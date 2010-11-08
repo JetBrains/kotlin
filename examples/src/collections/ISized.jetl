@@ -1,0 +1,3 @@
+interface class ISized {
+  val size : Int
+}

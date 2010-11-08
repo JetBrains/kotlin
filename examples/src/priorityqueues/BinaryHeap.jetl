@@ -1,0 +1,104 @@
+class BinaryHeap<T> : IPriorityQueue<T> {
+  private val data : IMutableList<T>
+  private val compare : Comparison<T>
+
+  fun this(data : IIterable<T>, compare : Comparison<T> = naturalOrder<T>) {
+    this.compare = compare
+    this.data = ArrayList(data)
+    siftDown(* this.data.size / 2 .. 0)
+/*
+    for (val i in data.size / 2 .. 0) {
+      siftDown(i)
+    }
+*/
+  }
+
+  fun this(compare : Comparison<T>) {
+    this.compare = compare
+    this.data = ArrayList()
+  }
+
+  fun this() {
+    this.data = ArrayList()
+    Assert(T is IComparable<T>)
+    this.comparator = naturalOrder<T>
+  }
+
+  override fun extract() : T {
+    if (this.isEmpty)
+      throw UnderflowException()
+    data.swap(0, data.lastIndex)
+    data.remove(data.lastIndex)
+    siftDown(0)
+  }
+
+  override fun add(item : T) {
+    data.add(item)
+    siftUp(data.lastItem)
+  }
+
+  private fun siftDown(index : Int) {
+    var current = index
+    while (current.left.exists) {
+      var min = current
+      if (current.left.value < min.value) {
+        min = current.left
+      }
+      if (current.right.exists && current.right.value < min.value) {
+        min = current.right
+      }
+      if (min == current) break
+      data.swap(min, current)
+      current = min
+    }
+  }
+
+  private fun siftUp(index : Int) {
+    if (!current.exists) return
+    var current = index
+    while (current.parent.exists) {
+      if (current.value < current.parent.value) {
+        data.swap(current, current.parent)
+        current = current.parent
+      }
+    }
+  }
+
+  private extension HeapIndex for Int {
+    val parent : Int {
+      get() = (this - 1) / 2
+    }
+
+    val left : Int {
+      get() = this * 2 + 1
+    }
+
+    val right : Int {
+      get() = this * 2 + 2
+    }
+
+    val value : T {
+      get() = data[this]
+    }
+
+    val exists : Boolean {
+      get() = (this < data.size) && (this >= 0)
+    }
+  }
+
+  private extension for T {
+    [operator] fun compareTo(other : T) : Int = compare(this, other)
+  }
+
+}
+
+extension fun IMutableList<T>.swap(a : Int, b : Int) {
+  val t = this[a]
+  this[a] = this[b]
+  this[b] = t
+}
+
+extension val IList<T>.lastIndex : Int {
+  get() = this.size - 1
+}
+

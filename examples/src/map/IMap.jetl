@@ -1,0 +1,4 @@
+interface class IMap<in K, out V> {
+  
+
+}
