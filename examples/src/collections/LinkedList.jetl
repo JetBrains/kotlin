@@ -15,14 +15,14 @@ class LinkedList<T> : IMutableList<T> {
     if (index == 0) {
       newItem.next = head
       head = newItem
-      if (tail == null) {
+      if (tail === null) {
         tail = head
       }
     } else {
       var insertAfter = itemAt(index)
       newItem.next = insertAfter.next
       insertAfter.next = newItem
-      if (tail == insertAfter) {
+      if (tail === insertAfter) {
         tail = newItem
       }
     }
@@ -37,13 +37,13 @@ class LinkedList<T> : IMutableList<T> {
   override fun remove(index : Int) : T {
     checkIndex(index)
     val item = itemAt(index)
-    if (item == head) {
+    if (item === head) {
       head = item.next
-      if (head == null)
+      if (head === null)
         tail= null
     } else {
       item.previous.next = item.next
-      if (item.next == null) {
+      if (item.next === null) {
         item.next.previous = item.previous
       } else {
         tail = tail.previous
