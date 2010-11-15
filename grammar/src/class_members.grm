@@ -1,0 +1,82 @@
+class Example(a : Foo, i : Int) : Bar(i), Some {
+  // constrtuctors:
+  public this(a : Foo) : this(a, 0)
+
+  public this(a : Foo) : Bar(5), Some(a) {
+    // code
+  }
+
+  // functions
+  abstract fun foo(a : Bar)
+
+  fun foo(a : Bar) = 0
+
+  fun foo(a : Bar) = {
+    return 0
+  }
+
+  fun foo(a : Bar) { // return type is Unit
+
+  // properties
+  val x : Int = 5
+  var y : Double = 7.0d
+  var z : String = "SDfsdf" {
+    get() = $z + "sdfsd"
+    private set(s : String) { $z = s } // TODO: allow to omit the type here?
+  }
+}
+
+
+// h5. Grammar
+
+memberDeclaration
+  : constructor
+  : method
+  : property
+  : class //TODO : static
+//  : constant ???
+  ;
+
+constructor
+  : accessModifier? "this" functionParameters (":" initializers) block
+  ;
+
+initializers
+  : "this" functionArguments
+  : constructorInvocation // type parameters may (must?) be omitted
+  ;
+
+super
+  : "super" "<" name ">"
+  ;
+
+method
+  : methodModifier* "fun" SimpleName functionParameters (":" type)? functionBody?
+  ;
+
+functionParameters
+  : "(" (parameter{","})? ")"
+  ;
+
+block
+  : "{" statements "}"
+  ;
+
+functionBody
+  : block
+  : "=" expression
+  ;
+
+property
+  : propertyModifier* ("val" | "var") SimpleName (":" type)? ("=" expression)?
+    "{" getter? setter? "}"
+  ;
+
+getter
+  : methodModifier* "get" "(" ")" functionBody
+  ;
+
+setter
+  : methodModifier* "set" "(" parameter ")" functionBody
+  ;
+

@@ -1,0 +1,29 @@
+/*
+
+Foo<Bar<X>, T, Object> // user type
+{A, Object => Foo} // function type
+{ => Foo} // function with no arguments
+(A, B, C) // tuple type
+() // 0-ary tuple type (Unit)
+
+*/
+
+type
+  : userType
+  : functionType
+  : tupleType
+  ;
+
+userType
+  : name ("<" type{","} ">")?
+  ;
+
+functionType
+  : "{" type{","} "=>" type "}"
+  ;
+
+tupleType
+  : "(" type"{","} ")"
+  ;
+
+

@@ -1,0 +1,34 @@
+expression
+  : "new" constructorInvocation
+  : literalConstant
+  : functionLiteral
+  : tupleLiteral
+  : "null"
+  : binOpExpression
+  : unOpExpression
+  : name functionParameters? // ambiguity here
+  : FieldName
+  : if
+// list comprehension
+  : jump
+  ;
+
+jump
+  : "throw" expression
+  : "return" expression
+  : "continue" SimpleName
+  : "break" SimpleName
+// yield ?
+  ;
+
+tupleLiteral
+  : "(" expression{","} ")"
+  ;
+
+functionLiteral
+  : "{" (parameter | SimpleName)* "=>" expression "}"
+  ;
+
+constructorInvocation
+  : userType "(" expression{","} ")"
+  ;

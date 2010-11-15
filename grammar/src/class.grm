@@ -1,0 +1,50 @@
+/*
+
+internal class Example<X, T : Comparable<X>>(protected val x : Foo<X, T>, y : Some)
+    : Bar(x), Foo<X, T> by x, IAbstractSome by y.asAbstract()
+    where
+      T : Function<Object, Object>
+{
+  // members
+}
+
+*/
+
+class
+  : classModifier* "class" SimpleName
+      ("<" typeParameter{","} ">")?
+      ("(" defaultConstructorParameter{","} ")")?
+      (":" delegationSpecifier{","})?
+      ("where" typeConstraint{","})?  // Syntax is questionable
+      ("{" memberDeclaration{","} "}"?
+  ;
+
+classModifier
+  : accessModifier
+  : "abstract"
+  : "sealed"
+  ;
+
+delegationSpecifier
+  : constructorInvocation // type and constructor arguments
+  : explicitDelegation
+  ;
+
+explicitDelegation
+  : userType "by" expression // Syntax is questionable
+  ;
+
+typeParameter
+  : varianceAnnotation? SimpleName (":" userType)?
+  ;
+
+typeConstraint
+  : userType ":" userType
+  // other constraints, maybe
+  ;
+
+defaultConstructorParameter
+  : accessModifier? ("val" | "var")? parameter
+  ;
+
+

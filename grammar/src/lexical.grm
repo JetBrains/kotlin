@@ -1,0 +1,5 @@
+
+
+SimpleName : /*java identifier*/;
+FieldName : "$" SimpleName;
+name : /*possibly qualified name*/;
