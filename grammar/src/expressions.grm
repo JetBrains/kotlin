@@ -1,16 +1,33 @@
 expression
+  : "(" expression ")" // see tupleLiteral
   : "new" constructorInvocation
   : literalConstant
   : functionLiteral
   : tupleLiteral
+  : listLiteral
+  : mapLiteral
   : "null"
   : binOpExpression
   : unOpExpression
-  : name functionParameters? // ambiguity here
+  : name functionParameters? // TODO: ambiguity here
   : FieldName
   : if
-// list comprehension
+// TODO: list comprehension
   : jump
+  ;
+
+binaryOperation
+  : "+" : "-" : "*" : "/"
+  : "|" : "||" : "&" : "&&" : "^" // Maybe we can drop "^"
+  : "<" : ">" : ">=" : "<="
+  : "==" : "==="
+  : "in"
+  : "is" : "isnot"
+  ;
+
+unaryOperation
+  : "-" : "+"
+  : "!"
   ;
 
 jump
@@ -21,8 +38,9 @@ jump
 // yield ?
   ;
 
-tupleLiteral
-  : "(" expression{","} ")"
+tupleLiteral // No, (a) is not a tuple
+  : "(" ")"
+  : "(" expression  ("," expression)+ ")"
   ;
 
 functionLiteral
@@ -33,4 +51,17 @@ functionLiteral
 
 constructorInvocation
   : userType "(" expression{","} ")"
+  ;
+
+listLiteral
+  : "[" expression{","} "]"
+  ;
+
+mapLiteral
+  : "[" mapEntryLiteral ("," mapEntryLiteral)* "]"
+  : "[" ":" "]"
+  ;
+
+mapEntryLiteral
+  : expression ":" expression
   ;
