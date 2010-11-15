@@ -15,15 +15,27 @@ type
   ;
 
 userType
-  : name ("<" type{","} ">")?
+  : name ("<" (projectionSpecifier type){","} ">")?
+  ;
+
+projectionSpecifier
+  : "in"
+  : "out"
+  : empty
   ;
 
 functionType
-  : "{" type{","} "=>" type "}"
+  : "{" functionTypeContents "}"
+  ;
+
+functionTypeContents
+  : "(" (parameter | type){","} ")" ":" type
   ;
 
 tupleType
-  : "(" type"{","} ")"
+  : "(" type{","} ")"
   ;
 
+
+////////////////////////////////////////
 
