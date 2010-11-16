@@ -10,24 +10,39 @@ expression
   : binOpExpression
   : unOpExpression
   : name functionParameters? // TODO: ambiguity here
+  : infixFunctionCall
+  : arrayAccess
+  : match
   : FieldName
   : if
 // TODO: list comprehension
   : jump
   ;
 
-binaryOperation
-  : "+" : "-" : "*" : "/"
-  : "|" : "||" : "&" : "&&" : "^" // Maybe we can drop "^"
-  : "<" : ">" : ">=" : "<="
+binaryOperation // Decreasing precedence
+  : "*" : "/"    // No %
+  : "+" : "-"
+  // No << >> >>>
+  : "<" : ">" : ">=" : "<=" : "is" : "isnot" : "in" // TODO: Check the precedence for in carefully 
   : "==" : "==="
-  : "in"
-  : "is" : "isnot"
+  // No | & ^ ~
+  : "&&"
+  : "||"
   ;
 
-unaryOperation
+assignments
+  : "="
+  : "+=" : "-=" : "*=" : "/=" // TODO: |=, %= and <<= make more sense than |, % or << alone, and so for others
+  ;
+
+prefixUnaryOperation
   : "-" : "+"
-  : "!"
+  : "++" : "--"
+  : "!"  // No ~
+  ;
+
+postfixUnaryOperation
+  : "++" : "--"
   ;
 
 jump
