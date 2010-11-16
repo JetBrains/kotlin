@@ -22,6 +22,7 @@ class
 classModifier
   : accessModifier
   : "abstract"
+  : "interface" // TODO: better name
   : "sealed"
   ;
 
@@ -31,7 +32,7 @@ delegationSpecifier
   ;
 
 explicitDelegation
-  : userType "by" expression // Syntax is questionable
+  : userType "by" expression // TODO: Syntax is questionable
   ;
 
 typeParameter
@@ -40,7 +41,7 @@ typeParameter
 
 typeConstraint
   : userType ":" userType
-  // other constraints, maybe
+  // TODO: other constraints, maybe
   ;
 
 defaultConstructorParameter

@@ -30,5 +30,5 @@ val f1 = {(T) : X => something(it)}
 val f1 = {t => something(t)}
 val f1 = {something(it)}
 
-val f1 : {(T) : X} = ...
+val f1 : {(T) : X} = {X()}
 

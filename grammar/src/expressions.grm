@@ -6,11 +6,11 @@ expression
   : tupleLiteral
   : listLiteral
   : mapLiteral
+  : typeLiteral
   : "null"
   : binOpExpression
   : unOpExpression
-  : name functionParameters? // TODO: ambiguity here
-  : infixFunctionCall
+  : functionCall
   : arrayAccess
   : match
   : FieldName
@@ -23,7 +23,7 @@ binaryOperation // Decreasing precedence
   : "*" : "/"    // No %
   : "+" : "-"
   // No << >> >>>
-  : "<" : ">" : ">=" : "<=" : "is" : "isnot" : "in" // TODO: Check the precedence for in carefully 
+  : "<" : ">" : ">=" : "<=" : "is" : "isnot" : "in" : "as" // TODO: Check the precedence for in carefully 
   : "==" : "==="
   // No | & ^ ~
   : "&&"
@@ -44,6 +44,11 @@ prefixUnaryOperation
 postfixUnaryOperation
   : "++" : "--"
   ;
+
+functionCall
+  : completeFunctionCall
+  : onlyTypeParameters
+  : infixFunctionCall
 
 jump
   : "throw" expression
