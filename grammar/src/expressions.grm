@@ -1,38 +1,57 @@
 expression
   : "(" expression ")" // see tupleLiteral
-  : "new" constructorInvocation
   : literalConstant
   : functionLiteral
   : tupleLiteral
   : listLiteral
   : mapLiteral
-  : typeLiteral
   : "null"
+  : "this"
+  : memberAccessExpression
+  : infixFunctionCall
   : binOpExpression
+  : assignment
   : unOpExpression
-  : functionCall
-  : arrayAccess
+  : castExpression
   : match
-  : FieldName
   : if
+  : "new" constructorInvocation
+  : anonymousInnerClassInstantiation // TODO
 // TODO: list comprehension
   : jump
+  ;
+
+castExpression
+  : expression "as" type
+  ;
+
+binOpExpression
+  : expression binaryOperation expression // see priorities
+  ;
+
+unOpExpression
+  : expression postfixUnaryOperation
+  : prefixUnaryOperation expression
   ;
 
 binaryOperation // Decreasing precedence
   : "*" : "/"    // No %
   : "+" : "-"
   // No << >> >>>
-  : "<" : ">" : ">=" : "<=" : "is" : "isnot" : "in" : "as" // TODO: Check the precedence for in carefully 
-  : "==" : "==="
+  : "<" : ">" : ">=" : "<=" : "is" : "isnot" : "in" // TODO: Check the precedence for in carefully
+  : "!=" : "==" : "==="
   // No | & ^ ~
   : "&&"
   : "||"
   ;
 
-assignments
+assignmentOperator
   : "="
   : "+=" : "-=" : "*=" : "/=" // TODO: |=, %= and <<= make more sense than |, % or << alone, and so for others
+  ;
+
+assignment
+  : memberAccessExpression assignmentOperator expression // Assignment to functions prohibited by a semantic check
   ;
 
 prefixUnaryOperation
@@ -46,9 +65,22 @@ postfixUnaryOperation
   ;
 
 functionCall
-  : completeFunctionCall
-  : onlyTypeParameters
-  : infixFunctionCall
+  : SimpleName typeArguments valueArguments? functionLiteral?
+  : SimpleName valueArguments functionLiteral?
+  ;
+
+typeArguments
+  : "<" type{","} ">"
+  ;
+
+valueArguments
+  : "(" expression{","} ")"
+  ;
+
+infixFunctionCall
+  : expression SimpleName typeArguments expression?
+  : expression SimpleName expression
+  ;
 
 jump
   : "throw" expression
@@ -58,9 +90,9 @@ jump
 // yield ?
   ;
 
-tupleLiteral // No, (a) is not a tuple
-  : "(" ")"
-  : "(" expression  ("," expression)+ ")"
+tupleLiteral // Ambiguity when after a SimpleName (infix call). In this case (e) is treated as an expression in parentheses
+             // to put a tuple, write write ((e))
+  : "(" expression{","} ")"
   ;
 
 functionLiteral
@@ -84,4 +116,32 @@ mapLiteral
 
 mapEntryLiteral
   : expression ":" expression
+  ;
+
+literalConstant
+  : booleanLiteral
+  : IntegerLiteral
+  : HexadecimalLiteral
+  : CharacterLiteral
+  : SingleLineStringLiteral
+  : SingleLineStringTemplate
+  : MultiLineStringLiteral
+  : MultiLineStringTemplate
+  ;
+
+memberAccessExpression
+  : (expression ".")? memberAccess
+  ;
+
+memberAccess
+  : functionCall
+  : fieldOrPropertyAccess
+  ;
+
+fieldOrPropertyAccess
+  : (FieldName | SimpleName) arrayAccess?
+  ;
+
+arrayAccess
+  : "[" expression "]"
   ;

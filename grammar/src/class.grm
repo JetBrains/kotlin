@@ -40,7 +40,7 @@ typeParameter
   ;
 
 typeConstraint
-  : userType ":" userType
+  : userType ":" (userType | "this") 
   // TODO: other constraints, maybe
   ;
 

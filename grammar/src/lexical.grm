@@ -1,5 +1,6 @@
-
-
 SimpleName : /*java identifier*/;
 FieldName : "$" SimpleName;
-name : /*possibly qualified name*/;
+[helper] Digit : ["0".."9"];
+IntegerLiteral : Digit+ "L"?
+[helper] HaxDigit : Digit | ["A"-"F", "a"-"f"];
+HexadecimaLiteral : "0x" HexDigit+;
