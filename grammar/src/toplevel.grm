@@ -1,0 +1,14 @@
+jetlFile
+  : preamble toplevelObject*
+  ;
+
+preamble
+  : empty
+  ;
+
+toplevelObject
+  : class
+  : extension
+  : method
+  : property
+  ;

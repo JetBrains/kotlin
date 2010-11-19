@@ -55,7 +55,11 @@ super
   ;
 
 method
-  : methodModifier* "fun" SimpleName typeParameters? functionParameters (":" type)? functionBody?
+  : methodModifier* "fun" functionRest
+  ;
+
+functionRest
+  : SimpleName typeParameters? functionParameters (":" type)? functionBody?
   ;
 
 functionParameters
@@ -72,7 +76,10 @@ functionBody
   ;
 
 property
-  : propertyModifier* ("val" | "var") SimpleName (":" type)? ("=" expression)?
+  : propertyModifier* ("val" | "var")
+
+propertyRest
+  : SimpleName (":" type)? ("=" expression)?
     "{" getter? setter? "}"
   ;
 

@@ -1,0 +1,17 @@
+extension
+  : completeExtension
+  : extensionMethod
+  : extensionProperty
+  ;
+
+completeExtension
+  : accessModifier? "extension" SimpleName? typeParameters? "for" type classBody?
+  ;
+
+extensionMethod
+  : accessModifier? "extension" "fun" type "." functionRest
+  ;
+
+extensionProperty
+  : accessModifier? "extension" propertyRest
+  ;
