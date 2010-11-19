@@ -1,17 +1,16 @@
 class Foo(bar : Bar) {
+  class object {
+    private val cache = HashMap<Bar, Foo>()
 
-} static {
-  private val cache = HashMap<Bar, Foo>()
+// Factory method:
+    Foo() = Foo(null);
 
-  Foo() {
-    return Foo(null);
+// Factory method:
+    Foo(bar : Bar) = cache.cachedLookup(bar, this(bar))
   }
 
-  Foo(bar : Bar) {
-    if (bar in cache.keys) return cache[bar]
-    val newFoo = this(bar) // calls the primary constructor
-    cahce[bar] = newFoo
-    return newFoo
+  fun doFoo() {
+    // ...
   }
 }
 
@@ -23,4 +22,13 @@ val foo = Foo(Bar())
 // Subclass (Foo must be marked as extendable/open, i.e. ont sealed)
 class FooSub(S : String) : Foo() { // Delegates to Foo created as a result of the factory method Foo()
 
+}
+
+extension Map<K, V>.cachedLookup(key : K, lazy value : V) : V {
+  var v = this[key]
+  if (v == null) {
+    v = value
+    this[key] = value
+  }
+  return v
 }

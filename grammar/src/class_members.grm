@@ -30,11 +30,15 @@ class Example(a : Foo, i : Int) : Bar(i), Some {
 // h5. Grammar
 
 memberDeclaration
+  : classObject
   : constructor
   : method
   : property
-  : class //TODO : static
-//  : constant ???
+  : class
+  ;
+
+classObject
+  : "class" objectLiteral
   ;
 
 constructor
@@ -51,7 +55,7 @@ super
   ;
 
 method
-  : methodModifier* "fun" SimpleName functionParameters (":" type)? functionBody?
+  : methodModifier* "fun" SimpleName typeParameters? functionParameters (":" type)? functionBody?
   ;
 
 functionParameters

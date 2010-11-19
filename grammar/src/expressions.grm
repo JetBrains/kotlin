@@ -11,9 +11,8 @@ expression
   : expressionWithPrecedences
   : match
   : if
-  : "new" constructorInvocation
-  : anonymousInnerClassInstantiation // TODO
-// TODO: list comprehension
+  : "new" constructorInvocation // TODO: Do we need "new"?, see factory methods
+  : objectLiteral
   : jump
   ;
 
@@ -159,6 +158,23 @@ arrayAccess
   : "[" expression "]"
   ;
 
-anonymousInnerClassInstantiation
-  : "object" delegationSpecifier{","} classBody
+objectLiteral
+  : "object" delegationSpecifier{","} classBody?
   ;
+
+/* Factory methods:
+
+objectLiteral
+  : "object" delegationSpecifier{","} ("{" objectLiteralMember{","} "}")?
+  ;
+
+objectLiteralMember
+  : memberDeclaration
+  : factoryMethod
+  ;
+
+factoryMethod
+  : accessModifier? SimpleName typeParameters? functionParameters functionBody
+  ;
+
+*/
