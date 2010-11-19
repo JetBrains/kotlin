@@ -8,11 +8,7 @@ expression
   : "null"
   : "this"
   : memberAccessExpression
-  : infixFunctionCall
-  : binOpExpression
-  : assignment
-  : unOpExpression
-  : castExpression
+  : expressionWithPrecedences
   : match
   : if
   : "new" constructorInvocation
@@ -21,8 +17,21 @@ expression
   : jump
   ;
 
-castExpression
-  : expression "as" type
+expressionWithPrecedences // See the precedence table, everything associates to the left
+  : infixFunctionCall
+  : binOpExpression
+  : assignment
+  : unOpExpression
+  : castExpression
+  : typingExpression
+  ;
+
+typingExpression
+  : expression typingOperation type
+  ;
+
+typingOperation
+  : "as" : "is" : "isnot"
   ;
 
 binOpExpression
@@ -35,14 +44,18 @@ unOpExpression
   ;
 
 binaryOperation // Decreasing precedence
-  : "*" : "/"    // No %
+  // .
+  // unary
+  : "*" : "/" : "%"
   : "+" : "-"
   // No << >> >>>
-  : "<" : ">" : ">=" : "<=" : "is" : "isnot" : "in" // TODO: Check the precedence for in carefully
-  : "!=" : "==" : "==="
+  // named functions in infix form
+  : "<" : ">" : ">=" : "<=" : "in" // is isnot as // TODO: Check the precedence for in carefully
+  : "!=" : "==" : "===" : "!=="
   // No | & ^ ~
   : "&&"
   : "||"
+  // assignments
   ;
 
 assignmentOperator
@@ -144,4 +157,8 @@ fieldOrPropertyAccess
 
 arrayAccess
   : "[" expression "]"
+  ;
+
+anonymousInnerClassInstantiation
+  : "object" delegationSpecifier{","} classBody
   ;

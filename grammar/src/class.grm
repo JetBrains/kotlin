@@ -16,7 +16,11 @@ class
       ("(" defaultConstructorParameter{","} ")")?
       (":" delegationSpecifier{","})?
       ("where" typeConstraint{","})?  // Syntax is questionable
-      ("{" memberDeclaration{","} "}"?
+      classBody?
+  ;
+
+classBody
+  : ("{" memberDeclaration{","} "}"
   ;
 
 classModifier

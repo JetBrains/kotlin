@@ -1,0 +1,13 @@
+class ConcreteClass {
+
+  this() {}
+
+}
+
+// Implicitly generated a factory for ConcreteClass with a no-argument factory method
+
+interface class IFooBarInterface {
+  new () {  }
+}
+
+factory

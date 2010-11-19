@@ -8,6 +8,7 @@ match
 
 matchEntry
   : "case" pattern "=>" expression // TODO: Consider other options than "=>"
+  : "else" "=>" expression // TODO: keyword
   ;
 
 for
