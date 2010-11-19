@@ -1,13 +1,26 @@
-class ConcreteClass {
+class Foo(bar : Bar) {
 
-  this() {}
+} static {
+  private val cache = HashMap<Bar, Foo>()
 
+  Foo() {
+    return Foo(null);
+  }
+
+  Foo(bar : Bar) {
+    if (bar in cache.keys) return cache[bar]
+    val newFoo = this(bar) // calls the primary constructor
+    cahce[bar] = newFoo
+    return newFoo
+  }
 }
 
-// Implicitly generated a factory for ConcreteClass with a no-argument factory method
+// To create an object of Foo
+val foo = Foo()
+or
+val foo = Foo(Bar())
 
-interface class IFooBarInterface {
-  new () {  }
+// Subclass (Foo must be marked as extendable/open, i.e. ont sealed)
+class FooSub(S : String) : Foo() { // Delegates to Foo created as a result of the factory method Foo()
+
 }
-
-factory

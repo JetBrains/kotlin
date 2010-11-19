@@ -18,4 +18,6 @@ val GOD = object {
   fun sendMessage(message : GodMEssage) = throw new RuntimeException(message.name)
 };
 
+
+// Groovy like syntax: too many things to assume
 addMouseListener([mouseClicked : {e => doFoo()}]);
