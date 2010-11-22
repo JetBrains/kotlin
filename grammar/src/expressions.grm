@@ -148,6 +148,7 @@ memberAccessExpression
 memberAccess
   : functionCall
   : fieldOrPropertyAccess
+  : functionLiteral // no parameters allowed
   ;
 
 fieldOrPropertyAccess
