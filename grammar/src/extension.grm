@@ -9,9 +9,9 @@ completeExtension
   ;
 
 extensionMethod
-  : accessModifier? "extension" "fun" type "." functionRest
+  : accessModifier? "fun" type "." functionRest
   ;
 
 extensionProperty
-  : accessModifier? "extension" propertyRest
+  : accessModifier? propertyModifier? ("val" | "var") type "." propertyRest
   ;

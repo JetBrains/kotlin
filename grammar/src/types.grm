@@ -25,7 +25,7 @@ projectionSpecifier
   ;
 
 functionType
-  : "{" functionTypeContents "}"
+  : (type ".")? "{" functionTypeContents "}"
   ;
 
 functionTypeContents
