@@ -1,0 +1,14 @@
+match
+  : expression "match" "{" matchEntry+ "}"
+  ;
+
+matchEntry
+  : "case" pattern "=>" expression // TODO: Consider other options than "=>"
+  : "else" "=>" expression // TODO: keyword
+  ;
+
+pattern
+  : SimpleName
+  : expression
+  : // TODO: how to write the typeswitch?
+  ;

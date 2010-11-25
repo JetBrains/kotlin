@@ -2,15 +2,6 @@ if
   : "if" "(" expression ")" expression ("else" expression)?
   ;
 
-match
-  : expression "match" "{" matchEntry+ "}"
-  ;
-
-matchEntry
-  : "case" pattern "=>" expression // TODO: Consider other options than "=>"
-  : "else" "=>" expression // TODO: keyword
-  ;
-
 for
   : "for" "(" valOrVar? (SimpleName | parameter) "in" expression ")" expression
   ;
