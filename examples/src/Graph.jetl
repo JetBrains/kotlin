@@ -24,11 +24,11 @@ class Graph<V, E> {
 
   fun neighbours(v : Vertex<V>) = edges.filter{it.from == v}.map{it.to} // type is IIterable<Vertex<V>>
 
-  fun dfs(handler : {V => ()}) {
+  fun dfs(handler : {(V) : Unit}) {
     val visited = new HashSet<Vertex<V>>()
     vertices.foreach{dfs(it, visited, handler)}
 
-    fun dfs(current : Vertex<V>, visited : ISet<Vertex<V>>, handler : {V => ()}) {
+    fun dfs(current : Vertex<V>, visited : ISet<Vertex<V>>, handler : {(V) : Unit}) {
       if (!visited.add(current))
         return
       handler(current)
@@ -36,7 +36,7 @@ class Graph<V, E> {
     }
   }
 
-  public fun traverse(pending : IPushPop<Vertex<V>>, visited : ISet<Vertex<V>>, handler : {V => ()}) {
+  public fun traverse(pending : IPushPop<Vertex<V>>, visited : ISet<Vertex<V>>, handler : {(V) : Unit}) {
     vertices.foreach {
       if (!visited.add(it))
         continue

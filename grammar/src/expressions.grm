@@ -5,6 +5,7 @@ expression
   : tupleLiteral
   : listLiteral
   : mapLiteral
+  : range
   : "null"
   : "this"
   : memberAccessExpression
@@ -86,7 +87,7 @@ typeArguments
   ;
 
 valueArguments
-  : "(" expression{","} ")"
+  : "(" (SimpleName ":")? expression{","} ")"
   ;
 
 infixFunctionCall
@@ -107,10 +108,10 @@ tupleLiteral // Ambiguity when after a SimpleName (infix call). In this case (e)
   : "(" expression{","} ")"
   ;
 
-functionLiteral
+functionLiteral  // one can use "it" as a parameter name
   : "{" SimpleName "=>" expression "}"
-  : "{" functionTypeContents "=>" expression "}"
-  : "{" "(" parameter{","} ")" "=>" expression "}"
+  : "{" "(" SimpleName{","} ")" "=>" expression "}"
+  : "{" "(" parameter{","} ")" (":" type)? "=>" expression "}"
   ;
 
 constructorInvocation
@@ -139,6 +140,10 @@ literalConstant
   : SingleLineStringTemplate
   : MultiLineStringLiteral
   : MultiLineStringTemplate
+  ;
+
+range
+  : "[" expression ".." expression "]"
   ;
 
 memberAccessExpression

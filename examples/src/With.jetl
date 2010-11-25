@@ -1,4 +1,4 @@
-[inline] fun with<T>(receiver : T, body : T.{=> ()}) = receiver.body()
+[inline] fun with<T>(receiver : T, body : T.{() : Unit}) = receiver.body()
 
 fun example() {
 
@@ -8,7 +8,8 @@ fun example() {
   }
 
   System.out.{
-    
-  }
+    println("foo");
+    print("bar");
+  }()
 
 }

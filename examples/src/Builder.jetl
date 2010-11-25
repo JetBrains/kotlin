@@ -31,7 +31,7 @@ class AntBuilder {
     fun classpath(entries : ClassPathEntry...) { ... }
   }
 
-  fun library(initializer : Library.{ => Library}) {
+  fun library(initializer : Library.{ () : Library}) {
     val lib = new Library()
     lib.initializer()
     return lib

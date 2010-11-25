@@ -1,9 +1,10 @@
 /*
 
 Foo<Bar<X>, T, Object> // user type
-{A, Object => Foo} // function type
-{ => Foo} // function with no arguments
+{(A, Object) : Foo} // function type
+{ () : Foo} // function with no arguments
 (A, B, C) // tuple type
+(a : A, b : B) // tuple type with named entries
 () // 0-ary tuple type (Unit)
 
 */
@@ -33,7 +34,8 @@ functionTypeContents
   ;
 
 tupleType
-  : "(" type{","} ")"
+  : "(" type{","}? ")"
+  : "(" parameter{","} ")" // tuple with named entries, the names do not affect assignment compatibility
   ;
 
 

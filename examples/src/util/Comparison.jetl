@@ -1,4 +1,4 @@
-type Comparison<in T> = {T, T => Int}
+type Comparison<in T> = {(T, T) : Int}
 
 fun naturalOrder<in T : IComparable<T>>(a : T, b : T) : Int = a.compareTo(b)
 
@@ -8,7 +8,7 @@ enum class ComparisonResult {
   LS,EQ, GR
 }
 
-type MatchableComparison<in T> = {T, T, => ComparisonResult}
+type MatchableComparison<in T> = {(T, T) : ComparisonResult}
 
 fun asMatchableComparison<T>(cmp : Comparison<T>) : MatchableComparison<T> = {a, b =>
   val res = cmp(a, b)

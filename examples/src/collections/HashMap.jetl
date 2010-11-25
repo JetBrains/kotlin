@@ -1,0 +1,58 @@
+virtual class IEquality {
+  fun equals(other : Any) : Boolean
+    = (this as java.lang.Object).equals(other as java.lang.Object)
+}
+
+virtual class IHashable : IEquality {
+  val hashCode() : Integer {
+    get() = (this as java.lang.Object).hashCode()
+  }
+}
+
+virtual class IMap<K, V> {
+  fun get(key : K) : V
+  fun set(key : K, value : V) : V
+  fun remove(key : K) : V
+  fun containsKey(key : K) : Boolean
+}
+
+class HashableWrapper(wraps val obj : Any) : IHashable
+  // equals and hashCode implementations are inherited
+
+[inline] fun Any.hashable() : HashableWrapper = new HashableWrapper(this)
+
+virtual class IHashingStrategy<K> {
+  fun equals(a : K, b : K) : Boolean
+  fun hashCode(a : K) : Integer
+}
+
+class DefaultHashingStrategy<in K : IHashable> : IHashingStrategy<K> {
+  override fun equals(a : K, b : K) : Boolean = a.equals(b)
+  override fun hashCode(a : K) : Integer = a.hashCode
+}
+
+class JavaObjectHashingStrategy<K> : IHashingStrategy<K> {
+  override fun equals(a : K, b : K) : Boolean
+    = a.hashable().equals(b)
+  override fun hashCode(a : K) : Integer
+    = a.hashable().hashCode
+}
+
+class HashMap<K, V> : IMap<K, V> {
+  private [inline] fun hashCode(a : K) = a.hashable().hashCode
+  private [inline] fun equals(a : K, b : K) = a.hashable() == b
+
+  // everything else uses these equals() and hashCode()... 
+
+}
+
+class StrategyHashMap<K, V>(hashingStrategy : IHashingStrategy<K>) : IMap<K, V> {
+
+  this() where (K : IHashable) : this(new DefaultHashingStrategy<K>()) {}
+
+  // where !(K : IHashable) 
+  this() : this(new JavaObjectHashingStrategy<K>()) {}
+
+  //...
+
+}

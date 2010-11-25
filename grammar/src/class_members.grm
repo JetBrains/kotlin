@@ -64,7 +64,7 @@ functionRest
   ;
 
 functionParameters
-  : "(" (parameter{","})? ")"
+  : "(" ((parameter ("=" expression)?){","})? ")" // default values
   ;
 
 block
