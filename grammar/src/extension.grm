@@ -2,6 +2,7 @@ extension
   : completeExtension
   : extensionMethod
   : extensionProperty
+  : extensionDecomposer
   ;
 
 completeExtension
@@ -14,4 +15,8 @@ extensionMethod
 
 extensionProperty
   : accessModifier? propertyModifier? ("val" | "var") type "." propertyRest
+  ;
+
+extensionDecomposer
+  : "decomposer" (type ".")? SimpleName "(" SimpleName{","} ")" // Public properties only
   ;

@@ -4,11 +4,24 @@ match
 
 matchEntry
   : "case" pattern "=>" expression // TODO: Consider other options than "=>"
-  : "else" "=>" expression // TODO: keyword
   ;
 
 pattern
-  : SimpleName
-  : expression
-  : // TODO: how to write the typeswitch?
+  : constantPattern // literal
+  : variablePattern // variable from the context
+  : tuplePattern
+  : bindingPattern
+  : decomposerPattern // labeled components are allowed
+  ;
+
+tuplePattern
+  : "(" ((SimpleName "=")? pattern{","})? ")"
+  ;
+
+bindingPattern
+  : "?" SimpleName? (":" pattern)?
+  ;
+
+decomposerPattern
+  : userType tuplePattern?
   ;

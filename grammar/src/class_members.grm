@@ -33,9 +33,14 @@ class Example(a : Foo, i : Int) : Bar(i), Some {
 memberDeclaration
   : classObject
   : constructor
+  : decomposer
   : method
   : property
   : class
+  ;
+
+decomposer  // TODO: consider other names
+  : "decomposer" SimpleName "(" SimpleName{","} ")" // Public properties only
   ;
 
 classObject
