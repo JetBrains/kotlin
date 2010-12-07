@@ -2,6 +2,12 @@ if
   : "if" "(" expression ")" expression ("else" expression)?
   ;
 
+loop
+  : for
+  : while
+  : doWhile
+  ;
+
 for
   : "for" "(" valOrVar? (SimpleName | parameter) "in" expression ")" expression
   ;

@@ -1,6 +1,9 @@
-jetlFile
+[start] jetlFile
   : preamble toplevelObject*
   ;
+
+[start] script
+  : expression
 
 preamble
   : namespaceHeader? import*

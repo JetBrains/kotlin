@@ -39,10 +39,6 @@ memberDeclaration
   : class
   ;
 
-decomposer  // TODO: consider other names
-  : "decomposer" SimpleName "(" SimpleName{","} ")" // Public properties only
-  ;
-
 classObject
   : "class" objectLiteral
   ;
@@ -51,29 +47,47 @@ constructor
   : accessModifier? "this" functionParameters (":" initializers) block
   ;
 
+functionParameters
+  : "(" functionParameter{","}? ")" // default values
+  ;
+
+functionParameter
+  : parameterKind parameter ("=" expression)?
+  ;
+
+parameterKind
+  : "lazy"
+  : "out"
+  : "ref"
+  ;
+
 initializers
-  : "this" functionArguments
+  : "this" valueArguments
   : constructorInvocation // type parameters may (must?) be omitted
   ;
 
-super
-  : "super" "<" name ">"
+block
+  : "{" expression "}"
+  ;
+
+decomposer  // TODO: consider other names
+  : "decomposer" SimpleName "(" SimpleName{","} ")" // Public properties only
   ;
 
 method
-  : methodModifier* "fun" functionRest
+  : memberModifier* "fun" functionRest
+  ;
+
+memberModifier
+  : accessModifier
+  : "override"
+  : "virtual"
+  : "abstract"
+  : // TODO: inline
   ;
 
 functionRest
   : SimpleName typeParameters? functionParameters (":" type)? functionBody?
-  ;
-
-functionParameters
-  : "(" ((parameter ("=" expression)?){","})? ")" // default values
-  ;
-
-block
-  : "{" expression* "}"
   ;
 
 functionBody
@@ -82,7 +96,8 @@ functionBody
   ;
 
 property
-  : propertyModifier* ("val" | "var")
+  : memberModifier* "lazy"? ("val" | "var") propertyRest
+  ;
 
 propertyRest
   : SimpleName (":" type)? ("=" expression)?
@@ -90,10 +105,13 @@ propertyRest
   ;
 
 getter
-  : methodModifier* "get" "(" ")" functionBody
+  : memberModifier* "get" "(" ")" functionBody
   ;
 
 setter
-  : methodModifier* "set" "(" parameter ")" functionBody
+  : memberModifier* "set" "(" parameter ")" functionBody
   ;
 
+parameter
+  : SimpleName ":" type
+  ;

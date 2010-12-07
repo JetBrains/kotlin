@@ -6,7 +6,7 @@ extension
   ;
 
 completeExtension
-  : accessModifier? "extension" SimpleName? typeParameters? "for" type classBody?
+  : accessModifier? "extension" SimpleName? typeParameters? "for" type classBody? // properties cannot be lazy, cannot have backing fields
   ;
 
 extensionMethod
@@ -14,7 +14,7 @@ extensionMethod
   ;
 
 extensionProperty
-  : accessModifier? propertyModifier? ("val" | "var") type "." propertyRest
+  : accessModifier? propertyModifier? ("val" | "var") type "." propertyRest // Extension property cannot be lazy
   ;
 
 extensionDecomposer

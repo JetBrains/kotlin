@@ -14,6 +14,10 @@ pattern
   : decomposerPattern // labeled components are allowed
   ;
 
+constantPattern
+  : literalConstant
+  ;
+
 tuplePattern
   : "(" ((SimpleName "=")? pattern{","})? ")"
   ;

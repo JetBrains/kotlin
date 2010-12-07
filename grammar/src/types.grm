@@ -16,13 +16,7 @@ type
   ;
 
 userType
-  : name ("<" (projectionSpecifier type){","} ">")?
-  ;
-
-projectionSpecifier
-  : "in"
-  : "out"
-  : empty
+  : SimpleName{"."} ("<" (varianceSpecifier? type){","} ">")?
   ;
 
 functionType

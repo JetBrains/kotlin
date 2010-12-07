@@ -7,15 +7,32 @@ expression
   : mapLiteral
   : range
   : "null"
-  : "this"
+  : "this" ("<" type ">")?
   : memberAccessExpression
   : expressionWithPrecedences
   : match
   : if
-  : "typeof"
+  : "typeof" // TODO: another keyword
   : "new" constructorInvocation // TODO: Do we need "new"?, see factory methods
   : objectLiteral
+  : declaration
   : jump
+  : loop
+  // block is syntactically equivalent to a functionLiteral with no parameters
+  ;
+
+literalConstant
+  : "true" | "false"
+  : StringWithTemplates
+  : NoEscapeString
+  : IntegerLiteral
+  : HexadecimalLiteral
+  : CharacterLiteral
+  ;
+
+declaration
+  : function
+  : property
   ;
 
 expressionWithPrecedences // See the precedence table, everything associates to the left
@@ -25,6 +42,11 @@ expressionWithPrecedences // See the precedence table, everything associates to 
   : unOpExpression
   : castExpression
   : typingExpression
+  : memberAccessExpression
+  ;
+
+memberAccessExpression
+  : (expression ".")? memberAccess
   ;
 
 typingExpression
@@ -32,16 +54,13 @@ typingExpression
   ;
 
 typingOperation
-  : "as" : "is" : "isnot"
+  : "as"
+  : "is"
+  : "isnot"
   ;
 
 binOpExpression
   : expression binaryOperation expression // see priorities
-  ;
-
-unOpExpression
-  : expression postfixUnaryOperation
-  : prefixUnaryOperation expression
   ;
 
 binaryOperation // Decreasing precedence
@@ -66,6 +85,11 @@ assignmentOperator
 
 assignment
   : memberAccessExpression assignmentOperator expression // Assignment to functions prohibited by a semantic check
+  ;
+
+unOpExpression
+  : expression postfixUnaryOperation
+  : prefixUnaryOperation expression
   ;
 
 prefixUnaryOperation
@@ -120,11 +144,11 @@ constructorInvocation
   ;
 
 listLiteral
-  : "[" expression{","} "]"
+  : "[" expression{","}? "]"
   ;
 
 mapLiteral
-  : "[" mapEntryLiteral ("," mapEntryLiteral)* "]"
+  : "[" mapEntryLiteral{","} "]"
   : "[" ":" "]"
   ;
 
@@ -132,23 +156,8 @@ mapEntryLiteral
   : expression ":" expression
   ;
 
-literalConstant
-  : booleanLiteral
-  : IntegerLiteral
-  : HexadecimalLiteral
-  : CharacterLiteral
-  : SingleLineStringLiteral
-  : SingleLineStringTemplate
-  : MultiLineStringLiteral
-  : MultiLineStringTemplate
-  ;
-
 range
   : "[" expression ".." expression "]"
-  ;
-
-memberAccessExpression
-  : (expression ".")? memberAccess
   ;
 
 memberAccess
@@ -166,7 +175,7 @@ arrayAccess
   ;
 
 objectLiteral
-  : "object" delegationSpecifier{","} classBody?
+  : "object" delegationSpecifier{","}? classBody?
   ;
 
 /* Factory methods:

@@ -16,19 +16,28 @@ class
       "wraps"?
       ("(" primaryConstructorParameter{","} ")")?
       (":" delegationSpecifier{","})?
-      ("where" typeConstraint{","})?  // Syntax is questionable
+      ("where" typeConstraint{","})?  // TODO: Syntax is questionable
       classBody?
-  ;
-
-classBody
-  : ("{" memberDeclaration{","} "}"
   ;
 
 classModifier
   : accessModifier
   : "abstract"
-  : "interface" // TODO: better name
-  : "sealed"
+  : "virtual"
+  : "enum"
+  : "extendable" // TODO: open?
+  // sealed by default
+  ;
+
+accessModifier
+  : "private"
+  : "protected"
+  : "public"
+  : "internal"
+  ;  
+
+classBody
+  : ("{" memberDeclaration{","} "}")?
   ;
 
 delegationSpecifier
@@ -44,8 +53,13 @@ typeParameter
   : varianceAnnotation? SimpleName (":" userType)?
   ;
 
+varianceAnnotation
+  : "in"
+  : "out"
+  ;
+
 typeConstraint
-  : userType ":" (userType | "this") 
+  : userType ":" (userType | "this") // "this" for self-type 
   // TODO: other constraints, maybe
   ;
 
