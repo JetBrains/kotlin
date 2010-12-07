@@ -5,10 +5,10 @@ IntegerLiteral : Digit+ "L"?
 [helper] HexDigit : Digit | ["A"-"F", "a"-"f"];
 HexadecimalLiteral : "0x" HexDigit+;
 
-CharacterLiteral : /*character as in Java*/
+CharacterLiteral : /*character as in Java*/;
 
 StringWithTemplates : /*single-quoted string, $ can be escaped*/;
-NoEscapeString : /* @-prefixed string, maybe allow putting a bar for indentation correction */;
+NoEscapeString : /* """-quoted string */;
 
 /*
 val foo = @"
