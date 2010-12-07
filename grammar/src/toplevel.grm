@@ -3,12 +3,28 @@ jetlFile
   ;
 
 preamble
-  : // TODO: Imports?!
+  : namespaceHeader? import*
+  ;
+
+namespaceHeader
+  : "namespace" SimpleName{"."}
+  ;
+
+import
+  : "import" SimpleName{"."} ("." "*" | "as" SimpleName)?
   ;
 
 toplevelObject
+  : namespace
   : class
   : extension
   : method
   : property
+  ;
+
+namespace
+  : "namespace" SimpleName{"."} "{"
+       import*
+       toplevelObject*
+    "}"
   ;
