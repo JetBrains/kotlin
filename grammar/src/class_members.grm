@@ -73,7 +73,7 @@ functionParameters
   ;
 
 block
-  : "{" statements "}"
+  : "{" expression* "}"
   ;
 
 functionBody

@@ -13,7 +13,8 @@ internal class Example<X, T : Comparable<X>>(protected val x : Foo<X, T>, y : So
 class
   : classModifier* "class" SimpleName
       ("<" typeParameter{","} ">")?
-      ("(" defaultConstructorParameter{","} ")")?
+      "wraps"?
+      ("(" primaryConstructorParameter{","} ")")?
       (":" delegationSpecifier{","})?
       ("where" typeConstraint{","})?  // Syntax is questionable
       classBody?
@@ -48,7 +49,7 @@ typeConstraint
   // TODO: other constraints, maybe
   ;
 
-defaultConstructorParameter
+primaryConstructorParameter
   : accessModifier? ("val" | "var")? parameter
   ;
 

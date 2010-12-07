@@ -3,14 +3,14 @@ match
   ;
 
 matchEntry
-  : "case" pattern "=>" expression // TODO: Consider other options than "=>"
+  : "case" pattern ("if" "(" expression ")")? "=>" expression // TODO: Consider other options than "=>"
   ;
 
 pattern
   : constantPattern // literal
   : variablePattern // variable from the context
   : tuplePattern
-  : bindingPattern
+  : bindingPattern // we allow non-linear patterns
   : decomposerPattern // labeled components are allowed
   ;
 

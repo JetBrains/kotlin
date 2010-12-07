@@ -2,5 +2,16 @@ SimpleName : /*java identifier*/;
 FieldName : "$" SimpleName;
 [helper] Digit : ["0".."9"];
 IntegerLiteral : Digit+ "L"?
-[helper] HaxDigit : Digit | ["A"-"F", "a"-"f"];
-HexadecimaLiteral : "0x" HexDigit+;
+[helper] HexDigit : Digit | ["A"-"F", "a"-"f"];
+HexadecimalLiteral : "0x" HexDigit+;
+
+StringWithPatterns : /*single-quoted string, $ can be escaped*/;
+NoEscapeString : /* @-prefixed string, maybe allow putting a bar for indentation correction */;
+
+/*
+val foo = @"
+   |Blah-blah-blah
+    foobar
+    barfoo
+"
+*/
