@@ -3,7 +3,8 @@
   ;
 
 [start] script
-  : expression
+  : preamble expression*
+  ;
 
 preamble
   : namespaceHeader? import*
