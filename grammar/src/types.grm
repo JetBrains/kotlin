@@ -13,10 +13,11 @@ type
   : userType
   : functionType
   : tupleType
+  : attributes type
   ;
 
 userType
-  : SimpleName{"."} ("<" (varianceSpecifier? type){","} ">")?
+  : SimpleName{"."} ("<" (modifiers type){","} ">")?
   ;
 
 functionType

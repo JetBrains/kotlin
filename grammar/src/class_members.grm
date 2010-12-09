@@ -34,7 +34,7 @@ memberDeclaration
   : classObject
   : constructor
   : decomposer
-  : method
+  : function
   : property
   : class
   ;
@@ -68,7 +68,7 @@ decomposer  // TODO: consider other names
   : attributes "decomposer" SimpleName "(" (attributes SimpleName){","} ")" // Public properties only
   ;
 
-method
+function
   : modifiers "fun" functionRest
   ;
 

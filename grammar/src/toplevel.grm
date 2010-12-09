@@ -22,7 +22,7 @@ toplevelObject
   : namespace
   : class
   : extension
-  : method
+  : function
   : property
   ;
 
