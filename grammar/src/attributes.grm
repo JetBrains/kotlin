@@ -1,0 +1,11 @@
+attributes
+  : attributeAnnotation*
+  ;
+
+attributeAnnotation
+  : "[" attribute{","} "]"
+  ;
+
+attribute
+  : SimpleName{"."} valueArguments?
+  ;

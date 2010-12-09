@@ -11,30 +11,18 @@ internal class Example<X, T : Comparable<X>>(protected val x : Foo<X, T>, y : So
 */
 
 class
-  : classModifier* "class" SimpleName
-      ("<" typeParameter{","} ">")?
+  : modifiers "class" SimpleName
+      typeParameters?
       "wraps"?
       ("(" primaryConstructorParameter{","} ")")?
-      (":" delegationSpecifier{","})?
-      ("where" typeConstraint{","})?  // TODO: Syntax is questionable
+      (":" attributes delegationSpecifier{","})?
       classBody?
   ;
 
-classModifier
-  : accessModifier
-  : "abstract"
-  : "virtual"
-  : "enum"
-  : "extendable" // TODO: open?
-  // sealed by default
+typeParameters
+  : "<" typeParameter{","} ">"
+    ("where" typeConstraint{","})?  // TODO: Syntax is questionable
   ;
-
-accessModifier
-  : "private"
-  : "protected"
-  : "public"
-  : "internal"
-  ;  
 
 classBody
   : ("{" memberDeclaration{","} "}")?
@@ -50,21 +38,14 @@ explicitDelegation
   ;
 
 typeParameter
-  : varianceAnnotation? SimpleName (":" userType)?
-  ;
-
-varianceAnnotation
-  : "in"
-  : "out"
+  : modifiers SimpleName (":" userType)?
   ;
 
 typeConstraint
-  : userType ":" (userType | "this") // "this" for self-type 
+  : attributes userType ":" (userType | "this") // "this" for self-type 
   // TODO: other constraints, maybe
   ;
 
 primaryConstructorParameter
-  : accessModifier? ("val" | "var")? parameter
+  : modifiers ("val" | "var")? parameter // TODO: ref/out?
   ;
-
-

@@ -10,10 +10,3 @@ CharacterLiteral : /*character as in Java*/;
 StringWithTemplates : /*single-quoted string, $ can be escaped*/;
 NoEscapeString : /* """-quoted string */;
 
-/*
-val foo = @"
-   |Blah-blah-blah
-    foobar
-    barfoo
-"
-*/

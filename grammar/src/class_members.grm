@@ -40,11 +40,11 @@ memberDeclaration
   ;
 
 classObject
-  : "class" objectLiteral
+  : modifiers "class" objectLiteral
   ;
 
 constructor
-  : accessModifier? "this" functionParameters (":" initializers) block
+  : modifiers "this" functionParameters (":" initializers) block
   ;
 
 functionParameters
@@ -52,18 +52,12 @@ functionParameters
   ;
 
 functionParameter
-  : parameterKind parameter ("=" expression)?
-  ;
-
-parameterKind
-  : "lazy"
-  : "out"
-  : "ref"
+  : modifiers parameter ("=" expression)?
   ;
 
 initializers
-  : "this" valueArguments
-  : constructorInvocation // type parameters may (must?) be omitted
+  : attributes "this" valueArguments
+  : attributes constructorInvocation // type parameters may (must?) be omitted
   ;
 
 block
@@ -71,19 +65,11 @@ block
   ;
 
 decomposer  // TODO: consider other names
-  : "decomposer" SimpleName "(" SimpleName{","} ")" // Public properties only
+  : attributes "decomposer" SimpleName "(" (attributes SimpleName){","} ")" // Public properties only
   ;
 
 method
-  : memberModifier* "fun" functionRest
-  ;
-
-memberModifier
-  : accessModifier
-  : "override"
-  : "virtual"
-  : "abstract"
-  : // TODO: inline
+  : modifiers "fun" functionRest
   ;
 
 functionRest
@@ -96,7 +82,7 @@ functionBody
   ;
 
 property
-  : memberModifier* "lazy"? ("val" | "var") propertyRest
+  : modifiers "lazy"? ("val" | "var") propertyRest
   ;
 
 propertyRest
@@ -105,11 +91,11 @@ propertyRest
   ;
 
 getter
-  : memberModifier* "get" "(" ")" functionBody
+  : modifiers "get" "(" ")" functionBody
   ;
 
 setter
-  : memberModifier* "set" "(" parameter ")" functionBody
+  : modifiers "set" "(" modifiers parameter ")" functionBody // TODO: Can the parameter be lazy?
   ;
 
 parameter

@@ -1,0 +1,47 @@
+modifiers
+  : modifier*
+  ;
+
+modifier
+  : classModifier
+  : accessModifier
+  : varianceAnnotation
+  : memberModifier
+  : parameterKind
+  : attributes
+  // sealed by default
+  ;
+
+classModifier
+  : "abstract"
+  : "virtual"
+  : "enum"
+  : "extendable" // TODO: open?
+  : "attribute"
+  ;
+
+memberModifier
+  : "override"
+  : "virtual"
+  : "abstract"
+  : // TODO: inline
+  ;
+
+accessModifier
+  : "private"
+  : "protected"
+  : "public"
+  : "internal"
+  ;
+
+varianceAnnotation
+  : "in"
+  : "out"
+  ;
+
+parameterKind
+  : "lazy"
+  : "out"
+  : "ref"
+  ;
+

@@ -6,17 +6,17 @@ extension
   ;
 
 completeExtension
-  : accessModifier? "extension" SimpleName? typeParameters? "for" type classBody? // properties cannot be lazy, cannot have backing fields
+  : modifiers "extension" SimpleName? typeParameters? "for" type classBody? // properties cannot be lazy, cannot have backing fields
   ;
 
 extensionMethod
-  : accessModifier? "fun" type "." functionRest
+  : modifiers "fun" type "." functionRest
   ;
 
 extensionProperty
-  : accessModifier? propertyModifier? ("val" | "var") type "." propertyRest // Extension property cannot be lazy
+  : modifiers ("val" | "var") type "." propertyRest // Extension property cannot be lazy
   ;
 
 extensionDecomposer
-  : "decomposer" (type ".")? SimpleName "(" SimpleName{","} ")" // Public properties only
+  : attributes "decomposer" (type ".")? SimpleName "(" attributes SimpleName{","} ")" // Public properties only
   ;

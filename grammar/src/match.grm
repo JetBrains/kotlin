@@ -3,7 +3,7 @@ match
   ;
 
 matchEntry
-  : "case" pattern ("if" "(" expression ")")? "=>" expression // TODO: Consider other options than "=>"
+  : attributes "case" pattern ("if" "(" expression ")")? "=>" expression // TODO: Consider other options than "=>"
   ;
 
 pattern
