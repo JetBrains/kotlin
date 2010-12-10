@@ -25,6 +25,8 @@ NoEscapeString : /* """-quoted string */;
 =>
 ..
 ?
+?:
+?.
 */
 
 /* Keywords:

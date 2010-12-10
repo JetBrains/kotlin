@@ -49,7 +49,12 @@ expressionWithPrecedences // See the precedence table, everything associates to 
   ;
 
 memberAccessExpression
-  : (expression ".")? memberAccess
+  : (expression accessOp)? memberAccess
+  ;
+
+accessOp
+  : "."
+  : "?."
   ;
 
 typingExpression
@@ -78,6 +83,7 @@ binaryOperation // Decreasing precedence
   // No | & ^ ~
   : "&&"
   : "||"
+  : "?:"
   // assignments
   ;
 

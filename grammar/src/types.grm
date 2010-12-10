@@ -41,6 +41,4 @@ tupleType
   : "(" parameter{","} ")" // tuple with named entries, the names do not affect assignment compatibility
   ;
 
-
 ////////////////////////////////////////
-
