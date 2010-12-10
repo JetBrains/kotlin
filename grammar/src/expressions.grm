@@ -106,8 +106,12 @@ postfixUnaryOperation
   ;
 
 functionCall
-  : SimpleName typeArguments valueArguments? functionLiteral?
-  : SimpleName valueArguments functionLiteral?
+  : functionExpression typeArguments valueArguments? functionLiteral?
+  : functionExpression valueArguments functionLiteral?
+  ;
+
+functionExpression
+  : expression
   ;
 
 typeArguments
