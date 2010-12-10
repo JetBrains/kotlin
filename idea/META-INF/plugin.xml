@@ -1,0 +1,22 @@
+<idea-plugin version="2">
+  <name>Jet</name>
+  <description>Jet Language support</description>
+  <version>1.0</version>
+  <vendor>JetBrains</vendor>
+
+  <application-components>
+    <!-- Add your application components here -->
+  </application-components>
+
+  <project-components>
+    <!-- Add your project components here -->
+  </project-components>
+
+  <actions>
+    <!-- Add your actions here -->
+  </actions>
+
+  <extensions defaultExtensionNs="com.intellij">
+      <fileTypeFactory implementation="org.jetbrains.jet.lang.JetFileFactory"/>
+  </extensions>
+</idea-plugin>

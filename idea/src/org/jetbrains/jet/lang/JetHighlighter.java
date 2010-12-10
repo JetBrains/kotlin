@@ -1,0 +1,86 @@
+/*
+ * @author max
+ */
+package org.jetbrains.jet.lang;
+
+import com.intellij.lexer.Lexer;
+import com.intellij.openapi.editor.HighlighterColors;
+import com.intellij.openapi.editor.SyntaxHighlighterColors;
+import com.intellij.openapi.editor.colors.TextAttributesKey;
+import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
+import com.intellij.psi.tree.IElementType;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lexer.JetLexer;
+import org.jetbrains.jet.lexer.JetTokens;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class JetHighlighter extends SyntaxHighlighterBase {
+    private static final Map<IElementType, TextAttributesKey> keys1;
+    private static final Map<IElementType, TextAttributesKey> keys2;
+
+    static final TextAttributesKey JET_KEYWORD = TextAttributesKey.createTextAttributesKey(
+                                                  "JET.KEYWORD",
+                                                  SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()
+                                                 );
+
+    static final TextAttributesKey JET_SOFT_KEYWORD = TextAttributesKey.createTextAttributesKey(
+                                                  "JET.SOFT.KEYWORD",
+                                                  SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()
+                                                 );
+
+    static final TextAttributesKey JET_NUMBER = TextAttributesKey.createTextAttributesKey(
+                                                 "JET.NUMBER",
+                                                 SyntaxHighlighterColors.NUMBER.getDefaultAttributes()
+                                                );
+
+    static final TextAttributesKey JET_STRING = TextAttributesKey.createTextAttributesKey(
+                                                 "JET.STRING",
+                                                 SyntaxHighlighterColors.STRING.getDefaultAttributes()
+                                                );
+
+    static final TextAttributesKey JET_COMMENT = TextAttributesKey.createTextAttributesKey(
+                                                       "JET.COMMENT",
+                                                       SyntaxHighlighterColors.LINE_COMMENT.getDefaultAttributes()
+                                                     );
+
+    static final TextAttributesKey JET_BAD_CHARACTER = TextAttributesKey.createTextAttributesKey(
+                                                    "JET.BADCHARACTER",
+                                                    HighlighterColors.BAD_CHARACTER.getDefaultAttributes()
+                                                  );
+
+
+
+
+
+
+    @NotNull
+    public Lexer getHighlightingLexer() {
+        return new JetLexer();
+    }
+
+    @NotNull
+    public TextAttributesKey[] getTokenHighlights(IElementType tokenType) {
+        return pack(keys1.get(tokenType), keys2.get(tokenType));
+    }
+
+    static {
+        keys1 = new HashMap<IElementType, TextAttributesKey>();
+        keys2 = new HashMap<IElementType, TextAttributesKey>();
+
+
+        fillMap(keys1, JetTokens.KEYWORDS, JET_KEYWORD);
+
+        keys1.put(JetTokens.INTEGER_LITERAL, JET_NUMBER);
+        keys1.put(JetTokens.FLOAT_LITERAL, JET_NUMBER);
+
+        keys1.put(JetTokens.STRING_LITERAL, JET_STRING);
+        keys1.put(JetTokens.CHARACTER_LITERAL, JET_STRING);
+        keys1.put(JetTokens.RAW_STRING_LITERAL, JET_STRING);
+
+        keys1.put(JetTokens.EOL_COMMENT, JET_COMMENT);
+        keys1.put(JetTokens.BLOCK_COMMENT, JET_COMMENT);
+        keys1.put(JetTokens.DOC_COMMENT, JET_COMMENT);
+    }
+}
