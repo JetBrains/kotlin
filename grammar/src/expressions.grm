@@ -33,6 +33,9 @@ literalConstant
 declaration
   : function
   : property
+  : extension
+  : class
+  : typedef
   ;
 
 expressionWithPrecedences // See the precedence table, everything associates to the left

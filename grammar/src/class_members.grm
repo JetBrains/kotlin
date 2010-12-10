@@ -37,6 +37,8 @@ memberDeclaration
   : function
   : property
   : class
+  : extension
+  : typedef
   ;
 
 classObject

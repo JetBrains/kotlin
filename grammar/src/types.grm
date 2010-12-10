@@ -17,7 +17,15 @@ type
   ;
 
 userType
-  : SimpleName{"."} ("<" (modifiers type){","} ">")?
+  : (SimpleName ".")* simpleUserType{"."}
+  ;
+
+simpleUserType
+  : SimpleName ("<" (optionalProjection type){","} ">")?
+  ;
+
+optionalProjection
+  : modifiers
   ;
 
 functionType
