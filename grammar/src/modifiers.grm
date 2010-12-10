@@ -16,7 +16,7 @@ classModifier
   : "abstract"
   : "virtual"
   : "enum"
-  : "extendable" // TODO: open?
+  : "open"
   : "attribute"
   ;
 
