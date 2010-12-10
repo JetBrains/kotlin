@@ -18,6 +18,7 @@ constantPattern
   : literalConstant
   ;
 
+
 tuplePattern
   : "(" ((SimpleName "=")? pattern{","})? ")"
   ;

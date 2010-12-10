@@ -24,6 +24,7 @@ toplevelObject
   : extension
   : function
   : property
+  : typedef
   ;
 
 namespace
@@ -31,4 +32,8 @@ namespace
        import*
        toplevelObject*
     "}"
+  ;
+
+typedef
+  : modifiers "type" SimpleName typeParameters? "=" type
   ;

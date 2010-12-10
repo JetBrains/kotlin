@@ -73,7 +73,7 @@ function
   ;
 
 functionRest
-  : SimpleName typeParameters? functionParameters (":" type)? functionBody?
+  : attributes SimpleName typeParameters? functionParameters (":" type)? functionBody?
   ;
 
 functionBody
@@ -82,7 +82,7 @@ functionBody
   ;
 
 property
-  : modifiers "lazy"? ("val" | "var") propertyRest
+  : modifiers ("val" | "var") propertyRest
   ;
 
 propertyRest
