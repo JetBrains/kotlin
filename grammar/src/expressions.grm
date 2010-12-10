@@ -89,7 +89,7 @@ binaryOperation // Decreasing precedence
 
 assignmentOperator
   : "="
-  : "+=" : "-=" : "*=" : "/=" // TODO: |=, %= and <<= make more sense than |, % or << alone, and so for others
+  : "+=" : "-=" : "*=" : "/=" : "%="// TODO: |=, %= and <<= make more sense than |, % or << alone, and so for others
   ;
 
 assignment

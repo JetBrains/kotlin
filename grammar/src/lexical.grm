@@ -19,7 +19,7 @@ NoEscapeString : /* """-quoted string */;
 <= >= == != === !==
 + - * / %
 =
-+= -= *= /=
++= -= *= /= %=
 ++ -- !
 && ||  -- may be just & and |
 =>
