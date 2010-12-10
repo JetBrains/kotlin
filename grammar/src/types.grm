@@ -10,10 +10,7 @@ Foo<Bar<X>, T, Object> // user type
 */
 
 type
-  : userType
-  : functionType
-  : tupleType
-  : attributes type
+  : attributes (userType | functionType | tupleType)
   ;
 
 userType
