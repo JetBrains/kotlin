@@ -13,7 +13,7 @@ import java.util.Set;
 
 public interface JetTokens {
     JetToken BLOCK_COMMENT = new JetToken("BLOCK_COMMENT");
-    JetToken DOC_COMMENT = new JetToken("DOC_COMMENT");
+    JetToken DOC_COMMENT   = new JetToken("DOC_COMMENT");
     JetToken EOL_COMMENT   = new JetToken("EOL_COMMENT");
 
     IElementType WHITE_SPACE = TokenType.WHITE_SPACE;
@@ -129,4 +129,10 @@ public interface JetTokens {
             OVERRIDE_KEYWORD, PRIVATE_KEYWORD, PUBLIC_KEYWORD, INTERNAL_KEYWORD, PROTECTED_KEYWORD, OUT_KEYWORD,
             REF_KEYWORD
     );
+
+    TokenSet WHITE_SPACE_OR_COMMENT_BIT_SET = TokenSet.create(WHITE_SPACE, BLOCK_COMMENT, EOL_COMMENT, DOC_COMMENT);
+
+    TokenSet WHITESPACES = TokenSet.create(TokenType.WHITE_SPACE);
+    TokenSet COMMENTS = TokenSet.create(EOL_COMMENT, BLOCK_COMMENT, DOC_COMMENT);
+    TokenSet STRINGS = TokenSet.create(CHARACTER_LITERAL, STRING_LITERAL, RAW_STRING_LITERAL);
 }
