@@ -23,4 +23,9 @@ public class JetFile extends PsiFileBase {
     public FileType getFileType() {
         return JetFileType.INSTANCE;
     }
+
+    @Override
+    public String toString() {
+        return "JetFile: " + getName();
+    }
 }
