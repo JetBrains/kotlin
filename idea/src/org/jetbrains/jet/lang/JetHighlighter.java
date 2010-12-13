@@ -25,7 +25,7 @@ public class JetHighlighter extends SyntaxHighlighterBase {
                                                   SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()
                                                  );
 
-    static final TextAttributesKey JET_SOFT_KEYWORD = TextAttributesKey.createTextAttributesKey(
+    public static final TextAttributesKey JET_SOFT_KEYWORD = TextAttributesKey.createTextAttributesKey(
                                                   "JET.SOFT.KEYWORD",
                                                   SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()
                                                  );

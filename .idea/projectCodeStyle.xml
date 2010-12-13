@@ -3,7 +3,9 @@
   <component name="CodeStyleSettingsManager">
     <option name="PER_PROJECT_SETTINGS">
       <value>
+        <option name="ELSE_ON_NEW_LINE" value="true" />
         <option name="ALIGN_GROUP_FIELD_DECLARATIONS" value="true" />
+        <option name="IF_BRACE_FORCE" value="1" />
         <ADDITIONAL_INDENT_OPTIONS fileType="groovy">
           <option name="INDENT_SIZE" value="2" />
           <option name="CONTINUATION_INDENT_SIZE" value="8" />

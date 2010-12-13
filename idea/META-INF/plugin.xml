@@ -20,5 +20,6 @@
       <fileTypeFactory implementation="org.jetbrains.jet.lang.JetFileFactory"/>
       <lang.braceMatcher language="jet" implementationClass="org.jetbrains.jet.lang.JetPairMatcher"/>
       <lang.parserDefinition language="jet" implementationClass="org.jetbrains.jet.lang.parsing.JetParserDefinition"/>
+      <annotator language="jet" implementationClass="org.jetbrains.jet.lang.annotations.SoftKeywordsAnnotator"/>
   </extensions>
 </idea-plugin>

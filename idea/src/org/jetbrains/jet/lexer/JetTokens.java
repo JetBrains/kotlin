@@ -98,24 +98,24 @@ public interface JetTokens {
     JetToken MINUSEQ     = new JetToken("MINUSEQ");
     JetToken COMMA       = new JetToken("COMMA");
 
-    JetToken WRAPS_KEYWORD     = new JetToken("wraps");
-    JetToken WHERE_KEYWORD     = new JetToken("where");
-    JetToken BY_KEYWORD        = new JetToken("by");
-    JetToken LAZY_KEYWORD      = new JetToken("lazy");
-    JetToken GET_KEYWORD       = new JetToken("get");
-    JetToken SET_KEYWORD       = new JetToken("set");
-    JetToken ABSTRACT_KEYWORD  = new JetToken("abstract");
-    JetToken VIRTUAL_KEYWORD   = new JetToken("virtual");
-    JetToken ENUM_KEYWORD      = new JetToken("enum");
-    JetToken OPEN_KEYWORD      = new JetToken("open");
-    JetToken ATTRIBUTE_KEYWORD = new JetToken("attribute");
-    JetToken OVERRIDE_KEYWORD  = new JetToken("override");
-    JetToken PRIVATE_KEYWORD   = new JetToken("private");
-    JetToken PUBLIC_KEYWORD    = new JetToken("public");
-    JetToken INTERNAL_KEYWORD  = new JetToken("internal");
-    JetToken PROTECTED_KEYWORD = new JetToken("protected");
-    JetToken OUT_KEYWORD       = new JetToken("out");
-    JetToken REF_KEYWORD       = new JetToken("ref");
+    JetSoftKeywordToken WRAPS_KEYWORD     = new JetSoftKeywordToken("wraps");
+    JetSoftKeywordToken WHERE_KEYWORD     = new JetSoftKeywordToken("where");
+    JetSoftKeywordToken BY_KEYWORD        = new JetSoftKeywordToken("by");
+    JetSoftKeywordToken LAZY_KEYWORD      = new JetSoftKeywordToken("lazy");
+    JetSoftKeywordToken GET_KEYWORD       = new JetSoftKeywordToken("get");
+    JetSoftKeywordToken SET_KEYWORD       = new JetSoftKeywordToken("set");
+    JetSoftKeywordToken ABSTRACT_KEYWORD  = new JetSoftKeywordToken("abstract");
+    JetSoftKeywordToken VIRTUAL_KEYWORD   = new JetSoftKeywordToken("virtual");
+    JetSoftKeywordToken ENUM_KEYWORD      = new JetSoftKeywordToken("enum");
+    JetSoftKeywordToken OPEN_KEYWORD      = new JetSoftKeywordToken("open");
+    JetSoftKeywordToken ATTRIBUTE_KEYWORD = new JetSoftKeywordToken("attribute");
+    JetSoftKeywordToken OVERRIDE_KEYWORD  = new JetSoftKeywordToken("override");
+    JetSoftKeywordToken PRIVATE_KEYWORD   = new JetSoftKeywordToken("private");
+    JetSoftKeywordToken PUBLIC_KEYWORD    = new JetSoftKeywordToken("public");
+    JetSoftKeywordToken INTERNAL_KEYWORD  = new JetSoftKeywordToken("internal");
+    JetSoftKeywordToken PROTECTED_KEYWORD = new JetSoftKeywordToken("protected");
+    JetSoftKeywordToken OUT_KEYWORD       = new JetSoftKeywordToken("out");
+    JetSoftKeywordToken REF_KEYWORD       = new JetSoftKeywordToken("ref");
 
     TokenSet KEYWORDS = TokenSet.create(NAMESPACE_KEYWORD, IMPORT_KEYWORD, AS_KEYWORD, TYPE_KEYWORD, CLASS_KEYWORD,
             THIS_KEYWORD, VAL_KEYWORD, VAR_KEYWORD, FUN_KEYWORD, DECOMPOSER_KEYWORD, EXTENSION_KEYWORD, FOR_KEYWORD,
