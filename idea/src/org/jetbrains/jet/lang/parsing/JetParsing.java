@@ -45,9 +45,9 @@ public class JetParsing {
     @Nullable
     private PsiBuilder.Marker parsePreamble() {
         if (at(NAMESPACE_KEYWORD)) {
+            PsiBuilder.Marker namespaceMarker = mark();
             advance();
 
-            PsiBuilder.Marker namespaceMarker = mark();
             parseQualifiedName();
             return namespaceMarker;
         }
