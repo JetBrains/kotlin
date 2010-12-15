@@ -35,4 +35,6 @@ public class JetParsingTest extends ParsingTestCase {
     public void testNamespaceBlock_ERR() throws Exception {doTest(true);}
     public void testNamespaceBlock() throws Exception {doTest(true);}
     public void testSimpleModifiers() throws Exception {doTest(true);}
+    public void testAttributes() throws Exception {doTest(true);}
+    public void testAttributes_ERR() throws Exception {doTest(true);}
 }

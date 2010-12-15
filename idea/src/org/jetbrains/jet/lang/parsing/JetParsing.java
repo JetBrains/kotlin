@@ -207,22 +207,17 @@ public class JetParsing {
 
     /*
      * modifier
-     *   : "abstract"
      *   : "virtual"
      *   : "enum"
      *   : "open"
      *   : "attribute"
      *   : "override"
-     *   : "virtual"
      *   : "abstract"
      *   : "private"
      *   : "protected"
      *   : "public"
      *   : "internal"
-     *   : "in"
-     *   : "out"
      *   : "lazy"
-     *   : "ref"
      */
     private boolean parseModifierSoftKeyword() {
         if (!at(IDENTIFIER)) return false;
@@ -236,11 +231,16 @@ public class JetParsing {
         return false;
     }
 
+    /*
+     * (modifier | attribute)*
+     */
     private void parseModifierList() {
         PsiBuilder.Marker list = mark();
         boolean empty = true;
-        while (true) {
-            if (MODIFIER_KEYWORDS.contains(tt())) {
+        while (!eof()) {
+            if (at(LBRACKET)) {
+                parseAttributeAnnotation();
+            } else if (MODIFIER_KEYWORDS.contains(tt())) {
                 advance();
             }
             else {
@@ -253,6 +253,143 @@ public class JetParsing {
         } else {
             list.done(MODIFIER_LIST);
         }
+    }
+
+    /*
+     * attributeAnnotation
+     *   : "[" attribute{","} "]"
+     *   ;
+     */
+    private void parseAttributeAnnotation() {
+        assert at(LBRACKET);
+        PsiBuilder.Marker annotation = mark();
+
+        advance(); // LBRACKET
+
+        while (true) {
+            if (at(IDENTIFIER)) {
+                parseAttribute();
+                if (!at(COMMA)) break;
+                advance(); // COMMA
+            }
+            else {
+                error("Expecting a comma-separated list of attributes");
+                break;
+            }
+        }
+
+        expect(RBRACKET, "Expecting ']' to close an attribute annotation");
+
+        annotation.done(ATTRIBUTE_ANNOTATION);
+    }
+
+    /*
+     * attribute
+     *   // : SimpleName{"."} valueArguments?
+     *   [for recovery: userType valueArguments?]
+     *   ;
+     */
+    private void parseAttribute() {
+        PsiBuilder.Marker attribute = mark();
+        parseUserType();
+        if (at(LPAR)) parseValueArgumentList();
+        attribute.done(ATTRIBUTE);
+    }
+
+    /*
+     * userType
+     *   : simpleUserType{"."}
+     *   ;
+     *
+     * simpleUserType
+     *   : SimpleName ("<" (optionalProjection type){","} ">")?
+     *   ;
+     */
+    private void parseUserType() {
+        PsiBuilder.Marker userType = mark();
+
+        while (true) {
+            parseSimpleUserType();
+            if (!at(DOT)) break;
+            advance(); // DOT
+        }
+
+        userType.done(USER_TYPE);
+    }
+
+    /*
+     * simpleUserType
+     *   : SimpleName ("<" (optionalProjection type){","} ">")?
+     *   ;
+     */
+    private void parseSimpleUserType() {
+        PsiBuilder.Marker type = mark();
+
+        expect(IDENTIFIER, "Type name expected", TokenSet.create(LT));
+        parseTypeArgumentList();
+
+        type.done(USER_TYPE);
+    }
+
+    /*
+     *   (optionalProjection type){","}
+     */
+    private void parseTypeArgumentList() {
+        if (!at(LT)) return;
+
+        PsiBuilder.Marker list = mark();
+
+        advance(); // LT
+
+        while (true) {
+            parseModifierList();
+            parseTypeRef();
+            if (!at(COMMA)) break;
+            advance(); // COMMA
+        }
+
+        expect(GT, "Expecting a '>'");
+
+        list.done(TYPE_ARGUMENT_LIST);
+    }
+
+    /*
+     * valueArguments
+     *   : "(" (SimpleName "=")? ("out" | "ref")? expression{","} ")"
+     *   ;
+     */
+    private void parseValueArgumentList() {
+        assert at(LPAR);
+
+        PsiBuilder.Marker list = mark();
+
+        advance(); // LPAR
+
+        if (!at(RPAR)) {
+            while (true) {
+                parseValueArgument();
+                if (!at(COMMA)) break;
+                advance(); // COMMA
+            }
+        }
+
+        expect(RPAR, "Expecting ')'");
+
+        list.done(VALUE_ARGUMENT_LIST);
+    }
+
+    /*
+     * (SimpleName "=")? ("out" | "ref")? expression
+     */
+    private void parseValueArgument() {
+        PsiBuilder.Marker argument = mark();
+        if (at(IDENTIFIER) && lookahead(1) == EQ) {
+             advance(); // IDENTIFIER
+             advance(); // EQ
+        }
+        if (at(OUT_KEYWORD) || at(REF_KEYWORD)) advance(); // REF or OUT
+        parseExpression();
+        argument.done(VALUE_ARGUMENT);
     }
 
     /*
@@ -351,6 +488,7 @@ public class JetParsing {
 
     private void parseDelegationSpecifierList() {
         PsiBuilder.Marker list = mark();
+
         while (true) {
             parseDelegationSpecifier();
             if (!at(COMMA)) break;

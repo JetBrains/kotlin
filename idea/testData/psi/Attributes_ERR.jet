@@ -1,0 +1,40 @@
+namespace foo.bar.goo
+
+abstract
+virtual
+enum
+open
+attribute
+override
+virtual
+abstract
+[]
+private
+protected
+public
+internal
+lazy [foo<A, B>(a, b), ina,foo.bar.goo.doo<f>.foo<bar, goo>.foo]
+[df]
+in
+[sdfsdf,]
+[s,fd d]
+out
+ref
+ class Bar<abstract
+virtual
+enum
+open
+attribute
+override
+virtual
+abstract
+[sdfsd, sdfsd, a.b.f.c]
+private
+protected
+public
+internal
+lazy
+in
+out
+ref T> {
+}

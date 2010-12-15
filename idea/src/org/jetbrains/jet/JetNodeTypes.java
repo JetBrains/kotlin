@@ -32,6 +32,12 @@ public interface JetNodeTypes {
     JetNodeType IMPORTED = new JetNodeType("IMPORTED");
     JetNodeType NAMESPACE_BODY = new JetNodeType("NAMESPACE_BODY");
     JetNodeType MODIFIER_LIST = new JetNodeType("MODIFIER_LIST");
+    JetNodeType ATTRIBUTE_ANNOTATION = new JetNodeType("ATTRIBUTE_ANNOTATION");
+    JetNodeType ATTRIBUTE = new JetNodeType("ATTRIBUTE");
+    JetNodeType USER_TYPE = new JetNodeType("USER_TYPE");
+    JetNodeType TYPE_ARGUMENT_LIST = new JetNodeType("TYPE_ARGUMENT_LIST");
+    JetNodeType VALUE_ARGUMENT_LIST = new JetNodeType("VALUE_ARGUMENT_LIST");
+    JetNodeType VALUE_ARGUMENT = new JetNodeType("VALUE_ARGUMENT");
 
 
     IElementType NAMESPACE_NAME = new JetNodeType("NAMESPACE_NAME");
