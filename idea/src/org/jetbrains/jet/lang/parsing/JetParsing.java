@@ -124,14 +124,14 @@ public class JetParsing {
                 errorWithRecovery("Qualified name must be a '.'-separated identifier list", TokenSet.create(AS_KEYWORD, DOT, MAP, SEMICOLON));
             }
         }
-       if (at(MAP)) {
-                advance();
-                handleUselessRename();
-            }
-            else if (at(AS_KEYWORD)) {
-                advance();
-                expect(IDENTIFIER, "Expecting identifier", TokenSet.create(SEMICOLON));
-            }
+        if (at(MAP)) {
+            advance();
+            handleUselessRename();
+        }
+        else if (at(AS_KEYWORD)) {
+            advance();
+            expect(IDENTIFIER, "Expecting identifier", TokenSet.create(SEMICOLON));
+        }
         cosumeIf(SEMICOLON);
         importDirective.done(IMPORT_DIRECTIVE);
     }

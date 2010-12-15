@@ -1,0 +1,16 @@
+JetFile: ImportSoftKW.jet
+  NAMESPACE
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('import')
+      PsiElement(DOT)('.')
+      PsiElement(IDENTIFIER)('import')
+      PsiElement(DOT)('.')
+      PsiElement(IDENTIFIER)('import')
+      PsiElement(DOT)('.')
+      PsiElement(IDENTIFIER)('import')
+      PsiWhiteSpace(' ')
+      PsiElement(AS_KEYWORD)('as')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('import')
