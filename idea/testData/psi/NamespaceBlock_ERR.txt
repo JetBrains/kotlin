@@ -1,6 +1,6 @@
 JetFile: NamespaceBlock_ERR.jet
   NAMESPACE
-    PsiElement(NAMESPACE_KEYWORD)('namespace')
+    PsiElement(namespace)('namespace')
     PsiWhiteSpace(' ')
     NAMESPACE_NAME
       PsiElement(IDENTIFIER)('foo')
@@ -14,7 +14,7 @@ JetFile: NamespaceBlock_ERR.jet
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('foo')
       PsiWhiteSpace(' ')
-      PsiElement(AS_KEYWORD)('as')
+      PsiElement(as)('as')
       PsiWhiteSpace('\n')
       PsiElement(IDENTIFIER)('import')
     PsiWhiteSpace(' ')
@@ -39,13 +39,13 @@ JetFile: NamespaceBlock_ERR.jet
       PsiElement(DOT)('.')
     PsiWhiteSpace(' ')
     PsiErrorElement:Expecting namespace or top level declaration
-      PsiElement(AS_KEYWORD)('as')
+      PsiElement(as)('as')
     PsiWhiteSpace(' ')
     PsiErrorElement:Expecting namespace or top level declaration
       PsiElement(IDENTIFIER)('bar')
     PsiWhiteSpace('\n\n')
     NAMESPACE
-      PsiElement(NAMESPACE_KEYWORD)('namespace')
+      PsiElement(namespace)('namespace')
       PsiWhiteSpace(' ')
       NAMESPACE_NAME
         PsiElement(IDENTIFIER)('foof')
@@ -62,7 +62,7 @@ JetFile: NamespaceBlock_ERR.jet
           PsiElement(MAP)('.*')
           PsiWhiteSpace(' ')
           PsiErrorElement:Cannot rename a all imported items to one identifier
-            PsiElement(AS_KEYWORD)('as')
+            PsiElement(as)('as')
             PsiWhiteSpace(' ')
             PsiElement(IDENTIFIER)('bar')
         PsiWhiteSpace('\n    ')
@@ -75,7 +75,7 @@ JetFile: NamespaceBlock_ERR.jet
           PsiElement(MAP)('.*')
           PsiWhiteSpace(' ')
           PsiErrorElement:Cannot rename a all imported items to one identifier
-            PsiElement(AS_KEYWORD)('as')
+            PsiElement(as)('as')
             PsiWhiteSpace('\n\n    ')
             PsiElement(IDENTIFIER)('import')
         PsiWhiteSpace(' ')
@@ -83,7 +83,7 @@ JetFile: NamespaceBlock_ERR.jet
           PsiElement(IDENTIFIER)('foo')
         PsiWhiteSpace(' ')
         PsiErrorElement:Expecting namespace or top level declaration
-          PsiElement(AS_KEYWORD)('as')
+          PsiElement(as)('as')
         PsiWhiteSpace(' ')
         PsiErrorElement:Expecting namespace or top level declaration
           PsiElement(SEMICOLON)(';')
@@ -118,7 +118,7 @@ JetFile: NamespaceBlock_ERR.jet
           PsiErrorElement:Qualified name must be a '.'-separated identifier list
             <empty list>
           PsiWhiteSpace(' ')
-          PsiElement(AS_KEYWORD)('as')
+          PsiElement(as)('as')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('bar')
           PsiWhiteSpace(' ')
@@ -133,7 +133,7 @@ JetFile: NamespaceBlock_ERR.jet
           PsiElement(MAP)('.*')
           PsiWhiteSpace(' ')
           PsiErrorElement:Cannot rename a all imported items to one identifier
-            PsiElement(AS_KEYWORD)('as')
+            PsiElement(as)('as')
             PsiWhiteSpace(' ')
             PsiElement(IDENTIFIER)('bar')
           PsiWhiteSpace(' ')
@@ -148,12 +148,12 @@ JetFile: NamespaceBlock_ERR.jet
           PsiElement(MAP)('.*')
           PsiWhiteSpace(' ')
           PsiErrorElement:Cannot rename a all imported items to one identifier
-            PsiElement(AS_KEYWORD)('as')
+            PsiElement(as)('as')
           PsiWhiteSpace(' ')
           PsiElement(SEMICOLON)(';')
         PsiWhiteSpace('\n\n    ')
         NAMESPACE
-          PsiElement(NAMESPACE_KEYWORD)('namespace')
+          PsiElement(namespace)('namespace')
           PsiWhiteSpace(' ')
           NAMESPACE_NAME
             PsiElement(IDENTIFIER)('foo')
@@ -161,7 +161,7 @@ JetFile: NamespaceBlock_ERR.jet
             <empty list>
         PsiWhiteSpace('\n\n    ')
         CLASS
-          PsiElement(CLASS_KEYWORD)('class')
+          PsiElement(class)('class')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('Foo')
           PsiWhiteSpace(' ')
@@ -172,7 +172,7 @@ JetFile: NamespaceBlock_ERR.jet
             PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n    ')
         NAMESPACE
-          PsiElement(NAMESPACE_KEYWORD)('namespace')
+          PsiElement(namespace)('namespace')
           PsiErrorElement:Expecting namespace name
             <empty list>
           PsiWhiteSpace('  ')
@@ -180,7 +180,7 @@ JetFile: NamespaceBlock_ERR.jet
           PsiWhiteSpace('\n      ')
           NAMESPACE_BODY
             CLASS
-              PsiElement(CLASS_KEYWORD)('class')
+              PsiElement(class)('class')
               PsiWhiteSpace(' ')
               PsiElement(IDENTIFIER)('Bar')
               PsiWhiteSpace(' ')
@@ -191,7 +191,7 @@ JetFile: NamespaceBlock_ERR.jet
                 PsiElement(RBRACE)('}')
             PsiWhiteSpace('\n\n      ')
             NAMESPACE
-              PsiElement(NAMESPACE_KEYWORD)('namespace')
+              PsiElement(namespace)('namespace')
               PsiWhiteSpace(' ')
               NAMESPACE_NAME
                 PsiElement(IDENTIFIER)('ns')
@@ -200,14 +200,14 @@ JetFile: NamespaceBlock_ERR.jet
               PsiWhiteSpace('\n            ')
               NAMESPACE_BODY
                 CLASS
-                  PsiElement(CLASS_KEYWORD)('class')
+                  PsiElement(class)('class')
                   PsiWhiteSpace(' ')
                   PsiElement(IDENTIFIER)('X')
                   PsiWhiteSpace('\n\n            ')
                   TYPE_PARAMETER_LIST
                     <empty list>
                 CLASS
-                  PsiElement(CLASS_KEYWORD)('class')
+                  PsiElement(class)('class')
                   PsiWhiteSpace(' ')
                   PsiElement(IDENTIFIER)('Y')
                   PsiWhiteSpace('\n      ')
@@ -223,7 +223,7 @@ JetFile: NamespaceBlock_ERR.jet
       PsiElement(IDENTIFIER)('dsfgd')
     PsiWhiteSpace('\n\n')
     CLASS
-      PsiElement(CLASS_KEYWORD)('class')
+      PsiElement(class)('class')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('Bar')
       TYPE_PARAMETER_LIST
@@ -237,7 +237,7 @@ JetFile: NamespaceBlock_ERR.jet
         PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n\n')
     NAMESPACE
-      PsiElement(NAMESPACE_KEYWORD)('namespace')
+      PsiElement(namespace)('namespace')
       PsiWhiteSpace(' ')
       NAMESPACE_NAME
         PsiElement(IDENTIFIER)('foo')
@@ -245,7 +245,7 @@ JetFile: NamespaceBlock_ERR.jet
         <empty list>
     PsiWhiteSpace('\n\n')
     NAMESPACE
-      PsiElement(NAMESPACE_KEYWORD)('namespace')
+      PsiElement(namespace)('namespace')
       PsiErrorElement:Expecting namespace name
         <empty list>
       PsiWhiteSpace(' ')
@@ -255,7 +255,7 @@ JetFile: NamespaceBlock_ERR.jet
       PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n\n')
     NAMESPACE
-      PsiElement(NAMESPACE_KEYWORD)('namespace')
+      PsiElement(namespace)('namespace')
       PsiWhiteSpace(' ')
       NAMESPACE_NAME
         PsiElement(IDENTIFIER)('bar')

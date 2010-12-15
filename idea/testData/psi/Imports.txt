@@ -1,6 +1,6 @@
 JetFile: Imports.jet
   NAMESPACE
-    PsiElement(NAMESPACE_KEYWORD)('namespace')
+    PsiElement(namespace)('namespace')
     PsiWhiteSpace(' ')
     NAMESPACE_NAME
       PsiElement(IDENTIFIER)('foo')
@@ -26,7 +26,7 @@ JetFile: Imports.jet
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('foo')
       PsiWhiteSpace(' ')
-      PsiElement(AS_KEYWORD)('as')
+      PsiElement(as)('as')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('bar')
     PsiWhiteSpace('\n')
@@ -37,7 +37,7 @@ JetFile: Imports.jet
       PsiElement(DOT)('.')
       PsiElement(IDENTIFIER)('bar')
       PsiWhiteSpace(' ')
-      PsiElement(AS_KEYWORD)('as')
+      PsiElement(as)('as')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('bar')
     PsiWhiteSpace('\n')

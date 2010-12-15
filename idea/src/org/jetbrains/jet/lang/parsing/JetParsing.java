@@ -8,16 +8,26 @@ import com.intellij.lang.WhitespaceSkippedCallback;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.jet.JetNodeType;
-import org.jetbrains.jet.lexer.JetSoftKeywordToken;
+import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetToken;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.jetbrains.jet.JetNodeTypes.*;
 import static org.jetbrains.jet.lexer.JetTokens.*;
 
 public class JetParsing {
-    public static final TokenSet CLASS_NAME_RECOVERY_SET = TokenSet.create(LT, WRAPS_KEYWORD, LPAR, COLON, LBRACE);
-    public static final TokenSet TYPE_PARAMETER_GT_RECOVERY_SET = TokenSet.create(WHERE_KEYWORD, WRAPS_KEYWORD, LPAR, COLON, LBRACE, GT);
-    public static final TokenSet PARAMETER_NAME_RECOVERY_SET = TokenSet.create(COLON, EQ, COMMA, RPAR);
+    private static final Map<String, IElementType> MODIFIER_KEYWORD_MAP = new HashMap<String, IElementType>();
+    static {
+        for (IElementType softKeyword : MODIFIER_KEYWORDS.getTypes()) {
+            MODIFIER_KEYWORD_MAP.put(((JetKeywordToken) softKeyword).getValue(), softKeyword);
+        }
+    }
+
+    private static final TokenSet CLASS_NAME_RECOVERY_SET = TokenSet.create(LT, WRAPS_KEYWORD, LPAR, COLON, LBRACE);
+    private static final TokenSet TYPE_PARAMETER_GT_RECOVERY_SET = TokenSet.create(WHERE_KEYWORD, WRAPS_KEYWORD, LPAR, COLON, LBRACE, GT);
+    private static final TokenSet PARAMETER_NAME_RECOVERY_SET = TokenSet.create(COLON, EQ, COMMA, RPAR);
     private static final TokenSet NAMESPACE_NAME_RECOVERY_SET = TokenSet.create(DOT, EOL_OR_SEMICOLON);
 
     private final WhitespaceSkippedCallback myWhitespaceSkippedCallback = new WhitespaceSkippedCallback() {
@@ -163,11 +173,7 @@ public class JetParsing {
      */
     private void parseTopLevelObject() {
         PsiBuilder.Marker decl = mark();
-        if (!parseModifierList()) {
-            decl.drop();
-            advance(); // TODO
-            return;
-        }
+        parseModifierList();
 
         JetToken keywordToken = tt();
         JetNodeType declType = null;
@@ -199,9 +205,54 @@ public class JetParsing {
         }
     }
 
-    private boolean parseModifierList() {
-        // TODO
-        return true;
+    /*
+     * modifier
+     *   : "abstract"
+     *   : "virtual"
+     *   : "enum"
+     *   : "open"
+     *   : "attribute"
+     *   : "override"
+     *   : "virtual"
+     *   : "abstract"
+     *   : "private"
+     *   : "protected"
+     *   : "public"
+     *   : "internal"
+     *   : "in"
+     *   : "out"
+     *   : "lazy"
+     *   : "ref"
+     */
+    private boolean parseModifierSoftKeyword() {
+        if (!at(IDENTIFIER)) return false;
+        String tokenText = myBuilder.getTokenText();
+        IElementType tokenType = MODIFIER_KEYWORD_MAP.get(tokenText);
+        if (tokenType != null) {
+            myBuilder.remapCurrentToken(tokenType);
+            advance();
+            return true;
+        }
+        return false;
+    }
+
+    private void parseModifierList() {
+        PsiBuilder.Marker list = mark();
+        boolean empty = true;
+        while (true) {
+            if (MODIFIER_KEYWORDS.contains(tt())) {
+                advance();
+            }
+            else {
+                if (!parseModifierSoftKeyword()) break;
+            }
+            empty = false;
+        }
+        if (empty) {
+            list.drop();
+        } else {
+            list.done(MODIFIER_LIST);
+        }
     }
 
     /*
@@ -518,16 +569,9 @@ public class JetParsing {
             if (token == SEMICOLON) return true;
             if (myEOLInLastWhitespace) return true;
         }
-        if (token == IDENTIFIER && expectation instanceof JetSoftKeywordToken) {
-            if (((JetSoftKeywordToken) expectation).getValue().equals(myBuilder.getTokenText())) {
-//                myBuilder.setTokenTypeRemapper(new ITokenTypeRemapper() {
-//                    public IElementType filter(IElementType source, int start, int end, CharSequence text) {
-//                        return expectation;
-//                    }
-//                });
-
-//                tt();
-//                myBuilder.setTokenTypeRemapper(null);
+        if (token == IDENTIFIER && expectation instanceof JetKeywordToken) {
+            JetKeywordToken expectedKeyword = (JetKeywordToken) expectation;
+            if (expectedKeyword.isSoft() && expectedKeyword.getValue().equals(myBuilder.getTokenText())) {
                 myBuilder.remapCurrentToken(expectation);
                 return true;
             }

@@ -31,6 +31,7 @@ public interface JetNodeTypes {
     JetNodeType IMPORT_DIRECTIVE = new JetNodeType("IMPORT_DIRECTIVE");
     JetNodeType IMPORTED = new JetNodeType("IMPORTED");
     JetNodeType NAMESPACE_BODY = new JetNodeType("NAMESPACE_BODY");
+    JetNodeType MODIFIER_LIST = new JetNodeType("MODIFIER_LIST");
 
 
     IElementType NAMESPACE_NAME = new JetNodeType("NAMESPACE_NAME");

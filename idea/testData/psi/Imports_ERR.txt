@@ -1,6 +1,6 @@
 JetFile: Imports_ERR.jet
   NAMESPACE
-    PsiElement(NAMESPACE_KEYWORD)('namespace')
+    PsiElement(namespace)('namespace')
     PsiWhiteSpace(' ')
     NAMESPACE_NAME
       PsiElement(IDENTIFIER)('foo')
@@ -14,7 +14,7 @@ JetFile: Imports_ERR.jet
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('foo')
       PsiWhiteSpace(' ')
-      PsiElement(AS_KEYWORD)('as')
+      PsiElement(as)('as')
       PsiWhiteSpace('\n')
       PsiElement(IDENTIFIER)('import')
     PsiWhiteSpace(' ')
@@ -39,7 +39,7 @@ JetFile: Imports_ERR.jet
       PsiElement(DOT)('.')
     PsiWhiteSpace(' ')
     PsiErrorElement:Expecting namespace or top level declaration
-      PsiElement(AS_KEYWORD)('as')
+      PsiElement(as)('as')
     PsiWhiteSpace(' ')
     PsiErrorElement:Expecting namespace or top level declaration
       PsiElement(IDENTIFIER)('bar')
@@ -53,7 +53,7 @@ JetFile: Imports_ERR.jet
       PsiElement(MAP)('.*')
       PsiWhiteSpace(' ')
       PsiErrorElement:Cannot rename a all imported items to one identifier
-        PsiElement(AS_KEYWORD)('as')
+        PsiElement(as)('as')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('bar')
     PsiWhiteSpace('\n')
@@ -66,7 +66,7 @@ JetFile: Imports_ERR.jet
       PsiElement(MAP)('.*')
       PsiWhiteSpace(' ')
       PsiErrorElement:Cannot rename a all imported items to one identifier
-        PsiElement(AS_KEYWORD)('as')
+        PsiElement(as)('as')
         PsiWhiteSpace('\n\n')
         PsiElement(IDENTIFIER)('import')
     PsiWhiteSpace(' ')
@@ -74,7 +74,7 @@ JetFile: Imports_ERR.jet
       PsiElement(IDENTIFIER)('foo')
     PsiWhiteSpace(' ')
     PsiErrorElement:Expecting namespace or top level declaration
-      PsiElement(AS_KEYWORD)('as')
+      PsiElement(as)('as')
     PsiWhiteSpace(' ')
     PsiErrorElement:Expecting namespace or top level declaration
       PsiElement(SEMICOLON)(';')
@@ -109,7 +109,7 @@ JetFile: Imports_ERR.jet
       PsiErrorElement:Qualified name must be a '.'-separated identifier list
         <empty list>
       PsiWhiteSpace(' ')
-      PsiElement(AS_KEYWORD)('as')
+      PsiElement(as)('as')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('bar')
       PsiWhiteSpace(' ')
@@ -124,7 +124,7 @@ JetFile: Imports_ERR.jet
       PsiElement(MAP)('.*')
       PsiWhiteSpace(' ')
       PsiErrorElement:Cannot rename a all imported items to one identifier
-        PsiElement(AS_KEYWORD)('as')
+        PsiElement(as)('as')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('bar')
       PsiWhiteSpace(' ')
@@ -139,12 +139,12 @@ JetFile: Imports_ERR.jet
       PsiElement(MAP)('.*')
       PsiWhiteSpace(' ')
       PsiErrorElement:Cannot rename a all imported items to one identifier
-        PsiElement(AS_KEYWORD)('as')
+        PsiElement(as)('as')
       PsiWhiteSpace(' ')
       PsiElement(SEMICOLON)(';')
     PsiWhiteSpace('\n\n')
     CLASS
-      PsiElement(CLASS_KEYWORD)('class')
+      PsiElement(class)('class')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('Foo')
       PsiWhiteSpace(' ')

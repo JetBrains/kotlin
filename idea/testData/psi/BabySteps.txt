@@ -1,12 +1,12 @@
 JetFile: BabySteps.jet
   NAMESPACE
-    PsiElement(NAMESPACE_KEYWORD)('namespace')
+    PsiElement(namespace)('namespace')
     PsiWhiteSpace(' ')
     NAMESPACE_NAME
       PsiElement(IDENTIFIER)('foo')
     PsiWhiteSpace('\n\n')
     CLASS
-      PsiElement(CLASS_KEYWORD)('class')
+      PsiElement(class)('class')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('Runnable')
       TYPE_PARAMETER_LIST
