@@ -125,7 +125,7 @@ typeArguments
   ;
 
 valueArguments
-  : "(" (SimpleName "=")? expression{","} ")"
+  : "(" (SimpleName "=")? ("out" | "ref")? expression{","} ")"
   ;
 
 infixFunctionCall

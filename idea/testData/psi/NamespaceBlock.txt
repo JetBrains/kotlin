@@ -1,0 +1,138 @@
+JetFile: NamespaceBlock.jet
+  NAMESPACE
+    PsiElement(NAMESPACE_KEYWORD)('namespace')
+    PsiWhiteSpace(' ')
+    NAMESPACE_NAME
+      PsiElement(IDENTIFIER)('foo')
+      PsiElement(DOT)('.')
+      PsiElement(IDENTIFIER)('bar')
+      PsiElement(DOT)('.')
+      PsiElement(IDENTIFIER)('goo')
+    PsiWhiteSpace('\n\n')
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('foo')
+      PsiWhiteSpace(' ')
+      PsiElement(AS_KEYWORD)('as')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('bar')
+    PsiWhiteSpace('\n\n')
+    NAMESPACE
+      PsiElement(NAMESPACE_KEYWORD)('namespace')
+      PsiWhiteSpace(' ')
+      NAMESPACE_NAME
+        PsiElement(IDENTIFIER)('foof')
+      PsiWhiteSpace(' ')
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      NAMESPACE_BODY
+        IMPORT_DIRECTIVE
+          PsiElement(import)('import')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('foo')
+          PsiElement(DOT)('.')
+          PsiElement(IDENTIFIER)('bar')
+          PsiElement(MAP)('.*')
+          PsiElement(SEMICOLON)(';')
+        PsiWhiteSpace('\n\n    ')
+        CLASS
+          PsiElement(CLASS_KEYWORD)('class')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('Foo')
+          PsiWhiteSpace(' ')
+          TYPE_PARAMETER_LIST
+            <empty list>
+          CLASS_BODY
+            PsiElement(LBRACE)('{')
+            PsiElement(RBRACE)('}')
+        PsiWhiteSpace('\n\n    ')
+        NAMESPACE
+          PsiElement(NAMESPACE_KEYWORD)('namespace')
+          PsiWhiteSpace(' ')
+          NAMESPACE_NAME
+            PsiElement(IDENTIFIER)('bar')
+          PsiWhiteSpace(' ')
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace('\n      ')
+          NAMESPACE_BODY
+            CLASS
+              PsiElement(CLASS_KEYWORD)('class')
+              PsiWhiteSpace(' ')
+              PsiElement(IDENTIFIER)('Bar')
+              PsiWhiteSpace(' ')
+              TYPE_PARAMETER_LIST
+                <empty list>
+              CLASS_BODY
+                PsiElement(LBRACE)('{')
+                PsiElement(RBRACE)('}')
+            PsiWhiteSpace('\n\n      ')
+            NAMESPACE
+              PsiElement(NAMESPACE_KEYWORD)('namespace')
+              PsiWhiteSpace(' ')
+              NAMESPACE_NAME
+                PsiElement(IDENTIFIER)('ns')
+              PsiWhiteSpace(' ')
+              PsiElement(LBRACE)('{')
+              PsiWhiteSpace('\n            ')
+              NAMESPACE_BODY
+                CLASS
+                  PsiElement(CLASS_KEYWORD)('class')
+                  PsiWhiteSpace(' ')
+                  PsiElement(IDENTIFIER)('X')
+                  PsiWhiteSpace('\n\n            ')
+                  TYPE_PARAMETER_LIST
+                    <empty list>
+                CLASS
+                  PsiElement(CLASS_KEYWORD)('class')
+                  PsiWhiteSpace(' ')
+                  PsiElement(IDENTIFIER)('Y')
+                  PsiWhiteSpace('\n      ')
+                  TYPE_PARAMETER_LIST
+                    <empty list>
+              PsiElement(RBRACE)('}')
+          PsiWhiteSpace('\n    ')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+    PsiWhiteSpace('\n\n\n')
+    CLASS
+      PsiElement(CLASS_KEYWORD)('class')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('Bar')
+      TYPE_PARAMETER_LIST
+        PsiElement(LT)('<')
+        TYPE_PARAMETER
+          PsiElement(IDENTIFIER)('T')
+        PsiElement(GT)('>')
+      PsiWhiteSpace(' ')
+      CLASS_BODY
+        PsiElement(LBRACE)('{')
+        PsiElement(RBRACE)('}')
+    PsiWhiteSpace('\n\n')
+    NAMESPACE
+      PsiElement(NAMESPACE_KEYWORD)('namespace')
+      PsiWhiteSpace(' ')
+      NAMESPACE_NAME
+        PsiElement(IDENTIFIER)('foo')
+      PsiWhiteSpace(' ')
+      PsiElement(LBRACE)('{')
+      NAMESPACE_BODY
+        <empty list>
+      PsiElement(RBRACE)('}')
+    PsiWhiteSpace('\n\n')
+    NAMESPACE
+      PsiElement(NAMESPACE_KEYWORD)('namespace')
+      PsiWhiteSpace(' ')
+      NAMESPACE_NAME
+        PsiElement(IDENTIFIER)('bar')
+      PsiWhiteSpace(' ')
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      NAMESPACE_BODY
+        IMPORT_DIRECTIVE
+          PsiElement(import)('import')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('sdf')
+      PsiWhiteSpace('\n\n')
+      PsiElement(RBRACE)('}')

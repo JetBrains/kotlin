@@ -1,0 +1,44 @@
+namespace foo.bar.goo
+
+import foo as
+import foo.
+import foo.bar.
+import foo. as bar
+
+namespace foof {
+    import foo.bar.* as bar
+    import foo.bar.* as
+
+    import foo as ;
+    import foo. ;
+    import foo.bar. ;
+    import foo. as bar ;
+    import foo.bar.* as bar ;
+    import foo.bar.* as ;
+
+    namespace foo
+
+    class Foo {}
+    namespace  {
+      class Bar {}
+
+      namespace ns {
+            class X
+
+            class Y
+      }
+    }
+}
+
+dsfgd
+
+class Bar<T> {}
+
+namespace foo
+
+namespace {}
+
+namespace bar {
+    import sdf
+
+}

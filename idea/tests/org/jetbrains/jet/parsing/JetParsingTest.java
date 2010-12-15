@@ -32,4 +32,6 @@ public class JetParsingTest extends ParsingTestCase {
     public void testImports() throws Exception {doTest(true);}
     public void testImports_ERR() throws Exception {doTest(true);}
     public void testImportSoftKW() throws Exception {doTest(true);}
+    public void testNamespaceBlock_ERR() throws Exception {doTest(true);}
+    public void testNamespaceBlock() throws Exception {doTest(true);}
 }

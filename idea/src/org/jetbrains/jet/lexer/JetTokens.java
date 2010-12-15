@@ -12,6 +12,8 @@ import java.util.Arrays;
 import java.util.Set;
 
 public interface JetTokens {
+    JetToken EOF   = new JetToken("EOF");
+
     JetToken BLOCK_COMMENT = new JetToken("BLOCK_COMMENT");
     JetToken DOC_COMMENT   = new JetToken("DOC_COMMENT");
     JetToken EOL_COMMENT   = new JetToken("EOL_COMMENT");

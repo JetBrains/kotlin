@@ -30,6 +30,8 @@ public interface JetNodeTypes {
     JetNodeType CLASS_BODY = new JetNodeType("CLASS_BODY");
     JetNodeType IMPORT_DIRECTIVE = new JetNodeType("IMPORT_DIRECTIVE");
     JetNodeType IMPORTED = new JetNodeType("IMPORTED");
+    JetNodeType NAMESPACE_BODY = new JetNodeType("NAMESPACE_BODY");
+
 
     IElementType NAMESPACE_NAME = new JetNodeType("NAMESPACE_NAME");
 }

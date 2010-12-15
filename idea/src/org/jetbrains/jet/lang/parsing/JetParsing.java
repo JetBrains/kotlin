@@ -3,7 +3,6 @@
  */
 package org.jetbrains.jet.lang.parsing;
 
-import com.intellij.lang.ITokenTypeRemapper;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.WhitespaceSkippedCallback;
 import com.intellij.psi.tree.IElementType;
@@ -52,7 +51,17 @@ public class JetParsing {
 
         parsePreamble();
 
-        while (!eof()) {
+        parseToplevelDeclarations(false);
+
+        namespaceMarker.done(NAMESPACE);
+        fileMarker.done(JET_FILE);
+    }
+
+    /*
+     * toplevelObject[| import]*
+     */
+    private void parseToplevelDeclarations(boolean insideBlock) {
+        while (!eof() && (!insideBlock || !at(RBRACE))) {
             if (at(IMPORT_KEYWORD)) {
                 parseImportDirective();
             }
@@ -60,9 +69,6 @@ public class JetParsing {
                 parseTopLevelObject();
             }
         }
-
-        namespaceMarker.done(NAMESPACE);
-        fileMarker.done(JET_FILE);
     }
 
     /*
@@ -77,7 +83,7 @@ public class JetParsing {
          *   ;
          */
         if (at(NAMESPACE_KEYWORD)) {
-            advance();
+            advance(); // NAMESPACE_KEYWORD
 
             parseNamespaceName();
         }
@@ -92,7 +98,7 @@ public class JetParsing {
         PsiBuilder.Marker nsName = mark();
         expect(IDENTIFIER, "Expecting qualified name", NAMESPACE_NAME_RECOVERY_SET);
         while (at(DOT)) {
-            advance();
+            advance(); // DOT
             expect(IDENTIFIER, "Namespace name must be a '.'-separated identifier list", NAMESPACE_NAME_RECOVERY_SET);
             if (at(EOL_OR_SEMICOLON)) break;
         }
@@ -107,16 +113,16 @@ public class JetParsing {
     private void parseImportDirective() {
         assert at(IMPORT_KEYWORD);
         PsiBuilder.Marker importDirective = mark();
-        advance();
+        advance(); // IMPORT_KEYWORD
 
         expect(IDENTIFIER, "Expecting qualified name", TokenSet.create(DOT, MAP));
         while (at(DOT)) {
-            advance();
+            advance(); // DOT
             if (at(IDENTIFIER)) {
-                advance();
+                advance(); // IDENTIFIER
             }
             else if (at(MUL)) {
-                advance();
+                advance(); // MUL
                 handleUselessRename();
                 break;
             }
@@ -125,41 +131,50 @@ public class JetParsing {
             }
         }
         if (at(MAP)) {
-            advance();
+            advance(); // MAP
             handleUselessRename();
         }
         else if (at(AS_KEYWORD)) {
-            advance();
+            advance(); // AS_KEYWORD
             expect(IDENTIFIER, "Expecting identifier", TokenSet.create(SEMICOLON));
         }
         cosumeIf(SEMICOLON);
         importDirective.done(IMPORT_DIRECTIVE);
     }
 
-    private void cosumeIf(JetToken token) {
-        if (at(token)) advance();
-    }
-
     private void handleUselessRename() {
         if (at(AS_KEYWORD)) {
             PsiBuilder.Marker as = mark();
-            advance();
+            advance(); // AS_KEYWORD
             cosumeIf(IDENTIFIER);
             as.error("Cannot rename a all imported items to one identifier");
         }
     }
 
+    /*
+     * toplevelObject
+     *   : namespace
+     *   : class
+     *   : extension
+     *   : function
+     *   : property
+     *   : typedef
+     *   ;
+     */
     private void parseTopLevelObject() {
         PsiBuilder.Marker decl = mark();
         if (!parseModifierList()) {
             decl.drop();
-            advance();
+            advance(); // TODO
             return;
         }
 
         JetToken keywordToken = tt();
         JetNodeType declType = null;
-        if (keywordToken == CLASS_KEYWORD) {
+        if (keywordToken == NAMESPACE_KEYWORD) {
+            declType = parseNamespaceBlock();
+        }
+        else if (keywordToken == CLASS_KEYWORD) {
             declType = parseClass();
         }
         else if (keywordToken == EXTENSION_KEYWORD) {
@@ -170,9 +185,6 @@ public class JetParsing {
         }
         else if (keywordToken == VAL_KEYWORD || keywordToken == VAR_KEYWORD) {
             declType = parseProperty();
-        }
-        else if (keywordToken == NAMESPACE_KEYWORD) {
-            declType = parseBlockNamespace();
         }
         else if (keywordToken == TYPE_KEYWORD) {
             declType = parseTypedef();
@@ -187,14 +199,73 @@ public class JetParsing {
         }
     }
 
+    private boolean parseModifierList() {
+        // TODO
+        return true;
+    }
+
+    /*
+     * namespace
+     *   : "namespace" SimpleName{"."} "{"
+     *        import*
+     *        toplevelObject[| import]*
+     *     "}"
+     *   ;
+     */
+    private JetNodeType parseNamespaceBlock() {
+        assert at(NAMESPACE);
+        advance(); // NAMESPACE
+
+        if (at(LBRACE)) {
+            error("Expecting namespace name");
+        }
+        else {
+            parseNamespaceName();
+        }
+
+        if (!at(LBRACE)) {
+            error("A namespace block in '{...}' expected");
+            return NAMESPACE;
+        }
+
+        advance(); // LBRACE
+        PsiBuilder.Marker namespaceBody = mark();
+
+        parseToplevelDeclarations(true);
+
+        namespaceBody.done(NAMESPACE_BODY);
+        expect(RBRACE, "Expecting '}'");
+
+        return NAMESPACE;
+    }
+
+    private JetNodeType parseClass() {
+        assert at(CLASS_KEYWORD);
+        advance(); // CLASS_KEYWORD
+
+        expect(IDENTIFIER, "Class name expected", CLASS_NAME_RECOVERY_SET);
+        parseTypeParameterList();
+
+        cosumeIf(WRAPS_KEYWORD);
+        if (at(LPAR)) {
+            parsePrimaryConstructorParameterList();
+        }
+
+        if (at(COLON)) {
+            advance(); // COLON
+            parseDelegationSpecifierList();
+        }
+
+        if (at(LBRACE)) {
+            parseClassBody();
+        }
+
+        return CLASS;
+    }
+
     private JetNodeType parseTypedef() {
         advance(); // TODO
         return TYPEDEF;
-    }
-
-    private JetNodeType parseBlockNamespace() {
-        advance(); // TODO
-        return NAMESPACE;
     }
 
     private JetNodeType parseProperty() {
@@ -212,40 +283,16 @@ public class JetParsing {
         return EXTENSION;
     }
 
-    private JetNodeType parseClass() {
-        assert at(CLASS_KEYWORD);
-        advance();
-
-        expect(IDENTIFIER, "Class name expected", CLASS_NAME_RECOVERY_SET);
-        parseTypeParameterList();
-
-        cosumeIf(WRAPS_KEYWORD);
-        if (at(LPAR)) {
-            parsePrimaryConstructorParameterList();
-        }
-
-        if (at(COLON)) {
-            advance();
-            parseDelegationSpecifierList();
-        }
-
-        if (at(LBRACE)) {
-            parseClassBody();
-        }
-
-        return CLASS;
-    }
-
     private void parseClassBody() {
         assert at(LBRACE);
         PsiBuilder.Marker body = mark();
-        advance();
+        advance(); // LBRACE
 
         while (!eof()) {
             if (at(RBRACE)) {
                 break;
             }
-            advance();
+            advance(); // TODO
         }
         expect(RBRACE, "Missing '}");
         body.done(CLASS_BODY);
@@ -256,7 +303,7 @@ public class JetParsing {
         while (true) {
             parseDelegationSpecifier();
             if (!at(COMMA)) break;
-            advance();
+            advance(); // COMMA
         }
 
         list.done(DELEGATION_SPECIFIER_LIST);
@@ -269,7 +316,7 @@ public class JetParsing {
         PsiBuilder.Marker delegator = mark();
         parseTypeRef(); // TODO: Error recovery!!!
         if (at(BY_KEYWORD)) {
-            advance();
+            advance(); // BY_KEYWORD
             parseExpression();
             delegator.done(DELEGATOR_BY);
         }
@@ -287,12 +334,12 @@ public class JetParsing {
     private void parseValueParameterList() {
         assert at(LPAR);
         PsiBuilder.Marker list = mark();
-        advance();
+        advance(); // LPAR
         while (true) {
             if (at(IDENTIFIER) && lookahead(1) == EQ) {
                 PsiBuilder.Marker named = mark();
-                advance();
-                advance();
+                advance(); // IDENTIFIER
+                advance(); // EQ
                 parseExpression();
                 named.done(NAMED_ARGUMENT);
             }
@@ -318,12 +365,12 @@ public class JetParsing {
     private void parsePrimaryConstructorParameterList() {
         assert at(LPAR);
         PsiBuilder.Marker cons = mark();
-        advance();
+        advance(); // LPAR
 
         while (true) {
             parsePrimaryConstructorParameter();
             if (!at(COMMA)) break;
-            advance();
+            advance(); // COMMA
         }
 
         expect(RPAR, "')' expected");
@@ -336,7 +383,7 @@ public class JetParsing {
         parseModifierList();
 
         if (at(VAR_KEYWORD) || at(VAL_KEYWORD)) {
-            advance();
+            advance(); // VAR_KEYWORD | VAL_KEYWORD
         }
 
         parseFunctionParameterRest();
@@ -348,7 +395,7 @@ public class JetParsing {
         expect(IDENTIFIER, "Parameter name expected", PARAMETER_NAME_RECOVERY_SET);
 
         if (at(COLON)) {
-            advance();
+            advance(); // COLON
             parseTypeRef();
         }
         else {
@@ -356,26 +403,25 @@ public class JetParsing {
         }
 
         if (at(EQ)) {
-            advance();
+            advance(); // EQ
             parseExpression();
         }
     }
 
     private void parseExpression() {
-        advance();
-        // TODO
+        advance(); // TODO
     }
 
     private void parseTypeParameterList() {
         PsiBuilder.Marker list = mark();
         if (tt() == LT) {
-            advance();
+            advance(); // LT
 
             while (true) {
                 parseTypeParameter();
 
                 if (!at(COMMA)) break;
-                advance();
+                advance(); // COMMA
             }
 
             expect(GT, "Missing '>'", TYPE_PARAMETER_GT_RECOVERY_SET);
@@ -394,7 +440,7 @@ public class JetParsing {
         expect(IDENTIFIER, "Type parameter name expected", TokenSet.EMPTY);
 
         if (at(COLON)) {
-            advance();
+            advance(); // COLON
             parseTypeRef();
         }
 
@@ -403,13 +449,7 @@ public class JetParsing {
     }
 
     private void parseTypeRef() {
-        advance();
-        // tODO:
-    }
-
-    private boolean parseModifierList() {
-        // TODO
-        return true;
+        advance(); // tODO:
     }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -431,7 +471,7 @@ public class JetParsing {
 
     private boolean expect(JetToken expectation, String message, TokenSet recoverySet) {
         if (at(expectation)) {
-            advance();
+            advance(); // expectation
             return true;
         }
 
@@ -454,7 +494,7 @@ public class JetParsing {
 
     private void errorAndAdvance(String message) {
         PsiBuilder.Marker err = mark();
-        advance();
+        advance(); // erroneous token
         err.error(message);
     }
 
@@ -503,4 +543,9 @@ public class JetParsing {
         tmp.rollbackTo();
         return tt;
     }
+
+    private void cosumeIf(JetToken token) {
+        if (at(token)) advance(); // token
+    }
+
 }
