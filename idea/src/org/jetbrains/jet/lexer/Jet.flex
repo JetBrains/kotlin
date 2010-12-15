@@ -77,7 +77,6 @@ RAW_STRING_LITERAL = {THREE_QUO} {QUO_STRING_CHAR}* {THREE_QUO}?
 <YYINITIAL> {RAW_STRING_LITERAL} { return JetTokens.RAW_STRING_LITERAL; }
 
 <YYINITIAL> "namespace"  { return JetTokens.NAMESPACE_KEYWORD ;}
-<YYINITIAL> "import"     { return JetTokens.IMPORT_KEYWORD ;}
 <YYINITIAL> "as"         { return JetTokens.AS_KEYWORD ;}
 <YYINITIAL> "type"       { return JetTokens.TYPE_KEYWORD ;}
 <YYINITIAL> "class"      { return JetTokens.CLASS_KEYWORD ;}
@@ -96,6 +95,8 @@ RAW_STRING_LITERAL = {THREE_QUO} {QUO_STRING_CHAR}* {THREE_QUO}?
 <YYINITIAL> "is"         { return JetTokens.IS_KEYWORD ;}
 <YYINITIAL> "isnot"      { return JetTokens.ISNOT_KEYWORD ;}
 <YYINITIAL> "in"         { return JetTokens.IN_KEYWORD ;}
+<YYINITIAL> "out"        { return JetTokens.OUT_KEYWORD ;}
+<YYINITIAL> "ref"        { return JetTokens.REF_KEYWORD ;}
 <YYINITIAL> "throw"      { return JetTokens.THROW_KEYWORD ;}
 <YYINITIAL> "return"     { return JetTokens.RETURN_KEYWORD ;}
 <YYINITIAL> "break"      { return JetTokens.BREAK_KEYWORD ;}

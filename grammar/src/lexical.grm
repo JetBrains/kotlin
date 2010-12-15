@@ -31,7 +31,6 @@ NoEscapeString : /* """-quoted string */;
 
 /* Keywords:
 namespace
-import
 as
 type
 class
@@ -60,6 +59,8 @@ else
 while
 do
 match
+out
+ref
 
 Soft:
 wraps -- in a class header
@@ -67,6 +68,7 @@ where -- in class, function and type headers
 by -- in a class header (Delegation specifier)
 lazy -- in a property/parameter declaration
 get, set -- in a property definition
+import
 abstract
 virtual
 enum
@@ -77,6 +79,4 @@ private
 public
 internal
 protected
-out
-ref
 */

@@ -28,5 +28,7 @@ public interface JetNodeTypes {
     JetNodeType VALUE_PARAMETER_LIST = new JetNodeType("VALUE_PARAMETER_LIST");
     JetNodeType NAMED_ARGUMENT = new JetNodeType("NAMED_ARGUMENT");
     JetNodeType CLASS_BODY = new JetNodeType("CLASS_BODY");
+    JetNodeType IMPORT_DIRECTIVE = new JetNodeType("IMPORT_DIRECTIVE");
 
+    IElementType NAMESPACE_NAME = new JetNodeType("NAMESPACE_NAME");
 }

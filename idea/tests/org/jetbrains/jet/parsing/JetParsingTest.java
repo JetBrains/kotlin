@@ -29,4 +29,6 @@ public class JetParsingTest extends ParsingTestCase {
 
     public void testEmptyFile() throws Exception {doTest(true);}
     public void testBabySteps() throws Exception {doTest(true);}
+    public void testImports() throws Exception {doTest(true);}
+    public void testImports_ERR() throws Exception {doTest(true);}
 }

@@ -25,7 +25,6 @@ public interface JetTokens {
     JetToken RAW_STRING_LITERAL = new JetToken("RAW_STRING_LITERAL");
 
     JetToken NAMESPACE_KEYWORD  = new JetToken("NAMESPACE_KEYWORD");
-    JetToken IMPORT_KEYWORD     = new JetToken("IMPORT_KEYWORD");
     JetToken AS_KEYWORD         = new JetToken("AS_KEYWORD");
     JetToken TYPE_KEYWORD       = new JetToken("TYPE_KEYWORD");
     JetToken CLASS_KEYWORD      = new JetToken("CLASS_KEYWORD");
@@ -98,7 +97,10 @@ public interface JetTokens {
     JetToken MINUSEQ     = new JetToken("MINUSEQ");
     JetToken COMMA       = new JetToken("COMMA");
 
+    JetToken EOL_OR_SEMICOLON   = new JetToken("EOL_OR_SEMICOLON");
+
     JetSoftKeywordToken WRAPS_KEYWORD     = new JetSoftKeywordToken("wraps");
+    JetSoftKeywordToken IMPORT_KEYWORD    = new JetSoftKeywordToken("import");
     JetSoftKeywordToken WHERE_KEYWORD     = new JetSoftKeywordToken("where");
     JetSoftKeywordToken BY_KEYWORD        = new JetSoftKeywordToken("by");
     JetSoftKeywordToken LAZY_KEYWORD      = new JetSoftKeywordToken("lazy");
@@ -117,14 +119,14 @@ public interface JetTokens {
     JetSoftKeywordToken OUT_KEYWORD       = new JetSoftKeywordToken("out");
     JetSoftKeywordToken REF_KEYWORD       = new JetSoftKeywordToken("ref");
 
-    TokenSet KEYWORDS = TokenSet.create(NAMESPACE_KEYWORD, IMPORT_KEYWORD, AS_KEYWORD, TYPE_KEYWORD, CLASS_KEYWORD,
+    TokenSet KEYWORDS = TokenSet.create(NAMESPACE_KEYWORD, AS_KEYWORD, TYPE_KEYWORD, CLASS_KEYWORD,
             THIS_KEYWORD, VAL_KEYWORD, VAR_KEYWORD, FUN_KEYWORD, DECOMPOSER_KEYWORD, EXTENSION_KEYWORD, FOR_KEYWORD,
             NULL_KEYWORD, TYPEOF_KEYWORD, NEW_KEYWORD, TRUE_KEYWORD, FALSE_KEYWORD, IS_KEYWORD, ISNOT_KEYWORD,
             IN_KEYWORD, THROW_KEYWORD, RETURN_KEYWORD, BREAK_KEYWORD, CONTINUE_KEYWORD, OBJECT_KEYWORD, IF_KEYWORD,
             ELSE_KEYWORD, WHILE_KEYWORD, DO_KEYWORD, MATCH_KEYWORD
     );
 
-    TokenSet SOFT_KEYWORDS = TokenSet.create(WRAPS_KEYWORD, WHERE_KEYWORD, BY_KEYWORD, LAZY_KEYWORD, GET_KEYWORD,
+    TokenSet SOFT_KEYWORDS = TokenSet.create(WRAPS_KEYWORD, IMPORT_KEYWORD, WHERE_KEYWORD, BY_KEYWORD, LAZY_KEYWORD, GET_KEYWORD,
             SET_KEYWORD, ABSTRACT_KEYWORD, VIRTUAL_KEYWORD, ENUM_KEYWORD, OPEN_KEYWORD, ATTRIBUTE_KEYWORD,
             OVERRIDE_KEYWORD, PRIVATE_KEYWORD, PUBLIC_KEYWORD, INTERNAL_KEYWORD, PROTECTED_KEYWORD, OUT_KEYWORD,
             REF_KEYWORD
