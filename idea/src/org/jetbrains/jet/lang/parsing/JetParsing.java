@@ -683,16 +683,34 @@ public class JetParsing {
         list.done(TYPE_ARGUMENT_LIST);
     }
 
+    /*
+     * tupleType
+     *   : "(" type{","}? ")"
+     *   : "(" parameter{","} ")" // tuple with named entries, the names do not affect assignment compatibility
+     *   ;
+     */
     private void parseTupleType() {
         assert at(LPAR);
+
+        PsiBuilder.Marker tuple = mark();
 
         advance(); // LPAR
 
         if (!at(RPAR)) {
             while (true) {
-                if (TokenSet.create(IDENTIFIER, LBRACE, LPAR).contains(tt())) {
+                if (at(COLON)) errorAndAdvance("Expecting a name for tuple entry");
+
+                if (at(IDENTIFIER) && lookahead(1) == COLON) {
+                    PsiBuilder.Marker labeledEntry = mark();
+                    advance(); // IDENTIFIER
+                    advance(); // COLON
                     parseTypeRef();
-                } else {
+                    labeledEntry.done(LABELED_TUPLE_ENTRY);
+                }
+                else if (TokenSet.create(LBRACKET, IDENTIFIER, LBRACE, LPAR).contains(tt())) {
+                    parseTypeRef();
+                }
+                else {
                     error("Type expected");
                     break;
                 }
@@ -702,6 +720,8 @@ public class JetParsing {
         }
 
         expect(RPAR, "Expecting ')");
+
+        tuple.done(TUPLE_TYPE);
     }
 
     /*

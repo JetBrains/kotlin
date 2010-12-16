@@ -39,6 +39,8 @@ public interface JetNodeTypes {
     JetNodeType VALUE_ARGUMENT_LIST = new JetNodeType("VALUE_ARGUMENT_LIST");
     JetNodeType VALUE_ARGUMENT = new JetNodeType("VALUE_ARGUMENT");
     JetNodeType TYPE_REFERENCE = new JetNodeType("TYPE_REFERENCE");
+    JetNodeType LABELED_TUPLE_ENTRY = new JetNodeType("LABELED_TUPLE_ENTRY");
+    JetNodeType TUPLE_TYPE = new JetNodeType("TUPLE_TYPE");
 
 
     IElementType NAMESPACE_NAME = new JetNodeType("NAMESPACE_NAME");
