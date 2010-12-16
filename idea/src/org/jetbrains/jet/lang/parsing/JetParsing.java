@@ -752,12 +752,14 @@ public class JetParsing {
      */
     private void parseSimpleFunctionType() {
         assert at(LBRACE);
+        PsiBuilder.Marker functionType = mark();
 
         advance(); // LBRACE
 
         parseFunctionTypeContents();
 
         expect(RBRACE, "Expecting '}");
+        functionType.done(FUNCTION_TYPE);
     }
 
     /*

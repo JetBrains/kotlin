@@ -14,3 +14,12 @@ type f = {(foo, a : {(a) : b}) : b}
 type f = {(foo, a : {(a) : b}) : {() : ()}}
 
 type f = {(lazy foo, out a : {(ref a) : b}) : {() : ()}}
+
+type f = T.{() : ()}
+type f = T.T.{() : ()}
+type f = T<A, B>.T<x>.{() : ()}
+type f = (S).{() : ()}.{() : ()}
+type f = T.{() : ()}.{() : ()}
+type f = T.T.{() : ()}.{() : ()}
+type f = T<A, B>.T<x>.{() : ()}.{() : ()}
+type f = (S).{() : ()}.{() : ()}

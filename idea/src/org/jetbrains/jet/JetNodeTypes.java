@@ -42,6 +42,7 @@ public interface JetNodeTypes {
     JetNodeType LABELED_TUPLE_ENTRY = new JetNodeType("LABELED_TUPLE_ENTRY");
     JetNodeType TUPLE_TYPE = new JetNodeType("TUPLE_TYPE");
     JetNodeType VALUE_PARAMETER = new JetNodeType("VALUE_PARAMETER");
+    JetNodeType FUNCTION_TYPE = new JetNodeType("FUNCTION_TYPE");
 
 
     IElementType NAMESPACE_NAME = new JetNodeType("NAMESPACE_NAME");
