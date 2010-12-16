@@ -13,7 +13,7 @@ import org.jetbrains.jet.JetNodeTypes;
 public class JetParser implements PsiParser {
     @NotNull
     public ASTNode parse(IElementType iElementType, PsiBuilder psiBuilder) {
-        new JetParsing(psiBuilder).parseFile();
+        new JetParsing(new SemanticWitespaceAwarePsiBuilder(psiBuilder)).parseFile();
         return psiBuilder.getTreeBuilt();
     }
 }

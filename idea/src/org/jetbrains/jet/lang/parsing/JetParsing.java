@@ -4,7 +4,6 @@
 package org.jetbrains.jet.lang.parsing;
 
 import com.intellij.lang.PsiBuilder;
-import com.intellij.lang.WhitespaceSkippedCallback;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.jet.JetNodeType;
@@ -17,7 +16,7 @@ import java.util.Map;
 import static org.jetbrains.jet.JetNodeTypes.*;
 import static org.jetbrains.jet.lexer.JetTokens.*;
 
-public class JetParsing {
+public class JetParsing extends AbstractJetParsing {
     private static final Map<String, IElementType> MODIFIER_KEYWORD_MAP = new HashMap<String, IElementType>();
     static {
         for (IElementType softKeyword : MODIFIER_KEYWORDS.getTypes()) {
@@ -34,24 +33,11 @@ public class JetParsing {
     private static final TokenSet NAMESPACE_NAME_RECOVERY_SET = TokenSet.create(DOT, EOL_OR_SEMICOLON);
     private static final TokenSet TYPE_REF_FIRST = TokenSet.create(LBRACKET, IDENTIFIER, LBRACE, LPAR);
 
-    private final WhitespaceSkippedCallback myWhitespaceSkippedCallback = new WhitespaceSkippedCallback() {
-        public void onSkip(IElementType type, int start, int end) {
-            CharSequence whitespace = JetParsing.this.myBuilder.getOriginalText();
-            for (int i = start; i < end; i++) {
-                char c = whitespace.charAt(i);
-                if (c == '\n') {
-                    myEOLInLastWhitespace = true;
-                    break;
-                }
-            }
-        }
-    };
-    private final PsiBuilder myBuilder;
-    private boolean myEOLInLastWhitespace;
+    private final JetExpressionParsing myExpressionParsing;
 
-    public JetParsing(PsiBuilder myBuilder) {
-        this.myBuilder = myBuilder;
-        myBuilder.setWhitespaceSkippedCallback(myWhitespaceSkippedCallback);
+    public JetParsing(SemanticWitespaceAwarePsiBuilder builder) {
+        super(builder);
+        this.myExpressionParsing = new JetExpressionParsing(builder);
     }
 
     /*
@@ -350,7 +336,7 @@ public class JetParsing {
             type = NAMED_ARGUMENT;
         }
         if (at(OUT_KEYWORD) || at(REF_KEYWORD)) advance(); // REF or OUT
-        parseExpression();
+        myExpressionParsing.parseExpression();
         argument.done(type);
     }
 
@@ -545,7 +531,7 @@ public class JetParsing {
 
         if (at(BY_KEYWORD)) {
             advance(); // BY_KEYWORD
-            parseExpression();
+            myExpressionParsing.parseExpression();
             delegator.done(DELEGATOR_BY);
         }
         else if (at(LPAR)) {
@@ -625,37 +611,9 @@ public class JetParsing {
 
         if (at(EQ)) {
             advance(); // EQ
-            parseExpression();
+            myExpressionParsing.parseExpression();
         }
         return true;
-    }
-
-    /*
-     * expression
-     *   : "(" expression ")" // see tupleLiteral
-     *   : literalConstant
-     *   : functionLiteral
-     *   : tupleLiteral
-     *   : listLiteral
-     *   : mapLiteral
-     *   : range
-     *   : "null"
-     *   : "this" ("<" type ">")?
-     *   : memberAccessExpression
-     *   : expressionWithPrecedences
-     *   : match
-     *   : if
-     *   : "typeof"
-     *   : "new" constructorInvocation
-     *   : objectLiteral
-     *   : declaration
-     *   : jump
-     *   : loop
-     *   // block is syntactically equivalent to a functionLiteral with no parameters
-     *   ;
-     */
-    private void parseExpression() {
-        advance(); // TODO
     }
 
     /*
@@ -890,95 +848,6 @@ public class JetParsing {
 
         parameter.done(VALUE_PARAMETER);
         return true;
-    }
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private boolean expect(JetToken expectation, String message) {
-        return expect(expectation, message, null);
-    }
-
-    private PsiBuilder.Marker mark() {
-        return myBuilder.mark();
-    }
-
-    private void error(String message) {
-        myBuilder.error(message);
-    }
-
-    private boolean expect(JetToken expectation, String message, TokenSet recoverySet) {
-        if (at(expectation)) {
-            advance(); // expectation
-            return true;
-        }
-
-        errorWithRecovery(message, recoverySet);
-
-        return false;
-    }
-
-    private void errorWithRecovery(String message, TokenSet recoverySet) {
-        JetToken tt = tt();
-        if (recoverySet == null || recoverySet.contains(tt)
-                || (recoverySet.contains(EOL_OR_SEMICOLON)
-                        && (tt == SEMICOLON || myEOLInLastWhitespace))) {
-            error(message);
-        }
-        else {
-            errorAndAdvance(message);
-        }
-    }
-
-    private void errorAndAdvance(String message) {
-        PsiBuilder.Marker err = mark();
-        advance(); // erroneous token
-        err.error(message);
-    }
-
-    private boolean eof() {
-        return myBuilder.eof();
-    }
-
-    private void advance() {
-        myEOLInLastWhitespace = false;
-        myBuilder.advanceLexer();
-    }
-
-    private JetToken tt() {
-        return (JetToken) myBuilder.getTokenType();
-    }
-
-    private boolean at(final IElementType expectation) {
-        JetToken token = tt();
-        if (token == expectation) return true;
-        if (expectation == EOL_OR_SEMICOLON) {
-            if (token == SEMICOLON) return true;
-            if (myEOLInLastWhitespace) return true;
-        }
-        if (token == IDENTIFIER && expectation instanceof JetKeywordToken) {
-            JetKeywordToken expectedKeyword = (JetKeywordToken) expectation;
-            if (expectedKeyword.isSoft() && expectedKeyword.getValue().equals(myBuilder.getTokenText())) {
-                myBuilder.remapCurrentToken(expectation);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private IElementType lookahead(int k) {
-        PsiBuilder.Marker tmp = mark();
-        for (int i = 0; i < k; i++) advance();
-
-        JetToken tt = tt();
-        tmp.rollbackTo();
-        return tt;
-    }
-
-    private void consumeIf(JetToken token) {
-        if (at(token)) advance(); // token
     }
 
 }
