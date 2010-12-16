@@ -25,7 +25,10 @@ public class JetParsing {
         }
     }
 
-    private static final TokenSet CLASS_NAME_RECOVERY_SET = TokenSet.create(LT, WRAPS_KEYWORD, LPAR, COLON, LBRACE);
+    private static final TokenSet TOPLEVEL_OBJECT_FIRST = TokenSet.create(TYPE_KEYWORD, CLASS_KEYWORD,
+                EXTENSION_KEYWORD, FUN_KEYWORD, VAL_KEYWORD, REF_KEYWORD, NAMESPACE_KEYWORD);
+
+    private static final TokenSet CLASS_NAME_RECOVERY_SET = TokenSet.orSet(TokenSet.create(LT, WRAPS_KEYWORD, LPAR, COLON, LBRACE), TOPLEVEL_OBJECT_FIRST);
     private static final TokenSet TYPE_PARAMETER_GT_RECOVERY_SET = TokenSet.create(WHERE_KEYWORD, WRAPS_KEYWORD, LPAR, COLON, LBRACE, GT);
     private static final TokenSet PARAMETER_NAME_RECOVERY_SET = TokenSet.create(COLON, EQ, COMMA, RPAR);
     private static final TokenSet NAMESPACE_NAME_RECOVERY_SET = TokenSet.create(DOT, EOL_OR_SEMICOLON);
@@ -148,7 +151,7 @@ public class JetParsing {
             advance(); // AS_KEYWORD
             expect(IDENTIFIER, "Expecting identifier", TokenSet.create(SEMICOLON));
         }
-        cosumeIf(SEMICOLON);
+        consumeIf(SEMICOLON);
         importDirective.done(IMPORT_DIRECTIVE);
     }
 
@@ -156,7 +159,7 @@ public class JetParsing {
         if (at(AS_KEYWORD)) {
             PsiBuilder.Marker as = mark();
             advance(); // AS_KEYWORD
-            cosumeIf(IDENTIFIER);
+            consumeIf(IDENTIFIER);
             as.error("Cannot rename a all imported items to one identifier");
         }
     }
@@ -297,63 +300,6 @@ public class JetParsing {
     }
 
     /*
-     * userType
-     *   : simpleUserType{"."}
-     *   ;
-     *
-     * simpleUserType
-     *   : SimpleName ("<" (optionalProjection type){","} ">")?
-     *   ;
-     */
-    private void parseUserType() {
-        PsiBuilder.Marker userType = mark();
-
-        while (true) {
-            parseSimpleUserType();
-            if (!at(DOT)) break;
-            advance(); // DOT
-        }
-
-        userType.done(USER_TYPE);
-    }
-
-    /*
-     * simpleUserType
-     *   : SimpleName ("<" (optionalProjection type){","} ">")?
-     *   ;
-     */
-    private void parseSimpleUserType() {
-        PsiBuilder.Marker type = mark();
-
-        expect(IDENTIFIER, "Type name expected", TokenSet.create(LT));
-        parseTypeArgumentList();
-
-        type.done(USER_TYPE);
-    }
-
-    /*
-     *   (optionalProjection type){","}
-     */
-    private void parseTypeArgumentList() {
-        if (!at(LT)) return;
-
-        PsiBuilder.Marker list = mark();
-
-        advance(); // LT
-
-        while (true) {
-            parseModifierList();
-            parseTypeRef();
-            if (!at(COMMA)) break;
-            advance(); // COMMA
-        }
-
-        expect(GT, "Expecting a '>'");
-
-        list.done(TYPE_ARGUMENT_LIST);
-    }
-
-    /*
      * valueArguments
      *   : "(" (SimpleName "=")? ("out" | "ref")? expression{","} ")"
      *   ;
@@ -434,7 +380,7 @@ public class JetParsing {
         expect(IDENTIFIER, "Class name expected", CLASS_NAME_RECOVERY_SET);
         parseTypeParameterList();
 
-        cosumeIf(WRAPS_KEYWORD);
+        consumeIf(WRAPS_KEYWORD);
         if (at(LPAR)) {
             parsePrimaryConstructorParameterList();
         }
@@ -451,8 +397,41 @@ public class JetParsing {
         return CLASS;
     }
 
+    private void parseClassBody() {
+        assert at(LBRACE);
+        PsiBuilder.Marker body = mark();
+        advance(); // LBRACE
+
+        while (!eof()) {
+            if (at(RBRACE)) {
+                break;
+            }
+            advance(); // TODO
+        }
+        expect(RBRACE, "Missing '}");
+        body.done(CLASS_BODY);
+    }
+
+    /*
+     * typedef
+     *   : modifiers "type" SimpleName typeParameters? "=" type
+     *   ;
+     */
     private JetNodeType parseTypedef() {
-        advance(); // TODO
+        assert at(TYPE_KEYWORD);
+
+        advance(); // TYPE_KEYWORD
+
+        expect(IDENTIFIER, "Type name expected", TokenSet.orSet(TokenSet.create(LT, EQ, SEMICOLON), TOPLEVEL_OBJECT_FIRST));
+
+        parseTypeParameterList();
+
+        expect(EQ, "Expecting '='", TokenSet.orSet(TOPLEVEL_OBJECT_FIRST, TokenSet.create(SEMICOLON)));
+
+        parseTypeRef();
+
+        consumeIf(SEMICOLON);
+
         return TYPEDEF;
     }
 
@@ -469,21 +448,6 @@ public class JetParsing {
     private JetNodeType parseExtension() {
         advance(); // TODO
         return EXTENSION;
-    }
-
-    private void parseClassBody() {
-        assert at(LBRACE);
-        PsiBuilder.Marker body = mark();
-        advance(); // LBRACE
-
-        while (!eof()) {
-            if (at(RBRACE)) {
-                break;
-            }
-            advance(); // TODO
-        }
-        expect(RBRACE, "Missing '}");
-        body.done(CLASS_BODY);
     }
 
     private void parseDelegationSpecifierList() {
@@ -637,8 +601,122 @@ public class JetParsing {
 
     }
 
+    /*
+     * type
+     *   : attributes (userType | functionType | tupleType)
+     *   ;
+     */
     private void parseTypeRef() {
-        advance(); // tODO:
+        PsiBuilder.Marker type = mark();
+
+        parseAttributeList();
+
+        while (true) {
+            if (at(IDENTIFIER)) {
+                parseSimpleUserType();
+            }
+            else if (at(LBRACE)) {
+                parseSimpleFunctionType();
+            } else if (at(LPAR)) {
+                parseTupleType();
+            } else {
+                error("Type expected");
+                break;
+            }
+
+            if (!at(DOT)) break;
+            advance(); // DOT
+        }
+        type.done(TYPE_REFERENCE);
+    }
+
+    /*
+     * userType
+     *   : simpleUserType{"."}
+     *   ;
+     */
+    private void parseUserType() {
+        PsiBuilder.Marker userType = mark();
+
+        while (true) {
+            parseSimpleUserType();
+            if (!at(DOT)) break;
+            advance(); // DOT
+        }
+
+        userType.done(USER_TYPE);
+    }
+
+    /*
+     * simpleUserType
+     *   : SimpleName ("<" (optionalProjection type){","} ">")?
+     *   ;
+     */
+    private void parseSimpleUserType() {
+        PsiBuilder.Marker type = mark();
+
+        expect(IDENTIFIER, "Type name expected", TokenSet.create(LT));
+        parseTypeArgumentList();
+
+        type.done(USER_TYPE);
+    }
+
+    /*
+     *   (optionalProjection type){","}
+     */
+    private void parseTypeArgumentList() {
+        if (!at(LT)) return;
+
+        PsiBuilder.Marker list = mark();
+
+        advance(); // LT
+
+        while (true) {
+            parseModifierList();
+            parseTypeRef();
+            if (!at(COMMA)) break;
+            advance(); // COMMA
+        }
+
+        expect(GT, "Expecting a '>'");
+
+        list.done(TYPE_ARGUMENT_LIST);
+    }
+
+    private void parseTupleType() {
+        assert at(LPAR);
+
+        advance(); // LPAR
+
+        if (!at(RPAR)) {
+            while (true) {
+                if (TokenSet.create(IDENTIFIER, LBRACE, LPAR).contains(tt())) {
+                    parseTypeRef();
+                } else {
+                    error("Type expected");
+                    break;
+                }
+                if (!at(COMMA)) break;
+                advance(); // COMMA
+            }
+        }
+
+        expect(RPAR, "Expecting ')");
+    }
+
+    /*
+     * simpleFunctionType
+     *   : "{" functionTypeContents "}"
+     *   ;
+     */
+    private void parseSimpleFunctionType() {
+        assert at(LBRACE);
+
+        advance(); // LPAR
+
+        // TODO
+
+        expect(RBRACE, "Expecting '}");
     }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -726,7 +804,7 @@ public class JetParsing {
         return tt;
     }
 
-    private void cosumeIf(JetToken token) {
+    private void consumeIf(JetToken token) {
         if (at(token)) advance(); // token
     }
 

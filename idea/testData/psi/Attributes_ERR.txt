@@ -50,10 +50,14 @@ JetFile: Attributes_ERR.jet
               PsiElement(IDENTIFIER)('foo')
               TYPE_ARGUMENT_LIST
                 PsiElement(LT)('<')
-                PsiElement(IDENTIFIER)('A')
+                TYPE_REFERENCE
+                  USER_TYPE
+                    PsiElement(IDENTIFIER)('A')
                 PsiElement(COMMA)(',')
                 PsiWhiteSpace(' ')
-                PsiElement(IDENTIFIER)('B')
+                TYPE_REFERENCE
+                  USER_TYPE
+                    PsiElement(IDENTIFIER)('B')
                 PsiElement(GT)('>')
           VALUE_ARGUMENT_LIST
             PsiElement(LPAR)('(')
@@ -86,17 +90,23 @@ JetFile: Attributes_ERR.jet
               PsiElement(IDENTIFIER)('doo')
               TYPE_ARGUMENT_LIST
                 PsiElement(LT)('<')
-                PsiElement(IDENTIFIER)('f')
+                TYPE_REFERENCE
+                  USER_TYPE
+                    PsiElement(IDENTIFIER)('f')
                 PsiElement(GT)('>')
             PsiElement(DOT)('.')
             USER_TYPE
               PsiElement(IDENTIFIER)('foo')
               TYPE_ARGUMENT_LIST
                 PsiElement(LT)('<')
-                PsiElement(IDENTIFIER)('bar')
+                TYPE_REFERENCE
+                  USER_TYPE
+                    PsiElement(IDENTIFIER)('bar')
                 PsiElement(COMMA)(',')
                 PsiWhiteSpace(' ')
-                PsiElement(IDENTIFIER)('goo')
+                TYPE_REFERENCE
+                  USER_TYPE
+                    PsiElement(IDENTIFIER)('goo')
                 PsiElement(GT)('>')
             PsiElement(DOT)('.')
             USER_TYPE
