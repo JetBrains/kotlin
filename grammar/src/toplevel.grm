@@ -25,6 +25,7 @@ toplevelObject
   : function
   : property
   : typedef
+  : decomposer
   ;
 
 namespace
@@ -36,4 +37,8 @@ namespace
 
 typedef
   : modifiers "type" SimpleName typeParameters? "=" type
+  ;
+
+extension
+  : modifiers "extension" SimpleName? typeParameters? "for" type classBody? // properties cannot be lazy, cannot have backing fields
   ;

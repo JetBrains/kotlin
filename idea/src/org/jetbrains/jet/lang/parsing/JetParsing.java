@@ -26,7 +26,7 @@ public class JetParsing {
     }
 
     private static final TokenSet TOPLEVEL_OBJECT_FIRST = TokenSet.create(TYPE_KEYWORD, CLASS_KEYWORD,
-                EXTENSION_KEYWORD, FUN_KEYWORD, VAL_KEYWORD, REF_KEYWORD, NAMESPACE_KEYWORD);
+                EXTENSION_KEYWORD, FUN_KEYWORD, VAL_KEYWORD, REF_KEYWORD, NAMESPACE_KEYWORD, DECOMPOSER_KEYWORD);
 
     private static final TokenSet CLASS_NAME_RECOVERY_SET = TokenSet.orSet(TokenSet.create(LT, WRAPS_KEYWORD, LPAR, COLON, LBRACE), TOPLEVEL_OBJECT_FIRST);
     private static final TokenSet TYPE_PARAMETER_GT_RECOVERY_SET = TokenSet.create(WHERE_KEYWORD, WRAPS_KEYWORD, LPAR, COLON, LBRACE, GT);
@@ -199,6 +199,9 @@ public class JetParsing {
         else if (keywordToken == TYPE_KEYWORD) {
             declType = parseTypedef();
         }
+        else if (keywordToken == DECOMPOSER_KEYWORD) {
+            declType = parseDecomposer();
+        }
 
         if (declType == null) {
             errorAndAdvance("Expecting namespace or top level declaration");
@@ -207,6 +210,16 @@ public class JetParsing {
         else {
             decl.done(declType);
         }
+    }
+
+    /*
+     * decomposer
+     *   : attributes "decomposer" (type ".")? SimpleName "(" (attributes SimpleName){","} ")" // Public properties only
+     *   ;
+     */
+    private JetNodeType parseDecomposer() {
+        // TODO
+        return DECOMPOSER;
     }
 
     /*
@@ -330,13 +343,15 @@ public class JetParsing {
      */
     private void parseValueArgument() {
         PsiBuilder.Marker argument = mark();
+        JetNodeType type = VALUE_ARGUMENT;
         if (at(IDENTIFIER) && lookahead(1) == EQ) {
-             advance(); // IDENTIFIER
-             advance(); // EQ
+            advance(); // IDENTIFIER
+            advance(); // EQ
+            type = NAMED_ARGUMENT;
         }
         if (at(OUT_KEYWORD) || at(REF_KEYWORD)) advance(); // REF or OUT
         parseExpression();
-        argument.done(VALUE_ARGUMENT);
+        argument.done(type);
     }
 
     /*
@@ -374,6 +389,16 @@ public class JetParsing {
         return NAMESPACE;
     }
 
+    /*
+     * class
+     *   : modifiers "class" SimpleName
+     *       typeParameters?
+     *       "wraps"?
+     *       ("(" primaryConstructorParameter{","} ")")?
+     *       (":" attributes delegationSpecifier{","})?
+     *       classBody?
+     *   ;
+     */
     private JetNodeType parseClass() {
         assert at(CLASS_KEYWORD);
         advance(); // CLASS_KEYWORD
@@ -398,6 +423,11 @@ public class JetParsing {
         return CLASS;
     }
 
+    /*
+     * classBody
+     *   : ("{" memberDeclaration{","} "}")?
+     *   ;
+     */
     private void parseClassBody() {
         assert at(LBRACE);
         PsiBuilder.Marker body = mark();
@@ -436,25 +466,51 @@ public class JetParsing {
         return TYPEDEF;
     }
 
+    /*
+     * property
+     *   : modifiers ("val" | "var") (type ".")? propertyRest
+     *   ;
+     */
     private JetNodeType parseProperty() {
         advance(); // TODO
         return PROPERTY;
     }
 
+    /*
+     * function
+     *   : modifiers "fun" (type ".")? functionRest
+     *   ;
+     *
+     * functionRest
+     *   : attributes SimpleName typeParameters? functionParameters (":" type)? functionBody?
+     *   ;
+     */
     private JetNodeType parseFunction() {
         advance(); // TODO
         return FUN;
     }
 
+    /*
+     * extension
+     *   : modifiers "extension" SimpleName? typeParameters? "for" type classBody? // properties cannot be lazy, cannot have backing fields
+     *   ;
+     */
     private JetNodeType parseExtension() {
         advance(); // TODO
         return EXTENSION;
     }
 
+    /*
+     * delegationSpecifier{","}
+     */
     private void parseDelegationSpecifierList() {
         PsiBuilder.Marker list = mark();
 
         while (true) {
+            if (at(COMMA)) {
+                errorAndAdvance("Expecting a delegation specifier");
+                continue;
+            }
             parseDelegationSpecifier();
             if (!at(COMMA)) break;
             advance(); // COMMA
@@ -463,19 +519,37 @@ public class JetParsing {
         list.done(DELEGATION_SPECIFIER_LIST);
     }
 
+    /*
+     * attributes delegationSpecifier
+     *
+     * delegationSpecifier
+     *   : constructorInvocation // type and constructor arguments
+     *   : explicitDelegation
+     *   ;
+     *
+     * explicitDelegation
+     *   : userType "by" expression // TODO: Syntax is questionable
+     *   ;
+     */
     private void parseDelegationSpecifier() {
         PsiBuilder.Marker specifier = mark();
         parseAttributeList();
 
         PsiBuilder.Marker delegator = mark();
-        parseTypeRef(); // TODO: Error recovery!!!
+        if (at(LPAR)) {
+            error("Expecting type name");
+        }
+        else {
+            parseTypeRef();
+        }
+
         if (at(BY_KEYWORD)) {
             advance(); // BY_KEYWORD
             parseExpression();
             delegator.done(DELEGATOR_BY);
         }
         else if (at(LPAR)) {
-            parseValueParameterList();
+            parseValueArgumentList();
             delegator.done(DELEGATOR_SUPER_CALL);
         }
         else {
@@ -485,32 +559,6 @@ public class JetParsing {
         specifier.done(DELEGATION_SPECIFIER);
     }
 
-    private void parseValueParameterList() {
-        assert at(LPAR);
-        PsiBuilder.Marker list = mark();
-        advance(); // LPAR
-        while (true) {
-            if (at(IDENTIFIER) && lookahead(1) == EQ) {
-                PsiBuilder.Marker named = mark();
-                advance(); // IDENTIFIER
-                advance(); // EQ
-                parseExpression();
-                named.done(NAMED_ARGUMENT);
-            }
-            else {
-                parseExpression();
-            }
-
-            if (!at(COMMA)) {
-                break;
-            }
-        }
-
-        expect(RPAR, "Missing ')'");
-
-        list.done(VALUE_PARAMETER_LIST);
-
-    }
 
     /*
      * attributes

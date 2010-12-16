@@ -71,11 +71,11 @@ block
   ;
 
 decomposer  // TODO: consider other names
-  : attributes "decomposer" SimpleName "(" (attributes SimpleName){","} ")" // Public properties only
+  : attributes "decomposer" (type ".")? SimpleName "(" (attributes SimpleName){","} ")" // Public properties only
   ;
 
 function
-  : modifiers "fun" functionRest
+  : modifiers "fun" (type ".")? functionRest
   ;
 
 functionRest
@@ -88,7 +88,7 @@ functionBody
   ;
 
 property
-  : modifiers ("val" | "var") propertyRest
+  : modifiers ("val" | "var") (type ".")? propertyRest
   ;
 
 propertyRest

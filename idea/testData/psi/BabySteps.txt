@@ -41,7 +41,7 @@ JetFile: BabySteps.jet
             TYPE_REFERENCE
               USER_TYPE
                 PsiElement(IDENTIFIER)('foo')
-            VALUE_PARAMETER_LIST
+            VALUE_ARGUMENT_LIST
               PsiElement(LPAR)('(')
               NAMED_ARGUMENT
                 PsiElement(IDENTIFIER)('d')

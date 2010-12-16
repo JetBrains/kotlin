@@ -16,6 +16,7 @@ public interface JetNodeTypes {
     JetNodeType FUN = new JetNodeType("FUN");
     JetNodeType EXTENSION = new JetNodeType("EXTENSION");
     JetNodeType TYPEDEF = new JetNodeType("TYPEDEF");
+    JetNodeType DECOMPOSER = new JetNodeType("DECOMPOSER");
     JetNodeType TYPE_PARAMETER_LIST = new JetNodeType("TYPE_PARAMETER_LIST");
     JetNodeType TYPE_PARAMETER = new JetNodeType("TYPE_PARAMETER");
     JetNodeType PRIMARY_CONSTRUCTOR_PARAMETERS_LIST = new JetNodeType("PRIMARY_CONSTRUCTOR_PARAMETERS_LIST");
