@@ -16,7 +16,13 @@ import java.util.Map;
 import static org.jetbrains.jet.JetNodeTypes.*;
 import static org.jetbrains.jet.lexer.JetTokens.*;
 
+/**
+ * @author max
+ * @author abreslav
+ */
 public class JetParsing extends AbstractJetParsing {
+    // TODO: token sets to constants
+
     private static final Map<String, IElementType> MODIFIER_KEYWORD_MAP = new HashMap<String, IElementType>();
     static {
         for (IElementType softKeyword : MODIFIER_KEYWORDS.getTypes()) {
@@ -200,11 +206,63 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * decomposer
-     *   : attributes "decomposer" (type ".")? SimpleName "(" (attributes SimpleName){","} ")" // Public properties only
+     *   : modifiers "decomposer" (type ".")? SimpleName? "(" (attributes SimpleName){","}? ")" // Public properties only
      *   ;
      */
     private JetNodeType parseDecomposer() {
-        // TODO
+        assert at(DECOMPOSER_KEYWORD);
+        advance(); // DECOMPOSER_KEYWORD
+
+        boolean extenstion;
+        if (!at(LPAR)) {
+            extenstion = true;
+            if (TYPE_REF_FIRST.contains(tt())
+                    && !(at(IDENTIFIER) && lookahead(1) == LPAR)) {
+                // TODO: if this type is annotated with an attribute, and it is a single identifier, it is a error (decomposer [a] foo())
+                parseTypeRef();
+                // The decomposer name may appear as the last section of the type
+                if (at(DOT)) {
+                    advance(); // DOT
+                    expect(IDENTIFIER, "Expecting decomposer name", TokenSet.create(LPAR));
+                }
+            }
+            else {
+                consumeIf(IDENTIFIER);
+            }
+        } else {
+            extenstion = false;
+        }
+
+        PsiBuilder.Marker properties = mark();
+
+        expect(LPAR, "Expecting a property list in parentheses '( ... )'");
+
+        if (!at(RPAR)) {
+            while (true) {
+                parseAttributeList();
+                if (!expect(IDENTIFIER, "Expecting a property name", TokenSet.create(COMMA, RPAR))) {
+                    skipUntil(TokenSet.create(COMMA, RPAR, EOL_OR_SEMICOLON));
+                }
+                if (!at(COMMA)) {
+                    if (at(RPAR) || at(EOL_OR_SEMICOLON)) break;
+                    error("Expecting a property name or a closing ')'");
+                    skipUntil(TokenSet.create(COMMA, RPAR, EOL_OR_SEMICOLON));
+                }
+                if (!at(COMMA)) break;
+                advance(); // COMMA
+            }
+        }
+
+        expect(RPAR, "Expecting ')' to close a property list");
+
+        consumeIf(SEMICOLON);
+
+        properties.done(DECOMPOSER_PROPERTY_LIST);
+
+        if (at(DOT) && !extenstion) {
+            error("Cannot define an extension decomposer on a tuple");
+        }
+
         return DECOMPOSER;
     }
 
@@ -295,49 +353,8 @@ public class JetParsing extends AbstractJetParsing {
     private void parseAttribute() {
         PsiBuilder.Marker attribute = mark();
         parseUserType();
-        if (at(LPAR)) parseValueArgumentList();
+        if (at(LPAR)) myExpressionParsing.parseValueArgumentList();
         attribute.done(ATTRIBUTE);
-    }
-
-    /*
-     * valueArguments
-     *   : "(" (SimpleName "=")? ("out" | "ref")? expression{","} ")"
-     *   ;
-     */
-    private void parseValueArgumentList() {
-        assert at(LPAR);
-
-        PsiBuilder.Marker list = mark();
-
-        advance(); // LPAR
-
-        if (!at(RPAR)) {
-            while (true) {
-                parseValueArgument();
-                if (!at(COMMA)) break;
-                advance(); // COMMA
-            }
-        }
-
-        expect(RPAR, "Expecting ')'");
-
-        list.done(VALUE_ARGUMENT_LIST);
-    }
-
-    /*
-     * (SimpleName "=")? ("out" | "ref")? expression
-     */
-    private void parseValueArgument() {
-        PsiBuilder.Marker argument = mark();
-        JetNodeType type = VALUE_ARGUMENT;
-        if (at(IDENTIFIER) && lookahead(1) == EQ) {
-            advance(); // IDENTIFIER
-            advance(); // EQ
-            type = NAMED_ARGUMENT;
-        }
-        if (at(OUT_KEYWORD) || at(REF_KEYWORD)) advance(); // REF or OUT
-        myExpressionParsing.parseExpression();
-        argument.done(type);
     }
 
     /*
@@ -535,7 +552,7 @@ public class JetParsing extends AbstractJetParsing {
             delegator.done(DELEGATOR_BY);
         }
         else if (at(LPAR)) {
-            parseValueArgumentList();
+            myExpressionParsing.parseValueArgumentList();
             delegator.done(DELEGATOR_SUPER_CALL);
         }
         else {
@@ -762,7 +779,9 @@ public class JetParsing extends AbstractJetParsing {
 
         if (!at(RPAR)) {
             while (true) {
-                if (at(COLON)) errorAndAdvance("Expecting a name for tuple entry");
+                if (at(COLON)) {
+                    errorAndAdvance("Expecting a name for tuple entry");
+                }
 
                 if (at(IDENTIFIER) && lookahead(1) == COLON) {
                     PsiBuilder.Marker labeledEntry = mark();

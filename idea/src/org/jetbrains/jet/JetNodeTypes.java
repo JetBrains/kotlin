@@ -44,6 +44,7 @@ public interface JetNodeTypes {
     JetNodeType TUPLE_TYPE = new JetNodeType("TUPLE_TYPE");
     JetNodeType VALUE_PARAMETER = new JetNodeType("VALUE_PARAMETER");
     JetNodeType FUNCTION_TYPE = new JetNodeType("FUNCTION_TYPE");
+    JetNodeType DECOMPOSER_PROPERTY_LIST = new JetNodeType("DECOMPOSER_PROPERTY_LIST");
 
 
     IElementType NAMESPACE_NAME = new JetNodeType("NAMESPACE_NAME");

@@ -1,0 +1,103 @@
+JetFile: Decomposers.jet
+  NAMESPACE
+    DECOMPOSER
+      PsiElement(decomposer)('decomposer')
+      PsiWhiteSpace(' ')
+      DECOMPOSER_PROPERTY_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(IDENTIFIER)('a')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('a')
+        PsiElement(RPAR)(')')
+    PsiWhiteSpace('\n')
+    DECOMPOSER
+      PsiElement(decomposer)('decomposer')
+      PsiWhiteSpace(' ')
+      DECOMPOSER_PROPERTY_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
+    PsiWhiteSpace('\n')
+    DECOMPOSER
+      PsiElement(decomposer)('decomposer')
+      PsiWhiteSpace(' ')
+      TYPE_REFERENCE
+        USER_TYPE
+          PsiElement(IDENTIFIER)('foo')
+          TYPE_ARGUMENT_LIST
+            PsiElement(LT)('<')
+            TYPE_REFERENCE
+              USER_TYPE
+                PsiElement(IDENTIFIER)('T')
+            PsiElement(GT)('>')
+        PsiElement(DOT)('.')
+        FUNCTION_TYPE
+          PsiElement(LBRACE)('{')
+          VALUE_PARAMETER_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            TUPLE_TYPE
+              PsiElement(LPAR)('(')
+              PsiElement(RPAR)(')')
+          PsiElement(RBRACE)('}')
+        PsiElement(DOT)('.')
+        USER_TYPE
+          PsiElement(IDENTIFIER)('bar')
+      DECOMPOSER_PROPERTY_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(IDENTIFIER)('a')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('a')
+        PsiElement(RPAR)(')')
+    PsiWhiteSpace('\n')
+    DECOMPOSER
+      PsiElement(decomposer)('decomposer')
+      PsiWhiteSpace(' ')
+      TYPE_REFERENCE
+        USER_TYPE
+          PsiElement(IDENTIFIER)('a')
+        PsiElement(DOT)('.')
+        USER_TYPE
+          PsiElement(IDENTIFIER)('foobar')
+      DECOMPOSER_PROPERTY_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
+    PsiWhiteSpace('\n')
+    DECOMPOSER
+      MODIFIER_LIST
+        ATTRIBUTE_ANNOTATION
+          PsiElement(LBRACKET)('[')
+          ATTRIBUTE
+            USER_TYPE
+              USER_TYPE
+                PsiElement(IDENTIFIER)('a')
+          PsiElement(RBRACKET)(']')
+      PsiWhiteSpace(' ')
+      PsiElement(decomposer)('decomposer')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('foobar')
+      DECOMPOSER_PROPERTY_LIST
+        PsiElement(LPAR)('(')
+        ATTRIBUTE_ANNOTATION
+          PsiElement(LBRACKET)('[')
+          ATTRIBUTE
+            USER_TYPE
+              USER_TYPE
+                PsiElement(IDENTIFIER)('a')
+          PsiElement(RBRACKET)(']')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('s')
+        PsiElement(RPAR)(')')
+    PsiWhiteSpace('\n')
+    DECOMPOSER
+      PsiElement(decomposer)('decomposer')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('foobar')
+      DECOMPOSER_PROPERTY_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')

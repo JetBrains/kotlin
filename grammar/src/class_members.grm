@@ -71,7 +71,7 @@ block
   ;
 
 decomposer  // TODO: consider other names
-  : attributes "decomposer" (type ".")? SimpleName "(" (attributes SimpleName){","} ")" // Public properties only
+  : modifiers "decomposer" (type ".")? SimpleName? "(" (attributes SimpleName){","}? ")" // Public properties only
   ;
 
 function

@@ -1,0 +1,10 @@
+decomposer (a a)
+decomposer foo<T>.{() : ()}.bar(, a)
+decomposer a.foobar)
+[a] decomposer foobar([a] s, )
+decomposer foobar([a])
+
+
+decomposer (a, a).
+decomposer ().
+decomposer foo<T>.{() : ()}.bar(a, a).

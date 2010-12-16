@@ -9,11 +9,7 @@ import org.jetbrains.jet.lexer.JetToken;
 import static org.jetbrains.jet.lexer.JetTokens.*;
 
 /**
- * Created by IntelliJ IDEA.
- * User: user
- * Date: 12/16/10
- * Time: 6:34 PM
- * To change this template use File | Settings | File Templates.
+ * @author abreslav
  */
 /*package*/ class AbstractJetParsing {
     protected final SemanticWitespaceAwarePsiBuilder myBuilder;
@@ -57,10 +53,11 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
         }
     }
 
-    protected void errorAndAdvance(String message) {
+    protected boolean errorAndAdvance(String message) {
         PsiBuilder.Marker err = mark();
         advance(); // erroneous token
         err.error(message);
+        return false;
     }
 
     protected boolean eof() {
@@ -104,4 +101,11 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
     protected void consumeIf(JetToken token) {
         if (at(token)) advance(); // token
     }
+
+    protected void skipUntil(TokenSet tokenSet) {
+        while (!eof() && !tokenSet.contains(tt())) {
+            advance();
+        }
+    }
+
 }
