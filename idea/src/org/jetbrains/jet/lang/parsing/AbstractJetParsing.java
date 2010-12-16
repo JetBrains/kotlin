@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.parsing;
 
 import com.intellij.lang.PsiBuilder;
+import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.jet.lexer.JetKeywordToken;
@@ -42,7 +43,7 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
     }
 
     protected void errorWithRecovery(String message, TokenSet recoverySet) {
-        JetToken tt = tt();
+        IElementType tt = tt();
         if (recoverySet == null || recoverySet.contains(tt)
                 || (recoverySet.contains(EOL_OR_SEMICOLON)
                         && (tt == SEMICOLON || myBuilder.eolInLastWhitespace()))) {
@@ -68,12 +69,15 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
         myBuilder.advanceLexer();
     }
 
-    protected JetToken tt() {
-        return (JetToken) myBuilder.getTokenType();
+    protected IElementType tt() {
+        IElementType tokenType = myBuilder.getTokenType();
+        // TODO: review
+        if (tokenType == TokenType.BAD_CHARACTER) errorAndAdvance("Bad character");
+        return tokenType;
     }
 
     protected boolean at(final IElementType expectation) {
-        JetToken token = tt();
+        IElementType token = tt();
         if (token == expectation) return true;
         if (expectation == EOL_OR_SEMICOLON) {
             if (token == SEMICOLON) return true;
@@ -93,7 +97,7 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
         PsiBuilder.Marker tmp = mark();
         for (int i = 0; i < k; i++) advance();
 
-        JetToken tt = tt();
+        IElementType tt = tt();
         tmp.rollbackTo();
         return tt;
     }
@@ -106,6 +110,12 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
         while (!eof() && !tokenSet.contains(tt())) {
             advance();
         }
+    }
+
+    protected void errorUntil(String mesage, TokenSet tokenSet) {
+        PsiBuilder.Marker error = mark();
+        skipUntil(tokenSet);
+        error.error(mesage);
     }
 
 }

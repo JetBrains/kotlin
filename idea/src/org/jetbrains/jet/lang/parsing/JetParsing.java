@@ -171,7 +171,7 @@ public class JetParsing extends AbstractJetParsing {
         PsiBuilder.Marker decl = mark();
         parseModifierList();
 
-        JetToken keywordToken = tt();
+        IElementType keywordToken = tt();
         JetNodeType declType = null;
         if (keywordToken == NAMESPACE_KEYWORD) {
             declType = parseNamespaceBlock();
@@ -471,12 +471,95 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * property
-     *   : modifiers ("val" | "var") (type ".")? propertyRest
+     *   : modifiers ("val" | "var") attributes (type ".")? SimpleName (":" type)? ("=" expression)?
+     *       ("{" getter? setter? "}")?
      *   ;
      */
     private JetNodeType parseProperty() {
-        advance(); // TODO
+        assert at(VAL_KEYWORD) || at(VAR_KEYWORD);
+
+        advance(); // VAL_KEYWORD or VAR_KEYWORD
+
+        PsiBuilder.Marker receiverTypeAttributes = mark();
+        parseAttributeList();
+
+        TokenSet propertyNameFollow = TokenSet.create(COLON, EQ, LBRACE, EOL_OR_SEMICOLON);
+        if (at(IDENTIFIER) && propertyNameFollow.contains(lookahead(1))) {
+            // val [a] name = foo
+            receiverTypeAttributes.done(RECEIVER_TYPE_ATTRIBUTES);
+            advance(); // IDENTIFIER
+        }
+        else {
+            receiverTypeAttributes.rollbackTo();
+            if (!TYPE_REF_FIRST.contains(tt())) {
+                errorAndAdvance("Expecting receiver type or property name");
+            }
+            else {
+                // TODO: if this type is annotated with an attribute, and it is a single identifier, it is a error (fun [a] foo())
+                parseTypeRef();
+                // The property name may appear as the last section of the type
+                if (at(DOT)) {
+                    advance(); // DOT
+                    expect(IDENTIFIER, "Expecting property name", propertyNameFollow);
+                }
+            }
+        }
+
+        if (at(COLON)) {
+            advance(); // COLON
+            parseTypeRef();
+        }
+
+        if (at(EQ)) {
+            advance(); // EQ
+            myExpressionParsing.parseExpression();
+        }
+
+        if (!at(EOL_OR_SEMICOLON) && at(LBRACE)) {
+            advance(); // LBRACE
+
+            // TODO: review
+            // TODO: $field = foo or something like this
+            parsePropertyGetterOrSetter();
+            if (!at(RBRACE)) parsePropertyGetterOrSetter();
+
+            if (!at(RBRACE)) {
+                errorUntil("Expecting '}'", TokenSet.create(RBRACE));
+            }
+
+            expect(RBRACE, "Expecting '}'");
+        }
+
+        consumeIf(SEMICOLON);
+
         return PROPERTY;
+    }
+
+    /*
+     * getter
+     *   : modifiers
+     *        (     "get" "(" ")"
+     *          |
+     *              "set" "(" modifiers parameter ")"
+     *        ) functionBody
+     *   ;
+     */
+    private void parsePropertyGetterOrSetter() {
+        PsiBuilder.Marker getter = mark();
+
+        parseModifierList();
+
+        if (!at(GET_KEYWORD) && !at(SET_KEYWORD)) {
+            errorWithRecovery("Expecting 'get' or 'set'", TokenSet.create(LPAR, RBRACE));
+        }
+        else {
+            advance(); // GET_KEYWORD or SET_KEYWORD
+        }
+        parseValueParameterList(false);
+
+        parseFunctionBody();
+
+        getter.done(PROPERTY_GETTER);
     }
 
     /*
@@ -491,6 +574,43 @@ public class JetParsing extends AbstractJetParsing {
     private JetNodeType parseFunction() {
         advance(); // TODO
         return FUN;
+    }
+
+    /*
+     * functionBody
+     *   : block
+     *   : "=" expression
+     *   ;
+     */
+    private void parseFunctionBody() {
+        if (at(LBRACE)) {
+            parseBlock();
+        }
+        else if (at(EQ)) {
+            advance(); // EQ
+            myExpressionParsing.parseExpression();
+        }
+        else {
+            error("Expecting function body");
+        }
+    }
+
+    /*
+     * block
+     *   : "{" (expression ";"?)* "}"
+     *   ;
+     */
+    private void parseBlock() {
+        assert at(LBRACE);
+
+        advance(); // LBRACE
+
+        while (!eof() && !at(RBRACE)) {
+            myExpressionParsing.parseExpression();
+            consumeIf(SEMICOLON);
+        }
+
+        expect(RBRACE, "Expecting '}");
     }
 
     /*
@@ -830,14 +950,39 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      */
     private void parseFunctionTypeContents() {
+        parseValueParameterList(true);
+
+        expect(COLON, "Expecting ':' followed by a return type", TYPE_REF_FIRST);
+
+        parseTypeRef();
+    }
+
+    /*
+     * functionParameters
+     *   : "(" functionParameter{","}? ")" // default values
+     *   ;
+     *
+     * functionParameter
+     *   : modifiers functionParameterRest
+     *   ;
+     *
+     * functionParameterRest
+     *   : parameter ("=" expression)?
+     *   ;
+     */
+    private void parseValueParameterList(boolean isFunctionTypeContents) {
         PsiBuilder.Marker parameters = mark();
         expect(LPAR, "Expecting '(");
 
         if (!at(RPAR)) {
             while (true) {
                 if (!parseValueParameter()) {
-                    parseModifierList(); // lazy, out, ref
-                    parseTypeRef();
+                    if (isFunctionTypeContents) {
+                        parseModifierList(); // lazy, out, ref
+                        parseTypeRef();
+                    } else {
+                        errorAndAdvance("Expecting a parameter declaration");
+                    }
                 }
                 if (!at(COMMA)) break;
                 advance(); // COMMA
@@ -845,10 +990,6 @@ public class JetParsing extends AbstractJetParsing {
         }
         expect(RPAR, "Expecting ')'");
         parameters.done(VALUE_PARAMETER_LIST);
-
-        expect(COLON, "Expecting ':' followed by a return type", TYPE_REF_FIRST);
-
-        parseTypeRef();
     }
 
     /*

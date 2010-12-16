@@ -45,7 +45,8 @@ public interface JetNodeTypes {
     JetNodeType VALUE_PARAMETER = new JetNodeType("VALUE_PARAMETER");
     JetNodeType FUNCTION_TYPE = new JetNodeType("FUNCTION_TYPE");
     JetNodeType DECOMPOSER_PROPERTY_LIST = new JetNodeType("DECOMPOSER_PROPERTY_LIST");
-
+    JetNodeType RECEIVER_TYPE_ATTRIBUTES = new JetNodeType("RECEIVER_TYPE_ATTRIBUTES");
+    JetNodeType PROPERTY_GETTER = new JetNodeType("PROPERTY_GETTER");
 
     IElementType NAMESPACE_NAME = new JetNodeType("NAMESPACE_NAME");
 }

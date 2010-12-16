@@ -67,7 +67,7 @@ initializers
   ;
 
 block
-  : "{" expression "}"
+  : "{" (expression ";"?)* "}"
   ;
 
 decomposer  // TODO: consider other names
@@ -75,11 +75,7 @@ decomposer  // TODO: consider other names
   ;
 
 function
-  : modifiers "fun" (type ".")? functionRest
-  ;
-
-functionRest
-  : attributes SimpleName typeParameters? functionParameters (":" type)? functionBody?
+  : modifiers "fun" (type ".")? attributes/*for receiver type*/ typeParameters? functionParameters (":" type)? functionBody?
   ;
 
 functionBody
@@ -88,12 +84,8 @@ functionBody
   ;
 
 property
-  : modifiers ("val" | "var") (type ".")? propertyRest
-  ;
-
-propertyRest
-  : SimpleName (":" type)? ("=" expression)?
-    "{" getter? setter? "}"
+  : modifiers ("val" | "var") attributes (type ".")? SimpleName (":" type)? ("=" expression)?
+      "{" getter? setter? "}"
   ;
 
 getter
