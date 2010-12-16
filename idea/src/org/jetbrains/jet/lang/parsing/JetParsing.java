@@ -512,7 +512,7 @@ public class JetParsing {
     }
 
     private void parseAttributeList() {
-        // TODO
+        while (at(LBRACKET)) parseAttributeAnnotation();
     }
 
     private void parsePrimaryConstructorParameterList() {

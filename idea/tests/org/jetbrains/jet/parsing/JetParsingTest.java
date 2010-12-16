@@ -39,4 +39,5 @@ public class JetParsingTest extends ParsingTestCase {
     public void testAttributes_ERR() throws Exception {doTest(true);}
     public void testTypeDef() throws Exception {doTest(true);}
     public void testTypeDef_ERR() throws Exception {doTest(true);}
+    public void testTypeAnnotations() throws Exception {doTest(true);}
 }
