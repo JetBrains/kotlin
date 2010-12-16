@@ -528,7 +528,7 @@ public class JetParsing {
      *   ;
      *
      * explicitDelegation
-     *   : userType "by" expression // TODO: Syntax is questionable
+     *   : userType "by" expression
      *   ;
      */
     private void parseDelegationSpecifier() {
@@ -630,10 +630,40 @@ public class JetParsing {
         return true;
     }
 
+    /*
+     * expression
+     *   : "(" expression ")" // see tupleLiteral
+     *   : literalConstant
+     *   : functionLiteral
+     *   : tupleLiteral
+     *   : listLiteral
+     *   : mapLiteral
+     *   : range
+     *   : "null"
+     *   : "this" ("<" type ">")?
+     *   : memberAccessExpression
+     *   : expressionWithPrecedences
+     *   : match
+     *   : if
+     *   : "typeof"
+     *   : "new" constructorInvocation
+     *   : objectLiteral
+     *   : declaration
+     *   : jump
+     *   : loop
+     *   // block is syntactically equivalent to a functionLiteral with no parameters
+     *   ;
+     */
     private void parseExpression() {
         advance(); // TODO
     }
 
+    /*
+     * typeParameters
+     *   : ("<" typeParameter{","} ">"
+     *      ("where" typeConstraint{","})?)?
+     *   ;
+     */
     private void parseTypeParameterList() {
         PsiBuilder.Marker list = mark();
         if (tt() == LT) {
@@ -648,9 +678,15 @@ public class JetParsing {
 
             expect(GT, "Missing '>'", TYPE_PARAMETER_GT_RECOVERY_SET);
         }
+        // TODO : where an stuff
         list.done(TYPE_PARAMETER_LIST);
     }
 
+    /*
+     * typeParameter
+     *   : modifiers SimpleName (":" userType)?
+     *   ;
+     */
     private void parseTypeParameter() {
         if (TYPE_PARAMETER_GT_RECOVERY_SET.contains(tt())) {
             error("Type parameter declaration expected");
@@ -661,6 +697,7 @@ public class JetParsing {
         parseModifierList();
         expect(IDENTIFIER, "Type parameter name expected", TokenSet.EMPTY);
 
+        // TODO : other
         if (at(COLON)) {
             advance(); // COLON
             parseTypeRef();
