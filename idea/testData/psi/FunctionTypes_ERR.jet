@@ -1,0 +1,2 @@
+type f = {([a] a)  b}
+type f = {(a, ) : b}

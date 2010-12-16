@@ -1,0 +1,14 @@
+type f = {([a] a) : b}
+type f = {(a) : b}
+type f = {() : [x] b}
+type f = {() : ()}
+
+type f = {(a : [a] a) : b}
+type f = {(a : a) : b}
+type f = {() : b}
+type f = {() : ()}
+
+type f = {(a : [a] a, foo, x : bar) : b}
+type f = {(foo, a : a) : b}
+type f = {(foo, a : {(a) : b}) : b}
+type f = {(foo, a : {(a) : b}) : {() : ()}}

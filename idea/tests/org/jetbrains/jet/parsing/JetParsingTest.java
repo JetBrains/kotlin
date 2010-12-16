@@ -42,4 +42,6 @@ public class JetParsingTest extends ParsingTestCase {
     public void testTypeAnnotations() throws Exception {doTest(true);}
     public void testTupleTypes() throws Exception {doTest(true);}
     public void testTupleTypes_ERR() throws Exception {doTest(true);}
+    public void testFunctionTypes() throws Exception {doTest(true);}
+    public void testFunctionTypes_ERR() throws Exception {doTest(true);}
 }

@@ -32,6 +32,7 @@ public class JetParsing {
     private static final TokenSet TYPE_PARAMETER_GT_RECOVERY_SET = TokenSet.create(WHERE_KEYWORD, WRAPS_KEYWORD, LPAR, COLON, LBRACE, GT);
     private static final TokenSet PARAMETER_NAME_RECOVERY_SET = TokenSet.create(COLON, EQ, COMMA, RPAR);
     private static final TokenSet NAMESPACE_NAME_RECOVERY_SET = TokenSet.create(DOT, EOL_OR_SEMICOLON);
+    private static final TokenSet TYPE_REF_FIRST = TokenSet.create(LBRACKET, IDENTIFIER, LBRACE, LPAR);
 
     private final WhitespaceSkippedCallback myWhitespaceSkippedCallback = new WhitespaceSkippedCallback() {
         public void onSkip(IElementType type, int start, int end) {
@@ -511,10 +512,18 @@ public class JetParsing {
 
     }
 
+    /*
+     * attributes
+     *   : attributeAnnotation*
+     *   ;
+     */
     private void parseAttributeList() {
         while (at(LBRACKET)) parseAttributeAnnotation();
     }
 
+    /*
+     * ("(" primaryConstructorParameter{","} ")")
+     */
     private void parsePrimaryConstructorParameterList() {
         assert at(LPAR);
         PsiBuilder.Marker cons = mark();
@@ -531,6 +540,11 @@ public class JetParsing {
         cons.done(PRIMARY_CONSTRUCTOR_PARAMETERS_LIST);
     }
 
+    /*
+     * primaryConstructorParameter
+     *   : modifiers ("val" | "var")? functionParameterRest
+     *   ;
+     */
     private void parsePrimaryConstructorParameter() {
         PsiBuilder.Marker param = mark();
         parseModifierList();
@@ -544,7 +558,12 @@ public class JetParsing {
         param.done(PRIMARY_CONSTRUCTOR_PARAMETER);
     }
 
-    private void parseFunctionParameterRest() {
+    /*
+     * functionParameterRest
+     *   : parameter ("=" expression)?
+     *   ;
+     */
+    private boolean parseFunctionParameterRest() {
         expect(IDENTIFIER, "Parameter name expected", PARAMETER_NAME_RECOVERY_SET);
 
         if (at(COLON)) {
@@ -553,12 +572,14 @@ public class JetParsing {
         }
         else {
             error("Parameters must have type annotation");
+            return false;
         }
 
         if (at(EQ)) {
             advance(); // EQ
             parseExpression();
         }
+        return true;
     }
 
     private void parseExpression() {
@@ -707,7 +728,7 @@ public class JetParsing {
                     parseTypeRef();
                     labeledEntry.done(LABELED_TUPLE_ENTRY);
                 }
-                else if (TokenSet.create(LBRACKET, IDENTIFIER, LBRACE, LPAR).contains(tt())) {
+                else if (TYPE_REF_FIRST.contains(tt())) {
                     parseTypeRef();
                 }
                 else {
@@ -732,11 +753,55 @@ public class JetParsing {
     private void parseSimpleFunctionType() {
         assert at(LBRACE);
 
-        advance(); // LPAR
+        advance(); // LBRACE
 
-        // TODO
+        parseFunctionTypeContents();
 
         expect(RBRACE, "Expecting '}");
+    }
+
+    /*
+     * functionTypeContents
+     *   : "(" (parameter | type){","} ")" ":" type
+     *   ;
+     */
+    private void parseFunctionTypeContents() {
+        PsiBuilder.Marker parameters = mark();
+        expect(LPAR, "Expecting '(");
+
+        if (!at(RPAR)) {
+            while (true) {
+                if (!parseValueParameter()) {
+                    parseTypeRef();
+                }
+                if (!at(COMMA)) break;
+                advance(); // COMMA
+            }
+        }
+        expect(RPAR, "Expecting ')'");
+        parameters.done(VALUE_PARAMETER_LIST);
+
+        expect(COLON, "Expecting ':' followed by a return type", TYPE_REF_FIRST);
+
+        parseTypeRef();
+    }
+
+    /*
+     * functionParameter
+     *   : modifiers functionParameterRest
+     *   ;
+     */
+    private boolean parseValueParameter() {
+        PsiBuilder.Marker parameter = mark();
+
+        parseModifierList();
+        if (!parseFunctionParameterRest()) {
+            parameter.rollbackTo();
+            return false;
+        }
+
+        parameter.done(VALUE_PARAMETER);
+        return true;
     }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -47,5 +47,5 @@ typeConstraint
   ;
 
 primaryConstructorParameter
-  : modifiers ("val" | "var")? parameter // TODO: ref/out?
+  : modifiers ("val" | "var")? functionParameterRest
   ;
