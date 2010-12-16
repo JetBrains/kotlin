@@ -772,6 +772,7 @@ public class JetParsing {
         if (!at(RPAR)) {
             while (true) {
                 if (!parseValueParameter()) {
+                    parseModifierList(); // lazy, out, ref
                     parseTypeRef();
                 }
                 if (!at(COMMA)) break;

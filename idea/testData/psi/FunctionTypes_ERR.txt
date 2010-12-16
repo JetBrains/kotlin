@@ -13,7 +13,7 @@ JetFile: FunctionTypes_ERR.jet
         PsiElement(LBRACE)('{')
         VALUE_PARAMETER_LIST
           PsiElement(LPAR)('(')
-          TYPE_REFERENCE
+          MODIFIER_LIST
             ATTRIBUTE_ANNOTATION
               PsiElement(LBRACKET)('[')
               ATTRIBUTE
@@ -21,7 +21,8 @@ JetFile: FunctionTypes_ERR.jet
                   USER_TYPE
                     PsiElement(IDENTIFIER)('a')
               PsiElement(RBRACKET)(']')
-            PsiWhiteSpace(' ')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
             USER_TYPE
               PsiElement(IDENTIFIER)('a')
           PsiElement(RPAR)(')')

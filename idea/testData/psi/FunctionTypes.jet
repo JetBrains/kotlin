@@ -12,3 +12,5 @@ type f = {(a : [a] a, foo, x : bar) : b}
 type f = {(foo, a : a) : b}
 type f = {(foo, a : {(a) : b}) : b}
 type f = {(foo, a : {(a) : b}) : {() : ()}}
+
+type f = {(lazy foo, out a : {(ref a) : b}) : {() : ()}}

@@ -30,7 +30,7 @@ functionType
   ;
 
 functionTypeContents
-  : "(" (parameter | type){","} ")" ":" type
+  : "(" (parameter | modifiers /*lazy out ref*/ type){","} ")" ":" type
   ;
 
 tupleType
