@@ -1,0 +1,225 @@
+JetFile: Properties_ERR.jet
+  NAMESPACE
+    PROPERTY
+      PsiElement(val)('val')
+      PsiWhiteSpace(' ')
+      RECEIVER_TYPE_ATTRIBUTES
+        <empty list>
+      PsiElement(IDENTIFIER)('foo')
+      PsiWhiteSpace(' ')
+      PsiElement(COLON)(':')
+      PsiWhiteSpace('\n')
+      TYPE_REFERENCE
+        PsiErrorElement:Type expected
+          <empty list>
+    PROPERTY
+      PsiElement(val)('val')
+      PsiWhiteSpace(' ')
+      RECEIVER_TYPE_ATTRIBUTES
+        ATTRIBUTE_ANNOTATION
+          PsiElement(LBRACKET)('[')
+          ATTRIBUTE
+            USER_TYPE
+              USER_TYPE
+                PsiElement(IDENTIFIER)('a')
+          PsiErrorElement:Expecting ']' to close an attribute annotation
+            <empty list>
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('foo')
+      PsiWhiteSpace(' ')
+      PsiElement(EQ)('=')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('foo')
+    PsiWhiteSpace('\n')
+    PROPERTY
+      PsiElement(val)('val')
+      PsiWhiteSpace(' ')
+      TYPE_REFERENCE
+        USER_TYPE
+          PsiElement(IDENTIFIER)('foo')
+        PsiElement(DOT)('.')
+        USER_TYPE
+          PsiElement(IDENTIFIER)('bar')
+        PsiElement(DOT)('.')
+        PsiErrorElement:Type expected
+          <empty list>
+    PsiWhiteSpace('\n')
+    PROPERTY
+      PsiElement(val)('val')
+      PsiWhiteSpace(' ')
+      RECEIVER_TYPE_ATTRIBUTES
+        ATTRIBUTE_ANNOTATION
+          PsiElement(LBRACKET)('[')
+          ATTRIBUTE
+            USER_TYPE
+              USER_TYPE
+                PsiElement(IDENTIFIER)('a')
+          PsiElement(RBRACKET)(']')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('foo')
+      PsiWhiteSpace(' ')
+      PsiElement(COLON)(':')
+      PsiWhiteSpace(' ')
+      TYPE_REFERENCE
+        PsiErrorElement:Type expected
+          <empty list>
+      PsiElement(EQ)('=')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('bar')
+    PsiWhiteSpace('\n')
+    PROPERTY
+      PsiElement(val)('val')
+      PsiWhiteSpace(' ')
+      TYPE_REFERENCE
+        USER_TYPE
+          PsiElement(IDENTIFIER)('foo')
+        PsiElement(DOT)('.')
+        USER_TYPE
+          PsiElement(IDENTIFIER)('bar')
+      PsiWhiteSpace(' ')
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n   ')
+      PROPERTY_GETTER
+        MODIFIER_LIST
+          PsiElement(public)('public')
+        PsiErrorElement:Expecting 'get' or 'set'
+          <empty list>
+        PsiWhiteSpace(' ')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(LBRACE)('{')
+        PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n   ')
+      PROPERTY_GETTER
+        PsiErrorElement:Expecting 'get' or 'set'
+          <empty list>
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('foo')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+    PsiWhiteSpace('\n')
+    PROPERTY
+      PsiElement(val)('val')
+      PsiWhiteSpace(' ')
+      TYPE_REFERENCE
+        USER_TYPE
+          PsiElement(IDENTIFIER)('foo')
+        PsiElement(DOT)('.')
+        USER_TYPE
+          PsiElement(IDENTIFIER)('bar')
+        PsiElement(DOT)('.')
+        FUNCTION_TYPE
+          PsiElement(LBRACE)('{')
+          VALUE_PARAMETER_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            TUPLE_TYPE
+              PsiElement(LPAR)('(')
+              PsiElement(RPAR)(')')
+          PsiElement(RBRACE)('}')
+        PsiElement(DOT)('.')
+        USER_TYPE
+          PsiElement(IDENTIFIER)('foo')
+      PsiWhiteSpace(' ')
+      PsiElement(EQ)('=')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('foo')
+      PsiWhiteSpace(' ')
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n   ')
+      PROPERTY_GETTER
+        PsiErrorElement:Expecting 'get' or 'set'
+          PsiElement(IDENTIFIER)('dfget')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(LBRACE)('{')
+        PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n   ')
+      PROPERTY_GETTER
+        PsiElement(set)('set')
+        VALUE_PARAMETER_LIST
+          PsiErrorElement:Expecting '(
+            <empty list>
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(LBRACE)('{')
+        PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+    PsiWhiteSpace('\n')
+    PROPERTY
+      PsiElement(val)('val')
+      PsiWhiteSpace(' ')
+      TYPE_REFERENCE
+        USER_TYPE
+          PsiElement(IDENTIFIER)('foo')
+        PsiElement(DOT)('.')
+        USER_TYPE
+          PsiElement(IDENTIFIER)('bar')
+        PsiElement(DOT)('.')
+        FUNCTION_TYPE
+          PsiElement(LBRACE)('{')
+          VALUE_PARAMETER_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            TUPLE_TYPE
+              PsiElement(LPAR)('(')
+              PsiElement(RPAR)(')')
+          PsiElement(RBRACE)('}')
+        PsiElement(DOT)('.')
+        USER_TYPE
+          PsiElement(IDENTIFIER)('foo')
+      PsiWhiteSpace(' ')
+      PsiElement(EQ)('=')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('foo')
+      PsiWhiteSpace(' ')
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n   ')
+      PROPERTY_GETTER
+        PsiElement(get)('get')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiErrorElement:Expecting a parameter declaration
+            PsiElement(IDENTIFIER)('foo')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(LBRACE)('{')
+        PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n   ')
+      PROPERTY_GETTER
+        PsiElement(set)('set')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(LBRACE)('{')
+        PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n   ')
+      PsiErrorElement:Expecting '}'
+        PsiElement(IDENTIFIER)('set')
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(LBRACE)('{')
+      PsiElement(RBRACE)('}')
+    PsiWhiteSpace('\n')
+    PsiErrorElement:Expecting namespace or top level declaration
+      PsiElement(RBRACE)('}')
