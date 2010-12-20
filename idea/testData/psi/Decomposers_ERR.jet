@@ -8,3 +8,6 @@ decomposer foobar([a])
 decomposer (a, a).
 decomposer ().
 decomposer foo<T>.{() : ()}.bar(a, a).
+
+
+decomposer foo.bar.-()

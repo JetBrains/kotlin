@@ -175,3 +175,19 @@ JetFile: Decomposers_ERR.jet
         PsiElement(RPAR)(')')
     PsiErrorElement:Expecting namespace or top level declaration
       PsiElement(DOT)('.')
+    PsiWhiteSpace('\n\n\n')
+    DECOMPOSER
+      PsiElement(decomposer)('decomposer')
+      PsiWhiteSpace(' ')
+      TYPE_REFERENCE
+        USER_TYPE
+          PsiElement(IDENTIFIER)('foo')
+        PsiElement(DOT)('.')
+        USER_TYPE
+          PsiElement(IDENTIFIER)('bar')
+      PsiElement(DOT)('.')
+      PsiErrorElement:Expecting decomposer name
+        PsiElement(MINUS)('-')
+      DECOMPOSER_PROPERTY_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')

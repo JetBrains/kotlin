@@ -107,7 +107,8 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
     }
 
     protected void skipUntil(TokenSet tokenSet) {
-        while (!eof() && !tokenSet.contains(tt())) {
+        boolean stopAtEolOrSemi = tokenSet.contains(EOL_OR_SEMICOLON);
+        while (!eof() && !tokenSet.contains(tt()) && !(stopAtEolOrSemi && at(EOL_OR_SEMICOLON))) {
             advance();
         }
     }

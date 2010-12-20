@@ -1,6 +1,44 @@
 JetFile: Properties_ERR.jet
   NAMESPACE
     PROPERTY
+      PsiElement(var)('var')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting receiver type or property name
+        PsiElement(MINUS)('-')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('f')
+      PsiWhiteSpace(' ')
+      PsiElement(EQ)('=')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('s')
+    PsiWhiteSpace('\n')
+    PROPERTY
+      PsiElement(var)('var')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting receiver type or property name
+        PsiElement(MINUS)('-')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('f')
+      PsiWhiteSpace(' ')
+      PsiElement(LBRACE)('{')
+      PsiErrorElement:Expecting a getter and/or setter
+        <empty list>
+      PsiElement(RBRACE)('}')
+    PsiWhiteSpace('\n')
+    PROPERTY
+      PsiElement(var)('var')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting receiver type or property name
+        PsiElement(MINUS)('-')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('f')
+      PsiWhiteSpace(' ')
+      PsiElement(COLON)(':')
+      PsiWhiteSpace('\n')
+      TYPE_REFERENCE
+        PsiErrorElement:Type expected
+          <empty list>
+    PROPERTY
       PsiElement(val)('val')
       PsiWhiteSpace(' ')
       RECEIVER_TYPE_ATTRIBUTES
@@ -40,9 +78,9 @@ JetFile: Properties_ERR.jet
         PsiElement(DOT)('.')
         USER_TYPE
           PsiElement(IDENTIFIER)('bar')
-        PsiElement(DOT)('.')
-        PsiErrorElement:Type expected
-          <empty list>
+      PsiElement(DOT)('.')
+      PsiErrorElement:Expecting property name
+        <empty list>
     PsiWhiteSpace('\n')
     PROPERTY
       PsiElement(val)('val')
@@ -222,4 +260,41 @@ JetFile: Properties_ERR.jet
       PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n')
     PsiErrorElement:Expecting namespace or top level declaration
+      PsiElement(RBRACE)('}')
+    PsiWhiteSpace('\n')
+    PROPERTY
+      PsiElement(val)('val')
+      PsiWhiteSpace(' ')
+      TYPE_REFERENCE
+        USER_TYPE
+          PsiElement(IDENTIFIER)('f')
+        PsiElement(DOT)('.')
+        USER_TYPE
+          PsiElement(IDENTIFIER)('d')
+      PsiElement(DOT)('.')
+      PsiErrorElement:Expecting property name
+        PsiElement(MINUS)('-')
+      PsiWhiteSpace(' ')
+      PsiElement(EQ)('=')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('f')
+    PsiWhiteSpace('\n\n')
+    PROPERTY
+      PsiElement(val)('val')
+      PsiWhiteSpace(' ')
+      RECEIVER_TYPE_ATTRIBUTES
+        <empty list>
+      PsiElement(IDENTIFIER)('foo')
+      PsiWhiteSpace(' ')
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      PROPERTY_GETTER
+        PsiElement(get)('get')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiErrorElement:Expecting function body
+          PsiElement(MINUS)('-')
+      PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')

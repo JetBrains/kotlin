@@ -484,18 +484,19 @@ public class JetParsing extends AbstractJetParsing {
         parseAttributeList();
 
         TokenSet propertyNameFollow = TokenSet.create(COLON, EQ, LBRACE, EOL_OR_SEMICOLON);
-        if (at(IDENTIFIER) && propertyNameFollow.contains(lookahead(1))) {
+        if (at(IDENTIFIER) && propertyNameFollow.contains(lookahead(1))) { // There's no explicit receiver specified
             // val [a] name = foo
             receiverTypeAttributes.done(RECEIVER_TYPE_ATTRIBUTES);
             advance(); // IDENTIFIER
         }
-        else {
-            receiverTypeAttributes.rollbackTo();
+        else { // There must be an explicit receiver
+            receiverTypeAttributes.rollbackTo(); // Attributes are a part of the receiver type
             if (!TYPE_REF_FIRST.contains(tt())) {
-                errorAndAdvance("Expecting receiver type or property name");
+                errorUntil("Expecting receiver type or property name", propertyNameFollow);
             }
             else {
-                // TODO: if this type is annotated with an attribute, and it is a single identifier, it is a error (fun [a] foo())
+                // TODO: if this type is annotated with an attribute, and it is a single identifier,
+                // TODO: it is NOT an error (fun [a] foo()) -- annotation on receiver
                 parseTypeRef();
                 // The property name may appear as the last section of the type
                 if (at(DOT)) {
@@ -520,7 +521,12 @@ public class JetParsing extends AbstractJetParsing {
 
             // TODO: review
             // TODO: $field = foo or something like this
-            parsePropertyGetterOrSetter();
+            if (at(RBRACE)) {
+                error("Expecting a getter and/or setter");
+            }
+            else {
+                parsePropertyGetterOrSetter();
+            }
             if (!at(RBRACE)) parsePropertyGetterOrSetter();
 
             if (!at(RBRACE)) {
@@ -591,7 +597,7 @@ public class JetParsing extends AbstractJetParsing {
             myExpressionParsing.parseExpression();
         }
         else {
-            error("Expecting function body");
+            errorAndAdvance("Expecting function body");
         }
     }
 
@@ -812,6 +818,7 @@ public class JetParsing extends AbstractJetParsing {
 
         parseAttributeList();
 
+        TokenSet simpleTypeFirst = TokenSet.create(IDENTIFIER, LBRACE, LPAR);
         while (true) {
             if (at(IDENTIFIER)) {
                 parseSimpleUserType();
@@ -826,7 +833,12 @@ public class JetParsing extends AbstractJetParsing {
             }
 
             if (!at(DOT)) break;
-            advance(); // DOT
+            if (simpleTypeFirst.contains(lookahead(1))) {
+                advance(); // DOT
+            } else {
+                break;
+                // TODO: ERROR here?
+            }
         }
         type.done(TYPE_REFERENCE);
     }

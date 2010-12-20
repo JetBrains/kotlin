@@ -1,3 +1,6 @@
+var - f = s
+var - f {}
+var - f :
 val foo :
 val [a foo = foo
 val foo.bar.
@@ -14,4 +17,9 @@ val foo.bar.{() : ()}.foo = foo {
    get(foo) {}
    set() {}
    set() {}
+}
+val f.d.- = f
+
+val foo {
+    get() -
 }
