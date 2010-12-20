@@ -497,32 +497,6 @@ public class JetParsing extends AbstractJetParsing {
             expect(IDENTIFIER, "Expecting property name", propertyNameFollow);
         }
 
-
-//        PsiBuilder.Marker receiverTypeAttributes = mark();
-//        parseAttributeList();
-//
-//        if (at(IDENTIFIER) && propertyNameFollow.contains(lookahead(1))) { // There's no explicit receiver specified
-//            // val [a] name = foo
-//            receiverTypeAttributes.done(RECEIVER_TYPE_ATTRIBUTES);
-//            advance(); // IDENTIFIER
-//        }
-//        else { // There must be an explicit receiver
-//            receiverTypeAttributes.rollbackTo(); // Attributes are a part of the receiver type
-//            if (!TYPE_REF_FIRST.contains(tt())) {
-//                errorUntil("Expecting receiver type or property name", propertyNameFollow);
-//            }
-//            else {
-//                // TODO: if this type is annotated with an attribute, and it is a single identifier,
-//                // TODO: it is NOT an error (fun [a] foo()) -- annotation on receiver
-//                parseTypeRef();
-//                // The property name may appear as the last section of the type
-//                if (at(DOT)) {
-//                    advance(); // DOT
-//                    expect(IDENTIFIER, "Expecting property name", propertyNameFollow);
-//                }
-//            }
-//        }
-
         if (at(COLON)) {
             advance(); // COLON
             parseTypeRef();
@@ -617,32 +591,6 @@ public class JetParsing extends AbstractJetParsing {
             expect(DOT, "Expecting '.' before a function name", functionNameFollow);
             expect(IDENTIFIER, "Expecting function name", functionNameFollow);
         }
-
-//        PsiBuilder.Marker receiverTypeAttributes = mark();
-//
-//        parseAttributeList();
-//
-//        if (at(IDENTIFIER) && lookahead(1) == LPAR) { // There's no explicit receiver specified
-//            // fun [a] name() = foo
-//            receiverTypeAttributes.done(RECEIVER_TYPE_ATTRIBUTES);
-//            advance(); // IDENTIFIER
-//        }
-//        else { // There must be an explicit receiver
-//            receiverTypeAttributes.rollbackTo(); // Attributes are a part of the receiver type
-//            if (!TYPE_REF_FIRST.contains(tt())) {
-//                errorUntil("Expecting receiver type or property name", TokenSet.create(LPAR, EOL_OR_SEMICOLON));
-//            }
-//            else {
-//                // TODO: if this type is annotated with an attribute, and it is a single identifier,
-//                // TODO: it is NOT an error (fun [a] foo()) -- annotation on receiver
-//                parseTypeRef();
-//                // The property name may appear as the last section of the type
-//                if (at(DOT)) {
-//                    advance(); // DOT
-//                    expect(IDENTIFIER, "Expecting property name", TokenSet.create(LPAR));
-//                }
-//            }
-//        }
 
         TokenSet valueParametersFollow = TokenSet.create(COLON, EQ, LBRACE, SEMICOLON, RPAR);
 
@@ -768,7 +716,25 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      */
     private JetNodeType parseExtension() {
-        advance(); // TODO
+        assert at(EXTENSION_KEYWORD);
+
+        advance(); // EXTENSION_KEYWORD
+
+        consumeIf(IDENTIFIER);
+
+        parseTypeParameterList(TokenSet.create(FOR_KEYWORD, LBRACE));
+
+        expect(FOR_KEYWORD, "Expecting 'for' to specify the type that is being extended", TYPE_REF_FIRST);
+
+        parseTypeRef();
+
+        if (at(LBRACE)) {
+            parseClassBody();
+        }
+        else {
+            consumeIf(SEMICOLON);
+        }
+
         return EXTENSION;
     }
 

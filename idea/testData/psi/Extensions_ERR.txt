@@ -1,0 +1,86 @@
+JetFile: Extensions_ERR.jet
+  NAMESPACE
+    EXTENSION
+      PsiElement(extension)('extension')
+      PsiWhiteSpace(' ')
+      TYPE_PARAMETER_LIST
+        <empty list>
+      PsiElement(for)('for')
+      PsiWhiteSpace('\n')
+      TYPE_REFERENCE
+        PsiErrorElement:Type expected
+          <empty list>
+    EXTENSION
+      PsiElement(extension)('extension')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('foo')
+      PsiWhiteSpace(' ')
+      TYPE_PARAMETER_LIST
+        <empty list>
+      PsiErrorElement:Expecting 'for' to specify the type that is being extended
+        <empty list>
+      TYPE_REFERENCE
+        USER_TYPE
+          PsiElement(IDENTIFIER)('bar')
+    PsiWhiteSpace('\n')
+    EXTENSION
+      PsiElement(extension)('extension')
+      PsiWhiteSpace(' ')
+      TYPE_PARAMETER_LIST
+        PsiElement(LT)('<')
+        TYPE_PARAMETER
+          PsiElement(IDENTIFIER)('foo')
+        PsiErrorElement:Missing '>'
+          <empty list>
+      PsiWhiteSpace(' ')
+      PsiElement(for)('for')
+      PsiWhiteSpace(' ')
+      TYPE_REFERENCE
+        USER_TYPE
+          PsiElement(IDENTIFIER)('bar')
+    PsiWhiteSpace('\n')
+    EXTENSION
+      PsiElement(extension)('extension')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('foo')
+      TYPE_PARAMETER_LIST
+        PsiElement(LT)('<')
+        TYPE_PARAMETER
+          PsiElement(IDENTIFIER)('A')
+        PsiElement(GT)('>')
+      PsiWhiteSpace(' ')
+      PsiElement(for)('for')
+      PsiWhiteSpace('\n')
+      TYPE_REFERENCE
+        PsiErrorElement:Type expected
+          <empty list>
+    EXTENSION
+      PsiElement(extension)('extension')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('foo')
+      TYPE_PARAMETER_LIST
+        PsiElement(LT)('<')
+        TYPE_PARAMETER
+          PsiElement(IDENTIFIER)('A')
+        PsiElement(GT)('>')
+      PsiWhiteSpace(' ')
+      PsiElement(for)('for')
+      PsiWhiteSpace(' ')
+      TYPE_REFERENCE
+        FUNCTION_TYPE
+          PsiElement(LBRACE)('{')
+          VALUE_PARAMETER_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            TUPLE_TYPE
+              PsiElement(LPAR)('(')
+              PsiElement(RPAR)(')')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace(' ')
+      CLASS_BODY
+        PsiElement(LBRACE)('{')
+        PsiElement(RBRACE)('}')
