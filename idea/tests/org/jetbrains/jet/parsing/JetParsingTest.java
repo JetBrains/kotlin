@@ -48,4 +48,6 @@ public class JetParsingTest extends ParsingTestCase {
     public void testDecomposers_ERR() throws Exception {doTest(true);}
     public void testProperties() throws Exception {doTest(true);}
     public void testProperties_ERR() throws Exception {doTest(true);}
+    public void testFunctions() throws Exception {doTest(true);}
+    public void testFunctions_ERR() throws Exception {doTest(true);}
 }

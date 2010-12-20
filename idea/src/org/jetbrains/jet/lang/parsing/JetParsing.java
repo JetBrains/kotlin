@@ -8,7 +8,6 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.jet.JetNodeType;
 import org.jetbrains.jet.lexer.JetKeywordToken;
-import org.jetbrains.jet.lexer.JetToken;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -407,7 +406,7 @@ public class JetParsing extends AbstractJetParsing {
         advance(); // CLASS_KEYWORD
 
         expect(IDENTIFIER, "Class name expected", CLASS_NAME_RECOVERY_SET);
-        parseTypeParameterList();
+        parseTypeParameterList(TYPE_PARAMETER_GT_RECOVERY_SET);
 
         consumeIf(WRAPS_KEYWORD);
         if (at(LPAR)) {
@@ -458,7 +457,7 @@ public class JetParsing extends AbstractJetParsing {
 
         expect(IDENTIFIER, "Type name expected", TokenSet.orSet(TokenSet.create(LT, EQ, SEMICOLON), TOPLEVEL_OBJECT_FIRST));
 
-        parseTypeParameterList();
+        parseTypeParameterList(TYPE_PARAMETER_GT_RECOVERY_SET);
 
         expect(EQ, "Expecting '='", TokenSet.orSet(TOPLEVEL_OBJECT_FIRST, TokenSet.create(SEMICOLON)));
 
@@ -545,7 +544,7 @@ public class JetParsing extends AbstractJetParsing {
      * getter
      *   : modifiers
      *        (     "get" "(" ")"
-     *          |
+     *           |
      *              "set" "(" modifiers parameter ")"
      *        ) functionBody
      *   ;
@@ -561,7 +560,7 @@ public class JetParsing extends AbstractJetParsing {
         else {
             advance(); // GET_KEYWORD or SET_KEYWORD
         }
-        parseValueParameterList(false);
+        parseValueParameterList(false, TokenSet.create(RPAR));
 
         parseFunctionBody();
 
@@ -578,8 +577,127 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      */
     private JetNodeType parseFunction() {
-        advance(); // TODO
+        assert at(FUN_KEYWORD);
+
+        advance(); // FUN_KEYWORD
+
+        // TODO: This code is very close to what we have for properties
+
+
+        int lastDot = findLastDotBeforeLPAR();
+
+        if (lastDot == -1) { // There's no explicit receiver type specified
+            parseAttributeList();
+            expect(IDENTIFIER, "Expecting function name or receiver type");
+        } else {
+            // The code below in NOT REENTRANT
+            myBuilder.setEOFPosition(lastDot);
+            parseTypeRef();
+            myBuilder.unSetEOFPosition();
+
+            TokenSet functionNameFollow = TokenSet.create(LT, LPAR, COLON, EQ);
+            expect(DOT, "Expecting '.' before a function name", functionNameFollow);
+            expect(IDENTIFIER, "Expecting function name", functionNameFollow);
+
+        }
+
+//        PsiBuilder.Marker receiverTypeAttributes = mark();
+//
+//        parseAttributeList();
+//
+//        if (at(IDENTIFIER) && lookahead(1) == LPAR) { // There's no explicit receiver specified
+//            // fun [a] name() = foo
+//            receiverTypeAttributes.done(RECEIVER_TYPE_ATTRIBUTES);
+//            advance(); // IDENTIFIER
+//        }
+//        else { // There must be an explicit receiver
+//            receiverTypeAttributes.rollbackTo(); // Attributes are a part of the receiver type
+//            if (!TYPE_REF_FIRST.contains(tt())) {
+//                errorUntil("Expecting receiver type or property name", TokenSet.create(LPAR, EOL_OR_SEMICOLON));
+//            }
+//            else {
+//                // TODO: if this type is annotated with an attribute, and it is a single identifier,
+//                // TODO: it is NOT an error (fun [a] foo()) -- annotation on receiver
+//                parseTypeRef();
+//                // The property name may appear as the last section of the type
+//                if (at(DOT)) {
+//                    advance(); // DOT
+//                    expect(IDENTIFIER, "Expecting property name", TokenSet.create(LPAR));
+//                }
+//            }
+//        }
+
+        TokenSet valueParametersFollow = TokenSet.create(COLON, EQ, LBRACE, SEMICOLON, RPAR);
+
+        parseTypeParameterList(TokenSet.orSet(TokenSet.create(LPAR), valueParametersFollow));
+
+        parseValueParameterList(false, valueParametersFollow);
+
+        if (at(COLON)) {
+            advance(); // COLON
+
+            parseTypeRef();
+        }
+
+        if (at(EOL_OR_SEMICOLON)) {
+            consumeIf(SEMICOLON);
+        } else {
+            parseFunctionBody();
+        }
+
         return FUN;
+    }
+
+    /*
+     * Looks for a the last top-level (not inside any {} [] () <>) '.' occurring before a top-level '('
+     */
+    private int findLastDotBeforeLPAR() {
+        PsiBuilder.Marker currentPosition = mark();
+        int lastDot = -1;
+        int openAngleBrackets = 0;
+        int openBraces = 0;
+        int openParentheses = 0;
+        int openBrackets = 0;
+        while (!eof()) {
+            if (at(LPAR)) {
+                if (openAngleBrackets == 0
+                    && openBrackets == 0
+                    && openBraces == 0
+                    && openParentheses == 0) break;
+                openParentheses++;
+            }
+            else if (at(LT)) {
+                openAngleBrackets++;
+            }
+            else if (at(LBRACE)) {
+                openBraces++;
+            }
+            else if (at(LBRACKET)) {
+                openBrackets++;
+            }
+            else if (at(RPAR)) {
+                openParentheses--;
+            }
+            else if (at(GT)) {
+                openAngleBrackets--;
+            }
+            else if (at(RBRACE)) {
+                openBraces--;
+            }
+            else if (at(RBRACKET)) {
+                openBrackets--;
+            }
+            else if (at(DOT)
+                    && openAngleBrackets == 0
+                    && openBrackets == 0
+                    && openBraces == 0
+                    && openParentheses == 0) {
+                lastDot = myBuilder.getCurrentOffset();
+            }
+            advance(); // skip token
+        }
+        currentPosition.rollbackTo();
+        return lastDot;
     }
 
     /*
@@ -595,6 +713,7 @@ public class JetParsing extends AbstractJetParsing {
         else if (at(EQ)) {
             advance(); // EQ
             myExpressionParsing.parseExpression();
+            consumeIf(SEMICOLON);
         }
         else {
             errorAndAdvance("Expecting function body");
@@ -765,21 +884,22 @@ public class JetParsing extends AbstractJetParsing {
      *      ("where" typeConstraint{","})?)?
      *   ;
      */
-    private void parseTypeParameterList() {
+    private void parseTypeParameterList(TokenSet recoverySet) {
         PsiBuilder.Marker list = mark();
-        if (tt() == LT) {
+        if (at(LT)) {
             advance(); // LT
 
             while (true) {
+                if (at(COMMA)) errorAndAdvance("Expecting type parameter declaration");
                 parseTypeParameter();
 
                 if (!at(COMMA)) break;
                 advance(); // COMMA
             }
 
-            expect(GT, "Missing '>'", TYPE_PARAMETER_GT_RECOVERY_SET);
+            expect(GT, "Missing '>'", recoverySet);
+            // TODO : where an stuff
         }
-        // TODO : where an stuff
         list.done(TYPE_PARAMETER_LIST);
     }
 
@@ -828,7 +948,9 @@ public class JetParsing extends AbstractJetParsing {
             } else if (at(LPAR)) {
                 parseTupleType();
             } else {
-                error("Type expected");
+                errorWithRecovery("Type expected",
+                        TokenSet.orSet(TOPLEVEL_OBJECT_FIRST,
+                                TokenSet.create(EQ, COMMA, GT, RBRACKET, DOT, RPAR, RBRACE, LBRACE, SEMICOLON)));
                 break;
             }
 
@@ -962,7 +1084,7 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      */
     private void parseFunctionTypeContents() {
-        parseValueParameterList(true);
+        parseValueParameterList(true, TokenSet.EMPTY);
 
         expect(COLON, "Expecting ':' followed by a return type", TYPE_REF_FIRST);
 
@@ -982,12 +1104,13 @@ public class JetParsing extends AbstractJetParsing {
      *   : parameter ("=" expression)?
      *   ;
      */
-    private void parseValueParameterList(boolean isFunctionTypeContents) {
+    private void parseValueParameterList(boolean isFunctionTypeContents, TokenSet recoverySet) {
         PsiBuilder.Marker parameters = mark();
-        expect(LPAR, "Expecting '(");
+        expect(LPAR, "Expecting '(", recoverySet);
 
         if (!at(RPAR)) {
             while (true) {
+                if (at(COMMA)) errorAndAdvance("Expecting a parameter declaration");
                 if (!parseValueParameter()) {
                     if (isFunctionTypeContents) {
                         parseModifierList(); // lazy, out, ref
@@ -1000,7 +1123,7 @@ public class JetParsing extends AbstractJetParsing {
                 advance(); // COMMA
             }
         }
-        expect(RPAR, "Expecting ')'");
+        expect(RPAR, "Expecting ')'", recoverySet);
         parameters.done(VALUE_PARAMETER_LIST);
     }
 

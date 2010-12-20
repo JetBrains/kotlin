@@ -23,6 +23,7 @@ public class SemanticWitespaceAwarePsiBuilder extends PsiBuilderAdapter {
     };
 
     private boolean myEOLInLastWhitespace;
+    private int myEOFPosition = -1;
 
     public SemanticWitespaceAwarePsiBuilder(final PsiBuilder delegate) {
         super(delegate);
@@ -37,5 +38,31 @@ public class SemanticWitespaceAwarePsiBuilder extends PsiBuilderAdapter {
 
     public boolean eolInLastWhitespace() {
         return myEOLInLastWhitespace;
+    }
+
+    @Override
+    public boolean eof() {
+        if (super.eof()) return true;
+        return myEOFPosition >= 0 && getCurrentOffset() >= myEOFPosition;
+    }
+
+    @Override
+    public String getTokenText() {
+        if (eof()) return null;
+        return super.getTokenText();
+    }
+
+    @Override
+    public IElementType getTokenType() {
+        if (eof()) return null;
+        return super.getTokenType();
+    }
+
+    public void setEOFPosition(int myEOFPosition) {
+        this.myEOFPosition = myEOFPosition;
+    }
+
+    public void unSetEOFPosition() {
+        this.myEOFPosition = -1;
     }
 }

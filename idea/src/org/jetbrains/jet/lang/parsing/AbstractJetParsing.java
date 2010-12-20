@@ -46,7 +46,7 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
         IElementType tt = tt();
         if (recoverySet == null || recoverySet.contains(tt)
                 || (recoverySet.contains(EOL_OR_SEMICOLON)
-                        && (tt == SEMICOLON || myBuilder.eolInLastWhitespace()))) {
+                        && (eof() || tt == SEMICOLON || myBuilder.eolInLastWhitespace()))) {
             error(message);
         }
         else {
@@ -80,6 +80,7 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
         IElementType token = tt();
         if (token == expectation) return true;
         if (expectation == EOL_OR_SEMICOLON) {
+            if (eof()) return true;
             if (token == SEMICOLON) return true;
             if (myBuilder.eolInLastWhitespace()) return true;
         }
