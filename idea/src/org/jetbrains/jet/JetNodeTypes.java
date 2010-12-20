@@ -47,6 +47,9 @@ public interface JetNodeTypes {
     JetNodeType DECOMPOSER_PROPERTY_LIST = new JetNodeType("DECOMPOSER_PROPERTY_LIST");
     JetNodeType RECEIVER_TYPE_ATTRIBUTES = new JetNodeType("RECEIVER_TYPE_ATTRIBUTES");
     JetNodeType PROPERTY_GETTER = new JetNodeType("PROPERTY_GETTER");
+    JetNodeType CONSTRUCTOR = new JetNodeType("CONSTRUCTOR");
+    JetNodeType INITIALIZER_LIST = new JetNodeType("INITIALIZER_LIST");
+    JetNodeType THIS_CALL = new JetNodeType("THIS_CALL");
 
     IElementType NAMESPACE_NAME = new JetNodeType("NAMESPACE_NAME");
 }

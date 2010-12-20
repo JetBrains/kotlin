@@ -439,10 +439,139 @@ public class JetParsing extends AbstractJetParsing {
             if (at(RBRACE)) {
                 break;
             }
-            advance(); // TODO
+            parseMemberDeclaration();
         }
         expect(RBRACE, "Missing '}");
         body.done(CLASS_BODY);
+    }
+
+    /*
+     * memberDeclaration
+     *   : classObject
+     *   : constructor
+     *   : decomposer
+     *   : function
+     *   : property
+     *   : class
+     *   : extension
+     *   : typedef
+     *   ;
+     */
+    private void parseMemberDeclaration() {
+        PsiBuilder.Marker decl = mark();
+
+        IElementType keywordToken = tt();
+        JetNodeType declType = null;
+        if (keywordToken == CLASS_KEYWORD) {
+            if (lookahead(1) == OBJECT_KEYWORD) {
+                declType = parseClassObject();
+            }
+            else {
+                declType = parseClass();
+            }
+        }
+        else if (keywordToken == EXTENSION_KEYWORD) {
+            declType = parseExtension();
+        }
+        else if (keywordToken == FUN_KEYWORD) {
+            declType = parseFunction();
+        }
+        else if (keywordToken == VAL_KEYWORD || keywordToken == VAR_KEYWORD) {
+            declType = parseProperty();
+        }
+        else if (keywordToken == TYPE_KEYWORD) {
+            declType = parseTypeDef();
+        }
+        else if (keywordToken == DECOMPOSER_KEYWORD) {
+            declType = parseDecomposer();
+        }
+        else if (keywordToken == THIS_KEYWORD) {
+            declType = parseConstructor();
+        }
+
+        if (declType == null) {
+            errorAndAdvance("Expecting namespace or top level declaration");
+            decl.drop();
+        }
+        else {
+            decl.done(declType);
+        }
+    }
+
+    /*
+     * constructor
+     *   : modifiers "this" functionParameters (":" initializer{","}) block?
+     *   ;
+     */
+    private JetNodeType parseConstructor() {
+        assert at(THIS_KEYWORD);
+
+        advance(); // THIS_KEYWORD
+
+        parseValueParameterList(false, TokenSet.create(COLON, LBRACE, SEMICOLON));
+
+        if (at(COLON)) {
+            advance(); // COLON
+
+            parseInitializerList();
+        }
+
+        if (at(LBRACE)) {
+            parseBlock();
+        }
+        else {
+            consumeIf(SEMICOLON);
+        }
+
+        return CONSTRUCTOR;
+    }
+
+    /*
+     * initializer{","}
+     */
+    private void parseInitializerList() {
+        PsiBuilder.Marker list = mark();
+        while (true) {
+            if (at(COMMA)) errorAndAdvance("Expecting a this or super constructor call");
+            parseInitializer();
+            if (at(COMMA)) break;
+            advance(); // COMMA
+        }
+        list.done(INITIALIZER_LIST);
+    }
+
+    /*
+     * initializer
+     *   : attributes "this" valueArguments
+     *   : attributes constructorInvocation // type parameters may (must?) be omitted
+     *   ;
+     */
+    private void parseInitializer() {
+        PsiBuilder.Marker initializer = mark();
+        parseAttributeList();
+
+        IElementType type;
+        if (at(THIS_KEYWORD)) {
+            advance(); // THIS_KEYWORD
+            type = THIS_CALL;
+        }
+        else {
+            parseTypeRef();
+            type = DELEGATOR_SUPER_CALL;
+        }
+        myExpressionParsing.parseValueArgumentList();
+
+        initializer.done(type);
+    }
+
+    /*
+     * classObject
+     *   : modifiers "class" objectLiteral
+     *   ;
+     */
+    private JetNodeType parseClassObject() {
+        // TODO
+        return null;
     }
 
     /*
@@ -572,9 +701,6 @@ public class JetParsing extends AbstractJetParsing {
         assert at(FUN_KEYWORD);
 
         advance(); // FUN_KEYWORD
-
-        // TODO: This code is very close to what we have for properties
-
 
         int lastDot = findLastDotBefore(TokenSet.create(LPAR));
 
@@ -908,7 +1034,7 @@ public class JetParsing extends AbstractJetParsing {
         parseModifierList();
         expect(IDENTIFIER, "Type parameter name expected", TokenSet.EMPTY);
 
-        // TODO : other
+        // TODO : other constraints
         if (at(COLON)) {
             advance(); // COLON
             parseTypeRef();

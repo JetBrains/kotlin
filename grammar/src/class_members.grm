@@ -46,7 +46,7 @@ classObject
   ;
 
 constructor
-  : modifiers "this" functionParameters (":" initializers) block
+  : modifiers "this" functionParameters (":" initializer{","}) block?
   ;
 
 functionParameters
@@ -61,7 +61,7 @@ functionParameterRest
   : parameter ("=" expression)?
   ;
 
-initializers
+initializer
   : attributes "this" valueArguments
   : attributes constructorInvocation // type parameters may (must?) be omitted
   ;
