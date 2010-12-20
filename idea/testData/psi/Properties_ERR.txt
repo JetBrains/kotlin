@@ -3,22 +3,8 @@ JetFile: Properties_ERR.jet
     PROPERTY
       PsiElement(var)('var')
       PsiWhiteSpace(' ')
-      PsiErrorElement:Expecting receiver type or property name
+      PsiErrorElement:Expecting property name or receiver type
         PsiElement(MINUS)('-')
-        PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('f')
-      PsiWhiteSpace(' ')
-      PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('s')
-    PsiWhiteSpace('\n')
-    PROPERTY
-      PsiElement(var)('var')
-      PsiWhiteSpace(' ')
-      PsiErrorElement:Expecting receiver type or property name
-        PsiElement(MINUS)('-')
-        PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('f')
       PsiWhiteSpace(' ')
       PsiElement(LBRACE)('{')
       PsiErrorElement:Expecting a getter and/or setter
@@ -28,10 +14,17 @@ JetFile: Properties_ERR.jet
     PROPERTY
       PsiElement(var)('var')
       PsiWhiteSpace(' ')
-      PsiErrorElement:Expecting receiver type or property name
-        PsiElement(MINUS)('-')
-        PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('f')
+      PsiElement(IDENTIFIER)('f')
+      PsiWhiteSpace(' ')
+      PsiElement(LBRACE)('{')
+      PsiErrorElement:Expecting a getter and/or setter
+        <empty list>
+      PsiElement(RBRACE)('}')
+    PsiWhiteSpace('\n')
+    PROPERTY
+      PsiElement(var)('var')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('f')
       PsiWhiteSpace(' ')
       PsiElement(COLON)(':')
       PsiWhiteSpace('\n')
@@ -41,8 +34,6 @@ JetFile: Properties_ERR.jet
     PROPERTY
       PsiElement(val)('val')
       PsiWhiteSpace(' ')
-      RECEIVER_TYPE_ATTRIBUTES
-        <empty list>
       PsiElement(IDENTIFIER)('foo')
       PsiWhiteSpace(' ')
       PsiElement(COLON)(':')
@@ -53,15 +44,14 @@ JetFile: Properties_ERR.jet
     PROPERTY
       PsiElement(val)('val')
       PsiWhiteSpace(' ')
-      RECEIVER_TYPE_ATTRIBUTES
-        ATTRIBUTE_ANNOTATION
-          PsiElement(LBRACKET)('[')
-          ATTRIBUTE
+      ATTRIBUTE_ANNOTATION
+        PsiElement(LBRACKET)('[')
+        ATTRIBUTE
+          USER_TYPE
             USER_TYPE
-              USER_TYPE
-                PsiElement(IDENTIFIER)('a')
-          PsiErrorElement:Expecting ']' to close an attribute annotation
-            <empty list>
+              PsiElement(IDENTIFIER)('a')
+        PsiErrorElement:Expecting ']' to close an attribute annotation
+          <empty list>
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('foo')
       PsiWhiteSpace(' ')
@@ -85,14 +75,13 @@ JetFile: Properties_ERR.jet
     PROPERTY
       PsiElement(val)('val')
       PsiWhiteSpace(' ')
-      RECEIVER_TYPE_ATTRIBUTES
-        ATTRIBUTE_ANNOTATION
-          PsiElement(LBRACKET)('[')
-          ATTRIBUTE
+      ATTRIBUTE_ANNOTATION
+        PsiElement(LBRACKET)('[')
+        ATTRIBUTE
+          USER_TYPE
             USER_TYPE
-              USER_TYPE
-                PsiElement(IDENTIFIER)('a')
-          PsiElement(RBRACKET)(']')
+              PsiElement(IDENTIFIER)('a')
+        PsiElement(RBRACKET)(']')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('foo')
       PsiWhiteSpace(' ')
@@ -111,9 +100,8 @@ JetFile: Properties_ERR.jet
       TYPE_REFERENCE
         USER_TYPE
           PsiElement(IDENTIFIER)('foo')
-        PsiElement(DOT)('.')
-        USER_TYPE
-          PsiElement(IDENTIFIER)('bar')
+      PsiElement(DOT)('.')
+      PsiElement(IDENTIFIER)('bar')
       PsiWhiteSpace(' ')
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n   ')
@@ -166,9 +154,8 @@ JetFile: Properties_ERR.jet
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')
           PsiElement(RBRACE)('}')
-        PsiElement(DOT)('.')
-        USER_TYPE
-          PsiElement(IDENTIFIER)('foo')
+      PsiElement(DOT)('.')
+      PsiElement(IDENTIFIER)('foo')
       PsiWhiteSpace(' ')
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
@@ -221,9 +208,8 @@ JetFile: Properties_ERR.jet
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')
           PsiElement(RBRACE)('}')
-        PsiElement(DOT)('.')
-        USER_TYPE
-          PsiElement(IDENTIFIER)('foo')
+      PsiElement(DOT)('.')
+      PsiElement(IDENTIFIER)('foo')
       PsiWhiteSpace(' ')
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
@@ -282,8 +268,6 @@ JetFile: Properties_ERR.jet
     PROPERTY
       PsiElement(val)('val')
       PsiWhiteSpace(' ')
-      RECEIVER_TYPE_ATTRIBUTES
-        <empty list>
       PsiElement(IDENTIFIER)('foo')
       PsiWhiteSpace(' ')
       PsiElement(LBRACE)('{')

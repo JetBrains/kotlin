@@ -47,84 +47,6 @@ JetFile: Functions_ERR.jet
         PsiWhiteSpace(' ')
         USER_TYPE
           PsiElement(IDENTIFIER)('T')
-        PsiElement(DOT)('.')
-        USER_TYPE
-          PsiElement(IDENTIFIER)('foo')
-      PsiElement(DOT)('.')
-      PsiErrorElement:Expecting function name
-        <empty list>
-      TYPE_PARAMETER_LIST
-        <empty list>
-      VALUE_PARAMETER_LIST
-        PsiElement(LPAR)('(')
-        PsiElement(RPAR)(')')
-    PsiWhiteSpace('\n')
-    FUN
-      PsiElement(fun)('fun')
-      PsiWhiteSpace(' ')
-      TYPE_REFERENCE
-        ATTRIBUTE_ANNOTATION
-          PsiElement(LBRACKET)('[')
-          ATTRIBUTE
-            USER_TYPE
-              USER_TYPE
-                PsiElement(IDENTIFIER)('a')
-          PsiElement(RBRACKET)(']')
-        PsiWhiteSpace(' ')
-        USER_TYPE
-          PsiElement(IDENTIFIER)('T')
-          TYPE_ARGUMENT_LIST
-            PsiElement(LT)('<')
-            TYPE_REFERENCE
-              USER_TYPE
-                PsiElement(IDENTIFIER)('T')
-            PsiElement(GT)('>')
-      PsiElement(DOT)('.')
-      PsiErrorElement:Expecting function name
-        PsiElement(LBRACE)('{')
-      TYPE_PARAMETER_LIST
-        <empty list>
-      VALUE_PARAMETER_LIST
-        PsiElement(LPAR)('(')
-        PsiErrorElement:Expecting a parameter declaration
-          PsiElement(IDENTIFIER)('A')
-        PsiErrorElement:Expecting ')'
-          PsiElement(LT)('<')
-      PsiErrorElement:Expecting function body
-        PsiElement(IDENTIFIER)('B')
-    PsiErrorElement:Expecting namespace or top level declaration
-      PsiElement(GT)('>')
-    PsiErrorElement:Expecting namespace or top level declaration
-      PsiElement(RPAR)(')')
-    PsiWhiteSpace(' ')
-    PsiErrorElement:Expecting namespace or top level declaration
-      PsiElement(COLON)(':')
-    PsiWhiteSpace(' ')
-    PsiErrorElement:Expecting namespace or top level declaration
-      PsiElement(LPAR)('(')
-    PsiErrorElement:Expecting namespace or top level declaration
-      PsiElement(RPAR)(')')
-    PsiErrorElement:Expecting namespace or top level declaration
-      PsiElement(RBRACE)('}')
-    PsiErrorElement:Expecting namespace or top level declaration
-      PsiElement(LPAR)('(')
-    PsiErrorElement:Expecting namespace or top level declaration
-      PsiElement(RPAR)(')')
-    PsiWhiteSpace('\n')
-    FUN
-      PsiElement(fun)('fun')
-      PsiWhiteSpace(' ')
-      TYPE_REFERENCE
-        ATTRIBUTE_ANNOTATION
-          PsiElement(LBRACKET)('[')
-          ATTRIBUTE
-            USER_TYPE
-              USER_TYPE
-                PsiElement(IDENTIFIER)('a')
-          PsiElement(RBRACKET)(']')
-        PsiWhiteSpace(' ')
-        USER_TYPE
-          PsiElement(IDENTIFIER)('T')
       PsiElement(DOT)('.')
       PsiElement(IDENTIFIER)('foo')
       TYPE_PARAMETER_LIST
@@ -432,3 +354,55 @@ JetFile: Functions_ERR.jet
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('a')
       PsiElement(SEMICOLON)(';')
+    PsiWhiteSpace('\n\n\n')
+    FUN
+      PsiElement(fun)('fun')
+      PsiWhiteSpace(' ')
+      TYPE_REFERENCE
+        ATTRIBUTE_ANNOTATION
+          PsiElement(LBRACKET)('[')
+          ATTRIBUTE
+            USER_TYPE
+              USER_TYPE
+                PsiElement(IDENTIFIER)('a')
+          PsiElement(RBRACKET)(']')
+        PsiWhiteSpace(' ')
+        USER_TYPE
+          PsiElement(IDENTIFIER)('T')
+          TYPE_ARGUMENT_LIST
+            PsiElement(LT)('<')
+            TYPE_REFERENCE
+              USER_TYPE
+                PsiElement(IDENTIFIER)('T')
+            PsiElement(GT)('>')
+        PsiElement(DOT)('.')
+        FUNCTION_TYPE
+          PsiElement(LBRACE)('{')
+          VALUE_PARAMETER_LIST
+            PsiElement(LPAR)('(')
+            TYPE_REFERENCE
+              USER_TYPE
+                PsiElement(IDENTIFIER)('A')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      PsiElement(IDENTIFIER)('B')
+                  PsiElement(GT)('>')
+            PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            TUPLE_TYPE
+              PsiElement(LPAR)('(')
+              PsiElement(RPAR)(')')
+          PsiElement(RBRACE)('}')
+      PsiElement(DOT)('.')
+      PsiErrorElement:Expecting function name
+        PsiElement(MINUS)('-')
+      TYPE_PARAMETER_LIST
+        <empty list>
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')

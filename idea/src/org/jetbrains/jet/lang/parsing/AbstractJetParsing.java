@@ -94,6 +94,28 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
         return false;
     }
 
+    protected boolean atSet(final TokenSet set) {
+        IElementType token = tt();
+        if (set.contains(token)) return true;
+        if (set.contains(EOL_OR_SEMICOLON)) {
+            if (eof()) return true;
+            if (token == SEMICOLON) return true;
+            if (myBuilder.eolInLastWhitespace()) return true;
+        }
+        if (token == IDENTIFIER) {
+            for (IElementType type : set.getTypes()) {
+                if (type instanceof JetKeywordToken) {
+                    JetKeywordToken expectedKeyword = (JetKeywordToken) type;
+                    if (expectedKeyword.isSoft() && expectedKeyword.getValue().equals(myBuilder.getTokenText())) {
+                        myBuilder.remapCurrentToken(type);
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     protected IElementType lookahead(int k) {
         PsiBuilder.Marker tmp = mark();
         for (int i = 0; i < k; i++) advance();

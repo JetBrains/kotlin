@@ -188,7 +188,7 @@ public class JetParsing extends AbstractJetParsing {
             declType = parseProperty();
         }
         else if (keywordToken == TYPE_KEYWORD) {
-            declType = parseTypedef();
+            declType = parseTypeDef();
         }
         else if (keywordToken == DECOMPOSER_KEYWORD) {
             declType = parseDecomposer();
@@ -450,7 +450,7 @@ public class JetParsing extends AbstractJetParsing {
      *   : modifiers "type" SimpleName typeParameters? "=" type
      *   ;
      */
-    private JetNodeType parseTypedef() {
+    private JetNodeType parseTypeDef() {
         assert at(TYPE_KEYWORD);
 
         advance(); // TYPE_KEYWORD
@@ -479,31 +479,49 @@ public class JetParsing extends AbstractJetParsing {
 
         advance(); // VAL_KEYWORD or VAR_KEYWORD
 
-        PsiBuilder.Marker receiverTypeAttributes = mark();
-        parseAttributeList();
-
         TokenSet propertyNameFollow = TokenSet.create(COLON, EQ, LBRACE, EOL_OR_SEMICOLON);
-        if (at(IDENTIFIER) && propertyNameFollow.contains(lookahead(1))) { // There's no explicit receiver specified
-            // val [a] name = foo
-            receiverTypeAttributes.done(RECEIVER_TYPE_ATTRIBUTES);
-            advance(); // IDENTIFIER
+
+        int lastDot = findLastDotBefore(propertyNameFollow);
+
+        if (lastDot == -1) {
+            parseAttributeList();
+            expect(IDENTIFIER, "Expecting property name or receiver type", propertyNameFollow);
         }
-        else { // There must be an explicit receiver
-            receiverTypeAttributes.rollbackTo(); // Attributes are a part of the receiver type
-            if (!TYPE_REF_FIRST.contains(tt())) {
-                errorUntil("Expecting receiver type or property name", propertyNameFollow);
-            }
-            else {
-                // TODO: if this type is annotated with an attribute, and it is a single identifier,
-                // TODO: it is NOT an error (fun [a] foo()) -- annotation on receiver
-                parseTypeRef();
-                // The property name may appear as the last section of the type
-                if (at(DOT)) {
-                    advance(); // DOT
-                    expect(IDENTIFIER, "Expecting property name", propertyNameFollow);
-                }
-            }
+        else {
+            // The code below is NOT REENTRANT
+            myBuilder.setEOFPosition(lastDot);
+            parseTypeRef();
+            myBuilder.unSetEOFPosition();
+
+            expect(DOT, "Expecting '.' before a property name", propertyNameFollow);
+            expect(IDENTIFIER, "Expecting property name", propertyNameFollow);
         }
+
+
+//        PsiBuilder.Marker receiverTypeAttributes = mark();
+//        parseAttributeList();
+//
+//        if (at(IDENTIFIER) && propertyNameFollow.contains(lookahead(1))) { // There's no explicit receiver specified
+//            // val [a] name = foo
+//            receiverTypeAttributes.done(RECEIVER_TYPE_ATTRIBUTES);
+//            advance(); // IDENTIFIER
+//        }
+//        else { // There must be an explicit receiver
+//            receiverTypeAttributes.rollbackTo(); // Attributes are a part of the receiver type
+//            if (!TYPE_REF_FIRST.contains(tt())) {
+//                errorUntil("Expecting receiver type or property name", propertyNameFollow);
+//            }
+//            else {
+//                // TODO: if this type is annotated with an attribute, and it is a single identifier,
+//                // TODO: it is NOT an error (fun [a] foo()) -- annotation on receiver
+//                parseTypeRef();
+//                // The property name may appear as the last section of the type
+//                if (at(DOT)) {
+//                    advance(); // DOT
+//                    expect(IDENTIFIER, "Expecting property name", propertyNameFollow);
+//                }
+//            }
+//        }
 
         if (at(COLON)) {
             advance(); // COLON
@@ -584,7 +602,7 @@ public class JetParsing extends AbstractJetParsing {
         // TODO: This code is very close to what we have for properties
 
 
-        int lastDot = findLastDotBeforeLPAR();
+        int lastDot = findLastDotBefore(TokenSet.create(LPAR));
 
         if (lastDot == -1) { // There's no explicit receiver type specified
             parseAttributeList();
@@ -598,7 +616,6 @@ public class JetParsing extends AbstractJetParsing {
             TokenSet functionNameFollow = TokenSet.create(LT, LPAR, COLON, EQ);
             expect(DOT, "Expecting '.' before a function name", functionNameFollow);
             expect(IDENTIFIER, "Expecting function name", functionNameFollow);
-
         }
 
 //        PsiBuilder.Marker receiverTypeAttributes = mark();
@@ -631,6 +648,7 @@ public class JetParsing extends AbstractJetParsing {
 
         parseTypeParameterList(TokenSet.orSet(TokenSet.create(LPAR), valueParametersFollow));
 
+
         parseValueParameterList(false, valueParametersFollow);
 
         if (at(COLON)) {
@@ -649,21 +667,26 @@ public class JetParsing extends AbstractJetParsing {
     }
 
     /*
-     * Looks for a the last top-level (not inside any {} [] () <>) '.' occurring before a top-level '('
+     * Looks for a the last top-level (not inside any {} [] () <>) '.' occurring before a
+     * top-level occurrence of a token from the <code>stopSet</code>
      */
-    private int findLastDotBeforeLPAR() {
+    private int findLastDotBefore(TokenSet stopSet) {
         PsiBuilder.Marker currentPosition = mark();
         int lastDot = -1;
         int openAngleBrackets = 0;
         int openBraces = 0;
         int openParentheses = 0;
         int openBrackets = 0;
+        IElementType previousToken = null;
         while (!eof()) {
-            if (at(LPAR)) {
+            if (atSet(stopSet)) {
                 if (openAngleBrackets == 0
                     && openBrackets == 0
                     && openBraces == 0
-                    && openParentheses == 0) break;
+                    && openParentheses == 0
+                    && previousToken != DOT) break;
+            }
+            if (at(LPAR)) {
                 openParentheses++;
             }
             else if (at(LT)) {
@@ -694,6 +717,7 @@ public class JetParsing extends AbstractJetParsing {
                     && openParentheses == 0) {
                 lastDot = myBuilder.getCurrentOffset();
             }
+            previousToken = tt();
             advance(); // skip token
         }
         currentPosition.rollbackTo();
