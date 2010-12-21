@@ -51,6 +51,7 @@ public interface JetNodeTypes {
     JetNodeType INITIALIZER_LIST = new JetNodeType("INITIALIZER_LIST");
     JetNodeType THIS_CALL = new JetNodeType("THIS_CALL");
     JetNodeType BLOCK = new JetNodeType("BLOCK");
+    JetNodeType CLASS_OBJECT = new JetNodeType("CLASS_OBJECT");
 
     IElementType NAMESPACE_NAME = new JetNodeType("NAMESPACE_NAME");
 }

@@ -188,7 +188,8 @@ arrayAccess
   ;
 
 objectLiteral
-  : "object" delegationSpecifier{","}? classBody?
+  : "object" delegationSpecifier{","} classBody?
+  : "object" classBody
   ;
 
 /* Factory methods:

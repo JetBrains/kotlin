@@ -36,13 +36,13 @@ public class JetParsing extends AbstractJetParsing {
     private static final TokenSet TYPE_PARAMETER_GT_RECOVERY_SET = TokenSet.create(WHERE_KEYWORD, WRAPS_KEYWORD, LPAR, COLON, LBRACE, GT);
     private static final TokenSet PARAMETER_NAME_RECOVERY_SET = TokenSet.create(COLON, EQ, COMMA, RPAR);
     private static final TokenSet NAMESPACE_NAME_RECOVERY_SET = TokenSet.create(DOT, EOL_OR_SEMICOLON);
-    private static final TokenSet TYPE_REF_FIRST = TokenSet.create(LBRACKET, IDENTIFIER, LBRACE, LPAR);
+    /*package*/ static final TokenSet TYPE_REF_FIRST = TokenSet.create(LBRACKET, IDENTIFIER, LBRACE, LPAR);
 
     private final JetExpressionParsing myExpressionParsing;
 
     public JetParsing(SemanticWhitespaceAwarePsiBuilder builder) {
         super(builder);
-        this.myExpressionParsing = new JetExpressionParsing(builder);
+        this.myExpressionParsing = new JetExpressionParsing(builder, this);
     }
 
     /*
@@ -430,7 +430,7 @@ public class JetParsing extends AbstractJetParsing {
      *   : ("{" memberDeclaration{","} "}")?
      *   ;
      */
-    private void parseClassBody() {
+    /*package*/ void parseClassBody() {
         // TODO: enum classes
         assert at(LBRACE);
         PsiBuilder.Marker body = mark();
@@ -577,8 +577,14 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      */
     private JetNodeType parseClassObject() {
-        // TODO
-        return null;
+        assert at(CLASS_KEYWORD) && lookahead(1) == OBJECT_KEYWORD;
+
+        advance(); // CLASS_KEYWORD
+
+        myExpressionParsing.parseObjectLiteral();
+
+
+        return CLASS_OBJECT;
     }
 
     /*
@@ -877,7 +883,7 @@ public class JetParsing extends AbstractJetParsing {
     /*
      * delegationSpecifier{","}
      */
-    private void parseDelegationSpecifierList() {
+    /*package*/ void parseDelegationSpecifierList() {
         PsiBuilder.Marker list = mark();
 
         while (true) {
@@ -1024,7 +1030,7 @@ public class JetParsing extends AbstractJetParsing {
             }
 
             expect(GT, "Missing '>'", recoverySet);
-            // TODO : where an stuff
+            // TODO : where and stuff
         }
         list.done(TYPE_PARAMETER_LIST);
     }

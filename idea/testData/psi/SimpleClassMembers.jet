@@ -22,7 +22,23 @@ class foo {
 
     class Bar {
         extension foo for X {
+            class object {
 
+            }
+
+            private class object {
+
+            }
+
+            private class object Fooo {
+
+            }
+
+            private class object Fooo, Bar by foo {
+
+            }
+
+            private class object Fooo, Bar by foo, Goo()
         }
 
         class Bar {}
@@ -55,5 +71,24 @@ class foo {
     this() : this(a, b, c), Foo<T>(bar) {
 
     }
+
+    class object {
+
+    }
+
+    private class object {
+
+    }
+
+    private class object Fooo {
+
+    }
+
+    private class object Fooo, Bar by foo {
+
+    }
+
+    private class object Fooo, Bar by foo, Goo()
+
 
 }

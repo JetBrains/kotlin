@@ -11,8 +11,11 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
  * @author abreslav
  */
 public class JetExpressionParsing extends AbstractJetParsing {
-    public JetExpressionParsing(SemanticWhitespaceAwarePsiBuilder builder) {
+    private final JetParsing myJetParsing;
+
+    public JetExpressionParsing(SemanticWhitespaceAwarePsiBuilder builder, JetParsing jetParsing) {
         super(builder);
+        myJetParsing = jetParsing;
     }
 
     /*
@@ -82,6 +85,25 @@ public class JetExpressionParsing extends AbstractJetParsing {
         argument.done(type);
     }
 
+    /*
+     * objectLiteral
+     *   : "object" delegationSpecifier{","} classBody?
+     *   : "object" classBody
+     *   ;
+     */
+    public void parseObjectLiteral() {
+        assert at(OBJECT_KEYWORD);
 
+        advance(); // OBJECT_KEYWORD
 
+        if (at(LBRACE)) {
+            myJetParsing.parseClassBody();
+        }
+        else {
+            myJetParsing.parseDelegationSpecifierList();
+            if (at(LBRACE)) {
+                myJetParsing.parseClassBody();
+            }
+        }
+    }
 }
