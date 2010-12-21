@@ -1,0 +1,115 @@
+namespace foo.bar.goo
+
+import foo
+
+public protected private internal
+abstract
+virtual
+enum
+open
+attribute
+override
+virtual
+abstract
+private
+protected
+public
+internal
+lazy
+in
+out
+ref
+ class Bar<abstract, abstract enum : T, lazy virtual,
+    public protected private internal abstract
+    virtual
+    enum
+    open
+    attribute
+    override
+    virtual
+    abstract
+    private
+    protected
+    public
+    internal
+    lazy open
+ > wraps (a : B) : A by b {
+    public protected private internal val abstract
+    val virtual
+    val enum
+    val open
+    val attribute
+    val override
+    val virtual
+    val abstract
+    val private
+    val protected
+    val public
+    val internal
+    val lazy
+    val wraps
+    val import
+    val where
+    val by
+    val get
+    val set
+    val public
+    val private
+    val protected
+    val internal {
+      get() = a
+      set(S : s) {}
+    }
+
+    public protected private internal
+    fun abstract  () : abstract
+    fun virtual   () : virtual
+    fun enum      () : enum
+    fun open      () : open
+    fun attribute () : attribute
+    fun override  () : override
+    fun virtual   () : virtual
+    fun abstract  () : abstract
+    fun private   () : private
+    fun protected () : protected
+    fun public    () : public
+    fun internal  () : internal
+    fun lazy      () : lazy
+    fun wraps     () : wraps
+    fun import    () : import
+    fun where     () : where
+    fun by        () : by
+    fun get       () : get
+    fun set       () : set
+    fun public    () : public
+    fun private   () : private
+    fun protected () : protected
+    fun internal  () : internal
+
+    fun test(
+        abstract  : t,
+        virtual   : t,
+        enum      : t,
+        open      : t,
+        attribute : t,
+        override  : t,
+        virtual   : t,
+        abstract  : t,
+        private   : t,
+        protected : t,
+        public    : t,
+        internal  : t,
+        lazy      : t,
+        wraps     : t,
+        import    : t,
+        where     : t,
+        by        : t,
+        get       : t,
+        set       : t,
+        public    : t,
+        private   : t,
+        protected : t,
+        internal  : t
+     )
+
+}

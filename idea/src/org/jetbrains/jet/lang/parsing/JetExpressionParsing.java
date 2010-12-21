@@ -12,7 +12,7 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
  * @author abreslav
  */
 public class JetExpressionParsing extends AbstractJetParsing {
-    public JetExpressionParsing(SemanticWitespaceAwarePsiBuilder builder) {
+    public JetExpressionParsing(SemanticWhitespaceAwarePsiBuilder builder) {
         super(builder);
     }
 

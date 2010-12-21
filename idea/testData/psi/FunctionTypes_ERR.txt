@@ -53,10 +53,9 @@ JetFile: FunctionTypes_ERR.jet
               USER_TYPE
                 PsiElement(IDENTIFIER)('a')
             PsiElement(COMMA)(',')
+            PsiErrorElement:Expecting a parameter declaration
+              <empty list>
             PsiWhiteSpace(' ')
-            TYPE_REFERENCE
-              PsiErrorElement:Type expected
-                <empty list>
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           PsiElement(COLON)(':')

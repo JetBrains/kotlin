@@ -40,7 +40,7 @@ public class JetParsing extends AbstractJetParsing {
 
     private final JetExpressionParsing myExpressionParsing;
 
-    public JetParsing(SemanticWitespaceAwarePsiBuilder builder) {
+    public JetParsing(SemanticWhitespaceAwarePsiBuilder builder) {
         super(builder);
         this.myExpressionParsing = new JetExpressionParsing(builder);
     }
@@ -300,8 +300,8 @@ public class JetParsing extends AbstractJetParsing {
         while (!eof()) {
             if (at(LBRACKET)) {
                 parseAttributeAnnotation();
-            } else if (MODIFIER_KEYWORDS.contains(tt())) {
-                advance();
+            } else if (atSet(MODIFIER_KEYWORDS)) {
+                advance(); // MODIFIER
             }
             else {
                 if (!parseModifierSoftKeyword()) break;
@@ -365,8 +365,8 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      */
     private JetNodeType parseNamespaceBlock() {
-        assert at(NAMESPACE);
-        advance(); // NAMESPACE
+        assert at(NAMESPACE_KEYWORD);
+        advance(); // NAMESPACE_KEYWORD
 
         if (at(LBRACE)) {
             error("Expecting namespace name");
@@ -460,6 +460,8 @@ public class JetParsing extends AbstractJetParsing {
     private void parseMemberDeclaration() {
         PsiBuilder.Marker decl = mark();
 
+        parseModifierList();
+
         IElementType keywordToken = tt();
         JetNodeType declType = null;
         if (keywordToken == CLASS_KEYWORD) {
@@ -490,7 +492,7 @@ public class JetParsing extends AbstractJetParsing {
         }
 
         if (declType == null) {
-            errorAndAdvance("Expecting namespace or top level declaration");
+            errorAndAdvance("Expecting member declaration");
             decl.drop();
         }
         else {
@@ -610,17 +612,18 @@ public class JetParsing extends AbstractJetParsing {
 
         TokenSet propertyNameFollow = TokenSet.create(COLON, EQ, LBRACE, EOL_OR_SEMICOLON);
 
-        int lastDot = findLastDotBefore(propertyNameFollow);
+        int lastDot = findLastBefore(TokenSet.create(DOT), propertyNameFollow, true);
 
         if (lastDot == -1) {
             parseAttributeList();
             expect(IDENTIFIER, "Expecting property name or receiver type", propertyNameFollow);
         }
         else {
-            // The code below is NOT REENTRANT
-            myBuilder.setEOFPosition(lastDot);
-            parseTypeRef();
-            myBuilder.unSetEOFPosition();
+            createTruncatedBuilder(lastDot).parseTypeRef();
+//            // The code below is NOT REENTRANT
+//            myBuilder.setEOFPosition(lastDot);
+//            parseTypeRef();
+//            myBuilder.unSetEOFPosition();
 
             expect(DOT, "Expecting '.' before a property name", propertyNameFollow);
             expect(IDENTIFIER, "Expecting property name", propertyNameFollow);
@@ -659,6 +662,10 @@ public class JetParsing extends AbstractJetParsing {
         consumeIf(SEMICOLON);
 
         return PROPERTY;
+    }
+
+    private JetParsing createTruncatedBuilder(int eofPosition) {
+        return new JetParsing(new TruncatedSemanticWhitespaceAwarePsiBuilder(myBuilder, eofPosition));
     }
 
     /*
@@ -702,16 +709,17 @@ public class JetParsing extends AbstractJetParsing {
 
         advance(); // FUN_KEYWORD
 
-        int lastDot = findLastDotBefore(TokenSet.create(LPAR));
+        int lastDot = findLastBefore(TokenSet.create(DOT), TokenSet.create(LPAR), true);
 
         if (lastDot == -1) { // There's no explicit receiver type specified
             parseAttributeList();
             expect(IDENTIFIER, "Expecting function name or receiver type");
         } else {
-            // The code below in NOT REENTRANT
-            myBuilder.setEOFPosition(lastDot);
-            parseTypeRef();
-            myBuilder.unSetEOFPosition();
+            createTruncatedBuilder(lastDot).parseTypeRef();
+//            // The code below in NOT REENTRANT
+//            myBuilder.setEOFPosition(lastDot);
+//            parseTypeRef();
+//            myBuilder.unSetEOFPosition();
 
             TokenSet functionNameFollow = TokenSet.create(LT, LPAR, COLON, EQ);
             expect(DOT, "Expecting '.' before a function name", functionNameFollow);
@@ -744,21 +752,22 @@ public class JetParsing extends AbstractJetParsing {
      * Looks for a the last top-level (not inside any {} [] () <>) '.' occurring before a
      * top-level occurrence of a token from the <code>stopSet</code>
      */
-    private int findLastDotBefore(TokenSet stopSet) {
+    private int findLastBefore(TokenSet lookFor, TokenSet stopAt, boolean dontStopRightAfterOccurrence) {
         PsiBuilder.Marker currentPosition = mark();
-        int lastDot = -1;
+        int lastOccurrence = -1;
         int openAngleBrackets = 0;
         int openBraces = 0;
         int openParentheses = 0;
         int openBrackets = 0;
         IElementType previousToken = null;
         while (!eof()) {
-            if (atSet(stopSet)) {
+            if (atSet(stopAt)) {
                 if (openAngleBrackets == 0
                     && openBrackets == 0
                     && openBraces == 0
                     && openParentheses == 0
-                    && previousToken != DOT) break;
+                    && (!dontStopRightAfterOccurrence
+                        || !lookFor.contains(previousToken))) break;
             }
             if (at(LPAR)) {
                 openParentheses++;
@@ -784,18 +793,18 @@ public class JetParsing extends AbstractJetParsing {
             else if (at(RBRACKET)) {
                 openBrackets--;
             }
-            else if (at(DOT)
+            else if (atSet(lookFor)
                     && openAngleBrackets == 0
                     && openBrackets == 0
                     && openBraces == 0
                     && openParentheses == 0) {
-                lastDot = myBuilder.getCurrentOffset();
+                lastOccurrence = myBuilder.getCurrentOffset();
             }
             previousToken = tt();
             advance(); // skip token
         }
         currentPosition.rollbackTo();
-        return lastDot;
+        return lastOccurrence ;
     }
 
     /*
@@ -1025,13 +1034,20 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      */
     private void parseTypeParameter() {
-        if (TYPE_PARAMETER_GT_RECOVERY_SET.contains(tt())) {
+        if (atSet(TYPE_PARAMETER_GT_RECOVERY_SET)) {
             error("Type parameter declaration expected");
             return;
         }
 
         PsiBuilder.Marker mark = mark();
-        parseModifierList();
+
+        int lastId = findLastBefore(TokenSet.create(IDENTIFIER), TokenSet.create(COMMA, GT, COLON), false);
+        createTruncatedBuilder(lastId).parseModifierList();
+//        // The code below is NOT REENTRANT
+//        myBuilder.setEOFPosition(lastId);
+//        parseModifierList();
+//        myBuilder.unSetEOFPosition();
+
         expect(IDENTIFIER, "Type parameter name expected", TokenSet.EMPTY);
 
         // TODO : other constraints
@@ -1226,7 +1242,13 @@ public class JetParsing extends AbstractJetParsing {
 
         if (!at(RPAR)) {
             while (true) {
-                if (at(COMMA)) errorAndAdvance("Expecting a parameter declaration");
+                if (at(COMMA)) {
+                    errorAndAdvance("Expecting a parameter declaration");
+                }
+                else if (at(RPAR)) {
+                    error("Expecting a parameter declaration");
+                    break;
+                }
                 if (!parseValueParameter()) {
                     if (isFunctionTypeContents) {
                         parseModifierList(); // lazy, out, ref
@@ -1251,7 +1273,13 @@ public class JetParsing extends AbstractJetParsing {
     private boolean parseValueParameter() {
         PsiBuilder.Marker parameter = mark();
 
-        parseModifierList();
+        int lastId = findLastBefore(TokenSet.create(IDENTIFIER), TokenSet.create(COMMA, RPAR, COLON), false);
+        createTruncatedBuilder(lastId).parseModifierList();
+//        // The code below is NOT REENTRANT
+//        myBuilder.setEOFPosition(lastId);
+//        parseModifierList();
+//        myBuilder.unSetEOFPosition();
+
         if (!parseFunctionParameterRest()) {
             parameter.rollbackTo();
             return false;

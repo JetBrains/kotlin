@@ -13,9 +13,9 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
  * @author abreslav
  */
 /*package*/ class AbstractJetParsing {
-    protected final SemanticWitespaceAwarePsiBuilder myBuilder;
+    protected final SemanticWhitespaceAwarePsiBuilder myBuilder;
 
-    public AbstractJetParsing(SemanticWitespaceAwarePsiBuilder builder) {
+    public AbstractJetParsing(SemanticWhitespaceAwarePsiBuilder builder) {
         this.myBuilder = builder;
     }
 

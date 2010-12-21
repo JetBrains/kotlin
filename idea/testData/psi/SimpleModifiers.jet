@@ -17,35 +17,32 @@ in
 out
 ref
  class Bar<abstract
-virtual
-enum
-open
-attribute
-override
-virtual
-abstract
-private
-protected
-public
-internal
-lazy
-in
-out
-ref T> {
-abstract
-virtual
-enum
-open
-attribute
-override
-virtual
-abstract
-private
-protected
-public
-internal
-in
-lazy
-out
-ref
+        virtual
+        enum
+        open
+        attribute
+        override
+        virtual
+        abstract
+        private
+        protected
+        public
+        internal
+        lazy
+        in
+        out
+        ref T> {
+    val abstract
+    val virtual
+    val enum
+    val open
+    val attribute
+    val override
+    val virtual
+    val abstract
+    val private
+    val protected
+    val public
+    val internal
+    val lazy
 }
