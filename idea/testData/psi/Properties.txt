@@ -98,8 +98,9 @@ JetFile: Properties.jet
           PsiElement(LPAR)('(')
           PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
-        PsiElement(LBRACE)('{')
-        PsiElement(RBRACE)('}')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n    ')
       PROPERTY_GETTER
         PsiElement(set)('set')
@@ -151,8 +152,9 @@ JetFile: Properties.jet
           PsiElement(LPAR)('(')
           PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
-        PsiElement(LBRACE)('{')
-        PsiElement(RBRACE)('}')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n    ')
       PROPERTY_GETTER
         PsiElement(set)('set')
@@ -160,8 +162,9 @@ JetFile: Properties.jet
           PsiElement(LPAR)('(')
           PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
-        PsiElement(LBRACE)('{')
-        PsiElement(RBRACE)('}')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n ')
       PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n\n ')
@@ -220,8 +223,9 @@ JetFile: Properties.jet
           PsiElement(LPAR)('(')
           PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
-        PsiElement(LBRACE)('{')
-        PsiElement(RBRACE)('}')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n    ')
       PROPERTY_GETTER
         MODIFIER_LIST
@@ -240,8 +244,9 @@ JetFile: Properties.jet
                 PsiElement(IDENTIFIER)('b')
           PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
-        PsiElement(LBRACE)('{')
-        PsiElement(RBRACE)('}')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n ')
       PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n\n ')
@@ -300,8 +305,9 @@ JetFile: Properties.jet
                 PsiElement(IDENTIFIER)('b')
           PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
-        PsiElement(LBRACE)('{')
-        PsiElement(RBRACE)('}')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n ')
       PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n\n ')
@@ -360,7 +366,8 @@ JetFile: Properties.jet
           PsiElement(LPAR)('(')
           PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
-        PsiElement(LBRACE)('{')
-        PsiElement(RBRACE)('}')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n ')
       PsiElement(RBRACE)('}')

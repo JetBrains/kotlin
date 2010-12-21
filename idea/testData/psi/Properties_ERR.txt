@@ -115,8 +115,9 @@ JetFile: Properties_ERR.jet
           PsiElement(LPAR)('(')
           PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
-        PsiElement(LBRACE)('{')
-        PsiElement(RBRACE)('}')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n   ')
       PROPERTY_GETTER
         PsiErrorElement:Expecting 'get' or 'set'
@@ -170,8 +171,9 @@ JetFile: Properties_ERR.jet
           PsiElement(LPAR)('(')
           PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
-        PsiElement(LBRACE)('{')
-        PsiElement(RBRACE)('}')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n   ')
       PROPERTY_GETTER
         PsiElement(set)('set')
@@ -180,8 +182,9 @@ JetFile: Properties_ERR.jet
             <empty list>
           PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
-        PsiElement(LBRACE)('{')
-        PsiElement(RBRACE)('}')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n')
@@ -225,8 +228,9 @@ JetFile: Properties_ERR.jet
             PsiElement(IDENTIFIER)('foo')
           PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
-        PsiElement(LBRACE)('{')
-        PsiElement(RBRACE)('}')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n   ')
       PROPERTY_GETTER
         PsiElement(set)('set')
@@ -234,8 +238,9 @@ JetFile: Properties_ERR.jet
           PsiElement(LPAR)('(')
           PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
-        PsiElement(LBRACE)('{')
-        PsiElement(RBRACE)('}')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n   ')
       PsiErrorElement:Expecting '}'
         PsiElement(IDENTIFIER)('set')

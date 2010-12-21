@@ -536,7 +536,7 @@ public class JetParsing extends AbstractJetParsing {
         while (true) {
             if (at(COMMA)) errorAndAdvance("Expecting a this or super constructor call");
             parseInitializer();
-            if (at(COMMA)) break;
+            if (!at(COMMA)) break;
             advance(); // COMMA
         }
         list.done(INITIALIZER_LIST);
@@ -557,9 +557,13 @@ public class JetParsing extends AbstractJetParsing {
             advance(); // THIS_KEYWORD
             type = THIS_CALL;
         }
-        else {
+        else if (atSet(TYPE_REF_FIRST)) {
             parseTypeRef();
             type = DELEGATOR_SUPER_CALL;
+        } else {
+            errorWithRecovery("Expecting constructor call (this(...)) or supertype initializer", TokenSet.create(LBRACE, COMMA));
+            initializer.drop();
+            return;
         }
         myExpressionParsing.parseValueArgumentList();
 
@@ -620,10 +624,6 @@ public class JetParsing extends AbstractJetParsing {
         }
         else {
             createTruncatedBuilder(lastDot).parseTypeRef();
-//            // The code below is NOT REENTRANT
-//            myBuilder.setEOFPosition(lastDot);
-//            parseTypeRef();
-//            myBuilder.unSetEOFPosition();
 
             expect(DOT, "Expecting '.' before a property name", propertyNameFollow);
             expect(IDENTIFIER, "Expecting property name", propertyNameFollow);
@@ -716,10 +716,6 @@ public class JetParsing extends AbstractJetParsing {
             expect(IDENTIFIER, "Expecting function name or receiver type");
         } else {
             createTruncatedBuilder(lastDot).parseTypeRef();
-//            // The code below in NOT REENTRANT
-//            myBuilder.setEOFPosition(lastDot);
-//            parseTypeRef();
-//            myBuilder.unSetEOFPosition();
 
             TokenSet functionNameFollow = TokenSet.create(LT, LPAR, COLON, EQ);
             expect(DOT, "Expecting '.' before a function name", functionNameFollow);
@@ -835,6 +831,8 @@ public class JetParsing extends AbstractJetParsing {
     private void parseBlock() {
         assert at(LBRACE);
 
+        PsiBuilder.Marker block = mark();
+
         advance(); // LBRACE
 
         while (!eof() && !at(RBRACE)) {
@@ -843,6 +841,8 @@ public class JetParsing extends AbstractJetParsing {
         }
 
         expect(RBRACE, "Expecting '}");
+
+        block.done(BLOCK);
     }
 
     /*
@@ -1043,10 +1043,6 @@ public class JetParsing extends AbstractJetParsing {
 
         int lastId = findLastBefore(TokenSet.create(IDENTIFIER), TokenSet.create(COMMA, GT, COLON), false);
         createTruncatedBuilder(lastId).parseModifierList();
-//        // The code below is NOT REENTRANT
-//        myBuilder.setEOFPosition(lastId);
-//        parseModifierList();
-//        myBuilder.unSetEOFPosition();
 
         expect(IDENTIFIER, "Type parameter name expected", TokenSet.EMPTY);
 
@@ -1275,10 +1271,6 @@ public class JetParsing extends AbstractJetParsing {
 
         int lastId = findLastBefore(TokenSet.create(IDENTIFIER), TokenSet.create(COMMA, RPAR, COLON), false);
         createTruncatedBuilder(lastId).parseModifierList();
-//        // The code below is NOT REENTRANT
-//        myBuilder.setEOFPosition(lastId);
-//        parseModifierList();
-//        myBuilder.unSetEOFPosition();
 
         if (!parseFunctionParameterRest()) {
             parameter.rollbackTo();

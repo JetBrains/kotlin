@@ -412,8 +412,9 @@ JetFile: Functions.jet
         PsiElement(LPAR)('(')
         PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
-      PsiElement(LBRACE)('{')
-      PsiElement(RBRACE)('}')
+      BLOCK
+        PsiElement(LBRACE)('{')
+        PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n')
     FUN
       PsiElement(fun)('fun')
@@ -433,8 +434,9 @@ JetFile: Functions.jet
         PsiElement(LPAR)('(')
         PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
-      PsiElement(LBRACE)('{')
-      PsiElement(RBRACE)('}')
+      BLOCK
+        PsiElement(LBRACE)('{')
+        PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n')
     FUN
       PsiElement(fun)('fun')
@@ -458,8 +460,9 @@ JetFile: Functions.jet
         PsiElement(LPAR)('(')
         PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
-      PsiElement(LBRACE)('{')
-      PsiElement(RBRACE)('}')
+      BLOCK
+        PsiElement(LBRACE)('{')
+        PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n')
     FUN
       PsiElement(fun)('fun')
@@ -512,8 +515,9 @@ JetFile: Functions.jet
         PsiElement(LPAR)('(')
         PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
-      PsiElement(LBRACE)('{')
-      PsiElement(RBRACE)('}')
+      BLOCK
+        PsiElement(LBRACE)('{')
+        PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n')
     FUN
       PsiElement(fun)('fun')
@@ -551,8 +555,9 @@ JetFile: Functions.jet
         USER_TYPE
           PsiElement(IDENTIFIER)('bar')
       PsiWhiteSpace(' ')
-      PsiElement(LBRACE)('{')
-      PsiElement(RBRACE)('}')
+      BLOCK
+        PsiElement(LBRACE)('{')
+        PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n')
     FUN
       PsiElement(fun)('fun')
@@ -615,5 +620,6 @@ JetFile: Functions.jet
         USER_TYPE
           PsiElement(IDENTIFIER)('bar')
       PsiWhiteSpace(' ')
-      PsiElement(LBRACE)('{')
-      PsiElement(RBRACE)('}')
+      BLOCK
+        PsiElement(LBRACE)('{')
+        PsiElement(RBRACE)('}')

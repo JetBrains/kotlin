@@ -1,11 +1,10 @@
 package org.jetbrains.jet.lang.parsing;
 
 import com.intellij.lang.PsiBuilder;
+import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.jet.JetNodeType;
 
-import static org.jetbrains.jet.JetNodeTypes.NAMED_ARGUMENT;
-import static org.jetbrains.jet.JetNodeTypes.VALUE_ARGUMENT;
-import static org.jetbrains.jet.JetNodeTypes.VALUE_ARGUMENT_LIST;
+import static org.jetbrains.jet.JetNodeTypes.*;
 import static org.jetbrains.jet.lexer.JetTokens.*;
 
 /**
@@ -50,11 +49,9 @@ public class JetExpressionParsing extends AbstractJetParsing {
      *   ;
      */
     public void parseValueArgumentList() {
-        assert at(LPAR);
-
         PsiBuilder.Marker list = mark();
 
-        advance(); // LPAR
+        expect(LPAR, "Expecting a parameter list", TokenSet.create(RPAR));
 
         if (!at(RPAR)) {
             while (true) {

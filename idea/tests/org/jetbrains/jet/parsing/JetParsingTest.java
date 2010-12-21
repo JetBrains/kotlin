@@ -53,4 +53,5 @@ public class JetParsingTest extends ParsingTestCase {
     public void testExtensions() throws Exception {doTest(true);}
     public void testExtensions_ERR() throws Exception {doTest(true);}
     public void testSoftKeywords() throws Exception {doTest(true);}
+    public void testSimpleClassMembers() throws Exception {doTest(true);}
 }

@@ -117,6 +117,7 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
     }
 
     protected IElementType lookahead(int k) {
+        // TODO: use a faster implementation
         PsiBuilder.Marker tmp = mark();
         for (int i = 0; i < k; i++) advance();
 

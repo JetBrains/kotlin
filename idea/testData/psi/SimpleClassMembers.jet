@@ -1,0 +1,59 @@
+class foo {
+
+    extension foo for X {
+        extension foo for X {
+
+        }
+
+        class Bar {}
+
+        fun foo()
+
+        val x
+
+        var f
+
+        type foo = bar
+
+        decomposer (a, b, c)
+
+        this() : this(a, b, c), Foo<T>(bar)
+    }
+
+    class Bar {
+        extension foo for X {
+
+        }
+
+        class Bar {}
+
+        fun foo()
+
+        val x
+
+        var f
+
+        type foo = bar
+
+        decomposer (a, b, c)
+
+        this() : this(a, b, c), Foo<T>(bar)
+    }
+
+    fun foo()
+
+    val x
+
+    var f
+
+    type foo = bar
+
+    decomposer (a, b, c)
+
+    this() : this(a, b, c), Foo<T>(bar)
+
+    this() : this(a, b, c), Foo<T>(bar) {
+
+    }
+
+}

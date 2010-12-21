@@ -305,8 +305,9 @@ JetFile: SoftKeywords.jet
                     PsiElement(IDENTIFIER)('s')
               PsiElement(RPAR)(')')
             PsiWhiteSpace(' ')
-            PsiElement(LBRACE)('{')
-            PsiElement(RBRACE)('}')
+            BLOCK
+              PsiElement(LBRACE)('{')
+              PsiElement(RBRACE)('}')
           PsiWhiteSpace('\n    ')
           PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n\n    ')
