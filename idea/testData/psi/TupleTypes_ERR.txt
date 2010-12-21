@@ -88,7 +88,7 @@ JetFile: TupleTypes_ERR.jet
             ATTRIBUTE_ANNOTATION
               PsiElement(LBRACKET)('[')
               ATTRIBUTE
-                USER_TYPE
+                TYPE_REFERENCE
                   USER_TYPE
                     PsiElement(IDENTIFIER)('x')
               PsiElement(RBRACKET)(']')
@@ -107,7 +107,7 @@ JetFile: TupleTypes_ERR.jet
             ATTRIBUTE_ANNOTATION
               PsiElement(LBRACKET)('[')
               ATTRIBUTE
-                USER_TYPE
+                TYPE_REFERENCE
                   USER_TYPE
                     PsiElement(IDENTIFIER)('x')
               PsiElement(RBRACKET)(']')
@@ -117,7 +117,7 @@ JetFile: TupleTypes_ERR.jet
                 ATTRIBUTE_ANNOTATION
                   PsiElement(LBRACKET)('[')
                   ATTRIBUTE
-                    USER_TYPE
+                    TYPE_REFERENCE
                       USER_TYPE
                         PsiElement(IDENTIFIER)('x')
                   PsiErrorElement:Expecting ']' to close an attribute annotation
@@ -137,7 +137,7 @@ JetFile: TupleTypes_ERR.jet
             ATTRIBUTE_ANNOTATION
               PsiElement(LBRACKET)('[')
               ATTRIBUTE
-                USER_TYPE
+                TYPE_REFERENCE
                   USER_TYPE
                     PsiElement(IDENTIFIER)('x')
               PsiElement(RBRACKET)(']')
@@ -148,7 +148,7 @@ JetFile: TupleTypes_ERR.jet
                 ATTRIBUTE_ANNOTATION
                   PsiElement(LBRACKET)('[')
                   ATTRIBUTE
-                    USER_TYPE
+                    TYPE_REFERENCE
                       USER_TYPE
                         PsiElement(IDENTIFIER)('x')
                   PsiElement(RBRACKET)(']')
@@ -161,7 +161,7 @@ JetFile: TupleTypes_ERR.jet
                 ATTRIBUTE_ANNOTATION
                   PsiElement(LBRACKET)('[')
                   ATTRIBUTE
-                    USER_TYPE
+                    TYPE_REFERENCE
                       USER_TYPE
                         PsiElement(IDENTIFIER)('x')
                   PsiElement(RBRACKET)(']')
@@ -179,7 +179,7 @@ JetFile: TupleTypes_ERR.jet
             ATTRIBUTE_ANNOTATION
               PsiElement(LBRACKET)('[')
               ATTRIBUTE
-                USER_TYPE
+                TYPE_REFERENCE
                   USER_TYPE
                     PsiElement(IDENTIFIER)('x')
               PsiElement(RBRACKET)(']')
@@ -195,7 +195,7 @@ JetFile: TupleTypes_ERR.jet
                   ATTRIBUTE_ANNOTATION
                     PsiElement(LBRACKET)('[')
                     ATTRIBUTE
-                      USER_TYPE
+                      TYPE_REFERENCE
                         USER_TYPE
                           PsiElement(IDENTIFIER)('x')
                     PsiElement(RBRACKET)(']')
@@ -213,7 +213,7 @@ JetFile: TupleTypes_ERR.jet
                   ATTRIBUTE_ANNOTATION
                     PsiElement(LBRACKET)('[')
                     ATTRIBUTE
-                      USER_TYPE
+                      TYPE_REFERENCE
                         USER_TYPE
                           PsiElement(IDENTIFIER)('x')
                     PsiElement(RBRACKET)(']')

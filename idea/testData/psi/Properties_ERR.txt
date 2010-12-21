@@ -47,7 +47,7 @@ JetFile: Properties_ERR.jet
       ATTRIBUTE_ANNOTATION
         PsiElement(LBRACKET)('[')
         ATTRIBUTE
-          USER_TYPE
+          TYPE_REFERENCE
             USER_TYPE
               PsiElement(IDENTIFIER)('a')
         PsiErrorElement:Expecting ']' to close an attribute annotation
@@ -78,7 +78,7 @@ JetFile: Properties_ERR.jet
       ATTRIBUTE_ANNOTATION
         PsiElement(LBRACKET)('[')
         ATTRIBUTE
-          USER_TYPE
+          TYPE_REFERENCE
             USER_TYPE
               PsiElement(IDENTIFIER)('a')
         PsiElement(RBRACKET)(']')
@@ -224,8 +224,10 @@ JetFile: Properties_ERR.jet
         PsiElement(get)('get')
         VALUE_PARAMETER_LIST
           PsiElement(LPAR)('(')
-          PsiErrorElement:Expecting a parameter declaration
+          VALUE_PARAMETER
             PsiElement(IDENTIFIER)('foo')
+            PsiErrorElement:Parameters must have type annotation
+              <empty list>
           PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         BLOCK

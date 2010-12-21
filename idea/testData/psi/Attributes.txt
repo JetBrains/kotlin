@@ -40,7 +40,7 @@ JetFile: Attributes.jet
         ATTRIBUTE_ANNOTATION
           PsiElement(LBRACKET)('[')
           ATTRIBUTE
-            USER_TYPE
+            TYPE_REFERENCE
               USER_TYPE
                 PsiElement(IDENTIFIER)('foo')
                 TYPE_ARGUMENT_LIST
@@ -65,12 +65,12 @@ JetFile: Attributes.jet
               PsiElement(RPAR)(')')
           PsiElement(COMMA)(',')
           ATTRIBUTE
-            USER_TYPE
+            TYPE_REFERENCE
               USER_TYPE
                 PsiElement(IDENTIFIER)('ina')
           PsiElement(COMMA)(',')
           ATTRIBUTE
-            USER_TYPE
+            TYPE_REFERENCE
               USER_TYPE
                 PsiElement(IDENTIFIER)('foo')
               PsiElement(DOT)('.')
@@ -110,7 +110,7 @@ JetFile: Attributes.jet
         ATTRIBUTE_ANNOTATION
           PsiElement(LBRACKET)('[')
           ATTRIBUTE
-            USER_TYPE
+            TYPE_REFERENCE
               USER_TYPE
                 PsiElement(IDENTIFIER)('df')
           PsiElement(RBRACKET)(']')
@@ -120,7 +120,7 @@ JetFile: Attributes.jet
         ATTRIBUTE_ANNOTATION
           PsiElement(LBRACKET)('[')
           ATTRIBUTE
-            USER_TYPE
+            TYPE_REFERENCE
               USER_TYPE
                 PsiElement(IDENTIFIER)('sdfsdf')
           PsiElement(RBRACKET)(']')
@@ -155,19 +155,19 @@ JetFile: Attributes.jet
             ATTRIBUTE_ANNOTATION
               PsiElement(LBRACKET)('[')
               ATTRIBUTE
-                USER_TYPE
+                TYPE_REFERENCE
                   USER_TYPE
                     PsiElement(IDENTIFIER)('sdfsd')
               PsiElement(COMMA)(',')
               PsiWhiteSpace(' ')
               ATTRIBUTE
-                USER_TYPE
+                TYPE_REFERENCE
                   USER_TYPE
                     PsiElement(IDENTIFIER)('sdfsd')
               PsiElement(COMMA)(',')
               PsiWhiteSpace(' ')
               ATTRIBUTE
-                USER_TYPE
+                TYPE_REFERENCE
                   USER_TYPE
                     PsiElement(IDENTIFIER)('a')
                   PsiElement(DOT)('.')

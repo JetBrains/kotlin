@@ -11,7 +11,7 @@ JetFile: Properties.jet
       ATTRIBUTE_ANNOTATION
         PsiElement(LBRACKET)('[')
         ATTRIBUTE
-          USER_TYPE
+          TYPE_REFERENCE
             USER_TYPE
               PsiElement(IDENTIFIER)('a')
         PsiElement(RBRACKET)(']')
@@ -70,7 +70,7 @@ JetFile: Properties.jet
       ATTRIBUTE_ANNOTATION
         PsiElement(LBRACKET)('[')
         ATTRIBUTE
-          USER_TYPE
+          TYPE_REFERENCE
             USER_TYPE
               PsiElement(IDENTIFIER)('a')
         PsiElement(RBRACKET)(']')
@@ -211,7 +211,7 @@ JetFile: Properties.jet
           ATTRIBUTE_ANNOTATION
             PsiElement(LBRACKET)('[')
             ATTRIBUTE
-              USER_TYPE
+              TYPE_REFERENCE
                 USER_TYPE
                   PsiElement(IDENTIFIER)('a')
             PsiElement(RBRACKET)(']')
@@ -354,7 +354,7 @@ JetFile: Properties.jet
           ATTRIBUTE_ANNOTATION
             PsiElement(LBRACKET)('[')
             ATTRIBUTE
-              USER_TYPE
+              TYPE_REFERENCE
                 USER_TYPE
                   PsiElement(IDENTIFIER)('a')
             PsiElement(RBRACKET)(']')

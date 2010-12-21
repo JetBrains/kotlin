@@ -1,0 +1,9 @@
+class foo {
+
+    this() : this(a, b, c), Foo<T>(bar)
+
+    this(foo : bar) : this(a, b, c), Foo<T>(bar) {
+
+    }
+
+}

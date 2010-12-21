@@ -45,7 +45,7 @@ JetFile: Attributes_ERR.jet
       ATTRIBUTE_ANNOTATION
         PsiElement(LBRACKET)('[')
         ATTRIBUTE
-          USER_TYPE
+          TYPE_REFERENCE
             USER_TYPE
               PsiElement(IDENTIFIER)('foo')
               TYPE_ARGUMENT_LIST
@@ -71,12 +71,12 @@ JetFile: Attributes_ERR.jet
         PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
         ATTRIBUTE
-          USER_TYPE
+          TYPE_REFERENCE
             USER_TYPE
               PsiElement(IDENTIFIER)('ina')
         PsiElement(COMMA)(',')
         ATTRIBUTE
-          USER_TYPE
+          TYPE_REFERENCE
             USER_TYPE
               PsiElement(IDENTIFIER)('foo')
             PsiElement(DOT)('.')
@@ -116,7 +116,7 @@ JetFile: Attributes_ERR.jet
       ATTRIBUTE_ANNOTATION
         PsiElement(LBRACKET)('[')
         ATTRIBUTE
-          USER_TYPE
+          TYPE_REFERENCE
             USER_TYPE
               PsiElement(IDENTIFIER)('df')
         PsiElement(RBRACKET)(']')
@@ -126,7 +126,7 @@ JetFile: Attributes_ERR.jet
       ATTRIBUTE_ANNOTATION
         PsiElement(LBRACKET)('[')
         ATTRIBUTE
-          USER_TYPE
+          TYPE_REFERENCE
             USER_TYPE
               PsiElement(IDENTIFIER)('sdfsdf')
         PsiElement(COMMA)(',')
@@ -137,12 +137,12 @@ JetFile: Attributes_ERR.jet
       ATTRIBUTE_ANNOTATION
         PsiElement(LBRACKET)('[')
         ATTRIBUTE
-          USER_TYPE
+          TYPE_REFERENCE
             USER_TYPE
               PsiElement(IDENTIFIER)('s')
         PsiElement(COMMA)(',')
         ATTRIBUTE
-          USER_TYPE
+          TYPE_REFERENCE
             USER_TYPE
               PsiElement(IDENTIFIER)('fd')
         PsiErrorElement:Expecting ']' to close an attribute annotation
@@ -185,19 +185,19 @@ JetFile: Attributes_ERR.jet
             ATTRIBUTE_ANNOTATION
               PsiElement(LBRACKET)('[')
               ATTRIBUTE
-                USER_TYPE
+                TYPE_REFERENCE
                   USER_TYPE
                     PsiElement(IDENTIFIER)('sdfsd')
               PsiElement(COMMA)(',')
               PsiWhiteSpace(' ')
               ATTRIBUTE
-                USER_TYPE
+                TYPE_REFERENCE
                   USER_TYPE
                     PsiElement(IDENTIFIER)('sdfsd')
               PsiElement(COMMA)(',')
               PsiWhiteSpace(' ')
               ATTRIBUTE
-                USER_TYPE
+                TYPE_REFERENCE
                   USER_TYPE
                     PsiElement(IDENTIFIER)('a')
                   PsiElement(DOT)('.')

@@ -1,0 +1,25 @@
+class foo {
+
+    extension foo for X { } -
+
+    class Bar {
+    sdfsd
+    }
+
+    fun foo()
+
+    val x
+
+    var f
+
+    type foo =
+
+    decomposer (a, b, c
+
+    this() : this(a, b, c), Foo<T(bar)
+
+    this() : this(a, b, c), Foo<T>(bar) {
+
+    }
+
+}

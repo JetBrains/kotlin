@@ -431,6 +431,7 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      */
     private void parseClassBody() {
+        // TODO: enum classes
         assert at(LBRACE);
         PsiBuilder.Marker body = mark();
         advance(); // LBRACE
@@ -1107,7 +1108,7 @@ public class JetParsing extends AbstractJetParsing {
             advance(); // DOT
         }
 
-        userType.done(USER_TYPE);
+        userType.done(TYPE_REFERENCE);
     }
 
     /*
@@ -1245,13 +1246,13 @@ public class JetParsing extends AbstractJetParsing {
                     error("Expecting a parameter declaration");
                     break;
                 }
-                if (!parseValueParameter()) {
-                    if (isFunctionTypeContents) {
-                        parseModifierList(); // lazy, out, ref
-                        parseTypeRef();
-                    } else {
-                        errorAndAdvance("Expecting a parameter declaration");
+                if (isFunctionTypeContents) {
+                    if (!tryParseValueParameter()) {
+                            parseModifierList(); // lazy, out, ref
+                            parseTypeRef();
                     }
+                } else {
+                    parseValueParameter();
                 }
                 if (!at(COMMA)) break;
                 advance(); // COMMA
@@ -1266,7 +1267,7 @@ public class JetParsing extends AbstractJetParsing {
      *   : modifiers functionParameterRest
      *   ;
      */
-    private boolean parseValueParameter() {
+    private boolean tryParseValueParameter() {
         PsiBuilder.Marker parameter = mark();
 
         int lastId = findLastBefore(TokenSet.create(IDENTIFIER), TokenSet.create(COMMA, RPAR, COLON), false);
@@ -1279,6 +1280,22 @@ public class JetParsing extends AbstractJetParsing {
 
         parameter.done(VALUE_PARAMETER);
         return true;
+    }
+
+    /*
+     * functionParameter
+     *   : modifiers functionParameterRest
+     *   ;
+     */
+    private void parseValueParameter() {
+        PsiBuilder.Marker parameter = mark();
+
+        int lastId = findLastBefore(TokenSet.create(IDENTIFIER), TokenSet.create(COMMA, RPAR, COLON), false);
+        createTruncatedBuilder(lastId).parseModifierList();
+
+        parseFunctionParameterRest();
+
+        parameter.done(VALUE_PARAMETER);
     }
 
 }
