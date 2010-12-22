@@ -8,7 +8,6 @@ expression
   : range
   : "null"
   : "this" ("<" type ">")?
-  : memberAccessExpression
   : expressionWithPrecedences
   : match
   : if

@@ -43,6 +43,72 @@ public class JetExpressionParsing extends AbstractJetParsing {
      *   ;
      */
     public void parseExpression() {
+        if (at(LPAR)) {
+            // TODO (expression) or tuple
+        }
+        else if (at(INTEGER_LITERAL)) {
+            // TODO
+        }
+        else if (at(CHARACTER_LITERAL)) {
+            // TODO
+        }
+        else if (at(FLOAT_LITERAL)) {
+            // TODO
+        }
+        else if (at(STRING_LITERAL)) {
+            // TODO
+        }
+        else if (at(TRUE_KEYWORD)) {
+            // TODO
+        }
+        else if (at(FALSE_KEYWORD)) {
+            // TODO
+        }
+        else if (at(LBRACKET)) {
+            // TODO: map, list or range
+        }
+        else if (at(NULL_KEYWORD)) {
+            // TODO
+        }
+        else if (at(THIS_KEYWORD)) {
+            // TODO
+        }
+        else if (at(IF_KEYWORD)) {
+            // TODO
+        }
+        else if (at(TYPEOF_KEYWORD)) {
+            // TODO
+        }
+        else if (at(NEW_KEYWORD)) {
+            // TODO
+        }
+        else if (at(OBJECT_KEYWORD)) {
+            // TODO
+        }
+        else if (at(THROW_KEYWORD)) {
+            // TODO
+        }
+        else if (at(RETURN_KEYWORD)) {
+            // TODO
+        }
+        else if (at(CONTINUE_KEYWORD)) {
+            // TODO
+        }
+        else if (at(BREAK_KEYWORD)) {
+            // TODO
+        }
+        else if (at(FOR_KEYWORD)) {
+            // TODO
+        }
+        else if (at(WHILE_KEYWORD)) {
+            // TODO
+        }
+        else if (at(DO_KEYWORD)) {
+            // TODO
+        }
+        else if (atSet(TokenSet.create(CLASS_KEYWORD, EXTENSION_KEYWORD, FUN_KEYWORD, VAL_KEYWORD, VAR_KEYWORD, TYPE_KEYWORD))) {
+            // TODO
+        }
         advance(); // TODO
     }
 

@@ -103,6 +103,7 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
             if (myBuilder.eolInLastWhitespace()) return true;
         }
         if (token == IDENTIFIER) {
+            // TODO : this loop seems to be a bad solution
             for (IElementType type : set.getTypes()) {
                 if (type instanceof JetKeywordToken) {
                     JetKeywordToken expectedKeyword = (JetKeywordToken) type;
