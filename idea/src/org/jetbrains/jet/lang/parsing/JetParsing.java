@@ -613,7 +613,7 @@ public class JetParsing extends AbstractJetParsing {
     /*
      * property
      *   : modifiers ("val" | "var") attributes (type ".")? SimpleName (":" type)? ("=" expression)?
-     *       ("{" getter? setter? "}")?
+     *       getter? setter?
      *   ;
      */
     private JetNodeType parseProperty() {
@@ -646,33 +646,13 @@ public class JetParsing extends AbstractJetParsing {
             myExpressionParsing.parseExpression();
         }
 
-        if (!at(EOL_OR_SEMICOLON) && at(LBRACE)) {
-            advance(); // LBRACE
-
-            // TODO: review
-            // TODO: $field = foo or something like this
-            if (at(RBRACE)) {
-                error("Expecting a getter and/or setter");
-            }
-            else {
-                parsePropertyGetterOrSetter();
-            }
-            if (!at(RBRACE)) parsePropertyGetterOrSetter();
-
-            if (!at(RBRACE)) {
-                errorUntil("Expecting '}'", TokenSet.create(RBRACE));
-            }
-
-            expect(RBRACE, "Expecting '}'");
+        if (parsePropertyGetterOrSetter()) {
+            parsePropertyGetterOrSetter();
         }
 
         consumeIf(SEMICOLON);
 
         return PROPERTY;
-    }
-
-    private JetParsing createTruncatedBuilder(int eofPosition) {
-        return new JetParsing(new TruncatedSemanticWhitespaceAwarePsiBuilder(myBuilder, eofPosition));
     }
 
     /*
@@ -684,22 +664,47 @@ public class JetParsing extends AbstractJetParsing {
      *        ) functionBody
      *   ;
      */
-    private void parsePropertyGetterOrSetter() {
-        PsiBuilder.Marker getter = mark();
+    private boolean parsePropertyGetterOrSetter() {
+        PsiBuilder.Marker getterOrSetter = mark();
 
         parseModifierList();
 
         if (!at(GET_KEYWORD) && !at(SET_KEYWORD)) {
-            errorWithRecovery("Expecting 'get' or 'set'", TokenSet.create(LPAR, RBRACE));
+            getterOrSetter.rollbackTo();
+            return false;
         }
-        else {
-            advance(); // GET_KEYWORD or SET_KEYWORD
+
+        boolean setter = at(SET_KEYWORD);
+        advance(); // GET_KEYWORD or SET_KEYWORD
+
+        expect(LPAR, "Expecting '('", TokenSet.create(RPAR, IDENTIFIER, COLON, LBRACE, EQ));
+        if (setter) {
+            PsiBuilder.Marker setterParameter = mark();
+            int lastId = findLastBefore(TokenSet.create(IDENTIFIER), TokenSet.create(RPAR, COMMA, COLON), false);
+            createTruncatedBuilder(lastId).parseModifierList();
+            expect(IDENTIFIER, "Expecting parameter name", TokenSet.create(RPAR, COLON, LBRACE, EQ));
+
+            if (at(COLON)) {
+                advance();
+
+                parseTypeRef();
+            }
+            setterParameter.done(VALUE_PARAMETER);
         }
-        parseValueParameterList(false, TokenSet.create(RPAR));
+        if (!at(RPAR)) errorUntil("Expecting ')'", TokenSet.create(RPAR, COLON, LBRACE, EQ, EOL_OR_SEMICOLON));
+        expect(RPAR, "Expecting ')'", TokenSet.create(RPAR, COLON, LBRACE, EQ));
+
+        if (at(COLON)) {
+            advance();
+
+            parseTypeRef();
+        }
 
         parseFunctionBody();
 
-        getter.done(PROPERTY_GETTER);
+        getterOrSetter.done(PROPERTY_ACCESSOR);
+
+        return true;
     }
 
     /*
@@ -1030,9 +1035,56 @@ public class JetParsing extends AbstractJetParsing {
             }
 
             expect(GT, "Missing '>'", recoverySet);
-            // TODO : where and stuff
+
+            if (at(WHERE_KEYWORD)) {
+                parseTypeConstraintList();
+            }
         }
         list.done(TYPE_PARAMETER_LIST);
+    }
+
+    /*
+     * typeConstraint{","}
+     */
+    private void parseTypeConstraintList() {
+        assert at(WHERE_KEYWORD);
+
+        advance(); // WHERE_KEYWORD
+
+        PsiBuilder.Marker list = mark();
+
+        while (true) {
+            if (at(COMMA)) errorAndAdvance("Type constraint expected");
+            parseTypeConstraint();
+            if (!at(COMMA)) break;
+            advance(); // COMMA
+        }
+
+        list.done(TYPE_CONSTRAINT_LIST);
+    }
+
+    /*
+     * typeConstraint
+     *   : userType ":" type
+     *   : "class" "object" userType ":" type
+     *   ;
+     */
+    private void parseTypeConstraint() {
+        PsiBuilder.Marker constraint = mark();
+
+        if (at(CLASS_KEYWORD)) {
+            advance(); // CLASS_KEYWORD
+
+            expect(OBJECT_KEYWORD, "Expecting 'object'", TYPE_REF_FIRST);
+
+        }
+        parseTypeRef();
+
+        expect(COLON, "Expecting ':' before the upper bound", TYPE_REF_FIRST);
+
+        parseTypeRef();
+
+        constraint.done(TYPE_CONSTRAINT);
     }
 
     /*
@@ -1053,7 +1105,6 @@ public class JetParsing extends AbstractJetParsing {
 
         expect(IDENTIFIER, "Type parameter name expected", TokenSet.EMPTY);
 
-        // TODO : other constraints
         if (at(COLON)) {
             advance(); // COLON
             parseTypeRef();
@@ -1090,12 +1141,8 @@ public class JetParsing extends AbstractJetParsing {
             }
 
             if (!at(DOT)) break;
-            if (simpleTypeFirst.contains(lookahead(1))) {
-                advance(); // DOT
-            } else {
-                break;
-                // TODO: ERROR here?
-            }
+            if (!simpleTypeFirst.contains(lookahead(1))) break;
+            advance(); // DOT
         }
         type.done(TYPE_REFERENCE);
     }
@@ -1302,6 +1349,10 @@ public class JetParsing extends AbstractJetParsing {
         parseFunctionParameterRest();
 
         parameter.done(VALUE_PARAMETER);
+    }
+
+    private JetParsing createTruncatedBuilder(int eofPosition) {
+        return new JetParsing(new TruncatedSemanticWhitespaceAwarePsiBuilder(myBuilder, eofPosition));
     }
 
 }

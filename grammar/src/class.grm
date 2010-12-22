@@ -42,7 +42,8 @@ typeParameter
   ;
 
 typeConstraint
-  : userType ":" (userType | "this") // "this" for self-type 
+  : userType ":" type
+  : "class" "object" userType ":" type
   // TODO: other constraints, maybe
   ;
 

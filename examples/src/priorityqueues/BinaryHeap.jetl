@@ -65,25 +65,28 @@ class BinaryHeap<T> : IPriorityQueue<T> {
   }
 
   private extension HeapIndex for Int {
-    val parent : Int {
+    val parent : Int
       get() = (this - 1) / 2
-    }
 
-    val left : Int {
+
+    val left : Int
       get() = this * 2 + 1
-    }
 
-    val right : Int {
+
+    val right : Int
       get() = this * 2 + 2
-    }
 
-    val value : T {
+
+    val value : T = foo.bar()
       get() = data[this]
-    }
+      set(it) {
+        $value = it
+      }
 
-    val exists : Boolean {
+
+    val exists : Boolean
       get() = (this < data.size) && (this >= 0)
-    }
+
   }
 
   private extension for T {
@@ -98,7 +101,6 @@ extension fun IMutableList<T>.swap(a : Int, b : Int) {
   this[b] = t
 }
 
-extension val IList<T>.lastIndex : Int {
+extension val IList<T>.lastIndex : Int
   get() = this.size - 1
-}
 

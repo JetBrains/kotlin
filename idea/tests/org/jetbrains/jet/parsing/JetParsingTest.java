@@ -56,4 +56,5 @@ public class JetParsingTest extends ParsingTestCase {
     public void testSimpleClassMembers() throws Exception {doTest(true);}
     public void testSimpleClassMembers_ERR() throws Exception {doTest(true);}
     public void testConstructors() throws Exception {doTest(true);}
+    public void testTypeConstraints() throws Exception {doTest(true);}
 }

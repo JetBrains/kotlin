@@ -39,17 +39,22 @@ declaration
   ;
 
 expressionWithPrecedences // See the precedence table, everything associates to the left
+  : memberLiteral
+  : memberAccessExpression
   : infixFunctionCall
   : binOpExpression
   : assignment
   : unOpExpression
   : castExpression
   : typingExpression
-  : memberAccessExpression
+  ;
+
+memberLiteral
+  : expression? '#' SimpleName
   ;
 
 memberAccessExpression
-  : (expression accessOp)? memberAccess
+  : (expression accessOp)? (memberAccess | expression)
   ;
 
 accessOp

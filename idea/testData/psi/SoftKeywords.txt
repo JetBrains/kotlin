@@ -278,39 +278,33 @@ JetFile: SoftKeywords.jet
           PsiElement(val)('val')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('internal')
-          PsiWhiteSpace(' ')
-          PsiElement(LBRACE)('{')
           PsiWhiteSpace('\n      ')
-          PROPERTY_GETTER
+          PROPERTY_ACCESSOR
             PsiElement(get)('get')
-            VALUE_PARAMETER_LIST
-              PsiElement(LPAR)('(')
-              PsiElement(RPAR)(')')
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
             PsiWhiteSpace(' ')
             PsiElement(EQ)('=')
             PsiWhiteSpace(' ')
             PsiElement(IDENTIFIER)('a')
           PsiWhiteSpace('\n      ')
-          PROPERTY_GETTER
+          PROPERTY_ACCESSOR
             PsiElement(set)('set')
-            VALUE_PARAMETER_LIST
-              PsiElement(LPAR)('(')
-              VALUE_PARAMETER
-                PsiElement(IDENTIFIER)('S')
-                PsiWhiteSpace(' ')
-                PsiElement(COLON)(':')
-                PsiWhiteSpace(' ')
-                TYPE_REFERENCE
-                  USER_TYPE
-                    PsiElement(IDENTIFIER)('s')
-              PsiElement(RPAR)(')')
+            PsiElement(LPAR)('(')
+            VALUE_PARAMETER
+              PsiElement(IDENTIFIER)('S')
+              PsiWhiteSpace(' ')
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                USER_TYPE
+                  PsiElement(IDENTIFIER)('s')
+            PsiElement(RPAR)(')')
             PsiWhiteSpace(' ')
             BLOCK
               PsiElement(LBRACE)('{')
               PsiElement(RBRACE)('}')
-          PsiWhiteSpace('\n    ')
-          PsiElement(RBRACE)('}')
-        PsiWhiteSpace('\n\n    ')
+        PsiWhiteSpace('\n\n\n    ')
         FUN
           MODIFIER_LIST
             PsiElement(public)('public')

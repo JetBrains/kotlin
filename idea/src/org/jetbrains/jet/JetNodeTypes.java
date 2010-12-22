@@ -46,12 +46,14 @@ public interface JetNodeTypes {
     JetNodeType FUNCTION_TYPE = new JetNodeType("FUNCTION_TYPE");
     JetNodeType DECOMPOSER_PROPERTY_LIST = new JetNodeType("DECOMPOSER_PROPERTY_LIST");
     JetNodeType RECEIVER_TYPE_ATTRIBUTES = new JetNodeType("RECEIVER_TYPE_ATTRIBUTES");
-    JetNodeType PROPERTY_GETTER = new JetNodeType("PROPERTY_GETTER");
+    JetNodeType PROPERTY_ACCESSOR = new JetNodeType("PROPERTY_ACCESSOR");
     JetNodeType CONSTRUCTOR = new JetNodeType("CONSTRUCTOR");
     JetNodeType INITIALIZER_LIST = new JetNodeType("INITIALIZER_LIST");
     JetNodeType THIS_CALL = new JetNodeType("THIS_CALL");
     JetNodeType BLOCK = new JetNodeType("BLOCK");
     JetNodeType CLASS_OBJECT = new JetNodeType("CLASS_OBJECT");
+    JetNodeType TYPE_CONSTRAINT_LIST = new JetNodeType("TYPE_CONSTRAINT_LIST");
+    JetNodeType TYPE_CONSTRAINT = new JetNodeType("TYPE_CONSTRAINT");
 
     IElementType NAMESPACE_NAME = new JetNodeType("NAMESPACE_NAME");
 }

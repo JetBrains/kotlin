@@ -5,21 +5,20 @@ val foo :
 val [a foo = foo
 val foo.bar.
 val [a] foo : = bar
-val foo.bar {
+val foo.bar
    public () {}
    () = foo
-}
-val foo.bar.{() : ()}.foo = foo {
+
+val foo.bar.{() : ()}.foo = foo
    dfget() {}
    set) {}
-}
-val foo.bar.{() : ()}.foo = foo {
+
+val foo.bar.{() : ()}.foo = foo
    get(foo) {}
    set() {}
    set() {}
-}
+
 val f.d.- = f
 
-val foo {
+val foo
     get() -
-}

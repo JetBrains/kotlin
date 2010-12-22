@@ -56,10 +56,10 @@ ref
     val public
     val private
     val protected
-    val internal {
+    val internal
       get() = a
       set(S : s) {}
-    }
+
 
     public protected private internal
     fun abstract  () : abstract
