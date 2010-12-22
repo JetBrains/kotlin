@@ -1,0 +1,7 @@
+enumClassBody
+  : "{" enumEntry* "}"
+  ;
+
+enumEntry
+  : modifiers SimpleName typeParameters? valueParameters? (":" initializer{","})? classBody?
+  ;

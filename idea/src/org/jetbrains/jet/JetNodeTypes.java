@@ -54,6 +54,7 @@ public interface JetNodeTypes {
     JetNodeType CLASS_OBJECT = new JetNodeType("CLASS_OBJECT");
     JetNodeType TYPE_CONSTRAINT_LIST = new JetNodeType("TYPE_CONSTRAINT_LIST");
     JetNodeType TYPE_CONSTRAINT = new JetNodeType("TYPE_CONSTRAINT");
+    JetNodeType ENUM_ENTRY = new JetNodeType("ENUM_ENTRY");
 
     IElementType NAMESPACE_NAME = new JetNodeType("NAMESPACE_NAME");
 }

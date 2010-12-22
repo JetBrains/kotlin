@@ -8,7 +8,9 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.jet.JetNodeType;
 import org.jetbrains.jet.lexer.JetKeywordToken;
+import org.jetbrains.jet.lexer.JetToken;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,7 +32,9 @@ public class JetParsing extends AbstractJetParsing {
     }
 
     private static final TokenSet TOPLEVEL_OBJECT_FIRST = TokenSet.create(TYPE_KEYWORD, CLASS_KEYWORD,
-                EXTENSION_KEYWORD, FUN_KEYWORD, VAL_KEYWORD, REF_KEYWORD, NAMESPACE_KEYWORD, DECOMPOSER_KEYWORD);
+                EXTENSION_KEYWORD, FUN_KEYWORD, VAL_KEYWORD, NAMESPACE_KEYWORD, DECOMPOSER_KEYWORD);
+    private static final TokenSet ENUM_MEMBER_FIRST = TokenSet.create(TYPE_KEYWORD, CLASS_KEYWORD,
+                EXTENSION_KEYWORD, FUN_KEYWORD, VAL_KEYWORD, DECOMPOSER_KEYWORD, IDENTIFIER);
 
     private static final TokenSet CLASS_NAME_RECOVERY_SET = TokenSet.orSet(TokenSet.create(LT, WRAPS_KEYWORD, LPAR, COLON, LBRACE), TOPLEVEL_OBJECT_FIRST);
     private static final TokenSet TYPE_PARAMETER_GT_RECOVERY_SET = TokenSet.create(WHERE_KEYWORD, WRAPS_KEYWORD, LPAR, COLON, LBRACE, GT);
@@ -168,7 +172,9 @@ public class JetParsing extends AbstractJetParsing {
      */
     private void parseTopLevelObject() {
         PsiBuilder.Marker decl = mark();
-        parseModifierList();
+
+        EnumDetector detector = new EnumDetector();
+        parseModifierList(detector);
 
         IElementType keywordToken = tt();
         JetNodeType declType = null;
@@ -176,7 +182,7 @@ public class JetParsing extends AbstractJetParsing {
             declType = parseNamespaceBlock();
         }
         else if (keywordToken == CLASS_KEYWORD) {
-            declType = parseClass();
+            declType = parseClass(detector.isEnum());
         }
         else if (keywordToken == EXTENSION_KEYWORD) {
             declType = parseExtension();
@@ -269,12 +275,22 @@ public class JetParsing extends AbstractJetParsing {
      * (modifier | attribute)*
      */
     private void parseModifierList() {
+        parseModifierList(null);
+    }
+
+    /**
+     * (modifier | attribute)*
+     *
+     * Feeds modifiers (not attributes) into the passed consumer, if it is not null
+     */
+    private void parseModifierList(Consumer<IElementType> tokenConsumer) {
         PsiBuilder.Marker list = mark();
         boolean empty = true;
         while (!eof()) {
             if (at(LBRACKET)) {
                 parseAttributeAnnotation();
             } else if (atSet(MODIFIER_KEYWORDS)) {
+                if (tokenConsumer != null) tokenConsumer.consume(tt());
                 advance(); // MODIFIER
             }
             else {
@@ -372,10 +388,10 @@ public class JetParsing extends AbstractJetParsing {
      *       "wraps"?
      *       ("(" primaryConstructorParameter{","} ")")?
      *       (":" attributes delegationSpecifier{","})?
-     *       classBody?
+     *       (classBody? | enumClassBody)
      *   ;
      */
-    private JetNodeType parseClass() {
+    private JetNodeType parseClass(boolean enumClass) {
         assert at(CLASS_KEYWORD);
         advance(); // CLASS_KEYWORD
 
@@ -393,10 +409,87 @@ public class JetParsing extends AbstractJetParsing {
         }
 
         if (at(LBRACE)) {
-            parseClassBody();
+            if (enumClass) {
+                parseEnumClassBody();
+            }
+            else {
+                parseClassBody();
+            }
         }
 
         return CLASS;
+    }
+
+    /*
+     * enumClassBody
+     *   : "{" enumEntry* "}"
+     *   ;
+     */
+    private void parseEnumClassBody() {
+        if (!at(LBRACE)) return;
+
+        PsiBuilder.Marker classBody = mark();
+
+        advance(); // LBRACE
+
+        while (!eof() && !at(RBRACE)) {
+            PsiBuilder.Marker entryOrMember = mark();
+
+            TokenSet constructorNameFollow = TokenSet.create(SEMICOLON, COLON, LPAR, LT, LBRACE);
+            int lastId = findLastBefore(ENUM_MEMBER_FIRST, constructorNameFollow, false);
+            EnumDetector enumDetector = new EnumDetector();
+            createTruncatedBuilder(lastId).parseModifierList(enumDetector);
+
+            IElementType type;
+            if (at(IDENTIFIER)) {
+                parseEnumEntry();
+                type = ENUM_ENTRY;
+            }
+            else {
+                type = parseMemberDeclarationRest(enumDetector.isEnum());
+            }
+
+            if (type == null) {
+                errorAndAdvance("Expecting an enum entry or member declaration");
+                entryOrMember.drop();
+            }
+            else {
+                entryOrMember.done(type);
+            }
+        }
+
+        expect(RBRACE, "Expecting '}' to close enum class body");
+
+        classBody.done(CLASS_BODY);
+    }
+
+    /*
+     * enumEntry
+     *   : modifiers SimpleName typeParameters? valueParameters? (":" initializer{","})? classBody?
+     *   ;
+     */
+    private void parseEnumEntry() {
+        assert at(IDENTIFIER);
+
+        advance(); // IDENTIFIER
+
+        parseTypeParameterList(TokenSet.create(COLON, LPAR, SEMICOLON, LBRACE));
+
+        if (at(LPAR)) {
+            parseValueParameterList(false, TokenSet.create(COLON, SEMICOLON, LBRACE));
+        }
+
+        if (at(COLON)) {
+            advance(); // COLON
+
+            parseInitializerList();
+        }
+
+        if (at(LBRACE)) {
+            parseClassBody();
+        }
+
+        consumeIf(SEMICOLON);
     }
 
     /*
@@ -405,7 +498,6 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      */
     /*package*/ void parseClassBody() {
-        // TODO: enum classes
         assert at(LBRACE);
         PsiBuilder.Marker body = mark();
         advance(); // LBRACE
@@ -435,8 +527,21 @@ public class JetParsing extends AbstractJetParsing {
     private void parseMemberDeclaration() {
         PsiBuilder.Marker decl = mark();
 
-        parseModifierList();
+        EnumDetector enumDetector = new EnumDetector();
+        parseModifierList(enumDetector);
 
+        JetNodeType declType = parseMemberDeclarationRest(enumDetector.isEnum());
+
+        if (declType == null) {
+            errorAndAdvance("Expecting member declaration");
+            decl.drop();
+        }
+        else {
+            decl.done(declType);
+        }
+    }
+
+    private JetNodeType parseMemberDeclarationRest(boolean isEnum) {
         IElementType keywordToken = tt();
         JetNodeType declType = null;
         if (keywordToken == CLASS_KEYWORD) {
@@ -444,7 +549,7 @@ public class JetParsing extends AbstractJetParsing {
                 declType = parseClassObject();
             }
             else {
-                declType = parseClass();
+                declType = parseClass(isEnum);
             }
         }
         else if (keywordToken == EXTENSION_KEYWORD) {
@@ -465,14 +570,7 @@ public class JetParsing extends AbstractJetParsing {
         else if (keywordToken == THIS_KEYWORD) {
             declType = parseConstructor();
         }
-
-        if (declType == null) {
-            errorAndAdvance("Expecting member declaration");
-            decl.drop();
-        }
-        else {
-            decl.done(declType);
-        }
+        return declType;
     }
 
     /*
@@ -1326,4 +1424,19 @@ public class JetParsing extends AbstractJetParsing {
         return new JetParsing(new TruncatedSemanticWhitespaceAwarePsiBuilder(myBuilder, eofPosition));
     }
 
+    private static class EnumDetector implements Consumer<IElementType> {
+
+        private boolean myEnum = false;
+
+        @Override
+        public void consume(IElementType item) {
+            if (item == ENUM_KEYWORD) {
+                myEnum = true;
+            }
+        }
+
+        public boolean isEnum() {
+            return myEnum;
+        }
+    }
 }

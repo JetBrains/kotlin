@@ -16,7 +16,7 @@ class
       "wraps"?
       ("(" primaryConstructorParameter{","} ")")?
       (":" attributes delegationSpecifier{","})?
-      classBody?
+      (classBody? | enumClassBody)
   ;
 
 typeParameters
