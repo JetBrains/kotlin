@@ -89,11 +89,11 @@ property
   ;
 
 getter
-  : modifiers "get" "(" ")" functionBody
+  : modifiers "get" "(" ")" (":" type)? functionBody
   ;
 
 setter
-  : modifiers "set" "(" modifiers parameter ")" functionBody // TODO: Can the parameter be lazy?
+  : modifiers "set" "(" modifiers (SimpleName | parameter) ")" functionBody // TODO: Can the parameter be lazy?
   ;
 
 parameter

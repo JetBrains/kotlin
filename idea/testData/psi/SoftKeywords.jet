@@ -109,7 +109,63 @@ ref
         public    : t,
         private   : t,
         protected : t,
-        internal  : t
+        internal  : t,
+    public protected private internal abstract
+    virtual
+    enum
+    open
+    attribute
+    override
+    virtual
+    abstract
+    private
+    protected
+    public
+    internal
+    lazy open : t
+
      )
+
+}
+
+
+class F(val foo : bar,
+        abstract  : t,
+        virtual   : t,
+        enum      : t,
+        open      : t,
+        attribute : t,
+        override  : t,
+        virtual   : t,
+        abstract  : t,
+        private   : t,
+        protected : t,
+        public    : t,
+        internal  : t,
+        lazy      : t,
+        wraps     : t,
+        import    : t,
+        where     : t,
+        by        : t,
+        get       : t,
+        set       : t,
+        public    : t,
+        private   : t,
+        protected : t,
+        internal  : t,
+    public protected private internal abstract
+    virtual
+    enum
+    open
+    attribute
+    override
+    virtual
+    abstract
+    private
+    protected
+    public
+    internal
+    lazy open : b
+) {
 
 }

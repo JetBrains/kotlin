@@ -266,32 +266,6 @@ public class JetParsing extends AbstractJetParsing {
     }
 
     /*
-     * modifier
-     *   : "virtual"
-     *   : "enum"
-     *   : "open"
-     *   : "attribute"
-     *   : "override"
-     *   : "abstract"
-     *   : "private"
-     *   : "protected"
-     *   : "public"
-     *   : "internal"
-     *   : "lazy"
-     */
-    private boolean parseModifierSoftKeyword() {
-        if (!at(IDENTIFIER)) return false;
-        String tokenText = myBuilder.getTokenText();
-        IElementType tokenType = MODIFIER_KEYWORD_MAP.get(tokenText);
-        if (tokenType != null) {
-            myBuilder.remapCurrentToken(tokenType);
-            advance();
-            return true;
-        }
-        return false;
-    }
-
-    /*
      * (modifier | attribute)*
      */
     private void parseModifierList() {
@@ -304,7 +278,7 @@ public class JetParsing extends AbstractJetParsing {
                 advance(); // MODIFIER
             }
             else {
-                if (!parseModifierSoftKeyword()) break;
+                break;
             }
             empty = false;
         }
@@ -921,12 +895,7 @@ public class JetParsing extends AbstractJetParsing {
         parseAttributeList();
 
         PsiBuilder.Marker delegator = mark();
-        if (at(LPAR)) {
-            error("Expecting type name");
-        }
-        else {
-            parseTypeRef();
-        }
+        parseTypeRef();
 
         if (at(BY_KEYWORD)) {
             advance(); // BY_KEYWORD
@@ -980,7 +949,9 @@ public class JetParsing extends AbstractJetParsing {
      */
     private void parsePrimaryConstructorParameter() {
         PsiBuilder.Marker param = mark();
-        parseModifierList();
+
+        int lastId = findLastBefore(TokenSet.create(IDENTIFIER), TokenSet.create(COMMA, RPAR, COLON), false);
+        createTruncatedBuilder(lastId).parseModifierList();
 
         if (at(VAR_KEYWORD) || at(VAL_KEYWORD)) {
             advance(); // VAR_KEYWORD | VAL_KEYWORD
