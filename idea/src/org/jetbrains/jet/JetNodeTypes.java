@@ -55,6 +55,20 @@ public interface JetNodeTypes {
     JetNodeType TYPE_CONSTRAINT_LIST = new JetNodeType("TYPE_CONSTRAINT_LIST");
     JetNodeType TYPE_CONSTRAINT = new JetNodeType("TYPE_CONSTRAINT");
     JetNodeType ENUM_ENTRY = new JetNodeType("ENUM_ENTRY");
+    JetNodeType NULL = new JetNodeType("NULL");
+    JetNodeType BOOLEAN_CONSTANT = new JetNodeType("BOOLEAN_CONSTANT");
+    JetNodeType FLOAT_CONSTANT = new JetNodeType("FLOAT_CONSTANT");
+    JetNodeType CHARACTER_CONSTANT = new JetNodeType("CHARACTER_CONSTANT");
+    JetNodeType STRING_CONSTANT = new JetNodeType("STRING_CONSTANT");
+    JetNodeType INTEGER_CONSTANT = new JetNodeType("INTEGER_CONSTANT");
+    JetNodeType SUPERTYE_QUALIFIER = new JetNodeType("SUPERTYE_QUALIFIER");
+    JetNodeType LONG_CONSTANT = new JetNodeType("LONG_CONSTANT");
+    JetNodeType TUPLE = new JetNodeType("TUPLE");
+    JetNodeType MAP_LITERAL_ENTRY = new JetNodeType("MAP_LITERAL_ENTRY");
+    JetNodeType MAP_LITERAL = new JetNodeType("MAP_LITERAL");
+    JetNodeType RANGE_LITERAL = new JetNodeType("RANGE_LITERAL");
+    JetNodeType LIST_LITERAL = new JetNodeType("LIST_LITERAL");
+    JetNodeType TYPEOF = new JetNodeType("TYPEOF");
 
     IElementType NAMESPACE_NAME = new JetNodeType("NAMESPACE_NAME");
 }

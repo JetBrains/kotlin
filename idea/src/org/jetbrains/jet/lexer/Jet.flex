@@ -109,6 +109,7 @@ RAW_STRING_LITERAL = {THREE_QUO} {QUO_STRING_CHAR}* {THREE_QUO}?
 <YYINITIAL> "while"      { return JetTokens.WHILE_KEYWORD ;}
 <YYINITIAL> "do"         { return JetTokens.DO_KEYWORD ;}
 <YYINITIAL> "match"      { return JetTokens.MATCH_KEYWORD ;}
+<YYINITIAL> "try"        { return JetTokens.TRY_KEYWORD ;}
 
 
 <YYINITIAL> {IDENTIFIER} { return JetTokens.IDENTIFIER; }

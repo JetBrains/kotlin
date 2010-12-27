@@ -61,6 +61,7 @@ do
 match
 out
 ref
+try
 
 Soft:
 wraps -- in a class header
@@ -79,4 +80,6 @@ private
 public
 internal
 protected
+catch
+finally
 */

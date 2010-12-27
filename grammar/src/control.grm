@@ -2,6 +2,18 @@ if
   : "if" "(" expression ")" expression ("else" expression)?
   ;
 
+try
+  : "try" block catchBlock* finallyBlock?
+  ;
+
+catchBlock
+  : "catch" valueParameters block
+  ;
+
+finallyBlock
+  : "finally" block
+  ;
+
 loop
   : for
   : while

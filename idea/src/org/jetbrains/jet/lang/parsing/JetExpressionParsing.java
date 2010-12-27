@@ -29,11 +29,11 @@ public class JetExpressionParsing extends AbstractJetParsing {
      *   : range
      *   : "null"
      *   : "this" ("<" type ">")?
-     *   : memberAccessExpression
      *   : expressionWithPrecedences
      *   : match
      *   : if
-     *   : "typeof"
+     *   : try
+     *   : "typeof" "(" expression ")"
      *   : "new" constructorInvocation
      *   : objectLiteral
      *   : declaration
@@ -44,40 +44,22 @@ public class JetExpressionParsing extends AbstractJetParsing {
      */
     public void parseExpression() {
         if (at(LPAR)) {
-            // TODO (expression) or tuple
-        }
-        else if (at(INTEGER_LITERAL)) {
-            // TODO
-        }
-        else if (at(CHARACTER_LITERAL)) {
-            // TODO
-        }
-        else if (at(FLOAT_LITERAL)) {
-            // TODO
-        }
-        else if (at(STRING_LITERAL)) {
-            // TODO
-        }
-        else if (at(TRUE_KEYWORD)) {
-            // TODO
-        }
-        else if (at(FALSE_KEYWORD)) {
-            // TODO
+            parseParenthesizedExpressionOrTuple();
         }
         else if (at(LBRACKET)) {
-            // TODO: map, list or range
-        }
-        else if (at(NULL_KEYWORD)) {
-            // TODO
+            parseMapListOrRange();
         }
         else if (at(THIS_KEYWORD)) {
-            // TODO
+            parseThisExpression();
         }
         else if (at(IF_KEYWORD)) {
             // TODO
         }
-        else if (at(TYPEOF_KEYWORD)) {
+        else if (at(TRY_KEYWORD)) {
             // TODO
+        }
+        else if (at(TYPEOF_KEYWORD)) {
+            parseTypeOf();
         }
         else if (at(NEW_KEYWORD)) {
             // TODO
@@ -106,10 +88,195 @@ public class JetExpressionParsing extends AbstractJetParsing {
         else if (at(DO_KEYWORD)) {
             // TODO
         }
-        else if (atSet(TokenSet.create(CLASS_KEYWORD, EXTENSION_KEYWORD, FUN_KEYWORD, VAL_KEYWORD, VAR_KEYWORD, TYPE_KEYWORD))) {
+        else if (atSet(TokenSet.create(
+                CLASS_KEYWORD,
+                EXTENSION_KEYWORD,
+                FUN_KEYWORD,
+                VAL_KEYWORD,
+                VAR_KEYWORD,
+                TYPE_KEYWORD))) {
             // TODO
         }
-        advance(); // TODO
+        else if (at(IDENTIFIER)) {
+            advance(); // TODO
+        }
+        else if (at(INTEGER_LITERAL)) {
+            parseOneTokenExpression(INTEGER_CONSTANT);
+        }
+        else if (at(LONG_LITERAL)) {
+            parseOneTokenExpression(LONG_CONSTANT);
+        }
+        else if (at(CHARACTER_LITERAL)) {
+            parseOneTokenExpression(CHARACTER_CONSTANT);
+        }
+        else if (at(FLOAT_LITERAL)) {
+            parseOneTokenExpression(FLOAT_CONSTANT);
+        }
+        else if (at(STRING_LITERAL) || at(RAW_STRING_LITERAL)) {
+            parseOneTokenExpression(STRING_CONSTANT);
+        }
+        else if (at(TRUE_KEYWORD)) {
+            parseOneTokenExpression(BOOLEAN_CONSTANT);
+        }
+        else if (at(FALSE_KEYWORD)) {
+            parseOneTokenExpression(BOOLEAN_CONSTANT);
+        }
+        else if (at(NULL_KEYWORD)) {
+            parseOneTokenExpression(NULL);
+        }
+    }
+
+    /*
+     * "typeof" "(" expression ")"
+     */
+    private void parseTypeOf() {
+        assert at(TYPEOF_KEYWORD);
+
+        PsiBuilder.Marker typeof = mark();
+        advance(); // TYPEOF_KEYWORD
+
+        expect(LPAR, "Expecting '('");
+        parseExpression();
+        expect(RPAR, "Expecting ')'");
+        typeof.done(TYPEOF);
+    }
+
+    /*
+     * listLiteral
+     *   : "[" expression{","}? "]"
+     *   ;
+     *
+     * mapLiteral
+     *   : "[" mapEntryLiteral{","} "]"
+     *   : "[" ":" "]"
+     *   ;
+     *
+     * mapEntryLiteral
+     *   : expression ":" expression
+     *   ;
+     *
+     * range
+     *   : "[" expression ".." expression "]"
+     *   ;
+     */
+    private void parseMapListOrRange() {
+        assert at(LBRACKET);
+
+        PsiBuilder.Marker literal = mark();
+
+        advance(); // LBRACKET
+
+        // If this is an emty map "[:]"
+        if (at(COLON)) {
+            advance(); // COLON
+            expect(RBRACKET, "Expecting ']' to close an empty map literal '[:]'");
+            literal.done(MAP_LITERAL);
+            return;
+        }
+
+        PsiBuilder.Marker item = mark();
+        parseExpression();
+
+        // If it is a map "[e:e, e:e]"
+        if (at(COLON)) {
+            advance(); // COLON
+
+            parseExpression();
+            item.done(MAP_LITERAL_ENTRY);
+
+            while (at(COMMA)) {
+                advance(); // COMMA
+                if (at(COMMA)) error("Expecting a map entry");
+                parseMapLiteralEntry();
+            }
+            expect(RBRACKET, "Expecting ']' to close a map literal");
+            literal.done(MAP_LITERAL);
+            return;
+        }
+
+        // If it is a range "[a..b]"
+        if (at(RANGE)) {
+            item.drop();
+            advance(); // RANGE
+
+            parseExpression();
+
+            expect(RBRACKET, "Expecting ']' to close the range");
+            literal.done(RANGE_LITERAL);
+            return;
+        }
+
+        // Else: it must be a list literal "[a, b, c]"
+        item.drop();
+        while (at(COMMA)) {
+            advance(); // COMMA
+            if (at(COMMA)) error("Expecting a list entry");
+            parseExpression();
+        }
+
+        expect(RBRACKET, "Expecting a ']' to close a list");
+        literal.done(LIST_LITERAL);
+    }
+
+    /*
+     * mapLiteralEntry
+     *   : expression ":" expression
+     *   ;
+     */
+    private void parseMapLiteralEntry() {
+        PsiBuilder.Marker entry = mark();
+        parseExpression();
+        expect(COLON, "Expecting ':'");
+        parseExpression();
+        entry.done(MAP_LITERAL_ENTRY);
+    }
+
+    /*
+     * "(" expression ")" // see tupleLiteral
+     * "(" expression{","} ")"
+     * TODO: Labels in tuple literals?
+     */
+    private void parseParenthesizedExpressionOrTuple() {
+        assert at(LPAR);
+
+        PsiBuilder.Marker mark = mark();
+
+        advance(); // LPAR
+
+        while (true) {
+            if (at(COMMA)) errorAndAdvance("Expecting a tuple entry (expression)");
+            parseExpression();
+            if (!at(COMMA)) break;
+            advance(); // COMMA
+        }
+
+        expect(RPAR, "Expecting ')'");
+
+        mark.done(TUPLE);
+    }
+
+    /*
+     * "this" ("<" type ">")?
+     */
+    private void parseThisExpression() {
+        assert at(THIS_KEYWORD);
+        advance(); // THIS_KEYWORD
+        if (at(LT)) {
+            // This may be "this < foo" or "this<foo>", thus the backtracking
+            PsiBuilder.Marker supertype = mark();
+
+            advance(); // LT
+
+            myJetParsing.parseTypeRef();
+
+            if (at(GT)) {
+                advance(); // GT
+                supertype.done(SUPERTYE_QUALIFIER);
+            }
+            else {
+                supertype.rollbackTo();
+            }
+        }
     }
 
     /*
@@ -172,4 +339,11 @@ public class JetExpressionParsing extends AbstractJetParsing {
             }
         }
     }
+
+    private void parseOneTokenExpression(JetNodeType type) {
+        PsiBuilder.Marker mark = mark();
+        advance();
+        mark.done(type);
+    }
+
 }

@@ -41,7 +41,8 @@ JetFile: Enums.jet
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
-                  PsiElement(INTEGER_LITERAL)('0xFF000')
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('0xFF000')
                 PsiElement(RPAR)(')')
         PsiWhiteSpace('\n    ')
         ENUM_ENTRY
@@ -59,7 +60,8 @@ JetFile: Enums.jet
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
-                  PsiElement(INTEGER_LITERAL)('0x00FF00')
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('0x00FF00')
                 PsiElement(RPAR)(')')
         PsiWhiteSpace('\n    ')
         ENUM_ENTRY
@@ -77,7 +79,8 @@ JetFile: Enums.jet
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
-                  PsiElement(INTEGER_LITERAL)('0x0000FF')
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('0x0000FF')
                 PsiElement(RPAR)(')')
         PsiWhiteSpace('\n')
         PsiElement(RBRACE)('}')
@@ -135,7 +138,8 @@ JetFile: Enums.jet
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
-                  PsiElement(INTEGER_LITERAL)('0')
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('0')
                 PsiElement(RPAR)(')')
         PsiWhiteSpace('\n\n    ')
         ENUM_ENTRY

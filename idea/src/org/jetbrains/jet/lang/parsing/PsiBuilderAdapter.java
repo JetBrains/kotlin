@@ -58,6 +58,16 @@ public class PsiBuilderAdapter implements PsiBuilder {
         return myDelegate.lookAhead(steps);
     }
 
+//    @Override
+//    public IElementType rawLookup(int steps) {
+//        return myDelegate.rawLookup(steps);
+//    }
+//
+//    @Override
+//    public int rawTokenTypeStart(int steps) {
+//        return myDelegate.rawTokenTypeStart(steps);
+//    }
+
     @Nullable
     @NonNls
     public String getTokenText() {

@@ -829,65 +829,6 @@ public class JetParsing extends AbstractJetParsing {
     }
 
     /*
-     * Looks for a the last top-level (not inside any {} [] () <>) '.' occurring before a
-     * top-level occurrence of a token from the <code>stopSet</code>
-     */
-    private int findLastBefore(TokenSet lookFor, TokenSet stopAt, boolean dontStopRightAfterOccurrence) {
-        PsiBuilder.Marker currentPosition = mark();
-        int lastOccurrence = -1;
-        int openAngleBrackets = 0;
-        int openBraces = 0;
-        int openParentheses = 0;
-        int openBrackets = 0;
-        IElementType previousToken = null;
-        while (!eof()) {
-            if (atSet(stopAt)) {
-                if (openAngleBrackets == 0
-                    && openBrackets == 0
-                    && openBraces == 0
-                    && openParentheses == 0
-                    && (!dontStopRightAfterOccurrence
-                        || !lookFor.contains(previousToken))) break;
-            }
-            if (at(LPAR)) {
-                openParentheses++;
-            }
-            else if (at(LT)) {
-                openAngleBrackets++;
-            }
-            else if (at(LBRACE)) {
-                openBraces++;
-            }
-            else if (at(LBRACKET)) {
-                openBrackets++;
-            }
-            else if (at(RPAR)) {
-                openParentheses--;
-            }
-            else if (at(GT)) {
-                openAngleBrackets--;
-            }
-            else if (at(RBRACE)) {
-                openBraces--;
-            }
-            else if (at(RBRACKET)) {
-                openBrackets--;
-            }
-            else if (atSet(lookFor)
-                    && openAngleBrackets == 0
-                    && openBrackets == 0
-                    && openBraces == 0
-                    && openParentheses == 0) {
-                lastOccurrence = myBuilder.getCurrentOffset();
-            }
-            previousToken = tt();
-            advance(); // skip token
-        }
-        currentPosition.rollbackTo();
-        return lastOccurrence ;
-    }
-
-    /*
      * functionBody
      *   : block
      *   : "=" expression
@@ -1188,7 +1129,7 @@ public class JetParsing extends AbstractJetParsing {
      *   : attributes (userType | functionType | tupleType)
      *   ;
      */
-    private void parseTypeRef() {
+    public void parseTypeRef() {
         PsiBuilder.Marker type = mark();
 
         parseAttributeList();

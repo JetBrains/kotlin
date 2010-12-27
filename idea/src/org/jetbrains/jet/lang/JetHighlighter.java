@@ -73,6 +73,7 @@ public class JetHighlighter extends SyntaxHighlighterBase {
         fillMap(keys1, JetTokens.KEYWORDS, JET_KEYWORD);
 
         keys1.put(JetTokens.INTEGER_LITERAL, JET_NUMBER);
+        keys1.put(JetTokens.LONG_LITERAL, JET_NUMBER);
         keys1.put(JetTokens.FLOAT_LITERAL, JET_NUMBER);
 
         keys1.put(JetTokens.STRING_LITERAL, JET_STRING);

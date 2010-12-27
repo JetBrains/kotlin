@@ -11,7 +11,8 @@ expression
   : expressionWithPrecedences
   : match
   : if
-  : "typeof" // TODO: another keyword
+  : try
+  : "typeof" "(" expression ")"
   : "new" constructorInvocation // TODO: Do we need "new"?, see factory methods
   : objectLiteral
   : declaration
@@ -165,11 +166,11 @@ listLiteral
   ;
 
 mapLiteral
-  : "[" mapEntryLiteral{","} "]"
+  : "[" mapLiteralEntry{","} "]"
   : "[" ":" "]"
   ;
 
-mapEntryLiteral
+mapLiteralEntry
   : expression ":" expression
   ;
 
