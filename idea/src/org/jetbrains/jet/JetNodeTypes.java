@@ -70,6 +70,10 @@ public interface JetNodeTypes {
     JetNodeType LIST_LITERAL = new JetNodeType("LIST_LITERAL");
     JetNodeType TYPEOF = new JetNodeType("TYPEOF");
     JetNodeType NEW = new JetNodeType("NEW");
+    JetNodeType RETURN = new JetNodeType("RETURN");
+    JetNodeType THROW = new JetNodeType("THROW");
+    JetNodeType CONTINUE = new JetNodeType("CONTINUE");
+    JetNodeType BREAK = new JetNodeType("BREAK");
 
     IElementType NAMESPACE_NAME = new JetNodeType("NAMESPACE_NAME");
 }

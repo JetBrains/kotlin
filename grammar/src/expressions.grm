@@ -140,7 +140,7 @@ infixFunctionCall
 
 jump
   : "throw" expression
-  : "return" expression
+  : "return" expression?
   : "continue" SimpleName
   : "break" SimpleName
 // yield ?

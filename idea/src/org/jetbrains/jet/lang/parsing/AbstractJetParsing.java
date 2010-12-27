@@ -206,7 +206,7 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
     }
 
     protected boolean eol() {
-        return myBuilder.eolInLastWhitespace();
+        return myBuilder.eolInLastWhitespace() || eof();
     }
 
 }

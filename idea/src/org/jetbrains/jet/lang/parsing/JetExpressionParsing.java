@@ -52,12 +52,6 @@ public class JetExpressionParsing extends AbstractJetParsing {
         else if (at(THIS_KEYWORD)) {
             parseThisExpression();
         }
-        else if (at(IF_KEYWORD)) {
-            // TODO
-        }
-        else if (at(TRY_KEYWORD)) {
-            // TODO
-        }
         else if (at(TYPEOF_KEYWORD)) {
             parseTypeOf();
         }
@@ -71,12 +65,18 @@ public class JetExpressionParsing extends AbstractJetParsing {
             parseThrow();
         }
         else if (at(RETURN_KEYWORD)) {
-            // TODO
+            parseReturn();
         }
         else if (at(CONTINUE_KEYWORD)) {
-            // TODO
+            parseJump(CONTINUE);
         }
         else if (at(BREAK_KEYWORD)) {
+            parseJump(BREAK);
+        }
+        else if (at(IF_KEYWORD)) {
+            // TODO
+        }
+        else if (at(TRY_KEYWORD)) {
             // TODO
         }
         else if (at(FOR_KEYWORD)) {
@@ -127,14 +127,49 @@ public class JetExpressionParsing extends AbstractJetParsing {
     }
 
     /*
+     * : "continue" SimpleName
+     * : "break" SimpleName
+     */
+    private void parseJump(JetNodeType type) {
+        assert at(BREAK_KEYWORD) || at(CONTINUE_KEYWORD);
+
+        PsiBuilder.Marker marker = mark();
+
+        advance(); // BREAK_KEYWORD or CONTINUE_KEYWORD
+
+        if (!eol() && at(IDENTIFIER)) advance(); // IDENTIFIER
+
+        marker.done(type);
+    }
+
+    /*
+     * "return" expression?
+     */
+    private void parseReturn() {
+        assert at(RETURN_KEYWORD);
+
+        PsiBuilder.Marker returnExpression = mark();
+
+        advance(); // RETURN_KEYWORD
+
+        if (!at(EOL_OR_SEMICOLON)) parseExpression();
+
+        returnExpression.done(RETURN);
+    }
+
+    /*
      * : "throw" expression
      */
     private void parseThrow() {
         assert at(THROW_KEYWORD);
 
+        PsiBuilder.Marker marker = mark();
+
         advance(); // THROW_KEYWORD
 
         parseExpression();
+
+        marker.done(THROW);
     }
 
     /*
