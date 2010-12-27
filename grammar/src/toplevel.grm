@@ -11,7 +11,7 @@ preamble
   ;
 
 namespaceHeader
-  : "namespace" SimpleName{"."}
+  : "namespace" SimpleName{"."} SEMI?
   ;
 
 import

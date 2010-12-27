@@ -90,7 +90,7 @@ JetFile: SimpleClassMembers_ERR.jet
             PsiElement(COMMA)(',')
             PsiWhiteSpace(' ')
             PsiElement(IDENTIFIER)('c')
-            PsiErrorElement:Expecting ')' to close a property list
+            PsiErrorElement:Expecting ',' or a closing ')'
               <empty list>
         PsiWhiteSpace('\n\n    ')
         CONSTRUCTOR

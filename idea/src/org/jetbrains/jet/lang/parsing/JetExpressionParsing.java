@@ -62,13 +62,13 @@ public class JetExpressionParsing extends AbstractJetParsing {
             parseTypeOf();
         }
         else if (at(NEW_KEYWORD)) {
-            // TODO
+            parseNew();
         }
         else if (at(OBJECT_KEYWORD)) {
-            // TODO
+            parseObjectLiteral();
         }
         else if (at(THROW_KEYWORD)) {
-            // TODO
+            parseThrow();
         }
         else if (at(RETURN_KEYWORD)) {
             // TODO
@@ -124,6 +124,37 @@ public class JetExpressionParsing extends AbstractJetParsing {
         else if (at(NULL_KEYWORD)) {
             parseOneTokenExpression(NULL);
         }
+    }
+
+    /*
+     * : "throw" expression
+     */
+    private void parseThrow() {
+        assert at(THROW_KEYWORD);
+
+        advance(); // THROW_KEYWORD
+
+        parseExpression();
+    }
+
+    /*
+     * "new" constructorInvocation // identical to new nunctionCall
+     *
+     * constructorInvocation
+     *   : userType valueArguments?
+     */
+    private void parseNew() {
+        assert at(NEW_KEYWORD);
+
+        PsiBuilder.Marker creation = mark();
+        advance(); // NEW_KEYWORD
+
+        myJetParsing.parseTypeRef();
+
+        if (!eol() && at(LPAR)) {
+            parseValueArgumentList();
+        }
+        creation.done(NEW);
     }
 
     /*
@@ -320,8 +351,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
     /*
      * objectLiteral
-     *   : "object" delegationSpecifier{","} classBody?
-     *   : "object" classBody
+     *   : "object" delegationSpecifier{","}? classBody // Cannot make class body optional: foo(object F, a)
      *   ;
      */
     public void parseObjectLiteral() {

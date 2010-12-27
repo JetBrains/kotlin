@@ -69,6 +69,7 @@ public interface JetNodeTypes {
     JetNodeType RANGE_LITERAL = new JetNodeType("RANGE_LITERAL");
     JetNodeType LIST_LITERAL = new JetNodeType("LIST_LITERAL");
     JetNodeType TYPEOF = new JetNodeType("TYPEOF");
+    JetNodeType NEW = new JetNodeType("NEW");
 
     IElementType NAMESPACE_NAME = new JetNodeType("NAMESPACE_NAME");
 }

@@ -158,7 +158,7 @@ functionLiteral  // one can use "it" as a parameter name
   ;
 
 constructorInvocation
-  : userType "(" expression{","} ")"
+  : userType valueArguments?
   ;
 
 listLiteral
@@ -193,8 +193,7 @@ arrayAccess
   ;
 
 objectLiteral
-  : "object" delegationSpecifier{","} classBody?
-  : "object" classBody
+  : "object" delegationSpecifier{","}? classBody // Cannot make class body optional: foo(object F, a)
   ;
 
 /* Factory methods:

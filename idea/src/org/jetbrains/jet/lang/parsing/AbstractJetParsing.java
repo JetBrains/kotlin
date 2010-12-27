@@ -204,4 +204,9 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
         currentPosition.rollbackTo();
         return lastOccurrence;
     }
+
+    protected boolean eol() {
+        return myBuilder.eolInLastWhitespace();
+    }
+
 }

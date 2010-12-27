@@ -88,13 +88,15 @@ public class JetParsing extends AbstractJetParsing {
     private void parsePreamble() {
         /*
          * namespaceHeader
-         *   : "namespace" SimpleName{"."}
+         *   : "namespace" SimpleName{"."} SEMI?
          *   ;
          */
         if (at(NAMESPACE_KEYWORD)) {
             advance(); // NAMESPACE_KEYWORD
 
             parseNamespaceName();
+
+            consumeIf(SEMICOLON);
         }
 
         while (at(IMPORT_KEYWORD)) {
@@ -106,10 +108,9 @@ public class JetParsing extends AbstractJetParsing {
     private void parseNamespaceName() {
         PsiBuilder.Marker nsName = mark();
         expect(IDENTIFIER, "Expecting qualified name", NAMESPACE_NAME_RECOVERY_SET);
-        while (at(DOT)) {
+        while (!eol() && at(DOT)) {
             advance(); // DOT
             expect(IDENTIFIER, "Namespace name must be a '.'-separated identifier list", NAMESPACE_NAME_RECOVERY_SET);
-            if (at(EOL_OR_SEMICOLON)) break;
         }
         nsName.done(NAMESPACE_NAME);
     }
@@ -242,6 +243,7 @@ public class JetParsing extends AbstractJetParsing {
 
         expect(LPAR, "Expecting a property list in parentheses '( ... )'");
 
+        // Property list
         if (!at(RPAR)) {
             while (true) {
                 parseAttributeList();
@@ -249,8 +251,8 @@ public class JetParsing extends AbstractJetParsing {
                     skipUntil(TokenSet.create(COMMA, RPAR, EOL_OR_SEMICOLON));
                 }
                 if (!at(COMMA)) {
-                    if (at(RPAR) || at(EOL_OR_SEMICOLON)) break;
-                    error("Expecting a property name or a closing ')'");
+                    if (at(RPAR)) break;
+                    error("Expecting ',' or a closing ')'");
                     skipUntil(TokenSet.create(COMMA, RPAR, EOL_OR_SEMICOLON));
                 }
                 if (!at(COMMA)) break;
@@ -685,7 +687,7 @@ public class JetParsing extends AbstractJetParsing {
     /*
      * property
      *   : modifiers ("val" | "var") attributes (type ".")? SimpleName (":" type)? ("=" expression)?
-     *       getter? setter?
+     *       (getter? setter? | setter? getter?) SEMI?
      *   ;
      */
     private JetNodeType parseProperty() {
@@ -693,7 +695,8 @@ public class JetParsing extends AbstractJetParsing {
 
         advance(); // VAL_KEYWORD or VAR_KEYWORD
 
-        TokenSet propertyNameFollow = TokenSet.create(COLON, EQ, LBRACE, EOL_OR_SEMICOLON);
+        // TODO: EOL_OR_SEMICOLON is too restrictive here
+        TokenSet propertyNameFollow = TokenSet.create(COLON, EQ, LBRACE, SEMICOLON, EOL_OR_SEMICOLON);
 
         int lastDot = findLastBefore(TokenSet.create(DOT), propertyNameFollow, true);
 
@@ -819,9 +822,10 @@ public class JetParsing extends AbstractJetParsing {
             parseTypeRef();
         }
 
-        if (at(EOL_OR_SEMICOLON)) {
-            consumeIf(SEMICOLON);
-        } else {
+        if (at(SEMICOLON)) {
+            advance(); // SEMICOLON
+        }
+        else if (at(EQ) || at(LBRACE)) {
             parseFunctionBody();
         }
 
@@ -850,7 +854,7 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * block
-     *   : "{" (expression ";"?)* "}"
+     *   : "{" (expression SEMI)* "}"
      *   ;
      */
     private void parseBlock() {

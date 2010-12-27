@@ -67,11 +67,11 @@ initializer
   ;
 
 block
-  : "{" (expression ";"?)* "}"
+  : "{" (expression SEMI)* "}"
   ;
 
 decomposer  // TODO: consider other names
-  : modifiers "decomposer" (type ".")? SimpleName? "(" (attributes SimpleName){","}? ")" // Public properties only
+  : modifiers "decomposer" (type ".")? SimpleName? "(" (attributes SimpleName){","}? ")" SEMI? // Public properties only
   ;
 
 function
@@ -85,7 +85,7 @@ functionBody
 
 property
   : modifiers ("val" | "var") attributes (type ".")? SimpleName (":" type)? ("=" expression)?
-      (getter? setter? | setter? getter?)
+      (getter? setter? | setter? getter?) SEMI?
   ;
 
 getter

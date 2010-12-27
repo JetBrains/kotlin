@@ -6,7 +6,7 @@ JetFile: Decomposers_ERR.jet
       DECOMPOSER_PROPERTY_LIST
         PsiElement(LPAR)('(')
         PsiElement(IDENTIFIER)('a')
-        PsiErrorElement:Expecting a property name or a closing ')'
+        PsiErrorElement:Expecting ',' or a closing ')'
           <empty list>
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('a')
