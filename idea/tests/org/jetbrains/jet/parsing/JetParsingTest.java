@@ -60,4 +60,5 @@ public class JetParsingTest extends ParsingTestCase {
     public void testTypeConstraints() throws Exception {doTest(true);}
     public void testEnums() throws Exception {doTest(true);}
     public void testSimpleExpressions() throws Exception {doTest(true);}
+    public void testControlStructures() throws Exception {doTest(true);}
 }

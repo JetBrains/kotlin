@@ -7,7 +7,7 @@ try
   ;
 
 catchBlock
-  : "catch" valueParameters block
+  : "catch" "(" attributes SimpleName ":" userType ")" block
   ;
 
 finallyBlock
@@ -21,7 +21,7 @@ loop
   ;
 
 for
-  : "for" "(" valOrVar? (SimpleName | parameter) "in" expression ")" expression
+  : "for" "(" attributes valOrVar? SimpleName (":" type)? "in" expression ")" expression
   ;
 
 while

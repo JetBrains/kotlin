@@ -74,19 +74,19 @@ public class JetExpressionParsing extends AbstractJetParsing {
             parseJump(BREAK);
         }
         else if (at(IF_KEYWORD)) {
-            // TODO
+            parseIf();
         }
         else if (at(TRY_KEYWORD)) {
-            // TODO
+            parseTry();
         }
         else if (at(FOR_KEYWORD)) {
-            // TODO
+            parseFor();
         }
         else if (at(WHILE_KEYWORD)) {
-            // TODO
+            parseWhile();
         }
         else if (at(DO_KEYWORD)) {
-            // TODO
+            parseDoWhile();
         }
         else if (atSet(TokenSet.create(
                 CLASS_KEYWORD,
@@ -99,6 +99,10 @@ public class JetExpressionParsing extends AbstractJetParsing {
         }
         else if (at(IDENTIFIER)) {
             advance(); // TODO
+        }
+        else if (at(LBRACE)) {
+             // TODO
+            myJetParsing.parseBlock();
         }
         else if (at(INTEGER_LITERAL)) {
             parseOneTokenExpression(INTEGER_CONSTANT);
@@ -124,6 +128,183 @@ public class JetExpressionParsing extends AbstractJetParsing {
         else if (at(NULL_KEYWORD)) {
             parseOneTokenExpression(NULL);
         }
+        else {
+            errorAndAdvance("Expecting an expression");
+        }
+    }
+
+    /*
+     * doWhile
+     *   : "do" expression "while" "(" expression ")"
+     *   ;
+     */
+    private void parseDoWhile() {
+        assert at(DO_KEYWORD);
+
+        PsiBuilder.Marker loop = mark();
+
+        advance(); // DO_KEYWORD
+
+        parseControlStructureBody();
+
+        expect(WHILE_KEYWORD, "Expecting 'while' followed by a post-condition");
+
+        parseCondition();
+
+        loop.done(DO_WHILE);
+    }
+
+    /*
+     * while
+     *   : "while" "(" expression ")" expression
+     *   ;
+     */
+    private void parseWhile() {
+        assert at(WHILE_KEYWORD);
+
+        PsiBuilder.Marker loop = mark();
+
+        advance(); // WHILE_KEYWORD
+
+        parseCondition();
+
+        parseControlStructureBody();
+
+        loop.done(WHILE);
+    }
+
+    /*
+     * for
+     *   : "for" "(" attributes valOrVar? SimpleName (":" type)? "in" expression ")" expression
+     *   ;
+     */
+    private void parseFor() {
+        assert at(FOR_KEYWORD);
+
+        PsiBuilder.Marker loop = mark();
+
+        advance(); // FOR_KEYWORD
+
+        expect(LPAR, "Expecting '(' to open a loop range", TokenSet.create(RPAR, VAL_KEYWORD, VAR_KEYWORD, IDENTIFIER));
+
+        PsiBuilder.Marker parameter = mark();
+        if (at(VAL_KEYWORD) || at(VAR_KEYWORD)) advance(); // VAL_KEYWORD or VAR_KEYWORD
+        expect(IDENTIFIER, "Expecting a variable name", TokenSet.create(COLON));
+        if (at(COLON)) {
+            advance(); // COLON
+            myJetParsing.parseTypeRef();
+        }
+        parameter.done(LOOP_PARAMETER);
+
+        expect(IN_KEYWORD, "Expecting 'in'");
+
+        PsiBuilder.Marker range = mark();
+        parseExpression();
+        range.done(LOOP_RANGE);
+
+        expectNoAdvance(RPAR, "Expecting ')'");
+
+        parseControlStructureBody();
+
+        loop.done(FOR);
+    }
+
+    /*
+     * expression
+     */
+    private void parseControlStructureBody() {
+        PsiBuilder.Marker body = mark();
+        parseExpression();
+        body.done(BODY);
+
+        // TODO: empty body?
+    }
+
+    /*
+     * try
+     *   : "try" block catchBlock* finallyBlock?
+     *   ;
+     * catchBlock
+     *   : "catch" "(" attributes SimpleName ":" userType ")" block
+     *   ;
+     *
+     * finallyBlock
+     *   : "finally" block
+     *   ;
+     */
+    private void parseTry() {
+        assert at(TRY_KEYWORD);
+
+        PsiBuilder.Marker tryExpression = mark();
+
+        advance(); // TRY_KEYWORD
+
+        myJetParsing.parseBlock();
+
+        while (at(CATCH_KEYWORD)) {
+            PsiBuilder.Marker catchBlock = mark();
+            advance(); // CATCH_KEYWORD
+
+            myJetParsing.parseValueParameterList(false, TokenSet.create(LBRACE, FINALLY_KEYWORD, CATCH_KEYWORD));
+
+            myJetParsing.parseBlock();
+            catchBlock.done(CATCH);
+        }
+
+        if (at(FINALLY_KEYWORD)) {
+            PsiBuilder.Marker finallyBlock = mark();
+
+            advance(); // FINALLY_KEYWORD
+
+            myJetParsing.parseBlock();
+
+            finallyBlock.done(FINALLY);
+        }
+
+        tryExpression.done(TRY);
+    }
+
+    /*
+     * if
+     *   : "if" "(" expression ")" expression ("else" expression)?
+     *   ;
+     */
+    private void parseIf() {
+        assert at(IF_KEYWORD);
+
+        PsiBuilder.Marker marker = mark();
+
+        advance(); //IF_KEYWORD
+
+        parseCondition();
+
+        // TODO: empty body?
+        PsiBuilder.Marker thenBranch = mark();
+        parseExpression();
+        thenBranch.done(THEN);
+
+        if (at(ELSE_KEYWORD)) {
+            advance(); // ELSE_KEYWORD
+
+            PsiBuilder.Marker elseBranch = mark();
+            parseExpression();
+            elseBranch.done(ELSE);
+        }
+
+        marker.done(IF);
+    }
+
+    /*
+     * "(" expression ")"
+     */
+    private void parseCondition() {
+        expect(LPAR, "Expecting a condition in parentheses '(...)'");
+
+        PsiBuilder.Marker condition = mark();
+        parseExpression();
+        condition.done(CONDITION);
+
+        expect(RPAR, "Expecting ')");
     }
 
     /*
@@ -232,11 +413,18 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         advance(); // LBRACKET
 
-        // If this is an emty map "[:]"
+        // If this is an empty map "[:]"
         if (at(COLON)) {
             advance(); // COLON
             expect(RBRACKET, "Expecting ']' to close an empty map literal '[:]'");
             literal.done(MAP_LITERAL);
+            return;
+        }
+
+        // If this is an empty list "[]"
+        if (at(RBRACKET)) {
+            advance(); // RBRACKET
+            literal.done(LIST_LITERAL);
             return;
         }
 

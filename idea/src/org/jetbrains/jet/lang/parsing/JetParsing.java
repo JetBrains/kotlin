@@ -857,12 +857,10 @@ public class JetParsing extends AbstractJetParsing {
      *   : "{" (expression SEMI)* "}"
      *   ;
      */
-    private void parseBlock() {
-        assert at(LBRACE);
-
+    public void parseBlock() {
         PsiBuilder.Marker block = mark();
 
-        advance(); // LBRACE
+        expect(LBRACE, "Expecting '{' to open a block");
 
         while (!eof() && !at(RBRACE)) {
             myExpressionParsing.parseExpression();
@@ -1300,7 +1298,7 @@ public class JetParsing extends AbstractJetParsing {
      *   : parameter ("=" expression)?
      *   ;
      */
-    private void parseValueParameterList(boolean isFunctionTypeContents, TokenSet recoverySet) {
+    public void parseValueParameterList(boolean isFunctionTypeContents, TokenSet recoverySet) {
         PsiBuilder.Marker parameters = mark();
         expect(LPAR, "Expecting '(", recoverySet);
 

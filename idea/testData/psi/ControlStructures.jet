@@ -1,0 +1,80 @@
+
+fun a(
+    a : foo = throw new Foo,
+    a : foo = return 10,
+    a : foo = break,
+    a : foo = break la,
+    a : foo = continue,
+    a : foo = continue la,
+    a : foo = if (10) foo else bar,
+    a : foo = if (10) foo
+) {
+  return 10
+  return
+  10
+  break
+  la
+  break la
+  continue
+  la
+  continue la
+  if (foo)
+    if (foo)
+      bar
+    else
+      foo
+  else if (foo)
+    bar
+  else
+    bar
+
+  try {
+
+  }
+  catch (Foo : Bar) {
+
+  }
+  try {
+
+  }
+  catch (Foo : Bar) {
+
+  }
+  catch (Foo : Bar) {
+
+  }
+  catch (Foo : Bar) {
+
+  }
+  try {
+
+  }
+  catch (Foo : Bar) {
+
+  }
+  catch (Foo : Bar) {
+
+  }
+  finally {
+
+  }
+  try {
+
+  }
+  finally {
+
+  }
+
+  for (val x in foo) a
+  for (x in foo) a
+  for (val x in [1..10]) a
+  for (x in [1..10]) a
+  for (val x : Int in [1..10]) a
+  for (x : Int in [1..10]) {}
+
+  while (true) {}
+
+  do {
+
+  } while (false)
+}

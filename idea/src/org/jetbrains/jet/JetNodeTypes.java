@@ -74,6 +74,19 @@ public interface JetNodeTypes {
     JetNodeType THROW = new JetNodeType("THROW");
     JetNodeType CONTINUE = new JetNodeType("CONTINUE");
     JetNodeType BREAK = new JetNodeType("BREAK");
+    JetNodeType IF = new JetNodeType("IF");
+    JetNodeType CONDITION = new JetNodeType("CONDITION");
+    JetNodeType THEN = new JetNodeType("THEN");
+    JetNodeType ELSE = new JetNodeType("ELSE");
+    JetNodeType TRY = new JetNodeType("TRY");
+    JetNodeType CATCH = new JetNodeType("CATCH");
+    JetNodeType FINALLY = new JetNodeType("FINALLY");
+    JetNodeType FOR = new JetNodeType("FOR");
+    JetNodeType WHILE = new JetNodeType("WHILE");
+    JetNodeType DO_WHILE = new JetNodeType("DO_WHILE");
+    JetNodeType LOOP_PARAMETER = new JetNodeType("LOOP_PARAMETER");
+    JetNodeType LOOP_RANGE = new JetNodeType("LOOP_RANGE");
+    JetNodeType BODY = new JetNodeType("BODY");
 
     IElementType NAMESPACE_NAME = new JetNodeType("NAMESPACE_NAME");
 }

@@ -42,6 +42,17 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
         return false;
     }
 
+    protected boolean expectNoAdvance(JetToken expectation, String message) {
+        if (at(expectation)) {
+            advance(); // expectation
+            return true;
+        }
+
+        error(message);
+
+        return false;
+    }
+
     protected void errorWithRecovery(String message, TokenSet recoverySet) {
         IElementType tt = tt();
         if (recoverySet == null || recoverySet.contains(tt)
