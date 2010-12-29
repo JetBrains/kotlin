@@ -1,7 +1,9 @@
 val foo
 val [a] foo
 val foo.bar
-val foo.bar.{() : ()}.foo
+
+val {() : ()}.foo
+val {foo.bar.() : ()}.foo
 
 val foo : T
 val [a] foo = bar
@@ -9,24 +11,24 @@ val foo.bar
    get() {}
    set(sad) = foo
 
-val foo.bar.{() : ()}.foo = foo
+val {foo.bar.() : ()}.foo = foo
    get() {}
    set(it) {}
 
-val foo.bar.{() : ()}.foo = foo
+val {foo.bar.() : ()}.foo = foo
    get() : Foo {}
    set(it) {}
 
 
-val foo.bar.{() : ()}.foo : bar = foo
+val {foo.bar.() : ()}.foo : bar = foo
    [a] public get() {}
    virtual set(a : b) {}
 
 
-val foo.bar.{() : ()}.foo : bar = foo
+val {foo.bar.() : ()}.foo : bar = foo
    virtual set(a : b) {}
 
 
-val foo.bar.{() : ()}.foo : bar = foo
+val {foo.bar.() : ()}.foo : bar = foo
    [a] public get() {}
 

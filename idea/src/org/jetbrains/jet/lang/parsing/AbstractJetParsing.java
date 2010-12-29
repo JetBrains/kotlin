@@ -155,35 +155,20 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
         error.error(mesage);
     }
 
-    /*
-    * Looks for a the last top-level (not inside any {} [] () <>) '.' occurring before a
-    * top-level occurrence of a token from the <code>stopSet</code>
-    *
-    * Returns -1 if no occurrence is found
-    */
-    protected int findLastBefore(TokenSet lookFor, TokenSet stopAt, boolean dontStopRightAfterOccurrence) {
+    protected int matchTokenStreamPredicate(TokenStreamPattern pattern) {
         PsiBuilder.Marker currentPosition = mark();
-        int lastOccurrence = -1;
         int openAngleBrackets = 0;
         int openBraces = 0;
         int openParentheses = 0;
         int openBrackets = 0;
-        IElementType previousToken = null;
         while (!eof()) {
-            if (atSet(lookFor)
-                    && openAngleBrackets == 0
+            if (pattern.processToken(
+                    myBuilder.getCurrentOffset(),
+                    openAngleBrackets == 0
                     && openBrackets == 0
                     && openBraces == 0
-                    && openParentheses == 0) {
-                lastOccurrence = myBuilder.getCurrentOffset();
-            }
-            if (atSet(stopAt)) {
-                if (openAngleBrackets == 0
-                    && openBrackets == 0
-                    && openBraces == 0
-                    && openParentheses == 0
-                    && (!dontStopRightAfterOccurrence
-                        || !lookFor.contains(previousToken))) break;
+                    && openParentheses == 0)) {
+                break;
             }
             if (at(LPAR)) {
                 openParentheses++;
@@ -209,15 +194,65 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
             else if (at(RBRACKET)) {
                 openBrackets--;
             }
-            previousToken = tt();
             advance(); // skip token
         }
         currentPosition.rollbackTo();
-        return lastOccurrence;
+        return pattern.result();
+    }
+
+    /*
+     * Looks for a the last top-level (not inside any {} [] () <>) '.' occurring before a
+     * top-level occurrence of a token from the <code>stopSet</code>
+     *
+     * Returns -1 if no occurrence is found
+     */
+    protected int findLastBefore(TokenSet lookFor, TokenSet stopAt, boolean dontStopRightAfterOccurrence) {
+        return matchTokenStreamPredicate(new LastBefore(new AtSet(lookFor), new AtSet(stopAt), dontStopRightAfterOccurrence));
     }
 
     protected boolean eol() {
         return myBuilder.eolInLastWhitespace() || eof();
     }
+
+    protected class At implements TokenStreamPredicate {
+
+        private final IElementType lookFor;
+        private final boolean topLevelOnly;
+
+        public At(IElementType lookFor, boolean topLevelOnly) {
+            this.lookFor = lookFor;
+            this.topLevelOnly = topLevelOnly;
+        }
+
+        public At(IElementType lookFor) {
+            this(lookFor, true);
+        }
+
+        @Override
+        public boolean matching(boolean topLevel) {
+            return (topLevel || !topLevelOnly) && at(lookFor);
+        }
+
+    }
+
+    protected class AtSet implements TokenStreamPredicate {
+        private final TokenSet lookFor;
+        private final boolean topLevelOnly;
+
+        public AtSet(TokenSet lookFor, boolean topLevelOnly) {
+            this.lookFor = lookFor;
+            this.topLevelOnly = topLevelOnly;
+        }
+
+        public AtSet(TokenSet lookFor) {
+            this(lookFor, true);
+        }
+
+        @Override
+        public boolean matching(boolean topLevel) {
+            return (topLevel || !topLevelOnly) && atSet(lookFor);
+        }
+    }
+
 
 }

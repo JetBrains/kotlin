@@ -47,9 +47,8 @@ JetFile: Properties_ERR.jet
       ATTRIBUTE_ANNOTATION
         PsiElement(LBRACKET)('[')
         ATTRIBUTE
-          TYPE_REFERENCE
-            USER_TYPE
-              PsiElement(IDENTIFIER)('a')
+          USER_TYPE
+            PsiElement(IDENTIFIER)('a')
         PsiErrorElement:Expecting ']' to close an attribute annotation
           <empty list>
       PsiWhiteSpace(' ')
@@ -65,12 +64,10 @@ JetFile: Properties_ERR.jet
       TYPE_REFERENCE
         USER_TYPE
           PsiElement(IDENTIFIER)('foo')
-        PsiElement(DOT)('.')
-        USER_TYPE
-          PsiElement(IDENTIFIER)('bar')
       PsiElement(DOT)('.')
-      PsiErrorElement:Expecting property name
-        <empty list>
+      PsiElement(IDENTIFIER)('bar')
+    PsiErrorElement:Expecting namespace or top level declaration
+      PsiElement(DOT)('.')
     PsiWhiteSpace('\n')
     PROPERTY
       PsiElement(val)('val')
@@ -78,9 +75,8 @@ JetFile: Properties_ERR.jet
       ATTRIBUTE_ANNOTATION
         PsiElement(LBRACKET)('[')
         ATTRIBUTE
-          TYPE_REFERENCE
-            USER_TYPE
-              PsiElement(IDENTIFIER)('a')
+          USER_TYPE
+            PsiElement(IDENTIFIER)('a')
         PsiElement(RBRACKET)(']')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('foo')
@@ -131,14 +127,16 @@ JetFile: Properties_ERR.jet
       PsiElement(val)('val')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        USER_TYPE
-          PsiElement(IDENTIFIER)('foo')
-        PsiElement(DOT)('.')
-        USER_TYPE
-          PsiElement(IDENTIFIER)('bar')
-        PsiElement(DOT)('.')
         FUNCTION_TYPE
           PsiElement(LBRACE)('{')
+          RECEIVER_TYPE
+            TYPE_REFERENCE
+              USER_TYPE
+                PsiElement(IDENTIFIER)('foo')
+              PsiElement(DOT)('.')
+              USER_TYPE
+                PsiElement(IDENTIFIER)('bar')
+          PsiElement(DOT)('.')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -156,6 +154,18 @@ JetFile: Properties_ERR.jet
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('foo')
+      PsiWhiteSpace('\n   ')
+      PROPERTY_ACCESSOR
+        PsiElement(set)('set')
+        PsiErrorElement:Expecting '('
+          <empty list>
+        VALUE_PARAMETER
+          <empty list>
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n   ')
     PsiErrorElement:Expecting namespace or top level declaration
       PsiElement(IDENTIFIER)('dfget')
@@ -168,29 +178,21 @@ JetFile: Properties_ERR.jet
       PsiElement(LBRACE)('{')
     PsiErrorElement:Expecting namespace or top level declaration
       PsiElement(RBRACE)('}')
-    PsiWhiteSpace('\n   ')
-    PsiErrorElement:Expecting namespace or top level declaration
-      PsiElement(IDENTIFIER)('set')
-    PsiErrorElement:Expecting namespace or top level declaration
-      PsiElement(RPAR)(')')
-    PsiWhiteSpace(' ')
-    PsiErrorElement:Expecting namespace or top level declaration
-      PsiElement(LBRACE)('{')
-    PsiErrorElement:Expecting namespace or top level declaration
-      PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n\n')
     PROPERTY
       PsiElement(val)('val')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        USER_TYPE
-          PsiElement(IDENTIFIER)('foo')
-        PsiElement(DOT)('.')
-        USER_TYPE
-          PsiElement(IDENTIFIER)('bar')
-        PsiElement(DOT)('.')
         FUNCTION_TYPE
           PsiElement(LBRACE)('{')
+          RECEIVER_TYPE
+            TYPE_REFERENCE
+              USER_TYPE
+                PsiElement(IDENTIFIER)('foo')
+              PsiElement(DOT)('.')
+              USER_TYPE
+                PsiElement(IDENTIFIER)('bar')
+          PsiElement(DOT)('.')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -250,15 +252,17 @@ JetFile: Properties_ERR.jet
       TYPE_REFERENCE
         USER_TYPE
           PsiElement(IDENTIFIER)('f')
-        PsiElement(DOT)('.')
-        USER_TYPE
-          PsiElement(IDENTIFIER)('d')
       PsiElement(DOT)('.')
-      PsiErrorElement:Expecting property name
-        PsiElement(MINUS)('-')
-      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('d')
+    PsiErrorElement:Expecting namespace or top level declaration
+      PsiElement(DOT)('.')
+    PsiErrorElement:Expecting namespace or top level declaration
+      PsiElement(MINUS)('-')
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Expecting namespace or top level declaration
       PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Expecting namespace or top level declaration
       PsiElement(IDENTIFIER)('f')
     PsiWhiteSpace('\n\n')
     PROPERTY

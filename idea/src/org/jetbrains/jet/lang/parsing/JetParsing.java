@@ -694,9 +694,26 @@ public class JetParsing extends AbstractJetParsing {
         advance(); // VAL_KEYWORD or VAR_KEYWORD
 
         // TODO: EOL_OR_SEMICOLON is too restrictive here
-        TokenSet propertyNameFollow = TokenSet.create(COLON, EQ, LBRACE, SEMICOLON, EOL_OR_SEMICOLON);
+        TokenSet propertyNameFollow = TokenSet.create(COLON, EQ, LBRACE, SEMICOLON);
 
-        int lastDot = findLastBefore(TokenSet.create(DOT), propertyNameFollow, true);
+//        int lastDot = findLastBefore(TokenSet.create(DOT), propertyNameFollow, true);
+        // TODO: constant
+        int lastDot = matchTokenStreamPredicate(new FirstBefore(new TokenStreamPredicate() {
+            @Override
+            public boolean matching(boolean topLevel) {
+                return topLevel
+                        && at(DOT);
+            }
+        }, new TokenStreamPredicate() {
+            @Override
+            public boolean matching(boolean topLevel) {
+                if (lookahead(1) == IDENTIFIER) {
+                    IElementType lookahead2 = lookahead(2);
+                    return lookahead2 != LT && lookahead2 != DOT;
+                }
+                return false;
+            }
+        }));
 
         if (lastDot == -1) {
             parseAttributeList();
@@ -1258,6 +1275,7 @@ public class JetParsing extends AbstractJetParsing {
         int lastLPar = findLastBefore(TokenSet.create(LPAR), TokenSet.create(RBRACE, COLON), false);
         if (lastLPar >= 0 && lastLPar > myBuilder.getCurrentOffset()) {
             PsiBuilder.Marker receiverType = mark();
+            // TODO : -1 is a hack
             createTruncatedBuilder(lastLPar - 1).parseTypeRef();
             receiverType.done(RECEIVER_TYPE);
             advance(); // DOT

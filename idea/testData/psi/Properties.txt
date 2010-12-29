@@ -11,9 +11,8 @@ JetFile: Properties.jet
       ATTRIBUTE_ANNOTATION
         PsiElement(LBRACKET)('[')
         ATTRIBUTE
-          TYPE_REFERENCE
-            USER_TYPE
-              PsiElement(IDENTIFIER)('a')
+          USER_TYPE
+            PsiElement(IDENTIFIER)('a')
         PsiElement(RBRACKET)(']')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('foo')
@@ -26,19 +25,41 @@ JetFile: Properties.jet
           PsiElement(IDENTIFIER)('foo')
       PsiElement(DOT)('.')
       PsiElement(IDENTIFIER)('bar')
+    PsiWhiteSpace('\n\n')
+    PROPERTY
+      PsiElement(val)('val')
+      PsiWhiteSpace(' ')
+      TYPE_REFERENCE
+        FUNCTION_TYPE
+          PsiElement(LBRACE)('{')
+          VALUE_PARAMETER_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            TUPLE_TYPE
+              PsiElement(LPAR)('(')
+              PsiElement(RPAR)(')')
+          PsiElement(RBRACE)('}')
+      PsiElement(DOT)('.')
+      PsiElement(IDENTIFIER)('foo')
     PsiWhiteSpace('\n')
     PROPERTY
       PsiElement(val)('val')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        USER_TYPE
-          PsiElement(IDENTIFIER)('foo')
-        PsiElement(DOT)('.')
-        USER_TYPE
-          PsiElement(IDENTIFIER)('bar')
-        PsiElement(DOT)('.')
         FUNCTION_TYPE
           PsiElement(LBRACE)('{')
+          RECEIVER_TYPE
+            TYPE_REFERENCE
+              USER_TYPE
+                PsiElement(IDENTIFIER)('foo')
+              PsiElement(DOT)('.')
+              USER_TYPE
+                PsiElement(IDENTIFIER)('bar')
+          PsiElement(DOT)('.')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -70,9 +91,8 @@ JetFile: Properties.jet
       ATTRIBUTE_ANNOTATION
         PsiElement(LBRACKET)('[')
         ATTRIBUTE
-          TYPE_REFERENCE
-            USER_TYPE
-              PsiElement(IDENTIFIER)('a')
+          USER_TYPE
+            PsiElement(IDENTIFIER)('a')
         PsiElement(RBRACKET)(']')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('foo')
@@ -114,14 +134,16 @@ JetFile: Properties.jet
       PsiElement(val)('val')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        USER_TYPE
-          PsiElement(IDENTIFIER)('foo')
-        PsiElement(DOT)('.')
-        USER_TYPE
-          PsiElement(IDENTIFIER)('bar')
-        PsiElement(DOT)('.')
         FUNCTION_TYPE
           PsiElement(LBRACE)('{')
+          RECEIVER_TYPE
+            TYPE_REFERENCE
+              USER_TYPE
+                PsiElement(IDENTIFIER)('foo')
+              PsiElement(DOT)('.')
+              USER_TYPE
+                PsiElement(IDENTIFIER)('bar')
+          PsiElement(DOT)('.')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -164,14 +186,16 @@ JetFile: Properties.jet
       PsiElement(val)('val')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        USER_TYPE
-          PsiElement(IDENTIFIER)('foo')
-        PsiElement(DOT)('.')
-        USER_TYPE
-          PsiElement(IDENTIFIER)('bar')
-        PsiElement(DOT)('.')
         FUNCTION_TYPE
           PsiElement(LBRACE)('{')
+          RECEIVER_TYPE
+            TYPE_REFERENCE
+              USER_TYPE
+                PsiElement(IDENTIFIER)('foo')
+              PsiElement(DOT)('.')
+              USER_TYPE
+                PsiElement(IDENTIFIER)('bar')
+          PsiElement(DOT)('.')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -220,14 +244,16 @@ JetFile: Properties.jet
       PsiElement(val)('val')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        USER_TYPE
-          PsiElement(IDENTIFIER)('foo')
-        PsiElement(DOT)('.')
-        USER_TYPE
-          PsiElement(IDENTIFIER)('bar')
-        PsiElement(DOT)('.')
         FUNCTION_TYPE
           PsiElement(LBRACE)('{')
+          RECEIVER_TYPE
+            TYPE_REFERENCE
+              USER_TYPE
+                PsiElement(IDENTIFIER)('foo')
+              PsiElement(DOT)('.')
+              USER_TYPE
+                PsiElement(IDENTIFIER)('bar')
+          PsiElement(DOT)('.')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -257,9 +283,8 @@ JetFile: Properties.jet
           ATTRIBUTE_ANNOTATION
             PsiElement(LBRACKET)('[')
             ATTRIBUTE
-              TYPE_REFERENCE
-                USER_TYPE
-                  PsiElement(IDENTIFIER)('a')
+              USER_TYPE
+                PsiElement(IDENTIFIER)('a')
             PsiElement(RBRACKET)(']')
           PsiWhiteSpace(' ')
           PsiElement(public)('public')
@@ -296,14 +321,16 @@ JetFile: Properties.jet
       PsiElement(val)('val')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        USER_TYPE
-          PsiElement(IDENTIFIER)('foo')
-        PsiElement(DOT)('.')
-        USER_TYPE
-          PsiElement(IDENTIFIER)('bar')
-        PsiElement(DOT)('.')
         FUNCTION_TYPE
           PsiElement(LBRACE)('{')
+          RECEIVER_TYPE
+            TYPE_REFERENCE
+              USER_TYPE
+                PsiElement(IDENTIFIER)('foo')
+              PsiElement(DOT)('.')
+              USER_TYPE
+                PsiElement(IDENTIFIER)('bar')
+          PsiElement(DOT)('.')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -352,14 +379,16 @@ JetFile: Properties.jet
       PsiElement(val)('val')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        USER_TYPE
-          PsiElement(IDENTIFIER)('foo')
-        PsiElement(DOT)('.')
-        USER_TYPE
-          PsiElement(IDENTIFIER)('bar')
-        PsiElement(DOT)('.')
         FUNCTION_TYPE
           PsiElement(LBRACE)('{')
+          RECEIVER_TYPE
+            TYPE_REFERENCE
+              USER_TYPE
+                PsiElement(IDENTIFIER)('foo')
+              PsiElement(DOT)('.')
+              USER_TYPE
+                PsiElement(IDENTIFIER)('bar')
+          PsiElement(DOT)('.')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -389,9 +418,8 @@ JetFile: Properties.jet
           ATTRIBUTE_ANNOTATION
             PsiElement(LBRACKET)('[')
             ATTRIBUTE
-              TYPE_REFERENCE
-                USER_TYPE
-                  PsiElement(IDENTIFIER)('a')
+              USER_TYPE
+                PsiElement(IDENTIFIER)('a')
             PsiElement(RBRACKET)(']')
           PsiWhiteSpace(' ')
           PsiElement(public)('public')
