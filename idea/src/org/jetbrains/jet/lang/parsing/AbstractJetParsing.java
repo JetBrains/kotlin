@@ -170,6 +170,13 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
         int openBrackets = 0;
         IElementType previousToken = null;
         while (!eof()) {
+            if (atSet(lookFor)
+                    && openAngleBrackets == 0
+                    && openBrackets == 0
+                    && openBraces == 0
+                    && openParentheses == 0) {
+                lastOccurrence = myBuilder.getCurrentOffset();
+            }
             if (atSet(stopAt)) {
                 if (openAngleBrackets == 0
                     && openBrackets == 0
@@ -201,13 +208,6 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
             }
             else if (at(RBRACKET)) {
                 openBrackets--;
-            }
-            else if (atSet(lookFor)
-                    && openAngleBrackets == 0
-                    && openBrackets == 0
-                    && openBraces == 0
-                    && openParentheses == 0) {
-                lastOccurrence = myBuilder.getCurrentOffset();
             }
             previousToken = tt();
             advance(); // skip token

@@ -8,9 +8,7 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.jet.JetNodeType;
 import org.jetbrains.jet.lexer.JetKeywordToken;
-import org.jetbrains.jet.lexer.JetToken;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -1128,7 +1126,7 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * type
-     *   : attributes (userType | functionType | tupleType)
+     *   : attributes (functionType | userType | tupleType)
      *   ;
      */
     public void parseTypeRef() {
@@ -1136,25 +1134,19 @@ public class JetParsing extends AbstractJetParsing {
 
         parseAttributeList();
 
-        TokenSet simpleTypeFirst = TokenSet.create(IDENTIFIER, LBRACE, LPAR);
-        while (true) {
-            if (at(IDENTIFIER)) {
-                parseSimpleUserType();
-            }
-            else if (at(LBRACE)) {
-                parseSimpleFunctionType();
-            } else if (at(LPAR)) {
-                parseTupleType();
-            } else {
-                errorWithRecovery("Type expected",
-                        TokenSet.orSet(TOPLEVEL_OBJECT_FIRST,
-                                TokenSet.create(EQ, COMMA, GT, RBRACKET, DOT, RPAR, RBRACE, LBRACE, SEMICOLON)));
-                break;
-            }
-
-            if (!at(DOT)) break;
-            if (!simpleTypeFirst.contains(lookahead(1))) break;
-            advance(); // DOT
+        if (at(IDENTIFIER)) {
+            parseUserType();
+        }
+        else if (at(LBRACE)) {
+            parseFunctionType();
+        }
+        else if (at(LPAR)) {
+            parseTupleType();
+        }
+        else {
+            errorWithRecovery("Type expected",
+                    TokenSet.orSet(TOPLEVEL_OBJECT_FIRST,
+                            TokenSet.create(EQ, COMMA, GT, RBRACKET, DOT, RPAR, RBRACE, LBRACE, SEMICOLON)));
         }
         type.done(TYPE_REFERENCE);
     }
@@ -1165,15 +1157,11 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      */
     private void parseUserType() {
-        PsiBuilder.Marker userType = mark();
-
         while (true) {
             parseSimpleUserType();
             if (!at(DOT)) break;
             advance(); // DOT
         }
-
-        userType.done(TYPE_REFERENCE);
     }
 
     /*
@@ -1256,15 +1244,24 @@ public class JetParsing extends AbstractJetParsing {
     }
 
     /*
-     * simpleFunctionType
-     *   : "{" functionTypeContents "}"
+     * functionType
+     *   : "{" (type ".")? functionTypeContents "}"
      *   ;
      */
-    private void parseSimpleFunctionType() {
+    private void parseFunctionType() {
         assert at(LBRACE);
+
         PsiBuilder.Marker functionType = mark();
 
         advance(); // LBRACE
+
+        int lastLPar = findLastBefore(TokenSet.create(LPAR), TokenSet.create(RBRACE, COLON), false);
+        if (lastLPar >= 0 && lastLPar > myBuilder.getCurrentOffset()) {
+            PsiBuilder.Marker receiverType = mark();
+            createTruncatedBuilder(lastLPar - 1).parseTypeRef();
+            receiverType.done(RECEIVER_TYPE);
+            advance(); // DOT
+        }
 
         parseFunctionTypeContents();
 

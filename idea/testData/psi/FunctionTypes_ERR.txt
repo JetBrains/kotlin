@@ -18,9 +18,8 @@ JetFile: FunctionTypes_ERR.jet
               ATTRIBUTE_ANNOTATION
                 PsiElement(LBRACKET)('[')
                 ATTRIBUTE
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      PsiElement(IDENTIFIER)('a')
+                  USER_TYPE
+                    PsiElement(IDENTIFIER)('a')
                 PsiElement(RBRACKET)(']')
             PsiWhiteSpace(' ')
             TYPE_REFERENCE

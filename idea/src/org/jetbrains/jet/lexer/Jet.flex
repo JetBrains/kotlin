@@ -85,7 +85,6 @@ RAW_STRING_LITERAL = {THREE_QUO} {QUO_STRING_CHAR}* {THREE_QUO}?
 <YYINITIAL> "return"     { return JetTokens.RETURN_KEYWORD ;}
 <YYINITIAL> "typeof"     { return JetTokens.TYPEOF_KEYWORD ;}
 <YYINITIAL> "object"     { return JetTokens.OBJECT_KEYWORD ;}
-<YYINITIAL> "isnot"      { return JetTokens.ISNOT_KEYWORD ;}
 <YYINITIAL> "while"      { return JetTokens.WHILE_KEYWORD ;}
 <YYINITIAL> "break"      { return JetTokens.BREAK_KEYWORD ;}
 <YYINITIAL> "class"      { return JetTokens.CLASS_KEYWORD ;}
@@ -113,26 +112,14 @@ RAW_STRING_LITERAL = {THREE_QUO} {QUO_STRING_CHAR}* {THREE_QUO}?
 
 <YYINITIAL> {IDENTIFIER} { return JetTokens.IDENTIFIER; }
 
-<YYINITIAL> "["          { return JetTokens.LBRACKET  ; }
-<YYINITIAL> "]"          { return JetTokens.RBRACKET  ; }
-<YYINITIAL> "{"          { return JetTokens.LBRACE    ; }
-<YYINITIAL> "}"          { return JetTokens.RBRACE    ; }
-<YYINITIAL> "("          { return JetTokens.LPAR      ; }
-<YYINITIAL> ")"          { return JetTokens.RPAR      ; }
-<YYINITIAL> "."          { return JetTokens.DOT       ; }
+<YYINITIAL> "==="        { return JetTokens.EQEQEQ    ; }
+<YYINITIAL> "!=="        { return JetTokens.EXCLEQEQEQ; }
+<YYINITIAL> "!in"        { return JetTokens.NOT_IN; }
+<YYINITIAL> "!is"        { return JetTokens.NOT_IS; }
 <YYINITIAL> "++"         { return JetTokens.PLUSPLUS  ; }
 <YYINITIAL> "--"         { return JetTokens.MINUSMINUS; }
-<YYINITIAL> "*"          { return JetTokens.MUL       ; }
-<YYINITIAL> "+"          { return JetTokens.PLUS      ; }
-<YYINITIAL> "-"          { return JetTokens.MINUS     ; }
-<YYINITIAL> "!"          { return JetTokens.EXCL      ; }
-<YYINITIAL> "/"          { return JetTokens.DIV       ; }
-<YYINITIAL> "%"          { return JetTokens.PERC      ; }
-<YYINITIAL> "<"          { return JetTokens.LT        ; }
-<YYINITIAL> ">"          { return JetTokens.GT        ; }
 <YYINITIAL> "<="         { return JetTokens.LTEQ      ; }
 <YYINITIAL> ">="         { return JetTokens.GTEQ      ; }
-<YYINITIAL> "==="        { return JetTokens.EQEQEQ    ; }
 <YYINITIAL> "=="         { return JetTokens.EQEQ      ; }
 <YYINITIAL> "!="         { return JetTokens.EXCLEQ    ; }
 <YYINITIAL> "&&"         { return JetTokens.ANDAND    ; }
@@ -141,16 +128,32 @@ RAW_STRING_LITERAL = {THREE_QUO} {QUO_STRING_CHAR}* {THREE_QUO}?
 <YYINITIAL> "?:"         { return JetTokens.ELVIS     ; }
 <YYINITIAL> ".*"         { return JetTokens.MAP       ; }
 <YYINITIAL> ".?"         { return JetTokens.FILTER    ; }
-<YYINITIAL> "?"          { return JetTokens.QUEST     ; }
-<YYINITIAL> ":"          { return JetTokens.COLON     ; }
-<YYINITIAL> ";"          { return JetTokens.SEMICOLON ; }
-<YYINITIAL> ".."         { return JetTokens.RANGE     ; }
-<YYINITIAL> "="          { return JetTokens.EQ        ; }
 <YYINITIAL> "*="         { return JetTokens.MULTEQ    ; }
 <YYINITIAL> "/="         { return JetTokens.DIVEQ     ; }
 <YYINITIAL> "%="         { return JetTokens.PERCEQ    ; }
 <YYINITIAL> "+="         { return JetTokens.PLUSEQ    ; }
 <YYINITIAL> "-="         { return JetTokens.MINUSEQ   ; }
+<YYINITIAL> "->"         { return JetTokens.ARROW     ; }
+<YYINITIAL> "["          { return JetTokens.LBRACKET  ; }
+<YYINITIAL> "]"          { return JetTokens.RBRACKET  ; }
+<YYINITIAL> "{"          { return JetTokens.LBRACE    ; }
+<YYINITIAL> "}"          { return JetTokens.RBRACE    ; }
+<YYINITIAL> "("          { return JetTokens.LPAR      ; }
+<YYINITIAL> ")"          { return JetTokens.RPAR      ; }
+<YYINITIAL> "."          { return JetTokens.DOT       ; }
+<YYINITIAL> "*"          { return JetTokens.MUL       ; }
+<YYINITIAL> "+"          { return JetTokens.PLUS      ; }
+<YYINITIAL> "-"          { return JetTokens.MINUS     ; }
+<YYINITIAL> "!"          { return JetTokens.EXCL      ; }
+<YYINITIAL> "/"          { return JetTokens.DIV       ; }
+<YYINITIAL> "%"          { return JetTokens.PERC      ; }
+<YYINITIAL> "<"          { return JetTokens.LT        ; }
+<YYINITIAL> ">"          { return JetTokens.GT        ; }
+<YYINITIAL> "?"          { return JetTokens.QUEST     ; }
+<YYINITIAL> ":"          { return JetTokens.COLON     ; }
+<YYINITIAL> ";"          { return JetTokens.SEMICOLON ; }
+<YYINITIAL> ".."         { return JetTokens.RANGE     ; }
+<YYINITIAL> "="          { return JetTokens.EQ        ; }
 <YYINITIAL> ","          { return JetTokens.COMMA     ; }
 
 <YYINITIAL> . { return TokenType.BAD_CHARACTER; }

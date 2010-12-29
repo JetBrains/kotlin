@@ -67,7 +67,7 @@ initializer
   ;
 
 block
-  : "{" (expression SEMI)* "}"
+  : "{" expressions "}"
   ;
 
 decomposer  // TODO: consider other names

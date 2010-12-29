@@ -3,9 +3,6 @@ expression
   : literalConstant
   : functionLiteral
   : tupleLiteral
-  : listLiteral
-  : mapLiteral
-  : range
   : "null"
   : "this" ("<" type ">")?
   : expressionWithPrecedences
@@ -70,6 +67,7 @@ typingOperation
   : "as"
   : "is"
   : "isnot"
+  : ":"
   ;
 
 binOpExpression
@@ -77,19 +75,23 @@ binOpExpression
   ;
 
 binaryOperation // Decreasing precedence
-  // .
+  : "." : "?." : "#"
   // unary
   : "*" : "/" : "%"
   : "+" : "-"
   // No << >> >>>
-  // named functions in infix form
-  : "<" : ">" : ">=" : "<=" : "in" // is isnot as // TODO: Check the precedence for in carefully
+  : ".."
+  : SimpleName
+  : "?:"
+  : "in" : "is" : "!in" : "!is" : "as"
+  : "<" : ">" : ">=" : "<="
   : "!=" : "==" : "===" : "!=="
   // No | & ^ ~
   : "&&"
   : "||"
-  : "?:"
-  // assignments
+  : "->"
+  : ":"
+  : assignmentOperator
   ;
 
 assignmentOperator
@@ -152,30 +154,18 @@ tupleLiteral // Ambiguity when after a SimpleName (infix call). In this case (e)
   ;
 
 functionLiteral  // one can use "it" as a parameter name
-  : "{" SimpleName "=>" expression "}"
-  : "{" "(" SimpleName{","} ")" "=>" expression "}"
-  : "{" "(" parameter{","} ")" (":" type)? "=>" expression "}"
+  : "{" expressions "}"
+  : "{" (type ".")? SimpleName "=>" expressions "}"
+  : "{" (type ".")? "(" SimpleName{","} ")" "=>" expressions "}"
+  : "{" (type ".")? "(" parameter{","} ")" (":" type)? "=>" expressions "}"
+  ;
+
+expressions
+  : expression{SEMI} SEMI?
   ;
 
 constructorInvocation
   : userType valueArguments?
-  ;
-
-listLiteral
-  : "[" expression{","}? "]"
-  ;
-
-mapLiteral
-  : "[" mapLiteralEntry{","} "]"
-  : "[" ":" "]"
-  ;
-
-mapLiteralEntry
-  : expression ":" expression
-  ;
-
-range
-  : "[" expression ".." expression "]"
   ;
 
 memberAccess

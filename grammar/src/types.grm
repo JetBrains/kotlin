@@ -10,11 +10,11 @@ Foo<Bar<X>, T, Object> // user type
 */
 
 type
-  : attributes (userType | functionType | tupleType)
+  : attributes (functionType | userType | tupleType)
   ;
 
 userType
-  : /*(SimpleName ".")* */ simpleUserType{"."}
+  : simpleUserType{"."}
   ;
 
 simpleUserType
@@ -26,7 +26,7 @@ optionalProjection
   ;
 
 functionType
-  : (type ".")? "{" functionTypeContents "}"
+  : "{" (type ".")? functionTypeContents "}"
   ;
 
 functionTypeContents

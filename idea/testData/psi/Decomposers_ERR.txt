@@ -16,17 +16,19 @@ JetFile: Decomposers_ERR.jet
       PsiElement(decomposer)('decomposer')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        USER_TYPE
-          PsiElement(IDENTIFIER)('foo')
-          TYPE_ARGUMENT_LIST
-            PsiElement(LT)('<')
-            TYPE_REFERENCE
-              USER_TYPE
-                PsiElement(IDENTIFIER)('T')
-            PsiElement(GT)('>')
-        PsiElement(DOT)('.')
         FUNCTION_TYPE
           PsiElement(LBRACE)('{')
+          RECEIVER_TYPE
+            TYPE_REFERENCE
+              USER_TYPE
+                PsiElement(IDENTIFIER)('foo')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      PsiElement(IDENTIFIER)('T')
+                  PsiElement(GT)('>')
+          PsiElement(DOT)('.')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -38,9 +40,8 @@ JetFile: Decomposers_ERR.jet
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')
           PsiElement(RBRACE)('}')
-        PsiElement(DOT)('.')
-        USER_TYPE
-          PsiElement(IDENTIFIER)('bar')
+      PsiElement(DOT)('.')
+      PsiElement(IDENTIFIER)('bar')
       DECOMPOSER_PROPERTY_LIST
         PsiElement(LPAR)('(')
         PsiErrorElement:Expecting a property name
@@ -69,9 +70,8 @@ JetFile: Decomposers_ERR.jet
         ATTRIBUTE_ANNOTATION
           PsiElement(LBRACKET)('[')
           ATTRIBUTE
-            TYPE_REFERENCE
-              USER_TYPE
-                PsiElement(IDENTIFIER)('a')
+            USER_TYPE
+              PsiElement(IDENTIFIER)('a')
           PsiElement(RBRACKET)(']')
       PsiWhiteSpace(' ')
       PsiElement(decomposer)('decomposer')
@@ -82,9 +82,8 @@ JetFile: Decomposers_ERR.jet
         ATTRIBUTE_ANNOTATION
           PsiElement(LBRACKET)('[')
           ATTRIBUTE
-            TYPE_REFERENCE
-              USER_TYPE
-                PsiElement(IDENTIFIER)('a')
+            USER_TYPE
+              PsiElement(IDENTIFIER)('a')
           PsiElement(RBRACKET)(']')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('s')
@@ -103,9 +102,8 @@ JetFile: Decomposers_ERR.jet
         ATTRIBUTE_ANNOTATION
           PsiElement(LBRACKET)('[')
           ATTRIBUTE
-            TYPE_REFERENCE
-              USER_TYPE
-                PsiElement(IDENTIFIER)('a')
+            USER_TYPE
+              PsiElement(IDENTIFIER)('a')
           PsiElement(RBRACKET)(']')
         PsiErrorElement:Expecting a property name
           <empty list>
@@ -141,17 +139,19 @@ JetFile: Decomposers_ERR.jet
       PsiElement(decomposer)('decomposer')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        USER_TYPE
-          PsiElement(IDENTIFIER)('foo')
-          TYPE_ARGUMENT_LIST
-            PsiElement(LT)('<')
-            TYPE_REFERENCE
-              USER_TYPE
-                PsiElement(IDENTIFIER)('T')
-            PsiElement(GT)('>')
-        PsiElement(DOT)('.')
         FUNCTION_TYPE
           PsiElement(LBRACE)('{')
+          RECEIVER_TYPE
+            TYPE_REFERENCE
+              USER_TYPE
+                PsiElement(IDENTIFIER)('foo')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      PsiElement(IDENTIFIER)('T')
+                  PsiElement(GT)('>')
+          PsiElement(DOT)('.')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -163,9 +163,8 @@ JetFile: Decomposers_ERR.jet
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')
           PsiElement(RBRACE)('}')
-        PsiElement(DOT)('.')
-        USER_TYPE
-          PsiElement(IDENTIFIER)('bar')
+      PsiElement(DOT)('.')
+      PsiElement(IDENTIFIER)('bar')
       DECOMPOSER_PROPERTY_LIST
         PsiElement(LPAR)('(')
         PsiElement(IDENTIFIER)('a')
@@ -185,9 +184,10 @@ JetFile: Decomposers_ERR.jet
         PsiElement(DOT)('.')
         USER_TYPE
           PsiElement(IDENTIFIER)('bar')
-      PsiElement(DOT)('.')
-      PsiErrorElement:Expecting decomposer name
-        PsiElement(MINUS)('-')
+        PsiElement(DOT)('.')
+        USER_TYPE
+          PsiErrorElement:Type name expected
+            PsiElement(MINUS)('-')
       DECOMPOSER_PROPERTY_LIST
         PsiElement(LPAR)('(')
         PsiElement(RPAR)(')')

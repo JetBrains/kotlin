@@ -15,11 +15,20 @@ type f = {(foo, a : {(a) : b}) : {() : ()}}
 
 type f = {(lazy foo, out a : {(ref a) : b}) : {() : ()}}
 
-type f = T.{() : ()}
-type f = T.T.{() : ()}
-type f = T<A, B>.T<x>.{() : ()}
-type f = (S).{() : ()}.{() : ()}
-type f = T.{() : ()}.{() : ()}
-type f = T.T.{() : ()}.{() : ()}
-type f = T<A, B>.T<x>.{() : ()}.{() : ()}
-type f = (S).{() : ()}.{() : ()}
+type f = {T.() : ()}
+type f = {T.T.() : ()}
+type f = {T<A, B>.T<x>.() : ()}
+type f = {{(S).() : ()}.() : ()}
+type f = {{T.() : ()}.() : ()}
+type f = {{T.T.() : ()}.() : ()}
+type f = {{T<A, B>.T<x>.() : ()}.() : ()}
+type f = {{(S).() : ()}.() : ()}
+
+type f = [a] {T.() : ()}
+type f = [a] {T.T.() : ()}
+type f = [a] {T<A, B>.T<x>.() : ()}
+type f =  [a] {[a] {(S).() : ()}.() : ()}
+type f = [a] {[a] {T.() : ()}.() : ()}
+type f = [a] {[a] {T.T.() : ()}.() : ()}
+type f = [a] {[a] {T<A, B>.T<x>.() : ()}.() : ()}
+type f = [a] {[a] {(S).() : ()}.() : ()}

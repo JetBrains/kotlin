@@ -40,7 +40,6 @@ public interface JetTokens {
     JetKeywordToken TRUE_KEYWORD       = JetKeywordToken.keyword("true");
     JetKeywordToken FALSE_KEYWORD      = JetKeywordToken.keyword("false");
     JetKeywordToken IS_KEYWORD         = JetKeywordToken.keyword("is");
-    JetKeywordToken ISNOT_KEYWORD      = JetKeywordToken.keyword("isnot");
     JetKeywordToken IN_KEYWORD         = JetKeywordToken.keyword("in");
     JetKeywordToken THROW_KEYWORD      = JetKeywordToken.keyword("throw");
     JetKeywordToken RETURN_KEYWORD     = JetKeywordToken.keyword("return");
@@ -77,6 +76,8 @@ public interface JetTokens {
     JetToken LTEQ        = new JetToken("LTEQ");
     JetToken GTEQ        = new JetToken("GTEQ");
     JetToken EQEQEQ      = new JetToken("EQEQEQ");
+    JetToken ARROW       = new JetToken("ARROW");
+    JetToken EXCLEQEQEQ  = new JetToken("EXCLEQEQEQ");
     JetToken EQEQ        = new JetToken("EQEQ");
     JetToken EXCLEQ      = new JetToken("EXCLEQ");
     JetToken ANDAND      = new JetToken("ANDAND");
@@ -95,10 +96,12 @@ public interface JetTokens {
     JetToken PERCEQ      = new JetToken("PERCEQ");
     JetToken PLUSEQ      = new JetToken("PLUSEQ");
     JetToken MINUSEQ     = new JetToken("MINUSEQ");
+    JetToken NOT_IN      = new JetToken("NOT_IN");
+    JetToken NOT_IS      = new JetToken("NOT_IS");
+
     JetToken COMMA       = new JetToken("COMMA");
 
     JetToken EOL_OR_SEMICOLON   = new JetToken("EOL_OR_SEMICOLON");
-
     JetKeywordToken WRAPS_KEYWORD     = JetKeywordToken.softKeyword("wraps");
     JetKeywordToken IMPORT_KEYWORD    = JetKeywordToken.softKeyword("import");
     JetKeywordToken WHERE_KEYWORD     = JetKeywordToken.softKeyword("where");
@@ -119,11 +122,12 @@ public interface JetTokens {
     JetKeywordToken OUT_KEYWORD       = JetKeywordToken.softKeyword("out");
     JetKeywordToken REF_KEYWORD       = JetKeywordToken.softKeyword("ref");
     JetKeywordToken CATCH_KEYWORD       = JetKeywordToken.softKeyword("catch");
+
     JetKeywordToken FINALLY_KEYWORD       = JetKeywordToken.softKeyword("finally");
 
     TokenSet KEYWORDS = TokenSet.create(NAMESPACE_KEYWORD, AS_KEYWORD, TYPE_KEYWORD, CLASS_KEYWORD,
             THIS_KEYWORD, VAL_KEYWORD, VAR_KEYWORD, FUN_KEYWORD, DECOMPOSER_KEYWORD, EXTENSION_KEYWORD, FOR_KEYWORD,
-            NULL_KEYWORD, TYPEOF_KEYWORD, NEW_KEYWORD, TRUE_KEYWORD, FALSE_KEYWORD, IS_KEYWORD, ISNOT_KEYWORD,
+            NULL_KEYWORD, TYPEOF_KEYWORD, NEW_KEYWORD, TRUE_KEYWORD, FALSE_KEYWORD, IS_KEYWORD,
             IN_KEYWORD, THROW_KEYWORD, RETURN_KEYWORD, BREAK_KEYWORD, CONTINUE_KEYWORD, OBJECT_KEYWORD, IF_KEYWORD,
             ELSE_KEYWORD, WHILE_KEYWORD, DO_KEYWORD, MATCH_KEYWORD, REF_KEYWORD, OUT_KEYWORD, TRY_KEYWORD
     );
@@ -140,7 +144,6 @@ public interface JetTokens {
     );
 
     TokenSet WHITE_SPACE_OR_COMMENT_BIT_SET = TokenSet.create(WHITE_SPACE, BLOCK_COMMENT, EOL_COMMENT, DOC_COMMENT);
-
     TokenSet WHITESPACES = TokenSet.create(TokenType.WHITE_SPACE);
     TokenSet COMMENTS = TokenSet.create(EOL_COMMENT, BLOCK_COMMENT, DOC_COMMENT);
     TokenSet STRINGS = TokenSet.create(CHARACTER_LITERAL, STRING_LITERAL, RAW_STRING_LITERAL);

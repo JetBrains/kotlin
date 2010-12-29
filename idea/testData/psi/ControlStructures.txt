@@ -456,54 +456,6 @@ JetFile: ControlStructures.jet
             PsiElement(val)('val')
             PsiWhiteSpace(' ')
             PsiElement(IDENTIFIER)('x')
-          PsiWhiteSpace(' ')
-          PsiElement(in)('in')
-          PsiWhiteSpace(' ')
-          LOOP_RANGE
-            RANGE_LITERAL
-              PsiElement(LBRACKET)('[')
-              INTEGER_CONSTANT
-                PsiElement(INTEGER_LITERAL)('1')
-              PsiElement(RANGE)('..')
-              INTEGER_CONSTANT
-                PsiElement(INTEGER_LITERAL)('10')
-              PsiElement(RBRACKET)(']')
-          PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          BODY
-            PsiElement(IDENTIFIER)('a')
-        PsiWhiteSpace('\n  ')
-        FOR
-          PsiElement(for)('for')
-          PsiWhiteSpace(' ')
-          PsiElement(LPAR)('(')
-          LOOP_PARAMETER
-            PsiElement(IDENTIFIER)('x')
-          PsiWhiteSpace(' ')
-          PsiElement(in)('in')
-          PsiWhiteSpace(' ')
-          LOOP_RANGE
-            RANGE_LITERAL
-              PsiElement(LBRACKET)('[')
-              INTEGER_CONSTANT
-                PsiElement(INTEGER_LITERAL)('1')
-              PsiElement(RANGE)('..')
-              INTEGER_CONSTANT
-                PsiElement(INTEGER_LITERAL)('10')
-              PsiElement(RBRACKET)(']')
-          PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          BODY
-            PsiElement(IDENTIFIER)('a')
-        PsiWhiteSpace('\n  ')
-        FOR
-          PsiElement(for)('for')
-          PsiWhiteSpace(' ')
-          PsiElement(LPAR)('(')
-          LOOP_PARAMETER
-            PsiElement(val)('val')
-            PsiWhiteSpace(' ')
-            PsiElement(IDENTIFIER)('x')
             PsiWhiteSpace(' ')
             PsiElement(COLON)(':')
             PsiWhiteSpace(' ')
@@ -514,14 +466,7 @@ JetFile: ControlStructures.jet
           PsiElement(in)('in')
           PsiWhiteSpace(' ')
           LOOP_RANGE
-            RANGE_LITERAL
-              PsiElement(LBRACKET)('[')
-              INTEGER_CONSTANT
-                PsiElement(INTEGER_LITERAL)('1')
-              PsiElement(RANGE)('..')
-              INTEGER_CONSTANT
-                PsiElement(INTEGER_LITERAL)('10')
-              PsiElement(RBRACKET)(']')
+            PsiElement(IDENTIFIER)('foo')
           PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           BODY
@@ -543,14 +488,7 @@ JetFile: ControlStructures.jet
           PsiElement(in)('in')
           PsiWhiteSpace(' ')
           LOOP_RANGE
-            RANGE_LITERAL
-              PsiElement(LBRACKET)('[')
-              INTEGER_CONSTANT
-                PsiElement(INTEGER_LITERAL)('1')
-              PsiElement(RANGE)('..')
-              INTEGER_CONSTANT
-                PsiElement(INTEGER_LITERAL)('10')
-              PsiElement(RBRACKET)(']')
+            PsiElement(IDENTIFIER)('foo')
           PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           BODY

@@ -87,6 +87,7 @@ public interface JetNodeTypes {
     JetNodeType LOOP_PARAMETER = new JetNodeType("LOOP_PARAMETER");
     JetNodeType LOOP_RANGE = new JetNodeType("LOOP_RANGE");
     JetNodeType BODY = new JetNodeType("BODY");
+    JetNodeType RECEIVER_TYPE = new JetNodeType("RECEIVER_TYPE");
 
     IElementType NAMESPACE_NAME = new JetNodeType("NAMESPACE_NAME");
 }
