@@ -135,6 +135,7 @@ RAW_STRING_LITERAL = {THREE_QUO} {QUO_STRING_CHAR}* {THREE_QUO}?
 <YYINITIAL> "-="         { return JetTokens.MINUSEQ   ; }
 <YYINITIAL> "->"         { return JetTokens.ARROW     ; }
 <YYINITIAL> "=>"         { return JetTokens.DOUBLE_ARROW; }
+<YYINITIAL> ".."         { return JetTokens.RANGE     ; }
 <YYINITIAL> "["          { return JetTokens.LBRACKET  ; }
 <YYINITIAL> "]"          { return JetTokens.RBRACKET  ; }
 <YYINITIAL> "{"          { return JetTokens.LBRACE    ; }
@@ -153,9 +154,9 @@ RAW_STRING_LITERAL = {THREE_QUO} {QUO_STRING_CHAR}* {THREE_QUO}?
 <YYINITIAL> "?"          { return JetTokens.QUEST     ; }
 <YYINITIAL> ":"          { return JetTokens.COLON     ; }
 <YYINITIAL> ";"          { return JetTokens.SEMICOLON ; }
-<YYINITIAL> ".."         { return JetTokens.RANGE     ; }
 <YYINITIAL> "="          { return JetTokens.EQ        ; }
 <YYINITIAL> ","          { return JetTokens.COMMA     ; }
+<YYINITIAL> "#"          { return JetTokens.HASH      ; }
 
 <YYINITIAL> . { return TokenType.BAD_CHARACTER; }
 

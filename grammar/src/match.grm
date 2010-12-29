@@ -1,7 +1,3 @@
-match
-  : expression "match" "{" matchEntry+ "}"
-  ;
-
 matchEntry
   : attributes "case" pattern ("if" "(" expression ")")? "=>" expression // TODO: Consider other options than "=>"
   ;

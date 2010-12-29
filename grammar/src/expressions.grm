@@ -1,12 +1,96 @@
+/*
+
+Decreasing precedence:
+  memberAccessOperation
+  postfixUnaryOperation
+  prefixUnaryOperation
+  multiplicativeOperation
+  additiveOperation
+  ".."
+  SimpleName
+  "?:"
+  namedInfixOrTypeOperation
+  comparisonOperation
+  equalityOperation
+  "&&"
+  "||"
+  "match"
+  "->"
+  assignmentOperator
+
+*/
+
+
 expression
-  : attributes expression
+  : arrowTupleExpression (assignmentOperator arrowTupleExpression)?
+  ;
+
+arrowTupleExpression
+  : match ("->" match)*
+  ;
+
+match
+  : conjunction ("match" "{" matchEntry+ "}")*
+  ;
+
+disjunction
+  : conjunction ("||" conjunction)*
+  ;
+
+conjunction
+  : equalityComparison ("&&" equalityComparison)*
+  ;
+
+equalityComparison
+  : comparison (equalityOperation comparison)*
+  ;
+
+comparison
+  : namedInfixOrTypeExpression (comparisonOperation namedInfixOrTypeExpression)*
+  ;
+
+namedInfixOrTypeExpression
+  : elvisOperation (namedInfixOrTypeOperation elvisOperation)*
+  ;
+
+elvisOperation
+  : infixFunctionCall ("?:" infixFunctionCall)*
+  ;
+
+infixFunctionCall
+  : rangeExpression (SimpleName rangeExpression)*
+  ;
+
+rangeExpression
+  : additiveExpression (".." additiveExpression)*
+  ;
+
+additiveExpression
+  : multiplicativeExpression (additiveOperation multiplicativeExpression)*
+  ;
+
+multiplicativeExpression
+  : prefixUnaryExpression (multiplicativeOperation prefixUnaryExpression)*
+  ;
+
+prefixUnaryExpression
+  : prefixUnaryOperation postfixUnaryExpression
+  ;
+
+postfixUnaryExpression
+  : memberAccess postfixUnaryOperation
+  ;
+
+memberAccess
+  : atomicExpression memberAccessOperation atomicExpression
+  ;
+
+atomicExpression
   : "(" expression ")" // see tupleLiteral
   : literalConstant
   : functionLiteral
   : tupleLiteral
   : "this" ("<" type ">")?
-  : expressionWithPrecedences
-  : match
   : if
   : try
   : "typeof" "(" expression ")"
@@ -15,7 +99,7 @@ expression
   : declaration
   : jump
   : loop
-  // block is syntactically equivalent to a functionLiteral with no parameters
+  : SimpleName
   ;
 
 literalConstant
@@ -36,63 +120,28 @@ declaration
   : typedef
   ;
 
-expressionWithPrecedences // See the precedence table, everything associates to the left
-  : memberLiteral
-  : memberAccessExpression
-  : infixFunctionCall
-  : binOpExpression
-  : assignment
-  : unOpExpression
-  : castExpression
-  : typingExpression
-  ;
-
-memberLiteral
-  : expression? '#' SimpleName
-  ;
-
-memberAccessExpression
-  : (expression accessOp)? (memberAccess | expression)
-  ;
-
-accessOp
-  : "."
-  : "?."
-  ;
-
-typingExpression
-  : expression typingOperation type
-  ;
-
-typingOperation
-  : "as"
-  : "is"
-  : "isnot"
-  : ":"
-  ;
-
-binOpExpression
-  : expression binaryOperation expression // see priorities
-  ;
-
-binaryOperation // Decreasing precedence
+memberAccessOperation
   : "." : "?." : "#"
-  // unary
+  ;
+
+multiplicativeOperation
   : "*" : "/" : "%"
+  ;
+
+additiveOperation
   : "+" : "-"
-  // No << >> >>>
-  : ".."
-  : SimpleName
-  : "?:"
+  ;
+
+namedInfixOrTypeOperation
   : "in" : "is" : "!in" : "!is" : "as" : ":"
+  ;
+
+comparisonOperation
   : "<" : ">" : ">=" : "<="
+  ;
+
+equalityOperation
   : "!=" : "==" : "===" : "!=="
-  // No | & ^ ~
-  : "&&"
-  : "||"
-  : "match"
-  : "->"
-  : assignmentOperator
   ;
 
 assignmentOperator
@@ -113,10 +162,13 @@ prefixUnaryOperation
   : "-" : "+"
   : "++" : "--"
   : "!"  // No ~
+  : attributes // mandatory
   ;
 
 postfixUnaryOperation
   : "++" : "--"
+  : valueArguments
+  : arrayAccess
   ;
 
 functionCall
@@ -179,7 +231,7 @@ fieldOrPropertyAccess
   ;
 
 arrayAccess
-  : "[" expression "]"
+  : "[" expression{","} "]"
   ;
 
 objectLiteral

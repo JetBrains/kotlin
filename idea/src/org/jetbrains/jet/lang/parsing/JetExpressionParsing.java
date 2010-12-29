@@ -4,6 +4,7 @@ import com.intellij.lang.PsiBuilder;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.jet.JetNodeType;
+import org.jetbrains.jet.lexer.JetTokens;
 
 import static org.jetbrains.jet.JetNodeTypes.*;
 import static org.jetbrains.jet.lexer.JetTokens.*;
@@ -19,6 +20,71 @@ public class JetExpressionParsing extends AbstractJetParsing {
         myJetParsing = jetParsing;
     }
 
+    @SuppressWarnings({"UnusedDeclaration"})
+    private enum Priority {
+        MEMBER_ACCESS(DOT, HASH, SAFE_ACCESS) {
+            @Override
+            public void parseHigherPriority(JetExpressionParsing parsing) {
+                parsing.parseAtomicExpression();
+            }
+        },
+
+        POSTFIX(PLUSPLUS, MINUSMINUS), // valueArguments  : arrayAccess
+
+        PREFIX(MINUS, PLUS, MINUSMINUS, PLUSPLUS, EXCL) { // attributes
+
+            @Override
+            public void parseHigherPriority(JetExpressionParsing parsing) {
+                throw new IllegalStateException("Don't call this method");
+            }
+        },
+
+        MULTIPLICATIVE(MUL, DIV, PERC) {
+            @Override
+            public void parseHigherPriority(JetExpressionParsing parsing) {
+                parsing.parsePrefixExpression();
+            }
+        },
+
+        ADDITIVE(PLUS, MINUS),
+        RANGE(JetTokens.RANGE),
+        SIMPLE_NAME(IDENTIFIER),
+        ELVIS(JetTokens.ELVIS),
+        NAMED_INFIX_OR_TYPE(IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS, AS_KEYWORD, COLON),
+        COMPARISON(LT, GT, LTEQ, GTEQ),
+        EQUALITY(EQEQ, EXCLEQ, EQEQEQ, EXCLEQEQEQ),
+        CONJUNCTION(ANDAND),
+        DISJUNCTION(OROR),
+        MATCH(MATCH_KEYWORD),
+        ARROW(JetTokens.ARROW),
+        ASSIGNMENT(EQ, PLUSEQ, MINUSEQ, MULTEQ, DIVEQ, PERCEQ)
+        ;
+
+        static {
+            Priority[] values = Priority.values();
+            for (Priority priority : values) {
+                int ordinal = priority.ordinal();
+                priority.higher = ordinal > 0 ? values[ordinal - 1] : null;
+            }
+        }
+
+        private Priority higher;
+        private final TokenSet operations;
+
+        Priority(IElementType... operations ) {
+            this.operations = TokenSet.create(operations);
+        }
+
+        public void parseHigherPriority(JetExpressionParsing parsing) {
+            assert higher != null;
+            parsing.parseBinaryExpression(higher);
+        }
+
+        public final TokenSet getOperations() {
+            return operations;
+        }
+    }
+
     /*
      * expression
      *   : attributes expression
@@ -29,7 +95,6 @@ public class JetExpressionParsing extends AbstractJetParsing {
      *   : "null"
      *   : "this" ("<" type ">")?
      *   : expressionWithPrecedences
-     *   : match
      *   : if
      *   : try
      *   : "typeof" "(" expression ")"
@@ -42,6 +107,86 @@ public class JetExpressionParsing extends AbstractJetParsing {
      *   ;
      */
     public void parseExpression() {
+        parseBinaryExpression(Priority.ASSIGNMENT);
+    }
+
+    private void parseBinaryExpression(Priority priority) {
+//        System.out.println(priority.name() + " at " + tt());
+        PsiBuilder.Marker expression = mark();
+
+        priority.parseHigherPriority(this);
+
+        while (!myBuilder.eolInLastWhitespace() && atSet(priority.getOperations())) {
+             advance(); // operation
+             priority.parseHigherPriority(this);
+             expression.done(BINARY_EXPRESSION);
+             expression = expression.precede();
+        }
+
+        expression.drop();
+    }
+
+    private void parsePrefixExpression() {
+//        System.out.println("pre at " + tt());
+        if (at(LBRACKET)) {
+            if (!parseLocalDeclaration()) {
+                PsiBuilder.Marker attributes = mark();
+                myJetParsing.parseAttributeList();
+                parsePostfixExpression();
+                attributes.done(ANNOTATED_EXPRESSION);
+            }
+        } else if (atSet(Priority.PREFIX.getOperations())) {
+            PsiBuilder.Marker expression = mark();
+            advance(); // operation
+            parsePostfixExpression();
+            expression.done(PREFIX_EXPRESSION);
+        } else {
+            parsePostfixExpression();
+        }
+    }
+
+    private void parsePostfixExpression() {
+//        System.out.println("post at " + tt());
+
+        PsiBuilder.Marker expression = mark();
+        parseBinaryExpression(Priority.MEMBER_ACCESS);
+        if (myBuilder.eolInLastWhitespace()) {
+            expression.drop();
+        } else if (at(LBRACKET)) {
+            parseArrayAccess();
+            expression.done(ARRAY_ACCESS_EXPRESSION);
+        } else if (atSet(Priority.POSTFIX.getOperations())) {
+            advance(); // operation
+            expression.done(POSTFIX_EXPRESSION);
+        } else if (at(LPAR)) {
+            parseValueArgumentList();
+            expression.done(CALL_EXPRESSION);
+        } else {
+            expression.drop();
+        }
+    }
+
+    /*
+     * atomicExpression
+     *   : tupleLiteral // or parenthesized expression
+     *   : "this" ("<" type ">")?
+     *   : "typeof" "(" expression ")"
+     *   : "new" constructorInvocation // TODO: Do we need "new"?, see factory methods
+     *   : objectLiteral
+     *   : jump
+     *   : if
+     *   : try
+     *   : loop
+     *   : literalConstant
+     *   : functionLiteral
+     *   : declaration
+     *   : SimpleName
+     *   ;
+     */
+    private void parseAtomicExpression() {
+//        System.out.println("atom at " + tt());
+
+
         if (at(LPAR)) {
             parseParenthesizedExpressionOrTuple();
         }
@@ -112,33 +257,61 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 VAR_KEYWORD, TYPE_KEYWORD, DECOMPOSER_KEYWORD)) {
             parseLocalDeclaration();
         }
-        else if (at(LBRACKET)) {
-            if (!parseLocalDeclaration()) {
-                PsiBuilder.Marker attributes = mark();
-                myJetParsing.parseAttributeList();
-                parseExpression();
-                attributes.done(ANNOTATED_EXPRESSION);
-            }
-        }
         else if (at(IDENTIFIER)) {
             if (JetParsing.MODIFIER_KEYWORD_MAP.containsKey(myBuilder.getTokenText())) {
                 if (!parseLocalDeclaration()) {
-                    expect(IDENTIFIER, "[Internal error: should never occur]");
-                    // TODO
+                    parseSimpleName();
                 }
             } else {
-                expect(IDENTIFIER, "[Internal error: should never occur]");
-                // TODO
+                parseSimpleName();
             }
         }
         else if (at(LBRACE)) {
             parseFunctionLiteral();
         }
         else {
+            // TODO
             errorAndAdvance("Expecting an expression");
         }
+    }
 
-        // TODO: Binary operations
+
+    /*
+     * arrayAccess
+     *   : "[" expression{","} "]"
+     *   ;
+     */
+    private void parseArrayAccess() {
+        assert at(LBRACKET);
+
+        PsiBuilder.Marker indices = mark();
+
+        advance(); // LBRACKET
+
+        while (true) {
+            if (at(COMMA)) errorAndAdvance("Expecting an index expression");
+            if (at(RBRACKET)) {
+                error("Expecting an index expression");
+                break;
+            }
+            parseExpression();
+            if (!at(COMMA)) break;
+            advance(); // COMMA
+        }
+
+        expect(RBRACKET, "Expecting ']'");
+
+        indices.done(INDICES);
+    }
+
+    /*
+     * SimpleName
+     */
+    private void parseSimpleName() {
+        assert at(IDENTIFIER);
+//        PsiBuilder.Marker simpleName = mark();
+        advance(); // IDENTIFIER
+//        simpleName.done(SIMPLE_NAME);
     }
 
     /*
@@ -202,36 +375,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             }
 
             if (at(LPAR)) {
-                PsiBuilder.Marker list = mark();
-                expect(LPAR, "Expecting a parameter list in parentheses (...)", TokenSet.create(DOUBLE_ARROW, COLON));
-
-                if (!at(RPAR)) {
-                    while (true) {
-                        if (at(COMMA)) errorAndAdvance("Expecting a parameter declaration");
-
-                        PsiBuilder.Marker parameter = mark();
-                        int parameterNamePos = matchTokenStreamPredicate(new LastBefore(new At(IDENTIFIER), new AtSet(COMMA, RPAR, COLON, DOUBLE_ARROW)));
-                        createTruncatedBuilder(parameterNamePos).parseModifierList();
-
-                        expect(IDENTIFIER, "Expecting parameter declaration");
-
-                        if (at(COLON)) {
-                            advance(); // COLON
-                            myJetParsing.parseTypeRef();
-                        }
-                        parameter.done(VALUE_PARAMETER);
-                        if (!at(COMMA)) break;
-                        advance(); // COMMA
-
-                        if (at(RPAR)) {
-                            error("Expecting a parameter declaration");
-                            break;
-                        }
-                    }
-                }
-
-                expect(RPAR, "Expecting ')", TokenSet.create(DOUBLE_ARROW, COLON));
-                list.done(VALUE_PARAMETER_LIST);
+                parseFunctionLiteralParameterList();
 
                 if (at(COLON)) {
                     advance(); // COLON
@@ -271,6 +415,42 @@ public class JetExpressionParsing extends AbstractJetParsing {
         expect(RBRACE, "Expecting '}'");
 
         literal.done(FUNCTION_LITERAL);
+    }
+
+    /*
+     * "(" (modifiers SimpleName (":" type)?){","} ")"
+     */
+    private void parseFunctionLiteralParameterList() {
+        PsiBuilder.Marker list = mark();
+        expect(LPAR, "Expecting a parameter list in parentheses (...)", TokenSet.create(DOUBLE_ARROW, COLON));
+
+        if (!at(RPAR)) {
+            while (true) {
+                if (at(COMMA)) errorAndAdvance("Expecting a parameter declaration");
+
+                PsiBuilder.Marker parameter = mark();
+                int parameterNamePos = matchTokenStreamPredicate(new LastBefore(new At(IDENTIFIER), new AtSet(COMMA, RPAR, COLON, DOUBLE_ARROW)));
+                createTruncatedBuilder(parameterNamePos).parseModifierList();
+
+                expect(IDENTIFIER, "Expecting parameter declaration");
+
+                if (at(COLON)) {
+                    advance(); // COLON
+                    myJetParsing.parseTypeRef();
+                }
+                parameter.done(VALUE_PARAMETER);
+                if (!at(COMMA)) break;
+                advance(); // COMMA
+
+                if (at(RPAR)) {
+                    error("Expecting a parameter declaration");
+                    break;
+                }
+            }
+        }
+
+        expect(RPAR, "Expecting ')", TokenSet.create(DOUBLE_ARROW, COLON));
+        list.done(VALUE_PARAMETER_LIST);
     }
 
     /*

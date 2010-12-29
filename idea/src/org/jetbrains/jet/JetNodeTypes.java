@@ -90,6 +90,13 @@ public interface JetNodeTypes {
     JetNodeType RECEIVER_TYPE = new JetNodeType("RECEIVER_TYPE");
     JetNodeType FUNCTION_LITERAL = new JetNodeType("FUNCTION_LITERAL");
     JetNodeType ANNOTATED_EXPRESSION = new JetNodeType("ANNOTATED_EXPRESSION");
+//    JetNodeType SIMPLE_NAME = new JetNodeType("SIMPLE_NAME");
+    JetNodeType BINARY_EXPRESSION = new JetNodeType("BINARY_EXPRESSION");
+    JetNodeType PREFIX_EXPRESSION = new JetNodeType("PREFIX_EXPRESSION");
+    JetNodeType POSTFIX_EXPRESSION = new JetNodeType("POSTFIX_EXPRESSION");
+    JetNodeType CALL_EXPRESSION = new JetNodeType("CALL_EXPRESSION");
+    JetNodeType ARRAY_ACCESS_EXPRESSION = new JetNodeType("ARRAY_ACCESS_EXPRESSION");
+    JetNodeType INDICES = new JetNodeType("INDICES");
 
     IElementType NAMESPACE_NAME = new JetNodeType("NAMESPACE_NAME");
 }

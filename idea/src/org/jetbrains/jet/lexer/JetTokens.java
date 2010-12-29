@@ -99,6 +99,7 @@ public interface JetTokens {
     JetToken MINUSEQ     = new JetToken("MINUSEQ");
     JetToken NOT_IN      = new JetToken("NOT_IN");
     JetToken NOT_IS      = new JetToken("NOT_IS");
+    JetToken HASH        = new JetToken("HASH");
 
     JetToken COMMA       = new JetToken("COMMA");
 
