@@ -91,9 +91,8 @@ JetFile: TupleTypes.jet
             ATTRIBUTE_ANNOTATION
               PsiElement(LBRACKET)('[')
               ATTRIBUTE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    PsiElement(IDENTIFIER)('x')
+                USER_TYPE
+                  PsiElement(IDENTIFIER)('x')
               PsiElement(RBRACKET)(']')
             PsiWhiteSpace(' ')
             TUPLE_TYPE
@@ -110,9 +109,8 @@ JetFile: TupleTypes.jet
             ATTRIBUTE_ANNOTATION
               PsiElement(LBRACKET)('[')
               ATTRIBUTE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    PsiElement(IDENTIFIER)('x')
+                USER_TYPE
+                  PsiElement(IDENTIFIER)('x')
               PsiElement(RBRACKET)(']')
             TUPLE_TYPE
               PsiElement(LPAR)('(')
@@ -120,9 +118,8 @@ JetFile: TupleTypes.jet
                 ATTRIBUTE_ANNOTATION
                   PsiElement(LBRACKET)('[')
                   ATTRIBUTE
-                    TYPE_REFERENCE
-                      USER_TYPE
-                        PsiElement(IDENTIFIER)('x')
+                    USER_TYPE
+                      PsiElement(IDENTIFIER)('x')
                   PsiElement(RBRACKET)(']')
                 PsiWhiteSpace(' ')
                 USER_TYPE
@@ -139,9 +136,8 @@ JetFile: TupleTypes.jet
             ATTRIBUTE_ANNOTATION
               PsiElement(LBRACKET)('[')
               ATTRIBUTE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    PsiElement(IDENTIFIER)('x')
+                USER_TYPE
+                  PsiElement(IDENTIFIER)('x')
               PsiElement(RBRACKET)(']')
             PsiWhiteSpace(' ')
             TUPLE_TYPE
@@ -150,9 +146,8 @@ JetFile: TupleTypes.jet
                 ATTRIBUTE_ANNOTATION
                   PsiElement(LBRACKET)('[')
                   ATTRIBUTE
-                    TYPE_REFERENCE
-                      USER_TYPE
-                        PsiElement(IDENTIFIER)('x')
+                    USER_TYPE
+                      PsiElement(IDENTIFIER)('x')
                   PsiElement(RBRACKET)(']')
                 PsiWhiteSpace(' ')
                 USER_TYPE
@@ -163,9 +158,8 @@ JetFile: TupleTypes.jet
                 ATTRIBUTE_ANNOTATION
                   PsiElement(LBRACKET)('[')
                   ATTRIBUTE
-                    TYPE_REFERENCE
-                      USER_TYPE
-                        PsiElement(IDENTIFIER)('x')
+                    USER_TYPE
+                      PsiElement(IDENTIFIER)('x')
                   PsiElement(RBRACKET)(']')
                 USER_TYPE
                   PsiElement(IDENTIFIER)('B')
@@ -181,9 +175,8 @@ JetFile: TupleTypes.jet
             ATTRIBUTE_ANNOTATION
               PsiElement(LBRACKET)('[')
               ATTRIBUTE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    PsiElement(IDENTIFIER)('x')
+                USER_TYPE
+                  PsiElement(IDENTIFIER)('x')
               PsiElement(RBRACKET)(']')
             PsiWhiteSpace(' ')
             TUPLE_TYPE
@@ -197,9 +190,8 @@ JetFile: TupleTypes.jet
                   ATTRIBUTE_ANNOTATION
                     PsiElement(LBRACKET)('[')
                     ATTRIBUTE
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          PsiElement(IDENTIFIER)('x')
+                      USER_TYPE
+                        PsiElement(IDENTIFIER)('x')
                     PsiElement(RBRACKET)(']')
                   PsiWhiteSpace(' ')
                   USER_TYPE
@@ -215,9 +207,8 @@ JetFile: TupleTypes.jet
                   ATTRIBUTE_ANNOTATION
                     PsiElement(LBRACKET)('[')
                     ATTRIBUTE
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          PsiElement(IDENTIFIER)('x')
+                      USER_TYPE
+                        PsiElement(IDENTIFIER)('x')
                     PsiElement(RBRACKET)(']')
                   PsiWhiteSpace(' ')
                   USER_TYPE
