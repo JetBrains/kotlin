@@ -1,4 +1,5 @@
 expression
+  : attributes expression
   : "(" expression ")" // see tupleLiteral
   : literalConstant
   : functionLiteral
@@ -155,9 +156,8 @@ tupleLiteral // Ambiguity when after a SimpleName (infix call). In this case (e)
 
 functionLiteral  // one can use "it" as a parameter name
   : "{" expressions "}"
-  : "{" (type ".")? SimpleName "=>" expressions "}"
-  : "{" (type ".")? "(" SimpleName{","} ")" "=>" expressions "}"
-  : "{" (type ".")? "(" parameter{","} ")" (":" type)? "=>" expressions "}"
+  : "{" (type ".")? modifiers SimpleName "=>" expressions "}"
+  : "{" (type ".")? "(" (modifiers SimpleName (":" type)?){","} ")" (":" type)? "=>" expressions "}"
   ;
 
 expressions

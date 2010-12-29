@@ -21,6 +21,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
     /*
      * expression
+     *   : attributes expression
      *   : "(" expression ")" // see tupleLiteral
      *   : literalConstant
      *   : functionLiteral
@@ -115,17 +116,23 @@ public class JetExpressionParsing extends AbstractJetParsing {
             if (!parseLocalDeclaration()) {
                 PsiBuilder.Marker attributes = mark();
                 myJetParsing.parseAttributeList();
-                attributes.error("Attributes are only allowed on declarations");
+                parseExpression();
+                attributes.done(ANNOTATED_EXPRESSION);
             }
         }
         else if (at(IDENTIFIER)) {
-            if (!parseLocalDeclaration()) {
-                expect(IDENTIFIER, "[Internal error: should never occur]"); // TODO
+            if (JetParsing.MODIFIER_KEYWORD_MAP.containsKey(myBuilder.getTokenText())) {
+                if (!parseLocalDeclaration()) {
+                    expect(IDENTIFIER, "[Internal error: should never occur]");
+                    // TODO
+                }
+            } else {
+                expect(IDENTIFIER, "[Internal error: should never occur]");
+                // TODO
             }
         }
         else if (at(LBRACE)) {
-             // TODO
-            myJetParsing.parseBlock();
+            parseFunctionLiteral();
         }
         else {
             errorAndAdvance("Expecting an expression");
@@ -134,6 +141,9 @@ public class JetExpressionParsing extends AbstractJetParsing {
         // TODO: Binary operations
     }
 
+    /*
+     * modifiers declarationRest
+     */
     private boolean parseLocalDeclaration() {
         PsiBuilder.Marker decls = mark();
         JetParsing.EnumDetector enumDetector = new JetParsing.EnumDetector();
@@ -150,6 +160,139 @@ public class JetExpressionParsing extends AbstractJetParsing {
         }
     }
 
+    /*
+     * functionLiteral  // one can use "it" as a parameter name
+     *   : "{" expressions "}"
+     *   : "{" (type ".")? modifiers SimpleName "=>" expressions "}"
+     *   : "{" (type ".")? "(" (modifiers SimpleName (":" type)?){","} ")" (":" type)? "=>" expressions "}"
+     *   ;
+     */
+    private void parseFunctionLiteral() {
+        assert at(LBRACE);
+
+        PsiBuilder.Marker literal = mark();
+
+        advance(); // LBRACE
+
+        int doubleArrowPos = matchTokenStreamPredicate(new FirstBefore(new At(DOUBLE_ARROW), new At(RBRACE)));
+
+        if (doubleArrowPos >= 0) {
+            boolean dontExpectParameters = false;
+
+            int lastDot = matchTokenStreamPredicate(new LastBefore(new At(DOT), new AtOffset(doubleArrowPos)));
+            if (lastDot >= 0) { // There is a receiver type
+                PsiBuilder.Marker receiverType = mark();
+                createTruncatedBuilder(lastDot).parseTypeRef();
+                receiverType.done(RECEIVER_TYPE);
+                assert at(DOT);
+                advance(); // DOT;
+
+                if (!at(LPAR)) {
+                    int firstLParPos = matchTokenStreamPredicate(new FirstBefore(new At(LPAR), new AtOffset(doubleArrowPos)));
+
+                    if (firstLParPos >= 0) {
+                        errorUntilOffset("Expecting '('", firstLParPos);
+                    } else {
+                        errorUntilOffset("To specify a receiver type, use the full notation: {ReceiverType.(parameters) [: ReturnType] => ...}",
+                            doubleArrowPos);
+                        dontExpectParameters = true;
+                    }
+                }
+
+            }
+
+            if (at(LPAR)) {
+                PsiBuilder.Marker list = mark();
+                expect(LPAR, "Expecting a parameter list in parentheses (...)", TokenSet.create(DOUBLE_ARROW, COLON));
+
+                if (!at(RPAR)) {
+                    while (true) {
+                        if (at(COMMA)) errorAndAdvance("Expecting a parameter declaration");
+
+                        PsiBuilder.Marker parameter = mark();
+                        int parameterNamePos = matchTokenStreamPredicate(new LastBefore(new At(IDENTIFIER), new AtSet(COMMA, RPAR, COLON, DOUBLE_ARROW)));
+                        createTruncatedBuilder(parameterNamePos).parseModifierList();
+
+                        expect(IDENTIFIER, "Expecting parameter declaration");
+
+                        if (at(COLON)) {
+                            advance(); // COLON
+                            myJetParsing.parseTypeRef();
+                        }
+                        parameter.done(VALUE_PARAMETER);
+                        if (!at(COMMA)) break;
+                        advance(); // COMMA
+
+                        if (at(RPAR)) {
+                            error("Expecting a parameter declaration");
+                            break;
+                        }
+                    }
+                }
+
+                expect(RPAR, "Expecting ')", TokenSet.create(DOUBLE_ARROW, COLON));
+                list.done(VALUE_PARAMETER_LIST);
+
+                if (at(COLON)) {
+                    advance(); // COLON
+                    if (at(DOUBLE_ARROW)) {
+                        error("Expecting a type");
+                    } else {
+                        myJetParsing.parseTypeRef();
+                    }
+                }
+            } else if (!dontExpectParameters) {
+                PsiBuilder.Marker parameter = mark();
+                int parameterNamePos = matchTokenStreamPredicate(new LastBefore(new At(IDENTIFIER), new AtOffset(doubleArrowPos)));
+
+                createTruncatedBuilder(parameterNamePos).parseModifierList();
+
+                expect(IDENTIFIER, "Expecting parameter name", TokenSet.create(DOUBLE_ARROW));
+
+                parameter.done(VALUE_PARAMETER);
+
+                if (at(COLON)) {
+                    errorUntilOffset("To specify a type of a parameter or a return type, use the full notation: {(parameter : Type) : ReturnType => ...}", doubleArrowPos);
+                } else if (at(COMMA)) {
+                    errorUntilOffset("To specify many parameters, use the full notation: {(p1, p2, ...) => ...}", doubleArrowPos);
+                } else if (!at(DOUBLE_ARROW)) {
+                    errorUntilOffset("Expecting '=>'", doubleArrowPos);
+                }
+
+            }
+
+            expectNoAdvance(DOUBLE_ARROW, "Expecting '=>'");
+        }
+
+        PsiBuilder.Marker body = mark();
+        parseExpressions();
+        body.done(BODY);
+
+        expect(RBRACE, "Expecting '}'");
+
+        literal.done(FUNCTION_LITERAL);
+    }
+
+    /*
+     * expressions
+     *   : expression{SEMI} SEMI?
+     */
+    public void parseExpressions() {
+        while (!eof() && !at(RBRACE)) {
+            parseExpression();
+            consumeIf(SEMICOLON);
+        }
+    }
+
+    /*
+     * declaration
+     *   : function
+     *   : property
+     *   : extension
+     *   : class
+     *   : typedef
+     *   ;
+     */
     private JetNodeType parseLocalDeclarationRest(boolean isEnum) {
          IElementType keywordToken = tt();
          JetNodeType declType = null;
@@ -173,7 +316,6 @@ public class JetExpressionParsing extends AbstractJetParsing {
          }
          return declType;
      }
-
 
     /*
      * doWhile

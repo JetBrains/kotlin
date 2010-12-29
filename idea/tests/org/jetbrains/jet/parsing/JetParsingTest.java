@@ -27,6 +27,7 @@ public class JetParsingTest extends ParsingTestCase {
        return new File(PathManager.getResourceRoot(JetParsingTest.class, "/")).getParentFile().getParentFile().getParent();
     }
 
+    public void testAnnotatedExpressions() throws Exception {doTest(true);}
     public void testAttributes() throws Exception {doTest(true);}
     public void testAttributes_ERR() throws Exception {doTest(true);}
     public void testBabySteps() throws Exception {doTest(true);}
@@ -40,6 +41,8 @@ public class JetParsingTest extends ParsingTestCase {
     public void testExtensions() throws Exception {doTest(true);}
     public void testExtensions_ERR() throws Exception {doTest(true);}
     public void testFileStart_ERR() throws Exception {doTest(true);}
+    public void testFunctionLiterals() throws Exception {doTest(true);}
+    public void testFunctionLiterals_ERR() throws Exception {doTest(true);}
     public void testFunctions() throws Exception {doTest(true);}
     public void testFunctions_ERR() throws Exception {doTest(true);}
     public void testFunctionTypes() throws Exception {doTest(true);}
@@ -48,7 +51,6 @@ public class JetParsingTest extends ParsingTestCase {
     public void testImports_ERR() throws Exception {doTest(true);}
     public void testImportSoftKW() throws Exception {doTest(true);}
     public void testLocalDeclarations() throws Exception {doTest(true);}
-    public void testLocalDeclarations_ERR() throws Exception {doTest(true);}
     public void testNamespaceBlock_ERR() throws Exception {doTest(true);}
     public void testNamespaceBlock() throws Exception {doTest(true);}
     public void testProperties() throws Exception {doTest(true);}

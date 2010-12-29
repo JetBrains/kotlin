@@ -166,6 +166,14 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
         error.error(mesage);
     }
 
+    protected void errorUntilOffset(String mesage, int offset) {
+        PsiBuilder.Marker error = mark();
+        while (!eof() && myBuilder.getCurrentOffset() < offset) {
+            advance();
+        }
+        error.error(mesage);
+    }
+
     protected int matchTokenStreamPredicate(TokenStreamPattern pattern) {
         PsiBuilder.Marker currentPosition = mark();
         int openAngleBrackets = 0;
@@ -225,6 +233,25 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
         return myBuilder.eolInLastWhitespace() || eof();
     }
 
+    protected JetParsing createTruncatedBuilder(int eofPosition) {
+        return new JetParsing(new TruncatedSemanticWhitespaceAwarePsiBuilder(myBuilder, eofPosition));
+    }
+
+    protected class AtOffset implements TokenStreamPredicate {
+
+        private final int offset;
+
+        public AtOffset(int offset) {
+            this.offset = offset;
+        }
+
+        @Override
+        public boolean matching(boolean topLevel) {
+            return myBuilder.getCurrentOffset() == offset;
+        }
+
+    }
+
     protected class At implements TokenStreamPredicate {
 
         private final IElementType lookFor;
@@ -257,6 +284,10 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
 
         public AtSet(TokenSet lookFor) {
             this(lookFor, true);
+        }
+
+        public AtSet(IElementType... lookFor) {
+            this(TokenSet.create(lookFor), true);
         }
 
         @Override

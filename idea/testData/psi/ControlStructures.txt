@@ -492,8 +492,10 @@ JetFile: ControlStructures.jet
           PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           BODY
-            BLOCK
+            FUNCTION_LITERAL
               PsiElement(LBRACE)('{')
+              BODY
+                <empty list>
               PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n\n  ')
         WHILE
@@ -506,17 +508,21 @@ JetFile: ControlStructures.jet
           PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           BODY
-            BLOCK
+            FUNCTION_LITERAL
               PsiElement(LBRACE)('{')
+              BODY
+                <empty list>
               PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n\n  ')
         DO_WHILE
           PsiElement(do)('do')
           PsiWhiteSpace(' ')
           BODY
-            BLOCK
+            FUNCTION_LITERAL
               PsiElement(LBRACE)('{')
               PsiWhiteSpace('\n\n  ')
+              BODY
+                <empty list>
               PsiElement(RBRACE)('}')
           PsiWhiteSpace(' ')
           PsiElement(while)('while')

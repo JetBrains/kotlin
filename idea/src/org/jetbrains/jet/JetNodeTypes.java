@@ -88,6 +88,8 @@ public interface JetNodeTypes {
     JetNodeType LOOP_RANGE = new JetNodeType("LOOP_RANGE");
     JetNodeType BODY = new JetNodeType("BODY");
     JetNodeType RECEIVER_TYPE = new JetNodeType("RECEIVER_TYPE");
+    JetNodeType FUNCTION_LITERAL = new JetNodeType("FUNCTION_LITERAL");
+    JetNodeType ANNOTATED_EXPRESSION = new JetNodeType("ANNOTATED_EXPRESSION");
 
     IElementType NAMESPACE_NAME = new JetNodeType("NAMESPACE_NAME");
 }

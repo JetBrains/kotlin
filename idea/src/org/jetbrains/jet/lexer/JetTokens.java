@@ -77,6 +77,7 @@ public interface JetTokens {
     JetToken GTEQ        = new JetToken("GTEQ");
     JetToken EQEQEQ      = new JetToken("EQEQEQ");
     JetToken ARROW       = new JetToken("ARROW");
+    JetToken DOUBLE_ARROW       = new JetToken("DOUBLE_ARROW");
     JetToken EXCLEQEQEQ  = new JetToken("EXCLEQEQEQ");
     JetToken EQEQ        = new JetToken("EQEQ");
     JetToken EXCLEQ      = new JetToken("EXCLEQ");

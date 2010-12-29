@@ -134,6 +134,7 @@ RAW_STRING_LITERAL = {THREE_QUO} {QUO_STRING_CHAR}* {THREE_QUO}?
 <YYINITIAL> "+="         { return JetTokens.PLUSEQ    ; }
 <YYINITIAL> "-="         { return JetTokens.MINUSEQ   ; }
 <YYINITIAL> "->"         { return JetTokens.ARROW     ; }
+<YYINITIAL> "=>"         { return JetTokens.DOUBLE_ARROW; }
 <YYINITIAL> "["          { return JetTokens.LBRACKET  ; }
 <YYINITIAL> "]"          { return JetTokens.RBRACKET  ; }
 <YYINITIAL> "{"          { return JetTokens.LBRACE    ; }

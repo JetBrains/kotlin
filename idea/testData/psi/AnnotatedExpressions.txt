@@ -1,4 +1,4 @@
-JetFile: LocalDeclarations_ERR.jet
+JetFile: AnnotatedExpressions.jet
   NAMESPACE
     FUN
       PsiElement(fun)('fun')
@@ -13,23 +13,27 @@ JetFile: LocalDeclarations_ERR.jet
       BLOCK
         PsiElement(LBRACE)('{')
         PsiWhiteSpace('\n    ')
-        PsiErrorElement:Attributes are only allowed on declarations
+        ANNOTATED_EXPRESSION
           ATTRIBUTE_ANNOTATION
             PsiElement(LBRACKET)('[')
             ATTRIBUTE
               USER_TYPE
                 PsiElement(IDENTIFIER)('a')
             PsiElement(RBRACKET)(']')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('foo')
         PsiWhiteSpace('\n    ')
         INTEGER_CONSTANT
           PsiElement(INTEGER_LITERAL)('1')
         PsiWhiteSpace('\n    ')
-        PsiErrorElement:Attributes are only allowed on declarations
+        ANNOTATED_EXPRESSION
           ATTRIBUTE_ANNOTATION
             PsiElement(LBRACKET)('[')
             ATTRIBUTE
               USER_TYPE
                 PsiElement(IDENTIFIER)('a')
             PsiElement(RBRACKET)(']')
+          PsiWhiteSpace(' ')
+          PsiElement(this)('this')
         PsiWhiteSpace('\n')
         PsiElement(RBRACE)('}')

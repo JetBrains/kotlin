@@ -20,9 +20,9 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
  * @author abreslav
  */
 public class JetParsing extends AbstractJetParsing {
-    // TODO: token sets to constants
+    // TODO: token sets to constants, including derived methods
 
-    private static final Map<String, IElementType> MODIFIER_KEYWORD_MAP = new HashMap<String, IElementType>();
+    public static final Map<String, IElementType> MODIFIER_KEYWORD_MAP = new HashMap<String, IElementType>();
     static {
         for (IElementType softKeyword : MODIFIER_KEYWORDS.getTypes()) {
             MODIFIER_KEYWORD_MAP.put(((JetKeywordToken) softKeyword).getValue(), softKeyword);
@@ -868,7 +868,7 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * block
-     *   : "{" (expression SEMI)* "}"
+     *   : "{" (expressions)* "}"
      *   ;
      */
     public void parseBlock() {
@@ -876,10 +876,7 @@ public class JetParsing extends AbstractJetParsing {
 
         expect(LBRACE, "Expecting '{' to open a block");
 
-        while (!eof() && !at(RBRACE)) {
-            myExpressionParsing.parseExpression();
-            consumeIf(SEMICOLON);
-        }
+        myExpressionParsing.parseExpressions();
 
         expect(RBRACE, "Expecting '}");
 
@@ -1375,10 +1372,6 @@ public class JetParsing extends AbstractJetParsing {
         parseFunctionParameterRest();
 
         parameter.done(VALUE_PARAMETER);
-    }
-
-    private JetParsing createTruncatedBuilder(int eofPosition) {
-        return new JetParsing(new TruncatedSemanticWhitespaceAwarePsiBuilder(myBuilder, eofPosition));
     }
 
     /*package*/ static class EnumDetector implements Consumer<IElementType> {

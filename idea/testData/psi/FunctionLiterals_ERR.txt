@@ -1,0 +1,297 @@
+JetFile: FunctionLiterals_ERR.jet
+  NAMESPACE
+    FUN
+      PsiElement(fun)('fun')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('foo')
+      TYPE_PARAMETER_LIST
+        <empty list>
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      BLOCK
+        PsiElement(LBRACE)('{')
+        PsiWhiteSpace('\n    ')
+        FUNCTION_LITERAL
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace(' ')
+          VALUE_PARAMETER
+            PsiErrorElement:Expecting parameter name
+              <empty list>
+          PsiElement(DOUBLE_ARROW)('=>')
+          PsiWhiteSpace(' ')
+          BODY
+            PsiElement(IDENTIFIER)('a')
+          PsiElement(RBRACE)('}')
+        PsiWhiteSpace('\n    ')
+        FUNCTION_LITERAL
+          PsiElement(LBRACE)('{')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('a')
+          PsiErrorElement:To specify many parameters, use the full notation: {(p1, p2, ...) => ...}
+            PsiElement(COMMA)(',')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('b')
+          PsiWhiteSpace(' ')
+          PsiElement(DOUBLE_ARROW)('=>')
+          PsiWhiteSpace(' ')
+          BODY
+            PsiElement(IDENTIFIER)('a')
+          PsiElement(RBRACE)('}')
+        PsiWhiteSpace('\n\n    ')
+        FUNCTION_LITERAL
+          PsiElement(LBRACE)('{')
+          BODY
+            TUPLE
+              PsiElement(LPAR)('(')
+              PsiElement(IDENTIFIER)('a')
+              PsiErrorElement:Expecting ')'
+                <empty list>
+            PsiWhiteSpace(' ')
+            PsiErrorElement:Expecting an expression
+              PsiElement(DOUBLE_ARROW)('=>')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('a')
+          PsiElement(RBRACE)('}')
+        PsiWhiteSpace('\n    ')
+        FUNCTION_LITERAL
+          PsiElement(LBRACE)('{')
+          VALUE_PARAMETER_LIST
+            PsiElement(LPAR)('(')
+            VALUE_PARAMETER
+              PsiElement(IDENTIFIER)('a')
+              PsiWhiteSpace(' ')
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                PsiErrorElement:Type expected
+                  <empty list>
+            PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          PsiElement(DOUBLE_ARROW)('=>')
+          PsiWhiteSpace(' ')
+          BODY
+            PsiElement(IDENTIFIER)('a')
+          PsiElement(RBRACE)('}')
+        PsiWhiteSpace('\n    ')
+        FUNCTION_LITERAL
+          PsiElement(LBRACE)('{')
+          VALUE_PARAMETER_LIST
+            PsiElement(LPAR)('(')
+            VALUE_PARAMETER
+              PsiElement(IDENTIFIER)('a')
+              PsiWhiteSpace(' ')
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                USER_TYPE
+                  PsiElement(IDENTIFIER)('A')
+            PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          PsiElement(COLON)(':')
+          PsiErrorElement:Expecting a type
+            <empty list>
+          PsiWhiteSpace(' ')
+          PsiElement(DOUBLE_ARROW)('=>')
+          PsiWhiteSpace(' ')
+          BODY
+            PsiElement(IDENTIFIER)('a')
+          PsiElement(RBRACE)('}')
+        PsiWhiteSpace('\n    ')
+        FUNCTION_LITERAL
+          PsiElement(LBRACE)('{')
+          VALUE_PARAMETER_LIST
+            PsiElement(LPAR)('(')
+            VALUE_PARAMETER
+              PsiElement(IDENTIFIER)('a')
+            PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              PsiElement(IDENTIFIER)('T')
+          PsiWhiteSpace(' ')
+          PsiElement(DOUBLE_ARROW)('=>')
+          PsiWhiteSpace(' ')
+          BODY
+            <empty list>
+          PsiElement(RBRACE)('}')
+        PsiWhiteSpace('\n\n    ')
+        FUNCTION_LITERAL
+          PsiElement(LBRACE)('{')
+          VALUE_PARAMETER_LIST
+            PsiElement(LPAR)('(')
+            VALUE_PARAMETER
+              PsiElement(IDENTIFIER)('a')
+            PsiElement(COMMA)(',')
+            PsiErrorElement:Expecting a parameter declaration
+              <empty list>
+            PsiWhiteSpace(' ')
+            PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          PsiElement(DOUBLE_ARROW)('=>')
+          PsiWhiteSpace(' ')
+          BODY
+            PsiElement(IDENTIFIER)('a')
+          PsiElement(RBRACE)('}')
+        PsiWhiteSpace('\n    ')
+        FUNCTION_LITERAL
+          PsiElement(LBRACE)('{')
+          VALUE_PARAMETER_LIST
+            PsiElement(LPAR)('(')
+            VALUE_PARAMETER
+              PsiElement(IDENTIFIER)('a')
+              PsiWhiteSpace(' ')
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                USER_TYPE
+                  PsiElement(IDENTIFIER)('A')
+            PsiElement(COMMA)(',')
+            PsiWhiteSpace(' ')
+            PsiErrorElement:Expecting a parameter declaration
+              PsiElement(COMMA)(',')
+            PsiWhiteSpace(' ')
+            VALUE_PARAMETER
+              PsiElement(IDENTIFIER)('a')
+              PsiWhiteSpace(' ')
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                USER_TYPE
+                  PsiElement(IDENTIFIER)('B')
+            PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          PsiElement(DOUBLE_ARROW)('=>')
+          PsiWhiteSpace(' ')
+          BODY
+            PsiElement(IDENTIFIER)('a')
+          PsiElement(RBRACE)('}')
+        PsiWhiteSpace('\n    ')
+        FUNCTION_LITERAL
+          PsiElement(LBRACE)('{')
+          VALUE_PARAMETER_LIST
+            PsiElement(LPAR)('(')
+            VALUE_PARAMETER
+              PsiElement(IDENTIFIER)('a')
+              PsiWhiteSpace(' ')
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                USER_TYPE
+                  PsiElement(IDENTIFIER)('A')
+            PsiElement(COMMA)(',')
+            PsiWhiteSpace(' ')
+            PsiErrorElement:Expecting a parameter declaration
+              PsiElement(COMMA)(',')
+            PsiWhiteSpace(' ')
+            VALUE_PARAMETER
+              PsiErrorElement:Expecting parameter declaration
+                <empty list>
+            PsiElement(COMMA)(',')
+            PsiWhiteSpace(' ')
+            VALUE_PARAMETER
+              PsiElement(IDENTIFIER)('a')
+            PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              PsiElement(IDENTIFIER)('T')
+          PsiWhiteSpace(' ')
+          PsiElement(DOUBLE_ARROW)('=>')
+          PsiWhiteSpace(' ')
+          BODY
+            PsiElement(IDENTIFIER)('a')
+          PsiElement(RBRACE)('}')
+        PsiWhiteSpace('\n\n    ')
+        FUNCTION_LITERAL
+          PsiElement(LBRACE)('{')
+          RECEIVER_TYPE
+            TYPE_REFERENCE
+              USER_TYPE
+                PsiElement(IDENTIFIER)('T')
+          PsiElement(DOT)('.')
+          PsiErrorElement:Expecting '('
+            PsiElement(IDENTIFIER)('t')
+          VALUE_PARAMETER_LIST
+            PsiElement(LPAR)('(')
+            VALUE_PARAMETER
+              PsiElement(IDENTIFIER)('a')
+            PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          PsiElement(DOUBLE_ARROW)('=>')
+          PsiWhiteSpace(' ')
+          BODY
+            PsiElement(IDENTIFIER)('a')
+          PsiElement(RBRACE)('}')
+        PsiWhiteSpace('\n    ')
+        FUNCTION_LITERAL
+          PsiElement(LBRACE)('{')
+          RECEIVER_TYPE
+            TYPE_REFERENCE
+              USER_TYPE
+                PsiElement(IDENTIFIER)('T')
+          PsiElement(DOT)('.')
+          PsiErrorElement:Expecting '('
+            PsiElement(IDENTIFIER)('t')
+            PsiWhiteSpace(' ')
+            PsiElement(MINUS)('-')
+          VALUE_PARAMETER_LIST
+            PsiElement(LPAR)('(')
+            VALUE_PARAMETER
+              PsiElement(IDENTIFIER)('a')
+              PsiWhiteSpace(' ')
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                USER_TYPE
+                  PsiElement(IDENTIFIER)('A')
+            PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          PsiElement(DOUBLE_ARROW)('=>')
+          PsiWhiteSpace(' ')
+          BODY
+            PsiElement(IDENTIFIER)('a')
+          PsiElement(RBRACE)('}')
+        PsiWhiteSpace('\n\n    ')
+        FUNCTION_LITERAL
+          PsiElement(LBRACE)('{')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('a')
+          PsiWhiteSpace(' ')
+          PsiErrorElement:To specify a type of a parameter or a return type, use the full notation: {(parameter : Type) : ReturnType => ...}
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('b')
+          PsiWhiteSpace(' ')
+          PsiElement(DOUBLE_ARROW)('=>')
+          PsiWhiteSpace(' ')
+          BODY
+            PsiElement(IDENTIFIER)('f')
+          PsiElement(RBRACE)('}')
+        PsiWhiteSpace('\n    ')
+        FUNCTION_LITERAL
+          PsiElement(LBRACE)('{')
+          RECEIVER_TYPE
+            TYPE_REFERENCE
+              USER_TYPE
+                PsiElement(IDENTIFIER)('T')
+          PsiElement(DOT)('.')
+          PsiErrorElement:To specify a receiver type, use the full notation: {ReceiverType.(parameters) [: ReturnType] => ...}
+            PsiElement(IDENTIFIER)('a')
+            PsiWhiteSpace(' ')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('b')
+          PsiWhiteSpace(' ')
+          PsiElement(DOUBLE_ARROW)('=>')
+          PsiWhiteSpace(' ')
+          BODY
+            PsiElement(IDENTIFIER)('f')
+          PsiElement(RBRACE)('}')
+        PsiWhiteSpace('\n')
+        PsiElement(RBRACE)('}')
