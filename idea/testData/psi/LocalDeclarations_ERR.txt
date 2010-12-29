@@ -1,0 +1,35 @@
+JetFile: LocalDeclarations_ERR.jet
+  NAMESPACE
+    FUN
+      PsiElement(fun)('fun')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('foo')
+      TYPE_PARAMETER_LIST
+        <empty list>
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      BLOCK
+        PsiElement(LBRACE)('{')
+        PsiWhiteSpace('\n    ')
+        PsiErrorElement:Attributes are only allowed on declarations
+          ATTRIBUTE_ANNOTATION
+            PsiElement(LBRACKET)('[')
+            ATTRIBUTE
+              USER_TYPE
+                PsiElement(IDENTIFIER)('a')
+            PsiElement(RBRACKET)(']')
+        PsiWhiteSpace('\n    ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+        PsiWhiteSpace('\n    ')
+        PsiErrorElement:Attributes are only allowed on declarations
+          ATTRIBUTE_ANNOTATION
+            PsiElement(LBRACKET)('[')
+            ATTRIBUTE
+              USER_TYPE
+                PsiElement(IDENTIFIER)('a')
+            PsiElement(RBRACKET)(']')
+        PsiWhiteSpace('\n')
+        PsiElement(RBRACE)('}')

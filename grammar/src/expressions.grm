@@ -3,7 +3,6 @@ expression
   : literalConstant
   : functionLiteral
   : tupleLiteral
-  : "null"
   : "this" ("<" type ">")?
   : expressionWithPrecedences
   : match
@@ -25,6 +24,7 @@ literalConstant
   : IntegerLiteral
   : HexadecimalLiteral
   : CharacterLiteral
+  : "null"
   ;
 
 declaration
@@ -83,14 +83,14 @@ binaryOperation // Decreasing precedence
   : ".."
   : SimpleName
   : "?:"
-  : "in" : "is" : "!in" : "!is" : "as"
+  : "in" : "is" : "!in" : "!is" : "as" : ":"
   : "<" : ">" : ">=" : "<="
   : "!=" : "==" : "===" : "!=="
   // No | & ^ ~
   : "&&"
   : "||"
+  : "match"
   : "->"
-  : ":"
   : assignmentOperator
   ;
 

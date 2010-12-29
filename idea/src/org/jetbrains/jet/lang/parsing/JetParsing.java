@@ -213,7 +213,7 @@ public class JetParsing extends AbstractJetParsing {
      *   : modifiers "decomposer" (type ".")? SimpleName? "(" (attributes SimpleName){","}? ")" // Public properties only
      *   ;
      */
-    private JetNodeType parseDecomposer() {
+    public JetNodeType parseDecomposer() {
         assert at(DECOMPOSER_KEYWORD);
         advance(); // DECOMPOSER_KEYWORD
 
@@ -274,7 +274,7 @@ public class JetParsing extends AbstractJetParsing {
     /*
      * (modifier | attribute)*
      */
-    private void parseModifierList() {
+    public void parseModifierList() {
         parseModifierList(null);
     }
 
@@ -283,7 +283,7 @@ public class JetParsing extends AbstractJetParsing {
      *
      * Feeds modifiers (not attributes) into the passed consumer, if it is not null
      */
-    private void parseModifierList(Consumer<IElementType> tokenConsumer) {
+    public void parseModifierList(Consumer<IElementType> tokenConsumer) {
         PsiBuilder.Marker list = mark();
         boolean empty = true;
         while (!eof()) {
@@ -391,7 +391,7 @@ public class JetParsing extends AbstractJetParsing {
      *       (classBody? | enumClassBody)
      *   ;
      */
-    private JetNodeType parseClass(boolean enumClass) {
+    public JetNodeType parseClass(boolean enumClass) {
         assert at(CLASS_KEYWORD);
         advance(); // CLASS_KEYWORD
 
@@ -664,7 +664,7 @@ public class JetParsing extends AbstractJetParsing {
      *   : modifiers "type" SimpleName typeParameters? "=" type
      *   ;
      */
-    private JetNodeType parseTypeDef() {
+    public JetNodeType parseTypeDef() {
         assert at(TYPE_KEYWORD);
 
         advance(); // TYPE_KEYWORD
@@ -688,32 +688,31 @@ public class JetParsing extends AbstractJetParsing {
      *       (getter? setter? | setter? getter?) SEMI?
      *   ;
      */
-    private JetNodeType parseProperty() {
+    public JetNodeType parseProperty() {
         assert at(VAL_KEYWORD) || at(VAR_KEYWORD);
 
         advance(); // VAL_KEYWORD or VAR_KEYWORD
 
-        // TODO: EOL_OR_SEMICOLON is too restrictive here
         TokenSet propertyNameFollow = TokenSet.create(COLON, EQ, LBRACE, SEMICOLON);
 
-//        int lastDot = findLastBefore(TokenSet.create(DOT), propertyNameFollow, true);
         // TODO: constant
-        int lastDot = matchTokenStreamPredicate(new FirstBefore(new TokenStreamPredicate() {
-            @Override
-            public boolean matching(boolean topLevel) {
-                return topLevel
-                        && at(DOT);
-            }
-        }, new TokenStreamPredicate() {
-            @Override
-            public boolean matching(boolean topLevel) {
-                if (lookahead(1) == IDENTIFIER) {
-                    IElementType lookahead2 = lookahead(2);
-                    return lookahead2 != LT && lookahead2 != DOT;
-                }
-                return false;
-            }
-        }));
+        int lastDot = matchTokenStreamPredicate(new FirstBefore(
+                new TokenStreamPredicate() {
+                    @Override
+                    public boolean matching(boolean topLevel) {
+                        return topLevel
+                                && at(DOT);
+                    }
+                }, new TokenStreamPredicate() {
+                    @Override
+                    public boolean matching(boolean topLevel) {
+                        if (lookahead(1) == IDENTIFIER) {
+                            IElementType lookahead2 = lookahead(2);
+                            return lookahead2 != LT && lookahead2 != DOT;
+                        }
+                        return false;
+                    }
+                }));
 
         if (lastDot == -1) {
             parseAttributeList();
@@ -806,7 +805,7 @@ public class JetParsing extends AbstractJetParsing {
      *   : attributes SimpleName typeParameters? functionParameters (":" type)? functionBody?
      *   ;
      */
-    private JetNodeType parseFunction() {
+    public JetNodeType parseFunction() {
         assert at(FUN_KEYWORD);
 
         advance(); // FUN_KEYWORD
@@ -892,7 +891,7 @@ public class JetParsing extends AbstractJetParsing {
      *   : modifiers "extension" SimpleName? typeParameters? "for" type classBody? // properties cannot be lazy, cannot have backing fields
      *   ;
      */
-    private JetNodeType parseExtension() {
+    public JetNodeType parseExtension() {
         assert at(EXTENSION_KEYWORD);
 
         advance(); // EXTENSION_KEYWORD
@@ -975,7 +974,7 @@ public class JetParsing extends AbstractJetParsing {
      *   : attributeAnnotation*
      *   ;
      */
-    private void parseAttributeList() {
+    public void parseAttributeList() {
         while (at(LBRACKET)) parseAttributeAnnotation();
     }
 
@@ -1382,7 +1381,7 @@ public class JetParsing extends AbstractJetParsing {
         return new JetParsing(new TruncatedSemanticWhitespaceAwarePsiBuilder(myBuilder, eofPosition));
     }
 
-    private static class EnumDetector implements Consumer<IElementType> {
+    /*package*/ static class EnumDetector implements Consumer<IElementType> {
 
         private boolean myEnum = false;
 

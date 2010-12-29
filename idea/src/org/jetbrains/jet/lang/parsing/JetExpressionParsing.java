@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.parsing;
 
 import com.intellij.lang.PsiBuilder;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.jet.JetNodeType;
 
@@ -106,19 +107,21 @@ public class JetExpressionParsing extends AbstractJetParsing {
         else if (at(NULL_KEYWORD)) {
             parseOneTokenExpression(NULL);
         }
-        else if (atSet(TokenSet.create(
-                CLASS_KEYWORD,
-                EXTENSION_KEYWORD,
-                FUN_KEYWORD,
-                VAL_KEYWORD,
-                VAR_KEYWORD,
-                TYPE_KEYWORD))) {
-            // modifiers
-            // attributes
-            // TODO
+        else if (atSet(CLASS_KEYWORD, EXTENSION_KEYWORD, FUN_KEYWORD, VAL_KEYWORD,
+                VAR_KEYWORD, TYPE_KEYWORD, DECOMPOSER_KEYWORD)) {
+            parseLocalDeclaration();
+        }
+        else if (at(LBRACKET)) {
+            if (!parseLocalDeclaration()) {
+                PsiBuilder.Marker attributes = mark();
+                myJetParsing.parseAttributeList();
+                attributes.error("Attributes are only allowed on declarations");
+            }
         }
         else if (at(IDENTIFIER)) {
-            advance(); // TODO
+            if (!parseLocalDeclaration()) {
+                expect(IDENTIFIER, "[Internal error: should never occur]"); // TODO
+            }
         }
         else if (at(LBRACE)) {
              // TODO
@@ -130,6 +133,47 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         // TODO: Binary operations
     }
+
+    private boolean parseLocalDeclaration() {
+        PsiBuilder.Marker decls = mark();
+        JetParsing.EnumDetector enumDetector = new JetParsing.EnumDetector();
+        myJetParsing.parseModifierList(enumDetector);
+
+        JetNodeType declType = parseLocalDeclarationRest(enumDetector.isEnum());
+
+        if (declType != null) {
+            decls.done(declType);
+            return true;
+        } else {
+            decls.rollbackTo();
+            return false;
+        }
+    }
+
+    private JetNodeType parseLocalDeclarationRest(boolean isEnum) {
+         IElementType keywordToken = tt();
+         JetNodeType declType = null;
+         if (keywordToken == CLASS_KEYWORD) {
+             declType = myJetParsing.parseClass(isEnum);
+         }
+         else if (keywordToken == EXTENSION_KEYWORD) {
+             declType = myJetParsing.parseExtension();
+         }
+         else if (keywordToken == FUN_KEYWORD) {
+             declType = myJetParsing.parseFunction();
+         }
+         else if (keywordToken == VAL_KEYWORD || keywordToken == VAR_KEYWORD) {
+             declType = myJetParsing.parseProperty();
+         }
+         else if (keywordToken == TYPE_KEYWORD) {
+             declType = myJetParsing.parseTypeDef();
+         }
+         else if (keywordToken == DECOMPOSER_KEYWORD) {
+             declType = myJetParsing.parseDecomposer();
+         }
+         return declType;
+     }
+
 
     /*
      * doWhile

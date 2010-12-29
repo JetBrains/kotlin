@@ -102,7 +102,18 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
                 return true;
             }
         }
+        if (expectation == IDENTIFIER && token instanceof JetKeywordToken) {
+            JetKeywordToken keywordToken = (JetKeywordToken) token;
+            if (keywordToken.isSoft()) {
+                myBuilder.remapCurrentToken(IDENTIFIER);
+                return true;
+            }
+        }
         return false;
+    }
+
+    protected boolean atSet(IElementType... tokens) {
+        return atSet(TokenSet.create(tokens));
     }
 
     protected boolean atSet(final TokenSet set) {
