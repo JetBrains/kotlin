@@ -57,8 +57,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
         DISJUNCTION(OROR),
         MATCH(MATCH_KEYWORD),
         // TODO: don't build a binary tree, build a tuple
-        ASSIGNMENT(EQ, PLUSEQ, MINUSEQ, MULTEQ, DIVEQ, PERCEQ),
         ARROW(JetTokens.ARROW),
+        ASSIGNMENT(EQ, PLUSEQ, MINUSEQ, MULTEQ, DIVEQ, PERCEQ),
         ;
 
         static {

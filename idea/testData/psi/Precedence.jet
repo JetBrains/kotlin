@@ -1,0 +1,23 @@
+fun foo() {
+  a + b
+  a + b * c
+  a + (b * c)
+  a + b > c * c
+  a + b in c * d
+  a.b
+  a + b.c
+  a.b + c
+  a.b++
+  --a.b++
+  --a * b
+  a+b..b-1
+  1..2 foo 2..3
+  1 foo 2 ?: 1 bar 3
+  a ?: b in b?: c
+  a : b < b : c
+  a < b == b > c
+  a != b && c
+  a || b && c
+  a = b -> c
+  a = b || c
+}

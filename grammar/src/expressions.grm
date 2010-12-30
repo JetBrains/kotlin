@@ -27,6 +27,7 @@ arrowTupleExpression
   : match ("->" match)*
   ;
 
+// ATTENTION
 match
   : conjunction ("match" "{" matchEntry+ "}")*
   ;
@@ -55,8 +56,9 @@ elvisOperation
   : infixFunctionCall ("?:" infixFunctionCall)*
   ;
 
+// ATTENTION
 infixFunctionCall
-  : rangeExpression (SimpleName rangeExpression)*
+  : rangeExpression (SimpleName (typeParameters | rangeExpression))*
   ;
 
 rangeExpression
@@ -165,7 +167,8 @@ prefixUnaryOperation
 
 postfixUnaryOperation
   : "++" : "--"
-  : valueArguments
+  : typeArguments? valueArguments
+  : typeArguments
   : arrayAccess
   ;
 
@@ -187,7 +190,7 @@ valueArguments
   ;
 
 infixFunctionCall
-  : expression SimpleName typeArguments expression?
+  : expression SimpleName typeArguments
   : expression SimpleName expression
   ;
 

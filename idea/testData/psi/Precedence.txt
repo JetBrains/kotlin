@@ -1,0 +1,282 @@
+JetFile: Precedence.jet
+  NAMESPACE
+    FUN
+      PsiElement(fun)('fun')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('foo')
+      TYPE_PARAMETER_LIST
+        <empty list>
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      BLOCK
+        PsiElement(LBRACE)('{')
+        PsiWhiteSpace('\n  ')
+        BINARY_EXPRESSION
+          PsiElement(IDENTIFIER)('a')
+          PsiWhiteSpace(' ')
+          PsiElement(PLUS)('+')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('b')
+        PsiWhiteSpace('\n  ')
+        BINARY_EXPRESSION
+          PsiElement(IDENTIFIER)('a')
+          PsiWhiteSpace(' ')
+          PsiElement(PLUS)('+')
+          PsiWhiteSpace(' ')
+          BINARY_EXPRESSION
+            PsiElement(IDENTIFIER)('b')
+            PsiWhiteSpace(' ')
+            PsiElement(MUL)('*')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('c')
+        PsiWhiteSpace('\n  ')
+        BINARY_EXPRESSION
+          PsiElement(IDENTIFIER)('a')
+          PsiWhiteSpace(' ')
+          PsiElement(PLUS)('+')
+          PsiWhiteSpace(' ')
+          TUPLE
+            PsiElement(LPAR)('(')
+            BINARY_EXPRESSION
+              PsiElement(IDENTIFIER)('b')
+              PsiWhiteSpace(' ')
+              PsiElement(MUL)('*')
+              PsiWhiteSpace(' ')
+              PsiElement(IDENTIFIER)('c')
+            PsiElement(RPAR)(')')
+        PsiWhiteSpace('\n  ')
+        BINARY_EXPRESSION
+          BINARY_EXPRESSION
+            PsiElement(IDENTIFIER)('a')
+            PsiWhiteSpace(' ')
+            PsiElement(PLUS)('+')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('b')
+          PsiWhiteSpace(' ')
+          PsiElement(GT)('>')
+          PsiWhiteSpace(' ')
+          BINARY_EXPRESSION
+            PsiElement(IDENTIFIER)('c')
+            PsiWhiteSpace(' ')
+            PsiElement(MUL)('*')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('c')
+        PsiWhiteSpace('\n  ')
+        BINARY_EXPRESSION
+          BINARY_EXPRESSION
+            PsiElement(IDENTIFIER)('a')
+            PsiWhiteSpace(' ')
+            PsiElement(PLUS)('+')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('b')
+          PsiWhiteSpace(' ')
+          PsiElement(in)('in')
+          PsiWhiteSpace(' ')
+          BINARY_EXPRESSION
+            PsiElement(IDENTIFIER)('c')
+            PsiWhiteSpace(' ')
+            PsiElement(MUL)('*')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('d')
+        PsiWhiteSpace('\n  ')
+        BINARY_EXPRESSION
+          PsiElement(IDENTIFIER)('a')
+          PsiElement(DOT)('.')
+          PsiElement(IDENTIFIER)('b')
+        PsiWhiteSpace('\n  ')
+        BINARY_EXPRESSION
+          PsiElement(IDENTIFIER)('a')
+          PsiWhiteSpace(' ')
+          PsiElement(PLUS)('+')
+          PsiWhiteSpace(' ')
+          BINARY_EXPRESSION
+            PsiElement(IDENTIFIER)('b')
+            PsiElement(DOT)('.')
+            PsiElement(IDENTIFIER)('c')
+        PsiWhiteSpace('\n  ')
+        BINARY_EXPRESSION
+          BINARY_EXPRESSION
+            PsiElement(IDENTIFIER)('a')
+            PsiElement(DOT)('.')
+            PsiElement(IDENTIFIER)('b')
+          PsiWhiteSpace(' ')
+          PsiElement(PLUS)('+')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('c')
+        PsiWhiteSpace('\n  ')
+        POSTFIX_EXPRESSION
+          BINARY_EXPRESSION
+            PsiElement(IDENTIFIER)('a')
+            PsiElement(DOT)('.')
+            PsiElement(IDENTIFIER)('b')
+          PsiElement(PLUSPLUS)('++')
+        PsiWhiteSpace('\n  ')
+        PREFIX_EXPRESSION
+          PsiElement(MINUSMINUS)('--')
+          POSTFIX_EXPRESSION
+            BINARY_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
+              PsiElement(DOT)('.')
+              PsiElement(IDENTIFIER)('b')
+            PsiElement(PLUSPLUS)('++')
+        PsiWhiteSpace('\n  ')
+        BINARY_EXPRESSION
+          PREFIX_EXPRESSION
+            PsiElement(MINUSMINUS)('--')
+            PsiElement(IDENTIFIER)('a')
+          PsiWhiteSpace(' ')
+          PsiElement(MUL)('*')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('b')
+        PsiWhiteSpace('\n  ')
+        BINARY_EXPRESSION
+          BINARY_EXPRESSION
+            PsiElement(IDENTIFIER)('a')
+            PsiElement(PLUS)('+')
+            PsiElement(IDENTIFIER)('b')
+          PsiElement(RANGE)('..')
+          BINARY_EXPRESSION
+            PsiElement(IDENTIFIER)('b')
+            PsiElement(MINUS)('-')
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('1')
+        PsiWhiteSpace('\n  ')
+        BINARY_EXPRESSION
+          BINARY_EXPRESSION
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('1')
+            PsiElement(RANGE)('..')
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('2')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('foo')
+          PsiWhiteSpace(' ')
+          BINARY_EXPRESSION
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('2')
+            PsiElement(RANGE)('..')
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('3')
+        PsiWhiteSpace('\n  ')
+        BINARY_EXPRESSION
+          BINARY_EXPRESSION
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('1')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('foo')
+            PsiWhiteSpace(' ')
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('2')
+          PsiWhiteSpace(' ')
+          PsiElement(ELVIS)('?:')
+          PsiWhiteSpace(' ')
+          BINARY_EXPRESSION
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('1')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('bar')
+            PsiWhiteSpace(' ')
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('3')
+        PsiWhiteSpace('\n  ')
+        BINARY_EXPRESSION
+          BINARY_EXPRESSION
+            PsiElement(IDENTIFIER)('a')
+            PsiWhiteSpace(' ')
+            PsiElement(ELVIS)('?:')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('b')
+          PsiWhiteSpace(' ')
+          PsiElement(in)('in')
+          PsiWhiteSpace(' ')
+          BINARY_EXPRESSION
+            PsiElement(IDENTIFIER)('b')
+            PsiElement(ELVIS)('?:')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('c')
+        PsiWhiteSpace('\n  ')
+        BINARY_EXPRESSION
+          BINARY_EXPRESSION
+            PsiElement(IDENTIFIER)('a')
+            PsiWhiteSpace(' ')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('b')
+          PsiWhiteSpace(' ')
+          PsiElement(LT)('<')
+          PsiWhiteSpace(' ')
+          BINARY_EXPRESSION
+            PsiElement(IDENTIFIER)('b')
+            PsiWhiteSpace(' ')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('c')
+        PsiWhiteSpace('\n  ')
+        BINARY_EXPRESSION
+          BINARY_EXPRESSION
+            PsiElement(IDENTIFIER)('a')
+            PsiWhiteSpace(' ')
+            PsiElement(LT)('<')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('b')
+          PsiWhiteSpace(' ')
+          PsiElement(EQEQ)('==')
+          PsiWhiteSpace(' ')
+          BINARY_EXPRESSION
+            PsiElement(IDENTIFIER)('b')
+            PsiWhiteSpace(' ')
+            PsiElement(GT)('>')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('c')
+        PsiWhiteSpace('\n  ')
+        BINARY_EXPRESSION
+          BINARY_EXPRESSION
+            PsiElement(IDENTIFIER)('a')
+            PsiWhiteSpace(' ')
+            PsiElement(EXCLEQ)('!=')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('b')
+          PsiWhiteSpace(' ')
+          PsiElement(ANDAND)('&&')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('c')
+        PsiWhiteSpace('\n  ')
+        BINARY_EXPRESSION
+          PsiElement(IDENTIFIER)('a')
+          PsiWhiteSpace(' ')
+          PsiElement(OROR)('||')
+          PsiWhiteSpace(' ')
+          BINARY_EXPRESSION
+            PsiElement(IDENTIFIER)('b')
+            PsiWhiteSpace(' ')
+            PsiElement(ANDAND)('&&')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('c')
+        PsiWhiteSpace('\n  ')
+        BINARY_EXPRESSION
+          PsiElement(IDENTIFIER)('a')
+          PsiWhiteSpace(' ')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          BINARY_EXPRESSION
+            PsiElement(IDENTIFIER)('b')
+            PsiWhiteSpace(' ')
+            PsiElement(ARROW)('->')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('c')
+        PsiWhiteSpace('\n  ')
+        BINARY_EXPRESSION
+          PsiElement(IDENTIFIER)('a')
+          PsiWhiteSpace(' ')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          BINARY_EXPRESSION
+            PsiElement(IDENTIFIER)('b')
+            PsiWhiteSpace(' ')
+            PsiElement(OROR)('||')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('c')
+        PsiWhiteSpace('\n')
+        PsiElement(RBRACE)('}')

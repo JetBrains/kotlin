@@ -55,6 +55,7 @@ public class JetParsingTest extends ParsingTestCase {
     public void testNamespaceBlock_ERR() throws Exception {doTest(true);}
     public void testNamespaceBlock() throws Exception {doTest(true);}
     public void testNewlinesInParentheses() throws Exception {doTest(true);}
+    public void testPrecedence() throws Exception {doTest(true);}
     public void testProperties() throws Exception {doTest(true);}
     public void testProperties_ERR() throws Exception {doTest(true);}
     public void testSimpleClassMembers() throws Exception {doTest(true);}
