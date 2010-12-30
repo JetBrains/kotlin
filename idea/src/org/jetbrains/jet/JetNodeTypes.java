@@ -64,6 +64,7 @@ public interface JetNodeTypes {
     JetNodeType SUPERTYE_QUALIFIER = new JetNodeType("SUPERTYE_QUALIFIER");
     JetNodeType LONG_CONSTANT = new JetNodeType("LONG_CONSTANT");
     JetNodeType TUPLE = new JetNodeType("TUPLE");
+    JetNodeType ARROW_TUPLE = new JetNodeType("ARROW_TUPLE");
     JetNodeType MAP_LITERAL_ENTRY = new JetNodeType("MAP_LITERAL_ENTRY");
     JetNodeType MAP_LITERAL = new JetNodeType("MAP_LITERAL");
     JetNodeType RANGE_LITERAL = new JetNodeType("RANGE_LITERAL");

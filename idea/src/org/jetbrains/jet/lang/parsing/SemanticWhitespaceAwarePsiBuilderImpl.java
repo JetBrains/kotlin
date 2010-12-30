@@ -37,6 +37,6 @@ public class SemanticWhitespaceAwarePsiBuilderImpl extends PsiBuilderAdapter imp
 
     @Override
     public boolean eolInLastWhitespace() {
-        return myEOLInLastWhitespace;
+        return myEOLInLastWhitespace || eof();
     }
 }

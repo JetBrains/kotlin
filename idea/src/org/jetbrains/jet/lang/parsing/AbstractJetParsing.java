@@ -153,6 +153,7 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
         if (at(token)) advance(); // token
     }
 
+    // TODO: Migrate to predicates
     protected void skipUntil(TokenSet tokenSet) {
         boolean stopAtEolOrSemi = tokenSet.contains(EOL_OR_SEMICOLON);
         while (!eof() && !tokenSet.contains(tt()) && !(stopAtEolOrSemi && at(EOL_OR_SEMICOLON))) {
@@ -183,10 +184,7 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
         while (!eof()) {
             if (pattern.processToken(
                     myBuilder.getCurrentOffset(),
-                    openAngleBrackets == 0
-                    && openBrackets == 0
-                    && openBraces == 0
-                    && openParentheses == 0)) {
+                    pattern.isTopLevel(openAngleBrackets, openBrackets, openBraces, openParentheses))) {
                 break;
             }
             if (at(LPAR)) {
@@ -224,6 +222,8 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
      * top-level occurrence of a token from the <code>stopSet</code>
      *
      * Returns -1 if no occurrence is found
+     *
+     * TODO: Migrate to predictaes
      */
     protected int findLastBefore(TokenSet lookFor, TokenSet stopAt, boolean dontStopRightAfterOccurrence) {
         return matchTokenStreamPredicate(new LastBefore(new AtSet(lookFor), new AtSet(stopAt), dontStopRightAfterOccurrence));

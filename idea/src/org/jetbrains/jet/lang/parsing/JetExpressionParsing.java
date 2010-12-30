@@ -21,10 +21,10 @@ public class JetExpressionParsing extends AbstractJetParsing {
     }
 
     @SuppressWarnings({"UnusedDeclaration"})
-    private enum Priority {
+    private enum Precedence {
         MEMBER_ACCESS(DOT, HASH, SAFE_ACCESS) {
             @Override
-            public void parseHigherPriority(JetExpressionParsing parsing) {
+            public void parseHigherPrecedence(JetExpressionParsing parsing) {
                 parsing.parseAtomicExpression();
             }
         },
@@ -34,14 +34,14 @@ public class JetExpressionParsing extends AbstractJetParsing {
         PREFIX(MINUS, PLUS, MINUSMINUS, PLUSPLUS, EXCL) { // attributes
 
             @Override
-            public void parseHigherPriority(JetExpressionParsing parsing) {
+            public void parseHigherPrecedence(JetExpressionParsing parsing) {
                 throw new IllegalStateException("Don't call this method");
             }
         },
 
         MULTIPLICATIVE(MUL, DIV, PERC) {
             @Override
-            public void parseHigherPriority(JetExpressionParsing parsing) {
+            public void parseHigherPrecedence(JetExpressionParsing parsing) {
                 parsing.parsePrefixExpression();
             }
         },
@@ -56,26 +56,27 @@ public class JetExpressionParsing extends AbstractJetParsing {
         CONJUNCTION(ANDAND),
         DISJUNCTION(OROR),
         MATCH(MATCH_KEYWORD),
+        // TODO: don't build a binary tree, build a tuple
+        ASSIGNMENT(EQ, PLUSEQ, MINUSEQ, MULTEQ, DIVEQ, PERCEQ),
         ARROW(JetTokens.ARROW),
-        ASSIGNMENT(EQ, PLUSEQ, MINUSEQ, MULTEQ, DIVEQ, PERCEQ)
         ;
 
         static {
-            Priority[] values = Priority.values();
-            for (Priority priority : values) {
-                int ordinal = priority.ordinal();
-                priority.higher = ordinal > 0 ? values[ordinal - 1] : null;
+            Precedence[] values = Precedence.values();
+            for (Precedence precedence : values) {
+                int ordinal = precedence.ordinal();
+                precedence.higher = ordinal > 0 ? values[ordinal - 1] : null;
             }
         }
 
-        private Priority higher;
+        private Precedence higher;
         private final TokenSet operations;
 
-        Priority(IElementType... operations ) {
+        Precedence(IElementType... operations) {
             this.operations = TokenSet.create(operations);
         }
 
-        public void parseHigherPriority(JetExpressionParsing parsing) {
+        public void parseHigherPrecedence(JetExpressionParsing parsing) {
             assert higher != null;
             parsing.parseBinaryExpression(higher);
         }
@@ -107,18 +108,23 @@ public class JetExpressionParsing extends AbstractJetParsing {
      *   ;
      */
     public void parseExpression() {
-        parseBinaryExpression(Priority.ASSIGNMENT);
+        parseBinaryExpression(Precedence.ASSIGNMENT);
     }
 
-    private void parseBinaryExpression(Priority priority) {
-//        System.out.println(priority.name() + " at " + tt());
+    /*
+     * expression (operation expression)*
+     *
+     * see the precedence table
+     */
+    private void parseBinaryExpression(Precedence precedence) {
+//        System.out.println(precedence.name() + " at " + tt());
         PsiBuilder.Marker expression = mark();
 
-        priority.parseHigherPriority(this);
+        precedence.parseHigherPrecedence(this);
 
-        while (!myBuilder.eolInLastWhitespace() && atSet(priority.getOperations())) {
+        while (!myBuilder.eolInLastWhitespace() && atSet(precedence.getOperations())) {
              advance(); // operation
-             priority.parseHigherPriority(this);
+             precedence.parseHigherPrecedence(this);
              expression.done(BINARY_EXPRESSION);
              expression = expression.precede();
         }
@@ -126,6 +132,9 @@ public class JetExpressionParsing extends AbstractJetParsing {
         expression.drop();
     }
 
+    /*
+     * operation? expression
+     */
     private void parsePrefixExpression() {
 //        System.out.println("pre at " + tt());
         if (at(LBRACKET)) {
@@ -135,7 +144,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 parsePostfixExpression();
                 attributes.done(ANNOTATED_EXPRESSION);
             }
-        } else if (atSet(Priority.PREFIX.getOperations())) {
+        } else if (atSet(Precedence.PREFIX.getOperations())) {
             PsiBuilder.Marker expression = mark();
             advance(); // operation
             parsePostfixExpression();
@@ -145,17 +154,20 @@ public class JetExpressionParsing extends AbstractJetParsing {
         }
     }
 
+    /*
+     * expression operation?
+     */
     private void parsePostfixExpression() {
 //        System.out.println("post at " + tt());
 
         PsiBuilder.Marker expression = mark();
-        parseBinaryExpression(Priority.MEMBER_ACCESS);
+        parseBinaryExpression(Precedence.MEMBER_ACCESS);
         if (myBuilder.eolInLastWhitespace()) {
             expression.drop();
         } else if (at(LBRACKET)) {
             parseArrayAccess();
             expression.done(ARRAY_ACCESS_EXPRESSION);
-        } else if (atSet(Priority.POSTFIX.getOperations())) {
+        } else if (atSet(Precedence.POSTFIX.getOperations())) {
             advance(); // operation
             expression.done(POSTFIX_EXPRESSION);
         } else if (at(LPAR)) {
@@ -171,7 +183,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      *   : tupleLiteral // or parenthesized expression
      *   : "this" ("<" type ">")?
      *   : "typeof" "(" expression ")"
-     *   : "new" constructorInvocation // TODO: Do we need "new"?, see factory methods
+     *   : "new" constructorInvocation
      *   : objectLiteral
      *   : jump
      *   : if
@@ -347,7 +359,12 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         advance(); // LBRACE
 
-        int doubleArrowPos = matchTokenStreamPredicate(new FirstBefore(new At(DOUBLE_ARROW), new At(RBRACE)));
+        int doubleArrowPos = matchTokenStreamPredicate(new FirstBefore(new At(DOUBLE_ARROW), new At(RBRACE)) {
+            @Override
+            public boolean isTopLevel(int openAngleBrackets, int openBrackets, int openBraces, int openParentheses) {
+                return openBraces == 0;
+            }
+        });
 
         if (doubleArrowPos >= 0) {
             boolean dontExpectParameters = false;
@@ -460,7 +477,13 @@ public class JetExpressionParsing extends AbstractJetParsing {
     public void parseExpressions() {
         while (!eof() && !at(RBRACE)) {
             parseExpression();
-            consumeIf(SEMICOLON);
+            if (at(SEMICOLON)) {
+                advance(); // SEMICOLON
+            } else if (at(RBRACE)) {
+                break;
+            } else if (!myBuilder.eolInLastWhitespace()) {
+                errorUntil("Unexpected tokens (use ';' to separate expressions on the same line", TokenSet.create(EOL_OR_SEMICOLON));
+            }
         }
     }
 
