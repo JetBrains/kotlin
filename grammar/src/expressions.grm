@@ -74,15 +74,11 @@ multiplicativeExpression
   ;
 
 prefixUnaryExpression
-  : prefixUnaryOperation postfixUnaryExpression
+  : prefixUnaryOperation* postfixUnaryExpression
   ;
 
 postfixUnaryExpression
-  : memberAccess postfixUnaryOperation
-  ;
-
-memberAccess
-  : atomicExpression memberAccessOperation atomicExpression
+  : memberAccess postfixUnaryOperation*
   ;
 
 atomicExpression
@@ -120,10 +116,6 @@ declaration
   : typedef
   ;
 
-memberAccessOperation
-  : "." : "?." : "#"
-  ;
-
 multiplicativeOperation
   : "*" : "/" : "%"
   ;
@@ -149,10 +141,6 @@ assignmentOperator
   : "+=" : "-=" : "*=" : "/=" : "%="// TODO: |=, %= and <<= make more sense than |, % or << alone, and so for others
   ;
 
-assignment
-  : memberAccessExpression assignmentOperator expression // Assignment to functions prohibited by a semantic check
-  ;
-
 unOpExpression
   : expression postfixUnaryOperation
   : prefixUnaryOperation expression
@@ -168,8 +156,13 @@ prefixUnaryOperation
 postfixUnaryOperation
   : "++" : "--"
   : typeArguments? valueArguments
-  // : typeArguments // TODO:
+  : typeArguments
   : arrayAccess
+  : memberAccessOperation atomicExpression
+  ;
+
+memberAccessOperation
+  : "." : "?." : "#"
   ;
 
 functionCall

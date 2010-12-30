@@ -1,4 +1,7 @@
 fun foo() {
+  b().x
+  x++ . 4
+  ++ -- ! a
   f(foo<a, (b>(x)))
   f(foo<a, b>(x))
   f((foo<a), b>(x))

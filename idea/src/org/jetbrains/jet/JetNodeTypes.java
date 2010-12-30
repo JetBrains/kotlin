@@ -98,6 +98,9 @@ public interface JetNodeTypes {
     JetNodeType CALL_EXPRESSION = new JetNodeType("CALL_EXPRESSION");
     JetNodeType ARRAY_ACCESS_EXPRESSION = new JetNodeType("ARRAY_ACCESS_EXPRESSION");
     JetNodeType INDICES = new JetNodeType("INDICES");
+    JetNodeType DOT_QIALIFIED_EXPRESSION = new JetNodeType("DOT_QIALIFIED_EXPRESSION");
+    JetNodeType HASH_QIALIFIED_EXPRESSION = new JetNodeType("HASH_QIALIFIED_EXPRESSION");
+    JetNodeType SAFE_ACCESS_EXPRESSION = new JetNodeType("SAFE_ACCESS_EXPRESSION");
 
     IElementType NAMESPACE_NAME = new JetNodeType("NAMESPACE_NAME");
 }

@@ -63,14 +63,25 @@ public class SemanticWhitespaceAwarePsiBuilderImpl extends PsiBuilderAdapter imp
     // TODO: Overhead
     @Override
     public Marker mark() {
-        return new MarkerAdapter(super.mark()) {
-            private final boolean eolInLastWhitespace = eolInLastWhitespace();
+        return new MarkerWrapper(super.mark());
+    }
 
-            @Override
-            public void rollbackTo() {
-                super.rollbackTo();
-                myEOLInLastWhitespace = eolInLastWhitespace;
-            }
-        };
+    private class MarkerWrapper extends MarkerAdapter {
+        private final boolean eolInLastWhitespace = eolInLastWhitespace();
+
+        public MarkerWrapper(Marker delegate) {
+            super(delegate);
+        }
+
+        @Override
+        public void rollbackTo() {
+            super.rollbackTo();
+            myEOLInLastWhitespace = eolInLastWhitespace;
+        }
+
+        @Override
+        public Marker precede() {
+            return new MarkerWrapper(super.precede());
+        }
     }
 }

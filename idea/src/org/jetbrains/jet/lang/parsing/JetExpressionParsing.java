@@ -33,15 +33,14 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
     @SuppressWarnings({"UnusedDeclaration"})
     private enum Precedence {
-        MEMBER_ACCESS(DOT, HASH, SAFE_ACCESS) {
-            @Override
-            public void parseHigherPrecedence(JetExpressionParsing parsing) {
-                parsing.parseAtomicExpression();
-            }
-        },
-
-        // TODO: wrong priority for call: Random.nextInt().isOdd
-        POSTFIX(PLUSPLUS, MINUSMINUS), // typeArguments? valueArguments : arrayAccess
+//        MEMBER_ACCESS(DOT, HASH, SAFE_ACCESS) {
+//            @Override
+//            public void parseHigherPrecedence(JetExpressionParsing parsing) {
+//                parsing.parseAtomicExpression();
+//            }
+//        },
+//
+        POSTFIX(PLUSPLUS, MINUSMINUS), // typeArguments? valueArguments : typeArguments : arrayAccess
 
         PREFIX(MINUS, PLUS, MINUSMINUS, PLUSPLUS, EXCL) { // attributes
 
@@ -131,7 +130,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
      * see the precedence table
      */
     private void parseBinaryExpression(Precedence precedence) {
-//        System.out.println(precedence.name() + " at " + tt());
+//        System.out.println(precedence.name() + " at " + myBuilder.getTokenText());
+
         PsiBuilder.Marker expression = mark();
 
         precedence.parseHigherPrecedence(this);
@@ -147,21 +147,24 @@ public class JetExpressionParsing extends AbstractJetParsing {
     }
 
     /*
-     * operation? expression
+     * operation? prefixExpression
      */
     private void parsePrefixExpression() {
-//        System.out.println("pre at " + tt());
+//        System.out.println("pre at "  + myBuilder.getTokenText());
         if (at(LBRACKET)) {
             if (!parseLocalDeclaration()) {
-                PsiBuilder.Marker attributes = mark();
+                PsiBuilder.Marker expression = mark();
                 myJetParsing.parseAttributeList();
-                parsePostfixExpression();
-                attributes.done(ANNOTATED_EXPRESSION);
+                parsePrefixExpression();
+                expression.done(ANNOTATED_EXPRESSION);
+            } else {
+                return;
             }
         } else if (atSet(Precedence.PREFIX.getOperations())) {
             PsiBuilder.Marker expression = mark();
             advance(); // operation
-            parsePostfixExpression();
+
+            parsePrefixExpression();
             expression.done(PREFIX_EXPRESSION);
         } else {
             parsePostfixExpression();
@@ -172,41 +175,63 @@ public class JetExpressionParsing extends AbstractJetParsing {
      * expression operation?
      */
     private void parsePostfixExpression() {
-//        System.out.println("post at " + tt());
+//        System.out.println("post at "  + myBuilder.getTokenText());
         // TODO: call with a closure outside parentheses
 
         PsiBuilder.Marker expression = mark();
-        parseBinaryExpression(Precedence.MEMBER_ACCESS);
-        if (myBuilder.eolInLastWhitespace()) {
-            expression.drop();
-        } else if (at(LBRACKET)) {
-            parseArrayAccess();
-            expression.done(ARRAY_ACCESS_EXPRESSION);
-        } else if (atSet(Precedence.POSTFIX.getOperations())) {
-            advance(); // operation
-            expression.done(POSTFIX_EXPRESSION);
-        } else if (at(LPAR)) {
-            parseValueArgumentList();
-            expression.done(CALL_EXPRESSION);
-        } else if (at(LT)) {
-            // TODO: be more clever: f(foo<a, (a + 1), b>(c)) is not a function call
-            int gtPos = matchTokenStreamPredicate(new FirstBefore(new At(GT), new AtSet(TYPE_ARGUMENT_LIST_STOPPERS, false)) {
-                @Override
-                public boolean isTopLevel(int openAngleBrackets, int openBrackets, int openBraces, int openParentheses) {
-                    return openAngleBrackets == 1 && openBrackets == 0 && openBraces == 0 && openParentheses == 0;
-                }
-            });
-            if (gtPos >= 0) {
-                myJetParsing.parseTypeArgumentList();
-//                if (at(LPAR)) parseValueArgumentList(); TODO : we can do this...
+//        parseBinaryExpression(Precedence.MEMBER_ACCESS);
+        parseAtomicExpression();
+        while (true) {
+            if (myBuilder.eolInLastWhitespace()) {
+                break;
+            } else if (at(LBRACKET)) {
+                parseArrayAccess();
+                expression.done(ARRAY_ACCESS_EXPRESSION);
+            } else if (atSet(Precedence.POSTFIX.getOperations())) {
+                advance(); // operation
+                expression.done(POSTFIX_EXPRESSION);
+            } else if (at(LPAR)) {
                 parseValueArgumentList();
                 expression.done(CALL_EXPRESSION);
+            } else if (at(LT)) {
+                // TODO: be more clever: f(foo<a, (a + 1), b>(c)) is not a function call
+                int gtPos = matchTokenStreamPredicate(new FirstBefore(new At(GT), new AtSet(TYPE_ARGUMENT_LIST_STOPPERS, false)) {
+                    @Override
+                    public boolean isTopLevel(int openAngleBrackets, int openBrackets, int openBraces, int openParentheses) {
+                        return openAngleBrackets == 1 && openBrackets == 0 && openBraces == 0 && openParentheses == 0;
+                    }
+                });
+                if (gtPos >= 0) {
+                    myJetParsing.parseTypeArgumentList();
+                    if (at(LPAR)) parseValueArgumentList();
+                    expression.done(CALL_EXPRESSION);
+                } else {
+                    break;
+                }
+            } else if (at(DOT)) {
+                advance(); // DOT
+
+                parseAtomicExpression();
+
+                expression.done(DOT_QIALIFIED_EXPRESSION);
+            } else if (at(SAFE_ACCESS)) {
+                advance(); // SAFE_ACCESS
+
+                parseAtomicExpression();
+
+                expression.done(SAFE_ACCESS_EXPRESSION);
+            } else if (at(HASH)) {
+                advance(); // HASH
+
+                expect(IDENTIFIER, "Expecting property or function name");
+
+                expression.done(HASH_QIALIFIED_EXPRESSION);
             } else {
-                expression.drop();
+                break;
             }
-        } else {
-            expression.drop();
+            expression = expression.precede();
         }
+        expression.drop();
     }
 
     /*
@@ -227,7 +252,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      *   ;
      */
     private void parseAtomicExpression() {
-//        System.out.println("atom at " + tt());
+//        System.out.println("atom at "  + myBuilder.getTokenText());
 
 
         if (at(LPAR)) {
