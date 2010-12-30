@@ -701,6 +701,8 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      */
     public JetNodeType parseProperty() {
+        // TODO: var foo : Int { get; private set }
+
         assert at(VAL_KEYWORD) || at(VAR_KEYWORD);
 
         advance(); // VAL_KEYWORD or VAR_KEYWORD
@@ -718,7 +720,8 @@ public class JetParsing extends AbstractJetParsing {
                 }, new TokenStreamPredicate() {
                     @Override
                     public boolean matching(boolean topLevel) {
-                        if (lookahead(1) == IDENTIFIER) {
+                        if (topLevel && (at(EQ) || at(COLON))) return true;
+                        if (topLevel && lookahead(1) == IDENTIFIER) {
                             IElementType lookahead2 = lookahead(2);
                             return lookahead2 != LT && lookahead2 != DOT;
                         }

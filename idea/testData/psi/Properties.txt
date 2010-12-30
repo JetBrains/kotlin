@@ -4,6 +4,21 @@ JetFile: Properties.jet
       PsiElement(val)('val')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('foo')
+      PsiWhiteSpace(' ')
+      PsiElement(EQ)('=')
+      PsiWhiteSpace(' ')
+      BINARY_EXPRESSION
+        BINARY_EXPRESSION
+          PsiElement(IDENTIFIER)('bar')
+          PsiElement(DOT)('.')
+          PsiElement(IDENTIFIER)('foo')
+        PsiElement(DOT)('.')
+        PsiElement(IDENTIFIER)('bar')
+    PsiWhiteSpace('\n\n')
+    PROPERTY
+      PsiElement(val)('val')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('foo')
     PsiWhiteSpace('\n')
     PROPERTY
       PsiElement(val)('val')
