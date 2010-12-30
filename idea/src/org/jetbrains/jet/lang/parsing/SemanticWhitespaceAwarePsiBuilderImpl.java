@@ -5,6 +5,8 @@ import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.WhitespaceSkippedCallback;
 import com.intellij.psi.tree.IElementType;
 
+import java.util.Stack;
+
 /**
  * @author abreslav
  */
@@ -23,10 +25,12 @@ public class SemanticWhitespaceAwarePsiBuilderImpl extends PsiBuilderAdapter imp
     };
 
     private boolean myEOLInLastWhitespace;
+    private final Stack<Boolean> myEOLsEnabled = new Stack<Boolean>();
 
     public SemanticWhitespaceAwarePsiBuilderImpl(final PsiBuilder delegate) {
         super(delegate);
         delegate.setWhitespaceSkippedCallback(myWhitespaceSkippedCallback);
+        myEOLsEnabled.push(true);
     }
 
     @Override
@@ -37,7 +41,23 @@ public class SemanticWhitespaceAwarePsiBuilderImpl extends PsiBuilderAdapter imp
 
     @Override
     public boolean eolInLastWhitespace() {
-        return myEOLInLastWhitespace || eof();
+        return myEOLsEnabled.peek() && (myEOLInLastWhitespace || eof());
+    }
+
+    @Override
+    public void disableEols() {
+        myEOLsEnabled.push(false);
+    }
+
+    @Override
+    public void enableEols() {
+        myEOLsEnabled.push(true);
+    }
+
+    @Override
+    public void restoreEolsState() {
+        assert myEOLsEnabled.size() > 1;
+        myEOLsEnabled.pop();
     }
 
     // TODO: Overhead

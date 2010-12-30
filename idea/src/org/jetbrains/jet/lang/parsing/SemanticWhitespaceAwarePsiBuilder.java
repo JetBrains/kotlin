@@ -7,4 +7,7 @@ import com.intellij.lang.PsiBuilder;
  */
 public interface SemanticWhitespaceAwarePsiBuilder extends PsiBuilder {
     boolean eolInLastWhitespace();
+    void disableEols();
+    void enableEols();
+    void restoreEolsState();
 }

@@ -1,0 +1,12 @@
+fun foo() {
+  val a = a + b
+  val a = a +
+    b
+  val a = a
+  + b
+  val a = (a
+  + b)
+
+  val a = b[c
+    + d]
+}

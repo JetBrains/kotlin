@@ -12,7 +12,7 @@ class foo {
 
     var f
 
-    type foo =
+    type foo = ;
 
     decomposer (a, b, c
 

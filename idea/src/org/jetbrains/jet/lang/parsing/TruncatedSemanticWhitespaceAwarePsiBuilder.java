@@ -22,6 +22,20 @@ public class TruncatedSemanticWhitespaceAwarePsiBuilder extends PsiBuilderAdapte
         return myBuilder.eolInLastWhitespace();
     }
 
+    @Override
+    public void disableEols() {
+        myBuilder.disableEols();;
+    }
+
+    @Override
+    public void enableEols() {
+        myBuilder.enableEols();
+    }
+
+    @Override
+    public void restoreEolsState() {
+        myBuilder.restoreEolsState();
+    }
 
     @Override
     public boolean eof() {

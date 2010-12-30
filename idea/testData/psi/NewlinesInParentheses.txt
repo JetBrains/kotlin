@@ -1,0 +1,94 @@
+JetFile: NewlinesInParentheses.jet
+  NAMESPACE
+    FUN
+      PsiElement(fun)('fun')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('foo')
+      TYPE_PARAMETER_LIST
+        <empty list>
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      BLOCK
+        PsiElement(LBRACE)('{')
+        PsiWhiteSpace('\n  ')
+        PROPERTY
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('a')
+          PsiWhiteSpace(' ')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          BINARY_EXPRESSION
+            PsiElement(IDENTIFIER)('a')
+            PsiWhiteSpace(' ')
+            PsiElement(PLUS)('+')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('b')
+        PsiWhiteSpace('\n  ')
+        PROPERTY
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('a')
+          PsiWhiteSpace(' ')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          BINARY_EXPRESSION
+            PsiElement(IDENTIFIER)('a')
+            PsiWhiteSpace(' ')
+            PsiElement(PLUS)('+')
+            PsiWhiteSpace('\n    ')
+            PsiElement(IDENTIFIER)('b')
+        PsiWhiteSpace('\n  ')
+        PROPERTY
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('a')
+          PsiWhiteSpace(' ')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('a')
+        PsiWhiteSpace('\n  ')
+        PREFIX_EXPRESSION
+          PsiElement(PLUS)('+')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('b')
+        PsiWhiteSpace('\n  ')
+        PROPERTY
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('a')
+          PsiWhiteSpace(' ')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          TUPLE
+            PsiElement(LPAR)('(')
+            BINARY_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
+              PsiWhiteSpace('\n  ')
+              PsiElement(PLUS)('+')
+              PsiWhiteSpace(' ')
+              PsiElement(IDENTIFIER)('b')
+            PsiElement(RPAR)(')')
+        PsiWhiteSpace('\n\n  ')
+        PROPERTY
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('a')
+          PsiWhiteSpace(' ')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          ARRAY_ACCESS_EXPRESSION
+            PsiElement(IDENTIFIER)('b')
+            INDICES
+              PsiElement(LBRACKET)('[')
+              BINARY_EXPRESSION
+                PsiElement(IDENTIFIER)('c')
+                PsiWhiteSpace('\n    ')
+                PsiElement(PLUS)('+')
+                PsiWhiteSpace(' ')
+                PsiElement(IDENTIFIER)('d')
+              PsiElement(RBRACKET)(']')
+        PsiWhiteSpace('\n')
+        PsiElement(RBRACE)('}')

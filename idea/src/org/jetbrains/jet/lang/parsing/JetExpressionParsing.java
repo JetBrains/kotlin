@@ -298,6 +298,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         PsiBuilder.Marker indices = mark();
 
+        myBuilder.disableEols();
         advance(); // LBRACKET
 
         while (true) {
@@ -312,6 +313,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
         }
 
         expect(RBRACKET, "Expecting ']'");
+        myBuilder.restoreEolsState();
 
         indices.done(INDICES);
     }
@@ -357,6 +359,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         PsiBuilder.Marker literal = mark();
 
+        myBuilder.enableEols();
         advance(); // LBRACE
 
         int doubleArrowPos = matchTokenStreamPredicate(new FirstBefore(new At(DOUBLE_ARROW), new At(RBRACE)) {
@@ -430,6 +433,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
         body.done(BODY);
 
         expect(RBRACE, "Expecting '}'");
+        myBuilder.restoreEolsState();
 
         literal.done(FUNCTION_LITERAL);
     }
@@ -440,6 +444,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
     private void parseFunctionLiteralParameterList() {
         PsiBuilder.Marker list = mark();
         expect(LPAR, "Expecting a parameter list in parentheses (...)", TokenSet.create(DOUBLE_ARROW, COLON));
+
+        myBuilder.disableEols();
 
         if (!at(RPAR)) {
             while (true) {
@@ -466,19 +472,22 @@ public class JetExpressionParsing extends AbstractJetParsing {
             }
         }
 
+        myBuilder.restoreEolsState();
+
         expect(RPAR, "Expecting ')", TokenSet.create(DOUBLE_ARROW, COLON));
         list.done(VALUE_PARAMETER_LIST);
     }
 
     /*
      * expressions
-     *   : expression{SEMI} SEMI?
+     *   : SEMI* expression{SEMI+} SEMI*
      */
     public void parseExpressions() {
+        while (at(SEMICOLON)) advance(); // SEMICOLON
         while (!eof() && !at(RBRACE)) {
             parseExpression();
             if (at(SEMICOLON)) {
-                advance(); // SEMICOLON
+                while (at(SEMICOLON)) advance(); // SEMICOLON
             } else if (at(RBRACE)) {
                 break;
             } else if (!myBuilder.eolInLastWhitespace()) {
@@ -532,7 +541,9 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         advance(); // DO_KEYWORD
 
-        parseControlStructureBody();
+        if (!at(WHILE_KEYWORD)) {
+            parseControlStructureBody();
+        }
 
         expect(WHILE_KEYWORD, "Expecting 'while' followed by a post-condition");
 
@@ -572,6 +583,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         advance(); // FOR_KEYWORD
 
+        myBuilder.disableEols();
         expect(LPAR, "Expecting '(' to open a loop range", TokenSet.create(RPAR, VAL_KEYWORD, VAR_KEYWORD, IDENTIFIER));
 
         PsiBuilder.Marker parameter = mark();
@@ -590,6 +602,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
         range.done(LOOP_RANGE);
 
         expectNoAdvance(RPAR, "Expecting ')'");
+        myBuilder.restoreEolsState();
 
         parseControlStructureBody();
 
@@ -601,10 +614,9 @@ public class JetExpressionParsing extends AbstractJetParsing {
      */
     private void parseControlStructureBody() {
         PsiBuilder.Marker body = mark();
-        parseExpression();
+        if (!at(SEMICOLON))
+            parseExpression();
         body.done(BODY);
-
-        // TODO: empty body?
     }
 
     /*
@@ -653,7 +665,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
     /*
      * if
-     *   : "if" "(" expression ")" expression ("else" expression)?
+     *   : "if" "(" expression ")" expression SEMI? ("else" expression)?
      *   ;
      */
     private void parseIf() {
@@ -665,16 +677,20 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         parseCondition();
 
-        // TODO: empty body?
         PsiBuilder.Marker thenBranch = mark();
-        parseExpression();
+        if (!at(ELSE_KEYWORD) && !at(SEMICOLON)) {
+            parseExpression();
+        }
+        consumeIf(SEMICOLON);
         thenBranch.done(THEN);
 
         if (at(ELSE_KEYWORD)) {
             advance(); // ELSE_KEYWORD
 
             PsiBuilder.Marker elseBranch = mark();
-            parseExpression();
+            if (!at(SEMICOLON)) {
+                parseExpression();
+            }
             elseBranch.done(ELSE);
         }
 
@@ -685,6 +701,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      * "(" expression ")"
      */
     private void parseCondition() {
+        myBuilder.disableEols();
         expect(LPAR, "Expecting a condition in parentheses '(...)'");
 
         PsiBuilder.Marker condition = mark();
@@ -692,6 +709,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
         condition.done(CONDITION);
 
         expect(RPAR, "Expecting ')");
+        myBuilder.restoreEolsState();
     }
 
     /*
@@ -769,23 +787,15 @@ public class JetExpressionParsing extends AbstractJetParsing {
         PsiBuilder.Marker typeof = mark();
         advance(); // TYPEOF_KEYWORD
 
+        myBuilder.disableEols();
         expect(LPAR, "Expecting '('");
-        parseExpression();
-        expect(RPAR, "Expecting ')'");
-        typeof.done(TYPEOF);
-    }
 
-    /*
-     * mapLiteralEntry
-     *   : expression ":" expression
-     *   ;
-     */
-    private void parseMapLiteralEntry() {
-        PsiBuilder.Marker entry = mark();
         parseExpression();
-        expect(COLON, "Expecting ':'");
-        parseExpression();
-        entry.done(MAP_LITERAL_ENTRY);
+
+        expect(RPAR, "Expecting ')'");
+        myBuilder.restoreEolsState();
+
+        typeof.done(TYPEOF);
     }
 
     /*
@@ -798,7 +808,9 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         PsiBuilder.Marker mark = mark();
 
+        myBuilder.disableEols();
         advance(); // LPAR
+
 
         while (true) {
             if (at(COMMA)) errorAndAdvance("Expecting a tuple entry (expression)");
@@ -808,6 +820,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
         }
 
         expect(RPAR, "Expecting ')'");
+        myBuilder.restoreEolsState();
 
         mark.done(TUPLE);
     }
@@ -822,6 +835,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             // This may be "this < foo" or "this<foo>", thus the backtracking
             PsiBuilder.Marker supertype = mark();
 
+            myBuilder.disableEols();
             advance(); // LT
 
             myJetParsing.parseTypeRef();
@@ -833,6 +847,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             else {
                 supertype.rollbackTo();
             }
+            myBuilder.restoreEolsState();
         }
     }
 
@@ -844,6 +859,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     public void parseValueArgumentList() {
         PsiBuilder.Marker list = mark();
 
+        myBuilder.disableEols();
         expect(LPAR, "Expecting a parameter list", TokenSet.create(RPAR));
 
         if (!at(RPAR)) {
@@ -855,6 +871,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
         }
 
         expect(RPAR, "Expecting ')'");
+        myBuilder.restoreEolsState();
 
         list.done(VALUE_ARGUMENT_LIST);
     }

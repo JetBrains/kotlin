@@ -211,7 +211,7 @@ functionLiteral  // one can use "it" as a parameter name
   ;
 
 expressions
-  : expression{SEMI} SEMI?
+  : SEMI* expression{SEMI+} SEMI*
   ;
 
 constructorInvocation

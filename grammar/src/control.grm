@@ -1,5 +1,5 @@
 if
-  : "if" "(" expression ")" expression ("else" expression)?
+  : "if" "(" expression ")" expression SEMI? ("else" expression)?
   ;
 
 try
