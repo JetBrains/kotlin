@@ -22,22 +22,22 @@ class AntBuilder {
   abstract class ClassPathEntry {}
 
   class Module : ClassPathEntry {
-    fun classpath(entries : ClassPathEntry...) { ... }
+    fun classpath(entries : ClassPathEntry/*...*/) { /*...*/ }
     var targetLevel : String
-    fun src(src : String) { ... }
+    fun src(src : String) { /*...*/ }
   }
 
   class Library : ClassPathEntry {
-    fun classpath(entries : ClassPathEntry...) { ... }
+    fun classpath(entries : ClassPathEntry/*...*/) { /*...*/ }
   }
 
-  fun library(initializer : Library.{ () : Library}) {
+  fun library(initializer : { Library.() : Library}) {
     val lib = new Library()
     lib.initializer()
     return lib
   }
 
-  fun classpath...
+  fun classpath(/*...*/)
 
-  fun module...
+  fun module(/*...*/)
 }

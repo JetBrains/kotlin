@@ -4,9 +4,9 @@ virtual class IEquality {
 }
 
 virtual class IHashable : IEquality {
-  val hashCode() : Integer {
+  val hashCode : Integer
     get() = (this as java.lang.Object).hashCode()
-  }
+
 }
 
 virtual class IMap<K, V> {
@@ -16,7 +16,7 @@ virtual class IMap<K, V> {
   fun containsKey(key : K) : Boolean
 }
 
-class HashableWrapper(wraps val obj : Any) : IHashable
+class HashableWrapper wraps (val obj : Any) : IHashable
   // equals and hashCode implementations are inherited
 
 [inline] fun Any.hashable() : HashableWrapper = new HashableWrapper(this)
@@ -48,11 +48,11 @@ class HashMap<K, V> : IMap<K, V> {
 
 class StrategyHashMap<K, V>(hashingStrategy : IHashingStrategy<K>) : IMap<K, V> {
 
-  this() where (K : IHashable) : this(new DefaultHashingStrategy<K>()) {}
 
-  // where !(K : IHashable) 
+  // where !(K : IHashable)
   this() : this(new JavaObjectHashingStrategy<K>()) {}
 
+  this() where (K : IHashable) : this(new DefaultHashingStrategy<K>()) {}
   //...
 
 }

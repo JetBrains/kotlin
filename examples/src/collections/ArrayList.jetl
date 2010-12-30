@@ -5,7 +5,7 @@ class ArrayList<T> : IMutableList<T> {
 
   override fun iterator() : IIterator<T> = mutableIterator()
 
-  override fun mutableIterator() : IMutableIterator<T> = new IMutableIterator() { // T is inferred
+  override fun mutableIterator() : IMutableIterator<T> = object IMutableIterator() { // T is inferred
     private val index = 0
     private var myVersion = version
 
@@ -21,9 +21,9 @@ class ArrayList<T> : IMutableList<T> {
       data[index++]
     }
 
-    override val hasNext {
+    override val hasNext
       get() = index < used
-    }
+
 
     override fun remove() {
       checkVersion()
@@ -43,13 +43,13 @@ class ArrayList<T> : IMutableList<T> {
       throw new IndexOutOfBoundsException(index)
   }
 
-  override val isEmpty {
+  override val isEmpty
     get() = used == 0
-  }
 
-  override val size {
+
+  override val size
     get() = used
-  }
+
 
   override fun set(index : Int, value : T) {
     checkIndex(index)

@@ -40,6 +40,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             }
         },
 
+        // TODO: wrong priority for call: Random.nextInt().isOdd
         POSTFIX(PLUSPLUS, MINUSMINUS), // typeArguments? valueArguments : arrayAccess
 
         PREFIX(MINUS, PLUS, MINUSMINUS, PLUSPLUS, EXCL) { // attributes
@@ -61,11 +62,13 @@ public class JetExpressionParsing extends AbstractJetParsing {
         RANGE(JetTokens.RANGE),
         SIMPLE_NAME(IDENTIFIER),
         ELVIS(JetTokens.ELVIS),
+        // TODO: RHS (type parameters)
         NAMED_INFIX_OR_TYPE(IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS, AS_KEYWORD, COLON),
         COMPARISON(LT, GT, LTEQ, GTEQ),
         EQUALITY(EQEQ, EXCLEQ, EQEQEQ, EXCLEQEQEQ),
         CONJUNCTION(ANDAND),
         DISJUNCTION(OROR),
+        // TODO: RHS
         MATCH(MATCH_KEYWORD),
         // TODO: don't build a binary tree, build a tuple
         ARROW(JetTokens.ARROW),
@@ -170,6 +173,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      */
     private void parsePostfixExpression() {
 //        System.out.println("post at " + tt());
+        // TODO: call with a closure outside parentheses
 
         PsiBuilder.Marker expression = mark();
         parseBinaryExpression(Precedence.MEMBER_ACCESS);

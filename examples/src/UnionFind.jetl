@@ -29,6 +29,5 @@ class UnionFind {
   }
 }
 
-extension val Int.isOdd : Boolean {
+val Int.isOdd : Boolean
   get() = this % 2 != 0
-}

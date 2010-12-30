@@ -11,16 +11,16 @@ class BinaryTree<T> : IMutableSet<T> {
   private var root : TreeNode
   private var version = 0
 
-  override var size : Int { get; private set; }
+//  override var size : Int { get; private set; }
 
   this(compare : Comparison<T>) {
     this.compare = asMatchableComparison(comparison)
   }
 
-  this() : this(naturalOrder<T>) {
+  this() : this(naturalOrder<T>()) {
   }
 
-  private extension [operator] fun T.compareTo(other : T) : Int = compare(this, other)
+  private [operator] fun T.compareTo(other : T) : Int = compare(this, other)
 
   override fun contains(item : T) : Boolean {
     return contains(root, item)
@@ -129,7 +129,7 @@ class BinaryTree<T> : IMutableSet<T> {
 
   override fun iterator() : IIterator<T> = mutableIterator()
 
-  override fun mutableIterator() : IMutableIterator<T> = new IMutableIterator() {
+  override fun mutableIterator() : IMutableIterator<T> = object IMutableIterator {
     val version = BinaryTree.this.version
     val down = Stack<TreeNode>()
     val up = Stack<TreeNode>()
@@ -172,9 +172,9 @@ class BinaryTree<T> : IMutableSet<T> {
       }
     }
 
-    override val hasNext : Boolean {
+    override val hasNext : Boolean
       get() = !down.isEmpty || !up.isEmpty
-    }
+
 
     override fun remove() {
       checkVersion()

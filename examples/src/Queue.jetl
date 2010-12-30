@@ -1,4 +1,4 @@
-sealed class Queue<T> : IPushPop<T> {
+class Queue<T> : IPushPop<T> {
   private class Item<T>(val data : T, var next : Item<T>)
 
   private var head : Item<T> = null
@@ -26,8 +26,8 @@ sealed class Queue<T> : IPushPop<T> {
       result
     }
 
-  override val isEmpty {
+  override val isEmpty
     get() = head == null
-  }
+
 
 }

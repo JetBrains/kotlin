@@ -19,11 +19,11 @@ fun mostSignificantBit(x : INumber) = (x and oneBit(x.bits - 1) != 0) as Int
 
 fun countOnes(x : INumber) = if (x == 0) 0 else mostSignificantBit(x) + countOnes(x shl 1)
 
-extension fun Int.matchMask(mask : Int) = this and mask == mask
+fun Int.matchMask(mask : Int) = this and mask == mask
 
-interface class INumber<T : this> : IComparable<T> {
+virtual class INumber<T : this> : IComparable<T> {
   val bits : Int
   [operator] fun plus(other : T) : T
   [operator] fun shl(bits : Int) : T
-  ...
+  // ...
 }

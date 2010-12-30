@@ -16,10 +16,10 @@ class List<T> {
 
 }
 
-extension Map<E> for T
+extension Map<E, T>
   where
     T : Iterable<E>,
-    class object T : Buildable<E, T> {
+    class object T : Buildable<E, T>  for T {
 
   fun map<R>(f : {(E) : R}) : T<R> = {
     val builder = T.newBuilder()

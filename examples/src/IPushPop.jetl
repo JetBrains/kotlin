@@ -1,4 +1,4 @@
-interface class IPushPop<T> {
+virtual class IPushPop<T> {
   val isEmpty : Boolean
   fun push(item : T)
   fun pop() : T

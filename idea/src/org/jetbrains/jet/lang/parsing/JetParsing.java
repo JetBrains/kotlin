@@ -702,6 +702,7 @@ public class JetParsing extends AbstractJetParsing {
      */
     public JetNodeType parseProperty() {
         // TODO: var foo : Int { get; private set }
+        // TODO: accessors for local variables
 
         assert at(VAL_KEYWORD) || at(VAR_KEYWORD);
 
@@ -1167,6 +1168,7 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      */
     public void parseTypeRef() {
+        // TODO: Self type
         PsiBuilder.Marker type = mark();
 
         parseAttributeList();
@@ -1341,6 +1343,8 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      */
     public void parseValueParameterList(boolean isFunctionTypeContents, TokenSet recoverySet) {
+        // TODO: val a, b, c : Int
+
         PsiBuilder.Marker parameters = mark();
 
         myBuilder.disableEols();

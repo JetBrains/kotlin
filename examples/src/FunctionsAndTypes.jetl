@@ -6,7 +6,7 @@ type f_tuple = {((T, E)) : X}
 //type f_tuple = {((T, E)) => X}
 type hof = { (X) : {(T) : Y} }
 //type hof = { (X) => {(T) => Y} }
-type hof2 = { {(X) : Y} : {(Y) : Z} }
+type hof2 = { ({(X) : Y}) : {(Y) : Z} }
 //type hof2 = { {(X) => Y} => {(Y) => Z} }
 
 

@@ -1,6 +1,6 @@
-sealed class Vertex<V>(val data : V)
+class Vertex<V>(val data : V)
 
-sealed class Edge<V, E>(val from : V, val data : E, val to : V)
+class Edge<V, E>(val from : V, val data : E, val to : V)
 
 class Graph<V, E> {
 
