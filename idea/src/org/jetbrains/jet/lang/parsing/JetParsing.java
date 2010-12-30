@@ -1215,7 +1215,7 @@ public class JetParsing extends AbstractJetParsing {
     /*
      *   (optionalProjection type){","}
      */
-    private void parseTypeArgumentList() {
+    public void parseTypeArgumentList() {
         if (!at(LT)) return;
 
         PsiBuilder.Marker list = mark();

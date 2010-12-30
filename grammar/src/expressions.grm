@@ -58,7 +58,7 @@ elvisOperation
 
 // ATTENTION
 infixFunctionCall
-  : rangeExpression (SimpleName (typeParameters | rangeExpression))*
+  : rangeExpression (SimpleName (typeArguments | rangeExpression))*
   ;
 
 rangeExpression
@@ -168,7 +168,7 @@ prefixUnaryOperation
 postfixUnaryOperation
   : "++" : "--"
   : typeArguments? valueArguments
-  : typeArguments
+  // : typeArguments // TODO:
   : arrayAccess
   ;
 

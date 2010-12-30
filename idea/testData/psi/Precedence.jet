@@ -1,4 +1,8 @@
 fun foo() {
+  f(foo<a, (b>(x)))
+  f(foo<a, b>(x))
+  f((foo<a), b>(x))
+  f(foo<a, b)
   a + b
   a + b * c
   a + (b * c)

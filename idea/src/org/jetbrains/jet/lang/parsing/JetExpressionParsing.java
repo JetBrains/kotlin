@@ -14,6 +14,17 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
  */
 public class JetExpressionParsing extends AbstractJetParsing {
     private final JetParsing myJetParsing;
+    private static final TokenSet TYPE_ARGUMENT_LIST_STOPPERS = TokenSet.create(
+            INTEGER_LITERAL, LONG_LITERAL, FLOAT_LITERAL, CHARACTER_LITERAL, STRING_LITERAL, RAW_STRING_LITERAL,
+            NAMESPACE_KEYWORD, AS_KEYWORD, TYPE_KEYWORD, CLASS_KEYWORD, THIS_KEYWORD, VAL_KEYWORD, VAR_KEYWORD,
+            FUN_KEYWORD, DECOMPOSER_KEYWORD, EXTENSION_KEYWORD, FOR_KEYWORD, NULL_KEYWORD, TYPEOF_KEYWORD,
+            NEW_KEYWORD, TRUE_KEYWORD, FALSE_KEYWORD, IS_KEYWORD, THROW_KEYWORD, RETURN_KEYWORD, BREAK_KEYWORD,
+            CONTINUE_KEYWORD, OBJECT_KEYWORD, IF_KEYWORD, TRY_KEYWORD, ELSE_KEYWORD, WHILE_KEYWORD, DO_KEYWORD,
+            MATCH_KEYWORD, RBRACKET, RBRACE, RPAR, PLUSPLUS, MINUSMINUS, MUL, PLUS, MINUS, EXCL, DIV, PERC, LTEQ,
+            // TODO GTEQ,
+            EQEQEQ, ARROW, DOUBLE_ARROW, EXCLEQEQEQ, EQEQ, EXCLEQ, ANDAND, OROR, SAFE_ACCESS, ELVIS, QUEST,
+            SEMICOLON, RANGE, EQ, MULTEQ, DIVEQ, PERCEQ, PLUSEQ, MINUSEQ, NOT_IN, NOT_IS, HASH, EOL_OR_SEMICOLON
+    );
 
     public JetExpressionParsing(SemanticWhitespaceAwarePsiBuilder builder, JetParsing jetParsing) {
         super(builder);
@@ -29,7 +40,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             }
         },
 
-        POSTFIX(PLUSPLUS, MINUSMINUS), // valueArguments  : arrayAccess
+        POSTFIX(PLUSPLUS, MINUSMINUS), // typeArguments? valueArguments : arrayAccess
 
         PREFIX(MINUS, PLUS, MINUSMINUS, PLUSPLUS, EXCL) { // attributes
 
@@ -173,6 +184,22 @@ public class JetExpressionParsing extends AbstractJetParsing {
         } else if (at(LPAR)) {
             parseValueArgumentList();
             expression.done(CALL_EXPRESSION);
+        } else if (at(LT)) {
+            // TODO: be more clever: f(foo<a, (a + 1), b>(c)) is not a function call
+            int gtPos = matchTokenStreamPredicate(new FirstBefore(new At(GT), new AtSet(TYPE_ARGUMENT_LIST_STOPPERS, false)) {
+                @Override
+                public boolean isTopLevel(int openAngleBrackets, int openBrackets, int openBraces, int openParentheses) {
+                    return openAngleBrackets == 1 && openBrackets == 0 && openBraces == 0 && openParentheses == 0;
+                }
+            });
+            if (gtPos >= 0) {
+                myJetParsing.parseTypeArgumentList();
+//                if (at(LPAR)) parseValueArgumentList(); TODO : we can do this...
+                parseValueArgumentList();
+                expression.done(CALL_EXPRESSION);
+            } else {
+                expression.drop();
+            }
         } else {
             expression.drop();
         }
