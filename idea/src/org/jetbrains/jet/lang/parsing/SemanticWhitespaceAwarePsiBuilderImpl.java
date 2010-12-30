@@ -39,4 +39,18 @@ public class SemanticWhitespaceAwarePsiBuilderImpl extends PsiBuilderAdapter imp
     public boolean eolInLastWhitespace() {
         return myEOLInLastWhitespace || eof();
     }
+
+    // TODO: Overhead
+    @Override
+    public Marker mark() {
+        return new MarkerAdapter(super.mark()) {
+            private final boolean eolInLastWhitespace = eolInLastWhitespace();
+
+            @Override
+            public void rollbackTo() {
+                super.rollbackTo();
+                myEOLInLastWhitespace = eolInLastWhitespace;
+            }
+        };
+    }
 }
