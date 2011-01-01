@@ -605,8 +605,8 @@ JetFile: SimpleExpressions.jet
         PsiWhiteSpace('\n    ')
         BREAK
           PsiElement(break)('break')
-          PsiWhiteSpace('\n    ')
-          PsiElement(IDENTIFIER)('la')
+        PsiWhiteSpace('\n    ')
+        PsiElement(IDENTIFIER)('la')
         PsiWhiteSpace('\n    ')
         BREAK
           PsiElement(break)('break')
@@ -615,8 +615,8 @@ JetFile: SimpleExpressions.jet
         PsiWhiteSpace('\n    ')
         CONTINUE
           PsiElement(continue)('continue')
-          PsiWhiteSpace('\n    ')
-          PsiElement(IDENTIFIER)('la')
+        PsiWhiteSpace('\n    ')
+        PsiElement(IDENTIFIER)('la')
         PsiWhiteSpace('\n    ')
         CONTINUE
           PsiElement(continue)('continue')

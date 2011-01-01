@@ -140,13 +140,7 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
     }
 
     protected IElementType lookahead(int k) {
-        // TODO: use a faster implementation
-        PsiBuilder.Marker tmp = mark();
-        for (int i = 0; i < k; i++) advance();
-
-        IElementType tt = tt();
-        tmp.rollbackTo();
-        return tt;
+        return myBuilder.lookAhead(k);
     }
 
     protected void consumeIf(JetToken token) {

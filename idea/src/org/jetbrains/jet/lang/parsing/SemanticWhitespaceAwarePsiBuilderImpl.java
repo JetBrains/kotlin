@@ -2,7 +2,7 @@ package org.jetbrains.jet.lang.parsing;
 
 
 import com.intellij.lang.PsiBuilder;
-import com.intellij.lang.WhitespaceSkippedCallback;
+import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
 
 import java.util.Stack;
@@ -11,77 +11,44 @@ import java.util.Stack;
  * @author abreslav
  */
 public class SemanticWhitespaceAwarePsiBuilderImpl extends PsiBuilderAdapter implements SemanticWhitespaceAwarePsiBuilder {
-    private final WhitespaceSkippedCallback myWhitespaceSkippedCallback = new WhitespaceSkippedCallback() {
-        public void onSkip(IElementType type, int start, int end) {
-            CharSequence whitespace = getOriginalText();
-            for (int i = start; i < end; i++) {
-                char c = whitespace.charAt(i);
-                if (c == '\n') {
-                    myEOLInLastWhitespace = true;
-                    break;
-                }
-            }
-        }
-    };
-
-    private boolean myEOLInLastWhitespace;
-    private final Stack<Boolean> myEOLsEnabled = new Stack<Boolean>();
+    private final Stack<Boolean> eolsEnabled = new Stack<Boolean>();
 
     public SemanticWhitespaceAwarePsiBuilderImpl(final PsiBuilder delegate) {
         super(delegate);
-        delegate.setWhitespaceSkippedCallback(myWhitespaceSkippedCallback);
-        myEOLsEnabled.push(true);
+        eolsEnabled.push(true);
     }
 
     @Override
-    public void advanceLexer() {
-         myEOLInLastWhitespace = false;
-         super.advanceLexer();
-     }
-
-    @Override
     public boolean eolInLastWhitespace() {
-        return myEOLsEnabled.peek() && (myEOLInLastWhitespace || eof());
+        if (!eolsEnabled.peek()) return false;
+        if (eof()) return true;
+        IElementType previousToken = rawLookup(-1);
+        if (previousToken == TokenType.WHITE_SPACE) {
+            int previousTokenStart = rawTokenTypeStart(-1);
+            int previousTokenEnd = rawTokenTypeStart(0);
+            assert previousTokenStart >= 0;
+            assert previousTokenEnd < getOriginalText().length();
+            for (int i = previousTokenStart; i < previousTokenEnd; i++) {
+                if (getOriginalText().charAt(i) == '\n') return true;
+            }
+        }
+        return false;
     }
 
     @Override
     public void disableEols() {
-        myEOLsEnabled.push(false);
+        eolsEnabled.push(false);
     }
 
     @Override
     public void enableEols() {
-        myEOLsEnabled.push(true);
+        eolsEnabled.push(true);
     }
 
     @Override
     public void restoreEolsState() {
-        assert myEOLsEnabled.size() > 1;
-        myEOLsEnabled.pop();
+        assert eolsEnabled.size() > 1;
+        eolsEnabled.pop();
     }
 
-    // TODO: Overhead
-    @Override
-    public Marker mark() {
-        return new MarkerWrapper(super.mark());
-    }
-
-    private class MarkerWrapper extends MarkerAdapter {
-        private final boolean eolInLastWhitespace = eolInLastWhitespace();
-
-        public MarkerWrapper(Marker delegate) {
-            super(delegate);
-        }
-
-        @Override
-        public void rollbackTo() {
-            super.rollbackTo();
-            myEOLInLastWhitespace = eolInLastWhitespace;
-        }
-
-        @Override
-        public Marker precede() {
-            return new MarkerWrapper(super.precede());
-        }
-    }
 }

@@ -21,7 +21,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             NEW_KEYWORD, TRUE_KEYWORD, FALSE_KEYWORD, IS_KEYWORD, THROW_KEYWORD, RETURN_KEYWORD, BREAK_KEYWORD,
             CONTINUE_KEYWORD, OBJECT_KEYWORD, IF_KEYWORD, TRY_KEYWORD, ELSE_KEYWORD, WHILE_KEYWORD, DO_KEYWORD,
             MATCH_KEYWORD, RBRACKET, RBRACE, RPAR, PLUSPLUS, MINUSMINUS, MUL, PLUS, MINUS, EXCL, DIV, PERC, LTEQ,
-            // TODO GTEQ,
+            // TODO GTEQ,   foo<bar, baz>=x
             EQEQEQ, ARROW, DOUBLE_ARROW, EXCLEQEQEQ, EQEQ, EXCLEQ, ANDAND, OROR, SAFE_ACCESS, ELVIS, QUEST,
             SEMICOLON, RANGE, EQ, MULTEQ, DIVEQ, PERCEQ, PLUSEQ, MINUSEQ, NOT_IN, NOT_IS, HASH, EOL_OR_SEMICOLON
     );
@@ -194,7 +194,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 parseValueArgumentList();
                 expression.done(CALL_EXPRESSION);
             } else if (at(LT)) {
-                // TODO: be more clever: f(foo<a, (a + 1), b>(c)) is not a function call
+                // TODO: be (even) more clever
                 int gtPos = matchTokenStreamPredicate(new FirstBefore(new At(GT), new AtSet(TYPE_ARGUMENT_LIST_STOPPERS, false)) {
                     @Override
                     public boolean isTopLevel(int openAngleBrackets, int openBrackets, int openBraces, int openParentheses) {
