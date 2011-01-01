@@ -48,6 +48,96 @@ JetFile: Precedence.jet
           VALUE_ARGUMENT_LIST
             PsiElement(LPAR)('(')
             VALUE_ARGUMENT
+              CALL_EXPRESSION
+                PsiElement(IDENTIFIER)('foo')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      PsiElement(IDENTIFIER)('a')
+                  PsiElement(COMMA)(',')
+                  PsiWhiteSpace(' ')
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      PsiElement(IDENTIFIER)('a')
+                  PsiElement(COMMA)(',')
+                  PsiWhiteSpace(' ')
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      PsiElement(IDENTIFIER)('b')
+                  PsiElement(GT)('>')
+                VALUE_ARGUMENT_LIST
+                  PsiElement(LPAR)('(')
+                  VALUE_ARGUMENT
+                    PsiElement(IDENTIFIER)('x')
+                  PsiElement(RPAR)(')')
+            PsiElement(RPAR)(')')
+        PsiWhiteSpace('\n  ')
+        CALL_EXPRESSION
+          PsiElement(IDENTIFIER)('f')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            VALUE_ARGUMENT
+              BINARY_EXPRESSION
+                PsiElement(IDENTIFIER)('foo')
+                PsiElement(LT)('<')
+                PsiElement(IDENTIFIER)('a')
+            PsiElement(COMMA)(',')
+            PsiWhiteSpace(' ')
+            VALUE_ARGUMENT
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('1')
+            PsiElement(COMMA)(',')
+            PsiWhiteSpace(' ')
+            VALUE_ARGUMENT
+              BINARY_EXPRESSION
+                PsiElement(IDENTIFIER)('b')
+                PsiElement(GT)('>')
+                TUPLE
+                  PsiElement(LPAR)('(')
+                  PsiElement(IDENTIFIER)('x')
+                  PsiElement(RPAR)(')')
+            PsiElement(RPAR)(')')
+        PsiWhiteSpace('\n  ')
+        CALL_EXPRESSION
+          PsiElement(IDENTIFIER)('f')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            VALUE_ARGUMENT
+              BINARY_EXPRESSION
+                PsiElement(IDENTIFIER)('foo')
+                PsiElement(LT)('<')
+                PsiElement(IDENTIFIER)('a')
+            PsiElement(COMMA)(',')
+            PsiWhiteSpace(' ')
+            VALUE_ARGUMENT
+              TUPLE
+                PsiElement(LPAR)('(')
+                BINARY_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
+                  PsiWhiteSpace(' ')
+                  PsiElement(PLUS)('+')
+                  PsiWhiteSpace(' ')
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('1')
+                PsiElement(RPAR)(')')
+            PsiElement(COMMA)(',')
+            PsiWhiteSpace(' ')
+            VALUE_ARGUMENT
+              BINARY_EXPRESSION
+                PsiElement(IDENTIFIER)('b')
+                PsiElement(GT)('>')
+                TUPLE
+                  PsiElement(LPAR)('(')
+                  PsiElement(IDENTIFIER)('x')
+                  PsiElement(RPAR)(')')
+            PsiElement(RPAR)(')')
+        PsiWhiteSpace('\n  ')
+        CALL_EXPRESSION
+          PsiElement(IDENTIFIER)('f')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            VALUE_ARGUMENT
               BINARY_EXPRESSION
                 PsiElement(IDENTIFIER)('foo')
                 PsiElement(LT)('<')
@@ -164,6 +254,21 @@ JetFile: Precedence.jet
               PsiWhiteSpace(' ')
               PsiElement(IDENTIFIER)('c')
             PsiElement(RPAR)(')')
+        PsiWhiteSpace('\n  ')
+        BINARY_EXPRESSION
+          TUPLE
+            PsiElement(LPAR)('(')
+            BINARY_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
+              PsiWhiteSpace(' ')
+              PsiElement(PLUS)('+')
+              PsiWhiteSpace(' ')
+              PsiElement(IDENTIFIER)('b')
+            PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          PsiElement(MUL)('*')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('c')
         PsiWhiteSpace('\n  ')
         BINARY_EXPRESSION
           BINARY_EXPRESSION
@@ -298,6 +403,23 @@ JetFile: Precedence.jet
             PsiWhiteSpace(' ')
             INTEGER_CONSTANT
               PsiElement(INTEGER_LITERAL)('3')
+        PsiWhiteSpace('\n  ')
+        BINARY_EXPRESSION
+          BINARY_EXPRESSION
+            BINARY_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
+              PsiWhiteSpace(' ')
+              PsiElement(IDENTIFIER)('b')
+              PsiWhiteSpace(' ')
+              PsiElement(IDENTIFIER)('c')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('d')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('e')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('f')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('g')
         PsiWhiteSpace('\n  ')
         BINARY_EXPRESSION
           BINARY_EXPRESSION

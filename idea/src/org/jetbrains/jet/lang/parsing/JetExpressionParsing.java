@@ -574,7 +574,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
              declType = myJetParsing.parseFunction();
          }
          else if (keywordToken == VAL_KEYWORD || keywordToken == VAR_KEYWORD) {
-             declType = myJetParsing.parseProperty();
+             declType = myJetParsing.parseProperty(true);
          }
          else if (keywordToken == TYPE_KEYWORD) {
              declType = myJetParsing.parseTypeDef();

@@ -34,3 +34,39 @@ val {foo.bar.() : ()}.foo : bar = foo
 val {foo.bar.() : ()}.foo : bar = foo
    [a] public get() {}
 
+
+val foo get
+val foo set
+
+var foo
+  get
+  private set
+
+val foo.bar
+   get() {}
+   set
+
+val foo.bar
+   get
+   set(sad) = foo
+
+val foo = 5; get
+val foo =1; get set
+
+var foo = 5
+  get
+  private set
+
+val foo.bar = 5
+   get() {}
+   set
+
+val foo.bar = 5
+   get
+   set(sad) = foo
+
+fun foo() {
+  val foo = 5
+  get() = 5
+  set(int : x) = 5
+}

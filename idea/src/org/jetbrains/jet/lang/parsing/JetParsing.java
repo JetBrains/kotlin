@@ -696,14 +696,15 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * property
-     *   : modifiers ("val" | "var") attributes (type ".")? SimpleName (":" type)? ("=" expression)?
+     *   : modifiers ("val" | "var") attributes (type ".")? SimpleName (":" type)? ("=" expression SEMI?)?
      *       (getter? setter? | setter? getter?) SEMI?
      *   ;
      */
     public JetNodeType parseProperty() {
-        // TODO: var foo : Int { get; private set }
-        // TODO: accessors for local variables
+        return parseProperty(false);
+    }
 
+    public JetNodeType parseProperty(boolean local) {
         assert at(VAL_KEYWORD) || at(VAR_KEYWORD);
 
         advance(); // VAL_KEYWORD or VAR_KEYWORD
@@ -749,20 +750,23 @@ public class JetParsing extends AbstractJetParsing {
         if (at(EQ)) {
             advance(); // EQ
             myExpressionParsing.parseExpression();
+            consumeIf(SEMICOLON);
+        }
+        if (!local) {
+            if (parsePropertyGetterOrSetter()) {
+                parsePropertyGetterOrSetter();
+            }
+            consumeIf(SEMICOLON);
         }
 
-        if (parsePropertyGetterOrSetter()) {
-            parsePropertyGetterOrSetter();
-        }
-
-        consumeIf(SEMICOLON);
 
         return PROPERTY;
     }
 
     /*
      * getter
-     *   : modifiers
+     *   : modifiers ("get" | "set")
+     *   :
      *        (     "get" "(" ")"
      *           |
      *              "set" "(" modifiers parameter ")"
@@ -781,6 +785,11 @@ public class JetParsing extends AbstractJetParsing {
 
         boolean setter = at(SET_KEYWORD);
         advance(); // GET_KEYWORD or SET_KEYWORD
+
+        if (!at(LPAR)) {
+            getterOrSetter.done(PROPERTY_ACCESSOR);
+            return true;
+        }
 
         myBuilder.disableEols();
         expect(LPAR, "Expecting '('", TokenSet.create(RPAR, IDENTIFIER, COLON, LBRACE, EQ));

@@ -84,7 +84,7 @@ functionBody
   ;
 
 property
-  : modifiers ("val" | "var") attributes (type ".")? SimpleName (":" type)? ("=" expression)?
+  : modifiers ("val" | "var") attributes (type ".")? SimpleName (":" type)? ("=" expression SEMI?)?
       (getter? setter? | setter? getter?) SEMI?
   ;
 

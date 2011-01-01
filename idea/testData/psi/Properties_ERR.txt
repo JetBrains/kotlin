@@ -157,15 +157,13 @@ JetFile: Properties_ERR.jet
       PsiWhiteSpace('\n   ')
       PROPERTY_ACCESSOR
         PsiElement(set)('set')
-        PsiErrorElement:Expecting '('
-          <empty list>
-        VALUE_PARAMETER
-          <empty list>
-        PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        BLOCK
-          PsiElement(LBRACE)('{')
-          PsiElement(RBRACE)('}')
+    PsiErrorElement:Expecting namespace or top level declaration
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Expecting namespace or top level declaration
+      PsiElement(LBRACE)('{')
+    PsiErrorElement:Expecting namespace or top level declaration
+      PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n   ')
     PsiErrorElement:Expecting namespace or top level declaration
       PsiElement(IDENTIFIER)('dfget')
