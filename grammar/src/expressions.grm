@@ -103,8 +103,9 @@ literalConstant
   : StringWithTemplates
   : NoEscapeString
   : IntegerLiteral
-  : HexadecimalLiteral
+  : LongLiteral
   : CharacterLiteral
+  : FloatLiteral
   : "null"
   ;
 

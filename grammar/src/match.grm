@@ -1,14 +1,13 @@
 matchEntry
-  : attributes "case" pattern ("if" "(" expression ")")? "=>" expression // TODO: Consider other options than "=>"
+  : attributes "case" pattern ("if" "(" expression ")")? "=>" expression SEMI? // TODO: Consider other options than "=>"
   ;
 
 pattern
   : constantPattern // literal
-  : variablePattern // variable from the context
+  : SimpleName // variable from the context
   : tuplePattern
   : bindingPattern // we allow non-linear patterns
   : decomposerPattern // labeled components are allowed
-  : arrowPattern
   ;
 
 constantPattern
@@ -26,8 +25,4 @@ bindingPattern
 
 decomposerPattern
   : userType tuplePattern?
-  ;
-
-arrowPattern
-  : pattern "->" pattern
   ;

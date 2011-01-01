@@ -45,6 +45,7 @@ public interface JetNodeTypes {
     JetNodeType VALUE_PARAMETER = new JetNodeType("VALUE_PARAMETER");
     JetNodeType FUNCTION_TYPE = new JetNodeType("FUNCTION_TYPE");
     JetNodeType DECOMPOSER_PROPERTY_LIST = new JetNodeType("DECOMPOSER_PROPERTY_LIST");
+    // TODO: review
     JetNodeType RECEIVER_TYPE_ATTRIBUTES = new JetNodeType("RECEIVER_TYPE_ATTRIBUTES");
     JetNodeType PROPERTY_ACCESSOR = new JetNodeType("PROPERTY_ACCESSOR");
     JetNodeType CONSTRUCTOR = new JetNodeType("CONSTRUCTOR");
@@ -64,11 +65,6 @@ public interface JetNodeTypes {
     JetNodeType SUPERTYE_QUALIFIER = new JetNodeType("SUPERTYE_QUALIFIER");
     JetNodeType LONG_CONSTANT = new JetNodeType("LONG_CONSTANT");
     JetNodeType TUPLE = new JetNodeType("TUPLE");
-    JetNodeType ARROW_TUPLE = new JetNodeType("ARROW_TUPLE");
-    JetNodeType MAP_LITERAL_ENTRY = new JetNodeType("MAP_LITERAL_ENTRY");
-    JetNodeType MAP_LITERAL = new JetNodeType("MAP_LITERAL");
-    JetNodeType RANGE_LITERAL = new JetNodeType("RANGE_LITERAL");
-    JetNodeType LIST_LITERAL = new JetNodeType("LIST_LITERAL");
     JetNodeType TYPEOF = new JetNodeType("TYPEOF");
     JetNodeType NEW = new JetNodeType("NEW");
     JetNodeType RETURN = new JetNodeType("RETURN");
@@ -101,6 +97,9 @@ public interface JetNodeTypes {
     JetNodeType DOT_QIALIFIED_EXPRESSION = new JetNodeType("DOT_QIALIFIED_EXPRESSION");
     JetNodeType HASH_QIALIFIED_EXPRESSION = new JetNodeType("HASH_QIALIFIED_EXPRESSION");
     JetNodeType SAFE_ACCESS_EXPRESSION = new JetNodeType("SAFE_ACCESS_EXPRESSION");
+    JetNodeType MATCH_ENTRY = new JetNodeType("MATCH_ENTRY");
+    JetNodeType PATTERN = new JetNodeType("PATTERN");
+    JetNodeType TUPLE_PATTERN = new JetNodeType("TUPLE_PATTERN");
 
     IElementType NAMESPACE_NAME = new JetNodeType("NAMESPACE_NAME");
 }

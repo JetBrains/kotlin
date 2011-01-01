@@ -1204,7 +1204,7 @@ public class JetParsing extends AbstractJetParsing {
      *   : simpleUserType{"."}
      *   ;
      */
-    private void parseUserType() {
+    public void parseUserType() {
         while (true) {
             parseSimpleUserType();
             if (!at(DOT)) break;

@@ -68,7 +68,12 @@ public class JetExpressionParsing extends AbstractJetParsing {
         CONJUNCTION(ANDAND),
         DISJUNCTION(OROR),
         // TODO: RHS
-        MATCH(MATCH_KEYWORD),
+        MATCH(MATCH_KEYWORD) {
+            @Override
+            public void parseRightHandSide(JetExpressionParsing parsing) {
+                parsing.parseMatchBlock();
+            }
+        },
         // TODO: don't build a binary tree, build a tuple
         ARROW(JetTokens.ARROW),
         ASSIGNMENT(EQ, PLUSEQ, MINUSEQ, MULTEQ, DIVEQ, PERCEQ),
@@ -92,6 +97,10 @@ public class JetExpressionParsing extends AbstractJetParsing {
         public void parseHigherPrecedence(JetExpressionParsing parsing) {
             assert higher != null;
             parsing.parseBinaryExpression(higher);
+        }
+
+        public void parseRightHandSide(JetExpressionParsing parsing) {
+            parseHigherPrecedence(parsing);
         }
 
         public final TokenSet getOperations() {
@@ -138,7 +147,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         while (!myBuilder.eolInLastWhitespace() && atSet(precedence.getOperations())) {
              advance(); // operation
-             precedence.parseHigherPrecedence(this);
+             precedence.parseRightHandSide(this);
              expression.done(BINARY_EXPRESSION);
              expression = expression.precede();
         }
@@ -297,30 +306,6 @@ public class JetExpressionParsing extends AbstractJetParsing {
         else if (at(DO_KEYWORD)) {
             parseDoWhile();
         }
-        else if (at(INTEGER_LITERAL)) {
-            parseOneTokenExpression(INTEGER_CONSTANT);
-        }
-        else if (at(LONG_LITERAL)) {
-            parseOneTokenExpression(LONG_CONSTANT);
-        }
-        else if (at(CHARACTER_LITERAL)) {
-            parseOneTokenExpression(CHARACTER_CONSTANT);
-        }
-        else if (at(FLOAT_LITERAL)) {
-            parseOneTokenExpression(FLOAT_CONSTANT);
-        }
-        else if (at(STRING_LITERAL) || at(RAW_STRING_LITERAL)) {
-            parseOneTokenExpression(STRING_CONSTANT);
-        }
-        else if (at(TRUE_KEYWORD)) {
-            parseOneTokenExpression(BOOLEAN_CONSTANT);
-        }
-        else if (at(FALSE_KEYWORD)) {
-            parseOneTokenExpression(BOOLEAN_CONSTANT);
-        }
-        else if (at(NULL_KEYWORD)) {
-            parseOneTokenExpression(NULL);
-        }
         else if (atSet(CLASS_KEYWORD, EXTENSION_KEYWORD, FUN_KEYWORD, VAL_KEYWORD,
                 VAR_KEYWORD, TYPE_KEYWORD, DECOMPOSER_KEYWORD)) {
             parseLocalDeclaration();
@@ -337,12 +322,175 @@ public class JetExpressionParsing extends AbstractJetParsing {
         else if (at(LBRACE)) {
             parseFunctionLiteral();
         }
-        else {
+        else if (!parseLiteralConstant()) {
             // TODO
             errorAndAdvance("Expecting an expression");
         }
     }
 
+    /*
+     * literalConstant
+     *   : "true" | "false"
+     *   : StringWithTemplates
+     *   : NoEscapeString
+     *   : IntegerLiteral
+     *   : LongLiteral
+     *   : CharacterLiteral
+     *   : FloatLiteral
+     *   : "null"
+     *   ;
+     */
+    private boolean parseLiteralConstant() {
+        if (at(TRUE_KEYWORD) || at(FALSE_KEYWORD)) {
+            parseOneTokenExpression(BOOLEAN_CONSTANT);
+        }
+        else if (at(STRING_LITERAL) || at(RAW_STRING_LITERAL)) {
+            parseOneTokenExpression(STRING_CONSTANT);
+        }
+        else if (at(INTEGER_LITERAL)) {
+            parseOneTokenExpression(INTEGER_CONSTANT);
+        }
+        else if (at(LONG_LITERAL)) {
+            parseOneTokenExpression(LONG_CONSTANT);
+        }
+        else if (at(CHARACTER_LITERAL)) {
+            parseOneTokenExpression(CHARACTER_CONSTANT);
+        }
+        else if (at(FLOAT_LITERAL)) {
+            parseOneTokenExpression(FLOAT_CONSTANT);
+        }
+        else if (at(NULL_KEYWORD)) {
+            parseOneTokenExpression(NULL);
+        } else {
+            return false;
+        }
+        return true;
+    }
+
+    /*
+     * "{" matchEntry+ "}"
+     */
+    private void parseMatchBlock() {
+        expect(LBRACE, "Expecting '{' to open a match block");
+        while (!eof() && !at(RBRACE)) {
+            if (at(CASE_KEYWORD) || at(LBRACKET)) {
+                parseMatchEntry();
+            } else {
+                errorUntil("Expecting 'case' to start pattern matching", TokenSet.create(RBRACE, LBRACKET, CASE_KEYWORD));
+            }
+        }
+        expect(RBRACE, "Expecting '}'");
+    }
+
+    /*
+     * matchEntry
+     *   : attributes "case" pattern ("if" "(" expression ")")? "=>" expression SEMI? // TODO: Consider other options than "=>"
+     *   ;
+     */
+    private void parseMatchEntry() {
+        PsiBuilder.Marker entry = mark();
+
+        myJetParsing.parseAttributeList();
+
+        expect(CASE_KEYWORD, "Expecting 'case' to start pattern matching", TokenSet.create(RBRACE, IF_KEYWORD, DOUBLE_ARROW));
+
+        parsePattern();
+
+        if (at(IF_KEYWORD)) {
+            advance(); // IF_KEYWORD
+
+            parseCondition();
+        }
+
+        expect(DOUBLE_ARROW, "Expecting '=>'", TokenSet.create(RBRACE));
+
+        parseExpression();
+
+        consumeIf(SEMICOLON);
+
+        entry.done(MATCH_ENTRY);
+    }
+
+    /*
+     * pattern
+     *   : constantPattern // literal
+     *   : variablePattern // variable from the context
+     *   : tuplePattern
+     *   : bindingPattern // we allow non-linear patterns
+     *   : decomposerPattern // labeled components are allowed
+     *   ;
+     */
+    private void parsePattern() {
+        PsiBuilder.Marker pattern = mark();
+
+        if (at(IDENTIFIER)) {
+            myJetParsing.parseUserType();
+            if (at(LPAR)) {
+                parseTuplePattern();
+            }
+        }
+        else if (at(LPAR)) {
+            parseTuplePattern();
+        }
+        else if (at(QUEST)) {
+            parseBindingPattern();
+        } else if (!parseLiteralConstant()) {
+            errorUntil("Pattern expected", TokenSet.create(RBRACE, DOUBLE_ARROW));
+        }
+
+        pattern.done(PATTERN);
+    }
+
+    /*
+     * bindingPattern
+     *   : "?" SimpleName? (":" pattern)?
+     *   ;
+     */
+    private void parseBindingPattern() {
+        assert at(QUEST);
+
+        advance(); // QUEST
+
+        consumeIf(IDENTIFIER);
+
+        if (at(COLON)) {
+            advance(); // COLON
+
+            parsePattern();
+        }
+    }
+
+    /*
+     * tuplePattern
+     *   : "(" ((SimpleName "=")? pattern{","})? ")"
+     *   ;
+     */
+    private void parseTuplePattern() {
+        assert at(LPAR);
+
+        PsiBuilder.Marker pattern = mark();
+        advance(); // LPAR
+
+        if (!at(RPAR)) {
+            while (true) {
+                while (at(COMMA)) errorAndAdvance("Expecting a pattern");
+                if (at(IDENTIFIER) && lookahead(1) == EQ) {
+                    advance(); // IDENTIFIER
+                    advance(); // EQ
+                }
+                parsePattern();
+                if (!at(COMMA)) break;
+                advance(); // COMMA
+                if (at(RPAR)) {
+                    error("Expecting a pattern");
+                    break;
+                }
+            }
+        }
+
+        expect(RPAR, "Expecting ')'");
+        pattern.done(TUPLE_PATTERN);
+    }
 
     /*
      * arrayAccess

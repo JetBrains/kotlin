@@ -62,6 +62,7 @@ match
 out
 ref
 try
+case
 
 Soft:
 wraps -- in a class header
