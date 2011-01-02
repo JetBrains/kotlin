@@ -2,7 +2,7 @@ class BinaryHeap<T> : IPriorityQueue<T> {
   private val data : IMutableList<T>
   private val compare : Comparison<T>
 
-  fun this(data : IIterable<T>, compare : Comparison<T> = naturalOrder<T>) {
+  this(data : IIterable<T>, compare : Comparison<T> = naturalOrder<T>) {
     this.compare = compare
     this.data = ArrayList(data)
     siftDown(* this.data.size / 2 .. 0)
@@ -13,12 +13,12 @@ class BinaryHeap<T> : IPriorityQueue<T> {
 */
   }
 
-  fun this(compare : Comparison<T>) {
+  this(compare : Comparison<T>) {
     this.compare = compare
     this.data = ArrayList()
   }
 
-  fun this() {
+  this() {
     this.data = ArrayList()
     Assert(T is IComparable<T>)
     this.comparator = naturalOrder<T>
