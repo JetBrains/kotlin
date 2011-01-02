@@ -1,0 +1,24 @@
+fun foo() {
+  e match {
+
+  }
+  e match {
+    case  => foo
+  }
+  e match {
+    case  => ;
+  }
+  e match {
+    foo bar
+    case a => foo
+  }
+  e match {
+    foo bar
+  }
+  e match {
+    case - => foo
+    case (, , 1, , ) => foo
+  } match {
+
+  }
+}

@@ -32,4 +32,7 @@ fun foo() {
   a || b && c
   a = b -> c
   a = b || c
+  a = b || c match {} match {}
+  a = b || c match {}
+  a = a -> c match {} -> c
 }

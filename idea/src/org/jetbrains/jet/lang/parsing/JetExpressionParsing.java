@@ -392,6 +392,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         myJetParsing.parseAttributeList();
 
+        myBuilder.disableEols();
         expect(CASE_KEYWORD, "Expecting 'case' to start pattern matching", TokenSet.create(RBRACE, IF_KEYWORD, DOUBLE_ARROW));
 
         parsePattern();
@@ -403,6 +404,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
         }
 
         expect(DOUBLE_ARROW, "Expecting '=>'", TokenSet.create(RBRACE));
+        myBuilder.enableEols();
 
         parseExpression();
 

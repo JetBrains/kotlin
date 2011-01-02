@@ -52,6 +52,8 @@ public class JetParsingTest extends ParsingTestCase {
     public void testImports_ERR() throws Exception {doTest(true);}
     public void testImportSoftKW() throws Exception {doTest(true);}
     public void testLocalDeclarations() throws Exception {doTest(true);}
+    public void testMatch() throws Exception {doTest(true);}
+    public void testMatch_ERR() throws Exception {doTest(true);}
     public void testNamespaceBlock_ERR() throws Exception {doTest(true);}
     public void testNamespaceBlock() throws Exception {doTest(true);}
     public void testNewlinesInParentheses() throws Exception {doTest(true);}

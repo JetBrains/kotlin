@@ -188,5 +188,30 @@ JetFile: NewlinesInParentheses.jet
                 PsiWhiteSpace(' ')
                 PsiElement(IDENTIFIER)('d')
               PsiElement(RBRACKET)(']')
+        PsiWhiteSpace('\n\n  ')
+        BINARY_EXPRESSION
+          PsiElement(IDENTIFIER)('e')
+          PsiWhiteSpace(' ')
+          PsiElement(match)('match')
+          PsiWhiteSpace(' ')
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace('\n    ')
+          MATCH_ENTRY
+            PsiElement(case)('case')
+            PsiWhiteSpace(' ')
+            PATTERN
+              USER_TYPE
+                PsiElement(IDENTIFIER)('A')
+              PsiWhiteSpace('\n    ')
+              TUPLE_PATTERN
+                PsiElement(LPAR)('(')
+                PsiElement(RPAR)(')')
+            PsiWhiteSpace(' ')
+            PsiElement(DOUBLE_ARROW)('=>')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('foo')
+            PsiElement(SEMICOLON)(';')
+          PsiWhiteSpace('\n  ')
+          PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n')
         PsiElement(RBRACE)('}')

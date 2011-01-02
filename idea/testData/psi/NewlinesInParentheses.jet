@@ -19,4 +19,9 @@ fun foo() {
   val a = b[{c
     + d}
     + d]
+
+  e match {
+    case A
+    () => foo;
+  }
 }
