@@ -13,6 +13,79 @@ JetFile: Match.jet
       BLOCK
         PsiElement(LBRACE)('{')
         PsiWhiteSpace('\n  ')
+        RETURN
+          PsiElement(return)('return')
+          PsiWhiteSpace(' ')
+          BOOLEAN_CONSTANT
+            PsiElement(false)('false')
+        PsiWhiteSpace('\n\n  ')
+        FUN
+          PsiElement(fun)('fun')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('a')
+          TYPE_PARAMETER_LIST
+            <empty list>
+          VALUE_PARAMETER_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          FUNCTION_LITERAL
+            PsiElement(LBRACE)('{')
+            BODY
+              BINARY_EXPRESSION
+                PsiElement(IDENTIFIER)('a')
+                PsiWhiteSpace(' ')
+                PsiElement(match)('match')
+                PsiWhiteSpace(' ')
+                PsiElement(LBRACE)('{')
+                PsiWhiteSpace(' ')
+                MATCH_ENTRY
+                  PsiElement(case)('case')
+                  PsiWhiteSpace(' ')
+                  PATTERN
+                    USER_TYPE
+                      PsiElement(IDENTIFIER)('a')
+                  PsiWhiteSpace(' ')
+                  PsiElement(DOUBLE_ARROW)('=>')
+                  PsiWhiteSpace(' ')
+                  PsiElement(IDENTIFIER)('b')
+                PsiWhiteSpace(' ')
+                PsiElement(RBRACE)('}')
+            PsiElement(RBRACE)('}')
+        PsiWhiteSpace('\n\n  ')
+        PsiComment(EOL_COMMENT)('// foo')
+        PsiWhiteSpace('\n  ')
+        FUN
+          PsiElement(fun)('fun')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('b')
+          TYPE_PARAMETER_LIST
+            <empty list>
+          VALUE_PARAMETER_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiElement(RBRACE)('}')
+        PsiWhiteSpace('\n\n')
+        PsiElement(RBRACE)('}')
+    PsiWhiteSpace('\n\n')
+    FUN
+      PsiElement(fun)('fun')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('foo')
+      TYPE_PARAMETER_LIST
+        <empty list>
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      BLOCK
+        PsiElement(LBRACE)('{')
+        PsiWhiteSpace('\n  ')
         BINARY_EXPRESSION
           PsiElement(IDENTIFIER)('e')
           PsiWhiteSpace(' ')

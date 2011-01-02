@@ -1,4 +1,14 @@
 fun foo() {
+  return false
+
+  fun a() = {a match { case a => b }}
+
+  // foo
+  fun b() {}
+
+}
+
+fun foo() {
   e match {
 
   }

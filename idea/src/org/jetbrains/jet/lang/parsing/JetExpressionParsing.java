@@ -416,7 +416,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
         }
 
         expect(DOUBLE_ARROW, "Expecting '=>'", TokenSet.create(RBRACE));
-        myBuilder.enableEols();
+        myBuilder.restoreEolsState();
 
         parseExpression();
 

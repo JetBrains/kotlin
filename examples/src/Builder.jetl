@@ -1,4 +1,4 @@
-object AntBuilder() {
+val foo = object AntBuilder() {
 
   lazy val groovy = library {
     classpath("$libs/groovy-...")
