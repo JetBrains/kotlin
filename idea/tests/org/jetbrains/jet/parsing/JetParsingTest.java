@@ -38,6 +38,7 @@ public class JetParsingTest extends ParsingTestCase {
     public void testDecomposers_ERR() throws Exception {doTest(true);}
     public void testEmptyFile() throws Exception {doTest(true);}
     public void testEnums() throws Exception {doTest(true);}
+    public void testEOLsInComments() throws Exception {doTest(true);}
     public void testEOLsOnRollback() throws Exception {doTest(true);}
     public void testExtensions() throws Exception {doTest(true);}
     public void testExtensions_ERR() throws Exception {doTest(true);}
