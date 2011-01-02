@@ -3,10 +3,10 @@ class Foo(bar : Bar) {
     private val cache = HashMap<Bar, Foo>()
 
 // Factory method:
-    Foo() = Foo(null);
+    fun Foo() = Foo(null);
 
 // Factory method:
-    Foo(bar : Bar) = cache.cachedLookup(bar, this(bar))
+    fun Foo(bar : Bar) = cache.cachedLookup(bar, this(bar))
   }
 
   fun doFoo() {
@@ -16,7 +16,7 @@ class Foo(bar : Bar) {
 
 // To create an object of Foo
 val foo = Foo()
-or
+// or
 val foo = Foo(Bar())
 
 // Subclass (Foo must be marked as extendable/open, i.e. ont sealed)
@@ -24,7 +24,7 @@ class FooSub(S : String) : Foo() { // Delegates to Foo created as a result of th
 
 }
 
-extension Map<K, V>.cachedLookup(key : K, lazy value : V) : V {
+fun Map<K, V>.cachedLookup(key : K, lazy value : V) : V {
   var v = this[key]
   if (v == null) {
     v = value

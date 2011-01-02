@@ -1,4 +1,4 @@
-interface class IMap<in K, out V> {
+virtual class IMap<in K, out V> {
   
 
 }

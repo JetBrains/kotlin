@@ -1,4 +1,4 @@
-interface class IIterator<out T> {
+virtual class IIterator<out T> {
   fun next() : T
   val hasNext : Boolean
 
@@ -14,7 +14,7 @@ interface class IIterator<out T> {
     if (len == 0) return 0
 
     var count = 0;
-    for (i in [from .. from + length - 1]) {
+    for (i in from .. from + length - 1) {
       if (!hasNext)
         return count
       buffer[i] = next()

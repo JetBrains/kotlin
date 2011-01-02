@@ -1,4 +1,4 @@
-interface class IList<out T> : IIterable<T>, ISized {
+virtual class IList<out T> : IIterable<T>, ISized {
   [operator] fun get(index : Int) : T
   val isEmpty : Boolean
 }

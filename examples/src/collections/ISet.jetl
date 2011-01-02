@@ -1,3 +1,3 @@
-interface class ISet<T> : IIterable<T>, ISized {
+virtual class ISet<T> : IIterable<T>, ISized {
   fun contains(item : T) : Boolean
 }

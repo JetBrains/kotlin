@@ -6,7 +6,7 @@ class LinkedList<T> : IMutableList<T> {
 
   private var head : Item = null
   private var tail : Item = null
-  override var size { get; private set; }
+  override var size  get private set;
 
   override fun add(index : Int, value : T) {
     size++
@@ -29,7 +29,7 @@ class LinkedList<T> : IMutableList<T> {
   }
 
   private fun checkIndex(index : Int) {
-    if (!index in [0..size-1]) {
+    if (index !in 0..size-1) {
       throw IndexOutOfBoundsException(index)
     }
   }
@@ -63,7 +63,7 @@ class LinkedList<T> : IMutableList<T> {
 
   private fun itemAt(index : Int) {
     var result = head
-    for (i in [1..index]) {
+    for (i in 1..index) {
       result = result.next
     }
     return result

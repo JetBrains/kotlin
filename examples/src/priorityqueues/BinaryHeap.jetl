@@ -95,12 +95,11 @@ class BinaryHeap<T> : IPriorityQueue<T> {
 
 }
 
-extension fun IMutableList<T>.swap(a : Int, b : Int) {
+fun IMutableList<T>.swap(a : Int, b : Int) {
   val t = this[a]
   this[a] = this[b]
   this[b] = t
 }
 
-extension val IList<T>.lastIndex : Int
+val IList<T>.lastIndex : Int
   get() = this.size - 1
-

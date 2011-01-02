@@ -1,8 +1,8 @@
-interface class IAdder<in T> {
+virtual class IAdder<in T> {
   fun add(item : T) : Boolean
 }
 
-interface class ICloseable {
+virtual class ICloseable {
   fun close()
 }
 
@@ -24,20 +24,19 @@ class FileInput : IIterator<Byte>, JavaCloseableWrapper {
   override fun next() {
     if (!nextUsed) {
       nextUsed = true
-      return next.as<Byte>
+      return next as Byte
     }
     return
   }
-  
-  override val hasNext {
+
+  override val hasNext
     get() { // implicitly throws IOException
       if (nextUsed && next != -1) {
         nextUsed = false
         next = stream.read() // throws IOException
       }
-      return next != -1        
+      return next != -1
     }
-  }
 }
 
 class FileOutput throws IOException : IAdder<Byte>, JavaCloseableWrapper {
