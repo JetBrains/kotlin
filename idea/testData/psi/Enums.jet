@@ -7,7 +7,7 @@ enum class Color(val rgb : Int) {
 enum class List<out T>(val size : Int) {
     Nil : List<Nothing>(0)
 
-    Cons<T>(value : T, tail : List<T>) : List<T>(/*tail.size + 1*/a)
+    Cons<T>(val value : T, val tail : List<T>) : List<T>(/*tail.size + 1*/a)
 
     val isEmpty : Bool
       get() = size //> 0

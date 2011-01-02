@@ -3,5 +3,5 @@ enumClassBody
   ;
 
 enumEntry
-  : modifiers SimpleName typeParameters? valueParameters? (":" initializer{","})? classBody?
+  : modifiers SimpleName typeParameters? primaryConstructorParameters? (":" initializer{","})? classBody?
   ;

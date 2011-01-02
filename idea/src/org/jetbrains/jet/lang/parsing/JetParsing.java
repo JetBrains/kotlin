@@ -494,7 +494,7 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * enumEntry
-     *   : modifiers SimpleName typeParameters? valueParameters? (":" initializer{","})? classBody?
+     *   : modifiers SimpleName typeParameters? primaryConstructorParameters? (":" initializer{","})? classBody?
      *   ;
      */
     private void parseEnumEntry() {
@@ -505,7 +505,8 @@ public class JetParsing extends AbstractJetParsing {
         parseTypeParameterList(TokenSet.create(COLON, LPAR, SEMICOLON, LBRACE));
 
         if (at(LPAR)) {
-            parseValueParameterList(false, TokenSet.create(COLON, SEMICOLON, LBRACE));
+            parsePrimaryConstructorParameterList();
+//            parseValueParameterList(false, TokenSet.create(COLON, SEMICOLON, LBRACE));
         }
 
         if (at(COLON)) {

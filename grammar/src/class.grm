@@ -14,9 +14,13 @@ class
   : modifiers "class" SimpleName
       typeParameters?
       "wraps"?
-      ("(" primaryConstructorParameter{","} ")")?
+      primaryConstructorParameters?
       (":" attributes delegationSpecifier{","})?
       (classBody? | enumClassBody)
+  ;
+
+primaryConstructorParameters
+  : "(" primaryConstructorParameter{","} ")"
   ;
 
 typeParameters

@@ -149,9 +149,11 @@ JetFile: Enums.jet
             TYPE_PARAMETER
               PsiElement(IDENTIFIER)('T')
             PsiElement(GT)('>')
-          VALUE_PARAMETER_LIST
+          PRIMARY_CONSTRUCTOR_PARAMETERS_LIST
             PsiElement(LPAR)('(')
-            VALUE_PARAMETER
+            PRIMARY_CONSTRUCTOR_PARAMETER
+              PsiElement(val)('val')
+              PsiWhiteSpace(' ')
               PsiElement(IDENTIFIER)('value')
               PsiWhiteSpace(' ')
               PsiElement(COLON)(':')
@@ -161,7 +163,9 @@ JetFile: Enums.jet
                   PsiElement(IDENTIFIER)('T')
             PsiElement(COMMA)(',')
             PsiWhiteSpace(' ')
-            VALUE_PARAMETER
+            PRIMARY_CONSTRUCTOR_PARAMETER
+              PsiElement(val)('val')
+              PsiWhiteSpace(' ')
               PsiElement(IDENTIFIER)('tail')
               PsiWhiteSpace(' ')
               PsiElement(COLON)(':')
