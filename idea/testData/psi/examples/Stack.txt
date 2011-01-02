@@ -1,0 +1,141 @@
+JetFile: Stack.jet
+  NAMESPACE
+    CLASS
+      PsiElement(class)('class')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('Stack')
+      TYPE_PARAMETER_LIST
+        PsiElement(LT)('<')
+        TYPE_PARAMETER
+          PsiElement(IDENTIFIER)('T')
+        PsiElement(GT)('>')
+      PsiWhiteSpace(' ')
+      PsiElement(COLON)(':')
+      PsiWhiteSpace(' ')
+      DELEGATION_SPECIFIER_LIST
+        DELEGATION_SPECIFIER
+          DELEGATOR_SUPER_CLASS
+            TYPE_REFERENCE
+              USER_TYPE
+                PsiElement(IDENTIFIER)('IPushPop')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      PsiElement(IDENTIFIER)('T')
+                  PsiElement(GT)('>')
+      PsiWhiteSpace(' ')
+      CLASS_BODY
+        PsiElement(LBRACE)('{')
+        PsiWhiteSpace('\n  ')
+        PROPERTY
+          MODIFIER_LIST
+            PsiElement(private)('private')
+          PsiWhiteSpace(' ')
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('data')
+          PsiWhiteSpace(' ')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          NEW
+            PsiElement(new)('new')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                PsiElement(IDENTIFIER)('ArrayList')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      PsiElement(IDENTIFIER)('T')
+                  PsiElement(GT)('>')
+            VALUE_ARGUMENT_LIST
+              PsiElement(LPAR)('(')
+              PsiElement(RPAR)(')')
+          PsiElement(SEMICOLON)(';')
+        PsiWhiteSpace('\n\n  ')
+        FUN
+          MODIFIER_LIST
+            PsiElement(override)('override')
+          PsiWhiteSpace(' ')
+          PsiElement(fun)('fun')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('push')
+          TYPE_PARAMETER_LIST
+            <empty list>
+          VALUE_PARAMETER_LIST
+            PsiElement(LPAR)('(')
+            VALUE_PARAMETER
+              PsiElement(IDENTIFIER)('item')
+              PsiWhiteSpace(' ')
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                USER_TYPE
+                  PsiElement(IDENTIFIER)('T')
+            PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiWhiteSpace('\n    ')
+            CALL_EXPRESSION
+              DOT_QIALIFIED_EXPRESSION
+                PsiElement(IDENTIFIER)('data')
+                PsiElement(DOT)('.')
+                PsiElement(IDENTIFIER)('add')
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                VALUE_ARGUMENT
+                  PsiElement(IDENTIFIER)('item')
+                PsiElement(RPAR)(')')
+            PsiWhiteSpace(' ')
+            PsiComment(EOL_COMMENT)('// Problem: I would like to write push(...) = data.add(...), but the types do not match')
+            PsiWhiteSpace('\n  ')
+            PsiElement(RBRACE)('}')
+        PsiWhiteSpace('\n\n  ')
+        FUN
+          MODIFIER_LIST
+            PsiElement(override)('override')
+          PsiWhiteSpace(' ')
+          PsiElement(fun)('fun')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('pop')
+          TYPE_PARAMETER_LIST
+            <empty list>
+          VALUE_PARAMETER_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          CALL_EXPRESSION
+            DOT_QIALIFIED_EXPRESSION
+              PsiElement(IDENTIFIER)('data')
+              PsiElement(DOT)('.')
+              PsiElement(IDENTIFIER)('removeLast')
+            VALUE_ARGUMENT_LIST
+              PsiElement(LPAR)('(')
+              PsiElement(RPAR)(')')
+        PsiWhiteSpace('\n\n  ')
+        PROPERTY
+          MODIFIER_LIST
+            PsiElement(override)('override')
+          PsiWhiteSpace(' ')
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('isEmpty')
+          PsiWhiteSpace('\n    ')
+          PROPERTY_ACCESSOR
+            PsiElement(get)('get')
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+            PsiWhiteSpace(' ')
+            PsiElement(EQ)('=')
+            PsiWhiteSpace(' ')
+            DOT_QIALIFIED_EXPRESSION
+              PsiElement(IDENTIFIER)('data')
+              PsiElement(DOT)('.')
+              PsiElement(IDENTIFIER)('isEmpty')
+        PsiWhiteSpace('\n\n')
+        PsiElement(RBRACE)('}')

@@ -1,0 +1,55 @@
+JetFile: IMutableIterator.jet
+  NAMESPACE
+    CLASS
+      MODIFIER_LIST
+        PsiElement(virtual)('virtual')
+      PsiWhiteSpace(' ')
+      PsiElement(class)('class')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('IMutableIterator')
+      TYPE_PARAMETER_LIST
+        PsiElement(LT)('<')
+        TYPE_PARAMETER
+          MODIFIER_LIST
+            PsiElement(out)('out')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('T')
+        PsiElement(GT)('>')
+      PsiWhiteSpace(' ')
+      PsiElement(COLON)(':')
+      PsiWhiteSpace(' ')
+      DELEGATION_SPECIFIER_LIST
+        DELEGATION_SPECIFIER
+          DELEGATOR_SUPER_CLASS
+            TYPE_REFERENCE
+              USER_TYPE
+                PsiElement(IDENTIFIER)('IIterator')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      PsiElement(IDENTIFIER)('T')
+                  PsiElement(GT)('>')
+      PsiWhiteSpace(' ')
+      CLASS_BODY
+        PsiElement(LBRACE)('{')
+        PsiWhiteSpace('\n  ')
+        FUN
+          PsiElement(fun)('fun')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('remove')
+          TYPE_PARAMETER_LIST
+            <empty list>
+          VALUE_PARAMETER_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              PsiElement(IDENTIFIER)('T')
+        PsiWhiteSpace('\n\n')
+        PsiComment(BLOCK_COMMENT)('/*\n  Considerations:\n    pro: why not + non iteration breaking\n    con: counter-intuitive for, e.g., TreeSet\n\n\n  fun addBefore(item : T) : Boolean\n  fun addAfter(item : T) : Boolean\n*/')
+        PsiWhiteSpace('\n')
+        PsiElement(RBRACE)('}')

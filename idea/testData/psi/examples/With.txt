@@ -1,0 +1,160 @@
+JetFile: With.jet
+  NAMESPACE
+    FUN
+      MODIFIER_LIST
+        ATTRIBUTE_ANNOTATION
+          PsiElement(LBRACKET)('[')
+          ATTRIBUTE
+            USER_TYPE
+              PsiElement(IDENTIFIER)('inline')
+          PsiElement(RBRACKET)(']')
+      PsiWhiteSpace(' ')
+      PsiElement(fun)('fun')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('with')
+      TYPE_PARAMETER_LIST
+        PsiElement(LT)('<')
+        TYPE_PARAMETER
+          PsiElement(IDENTIFIER)('T')
+        PsiElement(GT)('>')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiElement(IDENTIFIER)('receiver')
+          PsiWhiteSpace(' ')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              PsiElement(IDENTIFIER)('T')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        VALUE_PARAMETER
+          PsiElement(IDENTIFIER)('body')
+          PsiWhiteSpace(' ')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            FUNCTION_TYPE
+              PsiElement(LBRACE)('{')
+              RECEIVER_TYPE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    PsiElement(IDENTIFIER)('T')
+              PsiElement(DOT)('.')
+              VALUE_PARAMETER_LIST
+                PsiElement(LPAR)('(')
+                PsiElement(RPAR)(')')
+              PsiWhiteSpace(' ')
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                USER_TYPE
+                  PsiElement(IDENTIFIER)('Unit')
+              PsiElement(RBRACE)('}')
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiElement(EQ)('=')
+      PsiWhiteSpace(' ')
+      CALL_EXPRESSION
+        DOT_QIALIFIED_EXPRESSION
+          PsiElement(IDENTIFIER)('receiver')
+          PsiElement(DOT)('.')
+          PsiElement(IDENTIFIER)('body')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+    PsiWhiteSpace('\n\n')
+    FUN
+      PsiElement(fun)('fun')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('example')
+      TYPE_PARAMETER_LIST
+        <empty list>
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      BLOCK
+        PsiElement(LBRACE)('{')
+        PsiWhiteSpace('\n\n  ')
+        CALL_EXPRESSION
+          PsiElement(IDENTIFIER)('with')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            VALUE_ARGUMENT
+              DOT_QIALIFIED_EXPRESSION
+                DOT_QIALIFIED_EXPRESSION
+                  DOT_QIALIFIED_EXPRESSION
+                    PsiElement(IDENTIFIER)('java')
+                    PsiElement(DOT)('.')
+                    PsiElement(IDENTIFIER)('lang')
+                  PsiElement(DOT)('.')
+                  PsiElement(IDENTIFIER)('System')
+                PsiElement(DOT)('.')
+                PsiElement(IDENTIFIER)('out')
+            PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          FUNCTION_LITERAL
+            PsiElement(LBRACE)('{')
+            PsiWhiteSpace('\n    ')
+            BODY
+              CALL_EXPRESSION
+                PsiElement(IDENTIFIER)('println')
+                VALUE_ARGUMENT_LIST
+                  PsiElement(LPAR)('(')
+                  VALUE_ARGUMENT
+                    STRING_CONSTANT
+                      PsiElement(STRING_LITERAL)('"foo"')
+                  PsiElement(RPAR)(')')
+              PsiElement(SEMICOLON)(';')
+              PsiWhiteSpace('\n    ')
+              CALL_EXPRESSION
+                PsiElement(IDENTIFIER)('print')
+                VALUE_ARGUMENT_LIST
+                  PsiElement(LPAR)('(')
+                  VALUE_ARGUMENT
+                    STRING_CONSTANT
+                      PsiElement(STRING_LITERAL)('"bar"')
+                  PsiElement(RPAR)(')')
+              PsiElement(SEMICOLON)(';')
+            PsiWhiteSpace('\n  ')
+            PsiElement(RBRACE)('}')
+        PsiWhiteSpace('\n\n  ')
+        CALL_EXPRESSION
+          DOT_QIALIFIED_EXPRESSION
+            DOT_QIALIFIED_EXPRESSION
+              PsiElement(IDENTIFIER)('System')
+              PsiElement(DOT)('.')
+              PsiElement(IDENTIFIER)('out')
+            PsiElement(DOT)('.')
+            FUNCTION_LITERAL
+              PsiElement(LBRACE)('{')
+              PsiWhiteSpace('\n    ')
+              BODY
+                CALL_EXPRESSION
+                  PsiElement(IDENTIFIER)('println')
+                  VALUE_ARGUMENT_LIST
+                    PsiElement(LPAR)('(')
+                    VALUE_ARGUMENT
+                      STRING_CONSTANT
+                        PsiElement(STRING_LITERAL)('"foo"')
+                    PsiElement(RPAR)(')')
+                PsiElement(SEMICOLON)(';')
+                PsiWhiteSpace('\n    ')
+                CALL_EXPRESSION
+                  PsiElement(IDENTIFIER)('print')
+                  VALUE_ARGUMENT_LIST
+                    PsiElement(LPAR)('(')
+                    VALUE_ARGUMENT
+                      STRING_CONSTANT
+                        PsiElement(STRING_LITERAL)('"bar"')
+                    PsiElement(RPAR)(')')
+                PsiElement(SEMICOLON)(';')
+              PsiWhiteSpace('\n  ')
+              PsiElement(RBRACE)('}')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+        PsiWhiteSpace('\n\n')
+        PsiElement(RBRACE)('}')

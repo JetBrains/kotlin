@@ -1,0 +1,194 @@
+JetFile: AnonymousObjects.jet
+  NAMESPACE
+    FUN
+      PsiElement(fun)('fun')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('foo')
+      TYPE_PARAMETER_LIST
+        <empty list>
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      BLOCK
+        PsiElement(LBRACE)('{')
+        PsiWhiteSpace('\n\n')
+        CALL_EXPRESSION
+          PsiElement(IDENTIFIER)('addMouseListener')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            VALUE_ARGUMENT
+              PsiElement(object)('object')
+              PsiWhiteSpace(' ')
+              DELEGATION_SPECIFIER_LIST
+                DELEGATION_SPECIFIER
+                  DELEGATOR_SUPER_CALL
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        PsiElement(IDENTIFIER)('MouseAdapter')
+                    VALUE_ARGUMENT_LIST
+                      PsiElement(LPAR)('(')
+                      PsiElement(RPAR)(')')
+              PsiWhiteSpace(' ')
+              CLASS_BODY
+                PsiElement(LBRACE)('{')
+                PsiWhiteSpace('\n\n  ')
+                PROPERTY
+                  MODIFIER_LIST
+                    PsiElement(private)('private')
+                  PsiWhiteSpace(' ')
+                  PsiElement(var)('var')
+                  PsiWhiteSpace(' ')
+                  PsiElement(IDENTIFIER)('clickCount')
+                  PsiWhiteSpace(' ')
+                  PsiElement(EQ)('=')
+                  PsiWhiteSpace(' ')
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('0')
+                  PsiElement(SEMICOLON)(';')
+                PsiWhiteSpace('\n\n  ')
+                FUN
+                  MODIFIER_LIST
+                    PsiElement(override)('override')
+                  PsiWhiteSpace(' ')
+                  PsiElement(fun)('fun')
+                  PsiWhiteSpace(' ')
+                  PsiElement(IDENTIFIER)('mouseClicked')
+                  TYPE_PARAMETER_LIST
+                    <empty list>
+                  VALUE_PARAMETER_LIST
+                    PsiElement(LPAR)('(')
+                    VALUE_PARAMETER
+                      PsiElement(IDENTIFIER)('e')
+                      PsiWhiteSpace(' ')
+                      PsiElement(COLON)(':')
+                      PsiWhiteSpace(' ')
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          PsiElement(IDENTIFIER)('MouseEvent')
+                    PsiElement(RPAR)(')')
+                  PsiWhiteSpace(' ')
+                  BLOCK
+                    PsiElement(LBRACE)('{')
+                    PsiWhiteSpace('\n    ')
+                    POSTFIX_EXPRESSION
+                      PsiElement(IDENTIFIER)('clickCount')
+                      PsiElement(PLUSPLUS)('++')
+                    PsiElement(SEMICOLON)(';')
+                    PsiWhiteSpace('\n    ')
+                    IF
+                      PsiElement(if)('if')
+                      PsiWhiteSpace(' ')
+                      PsiElement(LPAR)('(')
+                      CONDITION
+                        BINARY_EXPRESSION
+                          PsiElement(IDENTIFIER)('clickCount')
+                          PsiWhiteSpace(' ')
+                          PsiElement(GT)('>')
+                          PsiWhiteSpace(' ')
+                          INTEGER_CONSTANT
+                            PsiElement(INTEGER_LITERAL)('3')
+                      PsiElement(RPAR)(')')
+                      PsiWhiteSpace(' ')
+                      THEN
+                        CALL_EXPRESSION
+                          DOT_QIALIFIED_EXPRESSION
+                            PsiElement(IDENTIFIER)('GOD')
+                            PsiElement(DOT)('.')
+                            PsiElement(IDENTIFIER)('sendMessage')
+                          VALUE_ARGUMENT_LIST
+                            PsiElement(LPAR)('(')
+                            VALUE_ARGUMENT
+                              DOT_QIALIFIED_EXPRESSION
+                                PsiElement(IDENTIFIER)('GodMEssages')
+                                PsiElement(DOT)('.')
+                                PsiElement(IDENTIFIER)('TOO_MANY_CLICKS')
+                            PsiElement(RPAR)(')')
+                        PsiElement(SEMICOLON)(';')
+                    PsiWhiteSpace('\n  ')
+                    PsiElement(RBRACE)('}')
+                PsiWhiteSpace('\n')
+                PsiElement(RBRACE)('}')
+            PsiElement(RPAR)(')')
+        PsiWhiteSpace('\n\n')
+        CLASS
+          MODIFIER_LIST
+            PsiElement(enum)('enum')
+          PsiWhiteSpace(' ')
+          PsiElement(class)('class')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('GodMessages')
+          PsiWhiteSpace(' ')
+          TYPE_PARAMETER_LIST
+            <empty list>
+          CLASS_BODY
+            PsiElement(LBRACE)('{')
+            PsiWhiteSpace('\n  ')
+            ENUM_ENTRY
+              PsiElement(IDENTIFIER)('TOO_MANY_CLICKS')
+              PsiWhiteSpace('\n  ')
+              TYPE_PARAMETER_LIST
+                <empty list>
+            ENUM_ENTRY
+              PsiElement(IDENTIFIER)('ONE_MORE_MESSAGE')
+              PsiWhiteSpace('\n')
+              TYPE_PARAMETER_LIST
+                <empty list>
+            PsiElement(RBRACE)('}')
+        PsiWhiteSpace('\n\n')
+        PsiComment(EOL_COMMENT)('// Type of this variable is GOD_AnonymousClass')
+        PsiWhiteSpace('\n')
+        PROPERTY
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('GOD')
+          PsiWhiteSpace(' ')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          PsiElement(object)('object')
+          PsiWhiteSpace(' ')
+          CLASS_BODY
+            PsiElement(LBRACE)('{')
+            PsiWhiteSpace('\n  ')
+            FUN
+              PsiElement(fun)('fun')
+              PsiWhiteSpace(' ')
+              PsiElement(IDENTIFIER)('sendMessage')
+              TYPE_PARAMETER_LIST
+                <empty list>
+              VALUE_PARAMETER_LIST
+                PsiElement(LPAR)('(')
+                VALUE_PARAMETER
+                  PsiElement(IDENTIFIER)('message')
+                  PsiWhiteSpace(' ')
+                  PsiElement(COLON)(':')
+                  PsiWhiteSpace(' ')
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      PsiElement(IDENTIFIER)('GodMEssage')
+                PsiElement(RPAR)(')')
+              PsiWhiteSpace(' ')
+              PsiElement(EQ)('=')
+              PsiWhiteSpace(' ')
+              THROW
+                PsiElement(throw)('throw')
+                PsiWhiteSpace(' ')
+                NEW
+                  PsiElement(new)('new')
+                  PsiWhiteSpace(' ')
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      PsiElement(IDENTIFIER)('RuntimeException')
+                  VALUE_ARGUMENT_LIST
+                    PsiElement(LPAR)('(')
+                    VALUE_ARGUMENT
+                      DOT_QIALIFIED_EXPRESSION
+                        PsiElement(IDENTIFIER)('message')
+                        PsiElement(DOT)('.')
+                        PsiElement(IDENTIFIER)('name')
+                    PsiElement(RPAR)(')')
+            PsiWhiteSpace('\n')
+            PsiElement(RBRACE)('}')
+          PsiElement(SEMICOLON)(';')
+        PsiWhiteSpace('\n\n\n')
+        PsiElement(RBRACE)('}')

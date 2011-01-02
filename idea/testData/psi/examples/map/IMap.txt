@@ -1,0 +1,29 @@
+JetFile: IMap.jet
+  NAMESPACE
+    CLASS
+      MODIFIER_LIST
+        PsiElement(virtual)('virtual')
+      PsiWhiteSpace(' ')
+      PsiElement(class)('class')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('IMap')
+      TYPE_PARAMETER_LIST
+        PsiElement(LT)('<')
+        TYPE_PARAMETER
+          MODIFIER_LIST
+            PsiElement(in)('in')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('K')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        TYPE_PARAMETER
+          MODIFIER_LIST
+            PsiElement(out)('out')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('V')
+        PsiElement(GT)('>')
+      PsiWhiteSpace(' ')
+      CLASS_BODY
+        PsiElement(LBRACE)('{')
+        PsiWhiteSpace('\n  \n\n')
+        PsiElement(RBRACE)('}')

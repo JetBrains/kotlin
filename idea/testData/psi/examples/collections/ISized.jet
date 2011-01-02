@@ -1,0 +1,3 @@
+virtual class ISized {
+  val size : Int
+}

@@ -1,0 +1,68 @@
+JetFile: LINQ.jet
+  NAMESPACE
+    FUN
+      PsiElement(fun)('fun')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('foo')
+      TYPE_PARAMETER_LIST
+        <empty list>
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      BLOCK
+        PsiElement(LBRACE)('{')
+        PsiWhiteSpace('\n    ')
+        BINARY_EXPRESSION
+          BINARY_EXPRESSION
+            BINARY_EXPRESSION
+              PsiElement(IDENTIFIER)('l')
+              PsiWhiteSpace(' ')
+              PsiElement(IDENTIFIER)('filter')
+              PsiWhiteSpace(' ')
+              FUNCTION_LITERAL
+                PsiElement(LBRACE)('{')
+                BODY
+                  DOT_QIALIFIED_EXPRESSION
+                    PsiElement(IDENTIFIER)('it')
+                    PsiElement(DOT)('.')
+                    PsiElement(IDENTIFIER)('x')
+                PsiElement(RBRACE)('}')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('map')
+            PsiWhiteSpace(' ')
+            FUNCTION_LITERAL
+              PsiElement(LBRACE)('{')
+              BODY
+                DOT_QIALIFIED_EXPRESSION
+                  PsiElement(IDENTIFIER)('it')
+                  PsiElement(DOT)('.')
+                  PsiElement(IDENTIFIER)('foo')
+              PsiElement(RBRACE)('}')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('aggregate')
+          PsiWhiteSpace(' ')
+          FUNCTION_LITERAL
+            PsiElement(LBRACE)('{')
+            VALUE_PARAMETER_LIST
+              PsiElement(LPAR)('(')
+              VALUE_PARAMETER
+                PsiElement(IDENTIFIER)('a')
+              PsiElement(COMMA)(',')
+              PsiWhiteSpace(' ')
+              VALUE_PARAMETER
+                PsiElement(IDENTIFIER)('b')
+              PsiElement(RPAR)(')')
+            PsiWhiteSpace(' ')
+            PsiElement(DOUBLE_ARROW)('=>')
+            PsiWhiteSpace(' ')
+            BODY
+              BINARY_EXPRESSION
+                PsiElement(IDENTIFIER)('a')
+                PsiWhiteSpace(' ')
+                PsiElement(PLUS)('+')
+                PsiWhiteSpace(' ')
+                PsiElement(IDENTIFIER)('b')
+            PsiElement(RBRACE)('}')
+        PsiWhiteSpace('\n')
+        PsiElement(RBRACE)('}')

@@ -1,0 +1,4 @@
+virtual class IMap<in K, out V> {
+  
+
+}

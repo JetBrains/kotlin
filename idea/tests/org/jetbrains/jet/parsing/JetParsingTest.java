@@ -5,21 +5,30 @@ package org.jetbrains.jet.parsing;
 
 import com.intellij.openapi.application.PathManager;
 import com.intellij.testFramework.ParsingTestCase;
-import org.jetbrains.annotations.NonNls;
+import junit.framework.TestSuite;
 
 import java.io.File;
+import java.io.FileFilter;
+import java.io.FilenameFilter;
 
 public class JetParsingTest extends ParsingTestCase {
     static {
         System.setProperty("idea.platform.prefix", "Idea");
     }
 
-    public JetParsingTest() {
-        super("", "jet");
+    private final String name;
+
+    public JetParsingTest(String dataPath, String name) {
+        super(dataPath, "jet");
+        this.name = name;
     }
 
     @Override
     protected String getTestDataPath() {
+        return getTestDataDir();
+    }
+
+    private static String getTestDataDir() {
         return getHomeDirectory() + "/idea/testData";
     }
 
@@ -27,50 +36,49 @@ public class JetParsingTest extends ParsingTestCase {
        return new File(PathManager.getResourceRoot(JetParsingTest.class, "/")).getParentFile().getParentFile().getParent();
     }
 
-    public void testAnnotatedExpressions() throws Exception {doTest(true);}
-    public void testAttributes() throws Exception {doTest(true);}
-    public void testAttributes_ERR() throws Exception {doTest(true);}
-    public void testBabySteps() throws Exception {doTest(true);}
-    public void testBabySteps_ERR() throws Exception {doTest(true);}
-    public void testConstructors() throws Exception {doTest(true);}
-    public void testControlStructures() throws Exception {doTest(true);}
-    public void testDecomposers() throws Exception {doTest(true);}
-    public void testDecomposers_ERR() throws Exception {doTest(true);}
-    public void testEmptyFile() throws Exception {doTest(true);}
-    public void testEnums() throws Exception {doTest(true);}
-    public void testEOLsInComments() throws Exception {doTest(true);}
-    public void testEOLsOnRollback() throws Exception {doTest(true);}
-    public void testExtensions() throws Exception {doTest(true);}
-    public void testExtensions_ERR() throws Exception {doTest(true);}
-    public void testFileStart_ERR() throws Exception {doTest(true);}
-    public void testFunctionCalls() throws Exception {doTest(true);}
-    public void testFunctionLiterals() throws Exception {doTest(true);}
-    public void testFunctionLiterals_ERR() throws Exception {doTest(true);}
-    public void testFunctions() throws Exception {doTest(true);}
-    public void testFunctions_ERR() throws Exception {doTest(true);}
-    public void testFunctionTypes() throws Exception {doTest(true);}
-    public void testFunctionTypes_ERR() throws Exception {doTest(true);}
-    public void testImports() throws Exception {doTest(true);}
-    public void testImports_ERR() throws Exception {doTest(true);}
-    public void testImportSoftKW() throws Exception {doTest(true);}
-    public void testLocalDeclarations() throws Exception {doTest(true);}
-    public void testMatch() throws Exception {doTest(true);}
-    public void testMatch_ERR() throws Exception {doTest(true);}
-    public void testNamespaceBlock_ERR() throws Exception {doTest(true);}
-    public void testNamespaceBlock() throws Exception {doTest(true);}
-    public void testNewlinesInParentheses() throws Exception {doTest(true);}
-    public void testPrecedence() throws Exception {doTest(true);}
-    public void testProperties() throws Exception {doTest(true);}
-    public void testProperties_ERR() throws Exception {doTest(true);}
-    public void testSimpleClassMembers() throws Exception {doTest(true);}
-    public void testSimpleClassMembers_ERR() throws Exception {doTest(true);}
-    public void testSimpleExpressions() throws Exception {doTest(true);}
-    public void testSimpleModifiers() throws Exception {doTest(true);}
-    public void testSoftKeywords() throws Exception {doTest(true);}
-    public void testTupleTypes() throws Exception {doTest(true);}
-    public void testTupleTypes_ERR() throws Exception {doTest(true);}
-    public void testTypeAnnotations() throws Exception {doTest(true);}
-    public void testTypeConstraints() throws Exception {doTest(true);}
-    public void testTypeDef() throws Exception {doTest(true);}
-    public void testTypeDef_ERR() throws Exception {doTest(true);}
+    @Override
+    protected void runTest() throws Throwable {
+        doTest(true);
+    }
+
+    @Override
+    public String getName() {
+        return "test" + name;
+    }
+
+    public static TestSuite suite() {
+        TestSuite suite = new TestSuite();
+        suite.addTest(suiteForDirectory("/", false));
+        suite.addTest(suiteForDirectory("examples", true));
+        return suite;
+    }
+
+    private static TestSuite suiteForDirectory(final String dataPath, boolean recursive) {
+        TestSuite suite = new TestSuite(dataPath);
+        final String extension = ".jet";
+        FilenameFilter extensionFilter = new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.endsWith(extension);
+            }
+        };
+        File dir = new File(getTestDataDir() + "/psi/" + dataPath);
+        FileFilter dirFilter = new FileFilter() {
+            @Override
+            public boolean accept(File pathname) {
+                return pathname.isDirectory();
+            }
+        };
+        if (recursive) {
+            for (File subDir : dir.listFiles(dirFilter)) {
+                suite.addTest(suiteForDirectory(dataPath + "/" + subDir.getName(), recursive));
+            }
+        }
+        for (File file : dir.listFiles(extensionFilter)) {
+            String fileName = file.getName();
+            suite.addTest(new JetParsingTest(dataPath, fileName.substring(0, fileName.length() - extension.length())));
+        }
+        return suite;
+    }
+
 }
