@@ -42,6 +42,7 @@ public class JetParsingTest extends ParsingTestCase {
     public void testExtensions() throws Exception {doTest(true);}
     public void testExtensions_ERR() throws Exception {doTest(true);}
     public void testFileStart_ERR() throws Exception {doTest(true);}
+    public void testFunctionCalls() throws Exception {doTest(true);}
     public void testFunctionLiterals() throws Exception {doTest(true);}
     public void testFunctionLiterals_ERR() throws Exception {doTest(true);}
     public void testFunctions() throws Exception {doTest(true);}

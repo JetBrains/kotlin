@@ -67,7 +67,6 @@ public class JetExpressionParsing extends AbstractJetParsing {
         EQUALITY(EQEQ, EXCLEQ, EQEQEQ, EXCLEQEQEQ),
         CONJUNCTION(ANDAND),
         DISJUNCTION(OROR),
-        // TODO: RHS
         MATCH(MATCH_KEYWORD) {
             @Override
             public void parseRightHandSide(JetExpressionParsing parsing) {
@@ -185,10 +184,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
      */
     private void parsePostfixExpression() {
 //        System.out.println("post at "  + myBuilder.getTokenText());
-        // TODO: call with a closure outside parentheses
 
         PsiBuilder.Marker expression = mark();
-//        parseBinaryExpression(Precedence.MEMBER_ACCESS);
         parseAtomicExpression();
         while (true) {
             if (myBuilder.eolInLastWhitespace()) {
@@ -199,8 +196,11 @@ public class JetExpressionParsing extends AbstractJetParsing {
             } else if (atSet(Precedence.POSTFIX.getOperations())) {
                 advance(); // operation
                 expression.done(POSTFIX_EXPRESSION);
+            } else if (parseCallWithClosure()) {
+                expression.done(CALL_EXPRESSION);
             } else if (at(LPAR)) {
                 parseValueArgumentList();
+                parseCallWithClosure();
                 expression.done(CALL_EXPRESSION);
             } else if (at(LT)) {
                 // TODO: be (even) more clever
@@ -212,7 +212,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 });
                 if (gtPos >= 0) {
                     myJetParsing.parseTypeArgumentList();
-                    if (at(LPAR)) parseValueArgumentList();
+                    if (!myBuilder.eolInLastWhitespace() && at(LPAR)) parseValueArgumentList();
+                    parseCallWithClosure();
                     expression.done(CALL_EXPRESSION);
                 } else {
                     break;
@@ -241,6 +242,17 @@ public class JetExpressionParsing extends AbstractJetParsing {
             expression = expression.precede();
         }
         expression.drop();
+    }
+
+    /*
+     * expression functionLiteral?
+     */
+    protected boolean parseCallWithClosure() {
+        if (!myBuilder.eolInLastWhitespace() && at(LBRACE)) {
+            parseFunctionLiteral();
+            return true;
+        }
+        return false;
     }
 
     /*
@@ -384,7 +396,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
     /*
      * matchEntry
-     *   : attributes "case" pattern ("if" "(" expression ")")? "=>" expression SEMI? // TODO: Consider other options than "=>"
+     *   : attributes "case" pattern ("if" "(" expression ")")? "=>" expression SEMI?
      *   ;
      */
     private void parseMatchEntry() {
@@ -1125,4 +1137,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
         mark.done(type);
     }
 
+    @Override
+    protected JetParsing create(SemanticWhitespaceAwarePsiBuilder builder) {
+        return myJetParsing.create(builder);
+    }
 }

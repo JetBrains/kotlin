@@ -12,7 +12,7 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
 /**
  * @author abreslav
  */
-/*package*/ class AbstractJetParsing {
+/*package*/ abstract class AbstractJetParsing {
     protected final SemanticWhitespaceAwarePsiBuilder myBuilder;
 
     public AbstractJetParsing(SemanticWhitespaceAwarePsiBuilder builder) {
@@ -227,8 +227,10 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
         return myBuilder.eolInLastWhitespace() || eof();
     }
 
+    protected abstract JetParsing create(SemanticWhitespaceAwarePsiBuilder builder);
+
     protected JetParsing createTruncatedBuilder(int eofPosition) {
-        return new JetParsing(new TruncatedSemanticWhitespaceAwarePsiBuilder(myBuilder, eofPosition));
+        return create(new TruncatedSemanticWhitespaceAwarePsiBuilder(myBuilder, eofPosition));
     }
 
     protected class AtOffset implements TokenStreamPredicate {

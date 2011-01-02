@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 public class JetParser implements PsiParser {
     @NotNull
     public ASTNode parse(IElementType iElementType, PsiBuilder psiBuilder) {
-        new JetParsing(new SemanticWhitespaceAwarePsiBuilderImpl(psiBuilder)).parseFile();
+        JetParsing.createForTopLevel(new SemanticWhitespaceAwarePsiBuilderImpl(psiBuilder)).parseFile();
         return psiBuilder.getTreeBuilt();
     }
 }

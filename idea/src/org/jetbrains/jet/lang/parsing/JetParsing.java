@@ -40,11 +40,32 @@ public class JetParsing extends AbstractJetParsing {
     private static final TokenSet NAMESPACE_NAME_RECOVERY_SET = TokenSet.create(DOT, EOL_OR_SEMICOLON);
     /*package*/ static final TokenSet TYPE_REF_FIRST = TokenSet.create(LBRACKET, IDENTIFIER, LBRACE, LPAR);
 
-    private final JetExpressionParsing myExpressionParsing;
+    public static JetParsing createForTopLevel(SemanticWhitespaceAwarePsiBuilder builder) {
+        JetParsing jetParsing = new JetParsing(builder);
+        jetParsing.myExpressionParsing = new JetExpressionParsing(builder, jetParsing);
+        return jetParsing;
+    }
 
-    public JetParsing(SemanticWhitespaceAwarePsiBuilder builder) {
+    public static JetParsing createForByClause(final SemanticWhitespaceAwarePsiBuilder builder) {
+        JetParsing jetParsing = new JetParsing(builder);
+        jetParsing.myExpressionParsing = new JetExpressionParsing(builder, jetParsing) {
+            @Override
+            protected boolean parseCallWithClosure() {
+                return false;
+            }
+
+            @Override
+            protected JetParsing create(SemanticWhitespaceAwarePsiBuilder builder) {
+                return createForByClause(builder);
+            }
+        };
+        return jetParsing;
+    }
+
+    private JetExpressionParsing myExpressionParsing;
+
+    private JetParsing(SemanticWhitespaceAwarePsiBuilder builder) {
         super(builder);
-        this.myExpressionParsing = new JetExpressionParsing(builder, this);
     }
 
     /*
@@ -979,7 +1000,8 @@ public class JetParsing extends AbstractJetParsing {
 
         if (at(BY_KEYWORD)) {
             advance(); // BY_KEYWORD
-            myExpressionParsing.parseExpression();
+            // TODO: discuss: in nested expressions (including method bodies) one cannot use foo {bar} either, but this is required only for the top level
+            createForByClause(myBuilder).myExpressionParsing.parseExpression();
             delegator.done(DELEGATOR_BY);
         }
         else if (at(LPAR)) {
@@ -1420,6 +1442,11 @@ public class JetParsing extends AbstractJetParsing {
         parseFunctionParameterRest();
 
         parameter.done(VALUE_PARAMETER);
+    }
+
+    @Override
+    protected JetParsing create(SemanticWhitespaceAwarePsiBuilder builder) {
+        return createForTopLevel(builder);
     }
 
     /*package*/ static class EnumDetector implements Consumer<IElementType> {

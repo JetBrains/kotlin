@@ -1,0 +1,30 @@
+fun foo() {
+  f(a)
+  f<foo>(a)
+  f<foo>
+  (a)
+  f {s}
+  f
+  {s}
+  f {
+    s
+  }
+  f(a) {
+    s
+  }
+  f(a)
+  {
+    s
+  }
+  f<a>(a) {
+    s
+  }
+  f<a>(a)
+  {
+    s
+  }
+  f(foo<a, b>)
+  f(foo<a, b>(a))
+  f(foo<a, 1, b>(a))
+  f(foo<a, (1 + 2), b>(a))
+}

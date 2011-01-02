@@ -34,7 +34,7 @@ delegationSpecifier
   ;
 
 explicitDelegation
-  : userType "by" expression // TODO: Syntax is questionable
+  : userType "by" expression // internal this expression no foo {bar} is allowed // TODO: Syntax is questionable
   ;
 
 typeParameter
