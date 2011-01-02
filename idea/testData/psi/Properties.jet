@@ -70,3 +70,6 @@ fun foo() {
   get() = 5
   set(int : x) = 5
 }
+
+val IList<T>.lastIndex : Int
+  get() = this.size - 1

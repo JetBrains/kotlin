@@ -726,6 +726,8 @@ public class JetParsing extends AbstractJetParsing {
     }
 
     public JetNodeType parseProperty(boolean local) {
+        // TODO: how to write an extension ptoperty for a generic type? (val List<T>.i -- what is T?!)
+
         assert at(VAL_KEYWORD) || at(VAR_KEYWORD);
 
         advance(); // VAL_KEYWORD or VAR_KEYWORD
@@ -744,9 +746,9 @@ public class JetParsing extends AbstractJetParsing {
                     @Override
                     public boolean matching(boolean topLevel) {
                         if (topLevel && (at(EQ) || at(COLON))) return true;
-                        if (topLevel && lookahead(1) == IDENTIFIER) {
-                            IElementType lookahead2 = lookahead(2);
-                            return lookahead2 != LT && lookahead2 != DOT;
+                        if (topLevel && at(IDENTIFIER)) {
+                            IElementType lookahead = lookahead(1);
+                            return lookahead != LT && lookahead != DOT;
                         }
                         return false;
                     }
