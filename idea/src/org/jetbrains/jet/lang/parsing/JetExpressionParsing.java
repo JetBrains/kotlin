@@ -272,6 +272,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
      *   ;
      */
     private void parseAtomicExpression() {
+
+        // TODO: namespace.a.b.C
 //        System.out.println("atom at "  + myBuilder.getTokenText());
 
 
@@ -1127,6 +1129,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
     public void parseObjectLiteral() {
         assert at(OBJECT_KEYWORD);
 
+        PsiBuilder.Marker literal = mark();
+
         advance(); // OBJECT_KEYWORD
 
         if (at(LBRACE)) {
@@ -1138,6 +1142,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 myJetParsing.parseClassBody();
             }
         }
+        literal.done(OBJECT_LITERAL);
     }
 
     private void parseOneTokenExpression(JetNodeType type) {

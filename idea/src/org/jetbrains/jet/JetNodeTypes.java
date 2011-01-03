@@ -100,6 +100,7 @@ public interface JetNodeTypes {
     JetNodeType MATCH_ENTRY = new JetNodeType("MATCH_ENTRY");
     JetNodeType PATTERN = new JetNodeType("PATTERN");
     JetNodeType TUPLE_PATTERN = new JetNodeType("TUPLE_PATTERN");
+    JetNodeType OBJECT_LITERAL = new JetNodeType("OBJECT_LITERAL");
 
     IElementType NAMESPACE_NAME = new JetNodeType("NAMESPACE_NAME");
 }

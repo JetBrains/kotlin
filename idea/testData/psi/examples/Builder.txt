@@ -9,155 +9,156 @@ JetFile: Builder.jet
       PsiWhiteSpace(' ')
       CALL_EXPRESSION
         DOT_QIALIFIED_EXPRESSION
-          PsiElement(object)('object')
-          PsiWhiteSpace(' ')
-          DELEGATION_SPECIFIER_LIST
-            DELEGATION_SPECIFIER
-              DELEGATOR_SUPER_CALL
-                TYPE_REFERENCE
-                  USER_TYPE
-                    PsiElement(IDENTIFIER)('AntBuilder')
-                VALUE_ARGUMENT_LIST
-                  PsiElement(LPAR)('(')
-                  PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          CLASS_BODY
-            PsiElement(LBRACE)('{')
-            PsiWhiteSpace('\n\n  ')
-            PROPERTY
-              MODIFIER_LIST
-                PsiElement(lazy)('lazy')
-              PsiWhiteSpace(' ')
-              PsiElement(val)('val')
-              PsiWhiteSpace(' ')
-              PsiElement(IDENTIFIER)('groovy')
-              PsiWhiteSpace(' ')
-              PsiElement(EQ)('=')
-              PsiWhiteSpace(' ')
-              CALL_EXPRESSION
-                PsiElement(IDENTIFIER)('library')
+          OBJECT_LITERAL
+            PsiElement(object)('object')
+            PsiWhiteSpace(' ')
+            DELEGATION_SPECIFIER_LIST
+              DELEGATION_SPECIFIER
+                DELEGATOR_SUPER_CALL
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      PsiElement(IDENTIFIER)('AntBuilder')
+                  VALUE_ARGUMENT_LIST
+                    PsiElement(LPAR)('(')
+                    PsiElement(RPAR)(')')
+            PsiWhiteSpace(' ')
+            CLASS_BODY
+              PsiElement(LBRACE)('{')
+              PsiWhiteSpace('\n\n  ')
+              PROPERTY
+                MODIFIER_LIST
+                  PsiElement(lazy)('lazy')
                 PsiWhiteSpace(' ')
-                FUNCTION_LITERAL
-                  PsiElement(LBRACE)('{')
-                  PsiWhiteSpace('\n    ')
-                  BODY
-                    CALL_EXPRESSION
-                      PsiElement(IDENTIFIER)('classpath')
-                      VALUE_ARGUMENT_LIST
-                        PsiElement(LPAR)('(')
-                        VALUE_ARGUMENT
-                          STRING_CONSTANT
-                            PsiElement(STRING_LITERAL)('"$libs/groovy-..."')
-                        PsiElement(RPAR)(')')
-                  PsiWhiteSpace('\n  ')
-                  PsiElement(RBRACE)('}')
-            PsiWhiteSpace('\n\n  ')
-            PROPERTY
-              MODIFIER_LIST
-                PsiElement(lazy)('lazy')
-              PsiWhiteSpace(' ')
-              PsiElement(val)('val')
-              PsiWhiteSpace(' ')
-              PsiElement(IDENTIFIER)('gant')
-              PsiWhiteSpace(' ')
-              PsiElement(EQ)('=')
-              PsiWhiteSpace(' ')
-              CALL_EXPRESSION
-                PsiElement(IDENTIFIER)('library')
+                PsiElement(val)('val')
                 PsiWhiteSpace(' ')
-                FUNCTION_LITERAL
-                  PsiElement(LBRACE)('{')
-                  PsiWhiteSpace('\n    ')
-                  BODY
-                    CALL_EXPRESSION
-                      DOT_QIALIFIED_EXPRESSION
+                PsiElement(IDENTIFIER)('groovy')
+                PsiWhiteSpace(' ')
+                PsiElement(EQ)('=')
+                PsiWhiteSpace(' ')
+                CALL_EXPRESSION
+                  PsiElement(IDENTIFIER)('library')
+                  PsiWhiteSpace(' ')
+                  FUNCTION_LITERAL
+                    PsiElement(LBRACE)('{')
+                    PsiWhiteSpace('\n    ')
+                    BODY
+                      CALL_EXPRESSION
+                        PsiElement(IDENTIFIER)('classpath')
+                        VALUE_ARGUMENT_LIST
+                          PsiElement(LPAR)('(')
+                          VALUE_ARGUMENT
+                            STRING_CONSTANT
+                              PsiElement(STRING_LITERAL)('"$libs/groovy-..."')
+                          PsiElement(RPAR)(')')
+                    PsiWhiteSpace('\n  ')
+                    PsiElement(RBRACE)('}')
+              PsiWhiteSpace('\n\n  ')
+              PROPERTY
+                MODIFIER_LIST
+                  PsiElement(lazy)('lazy')
+                PsiWhiteSpace(' ')
+                PsiElement(val)('val')
+                PsiWhiteSpace(' ')
+                PsiElement(IDENTIFIER)('gant')
+                PsiWhiteSpace(' ')
+                PsiElement(EQ)('=')
+                PsiWhiteSpace(' ')
+                CALL_EXPRESSION
+                  PsiElement(IDENTIFIER)('library')
+                  PsiWhiteSpace(' ')
+                  FUNCTION_LITERAL
+                    PsiElement(LBRACE)('{')
+                    PsiWhiteSpace('\n    ')
+                    BODY
+                      CALL_EXPRESSION
                         DOT_QIALIFIED_EXPRESSION
-                          NEW
-                            PsiElement(new)('new')
-                            PsiWhiteSpace(' ')
-                            TYPE_REFERENCE
-                              USER_TYPE
-                                PsiElement(IDENTIFIER)('File')
-                            VALUE_ARGUMENT_LIST
-                              PsiElement(LPAR)('(')
-                              VALUE_ARGUMENT
-                                STRING_CONSTANT
-                                  PsiElement(STRING_LITERAL)('"$gantHome/lib"')
-                              PsiElement(RPAR)(')')
+                          DOT_QIALIFIED_EXPRESSION
+                            NEW
+                              PsiElement(new)('new')
+                              PsiWhiteSpace(' ')
+                              TYPE_REFERENCE
+                                USER_TYPE
+                                  PsiElement(IDENTIFIER)('File')
+                              VALUE_ARGUMENT_LIST
+                                PsiElement(LPAR)('(')
+                                VALUE_ARGUMENT
+                                  STRING_CONSTANT
+                                    PsiElement(STRING_LITERAL)('"$gantHome/lib"')
+                                PsiElement(RPAR)(')')
+                            PsiElement(DOT)('.')
+                            PsiElement(IDENTIFIER)('files')
                           PsiElement(DOT)('.')
-                          PsiElement(IDENTIFIER)('files')
-                        PsiElement(DOT)('.')
-                        PsiElement(IDENTIFIER)('each')
-                      PsiWhiteSpace(' ')
-                      FUNCTION_LITERAL
-                        PsiElement(LBRACE)('{')
-                        PsiWhiteSpace('\n      ')
-                        BODY
-                          CALL_EXPRESSION
-                            PsiElement(IDENTIFIER)('classpath')
-                            VALUE_ARGUMENT_LIST
-                              PsiElement(LPAR)('(')
-                              VALUE_ARGUMENT
-                                PsiElement(IDENTIFIER)('it')
-                              PsiElement(RPAR)(')')
-                        PsiWhiteSpace('\n    ')
-                        PsiElement(RBRACE)('}')
-                  PsiWhiteSpace('\n  ')
-                  PsiElement(RBRACE)('}')
-            PsiWhiteSpace('\n\n  ')
-            PROPERTY
-              MODIFIER_LIST
-                PsiElement(lazy)('lazy')
-              PsiWhiteSpace(' ')
-              PsiElement(val)('val')
-              PsiWhiteSpace(' ')
-              PsiElement(IDENTIFIER)('JPS')
-              PsiWhiteSpace(' ')
-              PsiElement(EQ)('=')
-              PsiWhiteSpace(' ')
-              CALL_EXPRESSION
-                PsiElement(IDENTIFIER)('module')
+                          PsiElement(IDENTIFIER)('each')
+                        PsiWhiteSpace(' ')
+                        FUNCTION_LITERAL
+                          PsiElement(LBRACE)('{')
+                          PsiWhiteSpace('\n      ')
+                          BODY
+                            CALL_EXPRESSION
+                              PsiElement(IDENTIFIER)('classpath')
+                              VALUE_ARGUMENT_LIST
+                                PsiElement(LPAR)('(')
+                                VALUE_ARGUMENT
+                                  PsiElement(IDENTIFIER)('it')
+                                PsiElement(RPAR)(')')
+                          PsiWhiteSpace('\n    ')
+                          PsiElement(RBRACE)('}')
+                    PsiWhiteSpace('\n  ')
+                    PsiElement(RBRACE)('}')
+              PsiWhiteSpace('\n\n  ')
+              PROPERTY
+                MODIFIER_LIST
+                  PsiElement(lazy)('lazy')
                 PsiWhiteSpace(' ')
-                FUNCTION_LITERAL
-                  PsiElement(LBRACE)('{')
-                  PsiWhiteSpace('\n    ')
-                  BODY
-                    BINARY_EXPRESSION
-                      PsiElement(IDENTIFIER)('targetLevel')
-                      PsiWhiteSpace(' ')
-                      PsiElement(EQ)('=')
-                      PsiWhiteSpace(' ')
-                      STRING_CONSTANT
-                        PsiElement(STRING_LITERAL)('"1.5"')
+                PsiElement(val)('val')
+                PsiWhiteSpace(' ')
+                PsiElement(IDENTIFIER)('JPS')
+                PsiWhiteSpace(' ')
+                PsiElement(EQ)('=')
+                PsiWhiteSpace(' ')
+                CALL_EXPRESSION
+                  PsiElement(IDENTIFIER)('module')
+                  PsiWhiteSpace(' ')
+                  FUNCTION_LITERAL
+                    PsiElement(LBRACE)('{')
                     PsiWhiteSpace('\n    ')
-                    CALL_EXPRESSION
-                      PsiElement(IDENTIFIER)('classpath')
-                      VALUE_ARGUMENT_LIST
-                        PsiElement(LPAR)('(')
-                        VALUE_ARGUMENT
-                          PsiElement(IDENTIFIER)('antLayout')
-                        PsiElement(COMMA)(',')
+                    BODY
+                      BINARY_EXPRESSION
+                        PsiElement(IDENTIFIER)('targetLevel')
                         PsiWhiteSpace(' ')
-                        VALUE_ARGUMENT
-                          PsiElement(IDENTIFIER)('gant')
-                        PsiElement(COMMA)(',')
+                        PsiElement(EQ)('=')
                         PsiWhiteSpace(' ')
-                        VALUE_ARGUMENT
-                          PsiElement(IDENTIFIER)('groovy')
-                        PsiElement(RPAR)(')')
-                    PsiWhiteSpace('\n    ')
-                    CALL_EXPRESSION
-                      PsiElement(IDENTIFIER)('src')
-                      VALUE_ARGUMENT_LIST
-                        PsiElement(LPAR)('(')
-                        VALUE_ARGUMENT
-                          STRING_CONSTANT
-                            PsiElement(STRING_LITERAL)('"$projectHome/antLayout/src"')
-                        PsiElement(RPAR)(')')
-                  PsiWhiteSpace('\n  ')
-                  PsiElement(RBRACE)('}')
-            PsiWhiteSpace('\n\n')
-            PsiElement(RBRACE)('}')
+                        STRING_CONSTANT
+                          PsiElement(STRING_LITERAL)('"1.5"')
+                      PsiWhiteSpace('\n    ')
+                      CALL_EXPRESSION
+                        PsiElement(IDENTIFIER)('classpath')
+                        VALUE_ARGUMENT_LIST
+                          PsiElement(LPAR)('(')
+                          VALUE_ARGUMENT
+                            PsiElement(IDENTIFIER)('antLayout')
+                          PsiElement(COMMA)(',')
+                          PsiWhiteSpace(' ')
+                          VALUE_ARGUMENT
+                            PsiElement(IDENTIFIER)('gant')
+                          PsiElement(COMMA)(',')
+                          PsiWhiteSpace(' ')
+                          VALUE_ARGUMENT
+                            PsiElement(IDENTIFIER)('groovy')
+                          PsiElement(RPAR)(')')
+                      PsiWhiteSpace('\n    ')
+                      CALL_EXPRESSION
+                        PsiElement(IDENTIFIER)('src')
+                        VALUE_ARGUMENT_LIST
+                          PsiElement(LPAR)('(')
+                          VALUE_ARGUMENT
+                            STRING_CONSTANT
+                              PsiElement(STRING_LITERAL)('"$projectHome/antLayout/src"')
+                          PsiElement(RPAR)(')')
+                    PsiWhiteSpace('\n  ')
+                    PsiElement(RBRACE)('}')
+              PsiWhiteSpace('\n\n')
+              PsiElement(RBRACE)('}')
           PsiElement(DOT)('.')
           PsiElement(IDENTIFIER)('build')
         VALUE_ARGUMENT_LIST
