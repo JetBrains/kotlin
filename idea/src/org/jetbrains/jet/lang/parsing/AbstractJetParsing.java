@@ -1,7 +1,6 @@
 package org.jetbrains.jet.lang.parsing;
 
 import com.intellij.lang.PsiBuilder;
-import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.jet.lexer.JetKeywordToken;
@@ -9,9 +8,7 @@ import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import static org.jetbrains.jet.lexer.JetTokens.*;
 
@@ -225,7 +222,7 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
      *
      * Returns -1 if no occurrence is found
      *
-     * TODO: Migrate to predictaes
+     * TODO: Migrate to predicates
      */
     protected int findLastBefore(TokenSet lookFor, TokenSet stopAt, boolean dontStopRightAfterOccurrence) {
         return matchTokenStreamPredicate(new LastBefore(new AtSet(lookFor), new AtSet(stopAt), dontStopRightAfterOccurrence));
