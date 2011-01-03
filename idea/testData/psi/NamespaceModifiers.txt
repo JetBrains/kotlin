@@ -1,0 +1,56 @@
+JetFile: NamespaceModifiers.jet
+  NAMESPACE
+    MODIFIER_LIST
+      PsiElement(public)('public')
+      PsiWhiteSpace(' ')
+      ATTRIBUTE_ANNOTATION
+        PsiElement(LBRACKET)('[')
+        ATTRIBUTE
+          USER_TYPE
+            PsiElement(IDENTIFIER)('a')
+        PsiElement(RBRACKET)(']')
+    PsiWhiteSpace(' ')
+    PsiElement(namespace)('namespace')
+    PsiWhiteSpace(' ')
+    NAMESPACE_NAME
+      PsiElement(IDENTIFIER)('name')
+    PsiElement(SEMICOLON)(';')
+    PsiWhiteSpace('\n\n')
+    NAMESPACE
+      MODIFIER_LIST
+        ATTRIBUTE_ANNOTATION
+          PsiElement(LBRACKET)('[')
+          ATTRIBUTE
+            USER_TYPE
+              PsiElement(IDENTIFIER)('a')
+          PsiElement(RBRACKET)(']')
+      PsiWhiteSpace(' ')
+      PsiElement(namespace)('namespace')
+      PsiWhiteSpace(' ')
+      NAMESPACE_NAME
+        PsiElement(IDENTIFIER)('a')
+      PsiWhiteSpace(' ')
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n  ')
+      NAMESPACE_BODY
+        PROPERTY
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('foo')
+        PsiWhiteSpace('\n\n  ')
+        NAMESPACE
+          MODIFIER_LIST
+            PsiElement(private)('private')
+          PsiWhiteSpace(' ')
+          PsiElement(namespace)('namespace')
+          PsiWhiteSpace(' ')
+          NAMESPACE_NAME
+            PsiElement(IDENTIFIER)('b')
+          PsiWhiteSpace(' ')
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace('\n\n  ')
+          NAMESPACE_BODY
+            <empty list>
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

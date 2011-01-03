@@ -337,7 +337,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             parseFunctionLiteral();
         }
         else if (!parseLiteralConstant()) {
-            // TODO
+            // TODO: betters recovery if FIRST(expression) did not match
             errorAndAdvance("Expecting an expression");
         }
     }

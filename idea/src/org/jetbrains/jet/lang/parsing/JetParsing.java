@@ -110,16 +110,21 @@ public class JetParsing extends AbstractJetParsing {
     private void parsePreamble() {
         /*
          * namespaceHeader
-         *   : "namespace" SimpleName{"."} SEMI?
+         *   : modifiers "namespace" SimpleName{"."} SEMI?
          *   ;
          */
+        PsiBuilder.Marker firstEntry = mark();
+        parseModifierList();
+
         if (at(NAMESPACE_KEYWORD)) {
-            // TODO: Modifiers
+            firstEntry.drop();
             advance(); // NAMESPACE_KEYWORD
 
             parseNamespaceName();
 
             consumeIf(SEMICOLON);
+        } else {
+            firstEntry.rollbackTo();
         }
 
         while (at(IMPORT_KEYWORD)) {
@@ -384,7 +389,6 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      */
     private JetNodeType parseNamespaceBlock() {
-        // TODO: Modifiers
         assert _at(NAMESPACE_KEYWORD);
         advance(); // NAMESPACE_KEYWORD
 

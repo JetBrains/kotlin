@@ -1,0 +1,9 @@
+public [a] namespace name;
+
+[a] namespace a {
+  val foo
+
+  private namespace b {
+
+  }
+}
