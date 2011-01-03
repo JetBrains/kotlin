@@ -5,36 +5,14 @@ import com.intellij.psi.tree.IElementType;
 /**
  * @author abreslav
  */
-public class TruncatedSemanticWhitespaceAwarePsiBuilder extends PsiBuilderAdapter implements SemanticWhitespaceAwarePsiBuilder {
+public class TruncatedSemanticWhitespaceAwarePsiBuilder extends SemanticWhitespaceAwarePsiBuilderAdapter {
 
-    private final SemanticWhitespaceAwarePsiBuilder myBuilder;
     private final int myEOFPosition;
 
 
-    public TruncatedSemanticWhitespaceAwarePsiBuilder(SemanticWhitespaceAwarePsiBuilder myBuilder, int eofPosition) {
-        super(myBuilder);
-        this.myBuilder = myBuilder;
+    public TruncatedSemanticWhitespaceAwarePsiBuilder(SemanticWhitespaceAwarePsiBuilder builder, int eofPosition) {
+        super(builder);
         this.myEOFPosition = eofPosition;
-    }
-
-    @Override
-    public boolean eolInLastWhitespace() {
-        return myBuilder.eolInLastWhitespace();
-    }
-
-    @Override
-    public void disableEols() {
-        myBuilder.disableEols();;
-    }
-
-    @Override
-    public void enableEols() {
-        myBuilder.enableEols();
-    }
-
-    @Override
-    public void restoreEolsState() {
-        myBuilder.restoreEolsState();
     }
 
     @Override

@@ -46,10 +46,14 @@ public class JetParsing extends AbstractJetParsing {
     }
 
     public static JetParsing createForByClause(final SemanticWhitespaceAwarePsiBuilder builder) {
-        JetParsing jetParsing = new JetParsing(builder);
-        jetParsing.myExpressionParsing = new JetExpressionParsing(builder, jetParsing) {
+        final SemanticWhitespaceAwarePsiBuilderForByClause builderForByClause = new SemanticWhitespaceAwarePsiBuilderForByClause(builder);
+        JetParsing jetParsing = new JetParsing(builderForByClause);
+        jetParsing.myExpressionParsing = new JetExpressionParsing(builderForByClause, jetParsing) {
             @Override
             protected boolean parseCallWithClosure() {
+                if (builderForByClause.getStackSize() > 0) {
+                    return  super.parseCallWithClosure();
+                }
                 return false;
             }
 
@@ -527,7 +531,7 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      */
     /*package*/ void parseClassBody() {
-        // TODO : initializer?
+        // TODO : anonymous initializer, like {...} in Java?
         assert at(LBRACE);
         PsiBuilder.Marker body = mark();
 
@@ -1003,7 +1007,6 @@ public class JetParsing extends AbstractJetParsing {
 
         if (at(BY_KEYWORD)) {
             advance(); // BY_KEYWORD
-            // TODO: discuss: in nested expressions (including method bodies) one cannot use foo {bar} either, but this is required only for the top level
             createForByClause(myBuilder).myExpressionParsing.parseExpression();
             delegator.done(DELEGATOR_BY);
         }
@@ -1336,7 +1339,7 @@ public class JetParsing extends AbstractJetParsing {
         int lastLPar = findLastBefore(TokenSet.create(LPAR), TokenSet.create(RBRACE, COLON), false);
         if (lastLPar >= 0 && lastLPar > myBuilder.getCurrentOffset()) {
             PsiBuilder.Marker receiverType = mark();
-            // TODO : -1 is a hack
+            // TODO : -1 is a hack?
             createTruncatedBuilder(lastLPar - 1).parseTypeRef();
             receiverType.done(RECEIVER_TYPE);
             advance(); // DOT
