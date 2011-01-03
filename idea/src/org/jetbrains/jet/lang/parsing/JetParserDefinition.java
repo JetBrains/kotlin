@@ -15,6 +15,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.JetNodeType;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lexer.JetLexer;
@@ -51,8 +52,7 @@ public class JetParserDefinition implements ParserDefinition {
 
     @NotNull
     public PsiElement createElement(ASTNode astNode) {
-        // TODO
-        return new CompositeNode(astNode);
+        return ((JetNodeType) astNode.getElementType()).createPsi(astNode);
     }
 
     public PsiFile createFile(FileViewProvider fileViewProvider) {
@@ -61,16 +61,5 @@ public class JetParserDefinition implements ParserDefinition {
 
     public SpaceRequirements spaceExistanceTypeBetweenTokens(ASTNode astNode, ASTNode astNode1) {
         return SpaceRequirements.MAY;
-    }
-
-    private static class CompositeNode extends ASTWrapperPsiElement {
-        private CompositeNode(@NotNull ASTNode node) {
-            super(node);
-        }
-
-        @Override
-        public String toString() {
-            return getNode().getElementType().toString();
-        }
     }
 }

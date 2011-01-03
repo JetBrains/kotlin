@@ -37,7 +37,7 @@ public class JetParsingTest extends ParsingTestCase {
     }
 
     private static String getHomeDirectory() {
-       return new File(PathManager.getResourceRoot(JetParsingTest.class, "/")).getParentFile().getParentFile().getParent();
+       return new File(PathManager.getResourceRoot(JetParsingTest.class, "/org/jetbrains/jet/parsing/JetParsingTest.class")).getParentFile().getParentFile().getParent();
     }
 
     @Override

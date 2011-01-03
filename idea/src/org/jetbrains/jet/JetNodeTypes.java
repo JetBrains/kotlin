@@ -6,11 +6,12 @@ package org.jetbrains.jet;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
 import org.jetbrains.jet.lang.JetLanguage;
+import org.jetbrains.jet.lang.psi.JetNamespace;
 
 public interface JetNodeTypes {
     IFileElementType JET_FILE = new IFileElementType(JetLanguage.INSTANCE);
 
-    JetNodeType NAMESPACE = new JetNodeType("NAMESPACE");
+    JetNodeType NAMESPACE = new JetNodeType("NAMESPACE", JetNamespace.class);
     JetNodeType CLASS = new JetNodeType("CLASS");
     JetNodeType PROPERTY = new JetNodeType("PROPERTY");
     JetNodeType FUN = new JetNodeType("FUN");
