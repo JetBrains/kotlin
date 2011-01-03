@@ -8,6 +8,8 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 
 public interface JetTokens {
+    // TODO: $identifier as a separate token
+    // TODO: `namespace` to escape Java identifiers that are keywords in Jet
     JetToken EOF   = new JetToken("EOF");
 
     JetToken BLOCK_COMMENT = new JetToken("BLOCK_COMMENT");
@@ -98,13 +100,14 @@ public interface JetTokens {
     JetToken PERCEQ      = new JetToken("PERCEQ");
     JetToken PLUSEQ      = new JetToken("PLUSEQ");
     JetToken MINUSEQ     = new JetToken("MINUSEQ");
-    JetToken NOT_IN      = new JetToken("NOT_IN");
-    JetToken NOT_IS      = new JetToken("NOT_IS");
+    JetToken NOT_IN      = JetKeywordToken.keyword("NOT_IN");
+    JetToken NOT_IS      = JetKeywordToken.keyword("NOT_IS");
     JetToken HASH        = new JetToken("HASH");
 
     JetToken COMMA       = new JetToken("COMMA");
 
     JetToken EOL_OR_SEMICOLON   = new JetToken("EOL_OR_SEMICOLON");
+
     JetKeywordToken WRAPS_KEYWORD     = JetKeywordToken.softKeyword("wraps");
     JetKeywordToken IMPORT_KEYWORD    = JetKeywordToken.softKeyword("import");
     JetKeywordToken WHERE_KEYWORD     = JetKeywordToken.softKeyword("where");
@@ -122,24 +125,24 @@ public interface JetTokens {
     JetKeywordToken PUBLIC_KEYWORD    = JetKeywordToken.softKeyword("public");
     JetKeywordToken INTERNAL_KEYWORD  = JetKeywordToken.softKeyword("internal");
     JetKeywordToken PROTECTED_KEYWORD = JetKeywordToken.softKeyword("protected");
+    JetKeywordToken CATCH_KEYWORD     = JetKeywordToken.softKeyword("catch");
     JetKeywordToken OUT_KEYWORD       = JetKeywordToken.softKeyword("out");
     JetKeywordToken REF_KEYWORD       = JetKeywordToken.softKeyword("ref");
-    JetKeywordToken CATCH_KEYWORD       = JetKeywordToken.softKeyword("catch");
 
-    JetKeywordToken FINALLY_KEYWORD       = JetKeywordToken.softKeyword("finally");
+    JetKeywordToken FINALLY_KEYWORD   = JetKeywordToken.softKeyword("finally");
 
     TokenSet KEYWORDS = TokenSet.create(NAMESPACE_KEYWORD, AS_KEYWORD, TYPE_KEYWORD, CLASS_KEYWORD,
             THIS_KEYWORD, VAL_KEYWORD, VAR_KEYWORD, FUN_KEYWORD, DECOMPOSER_KEYWORD, EXTENSION_KEYWORD, FOR_KEYWORD,
             NULL_KEYWORD, TYPEOF_KEYWORD, NEW_KEYWORD, TRUE_KEYWORD, FALSE_KEYWORD, IS_KEYWORD,
             IN_KEYWORD, THROW_KEYWORD, RETURN_KEYWORD, BREAK_KEYWORD, CONTINUE_KEYWORD, OBJECT_KEYWORD, IF_KEYWORD,
-            ELSE_KEYWORD, WHILE_KEYWORD, DO_KEYWORD, MATCH_KEYWORD, REF_KEYWORD, OUT_KEYWORD, TRY_KEYWORD, CASE_KEYWORD,
+            ELSE_KEYWORD, WHILE_KEYWORD, DO_KEYWORD, MATCH_KEYWORD, TRY_KEYWORD, CASE_KEYWORD,
             NOT_IN, NOT_IS
     );
 
     TokenSet SOFT_KEYWORDS = TokenSet.create(WRAPS_KEYWORD, IMPORT_KEYWORD, WHERE_KEYWORD, BY_KEYWORD, LAZY_KEYWORD, GET_KEYWORD,
             SET_KEYWORD, ABSTRACT_KEYWORD, VIRTUAL_KEYWORD, ENUM_KEYWORD, OPEN_KEYWORD, ATTRIBUTE_KEYWORD,
             OVERRIDE_KEYWORD, PRIVATE_KEYWORD, PUBLIC_KEYWORD, INTERNAL_KEYWORD, PROTECTED_KEYWORD,
-            CATCH_KEYWORD, FINALLY_KEYWORD
+            CATCH_KEYWORD, FINALLY_KEYWORD, REF_KEYWORD, OUT_KEYWORD
     );
 
     TokenSet MODIFIER_KEYWORDS = TokenSet.create(LAZY_KEYWORD, ABSTRACT_KEYWORD, VIRTUAL_KEYWORD, ENUM_KEYWORD,

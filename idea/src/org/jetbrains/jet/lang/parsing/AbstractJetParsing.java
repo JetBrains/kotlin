@@ -25,6 +25,13 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
         }
     }
 
+    static {
+        for (IElementType token : JetTokens.KEYWORDS.getTypes()) {
+            assert token instanceof JetKeywordToken : "Must be JetKeywordToken: " + token;
+            assert !((JetKeywordToken) token).isSoft() : "Must not be soft: " + token;
+        }
+    }
+
     protected final SemanticWhitespaceAwarePsiBuilder myBuilder;
 
     public AbstractJetParsing(SemanticWhitespaceAwarePsiBuilder builder) {
@@ -97,7 +104,10 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
         return myBuilder.getTokenType();
     }
 
-    protected boolean at(final IElementType expectation) {
+    /**
+     * Side-effect-free version of at()
+     */
+    protected boolean _at(IElementType expectation) {
         IElementType token = tt();
         if (token == expectation) return true;
         if (expectation == EOL_OR_SEMICOLON) {
@@ -105,6 +115,12 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
             if (token == SEMICOLON) return true;
             if (myBuilder.newlineBeforeCurrentToken()) return true;
         }
+        return false;
+    }
+
+    protected boolean at(final IElementType expectation) {
+        if (_at(expectation)) return true;
+        IElementType token = tt();
         if (token == IDENTIFIER && expectation instanceof JetKeywordToken) {
             JetKeywordToken expectedKeyword = (JetKeywordToken) expectation;
             if (expectedKeyword.isSoft() && expectedKeyword.getValue().equals(myBuilder.getTokenText())) {
@@ -122,11 +138,17 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
         return false;
     }
 
-    protected boolean atSet(IElementType... tokens) {
-        return atSet(TokenSet.create(tokens));
+    /**
+     * Side-effect-free version of atSet()
+     */
+    protected boolean _atSet(IElementType... tokens) {
+        return _atSet(TokenSet.create(tokens));
     }
 
-    protected boolean atSet(final TokenSet set) {
+    /**
+     * Side-effect-free version of atSet()
+     */
+    protected boolean _atSet(final TokenSet set) {
         IElementType token = tt();
         if (set.contains(token)) return true;
         if (set.contains(EOL_OR_SEMICOLON)) {
@@ -134,11 +156,28 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
             if (token == SEMICOLON) return true;
             if (myBuilder.newlineBeforeCurrentToken()) return true;
         }
+        return false;
+    }
+
+    protected boolean atSet(IElementType... tokens) {
+        return atSet(TokenSet.create(tokens));
+    }
+
+    protected boolean atSet(final TokenSet set) {
+        if (_atSet(set)) return true;
+        IElementType token = tt();
         if (token == IDENTIFIER) {
             JetKeywordToken keywordToken = SOFT_KEYWORD_TEXTS.get(myBuilder.getTokenText());
             if (keywordToken != null && set.contains(keywordToken)) {
                 myBuilder.remapCurrentToken(keywordToken);
                 return true;
+            }
+        } else {
+            // We know at this point that <code>set</code> does not contain <code>token</code>
+            if (set.contains(IDENTIFIER) && token instanceof JetKeywordToken) {
+                if (((JetKeywordToken) token).isSoft()) {
+                    myBuilder.remapCurrentToken(IDENTIFIER);
+                }
             }
         }
         return false;

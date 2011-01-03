@@ -24,7 +24,6 @@ memberModifier
   : "override"
   : "virtual"
   : "abstract"
-  : // TODO: inline
   ;
 
 accessModifier

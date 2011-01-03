@@ -114,6 +114,7 @@ public class JetParsing extends AbstractJetParsing {
          *   ;
          */
         if (at(NAMESPACE_KEYWORD)) {
+            // TODO: Modifiers
             advance(); // NAMESPACE_KEYWORD
 
             parseNamespaceName();
@@ -143,7 +144,7 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      */
     private void parseImportDirective() {
-        assert at(IMPORT_KEYWORD);
+        assert _at(IMPORT_KEYWORD);
         PsiBuilder.Marker importDirective = mark();
         advance(); // IMPORT_KEYWORD
 
@@ -238,7 +239,7 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      */
     public JetNodeType parseDecomposer() {
-        assert at(DECOMPOSER_KEYWORD);
+        assert _at(DECOMPOSER_KEYWORD);
         advance(); // DECOMPOSER_KEYWORD
 
         boolean extenstion;
@@ -337,7 +338,7 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      */
     private void parseAttributeAnnotation() {
-        assert at(LBRACKET);
+        assert _at(LBRACKET);
         PsiBuilder.Marker annotation = mark();
 
         myBuilder.disableNewlines();
@@ -383,7 +384,8 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      */
     private JetNodeType parseNamespaceBlock() {
-        assert at(NAMESPACE_KEYWORD);
+        // TODO: Modifiers
+        assert _at(NAMESPACE_KEYWORD);
         advance(); // NAMESPACE_KEYWORD
 
         if (at(LBRACE)) {
@@ -422,7 +424,7 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      */
     public JetNodeType parseClass(boolean enumClass) {
-        assert at(CLASS_KEYWORD);
+        assert _at(CLASS_KEYWORD);
         advance(); // CLASS_KEYWORD
 
         expect(IDENTIFIER, "Class name expected", CLASS_NAME_RECOVERY_SET);
@@ -501,7 +503,7 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      */
     private void parseEnumEntry() {
-        assert at(IDENTIFIER);
+        assert _at(IDENTIFIER);
 
         advance(); // IDENTIFIER
 
@@ -532,7 +534,7 @@ public class JetParsing extends AbstractJetParsing {
      */
     /*package*/ void parseClassBody() {
         // TODO : anonymous initializer, like {...} in Java?
-        assert at(LBRACE);
+        assert _at(LBRACE);
         PsiBuilder.Marker body = mark();
 
         myBuilder.enableNewlines();
@@ -617,7 +619,7 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      */
     private JetNodeType parseConstructor() {
-        assert at(THIS_KEYWORD);
+        assert _at(THIS_KEYWORD);
 
         advance(); // THIS_KEYWORD
 
@@ -687,7 +689,7 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      */
     private JetNodeType parseClassObject() {
-        assert at(CLASS_KEYWORD) && lookahead(1) == OBJECT_KEYWORD;
+        assert _at(CLASS_KEYWORD) && lookahead(1) == OBJECT_KEYWORD;
 
         advance(); // CLASS_KEYWORD
 
@@ -703,7 +705,7 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      */
     public JetNodeType parseTypeDef() {
-        assert at(TYPE_KEYWORD);
+        assert _at(TYPE_KEYWORD);
 
         advance(); // TYPE_KEYWORD
 
@@ -733,13 +735,13 @@ public class JetParsing extends AbstractJetParsing {
     public JetNodeType parseProperty(boolean local) {
         // TODO: how to write an extension ptoperty for a generic type? (val List<T>.i -- what is T?!)
 
-        assert at(VAL_KEYWORD) || at(VAR_KEYWORD);
+        assert _at(VAL_KEYWORD) || _at(VAR_KEYWORD);
 
         advance(); // VAL_KEYWORD or VAR_KEYWORD
 
         TokenSet propertyNameFollow = TokenSet.create(COLON, EQ, LBRACE, SEMICOLON);
 
-        // TODO: constant
+        // TODO: extract constant
         int lastDot = matchTokenStreamPredicate(new FirstBefore(
                 new TokenStreamPredicate() {
                     @Override
@@ -861,7 +863,7 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      */
     public JetNodeType parseFunction() {
-        assert at(FUN_KEYWORD);
+        assert _at(FUN_KEYWORD);
 
         advance(); // FUN_KEYWORD
 
@@ -945,7 +947,7 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      */
     public JetNodeType parseExtension() {
-        assert at(EXTENSION_KEYWORD);
+        assert _at(EXTENSION_KEYWORD);
 
         advance(); // EXTENSION_KEYWORD
 
@@ -1035,7 +1037,7 @@ public class JetParsing extends AbstractJetParsing {
      * ("(" primaryConstructorParameter{","} ")")
      */
     private void parsePrimaryConstructorParameterList() {
-        assert at(LPAR);
+        assert _at(LPAR);
         PsiBuilder.Marker cons = mark();
 
         myBuilder.disableNewlines();
@@ -1132,7 +1134,7 @@ public class JetParsing extends AbstractJetParsing {
      * typeConstraint{","}
      */
     private void parseTypeConstraintList() {
-        assert at(WHERE_KEYWORD);
+        assert _at(WHERE_KEYWORD);
 
         advance(); // WHERE_KEYWORD
 
@@ -1289,7 +1291,7 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      */
     private void parseTupleType() {
-        assert at(LPAR);
+        assert _at(LPAR);
 
         PsiBuilder.Marker tuple = mark();
 
@@ -1333,7 +1335,7 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      */
     private void parseFunctionType() {
-        assert at(LBRACE);
+        assert _at(LBRACE);
 
         PsiBuilder.Marker functionType = mark();
 

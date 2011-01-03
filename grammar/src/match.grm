@@ -1,5 +1,5 @@
 matchEntry
-  : attributes "case" pattern ("if" "(" expression ")")? "=>" expression SEMI? // TODO: Consider other options than "=>"
+  : attributes "case" pattern ("if" "(" expression ")")? "=>" expression SEMI?
   ;
 
 pattern

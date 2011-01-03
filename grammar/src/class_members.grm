@@ -23,7 +23,7 @@ class Example(a : Foo, i : Int) : Bar(i), Some {
   var y : Double = 7.0d
   var z : String = "SDfsdf" {
     get() = $z + "sdfsd"
-    private set(s : String) { $z = s } // TODO: allow to omit the type here?
+    private set(s : String) { $z = s }
   }
 }
 */

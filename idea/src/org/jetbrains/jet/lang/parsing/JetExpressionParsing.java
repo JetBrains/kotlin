@@ -275,7 +275,6 @@ public class JetExpressionParsing extends AbstractJetParsing {
     private void parseAtomicExpression() {
 //        System.out.println("atom at "  + myBuilder.getTokenText());
 
-
         if (at(LPAR)) {
             parseParenthesizedExpressionOrTuple();
         }
@@ -464,7 +463,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      *   ;
      */
     private void parseBindingPattern() {
-        assert at(QUEST);
+        assert _at(QUEST);
 
         advance(); // QUEST
 
@@ -483,7 +482,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      *   ;
      */
     private void parseTuplePattern() {
-        assert at(LPAR);
+        assert _at(LPAR);
 
         PsiBuilder.Marker pattern = mark();
         advance(); // LPAR
@@ -515,7 +514,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      *   ;
      */
     private void parseArrayAccess() {
-        assert at(LBRACKET);
+        assert _at(LBRACKET);
 
         PsiBuilder.Marker indices = mark();
 
@@ -543,9 +542,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
      * SimpleName
      */
     private void parseSimpleName() {
-        assert at(IDENTIFIER);
 //        PsiBuilder.Marker simpleName = mark();
-        advance(); // IDENTIFIER
+        expect(IDENTIFIER, "Expecting an identifier [Interal error]");
 //        simpleName.done(SIMPLE_NAME);
     }
 
@@ -576,7 +574,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      *   ;
      */
     private void parseFunctionLiteral() {
-        assert at(LBRACE);
+        assert _at(LBRACE);
 
         PsiBuilder.Marker literal = mark();
 
@@ -598,7 +596,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 PsiBuilder.Marker receiverType = mark();
                 createTruncatedBuilder(lastDot).parseTypeRef();
                 receiverType.done(RECEIVER_TYPE);
-                assert at(DOT);
+                assert _at(DOT);
                 advance(); // DOT;
 
                 if (!at(LPAR)) {
@@ -756,7 +754,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      *   ;
      */
     private void parseDoWhile() {
-        assert at(DO_KEYWORD);
+        assert _at(DO_KEYWORD);
 
         PsiBuilder.Marker loop = mark();
 
@@ -779,7 +777,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      *   ;
      */
     private void parseWhile() {
-        assert at(WHILE_KEYWORD);
+        assert _at(WHILE_KEYWORD);
 
         PsiBuilder.Marker loop = mark();
 
@@ -798,7 +796,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      *   ;
      */
     private void parseFor() {
-        assert at(FOR_KEYWORD);
+        assert _at(FOR_KEYWORD);
 
         PsiBuilder.Marker loop = mark();
 
@@ -853,7 +851,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      *   ;
      */
     private void parseTry() {
-        assert at(TRY_KEYWORD);
+        assert _at(TRY_KEYWORD);
 
         PsiBuilder.Marker tryExpression = mark();
 
@@ -890,7 +888,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      *   ;
      */
     private void parseIf() {
-        assert at(IF_KEYWORD);
+        assert _at(IF_KEYWORD);
 
         PsiBuilder.Marker marker = mark();
 
@@ -938,7 +936,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      * : "break" SimpleName
      */
     private void parseJump(JetNodeType type) {
-        assert at(BREAK_KEYWORD) || at(CONTINUE_KEYWORD);
+        assert _at(BREAK_KEYWORD) || _at(CONTINUE_KEYWORD);
 
         PsiBuilder.Marker marker = mark();
 
@@ -953,7 +951,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      * "return" expression?
      */
     private void parseReturn() {
-        assert at(RETURN_KEYWORD);
+        assert _at(RETURN_KEYWORD);
 
         PsiBuilder.Marker returnExpression = mark();
 
@@ -968,7 +966,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      * : "throw" expression
      */
     private void parseThrow() {
-        assert at(THROW_KEYWORD);
+        assert _at(THROW_KEYWORD);
 
         PsiBuilder.Marker marker = mark();
 
@@ -986,7 +984,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      *   : userType valueArguments?
      */
     private void parseNew() {
-        assert at(NEW_KEYWORD);
+        assert _at(NEW_KEYWORD);
 
         PsiBuilder.Marker creation = mark();
         advance(); // NEW_KEYWORD
@@ -1003,7 +1001,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      * "typeof" "(" expression ")"
      */
     private void parseTypeOf() {
-        assert at(TYPEOF_KEYWORD);
+        assert _at(TYPEOF_KEYWORD);
 
         PsiBuilder.Marker typeof = mark();
         advance(); // TYPEOF_KEYWORD
@@ -1025,7 +1023,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      * TODO: duplication with valueArguments (but for the error messages)
      */
     private void parseParenthesizedExpressionOrTuple() {
-        assert at(LPAR);
+        assert _at(LPAR);
 
         PsiBuilder.Marker mark = mark();
 
@@ -1055,7 +1053,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      * "this" ("<" type ">")?
      */
     private void parseThisExpression() {
-        assert at(THIS_KEYWORD);
+        assert _at(THIS_KEYWORD);
         advance(); // THIS_KEYWORD
         if (at(LT)) {
             // This may be "this < foo" or "this<foo>", thus the backtracking
@@ -1129,7 +1127,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      *   ;
      */
     public void parseObjectLiteral() {
-        assert at(OBJECT_KEYWORD);
+        assert _at(OBJECT_KEYWORD);
 
         PsiBuilder.Marker literal = mark();
 

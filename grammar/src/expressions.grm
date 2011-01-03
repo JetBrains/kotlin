@@ -139,7 +139,7 @@ equalityOperation
 
 assignmentOperator
   : "="
-  : "+=" : "-=" : "*=" : "/=" : "%="// TODO: |=, %= and <<= make more sense than |, % or << alone, and so for others
+  : "+=" : "-=" : "*=" : "/=" : "%="
   ;
 
 unOpExpression
