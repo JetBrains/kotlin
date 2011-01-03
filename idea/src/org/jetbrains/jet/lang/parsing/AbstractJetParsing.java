@@ -6,6 +6,12 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetToken;
+import org.jetbrains.jet.lexer.JetTokens;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import static org.jetbrains.jet.lexer.JetTokens.*;
 
@@ -13,6 +19,15 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
  * @author abreslav
  */
 /*package*/ abstract class AbstractJetParsing {
+    private static final Set<String> SOFT_KEYWORD_TEXTS = new HashSet<String>();
+    static {
+        for (IElementType type : JetTokens.SOFT_KEYWORDS.getTypes()) {
+            JetKeywordToken keywordToken = (JetKeywordToken) type;
+            assert keywordToken.isSoft();
+            SOFT_KEYWORD_TEXTS.add(keywordToken.getValue());
+        }
+    }
+
     protected final SemanticWhitespaceAwarePsiBuilder myBuilder;
 
     public AbstractJetParsing(SemanticWhitespaceAwarePsiBuilder builder) {
@@ -77,14 +92,12 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
     }
 
     protected void advance() {
+        // TODO: how to report errors on bad characters? (Other than highlighting)
         myBuilder.advanceLexer();
     }
 
     protected IElementType tt() {
-        IElementType tokenType = myBuilder.getTokenType();
-        // TODO: review
-        if (tokenType == TokenType.BAD_CHARACTER) errorAndAdvance("Bad character");
-        return tokenType;
+        return myBuilder.getTokenType();
     }
 
     protected boolean at(final IElementType expectation) {
@@ -124,7 +137,7 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
             if (token == SEMICOLON) return true;
             if (myBuilder.eolInLastWhitespace()) return true;
         }
-        if (token == IDENTIFIER) {
+        if (token == IDENTIFIER && SOFT_KEYWORD_TEXTS.contains(myBuilder.getTokenText())) {
             // TODO : this loop seems to be a bad solution
             for (IElementType type : set.getTypes()) {
                 if (type instanceof JetKeywordToken) {

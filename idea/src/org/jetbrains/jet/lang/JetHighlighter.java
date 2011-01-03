@@ -8,6 +8,7 @@ import com.intellij.openapi.editor.HighlighterColors;
 import com.intellij.openapi.editor.SyntaxHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
+import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lexer.JetLexer;
@@ -20,7 +21,7 @@ public class JetHighlighter extends SyntaxHighlighterBase {
     private static final Map<IElementType, TextAttributesKey> keys1;
     private static final Map<IElementType, TextAttributesKey> keys2;
 
-    static final TextAttributesKey JET_KEYWORD = TextAttributesKey.createTextAttributesKey(
+    private static final TextAttributesKey JET_KEYWORD = TextAttributesKey.createTextAttributesKey(
                                                   "JET.KEYWORD",
                                                   SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()
                                                  );
@@ -30,30 +31,25 @@ public class JetHighlighter extends SyntaxHighlighterBase {
                                                   SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()
                                                  );
 
-    static final TextAttributesKey JET_NUMBER = TextAttributesKey.createTextAttributesKey(
+    private static final TextAttributesKey JET_NUMBER = TextAttributesKey.createTextAttributesKey(
                                                  "JET.NUMBER",
                                                  SyntaxHighlighterColors.NUMBER.getDefaultAttributes()
                                                 );
 
-    static final TextAttributesKey JET_STRING = TextAttributesKey.createTextAttributesKey(
+    private static final TextAttributesKey JET_STRING = TextAttributesKey.createTextAttributesKey(
                                                  "JET.STRING",
                                                  SyntaxHighlighterColors.STRING.getDefaultAttributes()
                                                 );
 
-    static final TextAttributesKey JET_COMMENT = TextAttributesKey.createTextAttributesKey(
+    private static final TextAttributesKey JET_COMMENT = TextAttributesKey.createTextAttributesKey(
                                                        "JET.COMMENT",
                                                        SyntaxHighlighterColors.LINE_COMMENT.getDefaultAttributes()
                                                      );
 
-    static final TextAttributesKey JET_BAD_CHARACTER = TextAttributesKey.createTextAttributesKey(
+    private static final TextAttributesKey JET_BAD_CHARACTER = TextAttributesKey.createTextAttributesKey(
                                                     "JET.BADCHARACTER",
                                                     HighlighterColors.BAD_CHARACTER.getDefaultAttributes()
                                                   );
-
-
-
-
-
 
     @NotNull
     public Lexer getHighlightingLexer() {
@@ -83,5 +79,7 @@ public class JetHighlighter extends SyntaxHighlighterBase {
         keys1.put(JetTokens.EOL_COMMENT, JET_COMMENT);
         keys1.put(JetTokens.BLOCK_COMMENT, JET_COMMENT);
         keys1.put(JetTokens.DOC_COMMENT, JET_COMMENT);
+
+        keys1.put(TokenType.BAD_CHARACTER, JET_BAD_CHARACTER);
     }
 }
