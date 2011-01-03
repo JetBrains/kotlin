@@ -58,6 +58,7 @@ public interface JetTokens {
 
 
     JetToken IDENTIFIER = new JetToken("IDENTIFIER");
+    JetToken FIELD_IDENTIFIER = new JetToken("FIELD_IDENTIFIER");
 
     JetToken LBRACKET    = new JetToken("LBRACKET");
     JetToken RBRACKET    = new JetToken("RBRACKET");

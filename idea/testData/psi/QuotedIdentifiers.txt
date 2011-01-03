@@ -1,0 +1,30 @@
+JetFile: QuotedIdentifiers.jet
+  NAMESPACE
+    FUN
+      MODIFIER_LIST
+        ATTRIBUTE_ANNOTATION
+          PsiElement(LBRACKET)('[')
+          ATTRIBUTE
+            USER_TYPE
+              PsiElement(IDENTIFIER)('`return`')
+          PsiElement(RBRACKET)(']')
+      PsiWhiteSpace(' ')
+      PsiElement(fun)('fun')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('`namespace`')
+      TYPE_PARAMETER_LIST
+        <empty list>
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      BLOCK
+        PsiElement(LBRACE)('{')
+        PsiWhiteSpace('\n  ')
+        CALL_EXPRESSION
+          PsiElement(IDENTIFIER)('`class`')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+        PsiWhiteSpace('\n')
+        PsiElement(RBRACE)('}')

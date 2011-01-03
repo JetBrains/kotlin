@@ -324,6 +324,9 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 VAR_KEYWORD, TYPE_KEYWORD, DECOMPOSER_KEYWORD)) {
             parseLocalDeclaration();
         }
+        else if (at(FIELD_IDENTIFIER)) {
+            parseOneTokenExpression(FIELD_REFERENCE);
+        }
         else if (at(IDENTIFIER)) {
             if (JetParsing.MODIFIER_KEYWORD_MAP.containsKey(myBuilder.getTokenText())) {
                 if (!parseLocalDeclaration()) {
@@ -337,7 +340,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             parseFunctionLiteral();
         }
         else if (!parseLiteralConstant()) {
-            // TODO: betters recovery if FIRST(expression) did not match
+            // TODO: better recovery if FIRST(expression) did not match
             errorAndAdvance("Expecting an expression");
         }
     }

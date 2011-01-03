@@ -31,6 +31,12 @@ public class JetHighlighter extends SyntaxHighlighterBase {
                                                   SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()
                                                  );
 
+    public static final TextAttributesKey JET_FIELD_IDENTIFIER = TextAttributesKey.createTextAttributesKey(
+                                                  "JET.FIELD.IDENTIFIER",
+// TODO: proper attributes
+                                                  SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()
+                                                 );
+
     private static final TextAttributesKey JET_NUMBER = TextAttributesKey.createTextAttributesKey(
                                                  "JET.NUMBER",
                                                  SyntaxHighlighterColors.NUMBER.getDefaultAttributes()
@@ -68,6 +74,7 @@ public class JetHighlighter extends SyntaxHighlighterBase {
 
         fillMap(keys1, JetTokens.KEYWORDS, JET_KEYWORD);
 
+        keys1.put(JetTokens.FIELD_IDENTIFIER, JET_FIELD_IDENTIFIER);
         keys1.put(JetTokens.INTEGER_LITERAL, JET_NUMBER);
         keys1.put(JetTokens.LONG_LITERAL, JET_NUMBER);
         keys1.put(JetTokens.FLOAT_LITERAL, JET_NUMBER);

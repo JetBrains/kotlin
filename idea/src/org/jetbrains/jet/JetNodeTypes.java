@@ -110,6 +110,7 @@ public interface JetNodeTypes {
     JetNodeType TUPLE_PATTERN                       = new JetNodeType("TUPLE_PATTERN");
     JetNodeType OBJECT_LITERAL                      = new JetNodeType("OBJECT_LITERAL");
     JetNodeType ROOT_NAMESPACE                      = new JetNodeType("ROOT_NAMESPACE");
+    JetNodeType FIELD_REFERENCE                     = new JetNodeType("FIELD_REFERENCE");
 
     IElementType NAMESPACE_NAME = new JetNodeType("NAMESPACE_NAME");
 }

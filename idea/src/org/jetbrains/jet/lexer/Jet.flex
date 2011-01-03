@@ -21,7 +21,12 @@ DIGIT=[0-9]
 HEX_DIGIT=[0-9A-Fa-f]
 WHITE_SPACE_CHAR=[\ \n\t\f]
 
-IDENTIFIER=[:jletter:] [:jletterdigit:]*
+// TODO: prohibit '$' in identifiers?
+PLAIN_IDENTIFIER=[:jletter:] [:jletterdigit:]*
+// TODO: this one MUST allow everything accepted by the runtime
+ESCAPED_IDENTIFIER = `{PLAIN_IDENTIFIER}`
+IDENTIFIER = {PLAIN_IDENTIFIER}|{ESCAPED_IDENTIFIER}
+FIELD_IDENTIFIER = \${IDENTIFIER}
 
 BLOCK_COMMENT=("/*"[^"*"]{COMMENT_TAIL})|"/*"
 DOC_COMMENT="/*""*"+("/"|([^"/""*"]{COMMENT_TAIL}))?
@@ -111,6 +116,7 @@ RAW_STRING_LITERAL = {THREE_QUO} {QUO_STRING_CHAR}* {THREE_QUO}?
 <YYINITIAL> "do"         { return JetTokens.DO_KEYWORD ;}
 <YYINITIAL> "as"         { return JetTokens.AS_KEYWORD ;}
 
+<YYINITIAL> {FIELD_IDENTIFIER} { return JetTokens.FIELD_IDENTIFIER; }
 <YYINITIAL> {IDENTIFIER} { return JetTokens.IDENTIFIER; }
 
 <YYINITIAL> "==="        { return JetTokens.EQEQEQ    ; }
