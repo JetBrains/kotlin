@@ -263,7 +263,7 @@ public class JetParsing extends AbstractJetParsing {
 
         PsiBuilder.Marker properties = mark();
 
-        myBuilder.disableEols();
+        myBuilder.disableNewlines();
         expect(LPAR, "Expecting a property list in parentheses '( ... )'");
 
         // Property list
@@ -284,7 +284,7 @@ public class JetParsing extends AbstractJetParsing {
         }
 
         expect(RPAR, "Expecting ')' to close a property list");
-        myBuilder.restoreEolsState();
+        myBuilder.restoreNewlinesState();
 
         consumeIf(SEMICOLON);
 
@@ -340,7 +340,7 @@ public class JetParsing extends AbstractJetParsing {
         assert at(LBRACKET);
         PsiBuilder.Marker annotation = mark();
 
-        myBuilder.disableEols();
+        myBuilder.disableNewlines();
         advance(); // LBRACKET
 
         while (true) {
@@ -356,7 +356,7 @@ public class JetParsing extends AbstractJetParsing {
         }
 
         expect(RBRACKET, "Expecting ']' to close an attribute annotation");
-        myBuilder.restoreEolsState();
+        myBuilder.restoreNewlinesState();
 
         annotation.done(ATTRIBUTE_ANNOTATION);
     }
@@ -398,7 +398,7 @@ public class JetParsing extends AbstractJetParsing {
             return NAMESPACE;
         }
 
-        myBuilder.enableEols();
+        myBuilder.enableNewlines();
         advance(); // LBRACE
         PsiBuilder.Marker namespaceBody = mark();
 
@@ -406,7 +406,7 @@ public class JetParsing extends AbstractJetParsing {
 
         namespaceBody.done(NAMESPACE_BODY);
         expect(RBRACE, "Expecting '}'");
-        myBuilder.restoreEolsState();
+        myBuilder.restoreNewlinesState();
 
         return NAMESPACE;
     }
@@ -460,7 +460,7 @@ public class JetParsing extends AbstractJetParsing {
 
         PsiBuilder.Marker classBody = mark();
 
-        myBuilder.enableEols();
+        myBuilder.enableNewlines();
         advance(); // LBRACE
 
         while (!eof() && !at(RBRACE)) {
@@ -490,7 +490,7 @@ public class JetParsing extends AbstractJetParsing {
         }
 
         expect(RBRACE, "Expecting '}' to close enum class body");
-        myBuilder.restoreEolsState();
+        myBuilder.restoreNewlinesState();
 
         classBody.done(CLASS_BODY);
     }
@@ -535,7 +535,7 @@ public class JetParsing extends AbstractJetParsing {
         assert at(LBRACE);
         PsiBuilder.Marker body = mark();
 
-        myBuilder.enableEols();
+        myBuilder.enableNewlines();
         advance(); // LBRACE
 
         while (!eof()) {
@@ -545,7 +545,7 @@ public class JetParsing extends AbstractJetParsing {
             parseMemberDeclaration();
         }
         expect(RBRACE, "Missing '}");
-        myBuilder.restoreEolsState();
+        myBuilder.restoreNewlinesState();
 
         body.done(CLASS_BODY);
     }
@@ -819,7 +819,7 @@ public class JetParsing extends AbstractJetParsing {
             return true;
         }
 
-        myBuilder.disableEols();
+        myBuilder.disableNewlines();
         expect(LPAR, "Expecting '('", TokenSet.create(RPAR, IDENTIFIER, COLON, LBRACE, EQ));
         if (setter) {
             PsiBuilder.Marker setterParameter = mark();
@@ -836,7 +836,7 @@ public class JetParsing extends AbstractJetParsing {
         }
         if (!at(RPAR)) errorUntil("Expecting ')'", TokenSet.create(RPAR, COLON, LBRACE, EQ, EOL_OR_SEMICOLON));
         expect(RPAR, "Expecting ')'", TokenSet.create(RPAR, COLON, LBRACE, EQ));
-        myBuilder.restoreEolsState();
+        myBuilder.restoreNewlinesState();
 
         if (at(COLON)) {
             advance();
@@ -928,13 +928,13 @@ public class JetParsing extends AbstractJetParsing {
     public void parseBlock() {
         PsiBuilder.Marker block = mark();
 
-        myBuilder.enableEols();
+        myBuilder.enableNewlines();
         expect(LBRACE, "Expecting '{' to open a block");
 
         myExpressionParsing.parseExpressions();
 
         expect(RBRACE, "Expecting '}");
-        myBuilder.restoreEolsState();
+        myBuilder.restoreNewlinesState();
 
         block.done(BLOCK);
     }
@@ -1038,7 +1038,7 @@ public class JetParsing extends AbstractJetParsing {
         assert at(LPAR);
         PsiBuilder.Marker cons = mark();
 
-        myBuilder.disableEols();
+        myBuilder.disableNewlines();
         advance(); // LPAR
 
         while (true) {
@@ -1048,7 +1048,7 @@ public class JetParsing extends AbstractJetParsing {
         }
 
         expect(RPAR, "')' expected");
-        myBuilder.restoreEolsState();
+        myBuilder.restoreNewlinesState();
 
         cons.done(PRIMARY_CONSTRUCTOR_PARAMETERS_LIST);
     }
@@ -1107,7 +1107,7 @@ public class JetParsing extends AbstractJetParsing {
         PsiBuilder.Marker list = mark();
         if (at(LT)) {
 
-            myBuilder.disableEols();
+            myBuilder.disableNewlines();
             advance(); // LT
 
             while (true) {
@@ -1119,7 +1119,7 @@ public class JetParsing extends AbstractJetParsing {
             }
 
             expect(GT, "Missing '>'", recoverySet);
-            myBuilder.restoreEolsState();
+            myBuilder.restoreNewlinesState();
 
             if (at(WHERE_KEYWORD)) {
                 parseTypeConstraintList();
@@ -1262,7 +1262,7 @@ public class JetParsing extends AbstractJetParsing {
 
         PsiBuilder.Marker list = mark();
 
-        myBuilder.disableEols();
+        myBuilder.disableNewlines();
         advance(); // LT
 
         while (true) {
@@ -1273,7 +1273,7 @@ public class JetParsing extends AbstractJetParsing {
         }
 
         expect(GT, "Expecting a '>'");
-        myBuilder.restoreEolsState();
+        myBuilder.restoreNewlinesState();
 
         list.done(TYPE_ARGUMENT_LIST);
     }
@@ -1289,7 +1289,7 @@ public class JetParsing extends AbstractJetParsing {
 
         PsiBuilder.Marker tuple = mark();
 
-        myBuilder.disableEols();
+        myBuilder.disableNewlines();
         advance(); // LPAR
 
         if (!at(RPAR)) {
@@ -1318,7 +1318,7 @@ public class JetParsing extends AbstractJetParsing {
         }
 
         expect(RPAR, "Expecting ')");
-        myBuilder.restoreEolsState();
+        myBuilder.restoreNewlinesState();
 
         tuple.done(TUPLE_TYPE);
     }
@@ -1333,7 +1333,7 @@ public class JetParsing extends AbstractJetParsing {
 
         PsiBuilder.Marker functionType = mark();
 
-        myBuilder.disableEols();
+        myBuilder.disableNewlines();
         advance(); // LBRACE
 
         int lastLPar = findLastBefore(TokenSet.create(LPAR), TokenSet.create(RBRACE, COLON), false);
@@ -1348,7 +1348,7 @@ public class JetParsing extends AbstractJetParsing {
         parseFunctionTypeContents();
 
         expect(RBRACE, "Expecting '}");
-        myBuilder.restoreEolsState();
+        myBuilder.restoreNewlinesState();
 
         functionType.done(FUNCTION_TYPE);
     }
@@ -1382,7 +1382,7 @@ public class JetParsing extends AbstractJetParsing {
     public void parseValueParameterList(boolean isFunctionTypeContents, TokenSet recoverySet) {
         PsiBuilder.Marker parameters = mark();
 
-        myBuilder.disableEols();
+        myBuilder.disableNewlines();
         expect(LPAR, "Expecting '(", recoverySet);
 
         if (!at(RPAR)) {
@@ -1407,7 +1407,7 @@ public class JetParsing extends AbstractJetParsing {
             }
         }
         expect(RPAR, "Expecting ')'", recoverySet);
-        myBuilder.restoreEolsState();
+        myBuilder.restoreNewlinesState();
 
         parameters.done(VALUE_PARAMETER_LIST);
     }

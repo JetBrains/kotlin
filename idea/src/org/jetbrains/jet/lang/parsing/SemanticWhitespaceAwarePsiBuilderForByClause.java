@@ -1,7 +1,5 @@
 package org.jetbrains.jet.lang.parsing;
 
-import com.intellij.psi.tree.IElementType;
-
 /**
  * @author abreslav
  */
@@ -14,20 +12,20 @@ public class SemanticWhitespaceAwarePsiBuilderForByClause extends SemanticWhites
     }
 
     @Override
-    public void disableEols() {
-        super.disableEols();
+    public void disableNewlines() {
+        super.disableNewlines();
         stackSize++;
     }
 
     @Override
-    public void enableEols() {
-        super.enableEols();
+    public void enableNewlines() {
+        super.enableNewlines();
         stackSize++;
     }
 
     @Override
-    public void restoreEolsState() {
-        super.restoreEolsState();
+    public void restoreNewlinesState() {
+        super.restoreNewlinesState();
         stackSize--;
     }
 

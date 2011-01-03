@@ -12,16 +12,16 @@ import java.util.Stack;
  * @author abreslav
  */
 public class SemanticWhitespaceAwarePsiBuilderImpl extends PsiBuilderAdapter implements SemanticWhitespaceAwarePsiBuilder {
-    private final Stack<Boolean> eolsEnabled = new Stack<Boolean>();
+    private final Stack<Boolean> newlinesEnabled = new Stack<Boolean>();
 
     public SemanticWhitespaceAwarePsiBuilderImpl(final PsiBuilder delegate) {
         super(delegate);
-        eolsEnabled.push(true);
+        newlinesEnabled.push(true);
     }
 
     @Override
-    public boolean eolInLastWhitespace() {
-        if (!eolsEnabled.peek()) return false;
+    public boolean newlineBeforeCurrentToken() {
+        if (!newlinesEnabled.peek()) return false;
         if (eof()) return true;
         // TODO: maybe, memoize this somehow?
         for (int i = 1; i <= getCurrentOffset(); i++) {
@@ -46,19 +46,19 @@ public class SemanticWhitespaceAwarePsiBuilderImpl extends PsiBuilderAdapter imp
     }
 
     @Override
-    public void disableEols() {
-        eolsEnabled.push(false);
+    public void disableNewlines() {
+        newlinesEnabled.push(false);
     }
 
     @Override
-    public void enableEols() {
-        eolsEnabled.push(true);
+    public void enableNewlines() {
+        newlinesEnabled.push(true);
     }
 
     @Override
-    public void restoreEolsState() {
-        assert eolsEnabled.size() > 1;
-        eolsEnabled.pop();
+    public void restoreNewlinesState() {
+        assert newlinesEnabled.size() > 1;
+        newlinesEnabled.pop();
     }
 
 }

@@ -69,7 +69,7 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
         IElementType tt = tt();
         if (recoverySet == null || recoverySet.contains(tt)
                 || (recoverySet.contains(EOL_OR_SEMICOLON)
-                        && (eof() || tt == SEMICOLON || myBuilder.eolInLastWhitespace()))) {
+                        && (eof() || tt == SEMICOLON || myBuilder.newlineBeforeCurrentToken()))) {
             error(message);
         }
         else {
@@ -103,7 +103,7 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
         if (expectation == EOL_OR_SEMICOLON) {
             if (eof()) return true;
             if (token == SEMICOLON) return true;
-            if (myBuilder.eolInLastWhitespace()) return true;
+            if (myBuilder.newlineBeforeCurrentToken()) return true;
         }
         if (token == IDENTIFIER && expectation instanceof JetKeywordToken) {
             JetKeywordToken expectedKeyword = (JetKeywordToken) expectation;
@@ -132,7 +132,7 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
         if (set.contains(EOL_OR_SEMICOLON)) {
             if (eof()) return true;
             if (token == SEMICOLON) return true;
-            if (myBuilder.eolInLastWhitespace()) return true;
+            if (myBuilder.newlineBeforeCurrentToken()) return true;
         }
         if (token == IDENTIFIER) {
             JetKeywordToken keywordToken = SOFT_KEYWORD_TEXTS.get(myBuilder.getTokenText());
@@ -229,7 +229,7 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
     }
 
     protected boolean eol() {
-        return myBuilder.eolInLastWhitespace() || eof();
+        return myBuilder.newlineBeforeCurrentToken() || eof();
     }
 
     protected abstract JetParsing create(SemanticWhitespaceAwarePsiBuilder builder);

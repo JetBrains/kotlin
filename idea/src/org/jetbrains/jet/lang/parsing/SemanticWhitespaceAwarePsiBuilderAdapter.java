@@ -14,23 +14,23 @@ public class SemanticWhitespaceAwarePsiBuilderAdapter extends PsiBuilderAdapter 
     }
 
     @Override
-    public boolean eolInLastWhitespace() {
-        return myBuilder.eolInLastWhitespace();
+    public boolean newlineBeforeCurrentToken() {
+        return myBuilder.newlineBeforeCurrentToken();
     }
 
     @Override
-    public void disableEols() {
-        myBuilder.disableEols();
+    public void disableNewlines() {
+        myBuilder.disableNewlines();
     }
 
     @Override
-    public void enableEols() {
-        myBuilder.enableEols();
+    public void enableNewlines() {
+        myBuilder.enableNewlines();
     }
 
     @Override
-    public void restoreEolsState() {
-        myBuilder.restoreEolsState();
+    public void restoreNewlinesState() {
+        myBuilder.restoreNewlinesState();
     }
 
 }
