@@ -1,0 +1,13 @@
+namespace foo.bar;
+
+class X
+
+namespace foo.bar {
+  fun foo() {
+    namespace.foo.bar.X
+    new namespace.foo.bar.X()
+    e match {
+      case namespace.foo.bar.X(x) => {}
+    }
+  }
+}

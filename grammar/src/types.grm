@@ -14,7 +14,7 @@ type
   ;
 
 userType
-  : simpleUserType{"."}
+  : ("namespace" ".")? simpleUserType{"."}
   ;
 
 simpleUserType

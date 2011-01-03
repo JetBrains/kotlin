@@ -1210,7 +1210,7 @@ public class JetParsing extends AbstractJetParsing {
 
         parseAttributeList();
 
-        if (at(IDENTIFIER)) {
+        if (at(IDENTIFIER) || at(NAMESPACE_KEYWORD)) {
             parseUserType();
         }
         else if (at(LBRACE)) {
@@ -1229,10 +1229,14 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * userType
-     *   : simpleUserType{"."}
+     *   : ("namespace" ".")? simpleUserType{"."}
      *   ;
      */
     public void parseUserType() {
+        if (at(NAMESPACE_KEYWORD)) {
+            advance(); // NAMESPACE_KEYWORD
+            expect(DOT, "Expecting '.'", TokenSet.create(IDENTIFIER));
+        }
         while (true) {
             parseSimpleUserType();
             if (!at(DOT)) break;

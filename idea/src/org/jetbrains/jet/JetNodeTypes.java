@@ -101,6 +101,7 @@ public interface JetNodeTypes {
     JetNodeType PATTERN = new JetNodeType("PATTERN");
     JetNodeType TUPLE_PATTERN = new JetNodeType("TUPLE_PATTERN");
     JetNodeType OBJECT_LITERAL = new JetNodeType("OBJECT_LITERAL");
+    JetNodeType ROOT_NAMESPACE = new JetNodeType("ROOT_NAMESPACE");
 
     IElementType NAMESPACE_NAME = new JetNodeType("NAMESPACE_NAME");
 }

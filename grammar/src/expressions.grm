@@ -95,6 +95,7 @@ atomicExpression
   : jump
   : loop
   : SimpleName
+  : "namespace" // foo the root namespace
   ;
 
 literalConstant

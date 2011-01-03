@@ -269,16 +269,18 @@ public class JetExpressionParsing extends AbstractJetParsing {
      *   : functionLiteral
      *   : declaration
      *   : SimpleName
+     *   : "namespace" // foo the root namespace
      *   ;
      */
     private void parseAtomicExpression() {
-
-        // TODO: namespace.a.b.C
 //        System.out.println("atom at "  + myBuilder.getTokenText());
 
 
         if (at(LPAR)) {
             parseParenthesizedExpressionOrTuple();
+        }
+        else if (at(NAMESPACE_KEYWORD)) {
+            parseOneTokenExpression(ROOT_NAMESPACE);
         }
         else if (at(THIS_KEYWORD)) {
             parseThisExpression();
@@ -438,7 +440,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     private void parsePattern() {
         PsiBuilder.Marker pattern = mark();
 
-        if (at(IDENTIFIER)) {
+        if (at(IDENTIFIER) || at(NAMESPACE_KEYWORD)) {
             myJetParsing.parseUserType();
             if (at(LPAR)) {
                 parseTuplePattern();

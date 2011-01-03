@@ -1,0 +1,112 @@
+JetFile: RootNamespace.jet
+  NAMESPACE
+    PsiElement(namespace)('namespace')
+    PsiWhiteSpace(' ')
+    NAMESPACE_NAME
+      PsiElement(IDENTIFIER)('foo')
+      PsiElement(DOT)('.')
+      PsiElement(IDENTIFIER)('bar')
+    PsiElement(SEMICOLON)(';')
+    PsiWhiteSpace('\n\n')
+    CLASS
+      PsiElement(class)('class')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('X')
+      PsiWhiteSpace('\n\n')
+      TYPE_PARAMETER_LIST
+        <empty list>
+    NAMESPACE
+      PsiElement(namespace)('namespace')
+      PsiWhiteSpace(' ')
+      NAMESPACE_NAME
+        PsiElement(IDENTIFIER)('foo')
+        PsiElement(DOT)('.')
+        PsiElement(IDENTIFIER)('bar')
+      PsiWhiteSpace(' ')
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n  ')
+      NAMESPACE_BODY
+        FUN
+          PsiElement(fun)('fun')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('foo')
+          TYPE_PARAMETER_LIST
+            <empty list>
+          VALUE_PARAMETER_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiWhiteSpace('\n    ')
+            DOT_QIALIFIED_EXPRESSION
+              DOT_QIALIFIED_EXPRESSION
+                DOT_QIALIFIED_EXPRESSION
+                  ROOT_NAMESPACE
+                    PsiElement(namespace)('namespace')
+                  PsiElement(DOT)('.')
+                  PsiElement(IDENTIFIER)('foo')
+                PsiElement(DOT)('.')
+                PsiElement(IDENTIFIER)('bar')
+              PsiElement(DOT)('.')
+              PsiElement(IDENTIFIER)('X')
+            PsiWhiteSpace('\n    ')
+            NEW
+              PsiElement(new)('new')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                PsiElement(namespace)('namespace')
+                PsiElement(DOT)('.')
+                USER_TYPE
+                  PsiElement(IDENTIFIER)('foo')
+                PsiElement(DOT)('.')
+                USER_TYPE
+                  PsiElement(IDENTIFIER)('bar')
+                PsiElement(DOT)('.')
+                USER_TYPE
+                  PsiElement(IDENTIFIER)('X')
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                PsiElement(RPAR)(')')
+            PsiWhiteSpace('\n    ')
+            BINARY_EXPRESSION
+              PsiElement(IDENTIFIER)('e')
+              PsiWhiteSpace(' ')
+              PsiElement(match)('match')
+              PsiWhiteSpace(' ')
+              PsiElement(LBRACE)('{')
+              PsiWhiteSpace('\n      ')
+              MATCH_ENTRY
+                PsiElement(case)('case')
+                PsiWhiteSpace(' ')
+                PATTERN
+                  PsiElement(namespace)('namespace')
+                  PsiElement(DOT)('.')
+                  USER_TYPE
+                    PsiElement(IDENTIFIER)('foo')
+                  PsiElement(DOT)('.')
+                  USER_TYPE
+                    PsiElement(IDENTIFIER)('bar')
+                  PsiElement(DOT)('.')
+                  USER_TYPE
+                    PsiElement(IDENTIFIER)('X')
+                  TUPLE_PATTERN
+                    PsiElement(LPAR)('(')
+                    PATTERN
+                      USER_TYPE
+                        PsiElement(IDENTIFIER)('x')
+                    PsiElement(RPAR)(')')
+                PsiWhiteSpace(' ')
+                PsiElement(DOUBLE_ARROW)('=>')
+                PsiWhiteSpace(' ')
+                FUNCTION_LITERAL
+                  PsiElement(LBRACE)('{')
+                  BODY
+                    <empty list>
+                  PsiElement(RBRACE)('}')
+              PsiWhiteSpace('\n    ')
+              PsiElement(RBRACE)('}')
+            PsiWhiteSpace('\n  ')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
