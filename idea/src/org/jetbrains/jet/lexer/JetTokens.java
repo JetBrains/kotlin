@@ -8,8 +8,6 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 
 public interface JetTokens {
-    // TODO: $identifier as a separate token
-    // TODO: `namespace` to escape Java identifiers that are keywords in Jet
     JetToken EOF   = new JetToken("EOF");
 
     JetToken BLOCK_COMMENT = new JetToken("BLOCK_COMMENT");
