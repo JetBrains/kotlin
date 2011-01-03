@@ -21,7 +21,6 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
  */
 public class JetParsing extends AbstractJetParsing {
     // TODO: token sets to constants, including derived methods
-
     public static final Map<String, IElementType> MODIFIER_KEYWORD_MAP = new HashMap<String, IElementType>();
     static {
         for (IElementType softKeyword : MODIFIER_KEYWORDS.getTypes()) {
@@ -528,6 +527,7 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      */
     /*package*/ void parseClassBody() {
+        // TODO : initializer?
         assert at(LBRACE);
         PsiBuilder.Marker body = mark();
 

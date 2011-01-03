@@ -19,12 +19,12 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
  * @author abreslav
  */
 /*package*/ abstract class AbstractJetParsing {
-    private static final Set<String> SOFT_KEYWORD_TEXTS = new HashSet<String>();
+    private static final Map<String, JetKeywordToken> SOFT_KEYWORD_TEXTS = new HashMap<String, JetKeywordToken>();
     static {
         for (IElementType type : JetTokens.SOFT_KEYWORDS.getTypes()) {
             JetKeywordToken keywordToken = (JetKeywordToken) type;
             assert keywordToken.isSoft();
-            SOFT_KEYWORD_TEXTS.add(keywordToken.getValue());
+            SOFT_KEYWORD_TEXTS.put(keywordToken.getValue(), keywordToken);
         }
     }
 
@@ -137,16 +137,11 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
             if (token == SEMICOLON) return true;
             if (myBuilder.eolInLastWhitespace()) return true;
         }
-        if (token == IDENTIFIER && SOFT_KEYWORD_TEXTS.contains(myBuilder.getTokenText())) {
-            // TODO : this loop seems to be a bad solution
-            for (IElementType type : set.getTypes()) {
-                if (type instanceof JetKeywordToken) {
-                    JetKeywordToken expectedKeyword = (JetKeywordToken) type;
-                    if (expectedKeyword.isSoft() && expectedKeyword.getValue().equals(myBuilder.getTokenText())) {
-                        myBuilder.remapCurrentToken(type);
-                        return true;
-                    }
-                }
+        if (token == IDENTIFIER) {
+            JetKeywordToken keywordToken = SOFT_KEYWORD_TEXTS.get(myBuilder.getTokenText());
+            if (keywordToken != null && set.contains(keywordToken)) {
+                myBuilder.remapCurrentToken(keywordToken);
+                return true;
             }
         }
         return false;
