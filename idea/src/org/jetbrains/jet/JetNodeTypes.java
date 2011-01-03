@@ -5,19 +5,28 @@ package org.jetbrains.jet;
 
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
+import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.jet.lang.JetLanguage;
-import org.jetbrains.jet.lang.psi.JetNamespace;
+import org.jetbrains.jet.lang.psi.*;
 
 public interface JetNodeTypes {
     IFileElementType JET_FILE = new IFileElementType(JetLanguage.INSTANCE);
 
     JetNodeType NAMESPACE = new JetNodeType("NAMESPACE", JetNamespace.class);
-    JetNodeType CLASS = new JetNodeType("CLASS");
-    JetNodeType PROPERTY = new JetNodeType("PROPERTY");
-    JetNodeType FUN = new JetNodeType("FUN");
-    JetNodeType EXTENSION = new JetNodeType("EXTENSION");
-    JetNodeType TYPEDEF = new JetNodeType("TYPEDEF");
-    JetNodeType DECOMPOSER = new JetNodeType("DECOMPOSER");
+    JetNodeType CLASS = new JetNodeType("CLASS", JetClass.class);
+    JetNodeType PROPERTY = new JetNodeType("PROPERTY", JetProperty.class);
+    JetNodeType FUN = new JetNodeType("FUN", JetFunction.class);
+    JetNodeType EXTENSION = new JetNodeType("EXTENSION", JetExtension.class);
+    JetNodeType TYPEDEF = new JetNodeType("TYPEDEF", JetTypedef.class);
+    JetNodeType DECOMPOSER = new JetNodeType("DECOMPOSER", JetDecomposer.class);
+
+    JetNodeType CLASS_OBJECT = new JetNodeType("CLASS_OBJECT", JetClassObject.class);
+    JetNodeType CONSTRUCTOR = new JetNodeType("CONSTRUCTOR", JetConstructor.class);
+
+    TokenSet DECLARATIONS = TokenSet.create(
+            NAMESPACE, CLASS, PROPERTY, FUN, EXTENSION,
+            TYPEDEF, DECOMPOSER, CLASS_OBJECT, CONSTRUCTOR);
+
     JetNodeType TYPE_PARAMETER_LIST = new JetNodeType("TYPE_PARAMETER_LIST");
     JetNodeType TYPE_PARAMETER = new JetNodeType("TYPE_PARAMETER");
     JetNodeType PRIMARY_CONSTRUCTOR_PARAMETERS_LIST = new JetNodeType("PRIMARY_CONSTRUCTOR_PARAMETERS_LIST");
@@ -29,8 +38,8 @@ public interface JetNodeTypes {
     JetNodeType DELEGATOR_SUPER_CLASS = new JetNodeType("DELEGATOR_SUPER_CLASS");
     JetNodeType VALUE_PARAMETER_LIST = new JetNodeType("VALUE_PARAMETER_LIST");
     JetNodeType NAMED_ARGUMENT = new JetNodeType("NAMED_ARGUMENT");
-    JetNodeType CLASS_BODY = new JetNodeType("CLASS_BODY");
-    JetNodeType IMPORT_DIRECTIVE = new JetNodeType("IMPORT_DIRECTIVE");
+    JetNodeType CLASS_BODY = new JetNodeType("CLASS_BODY", JetClassBody.class);
+    JetNodeType IMPORT_DIRECTIVE = new JetNodeType("IMPORT_DIRECTIVE", JetImportDirective.class);
     JetNodeType IMPORTED = new JetNodeType("IMPORTED");
     JetNodeType NAMESPACE_BODY = new JetNodeType("NAMESPACE_BODY");
     JetNodeType MODIFIER_LIST = new JetNodeType("MODIFIER_LIST");
@@ -49,11 +58,9 @@ public interface JetNodeTypes {
     // TODO: review
     JetNodeType RECEIVER_TYPE_ATTRIBUTES = new JetNodeType("RECEIVER_TYPE_ATTRIBUTES");
     JetNodeType PROPERTY_ACCESSOR = new JetNodeType("PROPERTY_ACCESSOR");
-    JetNodeType CONSTRUCTOR = new JetNodeType("CONSTRUCTOR");
     JetNodeType INITIALIZER_LIST = new JetNodeType("INITIALIZER_LIST");
     JetNodeType THIS_CALL = new JetNodeType("THIS_CALL");
     JetNodeType BLOCK = new JetNodeType("BLOCK");
-    JetNodeType CLASS_OBJECT = new JetNodeType("CLASS_OBJECT");
     JetNodeType TYPE_CONSTRAINT_LIST = new JetNodeType("TYPE_CONSTRAINT_LIST");
     JetNodeType TYPE_CONSTRAINT = new JetNodeType("TYPE_CONSTRAINT");
     JetNodeType ENUM_ENTRY = new JetNodeType("ENUM_ENTRY");
