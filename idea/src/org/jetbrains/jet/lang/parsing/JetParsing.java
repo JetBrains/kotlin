@@ -1368,7 +1368,7 @@ public class JetParsing extends AbstractJetParsing {
      *   : "(" functionParameter{","}? ")" // default values
      *   ;
      *
-     * functionParameter
+     * functionParameter                                         Машка Юдина Неееет! Зимой сельдерей не растет на улице!!! Как же так?
      *   : modifiers functionParameterRest
      *   ;
      *
@@ -1377,8 +1377,6 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      */
     public void parseValueParameterList(boolean isFunctionTypeContents, TokenSet recoverySet) {
-        // TODO: val a, b, c : Int
-
         PsiBuilder.Marker parameters = mark();
 
         myBuilder.disableEols();

@@ -56,9 +56,8 @@ elvisOperation
   : infixFunctionCall ("?:" infixFunctionCall)*
   ;
 
-// ATTENTION
 infixFunctionCall
-  : rangeExpression (SimpleName (typeArguments | rangeExpression))*
+  : rangeExpression (SimpleName rangeExpression)*
   ;
 
 rangeExpression
@@ -198,7 +197,7 @@ jump
 
 tupleLiteral // Ambiguity when after a SimpleName (infix call). In this case (e) is treated as an expression in parentheses
              // to put a tuple, write write ((e))
-  : "(" expression{","} ")"
+  : "(" ((SimpleName "=")? expression){","} ")"
   ;
 
 functionLiteral  // one can use "it" as a parameter name

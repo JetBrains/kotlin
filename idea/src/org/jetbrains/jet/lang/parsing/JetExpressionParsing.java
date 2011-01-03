@@ -61,7 +61,6 @@ public class JetExpressionParsing extends AbstractJetParsing {
         RANGE(JetTokens.RANGE),
         SIMPLE_NAME(IDENTIFIER),
         ELVIS(JetTokens.ELVIS),
-        // TODO: RHS (type parameters)
         NAMED_INFIX_OR_TYPE(IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS, AS_KEYWORD, COLON),
         COMPARISON(LT, GT, LTEQ, GTEQ),
         EQUALITY(EQEQ, EXCLEQ, EQEQEQ, EXCLEQEQEQ),
@@ -1019,7 +1018,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     /*
      * "(" expression ")" // see tupleLiteral
      * "(" expression{","} ")"
-     * TODO: Labels in tuple literals?
+     * TODO: duplication with valueArguments (but for the error messages)
      */
     private void parseParenthesizedExpressionOrTuple() {
         assert at(LPAR);
@@ -1029,12 +1028,17 @@ public class JetExpressionParsing extends AbstractJetParsing {
         myBuilder.disableEols();
         advance(); // LPAR
 
-
-        while (true) {
-            if (at(COMMA)) errorAndAdvance("Expecting a tuple entry (expression)");
-            parseExpression();
-            if (!at(COMMA)) break;
-            advance(); // COMMA
+        if (!at(RPAR)) {
+            while (true) {
+                while (at(COMMA)) errorAndAdvance("Expecting a tuple entry (expression)");
+                parseExpression();
+                if (!at(COMMA)) break;
+                advance(); // COMMA
+                if (at(RPAR)) {
+                    error("Expecting a tuple entry (expression)");
+                    break;
+                }
+            }
         }
 
         expect(RPAR, "Expecting ')'");
@@ -1078,13 +1082,18 @@ public class JetExpressionParsing extends AbstractJetParsing {
         PsiBuilder.Marker list = mark();
 
         myBuilder.disableEols();
-        expect(LPAR, "Expecting a parameter list", TokenSet.create(RPAR));
+        expect(LPAR, "Expecting an argument list", TokenSet.create(RPAR));
 
         if (!at(RPAR)) {
             while (true) {
+                while (at(COMMA)) errorAndAdvance("Expecting an argument");
                 parseValueArgument();
                 if (!at(COMMA)) break;
                 advance(); // COMMA
+                if (at(RPAR)) {
+                    error("Expecting an argument");
+                    break;
+                }
             }
         }
 

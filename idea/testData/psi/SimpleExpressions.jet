@@ -1,5 +1,6 @@
 
 fun a(
+    a : foo = (),
     a : foo = 10,
     a : foo = 0x10,
     a : foo = '1',

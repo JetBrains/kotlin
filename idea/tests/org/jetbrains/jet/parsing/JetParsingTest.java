@@ -10,6 +10,10 @@ import junit.framework.TestSuite;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FilenameFilter;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 public class JetParsingTest extends ParsingTestCase {
     static {
@@ -70,11 +74,15 @@ public class JetParsingTest extends ParsingTestCase {
             }
         };
         if (recursive) {
-            for (File subDir : dir.listFiles(dirFilter)) {
-                suite.addTest(suiteForDirectory(dataPath + "/" + subDir.getName(), recursive));
+            List<File> subdirs = Arrays.asList(dir.listFiles(dirFilter));
+            Collections.sort(subdirs);
+            for (File subdir : subdirs) {
+                suite.addTest(suiteForDirectory(dataPath + "/" + subdir.getName(), recursive));
             }
         }
-        for (File file : dir.listFiles(extensionFilter)) {
+        List<File> files = Arrays.asList(dir.listFiles(extensionFilter));
+        Collections.sort(files);
+        for (File file : files) {
             String fileName = file.getName();
             suite.addTest(new JetParsingTest(dataPath, fileName.substring(0, fileName.length() - extension.length())));
         }

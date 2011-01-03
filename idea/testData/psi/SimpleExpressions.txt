@@ -20,6 +20,22 @@ JetFile: SimpleExpressions.jet
           PsiWhiteSpace(' ')
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
+          TUPLE
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_PARAMETER
+          PsiElement(IDENTIFIER)('a')
+          PsiWhiteSpace(' ')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              PsiElement(IDENTIFIER)('foo')
+          PsiWhiteSpace(' ')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
           INTEGER_CONSTANT
             PsiElement(INTEGER_LITERAL)('10')
         PsiElement(COMMA)(',')
