@@ -62,6 +62,10 @@ public class JetVisitor extends PsiElementVisitor {
         visitJetElement(classBody);
     }
 
+    public void visitNamespaceBody(JetNamespaceBody body) {
+        visitJetElement(body);
+    }
+
     public void visitModifierList(JetModifierList list) {
         visitJetElement(list);
     }
@@ -72,5 +76,17 @@ public class JetVisitor extends PsiElementVisitor {
 
     public void visitAttribute(JetAttribute attribute) {
         visitJetElement(attribute);
+    }
+
+    public void visitTypeParameterList(JetTypeParameterList list) {
+        visitJetElement(list);
+    }
+
+    public void visitTypeParameter(JetTypeParameter parameter) {
+        visitDeclaration(parameter);
+    }
+
+    public void visitEnumEntry(JetEnumEntry enumEntry) {
+        visitClass(enumEntry);
     }
 }

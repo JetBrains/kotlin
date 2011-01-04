@@ -22,13 +22,14 @@ public interface JetNodeTypes {
 
     JetNodeType CLASS_OBJECT = new JetNodeType("CLASS_OBJECT", JetClassObject.class);
     JetNodeType CONSTRUCTOR  = new JetNodeType("CONSTRUCTOR", JetConstructor.class);
+    JetNodeType ENUM_ENTRY   = new JetNodeType("ENUM_ENTRY", JetEnumEntry.class);
 
     TokenSet DECLARATIONS = TokenSet.create(
             NAMESPACE, CLASS, PROPERTY, FUN, EXTENSION,
-            TYPEDEF, DECOMPOSER, CLASS_OBJECT, CONSTRUCTOR);
+            TYPEDEF, DECOMPOSER, CLASS_OBJECT, CONSTRUCTOR, ENUM_ENTRY);
 
-    JetNodeType TYPE_PARAMETER_LIST                 = new JetNodeType("TYPE_PARAMETER_LIST");
-    JetNodeType TYPE_PARAMETER                      = new JetNodeType("TYPE_PARAMETER");
+    JetNodeType TYPE_PARAMETER_LIST                 = new JetNodeType("TYPE_PARAMETER_LIST", JetTypeParameterList.class);
+    JetNodeType TYPE_PARAMETER                      = new JetNodeType("TYPE_PARAMETER", JetTypeParameter.class);
     JetNodeType PRIMARY_CONSTRUCTOR_PARAMETERS_LIST = new JetNodeType("PRIMARY_CONSTRUCTOR_PARAMETERS_LIST");
     JetNodeType PRIMARY_CONSTRUCTOR_PARAMETER       = new JetNodeType("PRIMARY_CONSTRUCTOR_PARAMETER");
     JetNodeType DELEGATION_SPECIFIER_LIST           = new JetNodeType("DELEGATION_SPECIFIER_LIST");
@@ -41,7 +42,7 @@ public interface JetNodeTypes {
     JetNodeType CLASS_BODY                          = new JetNodeType("CLASS_BODY", JetClassBody.class);
     JetNodeType IMPORT_DIRECTIVE                    = new JetNodeType("IMPORT_DIRECTIVE", JetImportDirective.class);
     JetNodeType IMPORTED                            = new JetNodeType("IMPORTED");
-    JetNodeType NAMESPACE_BODY                      = new JetNodeType("NAMESPACE_BODY");
+    JetNodeType NAMESPACE_BODY                      = new JetNodeType("NAMESPACE_BODY", JetNamespaceBody.class);
     JetNodeType MODIFIER_LIST                       = new JetNodeType("MODIFIER_LIST", JetModifierList.class);
     JetNodeType ATTRIBUTE_ANNOTATION                = new JetNodeType("ATTRIBUTE_ANNOTATION", JetAttributeAnnotation.class);
     JetNodeType ATTRIBUTE                           = new JetNodeType("ATTRIBUTE", JetAttribute.class);
@@ -63,7 +64,6 @@ public interface JetNodeTypes {
     JetNodeType BLOCK                               = new JetNodeType("BLOCK");
     JetNodeType TYPE_CONSTRAINT_LIST                = new JetNodeType("TYPE_CONSTRAINT_LIST");
     JetNodeType TYPE_CONSTRAINT                     = new JetNodeType("TYPE_CONSTRAINT");
-    JetNodeType ENUM_ENTRY                          = new JetNodeType("ENUM_ENTRY");
     JetNodeType NULL                                = new JetNodeType("NULL");
     JetNodeType BOOLEAN_CONSTANT                    = new JetNodeType("BOOLEAN_CONSTANT");
     JetNodeType FLOAT_CONSTANT                      = new JetNodeType("FLOAT_CONSTANT");

@@ -6,13 +6,13 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author max
  */
-public class JetTypedef extends JetTypeParameterListOwner {
-    public JetTypedef(@NotNull ASTNode node) {
+public class JetEnumEntry extends JetClass {
+    public JetEnumEntry(@NotNull ASTNode node) {
         super(node);
     }
 
     @Override
     public void accept(@NotNull JetVisitor visitor) {
-        visitor.visitTypedef(this);
+        visitor.visitEnumEntry(this);
     }
 }

@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author max
  */
-public class JetFunction extends JetNamedDeclaration {
+public class JetFunction extends JetTypeParameterListOwner {
     public JetFunction(@NotNull ASTNode node) {
         super(node);
     }
