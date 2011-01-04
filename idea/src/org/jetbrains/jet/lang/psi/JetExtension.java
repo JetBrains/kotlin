@@ -1,7 +1,6 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElementVisitor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetNodeTypes;
 
@@ -25,12 +24,7 @@ public class JetExtension extends JetNamedDeclaration {
 
 
     @Override
-    public void accept(@NotNull PsiElementVisitor visitor) {
-        if (visitor instanceof JetVisitor) {
-            ((JetVisitor) visitor).visitExtension(this);
-        }
-        else {
-            visitor.visitElement(this);
-        }
+    public void accept(@NotNull JetVisitor visitor) {
+        visitor.visitExtension(this);
     }
 }

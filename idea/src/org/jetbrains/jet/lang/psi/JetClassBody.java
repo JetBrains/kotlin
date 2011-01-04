@@ -1,8 +1,6 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetNodeTypes;
 
@@ -21,12 +19,7 @@ public class JetClassBody extends JetElement {
     }
 
     @Override
-    public void accept(@NotNull PsiElementVisitor visitor) {
-        if (visitor instanceof JetVisitor) {
-            ((JetVisitor) visitor).visitClassBody(this);
-        }
-        else {
-            visitor.visitElement(this);
-        }
+    public void accept(@NotNull JetVisitor visitor) {
+        visitor.visitClassBody(this);
     }
 }

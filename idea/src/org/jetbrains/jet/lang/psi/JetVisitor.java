@@ -61,4 +61,16 @@ public class JetVisitor extends PsiElementVisitor {
     public void visitClassBody(JetClassBody classBody) {
         visitJetElement(classBody);
     }
+
+    public void visitModifierList(JetModifierList list) {
+        visitJetElement(list);
+    }
+
+    public void visitAttributeAnnotation(JetAttributeAnnotation annotation) {
+        visitJetElement(annotation);
+    }
+
+    public void visitAttribute(JetAttribute attribute) {
+        visitJetElement(attribute);
+    }
 }

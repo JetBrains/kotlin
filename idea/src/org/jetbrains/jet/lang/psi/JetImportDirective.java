@@ -1,7 +1,6 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElementVisitor;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -13,12 +12,7 @@ public class JetImportDirective extends JetElement {
     }
 
     @Override
-    public void accept(@NotNull PsiElementVisitor visitor) {
-        if (visitor instanceof JetVisitor) {
-            ((JetVisitor) visitor).visitImportDirective(this);
-        }
-        else {
-            visitor.visitElement(this);
-        }
+    public void accept(@NotNull JetVisitor visitor) {
+        visitor.visitImportDirective(this);
     }
 }
