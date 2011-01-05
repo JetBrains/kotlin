@@ -37,39 +37,36 @@ JetFile: BabySteps_ERR.jet
       PsiElement(COLON)(':')
       PsiWhiteSpace(' ')
       DELEGATION_SPECIFIER_LIST
-        DELEGATION_SPECIFIER
-          DELEGATOR_SUPER_CALL
-            TYPE_REFERENCE
-              USER_TYPE
-                PsiElement(IDENTIFIER)('foo')
-            VALUE_ARGUMENT_LIST
-              PsiElement(LPAR)('(')
-              NAMED_ARGUMENT
-                PsiElement(IDENTIFIER)('d')
-                PsiElement(EQ)('=')
-                INTEGER_CONSTANT
-                  PsiElement(INTEGER_LITERAL)('0')
-              PsiElement(RPAR)(')')
+        DELEGATOR_SUPER_CALL
+          TYPE_REFERENCE
+            USER_TYPE
+              PsiElement(IDENTIFIER)('foo')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            NAMED_ARGUMENT
+              PsiElement(IDENTIFIER)('d')
+              PsiElement(EQ)('=')
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('0')
+            PsiElement(RPAR)(')')
         PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
         PsiErrorElement:Expecting a delegation specifier
           PsiElement(COMMA)(',')
-        DELEGATION_SPECIFIER
-          DELEGATOR_BY
-            TYPE_REFERENCE
-              USER_TYPE
-                PsiElement(IDENTIFIER)('bar')
-            PsiWhiteSpace(' ')
-            PsiElement(by)('by')
-            PsiWhiteSpace(' ')
-            PsiElement(IDENTIFIER)('x')
+        DELEGATOR_BY
+          TYPE_REFERENCE
+            USER_TYPE
+              PsiElement(IDENTIFIER)('bar')
+          PsiWhiteSpace(' ')
+          PsiElement(by)('by')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('x')
         PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
-        DELEGATION_SPECIFIER
-          DELEGATOR_SUPER_CLASS
-            TYPE_REFERENCE
-              USER_TYPE
-                PsiElement(IDENTIFIER)('bar')
+        DELEGATOR_SUPER_CLASS
+          TYPE_REFERENCE
+            USER_TYPE
+              PsiElement(IDENTIFIER)('bar')
       PsiWhiteSpace(' ')
       CLASS_BODY
         PsiElement(LBRACE)('{')

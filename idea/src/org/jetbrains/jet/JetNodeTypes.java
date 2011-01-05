@@ -27,7 +27,6 @@ public interface JetNodeTypes {
     JetNodeType TYPE_PARAMETER_LIST                 = new JetNodeType("TYPE_PARAMETER_LIST", JetTypeParameterList.class);
     JetNodeType TYPE_PARAMETER                      = new JetNodeType("TYPE_PARAMETER", JetTypeParameter.class);
     JetNodeType DELEGATION_SPECIFIER_LIST           = new JetNodeType("DELEGATION_SPECIFIER_LIST");
-    JetNodeType DELEGATION_SPECIFIER                = new JetNodeType("DELEGATION_SPECIFIER");
     JetNodeType DELEGATOR_BY                        = new JetNodeType("DELEGATOR_BY");
     JetNodeType DELEGATOR_SUPER_CALL                = new JetNodeType("DELEGATOR_SUPER_CALL");
     JetNodeType DELEGATOR_SUPER_CLASS               = new JetNodeType("DELEGATOR_SUPER_CLASS");

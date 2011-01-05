@@ -13,17 +13,16 @@ JetFile: LinkedList.jet
       PsiElement(COLON)(':')
       PsiWhiteSpace(' ')
       DELEGATION_SPECIFIER_LIST
-        DELEGATION_SPECIFIER
-          DELEGATOR_SUPER_CLASS
-            TYPE_REFERENCE
-              USER_TYPE
-                PsiElement(IDENTIFIER)('IMutableList')
-                TYPE_ARGUMENT_LIST
-                  PsiElement(LT)('<')
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      PsiElement(IDENTIFIER)('T')
-                  PsiElement(GT)('>')
+        DELEGATOR_SUPER_CLASS
+          TYPE_REFERENCE
+            USER_TYPE
+              PsiElement(IDENTIFIER)('IMutableList')
+              TYPE_ARGUMENT_LIST
+                PsiElement(LT)('<')
+                TYPE_REFERENCE
+                  USER_TYPE
+                    PsiElement(IDENTIFIER)('T')
+                PsiElement(GT)('>')
       PsiWhiteSpace(' ')
       CLASS_BODY
         PsiElement(LBRACE)('{')

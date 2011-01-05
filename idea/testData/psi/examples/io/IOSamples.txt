@@ -100,16 +100,15 @@ JetFile: IOSamples.jet
       PsiElement(COLON)(':')
       PsiWhiteSpace(' ')
       DELEGATION_SPECIFIER_LIST
-        DELEGATION_SPECIFIER
-          DELEGATOR_SUPER_CALL
-            TYPE_REFERENCE
-              USER_TYPE
-                PsiElement(IDENTIFIER)('ICloseable')
-            VALUE_ARGUMENT_LIST
-              PsiElement(LPAR)('(')
-              VALUE_ARGUMENT
-                PsiElement(IDENTIFIER)('closeable')
-              PsiElement(RPAR)(')')
+        DELEGATOR_SUPER_CALL
+          TYPE_REFERENCE
+            USER_TYPE
+              PsiElement(IDENTIFIER)('ICloseable')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            VALUE_ARGUMENT
+              PsiElement(IDENTIFIER)('closeable')
+            PsiElement(RPAR)(')')
     PsiWhiteSpace('\n\n')
     FUN
       PsiElement(fun)('fun')
@@ -194,24 +193,22 @@ JetFile: IOSamples.jet
       PsiElement(COLON)(':')
       PsiWhiteSpace(' ')
       DELEGATION_SPECIFIER_LIST
-        DELEGATION_SPECIFIER
-          DELEGATOR_SUPER_CLASS
-            TYPE_REFERENCE
-              USER_TYPE
-                PsiElement(IDENTIFIER)('IIterator')
-                TYPE_ARGUMENT_LIST
-                  PsiElement(LT)('<')
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      PsiElement(IDENTIFIER)('Byte')
-                  PsiElement(GT)('>')
+        DELEGATOR_SUPER_CLASS
+          TYPE_REFERENCE
+            USER_TYPE
+              PsiElement(IDENTIFIER)('IIterator')
+              TYPE_ARGUMENT_LIST
+                PsiElement(LT)('<')
+                TYPE_REFERENCE
+                  USER_TYPE
+                    PsiElement(IDENTIFIER)('Byte')
+                PsiElement(GT)('>')
         PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
-        DELEGATION_SPECIFIER
-          DELEGATOR_SUPER_CLASS
-            TYPE_REFERENCE
-              USER_TYPE
-                PsiElement(IDENTIFIER)('JavaCloseableWrapper')
+        DELEGATOR_SUPER_CLASS
+          TYPE_REFERENCE
+            USER_TYPE
+              PsiElement(IDENTIFIER)('JavaCloseableWrapper')
       PsiWhiteSpace(' ')
       CLASS_BODY
         PsiElement(LBRACE)('{')
@@ -459,24 +456,22 @@ JetFile: IOSamples.jet
       PsiElement(COLON)(':')
       PsiWhiteSpace(' ')
       DELEGATION_SPECIFIER_LIST
-        DELEGATION_SPECIFIER
-          DELEGATOR_SUPER_CLASS
-            TYPE_REFERENCE
-              USER_TYPE
-                PsiElement(IDENTIFIER)('IAdder')
-                TYPE_ARGUMENT_LIST
-                  PsiElement(LT)('<')
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      PsiElement(IDENTIFIER)('Byte')
-                  PsiElement(GT)('>')
+        DELEGATOR_SUPER_CLASS
+          TYPE_REFERENCE
+            USER_TYPE
+              PsiElement(IDENTIFIER)('IAdder')
+              TYPE_ARGUMENT_LIST
+                PsiElement(LT)('<')
+                TYPE_REFERENCE
+                  USER_TYPE
+                    PsiElement(IDENTIFIER)('Byte')
+                PsiElement(GT)('>')
         PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
-        DELEGATION_SPECIFIER
-          DELEGATOR_SUPER_CLASS
-            TYPE_REFERENCE
-              USER_TYPE
-                PsiElement(IDENTIFIER)('JavaCloseableWrapper')
+        DELEGATOR_SUPER_CLASS
+          TYPE_REFERENCE
+            USER_TYPE
+              PsiElement(IDENTIFIER)('JavaCloseableWrapper')
       PsiWhiteSpace(' ')
       CLASS_BODY
         PsiElement(LBRACE)('{')

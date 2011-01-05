@@ -1005,10 +1005,8 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      */
     private void parseDelegationSpecifier() {
-        PsiBuilder.Marker specifier = mark();
-        parseAttributeList();
-
         PsiBuilder.Marker delegator = mark();
+        parseAttributeList();
         parseTypeRef();
 
         if (at(BY_KEYWORD)) {
@@ -1023,8 +1021,6 @@ public class JetParsing extends AbstractJetParsing {
         else {
             delegator.done(DELEGATOR_SUPER_CLASS);
         }
-
-        specifier.done(DELEGATION_SPECIFIER);
     }
 
 

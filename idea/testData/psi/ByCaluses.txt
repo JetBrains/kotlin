@@ -10,15 +10,14 @@ JetFile: ByCaluses.jet
       PsiElement(COLON)(':')
       PsiWhiteSpace(' ')
       DELEGATION_SPECIFIER_LIST
-        DELEGATION_SPECIFIER
-          DELEGATOR_BY
-            TYPE_REFERENCE
-              USER_TYPE
-                PsiElement(IDENTIFIER)('b')
-            PsiWhiteSpace(' ')
-            PsiElement(by)('by')
-            PsiWhiteSpace(' ')
-            PsiElement(IDENTIFIER)('a')
+        DELEGATOR_BY
+          TYPE_REFERENCE
+            USER_TYPE
+              PsiElement(IDENTIFIER)('b')
+          PsiWhiteSpace(' ')
+          PsiElement(by)('by')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('a')
       PsiWhiteSpace(' ')
       CLASS_BODY
         PsiElement(LBRACE)('{')
@@ -45,30 +44,29 @@ JetFile: ByCaluses.jet
       PsiElement(COLON)(':')
       PsiWhiteSpace(' ')
       DELEGATION_SPECIFIER_LIST
-        DELEGATION_SPECIFIER
-          DELEGATOR_BY
-            TYPE_REFERENCE
-              USER_TYPE
-                PsiElement(IDENTIFIER)('b')
+        DELEGATOR_BY
+          TYPE_REFERENCE
+            USER_TYPE
+              PsiElement(IDENTIFIER)('b')
+          PsiWhiteSpace(' ')
+          PsiElement(by)('by')
+          PsiWhiteSpace(' ')
+          BINARY_EXPRESSION
+            PsiElement(IDENTIFIER)('a')
             PsiWhiteSpace(' ')
-            PsiElement(by)('by')
+            PsiElement(PLUS)('+')
             PsiWhiteSpace(' ')
             BINARY_EXPRESSION
-              PsiElement(IDENTIFIER)('a')
+              CALL_EXPRESSION
+                PsiElement(IDENTIFIER)('b')
+                VALUE_ARGUMENT_LIST
+                  PsiElement(LPAR)('(')
+                  PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')
-              PsiElement(PLUS)('+')
+              PsiElement(MUL)('*')
               PsiWhiteSpace(' ')
-              BINARY_EXPRESSION
-                CALL_EXPRESSION
-                  PsiElement(IDENTIFIER)('b')
-                  VALUE_ARGUMENT_LIST
-                    PsiElement(LPAR)('(')
-                    PsiElement(RPAR)(')')
-                PsiWhiteSpace(' ')
-                PsiElement(MUL)('*')
-                PsiWhiteSpace(' ')
-                INTEGER_CONSTANT
-                  PsiElement(INTEGER_LITERAL)('5')
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('5')
       PsiWhiteSpace(' ')
       CLASS_BODY
         PsiElement(LBRACE)('{')
@@ -95,18 +93,17 @@ JetFile: ByCaluses.jet
       PsiElement(COLON)(':')
       PsiWhiteSpace(' ')
       DELEGATION_SPECIFIER_LIST
-        DELEGATION_SPECIFIER
-          DELEGATOR_BY
-            TYPE_REFERENCE
-              USER_TYPE
-                PsiElement(IDENTIFIER)('b')
-            PsiWhiteSpace(' ')
-            PsiElement(by)('by')
-            PsiWhiteSpace(' ')
-            TUPLE
-              PsiElement(LPAR)('(')
-              PsiElement(IDENTIFIER)('a')
-              PsiElement(RPAR)(')')
+        DELEGATOR_BY
+          TYPE_REFERENCE
+            USER_TYPE
+              PsiElement(IDENTIFIER)('b')
+          PsiWhiteSpace(' ')
+          PsiElement(by)('by')
+          PsiWhiteSpace(' ')
+          TUPLE
+            PsiElement(LPAR)('(')
+            PsiElement(IDENTIFIER)('a')
+            PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
       CLASS_BODY
         PsiElement(LBRACE)('{')
@@ -133,16 +130,61 @@ JetFile: ByCaluses.jet
       PsiElement(COLON)(':')
       PsiWhiteSpace(' ')
       DELEGATION_SPECIFIER_LIST
-        DELEGATION_SPECIFIER
-          DELEGATOR_BY
-            TYPE_REFERENCE
-              USER_TYPE
-                PsiElement(IDENTIFIER)('b')
-            PsiWhiteSpace(' ')
-            PsiElement(by)('by')
-            PsiWhiteSpace(' ')
-            TUPLE
-              PsiElement(LPAR)('(')
+        DELEGATOR_BY
+          TYPE_REFERENCE
+            USER_TYPE
+              PsiElement(IDENTIFIER)('b')
+          PsiWhiteSpace(' ')
+          PsiElement(by)('by')
+          PsiWhiteSpace(' ')
+          TUPLE
+            PsiElement(LPAR)('(')
+            CALL_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
+              PsiWhiteSpace(' ')
+              FUNCTION_LITERAL
+                PsiElement(LBRACE)('{')
+                BODY
+                  <empty list>
+                PsiElement(RBRACE)('}')
+            PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      CLASS_BODY
+        PsiElement(LBRACE)('{')
+        PsiWhiteSpace('\n  ')
+        CONSTRUCTOR
+          PsiElement(this)('this')
+          VALUE_PARAMETER_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiElement(RBRACE)('}')
+        PsiWhiteSpace('\n')
+        PsiElement(RBRACE)('}')
+    PsiWhiteSpace('\n')
+    CLASS
+      PsiElement(class)('class')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('A')
+      PsiWhiteSpace(' ')
+      TYPE_PARAMETER_LIST
+        <empty list>
+      PsiElement(COLON)(':')
+      PsiWhiteSpace(' ')
+      DELEGATION_SPECIFIER_LIST
+        DELEGATOR_BY
+          TYPE_REFERENCE
+            USER_TYPE
+              PsiElement(IDENTIFIER)('b')
+          PsiWhiteSpace(' ')
+          PsiElement(by)('by')
+          PsiWhiteSpace(' ')
+          ARRAY_ACCESS_EXPRESSION
+            PsiElement(IDENTIFIER)('a')
+            INDICES
+              PsiElement(LBRACKET)('[')
               CALL_EXPRESSION
                 PsiElement(IDENTIFIER)('a')
                 PsiWhiteSpace(' ')
@@ -151,6 +193,53 @@ JetFile: ByCaluses.jet
                   BODY
                     <empty list>
                   PsiElement(RBRACE)('}')
+              PsiElement(RBRACKET)(']')
+      PsiWhiteSpace(' ')
+      CLASS_BODY
+        PsiElement(LBRACE)('{')
+        PsiWhiteSpace('\n  ')
+        CONSTRUCTOR
+          PsiElement(this)('this')
+          VALUE_PARAMETER_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiElement(RBRACE)('}')
+        PsiWhiteSpace('\n')
+        PsiElement(RBRACE)('}')
+    PsiWhiteSpace('\n')
+    CLASS
+      PsiElement(class)('class')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('A')
+      PsiWhiteSpace(' ')
+      TYPE_PARAMETER_LIST
+        <empty list>
+      PsiElement(COLON)(':')
+      PsiWhiteSpace(' ')
+      DELEGATION_SPECIFIER_LIST
+        DELEGATOR_BY
+          TYPE_REFERENCE
+            USER_TYPE
+              PsiElement(IDENTIFIER)('b')
+          PsiWhiteSpace(' ')
+          PsiElement(by)('by')
+          PsiWhiteSpace(' ')
+          CALL_EXPRESSION
+            PsiElement(IDENTIFIER)('a')
+            VALUE_ARGUMENT_LIST
+              PsiElement(LPAR)('(')
+              VALUE_ARGUMENT
+                CALL_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
+                  PsiWhiteSpace(' ')
+                  FUNCTION_LITERAL
+                    PsiElement(LBRACE)('{')
+                    BODY
+                      <empty list>
+                    PsiElement(RBRACE)('}')
               PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
       CLASS_BODY
@@ -178,18 +267,31 @@ JetFile: ByCaluses.jet
       PsiElement(COLON)(':')
       PsiWhiteSpace(' ')
       DELEGATION_SPECIFIER_LIST
-        DELEGATION_SPECIFIER
-          DELEGATOR_BY
-            TYPE_REFERENCE
-              USER_TYPE
-                PsiElement(IDENTIFIER)('b')
+        DELEGATOR_BY
+          TYPE_REFERENCE
+            USER_TYPE
+              PsiElement(IDENTIFIER)('b')
+          PsiWhiteSpace(' ')
+          PsiElement(by)('by')
+          PsiWhiteSpace(' ')
+          OBJECT_LITERAL
+            PsiElement(object)('object')
             PsiWhiteSpace(' ')
-            PsiElement(by)('by')
-            PsiWhiteSpace(' ')
-            ARRAY_ACCESS_EXPRESSION
-              PsiElement(IDENTIFIER)('a')
-              INDICES
-                PsiElement(LBRACKET)('[')
+            CLASS_BODY
+              PsiElement(LBRACE)('{')
+              PsiWhiteSpace('\n  ')
+              FUN
+                PsiElement(fun)('fun')
+                PsiWhiteSpace(' ')
+                PsiElement(IDENTIFIER)('f')
+                TYPE_PARAMETER_LIST
+                  <empty list>
+                VALUE_PARAMETER_LIST
+                  PsiElement(LPAR)('(')
+                  PsiElement(RPAR)(')')
+                PsiWhiteSpace(' ')
+                PsiElement(EQ)('=')
+                PsiWhiteSpace(' ')
                 CALL_EXPRESSION
                   PsiElement(IDENTIFIER)('a')
                   PsiWhiteSpace(' ')
@@ -198,117 +300,8 @@ JetFile: ByCaluses.jet
                     BODY
                       <empty list>
                     PsiElement(RBRACE)('}')
-                PsiElement(RBRACKET)(']')
-      PsiWhiteSpace(' ')
-      CLASS_BODY
-        PsiElement(LBRACE)('{')
-        PsiWhiteSpace('\n  ')
-        CONSTRUCTOR
-          PsiElement(this)('this')
-          VALUE_PARAMETER_LIST
-            PsiElement(LPAR)('(')
-            PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          BLOCK
-            PsiElement(LBRACE)('{')
-            PsiElement(RBRACE)('}')
-        PsiWhiteSpace('\n')
-        PsiElement(RBRACE)('}')
-    PsiWhiteSpace('\n')
-    CLASS
-      PsiElement(class)('class')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('A')
-      PsiWhiteSpace(' ')
-      TYPE_PARAMETER_LIST
-        <empty list>
-      PsiElement(COLON)(':')
-      PsiWhiteSpace(' ')
-      DELEGATION_SPECIFIER_LIST
-        DELEGATION_SPECIFIER
-          DELEGATOR_BY
-            TYPE_REFERENCE
-              USER_TYPE
-                PsiElement(IDENTIFIER)('b')
-            PsiWhiteSpace(' ')
-            PsiElement(by)('by')
-            PsiWhiteSpace(' ')
-            CALL_EXPRESSION
-              PsiElement(IDENTIFIER)('a')
-              VALUE_ARGUMENT_LIST
-                PsiElement(LPAR)('(')
-                VALUE_ARGUMENT
-                  CALL_EXPRESSION
-                    PsiElement(IDENTIFIER)('a')
-                    PsiWhiteSpace(' ')
-                    FUNCTION_LITERAL
-                      PsiElement(LBRACE)('{')
-                      BODY
-                        <empty list>
-                      PsiElement(RBRACE)('}')
-                PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      CLASS_BODY
-        PsiElement(LBRACE)('{')
-        PsiWhiteSpace('\n  ')
-        CONSTRUCTOR
-          PsiElement(this)('this')
-          VALUE_PARAMETER_LIST
-            PsiElement(LPAR)('(')
-            PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          BLOCK
-            PsiElement(LBRACE)('{')
-            PsiElement(RBRACE)('}')
-        PsiWhiteSpace('\n')
-        PsiElement(RBRACE)('}')
-    PsiWhiteSpace('\n')
-    CLASS
-      PsiElement(class)('class')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('A')
-      PsiWhiteSpace(' ')
-      TYPE_PARAMETER_LIST
-        <empty list>
-      PsiElement(COLON)(':')
-      PsiWhiteSpace(' ')
-      DELEGATION_SPECIFIER_LIST
-        DELEGATION_SPECIFIER
-          DELEGATOR_BY
-            TYPE_REFERENCE
-              USER_TYPE
-                PsiElement(IDENTIFIER)('b')
-            PsiWhiteSpace(' ')
-            PsiElement(by)('by')
-            PsiWhiteSpace(' ')
-            OBJECT_LITERAL
-              PsiElement(object)('object')
-              PsiWhiteSpace(' ')
-              CLASS_BODY
-                PsiElement(LBRACE)('{')
-                PsiWhiteSpace('\n  ')
-                FUN
-                  PsiElement(fun)('fun')
-                  PsiWhiteSpace(' ')
-                  PsiElement(IDENTIFIER)('f')
-                  TYPE_PARAMETER_LIST
-                    <empty list>
-                  VALUE_PARAMETER_LIST
-                    PsiElement(LPAR)('(')
-                    PsiElement(RPAR)(')')
-                  PsiWhiteSpace(' ')
-                  PsiElement(EQ)('=')
-                  PsiWhiteSpace(' ')
-                  CALL_EXPRESSION
-                    PsiElement(IDENTIFIER)('a')
-                    PsiWhiteSpace(' ')
-                    FUNCTION_LITERAL
-                      PsiElement(LBRACE)('{')
-                      BODY
-                        <empty list>
-                      PsiElement(RBRACE)('}')
-                PsiWhiteSpace('\n')
-                PsiElement(RBRACE)('}')
+              PsiWhiteSpace('\n')
+              PsiElement(RBRACE)('}')
       PsiWhiteSpace(' ')
       CLASS_BODY
         PsiElement(LBRACE)('{')
