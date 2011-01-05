@@ -81,6 +81,7 @@ RAW_STRING_LITERAL = {THREE_QUO} {QUO_STRING_CHAR}* {THREE_QUO}?
 
 <YYINITIAL> {CHARACTER_LITERAL} { return JetTokens.CHARACTER_LITERAL; }
 <YYINITIAL> {STRING_LITERAL} { return JetTokens.STRING_LITERAL; }
+// TODO: Decide what to do with """ ... """"
 <YYINITIAL> {RAW_STRING_LITERAL} { return JetTokens.RAW_STRING_LITERAL; }
 
 <YYINITIAL> "decomposer" { return JetTokens.DECOMPOSER_KEYWORD ;}
