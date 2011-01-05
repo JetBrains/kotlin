@@ -102,6 +102,7 @@ RAW_STRING_LITERAL = {THREE_QUO} {QUO_STRING_CHAR}* {THREE_QUO}?
 <YYINITIAL> "this"       { return JetTokens.THIS_KEYWORD ;}
 <YYINITIAL> "null"       { return JetTokens.NULL_KEYWORD ;}
 <YYINITIAL> "else"       { return JetTokens.ELSE_KEYWORD ;}
+<YYINITIAL> "This"       { return JetTokens.CAPITALIZED_THIS_KEYWORD ;}
 <YYINITIAL> "try"        { return JetTokens.TRY_KEYWORD ;}
 <YYINITIAL> "val"        { return JetTokens.VAL_KEYWORD ;}
 <YYINITIAL> "var"        { return JetTokens.VAR_KEYWORD ;}

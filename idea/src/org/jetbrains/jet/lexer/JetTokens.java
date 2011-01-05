@@ -23,36 +23,38 @@ public interface JetTokens {
     JetToken STRING_LITERAL     = new JetToken("STRING_LITERAL");
     JetToken RAW_STRING_LITERAL = new JetToken("RAW_STRING_LITERAL");
 
-    JetKeywordToken NAMESPACE_KEYWORD  = JetKeywordToken.keyword("namespace");
-    JetKeywordToken AS_KEYWORD         = JetKeywordToken.keyword("as");
-    JetKeywordToken TYPE_KEYWORD       = JetKeywordToken.keyword("type");
-    JetKeywordToken CLASS_KEYWORD      = JetKeywordToken.keyword("class");
-    JetKeywordToken THIS_KEYWORD       = JetKeywordToken.keyword("this");
-    JetKeywordToken VAL_KEYWORD        = JetKeywordToken.keyword("val");
-    JetKeywordToken VAR_KEYWORD        = JetKeywordToken.keyword("var");
-    JetKeywordToken FUN_KEYWORD        = JetKeywordToken.keyword("fun");
-    JetKeywordToken DECOMPOSER_KEYWORD = JetKeywordToken.keyword("decomposer");
-    JetKeywordToken EXTENSION_KEYWORD  = JetKeywordToken.keyword("extension");
-    JetKeywordToken FOR_KEYWORD        = JetKeywordToken.keyword("for");
-    JetKeywordToken NULL_KEYWORD       = JetKeywordToken.keyword("null");
-    JetKeywordToken TYPEOF_KEYWORD     = JetKeywordToken.keyword("typeof");
-    JetKeywordToken NEW_KEYWORD        = JetKeywordToken.keyword("new");
-    JetKeywordToken TRUE_KEYWORD       = JetKeywordToken.keyword("true");
-    JetKeywordToken FALSE_KEYWORD      = JetKeywordToken.keyword("false");
-    JetKeywordToken IS_KEYWORD         = JetKeywordToken.keyword("is");
-    JetKeywordToken IN_KEYWORD         = JetKeywordToken.keyword("in");
-    JetKeywordToken THROW_KEYWORD      = JetKeywordToken.keyword("throw");
-    JetKeywordToken RETURN_KEYWORD     = JetKeywordToken.keyword("return");
-    JetKeywordToken BREAK_KEYWORD      = JetKeywordToken.keyword("break");
-    JetKeywordToken CONTINUE_KEYWORD   = JetKeywordToken.keyword("continue");
-    JetKeywordToken OBJECT_KEYWORD     = JetKeywordToken.keyword("object");
-    JetKeywordToken IF_KEYWORD         = JetKeywordToken.keyword("if");
-    JetKeywordToken TRY_KEYWORD        = JetKeywordToken.keyword("try");
-    JetKeywordToken ELSE_KEYWORD       = JetKeywordToken.keyword("else");
-    JetKeywordToken WHILE_KEYWORD      = JetKeywordToken.keyword("while");
-    JetKeywordToken DO_KEYWORD         = JetKeywordToken.keyword("do");
-    JetKeywordToken MATCH_KEYWORD      = JetKeywordToken.keyword("match");
-    JetKeywordToken CASE_KEYWORD       = JetKeywordToken.keyword("case");
+    JetKeywordToken NAMESPACE_KEYWORD        = JetKeywordToken.keyword("namespace");
+    JetKeywordToken AS_KEYWORD               = JetKeywordToken.keyword("as");
+    JetKeywordToken TYPE_KEYWORD             = JetKeywordToken.keyword("type");
+    JetKeywordToken CLASS_KEYWORD            = JetKeywordToken.keyword("class");
+    JetKeywordToken THIS_KEYWORD             = JetKeywordToken.keyword("this");
+    JetKeywordToken VAL_KEYWORD              = JetKeywordToken.keyword("val");
+    JetKeywordToken VAR_KEYWORD              = JetKeywordToken.keyword("var");
+    JetKeywordToken FUN_KEYWORD              = JetKeywordToken.keyword("fun");
+    JetKeywordToken DECOMPOSER_KEYWORD       = JetKeywordToken.keyword("decomposer");
+    JetKeywordToken EXTENSION_KEYWORD        = JetKeywordToken.keyword("extension");
+    JetKeywordToken FOR_KEYWORD              = JetKeywordToken.keyword("for");
+    JetKeywordToken NULL_KEYWORD             = JetKeywordToken.keyword("null");
+    JetKeywordToken TYPEOF_KEYWORD           = JetKeywordToken.keyword("typeof");
+    JetKeywordToken NEW_KEYWORD              = JetKeywordToken.keyword("new");
+    JetKeywordToken TRUE_KEYWORD             = JetKeywordToken.keyword("true");
+    JetKeywordToken FALSE_KEYWORD            = JetKeywordToken.keyword("false");
+    JetKeywordToken IS_KEYWORD               = JetKeywordToken.keyword("is");
+    JetKeywordToken IN_KEYWORD               = JetKeywordToken.keyword("in");
+    JetKeywordToken THROW_KEYWORD            = JetKeywordToken.keyword("throw");
+    JetKeywordToken RETURN_KEYWORD           = JetKeywordToken.keyword("return");
+    JetKeywordToken BREAK_KEYWORD            = JetKeywordToken.keyword("break");
+    JetKeywordToken CONTINUE_KEYWORD         = JetKeywordToken.keyword("continue");
+    JetKeywordToken OBJECT_KEYWORD           = JetKeywordToken.keyword("object");
+    JetKeywordToken IF_KEYWORD               = JetKeywordToken.keyword("if");
+    JetKeywordToken TRY_KEYWORD              = JetKeywordToken.keyword("try");
+    JetKeywordToken ELSE_KEYWORD             = JetKeywordToken.keyword("else");
+    JetKeywordToken WHILE_KEYWORD            = JetKeywordToken.keyword("while");
+    JetKeywordToken DO_KEYWORD               = JetKeywordToken.keyword("do");
+    JetKeywordToken MATCH_KEYWORD            = JetKeywordToken.keyword("match");
+    JetKeywordToken CASE_KEYWORD             = JetKeywordToken.keyword("case");
+    // TODO: Discuss "This" keyword
+    JetKeywordToken CAPITALIZED_THIS_KEYWORD = JetKeywordToken.keyword("This");
 
 
     JetToken IDENTIFIER = new JetToken("IDENTIFIER");
@@ -135,7 +137,7 @@ public interface JetTokens {
             NULL_KEYWORD, TYPEOF_KEYWORD, NEW_KEYWORD, TRUE_KEYWORD, FALSE_KEYWORD, IS_KEYWORD,
             IN_KEYWORD, THROW_KEYWORD, RETURN_KEYWORD, BREAK_KEYWORD, CONTINUE_KEYWORD, OBJECT_KEYWORD, IF_KEYWORD,
             ELSE_KEYWORD, WHILE_KEYWORD, DO_KEYWORD, MATCH_KEYWORD, TRY_KEYWORD, CASE_KEYWORD,
-            NOT_IN, NOT_IS
+            NOT_IN, NOT_IS, CAPITALIZED_THIS_KEYWORD
     );
 
     TokenSet SOFT_KEYWORDS = TokenSet.create(WRAPS_KEYWORD, IMPORT_KEYWORD, WHERE_KEYWORD, BY_KEYWORD, LAZY_KEYWORD, GET_KEYWORD,

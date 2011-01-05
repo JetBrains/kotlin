@@ -39,6 +39,7 @@ memberDeclaration
   : class
   : extension
   : typedef
+  : anonymousInitializer
   ;
 
 classObject

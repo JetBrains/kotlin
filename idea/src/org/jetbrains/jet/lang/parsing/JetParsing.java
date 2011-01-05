@@ -537,7 +537,6 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      */
     /*package*/ void parseClassBody() {
-        // TODO : anonymous initializer, like {...} in Java?
         assert _at(LBRACE);
         PsiBuilder.Marker body = mark();
 
@@ -558,6 +557,10 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * memberDeclaration
+     *   : modifiers memberDeclaration'
+     *   ;
+     *
+     * memberDeclaration'
      *   : classObject
      *   : constructor
      *   : decomposer
@@ -566,6 +569,7 @@ public class JetParsing extends AbstractJetParsing {
      *   : class
      *   : extension
      *   : typedef
+     *   : anonymousInitializer
      *   ;
      */
     private void parseMemberDeclaration() {
@@ -613,6 +617,9 @@ public class JetParsing extends AbstractJetParsing {
         }
         else if (keywordToken == THIS_KEYWORD) {
             declType = parseConstructor();
+        } else if (keywordToken == LBRACE) {
+            parseBlock();
+            declType = ANONYMOUS_INITIALIZER;
         }
         return declType;
     }
@@ -1203,11 +1210,10 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * type
-     *   : attributes (functionType | userType | tupleType)
+     *   : attributes (selfType | functionType | userType | tupleType)
      *   ;
      */
     public void parseTypeRef() {
-        // TODO: Self type
         PsiBuilder.Marker type = mark();
 
         parseAttributeList();
@@ -1221,12 +1227,28 @@ public class JetParsing extends AbstractJetParsing {
         else if (at(LPAR)) {
             parseTupleType();
         }
+        else if (at(CAPITALIZED_THIS_KEYWORD)) {
+            parseSelfType();
+        }
         else {
             errorWithRecovery("Type expected",
                     TokenSet.orSet(TOPLEVEL_OBJECT_FIRST,
                             TokenSet.create(EQ, COMMA, GT, RBRACKET, DOT, RPAR, RBRACE, LBRACE, SEMICOLON)));
         }
         type.done(TYPE_REFERENCE);
+    }
+
+    /*
+     * selfType
+     *   : "This"
+     *   ;
+     */
+    private void parseSelfType() {
+        assert _at(CAPITALIZED_THIS_KEYWORD);
+
+        PsiBuilder.Marker type = mark();
+        advance(); // CAPITALIZED_THIS_KEYWORD
+        type.done(SELF_TYPE);
     }
 
     /*

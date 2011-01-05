@@ -107,6 +107,8 @@ public interface JetNodeTypes {
     JetNodeType OBJECT_LITERAL                      = new JetNodeType("OBJECT_LITERAL");
     JetNodeType ROOT_NAMESPACE                      = new JetNodeType("ROOT_NAMESPACE");
     JetNodeType FIELD_REFERENCE                     = new JetNodeType("FIELD_REFERENCE");
+    JetNodeType SELF_TYPE                           = new JetNodeType("SELF_TYPE");
+    JetNodeType ANONYMOUS_INITIALIZER               = new JetNodeType("ANONYMOUS_INITIALIZER");
 
     IElementType NAMESPACE_NAME = new JetNodeType("NAMESPACE_NAME");
 
