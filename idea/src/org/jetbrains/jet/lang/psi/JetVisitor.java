@@ -89,4 +89,12 @@ public class JetVisitor extends PsiElementVisitor {
     public void visitEnumEntry(JetEnumEntry enumEntry) {
         visitClass(enumEntry);
     }
+
+    public void visitParameterList(JetParameterList list) {
+        visitJetElement(list);
+    }
+
+    public void visitParameter(JetParameter parameter) {
+        visitDeclaration(parameter);
+    }
 }

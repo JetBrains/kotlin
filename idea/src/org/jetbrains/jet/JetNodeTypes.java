@@ -24,20 +24,18 @@ public interface JetNodeTypes {
     JetNodeType CONSTRUCTOR  = new JetNodeType("CONSTRUCTOR", JetConstructor.class);
     JetNodeType ENUM_ENTRY   = new JetNodeType("ENUM_ENTRY", JetEnumEntry.class);
 
-    TokenSet DECLARATIONS = TokenSet.create(
-            NAMESPACE, CLASS, PROPERTY, FUN, EXTENSION,
-            TYPEDEF, DECOMPOSER, CLASS_OBJECT, CONSTRUCTOR, ENUM_ENTRY);
-
     JetNodeType TYPE_PARAMETER_LIST                 = new JetNodeType("TYPE_PARAMETER_LIST", JetTypeParameterList.class);
     JetNodeType TYPE_PARAMETER                      = new JetNodeType("TYPE_PARAMETER", JetTypeParameter.class);
-    JetNodeType PRIMARY_CONSTRUCTOR_PARAMETERS_LIST = new JetNodeType("PRIMARY_CONSTRUCTOR_PARAMETERS_LIST");
-    JetNodeType PRIMARY_CONSTRUCTOR_PARAMETER       = new JetNodeType("PRIMARY_CONSTRUCTOR_PARAMETER");
     JetNodeType DELEGATION_SPECIFIER_LIST           = new JetNodeType("DELEGATION_SPECIFIER_LIST");
     JetNodeType DELEGATION_SPECIFIER                = new JetNodeType("DELEGATION_SPECIFIER");
     JetNodeType DELEGATOR_BY                        = new JetNodeType("DELEGATOR_BY");
     JetNodeType DELEGATOR_SUPER_CALL                = new JetNodeType("DELEGATOR_SUPER_CALL");
     JetNodeType DELEGATOR_SUPER_CLASS               = new JetNodeType("DELEGATOR_SUPER_CLASS");
-    JetNodeType VALUE_PARAMETER_LIST                = new JetNodeType("VALUE_PARAMETER_LIST");
+    JetNodeType VALUE_PARAMETER_LIST                = new JetNodeType("VALUE_PARAMETER_LIST", JetParameterList.class);
+    JetNodeType VALUE_PARAMETER                     = new JetNodeType("VALUE_PARAMETER", JetParameter.class);
+    // TODO: Not sure if we really need separate PSI nodes for the class parameters?
+    JetNodeType PRIMARY_CONSTRUCTOR_PARAMETERS_LIST = new JetNodeType("PRIMARY_CONSTRUCTOR_PARAMETERS_LIST", JetParameterList.class);
+    JetNodeType PRIMARY_CONSTRUCTOR_PARAMETER       = new JetNodeType("PRIMARY_CONSTRUCTOR_PARAMETER", JetParameter.class);
     JetNodeType NAMED_ARGUMENT                      = new JetNodeType("NAMED_ARGUMENT");
     JetNodeType CLASS_BODY                          = new JetNodeType("CLASS_BODY", JetClassBody.class);
     JetNodeType IMPORT_DIRECTIVE                    = new JetNodeType("IMPORT_DIRECTIVE", JetImportDirective.class);
@@ -53,7 +51,6 @@ public interface JetNodeTypes {
     JetNodeType TYPE_REFERENCE                      = new JetNodeType("TYPE_REFERENCE");
     JetNodeType LABELED_TUPLE_ENTRY                 = new JetNodeType("LABELED_TUPLE_ENTRY");
     JetNodeType TUPLE_TYPE                          = new JetNodeType("TUPLE_TYPE");
-    JetNodeType VALUE_PARAMETER                     = new JetNodeType("VALUE_PARAMETER");
     JetNodeType FUNCTION_TYPE                       = new JetNodeType("FUNCTION_TYPE");
     JetNodeType DECOMPOSER_PROPERTY_LIST            = new JetNodeType("DECOMPOSER_PROPERTY_LIST");
     // TODO: review
@@ -113,4 +110,8 @@ public interface JetNodeTypes {
     JetNodeType FIELD_REFERENCE                     = new JetNodeType("FIELD_REFERENCE");
 
     IElementType NAMESPACE_NAME = new JetNodeType("NAMESPACE_NAME");
+
+    TokenSet DECLARATIONS = TokenSet.create(
+            NAMESPACE, CLASS, PROPERTY, FUN, EXTENSION,
+            TYPEDEF, DECOMPOSER, CLASS_OBJECT, CONSTRUCTOR, ENUM_ENTRY, VALUE_PARAMETER);
 }

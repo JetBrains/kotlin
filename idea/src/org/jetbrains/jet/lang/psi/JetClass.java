@@ -27,4 +27,16 @@ public class JetClass extends JetTypeParameterListOwner {
     public void accept(@NotNull JetVisitor visitor) {
         visitor.visitClass(this);
     }
+
+    @Nullable
+    public JetParameterList getPrimaryConstructorParameterList() {
+        return (JetParameterList) findChildByType(JetNodeTypes.VALUE_PARAMETER_LIST);
+    }
+
+    @NotNull
+    public List<JetParameter> getPrimaryConstructorParameters() {
+        JetParameterList list = getPrimaryConstructorParameterList();
+        if (list == null) return Collections.emptyList();
+        return list.getParameters();
+    }
 }
