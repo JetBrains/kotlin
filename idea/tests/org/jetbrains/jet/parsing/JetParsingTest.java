@@ -4,12 +4,19 @@
 package org.jetbrains.jet.parsing;
 
 import com.intellij.openapi.application.PathManager;
+import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.ParsingTestCase;
 import junit.framework.TestSuite;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.jet.lang.psi.JetElement;
+import org.jetbrains.jet.lang.psi.JetVisitor;
 
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FilenameFilter;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -38,6 +45,34 @@ public class JetParsingTest extends ParsingTestCase {
 
     private static String getHomeDirectory() {
        return new File(PathManager.getResourceRoot(JetParsingTest.class, "/org/jetbrains/jet/parsing/JetParsingTest.class")).getParentFile().getParentFile().getParent();
+    }
+
+    @Override
+    protected void checkResult(@NonNls String targetDataName, PsiFile file) throws IOException {
+        super.checkResult(targetDataName, file);
+        file.acceptChildren(new JetVisitor() {
+            @Override
+            public void visitJetElement(JetElement elem) {
+                elem.acceptChildren(this);
+                try {
+                    checkPsiGetters(elem);
+                } catch (Throwable throwable) {
+                    throw new RuntimeException(throwable);
+                }
+            }
+        });
+    }
+
+    private void checkPsiGetters(JetElement elem) throws Throwable {
+        Method[] methods = elem.getClass().getDeclaredMethods();
+        for (Method method : methods) {
+            if (!method.getName().startsWith("get") && !method.getName().startsWith("find")) continue;
+            if (method.getParameterTypes().length > 0) continue;
+            Class<?> declaringClass = method.getDeclaringClass();
+            if (!declaringClass.getName().startsWith("org.jetbrains.jet")) continue;
+
+            method.invoke(elem);
+        }
     }
 
     @Override
