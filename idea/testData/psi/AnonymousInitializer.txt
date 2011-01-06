@@ -15,7 +15,8 @@ JetFile: AnonymousInitializer.jet
             PsiElement(LBRACE)('{')
             PsiWhiteSpace('\n    ')
             CALL_EXPRESSION
-              PsiElement(IDENTIFIER)('foo')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('foo')
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 PsiElement(RPAR)(')')
@@ -27,7 +28,8 @@ JetFile: AnonymousInitializer.jet
               PsiWhiteSpace(' ')
               PsiElement(EQ)('=')
               PsiWhiteSpace(' ')
-              PsiElement(IDENTIFIER)('f')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('f')
             PsiWhiteSpace('\n  ')
             PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n\n  ')

@@ -26,7 +26,8 @@ JetFile: BitArith.jet
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('shl')
         PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('index')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('index')
     PsiWhiteSpace('\n\n')
     FUN
       PsiElement(fun)('fun')
@@ -59,16 +60,19 @@ JetFile: BitArith.jet
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
       BINARY_EXPRESSION
-        PsiElement(IDENTIFIER)('x')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('x')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('or')
         PsiWhiteSpace(' ')
         CALL_EXPRESSION
-          PsiElement(IDENTIFIER)('oneBit')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('oneBit')
           VALUE_ARGUMENT_LIST
             PsiElement(LPAR)('(')
             VALUE_ARGUMENT
-              PsiElement(IDENTIFIER)('index')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('index')
             PsiElement(RPAR)(')')
     PsiWhiteSpace('\n')
     FUN
@@ -102,21 +106,25 @@ JetFile: BitArith.jet
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
       BINARY_EXPRESSION
-        PsiElement(IDENTIFIER)('x')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('x')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('and')
         PsiWhiteSpace(' ')
         CALL_EXPRESSION
-          PsiElement(IDENTIFIER)('not')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('not')
           VALUE_ARGUMENT_LIST
             PsiElement(LPAR)('(')
             VALUE_ARGUMENT
               CALL_EXPRESSION
-                PsiElement(IDENTIFIER)('oneBit')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('oneBit')
                 VALUE_ARGUMENT_LIST
                   PsiElement(LPAR)('(')
                   VALUE_ARGUMENT
-                    PsiElement(IDENTIFIER)('index')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('index')
                   PsiElement(RPAR)(')')
             PsiElement(RPAR)(')')
     PsiWhiteSpace('\n\n')
@@ -152,16 +160,19 @@ JetFile: BitArith.jet
       PsiWhiteSpace(' ')
       BINARY_EXPRESSION
         BINARY_EXPRESSION
-          PsiElement(IDENTIFIER)('x')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('x')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('and')
           PsiWhiteSpace(' ')
           CALL_EXPRESSION
-            PsiElement(IDENTIFIER)('oneBit')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('oneBit')
             VALUE_ARGUMENT_LIST
               PsiElement(LPAR)('(')
               VALUE_ARGUMENT
-                PsiElement(IDENTIFIER)('index')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('index')
               PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         PsiElement(EXCLEQ)('!=')
@@ -204,11 +215,13 @@ JetFile: BitArith.jet
           TUPLE
             PsiElement(LPAR)('(')
             BINARY_EXPRESSION
-              PsiElement(IDENTIFIER)('x')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('x')
               PsiWhiteSpace(' ')
               PsiElement(IDENTIFIER)('shr')
               PsiWhiteSpace(' ')
-              PsiElement(IDENTIFIER)('index')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('index')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('shl')
@@ -258,7 +271,8 @@ JetFile: BitArith.jet
           PsiElement(LPAR)('(')
           CONDITION
             BINARY_EXPRESSION
-              PsiElement(IDENTIFIER)('x')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('x')
               PsiWhiteSpace(' ')
               PsiElement(EXCLEQ)('!=')
               PsiWhiteSpace(' ')
@@ -272,12 +286,14 @@ JetFile: BitArith.jet
               PsiWhiteSpace('\n    ')
               BODY
                 BINARY_EXPRESSION
-                  PsiElement(IDENTIFIER)('result')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('result')
                   PsiWhiteSpace(' ')
                   PsiElement(PLUSEQ)('+=')
                   PsiWhiteSpace(' ')
                   BINARY_EXPRESSION
-                    PsiElement(IDENTIFIER)('x')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('x')
                     PsiWhiteSpace(' ')
                     PsiElement(IDENTIFIER)('and')
                     PsiWhiteSpace(' ')
@@ -285,12 +301,14 @@ JetFile: BitArith.jet
                       PsiElement(INTEGER_LITERAL)('1')
                 PsiWhiteSpace('\n    ')
                 BINARY_EXPRESSION
-                  PsiElement(IDENTIFIER)('x')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('x')
                   PsiWhiteSpace(' ')
                   PsiElement(EQ)('=')
                   PsiWhiteSpace(' ')
                   BINARY_EXPRESSION
-                    PsiElement(IDENTIFIER)('x')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('x')
                     PsiWhiteSpace(' ')
                     PsiElement(IDENTIFIER)('ushr')
                     PsiWhiteSpace(' ')
@@ -299,7 +317,8 @@ JetFile: BitArith.jet
               PsiWhiteSpace('\n  ')
               PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n  ')
-        PsiElement(IDENTIFIER)('result')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('result')
         PsiWhiteSpace('\n')
         PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n\n')
@@ -328,20 +347,24 @@ JetFile: BitArith.jet
           PsiElement(LPAR)('(')
           BINARY_EXPRESSION
             BINARY_EXPRESSION
-              PsiElement(IDENTIFIER)('x')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('x')
               PsiWhiteSpace(' ')
               PsiElement(IDENTIFIER)('and')
               PsiWhiteSpace(' ')
               CALL_EXPRESSION
-                PsiElement(IDENTIFIER)('oneBit')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('oneBit')
                 VALUE_ARGUMENT_LIST
                   PsiElement(LPAR)('(')
                   VALUE_ARGUMENT
                     BINARY_EXPRESSION
                       DOT_QIALIFIED_EXPRESSION
-                        PsiElement(IDENTIFIER)('x')
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('x')
                         PsiElement(DOT)('.')
-                        PsiElement(IDENTIFIER)('bits')
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('bits')
                       PsiWhiteSpace(' ')
                       PsiElement(MINUS)('-')
                       PsiWhiteSpace(' ')
@@ -357,7 +380,8 @@ JetFile: BitArith.jet
         PsiWhiteSpace(' ')
         PsiElement(as)('as')
         PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('Int')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('Int')
     PsiWhiteSpace('\n\n')
     FUN
       PsiElement(fun)('fun')
@@ -385,7 +409,8 @@ JetFile: BitArith.jet
         PsiElement(LPAR)('(')
         CONDITION
           BINARY_EXPRESSION
-            PsiElement(IDENTIFIER)('x')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('x')
             PsiWhiteSpace(' ')
             PsiElement(EQEQ)('==')
             PsiWhiteSpace(' ')
@@ -402,22 +427,26 @@ JetFile: BitArith.jet
         ELSE
           BINARY_EXPRESSION
             CALL_EXPRESSION
-              PsiElement(IDENTIFIER)('mostSignificantBit')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('mostSignificantBit')
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
-                  PsiElement(IDENTIFIER)('x')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('x')
                 PsiElement(RPAR)(')')
             PsiWhiteSpace(' ')
             PsiElement(PLUS)('+')
             PsiWhiteSpace(' ')
             CALL_EXPRESSION
-              PsiElement(IDENTIFIER)('countOnes')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('countOnes')
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
                   BINARY_EXPRESSION
-                    PsiElement(IDENTIFIER)('x')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('x')
                     PsiWhiteSpace(' ')
                     PsiElement(IDENTIFIER)('shl')
                     PsiWhiteSpace(' ')
@@ -455,11 +484,13 @@ JetFile: BitArith.jet
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('and')
           PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('mask')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('mask')
         PsiWhiteSpace(' ')
         PsiElement(EQEQ)('==')
         PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('mask')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('mask')
     PsiWhiteSpace('\n\n')
     CLASS
       MODIFIER_LIST

@@ -17,7 +17,8 @@ JetFile: ByCaluses.jet
           PsiWhiteSpace(' ')
           PsiElement(by)('by')
           PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('a')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('a')
       PsiWhiteSpace(' ')
       CLASS_BODY
         PsiElement(LBRACE)('{')
@@ -52,13 +53,15 @@ JetFile: ByCaluses.jet
           PsiElement(by)('by')
           PsiWhiteSpace(' ')
           BINARY_EXPRESSION
-            PsiElement(IDENTIFIER)('a')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
             PsiWhiteSpace(' ')
             PsiElement(PLUS)('+')
             PsiWhiteSpace(' ')
             BINARY_EXPRESSION
               CALL_EXPRESSION
-                PsiElement(IDENTIFIER)('b')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('b')
                 VALUE_ARGUMENT_LIST
                   PsiElement(LPAR)('(')
                   PsiElement(RPAR)(')')
@@ -102,7 +105,8 @@ JetFile: ByCaluses.jet
           PsiWhiteSpace(' ')
           TUPLE
             PsiElement(LPAR)('(')
-            PsiElement(IDENTIFIER)('a')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
             PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
       CLASS_BODY
@@ -140,7 +144,8 @@ JetFile: ByCaluses.jet
           TUPLE
             PsiElement(LPAR)('(')
             CALL_EXPRESSION
-              PsiElement(IDENTIFIER)('a')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('a')
               PsiWhiteSpace(' ')
               FUNCTION_LITERAL
                 PsiElement(LBRACE)('{')
@@ -182,11 +187,13 @@ JetFile: ByCaluses.jet
           PsiElement(by)('by')
           PsiWhiteSpace(' ')
           ARRAY_ACCESS_EXPRESSION
-            PsiElement(IDENTIFIER)('a')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
             INDICES
               PsiElement(LBRACKET)('[')
               CALL_EXPRESSION
-                PsiElement(IDENTIFIER)('a')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
                 PsiWhiteSpace(' ')
                 FUNCTION_LITERAL
                   PsiElement(LBRACE)('{')
@@ -228,12 +235,14 @@ JetFile: ByCaluses.jet
           PsiElement(by)('by')
           PsiWhiteSpace(' ')
           CALL_EXPRESSION
-            PsiElement(IDENTIFIER)('a')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
             VALUE_ARGUMENT_LIST
               PsiElement(LPAR)('(')
               VALUE_ARGUMENT
                 CALL_EXPRESSION
-                  PsiElement(IDENTIFIER)('a')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
                   PsiWhiteSpace(' ')
                   FUNCTION_LITERAL
                     PsiElement(LBRACE)('{')
@@ -293,7 +302,8 @@ JetFile: ByCaluses.jet
                 PsiElement(EQ)('=')
                 PsiWhiteSpace(' ')
                 CALL_EXPRESSION
-                  PsiElement(IDENTIFIER)('a')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
                   PsiWhiteSpace(' ')
                   FUNCTION_LITERAL
                     PsiElement(LBRACE)('{')

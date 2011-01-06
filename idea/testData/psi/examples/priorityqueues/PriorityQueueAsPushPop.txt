@@ -63,9 +63,11 @@ JetFile: PriorityQueueAsPushPop.jet
           PsiWhiteSpace(' ')
           CALL_EXPRESSION
             DOT_QIALIFIED_EXPRESSION
-              PsiElement(IDENTIFIER)('wrapped')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('wrapped')
               PsiElement(DOT)('.')
-              PsiElement(IDENTIFIER)('extract')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('extract')
             VALUE_ARGUMENT_LIST
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')
@@ -95,13 +97,16 @@ JetFile: PriorityQueueAsPushPop.jet
           PsiWhiteSpace(' ')
           CALL_EXPRESSION
             DOT_QIALIFIED_EXPRESSION
-              PsiElement(IDENTIFIER)('wrapped')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('wrapped')
               PsiElement(DOT)('.')
-              PsiElement(IDENTIFIER)('add')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('add')
             VALUE_ARGUMENT_LIST
               PsiElement(LPAR)('(')
               VALUE_ARGUMENT
-                PsiElement(IDENTIFIER)('item')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('item')
               PsiElement(RPAR)(')')
         PsiWhiteSpace('\n  ')
         PROPERTY
@@ -120,8 +125,10 @@ JetFile: PriorityQueueAsPushPop.jet
             PsiElement(EQ)('=')
             PsiWhiteSpace(' ')
             DOT_QIALIFIED_EXPRESSION
-              PsiElement(IDENTIFIER)('wrapped')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('wrapped')
               PsiElement(DOT)('.')
-              PsiElement(IDENTIFIER)('isEmpty')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('isEmpty')
         PsiWhiteSpace('\n\n')
         PsiElement(RBRACE)('}')

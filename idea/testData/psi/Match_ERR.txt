@@ -14,7 +14,8 @@ JetFile: Match_ERR.jet
         PsiElement(LBRACE)('{')
         PsiWhiteSpace('\n  ')
         BINARY_EXPRESSION
-          PsiElement(IDENTIFIER)('e')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('e')
           PsiWhiteSpace(' ')
           PsiElement(match)('match')
           PsiWhiteSpace(' ')
@@ -23,7 +24,8 @@ JetFile: Match_ERR.jet
           PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n  ')
         BINARY_EXPRESSION
-          PsiElement(IDENTIFIER)('e')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('e')
           PsiWhiteSpace(' ')
           PsiElement(match)('match')
           PsiWhiteSpace(' ')
@@ -37,12 +39,14 @@ JetFile: Match_ERR.jet
                 <empty list>
             PsiElement(DOUBLE_ARROW)('=>')
             PsiWhiteSpace(' ')
-            PsiElement(IDENTIFIER)('foo')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('foo')
           PsiWhiteSpace('\n  ')
           PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n  ')
         BINARY_EXPRESSION
-          PsiElement(IDENTIFIER)('e')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('e')
           PsiWhiteSpace(' ')
           PsiElement(match)('match')
           PsiWhiteSpace(' ')
@@ -62,7 +66,8 @@ JetFile: Match_ERR.jet
           PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n  ')
         BINARY_EXPRESSION
-          PsiElement(IDENTIFIER)('e')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('e')
           PsiWhiteSpace(' ')
           PsiElement(match)('match')
           PsiWhiteSpace(' ')
@@ -82,12 +87,14 @@ JetFile: Match_ERR.jet
             PsiWhiteSpace(' ')
             PsiElement(DOUBLE_ARROW)('=>')
             PsiWhiteSpace(' ')
-            PsiElement(IDENTIFIER)('foo')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('foo')
           PsiWhiteSpace('\n  ')
           PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n  ')
         BINARY_EXPRESSION
-          PsiElement(IDENTIFIER)('e')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('e')
           PsiWhiteSpace(' ')
           PsiElement(match)('match')
           PsiWhiteSpace(' ')
@@ -102,7 +109,8 @@ JetFile: Match_ERR.jet
         PsiWhiteSpace('\n  ')
         BINARY_EXPRESSION
           BINARY_EXPRESSION
-            PsiElement(IDENTIFIER)('e')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('e')
             PsiWhiteSpace(' ')
             PsiElement(match)('match')
             PsiWhiteSpace(' ')
@@ -117,7 +125,8 @@ JetFile: Match_ERR.jet
               PsiWhiteSpace(' ')
               PsiElement(DOUBLE_ARROW)('=>')
               PsiWhiteSpace(' ')
-              PsiElement(IDENTIFIER)('foo')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('foo')
             PsiWhiteSpace('\n    ')
             MATCH_ENTRY
               PsiElement(case)('case')
@@ -147,7 +156,8 @@ JetFile: Match_ERR.jet
               PsiWhiteSpace(' ')
               PsiElement(DOUBLE_ARROW)('=>')
               PsiWhiteSpace(' ')
-              PsiElement(IDENTIFIER)('foo')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('foo')
             PsiWhiteSpace('\n  ')
             PsiElement(RBRACE)('}')
           PsiWhiteSpace(' ')

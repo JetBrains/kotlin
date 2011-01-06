@@ -149,7 +149,8 @@ JetFile: SoftKeywords.jet
           PsiWhiteSpace(' ')
           PsiElement(by)('by')
           PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('b')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('b')
       PsiWhiteSpace(' ')
       CLASS_BODY
         PsiElement(LBRACE)('{')
@@ -285,7 +286,8 @@ JetFile: SoftKeywords.jet
             PsiWhiteSpace(' ')
             PsiElement(EQ)('=')
             PsiWhiteSpace(' ')
-            PsiElement(IDENTIFIER)('a')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
           PsiWhiteSpace('\n      ')
           PROPERTY_ACCESSOR
             PsiElement(set)('set')

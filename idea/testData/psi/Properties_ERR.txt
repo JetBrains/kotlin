@@ -56,7 +56,8 @@ JetFile: Properties_ERR.jet
       PsiWhiteSpace(' ')
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('foo')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('foo')
     PsiWhiteSpace('\n')
     PROPERTY
       PsiElement(val)('val')
@@ -88,7 +89,8 @@ JetFile: Properties_ERR.jet
           <empty list>
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('bar')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('bar')
     PsiWhiteSpace('\n')
     PROPERTY
       PsiElement(val)('val')
@@ -153,7 +155,8 @@ JetFile: Properties_ERR.jet
       PsiWhiteSpace(' ')
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('foo')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('foo')
       PsiWhiteSpace('\n   ')
       PROPERTY_ACCESSOR
         PsiElement(set)('set')
@@ -207,7 +210,8 @@ JetFile: Properties_ERR.jet
       PsiWhiteSpace(' ')
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('foo')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('foo')
       PsiWhiteSpace('\n   ')
       PROPERTY_ACCESSOR
         PsiElement(get)('get')

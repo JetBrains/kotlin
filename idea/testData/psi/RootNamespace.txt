@@ -45,11 +45,14 @@ JetFile: RootNamespace.jet
                   ROOT_NAMESPACE
                     PsiElement(namespace)('namespace')
                   PsiElement(DOT)('.')
-                  PsiElement(IDENTIFIER)('foo')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('foo')
                 PsiElement(DOT)('.')
-                PsiElement(IDENTIFIER)('bar')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('bar')
               PsiElement(DOT)('.')
-              PsiElement(IDENTIFIER)('X')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('X')
             PsiWhiteSpace('\n    ')
             NEW
               PsiElement(new)('new')
@@ -70,7 +73,8 @@ JetFile: RootNamespace.jet
                 PsiElement(RPAR)(')')
             PsiWhiteSpace('\n    ')
             BINARY_EXPRESSION
-              PsiElement(IDENTIFIER)('e')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('e')
               PsiWhiteSpace(' ')
               PsiElement(match)('match')
               PsiWhiteSpace(' ')

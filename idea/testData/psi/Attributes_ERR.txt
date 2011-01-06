@@ -61,11 +61,13 @@ JetFile: Attributes_ERR.jet
           VALUE_ARGUMENT_LIST
             PsiElement(LPAR)('(')
             VALUE_ARGUMENT
-              PsiElement(IDENTIFIER)('a')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('a')
             PsiElement(COMMA)(',')
             PsiWhiteSpace(' ')
             VALUE_ARGUMENT
-              PsiElement(IDENTIFIER)('b')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('b')
             PsiElement(RPAR)(')')
         PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')

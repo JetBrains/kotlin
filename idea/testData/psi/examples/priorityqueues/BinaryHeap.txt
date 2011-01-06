@@ -105,7 +105,8 @@ JetFile: BinaryHeap.jet
               PsiElement(EQ)('=')
               PsiWhiteSpace(' ')
               CALL_EXPRESSION
-                PsiElement(IDENTIFIER)('naturalOrder')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('naturalOrder')
                 TYPE_ARGUMENT_LIST
                   PsiElement(LT)('<')
                   TYPE_REFERENCE
@@ -121,26 +122,31 @@ JetFile: BinaryHeap.jet
               DOT_QIALIFIED_EXPRESSION
                 PsiElement(this)('this')
                 PsiElement(DOT)('.')
-                PsiElement(IDENTIFIER)('compare')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('compare')
               PsiWhiteSpace(' ')
               PsiElement(EQ)('=')
               PsiWhiteSpace(' ')
-              PsiElement(IDENTIFIER)('compare')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('compare')
             PsiWhiteSpace('\n    ')
             BINARY_EXPRESSION
               DOT_QIALIFIED_EXPRESSION
                 PsiElement(this)('this')
                 PsiElement(DOT)('.')
-                PsiElement(IDENTIFIER)('data')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('data')
               PsiWhiteSpace(' ')
               PsiElement(EQ)('=')
               PsiWhiteSpace(' ')
               CALL_EXPRESSION
-                PsiElement(IDENTIFIER)('ArrayList')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('ArrayList')
                 VALUE_ARGUMENT_LIST
                   PsiElement(LPAR)('(')
                   VALUE_ARGUMENT
-                    PsiElement(IDENTIFIER)('data')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('data')
                   PsiElement(RPAR)(')')
             PsiWhiteSpace('\n')
             PsiComment(EOL_COMMENT)('//    siftDown(* this.data.size / 2 .. 0)')
@@ -160,9 +166,11 @@ JetFile: BinaryHeap.jet
                 BINARY_EXPRESSION
                   BINARY_EXPRESSION
                     DOT_QIALIFIED_EXPRESSION
-                      PsiElement(IDENTIFIER)('data')
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('data')
                       PsiElement(DOT)('.')
-                      PsiElement(IDENTIFIER)('size')
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('size')
                     PsiWhiteSpace(' ')
                     PsiElement(DIV)('/')
                     PsiWhiteSpace(' ')
@@ -181,11 +189,13 @@ JetFile: BinaryHeap.jet
                   PsiWhiteSpace('\n      ')
                   BODY
                     CALL_EXPRESSION
-                      PsiElement(IDENTIFIER)('siftDown')
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('siftDown')
                       VALUE_ARGUMENT_LIST
                         PsiElement(LPAR)('(')
                         VALUE_ARGUMENT
-                          PsiElement(IDENTIFIER)('i')
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('i')
                         PsiElement(RPAR)(')')
                   PsiWhiteSpace('\n    ')
                   PsiElement(RBRACE)('}')
@@ -219,22 +229,26 @@ JetFile: BinaryHeap.jet
               DOT_QIALIFIED_EXPRESSION
                 PsiElement(this)('this')
                 PsiElement(DOT)('.')
-                PsiElement(IDENTIFIER)('compare')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('compare')
               PsiWhiteSpace(' ')
               PsiElement(EQ)('=')
               PsiWhiteSpace(' ')
-              PsiElement(IDENTIFIER)('compare')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('compare')
             PsiWhiteSpace('\n    ')
             BINARY_EXPRESSION
               DOT_QIALIFIED_EXPRESSION
                 PsiElement(this)('this')
                 PsiElement(DOT)('.')
-                PsiElement(IDENTIFIER)('data')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('data')
               PsiWhiteSpace(' ')
               PsiElement(EQ)('=')
               PsiWhiteSpace(' ')
               CALL_EXPRESSION
-                PsiElement(IDENTIFIER)('ArrayList')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('ArrayList')
                 VALUE_ARGUMENT_LIST
                   PsiElement(LPAR)('(')
                   PsiElement(RPAR)(')')
@@ -254,28 +268,33 @@ JetFile: BinaryHeap.jet
               DOT_QIALIFIED_EXPRESSION
                 PsiElement(this)('this')
                 PsiElement(DOT)('.')
-                PsiElement(IDENTIFIER)('data')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('data')
               PsiWhiteSpace(' ')
               PsiElement(EQ)('=')
               PsiWhiteSpace(' ')
               CALL_EXPRESSION
-                PsiElement(IDENTIFIER)('ArrayList')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('ArrayList')
                 VALUE_ARGUMENT_LIST
                   PsiElement(LPAR)('(')
                   PsiElement(RPAR)(')')
             PsiWhiteSpace('\n    ')
             CALL_EXPRESSION
-              PsiElement(IDENTIFIER)('Assert')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Assert')
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
                   BINARY_EXPRESSION
-                    PsiElement(IDENTIFIER)('T')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('T')
                     PsiWhiteSpace(' ')
                     PsiElement(is)('is')
                     PsiWhiteSpace(' ')
                     CALL_EXPRESSION
-                      PsiElement(IDENTIFIER)('IComparable')
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('IComparable')
                       TYPE_ARGUMENT_LIST
                         PsiElement(LT)('<')
                         TYPE_REFERENCE
@@ -288,12 +307,14 @@ JetFile: BinaryHeap.jet
               DOT_QIALIFIED_EXPRESSION
                 PsiElement(this)('this')
                 PsiElement(DOT)('.')
-                PsiElement(IDENTIFIER)('comparator')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('comparator')
               PsiWhiteSpace(' ')
               PsiElement(EQ)('=')
               PsiWhiteSpace(' ')
               CALL_EXPRESSION
-                PsiElement(IDENTIFIER)('naturalOrder')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('naturalOrder')
                 TYPE_ARGUMENT_LIST
                   PsiElement(LT)('<')
                   TYPE_REFERENCE
@@ -333,7 +354,8 @@ JetFile: BinaryHeap.jet
                 DOT_QIALIFIED_EXPRESSION
                   PsiElement(this)('this')
                   PsiElement(DOT)('.')
-                  PsiElement(IDENTIFIER)('isEmpty')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('isEmpty')
               PsiElement(RPAR)(')')
               PsiWhiteSpace('\n      ')
               THEN
@@ -341,16 +363,19 @@ JetFile: BinaryHeap.jet
                   PsiElement(throw)('throw')
                   PsiWhiteSpace(' ')
                   CALL_EXPRESSION
-                    PsiElement(IDENTIFIER)('UnderflowException')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('UnderflowException')
                     VALUE_ARGUMENT_LIST
                       PsiElement(LPAR)('(')
                       PsiElement(RPAR)(')')
             PsiWhiteSpace('\n    ')
             CALL_EXPRESSION
               DOT_QIALIFIED_EXPRESSION
-                PsiElement(IDENTIFIER)('data')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('data')
                 PsiElement(DOT)('.')
-                PsiElement(IDENTIFIER)('swap')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('swap')
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
@@ -360,27 +385,34 @@ JetFile: BinaryHeap.jet
                 PsiWhiteSpace(' ')
                 VALUE_ARGUMENT
                   DOT_QIALIFIED_EXPRESSION
-                    PsiElement(IDENTIFIER)('data')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('data')
                     PsiElement(DOT)('.')
-                    PsiElement(IDENTIFIER)('lastIndex')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('lastIndex')
                 PsiElement(RPAR)(')')
             PsiWhiteSpace('\n    ')
             CALL_EXPRESSION
               DOT_QIALIFIED_EXPRESSION
-                PsiElement(IDENTIFIER)('data')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('data')
                 PsiElement(DOT)('.')
-                PsiElement(IDENTIFIER)('remove')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('remove')
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
                   DOT_QIALIFIED_EXPRESSION
-                    PsiElement(IDENTIFIER)('data')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('data')
                     PsiElement(DOT)('.')
-                    PsiElement(IDENTIFIER)('lastIndex')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('lastIndex')
                 PsiElement(RPAR)(')')
             PsiWhiteSpace('\n    ')
             CALL_EXPRESSION
-              PsiElement(IDENTIFIER)('siftDown')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('siftDown')
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
@@ -416,24 +448,30 @@ JetFile: BinaryHeap.jet
             PsiWhiteSpace('\n    ')
             CALL_EXPRESSION
               DOT_QIALIFIED_EXPRESSION
-                PsiElement(IDENTIFIER)('data')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('data')
                 PsiElement(DOT)('.')
-                PsiElement(IDENTIFIER)('add')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('add')
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
-                  PsiElement(IDENTIFIER)('item')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('item')
                 PsiElement(RPAR)(')')
             PsiWhiteSpace('\n    ')
             CALL_EXPRESSION
-              PsiElement(IDENTIFIER)('siftUp')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('siftUp')
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
                   DOT_QIALIFIED_EXPRESSION
-                    PsiElement(IDENTIFIER)('data')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('data')
                     PsiElement(DOT)('.')
-                    PsiElement(IDENTIFIER)('lastItem')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('lastItem')
                 PsiElement(RPAR)(')')
             PsiWhiteSpace('\n  ')
             PsiElement(RBRACE)('}')
@@ -469,7 +507,8 @@ JetFile: BinaryHeap.jet
               PsiWhiteSpace(' ')
               PsiElement(EQ)('=')
               PsiWhiteSpace(' ')
-              PsiElement(IDENTIFIER)('index')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('index')
             PsiWhiteSpace('\n    ')
             WHILE
               PsiElement(while)('while')
@@ -478,11 +517,14 @@ JetFile: BinaryHeap.jet
               CONDITION
                 DOT_QIALIFIED_EXPRESSION
                   DOT_QIALIFIED_EXPRESSION
-                    PsiElement(IDENTIFIER)('current')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('current')
                     PsiElement(DOT)('.')
-                    PsiElement(IDENTIFIER)('left')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('left')
                   PsiElement(DOT)('.')
-                  PsiElement(IDENTIFIER)('exists')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('exists')
               PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')
               BODY
@@ -497,7 +539,8 @@ JetFile: BinaryHeap.jet
                       PsiWhiteSpace(' ')
                       PsiElement(EQ)('=')
                       PsiWhiteSpace(' ')
-                      PsiElement(IDENTIFIER)('current')
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('current')
                     PsiWhiteSpace('\n      ')
                     IF
                       PsiElement(if)('if')
@@ -507,18 +550,23 @@ JetFile: BinaryHeap.jet
                         BINARY_EXPRESSION
                           DOT_QIALIFIED_EXPRESSION
                             DOT_QIALIFIED_EXPRESSION
-                              PsiElement(IDENTIFIER)('current')
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('current')
                               PsiElement(DOT)('.')
-                              PsiElement(IDENTIFIER)('left')
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('left')
                             PsiElement(DOT)('.')
-                            PsiElement(IDENTIFIER)('value')
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('value')
                           PsiWhiteSpace(' ')
                           PsiElement(LT)('<')
                           PsiWhiteSpace(' ')
                           DOT_QIALIFIED_EXPRESSION
-                            PsiElement(IDENTIFIER)('min')
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('min')
                             PsiElement(DOT)('.')
-                            PsiElement(IDENTIFIER)('value')
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('value')
                       PsiElement(RPAR)(')')
                       PsiWhiteSpace(' ')
                       THEN
@@ -527,14 +575,17 @@ JetFile: BinaryHeap.jet
                           PsiWhiteSpace('\n        ')
                           BODY
                             BINARY_EXPRESSION
-                              PsiElement(IDENTIFIER)('min')
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('min')
                               PsiWhiteSpace(' ')
                               PsiElement(EQ)('=')
                               PsiWhiteSpace(' ')
                               DOT_QIALIFIED_EXPRESSION
-                                PsiElement(IDENTIFIER)('current')
+                                REFERENCE_EXPRESSION
+                                  PsiElement(IDENTIFIER)('current')
                                 PsiElement(DOT)('.')
-                                PsiElement(IDENTIFIER)('left')
+                                REFERENCE_EXPRESSION
+                                  PsiElement(IDENTIFIER)('left')
                           PsiWhiteSpace('\n      ')
                           PsiElement(RBRACE)('}')
                     PsiWhiteSpace('\n      ')
@@ -546,29 +597,37 @@ JetFile: BinaryHeap.jet
                         BINARY_EXPRESSION
                           DOT_QIALIFIED_EXPRESSION
                             DOT_QIALIFIED_EXPRESSION
-                              PsiElement(IDENTIFIER)('current')
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('current')
                               PsiElement(DOT)('.')
-                              PsiElement(IDENTIFIER)('right')
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('right')
                             PsiElement(DOT)('.')
-                            PsiElement(IDENTIFIER)('exists')
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('exists')
                           PsiWhiteSpace(' ')
                           PsiElement(ANDAND)('&&')
                           PsiWhiteSpace(' ')
                           BINARY_EXPRESSION
                             DOT_QIALIFIED_EXPRESSION
                               DOT_QIALIFIED_EXPRESSION
-                                PsiElement(IDENTIFIER)('current')
+                                REFERENCE_EXPRESSION
+                                  PsiElement(IDENTIFIER)('current')
                                 PsiElement(DOT)('.')
-                                PsiElement(IDENTIFIER)('right')
+                                REFERENCE_EXPRESSION
+                                  PsiElement(IDENTIFIER)('right')
                               PsiElement(DOT)('.')
-                              PsiElement(IDENTIFIER)('value')
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('value')
                             PsiWhiteSpace(' ')
                             PsiElement(LT)('<')
                             PsiWhiteSpace(' ')
                             DOT_QIALIFIED_EXPRESSION
-                              PsiElement(IDENTIFIER)('min')
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('min')
                               PsiElement(DOT)('.')
-                              PsiElement(IDENTIFIER)('value')
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('value')
                       PsiElement(RPAR)(')')
                       PsiWhiteSpace(' ')
                       THEN
@@ -577,14 +636,17 @@ JetFile: BinaryHeap.jet
                           PsiWhiteSpace('\n        ')
                           BODY
                             BINARY_EXPRESSION
-                              PsiElement(IDENTIFIER)('min')
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('min')
                               PsiWhiteSpace(' ')
                               PsiElement(EQ)('=')
                               PsiWhiteSpace(' ')
                               DOT_QIALIFIED_EXPRESSION
-                                PsiElement(IDENTIFIER)('current')
+                                REFERENCE_EXPRESSION
+                                  PsiElement(IDENTIFIER)('current')
                                 PsiElement(DOT)('.')
-                                PsiElement(IDENTIFIER)('right')
+                                REFERENCE_EXPRESSION
+                                  PsiElement(IDENTIFIER)('right')
                           PsiWhiteSpace('\n      ')
                           PsiElement(RBRACE)('}')
                     PsiWhiteSpace('\n      ')
@@ -594,11 +656,13 @@ JetFile: BinaryHeap.jet
                       PsiElement(LPAR)('(')
                       CONDITION
                         BINARY_EXPRESSION
-                          PsiElement(IDENTIFIER)('min')
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('min')
                           PsiWhiteSpace(' ')
                           PsiElement(EQEQ)('==')
                           PsiWhiteSpace(' ')
-                          PsiElement(IDENTIFIER)('current')
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('current')
                       PsiElement(RPAR)(')')
                       PsiWhiteSpace(' ')
                       THEN
@@ -607,25 +671,31 @@ JetFile: BinaryHeap.jet
                     PsiWhiteSpace('\n      ')
                     CALL_EXPRESSION
                       DOT_QIALIFIED_EXPRESSION
-                        PsiElement(IDENTIFIER)('data')
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('data')
                         PsiElement(DOT)('.')
-                        PsiElement(IDENTIFIER)('swap')
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('swap')
                       VALUE_ARGUMENT_LIST
                         PsiElement(LPAR)('(')
                         VALUE_ARGUMENT
-                          PsiElement(IDENTIFIER)('min')
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('min')
                         PsiElement(COMMA)(',')
                         PsiWhiteSpace(' ')
                         VALUE_ARGUMENT
-                          PsiElement(IDENTIFIER)('current')
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('current')
                         PsiElement(RPAR)(')')
                     PsiWhiteSpace('\n      ')
                     BINARY_EXPRESSION
-                      PsiElement(IDENTIFIER)('current')
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('current')
                       PsiWhiteSpace(' ')
                       PsiElement(EQ)('=')
                       PsiWhiteSpace(' ')
-                      PsiElement(IDENTIFIER)('min')
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('min')
                   PsiWhiteSpace('\n    ')
                   PsiElement(RBRACE)('}')
             PsiWhiteSpace('\n  ')
@@ -663,9 +733,11 @@ JetFile: BinaryHeap.jet
                 PREFIX_EXPRESSION
                   PsiElement(EXCL)('!')
                   DOT_QIALIFIED_EXPRESSION
-                    PsiElement(IDENTIFIER)('current')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('current')
                     PsiElement(DOT)('.')
-                    PsiElement(IDENTIFIER)('exists')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('exists')
               PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')
               THEN
@@ -679,7 +751,8 @@ JetFile: BinaryHeap.jet
               PsiWhiteSpace(' ')
               PsiElement(EQ)('=')
               PsiWhiteSpace(' ')
-              PsiElement(IDENTIFIER)('index')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('index')
             PsiWhiteSpace('\n    ')
             WHILE
               PsiElement(while)('while')
@@ -688,11 +761,14 @@ JetFile: BinaryHeap.jet
               CONDITION
                 DOT_QIALIFIED_EXPRESSION
                   DOT_QIALIFIED_EXPRESSION
-                    PsiElement(IDENTIFIER)('current')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('current')
                     PsiElement(DOT)('.')
-                    PsiElement(IDENTIFIER)('parent')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('parent')
                   PsiElement(DOT)('.')
-                  PsiElement(IDENTIFIER)('exists')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('exists')
               PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')
               BODY
@@ -707,19 +783,24 @@ JetFile: BinaryHeap.jet
                       CONDITION
                         BINARY_EXPRESSION
                           DOT_QIALIFIED_EXPRESSION
-                            PsiElement(IDENTIFIER)('current')
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('current')
                             PsiElement(DOT)('.')
-                            PsiElement(IDENTIFIER)('value')
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('value')
                           PsiWhiteSpace(' ')
                           PsiElement(LT)('<')
                           PsiWhiteSpace(' ')
                           DOT_QIALIFIED_EXPRESSION
                             DOT_QIALIFIED_EXPRESSION
-                              PsiElement(IDENTIFIER)('current')
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('current')
                               PsiElement(DOT)('.')
-                              PsiElement(IDENTIFIER)('parent')
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('parent')
                             PsiElement(DOT)('.')
-                            PsiElement(IDENTIFIER)('value')
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('value')
                       PsiElement(RPAR)(')')
                       PsiWhiteSpace(' ')
                       THEN
@@ -729,31 +810,39 @@ JetFile: BinaryHeap.jet
                           BODY
                             CALL_EXPRESSION
                               DOT_QIALIFIED_EXPRESSION
-                                PsiElement(IDENTIFIER)('data')
+                                REFERENCE_EXPRESSION
+                                  PsiElement(IDENTIFIER)('data')
                                 PsiElement(DOT)('.')
-                                PsiElement(IDENTIFIER)('swap')
+                                REFERENCE_EXPRESSION
+                                  PsiElement(IDENTIFIER)('swap')
                               VALUE_ARGUMENT_LIST
                                 PsiElement(LPAR)('(')
                                 VALUE_ARGUMENT
-                                  PsiElement(IDENTIFIER)('current')
+                                  REFERENCE_EXPRESSION
+                                    PsiElement(IDENTIFIER)('current')
                                 PsiElement(COMMA)(',')
                                 PsiWhiteSpace(' ')
                                 VALUE_ARGUMENT
                                   DOT_QIALIFIED_EXPRESSION
-                                    PsiElement(IDENTIFIER)('current')
+                                    REFERENCE_EXPRESSION
+                                      PsiElement(IDENTIFIER)('current')
                                     PsiElement(DOT)('.')
-                                    PsiElement(IDENTIFIER)('parent')
+                                    REFERENCE_EXPRESSION
+                                      PsiElement(IDENTIFIER)('parent')
                                 PsiElement(RPAR)(')')
                             PsiWhiteSpace('\n        ')
                             BINARY_EXPRESSION
-                              PsiElement(IDENTIFIER)('current')
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('current')
                               PsiWhiteSpace(' ')
                               PsiElement(EQ)('=')
                               PsiWhiteSpace(' ')
                               DOT_QIALIFIED_EXPRESSION
-                                PsiElement(IDENTIFIER)('current')
+                                REFERENCE_EXPRESSION
+                                  PsiElement(IDENTIFIER)('current')
                                 PsiElement(DOT)('.')
-                                PsiElement(IDENTIFIER)('parent')
+                                REFERENCE_EXPRESSION
+                                  PsiElement(IDENTIFIER)('parent')
                           PsiWhiteSpace('\n      ')
                           PsiElement(RBRACE)('}')
                   PsiWhiteSpace('\n    ')
@@ -894,9 +983,11 @@ JetFile: BinaryHeap.jet
               PsiWhiteSpace(' ')
               CALL_EXPRESSION
                 DOT_QIALIFIED_EXPRESSION
-                  PsiElement(IDENTIFIER)('foo')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('foo')
                   PsiElement(DOT)('.')
-                  PsiElement(IDENTIFIER)('bar')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('bar')
                 VALUE_ARGUMENT_LIST
                   PsiElement(LPAR)('(')
                   PsiElement(RPAR)(')')
@@ -909,7 +1000,8 @@ JetFile: BinaryHeap.jet
                 PsiElement(EQ)('=')
                 PsiWhiteSpace(' ')
                 ARRAY_ACCESS_EXPRESSION
-                  PsiElement(IDENTIFIER)('data')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('data')
                   INDICES
                     PsiElement(LBRACKET)('[')
                     PsiElement(this)('this')
@@ -931,7 +1023,8 @@ JetFile: BinaryHeap.jet
                     PsiWhiteSpace(' ')
                     PsiElement(EQ)('=')
                     PsiWhiteSpace(' ')
-                    PsiElement(IDENTIFIER)('it')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('it')
                   PsiWhiteSpace('\n      ')
                   PsiElement(RBRACE)('}')
             PsiWhiteSpace('\n\n\n    ')
@@ -962,9 +1055,11 @@ JetFile: BinaryHeap.jet
                       PsiElement(LT)('<')
                       PsiWhiteSpace(' ')
                       DOT_QIALIFIED_EXPRESSION
-                        PsiElement(IDENTIFIER)('data')
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('data')
                         PsiElement(DOT)('.')
-                        PsiElement(IDENTIFIER)('size')
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('size')
                     PsiElement(RPAR)(')')
                   PsiWhiteSpace(' ')
                   PsiElement(ANDAND)('&&')
@@ -1034,7 +1129,8 @@ JetFile: BinaryHeap.jet
               PsiElement(EQ)('=')
               PsiWhiteSpace(' ')
               CALL_EXPRESSION
-                PsiElement(IDENTIFIER)('compare')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('compare')
                 VALUE_ARGUMENT_LIST
                   PsiElement(LPAR)('(')
                   VALUE_ARGUMENT
@@ -1042,7 +1138,8 @@ JetFile: BinaryHeap.jet
                   PsiElement(COMMA)(',')
                   PsiWhiteSpace(' ')
                   VALUE_ARGUMENT
-                    PsiElement(IDENTIFIER)('other')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('other')
                   PsiElement(RPAR)(')')
             PsiWhiteSpace('\n  ')
             PsiElement(RBRACE)('}')
@@ -1101,7 +1198,8 @@ JetFile: BinaryHeap.jet
             PsiElement(this)('this')
             INDICES
               PsiElement(LBRACKET)('[')
-              PsiElement(IDENTIFIER)('a')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('a')
               PsiElement(RBRACKET)(']')
         PsiWhiteSpace('\n  ')
         BINARY_EXPRESSION
@@ -1109,7 +1207,8 @@ JetFile: BinaryHeap.jet
             PsiElement(this)('this')
             INDICES
               PsiElement(LBRACKET)('[')
-              PsiElement(IDENTIFIER)('a')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('a')
               PsiElement(RBRACKET)(']')
           PsiWhiteSpace(' ')
           PsiElement(EQ)('=')
@@ -1118,7 +1217,8 @@ JetFile: BinaryHeap.jet
             PsiElement(this)('this')
             INDICES
               PsiElement(LBRACKET)('[')
-              PsiElement(IDENTIFIER)('b')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('b')
               PsiElement(RBRACKET)(']')
         PsiWhiteSpace('\n  ')
         BINARY_EXPRESSION
@@ -1126,12 +1226,14 @@ JetFile: BinaryHeap.jet
             PsiElement(this)('this')
             INDICES
               PsiElement(LBRACKET)('[')
-              PsiElement(IDENTIFIER)('b')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('b')
               PsiElement(RBRACKET)(']')
           PsiWhiteSpace(' ')
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('t')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('t')
         PsiWhiteSpace('\n')
         PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n\n')
@@ -1167,7 +1269,8 @@ JetFile: BinaryHeap.jet
           DOT_QIALIFIED_EXPRESSION
             PsiElement(this)('this')
             PsiElement(DOT)('.')
-            PsiElement(IDENTIFIER)('size')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('size')
           PsiWhiteSpace(' ')
           PsiElement(MINUS)('-')
           PsiWhiteSpace(' ')

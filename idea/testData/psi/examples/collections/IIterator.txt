@@ -88,11 +88,13 @@ JetFile: IIterator.jet
               PsiElement(return)('return')
               PsiWhiteSpace(' ')
               CALL_EXPRESSION
-                PsiElement(IDENTIFIER)('fillBuffer')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('fillBuffer')
                 VALUE_ARGUMENT_LIST
                   PsiElement(LPAR)('(')
                   VALUE_ARGUMENT
-                    PsiElement(IDENTIFIER)('buffer')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('buffer')
                   PsiElement(COMMA)(',')
                   PsiWhiteSpace(' ')
                   VALUE_ARGUMENT
@@ -102,9 +104,11 @@ JetFile: IIterator.jet
                   PsiWhiteSpace(' ')
                   VALUE_ARGUMENT
                     DOT_QIALIFIED_EXPRESSION
-                      PsiElement(IDENTIFIER)('buffer')
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('buffer')
                       PsiElement(DOT)('.')
-                      PsiElement(IDENTIFIER)('size')
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('size')
                   PsiElement(RPAR)(')')
             PsiWhiteSpace('\n  ')
             PsiElement(RBRACE)('}')
@@ -176,7 +180,8 @@ JetFile: IIterator.jet
                   BINARY_EXPRESSION
                     BINARY_EXPRESSION
                       BINARY_EXPRESSION
-                        PsiElement(IDENTIFIER)('from')
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('from')
                         PsiWhiteSpace(' ')
                         PsiElement(LT)('<')
                         PsiWhiteSpace(' ')
@@ -186,19 +191,23 @@ JetFile: IIterator.jet
                       PsiElement(OROR)('||')
                       PsiWhiteSpace(' ')
                       BINARY_EXPRESSION
-                        PsiElement(IDENTIFIER)('from')
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('from')
                         PsiWhiteSpace(' ')
                         PsiElement(GT)('>')
                         PsiWhiteSpace(' ')
                         DOT_QIALIFIED_EXPRESSION
-                          PsiElement(IDENTIFIER)('buffer')
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('buffer')
                           PsiElement(DOT)('.')
-                          PsiElement(IDENTIFIER)('lastIndex')
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('lastIndex')
                     PsiWhiteSpace(' ')
                     PsiElement(OROR)('||')
                     PsiWhiteSpace(' ')
                     BINARY_EXPRESSION
-                      PsiElement(IDENTIFIER)('length')
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('length')
                       PsiWhiteSpace(' ')
                       PsiElement(LT)('<')
                       PsiWhiteSpace(' ')
@@ -208,19 +217,23 @@ JetFile: IIterator.jet
                   PsiElement(OROR)('||')
                   PsiWhiteSpace(' ')
                   BINARY_EXPRESSION
-                    PsiElement(IDENTIFIER)('length')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('length')
                     PsiWhiteSpace(' ')
                     PsiElement(GT)('>')
                     PsiWhiteSpace(' ')
                     BINARY_EXPRESSION
                       DOT_QIALIFIED_EXPRESSION
-                        PsiElement(IDENTIFIER)('buffer')
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('buffer')
                         PsiElement(DOT)('.')
-                        PsiElement(IDENTIFIER)('size')
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('size')
                       PsiWhiteSpace(' ')
                       PsiElement(MINUS)('-')
                       PsiWhiteSpace(' ')
-                      PsiElement(IDENTIFIER)('from')
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('from')
               PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')
               THEN
@@ -232,7 +245,8 @@ JetFile: IIterator.jet
                       PsiElement(throw)('throw')
                       PsiWhiteSpace(' ')
                       CALL_EXPRESSION
-                        PsiElement(IDENTIFIER)('IndexOutOfBoundsException')
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('IndexOutOfBoundsException')
                         VALUE_ARGUMENT_LIST
                           PsiElement(LPAR)('(')
                           PsiElement(RPAR)(')')
@@ -246,7 +260,8 @@ JetFile: IIterator.jet
               PsiElement(LPAR)('(')
               CONDITION
                 BINARY_EXPRESSION
-                  PsiElement(IDENTIFIER)('len')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('len')
                   PsiWhiteSpace(' ')
                   PsiElement(EQEQ)('==')
                   PsiWhiteSpace(' ')
@@ -283,17 +298,20 @@ JetFile: IIterator.jet
               PsiWhiteSpace(' ')
               LOOP_RANGE
                 BINARY_EXPRESSION
-                  PsiElement(IDENTIFIER)('from')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('from')
                   PsiWhiteSpace(' ')
                   PsiElement(RANGE)('..')
                   PsiWhiteSpace(' ')
                   BINARY_EXPRESSION
                     BINARY_EXPRESSION
-                      PsiElement(IDENTIFIER)('from')
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('from')
                       PsiWhiteSpace(' ')
                       PsiElement(PLUS)('+')
                       PsiWhiteSpace(' ')
-                      PsiElement(IDENTIFIER)('length')
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('length')
                     PsiWhiteSpace(' ')
                     PsiElement(MINUS)('-')
                     PsiWhiteSpace(' ')
@@ -313,33 +331,39 @@ JetFile: IIterator.jet
                       CONDITION
                         PREFIX_EXPRESSION
                           PsiElement(EXCL)('!')
-                          PsiElement(IDENTIFIER)('hasNext')
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('hasNext')
                       PsiElement(RPAR)(')')
                       PsiWhiteSpace('\n        ')
                       THEN
                         RETURN
                           PsiElement(return)('return')
                           PsiWhiteSpace(' ')
-                          PsiElement(IDENTIFIER)('count')
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('count')
                     PsiWhiteSpace('\n      ')
                     BINARY_EXPRESSION
                       ARRAY_ACCESS_EXPRESSION
-                        PsiElement(IDENTIFIER)('buffer')
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('buffer')
                         INDICES
                           PsiElement(LBRACKET)('[')
-                          PsiElement(IDENTIFIER)('i')
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('i')
                           PsiElement(RBRACKET)(']')
                       PsiWhiteSpace(' ')
                       PsiElement(EQ)('=')
                       PsiWhiteSpace(' ')
                       CALL_EXPRESSION
-                        PsiElement(IDENTIFIER)('next')
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('next')
                         VALUE_ARGUMENT_LIST
                           PsiElement(LPAR)('(')
                           PsiElement(RPAR)(')')
                     PsiWhiteSpace('\n      ')
                     POSTFIX_EXPRESSION
-                      PsiElement(IDENTIFIER)('count')
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('count')
                       PsiElement(PLUSPLUS)('++')
                   PsiWhiteSpace('\n    ')
                   PsiElement(RBRACE)('}')
@@ -347,7 +371,8 @@ JetFile: IIterator.jet
             RETURN
               PsiElement(return)('return')
               PsiWhiteSpace(' ')
-              PsiElement(IDENTIFIER)('count')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('count')
             PsiWhiteSpace('\n  ')
             PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n')

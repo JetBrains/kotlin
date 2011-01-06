@@ -9,11 +9,14 @@ JetFile: Properties.jet
       PsiWhiteSpace(' ')
       DOT_QIALIFIED_EXPRESSION
         DOT_QIALIFIED_EXPRESSION
-          PsiElement(IDENTIFIER)('bar')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('bar')
           PsiElement(DOT)('.')
-          PsiElement(IDENTIFIER)('foo')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('foo')
         PsiElement(DOT)('.')
-        PsiElement(IDENTIFIER)('bar')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar')
     PsiWhiteSpace('\n\n')
     PROPERTY
       PsiElement(val)('val')
@@ -114,7 +117,8 @@ JetFile: Properties.jet
       PsiWhiteSpace(' ')
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('bar')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('bar')
     PsiWhiteSpace('\n')
     PROPERTY
       PsiElement(val)('val')
@@ -143,7 +147,8 @@ JetFile: Properties.jet
         PsiWhiteSpace(' ')
         PsiElement(EQ)('=')
         PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('foo')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('foo')
     PsiWhiteSpace('\n\n')
     PROPERTY
       PsiElement(val)('val')
@@ -175,7 +180,8 @@ JetFile: Properties.jet
       PsiWhiteSpace(' ')
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('foo')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('foo')
       PsiWhiteSpace('\n   ')
       PROPERTY_ACCESSOR
         PsiElement(get)('get')
@@ -227,7 +233,8 @@ JetFile: Properties.jet
       PsiWhiteSpace(' ')
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('foo')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('foo')
       PsiWhiteSpace('\n   ')
       PROPERTY_ACCESSOR
         PsiElement(get)('get')
@@ -291,7 +298,8 @@ JetFile: Properties.jet
       PsiWhiteSpace(' ')
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('foo')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('foo')
       PsiWhiteSpace('\n   ')
       PROPERTY_ACCESSOR
         MODIFIER_LIST
@@ -368,7 +376,8 @@ JetFile: Properties.jet
       PsiWhiteSpace(' ')
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('foo')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('foo')
       PsiWhiteSpace('\n   ')
       PROPERTY_ACCESSOR
         MODIFIER_LIST
@@ -426,7 +435,8 @@ JetFile: Properties.jet
       PsiWhiteSpace(' ')
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('foo')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('foo')
       PsiWhiteSpace('\n   ')
       PROPERTY_ACCESSOR
         MODIFIER_LIST
@@ -519,7 +529,8 @@ JetFile: Properties.jet
         PsiWhiteSpace(' ')
         PsiElement(EQ)('=')
         PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('foo')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('foo')
     PsiWhiteSpace('\n\n')
     PROPERTY
       PsiElement(val)('val')
@@ -622,7 +633,8 @@ JetFile: Properties.jet
         PsiWhiteSpace(' ')
         PsiElement(EQ)('=')
         PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('foo')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('foo')
     PsiWhiteSpace('\n\n')
     FUN
       PsiElement(fun)('fun')
@@ -649,7 +661,8 @@ JetFile: Properties.jet
         PsiWhiteSpace('\n  ')
         BINARY_EXPRESSION
           CALL_EXPRESSION
-            PsiElement(IDENTIFIER)('get')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('get')
             VALUE_ARGUMENT_LIST
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')
@@ -661,16 +674,19 @@ JetFile: Properties.jet
         PsiWhiteSpace('\n  ')
         BINARY_EXPRESSION
           CALL_EXPRESSION
-            PsiElement(IDENTIFIER)('set')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('set')
             VALUE_ARGUMENT_LIST
               PsiElement(LPAR)('(')
               VALUE_ARGUMENT
                 BINARY_EXPRESSION
-                  PsiElement(IDENTIFIER)('int')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('int')
                   PsiWhiteSpace(' ')
                   PsiElement(COLON)(':')
                   PsiWhiteSpace(' ')
-                  PsiElement(IDENTIFIER)('x')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('x')
               PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           PsiElement(EQ)('=')
@@ -712,7 +728,8 @@ JetFile: Properties.jet
           DOT_QIALIFIED_EXPRESSION
             PsiElement(this)('this')
             PsiElement(DOT)('.')
-            PsiElement(IDENTIFIER)('size')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('size')
           PsiWhiteSpace(' ')
           PsiElement(MINUS)('-')
           PsiWhiteSpace(' ')

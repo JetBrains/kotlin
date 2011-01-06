@@ -22,7 +22,8 @@ JetFile: FunctionLiterals_ERR.jet
           PsiElement(DOUBLE_ARROW)('=>')
           PsiWhiteSpace(' ')
           BODY
-            PsiElement(IDENTIFIER)('a')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
           PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n    ')
         FUNCTION_LITERAL
@@ -37,7 +38,8 @@ JetFile: FunctionLiterals_ERR.jet
           PsiElement(DOUBLE_ARROW)('=>')
           PsiWhiteSpace(' ')
           BODY
-            PsiElement(IDENTIFIER)('a')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
           PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n\n    ')
         FUNCTION_LITERAL
@@ -52,7 +54,8 @@ JetFile: FunctionLiterals_ERR.jet
           PsiElement(DOUBLE_ARROW)('=>')
           PsiWhiteSpace(' ')
           BODY
-            PsiElement(IDENTIFIER)('a')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
           PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n    ')
         FUNCTION_LITERAL
@@ -72,7 +75,8 @@ JetFile: FunctionLiterals_ERR.jet
           PsiElement(DOUBLE_ARROW)('=>')
           PsiWhiteSpace(' ')
           BODY
-            PsiElement(IDENTIFIER)('a')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
           PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n    ')
         FUNCTION_LITERAL
@@ -96,7 +100,8 @@ JetFile: FunctionLiterals_ERR.jet
           PsiElement(DOUBLE_ARROW)('=>')
           PsiWhiteSpace(' ')
           BODY
-            PsiElement(IDENTIFIER)('a')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
           PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n    ')
         FUNCTION_LITERAL
@@ -134,7 +139,8 @@ JetFile: FunctionLiterals_ERR.jet
           PsiElement(DOUBLE_ARROW)('=>')
           PsiWhiteSpace(' ')
           BODY
-            PsiElement(IDENTIFIER)('a')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
           PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n    ')
         FUNCTION_LITERAL
@@ -167,7 +173,8 @@ JetFile: FunctionLiterals_ERR.jet
           PsiElement(DOUBLE_ARROW)('=>')
           PsiWhiteSpace(' ')
           BODY
-            PsiElement(IDENTIFIER)('a')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
           PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n    ')
         FUNCTION_LITERAL
@@ -205,7 +212,8 @@ JetFile: FunctionLiterals_ERR.jet
           PsiElement(DOUBLE_ARROW)('=>')
           PsiWhiteSpace(' ')
           BODY
-            PsiElement(IDENTIFIER)('a')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
           PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n\n    ')
         FUNCTION_LITERAL
@@ -226,7 +234,8 @@ JetFile: FunctionLiterals_ERR.jet
           PsiElement(DOUBLE_ARROW)('=>')
           PsiWhiteSpace(' ')
           BODY
-            PsiElement(IDENTIFIER)('a')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
           PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n    ')
         FUNCTION_LITERAL
@@ -255,7 +264,8 @@ JetFile: FunctionLiterals_ERR.jet
           PsiElement(DOUBLE_ARROW)('=>')
           PsiWhiteSpace(' ')
           BODY
-            PsiElement(IDENTIFIER)('a')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
           PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n\n    ')
         FUNCTION_LITERAL
@@ -271,7 +281,8 @@ JetFile: FunctionLiterals_ERR.jet
           PsiElement(DOUBLE_ARROW)('=>')
           PsiWhiteSpace(' ')
           BODY
-            PsiElement(IDENTIFIER)('f')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('f')
           PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n    ')
         FUNCTION_LITERAL
@@ -291,7 +302,8 @@ JetFile: FunctionLiterals_ERR.jet
           PsiElement(DOUBLE_ARROW)('=>')
           PsiWhiteSpace(' ')
           BODY
-            PsiElement(IDENTIFIER)('f')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('f')
           PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n')
         PsiElement(RBRACE)('}')

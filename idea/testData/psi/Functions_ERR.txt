@@ -348,7 +348,8 @@ JetFile: Functions_ERR.jet
           <empty list>
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('a')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('a')
       PsiElement(SEMICOLON)(';')
     PsiWhiteSpace('\n\n\n')
     FUN

@@ -58,9 +58,11 @@ JetFile: With.jet
       PsiWhiteSpace(' ')
       CALL_EXPRESSION
         DOT_QIALIFIED_EXPRESSION
-          PsiElement(IDENTIFIER)('receiver')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('receiver')
           PsiElement(DOT)('.')
-          PsiElement(IDENTIFIER)('body')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('body')
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
           PsiElement(RPAR)(')')
@@ -79,20 +81,25 @@ JetFile: With.jet
         PsiElement(LBRACE)('{')
         PsiWhiteSpace('\n\n  ')
         CALL_EXPRESSION
-          PsiElement(IDENTIFIER)('with')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('with')
           VALUE_ARGUMENT_LIST
             PsiElement(LPAR)('(')
             VALUE_ARGUMENT
               DOT_QIALIFIED_EXPRESSION
                 DOT_QIALIFIED_EXPRESSION
                   DOT_QIALIFIED_EXPRESSION
-                    PsiElement(IDENTIFIER)('java')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('java')
                     PsiElement(DOT)('.')
-                    PsiElement(IDENTIFIER)('lang')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('lang')
                   PsiElement(DOT)('.')
-                  PsiElement(IDENTIFIER)('System')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('System')
                 PsiElement(DOT)('.')
-                PsiElement(IDENTIFIER)('out')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('out')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           FUNCTION_LITERAL
@@ -100,7 +107,8 @@ JetFile: With.jet
             PsiWhiteSpace('\n    ')
             BODY
               CALL_EXPRESSION
-                PsiElement(IDENTIFIER)('println')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('println')
                 VALUE_ARGUMENT_LIST
                   PsiElement(LPAR)('(')
                   VALUE_ARGUMENT
@@ -110,7 +118,8 @@ JetFile: With.jet
               PsiElement(SEMICOLON)(';')
               PsiWhiteSpace('\n    ')
               CALL_EXPRESSION
-                PsiElement(IDENTIFIER)('print')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('print')
                 VALUE_ARGUMENT_LIST
                   PsiElement(LPAR)('(')
                   VALUE_ARGUMENT
@@ -124,16 +133,19 @@ JetFile: With.jet
         CALL_EXPRESSION
           DOT_QIALIFIED_EXPRESSION
             DOT_QIALIFIED_EXPRESSION
-              PsiElement(IDENTIFIER)('System')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('System')
               PsiElement(DOT)('.')
-              PsiElement(IDENTIFIER)('out')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('out')
             PsiElement(DOT)('.')
             FUNCTION_LITERAL
               PsiElement(LBRACE)('{')
               PsiWhiteSpace('\n    ')
               BODY
                 CALL_EXPRESSION
-                  PsiElement(IDENTIFIER)('println')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('println')
                   VALUE_ARGUMENT_LIST
                     PsiElement(LPAR)('(')
                     VALUE_ARGUMENT
@@ -143,7 +155,8 @@ JetFile: With.jet
                 PsiElement(SEMICOLON)(';')
                 PsiWhiteSpace('\n    ')
                 CALL_EXPRESSION
-                  PsiElement(IDENTIFIER)('print')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('print')
                   VALUE_ARGUMENT_LIST
                     PsiElement(LPAR)('(')
                     VALUE_ARGUMENT

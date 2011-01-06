@@ -13,7 +13,8 @@ JetFile: LocalDeclarations.jet
       BLOCK
         PsiElement(LBRACE)('{')
         PsiWhiteSpace('\n    ')
-        PsiElement(IDENTIFIER)('lazy')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('lazy')
         PsiWhiteSpace('\n    ')
         INTEGER_CONSTANT
           PsiElement(INTEGER_LITERAL)('1')

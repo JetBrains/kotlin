@@ -22,7 +22,8 @@ JetFile: QuotedIdentifiers.jet
         PsiElement(LBRACE)('{')
         PsiWhiteSpace('\n  ')
         CALL_EXPRESSION
-          PsiElement(IDENTIFIER)('`class`')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('`class`')
           VALUE_ARGUMENT_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')

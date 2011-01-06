@@ -35,14 +35,16 @@ JetFile: Builder.jet
                 PsiElement(EQ)('=')
                 PsiWhiteSpace(' ')
                 CALL_EXPRESSION
-                  PsiElement(IDENTIFIER)('library')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('library')
                   PsiWhiteSpace(' ')
                   FUNCTION_LITERAL
                     PsiElement(LBRACE)('{')
                     PsiWhiteSpace('\n    ')
                     BODY
                       CALL_EXPRESSION
-                        PsiElement(IDENTIFIER)('classpath')
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('classpath')
                         VALUE_ARGUMENT_LIST
                           PsiElement(LPAR)('(')
                           VALUE_ARGUMENT
@@ -63,7 +65,8 @@ JetFile: Builder.jet
                 PsiElement(EQ)('=')
                 PsiWhiteSpace(' ')
                 CALL_EXPRESSION
-                  PsiElement(IDENTIFIER)('library')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('library')
                   PsiWhiteSpace(' ')
                   FUNCTION_LITERAL
                     PsiElement(LBRACE)('{')
@@ -85,20 +88,24 @@ JetFile: Builder.jet
                                     PsiElement(STRING_LITERAL)('"$gantHome/lib"')
                                 PsiElement(RPAR)(')')
                             PsiElement(DOT)('.')
-                            PsiElement(IDENTIFIER)('files')
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('files')
                           PsiElement(DOT)('.')
-                          PsiElement(IDENTIFIER)('each')
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('each')
                         PsiWhiteSpace(' ')
                         FUNCTION_LITERAL
                           PsiElement(LBRACE)('{')
                           PsiWhiteSpace('\n      ')
                           BODY
                             CALL_EXPRESSION
-                              PsiElement(IDENTIFIER)('classpath')
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('classpath')
                               VALUE_ARGUMENT_LIST
                                 PsiElement(LPAR)('(')
                                 VALUE_ARGUMENT
-                                  PsiElement(IDENTIFIER)('it')
+                                  REFERENCE_EXPRESSION
+                                    PsiElement(IDENTIFIER)('it')
                                 PsiElement(RPAR)(')')
                           PsiWhiteSpace('\n    ')
                           PsiElement(RBRACE)('}')
@@ -116,14 +123,16 @@ JetFile: Builder.jet
                 PsiElement(EQ)('=')
                 PsiWhiteSpace(' ')
                 CALL_EXPRESSION
-                  PsiElement(IDENTIFIER)('module')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('module')
                   PsiWhiteSpace(' ')
                   FUNCTION_LITERAL
                     PsiElement(LBRACE)('{')
                     PsiWhiteSpace('\n    ')
                     BODY
                       BINARY_EXPRESSION
-                        PsiElement(IDENTIFIER)('targetLevel')
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('targetLevel')
                         PsiWhiteSpace(' ')
                         PsiElement(EQ)('=')
                         PsiWhiteSpace(' ')
@@ -131,23 +140,28 @@ JetFile: Builder.jet
                           PsiElement(STRING_LITERAL)('"1.5"')
                       PsiWhiteSpace('\n    ')
                       CALL_EXPRESSION
-                        PsiElement(IDENTIFIER)('classpath')
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('classpath')
                         VALUE_ARGUMENT_LIST
                           PsiElement(LPAR)('(')
                           VALUE_ARGUMENT
-                            PsiElement(IDENTIFIER)('antLayout')
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('antLayout')
                           PsiElement(COMMA)(',')
                           PsiWhiteSpace(' ')
                           VALUE_ARGUMENT
-                            PsiElement(IDENTIFIER)('gant')
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('gant')
                           PsiElement(COMMA)(',')
                           PsiWhiteSpace(' ')
                           VALUE_ARGUMENT
-                            PsiElement(IDENTIFIER)('groovy')
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('groovy')
                           PsiElement(RPAR)(')')
                       PsiWhiteSpace('\n    ')
                       CALL_EXPRESSION
-                        PsiElement(IDENTIFIER)('src')
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('src')
                         VALUE_ARGUMENT_LIST
                           PsiElement(LPAR)('(')
                           VALUE_ARGUMENT
@@ -159,7 +173,8 @@ JetFile: Builder.jet
               PsiWhiteSpace('\n\n')
               PsiElement(RBRACE)('}')
           PsiElement(DOT)('.')
-          PsiElement(IDENTIFIER)('build')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('build')
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
           PsiElement(RPAR)(')')
@@ -372,9 +387,11 @@ JetFile: Builder.jet
             PsiWhiteSpace('\n    ')
             CALL_EXPRESSION
               DOT_QIALIFIED_EXPRESSION
-                PsiElement(IDENTIFIER)('lib')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('lib')
                 PsiElement(DOT)('.')
-                PsiElement(IDENTIFIER)('initializer')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('initializer')
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 PsiElement(RPAR)(')')
@@ -382,7 +399,8 @@ JetFile: Builder.jet
             RETURN
               PsiElement(return)('return')
               PsiWhiteSpace(' ')
-              PsiElement(IDENTIFIER)('lib')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('lib')
             PsiWhiteSpace('\n  ')
             PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n\n  ')

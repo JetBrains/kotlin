@@ -24,15 +24,18 @@ JetFile: Constructors.jet
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
-                  PsiElement(IDENTIFIER)('a')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
                 PsiElement(COMMA)(',')
                 PsiWhiteSpace(' ')
                 VALUE_ARGUMENT
-                  PsiElement(IDENTIFIER)('b')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('b')
                 PsiElement(COMMA)(',')
                 PsiWhiteSpace(' ')
                 VALUE_ARGUMENT
-                  PsiElement(IDENTIFIER)('c')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('c')
                 PsiElement(RPAR)(')')
             PsiElement(COMMA)(',')
             PsiWhiteSpace(' ')
@@ -49,7 +52,8 @@ JetFile: Constructors.jet
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
-                  PsiElement(IDENTIFIER)('bar')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('bar')
                 PsiElement(RPAR)(')')
         PsiWhiteSpace('\n\n    ')
         CONSTRUCTOR
@@ -74,15 +78,18 @@ JetFile: Constructors.jet
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
-                  PsiElement(IDENTIFIER)('a')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
                 PsiElement(COMMA)(',')
                 PsiWhiteSpace(' ')
                 VALUE_ARGUMENT
-                  PsiElement(IDENTIFIER)('b')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('b')
                 PsiElement(COMMA)(',')
                 PsiWhiteSpace(' ')
                 VALUE_ARGUMENT
-                  PsiElement(IDENTIFIER)('c')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('c')
                 PsiElement(RPAR)(')')
             PsiElement(COMMA)(',')
             PsiWhiteSpace(' ')
@@ -99,7 +106,8 @@ JetFile: Constructors.jet
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
-                  PsiElement(IDENTIFIER)('bar')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('bar')
                 PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           BLOCK

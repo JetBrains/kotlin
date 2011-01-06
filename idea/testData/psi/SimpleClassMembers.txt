@@ -116,15 +116,18 @@ JetFile: SimpleClassMembers.jet
                   VALUE_ARGUMENT_LIST
                     PsiElement(LPAR)('(')
                     VALUE_ARGUMENT
-                      PsiElement(IDENTIFIER)('a')
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('a')
                     PsiElement(COMMA)(',')
                     PsiWhiteSpace(' ')
                     VALUE_ARGUMENT
-                      PsiElement(IDENTIFIER)('b')
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('b')
                     PsiElement(COMMA)(',')
                     PsiWhiteSpace(' ')
                     VALUE_ARGUMENT
-                      PsiElement(IDENTIFIER)('c')
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('c')
                     PsiElement(RPAR)(')')
                 PsiElement(COMMA)(',')
                 PsiWhiteSpace(' ')
@@ -141,7 +144,8 @@ JetFile: SimpleClassMembers.jet
                   VALUE_ARGUMENT_LIST
                     PsiElement(LPAR)('(')
                     VALUE_ARGUMENT
-                      PsiElement(IDENTIFIER)('bar')
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('bar')
                     PsiElement(RPAR)(')')
             PsiWhiteSpace('\n    ')
             PsiElement(RBRACE)('}')
@@ -240,7 +244,8 @@ JetFile: SimpleClassMembers.jet
                         PsiWhiteSpace(' ')
                         PsiElement(by)('by')
                         PsiWhiteSpace(' ')
-                        PsiElement(IDENTIFIER)('foo')
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('foo')
                     PsiWhiteSpace(' ')
                     CLASS_BODY
                       PsiElement(LBRACE)('{')
@@ -270,7 +275,8 @@ JetFile: SimpleClassMembers.jet
                         PsiWhiteSpace(' ')
                         PsiElement(by)('by')
                         PsiWhiteSpace(' ')
-                        PsiElement(IDENTIFIER)('foo')
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('foo')
                       PsiElement(COMMA)(',')
                       PsiWhiteSpace(' ')
                       DELEGATOR_SUPER_CALL
@@ -355,15 +361,18 @@ JetFile: SimpleClassMembers.jet
                   VALUE_ARGUMENT_LIST
                     PsiElement(LPAR)('(')
                     VALUE_ARGUMENT
-                      PsiElement(IDENTIFIER)('a')
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('a')
                     PsiElement(COMMA)(',')
                     PsiWhiteSpace(' ')
                     VALUE_ARGUMENT
-                      PsiElement(IDENTIFIER)('b')
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('b')
                     PsiElement(COMMA)(',')
                     PsiWhiteSpace(' ')
                     VALUE_ARGUMENT
-                      PsiElement(IDENTIFIER)('c')
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('c')
                     PsiElement(RPAR)(')')
                 PsiElement(COMMA)(',')
                 PsiWhiteSpace(' ')
@@ -380,7 +389,8 @@ JetFile: SimpleClassMembers.jet
                   VALUE_ARGUMENT_LIST
                     PsiElement(LPAR)('(')
                     VALUE_ARGUMENT
-                      PsiElement(IDENTIFIER)('bar')
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('bar')
                     PsiElement(RPAR)(')')
             PsiWhiteSpace('\n    ')
             PsiElement(RBRACE)('}')
@@ -446,15 +456,18 @@ JetFile: SimpleClassMembers.jet
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
-                  PsiElement(IDENTIFIER)('a')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
                 PsiElement(COMMA)(',')
                 PsiWhiteSpace(' ')
                 VALUE_ARGUMENT
-                  PsiElement(IDENTIFIER)('b')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('b')
                 PsiElement(COMMA)(',')
                 PsiWhiteSpace(' ')
                 VALUE_ARGUMENT
-                  PsiElement(IDENTIFIER)('c')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('c')
                 PsiElement(RPAR)(')')
             PsiElement(COMMA)(',')
             PsiWhiteSpace(' ')
@@ -471,7 +484,8 @@ JetFile: SimpleClassMembers.jet
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
-                  PsiElement(IDENTIFIER)('bar')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('bar')
                 PsiElement(RPAR)(')')
         PsiWhiteSpace('\n\n    ')
         CONSTRUCTOR
@@ -488,15 +502,18 @@ JetFile: SimpleClassMembers.jet
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
-                  PsiElement(IDENTIFIER)('a')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
                 PsiElement(COMMA)(',')
                 PsiWhiteSpace(' ')
                 VALUE_ARGUMENT
-                  PsiElement(IDENTIFIER)('b')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('b')
                 PsiElement(COMMA)(',')
                 PsiWhiteSpace(' ')
                 VALUE_ARGUMENT
-                  PsiElement(IDENTIFIER)('c')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('c')
                 PsiElement(RPAR)(')')
             PsiElement(COMMA)(',')
             PsiWhiteSpace(' ')
@@ -513,7 +530,8 @@ JetFile: SimpleClassMembers.jet
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
-                  PsiElement(IDENTIFIER)('bar')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('bar')
                 PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           BLOCK
@@ -589,7 +607,8 @@ JetFile: SimpleClassMembers.jet
                 PsiWhiteSpace(' ')
                 PsiElement(by)('by')
                 PsiWhiteSpace(' ')
-                PsiElement(IDENTIFIER)('foo')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('foo')
             PsiWhiteSpace(' ')
             CLASS_BODY
               PsiElement(LBRACE)('{')
@@ -619,7 +638,8 @@ JetFile: SimpleClassMembers.jet
                 PsiWhiteSpace(' ')
                 PsiElement(by)('by')
                 PsiWhiteSpace(' ')
-                PsiElement(IDENTIFIER)('foo')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('foo')
               PsiElement(COMMA)(',')
               PsiWhiteSpace(' ')
               DELEGATOR_SUPER_CALL

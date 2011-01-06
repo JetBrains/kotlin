@@ -134,12 +134,14 @@ JetFile: ControlStructures.jet
             PsiElement(RPAR)(')')
             PsiWhiteSpace(' ')
             THEN
-              PsiElement(IDENTIFIER)('foo')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('foo')
             PsiWhiteSpace(' ')
             PsiElement(else)('else')
             PsiWhiteSpace(' ')
             ELSE
-              PsiElement(IDENTIFIER)('bar')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('bar')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n    ')
         VALUE_PARAMETER
@@ -163,7 +165,8 @@ JetFile: ControlStructures.jet
             PsiElement(RPAR)(')')
             PsiWhiteSpace(' ')
             THEN
-              PsiElement(IDENTIFIER)('foo')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('foo')
         PsiWhiteSpace('\n')
         PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
@@ -185,7 +188,8 @@ JetFile: ControlStructures.jet
         BREAK
           PsiElement(break)('break')
         PsiWhiteSpace('\n  ')
-        PsiElement(IDENTIFIER)('la')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('la')
         PsiWhiteSpace('\n  ')
         BREAK
           PsiElement(break)('break')
@@ -195,7 +199,8 @@ JetFile: ControlStructures.jet
         CONTINUE
           PsiElement(continue)('continue')
         PsiWhiteSpace('\n  ')
-        PsiElement(IDENTIFIER)('la')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('la')
         PsiWhiteSpace('\n  ')
         CONTINUE
           PsiElement(continue)('continue')
@@ -207,7 +212,8 @@ JetFile: ControlStructures.jet
           PsiWhiteSpace(' ')
           PsiElement(LPAR)('(')
           CONDITION
-            PsiElement(IDENTIFIER)('foo')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('foo')
           PsiElement(RPAR)(')')
           PsiWhiteSpace('\n    ')
           THEN
@@ -216,16 +222,19 @@ JetFile: ControlStructures.jet
               PsiWhiteSpace(' ')
               PsiElement(LPAR)('(')
               CONDITION
-                PsiElement(IDENTIFIER)('foo')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('foo')
               PsiElement(RPAR)(')')
               PsiWhiteSpace('\n      ')
               THEN
-                PsiElement(IDENTIFIER)('bar')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('bar')
               PsiWhiteSpace('\n    ')
               PsiElement(else)('else')
               PsiWhiteSpace('\n      ')
               ELSE
-                PsiElement(IDENTIFIER)('foo')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('foo')
           PsiWhiteSpace('\n  ')
           PsiElement(else)('else')
           PsiWhiteSpace(' ')
@@ -235,16 +244,19 @@ JetFile: ControlStructures.jet
               PsiWhiteSpace(' ')
               PsiElement(LPAR)('(')
               CONDITION
-                PsiElement(IDENTIFIER)('foo')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('foo')
               PsiElement(RPAR)(')')
               PsiWhiteSpace('\n    ')
               THEN
-                PsiElement(IDENTIFIER)('bar')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('bar')
               PsiWhiteSpace('\n  ')
               PsiElement(else)('else')
               PsiWhiteSpace('\n    ')
               ELSE
-                PsiElement(IDENTIFIER)('bar')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('bar')
         PsiWhiteSpace('\n\n  ')
         TRY
           PsiElement(try)('try')
@@ -426,11 +438,13 @@ JetFile: ControlStructures.jet
           PsiElement(in)('in')
           PsiWhiteSpace(' ')
           LOOP_RANGE
-            PsiElement(IDENTIFIER)('foo')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('foo')
           PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           BODY
-            PsiElement(IDENTIFIER)('a')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
         PsiWhiteSpace('\n    ')
         FOR
           PsiElement(for)('for')
@@ -442,11 +456,13 @@ JetFile: ControlStructures.jet
           PsiElement(in)('in')
           PsiWhiteSpace(' ')
           LOOP_RANGE
-            PsiElement(IDENTIFIER)('foo')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('foo')
           PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           BODY
-            PsiElement(IDENTIFIER)('a')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
         PsiWhiteSpace('\n      ')
         FOR
           PsiElement(for)('for')
@@ -466,11 +482,13 @@ JetFile: ControlStructures.jet
           PsiElement(in)('in')
           PsiWhiteSpace(' ')
           LOOP_RANGE
-            PsiElement(IDENTIFIER)('foo')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('foo')
           PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           BODY
-            PsiElement(IDENTIFIER)('a')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
         PsiWhiteSpace('\n        ')
         FOR
           PsiElement(for)('for')
@@ -488,7 +506,8 @@ JetFile: ControlStructures.jet
           PsiElement(in)('in')
           PsiWhiteSpace(' ')
           LOOP_RANGE
-            PsiElement(IDENTIFIER)('foo')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('foo')
           PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           BODY
@@ -556,11 +575,13 @@ JetFile: ControlStructures.jet
               PsiElement(in)('in')
               PsiWhiteSpace(' ')
               LOOP_RANGE
-                PsiElement(IDENTIFIER)('b')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('b')
               PsiElement(RPAR)(')')
               PsiWhiteSpace('\n      ')
               BODY
-                PsiElement(IDENTIFIER)('b')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('b')
             PsiWhiteSpace('\n\n    ')
             FOR
               PsiElement(for)('for')
@@ -572,7 +593,8 @@ JetFile: ControlStructures.jet
               PsiElement(in)('in')
               PsiWhiteSpace(' ')
               LOOP_RANGE
-                PsiElement(IDENTIFIER)('b')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('b')
               PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')
               BODY
@@ -592,7 +614,8 @@ JetFile: ControlStructures.jet
               PsiElement(in)('in')
               PsiWhiteSpace(' ')
               LOOP_RANGE
-                PsiElement(IDENTIFIER)('b')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('b')
               PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')
               BODY
@@ -600,7 +623,8 @@ JetFile: ControlStructures.jet
                   PsiElement(LBRACE)('{')
                   PsiWhiteSpace('\n      ')
                   BODY
-                    PsiElement(IDENTIFIER)('b')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('b')
                   PsiWhiteSpace('\n    ')
                   PsiElement(RBRACE)('}')
             PsiWhiteSpace('\n\n    ')
@@ -614,13 +638,15 @@ JetFile: ControlStructures.jet
               PsiElement(in)('in')
               PsiWhiteSpace(' ')
               LOOP_RANGE
-                PsiElement(IDENTIFIER)('b')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('b')
               PsiElement(RPAR)(')')
               BODY
                 <empty list>
             PsiElement(SEMICOLON)(';')
             PsiWhiteSpace('\n      ')
-            PsiElement(IDENTIFIER)('b')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('b')
             PsiWhiteSpace('\n\n    ')
             WHILE
               PsiElement(while)('while')
@@ -628,15 +654,18 @@ JetFile: ControlStructures.jet
               PsiElement(LPAR)('(')
               CONDITION
                 BINARY_EXPRESSION
-                  PsiElement(IDENTIFIER)('a')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
                   PsiWhiteSpace(' ')
                   PsiElement(in)('in')
                   PsiWhiteSpace(' ')
-                  PsiElement(IDENTIFIER)('b')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('b')
               PsiElement(RPAR)(')')
               PsiWhiteSpace('\n      ')
               BODY
-                PsiElement(IDENTIFIER)('b')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('b')
             PsiWhiteSpace('\n\n    ')
             WHILE
               PsiElement(while)('while')
@@ -644,11 +673,13 @@ JetFile: ControlStructures.jet
               PsiElement(LPAR)('(')
               CONDITION
                 BINARY_EXPRESSION
-                  PsiElement(IDENTIFIER)('a')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
                   PsiWhiteSpace(' ')
                   PsiElement(in)('in')
                   PsiWhiteSpace(' ')
-                  PsiElement(IDENTIFIER)('b')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('b')
               PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')
               BODY
@@ -656,7 +687,8 @@ JetFile: ControlStructures.jet
                   PsiElement(LBRACE)('{')
                   PsiWhiteSpace('\n      ')
                   BODY
-                    PsiElement(IDENTIFIER)('b')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('b')
                   PsiWhiteSpace('\n    ')
                   PsiElement(RBRACE)('}')
             PsiWhiteSpace('\n\n    ')
@@ -666,24 +698,28 @@ JetFile: ControlStructures.jet
               PsiElement(LPAR)('(')
               CONDITION
                 BINARY_EXPRESSION
-                  PsiElement(IDENTIFIER)('a')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
                   PsiWhiteSpace(' ')
                   PsiElement(in)('in')
                   PsiWhiteSpace(' ')
-                  PsiElement(IDENTIFIER)('b')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('b')
               PsiElement(RPAR)(')')
               BODY
                 <empty list>
             PsiElement(SEMICOLON)(';')
             PsiWhiteSpace('\n      ')
-            PsiElement(IDENTIFIER)('b')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('b')
             PsiWhiteSpace('\n\n    ')
             WHILE
               PsiElement(while)('while')
               PsiWhiteSpace(' ')
               PsiElement(LPAR)('(')
               CONDITION
-                PsiElement(IDENTIFIER)('a')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
               PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')
               BODY
@@ -698,65 +734,77 @@ JetFile: ControlStructures.jet
               PsiWhiteSpace(' ')
               PsiElement(LPAR)('(')
               CONDITION
-                PsiElement(IDENTIFIER)('a')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
               PsiElement(RPAR)(')')
               PsiWhiteSpace('\n      ')
               THEN
-                PsiElement(IDENTIFIER)('b')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('b')
               PsiWhiteSpace('\n    ')
               PsiElement(else)('else')
               PsiWhiteSpace('\n      ')
               ELSE
-                PsiElement(IDENTIFIER)('c')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('c')
             PsiWhiteSpace('\n\n    ')
             IF
               PsiElement(if)('if')
               PsiWhiteSpace(' ')
               PsiElement(LPAR)('(')
               CONDITION
-                PsiElement(IDENTIFIER)('a')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
               PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')
               THEN
-                PsiElement(IDENTIFIER)('b')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('b')
               PsiWhiteSpace(' ')
               PsiElement(else)('else')
               PsiWhiteSpace(' ')
               ELSE
-                PsiElement(IDENTIFIER)('c')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('c')
             PsiWhiteSpace('\n\n    ')
             IF
               PsiElement(if)('if')
               PsiWhiteSpace(' ')
               PsiElement(LPAR)('(')
               CONDITION
-                PsiElement(IDENTIFIER)('a')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
               PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')
               THEN
-                PsiElement(IDENTIFIER)('b')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('b')
               PsiWhiteSpace('\n    ')
               PsiElement(else)('else')
               PsiWhiteSpace(' ')
               ELSE
-                PsiElement(IDENTIFIER)('c')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('c')
             PsiWhiteSpace('\n\n    ')
             IF
               PsiElement(if)('if')
               PsiWhiteSpace(' ')
               PsiElement(LPAR)('(')
               CONDITION
-                PsiElement(IDENTIFIER)('a')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
               PsiElement(RPAR)(')')
               PsiWhiteSpace('\n      ')
               THEN
-                PsiElement(IDENTIFIER)('b')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('b')
                 PsiElement(SEMICOLON)(';')
               PsiWhiteSpace('\n    ')
               PsiElement(else)('else')
               PsiWhiteSpace('\n      ')
               ELSE
-                PsiElement(IDENTIFIER)('c')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('c')
             PsiElement(SEMICOLON)(';')
             PsiWhiteSpace('\n\n    ')
             IF
@@ -764,33 +812,39 @@ JetFile: ControlStructures.jet
               PsiWhiteSpace(' ')
               PsiElement(LPAR)('(')
               CONDITION
-                PsiElement(IDENTIFIER)('a')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
               PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')
               THEN
-                PsiElement(IDENTIFIER)('b')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('b')
             PsiWhiteSpace('\n    ')
             IF
               PsiElement(if)('if')
               PsiWhiteSpace(' ')
               PsiElement(LPAR)('(')
               CONDITION
-                PsiElement(IDENTIFIER)('a')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
               PsiElement(RPAR)(')')
               PsiWhiteSpace('\n      ')
               THEN
-                PsiElement(IDENTIFIER)('b')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('b')
             PsiWhiteSpace('\n    ')
             IF
               PsiElement(if)('if')
               PsiWhiteSpace(' ')
               PsiElement(LPAR)('(')
               CONDITION
-                PsiElement(IDENTIFIER)('a')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
               PsiElement(RPAR)(')')
               PsiWhiteSpace('\n      ')
               THEN
-                PsiElement(IDENTIFIER)('b')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('b')
                 PsiElement(SEMICOLON)(';')
             PsiWhiteSpace('\n\n    ')
             IF
@@ -798,7 +852,8 @@ JetFile: ControlStructures.jet
               PsiWhiteSpace(' ')
               PsiElement(LPAR)('(')
               CONDITION
-                PsiElement(IDENTIFIER)('a')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
               PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')
               THEN
@@ -806,14 +861,16 @@ JetFile: ControlStructures.jet
               PsiElement(else)('else')
               PsiWhiteSpace(' ')
               ELSE
-                PsiElement(IDENTIFIER)('c')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('c')
             PsiWhiteSpace('\n    ')
             IF
               PsiElement(if)('if')
               PsiWhiteSpace(' ')
               PsiElement(LPAR)('(')
               CONDITION
-                PsiElement(IDENTIFIER)('a')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
               PsiElement(RPAR)(')')
               PsiWhiteSpace('\n    ')
               THEN
@@ -821,14 +878,16 @@ JetFile: ControlStructures.jet
               PsiElement(else)('else')
               PsiWhiteSpace(' ')
               ELSE
-                PsiElement(IDENTIFIER)('c')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('c')
             PsiWhiteSpace('\n    ')
             IF
               PsiElement(if)('if')
               PsiWhiteSpace(' ')
               PsiElement(LPAR)('(')
               CONDITION
-                PsiElement(IDENTIFIER)('a')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
               PsiElement(RPAR)(')')
               PsiWhiteSpace('\n     ')
               THEN
@@ -837,14 +896,16 @@ JetFile: ControlStructures.jet
               PsiElement(else)('else')
               PsiWhiteSpace(' ')
               ELSE
-                PsiElement(IDENTIFIER)('c')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('c')
             PsiWhiteSpace('\n    ')
             IF
               PsiElement(if)('if')
               PsiWhiteSpace(' ')
               PsiElement(LPAR)('(')
               CONDITION
-                PsiElement(IDENTIFIER)('a')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
               PsiElement(RPAR)(')')
               PsiWhiteSpace('\n    ')
               THEN
@@ -862,20 +923,23 @@ JetFile: ControlStructures.jet
               PsiWhiteSpace(' ')
               PsiElement(LPAR)('(')
               CONDITION
-                PsiElement(IDENTIFIER)('r')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('r')
               PsiElement(RPAR)(')')
             PsiWhiteSpace('\n    ')
             DO_WHILE
               PsiElement(do)('do')
               PsiWhiteSpace(' ')
               BODY
-                PsiElement(IDENTIFIER)('foo')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('foo')
               PsiWhiteSpace(' ')
               PsiElement(while)('while')
               PsiWhiteSpace(' ')
               PsiElement(LPAR)('(')
               CONDITION
-                PsiElement(IDENTIFIER)('r')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('r')
               PsiElement(RPAR)(')')
             PsiWhiteSpace('\n    ')
             DO_WHILE
@@ -888,9 +952,11 @@ JetFile: ControlStructures.jet
                     PsiElement(SEMICOLON)(';')
                     PsiElement(SEMICOLON)(';')
                     PsiElement(SEMICOLON)(';')
-                    PsiElement(IDENTIFIER)('foo')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('foo')
                     PsiElement(SEMICOLON)(';')
-                    PsiElement(IDENTIFIER)('bar')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('bar')
                     PsiElement(SEMICOLON)(';')
                     PsiElement(SEMICOLON)(';')
                     PsiElement(SEMICOLON)(';')
@@ -902,7 +968,8 @@ JetFile: ControlStructures.jet
               PsiWhiteSpace(' ')
               PsiElement(LPAR)('(')
               CONDITION
-                PsiElement(IDENTIFIER)('r')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('r')
               PsiElement(RPAR)(')')
             PsiWhiteSpace('\n')
             PsiElement(RBRACE)('}')

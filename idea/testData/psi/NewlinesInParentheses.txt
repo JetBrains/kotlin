@@ -21,11 +21,13 @@ JetFile: NewlinesInParentheses.jet
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
           BINARY_EXPRESSION
-            PsiElement(IDENTIFIER)('a')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
             PsiWhiteSpace(' ')
             PsiElement(PLUS)('+')
             PsiWhiteSpace(' ')
-            PsiElement(IDENTIFIER)('b')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('b')
         PsiWhiteSpace('\n  ')
         PROPERTY
           PsiElement(val)('val')
@@ -35,11 +37,13 @@ JetFile: NewlinesInParentheses.jet
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
           BINARY_EXPRESSION
-            PsiElement(IDENTIFIER)('a')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
             PsiWhiteSpace(' ')
             PsiElement(PLUS)('+')
             PsiWhiteSpace('\n    ')
-            PsiElement(IDENTIFIER)('b')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('b')
         PsiWhiteSpace('\n  ')
         PROPERTY
           PsiElement(val)('val')
@@ -48,12 +52,14 @@ JetFile: NewlinesInParentheses.jet
           PsiWhiteSpace(' ')
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('a')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('a')
         PsiWhiteSpace('\n  ')
         PREFIX_EXPRESSION
           PsiElement(PLUS)('+')
           PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('b')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('b')
         PsiWhiteSpace('\n  ')
         PROPERTY
           PsiElement(val)('val')
@@ -65,11 +71,13 @@ JetFile: NewlinesInParentheses.jet
           TUPLE
             PsiElement(LPAR)('(')
             BINARY_EXPRESSION
-              PsiElement(IDENTIFIER)('a')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('a')
               PsiWhiteSpace('\n  ')
               PsiElement(PLUS)('+')
               PsiWhiteSpace(' ')
-              PsiElement(IDENTIFIER)('b')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('b')
             PsiElement(RPAR)(')')
         PsiWhiteSpace('\n  ')
         PROPERTY
@@ -84,12 +92,14 @@ JetFile: NewlinesInParentheses.jet
             FUNCTION_LITERAL
               PsiElement(LBRACE)('{')
               BODY
-                PsiElement(IDENTIFIER)('a')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
                 PsiWhiteSpace('\n  ')
                 PREFIX_EXPRESSION
                   PsiElement(PLUS)('+')
                   PsiWhiteSpace(' ')
-                  PsiElement(IDENTIFIER)('b')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('b')
               PsiElement(RBRACE)('}')
             PsiElement(RPAR)(')')
         PsiWhiteSpace('\n  ')
@@ -106,17 +116,20 @@ JetFile: NewlinesInParentheses.jet
               FUNCTION_LITERAL
                 PsiElement(LBRACE)('{')
                 BODY
-                  PsiElement(IDENTIFIER)('a')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
                   PsiWhiteSpace('\n  ')
                   PREFIX_EXPRESSION
                     PsiElement(PLUS)('+')
                     PsiWhiteSpace(' ')
-                    PsiElement(IDENTIFIER)('b')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('b')
                 PsiElement(RBRACE)('}')
               PsiWhiteSpace('\n  ')
               PsiElement(PLUS)('+')
               PsiWhiteSpace(' ')
-              PsiElement(IDENTIFIER)('b')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('b')
             PsiElement(RPAR)(')')
         PsiWhiteSpace('\n\n  ')
         PROPERTY
@@ -127,15 +140,18 @@ JetFile: NewlinesInParentheses.jet
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
           ARRAY_ACCESS_EXPRESSION
-            PsiElement(IDENTIFIER)('b')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('b')
             INDICES
               PsiElement(LBRACKET)('[')
               BINARY_EXPRESSION
-                PsiElement(IDENTIFIER)('c')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('c')
                 PsiWhiteSpace('\n    ')
                 PsiElement(PLUS)('+')
                 PsiWhiteSpace(' ')
-                PsiElement(IDENTIFIER)('d')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('d')
               PsiElement(RBRACKET)(']')
         PsiWhiteSpace('\n  ')
         PROPERTY
@@ -146,18 +162,21 @@ JetFile: NewlinesInParentheses.jet
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
           ARRAY_ACCESS_EXPRESSION
-            PsiElement(IDENTIFIER)('b')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('b')
             INDICES
               PsiElement(LBRACKET)('[')
               FUNCTION_LITERAL
                 PsiElement(LBRACE)('{')
                 BODY
-                  PsiElement(IDENTIFIER)('c')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('c')
                   PsiWhiteSpace('\n    ')
                   PREFIX_EXPRESSION
                     PsiElement(PLUS)('+')
                     PsiWhiteSpace(' ')
-                    PsiElement(IDENTIFIER)('d')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('d')
                 PsiElement(RBRACE)('}')
               PsiElement(RBRACKET)(']')
         PsiWhiteSpace('\n  ')
@@ -169,28 +188,33 @@ JetFile: NewlinesInParentheses.jet
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
           ARRAY_ACCESS_EXPRESSION
-            PsiElement(IDENTIFIER)('b')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('b')
             INDICES
               PsiElement(LBRACKET)('[')
               BINARY_EXPRESSION
                 FUNCTION_LITERAL
                   PsiElement(LBRACE)('{')
                   BODY
-                    PsiElement(IDENTIFIER)('c')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('c')
                     PsiWhiteSpace('\n    ')
                     PREFIX_EXPRESSION
                       PsiElement(PLUS)('+')
                       PsiWhiteSpace(' ')
-                      PsiElement(IDENTIFIER)('d')
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('d')
                   PsiElement(RBRACE)('}')
                 PsiWhiteSpace('\n    ')
                 PsiElement(PLUS)('+')
                 PsiWhiteSpace(' ')
-                PsiElement(IDENTIFIER)('d')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('d')
               PsiElement(RBRACKET)(']')
         PsiWhiteSpace('\n\n  ')
         BINARY_EXPRESSION
-          PsiElement(IDENTIFIER)('e')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('e')
           PsiWhiteSpace(' ')
           PsiElement(match)('match')
           PsiWhiteSpace(' ')
@@ -209,7 +233,8 @@ JetFile: NewlinesInParentheses.jet
             PsiWhiteSpace(' ')
             PsiElement(DOUBLE_ARROW)('=>')
             PsiWhiteSpace(' ')
-            PsiElement(IDENTIFIER)('foo')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('foo')
             PsiElement(SEMICOLON)(';')
           PsiWhiteSpace('\n  ')
           PsiElement(RBRACE)('}')

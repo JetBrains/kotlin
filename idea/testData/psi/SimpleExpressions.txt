@@ -337,7 +337,8 @@ JetFile: SimpleExpressions.jet
             VALUE_ARGUMENT_LIST
               PsiElement(LPAR)('(')
               VALUE_ARGUMENT
-                PsiElement(IDENTIFIER)('bar')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('bar')
               PsiElement(RPAR)(')')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n    ')
@@ -367,7 +368,8 @@ JetFile: SimpleExpressions.jet
             VALUE_ARGUMENT_LIST
               PsiElement(LPAR)('(')
               VALUE_ARGUMENT
-                PsiElement(IDENTIFIER)('bar')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('bar')
               PsiElement(RPAR)(')')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n    ')
@@ -622,7 +624,8 @@ JetFile: SimpleExpressions.jet
         BREAK
           PsiElement(break)('break')
         PsiWhiteSpace('\n    ')
-        PsiElement(IDENTIFIER)('la')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('la')
         PsiWhiteSpace('\n    ')
         BREAK
           PsiElement(break)('break')
@@ -632,7 +635,8 @@ JetFile: SimpleExpressions.jet
         CONTINUE
           PsiElement(continue)('continue')
         PsiWhiteSpace('\n    ')
-        PsiElement(IDENTIFIER)('la')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('la')
         PsiWhiteSpace('\n    ')
         CONTINUE
           PsiElement(continue)('continue')

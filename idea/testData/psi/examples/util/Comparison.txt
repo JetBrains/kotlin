@@ -93,13 +93,16 @@ JetFile: Comparison.jet
       PsiWhiteSpace(' ')
       CALL_EXPRESSION
         DOT_QIALIFIED_EXPRESSION
-          PsiElement(IDENTIFIER)('a')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('a')
           PsiElement(DOT)('.')
-          PsiElement(IDENTIFIER)('compareTo')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('compareTo')
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
-            PsiElement(IDENTIFIER)('b')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('b')
           PsiElement(RPAR)(')')
     PsiWhiteSpace('\n\n')
     FUN
@@ -143,12 +146,14 @@ JetFile: Comparison.jet
           TUPLE
             PsiElement(LPAR)('(')
             BINARY_EXPRESSION
-              PsiElement(IDENTIFIER)('a')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('a')
               PsiWhiteSpace(' ')
               PsiElement(as)('as')
               PsiWhiteSpace(' ')
               CALL_EXPRESSION
-                PsiElement(IDENTIFIER)('Comparable')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Comparable')
                 TYPE_ARGUMENT_LIST
                   PsiElement(LT)('<')
                   TYPE_REFERENCE
@@ -157,17 +162,20 @@ JetFile: Comparison.jet
                   PsiElement(GT)('>')
             PsiElement(RPAR)(')')
           PsiElement(DOT)('.')
-          PsiElement(IDENTIFIER)('compareTo')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('compareTo')
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
             BINARY_EXPRESSION
-              PsiElement(IDENTIFIER)('b')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('b')
               PsiWhiteSpace(' ')
               PsiElement(as)('as')
               PsiWhiteSpace(' ')
               CALL_EXPRESSION
-                PsiElement(IDENTIFIER)('Comparable')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Comparable')
                 TYPE_ARGUMENT_LIST
                   PsiElement(LT)('<')
                   TYPE_REFERENCE
@@ -309,15 +317,18 @@ JetFile: Comparison.jet
             PsiElement(EQ)('=')
             PsiWhiteSpace(' ')
             CALL_EXPRESSION
-              PsiElement(IDENTIFIER)('cmp')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('cmp')
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
-                  PsiElement(IDENTIFIER)('a')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
                 PsiElement(COMMA)(',')
                 PsiWhiteSpace(' ')
                 VALUE_ARGUMENT
-                  PsiElement(IDENTIFIER)('b')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('b')
                 PsiElement(RPAR)(')')
           PsiWhiteSpace('\n  ')
           IF
@@ -326,7 +337,8 @@ JetFile: Comparison.jet
             PsiElement(LPAR)('(')
             CONDITION
               BINARY_EXPRESSION
-                PsiElement(IDENTIFIER)('res')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('res')
                 PsiWhiteSpace(' ')
                 PsiElement(EQEQ)('==')
                 PsiWhiteSpace(' ')
@@ -339,9 +351,11 @@ JetFile: Comparison.jet
                 PsiElement(return)('return')
                 PsiWhiteSpace(' ')
                 DOT_QIALIFIED_EXPRESSION
-                  PsiElement(IDENTIFIER)('ComparisonResult')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('ComparisonResult')
                   PsiElement(DOT)('.')
-                  PsiElement(IDENTIFIER)('EQ')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('EQ')
           PsiWhiteSpace('\n  ')
           IF
             PsiElement(if)('if')
@@ -349,7 +363,8 @@ JetFile: Comparison.jet
             PsiElement(LPAR)('(')
             CONDITION
               BINARY_EXPRESSION
-                PsiElement(IDENTIFIER)('res')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('res')
                 PsiWhiteSpace(' ')
                 PsiElement(LT)('<')
                 PsiWhiteSpace(' ')
@@ -362,16 +377,20 @@ JetFile: Comparison.jet
                 PsiElement(return)('return')
                 PsiWhiteSpace(' ')
                 DOT_QIALIFIED_EXPRESSION
-                  PsiElement(IDENTIFIER)('ComparisonResult')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('ComparisonResult')
                   PsiElement(DOT)('.')
-                  PsiElement(IDENTIFIER)('LS')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('LS')
           PsiWhiteSpace('\n  ')
           RETURN
             PsiElement(return)('return')
             PsiWhiteSpace(' ')
             DOT_QIALIFIED_EXPRESSION
-              PsiElement(IDENTIFIER)('ComparisonResult')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('ComparisonResult')
               PsiElement(DOT)('.')
-              PsiElement(IDENTIFIER)('GR')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('GR')
         PsiWhiteSpace('\n')
         PsiElement(RBRACE)('}')

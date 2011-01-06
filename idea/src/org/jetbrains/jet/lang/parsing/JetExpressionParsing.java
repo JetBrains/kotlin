@@ -545,9 +545,9 @@ public class JetExpressionParsing extends AbstractJetParsing {
      * SimpleName
      */
     private void parseSimpleName() {
-//        PsiBuilder.Marker simpleName = mark();
+        PsiBuilder.Marker simpleName = mark();
         expect(IDENTIFIER, "Expecting an identifier [Interal error]");
-//        simpleName.done(SIMPLE_NAME);
+        simpleName.done(REFERENCE_EXPRESSION);
     }
 
     /*

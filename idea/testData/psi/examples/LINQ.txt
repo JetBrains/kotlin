@@ -16,7 +16,8 @@ JetFile: LINQ.jet
         BINARY_EXPRESSION
           BINARY_EXPRESSION
             BINARY_EXPRESSION
-              PsiElement(IDENTIFIER)('l')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('l')
               PsiWhiteSpace(' ')
               PsiElement(IDENTIFIER)('filter')
               PsiWhiteSpace(' ')
@@ -24,9 +25,11 @@ JetFile: LINQ.jet
                 PsiElement(LBRACE)('{')
                 BODY
                   DOT_QIALIFIED_EXPRESSION
-                    PsiElement(IDENTIFIER)('it')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('it')
                     PsiElement(DOT)('.')
-                    PsiElement(IDENTIFIER)('x')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('x')
                 PsiElement(RBRACE)('}')
             PsiWhiteSpace(' ')
             PsiElement(IDENTIFIER)('map')
@@ -35,9 +38,11 @@ JetFile: LINQ.jet
               PsiElement(LBRACE)('{')
               BODY
                 DOT_QIALIFIED_EXPRESSION
-                  PsiElement(IDENTIFIER)('it')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('it')
                   PsiElement(DOT)('.')
-                  PsiElement(IDENTIFIER)('foo')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('foo')
               PsiElement(RBRACE)('}')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('aggregate')
@@ -58,11 +63,13 @@ JetFile: LINQ.jet
             PsiWhiteSpace(' ')
             BODY
               BINARY_EXPRESSION
-                PsiElement(IDENTIFIER)('a')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
                 PsiWhiteSpace(' ')
                 PsiElement(PLUS)('+')
                 PsiWhiteSpace(' ')
-                PsiElement(IDENTIFIER)('b')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('b')
             PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n')
         PsiElement(RBRACE)('}')

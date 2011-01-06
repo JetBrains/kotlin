@@ -38,7 +38,8 @@ JetFile: ArrayList.jet
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
           CALL_EXPRESSION
-            PsiElement(IDENTIFIER)('MutableArray')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('MutableArray')
             VALUE_ARGUMENT_LIST
               PsiElement(LPAR)('(')
               VALUE_ARGUMENT
@@ -100,7 +101,8 @@ JetFile: ArrayList.jet
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
           CALL_EXPRESSION
-            PsiElement(IDENTIFIER)('mutableIterator')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('mutableIterator')
             VALUE_ARGUMENT_LIST
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')
@@ -172,7 +174,8 @@ JetFile: ArrayList.jet
                 PsiWhiteSpace(' ')
                 PsiElement(EQ)('=')
                 PsiWhiteSpace(' ')
-                PsiElement(IDENTIFIER)('version')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('version')
               PsiWhiteSpace('\n\n    ')
               FUN
                 MODIFIER_LIST
@@ -196,11 +199,13 @@ JetFile: ArrayList.jet
                     PsiElement(LPAR)('(')
                     CONDITION
                       BINARY_EXPRESSION
-                        PsiElement(IDENTIFIER)('version')
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('version')
                         PsiWhiteSpace(' ')
                         PsiElement(EXCLEQ)('!=')
                         PsiWhiteSpace(' ')
-                        PsiElement(IDENTIFIER)('myVersion')
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('myVersion')
                     PsiElement(RPAR)(')')
                     PsiWhiteSpace('\n        ')
                     THEN
@@ -236,7 +241,8 @@ JetFile: ArrayList.jet
                   PsiElement(LBRACE)('{')
                   PsiWhiteSpace('\n      ')
                   CALL_EXPRESSION
-                    PsiElement(IDENTIFIER)('checkVersion')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('checkVersion')
                     VALUE_ARGUMENT_LIST
                       PsiElement(LPAR)('(')
                       PsiElement(RPAR)(')')
@@ -246,7 +252,8 @@ JetFile: ArrayList.jet
                     PsiWhiteSpace(' ')
                     PsiElement(LPAR)('(')
                     CONDITION
-                      PsiElement(IDENTIFIER)('hasNext')
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('hasNext')
                     PsiElement(RPAR)(')')
                     PsiWhiteSpace('\n        ')
                     THEN
@@ -264,11 +271,13 @@ JetFile: ArrayList.jet
                             PsiElement(RPAR)(')')
                   PsiWhiteSpace('\n      ')
                   ARRAY_ACCESS_EXPRESSION
-                    PsiElement(IDENTIFIER)('data')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('data')
                     INDICES
                       PsiElement(LBRACKET)('[')
                       POSTFIX_EXPRESSION
-                        PsiElement(IDENTIFIER)('index')
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('index')
                         PsiElement(PLUSPLUS)('++')
                       PsiElement(RBRACKET)(']')
                   PsiWhiteSpace('\n    ')
@@ -290,11 +299,13 @@ JetFile: ArrayList.jet
                   PsiElement(EQ)('=')
                   PsiWhiteSpace(' ')
                   BINARY_EXPRESSION
-                    PsiElement(IDENTIFIER)('index')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('index')
                     PsiWhiteSpace(' ')
                     PsiElement(LT)('<')
                     PsiWhiteSpace(' ')
-                    PsiElement(IDENTIFIER)('used')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('used')
               PsiWhiteSpace('\n\n\n    ')
               FUN
                 MODIFIER_LIST
@@ -313,7 +324,8 @@ JetFile: ArrayList.jet
                   PsiElement(LBRACE)('{')
                   PsiWhiteSpace('\n      ')
                   CALL_EXPRESSION
-                    PsiElement(IDENTIFIER)('checkVersion')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('checkVersion')
                     VALUE_ARGUMENT_LIST
                       PsiElement(LPAR)('(')
                       PsiElement(RPAR)(')')
@@ -328,16 +340,19 @@ JetFile: ArrayList.jet
                     CALL_EXPRESSION
                       DOT_QIALIFIED_EXPRESSION
                         DOT_QIALIFIED_EXPRESSION
-                          PsiElement(IDENTIFIER)('ArrayList')
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('ArrayList')
                           PsiElement(DOT)('.')
                           PsiElement(this)('this')
                         PsiElement(DOT)('.')
-                        PsiElement(IDENTIFIER)('remove')
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('remove')
                       VALUE_ARGUMENT_LIST
                         PsiElement(LPAR)('(')
                         VALUE_ARGUMENT
                           BINARY_EXPRESSION
-                            PsiElement(IDENTIFIER)('index')
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('index')
                             PsiWhiteSpace(' ')
                             PsiElement(MINUS)('-')
                             PsiWhiteSpace(' ')
@@ -346,13 +361,16 @@ JetFile: ArrayList.jet
                         PsiElement(RPAR)(')')
                   PsiWhiteSpace('\n      ')
                   BINARY_EXPRESSION
-                    PsiElement(IDENTIFIER)('myVersion')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('myVersion')
                     PsiWhiteSpace(' ')
                     PsiElement(EQ)('=')
                     PsiWhiteSpace(' ')
-                    PsiElement(IDENTIFIER)('version')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('version')
                   PsiWhiteSpace('\n      ')
-                  PsiElement(IDENTIFIER)('result')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('result')
                   PsiWhiteSpace('\n    ')
                   PsiElement(RBRACE)('}')
               PsiWhiteSpace('\n  ')
@@ -383,18 +401,22 @@ JetFile: ArrayList.jet
             PsiElement(LBRACE)('{')
             PsiWhiteSpace('\n    ')
             CALL_EXPRESSION
-              PsiElement(IDENTIFIER)('checkIndex')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('checkIndex')
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
-                  PsiElement(IDENTIFIER)('index')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('index')
                 PsiElement(RPAR)(')')
             PsiWhiteSpace('\n    ')
             ARRAY_ACCESS_EXPRESSION
-              PsiElement(IDENTIFIER)('data')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('data')
               INDICES
                 PsiElement(LBRACKET)('[')
-                PsiElement(IDENTIFIER)('index')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('index')
                 PsiElement(RBRACKET)(']')
             PsiWhiteSpace('\n  ')
             PsiElement(RBRACE)('}')
@@ -429,11 +451,13 @@ JetFile: ArrayList.jet
               PsiElement(LPAR)('(')
               CONDITION
                 BINARY_EXPRESSION
-                  PsiElement(IDENTIFIER)('index')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('index')
                   PsiWhiteSpace(' ')
                   PsiElement(GT)('>')
                   PsiWhiteSpace(' ')
-                  PsiElement(IDENTIFIER)('used')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('used')
               PsiElement(RPAR)(')')
               PsiWhiteSpace('\n      ')
               THEN
@@ -449,7 +473,8 @@ JetFile: ArrayList.jet
                     VALUE_ARGUMENT_LIST
                       PsiElement(LPAR)('(')
                       VALUE_ARGUMENT
-                        PsiElement(IDENTIFIER)('index')
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('index')
                       PsiElement(RPAR)(')')
             PsiWhiteSpace('\n  ')
             PsiElement(RBRACE)('}')
@@ -470,7 +495,8 @@ JetFile: ArrayList.jet
             PsiElement(EQ)('=')
             PsiWhiteSpace(' ')
             BINARY_EXPRESSION
-              PsiElement(IDENTIFIER)('used')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('used')
               PsiWhiteSpace(' ')
               PsiElement(EQEQ)('==')
               PsiWhiteSpace(' ')
@@ -492,7 +518,8 @@ JetFile: ArrayList.jet
             PsiWhiteSpace(' ')
             PsiElement(EQ)('=')
             PsiWhiteSpace(' ')
-            PsiElement(IDENTIFIER)('used')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('used')
         PsiWhiteSpace('\n\n\n  ')
         FUN
           MODIFIER_LIST
@@ -529,11 +556,13 @@ JetFile: ArrayList.jet
             PsiElement(LBRACE)('{')
             PsiWhiteSpace('\n    ')
             CALL_EXPRESSION
-              PsiElement(IDENTIFIER)('checkIndex')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('checkIndex')
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
-                  PsiElement(IDENTIFIER)('index')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('index')
                 PsiElement(RPAR)(')')
             PsiWhiteSpace('\n    ')
             PROPERTY
@@ -544,25 +573,31 @@ JetFile: ArrayList.jet
               PsiElement(EQ)('=')
               PsiWhiteSpace(' ')
               ARRAY_ACCESS_EXPRESSION
-                PsiElement(IDENTIFIER)('data')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('data')
                 INDICES
                   PsiElement(LBRACKET)('[')
-                  PsiElement(IDENTIFIER)('index')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('index')
                   PsiElement(RBRACKET)(']')
             PsiWhiteSpace('\n    ')
             BINARY_EXPRESSION
               ARRAY_ACCESS_EXPRESSION
-                PsiElement(IDENTIFIER)('data')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('data')
                 INDICES
                   PsiElement(LBRACKET)('[')
-                  PsiElement(IDENTIFIER)('index')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('index')
                   PsiElement(RBRACKET)(']')
               PsiWhiteSpace(' ')
               PsiElement(EQ)('=')
               PsiWhiteSpace(' ')
-              PsiElement(IDENTIFIER)('value')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('value')
             PsiWhiteSpace('\n    ')
-            PsiElement(IDENTIFIER)('result')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('result')
             PsiWhiteSpace('\n  ')
             PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n\n  ')
@@ -601,12 +636,14 @@ JetFile: ArrayList.jet
             PsiElement(LBRACE)('{')
             PsiWhiteSpace('\n    ')
             CALL_EXPRESSION
-              PsiElement(IDENTIFIER)('ensureSize')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('ensureSize')
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
                   BINARY_EXPRESSION
-                    PsiElement(IDENTIFIER)('used')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('used')
                     PsiWhiteSpace(' ')
                     PsiElement(PLUS)('+')
                     PsiWhiteSpace(' ')
@@ -620,11 +657,13 @@ JetFile: ArrayList.jet
               PsiElement(LPAR)('(')
               CONDITION
                 BINARY_EXPRESSION
-                  PsiElement(IDENTIFIER)('index')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('index')
                   PsiWhiteSpace(' ')
                   PsiElement(EQEQ)('==')
                   PsiWhiteSpace(' ')
-                  PsiElement(IDENTIFIER)('used')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('used')
               PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')
               THEN
@@ -634,17 +673,20 @@ JetFile: ArrayList.jet
                   BODY
                     BINARY_EXPRESSION
                       ARRAY_ACCESS_EXPRESSION
-                        PsiElement(IDENTIFIER)('data')
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('data')
                         INDICES
                           PsiElement(LBRACKET)('[')
                           POSTFIX_EXPRESSION
-                            PsiElement(IDENTIFIER)('used')
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('used')
                             PsiElement(PLUSPLUS)('++')
                           PsiElement(RBRACKET)(']')
                       PsiWhiteSpace(' ')
                       PsiElement(EQ)('=')
                       PsiWhiteSpace(' ')
-                      PsiElement(IDENTIFIER)('value')
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('value')
                   PsiWhiteSpace('\n    ')
                   PsiElement(RBRACE)('}')
               PsiWhiteSpace(' ')
@@ -657,11 +699,13 @@ JetFile: ArrayList.jet
                   PsiElement(LPAR)('(')
                   CONDITION
                     BINARY_EXPRESSION
-                      PsiElement(IDENTIFIER)('index')
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('index')
                       PsiWhiteSpace(' ')
                       PsiElement(LT)('<')
                       PsiWhiteSpace(' ')
-                      PsiElement(IDENTIFIER)('used')
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('used')
                   PsiElement(RPAR)(')')
                   PsiWhiteSpace(' ')
                   THEN
@@ -681,12 +725,14 @@ JetFile: ArrayList.jet
                           LOOP_RANGE
                             BINARY_EXPRESSION
                               BINARY_EXPRESSION
-                                PsiElement(IDENTIFIER)('used')
+                                REFERENCE_EXPRESSION
+                                  PsiElement(IDENTIFIER)('used')
                                 PsiElement(MINUS)('-')
                                 INTEGER_CONSTANT
                                   PsiElement(INTEGER_LITERAL)('1')
                               PsiElement(RANGE)('..')
-                              PsiElement(IDENTIFIER)('index')
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('index')
                           PsiElement(RPAR)(')')
                           PsiWhiteSpace(' ')
                           PsiComment(EOL_COMMENT)('// backwards, special operator...  Need to optimize this to be a real indexed loop')
@@ -694,11 +740,13 @@ JetFile: ArrayList.jet
                           BODY
                             BINARY_EXPRESSION
                               ARRAY_ACCESS_EXPRESSION
-                                PsiElement(IDENTIFIER)('data')
+                                REFERENCE_EXPRESSION
+                                  PsiElement(IDENTIFIER)('data')
                                 INDICES
                                   PsiElement(LBRACKET)('[')
                                   BINARY_EXPRESSION
-                                    PsiElement(IDENTIFIER)('i')
+                                    REFERENCE_EXPRESSION
+                                      PsiElement(IDENTIFIER)('i')
                                     PsiWhiteSpace(' ')
                                     PsiElement(PLUS)('+')
                                     PsiWhiteSpace(' ')
@@ -709,26 +757,32 @@ JetFile: ArrayList.jet
                               PsiElement(EQ)('=')
                               PsiWhiteSpace(' ')
                               ARRAY_ACCESS_EXPRESSION
-                                PsiElement(IDENTIFIER)('data')
+                                REFERENCE_EXPRESSION
+                                  PsiElement(IDENTIFIER)('data')
                                 INDICES
                                   PsiElement(LBRACKET)('[')
-                                  PsiElement(IDENTIFIER)('i')
+                                  REFERENCE_EXPRESSION
+                                    PsiElement(IDENTIFIER)('i')
                                   PsiElement(RBRACKET)(']')
                         PsiWhiteSpace('\n      ')
                         BINARY_EXPRESSION
                           ARRAY_ACCESS_EXPRESSION
-                            PsiElement(IDENTIFIER)('data')
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('data')
                             INDICES
                               PsiElement(LBRACKET)('[')
-                              PsiElement(IDENTIFIER)('index')
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('index')
                               PsiElement(RBRACKET)(']')
                           PsiWhiteSpace(' ')
                           PsiElement(EQ)('=')
                           PsiWhiteSpace(' ')
-                          PsiElement(IDENTIFIER)('value')
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('value')
                         PsiWhiteSpace('\n      ')
                         POSTFIX_EXPRESSION
-                          PsiElement(IDENTIFIER)('used')
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('used')
                           PsiElement(PLUSPLUS)('++')
                       PsiWhiteSpace('\n    ')
                       PsiElement(RBRACE)('}')
@@ -740,11 +794,13 @@ JetFile: ArrayList.jet
                       PsiElement(throw)('throw')
                       PsiWhiteSpace(' ')
                       CALL_EXPRESSION
-                        PsiElement(IDENTIFIER)('IndexOutOfBoundsException')
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('IndexOutOfBoundsException')
                         VALUE_ARGUMENT_LIST
                           PsiElement(LPAR)('(')
                           VALUE_ARGUMENT
-                            PsiElement(IDENTIFIER)('index')
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('index')
                           PsiElement(RPAR)(')')
             PsiWhiteSpace('\n  ')
             PsiElement(RBRACE)('}')
@@ -784,10 +840,12 @@ JetFile: ArrayList.jet
               PsiWhiteSpace(' ')
               LOOP_RANGE
                 BINARY_EXPRESSION
-                  PsiElement(IDENTIFIER)('index')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('index')
                   PsiElement(RANGE)('..')
                   BINARY_EXPRESSION
-                    PsiElement(IDENTIFIER)('used')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('used')
                     PsiElement(MINUS)('-')
                     INTEGER_CONSTANT
                       PsiElement(INTEGER_LITERAL)('1')
@@ -796,20 +854,24 @@ JetFile: ArrayList.jet
               BODY
                 BINARY_EXPRESSION
                   ARRAY_ACCESS_EXPRESSION
-                    PsiElement(IDENTIFIER)('data')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('data')
                     INDICES
                       PsiElement(LBRACKET)('[')
-                      PsiElement(IDENTIFIER)('i')
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('i')
                       PsiElement(RBRACKET)(']')
                   PsiWhiteSpace(' ')
                   PsiElement(EQ)('=')
                   PsiWhiteSpace(' ')
                   ARRAY_ACCESS_EXPRESSION
-                    PsiElement(IDENTIFIER)('data')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('data')
                     INDICES
                       PsiElement(LBRACKET)('[')
                       BINARY_EXPRESSION
-                        PsiElement(IDENTIFIER)('i')
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('i')
                         PsiWhiteSpace(' ')
                         PsiElement(PLUS)('+')
                         PsiWhiteSpace(' ')

@@ -313,9 +313,11 @@ JetFile: PolymorphicClassObjects.jet
                 PsiWhiteSpace(' ')
                 CALL_EXPRESSION
                   DOT_QIALIFIED_EXPRESSION
-                    PsiElement(IDENTIFIER)('T')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('T')
                     PsiElement(DOT)('.')
-                    PsiElement(IDENTIFIER)('newBuilder')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('newBuilder')
                   VALUE_ARGUMENT_LIST
                     PsiElement(LPAR)('(')
                     PsiElement(RPAR)(')')
@@ -339,25 +341,30 @@ JetFile: PolymorphicClassObjects.jet
                     PsiWhiteSpace('\n      ')
                     BODY
                       BINARY_EXPRESSION
-                        PsiElement(IDENTIFIER)('builder')
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('builder')
                         PsiWhiteSpace(' ')
                         PsiElement(PLUSEQ)('+=')
                         PsiWhiteSpace(' ')
                         CALL_EXPRESSION
-                          PsiElement(IDENTIFIER)('f')
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('f')
                           VALUE_ARGUMENT_LIST
                             PsiElement(LPAR)('(')
                             VALUE_ARGUMENT
-                              PsiElement(IDENTIFIER)('e')
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('e')
                             PsiElement(RPAR)(')')
                     PsiWhiteSpace('\n    ')
                     PsiElement(RBRACE)('}')
               PsiWhiteSpace('\n    ')
               CALL_EXPRESSION
                 DOT_QIALIFIED_EXPRESSION
-                  PsiElement(IDENTIFIER)('builder')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('builder')
                   PsiElement(DOT)('.')
-                  PsiElement(IDENTIFIER)('result')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('result')
                 VALUE_ARGUMENT_LIST
                   PsiElement(LPAR)('(')
                   PsiElement(RPAR)(')')

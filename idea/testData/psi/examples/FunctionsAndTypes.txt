@@ -437,11 +437,13 @@ JetFile: FunctionsAndTypes.jet
         PsiWhiteSpace(' ')
         BODY
           CALL_EXPRESSION
-            PsiElement(IDENTIFIER)('something')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('something')
             VALUE_ARGUMENT_LIST
               PsiElement(LPAR)('(')
               VALUE_ARGUMENT
-                PsiElement(IDENTIFIER)('t')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('t')
               PsiElement(RPAR)(')')
         PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n')
@@ -472,11 +474,13 @@ JetFile: FunctionsAndTypes.jet
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
       CALL_EXPRESSION
-        PsiElement(IDENTIFIER)('something')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('something')
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
-            PsiElement(IDENTIFIER)('t')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('t')
           PsiElement(RPAR)(')')
     PsiWhiteSpace('\n\n')
     PROPERTY
@@ -504,11 +508,13 @@ JetFile: FunctionsAndTypes.jet
         PsiWhiteSpace(' ')
         BODY
           CALL_EXPRESSION
-            PsiElement(IDENTIFIER)('something')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('something')
             VALUE_ARGUMENT_LIST
               PsiElement(LPAR)('(')
               VALUE_ARGUMENT
-                PsiElement(IDENTIFIER)('t')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('t')
               PsiElement(RPAR)(')')
         PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n')
@@ -537,11 +543,13 @@ JetFile: FunctionsAndTypes.jet
         PsiWhiteSpace(' ')
         BODY
           CALL_EXPRESSION
-            PsiElement(IDENTIFIER)('something')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('something')
             VALUE_ARGUMENT_LIST
               PsiElement(LPAR)('(')
               VALUE_ARGUMENT
-                PsiElement(IDENTIFIER)('it')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('it')
               PsiElement(RPAR)(')')
         PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n')
@@ -561,11 +569,13 @@ JetFile: FunctionsAndTypes.jet
         PsiWhiteSpace(' ')
         BODY
           CALL_EXPRESSION
-            PsiElement(IDENTIFIER)('something')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('something')
             VALUE_ARGUMENT_LIST
               PsiElement(LPAR)('(')
               VALUE_ARGUMENT
-                PsiElement(IDENTIFIER)('t')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('t')
               PsiElement(RPAR)(')')
         PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n')
@@ -580,11 +590,13 @@ JetFile: FunctionsAndTypes.jet
         PsiElement(LBRACE)('{')
         BODY
           CALL_EXPRESSION
-            PsiElement(IDENTIFIER)('something')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('something')
             VALUE_ARGUMENT_LIST
               PsiElement(LPAR)('(')
               VALUE_ARGUMENT
-                PsiElement(IDENTIFIER)('it')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('it')
               PsiElement(RPAR)(')')
         PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n\n')
@@ -618,7 +630,8 @@ JetFile: FunctionsAndTypes.jet
         PsiElement(LBRACE)('{')
         BODY
           CALL_EXPRESSION
-            PsiElement(IDENTIFIER)('X')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('X')
             VALUE_ARGUMENT_LIST
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')

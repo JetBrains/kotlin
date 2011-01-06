@@ -107,7 +107,8 @@ JetFile: IOSamples.jet
           VALUE_ARGUMENT_LIST
             PsiElement(LPAR)('(')
             VALUE_ARGUMENT
-              PsiElement(IDENTIFIER)('closeable')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('closeable')
             PsiElement(RPAR)(')')
     PsiWhiteSpace('\n\n')
     FUN
@@ -166,19 +167,23 @@ JetFile: IOSamples.jet
           PsiElement(in)('in')
           PsiWhiteSpace(' ')
           LOOP_RANGE
-            PsiElement(IDENTIFIER)('from')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('from')
           PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           BODY
             CALL_EXPRESSION
               DOT_QIALIFIED_EXPRESSION
-                PsiElement(IDENTIFIER)('t')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('t')
                 PsiElement(DOT)('.')
-                PsiElement(IDENTIFIER)('add')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('add')
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
-                  PsiElement(IDENTIFIER)('item')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('item')
                 PsiElement(RPAR)(')')
         PsiWhiteSpace('\n')
         PsiElement(RBRACE)('}')
@@ -278,7 +283,8 @@ JetFile: IOSamples.jet
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
-                  PsiElement(IDENTIFIER)('stream')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('stream')
                 PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           BLOCK
@@ -287,16 +293,19 @@ JetFile: IOSamples.jet
             PsiComment(EOL_COMMENT)('// implicitly throws IOException')
             PsiWhiteSpace('\n    ')
             BINARY_EXPRESSION
-              PsiElement(IDENTIFIER)('stream')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('stream')
               PsiWhiteSpace(' ')
               PsiElement(EQ)('=')
               PsiWhiteSpace(' ')
               CALL_EXPRESSION
-                PsiElement(IDENTIFIER)('FileInputStream')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('FileInputStream')
                 VALUE_ARGUMENT_LIST
                   PsiElement(LPAR)('(')
                   VALUE_ARGUMENT
-                    PsiElement(IDENTIFIER)('file')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('file')
                   PsiElement(RPAR)(')')
             PsiWhiteSpace(' ')
             PsiComment(EOL_COMMENT)('// throws IOException')
@@ -326,7 +335,8 @@ JetFile: IOSamples.jet
               CONDITION
                 PREFIX_EXPRESSION
                   PsiElement(EXCL)('!')
-                  PsiElement(IDENTIFIER)('nextUsed')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('nextUsed')
               PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')
               THEN
@@ -335,7 +345,8 @@ JetFile: IOSamples.jet
                   PsiWhiteSpace('\n      ')
                   BODY
                     BINARY_EXPRESSION
-                      PsiElement(IDENTIFIER)('nextUsed')
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('nextUsed')
                       PsiWhiteSpace(' ')
                       PsiElement(EQ)('=')
                       PsiWhiteSpace(' ')
@@ -346,11 +357,13 @@ JetFile: IOSamples.jet
                       PsiElement(return)('return')
                       PsiWhiteSpace(' ')
                       BINARY_EXPRESSION
-                        PsiElement(IDENTIFIER)('next')
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('next')
                         PsiWhiteSpace(' ')
                         PsiElement(as)('as')
                         PsiWhiteSpace(' ')
-                        PsiElement(IDENTIFIER)('Byte')
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('Byte')
                   PsiWhiteSpace('\n    ')
                   PsiElement(RBRACE)('}')
             PsiWhiteSpace('\n    ')
@@ -383,12 +396,14 @@ JetFile: IOSamples.jet
                 PsiElement(LPAR)('(')
                 CONDITION
                   BINARY_EXPRESSION
-                    PsiElement(IDENTIFIER)('nextUsed')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('nextUsed')
                     PsiWhiteSpace(' ')
                     PsiElement(ANDAND)('&&')
                     PsiWhiteSpace(' ')
                     BINARY_EXPRESSION
-                      PsiElement(IDENTIFIER)('next')
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('next')
                       PsiWhiteSpace(' ')
                       PsiElement(EXCLEQ)('!=')
                       PsiWhiteSpace(' ')
@@ -404,7 +419,8 @@ JetFile: IOSamples.jet
                     PsiWhiteSpace('\n        ')
                     BODY
                       BINARY_EXPRESSION
-                        PsiElement(IDENTIFIER)('nextUsed')
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('nextUsed')
                         PsiWhiteSpace(' ')
                         PsiElement(EQ)('=')
                         PsiWhiteSpace(' ')
@@ -412,15 +428,18 @@ JetFile: IOSamples.jet
                           PsiElement(false)('false')
                       PsiWhiteSpace('\n        ')
                       BINARY_EXPRESSION
-                        PsiElement(IDENTIFIER)('next')
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('next')
                         PsiWhiteSpace(' ')
                         PsiElement(EQ)('=')
                         PsiWhiteSpace(' ')
                         CALL_EXPRESSION
                           DOT_QIALIFIED_EXPRESSION
-                            PsiElement(IDENTIFIER)('stream')
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('stream')
                             PsiElement(DOT)('.')
-                            PsiElement(IDENTIFIER)('read')
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('read')
                           VALUE_ARGUMENT_LIST
                             PsiElement(LPAR)('(')
                             PsiElement(RPAR)(')')
@@ -433,7 +452,8 @@ JetFile: IOSamples.jet
                 PsiElement(return)('return')
                 PsiWhiteSpace(' ')
                 BINARY_EXPRESSION
-                  PsiElement(IDENTIFIER)('next')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('next')
                   PsiWhiteSpace(' ')
                   PsiElement(EXCLEQ)('!=')
                   PsiWhiteSpace(' ')
@@ -514,23 +534,27 @@ JetFile: IOSamples.jet
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
-                  PsiElement(IDENTIFIER)('stream')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('stream')
                 PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           BLOCK
             PsiElement(LBRACE)('{')
             PsiWhiteSpace('\n    ')
             BINARY_EXPRESSION
-              PsiElement(IDENTIFIER)('stream')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('stream')
               PsiWhiteSpace(' ')
               PsiElement(EQ)('=')
               PsiWhiteSpace(' ')
               CALL_EXPRESSION
-                PsiElement(IDENTIFIER)('FileOutputStream')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('FileOutputStream')
                 VALUE_ARGUMENT_LIST
                   PsiElement(LPAR)('(')
                   VALUE_ARGUMENT
-                    PsiElement(IDENTIFIER)('file')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('file')
                   PsiElement(RPAR)(')')
             PsiWhiteSpace('\n  ')
             PsiElement(RBRACE)('}')
@@ -561,13 +585,16 @@ JetFile: IOSamples.jet
             PsiWhiteSpace('\n    ')
             CALL_EXPRESSION
               DOT_QIALIFIED_EXPRESSION
-                PsiElement(IDENTIFIER)('stream')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('stream')
                 PsiElement(DOT)('.')
-                PsiElement(IDENTIFIER)('write')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('write')
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
-                  PsiElement(IDENTIFIER)('item')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('item')
                 PsiElement(RPAR)(')')
             PsiWhiteSpace('\n  ')
             PsiElement(RBRACE)('}')
@@ -616,21 +643,25 @@ JetFile: IOSamples.jet
         PsiComment(EOL_COMMENT)('//= ...')
         PsiWhiteSpace('\n\n  ')
         CALL_EXPRESSION
-          PsiElement(IDENTIFIER)('streamCopy')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('streamCopy')
           VALUE_ARGUMENT_LIST
             PsiElement(LPAR)('(')
             VALUE_ARGUMENT
               CALL_EXPRESSION
-                PsiElement(IDENTIFIER)('FileInput')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('FileInput')
                 VALUE_ARGUMENT_LIST
                   PsiElement(LPAR)('(')
                   VALUE_ARGUMENT
-                    PsiElement(IDENTIFIER)('f1')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('f1')
                   PsiElement(RPAR)(')')
             PsiElement(COMMA)(',')
             PsiWhiteSpace(' ')
             VALUE_ARGUMENT
-              PsiElement(IDENTIFIER)('f2')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('f2')
             PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         PsiComment(EOL_COMMENT)('// throws IOException, you must catch or rethrow explicitly')

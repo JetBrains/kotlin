@@ -91,7 +91,7 @@ public interface JetNodeTypes {
     JetNodeType RECEIVER_TYPE                       = new JetNodeType("RECEIVER_TYPE");
     JetNodeType FUNCTION_LITERAL                    = new JetNodeType("FUNCTION_LITERAL");
     JetNodeType ANNOTATED_EXPRESSION                = new JetNodeType("ANNOTATED_EXPRESSION");
-    JetNodeType SIMPLE_NAME                         = new JetNodeType("SIMPLE_NAME");
+    JetNodeType REFERENCE_EXPRESSION                = new JetNodeType("REFERENCE_EXPRESSION");
     JetNodeType BINARY_EXPRESSION                   = new JetNodeType("BINARY_EXPRESSION");
     JetNodeType PREFIX_EXPRESSION                   = new JetNodeType("PREFIX_EXPRESSION");
     JetNodeType POSTFIX_EXPRESSION                  = new JetNodeType("POSTFIX_EXPRESSION");

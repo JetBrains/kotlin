@@ -198,7 +198,8 @@ JetFile: Enums.jet
                 PsiElement(LPAR)('(')
                 PsiComment(BLOCK_COMMENT)('/*tail.size + 1*/')
                 VALUE_ARGUMENT
-                  PsiElement(IDENTIFIER)('a')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
                 PsiElement(RPAR)(')')
         PsiWhiteSpace('\n\n    ')
         PROPERTY
@@ -219,7 +220,8 @@ JetFile: Enums.jet
             PsiWhiteSpace(' ')
             PsiElement(EQ)('=')
             PsiWhiteSpace(' ')
-            PsiElement(IDENTIFIER)('size')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('size')
         PsiWhiteSpace(' ')
         PsiComment(EOL_COMMENT)('//> 0')
         PsiWhiteSpace('\n')

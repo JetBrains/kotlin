@@ -60,7 +60,8 @@ JetFile: BabySteps_ERR.jet
           PsiWhiteSpace(' ')
           PsiElement(by)('by')
           PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('x')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('x')
         PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
         DELEGATOR_SUPER_CLASS

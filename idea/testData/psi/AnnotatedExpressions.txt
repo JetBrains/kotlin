@@ -21,7 +21,8 @@ JetFile: AnnotatedExpressions.jet
                 PsiElement(IDENTIFIER)('a')
             PsiElement(RBRACKET)(']')
           PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('foo')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('foo')
         PsiWhiteSpace('\n    ')
         INTEGER_CONSTANT
           PsiElement(INTEGER_LITERAL)('1')

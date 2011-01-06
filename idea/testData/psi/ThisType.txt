@@ -66,12 +66,14 @@ JetFile: ThisType.jet
           PsiElement(by)('by')
           PsiWhiteSpace(' ')
           BINARY_EXPRESSION
-            PsiElement(IDENTIFIER)('foo')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('foo')
             PsiWhiteSpace(' ')
             PsiElement(as)('as')
             PsiWhiteSpace(' ')
             CALL_EXPRESSION
-              PsiElement(IDENTIFIER)('List')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('List')
               TYPE_ARGUMENT_LIST
                 PsiElement(LT)('<')
                 TYPE_REFERENCE

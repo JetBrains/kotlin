@@ -80,13 +80,16 @@ JetFile: Stack.jet
             PsiWhiteSpace('\n    ')
             CALL_EXPRESSION
               DOT_QIALIFIED_EXPRESSION
-                PsiElement(IDENTIFIER)('data')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('data')
                 PsiElement(DOT)('.')
-                PsiElement(IDENTIFIER)('add')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('add')
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
-                  PsiElement(IDENTIFIER)('item')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('item')
                 PsiElement(RPAR)(')')
             PsiWhiteSpace(' ')
             PsiComment(EOL_COMMENT)('// Problem: I would like to write push(...) = data.add(...), but the types do not match')
@@ -110,9 +113,11 @@ JetFile: Stack.jet
           PsiWhiteSpace(' ')
           CALL_EXPRESSION
             DOT_QIALIFIED_EXPRESSION
-              PsiElement(IDENTIFIER)('data')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('data')
               PsiElement(DOT)('.')
-              PsiElement(IDENTIFIER)('removeLast')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('removeLast')
             VALUE_ARGUMENT_LIST
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')
@@ -133,8 +138,10 @@ JetFile: Stack.jet
             PsiElement(EQ)('=')
             PsiWhiteSpace(' ')
             DOT_QIALIFIED_EXPRESSION
-              PsiElement(IDENTIFIER)('data')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('data')
               PsiElement(DOT)('.')
-              PsiElement(IDENTIFIER)('isEmpty')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('isEmpty')
         PsiWhiteSpace('\n\n')
         PsiElement(RBRACE)('}')

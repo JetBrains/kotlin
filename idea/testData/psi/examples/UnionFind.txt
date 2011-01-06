@@ -21,7 +21,8 @@ JetFile: UnionFind.jet
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
           CALL_EXPRESSION
-            PsiElement(IDENTIFIER)('IMutableList')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('IMutableList')
             TYPE_ARGUMENT_LIST
               PsiElement(LT)('<')
               TYPE_REFERENCE
@@ -59,22 +60,28 @@ JetFile: UnionFind.jet
               PsiElement(EQ)('=')
               PsiWhiteSpace(' ')
               DOT_QIALIFIED_EXPRESSION
-                PsiElement(IDENTIFIER)('data')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('data')
                 PsiElement(DOT)('.')
-                PsiElement(IDENTIFIER)('size')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('size')
             PsiWhiteSpace('\n    ')
             CALL_EXPRESSION
               DOT_QIALIFIED_EXPRESSION
-                PsiElement(IDENTIFIER)('data')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('data')
                 PsiElement(DOT)('.')
-                PsiElement(IDENTIFIER)('add')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('add')
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
-                  PsiElement(IDENTIFIER)('size')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('size')
                 PsiElement(RPAR)(')')
             PsiWhiteSpace('\n    ')
-            PsiElement(IDENTIFIER)('size')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('size')
             PsiWhiteSpace('\n  ')
             PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n\n  ')
@@ -116,10 +123,12 @@ JetFile: UnionFind.jet
               PsiElement(EQ)('=')
               PsiWhiteSpace(' ')
               ARRAY_ACCESS_EXPRESSION
-                PsiElement(IDENTIFIER)('data')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('data')
                 INDICES
                   PsiElement(LBRACKET)('[')
-                  PsiElement(IDENTIFIER)('x')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('x')
                   PsiElement(RBRACKET)(']')
               PsiElement(SEMICOLON)(';')
             PsiWhiteSpace('\n    ')
@@ -129,11 +138,13 @@ JetFile: UnionFind.jet
               PsiElement(LPAR)('(')
               CONDITION
                 BINARY_EXPRESSION
-                  PsiElement(IDENTIFIER)('p')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('p')
                   PsiWhiteSpace(' ')
                   PsiElement(EQEQ)('==')
                   PsiWhiteSpace(' ')
-                  PsiElement(IDENTIFIER)('x')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('x')
               PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')
               THEN
@@ -144,7 +155,8 @@ JetFile: UnionFind.jet
                     RETURN
                       PsiElement(return)('return')
                       PsiWhiteSpace(' ')
-                      PsiElement(IDENTIFIER)('x')
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('x')
                     PsiElement(SEMICOLON)(';')
                   PsiWhiteSpace('\n    ')
                   PsiElement(RBRACE)('}')
@@ -157,25 +169,30 @@ JetFile: UnionFind.jet
               PsiElement(EQ)('=')
               PsiWhiteSpace(' ')
               CALL_EXPRESSION
-                PsiElement(IDENTIFIER)('parent')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('parent')
                 VALUE_ARGUMENT_LIST
                   PsiElement(LPAR)('(')
                   VALUE_ARGUMENT
-                    PsiElement(IDENTIFIER)('p')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('p')
                   PsiElement(RPAR)(')')
               PsiElement(SEMICOLON)(';')
             PsiWhiteSpace('\n    ')
             BINARY_EXPRESSION
               ARRAY_ACCESS_EXPRESSION
-                PsiElement(IDENTIFIER)('data')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('data')
                 INDICES
                   PsiElement(LBRACKET)('[')
-                  PsiElement(IDENTIFIER)('x')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('x')
                   PsiElement(RBRACKET)(']')
               PsiWhiteSpace(' ')
               PsiElement(EQ)('=')
               PsiWhiteSpace(' ')
-              PsiElement(IDENTIFIER)('result')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('result')
             PsiElement(SEMICOLON)(';')
             PsiWhiteSpace('\n  ')
             PsiElement(RBRACE)('}')
@@ -219,11 +236,13 @@ JetFile: UnionFind.jet
               PsiElement(EQ)('=')
               PsiWhiteSpace(' ')
               CALL_EXPRESSION
-                PsiElement(IDENTIFIER)('parent')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('parent')
                 VALUE_ARGUMENT_LIST
                   PsiElement(LPAR)('(')
                   VALUE_ARGUMENT
-                    PsiElement(IDENTIFIER)('a')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('a')
                   PsiElement(RPAR)(')')
             PsiWhiteSpace('\n    ')
             PROPERTY
@@ -234,11 +253,13 @@ JetFile: UnionFind.jet
               PsiElement(EQ)('=')
               PsiWhiteSpace(' ')
               CALL_EXPRESSION
-                PsiElement(IDENTIFIER)('parent')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('parent')
                 VALUE_ARGUMENT_LIST
                   PsiElement(LPAR)('(')
                   VALUE_ARGUMENT
-                    PsiElement(IDENTIFIER)('b')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('b')
                   PsiElement(RPAR)(')')
             PsiWhiteSpace('\n    ')
             IF
@@ -247,11 +268,13 @@ JetFile: UnionFind.jet
               PsiElement(LPAR)('(')
               CONDITION
                 BINARY_EXPRESSION
-                  PsiElement(IDENTIFIER)('pa')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('pa')
                   PsiWhiteSpace(' ')
                   PsiElement(EXCLEQ)('!=')
                   PsiWhiteSpace(' ')
-                  PsiElement(IDENTIFIER)('pb')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('pb')
               PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')
               THEN
@@ -267,14 +290,17 @@ JetFile: UnionFind.jet
                         DOT_QIALIFIED_EXPRESSION
                           CALL_EXPRESSION
                             DOT_QIALIFIED_EXPRESSION
-                              PsiElement(IDENTIFIER)('Random')
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('Random')
                               PsiElement(DOT)('.')
-                              PsiElement(IDENTIFIER)('nextInt')
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('nextInt')
                             VALUE_ARGUMENT_LIST
                               PsiElement(LPAR)('(')
                               PsiElement(RPAR)(')')
                           PsiElement(DOT)('.')
-                          PsiElement(IDENTIFIER)('isOdd')
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('isOdd')
                       PsiElement(RPAR)(')')
                       PsiWhiteSpace(' ')
                       THEN
@@ -284,15 +310,18 @@ JetFile: UnionFind.jet
                           BODY
                             BINARY_EXPRESSION
                               ARRAY_ACCESS_EXPRESSION
-                                PsiElement(IDENTIFIER)('data')
+                                REFERENCE_EXPRESSION
+                                  PsiElement(IDENTIFIER)('data')
                                 INDICES
                                   PsiElement(LBRACKET)('[')
-                                  PsiElement(IDENTIFIER)('pb')
+                                  REFERENCE_EXPRESSION
+                                    PsiElement(IDENTIFIER)('pb')
                                   PsiElement(RBRACKET)(']')
                               PsiWhiteSpace(' ')
                               PsiElement(EQ)('=')
                               PsiWhiteSpace(' ')
-                              PsiElement(IDENTIFIER)('pa')
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('pa')
                           PsiWhiteSpace('\n      ')
                           PsiElement(RBRACE)('}')
                       PsiWhiteSpace(' ')
@@ -305,15 +334,18 @@ JetFile: UnionFind.jet
                           BODY
                             BINARY_EXPRESSION
                               ARRAY_ACCESS_EXPRESSION
-                                PsiElement(IDENTIFIER)('data')
+                                REFERENCE_EXPRESSION
+                                  PsiElement(IDENTIFIER)('data')
                                 INDICES
                                   PsiElement(LBRACKET)('[')
-                                  PsiElement(IDENTIFIER)('pa')
+                                  REFERENCE_EXPRESSION
+                                    PsiElement(IDENTIFIER)('pa')
                                   PsiElement(RBRACKET)(']')
                               PsiWhiteSpace(' ')
                               PsiElement(EQ)('=')
                               PsiWhiteSpace(' ')
-                              PsiElement(IDENTIFIER)('pb')
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('pb')
                           PsiWhiteSpace('\n      ')
                           PsiElement(RBRACE)('}')
                   PsiWhiteSpace('\n    ')
