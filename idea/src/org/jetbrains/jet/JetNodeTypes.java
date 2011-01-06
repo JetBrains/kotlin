@@ -60,16 +60,19 @@ public interface JetNodeTypes {
     JetNodeType BLOCK                               = new JetNodeType("BLOCK");
     JetNodeType TYPE_CONSTRAINT_LIST                = new JetNodeType("TYPE_CONSTRAINT_LIST");
     JetNodeType TYPE_CONSTRAINT                     = new JetNodeType("TYPE_CONSTRAINT");
-    JetNodeType NULL                                = new JetNodeType("NULL");
-    JetNodeType BOOLEAN_CONSTANT                    = new JetNodeType("BOOLEAN_CONSTANT");
-    JetNodeType FLOAT_CONSTANT                      = new JetNodeType("FLOAT_CONSTANT");
-    JetNodeType CHARACTER_CONSTANT                  = new JetNodeType("CHARACTER_CONSTANT");
-    JetNodeType STRING_CONSTANT                     = new JetNodeType("STRING_CONSTANT");
-    JetNodeType INTEGER_CONSTANT                    = new JetNodeType("INTEGER_CONSTANT");
-    JetNodeType SUPERTYE_QUALIFIER                  = new JetNodeType("SUPERTYE_QUALIFIER");
-    JetNodeType LONG_CONSTANT                       = new JetNodeType("LONG_CONSTANT");
-    JetNodeType TUPLE                               = new JetNodeType("TUPLE");
-    JetNodeType TYPEOF                              = new JetNodeType("TYPEOF");
+
+    // TODO: Not sure if we need separate NT for each kind of constants
+    JetNodeType NULL                                = new JetNodeType("NULL", JetConstantExpression.class);
+    JetNodeType BOOLEAN_CONSTANT                    = new JetNodeType("BOOLEAN_CONSTANT", JetConstantExpression.class);
+    JetNodeType FLOAT_CONSTANT                      = new JetNodeType("FLOAT_CONSTANT", JetConstantExpression.class);
+    JetNodeType CHARACTER_CONSTANT                  = new JetNodeType("CHARACTER_CONSTANT", JetConstantExpression.class);
+    JetNodeType STRING_CONSTANT                     = new JetNodeType("STRING_CONSTANT", JetConstantExpression.class);
+    JetNodeType INTEGER_CONSTANT                    = new JetNodeType("INTEGER_CONSTANT", JetConstantExpression.class);
+    JetNodeType SUPERTYE_QUALIFIER                  = new JetNodeType("SUPERTYE_QUALIFIER", JetConstantExpression.class);
+    JetNodeType LONG_CONSTANT                       = new JetNodeType("LONG_CONSTANT", JetConstantExpression.class);
+
+    JetNodeType TUPLE                               = new JetNodeType("TUPLE", JetTupleExpression.class);
+    JetNodeType TYPEOF                              = new JetNodeType("TYPEOF", JetTypeofExpression.class);
     JetNodeType NEW                                 = new JetNodeType("NEW");
     JetNodeType RETURN                              = new JetNodeType("RETURN");
     JetNodeType THROW                               = new JetNodeType("THROW");
@@ -91,10 +94,10 @@ public interface JetNodeTypes {
     JetNodeType RECEIVER_TYPE                       = new JetNodeType("RECEIVER_TYPE");
     JetNodeType FUNCTION_LITERAL                    = new JetNodeType("FUNCTION_LITERAL");
     JetNodeType ANNOTATED_EXPRESSION                = new JetNodeType("ANNOTATED_EXPRESSION");
-    JetNodeType REFERENCE_EXPRESSION                = new JetNodeType("REFERENCE_EXPRESSION");
+    JetNodeType REFERENCE_EXPRESSION                = new JetNodeType("REFERENCE_EXPRESSION", JetReferenceExpression.class);
     JetNodeType BINARY_EXPRESSION                   = new JetNodeType("BINARY_EXPRESSION");
-    JetNodeType PREFIX_EXPRESSION                   = new JetNodeType("PREFIX_EXPRESSION");
-    JetNodeType POSTFIX_EXPRESSION                  = new JetNodeType("POSTFIX_EXPRESSION");
+    JetNodeType PREFIX_EXPRESSION                   = new JetNodeType("PREFIX_EXPRESSION", JetPrefixExpression.class);
+    JetNodeType POSTFIX_EXPRESSION                  = new JetNodeType("POSTFIX_EXPRESSION", JetPostfixExpression.class);
     JetNodeType CALL_EXPRESSION                     = new JetNodeType("CALL_EXPRESSION");
     JetNodeType ARRAY_ACCESS_EXPRESSION             = new JetNodeType("ARRAY_ACCESS_EXPRESSION");
     JetNodeType INDICES                             = new JetNodeType("INDICES");

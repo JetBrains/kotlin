@@ -129,4 +129,32 @@ public class JetVisitor extends PsiElementVisitor {
     public void visitArgument(JetArgument argument) {
         visitJetElement(argument);
     }
+
+    public void visitExpression(JetExpression expression) {
+        visitJetElement(expression);
+    }
+
+    public void visitConstantExpression(JetConstantExpression expression) {
+        visitExpression(expression);
+    }
+
+    public void visitReferenceExpression(JetReferenceExpression expression) {
+        visitExpression(expression);
+    }
+
+    public void visitTupleExpression(JetTupleExpression expression) {
+        visitExpression(expression);
+    }
+
+    public void visitPrefixExpression(JetPrefixExpression expression) {
+        visitExpression(expression);
+    }
+
+    public void visitPostfixExpression(JetPostfixExpression expression) {
+        visitExpression(expression);
+    }
+
+    public void visitTypeofExpression(JetTypeofExpression expression) {
+        visitExpression(expression);
+    }
 }
