@@ -97,4 +97,36 @@ public class JetVisitor extends PsiElementVisitor {
     public void visitParameter(JetParameter parameter) {
         visitDeclaration(parameter);
     }
+
+    public void visitDelegationSpecifierList(JetDelegationSpecifierList list) {
+        visitJetElement(list);
+    }
+
+    public void visitDelegationSpecifier(JetDelegationSpecifier specifier) {
+        visitJetElement(specifier);
+    }
+
+    public void visitDelegationByExpressionSpecifier(JetDelegatorByExpressionSpecifier specifier) {
+        visitDelegationSpecifier(specifier);
+    }
+
+    public void visitDelegationToSuperCallSpecifier(JetDelegatorToSuperCall call) {
+        visitDelegationSpecifier(call);
+    }
+
+    public void visitDelegationToSuperClassSpecifier(JetDelegatorToSuperClass specifier) {
+        visitDelegationSpecifier(specifier);
+    }
+
+    public void visitTypeReference(JetTypeReference typeReference) {
+        visitJetElement(typeReference);
+    }
+
+    public void visitArgumentList(JetArgumentList list) {
+        visitJetElement(list);
+    }
+
+    public void visitArgument(JetArgument argument) {
+        visitJetElement(argument);
+    }
 }
