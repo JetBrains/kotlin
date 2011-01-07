@@ -157,4 +157,88 @@ public class JetVisitor extends PsiElementVisitor {
     public void visitTypeofExpression(JetTypeofExpression expression) {
         visitExpression(expression);
     }
+
+    public void visitBinaryExpression(JetBinaryExpression expression) {
+        visitExpression(expression);
+    }
+
+    public void visitNewExpression(JetNewExpression expression) {
+        visitExpression(expression);
+    }
+
+    public void visitReturnExpression(JetReturnExpression expression) {
+        visitExpression(expression);
+    }
+
+    public void visitThrowExpression(JetThrowExpression expression) {
+        visitExpression(expression);
+    }
+
+    public void visitBreakExpression(JetBreakExpression expression) {
+        visitExpression(expression);
+    }
+
+    public void visitContinueExpression(JetContinueExpression expression) {
+        visitExpression(expression);
+    }
+
+    public void visitIfExpression(JetIfExpression expression) {
+        visitExpression(expression);
+    }
+
+    public void visitTryExpression(JetTryExpression expression) {
+        visitExpression(expression);
+    }
+
+    public void visitForExpression(JetForExpression expression) {
+        visitExpression(expression);
+    }
+
+    public void visitWhileExpression(JetWhileExpression expression) {
+        visitExpression(expression);
+    }
+
+    public void visitDoWhileExpression(JetDoWhileExpression expression) {
+        visitExpression(expression);
+    }
+
+    public void visitFunctionLiteralExpression(JetFunctionLiteralExpression expression) {
+        visitExpression(expression);
+    }
+
+    public void visitAnnotatedExpression(JetAnnotatedExpression expression) {
+        visitExpression(expression);
+    }
+
+    public void visitCallExpression(JetCallExpression expression) {
+        visitExpression(expression);
+    }
+
+    public void visitArrayAccessExpression(JetArrayAccessExpression expression) {
+        visitExpression(expression);
+    }
+
+    public void visitQualifiedExpression(JetQualifiedExpression expression) {
+        visitExpression(expression);
+    }
+
+    public void visitHashQualifiedExpression(JetHashQualifiedExpression expression) {
+        visitQualifiedExpression(expression);
+    }
+
+    public void visitDotQualifiedExpression(JetDotQualifiedExpression expression) {
+        visitQualifiedExpression(expression);
+    }
+
+    public void visitSafeQualifiedExpression(JetSafeQualifiedExpression expression) {
+        visitQualifiedExpression(expression);
+    }
+
+    public void visitObjectLiteralExpression(JetObjectLiteralExpression expression) {
+        visitExpression(expression);
+    }
+
+    public void visitRootNamespaceExpression(JetRootNamespaceExpression expression) {
+        visitExpression(expression);
+    }
 }

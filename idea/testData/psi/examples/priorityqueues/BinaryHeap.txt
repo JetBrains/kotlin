@@ -1018,7 +1018,7 @@ JetFile: BinaryHeap.jet
                   PsiElement(LBRACE)('{')
                   PsiWhiteSpace('\n        ')
                   BINARY_EXPRESSION
-                    FIELD_REFERENCE
+                    REFERENCE_EXPRESSION
                       PsiElement(FIELD_IDENTIFIER)('$value')
                     PsiWhiteSpace(' ')
                     PsiElement(EQ)('=')

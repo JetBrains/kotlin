@@ -325,7 +325,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             parseLocalDeclaration();
         }
         else if (at(FIELD_IDENTIFIER)) {
-            parseOneTokenExpression(FIELD_REFERENCE);
+            parseOneTokenExpression(REFERENCE_EXPRESSION);
         }
         else if (at(IDENTIFIER)) {
             if (JetParsing.MODIFIER_KEYWORD_MAP.containsKey(myBuilder.getTokenText())) {
