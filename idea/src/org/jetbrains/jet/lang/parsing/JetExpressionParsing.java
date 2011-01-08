@@ -1057,6 +1057,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      */
     private void parseThisExpression() {
         assert _at(THIS_KEYWORD);
+        PsiBuilder.Marker mark = mark();
         advance(); // THIS_KEYWORD
         if (at(LT)) {
             // This may be "this < foo" or "this<foo>", thus the backtracking
@@ -1069,13 +1070,14 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
             if (at(GT)) {
                 advance(); // GT
-                supertype.done(SUPERTYE_QUALIFIER);
+                supertype.drop();
             }
             else {
                 supertype.rollbackTo();
             }
             myBuilder.restoreNewlinesState();
         }
+        mark.done(THIS_EXPRESSION);
     }
 
     /*

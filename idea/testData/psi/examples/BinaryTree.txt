@@ -165,7 +165,8 @@ JetFile: BinaryTree.jet
             PsiWhiteSpace('\n    ')
             BINARY_EXPRESSION
               DOT_QIALIFIED_EXPRESSION
-                PsiElement(this)('this')
+                THIS_EXPRESSION
+                  PsiElement(this)('this')
                 PsiElement(DOT)('.')
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('compare')
@@ -263,7 +264,8 @@ JetFile: BinaryTree.jet
             VALUE_ARGUMENT_LIST
               PsiElement(LPAR)('(')
               VALUE_ARGUMENT
-                PsiElement(this)('this')
+                THIS_EXPRESSION
+                  PsiElement(this)('this')
               PsiElement(COMMA)(',')
               PsiWhiteSpace(' ')
               VALUE_ARGUMENT
@@ -1828,7 +1830,8 @@ JetFile: BinaryTree.jet
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('BinaryTree')
                     PsiElement(DOT)('.')
-                    PsiElement(this)('this')
+                    THIS_EXPRESSION
+                      PsiElement(this)('this')
                   PsiElement(DOT)('.')
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('version')
@@ -2391,7 +2394,8 @@ JetFile: BinaryTree.jet
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('BinaryTree')
                         PsiElement(DOT)('.')
-                        PsiElement(this)('this')
+                        THIS_EXPRESSION
+                          PsiElement(this)('this')
                       PsiElement(DOT)('.')
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('version')
@@ -2435,7 +2439,8 @@ JetFile: BinaryTree.jet
                             REFERENCE_EXPRESSION
                               PsiElement(IDENTIFIER)('BinaryTree')
                             PsiElement(DOT)('.')
-                            PsiElement(this)('this')
+                            THIS_EXPRESSION
+                              PsiElement(this)('this')
                           PsiElement(DOT)('.')
                           REFERENCE_EXPRESSION
                             PsiElement(IDENTIFIER)('version')

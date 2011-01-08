@@ -44,7 +44,8 @@ JetFile: HashMap.jet
               TUPLE
                 PsiElement(LPAR)('(')
                 BINARY_EXPRESSION
-                  PsiElement(this)('this')
+                  THIS_EXPRESSION
+                    PsiElement(this)('this')
                   PsiWhiteSpace(' ')
                   PsiElement(as)('as')
                   PsiWhiteSpace(' ')
@@ -129,7 +130,8 @@ JetFile: HashMap.jet
                 TUPLE
                   PsiElement(LPAR)('(')
                   BINARY_EXPRESSION
-                    PsiElement(this)('this')
+                    THIS_EXPRESSION
+                      PsiElement(this)('this')
                     PsiWhiteSpace(' ')
                     PsiElement(as)('as')
                     PsiWhiteSpace(' ')
@@ -353,7 +355,8 @@ JetFile: HashMap.jet
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
-            PsiElement(this)('this')
+            THIS_EXPRESSION
+              PsiElement(this)('this')
           PsiElement(RPAR)(')')
     PsiWhiteSpace('\n\n')
     CLASS

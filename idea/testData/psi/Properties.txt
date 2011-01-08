@@ -726,7 +726,8 @@ JetFile: Properties.jet
         PsiWhiteSpace(' ')
         BINARY_EXPRESSION
           DOT_QIALIFIED_EXPRESSION
-            PsiElement(this)('this')
+            THIS_EXPRESSION
+              PsiElement(this)('this')
             PsiElement(DOT)('.')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('size')

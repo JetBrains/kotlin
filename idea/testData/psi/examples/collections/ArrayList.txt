@@ -343,7 +343,8 @@ JetFile: ArrayList.jet
                           REFERENCE_EXPRESSION
                             PsiElement(IDENTIFIER)('ArrayList')
                           PsiElement(DOT)('.')
-                          PsiElement(this)('this')
+                          THIS_EXPRESSION
+                            PsiElement(this)('this')
                         PsiElement(DOT)('.')
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('remove')
