@@ -2,23 +2,21 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author max
  */
-public class JetReturnExpression extends JetExpression {
-    public JetReturnExpression(@NotNull ASTNode node) {
+public class JetFinallySection extends JetElement {
+    public JetFinallySection(@NotNull ASTNode node) {
         super(node);
     }
 
     @Override
     public void accept(JetVisitor visitor) {
-        visitor.visitReturnExpression(this);
+        visitor.visitFinallySection(this);
     }
 
-    @Nullable
-    public JetExpression getReturnedExpression() {
+    public JetExpression getFinalExpression() {
         return findChildByClass(JetExpression.class);
     }
 }

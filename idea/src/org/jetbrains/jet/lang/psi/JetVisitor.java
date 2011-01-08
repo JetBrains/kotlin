@@ -241,4 +241,16 @@ public class JetVisitor extends PsiElementVisitor {
     public void visitRootNamespaceExpression(JetRootNamespaceExpression expression) {
         visitExpression(expression);
     }
+
+    public void visitBlockExpression(JetBlockExpression expression) {
+        visitExpression(expression);
+    }
+
+    public void visitCatchSection(JetCatchSection catchSection) {
+        visitJetElement(catchSection);
+    }
+
+    public void visitFinallySection(JetFinallySection finallySection) {
+        visitJetElement(finallySection);
+    }
 }

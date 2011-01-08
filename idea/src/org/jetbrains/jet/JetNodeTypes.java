@@ -59,7 +59,6 @@ public interface JetNodeTypes {
     JetNodeType PROPERTY_ACCESSOR                   = new JetNodeType("PROPERTY_ACCESSOR");
     JetNodeType INITIALIZER_LIST                    = new JetNodeType("INITIALIZER_LIST");
     JetNodeType THIS_CALL                           = new JetNodeType("THIS_CALL");
-    JetNodeType BLOCK                               = new JetNodeType("BLOCK");
     JetNodeType TYPE_CONSTRAINT_LIST                = new JetNodeType("TYPE_CONSTRAINT_LIST");
     JetNodeType TYPE_CONSTRAINT                     = new JetNodeType("TYPE_CONSTRAINT");
 
@@ -81,19 +80,20 @@ public interface JetNodeTypes {
     JetNodeType CONTINUE                  = new JetNodeType("CONTINUE", JetContinueExpression.class);
     JetNodeType BREAK                     = new JetNodeType("BREAK", JetBreakExpression.class);
     JetNodeType IF                        = new JetNodeType("IF", JetIfExpression.class);
-    JetNodeType CONDITION                 = new JetNodeType("CONDITION");
-    JetNodeType THEN                      = new JetNodeType("THEN");
-    JetNodeType ELSE                      = new JetNodeType("ELSE");
+    JetNodeType CONDITION                 = new JetNodeType("CONDITION");   //TODO: discuss, this can be omitted
+    JetNodeType THEN                      = new JetNodeType("THEN");        //TODO: discuss, this can be omitted
+    JetNodeType ELSE                      = new JetNodeType("ELSE");        //TODO: discuss, this can be omitted
     JetNodeType TRY                       = new JetNodeType("TRY", JetTryExpression.class);
-    JetNodeType CATCH                     = new JetNodeType("CATCH");
-    JetNodeType FINALLY                   = new JetNodeType("FINALLY");
+    JetNodeType CATCH                     = new JetNodeType("CATCH", JetCatchSection.class);
+    JetNodeType FINALLY                   = new JetNodeType("FINALLY", JetFinallySection.class);
     JetNodeType FOR                       = new JetNodeType("FOR", JetForExpression.class);
     JetNodeType WHILE                     = new JetNodeType("WHILE", JetWhileExpression.class);
     JetNodeType DO_WHILE                  = new JetNodeType("DO_WHILE", JetDoWhileExpression.class);
-    JetNodeType LOOP_PARAMETER            = new JetNodeType("LOOP_PARAMETER");
-    JetNodeType LOOP_RANGE                = new JetNodeType("LOOP_RANGE");
-    JetNodeType BODY                      = new JetNodeType("BODY");
+    JetNodeType LOOP_PARAMETER            = new JetNodeType("LOOP_PARAMETER", JetParameter.class); // TODO: Do we need separate type?
+    JetNodeType LOOP_RANGE                = new JetNodeType("LOOP_RANGE");  //TODO: discuss, this can be omitted
+    JetNodeType BODY                      = new JetNodeType("BODY");        //TODO: discuss, this can be omitted
     JetNodeType RECEIVER_TYPE             = new JetNodeType("RECEIVER_TYPE");
+    JetNodeType BLOCK                     = new JetNodeType("BLOCK", JetBlockExpression.class);
     JetNodeType FUNCTION_LITERAL          = new JetNodeType("FUNCTION_LITERAL", JetFunctionLiteralExpression.class);
     JetNodeType ANNOTATED_EXPRESSION      = new JetNodeType("ANNOTATED_EXPRESSION", JetAnnotatedExpression.class);
     JetNodeType REFERENCE_EXPRESSION      = new JetNodeType("REFERENCE_EXPRESSION", JetReferenceExpression.class);

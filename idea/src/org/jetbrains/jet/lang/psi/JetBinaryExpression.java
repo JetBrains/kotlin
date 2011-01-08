@@ -2,15 +2,10 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiErrorElement;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
-
-import static org.jetbrains.jet.lexer.JetTokens.*;
 
 /**
  * @author max
@@ -46,26 +41,15 @@ public class JetBinaryExpression extends JetExpression {
         return null;
     }
 
+    @NotNull
     public ASTNode getOperationTokenNode() {
-        PsiElement child = getLeft().getNextSibling();
-
-        while (child != null) {
-            IElementType tt = child.getNode().getElementType();
-
-            if (JetTokens.WHITE_SPACE_OR_COMMENT_BIT_SET.contains(tt) || child instanceof PsiErrorElement) {
-                child = child.getNextSibling();
-            }
-            else {
-                return child.getNode();
-            }
-        }
-
-        return null;
+        ASTNode operationNode = getNode().findChildByType(JetTokens.OPERATIONS);
+        assert operationNode != null;
+        return operationNode;
     }
 
     @Nullable
     public JetToken getOperationSign() {
-        ASTNode node = getOperationTokenNode();
-        return node != null ? (JetToken) node.getElementType() : null;
+        return (JetToken) getOperationTokenNode().getElementType();
     }
 }

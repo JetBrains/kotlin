@@ -1,7 +1,12 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiErrorElement;
+import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lexer.JetTokens;
 
 /**
  * @author max
@@ -9,5 +14,43 @@ import org.jetbrains.annotations.NotNull;
 public abstract class JetQualifiedExpression extends JetExpression {
     public JetQualifiedExpression(@NotNull ASTNode node) {
         super(node);
+    }
+
+    @NotNull
+    public JetExpression getReceiverExpression() {
+        JetExpression left = findChildByClass(JetExpression.class);
+        assert left != null;
+        return left;
+    }
+
+    @Nullable
+    public JetExpression getSelectorExpression() {
+        ASTNode node = getOperationTokenNode();
+        while (node != null) {
+            PsiElement psi = node.getPsi();
+            if (psi instanceof JetExpression) {
+                return (JetExpression) psi;
+            }
+            node = node.getTreeNext();
+        }
+
+        return null;
+    }
+
+    public ASTNode getOperationTokenNode() {
+        PsiElement child = getReceiverExpression().getNextSibling();
+
+        while (child != null) {
+            IElementType tt = child.getNode().getElementType();
+
+            if (JetTokens.WHITE_SPACE_OR_COMMENT_BIT_SET.contains(tt) || child instanceof PsiErrorElement) {
+                child = child.getNextSibling();
+            }
+            else {
+                return child.getNode();
+            }
+        }
+
+        return null;
     }
 }

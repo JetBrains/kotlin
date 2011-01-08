@@ -15,4 +15,10 @@ public class JetTryExpression extends JetExpression {
     public void accept(JetVisitor visitor) {
         visitor.visitTryExpression(this);
     }
+
+    public JetExpression getBody() {
+        return findChildByClass(JetExpression.class);
+    }
+
+
 }
