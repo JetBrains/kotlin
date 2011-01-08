@@ -253,4 +253,12 @@ public class JetVisitor extends PsiElementVisitor {
     public void visitFinallySection(JetFinallySection finallySection) {
         visitJetElement(finallySection);
     }
+
+    public void visitTypeArgumentList(JetTypeArgumentList typeArgumentList) {
+        visitJetElement(typeArgumentList);
+    }
+
+    public void visitThisExpression(JetThisExpression expression) {
+        visitExpression(expression);
+    }
 }

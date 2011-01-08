@@ -45,7 +45,7 @@ public interface JetNodeTypes {
     JetNodeType ATTRIBUTE_ANNOTATION                = new JetNodeType("ATTRIBUTE_ANNOTATION", JetAttributeAnnotation.class);
     JetNodeType ATTRIBUTE                           = new JetNodeType("ATTRIBUTE", JetAttribute.class);
     JetNodeType USER_TYPE                           = new JetNodeType("USER_TYPE");
-    JetNodeType TYPE_ARGUMENT_LIST                  = new JetNodeType("TYPE_ARGUMENT_LIST");
+    JetNodeType TYPE_ARGUMENT_LIST                  = new JetNodeType("TYPE_ARGUMENT_LIST", JetTypeArgumentList.class);
     JetNodeType VALUE_ARGUMENT_LIST                 = new JetNodeType("VALUE_ARGUMENT_LIST", JetArgumentList.class);
     JetNodeType VALUE_ARGUMENT                      = new JetNodeType("VALUE_ARGUMENT", JetArgument.class);
     JetNodeType TYPE_REFERENCE                      = new JetNodeType("TYPE_REFERENCE", JetTypeReference.class);
@@ -69,7 +69,6 @@ public interface JetNodeTypes {
     JetNodeType CHARACTER_CONSTANT = new JetNodeType("CHARACTER_CONSTANT", JetConstantExpression.class);
     JetNodeType STRING_CONSTANT    = new JetNodeType("STRING_CONSTANT", JetConstantExpression.class);
     JetNodeType INTEGER_CONSTANT   = new JetNodeType("INTEGER_CONSTANT", JetConstantExpression.class);
-    JetNodeType SUPERTYE_QUALIFIER = new JetNodeType("SUPERTYE_QUALIFIER", JetConstantExpression.class);
     JetNodeType LONG_CONSTANT      = new JetNodeType("LONG_CONSTANT", JetConstantExpression.class);
 
     JetNodeType TUPLE                     = new JetNodeType("TUPLE", JetTupleExpression.class);
@@ -97,12 +96,13 @@ public interface JetNodeTypes {
     JetNodeType FUNCTION_LITERAL          = new JetNodeType("FUNCTION_LITERAL", JetFunctionLiteralExpression.class);
     JetNodeType ANNOTATED_EXPRESSION      = new JetNodeType("ANNOTATED_EXPRESSION", JetAnnotatedExpression.class);
     JetNodeType REFERENCE_EXPRESSION      = new JetNodeType("REFERENCE_EXPRESSION", JetReferenceExpression.class);
+    JetNodeType THIS_EXPRESSION           = new JetNodeType("THIS_EXPRESSION", JetThisExpression.class);
     JetNodeType BINARY_EXPRESSION         = new JetNodeType("BINARY_EXPRESSION", JetBinaryExpression.class);
     JetNodeType PREFIX_EXPRESSION         = new JetNodeType("PREFIX_EXPRESSION", JetPrefixExpression.class);
     JetNodeType POSTFIX_EXPRESSION        = new JetNodeType("POSTFIX_EXPRESSION", JetPostfixExpression.class);
     JetNodeType CALL_EXPRESSION           = new JetNodeType("CALL_EXPRESSION", JetCallExpression.class);
     JetNodeType ARRAY_ACCESS_EXPRESSION   = new JetNodeType("ARRAY_ACCESS_EXPRESSION", JetArrayAccessExpression.class);
-    JetNodeType INDICES                   = new JetNodeType("INDICES");
+    JetNodeType INDICES                   = new JetNodeType("INDICES"); //TODO: discuss, this can be omitted
     JetNodeType DOT_QIALIFIED_EXPRESSION  = new JetNodeType("DOT_QIALIFIED_EXPRESSION", JetDotQualifiedExpression.class);
     JetNodeType HASH_QIALIFIED_EXPRESSION = new JetNodeType("HASH_QIALIFIED_EXPRESSION", JetHashQualifiedExpression.class);
     JetNodeType SAFE_ACCESS_EXPRESSION    = new JetNodeType("SAFE_ACCESS_EXPRESSION", JetSafeQualifiedExpression.class);
