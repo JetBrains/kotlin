@@ -36,7 +36,6 @@ public interface JetNodeTypes {
     // TODO: Not sure if we really need separate PSI nodes for the class parameters?
     JetNodeType PRIMARY_CONSTRUCTOR_PARAMETERS_LIST = new JetNodeType("PRIMARY_CONSTRUCTOR_PARAMETERS_LIST", JetParameterList.class);
     JetNodeType PRIMARY_CONSTRUCTOR_PARAMETER       = new JetNodeType("PRIMARY_CONSTRUCTOR_PARAMETER", JetParameter.class);
-    JetNodeType NAMED_ARGUMENT                      = new JetNodeType("NAMED_ARGUMENT");
     JetNodeType CLASS_BODY                          = new JetNodeType("CLASS_BODY", JetClassBody.class);
     JetNodeType IMPORT_DIRECTIVE                    = new JetNodeType("IMPORT_DIRECTIVE", JetImportDirective.class);
     JetNodeType IMPORTED                            = new JetNodeType("IMPORTED");
@@ -48,6 +47,7 @@ public interface JetNodeTypes {
     JetNodeType TYPE_ARGUMENT_LIST                  = new JetNodeType("TYPE_ARGUMENT_LIST", JetTypeArgumentList.class);
     JetNodeType VALUE_ARGUMENT_LIST                 = new JetNodeType("VALUE_ARGUMENT_LIST", JetArgumentList.class);
     JetNodeType VALUE_ARGUMENT                      = new JetNodeType("VALUE_ARGUMENT", JetArgument.class);
+    JetNodeType NAMED_ARGUMENT                      = new JetNodeType("NAMED_ARGUMENT");
     JetNodeType TYPE_REFERENCE                      = new JetNodeType("TYPE_REFERENCE", JetTypeReference.class);
     JetNodeType LABELED_TUPLE_ENTRY                 = new JetNodeType("LABELED_TUPLE_ENTRY");
     JetNodeType TUPLE_TYPE                          = new JetNodeType("TUPLE_TYPE");
