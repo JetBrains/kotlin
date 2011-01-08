@@ -103,7 +103,7 @@ JetFile: ByCaluses.jet
           PsiWhiteSpace(' ')
           PsiElement(by)('by')
           PsiWhiteSpace(' ')
-          TUPLE
+          PARENTHESIZED
             PsiElement(LPAR)('(')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('a')
@@ -141,7 +141,7 @@ JetFile: ByCaluses.jet
           PsiWhiteSpace(' ')
           PsiElement(by)('by')
           PsiWhiteSpace(' ')
-          TUPLE
+          PARENTHESIZED
             PsiElement(LPAR)('(')
             CALL_EXPRESSION
               REFERENCE_EXPRESSION

@@ -212,7 +212,7 @@ JetFile: BitArith.jet
       PsiWhiteSpace(' ')
       BINARY_EXPRESSION
         BINARY_EXPRESSION
-          TUPLE
+          PARENTHESIZED
             PsiElement(LPAR)('(')
             BINARY_EXPRESSION
               REFERENCE_EXPRESSION
@@ -343,7 +343,7 @@ JetFile: BitArith.jet
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
       BINARY_EXPRESSION
-        TUPLE
+        PARENTHESIZED
           PsiElement(LPAR)('(')
           BINARY_EXPRESSION
             BINARY_EXPRESSION

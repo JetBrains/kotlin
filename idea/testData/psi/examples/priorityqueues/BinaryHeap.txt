@@ -895,7 +895,7 @@ JetFile: BinaryHeap.jet
                 PsiElement(EQ)('=')
                 PsiWhiteSpace(' ')
                 BINARY_EXPRESSION
-                  TUPLE
+                  PARENTHESIZED
                     PsiElement(LPAR)('(')
                     BINARY_EXPRESSION
                       THIS_EXPRESSION
@@ -1058,7 +1058,7 @@ JetFile: BinaryHeap.jet
                 PsiElement(EQ)('=')
                 PsiWhiteSpace(' ')
                 BINARY_EXPRESSION
-                  TUPLE
+                  PARENTHESIZED
                     PsiElement(LPAR)('(')
                     BINARY_EXPRESSION
                       THIS_EXPRESSION
@@ -1076,7 +1076,7 @@ JetFile: BinaryHeap.jet
                   PsiWhiteSpace(' ')
                   PsiElement(ANDAND)('&&')
                   PsiWhiteSpace(' ')
-                  TUPLE
+                  PARENTHESIZED
                     PsiElement(LPAR)('(')
                     BINARY_EXPRESSION
                       THIS_EXPRESSION

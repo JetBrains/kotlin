@@ -20,7 +20,7 @@ JetFile: SimpleExpressions.jet
           PsiWhiteSpace(' ')
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
-          TUPLE
+          PARENTHESIZED
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
         PsiElement(COMMA)(',')
@@ -266,7 +266,7 @@ JetFile: SimpleExpressions.jet
           PsiWhiteSpace(' ')
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
-          TUPLE
+          PARENTHESIZED
             PsiElement(LPAR)('(')
             INTEGER_CONSTANT
               PsiElement(INTEGER_LITERAL)('10')

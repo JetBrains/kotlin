@@ -72,6 +72,7 @@ public interface JetNodeTypes {
     JetNodeType LONG_CONSTANT      = new JetNodeType("LONG_CONSTANT", JetConstantExpression.class);
 
     JetNodeType TUPLE                     = new JetNodeType("TUPLE", JetTupleExpression.class);
+    JetNodeType PARENTHESIZED             = new JetNodeType("PARENTHESIZED", JetParenthesizedExpression.class);
     JetNodeType TYPEOF                    = new JetNodeType("TYPEOF", JetTypeofExpression.class);
     JetNodeType NEW                       = new JetNodeType("NEW", JetNewExpression.class);
     JetNodeType RETURN                    = new JetNodeType("RETURN", JetReturnExpression.class);

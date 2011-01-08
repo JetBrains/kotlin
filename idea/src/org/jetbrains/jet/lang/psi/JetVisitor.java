@@ -261,4 +261,8 @@ public class JetVisitor extends PsiElementVisitor {
     public void visitThisExpression(JetThisExpression expression) {
         visitExpression(expression);
     }
+
+    public void visitParenthesizedExpression(JetParenthesizedExpression expression) {
+        visitExpression(expression);
+    }
 }

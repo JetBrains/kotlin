@@ -143,7 +143,7 @@ JetFile: Comparison.jet
       PsiWhiteSpace(' ')
       CALL_EXPRESSION
         DOT_QIALIFIED_EXPRESSION
-          TUPLE
+          PARENTHESIZED
             PsiElement(LPAR)('(')
             BINARY_EXPRESSION
               REFERENCE_EXPRESSION

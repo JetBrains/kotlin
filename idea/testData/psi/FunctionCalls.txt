@@ -49,7 +49,7 @@ JetFile: FunctionCalls.jet
                 PsiElement(IDENTIFIER)('foo')
             PsiElement(GT)('>')
         PsiWhiteSpace('\n  ')
-        TUPLE
+        PARENTHESIZED
           PsiElement(LPAR)('(')
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('a')
@@ -251,7 +251,7 @@ JetFile: FunctionCalls.jet
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('b')
                 PsiElement(GT)('>')
-                TUPLE
+                PARENTHESIZED
                   PsiElement(LPAR)('(')
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('a')
@@ -273,7 +273,7 @@ JetFile: FunctionCalls.jet
             PsiElement(COMMA)(',')
             PsiWhiteSpace(' ')
             VALUE_ARGUMENT
-              TUPLE
+              PARENTHESIZED
                 PsiElement(LPAR)('(')
                 BINARY_EXPRESSION
                   INTEGER_CONSTANT
@@ -291,7 +291,7 @@ JetFile: FunctionCalls.jet
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('b')
                 PsiElement(GT)('>')
-                TUPLE
+                PARENTHESIZED
                   PsiElement(LPAR)('(')
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('a')

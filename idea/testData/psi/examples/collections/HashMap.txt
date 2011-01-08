@@ -41,7 +41,7 @@ JetFile: HashMap.jet
           PsiWhiteSpace(' ')
           CALL_EXPRESSION
             DOT_QIALIFIED_EXPRESSION
-              TUPLE
+              PARENTHESIZED
                 PsiElement(LPAR)('(')
                 BINARY_EXPRESSION
                   THIS_EXPRESSION
@@ -127,7 +127,7 @@ JetFile: HashMap.jet
             PsiWhiteSpace(' ')
             CALL_EXPRESSION
               DOT_QIALIFIED_EXPRESSION
-                TUPLE
+                PARENTHESIZED
                   PsiElement(LPAR)('(')
                   BINARY_EXPRESSION
                     THIS_EXPRESSION

@@ -68,7 +68,7 @@ JetFile: NewlinesInParentheses.jet
           PsiWhiteSpace(' ')
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
-          TUPLE
+          PARENTHESIZED
             PsiElement(LPAR)('(')
             BINARY_EXPRESSION
               REFERENCE_EXPRESSION
@@ -87,7 +87,7 @@ JetFile: NewlinesInParentheses.jet
           PsiWhiteSpace(' ')
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
-          TUPLE
+          PARENTHESIZED
             PsiElement(LPAR)('(')
             FUNCTION_LITERAL
               PsiElement(LBRACE)('{')
@@ -110,7 +110,7 @@ JetFile: NewlinesInParentheses.jet
           PsiWhiteSpace(' ')
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
-          TUPLE
+          PARENTHESIZED
             PsiElement(LPAR)('(')
             BINARY_EXPRESSION
               FUNCTION_LITERAL
