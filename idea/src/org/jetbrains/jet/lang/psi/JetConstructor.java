@@ -2,6 +2,11 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.JetNodeTypes;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author max
@@ -16,4 +21,25 @@ public class JetConstructor extends JetDeclaration {
         visitor.visitConstructor(this);
     }
 
+    @Nullable
+    public JetParameterList getParameterList() {
+        return (JetParameterList) findChildByType(JetNodeTypes.VALUE_PARAMETER_LIST);
+    }
+
+    @NotNull
+    public List<JetParameter> getParameters() {
+        JetParameterList list = getParameterList();
+        return list != null ? list.getParameters() : Collections.<JetParameter>emptyList();
+    }
+
+    @Nullable
+    public JetInitializerList getInitializerList() {
+        return (JetInitializerList) findChildByType(JetNodeTypes.INITIALIZER_LIST);
+    }
+
+    @NotNull
+    public List<JetDelegationSpecifier> getInitializers() {
+        JetInitializerList list = getInitializerList();
+        return list != null ? list.getInitializers() : Collections.<JetDelegationSpecifier>emptyList();
+    }
 }

@@ -122,6 +122,10 @@ public class JetVisitor extends PsiElementVisitor {
         visitDelegationSpecifier(specifier);
     }
 
+    public void visitDelegationToThisCall(JetDelegatorToThisCall thisCall) {
+        visitDelegationSpecifier(thisCall);
+    }
+
     public void visitTypeReference(JetTypeReference typeReference) {
         visitJetElement(typeReference);
     }
@@ -268,5 +272,9 @@ public class JetVisitor extends PsiElementVisitor {
 
     public void visitParenthesizedExpression(JetParenthesizedExpression expression) {
         visitExpression(expression);
+    }
+
+    public void visitInitializerList(JetInitializerList list) {
+        visitJetElement(list);
     }
 }
