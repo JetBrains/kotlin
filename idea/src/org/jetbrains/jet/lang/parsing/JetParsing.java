@@ -276,7 +276,11 @@ public class JetParsing extends AbstractJetParsing {
         if (!at(RPAR)) {
             while (true) {
                 parseAttributeList();
-                if (!expect(IDENTIFIER, "Expecting a property name", TokenSet.create(COMMA, RPAR))) {
+                if (at(IDENTIFIER)) {
+                    myExpressionParsing.parseSimpleNameExpression();
+                }
+                else {
+                    errorWithRecovery("Expecting a property name", TokenSet.create(COMMA, RPAR));
                     skipUntil(TokenSet.create(COMMA, RPAR, EOL_OR_SEMICOLON));
                 }
                 if (!at(COMMA)) {

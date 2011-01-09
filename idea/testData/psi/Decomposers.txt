@@ -5,10 +5,12 @@ JetFile: Decomposers.jet
       PsiWhiteSpace(' ')
       DECOMPOSER_PROPERTY_LIST
         PsiElement(LPAR)('(')
-        PsiElement(IDENTIFIER)('a')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('a')
         PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('a')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('a')
         PsiElement(RPAR)(')')
     PsiWhiteSpace('\n')
     DECOMPOSER
@@ -50,10 +52,12 @@ JetFile: Decomposers.jet
       PsiElement(IDENTIFIER)('bar')
       DECOMPOSER_PROPERTY_LIST
         PsiElement(LPAR)('(')
-        PsiElement(IDENTIFIER)('a')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('a')
         PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('a')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('a')
         PsiElement(RPAR)(')')
     PsiWhiteSpace('\n')
     DECOMPOSER
@@ -90,7 +94,8 @@ JetFile: Decomposers.jet
               PsiElement(IDENTIFIER)('a')
           PsiElement(RBRACKET)(']')
         PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('s')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('s')
         PsiElement(RPAR)(')')
     PsiWhiteSpace('\n')
     DECOMPOSER

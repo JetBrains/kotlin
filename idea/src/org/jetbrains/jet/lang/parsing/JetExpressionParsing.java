@@ -330,10 +330,10 @@ public class JetExpressionParsing extends AbstractJetParsing {
         else if (at(IDENTIFIER)) {
             if (JetParsing.MODIFIER_KEYWORD_MAP.containsKey(myBuilder.getTokenText())) {
                 if (!parseLocalDeclaration()) {
-                    parseSimpleName();
+                    parseSimpleNameExpression();
                 }
             } else {
-                parseSimpleName();
+                parseSimpleNameExpression();
             }
         }
         else if (at(LBRACE)) {
@@ -544,7 +544,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     /*
      * SimpleName
      */
-    private void parseSimpleName() {
+    public void parseSimpleNameExpression() {
         PsiBuilder.Marker simpleName = mark();
         expect(IDENTIFIER, "Expecting an identifier [Interal error]");
         simpleName.done(REFERENCE_EXPRESSION);

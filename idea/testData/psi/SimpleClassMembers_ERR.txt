@@ -85,13 +85,16 @@ JetFile: SimpleClassMembers_ERR.jet
           PsiWhiteSpace(' ')
           DECOMPOSER_PROPERTY_LIST
             PsiElement(LPAR)('(')
-            PsiElement(IDENTIFIER)('a')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
             PsiElement(COMMA)(',')
             PsiWhiteSpace(' ')
-            PsiElement(IDENTIFIER)('b')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('b')
             PsiElement(COMMA)(',')
             PsiWhiteSpace(' ')
-            PsiElement(IDENTIFIER)('c')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('c')
             PsiErrorElement:Expecting ',' or a closing ')'
               <empty list>
             PsiWhiteSpace('\n\n    ')

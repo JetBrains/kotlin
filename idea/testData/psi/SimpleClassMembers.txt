@@ -93,13 +93,16 @@ JetFile: SimpleClassMembers.jet
               PsiWhiteSpace(' ')
               DECOMPOSER_PROPERTY_LIST
                 PsiElement(LPAR)('(')
-                PsiElement(IDENTIFIER)('a')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
                 PsiElement(COMMA)(',')
                 PsiWhiteSpace(' ')
-                PsiElement(IDENTIFIER)('b')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('b')
                 PsiElement(COMMA)(',')
                 PsiWhiteSpace(' ')
-                PsiElement(IDENTIFIER)('c')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('c')
                 PsiElement(RPAR)(')')
             PsiWhiteSpace('\n\n        ')
             CONSTRUCTOR
@@ -338,13 +341,16 @@ JetFile: SimpleClassMembers.jet
               PsiWhiteSpace(' ')
               DECOMPOSER_PROPERTY_LIST
                 PsiElement(LPAR)('(')
-                PsiElement(IDENTIFIER)('a')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
                 PsiElement(COMMA)(',')
                 PsiWhiteSpace(' ')
-                PsiElement(IDENTIFIER)('b')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('b')
                 PsiElement(COMMA)(',')
                 PsiWhiteSpace(' ')
-                PsiElement(IDENTIFIER)('c')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('c')
                 PsiElement(RPAR)(')')
             PsiWhiteSpace('\n\n        ')
             CONSTRUCTOR
@@ -433,13 +439,16 @@ JetFile: SimpleClassMembers.jet
           PsiWhiteSpace(' ')
           DECOMPOSER_PROPERTY_LIST
             PsiElement(LPAR)('(')
-            PsiElement(IDENTIFIER)('a')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
             PsiElement(COMMA)(',')
             PsiWhiteSpace(' ')
-            PsiElement(IDENTIFIER)('b')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('b')
             PsiElement(COMMA)(',')
             PsiWhiteSpace(' ')
-            PsiElement(IDENTIFIER)('c')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('c')
             PsiElement(RPAR)(')')
         PsiWhiteSpace('\n\n    ')
         CONSTRUCTOR

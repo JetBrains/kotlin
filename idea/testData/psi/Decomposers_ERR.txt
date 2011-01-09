@@ -5,7 +5,8 @@ JetFile: Decomposers_ERR.jet
       PsiWhiteSpace(' ')
       DECOMPOSER_PROPERTY_LIST
         PsiElement(LPAR)('(')
-        PsiElement(IDENTIFIER)('a')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('a')
         PsiErrorElement:Expecting ',' or a closing ')'
           <empty list>
         PsiWhiteSpace(' ')
@@ -48,7 +49,8 @@ JetFile: Decomposers_ERR.jet
           <empty list>
         PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('a')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('a')
         PsiElement(RPAR)(')')
     PsiWhiteSpace('\n')
     DECOMPOSER
@@ -86,7 +88,8 @@ JetFile: Decomposers_ERR.jet
               PsiElement(IDENTIFIER)('a')
           PsiElement(RBRACKET)(']')
         PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('s')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('s')
         PsiElement(COMMA)(',')
         PsiErrorElement:Expecting a property name
           <empty list>
@@ -114,10 +117,12 @@ JetFile: Decomposers_ERR.jet
       PsiWhiteSpace(' ')
       DECOMPOSER_PROPERTY_LIST
         PsiElement(LPAR)('(')
-        PsiElement(IDENTIFIER)('a')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('a')
         PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('a')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('a')
         PsiElement(RPAR)(')')
       PsiErrorElement:Cannot define an extension decomposer on a tuple
         <empty list>
@@ -167,10 +172,12 @@ JetFile: Decomposers_ERR.jet
       PsiElement(IDENTIFIER)('bar')
       DECOMPOSER_PROPERTY_LIST
         PsiElement(LPAR)('(')
-        PsiElement(IDENTIFIER)('a')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('a')
         PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('a')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('a')
         PsiElement(RPAR)(')')
     PsiErrorElement:Expecting namespace or top level declaration
       PsiElement(DOT)('.')

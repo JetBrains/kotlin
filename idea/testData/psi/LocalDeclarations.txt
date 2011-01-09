@@ -153,7 +153,8 @@ JetFile: LocalDeclarations.jet
               PsiElement(IDENTIFIER)('foo')
           DECOMPOSER_PROPERTY_LIST
             PsiElement(LPAR)('(')
-            PsiElement(IDENTIFIER)('bar')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('bar')
             PsiElement(RPAR)(')')
         PsiWhiteSpace('\n')
         PsiElement(RBRACE)('}')

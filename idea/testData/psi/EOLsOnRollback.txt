@@ -61,7 +61,8 @@ JetFile: EOLsOnRollback.jet
           PsiWhiteSpace(' ')
           DECOMPOSER_PROPERTY_LIST
             PsiElement(LPAR)('(')
-            PsiElement(IDENTIFIER)('df')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('df')
             PsiElement(RPAR)(')')
         PsiWhiteSpace('\n\n    ')
         PROPERTY
