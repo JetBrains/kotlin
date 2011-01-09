@@ -53,7 +53,7 @@ public interface JetNodeTypes {
     JetNodeType TUPLE_TYPE                          = new JetNodeType("TUPLE_TYPE");
     JetNodeType FUNCTION_TYPE                       = new JetNodeType("FUNCTION_TYPE");
     JetNodeType SELF_TYPE                           = new JetNodeType("SELF_TYPE");
-    JetNodeType DECOMPOSER_PROPERTY_LIST            = new JetNodeType("DECOMPOSER_PROPERTY_LIST");
+    JetNodeType DECOMPOSER_PROPERTY_LIST            = new JetNodeType("DECOMPOSER_PROPERTY_LIST", JetDecomposerPropertyList.class);
     // TODO: review
     JetNodeType RECEIVER_TYPE_ATTRIBUTES            = new JetNodeType("RECEIVER_TYPE_ATTRIBUTES");
     JetNodeType PROPERTY_ACCESSOR                   = new JetNodeType("PROPERTY_ACCESSOR");
