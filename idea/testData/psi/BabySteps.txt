@@ -43,7 +43,7 @@ JetFile: BabySteps.jet
               PsiElement(IDENTIFIER)('foo')
           VALUE_ARGUMENT_LIST
             PsiElement(LPAR)('(')
-            NAMED_ARGUMENT
+            VALUE_ARGUMENT
               PsiElement(IDENTIFIER)('d')
               PsiElement(EQ)('=')
               INTEGER_CONSTANT
