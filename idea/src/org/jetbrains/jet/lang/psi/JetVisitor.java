@@ -281,4 +281,8 @@ public class JetVisitor extends PsiElementVisitor {
     public void visitAnonymousInitializer(JetClassInitializer initializer) {
         visitDeclaration(initializer);
     }
+
+    public void visitPropertyAccessor(JetPropertyAccessor accessor) {
+        visitDeclaration(accessor);
+    }
 }

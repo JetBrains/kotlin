@@ -54,7 +54,7 @@ public interface JetNodeTypes {
     JetNodeType DECOMPOSER_PROPERTY_LIST            = new JetNodeType("DECOMPOSER_PROPERTY_LIST", JetDecomposerPropertyList.class);
     // TODO: review
     JetNodeType RECEIVER_TYPE_ATTRIBUTES            = new JetNodeType("RECEIVER_TYPE_ATTRIBUTES");
-    JetNodeType PROPERTY_ACCESSOR                   = new JetNodeType("PROPERTY_ACCESSOR");
+    JetNodeType PROPERTY_ACCESSOR                   = new JetNodeType("PROPERTY_ACCESSOR", JetPropertyAccessor.class);
     JetNodeType INITIALIZER_LIST                    = new JetNodeType("INITIALIZER_LIST", JetInitializerList.class);
     JetNodeType THIS_CALL                           = new JetNodeType("THIS_CALL", JetDelegatorToThisCall.class);
     JetNodeType TYPE_CONSTRAINT_LIST                = new JetNodeType("TYPE_CONSTRAINT_LIST");
