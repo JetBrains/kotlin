@@ -342,7 +342,7 @@ JetFile: BitArith.jet
       PsiWhiteSpace(' ')
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
-      BINARY_EXPRESSION
+      BINARY_WITH_TYPE
         PARENTHESIZED
           PsiElement(LPAR)('(')
           BINARY_EXPRESSION
@@ -380,8 +380,9 @@ JetFile: BitArith.jet
         PsiWhiteSpace(' ')
         PsiElement(as)('as')
         PsiWhiteSpace(' ')
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('Int')
+        TYPE_REFERENCE
+          USER_TYPE
+            PsiElement(IDENTIFIER)('Int')
     PsiWhiteSpace('\n\n')
     FUN
       PsiElement(fun)('fun')

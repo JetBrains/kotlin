@@ -61,7 +61,18 @@ public class JetExpressionParsing extends AbstractJetParsing {
         RANGE(JetTokens.RANGE),
         SIMPLE_NAME(IDENTIFIER),
         ELVIS(JetTokens.ELVIS),
-        NAMED_INFIX_OR_TYPE(IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS, AS_KEYWORD, COLON),
+        WITH_TYPE_RHS(IS_KEYWORD, NOT_IS, AS_KEYWORD, COLON) {
+            @Override
+            public void parseRightHandSide(JetExpressionParsing parsing) {
+                parsing.myJetParsing.parseTypeRef();
+            }
+
+            @Override
+            public JetNodeType getProductType() {
+                return BINARY_WITH_TYPE;
+            }
+        },
+        NAMED_INFIX(IN_KEYWORD, NOT_IN),
         COMPARISON(LT, GT, LTEQ, GTEQ),
         EQUALITY(EQEQ, EXCLEQ, EQEQEQ, EXCLEQEQEQ),
         CONJUNCTION(ANDAND),
@@ -99,6 +110,10 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         public void parseRightHandSide(JetExpressionParsing parsing) {
             parseHigherPrecedence(parsing);
+        }
+
+        public JetNodeType getProductType() {
+            return BINARY_EXPRESSION;
         }
 
         public final TokenSet getOperations() {
@@ -146,7 +161,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
         while (!myBuilder.newlineBeforeCurrentToken() && atSet(precedence.getOperations())) {
              advance(); // operation
              precedence.parseRightHandSide(this);
-             expression.done(BINARY_EXPRESSION);
+             expression.done(precedence.getProductType());
              expression = expression.precede();
         }
 

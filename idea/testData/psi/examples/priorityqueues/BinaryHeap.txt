@@ -291,21 +291,21 @@ JetFile: BinaryHeap.jet
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
-                  BINARY_EXPRESSION
+                  BINARY_WITH_TYPE
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('T')
                     PsiWhiteSpace(' ')
                     PsiElement(is)('is')
                     PsiWhiteSpace(' ')
-                    CALL_EXPRESSION
-                      REFERENCE_EXPRESSION
+                    TYPE_REFERENCE
+                      USER_TYPE
                         PsiElement(IDENTIFIER)('IComparable')
-                      TYPE_ARGUMENT_LIST
-                        PsiElement(LT)('<')
-                        TYPE_REFERENCE
-                          USER_TYPE
-                            PsiElement(IDENTIFIER)('T')
-                        PsiElement(GT)('>')
+                        TYPE_ARGUMENT_LIST
+                          PsiElement(LT)('<')
+                          TYPE_REFERENCE
+                            USER_TYPE
+                              PsiElement(IDENTIFIER)('T')
+                          PsiElement(GT)('>')
                 PsiElement(RPAR)(')')
             PsiWhiteSpace('\n    ')
             BINARY_EXPRESSION

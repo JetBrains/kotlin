@@ -516,26 +516,7 @@ JetFile: Precedence.jet
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('c')
         PsiWhiteSpace('\n  ')
-        BINARY_EXPRESSION
-          BINARY_EXPRESSION
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('a')
-            PsiWhiteSpace(' ')
-            PsiElement(COLON)(':')
-            PsiWhiteSpace(' ')
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('b')
-          PsiWhiteSpace(' ')
-          PsiElement(LT)('<')
-          PsiWhiteSpace(' ')
-          BINARY_EXPRESSION
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('b')
-            PsiWhiteSpace(' ')
-            PsiElement(COLON)(':')
-            PsiWhiteSpace(' ')
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('c')
+        PsiComment(EOL_COMMENT)('// TODO a : b < b : c')
         PsiWhiteSpace('\n  ')
         BINARY_EXPRESSION
           BINARY_EXPRESSION

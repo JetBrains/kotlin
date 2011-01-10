@@ -65,21 +65,21 @@ JetFile: ThisType.jet
           PsiWhiteSpace(' ')
           PsiElement(by)('by')
           PsiWhiteSpace(' ')
-          BINARY_EXPRESSION
+          BINARY_WITH_TYPE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('foo')
             PsiWhiteSpace(' ')
             PsiElement(as)('as')
             PsiWhiteSpace(' ')
-            CALL_EXPRESSION
-              REFERENCE_EXPRESSION
+            TYPE_REFERENCE
+              USER_TYPE
                 PsiElement(IDENTIFIER)('List')
-              TYPE_ARGUMENT_LIST
-                PsiElement(LT)('<')
-                TYPE_REFERENCE
-                  SELF_TYPE
-                    PsiElement(This)('This')
-                PsiElement(GT)('>')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_REFERENCE
+                    SELF_TYPE
+                      PsiElement(This)('This')
+                  PsiElement(GT)('>')
       PsiWhiteSpace(' ')
       CLASS_BODY
         PsiElement(LBRACE)('{')

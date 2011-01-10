@@ -356,14 +356,15 @@ JetFile: IOSamples.jet
                     RETURN
                       PsiElement(return)('return')
                       PsiWhiteSpace(' ')
-                      BINARY_EXPRESSION
+                      BINARY_WITH_TYPE
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('next')
                         PsiWhiteSpace(' ')
                         PsiElement(as)('as')
                         PsiWhiteSpace(' ')
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('Byte')
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            PsiElement(IDENTIFIER)('Byte')
                   PsiWhiteSpace('\n    ')
                   PsiElement(RBRACE)('}')
             PsiWhiteSpace('\n    ')

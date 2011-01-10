@@ -313,4 +313,8 @@ public class JetVisitor extends PsiElementVisitor {
     public void visitSelfType(JetSelfType type) {
         visitTypeElement(type);
     }
+
+    public void visitBinaryWithTypeRHSExpression(JetBinaryExpressionWithTypeRHS expression) {
+        visitExpression(expression);
+    }
 }

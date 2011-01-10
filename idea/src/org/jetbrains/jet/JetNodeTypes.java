@@ -47,19 +47,19 @@ public interface JetNodeTypes {
     JetNodeType TYPE_REFERENCE                      = new JetNodeType("TYPE_REFERENCE", JetTypeReference.class);
     JetNodeType LABELED_TUPLE_ENTRY                 = new JetNodeType("LABELED_TUPLE_ENTRY");
 
-    JetNodeType USER_TYPE                           = new JetNodeType("USER_TYPE", JetUserType.class);
-    JetNodeType TUPLE_TYPE                          = new JetNodeType("TUPLE_TYPE", JetTupleType.class);
-    JetNodeType FUNCTION_TYPE                       = new JetNodeType("FUNCTION_TYPE", JetFunctionType.class);
-    JetNodeType SELF_TYPE                           = new JetNodeType("SELF_TYPE", JetSelfType.class);
+    JetNodeType USER_TYPE     = new JetNodeType("USER_TYPE", JetUserType.class);
+    JetNodeType TUPLE_TYPE    = new JetNodeType("TUPLE_TYPE", JetTupleType.class);
+    JetNodeType FUNCTION_TYPE = new JetNodeType("FUNCTION_TYPE", JetFunctionType.class);
+    JetNodeType SELF_TYPE     = new JetNodeType("SELF_TYPE", JetSelfType.class);
 
-    JetNodeType DECOMPOSER_PROPERTY_LIST            = new JetNodeType("DECOMPOSER_PROPERTY_LIST", JetDecomposerPropertyList.class);
+    JetNodeType DECOMPOSER_PROPERTY_LIST = new JetNodeType("DECOMPOSER_PROPERTY_LIST", JetDecomposerPropertyList.class);
     // TODO: review
-    JetNodeType RECEIVER_TYPE_ATTRIBUTES            = new JetNodeType("RECEIVER_TYPE_ATTRIBUTES");
-    JetNodeType PROPERTY_ACCESSOR                   = new JetNodeType("PROPERTY_ACCESSOR", JetPropertyAccessor.class);
-    JetNodeType INITIALIZER_LIST                    = new JetNodeType("INITIALIZER_LIST", JetInitializerList.class);
-    JetNodeType THIS_CALL                           = new JetNodeType("THIS_CALL", JetDelegatorToThisCall.class);
-    JetNodeType TYPE_CONSTRAINT_LIST                = new JetNodeType("TYPE_CONSTRAINT_LIST", JetTypeConstraintList.class);
-    JetNodeType TYPE_CONSTRAINT                     = new JetNodeType("TYPE_CONSTRAINT", JetTypeConstraint.class);
+    JetNodeType RECEIVER_TYPE_ATTRIBUTES = new JetNodeType("RECEIVER_TYPE_ATTRIBUTES");
+    JetNodeType PROPERTY_ACCESSOR        = new JetNodeType("PROPERTY_ACCESSOR", JetPropertyAccessor.class);
+    JetNodeType INITIALIZER_LIST         = new JetNodeType("INITIALIZER_LIST", JetInitializerList.class);
+    JetNodeType THIS_CALL                = new JetNodeType("THIS_CALL", JetDelegatorToThisCall.class);
+    JetNodeType TYPE_CONSTRAINT_LIST     = new JetNodeType("TYPE_CONSTRAINT_LIST", JetTypeConstraintList.class);
+    JetNodeType TYPE_CONSTRAINT          = new JetNodeType("TYPE_CONSTRAINT", JetTypeConstraint.class);
 
     // TODO: Not sure if we need separate NT for each kind of constants
     JetNodeType NULL               = new JetNodeType("NULL", JetConstantExpression.class);
@@ -97,6 +97,7 @@ public interface JetNodeTypes {
     JetNodeType REFERENCE_EXPRESSION      = new JetNodeType("REFERENCE_EXPRESSION", JetReferenceExpression.class);
     JetNodeType THIS_EXPRESSION           = new JetNodeType("THIS_EXPRESSION", JetThisExpression.class);
     JetNodeType BINARY_EXPRESSION         = new JetNodeType("BINARY_EXPRESSION", JetBinaryExpression.class);
+    JetNodeType BINARY_WITH_TYPE          = new JetNodeType("BINARY_WITH_TYPE", JetBinaryExpressionWithTypeRHS.class);
     JetNodeType PREFIX_EXPRESSION         = new JetNodeType("PREFIX_EXPRESSION", JetPrefixExpression.class);
     JetNodeType POSTFIX_EXPRESSION        = new JetNodeType("POSTFIX_EXPRESSION", JetPostfixExpression.class);
     JetNodeType CALL_EXPRESSION           = new JetNodeType("CALL_EXPRESSION", JetCallExpression.class);

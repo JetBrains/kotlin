@@ -145,21 +145,21 @@ JetFile: Comparison.jet
         DOT_QIALIFIED_EXPRESSION
           PARENTHESIZED
             PsiElement(LPAR)('(')
-            BINARY_EXPRESSION
+            BINARY_WITH_TYPE
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('a')
               PsiWhiteSpace(' ')
               PsiElement(as)('as')
               PsiWhiteSpace(' ')
-              CALL_EXPRESSION
-                REFERENCE_EXPRESSION
+              TYPE_REFERENCE
+                USER_TYPE
                   PsiElement(IDENTIFIER)('Comparable')
-                TYPE_ARGUMENT_LIST
-                  PsiElement(LT)('<')
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      PsiElement(IDENTIFIER)('Object')
-                  PsiElement(GT)('>')
+                  TYPE_ARGUMENT_LIST
+                    PsiElement(LT)('<')
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        PsiElement(IDENTIFIER)('Object')
+                    PsiElement(GT)('>')
             PsiElement(RPAR)(')')
           PsiElement(DOT)('.')
           REFERENCE_EXPRESSION
@@ -167,21 +167,21 @@ JetFile: Comparison.jet
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
-            BINARY_EXPRESSION
+            BINARY_WITH_TYPE
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('b')
               PsiWhiteSpace(' ')
               PsiElement(as)('as')
               PsiWhiteSpace(' ')
-              CALL_EXPRESSION
-                REFERENCE_EXPRESSION
+              TYPE_REFERENCE
+                USER_TYPE
                   PsiElement(IDENTIFIER)('Comparable')
-                TYPE_ARGUMENT_LIST
-                  PsiElement(LT)('<')
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      PsiElement(IDENTIFIER)('Object')
-                  PsiElement(GT)('>')
+                  TYPE_ARGUMENT_LIST
+                    PsiElement(LT)('<')
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        PsiElement(IDENTIFIER)('Object')
+                    PsiElement(GT)('>')
           PsiElement(RPAR)(')')
     PsiWhiteSpace('\n\n')
     CLASS
