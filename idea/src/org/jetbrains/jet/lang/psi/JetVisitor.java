@@ -293,4 +293,24 @@ public class JetVisitor extends PsiElementVisitor {
     public void visitTypeConstraint(JetTypeConstraint constraint) {
         visitJetElement(constraint);
     }
+
+    private void visitTypeElement(JetTypeElement type) {
+        visitJetElement(type);
+    }
+
+    public void visitUserType(JetUserType type) {
+        visitTypeElement(type);
+    }
+
+    public void visitTupleType(JetTupleType type) {
+        visitTypeElement(type);
+    }
+
+    public void visitFunctionType(JetFunctionType type) {
+        visitTypeElement(type);
+    }
+
+    public void visitSelfType(JetSelfType type) {
+        visitTypeElement(type);
+    }
 }

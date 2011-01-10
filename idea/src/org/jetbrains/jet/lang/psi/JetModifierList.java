@@ -22,6 +22,7 @@ public class JetModifierList extends JetElement {
         visitor.visitModifierList(this);
     }
 
+    @NotNull
     public List<JetAttributeAnnotation> getAttributeAnnotations() {
         return findChildrenByType(JetNodeTypes.ATTRIBUTE_ANNOTATION);
     }

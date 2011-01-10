@@ -42,15 +42,17 @@ public interface JetNodeTypes {
     JetNodeType MODIFIER_LIST                       = new JetNodeType("MODIFIER_LIST", JetModifierList.class);
     JetNodeType ATTRIBUTE_ANNOTATION                = new JetNodeType("ATTRIBUTE_ANNOTATION", JetAttributeAnnotation.class);
     JetNodeType ATTRIBUTE                           = new JetNodeType("ATTRIBUTE", JetAttribute.class);
-    JetNodeType USER_TYPE                           = new JetNodeType("USER_TYPE");
     JetNodeType TYPE_ARGUMENT_LIST                  = new JetNodeType("TYPE_ARGUMENT_LIST", JetTypeArgumentList.class);
     JetNodeType VALUE_ARGUMENT_LIST                 = new JetNodeType("VALUE_ARGUMENT_LIST", JetArgumentList.class);
     JetNodeType VALUE_ARGUMENT                      = new JetNodeType("VALUE_ARGUMENT", JetArgument.class);
     JetNodeType TYPE_REFERENCE                      = new JetNodeType("TYPE_REFERENCE", JetTypeReference.class);
     JetNodeType LABELED_TUPLE_ENTRY                 = new JetNodeType("LABELED_TUPLE_ENTRY");
-    JetNodeType TUPLE_TYPE                          = new JetNodeType("TUPLE_TYPE");
-    JetNodeType FUNCTION_TYPE                       = new JetNodeType("FUNCTION_TYPE");
-    JetNodeType SELF_TYPE                           = new JetNodeType("SELF_TYPE");
+
+    JetNodeType USER_TYPE                           = new JetNodeType("USER_TYPE", JetUserType.class);
+    JetNodeType TUPLE_TYPE                          = new JetNodeType("TUPLE_TYPE", JetTupleType.class);
+    JetNodeType FUNCTION_TYPE                       = new JetNodeType("FUNCTION_TYPE", JetFunctionType.class);
+    JetNodeType SELF_TYPE                           = new JetNodeType("SELF_TYPE", JetSelfType.class);
+
     JetNodeType DECOMPOSER_PROPERTY_LIST            = new JetNodeType("DECOMPOSER_PROPERTY_LIST", JetDecomposerPropertyList.class);
     // TODO: review
     JetNodeType RECEIVER_TYPE_ATTRIBUTES            = new JetNodeType("RECEIVER_TYPE_ATTRIBUTES");
