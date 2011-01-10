@@ -38,7 +38,7 @@ public interface JetNodeTypes {
     JetNodeType PRIMARY_CONSTRUCTOR_PARAMETER       = new JetNodeType("PRIMARY_CONSTRUCTOR_PARAMETER", JetParameter.class);
     JetNodeType CLASS_BODY                          = new JetNodeType("CLASS_BODY", JetClassBody.class);
     JetNodeType IMPORT_DIRECTIVE                    = new JetNodeType("IMPORT_DIRECTIVE", JetImportDirective.class);
-    JetNodeType IMPORTED                            = new JetNodeType("IMPORTED");
+    JetNodeType IMPORTED                            = new JetNodeType("IMPORTED"); // TODO: ???
     JetNodeType NAMESPACE_BODY                      = new JetNodeType("NAMESPACE_BODY", JetNamespaceBody.class);
     JetNodeType MODIFIER_LIST                       = new JetNodeType("MODIFIER_LIST", JetModifierList.class);
     JetNodeType ATTRIBUTE_ANNOTATION                = new JetNodeType("ATTRIBUTE_ANNOTATION", JetAttributeAnnotation.class);
