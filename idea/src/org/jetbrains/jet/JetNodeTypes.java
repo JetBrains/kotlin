@@ -57,8 +57,8 @@ public interface JetNodeTypes {
     JetNodeType PROPERTY_ACCESSOR                   = new JetNodeType("PROPERTY_ACCESSOR", JetPropertyAccessor.class);
     JetNodeType INITIALIZER_LIST                    = new JetNodeType("INITIALIZER_LIST", JetInitializerList.class);
     JetNodeType THIS_CALL                           = new JetNodeType("THIS_CALL", JetDelegatorToThisCall.class);
-    JetNodeType TYPE_CONSTRAINT_LIST                = new JetNodeType("TYPE_CONSTRAINT_LIST");
-    JetNodeType TYPE_CONSTRAINT                     = new JetNodeType("TYPE_CONSTRAINT");
+    JetNodeType TYPE_CONSTRAINT_LIST                = new JetNodeType("TYPE_CONSTRAINT_LIST", JetTypeConstraintList.class);
+    JetNodeType TYPE_CONSTRAINT                     = new JetNodeType("TYPE_CONSTRAINT", JetTypeConstraint.class);
 
     // TODO: Not sure if we need separate NT for each kind of constants
     JetNodeType NULL               = new JetNodeType("NULL", JetConstantExpression.class);

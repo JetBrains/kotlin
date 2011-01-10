@@ -285,4 +285,12 @@ public class JetVisitor extends PsiElementVisitor {
     public void visitPropertyAccessor(JetPropertyAccessor accessor) {
         visitDeclaration(accessor);
     }
+
+    public void visitTypeConstraintList(JetTypeConstraintList list) {
+        visitJetElement(list);
+    }
+
+    public void visitTypeConstraint(JetTypeConstraint constraint) {
+        visitJetElement(constraint);
+    }
 }
