@@ -348,10 +348,9 @@ JetFile: Builder.jet
                 FUNCTION_TYPE
                   PsiElement(LBRACE)('{')
                   PsiWhiteSpace(' ')
-                  RECEIVER_TYPE
-                    TYPE_REFERENCE
-                      USER_TYPE
-                        PsiElement(IDENTIFIER)('Library')
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      PsiElement(IDENTIFIER)('Library')
                   PsiElement(DOT)('.')
                   VALUE_PARAMETER_LIST
                     PsiElement(LPAR)('(')

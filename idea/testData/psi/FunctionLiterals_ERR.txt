@@ -218,10 +218,9 @@ JetFile: FunctionLiterals_ERR.jet
         PsiWhiteSpace('\n\n    ')
         FUNCTION_LITERAL
           PsiElement(LBRACE)('{')
-          RECEIVER_TYPE
-            TYPE_REFERENCE
-              USER_TYPE
-                PsiElement(IDENTIFIER)('T')
+          TYPE_REFERENCE
+            USER_TYPE
+              PsiElement(IDENTIFIER)('T')
           PsiElement(DOT)('.')
           PsiErrorElement:Expecting '('
             PsiElement(IDENTIFIER)('t')
@@ -240,10 +239,9 @@ JetFile: FunctionLiterals_ERR.jet
         PsiWhiteSpace('\n    ')
         FUNCTION_LITERAL
           PsiElement(LBRACE)('{')
-          RECEIVER_TYPE
-            TYPE_REFERENCE
-              USER_TYPE
-                PsiElement(IDENTIFIER)('T')
+          TYPE_REFERENCE
+            USER_TYPE
+              PsiElement(IDENTIFIER)('T')
           PsiElement(DOT)('.')
           PsiErrorElement:Expecting '('
             PsiElement(IDENTIFIER)('t')
@@ -287,10 +285,9 @@ JetFile: FunctionLiterals_ERR.jet
         PsiWhiteSpace('\n    ')
         FUNCTION_LITERAL
           PsiElement(LBRACE)('{')
-          RECEIVER_TYPE
-            TYPE_REFERENCE
-              USER_TYPE
-                PsiElement(IDENTIFIER)('T')
+          TYPE_REFERENCE
+            USER_TYPE
+              PsiElement(IDENTIFIER)('T')
           PsiElement(DOT)('.')
           PsiErrorElement:To specify a receiver type, use the full notation: {ReceiverType.(parameters) [: ReturnType] => ...}
             PsiElement(IDENTIFIER)('a')

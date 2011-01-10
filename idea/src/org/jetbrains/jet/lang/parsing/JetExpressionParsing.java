@@ -596,9 +596,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
             int lastDot = matchTokenStreamPredicate(new LastBefore(new At(DOT), new AtOffset(doubleArrowPos)));
             if (lastDot >= 0) { // There is a receiver type
-                PsiBuilder.Marker receiverType = mark();
                 createTruncatedBuilder(lastDot).parseTypeRef();
-                receiverType.done(RECEIVER_TYPE);
                 assert _at(DOT);
                 advance(); // DOT;
 

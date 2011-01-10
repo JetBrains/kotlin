@@ -1370,10 +1370,8 @@ public class JetParsing extends AbstractJetParsing {
 
         int lastLPar = findLastBefore(TokenSet.create(LPAR), TokenSet.create(RBRACE, COLON), false);
         if (lastLPar >= 0 && lastLPar > myBuilder.getCurrentOffset()) {
-            PsiBuilder.Marker receiverType = mark();
             // TODO : -1 is a hack?
             createTruncatedBuilder(lastLPar - 1).parseTypeRef();
-            receiverType.done(RECEIVER_TYPE);
             advance(); // DOT
         }
 

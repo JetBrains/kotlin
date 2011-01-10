@@ -90,7 +90,6 @@ public interface JetNodeTypes {
     JetNodeType LOOP_PARAMETER            = new JetNodeType("LOOP_PARAMETER", JetParameter.class); // TODO: Do we need separate type?
     JetNodeType LOOP_RANGE                = new JetNodeType("LOOP_RANGE");  //TODO: discuss, this can be omitted
     JetNodeType BODY                      = new JetNodeType("BODY");        //TODO: discuss, this can be omitted
-    JetNodeType RECEIVER_TYPE             = new JetNodeType("RECEIVER_TYPE");
     JetNodeType BLOCK                     = new JetNodeType("BLOCK", JetBlockExpression.class);
     JetNodeType FUNCTION_LITERAL          = new JetNodeType("FUNCTION_LITERAL", JetFunctionLiteralExpression.class);
     JetNodeType ANNOTATED_EXPRESSION      = new JetNodeType("ANNOTATED_EXPRESSION", JetAnnotatedExpression.class);

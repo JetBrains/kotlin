@@ -70,13 +70,12 @@ JetFile: Properties.jet
       TYPE_REFERENCE
         FUNCTION_TYPE
           PsiElement(LBRACE)('{')
-          RECEIVER_TYPE
-            TYPE_REFERENCE
-              USER_TYPE
-                PsiElement(IDENTIFIER)('foo')
-              PsiElement(DOT)('.')
-              USER_TYPE
-                PsiElement(IDENTIFIER)('bar')
+          TYPE_REFERENCE
+            USER_TYPE
+              PsiElement(IDENTIFIER)('foo')
+            PsiElement(DOT)('.')
+            USER_TYPE
+              PsiElement(IDENTIFIER)('bar')
           PsiElement(DOT)('.')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
@@ -156,13 +155,12 @@ JetFile: Properties.jet
       TYPE_REFERENCE
         FUNCTION_TYPE
           PsiElement(LBRACE)('{')
-          RECEIVER_TYPE
-            TYPE_REFERENCE
-              USER_TYPE
-                PsiElement(IDENTIFIER)('foo')
-              PsiElement(DOT)('.')
-              USER_TYPE
-                PsiElement(IDENTIFIER)('bar')
+          TYPE_REFERENCE
+            USER_TYPE
+              PsiElement(IDENTIFIER)('foo')
+            PsiElement(DOT)('.')
+            USER_TYPE
+              PsiElement(IDENTIFIER)('bar')
           PsiElement(DOT)('.')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
@@ -209,13 +207,12 @@ JetFile: Properties.jet
       TYPE_REFERENCE
         FUNCTION_TYPE
           PsiElement(LBRACE)('{')
-          RECEIVER_TYPE
-            TYPE_REFERENCE
-              USER_TYPE
-                PsiElement(IDENTIFIER)('foo')
-              PsiElement(DOT)('.')
-              USER_TYPE
-                PsiElement(IDENTIFIER)('bar')
+          TYPE_REFERENCE
+            USER_TYPE
+              PsiElement(IDENTIFIER)('foo')
+            PsiElement(DOT)('.')
+            USER_TYPE
+              PsiElement(IDENTIFIER)('bar')
           PsiElement(DOT)('.')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
@@ -268,13 +265,12 @@ JetFile: Properties.jet
       TYPE_REFERENCE
         FUNCTION_TYPE
           PsiElement(LBRACE)('{')
-          RECEIVER_TYPE
-            TYPE_REFERENCE
-              USER_TYPE
-                PsiElement(IDENTIFIER)('foo')
-              PsiElement(DOT)('.')
-              USER_TYPE
-                PsiElement(IDENTIFIER)('bar')
+          TYPE_REFERENCE
+            USER_TYPE
+              PsiElement(IDENTIFIER)('foo')
+            PsiElement(DOT)('.')
+            USER_TYPE
+              PsiElement(IDENTIFIER)('bar')
           PsiElement(DOT)('.')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
@@ -346,13 +342,12 @@ JetFile: Properties.jet
       TYPE_REFERENCE
         FUNCTION_TYPE
           PsiElement(LBRACE)('{')
-          RECEIVER_TYPE
-            TYPE_REFERENCE
-              USER_TYPE
-                PsiElement(IDENTIFIER)('foo')
-              PsiElement(DOT)('.')
-              USER_TYPE
-                PsiElement(IDENTIFIER)('bar')
+          TYPE_REFERENCE
+            USER_TYPE
+              PsiElement(IDENTIFIER)('foo')
+            PsiElement(DOT)('.')
+            USER_TYPE
+              PsiElement(IDENTIFIER)('bar')
           PsiElement(DOT)('.')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
@@ -405,13 +400,12 @@ JetFile: Properties.jet
       TYPE_REFERENCE
         FUNCTION_TYPE
           PsiElement(LBRACE)('{')
-          RECEIVER_TYPE
-            TYPE_REFERENCE
-              USER_TYPE
-                PsiElement(IDENTIFIER)('foo')
-              PsiElement(DOT)('.')
-              USER_TYPE
-                PsiElement(IDENTIFIER)('bar')
+          TYPE_REFERENCE
+            USER_TYPE
+              PsiElement(IDENTIFIER)('foo')
+            PsiElement(DOT)('.')
+            USER_TYPE
+              PsiElement(IDENTIFIER)('bar')
           PsiElement(DOT)('.')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
