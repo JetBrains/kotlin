@@ -24,6 +24,6 @@ public class JetWhileExpression extends JetExpression {
     }
 
     public JetExpression getBody() {
-        return findExpressionUnder(JetNodeTypes.THEN);
+        return findExpressionUnder(JetNodeTypes.BODY);
     }
 }
