@@ -27,7 +27,7 @@ public class JetBinaryExpressionWithTypeRHS extends JetExpression {
         return left;
     }
 
-    @Nullable(IF_NOT_PARSED)
+    @Nullable @IfNotParsed
     public JetTypeReference getRight() {
         ASTNode node = getOperationTokenNode();
         while (node != null) {

@@ -10,15 +10,14 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.ParsingTestCase;
 import junit.framework.TestSuite;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.jet.lang.psi.JetBinaryExpression;
 import org.jetbrains.jet.lang.psi.JetElement;
-import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetVisitor;
 
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collections;
@@ -61,17 +60,6 @@ public class JetParsingTest extends ParsingTestCase {
                     throw new RuntimeException(throwable);
                 }
             }
-
-            @Override
-            public void visitBinaryExpression(JetBinaryExpression expression) {
-                super.visitBinaryExpression(expression);
-                JetExpression right = expression.getRight();
-                JetExpression left = expression.getLeft();
-                assertNotSame(left, right);
-                if (right == null) {
-                    assertNotNull("Imcomplete binary operation in parsed OK test", PsiTreeUtil.findChildOfType(expression, PsiErrorElement.class) != null);
-                }
-            }
         });
 
         super.checkResult(targetDataName, file);
@@ -85,7 +73,17 @@ public class JetParsingTest extends ParsingTestCase {
             Class<?> declaringClass = method.getDeclaringClass();
             if (!declaringClass.getName().startsWith("org.jetbrains.jet")) continue;
 
-            method.invoke(elem);
+            Object result = method.invoke(elem);
+            if (result == null) {
+                for (Annotation annotation : method.getDeclaredAnnotations()) {
+                    if (annotation instanceof JetElement.IfNotParsed) {
+                        assertNotNull(
+                                "Imcomplete operation in parsed OK test, method " + method.getName() +
+                                " in " + declaringClass.getSimpleName() + " returns null. Element text: \n" + elem.getText(),
+                                PsiTreeUtil.findChildOfType(elem, PsiErrorElement.class));
+                    }
+                }
+            }
         }
     }
 

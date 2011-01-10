@@ -7,6 +7,11 @@ import com.intellij.psi.PsiElementVisitor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.JetLanguage;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 /**
  * @author max
  */
@@ -15,7 +20,12 @@ public class JetElement extends ASTWrapperPsiElement {
         super(node);
     }
 
-    protected static final String IF_NOT_PARSED = "Returns null if has parsing error";
+    /**
+     * Comes along with @Nullable to indicate null is only possible if parsing error present
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.METHOD})
+    public static @interface IfNotParsed {}
 
     @NotNull
     @Override

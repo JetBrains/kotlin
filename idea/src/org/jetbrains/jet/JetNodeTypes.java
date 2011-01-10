@@ -108,6 +108,7 @@ public interface JetNodeTypes {
     JetNodeType DOT_QIALIFIED_EXPRESSION  = new JetNodeType("DOT_QIALIFIED_EXPRESSION", JetDotQualifiedExpression.class);
     JetNodeType HASH_QIALIFIED_EXPRESSION = new JetNodeType("HASH_QIALIFIED_EXPRESSION", JetHashQualifiedExpression.class);
     JetNodeType SAFE_ACCESS_EXPRESSION    = new JetNodeType("SAFE_ACCESS_EXPRESSION", JetSafeQualifiedExpression.class);
+    JetNodeType EMPTY_EXPRESSION          = new JetNodeType("EMPTY_EXPRESSION", JetEmptyExpression.class);
     JetNodeType MATCH_BLOCK               = new JetNodeType("MATCH_BLOCK", JetMatchBlock.class);
     JetNodeType MATCH_ENTRY               = new JetNodeType("MATCH_ENTRY");
     JetNodeType PATTERN                   = new JetNodeType("PATTERN");

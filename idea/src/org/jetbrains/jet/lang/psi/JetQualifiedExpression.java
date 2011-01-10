@@ -22,7 +22,7 @@ public abstract class JetQualifiedExpression extends JetExpression {
         return left;
     }
 
-    @Nullable(IF_NOT_PARSED)
+    @Nullable @IfNotParsed
     public JetExpression getSelectorExpression() {
         ASTNode node = getOperationTokenNode();
         while (node != null) {

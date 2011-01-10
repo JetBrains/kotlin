@@ -25,7 +25,7 @@ public class JetMatchExpression extends JetExpression {
         return left;
     }
 
-    @Nullable(IF_NOT_PARSED)
+    @Nullable @IfNotParsed
     public JetMatchBlock getMatchBlock() {
         return (JetMatchBlock) findChildByType(JetNodeTypes.MATCH_BLOCK);
     }

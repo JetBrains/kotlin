@@ -29,7 +29,7 @@ public class JetExtension extends JetTypeParameterListOwner {
         return body.getDeclarations();
     }
 
-    @Nullable(IF_NOT_PARSED)
+    @Nullable @IfNotParsed
     public JetTypeReference getTargetTypeRef() {
         return (JetTypeReference) findChildByType(JetNodeTypes.TYPE_REFERENCE);
     }

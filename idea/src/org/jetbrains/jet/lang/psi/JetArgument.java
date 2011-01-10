@@ -17,7 +17,7 @@ public class JetArgument extends JetElement {
         visitor.visitArgument(this);
     }
 
-    @Nullable(IF_NOT_PARSED)
+    @Nullable @IfNotParsed
     public JetExpression getArgumentExpression() {
         return findChildByClass(JetExpression.class);
     }

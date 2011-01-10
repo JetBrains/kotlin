@@ -642,8 +642,8 @@ JetFile: ControlStructures.jet
                   PsiElement(IDENTIFIER)('b')
               PsiElement(RPAR)(')')
               BODY
-                <empty list>
-            PsiElement(SEMICOLON)(';')
+                EMPTY_EXPRESSION
+                  PsiElement(SEMICOLON)(';')
             PsiWhiteSpace('\n      ')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('b')
@@ -707,8 +707,8 @@ JetFile: ControlStructures.jet
                     PsiElement(IDENTIFIER)('b')
               PsiElement(RPAR)(')')
               BODY
-                <empty list>
-            PsiElement(SEMICOLON)(';')
+                EMPTY_EXPRESSION
+                  PsiElement(SEMICOLON)(';')
             PsiWhiteSpace('\n      ')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('b')

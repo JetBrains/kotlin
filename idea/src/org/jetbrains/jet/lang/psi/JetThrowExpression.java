@@ -17,7 +17,7 @@ public class JetThrowExpression extends JetExpression {
         visitor.visitThrowExpression(this);
     }
 
-    @Nullable(IF_NOT_PARSED)
+    @Nullable @IfNotParsed
     public JetExpression getThrownExpression() {
         return findChildByClass(JetExpression.class);
     }

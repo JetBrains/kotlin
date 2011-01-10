@@ -27,7 +27,7 @@ public class JetBinaryExpression extends JetExpression {
         return left;
     }
 
-    @Nullable(IF_NOT_PARSED)
+    @Nullable @IfNotParsed
     public JetExpression getRight() {
         ASTNode node = getOperationTokenNode();
         while (node != null) {
