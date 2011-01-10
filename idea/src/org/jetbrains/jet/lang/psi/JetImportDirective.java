@@ -19,6 +19,7 @@ public class JetImportDirective extends JetElement {
         visitor.visitImportDirective(this);
     }
 
+    @NotNull
     public String getImportedName() {
         StringBuilder answer = new StringBuilder();
         ASTNode childNode = getNode().getFirstChildNode();

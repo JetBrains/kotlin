@@ -19,8 +19,11 @@ public class JetPostfixExpression extends JetExpression {
         visitor.visitPostfixExpression(this);
     }
 
+    @NotNull
     public JetExpression getBaseExpression() {
-        return findChildByClass(JetExpression.class);
+        JetExpression answer = findChildByClass(JetExpression.class);
+        assert answer != null;
+        return answer;
     }
 
     @NotNull

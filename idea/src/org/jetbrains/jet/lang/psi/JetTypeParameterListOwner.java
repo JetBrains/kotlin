@@ -21,6 +21,7 @@ public class JetTypeParameterListOwner extends JetNamedDeclaration {
         return (JetTypeParameterList) findChildByType(JetNodeTypes.TYPE_PARAMETER_LIST);
     }
 
+    @NotNull
     public List<JetTypeParameter> getTypeParameters() {
         JetTypeParameterList list = getTypeParameterList();
         if (list == null) return Collections.emptyList();

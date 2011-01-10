@@ -24,7 +24,7 @@ public class JetFunction extends JetTypeParameterListOwner {
         visitor.visitFunction(this);
     }
 
-    @Nullable
+    @Nullable(IF_NOT_PARSED)
     public JetParameterList getParameterList() {
         return (JetParameterList) findChildByType(JetNodeTypes.VALUE_PARAMETER_LIST);
     }

@@ -18,15 +18,17 @@ public class JetIfExpression extends JetExpression {
         visitor.visitIfExpression(this);
     }
 
-    @Nullable
+    @Nullable(IF_NOT_PARSED)
     public JetExpression getCondition() {
         return findExpressionUnder(JetNodeTypes.CONDITION);
     }
 
+    @Nullable(IF_NOT_PARSED)
     public JetExpression getThen() {
         return findExpressionUnder(JetNodeTypes.THEN);
     }
 
+    @Nullable
     public JetExpression getElse() {
         return findExpressionUnder(JetNodeTypes.ELSE);
     }

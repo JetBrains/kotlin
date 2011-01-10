@@ -15,6 +15,8 @@ public class JetElement extends ASTWrapperPsiElement {
         super(node);
     }
 
+    protected static final String IF_NOT_PARSED = "Returns null if has parsing error";
+
     @NotNull
     @Override
     public Language getLanguage() {

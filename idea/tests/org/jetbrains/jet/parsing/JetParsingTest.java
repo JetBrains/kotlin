@@ -4,22 +4,24 @@
 package org.jetbrains.jet.parsing;
 
 import com.intellij.openapi.application.PathManager;
+import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.ParsingTestCase;
 import junit.framework.TestSuite;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.jet.lang.psi.JetBinaryExpression;
 import org.jetbrains.jet.lang.psi.JetElement;
+import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetVisitor;
 
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 public class JetParsingTest extends ParsingTestCase {
@@ -49,7 +51,6 @@ public class JetParsingTest extends ParsingTestCase {
 
     @Override
     protected void checkResult(@NonNls String targetDataName, PsiFile file) throws IOException {
-        super.checkResult(targetDataName, file);
         file.acceptChildren(new JetVisitor() {
             @Override
             public void visitJetElement(JetElement elem) {
@@ -60,7 +61,20 @@ public class JetParsingTest extends ParsingTestCase {
                     throw new RuntimeException(throwable);
                 }
             }
+
+            @Override
+            public void visitBinaryExpression(JetBinaryExpression expression) {
+                super.visitBinaryExpression(expression);
+                JetExpression right = expression.getRight();
+                JetExpression left = expression.getLeft();
+                assertNotSame(left, right);
+                if (right == null) {
+                    assertNotNull("Imcomplete binary operation in parsed OK test", PsiTreeUtil.findChildOfType(expression, PsiErrorElement.class) != null);
+                }
+            }
         });
+
+        super.checkResult(targetDataName, file);
     }
 
     private void checkPsiGetters(JetElement elem) throws Throwable {

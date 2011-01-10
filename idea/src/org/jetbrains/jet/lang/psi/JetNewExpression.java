@@ -21,6 +21,7 @@ public class JetNewExpression extends JetExpression {
         visitor.visitNewExpression(this);
     }
 
+    @Nullable(IF_NOT_PARSED)
     public JetTypeReference getTypeReference() {
         return (JetTypeReference) findChildByType(JetNodeTypes.TYPE_REFERENCE);
     }

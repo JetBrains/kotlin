@@ -35,6 +35,7 @@ public class JetObjectLiteralExpression extends JetExpression implements JetClas
     }
 
     @Override
+    @NotNull
     public List<JetDeclaration> getDeclarations() {
         JetClassBody body = (JetClassBody) findChildByType(JetNodeTypes.CLASS_BODY);
         if (body == null) return Collections.emptyList();

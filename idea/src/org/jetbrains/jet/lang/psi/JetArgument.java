@@ -17,11 +17,12 @@ public class JetArgument extends JetElement {
         visitor.visitArgument(this);
     }
 
-    @Nullable
+    @Nullable(IF_NOT_PARSED)
     public JetExpression getArgumentExpression() {
         return findChildByClass(JetExpression.class);
     }
 
+    @Nullable
     public String getArgumentName() {
         ASTNode firstChildNode = getNode().getFirstChildNode();
         return firstChildNode.getElementType() == JetTokens.IDENTIFIER ? firstChildNode.getText() : null;

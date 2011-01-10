@@ -21,7 +21,7 @@ public class JetConstructor extends JetDeclaration {
         visitor.visitConstructor(this);
     }
 
-    @Nullable
+    @Nullable(IF_NOT_PARSED)
     public JetParameterList getParameterList() {
         return (JetParameterList) findChildByType(JetNodeTypes.VALUE_PARAMETER_LIST);
     }

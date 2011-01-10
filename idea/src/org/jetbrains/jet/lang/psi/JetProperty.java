@@ -71,6 +71,7 @@ public class JetProperty extends JetNamedDeclaration {
         return null;
     }
 
+    @Nullable
     public JetPropertyAccessor getSetter() {
         for (JetPropertyAccessor accessor : getAccessors()) {
             if (accessor.isSetter()) return accessor;

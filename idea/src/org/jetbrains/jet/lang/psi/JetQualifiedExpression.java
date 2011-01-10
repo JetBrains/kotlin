@@ -22,7 +22,7 @@ public abstract class JetQualifiedExpression extends JetExpression {
         return left;
     }
 
-    @Nullable
+    @Nullable(IF_NOT_PARSED)
     public JetExpression getSelectorExpression() {
         ASTNode node = getOperationTokenNode();
         while (node != null) {
@@ -42,7 +42,7 @@ public abstract class JetQualifiedExpression extends JetExpression {
         return operationNode;
     }
 
-    @Nullable
+    @NotNull
     public JetToken getOperationSign() {
         return (JetToken) getOperationTokenNode().getElementType();
     }

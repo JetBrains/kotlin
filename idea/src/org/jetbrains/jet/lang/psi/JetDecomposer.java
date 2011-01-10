@@ -21,7 +21,7 @@ public class JetDecomposer extends JetNamedDeclaration {
         visitor.visitDecomposer(this);
     }
 
-    @Nullable
+    @Nullable(IF_NOT_PARSED)
     public JetDecomposerPropertyList getPropertyList() {
         return (JetDecomposerPropertyList) findChildByType(JetNodeTypes.DECOMPOSER_PROPERTY_LIST);
     }

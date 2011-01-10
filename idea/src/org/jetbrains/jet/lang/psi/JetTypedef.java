@@ -18,7 +18,7 @@ public class JetTypedef extends JetTypeParameterListOwner {
         visitor.visitTypedef(this);
     }
 
-    @Nullable
+    @Nullable(IF_NOT_PARSED)
     public JetTypeReference getTypeReference() {
         return (JetTypeReference) findChildByType(JetNodeTypes.TYPE_REFERENCE);
     }

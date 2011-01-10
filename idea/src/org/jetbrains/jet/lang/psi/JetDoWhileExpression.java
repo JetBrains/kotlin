@@ -18,11 +18,12 @@ public class JetDoWhileExpression extends JetExpression {
         visitor.visitDoWhileExpression(this);
     }
 
-    @Nullable
+    @Nullable(IF_NOT_PARSED)
     public JetExpression getCondition() {
         return findExpressionUnder(JetNodeTypes.CONDITION);
     }
 
+    @Nullable(IF_NOT_PARSED)
     public JetExpression getBody() {
         return findExpressionUnder(JetNodeTypes.BODY);
     }

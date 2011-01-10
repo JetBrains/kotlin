@@ -25,7 +25,7 @@ public class JetTypeConstraint extends JetElement {
                 findChildByType(JetTokens.OBJECT_KEYWORD) != null;
     }
 
-    @Nullable
+    @Nullable(IF_NOT_PARSED)
     public JetTypeReference getSubjectTypeReference() {
         ASTNode node = getNode().getFirstChildNode();
         while (node != null) {
@@ -38,7 +38,7 @@ public class JetTypeConstraint extends JetElement {
         return null;
     }
 
-    @Nullable
+    @Nullable(IF_NOT_PARSED)
     public JetTypeReference getExtendsTypeReference() {
         boolean passedColon = false;
         ASTNode node = getNode().getFirstChildNode();

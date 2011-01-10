@@ -21,7 +21,7 @@ public class JetAttribute extends JetElement {
         visitor.visitAttribute(this);
     }
 
-    @Nullable
+    @Nullable(IF_NOT_PARSED)
     public JetTypeReference getTypeReference() {
         return (JetTypeReference) findChildByType(JetNodeTypes.TYPE_REFERENCE);
     }

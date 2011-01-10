@@ -21,6 +21,7 @@ public class JetExtension extends JetTypeParameterListOwner {
         visitor.visitExtension(this);
     }
 
+    @NotNull
     public List<JetDeclaration> getDeclarations() {
         JetClassBody body = (JetClassBody) findChildByType(JetNodeTypes.CLASS_BODY);
         if (body == null) return Collections.emptyList();
@@ -28,7 +29,7 @@ public class JetExtension extends JetTypeParameterListOwner {
         return body.getDeclarations();
     }
 
-    @Nullable
+    @Nullable(IF_NOT_PARSED)
     public JetTypeReference getTargetTypeRef() {
         return (JetTypeReference) findChildByType(JetNodeTypes.TYPE_REFERENCE);
     }

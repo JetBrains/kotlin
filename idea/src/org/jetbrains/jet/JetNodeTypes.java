@@ -34,6 +34,7 @@ public interface JetNodeTypes {
     // TODO: Not sure if we really need separate PSI nodes for the class parameters?
     JetNodeType PRIMARY_CONSTRUCTOR_PARAMETERS_LIST = new JetNodeType("PRIMARY_CONSTRUCTOR_PARAMETERS_LIST", JetParameterList.class);
     JetNodeType PRIMARY_CONSTRUCTOR_PARAMETER       = new JetNodeType("PRIMARY_CONSTRUCTOR_PARAMETER", JetParameter.class);
+
     JetNodeType CLASS_BODY                          = new JetNodeType("CLASS_BODY", JetClassBody.class);
     JetNodeType IMPORT_DIRECTIVE                    = new JetNodeType("IMPORT_DIRECTIVE", JetImportDirective.class);
     JetNodeType IMPORTED                            = new JetNodeType("IMPORTED"); // TODO: ???

@@ -20,12 +20,12 @@ public class JetCatchSection extends JetElement {
         visitor.visitCatchSection(this);
     }
 
-    @Nullable
+    @Nullable(IF_NOT_PARSED)
     public JetParameterList getParameterList() {
         return (JetParameterList) findChildByType(JetNodeTypes.VALUE_PARAMETER_LIST);
     }
 
-    @Nullable
+    @Nullable(IF_NOT_PARSED)
     public JetParameter getCatchParameter() {
         JetParameterList list = getParameterList();
         if (list == null) return null;
@@ -34,6 +34,7 @@ public class JetCatchSection extends JetElement {
     }
 
 
+    @Nullable(IF_NOT_PARSED)
     public JetExpression getCatchBody() {
         return findChildByClass(JetExpression.class);
     }

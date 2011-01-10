@@ -2,7 +2,6 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -19,8 +18,11 @@ public class JetPrefixExpression extends JetExpression {
         visitor.visitPrefixExpression(this);
     }
 
+    @NotNull
     public JetExpression getBaseExpression() {
-        return findChildByClass(JetExpression.class);
+        JetExpression answer = findChildByClass(JetExpression.class);
+        assert answer != null;
+        return answer;
     }
 
     @NotNull
@@ -30,7 +32,7 @@ public class JetPrefixExpression extends JetExpression {
         return operationNode;
     }
 
-    @Nullable
+    @NotNull
     public JetToken getOperationSign() {
         return (JetToken) getOperationTokenNode().getElementType();
     }

@@ -2,7 +2,6 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author max
@@ -17,8 +16,10 @@ public class JetClassInitializer extends JetDeclaration {
         visitor.visitAnonymousInitializer(this);
     }
 
-    @Nullable
+    @NotNull
     public JetExpression getBody() {
-        return findChildByClass(JetExpression.class);
+        JetExpression body = findChildByClass(JetExpression.class);
+        assert body != null;
+        return body;
     }
 }
