@@ -317,4 +317,12 @@ public class JetVisitor extends PsiElementVisitor {
     public void visitBinaryWithTypeRHSExpression(JetBinaryExpressionWithTypeRHS expression) {
         visitExpression(expression);
     }
+
+    public void visitMatchExpression(JetMatchExpression expression) {
+        visitExpression(expression);
+    }
+
+    public void visitMatchBlock(JetMatchBlock block) {
+        visitJetElement(block);
+    }
 }

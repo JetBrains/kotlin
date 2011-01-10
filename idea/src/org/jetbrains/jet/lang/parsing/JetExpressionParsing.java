@@ -82,6 +82,11 @@ public class JetExpressionParsing extends AbstractJetParsing {
             public void parseRightHandSide(JetExpressionParsing parsing) {
                 parsing.parseMatchBlock();
             }
+
+            @Override
+            public JetNodeType getProductType() {
+                return MATCH_EXPRESSION;
+            }
         },
         // TODO: don't build a binary tree, build a tuple
         ARROW(JetTokens.ARROW),
@@ -403,6 +408,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      * "{" matchEntry+ "}"
      */
     private void parseMatchBlock() {
+        PsiBuilder.Marker mark = mark();
         expect(LBRACE, "Expecting '{' to open a match block");
         while (!eof() && !at(RBRACE)) {
             if (at(CASE_KEYWORD) || at(LBRACKET)) {
@@ -412,6 +418,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             }
         }
         expect(RBRACE, "Expecting '}'");
+        mark.done(MATCH_BLOCK);
     }
 
     /*

@@ -605,8 +605,8 @@ JetFile: Precedence.jet
           PsiWhiteSpace(' ')
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
-          BINARY_EXPRESSION
-            BINARY_EXPRESSION
+          MATCH_EXPRESSION
+            MATCH_EXPRESSION
               BINARY_EXPRESSION
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('b')
@@ -618,13 +618,15 @@ JetFile: Precedence.jet
               PsiWhiteSpace(' ')
               PsiElement(match)('match')
               PsiWhiteSpace(' ')
-              PsiElement(LBRACE)('{')
-              PsiElement(RBRACE)('}')
+              MATCH_BLOCK
+                PsiElement(LBRACE)('{')
+                PsiElement(RBRACE)('}')
             PsiWhiteSpace(' ')
             PsiElement(match)('match')
             PsiWhiteSpace(' ')
-            PsiElement(LBRACE)('{')
-            PsiElement(RBRACE)('}')
+            MATCH_BLOCK
+              PsiElement(LBRACE)('{')
+              PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n  ')
         BINARY_EXPRESSION
           REFERENCE_EXPRESSION
@@ -632,7 +634,7 @@ JetFile: Precedence.jet
           PsiWhiteSpace(' ')
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
-          BINARY_EXPRESSION
+          MATCH_EXPRESSION
             BINARY_EXPRESSION
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('b')
@@ -644,8 +646,9 @@ JetFile: Precedence.jet
             PsiWhiteSpace(' ')
             PsiElement(match)('match')
             PsiWhiteSpace(' ')
-            PsiElement(LBRACE)('{')
-            PsiElement(RBRACE)('}')
+            MATCH_BLOCK
+              PsiElement(LBRACE)('{')
+              PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n  ')
         BINARY_EXPRESSION
           REFERENCE_EXPRESSION
@@ -660,14 +663,15 @@ JetFile: Precedence.jet
               PsiWhiteSpace(' ')
               PsiElement(ARROW)('->')
               PsiWhiteSpace(' ')
-              BINARY_EXPRESSION
+              MATCH_EXPRESSION
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('c')
                 PsiWhiteSpace(' ')
                 PsiElement(match)('match')
                 PsiWhiteSpace(' ')
-                PsiElement(LBRACE)('{')
-                PsiElement(RBRACE)('}')
+                MATCH_BLOCK
+                  PsiElement(LBRACE)('{')
+                  PsiElement(RBRACE)('}')
             PsiWhiteSpace(' ')
             PsiElement(ARROW)('->')
             PsiWhiteSpace(' ')
