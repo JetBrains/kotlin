@@ -5,7 +5,6 @@ package org.jetbrains.jet;
 
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
-import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.jet.lang.JetLanguage;
 import org.jetbrains.jet.lang.psi.*;
 
@@ -113,8 +112,4 @@ public interface JetNodeTypes {
     JetNodeType ROOT_NAMESPACE            = new JetNodeType("ROOT_NAMESPACE", JetRootNamespaceExpression.class);
 
     IElementType NAMESPACE_NAME = new JetNodeType("NAMESPACE_NAME");
-
-    TokenSet DECLARATIONS = TokenSet.create(
-            NAMESPACE, CLASS, PROPERTY, FUN, EXTENSION,
-            TYPEDEF, DECOMPOSER, CLASS_OBJECT, CONSTRUCTOR, ENUM_ENTRY, VALUE_PARAMETER);
 }

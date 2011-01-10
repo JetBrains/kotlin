@@ -1,8 +1,8 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetNodeTypes;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ public class JetNamespaceBody extends JetElement {
     }
 
     public List<JetDeclaration> getDeclarations() {
-        return findChildrenByType(JetNodeTypes.DECLARATIONS);
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, JetDeclaration.class);
     }
 
     @Override
