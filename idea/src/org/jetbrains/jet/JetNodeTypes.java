@@ -3,7 +3,6 @@
  */
 package org.jetbrains.jet;
 
-import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
 import org.jetbrains.jet.lang.JetLanguage;
 import org.jetbrains.jet.lang.psi.*;
@@ -80,9 +79,9 @@ public interface JetNodeTypes {
     JetNodeType CONTINUE                  = new JetNodeType("CONTINUE", JetContinueExpression.class);
     JetNodeType BREAK                     = new JetNodeType("BREAK", JetBreakExpression.class);
     JetNodeType IF                        = new JetNodeType("IF", JetIfExpression.class);
-    JetNodeType CONDITION                 = new JetNodeType("CONDITION");   //TODO: discuss, this can be omitted
-    JetNodeType THEN                      = new JetNodeType("THEN");        //TODO: discuss, this can be omitted
-    JetNodeType ELSE                      = new JetNodeType("ELSE");        //TODO: discuss, this can be omitted
+    JetNodeType CONDITION                 = new JetNodeType("CONDITION", JetContainerNode.class);
+    JetNodeType THEN                      = new JetNodeType("THEN", JetContainerNode.class);
+    JetNodeType ELSE                      = new JetNodeType("ELSE", JetContainerNode.class);
     JetNodeType TRY                       = new JetNodeType("TRY", JetTryExpression.class);
     JetNodeType CATCH                     = new JetNodeType("CATCH", JetCatchSection.class);
     JetNodeType FINALLY                   = new JetNodeType("FINALLY", JetFinallySection.class);
@@ -90,8 +89,8 @@ public interface JetNodeTypes {
     JetNodeType WHILE                     = new JetNodeType("WHILE", JetWhileExpression.class);
     JetNodeType DO_WHILE                  = new JetNodeType("DO_WHILE", JetDoWhileExpression.class);
     JetNodeType LOOP_PARAMETER            = new JetNodeType("LOOP_PARAMETER", JetParameter.class); // TODO: Do we need separate type?
-    JetNodeType LOOP_RANGE                = new JetNodeType("LOOP_RANGE");  //TODO: discuss, this can be omitted
-    JetNodeType BODY                      = new JetNodeType("BODY");        //TODO: discuss, this can be omitted
+    JetNodeType LOOP_RANGE                = new JetNodeType("LOOP_RANGE", JetContainerNode.class);
+    JetNodeType BODY                      = new JetNodeType("BODY", JetContainerNode.class);
     JetNodeType BLOCK                     = new JetNodeType("BLOCK", JetBlockExpression.class);
     JetNodeType FUNCTION_LITERAL          = new JetNodeType("FUNCTION_LITERAL", JetFunctionLiteralExpression.class);
     JetNodeType ANNOTATED_EXPRESSION      = new JetNodeType("ANNOTATED_EXPRESSION", JetAnnotatedExpression.class);
@@ -102,7 +101,7 @@ public interface JetNodeTypes {
     JetNodeType POSTFIX_EXPRESSION        = new JetNodeType("POSTFIX_EXPRESSION", JetPostfixExpression.class);
     JetNodeType CALL_EXPRESSION           = new JetNodeType("CALL_EXPRESSION", JetCallExpression.class);
     JetNodeType ARRAY_ACCESS_EXPRESSION   = new JetNodeType("ARRAY_ACCESS_EXPRESSION", JetArrayAccessExpression.class);
-    JetNodeType INDICES                   = new JetNodeType("INDICES"); //TODO: discuss, this can be omitted
+    JetNodeType INDICES                   = new JetNodeType("INDICES", JetContainerNode.class);
     JetNodeType DOT_QIALIFIED_EXPRESSION  = new JetNodeType("DOT_QIALIFIED_EXPRESSION", JetDotQualifiedExpression.class);
     JetNodeType HASH_QIALIFIED_EXPRESSION = new JetNodeType("HASH_QIALIFIED_EXPRESSION", JetHashQualifiedExpression.class);
     JetNodeType SAFE_ACCESS_EXPRESSION    = new JetNodeType("SAFE_ACCESS_EXPRESSION", JetSafeQualifiedExpression.class);
@@ -112,5 +111,5 @@ public interface JetNodeTypes {
     JetNodeType OBJECT_LITERAL            = new JetNodeType("OBJECT_LITERAL", JetObjectLiteralExpression.class);
     JetNodeType ROOT_NAMESPACE            = new JetNodeType("ROOT_NAMESPACE", JetRootNamespaceExpression.class);
 
-    IElementType NAMESPACE_NAME = new JetNodeType("NAMESPACE_NAME");
+    JetNodeType NAMESPACE_NAME = new JetNodeType("NAMESPACE_NAME", JetContainerNode.class);
 }
