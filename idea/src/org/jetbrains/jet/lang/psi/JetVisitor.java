@@ -325,8 +325,4 @@ public class JetVisitor extends PsiElementVisitor {
     public void visitMatchBlock(JetMatchBlock block) {
         visitJetElement(block);
     }
-
-    public void visitEmptyExpression(JetEmptyExpression expression) {
-        visitExpression(expression);
-    }
 }

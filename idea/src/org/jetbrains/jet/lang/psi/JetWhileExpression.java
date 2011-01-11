@@ -23,7 +23,7 @@ public class JetWhileExpression extends JetExpression {
         return findExpressionUnder(JetNodeTypes.CONDITION);
     }
 
-    @Nullable @IfNotParsed
+    @Nullable
     public JetExpression getBody() {
         return findExpressionUnder(JetNodeTypes.BODY);
     }

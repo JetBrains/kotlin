@@ -856,12 +856,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      */
     private void parseControlStructureBody() {
         PsiBuilder.Marker body = mark();
-        if (at(SEMICOLON)) {
-            PsiBuilder.Marker mark = mark();
-            advance();
-            mark.done(EMPTY_EXPRESSION);
-        }
-        else {
+        if (!at(SEMICOLON)) {
             parseExpression();
         }
         body.done(BODY);
