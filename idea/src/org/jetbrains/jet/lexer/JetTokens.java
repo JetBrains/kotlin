@@ -127,6 +127,7 @@ public interface JetTokens {
     JetKeywordToken INTERNAL_KEYWORD  = JetKeywordToken.softKeyword("internal");
     JetKeywordToken PROTECTED_KEYWORD = JetKeywordToken.softKeyword("protected");
     JetKeywordToken CATCH_KEYWORD     = JetKeywordToken.softKeyword("catch");
+    // TODO: support these as annotations on arguments. Then, they probably can not be har keywords
     JetKeywordToken OUT_KEYWORD       = JetKeywordToken.softKeyword("out");
     JetKeywordToken REF_KEYWORD       = JetKeywordToken.softKeyword("ref");
 
