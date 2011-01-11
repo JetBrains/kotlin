@@ -1,7 +1,6 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
@@ -23,18 +22,24 @@ public class JetUserType extends JetTypeElement {
         visitor.visitUserType(this);
     }
 
-    @NotNull
+    public boolean isAbsoluteInRootNamespace() {
+        return findChildByType(JetTokens.NAMESPACE_KEYWORD) != null;
+    }
+
+    @Nullable
+    public JetUserType getQualifierType() {
+        return (JetUserType) findChildByType(JetNodeTypes.USER_TYPE);
+    }
+
+    @Nullable @IfNotParsed
+    public ASTNode getTypeNameNode() {
+        return getNode().findChildByType(JetTokens.IDENTIFIER);
+    }
+
+    @Nullable @IfNotParsed
     public String getReferencedName() {
-        StringBuilder answer = new StringBuilder();
-        ASTNode childNode = getNode().getFirstChildNode();
-        while (childNode != null) {
-            IElementType tt = childNode.getElementType();
-            if (tt == JetTokens.IDENTIFIER || tt == JetTokens.DOT || tt == JetTokens.NAMESPACE_KEYWORD) {
-                answer.append(childNode.getText());
-            }
-            childNode = childNode.getTreeNext();
-        }
-        return answer.toString();
+        ASTNode nameNode = getTypeNameNode();
+        return nameNode != null ? nameNode.getText() : null;
     }
 
     @Nullable
