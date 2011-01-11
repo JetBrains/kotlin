@@ -64,9 +64,9 @@ JetFile: Decomposers.jet
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
         USER_TYPE
-          PsiElement(IDENTIFIER)('a')
-        PsiElement(DOT)('.')
-        USER_TYPE
+          USER_TYPE
+            PsiElement(IDENTIFIER)('a')
+          PsiElement(DOT)('.')
           PsiElement(IDENTIFIER)('foobar')
       DECOMPOSER_PROPERTY_LIST
         PsiElement(LPAR)('(')

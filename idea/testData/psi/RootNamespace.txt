@@ -58,15 +58,15 @@ JetFile: RootNamespace.jet
               PsiElement(new)('new')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                PsiElement(namespace)('namespace')
-                PsiElement(DOT)('.')
                 USER_TYPE
-                  PsiElement(IDENTIFIER)('foo')
-                PsiElement(DOT)('.')
-                USER_TYPE
-                  PsiElement(IDENTIFIER)('bar')
-                PsiElement(DOT)('.')
-                USER_TYPE
+                  USER_TYPE
+                    USER_TYPE
+                      PsiElement(namespace)('namespace')
+                      PsiElement(DOT)('.')
+                      PsiElement(IDENTIFIER)('foo')
+                    PsiElement(DOT)('.')
+                    PsiElement(IDENTIFIER)('bar')
+                  PsiElement(DOT)('.')
                   PsiElement(IDENTIFIER)('X')
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
@@ -85,15 +85,15 @@ JetFile: RootNamespace.jet
                   PsiElement(case)('case')
                   PsiWhiteSpace(' ')
                   PATTERN
-                    PsiElement(namespace)('namespace')
-                    PsiElement(DOT)('.')
                     USER_TYPE
-                      PsiElement(IDENTIFIER)('foo')
-                    PsiElement(DOT)('.')
-                    USER_TYPE
-                      PsiElement(IDENTIFIER)('bar')
-                    PsiElement(DOT)('.')
-                    USER_TYPE
+                      USER_TYPE
+                        USER_TYPE
+                          PsiElement(namespace)('namespace')
+                          PsiElement(DOT)('.')
+                          PsiElement(IDENTIFIER)('foo')
+                        PsiElement(DOT)('.')
+                        PsiElement(IDENTIFIER)('bar')
+                      PsiElement(DOT)('.')
                       PsiElement(IDENTIFIER)('X')
                     TUPLE_PATTERN
                       PsiElement(LPAR)('(')

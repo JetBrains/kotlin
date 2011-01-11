@@ -1261,27 +1261,21 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      */
     public void parseUserType() {
+        PsiBuilder.Marker type = mark();
         if (at(NAMESPACE_KEYWORD)) {
             advance(); // NAMESPACE_KEYWORD
             expect(DOT, "Expecting '.'", TokenSet.create(IDENTIFIER));
         }
+
         while (true) {
-            parseSimpleUserType();
+            expect(IDENTIFIER, "Type name expected", TokenSet.create(LT));
+            parseTypeArgumentList();
+
             if (!at(DOT)) break;
+            type.done(USER_TYPE);
+            type = type.precede();
             advance(); // DOT
         }
-    }
-
-    /*
-     * simpleUserType
-     *   : SimpleName ("<" (optionalProjection type){","} ">")?
-     *   ;
-     */
-    private void parseSimpleUserType() {
-        PsiBuilder.Marker type = mark();
-
-        expect(IDENTIFIER, "Type name expected", TokenSet.create(LT));
-        parseTypeArgumentList();
 
         type.done(USER_TYPE);
     }
