@@ -191,9 +191,14 @@ infixFunctionCall
 jump
   : "throw" expression
   : "return" expression?
-  : "continue" SimpleName
-  : "break" SimpleName
+  : "continue" stringLiteral?
+  : "break" stringLiteral?
 // yield ?
+  ;
+
+stringLiteral
+  : StringWithTemplates
+  : NoEscapeString
   ;
 
 tupleLiteral // Ambiguity when after a SimpleName (infix call). In this case (e) is treated as an expression in parentheses

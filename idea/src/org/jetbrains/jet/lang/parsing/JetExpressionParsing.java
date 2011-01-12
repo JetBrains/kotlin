@@ -957,8 +957,13 @@ public class JetExpressionParsing extends AbstractJetParsing {
     }
 
     /*
-     * : "continue" SimpleName
-     * : "break" SimpleName
+     * : "continue" stringLiteral?
+     * : "break" stringLiteral?
+     *
+     * stringLiteral
+     *   : StringWithTemplates
+     *   : NoEscapeString
+     *   ;
      */
     private void parseJump(JetNodeType type) {
         assert _at(BREAK_KEYWORD) || _at(CONTINUE_KEYWORD);
@@ -967,7 +972,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         advance(); // BREAK_KEYWORD or CONTINUE_KEYWORD
 
-        if (!eol() && at(IDENTIFIER)) advance(); // IDENTIFIER
+        if (!eol() && (at(RAW_STRING_LITERAL) || at(STRING_LITERAL))) advance(); // RAW_STRING_LITERAL or STRING_LITERAL
 
         marker.done(type);
     }
