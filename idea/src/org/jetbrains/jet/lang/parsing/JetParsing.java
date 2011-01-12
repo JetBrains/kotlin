@@ -52,7 +52,7 @@ public class JetParsing extends AbstractJetParsing {
             @Override
             protected boolean parseCallWithClosure() {
                 if (builderForByClause.getStackSize() > 0) {
-                    return  super.parseCallWithClosure();
+                    return super.parseCallWithClosure();
                 }
                 return false;
             }
@@ -252,7 +252,7 @@ public class JetParsing extends AbstractJetParsing {
             extenstion = true;
             if (TYPE_REF_FIRST.contains(tt())
                     && !(at(IDENTIFIER) && lookahead(1) == LPAR)) {
-                // TODO: if this type is annotated with an attribute, and it is a single identifier, it is a error (decomposer [a] foo())
+                // TODO: if this type is annotated with an attribute, and it is a single identifier, it is an error (decomposer [a] foo())
                 parseTypeRef();
                 // The decomposer name may appear as the last section of the type
                 if (at(DOT)) {
@@ -1311,6 +1311,7 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      */
     private void parseTupleType() {
+        // TODO : prohibit (a)
         assert _at(LPAR);
 
         PsiBuilder.Marker tuple = mark();

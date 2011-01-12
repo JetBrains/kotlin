@@ -20,7 +20,7 @@ public class JetExpression extends JetElement {
     }
 
 
-    JetExpression findExpressionUnder(JetNodeType type) {
+    protected JetExpression findExpressionUnder(JetNodeType type) {
         PsiElement containerNode = findChildByType(type);
         if (containerNode == null) return null;
 

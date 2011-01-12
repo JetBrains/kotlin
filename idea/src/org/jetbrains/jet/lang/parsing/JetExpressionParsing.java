@@ -61,6 +61,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
         RANGE(JetTokens.RANGE),
         SIMPLE_NAME(IDENTIFIER),
         ELVIS(JetTokens.ELVIS),
+        // TODO : make same priority
         WITH_TYPE_RHS(IS_KEYWORD, NOT_IS, AS_KEYWORD, COLON) {
             @Override
             public void parseRightHandSide(JetExpressionParsing parsing) {

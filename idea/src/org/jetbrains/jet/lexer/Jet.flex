@@ -24,11 +24,13 @@ WHITE_SPACE_CHAR=[\ \n\t\f]
 // TODO: prohibit '$' in identifiers?
 PLAIN_IDENTIFIER=[:jletter:] [:jletterdigit:]*
 // TODO: this one MUST allow everything accepted by the runtime
+// TODO: Replace backticks by one backslash in the begining
 ESCAPED_IDENTIFIER = `{PLAIN_IDENTIFIER}`
 IDENTIFIER = {PLAIN_IDENTIFIER}|{ESCAPED_IDENTIFIER}
 FIELD_IDENTIFIER = \${IDENTIFIER}
 
 BLOCK_COMMENT=("/*"[^"*"]{COMMENT_TAIL})|"/*"
+// TODO: Wiki markup for doc comments?
 DOC_COMMENT="/*""*"+("/"|([^"/""*"]{COMMENT_TAIL}))?
 COMMENT_TAIL=([^"*"]*("*"+[^"*""/"])?)*("*"+"/")?
 EOL_COMMENT="/""/"[^\n]*
@@ -52,6 +54,7 @@ BINARY_EXPONENT=[Pp][+-]?{DIGIT}+
 HEX_SIGNIFICAND={HEX_INTEGER_LITERAL}|{HEX_INTEGER_LITERAL}.|0[Xx]{HEX_DIGIT}*.{HEX_DIGIT}+
 
 CHARACTER_LITERAL="'"([^\\\'\n]|{ESCAPE_SEQUENCE})*("'"|\\)?
+// TODO: introduce symbols (e.g. 'foo) as another way to write string literals
 STRING_LITERAL=\"([^\\\"\n]|{ESCAPE_SEQUENCE})*(\"|\\)?
 ESCAPE_SEQUENCE=\\[^\n]
 
