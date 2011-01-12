@@ -20,5 +20,4 @@ val GOD = object {
   fun sendMessage(message : GodMEssage) = throw new RuntimeException(message.name)
 };
 
-
 }
