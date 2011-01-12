@@ -20,6 +20,9 @@ out
 ref
  class Bar<abstract
 virtual
+[sdfsdf=1+1, a]
+[sdfsdf=1+1]
+[a(), sdfsdf=1+1]
 enum
 open
 attribute

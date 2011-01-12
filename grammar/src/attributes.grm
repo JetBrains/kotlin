@@ -7,5 +7,5 @@ attributeAnnotation
   ;
 
 attribute
-  : SimpleName{"."} valueArguments?
+  : SimpleName{"."} (valueArguments | "=" expression)?
   ;

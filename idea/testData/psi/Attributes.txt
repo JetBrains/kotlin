@@ -137,6 +137,61 @@ JetFile: Attributes.jet
             PsiWhiteSpace('\n')
             PsiElement(virtual)('virtual')
             PsiWhiteSpace('\n')
+            ATTRIBUTE_ANNOTATION
+              PsiElement(LBRACKET)('[')
+              ATTRIBUTE
+                USER_TYPE
+                  PsiElement(IDENTIFIER)('sdfsdf')
+                PsiElement(EQ)('=')
+                BINARY_EXPRESSION
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('1')
+                  PsiElement(PLUS)('+')
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('1')
+              PsiElement(COMMA)(',')
+              PsiWhiteSpace(' ')
+              ATTRIBUTE
+                USER_TYPE
+                  PsiElement(IDENTIFIER)('a')
+              PsiElement(RBRACKET)(']')
+            PsiWhiteSpace('\n')
+            ATTRIBUTE_ANNOTATION
+              PsiElement(LBRACKET)('[')
+              ATTRIBUTE
+                USER_TYPE
+                  PsiElement(IDENTIFIER)('sdfsdf')
+                PsiElement(EQ)('=')
+                BINARY_EXPRESSION
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('1')
+                  PsiElement(PLUS)('+')
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('1')
+              PsiElement(RBRACKET)(']')
+            PsiWhiteSpace('\n')
+            ATTRIBUTE_ANNOTATION
+              PsiElement(LBRACKET)('[')
+              ATTRIBUTE
+                USER_TYPE
+                  PsiElement(IDENTIFIER)('a')
+                VALUE_ARGUMENT_LIST
+                  PsiElement(LPAR)('(')
+                  PsiElement(RPAR)(')')
+              PsiElement(COMMA)(',')
+              PsiWhiteSpace(' ')
+              ATTRIBUTE
+                USER_TYPE
+                  PsiElement(IDENTIFIER)('sdfsdf')
+                PsiElement(EQ)('=')
+                BINARY_EXPRESSION
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('1')
+                  PsiElement(PLUS)('+')
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('1')
+              PsiElement(RBRACKET)(']')
+            PsiWhiteSpace('\n')
             PsiElement(enum)('enum')
             PsiWhiteSpace('\n')
             PsiElement(open)('open')

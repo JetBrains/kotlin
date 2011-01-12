@@ -373,14 +373,19 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * attribute
-     *   // : SimpleName{"."} valueArguments?
+     *   // : SimpleName{"."} (valueArguments | "=" expression)?
      *   [for recovery: userType valueArguments?]
      *   ;
      */
     private void parseAttribute() {
         PsiBuilder.Marker attribute = mark();
         parseUserType();
-        if (at(LPAR)) myExpressionParsing.parseValueArgumentList();
+        if (at(LPAR)) {
+            myExpressionParsing.parseValueArgumentList();
+        } else if (at(EQ)) {
+            advance(); // EQ
+            myExpressionParsing.parseExpression();
+        }
         attribute.done(ATTRIBUTE);
     }
 
