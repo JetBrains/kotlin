@@ -11,6 +11,4 @@ fun foo() {
     virtual extension foo for bar {
 
     }
-
-    decomposer T.foo(bar)
 }

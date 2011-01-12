@@ -140,20 +140,5 @@ JetFile: LocalDeclarations.jet
             PsiElement(LBRACE)('{')
             PsiWhiteSpace('\n\n    ')
             PsiElement(RBRACE)('}')
-        PsiWhiteSpace('\n\n    ')
-        DECOMPOSER
-          PsiElement(decomposer)('decomposer')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                PsiElement(IDENTIFIER)('T')
-              PsiElement(DOT)('.')
-              PsiElement(IDENTIFIER)('foo')
-          DECOMPOSER_PROPERTY_LIST
-            PsiElement(LPAR)('(')
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('bar')
-            PsiElement(RPAR)(')')
         PsiWhiteSpace('\n')
         PsiElement(RBRACE)('}')

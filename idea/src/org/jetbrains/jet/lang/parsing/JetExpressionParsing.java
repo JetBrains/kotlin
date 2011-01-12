@@ -17,7 +17,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     private static final TokenSet TYPE_ARGUMENT_LIST_STOPPERS = TokenSet.create(
             INTEGER_LITERAL, LONG_LITERAL, FLOAT_LITERAL, CHARACTER_LITERAL, STRING_LITERAL, RAW_STRING_LITERAL,
             NAMESPACE_KEYWORD, AS_KEYWORD, TYPE_KEYWORD, CLASS_KEYWORD, THIS_KEYWORD, VAL_KEYWORD, VAR_KEYWORD,
-            FUN_KEYWORD, DECOMPOSER_KEYWORD, EXTENSION_KEYWORD, FOR_KEYWORD, NULL_KEYWORD, TYPEOF_KEYWORD,
+            FUN_KEYWORD, EXTENSION_KEYWORD, FOR_KEYWORD, NULL_KEYWORD, TYPEOF_KEYWORD,
             NEW_KEYWORD, TRUE_KEYWORD, FALSE_KEYWORD, IS_KEYWORD, THROW_KEYWORD, RETURN_KEYWORD, BREAK_KEYWORD,
             CONTINUE_KEYWORD, OBJECT_KEYWORD, IF_KEYWORD, TRY_KEYWORD, ELSE_KEYWORD, WHILE_KEYWORD, DO_KEYWORD,
             MATCH_KEYWORD, RBRACKET, RBRACE, RPAR, PLUSPLUS, MINUSMINUS, MUL, PLUS, MINUS, EXCL, DIV, PERC, LTEQ,
@@ -342,7 +342,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             parseDoWhile();
         }
         else if (atSet(CLASS_KEYWORD, EXTENSION_KEYWORD, FUN_KEYWORD, VAL_KEYWORD,
-                VAR_KEYWORD, TYPE_KEYWORD, DECOMPOSER_KEYWORD)) {
+                VAR_KEYWORD, TYPE_KEYWORD)) {
             parseLocalDeclaration();
         }
         else if (at(FIELD_IDENTIFIER)) {
@@ -459,7 +459,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      *   : variablePattern // variable from the context
      *   : tuplePattern
      *   : bindingPattern // we allow non-linear patterns
-     *   : decomposerPattern // labeled components are allowed
+     *   : decomposerPattern // TODO: labeled components are allowed?
      *   ;
      */
     private void parsePattern() {
@@ -765,9 +765,6 @@ public class JetExpressionParsing extends AbstractJetParsing {
          }
          else if (keywordToken == TYPE_KEYWORD) {
              declType = myJetParsing.parseTypeDef();
-         }
-         else if (keywordToken == DECOMPOSER_KEYWORD) {
-             declType = myJetParsing.parseDecomposer();
          }
          return declType;
      }

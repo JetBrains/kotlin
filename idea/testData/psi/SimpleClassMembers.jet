@@ -15,8 +15,6 @@ class foo {
 
         type foo = bar
 
-        decomposer (a, b, c)
-
         this() : this(a, b, c), Foo<T>(bar)
     }
 
@@ -51,8 +49,6 @@ class foo {
 
         type foo = bar
 
-        decomposer (a, b, c)
-
         this() : this(a, b, c), Foo<T>(bar)
     }
 
@@ -63,8 +59,6 @@ class foo {
     var f
 
     type foo = bar
-
-    decomposer (a, b, c)
 
     this() : this(a, b, c), Foo<T>(bar)
 

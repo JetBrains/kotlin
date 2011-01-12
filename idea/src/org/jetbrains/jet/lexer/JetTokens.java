@@ -31,7 +31,6 @@ public interface JetTokens {
     JetKeywordToken VAL_KEYWORD              = JetKeywordToken.keyword("val");
     JetKeywordToken VAR_KEYWORD              = JetKeywordToken.keyword("var");
     JetKeywordToken FUN_KEYWORD              = JetKeywordToken.keyword("fun");
-    JetKeywordToken DECOMPOSER_KEYWORD       = JetKeywordToken.keyword("decomposer");
     JetKeywordToken EXTENSION_KEYWORD        = JetKeywordToken.keyword("extension");
     JetKeywordToken FOR_KEYWORD              = JetKeywordToken.keyword("for");
     JetKeywordToken NULL_KEYWORD             = JetKeywordToken.keyword("null");
@@ -134,7 +133,7 @@ public interface JetTokens {
     JetKeywordToken FINALLY_KEYWORD   = JetKeywordToken.softKeyword("finally");
 
     TokenSet KEYWORDS = TokenSet.create(NAMESPACE_KEYWORD, AS_KEYWORD, TYPE_KEYWORD, CLASS_KEYWORD,
-            THIS_KEYWORD, VAL_KEYWORD, VAR_KEYWORD, FUN_KEYWORD, DECOMPOSER_KEYWORD, EXTENSION_KEYWORD, FOR_KEYWORD,
+            THIS_KEYWORD, VAL_KEYWORD, VAR_KEYWORD, FUN_KEYWORD, EXTENSION_KEYWORD, FOR_KEYWORD,
             NULL_KEYWORD, TYPEOF_KEYWORD, NEW_KEYWORD, TRUE_KEYWORD, FALSE_KEYWORD, IS_KEYWORD,
             IN_KEYWORD, THROW_KEYWORD, RETURN_KEYWORD, BREAK_KEYWORD, CONTINUE_KEYWORD, OBJECT_KEYWORD, IF_KEYWORD,
             ELSE_KEYWORD, WHILE_KEYWORD, DO_KEYWORD, MATCH_KEYWORD, TRY_KEYWORD, CASE_KEYWORD,

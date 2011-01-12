@@ -33,7 +33,6 @@ class Example(a : Foo, i : Int) : Bar(i), Some {
 memberDeclaration
   : classObject
   : constructor
-  : decomposer
   : function
   : property
   : class
@@ -69,10 +68,6 @@ initializer
 
 block
   : "{" expressions "}"
-  ;
-
-decomposer  // TODO: consider other names
-  : modifiers "decomposer" (type ".")? SimpleName? "(" (attributes SimpleName){","}? ")" SEMI? // Public properties only
   ;
 
 function

@@ -14,8 +14,6 @@ class foo {
 
     type foo = ;
 
-    decomposer (a, b, c
-
     this() : this(a, b, c), Foo<T(bar)
 
     this() : this(a, b, c), Foo<T>(bar) {

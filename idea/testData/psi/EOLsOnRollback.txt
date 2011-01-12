@@ -56,15 +56,6 @@ JetFile: EOLsOnRollback.jet
             USER_TYPE
               PsiElement(IDENTIFIER)('t')
         PsiWhiteSpace('\n    ')
-        DECOMPOSER
-          PsiElement(decomposer)('decomposer')
-          PsiWhiteSpace(' ')
-          DECOMPOSER_PROPERTY_LIST
-            PsiElement(LPAR)('(')
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('df')
-            PsiElement(RPAR)(')')
-        PsiWhiteSpace('\n\n    ')
         PROPERTY
           PsiElement(var)('var')
           PsiWhiteSpace(' ')

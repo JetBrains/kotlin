@@ -16,7 +16,6 @@ public interface JetNodeTypes {
     JetNodeType FUN        = new JetNodeType("FUN", JetFunction.class);
     JetNodeType EXTENSION  = new JetNodeType("EXTENSION", JetExtension.class);
     JetNodeType TYPEDEF    = new JetNodeType("TYPEDEF", JetTypedef.class);
-    JetNodeType DECOMPOSER = new JetNodeType("DECOMPOSER", JetDecomposer.class);
 
     JetNodeType CLASS_OBJECT          = new JetNodeType("CLASS_OBJECT", JetClassObject.class);
     JetNodeType CONSTRUCTOR           = new JetNodeType("CONSTRUCTOR", JetConstructor.class);
@@ -53,7 +52,6 @@ public interface JetNodeTypes {
     JetNodeType FUNCTION_TYPE = new JetNodeType("FUNCTION_TYPE", JetFunctionType.class);
     JetNodeType SELF_TYPE     = new JetNodeType("SELF_TYPE", JetSelfType.class);
 
-    JetNodeType DECOMPOSER_PROPERTY_LIST = new JetNodeType("DECOMPOSER_PROPERTY_LIST", JetDecomposerPropertyList.class);
     // TODO: review
     JetNodeType RECEIVER_TYPE_ATTRIBUTES = new JetNodeType("RECEIVER_TYPE_ATTRIBUTES");
     JetNodeType PROPERTY_ACCESSOR        = new JetNodeType("PROPERTY_ACCESSOR", JetPropertyAccessor.class);

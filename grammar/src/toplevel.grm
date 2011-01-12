@@ -25,7 +25,6 @@ toplevelObject
   : function
   : property
   : typedef
-  : decomposer
   ;
 
 namespace

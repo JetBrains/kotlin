@@ -30,14 +30,6 @@ public class JetVisitor extends PsiElementVisitor {
         visitDeclaration(constructor);
     }
 
-    public void visitDecomposer(JetDecomposer decomposer) {
-        visitDeclaration(decomposer);
-    }
-
-    public void visitDecomposerPropertyList(JetDecomposerPropertyList propertyList) {
-        visitJetElement(propertyList);
-    }
-
     public void visitExtension(JetExtension extension) {
         visitDeclaration(extension);
     }

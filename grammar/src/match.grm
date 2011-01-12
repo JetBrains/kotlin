@@ -7,7 +7,7 @@ pattern
   : SimpleName // variable from the context
   : tuplePattern
   : bindingPattern // we allow non-linear patterns
-  : decomposerPattern // labeled components are allowed
+  : decomposerPattern // TODO: labeled components are allowed?
   ;
 
 constantPattern

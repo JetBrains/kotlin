@@ -88,23 +88,6 @@ JetFile: SimpleClassMembers.jet
                 USER_TYPE
                   PsiElement(IDENTIFIER)('bar')
             PsiWhiteSpace('\n\n        ')
-            DECOMPOSER
-              PsiElement(decomposer)('decomposer')
-              PsiWhiteSpace(' ')
-              DECOMPOSER_PROPERTY_LIST
-                PsiElement(LPAR)('(')
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('a')
-                PsiElement(COMMA)(',')
-                PsiWhiteSpace(' ')
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('b')
-                PsiElement(COMMA)(',')
-                PsiWhiteSpace(' ')
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('c')
-                PsiElement(RPAR)(')')
-            PsiWhiteSpace('\n\n        ')
             CONSTRUCTOR
               PsiElement(this)('this')
               VALUE_PARAMETER_LIST
@@ -336,23 +319,6 @@ JetFile: SimpleClassMembers.jet
                 USER_TYPE
                   PsiElement(IDENTIFIER)('bar')
             PsiWhiteSpace('\n\n        ')
-            DECOMPOSER
-              PsiElement(decomposer)('decomposer')
-              PsiWhiteSpace(' ')
-              DECOMPOSER_PROPERTY_LIST
-                PsiElement(LPAR)('(')
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('a')
-                PsiElement(COMMA)(',')
-                PsiWhiteSpace(' ')
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('b')
-                PsiElement(COMMA)(',')
-                PsiWhiteSpace(' ')
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('c')
-                PsiElement(RPAR)(')')
-            PsiWhiteSpace('\n\n        ')
             CONSTRUCTOR
               PsiElement(this)('this')
               VALUE_PARAMETER_LIST
@@ -433,23 +399,6 @@ JetFile: SimpleClassMembers.jet
           TYPE_REFERENCE
             USER_TYPE
               PsiElement(IDENTIFIER)('bar')
-        PsiWhiteSpace('\n\n    ')
-        DECOMPOSER
-          PsiElement(decomposer)('decomposer')
-          PsiWhiteSpace(' ')
-          DECOMPOSER_PROPERTY_LIST
-            PsiElement(LPAR)('(')
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('a')
-            PsiElement(COMMA)(',')
-            PsiWhiteSpace(' ')
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('b')
-            PsiElement(COMMA)(',')
-            PsiWhiteSpace(' ')
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('c')
-            PsiElement(RPAR)(')')
         PsiWhiteSpace('\n\n    ')
         CONSTRUCTOR
           PsiElement(this)('this')

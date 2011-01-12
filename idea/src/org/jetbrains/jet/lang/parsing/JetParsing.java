@@ -29,9 +29,9 @@ public class JetParsing extends AbstractJetParsing {
     }
 
     private static final TokenSet TOPLEVEL_OBJECT_FIRST = TokenSet.create(TYPE_KEYWORD, CLASS_KEYWORD,
-                EXTENSION_KEYWORD, FUN_KEYWORD, VAL_KEYWORD, NAMESPACE_KEYWORD, DECOMPOSER_KEYWORD);
+                EXTENSION_KEYWORD, FUN_KEYWORD, VAL_KEYWORD, NAMESPACE_KEYWORD);
     private static final TokenSet ENUM_MEMBER_FIRST = TokenSet.create(TYPE_KEYWORD, CLASS_KEYWORD,
-                EXTENSION_KEYWORD, FUN_KEYWORD, VAL_KEYWORD, DECOMPOSER_KEYWORD, IDENTIFIER);
+                EXTENSION_KEYWORD, FUN_KEYWORD, VAL_KEYWORD, IDENTIFIER);
 
     private static final TokenSet CLASS_NAME_RECOVERY_SET = TokenSet.orSet(TokenSet.create(LT, WRAPS_KEYWORD, LPAR, COLON, LBRACE), TOPLEVEL_OBJECT_FIRST);
     private static final TokenSet TYPE_PARAMETER_GT_RECOVERY_SET = TokenSet.create(WHERE_KEYWORD, WRAPS_KEYWORD, LPAR, COLON, LBRACE, GT);
@@ -225,9 +225,6 @@ public class JetParsing extends AbstractJetParsing {
         else if (keywordToken == TYPE_KEYWORD) {
             declType = parseTypeDef();
         }
-        else if (keywordToken == DECOMPOSER_KEYWORD) {
-            declType = parseDecomposer();
-        }
 
         if (declType == null) {
             errorAndAdvance("Expecting namespace or top level declaration");
@@ -236,75 +233,6 @@ public class JetParsing extends AbstractJetParsing {
         else {
             decl.done(declType);
         }
-    }
-
-    /*
-     * decomposer
-     *   : modifiers "decomposer" (type ".")? SimpleName? "(" (attributes SimpleName){","}? ")" // Public properties only
-     *   ;
-     */
-    public JetNodeType parseDecomposer() {
-        assert _at(DECOMPOSER_KEYWORD);
-        advance(); // DECOMPOSER_KEYWORD
-
-        boolean extenstion;
-        if (!at(LPAR)) {
-            extenstion = true;
-            if (TYPE_REF_FIRST.contains(tt())
-                    && !(at(IDENTIFIER) && lookahead(1) == LPAR)) {
-                // TODO: if this type is annotated with an attribute, and it is a single identifier, it is an error (decomposer [a] foo())
-                parseTypeRef();
-                // The decomposer name may appear as the last section of the type
-                if (at(DOT)) {
-                    advance(); // DOT
-                    expect(IDENTIFIER, "Expecting decomposer name", TokenSet.create(LPAR));
-                }
-            }
-            else {
-                consumeIf(IDENTIFIER);
-            }
-        } else {
-            extenstion = false;
-        }
-
-        PsiBuilder.Marker properties = mark();
-
-        myBuilder.disableNewlines();
-        expect(LPAR, "Expecting a property list in parentheses '( ... )'");
-
-        // Property list
-        if (!at(RPAR)) {
-            while (true) {
-                parseAttributeList();
-                if (at(IDENTIFIER)) {
-                    myExpressionParsing.parseSimpleNameExpression();
-                }
-                else {
-                    errorWithRecovery("Expecting a property name", TokenSet.create(COMMA, RPAR));
-                    skipUntil(TokenSet.create(COMMA, RPAR, EOL_OR_SEMICOLON));
-                }
-                if (!at(COMMA)) {
-                    if (at(RPAR)) break;
-                    error("Expecting ',' or a closing ')'");
-                    skipUntil(TokenSet.create(COMMA, RPAR, EOL_OR_SEMICOLON));
-                }
-                if (!at(COMMA)) break;
-                advance(); // COMMA
-            }
-        }
-
-        expect(RPAR, "Expecting ')' to close a property list");
-        myBuilder.restoreNewlinesState();
-
-        consumeIf(SEMICOLON);
-
-        properties.done(DECOMPOSER_PROPERTY_LIST);
-
-        if (at(DOT) && !extenstion) {
-            error("Cannot define an extension decomposer on a tuple");
-        }
-
-        return DECOMPOSER;
     }
 
     /*
@@ -572,7 +500,6 @@ public class JetParsing extends AbstractJetParsing {
      * memberDeclaration'
      *   : classObject
      *   : constructor
-     *   : decomposer
      *   : function
      *   : property
      *   : class
@@ -620,9 +547,6 @@ public class JetParsing extends AbstractJetParsing {
         }
         else if (keywordToken == TYPE_KEYWORD) {
             declType = parseTypeDef();
-        }
-        else if (keywordToken == DECOMPOSER_KEYWORD) {
-            declType = parseDecomposer();
         }
         else if (keywordToken == THIS_KEYWORD) {
             declType = parseConstructor();
