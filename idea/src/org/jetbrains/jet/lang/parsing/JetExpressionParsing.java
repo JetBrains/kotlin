@@ -23,7 +23,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
             MATCH_KEYWORD, RBRACKET, RBRACE, RPAR, PLUSPLUS, MINUSMINUS, MUL, PLUS, MINUS, EXCL, DIV, PERC, LTEQ,
             // TODO GTEQ,   foo<bar, baz>=x
             EQEQEQ, ARROW, DOUBLE_ARROW, EXCLEQEQEQ, EQEQ, EXCLEQ, ANDAND, OROR, SAFE_ACCESS, ELVIS, QUEST,
-            SEMICOLON, RANGE, EQ, MULTEQ, DIVEQ, PERCEQ, PLUSEQ, MINUSEQ, NOT_IN, NOT_IS, HASH, EOL_OR_SEMICOLON
+            SEMICOLON, RANGE, EQ, MULTEQ, DIVEQ, PERCEQ, PLUSEQ, MINUSEQ, NOT_IN, NOT_IS, HASH,
+            COLON
     );
 
     public JetExpressionParsing(SemanticWhitespaceAwarePsiBuilder builder, JetParsing jetParsing) {
