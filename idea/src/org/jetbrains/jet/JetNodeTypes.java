@@ -36,7 +36,6 @@ public interface JetNodeTypes {
 
     JetNodeType CLASS_BODY                          = new JetNodeType("CLASS_BODY", JetClassBody.class);
     JetNodeType IMPORT_DIRECTIVE                    = new JetNodeType("IMPORT_DIRECTIVE", JetImportDirective.class);
-    JetNodeType IMPORTED                            = new JetNodeType("IMPORTED"); // TODO: ???
     JetNodeType NAMESPACE_BODY                      = new JetNodeType("NAMESPACE_BODY", JetNamespaceBody.class);
     JetNodeType MODIFIER_LIST                       = new JetNodeType("MODIFIER_LIST", JetModifierList.class);
     JetNodeType ATTRIBUTE_ANNOTATION                = new JetNodeType("ATTRIBUTE_ANNOTATION", JetAttributeAnnotation.class);
@@ -46,6 +45,7 @@ public interface JetNodeTypes {
     JetNodeType VALUE_ARGUMENT                      = new JetNodeType("VALUE_ARGUMENT", JetArgument.class);
     JetNodeType TYPE_REFERENCE                      = new JetNodeType("TYPE_REFERENCE", JetTypeReference.class);
     JetNodeType LABELED_TUPLE_ENTRY                 = new JetNodeType("LABELED_TUPLE_ENTRY");
+    JetNodeType LABELED_TUPLE_TYPE_ENTRY            = new JetNodeType("LABELED_TUPLE_TYPE_ENTRY");
 
     JetNodeType USER_TYPE     = new JetNodeType("USER_TYPE", JetUserType.class);
     JetNodeType TUPLE_TYPE    = new JetNodeType("TUPLE_TYPE", JetTupleType.class);

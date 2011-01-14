@@ -1,0 +1,2 @@
+val foo = (a = 3)
+val foo = (a = 3, a)

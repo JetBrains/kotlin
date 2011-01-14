@@ -1218,8 +1218,15 @@ public class JetExpressionParsing extends AbstractJetParsing {
     }
 
     /*
-     * "(" expression ")" // see tupleLiteral
-     * "(" expression{","} ")"
+     * tupleLiteral // Ambiguity when after a SimpleName (infix call). In this case (e) is treated as an expression in parentheses
+     *              // to put a tuple, write write ((e))
+     *   : "(" ((SimpleName "=")? expression){","} ")"
+     *   ;
+     *
+     * expression
+     *   : "(" expression ")"
+     *   ;
+     *
      * TODO: duplication with valueArguments (but for the error messages)
      */
     private void parseParenthesizedExpressionOrTuple() {
@@ -1237,7 +1244,16 @@ public class JetExpressionParsing extends AbstractJetParsing {
                     errorAndAdvance("Expecting a tuple entry (expression)");
                 }
 
-                parseExpression();
+                if (at(IDENTIFIER) && lookahead(1) == EQ) {
+                    PsiBuilder.Marker entry = mark();
+                    advance(); // IDENTIFIER
+                    advance(); // EQ
+                    tuple = true;
+                    parseExpression();
+                    entry.done(LABELED_TUPLE_ENTRY);
+                } else {
+                    parseExpression();
+                }
 
                 if (!at(COMMA)) break;
                 advance(); // COMMA

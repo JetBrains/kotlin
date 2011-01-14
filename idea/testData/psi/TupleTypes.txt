@@ -61,7 +61,7 @@ JetFile: TupleTypes.jet
           TYPE_REFERENCE
             TUPLE_TYPE
               PsiElement(LPAR)('(')
-              LABELED_TUPLE_ENTRY
+              LABELED_TUPLE_TYPE_ENTRY
                 PsiElement(IDENTIFIER)('x')
                 PsiWhiteSpace(' ')
                 PsiElement(COLON)(':')
@@ -71,7 +71,7 @@ JetFile: TupleTypes.jet
                     PsiElement(IDENTIFIER)('Int')
               PsiElement(COMMA)(',')
               PsiWhiteSpace(' ')
-              LABELED_TUPLE_ENTRY
+              LABELED_TUPLE_TYPE_ENTRY
                 PsiElement(IDENTIFIER)('y')
                 PsiWhiteSpace(' ')
                 PsiElement(COLON)(':')
@@ -188,7 +188,7 @@ JetFile: TupleTypes.jet
             PsiWhiteSpace(' ')
             TUPLE_TYPE
               PsiElement(LPAR)('(')
-              LABELED_TUPLE_ENTRY
+              LABELED_TUPLE_TYPE_ENTRY
                 PsiElement(IDENTIFIER)('x')
                 PsiWhiteSpace(' ')
                 PsiElement(COLON)(':')
@@ -206,7 +206,7 @@ JetFile: TupleTypes.jet
                     PsiElement(IDENTIFIER)('Int')
               PsiElement(COMMA)(',')
               PsiWhiteSpace(' ')
-              LABELED_TUPLE_ENTRY
+              LABELED_TUPLE_TYPE_ENTRY
                 PsiElement(IDENTIFIER)('y')
                 PsiWhiteSpace(' ')
                 PsiElement(COLON)(':')

@@ -1274,7 +1274,7 @@ public class JetParsing extends AbstractJetParsing {
                     advance(); // IDENTIFIER
                     advance(); // COLON
                     parseTypeRef();
-                    labeledEntry.done(LABELED_TUPLE_ENTRY);
+                    labeledEntry.done(LABELED_TUPLE_TYPE_ENTRY);
                 }
                 else if (TYPE_REF_FIRST.contains(tt())) {
                     parseTypeRef();
