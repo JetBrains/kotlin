@@ -1233,11 +1233,11 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         myBuilder.disableNewlines();
         advance(); // LPAR
-        int commaPassed = 0;
+        boolean tuple = false;
         if (!at(RPAR)) {
             while (true) {
                 while (at(COMMA)) {
-                    commaPassed++;
+                    tuple = true;
                     errorAndAdvance("Expecting a tuple entry (expression)");
                 }
 
@@ -1245,19 +1245,21 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
                 if (!at(COMMA)) break;
                 advance(); // COMMA
-                commaPassed++;
+                tuple = true;
 
                 if (at(RPAR)) {
                     error("Expecting a tuple entry (expression)");
                     break;
                 }
             }
+        } else {
+            tuple = true;
         }
 
         expect(RPAR, "Expecting ')'");
         myBuilder.restoreNewlinesState();
 
-        mark.done(commaPassed > 0 ? TUPLE : PARENTHESIZED);
+        mark.done(tuple ? TUPLE : PARENTHESIZED);
     }
 
     /*

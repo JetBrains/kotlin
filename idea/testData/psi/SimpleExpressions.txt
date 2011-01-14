@@ -20,7 +20,7 @@ JetFile: SimpleExpressions.jet
           PsiWhiteSpace(' ')
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
-          PARENTHESIZED
+          TUPLE
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
         PsiElement(COMMA)(',')

@@ -324,7 +324,7 @@ JetFile: NewlinesInParentheses.jet
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('T')
         PsiWhiteSpace('\n  ')
-        PARENTHESIZED
+        TUPLE
           PsiElement(LPAR)('(')
           PsiElement(RPAR)(')')
         PsiWhiteSpace('\n')
