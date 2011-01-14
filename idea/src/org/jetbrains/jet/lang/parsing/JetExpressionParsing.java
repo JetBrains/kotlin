@@ -43,15 +43,15 @@ public class JetExpressionParsing extends AbstractJetParsing {
         PREFIX(MINUS, PLUS, MINUSMINUS, PLUSPLUS, EXCL) { // attributes
 
             @Override
-            public void parseHigherPrecedence(JetExpressionParsing parsing) {
+            public void parseHigherPrecedence(JetExpressionParsing parser) {
                 throw new IllegalStateException("Don't call this method");
             }
         },
 
         MULTIPLICATIVE(MUL, DIV, PERC) {
             @Override
-            public void parseHigherPrecedence(JetExpressionParsing parsing) {
-                parsing.parsePrefixExpression();
+            public void parseHigherPrecedence(JetExpressionParsing parser) {
+                parser.parsePrefixExpression();
             }
         },
 
@@ -60,29 +60,22 @@ public class JetExpressionParsing extends AbstractJetParsing {
         SIMPLE_NAME(IDENTIFIER),
         ELVIS(JetTokens.ELVIS),
         // TODO : make same priority
-        WITH_TYPE_RHS(AS_KEYWORD, COLON) {
+        WITH_TYPE_RHS(IN_KEYWORD, NOT_IN, AS_KEYWORD, COLON, IS_KEYWORD, NOT_IS) {
             @Override
-            public void parseRightHandSide(JetExpressionParsing parsing) {
-                parsing.myJetParsing.parseTypeRef();
-            }
+            public JetNodeType parseRightHandSide(IElementType operation, JetExpressionParsing parser) {
+                if (operation == AS_KEYWORD || operation == COLON) {
+                    parser.myJetParsing.parseTypeRef();
+                    return BINARY_WITH_TYPE;
+                }
+                if (operation == IS_KEYWORD || operation == NOT_IS) {
+                    parser.parsePattern();
 
-            @Override
-            public JetNodeType getProductType() {
-                return BINARY_WITH_TYPE;
+                    return BINARY_WITH_PATTERN;
+                }
+
+                return super.parseRightHandSide(operation, parser);
             }
         },
-        IS(IS_KEYWORD, NOT_IS) {
-            @Override
-            public void parseRightHandSide(JetExpressionParsing parsing) {
-                parsing.parsePattern();
-            }
-
-            @Override
-            public JetNodeType getProductType() {
-                return BINARY_WITH_PATTERN;
-            }
-        },
-        NAMED_INFIX(IN_KEYWORD, NOT_IN),
         COMPARISON(LT, GT, LTEQ, GTEQ),
         EQUALITY(EQEQ, EXCLEQ, EQEQEQ, EXCLEQEQEQ),
         CONJUNCTION(ANDAND),
@@ -106,16 +99,19 @@ public class JetExpressionParsing extends AbstractJetParsing {
             this.operations = TokenSet.create(operations);
         }
 
-        public void parseHigherPrecedence(JetExpressionParsing parsing) {
+        public void parseHigherPrecedence(JetExpressionParsing parser) {
             assert higher != null;
-            parsing.parseBinaryExpression(higher);
+            parser.parseBinaryExpression(higher);
         }
 
-        public void parseRightHandSide(JetExpressionParsing parsing) {
-            parseHigherPrecedence(parsing);
-        }
-
-        public JetNodeType getProductType() {
+        /**
+         *
+         * @param operation the operation sign (e.g. PLUS or IS
+         * @param parser the parser object
+         * @return node type of the result
+         */
+        public JetNodeType parseRightHandSide(IElementType operation, JetExpressionParsing parser) {
+            parseHigherPrecedence(parser);
             return BINARY_EXPRESSION;
         }
 
@@ -162,9 +158,10 @@ public class JetExpressionParsing extends AbstractJetParsing {
         precedence.parseHigherPrecedence(this);
 
         while (!myBuilder.newlineBeforeCurrentToken() && atSet(precedence.getOperations())) {
-             advance(); // operation
-             precedence.parseRightHandSide(this);
-             expression.done(precedence.getProductType());
+            IElementType operation = tt();
+            advance(); // operation
+            JetNodeType resultType = precedence.parseRightHandSide(operation, this);
+            expression.done(resultType);
              expression = expression.precede();
         }
 
