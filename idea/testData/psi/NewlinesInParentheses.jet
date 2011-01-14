@@ -20,8 +20,18 @@ fun foo() {
     + d}
     + d]
 
-  e match {
-    case A
-    () => foo;
+  when (e) {
+    is T
+    () => a
+    in f
+    () => a
+    !is T
+    () => a
+    !in f
+    () => a
+    f
+    () => a
   }
+  val f = a is T
+  ()
 }

@@ -539,6 +539,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      */
     private void parseWhenCondition() {
         PsiBuilder.Marker condition = mark();
+        myBuilder.disableNewlines();
         if (at(IN_KEYWORD) || at(NOT_IN)) {
             advance(); // IN_KEYWORD or NOT_IN
 
@@ -562,6 +563,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 parseExpression();
             }
         }
+        myBuilder.restoreNewlinesState();
         condition.done(WHEN_CONDITION);
     }
 
@@ -584,7 +586,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         if (at(NAMESPACE_KEYWORD) || at(IDENTIFIER)) {
             myJetParsing.parseUserType();
-            if (at(LPAR)) {
+            if (!myBuilder.newlineBeforeCurrentToken() && at(LPAR)) {
                 PsiBuilder.Marker list = mark();
                 parseTuplePattern(DECOMPOSER_ARGUMENT);
                 list.done(DECOMPOSER_ARGUMENT_LIST);
