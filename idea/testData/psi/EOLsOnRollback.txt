@@ -40,7 +40,7 @@ JetFile: EOLsOnRollback.jet
           PsiElement(for)('for')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            USER_TYPE
+            REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('boo')
         PsiWhiteSpace('\n\n    ')
         TYPEDEF
@@ -53,7 +53,7 @@ JetFile: EOLsOnRollback.jet
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            USER_TYPE
+            REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('t')
         PsiWhiteSpace('\n    ')
         PROPERTY
@@ -66,8 +66,9 @@ JetFile: EOLsOnRollback.jet
             ATTRIBUTE_ANNOTATION
               PsiElement(LBRACKET)('[')
               ATTRIBUTE
-                USER_TYPE
-                  PsiElement(IDENTIFIER)('a')
+                TYPE_REFERENCE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
               PsiElement(RBRACKET)(']')
           PsiWhiteSpace(' ')
           PsiElement(var)('var')
@@ -87,8 +88,9 @@ JetFile: EOLsOnRollback.jet
             ATTRIBUTE_ANNOTATION
               PsiElement(LBRACKET)('[')
               ATTRIBUTE
-                USER_TYPE
-                  PsiElement(IDENTIFIER)('a')
+                TYPE_REFERENCE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
               PsiElement(RBRACKET)(']')
           PsiWhiteSpace(' ')
           PsiElement(val)('val')

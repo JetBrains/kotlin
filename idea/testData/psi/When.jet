@@ -1,0 +1,76 @@
+fun foo() {
+  return false
+
+  fun a() = {when(x) { is a => b }}
+
+  // foo
+  fun b() {}
+
+}
+
+fun foo() {
+  when (e) {
+
+  }
+  when (e) {
+    is a => foo
+  }
+  when (e) {
+    is Tree(a, b) => foo
+    is Tree(a, b) if (a > 5) => foo
+    is null => foo
+    is 1 => foo
+    is A.b => foo
+    is 1l => foo
+    is 1.0 => foo
+    is 'c' => foo
+    is "sadfsa" => foo
+    is """ddd""" => foo
+    is ? => foo
+    is ? is Foo => foo
+    is ?a is Foo => foo
+    is (?a is Foo, b) => foo
+  }
+  when (when(when (e) {
+
+  }) {
+
+  }) {
+
+  }
+}
+
+fun foo() {
+  when (val a = e) {
+    is Tree => c
+    is Tree(null, ?r) => c
+    is a(a, b) => c
+    is a(a, b) => c
+    is a.a(a, b) => c
+    is a.a(foo = a, bar = b) => c
+    is namespace.a.a(a, b) => c
+    is a(?a is T, b) => c
+    is a(b, 1) => c
+    in 1..2 => dsf
+    !in 2 => sd
+    !is t => d
+    is {(foo) : Bar} => fgpp
+    is (1, ?a is Foo, ?, ? is Foo, bar) => d
+    is (Foo, ?a in 1..2, ?, ? !is Foo, ?bar = foo.bar<a>(a)) => d
+    is (Int, Int) => 2
+    else => foo
+    else continue
+  }
+}
+
+fun foo() {
+  when (val a = e) {
+    is Tree,
+    is Tree(null, ?r),
+    is a(a, b) => c
+    1, foo(), bar, 2 + 3,
+    is a(a, b) => c
+    is a.a(=a + 3, b) => c
+  }
+}
+

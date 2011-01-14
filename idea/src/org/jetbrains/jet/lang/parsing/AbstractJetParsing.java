@@ -199,10 +199,10 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
         }
     }
 
-    protected void errorUntil(String mesage, TokenSet tokenSet) {
+    protected void errorUntil(String message, TokenSet tokenSet) {
         PsiBuilder.Marker error = mark();
         skipUntil(tokenSet);
-        error.error(mesage);
+        error.error(message);
     }
 
     protected void errorUntilOffset(String mesage, int offset) {

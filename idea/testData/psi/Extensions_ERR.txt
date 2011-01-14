@@ -20,7 +20,7 @@ JetFile: Extensions_ERR.jet
       PsiErrorElement:Expecting 'for' to specify the type that is being extended
         <empty list>
       TYPE_REFERENCE
-        USER_TYPE
+        REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('bar')
     PsiWhiteSpace('\n')
     EXTENSION
@@ -36,7 +36,7 @@ JetFile: Extensions_ERR.jet
       PsiElement(for)('for')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        USER_TYPE
+        REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('bar')
     PsiWhiteSpace('\n')
     EXTENSION

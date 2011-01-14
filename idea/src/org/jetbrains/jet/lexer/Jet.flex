@@ -96,12 +96,11 @@ RAW_STRING_LITERAL = {THREE_QUO} {QUO_STRING_CHAR}* {THREE_QUO}?
 <YYINITIAL> "while"      { return JetTokens.WHILE_KEYWORD ;}
 <YYINITIAL> "break"      { return JetTokens.BREAK_KEYWORD ;}
 <YYINITIAL> "class"      { return JetTokens.CLASS_KEYWORD ;}
-<YYINITIAL> "match"      { return JetTokens.MATCH_KEYWORD ;}
 <YYINITIAL> "throw"      { return JetTokens.THROW_KEYWORD ;}
 <YYINITIAL> "false"      { return JetTokens.FALSE_KEYWORD ;}
+<YYINITIAL> "when"       { return JetTokens.WHEN_KEYWORD ;}
 <YYINITIAL> "true"       { return JetTokens.TRUE_KEYWORD ;}
 <YYINITIAL> "type"       { return JetTokens.TYPE_KEYWORD ;}
-<YYINITIAL> "case"       { return JetTokens.CASE_KEYWORD ;}
 <YYINITIAL> "this"       { return JetTokens.THIS_KEYWORD ;}
 <YYINITIAL> "null"       { return JetTokens.NULL_KEYWORD ;}
 <YYINITIAL> "else"       { return JetTokens.ELSE_KEYWORD ;}

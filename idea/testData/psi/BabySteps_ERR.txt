@@ -25,7 +25,7 @@ JetFile: BabySteps_ERR.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            USER_TYPE
+            REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('doo')
           PsiWhiteSpace(' ')
           PsiElement(EQ)('=')
@@ -39,7 +39,7 @@ JetFile: BabySteps_ERR.jet
       DELEGATION_SPECIFIER_LIST
         DELEGATOR_SUPER_CALL
           TYPE_REFERENCE
-            USER_TYPE
+            REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('foo')
           VALUE_ARGUMENT_LIST
             PsiElement(LPAR)('(')
@@ -55,7 +55,7 @@ JetFile: BabySteps_ERR.jet
           PsiElement(COMMA)(',')
         DELEGATOR_BY
           TYPE_REFERENCE
-            USER_TYPE
+            REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('bar')
           PsiWhiteSpace(' ')
           PsiElement(by)('by')
@@ -66,7 +66,7 @@ JetFile: BabySteps_ERR.jet
         PsiWhiteSpace(' ')
         DELEGATOR_SUPER_CLASS
           TYPE_REFERENCE
-            USER_TYPE
+            REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('bar')
       PsiWhiteSpace(' ')
       CLASS_BODY

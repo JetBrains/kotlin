@@ -97,6 +97,7 @@ public interface JetNodeTypes {
     JetNodeType THIS_EXPRESSION           = new JetNodeType("THIS_EXPRESSION", JetThisExpression.class);
     JetNodeType BINARY_EXPRESSION         = new JetNodeType("BINARY_EXPRESSION", JetBinaryExpression.class);
     JetNodeType BINARY_WITH_TYPE          = new JetNodeType("BINARY_WITH_TYPE", JetBinaryExpressionWithTypeRHS.class);
+    JetNodeType BINARY_WITH_PATTERN       = new JetNodeType("BINARY_WITH_PATTERN", JetExpression.class); // TODO:
     JetNodeType MATCH_EXPRESSION          = new JetNodeType("MATCH_EXPRESSION", JetMatchExpression.class);
     JetNodeType PREFIX_EXPRESSION         = new JetNodeType("PREFIX_EXPRESSION", JetPrefixExpression.class);
     JetNodeType POSTFIX_EXPRESSION        = new JetNodeType("POSTFIX_EXPRESSION", JetPostfixExpression.class);
@@ -108,10 +109,19 @@ public interface JetNodeTypes {
     JetNodeType SAFE_ACCESS_EXPRESSION    = new JetNodeType("SAFE_ACCESS_EXPRESSION", JetSafeQualifiedExpression.class);
     JetNodeType MATCH_BLOCK               = new JetNodeType("MATCH_BLOCK", JetMatchBlock.class);
     JetNodeType MATCH_ENTRY               = new JetNodeType("MATCH_ENTRY");
-    JetNodeType PATTERN                   = new JetNodeType("PATTERN");
+    JetNodeType DECOMPOSER_PATTERN        = new JetNodeType("DECOMPOSER_PATTERN");
     JetNodeType TUPLE_PATTERN             = new JetNodeType("TUPLE_PATTERN");
     JetNodeType OBJECT_LITERAL            = new JetNodeType("OBJECT_LITERAL", JetObjectLiteralExpression.class);
     JetNodeType ROOT_NAMESPACE            = new JetNodeType("ROOT_NAMESPACE", JetRootNamespaceExpression.class);
+    JetNodeType DECOMPOSER_ARGUMENT_LIST  = new JetNodeType("DECOMPOSER_ARGUMENT_LIST");
+    JetNodeType DECOMPOSER_ARGUMENT       = new JetNodeType("DECOMPOSER_ARGUMENT");
+    JetNodeType TYPE_PATTERN              = new JetNodeType("TYPE_PATTERN");
+    JetNodeType EXPRESSION_PATTERN        = new JetNodeType("EXPRESSION_PATTERN");
+    JetNodeType BINDING_PATTERN           = new JetNodeType("BINDING_PATTERN");
+    JetNodeType WHEN                      = new JetNodeType("WHEN");
+    JetNodeType WHEN_ENTRY                = new JetNodeType("WHEN_ENTRY");
+    JetNodeType WHEN_CONDITION            = new JetNodeType("WHEN_CONDITION");
+    JetNodeType TUPLE_PATTERN_ENTRY       = new JetNodeType("TUPLE_PATTERN_ENTRY");
 
     JetNodeType NAMESPACE_NAME = new JetNodeType("NAMESPACE_NAME", JetContainerNode.class);
 }

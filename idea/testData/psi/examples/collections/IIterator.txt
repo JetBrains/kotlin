@@ -32,7 +32,7 @@ JetFile: IIterator.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            USER_TYPE
+            REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('T')
         PsiWhiteSpace('\n  ')
         PROPERTY
@@ -43,7 +43,7 @@ JetFile: IIterator.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            USER_TYPE
+            REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Boolean')
         PsiWhiteSpace('\n\n  ')
         FUN
@@ -60,7 +60,7 @@ JetFile: IIterator.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                USER_TYPE
+                REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('MutableArray')
                   TYPE_ARGUMENT_LIST
                     PsiElement(LT)('<')
@@ -68,7 +68,7 @@ JetFile: IIterator.jet
                       PsiElement(in)('in')
                     PsiWhiteSpace(' ')
                     TYPE_REFERENCE
-                      USER_TYPE
+                      REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('T')
                     PsiElement(GT)('>')
             PsiElement(RPAR)(')')
@@ -76,7 +76,7 @@ JetFile: IIterator.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            USER_TYPE
+            REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Int')
           PsiWhiteSpace(' ')
           BLOCK
@@ -127,7 +127,7 @@ JetFile: IIterator.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                USER_TYPE
+                REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('MutableArray')
                   TYPE_ARGUMENT_LIST
                     PsiElement(LT)('<')
@@ -135,7 +135,7 @@ JetFile: IIterator.jet
                       PsiElement(in)('in')
                     PsiWhiteSpace(' ')
                     TYPE_REFERENCE
-                      USER_TYPE
+                      REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('T')
                     PsiElement(GT)('>')
             PsiElement(COMMA)(',')
@@ -146,7 +146,7 @@ JetFile: IIterator.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                USER_TYPE
+                REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('Int')
             PsiElement(COMMA)(',')
             PsiWhiteSpace(' ')
@@ -156,14 +156,14 @@ JetFile: IIterator.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                USER_TYPE
+                REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('Int')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            USER_TYPE
+            REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Int')
           PsiWhiteSpace(' ')
           BLOCK

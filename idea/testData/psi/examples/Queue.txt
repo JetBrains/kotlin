@@ -15,12 +15,12 @@ JetFile: Queue.jet
       DELEGATION_SPECIFIER_LIST
         DELEGATOR_SUPER_CLASS
           TYPE_REFERENCE
-            USER_TYPE
+            REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('IPushPop')
               TYPE_ARGUMENT_LIST
                 PsiElement(LT)('<')
                 TYPE_REFERENCE
-                  USER_TYPE
+                  REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('T')
                 PsiElement(GT)('>')
       PsiWhiteSpace(' ')
@@ -49,7 +49,7 @@ JetFile: Queue.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                USER_TYPE
+                REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('T')
             PsiElement(COMMA)(',')
             PsiWhiteSpace(' ')
@@ -61,12 +61,12 @@ JetFile: Queue.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                USER_TYPE
+                REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('Item')
                   TYPE_ARGUMENT_LIST
                     PsiElement(LT)('<')
                     TYPE_REFERENCE
-                      USER_TYPE
+                      REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('T')
                     PsiElement(GT)('>')
             PsiElement(RPAR)(')')
@@ -82,12 +82,12 @@ JetFile: Queue.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            USER_TYPE
+            REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Item')
               TYPE_ARGUMENT_LIST
                 PsiElement(LT)('<')
                 TYPE_REFERENCE
-                  USER_TYPE
+                  REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('T')
                 PsiElement(GT)('>')
           PsiWhiteSpace(' ')
@@ -107,12 +107,12 @@ JetFile: Queue.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            USER_TYPE
+            REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Item')
               TYPE_ARGUMENT_LIST
                 PsiElement(LT)('<')
                 TYPE_REFERENCE
-                  USER_TYPE
+                  REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('T')
                 PsiElement(GT)('>')
           PsiWhiteSpace(' ')
@@ -138,7 +138,7 @@ JetFile: Queue.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                USER_TYPE
+                REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('T')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
@@ -156,7 +156,7 @@ JetFile: Queue.jet
                 PsiElement(new)('new')
                 PsiWhiteSpace(' ')
                 TYPE_REFERENCE
-                  USER_TYPE
+                  REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('Item')
                 VALUE_ARGUMENT_LIST
                   PsiElement(LPAR)('(')
@@ -276,7 +276,7 @@ JetFile: Queue.jet
                   PsiElement(new)('new')
                   PsiWhiteSpace(' ')
                   TYPE_REFERENCE
-                    USER_TYPE
+                    REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('UnderflowException')
                   VALUE_ARGUMENT_LIST
                     PsiElement(LPAR)('(')

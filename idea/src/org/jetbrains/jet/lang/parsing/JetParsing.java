@@ -40,6 +40,7 @@ public class JetParsing extends AbstractJetParsing {
     /*package*/ static final TokenSet TYPE_REF_FIRST = TokenSet.create(LBRACKET, IDENTIFIER, LBRACE, LPAR);
 
     public static JetParsing createForTopLevel(SemanticWhitespaceAwarePsiBuilder builder) {
+        builder.setDebugMode(true);
         JetParsing jetParsing = new JetParsing(builder);
         jetParsing.myExpressionParsing = new JetExpressionParsing(builder, jetParsing);
         return jetParsing;
@@ -307,7 +308,10 @@ public class JetParsing extends AbstractJetParsing {
      */
     private void parseAttribute() {
         PsiBuilder.Marker attribute = mark();
+
+        PsiBuilder.Marker typeReference = mark();
         parseUserType();
+        typeReference.done(TYPE_REFERENCE);
         if (at(LPAR)) {
             myExpressionParsing.parseValueArgumentList();
         } else if (at(EQ)) {
@@ -679,9 +683,11 @@ public class JetParsing extends AbstractJetParsing {
     public JetNodeType parseProperty(boolean local) {
         // TODO: how to write an extension ptoperty for a generic type? (val List<T>.i -- what is T?!)
 
-        assert _at(VAL_KEYWORD) || _at(VAR_KEYWORD);
-
-        advance(); // VAL_KEYWORD or VAR_KEYWORD
+        if (at(VAL_KEYWORD) || at(VAR_KEYWORD)) {
+            advance(); // VAL_KEYWORD or VAR_KEYWORD
+        } else {
+            errorAndAdvance("Expecting 'val' or 'var'");
+        }
 
         TokenSet propertyNameFollow = TokenSet.create(COLON, EQ, LBRACE, SEMICOLON);
 
@@ -1201,12 +1207,12 @@ public class JetParsing extends AbstractJetParsing {
             parseTypeArgumentList();
 
             if (!at(DOT)) break;
-            type.done(USER_TYPE);
+            type.done(REFERENCE_EXPRESSION);
             type = type.precede();
             advance(); // DOT
         }
 
-        type.done(USER_TYPE);
+        type.done(REFERENCE_EXPRESSION);
     }
 
     /*

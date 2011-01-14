@@ -15,13 +15,13 @@ JetFile: TypeConstraints.jet
         TYPE_CONSTRAINT_LIST
           TYPE_CONSTRAINT
             TYPE_REFERENCE
-              USER_TYPE
+              REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('T')
             PsiWhiteSpace(' ')
             PsiElement(COLON)(':')
             PsiWhiteSpace(' ')
             TYPE_REFERENCE
-              USER_TYPE
+              REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('T')
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
@@ -31,13 +31,13 @@ JetFile: TypeConstraints.jet
             PsiElement(object)('object')
             PsiWhiteSpace(' ')
             TYPE_REFERENCE
-              USER_TYPE
+              REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('T')
             PsiWhiteSpace(' ')
             PsiElement(COLON)(':')
             PsiWhiteSpace(' ')
             TYPE_REFERENCE
-              USER_TYPE
+              REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('T')
       PsiWhiteSpace(' ')
       CLASS_BODY

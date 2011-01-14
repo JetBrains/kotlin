@@ -57,11 +57,10 @@ if
 else
 while
 do
-match
+when
 out
 ref
 try
-case
 
 Soft:
 wraps -- in a class header

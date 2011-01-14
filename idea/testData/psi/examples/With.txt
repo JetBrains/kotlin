@@ -5,8 +5,9 @@ JetFile: With.jet
         ATTRIBUTE_ANNOTATION
           PsiElement(LBRACKET)('[')
           ATTRIBUTE
-            USER_TYPE
-              PsiElement(IDENTIFIER)('inline')
+            TYPE_REFERENCE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('inline')
           PsiElement(RBRACKET)(']')
       PsiWhiteSpace(' ')
       PsiElement(fun)('fun')
@@ -25,7 +26,7 @@ JetFile: With.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            USER_TYPE
+            REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('T')
         PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
@@ -38,7 +39,7 @@ JetFile: With.jet
             FUNCTION_TYPE
               PsiElement(LBRACE)('{')
               TYPE_REFERENCE
-                USER_TYPE
+                REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('T')
               PsiElement(DOT)('.')
               VALUE_PARAMETER_LIST
@@ -48,7 +49,7 @@ JetFile: With.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                USER_TYPE
+                REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('Unit')
               PsiElement(RBRACE)('}')
         PsiElement(RPAR)(')')

@@ -15,12 +15,12 @@ JetFile: LinkedList.jet
       DELEGATION_SPECIFIER_LIST
         DELEGATOR_SUPER_CLASS
           TYPE_REFERENCE
-            USER_TYPE
+            REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('IMutableList')
               TYPE_ARGUMENT_LIST
                 PsiElement(LT)('<')
                 TYPE_REFERENCE
-                  USER_TYPE
+                  REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('T')
                 PsiElement(GT)('>')
       PsiWhiteSpace(' ')
@@ -46,7 +46,7 @@ JetFile: LinkedList.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                USER_TYPE
+                REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('Item')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
@@ -61,7 +61,7 @@ JetFile: LinkedList.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                USER_TYPE
+                REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('Item')
             PsiWhiteSpace('\n    ')
             PROPERTY
@@ -72,7 +72,7 @@ JetFile: LinkedList.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                USER_TYPE
+                REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('Item')
             PsiWhiteSpace('\n  ')
             PsiElement(RBRACE)('}')
@@ -88,7 +88,7 @@ JetFile: LinkedList.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            USER_TYPE
+            REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Item')
           PsiWhiteSpace(' ')
           PsiElement(EQ)('=')
@@ -107,7 +107,7 @@ JetFile: LinkedList.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            USER_TYPE
+            REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Item')
           PsiWhiteSpace(' ')
           PsiElement(EQ)('=')
@@ -149,7 +149,7 @@ JetFile: LinkedList.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                USER_TYPE
+                REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('Int')
             PsiElement(COMMA)(',')
             PsiWhiteSpace(' ')
@@ -159,7 +159,7 @@ JetFile: LinkedList.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                USER_TYPE
+                REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('T')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
@@ -379,7 +379,7 @@ JetFile: LinkedList.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                USER_TYPE
+                REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('Int')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
@@ -448,14 +448,14 @@ JetFile: LinkedList.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                USER_TYPE
+                REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('Int')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            USER_TYPE
+            REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('T')
           PsiWhiteSpace(' ')
           BLOCK
@@ -680,7 +680,7 @@ JetFile: LinkedList.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                USER_TYPE
+                REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('Int')
             PsiElement(COMMA)(',')
             PsiWhiteSpace(' ')
@@ -690,14 +690,14 @@ JetFile: LinkedList.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                USER_TYPE
+                REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('T')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            USER_TYPE
+            REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('T')
           PsiWhiteSpace(' ')
           BLOCK
@@ -782,7 +782,7 @@ JetFile: LinkedList.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                USER_TYPE
+                REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('Int')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
@@ -861,12 +861,12 @@ JetFile: LinkedList.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            USER_TYPE
+            REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('IMutableIterator')
               TYPE_ARGUMENT_LIST
                 PsiElement(LT)('<')
                 TYPE_REFERENCE
-                  USER_TYPE
+                  REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('T')
                 PsiElement(GT)('>')
         PsiWhiteSpace('\n')

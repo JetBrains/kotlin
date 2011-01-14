@@ -1,0 +1,65 @@
+when
+  : "when" "(" (modifiers "val" SimpleName "=")? expression ")" "{"
+        whenEntry*
+    "}"
+  ;
+
+// TODO: attributes for when entries?
+whenEntry
+  : whenConditionIf{","} (when  | "=>" expression SEMI)
+  : "else" ("continue" | "=>" expression SEMI)
+  ;
+
+whenConditionIf
+  : whenCondition ("if" "(" expression ")")?
+  ;
+
+whenCondition
+  : expression
+  : ("in" | "!in") expression
+  : ("is" | "!is") isRHS
+  ;
+
+pattern
+  : attributes pattern
+  : type // '[a] T' is a type-pattern 'T' with an attribute '[a]', not a type-pattern '[a] T'
+         // this makes sense because is-chack may be different for a type with attributes
+  : tuplePattern
+  : decomposerPattern
+  : constantPattern
+  : bindingPattern
+  : expressionPattern
+  ;
+
+decomposerPattern
+  : type
+  : qualifiedName typeParameters? (tuplePattern)?
+  ;
+
+constantPattern
+  : literalConstant
+  ;
+
+tuplePattern
+  : "(" ((SimpleName "=")? pattern{","})? ")"
+  ;
+
+bindingPattern
+  : "?" SimpleName? binding?
+  ;
+
+binding
+  : "is" pattern
+  : "!is" pattern
+  : "in" expression
+  : "!in" expression
+  : "=" expression
+  ;
+
+qualifiedName
+  : ("namespace" ".")? SimpleName{","}
+  ;
+
+expressionPattern
+  : "=" expression
+  ;

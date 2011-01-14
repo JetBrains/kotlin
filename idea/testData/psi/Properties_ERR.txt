@@ -47,8 +47,9 @@ JetFile: Properties_ERR.jet
       ATTRIBUTE_ANNOTATION
         PsiElement(LBRACKET)('[')
         ATTRIBUTE
-          USER_TYPE
-            PsiElement(IDENTIFIER)('a')
+          TYPE_REFERENCE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
         PsiErrorElement:Expecting ']' to close an attribute annotation
           <empty list>
       PsiWhiteSpace(' ')
@@ -63,7 +64,7 @@ JetFile: Properties_ERR.jet
       PsiElement(val)('val')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        USER_TYPE
+        REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('foo')
       PsiElement(DOT)('.')
       PsiElement(IDENTIFIER)('bar')
@@ -76,8 +77,9 @@ JetFile: Properties_ERR.jet
       ATTRIBUTE_ANNOTATION
         PsiElement(LBRACKET)('[')
         ATTRIBUTE
-          USER_TYPE
-            PsiElement(IDENTIFIER)('a')
+          TYPE_REFERENCE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
         PsiElement(RBRACKET)(']')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('foo')
@@ -96,7 +98,7 @@ JetFile: Properties_ERR.jet
       PsiElement(val)('val')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        USER_TYPE
+        REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('foo')
       PsiElement(DOT)('.')
       PsiElement(IDENTIFIER)('bar')
@@ -132,8 +134,8 @@ JetFile: Properties_ERR.jet
         FUNCTION_TYPE
           PsiElement(LBRACE)('{')
           TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
+            REFERENCE_EXPRESSION
+              REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('foo')
               PsiElement(DOT)('.')
               PsiElement(IDENTIFIER)('bar')
@@ -186,8 +188,8 @@ JetFile: Properties_ERR.jet
         FUNCTION_TYPE
           PsiElement(LBRACE)('{')
           TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
+            REFERENCE_EXPRESSION
+              REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('foo')
               PsiElement(DOT)('.')
               PsiElement(IDENTIFIER)('bar')
@@ -250,7 +252,7 @@ JetFile: Properties_ERR.jet
       PsiElement(val)('val')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        USER_TYPE
+        REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('f')
       PsiElement(DOT)('.')
       PsiElement(IDENTIFIER)('d')

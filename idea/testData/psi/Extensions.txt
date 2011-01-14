@@ -8,7 +8,7 @@ JetFile: Extensions.jet
       PsiElement(for)('for')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        USER_TYPE
+        REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('bar')
     PsiWhiteSpace('\n')
     EXTENSION
@@ -21,7 +21,7 @@ JetFile: Extensions.jet
       PsiElement(for)('for')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        USER_TYPE
+        REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('bar')
     PsiWhiteSpace('\n')
     EXTENSION
@@ -36,7 +36,7 @@ JetFile: Extensions.jet
       PsiElement(for)('for')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        USER_TYPE
+        REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('bar')
     PsiWhiteSpace('\n')
     EXTENSION
@@ -52,7 +52,7 @@ JetFile: Extensions.jet
       PsiElement(for)('for')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        USER_TYPE
+        REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('bar')
     PsiWhiteSpace('\n')
     EXTENSION
@@ -90,7 +90,7 @@ JetFile: Extensions.jet
       PsiElement(for)('for')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        USER_TYPE
+        REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('bar')
       PsiElement(SEMICOLON)(';')
     PsiWhiteSpace('\n')
@@ -104,7 +104,7 @@ JetFile: Extensions.jet
       PsiElement(for)('for')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        USER_TYPE
+        REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('bar')
       PsiElement(SEMICOLON)(';')
     PsiWhiteSpace('\n')
@@ -120,7 +120,7 @@ JetFile: Extensions.jet
       PsiElement(for)('for')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        USER_TYPE
+        REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('bar')
       PsiElement(SEMICOLON)(';')
     PsiWhiteSpace('\n')
@@ -137,7 +137,7 @@ JetFile: Extensions.jet
       PsiElement(for)('for')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        USER_TYPE
+        REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('bar')
       PsiElement(SEMICOLON)(';')
     PsiWhiteSpace('\n')
@@ -177,7 +177,7 @@ JetFile: Extensions.jet
       PsiElement(for)('for')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        USER_TYPE
+        REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('bar')
       PsiWhiteSpace(' ')
       CLASS_BODY
@@ -194,7 +194,7 @@ JetFile: Extensions.jet
       PsiElement(for)('for')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        USER_TYPE
+        REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('bar')
       PsiWhiteSpace(' ')
       CLASS_BODY
@@ -213,7 +213,7 @@ JetFile: Extensions.jet
       PsiElement(for)('for')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        USER_TYPE
+        REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('bar')
       PsiWhiteSpace(' ')
       CLASS_BODY
@@ -233,7 +233,7 @@ JetFile: Extensions.jet
       PsiElement(for)('for')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        USER_TYPE
+        REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('bar')
       PsiWhiteSpace(' ')
       CLASS_BODY

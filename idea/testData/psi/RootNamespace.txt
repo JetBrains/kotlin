@@ -58,9 +58,9 @@ JetFile: RootNamespace.jet
               PsiElement(new)('new')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                USER_TYPE
-                  USER_TYPE
-                    USER_TYPE
+                REFERENCE_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    REFERENCE_EXPRESSION
                       PsiElement(namespace)('namespace')
                       PsiElement(DOT)('.')
                       PsiElement(IDENTIFIER)('foo')
@@ -72,22 +72,24 @@ JetFile: RootNamespace.jet
                 PsiElement(LPAR)('(')
                 PsiElement(RPAR)(')')
             PsiWhiteSpace('\n    ')
-            MATCH_EXPRESSION
+            WHEN
+              PsiElement(when)('when')
+              PsiWhiteSpace(' ')
+              PsiElement(LPAR)('(')
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('e')
+              PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')
-              PsiElement(match)('match')
-              PsiWhiteSpace(' ')
-              MATCH_BLOCK
-                PsiElement(LBRACE)('{')
-                PsiWhiteSpace('\n      ')
-                MATCH_ENTRY
-                  PsiElement(case)('case')
+              PsiElement(LBRACE)('{')
+              PsiWhiteSpace('\n      ')
+              WHEN_ENTRY
+                WHEN_CONDITION
+                  PsiElement(is)('is')
                   PsiWhiteSpace(' ')
-                  PATTERN
-                    USER_TYPE
-                      USER_TYPE
-                        USER_TYPE
+                  DECOMPOSER_PATTERN
+                    REFERENCE_EXPRESSION
+                      REFERENCE_EXPRESSION
+                        REFERENCE_EXPRESSION
                           PsiElement(namespace)('namespace')
                           PsiElement(DOT)('.')
                           PsiElement(IDENTIFIER)('foo')
@@ -95,22 +97,23 @@ JetFile: RootNamespace.jet
                         PsiElement(IDENTIFIER)('bar')
                       PsiElement(DOT)('.')
                       PsiElement(IDENTIFIER)('X')
-                    TUPLE_PATTERN
+                    DECOMPOSER_ARGUMENT_LIST
                       PsiElement(LPAR)('(')
-                      PATTERN
-                        USER_TYPE
-                          PsiElement(IDENTIFIER)('x')
+                      DECOMPOSER_ARGUMENT
+                        TYPE_PATTERN
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('x')
                       PsiElement(RPAR)(')')
-                  PsiWhiteSpace(' ')
-                  PsiElement(DOUBLE_ARROW)('=>')
-                  PsiWhiteSpace(' ')
-                  FUNCTION_LITERAL
-                    PsiElement(LBRACE)('{')
-                    BODY
-                      <empty list>
-                    PsiElement(RBRACE)('}')
-                PsiWhiteSpace('\n    ')
-                PsiElement(RBRACE)('}')
+                PsiWhiteSpace(' ')
+                PsiElement(DOUBLE_ARROW)('=>')
+                PsiWhiteSpace(' ')
+                FUNCTION_LITERAL
+                  PsiElement(LBRACE)('{')
+                  BODY
+                    <empty list>
+                  PsiElement(RBRACE)('}')
+              PsiWhiteSpace('\n    ')
+              PsiElement(RBRACE)('}')
             PsiWhiteSpace('\n  ')
             PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n')

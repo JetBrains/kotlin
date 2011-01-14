@@ -13,7 +13,6 @@ Decreasing precedence:
   equalityOperation
   "&&"
   "||"
-  "match"
   "->"
   assignmentOperator
 */
@@ -24,12 +23,7 @@ expression
   ;
 
 arrowTupleExpression
-  : match ("->" match)*
-  ;
-
-// ATTENTION
-match
-  : conjunction ("match" "{" matchEntry+ "}")*
+  : assignmentOperator ("->" assignmentOperator)*
   ;
 
 disjunction
@@ -49,7 +43,9 @@ comparison
   ;
 
 namedInfixOrTypeExpression
-  : elvisOperation (namedInfixOrTypeOperation elvisOperation)*
+  : elvisOperation (inOperation elvisOperation)*
+  : elvisOperation (isOperation isRHS)?
+  : elvisOperation (typeOperation type)?
   ;
 
 elvisOperation
@@ -87,6 +83,7 @@ atomicExpression
   : tupleLiteral
   : "this" ("<" type ">")?
   : if
+  : when
   : try
   : "typeof" "(" expression ")"
   : "new" constructorInvocation // TODO: Do we need "new"?, see factory methods
@@ -109,6 +106,10 @@ literalConstant
   : "null"
   ;
 
+isRHS
+  : pattern
+  ;
+
 declaration
   : function
   : property
@@ -125,8 +126,16 @@ additiveOperation
   : "+" : "-"
   ;
 
-namedInfixOrTypeOperation
-  : "in" : "is" : "!in" : "!is" : "as" : ":"
+inOperation
+  : "in" : "!in"
+  ;
+
+typeOperation
+  : "as" : ":"
+  ;
+
+isOPeration
+  : "is" : "!is"
   ;
 
 comparisonOperation

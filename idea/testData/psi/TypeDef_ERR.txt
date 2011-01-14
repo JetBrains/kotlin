@@ -84,7 +84,7 @@ JetFile: TypeDef_ERR.jet
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        USER_TYPE
+        REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('foo')
     PsiWhiteSpace('\n')
     TYPEDEF
@@ -109,7 +109,7 @@ JetFile: TypeDef_ERR.jet
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        USER_TYPE
+        REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('foo')
       PsiWhiteSpace(' ')
       PsiElement(SEMICOLON)(';')
@@ -141,7 +141,7 @@ JetFile: TypeDef_ERR.jet
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        USER_TYPE
+        REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('bar')
     PsiWhiteSpace('\n')
     TYPEDEF
@@ -161,7 +161,7 @@ JetFile: TypeDef_ERR.jet
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        USER_TYPE
+        REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('bar')
     PsiWhiteSpace('\n')
     TYPEDEF
@@ -187,7 +187,7 @@ JetFile: TypeDef_ERR.jet
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        USER_TYPE
+        REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('bar')
     PsiWhiteSpace('\n\n')
     CLASS
@@ -207,5 +207,5 @@ JetFile: TypeDef_ERR.jet
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        USER_TYPE
+        REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('bar')

@@ -25,17 +25,17 @@ JetFile: TypeExpressionAmbiguities_ERR.jet
                 TYPE_ARGUMENT_LIST
                   PsiElement(LT)('<')
                   TYPE_REFERENCE
-                    USER_TYPE
+                    REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('a')
                   PsiElement(COMMA)(',')
                   PsiWhiteSpace(' ')
                   TYPE_REFERENCE
-                    USER_TYPE
+                    REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('b')
                   PsiElement(COMMA)(',')
                   PsiWhiteSpace(' ')
                   TYPE_REFERENCE
-                    USER_TYPE
+                    REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('c')
                   PsiElement(GT)('>')
                 VALUE_ARGUMENT_LIST
@@ -138,7 +138,7 @@ JetFile: TypeExpressionAmbiguities_ERR.jet
                 PsiElement(COLON)(':')
                 PsiWhiteSpace(' ')
                 TYPE_REFERENCE
-                  USER_TYPE
+                  REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('b')
             PsiElement(COMMA)(',')
             PsiWhiteSpace(' ')
@@ -161,14 +161,14 @@ JetFile: TypeExpressionAmbiguities_ERR.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            USER_TYPE
+            REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('b')
               PsiWhiteSpace(' ')
               TYPE_ARGUMENT_LIST
                 PsiElement(LT)('<')
                 PsiWhiteSpace(' ')
                 TYPE_REFERENCE
-                  USER_TYPE
+                  REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('c')
                 PsiErrorElement:Expecting a '>'
                   <empty list>
@@ -180,33 +180,33 @@ JetFile: TypeExpressionAmbiguities_ERR.jet
           PsiElement(as)('as')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            USER_TYPE
+            REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Foo')
               PsiWhiteSpace(' ')
               TYPE_ARGUMENT_LIST
                 PsiElement(LT)('<')
                 PsiWhiteSpace(' ')
                 TYPE_REFERENCE
-                  USER_TYPE
+                  REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('bar')
                 PsiErrorElement:Expecting a '>'
                   <empty list>
         PsiWhiteSpace('\n    ')
-        BINARY_WITH_TYPE
+        BINARY_WITH_PATTERN
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('x')
           PsiWhiteSpace(' ')
           PsiElement(is)('is')
           PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
+          TYPE_PATTERN
+            REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Foo')
               PsiWhiteSpace(' ')
               TYPE_ARGUMENT_LIST
                 PsiElement(LT)('<')
                 PsiWhiteSpace(' ')
                 TYPE_REFERENCE
-                  USER_TYPE
+                  REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('bar')
                 PsiErrorElement:Expecting a '>'
                   <empty list>

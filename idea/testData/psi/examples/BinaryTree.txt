@@ -15,12 +15,12 @@ JetFile: BinaryTree.jet
       DELEGATION_SPECIFIER_LIST
         DELEGATOR_SUPER_CLASS
           TYPE_REFERENCE
-            USER_TYPE
+            REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('IMutableSet')
               TYPE_ARGUMENT_LIST
                 PsiElement(LT)('<')
                 TYPE_REFERENCE
-                  USER_TYPE
+                  REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('T')
                 PsiElement(GT)('>')
       PsiWhiteSpace(' ')
@@ -47,7 +47,7 @@ JetFile: BinaryTree.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                USER_TYPE
+                REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('T')
             PsiElement(COMMA)(',')
             PsiWhiteSpace(' ')
@@ -59,7 +59,7 @@ JetFile: BinaryTree.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                USER_TYPE
+                REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('TreeNode')
             PsiWhiteSpace('\n  ')
             PsiElement(RPAR)(')')
@@ -75,7 +75,7 @@ JetFile: BinaryTree.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                USER_TYPE
+                REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('TreeNode')
             PsiWhiteSpace('\n    ')
             PROPERTY
@@ -86,7 +86,7 @@ JetFile: BinaryTree.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                USER_TYPE
+                REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('TreeNode')
             PsiWhiteSpace('\n\n  ')
             PsiElement(RBRACE)('}')
@@ -102,12 +102,12 @@ JetFile: BinaryTree.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            USER_TYPE
+            REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('MatchableComparison')
               TYPE_ARGUMENT_LIST
                 PsiElement(LT)('<')
                 TYPE_REFERENCE
-                  USER_TYPE
+                  REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('T')
                 PsiElement(GT)('>')
         PsiWhiteSpace('\n  ')
@@ -122,7 +122,7 @@ JetFile: BinaryTree.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            USER_TYPE
+            REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('TreeNode')
         PsiWhiteSpace('\n  ')
         PROPERTY
@@ -150,12 +150,12 @@ JetFile: BinaryTree.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                USER_TYPE
+                REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('Comparison')
                   TYPE_ARGUMENT_LIST
                     PsiElement(LT)('<')
                     TYPE_REFERENCE
-                      USER_TYPE
+                      REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('T')
                     PsiElement(GT)('>')
             PsiElement(RPAR)(')')
@@ -205,7 +205,7 @@ JetFile: BinaryTree.jet
                     TYPE_ARGUMENT_LIST
                       PsiElement(LT)('<')
                       TYPE_REFERENCE
-                        USER_TYPE
+                        REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('T')
                       PsiElement(GT)('>')
                     VALUE_ARGUMENT_LIST
@@ -225,14 +225,15 @@ JetFile: BinaryTree.jet
             ATTRIBUTE_ANNOTATION
               PsiElement(LBRACKET)('[')
               ATTRIBUTE
-                USER_TYPE
-                  PsiElement(IDENTIFIER)('operator')
+                TYPE_REFERENCE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('operator')
               PsiElement(RBRACKET)(']')
           PsiWhiteSpace(' ')
           PsiElement(fun)('fun')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            USER_TYPE
+            REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('T')
           PsiElement(DOT)('.')
           PsiElement(IDENTIFIER)('compareTo')
@@ -246,14 +247,14 @@ JetFile: BinaryTree.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                USER_TYPE
+                REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('T')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            USER_TYPE
+            REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Int')
           PsiWhiteSpace(' ')
           PsiElement(EQ)('=')
@@ -290,14 +291,14 @@ JetFile: BinaryTree.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                USER_TYPE
+                REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('T')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            USER_TYPE
+            REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Boolean')
           PsiWhiteSpace(' ')
           BLOCK
@@ -335,7 +336,7 @@ JetFile: BinaryTree.jet
                   PsiElement(COLON)(':')
                   PsiWhiteSpace(' ')
                   TYPE_REFERENCE
-                    USER_TYPE
+                    REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('TreeNode')
                 PsiElement(COMMA)(',')
                 PsiWhiteSpace(' ')
@@ -345,14 +346,14 @@ JetFile: BinaryTree.jet
                   PsiElement(COLON)(':')
                   PsiWhiteSpace(' ')
                   TYPE_REFERENCE
-                    USER_TYPE
+                    REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('T')
                 PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                USER_TYPE
+                REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('Boolean')
               PsiWhiteSpace(' ')
               BLOCK
@@ -380,7 +381,9 @@ JetFile: BinaryTree.jet
                       BOOLEAN_CONSTANT
                         PsiElement(false)('false')
                 PsiWhiteSpace('\n      ')
-                MATCH_EXPRESSION
+                WHEN
+                  PsiElement(when)('when')
+                  PsiElement(LPAR)('(')
                   CALL_EXPRESSION
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('compare')
@@ -399,81 +402,73 @@ JetFile: BinaryTree.jet
                           REFERENCE_EXPRESSION
                             PsiElement(IDENTIFIER)('value')
                       PsiElement(RPAR)(')')
+                  PsiElement(RPAR)(')')
                   PsiWhiteSpace(' ')
-                  PsiElement(match)('match')
-                  PsiWhiteSpace(' ')
-                  MATCH_BLOCK
-                    PsiElement(LBRACE)('{')
-                    PsiWhiteSpace('\n        ')
-                    MATCH_ENTRY
-                      PsiElement(case)('case')
-                      PsiWhiteSpace(' ')
-                      PATTERN
-                        USER_TYPE
-                          PsiElement(IDENTIFIER)('EQ')
-                      PsiWhiteSpace(' ')
-                      PsiElement(DOUBLE_ARROW)('=>')
-                      PsiWhiteSpace(' ')
-                      BOOLEAN_CONSTANT
-                        PsiElement(true)('true')
-                    PsiWhiteSpace('\n        ')
-                    MATCH_ENTRY
-                      PsiElement(case)('case')
-                      PsiWhiteSpace(' ')
-                      PATTERN
-                        USER_TYPE
-                          PsiElement(IDENTIFIER)('LS')
-                      PsiWhiteSpace(' ')
-                      PsiElement(DOUBLE_ARROW)('=>')
-                      PsiWhiteSpace(' ')
-                      CALL_EXPRESSION
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('contains')
-                        VALUE_ARGUMENT_LIST
-                          PsiElement(LPAR)('(')
-                          VALUE_ARGUMENT
-                            DOT_QIALIFIED_EXPRESSION
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('node')
-                              PsiElement(DOT)('.')
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('left')
-                          PsiElement(COMMA)(',')
-                          PsiWhiteSpace(' ')
-                          VALUE_ARGUMENT
+                  PsiElement(LBRACE)('{')
+                  PsiWhiteSpace('\n        ')
+                  WHEN_ENTRY
+                    WHEN_CONDITION
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('EQ')
+                    PsiWhiteSpace(' ')
+                    PsiElement(DOUBLE_ARROW)('=>')
+                    PsiWhiteSpace(' ')
+                    BOOLEAN_CONSTANT
+                      PsiElement(true)('true')
+                  PsiWhiteSpace('\n        ')
+                  WHEN_ENTRY
+                    WHEN_CONDITION
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('LS')
+                    PsiWhiteSpace(' ')
+                    PsiElement(DOUBLE_ARROW)('=>')
+                    PsiWhiteSpace(' ')
+                    CALL_EXPRESSION
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('contains')
+                      VALUE_ARGUMENT_LIST
+                        PsiElement(LPAR)('(')
+                        VALUE_ARGUMENT
+                          DOT_QIALIFIED_EXPRESSION
                             REFERENCE_EXPRESSION
-                              PsiElement(IDENTIFIER)('item')
-                          PsiElement(RPAR)(')')
-                    PsiWhiteSpace('\n        ')
-                    MATCH_ENTRY
-                      PsiElement(case)('case')
-                      PsiWhiteSpace(' ')
-                      PATTERN
-                        USER_TYPE
-                          PsiElement(IDENTIFIER)('GT')
-                      PsiWhiteSpace(' ')
-                      PsiElement(DOUBLE_ARROW)('=>')
-                      PsiWhiteSpace(' ')
-                      CALL_EXPRESSION
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('contains')
-                        VALUE_ARGUMENT_LIST
-                          PsiElement(LPAR)('(')
-                          VALUE_ARGUMENT
-                            DOT_QIALIFIED_EXPRESSION
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('node')
-                              PsiElement(DOT)('.')
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('right')
-                          PsiElement(COMMA)(',')
-                          PsiWhiteSpace(' ')
-                          VALUE_ARGUMENT
+                              PsiElement(IDENTIFIER)('node')
+                            PsiElement(DOT)('.')
                             REFERENCE_EXPRESSION
-                              PsiElement(IDENTIFIER)('item')
-                          PsiElement(RPAR)(')')
-                    PsiWhiteSpace('\n      ')
-                    PsiElement(RBRACE)('}')
+                              PsiElement(IDENTIFIER)('left')
+                        PsiElement(COMMA)(',')
+                        PsiWhiteSpace(' ')
+                        VALUE_ARGUMENT
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('item')
+                        PsiElement(RPAR)(')')
+                  PsiWhiteSpace('\n        ')
+                  WHEN_ENTRY
+                    WHEN_CONDITION
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('GT')
+                    PsiWhiteSpace(' ')
+                    PsiElement(DOUBLE_ARROW)('=>')
+                    PsiWhiteSpace(' ')
+                    CALL_EXPRESSION
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('contains')
+                      VALUE_ARGUMENT_LIST
+                        PsiElement(LPAR)('(')
+                        VALUE_ARGUMENT
+                          DOT_QIALIFIED_EXPRESSION
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('node')
+                            PsiElement(DOT)('.')
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('right')
+                        PsiElement(COMMA)(',')
+                        PsiWhiteSpace(' ')
+                        VALUE_ARGUMENT
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('item')
+                        PsiElement(RPAR)(')')
+                  PsiWhiteSpace('\n      ')
+                  PsiElement(RBRACE)('}')
                 PsiWhiteSpace('\n    ')
                 PsiElement(RBRACE)('}')
             PsiWhiteSpace('\n  ')
@@ -496,14 +491,14 @@ JetFile: BinaryTree.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                USER_TYPE
+                REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('T')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            USER_TYPE
+            REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Boolean')
           PsiWhiteSpace(' ')
           BLOCK
@@ -582,7 +577,7 @@ JetFile: BinaryTree.jet
                   PsiElement(COLON)(':')
                   PsiWhiteSpace(' ')
                   TYPE_REFERENCE
-                    USER_TYPE
+                    REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('TreeNode')
                 PsiElement(COMMA)(',')
                 PsiWhiteSpace(' ')
@@ -592,14 +587,14 @@ JetFile: BinaryTree.jet
                   PsiElement(COLON)(':')
                   PsiWhiteSpace(' ')
                   TYPE_REFERENCE
-                    USER_TYPE
+                    REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('TreeNode')
                 PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                USER_TYPE
+                REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('Boolean')
               PsiWhiteSpace(' ')
               BLOCK
@@ -654,7 +649,10 @@ JetFile: BinaryTree.jet
                       PsiWhiteSpace('\n      ')
                       PsiElement(RBRACE)('}')
                 PsiWhiteSpace('\n      ')
-                MATCH_EXPRESSION
+                WHEN
+                  PsiElement(when)('when')
+                  PsiWhiteSpace(' ')
+                  PsiElement(LPAR)('(')
                   CALL_EXPRESSION
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('compare')
@@ -673,85 +671,77 @@ JetFile: BinaryTree.jet
                           REFERENCE_EXPRESSION
                             PsiElement(IDENTIFIER)('value')
                       PsiElement(RPAR)(')')
+                  PsiElement(RPAR)(')')
                   PsiWhiteSpace(' ')
-                  PsiElement(match)('match')
-                  PsiWhiteSpace(' ')
-                  MATCH_BLOCK
-                    PsiElement(LBRACE)('{')
-                    PsiWhiteSpace('\n        ')
-                    MATCH_ENTRY
-                      PsiElement(case)('case')
-                      PsiWhiteSpace(' ')
-                      PATTERN
-                        USER_TYPE
-                          PsiElement(IDENTIFIER)('EQ')
-                      PsiWhiteSpace(' ')
-                      PsiElement(DOUBLE_ARROW)('=>')
-                      PsiWhiteSpace(' ')
-                      BOOLEAN_CONSTANT
-                        PsiElement(false)('false')
-                    PsiWhiteSpace('\n        ')
-                    MATCH_ENTRY
-                      PsiElement(case)('case')
-                      PsiWhiteSpace(' ')
-                      PATTERN
-                        USER_TYPE
-                          PsiElement(IDENTIFIER)('LS')
-                      PsiWhiteSpace(' ')
-                      PsiElement(DOUBLE_ARROW)('=>')
-                      PsiWhiteSpace(' ')
-                      CALL_EXPRESSION
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('add')
-                        VALUE_ARGUMENT_LIST
-                          PsiElement(LPAR)('(')
-                          VALUE_ARGUMENT
-                            PsiElement(ref)('ref')
-                            PsiWhiteSpace(' ')
-                            DOT_QIALIFIED_EXPRESSION
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('node')
-                              PsiElement(DOT)('.')
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('left')
-                          PsiElement(COMMA)(',')
+                  PsiElement(LBRACE)('{')
+                  PsiWhiteSpace('\n        ')
+                  WHEN_ENTRY
+                    WHEN_CONDITION
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('EQ')
+                    PsiWhiteSpace(' ')
+                    PsiElement(DOUBLE_ARROW)('=>')
+                    PsiWhiteSpace(' ')
+                    BOOLEAN_CONSTANT
+                      PsiElement(false)('false')
+                  PsiWhiteSpace('\n        ')
+                  WHEN_ENTRY
+                    WHEN_CONDITION
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('LS')
+                    PsiWhiteSpace(' ')
+                    PsiElement(DOUBLE_ARROW)('=>')
+                    PsiWhiteSpace(' ')
+                    CALL_EXPRESSION
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('add')
+                      VALUE_ARGUMENT_LIST
+                        PsiElement(LPAR)('(')
+                        VALUE_ARGUMENT
+                          PsiElement(ref)('ref')
                           PsiWhiteSpace(' ')
-                          VALUE_ARGUMENT
+                          DOT_QIALIFIED_EXPRESSION
                             REFERENCE_EXPRESSION
                               PsiElement(IDENTIFIER)('node')
-                          PsiElement(RPAR)(')')
-                    PsiWhiteSpace('\n        ')
-                    MATCH_ENTRY
-                      PsiElement(case)('case')
-                      PsiWhiteSpace(' ')
-                      PATTERN
-                        USER_TYPE
-                          PsiElement(IDENTIFIER)('GT')
-                      PsiWhiteSpace(' ')
-                      PsiElement(DOUBLE_ARROW)('=>')
-                      PsiWhiteSpace(' ')
-                      CALL_EXPRESSION
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('add')
-                        VALUE_ARGUMENT_LIST
-                          PsiElement(LPAR)('(')
-                          VALUE_ARGUMENT
-                            PsiElement(ref)('ref')
-                            PsiWhiteSpace(' ')
-                            DOT_QIALIFIED_EXPRESSION
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('node')
-                              PsiElement(DOT)('.')
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('right')
-                          PsiElement(COMMA)(',')
+                            PsiElement(DOT)('.')
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('left')
+                        PsiElement(COMMA)(',')
+                        PsiWhiteSpace(' ')
+                        VALUE_ARGUMENT
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('node')
+                        PsiElement(RPAR)(')')
+                  PsiWhiteSpace('\n        ')
+                  WHEN_ENTRY
+                    WHEN_CONDITION
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('GT')
+                    PsiWhiteSpace(' ')
+                    PsiElement(DOUBLE_ARROW)('=>')
+                    PsiWhiteSpace(' ')
+                    CALL_EXPRESSION
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('add')
+                      VALUE_ARGUMENT_LIST
+                        PsiElement(LPAR)('(')
+                        VALUE_ARGUMENT
+                          PsiElement(ref)('ref')
                           PsiWhiteSpace(' ')
-                          VALUE_ARGUMENT
+                          DOT_QIALIFIED_EXPRESSION
                             REFERENCE_EXPRESSION
                               PsiElement(IDENTIFIER)('node')
-                          PsiElement(RPAR)(')')
-                    PsiWhiteSpace('\n      ')
-                    PsiElement(RBRACE)('}')
+                            PsiElement(DOT)('.')
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('right')
+                        PsiElement(COMMA)(',')
+                        PsiWhiteSpace(' ')
+                        VALUE_ARGUMENT
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('node')
+                        PsiElement(RPAR)(')')
+                  PsiWhiteSpace('\n      ')
+                  PsiElement(RBRACE)('}')
                 PsiWhiteSpace('\n    ')
                 PsiElement(RBRACE)('}')
             PsiWhiteSpace('\n\n    ')
@@ -771,14 +761,14 @@ JetFile: BinaryTree.jet
                   PsiElement(COLON)(':')
                   PsiWhiteSpace(' ')
                   TYPE_REFERENCE
-                    USER_TYPE
+                    REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('TreeNode')
                 PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                USER_TYPE
+                REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('Boolean')
               PsiWhiteSpace(' ')
               BLOCK
@@ -833,7 +823,10 @@ JetFile: BinaryTree.jet
                       PsiWhiteSpace('\n      ')
                       PsiElement(RBRACE)('}')
                 PsiWhiteSpace('\n      ')
-                MATCH_EXPRESSION
+                WHEN
+                  PsiElement(when)('when')
+                  PsiWhiteSpace(' ')
+                  PsiElement(LPAR)('(')
                   CALL_EXPRESSION
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('compare')
@@ -852,200 +845,192 @@ JetFile: BinaryTree.jet
                           REFERENCE_EXPRESSION
                             PsiElement(IDENTIFIER)('value')
                       PsiElement(RPAR)(')')
+                  PsiElement(RPAR)(')')
                   PsiWhiteSpace(' ')
-                  PsiElement(match)('match')
-                  PsiWhiteSpace(' ')
-                  MATCH_BLOCK
-                    PsiElement(LBRACE)('{')
-                    PsiWhiteSpace('\n        ')
-                    MATCH_ENTRY
-                      PsiElement(case)('case')
+                  PsiElement(LBRACE)('{')
+                  PsiWhiteSpace('\n        ')
+                  WHEN_ENTRY
+                    WHEN_CONDITION
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('EQ')
+                    PsiWhiteSpace(' ')
+                    PsiElement(DOUBLE_ARROW)('=>')
+                    PsiWhiteSpace(' ')
+                    RETURN
+                      PsiElement(return)('return')
                       PsiWhiteSpace(' ')
-                      PATTERN
-                        USER_TYPE
-                          PsiElement(IDENTIFIER)('EQ')
+                      BOOLEAN_CONSTANT
+                        PsiElement(false)('false')
+                  PsiWhiteSpace('\n        ')
+                  WHEN_ENTRY
+                    WHEN_CONDITION
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('LS')
+                    PsiWhiteSpace(' ')
+                    PsiElement(DOUBLE_ARROW)('=>')
+                    PsiWhiteSpace('\n          ')
+                    IF
+                      PsiElement(if)('if')
                       PsiWhiteSpace(' ')
-                      PsiElement(DOUBLE_ARROW)('=>')
+                      PsiElement(LPAR)('(')
+                      CONDITION
+                        BINARY_EXPRESSION
+                          DOT_QIALIFIED_EXPRESSION
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('node')
+                            PsiElement(DOT)('.')
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('left')
+                          PsiWhiteSpace(' ')
+                          PsiElement(EQEQ)('==')
+                          PsiWhiteSpace(' ')
+                          NULL
+                            PsiElement(null)('null')
+                      PsiElement(RPAR)(')')
                       PsiWhiteSpace(' ')
-                      RETURN
-                        PsiElement(return)('return')
-                        PsiWhiteSpace(' ')
-                        BOOLEAN_CONSTANT
-                          PsiElement(false)('false')
-                    PsiWhiteSpace('\n        ')
-                    MATCH_ENTRY
-                      PsiElement(case)('case')
-                      PsiWhiteSpace(' ')
-                      PATTERN
-                        USER_TYPE
-                          PsiElement(IDENTIFIER)('LS')
-                      PsiWhiteSpace(' ')
-                      PsiElement(DOUBLE_ARROW)('=>')
-                      PsiWhiteSpace('\n          ')
-                      IF
-                        PsiElement(if)('if')
-                        PsiWhiteSpace(' ')
-                        PsiElement(LPAR)('(')
-                        CONDITION
-                          BINARY_EXPRESSION
-                            DOT_QIALIFIED_EXPRESSION
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('node')
-                              PsiElement(DOT)('.')
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('left')
-                            PsiWhiteSpace(' ')
-                            PsiElement(EQEQ)('==')
-                            PsiWhiteSpace(' ')
-                            NULL
-                              PsiElement(null)('null')
-                        PsiElement(RPAR)(')')
-                        PsiWhiteSpace(' ')
-                        THEN
-                          FUNCTION_LITERAL
-                            PsiElement(LBRACE)('{')
+                      THEN
+                        FUNCTION_LITERAL
+                          PsiElement(LBRACE)('{')
+                          PsiWhiteSpace('\n            ')
+                          BODY
+                            BINARY_EXPRESSION
+                              DOT_QIALIFIED_EXPRESSION
+                                REFERENCE_EXPRESSION
+                                  PsiElement(IDENTIFIER)('node')
+                                PsiElement(DOT)('.')
+                                REFERENCE_EXPRESSION
+                                  PsiElement(IDENTIFIER)('left')
+                              PsiWhiteSpace(' ')
+                              PsiElement(EQ)('=')
+                              PsiWhiteSpace(' ')
+                              CALL_EXPRESSION
+                                REFERENCE_EXPRESSION
+                                  PsiElement(IDENTIFIER)('TreeNode')
+                                VALUE_ARGUMENT_LIST
+                                  PsiElement(LPAR)('(')
+                                  VALUE_ARGUMENT
+                                    REFERENCE_EXPRESSION
+                                      PsiElement(IDENTIFIER)('item')
+                                  PsiElement(COMMA)(',')
+                                  PsiWhiteSpace(' ')
+                                  VALUE_ARGUMENT
+                                    REFERENCE_EXPRESSION
+                                      PsiElement(IDENTIFIER)('node')
+                                  PsiElement(RPAR)(')')
                             PsiWhiteSpace('\n            ')
-                            BODY
-                              BINARY_EXPRESSION
+                            RETURN
+                              PsiElement(return)('return')
+                              PsiWhiteSpace(' ')
+                              BOOLEAN_CONSTANT
+                                PsiElement(true)('true')
+                          PsiWhiteSpace('\n          ')
+                          PsiElement(RBRACE)('}')
+                      PsiWhiteSpace(' ')
+                      PsiElement(else)('else')
+                      PsiWhiteSpace(' ')
+                      ELSE
+                        RETURN
+                          PsiElement(return)('return')
+                          PsiWhiteSpace(' ')
+                          CALL_EXPRESSION
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('add')
+                            VALUE_ARGUMENT_LIST
+                              PsiElement(LPAR)('(')
+                              VALUE_ARGUMENT
                                 DOT_QIALIFIED_EXPRESSION
                                   REFERENCE_EXPRESSION
                                     PsiElement(IDENTIFIER)('node')
                                   PsiElement(DOT)('.')
                                   REFERENCE_EXPRESSION
                                     PsiElement(IDENTIFIER)('left')
-                                PsiWhiteSpace(' ')
-                                PsiElement(EQ)('=')
-                                PsiWhiteSpace(' ')
-                                CALL_EXPRESSION
-                                  REFERENCE_EXPRESSION
-                                    PsiElement(IDENTIFIER)('TreeNode')
-                                  VALUE_ARGUMENT_LIST
-                                    PsiElement(LPAR)('(')
-                                    VALUE_ARGUMENT
-                                      REFERENCE_EXPRESSION
-                                        PsiElement(IDENTIFIER)('item')
-                                    PsiElement(COMMA)(',')
-                                    PsiWhiteSpace(' ')
-                                    VALUE_ARGUMENT
-                                      REFERENCE_EXPRESSION
-                                        PsiElement(IDENTIFIER)('node')
-                                    PsiElement(RPAR)(')')
-                              PsiWhiteSpace('\n            ')
-                              RETURN
-                                PsiElement(return)('return')
-                                PsiWhiteSpace(' ')
-                                BOOLEAN_CONSTANT
-                                  PsiElement(true)('true')
-                            PsiWhiteSpace('\n          ')
-                            PsiElement(RBRACE)('}')
-                        PsiWhiteSpace(' ')
-                        PsiElement(else)('else')
-                        PsiWhiteSpace(' ')
-                        ELSE
-                          RETURN
-                            PsiElement(return)('return')
-                            PsiWhiteSpace(' ')
-                            CALL_EXPRESSION
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('add')
-                              VALUE_ARGUMENT_LIST
-                                PsiElement(LPAR)('(')
-                                VALUE_ARGUMENT
-                                  DOT_QIALIFIED_EXPRESSION
+                              PsiElement(RPAR)(')')
+                  PsiWhiteSpace('\n        ')
+                  WHEN_ENTRY
+                    WHEN_CONDITION
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('GT')
+                    PsiWhiteSpace(' ')
+                    PsiElement(DOUBLE_ARROW)('=>')
+                    PsiWhiteSpace('\n          ')
+                    IF
+                      PsiElement(if)('if')
+                      PsiWhiteSpace(' ')
+                      PsiElement(LPAR)('(')
+                      CONDITION
+                        BINARY_EXPRESSION
+                          DOT_QIALIFIED_EXPRESSION
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('node')
+                            PsiElement(DOT)('.')
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('right')
+                          PsiWhiteSpace(' ')
+                          PsiElement(EQEQ)('==')
+                          PsiWhiteSpace(' ')
+                          NULL
+                            PsiElement(null)('null')
+                      PsiElement(RPAR)(')')
+                      PsiWhiteSpace(' ')
+                      THEN
+                        FUNCTION_LITERAL
+                          PsiElement(LBRACE)('{')
+                          PsiWhiteSpace('\n            ')
+                          BODY
+                            BINARY_EXPRESSION
+                              DOT_QIALIFIED_EXPRESSION
+                                REFERENCE_EXPRESSION
+                                  PsiElement(IDENTIFIER)('node')
+                                PsiElement(DOT)('.')
+                                REFERENCE_EXPRESSION
+                                  PsiElement(IDENTIFIER)('right')
+                              PsiWhiteSpace(' ')
+                              PsiElement(EQ)('=')
+                              PsiWhiteSpace(' ')
+                              CALL_EXPRESSION
+                                REFERENCE_EXPRESSION
+                                  PsiElement(IDENTIFIER)('TreeNode')
+                                VALUE_ARGUMENT_LIST
+                                  PsiElement(LPAR)('(')
+                                  VALUE_ARGUMENT
+                                    REFERENCE_EXPRESSION
+                                      PsiElement(IDENTIFIER)('item')
+                                  PsiElement(COMMA)(',')
+                                  PsiWhiteSpace(' ')
+                                  VALUE_ARGUMENT
                                     REFERENCE_EXPRESSION
                                       PsiElement(IDENTIFIER)('node')
-                                    PsiElement(DOT)('.')
-                                    REFERENCE_EXPRESSION
-                                      PsiElement(IDENTIFIER)('left')
-                                PsiElement(RPAR)(')')
-                    PsiWhiteSpace('\n        ')
-                    MATCH_ENTRY
-                      PsiElement(case)('case')
-                      PsiWhiteSpace(' ')
-                      PATTERN
-                        USER_TYPE
-                          PsiElement(IDENTIFIER)('GT')
-                      PsiWhiteSpace(' ')
-                      PsiElement(DOUBLE_ARROW)('=>')
-                      PsiWhiteSpace(' \n          ')
-                      IF
-                        PsiElement(if)('if')
-                        PsiWhiteSpace(' ')
-                        PsiElement(LPAR)('(')
-                        CONDITION
-                          BINARY_EXPRESSION
-                            DOT_QIALIFIED_EXPRESSION
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('node')
-                              PsiElement(DOT)('.')
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('right')
-                            PsiWhiteSpace(' ')
-                            PsiElement(EQEQ)('==')
-                            PsiWhiteSpace(' ')
-                            NULL
-                              PsiElement(null)('null')
-                        PsiElement(RPAR)(')')
-                        PsiWhiteSpace(' ')
-                        THEN
-                          FUNCTION_LITERAL
-                            PsiElement(LBRACE)('{')
+                                  PsiElement(RPAR)(')')
                             PsiWhiteSpace('\n            ')
-                            BODY
-                              BINARY_EXPRESSION
+                            RETURN
+                              PsiElement(return)('return')
+                              PsiWhiteSpace(' ')
+                              BOOLEAN_CONSTANT
+                                PsiElement(true)('true')
+                          PsiWhiteSpace('\n          ')
+                          PsiElement(RBRACE)('}')
+                      PsiWhiteSpace(' ')
+                      PsiElement(else)('else')
+                      PsiWhiteSpace(' ')
+                      ELSE
+                        RETURN
+                          PsiElement(return)('return')
+                          PsiWhiteSpace(' ')
+                          CALL_EXPRESSION
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('add')
+                            VALUE_ARGUMENT_LIST
+                              PsiElement(LPAR)('(')
+                              VALUE_ARGUMENT
                                 DOT_QIALIFIED_EXPRESSION
                                   REFERENCE_EXPRESSION
                                     PsiElement(IDENTIFIER)('node')
                                   PsiElement(DOT)('.')
                                   REFERENCE_EXPRESSION
                                     PsiElement(IDENTIFIER)('right')
-                                PsiWhiteSpace(' ')
-                                PsiElement(EQ)('=')
-                                PsiWhiteSpace(' ')
-                                CALL_EXPRESSION
-                                  REFERENCE_EXPRESSION
-                                    PsiElement(IDENTIFIER)('TreeNode')
-                                  VALUE_ARGUMENT_LIST
-                                    PsiElement(LPAR)('(')
-                                    VALUE_ARGUMENT
-                                      REFERENCE_EXPRESSION
-                                        PsiElement(IDENTIFIER)('item')
-                                    PsiElement(COMMA)(',')
-                                    PsiWhiteSpace(' ')
-                                    VALUE_ARGUMENT
-                                      REFERENCE_EXPRESSION
-                                        PsiElement(IDENTIFIER)('node')
-                                    PsiElement(RPAR)(')')
-                              PsiWhiteSpace('\n            ')
-                              RETURN
-                                PsiElement(return)('return')
-                                PsiWhiteSpace(' ')
-                                BOOLEAN_CONSTANT
-                                  PsiElement(true)('true')
-                            PsiWhiteSpace('\n          ')
-                            PsiElement(RBRACE)('}')
-                        PsiWhiteSpace(' ')
-                        PsiElement(else)('else')
-                        PsiWhiteSpace(' ')
-                        ELSE
-                          RETURN
-                            PsiElement(return)('return')
-                            PsiWhiteSpace(' ')
-                            CALL_EXPRESSION
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('add')
-                              VALUE_ARGUMENT_LIST
-                                PsiElement(LPAR)('(')
-                                VALUE_ARGUMENT
-                                  DOT_QIALIFIED_EXPRESSION
-                                    REFERENCE_EXPRESSION
-                                      PsiElement(IDENTIFIER)('node')
-                                    PsiElement(DOT)('.')
-                                    REFERENCE_EXPRESSION
-                                      PsiElement(IDENTIFIER)('right')
-                                PsiElement(RPAR)(')')
-                    PsiWhiteSpace('\n      ')
-                    PsiElement(RBRACE)('}')
+                              PsiElement(RPAR)(')')
+                  PsiWhiteSpace('\n      ')
+                  PsiElement(RBRACE)('}')
                 PsiWhiteSpace('\n    ')
                 PsiElement(RBRACE)('}')
             PsiWhiteSpace('\n  ')
@@ -1068,14 +1053,14 @@ JetFile: BinaryTree.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                USER_TYPE
+                REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('T')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            USER_TYPE
+            REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Boolean')
           PsiWhiteSpace(' ')
           BLOCK
@@ -1165,14 +1150,14 @@ JetFile: BinaryTree.jet
                   PsiElement(COLON)(':')
                   PsiWhiteSpace(' ')
                   TYPE_REFERENCE
-                    USER_TYPE
+                    REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('TreeNode')
                 PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                USER_TYPE
+                REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('TreeNode')
               PsiWhiteSpace(' ')
               BLOCK
@@ -1200,7 +1185,10 @@ JetFile: BinaryTree.jet
                       NULL
                         PsiElement(null)('null')
                 PsiWhiteSpace('\n      ')
-                MATCH_EXPRESSION
+                WHEN
+                  PsiElement(when)('when')
+                  PsiWhiteSpace(' ')
+                  PsiElement(LPAR)('(')
                   CALL_EXPRESSION
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('compare')
@@ -1219,71 +1207,63 @@ JetFile: BinaryTree.jet
                           REFERENCE_EXPRESSION
                             PsiElement(IDENTIFIER)('value')
                       PsiElement(RPAR)(')')
+                  PsiElement(RPAR)(')')
                   PsiWhiteSpace(' ')
-                  PsiElement(match)('match')
-                  PsiWhiteSpace(' ')
-                  MATCH_BLOCK
-                    PsiElement(LBRACE)('{')
-                    PsiWhiteSpace('\n        ')
-                    MATCH_ENTRY
-                      PsiElement(case)('case')
-                      PsiWhiteSpace(' ')
-                      PATTERN
-                        USER_TYPE
-                          PsiElement(IDENTIFIER)('EQ')
-                      PsiWhiteSpace(' ')
-                      PsiElement(DOUBLE_ARROW)('=>')
-                      PsiWhiteSpace(' ')
+                  PsiElement(LBRACE)('{')
+                  PsiWhiteSpace('\n        ')
+                  WHEN_ENTRY
+                    WHEN_CONDITION
                       REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('node')
-                    PsiWhiteSpace('\n        ')
-                    MATCH_ENTRY
-                      PsiElement(case)('case')
-                      PsiWhiteSpace(' ')
-                      PATTERN
-                        USER_TYPE
-                          PsiElement(IDENTIFIER)('LS')
-                      PsiWhiteSpace(' ')
-                      PsiElement(DOUBLE_ARROW)('=>')
-                      PsiWhiteSpace(' ')
-                      CALL_EXPRESSION
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('find')
-                        VALUE_ARGUMENT_LIST
-                          PsiElement(LPAR)('(')
-                          VALUE_ARGUMENT
-                            DOT_QIALIFIED_EXPRESSION
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('node')
-                              PsiElement(DOT)('.')
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('left')
-                          PsiElement(RPAR)(')')
-                    PsiWhiteSpace('\n        ')
-                    MATCH_ENTRY
-                      PsiElement(case)('case')
-                      PsiWhiteSpace(' ')
-                      PATTERN
-                        USER_TYPE
-                          PsiElement(IDENTIFIER)('GT')
-                      PsiWhiteSpace(' ')
-                      PsiElement(DOUBLE_ARROW)('=>')
-                      PsiWhiteSpace(' ')
-                      CALL_EXPRESSION
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('find')
-                        VALUE_ARGUMENT_LIST
-                          PsiElement(LPAR)('(')
-                          VALUE_ARGUMENT
-                            DOT_QIALIFIED_EXPRESSION
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('node')
-                              PsiElement(DOT)('.')
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('right')
-                          PsiElement(RPAR)(')')
-                    PsiWhiteSpace('\n      ')
-                    PsiElement(RBRACE)('}')
+                        PsiElement(IDENTIFIER)('EQ')
+                    PsiWhiteSpace(' ')
+                    PsiElement(DOUBLE_ARROW)('=>')
+                    PsiWhiteSpace(' ')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('node')
+                  PsiWhiteSpace('\n        ')
+                  WHEN_ENTRY
+                    WHEN_CONDITION
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('LS')
+                    PsiWhiteSpace(' ')
+                    PsiElement(DOUBLE_ARROW)('=>')
+                    PsiWhiteSpace(' ')
+                    CALL_EXPRESSION
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('find')
+                      VALUE_ARGUMENT_LIST
+                        PsiElement(LPAR)('(')
+                        VALUE_ARGUMENT
+                          DOT_QIALIFIED_EXPRESSION
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('node')
+                            PsiElement(DOT)('.')
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('left')
+                        PsiElement(RPAR)(')')
+                  PsiWhiteSpace('\n        ')
+                  WHEN_ENTRY
+                    WHEN_CONDITION
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('GT')
+                    PsiWhiteSpace(' ')
+                    PsiElement(DOUBLE_ARROW)('=>')
+                    PsiWhiteSpace(' ')
+                    CALL_EXPRESSION
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('find')
+                      VALUE_ARGUMENT_LIST
+                        PsiElement(LPAR)('(')
+                        VALUE_ARGUMENT
+                          DOT_QIALIFIED_EXPRESSION
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('node')
+                            PsiElement(DOT)('.')
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('right')
+                        PsiElement(RPAR)(')')
+                  PsiWhiteSpace('\n      ')
+                  PsiElement(RBRACE)('}')
                 PsiWhiteSpace('\n    ')
                 PsiElement(RBRACE)('}')
             PsiWhiteSpace('\n  ')
@@ -1306,202 +1286,215 @@ JetFile: BinaryTree.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                USER_TYPE
+                REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('TreeNode')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           BLOCK
             PsiElement(LBRACE)('{')
             PsiWhiteSpace('\n    ')
-            MATCH_EXPRESSION
+            WHEN
+              PsiElement(when)('when')
+              PsiWhiteSpace(' ')
+              PsiElement(LPAR)('(')
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('node')
+              PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')
-              PsiElement(match)('match')
-              PsiWhiteSpace(' ')
-              MATCH_BLOCK
-                PsiElement(LBRACE)('{')
-                PsiWhiteSpace('\n      ')
-                MATCH_ENTRY
-                  PsiElement(case)('case')
+              PsiElement(LBRACE)('{')
+              PsiWhiteSpace('\n      ')
+              WHEN_ENTRY
+                WHEN_CONDITION
+                  PsiElement(is)('is')
                   PsiWhiteSpace(' ')
-                  PATTERN
-                    USER_TYPE
-                      PsiElement(IDENTIFIER)('TreeNode')
-                    TUPLE_PATTERN
-                      PsiElement(LPAR)('(')
-                      PATTERN
-                        NULL
-                          PsiElement(null)('null')
-                      PsiElement(COMMA)(',')
-                      PsiWhiteSpace(' ')
-                      PATTERN
-                        NULL
-                          PsiElement(null)('null')
-                      PsiElement(RPAR)(')')
-                  PsiWhiteSpace(' ')
-                  PsiElement(DOUBLE_ARROW)('=>')
-                  PsiWhiteSpace(' ')
-                  CALL_EXPRESSION
+                  DECOMPOSER_PATTERN
                     REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('replace')
-                    VALUE_ARGUMENT_LIST
-                      PsiElement(LPAR)('(')
-                      VALUE_ARGUMENT
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('node')
-                      PsiElement(COMMA)(',')
-                      PsiWhiteSpace(' ')
-                      VALUE_ARGUMENT
-                        NULL
-                          PsiElement(null)('null')
-                      PsiElement(RPAR)(')')
-                PsiWhiteSpace('\n      ')
-                MATCH_ENTRY
-                  PsiElement(case)('case')
-                  PsiWhiteSpace(' ')
-                  PATTERN
-                    USER_TYPE
                       PsiElement(IDENTIFIER)('TreeNode')
-                    TUPLE_PATTERN
+                    DECOMPOSER_ARGUMENT_LIST
                       PsiElement(LPAR)('(')
-                      PATTERN
-                        NULL
-                          PsiElement(null)('null')
+                      DECOMPOSER_ARGUMENT
+                        EXPRESSION_PATTERN
+                          NULL
+                            PsiElement(null)('null')
                       PsiElement(COMMA)(',')
                       PsiWhiteSpace(' ')
-                      PATTERN
-                        USER_TYPE
-                          PsiElement(IDENTIFIER)('right')
+                      DECOMPOSER_ARGUMENT
+                        EXPRESSION_PATTERN
+                          NULL
+                            PsiElement(null)('null')
                       PsiElement(RPAR)(')')
+                PsiWhiteSpace(' ')
+                PsiElement(DOUBLE_ARROW)('=>')
+                PsiWhiteSpace(' ')
+                CALL_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('replace')
+                  VALUE_ARGUMENT_LIST
+                    PsiElement(LPAR)('(')
+                    VALUE_ARGUMENT
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('node')
+                    PsiElement(COMMA)(',')
+                    PsiWhiteSpace(' ')
+                    VALUE_ARGUMENT
+                      NULL
+                        PsiElement(null)('null')
+                    PsiElement(RPAR)(')')
+              PsiWhiteSpace('\n      ')
+              WHEN_ENTRY
+                WHEN_CONDITION
+                  PsiElement(is)('is')
                   PsiWhiteSpace(' ')
-                  PsiElement(DOUBLE_ARROW)('=>')
-                  PsiWhiteSpace(' ')
-                  CALL_EXPRESSION
+                  DECOMPOSER_PATTERN
                     REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('replace')
-                    VALUE_ARGUMENT_LIST
-                      PsiElement(LPAR)('(')
-                      VALUE_ARGUMENT
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('node')
-                      PsiElement(COMMA)(',')
-                      PsiWhiteSpace(' ')
-                      VALUE_ARGUMENT
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('right')
-                      PsiElement(RPAR)(')')
-                PsiWhiteSpace('\n      ')
-                MATCH_ENTRY
-                  PsiElement(case)('case')
-                  PsiWhiteSpace(' ')
-                  PATTERN
-                    USER_TYPE
                       PsiElement(IDENTIFIER)('TreeNode')
-                    TUPLE_PATTERN
+                    DECOMPOSER_ARGUMENT_LIST
                       PsiElement(LPAR)('(')
-                      PATTERN
-                        USER_TYPE
-                          PsiElement(IDENTIFIER)('left')
+                      DECOMPOSER_ARGUMENT
+                        EXPRESSION_PATTERN
+                          NULL
+                            PsiElement(null)('null')
                       PsiElement(COMMA)(',')
                       PsiWhiteSpace(' ')
-                      PATTERN
-                        NULL
-                          PsiElement(null)('null')
+                      DECOMPOSER_ARGUMENT
+                        TYPE_PATTERN
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('right')
                       PsiElement(RPAR)(')')
+                PsiWhiteSpace(' ')
+                PsiElement(DOUBLE_ARROW)('=>')
+                PsiWhiteSpace(' ')
+                CALL_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('replace')
+                  VALUE_ARGUMENT_LIST
+                    PsiElement(LPAR)('(')
+                    VALUE_ARGUMENT
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('node')
+                    PsiElement(COMMA)(',')
+                    PsiWhiteSpace(' ')
+                    VALUE_ARGUMENT
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('right')
+                    PsiElement(RPAR)(')')
+              PsiWhiteSpace('\n      ')
+              WHEN_ENTRY
+                WHEN_CONDITION
+                  PsiElement(is)('is')
                   PsiWhiteSpace(' ')
-                  PsiElement(DOUBLE_ARROW)('=>')
-                  PsiWhiteSpace(' ')
-                  CALL_EXPRESSION
+                  DECOMPOSER_PATTERN
                     REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('replace')
-                    VALUE_ARGUMENT_LIST
-                      PsiElement(LPAR)('(')
-                      VALUE_ARGUMENT
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('node')
-                      PsiElement(COMMA)(',')
-                      PsiWhiteSpace(' ')
-                      VALUE_ARGUMENT
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('left')
-                      PsiElement(RPAR)(')')
-                PsiWhiteSpace('\n      ')
-                MATCH_ENTRY
-                  PsiElement(case)('case')
-                  PsiWhiteSpace(' ')
-                  PATTERN
-                    USER_TYPE
                       PsiElement(IDENTIFIER)('TreeNode')
-                    TUPLE_PATTERN
+                    DECOMPOSER_ARGUMENT_LIST
                       PsiElement(LPAR)('(')
-                      PATTERN
-                        USER_TYPE
-                          PsiElement(IDENTIFIER)('left')
+                      DECOMPOSER_ARGUMENT
+                        TYPE_PATTERN
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('left')
                       PsiElement(COMMA)(',')
                       PsiWhiteSpace(' ')
-                      PATTERN
-                        USER_TYPE
-                          PsiElement(IDENTIFIER)('right')
+                      DECOMPOSER_ARGUMENT
+                        EXPRESSION_PATTERN
+                          NULL
+                            PsiElement(null)('null')
                       PsiElement(RPAR)(')')
+                PsiWhiteSpace(' ')
+                PsiElement(DOUBLE_ARROW)('=>')
+                PsiWhiteSpace(' ')
+                CALL_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('replace')
+                  VALUE_ARGUMENT_LIST
+                    PsiElement(LPAR)('(')
+                    VALUE_ARGUMENT
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('node')
+                    PsiElement(COMMA)(',')
+                    PsiWhiteSpace(' ')
+                    VALUE_ARGUMENT
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('left')
+                    PsiElement(RPAR)(')')
+              PsiWhiteSpace('\n      ')
+              WHEN_ENTRY
+                WHEN_CONDITION
+                  PsiElement(is)('is')
                   PsiWhiteSpace(' ')
-                  PsiElement(DOUBLE_ARROW)('=>')
-                  PsiWhiteSpace(' ')
-                  FUNCTION_LITERAL
-                    PsiElement(LBRACE)('{')
-                    PsiWhiteSpace('\n        ')
-                    BODY
-                      PROPERTY
-                        PsiElement(val)('val')
-                        PsiWhiteSpace(' ')
-                        PsiElement(IDENTIFIER)('min')
-                        PsiWhiteSpace(' ')
-                        PsiElement(EQ)('=')
-                        PsiWhiteSpace(' ')
-                        CALL_EXPRESSION
+                  DECOMPOSER_PATTERN
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('TreeNode')
+                    DECOMPOSER_ARGUMENT_LIST
+                      PsiElement(LPAR)('(')
+                      DECOMPOSER_ARGUMENT
+                        TYPE_PATTERN
                           REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('min')
-                          VALUE_ARGUMENT_LIST
-                            PsiElement(LPAR)('(')
-                            VALUE_ARGUMENT
-                              DOT_QIALIFIED_EXPRESSION
-                                REFERENCE_EXPRESSION
-                                  PsiElement(IDENTIFIER)('node')
-                                PsiElement(DOT)('.')
-                                REFERENCE_EXPRESSION
-                                  PsiElement(IDENTIFIER)('right')
-                            PsiElement(RPAR)(')')
-                      PsiWhiteSpace('\n        ')
-                      BINARY_EXPRESSION
-                        DOT_QIALIFIED_EXPRESSION
+                            PsiElement(IDENTIFIER)('left')
+                      PsiElement(COMMA)(',')
+                      PsiWhiteSpace(' ')
+                      DECOMPOSER_ARGUMENT
+                        TYPE_PATTERN
                           REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('node')
-                          PsiElement(DOT)('.')
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('value')
-                        PsiWhiteSpace(' ')
-                        PsiElement(EQ)('=')
-                        PsiWhiteSpace(' ')
-                        DOT_QIALIFIED_EXPRESSION
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('min')
-                          PsiElement(DOT)('.')
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('value')
-                      PsiWhiteSpace('\n        ')
+                            PsiElement(IDENTIFIER)('right')
+                      PsiElement(RPAR)(')')
+                PsiWhiteSpace(' ')
+                PsiElement(DOUBLE_ARROW)('=>')
+                PsiWhiteSpace(' ')
+                FUNCTION_LITERAL
+                  PsiElement(LBRACE)('{')
+                  PsiWhiteSpace('\n        ')
+                  BODY
+                    PROPERTY
+                      PsiElement(val)('val')
+                      PsiWhiteSpace(' ')
+                      PsiElement(IDENTIFIER)('min')
+                      PsiWhiteSpace(' ')
+                      PsiElement(EQ)('=')
+                      PsiWhiteSpace(' ')
                       CALL_EXPRESSION
                         REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('remove')
+                          PsiElement(IDENTIFIER)('min')
                         VALUE_ARGUMENT_LIST
                           PsiElement(LPAR)('(')
                           VALUE_ARGUMENT
-                            REFERENCE_EXPRESSION
-                              PsiElement(IDENTIFIER)('min')
+                            DOT_QIALIFIED_EXPRESSION
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('node')
+                              PsiElement(DOT)('.')
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('right')
                           PsiElement(RPAR)(')')
-                    PsiWhiteSpace('\n      ')
-                    PsiElement(RBRACE)('}')
-                PsiWhiteSpace('\n    ')
-                PsiElement(RBRACE)('}')
+                    PsiWhiteSpace('\n        ')
+                    BINARY_EXPRESSION
+                      DOT_QIALIFIED_EXPRESSION
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('node')
+                        PsiElement(DOT)('.')
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('value')
+                      PsiWhiteSpace(' ')
+                      PsiElement(EQ)('=')
+                      PsiWhiteSpace(' ')
+                      DOT_QIALIFIED_EXPRESSION
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('min')
+                        PsiElement(DOT)('.')
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('value')
+                    PsiWhiteSpace('\n        ')
+                    CALL_EXPRESSION
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('remove')
+                      VALUE_ARGUMENT_LIST
+                        PsiElement(LPAR)('(')
+                        VALUE_ARGUMENT
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('min')
+                        PsiElement(RPAR)(')')
+                  PsiWhiteSpace('\n      ')
+                  PsiElement(RBRACE)('}')
+              PsiWhiteSpace('\n    ')
+              PsiElement(RBRACE)('}')
             PsiWhiteSpace('\n\n    ')
             FUN
               PsiElement(fun)('fun')
@@ -1517,7 +1510,7 @@ JetFile: BinaryTree.jet
                   PsiElement(COLON)(':')
                   PsiWhiteSpace(' ')
                   TYPE_REFERENCE
-                    USER_TYPE
+                    REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('TreeNode')
                 PsiElement(COMMA)(',')
                 PsiWhiteSpace(' ')
@@ -1527,7 +1520,7 @@ JetFile: BinaryTree.jet
                   PsiElement(COLON)(':')
                   PsiWhiteSpace(' ')
                   TYPE_REFERENCE
-                    USER_TYPE
+                    REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('TreeNode')
                 PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')
@@ -1701,7 +1694,7 @@ JetFile: BinaryTree.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                USER_TYPE
+                REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('TreeNode')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
@@ -1766,12 +1759,12 @@ JetFile: BinaryTree.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            USER_TYPE
+            REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('IIterator')
               TYPE_ARGUMENT_LIST
                 PsiElement(LT)('<')
                 TYPE_REFERENCE
-                  USER_TYPE
+                  REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('T')
                 PsiElement(GT)('>')
           PsiWhiteSpace(' ')
@@ -1800,12 +1793,12 @@ JetFile: BinaryTree.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            USER_TYPE
+            REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('IMutableIterator')
               TYPE_ARGUMENT_LIST
                 PsiElement(LT)('<')
                 TYPE_REFERENCE
-                  USER_TYPE
+                  REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('T')
                 PsiElement(GT)('>')
           PsiWhiteSpace(' ')
@@ -1817,7 +1810,7 @@ JetFile: BinaryTree.jet
             DELEGATION_SPECIFIER_LIST
               DELEGATOR_SUPER_CLASS
                 TYPE_REFERENCE
-                  USER_TYPE
+                  REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('IMutableIterator')
             PsiWhiteSpace(' ')
             CLASS_BODY
@@ -1854,7 +1847,7 @@ JetFile: BinaryTree.jet
                   TYPE_ARGUMENT_LIST
                     PsiElement(LT)('<')
                     TYPE_REFERENCE
-                      USER_TYPE
+                      REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('TreeNode')
                     PsiElement(GT)('>')
                   VALUE_ARGUMENT_LIST
@@ -1874,7 +1867,7 @@ JetFile: BinaryTree.jet
                   TYPE_ARGUMENT_LIST
                     PsiElement(LT)('<')
                     TYPE_REFERENCE
-                      USER_TYPE
+                      REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('TreeNode')
                     PsiElement(GT)('>')
                   VALUE_ARGUMENT_LIST
@@ -1889,7 +1882,7 @@ JetFile: BinaryTree.jet
                 PsiElement(COLON)(':')
                 PsiWhiteSpace(' ')
                 TYPE_REFERENCE
-                  USER_TYPE
+                  REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('TreeNode')
               PsiWhiteSpace('\n\n    ')
               CONSTRUCTOR
@@ -1949,7 +1942,7 @@ JetFile: BinaryTree.jet
                 PsiElement(COLON)(':')
                 PsiWhiteSpace(' ')
                 TYPE_REFERENCE
-                  USER_TYPE
+                  REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('T')
                 PsiWhiteSpace(' ')
                 BLOCK
@@ -2025,7 +2018,7 @@ JetFile: BinaryTree.jet
                 PsiElement(COLON)(':')
                 PsiWhiteSpace(' ')
                 TYPE_REFERENCE
-                  USER_TYPE
+                  REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('TreeNode')
                 PsiWhiteSpace(' ')
                 BLOCK
@@ -2295,7 +2288,7 @@ JetFile: BinaryTree.jet
                 PsiElement(COLON)(':')
                 PsiWhiteSpace(' ')
                 TYPE_REFERENCE
-                  USER_TYPE
+                  REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('Boolean')
                 PsiWhiteSpace('\n      ')
                 PROPERTY_ACCESSOR

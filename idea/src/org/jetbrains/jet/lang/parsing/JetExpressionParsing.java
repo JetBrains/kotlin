@@ -13,19 +13,23 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
  * @author abreslav
  */
 public class JetExpressionParsing extends AbstractJetParsing {
-    private final JetParsing myJetParsing;
+    private static final TokenSet WHEN_CONDITION_RECOVERY_SET = TokenSet.create(RBRACE, IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS, ELSE_KEYWORD);
+    private static final TokenSet WHEN_CONDITION_RECOVERY_SET_WITH_DOUBLE_ARROW = TokenSet.create(RBRACE, IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS, ELSE_KEYWORD, DOUBLE_ARROW);
+
     private static final TokenSet TYPE_ARGUMENT_LIST_STOPPERS = TokenSet.create(
             INTEGER_LITERAL, LONG_LITERAL, FLOAT_LITERAL, CHARACTER_LITERAL, STRING_LITERAL, RAW_STRING_LITERAL,
             NAMESPACE_KEYWORD, AS_KEYWORD, TYPE_KEYWORD, CLASS_KEYWORD, THIS_KEYWORD, VAL_KEYWORD, VAR_KEYWORD,
             FUN_KEYWORD, EXTENSION_KEYWORD, FOR_KEYWORD, NULL_KEYWORD, TYPEOF_KEYWORD,
             NEW_KEYWORD, TRUE_KEYWORD, FALSE_KEYWORD, IS_KEYWORD, THROW_KEYWORD, RETURN_KEYWORD, BREAK_KEYWORD,
             CONTINUE_KEYWORD, OBJECT_KEYWORD, IF_KEYWORD, TRY_KEYWORD, ELSE_KEYWORD, WHILE_KEYWORD, DO_KEYWORD,
-            MATCH_KEYWORD, RBRACKET, RBRACE, RPAR, PLUSPLUS, MINUSMINUS, MUL, PLUS, MINUS, EXCL, DIV, PERC, LTEQ,
+            WHEN_KEYWORD, RBRACKET, RBRACE, RPAR, PLUSPLUS, MINUSMINUS, MUL, PLUS, MINUS, EXCL, DIV, PERC, LTEQ,
             // TODO GTEQ,   foo<bar, baz>=x
             EQEQEQ, ARROW, DOUBLE_ARROW, EXCLEQEQEQ, EQEQ, EXCLEQ, ANDAND, OROR, SAFE_ACCESS, ELVIS, QUEST,
             SEMICOLON, RANGE, EQ, MULTEQ, DIVEQ, PERCEQ, PLUSEQ, MINUSEQ, NOT_IN, NOT_IS, HASH,
             COLON
     );
+
+    private final JetParsing myJetParsing;
 
     public JetExpressionParsing(SemanticWhitespaceAwarePsiBuilder builder, JetParsing jetParsing) {
         super(builder);
@@ -34,13 +38,6 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
     @SuppressWarnings({"UnusedDeclaration"})
     private enum Precedence {
-//        MEMBER_ACCESS(DOT, HASH, SAFE_ACCESS) {
-//            @Override
-//            public void parseHigherPrecedence(JetExpressionParsing parsing) {
-//                parsing.parseAtomicExpression();
-//            }
-//        },
-//
         POSTFIX(PLUSPLUS, MINUSMINUS), // typeArguments? valueArguments : typeArguments : arrayAccess
 
         PREFIX(MINUS, PLUS, MINUSMINUS, PLUSPLUS, EXCL) { // attributes
@@ -63,7 +60,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
         SIMPLE_NAME(IDENTIFIER),
         ELVIS(JetTokens.ELVIS),
         // TODO : make same priority
-        WITH_TYPE_RHS(IS_KEYWORD, NOT_IS, AS_KEYWORD, COLON) {
+        WITH_TYPE_RHS(AS_KEYWORD, COLON) {
             @Override
             public void parseRightHandSide(JetExpressionParsing parsing) {
                 parsing.myJetParsing.parseTypeRef();
@@ -74,23 +71,22 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 return BINARY_WITH_TYPE;
             }
         },
+        IS(IS_KEYWORD, NOT_IS) {
+            @Override
+            public void parseRightHandSide(JetExpressionParsing parsing) {
+                parsing.parsePattern();
+            }
+
+            @Override
+            public JetNodeType getProductType() {
+                return BINARY_WITH_PATTERN;
+            }
+        },
         NAMED_INFIX(IN_KEYWORD, NOT_IN),
         COMPARISON(LT, GT, LTEQ, GTEQ),
         EQUALITY(EQEQ, EXCLEQ, EQEQEQ, EXCLEQEQEQ),
         CONJUNCTION(ANDAND),
         DISJUNCTION(OROR),
-        MATCH(MATCH_KEYWORD) {
-            @Override
-            public void parseRightHandSide(JetExpressionParsing parsing) {
-                parsing.parseMatchBlock();
-            }
-
-            @Override
-            public JetNodeType getProductType() {
-                return MATCH_EXPRESSION;
-            }
-        },
-        // TODO: don't build a binary tree, build a tuple
         ARROW(JetTokens.ARROW),
         ASSIGNMENT(EQ, PLUSEQ, MINUSEQ, MULTEQ, DIVEQ, PERCEQ),
         ;
@@ -285,6 +281,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      *   : objectLiteral
      *   : jump
      *   : if
+     *   : when
      *   : try
      *   : loop
      *   : literalConstant
@@ -329,6 +326,9 @@ public class JetExpressionParsing extends AbstractJetParsing {
         }
         else if (at(IF_KEYWORD)) {
             parseIf();
+        }
+        else if (at(WHEN_KEYWORD)) {
+            parseWhen();
         }
         else if (at(TRY_KEYWORD)) {
             parseTry();
@@ -407,86 +407,259 @@ public class JetExpressionParsing extends AbstractJetParsing {
     }
 
     /*
-     * "{" matchEntry+ "}"
+     * when
+     *   : "when" "(" (modifiers "val" SimpleName "=")? expression ")" "{"
+     *         whenEntry*
+     *     "}"
+     *   ;
      */
-    private void parseMatchBlock() {
-        PsiBuilder.Marker mark = mark();
-        expect(LBRACE, "Expecting '{' to open a match block");
-        while (!eof() && !at(RBRACE)) {
-            if (at(CASE_KEYWORD) || at(LBRACKET)) {
-                parseMatchEntry();
-            } else {
-                errorUntil("Expecting 'case' to start pattern matching", TokenSet.create(RBRACE, LBRACKET, CASE_KEYWORD));
-            }
+    private void parseWhen() {
+        assert _at(WHEN_KEYWORD);
+
+        PsiBuilder.Marker when = mark();
+
+        advance(); // WHEN_KEYWORD
+
+        myBuilder.disableNewlines();
+        expect(LPAR, "Expecting '('");
+
+        int valPos = matchTokenStreamPredicate(new FirstBefore(new At(VAL_KEYWORD), new AtSet(RPAR, LBRACE, RBRACE, SEMICOLON, EQ)));
+        if (valPos >= 0) {
+            myJetParsing.parseProperty(true);
+        } else {
+            parseExpression();
         }
+
+        expect(RPAR, "Expecting ')'");
+        myBuilder.restoreNewlinesState();
+
+        myBuilder.enableNewlines();
+        expect(LBRACE, "Expecting '{'");
+
+        while (!eof() && !at(RBRACE)) {
+            parseWhenEntry();
+        }
+
         expect(RBRACE, "Expecting '}'");
-        mark.done(MATCH_BLOCK);
+        myBuilder.restoreNewlinesState();
+
+        when.done(WHEN);
     }
 
     /*
-     * matchEntry
-     *   : attributes "case" pattern ("if" "(" expression ")")? "=>" expression SEMI?
+     * TODO: attributes for when entries?
+     * whenEntry
+     *   : whenConditionIf{","} (when  | "=>" expression SEMI)
+     *   : "else" ("continue" | "=>" expression SEMI)
      *   ;
      */
-    private void parseMatchEntry() {
+    private void parseWhenEntry() {
         PsiBuilder.Marker entry = mark();
 
-        myJetParsing.parseAttributeList();
+        if (at(ELSE_KEYWORD)) {
+            advance(); // ELSE_KEYWORD
 
-        myBuilder.disableNewlines();
-        expect(CASE_KEYWORD, "Expecting 'case' to start pattern matching", TokenSet.create(RBRACE, IF_KEYWORD, DOUBLE_ARROW));
+            if (!at(CONTINUE_KEYWORD) && !at(DOUBLE_ARROW)) {
+                errorUntil("Expecting 'continue' or '=> expression'", TokenSet.create(CONTINUE_KEYWORD, DOUBLE_ARROW,
+                        RBRACE, EOL_OR_SEMICOLON));
+            }
 
-        parsePattern();
+            if (at(DOUBLE_ARROW)) {
+                advance(); // DOUBLE_ARROW
+
+                if (atSet(WHEN_CONDITION_RECOVERY_SET)) {
+                    error("Expecting an expression");
+                } else {
+                    parseExpression();
+                }
+            } else if (at(CONTINUE_KEYWORD)) {
+                advance(); // CONTINUE_KEYWORD
+            } else if (!atSet(WHEN_CONDITION_RECOVERY_SET)) {
+                 errorAndAdvance("Expecting 'continue' or '=> expression'");
+            }
+        } else {
+            parseWhenEntryNotElse();
+        }
+
+        entry.done(WHEN_ENTRY);
+        consumeIf(SEMICOLON);
+    }
+
+    /*
+     * : whenConditionIf{","} (when  | "=>" expression SEMI)
+     */
+    private void parseWhenEntryNotElse() {
+        while (true) {
+            while (at(COMMA)) errorAndAdvance("Expecting a when-condition");
+            parseWhenConditionIf();
+            if (!at(COMMA)) break;
+            advance(); // COMMA
+        }
+        if (at(WHEN_KEYWORD)) {
+            parseWhen();
+        } else {
+            expect(DOUBLE_ARROW, "Expecting '=>' or 'when'", WHEN_CONDITION_RECOVERY_SET);
+            if (atSet(WHEN_CONDITION_RECOVERY_SET)) {
+                error("Expecting an expression");
+            } else {
+                parseExpression();
+            }
+            // SEMI is consumed in parseWhenEntry
+        }
+    }
+
+    /*
+     * whenConditionIf
+     *   : pattern ("if" "(" expression ")")?
+     *   ;
+     */
+    private void parseWhenConditionIf() {
+        parseWhenCondition();
 
         if (at(IF_KEYWORD)) {
             advance(); // IF_KEYWORD
 
-            parseCondition();
+            // TODO : allow omitting these parentheses
+            myBuilder.disableNewlines();
+            expect(LPAR, "Expecting '('");
+
+            parseExpression();
+
+            expect(RPAR, "Expecting ')'");
+            myBuilder.restoreNewlinesState();
         }
+    }
 
-        expect(DOUBLE_ARROW, "Expecting '=>'", TokenSet.create(RBRACE));
-        myBuilder.restoreNewlinesState();
+    /*
+     * whenCondition
+     *   : expression
+     *   : ("in" | "!in") expression
+     *   : ("is" | "!is") isRHS
+     *   ;
+     */
+    private void parseWhenCondition() {
+        PsiBuilder.Marker condition = mark();
+        if (at(IN_KEYWORD) || at(NOT_IN)) {
+            advance(); // IN_KEYWORD or NOT_IN
 
-        parseExpression();
+            if (atSet(WHEN_CONDITION_RECOVERY_SET_WITH_DOUBLE_ARROW)) {
+                error("Expecting an expression");
+            } else {
+                parseExpression();
+            }
+        } else if (at(IS_KEYWORD) || at(NOT_IS)) {
+            advance(); // IS_KEYWORD or NOT_IS
 
-        consumeIf(SEMICOLON);
-
-        entry.done(MATCH_ENTRY);
+            if (atSet(WHEN_CONDITION_RECOVERY_SET_WITH_DOUBLE_ARROW)) {
+                error("Expecting a type or a decomposer pattern");
+            } else {
+                parsePattern();
+            }
+        } else {
+            if (atSet(WHEN_CONDITION_RECOVERY_SET_WITH_DOUBLE_ARROW)) {
+                error("Expecting an expression, is-condition or in-condition");
+            } else {
+                parseExpression();
+            }
+        }
+        condition.done(WHEN_CONDITION);
     }
 
     /*
      * pattern
-     *   : constantPattern // literal
-     *   : variablePattern // variable from the context
-     *   : tuplePattern
-     *   : bindingPattern // we allow non-linear patterns
-     *   : decomposerPattern // TODO: labeled components are allowed?
+     *  : attributes pattern
+     *  : type // '[a] T' is a type-pattern 'T' with an attribute '[a]', not a type-pattern '[a] T'
+     *         // this makes sense because is-chack may be different for a type with attributes
+     *  : tuplePattern
+     *  : decomposerPattern
+     *  : constantPattern
+     *  : bindingPattern
+     *  : expressionPattern
      *   ;
      */
     private void parsePattern() {
         PsiBuilder.Marker pattern = mark();
 
-        if (at(IDENTIFIER) || at(NAMESPACE_KEYWORD)) {
+        myJetParsing.parseAttributeList();
+
+        if (at(NAMESPACE_KEYWORD) || at(IDENTIFIER)) {
             myJetParsing.parseUserType();
             if (at(LPAR)) {
-                parseTuplePattern();
+                PsiBuilder.Marker list = mark();
+                parseTuplePattern(DECOMPOSER_ARGUMENT);
+                list.done(DECOMPOSER_ARGUMENT_LIST);
+                pattern.done(DECOMPOSER_PATTERN);
+            } else {
+                pattern.done(TYPE_PATTERN);
             }
-        }
-        else if (at(LPAR)) {
-            parseTuplePattern();
+        } else if (at(LPAR)) {
+            parseTuplePattern(TUPLE_PATTERN_ENTRY);
+            pattern.done(TUPLE_PATTERN);
+        } else if (at(LBRACE) || at(CAPITALIZED_THIS_KEYWORD)) {
+            myJetParsing.parseTypeRef();
+            pattern.done(TYPE_PATTERN);
         }
         else if (at(QUEST)) {
             parseBindingPattern();
-        } else if (!parseLiteralConstant()) {
+            pattern.done(BINDING_PATTERN);
+        } else if (at(EQ)) {
+            advance(); // EQ
+            parseExpression();
+            pattern.done(EXPRESSION_PATTERN);
+        } else if (parseLiteralConstant()) {
+            pattern.done(EXPRESSION_PATTERN);
+        } else {
             errorUntil("Pattern expected", TokenSet.create(RBRACE, DOUBLE_ARROW));
+            pattern.drop();
+        }
+    }
+
+    /*
+     * tuplePattern
+     *  : "(" ((SimpleName "=")? pattern){","}? ")"
+     *  ;
+     */
+    private void parseTuplePattern(JetNodeType entryType) {
+        assert _at(LPAR);
+
+        myBuilder.disableNewlines();
+        advance(); // LPAR
+
+        if (!at(RPAR)) {
+            while (true) {
+                while (at(COMMA)) errorAndAdvance("Expecting a pattern");
+                if (at(RPAR)) {
+                    error("Expecting a pattern");
+                    break;
+                }
+                PsiBuilder.Marker entry = mark();
+                if (at(IDENTIFIER) && lookahead(1) == EQ) {
+                    advance(); // IDENTIFIER
+                    advance(); // EQ
+                }
+                parsePattern();
+                entry.done(entryType);
+                if (!at(COMMA)) break;
+
+                advance(); // COMMA
+            }
         }
 
-        pattern.done(PATTERN);
+        expect(RPAR, "Expecting ')'");
+        myBuilder.restoreNewlinesState();
     }
 
     /*
      * bindingPattern
-     *   : "?" SimpleName? (":" pattern)?
+     *   : "?" SimpleName? binding?
+     *   ;
+     *
+     * binding
+     *   : "is" pattern
+     *   : "!is" pattern
+     *   : "in" expression
+     *   : "!in" expression
+     *   : "=" expression
      *   ;
      */
     private void parseBindingPattern() {
@@ -496,43 +669,44 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         consumeIf(IDENTIFIER);
 
-        if (at(COLON)) {
-            advance(); // COLON
+        if (at(IS_KEYWORD) || at(NOT_IS)) {
+            advance(); // IS_KEYWORD or NOT_IS
 
             parsePattern();
+        } else if (at(IN_KEYWORD) || at(NOT_IN)) {
+            advance(); // IN_KEYWORD ot NOT_IN
+
+            parseExpression();
+        } else if (at(EQ)) {
+            advance(); // EQ
+
+            parseExpression();
         }
     }
 
     /*
-     * tuplePattern
-     *   : "(" ((SimpleName "=")? pattern{","})? ")"
+     * qualifiedName
+     *   : ("namespace" ".")? SimpleName{","}
      *   ;
      */
-    private void parseTuplePattern() {
-        assert _at(LPAR);
+    private void parseQualifiedName() {
+        PsiBuilder.Marker mark = mark();
 
-        PsiBuilder.Marker pattern = mark();
-        advance(); // LPAR
+        if (at(NAMESPACE_KEYWORD)) {
+            advance(); // NAMESPACE_KEYWORD
+            mark.done(REFERENCE_EXPRESSION);
+            mark = mark.precede();
 
-        if (!at(RPAR)) {
-            while (true) {
-                while (at(COMMA)) errorAndAdvance("Expecting a pattern");
-                if (at(IDENTIFIER) && lookahead(1) == EQ) {
-                    advance(); // IDENTIFIER
-                    advance(); // EQ
-                }
-                parsePattern();
-                if (!at(COMMA)) break;
-                advance(); // COMMA
-                if (at(RPAR)) {
-                    error("Expecting a pattern");
-                    break;
-                }
-            }
+            expect(DOT, "Expecting '.'");
         }
-
-        expect(RPAR, "Expecting ')'");
-        pattern.done(TUPLE_PATTERN);
+        while (true) {
+            expect(IDENTIFIER, "Expecting an indetifier", TokenSet.create(DOT));
+            mark.done(REFERENCE_EXPRESSION);
+            mark = mark.precede();
+            if (!at(DOT)) break;
+            advance(); // DOT
+        }
+        mark.drop();
     }
 
     /*
@@ -621,8 +795,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
             int lastDot = matchTokenStreamPredicate(new LastBefore(new At(DOT), new AtOffset(doubleArrowPos)));
             if (lastDot >= 0) { // There is a receiver type
                 createTruncatedBuilder(lastDot).parseTypeRef();
-                assert _at(DOT);
-                advance(); // DOT;
+
+                expect(DOT, "Expecting '.'");
 
                 if (!at(LPAR)) {
                     int firstLParPos = matchTokenStreamPredicate(new FirstBefore(new At(LPAR), new AtOffset(doubleArrowPos)));

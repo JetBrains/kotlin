@@ -27,10 +27,10 @@ class BinaryTree<T> : IMutableSet<T> {
 
     fun contains(node : TreeNode, item : T) : Boolean {
       if (node == null) return false
-      compare(item, node.value) match {
-        case EQ => true
-        case LS => contains(node.left, item)
-        case GT => contains(node.right, item)
+      when (compare(item, node.value)) {
+        EQ => true
+        LS => contains(node.left, item)
+        GT => contains(node.right, item)
       }
     }
   }
@@ -50,10 +50,10 @@ class BinaryTree<T> : IMutableSet<T> {
         node = TreeNode(item, parent)
         return true
       }
-      compare(item, node.value) match {
-        case EQ => false
-        case LS => add(ref node.left, node)
-        case GT => add(ref node.right, node)
+      when (compare(item, node.value)) {
+        EQ => false
+        LS => add(ref node.left, node)
+        GT => add(ref node.right, node)
       }
     }
 
@@ -63,14 +63,14 @@ class BinaryTree<T> : IMutableSet<T> {
         root = TreeNode(item, null)
         return true
       }
-      compare(item, node.value) match {
-        case EQ => return false
-        case LS =>
+      when (compare(item, node.value)) {
+        EQ => return false
+        LS =>
           if (node.left == null) {
             node.left = TreeNode(item, node)
             return true
           } else return add(node.left)
-        case GT => 
+        GT =>
           if (node.right == null) {
             node.right = TreeNode(item, node)
             return true
@@ -89,20 +89,20 @@ class BinaryTree<T> : IMutableSet<T> {
 
     fun find(node : TreeNode) : TreeNode {
       if (node == null) return null
-      compare(item, node.value) match {
-        case EQ => node
-        case LS => find(node.left)
-        case GT => find(node.right)
+      when (compare(item, node.value)) {
+        EQ => node
+        LS => find(node.left)
+        GT => find(node.right)
       }
     }
   }
 
   private fun remove(node : TreeNode) {
-    node match {
-      case TreeNode(null, null) => replace(node, null)
-      case TreeNode(null, right) => replace(node, right)
-      case TreeNode(left, null) => replace(node, left)
-      case TreeNode(left, right) => {
+    when (node) {
+      is TreeNode(null, null) => replace(node, null)
+      is TreeNode(null, ?right) => replace(node, right)
+      is TreeNode(?left, null) => replace(node, left)
+      is TreeNode(?left, ?right) => {
         val min = min(node.right)
         node.value = min.value
         remove(min)

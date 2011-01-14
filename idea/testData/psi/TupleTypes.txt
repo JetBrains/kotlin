@@ -29,7 +29,7 @@ JetFile: TupleTypes.jet
             TUPLE_TYPE
               PsiElement(LPAR)('(')
               TYPE_REFERENCE
-                USER_TYPE
+                REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('X')
               PsiElement(RPAR)(')')
         PsiElement(COMMA)(',')
@@ -43,12 +43,12 @@ JetFile: TupleTypes.jet
             TUPLE_TYPE
               PsiElement(LPAR)('(')
               TYPE_REFERENCE
-                USER_TYPE
+                REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('A')
               PsiElement(COMMA)(',')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                USER_TYPE
+                REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('B')
               PsiElement(RPAR)(')')
         PsiElement(COMMA)(',')
@@ -67,7 +67,7 @@ JetFile: TupleTypes.jet
                 PsiElement(COLON)(':')
                 PsiWhiteSpace(' ')
                 TYPE_REFERENCE
-                  USER_TYPE
+                  REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('Int')
               PsiElement(COMMA)(',')
               PsiWhiteSpace(' ')
@@ -77,7 +77,7 @@ JetFile: TupleTypes.jet
                 PsiElement(COLON)(':')
                 PsiWhiteSpace(' ')
                 TYPE_REFERENCE
-                  USER_TYPE
+                  REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('Int')
               PsiElement(RPAR)(')')
         PsiElement(COMMA)(',')
@@ -91,8 +91,9 @@ JetFile: TupleTypes.jet
             ATTRIBUTE_ANNOTATION
               PsiElement(LBRACKET)('[')
               ATTRIBUTE
-                USER_TYPE
-                  PsiElement(IDENTIFIER)('x')
+                TYPE_REFERENCE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('x')
               PsiElement(RBRACKET)(']')
             PsiWhiteSpace(' ')
             TUPLE_TYPE
@@ -109,8 +110,9 @@ JetFile: TupleTypes.jet
             ATTRIBUTE_ANNOTATION
               PsiElement(LBRACKET)('[')
               ATTRIBUTE
-                USER_TYPE
-                  PsiElement(IDENTIFIER)('x')
+                TYPE_REFERENCE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('x')
               PsiElement(RBRACKET)(']')
             TUPLE_TYPE
               PsiElement(LPAR)('(')
@@ -118,11 +120,12 @@ JetFile: TupleTypes.jet
                 ATTRIBUTE_ANNOTATION
                   PsiElement(LBRACKET)('[')
                   ATTRIBUTE
-                    USER_TYPE
-                      PsiElement(IDENTIFIER)('x')
+                    TYPE_REFERENCE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('x')
                   PsiElement(RBRACKET)(']')
                 PsiWhiteSpace(' ')
-                USER_TYPE
+                REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('X')
               PsiElement(RPAR)(')')
         PsiElement(COMMA)(',')
@@ -136,8 +139,9 @@ JetFile: TupleTypes.jet
             ATTRIBUTE_ANNOTATION
               PsiElement(LBRACKET)('[')
               ATTRIBUTE
-                USER_TYPE
-                  PsiElement(IDENTIFIER)('x')
+                TYPE_REFERENCE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('x')
               PsiElement(RBRACKET)(']')
             PsiWhiteSpace(' ')
             TUPLE_TYPE
@@ -146,11 +150,12 @@ JetFile: TupleTypes.jet
                 ATTRIBUTE_ANNOTATION
                   PsiElement(LBRACKET)('[')
                   ATTRIBUTE
-                    USER_TYPE
-                      PsiElement(IDENTIFIER)('x')
+                    TYPE_REFERENCE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('x')
                   PsiElement(RBRACKET)(']')
                 PsiWhiteSpace(' ')
-                USER_TYPE
+                REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('A')
               PsiElement(COMMA)(',')
               PsiWhiteSpace(' ')
@@ -158,10 +163,11 @@ JetFile: TupleTypes.jet
                 ATTRIBUTE_ANNOTATION
                   PsiElement(LBRACKET)('[')
                   ATTRIBUTE
-                    USER_TYPE
-                      PsiElement(IDENTIFIER)('x')
+                    TYPE_REFERENCE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('x')
                   PsiElement(RBRACKET)(']')
-                USER_TYPE
+                REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('B')
               PsiElement(RPAR)(')')
         PsiElement(COMMA)(',')
@@ -175,8 +181,9 @@ JetFile: TupleTypes.jet
             ATTRIBUTE_ANNOTATION
               PsiElement(LBRACKET)('[')
               ATTRIBUTE
-                USER_TYPE
-                  PsiElement(IDENTIFIER)('x')
+                TYPE_REFERENCE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('x')
               PsiElement(RBRACKET)(']')
             PsiWhiteSpace(' ')
             TUPLE_TYPE
@@ -190,11 +197,12 @@ JetFile: TupleTypes.jet
                   ATTRIBUTE_ANNOTATION
                     PsiElement(LBRACKET)('[')
                     ATTRIBUTE
-                      USER_TYPE
-                        PsiElement(IDENTIFIER)('x')
+                      TYPE_REFERENCE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('x')
                     PsiElement(RBRACKET)(']')
                   PsiWhiteSpace(' ')
-                  USER_TYPE
+                  REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('Int')
               PsiElement(COMMA)(',')
               PsiWhiteSpace(' ')
@@ -207,11 +215,12 @@ JetFile: TupleTypes.jet
                   ATTRIBUTE_ANNOTATION
                     PsiElement(LBRACKET)('[')
                     ATTRIBUTE
-                      USER_TYPE
-                        PsiElement(IDENTIFIER)('x')
+                      TYPE_REFERENCE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('x')
                     PsiElement(RBRACKET)(']')
                   PsiWhiteSpace(' ')
-                  USER_TYPE
+                  REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('Int')
               PsiElement(RPAR)(')')
         PsiWhiteSpace('\n    ')

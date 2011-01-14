@@ -22,8 +22,8 @@ public class JetAttribute extends JetElement {
     }
 
     @Nullable @IfNotParsed
-    public JetUserType getTypeReference() {
-        return (JetUserType) findChildByType(JetNodeTypes.USER_TYPE);
+    public JetTypeReference getTypeReference() {
+        return (JetTypeReference) findChildByType(JetNodeTypes.TYPE_REFERENCE);
     }
 
     @Nullable

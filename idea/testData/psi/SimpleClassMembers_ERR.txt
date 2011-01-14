@@ -20,7 +20,7 @@ JetFile: SimpleClassMembers_ERR.jet
           PsiElement(for)('for')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            USER_TYPE
+            REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('X')
           PsiWhiteSpace(' ')
           CLASS_BODY
@@ -111,12 +111,12 @@ JetFile: SimpleClassMembers_ERR.jet
             PsiWhiteSpace(' ')
             DELEGATOR_SUPER_CALL
               TYPE_REFERENCE
-                USER_TYPE
+                REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('Foo')
                   TYPE_ARGUMENT_LIST
                     PsiElement(LT)('<')
                     TYPE_REFERENCE
-                      USER_TYPE
+                      REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('T')
                     PsiErrorElement:Expecting a '>'
                       <empty list>
@@ -158,12 +158,12 @@ JetFile: SimpleClassMembers_ERR.jet
             PsiWhiteSpace(' ')
             DELEGATOR_SUPER_CALL
               TYPE_REFERENCE
-                USER_TYPE
+                REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('Foo')
                   TYPE_ARGUMENT_LIST
                     PsiElement(LT)('<')
                     TYPE_REFERENCE
-                      USER_TYPE
+                      REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('T')
                     PsiElement(GT)('>')
               VALUE_ARGUMENT_LIST

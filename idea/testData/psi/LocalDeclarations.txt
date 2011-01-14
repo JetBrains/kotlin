@@ -24,8 +24,9 @@ JetFile: LocalDeclarations.jet
             ATTRIBUTE_ANNOTATION
               PsiElement(LBRACKET)('[')
               ATTRIBUTE
-                USER_TYPE
-                  PsiElement(IDENTIFIER)('a')
+                TYPE_REFERENCE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
               PsiElement(RBRACKET)(']')
             PsiWhiteSpace(' ')
             PsiElement(abstract)('abstract')
@@ -47,8 +48,9 @@ JetFile: LocalDeclarations.jet
             ATTRIBUTE_ANNOTATION
               PsiElement(LBRACKET)('[')
               ATTRIBUTE
-                USER_TYPE
-                  PsiElement(IDENTIFIER)('a')
+                TYPE_REFERENCE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
               PsiElement(RBRACKET)(']')
           PsiWhiteSpace(' ')
           PsiElement(class)('class')
@@ -79,8 +81,9 @@ JetFile: LocalDeclarations.jet
             ATTRIBUTE_ANNOTATION
               PsiElement(LBRACKET)('[')
               ATTRIBUTE
-                USER_TYPE
-                  PsiElement(IDENTIFIER)('a')
+                TYPE_REFERENCE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
               PsiElement(RBRACKET)(']')
           PsiWhiteSpace(' ')
           PsiElement(var)('var')
@@ -105,7 +108,7 @@ JetFile: LocalDeclarations.jet
             FUNCTION_TYPE
               PsiElement(LBRACE)('{')
               TYPE_REFERENCE
-                USER_TYPE
+                REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('T')
               PsiElement(DOT)('.')
               VALUE_PARAMETER_LIST
@@ -133,7 +136,7 @@ JetFile: LocalDeclarations.jet
           PsiElement(for)('for')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            USER_TYPE
+            REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('bar')
           PsiWhiteSpace(' ')
           CLASS_BODY

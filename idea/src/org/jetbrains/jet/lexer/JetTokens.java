@@ -50,8 +50,7 @@ public interface JetTokens {
     JetKeywordToken ELSE_KEYWORD             = JetKeywordToken.keyword("else");
     JetKeywordToken WHILE_KEYWORD            = JetKeywordToken.keyword("while");
     JetKeywordToken DO_KEYWORD               = JetKeywordToken.keyword("do");
-    JetKeywordToken MATCH_KEYWORD            = JetKeywordToken.keyword("match");
-    JetKeywordToken CASE_KEYWORD             = JetKeywordToken.keyword("case");
+    JetKeywordToken WHEN_KEYWORD            = JetKeywordToken.keyword("when");
     // TODO: Discuss "This" keyword
     JetKeywordToken CAPITALIZED_THIS_KEYWORD = JetKeywordToken.keyword("This");
 
@@ -136,7 +135,7 @@ public interface JetTokens {
             THIS_KEYWORD, VAL_KEYWORD, VAR_KEYWORD, FUN_KEYWORD, EXTENSION_KEYWORD, FOR_KEYWORD,
             NULL_KEYWORD, TYPEOF_KEYWORD, NEW_KEYWORD, TRUE_KEYWORD, FALSE_KEYWORD, IS_KEYWORD,
             IN_KEYWORD, THROW_KEYWORD, RETURN_KEYWORD, BREAK_KEYWORD, CONTINUE_KEYWORD, OBJECT_KEYWORD, IF_KEYWORD,
-            ELSE_KEYWORD, WHILE_KEYWORD, DO_KEYWORD, MATCH_KEYWORD, TRY_KEYWORD, CASE_KEYWORD,
+            ELSE_KEYWORD, WHILE_KEYWORD, DO_KEYWORD, TRY_KEYWORD, WHEN_KEYWORD,
             NOT_IN, NOT_IS, CAPITALIZED_THIS_KEYWORD
     );
 
@@ -159,5 +158,5 @@ public interface JetTokens {
     TokenSet OPERATIONS = TokenSet.create(AS_KEYWORD, IS_KEYWORD, IN_KEYWORD, DOT, PLUSPLUS, MINUSMINUS, MUL, PLUS,
             MINUS, EXCL, DIV, PERC, LT, GT, LTEQ, GTEQ, EQEQEQ, ARROW, EXCLEQEQEQ, EQEQ, EXCLEQ, ANDAND, OROR,
             SAFE_ACCESS, ELVIS, MAP, FILTER, QUEST, COLON, SEMICOLON, RANGE, EQ, MULTEQ, DIVEQ, PERCEQ, PLUSEQ, MINUSEQ,
-            NOT_IN, NOT_IS, HASH, IDENTIFIER, MATCH_KEYWORD);
+            NOT_IN, NOT_IS, HASH, IDENTIFIER);
 }
