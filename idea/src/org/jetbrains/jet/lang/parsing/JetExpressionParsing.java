@@ -444,7 +444,6 @@ public class JetExpressionParsing extends AbstractJetParsing {
     }
 
     /*
-     * TODO: attributes for when entries?
      * whenEntry
      *   : whenConditionIf{","} (when  | "=>" expression SEMI)
      *   : "else" ("continue" | "=>" expression SEMI)

@@ -4,7 +4,6 @@ when
     "}"
   ;
 
-// TODO: attributes for when entries?
 whenEntry
   : whenConditionIf{","} (when  | "=>" expression SEMI)
   : "else" ("continue" | "=>" expression SEMI)

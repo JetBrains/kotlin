@@ -1,0 +1,116 @@
+JetFile: AttributesOnPatterns.jet
+  NAMESPACE
+    FUN
+      PsiElement(fun)('fun')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('foo')
+      TYPE_PARAMETER_LIST
+        <empty list>
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      BLOCK
+        PsiElement(LBRACE)('{')
+        PsiWhiteSpace('\n\n    ')
+        WHEN
+          PsiElement(when)('when')
+          PsiWhiteSpace(' ')
+          PsiElement(LPAR)('(')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('e')
+          PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace('\n      ')
+          WHEN_ENTRY
+            WHEN_CONDITION
+              PsiElement(is)('is')
+              PsiWhiteSpace(' ')
+              EXPRESSION_PATTERN
+                ATTRIBUTE_ANNOTATION
+                  PsiElement(LBRACKET)('[')
+                  ATTRIBUTE
+                    TYPE_REFERENCE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('a')
+                  PsiElement(RBRACKET)(']')
+                PsiWhiteSpace(' ')
+                PsiElement(EQ)('=')
+                INTEGER_CONSTANT
+                  PsiElement(INTEGER_LITERAL)('2')
+            PsiWhiteSpace(' ')
+            PsiElement(DOUBLE_ARROW)('=>')
+            PsiWhiteSpace(' ')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('d')
+          PsiWhiteSpace('\n      ')
+          WHEN_ENTRY
+            WHEN_CONDITION
+              PsiElement(is)('is')
+              PsiWhiteSpace(' ')
+              EXPRESSION_PATTERN
+                ATTRIBUTE_ANNOTATION
+                  PsiElement(LBRACKET)('[')
+                  ATTRIBUTE
+                    TYPE_REFERENCE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('a')
+                  PsiElement(RBRACKET)(']')
+                PsiWhiteSpace(' ')
+                INTEGER_CONSTANT
+                  PsiElement(INTEGER_LITERAL)('2')
+            PsiWhiteSpace(' ')
+            PsiElement(DOUBLE_ARROW)('=>')
+            PsiWhiteSpace(' ')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('d')
+          PsiWhiteSpace('\n      ')
+          WHEN_ENTRY
+            WHEN_CONDITION
+              PsiElement(is)('is')
+              PsiWhiteSpace(' ')
+              TYPE_PATTERN
+                ATTRIBUTE_ANNOTATION
+                  PsiElement(LBRACKET)('[')
+                  ATTRIBUTE
+                    TYPE_REFERENCE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('a')
+                  PsiElement(RBRACKET)(']')
+                PsiWhiteSpace(' ')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('T')
+            PsiWhiteSpace(' ')
+            PsiElement(DOUBLE_ARROW)('=>')
+            PsiWhiteSpace(' ')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('d')
+          PsiWhiteSpace('\n      ')
+          WHEN_ENTRY
+            WHEN_CONDITION
+              PsiElement(is)('is')
+              PsiWhiteSpace(' ')
+              DECOMPOSER_PATTERN
+                ATTRIBUTE_ANNOTATION
+                  PsiElement(LBRACKET)('[')
+                  ATTRIBUTE
+                    TYPE_REFERENCE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('a')
+                  PsiElement(RBRACKET)(']')
+                PsiWhiteSpace(' ')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('T')
+                DECOMPOSER_ARGUMENT_LIST
+                  PsiElement(LPAR)('(')
+                  PsiElement(RPAR)(')')
+            PsiWhiteSpace(' ')
+            PsiElement(DOUBLE_ARROW)('=>')
+            PsiWhiteSpace(' ')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('d')
+          PsiWhiteSpace('\n    ')
+          PsiElement(RBRACE)('}')
+        PsiWhiteSpace('\n')
+        PsiElement(RBRACE)('}')
