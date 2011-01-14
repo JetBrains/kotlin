@@ -25,7 +25,7 @@ primaryConstructorParameters
 
 typeParameters
   : "<" typeParameter{","} ">"
-    ("where" typeConstraint{","})?  // TODO: Syntax is questionable
+    ("where" typeConstraint{","})?
   ;
 
 classBody
@@ -38,7 +38,7 @@ delegationSpecifier
   ;
 
 explicitDelegation
-  : userType "by" expression // internal this expression no foo {bar} is allowed // TODO: Syntax is questionable
+  : userType "by" expression // internal this expression no foo {bar} is allowed
   ;
 
 typeParameter
@@ -48,7 +48,6 @@ typeParameter
 typeConstraint
   : userType ":" type
   : "class" "object" userType ":" type
-  // TODO: other constraints, maybe
   ;
 
 primaryConstructorParameter

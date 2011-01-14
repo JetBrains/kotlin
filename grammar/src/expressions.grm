@@ -86,7 +86,7 @@ atomicExpression
   : when
   : try
   : "typeof" "(" expression ")"
-  : "new" constructorInvocation // TODO: Do we need "new"?, see factory methods
+  : "new" constructorInvocation
   : objectLiteral
   : declaration
   : jump

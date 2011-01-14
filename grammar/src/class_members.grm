@@ -96,7 +96,7 @@ getter
   ;
 
 setter
-  : modifiers "set" "(" modifiers (SimpleName | parameter) ")" functionBody // TODO: Can the parameter be lazy?
+  : modifiers "set" "(" modifiers (SimpleName | parameter) ")" functionBody
   ;
 
 parameter
