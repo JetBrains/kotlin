@@ -59,7 +59,6 @@ public class JetExpressionParsing extends AbstractJetParsing {
         RANGE(JetTokens.RANGE),
         SIMPLE_NAME(IDENTIFIER),
         ELVIS(JetTokens.ELVIS),
-        // TODO : make same priority
         WITH_TYPE_RHS(IN_KEYWORD, NOT_IN, AS_KEYWORD, COLON, IS_KEYWORD, NOT_IS) {
             @Override
             public JetNodeType parseRightHandSide(IElementType operation, JetExpressionParsing parser) {
@@ -160,6 +159,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
         while (!myBuilder.newlineBeforeCurrentToken() && atSet(precedence.getOperations())) {
             IElementType operation = tt();
             advance(); // operation
+
             JetNodeType resultType = precedence.parseRightHandSide(operation, this);
             expression.done(resultType);
              expression = expression.precede();
