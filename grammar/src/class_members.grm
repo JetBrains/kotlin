@@ -71,7 +71,11 @@ block
   ;
 
 function
-  : modifiers "fun" (type ".")? attributes/*for receiver type*/ typeParameters? functionParameters (":" type)? functionBody?
+  : modifiers "fun" typeParameters?
+      (type "." | attributes/*for receiver type*/)?
+      SimpleName
+      typeParameters? functionParameters (":" type)?
+      functionBody?
   ;
 
 functionBody
@@ -80,7 +84,10 @@ functionBody
   ;
 
 property
-  : modifiers ("val" | "var") attributes (type ".")? SimpleName (":" type)? ("=" expression SEMI?)?
+  : modifiers ("val" | "var")
+      typeParameters? (type "." | attributes)?
+      SimpleName (":" type)?
+      ("=" expression SEMI?)?
       (getter? setter? | setter? getter?) SEMI?
   ;
 

@@ -672,7 +672,10 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * property
-     *   : modifiers ("val" | "var") attributes (type ".")? SimpleName (":" type)? ("=" expression SEMI?)?
+     *   : modifiers ("val" | "var")
+     *       typeParameters? (type "." | attributes)?
+     *       SimpleName (":" type)?
+     *       ("=" expression SEMI?)?
      *       (getter? setter? | setter? getter?) SEMI?
      *   ;
      */
@@ -681,12 +684,14 @@ public class JetParsing extends AbstractJetParsing {
     }
 
     public JetNodeType parseProperty(boolean local) {
-        // TODO: how to write an extension ptoperty for a generic type? (val List<T>.i -- what is T?!)
-
         if (at(VAL_KEYWORD) || at(VAR_KEYWORD)) {
             advance(); // VAL_KEYWORD or VAR_KEYWORD
         } else {
             errorAndAdvance("Expecting 'val' or 'var'");
+        }
+
+        if (at(LT)) {
+            parseTypeParameterList(TokenSet.create(IDENTIFIER, EQ, COLON, SEMICOLON));
         }
 
         TokenSet propertyNameFollow = TokenSet.create(COLON, EQ, LBRACE, SEMICOLON);
@@ -805,17 +810,21 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * function
-     *   : modifiers "fun" (type ".")? functionRest
-     *   ;
-     *
-     * functionRest
-     *   : attributes SimpleName typeParameters? functionParameters (":" type)? functionBody?
+     *   : modifiers "fun" typeParameters?
+     *       (type "." | attributes)?
+     *       SimpleName
+     *       typeParameters? functionParameters (":" type)?
+     *       functionBody?
      *   ;
      */
     public JetNodeType parseFunction() {
         assert _at(FUN_KEYWORD);
 
         advance(); // FUN_KEYWORD
+
+        if (at(LT)) {
+            parseTypeParameterList(TokenSet.create(LBRACKET, LBRACE, LPAR));
+        }
 
         int lastDot = findLastBefore(TokenSet.create(DOT), TokenSet.create(LPAR), true);
 
