@@ -160,6 +160,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
         while (!myBuilder.newlineBeforeCurrentToken() && atSet(precedence.getOperations())) {
             IElementType operation = tt();
             advance(); // operation
+
             JetNodeType resultType = precedence.parseRightHandSide(operation, this);
             expression.done(resultType);
              expression = expression.precede();
