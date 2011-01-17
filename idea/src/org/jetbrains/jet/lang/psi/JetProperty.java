@@ -1,7 +1,9 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
@@ -78,5 +80,10 @@ public class JetProperty extends JetNamedDeclaration {
         }
 
         return null;
+    }
+
+    public JetExpression getInitializer() {
+        PsiElement eq = findChildByType(JetTokens.EQ);
+        return PsiTreeUtil.getNextSiblingOfType(eq, JetExpression.class);
     }
 }

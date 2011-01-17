@@ -19,7 +19,7 @@ public class JetTupleExpression extends JetExpression {
         visitor.visitTupleExpression(this);
     }
 
-    public List<JetExpression> getComponents() {
+    public List<JetExpression> getEntries() {
         return PsiTreeUtil.getChildrenOfTypeAsList(this, JetExpression.class);
     }
 }

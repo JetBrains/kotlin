@@ -13,13 +13,23 @@ import java.util.List;
  * @author max
  */
 public class JetChangeUtil {
+    public static JetExpression createExpression(Project project, String text) {
+        JetProperty property = createProperty(project, "val x = " + text);
+        return property.getInitializer();
+    }
+
     @NotNull
     public static JetFile createFile(Project project, String text) {
         return (JetFile) PsiFileFactory.getInstance(project).createFileFromText("dummy.jet", JetFileType.INSTANCE, text, LocalTimeCounter.currentTime(), true);
     }
 
     public static JetProperty createProperty(Project project, String name, String type) {
-        JetFile file = createFile(project, "val " + name + (type != null ? ":" + type : ""));
+        String text = "val " + name + (type != null ? ":" + type : "");
+        return createProperty(project, text);
+    }
+
+    private static JetProperty createProperty(Project project, String text) {
+        JetFile file = createFile(project, text);
         JetNamespace rootNamespace = file.getRootNamespace();
         List<JetDeclaration> dcls = rootNamespace.getDeclarations();
         assert dcls.size() == 1;

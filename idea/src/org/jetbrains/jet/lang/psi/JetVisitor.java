@@ -19,7 +19,7 @@ public class JetVisitor extends PsiElementVisitor {
     }
 
     public void visitClass(JetClass klass) {
-        visitDeclaration(klass);
+        visitNamedDeclaration(klass);
     }
 
     public void visitClassObject(JetClassObject classObject) {
@@ -31,19 +31,19 @@ public class JetVisitor extends PsiElementVisitor {
     }
 
     public void visitExtension(JetExtension extension) {
-        visitDeclaration(extension);
+        visitNamedDeclaration(extension);
     }
 
     public void visitFunction(JetFunction fun) {
-        visitDeclaration(fun);
+        visitNamedDeclaration(fun);
     }
 
     public void visitProperty(JetProperty property) {
-        visitDeclaration(property);
+        visitNamedDeclaration(property);
     }
 
     public void visitTypedef(JetTypedef typedef) {
-        visitDeclaration(typedef);
+        visitNamedDeclaration(typedef);
     }
 
     public void visitJetFile(JetFile file) {
@@ -79,7 +79,7 @@ public class JetVisitor extends PsiElementVisitor {
     }
 
     public void visitTypeParameter(JetTypeParameter parameter) {
-        visitDeclaration(parameter);
+        visitNamedDeclaration(parameter);
     }
 
     public void visitEnumEntry(JetEnumEntry enumEntry) {
@@ -91,7 +91,7 @@ public class JetVisitor extends PsiElementVisitor {
     }
 
     public void visitParameter(JetParameter parameter) {
-        visitDeclaration(parameter);
+        visitNamedDeclaration(parameter);
     }
 
     public void visitDelegationSpecifierList(JetDelegationSpecifierList list) {
@@ -316,5 +316,9 @@ public class JetVisitor extends PsiElementVisitor {
 
     public void visitMatchBlock(JetMatchBlock block) {
         visitJetElement(block);
+    }
+
+    public void visitNamedDeclaration(JetNamedDeclaration declaration) {
+        visitJetElement(declaration);
     }
 }
