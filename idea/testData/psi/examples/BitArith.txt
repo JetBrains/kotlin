@@ -511,12 +511,12 @@ JetFile: BitArith.jet
           TYPE_REFERENCE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('IComparable')
-              TYPE_ARGUMENT_LIST
-                PsiElement(LT)('<')
-                TYPE_REFERENCE
-                  SELF_TYPE
-                    PsiElement(This)('This')
-                PsiElement(GT)('>')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              TYPE_REFERENCE
+                SELF_TYPE
+                  PsiElement(This)('This')
+              PsiElement(GT)('>')
       PsiWhiteSpace(' ')
       CLASS_BODY
         PsiElement(LBRACE)('{')

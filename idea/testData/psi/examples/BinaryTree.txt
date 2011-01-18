@@ -17,12 +17,12 @@ JetFile: BinaryTree.jet
           TYPE_REFERENCE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('IMutableSet')
-              TYPE_ARGUMENT_LIST
-                PsiElement(LT)('<')
-                TYPE_REFERENCE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('T')
-                PsiElement(GT)('>')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              TYPE_REFERENCE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('T')
+              PsiElement(GT)('>')
       PsiWhiteSpace(' ')
       CLASS_BODY
         PsiElement(LBRACE)('{')
@@ -104,12 +104,12 @@ JetFile: BinaryTree.jet
           TYPE_REFERENCE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('MatchableComparison')
-              TYPE_ARGUMENT_LIST
-                PsiElement(LT)('<')
-                TYPE_REFERENCE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('T')
-                PsiElement(GT)('>')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              TYPE_REFERENCE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('T')
+              PsiElement(GT)('>')
         PsiWhiteSpace('\n  ')
         PROPERTY
           MODIFIER_LIST
@@ -152,12 +152,12 @@ JetFile: BinaryTree.jet
               TYPE_REFERENCE
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('Comparison')
-                  TYPE_ARGUMENT_LIST
-                    PsiElement(LT)('<')
-                    TYPE_REFERENCE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('T')
-                    PsiElement(GT)('>')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_REFERENCE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('T')
+                  PsiElement(GT)('>')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           BLOCK
@@ -1761,12 +1761,12 @@ JetFile: BinaryTree.jet
           TYPE_REFERENCE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('IIterator')
-              TYPE_ARGUMENT_LIST
-                PsiElement(LT)('<')
-                TYPE_REFERENCE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('T')
-                PsiElement(GT)('>')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              TYPE_REFERENCE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('T')
+              PsiElement(GT)('>')
           PsiWhiteSpace(' ')
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
@@ -1795,12 +1795,12 @@ JetFile: BinaryTree.jet
           TYPE_REFERENCE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('IMutableIterator')
-              TYPE_ARGUMENT_LIST
-                PsiElement(LT)('<')
-                TYPE_REFERENCE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('T')
-                PsiElement(GT)('>')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              TYPE_REFERENCE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('T')
+              PsiElement(GT)('>')
           PsiWhiteSpace(' ')
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')

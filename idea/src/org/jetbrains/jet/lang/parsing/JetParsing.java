@@ -1206,6 +1206,8 @@ public class JetParsing extends AbstractJetParsing {
      */
     public void parseUserType() {
         PsiBuilder.Marker type = mark();
+        boolean typeClosed = false;
+
         if (at(NAMESPACE_KEYWORD)) {
             advance(); // NAMESPACE_KEYWORD
             expect(DOT, "Expecting '.'", TokenSet.create(IDENTIFIER));
@@ -1213,22 +1215,32 @@ public class JetParsing extends AbstractJetParsing {
 
         while (true) {
             expect(IDENTIFIER, "Type name expected", TokenSet.create(LT));
-            parseTypeArgumentList();
+            PsiBuilder.Marker argsMarker = parseTypeArgumentList();
 
-            if (!at(DOT)) break;
+            if (!at(DOT)) {
+                // For recovery reasons, we allow to write Foo<A>.Bar<F, B>.X, but we need to place
+                // the last argument list next to the reference, not a its child
+                if (argsMarker != null) {
+                    type.doneBefore(REFERENCE_EXPRESSION, argsMarker);
+                    typeClosed = true;
+                }
+                break;
+            }
             type.done(REFERENCE_EXPRESSION);
             type = type.precede();
             advance(); // DOT
         }
 
-        type.done(REFERENCE_EXPRESSION);
+        if (!typeClosed) {
+            type.done(REFERENCE_EXPRESSION);
+        }
     }
 
     /*
      *   (optionalProjection type){","}
      */
-    public void parseTypeArgumentList() {
-        if (!at(LT)) return;
+    public PsiBuilder.Marker parseTypeArgumentList() {
+        if (!at(LT)) return null;
 
         PsiBuilder.Marker list = mark();
 
@@ -1246,6 +1258,7 @@ public class JetParsing extends AbstractJetParsing {
         myBuilder.restoreNewlinesState();
 
         list.done(TYPE_ARGUMENT_LIST);
+        return list;
     }
 
     /*

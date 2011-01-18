@@ -376,24 +376,24 @@ JetFile: Functions_ERR.jet
             PsiWhiteSpace(' ')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('T')
-              TYPE_ARGUMENT_LIST
-                PsiElement(LT)('<')
-                TYPE_REFERENCE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('T')
-                PsiElement(GT)('>')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              TYPE_REFERENCE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('T')
+              PsiElement(GT)('>')
           PsiElement(DOT)('.')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             TYPE_REFERENCE
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('A')
-                TYPE_ARGUMENT_LIST
-                  PsiElement(LT)('<')
-                  TYPE_REFERENCE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('B')
-                  PsiElement(GT)('>')
+              TYPE_ARGUMENT_LIST
+                PsiElement(LT)('<')
+                TYPE_REFERENCE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('B')
+                PsiElement(GT)('>')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           PsiElement(COLON)(':')

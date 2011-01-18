@@ -34,12 +34,12 @@ JetFile: List.jet
           TYPE_REFERENCE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('IList')
-              TYPE_ARGUMENT_LIST
-                PsiElement(LT)('<')
-                TYPE_REFERENCE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('T')
-                PsiElement(GT)('>')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              TYPE_REFERENCE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('T')
+              PsiElement(GT)('>')
       PsiWhiteSpace(' ')
       CLASS_BODY
         PsiElement(LBRACE)('{')
@@ -56,12 +56,12 @@ JetFile: List.jet
               TYPE_REFERENCE
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('List')
-                  TYPE_ARGUMENT_LIST
-                    PsiElement(LT)('<')
-                    TYPE_REFERENCE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('Nothing')
-                    PsiElement(GT)('>')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_REFERENCE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Nothing')
+                  PsiElement(GT)('>')
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
@@ -100,12 +100,12 @@ JetFile: List.jet
               TYPE_REFERENCE
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('List')
-                  TYPE_ARGUMENT_LIST
-                    PsiElement(LT)('<')
-                    TYPE_REFERENCE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('T')
-                    PsiElement(GT)('>')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_REFERENCE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('T')
+                  PsiElement(GT)('>')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           PsiElement(COLON)(':')
@@ -115,12 +115,12 @@ JetFile: List.jet
               TYPE_REFERENCE
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('List')
-                  TYPE_ARGUMENT_LIST
-                    PsiElement(LT)('<')
-                    TYPE_REFERENCE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('T')
-                    PsiElement(GT)('>')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_REFERENCE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('T')
+                  PsiElement(GT)('>')
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT

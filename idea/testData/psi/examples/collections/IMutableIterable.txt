@@ -23,12 +23,12 @@ JetFile: IMutableIterable.jet
           TYPE_REFERENCE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('IIterable')
-              TYPE_ARGUMENT_LIST
-                PsiElement(LT)('<')
-                TYPE_REFERENCE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('T')
-                PsiElement(GT)('>')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              TYPE_REFERENCE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('T')
+              PsiElement(GT)('>')
       PsiWhiteSpace(' ')
       CLASS_BODY
         PsiElement(LBRACE)('{')
@@ -48,11 +48,11 @@ JetFile: IMutableIterable.jet
           TYPE_REFERENCE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('IMutableIterator')
-              TYPE_ARGUMENT_LIST
-                PsiElement(LT)('<')
-                TYPE_REFERENCE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('T')
-                PsiElement(GT)('>')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              TYPE_REFERENCE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('T')
+              PsiElement(GT)('>')
         PsiWhiteSpace('\n')
         PsiElement(RBRACE)('}')

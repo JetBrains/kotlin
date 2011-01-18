@@ -14,12 +14,12 @@ JetFile: ThisType.jet
           TYPE_REFERENCE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('List')
-              TYPE_ARGUMENT_LIST
-                PsiElement(LT)('<')
-                TYPE_REFERENCE
-                  SELF_TYPE
-                    PsiElement(This)('This')
-                PsiElement(GT)('>')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              TYPE_REFERENCE
+                SELF_TYPE
+                  PsiElement(This)('This')
+              PsiElement(GT)('>')
         PsiElement(GT)('>')
       PRIMARY_CONSTRUCTOR_PARAMETERS_LIST
         PsiElement(LPAR)('(')
@@ -41,12 +41,12 @@ JetFile: ThisType.jet
           TYPE_REFERENCE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('bar')
-              TYPE_ARGUMENT_LIST
-                PsiElement(LT)('<')
-                TYPE_REFERENCE
-                  SELF_TYPE
-                    PsiElement(This)('This')
-                PsiElement(GT)('>')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              TYPE_REFERENCE
+                SELF_TYPE
+                  PsiElement(This)('This')
+              PsiElement(GT)('>')
         PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
       PsiElement(COLON)(':')
@@ -56,12 +56,12 @@ JetFile: ThisType.jet
           TYPE_REFERENCE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('List')
-              TYPE_ARGUMENT_LIST
-                PsiElement(LT)('<')
-                TYPE_REFERENCE
-                  SELF_TYPE
-                    PsiElement(This)('This')
-                PsiElement(GT)('>')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              TYPE_REFERENCE
+                SELF_TYPE
+                  PsiElement(This)('This')
+              PsiElement(GT)('>')
           PsiWhiteSpace(' ')
           PsiElement(by)('by')
           PsiWhiteSpace(' ')
@@ -74,12 +74,12 @@ JetFile: ThisType.jet
             TYPE_REFERENCE
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('List')
-                TYPE_ARGUMENT_LIST
-                  PsiElement(LT)('<')
-                  TYPE_REFERENCE
-                    SELF_TYPE
-                      PsiElement(This)('This')
-                  PsiElement(GT)('>')
+              TYPE_ARGUMENT_LIST
+                PsiElement(LT)('<')
+                TYPE_REFERENCE
+                  SELF_TYPE
+                    PsiElement(This)('This')
+                PsiElement(GT)('>')
       PsiWhiteSpace(' ')
       CLASS_BODY
         PsiElement(LBRACE)('{')
@@ -130,12 +130,12 @@ JetFile: ThisType.jet
                 TYPE_REFERENCE
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('Foo')
-                    TYPE_ARGUMENT_LIST
-                      PsiElement(LT)('<')
-                      TYPE_REFERENCE
-                        SELF_TYPE
-                          PsiElement(This)('This')
-                      PsiElement(GT)('>')
+                  TYPE_ARGUMENT_LIST
+                    PsiElement(LT)('<')
+                    TYPE_REFERENCE
+                      SELF_TYPE
+                        PsiElement(This)('This')
+                    PsiElement(GT)('>')
                 VALUE_ARGUMENT_LIST
                   PsiElement(LPAR)('(')
                   PsiElement(RPAR)(')')

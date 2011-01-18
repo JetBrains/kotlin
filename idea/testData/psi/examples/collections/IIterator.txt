@@ -62,15 +62,15 @@ JetFile: IIterator.jet
               TYPE_REFERENCE
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('MutableArray')
-                  TYPE_ARGUMENT_LIST
-                    PsiElement(LT)('<')
-                    MODIFIER_LIST
-                      PsiElement(in)('in')
-                    PsiWhiteSpace(' ')
-                    TYPE_REFERENCE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('T')
-                    PsiElement(GT)('>')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  MODIFIER_LIST
+                    PsiElement(in)('in')
+                  PsiWhiteSpace(' ')
+                  TYPE_REFERENCE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('T')
+                  PsiElement(GT)('>')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           PsiElement(COLON)(':')
@@ -129,15 +129,15 @@ JetFile: IIterator.jet
               TYPE_REFERENCE
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('MutableArray')
-                  TYPE_ARGUMENT_LIST
-                    PsiElement(LT)('<')
-                    MODIFIER_LIST
-                      PsiElement(in)('in')
-                    PsiWhiteSpace(' ')
-                    TYPE_REFERENCE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('T')
-                    PsiElement(GT)('>')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  MODIFIER_LIST
+                    PsiElement(in)('in')
+                  PsiWhiteSpace(' ')
+                  TYPE_REFERENCE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('T')
+                  PsiElement(GT)('>')
             PsiElement(COMMA)(',')
             PsiWhiteSpace(' ')
             VALUE_PARAMETER

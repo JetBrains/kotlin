@@ -589,12 +589,12 @@ JetFile: FunctionTypes.jet
                   PsiElement(GT)('>')
               PsiElement(DOT)('.')
               PsiElement(IDENTIFIER)('T')
-              TYPE_ARGUMENT_LIST
-                PsiElement(LT)('<')
-                TYPE_REFERENCE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('x')
-                PsiElement(GT)('>')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              TYPE_REFERENCE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('x')
+              PsiElement(GT)('>')
           PsiElement(DOT)('.')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
@@ -776,12 +776,12 @@ JetFile: FunctionTypes.jet
                       PsiElement(GT)('>')
                   PsiElement(DOT)('.')
                   PsiElement(IDENTIFIER)('T')
-                  TYPE_ARGUMENT_LIST
-                    PsiElement(LT)('<')
-                    TYPE_REFERENCE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('x')
-                    PsiElement(GT)('>')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_REFERENCE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('x')
+                  PsiElement(GT)('>')
               PsiElement(DOT)('.')
               VALUE_PARAMETER_LIST
                 PsiElement(LPAR)('(')
@@ -966,12 +966,12 @@ JetFile: FunctionTypes.jet
                   PsiElement(GT)('>')
               PsiElement(DOT)('.')
               PsiElement(IDENTIFIER)('T')
-              TYPE_ARGUMENT_LIST
-                PsiElement(LT)('<')
-                TYPE_REFERENCE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('x')
-                PsiElement(GT)('>')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              TYPE_REFERENCE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('x')
+              PsiElement(GT)('>')
           PsiElement(DOT)('.')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
@@ -1217,12 +1217,12 @@ JetFile: FunctionTypes.jet
                       PsiElement(GT)('>')
                   PsiElement(DOT)('.')
                   PsiElement(IDENTIFIER)('T')
-                  TYPE_ARGUMENT_LIST
-                    PsiElement(LT)('<')
-                    TYPE_REFERENCE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('x')
-                    PsiElement(GT)('>')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_REFERENCE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('x')
+                  PsiElement(GT)('>')
               PsiElement(DOT)('.')
               VALUE_PARAMETER_LIST
                 PsiElement(LPAR)('(')

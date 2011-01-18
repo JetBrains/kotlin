@@ -113,13 +113,13 @@ JetFile: SimpleClassMembers_ERR.jet
               TYPE_REFERENCE
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('Foo')
-                  TYPE_ARGUMENT_LIST
-                    PsiElement(LT)('<')
-                    TYPE_REFERENCE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('T')
-                    PsiErrorElement:Expecting a '>'
-                      <empty list>
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_REFERENCE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('T')
+                  PsiErrorElement:Expecting a '>'
+                    <empty list>
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
@@ -160,12 +160,12 @@ JetFile: SimpleClassMembers_ERR.jet
               TYPE_REFERENCE
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('Foo')
-                  TYPE_ARGUMENT_LIST
-                    PsiElement(LT)('<')
-                    TYPE_REFERENCE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('T')
-                    PsiElement(GT)('>')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_REFERENCE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('T')
+                  PsiElement(GT)('>')
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT

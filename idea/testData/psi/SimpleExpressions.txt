@@ -360,12 +360,12 @@ JetFile: SimpleExpressions.jet
             TYPE_REFERENCE
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('Foo')
-                TYPE_ARGUMENT_LIST
-                  PsiElement(LT)('<')
-                  TYPE_REFERENCE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('A')
-                  PsiElement(GT)('>')
+              TYPE_ARGUMENT_LIST
+                PsiElement(LT)('<')
+                TYPE_REFERENCE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('A')
+                PsiElement(GT)('>')
             VALUE_ARGUMENT_LIST
               PsiElement(LPAR)('(')
               VALUE_ARGUMENT
@@ -410,12 +410,12 @@ JetFile: SimpleExpressions.jet
             TYPE_REFERENCE
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('Foo')
-                TYPE_ARGUMENT_LIST
-                  PsiElement(LT)('<')
-                  TYPE_REFERENCE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('bar')
-                  PsiElement(GT)('>')
+              TYPE_ARGUMENT_LIST
+                PsiElement(LT)('<')
+                TYPE_REFERENCE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('bar')
+                PsiElement(GT)('>')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n    ')
         VALUE_PARAMETER

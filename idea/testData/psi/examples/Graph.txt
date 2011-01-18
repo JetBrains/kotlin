@@ -107,23 +107,23 @@ JetFile: Graph.jet
             TYPE_REFERENCE
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('ArrayList')
-                TYPE_ARGUMENT_LIST
-                  PsiElement(LT)('<')
-                  TYPE_REFERENCE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('Edge')
-                      TYPE_ARGUMENT_LIST
-                        PsiElement(LT)('<')
-                        TYPE_REFERENCE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('V')
-                        PsiElement(COMMA)(',')
-                        PsiWhiteSpace(' ')
-                        TYPE_REFERENCE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('E')
-                        PsiElement(GT)('>')
-                  PsiElement(GT)('>')
+              TYPE_ARGUMENT_LIST
+                PsiElement(LT)('<')
+                TYPE_REFERENCE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Edge')
+                  TYPE_ARGUMENT_LIST
+                    PsiElement(LT)('<')
+                    TYPE_REFERENCE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('V')
+                    PsiElement(COMMA)(',')
+                    PsiWhiteSpace(' ')
+                    TYPE_REFERENCE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('E')
+                    PsiElement(GT)('>')
+                PsiElement(GT)('>')
             VALUE_ARGUMENT_LIST
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')
@@ -148,18 +148,18 @@ JetFile: Graph.jet
             TYPE_REFERENCE
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('HashSet')
-                TYPE_ARGUMENT_LIST
-                  PsiElement(LT)('<')
-                  TYPE_REFERENCE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('Vertex')
-                      TYPE_ARGUMENT_LIST
-                        PsiElement(LT)('<')
-                        TYPE_REFERENCE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('V')
-                        PsiElement(GT)('>')
-                  PsiElement(GT)('>')
+              TYPE_ARGUMENT_LIST
+                PsiElement(LT)('<')
+                TYPE_REFERENCE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Vertex')
+                  TYPE_ARGUMENT_LIST
+                    PsiElement(LT)('<')
+                    TYPE_REFERENCE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('V')
+                    PsiElement(GT)('>')
+                PsiElement(GT)('>')
             VALUE_ARGUMENT_LIST
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')
@@ -174,23 +174,23 @@ JetFile: Graph.jet
           TYPE_REFERENCE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('IList')
-              TYPE_ARGUMENT_LIST
-                PsiElement(LT)('<')
-                TYPE_REFERENCE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('Edge')
-                    TYPE_ARGUMENT_LIST
-                      PsiElement(LT)('<')
-                      TYPE_REFERENCE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('V')
-                      PsiElement(COMMA)(',')
-                      PsiWhiteSpace(' ')
-                      TYPE_REFERENCE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('E')
-                      PsiElement(GT)('>')
-                PsiElement(GT)('>')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              TYPE_REFERENCE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Edge')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_REFERENCE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('V')
+                  PsiElement(COMMA)(',')
+                  PsiWhiteSpace(' ')
+                  TYPE_REFERENCE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('E')
+                  PsiElement(GT)('>')
+              PsiElement(GT)('>')
           PsiWhiteSpace(' ')
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
@@ -208,23 +208,23 @@ JetFile: Graph.jet
           TYPE_REFERENCE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('ISet')
-              TYPE_ARGUMENT_LIST
-                PsiElement(LT)('<')
-                TYPE_REFERENCE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('Edge')
-                    TYPE_ARGUMENT_LIST
-                      PsiElement(LT)('<')
-                      TYPE_REFERENCE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('V')
-                      PsiElement(COMMA)(',')
-                      PsiWhiteSpace(' ')
-                      TYPE_REFERENCE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('E')
-                      PsiElement(GT)('>')
-                PsiElement(GT)('>')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              TYPE_REFERENCE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Edge')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_REFERENCE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('V')
+                  PsiElement(COMMA)(',')
+                  PsiWhiteSpace(' ')
+                  TYPE_REFERENCE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('E')
+                  PsiElement(GT)('>')
+              PsiElement(GT)('>')
           PsiWhiteSpace(' ')
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
@@ -386,12 +386,12 @@ JetFile: Graph.jet
               TYPE_REFERENCE
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('Vertex')
-                  TYPE_ARGUMENT_LIST
-                    PsiElement(LT)('<')
-                    TYPE_REFERENCE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('V')
-                    PsiElement(GT)('>')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_REFERENCE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('V')
+                  PsiElement(GT)('>')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           PsiElement(EQ)('=')
@@ -484,18 +484,18 @@ JetFile: Graph.jet
                 TYPE_REFERENCE
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('HashSet')
-                    TYPE_ARGUMENT_LIST
-                      PsiElement(LT)('<')
-                      TYPE_REFERENCE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('Vertex')
-                          TYPE_ARGUMENT_LIST
-                            PsiElement(LT)('<')
-                            TYPE_REFERENCE
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('V')
-                            PsiElement(GT)('>')
-                      PsiElement(GT)('>')
+                  TYPE_ARGUMENT_LIST
+                    PsiElement(LT)('<')
+                    TYPE_REFERENCE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('Vertex')
+                      TYPE_ARGUMENT_LIST
+                        PsiElement(LT)('<')
+                        TYPE_REFERENCE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('V')
+                        PsiElement(GT)('>')
+                    PsiElement(GT)('>')
                 VALUE_ARGUMENT_LIST
                   PsiElement(LPAR)('(')
                   PsiElement(RPAR)(')')
@@ -547,12 +547,12 @@ JetFile: Graph.jet
                   TYPE_REFERENCE
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('Vertex')
-                      TYPE_ARGUMENT_LIST
-                        PsiElement(LT)('<')
-                        TYPE_REFERENCE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('V')
-                        PsiElement(GT)('>')
+                    TYPE_ARGUMENT_LIST
+                      PsiElement(LT)('<')
+                      TYPE_REFERENCE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('V')
+                      PsiElement(GT)('>')
                 PsiElement(COMMA)(',')
                 PsiWhiteSpace(' ')
                 VALUE_PARAMETER
@@ -563,18 +563,18 @@ JetFile: Graph.jet
                   TYPE_REFERENCE
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('ISet')
-                      TYPE_ARGUMENT_LIST
-                        PsiElement(LT)('<')
-                        TYPE_REFERENCE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('Vertex')
-                            TYPE_ARGUMENT_LIST
-                              PsiElement(LT)('<')
-                              TYPE_REFERENCE
-                                REFERENCE_EXPRESSION
-                                  PsiElement(IDENTIFIER)('V')
-                              PsiElement(GT)('>')
-                        PsiElement(GT)('>')
+                    TYPE_ARGUMENT_LIST
+                      PsiElement(LT)('<')
+                      TYPE_REFERENCE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('Vertex')
+                        TYPE_ARGUMENT_LIST
+                          PsiElement(LT)('<')
+                          TYPE_REFERENCE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('V')
+                          PsiElement(GT)('>')
+                      PsiElement(GT)('>')
                 PsiElement(COMMA)(',')
                 PsiWhiteSpace(' ')
                 VALUE_PARAMETER
@@ -700,18 +700,18 @@ JetFile: Graph.jet
               TYPE_REFERENCE
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('IPushPop')
-                  TYPE_ARGUMENT_LIST
-                    PsiElement(LT)('<')
-                    TYPE_REFERENCE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('Vertex')
-                        TYPE_ARGUMENT_LIST
-                          PsiElement(LT)('<')
-                          TYPE_REFERENCE
-                            REFERENCE_EXPRESSION
-                              PsiElement(IDENTIFIER)('V')
-                          PsiElement(GT)('>')
-                    PsiElement(GT)('>')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_REFERENCE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Vertex')
+                    TYPE_ARGUMENT_LIST
+                      PsiElement(LT)('<')
+                      TYPE_REFERENCE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('V')
+                      PsiElement(GT)('>')
+                  PsiElement(GT)('>')
             PsiElement(COMMA)(',')
             PsiWhiteSpace(' ')
             VALUE_PARAMETER
@@ -722,18 +722,18 @@ JetFile: Graph.jet
               TYPE_REFERENCE
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('ISet')
-                  TYPE_ARGUMENT_LIST
-                    PsiElement(LT)('<')
-                    TYPE_REFERENCE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('Vertex')
-                        TYPE_ARGUMENT_LIST
-                          PsiElement(LT)('<')
-                          TYPE_REFERENCE
-                            REFERENCE_EXPRESSION
-                              PsiElement(IDENTIFIER)('V')
-                          PsiElement(GT)('>')
-                    PsiElement(GT)('>')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_REFERENCE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Vertex')
+                    TYPE_ARGUMENT_LIST
+                      PsiElement(LT)('<')
+                      TYPE_REFERENCE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('V')
+                      PsiElement(GT)('>')
+                  PsiElement(GT)('>')
             PsiElement(COMMA)(',')
             PsiWhiteSpace(' ')
             VALUE_PARAMETER

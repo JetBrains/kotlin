@@ -48,17 +48,17 @@ JetFile: Attributes_ERR.jet
           TYPE_REFERENCE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('foo')
-              TYPE_ARGUMENT_LIST
-                PsiElement(LT)('<')
-                TYPE_REFERENCE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('A')
-                PsiElement(COMMA)(',')
-                PsiWhiteSpace(' ')
-                TYPE_REFERENCE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('B')
-                PsiElement(GT)('>')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              TYPE_REFERENCE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('A')
+              PsiElement(COMMA)(',')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('B')
+              PsiElement(GT)('>')
           VALUE_ARGUMENT_LIST
             PsiElement(LPAR)('(')
             VALUE_ARGUMENT

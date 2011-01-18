@@ -17,12 +17,12 @@ JetFile: BinaryHeap.jet
           TYPE_REFERENCE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('IPriorityQueue')
-              TYPE_ARGUMENT_LIST
-                PsiElement(LT)('<')
-                TYPE_REFERENCE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('T')
-                PsiElement(GT)('>')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              TYPE_REFERENCE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('T')
+              PsiElement(GT)('>')
       PsiWhiteSpace(' ')
       CLASS_BODY
         PsiElement(LBRACE)('{')
@@ -40,12 +40,12 @@ JetFile: BinaryHeap.jet
           TYPE_REFERENCE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('IMutableList')
-              TYPE_ARGUMENT_LIST
-                PsiElement(LT)('<')
-                TYPE_REFERENCE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('T')
-                PsiElement(GT)('>')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              TYPE_REFERENCE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('T')
+              PsiElement(GT)('>')
         PsiWhiteSpace('\n  ')
         PROPERTY
           MODIFIER_LIST
@@ -60,12 +60,12 @@ JetFile: BinaryHeap.jet
           TYPE_REFERENCE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Comparison')
-              TYPE_ARGUMENT_LIST
-                PsiElement(LT)('<')
-                TYPE_REFERENCE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('T')
-                PsiElement(GT)('>')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              TYPE_REFERENCE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('T')
+              PsiElement(GT)('>')
         PsiWhiteSpace('\n\n  ')
         CONSTRUCTOR
           PsiElement(this)('this')
@@ -79,12 +79,12 @@ JetFile: BinaryHeap.jet
               TYPE_REFERENCE
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('IIterable')
-                  TYPE_ARGUMENT_LIST
-                    PsiElement(LT)('<')
-                    TYPE_REFERENCE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('T')
-                    PsiElement(GT)('>')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_REFERENCE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('T')
+                  PsiElement(GT)('>')
             PsiElement(COMMA)(',')
             PsiWhiteSpace(' ')
             VALUE_PARAMETER
@@ -95,12 +95,12 @@ JetFile: BinaryHeap.jet
               TYPE_REFERENCE
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('Comparison')
-                  TYPE_ARGUMENT_LIST
-                    PsiElement(LT)('<')
-                    TYPE_REFERENCE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('T')
-                    PsiElement(GT)('>')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_REFERENCE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('T')
+                  PsiElement(GT)('>')
               PsiWhiteSpace(' ')
               PsiElement(EQ)('=')
               PsiWhiteSpace(' ')
@@ -216,12 +216,12 @@ JetFile: BinaryHeap.jet
               TYPE_REFERENCE
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('Comparison')
-                  TYPE_ARGUMENT_LIST
-                    PsiElement(LT)('<')
-                    TYPE_REFERENCE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('T')
-                    PsiElement(GT)('>')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_REFERENCE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('T')
+                  PsiElement(GT)('>')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           BLOCK
@@ -300,12 +300,12 @@ JetFile: BinaryHeap.jet
                     TYPE_PATTERN
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('IComparable')
-                        TYPE_ARGUMENT_LIST
-                          PsiElement(LT)('<')
-                          TYPE_REFERENCE
-                            REFERENCE_EXPRESSION
-                              PsiElement(IDENTIFIER)('T')
-                          PsiElement(GT)('>')
+                      TYPE_ARGUMENT_LIST
+                        PsiElement(LT)('<')
+                        TYPE_REFERENCE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('T')
+                        PsiElement(GT)('>')
                 PsiElement(RPAR)(')')
             PsiWhiteSpace('\n    ')
             BINARY_EXPRESSION
@@ -1167,12 +1167,12 @@ JetFile: BinaryHeap.jet
       TYPE_REFERENCE
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('IMutableList')
-          TYPE_ARGUMENT_LIST
-            PsiElement(LT)('<')
-            TYPE_REFERENCE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('T')
-            PsiElement(GT)('>')
+        TYPE_ARGUMENT_LIST
+          PsiElement(LT)('<')
+          TYPE_REFERENCE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('T')
+          PsiElement(GT)('>')
       PsiElement(DOT)('.')
       PsiElement(IDENTIFIER)('swap')
       TYPE_PARAMETER_LIST
@@ -1262,12 +1262,12 @@ JetFile: BinaryHeap.jet
       TYPE_REFERENCE
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('IList')
-          TYPE_ARGUMENT_LIST
-            PsiElement(LT)('<')
-            TYPE_REFERENCE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('T')
-            PsiElement(GT)('>')
+        TYPE_ARGUMENT_LIST
+          PsiElement(LT)('<')
+          TYPE_REFERENCE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('T')
+          PsiElement(GT)('>')
       PsiElement(DOT)('.')
       PsiElement(IDENTIFIER)('lastIndex')
       PsiWhiteSpace(' ')

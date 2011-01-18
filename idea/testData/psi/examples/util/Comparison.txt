@@ -54,12 +54,12 @@ JetFile: Comparison.jet
           TYPE_REFERENCE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('IComparable')
-              TYPE_ARGUMENT_LIST
-                PsiElement(LT)('<')
-                TYPE_REFERENCE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('T')
-                PsiElement(GT)('>')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              TYPE_REFERENCE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('T')
+              PsiElement(GT)('>')
         PsiElement(GT)('>')
       VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
@@ -154,12 +154,12 @@ JetFile: Comparison.jet
               TYPE_REFERENCE
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('Comparable')
-                  TYPE_ARGUMENT_LIST
-                    PsiElement(LT)('<')
-                    TYPE_REFERENCE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('Object')
-                    PsiElement(GT)('>')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_REFERENCE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Object')
+                  PsiElement(GT)('>')
             PsiElement(RPAR)(')')
           PsiElement(DOT)('.')
           REFERENCE_EXPRESSION
@@ -176,12 +176,12 @@ JetFile: Comparison.jet
               TYPE_REFERENCE
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('Comparable')
-                  TYPE_ARGUMENT_LIST
-                    PsiElement(LT)('<')
-                    TYPE_REFERENCE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('Object')
-                    PsiElement(GT)('>')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_REFERENCE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Object')
+                  PsiElement(GT)('>')
           PsiElement(RPAR)(')')
     PsiWhiteSpace('\n\n')
     CLASS
@@ -272,12 +272,12 @@ JetFile: Comparison.jet
           TYPE_REFERENCE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Comparison')
-              TYPE_ARGUMENT_LIST
-                PsiElement(LT)('<')
-                TYPE_REFERENCE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('T')
-                PsiElement(GT)('>')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              TYPE_REFERENCE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('T')
+              PsiElement(GT)('>')
         PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
       PsiElement(COLON)(':')
@@ -285,12 +285,12 @@ JetFile: Comparison.jet
       TYPE_REFERENCE
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('MatchableComparison')
-          TYPE_ARGUMENT_LIST
-            PsiElement(LT)('<')
-            TYPE_REFERENCE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('T')
-            PsiElement(GT)('>')
+        TYPE_ARGUMENT_LIST
+          PsiElement(LT)('<')
+          TYPE_REFERENCE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('T')
+          PsiElement(GT)('>')
       PsiWhiteSpace(' ')
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')

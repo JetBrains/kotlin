@@ -62,23 +62,23 @@ JetFile: TypeAnnotations.jet
         PsiWhiteSpace(' ')
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('F')
-          TYPE_ARGUMENT_LIST
-            PsiElement(LT)('<')
-            MODIFIER_LIST
-              ATTRIBUTE_ANNOTATION
-                PsiElement(LBRACKET)('[')
-                ATTRIBUTE
-                  TYPE_REFERENCE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('x')
-                PsiElement(RBRACKET)(']')
-            PsiWhiteSpace(' ')
-            TYPE_REFERENCE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('A')
-            PsiElement(COMMA)(',')
-            PsiWhiteSpace(' ')
-            TYPE_REFERENCE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('B')
-            PsiElement(GT)('>')
+        TYPE_ARGUMENT_LIST
+          PsiElement(LT)('<')
+          MODIFIER_LIST
+            ATTRIBUTE_ANNOTATION
+              PsiElement(LBRACKET)('[')
+              ATTRIBUTE
+                TYPE_REFERENCE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('x')
+              PsiElement(RBRACKET)(']')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('A')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('B')
+          PsiElement(GT)('>')

@@ -100,17 +100,17 @@ JetFile: PolymorphicClassObjects.jet
           TYPE_REFERENCE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Builder')
-              TYPE_ARGUMENT_LIST
-                PsiElement(LT)('<')
-                TYPE_REFERENCE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('E')
-                PsiElement(COMMA)(',')
-                PsiWhiteSpace(' ')
-                TYPE_REFERENCE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('R')
-                PsiElement(GT)('>')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              TYPE_REFERENCE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('E')
+              PsiElement(COMMA)(',')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('R')
+              PsiElement(GT)('>')
         PsiWhiteSpace('\n')
         PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n\n')
@@ -167,17 +167,17 @@ JetFile: PolymorphicClassObjects.jet
                 TYPE_REFERENCE
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('Builder')
-                    TYPE_ARGUMENT_LIST
-                      PsiElement(LT)('<')
-                      TYPE_REFERENCE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('E')
-                      PsiElement(COMMA)(',')
-                      PsiWhiteSpace(' ')
-                      TYPE_REFERENCE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('R')
-                      PsiElement(GT)('>')
+                  TYPE_ARGUMENT_LIST
+                    PsiElement(LT)('<')
+                    TYPE_REFERENCE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('E')
+                    PsiElement(COMMA)(',')
+                    PsiWhiteSpace(' ')
+                    TYPE_REFERENCE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('R')
+                    PsiElement(GT)('>')
               PsiWhiteSpace('\n\n  ')
               PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n\n')
@@ -210,12 +210,12 @@ JetFile: PolymorphicClassObjects.jet
             TYPE_REFERENCE
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('Iterable')
-                TYPE_ARGUMENT_LIST
-                  PsiElement(LT)('<')
-                  TYPE_REFERENCE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('E')
-                  PsiElement(GT)('>')
+              TYPE_ARGUMENT_LIST
+                PsiElement(LT)('<')
+                TYPE_REFERENCE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('E')
+                PsiElement(GT)('>')
           PsiElement(COMMA)(',')
           PsiWhiteSpace('\n    ')
           TYPE_CONSTRAINT
@@ -232,17 +232,17 @@ JetFile: PolymorphicClassObjects.jet
             TYPE_REFERENCE
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('Buildable')
-                TYPE_ARGUMENT_LIST
-                  PsiElement(LT)('<')
-                  TYPE_REFERENCE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('E')
-                  PsiElement(COMMA)(',')
-                  PsiWhiteSpace(' ')
-                  TYPE_REFERENCE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('T')
-                  PsiElement(GT)('>')
+              TYPE_ARGUMENT_LIST
+                PsiElement(LT)('<')
+                TYPE_REFERENCE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('E')
+                PsiElement(COMMA)(',')
+                PsiWhiteSpace(' ')
+                TYPE_REFERENCE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('T')
+                PsiElement(GT)('>')
       PsiWhiteSpace('  ')
       PsiElement(for)('for')
       PsiWhiteSpace(' ')
@@ -292,12 +292,12 @@ JetFile: PolymorphicClassObjects.jet
           TYPE_REFERENCE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('T')
-              TYPE_ARGUMENT_LIST
-                PsiElement(LT)('<')
-                TYPE_REFERENCE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('R')
-                PsiElement(GT)('>')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              TYPE_REFERENCE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('R')
+              PsiElement(GT)('>')
           PsiWhiteSpace(' ')
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')

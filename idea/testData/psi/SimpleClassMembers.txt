@@ -121,12 +121,12 @@ JetFile: SimpleClassMembers.jet
                   TYPE_REFERENCE
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('Foo')
-                      TYPE_ARGUMENT_LIST
-                        PsiElement(LT)('<')
-                        TYPE_REFERENCE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('T')
-                        PsiElement(GT)('>')
+                    TYPE_ARGUMENT_LIST
+                      PsiElement(LT)('<')
+                      TYPE_REFERENCE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('T')
+                      PsiElement(GT)('>')
                   VALUE_ARGUMENT_LIST
                     PsiElement(LPAR)('(')
                     VALUE_ARGUMENT
@@ -352,12 +352,12 @@ JetFile: SimpleClassMembers.jet
                   TYPE_REFERENCE
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('Foo')
-                      TYPE_ARGUMENT_LIST
-                        PsiElement(LT)('<')
-                        TYPE_REFERENCE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('T')
-                        PsiElement(GT)('>')
+                    TYPE_ARGUMENT_LIST
+                      PsiElement(LT)('<')
+                      TYPE_REFERENCE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('T')
+                      PsiElement(GT)('>')
                   VALUE_ARGUMENT_LIST
                     PsiElement(LPAR)('(')
                     VALUE_ARGUMENT
@@ -433,12 +433,12 @@ JetFile: SimpleClassMembers.jet
               TYPE_REFERENCE
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('Foo')
-                  TYPE_ARGUMENT_LIST
-                    PsiElement(LT)('<')
-                    TYPE_REFERENCE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('T')
-                    PsiElement(GT)('>')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_REFERENCE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('T')
+                  PsiElement(GT)('>')
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
@@ -479,12 +479,12 @@ JetFile: SimpleClassMembers.jet
               TYPE_REFERENCE
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('Foo')
-                  TYPE_ARGUMENT_LIST
-                    PsiElement(LT)('<')
-                    TYPE_REFERENCE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('T')
-                    PsiElement(GT)('>')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_REFERENCE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('T')
+                  PsiElement(GT)('>')
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
