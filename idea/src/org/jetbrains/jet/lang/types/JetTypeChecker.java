@@ -62,4 +62,9 @@ public class JetTypeChecker {
     public boolean isConvertibleTo(JetExpression expression, Type type) {
         return false;  //To change body of created methods use File | Settings | File Templates.
     }
+
+    public boolean isSubtypeOf(Type subtype, Type supertype) {
+
+        return false;
+    }
 }

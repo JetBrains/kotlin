@@ -18,6 +18,11 @@ public class JetChangeUtil {
         return property.getInitializer();
     }
 
+    public static JetTypeReference createType(Project project, String type) {
+        JetProperty property = createProperty(project, "val x : " + type);
+        return property.getPropertyTypeRef();
+    }
+
     @NotNull
     public static JetFile createFile(Project project, String text) {
         return (JetFile) PsiFileFactory.getInstance(project).createFileFromText("dummy.jet", JetFileType.INSTANCE, text, LocalTimeCounter.currentTime(), true);

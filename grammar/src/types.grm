@@ -10,8 +10,18 @@ Foo<Bar<X>, T, Object> // user type
 */
 
 type
-  : attributes (selfType | functionType | userType | tupleType)
+  : attributes typeDescriptor
+
+typeDescriptor
+  : selfType
+  : functionType
+  : userType
+  : tupleType
+  : nullableType
   ;
+
+nullableType
+  : typeDescriptor "?"
 
 selfType
   : "This"

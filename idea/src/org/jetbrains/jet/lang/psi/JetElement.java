@@ -48,7 +48,7 @@ public class JetElement extends ASTWrapperPsiElement {
         }
     }
 
-    public void accept(JetVisitor visitor) {
+    public void accept(@NotNull JetVisitor visitor) {
         visitor.visitJetElement(this);
     }
 }

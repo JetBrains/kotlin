@@ -1,7 +1,6 @@
 package org.jetbrains.jet.lang.annotations;
 
 import com.intellij.lang.annotation.AnnotationHolder;
-import com.intellij.lang.annotation.AnnotationSession;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +20,7 @@ public class JetPsiChecker implements Annotator {
 //            holder.createErrorAnnotation(property.getNameIdentifier(), "Specify either type or value");
             JetFile file = (JetFile) element;
             String path = file.getProject().getBaseDir().getPath();
-            System.out.println("Path: " + path);
+            println("Path: " + path);
             JetNamespace rootNamespace = file.getRootNamespace();
             List<JetDeclaration> declarations = rootNamespace.getDeclarations();
 
@@ -54,10 +53,10 @@ public class JetPsiChecker implements Annotator {
     }
 
     private void print(Object o) {
-        System.out.print(o);
+//        System.out.print(o);
     }
 
     private void println(Object o) {
-        System.out.println(o);
+//        System.out.println(o);
     }
 }

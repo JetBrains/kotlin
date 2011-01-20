@@ -1,15 +1,16 @@
-package org.jetbrains.jet.parsing;
+package org.jetbrains.jet.types;
 
 import com.intellij.codeInsight.daemon.LightDaemonAnalyzerTestCase;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.jet.lang.psi.JetChangeUtil;
-import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.JetStandardTypes;
-import org.jetbrains.jet.lang.types.Type;
 import org.jetbrains.jet.lang.types.JetTypeChecker;
+import org.jetbrains.jet.lang.types.Type;
+import org.jetbrains.jet.parsing.JetParsingTest;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * @author abreslav
@@ -53,6 +54,66 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertType("\"\"\"d\"\"\"", JetStandardTypes.getString());
 
         assertType("()", JetStandardTypes.getUnit());
+    }
+
+    public void testSubtyping() throws Exception {
+        assertSubtype("Boolean", "Boolean");
+        assertSubtype("Byte", "Byte");
+        assertSubtype("Char", "Char");
+        assertSubtype("Short", "Short");
+        assertSubtype("Int", "Int");
+        assertSubtype("Long", "Long");
+        assertSubtype("Float", "Float");
+        assertSubtype("Double", "Double");
+        assertSubtype("Unit", "Unit");
+
+        assertNotSubtype("Boolean", "Byte");
+        assertNotSubtype("Byte", "Short");
+        assertNotSubtype("Char", "Int");
+        assertNotSubtype("Short", "Int");
+        assertNotSubtype("Int", "Long");
+        assertNotSubtype("Long", "Double");
+        assertNotSubtype("Float", "Double");
+        assertNotSubtype("Double", "Int");
+        assertNotSubtype("Unit", "Unit");
+
+        assertSubtype("(Boolean)", "(Boolean)");
+        assertSubtype("(Byte)",    "(Byte)");
+        assertSubtype("(Char)",    "(Char)");
+        assertSubtype("(Short)",   "(Short)");
+        assertSubtype("(Int)",     "(Int)");
+        assertSubtype("(Long)",    "(Long)");
+        assertSubtype("(Float)",   "(Float)");
+        assertSubtype("(Double)",  "(Double)");
+        assertSubtype("(Unit)",    "(Unit)");
+
+    }
+
+    private void assertSubtype(String type1, String type2) {
+        assertSubtypingRelation(type1, type2, true);
+    }
+
+    private void assertNotSubtype(String type1, String type2) {
+        assertSubtypingRelation(type1, type2, false);
+    }
+
+    private void assertSubtypingRelation(String type1, String type2, boolean expected) {
+        Type typeNode1 = toType(JetChangeUtil.createType(getProject(), type1));
+        Type typeNode2 = toType(JetChangeUtil.createType(getProject(), type2));
+        boolean result = new JetTypeChecker().isSubtypeOf(
+                typeNode1,
+                typeNode2);
+        assertTrue(typeNode1 + " is not a subtype of " + typeNode2, result == expected);
+    }
+
+    private Type toType(JetTypeReference typeNode) {
+        List<JetAttribute> attributes = typeNode.getAttributes();
+        JetTypeElement typeElement = typeNode.getTypeElement();
+        List<JetTypeReference> typeArguments = typeNode.getTypeArguments();
+
+        typeElement.accept(new JetVisitor());
+
+        throw new UnsupportedOperationException(); // TODO
     }
 
     public void testImplicitConversions() throws Exception {

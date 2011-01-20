@@ -1,7 +1,8 @@
-package org.jetbrains.jet.parsing;
+package org.jetbrains.jet.checkers;
 
 import com.intellij.codeInsight.daemon.LightDaemonAnalyzerTestCase;
 import com.intellij.openapi.application.PathManager;
+import org.jetbrains.jet.parsing.JetParsingTest;
 
 import java.io.File;
 

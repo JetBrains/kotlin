@@ -12,6 +12,10 @@ public class TypeProjection {
         this.type = type;
     }
 
+    public TypeProjection(Type type) {
+        this(Variance.INVARIANT, type);
+    }
+
     public Variance getProjection() {
         return projection;
     }

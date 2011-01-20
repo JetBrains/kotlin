@@ -141,6 +141,11 @@ public class JetExpressionParsing extends AbstractJetParsing {
      *   ;
      */
     public void parseExpression() {
+        // TODO: better recovery for expressions
+        if (atSet(RPAR, RBRACE, RBRACKET, GT)) {
+            error("Expecting an expression");
+            return;
+        }
         parseBinaryExpression(Precedence.ASSIGNMENT);
     }
 
