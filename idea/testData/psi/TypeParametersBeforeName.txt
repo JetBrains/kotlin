@@ -37,8 +37,9 @@ JetFile: TypeParametersBeforeName.jet
         PsiElement(LBRACKET)('[')
         ATTRIBUTE
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('a')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('a')
         PsiElement(RBRACKET)(']')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('foo')
@@ -66,12 +67,14 @@ JetFile: TypeParametersBeforeName.jet
           PsiElement(LBRACKET)('[')
           ATTRIBUTE
             TYPE_REFERENCE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('a')
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
           PsiElement(RBRACKET)(']')
         PsiWhiteSpace(' ')
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('T')
+        USER_TYPE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('T')
       PsiElement(DOT)('.')
       PsiElement(IDENTIFIER)('foo')
       TYPE_PARAMETER_LIST
@@ -98,8 +101,9 @@ JetFile: TypeParametersBeforeName.jet
           PsiElement(LBRACKET)('[')
           ATTRIBUTE
             TYPE_REFERENCE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('a')
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
           PsiElement(RBRACKET)(']')
         PsiWhiteSpace(' ')
         FUNCTION_TYPE
@@ -111,8 +115,9 @@ JetFile: TypeParametersBeforeName.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('Unit')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Unit')
           PsiElement(RBRACE)('}')
       PsiElement(DOT)('.')
       PsiElement(IDENTIFIER)('foo')
@@ -132,14 +137,16 @@ JetFile: TypeParametersBeforeName.jet
         PsiElement(GT)('>')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('List')
-        TYPE_ARGUMENT_LIST
-          PsiElement(LT)('<')
-          TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('A')
-          PsiElement(GT)('>')
+        USER_TYPE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('List')
+          TYPE_ARGUMENT_LIST
+            PsiElement(LT)('<')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('A')
+            PsiElement(GT)('>')
       PsiElement(DOT)('.')
       PsiElement(IDENTIFIER)('foo')
     PsiWhiteSpace('\n')
@@ -153,13 +160,15 @@ JetFile: TypeParametersBeforeName.jet
         PsiElement(GT)('>')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('List')
-        TYPE_ARGUMENT_LIST
-          PsiElement(LT)('<')
-          TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('A')
-          PsiElement(GT)('>')
+        USER_TYPE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('List')
+          TYPE_ARGUMENT_LIST
+            PsiElement(LT)('<')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('A')
+            PsiElement(GT)('>')
       PsiElement(DOT)('.')
       PsiElement(IDENTIFIER)('foo')

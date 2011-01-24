@@ -33,15 +33,17 @@ JetFile: IOSamples.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('T')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('T')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('Boolean')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Boolean')
         PsiWhiteSpace('\n')
         PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n\n')
@@ -87,14 +89,15 @@ JetFile: IOSamples.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
+            USER_TYPE
               REFERENCE_EXPRESSION
                 REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('java')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('java')
+                  PsiElement(DOT)('.')
+                  PsiElement(IDENTIFIER)('io')
                 PsiElement(DOT)('.')
-                PsiElement(IDENTIFIER)('io')
-              PsiElement(DOT)('.')
-              PsiElement(IDENTIFIER)('Closeable')
+                PsiElement(IDENTIFIER)('Closeable')
         PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
       PsiElement(COLON)(':')
@@ -102,8 +105,9 @@ JetFile: IOSamples.jet
       DELEGATION_SPECIFIER_LIST
         DELEGATOR_SUPER_CALL
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('ICloseable')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('ICloseable')
           VALUE_ARGUMENT_LIST
             PsiElement(LPAR)('(')
             VALUE_ARGUMENT
@@ -128,14 +132,16 @@ JetFile: IOSamples.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('IIterable')
-            TYPE_ARGUMENT_LIST
-              PsiElement(LT)('<')
-              TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('T')
-              PsiElement(GT)('>')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('IIterable')
+              TYPE_ARGUMENT_LIST
+                PsiElement(LT)('<')
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('T')
+                PsiElement(GT)('>')
         PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
         VALUE_PARAMETER
@@ -144,14 +150,16 @@ JetFile: IOSamples.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('IAdder')
-            TYPE_ARGUMENT_LIST
-              PsiElement(LT)('<')
-              TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('T')
-              PsiElement(GT)('>')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('IAdder')
+              TYPE_ARGUMENT_LIST
+                PsiElement(LT)('<')
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('T')
+                PsiElement(GT)('>')
         PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
       BLOCK
@@ -200,20 +208,23 @@ JetFile: IOSamples.jet
       DELEGATION_SPECIFIER_LIST
         DELEGATOR_SUPER_CLASS
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('IIterator')
-            TYPE_ARGUMENT_LIST
-              PsiElement(LT)('<')
-              TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('Byte')
-              PsiElement(GT)('>')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('IIterator')
+              TYPE_ARGUMENT_LIST
+                PsiElement(LT)('<')
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Byte')
+                PsiElement(GT)('>')
         PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
         DELEGATOR_SUPER_CLASS
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('JavaCloseableWrapper')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('JavaCloseableWrapper')
       PsiWhiteSpace(' ')
       CLASS_BODY
         PsiElement(LBRACE)('{')
@@ -229,8 +240,9 @@ JetFile: IOSamples.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('InputStream')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('InputStream')
         PsiWhiteSpace('\n  ')
         PROPERTY
           MODIFIER_LIST
@@ -243,8 +255,9 @@ JetFile: IOSamples.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('Int')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
         PsiWhiteSpace('\n  ')
         PROPERTY
           MODIFIER_LIST
@@ -269,8 +282,9 @@ JetFile: IOSamples.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('File')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('File')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           PsiElement(COLON)(':')
@@ -278,8 +292,9 @@ JetFile: IOSamples.jet
           INITIALIZER_LIST
             DELEGATOR_SUPER_CALL
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('JavaCloseableWrapper')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('JavaCloseableWrapper')
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
@@ -363,8 +378,9 @@ JetFile: IOSamples.jet
                         PsiElement(as)('as')
                         PsiWhiteSpace(' ')
                         TYPE_REFERENCE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('Byte')
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('Byte')
                   PsiWhiteSpace('\n    ')
                   PsiElement(RBRACE)('}')
             PsiWhiteSpace('\n    ')
@@ -479,20 +495,23 @@ JetFile: IOSamples.jet
       DELEGATION_SPECIFIER_LIST
         DELEGATOR_SUPER_CLASS
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('IAdder')
-            TYPE_ARGUMENT_LIST
-              PsiElement(LT)('<')
-              TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('Byte')
-              PsiElement(GT)('>')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('IAdder')
+              TYPE_ARGUMENT_LIST
+                PsiElement(LT)('<')
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Byte')
+                PsiElement(GT)('>')
         PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
         DELEGATOR_SUPER_CLASS
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('JavaCloseableWrapper')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('JavaCloseableWrapper')
       PsiWhiteSpace(' ')
       CLASS_BODY
         PsiElement(LBRACE)('{')
@@ -508,8 +527,9 @@ JetFile: IOSamples.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('OutputStream')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('OutputStream')
         PsiWhiteSpace('\n\n  ')
         CONSTRUCTOR
           PsiElement(this)('this')
@@ -521,8 +541,9 @@ JetFile: IOSamples.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('File')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('File')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           PsiElement(COLON)(':')
@@ -530,8 +551,9 @@ JetFile: IOSamples.jet
           INITIALIZER_LIST
             DELEGATOR_SUPER_CALL
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('JavaCloseableWrapper')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('JavaCloseableWrapper')
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
@@ -577,8 +599,9 @@ JetFile: IOSamples.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('Byte')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Byte')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           BLOCK
@@ -625,8 +648,9 @@ JetFile: IOSamples.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('File')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('File')
         PsiWhiteSpace(' ')
         PsiComment(EOL_COMMENT)('//= ...')
         PsiWhiteSpace('\n  ')
@@ -638,8 +662,9 @@ JetFile: IOSamples.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('File')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('File')
         PsiWhiteSpace(' ')
         PsiComment(EOL_COMMENT)('//= ...')
         PsiWhiteSpace('\n\n  ')

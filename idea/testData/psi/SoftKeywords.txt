@@ -74,8 +74,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('T')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('T')
         PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
         TYPE_PARAMETER
@@ -135,8 +136,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('B')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('B')
         PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
       PsiElement(COLON)(':')
@@ -144,8 +146,9 @@ JetFile: SoftKeywords.jet
       DELEGATION_SPECIFIER_LIST
         DELEGATOR_BY
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('A')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('A')
           PsiWhiteSpace(' ')
           PsiElement(by)('by')
           PsiWhiteSpace(' ')
@@ -298,8 +301,9 @@ JetFile: SoftKeywords.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('s')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('s')
             PsiElement(RPAR)(')')
             PsiWhiteSpace(' ')
             BLOCK
@@ -329,8 +333,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('abstract')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('abstract')
         PsiWhiteSpace('\n    ')
         FUN
           PsiElement(fun)('fun')
@@ -346,8 +351,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('virtual')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('virtual')
         PsiWhiteSpace('\n    ')
         FUN
           PsiElement(fun)('fun')
@@ -363,8 +369,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('enum')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('enum')
         PsiWhiteSpace('\n    ')
         FUN
           PsiElement(fun)('fun')
@@ -380,8 +387,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('open')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('open')
         PsiWhiteSpace('\n    ')
         FUN
           PsiElement(fun)('fun')
@@ -397,8 +405,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('attribute')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('attribute')
         PsiWhiteSpace('\n    ')
         FUN
           PsiElement(fun)('fun')
@@ -414,8 +423,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('override')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('override')
         PsiWhiteSpace('\n    ')
         FUN
           PsiElement(fun)('fun')
@@ -431,8 +441,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('virtual')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('virtual')
         PsiWhiteSpace('\n    ')
         FUN
           PsiElement(fun)('fun')
@@ -448,8 +459,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('abstract')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('abstract')
         PsiWhiteSpace('\n    ')
         FUN
           PsiElement(fun)('fun')
@@ -465,8 +477,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('private')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('private')
         PsiWhiteSpace('\n    ')
         FUN
           PsiElement(fun)('fun')
@@ -482,8 +495,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('protected')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('protected')
         PsiWhiteSpace('\n    ')
         FUN
           PsiElement(fun)('fun')
@@ -499,8 +513,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('public')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('public')
         PsiWhiteSpace('\n    ')
         FUN
           PsiElement(fun)('fun')
@@ -516,8 +531,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('internal')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('internal')
         PsiWhiteSpace('\n    ')
         FUN
           PsiElement(fun)('fun')
@@ -533,8 +549,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('lazy')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('lazy')
         PsiWhiteSpace('\n    ')
         FUN
           PsiElement(fun)('fun')
@@ -550,8 +567,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('wraps')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('wraps')
         PsiWhiteSpace('\n    ')
         FUN
           PsiElement(fun)('fun')
@@ -567,8 +585,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('import')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('import')
         PsiWhiteSpace('\n    ')
         FUN
           PsiElement(fun)('fun')
@@ -584,8 +603,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('where')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('where')
         PsiWhiteSpace('\n    ')
         FUN
           PsiElement(fun)('fun')
@@ -601,8 +621,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('by')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('by')
         PsiWhiteSpace('\n    ')
         FUN
           PsiElement(fun)('fun')
@@ -618,8 +639,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('get')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('get')
         PsiWhiteSpace('\n    ')
         FUN
           PsiElement(fun)('fun')
@@ -635,8 +657,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('set')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('set')
         PsiWhiteSpace('\n    ')
         FUN
           PsiElement(fun)('fun')
@@ -652,8 +675,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('public')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('public')
         PsiWhiteSpace('\n    ')
         FUN
           PsiElement(fun)('fun')
@@ -669,8 +693,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('private')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('private')
         PsiWhiteSpace('\n    ')
         FUN
           PsiElement(fun)('fun')
@@ -686,8 +711,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('protected')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('protected')
         PsiWhiteSpace('\n    ')
         FUN
           PsiElement(fun)('fun')
@@ -703,8 +729,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('internal')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('internal')
         PsiWhiteSpace('\n\n    ')
         FUN
           PsiElement(fun)('fun')
@@ -721,8 +748,9 @@ JetFile: SoftKeywords.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('t')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('t')
             PsiElement(COMMA)(',')
             PsiWhiteSpace('\n        ')
             VALUE_PARAMETER
@@ -731,8 +759,9 @@ JetFile: SoftKeywords.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('t')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('t')
             PsiElement(COMMA)(',')
             PsiWhiteSpace('\n        ')
             VALUE_PARAMETER
@@ -741,8 +770,9 @@ JetFile: SoftKeywords.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('t')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('t')
             PsiElement(COMMA)(',')
             PsiWhiteSpace('\n        ')
             VALUE_PARAMETER
@@ -751,8 +781,9 @@ JetFile: SoftKeywords.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('t')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('t')
             PsiElement(COMMA)(',')
             PsiWhiteSpace('\n        ')
             VALUE_PARAMETER
@@ -761,8 +792,9 @@ JetFile: SoftKeywords.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('t')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('t')
             PsiElement(COMMA)(',')
             PsiWhiteSpace('\n        ')
             VALUE_PARAMETER
@@ -771,8 +803,9 @@ JetFile: SoftKeywords.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('t')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('t')
             PsiElement(COMMA)(',')
             PsiWhiteSpace('\n        ')
             VALUE_PARAMETER
@@ -781,8 +814,9 @@ JetFile: SoftKeywords.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('t')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('t')
             PsiElement(COMMA)(',')
             PsiWhiteSpace('\n        ')
             VALUE_PARAMETER
@@ -791,8 +825,9 @@ JetFile: SoftKeywords.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('t')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('t')
             PsiElement(COMMA)(',')
             PsiWhiteSpace('\n        ')
             VALUE_PARAMETER
@@ -801,8 +836,9 @@ JetFile: SoftKeywords.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('t')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('t')
             PsiElement(COMMA)(',')
             PsiWhiteSpace('\n        ')
             VALUE_PARAMETER
@@ -811,8 +847,9 @@ JetFile: SoftKeywords.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('t')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('t')
             PsiElement(COMMA)(',')
             PsiWhiteSpace('\n        ')
             VALUE_PARAMETER
@@ -821,8 +858,9 @@ JetFile: SoftKeywords.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('t')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('t')
             PsiElement(COMMA)(',')
             PsiWhiteSpace('\n        ')
             VALUE_PARAMETER
@@ -831,8 +869,9 @@ JetFile: SoftKeywords.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('t')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('t')
             PsiElement(COMMA)(',')
             PsiWhiteSpace('\n        ')
             VALUE_PARAMETER
@@ -841,8 +880,9 @@ JetFile: SoftKeywords.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('t')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('t')
             PsiElement(COMMA)(',')
             PsiWhiteSpace('\n        ')
             VALUE_PARAMETER
@@ -851,8 +891,9 @@ JetFile: SoftKeywords.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('t')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('t')
             PsiElement(COMMA)(',')
             PsiWhiteSpace('\n        ')
             VALUE_PARAMETER
@@ -861,8 +902,9 @@ JetFile: SoftKeywords.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('t')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('t')
             PsiElement(COMMA)(',')
             PsiWhiteSpace('\n        ')
             VALUE_PARAMETER
@@ -871,8 +913,9 @@ JetFile: SoftKeywords.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('t')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('t')
             PsiElement(COMMA)(',')
             PsiWhiteSpace('\n        ')
             VALUE_PARAMETER
@@ -881,8 +924,9 @@ JetFile: SoftKeywords.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('t')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('t')
             PsiElement(COMMA)(',')
             PsiWhiteSpace('\n        ')
             VALUE_PARAMETER
@@ -891,8 +935,9 @@ JetFile: SoftKeywords.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('t')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('t')
             PsiElement(COMMA)(',')
             PsiWhiteSpace('\n        ')
             VALUE_PARAMETER
@@ -901,8 +946,9 @@ JetFile: SoftKeywords.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('t')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('t')
             PsiElement(COMMA)(',')
             PsiWhiteSpace('\n        ')
             VALUE_PARAMETER
@@ -911,8 +957,9 @@ JetFile: SoftKeywords.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('t')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('t')
             PsiElement(COMMA)(',')
             PsiWhiteSpace('\n        ')
             VALUE_PARAMETER
@@ -921,8 +968,9 @@ JetFile: SoftKeywords.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('t')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('t')
             PsiElement(COMMA)(',')
             PsiWhiteSpace('\n        ')
             VALUE_PARAMETER
@@ -931,8 +979,9 @@ JetFile: SoftKeywords.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('t')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('t')
             PsiElement(COMMA)(',')
             PsiWhiteSpace('\n        ')
             VALUE_PARAMETER
@@ -941,8 +990,9 @@ JetFile: SoftKeywords.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('t')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('t')
             PsiElement(COMMA)(',')
             PsiWhiteSpace('\n    ')
             VALUE_PARAMETER
@@ -986,8 +1036,9 @@ JetFile: SoftKeywords.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('t')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('t')
             PsiWhiteSpace('\n\n     ')
             PsiElement(RPAR)(')')
         PsiWhiteSpace('\n\n')
@@ -1009,8 +1060,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('bar')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('bar')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n        ')
         PRIMARY_CONSTRUCTOR_PARAMETER
@@ -1019,8 +1071,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('t')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('t')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n        ')
         PRIMARY_CONSTRUCTOR_PARAMETER
@@ -1029,8 +1082,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('t')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('t')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n        ')
         PRIMARY_CONSTRUCTOR_PARAMETER
@@ -1039,8 +1093,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('t')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('t')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n        ')
         PRIMARY_CONSTRUCTOR_PARAMETER
@@ -1049,8 +1104,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('t')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('t')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n        ')
         PRIMARY_CONSTRUCTOR_PARAMETER
@@ -1059,8 +1115,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('t')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('t')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n        ')
         PRIMARY_CONSTRUCTOR_PARAMETER
@@ -1069,8 +1126,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('t')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('t')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n        ')
         PRIMARY_CONSTRUCTOR_PARAMETER
@@ -1079,8 +1137,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('t')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('t')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n        ')
         PRIMARY_CONSTRUCTOR_PARAMETER
@@ -1089,8 +1148,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('t')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('t')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n        ')
         PRIMARY_CONSTRUCTOR_PARAMETER
@@ -1099,8 +1159,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('t')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('t')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n        ')
         PRIMARY_CONSTRUCTOR_PARAMETER
@@ -1109,8 +1170,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('t')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('t')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n        ')
         PRIMARY_CONSTRUCTOR_PARAMETER
@@ -1119,8 +1181,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('t')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('t')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n        ')
         PRIMARY_CONSTRUCTOR_PARAMETER
@@ -1129,8 +1192,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('t')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('t')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n        ')
         PRIMARY_CONSTRUCTOR_PARAMETER
@@ -1139,8 +1203,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('t')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('t')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n        ')
         PRIMARY_CONSTRUCTOR_PARAMETER
@@ -1149,8 +1214,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('t')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('t')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n        ')
         PRIMARY_CONSTRUCTOR_PARAMETER
@@ -1159,8 +1225,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('t')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('t')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n        ')
         PRIMARY_CONSTRUCTOR_PARAMETER
@@ -1169,8 +1236,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('t')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('t')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n        ')
         PRIMARY_CONSTRUCTOR_PARAMETER
@@ -1179,8 +1247,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('t')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('t')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n        ')
         PRIMARY_CONSTRUCTOR_PARAMETER
@@ -1189,8 +1258,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('t')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('t')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n        ')
         PRIMARY_CONSTRUCTOR_PARAMETER
@@ -1199,8 +1269,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('t')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('t')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n        ')
         PRIMARY_CONSTRUCTOR_PARAMETER
@@ -1209,8 +1280,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('t')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('t')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n        ')
         PRIMARY_CONSTRUCTOR_PARAMETER
@@ -1219,8 +1291,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('t')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('t')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n        ')
         PRIMARY_CONSTRUCTOR_PARAMETER
@@ -1229,8 +1302,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('t')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('t')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n        ')
         PRIMARY_CONSTRUCTOR_PARAMETER
@@ -1239,8 +1313,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('t')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('t')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n    ')
         PRIMARY_CONSTRUCTOR_PARAMETER
@@ -1284,8 +1359,9 @@ JetFile: SoftKeywords.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('b')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('b')
         PsiWhiteSpace('\n')
         PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')

@@ -26,8 +26,9 @@ JetFile: UnionFind.jet
             TYPE_ARGUMENT_LIST
               PsiElement(LT)('<')
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('Int')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Int')
               PsiElement(GT)('>')
             VALUE_ARGUMENT_LIST
               PsiElement(LPAR)('(')
@@ -46,8 +47,9 @@ JetFile: UnionFind.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('Int')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
           PsiWhiteSpace(' ')
           BLOCK
             PsiElement(LBRACE)('{')
@@ -102,15 +104,17 @@ JetFile: UnionFind.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('Int')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Int')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('Int')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
           PsiWhiteSpace(' ')
           BLOCK
             PsiElement(LBRACE)('{')
@@ -211,8 +215,9 @@ JetFile: UnionFind.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('Int')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Int')
             PsiElement(COMMA)(',')
             PsiWhiteSpace(' ')
             VALUE_PARAMETER
@@ -221,8 +226,9 @@ JetFile: UnionFind.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('Int')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Int')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           BLOCK
@@ -359,16 +365,18 @@ JetFile: UnionFind.jet
       PsiElement(val)('val')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('Int')
+        USER_TYPE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('Int')
       PsiElement(DOT)('.')
       PsiElement(IDENTIFIER)('isOdd')
       PsiWhiteSpace(' ')
       PsiElement(COLON)(':')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('Boolean')
+        USER_TYPE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('Boolean')
       PsiWhiteSpace('\n  ')
       PROPERTY_ACCESSOR
         PsiElement(get)('get')

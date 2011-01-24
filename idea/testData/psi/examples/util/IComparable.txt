@@ -1,9 +1,9 @@
 JetFile: IComparable.jet
   NAMESPACE
-    PsiErrorElement:Expecting namespace or top level declaration
-      PsiElement(IDENTIFIER)('interface')
-    PsiWhiteSpace(' ')
     CLASS
+      MODIFIER_LIST
+        PsiElement(virtual)('virtual')
+      PsiWhiteSpace(' ')
       PsiElement(class)('class')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('IComparable')
@@ -33,14 +33,16 @@ JetFile: IComparable.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('T')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('T')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('Int')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
         PsiWhiteSpace('\n')
         PsiElement(RBRACE)('}')

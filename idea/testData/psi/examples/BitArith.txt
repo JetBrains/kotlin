@@ -14,8 +14,9 @@ JetFile: BitArith.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('Int')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
         PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
       PsiElement(EQ)('=')
@@ -43,8 +44,9 @@ JetFile: BitArith.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('Int')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
         PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
         VALUE_PARAMETER
@@ -53,8 +55,9 @@ JetFile: BitArith.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('Int')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
         PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
       PsiElement(EQ)('=')
@@ -89,8 +92,9 @@ JetFile: BitArith.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('Int')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
         PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
         VALUE_PARAMETER
@@ -99,8 +103,9 @@ JetFile: BitArith.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('Int')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
         PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
       PsiElement(EQ)('=')
@@ -142,8 +147,9 @@ JetFile: BitArith.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('Int')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
         PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
         VALUE_PARAMETER
@@ -152,8 +158,9 @@ JetFile: BitArith.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('Int')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
         PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
       PsiElement(EQ)('=')
@@ -194,8 +201,9 @@ JetFile: BitArith.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('Int')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
         PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
         VALUE_PARAMETER
@@ -204,8 +212,9 @@ JetFile: BitArith.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('Int')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
         PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
       PsiElement(EQ)('=')
@@ -248,8 +257,9 @@ JetFile: BitArith.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('INumber')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('INumber')
         PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
       BLOCK
@@ -336,8 +346,9 @@ JetFile: BitArith.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('INumber')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('INumber')
         PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
       PsiElement(EQ)('=')
@@ -381,8 +392,9 @@ JetFile: BitArith.jet
         PsiElement(as)('as')
         PsiWhiteSpace(' ')
         TYPE_REFERENCE
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('Int')
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Int')
     PsiWhiteSpace('\n\n')
     FUN
       PsiElement(fun)('fun')
@@ -398,8 +410,9 @@ JetFile: BitArith.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('INumber')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('INumber')
         PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
       PsiElement(EQ)('=')
@@ -459,8 +472,9 @@ JetFile: BitArith.jet
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('Int')
+        USER_TYPE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('Int')
       PsiElement(DOT)('.')
       PsiElement(IDENTIFIER)('matchMask')
       TYPE_PARAMETER_LIST
@@ -473,8 +487,9 @@ JetFile: BitArith.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('Int')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
         PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
       PsiElement(EQ)('=')
@@ -509,14 +524,15 @@ JetFile: BitArith.jet
       DELEGATION_SPECIFIER_LIST
         DELEGATOR_SUPER_CLASS
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('IComparable')
-            TYPE_ARGUMENT_LIST
-              PsiElement(LT)('<')
-              TYPE_REFERENCE
-                SELF_TYPE
-                  PsiElement(This)('This')
-              PsiElement(GT)('>')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('IComparable')
+              TYPE_ARGUMENT_LIST
+                PsiElement(LT)('<')
+                TYPE_REFERENCE
+                  SELF_TYPE
+                    PsiElement(This)('This')
+                PsiElement(GT)('>')
       PsiWhiteSpace(' ')
       CLASS_BODY
         PsiElement(LBRACE)('{')
@@ -529,8 +545,9 @@ JetFile: BitArith.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('Int')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
         PsiWhiteSpace('\n  ')
         FUN
           MODIFIER_LIST
@@ -538,8 +555,9 @@ JetFile: BitArith.jet
               PsiElement(LBRACKET)('[')
               ATTRIBUTE
                 TYPE_REFERENCE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('operator')
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('operator')
               PsiElement(RBRACKET)(']')
           PsiWhiteSpace(' ')
           PsiElement(fun)('fun')
@@ -571,8 +589,9 @@ JetFile: BitArith.jet
               PsiElement(LBRACKET)('[')
               ATTRIBUTE
                 TYPE_REFERENCE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('operator')
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('operator')
               PsiElement(RBRACKET)(']')
           PsiWhiteSpace(' ')
           PsiElement(fun)('fun')
@@ -588,8 +607,9 @@ JetFile: BitArith.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('Int')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Int')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           PsiElement(COLON)(':')

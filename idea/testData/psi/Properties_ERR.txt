@@ -48,8 +48,9 @@ JetFile: Properties_ERR.jet
         PsiElement(LBRACKET)('[')
         ATTRIBUTE
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('a')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('a')
         PsiErrorElement:Expecting ']' to close an attribute annotation
           <empty list>
       PsiWhiteSpace(' ')
@@ -64,8 +65,9 @@ JetFile: Properties_ERR.jet
       PsiElement(val)('val')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('foo')
+        USER_TYPE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('foo')
       PsiElement(DOT)('.')
       PsiElement(IDENTIFIER)('bar')
     PsiErrorElement:Expecting namespace or top level declaration
@@ -78,8 +80,9 @@ JetFile: Properties_ERR.jet
         PsiElement(LBRACKET)('[')
         ATTRIBUTE
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('a')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('a')
         PsiElement(RBRACKET)(']')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('foo')
@@ -98,8 +101,9 @@ JetFile: Properties_ERR.jet
       PsiElement(val)('val')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('foo')
+        USER_TYPE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('foo')
       PsiElement(DOT)('.')
       PsiElement(IDENTIFIER)('bar')
     PsiWhiteSpace('\n   ')
@@ -134,11 +138,12 @@ JetFile: Properties_ERR.jet
         FUNCTION_TYPE
           PsiElement(LBRACE)('{')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
+            USER_TYPE
               REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('foo')
-              PsiElement(DOT)('.')
-              PsiElement(IDENTIFIER)('bar')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('foo')
+                PsiElement(DOT)('.')
+                PsiElement(IDENTIFIER)('bar')
           PsiElement(DOT)('.')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
@@ -188,11 +193,12 @@ JetFile: Properties_ERR.jet
         FUNCTION_TYPE
           PsiElement(LBRACE)('{')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
+            USER_TYPE
               REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('foo')
-              PsiElement(DOT)('.')
-              PsiElement(IDENTIFIER)('bar')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('foo')
+                PsiElement(DOT)('.')
+                PsiElement(IDENTIFIER)('bar')
           PsiElement(DOT)('.')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
@@ -252,8 +258,9 @@ JetFile: Properties_ERR.jet
       PsiElement(val)('val')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('f')
+        USER_TYPE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('f')
       PsiElement(DOT)('.')
       PsiElement(IDENTIFIER)('d')
     PsiErrorElement:Expecting namespace or top level declaration

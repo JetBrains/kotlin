@@ -18,20 +18,23 @@ JetFile: TypeAnnotations.jet
               PsiElement(LBRACKET)('[')
               ATTRIBUTE
                 TYPE_REFERENCE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('a')
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('a')
               PsiElement(RBRACKET)(']')
             PsiWhiteSpace(' ')
             ATTRIBUTE_ANNOTATION
               PsiElement(LBRACKET)('[')
               ATTRIBUTE
                 TYPE_REFERENCE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('b')
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('b')
               PsiElement(RBRACKET)(']')
             PsiWhiteSpace(' ')
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('B')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('B')
         PsiElement(RPAR)(')')
     PsiWhiteSpace('\n\n')
     TYPEDEF
@@ -48,37 +51,43 @@ JetFile: TypeAnnotations.jet
           PsiElement(LBRACKET)('[')
           ATTRIBUTE
             TYPE_REFERENCE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('b')
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('b')
           PsiElement(RBRACKET)(']')
         PsiWhiteSpace(' ')
         ATTRIBUTE_ANNOTATION
           PsiElement(LBRACKET)('[')
           ATTRIBUTE
             TYPE_REFERENCE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('x')
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('x')
           PsiElement(RBRACKET)(']')
         PsiWhiteSpace(' ')
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('F')
-        TYPE_ARGUMENT_LIST
-          PsiElement(LT)('<')
-          MODIFIER_LIST
-            ATTRIBUTE_ANNOTATION
-              PsiElement(LBRACKET)('[')
-              ATTRIBUTE
-                TYPE_REFERENCE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('x')
-              PsiElement(RBRACKET)(']')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('A')
-          PsiElement(COMMA)(',')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('B')
-          PsiElement(GT)('>')
+        USER_TYPE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('F')
+          TYPE_ARGUMENT_LIST
+            PsiElement(LT)('<')
+            MODIFIER_LIST
+              ATTRIBUTE_ANNOTATION
+                PsiElement(LBRACKET)('[')
+                ATTRIBUTE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('x')
+                PsiElement(RBRACKET)(']')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('A')
+            PsiElement(COMMA)(',')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('B')
+            PsiElement(GT)('>')

@@ -15,8 +15,9 @@ JetFile: Builder.jet
             DELEGATION_SPECIFIER_LIST
               DELEGATOR_SUPER_CALL
                 TYPE_REFERENCE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('AntBuilder')
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('AntBuilder')
                 VALUE_ARGUMENT_LIST
                   PsiElement(LPAR)('(')
                   PsiElement(RPAR)(')')
@@ -79,8 +80,9 @@ JetFile: Builder.jet
                               PsiElement(new)('new')
                               PsiWhiteSpace(' ')
                               TYPE_REFERENCE
-                                REFERENCE_EXPRESSION
-                                  PsiElement(IDENTIFIER)('File')
+                                USER_TYPE
+                                  REFERENCE_EXPRESSION
+                                    PsiElement(IDENTIFIER)('File')
                               VALUE_ARGUMENT_LIST
                                 PsiElement(LPAR)('(')
                                 VALUE_ARGUMENT
@@ -215,8 +217,9 @@ JetFile: Builder.jet
           DELEGATION_SPECIFIER_LIST
             DELEGATOR_SUPER_CLASS
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('ClassPathEntry')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('ClassPathEntry')
           PsiWhiteSpace(' ')
           CLASS_BODY
             PsiElement(LBRACE)('{')
@@ -235,8 +238,9 @@ JetFile: Builder.jet
                   PsiElement(COLON)(':')
                   PsiWhiteSpace(' ')
                   TYPE_REFERENCE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('ClassPathEntry')
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('ClassPathEntry')
                 PsiComment(BLOCK_COMMENT)('/*...*/')
                 PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')
@@ -255,8 +259,9 @@ JetFile: Builder.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('String')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('String')
             PsiWhiteSpace('\n    ')
             FUN
               PsiElement(fun)('fun')
@@ -272,8 +277,9 @@ JetFile: Builder.jet
                   PsiElement(COLON)(':')
                   PsiWhiteSpace(' ')
                   TYPE_REFERENCE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('String')
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('String')
                 PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')
               BLOCK
@@ -297,8 +303,9 @@ JetFile: Builder.jet
           DELEGATION_SPECIFIER_LIST
             DELEGATOR_SUPER_CLASS
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('ClassPathEntry')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('ClassPathEntry')
           PsiWhiteSpace(' ')
           CLASS_BODY
             PsiElement(LBRACE)('{')
@@ -317,8 +324,9 @@ JetFile: Builder.jet
                   PsiElement(COLON)(':')
                   PsiWhiteSpace(' ')
                   TYPE_REFERENCE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('ClassPathEntry')
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('ClassPathEntry')
                 PsiComment(BLOCK_COMMENT)('/*...*/')
                 PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')
@@ -349,8 +357,9 @@ JetFile: Builder.jet
                   PsiElement(LBRACE)('{')
                   PsiWhiteSpace(' ')
                   TYPE_REFERENCE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('Library')
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('Library')
                   PsiElement(DOT)('.')
                   VALUE_PARAMETER_LIST
                     PsiElement(LPAR)('(')
@@ -359,8 +368,9 @@ JetFile: Builder.jet
                   PsiElement(COLON)(':')
                   PsiWhiteSpace(' ')
                   TYPE_REFERENCE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('Library')
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('Library')
                   PsiElement(RBRACE)('}')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
@@ -378,8 +388,9 @@ JetFile: Builder.jet
                 PsiElement(new)('new')
                 PsiWhiteSpace(' ')
                 TYPE_REFERENCE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('Library')
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Library')
                 VALUE_ARGUMENT_LIST
                   PsiElement(LPAR)('(')
                   PsiElement(RPAR)(')')

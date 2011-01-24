@@ -14,8 +14,9 @@ JetFile: UpdateOperation.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('Int')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
         PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
         PRIMARY_CONSTRUCTOR_PARAMETER
@@ -24,8 +25,9 @@ JetFile: UpdateOperation.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('Int')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
         PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
       CLASS_BODY
@@ -54,8 +56,9 @@ JetFile: UpdateOperation.jet
                     PsiElement(COLON)(':')
                     PsiWhiteSpace(' ')
                     TYPE_REFERENCE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('Pair')
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('Pair')
                   PsiElement(COMMA)(',')
                   PsiWhiteSpace(' ')
                   VALUE_PARAMETER
@@ -64,8 +67,9 @@ JetFile: UpdateOperation.jet
                     PsiElement(COLON)(':')
                     PsiWhiteSpace(' ')
                     TYPE_REFERENCE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('Int')
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('Int')
                     PsiWhiteSpace(' ')
                     PsiElement(EQ)('=')
                     PsiWhiteSpace(' ')
@@ -83,8 +87,9 @@ JetFile: UpdateOperation.jet
                     PsiElement(COLON)(':')
                     PsiWhiteSpace(' ')
                     TYPE_REFERENCE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('Int')
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('Int')
                     PsiWhiteSpace(' ')
                     PsiElement(EQ)('=')
                     PsiWhiteSpace(' ')
@@ -102,8 +107,9 @@ JetFile: UpdateOperation.jet
                   PsiElement(new)('new')
                   PsiWhiteSpace(' ')
                   TYPE_REFERENCE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('Pair')
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('Pair')
                   VALUE_ARGUMENT_LIST
                     PsiElement(LPAR)('(')
                     VALUE_ARGUMENT
@@ -133,8 +139,9 @@ JetFile: UpdateOperation.jet
         PsiElement(new)('new')
         PsiWhiteSpace(' ')
         TYPE_REFERENCE
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('Point')
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Point')
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT

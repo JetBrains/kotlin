@@ -29,8 +29,9 @@ JetFile: IPriorityQueue.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('T')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('T')
         PsiWhiteSpace('\n  ')
         FUN
           PsiElement(fun)('fun')
@@ -46,8 +47,9 @@ JetFile: IPriorityQueue.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('T')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('T')
             PsiElement(RPAR)(')')
         PsiWhiteSpace('\n  ')
         PROPERTY
@@ -58,7 +60,8 @@ JetFile: IPriorityQueue.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('Boolean')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Boolean')
         PsiWhiteSpace('\n')
         PsiElement(RBRACE)('}')

@@ -12,8 +12,9 @@ JetFile: ByCaluses.jet
       DELEGATION_SPECIFIER_LIST
         DELEGATOR_BY
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('b')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('b')
           PsiWhiteSpace(' ')
           PsiElement(by)('by')
           PsiWhiteSpace(' ')
@@ -47,8 +48,9 @@ JetFile: ByCaluses.jet
       DELEGATION_SPECIFIER_LIST
         DELEGATOR_BY
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('b')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('b')
           PsiWhiteSpace(' ')
           PsiElement(by)('by')
           PsiWhiteSpace(' ')
@@ -98,8 +100,9 @@ JetFile: ByCaluses.jet
       DELEGATION_SPECIFIER_LIST
         DELEGATOR_BY
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('b')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('b')
           PsiWhiteSpace(' ')
           PsiElement(by)('by')
           PsiWhiteSpace(' ')
@@ -136,8 +139,9 @@ JetFile: ByCaluses.jet
       DELEGATION_SPECIFIER_LIST
         DELEGATOR_BY
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('b')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('b')
           PsiWhiteSpace(' ')
           PsiElement(by)('by')
           PsiWhiteSpace(' ')
@@ -181,8 +185,9 @@ JetFile: ByCaluses.jet
       DELEGATION_SPECIFIER_LIST
         DELEGATOR_BY
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('b')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('b')
           PsiWhiteSpace(' ')
           PsiElement(by)('by')
           PsiWhiteSpace(' ')
@@ -229,8 +234,9 @@ JetFile: ByCaluses.jet
       DELEGATION_SPECIFIER_LIST
         DELEGATOR_BY
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('b')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('b')
           PsiWhiteSpace(' ')
           PsiElement(by)('by')
           PsiWhiteSpace(' ')
@@ -278,8 +284,9 @@ JetFile: ByCaluses.jet
       DELEGATION_SPECIFIER_LIST
         DELEGATOR_BY
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('b')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('b')
           PsiWhiteSpace(' ')
           PsiElement(by)('by')
           PsiWhiteSpace(' ')

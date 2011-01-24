@@ -32,8 +32,9 @@ JetFile: AttributesOnPatterns.jet
                   PsiElement(LBRACKET)('[')
                   ATTRIBUTE
                     TYPE_REFERENCE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('a')
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('a')
                   PsiElement(RBRACKET)(']')
                 PsiWhiteSpace(' ')
                 PsiElement(EQ)('=')
@@ -54,8 +55,9 @@ JetFile: AttributesOnPatterns.jet
                   PsiElement(LBRACKET)('[')
                   ATTRIBUTE
                     TYPE_REFERENCE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('a')
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('a')
                   PsiElement(RBRACKET)(']')
                 PsiWhiteSpace(' ')
                 INTEGER_CONSTANT
@@ -75,8 +77,9 @@ JetFile: AttributesOnPatterns.jet
                   PsiElement(LBRACKET)('[')
                   ATTRIBUTE
                     TYPE_REFERENCE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('a')
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('a')
                   PsiElement(RBRACKET)(']')
                 PsiWhiteSpace(' ')
                 REFERENCE_EXPRESSION
@@ -96,8 +99,9 @@ JetFile: AttributesOnPatterns.jet
                   PsiElement(LBRACKET)('[')
                   ATTRIBUTE
                     TYPE_REFERENCE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('a')
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('a')
                   PsiElement(RBRACKET)(']')
                 PsiWhiteSpace(' ')
                 REFERENCE_EXPRESSION

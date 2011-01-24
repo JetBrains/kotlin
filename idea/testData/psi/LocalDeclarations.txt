@@ -25,8 +25,9 @@ JetFile: LocalDeclarations.jet
               PsiElement(LBRACKET)('[')
               ATTRIBUTE
                 TYPE_REFERENCE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('a')
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('a')
               PsiElement(RBRACKET)(']')
             PsiWhiteSpace(' ')
             PsiElement(abstract)('abstract')
@@ -49,8 +50,9 @@ JetFile: LocalDeclarations.jet
               PsiElement(LBRACKET)('[')
               ATTRIBUTE
                 TYPE_REFERENCE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('a')
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('a')
               PsiElement(RBRACKET)(']')
           PsiWhiteSpace(' ')
           PsiElement(class)('class')
@@ -82,8 +84,9 @@ JetFile: LocalDeclarations.jet
               PsiElement(LBRACKET)('[')
               ATTRIBUTE
                 TYPE_REFERENCE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('a')
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('a')
               PsiElement(RBRACKET)(']')
           PsiWhiteSpace(' ')
           PsiElement(var)('var')
@@ -108,8 +111,9 @@ JetFile: LocalDeclarations.jet
             FUNCTION_TYPE
               PsiElement(LBRACE)('{')
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('T')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('T')
               PsiElement(DOT)('.')
               VALUE_PARAMETER_LIST
                 PsiElement(LPAR)('(')
@@ -136,8 +140,9 @@ JetFile: LocalDeclarations.jet
           PsiElement(for)('for')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('bar')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('bar')
           PsiWhiteSpace(' ')
           CLASS_BODY
             PsiElement(LBRACE)('{')

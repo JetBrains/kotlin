@@ -747,15 +747,17 @@ JetFile: When.jet
                     VALUE_PARAMETER_LIST
                       PsiElement(LPAR)('(')
                       TYPE_REFERENCE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('foo')
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('foo')
                       PsiElement(RPAR)(')')
                     PsiWhiteSpace(' ')
                     PsiElement(COLON)(':')
                     PsiWhiteSpace(' ')
                     TYPE_REFERENCE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('Bar')
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('Bar')
                     PsiElement(RBRACE)('}')
             PsiWhiteSpace(' ')
             PsiElement(DOUBLE_ARROW)('=>')
@@ -874,8 +876,9 @@ JetFile: When.jet
                       TYPE_ARGUMENT_LIST
                         PsiElement(LT)('<')
                         TYPE_REFERENCE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('a')
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('a')
                         PsiElement(GT)('>')
                       VALUE_ARGUMENT_LIST
                         PsiElement(LPAR)('(')

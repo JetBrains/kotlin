@@ -33,7 +33,7 @@ public class JetUserType extends JetTypeElement {
 
     @Nullable @IfNotParsed
     public ASTNode getTypeNameNode() {
-        return getNode().findChildByType(JetTokens.IDENTIFIER);
+        return getNode().findChildByType(JetNodeTypes.REFERENCE_EXPRESSION);
     }
 
     @Nullable @IfNotParsed

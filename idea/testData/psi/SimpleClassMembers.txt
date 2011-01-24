@@ -20,8 +20,9 @@ JetFile: SimpleClassMembers.jet
           PsiElement(for)('for')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('X')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('X')
           PsiWhiteSpace(' ')
           CLASS_BODY
             PsiElement(LBRACE)('{')
@@ -36,8 +37,9 @@ JetFile: SimpleClassMembers.jet
               PsiElement(for)('for')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('X')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('X')
               PsiWhiteSpace(' ')
               CLASS_BODY
                 PsiElement(LBRACE)('{')
@@ -85,8 +87,9 @@ JetFile: SimpleClassMembers.jet
               PsiElement(EQ)('=')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('bar')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('bar')
             PsiWhiteSpace('\n\n        ')
             CONSTRUCTOR
               PsiElement(this)('this')
@@ -119,14 +122,16 @@ JetFile: SimpleClassMembers.jet
                 PsiWhiteSpace(' ')
                 DELEGATOR_SUPER_CALL
                   TYPE_REFERENCE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('Foo')
-                    TYPE_ARGUMENT_LIST
-                      PsiElement(LT)('<')
-                      TYPE_REFERENCE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('T')
-                      PsiElement(GT)('>')
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('Foo')
+                      TYPE_ARGUMENT_LIST
+                        PsiElement(LT)('<')
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('T')
+                        PsiElement(GT)('>')
                   VALUE_ARGUMENT_LIST
                     PsiElement(LPAR)('(')
                     VALUE_ARGUMENT
@@ -156,8 +161,9 @@ JetFile: SimpleClassMembers.jet
               PsiElement(for)('for')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('X')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('X')
               PsiWhiteSpace(' ')
               CLASS_BODY
                 PsiElement(LBRACE)('{')
@@ -199,8 +205,9 @@ JetFile: SimpleClassMembers.jet
                     DELEGATION_SPECIFIER_LIST
                       DELEGATOR_SUPER_CLASS
                         TYPE_REFERENCE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('Fooo')
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('Fooo')
                     PsiWhiteSpace(' ')
                     CLASS_BODY
                       PsiElement(LBRACE)('{')
@@ -219,14 +226,16 @@ JetFile: SimpleClassMembers.jet
                     DELEGATION_SPECIFIER_LIST
                       DELEGATOR_SUPER_CLASS
                         TYPE_REFERENCE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('Fooo')
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('Fooo')
                       PsiElement(COMMA)(',')
                       PsiWhiteSpace(' ')
                       DELEGATOR_BY
                         TYPE_REFERENCE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('Bar')
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('Bar')
                         PsiWhiteSpace(' ')
                         PsiElement(by)('by')
                         PsiWhiteSpace(' ')
@@ -250,14 +259,16 @@ JetFile: SimpleClassMembers.jet
                     DELEGATION_SPECIFIER_LIST
                       DELEGATOR_SUPER_CLASS
                         TYPE_REFERENCE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('Fooo')
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('Fooo')
                       PsiElement(COMMA)(',')
                       PsiWhiteSpace(' ')
                       DELEGATOR_BY
                         TYPE_REFERENCE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('Bar')
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('Bar')
                         PsiWhiteSpace(' ')
                         PsiElement(by)('by')
                         PsiWhiteSpace(' ')
@@ -267,8 +278,9 @@ JetFile: SimpleClassMembers.jet
                       PsiWhiteSpace(' ')
                       DELEGATOR_SUPER_CALL
                         TYPE_REFERENCE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('Goo')
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('Goo')
                         VALUE_ARGUMENT_LIST
                           PsiElement(LPAR)('(')
                           PsiElement(RPAR)(')')
@@ -316,8 +328,9 @@ JetFile: SimpleClassMembers.jet
               PsiElement(EQ)('=')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('bar')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('bar')
             PsiWhiteSpace('\n\n        ')
             CONSTRUCTOR
               PsiElement(this)('this')
@@ -350,14 +363,16 @@ JetFile: SimpleClassMembers.jet
                 PsiWhiteSpace(' ')
                 DELEGATOR_SUPER_CALL
                   TYPE_REFERENCE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('Foo')
-                    TYPE_ARGUMENT_LIST
-                      PsiElement(LT)('<')
-                      TYPE_REFERENCE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('T')
-                      PsiElement(GT)('>')
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('Foo')
+                      TYPE_ARGUMENT_LIST
+                        PsiElement(LT)('<')
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('T')
+                        PsiElement(GT)('>')
                   VALUE_ARGUMENT_LIST
                     PsiElement(LPAR)('(')
                     VALUE_ARGUMENT
@@ -397,8 +412,9 @@ JetFile: SimpleClassMembers.jet
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('bar')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('bar')
         PsiWhiteSpace('\n\n    ')
         CONSTRUCTOR
           PsiElement(this)('this')
@@ -431,14 +447,16 @@ JetFile: SimpleClassMembers.jet
             PsiWhiteSpace(' ')
             DELEGATOR_SUPER_CALL
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('Foo')
-                TYPE_ARGUMENT_LIST
-                  PsiElement(LT)('<')
-                  TYPE_REFERENCE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('T')
-                  PsiElement(GT)('>')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Foo')
+                  TYPE_ARGUMENT_LIST
+                    PsiElement(LT)('<')
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('T')
+                    PsiElement(GT)('>')
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
@@ -477,14 +495,16 @@ JetFile: SimpleClassMembers.jet
             PsiWhiteSpace(' ')
             DELEGATOR_SUPER_CALL
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('Foo')
-                TYPE_ARGUMENT_LIST
-                  PsiElement(LT)('<')
-                  TYPE_REFERENCE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('T')
-                  PsiElement(GT)('>')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Foo')
+                  TYPE_ARGUMENT_LIST
+                    PsiElement(LT)('<')
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('T')
+                    PsiElement(GT)('>')
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
@@ -534,8 +554,9 @@ JetFile: SimpleClassMembers.jet
             DELEGATION_SPECIFIER_LIST
               DELEGATOR_SUPER_CLASS
                 TYPE_REFERENCE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('Fooo')
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Fooo')
             PsiWhiteSpace(' ')
             CLASS_BODY
               PsiElement(LBRACE)('{')
@@ -554,14 +575,16 @@ JetFile: SimpleClassMembers.jet
             DELEGATION_SPECIFIER_LIST
               DELEGATOR_SUPER_CLASS
                 TYPE_REFERENCE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('Fooo')
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Fooo')
               PsiElement(COMMA)(',')
               PsiWhiteSpace(' ')
               DELEGATOR_BY
                 TYPE_REFERENCE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('Bar')
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Bar')
                 PsiWhiteSpace(' ')
                 PsiElement(by)('by')
                 PsiWhiteSpace(' ')
@@ -585,14 +608,16 @@ JetFile: SimpleClassMembers.jet
             DELEGATION_SPECIFIER_LIST
               DELEGATOR_SUPER_CLASS
                 TYPE_REFERENCE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('Fooo')
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Fooo')
               PsiElement(COMMA)(',')
               PsiWhiteSpace(' ')
               DELEGATOR_BY
                 TYPE_REFERENCE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('Bar')
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Bar')
                 PsiWhiteSpace(' ')
                 PsiElement(by)('by')
                 PsiWhiteSpace(' ')
@@ -602,8 +627,9 @@ JetFile: SimpleClassMembers.jet
               PsiWhiteSpace(' ')
               DELEGATOR_SUPER_CALL
                 TYPE_REFERENCE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('Goo')
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Goo')
                 VALUE_ARGUMENT_LIST
                   PsiElement(LPAR)('(')
                   PsiElement(RPAR)(')')

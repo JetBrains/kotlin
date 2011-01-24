@@ -1158,8 +1158,18 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * type
-     *   : attributes (selfType | functionType | userType | tupleType)
+     *   : attributes typeDescriptor
+     *
+     * typeDescriptor
+     *   : selfType
+     *   : functionType
+     *   : userType
+     *   : tupleType
+     *   : nullableType
      *   ;
+     *
+     * nullableType
+     *   : typeDescriptor "?"
      */
     public void parseTypeRef() {
         PsiBuilder.Marker type = mark();
@@ -1183,6 +1193,15 @@ public class JetParsing extends AbstractJetParsing {
                     TokenSet.orSet(TOPLEVEL_OBJECT_FIRST,
                             TokenSet.create(EQ, COMMA, GT, RBRACKET, DOT, RPAR, RBRACE, LBRACE, SEMICOLON)));
         }
+
+        while (at(QUEST)) {
+            PsiBuilder.Marker precede = type.precede();
+
+            advance(); // QUEST
+            type.done(NULLABLE_TYPE);
+
+            type = precede;
+        }
         type.done(TYPE_REFERENCE);
     }
 
@@ -1204,7 +1223,13 @@ public class JetParsing extends AbstractJetParsing {
      *   : ("namespace" ".")? simpleUserType{"."}
      *   ;
      */
-    public void parseUserType() {
+    private void parseUserType() {
+        PsiBuilder.Marker userType = mark();
+        parseUserTypeOrQualifiedName();
+        userType.done(USER_TYPE);
+    }
+
+    public void parseUserTypeOrQualifiedName() {
         PsiBuilder.Marker type = mark();
         boolean typeClosed = false;
 

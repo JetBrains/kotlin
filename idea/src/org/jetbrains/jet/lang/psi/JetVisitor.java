@@ -321,4 +321,8 @@ public class JetVisitor extends PsiElementVisitor {
     public void visitNamedDeclaration(JetNamedDeclaration declaration) {
         visitJetElement(declaration);
     }
+
+    public void visitNullableType(JetNullableType nullableType) {
+        visitTypeElement(nullableType);
+    }
 }

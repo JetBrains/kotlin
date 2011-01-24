@@ -6,8 +6,9 @@ JetFile: QuotedIdentifiers.jet
           PsiElement(LBRACKET)('[')
           ATTRIBUTE
             TYPE_REFERENCE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('`return`')
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('`return`')
           PsiElement(RBRACKET)(']')
       PsiWhiteSpace(' ')
       PsiElement(fun)('fun')

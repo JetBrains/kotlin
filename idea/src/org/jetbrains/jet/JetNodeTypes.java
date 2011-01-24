@@ -122,6 +122,7 @@ public interface JetNodeTypes {
     JetNodeType WHEN_ENTRY                = new JetNodeType("WHEN_ENTRY");
     JetNodeType WHEN_CONDITION            = new JetNodeType("WHEN_CONDITION");
     JetNodeType TUPLE_PATTERN_ENTRY       = new JetNodeType("TUPLE_PATTERN_ENTRY");
+    JetNodeType NULLABLE_TYPE             = new JetNodeType("NULLABLE_TYPE", JetNullableType.class);
 
     JetNodeType NAMESPACE_NAME = new JetNodeType("NAMESPACE_NAME", JetContainerNode.class);
 }

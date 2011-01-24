@@ -18,8 +18,9 @@ JetFile: AnnotatedExpressions.jet
             PsiElement(LBRACKET)('[')
             ATTRIBUTE
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('a')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
             PsiElement(RBRACKET)(']')
           PsiWhiteSpace(' ')
           REFERENCE_EXPRESSION
@@ -33,8 +34,9 @@ JetFile: AnnotatedExpressions.jet
             PsiElement(LBRACKET)('[')
             ATTRIBUTE
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('a')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
             PsiElement(RBRACKET)(']')
           PsiWhiteSpace(' ')
           THIS_EXPRESSION

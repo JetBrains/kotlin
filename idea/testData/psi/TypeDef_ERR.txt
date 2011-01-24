@@ -84,8 +84,9 @@ JetFile: TypeDef_ERR.jet
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('foo')
+        USER_TYPE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('foo')
     PsiWhiteSpace('\n')
     TYPEDEF
       PsiElement(type)('type')
@@ -109,8 +110,9 @@ JetFile: TypeDef_ERR.jet
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('foo')
+        USER_TYPE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('foo')
       PsiWhiteSpace(' ')
       PsiElement(SEMICOLON)(';')
     PsiWhiteSpace('\n')
@@ -141,8 +143,9 @@ JetFile: TypeDef_ERR.jet
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('bar')
+        USER_TYPE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('bar')
     PsiWhiteSpace('\n')
     TYPEDEF
       PsiElement(type)('type')
@@ -161,8 +164,9 @@ JetFile: TypeDef_ERR.jet
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('bar')
+        USER_TYPE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('bar')
     PsiWhiteSpace('\n')
     TYPEDEF
       PsiElement(type)('type')
@@ -187,8 +191,9 @@ JetFile: TypeDef_ERR.jet
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('bar')
+        USER_TYPE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('bar')
     PsiWhiteSpace('\n\n')
     CLASS
       PsiElement(class)('class')
@@ -207,5 +212,6 @@ JetFile: TypeDef_ERR.jet
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('bar')
+        USER_TYPE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('bar')

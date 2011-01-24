@@ -89,8 +89,9 @@ JetFile: FunctionLiterals_ERR.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('A')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('A')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           PsiElement(COLON)(':')
@@ -115,8 +116,9 @@ JetFile: FunctionLiterals_ERR.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('T')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('T')
           PsiWhiteSpace(' ')
           PsiElement(DOUBLE_ARROW)('=>')
           PsiWhiteSpace(' ')
@@ -153,8 +155,9 @@ JetFile: FunctionLiterals_ERR.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('A')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('A')
             PsiElement(COMMA)(',')
             PsiWhiteSpace(' ')
             PsiErrorElement:Expecting a parameter declaration
@@ -166,8 +169,9 @@ JetFile: FunctionLiterals_ERR.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('B')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('B')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           PsiElement(DOUBLE_ARROW)('=>')
@@ -187,8 +191,9 @@ JetFile: FunctionLiterals_ERR.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('A')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('A')
             PsiElement(COMMA)(',')
             PsiWhiteSpace(' ')
             PsiErrorElement:Expecting a parameter declaration
@@ -206,8 +211,9 @@ JetFile: FunctionLiterals_ERR.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('T')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('T')
           PsiWhiteSpace(' ')
           PsiElement(DOUBLE_ARROW)('=>')
           PsiWhiteSpace(' ')
@@ -219,8 +225,9 @@ JetFile: FunctionLiterals_ERR.jet
         FUNCTION_LITERAL
           PsiElement(LBRACE)('{')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('T')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('T')
           PsiElement(DOT)('.')
           PsiErrorElement:Expecting '('
             PsiElement(IDENTIFIER)('t')
@@ -240,8 +247,9 @@ JetFile: FunctionLiterals_ERR.jet
         FUNCTION_LITERAL
           PsiElement(LBRACE)('{')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('T')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('T')
           PsiElement(DOT)('.')
           PsiErrorElement:Expecting '('
             PsiElement(IDENTIFIER)('t')
@@ -255,8 +263,9 @@ JetFile: FunctionLiterals_ERR.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('A')
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('A')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           PsiElement(DOUBLE_ARROW)('=>')
@@ -286,8 +295,9 @@ JetFile: FunctionLiterals_ERR.jet
         FUNCTION_LITERAL
           PsiElement(LBRACE)('{')
           TYPE_REFERENCE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('T')
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('T')
           PsiElement(DOT)('.')
           PsiErrorElement:To specify a receiver type, use the full notation: {ReceiverType.(parameters) [: ReturnType] => ...}
             PsiElement(IDENTIFIER)('a')

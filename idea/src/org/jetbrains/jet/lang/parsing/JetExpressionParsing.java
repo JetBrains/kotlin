@@ -586,7 +586,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
         myJetParsing.parseAttributeList();
 
         if (at(NAMESPACE_KEYWORD) || at(IDENTIFIER)) {
-            myJetParsing.parseUserType();
+            myJetParsing.parseUserTypeOrQualifiedName();
             if (!myBuilder.newlineBeforeCurrentToken() && at(LPAR)) {
                 PsiBuilder.Marker list = mark();
                 parseTuplePattern(DECOMPOSER_ARGUMENT);
