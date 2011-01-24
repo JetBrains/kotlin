@@ -64,7 +64,7 @@ public class JetTypeChecker {
     }
 
     public boolean isSubtypeOf(Type subtype, Type supertype) {
-
+//        subtype.getConstructor().getSupertypes()
         return false;
     }
 }

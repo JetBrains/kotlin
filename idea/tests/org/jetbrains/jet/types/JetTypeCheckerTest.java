@@ -4,9 +4,9 @@ import com.intellij.codeInsight.daemon.LightDaemonAnalyzerTestCase;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.types.JetStandardTypes;
-import org.jetbrains.jet.lang.types.JetTypeChecker;
-import org.jetbrains.jet.lang.types.Type;
+import org.jetbrains.jet.lang.resolve.JetScope;
+import org.jetbrains.jet.lang.resolve.TypeResolver;
+import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.parsing.JetParsingTest;
 
 import java.io.File;
@@ -16,6 +16,30 @@ import java.util.List;
  * @author abreslav
  */
 public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
+
+    private static final JetScope BASIC_SCOPE = new JetScope.JetScopeImpl() {
+        @Override
+        public ClassDescriptor getClass(String name) {
+            if ("Int".equals(name)) {
+                return JetStandardClasses.getInt();
+            } else if ("Boolean".equals(name)) {
+                return JetStandardClasses.getInt();
+            } else if ("Byte".equals(name)) {
+                return JetStandardClasses.getInt();
+            } else if ("Char".equals(name)) {
+                return JetStandardClasses.getInt();
+            } else if ("Short".equals(name)) {
+                return JetStandardClasses.getInt();
+            } else if ("Long".equals(name)) {
+                return JetStandardClasses.getInt();
+            } else if ("Float".equals(name)) {
+                return JetStandardClasses.getInt();
+            } else if ("Double".equals(name)) {
+                return JetStandardClasses.getInt();
+            }
+            return null;
+        }
+    };
 
     @Override
     protected String getTestDataPath() {
@@ -111,30 +135,36 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         JetTypeElement typeElement = typeNode.getTypeElement();
         List<JetTypeReference> typeArguments = typeNode.getTypeArguments();
 
-        typeElement.accept(new JetVisitor());
+        final Type[] result = new Type[1];
+        typeElement.accept(new JetVisitor() {
+            @Override
+            public void visitUserType(JetUserType type) {
+                result[0] = new ClassType(TypeResolver.INSTANCE.resolveClass(BASIC_SCOPE, type));
+            }
+        });
 
-        throw new UnsupportedOperationException(); // TODO
+        return result[0];
     }
 
     public void testImplicitConversions() throws Exception {
         assertConvertibleTo("1", JetStandardTypes.getByte());
     }
 
-    private void assertConvertibleTo(String expression, Type type) {
+    private static void assertConvertibleTo(String expression, Type type) {
         JetExpression jetExpression = JetChangeUtil.createExpression(getProject(), expression);
         assertTrue(
                 expression + " must be convertible to " + type,
                 new JetTypeChecker().isConvertibleTo(jetExpression, type));
     }
 
-    private void assertNotConvertibleTo(String expression, Type type) {
+    private static void assertNotConvertibleTo(String expression, Type type) {
         JetExpression jetExpression = JetChangeUtil.createExpression(getProject(), expression);
         assertFalse(
                 expression + " must not be convertible to " + type,
                 new JetTypeChecker().isConvertibleTo(jetExpression, type));
     }
 
-    private void assertType(String expression, Type expectedType) {
+    private static void assertType(String expression, Type expectedType) {
         Project project = getProject();
         JetExpression jetExpression = JetChangeUtil.createExpression(project, expression);
         Type type = new JetTypeChecker().getType(jetExpression);
