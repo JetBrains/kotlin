@@ -128,6 +128,10 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertSubtype("(Double)",  "(Double)");
         assertSubtype("(Unit)",    "(Unit)");
 
+        assertNotSubtype("(Unit)", "(Int)");
+
+        assertSubtype("(Unit)",    "(Any)");
+
     }
 
     private void assertSubtype(String type1, String type2) {
@@ -153,10 +157,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         JetTypeElement typeElement = typeNode.getTypeElement();
         List<JetTypeReference> argumentElements = typeNode.getTypeArguments();
 
-        final List<Type> arguments = new ArrayList<Type>();
-        for (JetTypeReference argumentElement : argumentElements) {
-            arguments.add(toType(argumentElement));
-        }
+        final List<Type> arguments = toTypes(argumentElements);
 
         // TODO annotations
         final Type[] result = new Type[1];
@@ -169,7 +170,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
             @Override
             public void visitTupleType(JetTupleType type) {
                 // TODO labels
-                result[0] = TupleType.getTupleType(arguments);
+                result[0] = TupleType.getTupleType(toTypes(type.getComponentTypeRefs()));
             }
 
             @Override
@@ -179,6 +180,14 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         });
 
         return result[0];
+    }
+
+    private List<Type> toTypes(List<JetTypeReference> argumentElements) {
+        final List<Type> arguments = new ArrayList<Type>();
+        for (JetTypeReference argumentElement : argumentElements) {
+            arguments.add(toType(argumentElement));
+        }
+        return arguments;
     }
 
     public void testImplicitConversions() throws Exception {

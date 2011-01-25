@@ -51,7 +51,7 @@ public class TupleType extends TypeImpl {
     private static List<TypeProjection> toProjections(List<Type> arguments) {
         List<TypeProjection> result = new ArrayList<TypeProjection>();
         for (Type argument : arguments) {
-            result.add(new TypeProjection(Variance.OUT_VARIANCE, argument));
+            result.add(new TypeProjection(ProjectionKind.OUT_ONLY, argument));
         }
         return result;
     }

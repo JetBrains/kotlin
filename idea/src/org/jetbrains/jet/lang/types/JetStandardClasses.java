@@ -28,7 +28,6 @@ public class JetStandardClasses {
     private static final ClassDescriptor DOUBLE  = new ClassDescriptor("Double");
     private static final ClassDescriptor BOOLEAN = new ClassDescriptor("Boolean");
     private static final ClassDescriptor STRING  = new ClassDescriptor("String");
-    private static final ClassDescriptor UNIT    = new ClassDescriptor("Unit");
 
     public static final int TUPLE_COUNT = 22;
     private static final ClassDescriptor[] TUPLE = new ClassDescriptor[TUPLE_COUNT];
