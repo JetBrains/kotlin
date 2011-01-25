@@ -19,4 +19,9 @@ public class TypeVariable extends TypeImpl {
     public Collection<MemberDescriptor> getMembers() {
         throw new javax.help.UnsupportedOperationException(); // TODO
     }
+
+    @Override
+    public <R, D> R accept(TypeVisitor<R, D> visitor, D data) {
+        return visitor.visitTypeVariable(this, data);
+    }
 }

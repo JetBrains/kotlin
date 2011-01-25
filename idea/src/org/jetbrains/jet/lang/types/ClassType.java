@@ -30,4 +30,9 @@ public class ClassType extends TypeImpl {
     public Collection<MemberDescriptor> getMembers() {
         throw new UnsupportedOperationException(); // TODO
     }
+
+    @Override
+    public <R, D> R accept(TypeVisitor<R, D> visitor, D data) {
+        return visitor.visitClassType(this, data);
+    }
 }

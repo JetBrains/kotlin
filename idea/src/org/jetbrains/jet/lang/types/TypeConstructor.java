@@ -8,10 +8,10 @@ import java.util.List;
  */
 public class TypeConstructor extends AnnotatedImpl {
     private final List<TypeParameterDescriptor> parameters;
-    private final Collection<Type> supertypes;
+    private final Collection<? extends Type> supertypes;
     private final String debugName;
 
-    public TypeConstructor(List<Annotation> annotations, String debugName, List<TypeParameterDescriptor> parameters, Collection<Type> supertypes) {
+    public TypeConstructor(List<Annotation> annotations, String debugName, List<TypeParameterDescriptor> parameters, Collection<? extends Type> supertypes) {
         super(annotations);
         this.debugName = debugName;
         this.parameters = parameters;
@@ -22,7 +22,7 @@ public class TypeConstructor extends AnnotatedImpl {
         return parameters;
     }
 
-    public Collection<Type> getSupertypes() {
+    public Collection<? extends Type> getSupertypes() {
         return supertypes;
     }
 

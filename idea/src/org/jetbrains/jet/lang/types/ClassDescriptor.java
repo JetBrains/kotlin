@@ -14,7 +14,7 @@ public class ClassDescriptor extends MemberDescriptorImpl implements MemberDomai
 
     public ClassDescriptor(
             List<Annotation> annotations,
-            String name, List<TypeParameterDescriptor> typeParameters, Collection<Type> superclasses) {
+            String name, List<TypeParameterDescriptor> typeParameters, Collection<? extends Type> superclasses) {
         super(annotations, name);
         this.typeConstructor = new TypeConstructor(annotations, name, typeParameters, superclasses);
     }

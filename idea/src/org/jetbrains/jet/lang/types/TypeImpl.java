@@ -43,4 +43,14 @@ public abstract class TypeImpl extends AnnotatedImpl implements Type {
         }
         return stringBuilder;
     }
+
+    @Override
+    public <R> R acceptNoData(TypeVisitor<R, ?> visitor) {
+        return accept(visitor, null);
+    }
+
+    @Override
+    public void acceptVoid(TypeVisitor<?, ?> visitor) {
+        accept(visitor, null);
+    }
 }

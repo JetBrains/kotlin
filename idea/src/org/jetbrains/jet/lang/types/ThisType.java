@@ -25,4 +25,9 @@ public class ThisType extends TypeImpl {
     public Collection<MemberDescriptor> getMembers() {
         throw new UnsupportedOperationException(); // TODO
     }
+
+    @Override
+    public <R, D> R accept(TypeVisitor<R, D> visitor, D data) {
+        return visitor.visitThisType(this, data);
+    }
 }

@@ -6,7 +6,9 @@ import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.psi.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author abreslav
@@ -74,10 +76,6 @@ public class JetTypeChecker {
         return checkSubtypeForTheSameConstructor(closestSupertype, supertype);
     }
 
-    private boolean checkSubtypeForTheSameConstructor(Type closestSupertype, Type supertype) {
-        throw new UnsupportedOperationException(); // TODO
-    }
-
     // This method returns the supertype of the first parameter that has the same constructor
     // as the second parameter, applying the substitution of type arguments to it
     @Nullable
@@ -89,10 +87,44 @@ public class JetTypeChecker {
         for (Type immediateSupertype : constructor.getSupertypes()) {
             Type correspondingSupertype = findCorrespondingSupertype(immediateSupertype, supertype);
             if (correspondingSupertype != null) {
-                return correspondingSupertype;
+                return substituteForParameters(subtype, correspondingSupertype);
             }
         }
         return null;
+    }
+
+    private Type substituteForParameters(Type context, Type subject) {
+        Map<TypeParameterDescriptor, TypeProjection> parameterValues = new HashMap<TypeParameterDescriptor, TypeProjection>();
+
+        List<TypeParameterDescriptor> parameters = context.getConstructor().getParameters();
+        List<TypeProjection> contextArguments = context.getArguments();
+        for (int i = 0, parametersSize = parameters.size(); i < parametersSize; i++) {
+            TypeParameterDescriptor parameter = parameters.get(i);
+            TypeProjection value = contextArguments.get(i);
+            parameterValues.put(parameter, value);
+        }
+
+        return substitute(parameterValues, subject);
+    }
+
+    private Type substitute(Map<TypeParameterDescriptor, TypeProjection> parameterValues, Type subject) {
+        List<TypeProjection> newArguments = new ArrayList<TypeProjection>();
+        for (TypeProjection argument : subject.getArguments()) {
+            newArguments.add(new TypeProjection(argument.getProjection(), substitute(parameterValues, argument.getType())));
+        }
+        return specializeType(subject, newArguments);
+    }
+
+    private Type specializeType(Type type, List<TypeProjection> newArguments) {
+        // TODO
+        return type;
+    }
+
+    private boolean checkSubtypeForTheSameConstructor(Type subtype, Type supertype) {
+        assert subtype.getConstructor().equals(supertype.getConstructor());
+
+        // TODO
+        return true;
     }
 
 }

@@ -11,4 +11,8 @@ public interface Type extends Annotated {
     List<TypeProjection> getArguments();
 
     Collection<MemberDescriptor> getMembers();
+
+    <R, D> R accept(TypeVisitor<R, D> visitor, D data);
+    <R> R acceptNoData(TypeVisitor<R, ?> visitor);
+    void acceptVoid(TypeVisitor<?, ?> visitor);
 }

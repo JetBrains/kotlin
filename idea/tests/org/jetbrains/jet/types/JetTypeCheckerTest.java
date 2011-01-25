@@ -10,6 +10,7 @@ import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.parsing.JetParsingTest;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -36,6 +37,10 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
                 return JetStandardClasses.getFloat();
             } else if ("Double".equals(name)) {
                 return JetStandardClasses.getDouble();
+            } else if ("Unit".equals(name)) {
+                return JetStandardClasses.getTuple(0);
+            } else if ("Any".equals(name)) {
+                return JetStandardClasses.getAny();
             }
             fail("Type not found: " + name);
             throw new IllegalStateException();
@@ -92,6 +97,17 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertSubtype("Double", "Double");
         assertSubtype("Unit", "Unit");
 
+        assertSubtype("Boolean", "Any");
+        assertSubtype("Byte", "Any");
+        assertSubtype("Char", "Any");
+        assertSubtype("Short", "Any");
+        assertSubtype("Int", "Any");
+        assertSubtype("Long", "Any");
+        assertSubtype("Float", "Any");
+        assertSubtype("Double", "Any");
+        assertSubtype("Unit", "Any");
+        assertSubtype("Any", "Any");
+
         assertNotSubtype("Boolean", "Byte");
         assertNotSubtype("Byte", "Short");
         assertNotSubtype("Char", "Int");
@@ -100,7 +116,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertNotSubtype("Long", "Double");
         assertNotSubtype("Float", "Double");
         assertNotSubtype("Double", "Int");
-        assertNotSubtype("Unit", "Unit");
+        assertNotSubtype("Unit", "Int");
 
         assertSubtype("(Boolean)", "(Boolean)");
         assertSubtype("(Byte)",    "(Byte)");
@@ -128,14 +144,21 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         boolean result = new JetTypeChecker().isSubtypeOf(
                 typeNode1,
                 typeNode2);
-        assertTrue(typeNode1 + " is not a subtype of " + typeNode2, result == expected);
+        String modifier = expected ? "not " : "";
+        assertTrue(typeNode1 + " is " + modifier + "a subtype of " + typeNode2, result == expected);
     }
 
     private Type toType(JetTypeReference typeNode) {
         List<JetAttribute> attributes = typeNode.getAttributes();
         JetTypeElement typeElement = typeNode.getTypeElement();
-        List<JetTypeReference> typeArguments = typeNode.getTypeArguments();
+        List<JetTypeReference> argumentElements = typeNode.getTypeArguments();
 
+        final List<Type> arguments = new ArrayList<Type>();
+        for (JetTypeReference argumentElement : argumentElements) {
+            arguments.add(toType(argumentElement));
+        }
+
+        // TODO annotations
         final Type[] result = new Type[1];
         typeElement.accept(new JetVisitor() {
             @Override
@@ -144,8 +167,14 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
             }
 
             @Override
+            public void visitTupleType(JetTupleType type) {
+                // TODO labels
+                result[0] = TupleType.getTupleType(arguments);
+            }
+
+            @Override
             public void visitJetElement(JetElement elem) {
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException("Unsupported type: " + elem);
             }
         });
 

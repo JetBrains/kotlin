@@ -10,28 +10,7 @@ import java.util.List;
  */
 public class TupleType extends TypeImpl {
 
-    public static final int TUPLE_COUNT = 22;
-    private static final TypeConstructor[] TUPLE = new TypeConstructor[TUPLE_COUNT];
-
     public static final TupleType UNIT = new TupleType(Collections.<Annotation>emptyList(), Collections.<Type>emptyList());
-
-    static {
-        for (int i = 0; i < TUPLE_COUNT; i++) {
-            List<TypeParameterDescriptor> parameters = new ArrayList<TypeParameterDescriptor>();
-            for (int j = 0; j < i; j++) {
-                parameters.add(new TypeParameterDescriptor(
-                        Collections.<Annotation>emptyList(),
-                        "T" + j,
-                        Variance.OUT_VARIANCE,
-                        Collections.<Type>emptySet()));
-            }
-            TUPLE[i] = new TypeConstructor(
-                    Collections.<Annotation>emptyList(),
-                    "Tuple" + i,
-                    parameters,
-                    Collections.singleton(JetStandardTypes.getAny()));
-        }
-    }
 
     public static TupleType getTupleType(List<Annotation> annotations, List<Type> arguments) {
         if (annotations.isEmpty() && arguments.isEmpty()) {
@@ -56,12 +35,17 @@ public class TupleType extends TypeImpl {
 
 
     private TupleType(List<Annotation> annotations, List<Type> arguments) {
-        super(annotations, TUPLE[arguments.size()], toProjections(arguments));
+        super(annotations, JetStandardClasses.getTuple(arguments.size()).getTypeConstructor(), toProjections(arguments));
     }
 
     @Override
     public Collection<MemberDescriptor> getMembers() {
         throw new UnsupportedOperationException("Not implemented"); // TODO
+    }
+
+    @Override
+    public <R, D> R accept(TypeVisitor<R, D> visitor, D data) {
+        return visitor.visitTupleType(this, data);
     }
 
     private static List<TypeProjection> toProjections(List<Type> arguments) {

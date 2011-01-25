@@ -38,4 +38,9 @@ public class NothingType extends TypeImpl {
     public Collection<MemberDescriptor> getMembers() {
         return Collections.emptySet();
     }
+
+    @Override
+    public <R, D> R accept(TypeVisitor<R, D> visitor, D data) {
+        return visitor.visitNothingType(this, data);
+    }
 }
