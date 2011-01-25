@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -9,6 +10,8 @@ import org.jetbrains.jet.lexer.JetTokens;
  * @author max
  */
 public class JetReferenceExpression extends JetExpression {
+    private static final TokenSet REFERENCE_TOKENS = TokenSet.create(JetTokens.IDENTIFIER, JetTokens.FIELD_IDENTIFIER);
+
     public JetReferenceExpression(@NotNull ASTNode node) {
         super(node);
     }
@@ -23,7 +26,7 @@ public class JetReferenceExpression extends JetExpression {
     }
 
     public String getReferencedName() {
-        return getNode().findChildByType(JetTokens.IDENTIFIER).getText();
+        return getNode().findChildByType(REFERENCE_TOKENS).getText();
     }
 
     @Override
