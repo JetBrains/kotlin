@@ -96,6 +96,9 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertSubtype("Float", "Float");
         assertSubtype("Double", "Double");
         assertSubtype("Unit", "Unit");
+        assertSubtype("Unit", "()");
+        assertSubtype("()", "Unit");
+        assertSubtype("()", "()");
 
         assertSubtype("Boolean", "Any");
         assertSubtype("Byte", "Any");
@@ -127,10 +130,25 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertSubtype("(Float)",   "(Float)");
         assertSubtype("(Double)",  "(Double)");
         assertSubtype("(Unit)",    "(Unit)");
+        assertSubtype("(Unit, Unit)",    "(Unit, Unit)");
+
+        assertSubtype("(Boolean)", "(Boolean)");
+        assertSubtype("(Byte)",    "(Byte)");
+        assertSubtype("(Char)",    "(Char)");
+        assertSubtype("(Short)",   "(Short)");
+        assertSubtype("(Int)",     "(Int)");
+        assertSubtype("(Long)",    "(Long)");
+        assertSubtype("(Float)",   "(Float)");
+        assertSubtype("(Double)",  "(Double)");
+        assertSubtype("(Unit)",    "(Unit)");
+        assertSubtype("(Unit, Unit)",    "(Unit, Unit)");
 
         assertNotSubtype("(Unit)", "(Int)");
 
         assertSubtype("(Unit)",    "(Any)");
+        assertSubtype("(Unit, Unit)",    "(Any, Any)");
+        assertSubtype("(Unit, Unit)",    "(Any, Unit)");
+        assertSubtype("(Unit, Unit)",    "(Unit, Any)");
 
     }
 
