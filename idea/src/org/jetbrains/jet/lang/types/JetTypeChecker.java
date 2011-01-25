@@ -1,14 +1,11 @@
 package org.jetbrains.jet.lang.types;
 
 import com.intellij.psi.tree.IElementType;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.psi.*;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -75,6 +72,10 @@ public class JetTypeChecker {
         }
 
         return checkSubtypeForTheSameConstructor(closestSupertype, supertype);
+    }
+
+    private boolean checkSubtypeForTheSameConstructor(Type closestSupertype, Type supertype) {
+        throw new UnsupportedOperationException(); // TODO
     }
 
     // This method returns the supertype of the first parameter that has the same constructor
