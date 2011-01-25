@@ -23,21 +23,22 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
             if ("Int".equals(name)) {
                 return JetStandardClasses.getInt();
             } else if ("Boolean".equals(name)) {
-                return JetStandardClasses.getInt();
+                return JetStandardClasses.getBoolean();
             } else if ("Byte".equals(name)) {
-                return JetStandardClasses.getInt();
+                return JetStandardClasses.getByte();
             } else if ("Char".equals(name)) {
-                return JetStandardClasses.getInt();
+                return JetStandardClasses.getChar();
             } else if ("Short".equals(name)) {
-                return JetStandardClasses.getInt();
+                return JetStandardClasses.getShort();
             } else if ("Long".equals(name)) {
-                return JetStandardClasses.getInt();
+                return JetStandardClasses.getLong();
             } else if ("Float".equals(name)) {
-                return JetStandardClasses.getInt();
+                return JetStandardClasses.getFloat();
             } else if ("Double".equals(name)) {
-                return JetStandardClasses.getInt();
+                return JetStandardClasses.getDouble();
             }
-            return null;
+            fail("Type not found: " + name);
+            throw new IllegalStateException();
         }
     };
 
@@ -140,6 +141,11 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
             @Override
             public void visitUserType(JetUserType type) {
                 result[0] = new ClassType(TypeResolver.INSTANCE.resolveClass(BASIC_SCOPE, type));
+            }
+
+            @Override
+            public void visitJetElement(JetElement elem) {
+                throw new IllegalArgumentException();
             }
         });
 

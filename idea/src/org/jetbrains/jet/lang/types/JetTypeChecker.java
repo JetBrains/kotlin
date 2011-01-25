@@ -1,10 +1,14 @@
 package org.jetbrains.jet.lang.types;
 
 import com.intellij.psi.tree.IElementType;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.psi.*;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -64,7 +68,30 @@ public class JetTypeChecker {
     }
 
     public boolean isSubtypeOf(Type subtype, Type supertype) {
-//        subtype.getConstructor().getSupertypes()
-        return false;
+        @Nullable
+        Type closestSupertype = findCorrespondingSupertype(subtype, supertype);
+        if (closestSupertype == null) {
+            return false;
+        }
+
+        return checkSubtypeForTheSameConstructor(closestSupertype, supertype);
     }
+
+    // This method returns the supertype of the first parameter that has the same constructor
+    // as the second parameter, applying the substitution of type arguments to it
+    @Nullable
+    private Type findCorrespondingSupertype(Type subtype, Type supertype) {
+        TypeConstructor constructor = subtype.getConstructor();
+        if (constructor.equals(supertype.getConstructor())) {
+            return subtype;
+        }
+        for (Type immediateSupertype : constructor.getSupertypes()) {
+            Type correspondingSupertype = findCorrespondingSupertype(immediateSupertype, supertype);
+            if (correspondingSupertype != null) {
+                return correspondingSupertype;
+            }
+        }
+        return null;
+    }
+
 }

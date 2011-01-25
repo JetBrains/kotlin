@@ -22,7 +22,7 @@ public class ClassDescriptor extends MemberDescriptorImpl implements MemberDomai
     public ClassDescriptor(String name) {
         this(Collections.<Annotation>emptyList(),
                 name, Collections.<TypeParameterDescriptor>emptyList(),
-                Collections.<Type>singleton(JetStandardTypes.getAny()));
+                Collections.<Type>singleton(JetStandardClasses.getAnyType()));
     }
 
     public TypeConstructor getTypeConstructor() {
