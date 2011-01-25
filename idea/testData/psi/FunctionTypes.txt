@@ -475,7 +475,7 @@ JetFile: FunctionTypes.jet
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             MODIFIER_LIST
-              PsiElement(lazy)('lazy')
+              PsiElement(ref)('ref')
             PsiWhiteSpace(' ')
             TYPE_REFERENCE
               USER_TYPE
@@ -485,7 +485,7 @@ JetFile: FunctionTypes.jet
             PsiWhiteSpace(' ')
             VALUE_PARAMETER
               MODIFIER_LIST
-                PsiElement(out)('out')
+                PsiElement(ref)('ref')
               PsiWhiteSpace(' ')
               PsiElement(IDENTIFIER)('a')
               PsiWhiteSpace(' ')

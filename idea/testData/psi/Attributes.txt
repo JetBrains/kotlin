@@ -35,8 +35,6 @@ JetFile: Attributes.jet
         PsiWhiteSpace('\n')
         PsiElement(internal)('internal')
         PsiWhiteSpace('\n')
-        PsiElement(lazy)('lazy')
-        PsiWhiteSpace(' ')
         ATTRIBUTE_ANNOTATION
           PsiElement(LBRACKET)('[')
           ATTRIBUTE
@@ -273,8 +271,6 @@ JetFile: Attributes.jet
             PsiElement(public)('public')
             PsiWhiteSpace('\n')
             PsiElement(internal)('internal')
-            PsiWhiteSpace('\n')
-            PsiElement(lazy)('lazy')
             PsiWhiteSpace('\n')
             PsiElement(in)('in')
             PsiWhiteSpace('\n')

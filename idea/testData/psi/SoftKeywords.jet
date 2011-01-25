@@ -15,11 +15,10 @@ private
 protected
 public
 internal
-lazy
 in
 out
 ref
- class Bar<abstract, abstract enum : T, lazy virtual,
+ class Bar<abstract, abstract enum : T, out virtual,
     public protected private internal abstract
     virtual
     enum
@@ -31,8 +30,7 @@ ref
     private
     protected
     public
-    internal
-    lazy open
+    internal open
  > wraps (a : B) : A by b {
     public protected private internal val abstract
     val virtual
@@ -121,8 +119,7 @@ ref
     private
     protected
     public
-    internal
-    lazy open : t
+    internal open : t
 
      )
 
@@ -164,8 +161,7 @@ class F(val foo : bar,
     private
     protected
     public
-    internal
-    lazy open : b
+    internal open : b
 ) {
 
 }

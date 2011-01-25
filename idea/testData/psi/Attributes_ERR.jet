@@ -13,7 +13,7 @@ private
 protected
 public
 internal
-lazy [foo<A, B>(a, b), ina,foo.bar.goo.doo<f>.foo<bar, goo>.foo]
+[foo<A, B>(a, b), ina,foo.bar.goo.doo<f>.foo<bar, goo>.foo]
 [df]
 in
 [sdfsdf,]
@@ -33,7 +33,6 @@ private
 protected
 public
 internal
-lazy
 in
 out
 ref T> {

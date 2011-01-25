@@ -14,7 +14,7 @@ JetFile: LocalDeclarations.jet
         PsiElement(LBRACE)('{')
         PsiWhiteSpace('\n    ')
         REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('lazy')
+          PsiElement(IDENTIFIER)('out')
         PsiWhiteSpace('\n    ')
         INTEGER_CONSTANT
           PsiElement(INTEGER_LITERAL)('1')
@@ -67,7 +67,7 @@ JetFile: LocalDeclarations.jet
         PsiWhiteSpace('\n\n    ')
         PROPERTY
           MODIFIER_LIST
-            PsiElement(lazy)('lazy')
+            PsiElement(out)('out')
           PsiWhiteSpace(' ')
           PsiElement(val)('val')
           PsiWhiteSpace(' ')

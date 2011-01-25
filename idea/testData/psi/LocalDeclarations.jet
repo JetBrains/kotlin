@@ -1,10 +1,10 @@
 fun foo() {
-    lazy
+    out
     1
     [a] abstract class foof {}
     abstract [a] class foof {}
 
-    lazy val foo = 5
+    out val foo = 5
     [a] var foo = 4
     type f = {T.() : ()}
 

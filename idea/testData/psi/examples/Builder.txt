@@ -27,7 +27,14 @@ JetFile: Builder.jet
               PsiWhiteSpace('\n\n  ')
               PROPERTY
                 MODIFIER_LIST
-                  PsiElement(lazy)('lazy')
+                  ATTRIBUTE_ANNOTATION
+                    PsiElement(LBRACKET)('[')
+                    ATTRIBUTE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('lazy')
+                    PsiElement(RBRACKET)(']')
                 PsiWhiteSpace(' ')
                 PsiElement(val)('val')
                 PsiWhiteSpace(' ')
@@ -57,7 +64,14 @@ JetFile: Builder.jet
               PsiWhiteSpace('\n\n  ')
               PROPERTY
                 MODIFIER_LIST
-                  PsiElement(lazy)('lazy')
+                  ATTRIBUTE_ANNOTATION
+                    PsiElement(LBRACKET)('[')
+                    ATTRIBUTE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('lazy')
+                    PsiElement(RBRACKET)(']')
                 PsiWhiteSpace(' ')
                 PsiElement(val)('val')
                 PsiWhiteSpace(' ')
@@ -116,7 +130,14 @@ JetFile: Builder.jet
               PsiWhiteSpace('\n\n  ')
               PROPERTY
                 MODIFIER_LIST
-                  PsiElement(lazy)('lazy')
+                  ATTRIBUTE_ANNOTATION
+                    PsiElement(LBRACKET)('[')
+                    ATTRIBUTE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('lazy')
+                    PsiElement(RBRACKET)(']')
                 PsiWhiteSpace(' ')
                 PsiElement(val)('val')
                 PsiWhiteSpace(' ')

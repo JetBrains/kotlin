@@ -12,7 +12,6 @@ private
 protected
 public
 internal
-lazy
 in
 out
 ref
@@ -28,7 +27,6 @@ ref
         protected
         public
         internal
-        lazy
         in
         out
         ref T> {
