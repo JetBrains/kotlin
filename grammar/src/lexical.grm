@@ -46,7 +46,6 @@ new
 true
 false
 is
-isnot
 in
 throw
 return
