@@ -728,10 +728,11 @@ JetFile: Properties.jet
             PsiElement(IDENTIFIER)('IList')
           TYPE_ARGUMENT_LIST
             PsiElement(LT)('<')
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('T')
+            TYPE_PROJECTION
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('T')
             PsiElement(GT)('>')
       PsiElement(DOT)('.')
       PsiElement(IDENTIFIER)('lastIndex')

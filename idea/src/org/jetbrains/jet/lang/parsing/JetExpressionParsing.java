@@ -756,10 +756,10 @@ public class JetExpressionParsing extends AbstractJetParsing {
      */
     private boolean parseLocalDeclaration() {
         PsiBuilder.Marker decls = mark();
-        JetParsing.EnumDetector enumDetector = new JetParsing.EnumDetector();
+        JetParsing.TokenDetector enumDetector = new JetParsing.TokenDetector(ENUM_KEYWORD);
         myJetParsing.parseModifierList(enumDetector);
 
-        JetNodeType declType = parseLocalDeclarationRest(enumDetector.isEnum());
+        JetNodeType declType = parseLocalDeclarationRest(enumDetector.isDetected());
 
         if (declType != null) {
             decls.done(declType);

@@ -875,10 +875,11 @@ JetFile: When.jet
                           PsiElement(IDENTIFIER)('bar')
                       TYPE_ARGUMENT_LIST
                         PsiElement(LT)('<')
-                        TYPE_REFERENCE
-                          USER_TYPE
-                            REFERENCE_EXPRESSION
-                              PsiElement(IDENTIFIER)('a')
+                        TYPE_PROJECTION
+                          TYPE_REFERENCE
+                            USER_TYPE
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('a')
                         PsiElement(GT)('>')
                       VALUE_ARGUMENT_LIST
                         PsiElement(LPAR)('(')

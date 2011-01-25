@@ -386,10 +386,11 @@ JetFile: SimpleExpressions.jet
                   PsiElement(IDENTIFIER)('Foo')
                 TYPE_ARGUMENT_LIST
                   PsiElement(LT)('<')
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('A')
+                  TYPE_PROJECTION
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('A')
                   PsiElement(GT)('>')
             VALUE_ARGUMENT_LIST
               PsiElement(LPAR)('(')
@@ -441,10 +442,11 @@ JetFile: SimpleExpressions.jet
                   PsiElement(IDENTIFIER)('Foo')
                 TYPE_ARGUMENT_LIST
                   PsiElement(LT)('<')
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('bar')
+                  TYPE_PROJECTION
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('bar')
                   PsiElement(GT)('>')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n    ')

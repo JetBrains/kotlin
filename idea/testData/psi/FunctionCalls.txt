@@ -28,10 +28,11 @@ JetFile: FunctionCalls.jet
             PsiElement(IDENTIFIER)('f')
           TYPE_ARGUMENT_LIST
             PsiElement(LT)('<')
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('foo')
+            TYPE_PROJECTION
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('foo')
             PsiElement(GT)('>')
           VALUE_ARGUMENT_LIST
             PsiElement(LPAR)('(')
@@ -45,10 +46,11 @@ JetFile: FunctionCalls.jet
             PsiElement(IDENTIFIER)('f')
           TYPE_ARGUMENT_LIST
             PsiElement(LT)('<')
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('foo')
+            TYPE_PROJECTION
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('foo')
             PsiElement(GT)('>')
         PsiWhiteSpace('\n  ')
         PARENTHESIZED
@@ -134,10 +136,11 @@ JetFile: FunctionCalls.jet
             PsiElement(IDENTIFIER)('f')
           TYPE_ARGUMENT_LIST
             PsiElement(LT)('<')
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('a')
+            TYPE_PROJECTION
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
             PsiElement(GT)('>')
           VALUE_ARGUMENT_LIST
             PsiElement(LPAR)('(')
@@ -160,10 +163,11 @@ JetFile: FunctionCalls.jet
             PsiElement(IDENTIFIER)('f')
           TYPE_ARGUMENT_LIST
             PsiElement(LT)('<')
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('a')
+            TYPE_PROJECTION
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
             PsiElement(GT)('>')
           VALUE_ARGUMENT_LIST
             PsiElement(LPAR)('(')
@@ -192,16 +196,18 @@ JetFile: FunctionCalls.jet
                   PsiElement(IDENTIFIER)('foo')
                 TYPE_ARGUMENT_LIST
                   PsiElement(LT)('<')
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('a')
+                  TYPE_PROJECTION
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('a')
                   PsiElement(COMMA)(',')
                   PsiWhiteSpace(' ')
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('b')
+                  TYPE_PROJECTION
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('b')
                   PsiElement(GT)('>')
             PsiElement(RPAR)(')')
         PsiWhiteSpace('\n  ')
@@ -216,16 +222,18 @@ JetFile: FunctionCalls.jet
                   PsiElement(IDENTIFIER)('foo')
                 TYPE_ARGUMENT_LIST
                   PsiElement(LT)('<')
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('a')
+                  TYPE_PROJECTION
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('a')
                   PsiElement(COMMA)(',')
                   PsiWhiteSpace(' ')
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('b')
+                  TYPE_PROJECTION
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('b')
                   PsiElement(GT)('>')
                 VALUE_ARGUMENT_LIST
                   PsiElement(LPAR)('(')

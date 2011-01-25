@@ -46,10 +46,11 @@ JetFile: Constructors.jet
                     PsiElement(IDENTIFIER)('Foo')
                   TYPE_ARGUMENT_LIST
                     PsiElement(LT)('<')
-                    TYPE_REFERENCE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('T')
+                    TYPE_PROJECTION
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('T')
                     PsiElement(GT)('>')
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
@@ -103,10 +104,11 @@ JetFile: Constructors.jet
                     PsiElement(IDENTIFIER)('Foo')
                   TYPE_ARGUMENT_LIST
                     PsiElement(LT)('<')
-                    TYPE_REFERENCE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('T')
+                    TYPE_PROJECTION
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('T')
                     PsiElement(GT)('>')
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')

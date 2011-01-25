@@ -51,16 +51,18 @@ JetFile: Attributes_ERR.jet
                 PsiElement(IDENTIFIER)('foo')
               TYPE_ARGUMENT_LIST
                 PsiElement(LT)('<')
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('A')
+                TYPE_PROJECTION
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('A')
                 PsiElement(COMMA)(',')
                 PsiWhiteSpace(' ')
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('B')
+                TYPE_PROJECTION
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('B')
                 PsiElement(GT)('>')
           VALUE_ARGUMENT_LIST
             PsiElement(LPAR)('(')
@@ -99,25 +101,28 @@ JetFile: Attributes_ERR.jet
                     PsiElement(IDENTIFIER)('doo')
                     TYPE_ARGUMENT_LIST
                       PsiElement(LT)('<')
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('f')
+                      TYPE_PROJECTION
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('f')
                       PsiElement(GT)('>')
                   PsiElement(DOT)('.')
                   PsiElement(IDENTIFIER)('foo')
                   TYPE_ARGUMENT_LIST
                     PsiElement(LT)('<')
-                    TYPE_REFERENCE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('bar')
+                    TYPE_PROJECTION
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('bar')
                     PsiElement(COMMA)(',')
                     PsiWhiteSpace(' ')
-                    TYPE_REFERENCE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('goo')
+                    TYPE_PROJECTION
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('goo')
                     PsiElement(GT)('>')
                 PsiElement(DOT)('.')
                 PsiElement(IDENTIFIER)('foo')

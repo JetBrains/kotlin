@@ -25,10 +25,11 @@ JetFile: UnionFind.jet
               PsiElement(IDENTIFIER)('IMutableList')
             TYPE_ARGUMENT_LIST
               PsiElement(LT)('<')
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('Int')
+              TYPE_PROJECTION
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Int')
               PsiElement(GT)('>')
             VALUE_ARGUMENT_LIST
               PsiElement(LPAR)('(')

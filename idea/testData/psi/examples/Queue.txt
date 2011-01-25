@@ -20,10 +20,11 @@ JetFile: Queue.jet
                 PsiElement(IDENTIFIER)('IPushPop')
               TYPE_ARGUMENT_LIST
                 PsiElement(LT)('<')
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('T')
+                TYPE_PROJECTION
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('T')
                 PsiElement(GT)('>')
       PsiWhiteSpace(' ')
       CLASS_BODY
@@ -69,10 +70,11 @@ JetFile: Queue.jet
                     PsiElement(IDENTIFIER)('Item')
                   TYPE_ARGUMENT_LIST
                     PsiElement(LT)('<')
-                    TYPE_REFERENCE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('T')
+                    TYPE_PROJECTION
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('T')
                     PsiElement(GT)('>')
             PsiElement(RPAR)(')')
         PsiWhiteSpace('\n\n  ')
@@ -92,10 +94,11 @@ JetFile: Queue.jet
                 PsiElement(IDENTIFIER)('Item')
               TYPE_ARGUMENT_LIST
                 PsiElement(LT)('<')
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('T')
+                TYPE_PROJECTION
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('T')
                 PsiElement(GT)('>')
           PsiWhiteSpace(' ')
           PsiElement(EQ)('=')
@@ -119,10 +122,11 @@ JetFile: Queue.jet
                 PsiElement(IDENTIFIER)('Item')
               TYPE_ARGUMENT_LIST
                 PsiElement(LT)('<')
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('T')
+                TYPE_PROJECTION
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('T')
                 PsiElement(GT)('>')
           PsiWhiteSpace(' ')
           PsiElement(EQ)('=')

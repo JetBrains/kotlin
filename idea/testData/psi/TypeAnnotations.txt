@@ -70,24 +70,26 @@ JetFile: TypeAnnotations.jet
             PsiElement(IDENTIFIER)('F')
           TYPE_ARGUMENT_LIST
             PsiElement(LT)('<')
-            MODIFIER_LIST
-              ATTRIBUTE_ANNOTATION
-                PsiElement(LBRACKET)('[')
-                ATTRIBUTE
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('x')
-                PsiElement(RBRACKET)(']')
-            PsiWhiteSpace(' ')
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('A')
+            TYPE_PROJECTION
+              MODIFIER_LIST
+                ATTRIBUTE_ANNOTATION
+                  PsiElement(LBRACKET)('[')
+                  ATTRIBUTE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('x')
+                  PsiElement(RBRACKET)(']')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('A')
             PsiElement(COMMA)(',')
             PsiWhiteSpace(' ')
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('B')
+            TYPE_PROJECTION
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('B')
             PsiElement(GT)('>')

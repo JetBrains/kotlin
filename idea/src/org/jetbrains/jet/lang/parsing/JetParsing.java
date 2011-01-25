@@ -203,7 +203,7 @@ public class JetParsing extends AbstractJetParsing {
     private void parseTopLevelObject() {
         PsiBuilder.Marker decl = mark();
 
-        EnumDetector detector = new EnumDetector();
+        TokenDetector detector = new TokenDetector(ENUM_KEYWORD);
         parseModifierList(detector);
 
         IElementType keywordToken = tt();
@@ -212,7 +212,7 @@ public class JetParsing extends AbstractJetParsing {
             declType = parseNamespaceBlock();
         }
         else if (keywordToken == CLASS_KEYWORD) {
-            declType = parseClass(detector.isEnum());
+            declType = parseClass(detector.isDetected());
         }
         else if (keywordToken == EXTENSION_KEYWORD) {
             declType = parseExtension();
@@ -415,7 +415,7 @@ public class JetParsing extends AbstractJetParsing {
 
             TokenSet constructorNameFollow = TokenSet.create(SEMICOLON, COLON, LPAR, LT, LBRACE);
             int lastId = findLastBefore(ENUM_MEMBER_FIRST, constructorNameFollow, false);
-            EnumDetector enumDetector = new EnumDetector();
+            TokenDetector enumDetector = new TokenDetector(ENUM_KEYWORD);
             createTruncatedBuilder(lastId).parseModifierList(enumDetector);
 
             IElementType type;
@@ -424,7 +424,7 @@ public class JetParsing extends AbstractJetParsing {
                 type = ENUM_ENTRY;
             }
             else {
-                type = parseMemberDeclarationRest(enumDetector.isEnum());
+                type = parseMemberDeclarationRest(enumDetector.isDetected());
             }
 
             if (type == null) {
@@ -515,10 +515,10 @@ public class JetParsing extends AbstractJetParsing {
     private void parseMemberDeclaration() {
         PsiBuilder.Marker decl = mark();
 
-        EnumDetector enumDetector = new EnumDetector();
+        TokenDetector enumDetector = new TokenDetector(ENUM_KEYWORD);
         parseModifierList(enumDetector);
 
-        JetNodeType declType = parseMemberDeclarationRest(enumDetector.isEnum());
+        JetNodeType declType = parseMemberDeclarationRest(enumDetector.isDetected());
 
         if (declType == null) {
             errorAndAdvance("Expecting member declaration");
@@ -1262,7 +1262,7 @@ public class JetParsing extends AbstractJetParsing {
     }
 
     /*
-     *   (optionalProjection type){","}
+     *  (optionalProjection type){","}
      */
     public PsiBuilder.Marker parseTypeArgumentList() {
         if (!at(LT)) return null;
@@ -1273,8 +1273,19 @@ public class JetParsing extends AbstractJetParsing {
         advance(); // LT
 
         while (true) {
-            parseModifierList();
-            parseTypeRef();
+            PsiBuilder.Marker projection = mark();
+            TokenDetector projectionDetector = new TokenDetector(TokenSet.create(IN_KEYWORD, OUT_KEYWORD));
+            parseModifierList(projectionDetector);
+            if (at(MUL)) {
+                if (projectionDetector.isDetected()) {
+                    errorAndAdvance("The '*' projection cannot be marked 'in' or 'out'"); // MUL
+                } else {
+                    advance(); // MUL
+                }
+            } else {
+                parseTypeRef();
+            }
+            projection.done(TYPE_PROJECTION);
             if (!at(COMMA)) break;
             advance(); // COMMA
         }
@@ -1460,19 +1471,28 @@ public class JetParsing extends AbstractJetParsing {
         return createForTopLevel(builder);
     }
 
-    /*package*/ static class EnumDetector implements Consumer<IElementType> {
+    /*package*/ static class TokenDetector implements Consumer<IElementType> {
 
-        private boolean myEnum = false;
+        private boolean detected = false;
+        private final TokenSet tokens;
+
+        public TokenDetector(JetKeywordToken token) {
+            this.tokens = TokenSet.create(token);
+        }
+
+        public TokenDetector(TokenSet tokens) {
+            this.tokens = tokens;
+        }
 
         @Override
         public void consume(IElementType item) {
-            if (item == ENUM_KEYWORD) {
-                myEnum = true;
+            if (tokens.contains(item)) {
+                detected = true;
             }
         }
 
-        public boolean isEnum() {
-            return myEnum;
+        public boolean isDetected() {
+            return detected;
         }
     }
 }

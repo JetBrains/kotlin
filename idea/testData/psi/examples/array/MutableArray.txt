@@ -160,10 +160,11 @@ JetFile: MutableArray.jet
                 PsiElement(IDENTIFIER)('ReadOnlyArray')
               TYPE_ARGUMENT_LIST
                 PsiElement(LT)('<')
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('T')
+                TYPE_PROJECTION
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('T')
                 PsiElement(GT)('>')
         PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
@@ -174,10 +175,11 @@ JetFile: MutableArray.jet
                 PsiElement(IDENTIFIER)('WriteOnlyArray')
               TYPE_ARGUMENT_LIST
                 PsiElement(LT)('<')
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('T')
+                TYPE_PROJECTION
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('T')
                 PsiElement(GT)('>')
       PsiWhiteSpace(' ')
       CLASS_BODY

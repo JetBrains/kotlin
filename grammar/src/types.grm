@@ -32,7 +32,7 @@ userType
   ;
 
 simpleUserType
-  : SimpleName ("<" (optionalProjection type){","} ">")?
+  : SimpleName ("<" (optionalProjection type | "*"){","} ">")?
   ;
 
 optionalProjection

@@ -529,9 +529,10 @@ JetFile: BitArith.jet
                 PsiElement(IDENTIFIER)('IComparable')
               TYPE_ARGUMENT_LIST
                 PsiElement(LT)('<')
-                TYPE_REFERENCE
-                  SELF_TYPE
-                    PsiElement(This)('This')
+                TYPE_PROJECTION
+                  TYPE_REFERENCE
+                    SELF_TYPE
+                      PsiElement(This)('This')
                 PsiElement(GT)('>')
       PsiWhiteSpace(' ')
       CLASS_BODY

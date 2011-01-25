@@ -490,10 +490,11 @@ JetFile: HashMap.jet
                 PsiElement(IDENTIFIER)('IHashingStrategy')
               TYPE_ARGUMENT_LIST
                 PsiElement(LT)('<')
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('K')
+                TYPE_PROJECTION
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('K')
                 PsiElement(GT)('>')
       PsiWhiteSpace(' ')
       CLASS_BODY
@@ -615,10 +616,11 @@ JetFile: HashMap.jet
                 PsiElement(IDENTIFIER)('IHashingStrategy')
               TYPE_ARGUMENT_LIST
                 PsiElement(LT)('<')
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('K')
+                TYPE_PROJECTION
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('K')
                 PsiElement(GT)('>')
       PsiWhiteSpace(' ')
       CLASS_BODY
@@ -760,16 +762,18 @@ JetFile: HashMap.jet
                 PsiElement(IDENTIFIER)('IMap')
               TYPE_ARGUMENT_LIST
                 PsiElement(LT)('<')
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('K')
+                TYPE_PROJECTION
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('K')
                 PsiElement(COMMA)(',')
                 PsiWhiteSpace(' ')
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('V')
+                TYPE_PROJECTION
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('V')
                 PsiElement(GT)('>')
       PsiWhiteSpace(' ')
       CLASS_BODY
@@ -914,10 +918,11 @@ JetFile: HashMap.jet
                 PsiElement(IDENTIFIER)('IHashingStrategy')
               TYPE_ARGUMENT_LIST
                 PsiElement(LT)('<')
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('K')
+                TYPE_PROJECTION
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('K')
                 PsiElement(GT)('>')
         PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
@@ -931,16 +936,18 @@ JetFile: HashMap.jet
                 PsiElement(IDENTIFIER)('IMap')
               TYPE_ARGUMENT_LIST
                 PsiElement(LT)('<')
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('K')
+                TYPE_PROJECTION
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('K')
                 PsiElement(COMMA)(',')
                 PsiWhiteSpace(' ')
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('V')
+                TYPE_PROJECTION
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('V')
                 PsiElement(GT)('>')
       PsiWhiteSpace(' ')
       CLASS_BODY
@@ -971,10 +978,11 @@ JetFile: HashMap.jet
                           PsiElement(IDENTIFIER)('JavaObjectHashingStrategy')
                         TYPE_ARGUMENT_LIST
                           PsiElement(LT)('<')
-                          TYPE_REFERENCE
-                            USER_TYPE
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('K')
+                          TYPE_PROJECTION
+                            TYPE_REFERENCE
+                              USER_TYPE
+                                REFERENCE_EXPRESSION
+                                  PsiElement(IDENTIFIER)('K')
                           PsiElement(GT)('>')
                     VALUE_ARGUMENT_LIST
                       PsiElement(LPAR)('(')

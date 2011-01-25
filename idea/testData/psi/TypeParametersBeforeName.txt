@@ -142,10 +142,11 @@ JetFile: TypeParametersBeforeName.jet
             PsiElement(IDENTIFIER)('List')
           TYPE_ARGUMENT_LIST
             PsiElement(LT)('<')
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('A')
+            TYPE_PROJECTION
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('A')
             PsiElement(GT)('>')
       PsiElement(DOT)('.')
       PsiElement(IDENTIFIER)('foo')
@@ -165,10 +166,11 @@ JetFile: TypeParametersBeforeName.jet
             PsiElement(IDENTIFIER)('List')
           TYPE_ARGUMENT_LIST
             PsiElement(LT)('<')
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('A')
+            TYPE_PROJECTION
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('A')
             PsiElement(GT)('>')
       PsiElement(DOT)('.')
       PsiElement(IDENTIFIER)('foo')

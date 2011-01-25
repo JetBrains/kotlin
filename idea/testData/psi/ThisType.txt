@@ -17,9 +17,10 @@ JetFile: ThisType.jet
                 PsiElement(IDENTIFIER)('List')
               TYPE_ARGUMENT_LIST
                 PsiElement(LT)('<')
-                TYPE_REFERENCE
-                  SELF_TYPE
-                    PsiElement(This)('This')
+                TYPE_PROJECTION
+                  TYPE_REFERENCE
+                    SELF_TYPE
+                      PsiElement(This)('This')
                 PsiElement(GT)('>')
         PsiElement(GT)('>')
       PRIMARY_CONSTRUCTOR_PARAMETERS_LIST
@@ -45,9 +46,10 @@ JetFile: ThisType.jet
                 PsiElement(IDENTIFIER)('bar')
               TYPE_ARGUMENT_LIST
                 PsiElement(LT)('<')
-                TYPE_REFERENCE
-                  SELF_TYPE
-                    PsiElement(This)('This')
+                TYPE_PROJECTION
+                  TYPE_REFERENCE
+                    SELF_TYPE
+                      PsiElement(This)('This')
                 PsiElement(GT)('>')
         PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
@@ -61,9 +63,10 @@ JetFile: ThisType.jet
                 PsiElement(IDENTIFIER)('List')
               TYPE_ARGUMENT_LIST
                 PsiElement(LT)('<')
-                TYPE_REFERENCE
-                  SELF_TYPE
-                    PsiElement(This)('This')
+                TYPE_PROJECTION
+                  TYPE_REFERENCE
+                    SELF_TYPE
+                      PsiElement(This)('This')
                 PsiElement(GT)('>')
           PsiWhiteSpace(' ')
           PsiElement(by)('by')
@@ -80,9 +83,10 @@ JetFile: ThisType.jet
                   PsiElement(IDENTIFIER)('List')
                 TYPE_ARGUMENT_LIST
                   PsiElement(LT)('<')
-                  TYPE_REFERENCE
-                    SELF_TYPE
-                      PsiElement(This)('This')
+                  TYPE_PROJECTION
+                    TYPE_REFERENCE
+                      SELF_TYPE
+                        PsiElement(This)('This')
                   PsiElement(GT)('>')
       PsiWhiteSpace(' ')
       CLASS_BODY
@@ -137,9 +141,10 @@ JetFile: ThisType.jet
                       PsiElement(IDENTIFIER)('Foo')
                     TYPE_ARGUMENT_LIST
                       PsiElement(LT)('<')
-                      TYPE_REFERENCE
-                        SELF_TYPE
-                          PsiElement(This)('This')
+                      TYPE_PROJECTION
+                        TYPE_REFERENCE
+                          SELF_TYPE
+                            PsiElement(This)('This')
                       PsiElement(GT)('>')
                 VALUE_ARGUMENT_LIST
                   PsiElement(LPAR)('(')
