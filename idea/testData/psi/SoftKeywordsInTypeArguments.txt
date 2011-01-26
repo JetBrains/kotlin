@@ -1,0 +1,55 @@
+JetFile: SoftKeywordsInTypeArguments.jet
+  NAMESPACE
+    CLASS
+      PsiElement(class)('class')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('Foo')
+      TYPE_PARAMETER_LIST
+        PsiElement(LT)('<')
+        TYPE_PARAMETER
+          MODIFIER_LIST
+            PsiElement(out)('out')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('abstract')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        TYPE_PARAMETER
+          MODIFIER_LIST
+            PsiElement(out)('out')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('out')
+        PsiElement(GT)('>')
+      PsiWhiteSpace(' ')
+      CLASS_BODY
+        PsiElement(LBRACE)('{')
+        PsiElement(RBRACE)('}')
+    PsiWhiteSpace('\n\n')
+    FUN
+      PsiElement(fun)('fun')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('f')
+      TYPE_PARAMETER_LIST
+        <empty list>
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      BLOCK
+        PsiElement(LBRACE)('{')
+        PsiWhiteSpace('\n\n  ')
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('Foo')
+          TYPE_ARGUMENT_LIST
+            PsiElement(LT)('<')
+            TYPE_PROJECTION
+              MODIFIER_LIST
+                PsiElement(out)('out')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('out')
+            PsiElement(GT)('>')
+        PsiWhiteSpace('\n\n')
+        PsiElement(RBRACE)('}')

@@ -111,8 +111,6 @@ RAW_STRING_LITERAL = {THREE_QUO} {QUO_STRING_CHAR}* {THREE_QUO}?
 <YYINITIAL> "fun"        { return JetTokens.FUN_KEYWORD ;}
 <YYINITIAL> "for"        { return JetTokens.FOR_KEYWORD ;}
 <YYINITIAL> "new"        { return JetTokens.NEW_KEYWORD ;}
-<YYINITIAL> "out"        { return JetTokens.OUT_KEYWORD ;}
-<YYINITIAL> "ref"        { return JetTokens.REF_KEYWORD ;}
 <YYINITIAL> "is"         { return JetTokens.IS_KEYWORD ;}
 <YYINITIAL> "in"         { return JetTokens.IN_KEYWORD ;}
 <YYINITIAL> "if"         { return JetTokens.IF_KEYWORD ;}

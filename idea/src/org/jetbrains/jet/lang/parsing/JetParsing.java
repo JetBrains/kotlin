@@ -1274,14 +1274,12 @@ public class JetParsing extends AbstractJetParsing {
 
         while (true) {
             PsiBuilder.Marker projection = mark();
-            TokenDetector projectionDetector = new TokenDetector(TokenSet.create(IN_KEYWORD, OUT_KEYWORD));
-            parseModifierList(projectionDetector);
+
+            int lastId = findLastBefore(TokenSet.create(IDENTIFIER), TokenSet.create(COMMA, COLON, GT), false);
+            createTruncatedBuilder(lastId).parseModifierList();
+
             if (at(MUL)) {
-                if (projectionDetector.isDetected()) {
-                    errorAndAdvance("The '*' projection cannot be marked 'in' or 'out'"); // MUL
-                } else {
-                    advance(); // MUL
-                }
+                advance(); // MUL
             } else {
                 parseTypeRef();
             }
