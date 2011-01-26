@@ -11,8 +11,8 @@ public class TypeConstructor extends AnnotatedImpl {
     private final Collection<? extends Type> supertypes;
     private final String debugName;
 
-    public TypeConstructor(List<Annotation> annotations, String debugName, List<TypeParameterDescriptor> parameters, Collection<? extends Type> supertypes) {
-        super(annotations);
+    public TypeConstructor(List<Attribute> attributes, String debugName, List<TypeParameterDescriptor> parameters, Collection<? extends Type> supertypes) {
+        super(attributes);
         this.debugName = debugName;
         this.parameters = parameters;
         this.supertypes = supertypes;

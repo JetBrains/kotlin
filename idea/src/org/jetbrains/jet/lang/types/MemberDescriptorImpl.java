@@ -6,7 +6,7 @@ import java.util.List;
  * @author abreslav
  */
 public abstract class MemberDescriptorImpl extends NamedAnnotatedImpl {
-    public MemberDescriptorImpl(List<Annotation> annotations, String name) {
-        super(annotations, name);
+    public MemberDescriptorImpl(List<Attribute> attributes, String name) {
+        super(attributes, name);
     }
 }

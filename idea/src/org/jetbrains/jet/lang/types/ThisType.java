@@ -9,14 +9,14 @@ import java.util.List;
  * @author abreslav
  */
 public class ThisType extends TypeImpl {
-    public ThisType(List<Annotation> annotations, ClassDescriptor thisClass) {
-        super(annotations, thisClass.getTypeConstructor(), toArguments(thisClass.getTypeConstructor().getParameters()));
+    public ThisType(List<Attribute> attributes, ClassDescriptor thisClass) {
+        super(attributes, thisClass.getTypeConstructor(), toArguments(thisClass.getTypeConstructor().getParameters()));
     }
 
     private static List<TypeProjection> toArguments(List<TypeParameterDescriptor> parameters) {
         List<TypeProjection> result = new ArrayList<TypeProjection>();
         for (TypeParameterDescriptor parameter : parameters) {
-            result.add(new TypeProjection(new TypeVariable(Collections.<Annotation>emptyList(), parameter)));
+            result.add(new TypeProjection(new TypeVariable(Collections.<Attribute>emptyList(), parameter)));
         }
         return result;
     }

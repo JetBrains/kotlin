@@ -6,14 +6,14 @@ import java.util.List;
  * @author abreslav
  */
 public abstract class AnnotatedImpl implements Annotated {
-    private final List<Annotation> annotations;
+    private final List<Attribute> attributes;
 
-    public AnnotatedImpl(List<Annotation> annotations) {
-        this.annotations = annotations;
+    public AnnotatedImpl(List<Attribute> attributes) {
+        this.attributes = attributes;
     }
 
     @Override
-    public List<Annotation> getAnnotations() {
-        return annotations;
+    public List<Attribute> getAttributes() {
+        return attributes;
     }
 }

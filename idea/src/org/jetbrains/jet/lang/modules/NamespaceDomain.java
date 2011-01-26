@@ -8,5 +8,5 @@ import org.jetbrains.jet.lang.types.NamespaceDescriptor;
  */
 public interface NamespaceDomain {
     @Nullable
-    NamespaceDescriptor getNamespace(String namespaceName);
+    NamespaceDescriptor getNamespace(String name);
 }

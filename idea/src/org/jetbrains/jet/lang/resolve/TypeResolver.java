@@ -1,20 +1,88 @@
 package org.jetbrains.jet.lang.resolve;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.modules.MemberDomain;
-import org.jetbrains.jet.lang.psi.JetReferenceExpression;
-import org.jetbrains.jet.lang.psi.JetUserType;
-import org.jetbrains.jet.lang.types.ClassDescriptor;
-import org.jetbrains.jet.lang.types.NamespaceDescriptor;
+import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.types.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author abreslav
  */
 public class TypeResolver {
 
+    @NotNull
     public static final TypeResolver INSTANCE = new TypeResolver();
 
     private TypeResolver() {}
+
+    @NotNull
+    public Type resolveType(@NotNull final JetScope scope, @NotNull final JetTypeReference typeReference) {
+        final List<Attribute> attributes = AttributeResolver.INSTANCE.resolveAttributes(typeReference.getAttributes());
+
+        final Type[] result = new Type[1];
+        typeReference.getTypeElement().accept(new JetVisitor() {
+            @Override
+            public void visitUserType(JetUserType type) {
+                ClassDescriptor classDescriptor = resolveClass(scope, type);
+                if (classDescriptor != null) {
+                    result[0] = new ClassType(
+                        attributes,
+                        classDescriptor,
+                        resolveTypeProjections(scope, type.getTypeArguments())
+                    );
+                } else if (type.getTypeArguments().isEmpty()) {
+                    TypeParameterDescriptor typeParameterDescriptor = scope.getTypeParameterDescriptor(type.getReferencedName());
+                    if (typeParameterDescriptor != null) {
+                        result[0] = new TypeVariable(attributes, typeParameterDescriptor);
+                    }
+                }
+            }
+
+            @Override
+            public void visitTupleType(JetTupleType type) {
+                // TODO labels
+                result[0] = TupleType.getTupleType(resolveTypes(scope, type.getComponentTypeRefs()));
+            }
+
+            @Override
+            public void visitJetElement(JetElement elem) {
+                throw new IllegalArgumentException("Unsupported type: " + elem);
+            }
+        });
+        if (result[0] == null) {
+            return new ErrorType(typeReference);
+        }
+        return result[0];
+    }
+
+    private List<Type> resolveTypes(JetScope scope, List<JetTypeReference> argumentElements) {
+        final List<Type> arguments = new ArrayList<Type>();
+        for (JetTypeReference argumentElement : argumentElements) {
+            arguments.add(resolveType(scope, argumentElement));
+        }
+        return arguments;
+    }
+
+    @NotNull
+    private List<TypeProjection> resolveTypeProjections(JetScope scope, List<JetTypeProjection> argumentElements) {
+        final List<TypeProjection> arguments = new ArrayList<TypeProjection>();
+        for (JetTypeProjection argumentElement : argumentElements) {
+            ProjectionKind projectionKind = argumentElement.getProjectionKind();
+            Type type;
+            if (projectionKind == ProjectionKind.NEITHER_OUT_NOR_IN) {
+                type = null;
+            } else {
+                type = resolveType(scope, argumentElement.getTypeReference());
+            }
+            TypeProjection typeProjection = new TypeProjection(projectionKind, type);
+            arguments.add(typeProjection);
+        }
+        return arguments;
+    }
 
     @Nullable
     public ClassDescriptor resolveClass(JetScope scope, JetUserType userType) {
@@ -29,7 +97,7 @@ public class TypeResolver {
 
         JetReferenceExpression qualifier = expression.getQualifier();
         if (qualifier != null) {
-            // TODO: this is slow. The faster way would be to start with the first item in the quilified name
+            // TODO: this is slow. The faster way would be to start with the first item in the qualified name
             // TODO: priorities: class of namespace first?
             MemberDomain domain = resolveClass(scope, qualifier);
             if (domain == null) {

@@ -10,32 +10,32 @@ import java.util.List;
  */
 public class TupleType extends TypeImpl {
 
-    public static final TupleType UNIT = new TupleType(Collections.<Annotation>emptyList(), Collections.<Type>emptyList());
+    public static final TupleType UNIT = new TupleType(Collections.<Attribute>emptyList(), Collections.<Type>emptyList());
 
-    public static TupleType getTupleType(List<Annotation> annotations, List<Type> arguments) {
-        if (annotations.isEmpty() && arguments.isEmpty()) {
+    public static TupleType getTupleType(List<Attribute> attributes, List<Type> arguments) {
+        if (attributes.isEmpty() && arguments.isEmpty()) {
             return UNIT;
         }
-        return new TupleType(annotations, arguments);
+        return new TupleType(attributes, arguments);
     }
 
 
     public static TupleType getTupleType(List<Type> arguments) {
-        return getTupleType(Collections.<Annotation>emptyList(), arguments);
+        return getTupleType(Collections.<Attribute>emptyList(), arguments);
     }
 
-    public static TupleType getLabeledTupleType(List<Annotation> annotations, List<ParameterDescriptor> arguments) {
-        return getTupleType(annotations, toTypes(arguments));
+    public static TupleType getLabeledTupleType(List<Attribute> attributes, List<ParameterDescriptor> arguments) {
+        return getTupleType(attributes, toTypes(arguments));
     }
 
 
     public static TupleType getLabeledTupleType(List<ParameterDescriptor> arguments) {
-        return getLabeledTupleType(Collections.<Annotation>emptyList(), arguments);
+        return getLabeledTupleType(Collections.<Attribute>emptyList(), arguments);
     }
 
 
-    private TupleType(List<Annotation> annotations, List<Type> arguments) {
-        super(annotations, JetStandardClasses.getTuple(arguments.size()).getTypeConstructor(), toProjections(arguments));
+    private TupleType(List<Attribute> attributes, List<Type> arguments) {
+        super(attributes, JetStandardClasses.getTuple(arguments.size()).getTypeConstructor(), toProjections(arguments));
     }
 
     @Override

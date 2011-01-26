@@ -9,8 +9,8 @@ public abstract class NamedAnnotatedImpl extends AnnotatedImpl {
 
     private final String name;
 
-    public NamedAnnotatedImpl(List<Annotation> annotations, String name) {
-        super(annotations);
+    public NamedAnnotatedImpl(List<Attribute> attributes, String name) {
+        super(attributes);
         this.name = name;
     }
 

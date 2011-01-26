@@ -6,13 +6,13 @@ import java.util.List;
 /**
  * @author abreslav
  */
-public abstract class TypeImpl extends AnnotatedImpl implements Type {
+public abstract class TypeImpl extends VisitableTypeImpl {
 
     private final TypeConstructor constructor;
     private final List<TypeProjection> arguments;
 
-    public TypeImpl(List<Annotation> annotations, TypeConstructor constructor, List<TypeProjection> arguments) {
-        super(annotations);
+    public TypeImpl(List<Attribute> attributes, TypeConstructor constructor, List<TypeProjection> arguments) {
+        super(attributes);
         this.constructor = constructor;
         this.arguments = arguments;
     }
@@ -44,13 +44,4 @@ public abstract class TypeImpl extends AnnotatedImpl implements Type {
         return stringBuilder;
     }
 
-    @Override
-    public <R> R acceptNoData(TypeVisitor<R, ?> visitor) {
-        return accept(visitor, null);
-    }
-
-    @Override
-    public void acceptVoid(TypeVisitor<?, ?> visitor) {
-        accept(visitor, null);
-    }
 }

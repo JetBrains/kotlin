@@ -13,14 +13,14 @@ public class ClassDescriptor extends MemberDescriptorImpl implements MemberDomai
     private final TypeConstructor typeConstructor;
 
     public ClassDescriptor(
-            List<Annotation> annotations,
+            List<Attribute> attributes,
             String name, List<TypeParameterDescriptor> typeParameters, Collection<? extends Type> superclasses) {
-        super(annotations, name);
-        this.typeConstructor = new TypeConstructor(annotations, name, typeParameters, superclasses);
+        super(attributes, name);
+        this.typeConstructor = new TypeConstructor(attributes, name, typeParameters, superclasses);
     }
 
     public ClassDescriptor(String name) {
-        this(Collections.<Annotation>emptyList(),
+        this(Collections.<Attribute>emptyList(),
                 name, Collections.<TypeParameterDescriptor>emptyList(),
                 Collections.<Type>singleton(JetStandardClasses.getAnyType()));
     }

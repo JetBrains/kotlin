@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 
 import java.util.Collections;
@@ -30,7 +31,14 @@ public class JetUserType extends JetTypeElement {
         return typeArgumentList == null ? Collections.<JetTypeProjection>emptyList() : typeArgumentList.getArguments();
     }
 
+    @Nullable
     public JetReferenceExpression getReferenceExpression() {
         return (JetReferenceExpression) findChildByType(JetNodeTypes.REFERENCE_EXPRESSION);
+    }
+
+    @Nullable
+    public String getReferencedName() {
+        JetReferenceExpression referenceExpression = getReferenceExpression();
+        return referenceExpression == null ? null : referenceExpression.getReferencedName();
     }
 }

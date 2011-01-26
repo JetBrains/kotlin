@@ -1,5 +1,7 @@
 package org.jetbrains.jet.lang.types;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -8,20 +10,22 @@ import java.util.List;
  * @author abreslav
  */
 public class ClassType extends TypeImpl {
+    @NotNull
     private final ClassDescriptor classDescriptor;
 
-    public ClassType(List<Annotation> annotations, ClassDescriptor classDescriptor, List<TypeProjection> arguments) {
-        super(annotations, classDescriptor.getTypeConstructor(), arguments);
+    public ClassType(@NotNull List<Attribute> attributes, @NotNull ClassDescriptor classDescriptor, @NotNull List<TypeProjection> arguments) {
+        super(attributes, classDescriptor.getTypeConstructor(), arguments);
         assert classDescriptor.getTypeConstructor().getParameters().size() == arguments.size() : classDescriptor.getTypeConstructor().getParameters().size() + " != " + arguments.size();
 
         this.classDescriptor = classDescriptor;
     }
 
     public ClassType(ClassDescriptor classDescriptor) {
-        this(Collections.<Annotation>emptyList(), classDescriptor, Collections.<TypeProjection>emptyList());
+        this(Collections.<Attribute>emptyList(), classDescriptor, Collections.<TypeProjection>emptyList());
         assert classDescriptor.getTypeConstructor().getParameters().size() == 0;
     }
 
+    @NotNull
     public ClassDescriptor getClassDescriptor() {
         return classDescriptor;
     }

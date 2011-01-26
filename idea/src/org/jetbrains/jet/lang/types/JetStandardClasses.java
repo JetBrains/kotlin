@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class JetStandardClasses {
     private static final ClassDescriptor ANY = new ClassDescriptor(
-            Collections.<Annotation>emptyList(),
+            Collections.<Attribute>emptyList(),
             "Any",
             Collections.<TypeParameterDescriptor>emptyList(),
             Collections.<Type>emptySet()
@@ -36,12 +36,12 @@ public class JetStandardClasses {
             List<TypeParameterDescriptor> parameters = new ArrayList<TypeParameterDescriptor>();
             for (int j = 0; j < i; j++) {
                 parameters.add(new TypeParameterDescriptor(
-                        Collections.<Annotation>emptyList(),
+                        Collections.<Attribute>emptyList(),
                         Variance.OUT_VARIANCE, "T" + j,
                         Collections.<Type>emptySet()));
             }
             TUPLE[i] = new ClassDescriptor(
-                    Collections.<Annotation>emptyList(),
+                    Collections.<Attribute>emptyList(),
                     "Tuple" + i,
                     parameters,
                     Collections.singleton(JetStandardClasses.getAnyType()));

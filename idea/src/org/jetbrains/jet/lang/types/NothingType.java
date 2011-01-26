@@ -8,7 +8,7 @@ import java.util.*;
 public class NothingType extends TypeImpl {
 
     public static final TypeConstructor NOTHING = new TypeConstructor(
-            Collections.<Annotation>emptyList(),
+            Collections.<Attribute>emptyList(),
             "Nothing",
             Collections.<TypeParameterDescriptor>emptyList(),
             new AbstractCollection<Type>() {
@@ -29,9 +29,9 @@ public class NothingType extends TypeImpl {
                 }
             });
 
-    // TODO: annotations seem wrong here
-    public NothingType(List<Annotation> annotations) {
-        super(annotations, NOTHING, Collections.<TypeProjection>emptyList());
+    // TODO: attributes seem wrong here
+    public NothingType(List<Attribute> attributes) {
+        super(attributes, NOTHING, Collections.<TypeProjection>emptyList());
     }
 
     @Override

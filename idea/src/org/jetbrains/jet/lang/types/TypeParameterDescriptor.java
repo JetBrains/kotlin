@@ -12,13 +12,13 @@ public class TypeParameterDescriptor extends NamedAnnotatedImpl {
     private final Collection<Type> upperBounds;
     private final TypeConstructor typeConstructor;
 
-    public TypeParameterDescriptor(List<Annotation> annotations, Variance variance, String name, Collection<Type> upperBounds) {
-        super(annotations, name);
+    public TypeParameterDescriptor(List<Attribute> attributes, Variance variance, String name, Collection<Type> upperBounds) {
+        super(attributes, name);
         this.variance = variance;
         this.upperBounds = upperBounds;
-        // TODO: Should we actually pass the annotations on to the type constructor?
+        // TODO: Should we actually pass the attributes on to the type constructor?
         this.typeConstructor = new TypeConstructor(
-                annotations,
+                attributes,
                 name,
                 Collections.<TypeParameterDescriptor>emptyList(),
                 upperBounds);

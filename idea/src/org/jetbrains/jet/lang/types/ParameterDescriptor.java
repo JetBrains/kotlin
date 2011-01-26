@@ -9,8 +9,8 @@ public class ParameterDescriptor extends  AnnotatedImpl {
     private final Type type;
     private final String name;
 
-    public ParameterDescriptor(List<Annotation> annotations, Type type, String name) {
-        super(annotations);
+    public ParameterDescriptor(List<Attribute> attributes, Type type, String name) {
+        super(attributes);
         this.type = type;
         this.name = name;
     }

@@ -23,7 +23,11 @@ public class TypeVisitor<R, D> {
     public R visitThisType(ThisType thisType, D data) {
         return visitType(thisType, data);
     }
-    
+
+    public R visitErrorType(ErrorType errorType, D data) {
+        return visitType(errorType, data);
+    }
+
     public R visitType(Type type, D data) {
         throw new UnsupportedOperationException(); // TODO
     }
