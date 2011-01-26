@@ -138,7 +138,7 @@ public class JetTypeChecker {
                 case INVARIANT:
                     switch (superArgument.getProjectionKind()) {
                         case NO_PROJECTION:
-                            if (!subArgumentType.equals(superArgumentType)) {
+                            if (!equalTypes(subArgumentType, superArgumentType)) {
                                 return false;
                             }
                             break;
@@ -196,6 +196,28 @@ public class JetTypeChecker {
             }
         }
 
+        return true;
+    }
+
+    private boolean equalTypes(Type type1, Type type2) {
+        if (!type1.getConstructor().equals(type2.getConstructor())) {
+            return false;
+        }
+        List<TypeProjection> type1Arguments = type1.getArguments();
+        List<TypeProjection> type2Arguments = type2.getArguments();
+        if (type1Arguments.size() != type2Arguments.size()) {
+            return false;
+        }
+        for (int i = 0; i < type1Arguments.size(); i++) {
+            TypeProjection typeProjection1 = type1Arguments.get(i);
+            TypeProjection typeProjection2 = type2Arguments.get(i);
+            if (typeProjection1.getProjectionKind() != typeProjection2.getProjectionKind()) {
+                return false;
+            }
+            if (!equalTypes(typeProjection1.getType(), typeProjection2.getType())) {
+                return false;
+            }
+        }
         return true;
     }
 

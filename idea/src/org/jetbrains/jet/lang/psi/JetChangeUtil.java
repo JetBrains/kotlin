@@ -23,6 +23,10 @@ public class JetChangeUtil {
         return property.getPropertyTypeRef();
     }
 
+    public static JetClass createClass(Project project, String text) {
+        return createDeclaration(project, text, JetClass.class);
+    }
+
     @NotNull
     public static JetFile createFile(Project project, String text) {
         return (JetFile) PsiFileFactory.getInstance(project).createFileFromText("dummy.jet", JetFileType.INSTANCE, text, LocalTimeCounter.currentTime(), true);
@@ -34,11 +38,16 @@ public class JetChangeUtil {
     }
 
     private static JetProperty createProperty(Project project, String text) {
+        return createDeclaration(project, text, JetProperty.class);
+    }
+
+    private static <T> T createDeclaration(Project project, String text, Class<T> clazz) {
         JetFile file = createFile(project, text);
         JetNamespace rootNamespace = file.getRootNamespace();
         List<JetDeclaration> dcls = rootNamespace.getDeclarations();
         assert dcls.size() == 1;
-        return (JetProperty) dcls.get(0);
+        //noinspection unchecked
+        return (T) dcls.get(0);
     }
 
     public static PsiElement createNameIdentifier(Project project, String name) {

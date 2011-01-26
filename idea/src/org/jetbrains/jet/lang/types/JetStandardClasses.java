@@ -37,8 +37,7 @@ public class JetStandardClasses {
             for (int j = 0; j < i; j++) {
                 parameters.add(new TypeParameterDescriptor(
                         Collections.<Annotation>emptyList(),
-                        "T" + j,
-                        Variance.OUT_VARIANCE,
+                        Variance.OUT_VARIANCE, "T" + j,
                         Collections.<Type>emptySet()));
             }
             TUPLE[i] = new ClassDescriptor(

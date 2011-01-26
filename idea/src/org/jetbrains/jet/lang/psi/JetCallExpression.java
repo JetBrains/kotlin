@@ -45,8 +45,8 @@ public class JetCallExpression extends JetExpression {
     }
 
     @NotNull
-    public List<JetTypeReference> getTypeArguments() {
+    public List<JetTypeProjection> getTypeArguments() {
         JetTypeArgumentList list = getTypeArgumentList();
-        return list != null ? list.getArguments() : Collections.<JetTypeReference>emptyList();
+        return list != null ? list.getArguments() : Collections.<JetTypeProjection>emptyList();
     }
 }

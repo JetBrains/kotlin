@@ -10,13 +10,31 @@ import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.parsing.JetParsingTest;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author abreslav
  */
 public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
+
+    public static final ClassDescriptor BASE_T = new ClassDescriptor(
+            Collections.<Annotation>emptyList(),
+            "Base_T",
+            Arrays.asList(
+                new TypeParameterDescriptor(
+                        Collections.<Annotation>emptyList(),
+                        Variance.INVARIANT, "T",
+                        Collections.<Type>emptyList())
+            ),
+                Collections.singleton(JetStandardClasses.getAnyType())
+        );
+
+    private static Map<String, ClassDescriptor> CLASSES = new HashMap<String, ClassDescriptor>();
+    private static String[] CLASS_DECLARATIONS = {
+        "class Base_T<T>",
+        "class Base_inT<in T>",
+        "class Base_outT<out T>",
+    };
 
     private static final JetScope BASIC_SCOPE = new JetScope.JetScopeImpl() {
         @Override
@@ -42,10 +60,22 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
             } else if ("Any".equals(name)) {
                 return JetStandardClasses.getAny();
             }
+            if (CLASSES.isEmpty()) {
+                for (String classDeclaration : CLASS_DECLARATIONS) {
+                    JetClass classElement = JetChangeUtil.createClass(getProject(), classDeclaration);
+                    ClassDescriptor classDescriptor = toClassDescriptor(classElement);
+                    CLASSES.put(classDescriptor.getName(), classDescriptor);
+                }
+            }
+            ClassDescriptor classDescriptor = CLASSES.get(name);
+            if (classDescriptor != null) {
+                return classDescriptor;
+            }
             fail("Type not found: " + name);
             throw new IllegalStateException();
         }
     };
+
 
     @Override
     protected String getTestDataPath() {
@@ -86,7 +116,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertType("()", JetStandardTypes.getUnit());
     }
 
-    public void testSubtyping() throws Exception {
+    public void testBasicSubtyping() throws Exception {
         assertSubtype("Boolean", "Boolean");
         assertSubtype("Byte", "Byte");
         assertSubtype("Char", "Char");
@@ -149,18 +179,59 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertSubtype("(Unit, Unit)",    "(Any, Any)");
         assertSubtype("(Unit, Unit)",    "(Any, Unit)");
         assertSubtype("(Unit, Unit)",    "(Unit, Any)");
-
     }
 
-    private void assertSubtype(String type1, String type2) {
+    public void testProjections() throws Exception {
+        assertSubtype("Base_T<Int>", "Base_T<Int>");
+    }
+
+    public void testImplicitConversions() throws Exception {
+        assertConvertibleTo("1", JetStandardTypes.getByte());
+    }
+
+    private static ClassDescriptor toClassDescriptor(JetClass classElement) {
+        return new ClassDescriptor(
+                toAttributes(classElement.getModifierList()),
+                classElement.getName(),
+                toTypeParameters(classElement.getTypeParameters()),
+                toTypes(classElement.getDelegationSpecifiers())
+                );
+    }
+
+    private static List<TypeParameterDescriptor> toTypeParameters(List<JetTypeParameter> typeParameters) {
+        List<TypeParameterDescriptor> result = new ArrayList<TypeParameterDescriptor>();
+        for (JetTypeParameter typeParameter : typeParameters) {
+            result.add(toTypeParameter(typeParameter));
+        }
+        return result;
+    }
+
+    private static TypeParameterDescriptor toTypeParameter(JetTypeParameter typeParameter) {
+        JetTypeReference extendsBound = typeParameter.getExtendsBound();
+        return new TypeParameterDescriptor(
+            toAttributes(typeParameter.getModifierList()),
+            typeParameter.getVariance(),
+            typeParameter.getName(),
+            extendsBound == null ? Collections.<Type>singleton(JetStandardClasses.getAnyType()) : Collections.singleton(toType(extendsBound))
+        );
+    }
+
+    private static Collection<? extends Type> toTypes(List<JetDelegationSpecifier> delegationSpecifiers) {
+        if (delegationSpecifiers.isEmpty()) {
+            return Collections.emptyList();
+        }
+        throw new UnsupportedOperationException(); // TODO
+    }
+
+    private static void assertSubtype(String type1, String type2) {
         assertSubtypingRelation(type1, type2, true);
     }
 
-    private void assertNotSubtype(String type1, String type2) {
+    private static void assertNotSubtype(String type1, String type2) {
         assertSubtypingRelation(type1, type2, false);
     }
 
-    private void assertSubtypingRelation(String type1, String type2, boolean expected) {
+    private static void assertSubtypingRelation(String type1, String type2, boolean expected) {
         Type typeNode1 = toType(JetChangeUtil.createType(getProject(), type1));
         Type typeNode2 = toType(JetChangeUtil.createType(getProject(), type2));
         boolean result = new JetTypeChecker().isSubtypeOf(
@@ -170,19 +241,20 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertTrue(typeNode1 + " is " + modifier + "a subtype of " + typeNode2, result == expected);
     }
 
-    private Type toType(JetTypeReference typeNode) {
-        List<JetAttribute> attributes = typeNode.getAttributes();
+    private static Type toType(JetTypeReference typeNode) {
+        List<JetAttribute> attributeElements = typeNode.getAttributes();
+        final List<Annotation> attributes = toAttributes(attributeElements);
         JetTypeElement typeElement = typeNode.getTypeElement();
-        List<JetTypeReference> argumentElements = typeNode.getTypeArguments();
-
-        final List<Type> arguments = toTypes(argumentElements);
 
         // TODO annotations
         final Type[] result = new Type[1];
         typeElement.accept(new JetVisitor() {
             @Override
             public void visitUserType(JetUserType type) {
-                result[0] = new ClassType(TypeResolver.INSTANCE.resolveClass(BASIC_SCOPE, type));
+                List<JetTypeProjection> argumentElements = type.getTypeArguments();
+
+                final List<TypeProjection> arguments = toTypeProjections(argumentElements);
+                result[0] = new ClassType(attributes, TypeResolver.INSTANCE.resolveClass(BASIC_SCOPE, type), arguments);
             }
 
             @Override
@@ -200,7 +272,19 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         return result[0];
     }
 
-    private List<Type> toTypes(List<JetTypeReference> argumentElements) {
+    private static List<Annotation> toAttributes(List<JetAttribute> attributeElements) {
+        return Collections.emptyList();
+    }
+
+    private static List<Annotation> toAttributes(JetModifierList modifierList) {
+        if (modifierList == null) {
+            return Collections.emptyList();
+        }
+        // TODO:
+        return Collections.emptyList();
+    }
+
+    private static List<Type> toTypes(List<JetTypeReference> argumentElements) {
         final List<Type> arguments = new ArrayList<Type>();
         for (JetTypeReference argumentElement : argumentElements) {
             arguments.add(toType(argumentElement));
@@ -208,8 +292,14 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         return arguments;
     }
 
-    public void testImplicitConversions() throws Exception {
-        assertConvertibleTo("1", JetStandardTypes.getByte());
+    private static List<TypeProjection> toTypeProjections(List<JetTypeProjection> argumentElements) {
+        final List<TypeProjection> arguments = new ArrayList<TypeProjection>();
+        for (JetTypeProjection argumentElement : argumentElements) {
+            Type type = toType(argumentElement.getTypeReference());
+            TypeProjection typeProjection = new TypeProjection(argumentElement.getProjectionKind(), type);
+            arguments.add(typeProjection);
+        }
+        return arguments;
     }
 
     private static void assertConvertibleTo(String expression, Type type) {

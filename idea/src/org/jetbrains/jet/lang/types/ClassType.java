@@ -12,7 +12,7 @@ public class ClassType extends TypeImpl {
 
     public ClassType(List<Annotation> annotations, ClassDescriptor classDescriptor, List<TypeProjection> arguments) {
         super(annotations, classDescriptor.getTypeConstructor(), arguments);
-        assert classDescriptor.getTypeConstructor().getParameters().size() == arguments.size();
+        assert classDescriptor.getTypeConstructor().getParameters().size() == arguments.size() : classDescriptor.getTypeConstructor().getParameters().size() + " != " + arguments.size();
 
         this.classDescriptor = classDescriptor;
     }

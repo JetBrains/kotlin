@@ -12,7 +12,7 @@ public class TypeParameterDescriptor extends NamedAnnotatedImpl {
     private final Collection<Type> upperBounds;
     private final TypeConstructor typeConstructor;
 
-    public TypeParameterDescriptor(List<Annotation> annotations, String name, Variance variance, Collection<Type> upperBounds) {
+    public TypeParameterDescriptor(List<Annotation> annotations, Variance variance, String name, Collection<Type> upperBounds) {
         super(annotations, name);
         this.variance = variance;
         this.upperBounds = upperBounds;

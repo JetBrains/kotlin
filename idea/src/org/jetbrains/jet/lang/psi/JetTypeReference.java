@@ -29,16 +29,6 @@ public class JetTypeReference extends JetElement {
         return findChildByClass(JetTypeElement.class);
     }
 
-    public JetTypeArgumentList getTypeArgumentList() {
-        return findChildByClass(JetTypeArgumentList.class);
-    }
-
-    public List<JetTypeReference> getTypeArguments() {
-        // TODO: empty elements in PSI
-        JetTypeArgumentList typeArgumentList = getTypeArgumentList();
-        return typeArgumentList == null ? Collections.<JetTypeReference>emptyList() : typeArgumentList.getArguments();
-    }
-
     public List<JetAttribute> getAttributes() {
         List<JetAttribute> answer = null;
         for (JetAttributeAnnotation annotation : getAttributeAnnotations()) {

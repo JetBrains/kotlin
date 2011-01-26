@@ -123,7 +123,7 @@ public interface JetNodeTypes {
     JetNodeType WHEN_CONDITION            = new JetNodeType("WHEN_CONDITION");
     JetNodeType TUPLE_PATTERN_ENTRY       = new JetNodeType("TUPLE_PATTERN_ENTRY");
     JetNodeType NULLABLE_TYPE             = new JetNodeType("NULLABLE_TYPE", JetNullableType.class);
-    JetNodeType TYPE_PROJECTION           = new JetNodeType("TYPE_PROJECTION");
+    JetNodeType TYPE_PROJECTION           = new JetNodeType("TYPE_PROJECTION", JetTypeProjection.class);
 
     JetNodeType NAMESPACE_NAME = new JetNodeType("NAMESPACE_NAME", JetContainerNode.class);
 }

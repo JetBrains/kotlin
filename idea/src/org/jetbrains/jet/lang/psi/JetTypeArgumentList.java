@@ -19,7 +19,7 @@ public class JetTypeArgumentList extends JetElement {
         visitor.visitTypeArgumentList(this);
     }
 
-    public List<JetTypeReference> getArguments() {
-        return findChildrenByType(JetNodeTypes.TYPE_REFERENCE);
+    public List<JetTypeProjection> getArguments() {
+        return findChildrenByType(JetNodeTypes.TYPE_PROJECTION);
     }
 }
