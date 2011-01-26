@@ -134,68 +134,64 @@ public class JetTypeChecker {
 
             Type subArgumentType = subArgument.getType();
             Type superArgumentType = superArgument.getType();
-            switch (parameter.getVariance()) {
-                case INVARIANT:
-                    switch (superArgument.getProjectionKind()) {
-                        case NO_PROJECTION:
-                            if (!equalTypes(subArgumentType, superArgumentType)) {
-                                return false;
-                            }
-                            break;
-                        case NEITHER_OUT_NOR_IN:
-                            if (!isSubtypeOf(subArgumentType, superArgumentType)) {
-                                return false;
-                            }
-                            break;
-                        case OUT_ONLY:
-                            if (subArgument.getProjectionKind() != ProjectionKind.OUT_ONLY) {
-                                return false;
-                            }
-                            if (!isSubtypeOf(subArgumentType, superArgumentType)) {
-                                return false;
-                            }
-                            break;
-                        case IN_ONLY:
-                            if (subArgument.getProjectionKind() != ProjectionKind.IN_ONLY) {
-                                return false;
-                            }
-                            if (!isSubtypeOf(superArgumentType, subArgumentType)) {
-                                return false;
-                            }
-                            break;
-                    }
-                    break;
-                case IN_VARIANCE:
-                    switch (superArgument.getProjectionKind()) {
-                        case NO_PROJECTION:
-                        case IN_ONLY:
-                            if (!isSubtypeOf(superArgumentType, subArgumentType)) {
+            if (superArgument.getProjectionKind() != ProjectionKind.NEITHER_OUT_NOR_IN) {
+                switch (parameter.getVariance()) {
+                    case INVARIANT:
+                        switch (superArgument.getProjectionKind()) {
+                            case NO_PROJECTION:
+                                if (!equalTypes(subArgumentType, superArgumentType)) {
                                     return false;
-                            }
-                            break;
-                        case NEITHER_OUT_NOR_IN:
-                        case OUT_ONLY:
-                            if (!isSubtypeOf(subArgumentType, superArgumentType)) {
+                                }
+                                break;
+                            case OUT_ONLY:
+                                if (!subArgument.getProjectionKind().allowsOutCalls()) {
                                     return false;
-                            }
-                            break;
-                    }
-                    break;
-                case OUT_VARIANCE:
-                    switch (superArgument.getProjectionKind()) {
-                        case NO_PROJECTION:
-                        case OUT_ONLY:
-                        case NEITHER_OUT_NOR_IN:
-                        case IN_ONLY:
-                            if (!isSubtypeOf(subArgumentType, superArgumentType)) {
+                                }
+                                if (!isSubtypeOf(subArgumentType, superArgumentType)) {
                                     return false;
-                            }
-                            break;
-                    }
-                    break;
+                                }
+                                break;
+                            case IN_ONLY:
+                                if (!subArgument.getProjectionKind().allowsInCalls()) {
+                                    return false;
+                                }
+                                if (!isSubtypeOf(superArgumentType, subArgumentType)) {
+                                    return false;
+                                }
+                                break;
+                        }
+                        break;
+                    case IN_VARIANCE:
+                        switch (superArgument.getProjectionKind()) {
+                            case NO_PROJECTION:
+                            case IN_ONLY:
+                                if (!isSubtypeOf(superArgumentType, subArgumentType)) {
+                                    return false;
+                                }
+                                break;
+                            case OUT_ONLY:
+                                if (!isSubtypeOf(subArgumentType, superArgumentType)) {
+                                    return false;
+                                }
+                                break;
+                        }
+                        break;
+                    case OUT_VARIANCE:
+                        switch (superArgument.getProjectionKind()) {
+                            case NO_PROJECTION:
+                            case OUT_ONLY:
+                            case IN_ONLY:
+                                if (!isSubtypeOf(subArgumentType, superArgumentType)) {
+                                    return false;
+                                }
+                                break;
+                        }
+                        break;
+                }
+            } else {
+                // C< anything > is always a subtype of C<*>
             }
         }
-
         return true;
     }
 

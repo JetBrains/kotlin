@@ -126,10 +126,6 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertSubtype("Float", "Float");
         assertSubtype("Double", "Double");
         assertSubtype("Unit", "Unit");
-        assertSubtype("Unit", "()");
-        assertSubtype("()", "Unit");
-        assertSubtype("()", "()");
-
         assertSubtype("Boolean", "Any");
         assertSubtype("Byte", "Any");
         assertSubtype("Char", "Any");
@@ -150,6 +146,12 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertNotSubtype("Float", "Double");
         assertNotSubtype("Double", "Int");
         assertNotSubtype("Unit", "Int");
+    }
+
+    public void testTuples() throws Exception {
+        assertSubtype("Unit", "()");
+        assertSubtype("()", "Unit");
+        assertSubtype("()", "()");
 
         assertSubtype("(Boolean)", "(Boolean)");
         assertSubtype("(Byte)",    "(Byte)");
@@ -183,6 +185,36 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
 
     public void testProjections() throws Exception {
         assertSubtype("Base_T<Int>", "Base_T<Int>");
+        assertNotSubtype("Base_T<Int>", "Base_T<Any>");
+
+        assertSubtype("Base_inT<Int>", "Base_inT<Int>");
+        assertSubtype("Base_inT<Any>", "Base_inT<Int>");
+        assertNotSubtype("Base_inT<Int>", "Base_inT<Any>");
+
+        assertSubtype("Base_outT<Int>", "Base_outT<Int>");
+        assertSubtype("Base_outT<Int>", "Base_outT<Any>");
+        assertNotSubtype("Base_outT<Any>", "Base_outT<Int>");
+
+        assertSubtype("Base_T<Int>", "Base_T<out Any>");
+        assertSubtype("Base_T<Any>", "Base_T<in Int>");
+
+        assertSubtype("Base_T<out Int>", "Base_T<out Int>");
+        assertSubtype("Base_T<in Int>", "Base_T<in Int>");
+
+        assertSubtype("Base_inT<out Int>", "Base_inT<out Int>");
+        assertSubtype("Base_inT<in Int>", "Base_inT<in Int>");
+
+        assertSubtype("Base_outT<out Int>", "Base_outT<out Int>");
+        assertSubtype("Base_outT<in Int>", "Base_outT<in Int>");
+
+        assertSubtype("Base_T<Int>", "Base_T<*>");
+        assertSubtype("Base_T<*>", "Base_T<*>");
+        assertSubtype("Base_T<Int>", "Base_T<out Any>");
+        assertSubtype("Base_T<Any>", "Base_T<in Int>");
+
+        assertNotSubtype("Base_T<out Any>", "Base_T<in Int>");
+        assertNotSubtype("Base_T<in Int>", "Base_T<out Int>");
+        assertNotSubtype("Base_T<*>", "Base_T<out Int>");
     }
 
     public void testImplicitConversions() throws Exception {
@@ -295,8 +327,14 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
     private static List<TypeProjection> toTypeProjections(List<JetTypeProjection> argumentElements) {
         final List<TypeProjection> arguments = new ArrayList<TypeProjection>();
         for (JetTypeProjection argumentElement : argumentElements) {
-            Type type = toType(argumentElement.getTypeReference());
-            TypeProjection typeProjection = new TypeProjection(argumentElement.getProjectionKind(), type);
+            ProjectionKind projectionKind = argumentElement.getProjectionKind();
+            Type type;
+            if (projectionKind == ProjectionKind.NEITHER_OUT_NOR_IN) {
+                type = null;
+            } else {
+                type = toType(argumentElement.getTypeReference());
+            }
+            TypeProjection typeProjection = new TypeProjection(projectionKind, type);
             arguments.add(typeProjection);
         }
         return arguments;
