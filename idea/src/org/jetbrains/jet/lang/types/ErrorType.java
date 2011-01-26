@@ -35,7 +35,7 @@ public class ErrorType extends VisitableTypeImpl implements Type {
 
     @Override
     public <R, D> R accept(TypeVisitor<R, D> visitor, D data) {
-        throw new UnsupportedOperationException("Not found: " + debugLabel); // TODO
+        return visitor.visitErrorType(this, data);
     }
 
     @Override

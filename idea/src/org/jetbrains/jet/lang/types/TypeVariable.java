@@ -12,8 +12,15 @@ import java.util.List;
  */
 public class TypeVariable extends TypeImpl {
 
+    private final TypeParameterDescriptor typeParameterDescriptor;
+
     public TypeVariable(@NotNull List<Attribute> attributes, @NotNull TypeParameterDescriptor typeParameter) {
         super(attributes, typeParameter.getTypeConstructor(), Collections.<TypeProjection>emptyList());
+        this.typeParameterDescriptor = typeParameter;
+    }
+
+    public TypeParameterDescriptor getTypeParameterDescriptor() {
+        return typeParameterDescriptor;
     }
 
     @Override

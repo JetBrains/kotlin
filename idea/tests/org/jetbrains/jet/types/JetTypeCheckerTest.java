@@ -158,9 +158,12 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertNotSubtype("Base_T<in Int>", "Base_T<out Int>");
         assertNotSubtype("Base_T<*>", "Base_T<out Int>");
 
-        assertNotSubtype("Derived_T<Any>", "Base_T<Any>");
-        assertSubtype("Derived_outT<Any>", "Base_outT<Any>");
+        assertSubtype("Derived_T<Int>", "Base_T<Int>");
+        assertSubtype("Derived_outT<Int>", "Base_outT<Int>");
+        assertSubtype("Derived_inT<Int>", "Base_inT<Int>");
+
         assertNotSubtype("Derived_T<Int>", "Base_T<Any>");
+
         assertSubtype("Derived_outT<Int>", "Base_outT<Any>");
         assertSubtype("Derived_T<Int>", "Base_T<out Any>");
         assertSubtype("Derived_T<Any>", "Base_T<in Int>");

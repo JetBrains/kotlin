@@ -28,6 +28,10 @@ public class TypeVisitor<R, D> {
         return visitType(errorType, data);
     }
 
+    public R visitNullableType(NullableType nullableType, D data) {
+        return visitType(nullableType, data);
+    }
+
     public R visitType(Type type, D data) {
         throw new UnsupportedOperationException(); // TODO
     }

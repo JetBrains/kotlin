@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.types;
 
 import com.intellij.psi.tree.IElementType;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.psi.*;
@@ -63,7 +64,7 @@ public class JetTypeChecker {
     }
 
     public boolean isConvertibleTo(JetExpression expression, Type type) {
-        return false;  //To change body of created methods use File | Settings | File Templates.
+        throw new UnsupportedOperationException(); // TODO
     }
 
     public boolean isSubtypeOf(Type subtype, Type supertype) {
@@ -107,7 +108,18 @@ public class JetTypeChecker {
         return substitute(parameterValues, subject);
     }
 
+    @NotNull
     private Type substitute(Map<TypeParameterDescriptor, TypeProjection> parameterValues, Type subject) {
+        if (subject instanceof TypeVariable) {
+            TypeVariable typeVariable = (TypeVariable) subject;
+            TypeProjection value = parameterValues.get(typeVariable.getTypeParameterDescriptor());
+            if (value == null) {
+                return typeVariable;
+            }
+            Type type = value.getType();
+            assert type != null;
+            return type;
+        }
         List<TypeProjection> newArguments = new ArrayList<TypeProjection>();
         for (TypeProjection argument : subject.getArguments()) {
             newArguments.add(new TypeProjection(argument.getProjectionKind(), substitute(parameterValues, argument.getType())));
@@ -116,8 +128,13 @@ public class JetTypeChecker {
     }
 
     private Type specializeType(Type type, List<TypeProjection> newArguments) {
-        // TODO
-        return type;
+        return type.accept(new TypeVisitor<Type, List<TypeProjection>>() {
+            @Override
+            public Type visitClassType(ClassType classType, List<TypeProjection> newArguments) {
+                return new ClassType(classType.getAttributes(), classType.getClassDescriptor(), newArguments);
+            }
+
+        }, newArguments);
     }
 
     private boolean checkSubtypeForTheSameConstructor(Type subtype, Type supertype) {
