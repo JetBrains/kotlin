@@ -66,6 +66,16 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertType("(1, 'a')", JetStandardClasses.getTupleType(JetStandardClasses.getIntType(), JetStandardClasses.getCharType()));
     }
 
+    public void testJumps() throws Exception {
+        assertType("throw e", JetStandardClasses.getNothingType());
+        assertType("return", JetStandardClasses.getNothingType());
+        assertType("return 1", JetStandardClasses.getNothingType());
+        assertType("continue", JetStandardClasses.getNothingType());
+        assertType("continue \"foo\"", JetStandardClasses.getNothingType());
+        assertType("break", JetStandardClasses.getNothingType());
+        assertType("break \"foo\"", JetStandardClasses.getNothingType());
+    }
+
     public void testBasicSubtyping() throws Exception {
         assertSubtype("Boolean", "Boolean");
         assertSubtype("Byte", "Byte");
@@ -120,17 +130,17 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertSubtype("(Short)",   "(Short)");
         assertSubtype("(Int)",     "(Int)");
         assertSubtype("(Long)",    "(Long)");
-        assertSubtype("(Float)",   "(Float)");
-        assertSubtype("(Double)",  "(Double)");
-        assertSubtype("(Unit)",    "(Unit)");
-        assertSubtype("(Unit, Unit)",    "(Unit, Unit)");
+        assertSubtype("(Float)", "(Float)");
+        assertSubtype("(Double)", "(Double)");
+        assertSubtype("(Unit)", "(Unit)");
+        assertSubtype("(Unit, Unit)", "(Unit, Unit)");
 
         assertNotSubtype("(Unit)", "(Int)");
 
-        assertSubtype("(Unit)",    "(Any)");
-        assertSubtype("(Unit, Unit)",    "(Any, Any)");
-        assertSubtype("(Unit, Unit)",    "(Any, Unit)");
-        assertSubtype("(Unit, Unit)",    "(Unit, Any)");
+        assertSubtype("(Unit)", "(Any)");
+        assertSubtype("(Unit, Unit)", "(Any, Any)");
+        assertSubtype("(Unit, Unit)", "(Any, Unit)");
+        assertSubtype("(Unit, Unit)", "(Unit, Any)");
     }
 
     public void testProjections() throws Exception {

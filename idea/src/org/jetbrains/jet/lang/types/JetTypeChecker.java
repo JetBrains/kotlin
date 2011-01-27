@@ -17,9 +17,29 @@ import java.util.Map;
 public class JetTypeChecker {
     public static final JetTypeChecker INSTANCE = new JetTypeChecker();
 
+    /*
+       : jump
+       : if
+       : when
+       : try
+       : functionLiteral
+       : "this" ("<" type ">")?
+       : "typeof" "(" expression ")"
+       : "new" constructorInvocation
+       : objectLiteral
+       : declaration
+       : loop
+       : SimpleName
+       : "namespace" // for the root namespace
+     */
     public Type getType(JetExpression expression) {
         final Type[] result = new Type[1];
         expression.accept(new JetVisitor() {
+            @Override
+            public void visitParenthesizedExpression(JetParenthesizedExpression expression) {
+                result[0] = getType(expression.getExpression());
+            }
+
             @Override
             public void visitConstantExpression(JetConstantExpression expression) {
                 IElementType elementType = expression.getNode().getElementType();
@@ -50,12 +70,38 @@ public class JetTypeChecker {
             }
 
             @Override
+            public void visitThrowExpression(JetThrowExpression expression) {
+                result[0] = JetStandardClasses.getNothingType();
+            }
+
+            @Override
+            public void visitReturnExpression(JetReturnExpression expression) {
+                result[0] = JetStandardClasses.getNothingType();
+            }
+
+            @Override
+            public void visitBreakExpression(JetBreakExpression expression) {
+                result[0] = JetStandardClasses.getNothingType();
+            }
+
+            @Override
+            public void visitContinueExpression(JetContinueExpression expression) {
+                result[0] = JetStandardClasses.getNothingType();
+            }
+
+            @Override
+            public void visitTypeofExpression(JetTypeofExpression expression) {
+                throw new UnsupportedOperationException("Return some reflection interface"); // TODO
+            }
+
+            @Override
             public void visitTupleExpression(JetTupleExpression expression) {
                 List<JetExpression> entries = expression.getEntries();
                 List<Type> types = new ArrayList<Type>();
                 for (JetExpression entry : entries) {
                     types.add(getType(entry));
                 }
+                // TODO : labels
                 result[0] = JetStandardClasses.getTupleType(types);
             }
 
