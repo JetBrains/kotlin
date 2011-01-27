@@ -177,6 +177,25 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertSubtype("Derived_T<Any>", "Base_T<in Int>");
     }
 
+    public void testNullable() throws Exception {
+        assertSubtype("Any?", "Any?");
+        assertSubtype("Any", "Any?");
+        assertNotSubtype("Any?", "Any");
+        assertSubtype("Int", "Any?");
+        assertSubtype("Int?", "Any?");
+        assertNotSubtype("Int?", "Any");
+    }
+
+    public void testNothing() throws Exception {
+        assertSubtype("Nothing", "Any");
+        assertSubtype("Nothing?", "Any?");
+        assertNotSubtype("Nothing?", "Any");
+
+        assertSubtype("Nothing", "Int");
+        assertSubtype("Nothing?", "Int?");
+        assertNotSubtype("Nothing?", "Int");
+    }
+
     public void testImplicitConversions() throws Exception {
         assertConvertibleTo("1", JetStandardClasses.getByteType());
     }
@@ -254,6 +273,8 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
                     return JetStandardClasses.getTuple(0);
                 } else if ("Any".equals(name)) {
                     return JetStandardClasses.getAny();
+                } else if ("Nothing".equals(name)) {
+                    return JetStandardClasses.getNothing();
                 }
                 if (CLASSES.isEmpty()) {
                     for (String classDeclaration : CLASS_DECLARATIONS) {

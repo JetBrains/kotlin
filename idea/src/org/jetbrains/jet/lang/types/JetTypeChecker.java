@@ -75,6 +75,9 @@ public class JetTypeChecker {
         if (!supertype.isNullable() && subtype.isNullable()) {
             return false;
         }
+        if (subtype.getConstructor() == JetStandardClasses.getNothing().getTypeConstructor()) {
+            return true;
+        }
         @Nullable Type closestSupertype = findCorrespondingSupertype(subtype, supertype);
         if (closestSupertype == null) {
             return false;

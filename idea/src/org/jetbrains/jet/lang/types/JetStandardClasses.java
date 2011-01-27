@@ -8,12 +8,12 @@ import java.util.*;
  * @author abreslav
  */
 public class JetStandardClasses {
-    private static final TypeConstructor NOTHING = new TypeConstructor(
+
+    private static ClassDescriptor NOTHING_CLASS = new ClassDescriptor(
             Collections.<Attribute>emptyList(),
             "Nothing",
             Collections.<TypeParameterDescriptor>emptyList(),
             new AbstractCollection<Type>() {
-
                 @Override
                 public boolean contains(Object o) {
                     return o instanceof Type;
@@ -28,7 +28,8 @@ public class JetStandardClasses {
                 public int size() {
                     throw new UnsupportedOperationException();
                 }
-            });
+            }
+    );
 
     private static final ClassDescriptor ANY = new ClassDescriptor(
             Collections.<Attribute>emptyList(),
@@ -85,8 +86,13 @@ public class JetStandardClasses {
     private static final Type BOOLEAN_TYPE = new TypeImpl(getBoolean().getTypeConstructor(), STUB);
     private static final Type STRING_TYPE = new TypeImpl(getString().getTypeConstructor(), STUB);
     private static final Type UNIT_TYPE = new TypeImpl(getTuple(0).getTypeConstructor(), STUB);
-    private static final Type NOTHING_TYPE = new TypeImpl(NOTHING, STUB);
-    private static final Type NULLABLE_NOTHING_TYPE = new TypeImpl(Collections.<Attribute>emptyList(), NOTHING, true, Collections.<TypeProjection>emptyList(), TypeMemberDomain.EMPTY);
+    private static final Type NOTHING_TYPE = new TypeImpl(getNothing().getTypeConstructor(), STUB);
+    private static final Type NULLABLE_NOTHING_TYPE = new TypeImpl(
+            Collections.<Attribute>emptyList(),
+            getNothing().getTypeConstructor(),
+            true,
+            Collections.<TypeProjection>emptyList(),
+            TypeMemberDomain.EMPTY);
 
     @NotNull
     public static ClassDescriptor getAny() {
@@ -141,6 +147,11 @@ public class JetStandardClasses {
     @NotNull
     public static ClassDescriptor getString() {
         return STRING;
+    }
+
+    @NotNull
+    public static ClassDescriptor getNothing() {
+        return NOTHING_CLASS;
     }
 
     @NotNull
