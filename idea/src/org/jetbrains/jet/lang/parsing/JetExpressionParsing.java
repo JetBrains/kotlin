@@ -156,7 +156,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         /**
          *
-         * @param operation the operation sign (e.g. PLUS or IS
+         * @param operation the operation sign (e.g. PLUS or IS)
          * @param parser the parser object
          * @return node type of the result
          */

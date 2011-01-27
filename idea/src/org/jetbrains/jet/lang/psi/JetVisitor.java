@@ -310,14 +310,6 @@ public class JetVisitor extends PsiElementVisitor {
         visitExpression(expression);
     }
 
-    public void visitMatchExpression(JetMatchExpression expression) {
-        visitExpression(expression);
-    }
-
-    public void visitMatchBlock(JetMatchBlock block) {
-        visitJetElement(block);
-    }
-
     public void visitNamedDeclaration(JetNamedDeclaration declaration) {
         visitJetElement(declaration);
     }

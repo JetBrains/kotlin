@@ -98,7 +98,6 @@ public interface JetNodeTypes {
     JetNodeType BINARY_EXPRESSION         = new JetNodeType("BINARY_EXPRESSION", JetBinaryExpression.class);
     JetNodeType BINARY_WITH_TYPE          = new JetNodeType("BINARY_WITH_TYPE", JetBinaryExpressionWithTypeRHS.class);
     JetNodeType BINARY_WITH_PATTERN       = new JetNodeType("BINARY_WITH_PATTERN", JetExpression.class); // TODO:
-    JetNodeType MATCH_EXPRESSION          = new JetNodeType("MATCH_EXPRESSION", JetMatchExpression.class);
     JetNodeType PREFIX_EXPRESSION         = new JetNodeType("PREFIX_EXPRESSION", JetPrefixExpression.class);
     JetNodeType POSTFIX_EXPRESSION        = new JetNodeType("POSTFIX_EXPRESSION", JetPostfixExpression.class);
     JetNodeType CALL_EXPRESSION           = new JetNodeType("CALL_EXPRESSION", JetCallExpression.class);
@@ -107,8 +106,6 @@ public interface JetNodeTypes {
     JetNodeType DOT_QIALIFIED_EXPRESSION  = new JetNodeType("DOT_QIALIFIED_EXPRESSION", JetDotQualifiedExpression.class);
     JetNodeType HASH_QIALIFIED_EXPRESSION = new JetNodeType("HASH_QIALIFIED_EXPRESSION", JetHashQualifiedExpression.class);
     JetNodeType SAFE_ACCESS_EXPRESSION    = new JetNodeType("SAFE_ACCESS_EXPRESSION", JetSafeQualifiedExpression.class);
-    JetNodeType MATCH_BLOCK               = new JetNodeType("MATCH_BLOCK", JetMatchBlock.class);
-    JetNodeType MATCH_ENTRY               = new JetNodeType("MATCH_ENTRY");
     JetNodeType DECOMPOSER_PATTERN        = new JetNodeType("DECOMPOSER_PATTERN");
     JetNodeType TUPLE_PATTERN             = new JetNodeType("TUPLE_PATTERN");
     JetNodeType OBJECT_LITERAL            = new JetNodeType("OBJECT_LITERAL", JetObjectLiteralExpression.class);
