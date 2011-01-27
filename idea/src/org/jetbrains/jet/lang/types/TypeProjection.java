@@ -26,6 +26,12 @@ public class TypeProjection {
 
     @Override
     public String toString() {
+        if (projection == ProjectionKind.NEITHER_OUT_NOR_IN) {
+            return projection.toString();
+        }
+        if (projection == ProjectionKind.NO_PROJECTION) {
+            return type + "";
+        }
         return projection + " " + type;
     }
 }

@@ -24,11 +24,20 @@ public class ClassDescriptorResolver {
     @Nullable
     public ClassDescriptor resolveClassDescriptor(@NotNull JetScope scope, @NotNull JetClass classElement) {
         TypeParameterExtensibleScope extensibleScope = new TypeParameterExtensibleScope(scope);
+
+        // This call has side-effects on the extensibleScope (fills it in)
+        List<TypeParameterDescriptor> typeParameters
+                = resolveTypeParameters(extensibleScope, classElement.getTypeParameters());
+
+        List<JetDelegationSpecifier> delegationSpecifiers = classElement.getDelegationSpecifiers();
+        Collection<? extends Type> superclasses = delegationSpecifiers.isEmpty()
+                ? Collections.singleton(JetStandardClasses.getAnyType())
+                : resolveTypes(extensibleScope, delegationSpecifiers);
         return new ClassDescriptor(
-            AttributeResolver.INSTANCE.resolveAttributes(classElement.getModifierList()),
-            classElement.getName(),
-            resolveTypeParameters(extensibleScope, classElement.getTypeParameters()),
-            resolveTypes(extensibleScope, classElement.getDelegationSpecifiers())
+                AttributeResolver.INSTANCE.resolveAttributes(classElement.getModifierList()),
+                classElement.getName(),
+                typeParameters,
+                superclasses
         );
     }
 

@@ -5,6 +5,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.JetScope;
+import org.jetbrains.jet.lang.resolve.TypeResolver;
+import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.*;
 
@@ -35,12 +38,12 @@ public class JetTypeChecker {
 
        : "namespace" // for the root namespace
      */
-    public Type getType(JetExpression expression) {
+    public Type getType(@NotNull final JetScope scope, @NotNull JetExpression expression) {
         final Type[] result = new Type[1];
         expression.accept(new JetVisitor() {
             @Override
             public void visitParenthesizedExpression(JetParenthesizedExpression expression) {
-                result[0] = getType(expression.getExpression());
+                result[0] = getType(scope, expression.getExpression());
             }
 
             @Override
@@ -98,6 +101,22 @@ public class JetTypeChecker {
             }
 
             @Override
+            public void visitBinaryWithTypeRHSExpression(JetBinaryExpressionWithTypeRHS expression) {
+                if (expression.getOperationSign() == JetTokens.COLON) {
+                    Type actualType = getType(scope, expression.getLeft());
+                    Type expectedType = TypeResolver.INSTANCE.resolveType(scope, expression.getRight());
+                    if (isSubtypeOf(actualType, expectedType)) {
+                        result[0] = expectedType;
+                        return;
+                    } else {
+                         // TODO
+                        throw new UnsupportedOperationException("Type mismatch: expected " + expectedType + " but found " + actualType);
+                    }
+                }
+                throw new UnsupportedOperationException(); // TODO
+            }
+
+            @Override
             public void visitIfExpression(JetIfExpression expression) {
                 // TODO : check condition type
                 // TODO : change types according to is and nullability according to null comparisons
@@ -106,8 +125,8 @@ public class JetTypeChecker {
                     // TODO : type-check the branch
                     result[0] = JetStandardClasses.getUnitType();
                 } else {
-                    Type thenType = getType(expression.getThen());
-                    Type elseType = getType(elseBranch);
+                    Type thenType = getType(scope, expression.getThen());
+                    Type elseType = getType(scope, elseBranch);
                     result[0] = commonSupertype(thenType, elseType);
                 }
             }
@@ -117,7 +136,7 @@ public class JetTypeChecker {
                 List<JetExpression> entries = expression.getEntries();
                 List<Type> types = new ArrayList<Type>();
                 for (JetExpression entry : entries) {
-                    types.add(getType(entry));
+                    types.add(getType(scope, entry));
                 }
                 // TODO : labels
                 result[0] = JetStandardClasses.getTupleType(types);
@@ -149,7 +168,13 @@ public class JetTypeChecker {
         assert !elseOrder.isEmpty() : "No common supertype";
         // TODO: support multiple common supertypes
 
-        return elseOrder.get(0);
+        Type result = elseOrder.get(0);
+
+        if (thenType.isNullable() || elseType.isNullable()) {
+            return TypeUtils.makeNullable(result);
+        }
+        assert !result.isNullable();
+        return result;
     }
 
     private void topologicallySort(Type current, Map<TypeConstructor, Type> visited, List<Type> topologicalOrder, @Nullable Map<TypeConstructor, Type> filter) {
@@ -165,11 +190,11 @@ public class JetTypeChecker {
                 assert equalTypes(visited.get(supertypeConstructor), supertype);
                 continue;
             }
-            Type substitutedSupertype = substitute(substitutionContext, supertype);
+            Type substitutedSupertype = substituteInType(substitutionContext, supertype);
             topologicallySort(substitutedSupertype, visited, topologicalOrder, filter);
         }
         if (filter != null && filter.containsKey(current.getConstructor())) {
-            assert equalTypes(filter.get(current.getConstructor()), current);
+            assert equalTypes(filter.get(current.getConstructor()), current) : filter.get(current.getConstructor()) + " != " + current;
             topologicalOrder.add(0, current);
         }
     }
@@ -204,7 +229,7 @@ public class JetTypeChecker {
         for (Type immediateSupertype : constructor.getSupertypes()) {
             Type correspondingSupertype = findCorrespondingSupertype(immediateSupertype, supertype);
             if (correspondingSupertype != null) {
-                return substitute(getSubstitutionContext(subtype), correspondingSupertype);
+                return substituteInType(getSubstitutionContext(subtype), correspondingSupertype);
             }
         }
         return null;
@@ -223,17 +248,34 @@ public class JetTypeChecker {
         return parameterValues;
     }
 
+    private Type substituteInType(Map<TypeConstructor, TypeProjection> substitutionContext, Type type) {
+        TypeProjection value = substitutionContext.get(type.getConstructor());
+        assert value == null : "For now this is used only for supertypes, thus no variables";
+
+        return specializeType(type, substituteInArguments(substitutionContext, type));
+    }
+
     @NotNull
-    private Type substitute(Map<TypeConstructor, TypeProjection> parameterValues, Type subject) {
-        TypeProjection value = parameterValues.get(subject.getConstructor());
+    private TypeProjection substitute(Map<TypeConstructor, TypeProjection> parameterValues, TypeProjection subject) {
+        ProjectionKind projectionKind = subject.getProjectionKind();
+        if (projectionKind == ProjectionKind.NEITHER_OUT_NOR_IN) {
+            return subject;
+        }
+        @NotNull Type subjectType = subject.getType();
+        TypeProjection value = parameterValues.get(subjectType.getConstructor());
         if (value != null) {
-            return value.getType();
+            return value;
         }
+        List<TypeProjection> newArguments = substituteInArguments(parameterValues, subjectType);
+        return new TypeProjection(projectionKind, specializeType(subjectType, newArguments));
+    }
+
+    private List<TypeProjection> substituteInArguments(Map<TypeConstructor, TypeProjection> parameterValues, Type subjectType) {
         List<TypeProjection> newArguments = new ArrayList<TypeProjection>();
-        for (TypeProjection argument : subject.getArguments()) {
-            newArguments.add(new TypeProjection(argument.getProjectionKind(), substitute(parameterValues, argument.getType())));
+        for (TypeProjection argument : subjectType.getArguments()) {
+            newArguments.add(substitute(parameterValues, argument));
         }
-        return specializeType(subject, newArguments);
+        return newArguments;
     }
 
     private Type specializeType(Type type, List<TypeProjection> newArguments) {
@@ -315,7 +357,7 @@ public class JetTypeChecker {
         return true;
     }
 
-    public boolean equalTypes(Type type1, Type type2) {
+    public boolean equalTypes(@NotNull Type type1, @NotNull Type type2) {
         if (!type1.getConstructor().equals(type2.getConstructor())) {
             return false;
         }
@@ -330,8 +372,10 @@ public class JetTypeChecker {
             if (typeProjection1.getProjectionKind() != typeProjection2.getProjectionKind()) {
                 return false;
             }
-            if (!equalTypes(typeProjection1.getType(), typeProjection2.getType())) {
-                return false;
+            if (typeProjection1.getProjectionKind() != ProjectionKind.NEITHER_OUT_NOR_IN) {
+                if (!equalTypes(typeProjection1.getType(), typeProjection2.getType())) {
+                    return false;
+                }
             }
         }
         return true;
