@@ -6,10 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.psi.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author abreslav
@@ -18,18 +15,24 @@ public class JetTypeChecker {
     public static final JetTypeChecker INSTANCE = new JetTypeChecker();
 
     /*
-       : jump
        : if
        : when
        : try
-       : functionLiteral
+
+       : SimpleName
        : "this" ("<" type ">")?
-       : "typeof" "(" expression ")"
+
        : "new" constructorInvocation
+
        : objectLiteral
+
+       : "typeof" "(" expression ")"
+
        : declaration
        : loop
-       : SimpleName
+
+       : functionLiteral
+
        : "namespace" // for the root namespace
      */
     public Type getType(JetExpression expression) {
@@ -95,6 +98,21 @@ public class JetTypeChecker {
             }
 
             @Override
+            public void visitIfExpression(JetIfExpression expression) {
+                // TODO : check condition type
+                // TODO : change types according to is and nullability according to null comparisons
+                JetExpression elseBranch = expression.getElse();
+                if (elseBranch == null) {
+                    // TODO : type-check the branch
+                    result[0] = JetStandardClasses.getUnitType();
+                } else {
+                    Type thenType = getType(expression.getThen());
+                    Type elseType = getType(elseBranch);
+                    result[0] = commonSupertype(thenType, elseType);
+                }
+            }
+
+            @Override
             public void visitTupleExpression(JetTupleExpression expression) {
                 List<JetExpression> entries = expression.getEntries();
                 List<Type> types = new ArrayList<Type>();
@@ -113,6 +131,49 @@ public class JetTypeChecker {
         return result[0];
     }
 
+    private Type commonSupertype(Type thenType, Type elseType) {
+        if (JetStandardClasses.isNothing(thenType)) {
+            return elseType;
+        }
+        if (JetStandardClasses.isNothing(elseType)) {
+            return thenType;
+        }
+
+        List<Type> thenOrder = new LinkedList<Type>(); // adding to the beginning
+        Map<TypeConstructor, Type> visited = new HashMap<TypeConstructor, Type>();
+        topologicallySort(thenType, visited, thenOrder, null);
+
+        List<Type> elseOrder = new LinkedList<Type>(); // adding to the beginning
+        topologicallySort(elseType, new HashMap<TypeConstructor, Type>(), elseOrder, visited);
+
+        assert !elseOrder.isEmpty() : "No common supertype";
+        // TODO: support multiple common supertypes
+
+        return elseOrder.get(0);
+    }
+
+    private void topologicallySort(Type current, Map<TypeConstructor, Type> visited, List<Type> topologicalOrder, @Nullable Map<TypeConstructor, Type> filter) {
+        Type visitedOccurrence = visited.put(current.getConstructor(), current);
+        if (visitedOccurrence != null) {
+            assert equalTypes(visitedOccurrence, current);
+            return;
+        }
+        Map<TypeConstructor, TypeProjection> substitutionContext = getSubstitutionContext(current);
+        for (Type supertype : current.getConstructor().getSupertypes()) {
+            TypeConstructor supertypeConstructor = supertype.getConstructor();
+            if (visited.containsKey(supertypeConstructor)) {
+                assert equalTypes(visited.get(supertypeConstructor), supertype);
+                continue;
+            }
+            Type substitutedSupertype = substitute(substitutionContext, supertype);
+            topologicallySort(substitutedSupertype, visited, topologicalOrder, filter);
+        }
+        if (filter != null && filter.containsKey(current.getConstructor())) {
+            assert equalTypes(filter.get(current.getConstructor()), current);
+            topologicalOrder.add(0, current);
+        }
+    }
+
     public boolean isConvertibleTo(JetExpression expression, Type type) {
         throw new UnsupportedOperationException(); // TODO
     }
@@ -121,7 +182,7 @@ public class JetTypeChecker {
         if (!supertype.isNullable() && subtype.isNullable()) {
             return false;
         }
-        if (subtype.getConstructor() == JetStandardClasses.getNothing().getTypeConstructor()) {
+        if (JetStandardClasses.isNothing(subtype)) {
             return true;
         }
         @Nullable Type closestSupertype = findCorrespondingSupertype(subtype, supertype);
@@ -143,13 +204,13 @@ public class JetTypeChecker {
         for (Type immediateSupertype : constructor.getSupertypes()) {
             Type correspondingSupertype = findCorrespondingSupertype(immediateSupertype, supertype);
             if (correspondingSupertype != null) {
-                return substituteForParameters(subtype, correspondingSupertype);
+                return substitute(getSubstitutionContext(subtype), correspondingSupertype);
             }
         }
         return null;
     }
 
-    private Type substituteForParameters(Type context, Type subject) {
+    private Map<TypeConstructor, TypeProjection> getSubstitutionContext(Type context) {
         Map<TypeConstructor, TypeProjection> parameterValues = new HashMap<TypeConstructor, TypeProjection>();
 
         List<TypeParameterDescriptor> parameters = context.getConstructor().getParameters();
@@ -159,8 +220,7 @@ public class JetTypeChecker {
             TypeProjection value = contextArguments.get(i);
             parameterValues.put(parameter.getTypeConstructor(), value);
         }
-
-        return substitute(parameterValues, subject);
+        return parameterValues;
     }
 
     @NotNull

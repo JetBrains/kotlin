@@ -76,6 +76,14 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertType("break \"foo\"", JetStandardClasses.getNothingType());
     }
 
+    public void testIf() throws Exception {
+        assertType("if (true) 1", JetStandardClasses.getUnitType());
+        assertType("if (true) 1 else 1", JetStandardClasses.getIntType());
+        assertType("if (true) 1 else return", JetStandardClasses.getIntType());
+        assertType("if (true) return else 1", JetStandardClasses.getIntType());
+        assertType("if (true) return else return", JetStandardClasses.getNothingType());
+    }
+
     public void testBasicSubtyping() throws Exception {
         assertSubtype("Boolean", "Boolean");
         assertSubtype("Byte", "Byte");

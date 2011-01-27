@@ -207,6 +207,10 @@ public class JetStandardClasses {
         return NULLABLE_NOTHING_TYPE;
     }
 
+    public static boolean isNothing(Type type) {
+        return type.getConstructor() == NOTHING_CLASS.getTypeConstructor();
+    }
+
     public static Type getTupleType(List<Attribute> attributes, List<Type> arguments) {
         if (attributes.isEmpty() && arguments.isEmpty()) {
             return getUnitType();
