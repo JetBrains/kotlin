@@ -7,6 +7,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -23,29 +24,48 @@ public class TypeResolver {
     public Type resolveType(@NotNull final JetScope scope, @NotNull final JetTypeReference typeReference) {
         final List<Attribute> attributes = AttributeResolver.INSTANCE.resolveAttributes(typeReference.getAttributes());
 
+        JetTypeElement typeElement = typeReference.getTypeElement();
+        return resolveTypeElement(scope, attributes, typeElement, false);
+    }
+
+    private Type resolveTypeElement(final JetScope scope, final List<Attribute> attributes, JetTypeElement typeElement, final boolean nullable) {
         final Type[] result = new Type[1];
-        typeReference.getTypeElement().accept(new JetVisitor() {
+        typeElement.accept(new JetVisitor() {
             @Override
             public void visitUserType(JetUserType type) {
                 ClassDescriptor classDescriptor = resolveClass(scope, type);
                 if (classDescriptor != null) {
-                    result[0] = new ClassType(
-                        attributes,
-                        classDescriptor,
-                        resolveTypeProjections(scope, type.getTypeArguments())
+                    result[0] = new TypeImpl(
+                            attributes,
+                            classDescriptor.getTypeConstructor(),
+                            nullable,
+                            resolveTypeProjections(scope, type.getTypeArguments()),
+                            JetStandardClasses.STUB
                     );
-                } else if (type.getTypeArguments().isEmpty()) {
+                }
+                else if (type.getTypeArguments().isEmpty()) {
                     TypeParameterDescriptor typeParameterDescriptor = scope.getTypeParameterDescriptor(type.getReferencedName());
                     if (typeParameterDescriptor != null) {
-                        result[0] = new TypeVariable(attributes, typeParameterDescriptor);
+                        result[0] = new TypeImpl(
+                                attributes,
+                                typeParameterDescriptor.getTypeConstructor(),
+                                nullable || hasNullableBound(typeParameterDescriptor),
+                                Collections.<TypeProjection>emptyList(),
+                                JetStandardClasses.STUB
+                        );
                     }
                 }
             }
 
             @Override
+            public void visitNullableType(JetNullableType nullableType) {
+                result[0] = resolveTypeElement(scope, attributes, nullableType.getInnerType(), true);
+            }
+
+            @Override
             public void visitTupleType(JetTupleType type) {
                 // TODO labels
-                result[0] = TupleType.getTupleType(resolveTypes(scope, type.getComponentTypeRefs()));
+                result[0] = JetStandardClasses.getTupleType(resolveTypes(scope, type.getComponentTypeRefs()));
             }
 
             @Override
@@ -54,9 +74,18 @@ public class TypeResolver {
             }
         });
         if (result[0] == null) {
-            return new ErrorType(typeReference);
+            return ErrorType.createErrorType(typeElement.getText());
         }
         return result[0];
+    }
+
+    private boolean hasNullableBound(TypeParameterDescriptor typeParameterDescriptor) {
+        for (Type bound : typeParameterDescriptor.getUpperBounds()) {
+            if (bound.isNullable()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private List<Type> resolveTypes(JetScope scope, List<JetTypeReference> argumentElements) {

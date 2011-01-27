@@ -1,18 +1,18 @@
 package org.jetbrains.jet.lang.types;
 
-import java.util.Collection;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 /**
  * @author abreslav
  */
 public interface Type extends Annotated {
-    TypeConstructor getConstructor();
-    List<TypeProjection> getArguments();
+    @NotNull TypeConstructor getConstructor();
+    @NotNull List<TypeProjection> getArguments();
+    boolean isNullable();
 
-    Collection<MemberDescriptor> getMembers();
+    @NotNull TypeMemberDomain getMemberDomain();
 
-    <R, D> R accept(TypeVisitor<R, D> visitor, D data);
-    <R> R acceptNoData(TypeVisitor<R, ?> visitor);
-    void acceptVoid(TypeVisitor<?, ?> visitor);
+    @NotNull Type getNullableVersion();
 }

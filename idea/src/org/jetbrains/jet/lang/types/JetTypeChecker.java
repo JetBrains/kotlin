@@ -15,6 +15,8 @@ import java.util.Map;
  * @author abreslav
  */
 public class JetTypeChecker {
+    public static final JetTypeChecker INSTANCE = new JetTypeChecker();
+
     public Type getType(JetExpression expression) {
         final Type[] result = new Type[1];
         expression.accept(new JetVisitor() {
@@ -22,24 +24,26 @@ public class JetTypeChecker {
             public void visitConstantExpression(JetConstantExpression expression) {
                 IElementType elementType = expression.getNode().getElementType();
                 if (elementType == JetNodeTypes.INTEGER_CONSTANT) {
-                    result[0] = JetStandardTypes.getInt();
+                    result[0] = JetStandardClasses.getIntType();
                 } else if (elementType == JetNodeTypes.LONG_CONSTANT) {
-                    result[0] = JetStandardTypes.getLong();
+                    result[0] = JetStandardClasses.getLongType();
                 } else if (elementType == JetNodeTypes.FLOAT_CONSTANT) {
                     String text = expression.getText();
                     assert text.length() > 0;
                     char lastChar = text.charAt(text.length() - 1);
                     if (lastChar == 'f' || lastChar == 'F') {
-                        result[0] = JetStandardTypes.getFloat();
+                        result[0] = JetStandardClasses.getFloatType();
                     } else {
-                        result[0] = JetStandardTypes.getDouble();
+                        result[0] = JetStandardClasses.getDoubleType();
                     }
                 } else if (elementType == JetNodeTypes.BOOLEAN_CONSTANT) {
-                    result[0] = JetStandardTypes.getBoolean();
+                    result[0] = JetStandardClasses.getBooleanType();
                 } else if (elementType == JetNodeTypes.CHARACTER_CONSTANT) {
-                    result[0] = JetStandardTypes.getChar();
+                    result[0] = JetStandardClasses.getCharType();
                 } else if (elementType == JetNodeTypes.STRING_CONSTANT) {
-                    result[0] = JetStandardTypes.getString();
+                    result[0] = JetStandardClasses.getStringType();
+                } else if (elementType == JetNodeTypes.NULL) {
+                    result[0] = JetStandardClasses.getNullableNothingType();
                 } else {
                     throw new IllegalArgumentException("Unsupported constant: " + expression);
                 }
@@ -52,7 +56,7 @@ public class JetTypeChecker {
                 for (JetExpression entry : entries) {
                     types.add(getType(entry));
                 }
-                result[0] = TupleType.getTupleType(types);
+                result[0] = JetStandardClasses.getTupleType(types);
             }
 
             @Override
@@ -68,8 +72,10 @@ public class JetTypeChecker {
     }
 
     public boolean isSubtypeOf(Type subtype, Type supertype) {
-        @Nullable
-        Type closestSupertype = findCorrespondingSupertype(subtype, supertype);
+        if (!supertype.isNullable() && subtype.isNullable()) {
+            return false;
+        }
+        @Nullable Type closestSupertype = findCorrespondingSupertype(subtype, supertype);
         if (closestSupertype == null) {
             return false;
         }
@@ -95,30 +101,24 @@ public class JetTypeChecker {
     }
 
     private Type substituteForParameters(Type context, Type subject) {
-        Map<TypeParameterDescriptor, TypeProjection> parameterValues = new HashMap<TypeParameterDescriptor, TypeProjection>();
+        Map<TypeConstructor, TypeProjection> parameterValues = new HashMap<TypeConstructor, TypeProjection>();
 
         List<TypeParameterDescriptor> parameters = context.getConstructor().getParameters();
         List<TypeProjection> contextArguments = context.getArguments();
         for (int i = 0, parametersSize = parameters.size(); i < parametersSize; i++) {
             TypeParameterDescriptor parameter = parameters.get(i);
             TypeProjection value = contextArguments.get(i);
-            parameterValues.put(parameter, value);
+            parameterValues.put(parameter.getTypeConstructor(), value);
         }
 
         return substitute(parameterValues, subject);
     }
 
     @NotNull
-    private Type substitute(Map<TypeParameterDescriptor, TypeProjection> parameterValues, Type subject) {
-        if (subject instanceof TypeVariable) {
-            TypeVariable typeVariable = (TypeVariable) subject;
-            TypeProjection value = parameterValues.get(typeVariable.getTypeParameterDescriptor());
-            if (value == null) {
-                return typeVariable;
-            }
-            Type type = value.getType();
-            assert type != null;
-            return type;
+    private Type substitute(Map<TypeConstructor, TypeProjection> parameterValues, Type subject) {
+        TypeProjection value = parameterValues.get(subject.getConstructor());
+        if (value != null) {
+            return value.getType();
         }
         List<TypeProjection> newArguments = new ArrayList<TypeProjection>();
         for (TypeProjection argument : subject.getArguments()) {
@@ -128,13 +128,7 @@ public class JetTypeChecker {
     }
 
     private Type specializeType(Type type, List<TypeProjection> newArguments) {
-        return type.accept(new TypeVisitor<Type, List<TypeProjection>>() {
-            @Override
-            public Type visitClassType(ClassType classType, List<TypeProjection> newArguments) {
-                return new ClassType(classType.getAttributes(), classType.getClassDescriptor(), newArguments);
-            }
-
-        }, newArguments);
+        return new TypeImpl(type.getAttributes(), type.getConstructor(), type.isNullable(), newArguments, type.getMemberDomain());
     }
 
     private boolean checkSubtypeForTheSameConstructor(Type subtype, Type supertype) {
@@ -212,7 +206,7 @@ public class JetTypeChecker {
         return true;
     }
 
-    private boolean equalTypes(Type type1, Type type2) {
+    public boolean equalTypes(Type type1, Type type2) {
         if (!type1.getConstructor().equals(type2.getConstructor())) {
             return false;
         }

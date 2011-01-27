@@ -19,7 +19,7 @@ public class TypeParameterDescriptor extends NamedAnnotatedImpl {
         // TODO: Should we actually pass the attributes on to the type constructor?
         this.typeConstructor = new TypeConstructor(
                 attributes,
-                name,
+                "&" + name,
                 Collections.<TypeParameterDescriptor>emptyList(),
                 upperBounds);
     }
@@ -34,5 +34,10 @@ public class TypeParameterDescriptor extends NamedAnnotatedImpl {
 
     public TypeConstructor getTypeConstructor() {
         return typeConstructor;
+    }
+
+    @Override
+    public String toString() {
+        return typeConstructor.toString();
     }
 }

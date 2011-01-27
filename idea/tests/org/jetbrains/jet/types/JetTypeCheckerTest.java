@@ -29,33 +29,41 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
     }
 
     public void testConstants() throws Exception {
-        assertType("1", JetStandardTypes.getInt());
-        assertType("0x1", JetStandardTypes.getInt());
-        assertType("0X1", JetStandardTypes.getInt());
-        assertType("0b1", JetStandardTypes.getInt());
-        assertType("0B1", JetStandardTypes.getInt());
+        assertType("1", JetStandardClasses.getIntType());
+        assertType("0x1", JetStandardClasses.getIntType());
+        assertType("0X1", JetStandardClasses.getIntType());
+        assertType("0b1", JetStandardClasses.getIntType());
+        assertType("0B1", JetStandardClasses.getIntType());
 
-        assertType("1l", JetStandardTypes.getLong());
-        assertType("1L", JetStandardTypes.getLong());
+        assertType("1l", JetStandardClasses.getLongType());
+        assertType("1L", JetStandardClasses.getLongType());
 
-        assertType("1.0", JetStandardTypes.getDouble());
-        assertType("1.0d", JetStandardTypes.getDouble());
-        assertType("1.0D", JetStandardTypes.getDouble());
-        assertType("0x1.fffffffffffffp1023", JetStandardTypes.getDouble());
+        assertType("1.0", JetStandardClasses.getDoubleType());
+        assertType("1.0d", JetStandardClasses.getDoubleType());
+        assertType("1.0D", JetStandardClasses.getDoubleType());
+        assertType("0x1.fffffffffffffp1023", JetStandardClasses.getDoubleType());
 
-        assertType("1.0f", JetStandardTypes.getFloat());
-        assertType("1.0F", JetStandardTypes.getFloat());
-        assertType("0x1.fffffffffffffp1023f", JetStandardTypes.getFloat());
+        assertType("1.0f", JetStandardClasses.getFloatType());
+        assertType("1.0F", JetStandardClasses.getFloatType());
+        assertType("0x1.fffffffffffffp1023f", JetStandardClasses.getFloatType());
 
-        assertType("true", JetStandardTypes.getBoolean());
-        assertType("false", JetStandardTypes.getBoolean());
+        assertType("true", JetStandardClasses.getBooleanType());
+        assertType("false", JetStandardClasses.getBooleanType());
 
-        assertType("'d'", JetStandardTypes.getChar());
+        assertType("'d'", JetStandardClasses.getCharType());
 
-        assertType("\"d\"", JetStandardTypes.getString());
-        assertType("\"\"\"d\"\"\"", JetStandardTypes.getString());
+        assertType("\"d\"", JetStandardClasses.getStringType());
+        assertType("\"\"\"d\"\"\"", JetStandardClasses.getStringType());
 
-        assertType("()", JetStandardTypes.getUnit());
+        assertType("()", JetStandardClasses.getUnitType());
+
+        assertType("null", JetStandardClasses.getNullableNothingType());
+    }
+
+    public void testTupleConstants() throws Exception {
+        assertType("()", JetStandardClasses.getUnitType());
+
+        assertType("(1, 'a')", JetStandardClasses.getTupleType(JetStandardClasses.getIntType(), JetStandardClasses.getCharType()));
     }
 
     public void testBasicSubtyping() throws Exception {
@@ -170,7 +178,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
     }
 
     public void testImplicitConversions() throws Exception {
-        assertConvertibleTo("1", JetStandardTypes.getByte());
+        assertConvertibleTo("1", JetStandardClasses.getByteType());
     }
 
     private static void assertSubtype(String type1, String type2) {
@@ -184,7 +192,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
     private static void assertSubtypingRelation(String type1, String type2, boolean expected) {
         Type typeNode1 = TypeResolver.INSTANCE.resolveType(ClassDefinitions.BASIC_SCOPE, JetChangeUtil.createType(getProject(), type1));
         Type typeNode2 = TypeResolver.INSTANCE.resolveType(ClassDefinitions.BASIC_SCOPE, JetChangeUtil.createType(getProject(), type2));
-        boolean result = new JetTypeChecker().isSubtypeOf(
+        boolean result = JetTypeChecker.INSTANCE.isSubtypeOf(
                 typeNode1,
                 typeNode2);
         String modifier = expected ? "not " : "";
@@ -195,21 +203,21 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         JetExpression jetExpression = JetChangeUtil.createExpression(getProject(), expression);
         assertTrue(
                 expression + " must be convertible to " + type,
-                new JetTypeChecker().isConvertibleTo(jetExpression, type));
+                JetTypeChecker.INSTANCE.isConvertibleTo(jetExpression, type));
     }
 
     private static void assertNotConvertibleTo(String expression, Type type) {
         JetExpression jetExpression = JetChangeUtil.createExpression(getProject(), expression);
         assertFalse(
                 expression + " must not be convertible to " + type,
-                new JetTypeChecker().isConvertibleTo(jetExpression, type));
+                JetTypeChecker.INSTANCE.isConvertibleTo(jetExpression, type));
     }
 
     private static void assertType(String expression, Type expectedType) {
         Project project = getProject();
         JetExpression jetExpression = JetChangeUtil.createExpression(project, expression);
-        Type type = new JetTypeChecker().getType(jetExpression);
-        assertEquals(type, expectedType);
+        Type type = JetTypeChecker.INSTANCE.getType(jetExpression);
+        assertTrue(type + "!=" + expectedType, JetTypeChecker.INSTANCE.equalTypes(type, expectedType));
     }
 
     private static class ClassDefinitions {

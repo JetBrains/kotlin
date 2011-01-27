@@ -1,45 +1,26 @@
 package org.jetbrains.jet.lang.types;
 
-import org.jetbrains.jet.lang.psi.JetTypeReference;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 /**
  * @author abreslav
  */
-public class ErrorType extends VisitableTypeImpl implements Type {
-    private final String debugLabel;
+public class ErrorType {
+    private static final TypeMemberDomain ERROR_DOMAIN = new TypeMemberDomain() {
+        @Override
+        public ClassDescriptor getClassDescriptor(@NotNull Type type) {
+            throw new UnsupportedOperationException(); // TODO
+        }
+    };
+    private static final TypeConstructor ERROR = new TypeConstructor(Collections.<Attribute>emptyList(), "ERROR", Collections.<TypeParameterDescriptor>emptyList(), Collections.<Type>emptyList());
 
-    public ErrorType(JetTypeReference typeReference) {
-        super(Collections.<Attribute>emptyList());
-        this.debugLabel = typeReference.getText();
-        assert debugLabel != null;
+    public static Type createErrorType(String debugMessage) {
+        return new TypeImpl(ERROR, ERROR_DOMAIN);
     }
 
-    @Override
-    public TypeConstructor getConstructor() {
-        throw new UnsupportedOperationException("Not found: " + debugLabel); // TODO
-    }
-
-    @Override
-    public List<TypeProjection> getArguments() {
-        throw new UnsupportedOperationException("Not found: " + debugLabel); // TODO
-    }
-
-    @Override
-    public Collection<MemberDescriptor> getMembers() {
-        throw new UnsupportedOperationException("Not found: " + debugLabel); // TODO
-    }
-
-    @Override
-    public <R, D> R accept(TypeVisitor<R, D> visitor, D data) {
-        return visitor.visitErrorType(this, data);
-    }
-
-    @Override
-    public String toString() {
-        return "!!!" + debugLabel + "!!!";
+    public static boolean isError(Type type) {
+        return type.getConstructor() == ERROR;
     }
 }
