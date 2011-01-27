@@ -29,6 +29,57 @@ public class JetExpressionParsing extends AbstractJetParsing {
             COLON
     );
 
+    private static final TokenSet EXPRESSION_FIRST = TokenSet.orSet(TokenSet.create(
+            // Prefix
+            MINUS, PLUS, MINUSMINUS, PLUSPLUS, EXCL, LBRACKET,
+            // Atomic
+
+            LPAR, // parenthesized
+
+            // literal constant
+            TRUE_KEYWORD, FALSE_KEYWORD,
+            STRING_LITERAL, RAW_STRING_LITERAL,
+            INTEGER_LITERAL, LONG_LITERAL, CHARACTER_LITERAL, FLOAT_LITERAL,
+            NULL_KEYWORD,
+
+            LBRACE, // functionLiteral
+
+            LPAR, // tuple
+
+            THIS_KEYWORD, // this
+
+            IF_KEYWORD, // if
+            WHEN_KEYWORD, // when
+            TRY_KEYWORD, // try
+            TYPEOF_KEYWORD, // typeof
+            NEW_KEYWORD, // new
+            OBJECT_KEYWORD, // object
+
+            // declaration
+            LBRACKET, // attribute
+            FUN_KEYWORD,
+            VAL_KEYWORD, VAR_KEYWORD,
+            EXTENSION_KEYWORD,
+            CLASS_KEYWORD,
+            TYPE_KEYWORD,
+
+            // jump
+            THROW_KEYWORD,
+            RETURN_KEYWORD,
+            CONTINUE_KEYWORD,
+            BREAK_KEYWORD,
+
+            // loop
+            FOR_KEYWORD,
+            WHILE_KEYWORD,
+            DO_KEYWORD,
+
+            IDENTIFIER, // SimpleName
+            FIELD_IDENTIFIER, // Field reference
+
+            NAMESPACE_KEYWORD // for absolute qualified names
+    ), MODIFIER_KEYWORDS);
+
     private final JetParsing myJetParsing;
 
     public JetExpressionParsing(SemanticWhitespaceAwarePsiBuilder builder, JetParsing jetParsing) {
@@ -141,8 +192,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      *   ;
      */
     public void parseExpression() {
-        // TODO: better recovery for expressions
-        if (atSet(RPAR, RBRACE, RBRACKET, GT)) {
+        if (!atSet(EXPRESSION_FIRST)) {
             error("Expecting an expression");
             return;
         }
@@ -906,7 +956,12 @@ public class JetExpressionParsing extends AbstractJetParsing {
     public void parseExpressions() {
         while (at(SEMICOLON)) advance(); // SEMICOLON
         while (!eof() && !at(RBRACE)) {
-            parseExpression();
+            if (!atSet(EXPRESSION_FIRST)) {
+                errorAndAdvance("Expecting an expression");
+            }
+            if (atSet(EXPRESSION_FIRST)) {
+                parseExpression();
+            }
             if (at(SEMICOLON)) {
                 while (at(SEMICOLON)) advance(); // SEMICOLON
             } else if (at(RBRACE)) {
@@ -993,6 +1048,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
      * for
      *   : "for" "(" attributes valOrVar? SimpleName (":" type)? "in" expression ")" expression
      *   ;
+     *
+     *   TODO: empty loop body (at the end of the block)?
      */
     private void parseFor() {
         assert _at(FOR_KEYWORD);
@@ -1162,7 +1219,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         advance(); // RETURN_KEYWORD
 
-        if (!at(EOL_OR_SEMICOLON)) parseExpression();
+        if (atSet(EXPRESSION_FIRST) && !at(EOL_OR_SEMICOLON)) parseExpression();
 
         returnExpression.done(RETURN);
     }

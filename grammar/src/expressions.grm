@@ -76,6 +76,7 @@ postfixUnaryExpression
   : memberAccess postfixUnaryOperation*
   ;
 
+// !!! When you add here, remember to update the FIRST set in the parser
 atomicExpression
   : "(" expression ")" // see tupleLiteral
   : literalConstant
@@ -92,6 +93,7 @@ atomicExpression
   : jump
   : loop
   : SimpleName
+  : FieldName
   : "namespace" // for the root namespace
   ;
 

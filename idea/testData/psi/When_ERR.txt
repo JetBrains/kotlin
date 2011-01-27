@@ -152,9 +152,10 @@ JetFile: When_ERR.jet
                 <empty list>
             PsiWhiteSpace('  ')
             PsiElement(DOUBLE_ARROW)('=>')
-            PsiWhiteSpace(' ')
             PsiErrorElement:Expecting an expression
-              PsiElement(SEMICOLON)(';')
+              <empty list>
+          PsiWhiteSpace(' ')
+          PsiElement(SEMICOLON)(';')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
             WHEN_CONDITION
