@@ -9,6 +9,7 @@ import org.jetbrains.jet.lang.types.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author abreslav
@@ -35,11 +36,12 @@ public class TypeResolver {
             public void visitUserType(JetUserType type) {
                 ClassDescriptor classDescriptor = resolveClass(scope, type);
                 if (classDescriptor != null) {
+                    TypeConstructor typeConstructor = classDescriptor.getTypeConstructor();
                     result[0] = new TypeImpl(
                             attributes,
-                            classDescriptor.getTypeConstructor(),
+                            typeConstructor,
                             nullable,
-                            resolveTypeProjections(scope, type.getTypeArguments()),
+                            resolveTypeProjections(scope, typeConstructor, type.getTypeArguments()),
                             JetStandardClasses.STUB
                     );
                 }
@@ -97,18 +99,22 @@ public class TypeResolver {
     }
 
     @NotNull
-    private List<TypeProjection> resolveTypeProjections(JetScope scope, List<JetTypeProjection> argumentElements) {
+    private List<TypeProjection> resolveTypeProjections(JetScope scope, TypeConstructor constructor, List<JetTypeProjection> argumentElements) {
         final List<TypeProjection> arguments = new ArrayList<TypeProjection>();
-        for (JetTypeProjection argumentElement : argumentElements) {
+        for (int i = 0, argumentElementsSize = argumentElements.size(); i < argumentElementsSize; i++) {
+            JetTypeProjection argumentElement = argumentElements.get(i);
+
             ProjectionKind projectionKind = argumentElement.getProjectionKind();
             Type type;
             if (projectionKind == ProjectionKind.NEITHER_OUT_NOR_IN) {
-                type = null;
-            } else {
-                type = resolveType(scope, argumentElement.getTypeReference());
+                Set<Type> upperBounds = constructor.getParameters().get(i).getUpperBounds();
+                arguments.add(new TypeProjection(ProjectionKind.OUT_ONLY, TypeUtils.intersect(upperBounds)));
             }
-            TypeProjection typeProjection = new TypeProjection(projectionKind, type);
-            arguments.add(typeProjection);
+            else {
+                // TODO : handle the Foo<in *> case
+                type = resolveType(scope, argumentElement.getTypeReference());
+                arguments.add(new TypeProjection(projectionKind, type));
+            }
         }
         return arguments;
     }

@@ -13,6 +13,4 @@ public interface Type extends Annotated {
     boolean isNullable();
 
     @NotNull TypeMemberDomain getMemberDomain();
-
-    @NotNull Type getNullableVersion();
 }

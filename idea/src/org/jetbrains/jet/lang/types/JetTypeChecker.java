@@ -127,7 +127,7 @@ public class JetTypeChecker {
                 } else {
                     Type thenType = getType(scope, expression.getThen());
                     Type elseType = getType(scope, elseBranch);
-                    result[0] = commonSupertype(thenType, elseType);
+                    result[0] = commonSupertype(Arrays.asList(thenType, elseType));
                 }
             }
 
@@ -150,53 +150,213 @@ public class JetTypeChecker {
         return result[0];
     }
 
-    private Type commonSupertype(Type thenType, Type elseType) {
-        if (JetStandardClasses.isNothing(thenType)) {
-            return elseType;
+    private Type commonSupertype(Collection<Type> types) {
+        Collection<Type> typeSet = new HashSet<Type>(types);
+        assert !typeSet.isEmpty();
+        boolean nullable = false;
+        for (Iterator<Type> iterator = typeSet.iterator(); iterator.hasNext();) {
+            Type type = iterator.next();
+            if (JetStandardClasses.isNothing(type)) {
+                iterator.remove();
+            }
+            nullable |= type.isNullable();
         }
-        if (JetStandardClasses.isNothing(elseType)) {
-            return thenType;
+
+        if (typeSet.isEmpty()) {
+            // TODO : attributes
+            return nullable ? JetStandardClasses.getNullableNothingType() : JetStandardClasses.getNothingType();
         }
 
-        List<Type> thenOrder = new LinkedList<Type>(); // adding to the beginning
-        Map<TypeConstructor, Type> visited = new HashMap<TypeConstructor, Type>();
-        topologicallySort(thenType, visited, thenOrder, null);
-
-        List<Type> elseOrder = new LinkedList<Type>(); // adding to the beginning
-        topologicallySort(elseType, new HashMap<TypeConstructor, Type>(), elseOrder, visited);
-
-        assert !elseOrder.isEmpty() : "No common supertype";
-        // TODO: support multiple common supertypes
-
-        Type result = elseOrder.get(0);
-
-        if (thenType.isNullable() || elseType.isNullable()) {
-            return TypeUtils.makeNullable(result);
+        if (typeSet.size() == 1) {
+            return TypeUtils.makeNullableIfNeeded(typeSet.iterator().next(), nullable);
         }
-        assert !result.isNullable();
+
+        Map<TypeConstructor, Set<Type>> commonSupertypes = computeCommonRawSupertypes(typeSet);
+        while (commonSupertypes.size() > 1) {
+            HashSet<Type> merge = new HashSet<Type>();
+            for (Set<Type> supertypes : commonSupertypes.values()) {
+                merge.addAll(supertypes);
+            }
+            commonSupertypes = computeCommonRawSupertypes(merge);
+        }
+        assert !commonSupertypes.isEmpty();
+        Map.Entry<TypeConstructor, Set<Type>> entry = commonSupertypes.entrySet().iterator().next();
+        Type result = computeSupertypeProjections(entry.getKey(), entry.getValue());
+
+        return TypeUtils.makeNullableIfNeeded(result, nullable);
+    }
+
+    private Type computeSupertypeProjections(TypeConstructor constructor, Set<Type> types) {
+        // we assume that all the given types are applications of the same type constructor
+
+        assert !types.isEmpty();
+
+        if (types.size() == 1) {
+            return types.iterator().next();
+        }
+
+        List<TypeParameterDescriptor> parameters = constructor.getParameters();
+        List<TypeProjection> newProjections = new ArrayList<TypeProjection>();
+        for (int i = 0, parametersSize = parameters.size(); i < parametersSize; i++) {
+            TypeParameterDescriptor parameterDescriptor = parameters.get(i);
+            Set<TypeProjection> typeProjections = new HashSet<TypeProjection>();
+            for (Type type : types) {
+                typeProjections.add(type.getArguments().get(i));
+            }
+            newProjections.add(computeSupertypeProjection(parameterDescriptor, typeProjections));
+        }
+
+        boolean nullable = false;
+        for (Type type : types) {
+            nullable |= type.isNullable();
+        }
+
+        // TODO : attributes?
+        return new TypeImpl(Collections.<Attribute>emptyList(), constructor, nullable, newProjections, JetStandardClasses.STUB);
+    }
+
+    private TypeProjection computeSupertypeProjection(TypeParameterDescriptor parameterDescriptor, Set<TypeProjection> typeProjections) {
+        // TODO: equals/hashCode for projections
+        if (typeProjections.size() == 1) {
+            return typeProjections.iterator().next();
+        }
+
+        Set<Type> ins = new HashSet<Type>();
+        Set<Type> outs = new HashSet<Type>();
+
+        Variance variance = parameterDescriptor.getVariance();
+        switch (variance) {
+            case INVARIANT:
+                // Nothing
+                break;
+            case IN_VARIANCE:
+                outs = null;
+                break;
+            case OUT_VARIANCE:
+                ins = null;
+                break;
+        }
+
+        for (TypeProjection projection : typeProjections) {
+            ProjectionKind projectionKind = projection.getProjectionKind();
+            if (projectionKind.allowsInCalls()) {
+                if (ins != null) {
+                    ins.add(projection.getType());
+                }
+            } else {
+                ins = null;
+            }
+
+            if (projectionKind.allowsOutCalls()) {
+                if (outs != null) {
+                    outs.add(projection.getType());
+                }
+            } else {
+                outs = null;
+            }
+        }
+
+        if (ins != null) {
+            ProjectionKind projectionKind = variance == Variance.IN_VARIANCE ? ProjectionKind.NO_PROJECTION : ProjectionKind.IN_ONLY;
+            return new TypeProjection(projectionKind, TypeUtils.intersect(ins));
+        } else if (outs != null) {
+            ProjectionKind projectionKind = variance == Variance.OUT_VARIANCE ? ProjectionKind.NO_PROJECTION : ProjectionKind.OUT_ONLY;
+            return new TypeProjection(projectionKind, commonSupertype(outs));
+        } else {
+            ProjectionKind projectionKind = variance == Variance.OUT_VARIANCE ? ProjectionKind.NO_PROJECTION : ProjectionKind.OUT_ONLY;
+            return new TypeProjection(projectionKind, commonSupertype(parameterDescriptor.getUpperBounds()));
+        }
+    }
+
+    private Map<TypeConstructor, Set<Type>> computeCommonRawSupertypes(Collection<Type> types) {
+        assert !types.isEmpty();
+
+        final Map<TypeConstructor, Set<Type>> constructorToAllInstances = new HashMap<TypeConstructor, Set<Type>>();
+        Set<TypeConstructor> commonSuperclasses = null;
+
+        List<TypeConstructor> order = null;
+        for (Iterator<Type> iterator = types.iterator(); iterator.hasNext();) {
+            Type type = iterator.next();
+
+            Set<TypeConstructor> visited = new HashSet<TypeConstructor>();
+
+            order = dfs(type, visited, new DfsNodeHandler<List<TypeConstructor>>() {
+                public LinkedList<TypeConstructor> list = new LinkedList<TypeConstructor>();
+
+                @Override
+                public void beforeChildren(Type current) {
+                    TypeConstructor constructor = current.getConstructor();
+
+                    Set<Type> instances = constructorToAllInstances.get(constructor);
+                    if (instances == null) {
+                        instances = new HashSet<Type>();
+                        constructorToAllInstances.put(constructor, instances);
+                    }
+                    instances.add(current);
+                }
+
+                @Override
+                public void afterChildren(Type current) {
+                    list.addFirst(current.getConstructor());
+                }
+
+                @Override
+                public List<TypeConstructor> result() {
+                    return list;
+                }
+            });
+
+            if (commonSuperclasses == null) {
+                commonSuperclasses = visited;
+            } else {
+                commonSuperclasses.retainAll(visited);
+            }
+        }
+        assert order != null;
+
+        Set<TypeConstructor> notSource = new HashSet<TypeConstructor>();
+        Map<TypeConstructor, Set<Type>> result = new HashMap<TypeConstructor, Set<Type>>();
+        for (TypeConstructor superConstructor : order) {
+            if (!commonSuperclasses.contains(superConstructor)) {
+                continue;
+            }
+
+            if (!notSource.contains(superConstructor)) {
+                result.put(superConstructor, constructorToAllInstances.get(superConstructor));
+                markAll(superConstructor, notSource);
+            }
+        }
+
         return result;
     }
 
-    private void topologicallySort(Type current, Map<TypeConstructor, Type> visited, List<Type> topologicalOrder, @Nullable Map<TypeConstructor, Type> filter) {
-        Type visitedOccurrence = visited.put(current.getConstructor(), current);
-        if (visitedOccurrence != null) {
-            assert equalTypes(visitedOccurrence, current);
+    private void markAll(TypeConstructor typeConstructor, Set<TypeConstructor> markerSet) {
+        markerSet.add(typeConstructor);
+        for (Type type : typeConstructor.getSupertypes()) {
+            markAll(type.getConstructor(), markerSet);
+        }
+    }
+
+    private <R> R dfs(Type current, Set<TypeConstructor> visited, DfsNodeHandler<R> handler) {
+        doDfs(current, visited, handler);
+        return handler.result();
+    }
+
+    private void doDfs(Type current, Set<TypeConstructor> visited, DfsNodeHandler<?> handler) {
+        if (!visited.add(current.getConstructor())) {
             return;
         }
+        handler.beforeChildren(current);
         Map<TypeConstructor, TypeProjection> substitutionContext = getSubstitutionContext(current);
         for (Type supertype : current.getConstructor().getSupertypes()) {
             TypeConstructor supertypeConstructor = supertype.getConstructor();
-            if (visited.containsKey(supertypeConstructor)) {
-                assert equalTypes(visited.get(supertypeConstructor), supertype);
+            if (visited.contains(supertypeConstructor)) {
                 continue;
             }
             Type substitutedSupertype = substituteInType(substitutionContext, supertype);
-            topologicallySort(substitutedSupertype, visited, topologicalOrder, filter);
+            dfs(substitutedSupertype, visited, handler);
         }
-        if (filter != null && filter.containsKey(current.getConstructor())) {
-            assert equalTypes(filter.get(current.getConstructor()), current) : filter.get(current.getConstructor()) + " != " + current;
-            topologicalOrder.add(0, current);
-        }
+        handler.afterChildren(current);
     }
 
     public boolean isConvertibleTo(JetExpression expression, Type type) {
@@ -358,27 +518,7 @@ public class JetTypeChecker {
     }
 
     public boolean equalTypes(@NotNull Type type1, @NotNull Type type2) {
-        if (!type1.getConstructor().equals(type2.getConstructor())) {
-            return false;
-        }
-        List<TypeProjection> type1Arguments = type1.getArguments();
-        List<TypeProjection> type2Arguments = type2.getArguments();
-        if (type1Arguments.size() != type2Arguments.size()) {
-            return false;
-        }
-        for (int i = 0; i < type1Arguments.size(); i++) {
-            TypeProjection typeProjection1 = type1Arguments.get(i);
-            TypeProjection typeProjection2 = type2Arguments.get(i);
-            if (typeProjection1.getProjectionKind() != typeProjection2.getProjectionKind()) {
-                return false;
-            }
-            if (typeProjection1.getProjectionKind() != ProjectionKind.NEITHER_OUT_NOR_IN) {
-                if (!equalTypes(typeProjection1.getType(), typeProjection2.getType())) {
-                    return false;
-                }
-            }
-        }
-        return true;
+        return TypeImpl.equalTypes(type1, type2);
     }
 
 }

@@ -1,18 +1,18 @@
 package org.jetbrains.jet.lang.types;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author abreslav
  */
 public class TypeParameterDescriptor extends NamedAnnotatedImpl {
     private final Variance variance;
-    private final Collection<Type> upperBounds;
+    private final Set<Type> upperBounds;
     private final TypeConstructor typeConstructor;
 
-    public TypeParameterDescriptor(List<Attribute> attributes, Variance variance, String name, Collection<Type> upperBounds) {
+    public TypeParameterDescriptor(List<Attribute> attributes, Variance variance, String name, Set<Type> upperBounds) {
         super(attributes, name);
         this.variance = variance;
         this.upperBounds = upperBounds;
@@ -24,11 +24,15 @@ public class TypeParameterDescriptor extends NamedAnnotatedImpl {
                 upperBounds);
     }
 
+    public TypeParameterDescriptor(List<Attribute> attributes, Variance variance, String name) {
+        this(attributes, variance, name, Collections.singleton(JetStandardClasses.getNullableAnyType()));
+    }
+
     public Variance getVariance() {
         return variance;
     }
 
-    public Collection<Type> getUpperBounds() {
+    public Set<Type> getUpperBounds() {
         return upperBounds;
     }
 

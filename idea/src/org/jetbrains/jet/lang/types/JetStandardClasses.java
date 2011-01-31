@@ -39,6 +39,7 @@ public class JetStandardClasses {
     );
 
     private static final Type ANY_TYPE = new TypeImpl(ANY.getTypeConstructor(), TypeMemberDomain.EMPTY);
+    private static final Type NULLABLE_ANY_TYPE = TypeUtils.makeNullable(ANY_TYPE);
 
     private static final ClassDescriptor BYTE    = new ClassDescriptor("Byte");
     private static final ClassDescriptor CHAR    = new ClassDescriptor("Char");
@@ -102,6 +103,10 @@ public class JetStandardClasses {
     @NotNull
     public static Type getAnyType() {
         return ANY_TYPE;
+    }
+
+    public static Type getNullableAnyType() {
+        return NULLABLE_ANY_TYPE;
     }
 
     @NotNull
