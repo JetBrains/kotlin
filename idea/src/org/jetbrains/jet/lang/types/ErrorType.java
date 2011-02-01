@@ -14,7 +14,7 @@ public class ErrorType {
             throw new UnsupportedOperationException(); // TODO
         }
     };
-    private static final TypeConstructor ERROR = new TypeConstructor(Collections.<Attribute>emptyList(), "ERROR", Collections.<TypeParameterDescriptor>emptyList(), Collections.<Type>emptyList());
+    private static final TypeConstructor ERROR = new TypeConstructor(Collections.<Attribute>emptyList(), false, "ERROR", Collections.<TypeParameterDescriptor>emptyList(), Collections.<Type>emptyList());
 
     public static Type createErrorType(String debugMessage) {
         return new TypeImpl(ERROR, ERROR_DOMAIN);

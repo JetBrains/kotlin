@@ -4,7 +4,6 @@ import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
-import org.jetbrains.jet.lang.types.ProjectionKind;
 import org.jetbrains.jet.lexer.JetTokens;
 
 /**
@@ -16,21 +15,21 @@ public class JetTypeProjection extends JetDeclaration {
     }
 
     @NotNull
-    public ProjectionKind getProjectionKind() {
+    public JetProjectionKind getProjectionKind() {
         JetModifierList modifierList = getModifierList();
         if (modifierList != null) {
             if (modifierList.hasModifier(JetTokens.IN_KEYWORD)) {
-                return ProjectionKind.IN_ONLY;
+                return JetProjectionKind.IN;
             }
             if (modifierList.hasModifier(JetTokens.OUT_KEYWORD)) {
-                return ProjectionKind.OUT_ONLY;
+                return JetProjectionKind.OUT;
             }
         }
         if (findChildByType(JetTokens.MUL) != null) {
-            return ProjectionKind.NEITHER_OUT_NOR_IN;
+            return JetProjectionKind.STAR;
         }
 
-        return ProjectionKind.NO_PROJECTION;
+        return JetProjectionKind.NONE;
     }
 
     @Override

@@ -11,6 +11,7 @@ public class JetStandardClasses {
 
     private static ClassDescriptor NOTHING_CLASS = new ClassDescriptor(
             Collections.<Attribute>emptyList(),
+            true,
             "Nothing",
             Collections.<TypeParameterDescriptor>emptyList(),
             new AbstractCollection<Type>() {
@@ -33,6 +34,7 @@ public class JetStandardClasses {
 
     private static final ClassDescriptor ANY = new ClassDescriptor(
             Collections.<Attribute>emptyList(),
+            false,
             "Any",
             Collections.<TypeParameterDescriptor>emptyList(),
             Collections.<Type>emptySet()
@@ -64,6 +66,7 @@ public class JetStandardClasses {
             }
             TUPLE[i] = new ClassDescriptor(
                     Collections.<Attribute>emptyList(),
+                    true,
                     "Tuple" + i,
                     parameters,
                     Collections.singleton(JetStandardClasses.getAnyType()));
@@ -244,7 +247,7 @@ public class JetStandardClasses {
     private static List<TypeProjection> toProjections(List<Type> arguments) {
         List<TypeProjection> result = new ArrayList<TypeProjection>();
         for (Type argument : arguments) {
-            result.add(new TypeProjection(ProjectionKind.OUT_ONLY, argument));
+            result.add(new TypeProjection(Variance.OUT_VARIANCE, argument));
         }
         return result;
     }

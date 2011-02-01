@@ -104,16 +104,29 @@ public class TypeResolver {
         for (int i = 0, argumentElementsSize = argumentElements.size(); i < argumentElementsSize; i++) {
             JetTypeProjection argumentElement = argumentElements.get(i);
 
-            ProjectionKind projectionKind = argumentElement.getProjectionKind();
+            JetProjectionKind projectionKind = argumentElement.getProjectionKind();
             Type type;
-            if (projectionKind == ProjectionKind.NEITHER_OUT_NOR_IN) {
+            if (projectionKind == JetProjectionKind.STAR) {
                 Set<Type> upperBounds = constructor.getParameters().get(i).getUpperBounds();
-                arguments.add(new TypeProjection(ProjectionKind.OUT_ONLY, TypeUtils.intersect(upperBounds)));
+                arguments.add(new TypeProjection(Variance.OUT_VARIANCE, TypeUtils.intersect(upperBounds)));
             }
             else {
                 // TODO : handle the Foo<in *> case
                 type = resolveType(scope, argumentElement.getTypeReference());
-                arguments.add(new TypeProjection(projectionKind, type));
+                Variance kind = null;
+                switch (projectionKind) {
+                    case IN:
+                        kind = Variance.IN_VARIANCE;
+                        break;
+                    case OUT:
+                        kind = Variance.OUT_VARIANCE;
+                        break;
+                    case NONE:
+                        kind = Variance.INVARIANT;
+                        break;
+                }
+                assert kind != null;
+                arguments.add(new TypeProjection(kind, type));
             }
         }
         return arguments;

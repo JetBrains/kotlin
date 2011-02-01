@@ -1,5 +1,7 @@
 package org.jetbrains.jet.lang.types;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -16,6 +18,7 @@ public class TypeUtils {
         return new TypeImpl(type.getAttributes(), type.getConstructor(), true, type.getArguments(), type.getMemberDomain());
     }
 
+    @Nullable
     public static Type intersect(Set<Type> types) {
         assert !types.isEmpty();
 
@@ -28,6 +31,15 @@ public class TypeUtils {
         for (Iterator<Type> iterator = types.iterator(); iterator.hasNext();) {
             Type type = iterator.next();
 
+            if (!canHaveSubtypes(type)) {
+                for (Type other : types) {
+                    if (type != other || !JetTypeChecker.INSTANCE.isSubtypeOf(type, other)) {
+                        return null;
+                    }
+                }
+                return type;
+            }
+
             nullable |= type.isNullable();
 
             debugName.append(type.toString());
@@ -37,13 +49,86 @@ public class TypeUtils {
         }
 
         List<Attribute> noAttributes = Collections.<Attribute>emptyList();
-        TypeConstructor constructor = new TypeConstructor(noAttributes, debugName.toString(), Collections.<TypeParameterDescriptor>emptyList(), types);
+        TypeConstructor constructor = new TypeConstructor(noAttributes, false, debugName.toString(), Collections.<TypeParameterDescriptor>emptyList(), types);
         return new TypeImpl(
                 noAttributes,
                 constructor,
                 nullable,
                 Collections.<TypeProjection>emptyList(),
                 JetStandardClasses.STUB);
+    }
+
+    private static boolean canHaveSubtypes(Type type) {
+        // TODO : a nullable type can have a subtype -- a non-nullable version
+
+        if (!type.getConstructor().isSealed()) {
+            return true;
+        }
+
+        List<TypeParameterDescriptor> parameters = type.getConstructor().getParameters();
+        List<TypeProjection> arguments = type.getArguments();
+        for (int i = 0, parametersSize = parameters.size(); i < parametersSize; i++) {
+            TypeParameterDescriptor parameterDescriptor = parameters.get(i);
+            TypeProjection typeProjection = arguments.get(i);
+            Variance projectionKind = typeProjection.getProjectionKind();
+            Type argument = typeProjection.getType();
+
+            switch (parameterDescriptor.getVariance()) {
+                case INVARIANT:
+                    switch (projectionKind) {
+                        case INVARIANT:
+                            if (lowerThanBound(argument, parameterDescriptor) || canHaveSubtypes(argument)) {
+                                return true;
+                            }
+                            break;
+                        case IN_VARIANCE:
+                            if (lowerThanBound(argument, parameterDescriptor)) {
+                                return true;
+                            }
+                            break;
+                        case OUT_VARIANCE:
+                            if (canHaveSubtypes(argument)) {
+                                return true;
+                            }
+                            break;
+                    }
+                    break;
+                case IN_VARIANCE:
+                    if (projectionKind != Variance.OUT_VARIANCE) {
+                        if (lowerThanBound(argument, parameterDescriptor)) {
+                            return true;
+                        }
+                    } else {
+                        if (canHaveSubtypes(argument)) {
+                            return true;
+                        }
+                    }
+                    break;
+                case OUT_VARIANCE:
+                    if (projectionKind != Variance.IN_VARIANCE) {
+                        if (canHaveSubtypes(argument)) {
+                            return true;
+                        }
+                    } else {
+                        if (lowerThanBound(argument, parameterDescriptor)) {
+                            return true;
+                        }
+                    }
+                    break;
+            }
+        }
+        return false;
+    }
+
+    private static boolean lowerThanBound(Type argument, TypeParameterDescriptor parameterDescriptor) {
+        for (Type bound : parameterDescriptor.getUpperBounds()) {
+            if (JetTypeChecker.INSTANCE.isSubtypeOf(argument, bound)) {
+                if (!argument.getConstructor().equals(bound.getConstructor())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public static Type makeNullableIfNeeded(Type type, boolean nullable) {

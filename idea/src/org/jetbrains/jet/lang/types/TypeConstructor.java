@@ -10,9 +10,11 @@ public class TypeConstructor extends AnnotatedImpl {
     private final List<TypeParameterDescriptor> parameters;
     private final Collection<? extends Type> supertypes;
     private final String debugName;
+    private final boolean sealed;
 
-    public TypeConstructor(List<Attribute> attributes, String debugName, List<TypeParameterDescriptor> parameters, Collection<? extends Type> supertypes) {
+    public TypeConstructor(List<Attribute> attributes, boolean sealed, String debugName, List<TypeParameterDescriptor> parameters, Collection<? extends Type> supertypes) {
         super(attributes);
+        this.sealed = sealed;
         this.debugName = debugName;
         this.parameters = parameters;
         this.supertypes = supertypes;
@@ -29,5 +31,9 @@ public class TypeConstructor extends AnnotatedImpl {
     @Override
     public String toString() {
         return debugName;
+    }
+
+    public boolean isSealed() {
+        return sealed;
     }
 }

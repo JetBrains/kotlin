@@ -216,7 +216,6 @@ public class JetTypeChecker {
     }
 
     private TypeProjection computeSupertypeProjection(TypeParameterDescriptor parameterDescriptor, Set<TypeProjection> typeProjections) {
-        // TODO: equals/hashCode for projections
         if (typeProjections.size() == 1) {
             return typeProjections.iterator().next();
         }
@@ -238,8 +237,8 @@ public class JetTypeChecker {
         }
 
         for (TypeProjection projection : typeProjections) {
-            ProjectionKind projectionKind = projection.getProjectionKind();
-            if (projectionKind.allowsInCalls()) {
+            Variance projectionKind = projection.getProjectionKind();
+            if (projectionKind.allowsInPosition()) {
                 if (ins != null) {
                     ins.add(projection.getType());
                 }
@@ -247,7 +246,7 @@ public class JetTypeChecker {
                 ins = null;
             }
 
-            if (projectionKind.allowsOutCalls()) {
+            if (projectionKind.allowsOutPosition()) {
                 if (outs != null) {
                     outs.add(projection.getType());
                 }
@@ -257,13 +256,17 @@ public class JetTypeChecker {
         }
 
         if (ins != null) {
-            ProjectionKind projectionKind = variance == Variance.IN_VARIANCE ? ProjectionKind.NO_PROJECTION : ProjectionKind.IN_ONLY;
-            return new TypeProjection(projectionKind, TypeUtils.intersect(ins));
+            Variance projectionKind = variance == Variance.IN_VARIANCE ? Variance.INVARIANT : Variance.IN_VARIANCE;
+            Type intersection = TypeUtils.intersect(ins);
+            if (intersection == null) {
+                return new TypeProjection(Variance.OUT_VARIANCE, commonSupertype(parameterDescriptor.getUpperBounds()));
+            }
+            return new TypeProjection(projectionKind, intersection);
         } else if (outs != null) {
-            ProjectionKind projectionKind = variance == Variance.OUT_VARIANCE ? ProjectionKind.NO_PROJECTION : ProjectionKind.OUT_ONLY;
+            Variance projectionKind = variance == Variance.OUT_VARIANCE ? Variance.INVARIANT : Variance.OUT_VARIANCE;
             return new TypeProjection(projectionKind, commonSupertype(outs));
         } else {
-            ProjectionKind projectionKind = variance == Variance.OUT_VARIANCE ? ProjectionKind.NO_PROJECTION : ProjectionKind.OUT_ONLY;
+            Variance projectionKind = variance == Variance.OUT_VARIANCE ? Variance.INVARIANT : Variance.OUT_VARIANCE;
             return new TypeProjection(projectionKind, commonSupertype(parameterDescriptor.getUpperBounds()));
         }
     }
@@ -417,17 +420,13 @@ public class JetTypeChecker {
 
     @NotNull
     private TypeProjection substitute(Map<TypeConstructor, TypeProjection> parameterValues, TypeProjection subject) {
-        ProjectionKind projectionKind = subject.getProjectionKind();
-        if (projectionKind == ProjectionKind.NEITHER_OUT_NOR_IN) {
-            return subject;
-        }
         @NotNull Type subjectType = subject.getType();
         TypeProjection value = parameterValues.get(subjectType.getConstructor());
         if (value != null) {
             return value;
         }
         List<TypeProjection> newArguments = substituteInArguments(parameterValues, subjectType);
-        return new TypeProjection(projectionKind, specializeType(subjectType, newArguments));
+        return new TypeProjection(subject.getProjectionKind(), specializeType(subjectType, newArguments));
     }
 
     private List<TypeProjection> substituteInArguments(Map<TypeConstructor, TypeProjection> parameterValues, Type subjectType) {
@@ -456,62 +455,58 @@ public class JetTypeChecker {
 
             Type subArgumentType = subArgument.getType();
             Type superArgumentType = superArgument.getType();
-            if (superArgument.getProjectionKind() != ProjectionKind.NEITHER_OUT_NOR_IN) {
-                switch (parameter.getVariance()) {
-                    case INVARIANT:
-                        switch (superArgument.getProjectionKind()) {
-                            case NO_PROJECTION:
-                                if (!equalTypes(subArgumentType, superArgumentType)) {
-                                    return false;
-                                }
-                                break;
-                            case OUT_ONLY:
-                                if (!subArgument.getProjectionKind().allowsOutCalls()) {
-                                    return false;
-                                }
-                                if (!isSubtypeOf(subArgumentType, superArgumentType)) {
-                                    return false;
-                                }
-                                break;
-                            case IN_ONLY:
-                                if (!subArgument.getProjectionKind().allowsInCalls()) {
-                                    return false;
-                                }
-                                if (!isSubtypeOf(superArgumentType, subArgumentType)) {
-                                    return false;
-                                }
-                                break;
-                        }
-                        break;
-                    case IN_VARIANCE:
-                        switch (superArgument.getProjectionKind()) {
-                            case NO_PROJECTION:
-                            case IN_ONLY:
-                                if (!isSubtypeOf(superArgumentType, subArgumentType)) {
-                                    return false;
-                                }
-                                break;
-                            case OUT_ONLY:
-                                if (!isSubtypeOf(subArgumentType, superArgumentType)) {
-                                    return false;
-                                }
-                                break;
-                        }
-                        break;
-                    case OUT_VARIANCE:
-                        switch (superArgument.getProjectionKind()) {
-                            case NO_PROJECTION:
-                            case OUT_ONLY:
-                            case IN_ONLY:
-                                if (!isSubtypeOf(subArgumentType, superArgumentType)) {
-                                    return false;
-                                }
-                                break;
-                        }
-                        break;
-                }
-            } else {
-                // C< anything > is always a subtype of C<*>
+            switch (parameter.getVariance()) {
+                case INVARIANT:
+                    switch (superArgument.getProjectionKind()) {
+                        case INVARIANT:
+                            if (!equalTypes(subArgumentType, superArgumentType)) {
+                                return false;
+                            }
+                            break;
+                        case OUT_VARIANCE:
+                            if (!subArgument.getProjectionKind().allowsOutPosition()) {
+                                return false;
+                            }
+                            if (!isSubtypeOf(subArgumentType, superArgumentType)) {
+                                return false;
+                            }
+                            break;
+                        case IN_VARIANCE:
+                            if (!subArgument.getProjectionKind().allowsInPosition()) {
+                                return false;
+                            }
+                            if (!isSubtypeOf(superArgumentType, subArgumentType)) {
+                                return false;
+                            }
+                            break;
+                    }
+                    break;
+                case IN_VARIANCE:
+                    switch (superArgument.getProjectionKind()) {
+                        case INVARIANT:
+                        case IN_VARIANCE:
+                            if (!isSubtypeOf(superArgumentType, subArgumentType)) {
+                                return false;
+                            }
+                            break;
+                        case OUT_VARIANCE:
+                            if (!isSubtypeOf(subArgumentType, superArgumentType)) {
+                                return false;
+                            }
+                            break;
+                    }
+                    break;
+                case OUT_VARIANCE:
+                    switch (superArgument.getProjectionKind()) {
+                        case INVARIANT:
+                        case OUT_VARIANCE:
+                        case IN_VARIANCE:
+                            if (!isSubtypeOf(subArgumentType, superArgumentType)) {
+                                return false;
+                            }
+                            break;
+                    }
+                    break;
             }
         }
         return true;

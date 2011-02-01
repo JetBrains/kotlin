@@ -10,6 +10,7 @@ import org.jetbrains.jet.lang.types.ClassDescriptor;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.Type;
 import org.jetbrains.jet.lang.types.TypeParameterDescriptor;
+import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.*;
 
@@ -33,8 +34,10 @@ public class ClassDescriptorResolver {
         Collection<? extends Type> superclasses = delegationSpecifiers.isEmpty()
                 ? Collections.singleton(JetStandardClasses.getAnyType())
                 : resolveTypes(extensibleScope, delegationSpecifiers);
+        boolean open = classElement.getModifierList().hasModifier(JetTokens.OPEN_KEYWORD);
         return new ClassDescriptor(
                 AttributeResolver.INSTANCE.resolveAttributes(classElement.getModifierList()),
+                !open,
                 classElement.getName(),
                 typeParameters,
                 superclasses

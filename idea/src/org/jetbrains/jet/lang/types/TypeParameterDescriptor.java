@@ -19,6 +19,7 @@ public class TypeParameterDescriptor extends NamedAnnotatedImpl {
         // TODO: Should we actually pass the attributes on to the type constructor?
         this.typeConstructor = new TypeConstructor(
                 attributes,
+                false,
                 "&" + name,
                 Collections.<TypeParameterDescriptor>emptyList(),
                 upperBounds);

@@ -109,10 +109,8 @@ public final class TypeImpl extends AnnotatedImpl implements Type {
             if (typeProjection1.getProjectionKind() != typeProjection2.getProjectionKind()) {
                 return false;
             }
-            if (typeProjection1.getProjectionKind() != ProjectionKind.NEITHER_OUT_NOR_IN) {
-                if (!equalTypes(typeProjection1.getType(), typeProjection2.getType())) {
-                    return false;
-                }
+            if (!equalTypes(typeProjection1.getType(), typeProjection2.getType())) {
+                return false;
             }
         }
         return true;

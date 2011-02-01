@@ -93,10 +93,10 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertType("if (true) null : DDerived_T<Int>? else null : Derived_T<Int>?", "Derived_T<Int>?");
         assertType("if (true) null : DDerived_T<Int>? else null : DDerived1_T<Int>?", "Derived_T<Int>?");
 
-        assertType("if (true) null : Base_T<Int>? else null : Base_T<Boolean>?", "Any?");
+        assertType("if (true) null : Base_T<Int>? else null : Base_T<Boolean>?", "Base_T<out Any>?");
         assertType("if (true) null : Base_T<Int>? else null : Base_T<in Int>?", "Base_T<in Int>?");
         assertType("if (true) null : Derived_T<Int>? else null : Base_T<in Int>?", "Base_T<in Int>?");
-        assertType("if (true) null : Derived_T<in Int>? else null : Base_T<Int>?", "Any?");
+        assertType("if (true) null : Derived_T<in Int>? else null : Base_T<Int>?", "Base_T<in Int>?");
         assertType("if (true) null : Base_T<Int>? else null : Base_T<*>?", "Base_T<*>?");
     }
 
@@ -274,7 +274,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         Project project = getProject();
         JetExpression jetExpression = JetChangeUtil.createExpression(project, expression);
         Type type = JetTypeChecker.INSTANCE.getType(ClassDefinitions.BASIC_SCOPE, jetExpression);
-        assertTrue(type + "!=" + expectedType, JetTypeChecker.INSTANCE.equalTypes(type, expectedType));
+        assertTrue(type + " != " + expectedType, JetTypeChecker.INSTANCE.equalTypes(type, expectedType));
     }
 
     private static void assertType(String expression, String expectedTypeStr) {
@@ -282,7 +282,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         JetExpression jetExpression = JetChangeUtil.createExpression(project, expression);
         Type type = JetTypeChecker.INSTANCE.getType(ClassDefinitions.BASIC_SCOPE, jetExpression);
         Type expectedType = makeType(expectedTypeStr);
-        assertTrue(type + "!=" + expectedType, JetTypeChecker.INSTANCE.equalTypes(type, expectedType));
+        assertTrue(type + " != " + expectedType, JetTypeChecker.INSTANCE.equalTypes(type, expectedType));
     }
 
     private static Type makeType(String typeStr) {
@@ -292,14 +292,14 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
     private static class ClassDefinitions {
         private static Map<String, ClassDescriptor> CLASSES = new HashMap<String, ClassDescriptor>();
         private static String[] CLASS_DECLARATIONS = {
-            "class Base_T<T>",
-            "class Derived_T<T> : Base_T<T>",
-            "class DDerived_T<T> : Derived_T<T>",
-            "class DDerived1_T<T> : Derived_T<T>",
-            "class Base_inT<in T>",
-            "class Derived_inT<in T> : Base_inT<T>",
-            "class Base_outT<out T>",
-            "class Derived_outT<out T> : Base_outT<T>",
+            "open class Base_T<T>",
+            "open class Derived_T<T> : Base_T<T>",
+            "open class DDerived_T<T> : Derived_T<T>",
+            "open class DDerived1_T<T> : Derived_T<T>",
+            "open class Base_inT<in T>",
+            "open class Derived_inT<in T> : Base_inT<T>",
+            "open class Base_outT<out T>",
+            "open class Derived_outT<out T> : Base_outT<T>",
         };
 
         public static JetScope BASIC_SCOPE = new JetScopeImpl() {
