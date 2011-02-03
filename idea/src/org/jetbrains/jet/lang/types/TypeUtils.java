@@ -59,8 +59,9 @@ public class TypeUtils {
     }
 
     private static boolean canHaveSubtypes(Type type) {
-        // TODO : a nullable type can have a subtype -- a non-nullable version
-
+        if (type.isNullable()) {
+            return true;
+        }
         if (!type.getConstructor().isSealed()) {
             return true;
         }

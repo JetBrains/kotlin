@@ -150,7 +150,7 @@ public class JetTypeChecker {
         return result[0];
     }
 
-    private Type commonSupertype(Collection<Type> types) {
+    public Type commonSupertype(Collection<Type> types) {
         Collection<Type> typeSet = new HashSet<Type>(types);
         assert !typeSet.isEmpty();
         boolean nullable = false;

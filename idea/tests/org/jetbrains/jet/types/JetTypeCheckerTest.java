@@ -87,17 +87,30 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertType("if (true) null else null", "Nothing?");
 
         assertType("if (true) 1 else '1'", "Any");
+    }
 
-        assertType("if (true) null : Base_T<*>? else null : Derived_T<*>?", "Base_T<*>?");
-        assertType("if (true) null : Base_inT<*>? else null : Derived_T<*>?", "Any?");
-        assertType("if (true) null : DDerived_T<Int>? else null : Derived_T<Int>?", "Derived_T<Int>?");
-        assertType("if (true) null : DDerived_T<Int>? else null : DDerived1_T<Int>?", "Derived_T<Int>?");
+    public void testCommonSupertypes() throws Exception {
+        assertCommonSupertype("Int", "Int", "Int");
 
-        assertType("if (true) null : Base_T<Int>? else null : Base_T<Boolean>?", "Base_T<out Any>?");
-        assertType("if (true) null : Base_T<Int>? else null : Base_T<in Int>?", "Base_T<in Int>?");
-        assertType("if (true) null : Derived_T<Int>? else null : Base_T<in Int>?", "Base_T<in Int>?");
-        assertType("if (true) null : Derived_T<in Int>? else null : Base_T<Int>?", "Base_T<in Int>?");
-        assertType("if (true) null : Base_T<Int>? else null : Base_T<*>?", "Base_T<*>?");
+        assertCommonSupertype("Int", "Int", "Nothing");
+        assertCommonSupertype("Int", "Nothing", "Int");
+        assertCommonSupertype("Nothing", "Nothing", "Nothing");
+
+        assertCommonSupertype("Int?", "Int", "Nothing?");
+        assertCommonSupertype("Nothing?", "Nothing?", "Nothing?");
+
+        assertCommonSupertype("Any", "Int", "Char");
+
+        assertCommonSupertype("Base_T<*>", "Base_T<*>", "Derived_T<*>");
+        assertCommonSupertype("Any", "Base_inT<*>", "Derived_T<*>");
+        assertCommonSupertype("Derived_T<Int>", "DDerived_T<Int>", "Derived_T<Int>");
+        assertCommonSupertype("Derived_T<Int>", "DDerived_T<Int>", "DDerived1_T<Int>");
+
+        assertCommonSupertype("Base_T<out Any>", "Base_T<Int>", "Base_T<Boolean>");
+        assertCommonSupertype("Base_T<in Int>", "Base_T<Int>", "Base_T<in Int>");
+        assertCommonSupertype("Base_T<in Int>", "Derived_T<Int>", "Base_T<in Int>");
+        assertCommonSupertype("Base_T<in Int>", "Derived_T<in Int>", "Base_T<Int>");
+        assertCommonSupertype("Base_T<*>", "Base_T<Int>", "Base_T<*>");
     }
 
     public void testBasicSubtyping() throws Exception {
@@ -244,6 +257,15 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
 
     private static void assertNotSubtype(String type1, String type2) {
         assertSubtypingRelation(type1, type2, false);
+    }
+
+    private void assertCommonSupertype(String expected, String... types) {
+        Collection<Type> subtypes = new ArrayList<Type>();
+        for (String type : types) {
+            subtypes.add(makeType(type));
+        }
+        Type result = JetTypeChecker.INSTANCE.commonSupertype(subtypes);
+        assertTrue(result + " != " + expected, JetTypeChecker.INSTANCE.equalTypes(result, makeType(expected)));
     }
 
     private static void assertSubtypingRelation(String type1, String type2, boolean expected) {
