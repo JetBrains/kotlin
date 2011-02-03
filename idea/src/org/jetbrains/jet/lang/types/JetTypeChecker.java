@@ -18,22 +18,17 @@ public class JetTypeChecker {
     public static final JetTypeChecker INSTANCE = new JetTypeChecker();
 
     /*
-       : try
-
-       : SimpleName
-       : "this" ("<" type ">")?
-
        : "new" constructorInvocation
 
        : objectLiteral
 
-       : "typeof" "(" expression ")"
+       : SimpleName
 
-       : declaration
-       : loop
+       : "typeof" "(" expression ")"
 
        : functionLiteral
 
+       : declaration
        : "namespace" // for the root namespace
      */
     public Type getType(@NotNull final JetScope scope, @NotNull JetExpression expression) {
@@ -167,6 +162,28 @@ public class JetTypeChecker {
             }
 
             @Override
+            public void visitThisExpression(JetThisExpression expression) {
+                // TODO : qualified this, e.g. Foo.this<Bar>
+                Type thisType = scope.getThisType();
+                JetTypeReference superTypeQualifier = expression.getSuperTypeQualifier();
+                if (superTypeQualifier != null) {
+                    // This cast must be safe (assuming the PSI doesn't contain errors)
+                    JetUserType typeElement = (JetUserType) superTypeQualifier.getTypeElement();
+                    ClassDescriptor superclass = TypeResolver.INSTANCE.resolveClass(scope, typeElement);
+                    Collection<? extends Type> supertypes = thisType.getConstructor().getSupertypes();
+                    for (Type declaredSupertype : supertypes) {
+                        if (declaredSupertype.getConstructor().equals(superclass.getTypeConstructor())) {
+                            result[0] = substituteInType(getSubstitutionContext(thisType), declaredSupertype);
+                            break;
+                        }
+                    }
+                    assert result[0] != null;
+                } else {
+                    result[0] = thisType;
+                }
+            }
+
+            @Override
             public void visitBlockExpression(JetBlockExpression expression) {
                 // TODO : this is a stub, consider function literals
                 List<JetExpression> statements = expression.getStatements();
@@ -175,6 +192,11 @@ public class JetTypeChecker {
                 } else {
                     result[0] = getType(scope, statements.get(statements.size() - 1));
                 }
+            }
+
+            @Override
+            public void visitLoopExpression(JetLoopExpression expression) {
+                result[0] = JetStandardClasses.getUnitType();
             }
 
             @Override

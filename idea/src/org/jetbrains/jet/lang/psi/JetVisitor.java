@@ -134,6 +134,10 @@ public class JetVisitor extends PsiElementVisitor {
         visitJetElement(expression);
     }
 
+    public void visitLoopExpression(JetLoopExpression loopExpression) {
+        visitExpression(loopExpression);
+    }
+
     public void visitConstantExpression(JetConstantExpression expression) {
         visitExpression(expression);
     }
@@ -195,15 +199,15 @@ public class JetVisitor extends PsiElementVisitor {
     }
 
     public void visitForExpression(JetForExpression expression) {
-        visitExpression(expression);
+        visitLoopExpression(expression);
     }
 
     public void visitWhileExpression(JetWhileExpression expression) {
-        visitExpression(expression);
+        visitLoopExpression(expression);
     }
 
     public void visitDoWhileExpression(JetDoWhileExpression expression) {
-        visitExpression(expression);
+        visitLoopExpression(expression);
     }
 
     public void visitFunctionLiteralExpression(JetFunctionLiteralExpression expression) {

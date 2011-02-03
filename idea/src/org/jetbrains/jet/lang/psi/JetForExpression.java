@@ -7,7 +7,7 @@ import org.jetbrains.jet.JetNodeTypes;
 /**
  * @author max
  */
-public class JetForExpression extends JetExpression {
+public class JetForExpression extends JetLoopExpression {
     public JetForExpression(@NotNull ASTNode node) {
         super(node);
     }
@@ -23,9 +23,5 @@ public class JetForExpression extends JetExpression {
 
     public JetExpression getLoopRange() {
         return findExpressionUnder(JetNodeTypes.LOOP_RANGE);
-    }
-
-    public JetExpression getBody() {
-        return findExpressionUnder(JetNodeTypes.BODY);
     }
 }

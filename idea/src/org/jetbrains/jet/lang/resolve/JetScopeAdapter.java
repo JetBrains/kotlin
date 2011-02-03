@@ -6,11 +6,15 @@ import org.jetbrains.jet.lang.types.*;
  * @author abreslav
  */
 public class JetScopeAdapter implements JetScope {
-
     private final JetScope scope;
 
     public JetScopeAdapter(JetScope scope) {
         this.scope = scope;
+    }
+
+    @Override
+    public Type getThisType() {
+        return scope.getThisType();
     }
 
     @Override

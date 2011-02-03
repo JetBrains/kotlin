@@ -4,10 +4,7 @@ import com.intellij.codeInsight.daemon.LightDaemonAnalyzerTestCase;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.ClassDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.JetScope;
-import org.jetbrains.jet.lang.resolve.JetScopeImpl;
-import org.jetbrains.jet.lang.resolve.TypeResolver;
+import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.parsing.JetParsingTest;
 
@@ -170,10 +167,10 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertSubtype("()", "()");
 
         assertSubtype("(Boolean)", "(Boolean)");
-        assertSubtype("(Byte)",    "(Byte)");
+        assertSubtype("(Byte)", "(Byte)");
         assertSubtype("(Char)",    "(Char)");
         assertSubtype("(Short)",   "(Short)");
-        assertSubtype("(Int)",     "(Int)");
+        assertSubtype("(Int)", "(Int)");
         assertSubtype("(Long)",    "(Long)");
         assertSubtype("(Float)",   "(Float)");
         assertSubtype("(Double)",  "(Double)");
@@ -266,6 +263,17 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertSubtype("Nothing?", "Derived_T<*>?");
     }
 
+    public void testThis() throws Exception {
+        assertType("Derived_T<Int>", "this", "Derived_T<Int>");
+        assertType("Derived_T<Int>", "this<Base_T>", "Base_T<Int>");
+    }
+
+    public void testLoops() throws Exception {
+        assertType("while (1) {1}", "Unit");
+        assertType("do {1} while(1)", "Unit");
+        assertType("for (i in 1) {1}", "Unit");
+    }
+
     public void testImplicitConversions() throws Exception {
         assertConvertibleTo("1", JetStandardClasses.getByteType());
     }
@@ -318,16 +326,35 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertTrue(type + " != " + expectedType, JetTypeChecker.INSTANCE.equalTypes(type, expectedType));
     }
 
+    private void assertType(String contextType, String expression, String expectedType) {
+        final Type thisType = makeType(contextType);
+        JetScope scope = new JetScopeAdapter(ClassDefinitions.BASIC_SCOPE) {
+            @Override
+            public Type getThisType() {
+                return thisType;
+            }
+        };
+        assertType(scope, expression, expectedType);
+    }
+
     private static void assertType(String expression, String expectedTypeStr) {
+        assertType(ClassDefinitions.BASIC_SCOPE, expression, expectedTypeStr);
+    }
+
+    private static void assertType(JetScope scope, String expression, String expectedTypeStr) {
         Project project = getProject();
         JetExpression jetExpression = JetChangeUtil.createExpression(project, expression);
-        Type type = JetTypeChecker.INSTANCE.getType(ClassDefinitions.BASIC_SCOPE, jetExpression);
+        Type type = JetTypeChecker.INSTANCE.getType(scope, jetExpression);
         Type expectedType = makeType(expectedTypeStr);
         assertTrue(type + " != " + expectedType, JetTypeChecker.INSTANCE.equalTypes(type, expectedType));
     }
 
     private static Type makeType(String typeStr) {
-        return TypeResolver.INSTANCE.resolveType(ClassDefinitions.BASIC_SCOPE, JetChangeUtil.createType(getProject(), typeStr));
+        return makeType(ClassDefinitions.BASIC_SCOPE, typeStr);
+    }
+
+    private static Type makeType(JetScope scope, String typeStr) {
+        return TypeResolver.INSTANCE.resolveType(scope, JetChangeUtil.createType(getProject(), typeStr));
     }
 
     private static class ClassDefinitions {

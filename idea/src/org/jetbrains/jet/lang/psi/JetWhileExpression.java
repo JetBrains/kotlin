@@ -8,7 +8,7 @@ import org.jetbrains.jet.JetNodeTypes;
 /**
  * @author max
  */
-public class JetWhileExpression extends JetExpression {
+public class JetWhileExpression extends JetLoopExpression {
     public JetWhileExpression(@NotNull ASTNode node) {
         super(node);
     }
@@ -21,10 +21,5 @@ public class JetWhileExpression extends JetExpression {
     @Nullable @IfNotParsed
     public JetExpression getCondition() {
         return findExpressionUnder(JetNodeTypes.CONDITION);
-    }
-
-    @Nullable
-    public JetExpression getBody() {
-        return findExpressionUnder(JetNodeTypes.BODY);
     }
 }

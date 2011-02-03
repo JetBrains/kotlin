@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.types;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.modules.MemberDomain;
 
 import java.util.Collection;
@@ -25,6 +26,7 @@ public class ClassDescriptor extends MemberDescriptorImpl implements MemberDomai
                 Collections.<Type>singleton(JetStandardClasses.getAnyType()));
     }
 
+    @NotNull
     public TypeConstructor getTypeConstructor() {
         return typeConstructor;
     }

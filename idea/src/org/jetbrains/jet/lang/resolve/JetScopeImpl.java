@@ -35,4 +35,9 @@ public abstract class JetScopeImpl implements JetScope {
     public TypeParameterDescriptor getTypeParameterDescriptor(String name) {
         return null;
     }
+
+    @Override
+    public Type getThisType() {
+        return JetStandardClasses.getNothingType();
+    }
 }
