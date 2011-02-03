@@ -82,7 +82,7 @@ public interface JetNodeTypes {
     JetNodeType THEN                      = new JetNodeType("THEN", JetContainerNode.class);
     JetNodeType ELSE                      = new JetNodeType("ELSE", JetContainerNode.class);
     JetNodeType TRY                       = new JetNodeType("TRY", JetTryExpression.class);
-    JetNodeType CATCH                     = new JetNodeType("CATCH", JetCatchSection.class);
+    JetNodeType CATCH                     = new JetNodeType("CATCH", JetCatchClause.class);
     JetNodeType FINALLY                   = new JetNodeType("FINALLY", JetFinallySection.class);
     JetNodeType FOR                       = new JetNodeType("FOR", JetForExpression.class);
     JetNodeType WHILE                     = new JetNodeType("WHILE", JetWhileExpression.class);

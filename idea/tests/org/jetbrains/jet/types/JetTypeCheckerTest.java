@@ -99,6 +99,15 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertType("when (1) { is 1 => 2; is 1 => '2'; is 1 => when(e) {is 1 => null}} ", "Any?");
     }
 
+    public void testTry() throws Exception {
+        assertType("try {1} finally{2}", "Int");
+        assertType("try {1} catch (e : e) {'a'} finally{2}", "Int");
+        assertType("try {1} catch (e : e) {'a'} finally{'2'}", "Any");
+        assertType("try {1} catch (e : e) {'a'}", "Any");
+        assertType("try {1} catch (e : e) {'a'} catch (e : e) {null}", "Any?");
+        assertType("try {} catch (e : e) {}", "Unit");
+    }
+
     public void testCommonSupertypes() throws Exception {
         assertCommonSupertype("Int", "Int", "Int");
 

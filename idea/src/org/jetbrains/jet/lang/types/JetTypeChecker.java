@@ -18,8 +18,6 @@ public class JetTypeChecker {
     public static final JetTypeChecker INSTANCE = new JetTypeChecker();
 
     /*
-       : if
-       : when
        : try
 
        : SimpleName
@@ -133,11 +131,28 @@ public class JetTypeChecker {
 
             @Override
             public void visitWhenExpression(JetWhenExpression expression) {
-                // TODO : what if there're sub-whens?
-                // TODO : what if there's "else continue"?
+                // TODO :change scope according to the bound value in the when header
                 List<Type> expressions = new ArrayList<Type>();
                 collectAllReturnTypes(expression, scope, expressions);
                 result[0] = commonSupertype(expressions);
+            }
+
+            @Override
+            public void visitTryExpression(JetTryExpression expression) {
+                JetExpression tryBlock = expression.getTryBlock();
+                List<JetCatchClause> catchClauses = expression.getCatchClauses();
+                JetFinallySection finallyBlock = expression.getFinallyBlock();
+                List<Type> types = new ArrayList<Type>();
+                if (finallyBlock == null) {
+                    for (JetCatchClause catchClause : catchClauses) {
+                        // TODO: change scope here
+                        types.add(getType(scope, catchClause.getCatchBody()));
+                    }
+                } else {
+                    types.add(getType(scope, finallyBlock.getFinalExpression()));
+                }
+                types.add(getType(scope, tryBlock));
+                result[0] = commonSupertype(types);
             }
 
             @Override
@@ -152,6 +167,17 @@ public class JetTypeChecker {
             }
 
             @Override
+            public void visitBlockExpression(JetBlockExpression expression) {
+                // TODO : this is a stub, consider function literals
+                List<JetExpression> statements = expression.getStatements();
+                if (statements.isEmpty()) {
+                    result[0] = JetStandardClasses.getUnitType();
+                } else {
+                    result[0] = getType(scope, statements.get(statements.size() - 1));
+                }
+            }
+
+            @Override
             public void visitJetElement(JetElement elem) {
                 throw new IllegalArgumentException("Unsupported element: " + elem);
             }
@@ -161,8 +187,9 @@ public class JetTypeChecker {
 
     private void collectAllReturnTypes(JetWhenExpression whenExpression, JetScope scope, List<Type> result) {
         for (JetWhenEntry entry : whenExpression.getEntries()) {
-            if (entry.getSubWhen() != null) {
-                collectAllReturnTypes(entry.getSubWhen(), scope, result);
+            JetWhenExpression subWhen = entry.getSubWhen();
+            if (subWhen != null) {
+                collectAllReturnTypes(subWhen, scope, result);
             } else {
                 JetExpression resultExpression = entry.getExpression();
                 if (resultExpression != null) {

@@ -250,8 +250,8 @@ public class JetVisitor extends PsiElementVisitor {
         visitExpression(expression);
     }
 
-    public void visitCatchSection(JetCatchSection catchSection) {
-        visitJetElement(catchSection);
+    public void visitCatchSection(JetCatchClause catchClause) {
+        visitJetElement(catchClause);
     }
 
     public void visitFinallySection(JetFinallySection finallySection) {

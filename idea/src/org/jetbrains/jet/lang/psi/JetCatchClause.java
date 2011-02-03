@@ -10,8 +10,8 @@ import java.util.List;
 /**
  * @author max
  */
-public class JetCatchSection extends JetElement {
-    public JetCatchSection(@NotNull ASTNode node) {
+public class JetCatchClause extends JetElement {
+    public JetCatchClause(@NotNull ASTNode node) {
         super(node);
     }
 
