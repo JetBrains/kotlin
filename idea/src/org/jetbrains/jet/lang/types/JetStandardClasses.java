@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -62,7 +63,7 @@ public class JetStandardClasses {
                 parameters.add(new TypeParameterDescriptor(
                         Collections.<Attribute>emptyList(),
                         Variance.OUT_VARIANCE, "T" + j,
-                        Collections.<Type>emptySet()));
+                        Collections.singleton(getNullableAnyType())));
             }
             TUPLE[i] = new ClassDescriptor(
                     Collections.<Attribute>emptyList(),
@@ -72,6 +73,42 @@ public class JetStandardClasses {
                     Collections.singleton(JetStandardClasses.getAnyType()));
         }
     }
+
+    public static final int FUNCTION_COUNT = 22;
+    private static final ClassDescriptor[] FUNCTION = new ClassDescriptor[FUNCTION_COUNT];
+    private static final ClassDescriptor[] RECEIVER_FUNCTION = new ClassDescriptor[FUNCTION_COUNT];
+    static {
+        for (int i = 0; i < FUNCTION_COUNT; i++) {
+            List<TypeParameterDescriptor> parameters = new ArrayList<TypeParameterDescriptor>();
+            for (int j = 0; j < i; j++) {
+                parameters.add(new TypeParameterDescriptor(
+                        Collections.<Attribute>emptyList(),
+                        Variance.IN_VARIANCE, "P" + j,
+                        Collections.singleton(getNullableAnyType())));
+            }
+            parameters.add(new TypeParameterDescriptor(
+                        Collections.<Attribute>emptyList(),
+                        Variance.OUT_VARIANCE, "R",
+                        Collections.singleton(getNullableAnyType())));
+            FUNCTION[i] = new ClassDescriptor(
+                    Collections.<Attribute>emptyList(),
+                    false,
+                    "Function" + i,
+                    parameters,
+                    Collections.singleton(JetStandardClasses.getAnyType()));
+            parameters.add(0, new TypeParameterDescriptor(
+                        Collections.<Attribute>emptyList(),
+                        Variance.IN_VARIANCE, "T",
+                        Collections.singleton(getNullableAnyType())));
+            RECEIVER_FUNCTION[i] = new ClassDescriptor(
+                    Collections.<Attribute>emptyList(),
+                    false,
+                    "ReceiverFunction" + i,
+                    parameters,
+                    Collections.singleton(JetStandardClasses.getAnyType()));
+        }
+    }
+
 
     public static final TypeMemberDomain STUB = new TypeMemberDomain() {
         @Override
@@ -258,5 +295,24 @@ public class JetStandardClasses {
             result.add(entry.getType());
         }
         return result;
+    }
+
+    // TODO : labeled version?
+    public static Type getFunctionType(List<Attribute> attributes, @Nullable Type receiverType, @NotNull List<Type> parameterTypes, @NotNull Type returnType) {
+        List<TypeProjection> arguments = new ArrayList<TypeProjection>();
+        if (receiverType != null) {
+            arguments.add(defaultProjection(receiverType));
+        }
+        for (Type parameterType : parameterTypes) {
+            arguments.add(defaultProjection(parameterType));
+        }
+        arguments.add(defaultProjection(returnType));
+        int size = parameterTypes.size();
+        TypeConstructor constructor = receiverType == null ? FUNCTION[size].getTypeConstructor() : RECEIVER_FUNCTION[size].getTypeConstructor();
+        return new TypeImpl(attributes, constructor, false, arguments, STUB);
+    }
+
+    private static TypeProjection defaultProjection(Type returnType) {
+        return new TypeProjection(Variance.INVARIANT, returnType);
     }
 }

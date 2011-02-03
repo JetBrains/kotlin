@@ -299,10 +299,11 @@ JetFile: PolymorphicClassObjects.jet
                   PsiElement(LBRACE)('{')
                   VALUE_PARAMETER_LIST
                     PsiElement(LPAR)('(')
-                    TYPE_REFERENCE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('E')
+                    VALUE_PARAMETER
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('E')
                     PsiElement(RPAR)(')')
                   PsiWhiteSpace(' ')
                   PsiElement(COLON)(':')

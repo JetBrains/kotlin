@@ -2,14 +2,8 @@ package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.lang.psi.JetDelegationSpecifier;
-import org.jetbrains.jet.lang.psi.JetTypeParameter;
-import org.jetbrains.jet.lang.psi.JetTypeReference;
-import org.jetbrains.jet.lang.types.ClassDescriptor;
-import org.jetbrains.jet.lang.types.JetStandardClasses;
-import org.jetbrains.jet.lang.types.Type;
-import org.jetbrains.jet.lang.types.TypeParameterDescriptor;
+import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.*;
@@ -105,5 +99,13 @@ public class ClassDescriptorResolver {
             }
             return super.getTypeParameterDescriptor(name);
         }
+    }
+
+    @NotNull
+    public PropertyDescriptor resolvePropertyDescriptor(@NotNull JetScope scope, @NotNull JetParameter parameter) {
+        return new PropertyDescriptor(
+                AttributeResolver.INSTANCE.resolveAttributes(parameter.getModifierList()),
+                parameter.getName(),
+                TypeResolver.INSTANCE.resolveType(scope, parameter.getTypeReference()));
     }
 }

@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.types;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -16,7 +17,7 @@ public class TypeConstructor extends AnnotatedImpl {
         super(attributes);
         this.sealed = sealed;
         this.debugName = debugName;
-        this.parameters = parameters;
+        this.parameters = new ArrayList<TypeParameterDescriptor>(parameters);
         this.supertypes = supertypes;
     }
 

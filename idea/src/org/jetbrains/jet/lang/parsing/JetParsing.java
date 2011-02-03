@@ -1412,8 +1412,10 @@ public class JetParsing extends AbstractJetParsing {
                 }
                 if (isFunctionTypeContents) {
                     if (!tryParseValueParameter()) {
-                            parseModifierList(); // lazy, out, ref
-                            parseTypeRef();
+                        PsiBuilder.Marker valueParameter = mark();
+                        parseModifierList(); // lazy, out, ref
+                        parseTypeRef();
+                        valueParameter.done(VALUE_PARAMETER);
                     }
                 } else {
                     parseValueParameter();

@@ -274,6 +274,28 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertType("for (i in 1) {1}", "Unit");
     }
 
+    public void testFunctionLiterals() throws Exception {
+        assertType("{() => }", "{() : Unit}");
+        assertType("{() : Int => }", "{() : Int}");
+        assertType("{() => 1}", "{() : Int}");
+
+        assertType("{(a : Int) => 1}", "{(a : Int) : Int}");
+        assertType("{(a : Int, b : String) => 1}", "{(a : Int, b : String) : Int}");
+
+        assertType("{(a : Int) => 1}", "{(Int) : Int}");
+        assertType("{(a : Int, b : String) => 1}", "{(Int, String) : Int}");
+
+        assertType("{Any.() => 1}", "{Any.() : Int}");
+
+        assertType("{Any.(a : Int) => 1}", "{Any.(a : Int) : Int}");
+        assertType("{Any.(a : Int, b : String) => 1}", "{Any.(a : Int, b : String) : Int}");
+
+        assertType("{Any.(a : Int) => 1}", "{Any.(Int) : Int}");
+        assertType("{Any.(a : Int, b : String) => 1}", "{Any.(Int, String) : Int}");
+
+        assertType("{Any.(a : Int, b : String) => b}", "{Any.(Int, String) : String}");
+    }
+
     public void testImplicitConversions() throws Exception {
         assertConvertibleTo("1", JetStandardClasses.getByteType());
     }

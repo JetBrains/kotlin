@@ -14,20 +14,21 @@ JetFile: FunctionTypes_ERR.jet
           PsiElement(LBRACE)('{')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
-            MODIFIER_LIST
-              ATTRIBUTE_ANNOTATION
-                PsiElement(LBRACKET)('[')
-                ATTRIBUTE
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('a')
-                PsiElement(RBRACKET)(']')
-            PsiWhiteSpace(' ')
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('a')
+            VALUE_PARAMETER
+              MODIFIER_LIST
+                ATTRIBUTE_ANNOTATION
+                  PsiElement(LBRACKET)('[')
+                  ATTRIBUTE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('a')
+                  PsiElement(RBRACKET)(']')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
             PsiElement(RPAR)(')')
           PsiErrorElement:Expecting ':' followed by a return type
             <empty list>
@@ -52,10 +53,11 @@ JetFile: FunctionTypes_ERR.jet
           PsiElement(LBRACE)('{')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('a')
+            VALUE_PARAMETER
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
             PsiElement(COMMA)(',')
             PsiErrorElement:Expecting a parameter declaration
               <empty list>

@@ -746,10 +746,11 @@ JetFile: When.jet
                     PsiElement(LBRACE)('{')
                     VALUE_PARAMETER_LIST
                       PsiElement(LPAR)('(')
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('foo')
+                      VALUE_PARAMETER
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('foo')
                       PsiElement(RPAR)(')')
                     PsiWhiteSpace(' ')
                     PsiElement(COLON)(':')

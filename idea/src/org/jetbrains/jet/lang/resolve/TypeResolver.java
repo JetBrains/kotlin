@@ -71,6 +71,21 @@ public class TypeResolver {
             }
 
             @Override
+            public void visitFunctionType(JetFunctionType type) {
+                JetTypeReference receiverTypeRef = type.getReceiverTypeRef();
+                Type receiverType = receiverTypeRef == null ? null : resolveType(scope, receiverTypeRef);
+
+                List<Type> parameterTypes = new ArrayList<Type>();
+                for (JetParameter parameter : type.getParameters()) {
+                    parameterTypes.add(resolveType(scope, parameter.getTypeReference()));
+                }
+
+                Type returnType = resolveType(scope, type.getReturnTypeRef());
+
+                result[0] = JetStandardClasses.getFunctionType(attributes, receiverType, parameterTypes, returnType);
+            }
+
+            @Override
             public void visitJetElement(JetElement elem) {
                 throw new IllegalArgumentException("Unsupported type: " + elem);
             }

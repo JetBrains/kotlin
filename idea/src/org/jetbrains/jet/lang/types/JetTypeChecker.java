@@ -5,7 +5,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.ClassDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.JetScope;
+import org.jetbrains.jet.lang.resolve.JetScopeAdapter;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -34,6 +36,65 @@ public class JetTypeChecker {
     public Type getType(@NotNull final JetScope scope, @NotNull JetExpression expression) {
         final Type[] result = new Type[1];
         expression.accept(new JetVisitor() {
+            @Override
+            public void visitReferenceExpression(JetReferenceExpression expression) {
+                // TODO : other members
+                // TODO : type substitutions???
+                PropertyDescriptor property = scope.getProperty(expression.getReferencedName());
+                if (property != null) {
+                    result[0] = property.getType();
+                }
+            }
+
+            @Override
+            public void visitFunctionLiteralExpression(JetFunctionLiteralExpression expression) {
+                JetTypeReference returnTypeRef = expression.getReturnTypeRef();
+
+                JetTypeReference receiverTypeRef = expression.getReceiverTypeRef();
+                final Type thisType;
+                if (receiverTypeRef != null) {
+                    thisType = TypeResolver.INSTANCE.resolveType(scope, receiverTypeRef);
+                } else {
+                    thisType = scope.getThisType();
+                }
+
+                List<JetExpression> body = expression.getBody();
+                final Map<String, PropertyDescriptor> parameterDescriptors = new HashMap<String, PropertyDescriptor>();
+                List<Type> parameterTypes = new ArrayList<Type>();
+                for (JetParameter parameter : expression.getParameters()) {
+                    JetTypeReference typeReference = parameter.getTypeReference();
+                    if (typeReference == null) {
+                        throw new UnsupportedOperationException("Type inference for parameters is not implemented yet");
+                    }
+                    PropertyDescriptor propertyDescriptor = ClassDescriptorResolver.INSTANCE.resolvePropertyDescriptor(scope, parameter);
+                    parameterDescriptors.put(parameter.getName(), propertyDescriptor);
+                    parameterTypes.add(propertyDescriptor.getType());
+                }
+                Type returnType;
+                if (returnTypeRef != null) {
+                    returnType = TypeResolver.INSTANCE.resolveType(scope, returnTypeRef);
+                } else if (body.isEmpty()) {
+                    returnType = JetStandardClasses.getUnitType();
+                } else {
+                    returnType = getType(new JetScopeAdapter(scope) {
+                        @Override
+                        public Type getThisType() {
+                            return thisType;
+                        }
+
+                        @Override
+                        public PropertyDescriptor getProperty(String name) {
+                            PropertyDescriptor propertyDescriptor = parameterDescriptors.get(name);
+                            if (propertyDescriptor == null) {
+                                return super.getProperty(name);
+                            }
+                            return propertyDescriptor;
+                        }
+                    }, body.get(body.size() - 1));
+                }
+                result[0] = JetStandardClasses.getFunctionType(null, receiverTypeRef == null ? null : thisType, parameterTypes, returnType);
+            }
+
             @Override
             public void visitParenthesizedExpression(JetParenthesizedExpression expression) {
                 result[0] = getType(scope, expression.getExpression());

@@ -494,10 +494,11 @@ JetFile: Graph.jet
                   PsiElement(LBRACE)('{')
                   VALUE_PARAMETER_LIST
                     PsiElement(LPAR)('(')
-                    TYPE_REFERENCE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('V')
+                    VALUE_PARAMETER
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('V')
                     PsiElement(RPAR)(')')
                   PsiWhiteSpace(' ')
                   PsiElement(COLON)(':')
@@ -641,10 +642,11 @@ JetFile: Graph.jet
                       PsiElement(LBRACE)('{')
                       VALUE_PARAMETER_LIST
                         PsiElement(LPAR)('(')
-                        TYPE_REFERENCE
-                          USER_TYPE
-                            REFERENCE_EXPRESSION
-                              PsiElement(IDENTIFIER)('V')
+                        VALUE_PARAMETER
+                          TYPE_REFERENCE
+                            USER_TYPE
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('V')
                         PsiElement(RPAR)(')')
                       PsiWhiteSpace(' ')
                       PsiElement(COLON)(':')
@@ -812,10 +814,11 @@ JetFile: Graph.jet
                   PsiElement(LBRACE)('{')
                   VALUE_PARAMETER_LIST
                     PsiElement(LPAR)('(')
-                    TYPE_REFERENCE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('V')
+                    VALUE_PARAMETER
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('V')
                     PsiElement(RPAR)(')')
                   PsiWhiteSpace(' ')
                   PsiElement(COLON)(':')
