@@ -186,6 +186,10 @@ public class JetVisitor extends PsiElementVisitor {
         visitExpression(expression);
     }
 
+    public void visitWhenExpression(JetWhenExpression expression) {
+        visitExpression(expression);
+    }
+
     public void visitTryExpression(JetTryExpression expression) {
         visitExpression(expression);
     }
@@ -320,5 +324,9 @@ public class JetVisitor extends PsiElementVisitor {
 
     public void visitTypeProjection(JetTypeProjection typeProjection) {
         visitJetElement(typeProjection);
+    }
+
+    public void visitWhenEntry(JetWhenEntry jetWhenEntry) {
+        visitJetElement(jetWhenEntry);
     }
 }

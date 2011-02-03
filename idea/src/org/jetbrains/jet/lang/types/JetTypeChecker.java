@@ -119,7 +119,7 @@ public class JetTypeChecker {
             @Override
             public void visitIfExpression(JetIfExpression expression) {
                 // TODO : check condition type
-                // TODO : change types according to is and nullability according to null comparisons
+                // TODO : change types according to is and nullability checks
                 JetExpression elseBranch = expression.getElse();
                 if (elseBranch == null) {
                     // TODO : type-check the branch
@@ -129,6 +129,15 @@ public class JetTypeChecker {
                     Type elseType = getType(scope, elseBranch);
                     result[0] = commonSupertype(Arrays.asList(thenType, elseType));
                 }
+            }
+
+            @Override
+            public void visitWhenExpression(JetWhenExpression expression) {
+                // TODO : what if there're sub-whens?
+                // TODO : what if there's "else continue"?
+                List<Type> expressions = new ArrayList<Type>();
+                collectAllReturnTypes(expression, scope, expressions);
+                result[0] = commonSupertype(expressions);
             }
 
             @Override
@@ -148,6 +157,19 @@ public class JetTypeChecker {
             }
         });
         return result[0];
+    }
+
+    private void collectAllReturnTypes(JetWhenExpression whenExpression, JetScope scope, List<Type> result) {
+        for (JetWhenEntry entry : whenExpression.getEntries()) {
+            if (entry.getSubWhen() != null) {
+                collectAllReturnTypes(entry.getSubWhen(), scope, result);
+            } else {
+                JetExpression resultExpression = entry.getExpression();
+                if (resultExpression != null) {
+                    result.add(getType(scope, resultExpression));
+                }
+            }
+        }
     }
 
     public Type commonSupertype(Collection<Type> types) {
