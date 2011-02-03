@@ -73,7 +73,7 @@ prefixUnaryExpression
   ;
 
 postfixUnaryExpression
-  : memberAccess postfixUnaryOperation*
+  : atomicExpression postfixUnaryOperation*
   ;
 
 // !!! When you add here, remember to update the FIRST set in the parser
@@ -177,26 +177,12 @@ memberAccessOperation
   : "." : "?." : "#"
   ;
 
-functionCall
-  : functionExpression typeArguments valueArguments? functionLiteral?
-  : functionExpression valueArguments functionLiteral?
-  ;
-
-functionExpression
-  : expression
-  ;
-
 typeArguments
   : "<" type{","} ">"
   ;
 
 valueArguments
   : "(" (SimpleName "=")? ("out" | "ref")? expression{","} ")"
-  ;
-
-infixFunctionCall
-  : expression SimpleName typeArguments
-  : expression SimpleName expression
   ;
 
 jump
@@ -229,16 +215,6 @@ expressions
 
 constructorInvocation
   : userType valueArguments?
-  ;
-
-memberAccess
-  : functionCall
-  : fieldOrPropertyAccess
-  : functionLiteral // no parameters allowed
-  ;
-
-fieldOrPropertyAccess
-  : (FieldName | SimpleName) arrayAccess?
   ;
 
 arrayAccess
