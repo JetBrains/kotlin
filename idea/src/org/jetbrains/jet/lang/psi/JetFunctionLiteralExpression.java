@@ -45,8 +45,8 @@ public class JetFunctionLiteralExpression extends JetExpression {
     }
 
     @NotNull
-    public List<JetExpression> getBody() {
-        return PsiTreeUtil.getChildrenOfTypeAsList(getBodyNode().getPsi(), JetExpression.class);
+    public List<JetElement> getBody() {
+        return PsiTreeUtil.getChildrenOfTypeAsList(getBodyNode().getPsi(), JetElement.class);
     }
 
     @Nullable
@@ -80,5 +80,9 @@ public class JetFunctionLiteralExpression extends JetExpression {
         }
 
         return null;
+    }
+
+    public boolean hasParameterSpecification() {
+        return findChildByType(JetTokens.DOUBLE_ARROW) != null;
     }
 }

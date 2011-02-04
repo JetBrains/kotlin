@@ -19,7 +19,8 @@ public class JetBlockExpression extends JetExpression {
         visitor.visitBlockExpression(this);
     }
 
-    public List<JetExpression> getStatements() {
-        return Arrays.asList(findChildrenByClass(JetExpression.class));
+    @NotNull
+    public List<JetElement> getStatements() {
+        return Arrays.asList(findChildrenByClass(JetElement.class));
     }
 }

@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.resolve;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.types.*;
 
 /**
@@ -12,6 +13,7 @@ public class JetScopeAdapter implements JetScope {
         this.scope = scope;
     }
 
+    @NotNull
     @Override
     public Type getThisType() {
         return scope.getThisType();

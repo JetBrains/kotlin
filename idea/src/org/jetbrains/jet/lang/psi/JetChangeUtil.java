@@ -46,8 +46,9 @@ public class JetChangeUtil {
         JetNamespace rootNamespace = file.getRootNamespace();
         List<JetDeclaration> dcls = rootNamespace.getDeclarations();
         assert dcls.size() == 1;
-        //noinspection unchecked
-        return (T) dcls.get(0);
+        @SuppressWarnings("unchecked")
+        T result = (T) dcls.get(0);
+        return result;
     }
 
     public static PsiElement createNameIdentifier(Project project, String name) {

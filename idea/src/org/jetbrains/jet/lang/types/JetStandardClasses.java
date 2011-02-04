@@ -2,7 +2,11 @@ package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.resolve.JetScope;
+import org.jetbrains.jet.lang.resolve.JetScopeImpl;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.*;
 
 /**
@@ -135,6 +139,43 @@ public class JetStandardClasses {
             Collections.<TypeProjection>emptyList(),
             TypeMemberDomain.EMPTY);
 
+    private static final Map<String, ClassDescriptor> CLASS_MAP = new HashMap<String, ClassDescriptor>();
+    static {
+        Field[] declaredFields = JetStandardClasses.class.getDeclaredFields();
+        for (Field field : declaredFields) {
+            if ((field.getModifiers() & Modifier.STATIC) == 0) {
+                continue;
+            }
+            Class<?> type = field.getType();
+            if (type == ClassDescriptor.class) {
+                try {
+                    ClassDescriptor descriptor = (ClassDescriptor) field.get(null);
+                    CLASS_MAP.put(descriptor.getName(), descriptor);
+                } catch (IllegalAccessException e) {
+                    throw new IllegalStateException(e);
+                }
+            } else if (type.isArray() && type.getComponentType() == ClassDescriptor.class) {
+                try {
+                    ClassDescriptor[] array = (ClassDescriptor[]) field.get(null);
+                    for (ClassDescriptor descriptor : array) {
+                        CLASS_MAP.put(descriptor.getName(), descriptor);
+                    }
+                } catch (IllegalAccessException e) {
+                    throw new IllegalStateException(e);
+                }
+            }
+        }
+        CLASS_MAP.put("Unit", getTuple(0));
+    }
+
+    @NotNull
+    public static final JetScope STANDARD_CLASSES = new JetScopeImpl() {
+        @Override
+        public ClassDescriptor getClass(String name) {
+            return CLASS_MAP.get(name);
+        }
+    };
+
     @NotNull
     public static ClassDescriptor getAny() {
         return ANY;
@@ -202,6 +243,16 @@ public class JetStandardClasses {
     @NotNull
     public static ClassDescriptor getTuple(int size) {
         return TUPLE[size];
+    }
+
+    @NotNull
+    public static ClassDescriptor getFunction(int parameterCount) {
+        return FUNCTION[parameterCount];
+    }
+
+    @NotNull
+    public static ClassDescriptor getReceiverFunction(int parameterCount) {
+        return RECEIVER_FUNCTION[parameterCount];
     }
 
     public static Type getIntType() {

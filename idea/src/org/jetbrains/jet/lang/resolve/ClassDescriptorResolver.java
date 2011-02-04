@@ -77,8 +77,8 @@ public class ClassDescriptorResolver {
     }
 
     private static final class TypeParameterExtensibleScope extends JetScopeAdapter {
-        private final Map<String, TypeParameterDescriptor> typeParameterDescriptors = new HashMap<String, TypeParameterDescriptor>();
 
+        private final Map<String, TypeParameterDescriptor> typeParameterDescriptors = new HashMap<String, TypeParameterDescriptor>();
         private TypeParameterExtensibleScope(JetScope scope) {
             super(scope);
         }
@@ -99,13 +99,33 @@ public class ClassDescriptorResolver {
             }
             return super.getTypeParameterDescriptor(name);
         }
-    }
 
+    }
     @NotNull
     public PropertyDescriptor resolvePropertyDescriptor(@NotNull JetScope scope, @NotNull JetParameter parameter) {
         return new PropertyDescriptor(
                 AttributeResolver.INSTANCE.resolveAttributes(parameter.getModifierList()),
                 parameter.getName(),
                 TypeResolver.INSTANCE.resolveType(scope, parameter.getTypeReference()));
+    }
+
+    public static PropertyDescriptor resolvePropertyDescriptor(@NotNull JetScope scope, JetProperty property) {
+        // TODO : receiver?
+        JetTypeReference propertyTypeRef = property.getPropertyTypeRef();
+
+        Type type;
+        if (propertyTypeRef == null) {
+            JetExpression initializer = property.getInitializer();
+            assert initializer != null;
+            // TODO : ??? Fix-point here: what if we have something like "val a = foo {a.bar()}"
+            type = JetTypeChecker.INSTANCE.getType(scope, initializer, false);
+        } else {
+            type = TypeResolver.INSTANCE.resolveType(scope, propertyTypeRef);
+        }
+
+        return new PropertyDescriptor(
+                AttributeResolver.INSTANCE.resolveAttributes(property.getModifierList()),
+                property.getName(),
+                type);
     }
 }

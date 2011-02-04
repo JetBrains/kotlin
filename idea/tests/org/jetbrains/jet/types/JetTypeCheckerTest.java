@@ -3,6 +3,7 @@ package org.jetbrains.jet.types;
 import com.intellij.codeInsight.daemon.LightDaemonAnalyzerTestCase;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.types.*;
@@ -296,6 +297,13 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertType("{Any.(a : Int, b : String) => b}", "{Any.(Int, String) : String}");
     }
 
+    public void testBlocks() throws Exception {
+        assertType("if (1) {val a = 1; a} else {null}", "Int?");
+        assertType("if (1) {() => val a = 1; a} else {() => null}", "Function0<Int?>");
+        assertType("if (1) {() => val a = 1; a; var b : Boolean; b = true; b} else null", "Function0<Boolean>?");
+        assertType("if (1) {() => val a = 1; a; var b = a; b} else null", "Function0<Int>?");
+    }
+
     public void testImplicitConversions() throws Exception {
         assertConvertibleTo("1", JetStandardClasses.getByteType());
     }
@@ -344,13 +352,14 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
     private static void assertType(String expression, Type expectedType) {
         Project project = getProject();
         JetExpression jetExpression = JetChangeUtil.createExpression(project, expression);
-        Type type = JetTypeChecker.INSTANCE.getType(ClassDefinitions.BASIC_SCOPE, jetExpression);
+        Type type = JetTypeChecker.INSTANCE.getType(ClassDefinitions.BASIC_SCOPE, jetExpression, false);
         assertTrue(type + " != " + expectedType, JetTypeChecker.INSTANCE.equalTypes(type, expectedType));
     }
 
-    private void assertType(String contextType, String expression, String expectedType) {
+    private static void assertType(String contextType, String expression, String expectedType) {
         final Type thisType = makeType(contextType);
         JetScope scope = new JetScopeAdapter(ClassDefinitions.BASIC_SCOPE) {
+            @NotNull
             @Override
             public Type getThisType() {
                 return thisType;
@@ -366,7 +375,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
     private static void assertType(JetScope scope, String expression, String expectedTypeStr) {
         Project project = getProject();
         JetExpression jetExpression = JetChangeUtil.createExpression(project, expression);
-        Type type = JetTypeChecker.INSTANCE.getType(scope, jetExpression);
+        Type type = JetTypeChecker.INSTANCE.getType(scope, jetExpression, false);
         Type expectedType = makeType(expectedTypeStr);
         assertTrue(type + " != " + expectedType, JetTypeChecker.INSTANCE.equalTypes(type, expectedType));
     }
@@ -392,32 +401,9 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
             "open class Derived_outT<out T> : Base_outT<T>",
         };
 
-        public static JetScope BASIC_SCOPE = new JetScopeImpl() {
+        public static JetScope BASIC_SCOPE = new JetScopeAdapter(JetStandardClasses.STANDARD_CLASSES) {
             @Override
             public ClassDescriptor getClass(String name) {
-                if ("Int".equals(name)) {
-                    return JetStandardClasses.getInt();
-                } else if ("Boolean".equals(name)) {
-                    return JetStandardClasses.getBoolean();
-                } else if ("Byte".equals(name)) {
-                    return JetStandardClasses.getByte();
-                } else if ("Char".equals(name)) {
-                    return JetStandardClasses.getChar();
-                } else if ("Short".equals(name)) {
-                    return JetStandardClasses.getShort();
-                } else if ("Long".equals(name)) {
-                    return JetStandardClasses.getLong();
-                } else if ("Float".equals(name)) {
-                    return JetStandardClasses.getFloat();
-                } else if ("Double".equals(name)) {
-                    return JetStandardClasses.getDouble();
-                } else if ("Unit".equals(name)) {
-                    return JetStandardClasses.getTuple(0);
-                } else if ("Any".equals(name)) {
-                    return JetStandardClasses.getAny();
-                } else if ("Nothing".equals(name)) {
-                    return JetStandardClasses.getNothing();
-                }
                 if (CLASSES.isEmpty()) {
                     for (String classDeclaration : CLASS_DECLARATIONS) {
                         JetClass classElement = JetChangeUtil.createClass(getProject(), classDeclaration);
@@ -429,7 +415,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
                 if (classDescriptor != null) {
                     return classDescriptor;
                 }
-                return null;
+                return super.getClass(name);
             }
         };
     }

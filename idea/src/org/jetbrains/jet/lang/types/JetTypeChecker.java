@@ -5,10 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.ClassDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.JetScope;
-import org.jetbrains.jet.lang.resolve.JetScopeAdapter;
-import org.jetbrains.jet.lang.resolve.TypeResolver;
+import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.*;
@@ -33,7 +30,7 @@ public class JetTypeChecker {
        : declaration
        : "namespace" // for the root namespace
      */
-    public Type getType(@NotNull final JetScope scope, @NotNull JetExpression expression) {
+    public Type getType(@NotNull final JetScope scope, @NotNull JetExpression expression, final boolean preferBlock) {
         final Type[] result = new Type[1];
         expression.accept(new JetVisitor() {
             @Override
@@ -48,6 +45,11 @@ public class JetTypeChecker {
 
             @Override
             public void visitFunctionLiteralExpression(JetFunctionLiteralExpression expression) {
+                if (preferBlock && !expression.hasParameterSpecification()) {
+                    result[0] = getBlockReturnedType(scope, expression.getBody());
+                    return;
+                }
+
                 JetTypeReference returnTypeRef = expression.getReturnTypeRef();
 
                 JetTypeReference receiverTypeRef = expression.getReceiverTypeRef();
@@ -58,7 +60,7 @@ public class JetTypeChecker {
                     thisType = scope.getThisType();
                 }
 
-                List<JetExpression> body = expression.getBody();
+                List<JetElement> body = expression.getBody();
                 final Map<String, PropertyDescriptor> parameterDescriptors = new HashMap<String, PropertyDescriptor>();
                 List<Type> parameterTypes = new ArrayList<Type>();
                 for (JetParameter parameter : expression.getParameters()) {
@@ -73,10 +75,8 @@ public class JetTypeChecker {
                 Type returnType;
                 if (returnTypeRef != null) {
                     returnType = TypeResolver.INSTANCE.resolveType(scope, returnTypeRef);
-                } else if (body.isEmpty()) {
-                    returnType = JetStandardClasses.getUnitType();
                 } else {
-                    returnType = getType(new JetScopeAdapter(scope) {
+                    returnType = getBlockReturnedType(new JetScopeAdapter(scope) {
                         @Override
                         public Type getThisType() {
                             return thisType;
@@ -90,14 +90,14 @@ public class JetTypeChecker {
                             }
                             return propertyDescriptor;
                         }
-                    }, body.get(body.size() - 1));
+                    }, body);
                 }
                 result[0] = JetStandardClasses.getFunctionType(null, receiverTypeRef == null ? null : thisType, parameterTypes, returnType);
             }
 
             @Override
             public void visitParenthesizedExpression(JetParenthesizedExpression expression) {
-                result[0] = getType(scope, expression.getExpression());
+                result[0] = getType(scope, expression.getExpression(), false);
             }
 
             @Override
@@ -157,7 +157,7 @@ public class JetTypeChecker {
             @Override
             public void visitBinaryWithTypeRHSExpression(JetBinaryExpressionWithTypeRHS expression) {
                 if (expression.getOperationSign() == JetTokens.COLON) {
-                    Type actualType = getType(scope, expression.getLeft());
+                    Type actualType = getType(scope, expression.getLeft(), false);
                     Type expectedType = TypeResolver.INSTANCE.resolveType(scope, expression.getRight());
                     if (isSubtypeOf(actualType, expectedType)) {
                         result[0] = expectedType;
@@ -179,8 +179,8 @@ public class JetTypeChecker {
                     // TODO : type-check the branch
                     result[0] = JetStandardClasses.getUnitType();
                 } else {
-                    Type thenType = getType(scope, expression.getThen());
-                    Type elseType = getType(scope, elseBranch);
+                    Type thenType = getType(scope, expression.getThen(), true);
+                    Type elseType = getType(scope, elseBranch, true);
                     result[0] = commonSupertype(Arrays.asList(thenType, elseType));
                 }
             }
@@ -202,12 +202,12 @@ public class JetTypeChecker {
                 if (finallyBlock == null) {
                     for (JetCatchClause catchClause : catchClauses) {
                         // TODO: change scope here
-                        types.add(getType(scope, catchClause.getCatchBody()));
+                        types.add(getType(scope, catchClause.getCatchBody(), true));
                     }
                 } else {
-                    types.add(getType(scope, finallyBlock.getFinalExpression()));
+                    types.add(getType(scope, finallyBlock.getFinalExpression(), true));
                 }
-                types.add(getType(scope, tryBlock));
+                types.add(getType(scope, tryBlock, true));
                 result[0] = commonSupertype(types);
             }
 
@@ -216,7 +216,7 @@ public class JetTypeChecker {
                 List<JetExpression> entries = expression.getEntries();
                 List<Type> types = new ArrayList<Type>();
                 for (JetExpression entry : entries) {
-                    types.add(getType(scope, entry));
+                    types.add(getType(scope, entry, false));
                 }
                 // TODO : labels
                 result[0] = JetStandardClasses.getTupleType(types);
@@ -247,12 +247,7 @@ public class JetTypeChecker {
             @Override
             public void visitBlockExpression(JetBlockExpression expression) {
                 // TODO : this is a stub, consider function literals
-                List<JetExpression> statements = expression.getStatements();
-                if (statements.isEmpty()) {
-                    result[0] = JetStandardClasses.getUnitType();
-                } else {
-                    result[0] = getType(scope, statements.get(statements.size() - 1));
-                }
+                result[0] = getBlockReturnedType(scope, expression.getStatements());
             }
 
             @Override
@@ -268,6 +263,29 @@ public class JetTypeChecker {
         return result[0];
     }
 
+    private Type getBlockReturnedType(@NotNull JetScope outerScope, List<JetElement> block) {
+        // TODO : this is a stub, consider function literals
+        if (block.isEmpty()) {
+            return JetStandardClasses.getUnitType();
+        } else {
+            AccumulatingScope scope = new AccumulatingScope(outerScope);
+            for (JetElement statement : block) {
+                // TODO: consider other declarations
+                if (statement instanceof JetProperty) {
+                    JetProperty property = (JetProperty) statement;
+                    scope.addPropertyDescriptor(ClassDescriptorResolver.resolvePropertyDescriptor(scope, property));
+                }
+            }
+            JetElement lastElement = block.get(block.size() - 1);
+            if (lastElement instanceof JetExpression) {
+                JetExpression expression = (JetExpression) lastElement;
+                return getType(scope, expression, true);
+            }
+            // TODO: functions, classes, etc.
+            throw new IllegalArgumentException("Last item in the block must be an expression");
+        }
+    }
+
     private void collectAllReturnTypes(JetWhenExpression whenExpression, JetScope scope, List<Type> result) {
         for (JetWhenEntry entry : whenExpression.getEntries()) {
             JetWhenExpression subWhen = entry.getSubWhen();
@@ -276,7 +294,7 @@ public class JetTypeChecker {
             } else {
                 JetExpression resultExpression = entry.getExpression();
                 if (resultExpression != null) {
-                    result.add(getType(scope, resultExpression));
+                    result.add(getType(scope, resultExpression, true));
                 }
             }
         }
