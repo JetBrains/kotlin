@@ -735,7 +735,11 @@ public class JetParsing extends AbstractJetParsing {
         if (at(EQ)) {
             advance(); // EQ
             myExpressionParsing.parseExpression();
-            consumeIf(SEMICOLON);
+            if (!local) {
+                consumeIf(SEMICOLON);
+            } else {
+                // "val a = 1; b" must not be an infix call of b on "val ...;"
+            }
         }
         if (!local) {
             if (parsePropertyGetterOrSetter()) {

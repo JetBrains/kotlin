@@ -297,7 +297,7 @@ JetFile: IIterator.jet
               PsiWhiteSpace(' ')
               INTEGER_CONSTANT
                 PsiElement(INTEGER_LITERAL)('0')
-              PsiElement(SEMICOLON)(';')
+            PsiElement(SEMICOLON)(';')
             PsiWhiteSpace('\n    ')
             FOR
               PsiElement(for)('for')

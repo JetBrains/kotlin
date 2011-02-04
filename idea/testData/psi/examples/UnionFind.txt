@@ -135,7 +135,7 @@ JetFile: UnionFind.jet
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('x')
                   PsiElement(RBRACKET)(']')
-              PsiElement(SEMICOLON)(';')
+            PsiElement(SEMICOLON)(';')
             PsiWhiteSpace('\n    ')
             IF
               PsiElement(if)('if')
@@ -182,7 +182,7 @@ JetFile: UnionFind.jet
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('p')
                   PsiElement(RPAR)(')')
-              PsiElement(SEMICOLON)(';')
+            PsiElement(SEMICOLON)(';')
             PsiWhiteSpace('\n    ')
             BINARY_EXPRESSION
               ARRAY_ACCESS_EXPRESSION

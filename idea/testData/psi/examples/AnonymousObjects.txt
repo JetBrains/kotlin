@@ -203,6 +203,6 @@ JetFile: AnonymousObjects.jet
                       PsiElement(RPAR)(')')
               PsiWhiteSpace('\n')
               PsiElement(RBRACE)('}')
-          PsiElement(SEMICOLON)(';')
+        PsiElement(SEMICOLON)(';')
         PsiWhiteSpace('\n\n')
         PsiElement(RBRACE)('}')

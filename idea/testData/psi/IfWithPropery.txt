@@ -1,0 +1,90 @@
+JetFile: IfWithPropery.jet
+  NAMESPACE
+    PROPERTY
+      PsiElement(val)('val')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('a')
+      PsiWhiteSpace(' ')
+      PsiElement(EQ)('=')
+      PsiWhiteSpace(' ')
+      IF
+        PsiElement(if)('if')
+        PsiElement(LPAR)('(')
+        CONDITION
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('1')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        THEN
+          FUNCTION_LITERAL
+            PsiElement(LBRACE)('{')
+            BODY
+              PROPERTY
+                PsiElement(var)('var')
+                PsiWhiteSpace(' ')
+                PsiElement(IDENTIFIER)('f')
+                PsiWhiteSpace(' ')
+                PsiElement(EQ)('=')
+                PsiWhiteSpace(' ')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
+              PsiElement(SEMICOLON)(';')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('a')
+            PsiElement(RBRACE)('}')
+        PsiWhiteSpace(' ')
+        PsiElement(else)('else')
+        PsiWhiteSpace(' ')
+        ELSE
+          FUNCTION_LITERAL
+            PsiElement(LBRACE)('{')
+            BODY
+              NULL
+                PsiElement(null)('null')
+            PsiElement(RBRACE)('}')
+    PsiWhiteSpace('\n')
+    PROPERTY
+      PsiElement(val)('val')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('a')
+      PsiWhiteSpace(' ')
+      PsiElement(EQ)('=')
+      PsiWhiteSpace(' ')
+      IF
+        PsiElement(if)('if')
+        PsiElement(LPAR)('(')
+        CONDITION
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('1')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        THEN
+          FUNCTION_LITERAL
+            PsiElement(LBRACE)('{')
+            PsiWhiteSpace('\n  ')
+            BODY
+              PROPERTY
+                PsiElement(var)('var')
+                PsiWhiteSpace(' ')
+                PsiElement(IDENTIFIER)('f')
+                PsiWhiteSpace(' ')
+                PsiElement(EQ)('=')
+                PsiWhiteSpace(' ')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
+              PsiElement(SEMICOLON)(';')
+              PsiWhiteSpace('\n  ')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('a')
+            PsiWhiteSpace('\n')
+            PsiElement(RBRACE)('}')
+        PsiWhiteSpace(' ')
+        PsiElement(else)('else')
+        PsiWhiteSpace(' ')
+        ELSE
+          FUNCTION_LITERAL
+            PsiElement(LBRACE)('{')
+            BODY
+              NULL
+                PsiElement(null)('null')
+            PsiElement(RBRACE)('}')
