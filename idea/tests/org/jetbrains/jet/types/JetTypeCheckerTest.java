@@ -304,10 +304,10 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertType("if (1) {() => val a = 1; a; var b = a; b} else null", "Function0<Int>?");
     }
 
-    public void testImplicitConversions() throws Exception {
-        assertConvertibleTo("1", JetStandardClasses.getByteType());
-    }
-
+//    public void testImplicitConversions() throws Exception {
+//        assertConvertibleTo("1", JetStandardClasses.getByteType());
+//    }
+//
     private static void assertSubtype(String type1, String type2) {
         assertSubtypingRelation(type1, type2, true);
     }
