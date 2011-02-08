@@ -399,7 +399,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             parseLocalDeclaration();
         }
         else if (at(FIELD_IDENTIFIER)) {
-            parseOneTokenExpression(REFERENCE_EXPRESSION);
+            parseSimpleNameExpression();
         }
         else if (at(IDENTIFIER)) {
             if (JetParsing.MODIFIER_KEYWORD_MAP.containsKey(myBuilder.getTokenText())) {
@@ -736,32 +736,6 @@ public class JetExpressionParsing extends AbstractJetParsing {
             parseExpression();
         }
     }
-
-    /*
-     * qualifiedName
-     *   : ("namespace" ".")? SimpleName{","}
-     *   ;
-     */
-    private void parseQualifiedName() {
-        PsiBuilder.Marker mark = mark();
-
-        if (at(NAMESPACE_KEYWORD)) {
-            advance(); // NAMESPACE_KEYWORD
-            mark.done(REFERENCE_EXPRESSION);
-            mark = mark.precede();
-
-            expect(DOT, "Expecting '.'");
-        }
-        while (true) {
-            expect(IDENTIFIER, "Expecting an indetifier", TokenSet.create(DOT));
-            mark.done(REFERENCE_EXPRESSION);
-            mark = mark.precede();
-            if (!at(DOT)) break;
-            advance(); // DOT
-        }
-        mark.drop();
-    }
-
     /*
      * arrayAccess
      *   : "[" expression{","} "]"
@@ -797,7 +771,11 @@ public class JetExpressionParsing extends AbstractJetParsing {
      */
     public void parseSimpleNameExpression() {
         PsiBuilder.Marker simpleName = mark();
-        expect(IDENTIFIER, "Expecting an identifier [Interal error]");
+        if (at(FIELD_IDENTIFIER)) {
+            advance(); //
+        } else {
+            expect(IDENTIFIER, "Expecting an identifier");
+        }
         simpleName.done(REFERENCE_EXPRESSION);
     }
 
