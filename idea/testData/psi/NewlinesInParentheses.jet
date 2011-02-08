@@ -21,12 +21,12 @@ fun foo() {
     + d]
 
   when (e) {
-    is T
+    is T @
     () => a
     in f
     () => a
     !is T
-    () => a
+    @ () => a
     !in f
     () => a
     f

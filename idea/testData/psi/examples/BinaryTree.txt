@@ -1347,6 +1347,9 @@ JetFile: BinaryTree.jet
                   DECOMPOSER_PATTERN
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('TreeNode')
+                    PsiWhiteSpace(' ')
+                    PsiElement(AT)('@')
+                    PsiWhiteSpace(' ')
                     DECOMPOSER_ARGUMENT_LIST
                       PsiElement(LPAR)('(')
                       DECOMPOSER_ARGUMENT
@@ -1385,6 +1388,9 @@ JetFile: BinaryTree.jet
                   DECOMPOSER_PATTERN
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('TreeNode')
+                    PsiWhiteSpace(' ')
+                    PsiElement(AT)('@')
+                    PsiWhiteSpace(' ')
                     DECOMPOSER_ARGUMENT_LIST
                       PsiElement(LPAR)('(')
                       DECOMPOSER_ARGUMENT
@@ -1395,8 +1401,10 @@ JetFile: BinaryTree.jet
                       PsiWhiteSpace(' ')
                       DECOMPOSER_ARGUMENT
                         TYPE_PATTERN
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('right')
+                          TYPE_REFERENCE
+                            USER_TYPE
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('right')
                       PsiElement(RPAR)(')')
                 PsiWhiteSpace(' ')
                 PsiElement(DOUBLE_ARROW)('=>')
@@ -1423,12 +1431,17 @@ JetFile: BinaryTree.jet
                   DECOMPOSER_PATTERN
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('TreeNode')
+                    PsiWhiteSpace(' ')
+                    PsiElement(AT)('@')
+                    PsiWhiteSpace(' ')
                     DECOMPOSER_ARGUMENT_LIST
                       PsiElement(LPAR)('(')
                       DECOMPOSER_ARGUMENT
                         TYPE_PATTERN
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('left')
+                          TYPE_REFERENCE
+                            USER_TYPE
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('left')
                       PsiElement(COMMA)(',')
                       PsiWhiteSpace(' ')
                       DECOMPOSER_ARGUMENT
@@ -1461,18 +1474,25 @@ JetFile: BinaryTree.jet
                   DECOMPOSER_PATTERN
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('TreeNode')
+                    PsiWhiteSpace(' ')
+                    PsiElement(AT)('@')
+                    PsiWhiteSpace(' ')
                     DECOMPOSER_ARGUMENT_LIST
                       PsiElement(LPAR)('(')
                       DECOMPOSER_ARGUMENT
                         TYPE_PATTERN
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('left')
+                          TYPE_REFERENCE
+                            USER_TYPE
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('left')
                       PsiElement(COMMA)(',')
                       PsiWhiteSpace(' ')
                       DECOMPOSER_ARGUMENT
                         TYPE_PATTERN
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('right')
+                          TYPE_REFERENCE
+                            USER_TYPE
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('right')
                       PsiElement(RPAR)(')')
                 PsiWhiteSpace(' ')
                 PsiElement(DOUBLE_ARROW)('=>')

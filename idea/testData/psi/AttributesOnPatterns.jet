@@ -4,6 +4,6 @@ fun foo() {
       is [a] =2 => d
       is [a] 2 => d
       is [a] T => d
-      is [a] T() => d
+      is [a] T @ () => d
     }
 }

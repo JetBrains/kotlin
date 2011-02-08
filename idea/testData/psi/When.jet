@@ -16,8 +16,8 @@ fun foo() {
     is a => foo
   }
   when (e) {
-    is Tree(a, b) => foo
-    is Tree(a, b) if (a > 5) => foo
+    is Tree @ (a, b) => foo
+    is Tree @ (a, b) if (a > 5) => foo
     is null => foo
     is 1 => foo
     is A.b => foo
@@ -43,14 +43,14 @@ fun foo() {
 fun foo() {
   when (val a = e) {
     is Tree => c
-    is Tree(null, ?r) => c
-    is a(a, b) => c
-    is a(a, b) => c
-    is a.a(a, b) => c
-    is a.a(foo = a, bar = b) => c
-    is namespace.a.a(a, b) => c
-    is a(?a is T, b) => c
-    is a(b, 1) => c
+    is Tree @ (null, ?r) => c
+    is a @ (a, b) => c
+    is a @ (a, b) => c
+    is a.a @ (a, b) => c
+    is a.a @ (foo = a, bar = b) => c
+    is namespace.a.a @ (a, b) => c
+    is a @ (?a is T, b) => c
+    is a @ (b, 1) => c
     in 1..2 => dsf
     !in 2 => sd
     !is t => d
@@ -66,11 +66,11 @@ fun foo() {
 fun foo() {
   when (val a = e) {
     is Tree,
-    is Tree(null, ?r),
-    is a(a, b) => c
+    is Tree @ (null, ?r),
+    is a @ (a, b) => c
     1, foo(), bar, 2 + 3,
-    is a(a, b) => c
-    is a.a(=a + 3, b) => c
+    is a @ (a, b) => c
+    is a.a @ (=a + 3, b) => c
   }
 }
 

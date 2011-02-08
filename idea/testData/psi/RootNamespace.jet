@@ -7,7 +7,7 @@ namespace foo.bar {
     namespace.foo.bar.X
     new namespace.foo.bar.X()
     when (e) {
-      is namespace.foo.bar.X(x) => {}
+      is namespace.foo.bar.X @ (x) => {}
     }
   }
 }

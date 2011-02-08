@@ -88,22 +88,31 @@ JetFile: RootNamespace.jet
                   PsiElement(is)('is')
                   PsiWhiteSpace(' ')
                   DECOMPOSER_PATTERN
-                    REFERENCE_EXPRESSION
-                      REFERENCE_EXPRESSION
-                        REFERENCE_EXPRESSION
-                          PsiElement(namespace)('namespace')
+                    DOT_QIALIFIED_EXPRESSION
+                      DOT_QIALIFIED_EXPRESSION
+                        DOT_QIALIFIED_EXPRESSION
+                          ROOT_NAMESPACE
+                            PsiElement(namespace)('namespace')
                           PsiElement(DOT)('.')
-                          PsiElement(IDENTIFIER)('foo')
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('foo')
                         PsiElement(DOT)('.')
-                        PsiElement(IDENTIFIER)('bar')
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('bar')
                       PsiElement(DOT)('.')
-                      PsiElement(IDENTIFIER)('X')
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('X')
+                    PsiWhiteSpace(' ')
+                    PsiElement(AT)('@')
+                    PsiWhiteSpace(' ')
                     DECOMPOSER_ARGUMENT_LIST
                       PsiElement(LPAR)('(')
                       DECOMPOSER_ARGUMENT
                         TYPE_PATTERN
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('x')
+                          TYPE_REFERENCE
+                            USER_TYPE
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('x')
                       PsiElement(RPAR)(')')
                 PsiWhiteSpace(' ')
                 PsiElement(DOUBLE_ARROW)('=>')

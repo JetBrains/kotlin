@@ -102,6 +102,7 @@ public interface JetTokens {
     JetToken NOT_IN      = JetKeywordToken.keyword("NOT_IN");
     JetToken NOT_IS      = JetKeywordToken.keyword("NOT_IS");
     JetToken HASH        = new JetToken("HASH");
+    JetToken AT          = new JetToken("AT");
 
     JetToken COMMA       = new JetToken("COMMA");
 

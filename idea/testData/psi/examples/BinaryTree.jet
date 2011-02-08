@@ -99,10 +99,10 @@ class BinaryTree<T> : IMutableSet<T> {
 
   private fun remove(node : TreeNode) {
     when (node) {
-      is TreeNode(null, null) => replace(node, null)
-      is TreeNode(null, right) => replace(node, right)
-      is TreeNode(left, null) => replace(node, left)
-      is TreeNode(left, right) => {
+      is TreeNode @ (null, null) => replace(node, null)
+      is TreeNode @ (null, right) => replace(node, right)
+      is TreeNode @ (left, null) => replace(node, left)
+      is TreeNode @ (left, right) => {
         val min = min(node.right)
         node.value = min.value
         remove(min)

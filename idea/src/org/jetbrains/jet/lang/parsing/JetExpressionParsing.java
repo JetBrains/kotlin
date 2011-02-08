@@ -6,6 +6,9 @@ import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.jet.JetNodeType;
 import org.jetbrains.jet.lexer.JetTokens;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.jetbrains.jet.JetNodeTypes.*;
 import static org.jetbrains.jet.lexer.JetTokens.*;
 
@@ -80,12 +83,9 @@ public class JetExpressionParsing extends AbstractJetParsing {
             NAMESPACE_KEYWORD // for absolute qualified names
     ), MODIFIER_KEYWORDS);
 
-    private final JetParsing myJetParsing;
-
-    public JetExpressionParsing(SemanticWhitespaceAwarePsiBuilder builder, JetParsing jetParsing) {
-        super(builder);
-        myJetParsing = jetParsing;
-    }
+    private static final TokenSet EXPRESSION_FOLLOW = TokenSet.create(
+            SEMICOLON, DOUBLE_ARROW, COMMA, RBRACE, RPAR, RBRACKET
+    );
 
     @SuppressWarnings({"UnusedDeclaration"})
     private enum Precedence {
@@ -168,6 +168,29 @@ public class JetExpressionParsing extends AbstractJetParsing {
         public final TokenSet getOperations() {
             return operations;
         }
+    }
+
+    private final JetParsing myJetParsing;
+    private TokenSet expressionFollow = null;
+    private TokenSet decomposerExpressionFollow = null;
+
+    public JetExpressionParsing(SemanticWhitespaceAwarePsiBuilder builder, JetParsing jetParsing) {
+        super(builder);
+        myJetParsing = jetParsing;
+    }
+
+    private TokenSet getDecomposerExpressionFollow() {
+        // TODO : memoize
+        List<IElementType> elvisFollow = new ArrayList<IElementType>();
+        Precedence precedence = Precedence.ELVIS;
+        while (precedence != null) {
+            IElementType[] types = precedence.getOperations().getTypes();
+            for (IElementType type : types) {
+                elvisFollow.add(type);
+            }
+            precedence = precedence.higher;
+        }
+        return TokenSet.orSet(EXPRESSION_FOLLOW, TokenSet.create(elvisFollow.toArray(new IElementType[elvisFollow.size()])));
     }
 
     /*
@@ -620,14 +643,14 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
     /*
      * pattern
-     *  : attributes pattern
-     *  : type // '[a] T' is a type-pattern 'T' with an attribute '[a]', not a type-pattern '[a] T'
-     *         // this makes sense because is-chack may be different for a type with attributes
-     *  : tuplePattern
-     *  : decomposerPattern
-     *  : constantPattern
-     *  : bindingPattern
-     *  : expressionPattern
+     *   : attributes pattern
+     *   : type // '[a] T' is a type-pattern 'T' with an attribute '[a]', not a type-pattern '[a] T'
+     *          // this makes sense because is-check may be different for a type with attributes
+     *   : tuplePattern
+     *   : decomposerPattern
+     *   : constantPattern
+     *   : bindingPattern
+     *   : "*" // wildcard pattern
      *   ;
      */
     private void parsePattern() {
@@ -635,22 +658,37 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         myJetParsing.parseAttributeList();
 
-        if (at(NAMESPACE_KEYWORD) || at(IDENTIFIER)) {
-            myJetParsing.parseUserTypeOrQualifiedName();
-            if (!myBuilder.newlineBeforeCurrentToken() && at(LPAR)) {
+        if (at(NAMESPACE_KEYWORD) || at(IDENTIFIER) || at(LBRACE) || at(THIS_KEYWORD)) {
+            PsiBuilder.Marker rollbackMarker = mark();
+            parseBinaryExpression(Precedence.ELVIS);
+            if (at(AT)) {
+                rollbackMarker.drop();
+                advance(); // AT
                 PsiBuilder.Marker list = mark();
                 parseTuplePattern(DECOMPOSER_ARGUMENT);
                 list.done(DECOMPOSER_ARGUMENT_LIST);
                 pattern.done(DECOMPOSER_PATTERN);
             } else {
-                pattern.done(TYPE_PATTERN);
+                int expressionEndOffset = myBuilder.getCurrentOffset();
+                rollbackMarker.rollbackTo();
+                rollbackMarker = mark();
+
+                myJetParsing.parseTypeRef();
+                if (at(AT)) {
+                    errorAndAdvance("'@' is allowed only after a decomposer expression, not after a type");
+                }
+                if (myBuilder.getCurrentOffset() < expressionEndOffset) {
+                    rollbackMarker.rollbackTo();
+                    parseBinaryExpression(Precedence.ELVIS);
+                    pattern.done(DECOMPOSER_PATTERN);
+                } else {
+                    rollbackMarker.drop();
+                    pattern.done(TYPE_PATTERN);
+                }
             }
         } else if (at(LPAR)) {
             parseTuplePattern(TUPLE_PATTERN_ENTRY);
             pattern.done(TUPLE_PATTERN);
-        } else if (at(LBRACE) || at(CAPITALIZED_THIS_KEYWORD)) {
-            myJetParsing.parseTypeRef();
-            pattern.done(TYPE_PATTERN);
         }
         else if (at(QUEST)) {
             parseBindingPattern();
@@ -673,10 +711,9 @@ public class JetExpressionParsing extends AbstractJetParsing {
      *  ;
      */
     private void parseTuplePattern(JetNodeType entryType) {
-        assert _at(LPAR);
 
         myBuilder.disableNewlines();
-        advance(); // LPAR
+        expect(LPAR, "Expecting '('", getDecomposerExpressionFollow());
 
         if (!at(RPAR)) {
             while (true) {

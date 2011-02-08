@@ -82,8 +82,10 @@ JetFile: AttributesOnPatterns.jet
                           PsiElement(IDENTIFIER)('a')
                   PsiElement(RBRACKET)(']')
                 PsiWhiteSpace(' ')
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('T')
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('T')
             PsiWhiteSpace(' ')
             PsiElement(DOUBLE_ARROW)('=>')
             PsiWhiteSpace(' ')
@@ -106,6 +108,9 @@ JetFile: AttributesOnPatterns.jet
                 PsiWhiteSpace(' ')
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('T')
+                PsiWhiteSpace(' ')
+                PsiElement(AT)('@')
+                PsiWhiteSpace(' ')
                 DECOMPOSER_ARGUMENT_LIST
                   PsiElement(LPAR)('(')
                   PsiElement(RPAR)(')')
