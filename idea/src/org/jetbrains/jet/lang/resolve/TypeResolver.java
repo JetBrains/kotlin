@@ -2,7 +2,6 @@ package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.modules.MemberDomain;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.*;
 
@@ -162,15 +161,16 @@ public class TypeResolver {
         if (qualifier != null) {
             // TODO: this is slow. The faster way would be to start with the first item in the qualified name
             // TODO: priorities: class of namespace first?
-            MemberDomain domain = resolveClass(scope, qualifier);
-            if (domain == null) {
-                domain = resolveNamespace(scope, qualifier);
-            }
-
-            if (domain != null) {
-                return domain.getClass(expression.getReferencedName());
-            }
-            return null;
+            throw new UnsupportedOperationException();
+//            MemberDomain domain = resolveClass(scope, qualifier);
+//            if (domain == null) {
+//                domain = resolveNamespace(scope, qualifier);
+//            }
+//
+//            if (domain != null) {
+//                return domain.getClass(expression.getReferencedName());
+//            }
+//            return null;
         }
 
         assert qualifier == null;

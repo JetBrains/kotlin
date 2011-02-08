@@ -1,14 +1,19 @@
 package org.jetbrains.jet.lang.resolve;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.types.*;
+
+import java.util.Collection;
+import java.util.Collections;
 
 /**
 * @author abreslav
 */
 public abstract class JetScopeImpl implements JetScope {
     @Override
-    public MethodDescriptor getMethods(String name) {
-        return null;
+    @NotNull
+    public Collection<MethodDescriptor> getMethods(String name) {
+        return Collections.emptyList();
     }
 
     @Override
@@ -36,6 +41,7 @@ public abstract class JetScopeImpl implements JetScope {
         return null;
     }
 
+    @NotNull
     @Override
     public Type getThisType() {
         return JetStandardClasses.getNothingType();

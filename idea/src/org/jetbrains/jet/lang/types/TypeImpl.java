@@ -28,6 +28,14 @@ public final class TypeImpl extends AnnotatedImpl implements Type {
         this(Collections.<Attribute>emptyList(), constructor, false, Collections.<TypeProjection>emptyList(), memberDomain);
     }
 
+    public TypeImpl(ClassDescriptor classDescriptor) {
+        this(Collections.<Attribute>emptyList(),
+                classDescriptor.getTypeConstructor(),
+                false,
+                Collections.<TypeProjection>emptyList(),
+                classDescriptor.getMemberDomain());
+    }
+
     @Override
     public TypeConstructor getConstructor() {
         return constructor;

@@ -53,11 +53,11 @@ public class JetTypeChecker {
                 JetTypeReference returnTypeRef = expression.getReturnTypeRef();
 
                 JetTypeReference receiverTypeRef = expression.getReceiverTypeRef();
-                final Type thisType;
+                final Type receiverType;
                 if (receiverTypeRef != null) {
-                    thisType = TypeResolver.INSTANCE.resolveType(scope, receiverTypeRef);
+                    receiverType = TypeResolver.INSTANCE.resolveType(scope, receiverTypeRef);
                 } else {
-                    thisType = scope.getThisType();
+                    receiverType = scope.getThisType();
                 }
 
                 List<JetElement> body = expression.getBody();
@@ -77,9 +77,10 @@ public class JetTypeChecker {
                     returnType = TypeResolver.INSTANCE.resolveType(scope, returnTypeRef);
                 } else {
                     returnType = getBlockReturnedType(new JetScopeAdapter(scope) {
+                        @NotNull
                         @Override
                         public Type getThisType() {
-                            return thisType;
+                            return receiverType;
                         }
 
                         @Override
@@ -92,7 +93,7 @@ public class JetTypeChecker {
                         }
                     }, body);
                 }
-                result[0] = JetStandardClasses.getFunctionType(null, receiverTypeRef == null ? null : thisType, parameterTypes, returnType);
+                result[0] = JetStandardClasses.getFunctionType(null, receiverTypeRef == null ? null : receiverType, parameterTypes, returnType);
             }
 
             @Override
@@ -246,13 +247,21 @@ public class JetTypeChecker {
 
             @Override
             public void visitBlockExpression(JetBlockExpression expression) {
-                // TODO : this is a stub, consider function literals
                 result[0] = getBlockReturnedType(scope, expression.getStatements());
             }
 
             @Override
             public void visitLoopExpression(JetLoopExpression expression) {
                 result[0] = JetStandardClasses.getUnitType();
+            }
+
+            @Override
+            public void visitDotQualifiedExpression(JetDotQualifiedExpression expression) {
+                JetExpression receiverExpression = expression.getReceiverExpression();
+                JetExpression selectorExpression = expression.getSelectorExpression();
+                Type receiverType = getType(scope, receiverExpression, false);
+                JetScope compositeScope = new ScopeWithReceiver(scope, receiverType);
+                result[0] = getType(compositeScope, selectorExpression, false);
             }
 
             @Override
@@ -264,7 +273,6 @@ public class JetTypeChecker {
     }
 
     private Type getBlockReturnedType(@NotNull JetScope outerScope, List<JetElement> block) {
-        // TODO : this is a stub, consider function literals
         if (block.isEmpty()) {
             return JetStandardClasses.getUnitType();
         } else {
@@ -585,6 +593,11 @@ public class JetTypeChecker {
             newArguments.add(substitute(parameterValues, argument));
         }
         return newArguments;
+    }
+
+    @NotNull
+    public Type substitute(@NotNull Type context, @NotNull Type subject) {
+        return substituteInType(getSubstitutionContext(context), subject);
     }
 
     private Type specializeType(Type type, List<TypeProjection> newArguments) {

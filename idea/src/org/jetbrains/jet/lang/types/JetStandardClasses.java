@@ -34,7 +34,7 @@ public class JetStandardClasses {
                 public int size() {
                     throw new UnsupportedOperationException();
                 }
-            }
+            }, TypeMemberDomain.EMPTY
     );
 
     private static final ClassDescriptor ANY = new ClassDescriptor(
@@ -42,24 +42,50 @@ public class JetStandardClasses {
             false,
             "Any",
             Collections.<TypeParameterDescriptor>emptyList(),
-            Collections.<Type>emptySet()
+            Collections.<Type>emptySet(),
+            TypeMemberDomain.EMPTY
     );
 
-    private static final Type ANY_TYPE = new TypeImpl(ANY.getTypeConstructor(), TypeMemberDomain.EMPTY);
-    private static final Type NULLABLE_ANY_TYPE = TypeUtils.makeNullable(ANY_TYPE);
+    public static final TypeMemberDomain STUB = new TypeMemberDomain() {
+        @Override
+        public ClassDescriptor getClassDescriptor(@NotNull Type type, String name) {
+            throw new UnsupportedOperationException(); // TODO
+        }
 
-    private static final ClassDescriptor BYTE    = new ClassDescriptor("Byte");
-    private static final ClassDescriptor CHAR    = new ClassDescriptor("Char");
-    private static final ClassDescriptor SHORT   = new ClassDescriptor("Short");
-    private static final ClassDescriptor INT     = new ClassDescriptor("Int");
-    private static final ClassDescriptor LONG    = new ClassDescriptor("Long");
-    private static final ClassDescriptor FLOAT   = new ClassDescriptor("Float");
-    private static final ClassDescriptor DOUBLE  = new ClassDescriptor("Double");
-    private static final ClassDescriptor BOOLEAN = new ClassDescriptor("Boolean");
-    private static final ClassDescriptor STRING  = new ClassDescriptor("String");
+        @NotNull
+        @Override
+        public Collection<MethodDescriptor> getMethods(Type receiverType, String name) {
+            throw new UnsupportedOperationException(); // TODO
+        }
+
+        @Override
+        public PropertyDescriptor getProperty(Type receiverType, String name) {
+            throw new UnsupportedOperationException(); // TODO
+        }
+
+        @Override
+        public ExtensionDescriptor getExtension(Type receiverType, String name) {
+            throw new UnsupportedOperationException(); // TODO
+        }
+    };
+
+    private static final Type ANY_TYPE = new TypeImpl(ANY.getTypeConstructor(), TypeMemberDomain.EMPTY);
+
+    private static final Type NULLABLE_ANY_TYPE = TypeUtils.makeNullable(ANY_TYPE);
+    private static final ClassDescriptor BYTE    = new ClassDescriptor("Byte", STUB);
+    private static final ClassDescriptor CHAR    = new ClassDescriptor("Char", STUB);
+    private static final ClassDescriptor SHORT   = new ClassDescriptor("Short", STUB);
+    private static final ClassDescriptor INT     = new ClassDescriptor("Int", STUB);
+    private static final ClassDescriptor LONG    = new ClassDescriptor("Long", STUB);
+    private static final ClassDescriptor FLOAT   = new ClassDescriptor("Float", STUB);
+    private static final ClassDescriptor DOUBLE  = new ClassDescriptor("Double", STUB);
+    private static final ClassDescriptor BOOLEAN = new ClassDescriptor("Boolean", STUB);
+
+    private static final ClassDescriptor STRING  = new ClassDescriptor("String", STUB);
 
     public static final int TUPLE_COUNT = 22;
     private static final ClassDescriptor[] TUPLE = new ClassDescriptor[TUPLE_COUNT];
+
     static {
         for (int i = 0; i < TUPLE_COUNT; i++) {
             List<TypeParameterDescriptor> parameters = new ArrayList<TypeParameterDescriptor>();
@@ -74,13 +100,14 @@ public class JetStandardClasses {
                     true,
                     "Tuple" + i,
                     parameters,
-                    Collections.singleton(JetStandardClasses.getAnyType()));
+                    Collections.singleton(JetStandardClasses.getAnyType()), STUB);
         }
     }
-
     public static final int FUNCTION_COUNT = 22;
     private static final ClassDescriptor[] FUNCTION = new ClassDescriptor[FUNCTION_COUNT];
     private static final ClassDescriptor[] RECEIVER_FUNCTION = new ClassDescriptor[FUNCTION_COUNT];
+
+
     static {
         for (int i = 0; i < FUNCTION_COUNT; i++) {
             List<TypeParameterDescriptor> parameters = new ArrayList<TypeParameterDescriptor>();
@@ -99,7 +126,7 @@ public class JetStandardClasses {
                     false,
                     "Function" + i,
                     parameters,
-                    Collections.singleton(JetStandardClasses.getAnyType()));
+                    Collections.singleton(JetStandardClasses.getAnyType()), STUB);
             parameters.add(0, new TypeParameterDescriptor(
                         Collections.<Attribute>emptyList(),
                         Variance.IN_VARIANCE, "T",
@@ -109,29 +136,22 @@ public class JetStandardClasses {
                     false,
                     "ReceiverFunction" + i,
                     parameters,
-                    Collections.singleton(JetStandardClasses.getAnyType()));
+                    Collections.singleton(JetStandardClasses.getAnyType()), STUB);
         }
     }
 
+    private static final Type BYTE_TYPE = new TypeImpl(getByte());
+    private static final Type CHAR_TYPE = new TypeImpl(getChar());
+    private static final Type SHORT_TYPE = new TypeImpl(getShort());
+    private static final Type INT_TYPE = new TypeImpl(getInt());
+    private static final Type LONG_TYPE = new TypeImpl(getLong());
+    private static final Type FLOAT_TYPE = new TypeImpl(getFloat());
+    private static final Type DOUBLE_TYPE = new TypeImpl(getDouble());
+    private static final Type BOOLEAN_TYPE = new TypeImpl(getBoolean());
+    private static final Type STRING_TYPE = new TypeImpl(getString());
+    private static final Type UNIT_TYPE = new TypeImpl(getTuple(0));
+    private static final Type NOTHING_TYPE = new TypeImpl(getNothing());
 
-    public static final TypeMemberDomain STUB = new TypeMemberDomain() {
-        @Override
-        public ClassDescriptor getClassDescriptor(@NotNull Type type) {
-            throw new UnsupportedOperationException(); // TODO
-        }
-    };
-
-    private static final Type BYTE_TYPE = new TypeImpl(getByte().getTypeConstructor(), STUB);
-    private static final Type CHAR_TYPE = new TypeImpl(getChar().getTypeConstructor(), STUB);
-    private static final Type SHORT_TYPE = new TypeImpl(getShort().getTypeConstructor(), STUB);
-    private static final Type INT_TYPE = new TypeImpl(getInt().getTypeConstructor(), STUB);
-    private static final Type LONG_TYPE = new TypeImpl(getLong().getTypeConstructor(), STUB);
-    private static final Type FLOAT_TYPE = new TypeImpl(getFloat().getTypeConstructor(), STUB);
-    private static final Type DOUBLE_TYPE = new TypeImpl(getDouble().getTypeConstructor(), STUB);
-    private static final Type BOOLEAN_TYPE = new TypeImpl(getBoolean().getTypeConstructor(), STUB);
-    private static final Type STRING_TYPE = new TypeImpl(getString().getTypeConstructor(), STUB);
-    private static final Type UNIT_TYPE = new TypeImpl(getTuple(0).getTypeConstructor(), STUB);
-    private static final Type NOTHING_TYPE = new TypeImpl(getNothing().getTypeConstructor(), STUB);
     private static final Type NULLABLE_NOTHING_TYPE = new TypeImpl(
             Collections.<Attribute>emptyList(),
             getNothing().getTypeConstructor(),

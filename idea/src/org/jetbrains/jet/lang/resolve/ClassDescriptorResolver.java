@@ -18,27 +18,84 @@ public class ClassDescriptorResolver {
 
     @Nullable
     public ClassDescriptor resolveClassDescriptor(@NotNull JetScope scope, @NotNull JetClass classElement) {
-        TypeParameterExtensibleScope extensibleScope = new TypeParameterExtensibleScope(scope);
+        TypeParameterExtensibleScope typeParameterScope = new TypeParameterExtensibleScope(scope);
 
-        // This call has side-effects on the extensibleScope (fills it in)
+        // This call has side-effects on the typeParameterScope (fills it in)
         List<TypeParameterDescriptor> typeParameters
-                = resolveTypeParameters(extensibleScope, classElement.getTypeParameters());
+                = resolveTypeParameters(typeParameterScope, classElement.getTypeParameters());
 
         List<JetDelegationSpecifier> delegationSpecifiers = classElement.getDelegationSpecifiers();
+        // TODO : assuming that the hierarchy is acyclic
         Collection<? extends Type> superclasses = delegationSpecifiers.isEmpty()
                 ? Collections.singleton(JetStandardClasses.getAnyType())
-                : resolveTypes(extensibleScope, delegationSpecifiers);
-        boolean open = classElement.getModifierList().hasModifier(JetTokens.OPEN_KEYWORD);
+                : resolveTypes(typeParameterScope, delegationSpecifiers);
+        boolean open = classElement.hasModifier(JetTokens.OPEN_KEYWORD);
         return new ClassDescriptor(
                 AttributeResolver.INSTANCE.resolveAttributes(classElement.getModifierList()),
                 !open,
                 classElement.getName(),
                 typeParameters,
-                superclasses
+                superclasses,
+                resolveMemberDomain(classElement, scope, typeParameterScope, superclasses)
         );
     }
 
+    private TypeMemberDomain resolveMemberDomain(
+            final JetClass classElement,
+            final JetScope outerScope,
+            final TypeParameterExtensibleScope typeParameterScope,
+            final Collection<? extends Type> supertypes) {
+        // TODO : Cache!!!
+        return new TypeMemberDomain() {
+            @Override
+            public PropertyDescriptor getProperty(Type receiverType, @NotNull String name) {
+                // TODO : primary constructor parameters
+                List<JetDeclaration> declarations = classElement.getDeclarations();
+                for (JetDeclaration declaration : declarations) {
+                    if (!name.equals(declaration.getName())) {
+                        continue;
+                    }
+                    if (declaration instanceof JetProperty) {
+                        JetProperty property = (JetProperty) declaration;
+                        // TODO : Caution: a cyclic dependency possible
+
+                        if (property.getPropertyTypeRef() != null) {
+                            return resolvePropertyDescriptor(JetScope.EMPTY, property);
+                        } else {
+                            throw new UnsupportedOperationException();
+                        }
+                    }
+                }
+
+                for (Type supertype : supertypes) {
+                    PropertyDescriptor property = supertype.getMemberDomain().getProperty(JetTypeChecker.INSTANCE.substitute(receiverType, supertype), name);
+                    if (property != null) {
+                        return property;
+                    }
+                }
+                return null;
+            }
+
+            @Override
+            public ClassDescriptor getClassDescriptor(@NotNull Type type, String name) {
+                throw new UnsupportedOperationException(); // TODO
+            }
+
+            @NotNull
+            @Override
+            public Collection<MethodDescriptor> getMethods(Type receiverType, String name) {
+                throw new UnsupportedOperationException(); // TODO
+            }
+
+            @Override
+            public ExtensionDescriptor getExtension(Type receiverType, String name) {
+                throw new UnsupportedOperationException(); // TODO
+            }
+        };
+    }
+
     private static List<TypeParameterDescriptor> resolveTypeParameters(TypeParameterExtensibleScope extensibleScope, List<JetTypeParameter> typeParameters) {
+        // TODO : When-clause
         List<TypeParameterDescriptor> result = new ArrayList<TypeParameterDescriptor>();
         for (JetTypeParameter typeParameter : typeParameters) {
             result.add(resolveTypeParameter(extensibleScope, typeParameter));
@@ -76,31 +133,6 @@ public class ClassDescriptorResolver {
         return TypeResolver.INSTANCE.resolveType(scope, typeReference);
     }
 
-    private static final class TypeParameterExtensibleScope extends JetScopeAdapter {
-
-        private final Map<String, TypeParameterDescriptor> typeParameterDescriptors = new HashMap<String, TypeParameterDescriptor>();
-        private TypeParameterExtensibleScope(JetScope scope) {
-            super(scope);
-        }
-
-        public void addTypeParameterDescriptor(TypeParameterDescriptor typeParameterDescriptor) {
-            String name = typeParameterDescriptor.getName();
-            if (typeParameterDescriptors.containsKey(name)) {
-                throw new UnsupportedOperationException(); // TODO
-            }
-            typeParameterDescriptors.put(name, typeParameterDescriptor);
-        }
-
-        @Override
-        public TypeParameterDescriptor getTypeParameterDescriptor(String name) {
-            TypeParameterDescriptor typeParameterDescriptor = typeParameterDescriptors.get(name);
-            if (typeParameterDescriptor != null) {
-                return typeParameterDescriptor;
-            }
-            return super.getTypeParameterDescriptor(name);
-        }
-
-    }
     @NotNull
     public PropertyDescriptor resolvePropertyDescriptor(@NotNull JetScope scope, @NotNull JetParameter parameter) {
         return new PropertyDescriptor(
@@ -127,5 +159,31 @@ public class ClassDescriptorResolver {
                 AttributeResolver.INSTANCE.resolveAttributes(property.getModifierList()),
                 property.getName(),
                 type);
+    }
+
+    private static final class TypeParameterExtensibleScope extends JetScopeAdapter {
+
+        private final Map<String, TypeParameterDescriptor> typeParameterDescriptors = new HashMap<String, TypeParameterDescriptor>();
+        private TypeParameterExtensibleScope(JetScope scope) {
+            super(scope);
+        }
+
+        public void addTypeParameterDescriptor(TypeParameterDescriptor typeParameterDescriptor) {
+            String name = typeParameterDescriptor.getName();
+            if (typeParameterDescriptors.containsKey(name)) {
+                throw new UnsupportedOperationException(); // TODO
+            }
+            typeParameterDescriptors.put(name, typeParameterDescriptor);
+        }
+
+        @Override
+        public TypeParameterDescriptor getTypeParameterDescriptor(String name) {
+            TypeParameterDescriptor typeParameterDescriptor = typeParameterDescriptors.get(name);
+            if (typeParameterDescriptor != null) {
+                return typeParameterDescriptor;
+            }
+            return super.getTypeParameterDescriptor(name);
+        }
+
     }
 }

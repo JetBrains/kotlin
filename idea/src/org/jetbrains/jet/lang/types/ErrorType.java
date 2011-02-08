@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.Collections;
 
 /**
@@ -10,7 +11,23 @@ import java.util.Collections;
 public class ErrorType {
     private static final TypeMemberDomain ERROR_DOMAIN = new TypeMemberDomain() {
         @Override
-        public ClassDescriptor getClassDescriptor(@NotNull Type type) {
+        public ClassDescriptor getClassDescriptor(@NotNull Type type, String name) {
+            throw new UnsupportedOperationException(); // TODO
+        }
+
+        @NotNull
+        @Override
+        public Collection<MethodDescriptor> getMethods(Type receiverType, String name) {
+            throw new UnsupportedOperationException(); // TODO
+        }
+
+        @Override
+        public PropertyDescriptor getProperty(Type receiverType, String name) {
+            throw new UnsupportedOperationException(); // TODO
+        }
+
+        @Override
+        public ExtensionDescriptor getExtension(Type receiverType, String name) {
             throw new UnsupportedOperationException(); // TODO
         }
     };

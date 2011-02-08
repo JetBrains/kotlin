@@ -3,6 +3,8 @@ package org.jetbrains.jet.lang.resolve;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.types.*;
 
+import java.util.Collection;
+
 /**
  * @author abreslav
  */
@@ -30,7 +32,7 @@ public class JetScopeAdapter implements JetScope {
     }
 
     @Override
-    public MethodDescriptor getMethods(String name) {
+    public Collection<MethodDescriptor> getMethods(String name) {
         return scope.getMethods(name);
     }
 
