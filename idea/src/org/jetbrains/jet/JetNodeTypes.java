@@ -53,7 +53,6 @@ public interface JetNodeTypes {
     JetNodeType SELF_TYPE     = new JetNodeType("SELF_TYPE", JetSelfType.class);
 
     // TODO: review
-    JetNodeType RECEIVER_TYPE_ATTRIBUTES = new JetNodeType("RECEIVER_TYPE_ATTRIBUTES");
     JetNodeType PROPERTY_ACCESSOR        = new JetNodeType("PROPERTY_ACCESSOR", JetPropertyAccessor.class);
     JetNodeType INITIALIZER_LIST         = new JetNodeType("INITIALIZER_LIST", JetInitializerList.class);
     JetNodeType THIS_CALL                = new JetNodeType("THIS_CALL", JetDelegatorToThisCall.class);
