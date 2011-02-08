@@ -27,7 +27,7 @@ JetFile: AttributesOnPatterns.jet
             WHEN_CONDITION
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
-              EXPRESSION_PATTERN
+              BINDING_PATTERN
                 ATTRIBUTE_ANNOTATION
                   PsiElement(LBRACKET)('[')
                   ATTRIBUTE
@@ -37,9 +37,61 @@ JetFile: AttributesOnPatterns.jet
                           PsiElement(IDENTIFIER)('a')
                   PsiElement(RBRACKET)(']')
                 PsiWhiteSpace(' ')
-                PsiElement(EQ)('=')
-                INTEGER_CONSTANT
-                  PsiElement(INTEGER_LITERAL)('2')
+                PsiElement(val)('val')
+                PsiWhiteSpace(' ')
+                PsiElement(IDENTIFIER)('a')
+            PsiWhiteSpace(' ')
+            PsiElement(DOUBLE_ARROW)('=>')
+            PsiWhiteSpace(' ')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('d')
+          PsiWhiteSpace('\n      ')
+          WHEN_ENTRY
+            WHEN_CONDITION
+              PsiElement(is)('is')
+              PsiWhiteSpace(' ')
+              BINDING_PATTERN
+                ATTRIBUTE_ANNOTATION
+                  PsiElement(LBRACKET)('[')
+                  ATTRIBUTE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('a')
+                  PsiElement(RBRACKET)(']')
+                PsiWhiteSpace(' ')
+                PsiElement(val)('val')
+                PsiWhiteSpace(' ')
+                PsiElement(IDENTIFIER)('a')
+                PsiWhiteSpace(' ')
+                PsiElement(is)('is')
+                PsiWhiteSpace(' ')
+                TYPE_PATTERN
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('foo')
+            PsiWhiteSpace(' ')
+            PsiElement(DOUBLE_ARROW)('=>')
+            PsiWhiteSpace(' ')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('d')
+          PsiWhiteSpace('\n      ')
+          WHEN_ENTRY
+            WHEN_CONDITION
+              PsiElement(is)('is')
+              PsiWhiteSpace(' ')
+              WILDCARD_PATTERN
+                ATTRIBUTE_ANNOTATION
+                  PsiElement(LBRACKET)('[')
+                  ATTRIBUTE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('a')
+                  PsiElement(RBRACKET)(']')
+                PsiWhiteSpace(' ')
+                PsiElement(MUL)('*')
             PsiWhiteSpace(' ')
             PsiElement(DOUBLE_ARROW)('=>')
             PsiWhiteSpace(' ')

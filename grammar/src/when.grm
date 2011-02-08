@@ -15,6 +15,7 @@ whenConditionIf
 
 whenCondition
   : expression
+//  : "." atomicExpression typeArguments? valueArguments?
   : ("in" | "!in") expression
   : ("is" | "!is") isRHS
   ;
@@ -22,17 +23,18 @@ whenCondition
 pattern
   : attributes pattern
   : type // '[a] T' is a type-pattern 'T' with an attribute '[a]', not a type-pattern '[a] T'
-         // this makes sense because is-chack may be different for a type with attributes
+         // this makes sense because is-check may be different for a type with attributes
   : tuplePattern
   : decomposerPattern
   : constantPattern
   : bindingPattern
-  : expressionPattern
+  : "*" // wildcard pattern
   ;
 
 decomposerPattern
   : type
-  : qualifiedName typeParameters? (tuplePattern)?
+// TODO : typeParameters will be consumed by the expression
+  : elvisExpression typeParameters? '@' tuplePattern
   ;
 
 constantPattern
@@ -44,7 +46,7 @@ tuplePattern
   ;
 
 bindingPattern
-  : "?" SimpleName? binding?
+  : "val" SimpleName binding?
   ;
 
 binding
@@ -52,13 +54,5 @@ binding
   : "!is" pattern
   : "in" expression
   : "!in" expression
-  : "=" expression
-  ;
-
-qualifiedName
-  : ("namespace" ".")? SimpleName{","}
-  ;
-
-expressionPattern
-  : "=" expression
+  : ":" type
   ;

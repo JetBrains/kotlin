@@ -1,7 +1,9 @@
 fun foo() {
 
     when (e) {
-      is [a] =2 => d
+      is [a] val a => d
+      is [a] val a is foo => d
+      is [a] * => d
       is [a] 2 => d
       is [a] T => d
       is [a] T @ () => d

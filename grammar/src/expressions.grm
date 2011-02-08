@@ -43,12 +43,12 @@ comparison
   ;
 
 namedInfixOrTypeExpression
-  : elvisOperation (inOperation elvisOperation)*
-  : elvisOperation (isOperation isRHS)?
-  : elvisOperation (typeOperation type)?
+  : elvisExpression (inOperation elvisExpression)*
+  : elvisExpression (isOperation isRHS)?
+  : elvisExpression (typeOperation type)?
   ;
 
-elvisOperation
+elvisExpression
   : infixFunctionCall ("?:" infixFunctionCall)*
   ;
 
@@ -170,7 +170,7 @@ postfixUnaryOperation
   : typeArguments? valueArguments
   : typeArguments
   : arrayAccess
-  : memberAccessOperation atomicExpression
+  : memberAccessOperation postfixUnaryOperation // TODO: Review
   ;
 
 memberAccessOperation

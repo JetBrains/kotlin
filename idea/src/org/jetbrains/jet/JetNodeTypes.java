@@ -114,6 +114,7 @@ public interface JetNodeTypes {
     JetNodeType TYPE_PATTERN              = new JetNodeType("TYPE_PATTERN");
     JetNodeType EXPRESSION_PATTERN        = new JetNodeType("EXPRESSION_PATTERN");
     JetNodeType BINDING_PATTERN           = new JetNodeType("BINDING_PATTERN");
+    JetNodeType WILDCARD_PATTERN          = new JetNodeType("WILDCARD_PATTERN");
     JetNodeType WHEN                      = new JetNodeType("WHEN", JetWhenExpression.class);
     JetNodeType WHEN_ENTRY                = new JetNodeType("WHEN_ENTRY", JetWhenEntry.class);
     JetNodeType WHEN_CONDITION            = new JetNodeType("WHEN_CONDITION");

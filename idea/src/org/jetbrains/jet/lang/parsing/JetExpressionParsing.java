@@ -171,7 +171,6 @@ public class JetExpressionParsing extends AbstractJetParsing {
     }
 
     private final JetParsing myJetParsing;
-    private TokenSet expressionFollow = null;
     private TokenSet decomposerExpressionFollow = null;
 
     public JetExpressionParsing(SemanticWhitespaceAwarePsiBuilder builder, JetParsing jetParsing) {
@@ -181,16 +180,19 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
     private TokenSet getDecomposerExpressionFollow() {
         // TODO : memoize
-        List<IElementType> elvisFollow = new ArrayList<IElementType>();
-        Precedence precedence = Precedence.ELVIS;
-        while (precedence != null) {
-            IElementType[] types = precedence.getOperations().getTypes();
-            for (IElementType type : types) {
-                elvisFollow.add(type);
+        if (decomposerExpressionFollow == null) {
+            List<IElementType> elvisFollow = new ArrayList<IElementType>();
+            Precedence precedence = Precedence.ELVIS;
+            while (precedence != null) {
+                IElementType[] types = precedence.getOperations().getTypes();
+                for (IElementType type : types) {
+                    elvisFollow.add(type);
+                }
+                precedence = precedence.higher;
             }
-            precedence = precedence.higher;
+            decomposerExpressionFollow = TokenSet.orSet(EXPRESSION_FOLLOW, TokenSet.create(elvisFollow.toArray(new IElementType[elvisFollow.size()])));
         }
-        return TokenSet.orSet(EXPRESSION_FOLLOW, TokenSet.create(elvisFollow.toArray(new IElementType[elvisFollow.size()])));
+        return decomposerExpressionFollow;
     }
 
     /*
@@ -690,13 +692,12 @@ public class JetExpressionParsing extends AbstractJetParsing {
             parseTuplePattern(TUPLE_PATTERN_ENTRY);
             pattern.done(TUPLE_PATTERN);
         }
-        else if (at(QUEST)) {
+        else if (at(MUL)) {
+            advance(); // MUL
+            pattern.done(WILDCARD_PATTERN);
+        } else if (at(VAL_KEYWORD)) {
             parseBindingPattern();
             pattern.done(BINDING_PATTERN);
-        } else if (at(EQ)) {
-            advance(); // EQ
-            parseExpression();
-            pattern.done(EXPRESSION_PATTERN);
         } else if (parseLiteralConstant()) {
             pattern.done(EXPRESSION_PATTERN);
         } else {
@@ -741,7 +742,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
     /*
      * bindingPattern
-     *   : "?" SimpleName? binding?
+     *   : "val" SimpleName binding?
      *   ;
      *
      * binding
@@ -749,15 +750,15 @@ public class JetExpressionParsing extends AbstractJetParsing {
      *   : "!is" pattern
      *   : "in" expression
      *   : "!in" expression
-     *   : "=" expression
+     *   : ":" type
      *   ;
      */
     private void parseBindingPattern() {
-        assert _at(QUEST);
+        assert _at(VAL_KEYWORD);
 
-        advance(); // QUEST
+        advance(); // VAL_KEYWORD
 
-        consumeIf(IDENTIFIER);
+        expect(IDENTIFIER, "Expecting an identifier");
 
         if (at(IS_KEYWORD) || at(NOT_IS)) {
             advance(); // IS_KEYWORD or NOT_IS
@@ -767,12 +768,13 @@ public class JetExpressionParsing extends AbstractJetParsing {
             advance(); // IN_KEYWORD ot NOT_IN
 
             parseExpression();
-        } else if (at(EQ)) {
+        } else if (at(COLON)) {
             advance(); // EQ
 
-            parseExpression();
+            myJetParsing.parseTypeRef();
         }
     }
+
     /*
      * arrayAccess
      *   : "[" expression{","} "]"

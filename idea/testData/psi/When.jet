@@ -26,10 +26,9 @@ fun foo() {
     is 'c' => foo
     is "sadfsa" => foo
     is """ddd""" => foo
-    is ? => foo
-    is ? is Foo => foo
-    is ?a is Foo => foo
-    is (?a is Foo, b) => foo
+    is * => foo
+    is val a is Foo => foo
+    is (val a is Foo, b) => foo
   }
   when (when(when (e) {
 
@@ -43,21 +42,22 @@ fun foo() {
 fun foo() {
   when (val a = e) {
     is Tree => c
-    is Tree @ (null, ?r) => c
+    is Tree @ (null, val r) => c
     is a @ (a, b) => c
     is a @ (a, b) => c
     is a.a @ (a, b) => c
     is a.a @ (foo = a, bar = b) => c
     is namespace.a.a @ (a, b) => c
-    is a @ (?a is T, b) => c
+    is a @ (val a is T, b) => c
     is a @ (b, 1) => c
     in 1..2 => dsf
     !in 2 => sd
     !is t => d
     is {(foo) : Bar} => fgpp
-    is (1, ?a is Foo, ?, ? is Foo, bar) => d
-    is (Foo, ?a in 1..2, ?, ? !is Foo, ?bar = foo.bar<a>(a)) => d
+    is (1, val a is Foo, *, Foo, bar) => d
+    is (Foo, val a in 1..2, *, val _ !is Foo, val bar is foo.bar<a> @ (a)) => d
     is (Int, Int) => 2
+    is val a : Foo => 2
     else => foo
     else continue
   }
@@ -66,11 +66,11 @@ fun foo() {
 fun foo() {
   when (val a = e) {
     is Tree,
-    is Tree @ (null, ?r),
+    is Tree @ (null, val r),
     is a @ (a, b) => c
     1, foo(), bar, 2 + 3,
     is a @ (a, b) => c
-    is a.a @ (=a + 3, b) => c
+    is a.a @ (val b, b) if (b == a + 3) => c
   }
 }
 
