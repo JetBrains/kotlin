@@ -1,0 +1,15 @@
+fun foo() {
+  when (a) {
+    .foo => a
+    .foo() => a
+    .foo<T> => a
+    .foo<T>(a) => a
+    .foo<T>(a, d) => a
+    .{bar} => a
+    .{!bar} => a
+    .{() => !bar} => a
+    else => a
+  }
+}
+
+

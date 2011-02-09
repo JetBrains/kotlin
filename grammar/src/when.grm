@@ -5,6 +5,7 @@ when
   ;
 
 whenEntry
+  // TODO : consider empty after =>
   : whenConditionIf{","} (when  | "=>" expression SEMI)
   : "else" ("continue" | "=>" expression SEMI)
   ;
@@ -15,7 +16,7 @@ whenConditionIf
 
 whenCondition
   : expression
-//  : "." atomicExpression typeArguments? valueArguments?
+  : "." postfixUnaryExpression typeArguments? valueArguments?
   : ("in" | "!in") expression
   : ("is" | "!is") isRHS
   ;
