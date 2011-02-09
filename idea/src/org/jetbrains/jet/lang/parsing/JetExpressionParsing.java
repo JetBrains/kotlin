@@ -17,7 +17,7 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
  */
 public class JetExpressionParsing extends AbstractJetParsing {
     private static final TokenSet WHEN_CONDITION_RECOVERY_SET = TokenSet.create(RBRACE, IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS, ELSE_KEYWORD);
-    private static final TokenSet WHEN_CONDITION_RECOVERY_SET_WITH_DOUBLE_ARROW = TokenSet.create(RBRACE, IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS, ELSE_KEYWORD, DOUBLE_ARROW);
+    private static final TokenSet WHEN_CONDITION_RECOVERY_SET_WITH_DOUBLE_ARROW = TokenSet.create(RBRACE, IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS, ELSE_KEYWORD, DOUBLE_ARROW, DOT);
 
     private static final TokenSet TYPE_ARGUMENT_LIST_STOPPERS = TokenSet.create(
             INTEGER_LITERAL, LONG_LITERAL, FLOAT_LITERAL, CHARACTER_LITERAL, STRING_LITERAL, RAW_STRING_LITERAL,
@@ -525,6 +525,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
     /*
      * whenEntry
+     *   // TODO : consider empty after =>
      *   : whenConditionIf{","} (when  | "=>" expression SEMI)
      *   : "else" ("continue" | "=>" expression SEMI)
      *   ;
@@ -609,6 +610,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     /*
      * whenCondition
      *   : expression
+     *   : "." postfixExpression typeArguments? valueArguments?
      *   : ("in" | "!in") expression
      *   : ("is" | "!is") isRHS
      *   ;
@@ -631,6 +633,13 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 error("Expecting a type or a decomposer pattern");
             } else {
                 parsePattern();
+            }
+        } else if (at(DOT)) {
+            advance(); // DOT
+            parsePostfixExpression();
+            myJetParsing.parseTypeArgumentList();
+            if (at(LPAR)) {
+                parseValueArgumentList();
             }
         } else {
             if (atSet(WHEN_CONDITION_RECOVERY_SET_WITH_DOUBLE_ARROW)) {
