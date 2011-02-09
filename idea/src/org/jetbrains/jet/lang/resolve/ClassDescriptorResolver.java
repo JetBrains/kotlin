@@ -48,7 +48,7 @@ public class ClassDescriptorResolver {
         // TODO : Cache!!!
         return new TypeMemberDomain() {
             @Override
-            public PropertyDescriptor getProperty(Type receiverType, @NotNull String name) {
+            public PropertyDescriptor getProperty(Type contextType, @NotNull String name) {
                 // TODO : primary constructor parameters
                 List<JetDeclaration> declarations = classElement.getDeclarations();
                 for (JetDeclaration declaration : declarations) {
@@ -59,7 +59,7 @@ public class ClassDescriptorResolver {
                         JetProperty property = (JetProperty) declaration;
 
                         if (property.getPropertyTypeRef() != null) {
-                            return resolvePropertyDescriptor(outerScope, property);
+                            return substituteInPropertyDescriptor(contextType, resolvePropertyDescriptor(typeParameterScope, property));
                         } else {
                             // TODO : Caution: a cyclic dependency possible
                             throw new UnsupportedOperationException();
@@ -68,7 +68,7 @@ public class ClassDescriptorResolver {
                 }
 
                 for (Type supertype : supertypes) {
-                    PropertyDescriptor property = supertype.getMemberDomain().getProperty(JetTypeChecker.INSTANCE.substitute(receiverType, supertype), name);
+                    PropertyDescriptor property = supertype.getMemberDomain().getProperty(JetTypeChecker.INSTANCE.substitute(contextType, supertype, Variance.INVARIANT), name);
                     if (property != null) {
                         return property;
                     }
@@ -77,21 +77,28 @@ public class ClassDescriptorResolver {
             }
 
             @Override
-            public ClassDescriptor getClassDescriptor(@NotNull Type type, String name) {
+            public ClassDescriptor getClassDescriptor(@NotNull Type contextType, String name) {
                 throw new UnsupportedOperationException(); // TODO
             }
 
             @NotNull
             @Override
-            public Collection<MethodDescriptor> getMethods(Type receiverType, String name) {
+            public Collection<MethodDescriptor> getMethods(Type contextType, String name) {
                 throw new UnsupportedOperationException(); // TODO
             }
 
             @Override
-            public ExtensionDescriptor getExtension(Type receiverType, String name) {
+            public ExtensionDescriptor getExtension(Type contextType, String name) {
                 throw new UnsupportedOperationException(); // TODO
             }
         };
+    }
+
+    private PropertyDescriptor substituteInPropertyDescriptor(Type contextType, PropertyDescriptor propertyDescriptor) {
+        if (contextType.getConstructor().getParameters().isEmpty()) {
+            return propertyDescriptor;
+        }
+        return new LazySubstitutedPropertyDescriptorImpl(propertyDescriptor, contextType);
     }
 
     private static List<TypeParameterDescriptor> resolveTypeParameters(TypeParameterExtensibleScope extensibleScope, List<JetTypeParameter> typeParameters) {
@@ -135,7 +142,7 @@ public class ClassDescriptorResolver {
 
     @NotNull
     public PropertyDescriptor resolvePropertyDescriptor(@NotNull JetScope scope, @NotNull JetParameter parameter) {
-        return new PropertyDescriptor(
+        return new PropertyDescriptorImpl(
                 AttributeResolver.INSTANCE.resolveAttributes(parameter.getModifierList()),
                 parameter.getName(),
                 TypeResolver.INSTANCE.resolveType(scope, parameter.getTypeReference()));
@@ -155,7 +162,7 @@ public class ClassDescriptorResolver {
             type = TypeResolver.INSTANCE.resolveType(scope, propertyTypeRef);
         }
 
-        return new PropertyDescriptor(
+        return new PropertyDescriptorImpl(
                 AttributeResolver.INSTANCE.resolveAttributes(property.getModifierList()),
                 property.getName(),
                 type);

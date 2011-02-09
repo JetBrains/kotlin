@@ -310,6 +310,9 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
 
     public void testPropertiesInClasses() throws Exception {
         assertType("new Properties().p", "Int");
+        assertType("new Props<Int>().p", "Int");
+        assertType("new Props<out Int>().p", "Int");
+        assertErrorType("new Props<in Int>().p");
     }
 
     //    public void testImplicitConversions() throws Exception {
@@ -364,6 +367,13 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertTrue(type + " != " + expectedType, JetTypeChecker.INSTANCE.equalTypes(type, expectedType));
     }
 
+    private void assertErrorType(String expression) {
+        Project project = getProject();
+        JetExpression jetExpression = JetChangeUtil.createExpression(project, expression);
+        Type type = JetTypeChecker.INSTANCE.getType(ClassDefinitions.BASIC_SCOPE, jetExpression, false);
+        assertTrue("Error type expected but " + type + " returned", ErrorType.isErrorType(type));
+    }
+
     private static void assertType(String contextType, String expression, String expectedType) {
         final Type thisType = makeType(contextType);
         JetScope scope = new JetScopeAdapter(ClassDefinitions.BASIC_SCOPE) {
@@ -407,7 +417,8 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
             "open class Derived_inT<in T> : Base_inT<T>",
             "open class Base_outT<out T>",
             "open class Derived_outT<out T> : Base_outT<T>",
-            "class Properties { val p : Int }"
+            "class Properties { val p : Int }",
+            "class Props<T> { val p : T }",
         };
 
         public static JetScope BASIC_SCOPE = new JetScopeAdapter(JetStandardClasses.STANDARD_CLASSES) {
