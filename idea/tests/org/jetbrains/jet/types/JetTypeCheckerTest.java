@@ -304,7 +304,15 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertType("if (1) {() => val a = 1; a; var b = a; b} else null", "Function0<Int>?");
     }
 
-//    public void testImplicitConversions() throws Exception {
+    public void testNew() throws Exception {
+        assertType("new Base_T<Int>()", "Base_T<Int>");
+    }
+
+    public void testPropertiesInClasses() throws Exception {
+        assertType("new Properties().p", "Int");
+    }
+
+    //    public void testImplicitConversions() throws Exception {
 //        assertConvertibleTo("1", JetStandardClasses.getByteType());
 //    }
 //
@@ -399,6 +407,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
             "open class Derived_inT<in T> : Base_inT<T>",
             "open class Base_outT<out T>",
             "open class Derived_outT<out T> : Base_outT<T>",
+            "class Properties { val p : Int }"
         };
 
         public static JetScope BASIC_SCOPE = new JetScopeAdapter(JetStandardClasses.STANDARD_CLASSES) {

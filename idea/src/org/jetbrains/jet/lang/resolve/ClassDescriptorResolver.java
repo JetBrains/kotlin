@@ -57,11 +57,11 @@ public class ClassDescriptorResolver {
                     }
                     if (declaration instanceof JetProperty) {
                         JetProperty property = (JetProperty) declaration;
-                        // TODO : Caution: a cyclic dependency possible
 
                         if (property.getPropertyTypeRef() != null) {
-                            return resolvePropertyDescriptor(JetScope.EMPTY, property);
+                            return resolvePropertyDescriptor(outerScope, property);
                         } else {
+                            // TODO : Caution: a cyclic dependency possible
                             throw new UnsupportedOperationException();
                         }
                     }

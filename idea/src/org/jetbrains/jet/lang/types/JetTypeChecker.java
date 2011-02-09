@@ -256,6 +256,13 @@ public class JetTypeChecker {
             }
 
             @Override
+            public void visitNewExpression(JetNewExpression expression) {
+                // TODO : type argument inference
+                JetTypeReference typeReference = expression.getTypeReference();
+                result[0] = TypeResolver.INSTANCE.resolveType(scope, typeReference);
+            }
+
+            @Override
             public void visitDotQualifiedExpression(JetDotQualifiedExpression expression) {
                 JetExpression receiverExpression = expression.getReceiverExpression();
                 JetExpression selectorExpression = expression.getSelectorExpression();

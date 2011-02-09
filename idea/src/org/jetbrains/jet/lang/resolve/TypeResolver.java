@@ -41,7 +41,7 @@ public class TypeResolver {
                             typeConstructor,
                             nullable,
                             resolveTypeProjections(scope, typeConstructor, type.getTypeArguments()),
-                            JetStandardClasses.STUB
+                            classDescriptor.getMemberDomain()
                     );
                 }
                 else if (type.getTypeArguments().isEmpty()) {
@@ -52,6 +52,7 @@ public class TypeResolver {
                                 typeParameterDescriptor.getTypeConstructor(),
                                 nullable || hasNullableBound(typeParameterDescriptor),
                                 Collections.<TypeProjection>emptyList(),
+                                // TODO : joint domain
                                 JetStandardClasses.STUB
                         );
                     }
