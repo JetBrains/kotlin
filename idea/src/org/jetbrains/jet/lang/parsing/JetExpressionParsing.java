@@ -274,7 +274,15 @@ public class JetExpressionParsing extends AbstractJetParsing {
     }
 
     /*
-     * expression operation?
+     * atomicExpression postfixUnaryOperation?
+     *
+     * postfixUnaryOperation
+     *   : "++" : "--"
+     *   : typeArguments? valueArguments
+     *   : typeArguments
+     *   : arrayAccess
+     *   : memberAccessOperation postfixUnaryOperation // TODO: Review
+     *   ;
      */
     private void parsePostfixExpression() {
 //        System.out.println("post at "  + myBuilder.getTokenText());
@@ -324,6 +332,12 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 parseAtomicExpression();
 
                 expression.done(SAFE_ACCESS_EXPRESSION);
+            } else if (at(QUEST)) {
+                advance(); // QUEST
+
+                parseAtomicExpression();
+
+                expression.done(PREDICATE_EXPRESSION);
             } else if (at(HASH)) {
                 advance(); // HASH
 

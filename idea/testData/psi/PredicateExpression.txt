@@ -1,0 +1,27 @@
+JetFile: PredicateExpression.jet
+  NAMESPACE
+    FUN
+      PsiElement(fun)('fun')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('foo')
+      TYPE_PARAMETER_LIST
+        <empty list>
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      BLOCK
+        PsiElement(LBRACE)('{')
+        PsiWhiteSpace('\n  ')
+        DOT_QIALIFIED_EXPRESSION
+          PREDICATE_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
+            PsiElement(QUEST)('?')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('f')
+          PsiElement(DOT)('.')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('foo')
+        PsiWhiteSpace('\n')
+        PsiElement(RBRACE)('}')

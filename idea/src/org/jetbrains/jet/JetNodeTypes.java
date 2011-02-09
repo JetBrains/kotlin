@@ -105,6 +105,7 @@ public interface JetNodeTypes {
     JetNodeType DOT_QIALIFIED_EXPRESSION  = new JetNodeType("DOT_QIALIFIED_EXPRESSION", JetDotQualifiedExpression.class);
     JetNodeType HASH_QIALIFIED_EXPRESSION = new JetNodeType("HASH_QIALIFIED_EXPRESSION", JetHashQualifiedExpression.class);
     JetNodeType SAFE_ACCESS_EXPRESSION    = new JetNodeType("SAFE_ACCESS_EXPRESSION", JetSafeQualifiedExpression.class);
+    JetNodeType PREDICATE_EXPRESSION       = new JetNodeType("PREDICATE_EXPRESSION", JetPridcateExpression.class);
     JetNodeType DECOMPOSER_PATTERN        = new JetNodeType("DECOMPOSER_PATTERN");
     JetNodeType TUPLE_PATTERN             = new JetNodeType("TUPLE_PATTERN");
     JetNodeType OBJECT_LITERAL            = new JetNodeType("OBJECT_LITERAL", JetObjectLiteralExpression.class);
