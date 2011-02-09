@@ -235,7 +235,7 @@ public class JetTypeChecker {
                     Collection<? extends Type> supertypes = thisType.getConstructor().getSupertypes();
                     for (Type declaredSupertype : supertypes) {
                         if (declaredSupertype.getConstructor().equals(superclass.getTypeConstructor())) {
-                            result[0] = substituteInType(getSubstitutionContext(thisType), declaredSupertype);
+                            result[0] = substituteInType(getSubstitutionContext(thisType), declaredSupertype, Variance.INVARIANT);
                             break;
                         }
                     }
@@ -521,7 +521,7 @@ public class JetTypeChecker {
             if (visited.contains(supertypeConstructor)) {
                 continue;
             }
-            Type substitutedSupertype = substituteInType(substitutionContext, supertype);
+            Type substitutedSupertype = substituteInType(substitutionContext, supertype, Variance.INVARIANT);
             dfs(substitutedSupertype, visited, handler);
         }
         handler.afterChildren(current);
@@ -557,7 +557,7 @@ public class JetTypeChecker {
         for (Type immediateSupertype : constructor.getSupertypes()) {
             Type correspondingSupertype = findCorrespondingSupertype(immediateSupertype, supertype);
             if (correspondingSupertype != null) {
-                return substituteInType(getSubstitutionContext(subtype), correspondingSupertype);
+                return substituteInType(getSubstitutionContext(subtype), correspondingSupertype, Variance.INVARIANT);
             }
         }
         return null;
@@ -576,9 +576,16 @@ public class JetTypeChecker {
         return parameterValues;
     }
 
-    private Type substituteInType(Map<TypeConstructor, TypeProjection> substitutionContext, Type type) {
+    private Type substituteInType(Map<TypeConstructor, TypeProjection> substitutionContext, Type type, Variance howThisTypeIsUsed) {
         TypeProjection value = substitutionContext.get(type.getConstructor());
-        assert value == null : "For now this is used only for supertypes, thus no variables";
+        if (value != null) {
+            Variance projectionKind = value.getProjectionKind();
+            if (howThisTypeIsUsed.allowsInPosition() && !projectionKind.allowsInPosition()
+                    || howThisTypeIsUsed.allowsOutPosition() && !projectionKind.allowsOutPosition()) {
+                return ErrorType.createWrongVarianceErrorType(value);
+            }
+            return value.getType();
+        }
 
         return specializeType(type, substituteInArguments(substitutionContext, type));
     }
@@ -603,8 +610,8 @@ public class JetTypeChecker {
     }
 
     @NotNull
-    public Type substitute(@NotNull Type context, @NotNull Type subject) {
-        return substituteInType(getSubstitutionContext(context), subject);
+    public Type substitute(@NotNull Type context, @NotNull Type subject, @NotNull Variance howThisTypeIsUsed) {
+        return substituteInType(getSubstitutionContext(context), subject, howThisTypeIsUsed);
     }
 
     private Type specializeType(Type type, List<TypeProjection> newArguments) {

@@ -48,23 +48,23 @@ public class JetStandardClasses {
 
     public static final TypeMemberDomain STUB = new TypeMemberDomain() {
         @Override
-        public ClassDescriptor getClassDescriptor(@NotNull Type type, String name) {
+        public ClassDescriptor getClassDescriptor(@NotNull Type contextType, String name) {
             throw new UnsupportedOperationException(); // TODO
         }
 
         @NotNull
         @Override
-        public Collection<MethodDescriptor> getMethods(Type receiverType, String name) {
+        public Collection<MethodDescriptor> getMethods(Type contextType, String name) {
             throw new UnsupportedOperationException(); // TODO
         }
 
         @Override
-        public PropertyDescriptor getProperty(Type receiverType, String name) {
+        public PropertyDescriptor getProperty(Type contextType, String name) {
             throw new UnsupportedOperationException(); // TODO
         }
 
         @Override
-        public ExtensionDescriptor getExtension(Type receiverType, String name) {
+        public ExtensionDescriptor getExtension(Type contextType, String name) {
             throw new UnsupportedOperationException(); // TODO
         }
     };

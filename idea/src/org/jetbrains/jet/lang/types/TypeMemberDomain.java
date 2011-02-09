@@ -12,36 +12,36 @@ import java.util.Collections;
 public interface TypeMemberDomain {
     TypeMemberDomain EMPTY = new TypeMemberDomain() {
         @Override
-        public ClassDescriptor getClassDescriptor(@NotNull Type type, String name) {
+        public ClassDescriptor getClassDescriptor(@NotNull Type contextType, String name) {
             return null;
         }
 
         @NotNull
         @Override
-        public Collection<MethodDescriptor> getMethods(Type receiverType, String name) {
+        public Collection<MethodDescriptor> getMethods(Type contextType, String name) {
             return Collections.emptyList();
         }
 
         @Override
-        public PropertyDescriptor getProperty(Type receiverType, String name) {
+        public PropertyDescriptor getProperty(Type contextType, String name) {
             return null;
         }
 
         @Override
-        public ExtensionDescriptor getExtension(Type receiverType, String name) {
+        public ExtensionDescriptor getExtension(Type contextType, String name) {
             return null;
         }
     };
 
     @Nullable
-    ClassDescriptor getClassDescriptor(@NotNull Type type, String name);
+    ClassDescriptor getClassDescriptor(@NotNull Type contextType, String name);
 
     @NotNull
-    Collection<MethodDescriptor> getMethods(Type receiverType, String name);
+    Collection<MethodDescriptor> getMethods(Type contextType, String name);
 
     @Nullable
-    PropertyDescriptor getProperty(Type receiverType, String name);
+    PropertyDescriptor getProperty(Type contextType, String name);
 
     @Nullable
-    ExtensionDescriptor getExtension(Type receiverType, String name);
+    ExtensionDescriptor getExtension(Type contextType, String name);
 }
