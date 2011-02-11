@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.JetScope;
 import org.jetbrains.jet.lang.resolve.JetScopeImpl;
+import org.jetbrains.jet.lang.resolve.WritableScope;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -34,7 +35,7 @@ public class JetStandardClasses {
                 public int size() {
                     throw new UnsupportedOperationException();
                 }
-            }, TypeMemberDomain.EMPTY
+            }, JetScope.EMPTY
     );
 
     private static final ClassDescriptor ANY = new ClassDescriptor(
@@ -43,33 +44,12 @@ public class JetStandardClasses {
             "Any",
             Collections.<TypeParameterDescriptor>emptyList(),
             Collections.<Type>emptySet(),
-            TypeMemberDomain.EMPTY
+            JetScope.EMPTY
     );
 
-    public static final TypeMemberDomain STUB = new TypeMemberDomain() {
-        @Override
-        public ClassDescriptor getClassDescriptor(@NotNull Type contextType, String name) {
-            throw new UnsupportedOperationException(); // TODO
-        }
+    public static final JetScope STUB = JetScope.EMPTY;
 
-        @NotNull
-        @Override
-        public Collection<MethodDescriptor> getMethods(Type contextType, String name) {
-            throw new UnsupportedOperationException(); // TODO
-        }
-
-        @Override
-        public PropertyDescriptor getProperty(Type contextType, String name) {
-            throw new UnsupportedOperationException(); // TODO
-        }
-
-        @Override
-        public ExtensionDescriptor getExtension(Type contextType, String name) {
-            throw new UnsupportedOperationException(); // TODO
-        }
-    };
-
-    private static final Type ANY_TYPE = new TypeImpl(ANY.getTypeConstructor(), TypeMemberDomain.EMPTY);
+    private static final Type ANY_TYPE = new TypeImpl(ANY.getTypeConstructor(), JetScope.EMPTY);
 
     private static final Type NULLABLE_ANY_TYPE = TypeUtils.makeNullable(ANY_TYPE);
     private static final ClassDescriptor BYTE    = new ClassDescriptor("Byte", STUB);
@@ -157,7 +137,7 @@ public class JetStandardClasses {
             getNothing().getTypeConstructor(),
             true,
             Collections.<TypeProjection>emptyList(),
-            TypeMemberDomain.EMPTY);
+            JetScope.EMPTY);
 
     private static final Map<String, ClassDescriptor> CLASS_MAP = new HashMap<String, ClassDescriptor>();
     static {

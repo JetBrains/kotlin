@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.JetScope;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -10,25 +11,41 @@ import java.util.List;
  * @author abreslav
  */
 public class ErrorType {
-    private static final TypeMemberDomain ERROR_DOMAIN = new TypeMemberDomain() {
+    private static final JetScope ERROR_SCOPE = new JetScope() {
+        @NotNull
         @Override
-        public ClassDescriptor getClassDescriptor(@NotNull Type contextType, String name) {
+        public Collection<MethodDescriptor> getMethods(String name) {
+            throw new UnsupportedOperationException(); // TODO
+        }
+
+        @Override
+        public ClassDescriptor getClass(String name) {
+            throw new UnsupportedOperationException(); // TODO
+        }
+
+        @Override
+        public PropertyDescriptor getProperty(String name) {
+            throw new UnsupportedOperationException(); // TODO
+        }
+
+        @Override
+        public ExtensionDescriptor getExtension(String name) {
+            throw new UnsupportedOperationException(); // TODO
+        }
+
+        @Override
+        public NamespaceDescriptor getNamespace(String name) {
+            throw new UnsupportedOperationException(); // TODO
+        }
+
+        @Override
+        public TypeParameterDescriptor getTypeParameterDescriptor(String name) {
             throw new UnsupportedOperationException(); // TODO
         }
 
         @NotNull
         @Override
-        public Collection<MethodDescriptor> getMethods(Type contextType, String name) {
-            throw new UnsupportedOperationException(); // TODO
-        }
-
-        @Override
-        public PropertyDescriptor getProperty(Type contextType, String name) {
-            throw new UnsupportedOperationException(); // TODO
-        }
-
-        @Override
-        public ExtensionDescriptor getExtension(Type contextType, String name) {
+        public Type getThisType() {
             throw new UnsupportedOperationException(); // TODO
         }
     };
@@ -36,15 +53,15 @@ public class ErrorType {
     private ErrorType() {}
 
     public static Type createErrorType(String debugMessage) {
-        return createErrorType(debugMessage, ERROR_DOMAIN);
+        return createErrorType(debugMessage, ERROR_SCOPE);
     }
 
-    private static Type createErrorType(String debugMessage, TypeMemberDomain memberDomain) {
-        return new ErrorTypeImpl(new TypeConstructor(Collections.<Attribute>emptyList(), false, "[ERROR : " + debugMessage + "]", Collections.<TypeParameterDescriptor>emptyList(), Collections.<Type>emptyList()), memberDomain);
+    private static Type createErrorType(String debugMessage, JetScope memberScope) {
+        return new ErrorTypeImpl(new TypeConstructor(Collections.<Attribute>emptyList(), false, "[ERROR : " + debugMessage + "]", Collections.<TypeParameterDescriptor>emptyList(), Collections.<Type>emptyList()), memberScope);
     }
 
     public static Type createWrongVarianceErrorType(TypeProjection value) {
-        return createErrorType(value + " is not allowed here]", value.getType().getMemberDomain());
+        return createErrorType(value + " is not allowed here]", value.getType().getMemberScope());
     }
 
     public static boolean isErrorType(Type type) {
@@ -54,11 +71,11 @@ public class ErrorType {
     private static class ErrorTypeImpl implements Type {
 
         private final TypeConstructor constructor;
-        private final TypeMemberDomain memberDomain;
+        private final JetScope memberScope;
 
-        private ErrorTypeImpl(TypeConstructor constructor, TypeMemberDomain memberDomain) {
+        private ErrorTypeImpl(TypeConstructor constructor, JetScope memberScope) {
             this.constructor = constructor;
-            this.memberDomain = memberDomain;
+            this.memberScope = memberScope;
         }
 
         @NotNull
@@ -80,8 +97,8 @@ public class ErrorType {
 
         @NotNull
         @Override
-        public TypeMemberDomain getMemberDomain() {
-            return memberDomain;
+        public JetScope getMemberScope() {
+            return memberScope;
         }
 
         @Override

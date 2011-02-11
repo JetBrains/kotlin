@@ -1,24 +1,27 @@
 package org.jetbrains.jet.lang.types;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author abreslav
  */
 public class LazySubstitutedPropertyDescriptorImpl implements PropertyDescriptor {
     private final PropertyDescriptor propertyDescriptor;
-    private final Type contextType;
+    private final Map<TypeConstructor, TypeProjection> substitutionContext;
     private Type propertyType = null;
 
-    public LazySubstitutedPropertyDescriptorImpl(PropertyDescriptor propertyDescriptor, Type contextType) {
+    public LazySubstitutedPropertyDescriptorImpl(@NotNull PropertyDescriptor propertyDescriptor, @NotNull Map<TypeConstructor, TypeProjection> substitutionContext) {
         this.propertyDescriptor = propertyDescriptor;
-        this.contextType = contextType;
+        this.substitutionContext = substitutionContext;
     }
 
     @Override
     public Type getType() {
         if (propertyType == null) {
-            propertyType = JetTypeChecker.INSTANCE.substitute(contextType, propertyDescriptor.getType(), Variance.OUT_VARIANCE);
+            propertyType = TypeSubstitutor.INSTANCE.substitute(substitutionContext, propertyDescriptor.getType(), Variance.OUT_VARIANCE);
         }
         return propertyType;
     }

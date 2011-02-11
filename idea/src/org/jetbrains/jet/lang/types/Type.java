@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.JetScope;
 
 import java.util.List;
 
@@ -12,5 +13,6 @@ public interface Type extends Annotated {
     @NotNull List<TypeProjection> getArguments();
     boolean isNullable();
 
-    @NotNull TypeMemberDomain getMemberDomain();
+    @NotNull
+    JetScope getMemberScope();
 }

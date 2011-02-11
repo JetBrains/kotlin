@@ -30,75 +30,44 @@ public class ClassDescriptorResolver {
                 ? Collections.singleton(JetStandardClasses.getAnyType())
                 : resolveTypes(typeParameterScope, delegationSpecifiers);
         boolean open = classElement.hasModifier(JetTokens.OPEN_KEYWORD);
+        WritableScope members = resolveMembers(classElement, typeParameters, scope, typeParameterScope, superclasses);
+
         return new ClassDescriptor(
                 AttributeResolver.INSTANCE.resolveAttributes(classElement.getModifierList()),
                 !open,
                 classElement.getName(),
                 typeParameters,
                 superclasses,
-                resolveMemberDomain(classElement, scope, typeParameterScope, superclasses)
+                members
         );
     }
 
-    private TypeMemberDomain resolveMemberDomain(
+    private WritableScope resolveMembers(
             final JetClass classElement,
+            List<TypeParameterDescriptor> typeParameters,
             final JetScope outerScope,
             final TypeParameterExtensibleScope typeParameterScope,
             final Collection<? extends Type> supertypes) {
-        // TODO : Cache!!!
-        return new TypeMemberDomain() {
-            @Override
-            public PropertyDescriptor getProperty(Type contextType, @NotNull String name) {
-                // TODO : primary constructor parameters
-                List<JetDeclaration> declarations = classElement.getDeclarations();
-                for (JetDeclaration declaration : declarations) {
-                    if (!name.equals(declaration.getName())) {
-                        continue;
-                    }
-                    if (declaration instanceof JetProperty) {
-                        JetProperty property = (JetProperty) declaration;
 
-                        if (property.getPropertyTypeRef() != null) {
-                            return substituteInPropertyDescriptor(contextType, resolvePropertyDescriptor(typeParameterScope, property));
-                        } else {
-                            // TODO : Caution: a cyclic dependency possible
-                            throw new UnsupportedOperationException();
-                        }
-                    }
+        WritableScope memberDeclarations = new WritableScope();
+
+        List<JetDeclaration> declarations = classElement.getDeclarations();
+        for (JetDeclaration declaration : declarations) {
+            if (declaration instanceof JetProperty) {
+                JetProperty property = (JetProperty) declaration;
+
+                if (property.getPropertyTypeRef() != null) {
+                    memberDeclarations.addPropertyDescriptor(resolvePropertyDescriptor(typeParameterScope, property));
+                } else {
+                    // TODO : Caution: a cyclic dependency possible
+                    throw new UnsupportedOperationException();
                 }
-
-                for (Type supertype : supertypes) {
-                    PropertyDescriptor property = supertype.getMemberDomain().getProperty(JetTypeChecker.INSTANCE.substitute(contextType, supertype, Variance.INVARIANT), name);
-                    if (property != null) {
-                        return property;
-                    }
-                }
-                return null;
-            }
-
-            @Override
-            public ClassDescriptor getClassDescriptor(@NotNull Type contextType, String name) {
+            } else {
                 throw new UnsupportedOperationException(); // TODO
             }
-
-            @NotNull
-            @Override
-            public Collection<MethodDescriptor> getMethods(Type contextType, String name) {
-                throw new UnsupportedOperationException(); // TODO
-            }
-
-            @Override
-            public ExtensionDescriptor getExtension(Type contextType, String name) {
-                throw new UnsupportedOperationException(); // TODO
-            }
-        };
-    }
-
-    private PropertyDescriptor substituteInPropertyDescriptor(Type contextType, PropertyDescriptor propertyDescriptor) {
-        if (contextType.getConstructor().getParameters().isEmpty()) {
-            return propertyDescriptor;
         }
-        return new LazySubstitutedPropertyDescriptorImpl(propertyDescriptor, contextType);
+
+        return memberDeclarations;
     }
 
     private static List<TypeParameterDescriptor> resolveTypeParameters(TypeParameterExtensibleScope extensibleScope, List<JetTypeParameter> typeParameters) {

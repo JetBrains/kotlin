@@ -233,9 +233,10 @@ public class JetTypeChecker {
                     JetUserType typeElement = (JetUserType) superTypeQualifier.getTypeElement();
                     ClassDescriptor superclass = TypeResolver.INSTANCE.resolveClass(scope, typeElement);
                     Collection<? extends Type> supertypes = thisType.getConstructor().getSupertypes();
+                    Map<TypeConstructor, TypeProjection> substitutionContext = TypeSubstitutor.INSTANCE.getSubstitutionContext(thisType);
                     for (Type declaredSupertype : supertypes) {
                         if (declaredSupertype.getConstructor().equals(superclass.getTypeConstructor())) {
-                            result[0] = substituteInType(getSubstitutionContext(thisType), declaredSupertype, Variance.INVARIANT);
+                            result[0] = TypeSubstitutor.INSTANCE.substitute(substitutionContext, declaredSupertype, Variance.INVARIANT);
                             break;
                         }
                     }
@@ -515,13 +516,13 @@ public class JetTypeChecker {
             return;
         }
         handler.beforeChildren(current);
-        Map<TypeConstructor, TypeProjection> substitutionContext = getSubstitutionContext(current);
+        Map<TypeConstructor, TypeProjection> substitutionContext = TypeSubstitutor.INSTANCE.getSubstitutionContext(current);
         for (Type supertype : current.getConstructor().getSupertypes()) {
             TypeConstructor supertypeConstructor = supertype.getConstructor();
             if (visited.contains(supertypeConstructor)) {
                 continue;
             }
-            Type substitutedSupertype = substituteInType(substitutionContext, supertype, Variance.INVARIANT);
+            Type substitutedSupertype = TypeSubstitutor.INSTANCE.substitute(substitutionContext, supertype, Variance.INVARIANT);
             dfs(substitutedSupertype, visited, handler);
         }
         handler.afterChildren(current);
@@ -557,65 +558,10 @@ public class JetTypeChecker {
         for (Type immediateSupertype : constructor.getSupertypes()) {
             Type correspondingSupertype = findCorrespondingSupertype(immediateSupertype, supertype);
             if (correspondingSupertype != null) {
-                return substituteInType(getSubstitutionContext(subtype), correspondingSupertype, Variance.INVARIANT);
+                return TypeSubstitutor.INSTANCE.substitute(subtype, correspondingSupertype, Variance.INVARIANT);
             }
         }
         return null;
-    }
-
-    private Map<TypeConstructor, TypeProjection> getSubstitutionContext(Type context) {
-        Map<TypeConstructor, TypeProjection> parameterValues = new HashMap<TypeConstructor, TypeProjection>();
-
-        List<TypeParameterDescriptor> parameters = context.getConstructor().getParameters();
-        List<TypeProjection> contextArguments = context.getArguments();
-        for (int i = 0, parametersSize = parameters.size(); i < parametersSize; i++) {
-            TypeParameterDescriptor parameter = parameters.get(i);
-            TypeProjection value = contextArguments.get(i);
-            parameterValues.put(parameter.getTypeConstructor(), value);
-        }
-        return parameterValues;
-    }
-
-    private Type substituteInType(Map<TypeConstructor, TypeProjection> substitutionContext, Type type, Variance howThisTypeIsUsed) {
-        TypeProjection value = substitutionContext.get(type.getConstructor());
-        if (value != null) {
-            Variance projectionKind = value.getProjectionKind();
-            if (howThisTypeIsUsed.allowsInPosition() && !projectionKind.allowsInPosition()
-                    || howThisTypeIsUsed.allowsOutPosition() && !projectionKind.allowsOutPosition()) {
-                return ErrorType.createWrongVarianceErrorType(value);
-            }
-            return value.getType();
-        }
-
-        return specializeType(type, substituteInArguments(substitutionContext, type));
-    }
-
-    @NotNull
-    private TypeProjection substitute(Map<TypeConstructor, TypeProjection> parameterValues, TypeProjection subject) {
-        @NotNull Type subjectType = subject.getType();
-        TypeProjection value = parameterValues.get(subjectType.getConstructor());
-        if (value != null) {
-            return value;
-        }
-        List<TypeProjection> newArguments = substituteInArguments(parameterValues, subjectType);
-        return new TypeProjection(subject.getProjectionKind(), specializeType(subjectType, newArguments));
-    }
-
-    private List<TypeProjection> substituteInArguments(Map<TypeConstructor, TypeProjection> parameterValues, Type subjectType) {
-        List<TypeProjection> newArguments = new ArrayList<TypeProjection>();
-        for (TypeProjection argument : subjectType.getArguments()) {
-            newArguments.add(substitute(parameterValues, argument));
-        }
-        return newArguments;
-    }
-
-    @NotNull
-    public Type substitute(@NotNull Type context, @NotNull Type subject, @NotNull Variance howThisTypeIsUsed) {
-        return substituteInType(getSubstitutionContext(context), subject, howThisTypeIsUsed);
-    }
-
-    private Type specializeType(Type type, List<TypeProjection> newArguments) {
-        return new TypeImpl(type.getAttributes(), type.getConstructor(), type.isNullable(), newArguments, type.getMemberDomain());
     }
 
     private boolean checkSubtypeForTheSameConstructor(Type subtype, Type supertype) {
@@ -636,7 +582,7 @@ public class JetTypeChecker {
                 case INVARIANT:
                     switch (superArgument.getProjectionKind()) {
                         case INVARIANT:
-                            if (!equalTypes(subArgumentType, superArgumentType)) {
+                            if (!TypeImpl.equalTypes(subArgumentType, superArgumentType)) {
                                 return false;
                             }
                             break;
@@ -688,9 +634,4 @@ public class JetTypeChecker {
         }
         return true;
     }
-
-    public boolean equalTypes(@NotNull Type type1, @NotNull Type type2) {
-        return TypeImpl.equalTypes(type1, type2);
-    }
-
 }

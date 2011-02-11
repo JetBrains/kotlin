@@ -335,7 +335,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
             subtypes.add(makeType(type));
         }
         Type result = JetTypeChecker.INSTANCE.commonSupertype(subtypes);
-        assertTrue(result + " != " + expected, JetTypeChecker.INSTANCE.equalTypes(result, makeType(expected)));
+        assertTrue(result + " != " + expected, TypeImpl.equalTypes(result, makeType(expected)));
     }
 
     private static void assertSubtypingRelation(String type1, String type2, boolean expected) {
@@ -366,7 +366,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         Project project = getProject();
         JetExpression jetExpression = JetChangeUtil.createExpression(project, expression);
         Type type = JetTypeChecker.INSTANCE.getType(ClassDefinitions.BASIC_SCOPE, jetExpression, false);
-        assertTrue(type + " != " + expectedType, JetTypeChecker.INSTANCE.equalTypes(type, expectedType));
+        assertTrue(type + " != " + expectedType, TypeImpl.equalTypes(type, expectedType));
     }
 
     private void assertErrorType(String expression) {
@@ -397,7 +397,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         JetExpression jetExpression = JetChangeUtil.createExpression(project, expression);
         Type type = JetTypeChecker.INSTANCE.getType(scope, jetExpression, false);
         Type expectedType = makeType(expectedTypeStr);
-        assertTrue(type + " != " + expectedType, JetTypeChecker.INSTANCE.equalTypes(type, expectedType));
+        assertTrue(type + " != " + expectedType, TypeImpl.equalTypes(type, expectedType));
     }
 
     private static Type makeType(String typeStr) {

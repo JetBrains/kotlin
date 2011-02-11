@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.JetScope;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -14,18 +15,18 @@ public final class TypeImpl extends AnnotatedImpl implements Type {
     private final TypeConstructor constructor;
     private final List<TypeProjection> arguments;
     private final boolean nullable;
-    private final TypeMemberDomain memberDomain;
+    private JetScope memberScope;
 
-    public TypeImpl(List<Attribute> attributes, TypeConstructor constructor, boolean nullable, List<TypeProjection> arguments, TypeMemberDomain memberDomain) {
+    public TypeImpl(List<Attribute> attributes, TypeConstructor constructor, boolean nullable, List<TypeProjection> arguments, JetScope memberScope) {
         super(attributes);
         this.constructor = constructor;
         this.nullable = nullable;
         this.arguments = arguments;
-        this.memberDomain = memberDomain;
+        this.memberScope = memberScope;
     }
 
-    public TypeImpl(TypeConstructor constructor, TypeMemberDomain memberDomain) {
-        this(Collections.<Attribute>emptyList(), constructor, false, Collections.<TypeProjection>emptyList(), memberDomain);
+    public TypeImpl(TypeConstructor constructor, JetScope memberScope) {
+        this(Collections.<Attribute>emptyList(), constructor, false, Collections.<TypeProjection>emptyList(), memberScope);
     }
 
     public TypeImpl(ClassDescriptor classDescriptor) {
@@ -33,7 +34,7 @@ public final class TypeImpl extends AnnotatedImpl implements Type {
                 classDescriptor.getTypeConstructor(),
                 false,
                 Collections.<TypeProjection>emptyList(),
-                classDescriptor.getMemberDomain());
+                classDescriptor.getMemberScope(Collections.<TypeProjection>emptyList()));
     }
 
     @Override
@@ -52,8 +53,11 @@ public final class TypeImpl extends AnnotatedImpl implements Type {
     }
 
     @Override
-    public TypeMemberDomain getMemberDomain() {
-        return memberDomain;
+    public JetScope getMemberScope() {
+        if (memberScope == null) {
+            // TODO
+        }
+        return memberScope;
     }
 
     @Override
@@ -85,7 +89,7 @@ public final class TypeImpl extends AnnotatedImpl implements Type {
 //        if (nullable != type.nullable) return false;
 //        if (arguments != null ? !arguments.equals(type.arguments) : type.arguments != null) return false;
 //        if (constructor != null ? !constructor.equals(type.constructor) : type.constructor != null) return false;
-//        if (memberDomain != null ? !memberDomain.equals(type.memberDomain) : type.memberDomain != null) return false;
+//        if (memberScope != null ? !memberScope.equals(type.memberScope) : type.memberScope != null) return false;
 
 //        return true;
     }

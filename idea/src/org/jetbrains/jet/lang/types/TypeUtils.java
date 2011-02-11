@@ -15,7 +15,7 @@ public class TypeUtils {
         if (type.isNullable()) {
             return type;
         }
-        return new TypeImpl(type.getAttributes(), type.getConstructor(), true, type.getArguments(), type.getMemberDomain());
+        return new TypeImpl(type.getAttributes(), type.getConstructor(), true, type.getArguments(), type.getMemberScope());
     }
 
     @Nullable

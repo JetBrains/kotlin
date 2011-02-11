@@ -15,7 +15,7 @@ public class ScopeWithReceiver extends JetScopeImpl {
 
     public ScopeWithReceiver(JetScope outerScope, Type receiverType) {
         this.outerScope = outerScope;
-        this.receiverTypeScope = new TypeScope(receiverType);
+        this.receiverTypeScope = receiverType.getMemberScope();
     }
 
     @Override

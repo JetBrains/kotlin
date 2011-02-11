@@ -36,12 +36,13 @@ public class TypeResolver {
                 ClassDescriptor classDescriptor = resolveClass(scope, type);
                 if (classDescriptor != null) {
                     TypeConstructor typeConstructor = classDescriptor.getTypeConstructor();
+                    List<TypeProjection> arguments = resolveTypeProjections(scope, typeConstructor, type.getTypeArguments());
                     result[0] = new TypeImpl(
                             attributes,
                             typeConstructor,
                             nullable,
-                            resolveTypeProjections(scope, typeConstructor, type.getTypeArguments()),
-                            classDescriptor.getMemberDomain()
+                            arguments,
+                            classDescriptor.getMemberScope(arguments)
                     );
                 }
                 else if (type.getTypeArguments().isEmpty()) {
