@@ -299,11 +299,11 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 advance(); // operation
                 expression.done(POSTFIX_EXPRESSION);
             } else if (parseCallWithClosure()) {
-                while (parseCallWithClosure());
+                parseCallWithClosure();
                 expression.done(CALL_EXPRESSION);
             } else if (at(LPAR)) {
                 parseValueArgumentList();
-                while (parseCallWithClosure());
+                parseCallWithClosure();
                 expression.done(CALL_EXPRESSION);
             } else if (at(LT)) {
                 // TODO: be (even) more clever
@@ -357,11 +357,12 @@ public class JetExpressionParsing extends AbstractJetParsing {
      * expression functionLiteral?
      */
     protected boolean parseCallWithClosure() {
-        if (!myBuilder.newlineBeforeCurrentToken() && at(LBRACE)) {
+        boolean success = false;
+        while (!myBuilder.newlineBeforeCurrentToken() && at(LBRACE)) {
             parseFunctionLiteral();
-            return true;
+            success = true;
         }
-        return false;
+        return success;
     }
 
     /*
