@@ -299,10 +299,11 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 advance(); // operation
                 expression.done(POSTFIX_EXPRESSION);
             } else if (parseCallWithClosure()) {
+                while (parseCallWithClosure());
                 expression.done(CALL_EXPRESSION);
             } else if (at(LPAR)) {
                 parseValueArgumentList();
-                parseCallWithClosure();
+                while (parseCallWithClosure());
                 expression.done(CALL_EXPRESSION);
             } else if (at(LT)) {
                 // TODO: be (even) more clever

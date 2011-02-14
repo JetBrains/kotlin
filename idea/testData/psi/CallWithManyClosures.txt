@@ -1,0 +1,166 @@
+JetFile: CallWithManyClosures.jet
+  NAMESPACE
+    PROPERTY
+      PsiElement(val)('val')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('a')
+      PsiWhiteSpace(' ')
+      PsiElement(EQ)('=')
+      PsiWhiteSpace(' ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('f')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        FUNCTION_LITERAL
+          PsiElement(LBRACE)('{')
+          BODY
+            <empty list>
+          PsiElement(RBRACE)('}')
+        PsiWhiteSpace(' ')
+        FUNCTION_LITERAL
+          PsiElement(LBRACE)('{')
+          BODY
+            <empty list>
+          PsiElement(RBRACE)('}')
+        PsiWhiteSpace(' ')
+        FUNCTION_LITERAL
+          PsiElement(LBRACE)('{')
+          BODY
+            <empty list>
+          PsiElement(RBRACE)('}')
+    PsiWhiteSpace('\n')
+    PROPERTY
+      PsiElement(val)('val')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('a')
+      PsiWhiteSpace(' ')
+      PsiElement(EQ)('=')
+      PsiWhiteSpace(' ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('f')
+        PsiWhiteSpace(' ')
+        FUNCTION_LITERAL
+          PsiElement(LBRACE)('{')
+          BODY
+            <empty list>
+          PsiElement(RBRACE)('}')
+        PsiWhiteSpace(' ')
+        FUNCTION_LITERAL
+          PsiElement(LBRACE)('{')
+          BODY
+            <empty list>
+          PsiElement(RBRACE)('}')
+        PsiWhiteSpace(' ')
+        FUNCTION_LITERAL
+          PsiElement(LBRACE)('{')
+          BODY
+            <empty list>
+          PsiElement(RBRACE)('}')
+    PsiWhiteSpace('\n')
+    PROPERTY
+      PsiElement(val)('val')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('a')
+      PsiWhiteSpace(' ')
+      PsiElement(EQ)('=')
+      PsiWhiteSpace(' ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('f')
+        PsiWhiteSpace(' ')
+        FUNCTION_LITERAL
+          PsiElement(LBRACE)('{')
+          BODY
+            <empty list>
+          PsiElement(RBRACE)('}')
+    PsiWhiteSpace('\n')
+    PROPERTY
+      PsiElement(val)('val')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('a')
+      PsiWhiteSpace(' ')
+      PsiElement(EQ)('=')
+      PsiWhiteSpace(' ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('f')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        FUNCTION_LITERAL
+          PsiElement(LBRACE)('{')
+          BODY
+            <empty list>
+          PsiElement(RBRACE)('}')
+    PsiWhiteSpace('\n')
+    PROPERTY
+      PsiElement(val)('val')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('a')
+      PsiWhiteSpace(' ')
+      PsiElement(EQ)('=')
+      PsiWhiteSpace(' ')
+      CALL_EXPRESSION
+        PARENTHESIZED
+          PsiElement(LPAR)('(')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('f')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        FUNCTION_LITERAL
+          PsiElement(LBRACE)('{')
+          BODY
+            <empty list>
+          PsiElement(RBRACE)('}')
+        PsiWhiteSpace(' ')
+        FUNCTION_LITERAL
+          PsiElement(LBRACE)('{')
+          BODY
+            <empty list>
+          PsiElement(RBRACE)('}')
+        PsiWhiteSpace(' ')
+        FUNCTION_LITERAL
+          PsiElement(LBRACE)('{')
+          BODY
+            <empty list>
+          PsiElement(RBRACE)('}')
+    PsiWhiteSpace('\n')
+    PROPERTY
+      PsiElement(val)('val')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('a')
+      PsiWhiteSpace(' ')
+      PsiElement(EQ)('=')
+      PsiWhiteSpace(' ')
+      CALL_EXPRESSION
+        PARENTHESIZED
+          PsiElement(LPAR)('(')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('f')
+          PsiElement(RPAR)(')')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        FUNCTION_LITERAL
+          PsiElement(LBRACE)('{')
+          BODY
+            <empty list>
+          PsiElement(RBRACE)('}')
+        PsiWhiteSpace(' ')
+        FUNCTION_LITERAL
+          PsiElement(LBRACE)('{')
+          BODY
+            <empty list>
+          PsiElement(RBRACE)('}')
+        PsiWhiteSpace(' ')
+        FUNCTION_LITERAL
+          PsiElement(LBRACE)('{')
+          BODY
+            <empty list>
+          PsiElement(RBRACE)('}')
