@@ -29,7 +29,7 @@ public class JetCallExpression extends JetExpression {
     }
 
     @Nullable
-    public JetArgumentList getArgumentList() {
+    public JetArgumentList getValueArgumentList() {
         return (JetArgumentList) findChildByType(JetNodeTypes.VALUE_ARGUMENT_LIST);
     }
 
@@ -39,8 +39,13 @@ public class JetCallExpression extends JetExpression {
     }
 
     @NotNull
-    public List<JetArgument> getArguments() {
-        JetArgumentList list = getArgumentList();
+    public List<JetExpression> getFunctionLiteralArguments() {
+        return findChildrenByType(JetNodeTypes.FUNCTION_LITERAL);
+    }
+
+    @NotNull
+    public List<JetArgument> getValueArguments() {
+        JetArgumentList list = getValueArgumentList();
         return list != null ? list.getArguments() : Collections.<JetArgument>emptyList();
     }
 

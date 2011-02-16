@@ -3,8 +3,6 @@ package org.jetbrains.jet.lang.resolve;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.types.*;
 
-import java.util.Collection;
-
 /**
  * @author abreslav
  */
@@ -22,18 +20,13 @@ public class JetScopeAdapter implements JetScope {
     }
 
     @Override
-    public TypeParameterDescriptor getTypeParameterDescriptor(String name) {
-        return scope.getTypeParameterDescriptor(name);
+    public TypeParameterDescriptor getTypeParameter(String name) {
+        return scope.getTypeParameter(name);
     }
 
     @Override
     public NamespaceDescriptor getNamespace(String name) {
         return scope.getNamespace(name);
-    }
-
-    @Override
-    public Collection<MethodDescriptor> getMethods(String name) {
-        return scope.getMethods(name);
     }
 
     @Override
@@ -49,5 +42,11 @@ public class JetScopeAdapter implements JetScope {
     @Override
     public ExtensionDescriptor getExtension(String name) {
         return scope.getExtension(name);
+    }
+
+    @NotNull
+    @Override
+    public OverloadDomain getOverloadDomain(Type receiverType, String referencedName) {
+        return scope.getOverloadDomain(receiverType, referencedName);
     }
 }

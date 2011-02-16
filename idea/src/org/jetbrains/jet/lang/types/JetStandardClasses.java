@@ -4,7 +4,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.JetScope;
 import org.jetbrains.jet.lang.resolve.JetScopeImpl;
-import org.jetbrains.jet.lang.resolve.WritableScope;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -322,12 +321,12 @@ public class JetStandardClasses {
         return getTupleType(Collections.<Attribute>emptyList(), Arrays.asList(arguments));
     }
 
-    public static Type getLabeledTupleType(List<Attribute> attributes, List<ParameterDescriptor> arguments) {
+    public static Type getLabeledTupleType(List<Attribute> attributes, List<ValueParameterDescriptor> arguments) {
         // TODO
         return getTupleType(attributes, toTypes(arguments));
     }
 
-    public static Type getLabeledTupleType(List<ParameterDescriptor> arguments) {
+    public static Type getLabeledTupleType(List<ValueParameterDescriptor> arguments) {
         // TODO
         return getLabeledTupleType(Collections.<Attribute>emptyList(), arguments);
     }
@@ -340,9 +339,9 @@ public class JetStandardClasses {
         return result;
     }
 
-    private static List<Type> toTypes(List<ParameterDescriptor> labeledEntries) {
+    private static List<Type> toTypes(List<ValueParameterDescriptor> labeledEntries) {
         List<Type> result = new ArrayList<Type>();
-        for (ParameterDescriptor entry : labeledEntries) {
+        for (ValueParameterDescriptor entry : labeledEntries) {
             result.add(entry.getType());
         }
         return result;

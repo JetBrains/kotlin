@@ -2,8 +2,8 @@ package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.JetScope;
+import org.jetbrains.jet.lang.resolve.OverloadDomain;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -12,12 +12,6 @@ import java.util.List;
  */
 public class ErrorType {
     private static final JetScope ERROR_SCOPE = new JetScope() {
-        @NotNull
-        @Override
-        public Collection<MethodDescriptor> getMethods(String name) {
-            throw new UnsupportedOperationException(); // TODO
-        }
-
         @Override
         public ClassDescriptor getClass(String name) {
             throw new UnsupportedOperationException(); // TODO
@@ -39,13 +33,19 @@ public class ErrorType {
         }
 
         @Override
-        public TypeParameterDescriptor getTypeParameterDescriptor(String name) {
+        public TypeParameterDescriptor getTypeParameter(String name) {
             throw new UnsupportedOperationException(); // TODO
         }
 
         @NotNull
         @Override
         public Type getThisType() {
+            throw new UnsupportedOperationException(); // TODO
+        }
+
+        @NotNull
+        @Override
+        public OverloadDomain getOverloadDomain(Type receiverType, String referencedName) {
             throw new UnsupportedOperationException(); // TODO
         }
     };

@@ -265,11 +265,102 @@ public class JetTypeChecker {
 
             @Override
             public void visitDotQualifiedExpression(JetDotQualifiedExpression expression) {
+                // TODO : functions
                 JetExpression receiverExpression = expression.getReceiverExpression();
                 JetExpression selectorExpression = expression.getSelectorExpression();
                 Type receiverType = getType(scope, receiverExpression, false);
                 JetScope compositeScope = new ScopeWithReceiver(scope, receiverType);
                 result[0] = getType(compositeScope, selectorExpression, false);
+            }
+
+            @Override
+            public void visitCallExpression(JetCallExpression expression) {
+                JetExpression calleeExpression = expression.getCalleeExpression();
+
+                // 1) ends with a name -> (scope, name) to look up
+                // 2) ends with something else -> just check types
+
+                // TODO : check somewhere that these are NOT projections
+                List<JetTypeProjection> typeArguments = expression.getTypeArguments();
+
+                List<JetArgument> valueArguments = expression.getValueArguments();
+                boolean someNamed = false;
+                for (JetArgument argument : valueArguments) {
+                    if (argument.isNamed()) {
+                        someNamed = true;
+                        break;
+                    }
+                }
+                List<JetExpression> functionLiteralArguments = expression.getFunctionLiteralArguments();
+
+                JetExpression functionLiteralArgument = functionLiteralArguments.isEmpty() ? null : functionLiteralArguments.get(0);
+                assert functionLiteralArguments.size() <= 1;
+
+                OverloadDomain overloadDomain = getOverloadDomain(scope, calleeExpression);
+                if (someNamed) {
+                    // TODO : check that all are named
+                    throw new UnsupportedOperationException(); // TODO
+
+//                    result[0] = overloadDomain.getReturnTypeForNamedArguments(typeArguments, valueArguments, functionLiteralArgument);
+                } else {
+                    throw new UnsupportedOperationException(); // TODO
+//                    List<JetExpression> positionedValueArguments = new ArrayList<JetExpression>();
+//                    for (JetArgument argument : valueArguments) {
+//                        positionedValueArguments.add(argument.getArgumentExpression());
+//                    }
+//                    positionedValueArguments.addAll(functionLiteralArguments);
+//                    result[0] = overloadDomain.getReturnTypeForPositionedArguments(typeArguments, positionedValueArguments);
+                }
+            }
+
+            @Override
+            public void visitJetElement(JetElement elem) {
+                throw new IllegalArgumentException("Unsupported element: " + elem);
+            }
+        });
+        return result[0];
+    }
+
+    private OverloadDomain getOverloadDomain(final JetScope scope, JetExpression calleeExpression) {
+        final OverloadDomain[] result = new OverloadDomain[1];
+        calleeExpression.accept(new JetVisitor() {
+
+            @Override
+            public void visitHashQualifiedExpression(JetHashQualifiedExpression expression) {
+                // a#b -- create a domain for all overloads of b in a
+                throw new UnsupportedOperationException(); // TODO
+            }
+
+            @Override
+            public void visitPredicateExpression(JetPredicateExpression expression) {
+                // overload lookup for checking, but the type is receiver's type + nullable
+                throw new UnsupportedOperationException(); // TODO
+            }
+
+            @Override
+            public void visitQualifiedExpression(JetQualifiedExpression expression) {
+                // . or ?.
+                JetExpression selectorExpression = expression.getSelectorExpression();
+                if (selectorExpression instanceof JetReferenceExpression) {
+                    JetReferenceExpression referenceExpression = (JetReferenceExpression) selectorExpression;
+
+                    Type receiverType = getType(scope, expression.getReceiverExpression(), false);
+                    result[0] = scope.getOverloadDomain(receiverType, referenceExpression.getReferencedName());
+                } else {
+                    throw new UnsupportedOperationException(); // TODO
+                }
+            }
+
+            @Override
+            public void visitReferenceExpression(JetReferenceExpression expression) {
+                // a -- create a hierarchical lookup domain for this.a
+                throw new UnsupportedOperationException(); // TODO
+            }
+
+            @Override
+            public void visitExpression(JetExpression expression) {
+                // <e> create a dummy domain for the type of e
+                throw new UnsupportedOperationException(); // TODO
             }
 
             @Override
@@ -444,9 +535,7 @@ public class JetTypeChecker {
         Set<TypeConstructor> commonSuperclasses = null;
 
         List<TypeConstructor> order = null;
-        for (Iterator<Type> iterator = types.iterator(); iterator.hasNext();) {
-            Type type = iterator.next();
-
+        for (Type type : types) {
             Set<TypeConstructor> visited = new HashSet<TypeConstructor>();
 
             order = dfs(type, visited, new DfsNodeHandler<List<TypeConstructor>>() {
@@ -477,7 +566,8 @@ public class JetTypeChecker {
 
             if (commonSuperclasses == null) {
                 commonSuperclasses = visited;
-            } else {
+            }
+            else {
                 commonSuperclasses.retainAll(visited);
             }
         }

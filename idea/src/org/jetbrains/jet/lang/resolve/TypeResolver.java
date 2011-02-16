@@ -46,7 +46,7 @@ public class TypeResolver {
                     );
                 }
                 else if (type.getTypeArguments().isEmpty()) {
-                    TypeParameterDescriptor typeParameterDescriptor = scope.getTypeParameterDescriptor(type.getReferencedName());
+                    TypeParameterDescriptor typeParameterDescriptor = scope.getTypeParameter(type.getReferencedName());
                     if (typeParameterDescriptor != null) {
                         result[0] = new TypeImpl(
                                 attributes,

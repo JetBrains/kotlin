@@ -44,8 +44,8 @@ public class JetPsiChecker implements Annotator {
                     }
 
                     @Override
-                    public void visitFunction(JetFunction fun) {
-                        super.visitFunction(fun);    //To change body of overridden methods use File | Settings | File Templates.
+                    public void visitFunction(JetFunction function) {
+                        super.visitFunction(function);    //To change body of overridden methods use File | Settings | File Templates.
                     }
                 });
             }

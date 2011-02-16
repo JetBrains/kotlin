@@ -317,6 +317,12 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertType("new Props<Properties>().p.p", "Int");
     }
 
+    public void testOverloads() throws Exception {
+        assertType("new Functions<String>().f()", "Unit");
+        assertType("new Functions<String>().f(1)", "Int");
+        assertType("new Functions<String>().f(1d)", "Any");
+    }
+
     //    public void testImplicitConversions() throws Exception {
 //        assertConvertibleTo("1", JetStandardClasses.getByteType());
 //    }
@@ -421,6 +427,11 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
             "open class Derived_outT<out T> : Base_outT<T>",
             "class Properties { val p : Int }",
             "class Props<T> { val p : T }",
+            "class Functions<T> { " +
+                    "fun f() : Unit {} " +
+                    "fun f(a : Int) : Int {} " +
+                    "fun f(a : T) : Any {} " +
+                    "}"
         };
 
         public static JetScope BASIC_SCOPE = new JetScopeAdapter(JetStandardClasses.STANDARD_CLASSES) {

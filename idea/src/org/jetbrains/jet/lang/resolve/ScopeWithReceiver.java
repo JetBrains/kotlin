@@ -3,8 +3,6 @@ package org.jetbrains.jet.lang.resolve;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.types.*;
 
-import java.util.Collection;
-
 /**
  * @author abreslav
  */
@@ -16,17 +14,6 @@ public class ScopeWithReceiver extends JetScopeImpl {
     public ScopeWithReceiver(JetScope outerScope, Type receiverType) {
         this.outerScope = outerScope;
         this.receiverTypeScope = receiverType.getMemberScope();
-    }
-
-    @Override
-    public Collection<MethodDescriptor> getMethods(String name) {
-        return receiverTypeScope.getMethods(name);
-        // TODO : Extension methods
-//        Collection<MethodDescriptor> outerScopeMethods = outerScope.getMethods(name);
-//        for (MethodDescriptor method : outerScopeMethods) {
-//            check for extensions for receiver type
-//            method.hasReceiver()
-//        }
     }
 
     @Override
@@ -51,8 +38,8 @@ public class ScopeWithReceiver extends JetScopeImpl {
     }
 
     @Override
-    public TypeParameterDescriptor getTypeParameterDescriptor(String name) {
-        return outerScope.getTypeParameterDescriptor(name);
+    public TypeParameterDescriptor getTypeParameter(String name) {
+        return outerScope.getTypeParameter(name);
     }
 
     @NotNull

@@ -12,7 +12,7 @@ public class NamespaceDescriptor implements NamespaceDomain {
         throw new UnsupportedOperationException(); // TODO
     }
 
-    public Collection<MethodDescriptor> getMethods(String name) {
+    public Collection<FunctionDescriptor> getMethods(String name) {
         throw new UnsupportedOperationException(); // TODO
     }
 

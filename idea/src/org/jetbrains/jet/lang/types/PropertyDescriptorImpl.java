@@ -13,10 +13,6 @@ public class PropertyDescriptorImpl extends MemberDescriptorImpl implements Prop
         this.type = type;
     }
 
-    public PropertyDescriptorImpl(List<Attribute> attributes, String name) {
-        this(attributes, name, null);
-    }
-
     @Override
     public Type getType() {
         return type;

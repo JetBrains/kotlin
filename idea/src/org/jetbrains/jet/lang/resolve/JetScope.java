@@ -4,16 +4,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.types.*;
 
-import java.util.Collection;
-
 /**
  * @author abreslav
  */
 public interface JetScope {
     JetScope EMPTY = new JetScopeImpl() {};
-
-    @NotNull
-    Collection<MethodDescriptor> getMethods(String name);
 
     @Nullable
     ClassDescriptor getClass(String name);
@@ -28,8 +23,11 @@ public interface JetScope {
     NamespaceDescriptor getNamespace(String name);
 
     @Nullable
-    TypeParameterDescriptor getTypeParameterDescriptor(String name);
+    TypeParameterDescriptor getTypeParameter(String name);
 
     @NotNull
     Type getThisType();
+
+    @NotNull
+    OverloadDomain getOverloadDomain(Type receiverType, String referencedName);
 }

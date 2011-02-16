@@ -34,8 +34,8 @@ public class JetVisitor extends PsiElementVisitor {
         visitNamedDeclaration(extension);
     }
 
-    public void visitFunction(JetFunction fun) {
-        visitNamedDeclaration(fun);
+    public void visitFunction(JetFunction function) {
+        visitNamedDeclaration(function);
     }
 
     public void visitProperty(JetProperty property) {
@@ -235,6 +235,10 @@ public class JetVisitor extends PsiElementVisitor {
     }
 
     public void visitDotQualifiedExpression(JetDotQualifiedExpression expression) {
+        visitQualifiedExpression(expression);
+    }
+
+    public void visitPredicateExpression(JetPredicateExpression expression) {
         visitQualifiedExpression(expression);
     }
 

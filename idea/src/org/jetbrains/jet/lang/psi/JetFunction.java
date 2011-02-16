@@ -25,13 +25,13 @@ public class JetFunction extends JetTypeParameterListOwner {
     }
 
     @Nullable @IfNotParsed
-    public JetParameterList getParameterList() {
+    public JetParameterList getValueParameterList() {
         return (JetParameterList) findChildByType(JetNodeTypes.VALUE_PARAMETER_LIST);
     }
 
     @NotNull
-    public List<JetParameter> getParameters() {
-        JetParameterList list = getParameterList();
+    public List<JetParameter> getValueParameters() {
+        JetParameterList list = getValueParameterList();
         return list != null ? list.getParameters() : Collections.<JetParameter>emptyList();
     }
 
@@ -72,5 +72,9 @@ public class JetFunction extends JetTypeParameterListOwner {
         }
 
         return null;
+    }
+
+    public boolean hasBlockBody() {
+        return findChildByType(JetTokens.EQ) != null;
     }
 }

@@ -3,7 +3,6 @@ package org.jetbrains.jet.lang.resolve;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.types.*;
 
-import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -28,12 +27,6 @@ public class SubstitutingScope implements JetScope {
         return new LazySubstitutedPropertyDescriptorImpl(property, substitutionContext);
     }
 
-    @NotNull
-    @Override
-    public Collection<MethodDescriptor> getMethods(String name) {
-        throw new UnsupportedOperationException(); // TODO
-    }
-
     @Override
     public ClassDescriptor getClass(String name) {
         throw new UnsupportedOperationException(); // TODO
@@ -50,13 +43,19 @@ public class SubstitutingScope implements JetScope {
     }
 
     @Override
-    public TypeParameterDescriptor getTypeParameterDescriptor(String name) {
+    public TypeParameterDescriptor getTypeParameter(String name) {
         throw new UnsupportedOperationException(); // TODO
     }
 
     @NotNull
     @Override
     public Type getThisType() {
+        throw new UnsupportedOperationException(); // TODO
+    }
+
+    @NotNull
+    @Override
+    public OverloadDomain getOverloadDomain(Type receiverType, String referencedName) {
         throw new UnsupportedOperationException(); // TODO
     }
 }
