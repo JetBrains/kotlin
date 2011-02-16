@@ -474,7 +474,7 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * classBody
-     *   : ("{" memberDeclaration{","} "}")?
+     *   : ("{" memberDeclaration "}")?
      *   ;
      */
     /*package*/ void parseClassBody() {

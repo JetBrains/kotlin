@@ -29,7 +29,7 @@ typeParameters
   ;
 
 classBody
-  : ("{" memberDeclaration{","} "}")?
+  : ("{" memberDeclaration "}")?
   ;
 
 delegationSpecifier
