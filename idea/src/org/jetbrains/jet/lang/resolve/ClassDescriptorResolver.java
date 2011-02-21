@@ -102,7 +102,7 @@ public class ClassDescriptorResolver {
             returnType = JetTypeChecker.INSTANCE.getType(parameterScope, bodyExpression, function.hasBlockBody());
         }
 
-        return new FunctionDescriptor(
+        return new FunctionDescriptorImpl(
                 AttributeResolver.INSTANCE.resolveAttributes(function.getModifierList()),
                 function.getName(),
                 typeParameterDescriptors,

@@ -55,9 +55,7 @@ public class SubstitutingScope implements JetScope {
 
     @NotNull
     @Override
-    public OverloadDomain getOverloadDomain(Type receiverType, @NotNull String referencedName) {
-        final OverloadDomain workerDomain = workerScope.getOverloadDomain(receiverType, referencedName);
-        // TODO: !!!
-        return workerDomain;
+    public FunctionGroup getFunctionGroup(@NotNull String name) {
+        return new LazySubstitutingFunctionGroup(substitutionContext, workerScope.getFunctionGroup(name));
     }
 }

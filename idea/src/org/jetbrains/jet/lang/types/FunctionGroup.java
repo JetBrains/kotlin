@@ -21,6 +21,11 @@ public interface FunctionGroup extends Named {
         public Collection<FunctionDescriptor> getPossiblyApplicableFunctions(@NotNull List<Type> typeArguments, @NotNull List<Type> positionedValueArgumentTypes) {
             return Collections.emptySet();
         }
+
+        @Override
+        public boolean isEmpty() {
+            return true;
+        }
     };
 
 
@@ -30,4 +35,6 @@ public interface FunctionGroup extends Named {
 
     @NotNull
     Collection<FunctionDescriptor> getPossiblyApplicableFunctions(@NotNull List<Type> typeArguments, @NotNull List<Type> positionedValueArgumentTypes);
+
+    boolean isEmpty();
 }

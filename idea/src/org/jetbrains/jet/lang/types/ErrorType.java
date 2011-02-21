@@ -2,7 +2,6 @@ package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.JetScope;
-import org.jetbrains.jet.lang.resolve.OverloadDomain;
 
 import java.util.Collections;
 import java.util.List;
@@ -45,9 +44,10 @@ public class ErrorType {
 
         @NotNull
         @Override
-        public OverloadDomain getOverloadDomain(Type receiverType, @NotNull String referencedName) {
+        public FunctionGroup getFunctionGroup(@NotNull String name) {
             throw new UnsupportedOperationException(); // TODO
         }
+
     };
 
     private ErrorType() {}

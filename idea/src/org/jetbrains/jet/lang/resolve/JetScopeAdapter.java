@@ -19,6 +19,12 @@ public class JetScopeAdapter implements JetScope {
         return scope.getThisType();
     }
 
+    @NotNull
+    @Override
+    public FunctionGroup getFunctionGroup(@NotNull String name) {
+        return scope.getFunctionGroup(name);
+    }
+
     @Override
     public TypeParameterDescriptor getTypeParameter(String name) {
         return scope.getTypeParameter(name);
@@ -44,9 +50,4 @@ public class JetScopeAdapter implements JetScope {
         return scope.getExtension(name);
     }
 
-    @NotNull
-    @Override
-    public OverloadDomain getOverloadDomain(Type receiverType, @NotNull String referencedName) {
-        return scope.getOverloadDomain(receiverType, referencedName);
-    }
 }

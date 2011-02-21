@@ -293,7 +293,8 @@ public class JetTypeChecker {
                 }
                 List<JetExpression> functionLiteralArguments = expression.getFunctionLiteralArguments();
 
-                JetExpression functionLiteralArgument = functionLiteralArguments.isEmpty() ? null : functionLiteralArguments.get(0);
+//                JetExpression functionLiteralArgument = functionLiteralArguments.isEmpty() ? null : functionLiteralArguments.get(0);
+                // TODO : must be a check
                 assert functionLiteralArguments.size() <= 1;
 
                 OverloadDomain overloadDomain = getOverloadDomain(scope, calleeExpression);
@@ -307,6 +308,7 @@ public class JetTypeChecker {
                     for (JetArgument argument : valueArguments) {
                         positionedValueArguments.add(argument.getArgumentExpression());
                     }
+
                     positionedValueArguments.addAll(functionLiteralArguments);
 
                     List<Type> types = new ArrayList<Type>();
@@ -356,7 +358,7 @@ public class JetTypeChecker {
                     JetReferenceExpression referenceExpression = (JetReferenceExpression) selectorExpression;
 
                     Type receiverType = getType(scope, expression.getReceiverExpression(), false);
-                    result[0] = scope.getOverloadDomain(receiverType, referenceExpression.getReferencedName());
+                    result[0] = OverloadResolver.INSTANCE.getOverloadDomain(receiverType, scope, referenceExpression.getReferencedName());
                 } else {
                     throw new UnsupportedOperationException(); // TODO
                 }

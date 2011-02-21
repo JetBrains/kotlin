@@ -2,10 +2,7 @@ package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author abreslav
@@ -72,5 +69,13 @@ public class TypeSubstitutor {
 
     private Type specializeType(Type type, List<TypeProjection> newArguments) {
         return new TypeImpl(type.getAttributes(), type.getConstructor(), type.isNullable(), newArguments, type.getMemberScope());
+    }
+
+    public Set<Type> substituteInSet(Map<TypeConstructor, TypeProjection> substitutionContext, Set<Type> types, Variance howTheseTypesWillBeUsed) {
+        Set<Type> result = new HashSet<Type>();
+        for (Type type : types) {
+            result.add(substitute(substitutionContext, type, howTheseTypesWillBeUsed));
+        }
+        return result;
     }
 }

@@ -1,14 +1,10 @@
 package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.types.FunctionDescriptor;
-import org.jetbrains.jet.lang.types.FunctionGroup;
-import org.jetbrains.jet.lang.types.Type;
-import org.jetbrains.jet.lang.types.TypeParameterDescriptor;
+import org.jetbrains.jet.lang.types.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -55,22 +51,16 @@ public class WritableFunctionGroup implements FunctionGroup {
         for (FunctionDescriptor functionDescriptor : getFunctionDescriptors()) {
             // TODO : type argument inference breaks this logic
             if (functionDescriptor.getTypeParameters().size() == typeArgCount) {
-                if (functionDescriptor.getMinimumArity() <= valueArgCount && valueArgCount <= functionDescriptor.getMaximumArity()) {
-                    result.add(substituteFunctionDescriptor(typeArguments, functionDescriptor));
+                if (FunctionDescriptorUtil.getMinimumArity(functionDescriptor) <= valueArgCount && valueArgCount <= FunctionDescriptorUtil.getMaximumArity(functionDescriptor)) {
+                    result.add(FunctionDescriptorUtil.substituteFunctionDescriptor(typeArguments, functionDescriptor));
                 }
             }
         }
         return result;
     }
 
-    private FunctionDescriptor substituteFunctionDescriptor(List<Type> typeArguments, FunctionDescriptor functionDescriptor) {
-        return new FunctionDescriptor(
-                // TODO : substitute
-                functionDescriptor.getAttributes(),
-                functionDescriptor.getName(),
-                Collections.<TypeParameterDescriptor>emptyList(), // TODO : questionable
-                functionDescriptor.getSubstitutedValueParameters(typeArguments),
-                functionDescriptor.getSubstitutedReturnType(typeArguments)
-        );
+    @Override
+    public boolean isEmpty() {
+        return functionDescriptors.isEmpty();
     }
 }
