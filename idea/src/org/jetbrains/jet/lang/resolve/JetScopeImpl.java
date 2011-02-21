@@ -40,7 +40,7 @@ public abstract class JetScopeImpl implements JetScope {
 
     @NotNull
     @Override
-    public OverloadDomain getOverloadDomain(Type receiverType, String referencedName) {
-        return OverloadDomain.EMPTY;
+    public OverloadDomain getOverloadDomain(Type receiverType, @NotNull String referencedName) {
+        return receiverType.getMemberScope().getOverloadDomain(null, referencedName);
     }
 }

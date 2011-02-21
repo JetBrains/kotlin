@@ -55,7 +55,9 @@ public class SubstitutingScope implements JetScope {
 
     @NotNull
     @Override
-    public OverloadDomain getOverloadDomain(Type receiverType, String referencedName) {
-        throw new UnsupportedOperationException(); // TODO
+    public OverloadDomain getOverloadDomain(Type receiverType, @NotNull String referencedName) {
+        final OverloadDomain workerDomain = workerScope.getOverloadDomain(receiverType, referencedName);
+        // TODO: !!!
+        return workerDomain;
     }
 }

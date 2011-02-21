@@ -65,7 +65,7 @@ public class WritableFunctionGroup implements FunctionGroup {
 
     private FunctionDescriptor substituteFunctionDescriptor(List<Type> typeArguments, FunctionDescriptor functionDescriptor) {
         return new FunctionDescriptor(
-            // TODO : substitute
+                // TODO : substitute
                 functionDescriptor.getAttributes(),
                 functionDescriptor.getName(),
                 Collections.<TypeParameterDescriptor>emptyList(), // TODO : questionable

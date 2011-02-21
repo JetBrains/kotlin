@@ -45,7 +45,7 @@ public class ErrorType {
 
         @NotNull
         @Override
-        public OverloadDomain getOverloadDomain(Type receiverType, String referencedName) {
+        public OverloadDomain getOverloadDomain(Type receiverType, @NotNull String referencedName) {
             throw new UnsupportedOperationException(); // TODO
         }
     };

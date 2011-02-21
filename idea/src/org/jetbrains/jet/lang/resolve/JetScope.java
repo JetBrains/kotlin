@@ -29,5 +29,5 @@ public interface JetScope {
     Type getThisType();
 
     @NotNull
-    OverloadDomain getOverloadDomain(Type receiverType, String referencedName);
+    OverloadDomain getOverloadDomain(@Nullable Type receiverType, @NotNull String referencedName);
 }

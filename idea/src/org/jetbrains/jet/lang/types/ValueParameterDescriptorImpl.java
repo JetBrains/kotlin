@@ -7,10 +7,12 @@ import java.util.List;
  */
 public class ValueParameterDescriptorImpl extends PropertyDescriptorImpl implements ValueParameterDescriptor {
     private final boolean hasDefaultValue;
+    private final boolean isVararg;
 
-    public ValueParameterDescriptorImpl(List<Attribute> attributes, String name, Type type, boolean hasDefaultValue) {
+    public ValueParameterDescriptorImpl(List<Attribute> attributes, String name, Type type, boolean hasDefaultValue, boolean isVararg) {
         super(attributes, name, type);
         this.hasDefaultValue = hasDefaultValue;
+        this.isVararg = isVararg;
     }
 
     @Override
@@ -25,6 +27,6 @@ public class ValueParameterDescriptorImpl extends PropertyDescriptorImpl impleme
 
     @Override
     public boolean isVararg() {
-        throw new UnsupportedOperationException(); // TODO
+        return isVararg;
     }
 }

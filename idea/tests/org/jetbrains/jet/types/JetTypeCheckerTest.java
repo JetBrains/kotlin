@@ -320,7 +320,9 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
     public void testOverloads() throws Exception {
         assertType("new Functions<String>().f()", "Unit");
         assertType("new Functions<String>().f(1)", "Int");
-        assertType("new Functions<String>().f(1d)", "Any");
+        assertType("new Functions<String>().f(1d)", (String) null);
+        assertType("new Functions<Double>().f(())", "Double");
+        assertType("new Functions<Double>().f(1d)", "Any");
     }
 
     //    public void testImplicitConversions() throws Exception {
@@ -402,8 +404,8 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         Project project = getProject();
         JetExpression jetExpression = JetChangeUtil.createExpression(project, expression);
         Type type = JetTypeChecker.INSTANCE.getType(scope, jetExpression, false);
-        Type expectedType = makeType(expectedTypeStr);
-        assertTrue(type + " != " + expectedType, TypeImpl.equalTypes(type, expectedType));
+        Type expectedType = expectedTypeStr == null ? null : makeType(expectedTypeStr);
+        assertEquals(expectedType, type);
     }
 
     private static Type makeType(String typeStr) {
@@ -431,6 +433,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
                     "fun f() : Unit {} " +
                     "fun f(a : Int) : Int {} " +
                     "fun f(a : T) : Any {} " +
+                    "fun f(a : Unit) : T {} " +
                     "}"
         };
 

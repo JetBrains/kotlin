@@ -1,7 +1,6 @@
 package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.TypeResolver;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -84,7 +83,8 @@ public class FunctionDescriptor extends MemberDescriptorImpl {
                     unsubstitutedValueParameter.getAttributes(),
                     unsubstitutedValueParameter.getName(),
                     TypeSubstitutor.INSTANCE.substitute(context, unsubstitutedValueParameter.getType(), Variance.IN_VARIANCE),
-                    unsubstitutedValueParameter.hasDefaultValue()
+                    unsubstitutedValueParameter.hasDefaultValue(),
+                    unsubstitutedValueParameter.isVararg()
             ));
         }
         return result;

@@ -46,7 +46,7 @@ public class JetScopeAdapter implements JetScope {
 
     @NotNull
     @Override
-    public OverloadDomain getOverloadDomain(Type receiverType, String referencedName) {
+    public OverloadDomain getOverloadDomain(Type receiverType, @NotNull String referencedName) {
         return scope.getOverloadDomain(receiverType, referencedName);
     }
 }

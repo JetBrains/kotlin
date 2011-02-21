@@ -4,10 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.types.*;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author abreslav
@@ -71,7 +68,7 @@ public class WritableScope implements JetScope {
 
     @NotNull
     @Override
-    public OverloadDomain getOverloadDomain(Type receiverType, String referencedName) {
+    public OverloadDomain getOverloadDomain(Type receiverType, @NotNull String referencedName) {
         final FunctionGroup functionGroup = getFunctionGroups().get(referencedName);
         if (functionGroup == null) {
             return OverloadDomain.EMPTY;
@@ -85,7 +82,55 @@ public class WritableScope implements JetScope {
                     return null;
                 }
 
-                throw new UnsupportedOperationException();
+                List<FunctionDescriptor> applicable = new ArrayList<FunctionDescriptor>();
+
+                descLoop:
+                for (FunctionDescriptor descriptor : possiblyApplicableFunctions) {
+                    // ASSERT: type arguments are figured out and substituted by this time!!!
+                    assert descriptor.getTypeParameters().isEmpty();
+
+                    List<ValueParameterDescriptor> parameters = descriptor.getUnsubstitutedValueParameters();
+                    if (parameters.size() >= positionedValueArgumentTypes.size()) {
+                        // possibly, some default values
+                        // possibly, nothing passed to a vararg
+                        // possibly, a single value passed to a vararg
+                        // possibly an array/list/etc passed as a whole vararg
+                        for (int i = 0, positionedValueArgumentTypesSize = positionedValueArgumentTypes.size(); i < positionedValueArgumentTypesSize; i++) {
+                            Type argumentType = positionedValueArgumentTypes.get(i);
+                            Type parameterType = parameters.get(i).getType();
+                            // TODO : handle vararg cases here
+                            if (!JetTypeChecker.INSTANCE.isConvertibleTo(argumentType, parameterType)) {
+                                continue descLoop;
+                            }
+                        }
+                    } else {
+                        // vararg
+                        int nonVarargs = parameters.size() - 1;
+                        for (int i = 0; i < nonVarargs; i++) {
+                            Type argumentType = positionedValueArgumentTypes.get(i);
+                            Type parameterType = parameters.get(i).getType();
+                            if (!JetTypeChecker.INSTANCE.isConvertibleTo(argumentType, parameterType)) {
+                                continue descLoop;
+                            }
+                        }
+                        Type varArgType = parameters.get(nonVarargs).getType();
+                        for (int i = nonVarargs, args = positionedValueArgumentTypes.size(); i < args; i++) {
+                            Type argumentType = positionedValueArgumentTypes.get(i);
+                            if (!JetTypeChecker.INSTANCE.isConvertibleTo(argumentType, varArgType)) {
+                                continue descLoop;
+                            }
+                        }
+                    }
+                    applicable.add(descriptor);
+                }
+
+                if (applicable.size() == 0) {
+                    return null;
+                } else if (applicable.size() == 1) {
+                    return applicable.get(0).getUnsubstitutedReturnType();
+                } else {
+                    throw new UnsupportedOperationException();
+                }
             }
 
             @Override

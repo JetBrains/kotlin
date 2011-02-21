@@ -122,7 +122,8 @@ public class ClassDescriptorResolver {
                     AttributeResolver.INSTANCE.resolveAttributes(valueParameter.getModifierList()),
                     valueParameter.getName(),
                     TypeResolver.INSTANCE.resolveType(parameterScope, typeReference),
-                    valueParameter.getDefaultValue() != null
+                    valueParameter.getDefaultValue() != null,
+                    false // TODO : varargs
             );
 
             // TODO : Default values???

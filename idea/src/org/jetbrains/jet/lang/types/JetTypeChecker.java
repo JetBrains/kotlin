@@ -303,13 +303,24 @@ public class JetTypeChecker {
 
 //                    result[0] = overloadDomain.getReturnTypeForNamedArguments(typeArguments, valueArguments, functionLiteralArgument);
                 } else {
-                    throw new UnsupportedOperationException(); // TODO
-//                    List<JetExpression> positionedValueArguments = new ArrayList<JetExpression>();
-//                    for (JetArgument argument : valueArguments) {
-//                        positionedValueArguments.add(argument.getArgumentExpression());
-//                    }
-//                    positionedValueArguments.addAll(functionLiteralArguments);
-//                    result[0] = overloadDomain.getReturnTypeForPositionedArguments(typeArguments, positionedValueArguments);
+                    List<JetExpression> positionedValueArguments = new ArrayList<JetExpression>();
+                    for (JetArgument argument : valueArguments) {
+                        positionedValueArguments.add(argument.getArgumentExpression());
+                    }
+                    positionedValueArguments.addAll(functionLiteralArguments);
+
+                    List<Type> types = new ArrayList<Type>();
+                    for (JetTypeProjection projection : typeArguments) {
+                        // TODO : check that there's no projection
+                        types.add(TypeResolver.INSTANCE.resolveType(scope, projection.getTypeReference()));
+                    }
+
+                    List<Type> valueArgumentTypes = new ArrayList<Type>();
+                    for (JetExpression valueArgument : positionedValueArguments) {
+                        valueArgumentTypes.add(getType(scope, valueArgument, false));
+                    }
+
+                    result[0] = overloadDomain.getReturnTypeForPositionedArguments(types, valueArgumentTypes);
                 }
             }
 
@@ -620,6 +631,11 @@ public class JetTypeChecker {
 
     public boolean isConvertibleTo(JetExpression expression, Type type) {
         throw new UnsupportedOperationException(); // TODO
+    }
+
+    public boolean isConvertibleTo(Type actual, Type expected) {
+        // TODO
+        return isSubtypeOf(actual, expected);
     }
 
     public boolean isSubtypeOf(Type subtype, Type supertype) {
