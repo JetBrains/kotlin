@@ -84,7 +84,8 @@ public class ClassDescriptorResolver {
         return memberDeclarations;
     }
 
-    private FunctionDescriptor resolveFunctionDescriptor(JetScope scope, JetFunction function) {
+    @NotNull
+    public FunctionDescriptor resolveFunctionDescriptor(JetScope scope, JetFunction function) {
         ParameterExtensibleScope parameterScope = new ParameterExtensibleScope(scope);
         // The two calls below have side-effects on parameterScope
         List<TypeParameterDescriptor> typeParameterDescriptors = resolveTypeParameters(parameterScope, function.getTypeParameters());

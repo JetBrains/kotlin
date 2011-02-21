@@ -367,7 +367,7 @@ public class JetTypeChecker {
             @Override
             public void visitReferenceExpression(JetReferenceExpression expression) {
                 // a -- create a hierarchical lookup domain for this.a
-                throw new UnsupportedOperationException(); // TODO
+                result[0] = OverloadResolver.INSTANCE.getOverloadDomain(null, scope, expression.getReferencedName());
             }
 
             @Override

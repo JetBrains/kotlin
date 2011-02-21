@@ -54,4 +54,8 @@ public class JetChangeUtil {
     public static PsiElement createNameIdentifier(Project project, String name) {
         return createProperty(project, name, null).getNameIdentifier();
     }
+
+    public static JetFunction createFunction(Project project, String funDecl) {
+        return createDeclaration(project, funDecl, JetFunction.class);
+    }
 }

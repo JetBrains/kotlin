@@ -323,6 +323,14 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertType("new Functions<String>().f(1d)", (String) null);
         assertType("new Functions<Double>().f(())", "Double");
         assertType("new Functions<Double>().f(1d)", "Any");
+        assertType("new Functions<Byte>().f<String>(\"\")", "Byte");
+        assertType("new Functions<Byte>().f<String>(1)", (String) null);
+
+        assertType("f()", "Unit");
+        assertType("f(1)", "Int");
+        assertType("f(1f, 1)", "Float");
+        assertType("f<String>(1f)", "String");
+        assertType("f(1.0)", (String) null);
     }
 
     //    public void testImplicitConversions() throws Exception {
@@ -434,7 +442,14 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
                     "fun f(a : Int) : Int {} " +
                     "fun f(a : T) : Any {} " +
                     "fun f(a : Unit) : T {} " +
+                    "fun f<E>(a : E) : T {} " +
                     "}"
+        };
+        private static String[] FUNCTION_DECLARATIONS = {
+            "fun f() : Unit {}",
+            "fun f(a : Int) : Int {a}",
+            "fun f(a : Float, b : Int) : Float {a}",
+            "fun f<T>(a : Float) : T {a}",
         };
 
         public static JetScope BASIC_SCOPE = new JetScopeAdapter(JetStandardClasses.STANDARD_CLASSES) {
@@ -452,6 +467,19 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
                     return classDescriptor;
                 }
                 return super.getClass(name);
+            }
+
+            @NotNull
+            @Override
+            public FunctionGroup getFunctionGroup(@NotNull String name) {
+                WritableFunctionGroup writableFunctionGroup = new WritableFunctionGroup(name);
+                for (String funDecl : FUNCTION_DECLARATIONS) {
+                    FunctionDescriptor functionDescriptor = ClassDescriptorResolver.INSTANCE.resolveFunctionDescriptor(this, JetChangeUtil.createFunction(getProject(), funDecl));
+                    if (name.equals(functionDescriptor.getName())) {
+                        writableFunctionGroup.addFunction(functionDescriptor);
+                    }
+                }
+                return writableFunctionGroup;
             }
         };
     }
