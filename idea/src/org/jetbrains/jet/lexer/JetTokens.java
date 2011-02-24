@@ -56,6 +56,7 @@ public interface JetTokens {
 
 
     JetToken IDENTIFIER = new JetToken("IDENTIFIER");
+    JetToken LABEL_IDENTIFIER = new JetToken("LABEL_IDENTIFIER");
     JetToken FIELD_IDENTIFIER = new JetToken("FIELD_IDENTIFIER");
 
     JetToken LBRACKET    = new JetToken("LBRACKET");
@@ -103,6 +104,8 @@ public interface JetTokens {
     JetToken NOT_IS      = JetKeywordToken.keyword("NOT_IS");
     JetToken HASH        = new JetToken("HASH");
     JetToken AT          = new JetToken("AT");
+    JetToken ATAT          = new JetToken("ATAT");
+    TokenSet LABELS = TokenSet.create(AT, ATAT, LABEL_IDENTIFIER);
 
     JetToken COMMA       = new JetToken("COMMA");
 
@@ -158,5 +161,5 @@ public interface JetTokens {
     TokenSet OPERATIONS = TokenSet.create(AS_KEYWORD, IS_KEYWORD, IN_KEYWORD, DOT, PLUSPLUS, MINUSMINUS, MUL, PLUS,
             MINUS, EXCL, DIV, PERC, LT, GT, LTEQ, GTEQ, EQEQEQ, ARROW, EXCLEQEQEQ, EQEQ, EXCLEQ, ANDAND, OROR,
             SAFE_ACCESS, ELVIS, MAP, FILTER, QUEST, COLON, SEMICOLON, RANGE, EQ, MULTEQ, DIVEQ, PERCEQ, PLUSEQ, MINUSEQ,
-            NOT_IN, NOT_IS, HASH, IDENTIFIER);
+            NOT_IN, NOT_IS, HASH, IDENTIFIER, LABEL_IDENTIFIER, ATAT, AT);
 }

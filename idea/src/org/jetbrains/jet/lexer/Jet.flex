@@ -28,6 +28,7 @@ PLAIN_IDENTIFIER=[:jletter:] [:jletterdigit:]*
 ESCAPED_IDENTIFIER = `{PLAIN_IDENTIFIER}`
 IDENTIFIER = {PLAIN_IDENTIFIER}|{ESCAPED_IDENTIFIER}
 FIELD_IDENTIFIER = \${IDENTIFIER}
+LABEL_IDENTIFIER = \@{IDENTIFIER}
 
 BLOCK_COMMENT=("/*"[^"*"]{COMMENT_TAIL})|"/*"
 // TODO: Wiki markup for doc comments?
@@ -119,6 +120,7 @@ RAW_STRING_LITERAL = {THREE_QUO} {QUO_STRING_CHAR}* {THREE_QUO}?
 
 <YYINITIAL> {FIELD_IDENTIFIER} { return JetTokens.FIELD_IDENTIFIER; }
 <YYINITIAL> {IDENTIFIER} { return JetTokens.IDENTIFIER; }
+<YYINITIAL> {LABEL_IDENTIFIER}   { return JetTokens.LABEL_IDENTIFIER; }
 
 <YYINITIAL> "==="        { return JetTokens.EQEQEQ    ; }
 <YYINITIAL> "!=="        { return JetTokens.EXCLEQEQEQ; }
@@ -144,6 +146,7 @@ RAW_STRING_LITERAL = {THREE_QUO} {QUO_STRING_CHAR}* {THREE_QUO}?
 <YYINITIAL> "->"         { return JetTokens.ARROW     ; }
 <YYINITIAL> "=>"         { return JetTokens.DOUBLE_ARROW; }
 <YYINITIAL> ".."         { return JetTokens.RANGE     ; }
+<YYINITIAL> "@@"         { return JetTokens.ATAT      ; }
 <YYINITIAL> "["          { return JetTokens.LBRACKET  ; }
 <YYINITIAL> "]"          { return JetTokens.RBRACKET  ; }
 <YYINITIAL> "{"          { return JetTokens.LBRACE    ; }

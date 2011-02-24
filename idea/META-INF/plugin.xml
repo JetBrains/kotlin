@@ -22,6 +22,7 @@
       <lang.parserDefinition language="jet" implementationClass="org.jetbrains.jet.lang.parsing.JetParserDefinition"/>
       <lang.commenter language="jet" implementationClass="org.jetbrains.jet.plugin.JetCommenter"/>
       <annotator language="jet" implementationClass="org.jetbrains.jet.lang.annotations.SoftKeywordsAnnotator"/>
+      <annotator language="jet" implementationClass="org.jetbrains.jet.lang.annotations.LabelsAnnotator"/>
       <annotator language="jet" implementationClass="org.jetbrains.jet.lang.annotations.JetPsiChecker"/>
   </extensions>
 </idea-plugin>

@@ -82,7 +82,7 @@ atomicExpression
   : literalConstant
   : functionLiteral
   : tupleLiteral
-  : "this" ("<" type ">")?
+  : "this" label? ("<" type ">")?
   : if
   : when
   : try
@@ -95,6 +95,12 @@ atomicExpression
   : SimpleName
   : FieldName
   : "namespace" // for the root namespace
+  ;
+
+label
+  : "@"
+  : "@@"
+  : LabelName
   ;
 
 literalConstant
@@ -163,12 +169,13 @@ prefixUnaryOperation
   : "++" : "--"
   : "!"  // No ~
   : attributes // mandatory
+  : label
   ;
 
 postfixUnaryOperation
   : "++" : "--"
-  : typeArguments? valueArguments
-  : typeArguments
+  : typeArguments? valueArguments (label? functionLiteral)
+  : typeArguments (label? functionLiteral)
   : arrayAccess
   : memberAccessOperation postfixUnaryOperation // TODO: Review
   ;
@@ -187,9 +194,9 @@ valueArguments
 
 jump
   : "throw" expression
-  : "return" expression?
-  : "continue" stringLiteral?
-  : "break" stringLiteral?
+  : "return" label? expression?
+  : "continue" label?
+  : "break" label?
 // yield ?
   ;
 

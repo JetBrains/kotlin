@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author max
  */
-public class JetReturnExpression extends JetExpression {
+public class JetReturnExpression extends JetLabelQualifiedExpression {
     public JetReturnExpression(@NotNull ASTNode node) {
         super(node);
     }

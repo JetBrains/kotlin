@@ -9,7 +9,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 /**
  * @author max
  */
-public class JetContinueExpression extends JetExpression {
+public class JetContinueExpression extends JetLabelQualifiedExpression {
     public JetContinueExpression(@NotNull ASTNode node) {
         super(node);
     }

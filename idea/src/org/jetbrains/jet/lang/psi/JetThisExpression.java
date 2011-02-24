@@ -8,7 +8,7 @@ import org.jetbrains.jet.JetNodeTypes;
 /**
  * @author max
  */
-public class JetThisExpression extends JetExpression {
+public class JetThisExpression extends JetLabelQualifiedExpression {
     public JetThisExpression(@NotNull ASTNode node) {
         super(node);
     }

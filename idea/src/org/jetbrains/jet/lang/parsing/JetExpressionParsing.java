@@ -34,7 +34,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
     private static final TokenSet EXPRESSION_FIRST = TokenSet.orSet(TokenSet.create(
             // Prefix
-            MINUS, PLUS, MINUSMINUS, PLUSPLUS, EXCL, LBRACKET,
+            MINUS, PLUS, MINUSMINUS, PLUSPLUS, EXCL, LBRACKET, LABEL_IDENTIFIER, AT, ATAT,
             // Atomic
 
             LPAR, // parenthesized
@@ -91,7 +91,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     private enum Precedence {
         POSTFIX(PLUSPLUS, MINUSMINUS), // typeArguments? valueArguments : typeArguments : arrayAccess
 
-        PREFIX(MINUS, PLUS, MINUSMINUS, PLUSPLUS, EXCL) { // attributes
+        PREFIX(MINUS, PLUS, MINUSMINUS, PLUSPLUS, EXCL, LABEL_IDENTIFIER, AT, ATAT) { // attributes
 
             @Override
             public void parseHigherPrecedence(JetExpressionParsing parser) {
@@ -278,8 +278,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
      *
      * postfixUnaryOperation
      *   : "++" : "--"
-     *   : typeArguments? valueArguments
-     *   : typeArguments
+     *   : typeArguments? valueArguments (label? functionLiteral)
+     *   : typeArguments (label? functionLiteral)
      *   : arrayAccess
      *   : memberAccessOperation postfixUnaryOperation // TODO: Review
      *   ;
@@ -354,12 +354,19 @@ public class JetExpressionParsing extends AbstractJetParsing {
     }
 
     /*
-     * expression functionLiteral?
+     * expression (label? functionLiteral)?
      */
     protected boolean parseCallWithClosure() {
         boolean success = false;
-        while (!myBuilder.newlineBeforeCurrentToken() && at(LBRACE)) {
-            parseFunctionLiteral();
+        while (!myBuilder.newlineBeforeCurrentToken()
+                && (at(LBRACE)
+                    || atSet(LABELS) && lookahead(1) == LBRACE)) {
+            if (!at(LBRACE)) {
+                assert _atSet(LABELS);
+                parsePrefixExpression();
+            } else {
+                parseFunctionLiteral();
+            }
             success = true;
         }
         return success;
@@ -368,7 +375,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     /*
      * atomicExpression
      *   : tupleLiteral // or parenthesized expression
-     *   : "this" ("<" type ">")?
+     *   : "this" label? ("<" type ">")?
      *   : "typeof" "(" expression ")"
      *   : "new" constructorInvocation
      *   : objectLiteral
@@ -1231,13 +1238,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
     }
 
     /*
-     * : "continue" stringLiteral?
-     * : "break" stringLiteral?
-     *
-     * stringLiteral
-     *   : StringWithTemplates
-     *   : NoEscapeString
-     *   ;
+     * : "continue" label?
+     * : "break" label?
      */
     private void parseJump(JetNodeType type) {
         assert _at(BREAK_KEYWORD) || _at(CONTINUE_KEYWORD);
@@ -1246,13 +1248,13 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         advance(); // BREAK_KEYWORD or CONTINUE_KEYWORD
 
-        if (!eol() && (at(RAW_STRING_LITERAL) || at(STRING_LITERAL))) advance(); // RAW_STRING_LITERAL or STRING_LITERAL
+        if (!eol() && atSet(LABELS)) advance(); // LABELS
 
         marker.done(type);
     }
 
     /*
-     * "return" expression?
+     * "return" label? expression?
      */
     private void parseReturn() {
         assert _at(RETURN_KEYWORD);
@@ -1260,6 +1262,10 @@ public class JetExpressionParsing extends AbstractJetParsing {
         PsiBuilder.Marker returnExpression = mark();
 
         advance(); // RETURN_KEYWORD
+
+        if (atSet(LABELS)) {
+            advance(); // LABELS
+        }
 
         if (atSet(EXPRESSION_FIRST) && !at(EOL_OR_SEMICOLON)) parseExpression();
 
@@ -1379,12 +1385,17 @@ public class JetExpressionParsing extends AbstractJetParsing {
     }
 
     /*
-     * "this" ("<" type ">")?
+     * "this" label? ("<" type ">")?
      */
     private void parseThisExpression() {
         assert _at(THIS_KEYWORD);
         PsiBuilder.Marker mark = mark();
         advance(); // THIS_KEYWORD
+
+        if (atSet(LABELS)) {
+            advance(); // LABELS
+        }
+
         if (at(LT)) {
             // This may be "this < foo" or "this<foo>", thus the backtracking
             PsiBuilder.Marker supertype = mark();

@@ -550,7 +550,7 @@ JetFile: SimpleExpressions.jet
           BREAK
             PsiElement(break)('break')
             PsiWhiteSpace(' ')
-            PsiElement(STRING_LITERAL)('"la"')
+            PsiElement(LABEL_IDENTIFIER)('@la')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n    ')
         VALUE_PARAMETER
@@ -584,7 +584,7 @@ JetFile: SimpleExpressions.jet
           CONTINUE
             PsiElement(continue)('continue')
             PsiWhiteSpace(' ')
-            PsiElement(STRING_LITERAL)('"la"')
+            PsiElement(LABEL_IDENTIFIER)('@la')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n    ')
         VALUE_PARAMETER
@@ -670,23 +670,23 @@ JetFile: SimpleExpressions.jet
         BREAK
           PsiElement(break)('break')
         PsiWhiteSpace('\n    ')
-        STRING_CONSTANT
-          PsiElement(STRING_LITERAL)('"la"')
-        PsiWhiteSpace('\n    ')
-        BREAK
-          PsiElement(break)('break')
-          PsiWhiteSpace(' ')
-          PsiElement(STRING_LITERAL)('"la"')
-        PsiWhiteSpace('\n    ')
-        CONTINUE
-          PsiElement(continue)('continue')
-        PsiWhiteSpace('\n    ')
-        STRING_CONSTANT
-          PsiElement(STRING_LITERAL)('"la"')
+        PREFIX_EXPRESSION
+          PsiElement(LABEL_IDENTIFIER)('@la')
+          PsiWhiteSpace('\n    ')
+          BREAK
+            PsiElement(break)('break')
+            PsiWhiteSpace(' ')
+            PsiElement(LABEL_IDENTIFIER)('@la')
         PsiWhiteSpace('\n    ')
         CONTINUE
           PsiElement(continue)('continue')
-          PsiWhiteSpace(' ')
-          PsiElement(STRING_LITERAL)('"la"')
+        PsiWhiteSpace('\n    ')
+        PREFIX_EXPRESSION
+          PsiElement(LABEL_IDENTIFIER)('@la')
+          PsiWhiteSpace('\n    ')
+          CONTINUE
+            PsiElement(continue)('continue')
+            PsiWhiteSpace(' ')
+            PsiElement(LABEL_IDENTIFIER)('@la')
         PsiWhiteSpace('\n')
         PsiElement(RBRACE)('}')

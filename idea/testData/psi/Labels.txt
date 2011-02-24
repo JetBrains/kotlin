@@ -1,0 +1,377 @@
+JetFile: Labels.jet
+  NAMESPACE
+    FUN
+      PsiElement(fun)('fun')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('foo')
+      TYPE_PARAMETER_LIST
+        <empty list>
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      BLOCK
+        PsiElement(LBRACE)('{')
+        PsiWhiteSpace('\n  ')
+        RETURN
+          PsiElement(return)('return')
+        PsiWhiteSpace('\n  ')
+        RETURN
+          PsiElement(return)('return')
+          PsiWhiteSpace(' ')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('1')
+        PsiWhiteSpace('\n  ')
+        RETURN
+          PsiElement(return)('return')
+          PsiWhiteSpace(' ')
+          PARENTHESIZED
+            PsiElement(LPAR)('(')
+            PREFIX_EXPRESSION
+              PsiElement(LABEL_IDENTIFIER)('@a')
+              PsiWhiteSpace(' ')
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('1')
+            PsiElement(RPAR)(')')
+        PsiWhiteSpace('\n\n  ')
+        RETURN
+          PsiElement(return)('return')
+          PsiElement(AT)('@')
+        PsiWhiteSpace('\n  ')
+        RETURN
+          PsiElement(return)('return')
+          PsiElement(AT)('@')
+          PsiWhiteSpace(' ')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('1')
+        PsiWhiteSpace('\n  ')
+        RETURN
+          PsiElement(return)('return')
+          PsiElement(AT)('@')
+          PsiWhiteSpace(' ')
+          PARENTHESIZED
+            PsiElement(LPAR)('(')
+            PREFIX_EXPRESSION
+              PsiElement(AT)('@')
+              PsiWhiteSpace(' ')
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('1')
+            PsiElement(RPAR)(')')
+        PsiWhiteSpace('\n  ')
+        RETURN
+          PsiElement(return)('return')
+          PsiElement(AT)('@')
+          PsiWhiteSpace(' ')
+          PREFIX_EXPRESSION
+            PsiElement(AT)('@')
+            PsiWhiteSpace(' ')
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('1')
+        PsiWhiteSpace('\n\n  ')
+        RETURN
+          PsiElement(return)('return')
+          PsiElement(LABEL_IDENTIFIER)('@a')
+        PsiWhiteSpace('\n  ')
+        RETURN
+          PsiElement(return)('return')
+          PsiElement(LABEL_IDENTIFIER)('@a')
+          PsiWhiteSpace(' ')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('1')
+        PsiWhiteSpace('\n  ')
+        RETURN
+          PsiElement(return)('return')
+          PsiElement(LABEL_IDENTIFIER)('@a')
+          PsiWhiteSpace(' ')
+          PARENTHESIZED
+            PsiElement(LPAR)('(')
+            PREFIX_EXPRESSION
+              PsiElement(LABEL_IDENTIFIER)('@a')
+              PsiWhiteSpace(' ')
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('1')
+            PsiElement(RPAR)(')')
+        PsiWhiteSpace('\n  ')
+        RETURN
+          PsiElement(return)('return')
+          PsiElement(LABEL_IDENTIFIER)('@a')
+          PsiWhiteSpace(' ')
+          PREFIX_EXPRESSION
+            PsiElement(LABEL_IDENTIFIER)('@a')
+            PsiWhiteSpace(' ')
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('1')
+        PsiWhiteSpace('\n\n  ')
+        RETURN
+          PsiElement(return)('return')
+          PsiElement(ATAT)('@@')
+        PsiWhiteSpace('\n  ')
+        RETURN
+          PsiElement(return)('return')
+          PsiElement(ATAT)('@@')
+          PsiWhiteSpace(' ')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('1')
+        PsiWhiteSpace('\n  ')
+        RETURN
+          PsiElement(return)('return')
+          PsiElement(ATAT)('@@')
+          PsiWhiteSpace(' ')
+          PARENTHESIZED
+            PsiElement(LPAR)('(')
+            PREFIX_EXPRESSION
+              PsiElement(ATAT)('@@')
+              PsiWhiteSpace(' ')
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('1')
+            PsiElement(RPAR)(')')
+        PsiWhiteSpace('\n  ')
+        RETURN
+          PsiElement(return)('return')
+          PsiElement(ATAT)('@@')
+          PsiWhiteSpace(' ')
+          PREFIX_EXPRESSION
+            PsiElement(ATAT)('@@')
+            PsiWhiteSpace(' ')
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('1')
+        PsiWhiteSpace('\n\n  ')
+        PREFIX_EXPRESSION
+          PsiElement(LABEL_IDENTIFIER)('@a')
+          PsiWhiteSpace(' ')
+          RETURN
+            PsiElement(return)('return')
+            PsiElement(ATAT)('@@')
+        PsiWhiteSpace('\n  ')
+        PREFIX_EXPRESSION
+          PsiElement(LABEL_IDENTIFIER)('@a')
+          PsiWhiteSpace(' ')
+          RETURN
+            PsiElement(return)('return')
+            PsiElement(ATAT)('@@')
+            PsiWhiteSpace(' ')
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('1')
+        PsiWhiteSpace('\n  ')
+        PREFIX_EXPRESSION
+          PsiElement(LABEL_IDENTIFIER)('@a')
+          PsiWhiteSpace(' ')
+          RETURN
+            PsiElement(return)('return')
+            PsiElement(ATAT)('@@')
+            PsiWhiteSpace(' ')
+            PARENTHESIZED
+              PsiElement(LPAR)('(')
+              PREFIX_EXPRESSION
+                PsiElement(ATAT)('@@')
+                PsiWhiteSpace(' ')
+                INTEGER_CONSTANT
+                  PsiElement(INTEGER_LITERAL)('1')
+              PsiElement(RPAR)(')')
+        PsiWhiteSpace('\n  ')
+        PREFIX_EXPRESSION
+          PsiElement(LABEL_IDENTIFIER)('@a')
+          PsiWhiteSpace(' ')
+          RETURN
+            PsiElement(return)('return')
+            PsiElement(ATAT)('@@')
+            PsiWhiteSpace(' ')
+            PREFIX_EXPRESSION
+              PsiElement(ATAT)('@@')
+              PsiWhiteSpace(' ')
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('1')
+        PsiWhiteSpace('\n\n  ')
+        BREAK
+          PsiElement(break)('break')
+        PsiWhiteSpace('\n  ')
+        BREAK
+          PsiElement(break)('break')
+          PsiElement(AT)('@')
+        PsiWhiteSpace('\n  ')
+        BREAK
+          PsiElement(break)('break')
+          PsiElement(LABEL_IDENTIFIER)('@a')
+        PsiWhiteSpace('\n  ')
+        BREAK
+          PsiElement(break)('break')
+          PsiElement(ATAT)('@@')
+        PsiWhiteSpace('\n\n  ')
+        CONTINUE
+          PsiElement(continue)('continue')
+        PsiWhiteSpace('\n  ')
+        CONTINUE
+          PsiElement(continue)('continue')
+          PsiElement(AT)('@')
+        PsiWhiteSpace('\n  ')
+        CONTINUE
+          PsiElement(continue)('continue')
+          PsiElement(LABEL_IDENTIFIER)('@a')
+        PsiWhiteSpace('\n  ')
+        CONTINUE
+          PsiElement(continue)('continue')
+          PsiElement(ATAT)('@@')
+        PsiWhiteSpace('\n\n  ')
+        CALL_EXPRESSION
+          DOT_QIALIFIED_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
+            PsiElement(DOT)('.')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('filter')
+          PsiWhiteSpace(' ')
+          PREFIX_EXPRESSION
+            PsiElement(LABEL_IDENTIFIER)('@f')
+            FUNCTION_LITERAL
+              PsiElement(LBRACE)('{')
+              PsiWhiteSpace('\n      ')
+              BODY
+                IF
+                  PsiElement(if)('if')
+                  PsiWhiteSpace(' ')
+                  PsiElement(LPAR)('(')
+                  CONDITION
+                    INTEGER_CONSTANT
+                      PsiElement(INTEGER_LITERAL)('1')
+                  PsiElement(RPAR)(')')
+                  PsiWhiteSpace(' ')
+                  THEN
+                    RETURN
+                      PsiElement(return)('return')
+                PsiWhiteSpace('\n      ')
+                RETURN
+                  PsiElement(return)('return')
+                  PsiElement(LABEL_IDENTIFIER)('@f')
+                  PsiWhiteSpace(' ')
+                  BOOLEAN_CONSTANT
+                    PsiElement(true)('true')
+              PsiWhiteSpace('\n  ')
+              PsiElement(RBRACE)('}')
+        PsiWhiteSpace('\n\n  ')
+        CALL_EXPRESSION
+          DOT_QIALIFIED_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
+            PsiElement(DOT)('.')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('filter')
+          PsiWhiteSpace(' ')
+          PREFIX_EXPRESSION
+            PsiElement(AT)('@')
+            FUNCTION_LITERAL
+              PsiElement(LBRACE)('{')
+              PsiWhiteSpace('\n      ')
+              BODY
+                IF
+                  PsiElement(if)('if')
+                  PsiWhiteSpace(' ')
+                  PsiElement(LPAR)('(')
+                  CONDITION
+                    INTEGER_CONSTANT
+                      PsiElement(INTEGER_LITERAL)('1')
+                  PsiElement(RPAR)(')')
+                  PsiWhiteSpace(' ')
+                  THEN
+                    RETURN
+                      PsiElement(return)('return')
+                PsiWhiteSpace('\n      ')
+                RETURN
+                  PsiElement(return)('return')
+                  PsiElement(AT)('@')
+                  PsiWhiteSpace(' ')
+                  BOOLEAN_CONSTANT
+                    PsiElement(true)('true')
+              PsiWhiteSpace('\n  ')
+              PsiElement(RBRACE)('}')
+        PsiWhiteSpace('\n\n  ')
+        CALL_EXPRESSION
+          DOT_QIALIFIED_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
+            PsiElement(DOT)('.')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('filter')
+          PsiWhiteSpace(' ')
+          PREFIX_EXPRESSION
+            PsiElement(ATAT)('@@')
+            FUNCTION_LITERAL
+              PsiElement(LBRACE)('{')
+              PsiWhiteSpace('\n      ')
+              BODY
+                IF
+                  PsiElement(if)('if')
+                  PsiWhiteSpace(' ')
+                  PsiElement(LPAR)('(')
+                  CONDITION
+                    INTEGER_CONSTANT
+                      PsiElement(INTEGER_LITERAL)('1')
+                  PsiElement(RPAR)(')')
+                  PsiWhiteSpace(' ')
+                  THEN
+                    RETURN
+                      PsiElement(return)('return')
+                PsiWhiteSpace('\n      ')
+                RETURN
+                  PsiElement(return)('return')
+                  PsiElement(ATAT)('@@')
+                  PsiWhiteSpace(' ')
+                  BOOLEAN_CONSTANT
+                    PsiElement(true)('true')
+              PsiWhiteSpace('\n  ')
+              PsiElement(RBRACE)('}')
+        PsiWhiteSpace('\n\n  ')
+        THIS_EXPRESSION
+          PsiElement(this)('this')
+        PsiWhiteSpace('\n  ')
+        THIS_EXPRESSION
+          PsiElement(this)('this')
+          PsiElement(AT)('@')
+        PsiWhiteSpace('\n  ')
+        THIS_EXPRESSION
+          PsiElement(this)('this')
+          PsiElement(LABEL_IDENTIFIER)('@a')
+        PsiWhiteSpace('\n  ')
+        THIS_EXPRESSION
+          PsiElement(this)('this')
+          PsiElement(ATAT)('@@')
+        PsiWhiteSpace('\n\n  ')
+        THIS_EXPRESSION
+          PsiElement(this)('this')
+          PsiElement(LT)('<')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('A')
+          PsiElement(GT)('>')
+        PsiWhiteSpace('\n  ')
+        THIS_EXPRESSION
+          PsiElement(this)('this')
+          PsiElement(AT)('@')
+          PsiElement(LT)('<')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('A')
+          PsiElement(GT)('>')
+        PsiWhiteSpace('\n  ')
+        THIS_EXPRESSION
+          PsiElement(this)('this')
+          PsiElement(LABEL_IDENTIFIER)('@a')
+          PsiElement(LT)('<')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('A')
+          PsiElement(GT)('>')
+        PsiWhiteSpace('\n  ')
+        THIS_EXPRESSION
+          PsiElement(this)('this')
+          PsiElement(ATAT)('@@')
+          PsiElement(LT)('<')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('A')
+          PsiElement(GT)('>')
+        PsiWhiteSpace('\n')
+        PsiElement(RBRACE)('}')

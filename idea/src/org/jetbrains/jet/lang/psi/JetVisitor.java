@@ -171,6 +171,10 @@ public class JetVisitor extends PsiElementVisitor {
     }
 
     public void visitReturnExpression(JetReturnExpression expression) {
+        visitLabelQualifiedExpression(expression);
+    }
+
+    public void visitLabelQualifiedExpression(JetLabelQualifiedExpression expression) {
         visitExpression(expression);
     }
 
@@ -179,11 +183,11 @@ public class JetVisitor extends PsiElementVisitor {
     }
 
     public void visitBreakExpression(JetBreakExpression expression) {
-        visitExpression(expression);
+        visitLabelQualifiedExpression(expression);
     }
 
     public void visitContinueExpression(JetContinueExpression expression) {
-        visitExpression(expression);
+        visitLabelQualifiedExpression(expression);
     }
 
     public void visitIfExpression(JetIfExpression expression) {
@@ -271,7 +275,7 @@ public class JetVisitor extends PsiElementVisitor {
     }
 
     public void visitThisExpression(JetThisExpression expression) {
-        visitExpression(expression);
+        visitLabelQualifiedExpression(expression);
     }
 
     public void visitParenthesizedExpression(JetParenthesizedExpression expression) {
