@@ -1,0 +1,62 @@
+namespace jet.lang
+
+virtual class Comparable<T> {
+  fun compareTo(other : T) : Int
+}
+
+class Boolean {
+}
+
+class String {
+  fun get(index : Int) : Char
+  val length : Int
+
+  fun plus(other : Any?) : String
+}
+
+class Double {
+  fun plus(other : Double) : Double
+}
+
+class Float {
+  fun plus(other : Double) : Double
+  fun plus(other : Float) : Float
+}
+
+class Long {
+  fun plus(other : Double) : Double
+  fun plus(other : Float) : Float
+  fun plus(other : Long) : Long
+}
+
+class Int {
+  fun plus(other : Double) : Double
+  fun plus(other : Float) : Float
+  fun plus(other : Long) : Long
+  fun plus(other : Int) : Int
+}
+
+class Char {
+  fun plus(other : Double) : Double
+  fun plus(other : Float) : Float
+  fun plus(other : Long) : Long
+  fun plus(other : Int) : Int
+  fun plus(other : Char) : Char
+}
+
+class Short {
+  fun plus(other : Double) : Double
+  fun plus(other : Float) : Float
+  fun plus(other : Long) : Long
+  fun plus(other : Int) : Int
+  fun plus(other : Short) : Short
+}
+
+class Byte {
+  fun plus(other : Double) : Double
+  fun plus(other : Float) : Float
+  fun plus(other : Long) : Long
+  fun plus(other : Int) : Int
+  fun plus(other : Short) : Short
+  fun plus(other : Byte) : Byte
+}

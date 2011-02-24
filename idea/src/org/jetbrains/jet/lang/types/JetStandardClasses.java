@@ -1,10 +1,20 @@
 package org.jetbrains.jet.lang.types;
 
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManager;
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.psi.PsiFileFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.JetFileType;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.FileContentsResolver;
 import org.jetbrains.jet.lang.resolve.JetScope;
 import org.jetbrains.jet.lang.resolve.JetScopeImpl;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
@@ -14,7 +24,7 @@ import java.util.*;
  */
 public class JetStandardClasses {
 
-    private static ClassDescriptor NOTHING_CLASS = new ClassDescriptor(
+    private static ClassDescriptor NOTHING_CLASS = new ClassDescriptorImpl(
             Collections.<Attribute>emptyList(),
             true,
             "Nothing",
@@ -37,7 +47,7 @@ public class JetStandardClasses {
             }, JetScope.EMPTY
     );
 
-    private static final ClassDescriptor ANY = new ClassDescriptor(
+    private static final ClassDescriptor ANY = new ClassDescriptorImpl(
             Collections.<Attribute>emptyList(),
             false,
             "Any",
@@ -50,17 +60,40 @@ public class JetStandardClasses {
 
     private static final Type ANY_TYPE = new TypeImpl(ANY.getTypeConstructor(), JetScope.EMPTY);
 
-    private static final Type NULLABLE_ANY_TYPE = TypeUtils.makeNullable(ANY_TYPE);
-    private static final ClassDescriptor BYTE    = new ClassDescriptor("Byte", STUB);
-    private static final ClassDescriptor CHAR    = new ClassDescriptor("Char", STUB);
-    private static final ClassDescriptor SHORT   = new ClassDescriptor("Short", STUB);
-    private static final ClassDescriptor INT     = new ClassDescriptor("Int", STUB);
-    private static final ClassDescriptor LONG    = new ClassDescriptor("Long", STUB);
-    private static final ClassDescriptor FLOAT   = new ClassDescriptor("Float", STUB);
-    private static final ClassDescriptor DOUBLE  = new ClassDescriptor("Double", STUB);
-    private static final ClassDescriptor BOOLEAN = new ClassDescriptor("Boolean", STUB);
+    private static final JetScope LIBRARY_SCOPE;
+    static {
+        // TODO : review
+        Project project = ProjectManager.getInstance().getDefaultProject();
+        InputStream stream = JetStandardClasses.class.getClassLoader().getResourceAsStream("jet/lang/Library.jet");
+        try {
+            //noinspection IOResourceOpenedButNotSafelyClosed
+            JetFile file = (JetFile) PsiFileFactory.getInstance(project).createFileFromText("Library.jet", JetFileType.INSTANCE, FileUtil.loadTextAndClose(new InputStreamReader(stream)));
 
-    private static final ClassDescriptor STRING  = new ClassDescriptor("String", STUB);
+            LIBRARY_SCOPE = FileContentsResolver.INSTANCE.resolveFileContents(JetScope.EMPTY, file);
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private static final Type NULLABLE_ANY_TYPE = TypeUtils.makeNullable(ANY_TYPE);
+    @NotNull
+    private static final ClassDescriptor BYTE    = LIBRARY_SCOPE.getClass("Byte");
+    @NotNull
+    private static final ClassDescriptor CHAR    = LIBRARY_SCOPE.getClass("Char");
+    @NotNull
+    private static final ClassDescriptor SHORT   = LIBRARY_SCOPE.getClass("Short");
+    @NotNull
+    private static final ClassDescriptor INT     = LIBRARY_SCOPE.getClass("Int");
+    @NotNull
+    private static final ClassDescriptor LONG    = LIBRARY_SCOPE.getClass("Long");
+    @NotNull
+    private static final ClassDescriptor FLOAT   = LIBRARY_SCOPE.getClass("Float");
+    @NotNull
+    private static final ClassDescriptor DOUBLE  = LIBRARY_SCOPE.getClass("Double");
+    @NotNull
+    private static final ClassDescriptor BOOLEAN = LIBRARY_SCOPE.getClass("Boolean");
+    @NotNull
+    private static final ClassDescriptor STRING  = LIBRARY_SCOPE.getClass("String");
 
     public static final int TUPLE_COUNT = 22;
     private static final ClassDescriptor[] TUPLE = new ClassDescriptor[TUPLE_COUNT];
@@ -74,7 +107,7 @@ public class JetStandardClasses {
                         Variance.OUT_VARIANCE, "T" + j,
                         Collections.singleton(getNullableAnyType())));
             }
-            TUPLE[i] = new ClassDescriptor(
+            TUPLE[i] = new ClassDescriptorImpl(
                     Collections.<Attribute>emptyList(),
                     true,
                     "Tuple" + i,
@@ -100,7 +133,7 @@ public class JetStandardClasses {
                         Collections.<Attribute>emptyList(),
                         Variance.OUT_VARIANCE, "R",
                         Collections.singleton(getNullableAnyType())));
-            FUNCTION[i] = new ClassDescriptor(
+            FUNCTION[i] = new ClassDescriptorImpl(
                     Collections.<Attribute>emptyList(),
                     false,
                     "Function" + i,
@@ -110,7 +143,7 @@ public class JetStandardClasses {
                         Collections.<Attribute>emptyList(),
                         Variance.IN_VARIANCE, "T",
                         Collections.singleton(getNullableAnyType())));
-            RECEIVER_FUNCTION[i] = new ClassDescriptor(
+            RECEIVER_FUNCTION[i] = new ClassDescriptorImpl(
                     Collections.<Attribute>emptyList(),
                     false,
                     "ReceiverFunction" + i,

@@ -9,11 +9,21 @@ import java.util.*;
 /**
  * @author abreslav
  */
-public class WritableScope implements JetScope {
+public class WritableScope extends JetScopeAdapter {
     @Nullable
     private Map<String, PropertyDescriptor> propertyDescriptors;
     @Nullable
     private Map<String, WritableFunctionGroup> functionGroups;
+    @Nullable
+    private Map<String, TypeParameterDescriptor> typeParameterDescriptors;
+
+    public WritableScope(JetScope scope) {
+        super(scope);
+    }
+
+    public WritableScope() {
+        super(JetScope.EMPTY);
+    }
 
     @NotNull
     private Map<String, PropertyDescriptor> getPropertyDescriptors() {
@@ -25,7 +35,9 @@ public class WritableScope implements JetScope {
 
     public void addPropertyDescriptor(PropertyDescriptor propertyDescriptor) {
         Map<String, PropertyDescriptor> propertyDescriptors = getPropertyDescriptors();
-        assert !propertyDescriptors.containsKey(propertyDescriptor.getName()) : "Property redeclared";
+        if (propertyDescriptors.containsKey(propertyDescriptor.getName())) {
+            throw new UnsupportedOperationException("Property redeclared: " + propertyDescriptor.getName());
+        }
         propertyDescriptors.put(propertyDescriptor.getName(), propertyDescriptor);
     }
 
@@ -67,9 +79,35 @@ public class WritableScope implements JetScope {
         return functionGroup;
     }
 
+    @NotNull
+    private Map<String, TypeParameterDescriptor> getTypeParameterDescriptors() {
+        if (typeParameterDescriptors == null) {
+            typeParameterDescriptors = new HashMap<String, TypeParameterDescriptor>();
+        }
+        return typeParameterDescriptors;
+    }
+
+    public void addTypeParameterDescriptor(TypeParameterDescriptor typeParameterDescriptor) {
+        String name = typeParameterDescriptor.getName();
+        Map<String, TypeParameterDescriptor> typeParameterDescriptors = getTypeParameterDescriptors();
+        if (typeParameterDescriptors.containsKey(name)) {
+            throw new UnsupportedOperationException("Type parameter redeclared"); // TODO
+        }
+        typeParameterDescriptors.put(name, typeParameterDescriptor);
+    }
+
+    @Override
+    public TypeParameterDescriptor getTypeParameter(String name) {
+        TypeParameterDescriptor typeParameterDescriptor = getTypeParameterDescriptors().get(name);
+        if (typeParameterDescriptor != null) {
+            return typeParameterDescriptor;
+        }
+        return super.getTypeParameter(name);
+    }
+
     @Override
     public ClassDescriptor getClass(String name) {
-        throw new UnsupportedOperationException(); // TODO
+        return super.getClass(name); // TODO
     }
 
     @Override
@@ -79,11 +117,6 @@ public class WritableScope implements JetScope {
 
     @Override
     public NamespaceDescriptor getNamespace(String name) {
-        throw new UnsupportedOperationException(); // TODO
-    }
-
-    @Override
-    public TypeParameterDescriptor getTypeParameter(String name) {
         throw new UnsupportedOperationException(); // TODO
     }
 

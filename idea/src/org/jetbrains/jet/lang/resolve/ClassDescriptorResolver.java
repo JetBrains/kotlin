@@ -18,7 +18,7 @@ public class ClassDescriptorResolver {
 
     @Nullable
     public ClassDescriptor resolveClassDescriptor(@NotNull JetScope scope, @NotNull JetClass classElement) {
-        ParameterExtensibleScope parameterScope = new ParameterExtensibleScope(scope);
+        WritableScope parameterScope = new WritableScope(scope);
 
         // This call has side-effects on the parameterScope (fills it in)
         List<TypeParameterDescriptor> typeParameters
@@ -32,7 +32,7 @@ public class ClassDescriptorResolver {
         boolean open = classElement.hasModifier(JetTokens.OPEN_KEYWORD);
         WritableScope members = resolveMembers(classElement, typeParameters, scope, parameterScope, superclasses);
 
-        return new ClassDescriptor(
+        return new ClassDescriptorImpl(
                 AttributeResolver.INSTANCE.resolveAttributes(classElement.getModifierList()),
                 !open,
                 classElement.getName(),
@@ -49,7 +49,7 @@ public class ClassDescriptorResolver {
             final JetScope typeParameterScope,
             final Collection<? extends Type> supertypes) {
 
-        final WritableScope memberDeclarations = new WritableScope();
+        final WritableScope memberDeclarations = new WritableScope(typeParameterScope);
 
         List<JetDeclaration> declarations = classElement.getDeclarations();
         for (JetDeclaration declaration : declarations) {
@@ -86,7 +86,7 @@ public class ClassDescriptorResolver {
 
     @NotNull
     public FunctionDescriptor resolveFunctionDescriptor(JetScope scope, JetFunction function) {
-        ParameterExtensibleScope parameterScope = new ParameterExtensibleScope(scope);
+        WritableScope parameterScope = new WritableScope(scope);
         // The two calls below have side-effects on parameterScope
         List<TypeParameterDescriptor> typeParameterDescriptors = resolveTypeParameters(parameterScope, function.getTypeParameters());
         List<ValueParameterDescriptor> valueParameterDescriptors = resolveValueParameters(parameterScope, function.getValueParameters());
@@ -112,7 +112,7 @@ public class ClassDescriptorResolver {
         );
     }
 
-    private List<ValueParameterDescriptor> resolveValueParameters(ParameterExtensibleScope parameterScope, List<JetParameter> valueParameters) {
+    private List<ValueParameterDescriptor> resolveValueParameters(WritableScope parameterScope, List<JetParameter> valueParameters) {
         List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>();
         for (JetParameter valueParameter : valueParameters) {
             JetTypeReference typeReference = valueParameter.getTypeReference();
@@ -135,7 +135,7 @@ public class ClassDescriptorResolver {
         return result;
     }
 
-    private static List<TypeParameterDescriptor> resolveTypeParameters(ParameterExtensibleScope extensibleScope, List<JetTypeParameter> typeParameters) {
+    public List<TypeParameterDescriptor> resolveTypeParameters(WritableScope extensibleScope, List<JetTypeParameter> typeParameters) {
         // TODO : When-clause
         List<TypeParameterDescriptor> result = new ArrayList<TypeParameterDescriptor>();
         for (JetTypeParameter typeParameter : typeParameters) {
@@ -144,7 +144,7 @@ public class ClassDescriptorResolver {
         return result;
     }
 
-    private static TypeParameterDescriptor resolveTypeParameter(ParameterExtensibleScope extensibleScope, JetTypeParameter typeParameter) {
+    private static TypeParameterDescriptor resolveTypeParameter(WritableScope extensibleScope, JetTypeParameter typeParameter) {
         JetTypeReference extendsBound = typeParameter.getExtendsBound();
         TypeParameterDescriptor typeParameterDescriptor = new TypeParameterDescriptor(
                 AttributeResolver.INSTANCE.resolveAttributes(typeParameter.getModifierList()),
@@ -158,7 +158,7 @@ public class ClassDescriptorResolver {
         return typeParameterDescriptor;
     }
 
-    private static Collection<? extends Type> resolveTypes(ParameterExtensibleScope extensibleScope, List<JetDelegationSpecifier> delegationSpecifiers) {
+    public static Collection<? extends Type> resolveTypes(WritableScope extensibleScope, List<JetDelegationSpecifier> delegationSpecifiers) {
         if (delegationSpecifiers.isEmpty()) {
             return Collections.emptyList();
         }
@@ -200,50 +200,5 @@ public class ClassDescriptorResolver {
                 AttributeResolver.INSTANCE.resolveAttributes(property.getModifierList()),
                 property.getName(),
                 type);
-    }
-
-    private static final class ParameterExtensibleScope extends JetScopeAdapter {
-
-        private final Map<String, TypeParameterDescriptor> typeParameterDescriptors = new HashMap<String, TypeParameterDescriptor>();
-        private final Map<String, PropertyDescriptor> propertyDescriptors = new HashMap<String, PropertyDescriptor>();
-
-        private ParameterExtensibleScope(JetScope scope) {
-            super(scope);
-        }
-
-        public void addTypeParameterDescriptor(TypeParameterDescriptor typeParameterDescriptor) {
-            String name = typeParameterDescriptor.getName();
-            if (typeParameterDescriptors.containsKey(name)) {
-                throw new UnsupportedOperationException(); // TODO
-            }
-            typeParameterDescriptors.put(name, typeParameterDescriptor);
-        }
-
-        @Override
-        public TypeParameterDescriptor getTypeParameter(String name) {
-            TypeParameterDescriptor typeParameterDescriptor = typeParameterDescriptors.get(name);
-            if (typeParameterDescriptor != null) {
-                return typeParameterDescriptor;
-            }
-            return super.getTypeParameter(name);
-        }
-
-        public void addPropertyDescriptor(PropertyDescriptor descriptor) {
-            String name = descriptor.getName();
-            if (propertyDescriptors.containsKey(name)) {
-                throw new UnsupportedOperationException(); // TODO
-            }
-            propertyDescriptors.put(name, descriptor);
-        }
-
-        @Override
-        public PropertyDescriptor getProperty(String name) {
-            PropertyDescriptor PropertyDescriptor = propertyDescriptors.get(name);
-            if (PropertyDescriptor != null) {
-                return PropertyDescriptor;
-            }
-            return super.getProperty(name);
-        }
-
     }
 }
