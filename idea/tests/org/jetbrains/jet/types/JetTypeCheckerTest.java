@@ -333,8 +333,42 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertType("f(1.0)", (String) null);
     }
 
+    public void testPlus() throws Exception {
+        assertType("1d.plus(1d)", "Double");
+//        assertType("1d.plus(1f)", "Double");
+//        assertType("1d.plus(1L)", "Double");
+//        assertType("1d.plus(1)", "Double");
+
+        assertType("1f.plus(1d)", "Double");
+        assertType("1f.plus(1f)", "Float");
+//        assertType("1f.plus(1L)", "Float");
+//        assertType("1f.plus(1)", "Float");
+
+        assertType("1L.plus(1d)", "Double");
+        assertType("1L.plus(1f)", "Float");
+        assertType("1L.plus(1L)", "Long");
+//        assertType("1L.plus(1)", "Long");
+
+        assertType("1.plus(1d)", "Double");
+        assertType("1.plus(1f)", "Float");
+        assertType("1.plus(1L)", "Long");
+        assertType("1.plus(1)", "Int");
+
+        assertType("'1'.plus(1d)", "Double");
+        assertType("'1'.plus(1f)", "Float");
+        assertType("'1'.plus(1L)", "Long");
+        assertType("'1'.plus(1)", "Int");
+        assertType("'1'.plus('1')", "Char");
+
+        assertType("\"1\".plus(1d)", "String");
+        assertType("\"1\".plus(1f)", "String");
+        assertType("\"1\".plus(1L)", "String");
+        assertType("\"1\".plus(1)", "String");
+        assertType("\"1\".plus('1')", "String");
+    }
+
+    //        assertConvertibleTo("1", JetStandardClasses.getByteType());
     //    public void testImplicitConversions() throws Exception {
-//        assertConvertibleTo("1", JetStandardClasses.getByteType());
 //    }
 //
     private static void assertSubtype(String type1, String type2) {

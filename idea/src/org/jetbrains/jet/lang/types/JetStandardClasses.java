@@ -10,7 +10,7 @@ import org.jetbrains.jet.lang.JetFileType;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.FileContentsResolver;
 import org.jetbrains.jet.lang.resolve.JetScope;
-import org.jetbrains.jet.lang.resolve.JetScopeImpl;
+import org.jetbrains.jet.lang.resolve.WritableScope;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,6 +47,16 @@ public class JetStandardClasses {
             }, JetScope.EMPTY
     );
 
+    private static final Type NOTHING_TYPE = new TypeImpl(getNothing());
+    private static final Type NULLABLE_NOTHING_TYPE = new TypeImpl(
+            Collections.<Attribute>emptyList(),
+            getNothing().getTypeConstructor(),
+            true,
+            Collections.<TypeProjection>emptyList(),
+            JetScope.EMPTY);
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     private static final ClassDescriptor ANY = new ClassDescriptorImpl(
             Collections.<Attribute>emptyList(),
             false,
@@ -56,48 +66,17 @@ public class JetStandardClasses {
             JetScope.EMPTY
     );
 
+    private static final Type ANY_TYPE = new TypeImpl(ANY.getTypeConstructor(), JetScope.EMPTY);
+    private static final Type NULLABLE_ANY_TYPE = TypeUtils.makeNullable(ANY_TYPE);
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     public static final JetScope STUB = JetScope.EMPTY;
 
-    private static final Type ANY_TYPE = new TypeImpl(ANY.getTypeConstructor(), JetScope.EMPTY);
-
-    private static final JetScope LIBRARY_SCOPE;
-    static {
-        // TODO : review
-        Project project = ProjectManager.getInstance().getDefaultProject();
-        InputStream stream = JetStandardClasses.class.getClassLoader().getResourceAsStream("jet/lang/Library.jet");
-        try {
-            //noinspection IOResourceOpenedButNotSafelyClosed
-            JetFile file = (JetFile) PsiFileFactory.getInstance(project).createFileFromText("Library.jet", JetFileType.INSTANCE, FileUtil.loadTextAndClose(new InputStreamReader(stream)));
-
-            LIBRARY_SCOPE = FileContentsResolver.INSTANCE.resolveFileContents(JetScope.EMPTY, file);
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    private static final Type NULLABLE_ANY_TYPE = TypeUtils.makeNullable(ANY_TYPE);
-    @NotNull
-    private static final ClassDescriptor BYTE    = LIBRARY_SCOPE.getClass("Byte");
-    @NotNull
-    private static final ClassDescriptor CHAR    = LIBRARY_SCOPE.getClass("Char");
-    @NotNull
-    private static final ClassDescriptor SHORT   = LIBRARY_SCOPE.getClass("Short");
-    @NotNull
-    private static final ClassDescriptor INT     = LIBRARY_SCOPE.getClass("Int");
-    @NotNull
-    private static final ClassDescriptor LONG    = LIBRARY_SCOPE.getClass("Long");
-    @NotNull
-    private static final ClassDescriptor FLOAT   = LIBRARY_SCOPE.getClass("Float");
-    @NotNull
-    private static final ClassDescriptor DOUBLE  = LIBRARY_SCOPE.getClass("Double");
-    @NotNull
-    private static final ClassDescriptor BOOLEAN = LIBRARY_SCOPE.getClass("Boolean");
-    @NotNull
-    private static final ClassDescriptor STRING  = LIBRARY_SCOPE.getClass("String");
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     public static final int TUPLE_COUNT = 22;
     private static final ClassDescriptor[] TUPLE = new ClassDescriptor[TUPLE_COUNT];
-
     static {
         for (int i = 0; i < TUPLE_COUNT; i++) {
             List<TypeParameterDescriptor> parameters = new ArrayList<TypeParameterDescriptor>();
@@ -112,13 +91,15 @@ public class JetStandardClasses {
                     true,
                     "Tuple" + i,
                     parameters,
-                    Collections.singleton(JetStandardClasses.getAnyType()), STUB);
+                    Collections.singleton(getAnyType()), STUB);
         }
     }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     public static final int FUNCTION_COUNT = 22;
     private static final ClassDescriptor[] FUNCTION = new ClassDescriptor[FUNCTION_COUNT];
     private static final ClassDescriptor[] RECEIVER_FUNCTION = new ClassDescriptor[FUNCTION_COUNT];
-
 
     static {
         for (int i = 0; i < FUNCTION_COUNT; i++) {
@@ -138,7 +119,7 @@ public class JetStandardClasses {
                     false,
                     "Function" + i,
                     parameters,
-                    Collections.singleton(JetStandardClasses.getAnyType()), STUB);
+                    Collections.singleton(getAnyType()), STUB);
             parameters.add(0, new TypeParameterDescriptor(
                         Collections.<Attribute>emptyList(),
                         Variance.IN_VARIANCE, "T",
@@ -148,9 +129,68 @@ public class JetStandardClasses {
                     false,
                     "ReceiverFunction" + i,
                     parameters,
-                    Collections.singleton(JetStandardClasses.getAnyType()), STUB);
+                    Collections.singleton(getAnyType()), STUB);
         }
     }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private static final JetScope PREDEFINED_SCOPE;
+    static {
+        WritableScope writableScope = new WritableScope(JetScope.EMPTY);
+        PREDEFINED_SCOPE = writableScope;
+        writableScope.addClassDescriptor(ANY);
+        writableScope.addClassDescriptor(NOTHING_CLASS);
+        for (ClassDescriptor classDescriptor : TUPLE) {
+            writableScope.addClassDescriptor(classDescriptor);
+        }
+        writableScope.addClassAlias("Unit", getTuple(0));
+        for (ClassDescriptor classDescriptor : FUNCTION) {
+            writableScope.addClassDescriptor(classDescriptor);
+        }
+        for (ClassDescriptor classDescriptor : RECEIVER_FUNCTION) {
+            writableScope.addClassDescriptor(classDescriptor);
+        }
+    }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private static final JetScope LIBRARY_SCOPE;
+    static {
+        // TODO : review
+        Project project = ProjectManager.getInstance().getDefaultProject();
+        InputStream stream = JetStandardClasses.class.getClassLoader().getResourceAsStream("jet/lang/Library.jet");
+        try {
+            //noinspection IOResourceOpenedButNotSafelyClosed
+            JetFile file = (JetFile) PsiFileFactory.getInstance(project).createFileFromText("Library.jet",
+                    JetFileType.INSTANCE, FileUtil.loadTextAndClose(new InputStreamReader(stream)));
+
+            LIBRARY_SCOPE = FileContentsResolver.INSTANCE.resolveFileContents(PREDEFINED_SCOPE, file);
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    @NotNull
+    private static final ClassDescriptor BYTE    = LIBRARY_SCOPE.getClass("Byte");
+    @NotNull
+    private static final ClassDescriptor CHAR    = LIBRARY_SCOPE.getClass("Char");
+    @NotNull
+    private static final ClassDescriptor SHORT   = LIBRARY_SCOPE.getClass("Short");
+    @NotNull
+    private static final ClassDescriptor INT     = LIBRARY_SCOPE.getClass("Int");
+    @NotNull
+    private static final ClassDescriptor LONG    = LIBRARY_SCOPE.getClass("Long");
+    @NotNull
+    private static final ClassDescriptor FLOAT   = LIBRARY_SCOPE.getClass("Float");
+    @NotNull
+    private static final ClassDescriptor DOUBLE  = LIBRARY_SCOPE.getClass("Double");
+    @NotNull
+    private static final ClassDescriptor BOOLEAN = LIBRARY_SCOPE.getClass("Boolean");
+    @NotNull
+    private static final ClassDescriptor STRING  = LIBRARY_SCOPE.getClass("String");
 
     private static final Type BYTE_TYPE = new TypeImpl(getByte());
     private static final Type CHAR_TYPE = new TypeImpl(getChar());
@@ -162,17 +202,14 @@ public class JetStandardClasses {
     private static final Type BOOLEAN_TYPE = new TypeImpl(getBoolean());
     private static final Type STRING_TYPE = new TypeImpl(getString());
     private static final Type UNIT_TYPE = new TypeImpl(getTuple(0));
-    private static final Type NOTHING_TYPE = new TypeImpl(getNothing());
 
-    private static final Type NULLABLE_NOTHING_TYPE = new TypeImpl(
-            Collections.<Attribute>emptyList(),
-            getNothing().getTypeConstructor(),
-            true,
-            Collections.<TypeProjection>emptyList(),
-            JetScope.EMPTY);
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private static final Map<String, ClassDescriptor> CLASS_MAP = new HashMap<String, ClassDescriptor>();
+    @NotNull
+    public static final JetScope STANDARD_CLASSES;
     static {
+        WritableScope writableScope = new WritableScope(LIBRARY_SCOPE);
+        STANDARD_CLASSES = writableScope;
         Field[] declaredFields = JetStandardClasses.class.getDeclaredFields();
         for (Field field : declaredFields) {
             if ((field.getModifiers() & Modifier.STATIC) == 0) {
@@ -182,7 +219,7 @@ public class JetStandardClasses {
             if (type == ClassDescriptor.class) {
                 try {
                     ClassDescriptor descriptor = (ClassDescriptor) field.get(null);
-                    CLASS_MAP.put(descriptor.getName(), descriptor);
+                    writableScope.addClassDescriptor(descriptor);
                 } catch (IllegalAccessException e) {
                     throw new IllegalStateException(e);
                 }
@@ -190,23 +227,14 @@ public class JetStandardClasses {
                 try {
                     ClassDescriptor[] array = (ClassDescriptor[]) field.get(null);
                     for (ClassDescriptor descriptor : array) {
-                        CLASS_MAP.put(descriptor.getName(), descriptor);
+                        writableScope.addClassDescriptor(descriptor);
                     }
                 } catch (IllegalAccessException e) {
                     throw new IllegalStateException(e);
                 }
             }
         }
-        CLASS_MAP.put("Unit", getTuple(0));
     }
-
-    @NotNull
-    public static final JetScope STANDARD_CLASSES = new JetScopeImpl() {
-        @Override
-        public ClassDescriptor getClass(String name) {
-            return CLASS_MAP.get(name);
-        }
-    };
 
     @NotNull
     public static ClassDescriptor getAny() {

@@ -388,7 +388,7 @@ public class JetTypeChecker {
         if (block.isEmpty()) {
             return JetStandardClasses.getUnitType();
         } else {
-            AccumulatingScope scope = new AccumulatingScope(outerScope);
+            WritableScope scope = new WritableScope(outerScope);
             for (JetElement statement : block) {
                 // TODO: consider other declarations
                 if (statement instanceof JetProperty) {

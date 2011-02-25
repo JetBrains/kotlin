@@ -4,7 +4,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.types.*;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author abreslav
@@ -16,13 +17,11 @@ public class WritableScope extends JetScopeAdapter {
     private Map<String, WritableFunctionGroup> functionGroups;
     @Nullable
     private Map<String, TypeParameterDescriptor> typeParameterDescriptors;
+    @Nullable
+    private Map<String, ClassDescriptor> classDescriptors;
 
     public WritableScope(JetScope scope) {
         super(scope);
-    }
-
-    public WritableScope() {
-        super(JetScope.EMPTY);
     }
 
     @NotNull
@@ -45,7 +44,11 @@ public class WritableScope extends JetScopeAdapter {
     public PropertyDescriptor getProperty(String name) {
         @NotNull
         Map<String, PropertyDescriptor> propertyDescriptors = getPropertyDescriptors();
-        return propertyDescriptors.get(name);
+        PropertyDescriptor propertyDescriptor = propertyDescriptors.get(name);
+        if (propertyDescriptor != null) {
+            return propertyDescriptor;
+        }
+        return super.getProperty(name);
     }
 
     @NotNull
@@ -73,10 +76,10 @@ public class WritableScope extends JetScopeAdapter {
     @NotNull
     public FunctionGroup getFunctionGroup(@NotNull String name) {
         WritableFunctionGroup functionGroup = getFunctionGroups().get(name);
-        if (functionGroup == null) {
-            return FunctionGroup.EMPTY;
+        if (functionGroup != null && !functionGroup.isEmpty()) {
+            return functionGroup;
         }
-        return functionGroup;
+        return super.getFunctionGroup(name);
     }
 
     @NotNull
@@ -105,24 +108,47 @@ public class WritableScope extends JetScopeAdapter {
         return super.getTypeParameter(name);
     }
 
+    @NotNull
+    private Map<String, ClassDescriptor> getClassDescriptors() {
+        if (classDescriptors == null) {
+            classDescriptors = new HashMap<String, ClassDescriptor>();
+        }
+        return classDescriptors;
+    }
+
+    public void addClassDescriptor(@NotNull ClassDescriptor classDescriptor) {
+        addClassAlias(classDescriptor.getName(), classDescriptor);
+    }
+
+    public void addClassAlias(String name, ClassDescriptor classDescriptor) {
+        Map<String, ClassDescriptor> classDescriptors = getClassDescriptors();
+        if (classDescriptors.put(name, classDescriptor) != null) {
+            throw new UnsupportedOperationException("Class redeclared: " + classDescriptor.getName());
+        }
+    }
+
     @Override
     public ClassDescriptor getClass(String name) {
-        return super.getClass(name); // TODO
-    }
-
-    @Override
-    public ExtensionDescriptor getExtension(String name) {
-        throw new UnsupportedOperationException(); // TODO
-    }
-
-    @Override
-    public NamespaceDescriptor getNamespace(String name) {
-        throw new UnsupportedOperationException(); // TODO
+        ClassDescriptor classDescriptor = getClassDescriptors().get(name);
+        if (classDescriptor != null) {
+            return classDescriptor;
+        }
+        return super.getClass(name);
     }
 
     @NotNull
     @Override
     public Type getThisType() {
-        throw new UnsupportedOperationException(); // TODO
+        return super.getThisType(); // TODO
+    }
+
+    @Override
+    public NamespaceDescriptor getNamespace(String name) {
+        return super.getNamespace(name); // TODO
+    }
+
+    @Override
+    public ExtensionDescriptor getExtension(String name) {
+        return super.getExtension(name); // TODO
     }
 }
