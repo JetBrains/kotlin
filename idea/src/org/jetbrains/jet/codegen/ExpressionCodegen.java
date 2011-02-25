@@ -4,6 +4,7 @@ import gnu.trove.TObjectIntHashMap;
 import org.jetbrains.jet.lang.psi.*;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
 
@@ -228,6 +229,18 @@ public class ExpressionCodegen extends JetVisitor {
             }
         }
 
+    }
+
+    @Override
+    public void visitReturnExpression(JetReturnExpression expression) {
+        final JetExpression returnedExpression = expression.getReturnedExpression();
+        if (returnedExpression != null) {
+            returnedExpression.accept(this);
+            v.visitInsn(Opcodes.ARETURN);
+        }
+        else {
+            v.visitInsn(Opcodes.RETURN);
+        }
     }
 
     private Type getType(JetProperty var) {

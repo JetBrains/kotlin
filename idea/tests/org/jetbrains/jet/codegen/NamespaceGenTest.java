@@ -25,10 +25,23 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
         System.out.println(text);
 
         final Class aClass = generateToClass(namespace, codegen);
-        final Method[] methods = aClass.getMethods();
-        final Method main = methods[0];
+        final Method main = firstMethod(aClass);
         Object[] args = new Object[] { new String[0] };
         main.invoke(null, args);
+    }
+
+    public void testReturnOne() throws Exception {
+        myFixture.configureByFile(JetParsingTest.getTestDataDir() + "/codegen/returnOne.jet");
+        JetFile jetFile = (JetFile) myFixture.getFile();
+        JetNamespace namespace = jetFile.getRootNamespace();
+        NamespaceCodegen codegen = new NamespaceCodegen();
+        final String text = generateToText(namespace, codegen);
+        System.out.println(text);
+
+        final Class aClass = generateToClass(namespace, codegen);
+        final Method main = firstMethod(aClass);
+        final Object returnValue = main.invoke(null, new Object[0]);
+        assertEquals(new Integer(42), returnValue);
     }
 
     private static String generateToText(JetNamespace namespace, NamespaceCodegen codegen) {
@@ -44,6 +57,10 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
         MyClassLoader classLoader = new MyClassLoader(NamespaceGenTest.class.getClassLoader());
         final Class aClass = classLoader.doDefineClass(NamespaceCodegen.getJVMClassName(namespace).replace("/", "."), data);
         return aClass;
+    }
+
+    private static Method firstMethod(Class aClass) {
+        return aClass.getMethods()[0];
     }
 
     private static class MyClassLoader extends ClassLoader {

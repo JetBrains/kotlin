@@ -25,12 +25,31 @@ public class FunctionCodegen {
         for (int i = 0; i < parameters.size(); i++) {
             parameterTypes[i] = mapTypeReference(parameters.get(i).getTypeReference());
         }
-        Method method = new Method(f.getName(), Type.VOID_TYPE, parameterTypes);
+        final JetTypeReference returnTypeRef = f.getReturnTypeRef();
+        Type returnType = returnTypeRef == null ? Type.VOID_TYPE : mapTypeReference(returnTypeRef);
+        Method method = new Method(f.getName(), returnType, parameterTypes);
         final MethodVisitor mv = v.visitMethod(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC,
                 method.getName(), method.getDescriptor(), null, null);
         mv.visitCode();
-        mv.visitInsn(Opcodes.RETURN);
+        final JetExpression bodyExpression = f.getBodyExpression();
+        bodyExpression.accept(new ExpressionCodegen(mv));
+        if (needReturn(bodyExpression)) {
+            mv.visitInsn(Opcodes.RETURN);
+        }
+        mv.visitMaxs(0, 0);
         mv.visitEnd();
+    }
+
+    private boolean needReturn(JetExpression bodyExpression) {
+        if (bodyExpression instanceof JetBlockExpression) {
+            final List<JetElement> statements = ((JetBlockExpression) bodyExpression).getStatements();
+            if (statements.size() == 0) {
+                return true;
+            }
+            final JetElement jetElement = statements.get(statements.size() - 1);
+            return !(jetElement instanceof JetReturnExpression);
+        }
+        return false;
     }
 
     private Type mapTypeReference(JetTypeReference typeRef) {
@@ -52,6 +71,9 @@ public class FunctionCodegen {
 
             if ("String".equals(referencedName)) {
                 return Type.getType(String.class);
+            }
+            if ("Int".equals(referencedName)) {
+                return Type.getType(Integer.class);
             }
         }
 
