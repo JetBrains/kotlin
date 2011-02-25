@@ -35,4 +35,8 @@ public class JetNamespace extends JetDeclaration {
         PsiElement nameNode = findChildByType(JetNodeTypes.NAMESPACE_NAME);
         return nameNode != null ? nameNode.getText() : "";
     }
+
+    public String getFQName() {
+        return getName(); // TODO: Must include container namespace names, module root namespace
+    }
 }
