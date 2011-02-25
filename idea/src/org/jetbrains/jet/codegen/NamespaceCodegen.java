@@ -19,9 +19,10 @@ public class NamespaceCodegen {
         final FunctionCodegen functionCodegen = new FunctionCodegen(v);
         v.visit(Opcodes.V1_6,
                 Opcodes.ACC_PUBLIC,
-                namespace.getFQName().replace('.', '/') + "/namespace",
+                getJVMClassName(namespace),
                 null,
-                "jet/lang/Namespace",
+                //"jet/lang/Namespace",
+                "java/lang/Object",
                 new String[0]
                 );
 
@@ -36,5 +37,9 @@ public class NamespaceCodegen {
 
 
         v.visitEnd();
+    }
+
+    public static String getJVMClassName(JetNamespace namespace) {
+        return namespace.getFQName().replace('.', '/') + "/namespace";
     }
 }
