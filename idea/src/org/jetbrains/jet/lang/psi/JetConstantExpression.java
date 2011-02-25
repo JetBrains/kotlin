@@ -21,10 +21,20 @@ public class JetConstantExpression extends JetExpression {
     public Object getValue() {
         IElementType elementType = getNode().getElementType();
         String nodeText = getNode().getText();
+
         if (elementType == JetNodeTypes.INTEGER_CONSTANT) {
+            if (nodeText.startsWith("0x") || nodeText.startsWith("0X")) {
+                return Integer.parseInt(nodeText.substring(2), 16);
+            }
+            if (nodeText.startsWith("0b") || nodeText.startsWith("0B")) {
+                return Integer.parseInt(nodeText.substring(2), 2);
+            }
             return Integer.parseInt(nodeText);
         }
         else if (elementType == JetNodeTypes.LONG_CONSTANT) {
+            if (nodeText.endsWith("l") || nodeText.endsWith("L")) {
+                return Long.parseLong(nodeText.substring(0, nodeText.length() - 1));
+            }
             return Long.parseLong(nodeText);
         }
         else if (elementType == JetNodeTypes.FLOAT_CONSTANT) {
