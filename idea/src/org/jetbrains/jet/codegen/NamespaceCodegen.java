@@ -11,15 +11,10 @@ import org.objectweb.asm.Opcodes;
  * @author max
  */
 public class NamespaceCodegen {
-    private final ClassVisitorFactory factory;
-
-    public NamespaceCodegen(ClassVisitorFactory factory) {
-        this.factory = factory;
+    public NamespaceCodegen() {
     }
 
-    public void generate(JetNamespace namespace) {
-        final ClassVisitor v = factory.visitorForClassIn(namespace);
-
+    public void generate(JetNamespace namespace, ClassVisitor v) {
         final PropertyCodegen propertyCodegen = new PropertyCodegen(v);
         final FunctionCodegen functionCodegen = new FunctionCodegen(v);
         v.visit(Opcodes.V1_6,

@@ -4,6 +4,7 @@
 package org.jetbrains.jet.parsing;
 
 import com.intellij.openapi.application.PathManager;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -40,12 +41,13 @@ public class JetParsingTest extends ParsingTestCase {
         return getTestDataDir();
     }
 
-    private static String getTestDataDir() {
+    public static String getTestDataDir() {
         return getHomeDirectory() + "/idea/testData";
     }
 
     private static String getHomeDirectory() {
-       return new File(PathManager.getResourceRoot(JetParsingTest.class, "/org/jetbrains/jet/parsing/JetParsingTest.class")).getParentFile().getParentFile().getParent();
+        File root = new File(PathManager.getResourceRoot(JetParsingTest.class, "/org/jetbrains/jet/parsing/JetParsingTest.class"));
+        return FileUtil.toSystemIndependentName(root.getParentFile().getParentFile().getParent());
     }
 
     @Override
