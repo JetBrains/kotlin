@@ -3,11 +3,7 @@ package org.jetbrains.jet.plugin;
 import com.intellij.lang.Commenter;
 
 /**
- * Created by IntelliJ IDEA.
- * User: max
- * Date: 12/19/10
- * Time: 5:45 PM
- * To change this template use File | Settings | File Templates.
+ * @author max
  */
 public class JetCommenter implements Commenter {
     @Override
