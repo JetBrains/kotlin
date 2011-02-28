@@ -14,22 +14,28 @@ import java.util.*;
  * @author abreslav
  */
 public class JetTypeChecker {
-    public static final JetTypeChecker INSTANCE = new JetTypeChecker();
+    public static final JetTypeChecker INSTANCE = new JetTypeChecker(TypeCheckerTrace.DUMMY);
+
+    private final TypeCheckerTrace trace;
+
+    public JetTypeChecker(TypeCheckerTrace trace) {
+        this.trace = trace;
+    }
 
     /*
-       : "new" constructorInvocation
+      : "new" constructorInvocation
 
-       : objectLiteral
+      : objectLiteral
 
-       : SimpleName
+      : SimpleName
 
-       : "typeof" "(" expression ")"
+      : "typeof" "(" expression ")"
 
-       : functionLiteral
+      : functionLiteral
 
-       : declaration
-       : "namespace" // for the root namespace
-     */
+      : declaration
+      : "namespace" // for the root namespace
+    */
     public Type getType(@NotNull final JetScope scope, @NotNull JetExpression expression, final boolean preferBlock) {
         final Type[] result = new Type[1];
         expression.accept(new JetVisitor() {
@@ -38,6 +44,7 @@ public class JetTypeChecker {
                 // TODO : other members
                 // TODO : type substitutions???
                 PropertyDescriptor property = scope.getProperty(expression.getReferencedName());
+                trace.recordResolutionResult(expression, property);
                 if (property != null) {
                     result[0] = property.getType();
                 }
@@ -321,6 +328,7 @@ public class JetTypeChecker {
                 throw new IllegalArgumentException("Unsupported element: " + elem);
             }
         });
+        trace.recordExpressionType(expression, result[0]);
         return result[0];
     }
 

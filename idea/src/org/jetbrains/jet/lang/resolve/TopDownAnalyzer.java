@@ -15,13 +15,15 @@ public class TopDownAnalyzer {
     private final Map<JetClass, MutableClassDescriptor> classes = new LinkedHashMap<JetClass, MutableClassDescriptor>();
     private final Map<JetFunction, FunctionDescriptor> functions = new HashMap<JetFunction, FunctionDescriptor>();
     private final Map<JetDeclaration, WritableScope> declaringScopes = new HashMap<JetDeclaration, WritableScope>();
+    private Map<JetExpression, Type> expressionTypes = new HashMap<JetExpression, Type>();
+    private Map<JetReferenceExpression,DeclarationDescriptor> resolutionResults = new HashMap<JetReferenceExpression, DeclarationDescriptor>();
 
     public BindingContext process(@NotNull JetScope outerScope, @NotNull List<JetDeclaration> declarations) {
         WritableScope toplevelScope = new WritableScope(outerScope);
         collectTypeDeclarators(toplevelScope, declarations);
         resolveTypeDeclarations();
         collectBehaviorDeclarators(toplevelScope, declarations);
-        resolveBehaviorDeclarations();
+        resolveBehaviorDeclarationBodies();
         return new BindingContext() {
 
             @Override
@@ -36,7 +38,7 @@ public class TopDownAnalyzer {
 
             @Override
             public FunctionDescriptor getFunctionDescriptor(JetFunction declaration) {
-                throw new UnsupportedOperationException(); // TODO
+                return functions.get(declaration);
             }
 
             @Override
@@ -46,12 +48,12 @@ public class TopDownAnalyzer {
 
             @Override
             public Type getExpressionType(JetExpression expression) {
-                throw new UnsupportedOperationException(); // TODO
+                return expressionTypes.get(expression);
             }
 
             @Override
             public DeclarationDescriptor resolve(JetReferenceExpression referenceExpression) {
-                throw new UnsupportedOperationException(); // TODO
+                return resolutionResults.get(referenceExpression);
             }
         };
     }
@@ -166,7 +168,7 @@ public class TopDownAnalyzer {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void resolveBehaviorDeclarations() {
+    private void resolveBehaviorDeclarationBodies() {
         for (Map.Entry<JetFunction, FunctionDescriptor> entry : functions.entrySet()) {
             JetFunction function = entry.getKey();
             FunctionDescriptor descriptor = entry.getValue();
@@ -174,8 +176,30 @@ public class TopDownAnalyzer {
             WritableScope declaringScope = declaringScopes.get(function);
             assert declaringScope != null;
 
+            WritableScope parameterScope = new WritableScope(declaringScope);
+            for (TypeParameterDescriptor typeParameter : descriptor.getTypeParameters()) {
+                parameterScope.addTypeParameterDescriptor(typeParameter);
+            }
+            for (ValueParameterDescriptor valueParameterDescriptor : descriptor.getUnsubstitutedValueParameters()) {
+                parameterScope.addPropertyDescriptor(valueParameterDescriptor);
+            }
 
+            resolveExpression(parameterScope, function.getBodyExpression(), true);
         }
+    }
+
+    private void resolveExpression(@NotNull JetScope scope, JetExpression expression, boolean preferBlock) {
+        new JetTypeChecker(new TypeCheckerTrace() {
+            @Override
+            public void recordExpressionType(JetExpression expression, Type type) {
+                expressionTypes.put(expression, type);
+            }
+
+            @Override
+            public void recordResolutionResult(JetReferenceExpression expression, DeclarationDescriptor descriptor) {
+                resolutionResults.put(expression, descriptor);
+            }
+        }).getType(scope, expression, preferBlock);
     }
 
 }

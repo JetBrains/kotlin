@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * @author abreslav
  */
-public abstract class DeclarationDescriptorImpl<T extends JetElement> extends AnnotatedImpl implements Named, DeclarationDescriptor<T> {
+public abstract class DeclarationDescriptorImpl<T extends JetElement> extends AnnotatedImpl implements Named, DeclarationDescriptor {
 
     private final String name;
     private final T psiElement;
@@ -23,7 +23,6 @@ public abstract class DeclarationDescriptorImpl<T extends JetElement> extends An
         return name;
     }
 
-    @Override
     public T getPsiElement() {
         return psiElement;
     }

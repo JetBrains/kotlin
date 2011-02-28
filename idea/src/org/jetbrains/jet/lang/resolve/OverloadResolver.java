@@ -18,7 +18,12 @@ public class OverloadResolver {
     private OverloadResolver() {}
 
     @NotNull
-    public OverloadDomain getOverloadDomain(@Nullable Type receiverType, @NotNull JetScope outerScope, @NotNull String name) {
+    public OverloadDomain getOverloadDomain(Type receiverType, @NotNull JetScope outerScope, @NotNull String name) {
+        return getOverloadDomain(TypeCheckerTrace.DUMMY, receiverType, outerScope, name);
+    }
+
+    @NotNull
+    public OverloadDomain getOverloadDomain(@NotNull TypeCheckerTrace trace, @Nullable Type receiverType, @NotNull JetScope outerScope, @NotNull String name) {
         // TODO : extension lookup
         JetScope scope = receiverType == null ? outerScope : receiverType.getMemberScope();
 
@@ -30,7 +35,7 @@ public class OverloadResolver {
 
         return new OverloadDomain() {
             @Override
-            public Type getReturnTypeForPositionedArguments(@NotNull List<Type> typeArguments, @NotNull List<Type> positionedValueArgumentTypes) {
+            public Type getReturnTypeForPositionedArguments(@NotNull final List<Type> typeArguments, @NotNull List<Type> positionedValueArgumentTypes) {
                 Collection<FunctionDescriptor> possiblyApplicableFunctions = functionGroup.getPossiblyApplicableFunctions(typeArguments, positionedValueArgumentTypes);
                 if (possiblyApplicableFunctions.isEmpty()) {
                     return null;

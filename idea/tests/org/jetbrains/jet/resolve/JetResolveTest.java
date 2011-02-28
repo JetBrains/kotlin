@@ -3,10 +3,7 @@ package org.jetbrains.jet.resolve;
 import com.intellij.codeInsight.daemon.LightDaemonAnalyzerTestCase;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.io.FileUtil;
-import org.jetbrains.jet.lang.psi.JetChangeUtil;
-import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.parsing.JetParsingTest;
@@ -35,8 +32,8 @@ public class JetResolveTest extends LightDaemonAnalyzerTestCase {
         List<JetDeclaration> declarations = jetFile.getRootNamespace().getDeclarations();
         BindingContext bindingContext = new TopDownAnalyzer().process(JetStandardClasses.STANDARD_CLASSES, declarations);
 
-        JetDeclaration declaration = declarations.get(0);
-        ClassDescriptor classA = bindingContext.getClassDescriptor((JetClass) declaration);
+        JetClass classADecl = (JetClass) declarations.get(0);
+        ClassDescriptor classA = bindingContext.getClassDescriptor(classADecl);
         assertNotNull(classA);
 
         JetScope membersOfA = classA.getMemberScope(Collections.<TypeProjection>emptyList());
@@ -53,6 +50,13 @@ public class JetResolveTest extends LightDaemonAnalyzerTestCase {
         OverloadDomain overloadsForFoo1 = OverloadResolver.INSTANCE.getOverloadDomain(null, membersOfA, "foo1");
         Type foo1Type = overloadsForFoo1.getReturnTypeForPositionedArguments(Collections.<Type>emptyList(), Collections.<Type>emptyList());
         assertEquals(new TypeImpl(classB), foo1Type);
+
+        JetFunction fooDecl = (JetFunction) classADecl.getDeclarations().get(1);
+        Type expressionType = bindingContext.getExpressionType(fooDecl.getBodyExpression());
+        assertEquals(JetStandardClasses.getIntType(), expressionType);
+
+        DeclarationDescriptor resolve = bindingContext.resolve((JetReferenceExpression) fooDecl.getBodyExpression());
+        assertSame(bindingContext.getFunctionDescriptor(fooDecl).getUnsubstitutedValueParameters().get(0), resolve);
 
         JetClass classCDecl = (JetClass) declarations.get(1);
         ClassDescriptor classC = bindingContext.getClassDescriptor(classCDecl);
