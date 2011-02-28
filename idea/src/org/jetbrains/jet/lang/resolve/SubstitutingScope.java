@@ -21,8 +21,8 @@ public class SubstitutingScope implements JetScope {
     @Override
     public PropertyDescriptor getProperty(String name) {
         PropertyDescriptor property = workerScope.getProperty(name);
-        if (property == null) {
-            return null;
+        if (property == null || substitutionContext.isEmpty()) {
+            return property;
         }
         return new LazySubstitutedPropertyDescriptorImpl(property, substitutionContext);
     }

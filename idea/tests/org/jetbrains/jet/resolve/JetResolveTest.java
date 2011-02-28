@@ -90,6 +90,12 @@ public class JetResolveTest extends LightDaemonAnalyzerTestCase {
             assertSame(intPlus, FunctionDescriptorUtil.getOriginal(mustBePlus));
         }
 
+        {
+            PropertyDescriptor a = classA.getMemberScope(Collections.<TypeProjection>emptyList()).getProperty("a");
+            JetProperty aDecl = (JetProperty) classADecl.getDeclarations().get(5);
+            PropertyDescriptor mustBeA = bindingContext.getPropertyDescriptor(aDecl);
+            assertSame(a, mustBeA);
+        }
 
         JetClass classCDecl = (JetClass) declarations.get(1);
         ClassDescriptor classC = bindingContext.getClassDescriptor(classCDecl);
