@@ -131,6 +131,7 @@ public class ClassDescriptorResolver {
 
         return new FunctionDescriptorImpl(
                 function,
+                null,
                 AttributeResolver.INSTANCE.resolveAttributes(function.getModifierList()),
                 function.getName(),
                 typeParameterDescriptors,

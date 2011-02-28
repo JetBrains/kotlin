@@ -40,16 +40,12 @@ public class JetResolveTest extends LightDaemonAnalyzerTestCase {
         ClassDescriptor classB = membersOfA.getClass("B");
         assertNotNull(classB);
 
-        FunctionGroup foo = membersOfA.getFunctionGroup("foo");
-        assertFalse(foo.isEmpty());
+        FunctionGroup fooFG = membersOfA.getFunctionGroup("foo");
+        assertFalse(fooFG.isEmpty());
 
-        OverloadDomain overloadsForFoo = OverloadResolver.INSTANCE.getOverloadDomain(null, membersOfA, "foo");
-        Type fooType = overloadsForFoo.getReturnTypeForPositionedArguments(Collections.<Type>emptyList(), Collections.<Type>emptyList());
-        assertEquals(JetStandardClasses.getIntType(), fooType);
-
-        OverloadDomain overloadsForFoo1 = OverloadResolver.INSTANCE.getOverloadDomain(null, membersOfA, "foo1");
-        Type foo1Type = overloadsForFoo1.getReturnTypeForPositionedArguments(Collections.<Type>emptyList(), Collections.<Type>emptyList());
-        assertEquals(new TypeImpl(classB), foo1Type);
+        assertReturnType(membersOfA, "foo", JetStandardClasses.getIntType());
+        assertReturnType(membersOfA, "foo1", new TypeImpl(classB));
+        assertReturnType(membersOfA, "fooB", JetStandardClasses.getIntType());
 
         JetFunction fooDecl = (JetFunction) classADecl.getDeclarations().get(1);
         Type expressionType = bindingContext.getExpressionType(fooDecl.getBodyExpression());
@@ -57,6 +53,12 @@ public class JetResolveTest extends LightDaemonAnalyzerTestCase {
 
         DeclarationDescriptor resolve = bindingContext.resolve((JetReferenceExpression) fooDecl.getBodyExpression());
         assertSame(bindingContext.getFunctionDescriptor(fooDecl).getUnsubstitutedValueParameters().get(0), resolve);
+
+        JetFunction fooBDecl = (JetFunction) classADecl.getDeclarations().get(2);
+        JetCallExpression fooBBody = (JetCallExpression) fooBDecl.getBodyExpression();
+        JetReferenceExpression refToFoo = (JetReferenceExpression) fooBBody.getCalleeExpression();
+        FunctionDescriptor mustBeFoo = (FunctionDescriptor) bindingContext.resolve(refToFoo);
+        assertSame(bindingContext.getFunctionDescriptor(fooDecl), mustBeFoo.getOriginal());
 
         JetClass classCDecl = (JetClass) declarations.get(1);
         ClassDescriptor classC = bindingContext.getClassDescriptor(classCDecl);
@@ -69,7 +71,13 @@ public class JetResolveTest extends LightDaemonAnalyzerTestCase {
         assertNotNull(classC_B);
         assertNotSame(classC_B, classB);
         assertEquals(classC.getTypeConstructor(), classC_B.getTypeConstructor().getSupertypes().iterator().next().getConstructor());
+    }
 
-
+    private void assertReturnType(JetScope membersOfA, String foo, Type returnType) {
+        OverloadDomain overloadsForFoo = OverloadResolver.INSTANCE.getOverloadDomain(null, membersOfA, foo);
+        FunctionDescriptor descriptorForFoo = overloadsForFoo.getFunctionDescriptorForPositionedArguments(Collections.<Type>emptyList(), Collections.<Type>emptyList());
+        assertNotNull(descriptorForFoo);
+        Type fooType = descriptorForFoo.getUnsubstitutedReturnType();
+        assertEquals(returnType, fooType);
     }
 }

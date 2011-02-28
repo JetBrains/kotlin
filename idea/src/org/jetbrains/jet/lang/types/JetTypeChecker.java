@@ -299,7 +299,7 @@ public class JetTypeChecker {
                     // TODO : check that all are named
                     throw new UnsupportedOperationException(); // TODO
 
-//                    result[0] = overloadDomain.getReturnTypeForNamedArguments(typeArguments, valueArguments, functionLiteralArgument);
+//                    result[0] = overloadDomain.getFunctionDescriptorForNamedArguments(typeArguments, valueArguments, functionLiteralArgument);
                 } else {
                     List<JetExpression> positionedValueArguments = new ArrayList<JetExpression>();
                     for (JetArgument argument : valueArguments) {
@@ -319,7 +319,10 @@ public class JetTypeChecker {
                         valueArgumentTypes.add(getType(scope, valueArgument, false));
                     }
 
-                    result[0] = overloadDomain.getReturnTypeForPositionedArguments(types, valueArgumentTypes);
+                    FunctionDescriptor functionDescriptor = overloadDomain.getFunctionDescriptorForPositionedArguments(types, valueArgumentTypes);
+                    if (functionDescriptor != null) {
+                        result[0] = functionDescriptor.getUnsubstitutedReturnType();
+                    }
                 }
             }
 
@@ -334,6 +337,7 @@ public class JetTypeChecker {
 
     private OverloadDomain getOverloadDomain(final JetScope scope, JetExpression calleeExpression) {
         final OverloadDomain[] result = new OverloadDomain[1];
+        final JetReferenceExpression[] reference = new JetReferenceExpression[1];
         calleeExpression.accept(new JetVisitor() {
 
             @Override
@@ -357,6 +361,7 @@ public class JetTypeChecker {
 
                     Type receiverType = getType(scope, expression.getReceiverExpression(), false);
                     result[0] = OverloadResolver.INSTANCE.getOverloadDomain(receiverType, scope, referenceExpression.getReferencedName());
+                    reference[0] = referenceExpression;
                 } else {
                     throw new UnsupportedOperationException(); // TODO
                 }
@@ -366,6 +371,7 @@ public class JetTypeChecker {
             public void visitReferenceExpression(JetReferenceExpression expression) {
                 // a -- create a hierarchical lookup domain for this.a
                 result[0] = OverloadResolver.INSTANCE.getOverloadDomain(null, scope, expression.getReferencedName());
+                reference[0] = expression;
             }
 
             @Override
@@ -379,7 +385,21 @@ public class JetTypeChecker {
                 throw new IllegalArgumentException("Unsupported element: " + elem);
             }
         });
-        return result[0];
+        return new OverloadDomain() {
+            @Override
+            public FunctionDescriptor getFunctionDescriptorForNamedArguments(@NotNull List<Type> typeArguments, @NotNull Map<String, Type> valueArgumentTypes, @Nullable Type functionLiteralArgumentType) {
+                FunctionDescriptor descriptor = result[0].getFunctionDescriptorForNamedArguments(typeArguments, valueArgumentTypes, functionLiteralArgumentType);
+                trace.recordResolutionResult(reference[0], descriptor);
+                return descriptor;
+            }
+
+            @Override
+            public FunctionDescriptor getFunctionDescriptorForPositionedArguments(@NotNull List<Type> typeArguments, @NotNull List<Type> positionedValueArgumentTypes) {
+                FunctionDescriptor descriptor = result[0].getFunctionDescriptorForPositionedArguments(typeArguments, positionedValueArgumentTypes);
+                trace.recordResolutionResult(reference[0], descriptor);
+                return descriptor;
+            }
+        };
     }
 
     private Type getBlockReturnedType(@NotNull JetScope outerScope, List<JetElement> block) {
