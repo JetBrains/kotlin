@@ -79,6 +79,7 @@ public class FunctionDescriptorUtil {
     public static FunctionDescriptor substituteFunctionDescriptor(@NotNull List<Type> typeArguments, @NotNull FunctionDescriptor functionDescriptor) {
         return new FunctionDescriptorImpl(
                 ResolveUtil.getJetFunction(functionDescriptor),
+                functionDescriptor,
                 // TODO : substitute
                 functionDescriptor.getAttributes(),
                 functionDescriptor.getName(),

@@ -59,6 +59,11 @@ public class LazySubstitutingFunctionDescriptor implements FunctionDescriptor {
     }
 
     @Override
+    public FunctionDescriptor getOriginal() {
+        return functionDescriptor;
+    }
+
+    @Override
     public List<Attribute> getAttributes() {
         // TODO : Substitute?
         return functionDescriptor.getAttributes();

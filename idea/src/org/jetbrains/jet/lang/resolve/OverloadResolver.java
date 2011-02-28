@@ -19,11 +19,6 @@ public class OverloadResolver {
 
     @NotNull
     public OverloadDomain getOverloadDomain(Type receiverType, @NotNull JetScope outerScope, @NotNull String name) {
-        return getOverloadDomain(TypeCheckerTrace.DUMMY, receiverType, outerScope, name);
-    }
-
-    @NotNull
-    public OverloadDomain getOverloadDomain(@NotNull TypeCheckerTrace trace, @Nullable Type receiverType, @NotNull JetScope outerScope, @NotNull String name) {
         // TODO : extension lookup
         JetScope scope = receiverType == null ? outerScope : receiverType.getMemberScope();
 
@@ -35,7 +30,7 @@ public class OverloadResolver {
 
         return new OverloadDomain() {
             @Override
-            public Type getReturnTypeForPositionedArguments(@NotNull final List<Type> typeArguments, @NotNull List<Type> positionedValueArgumentTypes) {
+            public FunctionDescriptor getFunctionDescriptorForPositionedArguments(@NotNull final List<Type> typeArguments, @NotNull List<Type> positionedValueArgumentTypes) {
                 Collection<FunctionDescriptor> possiblyApplicableFunctions = functionGroup.getPossiblyApplicableFunctions(typeArguments, positionedValueArgumentTypes);
                 if (possiblyApplicableFunctions.isEmpty()) {
                     return null;
@@ -86,14 +81,14 @@ public class OverloadResolver {
                 if (applicable.size() == 0) {
                     return null;
                 } else if (applicable.size() == 1) {
-                    return applicable.get(0).getUnsubstitutedReturnType();
+                    return applicable.get(0);
                 } else {
                     throw new UnsupportedOperationException();
                 }
             }
 
             @Override
-            public Type getReturnTypeForNamedArguments(@NotNull List<Type> typeArguments, @NotNull Map<String, Type> valueArgumentTypes, @Nullable Type functionLiteralArgumentType) {
+            public FunctionDescriptor getFunctionDescriptorForNamedArguments(@NotNull List<Type> typeArguments, @NotNull Map<String, Type> valueArgumentTypes, @Nullable Type functionLiteralArgumentType) {
                 throw new UnsupportedOperationException(); // TODO
             }
         };

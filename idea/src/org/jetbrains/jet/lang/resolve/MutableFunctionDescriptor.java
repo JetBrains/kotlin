@@ -29,4 +29,9 @@ public class MutableFunctionDescriptor extends MutableDeclarationDescriptor impl
     public Type getUnsubstitutedReturnType() {
         throw new UnsupportedOperationException(); // TODO
     }
+
+    @Override
+    public FunctionDescriptor getOriginal() {
+        throw new UnsupportedOperationException(); // TODO
+    }
 }
