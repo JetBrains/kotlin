@@ -1,0 +1,14 @@
+class A {
+  class B {
+
+  }
+
+  fun foo() : Int = 1
+  fun foo1() : B = new B()
+}
+
+class C : A {
+    class B : C {
+
+    }
+}

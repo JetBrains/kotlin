@@ -1,5 +1,7 @@
 package org.jetbrains.jet.lang.types;
 
+import org.jetbrains.jet.lang.psi.JetTypeParameter;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -7,13 +9,13 @@ import java.util.Set;
 /**
  * @author abreslav
  */
-public class TypeParameterDescriptor extends NamedAnnotatedImpl {
+public class TypeParameterDescriptor extends DeclarationDescriptorImpl<JetTypeParameter> {
     private final Variance variance;
     private final Set<Type> upperBounds;
     private final TypeConstructor typeConstructor;
 
-    public TypeParameterDescriptor(List<Attribute> attributes, Variance variance, String name, Set<Type> upperBounds) {
-        super(attributes, name);
+    public TypeParameterDescriptor(JetTypeParameter psiElement, List<Attribute> attributes, Variance variance, String name, Set<Type> upperBounds) {
+        super(psiElement, attributes, name);
         this.variance = variance;
         this.upperBounds = upperBounds;
         // TODO: Should we actually pass the attributes on to the type constructor?
@@ -26,7 +28,7 @@ public class TypeParameterDescriptor extends NamedAnnotatedImpl {
     }
 
     public TypeParameterDescriptor(List<Attribute> attributes, Variance variance, String name) {
-        this(attributes, variance, name, Collections.singleton(JetStandardClasses.getNullableAnyType()));
+        this(null, attributes, variance, name, Collections.singleton(JetStandardClasses.getNullableAnyType()));
     }
 
     public Variance getVariance() {

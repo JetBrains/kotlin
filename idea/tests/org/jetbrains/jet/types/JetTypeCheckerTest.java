@@ -360,6 +360,19 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertType("'1'.plus(1)", "Int");
         assertType("'1'.plus('1')", "Char");
 
+//        assertType("(1:Short).plus(1d)", "Double");
+//        assertType("(1:Short).plus(1f)", "Float");
+//        assertType("(1:Short).plus(1L)", "Long");
+//        assertType("(1:Short).plus(1)", "Int");
+//        assertType("(1:Short).plus(1:Short)", "Short");
+//
+//        assertType("(1:Byte).plus(1d)", "Double");
+//        assertType("(1:Byte).plus(1f)", "Float");
+//        assertType("(1:Byte).plus(1L)", "Long");
+//        assertType("(1:Byte).plus(1)", "Int");
+//        assertType("(1:Byte).plus(1:Short)", "Short");
+//        assertType("(1:Byte).plus(1:Byte)", "Byte");
+
         assertType("\"1\".plus(1d)", "String");
         assertType("\"1\".plus(1f)", "String");
         assertType("\"1\".plus(1L)", "String");

@@ -24,7 +24,13 @@ import java.util.*;
  */
 public class JetStandardClasses {
 
+    private JetStandardClasses() {
+    }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     private static ClassDescriptor NOTHING_CLASS = new ClassDescriptorImpl(
+            null,
             Collections.<Attribute>emptyList(),
             true,
             "Nothing",
@@ -46,8 +52,8 @@ public class JetStandardClasses {
                 }
             }, JetScope.EMPTY
     );
-
     private static final Type NOTHING_TYPE = new TypeImpl(getNothing());
+
     private static final Type NULLABLE_NOTHING_TYPE = new TypeImpl(
             Collections.<Attribute>emptyList(),
             getNothing().getTypeConstructor(),
@@ -58,6 +64,7 @@ public class JetStandardClasses {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private static final ClassDescriptor ANY = new ClassDescriptorImpl(
+            null,
             Collections.<Attribute>emptyList(),
             false,
             "Any",
@@ -65,8 +72,8 @@ public class JetStandardClasses {
             Collections.<Type>emptySet(),
             JetScope.EMPTY
     );
-
     private static final Type ANY_TYPE = new TypeImpl(ANY.getTypeConstructor(), JetScope.EMPTY);
+
     private static final Type NULLABLE_ANY_TYPE = TypeUtils.makeNullable(ANY_TYPE);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -77,16 +84,19 @@ public class JetStandardClasses {
 
     public static final int TUPLE_COUNT = 22;
     private static final ClassDescriptor[] TUPLE = new ClassDescriptor[TUPLE_COUNT];
+
     static {
         for (int i = 0; i < TUPLE_COUNT; i++) {
             List<TypeParameterDescriptor> parameters = new ArrayList<TypeParameterDescriptor>();
             for (int j = 0; j < i; j++) {
                 parameters.add(new TypeParameterDescriptor(
+                        null,
                         Collections.<Attribute>emptyList(),
                         Variance.OUT_VARIANCE, "T" + j,
                         Collections.singleton(getNullableAnyType())));
             }
             TUPLE[i] = new ClassDescriptorImpl(
+                    null,
                     Collections.<Attribute>emptyList(),
                     true,
                     "Tuple" + i,
@@ -99,6 +109,7 @@ public class JetStandardClasses {
 
     public static final int FUNCTION_COUNT = 22;
     private static final ClassDescriptor[] FUNCTION = new ClassDescriptor[FUNCTION_COUNT];
+
     private static final ClassDescriptor[] RECEIVER_FUNCTION = new ClassDescriptor[FUNCTION_COUNT];
 
     static {
@@ -106,25 +117,30 @@ public class JetStandardClasses {
             List<TypeParameterDescriptor> parameters = new ArrayList<TypeParameterDescriptor>();
             for (int j = 0; j < i; j++) {
                 parameters.add(new TypeParameterDescriptor(
+                        null,
                         Collections.<Attribute>emptyList(),
                         Variance.IN_VARIANCE, "P" + j,
                         Collections.singleton(getNullableAnyType())));
             }
             parameters.add(new TypeParameterDescriptor(
+                        null,
                         Collections.<Attribute>emptyList(),
                         Variance.OUT_VARIANCE, "R",
                         Collections.singleton(getNullableAnyType())));
             FUNCTION[i] = new ClassDescriptorImpl(
+                    null,
                     Collections.<Attribute>emptyList(),
                     false,
                     "Function" + i,
                     parameters,
                     Collections.singleton(getAnyType()), STUB);
             parameters.add(0, new TypeParameterDescriptor(
+                        null,
                         Collections.<Attribute>emptyList(),
                         Variance.IN_VARIANCE, "T",
                         Collections.singleton(getNullableAnyType())));
             RECEIVER_FUNCTION[i] = new ClassDescriptorImpl(
+                    null,
                     Collections.<Attribute>emptyList(),
                     false,
                     "ReceiverFunction" + i,
@@ -136,6 +152,7 @@ public class JetStandardClasses {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private static final JetScope PREDEFINED_SCOPE;
+
     static {
         WritableScope writableScope = new WritableScope(JetScope.EMPTY);
         PREDEFINED_SCOPE = writableScope;
@@ -156,6 +173,7 @@ public class JetStandardClasses {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private static final JetScope LIBRARY_SCOPE;
+
     static {
         // TODO : review
         Project project = ProjectManager.getInstance().getDefaultProject();
@@ -172,7 +190,6 @@ public class JetStandardClasses {
     }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
     @NotNull
     private static final ClassDescriptor BYTE    = LIBRARY_SCOPE.getClass("Byte");
     @NotNull
@@ -189,9 +206,9 @@ public class JetStandardClasses {
     private static final ClassDescriptor DOUBLE  = LIBRARY_SCOPE.getClass("Double");
     @NotNull
     private static final ClassDescriptor BOOLEAN = LIBRARY_SCOPE.getClass("Boolean");
+
     @NotNull
     private static final ClassDescriptor STRING  = LIBRARY_SCOPE.getClass("String");
-
     private static final Type BYTE_TYPE = new TypeImpl(getByte());
     private static final Type CHAR_TYPE = new TypeImpl(getChar());
     private static final Type SHORT_TYPE = new TypeImpl(getShort());
@@ -201,12 +218,14 @@ public class JetStandardClasses {
     private static final Type DOUBLE_TYPE = new TypeImpl(getDouble());
     private static final Type BOOLEAN_TYPE = new TypeImpl(getBoolean());
     private static final Type STRING_TYPE = new TypeImpl(getString());
+
     private static final Type UNIT_TYPE = new TypeImpl(getTuple(0));
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @NotNull
     public static final JetScope STANDARD_CLASSES;
+
     static {
         WritableScope writableScope = new WritableScope(LIBRARY_SCOPE);
         STANDARD_CLASSES = writableScope;
@@ -235,6 +254,8 @@ public class JetStandardClasses {
             }
         }
     }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @NotNull
     public static ClassDescriptor getAny() {

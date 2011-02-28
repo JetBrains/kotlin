@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.ResolveUtil;
 
 import java.util.*;
 
@@ -44,6 +45,7 @@ public class FunctionDescriptorUtil {
         for (ValueParameterDescriptor unsubstitutedValueParameter : functionDescriptor.getUnsubstitutedValueParameters()) {
             // TODO : Lazy?
             result.add(new ValueParameterDescriptorImpl(
+                    ResolveUtil.getJetParameter(unsubstitutedValueParameter),
                     unsubstitutedValueParameter.getAttributes(),
                     unsubstitutedValueParameter.getName(),
                     TypeSubstitutor.INSTANCE.substitute(context, unsubstitutedValueParameter.getType(), Variance.IN_VARIANCE),
@@ -76,6 +78,7 @@ public class FunctionDescriptorUtil {
     @NotNull
     public static FunctionDescriptor substituteFunctionDescriptor(@NotNull List<Type> typeArguments, @NotNull FunctionDescriptor functionDescriptor) {
         return new FunctionDescriptorImpl(
+                ResolveUtil.getJetFunction(functionDescriptor),
                 // TODO : substitute
                 functionDescriptor.getAttributes(),
                 functionDescriptor.getName(),

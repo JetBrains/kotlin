@@ -76,22 +76,12 @@ public class JetTypeChecker {
                 if (returnTypeRef != null) {
                     returnType = TypeResolver.INSTANCE.resolveType(scope, returnTypeRef);
                 } else {
-                    returnType = getBlockReturnedType(new JetScopeAdapter(scope) {
-                        @NotNull
-                        @Override
-                        public Type getThisType() {
-                            return receiverType;
-                        }
-
-                        @Override
-                        public PropertyDescriptor getProperty(String name) {
-                            PropertyDescriptor propertyDescriptor = parameterDescriptors.get(name);
-                            if (propertyDescriptor == null) {
-                                return super.getProperty(name);
-                            }
-                            return propertyDescriptor;
-                        }
-                    }, body);
+                    WritableScope writableScope = new WritableScope(scope);
+                    for (PropertyDescriptor propertyDescriptor : parameterDescriptors.values()) {
+                        writableScope.addPropertyDescriptor(propertyDescriptor);
+                    }
+                    writableScope.setThisType(receiverType);
+                    returnType = getBlockReturnedType(writableScope, body);
                 }
                 result[0] = JetStandardClasses.getFunctionType(null, receiverTypeRef == null ? null : receiverType, parameterTypes, returnType);
             }

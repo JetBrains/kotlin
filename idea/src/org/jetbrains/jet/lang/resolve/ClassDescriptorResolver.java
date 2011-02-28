@@ -33,12 +33,38 @@ public class ClassDescriptorResolver {
         WritableScope members = resolveMembers(classElement, typeParameters, scope, parameterScope, superclasses);
 
         return new ClassDescriptorImpl(
+                classElement,
                 AttributeResolver.INSTANCE.resolveAttributes(classElement.getModifierList()),
                 !open,
                 classElement.getName(),
                 typeParameters,
                 superclasses,
                 members
+        );
+    }
+
+    @Nullable
+    public void resolveMutableClassDescriptor(@NotNull JetScope scope, @NotNull JetClass classElement, @NotNull MutableClassDescriptor descriptor) {
+        WritableScope parameterScope = new WritableScope(scope);
+
+        // This call has side-effects on the parameterScope (fills it in)
+        List<TypeParameterDescriptor> typeParameters
+                = resolveTypeParameters(parameterScope, classElement.getTypeParameters());
+
+        List<JetDelegationSpecifier> delegationSpecifiers = classElement.getDelegationSpecifiers();
+        // TODO : assuming that the hierarchy is acyclic
+        Collection<? extends Type> superclasses = delegationSpecifiers.isEmpty()
+                ? Collections.singleton(JetStandardClasses.getAnyType())
+                : resolveTypes(parameterScope, delegationSpecifiers);
+        boolean open = classElement.hasModifier(JetTokens.OPEN_KEYWORD);
+
+        descriptor.setTypeConstructor(
+                new TypeConstructor(
+                        AttributeResolver.INSTANCE.resolveAttributes(classElement.getModifierList()),
+                        !open,
+                        classElement.getName(),
+                        typeParameters,
+                        superclasses)
         );
     }
 
@@ -104,6 +130,7 @@ public class ClassDescriptorResolver {
         }
 
         return new FunctionDescriptorImpl(
+                function,
                 AttributeResolver.INSTANCE.resolveAttributes(function.getModifierList()),
                 function.getName(),
                 typeParameterDescriptors,
@@ -120,6 +147,7 @@ public class ClassDescriptorResolver {
             assert typeReference != null : "Parameters without type annotations are not supported"; // TODO
 
             ValueParameterDescriptor valueParameterDescriptor = new ValueParameterDescriptorImpl(
+                    valueParameter,
                     AttributeResolver.INSTANCE.resolveAttributes(valueParameter.getModifierList()),
                     valueParameter.getName(),
                     TypeResolver.INSTANCE.resolveType(parameterScope, typeReference),
@@ -147,6 +175,7 @@ public class ClassDescriptorResolver {
     private static TypeParameterDescriptor resolveTypeParameter(WritableScope extensibleScope, JetTypeParameter typeParameter) {
         JetTypeReference extendsBound = typeParameter.getExtendsBound();
         TypeParameterDescriptor typeParameterDescriptor = new TypeParameterDescriptor(
+                typeParameter,
                 AttributeResolver.INSTANCE.resolveAttributes(typeParameter.getModifierList()),
                 typeParameter.getVariance(),
                 typeParameter.getName(),
@@ -177,6 +206,7 @@ public class ClassDescriptorResolver {
     @NotNull
     public PropertyDescriptor resolvePropertyDescriptor(@NotNull JetScope scope, @NotNull JetParameter parameter) {
         return new PropertyDescriptorImpl(
+                parameter,
                 AttributeResolver.INSTANCE.resolveAttributes(parameter.getModifierList()),
                 parameter.getName(),
                 TypeResolver.INSTANCE.resolveType(scope, parameter.getTypeReference()));
@@ -197,6 +227,7 @@ public class ClassDescriptorResolver {
         }
 
         return new PropertyDescriptorImpl(
+                property,
                 AttributeResolver.INSTANCE.resolveAttributes(property.getModifierList()),
                 property.getName(),
                 type);

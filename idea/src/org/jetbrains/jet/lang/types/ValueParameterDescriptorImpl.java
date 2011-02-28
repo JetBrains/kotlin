@@ -1,5 +1,7 @@
 package org.jetbrains.jet.lang.types;
 
+import org.jetbrains.jet.lang.psi.JetParameter;
+
 import java.util.List;
 
 /**
@@ -9,8 +11,8 @@ public class ValueParameterDescriptorImpl extends PropertyDescriptorImpl impleme
     private final boolean hasDefaultValue;
     private final boolean isVararg;
 
-    public ValueParameterDescriptorImpl(List<Attribute> attributes, String name, Type type, boolean hasDefaultValue, boolean isVararg) {
-        super(attributes, name, type);
+    public ValueParameterDescriptorImpl(JetParameter psiElement, List<Attribute> attributes, String name, Type type, boolean hasDefaultValue, boolean isVararg) {
+        super(psiElement, attributes, name, type);
         this.hasDefaultValue = hasDefaultValue;
         this.isVararg = isVararg;
     }

@@ -78,6 +78,9 @@ public class LazyClassDescriptor implements ClassDescriptor {
             unsubstitutedMemberScope = new LazyScope(getTypeParameterScope(), declaration.getDeclarations());
         }
         List<TypeParameterDescriptor> parameters = getTypeConstructor().getParameters();
+        if (parameters.isEmpty()) {
+            return unsubstitutedMemberScope;
+        }
         Map<TypeConstructor,TypeProjection> substitutionContext = TypeSubstitutor.INSTANCE.buildSubstitutionContext(parameters, typeArguments);
         return new SubstitutingScope(unsubstitutedMemberScope, substitutionContext);
     }

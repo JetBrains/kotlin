@@ -1,7 +1,8 @@
 namespace jet.lang
 
-virtual class Comparable<T> {
-  fun compareTo(other : T) : Int
+class Array<T> {
+  fun get(index : Int) : T
+  fun set(index : Int, value : T) : Unit
 }
 
 class Boolean {

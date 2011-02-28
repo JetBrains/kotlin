@@ -29,7 +29,11 @@ public class SubstitutingScope implements JetScope {
 
     @Override
     public ClassDescriptor getClass(String name) {
-        throw new UnsupportedOperationException(); // TODO
+        ClassDescriptor descriptor = workerScope.getClass(name);
+        if (descriptor == null) {
+            return null;
+        }
+        return new LazySubstitutingClassDescriptor(descriptor, substitutionContext);
     }
 
     @Override

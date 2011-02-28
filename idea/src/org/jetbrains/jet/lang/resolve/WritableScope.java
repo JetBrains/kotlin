@@ -19,6 +19,8 @@ public class WritableScope extends JetScopeAdapter {
     private Map<String, TypeParameterDescriptor> typeParameterDescriptors;
     @Nullable
     private Map<String, ClassDescriptor> classDescriptors;
+    @Nullable
+    private Type thisType;
 
     public WritableScope(JetScope scope) {
         super(scope);
@@ -139,7 +141,10 @@ public class WritableScope extends JetScopeAdapter {
     @NotNull
     @Override
     public Type getThisType() {
-        return super.getThisType(); // TODO
+        if (thisType == null) {
+            return super.getThisType();
+        }
+        return thisType;
     }
 
     @Override
@@ -150,5 +155,12 @@ public class WritableScope extends JetScopeAdapter {
     @Override
     public ExtensionDescriptor getExtension(String name) {
         return super.getExtension(name); // TODO
+    }
+
+    public void setThisType(Type thisType) {
+        if (this.thisType != null) {
+            throw new UnsupportedOperationException("Receiver redeclared");
+        }
+        this.thisType = thisType;
     }
 }

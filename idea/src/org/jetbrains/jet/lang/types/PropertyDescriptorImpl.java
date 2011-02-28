@@ -1,15 +1,18 @@
 package org.jetbrains.jet.lang.types;
 
+import org.jetbrains.jet.lang.psi.JetDeclaration;
+import org.jetbrains.jet.lang.psi.JetProperty;
+
 import java.util.List;
 
 /**
  * @author abreslav
  */
-public class PropertyDescriptorImpl extends MemberDescriptorImpl implements PropertyDescriptor {
+public class PropertyDescriptorImpl extends DeclarationDescriptorImpl<JetDeclaration> implements PropertyDescriptor {
     private Type type;
 
-    public PropertyDescriptorImpl(List<Attribute> attributes, String name, Type type) {
-        super(attributes, name);
+    public PropertyDescriptorImpl(JetDeclaration psiElement, List<Attribute> attributes, String name, Type type) {
+        super(psiElement, attributes, name);
         this.type = type;
     }
 
