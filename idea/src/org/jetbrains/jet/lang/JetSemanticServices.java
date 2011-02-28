@@ -11,12 +11,10 @@ import org.jetbrains.jet.lang.types.JetTypeInferrer;
 public class JetSemanticServices {
     private final JetStandardLibrary standardLibrary;
     private final JetTypeInferrer typeInferrer;
-    private final ClassDescriptorResolver classDescriptorResolver;
 
     public JetSemanticServices(JetStandardLibrary standardLibrary) {
         this.standardLibrary = standardLibrary;
         this.typeInferrer = new JetTypeInferrer(BindingTrace.DUMMY, this);
-        this.classDescriptorResolver = new ClassDescriptorResolver(this);
     }
 
     public JetStandardLibrary getStandardLibrary() {
@@ -27,8 +25,8 @@ public class JetSemanticServices {
         return typeInferrer;
     }
 
-    public ClassDescriptorResolver getClassDescriptorResolver() {
-        return classDescriptorResolver;
+    public ClassDescriptorResolver getClassDescriptorResolver(BindingTrace trace) {
+        return new ClassDescriptorResolver(this, trace);
     }
 
     public JetTypeInferrer getTypeInferrer(BindingTrace trace) {

@@ -18,10 +18,14 @@ public class JetTypeInferrer {
 
     private final BindingTrace trace;
     private final JetSemanticServices semanticServices;
+    private final TypeResolver typeResolver;
+    private final ClassDescriptorResolver classDescriptorResolver;
 
     public JetTypeInferrer(BindingTrace trace, JetSemanticServices semanticServices) {
         this.trace = trace;
         this.semanticServices = semanticServices;
+        this.typeResolver = new TypeResolver(trace);
+        this.classDescriptorResolver = new ClassDescriptorResolver(semanticServices, trace);
     }
 
     /*
@@ -64,7 +68,7 @@ public class JetTypeInferrer {
                 JetTypeReference receiverTypeRef = expression.getReceiverTypeRef();
                 final Type receiverType;
                 if (receiverTypeRef != null) {
-                    receiverType = TypeResolver.INSTANCE.resolveType(scope, receiverTypeRef);
+                    receiverType = typeResolver.resolveType(scope, receiverTypeRef);
                 } else {
                     receiverType = scope.getThisType();
                 }
@@ -77,13 +81,13 @@ public class JetTypeInferrer {
                     if (typeReference == null) {
                         throw new UnsupportedOperationException("Type inference for parameters is not implemented yet");
                     }
-                    PropertyDescriptor propertyDescriptor = semanticServices.getClassDescriptorResolver().resolvePropertyDescriptor(scope, parameter);
+                    PropertyDescriptor propertyDescriptor = classDescriptorResolver.resolvePropertyDescriptor(scope, parameter);
                     parameterDescriptors.put(parameter.getName(), propertyDescriptor);
                     parameterTypes.add(propertyDescriptor.getType());
                 }
                 Type returnType;
                 if (returnTypeRef != null) {
-                    returnType = TypeResolver.INSTANCE.resolveType(scope, returnTypeRef);
+                    returnType = typeResolver.resolveType(scope, returnTypeRef);
                 } else {
                     WritableScope writableScope = new WritableScope(scope);
                     for (PropertyDescriptor propertyDescriptor : parameterDescriptors.values()) {
@@ -159,7 +163,7 @@ public class JetTypeInferrer {
             public void visitBinaryWithTypeRHSExpression(JetBinaryExpressionWithTypeRHS expression) {
                 if (expression.getOperationSign() == JetTokens.COLON) {
                     Type actualType = getType(scope, expression.getLeft(), false);
-                    Type expectedType = TypeResolver.INSTANCE.resolveType(scope, expression.getRight());
+                    Type expectedType = typeResolver.resolveType(scope, expression.getRight());
                     if (JetTypeChecker.INSTANCE.isSubtypeOf(actualType, expectedType)) {
                         result[0] = expectedType;
                         return;
@@ -231,7 +235,7 @@ public class JetTypeInferrer {
                 if (superTypeQualifier != null) {
                     // This cast must be safe (assuming the PSI doesn't contain errors)
                     JetUserType typeElement = (JetUserType) superTypeQualifier.getTypeElement();
-                    ClassDescriptor superclass = TypeResolver.INSTANCE.resolveClass(scope, typeElement);
+                    ClassDescriptor superclass = typeResolver.resolveClass(scope, typeElement);
                     Collection<? extends Type> supertypes = thisType.getConstructor().getSupertypes();
                     Map<TypeConstructor, TypeProjection> substitutionContext = TypeSubstitutor.INSTANCE.getSubstitutionContext(thisType);
                     for (Type declaredSupertype : supertypes) {
@@ -260,7 +264,7 @@ public class JetTypeInferrer {
             public void visitNewExpression(JetNewExpression expression) {
                 // TODO : type argument inference
                 JetTypeReference typeReference = expression.getTypeReference();
-                result[0] = TypeResolver.INSTANCE.resolveType(scope, typeReference);
+                result[0] = typeResolver.resolveType(scope, typeReference);
             }
 
             @Override
@@ -314,7 +318,7 @@ public class JetTypeInferrer {
                     List<Type> types = new ArrayList<Type>();
                     for (JetTypeProjection projection : typeArguments) {
                         // TODO : check that there's no projection
-                        types.add(TypeResolver.INSTANCE.resolveType(scope, projection.getTypeReference()));
+                        types.add(typeResolver.resolveType(scope, projection.getTypeReference()));
                     }
 
                     List<Type> valueArgumentTypes = new ArrayList<Type>();
@@ -414,7 +418,7 @@ public class JetTypeInferrer {
                 // TODO: consider other declarations
                 if (statement instanceof JetProperty) {
                     JetProperty property = (JetProperty) statement;
-                    scope.addPropertyDescriptor(semanticServices.getClassDescriptorResolver().resolvePropertyDescriptor(scope, property));
+                    scope.addPropertyDescriptor(classDescriptorResolver.resolvePropertyDescriptor(scope, property));
                 }
             }
             JetElement lastElement = block.get(block.size() - 1);

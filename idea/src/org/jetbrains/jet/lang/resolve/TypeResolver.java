@@ -15,17 +15,20 @@ import java.util.Set;
  */
 public class TypeResolver {
 
-    @NotNull
-    public static final TypeResolver INSTANCE = new TypeResolver();
+    private final BindingTrace trace;
 
-    private TypeResolver() {}
+    public TypeResolver(BindingTrace trace) {
+        this.trace = trace;
+    }
 
     @NotNull
     public Type resolveType(@NotNull final JetScope scope, @NotNull final JetTypeReference typeReference) {
         final List<Attribute> attributes = AttributeResolver.INSTANCE.resolveAttributes(typeReference.getAttributes());
 
         JetTypeElement typeElement = typeReference.getTypeElement();
-        return resolveTypeElement(scope, attributes, typeElement, false);
+        Type type = resolveTypeElement(scope, attributes, typeElement, false);
+        trace.recordTypeResoltion(typeReference, type);
+        return type;
     }
 
     private Type resolveTypeElement(final JetScope scope, final List<Attribute> attributes, JetTypeElement typeElement, final boolean nullable) {

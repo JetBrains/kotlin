@@ -23,9 +23,10 @@ import java.util.Map;
  */
 public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
 
-    private JetStandardLibrary  library;
+    private JetStandardLibrary library;
     private JetSemanticServices semanticServices;
-    private ClassDefinitions    classDefinitions;
+    private ClassDefinitions classDefinitions;
+    private ClassDescriptorResolver classDescriptorResolver;
 
     @Override
     public void setUp() throws Exception {
@@ -33,6 +34,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         library          = new JetStandardLibrary(getProject());
         semanticServices = new JetSemanticServices(library);
         classDefinitions = new ClassDefinitions();
+        classDescriptorResolver = semanticServices.getClassDescriptorResolver(BindingTrace.DUMMY);
     }
 
     @Override
@@ -486,7 +488,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
     }
 
     private static Type makeType(JetScope scope, String typeStr) {
-        return TypeResolver.INSTANCE.resolveType(scope, JetChangeUtil.createType(getProject(), typeStr));
+        return new TypeResolver(BindingTrace.DUMMY).resolveType(scope, JetChangeUtil.createType(getProject(), typeStr));
     }
 
     private class ClassDefinitions {
@@ -523,7 +525,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
                 if (CLASSES.isEmpty()) {
                     for (String classDeclaration : CLASS_DECLARATIONS) {
                         JetClass classElement = JetChangeUtil.createClass(getProject(), classDeclaration);
-                        ClassDescriptor classDescriptor = semanticServices.getClassDescriptorResolver().resolveClassDescriptor(this, classElement);
+                        ClassDescriptor classDescriptor = classDescriptorResolver.resolveClassDescriptor(this, classElement);
                         CLASSES.put(classDescriptor.getName(), classDescriptor);
                     }
                 }
@@ -539,7 +541,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
             public FunctionGroup getFunctionGroup(@NotNull String name) {
                 WritableFunctionGroup writableFunctionGroup = new WritableFunctionGroup(name);
                 for (String funDecl : FUNCTION_DECLARATIONS) {
-                    FunctionDescriptor functionDescriptor = semanticServices.getClassDescriptorResolver().resolveFunctionDescriptor(this, JetChangeUtil.createFunction(getProject(), funDecl));
+                    FunctionDescriptor functionDescriptor = classDescriptorResolver.resolveFunctionDescriptor(this, JetChangeUtil.createFunction(getProject(), funDecl));
                     if (name.equals(functionDescriptor.getName())) {
                         writableFunctionGroup.addFunction(functionDescriptor);
                     }

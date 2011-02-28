@@ -15,9 +15,11 @@ import java.util.*;
 public class ClassDescriptorResolver {
 
     private final JetSemanticServices semanticServices;
+    private final TypeResolver typeResolver;
 
-    public ClassDescriptorResolver(JetSemanticServices semanticServices) {
+    public ClassDescriptorResolver(JetSemanticServices semanticServices, BindingTrace trace) {
         this.semanticServices = semanticServices;
+        this.typeResolver = new TypeResolver(trace);
     }
 
     @Nullable
@@ -124,7 +126,7 @@ public class ClassDescriptorResolver {
         Type returnType;
         JetTypeReference returnTypeRef = function.getReturnTypeRef();
         if (returnTypeRef != null) {
-            returnType = TypeResolver.INSTANCE.resolveType(parameterScope, returnTypeRef);
+            returnType = typeResolver.resolveType(parameterScope, returnTypeRef);
             // TODO : CHeck type of body
         } else {
             JetExpression bodyExpression = function.getBodyExpression();
@@ -155,7 +157,7 @@ public class ClassDescriptorResolver {
                     valueParameter,
                     AttributeResolver.INSTANCE.resolveAttributes(valueParameter.getModifierList()),
                     valueParameter.getName(),
-                    TypeResolver.INSTANCE.resolveType(parameterScope, typeReference),
+                    typeResolver.resolveType(parameterScope, typeReference),
                     valueParameter.getDefaultValue() != null,
                     false // TODO : varargs
             );
@@ -177,7 +179,7 @@ public class ClassDescriptorResolver {
         return result;
     }
 
-    private static TypeParameterDescriptor resolveTypeParameter(WritableScope extensibleScope, JetTypeParameter typeParameter) {
+    private TypeParameterDescriptor resolveTypeParameter(WritableScope extensibleScope, JetTypeParameter typeParameter) {
         JetTypeReference extendsBound = typeParameter.getExtendsBound();
         TypeParameterDescriptor typeParameterDescriptor = new TypeParameterDescriptor(
                 typeParameter,
@@ -186,13 +188,13 @@ public class ClassDescriptorResolver {
                 typeParameter.getName(),
                 extendsBound == null
                         ? Collections.<Type>singleton(JetStandardClasses.getAnyType())
-                        : Collections.singleton(TypeResolver.INSTANCE.resolveType(extensibleScope, extendsBound))
+                        : Collections.singleton(typeResolver.resolveType(extensibleScope, extendsBound))
         );
         extensibleScope.addTypeParameterDescriptor(typeParameterDescriptor);
         return typeParameterDescriptor;
     }
 
-    public static Collection<? extends Type> resolveTypes(WritableScope extensibleScope, List<JetDelegationSpecifier> delegationSpecifiers) {
+    public Collection<? extends Type> resolveTypes(WritableScope extensibleScope, List<JetDelegationSpecifier> delegationSpecifiers) {
         if (delegationSpecifiers.isEmpty()) {
             return Collections.emptyList();
         }
@@ -203,9 +205,9 @@ public class ClassDescriptorResolver {
         return result;
     }
 
-    private static Type resolveType(JetScope scope, JetDelegationSpecifier delegationSpecifier) {
+    private Type resolveType(JetScope scope, JetDelegationSpecifier delegationSpecifier) {
         JetTypeReference typeReference = delegationSpecifier.getTypeReference(); // TODO : make it not null
-        return TypeResolver.INSTANCE.resolveType(scope, typeReference);
+        return typeResolver.resolveType(scope, typeReference);
     }
 
     @NotNull
@@ -214,7 +216,7 @@ public class ClassDescriptorResolver {
                 parameter,
                 AttributeResolver.INSTANCE.resolveAttributes(parameter.getModifierList()),
                 parameter.getName(),
-                TypeResolver.INSTANCE.resolveType(scope, parameter.getTypeReference()));
+                typeResolver.resolveType(scope, parameter.getTypeReference()));
     }
 
     public PropertyDescriptor resolvePropertyDescriptor(@NotNull JetScope scope, JetProperty property) {
@@ -228,7 +230,7 @@ public class ClassDescriptorResolver {
             // TODO : ??? Fix-point here: what if we have something like "val a = foo {a.bar()}"
             type = semanticServices.getTypeInferrer().getType(scope, initializer, false);
         } else {
-            type = TypeResolver.INSTANCE.resolveType(scope, propertyTypeRef);
+            type = typeResolver.resolveType(scope, propertyTypeRef);
         }
 
         return new PropertyDescriptorImpl(

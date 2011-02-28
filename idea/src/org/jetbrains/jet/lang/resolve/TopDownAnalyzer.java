@@ -20,9 +20,27 @@ public class TopDownAnalyzer {
     private Map<JetReferenceExpression,DeclarationDescriptor> resolutionResults = new HashMap<JetReferenceExpression, DeclarationDescriptor>();
 
     private final JetSemanticServices semanticServices;
+    private Map<JetTypeReference, Type> types = new HashMap<JetTypeReference, Type>();
+    private final ClassDescriptorResolver classDescriptorResolver;
 
     public TopDownAnalyzer(JetSemanticServices semanticServices) {
         this.semanticServices = semanticServices;
+        this.classDescriptorResolver = new ClassDescriptorResolver(semanticServices, new BindingTrace() {
+            @Override
+            public void recordExpressionType(JetExpression expression, Type type) {
+                throw new UnsupportedOperationException(); // TODO
+            }
+
+            @Override
+            public void recordResolutionResult(JetReferenceExpression expression, DeclarationDescriptor descriptor) {
+                throw new UnsupportedOperationException(); // TODO
+            }
+
+            @Override
+            public void recordTypeResoltion(JetTypeReference typeReference, Type type) {
+                types.put(typeReference, type);
+            }
+        });
     }
 
     public BindingContext process(@NotNull JetScope outerScope, @NotNull List<JetDeclaration> declarations) {
@@ -51,6 +69,11 @@ public class TopDownAnalyzer {
             @Override
             public PropertyDescriptor getPropertyDescriptor(JetProperty declaration) {
                 return properties.get(declaration);
+            }
+
+            @Override
+            public Type getType(JetTypeReference typeReference) {
+                return types.get(typeReference);
             }
 
             @Override
@@ -119,7 +142,7 @@ public class TopDownAnalyzer {
         for (Map.Entry<JetClass, MutableClassDescriptor> entry : classes.entrySet()) {
             JetClass jetClass = entry.getKey();
             MutableClassDescriptor descriptor = entry.getValue();
-            semanticServices.getClassDescriptorResolver().resolveMutableClassDescriptor(declaringScopes.get(jetClass), jetClass, descriptor);
+            classDescriptorResolver.resolveMutableClassDescriptor(declaringScopes.get(jetClass), jetClass, descriptor);
         }
     }
 
@@ -165,14 +188,14 @@ public class TopDownAnalyzer {
 
     private void processFunction(@NotNull WritableScope declaringScope, JetFunction function) {
         declaringScopes.put(function, declaringScope);
-        FunctionDescriptor descriptor = semanticServices.getClassDescriptorResolver().resolveFunctionDescriptor(declaringScope, function);
+        FunctionDescriptor descriptor = classDescriptorResolver.resolveFunctionDescriptor(declaringScope, function);
         declaringScope.addFunctionDescriptor(descriptor);
         functions.put(function, descriptor);
     }
 
     private void processProperty(WritableScope declaringScope, JetProperty property) {
         declaringScopes.put(property, declaringScope);
-        PropertyDescriptor descriptor = semanticServices.getClassDescriptorResolver().resolvePropertyDescriptor(declaringScope, property);
+        PropertyDescriptor descriptor = classDescriptorResolver.resolvePropertyDescriptor(declaringScope, property);
         declaringScope.addPropertyDescriptor(descriptor);
         properties.put(property, descriptor);
     }
@@ -216,6 +239,11 @@ public class TopDownAnalyzer {
             @Override
             public void recordResolutionResult(JetReferenceExpression expression, DeclarationDescriptor descriptor) {
                 resolutionResults.put(expression, descriptor);
+            }
+
+            @Override
+            public void recordTypeResoltion(JetTypeReference typeReference, Type type) {
+                types.put(typeReference, type);
             }
         }).getType(scope, expression, preferBlock);
     }
