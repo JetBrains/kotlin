@@ -14,4 +14,6 @@ public interface BindingContext {
 
     Type getExpressionType(JetExpression expression);
     DeclarationDescriptor resolve(JetReferenceExpression referenceExpression);
+
+    JetScope getTopLevelScope();
 }

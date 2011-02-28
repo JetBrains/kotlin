@@ -6,8 +6,8 @@ import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 /**
  * @author abreslav
  */
-public interface TypeCheckerTrace {
-    TypeCheckerTrace DUMMY = new TypeCheckerTrace() {
+public interface BindingTrace {
+    BindingTrace DUMMY = new BindingTrace() {
         @Override
         public void recordExpressionType(JetExpression expression, Type type) {
         }

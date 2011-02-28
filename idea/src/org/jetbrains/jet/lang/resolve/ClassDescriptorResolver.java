@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -12,9 +13,12 @@ import java.util.*;
  * @author abreslav
  */
 public class ClassDescriptorResolver {
-    public static final ClassDescriptorResolver INSTANCE = new ClassDescriptorResolver();
 
-    private ClassDescriptorResolver() {}
+    private final JetSemanticServices semanticServices;
+
+    public ClassDescriptorResolver(JetSemanticServices semanticServices) {
+        this.semanticServices = semanticServices;
+    }
 
     @Nullable
     public ClassDescriptor resolveClassDescriptor(@NotNull JetScope scope, @NotNull JetClass classElement) {
@@ -126,7 +130,7 @@ public class ClassDescriptorResolver {
             JetExpression bodyExpression = function.getBodyExpression();
             assert bodyExpression != null : "No type, no body"; // TODO
             // TODO : Recursion possible
-            returnType = JetTypeChecker.INSTANCE.getType(parameterScope, bodyExpression, function.hasBlockBody());
+            returnType = semanticServices.getTypeInferrer().getType(parameterScope, bodyExpression, function.hasBlockBody());
         }
 
         return new FunctionDescriptorImpl(
@@ -213,7 +217,7 @@ public class ClassDescriptorResolver {
                 TypeResolver.INSTANCE.resolveType(scope, parameter.getTypeReference()));
     }
 
-    public static PropertyDescriptor resolvePropertyDescriptor(@NotNull JetScope scope, JetProperty property) {
+    public PropertyDescriptor resolvePropertyDescriptor(@NotNull JetScope scope, JetProperty property) {
         // TODO : receiver?
         JetTypeReference propertyTypeRef = property.getPropertyTypeRef();
 
@@ -222,7 +226,7 @@ public class ClassDescriptorResolver {
             JetExpression initializer = property.getInitializer();
             assert initializer != null;
             // TODO : ??? Fix-point here: what if we have something like "val a = foo {a.bar()}"
-            type = JetTypeChecker.INSTANCE.getType(scope, initializer, false);
+            type = semanticServices.getTypeInferrer().getType(scope, initializer, false);
         } else {
             type = TypeResolver.INSTANCE.resolveType(scope, propertyTypeRef);
         }

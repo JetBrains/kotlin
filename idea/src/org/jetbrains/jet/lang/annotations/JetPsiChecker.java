@@ -5,9 +5,6 @@ import com.intellij.lang.annotation.Annotator;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.FileContentsResolver;
-import org.jetbrains.jet.lang.resolve.JetScope;
-import org.jetbrains.jet.lang.types.JetStandardClasses;
 
 /**
  * @author abreslav
@@ -18,7 +15,7 @@ public class JetPsiChecker implements Annotator {
     public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
         if (element instanceof JetFile) {
             JetFile file = (JetFile) element;
-            JetScope jetScope = FileContentsResolver.INSTANCE.resolveFileContents(JetStandardClasses.STANDARD_CLASSES, file);
+//            JetScope jetScope = FileContentsResolver.INSTANCE.resolveFileContents(JetStandardClasses.STANDARD_CLASSES, file);
         }
     }
 }

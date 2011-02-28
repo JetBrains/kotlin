@@ -4,6 +4,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.FunctionDescriptor;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
+import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -18,10 +19,12 @@ import java.util.List;
 public class FunctionCodegen {
     private final ClassVisitor v;
     private final BindingContext bindingContext;
+    private final JetStandardLibrary standardLibrary;
 
-    public FunctionCodegen(ClassVisitor v, BindingContext bindingContext) {
+    public FunctionCodegen(ClassVisitor v, JetStandardLibrary standardLibrary, BindingContext bindingContext) {
         this.v = v;
         this.bindingContext = bindingContext;
+        this.standardLibrary = standardLibrary;
     }
 
     public void gen(JetFunction f, JetNamespace owner) {
@@ -38,7 +41,7 @@ public class FunctionCodegen {
             if (type.equals(JetStandardClasses.getUnitType())) {
                 returnType = Type.VOID_TYPE;
             }
-            else if (type.equals(JetStandardClasses.getIntType())) {
+            else if (type.equals(standardLibrary.getIntType())) {
                 returnType = Type.getType(Integer.class);
             }
             else {

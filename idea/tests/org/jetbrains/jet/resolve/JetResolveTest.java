@@ -3,6 +3,7 @@ package org.jetbrains.jet.resolve;
 import com.intellij.codeInsight.daemon.LightDaemonAnalyzerTestCase;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.io.FileUtil;
+import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.types.*;
@@ -18,6 +19,13 @@ import java.util.List;
  * @author abreslav
  */
 public class JetResolveTest extends LightDaemonAnalyzerTestCase {
+    private JetStandardLibrary library;
+
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        library = new JetStandardLibrary(getProject());
+    }
 
     @Override
     protected String getTestDataPath() {
@@ -31,7 +39,7 @@ public class JetResolveTest extends LightDaemonAnalyzerTestCase {
     public void testBasic() throws Exception {
         JetFile jetFile = JetChangeUtil.createFile(getProject(), FileUtil.loadTextAndClose(new FileReader(getTestDataPath() + "/resolve/Basic.jet")));
         List<JetDeclaration> declarations = jetFile.getRootNamespace().getDeclarations();
-        BindingContext bindingContext = new TopDownAnalyzer().process(JetStandardClasses.STANDARD_CLASSES, declarations);
+        BindingContext bindingContext = new TopDownAnalyzer(new JetSemanticServices(library)).process(library.getLibraryScope(), declarations);
 
         JetClass classADecl = (JetClass) declarations.get(0);
         ClassDescriptor classA = bindingContext.getClassDescriptor(classADecl);
@@ -41,26 +49,30 @@ public class JetResolveTest extends LightDaemonAnalyzerTestCase {
         ClassDescriptor classB = membersOfA.getClass("B");
         assertNotNull(classB);
 
-        FunctionGroup fooFG = membersOfA.getFunctionGroup("foo");
-        assertFalse(fooFG.isEmpty());
+        {
+            FunctionGroup fooFG = membersOfA.getFunctionGroup("foo");
+            assertFalse(fooFG.isEmpty());
+        }
 
-        assertReturnType(membersOfA, "foo", JetStandardClasses.getIntType());
+        assertReturnType(membersOfA, "foo", library.getIntType());
         assertReturnType(membersOfA, "foo1", new TypeImpl(classB));
-        assertReturnType(membersOfA, "fooB", JetStandardClasses.getIntType());
+        assertReturnType(membersOfA, "fooB", library.getIntType());
 
         JetFunction fooDecl = (JetFunction) classADecl.getDeclarations().get(1);
         Type expressionType = bindingContext.getExpressionType(fooDecl.getBodyExpression());
-        assertEquals(JetStandardClasses.getIntType(), expressionType);
-
-        DeclarationDescriptor resolve = bindingContext.resolve((JetReferenceExpression) fooDecl.getBodyExpression());
-        assertSame(bindingContext.getFunctionDescriptor(fooDecl).getUnsubstitutedValueParameters().get(0), resolve);
+        assertEquals(library.getIntType(), expressionType);
 
         {
-        JetFunction fooBDecl = (JetFunction) classADecl.getDeclarations().get(2);
-        JetCallExpression fooBBody = (JetCallExpression) fooBDecl.getBodyExpression();
-        JetReferenceExpression refToFoo = (JetReferenceExpression) fooBBody.getCalleeExpression();
-        FunctionDescriptor mustBeFoo = (FunctionDescriptor) bindingContext.resolve(refToFoo);
-        assertSame(bindingContext.getFunctionDescriptor(fooDecl), FunctionDescriptorUtil.getOriginal(mustBeFoo));
+            DeclarationDescriptor resolve = bindingContext.resolve((JetReferenceExpression) fooDecl.getBodyExpression());
+            assertSame(bindingContext.getFunctionDescriptor(fooDecl).getUnsubstitutedValueParameters().get(0), resolve);
+        }
+
+        {
+            JetFunction fooBDecl = (JetFunction) classADecl.getDeclarations().get(2);
+            JetCallExpression fooBBody = (JetCallExpression) fooBDecl.getBodyExpression();
+            JetReferenceExpression refToFoo = (JetReferenceExpression) fooBBody.getCalleeExpression();
+            FunctionDescriptor mustBeFoo = (FunctionDescriptor) bindingContext.resolve(refToFoo);
+            assertSame(bindingContext.getFunctionDescriptor(fooDecl), FunctionDescriptorUtil.getOriginal(mustBeFoo));
         }
 
         {
@@ -69,8 +81,8 @@ public class JetResolveTest extends LightDaemonAnalyzerTestCase {
             JetDotQualifiedExpression qualifiedPlus = (JetDotQualifiedExpression) fooIntBody.getCalleeExpression();
             JetReferenceExpression refToPlus = (JetReferenceExpression) qualifiedPlus.getSelectorExpression();
             FunctionDescriptor mustBePlus = (FunctionDescriptor) bindingContext.resolve(refToPlus);
-            FunctionGroup plusGroup = JetStandardClasses.getInt().getMemberScope(Collections.<TypeProjection>emptyList()).getFunctionGroup("plus");
-            Collection<FunctionDescriptor> pluses = plusGroup.getPossiblyApplicableFunctions(Collections.<Type>emptyList(), Collections.singletonList(JetStandardClasses.getIntType()));
+            FunctionGroup plusGroup = library.getInt().getMemberScope(Collections.<TypeProjection>emptyList()).getFunctionGroup("plus");
+            Collection<FunctionDescriptor> pluses = plusGroup.getPossiblyApplicableFunctions(Collections.<Type>emptyList(), Collections.singletonList(library.getIntType()));
             FunctionDescriptor intPlus = null;
             for (FunctionDescriptor plus : pluses) {
                 intPlus = plus;

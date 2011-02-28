@@ -31,7 +31,11 @@ public class LazySubstitutingFunctionGroup implements FunctionGroup {
         Collection<FunctionDescriptor> possiblyApplicableFunctions = functionGroup.getPossiblyApplicableFunctions(typeArguments, positionedValueArgumentTypes);
         Collection<FunctionDescriptor> result = new ArrayList<FunctionDescriptor>();
         for (FunctionDescriptor function : possiblyApplicableFunctions) {
-            result.add(new LazySubstitutingFunctionDescriptor(substitutionContext, function));
+            if (substitutionContext.isEmpty()) {
+                result.add(function);
+            } else {
+                result.add(new LazySubstitutingFunctionDescriptor(substitutionContext, function));
+            }
         }
         return result;
     }

@@ -13,6 +13,7 @@ import java.util.Map;
  * @author abreslav
  */
 public class OverloadResolver {
+
     public static final OverloadResolver INSTANCE = new OverloadResolver();
 
     private OverloadResolver() {}

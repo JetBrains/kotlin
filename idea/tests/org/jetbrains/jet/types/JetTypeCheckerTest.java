@@ -4,18 +4,36 @@ import com.intellij.codeInsight.daemon.LightDaemonAnalyzerTestCase;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.JetSemanticServices;
+import org.jetbrains.jet.lang.psi.JetChangeUtil;
+import org.jetbrains.jet.lang.psi.JetClass;
+import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.parsing.JetParsingTest;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author abreslav
  */
 public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
+
+    private JetStandardLibrary  library;
+    private JetSemanticServices semanticServices;
+    private ClassDefinitions    classDefinitions;
+
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        library          = new JetStandardLibrary(getProject());
+        semanticServices = new JetSemanticServices(library);
+        classDefinitions = new ClassDefinitions();
+    }
 
     @Override
     protected String getTestDataPath() {
@@ -27,31 +45,31 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
     }
 
     public void testConstants() throws Exception {
-        assertType("1", JetStandardClasses.getIntType());
-        assertType("0x1", JetStandardClasses.getIntType());
-        assertType("0X1", JetStandardClasses.getIntType());
-        assertType("0b1", JetStandardClasses.getIntType());
-        assertType("0B1", JetStandardClasses.getIntType());
+        assertType("1", library.getIntType());
+        assertType("0x1", library.getIntType());
+        assertType("0X1", library.getIntType());
+        assertType("0b1", library.getIntType());
+        assertType("0B1", library.getIntType());
 
-        assertType("1l", JetStandardClasses.getLongType());
-        assertType("1L", JetStandardClasses.getLongType());
+        assertType("1l", library.getLongType());
+        assertType("1L", library.getLongType());
 
-        assertType("1.0", JetStandardClasses.getDoubleType());
-        assertType("1.0d", JetStandardClasses.getDoubleType());
-        assertType("1.0D", JetStandardClasses.getDoubleType());
-        assertType("0x1.fffffffffffffp1023", JetStandardClasses.getDoubleType());
+        assertType("1.0", library.getDoubleType());
+        assertType("1.0d", library.getDoubleType());
+        assertType("1.0D", library.getDoubleType());
+        assertType("0x1.fffffffffffffp1023", library.getDoubleType());
 
-        assertType("1.0f", JetStandardClasses.getFloatType());
-        assertType("1.0F", JetStandardClasses.getFloatType());
-        assertType("0x1.fffffffffffffp1023f", JetStandardClasses.getFloatType());
+        assertType("1.0f", library.getFloatType());
+        assertType("1.0F", library.getFloatType());
+        assertType("0x1.fffffffffffffp1023f", library.getFloatType());
 
-        assertType("true", JetStandardClasses.getBooleanType());
-        assertType("false", JetStandardClasses.getBooleanType());
+        assertType("true", library.getBooleanType());
+        assertType("false", library.getBooleanType());
 
-        assertType("'d'", JetStandardClasses.getCharType());
+        assertType("'d'", library.getCharType());
 
-        assertType("\"d\"", JetStandardClasses.getStringType());
-        assertType("\"\"\"d\"\"\"", JetStandardClasses.getStringType());
+        assertType("\"d\"", library.getStringType());
+        assertType("\"\"\"d\"\"\"", library.getStringType());
 
         assertType("()", JetStandardClasses.getUnitType());
 
@@ -61,7 +79,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
     public void testTupleConstants() throws Exception {
         assertType("()", JetStandardClasses.getUnitType());
 
-        assertType("(1, 'a')", JetStandardClasses.getTupleType(JetStandardClasses.getIntType(), JetStandardClasses.getCharType()));
+        assertType("(1, 'a')", JetStandardClasses.getTupleType(library.getIntType(), library.getCharType()));
     }
 
     public void testJumps() throws Exception {
@@ -384,11 +402,11 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
     //    public void testImplicitConversions() throws Exception {
 //    }
 //
-    private static void assertSubtype(String type1, String type2) {
+    private void assertSubtype(String type1, String type2) {
         assertSubtypingRelation(type1, type2, true);
     }
 
-    private static void assertNotSubtype(String type1, String type2) {
+    private void assertNotSubtype(String type1, String type2) {
         assertSubtypingRelation(type1, type2, false);
     }
 
@@ -401,7 +419,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertTrue(result + " != " + expected, TypeImpl.equalTypes(result, makeType(expected)));
     }
 
-    private static void assertSubtypingRelation(String type1, String type2, boolean expected) {
+    private void assertSubtypingRelation(String type1, String type2, boolean expected) {
         Type typeNode1 = makeType(type1);
         Type typeNode2 = makeType(type2);
         boolean result = JetTypeChecker.INSTANCE.isSubtypeOf(
@@ -411,37 +429,37 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertTrue(typeNode1 + " is " + modifier + "a subtype of " + typeNode2, result == expected);
     }
 
-    private static void assertConvertibleTo(String expression, Type type) {
+    private void assertConvertibleTo(String expression, Type type) {
         JetExpression jetExpression = JetChangeUtil.createExpression(getProject(), expression);
         assertTrue(
                 expression + " must be convertible to " + type,
                 JetTypeChecker.INSTANCE.isConvertibleTo(jetExpression, type));
     }
 
-    private static void assertNotConvertibleTo(String expression, Type type) {
+    private void assertNotConvertibleTo(String expression, Type type) {
         JetExpression jetExpression = JetChangeUtil.createExpression(getProject(), expression);
         assertFalse(
                 expression + " must not be convertible to " + type,
                 JetTypeChecker.INSTANCE.isConvertibleTo(jetExpression, type));
     }
 
-    private static void assertType(String expression, Type expectedType) {
+    private void assertType(String expression, Type expectedType) {
         Project project = getProject();
         JetExpression jetExpression = JetChangeUtil.createExpression(project, expression);
-        Type type = JetTypeChecker.INSTANCE.getType(ClassDefinitions.BASIC_SCOPE, jetExpression, false);
+        Type type = semanticServices.getTypeInferrer().getType(classDefinitions.BASIC_SCOPE, jetExpression, false);
         assertTrue(type + " != " + expectedType, TypeImpl.equalTypes(type, expectedType));
     }
 
     private void assertErrorType(String expression) {
         Project project = getProject();
         JetExpression jetExpression = JetChangeUtil.createExpression(project, expression);
-        Type type = JetTypeChecker.INSTANCE.getType(ClassDefinitions.BASIC_SCOPE, jetExpression, false);
+        Type type = semanticServices.getTypeInferrer().getType(classDefinitions.BASIC_SCOPE, jetExpression, false);
         assertTrue("Error type expected but " + type + " returned", ErrorType.isErrorType(type));
     }
 
-    private static void assertType(String contextType, String expression, String expectedType) {
+    private void assertType(String contextType, String expression, String expectedType) {
         final Type thisType = makeType(contextType);
-        JetScope scope = new JetScopeAdapter(ClassDefinitions.BASIC_SCOPE) {
+        JetScope scope = new JetScopeAdapter(classDefinitions.BASIC_SCOPE) {
             @NotNull
             @Override
             public Type getThisType() {
@@ -451,29 +469,29 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertType(scope, expression, expectedType);
     }
 
-    private static void assertType(String expression, String expectedTypeStr) {
-        assertType(ClassDefinitions.BASIC_SCOPE, expression, expectedTypeStr);
+    private void assertType(String expression, String expectedTypeStr) {
+        assertType(classDefinitions.BASIC_SCOPE, expression, expectedTypeStr);
     }
 
-    private static void assertType(JetScope scope, String expression, String expectedTypeStr) {
+    private void assertType(JetScope scope, String expression, String expectedTypeStr) {
         Project project = getProject();
         JetExpression jetExpression = JetChangeUtil.createExpression(project, expression);
-        Type type = JetTypeChecker.INSTANCE.getType(scope, jetExpression, false);
+        Type type = semanticServices.getTypeInferrer().getType(scope, jetExpression, false);
         Type expectedType = expectedTypeStr == null ? null : makeType(expectedTypeStr);
         assertEquals(expectedType, type);
     }
 
-    private static Type makeType(String typeStr) {
-        return makeType(ClassDefinitions.BASIC_SCOPE, typeStr);
+    private Type makeType(String typeStr) {
+        return makeType(classDefinitions.BASIC_SCOPE, typeStr);
     }
 
     private static Type makeType(JetScope scope, String typeStr) {
         return TypeResolver.INSTANCE.resolveType(scope, JetChangeUtil.createType(getProject(), typeStr));
     }
 
-    private static class ClassDefinitions {
-        private static Map<String, ClassDescriptor> CLASSES = new HashMap<String, ClassDescriptor>();
-        private static String[] CLASS_DECLARATIONS = {
+    private class ClassDefinitions {
+        private Map<String, ClassDescriptor> CLASSES = new HashMap<String, ClassDescriptor>();
+        private String[] CLASS_DECLARATIONS = {
             "open class Base_T<T>",
             "open class Derived_T<T> : Base_T<T>",
             "open class DDerived_T<T> : Derived_T<T>",
@@ -492,20 +510,20 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
                     "fun f<E>(a : E) : T {} " +
                     "}"
         };
-        private static String[] FUNCTION_DECLARATIONS = {
+        private String[] FUNCTION_DECLARATIONS = {
             "fun f() : Unit {}",
             "fun f(a : Int) : Int {a}",
             "fun f(a : Float, b : Int) : Float {a}",
             "fun f<T>(a : Float) : T {a}",
         };
 
-        public static JetScope BASIC_SCOPE = new JetScopeAdapter(JetStandardClasses.STANDARD_CLASSES) {
+        public JetScope BASIC_SCOPE = new JetScopeAdapter(library.getLibraryScope()) {
             @Override
             public ClassDescriptor getClass(String name) {
                 if (CLASSES.isEmpty()) {
                     for (String classDeclaration : CLASS_DECLARATIONS) {
                         JetClass classElement = JetChangeUtil.createClass(getProject(), classDeclaration);
-                        ClassDescriptor classDescriptor = ClassDescriptorResolver.INSTANCE.resolveClassDescriptor(this, classElement);
+                        ClassDescriptor classDescriptor = semanticServices.getClassDescriptorResolver().resolveClassDescriptor(this, classElement);
                         CLASSES.put(classDescriptor.getName(), classDescriptor);
                     }
                 }
@@ -521,7 +539,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
             public FunctionGroup getFunctionGroup(@NotNull String name) {
                 WritableFunctionGroup writableFunctionGroup = new WritableFunctionGroup(name);
                 for (String funDecl : FUNCTION_DECLARATIONS) {
-                    FunctionDescriptor functionDescriptor = ClassDescriptorResolver.INSTANCE.resolveFunctionDescriptor(this, JetChangeUtil.createFunction(getProject(), funDecl));
+                    FunctionDescriptor functionDescriptor = semanticServices.getClassDescriptorResolver().resolveFunctionDescriptor(this, JetChangeUtil.createFunction(getProject(), funDecl));
                     if (name.equals(functionDescriptor.getName())) {
                         writableFunctionGroup.addFunction(functionDescriptor);
                     }

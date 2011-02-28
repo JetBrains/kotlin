@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.*;
 
@@ -11,15 +12,21 @@ import java.util.*;
  */
 public class TopDownAnalyzer {
 
-    private final WritableBindingContext context = new WritableBindingContext();
     private final Map<JetClass, MutableClassDescriptor> classes = new LinkedHashMap<JetClass, MutableClassDescriptor>();
     private final Map<JetFunction, FunctionDescriptor> functions = new HashMap<JetFunction, FunctionDescriptor>();
+    private Map<JetProperty, PropertyDescriptor> properties = new HashMap<JetProperty, PropertyDescriptor>();
     private final Map<JetDeclaration, WritableScope> declaringScopes = new HashMap<JetDeclaration, WritableScope>();
     private Map<JetExpression, Type> expressionTypes = new HashMap<JetExpression, Type>();
     private Map<JetReferenceExpression,DeclarationDescriptor> resolutionResults = new HashMap<JetReferenceExpression, DeclarationDescriptor>();
 
+    private final JetSemanticServices semanticServices;
+
+    public TopDownAnalyzer(JetSemanticServices semanticServices) {
+        this.semanticServices = semanticServices;
+    }
+
     public BindingContext process(@NotNull JetScope outerScope, @NotNull List<JetDeclaration> declarations) {
-        WritableScope toplevelScope = new WritableScope(outerScope);
+        final WritableScope toplevelScope = new WritableScope(outerScope);
         collectTypeDeclarators(toplevelScope, declarations);
         resolveTypeDeclarations();
         collectBehaviorDeclarators(toplevelScope, declarations);
@@ -43,7 +50,7 @@ public class TopDownAnalyzer {
 
             @Override
             public PropertyDescriptor getPropertyDescriptor(JetProperty declaration) {
-                throw new UnsupportedOperationException(); // TODO
+                return properties.get(declaration);
             }
 
             @Override
@@ -54,6 +61,11 @@ public class TopDownAnalyzer {
             @Override
             public DeclarationDescriptor resolve(JetReferenceExpression referenceExpression) {
                 return resolutionResults.get(referenceExpression);
+            }
+
+            @Override
+            public JetScope getTopLevelScope() {
+                return toplevelScope;
             }
         };
     }
@@ -107,7 +119,7 @@ public class TopDownAnalyzer {
         for (Map.Entry<JetClass, MutableClassDescriptor> entry : classes.entrySet()) {
             JetClass jetClass = entry.getKey();
             MutableClassDescriptor descriptor = entry.getValue();
-            ClassDescriptorResolver.INSTANCE.resolveMutableClassDescriptor(declaringScopes.get(jetClass), jetClass, descriptor);
+            semanticServices.getClassDescriptorResolver().resolveMutableClassDescriptor(declaringScopes.get(jetClass), jetClass, descriptor);
         }
     }
 
@@ -153,13 +165,16 @@ public class TopDownAnalyzer {
 
     private void processFunction(@NotNull WritableScope declaringScope, JetFunction function) {
         declaringScopes.put(function, declaringScope);
-        FunctionDescriptor descriptor = ClassDescriptorResolver.INSTANCE.resolveFunctionDescriptor(declaringScope, function);
+        FunctionDescriptor descriptor = semanticServices.getClassDescriptorResolver().resolveFunctionDescriptor(declaringScope, function);
         declaringScope.addFunctionDescriptor(descriptor);
         functions.put(function, descriptor);
     }
 
-    private void processProperty(JetScope declaringScope, JetProperty property) {
-        throw new UnsupportedOperationException(); // TODO
+    private void processProperty(WritableScope declaringScope, JetProperty property) {
+        declaringScopes.put(property, declaringScope);
+        PropertyDescriptor descriptor = semanticServices.getClassDescriptorResolver().resolvePropertyDescriptor(declaringScope, property);
+        declaringScope.addPropertyDescriptor(descriptor);
+        properties.put(property, descriptor);
     }
 
     private void processClassObject(JetClassObject classObject) {
@@ -184,12 +199,15 @@ public class TopDownAnalyzer {
                 parameterScope.addPropertyDescriptor(valueParameterDescriptor);
             }
 
-            resolveExpression(parameterScope, function.getBodyExpression(), true);
+            JetExpression bodyExpression = function.getBodyExpression();
+            if (bodyExpression != null) {
+                resolveExpression(parameterScope, bodyExpression, true);
+            }
         }
     }
 
     private void resolveExpression(@NotNull JetScope scope, JetExpression expression, boolean preferBlock) {
-        new JetTypeChecker(new TypeCheckerTrace() {
+        semanticServices.getTypeInferrer(new BindingTrace() {
             @Override
             public void recordExpressionType(JetExpression expression, Type type) {
                 expressionTypes.put(expression, type);

@@ -1,8 +1,10 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespace;
+import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.jet.parsing.JetParsingTest;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.util.TraceClassVisitor;
@@ -60,7 +62,7 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
         StringWriter writer = new StringWriter();
         JetFile jetFile = (JetFile) myFixture.getFile();
         JetNamespace namespace = jetFile.getRootNamespace();
-        codegen.generate(namespace, new TraceClassVisitor(new PrintWriter(writer)));
+        codegen.generate(namespace, new TraceClassVisitor(new PrintWriter(writer)), new JetSemanticServices(new JetStandardLibrary(getProject())));
         return writer.toString();
     }
 
@@ -68,7 +70,7 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
         JetFile jetFile = (JetFile) myFixture.getFile();
         ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
         final JetNamespace namespace = jetFile.getRootNamespace();
-        codegen.generate(namespace, writer);
+        codegen.generate(namespace, writer, new JetSemanticServices(new JetStandardLibrary(getProject())));
         final byte[] data = writer.toByteArray();
         MyClassLoader classLoader = new MyClassLoader(NamespaceGenTest.class.getClassLoader());
         final Class aClass = classLoader.doDefineClass(NamespaceCodegen.getJVMClassName(namespace).replace("/", "."), data);

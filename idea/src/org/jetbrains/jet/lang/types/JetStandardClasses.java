@@ -1,20 +1,10 @@
 package org.jetbrains.jet.lang.types;
 
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.psi.PsiFileFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.JetFileType;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.FileContentsResolver;
 import org.jetbrains.jet.lang.resolve.JetScope;
 import org.jetbrains.jet.lang.resolve.WritableScope;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
@@ -151,84 +141,18 @@ public class JetStandardClasses {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private static final JetScope PREDEFINED_SCOPE;
-
-    static {
-        WritableScope writableScope = new WritableScope(JetScope.EMPTY);
-        PREDEFINED_SCOPE = writableScope;
-        writableScope.addClassDescriptor(ANY);
-        writableScope.addClassDescriptor(NOTHING_CLASS);
-        for (ClassDescriptor classDescriptor : TUPLE) {
-            writableScope.addClassDescriptor(classDescriptor);
-        }
-        writableScope.addClassAlias("Unit", getTuple(0));
-        for (ClassDescriptor classDescriptor : FUNCTION) {
-            writableScope.addClassDescriptor(classDescriptor);
-        }
-        for (ClassDescriptor classDescriptor : RECEIVER_FUNCTION) {
-            writableScope.addClassDescriptor(classDescriptor);
-        }
-    }
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private static final JetScope LIBRARY_SCOPE;
-
-    static {
-        // TODO : review
-        Project project = ProjectManager.getInstance().getDefaultProject();
-        InputStream stream = JetStandardClasses.class.getClassLoader().getResourceAsStream("jet/lang/Library.jet");
-        try {
-            //noinspection IOResourceOpenedButNotSafelyClosed
-            JetFile file = (JetFile) PsiFileFactory.getInstance(project).createFileFromText("Library.jet",
-                    JetFileType.INSTANCE, FileUtil.loadTextAndClose(new InputStreamReader(stream)));
-
-            LIBRARY_SCOPE = FileContentsResolver.INSTANCE.resolveFileContents(PREDEFINED_SCOPE, file);
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    @NotNull
-    private static final ClassDescriptor BYTE    = LIBRARY_SCOPE.getClass("Byte");
-    @NotNull
-    private static final ClassDescriptor CHAR    = LIBRARY_SCOPE.getClass("Char");
-    @NotNull
-    private static final ClassDescriptor SHORT   = LIBRARY_SCOPE.getClass("Short");
-    @NotNull
-    private static final ClassDescriptor INT     = LIBRARY_SCOPE.getClass("Int");
-    @NotNull
-    private static final ClassDescriptor LONG    = LIBRARY_SCOPE.getClass("Long");
-    @NotNull
-    private static final ClassDescriptor FLOAT   = LIBRARY_SCOPE.getClass("Float");
-    @NotNull
-    private static final ClassDescriptor DOUBLE  = LIBRARY_SCOPE.getClass("Double");
-    @NotNull
-    private static final ClassDescriptor BOOLEAN = LIBRARY_SCOPE.getClass("Boolean");
-
-    @NotNull
-    private static final ClassDescriptor STRING  = LIBRARY_SCOPE.getClass("String");
-    private static final Type BYTE_TYPE = new TypeImpl(getByte());
-    private static final Type CHAR_TYPE = new TypeImpl(getChar());
-    private static final Type SHORT_TYPE = new TypeImpl(getShort());
-    private static final Type INT_TYPE = new TypeImpl(getInt());
-    private static final Type LONG_TYPE = new TypeImpl(getLong());
-    private static final Type FLOAT_TYPE = new TypeImpl(getFloat());
-    private static final Type DOUBLE_TYPE = new TypeImpl(getDouble());
-    private static final Type BOOLEAN_TYPE = new TypeImpl(getBoolean());
-    private static final Type STRING_TYPE = new TypeImpl(getString());
-
     private static final Type UNIT_TYPE = new TypeImpl(getTuple(0));
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @NotNull
-    public static final JetScope STANDARD_CLASSES;
+    /*package*/ static final JetScope STANDARD_CLASSES;
 
     static {
-        WritableScope writableScope = new WritableScope(LIBRARY_SCOPE);
+        WritableScope writableScope = new WritableScope(JetScope.EMPTY);
         STANDARD_CLASSES = writableScope;
+        writableScope.addClassAlias("Unit", getTuple(0));
+
         Field[] declaredFields = JetStandardClasses.class.getDeclaredFields();
         for (Field field : declaredFields) {
             if ((field.getModifiers() & Modifier.STATIC) == 0) {
@@ -272,51 +196,6 @@ public class JetStandardClasses {
     }
 
     @NotNull
-    public static ClassDescriptor getByte() {
-        return BYTE;
-    }
-
-    @NotNull
-    public static ClassDescriptor getChar() {
-        return CHAR;
-    }
-
-    @NotNull
-    public static ClassDescriptor getShort() {
-        return SHORT;
-    }
-
-    @NotNull
-    public static ClassDescriptor getInt() {
-        return INT;
-    }
-
-    @NotNull
-    public static ClassDescriptor getLong() {
-        return LONG;
-    }
-
-    @NotNull
-    public static ClassDescriptor getFloat() {
-        return FLOAT;
-    }
-
-    @NotNull
-    public static ClassDescriptor getDouble() {
-        return DOUBLE;
-    }
-
-    @NotNull
-    public static ClassDescriptor getBoolean() {
-        return BOOLEAN;
-    }
-
-    @NotNull
-    public static ClassDescriptor getString() {
-        return STRING;
-    }
-
-    @NotNull
     public static ClassDescriptor getNothing() {
         return NOTHING_CLASS;
     }
@@ -334,42 +213,6 @@ public class JetStandardClasses {
     @NotNull
     public static ClassDescriptor getReceiverFunction(int parameterCount) {
         return RECEIVER_FUNCTION[parameterCount];
-    }
-
-    public static Type getIntType() {
-        return INT_TYPE;
-    }
-
-    public static Type getLongType() {
-        return LONG_TYPE;
-    }
-
-    public static Type getDoubleType() {
-        return DOUBLE_TYPE;
-    }
-
-    public static Type getFloatType() {
-        return FLOAT_TYPE;
-    }
-
-    public static Type getCharType() {
-        return CHAR_TYPE;
-    }
-
-    public static Type getBooleanType() {
-        return BOOLEAN_TYPE;
-    }
-
-    public static Type getStringType() {
-        return STRING_TYPE;
-    }
-
-    public static Type getByteType() {
-        return BYTE_TYPE;
-    }
-
-    public static Type getShortType() {
-        return SHORT_TYPE;
     }
 
     public static Type getUnitType() {
