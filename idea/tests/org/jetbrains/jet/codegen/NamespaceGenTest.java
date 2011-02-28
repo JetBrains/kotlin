@@ -9,22 +9,26 @@ import org.objectweb.asm.util.TraceClassVisitor;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
  * @author yole
  */
 public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
-    public void testPSVM() throws InvocationTargetException, IllegalAccessException {
+    private NamespaceCodegen codegen;
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        codegen = new NamespaceCodegen();
+    }
+
+    public void testPSVM() throws Exception {
         myFixture.configureByFile(JetParsingTest.getTestDataDir() + "/codegen/PSVM.jet");
-        JetFile jetFile = (JetFile) myFixture.getFile();
-        JetNamespace namespace = jetFile.getRootNamespace();
-        NamespaceCodegen codegen = new NamespaceCodegen();
-        final String text = generateToText(namespace, codegen);
+        final String text = generateToText();
         System.out.println(text);
 
-        final Class aClass = generateToClass(namespace, codegen);
+        final Class aClass = generateToClass();
         final Method main = firstMethod(aClass);
         Object[] args = new Object[] { new String[0] };
         main.invoke(null, args);
@@ -32,26 +36,27 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
 
     public void testReturnOne() throws Exception {
         myFixture.configureByFile(JetParsingTest.getTestDataDir() + "/codegen/returnOne.jet");
-        JetFile jetFile = (JetFile) myFixture.getFile();
-        JetNamespace namespace = jetFile.getRootNamespace();
-        NamespaceCodegen codegen = new NamespaceCodegen();
-        final String text = generateToText(namespace, codegen);
+        final String text = generateToText();
         System.out.println(text);
 
-        final Class aClass = generateToClass(namespace, codegen);
+        final Class aClass = generateToClass();
         final Method main = firstMethod(aClass);
         final Object returnValue = main.invoke(null, new Object[0]);
         assertEquals(new Integer(42), returnValue);
     }
 
-    private static String generateToText(JetNamespace namespace, NamespaceCodegen codegen) {
+    private String generateToText() {
         StringWriter writer = new StringWriter();
+        JetFile jetFile = (JetFile) myFixture.getFile();
+        JetNamespace namespace = jetFile.getRootNamespace();
         codegen.generate(namespace, new TraceClassVisitor(new PrintWriter(writer)));
         return writer.toString();
     }
 
-    private static Class generateToClass(JetNamespace namespace, NamespaceCodegen codegen) {
+    private Class generateToClass() {
+        JetFile jetFile = (JetFile) myFixture.getFile();
         ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
+        final JetNamespace namespace = jetFile.getRootNamespace();
         codegen.generate(namespace, writer);
         final byte[] data = writer.toByteArray();
         MyClassLoader classLoader = new MyClassLoader(NamespaceGenTest.class.getClassLoader());
