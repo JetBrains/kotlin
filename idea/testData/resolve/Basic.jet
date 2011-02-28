@@ -5,7 +5,7 @@ class A {
 
   fun foo(a : Int) = a
   fun fooB() = foo(1)
-  fun foo() : Int = 1
+  fun foo() : Int = 1.plus(1)
   fun foo1() : B = new B()
 }
 

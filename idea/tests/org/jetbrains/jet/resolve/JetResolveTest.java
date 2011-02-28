@@ -10,6 +10,7 @@ import org.jetbrains.jet.parsing.JetParsingTest;
 
 import java.io.File;
 import java.io.FileReader;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -54,11 +55,29 @@ public class JetResolveTest extends LightDaemonAnalyzerTestCase {
         DeclarationDescriptor resolve = bindingContext.resolve((JetReferenceExpression) fooDecl.getBodyExpression());
         assertSame(bindingContext.getFunctionDescriptor(fooDecl).getUnsubstitutedValueParameters().get(0), resolve);
 
+        {
         JetFunction fooBDecl = (JetFunction) classADecl.getDeclarations().get(2);
         JetCallExpression fooBBody = (JetCallExpression) fooBDecl.getBodyExpression();
         JetReferenceExpression refToFoo = (JetReferenceExpression) fooBBody.getCalleeExpression();
         FunctionDescriptor mustBeFoo = (FunctionDescriptor) bindingContext.resolve(refToFoo);
-        assertSame(bindingContext.getFunctionDescriptor(fooDecl), mustBeFoo.getOriginal());
+        assertSame(bindingContext.getFunctionDescriptor(fooDecl), FunctionDescriptorUtil.getOriginal(mustBeFoo));
+        }
+
+        {
+            JetFunction fooIntDecl = (JetFunction) classADecl.getDeclarations().get(3);
+            JetCallExpression fooIntBody = (JetCallExpression) fooIntDecl.getBodyExpression();
+            JetDotQualifiedExpression qualifiedPlus = (JetDotQualifiedExpression) fooIntBody.getCalleeExpression();
+            JetReferenceExpression refToPlus = (JetReferenceExpression) qualifiedPlus.getSelectorExpression();
+            FunctionDescriptor mustBePlus = (FunctionDescriptor) bindingContext.resolve(refToPlus);
+            FunctionGroup plusGroup = JetStandardClasses.getInt().getMemberScope(Collections.<TypeProjection>emptyList()).getFunctionGroup("plus");
+            Collection<FunctionDescriptor> pluses = plusGroup.getPossiblyApplicableFunctions(Collections.<Type>emptyList(), Collections.singletonList(JetStandardClasses.getIntType()));
+            FunctionDescriptor intPlus = null;
+            for (FunctionDescriptor plus : pluses) {
+                intPlus = plus;
+            }
+            assertSame(intPlus, FunctionDescriptorUtil.getOriginal(mustBePlus));
+        }
+
 
         JetClass classCDecl = (JetClass) declarations.get(1);
         ClassDescriptor classC = bindingContext.getClassDescriptor(classCDecl);
