@@ -60,7 +60,7 @@ public class ExpressionGenTest extends LightDaemonAnalyzerTestCase {
         JetProperty p = PsiTreeUtil.getParentOfType(getFile().findElementAt(0), JetProperty.class);
 
         TraceMethodVisitor trace = new TraceMethodVisitor();
-        p.getInitializer().accept(new ExpressionCodegen(trace));
+        p.getInitializer().accept(new ExpressionCodegen(trace, null));
 
         StringWriter out = new StringWriter();
         trace.print(new PrintWriter(out));

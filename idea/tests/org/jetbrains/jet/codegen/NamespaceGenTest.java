@@ -45,6 +45,17 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
         assertEquals(new Integer(42), returnValue);
     }
 
+    public void testReturnA() throws Exception {
+        myFixture.configureByFile(JetParsingTest.getTestDataDir() + "/codegen/returnA.jet");
+        final String text = generateToText();
+        System.out.println(text);
+
+        final Class aClass = generateToClass();
+        final Method main = firstMethod(aClass);
+        final Object returnValue = main.invoke(null, 42);
+        assertEquals(new Integer(42), returnValue);
+    }
+
     private String generateToText() {
         StringWriter writer = new StringWriter();
         JetFile jetFile = (JetFile) myFixture.getFile();

@@ -2,6 +2,9 @@ package org.jetbrains.jet.codegen;
 
 import gnu.trove.TObjectIntHashMap;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.types.DeclarationDescriptor;
+import org.jetbrains.jet.lang.types.ValueParameterDescriptor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -21,9 +24,11 @@ public class ExpressionCodegen extends JetVisitor {
     private final InstructionAdapter v;
     private final TObjectIntHashMap<JetProperty> myVarIndex = new TObjectIntHashMap<JetProperty>();
     private       int myMaxVarIndex = 0;
+    private final BindingContext bindingContext;
 
-    public ExpressionCodegen(MethodVisitor v) {
+    public ExpressionCodegen(MethodVisitor v, BindingContext bindingContext) {
         this.v = new InstructionAdapter(v);
+        this.bindingContext = bindingContext;
     }
 
     private void gen(JetElement expr) {
@@ -240,6 +245,18 @@ public class ExpressionCodegen extends JetVisitor {
         }
         else {
             v.visitInsn(Opcodes.RETURN);
+        }
+    }
+
+    @Override
+    public void visitReferenceExpression(JetReferenceExpression expression) {
+        final DeclarationDescriptor descriptor = bindingContext.resolve(expression);
+        if (descriptor instanceof ValueParameterDescriptor) {
+            final int index = ((ValueParameterDescriptor) descriptor).getIndex();
+            v.visitVarInsn(Opcodes.ALOAD, index);  // TODO +1 for non-static methods
+        }
+        else {
+            throw new UnsupportedOperationException("don't know how to generate reference " + descriptor);
         }
     }
 

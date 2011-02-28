@@ -1,6 +1,9 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.types.FunctionDescriptor;
+import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -14,9 +17,11 @@ import java.util.List;
  */
 public class FunctionCodegen {
     private final ClassVisitor v;
+    private final BindingContext bindingContext;
 
-    public FunctionCodegen(ClassVisitor v) {
+    public FunctionCodegen(ClassVisitor v, BindingContext bindingContext) {
         this.v = v;
+        this.bindingContext = bindingContext;
     }
 
     public void gen(JetFunction f, JetNamespace owner) {
@@ -26,28 +31,50 @@ public class FunctionCodegen {
             parameterTypes[i] = mapTypeReference(parameters.get(i).getTypeReference());
         }
         final JetTypeReference returnTypeRef = f.getReturnTypeRef();
-        Type returnType = returnTypeRef == null ? Type.VOID_TYPE : mapTypeReference(returnTypeRef);
+        Type returnType;
+        if (returnTypeRef == null) {
+            final FunctionDescriptor functionDescriptor = bindingContext.getFunctionDescriptor(f);
+            final org.jetbrains.jet.lang.types.Type type = functionDescriptor.getUnsubstitutedReturnType();
+            if (type.equals(JetStandardClasses.getUnitType())) {
+                returnType = Type.VOID_TYPE;
+            }
+            else if (type.equals(JetStandardClasses.getIntType())) {
+                returnType = Type.getType(Integer.class);
+            }
+            else {
+                throw new UnsupportedOperationException("don't know how to map type " + type);
+            }
+        }
+        else {
+            returnType = mapTypeReference(returnTypeRef);
+        }
         Method method = new Method(f.getName(), returnType, parameterTypes);
         final MethodVisitor mv = v.visitMethod(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC,
                 method.getName(), method.getDescriptor(), null, null);
         mv.visitCode();
         final JetExpression bodyExpression = f.getBodyExpression();
-        bodyExpression.accept(new ExpressionCodegen(mv));
-        if (needReturn(bodyExpression)) {
-            mv.visitInsn(Opcodes.RETURN);
-        }
+        bodyExpression.accept(new ExpressionCodegen(mv, bindingContext));
+        generateReturn(mv, bodyExpression);
         mv.visitMaxs(0, 0);
         mv.visitEnd();
     }
 
-    private boolean needReturn(JetExpression bodyExpression) {
+    private void generateReturn(MethodVisitor mv, JetExpression bodyExpression) {
+        if (!endsWithReturn(bodyExpression)) {
+            final org.jetbrains.jet.lang.types.Type expressionType = bindingContext.getExpressionType(bodyExpression);
+            if (expressionType.equals(JetStandardClasses.getUnitType())) {
+                mv.visitInsn(Opcodes.RETURN);
+            }
+            else {
+                mv.visitInsn(Opcodes.ARETURN);
+            }
+        }
+    }
+
+    private static boolean endsWithReturn(JetExpression bodyExpression) {
         if (bodyExpression instanceof JetBlockExpression) {
             final List<JetElement> statements = ((JetBlockExpression) bodyExpression).getStatements();
-            if (statements.size() == 0) {
-                return true;
-            }
-            final JetElement jetElement = statements.get(statements.size() - 1);
-            return !(jetElement instanceof JetReturnExpression);
+            return statements.size() > 0 && statements.get(statements.size()-1) instanceof JetReturnExpression;
         }
         return false;
     }
@@ -58,26 +85,30 @@ public class FunctionCodegen {
         }
         final JetTypeElement typeElement = typeRef.getTypeElement();
         if (typeElement instanceof JetUserType) {
-            final String referencedName = ((JetUserType) typeElement).getReferencedName();
-            if ("Array".equals(referencedName)) {
-                final List<JetTypeProjection> typeArguments = ((JetUserType) typeElement).getTypeArguments();
-                if (typeArguments.size() != 1) {
-                    throw new UnsupportedOperationException("arrays must have one type argument");
-                }
-                final JetTypeReference elementTypeRef = typeArguments.get(0).getTypeReference();
-                Type elementType = mapTypeReference(elementTypeRef);
-                return Type.getType("[" + elementType.getDescriptor());
-            }
-
-            if ("String".equals(referencedName)) {
-                return Type.getType(String.class);
-            }
-            if ("Int".equals(referencedName)) {
-                return Type.getType(Integer.class);
-            }
+            final JetUserType userType = (JetUserType) typeElement;
+            return mapType(userType.getReferencedName(), userType.getTypeArguments());
         }
 
         throw new UnsupportedOperationException("Unknown type " + typeRef);
+    }
+
+    private Type mapType(final String name, final List<JetTypeProjection> typeArguments) {
+        if ("Array".equals(name)) {
+            if (typeArguments.size() != 1) {
+                throw new UnsupportedOperationException("arrays must have one type argument");
+            }
+            final JetTypeReference elementTypeRef = typeArguments.get(0).getTypeReference();
+            Type elementType = mapTypeReference(elementTypeRef);
+            return Type.getType("[" + elementType.getDescriptor());
+        }
+
+        if ("String".equals(name)) {
+            return Type.getType(String.class);
+        }
+        if ("Int".equals(name)) {
+            return Type.getType(Integer.class);
+        }
+        throw new UnsupportedOperationException("Unknown type " + name);
     }
 
     public void gen(JetFunction f, JetClass owner) {
