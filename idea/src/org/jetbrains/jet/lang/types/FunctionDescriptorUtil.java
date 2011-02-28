@@ -77,6 +77,9 @@ public class FunctionDescriptorUtil {
 
     @NotNull
     public static FunctionDescriptor substituteFunctionDescriptor(@NotNull List<Type> typeArguments, @NotNull FunctionDescriptor functionDescriptor) {
+        if (functionDescriptor.getTypeParameters().isEmpty()) {
+            return functionDescriptor;
+        }
         return new FunctionDescriptorImpl(
                 ResolveUtil.getJetFunction(functionDescriptor),
                 functionDescriptor,
@@ -89,4 +92,10 @@ public class FunctionDescriptorUtil {
         );
     }
 
+    public static FunctionDescriptor getOriginal(FunctionDescriptor descriptor) {
+        while (descriptor.getOriginal() != null) {
+            descriptor = descriptor.getOriginal();
+        }
+        return descriptor;
+    }
 }
