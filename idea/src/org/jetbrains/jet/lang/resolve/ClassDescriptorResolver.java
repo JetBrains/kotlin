@@ -139,7 +139,7 @@ public class ClassDescriptorResolver {
             returnType = semanticServices.getTypeInferrer().getType(parameterScope, bodyExpression, function.hasBlockBody());
         }
 
-        return new FunctionDescriptorImpl(
+        FunctionDescriptorImpl functionDescriptor = new FunctionDescriptorImpl(
                 function,
                 null,
                 AttributeResolver.INSTANCE.resolveAttributes(function.getModifierList()),
@@ -148,6 +148,9 @@ public class ClassDescriptorResolver {
                 valueParameterDescriptors,
                 returnType
         );
+
+        trace.recordDeclarationResolution(function, functionDescriptor);
+        return functionDescriptor;
     }
 
     private List<ValueParameterDescriptor> resolveValueParameters(WritableScope parameterScope, List<JetParameter> valueParameters) {

@@ -30,22 +30,22 @@ public class TopDownAnalyzer {
         this.semanticServices = semanticServices;
         this.classDescriptorResolver = new ClassDescriptorResolver(semanticServices, new BindingTrace() {
             @Override
-            public void recordExpressionType(JetExpression expression, Type type) {
+            public void recordExpressionType(@NotNull JetExpression expression, @NotNull Type type) {
                 expressionTypes.put(expression, type);
             }
 
             @Override
-            public void recordReferenceResolution(JetReferenceExpression expression, DeclarationDescriptor descriptor) {
+            public void recordReferenceResolution(@NotNull JetReferenceExpression expression, @NotNull DeclarationDescriptor descriptor) {
                 resolutionResults.put(expression, descriptor);
             }
 
             @Override
-            public void recordTypeResolution(JetTypeReference typeReference, Type type) {
+            public void recordTypeResolution(@NotNull JetTypeReference typeReference, @NotNull Type type) {
                 types.put(typeReference, type);
             }
 
             @Override
-            public void recordDeclarationResolution(JetDeclaration declaration, DeclarationDescriptor descriptor) {
+            public void recordDeclarationResolution(@NotNull JetDeclaration declaration, @NotNull DeclarationDescriptor descriptor) {
                 descriptorToDeclarations.put(descriptor, declaration);
             }
         });
@@ -245,22 +245,22 @@ public class TopDownAnalyzer {
     private void resolveExpression(@NotNull JetScope scope, JetExpression expression, boolean preferBlock) {
         semanticServices.getTypeInferrer(new BindingTrace() {
             @Override
-            public void recordExpressionType(JetExpression expression, Type type) {
+            public void recordExpressionType(@NotNull JetExpression expression, @NotNull Type type) {
                 expressionTypes.put(expression, type);
             }
 
             @Override
-            public void recordReferenceResolution(JetReferenceExpression expression, DeclarationDescriptor descriptor) {
+            public void recordReferenceResolution(@NotNull JetReferenceExpression expression, @NotNull DeclarationDescriptor descriptor) {
                 resolutionResults.put(expression, descriptor);
             }
 
             @Override
-            public void recordTypeResolution(JetTypeReference typeReference, Type type) {
+            public void recordTypeResolution(@NotNull JetTypeReference typeReference, @NotNull Type type) {
                 types.put(typeReference, type);
             }
 
             @Override
-            public void recordDeclarationResolution(JetDeclaration declaration, DeclarationDescriptor descriptor) {
+            public void recordDeclarationResolution(@NotNull JetDeclaration declaration, @NotNull DeclarationDescriptor descriptor) {
                 throw new IllegalStateException();
             }
         }).getType(scope, expression, preferBlock);

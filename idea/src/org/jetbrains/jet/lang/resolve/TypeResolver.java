@@ -37,8 +37,8 @@ public class TypeResolver {
             @Override
             public void visitUserType(JetUserType type) {
                 ClassDescriptor classDescriptor = resolveClass(scope, type);
-                trace.recordReferenceResolution(type.getReferenceExpression(), classDescriptor);
                 if (classDescriptor != null) {
+                    trace.recordReferenceResolution(type.getReferenceExpression(), classDescriptor);
                     TypeConstructor typeConstructor = classDescriptor.getTypeConstructor();
                     List<TypeProjection> arguments = resolveTypeProjections(scope, typeConstructor, type.getTypeArguments());
                     result[0] = new TypeImpl(

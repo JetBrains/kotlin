@@ -74,33 +74,33 @@ public class JetReferenceExpression extends JetExpression {
             @NotNull
             @Override
             public String getCanonicalText() {
-                throw new UnsupportedOperationException(); // TODO
+                return getReferencedName();
             }
 
             @Override
             public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
-                throw new UnsupportedOperationException(); // TODO
+                throw new IncorrectOperationException();
             }
 
             @Override
             public PsiElement bindToElement(@NotNull PsiElement element) throws IncorrectOperationException {
-                throw new UnsupportedOperationException(); // TODO
+                throw new IncorrectOperationException();
             }
 
             @Override
             public boolean isReferenceTo(PsiElement element) {
-                throw new UnsupportedOperationException(); // TODO
+                return false;
             }
 
             @NotNull
             @Override
             public Object[] getVariants() {
-                throw new UnsupportedOperationException(); // TODO
+                return EMPTY_ARRAY;
             }
 
             @Override
             public boolean isSoft() {
-                throw new UnsupportedOperationException(); // TODO
+                return false;
             }
         };
     }
