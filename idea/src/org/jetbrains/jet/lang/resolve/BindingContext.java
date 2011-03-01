@@ -1,20 +1,50 @@
 package org.jetbrains.jet.lang.resolve;
 
+import com.intellij.psi.PsiElement;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.*;
 
 /**
  * @author abreslav
  */
-public interface BindingContext {
-    NamespaceDescriptor getNamespaceDescriptor(JetNamespace declaration);
-    ClassDescriptor getClassDescriptor(JetClass declaration);
-    FunctionDescriptor getFunctionDescriptor(JetFunction declaration);
-    PropertyDescriptor getPropertyDescriptor(JetProperty declaration);
+public class BindingContext {
+    public NamespaceDescriptor getNamespaceDescriptor(JetNamespace declaration) {
+        return null;
+    }
 
-    Type getExpressionType(JetExpression expression);
-    JetScope getTopLevelScope();
+    public ClassDescriptor getClassDescriptor(JetClass declaration) {
+        return null;
+    }
 
-    DeclarationDescriptor resolveReferenceExpression(JetReferenceExpression referenceExpression);
-    Type resolveTypeReference(JetTypeReference typeReference);
+    public FunctionDescriptor getFunctionDescriptor(JetFunction declaration) {
+        return null;
+    }
+
+    public PropertyDescriptor getPropertyDescriptor(JetProperty declaration) {
+        return null;
+    }
+
+
+    public Type getExpressionType(JetExpression expression) {
+        return null;
+    }
+
+    public JetScope getTopLevelScope() {
+        return null;
+    }
+
+
+    public DeclarationDescriptor resolveReferenceExpression(JetReferenceExpression referenceExpression) {
+        return null;
+    }
+
+    public Type resolveTypeReference(JetTypeReference typeReference) {
+        return null;
+    }
+
+
+    public PsiElement resolveToDeclarationPsiElement(JetReferenceExpression referenceExpression) {
+        return null;
+    }
+
 }

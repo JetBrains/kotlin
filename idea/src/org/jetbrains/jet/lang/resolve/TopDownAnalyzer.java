@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.resolve;
 
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.psi.*;
@@ -14,13 +15,15 @@ public class TopDownAnalyzer {
 
     private final Map<JetClass, MutableClassDescriptor> classes = new LinkedHashMap<JetClass, MutableClassDescriptor>();
     private final Map<JetFunction, FunctionDescriptor> functions = new HashMap<JetFunction, FunctionDescriptor>();
-    private Map<JetProperty, PropertyDescriptor> properties = new HashMap<JetProperty, PropertyDescriptor>();
     private final Map<JetDeclaration, WritableScope> declaringScopes = new HashMap<JetDeclaration, WritableScope>();
-    private Map<JetExpression, Type> expressionTypes = new HashMap<JetExpression, Type>();
-    private Map<JetReferenceExpression,DeclarationDescriptor> resolutionResults = new HashMap<JetReferenceExpression, DeclarationDescriptor>();
+    private final Map<JetProperty, PropertyDescriptor> properties = new HashMap<JetProperty, PropertyDescriptor>();
+    private final Map<JetExpression, Type> expressionTypes = new HashMap<JetExpression, Type>();
+    private final Map<JetReferenceExpression, DeclarationDescriptor> resolutionResults = new HashMap<JetReferenceExpression, DeclarationDescriptor>();
+    private final Map<JetTypeReference, Type> types = new HashMap<JetTypeReference, Type>();
+    private final Map<DeclarationDescriptor, JetDeclaration> descriptorToDeclarations = new HashMap<DeclarationDescriptor, JetDeclaration>();
+
 
     private final JetSemanticServices semanticServices;
-    private Map<JetTypeReference, Type> types = new HashMap<JetTypeReference, Type>();
     private final ClassDescriptorResolver classDescriptorResolver;
 
     public TopDownAnalyzer(JetSemanticServices semanticServices) {
@@ -28,17 +31,22 @@ public class TopDownAnalyzer {
         this.classDescriptorResolver = new ClassDescriptorResolver(semanticServices, new BindingTrace() {
             @Override
             public void recordExpressionType(JetExpression expression, Type type) {
-                throw new UnsupportedOperationException(); // TODO
+                expressionTypes.put(expression, type);
             }
 
             @Override
-            public void recordResolutionResult(JetReferenceExpression expression, DeclarationDescriptor descriptor) {
-                throw new UnsupportedOperationException(); // TODO
+            public void recordReferenceResolution(JetReferenceExpression expression, DeclarationDescriptor descriptor) {
+                resolutionResults.put(expression, descriptor);
             }
 
             @Override
-            public void recordTypeResoltion(JetTypeReference typeReference, Type type) {
+            public void recordTypeResolution(JetTypeReference typeReference, Type type) {
                 types.put(typeReference, type);
+            }
+
+            @Override
+            public void recordDeclarationResolution(JetDeclaration declaration, DeclarationDescriptor descriptor) {
+                descriptorToDeclarations.put(descriptor, declaration);
             }
         });
     }
@@ -89,6 +97,11 @@ public class TopDownAnalyzer {
             @Override
             public JetScope getTopLevelScope() {
                 return toplevelScope;
+            }
+
+            @Override
+            public PsiElement resolveToDeclarationPsiElement(JetReferenceExpression referenceExpression) {
+                return descriptorToDeclarations.get(resolveReferenceExpression(referenceExpression));
             }
         };
     }
@@ -237,13 +250,18 @@ public class TopDownAnalyzer {
             }
 
             @Override
-            public void recordResolutionResult(JetReferenceExpression expression, DeclarationDescriptor descriptor) {
+            public void recordReferenceResolution(JetReferenceExpression expression, DeclarationDescriptor descriptor) {
                 resolutionResults.put(expression, descriptor);
             }
 
             @Override
-            public void recordTypeResoltion(JetTypeReference typeReference, Type type) {
+            public void recordTypeResolution(JetTypeReference typeReference, Type type) {
                 types.put(typeReference, type);
+            }
+
+            @Override
+            public void recordDeclarationResolution(JetDeclaration declaration, DeclarationDescriptor descriptor) {
+                throw new IllegalStateException();
             }
         }).getType(scope, expression, preferBlock);
     }

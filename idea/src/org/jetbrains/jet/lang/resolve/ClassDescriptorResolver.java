@@ -16,10 +16,12 @@ public class ClassDescriptorResolver {
 
     private final JetSemanticServices semanticServices;
     private final TypeResolver typeResolver;
+    private final BindingTrace trace;
 
     public ClassDescriptorResolver(JetSemanticServices semanticServices, BindingTrace trace) {
         this.semanticServices = semanticServices;
         this.typeResolver = new TypeResolver(trace);
+        this.trace = trace;
     }
 
     @Nullable
@@ -72,6 +74,8 @@ public class ClassDescriptorResolver {
                         typeParameters,
                         superclasses)
         );
+
+        trace.recordDeclarationResolution(classElement, descriptor);
     }
 
     private WritableScope resolveMembers(
@@ -165,6 +169,7 @@ public class ClassDescriptorResolver {
             // TODO : Default values???
 
             result.add(valueParameterDescriptor);
+            trace.recordDeclarationResolution(valueParameter, valueParameterDescriptor);
             parameterScope.addPropertyDescriptor(valueParameterDescriptor);
         }
         return result;

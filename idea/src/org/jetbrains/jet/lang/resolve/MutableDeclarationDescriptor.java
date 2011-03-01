@@ -1,15 +1,14 @@
 package org.jetbrains.jet.lang.resolve;
 
-import org.jetbrains.jet.lang.types.Annotated;
 import org.jetbrains.jet.lang.types.Attribute;
-import org.jetbrains.jet.lang.types.Named;
+import org.jetbrains.jet.lang.types.DeclarationDescriptor;
 
 import java.util.List;
 
 /**
  * @author abreslav
  */
-public class MutableDeclarationDescriptor implements Annotated, Named {
+public class MutableDeclarationDescriptor implements DeclarationDescriptor {
     private String name;
 
     @Override

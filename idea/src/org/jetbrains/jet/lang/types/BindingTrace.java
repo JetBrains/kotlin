@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.types;
 
+import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.psi.JetTypeReference;
@@ -7,26 +8,21 @@ import org.jetbrains.jet.lang.psi.JetTypeReference;
 /**
  * @author abreslav
  */
-public interface BindingTrace {
-    BindingTrace DUMMY = new BindingTrace() {
-        @Override
-        public void recordExpressionType(JetExpression expression, Type type) {
-        }
+public class BindingTrace {
+    public static final BindingTrace DUMMY = new BindingTrace();
 
-        @Override
-        public void recordResolutionResult(JetReferenceExpression expression, DeclarationDescriptor descriptor) {
+    public void recordExpressionType(JetExpression expression, Type type) {
+    }
 
-        }
+    public void recordReferenceResolution(JetReferenceExpression expression, DeclarationDescriptor descriptor) {
 
-        @Override
-        public void recordTypeResoltion(JetTypeReference typeReference, Type type) {
+    }
 
-        }
-    };
+    public void recordDeclarationResolution(JetDeclaration declaration, DeclarationDescriptor descriptor) {
 
-    void recordExpressionType(JetExpression expression, Type type);
+    }
 
-    void recordResolutionResult(JetReferenceExpression expression, DeclarationDescriptor descriptor);
+    public void recordTypeResolution(JetTypeReference typeReference, Type type) {
 
-    void recordTypeResoltion(JetTypeReference typeReference, Type type);
+    }
 }

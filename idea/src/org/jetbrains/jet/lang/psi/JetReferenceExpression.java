@@ -1,9 +1,16 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.util.TextRange;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.tree.TokenSet;
+import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.JetSemanticServices;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.TopDownAnalyzer;
 import org.jetbrains.jet.lexer.JetTokens;
 
 /**
@@ -32,5 +39,69 @@ public class JetReferenceExpression extends JetExpression {
     @Override
     public void accept(JetVisitor visitor) {
         visitor.visitReferenceExpression(this);
+    }
+
+    @Override
+    public PsiReference findReferenceAt(int offset) {
+        return getReference();
+    }
+
+    @Override
+    public PsiReference getReference() {
+        return new PsiReference() {
+            @Override
+            public PsiElement getElement() {
+                return findChildByType(REFERENCE_TOKENS);
+            }
+
+            @Override
+            public TextRange getRangeInElement() {
+                return new TextRange(0, getElement().getTextLength());
+            }
+
+            @Override
+            public PsiElement resolve() {
+                PsiElement element = getElement();
+                while (element != null && false == element instanceof JetFile) {
+                    element = element.getParent();
+                }
+                JetFile file = (JetFile) element;
+                JetSemanticServices semanticServices = new JetSemanticServices(element.getProject());
+                BindingContext bindingContext = new TopDownAnalyzer(semanticServices).process(semanticServices.getStandardLibrary().getLibraryScope(), file.getRootNamespace().getDeclarations());
+                return bindingContext.resolveToDeclarationPsiElement(JetReferenceExpression.this);
+            }
+
+            @NotNull
+            @Override
+            public String getCanonicalText() {
+                throw new UnsupportedOperationException(); // TODO
+            }
+
+            @Override
+            public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
+                throw new UnsupportedOperationException(); // TODO
+            }
+
+            @Override
+            public PsiElement bindToElement(@NotNull PsiElement element) throws IncorrectOperationException {
+                throw new UnsupportedOperationException(); // TODO
+            }
+
+            @Override
+            public boolean isReferenceTo(PsiElement element) {
+                throw new UnsupportedOperationException(); // TODO
+            }
+
+            @NotNull
+            @Override
+            public Object[] getVariants() {
+                throw new UnsupportedOperationException(); // TODO
+            }
+
+            @Override
+            public boolean isSoft() {
+                throw new UnsupportedOperationException(); // TODO
+            }
+        };
     }
 }

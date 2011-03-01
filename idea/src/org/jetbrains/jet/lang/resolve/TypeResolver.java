@@ -27,7 +27,7 @@ public class TypeResolver {
 
         JetTypeElement typeElement = typeReference.getTypeElement();
         Type type = resolveTypeElement(scope, attributes, typeElement, false);
-        trace.recordTypeResoltion(typeReference, type);
+        trace.recordTypeResolution(typeReference, type);
         return type;
     }
 
@@ -37,6 +37,7 @@ public class TypeResolver {
             @Override
             public void visitUserType(JetUserType type) {
                 ClassDescriptor classDescriptor = resolveClass(scope, type);
+                trace.recordReferenceResolution(type.getReferenceExpression(), classDescriptor);
                 if (classDescriptor != null) {
                     TypeConstructor typeConstructor = classDescriptor.getTypeConstructor();
                     List<TypeProjection> arguments = resolveTypeProjections(scope, typeConstructor, type.getTypeArguments());

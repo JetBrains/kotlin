@@ -27,7 +27,14 @@ public class JetPsiChecker implements Annotator {
                     for (JetDelegationSpecifier specifier : klass.getDelegationSpecifiers()) {
                         JetTypeReference typeReference = specifier.getTypeReference();
                         Type type = bindingContext.resolveTypeReference(typeReference);
-                        holder.createInfoAnnotation(typeReference, type.toString());
+                        holder.createWeakWarningAnnotation(typeReference, type.toString());
+                    }
+                }
+
+                @Override
+                public void visitNamespace(JetNamespace namespace) {
+                    for (JetDeclaration declaration : namespace.getDeclarations()) {
+                        declaration.accept(this);
                     }
                 }
             });

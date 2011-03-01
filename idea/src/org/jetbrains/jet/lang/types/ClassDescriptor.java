@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * @author abreslav
  */
-public interface ClassDescriptor extends Annotated, Named {
+public interface ClassDescriptor extends DeclarationDescriptor {
     @NotNull
     TypeConstructor getTypeConstructor();
 

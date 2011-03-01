@@ -50,7 +50,7 @@ public class JetTypeInferrer {
                 // TODO : other members
                 // TODO : type substitutions???
                 PropertyDescriptor property = scope.getProperty(expression.getReferencedName());
-                trace.recordResolutionResult(expression, property);
+                trace.recordReferenceResolution(expression, property);
                 if (property != null) {
                     result[0] = property.getType();
                 }
@@ -396,14 +396,14 @@ public class JetTypeInferrer {
             @Override
             public FunctionDescriptor getFunctionDescriptorForNamedArguments(@NotNull List<Type> typeArguments, @NotNull Map<String, Type> valueArgumentTypes, @Nullable Type functionLiteralArgumentType) {
                 FunctionDescriptor descriptor = result[0].getFunctionDescriptorForNamedArguments(typeArguments, valueArgumentTypes, functionLiteralArgumentType);
-                trace.recordResolutionResult(reference[0], descriptor);
+                trace.recordReferenceResolution(reference[0], descriptor);
                 return descriptor;
             }
 
             @Override
             public FunctionDescriptor getFunctionDescriptorForPositionedArguments(@NotNull List<Type> typeArguments, @NotNull List<Type> positionedValueArgumentTypes) {
                 FunctionDescriptor descriptor = result[0].getFunctionDescriptorForPositionedArguments(typeArguments, positionedValueArgumentTypes);
-                trace.recordResolutionResult(reference[0], descriptor);
+                trace.recordReferenceResolution(reference[0], descriptor);
                 return descriptor;
             }
         };
