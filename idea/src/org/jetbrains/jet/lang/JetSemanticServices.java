@@ -10,16 +10,23 @@ import org.jetbrains.jet.lang.types.JetTypeInferrer;
  * @author abreslav
  */
 public class JetSemanticServices {
-    private final JetStandardLibrary standardLibrary;
-    private final JetTypeInferrer typeInferrer;
-
-    public JetSemanticServices(JetStandardLibrary standardLibrary) {
-        this.standardLibrary = standardLibrary;
-        this.typeInferrer = new JetTypeInferrer(BindingTrace.DUMMY, this);
+    public static JetSemanticServices createSemanticServices(JetStandardLibrary standardLibrary, ErrorHandler errorHandler) {
+        return new JetSemanticServices(standardLibrary, errorHandler);
     }
 
-    public JetSemanticServices(Project project) {
-        this(new JetStandardLibrary(project));
+    public static JetSemanticServices createSemanticServices(Project project, ErrorHandler errorHandler) {
+        return new JetSemanticServices(new JetStandardLibrary(project), errorHandler);
+    }
+
+    private final JetTypeInferrer typeInferrer;
+    private final JetStandardLibrary standardLibrary;
+
+    private final ErrorHandler errorHandler;
+
+    private JetSemanticServices(JetStandardLibrary standardLibrary, ErrorHandler errorHandler) {
+        this.standardLibrary = standardLibrary;
+        this.errorHandler = errorHandler;
+        this.typeInferrer = new JetTypeInferrer(BindingTrace.DUMMY, this);
     }
 
     public JetStandardLibrary getStandardLibrary() {

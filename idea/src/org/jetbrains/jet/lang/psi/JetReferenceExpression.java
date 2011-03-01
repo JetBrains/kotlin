@@ -8,6 +8,7 @@ import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.TopDownAnalyzer;
@@ -66,7 +67,7 @@ public class JetReferenceExpression extends JetExpression {
                     element = element.getParent();
                 }
                 JetFile file = (JetFile) element;
-                JetSemanticServices semanticServices = new JetSemanticServices(element.getProject());
+                JetSemanticServices semanticServices = JetSemanticServices.createSemanticServices(element.getProject(), ErrorHandler.DO_NOTHING);
                 BindingContext bindingContext = new TopDownAnalyzer(semanticServices).process(semanticServices.getStandardLibrary().getLibraryScope(), file.getRootNamespace().getDeclarations());
                 return bindingContext.resolveToDeclarationPsiElement(JetReferenceExpression.this);
             }

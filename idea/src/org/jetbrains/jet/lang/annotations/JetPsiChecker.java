@@ -5,6 +5,7 @@ import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -20,7 +21,9 @@ public class JetPsiChecker implements Annotator {
     public void annotate(@NotNull PsiElement element, @NotNull final AnnotationHolder holder) {
         if (element instanceof JetFile) {
             JetFile file = (JetFile) element;
-            JetSemanticServices semanticServices = new JetSemanticServices(element.getProject());
+            JetSemanticServices semanticServices = JetSemanticServices.createSemanticServices(element.getProject(), new ErrorHandler() {
+
+            });
             try {
                 final BindingContext bindingContext = new TopDownAnalyzer(semanticServices).process(semanticServices.getStandardLibrary().getLibraryScope(), file.getRootNamespace().getDeclarations());
                 file.getRootNamespace().accept(new JetVisitor() {

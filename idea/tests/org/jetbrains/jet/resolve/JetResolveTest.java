@@ -3,6 +3,7 @@ package org.jetbrains.jet.resolve;
 import com.intellij.codeInsight.daemon.LightDaemonAnalyzerTestCase;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.io.FileUtil;
+import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
@@ -39,7 +40,7 @@ public class JetResolveTest extends LightDaemonAnalyzerTestCase {
     public void testBasic() throws Exception {
         JetFile jetFile = JetChangeUtil.createFile(getProject(), FileUtil.loadTextAndClose(new FileReader(getTestDataPath() + "/resolve/Basic.jet")));
         List<JetDeclaration> declarations = jetFile.getRootNamespace().getDeclarations();
-        BindingContext bindingContext = new TopDownAnalyzer(new JetSemanticServices(library)).process(library.getLibraryScope(), declarations);
+        BindingContext bindingContext = new TopDownAnalyzer(JetSemanticServices.createSemanticServices(library, ErrorHandler.THROW_EXCEPTION)).process(library.getLibraryScope(), declarations);
 
         JetClass classADecl = (JetClass) declarations.get(0);
         ClassDescriptor classA = bindingContext.getClassDescriptor(classADecl);

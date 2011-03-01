@@ -338,7 +338,9 @@ public class JetTypeInferrer {
                 throw new IllegalArgumentException("Unsupported element: " + elem);
             }
         });
-        trace.recordExpressionType(expression, result[0]);
+        if (result[0] != null) {
+            trace.recordExpressionType(expression, result[0]);
+        }
         return result[0];
     }
 
@@ -396,14 +398,18 @@ public class JetTypeInferrer {
             @Override
             public FunctionDescriptor getFunctionDescriptorForNamedArguments(@NotNull List<Type> typeArguments, @NotNull Map<String, Type> valueArgumentTypes, @Nullable Type functionLiteralArgumentType) {
                 FunctionDescriptor descriptor = result[0].getFunctionDescriptorForNamedArguments(typeArguments, valueArgumentTypes, functionLiteralArgumentType);
-                trace.recordReferenceResolution(reference[0], descriptor);
+                if (descriptor != null) {
+                    trace.recordReferenceResolution(reference[0], descriptor);
+                }
                 return descriptor;
             }
 
             @Override
             public FunctionDescriptor getFunctionDescriptorForPositionedArguments(@NotNull List<Type> typeArguments, @NotNull List<Type> positionedValueArgumentTypes) {
                 FunctionDescriptor descriptor = result[0].getFunctionDescriptorForPositionedArguments(typeArguments, positionedValueArgumentTypes);
-                trace.recordReferenceResolution(reference[0], descriptor);
+                if (descriptor != null) {
+                    trace.recordReferenceResolution(reference[0], descriptor);
+                }
                 return descriptor;
             }
         };
