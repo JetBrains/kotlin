@@ -4,7 +4,11 @@ import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.JetSemanticServices;
+import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.TopDownAnalyzer;
+import org.jetbrains.jet.lang.types.Type;
 
 /**
  * @author abreslav
@@ -12,10 +16,21 @@ import org.jetbrains.jet.lang.psi.JetFile;
 public class JetPsiChecker implements Annotator {
 
     @Override
-    public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
+    public void annotate(@NotNull PsiElement element, @NotNull final AnnotationHolder holder) {
         if (element instanceof JetFile) {
             JetFile file = (JetFile) element;
-//            JetScope jetScope = FileContentsResolver.INSTANCE.resolveFileContents(JetStandardClasses.STANDARD_CLASSES, file);
+            JetSemanticServices semanticServices = new JetSemanticServices(element.getProject());
+            final BindingContext bindingContext = new TopDownAnalyzer(semanticServices).process(semanticServices.getStandardLibrary().getLibraryScope(), file.getRootNamespace().getDeclarations());
+            file.getRootNamespace().accept(new JetVisitor() {
+                @Override
+                public void visitClass(JetClass klass) {
+                    for (JetDelegationSpecifier specifier : klass.getDelegationSpecifiers()) {
+                        JetTypeReference typeReference = specifier.getTypeReference();
+                        Type type = bindingContext.resolveTypeReference(typeReference);
+                        holder.createInfoAnnotation(typeReference, type.toString());
+                    }
+                }
+            });
         }
     }
 }

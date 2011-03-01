@@ -250,7 +250,7 @@ public class ExpressionCodegen extends JetVisitor {
 
     @Override
     public void visitReferenceExpression(JetReferenceExpression expression) {
-        final DeclarationDescriptor descriptor = bindingContext.resolve(expression);
+        final DeclarationDescriptor descriptor = bindingContext.resolveReferenceExpression(expression);
         if (descriptor instanceof ValueParameterDescriptor) {
             final int index = ((ValueParameterDescriptor) descriptor).getIndex();
             v.visitVarInsn(Opcodes.ALOAD, index);  // TODO +1 for non-static methods

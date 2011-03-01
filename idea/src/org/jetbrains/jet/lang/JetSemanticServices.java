@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang;
 
+import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.ClassDescriptorResolver;
 import org.jetbrains.jet.lang.types.BindingTrace;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
@@ -15,6 +16,10 @@ public class JetSemanticServices {
     public JetSemanticServices(JetStandardLibrary standardLibrary) {
         this.standardLibrary = standardLibrary;
         this.typeInferrer = new JetTypeInferrer(BindingTrace.DUMMY, this);
+    }
+
+    public JetSemanticServices(Project project) {
+        this(new JetStandardLibrary(project));
     }
 
     public JetStandardLibrary getStandardLibrary() {

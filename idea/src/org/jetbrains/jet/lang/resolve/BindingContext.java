@@ -12,9 +12,9 @@ public interface BindingContext {
     FunctionDescriptor getFunctionDescriptor(JetFunction declaration);
     PropertyDescriptor getPropertyDescriptor(JetProperty declaration);
 
-    Type getType(JetTypeReference typeReference);
     Type getExpressionType(JetExpression expression);
-    DeclarationDescriptor resolve(JetReferenceExpression referenceExpression);
-
     JetScope getTopLevelScope();
+
+    DeclarationDescriptor resolveReferenceExpression(JetReferenceExpression referenceExpression);
+    Type resolveTypeReference(JetTypeReference typeReference);
 }

@@ -63,7 +63,7 @@ public class JetResolveTest extends LightDaemonAnalyzerTestCase {
         assertEquals(library.getIntType(), expressionType);
 
         {
-            DeclarationDescriptor resolve = bindingContext.resolve((JetReferenceExpression) fooDecl.getBodyExpression());
+            DeclarationDescriptor resolve = bindingContext.resolveReferenceExpression((JetReferenceExpression) fooDecl.getBodyExpression());
             assertSame(bindingContext.getFunctionDescriptor(fooDecl).getUnsubstitutedValueParameters().get(0), resolve);
         }
 
@@ -71,7 +71,7 @@ public class JetResolveTest extends LightDaemonAnalyzerTestCase {
             JetFunction fooBDecl = (JetFunction) classADecl.getDeclarations().get(2);
             JetCallExpression fooBBody = (JetCallExpression) fooBDecl.getBodyExpression();
             JetReferenceExpression refToFoo = (JetReferenceExpression) fooBBody.getCalleeExpression();
-            FunctionDescriptor mustBeFoo = (FunctionDescriptor) bindingContext.resolve(refToFoo);
+            FunctionDescriptor mustBeFoo = (FunctionDescriptor) bindingContext.resolveReferenceExpression(refToFoo);
             assertSame(bindingContext.getFunctionDescriptor(fooDecl), FunctionDescriptorUtil.getOriginal(mustBeFoo));
         }
 
@@ -80,7 +80,7 @@ public class JetResolveTest extends LightDaemonAnalyzerTestCase {
             JetCallExpression fooIntBody = (JetCallExpression) fooIntDecl.getBodyExpression();
             JetDotQualifiedExpression qualifiedPlus = (JetDotQualifiedExpression) fooIntBody.getCalleeExpression();
             JetReferenceExpression refToPlus = (JetReferenceExpression) qualifiedPlus.getSelectorExpression();
-            FunctionDescriptor mustBePlus = (FunctionDescriptor) bindingContext.resolve(refToPlus);
+            FunctionDescriptor mustBePlus = (FunctionDescriptor) bindingContext.resolveReferenceExpression(refToPlus);
             FunctionGroup plusGroup = library.getInt().getMemberScope(Collections.<TypeProjection>emptyList()).getFunctionGroup("plus");
             Collection<FunctionDescriptor> pluses = plusGroup.getPossiblyApplicableFunctions(Collections.<Type>emptyList(), Collections.singletonList(library.getIntType()));
             FunctionDescriptor intPlus = null;
@@ -97,7 +97,7 @@ public class JetResolveTest extends LightDaemonAnalyzerTestCase {
             assertSame(a, mustBeA);
 
             JetTypeReference propertyTypeRef = aDecl.getPropertyTypeRef();
-            Type type = bindingContext.getType(propertyTypeRef);
+            Type type = bindingContext.resolveTypeReference(propertyTypeRef);
             assertEquals(library.getIntType(), type);
         }
 

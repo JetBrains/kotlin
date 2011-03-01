@@ -72,7 +72,7 @@ public class TopDownAnalyzer {
             }
 
             @Override
-            public Type getType(JetTypeReference typeReference) {
+            public Type resolveTypeReference(JetTypeReference typeReference) {
                 return types.get(typeReference);
             }
 
@@ -82,7 +82,7 @@ public class TopDownAnalyzer {
             }
 
             @Override
-            public DeclarationDescriptor resolve(JetReferenceExpression referenceExpression) {
+            public DeclarationDescriptor resolveReferenceExpression(JetReferenceExpression referenceExpression) {
                 return resolutionResults.get(referenceExpression);
             }
 
