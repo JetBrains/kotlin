@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.*;
 
@@ -16,9 +17,11 @@ import java.util.Set;
 public class TypeResolver {
 
     private final BindingTrace trace;
+    private final ErrorHandler errorHandler;
 
-    public TypeResolver(BindingTrace trace) {
+    public TypeResolver(BindingTrace trace, ErrorHandler errorHandler) {
         this.trace = trace;
+        this.errorHandler = errorHandler;
     }
 
     @NotNull
@@ -52,6 +55,7 @@ public class TypeResolver {
                 else if (type.getTypeArguments().isEmpty()) {
                     TypeParameterDescriptor typeParameterDescriptor = scope.getTypeParameter(type.getReferencedName());
                     if (typeParameterDescriptor != null) {
+                        trace.recordReferenceResolution(type.getReferenceExpression(), typeParameterDescriptor);
                         result[0] = new TypeImpl(
                                 attributes,
                                 typeParameterDescriptor.getTypeConstructor(),
@@ -60,7 +64,12 @@ public class TypeResolver {
                                 // TODO : joint domain
                                 JetStandardClasses.STUB
                         );
+                    } else {
+                        errorHandler.unresolvedReference(type.getReferenceExpression());
                     }
+                }
+                else {
+                    errorHandler.unresolvedReference(type.getReferenceExpression());
                 }
             }
 

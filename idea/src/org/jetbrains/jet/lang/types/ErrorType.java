@@ -12,27 +12,27 @@ import java.util.List;
 public class ErrorType {
     private static final JetScope ERROR_SCOPE = new JetScope() {
         @Override
-        public ClassDescriptor getClass(String name) {
+        public ClassDescriptor getClass(@NotNull String name) {
             throw new UnsupportedOperationException(); // TODO
         }
 
         @Override
-        public PropertyDescriptor getProperty(String name) {
+        public PropertyDescriptor getProperty(@NotNull String name) {
             throw new UnsupportedOperationException(); // TODO
         }
 
         @Override
-        public ExtensionDescriptor getExtension(String name) {
+        public ExtensionDescriptor getExtension(@NotNull String name) {
             throw new UnsupportedOperationException(); // TODO
         }
 
         @Override
-        public NamespaceDescriptor getNamespace(String name) {
+        public NamespaceDescriptor getNamespace(@NotNull String name) {
             throw new UnsupportedOperationException(); // TODO
         }
 
         @Override
-        public TypeParameterDescriptor getTypeParameter(String name) {
+        public TypeParameterDescriptor getTypeParameter(@NotNull String name) {
             throw new UnsupportedOperationException(); // TODO
         }
 

@@ -24,7 +24,7 @@ public class JetTypeInferrer {
     public JetTypeInferrer(BindingTrace trace, JetSemanticServices semanticServices) {
         this.trace = trace;
         this.semanticServices = semanticServices;
-        this.typeResolver = new TypeResolver(trace);
+        this.typeResolver = new TypeResolver(trace, semanticServices.getErrorHandler());
         this.classDescriptorResolver = new ClassDescriptorResolver(semanticServices, trace);
     }
 
@@ -50,9 +50,11 @@ public class JetTypeInferrer {
                 // TODO : other members
                 // TODO : type substitutions???
                 PropertyDescriptor property = scope.getProperty(expression.getReferencedName());
-                trace.recordReferenceResolution(expression, property);
                 if (property != null) {
+                    trace.recordReferenceResolution(expression, property);
                     result[0] = property.getType();
+                } else {
+                    semanticServices.getErrorHandler().unresolvedReference(expression);
                 }
             }
 
@@ -400,6 +402,8 @@ public class JetTypeInferrer {
                 FunctionDescriptor descriptor = result[0].getFunctionDescriptorForNamedArguments(typeArguments, valueArgumentTypes, functionLiteralArgumentType);
                 if (descriptor != null) {
                     trace.recordReferenceResolution(reference[0], descriptor);
+                } else {
+                    semanticServices.getErrorHandler().unresolvedReference(reference[0]);
                 }
                 return descriptor;
             }
@@ -409,6 +413,8 @@ public class JetTypeInferrer {
                 FunctionDescriptor descriptor = result[0].getFunctionDescriptorForPositionedArguments(typeArguments, positionedValueArgumentTypes);
                 if (descriptor != null) {
                     trace.recordReferenceResolution(reference[0], descriptor);
+                } else {
+                    semanticServices.getErrorHandler().unresolvedReference(reference[0]);
                 }
                 return descriptor;
             }

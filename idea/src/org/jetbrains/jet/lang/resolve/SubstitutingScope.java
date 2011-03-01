@@ -19,7 +19,7 @@ public class SubstitutingScope implements JetScope {
     }
 
     @Override
-    public PropertyDescriptor getProperty(String name) {
+    public PropertyDescriptor getProperty(@NotNull String name) {
         PropertyDescriptor property = workerScope.getProperty(name);
         if (property == null || substitutionContext.isEmpty()) {
             return property;
@@ -28,7 +28,7 @@ public class SubstitutingScope implements JetScope {
     }
 
     @Override
-    public ClassDescriptor getClass(String name) {
+    public ClassDescriptor getClass(@NotNull String name) {
         ClassDescriptor descriptor = workerScope.getClass(name);
         if (descriptor == null) {
             return null;
@@ -37,17 +37,17 @@ public class SubstitutingScope implements JetScope {
     }
 
     @Override
-    public ExtensionDescriptor getExtension(String name) {
+    public ExtensionDescriptor getExtension(@NotNull String name) {
         throw new UnsupportedOperationException(); // TODO
     }
 
     @Override
-    public NamespaceDescriptor getNamespace(String name) {
+    public NamespaceDescriptor getNamespace(@NotNull String name) {
         throw new UnsupportedOperationException(); // TODO
     }
 
     @Override
-    public TypeParameterDescriptor getTypeParameter(String name) {
+    public TypeParameterDescriptor getTypeParameter(@NotNull String name) {
         throw new UnsupportedOperationException(); // TODO
     }
 

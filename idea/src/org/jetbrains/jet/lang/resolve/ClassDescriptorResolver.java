@@ -20,7 +20,7 @@ public class ClassDescriptorResolver {
 
     public ClassDescriptorResolver(JetSemanticServices semanticServices, BindingTrace trace) {
         this.semanticServices = semanticServices;
-        this.typeResolver = new TypeResolver(trace);
+        this.typeResolver = new TypeResolver(trace, semanticServices.getErrorHandler());
         this.trace = trace;
     }
 

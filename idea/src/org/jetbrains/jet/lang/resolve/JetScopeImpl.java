@@ -8,27 +8,27 @@ import org.jetbrains.jet.lang.types.*;
 */
 public abstract class JetScopeImpl implements JetScope {
     @Override
-    public ClassDescriptor getClass(String name) {
+    public ClassDescriptor getClass(@NotNull String name) {
         return null;
     }
 
     @Override
-    public PropertyDescriptor getProperty(String name) {
+    public PropertyDescriptor getProperty(@NotNull String name) {
         return null;
     }
 
     @Override
-    public ExtensionDescriptor getExtension(String name) {
+    public ExtensionDescriptor getExtension(@NotNull String name) {
         return null;
     }
 
     @Override
-    public NamespaceDescriptor getNamespace(String name) {
+    public NamespaceDescriptor getNamespace(@NotNull String name) {
         return null;
     }
 
     @Override
-    public TypeParameterDescriptor getTypeParameter(String name) {
+    public TypeParameterDescriptor getTypeParameter(@NotNull String name) {
         return null;
     }
 

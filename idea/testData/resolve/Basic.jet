@@ -1,17 +1,19 @@
-class A {
-  class B {
+~A~class A {
+  ~B~class B {
 
   }
 
-  fun foo(a : Int) = a
-  fun fooB() = foo(1)
-  fun foo() : Int = 1.plus(1)
-  fun foo1() : B = new B()
-  val a : Int
+  ~foo~fun foo(~foo.a~a : `std::Char`Char) = `foo.a`a
+  ~fooB~fun fooB() = `foo`foo('1')
+  ~foo.1~fun foo() : Int = 1.`std::Int.plus(Int)`plus(1)
+  ~foo1~fun foo1() : `B`B = new `B`B()
+  ~A.a~val a : `std::Int`Int
 }
 
-class C : A {
-    class B : C {
+~C~class C : `A`A {
+    ~C.B~class B : `C`C {
 
     }
+
+    val x : `C.B`B
 }

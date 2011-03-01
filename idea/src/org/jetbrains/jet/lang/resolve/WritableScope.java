@@ -43,7 +43,7 @@ public class WritableScope extends JetScopeAdapter {
     }
 
     @Override
-    public PropertyDescriptor getProperty(String name) {
+    public PropertyDescriptor getProperty(@NotNull String name) {
         @NotNull
         Map<String, PropertyDescriptor> propertyDescriptors = getPropertyDescriptors();
         PropertyDescriptor propertyDescriptor = propertyDescriptors.get(name);
@@ -102,7 +102,7 @@ public class WritableScope extends JetScopeAdapter {
     }
 
     @Override
-    public TypeParameterDescriptor getTypeParameter(String name) {
+    public TypeParameterDescriptor getTypeParameter(@NotNull String name) {
         TypeParameterDescriptor typeParameterDescriptor = getTypeParameterDescriptors().get(name);
         if (typeParameterDescriptor != null) {
             return typeParameterDescriptor;
@@ -130,7 +130,7 @@ public class WritableScope extends JetScopeAdapter {
     }
 
     @Override
-    public ClassDescriptor getClass(String name) {
+    public ClassDescriptor getClass(@NotNull String name) {
         ClassDescriptor classDescriptor = getClassDescriptors().get(name);
         if (classDescriptor != null) {
             return classDescriptor;
@@ -148,12 +148,12 @@ public class WritableScope extends JetScopeAdapter {
     }
 
     @Override
-    public NamespaceDescriptor getNamespace(String name) {
+    public NamespaceDescriptor getNamespace(@NotNull String name) {
         return super.getNamespace(name); // TODO
     }
 
     @Override
-    public ExtensionDescriptor getExtension(String name) {
+    public ExtensionDescriptor getExtension(@NotNull String name) {
         return super.getExtension(name); // TODO
     }
 

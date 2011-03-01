@@ -44,4 +44,8 @@ public class JetSemanticServices {
     public JetTypeInferrer getTypeInferrer(BindingTrace trace) {
         return new JetTypeInferrer(trace, this);
     }
+
+    public ErrorHandler getErrorHandler() {
+        return errorHandler;
+    }
 }

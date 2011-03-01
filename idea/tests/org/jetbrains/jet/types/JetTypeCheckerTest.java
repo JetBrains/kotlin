@@ -33,7 +33,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
     public void setUp() throws Exception {
         super.setUp();
         library          = new JetStandardLibrary(getProject());
-        semanticServices = JetSemanticServices.createSemanticServices(library, ErrorHandler.THROW_EXCEPTION);
+        semanticServices = JetSemanticServices.createSemanticServices(library, ErrorHandler.DO_NOTHING);
         classDefinitions = new ClassDefinitions();
         classDescriptorResolver = semanticServices.getClassDescriptorResolver(BindingTrace.DUMMY);
     }
@@ -489,7 +489,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
     }
 
     private static Type makeType(JetScope scope, String typeStr) {
-        return new TypeResolver(BindingTrace.DUMMY).resolveType(scope, JetChangeUtil.createType(getProject(), typeStr));
+        return new TypeResolver(BindingTrace.DUMMY, ErrorHandler.THROW_EXCEPTION).resolveType(scope, JetChangeUtil.createType(getProject(), typeStr));
     }
 
     private class ClassDefinitions {
@@ -522,7 +522,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
 
         public JetScope BASIC_SCOPE = new JetScopeAdapter(library.getLibraryScope()) {
             @Override
-            public ClassDescriptor getClass(String name) {
+            public ClassDescriptor getClass(@NotNull String name) {
                 if (CLASSES.isEmpty()) {
                     for (String classDeclaration : CLASS_DECLARATIONS) {
                         JetClass classElement = JetChangeUtil.createClass(getProject(), classDeclaration);

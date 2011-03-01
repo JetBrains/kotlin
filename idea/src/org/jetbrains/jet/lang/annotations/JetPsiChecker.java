@@ -22,7 +22,10 @@ public class JetPsiChecker implements Annotator {
         if (element instanceof JetFile) {
             JetFile file = (JetFile) element;
             JetSemanticServices semanticServices = JetSemanticServices.createSemanticServices(element.getProject(), new ErrorHandler() {
-
+                @Override
+                public void unresolvedReference(JetReferenceExpression referenceExpression) {
+                    holder.createErrorAnnotation(referenceExpression, "Unresolved");
+                }
             });
             try {
                 final BindingContext bindingContext = new TopDownAnalyzer(semanticServices).process(semanticServices.getStandardLibrary().getLibraryScope(), file.getRootNamespace().getDeclarations());

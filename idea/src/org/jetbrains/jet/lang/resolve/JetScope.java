@@ -11,19 +11,19 @@ public interface JetScope {
     JetScope EMPTY = new JetScopeImpl() {};
 
     @Nullable
-    ClassDescriptor getClass(String name);
+    ClassDescriptor getClass(@NotNull String name);
 
     @Nullable
-    PropertyDescriptor getProperty(String name);
+    PropertyDescriptor getProperty(@NotNull String name);
 
     @Nullable
-    ExtensionDescriptor getExtension(String name);
+    ExtensionDescriptor getExtension(@NotNull String name);
 
     @Nullable
-    NamespaceDescriptor getNamespace(String name);
+    NamespaceDescriptor getNamespace(@NotNull String name);
 
     @Nullable
-    TypeParameterDescriptor getTypeParameter(String name);
+    TypeParameterDescriptor getTypeParameter(@NotNull String name);
 
     @NotNull
     Type getThisType();
