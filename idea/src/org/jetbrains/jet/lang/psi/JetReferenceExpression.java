@@ -11,7 +11,11 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingTraceContext;
+import org.jetbrains.jet.lang.resolve.ScopeWithImports;
 import org.jetbrains.jet.lang.resolve.TopDownAnalyzer;
+import org.jetbrains.jet.lang.resolve.java.JavaLangScope;
+import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 import org.jetbrains.jet.lexer.JetTokens;
 
 /**
@@ -68,7 +72,14 @@ public class JetReferenceExpression extends JetExpression {
                 }
                 JetFile file = (JetFile) element;
                 JetSemanticServices semanticServices = JetSemanticServices.createSemanticServices(element.getProject(), ErrorHandler.DO_NOTHING);
-                BindingContext bindingContext = new TopDownAnalyzer(semanticServices).process(semanticServices.getStandardLibrary().getLibraryScope(), file.getRootNamespace().getDeclarations());
+
+                ScopeWithImports scope = new ScopeWithImports(semanticServices.getStandardLibrary().getLibraryScope());
+
+                BindingTraceContext bindingTraceContext = new BindingTraceContext();
+                scope.addImport(new JavaLangScope(new JavaSemanticServices(element.getProject(), semanticServices, bindingTraceContext)));
+
+                new TopDownAnalyzer(semanticServices, bindingTraceContext).process(scope, file.getRootNamespace().getDeclarations());
+                BindingContext bindingContext = bindingTraceContext;
                 return bindingContext.resolveToDeclarationPsiElement(JetReferenceExpression.this);
             }
 

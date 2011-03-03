@@ -37,4 +37,5 @@ public class TypeConstructor extends AnnotatedImpl {
     public boolean isSealed() {
         return sealed;
     }
+
 }

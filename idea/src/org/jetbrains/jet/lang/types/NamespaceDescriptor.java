@@ -1,31 +1,29 @@
 package org.jetbrains.jet.lang.types;
 
-import org.jetbrains.jet.lang.modules.NamespaceDomain;
+import org.jetbrains.jet.lang.resolve.JetScope;
 
-import java.util.Collection;
+import java.util.List;
 
 /**
  * @author abreslav
  */
-public class NamespaceDescriptor implements NamespaceDomain {
-    public ClassDescriptor getClass(String name) {
-        throw new UnsupportedOperationException(); // TODO
+public class NamespaceDescriptor extends DeclarationDescriptorImpl {
+    private NamespaceType namespaceType;
+    private final JetScope memberScope;
+
+    public NamespaceDescriptor(List<Attribute> attributes, String name, JetScope memberScope) {
+        super(attributes, name);
+        this.memberScope = memberScope;
     }
 
-    public Collection<FunctionDescriptor> getMethods(String name) {
-        throw new UnsupportedOperationException(); // TODO
+    public JetScope getMemberScope() {
+        return memberScope;
     }
 
-    public PropertyDescriptor getProperty(String name) {
-        throw new UnsupportedOperationException(); // TODO
-    }
-
-    public ExtensionDescriptor getExtension(String name) {
-        throw new UnsupportedOperationException(); // TODO
-    }
-
-    @Override
-    public NamespaceDescriptor getNamespace(String namespaceName) {
-        throw new UnsupportedOperationException(); // TODO
+    public NamespaceType getNamespaceType() {
+        if (namespaceType == null) {
+            namespaceType = new NamespaceType(getName(), memberScope);
+        }
+        return namespaceType;
     }
 }

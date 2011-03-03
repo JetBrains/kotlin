@@ -49,13 +49,21 @@ public class JetTypeInferrer {
             public void visitReferenceExpression(JetReferenceExpression expression) {
                 // TODO : other members
                 // TODO : type substitutions???
-                PropertyDescriptor property = scope.getProperty(expression.getReferencedName());
+                String referencedName = expression.getReferencedName();
+                PropertyDescriptor property = scope.getProperty(referencedName);
                 if (property != null) {
                     trace.recordReferenceResolution(expression, property);
                     result[0] = property.getType();
+                    return;
                 } else {
-                    semanticServices.getErrorHandler().unresolvedReference(expression);
+                    NamespaceDescriptor namespace = scope.getNamespace(referencedName);
+                    if (namespace != null) {
+                        trace.recordReferenceResolution(expression, namespace);
+                        result[0] = namespace.getNamespaceType();
+                        return;
+                    }
                 }
+                semanticServices.getErrorHandler().unresolvedReference(expression);
             }
 
             @Override
@@ -275,8 +283,10 @@ public class JetTypeInferrer {
                 JetExpression receiverExpression = expression.getReceiverExpression();
                 JetExpression selectorExpression = expression.getSelectorExpression();
                 Type receiverType = getType(scope, receiverExpression, false);
-                JetScope compositeScope = new ScopeWithReceiver(scope, receiverType);
-                result[0] = getType(compositeScope, selectorExpression, false);
+                if (receiverType != null) { // TODO : review
+                    JetScope compositeScope = new ScopeWithReceiver(scope, receiverType);
+                    result[0] = getType(compositeScope, selectorExpression, false);
+                }
             }
 
             @Override
@@ -439,7 +449,7 @@ public class JetTypeInferrer {
                 return getType(scope, expression, true);
             }
             // TODO: functions, classes, etc.
-            throw new IllegalArgumentException("Last item in the block must be an expression");
+            throw new IllegalArgumentException("Last item in the block must be an expression, but was " + lastElement.getClass().getCanonicalName());
         }
     }
 

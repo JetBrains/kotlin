@@ -62,7 +62,7 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
         StringWriter writer = new StringWriter();
         JetFile jetFile = (JetFile) myFixture.getFile();
         JetNamespace namespace = jetFile.getRootNamespace();
-        codegen.generate(namespace, new TraceClassVisitor(new PrintWriter(writer)), JetSemanticServices.createSemanticServices(getProject(), ErrorHandler.THROW_EXCEPTION));
+        codegen.generate(namespace, new TraceClassVisitor(new PrintWriter(writer)), getProject());
         return writer.toString();
     }
 
@@ -70,7 +70,7 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
         JetFile jetFile = (JetFile) myFixture.getFile();
         ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
         final JetNamespace namespace = jetFile.getRootNamespace();
-        codegen.generate(namespace, writer, JetSemanticServices.createSemanticServices(getProject(), ErrorHandler.THROW_EXCEPTION));
+        codegen.generate(namespace, writer, getProject());
         final byte[] data = writer.toByteArray();
         MyClassLoader classLoader = new MyClassLoader(NamespaceGenTest.class.getClassLoader());
         final Class aClass = classLoader.doDefineClass(NamespaceCodegen.getJVMClassName(namespace).replace("/", "."), data);

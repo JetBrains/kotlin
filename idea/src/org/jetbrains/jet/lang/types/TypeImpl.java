@@ -29,7 +29,7 @@ public final class TypeImpl extends AnnotatedImpl implements Type {
         this(Collections.<Attribute>emptyList(), constructor, false, Collections.<TypeProjection>emptyList(), memberScope);
     }
 
-    public TypeImpl(ClassDescriptor classDescriptor) {
+    public TypeImpl(@NotNull ClassDescriptor classDescriptor) {
         this(Collections.<Attribute>emptyList(),
                 classDescriptor.getTypeConstructor(),
                 false,

@@ -41,7 +41,6 @@ public class ClassDescriptorResolver {
         WritableScope members = resolveMembers(classElement, typeParameters, scope, parameterScope, superclasses);
 
         return new ClassDescriptorImpl(
-                classElement,
                 AttributeResolver.INSTANCE.resolveAttributes(classElement.getModifierList()),
                 !open,
                 classElement.getName(),
@@ -140,7 +139,6 @@ public class ClassDescriptorResolver {
         }
 
         FunctionDescriptorImpl functionDescriptor = new FunctionDescriptorImpl(
-                function,
                 null,
                 AttributeResolver.INSTANCE.resolveAttributes(function.getModifierList()),
                 function.getName(),
@@ -155,13 +153,14 @@ public class ClassDescriptorResolver {
 
     private List<ValueParameterDescriptor> resolveValueParameters(WritableScope parameterScope, List<JetParameter> valueParameters) {
         List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>();
-        for (JetParameter valueParameter : valueParameters) {
+        for (int i = 0, valueParametersSize = valueParameters.size(); i < valueParametersSize; i++) {
+            JetParameter valueParameter = valueParameters.get(i);
             JetTypeReference typeReference = valueParameter.getTypeReference();
 
             assert typeReference != null : "Parameters without type annotations are not supported"; // TODO
 
             ValueParameterDescriptor valueParameterDescriptor = new ValueParameterDescriptorImpl(
-                    valueParameter,
+                    i,
                     AttributeResolver.INSTANCE.resolveAttributes(valueParameter.getModifierList()),
                     valueParameter.getName(),
                     typeResolver.resolveType(parameterScope, typeReference),
@@ -190,7 +189,6 @@ public class ClassDescriptorResolver {
     private TypeParameterDescriptor resolveTypeParameter(WritableScope extensibleScope, JetTypeParameter typeParameter) {
         JetTypeReference extendsBound = typeParameter.getExtendsBound();
         TypeParameterDescriptor typeParameterDescriptor = new TypeParameterDescriptor(
-                typeParameter,
                 AttributeResolver.INSTANCE.resolveAttributes(typeParameter.getModifierList()),
                 typeParameter.getVariance(),
                 typeParameter.getName(),
@@ -221,7 +219,6 @@ public class ClassDescriptorResolver {
     @NotNull
     public PropertyDescriptor resolvePropertyDescriptor(@NotNull JetScope scope, @NotNull JetParameter parameter) {
         return new PropertyDescriptorImpl(
-                parameter,
                 AttributeResolver.INSTANCE.resolveAttributes(parameter.getModifierList()),
                 parameter.getName(),
                 typeResolver.resolveType(scope, parameter.getTypeReference()));
@@ -242,7 +239,6 @@ public class ClassDescriptorResolver {
         }
 
         return new PropertyDescriptorImpl(
-                property,
                 AttributeResolver.INSTANCE.resolveAttributes(property.getModifierList()),
                 property.getName(),
                 type);

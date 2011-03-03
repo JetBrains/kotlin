@@ -1,12 +1,14 @@
 package org.jetbrains.jet.lang.resolve;
 
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.*;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author abreslav
@@ -16,94 +18,24 @@ public class TopDownAnalyzer {
     private final Map<JetClass, MutableClassDescriptor> classes = new LinkedHashMap<JetClass, MutableClassDescriptor>();
     private final Map<JetFunction, FunctionDescriptor> functions = new HashMap<JetFunction, FunctionDescriptor>();
     private final Map<JetDeclaration, WritableScope> declaringScopes = new HashMap<JetDeclaration, WritableScope>();
-    private final Map<JetProperty, PropertyDescriptor> properties = new HashMap<JetProperty, PropertyDescriptor>();
-    private final Map<JetExpression, Type> expressionTypes = new HashMap<JetExpression, Type>();
-    private final Map<JetReferenceExpression, DeclarationDescriptor> resolutionResults = new HashMap<JetReferenceExpression, DeclarationDescriptor>();
-    private final Map<JetTypeReference, Type> types = new HashMap<JetTypeReference, Type>();
-    private final Map<DeclarationDescriptor, JetDeclaration> descriptorToDeclarations = new HashMap<DeclarationDescriptor, JetDeclaration>();
-
 
     private final JetSemanticServices semanticServices;
     private final ClassDescriptorResolver classDescriptorResolver;
+    private final BindingTrace trace;
 
-    public TopDownAnalyzer(JetSemanticServices semanticServices) {
+    public TopDownAnalyzer(JetSemanticServices semanticServices, @NotNull BindingTrace bindingTrace) {
         this.semanticServices = semanticServices;
-        this.classDescriptorResolver = new ClassDescriptorResolver(semanticServices, new BindingTrace() {
-            @Override
-            public void recordExpressionType(@NotNull JetExpression expression, @NotNull Type type) {
-                expressionTypes.put(expression, type);
-            }
-
-            @Override
-            public void recordReferenceResolution(@NotNull JetReferenceExpression expression, @NotNull DeclarationDescriptor descriptor) {
-                resolutionResults.put(expression, descriptor);
-            }
-
-            @Override
-            public void recordTypeResolution(@NotNull JetTypeReference typeReference, @NotNull Type type) {
-                types.put(typeReference, type);
-            }
-
-            @Override
-            public void recordDeclarationResolution(@NotNull JetDeclaration declaration, @NotNull DeclarationDescriptor descriptor) {
-                descriptorToDeclarations.put(descriptor, declaration);
-            }
-        });
+        this.classDescriptorResolver = new ClassDescriptorResolver(semanticServices, bindingTrace);
+        this.trace = bindingTrace;
     }
 
-    public BindingContext process(@NotNull JetScope outerScope, @NotNull List<JetDeclaration> declarations) {
+    public void process(@NotNull JetScope outerScope, @NotNull List<JetDeclaration> declarations) {
         final WritableScope toplevelScope = new WritableScope(outerScope);
+        trace.setToplevelScope(toplevelScope); // TODO : this is a hack
         collectTypeDeclarators(toplevelScope, declarations);
         resolveTypeDeclarations();
         collectBehaviorDeclarators(toplevelScope, declarations);
         resolveBehaviorDeclarationBodies();
-        return new BindingContext() {
-
-            @Override
-            public NamespaceDescriptor getNamespaceDescriptor(JetNamespace declaration) {
-                throw new UnsupportedOperationException(); // TODO
-            }
-
-            @Override
-            public ClassDescriptor getClassDescriptor(JetClass declaration) {
-                return classes.get(declaration);
-            }
-
-            @Override
-            public FunctionDescriptor getFunctionDescriptor(JetFunction declaration) {
-                return functions.get(declaration);
-            }
-
-            @Override
-            public PropertyDescriptor getPropertyDescriptor(JetProperty declaration) {
-                return properties.get(declaration);
-            }
-
-            @Override
-            public Type resolveTypeReference(JetTypeReference typeReference) {
-                return types.get(typeReference);
-            }
-
-            @Override
-            public Type getExpressionType(JetExpression expression) {
-                return expressionTypes.get(expression);
-            }
-
-            @Override
-            public DeclarationDescriptor resolveReferenceExpression(JetReferenceExpression referenceExpression) {
-                return resolutionResults.get(referenceExpression);
-            }
-
-            @Override
-            public JetScope getTopLevelScope() {
-                return toplevelScope;
-            }
-
-            @Override
-            public PsiElement resolveToDeclarationPsiElement(JetReferenceExpression referenceExpression) {
-                return descriptorToDeclarations.get(resolveReferenceExpression(referenceExpression));
-            }
-        };
     }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -137,6 +69,7 @@ public class TopDownAnalyzer {
         mutableClassDescriptor.setName(klass.getName());
         declaringScope.addClassDescriptor(mutableClassDescriptor);
         classes.put(klass, mutableClassDescriptor);
+        trace.recordDeclarationResolution(klass, mutableClassDescriptor);
         declaringScopes.put(klass, declaringScope);
         return mutableClassDescriptor.getUnsubstitutedMemberScope();
     }
@@ -204,13 +137,14 @@ public class TopDownAnalyzer {
         FunctionDescriptor descriptor = classDescriptorResolver.resolveFunctionDescriptor(declaringScope, function);
         declaringScope.addFunctionDescriptor(descriptor);
         functions.put(function, descriptor);
+        trace.recordDeclarationResolution(function, descriptor);
     }
 
     private void processProperty(WritableScope declaringScope, JetProperty property) {
         declaringScopes.put(property, declaringScope);
         PropertyDescriptor descriptor = classDescriptorResolver.resolvePropertyDescriptor(declaringScope, property);
         declaringScope.addPropertyDescriptor(descriptor);
-        properties.put(property, descriptor);
+        trace.recordDeclarationResolution(property, descriptor);
     }
 
     private void processClassObject(JetClassObject classObject) {
@@ -243,27 +177,7 @@ public class TopDownAnalyzer {
     }
 
     private void resolveExpression(@NotNull JetScope scope, JetExpression expression, boolean preferBlock) {
-        semanticServices.getTypeInferrer(new BindingTrace() {
-            @Override
-            public void recordExpressionType(@NotNull JetExpression expression, @NotNull Type type) {
-                expressionTypes.put(expression, type);
-            }
-
-            @Override
-            public void recordReferenceResolution(@NotNull JetReferenceExpression expression, @NotNull DeclarationDescriptor descriptor) {
-                resolutionResults.put(expression, descriptor);
-            }
-
-            @Override
-            public void recordTypeResolution(@NotNull JetTypeReference typeReference, @NotNull Type type) {
-                types.put(typeReference, type);
-            }
-
-            @Override
-            public void recordDeclarationResolution(@NotNull JetDeclaration declaration, @NotNull DeclarationDescriptor descriptor) {
-                throw new IllegalStateException();
-            }
-        }).getType(scope, expression, preferBlock);
+        semanticServices.getTypeInferrer(trace).getType(scope, expression, preferBlock);
     }
 
 }

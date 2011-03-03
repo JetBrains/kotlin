@@ -9,7 +9,7 @@ import java.util.*;
 /**
  * @author abreslav
  */
-public class FunctionDescriptorImpl extends DeclarationDescriptorImpl<JetFunction> implements FunctionDescriptor {
+public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements FunctionDescriptor {
     @NotNull
     private final List<TypeParameterDescriptor> typeParameters;
     @NotNull
@@ -20,14 +20,13 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl<JetFunctio
     private final FunctionDescriptor original;
 
     public FunctionDescriptorImpl(
-            JetFunction psiElement,
             @Nullable FunctionDescriptor original,
             @NotNull List<Attribute> attributes,
             String name,
             @NotNull List<TypeParameterDescriptor> typeParameters,
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
             @NotNull Type unsubstitutedReturnType) {
-        super(psiElement, attributes, name);
+        super(attributes, name);
         this.original = original;
         this.typeParameters = typeParameters;
         this.unsubstitutedValueParameters = unsubstitutedValueParameters;

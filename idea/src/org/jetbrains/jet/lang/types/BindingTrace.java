@@ -1,10 +1,9 @@
 package org.jetbrains.jet.lang.types;
 
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetReferenceExpression;
-import org.jetbrains.jet.lang.psi.JetTypeReference;
+import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.JetScope;
 
 /**
  * @author abreslav
@@ -19,11 +18,15 @@ public class BindingTrace {
 
     }
 
-    public void recordDeclarationResolution(@NotNull JetDeclaration declaration, @NotNull DeclarationDescriptor descriptor) {
+    public void recordDeclarationResolution(@NotNull PsiElement declaration, @NotNull DeclarationDescriptor descriptor) {
 
     }
 
     public void recordTypeResolution(@NotNull JetTypeReference typeReference, @NotNull Type type) {
+
+    }
+
+    public void setToplevelScope(JetScope toplevelScope) {
 
     }
 }

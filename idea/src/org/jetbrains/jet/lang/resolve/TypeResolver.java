@@ -205,7 +205,7 @@ public class TypeResolver {
             if (domain == null) {
                 return null;
             }
-            return domain.getNamespace(expression.getReferencedName());
+            return domain.getMemberScope().getNamespace(expression.getReferencedName());
         }
 
         assert qualifier == null;

@@ -9,6 +9,7 @@ import org.jetbrains.jet.lang.JetFileType;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.JetScope;
 import org.jetbrains.jet.lang.resolve.TopDownAnalyzer;
 
@@ -52,8 +53,11 @@ public class JetStandardLibrary {
                     JetFileType.INSTANCE, FileUtil.loadTextAndClose(new InputStreamReader(stream)));
 
             JetSemanticServices bootstrappingSemanticServices = JetSemanticServices.createSemanticServices(this, ErrorHandler.DO_NOTHING);
-            TopDownAnalyzer bootstrappingTDA = new TopDownAnalyzer(bootstrappingSemanticServices);
-            BindingContext bindingContext = bootstrappingTDA.process(JetStandardClasses.STANDARD_CLASSES, file.getRootNamespace().getDeclarations());
+            BindingTraceContext bindingTraceContext = new BindingTraceContext();
+            TopDownAnalyzer bootstrappingTDA = new TopDownAnalyzer(bootstrappingSemanticServices, bindingTraceContext);
+            bootstrappingTDA.process(JetStandardClasses.STANDARD_CLASSES, file.getRootNamespace().getDeclarations());
+            BindingContext bindingContext = bindingTraceContext;
+
             this.libraryScope = bindingContext.getTopLevelScope();
 
             this.byteClass = libraryScope.getClass("Byte");

@@ -1,7 +1,6 @@
 package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.ResolveUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +25,6 @@ public class LazySubstitutingFunctionDescriptor implements FunctionDescriptor {
         for (TypeParameterDescriptor parameterDescriptor : functionDescriptor.getTypeParameters()) {
             // TODO : lazy?
             result.add(new TypeParameterDescriptor(
-                    ResolveUtil.getJetTypeParameter(parameterDescriptor),
                     parameterDescriptor.getAttributes(),
                     parameterDescriptor.getVariance(),
                     parameterDescriptor.getName(),
@@ -39,9 +37,11 @@ public class LazySubstitutingFunctionDescriptor implements FunctionDescriptor {
     @Override
     public List<ValueParameterDescriptor> getUnsubstitutedValueParameters() {
         List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>();
-        for (ValueParameterDescriptor parameterDescriptor : functionDescriptor.getUnsubstitutedValueParameters()) {
+        List<ValueParameterDescriptor> unsubstitutedValueParameters = functionDescriptor.getUnsubstitutedValueParameters();
+        for (int i = 0, unsubstitutedValueParametersSize = unsubstitutedValueParameters.size(); i < unsubstitutedValueParametersSize; i++) {
+            ValueParameterDescriptor parameterDescriptor = unsubstitutedValueParameters.get(i);
             result.add(new ValueParameterDescriptorImpl(
-                    ResolveUtil.getJetParameter(parameterDescriptor),
+                    i,
                     parameterDescriptor.getAttributes(),
                     parameterDescriptor.getName(),
                     TypeSubstitutor.INSTANCE.substitute(substitutionContext, parameterDescriptor.getType(), Variance.IN_VARIANCE),

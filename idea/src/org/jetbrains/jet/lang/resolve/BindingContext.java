@@ -7,44 +7,19 @@ import org.jetbrains.jet.lang.types.*;
 /**
  * @author abreslav
  */
-public class BindingContext {
-    public NamespaceDescriptor getNamespaceDescriptor(JetNamespace declaration) {
-        return null;
-    }
+public interface BindingContext {
+    NamespaceDescriptor getNamespaceDescriptor(JetNamespace declaration);
+    ClassDescriptor getClassDescriptor(JetClass declaration);
+    FunctionDescriptor getFunctionDescriptor(JetFunction declaration);
+    PropertyDescriptor getPropertyDescriptor(JetProperty declaration);
 
-    public ClassDescriptor getClassDescriptor(JetClass declaration) {
-        return null;
-    }
+    Type getExpressionType(JetExpression expression);
 
-    public FunctionDescriptor getFunctionDescriptor(JetFunction declaration) {
-        return null;
-    }
-
-    public PropertyDescriptor getPropertyDescriptor(JetProperty declaration) {
-        return null;
-    }
+    JetScope getTopLevelScope();
 
 
-    public Type getExpressionType(JetExpression expression) {
-        return null;
-    }
+    DeclarationDescriptor resolveReferenceExpression(JetReferenceExpression referenceExpression);
 
-    public JetScope getTopLevelScope() {
-        return null;
-    }
-
-
-    public DeclarationDescriptor resolveReferenceExpression(JetReferenceExpression referenceExpression) {
-        return null;
-    }
-
-    public Type resolveTypeReference(JetTypeReference typeReference) {
-        return null;
-    }
-
-
-    public PsiElement resolveToDeclarationPsiElement(JetReferenceExpression referenceExpression) {
-        return null;
-    }
-
+    Type resolveTypeReference(JetTypeReference typeReference);
+    PsiElement resolveToDeclarationPsiElement(JetReferenceExpression referenceExpression);
 }

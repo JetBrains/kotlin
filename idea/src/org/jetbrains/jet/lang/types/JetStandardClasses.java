@@ -20,7 +20,6 @@ public class JetStandardClasses {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private static ClassDescriptor NOTHING_CLASS = new ClassDescriptorImpl(
-            null,
             Collections.<Attribute>emptyList(),
             true,
             "Nothing",
@@ -54,7 +53,6 @@ public class JetStandardClasses {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private static final ClassDescriptor ANY = new ClassDescriptorImpl(
-            null,
             Collections.<Attribute>emptyList(),
             false,
             "Any",
@@ -80,13 +78,11 @@ public class JetStandardClasses {
             List<TypeParameterDescriptor> parameters = new ArrayList<TypeParameterDescriptor>();
             for (int j = 0; j < i; j++) {
                 parameters.add(new TypeParameterDescriptor(
-                        null,
                         Collections.<Attribute>emptyList(),
                         Variance.OUT_VARIANCE, "T" + j,
                         Collections.singleton(getNullableAnyType())));
             }
             TUPLE[i] = new ClassDescriptorImpl(
-                    null,
                     Collections.<Attribute>emptyList(),
                     true,
                     "Tuple" + i,
@@ -107,30 +103,25 @@ public class JetStandardClasses {
             List<TypeParameterDescriptor> parameters = new ArrayList<TypeParameterDescriptor>();
             for (int j = 0; j < i; j++) {
                 parameters.add(new TypeParameterDescriptor(
-                        null,
                         Collections.<Attribute>emptyList(),
                         Variance.IN_VARIANCE, "P" + j,
                         Collections.singleton(getNullableAnyType())));
             }
             parameters.add(new TypeParameterDescriptor(
-                        null,
-                        Collections.<Attribute>emptyList(),
+                    Collections.<Attribute>emptyList(),
                         Variance.OUT_VARIANCE, "R",
                         Collections.singleton(getNullableAnyType())));
             FUNCTION[i] = new ClassDescriptorImpl(
-                    null,
                     Collections.<Attribute>emptyList(),
                     false,
                     "Function" + i,
                     parameters,
                     Collections.singleton(getAnyType()), STUB);
             parameters.add(0, new TypeParameterDescriptor(
-                        null,
-                        Collections.<Attribute>emptyList(),
+                    Collections.<Attribute>emptyList(),
                         Variance.IN_VARIANCE, "T",
                         Collections.singleton(getNullableAnyType())));
             RECEIVER_FUNCTION[i] = new ClassDescriptorImpl(
-                    null,
                     Collections.<Attribute>emptyList(),
                     false,
                     "ReceiverFunction" + i,
