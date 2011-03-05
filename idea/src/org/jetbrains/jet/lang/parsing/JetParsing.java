@@ -146,7 +146,7 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * import
-     *   : "import" SimpleName{"."} ("." "*" | "as" SimpleName)?
+     *   : "import" ("namespace" ".")? SimpleName{"."} ("." "*" | "as" SimpleName)? SEMI?
      *   ;
      */
     private void parseImportDirective() {
@@ -154,26 +154,31 @@ public class JetParsing extends AbstractJetParsing {
         PsiBuilder.Marker importDirective = mark();
         advance(); // IMPORT_KEYWORD
 
-        expect(IDENTIFIER, "Expecting qualified name", TokenSet.create(DOT, MAP));
-        while (at(DOT)) {
-            advance(); // DOT
-            if (at(IDENTIFIER)) {
-                advance(); // IDENTIFIER
-            }
-            else if (at(MUL)) {
-                advance(); // MUL
-                handleUselessRename();
-                break;
-            }
-            else {
-                errorWithRecovery("Qualified name must be a '.'-separated identifier list", TokenSet.create(AS_KEYWORD, DOT, MAP, SEMICOLON));
-            }
+
+        PsiBuilder.Marker reference = mark();
+
+        if (at(NAMESPACE_KEYWORD)) {
+            advance(); // NAMESPACE_KEYWORD
+            expect(DOT, "Expecting '.'", TokenSet.create(IDENTIFIER, MUL, SEMICOLON));
         }
-        if (at(MAP)) {
-            advance(); // MAP
+
+        expect(IDENTIFIER, "Expecting qualified name", TokenSet.create(DOT, AS_KEYWORD));
+        while (at(DOT) && lookahead(1) != MUL) {
+            PsiBuilder.Marker precede = reference.precede();
+            reference.done(REFERENCE_EXPRESSION);
+            reference = precede;
+            advance(); // DOT
+            expect(IDENTIFIER,  "Qualified name must be a '.'-separated identifier list", TokenSet.create(AS_KEYWORD, DOT, SEMICOLON));
+        }
+        reference.done(REFERENCE_EXPRESSION);
+
+        if (at(DOT)) {
+            advance(); // DOT
+            assert _at(MUL);
+            advance(); // MUL
             handleUselessRename();
         }
-        else if (at(AS_KEYWORD)) {
+        if (at(AS_KEYWORD)) {
             advance(); // AS_KEYWORD
             expect(IDENTIFIER, "Expecting identifier", TokenSet.create(SEMICOLON));
         }

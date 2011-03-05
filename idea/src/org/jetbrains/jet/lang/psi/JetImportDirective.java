@@ -4,6 +4,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lexer.JetTokens;
 
 /**
@@ -19,23 +20,13 @@ public class JetImportDirective extends JetElement {
         visitor.visitImportDirective(this);
     }
 
-    @NotNull
-    public String getImportedName() {
-        StringBuilder answer = new StringBuilder();
-        ASTNode childNode = getNode().getFirstChildNode();
-        while (childNode != null) {
-            IElementType tt = childNode.getElementType();
-            if (tt == JetTokens.MAP || tt == JetTokens.AS_KEYWORD) break;
-            if (tt == JetTokens.IDENTIFIER || tt == JetTokens.DOT) {
-                answer.append(childNode.getText());
-            }
-            childNode = childNode.getTreeNext();
-        }
-        return answer.toString();
+    @Nullable @IfNotParsed
+    public JetReferenceExpression getImportedName() {
+        return (JetReferenceExpression) findChildByType(JetNodeTypes.REFERENCE_EXPRESSION);
     }
 
     @Nullable
-    private ASTNode getAliasNameNode() {
+    public ASTNode getAliasNameNode() {
         boolean asPassed = false;
         ASTNode childNode = getNode().getFirstChildNode();
         while (childNode != null) {
@@ -60,6 +51,6 @@ public class JetImportDirective extends JetElement {
     }
 
     public boolean isAllUnder() {
-        return getNode().findChildByType(JetTokens.MAP) != null;
+        return getNode().findChildByType(JetTokens.MUL) != null;
     }
 }

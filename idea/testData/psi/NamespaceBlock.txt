@@ -12,7 +12,8 @@ JetFile: NamespaceBlock.jet
     IMPORT_DIRECTIVE
       PsiElement(import)('import')
       PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('foo')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('foo')
       PsiWhiteSpace(' ')
       PsiElement(as)('as')
       PsiWhiteSpace(' ')
@@ -30,10 +31,13 @@ JetFile: NamespaceBlock.jet
         IMPORT_DIRECTIVE
           PsiElement(import)('import')
           PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('foo')
+          REFERENCE_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('foo')
+            PsiElement(DOT)('.')
+            PsiElement(IDENTIFIER)('bar')
           PsiElement(DOT)('.')
-          PsiElement(IDENTIFIER)('bar')
-          PsiElement(MAP)('.*')
+          PsiElement(MUL)('*')
           PsiElement(SEMICOLON)(';')
         PsiWhiteSpace('\n\n    ')
         CLASS
@@ -133,6 +137,7 @@ JetFile: NamespaceBlock.jet
         IMPORT_DIRECTIVE
           PsiElement(import)('import')
           PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('sdf')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('sdf')
       PsiWhiteSpace('\n\n')
       PsiElement(RBRACE)('}')

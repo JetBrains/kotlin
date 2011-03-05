@@ -31,8 +31,10 @@ public class JetReferenceExpression extends JetExpression {
         return findChildByClass(JetReferenceExpression.class);
     }
 
+    @Nullable @IfNotParsed
     public String getReferencedName() {
-        return getNode().findChildByType(REFERENCE_TOKENS).getText();
+        ASTNode node = getNode().findChildByType(REFERENCE_TOKENS);
+        return node == null ? null : node.getText();
     }
 
     @Override
@@ -47,6 +49,7 @@ public class JetReferenceExpression extends JetExpression {
 
     @Override
     public PsiReference getReference() {
+        if (getReferencedName() == null) return null;
         return new PsiReference() {
             @Override
             public PsiElement getElement() {

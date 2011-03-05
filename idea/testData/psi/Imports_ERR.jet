@@ -1,5 +1,9 @@
 namespace foo.bar.goo
 
+import namespace ;
+import namespace.*
+import namespace. ;
+
 import foo as
 import foo.
 import foo.bar.

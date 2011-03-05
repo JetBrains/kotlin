@@ -1,5 +1,6 @@
 namespace foo.bar.goo
 
+import namespace.foo
 import foo
 import foo.bar
 import foo as bar

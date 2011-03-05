@@ -12,7 +12,8 @@ JetFile: NamespaceBlock_ERR.jet
     IMPORT_DIRECTIVE
       PsiElement(import)('import')
       PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('foo')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('foo')
       PsiWhiteSpace(' ')
       PsiElement(as)('as')
       PsiWhiteSpace('\n')
@@ -26,12 +27,15 @@ JetFile: NamespaceBlock_ERR.jet
     IMPORT_DIRECTIVE
       PsiElement(import)('import')
       PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('foo')
-      PsiElement(DOT)('.')
-      PsiElement(IDENTIFIER)('bar')
-      PsiElement(DOT)('.')
-      PsiWhiteSpace('\n')
-      PsiElement(IDENTIFIER)('import')
+      REFERENCE_EXPRESSION
+        REFERENCE_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('foo')
+          PsiElement(DOT)('.')
+          PsiElement(IDENTIFIER)('bar')
+        PsiElement(DOT)('.')
+        PsiWhiteSpace('\n')
+        PsiElement(IDENTIFIER)('import')
     PsiWhiteSpace(' ')
     PsiErrorElement:Expecting namespace or top level declaration
       PsiElement(IDENTIFIER)('foo')
@@ -56,10 +60,13 @@ JetFile: NamespaceBlock_ERR.jet
         IMPORT_DIRECTIVE
           PsiElement(import)('import')
           PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('foo')
+          REFERENCE_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('foo')
+            PsiElement(DOT)('.')
+            PsiElement(IDENTIFIER)('bar')
           PsiElement(DOT)('.')
-          PsiElement(IDENTIFIER)('bar')
-          PsiElement(MAP)('.*')
+          PsiElement(MUL)('*')
           PsiWhiteSpace(' ')
           PsiErrorElement:Cannot rename a all imported items to one identifier
             PsiElement(as)('as')
@@ -69,10 +76,13 @@ JetFile: NamespaceBlock_ERR.jet
         IMPORT_DIRECTIVE
           PsiElement(import)('import')
           PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('foo')
+          REFERENCE_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('foo')
+            PsiElement(DOT)('.')
+            PsiElement(IDENTIFIER)('bar')
           PsiElement(DOT)('.')
-          PsiElement(IDENTIFIER)('bar')
-          PsiElement(MAP)('.*')
+          PsiElement(MUL)('*')
           PsiWhiteSpace(' ')
           PsiErrorElement:Cannot rename a all imported items to one identifier
             PsiElement(as)('as')
@@ -91,32 +101,39 @@ JetFile: NamespaceBlock_ERR.jet
         IMPORT_DIRECTIVE
           PsiElement(import)('import')
           PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('foo')
-          PsiElement(DOT)('.')
-          PsiErrorElement:Qualified name must be a '.'-separated identifier list
-            <empty list>
+          REFERENCE_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('foo')
+            PsiElement(DOT)('.')
+            PsiErrorElement:Qualified name must be a '.'-separated identifier list
+              <empty list>
           PsiWhiteSpace(' ')
           PsiElement(SEMICOLON)(';')
         PsiWhiteSpace('\n    ')
         IMPORT_DIRECTIVE
           PsiElement(import)('import')
           PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('foo')
-          PsiElement(DOT)('.')
-          PsiElement(IDENTIFIER)('bar')
-          PsiElement(DOT)('.')
-          PsiErrorElement:Qualified name must be a '.'-separated identifier list
-            <empty list>
+          REFERENCE_EXPRESSION
+            REFERENCE_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('foo')
+              PsiElement(DOT)('.')
+              PsiElement(IDENTIFIER)('bar')
+            PsiElement(DOT)('.')
+            PsiErrorElement:Qualified name must be a '.'-separated identifier list
+              <empty list>
           PsiWhiteSpace(' ')
           PsiElement(SEMICOLON)(';')
         PsiWhiteSpace('\n    ')
         IMPORT_DIRECTIVE
           PsiElement(import)('import')
           PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('foo')
-          PsiElement(DOT)('.')
-          PsiErrorElement:Qualified name must be a '.'-separated identifier list
-            <empty list>
+          REFERENCE_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('foo')
+            PsiElement(DOT)('.')
+            PsiErrorElement:Qualified name must be a '.'-separated identifier list
+              <empty list>
           PsiWhiteSpace(' ')
           PsiElement(as)('as')
           PsiWhiteSpace(' ')
@@ -127,10 +144,13 @@ JetFile: NamespaceBlock_ERR.jet
         IMPORT_DIRECTIVE
           PsiElement(import)('import')
           PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('foo')
+          REFERENCE_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('foo')
+            PsiElement(DOT)('.')
+            PsiElement(IDENTIFIER)('bar')
           PsiElement(DOT)('.')
-          PsiElement(IDENTIFIER)('bar')
-          PsiElement(MAP)('.*')
+          PsiElement(MUL)('*')
           PsiWhiteSpace(' ')
           PsiErrorElement:Cannot rename a all imported items to one identifier
             PsiElement(as)('as')
@@ -142,10 +162,13 @@ JetFile: NamespaceBlock_ERR.jet
         IMPORT_DIRECTIVE
           PsiElement(import)('import')
           PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('foo')
+          REFERENCE_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('foo')
+            PsiElement(DOT)('.')
+            PsiElement(IDENTIFIER)('bar')
           PsiElement(DOT)('.')
-          PsiElement(IDENTIFIER)('bar')
-          PsiElement(MAP)('.*')
+          PsiElement(MUL)('*')
           PsiWhiteSpace(' ')
           PsiErrorElement:Cannot rename a all imported items to one identifier
             PsiElement(as)('as')
@@ -266,6 +289,7 @@ JetFile: NamespaceBlock_ERR.jet
         IMPORT_DIRECTIVE
           PsiElement(import)('import')
           PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('sdf')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('sdf')
       PsiWhiteSpace('\n\n')
       PsiElement(RBRACE)('}')

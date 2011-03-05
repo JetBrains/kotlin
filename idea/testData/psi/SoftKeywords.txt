@@ -12,7 +12,8 @@ JetFile: SoftKeywords.jet
     IMPORT_DIRECTIVE
       PsiElement(import)('import')
       PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('foo')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('foo')
     PsiWhiteSpace('\n\n')
     CLASS
       MODIFIER_LIST

@@ -88,8 +88,8 @@ public interface JetTokens {
     JetToken OROR        = new JetToken("OROR");
     JetToken SAFE_ACCESS = new JetToken("SAFE_ACCESS");
     JetToken ELVIS       = new JetToken("ELVIS");
-    JetToken MAP         = new JetToken("MAP");
-    JetToken FILTER      = new JetToken("FILTER");
+//    JetToken MAP         = new JetToken("MAP");
+//    JetToken FILTER      = new JetToken("FILTER");
     JetToken QUEST       = new JetToken("QUEST");
     JetToken COLON       = new JetToken("COLON");
     JetToken SEMICOLON   = new JetToken("SEMICOLON");
@@ -160,6 +160,8 @@ public interface JetTokens {
 
     TokenSet OPERATIONS = TokenSet.create(AS_KEYWORD, IS_KEYWORD, IN_KEYWORD, DOT, PLUSPLUS, MINUSMINUS, MUL, PLUS,
             MINUS, EXCL, DIV, PERC, LT, GT, LTEQ, GTEQ, EQEQEQ, ARROW, EXCLEQEQEQ, EQEQ, EXCLEQ, ANDAND, OROR,
-            SAFE_ACCESS, ELVIS, MAP, FILTER, QUEST, COLON, SEMICOLON, RANGE, EQ, MULTEQ, DIVEQ, PERCEQ, PLUSEQ, MINUSEQ,
+            SAFE_ACCESS, ELVIS,
+//            MAP, FILTER,
+            QUEST, COLON, SEMICOLON, RANGE, EQ, MULTEQ, DIVEQ, PERCEQ, PLUSEQ, MINUSEQ,
             NOT_IN, NOT_IS, HASH, IDENTIFIER, LABEL_IDENTIFIER, ATAT, AT);
 }

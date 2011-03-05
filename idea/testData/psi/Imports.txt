@@ -12,19 +12,31 @@ JetFile: Imports.jet
     IMPORT_DIRECTIVE
       PsiElement(import)('import')
       PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('foo')
+      REFERENCE_EXPRESSION
+        PsiElement(namespace)('namespace')
+        PsiElement(DOT)('.')
+        PsiElement(IDENTIFIER)('foo')
     PsiWhiteSpace('\n')
     IMPORT_DIRECTIVE
       PsiElement(import)('import')
       PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('foo')
-      PsiElement(DOT)('.')
-      PsiElement(IDENTIFIER)('bar')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('foo')
     PsiWhiteSpace('\n')
     IMPORT_DIRECTIVE
       PsiElement(import)('import')
       PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('foo')
+      REFERENCE_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('foo')
+        PsiElement(DOT)('.')
+        PsiElement(IDENTIFIER)('bar')
+    PsiWhiteSpace('\n')
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('foo')
       PsiWhiteSpace(' ')
       PsiElement(as)('as')
       PsiWhiteSpace(' ')
@@ -33,9 +45,11 @@ JetFile: Imports.jet
     IMPORT_DIRECTIVE
       PsiElement(import)('import')
       PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('foo')
-      PsiElement(DOT)('.')
-      PsiElement(IDENTIFIER)('bar')
+      REFERENCE_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('foo')
+        PsiElement(DOT)('.')
+        PsiElement(IDENTIFIER)('bar')
       PsiWhiteSpace(' ')
       PsiElement(as)('as')
       PsiWhiteSpace(' ')
@@ -44,13 +58,16 @@ JetFile: Imports.jet
     IMPORT_DIRECTIVE
       PsiElement(import)('import')
       PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('foo')
-      PsiElement(MAP)('.*')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('foo')
+      PsiElement(DOT)('.')
+      PsiElement(MUL)('*')
     PsiWhiteSpace('\n')
     IMPORT_DIRECTIVE
       PsiElement(import)('import')
       PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('foo')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('foo')
       PsiElement(DOT)('.')
       PsiWhiteSpace(' ')
       PsiElement(MUL)('*')

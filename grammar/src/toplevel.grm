@@ -15,7 +15,7 @@ namespaceHeader
   ;
 
 import
-  : "import" SimpleName{"."} ("." "*" | "as" SimpleName)?
+  : "import" ("namespace" ".")? SimpleName{"."} ("." "*" | "as" SimpleName)? SEMI?
   ;
 
 toplevelObject
