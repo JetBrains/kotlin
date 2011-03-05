@@ -2,7 +2,7 @@ package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.ErrorHandler;
+import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.*;
 
@@ -17,11 +17,11 @@ import java.util.Set;
 public class TypeResolver {
 
     private final BindingTrace trace;
-    private final ErrorHandler errorHandler;
+    private final JetSemanticServices semanticServices;
 
-    public TypeResolver(BindingTrace trace, ErrorHandler errorHandler) {
+    public TypeResolver(BindingTrace trace, JetSemanticServices semanticServices) {
         this.trace = trace;
-        this.errorHandler = errorHandler;
+        this.semanticServices = semanticServices;
     }
 
     @NotNull
@@ -65,11 +65,11 @@ public class TypeResolver {
                                 JetStandardClasses.STUB
                         );
                     } else {
-                        errorHandler.unresolvedReference(type.getReferenceExpression());
+                        semanticServices.getErrorHandler().unresolvedReference(type.getReferenceExpression());
                     }
                 }
                 else {
-                    errorHandler.unresolvedReference(type.getReferenceExpression());
+                    semanticServices.getErrorHandler().unresolvedReference(type.getReferenceExpression());
                 }
             }
 
@@ -163,54 +163,44 @@ public class TypeResolver {
 
     @Nullable
     public ClassDescriptor resolveClass(JetScope scope, JetUserType userType) {
-        return resolveClass(scope, userType.getReferenceExpression());
-    }
-
-    @Nullable
-    private ClassDescriptor resolveClass(JetScope scope, JetReferenceExpression expression) {
-        if (expression.isAbsoluteInRootNamespace()) {
-            return resolveClass(JetModuleUtil.getRootNamespaceScope(expression), expression);
+        JetReferenceExpression expression = userType.getReferenceExpression();
+        if (userType.isAbsoluteInRootNamespace()) {
+            return JetModuleUtil.getRootNamespaceScope(userType).getClass(expression.getReferencedName());
         }
-
-        JetReferenceExpression qualifier = expression.getQualifier();
+        JetUserType qualifier = userType.getQualifier();
         if (qualifier != null) {
-            // TODO: this is slow. The faster way would be to start with the first item in the qualified name
-            // TODO: priorities: class of namespace first?
-            throw new UnsupportedOperationException();
-//            MemberDomain domain = resolveClass(scope, qualifier);
-//            if (domain == null) {
-//                domain = resolveNamespace(scope, qualifier);
-//            }
-//
-//            if (domain != null) {
-//                return domain.getClass(expression.getReferencedName());
-//            }
-//            return null;
+            scope = resolveClassLookupScope(scope, qualifier);
         }
-
-        assert qualifier == null;
-
         return scope.getClass(expression.getReferencedName());
     }
 
-    @Nullable
-    private NamespaceDescriptor resolveNamespace(JetScope scope, JetReferenceExpression expression) {
-        if (expression.isAbsoluteInRootNamespace()) {
-            return resolveNamespace(JetModuleUtil.getRootNamespaceScope(expression), expression);
+    private JetScope resolveClassLookupScope(JetScope scope, JetUserType userType) {
+        ClassDescriptor classDescriptor = resolveClass(scope, userType);
+        if (classDescriptor != null) {
+            return classDescriptor.getMemberScope(resolveTypeProjections(scope, classDescriptor.getTypeConstructor(), userType.getTypeArguments()));
         }
 
-        JetReferenceExpression qualifier = expression.getQualifier();
+        return resolveNamespace(scope, userType).getMemberScope();
+    }
+
+    @Nullable
+    private NamespaceDescriptor resolveNamespace(JetScope scope, JetUserType userType) {
+        if (userType.isAbsoluteInRootNamespace()) {
+            return resolveNamespace(JetModuleUtil.getRootNamespaceScope(userType), userType);
+        }
+
+        JetUserType qualifier = userType.getQualifier();
         if (qualifier != null) {
             NamespaceDescriptor domain = resolveNamespace(scope, qualifier);
             if (domain == null) {
                 return null;
             }
-            return domain.getMemberScope().getNamespace(expression.getReferencedName());
+            return domain.getMemberScope().getNamespace(userType.getReferencedName());
         }
 
-        assert qualifier == null;
-
-        return scope.getNamespace(expression.getReferencedName());
+        NamespaceDescriptor namespace = scope.getNamespace(userType.getReferencedName());
+        trace.recordReferenceResolution(userType.getReferenceExpression(), namespace);
+        return namespace;
     }
 
 }

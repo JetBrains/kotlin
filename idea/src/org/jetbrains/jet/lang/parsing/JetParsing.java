@@ -154,23 +154,27 @@ public class JetParsing extends AbstractJetParsing {
         PsiBuilder.Marker importDirective = mark();
         advance(); // IMPORT_KEYWORD
 
-
-        PsiBuilder.Marker reference = mark();
-
+        PsiBuilder.Marker qualifiedName = mark();
         if (at(NAMESPACE_KEYWORD)) {
             advance(); // NAMESPACE_KEYWORD
             expect(DOT, "Expecting '.'", TokenSet.create(IDENTIFIER, MUL, SEMICOLON));
         }
 
+        PsiBuilder.Marker reference = mark();
         expect(IDENTIFIER, "Expecting qualified name", TokenSet.create(DOT, AS_KEYWORD));
-        while (at(DOT) && lookahead(1) != MUL) {
-            PsiBuilder.Marker precede = reference.precede();
-            reference.done(REFERENCE_EXPRESSION);
-            reference = precede;
-            advance(); // DOT
-            expect(IDENTIFIER,  "Qualified name must be a '.'-separated identifier list", TokenSet.create(AS_KEYWORD, DOT, SEMICOLON));
-        }
         reference.done(REFERENCE_EXPRESSION);
+        while (at(DOT) && lookahead(1) != MUL) {
+            advance(); // DOT
+
+            reference = mark();
+            expect(IDENTIFIER, "Qualified name must be a '.'-separated identifier list", TokenSet.create(AS_KEYWORD, DOT, SEMICOLON));
+            reference.done(REFERENCE_EXPRESSION);
+
+            PsiBuilder.Marker precede = qualifiedName.precede();
+            qualifiedName.done(DOT_QIALIFIED_EXPRESSION);
+            qualifiedName = precede;
+        }
+        qualifiedName.drop();
 
         if (at(DOT)) {
             advance(); // DOT
@@ -1234,40 +1238,31 @@ public class JetParsing extends AbstractJetParsing {
      */
     private void parseUserType() {
         PsiBuilder.Marker userType = mark();
-        parseUserTypeOrQualifiedName();
-        userType.done(USER_TYPE);
-    }
-
-    public void parseUserTypeOrQualifiedName() {
-        PsiBuilder.Marker type = mark();
-        boolean typeClosed = false;
 
         if (at(NAMESPACE_KEYWORD)) {
             advance(); // NAMESPACE_KEYWORD
             expect(DOT, "Expecting '.'", TokenSet.create(IDENTIFIER));
         }
 
+        PsiBuilder.Marker reference = mark();
         while (true) {
             expect(IDENTIFIER, "Type name expected", TokenSet.create(LT));
-            PsiBuilder.Marker argsMarker = parseTypeArgumentList();
+            reference.done(REFERENCE_EXPRESSION);
 
+            parseTypeArgumentList();
             if (!at(DOT)) {
-                // For recovery reasons, we allow to write Foo<A>.Bar<F, B>.X, but we need to place
-                // the last argument list next to the reference, not a its child
-                if (argsMarker != null) {
-                    type.doneBefore(REFERENCE_EXPRESSION, argsMarker);
-                    typeClosed = true;
-                }
                 break;
             }
-            type.done(REFERENCE_EXPRESSION);
-            type = type.precede();
+
+            PsiBuilder.Marker precede = userType.precede();
+            userType.done(USER_TYPE);
+            userType = precede;
+
             advance(); // DOT
+            reference = mark();
         }
 
-        if (!typeClosed) {
-            type.done(REFERENCE_EXPRESSION);
-        }
+        userType.done(USER_TYPE);
     }
 
     /*

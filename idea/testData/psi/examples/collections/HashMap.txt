@@ -53,13 +53,15 @@ JetFile: HashMap.jet
                   PsiWhiteSpace(' ')
                   TYPE_REFERENCE
                     USER_TYPE
-                      REFERENCE_EXPRESSION
-                        REFERENCE_EXPRESSION
+                      USER_TYPE
+                        USER_TYPE
                           REFERENCE_EXPRESSION
                             PsiElement(IDENTIFIER)('java')
-                          PsiElement(DOT)('.')
-                          PsiElement(IDENTIFIER)('lang')
                         PsiElement(DOT)('.')
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('lang')
+                      PsiElement(DOT)('.')
+                      REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('Object')
                 PsiElement(RPAR)(')')
               PsiElement(DOT)('.')
@@ -76,13 +78,15 @@ JetFile: HashMap.jet
                   PsiWhiteSpace(' ')
                   TYPE_REFERENCE
                     USER_TYPE
-                      REFERENCE_EXPRESSION
-                        REFERENCE_EXPRESSION
+                      USER_TYPE
+                        USER_TYPE
                           REFERENCE_EXPRESSION
                             PsiElement(IDENTIFIER)('java')
-                          PsiElement(DOT)('.')
-                          PsiElement(IDENTIFIER)('lang')
                         PsiElement(DOT)('.')
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('lang')
+                      PsiElement(DOT)('.')
+                      REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('Object')
               PsiElement(RPAR)(')')
         PsiWhiteSpace('\n')
@@ -141,13 +145,15 @@ JetFile: HashMap.jet
                     PsiWhiteSpace(' ')
                     TYPE_REFERENCE
                       USER_TYPE
-                        REFERENCE_EXPRESSION
-                          REFERENCE_EXPRESSION
+                        USER_TYPE
+                          USER_TYPE
                             REFERENCE_EXPRESSION
                               PsiElement(IDENTIFIER)('java')
-                            PsiElement(DOT)('.')
-                            PsiElement(IDENTIFIER)('lang')
                           PsiElement(DOT)('.')
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('lang')
+                        PsiElement(DOT)('.')
+                        REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('Object')
                   PsiElement(RPAR)(')')
                 PsiElement(DOT)('.')

@@ -24,7 +24,7 @@ public class JetTypeInferrer {
     public JetTypeInferrer(BindingTrace trace, JetSemanticServices semanticServices) {
         this.trace = trace;
         this.semanticServices = semanticServices;
-        this.typeResolver = new TypeResolver(trace, semanticServices.getErrorHandler());
+        this.typeResolver = new TypeResolver(trace, semanticServices);
         this.classDescriptorResolver = new ClassDescriptorResolver(semanticServices, trace);
     }
 
@@ -444,6 +444,12 @@ public class JetTypeInferrer {
                 if (statement instanceof JetProperty) {
                     JetProperty property = (JetProperty) statement;
                     scope.addPropertyDescriptor(classDescriptorResolver.resolvePropertyDescriptor(scope, property));
+                }
+                else if (statement instanceof JetExpression) {
+                    getType(scope, (JetExpression) statement, true);
+                }
+                else {
+                    throw new UnsupportedOperationException(); // TODO
                 }
             }
             JetElement lastElement = block.get(block.size() - 1);

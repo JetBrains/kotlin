@@ -585,10 +585,11 @@ JetFile: FunctionTypes.jet
           PsiElement(LBRACE)('{')
           TYPE_REFERENCE
             USER_TYPE
-              REFERENCE_EXPRESSION
+              USER_TYPE
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('T')
-                PsiElement(DOT)('.')
+              PsiElement(DOT)('.')
+              REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('T')
           PsiElement(DOT)('.')
           VALUE_PARAMETER_LIST
@@ -617,25 +618,26 @@ JetFile: FunctionTypes.jet
           PsiElement(LBRACE)('{')
           TYPE_REFERENCE
             USER_TYPE
-              REFERENCE_EXPRESSION
+              USER_TYPE
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('T')
-                  TYPE_ARGUMENT_LIST
-                    PsiElement(LT)('<')
-                    TYPE_PROJECTION
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('A')
-                    PsiElement(COMMA)(',')
-                    PsiWhiteSpace(' ')
-                    TYPE_PROJECTION
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('B')
-                    PsiElement(GT)('>')
-                PsiElement(DOT)('.')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_PROJECTION
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('A')
+                  PsiElement(COMMA)(',')
+                  PsiWhiteSpace(' ')
+                  TYPE_PROJECTION
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('B')
+                  PsiElement(GT)('>')
+              PsiElement(DOT)('.')
+              REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('T')
               TYPE_ARGUMENT_LIST
                 PsiElement(LT)('<')
@@ -767,10 +769,11 @@ JetFile: FunctionTypes.jet
               PsiElement(LBRACE)('{')
               TYPE_REFERENCE
                 USER_TYPE
-                  REFERENCE_EXPRESSION
+                  USER_TYPE
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('T')
-                    PsiElement(DOT)('.')
+                  PsiElement(DOT)('.')
+                  REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('T')
               PsiElement(DOT)('.')
               VALUE_PARAMETER_LIST
@@ -814,25 +817,26 @@ JetFile: FunctionTypes.jet
               PsiElement(LBRACE)('{')
               TYPE_REFERENCE
                 USER_TYPE
-                  REFERENCE_EXPRESSION
+                  USER_TYPE
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('T')
-                      TYPE_ARGUMENT_LIST
-                        PsiElement(LT)('<')
-                        TYPE_PROJECTION
-                          TYPE_REFERENCE
-                            USER_TYPE
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('A')
-                        PsiElement(COMMA)(',')
-                        PsiWhiteSpace(' ')
-                        TYPE_PROJECTION
-                          TYPE_REFERENCE
-                            USER_TYPE
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('B')
-                        PsiElement(GT)('>')
-                    PsiElement(DOT)('.')
+                    TYPE_ARGUMENT_LIST
+                      PsiElement(LT)('<')
+                      TYPE_PROJECTION
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('A')
+                      PsiElement(COMMA)(',')
+                      PsiWhiteSpace(' ')
+                      TYPE_PROJECTION
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('B')
+                      PsiElement(GT)('>')
+                  PsiElement(DOT)('.')
+                  REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('T')
                   TYPE_ARGUMENT_LIST
                     PsiElement(LT)('<')
@@ -976,10 +980,11 @@ JetFile: FunctionTypes.jet
           PsiElement(LBRACE)('{')
           TYPE_REFERENCE
             USER_TYPE
-              REFERENCE_EXPRESSION
+              USER_TYPE
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('T')
-                PsiElement(DOT)('.')
+              PsiElement(DOT)('.')
+              REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('T')
           PsiElement(DOT)('.')
           VALUE_PARAMETER_LIST
@@ -1017,25 +1022,26 @@ JetFile: FunctionTypes.jet
           PsiElement(LBRACE)('{')
           TYPE_REFERENCE
             USER_TYPE
-              REFERENCE_EXPRESSION
+              USER_TYPE
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('T')
-                  TYPE_ARGUMENT_LIST
-                    PsiElement(LT)('<')
-                    TYPE_PROJECTION
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('A')
-                    PsiElement(COMMA)(',')
-                    PsiWhiteSpace(' ')
-                    TYPE_PROJECTION
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('B')
-                    PsiElement(GT)('>')
-                PsiElement(DOT)('.')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_PROJECTION
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('A')
+                  PsiElement(COMMA)(',')
+                  PsiWhiteSpace(' ')
+                  TYPE_PROJECTION
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('B')
+                  PsiElement(GT)('>')
+              PsiElement(DOT)('.')
+              REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('T')
               TYPE_ARGUMENT_LIST
                 PsiElement(LT)('<')
@@ -1221,10 +1227,11 @@ JetFile: FunctionTypes.jet
               PsiElement(LBRACE)('{')
               TYPE_REFERENCE
                 USER_TYPE
-                  REFERENCE_EXPRESSION
+                  USER_TYPE
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('T')
-                    PsiElement(DOT)('.')
+                  PsiElement(DOT)('.')
+                  REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('T')
               PsiElement(DOT)('.')
               VALUE_PARAMETER_LIST
@@ -1286,25 +1293,26 @@ JetFile: FunctionTypes.jet
               PsiElement(LBRACE)('{')
               TYPE_REFERENCE
                 USER_TYPE
-                  REFERENCE_EXPRESSION
+                  USER_TYPE
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('T')
-                      TYPE_ARGUMENT_LIST
-                        PsiElement(LT)('<')
-                        TYPE_PROJECTION
-                          TYPE_REFERENCE
-                            USER_TYPE
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('A')
-                        PsiElement(COMMA)(',')
-                        PsiWhiteSpace(' ')
-                        TYPE_PROJECTION
-                          TYPE_REFERENCE
-                            USER_TYPE
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('B')
-                        PsiElement(GT)('>')
-                    PsiElement(DOT)('.')
+                    TYPE_ARGUMENT_LIST
+                      PsiElement(LT)('<')
+                      TYPE_PROJECTION
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('A')
+                      PsiElement(COMMA)(',')
+                      PsiWhiteSpace(' ')
+                      TYPE_PROJECTION
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('B')
+                      PsiElement(GT)('>')
+                  PsiElement(DOT)('.')
+                  REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('T')
                   TYPE_ARGUMENT_LIST
                     PsiElement(LT)('<')

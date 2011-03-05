@@ -12,30 +12,30 @@ JetFile: Imports_ERR.jet
     IMPORT_DIRECTIVE
       PsiElement(import)('import')
       PsiWhiteSpace(' ')
+      PsiElement(namespace)('namespace')
+      PsiErrorElement:Expecting '.'
+        <empty list>
+      PsiWhiteSpace(' ')
       REFERENCE_EXPRESSION
-        PsiElement(namespace)('namespace')
-        PsiErrorElement:Expecting '.'
-          <empty list>
-        PsiWhiteSpace(' ')
         PsiErrorElement:Expecting qualified name
           PsiElement(SEMICOLON)(';')
     PsiWhiteSpace('\n')
     IMPORT_DIRECTIVE
       PsiElement(import)('import')
       PsiWhiteSpace(' ')
+      PsiElement(namespace)('namespace')
+      PsiElement(DOT)('.')
       REFERENCE_EXPRESSION
-        PsiElement(namespace)('namespace')
-        PsiElement(DOT)('.')
         PsiErrorElement:Expecting qualified name
           PsiElement(MUL)('*')
     PsiWhiteSpace('\n')
     IMPORT_DIRECTIVE
       PsiElement(import)('import')
       PsiWhiteSpace(' ')
+      PsiElement(namespace)('namespace')
+      PsiElement(DOT)('.')
+      PsiWhiteSpace(' ')
       REFERENCE_EXPRESSION
-        PsiElement(namespace)('namespace')
-        PsiElement(DOT)('.')
-        PsiWhiteSpace(' ')
         PsiErrorElement:Expecting qualified name
           PsiElement(SEMICOLON)(';')
     PsiWhiteSpace('\n\n')
@@ -57,15 +57,17 @@ JetFile: Imports_ERR.jet
     IMPORT_DIRECTIVE
       PsiElement(import)('import')
       PsiWhiteSpace(' ')
-      REFERENCE_EXPRESSION
-        REFERENCE_EXPRESSION
+      DOT_QIALIFIED_EXPRESSION
+        DOT_QIALIFIED_EXPRESSION
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('foo')
           PsiElement(DOT)('.')
-          PsiElement(IDENTIFIER)('bar')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('bar')
         PsiElement(DOT)('.')
         PsiWhiteSpace('\n')
-        PsiElement(IDENTIFIER)('import')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('import')
     PsiWhiteSpace(' ')
     PsiErrorElement:Expecting namespace or top level declaration
       PsiElement(IDENTIFIER)('foo')
@@ -81,11 +83,12 @@ JetFile: Imports_ERR.jet
     IMPORT_DIRECTIVE
       PsiElement(import)('import')
       PsiWhiteSpace(' ')
-      REFERENCE_EXPRESSION
+      DOT_QIALIFIED_EXPRESSION
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('foo')
         PsiElement(DOT)('.')
-        PsiElement(IDENTIFIER)('bar')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar')
       PsiElement(DOT)('.')
       PsiElement(MUL)('*')
       PsiWhiteSpace(' ')
@@ -97,11 +100,12 @@ JetFile: Imports_ERR.jet
     IMPORT_DIRECTIVE
       PsiElement(import)('import')
       PsiWhiteSpace(' ')
-      REFERENCE_EXPRESSION
+      DOT_QIALIFIED_EXPRESSION
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('foo')
         PsiElement(DOT)('.')
-        PsiElement(IDENTIFIER)('bar')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar')
       PsiElement(DOT)('.')
       PsiElement(MUL)('*')
       PsiWhiteSpace(' ')
@@ -122,40 +126,44 @@ JetFile: Imports_ERR.jet
     IMPORT_DIRECTIVE
       PsiElement(import)('import')
       PsiWhiteSpace(' ')
-      REFERENCE_EXPRESSION
+      DOT_QIALIFIED_EXPRESSION
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('foo')
         PsiElement(DOT)('.')
-        PsiErrorElement:Qualified name must be a '.'-separated identifier list
-          <empty list>
-      PsiWhiteSpace(' ')
+        PsiWhiteSpace(' ')
+        REFERENCE_EXPRESSION
+          PsiErrorElement:Qualified name must be a '.'-separated identifier list
+            <empty list>
       PsiElement(SEMICOLON)(';')
     PsiWhiteSpace('\n')
     IMPORT_DIRECTIVE
       PsiElement(import)('import')
       PsiWhiteSpace(' ')
-      REFERENCE_EXPRESSION
-        REFERENCE_EXPRESSION
+      DOT_QIALIFIED_EXPRESSION
+        DOT_QIALIFIED_EXPRESSION
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('foo')
           PsiElement(DOT)('.')
-          PsiElement(IDENTIFIER)('bar')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('bar')
         PsiElement(DOT)('.')
-        PsiErrorElement:Qualified name must be a '.'-separated identifier list
-          <empty list>
-      PsiWhiteSpace(' ')
+        PsiWhiteSpace(' ')
+        REFERENCE_EXPRESSION
+          PsiErrorElement:Qualified name must be a '.'-separated identifier list
+            <empty list>
       PsiElement(SEMICOLON)(';')
     PsiWhiteSpace('\n')
     IMPORT_DIRECTIVE
       PsiElement(import)('import')
       PsiWhiteSpace(' ')
-      REFERENCE_EXPRESSION
+      DOT_QIALIFIED_EXPRESSION
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('foo')
         PsiElement(DOT)('.')
-        PsiErrorElement:Qualified name must be a '.'-separated identifier list
-          <empty list>
-      PsiWhiteSpace(' ')
+        PsiWhiteSpace(' ')
+        REFERENCE_EXPRESSION
+          PsiErrorElement:Qualified name must be a '.'-separated identifier list
+            <empty list>
       PsiElement(as)('as')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('bar')
@@ -165,11 +173,12 @@ JetFile: Imports_ERR.jet
     IMPORT_DIRECTIVE
       PsiElement(import)('import')
       PsiWhiteSpace(' ')
-      REFERENCE_EXPRESSION
+      DOT_QIALIFIED_EXPRESSION
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('foo')
         PsiElement(DOT)('.')
-        PsiElement(IDENTIFIER)('bar')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar')
       PsiElement(DOT)('.')
       PsiElement(MUL)('*')
       PsiWhiteSpace(' ')
@@ -183,11 +192,12 @@ JetFile: Imports_ERR.jet
     IMPORT_DIRECTIVE
       PsiElement(import)('import')
       PsiWhiteSpace(' ')
-      REFERENCE_EXPRESSION
+      DOT_QIALIFIED_EXPRESSION
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('foo')
         PsiElement(DOT)('.')
-        PsiElement(IDENTIFIER)('bar')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar')
       PsiElement(DOT)('.')
       PsiElement(MUL)('*')
       PsiWhiteSpace(' ')

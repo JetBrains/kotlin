@@ -59,15 +59,18 @@ public class TopDownAnalyzer {
                     ScopeWithImports scopeWithImports = new ScopeWithImports(declaringScope);
 
                     for (JetImportDirective importDirective : importDirectives) {
-//                        if (importDirective.isAllUnder()) {
-//                            // TODO: this works only for Java,
-//                            //       but should thoroughly resolve qualified names item-by-item
-//                            //       taking previous imports into account
-//                            String importedName = importDirective.getImportedName();
-//                            scopeWithImports.importScope(new JavaPackageScope(importedName, ));
-//                        } else {
-//                            throw new UnsupportedOperationException();
-//                        }
+                        if (importDirective.isAbsoluteInRootNamespace()) {
+                            throw new UnsupportedOperationException();
+                        }
+                        if (importDirective.isAllUnder()) {
+                            JetExpression importedReference = importDirective.getImportedReference();
+                            Type type = semanticServices.getTypeInferrer(trace).getType(scopeWithImports, importedReference, false);
+                            if (type != null) {
+                                scopeWithImports.importScope(type.getMemberScope());
+                            }
+                        } else {
+                            throw new UnsupportedOperationException();
+                        }
                     }
                     WritableScope namespaceScope = new WritableScope(scopeWithImports);
                     collectTypeDeclarators(namespaceScope, namespace.getDeclarations());

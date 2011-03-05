@@ -321,7 +321,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
     public void testBlocks() throws Exception {
         assertType("if (1) {val a = 1; a} else {null}", "Int?");
         assertType("if (1) {() => val a = 1; a} else {() => null}", "Function0<Int?>");
-        assertType("if (1) {() => val a = 1; a; var b : Boolean; b = true; b} else null", "Function0<Boolean>?");
+        assertType("if (1) {() => val a = 1; a; var b : Boolean; b} else null", "Function0<Boolean>?");
         assertType("if (1) {() => val a = 1; a; var b = a; b} else null", "Function0<Int>?");
     }
 
@@ -488,8 +488,8 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         return makeType(classDefinitions.BASIC_SCOPE, typeStr);
     }
 
-    private static Type makeType(JetScope scope, String typeStr) {
-        return new TypeResolver(BindingTrace.DUMMY, ErrorHandler.THROW_EXCEPTION).resolveType(scope, JetChangeUtil.createType(getProject(), typeStr));
+    private Type makeType(JetScope scope, String typeStr) {
+        return new TypeResolver(BindingTrace.DUMMY, semanticServices).resolveType(scope, JetChangeUtil.createType(getProject(), typeStr));
     }
 
     private class ClassDefinitions {

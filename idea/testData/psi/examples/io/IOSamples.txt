@@ -90,13 +90,15 @@ JetFile: IOSamples.jet
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
             USER_TYPE
-              REFERENCE_EXPRESSION
-                REFERENCE_EXPRESSION
+              USER_TYPE
+                USER_TYPE
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('java')
-                  PsiElement(DOT)('.')
-                  PsiElement(IDENTIFIER)('io')
                 PsiElement(DOT)('.')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('io')
+              PsiElement(DOT)('.')
+              REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('Closeable')
         PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')

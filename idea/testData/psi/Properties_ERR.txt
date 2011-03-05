@@ -139,10 +139,11 @@ JetFile: Properties_ERR.jet
           PsiElement(LBRACE)('{')
           TYPE_REFERENCE
             USER_TYPE
-              REFERENCE_EXPRESSION
+              USER_TYPE
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('foo')
-                PsiElement(DOT)('.')
+              PsiElement(DOT)('.')
+              REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('bar')
           PsiElement(DOT)('.')
           VALUE_PARAMETER_LIST
@@ -194,10 +195,11 @@ JetFile: Properties_ERR.jet
           PsiElement(LBRACE)('{')
           TYPE_REFERENCE
             USER_TYPE
-              REFERENCE_EXPRESSION
+              USER_TYPE
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('foo')
-                PsiElement(DOT)('.')
+              PsiElement(DOT)('.')
+              REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('bar')
           PsiElement(DOT)('.')
           VALUE_PARAMETER_LIST

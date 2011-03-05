@@ -22,15 +22,6 @@ public class JetReferenceExpression extends JetExpression {
         super(node);
     }
 
-    public boolean isAbsoluteInRootNamespace() {
-        return findChildByType(JetTokens.NAMESPACE_KEYWORD) != null;
-    }
-
-    @Nullable
-    public JetReferenceExpression getQualifier() {
-        return findChildByClass(JetReferenceExpression.class);
-    }
-
     @Nullable @IfNotParsed
     public String getReferencedName() {
         ASTNode node = getNode().findChildByType(REFERENCE_TOKENS);

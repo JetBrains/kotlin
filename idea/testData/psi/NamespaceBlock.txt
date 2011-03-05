@@ -31,11 +31,12 @@ JetFile: NamespaceBlock.jet
         IMPORT_DIRECTIVE
           PsiElement(import)('import')
           PsiWhiteSpace(' ')
-          REFERENCE_EXPRESSION
+          DOT_QIALIFIED_EXPRESSION
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('foo')
             PsiElement(DOT)('.')
-            PsiElement(IDENTIFIER)('bar')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('bar')
           PsiElement(DOT)('.')
           PsiElement(MUL)('*')
           PsiElement(SEMICOLON)(';')

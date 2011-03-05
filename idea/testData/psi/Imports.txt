@@ -12,14 +12,8 @@ JetFile: Imports.jet
     IMPORT_DIRECTIVE
       PsiElement(import)('import')
       PsiWhiteSpace(' ')
-      REFERENCE_EXPRESSION
-        PsiElement(namespace)('namespace')
-        PsiElement(DOT)('.')
-        PsiElement(IDENTIFIER)('foo')
-    PsiWhiteSpace('\n')
-    IMPORT_DIRECTIVE
-      PsiElement(import)('import')
-      PsiWhiteSpace(' ')
+      PsiElement(namespace)('namespace')
+      PsiElement(DOT)('.')
       REFERENCE_EXPRESSION
         PsiElement(IDENTIFIER)('foo')
     PsiWhiteSpace('\n')
@@ -27,10 +21,17 @@ JetFile: Imports.jet
       PsiElement(import)('import')
       PsiWhiteSpace(' ')
       REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('foo')
+    PsiWhiteSpace('\n')
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      DOT_QIALIFIED_EXPRESSION
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('foo')
         PsiElement(DOT)('.')
-        PsiElement(IDENTIFIER)('bar')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar')
     PsiWhiteSpace('\n')
     IMPORT_DIRECTIVE
       PsiElement(import)('import')
@@ -45,11 +46,12 @@ JetFile: Imports.jet
     IMPORT_DIRECTIVE
       PsiElement(import)('import')
       PsiWhiteSpace(' ')
-      REFERENCE_EXPRESSION
+      DOT_QIALIFIED_EXPRESSION
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('foo')
         PsiElement(DOT)('.')
-        PsiElement(IDENTIFIER)('bar')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar')
       PsiWhiteSpace(' ')
       PsiElement(as)('as')
       PsiWhiteSpace(' ')

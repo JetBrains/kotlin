@@ -253,10 +253,11 @@ JetFile: When.jet
               TYPE_PATTERN
                 TYPE_REFERENCE
                   USER_TYPE
-                    REFERENCE_EXPRESSION
+                    USER_TYPE
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('A')
-                      PsiElement(DOT)('.')
+                    PsiElement(DOT)('.')
+                    REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('b')
             PsiWhiteSpace(' ')
             PsiElement(DOUBLE_ARROW)('=>')

@@ -4,6 +4,7 @@ import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Collections;
 import java.util.List;
@@ -16,8 +17,12 @@ public class JetUserType extends JetTypeElement {
         super(node);
     }
 
+    public boolean isAbsoluteInRootNamespace() {
+        return findChildByType(JetTokens.NAMESPACE_KEYWORD) != null;
+    }
+
     @Override
-    public void accept(JetVisitor visitor) {
+    public void accept(@NotNull JetVisitor visitor) {
         visitor.visitUserType(this);
     }
 
@@ -31,9 +36,14 @@ public class JetUserType extends JetTypeElement {
         return typeArgumentList == null ? Collections.<JetTypeProjection>emptyList() : typeArgumentList.getArguments();
     }
 
-    @Nullable
+    @Nullable @IfNotParsed
     public JetReferenceExpression getReferenceExpression() {
         return (JetReferenceExpression) findChildByType(JetNodeTypes.REFERENCE_EXPRESSION);
+    }
+
+    @Nullable
+    public JetUserType getQualifier() {
+        return (JetUserType) findChildByType(JetNodeTypes.USER_TYPE);
     }
 
     @Nullable

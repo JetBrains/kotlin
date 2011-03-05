@@ -3,17 +3,20 @@ JetFile: ImportSoftKW.jet
     IMPORT_DIRECTIVE
       PsiElement(import)('import')
       PsiWhiteSpace(' ')
-      REFERENCE_EXPRESSION
-        REFERENCE_EXPRESSION
-          REFERENCE_EXPRESSION
+      DOT_QIALIFIED_EXPRESSION
+        DOT_QIALIFIED_EXPRESSION
+          DOT_QIALIFIED_EXPRESSION
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('import')
             PsiElement(DOT)('.')
-            PsiElement(IDENTIFIER)('import')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('import')
           PsiElement(DOT)('.')
-          PsiElement(IDENTIFIER)('import')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('import')
         PsiElement(DOT)('.')
-        PsiElement(IDENTIFIER)('import')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('import')
       PsiWhiteSpace(' ')
       PsiElement(as)('as')
       PsiWhiteSpace(' ')
