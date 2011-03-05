@@ -5,10 +5,7 @@ import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.*;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author abreslav
@@ -27,6 +24,10 @@ public class TopDownAnalyzer {
         this.semanticServices = semanticServices;
         this.classDescriptorResolver = new ClassDescriptorResolver(semanticServices, bindingTrace);
         this.trace = bindingTrace;
+    }
+
+    public void process(@NotNull JetScope outerScope, @NotNull JetDeclaration declaration) {
+        process(outerScope, Collections.singletonList(declaration));
     }
 
     public void process(@NotNull JetScope outerScope, @NotNull List<JetDeclaration> declarations) {
@@ -52,6 +53,27 @@ public class TopDownAnalyzer {
                 }
 
                 @Override
+                public void visitNamespace(JetNamespace namespace) {
+                    List<JetImportDirective> importDirectives = namespace.getImportDirectives();
+
+                    ScopeWithImports scopeWithImports = new ScopeWithImports(declaringScope);
+
+                    for (JetImportDirective importDirective : importDirectives) {
+//                        if (importDirective.isAllUnder()) {
+//                            // TODO: this works only for Java,
+//                            //       but should thoroughly resolve qualified names item-by-item
+//                            //       taking previous imports into account
+//                            String importedName = importDirective.getImportedName();
+//                            scopeWithImports.importScope(new JavaPackageScope(importedName, ));
+//                        } else {
+//                            throw new UnsupportedOperationException();
+//                        }
+                    }
+                    WritableScope namespaceScope = new WritableScope(scopeWithImports);
+                    collectTypeDeclarators(namespaceScope, namespace.getDeclarations());
+                }
+
+                @Override
                 public void visitTypedef(JetTypedef typedef) {
                     processTypeDef(typedef);
                 }
@@ -67,10 +89,13 @@ public class TopDownAnalyzer {
     private WritableScope processClass(@NotNull WritableScope declaringScope, JetClass klass) {
         MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(declaringScope);
         mutableClassDescriptor.setName(klass.getName());
+
         declaringScope.addClassDescriptor(mutableClassDescriptor);
+
         classes.put(klass, mutableClassDescriptor);
         trace.recordDeclarationResolution(klass, mutableClassDescriptor);
         declaringScopes.put(klass, declaringScope);
+
         return mutableClassDescriptor.getUnsubstitutedMemberScope();
     }
 

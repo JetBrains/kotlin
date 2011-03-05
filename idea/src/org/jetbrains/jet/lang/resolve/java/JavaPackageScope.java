@@ -8,12 +8,14 @@ import org.jetbrains.jet.lang.types.NamespaceDescriptor;
 /**
  * @author abreslav
  */
-public class JavaLangScope extends JetScopeImpl {
+public class JavaPackageScope extends JetScopeImpl {
 
     private final JavaSemanticServices semanticServices;
+    private String packagePrefix;
 
-    public JavaLangScope(JavaSemanticServices semanticServices) {
+    public JavaPackageScope(@NotNull String packageFQN, JavaSemanticServices semanticServices) {
         this.semanticServices = semanticServices;
+        this.packagePrefix = packageFQN.isEmpty() ? "" : packageFQN + ".";
     }
 
     @Override
@@ -27,6 +29,6 @@ public class JavaLangScope extends JetScopeImpl {
     }
 
     private String getQualifiedName(String name) {
-        return "java.lang." + name;
+        return packagePrefix + name;
     }
 }

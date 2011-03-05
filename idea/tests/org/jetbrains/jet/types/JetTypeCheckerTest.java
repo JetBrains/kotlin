@@ -32,7 +32,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        library          = new JetStandardLibrary(getProject());
+        library          = JetStandardLibrary.getJetStandardLibrary(getProject());
         semanticServices = JetSemanticServices.createSemanticServices(library, ErrorHandler.DO_NOTHING);
         classDefinitions = new ClassDefinitions();
         classDescriptorResolver = semanticServices.getClassDescriptorResolver(BindingTrace.DUMMY);

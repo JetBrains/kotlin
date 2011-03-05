@@ -34,7 +34,7 @@ public class ScopeWithReceiver extends JetScopeImpl {
 
     @Override
     public NamespaceDescriptor getNamespace(@NotNull String name) {
-        return outerScope.getNamespace(name);
+        return receiverTypeScope.getNamespace(name);
     }
 
     @Override

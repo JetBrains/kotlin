@@ -16,14 +16,27 @@ import org.jetbrains.jet.lang.resolve.TopDownAnalyzer;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author abreslav
  */
 public class JetStandardLibrary {
 
-    private final JetScope libraryScope;
+    // TODO : consider releasing this memory
+    private static final Map<Project, JetStandardLibrary> standardLibraryCache = new HashMap<Project, JetStandardLibrary>();
 
+    public static JetStandardLibrary getJetStandardLibrary(@NotNull Project project) {
+        JetStandardLibrary standardLibrary = standardLibraryCache.get(project);
+        if (standardLibrary == null) {
+            standardLibrary = new JetStandardLibrary(project);
+            standardLibraryCache.put(project, standardLibrary);
+        }
+        return standardLibrary;
+    }
+
+    private final JetScope libraryScope;
     private final ClassDescriptor byteClass;
     private final ClassDescriptor charClass;
     private final ClassDescriptor shortClass;
@@ -44,7 +57,7 @@ public class JetStandardLibrary {
     private final Type booleanType;
     private final Type stringType;
 
-    public JetStandardLibrary(@NotNull Project project) {
+    private JetStandardLibrary(@NotNull Project project) {
         // TODO : review
         InputStream stream = JetStandardClasses.class.getClassLoader().getResourceAsStream("jet/lang/Library.jet");
         try {

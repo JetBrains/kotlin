@@ -73,11 +73,26 @@ public class JavaDescriptorResolver {
 
             PsiClass psiClass = javaFacade.findClass(qualifiedName, javaSearchScope);
             if (psiClass == null) {
-                return null;
+                PsiPackage psiPackage = javaFacade.findPackage(qualifiedName);
+                if (psiPackage == null) {
+                    return null;
+                }
+                namespaceDescriptor = createJavaNamespaceDescriptor(psiPackage);
+            } else {
+                namespaceDescriptor = createJavaNamespaceDescriptor(psiClass);
             }
-            namespaceDescriptor = createJavaNamespaceDescriptor(psiClass);
             namespaceDescriptorCache.put(qualifiedName, namespaceDescriptor);
         }
+        return namespaceDescriptor;
+    }
+
+    private NamespaceDescriptor createJavaNamespaceDescriptor(PsiPackage psiPackage) {
+        NamespaceDescriptor namespaceDescriptor = new NamespaceDescriptor(
+                Collections.<Attribute>emptyList(), // TODO
+                psiPackage.getName(),
+                new JavaPackageScope(psiPackage.getQualifiedName(), semanticServices)
+        );
+        semanticServices.getTrace().recordDeclarationResolution(psiPackage, namespaceDescriptor);
         return namespaceDescriptor;
     }
 

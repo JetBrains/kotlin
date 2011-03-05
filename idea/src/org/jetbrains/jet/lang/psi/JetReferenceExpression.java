@@ -9,13 +9,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.ErrorHandler;
-import org.jetbrains.jet.lang.JetSemanticServices;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingTraceContext;
-import org.jetbrains.jet.lang.resolve.ScopeWithImports;
-import org.jetbrains.jet.lang.resolve.TopDownAnalyzer;
-import org.jetbrains.jet.lang.resolve.java.JavaLangScope;
-import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
+import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lexer.JetTokens;
 
 /**
@@ -71,15 +65,7 @@ public class JetReferenceExpression extends JetExpression {
                     element = element.getParent();
                 }
                 JetFile file = (JetFile) element;
-                JetSemanticServices semanticServices = JetSemanticServices.createSemanticServices(element.getProject(), ErrorHandler.DO_NOTHING);
-
-                ScopeWithImports scope = new ScopeWithImports(semanticServices.getStandardLibrary().getLibraryScope());
-
-                BindingTraceContext bindingTraceContext = new BindingTraceContext();
-                scope.addImport(new JavaLangScope(new JavaSemanticServices(element.getProject(), semanticServices, bindingTraceContext)));
-
-                new TopDownAnalyzer(semanticServices, bindingTraceContext).process(scope, file.getRootNamespace().getDeclarations());
-                BindingContext bindingContext = bindingTraceContext;
+                BindingContext bindingContext = AnalyzingUtils.analyzeFile(file, ErrorHandler.DO_NOTHING);
                 return bindingContext.resolveToDeclarationPsiElement(JetReferenceExpression.this);
             }
 
@@ -116,4 +102,5 @@ public class JetReferenceExpression extends JetExpression {
             }
         };
     }
+
 }

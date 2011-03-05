@@ -6,9 +6,8 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingTraceContext;
-import org.jetbrains.jet.lang.resolve.TopDownAnalyzer;
 import org.jetbrains.jet.lang.types.*;
 
 import java.util.Collection;
@@ -77,10 +76,7 @@ public class ExpectedResolveData {
         Map<String, DeclarationDescriptor> nameToDescriptor = new HashMap<String, DeclarationDescriptor>();
         nameToDescriptor.put("std::Int.plus(Int)", standardFunction(lib.getInt(), "plus", lib.getIntType()));
 
-        BindingTraceContext bindingTraceContext = new BindingTraceContext();
-        TopDownAnalyzer topDownAnalyzer = new TopDownAnalyzer(semanticServices, bindingTraceContext);
-        topDownAnalyzer.process(lib.getLibraryScope(), file.getRootNamespace().getDeclarations());
-        BindingContext bindingContext = bindingTraceContext;
+        BindingContext bindingContext = AnalyzingUtils.analyzeFile(file, ErrorHandler.THROW_EXCEPTION);
 
         Map<String, JetDeclaration> nameToDeclaration = new HashMap<String, JetDeclaration>();
 

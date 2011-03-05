@@ -18,7 +18,7 @@ public class ScopeWithImports implements JetScope {
         this.scope = scope;
     }
 
-    public void addImport(JetScope imported) {
+    public void importScope(JetScope imported) {
         imports.add(0, imported);
     }
 
@@ -68,18 +68,18 @@ public class ScopeWithImports implements JetScope {
 
     @Override
     public TypeParameterDescriptor getTypeParameter(@NotNull String name) {
-        throw new UnsupportedOperationException(); // TODO
+        return scope.getTypeParameter(name);
     }
 
     @NotNull
     @Override
     public Type getThisType() {
-        throw new UnsupportedOperationException(); // TODO
+        return scope.getThisType();
     }
 
     @NotNull
     @Override
     public FunctionGroup getFunctionGroup(@NotNull String name) {
-        throw new UnsupportedOperationException(); // TODO
+        return scope.getFunctionGroup(name); // TODO
     }
 }

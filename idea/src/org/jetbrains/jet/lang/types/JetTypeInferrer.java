@@ -381,8 +381,10 @@ public class JetTypeInferrer {
                     JetReferenceExpression referenceExpression = (JetReferenceExpression) selectorExpression;
 
                     Type receiverType = getType(scope, expression.getReceiverExpression(), false);
-                    result[0] = OverloadResolver.INSTANCE.getOverloadDomain(receiverType, scope, referenceExpression.getReferencedName());
-                    reference[0] = referenceExpression;
+                    if (receiverType != null) {
+                        result[0] = OverloadResolver.INSTANCE.getOverloadDomain(receiverType, scope, referenceExpression.getReferencedName());
+                        reference[0] = referenceExpression;
+                    }
                 } else {
                     throw new UnsupportedOperationException(); // TODO
                 }
@@ -406,6 +408,7 @@ public class JetTypeInferrer {
                 throw new IllegalArgumentException("Unsupported element: " + elem);
             }
         });
+        if (result[0] == null) return OverloadDomain.EMPTY;
         return new OverloadDomain() {
             @Override
             public FunctionDescriptor getFunctionDescriptorForNamedArguments(@NotNull List<Type> typeArguments, @NotNull Map<String, Type> valueArgumentTypes, @Nullable Type functionLiteralArgumentType) {

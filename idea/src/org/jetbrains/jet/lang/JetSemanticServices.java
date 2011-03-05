@@ -15,7 +15,7 @@ public class JetSemanticServices {
     }
 
     public static JetSemanticServices createSemanticServices(Project project, ErrorHandler errorHandler) {
-        return new JetSemanticServices(new JetStandardLibrary(project), errorHandler);
+        return new JetSemanticServices(JetStandardLibrary.getJetStandardLibrary(project), errorHandler);
     }
 
     private final JetTypeInferrer typeInferrer;

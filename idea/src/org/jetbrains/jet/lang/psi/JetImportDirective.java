@@ -35,20 +35,28 @@ public class JetImportDirective extends JetElement {
     }
 
     @Nullable
-    public String getAliasName() {
+    private ASTNode getAliasNameNode() {
         boolean asPassed = false;
         ASTNode childNode = getNode().getFirstChildNode();
         while (childNode != null) {
             IElementType tt = childNode.getElementType();
             if (tt == JetTokens.AS_KEYWORD) asPassed = true;
             if (asPassed && tt == JetTokens.IDENTIFIER) {
-                return childNode.getText();
+                return childNode;
             }
 
             childNode = childNode.getTreeNext();
         }
-
         return null;
+    }
+
+    @Nullable
+    public String getAliasName() {
+        ASTNode aliasNameNode = getAliasNameNode();
+        if (aliasNameNode == null) {
+            return null;
+        }
+        return aliasNameNode.getText();
     }
 
     public boolean isAllUnder() {

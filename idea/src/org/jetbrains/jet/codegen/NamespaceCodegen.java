@@ -2,18 +2,15 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.ErrorHandler;
-import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFunction;
 import org.jetbrains.jet.lang.psi.JetNamespace;
 import org.jetbrains.jet.lang.psi.JetProperty;
-import org.jetbrains.jet.lang.resolve.*;
-import org.jetbrains.jet.lang.resolve.java.JavaLangScope;
-import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
+import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Opcodes;
-
-import java.util.List;
 
 /**
  * @author max
@@ -23,17 +20,10 @@ public class NamespaceCodegen {
     }
 
     public void generate(JetNamespace namespace, ClassVisitor v, Project project) {
-        List<JetDeclaration> declarations = namespace.getDeclarations();
-
-        JetSemanticServices semanticServices = JetSemanticServices.createSemanticServices(project, ErrorHandler.THROW_EXCEPTION);
-        BindingTraceContext bindingTraceContext = new BindingTraceContext();
-        ScopeWithImports scope = new ScopeWithImports(semanticServices.getStandardLibrary().getLibraryScope());
-        scope.addImport(new JavaLangScope(new JavaSemanticServices(project, semanticServices, bindingTraceContext)));
-        new TopDownAnalyzer(semanticServices, bindingTraceContext).process(scope, declarations);
-        BindingContext bindingContext = bindingTraceContext;
+        BindingContext bindingContext = AnalyzingUtils.analyzeNamespace(namespace, ErrorHandler.THROW_EXCEPTION);
 
         final PropertyCodegen propertyCodegen = new PropertyCodegen(v);
-        final FunctionCodegen functionCodegen = new FunctionCodegen(v, semanticServices.getStandardLibrary(), bindingContext);
+        final FunctionCodegen functionCodegen = new FunctionCodegen(v, JetStandardLibrary.getJetStandardLibrary(project), bindingContext);
         v.visit(Opcodes.V1_6,
                 Opcodes.ACC_PUBLIC,
                 getJVMClassName(namespace),
