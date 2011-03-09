@@ -30,34 +30,35 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
         nameToDescriptor.put("std::Int.plus(Int)", standardFunction(lib.getInt(), "plus", lib.getIntType()));
 
         Map<String,PsiElement> nameToDeclaration = new HashMap<String, PsiElement>();
-        nameToDeclaration.put("java::java.util.Collections.emptyList()", findMethod(findClass(project, "java.util.Collections"), "emptyList"));
-        nameToDeclaration.put("java::java.util.Collections", findClass(project, "java.util.Collections"));
-        nameToDeclaration.put("java::java.util.List", findClass(project, "java.util.List"));
-        nameToDeclaration.put("java::java", findPackage(project, "java"));
-        nameToDeclaration.put("java::java.util", findPackage(project, "java.util"));
-        nameToDeclaration.put("java::java.lang", findPackage(project, "java.lang"));
-        nameToDeclaration.put("java::java.lang.Object", findClass(project, "java.lang.Object"));
-        nameToDeclaration.put("java::java.lang.System", findClass(project, "java.lang.System"));
-        PsiMethod[] methods = findClass(project, "java.io.PrintStream").findMethodsByName("print", true);
+        nameToDeclaration.put("java::java.util.Collections.emptyList()", findMethod(findClass("java.util.Collections"), "emptyList"));
+        nameToDeclaration.put("java::java.util.Collections", findClass("java.util.Collections"));
+        nameToDeclaration.put("java::java.util.List", findClass("java.util.List"));
+        nameToDeclaration.put("java::java", findPackage("java"));
+        nameToDeclaration.put("java::java.util", findPackage("java.util"));
+        nameToDeclaration.put("java::java.lang", findPackage("java.lang"));
+        nameToDeclaration.put("java::java.lang.Object", findClass("java.lang.Object"));
+        nameToDeclaration.put("java::java.lang.System", findClass("java.lang.System"));
+        PsiMethod[] methods = findClass("java.io.PrintStream").findMethodsByName("print", true);
         nameToDeclaration.put("java::java.io.PrintStream.print(Object)", methods[8]);
         nameToDeclaration.put("java::java.io.PrintStream.print(Int)", methods[2]);
-        nameToDeclaration.put("java::java.lang.System.out", findClass(project, "java.lang.System").findFieldByName("out", true));
+        nameToDeclaration.put("java::java.lang.System.out", findClass("java.lang.System").findFieldByName("out", true));
 
 
         return new ExpectedResolveData(nameToDescriptor, nameToDeclaration);
     }
 
-    private PsiElement findPackage(Project project, String qualifiedName) {
-        JavaPsiFacade javaFacade = JavaPsiFacade.getInstance(project);
+    private PsiElement findPackage(String qualifiedName) {
+        JavaPsiFacade javaFacade = JavaPsiFacade.getInstance(getProject());
         return javaFacade.findPackage(qualifiedName);
     }
 
-    private PsiMethod findMethod(PsiClass collections, String name) {
-        PsiMethod[] emptyLists = collections.findMethodsByName(name, true);
+    private PsiMethod findMethod(PsiClass psiClass, String name) {
+        PsiMethod[] emptyLists = psiClass.findMethodsByName(name, true);
         return emptyLists[0];
     }
 
-    private PsiClass findClass(Project project, String qualifiedName) {
+    private PsiClass findClass(String qualifiedName) {
+        Project project = getProject();
         JavaPsiFacade javaFacade = JavaPsiFacade.getInstance(project);
         GlobalSearchScope javaSearchScope = GlobalSearchScope.allScope(project);
         return javaFacade.findClass(qualifiedName, javaSearchScope);
