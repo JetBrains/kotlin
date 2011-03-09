@@ -28,17 +28,21 @@ import java.util.List;
  */
 public abstract class ExtensibleResolveTestCase extends LightCodeInsightTestCase {
     private final FileTreeAccessFilter myJavaFilesFilter = new FileTreeAccessFilter();
+    private ExpectedResolveData expectedResolveData;
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
+        expectedResolveData = getExpectedResolveData();
         ((DaemonCodeAnalyzerImpl) DaemonCodeAnalyzer.getInstance(getProject())).prepareForTest(true);
         DaemonCodeAnalyzerSettings.getInstance().setImportHintEnabled(false);
     }
 
+    protected abstract ExpectedResolveData getExpectedResolveData();
+
     @Override
     protected void tearDown() throws Exception {
-        ((DaemonCodeAnalyzerImpl) DaemonCodeAnalyzer.getInstance(getProject())).cleanupAfterTest(true); // has to cleanup by hand since light project does not get disposed any time soon
+        ((DaemonCodeAnalyzerImpl) DaemonCodeAnalyzer.getInstance(getProject())).cleanupAfterTest(); // has to cleanup by hand since light project does not get disposed any time soon
         super.tearDown();
     }
 
@@ -69,7 +73,7 @@ public abstract class ExtensibleResolveTestCase extends LightCodeInsightTestCase
         getJavaFacade().setAssertOnFileLoadingFilter(VirtualFileFilter.NONE);
 
 //        ExpectedHighlightingData expectedData = new ExpectedHighlightingData(getEditor().getDocument(), checkWarnings, checkInfos);
-        ExpectedResolveData expectedData = new ExpectedResolveData(getEditor().getDocument());
+        expectedResolveData.extractData(getEditor().getDocument());
 
         PsiDocumentManager.getInstance(getProject()).commitAllDocuments();
         getFile().getText(); //to load text
@@ -80,7 +84,7 @@ public abstract class ExtensibleResolveTestCase extends LightCodeInsightTestCase
 
         getJavaFacade().setAssertOnFileLoadingFilter(VirtualFileFilter.NONE);
 
-        expectedData.checkResult((JetFile) getFile());
+        expectedResolveData.checkResult((JetFile) getFile());
     }
 
     @NotNull

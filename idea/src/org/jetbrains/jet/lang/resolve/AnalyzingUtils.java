@@ -25,7 +25,7 @@ public class AnalyzingUtils {
         BindingTraceContext bindingTraceContext = new BindingTraceContext();
         JavaSemanticServices javaSemanticServices = new JavaSemanticServices(project, semanticServices, bindingTraceContext);
 
-        ScopeWithImports scope = new ScopeWithImports(semanticServices.getStandardLibrary().getLibraryScope());
+        WritableScope scope = new WritableScope(semanticServices.getStandardLibrary().getLibraryScope());
         scope.importScope(new JavaPackageScope("", javaSemanticServices));
         scope.importScope(new JavaPackageScope("java.lang", javaSemanticServices));
 

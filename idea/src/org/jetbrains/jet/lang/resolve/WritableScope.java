@@ -4,7 +4,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.types.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,9 +23,23 @@ public class WritableScope extends JetScopeAdapter {
     private Map<String, ClassDescriptor> classDescriptors;
     @Nullable
     private Type thisType;
+    @Nullable
+    private List<JetScope> imports;
 
     public WritableScope(JetScope scope) {
         super(scope);
+    }
+
+    public void importScope(JetScope imported) {
+        getImports().add(0, imported);
+    }
+
+    @NotNull
+    private List<JetScope> getImports() {
+        if (imports == null) {
+            imports = new ArrayList<JetScope>();
+        }
+        return imports;
     }
 
     @NotNull
@@ -50,7 +66,17 @@ public class WritableScope extends JetScopeAdapter {
         if (propertyDescriptor != null) {
             return propertyDescriptor;
         }
-        return super.getProperty(name);
+        propertyDescriptor = super.getProperty(name);
+        if (propertyDescriptor != null) {
+            return propertyDescriptor;
+        }
+        for (JetScope imported : getImports()) {
+            PropertyDescriptor importedDescriptor = imported.getProperty(name);
+            if (importedDescriptor != null) {
+                return importedDescriptor;
+            }
+        }
+        return null;
     }
 
     @NotNull
@@ -77,11 +103,20 @@ public class WritableScope extends JetScopeAdapter {
     @Override
     @NotNull
     public FunctionGroup getFunctionGroup(@NotNull String name) {
-        WritableFunctionGroup functionGroup = getFunctionGroups().get(name);
+        FunctionGroup functionGroup = getFunctionGroups().get(name);
         if (functionGroup != null && !functionGroup.isEmpty()) {
             return functionGroup;
         }
-        return super.getFunctionGroup(name);
+        // TODO : this logic is questionable
+        functionGroup = super.getFunctionGroup(name);
+        if (!functionGroup.isEmpty()) return functionGroup;
+        for (JetScope imported : getImports()) {
+            FunctionGroup importedDescriptor = imported.getFunctionGroup(name);
+            if (!importedDescriptor.isEmpty()) {
+                return importedDescriptor;
+            }
+        }
+        return functionGroup;
     }
 
     @NotNull
@@ -132,10 +167,17 @@ public class WritableScope extends JetScopeAdapter {
     @Override
     public ClassDescriptor getClass(@NotNull String name) {
         ClassDescriptor classDescriptor = getClassDescriptors().get(name);
-        if (classDescriptor != null) {
-            return classDescriptor;
+        if (classDescriptor != null) return classDescriptor;
+
+        classDescriptor = super.getClass(name);
+        if (classDescriptor != null) return classDescriptor;
+        for (JetScope imported : getImports()) {
+            ClassDescriptor importedClass = imported.getClass(name);
+            if (importedClass != null) {
+                return importedClass;
+            }
         }
-        return super.getClass(name);
+        return null;
     }
 
     @NotNull
@@ -149,7 +191,15 @@ public class WritableScope extends JetScopeAdapter {
 
     @Override
     public NamespaceDescriptor getNamespace(@NotNull String name) {
-        return super.getNamespace(name); // TODO
+        NamespaceDescriptor namespace = super.getNamespace(name);
+        if (namespace != null) return namespace;
+        for (JetScope imported : getImports()) {
+            NamespaceDescriptor importedDescriptor = imported.getNamespace(name);
+            if (importedDescriptor != null) {
+                return importedDescriptor;
+            }
+        }
+        return null;
     }
 
     @Override

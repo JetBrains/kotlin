@@ -9,7 +9,8 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.ErrorHandler;
-import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lexer.JetTokens;
 
 /**
@@ -26,6 +27,11 @@ public class JetReferenceExpression extends JetExpression {
     public String getReferencedName() {
         ASTNode node = getNode().findChildByType(REFERENCE_TOKENS);
         return node == null ? null : node.getText();
+    }
+
+    @Nullable @IfNotParsed
+    public PsiElement getReferencedNameElement() {
+        return findChildByType(REFERENCE_TOKENS);
     }
 
     @Override

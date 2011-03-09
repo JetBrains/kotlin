@@ -13,6 +13,7 @@ import java.util.*;
 public class TopDownAnalyzer {
 
     private final Map<JetClass, MutableClassDescriptor> classes = new LinkedHashMap<JetClass, MutableClassDescriptor>();
+    private final Map<JetNamespace, WritableScope> namespaceScopes = new LinkedHashMap<JetNamespace, WritableScope>();
     private final Map<JetFunction, FunctionDescriptor> functions = new HashMap<JetFunction, FunctionDescriptor>();
     private final Map<JetDeclaration, WritableScope> declaringScopes = new HashMap<JetDeclaration, WritableScope>();
 
@@ -56,7 +57,8 @@ public class TopDownAnalyzer {
                 public void visitNamespace(JetNamespace namespace) {
                     List<JetImportDirective> importDirectives = namespace.getImportDirectives();
 
-                    ScopeWithImports scopeWithImports = new ScopeWithImports(declaringScope);
+                    WritableScope namespaceScope = new WritableScope(declaringScope);
+                    namespaceScopes.put(namespace, namespaceScope);
 
                     for (JetImportDirective importDirective : importDirectives) {
                         if (importDirective.isAbsoluteInRootNamespace()) {
@@ -64,15 +66,15 @@ public class TopDownAnalyzer {
                         }
                         if (importDirective.isAllUnder()) {
                             JetExpression importedReference = importDirective.getImportedReference();
-                            Type type = semanticServices.getTypeInferrer(trace).getType(scopeWithImports, importedReference, false);
+                            Type type = semanticServices.getTypeInferrer(trace).getType(namespaceScope, importedReference, false);
                             if (type != null) {
-                                scopeWithImports.importScope(type.getMemberScope());
+                                namespaceScope.importScope(type.getMemberScope());
                             }
                         } else {
                             throw new UnsupportedOperationException();
                         }
                     }
-                    WritableScope namespaceScope = new WritableScope(scopeWithImports);
+
                     collectTypeDeclarators(namespaceScope, namespace.getDeclarations());
                 }
 
@@ -138,7 +140,8 @@ public class TopDownAnalyzer {
 
                 @Override
                 public void visitNamespace(JetNamespace namespace) {
-                    collectBehaviorDeclarators(declaringScope, namespace.getDeclarations());
+                    WritableScope namespaceScope = namespaceScopes.get(namespace);
+                    collectBehaviorDeclarators(namespaceScope, namespace.getDeclarations());
                 }
 
                 @Override

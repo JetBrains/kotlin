@@ -1,0 +1,31 @@
+import `java::java`java.*
+import `java::java.util`util.*
+
+fun foo(o : `java::java.lang.Object`Object, l : `java::java.util`util.`java::java.util.List`List) : `java::java.util.List`List {}
+
+~A~class A  {
+  fun f(a : `java::java.util`util.`java::java.util.List`List) {}
+  fun f(a : `java::java.util.List`List) {}
+
+}
+
+class B : `java::java.lang.Object`Object {
+  fun bar(~o~o : `java::java.lang.Object`Object) {
+     `java::java.lang.System`System.`java::java.lang.System.out`out.`java::java.io.PrintStream.print(Object)`print(`o`o)
+  }
+
+  fun f(a : `java::java.util`util.`java::java.util.List`List) {}
+  fun f(a : `java::java.util.List`List) {}
+
+
+  ~foo~fun foo(abc : `A`A) : `A`A {
+    `java::java`java.`java::java.lang`lang.`java::java.lang.System`System.`java::java.lang.System.out`out.`java::java.io.PrintStream.print(Int)`print(1)
+    `java::java.util`util.`java::java.util.Collections`Collections.`java::java.util.Collections.emptyList()`emptyList()
+    `java::java`java.`!`Foo
+    `java::java.util.Collections`Collections.`java::java.util.Collections.emptyList()`emptyList()
+  }
+
+  fun barrr() : `std::Int`Int {
+    `foo`foo(new `A`A())
+  }
+}

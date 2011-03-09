@@ -10,15 +10,11 @@ import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.*;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertSame;
+import static junit.framework.Assert.*;
 
 /**
  * @author abreslav
@@ -28,16 +24,24 @@ public class ExpectedResolveData {
     private final Map<String, Integer> declarationToPosition = new HashMap<String, Integer>();
     private final Map<Integer, String> positionToReference = new HashMap<Integer, String>();
     private final Map<Integer, String> positionToType = new HashMap<Integer, String>();
+    private final Map<String, DeclarationDescriptor> nameToDescriptor;
+    private final Map<String, PsiElement> nameToPsiElement;
 
-    public ExpectedResolveData(final Document document) {
+
+    public ExpectedResolveData(Map<String, DeclarationDescriptor> nameToDescriptor, Map<String, PsiElement> nameToPsiElement) {
+        this.nameToDescriptor = nameToDescriptor;
+        this.nameToPsiElement = nameToPsiElement;
+    }
+
+    public void extractData(final Document document) {
         new WriteCommandAction.Simple(null) {
           public void run() {
-              extractData(document);
+              doExtractData(document);
           }
         }.execute().throwException();
     }
 
-    private void extractData(Document document) {
+    private void doExtractData(Document document) {
         String text = document.getText();
 
         Pattern pattern = Pattern.compile("(~[^~]+~)|(`[^`]+`)");
@@ -71,12 +75,16 @@ public class ExpectedResolveData {
     }
 
     public void checkResult(JetFile file) {
-        JetSemanticServices semanticServices = JetSemanticServices.createSemanticServices(file.getProject(), ErrorHandler.THROW_EXCEPTION);
+        final Set<PsiElement> unresolvedReferences = new HashSet<PsiElement>();
+        JetSemanticServices semanticServices = JetSemanticServices.createSemanticServices(file.getProject(), new ErrorHandler() {
+            @Override
+            public void unresolvedReference(JetReferenceExpression referenceExpression) {
+                unresolvedReferences.add(referenceExpression.getReferencedNameElement());
+            }
+        });
         JetStandardLibrary lib = semanticServices.getStandardLibrary();
-        Map<String, DeclarationDescriptor> nameToDescriptor = new HashMap<String, DeclarationDescriptor>();
-        nameToDescriptor.put("std::Int.plus(Int)", standardFunction(lib.getInt(), "plus", lib.getIntType()));
 
-        BindingContext bindingContext = AnalyzingUtils.analyzeFile(file, ErrorHandler.THROW_EXCEPTION);
+        BindingContext bindingContext = AnalyzingUtils.analyzeFile(file, semanticServices.getErrorHandler());
 
         Map<String, JetDeclaration> nameToDeclaration = new HashMap<String, JetDeclaration>();
 
@@ -96,7 +104,15 @@ public class ExpectedResolveData {
             String name = entry.getValue();
             PsiElement element = file.findElementAt(position);
 
-            JetDeclaration expected = nameToDeclaration.get(name);
+            if ("!".equals(name)) {
+                assertTrue("Must have been unresolved: " + element, unresolvedReferences.contains(element));
+                continue;
+            }
+
+            PsiElement expected = nameToDeclaration.get(name);
+            if (expected == null) {
+                expected = nameToPsiElement.get(name);
+            }
 
             JetReferenceExpression reference = getAncestorOfType(JetReferenceExpression.class, element);
             if (expected == null && name.startsWith("std::")) {
@@ -156,17 +172,6 @@ public class ExpectedResolveData {
 
             assertSame("At " + position + ": ", expectedTypeConstructor, expressionType.getConstructor());
         }
-    }
-
-    private DeclarationDescriptor standardFunction(ClassDescriptor classDescriptor, String name, Type parameterType) {
-        FunctionGroup functionGroup = classDescriptor.getMemberScope(Collections.<TypeProjection>emptyList()).getFunctionGroup(name);
-        Collection<FunctionDescriptor> functions = functionGroup.getPossiblyApplicableFunctions(Collections.<Type>emptyList(), Collections.singletonList(parameterType));
-        for (FunctionDescriptor function : functions) {
-            if (function.getUnsubstitutedValueParameters().get(0).getType().equals(parameterType)) {
-                return function;
-            }
-        }
-        throw new IllegalArgumentException("Not found: std::" + classDescriptor.getName() + "." + name + "(" + parameterType + ")");
     }
 
     private <T> T getAncestorOfType(Class<T> type, PsiElement element) {

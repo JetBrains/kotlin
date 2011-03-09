@@ -180,7 +180,11 @@ public class TypeResolver {
             return classDescriptor.getMemberScope(resolveTypeProjections(scope, classDescriptor.getTypeConstructor(), userType.getTypeArguments()));
         }
 
-        return resolveNamespace(scope, userType).getMemberScope();
+        NamespaceDescriptor namespaceDescriptor = resolveNamespace(scope, userType);
+        if (namespaceDescriptor == null) {
+            return JetScope.EMPTY;
+        }
+        return namespaceDescriptor.getMemberScope();
     }
 
     @Nullable
@@ -199,7 +203,9 @@ public class TypeResolver {
         }
 
         NamespaceDescriptor namespace = scope.getNamespace(userType.getReferencedName());
-        trace.recordReferenceResolution(userType.getReferenceExpression(), namespace);
+        if (namespace != null) {
+            trace.recordReferenceResolution(userType.getReferenceExpression(), namespace);
+        }
         return namespace;
     }
 

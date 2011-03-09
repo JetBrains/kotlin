@@ -135,7 +135,7 @@ public class ClassDescriptorResolver {
             JetExpression bodyExpression = function.getBodyExpression();
             assert bodyExpression != null : "No type, no body"; // TODO
             // TODO : Recursion possible
-            returnType = semanticServices.getTypeInferrer().getType(parameterScope, bodyExpression, function.hasBlockBody());
+            returnType = semanticServices.getTypeInferrer().safeGetType(parameterScope, bodyExpression, function.hasBlockBody());
         }
 
         FunctionDescriptorImpl functionDescriptor = new FunctionDescriptorImpl(

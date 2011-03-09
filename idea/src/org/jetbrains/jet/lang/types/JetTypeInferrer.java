@@ -28,20 +28,16 @@ public class JetTypeInferrer {
         this.classDescriptorResolver = new ClassDescriptorResolver(semanticServices, trace);
     }
 
-    /*
-      : "new" constructorInvocation
+    @NotNull
+    public Type safeGetType(@NotNull final JetScope scope, @NotNull JetExpression expression, final boolean preferBlock) {
+        Type type = getType(scope, expression, preferBlock);
+        if (type != null) {
+            return type;
+        }
+        return ErrorType.createErrorType("Type for " + expression.getText());
+    }
 
-      : objectLiteral
-
-      : SimpleName
-
-      : "typeof" "(" expression ")"
-
-      : functionLiteral
-
-      : declaration
-      : "namespace" // for the root namespace
-    */
+    @Nullable
     public Type getType(@NotNull final JetScope scope, @NotNull JetExpression expression, final boolean preferBlock) {
         final Type[] result = new Type[1];
         expression.accept(new JetVisitor() {
