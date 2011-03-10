@@ -18,4 +18,9 @@ public abstract class DeclarationDescriptorImpl extends AnnotatedImpl implements
     public String getName() {
         return name;
     }
+
+    @Override
+    public DeclarationDescriptor getOriginal() {
+        return this;
+    }
 }

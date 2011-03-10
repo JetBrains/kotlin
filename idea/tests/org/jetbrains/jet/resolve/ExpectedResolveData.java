@@ -120,7 +120,7 @@ public class ExpectedResolveData {
                 JetTypeReference typeReference = getAncestorOfType(JetTypeReference.class, element);
                 if (expectedDescriptor != null) {
                     DeclarationDescriptor actual = bindingContext.resolveReferenceExpression(reference);
-                    assertSame(expectedDescriptor, actual);
+                    assertSame("Expected: " + name,  expectedDescriptor.getOriginal(), actual == null ? null : actual.getOriginal());
                     continue;
                 }
 

@@ -60,7 +60,7 @@ public class LazySubstitutingFunctionDescriptor implements FunctionDescriptor {
 
     @Override
     public FunctionDescriptor getOriginal() {
-        return functionDescriptor;
+        return functionDescriptor.getOriginal();
     }
 
     @Override
@@ -73,5 +73,7 @@ public class LazySubstitutingFunctionDescriptor implements FunctionDescriptor {
     public String getName() {
         return functionDescriptor.getName();
     }
+
+
 }
 

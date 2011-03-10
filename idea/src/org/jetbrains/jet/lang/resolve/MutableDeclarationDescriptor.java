@@ -24,4 +24,9 @@ public class MutableDeclarationDescriptor implements DeclarationDescriptor {
     public void setName(String name) {
         this.name = name;
     }
+
+    @Override
+    public DeclarationDescriptor getOriginal() {
+        return this;
+    }
 }

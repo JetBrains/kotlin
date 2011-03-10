@@ -36,4 +36,9 @@ public class LazySubstitutedPropertyDescriptorImpl implements PropertyDescriptor
     public String getName() {
         return propertyDescriptor.getName();
     }
+
+    @Override
+    public DeclarationDescriptor getOriginal() {
+        return propertyDescriptor.getOriginal();
+    }
 }

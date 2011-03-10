@@ -2,9 +2,8 @@ package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.JetFunction;
 
-import java.util.*;
+import java.util.List;
 
 /**
  * @author abreslav
@@ -27,7 +26,7 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
             @NotNull Type unsubstitutedReturnType) {
         super(attributes, name);
-        this.original = original;
+        this.original = original == null ? this : original;
         this.typeParameters = typeParameters;
         this.unsubstitutedValueParameters = unsubstitutedValueParameters;
         this.unsubstitutedReturnType = unsubstitutedReturnType;

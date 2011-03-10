@@ -60,6 +60,10 @@ public class SubstitutingScope implements JetScope {
     @NotNull
     @Override
     public FunctionGroup getFunctionGroup(@NotNull String name) {
-        return new LazySubstitutingFunctionGroup(substitutionContext, workerScope.getFunctionGroup(name));
+        FunctionGroup functionGroup = workerScope.getFunctionGroup(name);
+        if (substitutionContext.isEmpty()) {
+            return functionGroup;
+        }
+        return new LazySubstitutingFunctionGroup(substitutionContext, functionGroup);
     }
 }

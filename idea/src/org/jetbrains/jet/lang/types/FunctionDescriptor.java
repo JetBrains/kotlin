@@ -18,12 +18,6 @@ public interface FunctionDescriptor extends DeclarationDescriptor {
     @NotNull
     Type getUnsubstitutedReturnType();
 
-    /**
-     * @return The descriptor that corresponds to the original declaration of this function.
-     *         A descriptor can be obtained from its original by substituting type arguments (of the declaring class
-     *         or of the function itself).
-     *         null if the current descriptor is original itself
-     */
     @Nullable
     FunctionDescriptor getOriginal();
 }

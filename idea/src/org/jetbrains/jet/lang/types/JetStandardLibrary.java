@@ -16,7 +16,9 @@ import org.jetbrains.jet.lang.resolve.TopDownAnalyzer;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -46,6 +48,7 @@ public class JetStandardLibrary {
     private final ClassDescriptor doubleClass;
     private final ClassDescriptor booleanClass;
     private final ClassDescriptor stringClass;
+    private final ClassDescriptor arrayClass;
 
     private final Type byteType;
     private final Type charType;
@@ -82,6 +85,7 @@ public class JetStandardLibrary {
             this.doubleClass = libraryScope.getClass("Double");
             this.booleanClass = libraryScope.getClass("Boolean");
             this.stringClass = libraryScope.getClass("String");
+            this.arrayClass = libraryScope.getClass("Array");
 
             this.byteType = new TypeImpl(getByte());
             this.charType = new TypeImpl(getChar());
@@ -146,39 +150,71 @@ public class JetStandardLibrary {
         return stringClass;
     }
 
+    @NotNull
+    public ClassDescriptor getArray() {
+        return arrayClass;
+    }
+
+    @NotNull
     public Type getIntType() {
         return intType;
     }
 
+    @NotNull
     public Type getLongType() {
         return longType;
     }
 
+    @NotNull
     public Type getDoubleType() {
         return doubleType;
     }
 
+    @NotNull
     public Type getFloatType() {
         return floatType;
     }
 
+    @NotNull
     public Type getCharType() {
         return charType;
     }
 
+    @NotNull
     public Type getBooleanType() {
         return booleanType;
     }
 
+    @NotNull
     public Type getStringType() {
         return stringType;
     }
 
+    @NotNull
     public Type getByteType() {
         return byteType;
     }
 
+    @NotNull
     public Type getShortType() {
         return shortType;
+    }
+
+    @NotNull
+    public Type getArrayType(@NotNull Type argument) {
+        Variance variance = Variance.INVARIANT;
+        return getArrayType(variance, argument);
+    }
+
+    @NotNull
+    public Type getArrayType(@NotNull Variance variance, @NotNull Type argument) {
+        List<TypeProjection> types = Collections.singletonList(new TypeProjection(variance, argument));
+        return new TypeImpl(
+                Collections.<Attribute>emptyList(),
+                getArray().getTypeConstructor(),
+                false,
+                types,
+                getArray().getMemberScope(types)
+        );
     }
 }

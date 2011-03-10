@@ -52,7 +52,7 @@ public class ClassDescriptorResolver {
 
     @Nullable
     public void resolveMutableClassDescriptor(@NotNull JetScope scope, @NotNull JetClass classElement, @NotNull MutableClassDescriptor descriptor) {
-        WritableScope parameterScope = new WritableScope(scope);
+        WritableScope parameterScope = descriptor.getUnsubstitutedMemberScope();
 
         // This call has side-effects on the parameterScope (fills it in)
         List<TypeParameterDescriptor> typeParameters
@@ -157,17 +157,21 @@ public class ClassDescriptorResolver {
             JetParameter valueParameter = valueParameters.get(i);
             JetTypeReference typeReference = valueParameter.getTypeReference();
 
-            assert typeReference != null : "Parameters without type annotations are not supported"; // TODO
-
+            Type type;
+            if (typeReference == null) {
+                semanticServices.getErrorHandler().structuralError(valueParameter.getNode(), "A type annotation is required on a value parameter " + valueParameter.getName());
+                type = ErrorType.createErrorType("Type annotation was missing");
+            } else {
+                type = typeResolver.resolveType(parameterScope, typeReference);
+            }
             ValueParameterDescriptor valueParameterDescriptor = new ValueParameterDescriptorImpl(
                     i,
                     AttributeResolver.INSTANCE.resolveAttributes(valueParameter.getModifierList()),
                     valueParameter.getName(),
-                    typeResolver.resolveType(parameterScope, typeReference),
+                    type,
                     valueParameter.getDefaultValue() != null,
                     false // TODO : varargs
             );
-
             // TODO : Default values???
 
             result.add(valueParameterDescriptor);
@@ -197,6 +201,7 @@ public class ClassDescriptorResolver {
                         : Collections.singleton(typeResolver.resolveType(extensibleScope, extendsBound))
         );
         extensibleScope.addTypeParameterDescriptor(typeParameterDescriptor);
+        trace.recordDeclarationResolution(typeParameter, typeParameterDescriptor);
         return typeParameterDescriptor;
     }
 

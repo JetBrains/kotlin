@@ -1,6 +1,11 @@
 import `java::java`java.*
 import `java::java.util`util.*
 
+fun foo(~a~a : `std::Array`Array<`std::Int`Int>) : `java::java.util.List`List {
+  `a`a.`std::Array.get(Int)`get(1)
+  `a`a.`std::Array.set(Int, Int)`set(1, 1)
+}
+
 fun foo(o : `java::java.lang.Object`Object, l : `java::java.util`util.`java::java.util.List`List) : `java::java.util.List`List {}
 
 ~A~class A  {

@@ -1,10 +1,7 @@
 package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.types.Attribute;
-import org.jetbrains.jet.lang.types.ClassDescriptor;
-import org.jetbrains.jet.lang.types.TypeConstructor;
-import org.jetbrains.jet.lang.types.TypeProjection;
+import org.jetbrains.jet.lang.types.*;
 
 import java.util.List;
 import java.util.Map;
@@ -48,5 +45,10 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
     @Override
     public String getName() {
         return original.getName();
+    }
+
+    @Override
+    public DeclarationDescriptor getOriginal() {
+        return original.getOriginal();
     }
 }
