@@ -48,7 +48,8 @@ JetFile: EOLsInComments.jet
           PsiWhiteSpace(' ')
           PsiComment(BLOCK_COMMENT)('/*\n  */')
           PsiWhiteSpace('  ')
-          PsiElement(PLUS)('+')
+          OPERATION_REFERENCE
+            PsiElement(PLUS)('+')
           PsiWhiteSpace(' ')
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('b')
@@ -70,7 +71,8 @@ JetFile: EOLsInComments.jet
           PsiWhiteSpace(' ')
           PsiComment(DOC_COMMENT)('/**\n  */')
           PsiWhiteSpace('  ')
-          PsiElement(PLUS)('+')
+          OPERATION_REFERENCE
+            PsiElement(PLUS)('+')
           PsiWhiteSpace(' ')
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('b')

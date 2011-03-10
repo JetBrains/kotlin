@@ -61,7 +61,8 @@ JetFile: TypeExpressionAmbiguities_ERR.jet
               BINARY_EXPRESSION
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('bar')
-                PsiElement(LT)('<')
+                OPERATION_REFERENCE
+                  PsiElement(LT)('<')
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('a')
             PsiElement(COMMA)(',')
@@ -70,7 +71,8 @@ JetFile: TypeExpressionAmbiguities_ERR.jet
               BINARY_EXPRESSION
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('b')
-                PsiElement(PLUS)('+')
+                OPERATION_REFERENCE
+                  PsiElement(PLUS)('+')
                 INTEGER_CONSTANT
                   PsiElement(INTEGER_LITERAL)('1')
             PsiElement(COMMA)(',')
@@ -79,7 +81,8 @@ JetFile: TypeExpressionAmbiguities_ERR.jet
               BINARY_EXPRESSION
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('c')
-                PsiElement(GT)('>')
+                OPERATION_REFERENCE
+                  PsiElement(GT)('>')
                 PARENTHESIZED
                   PsiElement(LPAR)('(')
                   REFERENCE_EXPRESSION
@@ -96,7 +99,8 @@ JetFile: TypeExpressionAmbiguities_ERR.jet
               BINARY_EXPRESSION
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('bar')
-                PsiElement(LT)('<')
+                OPERATION_REFERENCE
+                  PsiElement(LT)('<')
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('a')
             PsiElement(COMMA)(',')
@@ -114,7 +118,8 @@ JetFile: TypeExpressionAmbiguities_ERR.jet
               BINARY_EXPRESSION
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('c')
-                PsiElement(GT)('>')
+                OPERATION_REFERENCE
+                  PsiElement(GT)('>')
                 PARENTHESIZED
                   PsiElement(LPAR)('(')
                   REFERENCE_EXPRESSION
@@ -131,7 +136,8 @@ JetFile: TypeExpressionAmbiguities_ERR.jet
               BINARY_EXPRESSION
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('bar')
-                PsiElement(LT)('<')
+                OPERATION_REFERENCE
+                  PsiElement(LT)('<')
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('a')
             PsiElement(COMMA)(',')
@@ -141,7 +147,8 @@ JetFile: TypeExpressionAmbiguities_ERR.jet
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('a')
                 PsiWhiteSpace(' ')
-                PsiElement(COLON)(':')
+                OPERATION_REFERENCE
+                  PsiElement(COLON)(':')
                 PsiWhiteSpace(' ')
                 TYPE_REFERENCE
                   USER_TYPE
@@ -153,7 +160,8 @@ JetFile: TypeExpressionAmbiguities_ERR.jet
               BINARY_EXPRESSION
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('c')
-                PsiElement(GT)('>')
+                OPERATION_REFERENCE
+                  PsiElement(GT)('>')
                 PARENTHESIZED
                   PsiElement(LPAR)('(')
                   REFERENCE_EXPRESSION
@@ -165,7 +173,8 @@ JetFile: TypeExpressionAmbiguities_ERR.jet
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('a')
           PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
+          OPERATION_REFERENCE
+            PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
             USER_TYPE
@@ -187,7 +196,8 @@ JetFile: TypeExpressionAmbiguities_ERR.jet
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('d')
           PsiWhiteSpace(' ')
-          PsiElement(as)('as')
+          OPERATION_REFERENCE
+            PsiElement(as)('as')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
             USER_TYPE
@@ -209,7 +219,8 @@ JetFile: TypeExpressionAmbiguities_ERR.jet
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('x')
           PsiWhiteSpace(' ')
-          PsiElement(is)('is')
+          OPERATION_REFERENCE
+            PsiElement(is)('is')
           PsiWhiteSpace(' ')
           TYPE_PATTERN
             TYPE_REFERENCE

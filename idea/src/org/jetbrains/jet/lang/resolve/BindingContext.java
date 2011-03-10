@@ -17,7 +17,6 @@ public interface BindingContext {
 
     JetScope getTopLevelScope();
 
-
     DeclarationDescriptor resolveReferenceExpression(JetReferenceExpression referenceExpression);
 
     Type resolveTypeReference(JetTypeReference typeReference);

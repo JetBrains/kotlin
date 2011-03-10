@@ -142,7 +142,8 @@ JetFile: List.jet
                     INTEGER_CONSTANT
                       PsiElement(INTEGER_LITERAL)('1')
                     PsiWhiteSpace(' ')
-                    PsiElement(PLUS)('+')
+                    OPERATION_REFERENCE
+                      PsiElement(PLUS)('+')
                     PsiWhiteSpace(' ')
                     DOT_QIALIFIED_EXPRESSION
                       REFERENCE_EXPRESSION
@@ -203,7 +204,8 @@ JetFile: List.jet
               THIS_EXPRESSION
                 PsiElement(this)('this')
               PsiWhiteSpace(' ')
-              PsiElement(EQEQ)('==')
+              OPERATION_REFERENCE
+                PsiElement(EQEQ)('==')
               PsiWhiteSpace(' ')
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('Nil')
@@ -277,13 +279,15 @@ JetFile: List.jet
                             PsiElement(LPAR)('(')
                             PsiElement(RPAR)(')')
                         PsiWhiteSpace(' ')
-                        PsiElement(EQ)('=')
+                        OPERATION_REFERENCE
+                          PsiElement(EQ)('=')
                         PsiWhiteSpace(' ')
                         BINARY_EXPRESSION
                           REFERENCE_EXPRESSION
                             PsiElement(IDENTIFIER)('current')
                           PsiWhiteSpace(' ')
-                          PsiElement(EQEQ)('==')
+                          OPERATION_REFERENCE
+                            PsiElement(EQEQ)('==')
                           PsiWhiteSpace(' ')
                           REFERENCE_EXPRESSION
                             PsiElement(IDENTIFIER)('Nil')
@@ -324,7 +328,8 @@ JetFile: List.jet
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('current')
                       PsiWhiteSpace(' ')
-                      PsiElement(EQ)('=')
+                      OPERATION_REFERENCE
+                        PsiElement(EQ)('=')
                       PsiWhiteSpace(' ')
                       DOT_QIALIFIED_EXPRESSION
                         REFERENCE_EXPRESSION

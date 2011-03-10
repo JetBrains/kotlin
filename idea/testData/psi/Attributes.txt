@@ -171,7 +171,8 @@ JetFile: Attributes.jet
                 BINARY_EXPRESSION
                   INTEGER_CONSTANT
                     PsiElement(INTEGER_LITERAL)('1')
-                  PsiElement(PLUS)('+')
+                  OPERATION_REFERENCE
+                    PsiElement(PLUS)('+')
                   INTEGER_CONSTANT
                     PsiElement(INTEGER_LITERAL)('1')
               PsiElement(COMMA)(',')
@@ -194,7 +195,8 @@ JetFile: Attributes.jet
                 BINARY_EXPRESSION
                   INTEGER_CONSTANT
                     PsiElement(INTEGER_LITERAL)('1')
-                  PsiElement(PLUS)('+')
+                  OPERATION_REFERENCE
+                    PsiElement(PLUS)('+')
                   INTEGER_CONSTANT
                     PsiElement(INTEGER_LITERAL)('1')
               PsiElement(RBRACKET)(']')
@@ -220,7 +222,8 @@ JetFile: Attributes.jet
                 BINARY_EXPRESSION
                   INTEGER_CONSTANT
                     PsiElement(INTEGER_LITERAL)('1')
-                  PsiElement(PLUS)('+')
+                  OPERATION_REFERENCE
+                    PsiElement(PLUS)('+')
                   INTEGER_CONSTANT
                     PsiElement(INTEGER_LITERAL)('1')
               PsiElement(RBRACKET)(']')

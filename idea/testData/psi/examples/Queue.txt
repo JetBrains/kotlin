@@ -189,7 +189,8 @@ JetFile: Queue.jet
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('tail')
                   PsiWhiteSpace(' ')
-                  PsiElement(EQEQ)('==')
+                  OPERATION_REFERENCE
+                    PsiElement(EQEQ)('==')
                   PsiWhiteSpace(' ')
                   NULL
                     PsiElement(null)('null')
@@ -204,7 +205,8 @@ JetFile: Queue.jet
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('head')
                       PsiWhiteSpace(' ')
-                      PsiElement(EQ)('=')
+                      OPERATION_REFERENCE
+                        PsiElement(EQ)('=')
                       PsiWhiteSpace(' ')
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('i')
@@ -213,7 +215,8 @@ JetFile: Queue.jet
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('tail')
                       PsiWhiteSpace(' ')
-                      PsiElement(EQ)('=')
+                      OPERATION_REFERENCE
+                        PsiElement(EQ)('=')
                       PsiWhiteSpace(' ')
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('head')
@@ -235,7 +238,8 @@ JetFile: Queue.jet
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('next')
                       PsiWhiteSpace(' ')
-                      PsiElement(EQ)('=')
+                      OPERATION_REFERENCE
+                        PsiElement(EQ)('=')
                       PsiWhiteSpace(' ')
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('i')
@@ -244,7 +248,8 @@ JetFile: Queue.jet
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('tail')
                       PsiWhiteSpace(' ')
-                      PsiElement(EQ)('=')
+                      OPERATION_REFERENCE
+                        PsiElement(EQ)('=')
                       PsiWhiteSpace(' ')
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('i')
@@ -277,7 +282,8 @@ JetFile: Queue.jet
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('head')
                 PsiWhiteSpace(' ')
-                PsiElement(EQEQ)('==')
+                OPERATION_REFERENCE
+                  PsiElement(EQEQ)('==')
                 PsiWhiteSpace(' ')
                 NULL
                   PsiElement(null)('null')
@@ -323,7 +329,8 @@ JetFile: Queue.jet
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('head')
                     PsiWhiteSpace(' ')
-                    PsiElement(EQ)('=')
+                    OPERATION_REFERENCE
+                      PsiElement(EQ)('=')
                     PsiWhiteSpace(' ')
                     DOT_QIALIFIED_EXPRESSION
                       REFERENCE_EXPRESSION
@@ -341,7 +348,8 @@ JetFile: Queue.jet
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('head')
                         PsiWhiteSpace(' ')
-                        PsiElement(EQEQ)('==')
+                        OPERATION_REFERENCE
+                          PsiElement(EQEQ)('==')
                         PsiWhiteSpace(' ')
                         NULL
                           PsiElement(null)('null')
@@ -352,7 +360,8 @@ JetFile: Queue.jet
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('tail')
                         PsiWhiteSpace(' ')
-                        PsiElement(EQ)('=')
+                        OPERATION_REFERENCE
+                          PsiElement(EQ)('=')
                         PsiWhiteSpace(' ')
                         NULL
                           PsiElement(null)('null')
@@ -381,7 +390,8 @@ JetFile: Queue.jet
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('head')
               PsiWhiteSpace(' ')
-              PsiElement(EQEQ)('==')
+              OPERATION_REFERENCE
+                PsiElement(EQEQ)('==')
               PsiWhiteSpace(' ')
               NULL
                 PsiElement(null)('null')

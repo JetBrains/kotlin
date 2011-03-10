@@ -185,7 +185,8 @@ JetFile: BinaryTree.jet
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('compare')
               PsiWhiteSpace(' ')
-              PsiElement(EQ)('=')
+              OPERATION_REFERENCE
+                PsiElement(EQ)('=')
               PsiWhiteSpace(' ')
               CALL_EXPRESSION
                 REFERENCE_EXPRESSION
@@ -393,7 +394,8 @@ JetFile: BinaryTree.jet
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('node')
                       PsiWhiteSpace(' ')
-                      PsiElement(EQEQ)('==')
+                      OPERATION_REFERENCE
+                        PsiElement(EQEQ)('==')
                       PsiWhiteSpace(' ')
                       NULL
                         PsiElement(null)('null')
@@ -639,7 +641,8 @@ JetFile: BinaryTree.jet
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('node')
                       PsiWhiteSpace(' ')
-                      PsiElement(EQEQ)('==')
+                      OPERATION_REFERENCE
+                        PsiElement(EQEQ)('==')
                       PsiWhiteSpace(' ')
                       NULL
                         PsiElement(null)('null')
@@ -654,7 +657,8 @@ JetFile: BinaryTree.jet
                           REFERENCE_EXPRESSION
                             PsiElement(IDENTIFIER)('node')
                           PsiWhiteSpace(' ')
-                          PsiElement(EQ)('=')
+                          OPERATION_REFERENCE
+                            PsiElement(EQ)('=')
                           PsiWhiteSpace(' ')
                           CALL_EXPRESSION
                             REFERENCE_EXPRESSION
@@ -815,7 +819,8 @@ JetFile: BinaryTree.jet
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('node')
                       PsiWhiteSpace(' ')
-                      PsiElement(EQEQ)('==')
+                      OPERATION_REFERENCE
+                        PsiElement(EQEQ)('==')
                       PsiWhiteSpace(' ')
                       NULL
                         PsiElement(null)('null')
@@ -830,7 +835,8 @@ JetFile: BinaryTree.jet
                           REFERENCE_EXPRESSION
                             PsiElement(IDENTIFIER)('root')
                           PsiWhiteSpace(' ')
-                          PsiElement(EQ)('=')
+                          OPERATION_REFERENCE
+                            PsiElement(EQ)('=')
                           PsiWhiteSpace(' ')
                           CALL_EXPRESSION
                             REFERENCE_EXPRESSION
@@ -914,7 +920,8 @@ JetFile: BinaryTree.jet
                             REFERENCE_EXPRESSION
                               PsiElement(IDENTIFIER)('left')
                           PsiWhiteSpace(' ')
-                          PsiElement(EQEQ)('==')
+                          OPERATION_REFERENCE
+                            PsiElement(EQEQ)('==')
                           PsiWhiteSpace(' ')
                           NULL
                             PsiElement(null)('null')
@@ -933,7 +940,8 @@ JetFile: BinaryTree.jet
                                 REFERENCE_EXPRESSION
                                   PsiElement(IDENTIFIER)('left')
                               PsiWhiteSpace(' ')
-                              PsiElement(EQ)('=')
+                              OPERATION_REFERENCE
+                                PsiElement(EQ)('=')
                               PsiWhiteSpace(' ')
                               CALL_EXPRESSION
                                 REFERENCE_EXPRESSION
@@ -998,7 +1006,8 @@ JetFile: BinaryTree.jet
                             REFERENCE_EXPRESSION
                               PsiElement(IDENTIFIER)('right')
                           PsiWhiteSpace(' ')
-                          PsiElement(EQEQ)('==')
+                          OPERATION_REFERENCE
+                            PsiElement(EQEQ)('==')
                           PsiWhiteSpace(' ')
                           NULL
                             PsiElement(null)('null')
@@ -1017,7 +1026,8 @@ JetFile: BinaryTree.jet
                                 REFERENCE_EXPRESSION
                                   PsiElement(IDENTIFIER)('right')
                               PsiWhiteSpace(' ')
-                              PsiElement(EQ)('=')
+                              OPERATION_REFERENCE
+                                PsiElement(EQ)('=')
                               PsiWhiteSpace(' ')
                               CALL_EXPRESSION
                                 REFERENCE_EXPRESSION
@@ -1131,7 +1141,8 @@ JetFile: BinaryTree.jet
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('toRemove')
                   PsiWhiteSpace(' ')
-                  PsiElement(EQEQ)('==')
+                  OPERATION_REFERENCE
+                    PsiElement(EQEQ)('==')
                   PsiWhiteSpace(' ')
                   NULL
                     PsiElement(null)('null')
@@ -1208,7 +1219,8 @@ JetFile: BinaryTree.jet
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('node')
                       PsiWhiteSpace(' ')
-                      PsiElement(EQEQ)('==')
+                      OPERATION_REFERENCE
+                        PsiElement(EQEQ)('==')
                       PsiWhiteSpace(' ')
                       NULL
                         PsiElement(null)('null')
@@ -1530,7 +1542,8 @@ JetFile: BinaryTree.jet
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('value')
                       PsiWhiteSpace(' ')
-                      PsiElement(EQ)('=')
+                      OPERATION_REFERENCE
+                        PsiElement(EQ)('=')
                       PsiWhiteSpace(' ')
                       DOT_QIALIFIED_EXPRESSION
                         REFERENCE_EXPRESSION
@@ -1595,7 +1608,8 @@ JetFile: BinaryTree.jet
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('node')
                       PsiWhiteSpace(' ')
-                      PsiElement(EQEQ)('==')
+                      OPERATION_REFERENCE
+                        PsiElement(EQEQ)('==')
                       PsiWhiteSpace(' ')
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('root')
@@ -1610,7 +1624,8 @@ JetFile: BinaryTree.jet
                           REFERENCE_EXPRESSION
                             PsiElement(IDENTIFIER)('root')
                           PsiWhiteSpace(' ')
-                          PsiElement(EQ)('=')
+                          OPERATION_REFERENCE
+                            PsiElement(EQ)('=')
                           PsiWhiteSpace(' ')
                           REFERENCE_EXPRESSION
                             PsiElement(IDENTIFIER)('replace')
@@ -1637,7 +1652,8 @@ JetFile: BinaryTree.jet
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('left')
                       PsiWhiteSpace(' ')
-                      PsiElement(EQEQ)('==')
+                      OPERATION_REFERENCE
+                        PsiElement(EQEQ)('==')
                       PsiWhiteSpace(' ')
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('node')
@@ -1660,7 +1676,8 @@ JetFile: BinaryTree.jet
                             REFERENCE_EXPRESSION
                               PsiElement(IDENTIFIER)('left')
                           PsiWhiteSpace(' ')
-                          PsiElement(EQ)('=')
+                          OPERATION_REFERENCE
+                            PsiElement(EQ)('=')
                           PsiWhiteSpace(' ')
                           REFERENCE_EXPRESSION
                             PsiElement(IDENTIFIER)('replace')
@@ -1687,7 +1704,8 @@ JetFile: BinaryTree.jet
                             REFERENCE_EXPRESSION
                               PsiElement(IDENTIFIER)('right')
                           PsiWhiteSpace(' ')
-                          PsiElement(EQEQ)('==')
+                          OPERATION_REFERENCE
+                            PsiElement(EQEQ)('==')
                           PsiWhiteSpace(' ')
                           REFERENCE_EXPRESSION
                             PsiElement(IDENTIFIER)('node')
@@ -1710,7 +1728,8 @@ JetFile: BinaryTree.jet
                                 REFERENCE_EXPRESSION
                                   PsiElement(IDENTIFIER)('right')
                               PsiWhiteSpace(' ')
-                              PsiElement(EQ)('=')
+                              OPERATION_REFERENCE
+                                PsiElement(EQ)('=')
                               PsiWhiteSpace(' ')
                               REFERENCE_EXPRESSION
                                 PsiElement(IDENTIFIER)('replace')
@@ -1774,7 +1793,8 @@ JetFile: BinaryTree.jet
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('left')
                   PsiWhiteSpace(' ')
-                  PsiElement(EQEQ)('==')
+                  OPERATION_REFERENCE
+                    PsiElement(EQEQ)('==')
                   PsiWhiteSpace(' ')
                   NULL
                     PsiElement(null)('null')
@@ -1975,7 +1995,8 @@ JetFile: BinaryTree.jet
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('root')
                         PsiWhiteSpace(' ')
-                        PsiElement(EXCLEQ)('!=')
+                        OPERATION_REFERENCE
+                          PsiElement(EXCLEQ)('!=')
                         PsiWhiteSpace(' ')
                         NULL
                           PsiElement(null)('null')
@@ -2054,7 +2075,8 @@ JetFile: BinaryTree.jet
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('lastNode')
                     PsiWhiteSpace(' ')
-                    PsiElement(EQ)('=')
+                    OPERATION_REFERENCE
+                      PsiElement(EQ)('=')
                     PsiWhiteSpace(' ')
                     CALL_EXPRESSION
                       REFERENCE_EXPRESSION
@@ -2163,7 +2185,8 @@ JetFile: BinaryTree.jet
                                           REFERENCE_EXPRESSION
                                             PsiElement(IDENTIFIER)('left')
                                         PsiWhiteSpace(' ')
-                                        PsiElement(EXCLEQ)('!=')
+                                        OPERATION_REFERENCE
+                                          PsiElement(EXCLEQ)('!=')
                                         PsiWhiteSpace(' ')
                                         NULL
                                           PsiElement(null)('null')
@@ -2228,7 +2251,8 @@ JetFile: BinaryTree.jet
                                                   REFERENCE_EXPRESSION
                                                     PsiElement(IDENTIFIER)('right')
                                                 PsiWhiteSpace(' ')
-                                                PsiElement(EXCLEQ)('!=')
+                                                OPERATION_REFERENCE
+                                                  PsiElement(EXCLEQ)('!=')
                                                 PsiWhiteSpace(' ')
                                                 NULL
                                                   PsiElement(null)('null')
@@ -2308,7 +2332,8 @@ JetFile: BinaryTree.jet
                                           REFERENCE_EXPRESSION
                                             PsiElement(IDENTIFIER)('right')
                                         PsiWhiteSpace(' ')
-                                        PsiElement(EXCLEQ)('!=')
+                                        OPERATION_REFERENCE
+                                          PsiElement(EXCLEQ)('!=')
                                         PsiWhiteSpace(' ')
                                         NULL
                                           PsiElement(null)('null')
@@ -2383,7 +2408,8 @@ JetFile: BinaryTree.jet
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('isEmpty')
                     PsiWhiteSpace(' ')
-                    PsiElement(OROR)('||')
+                    OPERATION_REFERENCE
+                      PsiElement(OROR)('||')
                     PsiWhiteSpace(' ')
                     PREFIX_EXPRESSION
                       PsiElement(EXCL)('!')
@@ -2426,7 +2452,8 @@ JetFile: BinaryTree.jet
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('lastNode')
                         PsiWhiteSpace(' ')
-                        PsiElement(EQEQ)('==')
+                        OPERATION_REFERENCE
+                          PsiElement(EQEQ)('==')
                         PsiWhiteSpace(' ')
                         NULL
                           PsiElement(null)('null')
@@ -2473,7 +2500,8 @@ JetFile: BinaryTree.jet
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('version')
                     PsiWhiteSpace(' ')
-                    PsiElement(EQ)('=')
+                    OPERATION_REFERENCE
+                      PsiElement(EQ)('=')
                     PsiWhiteSpace(' ')
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('version')
@@ -2505,7 +2533,8 @@ JetFile: BinaryTree.jet
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('version')
                         PsiWhiteSpace(' ')
-                        PsiElement(EXCLEQ)('!=')
+                        OPERATION_REFERENCE
+                          PsiElement(EXCLEQ)('!=')
                         PsiWhiteSpace(' ')
                         DOT_QIALIFIED_EXPRESSION
                           DOT_QIALIFIED_EXPRESSION

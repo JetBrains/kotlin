@@ -157,7 +157,8 @@ JetFile: Builder.jet
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('targetLevel')
                         PsiWhiteSpace(' ')
-                        PsiElement(EQ)('=')
+                        OPERATION_REFERENCE
+                          PsiElement(EQ)('=')
                         PsiWhiteSpace(' ')
                         STRING_CONSTANT
                           PsiElement(STRING_LITERAL)('"1.5"')

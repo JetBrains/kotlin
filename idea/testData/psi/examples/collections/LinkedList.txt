@@ -217,7 +217,8 @@ JetFile: LinkedList.jet
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('index')
                   PsiWhiteSpace(' ')
-                  PsiElement(EQEQ)('==')
+                  OPERATION_REFERENCE
+                    PsiElement(EQEQ)('==')
                   PsiWhiteSpace(' ')
                   INTEGER_CONSTANT
                     PsiElement(INTEGER_LITERAL)('0')
@@ -236,7 +237,8 @@ JetFile: LinkedList.jet
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('next')
                       PsiWhiteSpace(' ')
-                      PsiElement(EQ)('=')
+                      OPERATION_REFERENCE
+                        PsiElement(EQ)('=')
                       PsiWhiteSpace(' ')
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('head')
@@ -245,7 +247,8 @@ JetFile: LinkedList.jet
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('head')
                       PsiWhiteSpace(' ')
-                      PsiElement(EQ)('=')
+                      OPERATION_REFERENCE
+                        PsiElement(EQ)('=')
                       PsiWhiteSpace(' ')
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('newItem')
@@ -259,7 +262,8 @@ JetFile: LinkedList.jet
                           REFERENCE_EXPRESSION
                             PsiElement(IDENTIFIER)('tail')
                           PsiWhiteSpace(' ')
-                          PsiElement(EQEQEQ)('===')
+                          OPERATION_REFERENCE
+                            PsiElement(EQEQEQ)('===')
                           PsiWhiteSpace(' ')
                           NULL
                             PsiElement(null)('null')
@@ -274,7 +278,8 @@ JetFile: LinkedList.jet
                               REFERENCE_EXPRESSION
                                 PsiElement(IDENTIFIER)('tail')
                               PsiWhiteSpace(' ')
-                              PsiElement(EQ)('=')
+                              OPERATION_REFERENCE
+                                PsiElement(EQ)('=')
                               PsiWhiteSpace(' ')
                               REFERENCE_EXPRESSION
                                 PsiElement(IDENTIFIER)('head')
@@ -315,7 +320,8 @@ JetFile: LinkedList.jet
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('next')
                       PsiWhiteSpace(' ')
-                      PsiElement(EQ)('=')
+                      OPERATION_REFERENCE
+                        PsiElement(EQ)('=')
                       PsiWhiteSpace(' ')
                       DOT_QIALIFIED_EXPRESSION
                         REFERENCE_EXPRESSION
@@ -332,7 +338,8 @@ JetFile: LinkedList.jet
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('next')
                       PsiWhiteSpace(' ')
-                      PsiElement(EQ)('=')
+                      OPERATION_REFERENCE
+                        PsiElement(EQ)('=')
                       PsiWhiteSpace(' ')
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('newItem')
@@ -346,7 +353,8 @@ JetFile: LinkedList.jet
                           REFERENCE_EXPRESSION
                             PsiElement(IDENTIFIER)('tail')
                           PsiWhiteSpace(' ')
-                          PsiElement(EQEQEQ)('===')
+                          OPERATION_REFERENCE
+                            PsiElement(EQEQEQ)('===')
                           PsiWhiteSpace(' ')
                           REFERENCE_EXPRESSION
                             PsiElement(IDENTIFIER)('insertAfter')
@@ -361,7 +369,8 @@ JetFile: LinkedList.jet
                               REFERENCE_EXPRESSION
                                 PsiElement(IDENTIFIER)('tail')
                               PsiWhiteSpace(' ')
-                              PsiElement(EQ)('=')
+                              OPERATION_REFERENCE
+                                PsiElement(EQ)('=')
                               PsiWhiteSpace(' ')
                               REFERENCE_EXPRESSION
                                 PsiElement(IDENTIFIER)('newItem')
@@ -406,16 +415,19 @@ JetFile: LinkedList.jet
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('index')
                   PsiWhiteSpace(' ')
-                  PsiElement(NOT_IN)('!in')
+                  OPERATION_REFERENCE
+                    PsiElement(NOT_IN)('!in')
                   PsiWhiteSpace(' ')
                   BINARY_EXPRESSION
                     INTEGER_CONSTANT
                       PsiElement(INTEGER_LITERAL)('0')
-                    PsiElement(RANGE)('..')
+                    OPERATION_REFERENCE
+                      PsiElement(RANGE)('..')
                     BINARY_EXPRESSION
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('size')
-                      PsiElement(MINUS)('-')
+                      OPERATION_REFERENCE
+                        PsiElement(MINUS)('-')
                       INTEGER_CONSTANT
                         PsiElement(INTEGER_LITERAL)('1')
               PsiElement(RPAR)(')')
@@ -510,7 +522,8 @@ JetFile: LinkedList.jet
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('item')
                   PsiWhiteSpace(' ')
-                  PsiElement(EQEQEQ)('===')
+                  OPERATION_REFERENCE
+                    PsiElement(EQEQEQ)('===')
                   PsiWhiteSpace(' ')
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('head')
@@ -525,7 +538,8 @@ JetFile: LinkedList.jet
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('head')
                       PsiWhiteSpace(' ')
-                      PsiElement(EQ)('=')
+                      OPERATION_REFERENCE
+                        PsiElement(EQ)('=')
                       PsiWhiteSpace(' ')
                       DOT_QIALIFIED_EXPRESSION
                         REFERENCE_EXPRESSION
@@ -543,7 +557,8 @@ JetFile: LinkedList.jet
                           REFERENCE_EXPRESSION
                             PsiElement(IDENTIFIER)('head')
                           PsiWhiteSpace(' ')
-                          PsiElement(EQEQEQ)('===')
+                          OPERATION_REFERENCE
+                            PsiElement(EQEQEQ)('===')
                           PsiWhiteSpace(' ')
                           NULL
                             PsiElement(null)('null')
@@ -553,7 +568,8 @@ JetFile: LinkedList.jet
                         BINARY_EXPRESSION
                           REFERENCE_EXPRESSION
                             PsiElement(IDENTIFIER)('tail')
-                          PsiElement(EQ)('=')
+                          OPERATION_REFERENCE
+                            PsiElement(EQ)('=')
                           PsiWhiteSpace(' ')
                           NULL
                             PsiElement(null)('null')
@@ -579,7 +595,8 @@ JetFile: LinkedList.jet
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('next')
                       PsiWhiteSpace(' ')
-                      PsiElement(EQ)('=')
+                      OPERATION_REFERENCE
+                        PsiElement(EQ)('=')
                       PsiWhiteSpace(' ')
                       DOT_QIALIFIED_EXPRESSION
                         REFERENCE_EXPRESSION
@@ -601,7 +618,8 @@ JetFile: LinkedList.jet
                             REFERENCE_EXPRESSION
                               PsiElement(IDENTIFIER)('next')
                           PsiWhiteSpace(' ')
-                          PsiElement(EQEQEQ)('===')
+                          OPERATION_REFERENCE
+                            PsiElement(EQEQEQ)('===')
                           PsiWhiteSpace(' ')
                           NULL
                             PsiElement(null)('null')
@@ -624,7 +642,8 @@ JetFile: LinkedList.jet
                                 REFERENCE_EXPRESSION
                                   PsiElement(IDENTIFIER)('previous')
                               PsiWhiteSpace(' ')
-                              PsiElement(EQ)('=')
+                              OPERATION_REFERENCE
+                                PsiElement(EQ)('=')
                               PsiWhiteSpace(' ')
                               DOT_QIALIFIED_EXPRESSION
                                 REFERENCE_EXPRESSION
@@ -646,7 +665,8 @@ JetFile: LinkedList.jet
                               REFERENCE_EXPRESSION
                                 PsiElement(IDENTIFIER)('tail')
                               PsiWhiteSpace(' ')
-                              PsiElement(EQ)('=')
+                              OPERATION_REFERENCE
+                                PsiElement(EQ)('=')
                               PsiWhiteSpace(' ')
                               DOT_QIALIFIED_EXPRESSION
                                 REFERENCE_EXPRESSION
@@ -768,7 +788,8 @@ JetFile: LinkedList.jet
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('value')
               PsiWhiteSpace(' ')
-              PsiElement(EQ)('=')
+              OPERATION_REFERENCE
+                PsiElement(EQ)('=')
               PsiWhiteSpace(' ')
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('value')
@@ -829,7 +850,8 @@ JetFile: LinkedList.jet
                 BINARY_EXPRESSION
                   INTEGER_CONSTANT
                     PsiElement(INTEGER_LITERAL)('1')
-                  PsiElement(RANGE)('..')
+                  OPERATION_REFERENCE
+                    PsiElement(RANGE)('..')
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('index')
               PsiElement(RPAR)(')')
@@ -843,7 +865,8 @@ JetFile: LinkedList.jet
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('result')
                       PsiWhiteSpace(' ')
-                      PsiElement(EQ)('=')
+                      OPERATION_REFERENCE
+                        PsiElement(EQ)('=')
                       PsiWhiteSpace(' ')
                       DOT_QIALIFIED_EXPRESSION
                         REFERENCE_EXPRESSION

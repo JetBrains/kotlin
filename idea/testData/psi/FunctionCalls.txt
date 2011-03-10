@@ -252,7 +252,8 @@ JetFile: FunctionCalls.jet
               BINARY_EXPRESSION
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('foo')
-                PsiElement(LT)('<')
+                OPERATION_REFERENCE
+                  PsiElement(LT)('<')
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('a')
             PsiElement(COMMA)(',')
@@ -266,7 +267,8 @@ JetFile: FunctionCalls.jet
               BINARY_EXPRESSION
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('b')
-                PsiElement(GT)('>')
+                OPERATION_REFERENCE
+                  PsiElement(GT)('>')
                 PARENTHESIZED
                   PsiElement(LPAR)('(')
                   REFERENCE_EXPRESSION
@@ -283,7 +285,8 @@ JetFile: FunctionCalls.jet
               BINARY_EXPRESSION
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('foo')
-                PsiElement(LT)('<')
+                OPERATION_REFERENCE
+                  PsiElement(LT)('<')
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('a')
             PsiElement(COMMA)(',')
@@ -295,7 +298,8 @@ JetFile: FunctionCalls.jet
                   INTEGER_CONSTANT
                     PsiElement(INTEGER_LITERAL)('1')
                   PsiWhiteSpace(' ')
-                  PsiElement(PLUS)('+')
+                  OPERATION_REFERENCE
+                    PsiElement(PLUS)('+')
                   PsiWhiteSpace(' ')
                   INTEGER_CONSTANT
                     PsiElement(INTEGER_LITERAL)('2')
@@ -306,7 +310,8 @@ JetFile: FunctionCalls.jet
               BINARY_EXPRESSION
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('b')
-                PsiElement(GT)('>')
+                OPERATION_REFERENCE
+                  PsiElement(GT)('>')
                 PARENTHESIZED
                   PsiElement(LPAR)('(')
                   REFERENCE_EXPRESSION

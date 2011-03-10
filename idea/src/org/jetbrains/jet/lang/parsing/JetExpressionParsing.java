@@ -6,8 +6,7 @@ import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.jet.JetNodeType;
 import org.jetbrains.jet.lexer.JetTokens;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static org.jetbrains.jet.JetNodeTypes.*;
 import static org.jetbrains.jet.lexer.JetTokens.*;
@@ -170,6 +169,28 @@ public class JetExpressionParsing extends AbstractJetParsing {
         }
     }
 
+    public static final TokenSet ALL_OPERATIONS;
+    static {
+        Set<IElementType> operations = new HashSet<IElementType>();
+        Precedence[] values = Precedence.values();
+        for (Precedence precedence : values) {
+            operations.addAll(Arrays.asList(precedence.getOperations().getTypes()));
+        }
+        ALL_OPERATIONS = TokenSet.create(operations.toArray(new IElementType[operations.size()]));
+    }
+
+    static {
+        IElementType[] operations = OPERATIONS.getTypes();
+        Set<IElementType> opSet = new HashSet<IElementType>(Arrays.asList(operations));
+        IElementType[] usedOperations = ALL_OPERATIONS.getTypes();
+        Set<IElementType> usedSet = new HashSet<IElementType>(Arrays.asList(usedOperations));
+
+        usedSet.removeAll(opSet);
+
+        assert usedSet.isEmpty() : "" + usedSet;
+    }
+
+
     private final JetParsing myJetParsing;
     private TokenSet decomposerExpressionFollow = null;
 
@@ -238,7 +259,10 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         while (!myBuilder.newlineBeforeCurrentToken() && atSet(precedence.getOperations())) {
             IElementType operation = tt();
+
+            PsiBuilder.Marker operationReference = mark();
             advance(); // operation
+            operationReference.done(OPERATION_REFERENCE);
 
             JetNodeType resultType = precedence.parseRightHandSide(operation, this);
             expression.done(resultType);

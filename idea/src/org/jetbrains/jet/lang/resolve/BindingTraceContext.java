@@ -38,8 +38,8 @@ public class BindingTraceContext extends BindingTrace implements BindingContext 
 
     @Override
     public void recordDeclarationResolution(@NotNull PsiElement declaration, @NotNull DeclarationDescriptor descriptor) {
-        descriptorToDeclarations.put(descriptor, declaration);
-        declarationsToDescriptors.put(declaration, descriptor);
+        descriptorToDeclarations.put(descriptor.getOriginal(), declaration);
+        declarationsToDescriptors.put(declaration, descriptor.getOriginal());
     }
 
     public void setToplevelScope(JetScope toplevelScope) {
@@ -89,7 +89,11 @@ public class BindingTraceContext extends BindingTrace implements BindingContext 
 
     @Override
     public PsiElement resolveToDeclarationPsiElement(JetReferenceExpression referenceExpression) {
-        return descriptorToDeclarations.get(resolveReferenceExpression(referenceExpression));
+        DeclarationDescriptor declarationDescriptor = resolveReferenceExpression(referenceExpression);
+        if (declarationDescriptor == null) {
+            return null;
+        }
+        return descriptorToDeclarations.get(declarationDescriptor.getOriginal());
     }
 
 }

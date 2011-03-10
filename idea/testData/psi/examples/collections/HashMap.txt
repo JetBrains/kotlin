@@ -49,7 +49,8 @@ JetFile: HashMap.jet
                   THIS_EXPRESSION
                     PsiElement(this)('this')
                   PsiWhiteSpace(' ')
-                  PsiElement(as)('as')
+                  OPERATION_REFERENCE
+                    PsiElement(as)('as')
                   PsiWhiteSpace(' ')
                   TYPE_REFERENCE
                     USER_TYPE
@@ -74,7 +75,8 @@ JetFile: HashMap.jet
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('other')
                   PsiWhiteSpace(' ')
-                  PsiElement(as)('as')
+                  OPERATION_REFERENCE
+                    PsiElement(as)('as')
                   PsiWhiteSpace(' ')
                   TYPE_REFERENCE
                     USER_TYPE
@@ -141,7 +143,8 @@ JetFile: HashMap.jet
                     THIS_EXPRESSION
                       PsiElement(this)('this')
                     PsiWhiteSpace(' ')
-                    PsiElement(as)('as')
+                    OPERATION_REFERENCE
+                      PsiElement(as)('as')
                     PsiWhiteSpace(' ')
                     TYPE_REFERENCE
                       USER_TYPE
@@ -889,7 +892,8 @@ JetFile: HashMap.jet
                 PsiElement(LPAR)('(')
                 PsiElement(RPAR)(')')
             PsiWhiteSpace(' ')
-            PsiElement(EQEQ)('==')
+            OPERATION_REFERENCE
+              PsiElement(EQEQ)('==')
             PsiWhiteSpace(' ')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('b')

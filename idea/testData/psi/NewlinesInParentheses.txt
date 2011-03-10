@@ -24,7 +24,8 @@ JetFile: NewlinesInParentheses.jet
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('a')
             PsiWhiteSpace(' ')
-            PsiElement(PLUS)('+')
+            OPERATION_REFERENCE
+              PsiElement(PLUS)('+')
             PsiWhiteSpace(' ')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('b')
@@ -40,7 +41,8 @@ JetFile: NewlinesInParentheses.jet
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('a')
             PsiWhiteSpace(' ')
-            PsiElement(PLUS)('+')
+            OPERATION_REFERENCE
+              PsiElement(PLUS)('+')
             PsiWhiteSpace('\n    ')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('b')
@@ -74,7 +76,8 @@ JetFile: NewlinesInParentheses.jet
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('a')
               PsiWhiteSpace('\n  ')
-              PsiElement(PLUS)('+')
+              OPERATION_REFERENCE
+                PsiElement(PLUS)('+')
               PsiWhiteSpace(' ')
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('b')
@@ -126,7 +129,8 @@ JetFile: NewlinesInParentheses.jet
                       PsiElement(IDENTIFIER)('b')
                 PsiElement(RBRACE)('}')
               PsiWhiteSpace('\n  ')
-              PsiElement(PLUS)('+')
+              OPERATION_REFERENCE
+                PsiElement(PLUS)('+')
               PsiWhiteSpace(' ')
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('b')
@@ -148,7 +152,8 @@ JetFile: NewlinesInParentheses.jet
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('c')
                 PsiWhiteSpace('\n    ')
-                PsiElement(PLUS)('+')
+                OPERATION_REFERENCE
+                  PsiElement(PLUS)('+')
                 PsiWhiteSpace(' ')
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('d')
@@ -206,7 +211,8 @@ JetFile: NewlinesInParentheses.jet
                         PsiElement(IDENTIFIER)('d')
                   PsiElement(RBRACE)('}')
                 PsiWhiteSpace('\n    ')
-                PsiElement(PLUS)('+')
+                OPERATION_REFERENCE
+                  PsiElement(PLUS)('+')
                 PsiWhiteSpace(' ')
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('d')
@@ -322,7 +328,8 @@ JetFile: NewlinesInParentheses.jet
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('a')
             PsiWhiteSpace(' ')
-            PsiElement(is)('is')
+            OPERATION_REFERENCE
+              PsiElement(is)('is')
             PsiWhiteSpace(' ')
             TYPE_PATTERN
               TYPE_REFERENCE

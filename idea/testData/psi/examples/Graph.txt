@@ -455,7 +455,8 @@ JetFile: Graph.jet
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('from')
                       PsiWhiteSpace(' ')
-                      PsiElement(EQEQ)('==')
+                      OPERATION_REFERENCE
+                        PsiElement(EQEQ)('==')
                       PsiWhiteSpace(' ')
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('v')

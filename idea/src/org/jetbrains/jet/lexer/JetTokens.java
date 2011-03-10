@@ -6,6 +6,7 @@ package org.jetbrains.jet.lexer;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
+import org.jetbrains.jet.lang.parsing.JetExpressionParsing;
 
 public interface JetTokens {
     JetToken EOF   = new JetToken("EOF");

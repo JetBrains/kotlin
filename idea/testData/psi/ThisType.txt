@@ -75,7 +75,8 @@ JetFile: ThisType.jet
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('foo')
             PsiWhiteSpace(' ')
-            PsiElement(as)('as')
+            OPERATION_REFERENCE
+              PsiElement(as)('as')
             PsiWhiteSpace(' ')
             TYPE_REFERENCE
               USER_TYPE

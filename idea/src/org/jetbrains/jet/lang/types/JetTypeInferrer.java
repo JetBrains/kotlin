@@ -167,7 +167,7 @@ public class JetTypeInferrer {
 
             @Override
             public void visitBinaryWithTypeRHSExpression(JetBinaryExpressionWithTypeRHS expression) {
-                if (expression.getOperationSign() == JetTokens.COLON) {
+                if (expression.getOperationReference().getReferencedNameElementType() == JetTokens.COLON) {
                     Type actualType = getType(scope, expression.getLeft(), false);
                     Type expectedType = typeResolver.resolveType(scope, expression.getRight());
                     if (JetTypeChecker.INSTANCE.isSubtypeOf(actualType, expectedType)) {
@@ -316,18 +316,18 @@ public class JetTypeInferrer {
 
 //                    result[0] = overloadDomain.getFunctionDescriptorForNamedArguments(typeArguments, valueArguments, functionLiteralArgument);
                 } else {
+                    List<Type> types = new ArrayList<Type>();
+                    for (JetTypeProjection projection : typeArguments) {
+                        // TODO : check that there's no projection
+                        types.add(typeResolver.resolveType(scope, projection.getTypeReference()));
+                    }
+
                     List<JetExpression> positionedValueArguments = new ArrayList<JetExpression>();
                     for (JetArgument argument : valueArguments) {
                         positionedValueArguments.add(argument.getArgumentExpression());
                     }
 
                     positionedValueArguments.addAll(functionLiteralArguments);
-
-                    List<Type> types = new ArrayList<Type>();
-                    for (JetTypeProjection projection : typeArguments) {
-                        // TODO : check that there's no projection
-                        types.add(typeResolver.resolveType(scope, projection.getTypeReference()));
-                    }
 
                     List<Type> valueArgumentTypes = new ArrayList<Type>();
                     for (JetExpression valueArgument : positionedValueArguments) {
@@ -342,8 +342,38 @@ public class JetTypeInferrer {
             }
 
             @Override
+            public void visitBinaryExpression(JetBinaryExpression expression) {
+                JetReferenceExpression operationSign = expression.getOperationReference();
+
+                IElementType operationType = operationSign.getReferencedNameElementType();
+                if (operationType == JetTokens.IDENTIFIER) {
+                    result[0] = getTypeForBinaryCall(expression, operationSign.getReferencedName(), scope);
+                }
+                else if (operationType == JetTokens.PLUS) {
+                    result[0] = getTypeForBinaryCall(expression, "plus", scope);
+                } else {
+                    throw new UnsupportedOperationException(); // TODO
+                }
+            }
+
+            @Override
             public void visitJetElement(JetElement elem) {
                 throw new IllegalArgumentException("Unsupported element: " + elem);
+            }
+
+            private Type getTypeForBinaryCall(JetBinaryExpression expression, String name, JetScope scope) {
+                JetReferenceExpression operationSign = expression.getOperationReference();
+                JetExpression left = expression.getLeft();
+                Type leftType = getType(scope, left, false);
+                JetExpression right = expression.getRight();
+                Type rightType = getType(scope, right, false);
+                OverloadDomain overloadDomain = OverloadResolver.INSTANCE.getOverloadDomain(leftType, scope, name);
+                overloadDomain = wrapForTracing(overloadDomain, operationSign);
+                FunctionDescriptor functionDescriptor = overloadDomain.getFunctionDescriptorForPositionedArguments(Collections.<Type>emptyList(), Collections.singletonList(rightType));
+                if (functionDescriptor != null) {
+                    return functionDescriptor.getUnsubstitutedReturnType();
+                }
+                return null;
             }
         });
         if (result[0] != null) {
@@ -351,6 +381,7 @@ public class JetTypeInferrer {
         }
         return result[0];
     }
+
 
     private OverloadDomain getOverloadDomain(final JetScope scope, JetExpression calleeExpression) {
         final OverloadDomain[] result = new OverloadDomain[1];
@@ -404,26 +435,30 @@ public class JetTypeInferrer {
                 throw new IllegalArgumentException("Unsupported element: " + elem);
             }
         });
-        if (result[0] == null) return OverloadDomain.EMPTY;
+        return wrapForTracing(result[0], reference[0]);
+    }
+
+    private OverloadDomain wrapForTracing(final OverloadDomain overloadDomain, final JetReferenceExpression referenceExpression) {
+        if (overloadDomain == null) return OverloadDomain.EMPTY;
         return new OverloadDomain() {
             @Override
             public FunctionDescriptor getFunctionDescriptorForNamedArguments(@NotNull List<Type> typeArguments, @NotNull Map<String, Type> valueArgumentTypes, @Nullable Type functionLiteralArgumentType) {
-                FunctionDescriptor descriptor = result[0].getFunctionDescriptorForNamedArguments(typeArguments, valueArgumentTypes, functionLiteralArgumentType);
+                FunctionDescriptor descriptor = overloadDomain.getFunctionDescriptorForNamedArguments(typeArguments, valueArgumentTypes, functionLiteralArgumentType);
                 if (descriptor != null) {
-                    trace.recordReferenceResolution(reference[0], descriptor);
+                    trace.recordReferenceResolution(referenceExpression, descriptor);
                 } else {
-                    semanticServices.getErrorHandler().unresolvedReference(reference[0]);
+                    semanticServices.getErrorHandler().unresolvedReference(referenceExpression);
                 }
                 return descriptor;
             }
 
             @Override
             public FunctionDescriptor getFunctionDescriptorForPositionedArguments(@NotNull List<Type> typeArguments, @NotNull List<Type> positionedValueArgumentTypes) {
-                FunctionDescriptor descriptor = result[0].getFunctionDescriptorForPositionedArguments(typeArguments, positionedValueArgumentTypes);
+                FunctionDescriptor descriptor = overloadDomain.getFunctionDescriptorForPositionedArguments(typeArguments, positionedValueArgumentTypes);
                 if (descriptor != null) {
-                    trace.recordReferenceResolution(reference[0], descriptor);
+                    trace.recordReferenceResolution(referenceExpression, descriptor);
                 } else {
-                    semanticServices.getErrorHandler().unresolvedReference(reference[0]);
+                    semanticServices.getErrorHandler().unresolvedReference(referenceExpression);
                 }
                 return descriptor;
             }

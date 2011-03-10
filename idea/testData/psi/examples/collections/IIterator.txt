@@ -195,18 +195,21 @@ JetFile: IIterator.jet
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('from')
                         PsiWhiteSpace(' ')
-                        PsiElement(LT)('<')
+                        OPERATION_REFERENCE
+                          PsiElement(LT)('<')
                         PsiWhiteSpace(' ')
                         INTEGER_CONSTANT
                           PsiElement(INTEGER_LITERAL)('0')
                       PsiWhiteSpace(' ')
-                      PsiElement(OROR)('||')
+                      OPERATION_REFERENCE
+                        PsiElement(OROR)('||')
                       PsiWhiteSpace(' ')
                       BINARY_EXPRESSION
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('from')
                         PsiWhiteSpace(' ')
-                        PsiElement(GT)('>')
+                        OPERATION_REFERENCE
+                          PsiElement(GT)('>')
                         PsiWhiteSpace(' ')
                         DOT_QIALIFIED_EXPRESSION
                           REFERENCE_EXPRESSION
@@ -215,24 +218,28 @@ JetFile: IIterator.jet
                           REFERENCE_EXPRESSION
                             PsiElement(IDENTIFIER)('lastIndex')
                     PsiWhiteSpace(' ')
-                    PsiElement(OROR)('||')
+                    OPERATION_REFERENCE
+                      PsiElement(OROR)('||')
                     PsiWhiteSpace(' ')
                     BINARY_EXPRESSION
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('length')
                       PsiWhiteSpace(' ')
-                      PsiElement(LT)('<')
+                      OPERATION_REFERENCE
+                        PsiElement(LT)('<')
                       PsiWhiteSpace(' ')
                       INTEGER_CONSTANT
                         PsiElement(INTEGER_LITERAL)('0')
                   PsiWhiteSpace(' ')
-                  PsiElement(OROR)('||')
+                  OPERATION_REFERENCE
+                    PsiElement(OROR)('||')
                   PsiWhiteSpace(' ')
                   BINARY_EXPRESSION
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('length')
                     PsiWhiteSpace(' ')
-                    PsiElement(GT)('>')
+                    OPERATION_REFERENCE
+                      PsiElement(GT)('>')
                     PsiWhiteSpace(' ')
                     BINARY_EXPRESSION
                       DOT_QIALIFIED_EXPRESSION
@@ -242,7 +249,8 @@ JetFile: IIterator.jet
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('size')
                       PsiWhiteSpace(' ')
-                      PsiElement(MINUS)('-')
+                      OPERATION_REFERENCE
+                        PsiElement(MINUS)('-')
                       PsiWhiteSpace(' ')
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('from')
@@ -275,7 +283,8 @@ JetFile: IIterator.jet
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('len')
                   PsiWhiteSpace(' ')
-                  PsiElement(EQEQ)('==')
+                  OPERATION_REFERENCE
+                    PsiElement(EQEQ)('==')
                   PsiWhiteSpace(' ')
                   INTEGER_CONSTANT
                     PsiElement(INTEGER_LITERAL)('0')
@@ -313,19 +322,22 @@ JetFile: IIterator.jet
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('from')
                   PsiWhiteSpace(' ')
-                  PsiElement(RANGE)('..')
+                  OPERATION_REFERENCE
+                    PsiElement(RANGE)('..')
                   PsiWhiteSpace(' ')
                   BINARY_EXPRESSION
                     BINARY_EXPRESSION
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('from')
                       PsiWhiteSpace(' ')
-                      PsiElement(PLUS)('+')
+                      OPERATION_REFERENCE
+                        PsiElement(PLUS)('+')
                       PsiWhiteSpace(' ')
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('length')
                     PsiWhiteSpace(' ')
-                    PsiElement(MINUS)('-')
+                    OPERATION_REFERENCE
+                      PsiElement(MINUS)('-')
                     PsiWhiteSpace(' ')
                     INTEGER_CONSTANT
                       PsiElement(INTEGER_LITERAL)('1')
@@ -364,7 +376,8 @@ JetFile: IIterator.jet
                             PsiElement(IDENTIFIER)('i')
                           PsiElement(RBRACKET)(']')
                       PsiWhiteSpace(' ')
-                      PsiElement(EQ)('=')
+                      OPERATION_REFERENCE
+                        PsiElement(EQ)('=')
                       PsiWhiteSpace(' ')
                       CALL_EXPRESSION
                         REFERENCE_EXPRESSION

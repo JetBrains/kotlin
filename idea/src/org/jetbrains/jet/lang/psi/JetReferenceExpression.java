@@ -4,12 +4,14 @@ import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.ErrorHandler;
+import org.jetbrains.jet.lang.parsing.JetExpressionParsing;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -26,18 +28,23 @@ public class JetReferenceExpression extends JetExpression {
 
     @Nullable @IfNotParsed
     public String getReferencedName() {
-        ASTNode node = getNode().findChildByType(REFERENCE_TOKENS);
-        return node == null ? null : node.getText();
+        PsiElement referencedNameElement = getReferencedNameElement();
+        return referencedNameElement == null ? null : referencedNameElement.getNode().getText();
     }
 
     @Nullable @IfNotParsed
     public PsiElement getReferencedNameElement() {
-        return findChildByType(REFERENCE_TOKENS);
+        PsiElement element = findChildByType(REFERENCE_TOKENS);
+        if (element == null) {
+            element = findChildByType(JetExpressionParsing.ALL_OPERATIONS);
+        }
+        return element;
     }
 
-    @Override
-    public void accept(JetVisitor visitor) {
-        visitor.visitReferenceExpression(this);
+    @Nullable @IfNotParsed
+    public IElementType getReferencedNameElementType() {
+        PsiElement element = getReferencedNameElement();
+        return element == null ? null : element.getNode().getElementType();
     }
 
     @Override
@@ -51,7 +58,7 @@ public class JetReferenceExpression extends JetExpression {
         return new PsiReference() {
             @Override
             public PsiElement getElement() {
-                return findChildByType(REFERENCE_TOKENS);
+                return getReferencedNameElement();
             }
 
             @Override
@@ -102,6 +109,11 @@ public class JetReferenceExpression extends JetExpression {
                 return false;
             }
         };
+    }
+
+    @Override
+    public void accept(JetVisitor visitor) {
+        visitor.visitReferenceExpression(this);
     }
 
 }

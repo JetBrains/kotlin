@@ -92,7 +92,10 @@ public interface JetNodeTypes {
     JetNodeType BLOCK                     = new JetNodeType("BLOCK", JetBlockExpression.class);
     JetNodeType FUNCTION_LITERAL          = new JetNodeType("FUNCTION_LITERAL", JetFunctionLiteralExpression.class);
     JetNodeType ANNOTATED_EXPRESSION      = new JetNodeType("ANNOTATED_EXPRESSION", JetAnnotatedExpression.class);
+
     JetNodeType REFERENCE_EXPRESSION      = new JetNodeType("REFERENCE_EXPRESSION", JetReferenceExpression.class);
+    JetNodeType OPERATION_REFERENCE       = new JetNodeType("OPERATION_REFERENCE", JetReferenceExpression.class);
+
     JetNodeType THIS_EXPRESSION           = new JetNodeType("THIS_EXPRESSION", JetThisExpression.class);
     JetNodeType BINARY_EXPRESSION         = new JetNodeType("BINARY_EXPRESSION", JetBinaryExpression.class);
     JetNodeType BINARY_WITH_TYPE          = new JetNodeType("BINARY_WITH_TYPE", JetBinaryExpressionWithTypeRHS.class);

@@ -95,7 +95,8 @@ JetFile: Precedence.jet
               BINARY_EXPRESSION
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('foo')
-                PsiElement(LT)('<')
+                OPERATION_REFERENCE
+                  PsiElement(LT)('<')
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('a')
             PsiElement(COMMA)(',')
@@ -109,7 +110,8 @@ JetFile: Precedence.jet
               BINARY_EXPRESSION
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('b')
-                PsiElement(GT)('>')
+                OPERATION_REFERENCE
+                  PsiElement(GT)('>')
                 PARENTHESIZED
                   PsiElement(LPAR)('(')
                   REFERENCE_EXPRESSION
@@ -126,7 +128,8 @@ JetFile: Precedence.jet
               BINARY_EXPRESSION
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('foo')
-                PsiElement(LT)('<')
+                OPERATION_REFERENCE
+                  PsiElement(LT)('<')
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('a')
             PsiElement(COMMA)(',')
@@ -138,7 +141,8 @@ JetFile: Precedence.jet
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('a')
                   PsiWhiteSpace(' ')
-                  PsiElement(PLUS)('+')
+                  OPERATION_REFERENCE
+                    PsiElement(PLUS)('+')
                   PsiWhiteSpace(' ')
                   INTEGER_CONSTANT
                     PsiElement(INTEGER_LITERAL)('1')
@@ -149,7 +153,8 @@ JetFile: Precedence.jet
               BINARY_EXPRESSION
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('b')
-                PsiElement(GT)('>')
+                OPERATION_REFERENCE
+                  PsiElement(GT)('>')
                 PARENTHESIZED
                   PsiElement(LPAR)('(')
                   REFERENCE_EXPRESSION
@@ -166,7 +171,8 @@ JetFile: Precedence.jet
               BINARY_EXPRESSION
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('foo')
-                PsiElement(LT)('<')
+                OPERATION_REFERENCE
+                  PsiElement(LT)('<')
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('a')
             PsiElement(COMMA)(',')
@@ -177,7 +183,8 @@ JetFile: Precedence.jet
                 BINARY_EXPRESSION
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('b')
-                  PsiElement(GT)('>')
+                  OPERATION_REFERENCE
+                    PsiElement(GT)('>')
                   PARENTHESIZED
                     PsiElement(LPAR)('(')
                     REFERENCE_EXPRESSION
@@ -229,7 +236,8 @@ JetFile: Precedence.jet
                 BINARY_EXPRESSION
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('foo')
-                  PsiElement(LT)('<')
+                  OPERATION_REFERENCE
+                    PsiElement(LT)('<')
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('a')
                 PsiElement(RPAR)(')')
@@ -239,7 +247,8 @@ JetFile: Precedence.jet
               BINARY_EXPRESSION
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('b')
-                PsiElement(GT)('>')
+                OPERATION_REFERENCE
+                  PsiElement(GT)('>')
                 PARENTHESIZED
                   PsiElement(LPAR)('(')
                   REFERENCE_EXPRESSION
@@ -256,7 +265,8 @@ JetFile: Precedence.jet
               BINARY_EXPRESSION
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('foo')
-                PsiElement(LT)('<')
+                OPERATION_REFERENCE
+                  PsiElement(LT)('<')
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('a')
             PsiElement(COMMA)(',')
@@ -270,7 +280,8 @@ JetFile: Precedence.jet
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('a')
           PsiWhiteSpace(' ')
-          PsiElement(PLUS)('+')
+          OPERATION_REFERENCE
+            PsiElement(PLUS)('+')
           PsiWhiteSpace(' ')
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('b')
@@ -279,13 +290,15 @@ JetFile: Precedence.jet
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('a')
           PsiWhiteSpace(' ')
-          PsiElement(PLUS)('+')
+          OPERATION_REFERENCE
+            PsiElement(PLUS)('+')
           PsiWhiteSpace(' ')
           BINARY_EXPRESSION
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('b')
             PsiWhiteSpace(' ')
-            PsiElement(MUL)('*')
+            OPERATION_REFERENCE
+              PsiElement(MUL)('*')
             PsiWhiteSpace(' ')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('c')
@@ -294,7 +307,8 @@ JetFile: Precedence.jet
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('a')
           PsiWhiteSpace(' ')
-          PsiElement(PLUS)('+')
+          OPERATION_REFERENCE
+            PsiElement(PLUS)('+')
           PsiWhiteSpace(' ')
           PARENTHESIZED
             PsiElement(LPAR)('(')
@@ -302,7 +316,8 @@ JetFile: Precedence.jet
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('b')
               PsiWhiteSpace(' ')
-              PsiElement(MUL)('*')
+              OPERATION_REFERENCE
+                PsiElement(MUL)('*')
               PsiWhiteSpace(' ')
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('c')
@@ -315,13 +330,15 @@ JetFile: Precedence.jet
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('a')
               PsiWhiteSpace(' ')
-              PsiElement(PLUS)('+')
+              OPERATION_REFERENCE
+                PsiElement(PLUS)('+')
               PsiWhiteSpace(' ')
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('b')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
-          PsiElement(MUL)('*')
+          OPERATION_REFERENCE
+            PsiElement(MUL)('*')
           PsiWhiteSpace(' ')
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('c')
@@ -331,18 +348,21 @@ JetFile: Precedence.jet
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('a')
             PsiWhiteSpace(' ')
-            PsiElement(PLUS)('+')
+            OPERATION_REFERENCE
+              PsiElement(PLUS)('+')
             PsiWhiteSpace(' ')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('b')
           PsiWhiteSpace(' ')
-          PsiElement(GT)('>')
+          OPERATION_REFERENCE
+            PsiElement(GT)('>')
           PsiWhiteSpace(' ')
           BINARY_EXPRESSION
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('c')
             PsiWhiteSpace(' ')
-            PsiElement(MUL)('*')
+            OPERATION_REFERENCE
+              PsiElement(MUL)('*')
             PsiWhiteSpace(' ')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('c')
@@ -352,18 +372,21 @@ JetFile: Precedence.jet
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('a')
             PsiWhiteSpace(' ')
-            PsiElement(PLUS)('+')
+            OPERATION_REFERENCE
+              PsiElement(PLUS)('+')
             PsiWhiteSpace(' ')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('b')
           PsiWhiteSpace(' ')
-          PsiElement(in)('in')
+          OPERATION_REFERENCE
+            PsiElement(in)('in')
           PsiWhiteSpace(' ')
           BINARY_EXPRESSION
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('c')
             PsiWhiteSpace(' ')
-            PsiElement(MUL)('*')
+            OPERATION_REFERENCE
+              PsiElement(MUL)('*')
             PsiWhiteSpace(' ')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('d')
@@ -379,7 +402,8 @@ JetFile: Precedence.jet
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('a')
           PsiWhiteSpace(' ')
-          PsiElement(PLUS)('+')
+          OPERATION_REFERENCE
+            PsiElement(PLUS)('+')
           PsiWhiteSpace(' ')
           DOT_QIALIFIED_EXPRESSION
             REFERENCE_EXPRESSION
@@ -396,7 +420,8 @@ JetFile: Precedence.jet
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('b')
           PsiWhiteSpace(' ')
-          PsiElement(PLUS)('+')
+          OPERATION_REFERENCE
+            PsiElement(PLUS)('+')
           PsiWhiteSpace(' ')
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('c')
@@ -427,7 +452,8 @@ JetFile: Precedence.jet
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('a')
           PsiWhiteSpace(' ')
-          PsiElement(MUL)('*')
+          OPERATION_REFERENCE
+            PsiElement(MUL)('*')
           PsiWhiteSpace(' ')
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('b')
@@ -436,14 +462,17 @@ JetFile: Precedence.jet
           BINARY_EXPRESSION
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('a')
-            PsiElement(PLUS)('+')
+            OPERATION_REFERENCE
+              PsiElement(PLUS)('+')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('b')
-          PsiElement(RANGE)('..')
+          OPERATION_REFERENCE
+            PsiElement(RANGE)('..')
           BINARY_EXPRESSION
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('b')
-            PsiElement(MINUS)('-')
+            OPERATION_REFERENCE
+              PsiElement(MINUS)('-')
             INTEGER_CONSTANT
               PsiElement(INTEGER_LITERAL)('1')
         PsiWhiteSpace('\n  ')
@@ -451,16 +480,19 @@ JetFile: Precedence.jet
           BINARY_EXPRESSION
             INTEGER_CONSTANT
               PsiElement(INTEGER_LITERAL)('1')
-            PsiElement(RANGE)('..')
+            OPERATION_REFERENCE
+              PsiElement(RANGE)('..')
             INTEGER_CONSTANT
               PsiElement(INTEGER_LITERAL)('2')
           PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('foo')
+          OPERATION_REFERENCE
+            PsiElement(IDENTIFIER)('foo')
           PsiWhiteSpace(' ')
           BINARY_EXPRESSION
             INTEGER_CONSTANT
               PsiElement(INTEGER_LITERAL)('2')
-            PsiElement(RANGE)('..')
+            OPERATION_REFERENCE
+              PsiElement(RANGE)('..')
             INTEGER_CONSTANT
               PsiElement(INTEGER_LITERAL)('3')
         PsiWhiteSpace('\n  ')
@@ -469,18 +501,21 @@ JetFile: Precedence.jet
             INTEGER_CONSTANT
               PsiElement(INTEGER_LITERAL)('1')
             PsiWhiteSpace(' ')
-            PsiElement(IDENTIFIER)('foo')
+            OPERATION_REFERENCE
+              PsiElement(IDENTIFIER)('foo')
             PsiWhiteSpace(' ')
             INTEGER_CONSTANT
               PsiElement(INTEGER_LITERAL)('2')
           PsiWhiteSpace(' ')
-          PsiElement(ELVIS)('?:')
+          OPERATION_REFERENCE
+            PsiElement(ELVIS)('?:')
           PsiWhiteSpace(' ')
           BINARY_EXPRESSION
             INTEGER_CONSTANT
               PsiElement(INTEGER_LITERAL)('1')
             PsiWhiteSpace(' ')
-            PsiElement(IDENTIFIER)('bar')
+            OPERATION_REFERENCE
+              PsiElement(IDENTIFIER)('bar')
             PsiWhiteSpace(' ')
             INTEGER_CONSTANT
               PsiElement(INTEGER_LITERAL)('3')
@@ -491,17 +526,20 @@ JetFile: Precedence.jet
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('a')
               PsiWhiteSpace(' ')
-              PsiElement(IDENTIFIER)('b')
+              OPERATION_REFERENCE
+                PsiElement(IDENTIFIER)('b')
               PsiWhiteSpace(' ')
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('c')
             PsiWhiteSpace(' ')
-            PsiElement(IDENTIFIER)('d')
+            OPERATION_REFERENCE
+              PsiElement(IDENTIFIER)('d')
             PsiWhiteSpace(' ')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('e')
           PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('f')
+          OPERATION_REFERENCE
+            PsiElement(IDENTIFIER)('f')
           PsiWhiteSpace(' ')
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('g')
@@ -511,17 +549,20 @@ JetFile: Precedence.jet
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('a')
             PsiWhiteSpace(' ')
-            PsiElement(ELVIS)('?:')
+            OPERATION_REFERENCE
+              PsiElement(ELVIS)('?:')
             PsiWhiteSpace(' ')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('b')
           PsiWhiteSpace(' ')
-          PsiElement(in)('in')
+          OPERATION_REFERENCE
+            PsiElement(in)('in')
           PsiWhiteSpace(' ')
           BINARY_EXPRESSION
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('b')
-            PsiElement(ELVIS)('?:')
+            OPERATION_REFERENCE
+              PsiElement(ELVIS)('?:')
             PsiWhiteSpace(' ')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('c')
@@ -533,7 +574,8 @@ JetFile: Precedence.jet
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('a')
               PsiWhiteSpace(' ')
-              PsiElement(COLON)(':')
+              OPERATION_REFERENCE
+                PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
                 USER_TYPE
@@ -541,13 +583,15 @@ JetFile: Precedence.jet
                     PsiElement(IDENTIFIER)('b')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
-          PsiElement(LT)('<')
+          OPERATION_REFERENCE
+            PsiElement(LT)('<')
           PsiWhiteSpace(' ')
           BINARY_WITH_TYPE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('b')
             PsiWhiteSpace(' ')
-            PsiElement(COLON)(':')
+            OPERATION_REFERENCE
+              PsiElement(COLON)(':')
             PsiWhiteSpace(' ')
             TYPE_REFERENCE
               USER_TYPE
@@ -559,18 +603,21 @@ JetFile: Precedence.jet
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('a')
             PsiWhiteSpace(' ')
-            PsiElement(LT)('<')
+            OPERATION_REFERENCE
+              PsiElement(LT)('<')
             PsiWhiteSpace(' ')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('b')
           PsiWhiteSpace(' ')
-          PsiElement(EQEQ)('==')
+          OPERATION_REFERENCE
+            PsiElement(EQEQ)('==')
           PsiWhiteSpace(' ')
           BINARY_EXPRESSION
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('b')
             PsiWhiteSpace(' ')
-            PsiElement(GT)('>')
+            OPERATION_REFERENCE
+              PsiElement(GT)('>')
             PsiWhiteSpace(' ')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('c')
@@ -580,12 +627,14 @@ JetFile: Precedence.jet
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('a')
             PsiWhiteSpace(' ')
-            PsiElement(EXCLEQ)('!=')
+            OPERATION_REFERENCE
+              PsiElement(EXCLEQ)('!=')
             PsiWhiteSpace(' ')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('b')
           PsiWhiteSpace(' ')
-          PsiElement(ANDAND)('&&')
+          OPERATION_REFERENCE
+            PsiElement(ANDAND)('&&')
           PsiWhiteSpace(' ')
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('c')
@@ -594,43 +643,49 @@ JetFile: Precedence.jet
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('a')
           PsiWhiteSpace(' ')
-          PsiElement(OROR)('||')
-          PsiWhiteSpace(' ')
-          BINARY_EXPRESSION
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('b')
-            PsiWhiteSpace(' ')
-            PsiElement(ANDAND)('&&')
-            PsiWhiteSpace(' ')
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('c')
-        PsiWhiteSpace('\n  ')
-        BINARY_EXPRESSION
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('a')
-          PsiWhiteSpace(' ')
-          PsiElement(EQ)('=')
-          PsiWhiteSpace(' ')
-          BINARY_EXPRESSION
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('b')
-            PsiWhiteSpace(' ')
-            PsiElement(ARROW)('->')
-            PsiWhiteSpace(' ')
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('c')
-        PsiWhiteSpace('\n  ')
-        BINARY_EXPRESSION
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('a')
-          PsiWhiteSpace(' ')
-          PsiElement(EQ)('=')
-          PsiWhiteSpace(' ')
-          BINARY_EXPRESSION
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('b')
-            PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
             PsiElement(OROR)('||')
+          PsiWhiteSpace(' ')
+          BINARY_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('b')
+            PsiWhiteSpace(' ')
+            OPERATION_REFERENCE
+              PsiElement(ANDAND)('&&')
+            PsiWhiteSpace(' ')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('c')
+        PsiWhiteSpace('\n  ')
+        BINARY_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('a')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          BINARY_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('b')
+            PsiWhiteSpace(' ')
+            OPERATION_REFERENCE
+              PsiElement(ARROW)('->')
+            PsiWhiteSpace(' ')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('c')
+        PsiWhiteSpace('\n  ')
+        BINARY_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('a')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          BINARY_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('b')
+            PsiWhiteSpace(' ')
+            OPERATION_REFERENCE
+              PsiElement(OROR)('||')
             PsiWhiteSpace(' ')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('c')

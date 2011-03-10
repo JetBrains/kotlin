@@ -163,7 +163,8 @@ JetFile: Comparison.jet
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('a')
               PsiWhiteSpace(' ')
-              PsiElement(as)('as')
+              OPERATION_REFERENCE
+                PsiElement(as)('as')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
                 USER_TYPE
@@ -188,7 +189,8 @@ JetFile: Comparison.jet
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('b')
               PsiWhiteSpace(' ')
-              PsiElement(as)('as')
+              OPERATION_REFERENCE
+                PsiElement(as)('as')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
                 USER_TYPE
@@ -371,7 +373,8 @@ JetFile: Comparison.jet
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('res')
                 PsiWhiteSpace(' ')
-                PsiElement(EQEQ)('==')
+                OPERATION_REFERENCE
+                  PsiElement(EQEQ)('==')
                 PsiWhiteSpace(' ')
                 INTEGER_CONSTANT
                   PsiElement(INTEGER_LITERAL)('0')
@@ -397,7 +400,8 @@ JetFile: Comparison.jet
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('res')
                 PsiWhiteSpace(' ')
-                PsiElement(LT)('<')
+                OPERATION_REFERENCE
+                  PsiElement(LT)('<')
                 PsiWhiteSpace(' ')
                 INTEGER_CONSTANT
                   PsiElement(INTEGER_LITERAL)('0')

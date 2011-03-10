@@ -377,7 +377,8 @@ JetFile: PolymorphicClassObjects.jet
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('builder')
                         PsiWhiteSpace(' ')
-                        PsiElement(PLUSEQ)('+=')
+                        OPERATION_REFERENCE
+                          PsiElement(PLUSEQ)('+=')
                         PsiWhiteSpace(' ')
                         CALL_EXPRESSION
                           REFERENCE_EXPRESSION

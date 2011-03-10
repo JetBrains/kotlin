@@ -58,7 +58,8 @@ JetFile: ByCaluses.jet
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('a')
             PsiWhiteSpace(' ')
-            PsiElement(PLUS)('+')
+            OPERATION_REFERENCE
+              PsiElement(PLUS)('+')
             PsiWhiteSpace(' ')
             BINARY_EXPRESSION
               CALL_EXPRESSION
@@ -68,7 +69,8 @@ JetFile: ByCaluses.jet
                   PsiElement(LPAR)('(')
                   PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')
-              PsiElement(MUL)('*')
+              OPERATION_REFERENCE
+                PsiElement(MUL)('*')
               PsiWhiteSpace(' ')
               INTEGER_CONSTANT
                 PsiElement(INTEGER_LITERAL)('5')

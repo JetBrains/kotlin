@@ -676,7 +676,8 @@ JetFile: ControlStructures.jet
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('a')
               PsiWhiteSpace(' ')
-              PsiElement(in)('in')
+              OPERATION_REFERENCE
+                PsiElement(in)('in')
               PsiWhiteSpace(' ')
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('b')
@@ -695,7 +696,8 @@ JetFile: ControlStructures.jet
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('a')
               PsiWhiteSpace(' ')
-              PsiElement(in)('in')
+              OPERATION_REFERENCE
+                PsiElement(in)('in')
               PsiWhiteSpace(' ')
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('b')
@@ -720,7 +722,8 @@ JetFile: ControlStructures.jet
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('a')
               PsiWhiteSpace(' ')
-              PsiElement(in)('in')
+              OPERATION_REFERENCE
+                PsiElement(in)('in')
               PsiWhiteSpace(' ')
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('b')

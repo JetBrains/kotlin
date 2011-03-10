@@ -316,7 +316,8 @@ JetFile: IOSamples.jet
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('stream')
               PsiWhiteSpace(' ')
-              PsiElement(EQ)('=')
+              OPERATION_REFERENCE
+                PsiElement(EQ)('=')
               PsiWhiteSpace(' ')
               CALL_EXPRESSION
                 REFERENCE_EXPRESSION
@@ -368,7 +369,8 @@ JetFile: IOSamples.jet
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('nextUsed')
                       PsiWhiteSpace(' ')
-                      PsiElement(EQ)('=')
+                      OPERATION_REFERENCE
+                        PsiElement(EQ)('=')
                       PsiWhiteSpace(' ')
                       BOOLEAN_CONSTANT
                         PsiElement(true)('true')
@@ -380,7 +382,8 @@ JetFile: IOSamples.jet
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('next')
                         PsiWhiteSpace(' ')
-                        PsiElement(as)('as')
+                        OPERATION_REFERENCE
+                          PsiElement(as)('as')
                         PsiWhiteSpace(' ')
                         TYPE_REFERENCE
                           USER_TYPE
@@ -421,13 +424,15 @@ JetFile: IOSamples.jet
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('nextUsed')
                     PsiWhiteSpace(' ')
-                    PsiElement(ANDAND)('&&')
+                    OPERATION_REFERENCE
+                      PsiElement(ANDAND)('&&')
                     PsiWhiteSpace(' ')
                     BINARY_EXPRESSION
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('next')
                       PsiWhiteSpace(' ')
-                      PsiElement(EXCLEQ)('!=')
+                      OPERATION_REFERENCE
+                        PsiElement(EXCLEQ)('!=')
                       PsiWhiteSpace(' ')
                       PREFIX_EXPRESSION
                         PsiElement(MINUS)('-')
@@ -444,7 +449,8 @@ JetFile: IOSamples.jet
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('nextUsed')
                         PsiWhiteSpace(' ')
-                        PsiElement(EQ)('=')
+                        OPERATION_REFERENCE
+                          PsiElement(EQ)('=')
                         PsiWhiteSpace(' ')
                         BOOLEAN_CONSTANT
                           PsiElement(false)('false')
@@ -453,7 +459,8 @@ JetFile: IOSamples.jet
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('next')
                         PsiWhiteSpace(' ')
-                        PsiElement(EQ)('=')
+                        OPERATION_REFERENCE
+                          PsiElement(EQ)('=')
                         PsiWhiteSpace(' ')
                         CALL_EXPRESSION
                           DOT_QIALIFIED_EXPRESSION
@@ -477,7 +484,8 @@ JetFile: IOSamples.jet
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('next')
                   PsiWhiteSpace(' ')
-                  PsiElement(EXCLEQ)('!=')
+                  OPERATION_REFERENCE
+                    PsiElement(EXCLEQ)('!=')
                   PsiWhiteSpace(' ')
                   PREFIX_EXPRESSION
                     PsiElement(MINUS)('-')
@@ -574,7 +582,8 @@ JetFile: IOSamples.jet
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('stream')
               PsiWhiteSpace(' ')
-              PsiElement(EQ)('=')
+              OPERATION_REFERENCE
+                PsiElement(EQ)('=')
               PsiWhiteSpace(' ')
               CALL_EXPRESSION
                 REFERENCE_EXPRESSION

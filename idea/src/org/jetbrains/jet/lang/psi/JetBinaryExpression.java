@@ -4,8 +4,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lexer.JetToken;
-import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.JetNodeTypes;
 
 /**
  * @author max
@@ -29,7 +28,7 @@ public class JetBinaryExpression extends JetExpression {
 
     @Nullable @IfNotParsed
     public JetExpression getRight() {
-        ASTNode node = getOperationTokenNode();
+        ASTNode node = getOperationReference().getNode().getTreeNext();
         while (node != null) {
             PsiElement psi = node.getPsi();
             if (psi instanceof JetExpression) {
@@ -42,14 +41,8 @@ public class JetBinaryExpression extends JetExpression {
     }
 
     @NotNull
-    public ASTNode getOperationTokenNode() {
-        ASTNode operationNode = getNode().findChildByType(JetTokens.OPERATIONS);
-        assert operationNode != null;
-        return operationNode;
+    public JetReferenceExpression getOperationReference() {
+        return (JetReferenceExpression) findChildByType(JetNodeTypes.OPERATION_REFERENCE);
     }
 
-    @NotNull
-    public JetToken getOperationSign() {
-        return (JetToken) getOperationTokenNode().getElementType();
-    }
 }

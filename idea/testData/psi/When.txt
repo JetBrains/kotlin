@@ -209,7 +209,8 @@ JetFile: When.jet
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('a')
               PsiWhiteSpace(' ')
-              PsiElement(GT)('>')
+              OPERATION_REFERENCE
+                PsiElement(GT)('>')
               PsiWhiteSpace(' ')
               INTEGER_CONSTANT
                 PsiElement(INTEGER_LITERAL)('5')
@@ -772,7 +773,8 @@ JetFile: When.jet
               BINARY_EXPRESSION
                 INTEGER_CONSTANT
                   PsiElement(INTEGER_LITERAL)('1')
-                PsiElement(RANGE)('..')
+                OPERATION_REFERENCE
+                  PsiElement(RANGE)('..')
                 INTEGER_CONSTANT
                   PsiElement(INTEGER_LITERAL)('2')
             PsiWhiteSpace(' ')
@@ -916,7 +918,8 @@ JetFile: When.jet
                     BINARY_EXPRESSION
                       INTEGER_CONSTANT
                         PsiElement(INTEGER_LITERAL)('1')
-                      PsiElement(RANGE)('..')
+                      OPERATION_REFERENCE
+                        PsiElement(RANGE)('..')
                       INTEGER_CONSTANT
                         PsiElement(INTEGER_LITERAL)('2')
                 PsiElement(COMMA)(',')
@@ -1171,7 +1174,8 @@ JetFile: When.jet
                 INTEGER_CONSTANT
                   PsiElement(INTEGER_LITERAL)('2')
                 PsiWhiteSpace(' ')
-                PsiElement(PLUS)('+')
+                OPERATION_REFERENCE
+                  PsiElement(PLUS)('+')
                 PsiWhiteSpace(' ')
                 INTEGER_CONSTANT
                   PsiElement(INTEGER_LITERAL)('3')
@@ -1247,13 +1251,15 @@ JetFile: When.jet
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('b')
               PsiWhiteSpace(' ')
-              PsiElement(EQEQ)('==')
+              OPERATION_REFERENCE
+                PsiElement(EQEQ)('==')
               PsiWhiteSpace(' ')
               BINARY_EXPRESSION
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('a')
                 PsiWhiteSpace(' ')
-                PsiElement(PLUS)('+')
+                OPERATION_REFERENCE
+                  PsiElement(PLUS)('+')
                 PsiWhiteSpace(' ')
                 INTEGER_CONSTANT
                   PsiElement(INTEGER_LITERAL)('3')

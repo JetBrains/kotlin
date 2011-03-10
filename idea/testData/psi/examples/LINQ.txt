@@ -19,7 +19,8 @@ JetFile: LINQ.jet
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('l')
               PsiWhiteSpace(' ')
-              PsiElement(IDENTIFIER)('filter')
+              OPERATION_REFERENCE
+                PsiElement(IDENTIFIER)('filter')
               PsiWhiteSpace(' ')
               FUNCTION_LITERAL
                 PsiElement(LBRACE)('{')
@@ -32,7 +33,8 @@ JetFile: LINQ.jet
                       PsiElement(IDENTIFIER)('x')
                 PsiElement(RBRACE)('}')
             PsiWhiteSpace(' ')
-            PsiElement(IDENTIFIER)('map')
+            OPERATION_REFERENCE
+              PsiElement(IDENTIFIER)('map')
             PsiWhiteSpace(' ')
             FUNCTION_LITERAL
               PsiElement(LBRACE)('{')
@@ -45,7 +47,8 @@ JetFile: LINQ.jet
                     PsiElement(IDENTIFIER)('foo')
               PsiElement(RBRACE)('}')
           PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('aggregate')
+          OPERATION_REFERENCE
+            PsiElement(IDENTIFIER)('aggregate')
           PsiWhiteSpace(' ')
           FUNCTION_LITERAL
             PsiElement(LBRACE)('{')
@@ -66,7 +69,8 @@ JetFile: LINQ.jet
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('a')
                 PsiWhiteSpace(' ')
-                PsiElement(PLUS)('+')
+                OPERATION_REFERENCE
+                  PsiElement(PLUS)('+')
                 PsiWhiteSpace(' ')
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('b')

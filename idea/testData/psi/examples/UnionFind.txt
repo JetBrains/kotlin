@@ -146,7 +146,8 @@ JetFile: UnionFind.jet
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('p')
                   PsiWhiteSpace(' ')
-                  PsiElement(EQEQ)('==')
+                  OPERATION_REFERENCE
+                    PsiElement(EQEQ)('==')
                   PsiWhiteSpace(' ')
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('x')
@@ -194,7 +195,8 @@ JetFile: UnionFind.jet
                     PsiElement(IDENTIFIER)('x')
                   PsiElement(RBRACKET)(']')
               PsiWhiteSpace(' ')
-              PsiElement(EQ)('=')
+              OPERATION_REFERENCE
+                PsiElement(EQ)('=')
               PsiWhiteSpace(' ')
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('result')
@@ -278,7 +280,8 @@ JetFile: UnionFind.jet
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('pa')
                   PsiWhiteSpace(' ')
-                  PsiElement(EXCLEQ)('!=')
+                  OPERATION_REFERENCE
+                    PsiElement(EXCLEQ)('!=')
                   PsiWhiteSpace(' ')
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('pb')
@@ -325,7 +328,8 @@ JetFile: UnionFind.jet
                                     PsiElement(IDENTIFIER)('pb')
                                   PsiElement(RBRACKET)(']')
                               PsiWhiteSpace(' ')
-                              PsiElement(EQ)('=')
+                              OPERATION_REFERENCE
+                                PsiElement(EQ)('=')
                               PsiWhiteSpace(' ')
                               REFERENCE_EXPRESSION
                                 PsiElement(IDENTIFIER)('pa')
@@ -349,7 +353,8 @@ JetFile: UnionFind.jet
                                     PsiElement(IDENTIFIER)('pa')
                                   PsiElement(RBRACKET)(']')
                               PsiWhiteSpace(' ')
-                              PsiElement(EQ)('=')
+                              OPERATION_REFERENCE
+                                PsiElement(EQ)('=')
                               PsiWhiteSpace(' ')
                               REFERENCE_EXPRESSION
                                 PsiElement(IDENTIFIER)('pb')
@@ -391,12 +396,14 @@ JetFile: UnionFind.jet
             THIS_EXPRESSION
               PsiElement(this)('this')
             PsiWhiteSpace(' ')
-            PsiElement(PERC)('%')
+            OPERATION_REFERENCE
+              PsiElement(PERC)('%')
             PsiWhiteSpace(' ')
             INTEGER_CONSTANT
               PsiElement(INTEGER_LITERAL)('2')
           PsiWhiteSpace(' ')
-          PsiElement(EXCLEQ)('!=')
+          OPERATION_REFERENCE
+            PsiElement(EXCLEQ)('!=')
           PsiWhiteSpace(' ')
           INTEGER_CONSTANT
             PsiElement(INTEGER_LITERAL)('0')
