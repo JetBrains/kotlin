@@ -24,5 +24,6 @@
       <annotator language="jet" implementationClass="org.jetbrains.jet.lang.annotations.SoftKeywordsAnnotator"/>
       <annotator language="jet" implementationClass="org.jetbrains.jet.lang.annotations.LabelsAnnotator"/>
       <annotator language="jet" implementationClass="org.jetbrains.jet.lang.annotations.JetPsiChecker"/>
+      <documentationProvider implementation="org.jetbrains.jet.plugin.JetQuickDocumentationProvider"/>
   </extensions>
 </idea-plugin>

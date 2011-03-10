@@ -5,6 +5,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.tree.TokenSet;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -61,12 +62,12 @@ public class JetReferenceExpression extends JetExpression {
             @Override
             public PsiElement resolve() {
                 PsiElement element = getElement();
-                while (element != null && false == element instanceof JetFile) {
-                    element = element.getParent();
-                }
-                JetFile file = (JetFile) element;
+                JetFile file = PsiTreeUtil.getParentOfType(element, JetFile.class);
                 BindingContext bindingContext = AnalyzingUtils.analyzeFile(file, ErrorHandler.DO_NOTHING);
-                return bindingContext.resolveToDeclarationPsiElement(JetReferenceExpression.this);
+                PsiElement psiElement = bindingContext.resolveToDeclarationPsiElement(JetReferenceExpression.this);
+                return psiElement == null
+                        ? file
+                        : psiElement;
             }
 
             @NotNull
@@ -87,7 +88,7 @@ public class JetReferenceExpression extends JetExpression {
 
             @Override
             public boolean isReferenceTo(PsiElement element) {
-                return false;
+                return resolve() == element;
             }
 
             @NotNull

@@ -55,4 +55,8 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
         return original;
     }
 
+    @Override
+    public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
+        return visitor.visitFunctionDescriptor(this, data);
+    }
 }

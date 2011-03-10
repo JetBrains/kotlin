@@ -51,4 +51,14 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
     public DeclarationDescriptor getOriginal() {
         return original.getOriginal();
     }
+
+    @Override
+    public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
+        return visitor.visitClassDescriptor(this, data);
+    }
+
+    @Override
+    public void acceptVoid(DeclarationDescriptorVisitor<Void, Void> visitor) {
+        throw new UnsupportedOperationException(); // TODO
+    }
 }

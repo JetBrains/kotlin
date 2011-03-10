@@ -74,6 +74,14 @@ public class LazySubstitutingFunctionDescriptor implements FunctionDescriptor {
         return functionDescriptor.getName();
     }
 
+    @Override
+    public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
+        return visitor.visitFunctionDescriptor(this, data);
+    }
 
+    @Override
+    public void acceptVoid(DeclarationDescriptorVisitor<Void, Void> visitor) {
+        accept(visitor, null);
+    }
 }
 

@@ -11,4 +11,7 @@ public interface DeclarationDescriptor extends Annotated, Named {
      *         returns <code>this</code> object if the current descriptor is original itself
      */
     DeclarationDescriptor getOriginal();
+
+    <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data);
+    void acceptVoid(DeclarationDescriptorVisitor<Void, Void> visitor);
 }

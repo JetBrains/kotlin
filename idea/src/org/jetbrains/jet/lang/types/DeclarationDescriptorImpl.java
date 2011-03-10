@@ -23,4 +23,9 @@ public abstract class DeclarationDescriptorImpl extends AnnotatedImpl implements
     public DeclarationDescriptor getOriginal() {
         return this;
     }
+
+    @Override
+    public void acceptVoid(DeclarationDescriptorVisitor<Void, Void> visitor) {
+        accept(visitor, null);
+    }
 }

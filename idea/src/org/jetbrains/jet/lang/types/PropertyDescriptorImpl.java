@@ -17,4 +17,9 @@ public class PropertyDescriptorImpl extends DeclarationDescriptorImpl implements
     public Type getType() {
         return type;
     }
+
+    @Override
+    public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
+        return visitor.visitPropertyDescriptor(this, data);
+    }
 }

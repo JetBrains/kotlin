@@ -37,4 +37,9 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     public WritableScope getUnsubstitutedMemberScope() {
         return unsubstitutedMemberScope;
     }
+
+    @Override
+    public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
+        return visitor.visitClassDescriptor(this, data);
+    }
 }

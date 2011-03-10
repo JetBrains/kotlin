@@ -41,4 +41,14 @@ public class LazySubstitutedPropertyDescriptorImpl implements PropertyDescriptor
     public DeclarationDescriptor getOriginal() {
         return propertyDescriptor.getOriginal();
     }
+
+    @Override
+    public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
+        return visitor.visitPropertyDescriptor(this, data);
+    }
+
+    @Override
+    public void acceptVoid(DeclarationDescriptorVisitor<Void, Void> visitor) {
+        accept(visitor, null);
+    }
 }

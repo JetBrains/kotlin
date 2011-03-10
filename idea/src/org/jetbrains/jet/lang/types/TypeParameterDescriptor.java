@@ -45,4 +45,9 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl {
     public String toString() {
         return typeConstructor.toString();
     }
+
+    @Override
+    public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
+        return visitor.visitTypeParameterDescriptor(this, data);
+    }
 }

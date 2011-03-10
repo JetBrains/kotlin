@@ -45,4 +45,9 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
         Map<TypeConstructor,TypeProjection> substitutionContext = TypeSubstitutor.INSTANCE.buildSubstitutionContext(typeConstructor.getParameters(), typeArguments);
         return new SubstitutingScope(memberDeclarations, substitutionContext);
     }
+
+    @Override
+    public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
+        return visitor.visitClassDescriptor(this, data);
+    }
 }
