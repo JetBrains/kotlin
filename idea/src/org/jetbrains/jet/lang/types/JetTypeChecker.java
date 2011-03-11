@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.types;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetExpression;
 
@@ -293,7 +294,7 @@ public class JetTypeChecker {
         return false;
     }
 
-    public boolean isSubtypeOf(Type subtype, Type supertype) {
+    public boolean isSubtypeOf(@NotNull Type subtype, @NotNull Type supertype) {
         if (!supertype.isNullable() && subtype.isNullable()) {
             return false;
         }

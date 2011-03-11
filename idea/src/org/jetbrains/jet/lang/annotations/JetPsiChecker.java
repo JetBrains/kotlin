@@ -1,8 +1,10 @@
 package org.jetbrains.jet.lang.annotations;
 
+import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
@@ -28,7 +30,7 @@ public class JetPsiChecker implements Annotator {
                 final BindingContext bindingContext = AnalyzingUtils.analyzeFile(file, new ErrorHandler() {
                     @Override
                     public void unresolvedReference(JetReferenceExpression referenceExpression) {
-                        holder.createErrorAnnotation(referenceExpression, "Unresolved");
+                        holder.createErrorAnnotation(referenceExpression, "Unresolved").setHighlightType(ProblemHighlightType.LIKE_UNKNOWN_SYMBOL);
                     }
 
                     @Override
@@ -58,6 +60,9 @@ public class JetPsiChecker implements Annotator {
                         }
                     }
                 });
+            }
+            catch (ProcessCanceledException e) {
+                // Canceled. We are fine
             }
             catch (Throwable e) {
                 // TODO

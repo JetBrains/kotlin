@@ -34,6 +34,7 @@ public class TypeResolver {
         return type;
     }
 
+    @NotNull
     private Type resolveTypeElement(final JetScope scope, final List<Attribute> attributes, JetTypeElement typeElement, final boolean nullable) {
         final Type[] result = new Type[1];
         if (typeElement != null) {
