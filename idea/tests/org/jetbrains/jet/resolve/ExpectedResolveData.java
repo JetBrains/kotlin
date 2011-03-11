@@ -166,8 +166,18 @@ public class ExpectedResolveData {
                 assertNotNull(declarationPosition);
                 JetDeclaration declaration = getAncestorOfType(JetDeclaration.class, declElement);
                 assertNotNull(declaration);
-                ClassDescriptor classDescriptor = bindingContext.getClassDescriptor((JetClass) declaration);
-                expectedTypeConstructor = classDescriptor.getTypeConstructor();
+                if (declaration instanceof JetClass) {
+                    ClassDescriptor classDescriptor = bindingContext.getClassDescriptor((JetClass) declaration);
+                    expectedTypeConstructor = classDescriptor.getTypeConstructor();
+                }
+                else if (declaration instanceof JetTypeParameter) {
+                    TypeParameterDescriptor typeParameterDescriptor = bindingContext.getTypeParameterDescriptor((JetTypeParameter) declaration);
+                    expectedTypeConstructor = typeParameterDescriptor.getTypeConstructor();
+                }
+                else {
+                    fail("Unsupported declaration: " + declaration);
+                    return;
+                }
             }
 
             assertSame("At " + position + ": ", expectedTypeConstructor, expressionType.getConstructor());

@@ -1,0 +1,14 @@
+~X~class X<~T~T> {
+  fun foo(a : `T`T) : `X`X<`T`T>{}
+  ~plus~fun plus(t : `T`T) : Int {}
+}
+
+~t~fun <~t.T~T> t(~t.t~t : `t.T`T) : `t.T`T {
+  `t`t<Int>(1)`:std::Int`
+  `t`t<`t.T`T>(`t.t`t)`:t.T`
+  new `X`X<`t.T`T>()
+  1 `std::Int.plus(Int)`+ 1
+  new X<String>() `plus`+ "1"
+  new X<String>() `plus`plus "sadfas"
+  new X<String>().`plus`plus("")
+}

@@ -10,6 +10,7 @@ import org.jetbrains.jet.lang.types.*;
 public interface BindingContext {
     NamespaceDescriptor getNamespaceDescriptor(JetNamespace declaration);
     ClassDescriptor getClassDescriptor(JetClass declaration);
+    TypeParameterDescriptor getTypeParameterDescriptor(JetTypeParameter declaration);
     FunctionDescriptor getFunctionDescriptor(JetFunction declaration);
     PropertyDescriptor getPropertyDescriptor(JetProperty declaration);
 

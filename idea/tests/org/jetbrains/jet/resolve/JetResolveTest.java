@@ -126,4 +126,8 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
         doTest("/resolve/ResolveToJava.jet", true, true);
     }
 
+    public void testResolveOfInfixExpressions() throws Exception {
+        doTest("/resolve/ResolveOfInfixExpressions.jet", true, true);
+    }
+
 }
