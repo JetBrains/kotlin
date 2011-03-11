@@ -36,18 +36,25 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
         nameToDescriptor.put("std::Array.set(Int, Int)", descriptorForSet.getOriginal());
 
         Map<String,PsiElement> nameToDeclaration = new HashMap<String, PsiElement>();
-        nameToDeclaration.put("java::java.util.Collections.emptyList()", findMethod(findClass("java.util.Collections"), "emptyList"));
-        nameToDeclaration.put("java::java.util.Collections", findClass("java.util.Collections"));
+        PsiClass java_util_Collections = findClass("java.util.Collections");
+        nameToDeclaration.put("java::java.util.Collections.emptyList()", findMethod(java_util_Collections, "emptyList"));
+        nameToDeclaration.put("java::java.util.Collections", java_util_Collections);
         nameToDeclaration.put("java::java.util.List", findClass("java.util.List"));
         nameToDeclaration.put("java::java", findPackage("java"));
         nameToDeclaration.put("java::java.util", findPackage("java.util"));
         nameToDeclaration.put("java::java.lang", findPackage("java.lang"));
         nameToDeclaration.put("java::java.lang.Object", findClass("java.lang.Object"));
-        nameToDeclaration.put("java::java.lang.System", findClass("java.lang.System"));
+        PsiClass java_lang_System = findClass("java.lang.System");
+        nameToDeclaration.put("java::java.lang.System", java_lang_System);
         PsiMethod[] methods = findClass("java.io.PrintStream").findMethodsByName("print", true);
         nameToDeclaration.put("java::java.io.PrintStream.print(Object)", methods[8]);
         nameToDeclaration.put("java::java.io.PrintStream.print(Int)", methods[2]);
-        nameToDeclaration.put("java::java.lang.System.out", findClass("java.lang.System").findFieldByName("out", true));
+        nameToDeclaration.put("java::java.io.PrintStream.print(char[])", methods[6]);
+        nameToDeclaration.put("java::java.io.PrintStream.print(Double)", methods[5]);
+        nameToDeclaration.put("java::java.lang.System.out", java_lang_System.findFieldByName("out", true));
+        PsiClass java_lang_Number = findClass("java.lang.Number");
+        nameToDeclaration.put("java::java.lang.Number", java_lang_Number);
+        nameToDeclaration.put("java::java.lang.Number.intValue()", java_lang_Number.findMethodsByName("intValue", true)[0]);
 
         return new ExpectedResolveData(nameToDescriptor, nameToDeclaration);
     }

@@ -72,22 +72,22 @@ public class JavaClassMembersScope implements JetScope {
 
     @Override
     public ExtensionDescriptor getExtension(@NotNull String name) {
-        throw new UnsupportedOperationException(); // TODO
+        return null;
     }
 
     @Override
     public NamespaceDescriptor getNamespace(@NotNull String name) {
-        throw new UnsupportedOperationException(); // TODO
+        return null;
     }
 
     @Override
     public TypeParameterDescriptor getTypeParameter(@NotNull String name) {
-        throw new UnsupportedOperationException(); // TODO
+        return null;
     }
 
     @NotNull
     @Override
     public Type getThisType() {
-        throw new UnsupportedOperationException(); // TODO
+        return null;
     }
 }

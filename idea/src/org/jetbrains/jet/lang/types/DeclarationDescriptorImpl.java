@@ -1,5 +1,7 @@
 package org.jetbrains.jet.lang.types;
 
+import org.jetbrains.jet.resolve.DescriptorUtil;
+
 import java.util.List;
 
 /**
@@ -27,5 +29,10 @@ public abstract class DeclarationDescriptorImpl extends AnnotatedImpl implements
     @Override
     public void acceptVoid(DeclarationDescriptorVisitor<Void, Void> visitor) {
         accept(visitor, null);
+    }
+
+    @Override
+    public String toString() {
+        return DescriptorUtil.renderPresentableText(this) + "[" + getClass().getCanonicalName()+ "]";
     }
 }

@@ -10,9 +10,57 @@ import java.util.*;
  */
 public class JetTypeChecker {
 
-    public static final JetTypeChecker INSTANCE = new JetTypeChecker();
+    private final Map<TypeConstructor, Set<TypeConstructor>> conversionMap = new HashMap<TypeConstructor, Set<TypeConstructor>>();
+    private final JetStandardLibrary standardLibrary;
 
-    private JetTypeChecker() {}
+    public JetTypeChecker(JetStandardLibrary standardLibrary) {
+        this.standardLibrary = standardLibrary;
+    }
+
+    private Map<TypeConstructor, Set<TypeConstructor>> getConversionMap() {
+        if (conversionMap.size() == 0) {
+            addConversion(standardLibrary.getByte(),
+                    standardLibrary.getShort(),
+                    standardLibrary.getInt(),
+                    standardLibrary.getLong(),
+                    standardLibrary.getFloat(),
+                    standardLibrary.getDouble());
+
+            addConversion(standardLibrary.getShort(),
+                    standardLibrary.getInt(),
+                    standardLibrary.getLong(),
+                    standardLibrary.getFloat(),
+                    standardLibrary.getDouble());
+
+            addConversion(standardLibrary.getChar(),
+                    standardLibrary.getInt(),
+                    standardLibrary.getLong(),
+                    standardLibrary.getFloat(),
+                    standardLibrary.getDouble());
+
+            addConversion(standardLibrary.getInt(),
+                    standardLibrary.getLong(),
+                    standardLibrary.getFloat(),
+                    standardLibrary.getDouble());
+
+            addConversion(standardLibrary.getLong(),
+                    standardLibrary.getFloat(),
+                    standardLibrary.getDouble());
+
+            addConversion(standardLibrary.getFloat(),
+                    standardLibrary.getDouble());
+        }
+        return conversionMap;
+    }
+
+    private void addConversion(ClassDescriptor actual, ClassDescriptor... convertedTo) {
+        TypeConstructor[] constructors = new TypeConstructor[convertedTo.length];
+        for (int i = 0, convertedToLength = convertedTo.length; i < convertedToLength; i++) {
+            ClassDescriptor classDescriptor = convertedTo[i];
+            constructors[i] = classDescriptor.getTypeConstructor();
+        }
+        conversionMap.put(actual.getTypeConstructor(), new HashSet<TypeConstructor>(Arrays.asList(constructors)));
+    }
 
     public Type commonSupertype(Collection<Type> types) {
         Collection<Type> typeSet = new HashSet<Type>(types);
@@ -121,7 +169,7 @@ public class JetTypeChecker {
 
         if (ins != null) {
             Variance projectionKind = variance == Variance.IN_VARIANCE ? Variance.INVARIANT : Variance.IN_VARIANCE;
-            Type intersection = TypeUtils.intersect(ins);
+            Type intersection = TypeUtils.intersect(this, ins);
             if (intersection == null) {
                 return new TypeProjection(Variance.OUT_VARIANCE, commonSupertype(parameterDescriptor.getUpperBounds()));
             }
@@ -230,8 +278,19 @@ public class JetTypeChecker {
     }
 
     public boolean isConvertibleTo(Type actual, Type expected) {
-        // TODO
-        return isSubtypeOf(actual, expected);
+        if (isSubtypeOf(actual, expected)) return true;
+        if (expected.getConstructor() == JetStandardClasses.getTuple(0).getTypeConstructor()) {
+            return true;
+        }
+        if (actual.getArguments().isEmpty()) {
+            TypeConstructor actualConstructor = actual.getConstructor();
+            TypeConstructor constructor = expected.getConstructor();
+            Set<TypeConstructor> convertibleTo = getConversionMap().get(actualConstructor);
+            if (convertibleTo != null) {
+                return convertibleTo.contains(constructor);
+            }
+        }
+        return false;
     }
 
     public boolean isSubtypeOf(Type subtype, Type supertype) {

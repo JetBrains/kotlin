@@ -170,13 +170,12 @@ public class JetTypeInferrer {
                 if (expression.getOperationReference().getReferencedNameElementType() == JetTokens.COLON) {
                     Type actualType = getType(scope, expression.getLeft(), false);
                     Type expectedType = typeResolver.resolveType(scope, expression.getRight());
-                    if (JetTypeChecker.INSTANCE.isSubtypeOf(actualType, expectedType)) {
-                        result[0] = expectedType;
-                        return;
-                    } else {
-                         // TODO
-                        throw new UnsupportedOperationException("Type mismatch: expected " + expectedType + " but found " + actualType);
+                    if (!semanticServices.getTypeChecker().isSubtypeOf(actualType, expectedType)) {
+                        // TODO
+                        semanticServices.getErrorHandler().typeMismatch(expression.getLeft(), expectedType, actualType);
                     }
+                    result[0] = expectedType;
+                    return;
                 }
                 throw new UnsupportedOperationException(); // TODO
             }
@@ -192,7 +191,7 @@ public class JetTypeInferrer {
                 } else {
                     Type thenType = getType(scope, expression.getThen(), true);
                     Type elseType = getType(scope, elseBranch, true);
-                    result[0] = JetTypeChecker.INSTANCE.commonSupertype(Arrays.asList(thenType, elseType));
+                    result[0] = semanticServices.getTypeChecker().commonSupertype(Arrays.asList(thenType, elseType));
                 }
             }
 
@@ -201,7 +200,7 @@ public class JetTypeInferrer {
                 // TODO :change scope according to the bound value in the when header
                 List<Type> expressions = new ArrayList<Type>();
                 collectAllReturnTypes(expression, scope, expressions);
-                result[0] = JetTypeChecker.INSTANCE.commonSupertype(expressions);
+                result[0] = semanticServices.getTypeChecker().commonSupertype(expressions);
             }
 
             @Override
@@ -219,7 +218,7 @@ public class JetTypeInferrer {
                     types.add(getType(scope, finallyBlock.getFinalExpression(), true));
                 }
                 types.add(getType(scope, tryBlock, true));
-                result[0] = JetTypeChecker.INSTANCE.commonSupertype(types);
+                result[0] = semanticServices.getTypeChecker().commonSupertype(types);
             }
 
             @Override
@@ -366,8 +365,11 @@ public class JetTypeInferrer {
                 JetExpression left = expression.getLeft();
                 Type leftType = getType(scope, left, false);
                 JetExpression right = expression.getRight();
+                if (right == null) {
+                    return ErrorType.createErrorType("No right argument");
+                }
                 Type rightType = getType(scope, right, false);
-                OverloadDomain overloadDomain = OverloadResolver.INSTANCE.getOverloadDomain(leftType, scope, name);
+                OverloadDomain overloadDomain = semanticServices.getOverloadResolver().getOverloadDomain(leftType, scope, name);
                 overloadDomain = wrapForTracing(overloadDomain, operationSign);
                 FunctionDescriptor functionDescriptor = overloadDomain.getFunctionDescriptorForPositionedArguments(Collections.<Type>emptyList(), Collections.singletonList(rightType));
                 if (functionDescriptor != null) {
@@ -409,7 +411,7 @@ public class JetTypeInferrer {
 
                     Type receiverType = getType(scope, expression.getReceiverExpression(), false);
                     if (receiverType != null) {
-                        result[0] = OverloadResolver.INSTANCE.getOverloadDomain(receiverType, scope, referenceExpression.getReferencedName());
+                        result[0] = semanticServices.getOverloadResolver().getOverloadDomain(receiverType, scope, referenceExpression.getReferencedName());
                         reference[0] = referenceExpression;
                     }
                 } else {
@@ -420,7 +422,7 @@ public class JetTypeInferrer {
             @Override
             public void visitReferenceExpression(JetReferenceExpression expression) {
                 // a -- create a hierarchical lookup domain for this.a
-                result[0] = OverloadResolver.INSTANCE.getOverloadDomain(null, scope, expression.getReferencedName());
+                result[0] = semanticServices.getOverloadResolver().getOverloadDomain(null, scope, expression.getReferencedName());
                 reference[0] = expression;
             }
 

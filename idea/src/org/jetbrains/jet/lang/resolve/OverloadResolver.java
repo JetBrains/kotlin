@@ -4,19 +4,18 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.types.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author abreslav
  */
 public class OverloadResolver {
 
-    public static final OverloadResolver INSTANCE = new OverloadResolver();
+    private final JetTypeChecker typeChecker;
 
-    private OverloadResolver() {}
+    public OverloadResolver(JetTypeChecker typeChecker) {
+        this.typeChecker = typeChecker;
+    }
 
     @NotNull
     public OverloadDomain getOverloadDomain(Type receiverType, @NotNull JetScope outerScope, @NotNull String name) {
@@ -54,7 +53,7 @@ public class OverloadResolver {
                             Type argumentType = positionedValueArgumentTypes.get(i);
                             Type parameterType = parameters.get(i).getType();
                             // TODO : handle vararg cases here
-                            if (!JetTypeChecker.INSTANCE.isConvertibleTo(argumentType, parameterType)) {
+                            if (!typeChecker.isConvertibleTo(argumentType, parameterType)) {
                                 continue descLoop;
                             }
                         }
@@ -64,14 +63,14 @@ public class OverloadResolver {
                         for (int i = 0; i < nonVarargs; i++) {
                             Type argumentType = positionedValueArgumentTypes.get(i);
                             Type parameterType = parameters.get(i).getType();
-                            if (!JetTypeChecker.INSTANCE.isConvertibleTo(argumentType, parameterType)) {
+                            if (!typeChecker.isConvertibleTo(argumentType, parameterType)) {
                                 continue descLoop;
                             }
                         }
                         Type varArgType = parameters.get(nonVarargs).getType();
                         for (int i = nonVarargs, args = positionedValueArgumentTypes.size(); i < args; i++) {
                             Type argumentType = positionedValueArgumentTypes.get(i);
-                            if (!JetTypeChecker.INSTANCE.isConvertibleTo(argumentType, varArgType)) {
+                            if (!typeChecker.isConvertibleTo(argumentType, varArgType)) {
                                 continue descLoop;
                             }
                         }
@@ -84,6 +83,23 @@ public class OverloadResolver {
                 } else if (applicable.size() == 1) {
                     return applicable.get(0);
                 } else {
+                    // TODO : varargs
+
+                    List<FunctionDescriptor> maximallySpecific = new ArrayList<FunctionDescriptor>();
+                    meLoop:
+                    for (FunctionDescriptor me : applicable) {
+                        for (FunctionDescriptor other : applicable) {
+                            if (other == me) continue;
+                            if (!moreSpecific(me, other) || moreSpecific(other, me)) continue meLoop;
+                        }
+                        maximallySpecific.add(me);
+                    }
+                    if (maximallySpecific.isEmpty()) {
+                        return null;
+                    }
+                    if (maximallySpecific.size() == 1) {
+                        return maximallySpecific.get(0);
+                    }
                     throw new UnsupportedOperationException();
                 }
             }
@@ -93,6 +109,24 @@ public class OverloadResolver {
                 throw new UnsupportedOperationException(); // TODO
             }
         };
+    }
+
+    private boolean moreSpecific(FunctionDescriptor f, FunctionDescriptor g) {
+        List<ValueParameterDescriptor> fParams = f.getUnsubstitutedValueParameters();
+        List<ValueParameterDescriptor> gParams = g.getUnsubstitutedValueParameters();
+
+        int fSize = fParams.size();
+        if (fSize != gParams.size()) return false;
+        for (int i = 0; i < fSize; i++) {
+            Type fParamType = fParams.get(i).getType();
+            Type gParamType = gParams.get(i).getType();
+
+            // TODO : maybe isSubtypeOf is sufficient?
+            if (!typeChecker.isConvertibleTo(fParamType, gParamType)) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }

@@ -4,7 +4,9 @@ import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.types.*;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,13 +25,25 @@ public class JavaTypeTransformer {
 
     @NotNull
     public Type transform(PsiType javaType) {
-        Type result = javaType.accept(new PsiTypeVisitor<Type>() {
+        return javaType.accept(new PsiTypeVisitor<Type>() {
             @Override
             public Type visitClassType(PsiClassType classType) {
                 PsiClass psiClass = classType.resolveGenerics().getElement();
+                if (psiClass == null) {
+                    return ErrorType.createErrorType("Unresolved java class: " + classType.getPresentableText());
+                }
+                if ("java.lang.Object".equals(psiClass.getQualifiedName())) {
+                    return JetStandardClasses.getNullableAnyType();
+                }
                 ClassDescriptor descriptor = resolver.resolveClass(psiClass);
-                // TODO : parameters
-                return new TypeImpl(descriptor);
+                // TODO : arguments & raw types
+                List<TypeProjection> arguments = Collections.<TypeProjection>emptyList(); // TODO
+                return new TypeImpl(
+                        Collections.<Attribute>emptyList(),
+                        descriptor.getTypeConstructor(),
+                        true,
+                        arguments,
+                        descriptor.getMemberScope(arguments));
             }
 
             @Override
@@ -42,10 +56,10 @@ public class JavaTypeTransformer {
 
             @Override
             public Type visitArrayType(PsiArrayType arrayType) {
-                return JetStandardClasses.getUnitType(); // TODO!!!
+                Type type = transform(arrayType.getComponentType());
+                return TypeUtils.makeNullable(standardLibrary.getArrayType(type));
             }
         });
-        return result;
     }
 
     public Map<String, Type> getPrimitiveTypesMap() {

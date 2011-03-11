@@ -61,6 +61,6 @@ public class WritableFunctionGroup implements FunctionGroup {
 
     @Override
     public boolean isEmpty() {
-        return functionDescriptors.isEmpty();
+        return functionDescriptors == null || functionDescriptors.isEmpty();
     }
 }

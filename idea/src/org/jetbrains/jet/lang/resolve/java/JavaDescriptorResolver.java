@@ -59,11 +59,27 @@ public class JavaDescriptorResolver {
                 modifierList == null ? false : modifierList.hasModifierProperty(PsiModifier.FINAL),
                 name,
                 Collections.<TypeParameterDescriptor>emptyList(),
-                Collections.<Type>emptyList(),
+                getSupertypes(psiClass),
                 new JavaClassMembersScope(psiClass, semanticServices, false)
         );
         semanticServices.getTrace().recordDeclarationResolution(psiClass, classDescriptor);
         return classDescriptor;
+    }
+
+    private Collection<? extends Type> getSupertypes(PsiClass psiClass) {
+        List<Type> result = new ArrayList<Type>();
+        result.add(JetStandardClasses.getAnyType());
+        transformSupertypeList(result, psiClass.getExtendsListTypes());
+        transformSupertypeList(result, psiClass.getImplementsListTypes());
+        return result;
+    }
+
+    private void transformSupertypeList(List<Type> result, PsiClassType[] extendsListTypes) {
+        for (PsiClassType type : extendsListTypes) {
+            Type transform = semanticServices.getTypeTransformer().transform(type);
+
+            result.add(TypeUtils.makeNotNullable(transform));
+        }
     }
 
     public NamespaceDescriptor resolveNamespace(String qualifiedName) {

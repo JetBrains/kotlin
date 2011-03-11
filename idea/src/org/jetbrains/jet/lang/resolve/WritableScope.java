@@ -160,6 +160,7 @@ public class WritableScope extends JetScopeAdapter {
     public void addClassAlias(String name, ClassDescriptor classDescriptor) {
         Map<String, ClassDescriptor> classDescriptors = getClassDescriptors();
         if (classDescriptors.put(name, classDescriptor) != null) {
+
             throw new UnsupportedOperationException("Class redeclared: " + classDescriptor.getName());
         }
     }

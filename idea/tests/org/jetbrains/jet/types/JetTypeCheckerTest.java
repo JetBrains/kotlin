@@ -342,7 +342,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertType("new Functions<String>().f()", "Unit");
         assertType("new Functions<String>().f(1)", "Int");
         assertType("new Functions<String>().f(1d)", (String) null);
-        assertType("new Functions<Double>().f(())", "Double");
+        assertType("new Functions<Double>().f((1, 1))", "Double");
         assertType("new Functions<Double>().f(1d)", "Any");
         assertType("new Functions<Byte>().f<String>(\"\")", "Byte");
         assertType("new Functions<Byte>().f<String>(1)", (String) null);
@@ -418,14 +418,14 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         for (String type : types) {
             subtypes.add(makeType(type));
         }
-        Type result = JetTypeChecker.INSTANCE.commonSupertype(subtypes);
+        Type result = semanticServices.getTypeChecker().commonSupertype(subtypes);
         assertTrue(result + " != " + expected, TypeImpl.equalTypes(result, makeType(expected)));
     }
 
     private void assertSubtypingRelation(String type1, String type2, boolean expected) {
         Type typeNode1 = makeType(type1);
         Type typeNode2 = makeType(type2);
-        boolean result = JetTypeChecker.INSTANCE.isSubtypeOf(
+        boolean result = semanticServices.getTypeChecker().isSubtypeOf(
                 typeNode1,
                 typeNode2);
         String modifier = expected ? "not " : "";
@@ -436,14 +436,14 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         JetExpression jetExpression = JetChangeUtil.createExpression(getProject(), expression);
         assertTrue(
                 expression + " must be convertible to " + type,
-                JetTypeChecker.INSTANCE.isConvertibleTo(jetExpression, type));
+                semanticServices.getTypeChecker().isConvertibleTo(jetExpression, type));
     }
 
     private void assertNotConvertibleTo(String expression, Type type) {
         JetExpression jetExpression = JetChangeUtil.createExpression(getProject(), expression);
         assertFalse(
                 expression + " must not be convertible to " + type,
-                JetTypeChecker.INSTANCE.isConvertibleTo(jetExpression, type));
+                semanticServices.getTypeChecker().isConvertibleTo(jetExpression, type));
     }
 
     private void assertType(String expression, Type expectedType) {
@@ -509,7 +509,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
                     "fun f() : Unit {} " +
                     "fun f(a : Int) : Int {} " +
                     "fun f(a : T) : Any {} " +
-                    "fun f(a : Unit) : T {} " +
+                    "fun f(a : (Int, Int)) : T {} " +
                     "fun f<E>(a : E) : T {} " +
                     "}"
         };

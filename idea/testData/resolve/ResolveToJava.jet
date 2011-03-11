@@ -34,3 +34,16 @@ class B : `java::java.lang.Object`Object {
     `foo`foo(new `A`A())
   }
 }
+
+~c~fun c(~x~x : `java::java.lang.Number`Number) {
+  `x`x.`java::java.lang.Number.intValue()`intValue()
+}
+
+fun <T> t(t : T) : T {
+  `c`c(new java.lang.Integer(1))
+  System.out.`java::java.io.PrintStream.print(Object)`print(t)
+  System.out.`java::java.io.PrintStream.print(char[])`print(null : Array<Char>?)
+  System.out.`java::java.io.PrintStream.print(Object)`print(null : Object?)
+  System.out.`java::java.io.PrintStream.print(Int)`print(1)
+  System.out.`java::java.io.PrintStream.print(Double)`print(1.0)
+}

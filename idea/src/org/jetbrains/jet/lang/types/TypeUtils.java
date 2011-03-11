@@ -18,8 +18,15 @@ public class TypeUtils {
         return new TypeImpl(type.getAttributes(), type.getConstructor(), true, type.getArguments(), type.getMemberScope());
     }
 
+    public static Type makeNotNullable(Type type) {
+        if (!type.isNullable()) {
+            return type;
+        }
+        return new TypeImpl(type.getAttributes(), type.getConstructor(), false, type.getArguments(), type.getMemberScope());
+    }
+
     @Nullable
-    public static Type intersect(Set<Type> types) {
+    public static Type intersect(JetTypeChecker typeChecker, Set<Type> types) {
         assert !types.isEmpty();
 
         if (types.size() == 1) {
@@ -31,9 +38,9 @@ public class TypeUtils {
         for (Iterator<Type> iterator = types.iterator(); iterator.hasNext();) {
             Type type = iterator.next();
 
-            if (!canHaveSubtypes(type)) {
+            if (!canHaveSubtypes(typeChecker, type)) {
                 for (Type other : types) {
-                    if (type != other || !JetTypeChecker.INSTANCE.isSubtypeOf(type, other)) {
+                    if (type != other || !typeChecker.isSubtypeOf(type, other)) {
                         return null;
                     }
                 }
@@ -58,7 +65,7 @@ public class TypeUtils {
                 JetStandardClasses.STUB);
     }
 
-    private static boolean canHaveSubtypes(Type type) {
+    private static boolean canHaveSubtypes(JetTypeChecker typeChecker, Type type) {
         if (type.isNullable()) {
             return true;
         }
@@ -78,17 +85,17 @@ public class TypeUtils {
                 case INVARIANT:
                     switch (projectionKind) {
                         case INVARIANT:
-                            if (lowerThanBound(argument, parameterDescriptor) || canHaveSubtypes(argument)) {
+                            if (lowerThanBound(typeChecker, argument, parameterDescriptor) || canHaveSubtypes(typeChecker, argument)) {
                                 return true;
                             }
                             break;
                         case IN_VARIANCE:
-                            if (lowerThanBound(argument, parameterDescriptor)) {
+                            if (lowerThanBound(typeChecker, argument, parameterDescriptor)) {
                                 return true;
                             }
                             break;
                         case OUT_VARIANCE:
-                            if (canHaveSubtypes(argument)) {
+                            if (canHaveSubtypes(typeChecker, argument)) {
                                 return true;
                             }
                             break;
@@ -96,22 +103,22 @@ public class TypeUtils {
                     break;
                 case IN_VARIANCE:
                     if (projectionKind != Variance.OUT_VARIANCE) {
-                        if (lowerThanBound(argument, parameterDescriptor)) {
+                        if (lowerThanBound(typeChecker, argument, parameterDescriptor)) {
                             return true;
                         }
                     } else {
-                        if (canHaveSubtypes(argument)) {
+                        if (canHaveSubtypes(typeChecker, argument)) {
                             return true;
                         }
                     }
                     break;
                 case OUT_VARIANCE:
                     if (projectionKind != Variance.IN_VARIANCE) {
-                        if (canHaveSubtypes(argument)) {
+                        if (canHaveSubtypes(typeChecker, argument)) {
                             return true;
                         }
                     } else {
-                        if (lowerThanBound(argument, parameterDescriptor)) {
+                        if (lowerThanBound(typeChecker, argument, parameterDescriptor)) {
                             return true;
                         }
                     }
@@ -121,9 +128,9 @@ public class TypeUtils {
         return false;
     }
 
-    private static boolean lowerThanBound(Type argument, TypeParameterDescriptor parameterDescriptor) {
+    private static boolean lowerThanBound(JetTypeChecker typeChecker, Type argument, TypeParameterDescriptor parameterDescriptor) {
         for (Type bound : parameterDescriptor.getUpperBounds()) {
-            if (JetTypeChecker.INSTANCE.isSubtypeOf(argument, bound)) {
+            if (typeChecker.isSubtypeOf(argument, bound)) {
                 if (!argument.getConstructor().equals(bound.getConstructor())) {
                     return true;
                 }

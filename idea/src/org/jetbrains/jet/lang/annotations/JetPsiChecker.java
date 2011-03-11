@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.annotations;
 
+import com.intellij.lang.ASTNode;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.project.Project;
@@ -28,6 +29,16 @@ public class JetPsiChecker implements Annotator {
                     @Override
                     public void unresolvedReference(JetReferenceExpression referenceExpression) {
                         holder.createErrorAnnotation(referenceExpression, "Unresolved");
+                    }
+
+                    @Override
+                    public void structuralError(ASTNode node, String errorMessage) {
+                        holder.createErrorAnnotation(node, errorMessage);
+                    }
+
+                    @Override
+                    public void typeMismatch(JetExpression expression, Type expectedType, Type actualType) {
+                        holder.createErrorAnnotation(expression, "Type mismatch: inferred type is " + actualType + " but " + expectedType + " was expected");
                     }
                 });
                 file.getRootNamespace().accept(new JetVisitor() {
