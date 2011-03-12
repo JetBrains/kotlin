@@ -6,7 +6,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -69,7 +68,7 @@ public class JetReferenceExpression extends JetExpression {
             @Override
             public PsiElement resolve() {
                 PsiElement element = getElement();
-                JetFile file = PsiTreeUtil.getParentOfType(element, JetFile.class);
+                JetFile file = (JetFile) element.getContainingFile();
                 BindingContext bindingContext = AnalyzingUtils.analyzeFile(file, ErrorHandler.DO_NOTHING);
                 PsiElement psiElement = bindingContext.resolveToDeclarationPsiElement(JetReferenceExpression.this);
                 return psiElement == null
