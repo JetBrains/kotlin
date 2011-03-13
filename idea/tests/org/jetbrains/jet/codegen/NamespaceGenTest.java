@@ -1,8 +1,6 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
-import org.jetbrains.jet.lang.ErrorHandler;
-import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespace;
 import org.jetbrains.jet.parsing.JetParsingTest;
@@ -54,8 +52,19 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
 
         final Class aClass = generateToClass();
         final Method main = firstMethod(aClass);
-        final Object returnValue = main.invoke(null, 42);
-        assertEquals(new Integer(42), returnValue);
+        final Object returnValue = main.invoke(null, 50);
+        assertEquals(new Integer(50), returnValue);
+    }
+
+    public void testLocalPropery() throws Exception {
+        myFixture.configureByFile(JetParsingTest.getTestDataDir() + "/codegen/localProperty.jet");
+        final String text = generateToText();
+        System.out.println(text);
+
+        final Class aClass = generateToClass();
+        final Method main = firstMethod(aClass);
+        final Object returnValue = main.invoke(null, 76);
+        assertEquals(new Integer(50), returnValue);
     }
 
     private String generateToText() {

@@ -1,10 +1,8 @@
 package org.jetbrains.jet.codegen;
 
-import gnu.trove.TObjectIntHashMap;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.DeclarationDescriptor;
-import org.jetbrains.jet.lang.types.ValueParameterDescriptor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -22,11 +20,11 @@ public class ExpressionCodegen extends JetVisitor {
     private final Stack<Label> myLoopEnds = new Stack<Label>();
 
     private final InstructionAdapter v;
-    private final TObjectIntHashMap<JetProperty> myVarIndex = new TObjectIntHashMap<JetProperty>();
-    private       int myMaxVarIndex = 0;
+    private final FrameMap myMap;
     private final BindingContext bindingContext;
 
-    public ExpressionCodegen(MethodVisitor v, BindingContext bindingContext) {
+    public ExpressionCodegen(MethodVisitor v, BindingContext bindingContext, FrameMap myMap) {
+        this.myMap = myMap;
         this.v = new InstructionAdapter(v);
         this.bindingContext = bindingContext;
     }
@@ -214,7 +212,7 @@ public class ExpressionCodegen extends JetVisitor {
         List<JetElement> statements = expression.getStatements();
         for (JetElement statement : statements) {
             if (statement instanceof JetProperty) {
-                myVarIndex.put((JetProperty) statement, myMaxVarIndex++);
+                myMap.enter(bindingContext.getPropertyDescriptor((JetProperty) statement));
             }
         }
 
@@ -228,9 +226,8 @@ public class ExpressionCodegen extends JetVisitor {
         for (JetElement statement : statements) {
             if (statement instanceof JetProperty) {
                 JetProperty var = (JetProperty) statement;
-                int index = myVarIndex.remove(var);
+                int index = myMap.leave(bindingContext.getPropertyDescriptor(var));
                 v.visitLocalVariable(var.getName(), getType(var).getDescriptor(), null, blockStart, blockEnd, index);
-                myMaxVarIndex--;
             }
         }
 
@@ -251,14 +248,42 @@ public class ExpressionCodegen extends JetVisitor {
     @Override
     public void visitReferenceExpression(JetReferenceExpression expression) {
         final DeclarationDescriptor descriptor = bindingContext.resolveReferenceExpression(expression);
-        if (descriptor instanceof ValueParameterDescriptor) {
-            final int index = ((ValueParameterDescriptor) descriptor).getIndex();
-            v.visitVarInsn(Opcodes.ALOAD, index);  // TODO +1 for non-static methods
+        int index = myMap.getIndex(descriptor);
+        if (index >= 0) {
+            v.visitVarInsn(Opcodes.ALOAD, index);
         }
         else {
             throw new UnsupportedOperationException("don't know how to generate reference " + descriptor);
         }
     }
+
+/*
+    @Override
+    public void visitCallExpression(JetCallExpression expression) {
+        List<JetArgument> args = expression.getValueArguments();
+        for (JetArgument arg : args) {
+            gen(arg.getArgumentExpression());
+        }
+
+        JetExpression callee = expression.getCalleeExpression();
+
+        if (callee instanceof JetReferenceExpression) {
+            DeclarationDescriptor funDescriptor = bindingContext.resolveReferenceExpression((JetReferenceExpression) callee);
+            if (funDescriptor instanceof FunctionDescriptor) {
+            }
+            else {
+                throw new CompilationException();
+            }
+        }
+        else {
+            throw new UnsupportedOperationException("Don't know how to generate a call");
+        }
+    }
+
+    @Override
+    public void visitBinaryExpression(JetBinaryExpression expression) {
+    }
+*/
 
     private Type getType(JetProperty var) {
         return InstructionAdapter.OBJECT_TYPE;  // TODO:
@@ -270,7 +295,7 @@ public class ExpressionCodegen extends JetVisitor {
 
     @Override
     public void visitProperty(JetProperty property) {
-        int index = myVarIndex.get(property);
+        int index = myMap.getIndex(bindingContext.getPropertyDescriptor(property));
 
         assert index >= 0;
 

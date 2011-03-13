@@ -5,6 +5,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.FunctionDescriptor;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
+import org.jetbrains.jet.lang.types.ValueParameterDescriptor;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -56,7 +57,15 @@ public class FunctionCodegen {
                 method.getName(), method.getDescriptor(), null, null);
         mv.visitCode();
         final JetExpression bodyExpression = f.getBodyExpression();
-        bodyExpression.accept(new ExpressionCodegen(mv, bindingContext));
+        FrameMap frameMap = new FrameMap();
+
+        List<ValueParameterDescriptor> parameDescrs = bindingContext.getFunctionDescriptor(f).getUnsubstitutedValueParameters();
+
+        for (ValueParameterDescriptor parameter : parameDescrs) {
+            frameMap.enter(parameter);
+        }
+
+        bodyExpression.accept(new ExpressionCodegen(mv, bindingContext, frameMap));
         generateReturn(mv, bodyExpression);
         mv.visitMaxs(0, 0);
         mv.visitEnd();
