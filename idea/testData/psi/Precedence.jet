@@ -32,4 +32,21 @@ fun foo() {
   a || b && c
   a = b -> c
   a = b || c
+
+  t : Any
+  t : Any?
+  t as Any<T>?
+  t as Any.Any<T>.Any<T>
+  t as {() : T}
+
+  t : Any * 1
+  t : Any? * 1
+  t as Any<T>? * 1
+  t as Any.Any<T>.Any<T> * 1
+  t as {() : T} * 1
+
+  ++t : Any + 1
+  a.b : Any + 1
+
+  (t : Any) * 1
 }

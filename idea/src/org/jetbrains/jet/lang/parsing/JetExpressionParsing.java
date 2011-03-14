@@ -98,28 +98,27 @@ public class JetExpressionParsing extends AbstractJetParsing {
             }
         },
 
-//        COLON_AS(COLON,  AS_KEYWORD) {
-//
-//        },
+        COLON_AS(COLON, AS_KEYWORD) {
+            @Override
+            public JetNodeType parseRightHandSide(IElementType operation, JetExpressionParsing parser) {
+                parser.myJetParsing.parseTypeRef();
+                return BINARY_WITH_TYPE;
+            }
 
-        MULTIPLICATIVE(MUL, DIV, PERC) {
             @Override
             public void parseHigherPrecedence(JetExpressionParsing parser) {
                 parser.parsePrefixExpression();
             }
         },
 
+        MULTIPLICATIVE(MUL, DIV, PERC),
         ADDITIVE(PLUS, MINUS),
         RANGE(JetTokens.RANGE),
         SIMPLE_NAME(IDENTIFIER),
         ELVIS(JetTokens.ELVIS),
-        WITH_TYPE_RHS(IN_KEYWORD, NOT_IN, AS_KEYWORD, COLON, IS_KEYWORD, NOT_IS) {
+        IN_OR_IS(IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS) {
             @Override
             public JetNodeType parseRightHandSide(IElementType operation, JetExpressionParsing parser) {
-                if (operation == AS_KEYWORD || operation == COLON) {
-                    parser.myJetParsing.parseTypeRef();
-                    return BINARY_WITH_TYPE;
-                }
                 if (operation == IS_KEYWORD || operation == NOT_IS) {
                     parser.parsePattern();
 
