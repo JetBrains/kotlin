@@ -48,6 +48,12 @@ public class BindingTraceContext extends BindingTrace implements BindingContext 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+    @Override
+    public DeclarationDescriptor getDeclarationDescriptor(JetDeclaration declaration) {
+        return declarationsToDescriptors.get(declaration);
+    }
+
     public NamespaceDescriptor getNamespaceDescriptor(JetNamespace declaration) {
         return (NamespaceDescriptor) declarationsToDescriptors.get(declaration);
     }

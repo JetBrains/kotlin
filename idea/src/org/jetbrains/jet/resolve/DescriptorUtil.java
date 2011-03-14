@@ -16,13 +16,13 @@ public class DescriptorUtil {
                     @Override
                     public Void visitPropertyDescriptor(PropertyDescriptor descriptor, StringBuilder builder) {
                         Type type = descriptor.getType();
-                        builder.append(descriptor.getName()).append(" : ").append(type);
+                        builder.append(renderName(descriptor)).append(" : ").append(type);
                         return super.visitPropertyDescriptor(descriptor, builder); 
                     }
 
                     @Override
                     public Void visitFunctionDescriptor(FunctionDescriptor descriptor, StringBuilder builder) {
-                        builder.append("fun ").append(descriptor.getName());
+                        builder.append("fun ").append(renderName(descriptor));
                         List<TypeParameterDescriptor> typeParameters = descriptor.getTypeParameters();
                         renderTypeParameters(typeParameters, builder);
                         builder.append("(");
@@ -61,13 +61,13 @@ public class DescriptorUtil {
 
                     @Override
                     public Void visitNamespaceDescriptor(NamespaceDescriptor namespaceDescriptor, StringBuilder builder) {
-                        builder.append("namespace ").append(namespaceDescriptor.getName());
+                        builder.append("namespace ").append(renderName(namespaceDescriptor));
                         return super.visitNamespaceDescriptor(namespaceDescriptor, builder);
                     }
 
                     @Override
                     public Void visitClassDescriptor(ClassDescriptor descriptor, StringBuilder builder) {
-                        builder.append("class ").append(descriptor.getName());
+                        builder.append("class ").append(renderName(descriptor));
                         renderTypeParameters(descriptor.getTypeConstructor().getParameters(), builder);
                         return super.visitClassDescriptor(descriptor, builder);
                     }
@@ -76,8 +76,23 @@ public class DescriptorUtil {
         return stringBuilder.toString();
     }
 
+    private static StringBuilder renderName(DeclarationDescriptor descriptor) {
+        StringBuilder stringBuilder = new StringBuilder();
+        renderName(descriptor, stringBuilder);
+        return stringBuilder;
+    }
+
+    private static void renderName(DeclarationDescriptor descriptor, StringBuilder stringBuilder) {
+        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+        if (containingDeclaration != null) {
+            renderName(containingDeclaration, stringBuilder);
+            stringBuilder.append("::");
+        }
+        stringBuilder.append(descriptor.getName());
+    }
+
     private static void renderTypeParameter(TypeParameterDescriptor descriptor, StringBuilder builder) {
-        builder.append(descriptor.getName());
+        builder.append(renderName(descriptor));
         if (!descriptor.getUpperBounds().isEmpty()) {
             Type bound = descriptor.getUpperBounds().iterator().next();
             if (bound != JetStandardClasses.getAnyType()) {

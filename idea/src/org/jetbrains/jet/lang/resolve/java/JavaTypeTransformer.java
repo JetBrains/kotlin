@@ -25,7 +25,6 @@ public class JavaTypeTransformer {
 
     @NotNull
     public Type transform(PsiType javaType) {
-        System.out.println("javaType = " + javaType.getInternalCanonicalText());
         return javaType.accept(new PsiTypeVisitor<Type>() {
             @Override
             public Type visitClassType(PsiClassType classType) {

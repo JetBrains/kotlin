@@ -31,7 +31,6 @@ public abstract class DeclarationDescriptorImpl extends AnnotatedImpl implements
         return this;
     }
 
-    @NotNull
     @Override
     public DeclarationDescriptor getContainingDeclaration() {
         return containingDeclaration;

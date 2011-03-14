@@ -4,11 +4,13 @@ import com.intellij.lang.documentation.QuickDocumentationProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.jet.lang.ErrorHandler;
+import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.DeclarationDescriptor;
+import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.resolve.DescriptorUtil;
 
 /**
@@ -29,13 +31,26 @@ public class JetQuickDocumentationProvider extends QuickDocumentationProvider {
             BindingContext bindingContext = AnalyzingUtils.analyzeFile((JetFile) element.getContainingFile(), ErrorHandler.DO_NOTHING);
             DeclarationDescriptor declarationDescriptor = bindingContext.resolveReferenceExpression(ref);
             if (declarationDescriptor != null) {
-                String text = DescriptorUtil.renderPresentableText(declarationDescriptor);
-                text = text.replaceAll("<", "&lt;");
-                return text;
+                return render(declarationDescriptor);
             }
             return "Unresolved";
         }
+
+//        if (originalElement.getNode().getElementType() == JetTokens.IDENTIFIER) {
+//            JetDeclaration declaration = PsiTreeUtil.getParentOfType(originalElement, JetDeclaration.class);
+//            BindingContext bindingContext = AnalyzingUtils.analyzeFile((JetFile) element.getContainingFile(), ErrorHandler.DO_NOTHING);
+//            DeclarationDescriptor declarationDescriptor = bindingContext.getDeclarationDescriptor(declaration);
+//            if (declarationDescriptor != null) {
+//                return render(declarationDescriptor);
+//            }
+//        }
         return "Not a reference";
+    }
+
+    private String render(DeclarationDescriptor declarationDescriptor) {
+        String text = DescriptorUtil.renderPresentableText(declarationDescriptor);
+        text = text.replaceAll("<", "&lt;");
+        return text;
     }
 
 

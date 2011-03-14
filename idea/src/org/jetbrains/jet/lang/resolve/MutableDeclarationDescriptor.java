@@ -1,7 +1,6 @@
 package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.types.Attribute;
 import org.jetbrains.jet.lang.types.DeclarationDescriptor;
 import org.jetbrains.jet.lang.types.DeclarationDescriptorVisitor;
@@ -13,7 +12,11 @@ import java.util.List;
  */
 public abstract class MutableDeclarationDescriptor implements DeclarationDescriptor {
     private String name;
-    private DeclarationDescriptor containingDeclaration;
+    private final DeclarationDescriptor containingDeclaration;
+
+    public MutableDeclarationDescriptor(DeclarationDescriptor containingDeclaration) {
+        this.containingDeclaration = containingDeclaration;
+    }
 
     @Override
     public List<Attribute> getAttributes() {
@@ -35,14 +38,9 @@ public abstract class MutableDeclarationDescriptor implements DeclarationDescrip
         return this;
     }
 
-    @NotNull
     @Override
     public DeclarationDescriptor getContainingDeclaration() {
         return containingDeclaration;
-    }
-
-    public void setContainingDeclaration(@Nullable DeclarationDescriptor containingDeclaration) {
-        this.containingDeclaration = containingDeclaration;
     }
 
     @Override

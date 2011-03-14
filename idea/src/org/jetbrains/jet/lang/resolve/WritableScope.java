@@ -216,10 +216,16 @@ public class WritableScope extends JetScopeAdapter {
         }
     }
 
-    @Override
-    public NamespaceDescriptor getNamespace(@NotNull String name) {
+    public NamespaceDescriptor getDeclaredNamespace(@NotNull String name) {
         NamespaceDescriptor namespaceDescriptor = getNamespaceDescriptors().get(name);
         if (namespaceDescriptor != null) return namespaceDescriptor;
+        return null;
+    }
+
+    @Override
+    public NamespaceDescriptor getNamespace(@NotNull String name) {
+        NamespaceDescriptor declaredNamespace = getDeclaredNamespace(name);
+        if (declaredNamespace != null) return declaredNamespace;
 
         NamespaceDescriptor namespace = super.getNamespace(name);
         if (namespace != null) return namespace;

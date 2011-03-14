@@ -1,7 +1,5 @@
 package org.jetbrains.jet.lang.types;
 
-import org.jetbrains.jet.lang.resolve.LazySubstitutingClassDescriptor;
-
 /**
  * @author abreslav
  */
@@ -23,6 +21,10 @@ public class DeclarationDescriptorVisitor<R, D> {
     }
 
     public R visitClassDescriptor(ClassDescriptor descriptor, D data) {
+        return null;
+    }
+
+    public R visitModuleDeclaration(ModuleDescriptor moduleDescriptor, D data) {
         return null;
     }
 }

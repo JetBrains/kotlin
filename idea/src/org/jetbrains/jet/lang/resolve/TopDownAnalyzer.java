@@ -58,7 +58,7 @@ public class TopDownAnalyzer {
                     List<JetImportDirective> importDirectives = namespace.getImportDirectives();
 
                     String name = namespace.getName();
-                    NamespaceDescriptor namespaceDescriptor = declaringScope.getNamespace(name);
+                    NamespaceDescriptor namespaceDescriptor = declaringScope.getDeclaredNamespace(name);
                     if (namespaceDescriptor == null) {
                         namespaceDescriptor = new NamespaceDescriptor(
                                 declaringScope.getContainingDeclaration(),
@@ -104,7 +104,7 @@ public class TopDownAnalyzer {
     }
 
     private WritableScope processClass(@NotNull WritableScope declaringScope, JetClass klass) {
-        MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(declaringScope);
+        MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(declaringScope.getContainingDeclaration(), declaringScope);
         mutableClassDescriptor.setName(klass.getName());
 
         declaringScope.addClassDescriptor(mutableClassDescriptor);

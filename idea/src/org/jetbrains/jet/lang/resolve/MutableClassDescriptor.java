@@ -13,7 +13,8 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     private final WritableScope unsubstitutedMemberScope;
     private TypeConstructor typeConstructor;
 
-    public MutableClassDescriptor(@NotNull JetScope outerScope) {
+    public MutableClassDescriptor(@NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope outerScope) {
+        super(containingDeclaration);
         this.unsubstitutedMemberScope = new WritableScope(outerScope, this);
     }
 
