@@ -15,11 +15,19 @@ public class JavaClassMembersScope implements JetScope {
     private final PsiClass psiClass;
     private final JavaSemanticServices semanticServices;
     private final boolean staticMembers;
+    private final DeclarationDescriptor containingDeclaration;
 
-    public JavaClassMembersScope(PsiClass psiClass, JavaSemanticServices semanticServices, boolean staticMembers) {
+    public JavaClassMembersScope(@NotNull DeclarationDescriptor classDescriptor, PsiClass psiClass, JavaSemanticServices semanticServices, boolean staticMembers) {
+        this.containingDeclaration = classDescriptor;
         this.psiClass = psiClass;
         this.semanticServices = semanticServices;
         this.staticMembers = staticMembers;
+    }
+
+    @NotNull
+    @Override
+    public DeclarationDescriptor getContainingDeclaration() {
+        return containingDeclaration;
     }
 
     @Override
@@ -36,6 +44,7 @@ public class JavaClassMembersScope implements JetScope {
         }
 
         PropertyDescriptorImpl propertyDescriptor = new PropertyDescriptorImpl(
+                containingDeclaration,
                 Collections.<Attribute>emptyList(),
                 field.getName(),
                 semanticServices.getTypeTransformer().transform(field.getType()));
@@ -55,13 +64,16 @@ public class JavaClassMembersScope implements JetScope {
             if (!name.equals(method.getName())) {
                  continue;
             }
-            PsiParameter[] parameters = method.getParameterList().getParameters();
+            final PsiParameter[] parameters = method.getParameterList().getParameters();
+
             FunctionDescriptorImpl functionDescriptor = new FunctionDescriptorImpl(
-                    null,
+                    JavaDescriptorResolver.JAVA_ROOT,
                     Collections.<Attribute>emptyList(), // TODO
-                    name,
+                    name
+            );
+            functionDescriptor.initialize(
                     Collections.<TypeParameterDescriptor>emptyList(), // TODO
-                    semanticServices.getDescriptorResolver().resolveParameterDescriptors(parameters),
+                    semanticServices.getDescriptorResolver().resolveParameterDescriptors(functionDescriptor, parameters),
                     semanticServices.getTypeTransformer().transform(method.getReturnType())
             );
             semanticServices.getTrace().recordDeclarationResolution(method, functionDescriptor);

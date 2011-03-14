@@ -1,5 +1,7 @@
 package org.jetbrains.jet.lang.types;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.resolve.DescriptorUtil;
 
 import java.util.List;
@@ -10,10 +12,12 @@ import java.util.List;
 public abstract class DeclarationDescriptorImpl extends AnnotatedImpl implements Named, DeclarationDescriptor {
 
     private final String name;
+    private final DeclarationDescriptor containingDeclaration;
 
-    public DeclarationDescriptorImpl(List<Attribute> attributes, String name) {
+    public DeclarationDescriptorImpl(@Nullable DeclarationDescriptor containingDeclaration, List<Attribute> attributes, String name) {
         super(attributes);
         this.name = name;
+        this.containingDeclaration = containingDeclaration;
     }
 
     @Override
@@ -21,9 +25,16 @@ public abstract class DeclarationDescriptorImpl extends AnnotatedImpl implements
         return name;
     }
 
+    @NotNull
     @Override
     public DeclarationDescriptor getOriginal() {
         return this;
+    }
+
+    @NotNull
+    @Override
+    public DeclarationDescriptor getContainingDeclaration() {
+        return containingDeclaration;
     }
 
     @Override

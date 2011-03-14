@@ -14,7 +14,7 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     private TypeConstructor typeConstructor;
 
     public MutableClassDescriptor(@NotNull JetScope outerScope) {
-        this.unsubstitutedMemberScope = new WritableScope(outerScope);
+        this.unsubstitutedMemberScope = new WritableScope(outerScope, this);
     }
 
     @NotNull
@@ -27,6 +27,7 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
         this.typeConstructor = typeConstructor;
     }
 
+    @NotNull
     @Override
     public JetScope getMemberScope(List<TypeProjection> typeArguments) {
         List<TypeParameterDescriptor> typeParameters = getTypeConstructor().getParameters();

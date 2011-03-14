@@ -1,5 +1,7 @@
 package org.jetbrains.jet.lang.types;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 /**
@@ -8,8 +10,8 @@ import java.util.List;
 public class PropertyDescriptorImpl extends DeclarationDescriptorImpl implements PropertyDescriptor {
     private Type type;
 
-    public PropertyDescriptorImpl(List<Attribute> attributes, String name, Type type) {
-        super(attributes, name);
+    public PropertyDescriptorImpl(@NotNull DeclarationDescriptor containingDeclaration, List<Attribute> attributes, String name, Type type) {
+        super(containingDeclaration, attributes, name);
         this.type = type;
     }
 

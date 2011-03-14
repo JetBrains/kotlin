@@ -48,6 +48,12 @@ public class ErrorType {
             throw new UnsupportedOperationException(); // TODO
         }
 
+        @NotNull
+        @Override
+        public DeclarationDescriptor getContainingDeclaration() {
+            throw new UnsupportedOperationException(); // TODO
+        }
+
     };
 
     private ErrorType() {}

@@ -38,7 +38,7 @@ public class FunctionDescriptorUtil {
     }
 
     @NotNull
-    public static List<ValueParameterDescriptor> getSubstitutedValueParameters(@NotNull FunctionDescriptor functionDescriptor, @NotNull List<Type> typeArguments) {
+    public static List<ValueParameterDescriptor> getSubstitutedValueParameters(FunctionDescriptor substitutedDescriptor, @NotNull FunctionDescriptor functionDescriptor, @NotNull List<Type> typeArguments) {
         List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>();
         Map<TypeConstructor, TypeProjection> context = createSubstitutionContext(functionDescriptor, typeArguments);
         List<ValueParameterDescriptor> unsubstitutedValueParameters = functionDescriptor.getUnsubstitutedValueParameters();
@@ -46,6 +46,7 @@ public class FunctionDescriptorUtil {
             ValueParameterDescriptor unsubstitutedValueParameter = unsubstitutedValueParameters.get(i);
             // TODO : Lazy?
             result.add(new ValueParameterDescriptorImpl(
+                    substitutedDescriptor,
                     i,
                     unsubstitutedValueParameter.getAttributes(),
                     unsubstitutedValueParameter.getName(),
@@ -81,21 +82,16 @@ public class FunctionDescriptorUtil {
         if (functionDescriptor.getTypeParameters().isEmpty()) {
             return functionDescriptor;
         }
-        return new FunctionDescriptorImpl(
+        FunctionDescriptorImpl substitutedDescriptor = new FunctionDescriptorImpl(
                 functionDescriptor,
                 // TODO : substitute
                 functionDescriptor.getAttributes(),
-                functionDescriptor.getName(),
+                functionDescriptor.getName());
+        substitutedDescriptor.initialize(
                 Collections.<TypeParameterDescriptor>emptyList(), // TODO : questionable
-                getSubstitutedValueParameters(functionDescriptor, typeArguments),
+                getSubstitutedValueParameters(substitutedDescriptor, functionDescriptor, typeArguments),
                 getSubstitutedReturnType(functionDescriptor, typeArguments)
         );
-    }
-
-    public static FunctionDescriptor getOriginal(FunctionDescriptor descriptor) {
-        while (descriptor.getOriginal() != null) {
-            descriptor = descriptor.getOriginal();
-        }
-        return descriptor;
+        return substitutedDescriptor;
     }
 }

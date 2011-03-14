@@ -22,12 +22,24 @@ public class WritableScope extends JetScopeAdapter {
     @Nullable
     private Map<String, ClassDescriptor> classDescriptors;
     @Nullable
+    private Map<String, NamespaceDescriptor> namespaceDescriptors;
+    @Nullable
     private Type thisType;
     @Nullable
     private List<JetScope> imports;
 
-    public WritableScope(JetScope scope) {
+    @NotNull
+    private final DeclarationDescriptor ownerDeclarationDescriptor;
+
+    public WritableScope(JetScope scope, @NotNull DeclarationDescriptor owner) {
         super(scope);
+        this.ownerDeclarationDescriptor = owner;
+    }
+
+    @NotNull
+    @Override
+    public DeclarationDescriptor getContainingDeclaration() {
+        return ownerDeclarationDescriptor;
     }
 
     public void importScope(JetScope imported) {
@@ -160,7 +172,6 @@ public class WritableScope extends JetScopeAdapter {
     public void addClassAlias(String name, ClassDescriptor classDescriptor) {
         Map<String, ClassDescriptor> classDescriptors = getClassDescriptors();
         if (classDescriptors.put(name, classDescriptor) != null) {
-
             throw new UnsupportedOperationException("Class redeclared: " + classDescriptor.getName());
         }
     }
@@ -190,8 +201,26 @@ public class WritableScope extends JetScopeAdapter {
         return thisType;
     }
 
+    @NotNull
+    public Map<String, NamespaceDescriptor> getNamespaceDescriptors() {
+        if (namespaceDescriptors == null) {
+            namespaceDescriptors = new HashMap<String, NamespaceDescriptor>();
+        }
+        return namespaceDescriptors;
+    }
+
+    public void addNamespace(NamespaceDescriptor namespaceDescriptor) {
+        NamespaceDescriptor oldValue = getNamespaceDescriptors().put(namespaceDescriptor.getName(), namespaceDescriptor);
+        if (oldValue != null) {
+            throw new UnsupportedOperationException("Namespace redeclared: " + namespaceDescriptor.getName());
+        }
+    }
+
     @Override
     public NamespaceDescriptor getNamespace(@NotNull String name) {
+        NamespaceDescriptor namespaceDescriptor = getNamespaceDescriptors().get(name);
+        if (namespaceDescriptor != null) return namespaceDescriptor;
+
         NamespaceDescriptor namespace = super.getNamespace(name);
         if (namespace != null) return namespace;
         for (JetScope imported : getImports()) {

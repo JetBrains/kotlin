@@ -32,7 +32,7 @@ public class TopDownAnalyzer {
     }
 
     public void process(@NotNull JetScope outerScope, @NotNull List<JetDeclaration> declarations) {
-        final WritableScope toplevelScope = new WritableScope(outerScope);
+        final WritableScope toplevelScope = new WritableScope(outerScope, outerScope.getContainingDeclaration()); // TODO ?!
         trace.setToplevelScope(toplevelScope); // TODO : this is a hack
         collectTypeDeclarators(toplevelScope, declarations);
         resolveTypeDeclarations();
@@ -57,7 +57,19 @@ public class TopDownAnalyzer {
                 public void visitNamespace(JetNamespace namespace) {
                     List<JetImportDirective> importDirectives = namespace.getImportDirectives();
 
-                    WritableScope namespaceScope = new WritableScope(declaringScope);
+                    String name = namespace.getName();
+                    NamespaceDescriptor namespaceDescriptor = declaringScope.getNamespace(name);
+                    if (namespaceDescriptor == null) {
+                        namespaceDescriptor = new NamespaceDescriptor(
+                                declaringScope.getContainingDeclaration(),
+                                Collections.<Attribute>emptyList(), // TODO
+                                name
+                        );
+                        declaringScope.addNamespace(namespaceDescriptor);
+                        trace.recordDeclarationResolution(namespace, namespaceDescriptor);
+                    }
+
+                    WritableScope namespaceScope = new WritableScope(declaringScope, namespaceDescriptor);
                     namespaceScopes.put(namespace, namespaceScope);
 
                     for (JetImportDirective importDirective : importDirectives) {
@@ -165,7 +177,7 @@ public class TopDownAnalyzer {
 
     private void processFunction(@NotNull WritableScope declaringScope, JetFunction function) {
         declaringScopes.put(function, declaringScope);
-        FunctionDescriptor descriptor = classDescriptorResolver.resolveFunctionDescriptor(declaringScope, function);
+        FunctionDescriptor descriptor = classDescriptorResolver.resolveFunctionDescriptor(declaringScope.getContainingDeclaration(), declaringScope, function);
         declaringScope.addFunctionDescriptor(descriptor);
         functions.put(function, descriptor);
         trace.recordDeclarationResolution(function, descriptor);
@@ -173,7 +185,7 @@ public class TopDownAnalyzer {
 
     private void processProperty(WritableScope declaringScope, JetProperty property) {
         declaringScopes.put(property, declaringScope);
-        PropertyDescriptor descriptor = classDescriptorResolver.resolvePropertyDescriptor(declaringScope, property);
+        PropertyDescriptor descriptor = classDescriptorResolver.resolvePropertyDescriptor(declaringScope.getContainingDeclaration(), declaringScope, property);
         declaringScope.addPropertyDescriptor(descriptor);
         trace.recordDeclarationResolution(property, descriptor);
     }
@@ -192,7 +204,7 @@ public class TopDownAnalyzer {
             WritableScope declaringScope = declaringScopes.get(function);
             assert declaringScope != null;
 
-            WritableScope parameterScope = new WritableScope(declaringScope);
+            WritableScope parameterScope = new WritableScope(declaringScope, descriptor);
             for (TypeParameterDescriptor typeParameter : descriptor.getTypeParameters()) {
                 parameterScope.addTypeParameterDescriptor(typeParameter);
             }

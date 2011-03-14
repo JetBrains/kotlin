@@ -50,4 +50,9 @@ public class JetScopeAdapter implements JetScope {
         return scope.getExtension(name);
     }
 
+    @NotNull
+    @Override
+    public DeclarationDescriptor getContainingDeclaration() {
+        return scope.getContainingDeclaration();
+    }
 }

@@ -47,4 +47,10 @@ public class ScopeWithReceiver extends JetScopeImpl {
     public Type getThisType() {
         return receiverTypeScope.getThisType();
     }
+
+    @NotNull
+    @Override
+    public DeclarationDescriptor getContainingDeclaration() {
+        return outerScope.getContainingDeclaration();
+    }
 }

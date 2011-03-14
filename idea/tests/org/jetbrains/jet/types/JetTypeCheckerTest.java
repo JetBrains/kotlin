@@ -542,7 +542,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
             public FunctionGroup getFunctionGroup(@NotNull String name) {
                 WritableFunctionGroup writableFunctionGroup = new WritableFunctionGroup(name);
                 for (String funDecl : FUNCTION_DECLARATIONS) {
-                    FunctionDescriptor functionDescriptor = classDescriptorResolver.resolveFunctionDescriptor(this, JetChangeUtil.createFunction(getProject(), funDecl));
+                    FunctionDescriptor functionDescriptor = classDescriptorResolver.resolveFunctionDescriptor(JetStandardClasses.getAny(), this, JetChangeUtil.createFunction(getProject(), funDecl));
                     if (name.equals(functionDescriptor.getName())) {
                         writableFunctionGroup.addFunction(functionDescriptor);
                     }

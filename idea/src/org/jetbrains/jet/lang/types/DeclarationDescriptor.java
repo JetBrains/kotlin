@@ -1,5 +1,8 @@
 package org.jetbrains.jet.lang.types;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 /**
  * @author abreslav
  */
@@ -10,7 +13,12 @@ public interface DeclarationDescriptor extends Annotated, Named {
      *         or of the element itself).
      *         returns <code>this</code> object if the current descriptor is original itself
      */
+    @NotNull
     DeclarationDescriptor getOriginal();
+
+
+    @Nullable
+    DeclarationDescriptor getContainingDeclaration();
 
     <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data);
     void acceptVoid(DeclarationDescriptorVisitor<Void, Void> visitor);

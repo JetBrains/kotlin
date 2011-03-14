@@ -43,7 +43,7 @@ public class SubstitutingScope implements JetScope {
 
     @Override
     public NamespaceDescriptor getNamespace(@NotNull String name) {
-        throw new UnsupportedOperationException(); // TODO
+        return workerScope.getNamespace(name); // TODO
     }
 
     @Override
@@ -65,5 +65,11 @@ public class SubstitutingScope implements JetScope {
             return functionGroup;
         }
         return new LazySubstitutingFunctionGroup(substitutionContext, functionGroup);
+    }
+
+    @NotNull
+    @Override
+    public DeclarationDescriptor getContainingDeclaration() {
+        return workerScope.getContainingDeclaration();
     }
 }

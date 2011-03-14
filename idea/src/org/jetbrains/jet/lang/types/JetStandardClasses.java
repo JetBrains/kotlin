@@ -19,10 +19,13 @@ public class JetStandardClasses {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private static ClassDescriptor NOTHING_CLASS = new ClassDescriptorImpl(
+    private static NamespaceDescriptor STANDARD_CLASSES_NAMESPACE = new NamespaceDescriptor(null, Collections.<Attribute>emptyList(), "jet");
+
+    private static final ClassDescriptor NOTHING_CLASS = new ClassDescriptorImpl(
+            STANDARD_CLASSES_NAMESPACE,
             Collections.<Attribute>emptyList(),
+            "Nothing").initialize(
             true,
-            "Nothing",
             Collections.<TypeParameterDescriptor>emptyList(),
             new AbstractCollection<Type>() {
                 @Override
@@ -53,9 +56,10 @@ public class JetStandardClasses {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private static final ClassDescriptor ANY = new ClassDescriptorImpl(
+            STANDARD_CLASSES_NAMESPACE,
             Collections.<Attribute>emptyList(),
+            "Any").initialize(
             false,
-            "Any",
             Collections.<TypeParameterDescriptor>emptyList(),
             Collections.<Type>emptySet(),
             JetScope.EMPTY
@@ -76,16 +80,19 @@ public class JetStandardClasses {
     static {
         for (int i = 0; i < TUPLE_COUNT; i++) {
             List<TypeParameterDescriptor> parameters = new ArrayList<TypeParameterDescriptor>();
+            ClassDescriptorImpl classDescriptor = new ClassDescriptorImpl(
+                    STANDARD_CLASSES_NAMESPACE,
+                    Collections.<Attribute>emptyList(),
+                    "Tuple" + i);
             for (int j = 0; j < i; j++) {
                 parameters.add(new TypeParameterDescriptor(
+                        classDescriptor,
                         Collections.<Attribute>emptyList(),
                         Variance.OUT_VARIANCE, "T" + j,
                         Collections.singleton(getNullableAnyType())));
             }
-            TUPLE[i] = new ClassDescriptorImpl(
-                    Collections.<Attribute>emptyList(),
+            TUPLE[i] = classDescriptor.initialize(
                     true,
-                    "Tuple" + i,
                     parameters,
                     Collections.singleton(getAnyType()), STUB);
         }
@@ -100,34 +107,47 @@ public class JetStandardClasses {
 
     static {
         for (int i = 0; i < FUNCTION_COUNT; i++) {
-            List<TypeParameterDescriptor> parameters = new ArrayList<TypeParameterDescriptor>();
-            for (int j = 0; j < i; j++) {
-                parameters.add(new TypeParameterDescriptor(
-                        Collections.<Attribute>emptyList(),
-                        Variance.IN_VARIANCE, "P" + j,
-                        Collections.singleton(getNullableAnyType())));
-            }
-            parameters.add(new TypeParameterDescriptor(
+            ClassDescriptorImpl function = new ClassDescriptorImpl(
+                    STANDARD_CLASSES_NAMESPACE,
                     Collections.<Attribute>emptyList(),
-                        Variance.OUT_VARIANCE, "R",
-                        Collections.singleton(getNullableAnyType())));
-            FUNCTION[i] = new ClassDescriptorImpl(
-                    Collections.<Attribute>emptyList(),
+                    "Function" + i);
+            FUNCTION[i] = function.initialize(
                     false,
-                    "Function" + i,
-                    parameters,
+                    createTypeParameters(i, function),
                     Collections.singleton(getAnyType()), STUB);
+
+            ClassDescriptorImpl receiverFunction = new ClassDescriptorImpl(
+                    STANDARD_CLASSES_NAMESPACE,
+                    Collections.<Attribute>emptyList(),
+                    "ReceiverFunction" + i);
+            List<TypeParameterDescriptor> parameters = createTypeParameters(i, receiverFunction);
             parameters.add(0, new TypeParameterDescriptor(
+                    receiverFunction,
                     Collections.<Attribute>emptyList(),
-                        Variance.IN_VARIANCE, "T",
-                        Collections.singleton(getNullableAnyType())));
-            RECEIVER_FUNCTION[i] = new ClassDescriptorImpl(
-                    Collections.<Attribute>emptyList(),
+                    Variance.IN_VARIANCE, "T",
+                    Collections.singleton(getNullableAnyType())));
+            RECEIVER_FUNCTION[i] = receiverFunction.initialize(
                     false,
-                    "ReceiverFunction" + i,
                     parameters,
                     Collections.singleton(getAnyType()), STUB);
         }
+    }
+
+    private static List<TypeParameterDescriptor> createTypeParameters(int parameterCount, ClassDescriptorImpl function) {
+        List<TypeParameterDescriptor> parameters = new ArrayList<TypeParameterDescriptor>();
+        for (int j = 0; j < parameterCount; j++) {
+            parameters.add(new TypeParameterDescriptor(
+                    function,
+                    Collections.<Attribute>emptyList(),
+                    Variance.IN_VARIANCE, "P" + j,
+                    Collections.singleton(getNullableAnyType())));
+        }
+        parameters.add(new TypeParameterDescriptor(
+                function,
+                Collections.<Attribute>emptyList(),
+                Variance.OUT_VARIANCE, "R",
+                Collections.singleton(getNullableAnyType())));
+        return parameters;
     }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -140,7 +160,7 @@ public class JetStandardClasses {
     /*package*/ static final JetScope STANDARD_CLASSES;
 
     static {
-        WritableScope writableScope = new WritableScope(JetScope.EMPTY);
+        WritableScope writableScope = new WritableScope(JetScope.EMPTY, STANDARD_CLASSES_NAMESPACE);
         STANDARD_CLASSES = writableScope;
         writableScope.addClassAlias("Unit", getTuple(0));
 

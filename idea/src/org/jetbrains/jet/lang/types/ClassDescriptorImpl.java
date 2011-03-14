@@ -5,7 +5,6 @@ import org.jetbrains.jet.lang.resolve.JetScope;
 import org.jetbrains.jet.lang.resolve.SubstitutingScope;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -13,22 +12,30 @@ import java.util.Map;
  * @author abreslav
  */
 public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements ClassDescriptor {
-    private final TypeConstructor typeConstructor;
-    private final JetScope memberDeclarations;
+    private TypeConstructor typeConstructor;
+
+    private JetScope memberDeclarations;
 
     public ClassDescriptorImpl(
-            List<Attribute> attributes, boolean sealed,
-            String name, List<TypeParameterDescriptor> typeParameters,
-            Collection<? extends Type> superclasses, JetScope memberDeclarations) {
-        super(attributes, name);
-        this.typeConstructor = new TypeConstructor(attributes, sealed, name, typeParameters, superclasses);
-        this.memberDeclarations = memberDeclarations;
+            @NotNull DeclarationDescriptor containingDeclaration,
+            List<Attribute> attributes,
+            String name) {
+        super(containingDeclaration, attributes, name);
     }
 
-    public ClassDescriptorImpl(String name, JetScope memberDeclarations) {
-        this(Collections.<Attribute>emptyList(), true,
-                name, Collections.<TypeParameterDescriptor>emptyList(),
-                Collections.<Type>singleton(JetStandardClasses.getAnyType()), memberDeclarations);
+//    public ClassDescriptorImpl(@NotNull DeclarationDescriptor containingDeclaration, String name, JetScope memberDeclarations) {
+//        this(containingDeclaration, Collections.<Attribute>emptyList(), name);
+//        this.initialize(Collections.<Attribute>emptyList(), true,
+//                name, Collections.<TypeParameterDescriptor>emptyList(),
+//                Collections.<Type>singleton(JetStandardClasses.getAnyType()), memberDeclarations);
+//    }
+//
+    public final ClassDescriptorImpl initialize(boolean sealed,
+                                                List<TypeParameterDescriptor> typeParameters,
+                                                Collection<? extends Type> superclasses, JetScope memberDeclarations) {
+        this.typeConstructor = new TypeConstructor(getAttributes(), sealed, getName(), typeParameters, superclasses);
+        this.memberDeclarations = memberDeclarations;
+        return this;
     }
 
     @Override
@@ -38,6 +45,7 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
     }
 
     @Override
+    @NotNull
     public JetScope getMemberScope(List<TypeProjection> typeArguments) {
         if (typeConstructor.getParameters().isEmpty()) {
             return  memberDeclarations;

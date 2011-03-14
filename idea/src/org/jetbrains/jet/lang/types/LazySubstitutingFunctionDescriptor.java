@@ -25,6 +25,7 @@ public class LazySubstitutingFunctionDescriptor implements FunctionDescriptor {
         for (TypeParameterDescriptor parameterDescriptor : functionDescriptor.getTypeParameters()) {
             // TODO : lazy?
             result.add(new TypeParameterDescriptor(
+                    this,
                     parameterDescriptor.getAttributes(),
                     parameterDescriptor.getVariance(),
                     parameterDescriptor.getName(),
@@ -41,6 +42,7 @@ public class LazySubstitutingFunctionDescriptor implements FunctionDescriptor {
         for (int i = 0, unsubstitutedValueParametersSize = unsubstitutedValueParameters.size(); i < unsubstitutedValueParametersSize; i++) {
             ValueParameterDescriptor parameterDescriptor = unsubstitutedValueParameters.get(i);
             result.add(new ValueParameterDescriptorImpl(
+                    this,
                     i,
                     parameterDescriptor.getAttributes(),
                     parameterDescriptor.getName(),
@@ -58,6 +60,7 @@ public class LazySubstitutingFunctionDescriptor implements FunctionDescriptor {
         return TypeSubstitutor.INSTANCE.substitute(substitutionContext, functionDescriptor.getUnsubstitutedReturnType(), Variance.OUT_VARIANCE);
     }
 
+    @NotNull
     @Override
     public FunctionDescriptor getOriginal() {
         return functionDescriptor.getOriginal();
@@ -72,6 +75,12 @@ public class LazySubstitutingFunctionDescriptor implements FunctionDescriptor {
     @Override
     public String getName() {
         return functionDescriptor.getName();
+    }
+
+    @NotNull
+    @Override
+    public DeclarationDescriptor getContainingDeclaration() {
+        return functionDescriptor.getContainingDeclaration();
     }
 
     @Override

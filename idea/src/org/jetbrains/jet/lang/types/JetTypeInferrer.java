@@ -69,6 +69,8 @@ public class JetTypeInferrer {
                     return;
                 }
 
+                FunctionDescriptorImpl functionDescriptor = new FunctionDescriptorImpl(scope.getContainingDeclaration(), Collections.<Attribute>emptyList(), "<anonymous>");
+
                 JetTypeReference returnTypeRef = expression.getReturnTypeRef();
 
                 JetTypeReference receiverTypeRef = expression.getReceiverTypeRef();
@@ -87,7 +89,7 @@ public class JetTypeInferrer {
                     if (typeReference == null) {
                         throw new UnsupportedOperationException("Type inference for parameters is not implemented yet");
                     }
-                    PropertyDescriptor propertyDescriptor = classDescriptorResolver.resolvePropertyDescriptor(scope, parameter);
+                    PropertyDescriptor propertyDescriptor = classDescriptorResolver.resolvePropertyDescriptor(functionDescriptor, scope, parameter);
                     parameterDescriptors.put(parameter.getName(), propertyDescriptor);
                     parameterTypes.add(propertyDescriptor.getType());
                 }
@@ -95,7 +97,7 @@ public class JetTypeInferrer {
                 if (returnTypeRef != null) {
                     returnType = typeResolver.resolveType(scope, returnTypeRef);
                 } else {
-                    WritableScope writableScope = new WritableScope(scope);
+                    WritableScope writableScope = new WritableScope(scope, functionDescriptor);
                     for (PropertyDescriptor propertyDescriptor : parameterDescriptors.values()) {
                         writableScope.addPropertyDescriptor(propertyDescriptor);
                     }
@@ -147,6 +149,10 @@ public class JetTypeInferrer {
 
             @Override
             public void visitReturnExpression(JetReturnExpression expression) {
+                JetExpression returnedExpression = expression.getReturnedExpression();
+                if (returnedExpression != null) {
+                    getType(scope, returnedExpression, false);
+                }
                 result[0] = JetStandardClasses.getNothingType();
             }
 
@@ -535,12 +541,13 @@ public class JetTypeInferrer {
         if (block.isEmpty()) {
             return JetStandardClasses.getUnitType();
         } else {
-            WritableScope scope = new WritableScope(outerScope);
+            DeclarationDescriptor containingDescriptor = outerScope.getContainingDeclaration();
+            WritableScope scope = new WritableScope(outerScope, containingDescriptor);
             for (JetElement statement : block) {
                 // TODO: consider other declarations
                 if (statement instanceof JetProperty) {
                     JetProperty property = (JetProperty) statement;
-                    PropertyDescriptor propertyDescriptor = classDescriptorResolver.resolvePropertyDescriptor(scope, property);
+                    PropertyDescriptor propertyDescriptor = classDescriptorResolver.resolvePropertyDescriptor(containingDescriptor, scope, property);
                     scope.addPropertyDescriptor(propertyDescriptor);
                     trace.recordDeclarationResolution(property, propertyDescriptor);
                 }

@@ -1,7 +1,6 @@
 package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -9,24 +8,34 @@ import java.util.List;
  * @author abreslav
  */
 public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements FunctionDescriptor {
-    @NotNull
-    private final List<TypeParameterDescriptor> typeParameters;
-    @NotNull
-    private final List<ValueParameterDescriptor> unsubstitutedValueParameters;
-    @NotNull
-    private final Type unsubstitutedReturnType;
-    @Nullable
+
+    private List<TypeParameterDescriptor> typeParameters;
+
+    private List<ValueParameterDescriptor> unsubstitutedValueParameters;
+
+    private Type unsubstitutedReturnType;
     private final FunctionDescriptor original;
 
     public FunctionDescriptorImpl(
-            @Nullable FunctionDescriptor original,
+            @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull List<Attribute> attributes,
-            String name,
+            String name) {
+        super(containingDeclaration, attributes, name);
+        this.original = this;
+    }
+
+    public FunctionDescriptorImpl(
+            @NotNull FunctionDescriptor original,
+            @NotNull List<Attribute> attributes,
+            String name) {
+        super(original.getContainingDeclaration(), attributes, name);
+        this.original = original;
+    }
+
+    public final void initialize(
             @NotNull List<TypeParameterDescriptor> typeParameters,
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
             @NotNull Type unsubstitutedReturnType) {
-        super(attributes, name);
-        this.original = original == null ? this : original;
         this.typeParameters = typeParameters;
         this.unsubstitutedValueParameters = unsubstitutedValueParameters;
         this.unsubstitutedReturnType = unsubstitutedReturnType;
@@ -50,6 +59,7 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
         return unsubstitutedReturnType;
     }
 
+    @NotNull
     @Override
     public FunctionDescriptor getOriginal() {
         return original;

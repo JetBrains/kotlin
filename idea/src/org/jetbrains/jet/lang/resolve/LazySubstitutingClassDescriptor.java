@@ -28,6 +28,7 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
         throw new UnsupportedOperationException(); // TODO
     }
 
+    @NotNull
     @Override
     public JetScope getMemberScope(List<TypeProjection> typeArguments) {
         JetScope memberScope = original.getMemberScope(typeArguments);
@@ -47,9 +48,16 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
         return original.getName();
     }
 
+    @NotNull
     @Override
     public DeclarationDescriptor getOriginal() {
         return original.getOriginal();
+    }
+
+    @NotNull
+    @Override
+    public DeclarationDescriptor getContainingDeclaration() {
+        return original.getContainingDeclaration();
     }
 
     @Override

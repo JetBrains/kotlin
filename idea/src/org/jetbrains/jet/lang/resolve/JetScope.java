@@ -8,7 +8,13 @@ import org.jetbrains.jet.lang.types.*;
  * @author abreslav
  */
 public interface JetScope {
-    JetScope EMPTY = new JetScopeImpl() {};
+    JetScope EMPTY = new JetScopeImpl() {
+        @NotNull
+        @Override
+        public DeclarationDescriptor getContainingDeclaration() {
+            throw new UnsupportedOperationException(); // TODO
+        }
+    };
 
     @Nullable
     ClassDescriptor getClass(@NotNull String name);
@@ -30,4 +36,7 @@ public interface JetScope {
 
     @NotNull
     FunctionGroup getFunctionGroup(@NotNull String name);
+
+    @NotNull
+    DeclarationDescriptor getContainingDeclaration();
 }

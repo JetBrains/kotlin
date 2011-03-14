@@ -14,6 +14,13 @@ import java.util.*;
  */
 public class JavaDescriptorResolver {
 
+    /*package*/ static final DeclarationDescriptor JAVA_ROOT = new DeclarationDescriptorImpl(null, Collections.<Attribute>emptyList(), "<java_root>") {
+        @Override
+        public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
+            throw new UnsupportedOperationException(); // TODO
+        }
+    };
+
     protected final Map<String, ClassDescriptor> classDescriptorCache = new HashMap<String, ClassDescriptor>();
     protected final Map<String, NamespaceDescriptor> namespaceDescriptorCache = new HashMap<String, NamespaceDescriptor>();
     protected final JavaPsiFacade javaFacade;
@@ -51,16 +58,20 @@ public class JavaDescriptorResolver {
         return classDescriptor;
     }
 
-    private ClassDescriptor createJavaClassDescriptor(@NotNull PsiClass psiClass) {
+    private ClassDescriptor createJavaClassDescriptor(@NotNull final PsiClass psiClass) {
         String name = psiClass.getName();
         PsiModifierList modifierList = psiClass.getModifierList();
         ClassDescriptorImpl classDescriptor = new ClassDescriptorImpl(
+                JAVA_ROOT,
                 Collections.<Attribute>emptyList(), // TODO
+                name
+        );
+        classDescriptor.initialize(
+                // TODO
                 modifierList == null ? false : modifierList.hasModifierProperty(PsiModifier.FINAL),
-                name,
                 Collections.<TypeParameterDescriptor>emptyList(),
                 getSupertypes(psiClass),
-                new JavaClassMembersScope(psiClass, semanticServices, false)
+                new JavaClassMembersScope(classDescriptor, psiClass, semanticServices, false)
         );
         semanticServices.getTrace().recordDeclarationResolution(psiClass, classDescriptor);
         return classDescriptor;
@@ -104,29 +115,32 @@ public class JavaDescriptorResolver {
 
     private NamespaceDescriptor createJavaNamespaceDescriptor(PsiPackage psiPackage) {
         NamespaceDescriptor namespaceDescriptor = new NamespaceDescriptor(
+                JAVA_ROOT,
                 Collections.<Attribute>emptyList(), // TODO
-                psiPackage.getName(),
-                new JavaPackageScope(psiPackage.getQualifiedName(), semanticServices)
+                psiPackage.getName()
         );
+        namespaceDescriptor.initialize(new JavaPackageScope(psiPackage.getQualifiedName(), namespaceDescriptor, semanticServices));
         semanticServices.getTrace().recordDeclarationResolution(psiPackage, namespaceDescriptor);
         return namespaceDescriptor;
     }
 
-    private NamespaceDescriptor createJavaNamespaceDescriptor(@NotNull PsiClass psiClass) {
+    private NamespaceDescriptor createJavaNamespaceDescriptor(@NotNull final PsiClass psiClass) {
         NamespaceDescriptor namespaceDescriptor = new NamespaceDescriptor(
+                JAVA_ROOT,
                 Collections.<Attribute>emptyList(), // TODO
-                psiClass.getName(),
-                new JavaClassMembersScope(psiClass, semanticServices, true)
+                psiClass.getName()
         );
+        namespaceDescriptor.initialize(new JavaClassMembersScope(namespaceDescriptor, psiClass, semanticServices, true));
         semanticServices.getTrace().recordDeclarationResolution(psiClass, namespaceDescriptor);
         return namespaceDescriptor;
     }
 
-    public List<ValueParameterDescriptor> resolveParameterDescriptors(PsiParameter[] parameters) {
+    public List<ValueParameterDescriptor> resolveParameterDescriptors(DeclarationDescriptor containingDeclaration, PsiParameter[] parameters) {
         List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>();
         for (int i = 0, parametersLength = parameters.length; i < parametersLength; i++) {
             PsiParameter parameter = parameters[i];
             result.add(new ValueParameterDescriptorImpl(
+                    containingDeclaration,
                     i,
                     Collections.<Attribute>emptyList(), // TODO
                     parameter.getName(),

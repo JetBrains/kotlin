@@ -62,11 +62,11 @@ public class JetPsiChecker implements Annotator {
                 });
             }
             catch (ProcessCanceledException e) {
-                // Canceled. We are fine
+                throw e;
             }
             catch (Throwable e) {
                 // TODO
-                holder.createErrorAnnotation(new TextRange(0, 1), e.getClass().getCanonicalName() + ": " + e.getMessage());
+                holder.createErrorAnnotation(element, e.getClass().getCanonicalName() + ": " + e.getMessage());
                 e.printStackTrace();
             }
         }

@@ -25,9 +25,12 @@ public class AnalyzingUtils {
         BindingTraceContext bindingTraceContext = new BindingTraceContext();
         JavaSemanticServices javaSemanticServices = new JavaSemanticServices(project, semanticServices, bindingTraceContext);
 
-        WritableScope scope = new WritableScope(semanticServices.getStandardLibrary().getLibraryScope());
-        scope.importScope(new JavaPackageScope("", javaSemanticServices));
-        scope.importScope(new JavaPackageScope("java.lang", javaSemanticServices));
+        JetScope libraryScope = semanticServices.getStandardLibrary().getLibraryScope();
+        WritableScope scope = new WritableScope(libraryScope, libraryScope.getContainingDeclaration());
+//        scope.importScope(javaSemanticServices.getDescriptorResolver().resolveNamespace("").getMemberScope());
+//        scope.importScope(javaSemanticServices.getDescriptorResolver().resolveNamespace("java.lang").getMemberScope());
+        scope.importScope(new JavaPackageScope("", null, javaSemanticServices));
+        scope.importScope(new JavaPackageScope("java.lang", null, javaSemanticServices));
 
         new TopDownAnalyzer(semanticServices, bindingTraceContext).process(scope, namespace);
         return bindingTraceContext;

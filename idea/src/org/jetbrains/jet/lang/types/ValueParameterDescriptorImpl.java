@@ -1,8 +1,6 @@
 package org.jetbrains.jet.lang.types;
 
-import com.intellij.psi.PsiElement;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lang.psi.JetParameterList;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -14,8 +12,8 @@ public class ValueParameterDescriptorImpl extends PropertyDescriptorImpl impleme
     private final boolean isVararg;
     private final int index;
 
-    public ValueParameterDescriptorImpl(int index, List<Attribute> attributes, String name, Type type, boolean hasDefaultValue, boolean isVararg) {
-        super(attributes, name, type);
+    public ValueParameterDescriptorImpl(@NotNull DeclarationDescriptor containingDeclaration, int index, List<Attribute> attributes, String name, Type type, boolean hasDefaultValue, boolean isVararg) {
+        super(containingDeclaration, attributes, name, type);
         this.index = index;
         this.hasDefaultValue = hasDefaultValue;
         this.isVararg = isVararg;

@@ -101,4 +101,8 @@ public class BindingTraceContext extends BindingTrace implements BindingContext 
         return descriptorToDeclarations.get(declarationDescriptor.getOriginal());
     }
 
+    @Override
+    public PsiElement getDeclarationPsiElement(DeclarationDescriptor descriptor) {
+        return descriptorToDeclarations.get(descriptor);
+    }
 }

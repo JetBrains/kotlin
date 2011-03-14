@@ -22,4 +22,5 @@ public interface BindingContext {
 
     Type resolveTypeReference(JetTypeReference typeReference);
     PsiElement resolveToDeclarationPsiElement(JetReferenceExpression referenceExpression);
+    PsiElement getDeclarationPsiElement(DeclarationDescriptor descriptor);
 }

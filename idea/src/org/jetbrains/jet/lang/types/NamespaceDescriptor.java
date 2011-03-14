@@ -1,5 +1,7 @@
 package org.jetbrains.jet.lang.types;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.JetScope;
 
 import java.util.List;
@@ -9,17 +11,23 @@ import java.util.List;
  */
 public class NamespaceDescriptor extends DeclarationDescriptorImpl {
     private NamespaceType namespaceType;
-    private final JetScope memberScope;
 
-    public NamespaceDescriptor(List<Attribute> attributes, String name, JetScope memberScope) {
-        super(attributes, name);
+    private JetScope memberScope;
+
+    public NamespaceDescriptor(@Nullable DeclarationDescriptor containingDeclaration, List<Attribute> attributes, String name) {
+        super(containingDeclaration, attributes, name);
+    }
+
+    public void initialize(@NotNull JetScope memberScope) {
         this.memberScope = memberScope;
     }
 
+    @NotNull
     public JetScope getMemberScope() {
         return memberScope;
     }
 
+    @NotNull
     public NamespaceType getNamespaceType() {
         if (namespaceType == null) {
             namespaceType = new NamespaceType(getName(), memberScope);

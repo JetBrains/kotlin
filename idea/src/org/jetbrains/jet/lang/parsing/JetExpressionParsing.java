@@ -98,6 +98,10 @@ public class JetExpressionParsing extends AbstractJetParsing {
             }
         },
 
+//        COLON_AS(COLON,  AS_KEYWORD) {
+//
+//        },
+
         MULTIPLICATIVE(MUL, DIV, PERC) {
             @Override
             public void parseHigherPrecedence(JetExpressionParsing parser) {

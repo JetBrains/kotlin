@@ -1,7 +1,6 @@
 package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -18,6 +17,10 @@ public interface FunctionDescriptor extends DeclarationDescriptor {
     @NotNull
     Type getUnsubstitutedReturnType();
 
-    @Nullable
+    @NotNull
     FunctionDescriptor getOriginal();
+
+    @Override
+    @NotNull
+    DeclarationDescriptor getContainingDeclaration();
 }
