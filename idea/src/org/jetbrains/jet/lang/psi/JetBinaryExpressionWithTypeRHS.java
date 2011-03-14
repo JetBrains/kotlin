@@ -40,8 +40,8 @@ public class JetBinaryExpressionWithTypeRHS extends JetExpression {
         return null;
     }
     @NotNull
-    public JetReferenceExpression getOperationReference() {
-        return (JetReferenceExpression) findChildByType(JetNodeTypes.OPERATION_REFERENCE);
+    public JetSimpleNameExpression getOperationReference() {
+        return (JetSimpleNameExpression) findChildByType(JetNodeTypes.OPERATION_REFERENCE);
     }
 
 }

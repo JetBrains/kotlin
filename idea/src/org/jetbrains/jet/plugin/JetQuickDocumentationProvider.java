@@ -18,7 +18,13 @@ public class JetQuickDocumentationProvider extends QuickDocumentationProvider {
 
     @Override
     public String getQuickNavigateInfo(PsiElement element, PsiElement originalElement) {
-        JetReferenceExpression ref = PsiTreeUtil.getParentOfType(originalElement, JetReferenceExpression.class);
+        JetReferenceExpression ref;
+        if (originalElement instanceof JetReferenceExpression) {
+            ref = (JetReferenceExpression) originalElement;
+        }
+        else {
+            ref = PsiTreeUtil.getParentOfType(originalElement, JetReferenceExpression.class);
+        }
         if (ref != null) {
             BindingContext bindingContext = AnalyzingUtils.analyzeFile((JetFile) element.getContainingFile(), ErrorHandler.DO_NOTHING);
             DeclarationDescriptor declarationDescriptor = bindingContext.resolveReferenceExpression(ref);

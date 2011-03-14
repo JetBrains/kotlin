@@ -3,6 +3,7 @@ package org.jetbrains.jet.resolve;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.psi.*;
@@ -79,7 +80,7 @@ public class ExpectedResolveData {
         JetSemanticServices semanticServices = JetSemanticServices.createSemanticServices(file.getProject(), new ErrorHandler() {
             @Override
             public void unresolvedReference(JetReferenceExpression referenceExpression) {
-                unresolvedReferences.add(referenceExpression.getReferencedNameElement());
+                unresolvedReferences.add(referenceExpression);
             }
         });
         JetStandardLibrary lib = semanticServices.getStandardLibrary();
@@ -105,7 +106,8 @@ public class ExpectedResolveData {
             PsiElement element = file.findElementAt(position);
 
             if ("!".equals(name)) {
-                assertTrue("Must have been unresolved: " + element, unresolvedReferences.contains(element));
+                JetReferenceExpression referenceExpression = PsiTreeUtil.getParentOfType(element, JetReferenceExpression.class);
+                assertTrue("Must have been unresolved: " + referenceExpression.getText(), unresolvedReferences.contains(referenceExpression));
                 continue;
             }
 
@@ -141,8 +143,9 @@ public class ExpectedResolveData {
                     actualName = actual.toString();
                 }
             }
+            assertNotNull(reference);
             assertSame(
-                    "Reference `" + name + "`" + reference.getReferencedName() + " at " + reference.getTextOffset() + " is resolved into " + actualName + ".",
+                    "Reference `" + name + "`" + reference.getText() + " at " + reference.getTextOffset() + " is resolved into " + actualName + ".",
                     expected, actual);
         }
 

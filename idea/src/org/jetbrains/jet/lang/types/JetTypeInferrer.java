@@ -42,7 +42,7 @@ public class JetTypeInferrer {
         final Type[] result = new Type[1];
         expression.accept(new JetVisitor() {
             @Override
-            public void visitReferenceExpression(JetReferenceExpression expression) {
+            public void visitReferenceExpression(JetSimpleNameExpression expression) {
                 // TODO : other members
                 // TODO : type substitutions???
                 String referencedName = expression.getReferencedName();
@@ -348,7 +348,7 @@ public class JetTypeInferrer {
 
             @Override
             public void visitBinaryExpression(JetBinaryExpression expression) {
-                JetReferenceExpression operationSign = expression.getOperationReference();
+                JetSimpleNameExpression operationSign = expression.getOperationReference();
 
                 IElementType operationType = operationSign.getReferencedNameElementType();
                 if (operationType == JetTokens.IDENTIFIER) {
@@ -359,8 +359,9 @@ public class JetTypeInferrer {
                 }
                 else if (operationType == JetTokens.EQ) {
                     JetExpression left = expression.getLeft();
-                    if (left instanceof JetArrayAccessExpression) {
-                        JetArrayAccessExpression arrayAccessExpression = (JetArrayAccessExpression) left;
+                    JetExpression deparenthesized = deparenthesize(left);
+                    if (deparenthesized instanceof JetArrayAccessExpression) {
+                        JetArrayAccessExpression arrayAccessExpression = (JetArrayAccessExpression) deparenthesized;
                         resolveArrayAccessToLValue(arrayAccessExpression, expression.getRight(), expression.getOperationReference());
                     }
                     else {
@@ -380,14 +381,13 @@ public class JetTypeInferrer {
                 List<Type> argumentTypes = getTypes(scope, indexExpressions);
                 if (argumentTypes == null) return;
 
-                // TODO : record unresolved
-                FunctionDescriptor functionDescriptor = lookupFunction(scope, null, "get", receiverType, argumentTypes);
+                FunctionDescriptor functionDescriptor = lookupFunction(scope, expression, "get", receiverType, argumentTypes);
                 if (functionDescriptor != null) {
                     result[0] = functionDescriptor.getUnsubstitutedReturnType();
                 }
             }
 
-            private void resolveArrayAccessToLValue(JetArrayAccessExpression arrayAccessExpression, JetExpression rightHandSide, JetReferenceExpression operationSign) {
+            private void resolveArrayAccessToLValue(JetArrayAccessExpression arrayAccessExpression, JetExpression rightHandSide, JetSimpleNameExpression operationSign) {
                 List<Type> argumentTypes = getTypes(scope, arrayAccessExpression.getIndexExpressions());
                 if (argumentTypes == null) return;
                 Type rhsType = getType(scope, rightHandSide, false);
@@ -397,6 +397,8 @@ public class JetTypeInferrer {
                 Type receiverType = getType(scope, arrayAccessExpression.getArrayExpression(), false);
                 if (receiverType == null) return;
 
+                // TODO : nasty hack: effort is duplicated
+                lookupFunction(scope, arrayAccessExpression, "set", receiverType, argumentTypes);
                 FunctionDescriptor functionDescriptor = lookupFunction(scope, operationSign, "set", receiverType, argumentTypes);
                 if (functionDescriptor != null) {
                     result[0] = functionDescriptor.getUnsubstitutedReturnType();
@@ -409,7 +411,7 @@ public class JetTypeInferrer {
             }
 
             private Type getTypeForBinaryCall(JetBinaryExpression expression, String name, JetScope scope) {
-                JetReferenceExpression operationSign = expression.getOperationReference();
+                JetSimpleNameExpression operationSign = expression.getOperationReference();
                 JetExpression left = expression.getLeft();
                 Type leftType = getType(scope, left, false);
                 JetExpression right = expression.getRight();
@@ -428,6 +430,14 @@ public class JetTypeInferrer {
             trace.recordExpressionType(expression, result[0]);
         }
         return result[0];
+    }
+
+    @NotNull
+    private JetExpression deparenthesize(@NotNull JetExpression expression) {
+        while (expression instanceof JetParenthesizedExpression) {
+            expression = ((JetParenthesizedExpression) expression).getExpression();
+        }
+        return expression;
     }
 
     @Nullable
@@ -453,7 +463,7 @@ public class JetTypeInferrer {
 
     private OverloadDomain getOverloadDomain(final JetScope scope, JetExpression calleeExpression) {
         final OverloadDomain[] result = new OverloadDomain[1];
-        final JetReferenceExpression[] reference = new JetReferenceExpression[1];
+        final JetSimpleNameExpression[] reference = new JetSimpleNameExpression[1];
         calleeExpression.accept(new JetVisitor() {
 
             @Override
@@ -472,8 +482,8 @@ public class JetTypeInferrer {
             public void visitQualifiedExpression(JetQualifiedExpression expression) {
                 // . or ?.
                 JetExpression selectorExpression = expression.getSelectorExpression();
-                if (selectorExpression instanceof JetReferenceExpression) {
-                    JetReferenceExpression referenceExpression = (JetReferenceExpression) selectorExpression;
+                if (selectorExpression instanceof JetSimpleNameExpression) {
+                    JetSimpleNameExpression referenceExpression = (JetSimpleNameExpression) selectorExpression;
 
                     Type receiverType = getType(scope, expression.getReceiverExpression(), false);
                     if (receiverType != null) {
@@ -486,7 +496,7 @@ public class JetTypeInferrer {
             }
 
             @Override
-            public void visitReferenceExpression(JetReferenceExpression expression) {
+            public void visitReferenceExpression(JetSimpleNameExpression expression) {
                 // a -- create a hierarchical lookup domain for this.a
                 result[0] = semanticServices.getOverloadResolver().getOverloadDomain(null, scope, expression.getReferencedName());
                 reference[0] = expression;
@@ -506,7 +516,7 @@ public class JetTypeInferrer {
         return wrapForTracing(result[0], reference[0]);
     }
 
-    private OverloadDomain wrapForTracing(final OverloadDomain overloadDomain, @Nullable final JetReferenceExpression referenceExpression) {
+    private OverloadDomain wrapForTracing(final OverloadDomain overloadDomain, @NotNull final JetReferenceExpression referenceExpression) {
         if (overloadDomain == null) return OverloadDomain.EMPTY;
         return new OverloadDomain() {
             @Override

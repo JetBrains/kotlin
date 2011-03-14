@@ -1,7 +1,6 @@
 package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.jet.lang.psi.JetElement;
-import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 
 /**
  * @author abreslav

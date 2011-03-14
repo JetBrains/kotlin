@@ -166,7 +166,7 @@ public class TypeResolver {
 
     @Nullable
     public ClassDescriptor resolveClass(JetScope scope, JetUserType userType) {
-        JetReferenceExpression expression = userType.getReferenceExpression();
+        JetSimpleNameExpression expression = userType.getReferenceExpression();
         if (userType.isAbsoluteInRootNamespace()) {
             return JetModuleUtil.getRootNamespaceScope(userType).getClass(expression.getReferencedName());
         }

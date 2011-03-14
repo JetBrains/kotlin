@@ -246,7 +246,7 @@ public class ExpressionCodegen extends JetVisitor {
     }
 
     @Override
-    public void visitReferenceExpression(JetReferenceExpression expression) {
+    public void visitReferenceExpression(JetSimpleNameExpression expression) {
         final DeclarationDescriptor descriptor = bindingContext.resolveReferenceExpression(expression);
         int index = myMap.getIndex(descriptor);
         if (index >= 0) {
@@ -267,8 +267,8 @@ public class ExpressionCodegen extends JetVisitor {
 
         JetExpression callee = expression.getCalleeExpression();
 
-        if (callee instanceof JetReferenceExpression) {
-            DeclarationDescriptor funDescriptor = bindingContext.resolveReferenceExpression((JetReferenceExpression) callee);
+        if (callee instanceof JetSimpleNameExpression) {
+            DeclarationDescriptor funDescriptor = bindingContext.resolveReferenceExpression((JetSimpleNameExpression) callee);
             if (funDescriptor instanceof FunctionDescriptor) {
             }
             else {

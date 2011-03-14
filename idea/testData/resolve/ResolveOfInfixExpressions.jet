@@ -1,3 +1,6 @@
+import java.*
+import util.*
+
 ~X~class X<~T~T> {
   fun foo(a : `T`T) : `X`X<`T`T>{}
   ~plus~fun plus(t : `T`T) : Int {}
@@ -11,4 +14,26 @@
   new X<String>() `plus`+ "1"
   new X<String>() `plus`plus "sadfas"
   new X<String>().`plus`plus("")
+}
+
+~Foo~class Foo {
+  ~set1~fun set(i : Int, val : String) {}
+  ~get1~fun get(i : Int) : Int {}
+  ~get2~fun get(i : Int, j : Int) : String {}
+  ~get3~fun get(i : Object) : Any {return i }
+}
+
+fun <T> tt(t : T) : T {
+  val x : List = 0
+  x`java::java.util.List.get()`[1]
+  val foo = new Foo
+  foo`!`[null, 1]
+  foo`get2`[1, 1]
+  foo`get1`[1]
+  foo`set1`[1] = ""
+  foo`!`[1, 2] = ""
+  x`java::java.util.List.set()`[1] = null
+  (x`java::java.util.List.set()`[1]) = null
+  x`!`[null] = null
+  (x`!`[null, 2]) = null
 }

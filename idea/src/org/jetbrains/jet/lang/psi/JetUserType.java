@@ -37,8 +37,8 @@ public class JetUserType extends JetTypeElement {
     }
 
     @Nullable @IfNotParsed
-    public JetReferenceExpression getReferenceExpression() {
-        return (JetReferenceExpression) findChildByType(JetNodeTypes.REFERENCE_EXPRESSION);
+    public JetSimpleNameExpression getReferenceExpression() {
+        return (JetSimpleNameExpression) findChildByType(JetNodeTypes.REFERENCE_EXPRESSION);
     }
 
     @Nullable
@@ -48,7 +48,7 @@ public class JetUserType extends JetTypeElement {
 
     @Nullable
     public String getReferencedName() {
-        JetReferenceExpression referenceExpression = getReferenceExpression();
+        JetSimpleNameExpression referenceExpression = getReferenceExpression();
         return referenceExpression == null ? null : referenceExpression.getReferencedName();
     }
 }

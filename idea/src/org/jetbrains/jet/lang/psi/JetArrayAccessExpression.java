@@ -1,20 +1,30 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.util.TextRange;
+import com.intellij.psi.MultiRangeReference;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lexer.JetTokens;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 /**
  * @author max
  */
-public class JetArrayAccessExpression extends JetExpression {
+public class JetArrayAccessExpression extends JetReferenceExpression {
     public JetArrayAccessExpression(@NotNull ASTNode node) {
         super(node);
+    }
+
+    @Override
+    public PsiReference getReference() {
+        return new JetArrayAccessReference();
     }
 
     @Override
@@ -34,5 +44,35 @@ public class JetArrayAccessExpression extends JetExpression {
         PsiElement container = findChildByType(JetNodeTypes.INDICES);
         if (container == null) return Collections.emptyList();
         return PsiTreeUtil.getChildrenOfTypeAsList(container, JetExpression.class);
+    }
+
+    private class JetArrayAccessReference extends JetPsiReference implements MultiRangeReference {
+
+        @Override
+        public PsiElement getElement() {
+            return JetArrayAccessExpression.this;
+        }
+
+        @Override
+        public TextRange getRangeInElement() {
+            return getElement().getTextRange().shiftRight(-getElement().getTextOffset());
+        }
+
+        @Override
+        public List<TextRange> getRanges() {
+            List<TextRange> list = new ArrayList<TextRange>();
+
+            JetContainerNode indices = (JetContainerNode) findChildByType(JetNodeTypes.INDICES);
+            TextRange textRange = indices.getNode().findChildByType(JetTokens.LBRACKET).getTextRange();
+            TextRange lBracketRange = textRange.shiftRight(-getTextOffset());
+
+            list.add(lBracketRange);
+
+            textRange = indices.getNode().findChildByType(JetTokens.RBRACKET).getTextRange();
+            TextRange rBracketRange = textRange.shiftRight(-getTextOffset());
+            list.add(rBracketRange);
+
+            return list;
+        }
     }
 }

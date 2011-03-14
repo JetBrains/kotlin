@@ -39,7 +39,10 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
         PsiClass java_util_Collections = findClass("java.util.Collections");
         nameToDeclaration.put("java::java.util.Collections.emptyList()", findMethod(java_util_Collections, "emptyList"));
         nameToDeclaration.put("java::java.util.Collections", java_util_Collections);
-        nameToDeclaration.put("java::java.util.List", findClass("java.util.List"));
+        PsiClass java_util_List = findClass("java.util.List");
+        nameToDeclaration.put("java::java.util.List", java_util_List);
+        nameToDeclaration.put("java::java.util.List.set()", java_util_List.findMethodsByName("set", true)[0]);
+        nameToDeclaration.put("java::java.util.List.get()", java_util_List.findMethodsByName("get", true)[0]);
         nameToDeclaration.put("java::java", findPackage("java"));
         nameToDeclaration.put("java::java.util", findPackage("java.util"));
         nameToDeclaration.put("java::java.lang", findPackage("java.lang"));

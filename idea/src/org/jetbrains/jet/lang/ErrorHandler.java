@@ -13,7 +13,7 @@ public class ErrorHandler {
     public static final ErrorHandler THROW_EXCEPTION = new ErrorHandler() {
         @Override
         public void unresolvedReference(JetReferenceExpression referenceExpression) {
-            throw new IllegalStateException("Unresolved reference: " + referenceExpression.getReferencedName());
+            throw new IllegalStateException("Unresolved reference: " + referenceExpression.getText());
         }
 
         @Override

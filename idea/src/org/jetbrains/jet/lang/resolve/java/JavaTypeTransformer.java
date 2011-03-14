@@ -25,6 +25,7 @@ public class JavaTypeTransformer {
 
     @NotNull
     public Type transform(PsiType javaType) {
+        System.out.println("javaType = " + javaType.getInternalCanonicalText());
         return javaType.accept(new PsiTypeVisitor<Type>() {
             @Override
             public Type visitClassType(PsiClassType classType) {
@@ -32,9 +33,11 @@ public class JavaTypeTransformer {
                 if (psiClass == null) {
                     return ErrorType.createErrorType("Unresolved java class: " + classType.getPresentableText());
                 }
+
                 if ("java.lang.Object".equals(psiClass.getQualifiedName())) {
                     return JetStandardClasses.getNullableAnyType();
                 }
+
                 ClassDescriptor descriptor = resolver.resolveClass(psiClass);
                 // TODO : arguments & raw types
                 List<TypeProjection> arguments = Collections.<TypeProjection>emptyList(); // TODO
@@ -58,6 +61,11 @@ public class JavaTypeTransformer {
             public Type visitArrayType(PsiArrayType arrayType) {
                 Type type = transform(arrayType.getComponentType());
                 return TypeUtils.makeNullable(standardLibrary.getArrayType(type));
+            }
+
+            @Override
+            public Type visitType(PsiType type) {
+                throw new UnsupportedOperationException("Unsupported type: " + type.getPresentableText()); // TODO
             }
         });
     }

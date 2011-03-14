@@ -7,7 +7,9 @@ import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.psi.MultiRangeReference;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.psi.*;
@@ -30,7 +32,15 @@ public class JetPsiChecker implements Annotator {
                 final BindingContext bindingContext = AnalyzingUtils.analyzeFile(file, new ErrorHandler() {
                     @Override
                     public void unresolvedReference(JetReferenceExpression referenceExpression) {
-                        holder.createErrorAnnotation(referenceExpression, "Unresolved").setHighlightType(ProblemHighlightType.LIKE_UNKNOWN_SYMBOL);
+                        PsiReference reference = referenceExpression.getReference();
+                        if (reference instanceof MultiRangeReference) {
+                            MultiRangeReference mrr = (MultiRangeReference) reference;
+                            for (TextRange range : mrr.getRanges()) {
+                                holder.createErrorAnnotation(range.shiftRight(referenceExpression.getTextOffset()), "Unresolved").setHighlightType(ProblemHighlightType.LIKE_UNKNOWN_SYMBOL);
+                            }
+                        } else {
+                            holder.createErrorAnnotation(referenceExpression, "Unresolved").setHighlightType(ProblemHighlightType.LIKE_UNKNOWN_SYMBOL);
+                        }
                     }
 
                     @Override

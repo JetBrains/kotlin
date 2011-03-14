@@ -142,7 +142,7 @@ public class JetVisitor extends PsiElementVisitor {
         visitExpression(expression);
     }
 
-    public void visitReferenceExpression(JetReferenceExpression expression) {
+    public void visitReferenceExpression(JetSimpleNameExpression expression) {
         visitExpression(expression);
     }
 
