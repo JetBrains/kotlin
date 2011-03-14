@@ -449,14 +449,14 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
     private void assertType(String expression, Type expectedType) {
         Project project = getProject();
         JetExpression jetExpression = JetChangeUtil.createExpression(project, expression);
-        Type type = semanticServices.getTypeInferrer().getType(classDefinitions.BASIC_SCOPE, jetExpression, false);
+        Type type = semanticServices.getTypeInferrer(BindingTrace.DUMMY).getType(classDefinitions.BASIC_SCOPE, jetExpression, false);
         assertTrue(type + " != " + expectedType, TypeImpl.equalTypes(type, expectedType));
     }
 
     private void assertErrorType(String expression) {
         Project project = getProject();
         JetExpression jetExpression = JetChangeUtil.createExpression(project, expression);
-        Type type = semanticServices.getTypeInferrer().getType(classDefinitions.BASIC_SCOPE, jetExpression, false);
+        Type type = semanticServices.getTypeInferrer(BindingTrace.DUMMY).getType(classDefinitions.BASIC_SCOPE, jetExpression, false);
         assertTrue("Error type expected but " + type + " returned", ErrorType.isErrorType(type));
     }
 
@@ -479,7 +479,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
     private void assertType(JetScope scope, String expression, String expectedTypeStr) {
         Project project = getProject();
         JetExpression jetExpression = JetChangeUtil.createExpression(project, expression);
-        Type type = semanticServices.getTypeInferrer().getType(scope, jetExpression, false);
+        Type type = semanticServices.getTypeInferrer(BindingTrace.DUMMY).getType(scope, jetExpression, false);
         Type expectedType = expectedTypeStr == null ? null : makeType(expectedTypeStr);
         assertEquals(expectedType, type);
     }

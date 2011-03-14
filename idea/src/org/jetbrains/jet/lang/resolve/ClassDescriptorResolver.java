@@ -138,14 +138,21 @@ public class ClassDescriptorResolver {
 
         Type returnType;
         JetTypeReference returnTypeRef = function.getReturnTypeRef();
+        JetExpression bodyExpression = function.getBodyExpression();
         if (returnTypeRef != null) {
             returnType = typeResolver.resolveType(parameterScope, returnTypeRef);
-            // TODO : CHeck type of body
+            // TODO : check body type, consider recursion
+            if (bodyExpression != null) {
+                semanticServices.getTypeInferrer(trace).getType(parameterScope, bodyExpression, function.hasBlockBody());
+            }
         } else {
-            JetExpression bodyExpression = function.getBodyExpression();
-            assert bodyExpression != null : "No type, no body"; // TODO
-            // TODO : Recursion possible
-            returnType = semanticServices.getTypeInferrer().safeGetType(parameterScope, bodyExpression, function.hasBlockBody());
+            if (bodyExpression == null) {
+                semanticServices.getErrorHandler().structuralError(function.getNode(), "This function must either declare a return type or have a body expression");
+                returnType = ErrorType.createErrorType("No type, no body");
+            } else {
+                // TODO : Recursion possible
+                returnType = semanticServices.getTypeInferrer(trace).safeGetType(parameterScope, bodyExpression, function.hasBlockBody());
+            }
         }
 
         functionDescriptor.initialize(
@@ -245,9 +252,13 @@ public class ClassDescriptorResolver {
         Type type;
         if (propertyTypeRef == null) {
             JetExpression initializer = property.getInitializer();
-            assert initializer != null;
-            // TODO : ??? Fix-point here: what if we have something like "val a = foo {a.bar()}"
-            type = semanticServices.getTypeInferrer().getType(scope, initializer, false);
+            if (initializer == null) {
+                semanticServices.getErrorHandler().structuralError(property.getNode(), "This property must either have a type annotation or be initialized");
+                type = ErrorType.createErrorType("No type, no body");
+            } else {
+                // TODO : ??? Fix-point here: what if we have something like "val a = foo {a.bar()}"
+                type = semanticServices.getTypeInferrer(trace).getType(scope, initializer, false);
+            }
         } else {
             type = typeResolver.resolveType(scope, propertyTypeRef);
         }

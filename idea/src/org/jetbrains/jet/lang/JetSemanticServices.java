@@ -21,7 +21,6 @@ public class JetSemanticServices {
         return new JetSemanticServices(JetStandardLibrary.getJetStandardLibrary(project), errorHandler);
     }
 
-    private final JetTypeInferrer typeInferrer;
     private final JetStandardLibrary standardLibrary;
     private final JetTypeChecker typeChecker;
     private final OverloadResolver overloadResolver;
@@ -31,7 +30,6 @@ public class JetSemanticServices {
     private JetSemanticServices(JetStandardLibrary standardLibrary, ErrorHandler errorHandler) {
         this.standardLibrary = standardLibrary;
         this.errorHandler = errorHandler;
-        this.typeInferrer = new JetTypeInferrer(BindingTrace.DUMMY, this);
         this.typeChecker = new JetTypeChecker(standardLibrary);
         this.overloadResolver = new OverloadResolver(typeChecker);
     }
@@ -39,11 +37,6 @@ public class JetSemanticServices {
     @NotNull
     public JetStandardLibrary getStandardLibrary() {
         return standardLibrary;
-    }
-
-    @NotNull
-    public JetTypeInferrer getTypeInferrer() {
-        return typeInferrer;
     }
 
     @NotNull

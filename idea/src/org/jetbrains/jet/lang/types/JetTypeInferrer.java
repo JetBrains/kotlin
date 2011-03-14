@@ -301,6 +301,7 @@ public class JetTypeInferrer {
                 List<JetTypeProjection> typeArguments = expression.getTypeArguments();
 
                 List<JetArgument> valueArguments = expression.getValueArguments();
+
                 boolean someNamed = false;
                 for (JetArgument argument : valueArguments) {
                     if (argument.isNamed()) {
@@ -365,7 +366,8 @@ public class JetTypeInferrer {
                         resolveArrayAccessToLValue(arrayAccessExpression, expression.getRight(), expression.getOperationReference());
                     }
                     else {
-                        throw new UnsupportedOperationException();
+                        getType(scope, expression.getRight(), false);
+                        //throw new UnsupportedOperationException();
                     }
                     result[0] = null; // TODO : This is not an expression, in fact!
                 } else {
