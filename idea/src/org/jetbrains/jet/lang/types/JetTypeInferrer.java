@@ -525,20 +525,20 @@ public class JetTypeInferrer {
         }
 
         @Override
-        public void visitPrefixExpression(JetPrefixExpression expression) {
+        public void visitUnaryExpression(JetUnaryExpression expression) {
             JetSimpleNameExpression operationSign = expression.getOperationSign();
-            if (operationSign.getReferencedNameElementType() == JetTokens.EXCL) {
-                JetExpression baseExpression = expression.getBaseExpression();
-                JetType type = getType(scope, baseExpression, false);
+            String name = unaryOperationNames.get(operationSign.getReferencedNameElementType());
+            if (name == null) {
+                semanticServices.getErrorHandler().structuralError(operationSign.getNode(), "Unknown unary operation");
+            }
+            else {
+                JetType type = getType(scope, expression.getBaseExpression(), false);
                 if (type != null) {
-                    FunctionDescriptor functionDescriptor = lookupFunction(scope, operationSign, "not", type, Collections.<JetType>emptyList());
+                    FunctionDescriptor functionDescriptor = lookupFunction(scope, expression.getOperationSign(), name, type, Collections.<JetType>emptyList());
                     if (functionDescriptor != null) {
                         result = functionDescriptor.getUnsubstitutedReturnType();
                     }
                 }
-            }
-            else {
-                throw new UnsupportedOperationException(); // TODO
             }
         }
 
@@ -550,8 +550,8 @@ public class JetTypeInferrer {
             if (operationType == JetTokens.IDENTIFIER) {
                 result = getTypeForBinaryCall(expression, operationSign.getReferencedName(), scope);
             }
-            else if (operationType == JetTokens.PLUS) {
-                result = getTypeForBinaryCall(expression, "plus", scope);
+            else if (binaryOperationNames.containsKey(operationType)) {
+                result = getTypeForBinaryCall(expression, binaryOperationNames.get(operationType), scope);
             }
             else if (operationType == JetTokens.EQ) {
                 JetExpression left = expression.getLeft();
@@ -566,7 +566,7 @@ public class JetTypeInferrer {
                 }
                 result = null; // TODO : This is not an expression, in fact!
             }
-            else if (operationType == JetTokens.LT) {
+            else if (comparisonOperations.contains(operationType)) {
                 JetExpression left = expression.getLeft();
                 JetExpression deparenthesized = deparenthesize(left);
                 if (deparenthesized instanceof JetArrayAccessExpression) {
@@ -579,7 +579,7 @@ public class JetTypeInferrer {
                 }
                 result = null; // TODO : This is not an expression, in fact!
             } else {
-                throw new UnsupportedOperationException(); // TODO
+                semanticServices.getErrorHandler().structuralError(operationSign.getNode(), "Unknown operation");
             }
         }
 
@@ -637,38 +637,35 @@ public class JetTypeInferrer {
         }
     }
 
-    {
-        Map<IElementType, String> operationToMethodName = new HashMap<IElementType, String>();
+    private static final Map<IElementType, String> unaryOperationNames = new HashMap<IElementType, String>();
+    static {
+        unaryOperationNames.put(JetTokens.PLUSPLUS, "inc");
+        unaryOperationNames.put(JetTokens.MINUSMINUS, "dec");
+        unaryOperationNames.put(JetTokens.EXCL, "not");
+    }
 
-//        operationToMethodName.put(JetTokens.EXCL, "excl");
-//
-//        operationToMethodName.put(JetTokens.LT, "lt");
-//        operationToMethodName.put(JetTokens.GT, "gt");
-//        operationToMethodName.put(JetTokens.LTEQ, "lteq");
-//        operationToMethodName.put(JetTokens.GTEQ, "gteq");
-//
-//        operationToMethodName.put(JetTokens.EQEQ, "eqeq");
-//        operationToMethodName.put(JetTokens.EXCLEQ, "excleq");
-//
-//        operationToMethodName.put(JetTokens.MULTEQ, "multeq");
-//        operationToMethodName.put(JetTokens.DIVEQ, "diveq");
-//        operationToMethodName.put(JetTokens.PERCEQ, "perceq");
-//        operationToMethodName.put(JetTokens.PLUSEQ, "pluseq");
-//        operationToMethodName.put(JetTokens.MINUSEQ, "minuseq");
-//
-//        operationToMethodName.put(JetTokens.PLUSPLUS, "plusplus");
-//        operationToMethodName.put(JetTokens.MINUSMINUS, "minusminus");
+    private static final Map<IElementType, String> binaryOperationNames = new HashMap<IElementType, String>();
+    static {
+        binaryOperationNames.put(JetTokens.MUL, "times");
+        binaryOperationNames.put(JetTokens.PLUS, "plus");
+        binaryOperationNames.put(JetTokens.MINUS, "minus");
+        binaryOperationNames.put(JetTokens.DIV, "div");
+        binaryOperationNames.put(JetTokens.PERC, "mod");
+        binaryOperationNames.put(JetTokens.ARROW, "arrow");
+        binaryOperationNames.put(JetTokens.RANGE, "rangeTo");
+    }
 
-        operationToMethodName.put(JetTokens.MUL, "times");
-        operationToMethodName.put(JetTokens.PLUS, "plus");
-        operationToMethodName.put(JetTokens.MINUS, "minus");
-        operationToMethodName.put(JetTokens.DIV, "div");
-        operationToMethodName.put(JetTokens.PERC, "mod");
-        operationToMethodName.put(JetTokens.ARROW, "arrow");
-        operationToMethodName.put(JetTokens.RANGE, "rangeTo");
+    private static final Set<IElementType> comparisonOperations = new HashSet<IElementType>(Arrays.asList(JetTokens.LT, JetTokens.GT, JetTokens.LTEQ, JetTokens.GTEQ));
+    private static final Set<IElementType> equalsOperations = new HashSet<IElementType>(Arrays.asList(JetTokens.EQEQ, JetTokens.EXCLEQ));
+    private static final Set<IElementType> inOperations = new HashSet<IElementType>(Arrays.asList(JetTokens.IN_KEYWORD, JetTokens.NOT_IN));
 
-//        operationToMethodName.put(JetTokens.IN_KEYWORD, "contains");
-//        operationToMethodName.put(JetTokens.NOT_IN, "not_in");
+    private static final Map<IElementType, String> assignmentOperationNames = new HashMap<IElementType, String>();
+    static {
+        assignmentOperationNames.put(JetTokens.MULTEQ, "timesAssign");
+        assignmentOperationNames.put(JetTokens.DIVEQ, "divAssign");
+        assignmentOperationNames.put(JetTokens.PERCEQ, "modAssign");
+        assignmentOperationNames.put(JetTokens.PLUSEQ, "plusAssign");
+        assignmentOperationNames.put(JetTokens.MINUSEQ, "minusAssign");
     }
 
 

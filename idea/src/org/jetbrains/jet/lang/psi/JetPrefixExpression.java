@@ -8,7 +8,7 @@ import org.jetbrains.jet.JetNodeTypes;
 /**
  * @author max
  */
-public class JetPrefixExpression extends JetExpression {
+public class JetPrefixExpression extends JetUnaryExpression {
     public JetPrefixExpression(@NotNull ASTNode node) {
         super(node);
     }
@@ -26,10 +26,5 @@ public class JetPrefixExpression extends JetExpression {
         }
         assert expression != null;
         return (JetExpression) expression;
-    }
-
-    @NotNull
-    public JetSimpleNameExpression getOperationSign() {
-        return (JetSimpleNameExpression) findChildByType(JetNodeTypes.OPERATION_REFERENCE);
     }
 }

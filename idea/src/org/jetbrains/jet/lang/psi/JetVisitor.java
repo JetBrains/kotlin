@@ -151,10 +151,14 @@ public class JetVisitor extends PsiElementVisitor {
     }
 
     public void visitPrefixExpression(JetPrefixExpression expression) {
-        visitExpression(expression);
+        visitUnaryExpression(expression);
     }
 
     public void visitPostfixExpression(JetPostfixExpression expression) {
+        visitUnaryExpression(expression);
+    }
+
+    public void visitUnaryExpression(JetUnaryExpression expression) {
         visitExpression(expression);
     }
 

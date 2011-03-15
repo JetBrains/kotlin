@@ -4,6 +4,11 @@ import util.*
 ~X~class X<~T~T> {
   fun foo(a : `T`T) : `X`X<`T`T>{}
   ~plus~fun plus(t : `T`T) : Int {}
+  ~minus~fun minus(t : String) : Int {}
+  ~times~fun times(t : String) : Int {}
+  ~div~fun div(t : String) : Int {}
+  ~mod~fun mod(t : String) : Int {}
+  ~rangeTo~fun rangeTo(t : String) : Int {}
 }
 
 ~t~fun <~t.T~T> t(~t.t~t : `t.T`T) : `t.T`T {
@@ -14,6 +19,12 @@ import util.*
   new X<String>() `plus`+ "1"
   new X<String>() `plus`plus "sadfas"
   new X<String>().`plus`plus("")
+  val x = new X<String>
+  x `minus`- ""
+  x `times`* ""
+  x `div`/ ""
+  x `mod`% ""
+  x `rangeTo`.. ""
 }
 
 ~Foo~class Foo {
@@ -25,6 +36,8 @@ import util.*
 
 ~Bar~class Bar : Foo {
   ~not~fun not() : String {}
+  ~inc~fun inc() : Unit
+  ~dec~fun dec() : Unit
 }
 
 fun <T> tt(t : T) : T {
@@ -41,4 +54,10 @@ fun <T> tt(t : T) : T {
   x`!`[null] = null
   (x`!`[null, 2]) = null
   (`not`!foo)[1]`:std::Char`
+  val y = new Bar
+  y`inc`++
+  `inc`++y
+  `dec`--y
+  y`dec`--
+
 }
