@@ -17,7 +17,8 @@ JetFile: EOLsInComments.jet
           PsiElement(IDENTIFIER)('a')
         PsiWhiteSpace('\n  ')
         PREFIX_EXPRESSION
-          PsiElement(PLUS)('+')
+          OPERATION_REFERENCE
+            PsiElement(PLUS)('+')
           PsiWhiteSpace(' ')
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('b')
@@ -27,7 +28,8 @@ JetFile: EOLsInComments.jet
         PsiWhiteSpace('\n  ')
         PsiComment(DOC_COMMENT)('/** */')
         PREFIX_EXPRESSION
-          PsiElement(PLUS)('+')
+          OPERATION_REFERENCE
+            PsiElement(PLUS)('+')
           PsiWhiteSpace(' ')
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('b')
@@ -37,7 +39,8 @@ JetFile: EOLsInComments.jet
         PsiWhiteSpace('\n  ')
         PsiComment(BLOCK_COMMENT)('/* */')
         PREFIX_EXPRESSION
-          PsiElement(PLUS)('+')
+          OPERATION_REFERENCE
+            PsiElement(PLUS)('+')
           PsiWhiteSpace(' ')
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('b')
@@ -60,7 +63,8 @@ JetFile: EOLsInComments.jet
         PsiComment(BLOCK_COMMENT)('/*\n  */')
         PsiWhiteSpace('  ')
         PREFIX_EXPRESSION
-          PsiElement(PLUS)('+')
+          OPERATION_REFERENCE
+            PsiElement(PLUS)('+')
           PsiWhiteSpace(' ')
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('b')
@@ -83,7 +87,8 @@ JetFile: EOLsInComments.jet
         PsiComment(EOL_COMMENT)('//')
         PsiWhiteSpace('\n  ')
         PREFIX_EXPRESSION
-          PsiElement(PLUS)('+')
+          OPERATION_REFERENCE
+            PsiElement(PLUS)('+')
           PsiWhiteSpace(' ')
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('b')
@@ -94,7 +99,8 @@ JetFile: EOLsInComments.jet
         PsiComment(EOL_COMMENT)('//')
         PsiWhiteSpace('\n')
         PREFIX_EXPRESSION
-          PsiElement(PLUS)('+')
+          OPERATION_REFERENCE
+            PsiElement(PLUS)('+')
           PsiWhiteSpace(' ')
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('b')

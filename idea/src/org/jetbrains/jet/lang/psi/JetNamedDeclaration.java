@@ -40,7 +40,9 @@ public abstract class JetNamedDeclaration extends JetDeclaration implements PsiN
 
             @Override
             public TextRange getRangeInElement() {
-                return getElement().getTextRange().shiftRight(getElement().getTextOffset());
+                PsiElement element = getElement();
+                if (element == null) return null;
+                return element.getTextRange().shiftRight(element.getTextOffset());
             }
 
             @Override

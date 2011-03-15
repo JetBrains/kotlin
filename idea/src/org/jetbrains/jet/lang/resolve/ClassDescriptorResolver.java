@@ -61,22 +61,33 @@ public class ClassDescriptorResolver {
         List<TypeParameterDescriptor> typeParameters
                 = resolveTypeParameters(descriptor, parameterScope, classElement.getTypeParameters());
 
+        boolean open = classElement.hasModifier(JetTokens.OPEN_KEYWORD);
+        List<JetType> supertypes = new ArrayList<JetType>();
+        TypeConstructorImpl typeConstructor = new TypeConstructorImpl(
+                descriptor,
+                AttributeResolver.INSTANCE.resolveAttributes(classElement.getModifierList()),
+                !open,
+                classElement.getName(),
+                typeParameters,
+                supertypes);
+        descriptor.setTypeConstructor(
+                typeConstructor
+        );
+
         List<JetDelegationSpecifier> delegationSpecifiers = classElement.getDelegationSpecifiers();
         // TODO : assuming that the hierarchy is acyclic
         Collection<? extends JetType> superclasses = delegationSpecifiers.isEmpty()
                 ? Collections.singleton(JetStandardClasses.getAnyType())
                 : resolveTypes(parameterScope, delegationSpecifiers);
-        boolean open = classElement.hasModifier(JetTokens.OPEN_KEYWORD);
 
-        descriptor.setTypeConstructor(
-                new TypeConstructor(
-                        descriptor,
-                        AttributeResolver.INSTANCE.resolveAttributes(classElement.getModifierList()),
-                        !open,
-                        classElement.getName(),
-                        typeParameters,
-                        superclasses)
-        );
+        // TODO : UGLY HACK
+        supertypes.addAll(superclasses);
+
+
+        // TODO : importing may be a bad idea
+        for (JetType supertype : superclasses) {
+            parameterScope.importScope(supertype.getMemberScope());
+        }
 
         trace.recordDeclarationResolution(classElement, descriptor);
     }

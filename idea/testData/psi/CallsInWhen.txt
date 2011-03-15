@@ -148,7 +148,8 @@ JetFile: CallsInWhen.jet
                 PsiElement(LBRACE)('{')
                 BODY
                   PREFIX_EXPRESSION
-                    PsiElement(EXCL)('!')
+                    OPERATION_REFERENCE
+                      PsiElement(EXCL)('!')
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('bar')
                 PsiElement(RBRACE)('}')
@@ -171,7 +172,8 @@ JetFile: CallsInWhen.jet
                 PsiWhiteSpace(' ')
                 BODY
                   PREFIX_EXPRESSION
-                    PsiElement(EXCL)('!')
+                    OPERATION_REFERENCE
+                      PsiElement(EXCL)('!')
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('bar')
                 PsiElement(RBRACE)('}')

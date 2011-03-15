@@ -355,7 +355,8 @@ JetFile: IOSamples.jet
               PsiElement(LPAR)('(')
               CONDITION
                 PREFIX_EXPRESSION
-                  PsiElement(EXCL)('!')
+                  OPERATION_REFERENCE
+                    PsiElement(EXCL)('!')
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('nextUsed')
               PsiElement(RPAR)(')')
@@ -435,7 +436,8 @@ JetFile: IOSamples.jet
                         PsiElement(EXCLEQ)('!=')
                       PsiWhiteSpace(' ')
                       PREFIX_EXPRESSION
-                        PsiElement(MINUS)('-')
+                        OPERATION_REFERENCE
+                          PsiElement(MINUS)('-')
                         INTEGER_CONSTANT
                           PsiElement(INTEGER_LITERAL)('1')
                 PsiElement(RPAR)(')')
@@ -488,7 +490,8 @@ JetFile: IOSamples.jet
                     PsiElement(EXCLEQ)('!=')
                   PsiWhiteSpace(' ')
                   PREFIX_EXPRESSION
-                    PsiElement(MINUS)('-')
+                    OPERATION_REFERENCE
+                      PsiElement(MINUS)('-')
                     INTEGER_CONSTANT
                       PsiElement(INTEGER_LITERAL)('1')
               PsiWhiteSpace('        \n    ')

@@ -198,7 +198,8 @@ JetFile: ControlStructures.jet
           PsiElement(break)('break')
         PsiWhiteSpace('\n  ')
         PREFIX_EXPRESSION
-          PsiElement(LABEL_IDENTIFIER)('@la')
+          OPERATION_REFERENCE
+            PsiElement(LABEL_IDENTIFIER)('@la')
           PsiWhiteSpace('\n  ')
           BREAK
             PsiElement(break)('break')
@@ -209,7 +210,8 @@ JetFile: ControlStructures.jet
           PsiElement(continue)('continue')
         PsiWhiteSpace('\n  ')
         PREFIX_EXPRESSION
-          PsiElement(LABEL_IDENTIFIER)('@la')
+          OPERATION_REFERENCE
+            PsiElement(LABEL_IDENTIFIER)('@la')
           PsiWhiteSpace('\n  ')
           CONTINUE
             PsiElement(continue)('continue')

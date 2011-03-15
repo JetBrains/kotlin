@@ -63,7 +63,7 @@ public class ErrorType {
     }
 
     private static JetType createErrorType(String debugMessage, JetScope memberScope) {
-        return new ErrorTypeImpl(new TypeConstructor(null, Collections.<Attribute>emptyList(), false, "[ERROR : " + debugMessage + "]", Collections.<TypeParameterDescriptor>emptyList(), Collections.<JetType>emptyList()), memberScope);
+        return new ErrorTypeImpl(new TypeConstructorImpl(null, Collections.<Attribute>emptyList(), false, "[ERROR : " + debugMessage + "]", Collections.<TypeParameterDescriptor>emptyList(), Collections.<JetType>emptyList()), memberScope);
     }
 
     public static JetType createWrongVarianceErrorType(TypeProjection value) {

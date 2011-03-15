@@ -2,9 +2,7 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lexer.JetToken;
-import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.JetNodeTypes;
 
 /**
  * @author max
@@ -27,14 +25,7 @@ public class JetPostfixExpression extends JetExpression {
     }
 
     @NotNull
-    public ASTNode getOperationTokenNode() {
-        ASTNode operationNode = getNode().findChildByType(JetTokens.OPERATIONS);
-        assert operationNode != null;
-        return operationNode;
-    }
-
-    @Nullable
-    public JetToken getOperationSign() {
-        return (JetToken) getOperationTokenNode().getElementType();
+    public JetSimpleNameExpression getOperationSign() {
+        return (JetSimpleNameExpression) findChildByType(JetNodeTypes.OPERATION_REFERENCE);
     }
 }

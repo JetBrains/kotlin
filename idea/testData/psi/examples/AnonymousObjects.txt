@@ -77,7 +77,8 @@ JetFile: AnonymousObjects.jet
                       POSTFIX_EXPRESSION
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('clickCount')
-                        PsiElement(PLUSPLUS)('++')
+                        OPERATION_REFERENCE
+                          PsiElement(PLUSPLUS)('++')
                       PsiElement(SEMICOLON)(';')
                       PsiWhiteSpace('\n    ')
                       IF

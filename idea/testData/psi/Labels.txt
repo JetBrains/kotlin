@@ -28,7 +28,8 @@ JetFile: Labels.jet
           PARENTHESIZED
             PsiElement(LPAR)('(')
             PREFIX_EXPRESSION
-              PsiElement(LABEL_IDENTIFIER)('@a')
+              OPERATION_REFERENCE
+                PsiElement(LABEL_IDENTIFIER)('@a')
               PsiWhiteSpace(' ')
               INTEGER_CONSTANT
                 PsiElement(INTEGER_LITERAL)('1')
@@ -52,18 +53,20 @@ JetFile: Labels.jet
           PARENTHESIZED
             PsiElement(LPAR)('(')
             PREFIX_EXPRESSION
+              OPERATION_REFERENCE
+                PsiElement(AT)('@')
+              PsiWhiteSpace(' ')
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('1')
+            PsiElement(RPAR)(')')
+        PsiWhiteSpace('\n  ')
+        RETURN
+          PsiElement(return)('return')
+          PsiElement(AT)('@')
+          PsiWhiteSpace(' ')
+          PREFIX_EXPRESSION
+            OPERATION_REFERENCE
               PsiElement(AT)('@')
-              PsiWhiteSpace(' ')
-              INTEGER_CONSTANT
-                PsiElement(INTEGER_LITERAL)('1')
-            PsiElement(RPAR)(')')
-        PsiWhiteSpace('\n  ')
-        RETURN
-          PsiElement(return)('return')
-          PsiElement(AT)('@')
-          PsiWhiteSpace(' ')
-          PREFIX_EXPRESSION
-            PsiElement(AT)('@')
             PsiWhiteSpace(' ')
             INTEGER_CONSTANT
               PsiElement(INTEGER_LITERAL)('1')
@@ -86,18 +89,20 @@ JetFile: Labels.jet
           PARENTHESIZED
             PsiElement(LPAR)('(')
             PREFIX_EXPRESSION
+              OPERATION_REFERENCE
+                PsiElement(LABEL_IDENTIFIER)('@a')
+              PsiWhiteSpace(' ')
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('1')
+            PsiElement(RPAR)(')')
+        PsiWhiteSpace('\n  ')
+        RETURN
+          PsiElement(return)('return')
+          PsiElement(LABEL_IDENTIFIER)('@a')
+          PsiWhiteSpace(' ')
+          PREFIX_EXPRESSION
+            OPERATION_REFERENCE
               PsiElement(LABEL_IDENTIFIER)('@a')
-              PsiWhiteSpace(' ')
-              INTEGER_CONSTANT
-                PsiElement(INTEGER_LITERAL)('1')
-            PsiElement(RPAR)(')')
-        PsiWhiteSpace('\n  ')
-        RETURN
-          PsiElement(return)('return')
-          PsiElement(LABEL_IDENTIFIER)('@a')
-          PsiWhiteSpace(' ')
-          PREFIX_EXPRESSION
-            PsiElement(LABEL_IDENTIFIER)('@a')
             PsiWhiteSpace(' ')
             INTEGER_CONSTANT
               PsiElement(INTEGER_LITERAL)('1')
@@ -120,7 +125,8 @@ JetFile: Labels.jet
           PARENTHESIZED
             PsiElement(LPAR)('(')
             PREFIX_EXPRESSION
-              PsiElement(ATAT)('@@')
+              OPERATION_REFERENCE
+                PsiElement(ATAT)('@@')
               PsiWhiteSpace(' ')
               INTEGER_CONSTANT
                 PsiElement(INTEGER_LITERAL)('1')
@@ -131,20 +137,23 @@ JetFile: Labels.jet
           PsiElement(ATAT)('@@')
           PsiWhiteSpace(' ')
           PREFIX_EXPRESSION
-            PsiElement(ATAT)('@@')
+            OPERATION_REFERENCE
+              PsiElement(ATAT)('@@')
             PsiWhiteSpace(' ')
             INTEGER_CONSTANT
               PsiElement(INTEGER_LITERAL)('1')
         PsiWhiteSpace('\n\n  ')
         PREFIX_EXPRESSION
-          PsiElement(LABEL_IDENTIFIER)('@a')
+          OPERATION_REFERENCE
+            PsiElement(LABEL_IDENTIFIER)('@a')
           PsiWhiteSpace(' ')
           RETURN
             PsiElement(return)('return')
             PsiElement(ATAT)('@@')
         PsiWhiteSpace('\n  ')
         PREFIX_EXPRESSION
-          PsiElement(LABEL_IDENTIFIER)('@a')
+          OPERATION_REFERENCE
+            PsiElement(LABEL_IDENTIFIER)('@a')
           PsiWhiteSpace(' ')
           RETURN
             PsiElement(return)('return')
@@ -154,7 +163,8 @@ JetFile: Labels.jet
               PsiElement(INTEGER_LITERAL)('1')
         PsiWhiteSpace('\n  ')
         PREFIX_EXPRESSION
-          PsiElement(LABEL_IDENTIFIER)('@a')
+          OPERATION_REFERENCE
+            PsiElement(LABEL_IDENTIFIER)('@a')
           PsiWhiteSpace(' ')
           RETURN
             PsiElement(return)('return')
@@ -163,21 +173,24 @@ JetFile: Labels.jet
             PARENTHESIZED
               PsiElement(LPAR)('(')
               PREFIX_EXPRESSION
-                PsiElement(ATAT)('@@')
+                OPERATION_REFERENCE
+                  PsiElement(ATAT)('@@')
                 PsiWhiteSpace(' ')
                 INTEGER_CONSTANT
                   PsiElement(INTEGER_LITERAL)('1')
               PsiElement(RPAR)(')')
         PsiWhiteSpace('\n  ')
         PREFIX_EXPRESSION
-          PsiElement(LABEL_IDENTIFIER)('@a')
+          OPERATION_REFERENCE
+            PsiElement(LABEL_IDENTIFIER)('@a')
           PsiWhiteSpace(' ')
           RETURN
             PsiElement(return)('return')
             PsiElement(ATAT)('@@')
             PsiWhiteSpace(' ')
             PREFIX_EXPRESSION
-              PsiElement(ATAT)('@@')
+              OPERATION_REFERENCE
+                PsiElement(ATAT)('@@')
               PsiWhiteSpace(' ')
               INTEGER_CONSTANT
                 PsiElement(INTEGER_LITERAL)('1')
@@ -221,7 +234,8 @@ JetFile: Labels.jet
               PsiElement(IDENTIFIER)('filter')
           PsiWhiteSpace(' ')
           PREFIX_EXPRESSION
-            PsiElement(LABEL_IDENTIFIER)('@f')
+            OPERATION_REFERENCE
+              PsiElement(LABEL_IDENTIFIER)('@f')
             FUNCTION_LITERAL
               PsiElement(LBRACE)('{')
               PsiWhiteSpace('\n      ')
@@ -257,7 +271,8 @@ JetFile: Labels.jet
               PsiElement(IDENTIFIER)('filter')
           PsiWhiteSpace(' ')
           PREFIX_EXPRESSION
-            PsiElement(AT)('@')
+            OPERATION_REFERENCE
+              PsiElement(AT)('@')
             FUNCTION_LITERAL
               PsiElement(LBRACE)('{')
               PsiWhiteSpace('\n      ')
@@ -293,7 +308,8 @@ JetFile: Labels.jet
               PsiElement(IDENTIFIER)('filter')
           PsiWhiteSpace(' ')
           PREFIX_EXPRESSION
-            PsiElement(ATAT)('@@')
+            OPERATION_REFERENCE
+              PsiElement(ATAT)('@@')
             FUNCTION_LITERAL
               PsiElement(LBRACE)('{')
               PsiWhiteSpace('\n      ')

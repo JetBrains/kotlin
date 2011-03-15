@@ -564,12 +564,14 @@ JetFile: BinaryTree.jet
                     POSTFIX_EXPRESSION
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('size')
-                      PsiElement(PLUSPLUS)('++')
+                      OPERATION_REFERENCE
+                        PsiElement(PLUSPLUS)('++')
                     PsiWhiteSpace('\n      ')
                     POSTFIX_EXPRESSION
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('version')
-                      PsiElement(PLUSPLUS)('++')
+                      OPERATION_REFERENCE
+                        PsiElement(PLUSPLUS)('++')
                     PsiWhiteSpace('\n      ')
                     RETURN
                       PsiElement(return)('return')
@@ -1168,12 +1170,14 @@ JetFile: BinaryTree.jet
             POSTFIX_EXPRESSION
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('size')
-              PsiElement(MINUSMINUS)('--')
+              OPERATION_REFERENCE
+                PsiElement(MINUSMINUS)('--')
             PsiWhiteSpace('\n    ')
             POSTFIX_EXPRESSION
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('version')
-              PsiElement(PLUSPLUS)('++')
+              OPERATION_REFERENCE
+                PsiElement(PLUSPLUS)('++')
             PsiWhiteSpace('\n    ')
             RETURN
               PsiElement(return)('return')
@@ -2048,7 +2052,8 @@ JetFile: BinaryTree.jet
                     PsiElement(LPAR)('(')
                     CONDITION
                       PREFIX_EXPRESSION
-                        PsiElement(EXCL)('!')
+                        OPERATION_REFERENCE
+                          PsiElement(EXCL)('!')
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('hasNext')
                     PsiElement(RPAR)(')')
@@ -2140,7 +2145,8 @@ JetFile: BinaryTree.jet
                             PsiElement(LPAR)('(')
                             CONDITION
                               PREFIX_EXPRESSION
-                                PsiElement(EXCL)('!')
+                                OPERATION_REFERENCE
+                                  PsiElement(EXCL)('!')
                                 DOT_QIALIFIED_EXPRESSION
                                   REFERENCE_EXPRESSION
                                     PsiElement(IDENTIFIER)('down')
@@ -2400,7 +2406,8 @@ JetFile: BinaryTree.jet
                   PsiWhiteSpace(' ')
                   BINARY_EXPRESSION
                     PREFIX_EXPRESSION
-                      PsiElement(EXCL)('!')
+                      OPERATION_REFERENCE
+                        PsiElement(EXCL)('!')
                       DOT_QIALIFIED_EXPRESSION
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('down')
@@ -2412,7 +2419,8 @@ JetFile: BinaryTree.jet
                       PsiElement(OROR)('||')
                     PsiWhiteSpace(' ')
                     PREFIX_EXPRESSION
-                      PsiElement(EXCL)('!')
+                      OPERATION_REFERENCE
+                        PsiElement(EXCL)('!')
                       DOT_QIALIFIED_EXPRESSION
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('up')
@@ -2486,7 +2494,8 @@ JetFile: BinaryTree.jet
                   POSTFIX_EXPRESSION
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('version')
-                    PsiElement(PLUSPLUS)('++')
+                    OPERATION_REFERENCE
+                      PsiElement(PLUSPLUS)('++')
                   PsiWhiteSpace('\n      ')
                   BINARY_EXPRESSION
                     DOT_QIALIFIED_EXPRESSION

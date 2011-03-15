@@ -23,10 +23,14 @@ import util.*
   ~get3~fun get(i : Object) : Any {return i }
 }
 
+~Bar~class Bar : Foo {
+  ~not~fun not() : String {}
+}
+
 fun <T> tt(t : T) : T {
   val x : List = 0
   x`java::java.util.List.get()`[1]
-  val foo = new Foo
+  val foo = new Bar
   foo`!`[null, 1]
   foo`get2`[1, 1]
   foo`get1`[1]
@@ -36,4 +40,5 @@ fun <T> tt(t : T) : T {
   (x`java::java.util.List.set()`[1]) = null
   x`!`[null] = null
   (x`!`[null, 2]) = null
+  (`not`!foo)[1]`:std::Char`
 }

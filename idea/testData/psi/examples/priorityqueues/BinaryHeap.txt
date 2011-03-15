@@ -784,7 +784,8 @@ JetFile: BinaryHeap.jet
               PsiElement(LPAR)('(')
               CONDITION
                 PREFIX_EXPRESSION
-                  PsiElement(EXCL)('!')
+                  OPERATION_REFERENCE
+                    PsiElement(EXCL)('!')
                   DOT_QIALIFIED_EXPRESSION
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('current')

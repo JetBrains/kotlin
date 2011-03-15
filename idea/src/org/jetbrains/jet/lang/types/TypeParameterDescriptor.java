@@ -19,7 +19,7 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl {
         this.variance = variance;
         this.upperBounds = upperBounds;
         // TODO: Should we actually pass the attributes on to the type constructor?
-        this.typeConstructor = new TypeConstructor(
+        this.typeConstructor = new TypeConstructorImpl(
                 this,
                 attributes,
                 false,

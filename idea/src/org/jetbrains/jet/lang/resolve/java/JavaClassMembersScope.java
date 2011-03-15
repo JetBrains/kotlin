@@ -32,7 +32,13 @@ public class JavaClassMembersScope implements JetScope {
 
     @Override
     public ClassDescriptor getClass(@NotNull String name) {
-        throw new UnsupportedOperationException(); // TODO
+        for (PsiClass innerClass : psiClass.getAllInnerClasses()) {
+            if (name.equals(innerClass.getName())) {
+                if (innerClass.hasModifierProperty(PsiModifier.STATIC) != staticMembers) return null;
+                return semanticServices.getDescriptorResolver().resolveClass(innerClass);
+            }
+        }
+        return null;
     }
 
     @Override

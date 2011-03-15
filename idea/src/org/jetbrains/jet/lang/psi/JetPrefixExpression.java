@@ -1,9 +1,9 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lexer.JetToken;
-import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.JetNodeTypes;
 
 /**
  * @author max
@@ -20,20 +20,16 @@ public class JetPrefixExpression extends JetExpression {
 
     @NotNull
     public JetExpression getBaseExpression() {
-        JetExpression answer = findChildByClass(JetExpression.class);
-        assert answer != null;
-        return answer;
+        PsiElement expression = getOperationSign().getNextSibling();
+        while (expression != null && false == expression instanceof JetExpression) {
+            expression = expression.getNextSibling();
+        }
+        assert expression != null;
+        return (JetExpression) expression;
     }
 
     @NotNull
-    public ASTNode getOperationTokenNode() {
-        ASTNode operationNode = getNode().findChildByType(JetTokens.OPERATIONS);
-        assert operationNode != null;
-        return operationNode;
-    }
-
-    @NotNull
-    public JetToken getOperationSign() {
-        return (JetToken) getOperationTokenNode().getElementType();
+    public JetSimpleNameExpression getOperationSign() {
+        return (JetSimpleNameExpression) findChildByType(JetNodeTypes.OPERATION_REFERENCE);
     }
 }

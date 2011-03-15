@@ -291,7 +291,8 @@ JetFile: ArrayList.jet
                       POSTFIX_EXPRESSION
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('index')
-                        PsiElement(PLUSPLUS)('++')
+                        OPERATION_REFERENCE
+                          PsiElement(PLUSPLUS)('++')
                       PsiElement(RBRACKET)(']')
                   PsiWhiteSpace('\n    ')
                   PsiElement(RBRACE)('}')
@@ -709,7 +710,8 @@ JetFile: ArrayList.jet
                           POSTFIX_EXPRESSION
                             REFERENCE_EXPRESSION
                               PsiElement(IDENTIFIER)('used')
-                            PsiElement(PLUSPLUS)('++')
+                            OPERATION_REFERENCE
+                              PsiElement(PLUSPLUS)('++')
                           PsiElement(RBRACKET)(']')
                       PsiWhiteSpace(' ')
                       OPERATION_REFERENCE
@@ -819,7 +821,8 @@ JetFile: ArrayList.jet
                         POSTFIX_EXPRESSION
                           REFERENCE_EXPRESSION
                             PsiElement(IDENTIFIER)('used')
-                          PsiElement(PLUSPLUS)('++')
+                          OPERATION_REFERENCE
+                            PsiElement(PLUSPLUS)('++')
                       PsiWhiteSpace('\n    ')
                       PsiElement(RBRACE)('}')
                   PsiWhiteSpace(' ')

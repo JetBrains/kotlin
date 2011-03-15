@@ -28,7 +28,8 @@ JetFile: Precedence.jet
           POSTFIX_EXPRESSION
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('x')
-            PsiElement(PLUSPLUS)('++')
+            OPERATION_REFERENCE
+              PsiElement(PLUSPLUS)('++')
           PsiWhiteSpace(' ')
           PsiElement(DOT)('.')
           PsiWhiteSpace(' ')
@@ -36,13 +37,16 @@ JetFile: Precedence.jet
             PsiElement(INTEGER_LITERAL)('4')
         PsiWhiteSpace('\n  ')
         PREFIX_EXPRESSION
-          PsiElement(PLUSPLUS)('++')
+          OPERATION_REFERENCE
+            PsiElement(PLUSPLUS)('++')
           PsiWhiteSpace(' ')
           PREFIX_EXPRESSION
-            PsiElement(MINUSMINUS)('--')
+            OPERATION_REFERENCE
+              PsiElement(MINUSMINUS)('--')
             PsiWhiteSpace(' ')
             PREFIX_EXPRESSION
-              PsiElement(EXCL)('!')
+              OPERATION_REFERENCE
+                PsiElement(EXCL)('!')
               PsiWhiteSpace(' ')
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('a')
@@ -433,10 +437,12 @@ JetFile: Precedence.jet
             PsiElement(DOT)('.')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('b')
-          PsiElement(PLUSPLUS)('++')
+          OPERATION_REFERENCE
+            PsiElement(PLUSPLUS)('++')
         PsiWhiteSpace('\n  ')
         PREFIX_EXPRESSION
-          PsiElement(MINUSMINUS)('--')
+          OPERATION_REFERENCE
+            PsiElement(MINUSMINUS)('--')
           POSTFIX_EXPRESSION
             DOT_QIALIFIED_EXPRESSION
               REFERENCE_EXPRESSION
@@ -444,11 +450,13 @@ JetFile: Precedence.jet
               PsiElement(DOT)('.')
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('b')
-            PsiElement(PLUSPLUS)('++')
+            OPERATION_REFERENCE
+              PsiElement(PLUSPLUS)('++')
         PsiWhiteSpace('\n  ')
         BINARY_EXPRESSION
           PREFIX_EXPRESSION
-            PsiElement(MINUSMINUS)('--')
+            OPERATION_REFERENCE
+              PsiElement(MINUSMINUS)('--')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('a')
           PsiWhiteSpace(' ')
@@ -940,7 +948,8 @@ JetFile: Precedence.jet
         BINARY_EXPRESSION
           BINARY_WITH_TYPE
             PREFIX_EXPRESSION
-              PsiElement(PLUSPLUS)('++')
+              OPERATION_REFERENCE
+                PsiElement(PLUSPLUS)('++')
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('t')
             PsiWhiteSpace(' ')

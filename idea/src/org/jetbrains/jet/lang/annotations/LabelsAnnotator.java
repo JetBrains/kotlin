@@ -17,9 +17,9 @@ public class LabelsAnnotator implements Annotator {
         element.accept(new JetVisitor() {
             @Override
             public void visitPrefixExpression(JetPrefixExpression expression) {
-                ASTNode operationTokenNode = expression.getOperationTokenNode();
-                if (JetTokens.LABELS.contains(operationTokenNode.getElementType())) {
-                    holder.createInfoAnnotation(operationTokenNode, null).setTextAttributes(JetHighlighter.JET_LABEL_IDENTIFIER);
+                JetSimpleNameExpression operationSign = expression.getOperationSign();
+                if (JetTokens.LABELS.contains(operationSign.getReferencedNameElementType())) {
+                    holder.createInfoAnnotation(operationSign, null).setTextAttributes(JetHighlighter.JET_LABEL_IDENTIFIER);
                 }
             }
 

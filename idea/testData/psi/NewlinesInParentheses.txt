@@ -58,7 +58,8 @@ JetFile: NewlinesInParentheses.jet
             PsiElement(IDENTIFIER)('a')
         PsiWhiteSpace('\n  ')
         PREFIX_EXPRESSION
-          PsiElement(PLUS)('+')
+          OPERATION_REFERENCE
+            PsiElement(PLUS)('+')
           PsiWhiteSpace(' ')
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('b')
@@ -99,7 +100,8 @@ JetFile: NewlinesInParentheses.jet
                   PsiElement(IDENTIFIER)('a')
                 PsiWhiteSpace('\n  ')
                 PREFIX_EXPRESSION
-                  PsiElement(PLUS)('+')
+                  OPERATION_REFERENCE
+                    PsiElement(PLUS)('+')
                   PsiWhiteSpace(' ')
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('b')
@@ -123,7 +125,8 @@ JetFile: NewlinesInParentheses.jet
                     PsiElement(IDENTIFIER)('a')
                   PsiWhiteSpace('\n  ')
                   PREFIX_EXPRESSION
-                    PsiElement(PLUS)('+')
+                    OPERATION_REFERENCE
+                      PsiElement(PLUS)('+')
                     PsiWhiteSpace(' ')
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('b')
@@ -178,7 +181,8 @@ JetFile: NewlinesInParentheses.jet
                     PsiElement(IDENTIFIER)('c')
                   PsiWhiteSpace('\n    ')
                   PREFIX_EXPRESSION
-                    PsiElement(PLUS)('+')
+                    OPERATION_REFERENCE
+                      PsiElement(PLUS)('+')
                     PsiWhiteSpace(' ')
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('d')
@@ -205,7 +209,8 @@ JetFile: NewlinesInParentheses.jet
                       PsiElement(IDENTIFIER)('c')
                     PsiWhiteSpace('\n    ')
                     PREFIX_EXPRESSION
-                      PsiElement(PLUS)('+')
+                      OPERATION_REFERENCE
+                        PsiElement(PLUS)('+')
                       PsiWhiteSpace(' ')
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('d')

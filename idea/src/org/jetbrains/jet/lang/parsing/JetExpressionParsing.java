@@ -263,9 +263,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
         while (!myBuilder.newlineBeforeCurrentToken() && atSet(precedence.getOperations())) {
             IElementType operation = tt();
 
-            PsiBuilder.Marker operationReference = mark();
-            advance(); // operation
-            operationReference.done(OPERATION_REFERENCE);
+            parseOperationReference();
 
             JetNodeType resultType = precedence.parseRightHandSide(operation, this);
             expression.done(resultType);
@@ -291,7 +289,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
             }
         } else if (atSet(Precedence.PREFIX.getOperations())) {
             PsiBuilder.Marker expression = mark();
-            advance(); // operation
+
+            parseOperationReference();
 
             parsePrefixExpression();
             expression.done(PREFIX_EXPRESSION);
@@ -323,7 +322,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 parseArrayAccess();
                 expression.done(ARRAY_ACCESS_EXPRESSION);
             } else if (atSet(Precedence.POSTFIX.getOperations())) {
-                advance(); // operation
+                parseOperationReference();
                 expression.done(POSTFIX_EXPRESSION);
             } else if (parseCallWithClosure()) {
                 parseCallWithClosure();
@@ -378,6 +377,12 @@ public class JetExpressionParsing extends AbstractJetParsing {
             expression = expression.precede();
         }
         expression.drop();
+    }
+
+    private void parseOperationReference() {
+        PsiBuilder.Marker operationReference = mark();
+        advance(); // operation
+        operationReference.done(OPERATION_REFERENCE);
     }
 
     /*

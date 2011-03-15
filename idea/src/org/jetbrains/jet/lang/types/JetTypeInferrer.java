@@ -39,399 +39,13 @@ public class JetTypeInferrer {
 
     @Nullable
     public JetType getType(@NotNull final JetScope scope, @NotNull JetExpression expression, final boolean preferBlock) {
-        final JetType[] result = new JetType[1];
-        expression.accept(new JetVisitor() {
-            @Override
-            public void visitReferenceExpression(JetSimpleNameExpression expression) {
-                // TODO : other members
-                // TODO : type substitutions???
-                String referencedName = expression.getReferencedName();
-                PropertyDescriptor property = scope.getProperty(referencedName);
-                if (property != null) {
-                    trace.recordReferenceResolution(expression, property);
-                    result[0] = property.getType();
-                    return;
-                } else {
-                    NamespaceDescriptor namespace = scope.getNamespace(referencedName);
-                    if (namespace != null) {
-                        trace.recordReferenceResolution(expression, namespace);
-                        result[0] = namespace.getNamespaceType();
-                        return;
-                    }
-                }
-                semanticServices.getErrorHandler().unresolvedReference(expression);
-            }
-
-            @Override
-            public void visitFunctionLiteralExpression(JetFunctionLiteralExpression expression) {
-                if (preferBlock && !expression.hasParameterSpecification()) {
-                    result[0] = getBlockReturnedType(scope, expression.getBody());
-                    return;
-                }
-
-                FunctionDescriptorImpl functionDescriptor = new FunctionDescriptorImpl(scope.getContainingDeclaration(), Collections.<Attribute>emptyList(), "<anonymous>");
-
-                JetTypeReference returnTypeRef = expression.getReturnTypeRef();
-
-                JetTypeReference receiverTypeRef = expression.getReceiverTypeRef();
-                final JetType receiverType;
-                if (receiverTypeRef != null) {
-                    receiverType = typeResolver.resolveType(scope, receiverTypeRef);
-                } else {
-                    receiverType = scope.getThisType();
-                }
-
-                List<JetElement> body = expression.getBody();
-                final Map<String, PropertyDescriptor> parameterDescriptors = new HashMap<String, PropertyDescriptor>();
-                List<JetType> parameterTypes = new ArrayList<JetType>();
-                for (JetParameter parameter : expression.getParameters()) {
-                    JetTypeReference typeReference = parameter.getTypeReference();
-                    if (typeReference == null) {
-                        throw new UnsupportedOperationException("Type inference for parameters is not implemented yet");
-                    }
-                    PropertyDescriptor propertyDescriptor = classDescriptorResolver.resolvePropertyDescriptor(functionDescriptor, scope, parameter);
-                    parameterDescriptors.put(parameter.getName(), propertyDescriptor);
-                    parameterTypes.add(propertyDescriptor.getType());
-                }
-                JetType returnType;
-                if (returnTypeRef != null) {
-                    returnType = typeResolver.resolveType(scope, returnTypeRef);
-                } else {
-                    WritableScope writableScope = new WritableScope(scope, functionDescriptor);
-                    for (PropertyDescriptor propertyDescriptor : parameterDescriptors.values()) {
-                        writableScope.addPropertyDescriptor(propertyDescriptor);
-                    }
-                    writableScope.setThisType(receiverType);
-                    returnType = getBlockReturnedType(writableScope, body);
-                }
-                result[0] = JetStandardClasses.getFunctionType(null, receiverTypeRef == null ? null : receiverType, parameterTypes, returnType);
-            }
-
-            @Override
-            public void visitParenthesizedExpression(JetParenthesizedExpression expression) {
-                result[0] = getType(scope, expression.getExpression(), false);
-            }
-
-            @Override
-            public void visitConstantExpression(JetConstantExpression expression) {
-                IElementType elementType = expression.getNode().getElementType();
-                JetStandardLibrary standardLibrary = semanticServices.getStandardLibrary();
-                if (elementType == JetNodeTypes.INTEGER_CONSTANT) {
-                    result[0] = standardLibrary.getIntType();
-                } else if (elementType == JetNodeTypes.LONG_CONSTANT) {
-                    result[0] = standardLibrary.getLongType();
-                } else if (elementType == JetNodeTypes.FLOAT_CONSTANT) {
-                    String text = expression.getText();
-                    assert text.length() > 0;
-                    char lastChar = text.charAt(text.length() - 1);
-                    if (lastChar == 'f' || lastChar == 'F') {
-                        result[0] = standardLibrary.getFloatType();
-                    } else {
-                        result[0] = standardLibrary.getDoubleType();
-                    }
-                } else if (elementType == JetNodeTypes.BOOLEAN_CONSTANT) {
-                    result[0] = standardLibrary.getBooleanType();
-                } else if (elementType == JetNodeTypes.CHARACTER_CONSTANT) {
-                    result[0] = standardLibrary.getCharType();
-                } else if (elementType == JetNodeTypes.STRING_CONSTANT) {
-                    result[0] = standardLibrary.getStringType();
-                } else if (elementType == JetNodeTypes.NULL) {
-                    result[0] = JetStandardClasses.getNullableNothingType();
-                } else {
-                    throw new IllegalArgumentException("Unsupported constant: " + expression);
-                }
-            }
-
-            @Override
-            public void visitThrowExpression(JetThrowExpression expression) {
-                result[0] = JetStandardClasses.getNothingType();
-            }
-
-            @Override
-            public void visitReturnExpression(JetReturnExpression expression) {
-                JetExpression returnedExpression = expression.getReturnedExpression();
-                if (returnedExpression != null) {
-                    getType(scope, returnedExpression, false);
-                }
-                result[0] = JetStandardClasses.getNothingType();
-            }
-
-            @Override
-            public void visitBreakExpression(JetBreakExpression expression) {
-                result[0] = JetStandardClasses.getNothingType();
-            }
-
-            @Override
-            public void visitContinueExpression(JetContinueExpression expression) {
-                result[0] = JetStandardClasses.getNothingType();
-            }
-
-            @Override
-            public void visitTypeofExpression(JetTypeofExpression expression) {
-                throw new UnsupportedOperationException("Return some reflection interface"); // TODO
-            }
-
-            @Override
-            public void visitBinaryWithTypeRHSExpression(JetBinaryExpressionWithTypeRHS expression) {
-                if (expression.getOperationReference().getReferencedNameElementType() == JetTokens.COLON) {
-                    JetType actualType = getType(scope, expression.getLeft(), false);
-                    JetType expectedType = typeResolver.resolveType(scope, expression.getRight());
-                    if (actualType != null && !semanticServices.getTypeChecker().isSubtypeOf(actualType, expectedType)) {
-                        // TODO
-                        semanticServices.getErrorHandler().typeMismatch(expression.getLeft(), expectedType, actualType);
-                    }
-                    result[0] = expectedType;
-                    return;
-                }
-                throw new UnsupportedOperationException(); // TODO
-            }
-
-            @Override
-            public void visitIfExpression(JetIfExpression expression) {
-                // TODO : check condition type
-                // TODO : change types according to is and nullability checks
-                JetExpression elseBranch = expression.getElse();
-                if (elseBranch == null) {
-                    // TODO : type-check the branch
-                    result[0] = JetStandardClasses.getUnitType();
-                } else {
-                    JetType thenType = getType(scope, expression.getThen(), true);
-                    JetType elseType = getType(scope, elseBranch, true);
-                    result[0] = semanticServices.getTypeChecker().commonSupertype(Arrays.asList(thenType, elseType));
-                }
-            }
-
-            @Override
-            public void visitWhenExpression(JetWhenExpression expression) {
-                // TODO :change scope according to the bound value in the when header
-                List<JetType> expressions = new ArrayList<JetType>();
-                collectAllReturnTypes(expression, scope, expressions);
-                result[0] = semanticServices.getTypeChecker().commonSupertype(expressions);
-            }
-
-            @Override
-            public void visitTryExpression(JetTryExpression expression) {
-                JetExpression tryBlock = expression.getTryBlock();
-                List<JetCatchClause> catchClauses = expression.getCatchClauses();
-                JetFinallySection finallyBlock = expression.getFinallyBlock();
-                List<JetType> types = new ArrayList<JetType>();
-                if (finallyBlock == null) {
-                    for (JetCatchClause catchClause : catchClauses) {
-                        // TODO: change scope here
-                        types.add(getType(scope, catchClause.getCatchBody(), true));
-                    }
-                } else {
-                    types.add(getType(scope, finallyBlock.getFinalExpression(), true));
-                }
-                types.add(getType(scope, tryBlock, true));
-                result[0] = semanticServices.getTypeChecker().commonSupertype(types);
-            }
-
-            @Override
-            public void visitTupleExpression(JetTupleExpression expression) {
-                List<JetExpression> entries = expression.getEntries();
-                List<JetType> types = new ArrayList<JetType>();
-                for (JetExpression entry : entries) {
-                    types.add(getType(scope, entry, false));
-                }
-                // TODO : labels
-                result[0] = JetStandardClasses.getTupleType(types);
-            }
-
-            @Override
-            public void visitThisExpression(JetThisExpression expression) {
-                // TODO : qualified this, e.g. Foo.this<Bar>
-                JetType thisType = scope.getThisType();
-                JetTypeReference superTypeQualifier = expression.getSuperTypeQualifier();
-                if (superTypeQualifier != null) {
-                    // This cast must be safe (assuming the PSI doesn't contain errors)
-                    JetUserType typeElement = (JetUserType) superTypeQualifier.getTypeElement();
-                    ClassDescriptor superclass = typeResolver.resolveClass(scope, typeElement);
-                    Collection<? extends JetType> supertypes = thisType.getConstructor().getSupertypes();
-                    Map<TypeConstructor, TypeProjection> substitutionContext = TypeSubstitutor.INSTANCE.getSubstitutionContext(thisType);
-                    for (JetType declaredSupertype : supertypes) {
-                        if (declaredSupertype.getConstructor().equals(superclass.getTypeConstructor())) {
-                            result[0] = TypeSubstitutor.INSTANCE.substitute(substitutionContext, declaredSupertype, Variance.INVARIANT);
-                            break;
-                        }
-                    }
-                    assert result[0] != null;
-                } else {
-                    result[0] = thisType;
-                }
-            }
-
-            @Override
-            public void visitBlockExpression(JetBlockExpression expression) {
-                result[0] = getBlockReturnedType(scope, expression.getStatements());
-            }
-
-            @Override
-            public void visitLoopExpression(JetLoopExpression expression) {
-                result[0] = JetStandardClasses.getUnitType();
-            }
-
-            @Override
-            public void visitNewExpression(JetNewExpression expression) {
-                // TODO : type argument inference
-                JetTypeReference typeReference = expression.getTypeReference();
-                result[0] = typeResolver.resolveType(scope, typeReference);
-            }
-
-            @Override
-            public void visitDotQualifiedExpression(JetDotQualifiedExpression expression) {
-                // TODO : functions
-                JetExpression receiverExpression = expression.getReceiverExpression();
-                JetExpression selectorExpression = expression.getSelectorExpression();
-                JetType receiverType = getType(scope, receiverExpression, false);
-                if (receiverType != null) { // TODO : review
-                    JetScope compositeScope = new ScopeWithReceiver(scope, receiverType);
-                    result[0] = getType(compositeScope, selectorExpression, false);
-                }
-            }
-
-            @Override
-            public void visitCallExpression(JetCallExpression expression) {
-                JetExpression calleeExpression = expression.getCalleeExpression();
-
-                // 1) ends with a name -> (scope, name) to look up
-                // 2) ends with something else -> just check types
-
-                // TODO : check somewhere that these are NOT projections
-                List<JetTypeProjection> typeArguments = expression.getTypeArguments();
-
-                List<JetArgument> valueArguments = expression.getValueArguments();
-
-                boolean someNamed = false;
-                for (JetArgument argument : valueArguments) {
-                    if (argument.isNamed()) {
-                        someNamed = true;
-                        break;
-                    }
-                }
-                List<JetExpression> functionLiteralArguments = expression.getFunctionLiteralArguments();
-
-//                JetExpression functionLiteralArgument = functionLiteralArguments.isEmpty() ? null : functionLiteralArguments.get(0);
-                // TODO : must be a check
-                assert functionLiteralArguments.size() <= 1;
-
-                OverloadDomain overloadDomain = getOverloadDomain(scope, calleeExpression);
-                if (someNamed) {
-                    // TODO : check that all are named
-                    throw new UnsupportedOperationException(); // TODO
-
-//                    result[0] = overloadDomain.getFunctionDescriptorForNamedArguments(typeArguments, valueArguments, functionLiteralArgument);
-                } else {
-                    List<JetType> types = new ArrayList<JetType>();
-                    for (JetTypeProjection projection : typeArguments) {
-                        // TODO : check that there's no projection
-                        types.add(typeResolver.resolveType(scope, projection.getTypeReference()));
-                    }
-
-                    List<JetExpression> positionedValueArguments = new ArrayList<JetExpression>();
-                    for (JetArgument argument : valueArguments) {
-                        positionedValueArguments.add(argument.getArgumentExpression());
-                    }
-
-                    positionedValueArguments.addAll(functionLiteralArguments);
-
-                    List<JetType> valueArgumentTypes = new ArrayList<JetType>();
-                    for (JetExpression valueArgument : positionedValueArguments) {
-                        valueArgumentTypes.add(getType(scope, valueArgument, false));
-                    }
-
-                    FunctionDescriptor functionDescriptor = overloadDomain.getFunctionDescriptorForPositionedArguments(types, valueArgumentTypes);
-                    if (functionDescriptor != null) {
-                        result[0] = functionDescriptor.getUnsubstitutedReturnType();
-                    }
-                }
-            }
-
-            @Override
-            public void visitBinaryExpression(JetBinaryExpression expression) {
-                JetSimpleNameExpression operationSign = expression.getOperationReference();
-
-                IElementType operationType = operationSign.getReferencedNameElementType();
-                if (operationType == JetTokens.IDENTIFIER) {
-                    result[0] = getTypeForBinaryCall(expression, operationSign.getReferencedName(), scope);
-                }
-                else if (operationType == JetTokens.PLUS) {
-                    result[0] = getTypeForBinaryCall(expression, "plus", scope);
-                }
-                else if (operationType == JetTokens.EQ) {
-                    JetExpression left = expression.getLeft();
-                    JetExpression deparenthesized = deparenthesize(left);
-                    if (deparenthesized instanceof JetArrayAccessExpression) {
-                        JetArrayAccessExpression arrayAccessExpression = (JetArrayAccessExpression) deparenthesized;
-                        resolveArrayAccessToLValue(arrayAccessExpression, expression.getRight(), expression.getOperationReference());
-                    }
-                    else {
-                        getType(scope, expression.getRight(), false);
-                        //throw new UnsupportedOperationException();
-                    }
-                    result[0] = null; // TODO : This is not an expression, in fact!
-                } else {
-                    throw new UnsupportedOperationException(); // TODO
-                }
-            }
-
-            @Override
-            public void visitArrayAccessExpression(JetArrayAccessExpression expression) {
-                JetExpression arrayExpression = expression.getArrayExpression();
-                JetType receiverType = getType(scope, arrayExpression, false);
-                List<JetExpression> indexExpressions = expression.getIndexExpressions();
-                List<JetType> argumentTypes = getTypes(scope, indexExpressions);
-                if (argumentTypes == null) return;
-
-                FunctionDescriptor functionDescriptor = lookupFunction(scope, expression, "get", receiverType, argumentTypes);
-                if (functionDescriptor != null) {
-                    result[0] = functionDescriptor.getUnsubstitutedReturnType();
-                }
-            }
-
-            private void resolveArrayAccessToLValue(JetArrayAccessExpression arrayAccessExpression, JetExpression rightHandSide, JetSimpleNameExpression operationSign) {
-                List<JetType> argumentTypes = getTypes(scope, arrayAccessExpression.getIndexExpressions());
-                if (argumentTypes == null) return;
-                JetType rhsType = getType(scope, rightHandSide, false);
-                if (rhsType == null) return;
-                argumentTypes.add(rhsType);
-
-                JetType receiverType = getType(scope, arrayAccessExpression.getArrayExpression(), false);
-                if (receiverType == null) return;
-
-                // TODO : nasty hack: effort is duplicated
-                lookupFunction(scope, arrayAccessExpression, "set", receiverType, argumentTypes);
-                FunctionDescriptor functionDescriptor = lookupFunction(scope, operationSign, "set", receiverType, argumentTypes);
-                if (functionDescriptor != null) {
-                    result[0] = functionDescriptor.getUnsubstitutedReturnType();
-                }
-            }
-
-            @Override
-            public void visitJetElement(JetElement elem) {
-                throw new IllegalArgumentException("Unsupported element: " + elem);
-            }
-
-            private JetType getTypeForBinaryCall(JetBinaryExpression expression, String name, JetScope scope) {
-                JetSimpleNameExpression operationSign = expression.getOperationReference();
-                JetExpression left = expression.getLeft();
-                JetType leftType = getType(scope, left, false);
-                JetExpression right = expression.getRight();
-                if (right == null) {
-                    return ErrorType.createErrorType("No right argument");
-                }
-                JetType rightType = getType(scope, right, false);
-                FunctionDescriptor functionDescriptor = lookupFunction(scope, operationSign, name, leftType, Collections.singletonList(rightType));
-                if (functionDescriptor != null) {
-                    return functionDescriptor.getUnsubstitutedReturnType();
-                }
-                return null;
-            }
-        });
-        if (result[0] != null) {
-            trace.recordExpressionType(expression, result[0]);
+        TypeInferrerVisitor visitor = new TypeInferrerVisitor(scope, preferBlock);
+        expression.accept(visitor);
+        JetType result = visitor.getResult();
+        if (result != null) {
+            trace.recordExpressionType(expression, result);
         }
-        return result[0];
+        return result;
     }
 
     @NotNull
@@ -589,5 +203,473 @@ public class JetTypeInferrer {
             }
         }
     }
+
+    private class TypeInferrerVisitor extends JetVisitor {
+        private final JetScope scope;
+        private JetType result;
+        private final boolean preferBlock;
+
+        public TypeInferrerVisitor(JetScope scope, boolean preferBlock) {
+            this.scope = scope;
+            this.preferBlock = preferBlock;
+        }
+
+        public JetType getResult() {
+            return result;
+        }
+
+        @Override
+        public void visitReferenceExpression(JetSimpleNameExpression expression) {
+            // TODO : other members
+            // TODO : type substitutions???
+            String referencedName = expression.getReferencedName();
+            PropertyDescriptor property = scope.getProperty(referencedName);
+            if (property != null) {
+                trace.recordReferenceResolution(expression, property);
+                result = property.getType();
+                return;
+            } else {
+                NamespaceDescriptor namespace = scope.getNamespace(referencedName);
+                if (namespace != null) {
+                    trace.recordReferenceResolution(expression, namespace);
+                    result = namespace.getNamespaceType();
+                    return;
+                }
+            }
+            semanticServices.getErrorHandler().unresolvedReference(expression);
+        }
+
+        @Override
+        public void visitFunctionLiteralExpression(JetFunctionLiteralExpression expression) {
+            if (preferBlock && !expression.hasParameterSpecification()) {
+                result = getBlockReturnedType(scope, expression.getBody());
+                return;
+            }
+
+            FunctionDescriptorImpl functionDescriptor = new FunctionDescriptorImpl(scope.getContainingDeclaration(), Collections.<Attribute>emptyList(), "<anonymous>");
+
+            JetTypeReference returnTypeRef = expression.getReturnTypeRef();
+
+            JetTypeReference receiverTypeRef = expression.getReceiverTypeRef();
+            final JetType receiverType;
+            if (receiverTypeRef != null) {
+                receiverType = typeResolver.resolveType(scope, receiverTypeRef);
+            } else {
+                receiverType = scope.getThisType();
+            }
+
+            List<JetElement> body = expression.getBody();
+            final Map<String, PropertyDescriptor> parameterDescriptors = new HashMap<String, PropertyDescriptor>();
+            List<JetType> parameterTypes = new ArrayList<JetType>();
+            for (JetParameter parameter : expression.getParameters()) {
+                JetTypeReference typeReference = parameter.getTypeReference();
+                if (typeReference == null) {
+                    throw new UnsupportedOperationException("Type inference for parameters is not implemented yet");
+                }
+                PropertyDescriptor propertyDescriptor = classDescriptorResolver.resolvePropertyDescriptor(functionDescriptor, scope, parameter);
+                parameterDescriptors.put(parameter.getName(), propertyDescriptor);
+                parameterTypes.add(propertyDescriptor.getType());
+            }
+            JetType returnType;
+            if (returnTypeRef != null) {
+                returnType = typeResolver.resolveType(scope, returnTypeRef);
+            } else {
+                WritableScope writableScope = new WritableScope(scope, functionDescriptor);
+                for (PropertyDescriptor propertyDescriptor : parameterDescriptors.values()) {
+                    writableScope.addPropertyDescriptor(propertyDescriptor);
+                }
+                writableScope.setThisType(receiverType);
+                returnType = getBlockReturnedType(writableScope, body);
+            }
+            result = JetStandardClasses.getFunctionType(null, receiverTypeRef == null ? null : receiverType, parameterTypes, returnType);
+        }
+
+        @Override
+        public void visitParenthesizedExpression(JetParenthesizedExpression expression) {
+            result = getType(scope, expression.getExpression(), false);
+        }
+
+        @Override
+        public void visitConstantExpression(JetConstantExpression expression) {
+            IElementType elementType = expression.getNode().getElementType();
+            JetStandardLibrary standardLibrary = semanticServices.getStandardLibrary();
+            if (elementType == JetNodeTypes.INTEGER_CONSTANT) {
+                result = standardLibrary.getIntType();
+            } else if (elementType == JetNodeTypes.LONG_CONSTANT) {
+                result = standardLibrary.getLongType();
+            } else if (elementType == JetNodeTypes.FLOAT_CONSTANT) {
+                String text = expression.getText();
+                assert text.length() > 0;
+                char lastChar = text.charAt(text.length() - 1);
+                if (lastChar == 'f' || lastChar == 'F') {
+                    result = standardLibrary.getFloatType();
+                } else {
+                    result = standardLibrary.getDoubleType();
+                }
+            } else if (elementType == JetNodeTypes.BOOLEAN_CONSTANT) {
+                result = standardLibrary.getBooleanType();
+            } else if (elementType == JetNodeTypes.CHARACTER_CONSTANT) {
+                result = standardLibrary.getCharType();
+            } else if (elementType == JetNodeTypes.STRING_CONSTANT) {
+                result = standardLibrary.getStringType();
+            } else if (elementType == JetNodeTypes.NULL) {
+                result = JetStandardClasses.getNullableNothingType();
+            } else {
+                throw new IllegalArgumentException("Unsupported constant: " + expression);
+            }
+        }
+
+        @Override
+        public void visitThrowExpression(JetThrowExpression expression) {
+            result = JetStandardClasses.getNothingType();
+        }
+
+        @Override
+        public void visitReturnExpression(JetReturnExpression expression) {
+            JetExpression returnedExpression = expression.getReturnedExpression();
+            if (returnedExpression != null) {
+                getType(scope, returnedExpression, false);
+            }
+            result = JetStandardClasses.getNothingType();
+        }
+
+        @Override
+        public void visitBreakExpression(JetBreakExpression expression) {
+            result = JetStandardClasses.getNothingType();
+        }
+
+        @Override
+        public void visitContinueExpression(JetContinueExpression expression) {
+            result = JetStandardClasses.getNothingType();
+        }
+
+        @Override
+        public void visitTypeofExpression(JetTypeofExpression expression) {
+            throw new UnsupportedOperationException("Return some reflection interface"); // TODO
+        }
+
+        @Override
+        public void visitBinaryWithTypeRHSExpression(JetBinaryExpressionWithTypeRHS expression) {
+            if (expression.getOperationReference().getReferencedNameElementType() == JetTokens.COLON) {
+                JetType actualType = getType(scope, expression.getLeft(), false);
+                JetType expectedType = typeResolver.resolveType(scope, expression.getRight());
+                if (actualType != null && !semanticServices.getTypeChecker().isSubtypeOf(actualType, expectedType)) {
+                    // TODO
+                    semanticServices.getErrorHandler().typeMismatch(expression.getLeft(), expectedType, actualType);
+                }
+                result = expectedType;
+                return;
+            }
+            throw new UnsupportedOperationException(); // TODO
+        }
+
+        @Override
+        public void visitIfExpression(JetIfExpression expression) {
+            // TODO : check condition type
+            // TODO : change types according to is and nullability checks
+            JetExpression elseBranch = expression.getElse();
+            if (elseBranch == null) {
+                // TODO : type-check the branch
+                result = JetStandardClasses.getUnitType();
+            } else {
+                JetType thenType = getType(scope, expression.getThen(), true);
+                JetType elseType = getType(scope, elseBranch, true);
+                result = semanticServices.getTypeChecker().commonSupertype(Arrays.asList(thenType, elseType));
+            }
+        }
+
+        @Override
+        public void visitWhenExpression(JetWhenExpression expression) {
+            // TODO :change scope according to the bound value in the when header
+            List<JetType> expressions = new ArrayList<JetType>();
+            collectAllReturnTypes(expression, scope, expressions);
+            result = semanticServices.getTypeChecker().commonSupertype(expressions);
+        }
+
+        @Override
+        public void visitTryExpression(JetTryExpression expression) {
+            JetExpression tryBlock = expression.getTryBlock();
+            List<JetCatchClause> catchClauses = expression.getCatchClauses();
+            JetFinallySection finallyBlock = expression.getFinallyBlock();
+            List<JetType> types = new ArrayList<JetType>();
+            if (finallyBlock == null) {
+                for (JetCatchClause catchClause : catchClauses) {
+                    // TODO: change scope here
+                    types.add(getType(scope, catchClause.getCatchBody(), true));
+                }
+            } else {
+                types.add(getType(scope, finallyBlock.getFinalExpression(), true));
+            }
+            types.add(getType(scope, tryBlock, true));
+            result = semanticServices.getTypeChecker().commonSupertype(types);
+        }
+
+        @Override
+        public void visitTupleExpression(JetTupleExpression expression) {
+            List<JetExpression> entries = expression.getEntries();
+            List<JetType> types = new ArrayList<JetType>();
+            for (JetExpression entry : entries) {
+                types.add(getType(scope, entry, false));
+            }
+            // TODO : labels
+            result = JetStandardClasses.getTupleType(types);
+        }
+
+        @Override
+        public void visitThisExpression(JetThisExpression expression) {
+            // TODO : qualified this, e.g. Foo.this<Bar>
+            JetType thisType = scope.getThisType();
+            JetTypeReference superTypeQualifier = expression.getSuperTypeQualifier();
+            if (superTypeQualifier != null) {
+                // This cast must be safe (assuming the PSI doesn't contain errors)
+                JetUserType typeElement = (JetUserType) superTypeQualifier.getTypeElement();
+                ClassDescriptor superclass = typeResolver.resolveClass(scope, typeElement);
+                Collection<? extends JetType> supertypes = thisType.getConstructor().getSupertypes();
+                Map<TypeConstructor, TypeProjection> substitutionContext = TypeSubstitutor.INSTANCE.getSubstitutionContext(thisType);
+                for (JetType declaredSupertype : supertypes) {
+                    if (declaredSupertype.getConstructor().equals(superclass.getTypeConstructor())) {
+                        result = TypeSubstitutor.INSTANCE.substitute(substitutionContext, declaredSupertype, Variance.INVARIANT);
+                        break;
+                    }
+                }
+                assert result != null;
+            } else {
+                result = thisType;
+            }
+        }
+
+        @Override
+        public void visitBlockExpression(JetBlockExpression expression) {
+            result = getBlockReturnedType(scope, expression.getStatements());
+        }
+
+        @Override
+        public void visitLoopExpression(JetLoopExpression expression) {
+            result = JetStandardClasses.getUnitType();
+        }
+
+        @Override
+        public void visitNewExpression(JetNewExpression expression) {
+            // TODO : type argument inference
+            JetTypeReference typeReference = expression.getTypeReference();
+            result = typeResolver.resolveType(scope, typeReference);
+        }
+
+        @Override
+        public void visitDotQualifiedExpression(JetDotQualifiedExpression expression) {
+            // TODO : functions
+            JetExpression receiverExpression = expression.getReceiverExpression();
+            JetExpression selectorExpression = expression.getSelectorExpression();
+            JetType receiverType = getType(scope, receiverExpression, false);
+            if (receiverType != null) { // TODO : review
+                JetScope compositeScope = new ScopeWithReceiver(scope, receiverType);
+                result = getType(compositeScope, selectorExpression, false);
+            }
+        }
+
+        @Override
+        public void visitCallExpression(JetCallExpression expression) {
+            JetExpression calleeExpression = expression.getCalleeExpression();
+
+            // 1) ends with a name -> (scope, name) to look up
+            // 2) ends with something else -> just check types
+
+            // TODO : check somewhere that these are NOT projections
+            List<JetTypeProjection> typeArguments = expression.getTypeArguments();
+
+            List<JetArgument> valueArguments = expression.getValueArguments();
+
+            boolean someNamed = false;
+            for (JetArgument argument : valueArguments) {
+                if (argument.isNamed()) {
+                    someNamed = true;
+                    break;
+                }
+            }
+            List<JetExpression> functionLiteralArguments = expression.getFunctionLiteralArguments();
+
+//                JetExpression functionLiteralArgument = functionLiteralArguments.isEmpty() ? null : functionLiteralArguments.get(0);
+            // TODO : must be a check
+            assert functionLiteralArguments.size() <= 1;
+
+            OverloadDomain overloadDomain = getOverloadDomain(scope, calleeExpression);
+            if (someNamed) {
+                // TODO : check that all are named
+                throw new UnsupportedOperationException(); // TODO
+
+//                    result = overloadDomain.getFunctionDescriptorForNamedArguments(typeArguments, valueArguments, functionLiteralArgument);
+            } else {
+                List<JetType> types = new ArrayList<JetType>();
+                for (JetTypeProjection projection : typeArguments) {
+                    // TODO : check that there's no projection
+                    types.add(typeResolver.resolveType(scope, projection.getTypeReference()));
+                }
+
+                List<JetExpression> positionedValueArguments = new ArrayList<JetExpression>();
+                for (JetArgument argument : valueArguments) {
+                    positionedValueArguments.add(argument.getArgumentExpression());
+                }
+
+                positionedValueArguments.addAll(functionLiteralArguments);
+
+                List<JetType> valueArgumentTypes = new ArrayList<JetType>();
+                for (JetExpression valueArgument : positionedValueArguments) {
+                    valueArgumentTypes.add(getType(scope, valueArgument, false));
+                }
+
+                FunctionDescriptor functionDescriptor = overloadDomain.getFunctionDescriptorForPositionedArguments(types, valueArgumentTypes);
+                if (functionDescriptor != null) {
+                    result = functionDescriptor.getUnsubstitutedReturnType();
+                }
+            }
+        }
+
+        @Override
+        public void visitPrefixExpression(JetPrefixExpression expression) {
+            JetSimpleNameExpression operationSign = expression.getOperationSign();
+            if (operationSign.getReferencedNameElementType() == JetTokens.EXCL) {
+                JetExpression baseExpression = expression.getBaseExpression();
+                JetType type = getType(scope, baseExpression, false);
+                if (type != null) {
+                    FunctionDescriptor functionDescriptor = lookupFunction(scope, operationSign, "not", type, Collections.<JetType>emptyList());
+                    if (functionDescriptor != null) {
+                        result = functionDescriptor.getUnsubstitutedReturnType();
+                    }
+                }
+            }
+            else {
+                throw new UnsupportedOperationException(); // TODO
+            }
+        }
+
+        @Override
+        public void visitBinaryExpression(JetBinaryExpression expression) {
+            JetSimpleNameExpression operationSign = expression.getOperationReference();
+
+            IElementType operationType = operationSign.getReferencedNameElementType();
+            if (operationType == JetTokens.IDENTIFIER) {
+                result = getTypeForBinaryCall(expression, operationSign.getReferencedName(), scope);
+            }
+            else if (operationType == JetTokens.PLUS) {
+                result = getTypeForBinaryCall(expression, "plus", scope);
+            }
+            else if (operationType == JetTokens.EQ) {
+                JetExpression left = expression.getLeft();
+                JetExpression deparenthesized = deparenthesize(left);
+                if (deparenthesized instanceof JetArrayAccessExpression) {
+                    JetArrayAccessExpression arrayAccessExpression = (JetArrayAccessExpression) deparenthesized;
+                    resolveArrayAccessToLValue(arrayAccessExpression, expression.getRight(), expression.getOperationReference());
+                }
+                else {
+                    getType(scope, expression.getRight(), false);
+                    //throw new UnsupportedOperationException();
+                }
+                result = null; // TODO : This is not an expression, in fact!
+            }
+            else if (operationType == JetTokens.LT) {
+                JetExpression left = expression.getLeft();
+                JetExpression deparenthesized = deparenthesize(left);
+                if (deparenthesized instanceof JetArrayAccessExpression) {
+                    JetArrayAccessExpression arrayAccessExpression = (JetArrayAccessExpression) deparenthesized;
+                    resolveArrayAccessToLValue(arrayAccessExpression, expression.getRight(), expression.getOperationReference());
+                }
+                else {
+                    getType(scope, expression.getRight(), false);
+                    //throw new UnsupportedOperationException();
+                }
+                result = null; // TODO : This is not an expression, in fact!
+            } else {
+                throw new UnsupportedOperationException(); // TODO
+            }
+        }
+
+        @Override
+        public void visitArrayAccessExpression(JetArrayAccessExpression expression) {
+            JetExpression arrayExpression = expression.getArrayExpression();
+            JetType receiverType = getType(scope, arrayExpression, false);
+            List<JetExpression> indexExpressions = expression.getIndexExpressions();
+            List<JetType> argumentTypes = getTypes(scope, indexExpressions);
+            if (argumentTypes == null) return;
+
+            FunctionDescriptor functionDescriptor = lookupFunction(scope, expression, "get", receiverType, argumentTypes);
+            if (functionDescriptor != null) {
+                result = functionDescriptor.getUnsubstitutedReturnType();
+            }
+        }
+
+        private void resolveArrayAccessToLValue(JetArrayAccessExpression arrayAccessExpression, JetExpression rightHandSide, JetSimpleNameExpression operationSign) {
+            List<JetType> argumentTypes = getTypes(scope, arrayAccessExpression.getIndexExpressions());
+            if (argumentTypes == null) return;
+            JetType rhsType = getType(scope, rightHandSide, false);
+            if (rhsType == null) return;
+            argumentTypes.add(rhsType);
+
+            JetType receiverType = getType(scope, arrayAccessExpression.getArrayExpression(), false);
+            if (receiverType == null) return;
+
+            // TODO : nasty hack: effort is duplicated
+            lookupFunction(scope, arrayAccessExpression, "set", receiverType, argumentTypes);
+            FunctionDescriptor functionDescriptor = lookupFunction(scope, operationSign, "set", receiverType, argumentTypes);
+            if (functionDescriptor != null) {
+                result = functionDescriptor.getUnsubstitutedReturnType();
+            }
+        }
+
+        @Override
+        public void visitJetElement(JetElement elem) {
+            throw new IllegalArgumentException("Unsupported element: " + elem);
+        }
+
+        private JetType getTypeForBinaryCall(JetBinaryExpression expression, String name, JetScope scope) {
+            JetSimpleNameExpression operationSign = expression.getOperationReference();
+            JetExpression left = expression.getLeft();
+            JetType leftType = getType(scope, left, false);
+            JetExpression right = expression.getRight();
+            if (right == null) {
+                return ErrorType.createErrorType("No right argument"); // TODO
+            }
+            JetType rightType = getType(scope, right, false);
+            FunctionDescriptor functionDescriptor = lookupFunction(scope, operationSign, name, leftType, Collections.singletonList(rightType));
+            if (functionDescriptor != null) {
+                return functionDescriptor.getUnsubstitutedReturnType();
+            }
+            return null;
+        }
+    }
+
+    {
+        Map<IElementType, String> operationToMethodName = new HashMap<IElementType, String>();
+
+//        operationToMethodName.put(JetTokens.EXCL, "excl");
+//
+//        operationToMethodName.put(JetTokens.LT, "lt");
+//        operationToMethodName.put(JetTokens.GT, "gt");
+//        operationToMethodName.put(JetTokens.LTEQ, "lteq");
+//        operationToMethodName.put(JetTokens.GTEQ, "gteq");
+//
+//        operationToMethodName.put(JetTokens.EQEQ, "eqeq");
+//        operationToMethodName.put(JetTokens.EXCLEQ, "excleq");
+//
+//        operationToMethodName.put(JetTokens.MULTEQ, "multeq");
+//        operationToMethodName.put(JetTokens.DIVEQ, "diveq");
+//        operationToMethodName.put(JetTokens.PERCEQ, "perceq");
+//        operationToMethodName.put(JetTokens.PLUSEQ, "pluseq");
+//        operationToMethodName.put(JetTokens.MINUSEQ, "minuseq");
+//
+//        operationToMethodName.put(JetTokens.PLUSPLUS, "plusplus");
+//        operationToMethodName.put(JetTokens.MINUSMINUS, "minusminus");
+
+        operationToMethodName.put(JetTokens.MUL, "times");
+        operationToMethodName.put(JetTokens.PLUS, "plus");
+        operationToMethodName.put(JetTokens.MINUS, "minus");
+        operationToMethodName.put(JetTokens.DIV, "div");
+        operationToMethodName.put(JetTokens.PERC, "mod");
+        operationToMethodName.put(JetTokens.ARROW, "arrow");
+        operationToMethodName.put(JetTokens.RANGE, "rangeTo");
+
+//        operationToMethodName.put(JetTokens.IN_KEYWORD, "contains");
+//        operationToMethodName.put(JetTokens.NOT_IN, "not_in");
+    }
+
 
 }

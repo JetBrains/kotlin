@@ -5,39 +5,58 @@ class Array<T> {
   fun set(index : Int, value : T) : Unit
 }
 
-class Boolean {
+virtual class Comparable<in T> {
+  fun compareTo(other : T) : Int
 }
 
-class String {
+class Boolean : Comparable<Boolean> {
+  fun not() : Boolean
+}
+
+class String : Comparable<String> {
   fun get(index : Int) : Char
   val length : Int
 
   fun plus(other : Any?) : String
 }
 
-class Double {
+class Double : Comparable<Double>  {
   fun plus(other : Double) : Double
 }
 
-class Float {
+class Float : Comparable<Float>  {
+  fun compareTo(other : Double) : Int
+
   fun plus(other : Double) : Double
   fun plus(other : Float) : Float
 }
 
-class Long {
+class Long : Comparable<Long> {
+  fun compareTo(other : Double) : Int
+  fun compareTo(other : Float) : Int
+
   fun plus(other : Double) : Double
   fun plus(other : Float) : Float
   fun plus(other : Long) : Long
 }
 
-class Int {
+class Int : Comparable<Int> {
+  fun compareTo(other : Double) : Int
+  fun compareTo(other : Float) : Int
+  fun compareTo(other : Long) : Int
+
   fun plus(other : Double) : Double
   fun plus(other : Float) : Float
   fun plus(other : Long) : Long
   fun plus(other : Int) : Int
 }
 
-class Char {
+class Char : Comparable<Char> {
+  fun compareTo(other : Double) : Int
+  fun compareTo(other : Float) : Int
+  fun compareTo(other : Long) : Int
+  fun compareTo(other : Int) : Int
+
   fun plus(other : Double) : Double
   fun plus(other : Float) : Float
   fun plus(other : Long) : Long
@@ -45,7 +64,12 @@ class Char {
   fun plus(other : Char) : Char
 }
 
-class Short {
+class Short : Comparable<Char> {
+  fun compareTo(other : Double) : Int
+  fun compareTo(other : Float) : Int
+  fun compareTo(other : Long) : Int
+  fun compareTo(other : Int) : Int
+
   fun plus(other : Double) : Double
   fun plus(other : Float) : Float
   fun plus(other : Long) : Long
@@ -53,7 +77,13 @@ class Short {
   fun plus(other : Short) : Short
 }
 
-class Byte {
+class Byte : Comparable<Char> {
+  fun compareTo(other : Double) : Int
+  fun compareTo(other : Float) : Int
+  fun compareTo(other : Long) : Int
+  fun compareTo(other : Int) : Int
+  fun compareTo(other : Short) : Int
+
   fun plus(other : Double) : Double
   fun plus(other : Float) : Float
   fun plus(other : Long) : Long

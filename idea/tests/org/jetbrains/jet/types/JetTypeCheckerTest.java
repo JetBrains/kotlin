@@ -105,25 +105,25 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertType("if (true) 1 else null", "Int?");
         assertType("if (true) null else null", "Nothing?");
 
-        assertType("if (true) 1 else '1'", "Any");
+        assertType("if (true) 1 else '1'", "Comparable<out Any>");
     }
 
     public void testWhen() throws Exception {
         assertType("when (1) { is 1 => 2; } ", "Int");
-        assertType("when (1) { is 1 => 2; is 1 => '2'} ", "Any");
-        assertType("when (1) { is 1 => 2; is 1 => '2'; is 1 => null} ", "Any?");
-        assertType("when (1) { is 1 => 2; is 1 => '2'; else => null} ", "Any?");
-        assertType("when (1) { is 1 => 2; is 1 => '2'; else continue} ", "Any");
-        assertType("when (1) { is 1 => 2; is 1 => '2'; is 1 when(e) {is 1 => null}} ", "Any?");
-        assertType("when (1) { is 1 => 2; is 1 => '2'; is 1 => when(e) {is 1 => null}} ", "Any?");
+        assertType("when (1) { is 1 => 2; is 1 => '2'} ", "Comparable<out Any>");
+        assertType("when (1) { is 1 => 2; is 1 => '2'; is 1 => null} ", "Comparable<out Any>?");
+        assertType("when (1) { is 1 => 2; is 1 => '2'; else => null} ", "Comparable<out Any>?");
+        assertType("when (1) { is 1 => 2; is 1 => '2'; else continue} ", "Comparable<out Any>");
+        assertType("when (1) { is 1 => 2; is 1 => '2'; is 1 when(e) {is 1 => null}} ", "Comparable<out Any>?");
+        assertType("when (1) { is 1 => 2; is 1 => '2'; is 1 => when(e) {is 1 => null}} ", "Comparable<out Any>?");
     }
 
     public void testTry() throws Exception {
         assertType("try {1} finally{2}", "Int");
         assertType("try {1} catch (e : e) {'a'} finally{2}", "Int");
-        assertType("try {1} catch (e : e) {'a'} finally{'2'}", "Any");
-        assertType("try {1} catch (e : e) {'a'}", "Any");
-        assertType("try {1} catch (e : e) {'a'} catch (e : e) {null}", "Any?");
+        assertType("try {1} catch (e : e) {'a'} finally{'2'}", "Comparable<out Any>");
+        assertType("try {1} catch (e : e) {'a'}", "Comparable<out Any>");
+        assertType("try {1} catch (e : e) {'a'} catch (e : e) {null}", "Comparable<out Any>?");
         assertType("try {} catch (e : e) {}", "Unit");
     }
 
@@ -137,7 +137,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertCommonSupertype("Int?", "Int", "Nothing?");
         assertCommonSupertype("Nothing?", "Nothing?", "Nothing?");
 
-        assertCommonSupertype("Any", "Int", "Char");
+        assertCommonSupertype("Comparable<out Any>", "Int", "Char");
 
         assertCommonSupertype("Base_T<*>", "Base_T<*>", "Derived_T<*>");
         assertCommonSupertype("Any", "Base_inT<*>", "Derived_T<*>");

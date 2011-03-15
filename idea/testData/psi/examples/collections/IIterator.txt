@@ -354,7 +354,8 @@ JetFile: IIterator.jet
                       PsiElement(LPAR)('(')
                       CONDITION
                         PREFIX_EXPRESSION
-                          PsiElement(EXCL)('!')
+                          OPERATION_REFERENCE
+                            PsiElement(EXCL)('!')
                           REFERENCE_EXPRESSION
                             PsiElement(IDENTIFIER)('hasNext')
                       PsiElement(RPAR)(')')
@@ -389,7 +390,8 @@ JetFile: IIterator.jet
                     POSTFIX_EXPRESSION
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('count')
-                      PsiElement(PLUSPLUS)('++')
+                      OPERATION_REFERENCE
+                        PsiElement(PLUSPLUS)('++')
                   PsiWhiteSpace('\n    ')
                   PsiElement(RBRACE)('}')
             PsiWhiteSpace('\n    ')
