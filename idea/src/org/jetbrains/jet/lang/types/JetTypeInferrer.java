@@ -370,6 +370,14 @@ public class JetTypeInferrer {
         @Override
         public void visitIfExpression(JetIfExpression expression) {
             // TODO : check condition type
+            JetExpression condition = expression.getCondition();
+            if (condition != null) {
+                JetType conditionType = getType(scope, condition, false);
+
+                if (conditionType != null && !isBoolean(conditionType)) {
+                    semanticServices.getErrorHandler().structuralError(condition.getNode(), "Condition must be of type Boolean, but was of type " + conditionType);
+                }
+            }
             // TODO : change types according to is and nullability checks
             JetExpression elseBranch = expression.getElse();
             if (elseBranch == null) {
@@ -618,8 +626,7 @@ public class JetTypeInferrer {
         private JetType assureBooleanResult(JetSimpleNameExpression operationSign, String name, JetType resultType) {
             if (resultType != null) {
                 // TODO : Relax?
-                TypeConstructor booleanTypeConstructor = semanticServices.getStandardLibrary().getBoolean().getTypeConstructor();
-                if (!resultType.getConstructor().equals(booleanTypeConstructor)) {
+                if (!isBoolean(resultType)) {
                     semanticServices.getErrorHandler().structuralError(operationSign.getNode(), "'" + name + "' must return Boolean but returns " + resultType);
                     return null;
                 } else {
@@ -627,6 +634,11 @@ public class JetTypeInferrer {
                 }
             }
             return resultType;
+        }
+
+        private boolean isBoolean(@NotNull JetType resultType) {
+            TypeConstructor booleanTypeConstructor = semanticServices.getStandardLibrary().getBoolean().getTypeConstructor();
+            return resultType.getConstructor().equals(booleanTypeConstructor);
         }
 
         @Override
