@@ -9,6 +9,7 @@ import util.*
   ~div~fun div(t : String) : Int {}
   ~mod~fun mod(t : String) : Int {}
   ~rangeTo~fun rangeTo(t : String) : Int {}
+  ~==~fun equals(a : Any?) : Boolean {}
 }
 
 ~t~fun <~t.T~T> t(~t.t~t : `t.T`T) : `t.T`T {
@@ -26,6 +27,8 @@ import util.*
   x `div`/ ""
   x `mod`% ""
   x `rangeTo`.. ""
+  x `==`== ""
+  x `==`!= 1
 }
 
 ~Foo~class Foo {

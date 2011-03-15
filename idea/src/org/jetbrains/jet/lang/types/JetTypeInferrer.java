@@ -599,14 +599,20 @@ public class JetTypeInferrer {
                         result = assignmentOperationType;
                     }
                 }
-                else {
-                    if (counterpartType == null) {
-                        semanticServices.getErrorHandler().unresolvedReference(operationSign);
+            }
+            else if (equalsOperations.contains(operationType)) {
+                JetType equalsType = getTypeForBinaryCall(expression, "equals", scope, true);
+                if (equalsType != null) {
+                    // TODO : Relax?
+                    TypeConstructor booleanTypeConstructor = semanticServices.getStandardLibrary().getBoolean().getTypeConstructor();
+                    if (!equalsType.getConstructor().equals(booleanTypeConstructor)) {
+                        semanticServices.getErrorHandler().structuralError(operationSign.getNode(), "'equals' must return Boolean but returns " + equalsType);
                     } else {
-                        result = counterpartType;
+                        result = equalsType;
                     }
                 }
-            } else {
+            }
+            else {
                 semanticServices.getErrorHandler().structuralError(operationSign.getNode(), "Unknown operation");
             }
         }
