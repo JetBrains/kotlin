@@ -24,7 +24,17 @@ class Range<in T : Comparable<T>> {
   fun contains(item : T) : Boolean
 }
 
-class Double : Comparable<Double>  {
+class Number {
+  val d : Double
+  val f : Float
+  val l : Long
+  val i : Int
+  val c : Char
+  val s : Short
+  val b : Byte
+}
+
+class Double : Number, Comparable<Double>  {
   fun compareTo(other : Float)  : Int
   fun compareTo(other : Long)   : Int
   fun compareTo(other : Int)    : Int
@@ -83,7 +93,7 @@ class Double : Comparable<Double>  {
   fun dec() : Double
 }
 
-class Float : Comparable<Float>  {
+class Float : Number, Comparable<Float>  {
   fun compareTo(other : Double) : Int
   fun compareTo(other : Float)  : Int
   fun compareTo(other : Long)   : Int
@@ -144,7 +154,7 @@ class Float : Comparable<Float>  {
   fun dec() : Float
 }
 
-class Long : Comparable<Long> {
+class Long : Number, Comparable<Long> {
   fun compareTo(other : Double) : Int
   fun compareTo(other : Float)  : Int
   fun compareTo(other : Long)   : Int
@@ -205,7 +215,7 @@ class Long : Comparable<Long> {
   fun dec() : Long
 }
 
-class Int : Comparable<Int> {
+class Int : Number, Comparable<Int> {
   fun compareTo(other : Double) : Int
   fun compareTo(other : Float)  : Int
   fun compareTo(other : Int)    : Int
@@ -266,7 +276,7 @@ class Int : Comparable<Int> {
   fun dec() : Int
 }
 
-class Char : Comparable<Char> {
+class Char : Number, Comparable<Char> {
   fun compareTo(other : Double) : Int
   fun compareTo(other : Float)  : Int
   fun compareTo(other : Int)    : Int
@@ -327,7 +337,7 @@ class Char : Comparable<Char> {
   fun dec() : Char
 }
 
-class Short : Comparable<Char> {
+class Short : Number, Comparable<Char> {
   fun compareTo(other : Double) : Int
   fun compareTo(other : Float)  : Int
   fun compareTo(other : Int)    : Int
@@ -388,7 +398,7 @@ class Short : Comparable<Char> {
   fun dec() : Short
 }
 
-class Byte : Comparable<Char> {
+class Byte : Number, Comparable<Char> {
   fun compareTo(other : Double) : Int
   fun compareTo(other : Float)  : Int
   fun compareTo(other : Int)    : Int
