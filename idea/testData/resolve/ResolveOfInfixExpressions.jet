@@ -16,6 +16,7 @@ import util.*
   `t`t<`t.T`T>(`t.t`t)`:t.T`
   new `X`X<`t.T`T>()
   1 `std::Int.plus(Int)`+ 1
+  1 `std::Int.plus(Int)`+= 1
   new X<String>() `plus`+ "1"
   new X<String>() `plus`plus "sadfas"
   new X<String>().`plus`plus("")
@@ -32,6 +33,7 @@ import util.*
   ~get1~fun get(i : Int) : Int {}
   ~get2~fun get(i : Int, j : Int) : String {}
   ~get3~fun get(i : Object) : Any {return i }
+  ~+=~fun plusAssign(a : Any?) : Unit {}
 }
 
 ~Bar~class Bar : Foo {
@@ -59,6 +61,7 @@ fun <T> tt(t : T) : T {
   `inc`++y
   `dec`--y
   y`dec`--
+  y `+=`+= 1
   1 `std::Int.compareTo(Double)`> 2.0
   1 `std::Int.compareTo(Double)`< 2.0
   1 `std::Int.compareTo(Double)`>= 2.0

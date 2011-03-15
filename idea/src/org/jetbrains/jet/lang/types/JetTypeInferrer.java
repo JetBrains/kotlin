@@ -57,9 +57,9 @@ public class JetTypeInferrer {
     }
 
     @Nullable
-    private FunctionDescriptor lookupFunction(JetScope scope, JetReferenceExpression reference, String name, JetType receiverType, List<JetType> argumentTypes) {
+    private FunctionDescriptor lookupFunction(JetScope scope, JetReferenceExpression reference, String name, JetType receiverType, List<JetType> argumentTypes, boolean reportUnresolved) {
         OverloadDomain overloadDomain = semanticServices.getOverloadResolver().getOverloadDomain(receiverType, scope, name);
-        overloadDomain = wrapForTracing(overloadDomain, reference);
+        overloadDomain = wrapForTracing(overloadDomain, reference, reportUnresolved);
         return overloadDomain.getFunctionDescriptorForPositionedArguments(Collections.<JetType>emptyList(), argumentTypes);
     }
 
@@ -129,10 +129,10 @@ public class JetTypeInferrer {
                 throw new IllegalArgumentException("Unsupported element: " + elem);
             }
         });
-        return wrapForTracing(result[0], reference[0]);
+        return wrapForTracing(result[0], reference[0], true);
     }
 
-    private OverloadDomain wrapForTracing(final OverloadDomain overloadDomain, @NotNull final JetReferenceExpression referenceExpression) {
+    private OverloadDomain wrapForTracing(final OverloadDomain overloadDomain, @NotNull final JetReferenceExpression referenceExpression, final boolean reportUnresolved) {
         if (overloadDomain == null) return OverloadDomain.EMPTY;
         return new OverloadDomain() {
             @Override
@@ -141,7 +141,9 @@ public class JetTypeInferrer {
                 if (descriptor != null) {
                     trace.recordReferenceResolution(referenceExpression, descriptor);
                 } else {
-                    semanticServices.getErrorHandler().unresolvedReference(referenceExpression);
+                    if (reportUnresolved) {
+                        semanticServices.getErrorHandler().unresolvedReference(referenceExpression);
+                    }
                 }
                 return descriptor;
             }
@@ -152,7 +154,9 @@ public class JetTypeInferrer {
                 if (descriptor != null) {
                     trace.recordReferenceResolution(referenceExpression, descriptor);
                 } else {
-                    semanticServices.getErrorHandler().unresolvedReference(referenceExpression);
+                    if (reportUnresolved) {
+                        semanticServices.getErrorHandler().unresolvedReference(referenceExpression);
+                    }
                 }
                 return descriptor;
             }
@@ -534,7 +538,7 @@ public class JetTypeInferrer {
             else {
                 JetType type = getType(scope, expression.getBaseExpression(), false);
                 if (type != null) {
-                    FunctionDescriptor functionDescriptor = lookupFunction(scope, expression.getOperationSign(), name, type, Collections.<JetType>emptyList());
+                    FunctionDescriptor functionDescriptor = lookupFunction(scope, expression.getOperationSign(), name, type, Collections.<JetType>emptyList(), true);
                     if (functionDescriptor != null) {
                         result = functionDescriptor.getUnsubstitutedReturnType();
                     }
@@ -548,10 +552,10 @@ public class JetTypeInferrer {
 
             IElementType operationType = operationSign.getReferencedNameElementType();
             if (operationType == JetTokens.IDENTIFIER) {
-                result = getTypeForBinaryCall(expression, operationSign.getReferencedName(), scope);
+                result = getTypeForBinaryCall(expression, operationSign.getReferencedName(), scope, true);
             }
             else if (binaryOperationNames.containsKey(operationType)) {
-                result = getTypeForBinaryCall(expression, binaryOperationNames.get(operationType), scope);
+                result = getTypeForBinaryCall(expression, binaryOperationNames.get(operationType), scope, true);
             }
             else if (operationType == JetTokens.EQ) {
                 JetExpression left = expression.getLeft();
@@ -567,7 +571,7 @@ public class JetTypeInferrer {
                 result = null; // TODO : This is not an expression, in fact!
             }
             else if (comparisonOperations.contains(operationType)) {
-                JetType compareToReturnType = getTypeForBinaryCall(expression, "compareTo", scope);
+                JetType compareToReturnType = getTypeForBinaryCall(expression, "compareTo", scope, true);
                 if (compareToReturnType != null) {
                     TypeConstructor constructor = compareToReturnType.getConstructor();
                     JetStandardLibrary standardLibrary = semanticServices.getStandardLibrary();
@@ -576,6 +580,30 @@ public class JetTypeInferrer {
                         result = standardLibrary.getBooleanType();
                     } else {
                         semanticServices.getErrorHandler().structuralError(operationSign.getNode(), "compareTo must return Int, but returns " + compareToReturnType);
+                    }
+                }
+            }
+            else if (assignmentOperationNames.containsKey(operationType)) {
+                String name = assignmentOperationNames.get(operationType);
+                JetType assignmentOperationType = getTypeForBinaryCall(expression, name, scope, false);
+
+                String counterpartName = binaryOperationNames.get(assignmentOperationCounterparts.get(operationType));
+                JetType counterpartType = getTypeForBinaryCall(expression, counterpartName, scope, false);
+
+                if (assignmentOperationType != null) {
+                    if (counterpartType != null) {
+                        semanticServices.getErrorHandler().structuralError(operationSign.getNode(), "Ambiguity: both '" + name + "' and '" + counterpartName + "' are defined");
+                        // TODO : make reference unresolved?
+                        trace.removeReferenceResolution(operationSign);
+                    } else {
+                        result = assignmentOperationType;
+                    }
+                }
+                else {
+                    if (counterpartType == null) {
+                        semanticServices.getErrorHandler().unresolvedReference(operationSign);
+                    } else {
+                        result = counterpartType;
                     }
                 }
             } else {
@@ -591,7 +619,7 @@ public class JetTypeInferrer {
             List<JetType> argumentTypes = getTypes(scope, indexExpressions);
             if (argumentTypes == null) return;
 
-            FunctionDescriptor functionDescriptor = lookupFunction(scope, expression, "get", receiverType, argumentTypes);
+            FunctionDescriptor functionDescriptor = lookupFunction(scope, expression, "get", receiverType, argumentTypes, true);
             if (functionDescriptor != null) {
                 result = functionDescriptor.getUnsubstitutedReturnType();
             }
@@ -608,8 +636,8 @@ public class JetTypeInferrer {
             if (receiverType == null) return;
 
             // TODO : nasty hack: effort is duplicated
-            lookupFunction(scope, arrayAccessExpression, "set", receiverType, argumentTypes);
-            FunctionDescriptor functionDescriptor = lookupFunction(scope, operationSign, "set", receiverType, argumentTypes);
+            lookupFunction(scope, arrayAccessExpression, "set", receiverType, argumentTypes, true);
+            FunctionDescriptor functionDescriptor = lookupFunction(scope, operationSign, "set", receiverType, argumentTypes, true);
             if (functionDescriptor != null) {
                 result = functionDescriptor.getUnsubstitutedReturnType();
             }
@@ -620,7 +648,7 @@ public class JetTypeInferrer {
             throw new IllegalArgumentException("Unsupported element: " + elem);
         }
 
-        private JetType getTypeForBinaryCall(JetBinaryExpression expression, String name, JetScope scope) {
+        private JetType getTypeForBinaryCall(JetBinaryExpression expression, @NotNull String name, JetScope scope, boolean reportUnresolved) {
             JetSimpleNameExpression operationSign = expression.getOperationReference();
             JetExpression left = expression.getLeft();
             JetType leftType = getType(scope, left, false);
@@ -629,7 +657,7 @@ public class JetTypeInferrer {
                 return ErrorType.createErrorType("No right argument"); // TODO
             }
             JetType rightType = getType(scope, right, false);
-            FunctionDescriptor functionDescriptor = lookupFunction(scope, operationSign, name, leftType, Collections.singletonList(rightType));
+            FunctionDescriptor functionDescriptor = lookupFunction(scope, operationSign, name, leftType, Collections.singletonList(rightType), reportUnresolved);
             if (functionDescriptor != null) {
                 return functionDescriptor.getUnsubstitutedReturnType();
             }
@@ -666,6 +694,15 @@ public class JetTypeInferrer {
         assignmentOperationNames.put(JetTokens.PERCEQ, "modAssign");
         assignmentOperationNames.put(JetTokens.PLUSEQ, "plusAssign");
         assignmentOperationNames.put(JetTokens.MINUSEQ, "minusAssign");
+    }
+
+    private static final Map<IElementType, IElementType> assignmentOperationCounterparts = new HashMap<IElementType, IElementType>();
+    static {
+        assignmentOperationCounterparts.put(JetTokens.MULTEQ, JetTokens.MUL);
+        assignmentOperationCounterparts.put(JetTokens.DIVEQ, JetTokens.DIV);
+        assignmentOperationCounterparts.put(JetTokens.PERCEQ, JetTokens.PERC);
+        assignmentOperationCounterparts.put(JetTokens.PLUSEQ, JetTokens.PLUS);
+        assignmentOperationCounterparts.put(JetTokens.MINUSEQ, JetTokens.MINUS);
     }
 
 

@@ -32,6 +32,11 @@ public class BindingTraceContext extends BindingTrace implements BindingContext 
     }
 
     @Override
+    public void removeReferenceResolution(@NotNull JetReferenceExpression referenceExpression) {
+        resolutionResults.remove(referenceExpression);
+    }
+
+    @Override
     public void recordTypeResolution(@NotNull JetTypeReference typeReference, @NotNull JetType type) {
         types.put(typeReference, type);
     }

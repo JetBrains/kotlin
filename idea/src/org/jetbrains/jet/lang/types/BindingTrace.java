@@ -29,4 +29,8 @@ public class BindingTrace {
     public void setToplevelScope(JetScope toplevelScope) {
 
     }
+
+    public void removeReferenceResolution(@NotNull JetReferenceExpression referenceExpression) {
+
+    }
 }
