@@ -70,6 +70,7 @@ public class ClassDescriptorResolver {
 
         descriptor.setTypeConstructor(
                 new TypeConstructor(
+                        descriptor,
                         AttributeResolver.INSTANCE.resolveAttributes(classElement.getModifierList()),
                         !open,
                         classElement.getName(),

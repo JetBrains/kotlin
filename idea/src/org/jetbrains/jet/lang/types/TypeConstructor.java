@@ -1,5 +1,8 @@
 package org.jetbrains.jet.lang.types;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -13,18 +16,30 @@ public class TypeConstructor extends AnnotatedImpl {
     private final String debugName;
     private final boolean sealed;
 
-    public TypeConstructor(List<Attribute> attributes, boolean sealed, String debugName, List<TypeParameterDescriptor> parameters, Collection<? extends JetType> supertypes) {
+    @Nullable
+    private final DeclarationDescriptor declarationDescriptor;
+
+    public TypeConstructor(
+            @Nullable DeclarationDescriptor declarationDescriptor,
+            @NotNull List<Attribute> attributes,
+            boolean sealed,
+            @NotNull String debugName,
+            @NotNull List<TypeParameterDescriptor> parameters,
+            @NotNull Collection<? extends JetType> supertypes) {
         super(attributes);
+        this.declarationDescriptor = declarationDescriptor;
         this.sealed = sealed;
         this.debugName = debugName;
         this.parameters = new ArrayList<TypeParameterDescriptor>(parameters);
         this.supertypes = supertypes;
     }
 
+    @NotNull
     public List<TypeParameterDescriptor> getParameters() {
         return parameters;
     }
 
+    @NotNull
     public Collection<? extends JetType> getSupertypes() {
         return supertypes;
     }
@@ -38,4 +53,8 @@ public class TypeConstructor extends AnnotatedImpl {
         return sealed;
     }
 
+    @Nullable
+    public DeclarationDescriptor getDeclarationDescriptor() {
+        return declarationDescriptor;
+    }
 }

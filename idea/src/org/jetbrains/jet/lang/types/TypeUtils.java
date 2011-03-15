@@ -56,7 +56,7 @@ public class TypeUtils {
         }
 
         List<Attribute> noAttributes = Collections.<Attribute>emptyList();
-        TypeConstructor constructor = new TypeConstructor(noAttributes, false, debugName.toString(), Collections.<TypeParameterDescriptor>emptyList(), types);
+        TypeConstructor constructor = new TypeConstructor(null, noAttributes, false, debugName.toString(), Collections.<TypeParameterDescriptor>emptyList(), types);
         return new JetTypeImpl(
                 noAttributes,
                 constructor,
