@@ -20,8 +20,22 @@ class String : Comparable<String> {
   fun plus(other : Any?) : String
 }
 
+class Range<in T : Comparable<T>> {
+  fun contains(item : T) : Boolean
+}
+
 class Double : Comparable<Double>  {
   fun plus(other : Double) : Double
+
+  fun minus(other : Double) : Double
+
+  fun times(other : Double) : Double
+
+  fun div(other : Double) : Double
+
+  fun mod(other : Double) : Double
+
+  fun rangeTo(other : Double) : Range<Double>
 }
 
 class Float : Comparable<Float>  {
@@ -29,6 +43,21 @@ class Float : Comparable<Float>  {
 
   fun plus(other : Double) : Double
   fun plus(other : Float) : Float
+
+  fun minus(other : Double) : Double
+  fun minus(other : Float) : Float
+
+  fun times(other : Double) : Double
+  fun times(other : Float) : Float
+
+  fun div(other : Double) : Double
+  fun div(other : Float) : Float
+
+  fun mod(other : Double) : Double
+  fun mod(other : Float) : Float
+
+  fun rangeTo(other : Double) : Range<Double>
+  fun rangeTo(other : Float) : Range<Float>
 }
 
 class Long : Comparable<Long> {
@@ -38,6 +67,26 @@ class Long : Comparable<Long> {
   fun plus(other : Double) : Double
   fun plus(other : Float) : Float
   fun plus(other : Long) : Long
+
+  fun minus(other : Double) : Double
+  fun minus(other : Float) : Float
+  fun minus(other : Long) : Long
+
+  fun times(other : Double) : Double
+  fun times(other : Float) : Float
+  fun times(other : Long) : Long
+
+  fun div(other : Double) : Double
+  fun div(other : Float) : Float
+  fun div(other : Long) : Long
+
+  fun mod(other : Double) : Double
+  fun mod(other : Float) : Float
+  fun mod(other : Long) : Long
+
+  fun rangeTo(other : Double) : Range<Double>
+  fun rangeTo(other : Float) : Range<Float>
+  fun rangeTo(other : Long) : Range<Long>
 }
 
 class Int : Comparable<Int> {
@@ -49,6 +98,31 @@ class Int : Comparable<Int> {
   fun plus(other : Float) : Float
   fun plus(other : Long) : Long
   fun plus(other : Int) : Int
+
+  fun minus(other : Double) : Double
+  fun minus(other : Float) : Float
+  fun minus(other : Long) : Long
+  fun minus(other : Int) : Int
+
+  fun times(other : Double) : Double
+  fun times(other : Float) : Float
+  fun times(other : Long) : Long
+  fun times(other : Int) : Int
+
+  fun div(other : Double) : Double
+  fun div(other : Float) : Float
+  fun div(other : Long) : Long
+  fun div(other : Int) : Int
+
+  fun mod(other : Double) : Double
+  fun mod(other : Float) : Float
+  fun mod(other : Long) : Long
+  fun mod(other : Int) : Int
+
+  fun rangeTo(other : Double) : Range<Double>
+  fun rangeTo(other : Float) : Range<Float>
+  fun rangeTo(other : Long) : Range<Long>
+  fun rangeTo(other : Int) : Range<Int>
 }
 
 class Char : Comparable<Char> {
@@ -62,6 +136,36 @@ class Char : Comparable<Char> {
   fun plus(other : Long) : Long
   fun plus(other : Int) : Int
   fun plus(other : Char) : Char
+
+  fun minus(other : Double) : Double
+  fun minus(other : Float) : Float
+  fun minus(other : Long) : Long
+  fun minus(other : Int) : Int
+  fun minus(other : Char) : Char
+
+  fun times(other : Double) : Double
+  fun times(other : Float) : Float
+  fun times(other : Long) : Long
+  fun times(other : Int) : Int
+  fun times(other : Char) : Char
+
+  fun div(other : Double) : Double
+  fun div(other : Float) : Float
+  fun div(other : Long) : Long
+  fun div(other : Int) : Int
+  fun div(other : Char) : Char
+
+  fun mod(other : Double) : Double
+  fun mod(other : Float) : Float
+  fun mod(other : Long) : Long
+  fun mod(other : Int) : Int
+  fun mod(other : Char) : Char
+
+  fun rangeTo(other : Double) : Range<Double>
+  fun rangeTo(other : Float) : Range<Float>
+  fun rangeTo(other : Long) : Range<Long>
+  fun rangeTo(other : Int) : Range<Int>
+  fun rangeTo(other : Char) : Range<Char>
 }
 
 class Short : Comparable<Char> {
@@ -75,6 +179,36 @@ class Short : Comparable<Char> {
   fun plus(other : Long) : Long
   fun plus(other : Int) : Int
   fun plus(other : Short) : Short
+
+  fun minus(other : Double) : Double
+  fun minus(other : Float) : Float
+  fun minus(other : Long) : Long
+  fun minus(other : Int) : Int
+  fun minus(other : Short) : Short
+
+  fun times(other : Double) : Double
+  fun times(other : Float) : Float
+  fun times(other : Long) : Long
+  fun times(other : Int) : Int
+  fun times(other : Short) : Short
+
+  fun div(other : Double) : Double
+  fun div(other : Float) : Float
+  fun div(other : Long) : Long
+  fun div(other : Int) : Int
+  fun div(other : Short) : Short
+
+  fun mod(other : Double) : Double
+  fun mod(other : Float) : Float
+  fun mod(other : Long) : Long
+  fun mod(other : Int) : Int
+  fun mod(other : Short) : Short
+
+  fun rangeTo(other : Double) : Range<Double>
+  fun rangeTo(other : Float) : Range<Float>
+  fun rangeTo(other : Long) : Range<Long>
+  fun rangeTo(other : Int) : Range<Int>
+  fun rangeTo(other : Short) : Range<Short>
 }
 
 class Byte : Comparable<Char> {
@@ -90,4 +224,39 @@ class Byte : Comparable<Char> {
   fun plus(other : Int) : Int
   fun plus(other : Short) : Short
   fun plus(other : Byte) : Byte
+
+  fun minus(other : Double) : Double
+  fun minus(other : Float) : Float
+  fun minus(other : Long) : Long
+  fun minus(other : Int) : Int
+  fun minus(other : Short) : Short
+  fun minus(other : Byte) : Byte
+
+  fun times(other : Double) : Double
+  fun times(other : Float) : Float
+  fun times(other : Long) : Long
+  fun times(other : Int) : Int
+  fun times(other : Short) : Short
+  fun times(other : Byte) : Byte
+
+  fun div(other : Double) : Double
+  fun div(other : Float) : Float
+  fun div(other : Long) : Long
+  fun div(other : Int) : Int
+  fun div(other : Short) : Short
+  fun div(other : Byte) : Byte
+
+  fun mod(other : Double) : Double
+  fun mod(other : Float) : Float
+  fun mod(other : Long) : Long
+  fun mod(other : Int) : Int
+  fun mod(other : Short) : Short
+  fun mod(other : Byte) : Byte
+
+  fun rangeTo(other : Double) : Range<Double>
+  fun rangeTo(other : Float) : Range<Float>
+  fun rangeTo(other : Long) : Range<Long>
+  fun rangeTo(other : Int) : Range<Int>
+  fun rangeTo(other : Short) : Range<Short>
+  fun rangeTo(other : Byte) : Range<Byte>
 }
