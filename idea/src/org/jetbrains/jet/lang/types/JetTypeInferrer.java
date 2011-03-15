@@ -587,18 +587,11 @@ public class JetTypeInferrer {
                 String name = assignmentOperationNames.get(operationType);
                 JetType assignmentOperationType = getTypeForBinaryCall(expression, name, scope, false);
 
-                String counterpartName = binaryOperationNames.get(assignmentOperationCounterparts.get(operationType));
-                JetType counterpartType = getTypeForBinaryCall(expression, counterpartName, scope, false);
-
-                if (assignmentOperationType != null) {
-                    if (counterpartType != null) {
-                        semanticServices.getErrorHandler().structuralError(operationSign.getNode(), "Ambiguity: both '" + name + "' and '" + counterpartName + "' are defined");
-                        // TODO : make reference unresolved?
-                        trace.removeReferenceResolution(operationSign);
-                    } else {
-                        result = assignmentOperationType;
-                    }
+                if (assignmentOperationType == null) {
+                    String counterpartName = binaryOperationNames.get(assignmentOperationCounterparts.get(operationType));
+                    getTypeForBinaryCall(expression, counterpartName, scope, true);
                 }
+                result = null; // TODO : not an expression
             }
             else if (equalsOperations.contains(operationType)) {
                 String name = "equals";
