@@ -10,6 +10,7 @@ import util.*
   ~mod~fun mod(t : String) : Int {}
   ~rangeTo~fun rangeTo(t : String) : Int {}
   ~==~fun equals(a : Any?) : Boolean {}
+  ~contains~fun contains(a : Any?) : Boolean {}
 }
 
 ~t~fun <~t.T~T> t(~t.t~t : `t.T`T) : `t.T`T {
@@ -29,6 +30,8 @@ import util.*
   x `rangeTo`.. ""
   x `==`== ""
   x `==`!= 1
+  1 `contains`in x
+  1 `contains`!in x
 }
 
 ~Foo~class Foo {

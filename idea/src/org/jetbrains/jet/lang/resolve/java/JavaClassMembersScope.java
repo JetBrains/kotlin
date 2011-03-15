@@ -62,7 +62,7 @@ public class JavaClassMembersScope implements JetScope {
     @Override
     public FunctionGroup getFunctionGroup(@NotNull String name) {
         WritableFunctionGroup writableFunctionGroup = new WritableFunctionGroup(name);
-        PsiMethod[] allMethods = psiClass.getAllMethods();
+        PsiMethod[] allMethods = psiClass.getMethods(); // TODO : look into superclasses
         for (PsiMethod method : allMethods) {
             if (method.hasModifierProperty(PsiModifier.STATIC) != staticMembers) {
                 continue;

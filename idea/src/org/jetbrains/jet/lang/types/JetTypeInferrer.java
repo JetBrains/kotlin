@@ -601,20 +601,37 @@ public class JetTypeInferrer {
                 }
             }
             else if (equalsOperations.contains(operationType)) {
-                JetType equalsType = getTypeForBinaryCall(expression, "equals", scope, true);
-                if (equalsType != null) {
-                    // TODO : Relax?
-                    TypeConstructor booleanTypeConstructor = semanticServices.getStandardLibrary().getBoolean().getTypeConstructor();
-                    if (!equalsType.getConstructor().equals(booleanTypeConstructor)) {
-                        semanticServices.getErrorHandler().structuralError(operationSign.getNode(), "'equals' must return Boolean but returns " + equalsType);
-                    } else {
-                        result = equalsType;
-                    }
+                String name = "equals";
+                JetType equalsType = getTypeForBinaryCall(expression, name, scope, true);
+                assureBooleanResult(operationSign, name, equalsType);
+            }
+            else if (inOperations.contains(operationType)) {
+                JetExpression right = expression.getRight();
+                if (right == null) {
+                    result = ErrorType.createErrorType("No right argument"); // TODO
+                    return;
                 }
+                String name = "contains";
+                JetType containsType = getTypeForBinaryCall(scope, right, expression.getOperationReference(), expression.getLeft(), name, true);
+                result = assureBooleanResult(operationSign, name, containsType);
             }
             else {
                 semanticServices.getErrorHandler().structuralError(operationSign.getNode(), "Unknown operation");
             }
+        }
+
+        private JetType assureBooleanResult(JetSimpleNameExpression operationSign, String name, JetType resultType) {
+            if (resultType != null) {
+                // TODO : Relax?
+                TypeConstructor booleanTypeConstructor = semanticServices.getStandardLibrary().getBoolean().getTypeConstructor();
+                if (!resultType.getConstructor().equals(booleanTypeConstructor)) {
+                    semanticServices.getErrorHandler().structuralError(operationSign.getNode(), "'" + name + "' must return Boolean but returns " + resultType);
+                    return null;
+                } else {
+                    return resultType;
+                }
+            }
+            return resultType;
         }
 
         @Override
@@ -655,13 +672,17 @@ public class JetTypeInferrer {
         }
 
         private JetType getTypeForBinaryCall(JetBinaryExpression expression, @NotNull String name, JetScope scope, boolean reportUnresolved) {
-            JetSimpleNameExpression operationSign = expression.getOperationReference();
             JetExpression left = expression.getLeft();
-            JetType leftType = getType(scope, left, false);
             JetExpression right = expression.getRight();
             if (right == null) {
                 return ErrorType.createErrorType("No right argument"); // TODO
             }
+            JetSimpleNameExpression operationSign = expression.getOperationReference();
+            return getTypeForBinaryCall(scope, left, operationSign, right, name, reportUnresolved);
+        }
+
+        private JetType getTypeForBinaryCall(JetScope scope, JetExpression left, JetSimpleNameExpression operationSign, @NotNull JetExpression right, String name, boolean reportUnresolved) {
+            JetType leftType = getType(scope, left, false);
             JetType rightType = getType(scope, right, false);
             FunctionDescriptor functionDescriptor = lookupFunction(scope, operationSign, name, leftType, Collections.singletonList(rightType), reportUnresolved);
             if (functionDescriptor != null) {
