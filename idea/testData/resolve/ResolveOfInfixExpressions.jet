@@ -59,5 +59,8 @@ fun <T> tt(t : T) : T {
   `inc`++y
   `dec`--y
   y`dec`--
-
+  1 `std::Int.compareTo(Double)`> 2.0
+  1 `std::Int.compareTo(Double)`< 2.0
+  1 `std::Int.compareTo(Double)`>= 2.0
+  1 `std::Int.compareTo(Double)`<= 2.0
 }

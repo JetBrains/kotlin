@@ -31,6 +31,7 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
         nameToDescriptor.put("std::Int.plus(Int)", standardFunction(lib.getInt(), "plus", lib.getIntType()));
         FunctionDescriptor descriptorForGet = standardFunction(lib.getArray(), Collections.singletonList(new TypeProjection(lib.getIntType())), "get", lib.getIntType());
         nameToDescriptor.put("std::Array.get(Int)", descriptorForGet.getOriginal());
+        nameToDescriptor.put("std::Int.compareTo(Double)", standardFunction(lib.getInt(), "compareTo", lib.getDoubleType()));
         @NotNull
         FunctionDescriptor descriptorForSet = standardFunction(lib.getArray(), Collections.singletonList(new TypeProjection(lib.getIntType())), "set", lib.getIntType(), lib.getIntType());
         nameToDescriptor.put("std::Array.set(Int, Int)", descriptorForSet.getOriginal());

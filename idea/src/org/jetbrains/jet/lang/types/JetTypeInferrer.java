@@ -567,17 +567,17 @@ public class JetTypeInferrer {
                 result = null; // TODO : This is not an expression, in fact!
             }
             else if (comparisonOperations.contains(operationType)) {
-                JetExpression left = expression.getLeft();
-                JetExpression deparenthesized = deparenthesize(left);
-                if (deparenthesized instanceof JetArrayAccessExpression) {
-                    JetArrayAccessExpression arrayAccessExpression = (JetArrayAccessExpression) deparenthesized;
-                    resolveArrayAccessToLValue(arrayAccessExpression, expression.getRight(), expression.getOperationReference());
+                JetType compareToReturnType = getTypeForBinaryCall(expression, "compareTo", scope);
+                if (compareToReturnType != null) {
+                    TypeConstructor constructor = compareToReturnType.getConstructor();
+                    JetStandardLibrary standardLibrary = semanticServices.getStandardLibrary();
+                    TypeConstructor intTypeConstructor = standardLibrary.getInt().getTypeConstructor();
+                    if (constructor.equals(intTypeConstructor)) {
+                        result = standardLibrary.getBooleanType();
+                    } else {
+                        semanticServices.getErrorHandler().structuralError(operationSign.getNode(), "compareTo must return Int, but returns " + compareToReturnType);
+                    }
                 }
-                else {
-                    getType(scope, expression.getRight(), false);
-                    //throw new UnsupportedOperationException();
-                }
-                result = null; // TODO : This is not an expression, in fact!
             } else {
                 semanticServices.getErrorHandler().structuralError(operationSign.getNode(), "Unknown operation");
             }
