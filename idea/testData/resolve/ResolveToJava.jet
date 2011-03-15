@@ -35,7 +35,7 @@ class B : `java::java.lang.Object`Object {
   }
 }
 
-~c~fun c(~x~x : `java::java.lang.Number`Number) {
+~c~fun c(~x~x : java.lang.`java::java.lang.Number`Number) {
   `x`x.`java::java.lang.Number.intValue()`intValue()
 }
 

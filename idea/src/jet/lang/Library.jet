@@ -24,6 +24,19 @@ class Range<in T : Comparable<T>> {
   fun contains(item : T) : Boolean
 }
 
+class Iterator<out T> {
+  fun next() : T
+  val hasNext : Boolean
+}
+
+class Iterable<out T> {
+  fun iterator() : Iterator<T>
+}
+
+class IntRange<T> : Range<T>, Iterable<T> {
+
+}
+
 class Number {
   val d : Double
   val f : Float
@@ -205,11 +218,11 @@ class Long : Number, Comparable<Long> {
 
   fun rangeTo(other : Double) : Range<Double>
   fun rangeTo(other : Float)  : Range<Float>
-  fun rangeTo(other : Long)   : Range<Long>
-  fun rangeTo(other : Int)    : Range<Long>
-  fun rangeTo(other : Short)  : Range<Long>
-  fun rangeTo(other : Byte)   : Range<Long>
-  fun rangeTo(other : Char)   : Range<Long>
+  fun rangeTo(other : Long)   : IntRange<Long>
+  fun rangeTo(other : Int)    : IntRange<Long>
+  fun rangeTo(other : Short)  : IntRange<Long>
+  fun rangeTo(other : Byte)   : IntRange<Long>
+  fun rangeTo(other : Char)   : IntRange<Long>
 
   fun inc() : Long
   fun dec() : Long
@@ -266,11 +279,11 @@ class Int : Number, Comparable<Int> {
 
   fun rangeTo(other : Double) : Range<Double>
   fun rangeTo(other : Float)  : Range<Float>
-  fun rangeTo(other : Long)   : Range<Long>
-  fun rangeTo(other : Int)    : Range<Int>
-  fun rangeTo(other : Short)  : Range<Int>
-  fun rangeTo(other : Byte)   : Range<Int>
-  fun rangeTo(other : Char)   : Range<Int>
+  fun rangeTo(other : Long)   : IntRange<Long>
+  fun rangeTo(other : Int)    : IntRange<Int>
+  fun rangeTo(other : Short)  : IntRange<Int>
+  fun rangeTo(other : Byte)   : IntRange<Int>
+  fun rangeTo(other : Char)   : IntRange<Int>
 
   fun inc() : Int
   fun dec() : Int
@@ -327,11 +340,11 @@ class Char : Number, Comparable<Char> {
 
   fun rangeTo(other : Double) : Range<Double>
   fun rangeTo(other : Float)  : Range<Float>
-  fun rangeTo(other : Long)   : Range<Long>
-  fun rangeTo(other : Int)    : Range<Int>
-  fun rangeTo(other : Short)  : Range<Int>
-  fun rangeTo(other : Byte)   : Range<Int>
-  fun rangeTo(other : Char)   : Range<Int>
+  fun rangeTo(other : Long)   : IntRange<Long>
+  fun rangeTo(other : Int)    : IntRange<Int>
+  fun rangeTo(other : Short)  : IntRange<Int>
+  fun rangeTo(other : Byte)   : IntRange<Int>
+  fun rangeTo(other : Char)   : IntRange<Int>
 
   fun inc() : Char
   fun dec() : Char
@@ -388,11 +401,11 @@ class Short : Number, Comparable<Char> {
 
   fun rangeTo(other : Double) : Range<Double>
   fun rangeTo(other : Float)  : Range<Float>
-  fun rangeTo(other : Long)   : Range<Long>
-  fun rangeTo(other : Int)    : Range<Int>
-  fun rangeTo(other : Short)  : Range<Int>
-  fun rangeTo(other : Byte)   : Range<Int>
-  fun rangeTo(other : Char)   : Range<Int>
+  fun rangeTo(other : Long)   : IntRange<Long>
+  fun rangeTo(other : Int)    : IntRange<Int>
+  fun rangeTo(other : Short)  : IntRange<Int>
+  fun rangeTo(other : Byte)   : IntRange<Int>
+  fun rangeTo(other : Char)   : IntRange<Int>
 
   fun inc() : Short
   fun dec() : Short
@@ -449,11 +462,11 @@ class Byte : Number, Comparable<Char> {
 
   fun rangeTo(other : Double) : Range<Double>
   fun rangeTo(other : Float)  : Range<Float>
-  fun rangeTo(other : Long)   : Range<Long>
-  fun rangeTo(other : Int)    : Range<Int>
-  fun rangeTo(other : Short)  : Range<Int>
-  fun rangeTo(other : Byte)   : Range<Int>
-  fun rangeTo(other : Char)   : Range<Int>
+  fun rangeTo(other : Long)   : IntRange<Long>
+  fun rangeTo(other : Int)    : IntRange<Int>
+  fun rangeTo(other : Short)  : IntRange<Int>
+  fun rangeTo(other : Byte)   : IntRange<Int>
+  fun rangeTo(other : Char)   : IntRange<Int>
 
   fun inc() : Byte
   fun dec() : Byte
