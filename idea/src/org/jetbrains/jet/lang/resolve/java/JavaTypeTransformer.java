@@ -16,7 +16,7 @@ public class JavaTypeTransformer {
 
     private final JavaDescriptorResolver resolver;
     private final JetStandardLibrary standardLibrary;
-    private Map<String, Type> primitiveTypesMap;
+    private Map<String, JetType> primitiveTypesMap;
 
     public JavaTypeTransformer(JetStandardLibrary standardLibrary, JavaDescriptorResolver resolver) {
         this.resolver = resolver;
@@ -24,10 +24,10 @@ public class JavaTypeTransformer {
     }
 
     @NotNull
-    public Type transform(PsiType javaType) {
-        return javaType.accept(new PsiTypeVisitor<Type>() {
+    public JetType transform(PsiType javaType) {
+        return javaType.accept(new PsiTypeVisitor<JetType>() {
             @Override
-            public Type visitClassType(PsiClassType classType) {
+            public JetType visitClassType(PsiClassType classType) {
                 PsiClass psiClass = classType.resolveGenerics().getElement();
                 if (psiClass == null) {
                     return ErrorType.createErrorType("Unresolved java class: " + classType.getPresentableText());
@@ -40,7 +40,7 @@ public class JavaTypeTransformer {
                 ClassDescriptor descriptor = resolver.resolveClass(psiClass);
                 // TODO : arguments & raw types
                 List<TypeProjection> arguments = Collections.<TypeProjection>emptyList(); // TODO
-                return new TypeImpl(
+                return new JetTypeImpl(
                         Collections.<Attribute>emptyList(),
                         descriptor.getTypeConstructor(),
                         true,
@@ -49,29 +49,29 @@ public class JavaTypeTransformer {
             }
 
             @Override
-            public Type visitPrimitiveType(PsiPrimitiveType primitiveType) {
+            public JetType visitPrimitiveType(PsiPrimitiveType primitiveType) {
                 String canonicalText = primitiveType.getCanonicalText();
-                Type type = getPrimitiveTypesMap().get(canonicalText);
+                JetType type = getPrimitiveTypesMap().get(canonicalText);
                 assert type != null : canonicalText;
                 return type;
             }
 
             @Override
-            public Type visitArrayType(PsiArrayType arrayType) {
-                Type type = transform(arrayType.getComponentType());
+            public JetType visitArrayType(PsiArrayType arrayType) {
+                JetType type = transform(arrayType.getComponentType());
                 return TypeUtils.makeNullable(standardLibrary.getArrayType(type));
             }
 
             @Override
-            public Type visitType(PsiType type) {
+            public JetType visitType(PsiType type) {
                 throw new UnsupportedOperationException("Unsupported type: " + type.getPresentableText()); // TODO
             }
         });
     }
 
-    public Map<String, Type> getPrimitiveTypesMap() {
+    public Map<String, JetType> getPrimitiveTypesMap() {
         if (primitiveTypesMap == null) {
-            primitiveTypesMap = new HashMap<String, Type>();
+            primitiveTypesMap = new HashMap<String, JetType>();
             primitiveTypesMap.put("byte", standardLibrary.getByteType());
             primitiveTypesMap.put("short", standardLibrary.getShortType());
             primitiveTypesMap.put("char", standardLibrary.getCharType());

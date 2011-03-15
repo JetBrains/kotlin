@@ -3,7 +3,7 @@ package org.jetbrains.jet.lang;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
-import org.jetbrains.jet.lang.types.Type;
+import org.jetbrains.jet.lang.types.JetType;
 
 /**
  * @author abreslav
@@ -22,7 +22,7 @@ public class ErrorHandler {
         }
 
         @Override
-        public void typeMismatch(JetExpression expression, Type expectedType, Type actualType) {
+        public void typeMismatch(JetExpression expression, JetType expectedType, JetType actualType) {
             throw new IllegalStateException("Type mismatch: inferred type is " + actualType + " but " + expectedType + " was expected");
         }
     };
@@ -33,6 +33,6 @@ public class ErrorHandler {
     public void structuralError(ASTNode node, String errorMessage) {
     }
 
-    public void typeMismatch(JetExpression expression, Type expectedType, Type actualType) {
+    public void typeMismatch(JetExpression expression, JetType expectedType, JetType actualType) {
     }
 }

@@ -18,7 +18,7 @@ public interface FunctionGroup extends Named {
 
         @NotNull
         @Override
-        public Collection<FunctionDescriptor> getPossiblyApplicableFunctions(@NotNull List<Type> typeArguments, @NotNull List<Type> positionedValueArgumentTypes) {
+        public Collection<FunctionDescriptor> getPossiblyApplicableFunctions(@NotNull List<JetType> typeArguments, @NotNull List<JetType> positionedValueArgumentTypes) {
             return Collections.emptySet();
         }
 
@@ -34,7 +34,7 @@ public interface FunctionGroup extends Named {
     String getName();
 
     @NotNull
-    Collection<FunctionDescriptor> getPossiblyApplicableFunctions(@NotNull List<Type> typeArguments, @NotNull List<Type> positionedValueArgumentTypes);
+    Collection<FunctionDescriptor> getPossiblyApplicableFunctions(@NotNull List<JetType> typeArguments, @NotNull List<JetType> positionedValueArgumentTypes);
 
     boolean isEmpty();
 }

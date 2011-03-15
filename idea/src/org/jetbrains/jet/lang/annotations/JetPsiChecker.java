@@ -15,7 +15,7 @@ import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.types.Type;
+import org.jetbrains.jet.lang.types.JetType;
 
 /**
  * @author abreslav
@@ -49,7 +49,7 @@ public class JetPsiChecker implements Annotator {
                     }
 
                     @Override
-                    public void typeMismatch(JetExpression expression, Type expectedType, Type actualType) {
+                    public void typeMismatch(JetExpression expression, JetType expectedType, JetType actualType) {
                         holder.createErrorAnnotation(expression, "Type mismatch: inferred type is " + actualType + " but " + expectedType + " was expected");
                     }
                 });
@@ -58,7 +58,7 @@ public class JetPsiChecker implements Annotator {
                     public void visitClass(JetClass klass) {
                         for (JetDelegationSpecifier specifier : klass.getDelegationSpecifiers()) {
                             JetTypeReference typeReference = specifier.getTypeReference();
-                            Type type = bindingContext.resolveTypeReference(typeReference);
+                            JetType type = bindingContext.resolveTypeReference(typeReference);
                             holder.createWeakWarningAnnotation(typeReference, type.toString());
                         }
                     }

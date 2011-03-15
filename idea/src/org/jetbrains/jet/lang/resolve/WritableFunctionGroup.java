@@ -44,7 +44,7 @@ public class WritableFunctionGroup implements FunctionGroup {
 
     @NotNull
     @Override
-    public Collection<FunctionDescriptor> getPossiblyApplicableFunctions(@NotNull List<Type> typeArguments, @NotNull List<Type> positionedValueArgumentTypes) {
+    public Collection<FunctionDescriptor> getPossiblyApplicableFunctions(@NotNull List<JetType> typeArguments, @NotNull List<JetType> positionedValueArgumentTypes) {
         int typeArgCount = typeArguments.size();
         int valueArgCount = positionedValueArgumentTypes.size();
         Collection<FunctionDescriptor> result = new ArrayList<FunctionDescriptor>();

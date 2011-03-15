@@ -8,15 +8,15 @@ import java.util.List;
  * @author abreslav
  */
 public class PropertyDescriptorImpl extends DeclarationDescriptorImpl implements PropertyDescriptor {
-    private Type type;
+    private JetType type;
 
-    public PropertyDescriptorImpl(@NotNull DeclarationDescriptor containingDeclaration, List<Attribute> attributes, String name, Type type) {
+    public PropertyDescriptorImpl(@NotNull DeclarationDescriptor containingDeclaration, List<Attribute> attributes, String name, JetType type) {
         super(containingDeclaration, attributes, name);
         this.type = type;
     }
 
     @Override
-    public Type getType() {
+    public JetType getType() {
         return type;
     }
 

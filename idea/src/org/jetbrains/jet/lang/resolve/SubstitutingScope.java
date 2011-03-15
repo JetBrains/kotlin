@@ -53,7 +53,7 @@ public class SubstitutingScope implements JetScope {
 
     @NotNull
     @Override
-    public Type getThisType() {
+    public JetType getThisType() {
         throw new UnsupportedOperationException(); // TODO
     }
 

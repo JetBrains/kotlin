@@ -77,17 +77,17 @@ public class JavaDescriptorResolver {
         return classDescriptor;
     }
 
-    private Collection<? extends Type> getSupertypes(PsiClass psiClass) {
-        List<Type> result = new ArrayList<Type>();
+    private Collection<? extends JetType> getSupertypes(PsiClass psiClass) {
+        List<JetType> result = new ArrayList<JetType>();
         result.add(JetStandardClasses.getAnyType());
         transformSupertypeList(result, psiClass.getExtendsListTypes());
         transformSupertypeList(result, psiClass.getImplementsListTypes());
         return result;
     }
 
-    private void transformSupertypeList(List<Type> result, PsiClassType[] extendsListTypes) {
+    private void transformSupertypeList(List<JetType> result, PsiClassType[] extendsListTypes) {
         for (PsiClassType type : extendsListTypes) {
-            Type transform = semanticServices.getTypeTransformer().transform(type);
+            JetType transform = semanticServices.getTypeTransformer().transform(type);
 
             result.add(TypeUtils.makeNotNullable(transform));
         }

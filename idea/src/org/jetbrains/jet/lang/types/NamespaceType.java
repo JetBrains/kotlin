@@ -11,7 +11,7 @@ import java.util.List;
  *
  * @author abreslav
  */
-public class NamespaceType implements Type {
+public class NamespaceType implements JetType {
     private final String name;
     private final JetScope memberScope;
 

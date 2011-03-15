@@ -11,7 +11,7 @@ public class ScopeWithReceiver extends JetScopeImpl {
     private final JetScope receiverTypeScope;
     private final JetScope outerScope;
 
-    public ScopeWithReceiver(JetScope outerScope, Type receiverType) {
+    public ScopeWithReceiver(JetScope outerScope, JetType receiverType) {
         this.outerScope = outerScope;
         this.receiverTypeScope = receiverType.getMemberScope();
     }
@@ -44,7 +44,7 @@ public class ScopeWithReceiver extends JetScopeImpl {
 
     @NotNull
     @Override
-    public Type getThisType() {
+    public JetType getThisType() {
         return receiverTypeScope.getThisType();
     }
 

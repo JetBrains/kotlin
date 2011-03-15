@@ -83,16 +83,16 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
     }
 
     @NotNull
-    private FunctionDescriptor standardFunction(ClassDescriptor classDescriptor, String name, Type parameterType) {
+    private FunctionDescriptor standardFunction(ClassDescriptor classDescriptor, String name, JetType parameterType) {
         List<TypeProjection> typeArguments = Collections.emptyList();
         return standardFunction(classDescriptor, typeArguments, name, parameterType);
     }
 
     @NotNull
-    private FunctionDescriptor standardFunction(ClassDescriptor classDescriptor, List<TypeProjection> typeArguments, String name, Type... parameterType) {
+    private FunctionDescriptor standardFunction(ClassDescriptor classDescriptor, List<TypeProjection> typeArguments, String name, JetType... parameterType) {
         FunctionGroup functionGroup = classDescriptor.getMemberScope(typeArguments).getFunctionGroup(name);
-        List<Type> parameterTypeList = Arrays.asList(parameterType);
-        Collection<FunctionDescriptor> functions = functionGroup.getPossiblyApplicableFunctions(Collections.<Type>emptyList(), parameterTypeList);
+        List<JetType> parameterTypeList = Arrays.asList(parameterType);
+        Collection<FunctionDescriptor> functions = functionGroup.getPossiblyApplicableFunctions(Collections.<JetType>emptyList(), parameterTypeList);
         for (FunctionDescriptor function : functions) {
             List<ValueParameterDescriptor> unsubstitutedValueParameters = function.getUnsubstitutedValueParameters();
             for (int i = 0, unsubstitutedValueParametersSize = unsubstitutedValueParameters.size(); i < unsubstitutedValueParametersSize; i++) {

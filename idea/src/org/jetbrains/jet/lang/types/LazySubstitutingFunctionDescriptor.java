@@ -56,7 +56,7 @@ public class LazySubstitutingFunctionDescriptor implements FunctionDescriptor {
 
     @NotNull
     @Override
-    public Type getUnsubstitutedReturnType() {
+    public JetType getUnsubstitutedReturnType() {
         return TypeSubstitutor.INSTANCE.substitute(substitutionContext, functionDescriptor.getUnsubstitutedReturnType(), Variance.OUT_VARIANCE);
     }
 

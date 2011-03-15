@@ -25,18 +25,18 @@ public class TypeResolver {
     }
 
     @NotNull
-    public Type resolveType(@NotNull final JetScope scope, @NotNull final JetTypeReference typeReference) {
+    public JetType resolveType(@NotNull final JetScope scope, @NotNull final JetTypeReference typeReference) {
         final List<Attribute> attributes = AttributeResolver.INSTANCE.resolveAttributes(typeReference.getAttributes());
 
         JetTypeElement typeElement = typeReference.getTypeElement();
-        Type type = resolveTypeElement(scope, attributes, typeElement, false);
+        JetType type = resolveTypeElement(scope, attributes, typeElement, false);
         trace.recordTypeResolution(typeReference, type);
         return type;
     }
 
     @NotNull
-    private Type resolveTypeElement(final JetScope scope, final List<Attribute> attributes, JetTypeElement typeElement, final boolean nullable) {
-        final Type[] result = new Type[1];
+    private JetType resolveTypeElement(final JetScope scope, final List<Attribute> attributes, JetTypeElement typeElement, final boolean nullable) {
+        final JetType[] result = new JetType[1];
         if (typeElement != null) {
             typeElement.accept(new JetVisitor() {
                 @Override
@@ -46,7 +46,7 @@ public class TypeResolver {
                         trace.recordReferenceResolution(type.getReferenceExpression(), classDescriptor);
                         TypeConstructor typeConstructor = classDescriptor.getTypeConstructor();
                         List<TypeProjection> arguments = resolveTypeProjections(scope, typeConstructor, type.getTypeArguments());
-                        result[0] = new TypeImpl(
+                        result[0] = new JetTypeImpl(
                                 attributes,
                                 typeConstructor,
                                 nullable,
@@ -58,7 +58,7 @@ public class TypeResolver {
                         TypeParameterDescriptor typeParameterDescriptor = scope.getTypeParameter(type.getReferencedName());
                         if (typeParameterDescriptor != null) {
                             trace.recordReferenceResolution(type.getReferenceExpression(), typeParameterDescriptor);
-                            result[0] = new TypeImpl(
+                            result[0] = new JetTypeImpl(
                                     attributes,
                                     typeParameterDescriptor.getTypeConstructor(),
                                     nullable || hasNullableBound(typeParameterDescriptor),
@@ -89,14 +89,14 @@ public class TypeResolver {
                 @Override
                 public void visitFunctionType(JetFunctionType type) {
                     JetTypeReference receiverTypeRef = type.getReceiverTypeRef();
-                    Type receiverType = receiverTypeRef == null ? null : resolveType(scope, receiverTypeRef);
+                    JetType receiverType = receiverTypeRef == null ? null : resolveType(scope, receiverTypeRef);
 
-                    List<Type> parameterTypes = new ArrayList<Type>();
+                    List<JetType> parameterTypes = new ArrayList<JetType>();
                     for (JetParameter parameter : type.getParameters()) {
                         parameterTypes.add(resolveType(scope, parameter.getTypeReference()));
                     }
 
-                    Type returnType = resolveType(scope, type.getReturnTypeRef());
+                    JetType returnType = resolveType(scope, type.getReturnTypeRef());
 
                     result[0] = JetStandardClasses.getFunctionType(attributes, receiverType, parameterTypes, returnType);
                 }
@@ -114,7 +114,7 @@ public class TypeResolver {
     }
 
     private boolean hasNullableBound(TypeParameterDescriptor typeParameterDescriptor) {
-        for (Type bound : typeParameterDescriptor.getUpperBounds()) {
+        for (JetType bound : typeParameterDescriptor.getUpperBounds()) {
             if (bound.isNullable()) {
                 return true;
             }
@@ -122,8 +122,8 @@ public class TypeResolver {
         return false;
     }
 
-    private List<Type> resolveTypes(JetScope scope, List<JetTypeReference> argumentElements) {
-        final List<Type> arguments = new ArrayList<Type>();
+    private List<JetType> resolveTypes(JetScope scope, List<JetTypeReference> argumentElements) {
+        final List<JetType> arguments = new ArrayList<JetType>();
         for (JetTypeReference argumentElement : argumentElements) {
             arguments.add(resolveType(scope, argumentElement));
         }
@@ -137,9 +137,9 @@ public class TypeResolver {
             JetTypeProjection argumentElement = argumentElements.get(i);
 
             JetProjectionKind projectionKind = argumentElement.getProjectionKind();
-            Type type;
+            JetType type;
             if (projectionKind == JetProjectionKind.STAR) {
-                Set<Type> upperBounds = constructor.getParameters().get(i).getUpperBounds();
+                Set<JetType> upperBounds = constructor.getParameters().get(i).getUpperBounds();
                 arguments.add(new TypeProjection(Variance.OUT_VARIANCE, TypeUtils.intersect(semanticServices.getTypeChecker(), upperBounds)));
             }
             else {

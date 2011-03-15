@@ -38,7 +38,7 @@ public class ClassDescriptorResolver {
 
         List<JetDelegationSpecifier> delegationSpecifiers = classElement.getDelegationSpecifiers();
         // TODO : assuming that the hierarchy is acyclic
-        Collection<? extends Type> superclasses = delegationSpecifiers.isEmpty()
+        Collection<? extends JetType> superclasses = delegationSpecifiers.isEmpty()
                 ? Collections.singleton(JetStandardClasses.getAnyType())
                 : resolveTypes(parameterScope, delegationSpecifiers);
         boolean open = classElement.hasModifier(JetTokens.OPEN_KEYWORD);
@@ -63,7 +63,7 @@ public class ClassDescriptorResolver {
 
         List<JetDelegationSpecifier> delegationSpecifiers = classElement.getDelegationSpecifiers();
         // TODO : assuming that the hierarchy is acyclic
-        Collection<? extends Type> superclasses = delegationSpecifiers.isEmpty()
+        Collection<? extends JetType> superclasses = delegationSpecifiers.isEmpty()
                 ? Collections.singleton(JetStandardClasses.getAnyType())
                 : resolveTypes(parameterScope, delegationSpecifiers);
         boolean open = classElement.hasModifier(JetTokens.OPEN_KEYWORD);
@@ -86,7 +86,7 @@ public class ClassDescriptorResolver {
             List<TypeParameterDescriptor> typeParameters,
             final JetScope outerScope,
             final JetScope typeParameterScope,
-            final Collection<? extends Type> supertypes) {
+            final Collection<? extends JetType> supertypes) {
 
         final WritableScope memberDeclarations = new WritableScope(typeParameterScope, classDescriptor);
 
@@ -136,7 +136,7 @@ public class ClassDescriptorResolver {
         List<TypeParameterDescriptor> typeParameterDescriptors = resolveTypeParameters(functionDescriptor, parameterScope, function.getTypeParameters());
         List<ValueParameterDescriptor> valueParameterDescriptors = resolveValueParameters(functionDescriptor, parameterScope, function.getValueParameters());
 
-        Type returnType;
+        JetType returnType;
         JetTypeReference returnTypeRef = function.getReturnTypeRef();
         JetExpression bodyExpression = function.getBodyExpression();
         if (returnTypeRef != null) {
@@ -170,7 +170,7 @@ public class ClassDescriptorResolver {
             JetParameter valueParameter = valueParameters.get(i);
             JetTypeReference typeReference = valueParameter.getTypeReference();
 
-            Type type;
+            JetType type;
             if (typeReference == null) {
                 semanticServices.getErrorHandler().structuralError(valueParameter.getNode(), "A type annotation is required on a value parameter " + valueParameter.getName());
                 type = ErrorType.createErrorType("Type annotation was missing");
@@ -212,7 +212,7 @@ public class ClassDescriptorResolver {
                 typeParameter.getVariance(),
                 typeParameter.getName(),
                 extendsBound == null
-                        ? Collections.<Type>singleton(JetStandardClasses.getAnyType())
+                        ? Collections.<JetType>singleton(JetStandardClasses.getAnyType())
                         : Collections.singleton(typeResolver.resolveType(extensibleScope, extendsBound))
         );
         extensibleScope.addTypeParameterDescriptor(typeParameterDescriptor);
@@ -220,18 +220,18 @@ public class ClassDescriptorResolver {
         return typeParameterDescriptor;
     }
 
-    public Collection<? extends Type> resolveTypes(WritableScope extensibleScope, List<JetDelegationSpecifier> delegationSpecifiers) {
+    public Collection<? extends JetType> resolveTypes(WritableScope extensibleScope, List<JetDelegationSpecifier> delegationSpecifiers) {
         if (delegationSpecifiers.isEmpty()) {
             return Collections.emptyList();
         }
-        Collection<Type> result = new ArrayList<Type>();
+        Collection<JetType> result = new ArrayList<JetType>();
         for (JetDelegationSpecifier delegationSpecifier : delegationSpecifiers) {
             result.add(resolveType(extensibleScope, delegationSpecifier));
         }
         return result;
     }
 
-    private Type resolveType(JetScope scope, JetDelegationSpecifier delegationSpecifier) {
+    private JetType resolveType(JetScope scope, JetDelegationSpecifier delegationSpecifier) {
         JetTypeReference typeReference = delegationSpecifier.getTypeReference(); // TODO : make it not null
         return typeResolver.resolveType(scope, typeReference);
     }
@@ -249,7 +249,7 @@ public class ClassDescriptorResolver {
         // TODO : receiver?
         JetTypeReference propertyTypeRef = property.getPropertyTypeRef();
 
-        Type type;
+        JetType type;
         if (propertyTypeRef == null) {
             JetExpression initializer = property.getInitializer();
             if (initializer == null) {

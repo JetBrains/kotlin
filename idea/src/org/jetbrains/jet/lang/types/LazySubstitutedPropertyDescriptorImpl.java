@@ -11,7 +11,7 @@ import java.util.Map;
 public class LazySubstitutedPropertyDescriptorImpl implements PropertyDescriptor {
     private final PropertyDescriptor propertyDescriptor;
     private final Map<TypeConstructor, TypeProjection> substitutionContext;
-    private Type propertyType = null;
+    private JetType propertyType = null;
 
     public LazySubstitutedPropertyDescriptorImpl(@NotNull PropertyDescriptor propertyDescriptor, @NotNull Map<TypeConstructor, TypeProjection> substitutionContext) {
         this.propertyDescriptor = propertyDescriptor;
@@ -19,7 +19,7 @@ public class LazySubstitutedPropertyDescriptorImpl implements PropertyDescriptor
     }
 
     @Override
-    public Type getType() {
+    public JetType getType() {
         if (propertyType == null) {
             propertyType = TypeSubstitutor.INSTANCE.substitute(substitutionContext, propertyDescriptor.getType(), Variance.OUT_VARIANCE);
         }

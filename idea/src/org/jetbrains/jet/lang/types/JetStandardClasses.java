@@ -27,14 +27,14 @@ public class JetStandardClasses {
             "Nothing").initialize(
             true,
             Collections.<TypeParameterDescriptor>emptyList(),
-            new AbstractCollection<Type>() {
+            new AbstractCollection<JetType>() {
                 @Override
                 public boolean contains(Object o) {
-                    return o instanceof Type;
+                    return o instanceof JetType;
                 }
 
                 @Override
-                public Iterator<Type> iterator() {
+                public Iterator<JetType> iterator() {
                     throw new UnsupportedOperationException();
                 }
 
@@ -44,9 +44,9 @@ public class JetStandardClasses {
                 }
             }, JetScope.EMPTY
     );
-    private static final Type NOTHING_TYPE = new TypeImpl(getNothing());
+    private static final JetType NOTHING_TYPE = new JetTypeImpl(getNothing());
 
-    private static final Type NULLABLE_NOTHING_TYPE = new TypeImpl(
+    private static final JetType NULLABLE_NOTHING_TYPE = new JetTypeImpl(
             Collections.<Attribute>emptyList(),
             getNothing().getTypeConstructor(),
             true,
@@ -61,12 +61,12 @@ public class JetStandardClasses {
             "Any").initialize(
             false,
             Collections.<TypeParameterDescriptor>emptyList(),
-            Collections.<Type>emptySet(),
+            Collections.<JetType>emptySet(),
             JetScope.EMPTY
     );
-    private static final Type ANY_TYPE = new TypeImpl(ANY.getTypeConstructor(), JetScope.EMPTY);
+    private static final JetType ANY_TYPE = new JetTypeImpl(ANY.getTypeConstructor(), JetScope.EMPTY);
 
-    private static final Type NULLABLE_ANY_TYPE = TypeUtils.makeNullable(ANY_TYPE);
+    private static final JetType NULLABLE_ANY_TYPE = TypeUtils.makeNullable(ANY_TYPE);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -152,7 +152,7 @@ public class JetStandardClasses {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private static final Type UNIT_TYPE = new TypeImpl(getTuple(0));
+    private static final JetType UNIT_TYPE = new JetTypeImpl(getTuple(0));
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -198,11 +198,11 @@ public class JetStandardClasses {
     }
 
     @NotNull
-    public static Type getAnyType() {
+    public static JetType getAnyType() {
         return ANY_TYPE;
     }
 
-    public static Type getNullableAnyType() {
+    public static JetType getNullableAnyType() {
         return NULLABLE_ANY_TYPE;
     }
 
@@ -226,57 +226,57 @@ public class JetStandardClasses {
         return RECEIVER_FUNCTION[parameterCount];
     }
 
-    public static Type getUnitType() {
+    public static JetType getUnitType() {
         return UNIT_TYPE;
     }
 
-    public static Type getNothingType() {
+    public static JetType getNothingType() {
         return NOTHING_TYPE;
     }
 
-    public static Type getNullableNothingType() {
+    public static JetType getNullableNothingType() {
         return NULLABLE_NOTHING_TYPE;
     }
 
-    public static boolean isNothing(Type type) {
+    public static boolean isNothing(JetType type) {
         return type.getConstructor() == NOTHING_CLASS.getTypeConstructor();
     }
 
-    public static Type getTupleType(List<Attribute> attributes, List<Type> arguments) {
+    public static JetType getTupleType(List<Attribute> attributes, List<JetType> arguments) {
         if (attributes.isEmpty() && arguments.isEmpty()) {
             return getUnitType();
         }
-        return new TypeImpl(attributes, getTuple(arguments.size()).getTypeConstructor(), false, toProjections(arguments), STUB);
+        return new JetTypeImpl(attributes, getTuple(arguments.size()).getTypeConstructor(), false, toProjections(arguments), STUB);
     }
 
-    public static Type getTupleType(List<Type> arguments) {
+    public static JetType getTupleType(List<JetType> arguments) {
         return getTupleType(Collections.<Attribute>emptyList(), arguments);
     }
 
-    public static Type getTupleType(Type... arguments) {
+    public static JetType getTupleType(JetType... arguments) {
         return getTupleType(Collections.<Attribute>emptyList(), Arrays.asList(arguments));
     }
 
-    public static Type getLabeledTupleType(List<Attribute> attributes, List<ValueParameterDescriptor> arguments) {
+    public static JetType getLabeledTupleType(List<Attribute> attributes, List<ValueParameterDescriptor> arguments) {
         // TODO
         return getTupleType(attributes, toTypes(arguments));
     }
 
-    public static Type getLabeledTupleType(List<ValueParameterDescriptor> arguments) {
+    public static JetType getLabeledTupleType(List<ValueParameterDescriptor> arguments) {
         // TODO
         return getLabeledTupleType(Collections.<Attribute>emptyList(), arguments);
     }
 
-    private static List<TypeProjection> toProjections(List<Type> arguments) {
+    private static List<TypeProjection> toProjections(List<JetType> arguments) {
         List<TypeProjection> result = new ArrayList<TypeProjection>();
-        for (Type argument : arguments) {
+        for (JetType argument : arguments) {
             result.add(new TypeProjection(Variance.OUT_VARIANCE, argument));
         }
         return result;
     }
 
-    private static List<Type> toTypes(List<ValueParameterDescriptor> labeledEntries) {
-        List<Type> result = new ArrayList<Type>();
+    private static List<JetType> toTypes(List<ValueParameterDescriptor> labeledEntries) {
+        List<JetType> result = new ArrayList<JetType>();
         for (ValueParameterDescriptor entry : labeledEntries) {
             result.add(entry.getType());
         }
@@ -284,21 +284,21 @@ public class JetStandardClasses {
     }
 
     // TODO : labeled version?
-    public static Type getFunctionType(List<Attribute> attributes, @Nullable Type receiverType, @NotNull List<Type> parameterTypes, @NotNull Type returnType) {
+    public static JetType getFunctionType(List<Attribute> attributes, @Nullable JetType receiverType, @NotNull List<JetType> parameterTypes, @NotNull JetType returnType) {
         List<TypeProjection> arguments = new ArrayList<TypeProjection>();
         if (receiverType != null) {
             arguments.add(defaultProjection(receiverType));
         }
-        for (Type parameterType : parameterTypes) {
+        for (JetType parameterType : parameterTypes) {
             arguments.add(defaultProjection(parameterType));
         }
         arguments.add(defaultProjection(returnType));
         int size = parameterTypes.size();
         TypeConstructor constructor = receiverType == null ? FUNCTION[size].getTypeConstructor() : RECEIVER_FUNCTION[size].getTypeConstructor();
-        return new TypeImpl(attributes, constructor, false, arguments, STUB);
+        return new JetTypeImpl(attributes, constructor, false, arguments, STUB);
     }
 
-    private static TypeProjection defaultProjection(Type returnType) {
+    private static TypeProjection defaultProjection(JetType returnType) {
         return new TypeProjection(Variance.INVARIANT, returnType);
     }
 }

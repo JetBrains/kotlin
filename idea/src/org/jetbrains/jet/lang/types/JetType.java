@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * @author abreslav
  */
-public interface Type extends Annotated {
+public interface JetType extends Annotated {
     @NotNull TypeConstructor getConstructor();
     @NotNull List<TypeProjection> getArguments();
     boolean isNullable();

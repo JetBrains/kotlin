@@ -126,7 +126,7 @@ public class ExpectedResolveData {
                     continue;
                 }
 
-                Type actualType = bindingContext.resolveTypeReference(typeReference);
+                JetType actualType = bindingContext.resolveTypeReference(typeReference);
                 assertNotNull("Type " + name + " not resolved for reference " + name, actualType);
                 ClassDescriptor expectedClass = lib.getLibraryScope().getClass(name.substring(5));
                 assertNotNull("Expected class not found: " + name);
@@ -156,7 +156,7 @@ public class ExpectedResolveData {
             PsiElement element = file.findElementAt(position);
             JetExpression expression = getAncestorOfType(JetExpression.class, element);
 
-            Type expressionType = bindingContext.getExpressionType(expression);
+            JetType expressionType = bindingContext.getExpressionType(expression);
             TypeConstructor expectedTypeConstructor;
             if (typeName.startsWith("std::")) {
                 ClassDescriptor expectedClass = lib.getLibraryScope().getClass(typeName.substring(5));

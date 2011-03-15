@@ -24,7 +24,7 @@ public class WritableScope extends JetScopeAdapter {
     @Nullable
     private Map<String, NamespaceDescriptor> namespaceDescriptors;
     @Nullable
-    private Type thisType;
+    private JetType thisType;
     @Nullable
     private List<JetScope> imports;
 
@@ -194,7 +194,7 @@ public class WritableScope extends JetScopeAdapter {
 
     @NotNull
     @Override
-    public Type getThisType() {
+    public JetType getThisType() {
         if (thisType == null) {
             return super.getThisType();
         }
@@ -243,7 +243,7 @@ public class WritableScope extends JetScopeAdapter {
         return super.getExtension(name); // TODO
     }
 
-    public void setThisType(Type thisType) {
+    public void setThisType(JetType thisType) {
         if (this.thisType != null) {
             throw new UnsupportedOperationException("Receiver redeclared");
         }

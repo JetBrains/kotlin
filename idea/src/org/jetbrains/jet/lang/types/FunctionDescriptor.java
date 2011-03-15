@@ -15,7 +15,7 @@ public interface FunctionDescriptor extends DeclarationDescriptor {
     List<ValueParameterDescriptor> getUnsubstitutedValueParameters();
 
     @NotNull
-    Type getUnsubstitutedReturnType();
+    JetType getUnsubstitutedReturnType();
 
     @NotNull
     FunctionDescriptor getOriginal();

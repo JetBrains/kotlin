@@ -13,7 +13,7 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
 
     private List<ValueParameterDescriptor> unsubstitutedValueParameters;
 
-    private Type unsubstitutedReturnType;
+    private JetType unsubstitutedReturnType;
     private final FunctionDescriptor original;
 
     public FunctionDescriptorImpl(
@@ -35,7 +35,7 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
     public final void initialize(
             @NotNull List<TypeParameterDescriptor> typeParameters,
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
-            @NotNull Type unsubstitutedReturnType) {
+            @NotNull JetType unsubstitutedReturnType) {
         this.typeParameters = typeParameters;
         this.unsubstitutedValueParameters = unsubstitutedValueParameters;
         this.unsubstitutedReturnType = unsubstitutedReturnType;
@@ -55,7 +55,7 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
 
     @Override
     @NotNull
-    public Type getUnsubstitutedReturnType() {
+    public JetType getUnsubstitutedReturnType() {
         return unsubstitutedReturnType;
     }
 

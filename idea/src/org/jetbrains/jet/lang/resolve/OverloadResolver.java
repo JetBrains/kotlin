@@ -18,7 +18,7 @@ public class OverloadResolver {
     }
 
     @NotNull
-    public OverloadDomain getOverloadDomain(Type receiverType, @NotNull JetScope outerScope, @NotNull String name) {
+    public OverloadDomain getOverloadDomain(JetType receiverType, @NotNull JetScope outerScope, @NotNull String name) {
         // TODO : extension lookup
         JetScope scope = receiverType == null ? outerScope : receiverType.getMemberScope();
 
@@ -30,7 +30,7 @@ public class OverloadResolver {
 
         return new OverloadDomain() {
             @Override
-            public FunctionDescriptor getFunctionDescriptorForPositionedArguments(@NotNull final List<Type> typeArguments, @NotNull List<Type> positionedValueArgumentTypes) {
+            public FunctionDescriptor getFunctionDescriptorForPositionedArguments(@NotNull final List<JetType> typeArguments, @NotNull List<JetType> positionedValueArgumentTypes) {
                 Collection<FunctionDescriptor> possiblyApplicableFunctions = functionGroup.getPossiblyApplicableFunctions(typeArguments, positionedValueArgumentTypes);
                 if (possiblyApplicableFunctions.isEmpty()) {
                     return null;
@@ -50,8 +50,8 @@ public class OverloadResolver {
                         // possibly, a single value passed to a vararg
                         // possibly an array/list/etc passed as a whole vararg
                         for (int i = 0, positionedValueArgumentTypesSize = positionedValueArgumentTypes.size(); i < positionedValueArgumentTypesSize; i++) {
-                            Type argumentType = positionedValueArgumentTypes.get(i);
-                            Type parameterType = parameters.get(i).getType();
+                            JetType argumentType = positionedValueArgumentTypes.get(i);
+                            JetType parameterType = parameters.get(i).getType();
                             // TODO : handle vararg cases here
                             if (!typeChecker.isConvertibleTo(argumentType, parameterType)) {
                                 continue descLoop;
@@ -61,15 +61,15 @@ public class OverloadResolver {
                         // vararg
                         int nonVarargs = parameters.size() - 1;
                         for (int i = 0; i < nonVarargs; i++) {
-                            Type argumentType = positionedValueArgumentTypes.get(i);
-                            Type parameterType = parameters.get(i).getType();
+                            JetType argumentType = positionedValueArgumentTypes.get(i);
+                            JetType parameterType = parameters.get(i).getType();
                             if (!typeChecker.isConvertibleTo(argumentType, parameterType)) {
                                 continue descLoop;
                             }
                         }
-                        Type varArgType = parameters.get(nonVarargs).getType();
+                        JetType varArgType = parameters.get(nonVarargs).getType();
                         for (int i = nonVarargs, args = positionedValueArgumentTypes.size(); i < args; i++) {
-                            Type argumentType = positionedValueArgumentTypes.get(i);
+                            JetType argumentType = positionedValueArgumentTypes.get(i);
                             if (!typeChecker.isConvertibleTo(argumentType, varArgType)) {
                                 continue descLoop;
                             }
@@ -105,7 +105,7 @@ public class OverloadResolver {
             }
 
             @Override
-            public FunctionDescriptor getFunctionDescriptorForNamedArguments(@NotNull List<Type> typeArguments, @NotNull Map<String, Type> valueArgumentTypes, @Nullable Type functionLiteralArgumentType) {
+            public FunctionDescriptor getFunctionDescriptorForNamedArguments(@NotNull List<JetType> typeArguments, @NotNull Map<String, JetType> valueArgumentTypes, @Nullable JetType functionLiteralArgumentType) {
                 throw new UnsupportedOperationException(); // TODO
             }
         };
@@ -118,8 +118,8 @@ public class OverloadResolver {
         int fSize = fParams.size();
         if (fSize != gParams.size()) return false;
         for (int i = 0; i < fSize; i++) {
-            Type fParamType = fParams.get(i).getType();
-            Type gParamType = gParams.get(i).getType();
+            JetType fParamType = fParams.get(i).getType();
+            JetType gParamType = gParams.get(i).getType();
 
             // TODO : maybe isSubtypeOf is sufficient?
             if (!typeChecker.isConvertibleTo(fParamType, gParamType)) {

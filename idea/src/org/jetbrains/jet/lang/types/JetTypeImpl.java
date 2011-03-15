@@ -10,14 +10,14 @@ import java.util.List;
 /**
  * @author abreslav
  */
-public final class TypeImpl extends AnnotatedImpl implements Type {
+public final class JetTypeImpl extends AnnotatedImpl implements JetType {
 
     private final TypeConstructor constructor;
     private final List<TypeProjection> arguments;
     private final boolean nullable;
     private JetScope memberScope;
 
-    public TypeImpl(List<Attribute> attributes, TypeConstructor constructor, boolean nullable, List<TypeProjection> arguments, JetScope memberScope) {
+    public JetTypeImpl(List<Attribute> attributes, TypeConstructor constructor, boolean nullable, List<TypeProjection> arguments, JetScope memberScope) {
         super(attributes);
         this.constructor = constructor;
         this.nullable = nullable;
@@ -25,11 +25,11 @@ public final class TypeImpl extends AnnotatedImpl implements Type {
         this.memberScope = memberScope;
     }
 
-    public TypeImpl(TypeConstructor constructor, JetScope memberScope) {
+    public JetTypeImpl(TypeConstructor constructor, JetScope memberScope) {
         this(Collections.<Attribute>emptyList(), constructor, false, Collections.<TypeProjection>emptyList(), memberScope);
     }
 
-    public TypeImpl(@NotNull ClassDescriptor classDescriptor) {
+    public JetTypeImpl(@NotNull ClassDescriptor classDescriptor) {
         this(Collections.<Attribute>emptyList(),
                 classDescriptor.getTypeConstructor(),
                 false,
@@ -82,7 +82,7 @@ public final class TypeImpl extends AnnotatedImpl implements Type {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        TypeImpl type = (TypeImpl) o;
+        JetTypeImpl type = (JetTypeImpl) o;
 
         // TODO
         return equalTypes(this, type);
@@ -103,7 +103,7 @@ public final class TypeImpl extends AnnotatedImpl implements Type {
     }
 
 
-    public static boolean equalTypes(@NotNull Type type1, @NotNull Type type2) {
+    public static boolean equalTypes(@NotNull JetType type1, @NotNull JetType type2) {
         if (type1.isNullable() != type2.isNullable()) {
             return false;
         }

@@ -414,17 +414,17 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
     }
 
     private void assertCommonSupertype(String expected, String... types) {
-        Collection<Type> subtypes = new ArrayList<Type>();
+        Collection<JetType> subtypes = new ArrayList<JetType>();
         for (String type : types) {
             subtypes.add(makeType(type));
         }
-        Type result = semanticServices.getTypeChecker().commonSupertype(subtypes);
-        assertTrue(result + " != " + expected, TypeImpl.equalTypes(result, makeType(expected)));
+        JetType result = semanticServices.getTypeChecker().commonSupertype(subtypes);
+        assertTrue(result + " != " + expected, JetTypeImpl.equalTypes(result, makeType(expected)));
     }
 
     private void assertSubtypingRelation(String type1, String type2, boolean expected) {
-        Type typeNode1 = makeType(type1);
-        Type typeNode2 = makeType(type2);
+        JetType typeNode1 = makeType(type1);
+        JetType typeNode2 = makeType(type2);
         boolean result = semanticServices.getTypeChecker().isSubtypeOf(
                 typeNode1,
                 typeNode2);
@@ -432,40 +432,40 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertTrue(typeNode1 + " is " + modifier + "a subtype of " + typeNode2, result == expected);
     }
 
-    private void assertConvertibleTo(String expression, Type type) {
+    private void assertConvertibleTo(String expression, JetType type) {
         JetExpression jetExpression = JetChangeUtil.createExpression(getProject(), expression);
         assertTrue(
                 expression + " must be convertible to " + type,
                 semanticServices.getTypeChecker().isConvertibleTo(jetExpression, type));
     }
 
-    private void assertNotConvertibleTo(String expression, Type type) {
+    private void assertNotConvertibleTo(String expression, JetType type) {
         JetExpression jetExpression = JetChangeUtil.createExpression(getProject(), expression);
         assertFalse(
                 expression + " must not be convertible to " + type,
                 semanticServices.getTypeChecker().isConvertibleTo(jetExpression, type));
     }
 
-    private void assertType(String expression, Type expectedType) {
+    private void assertType(String expression, JetType expectedType) {
         Project project = getProject();
         JetExpression jetExpression = JetChangeUtil.createExpression(project, expression);
-        Type type = semanticServices.getTypeInferrer(BindingTrace.DUMMY).getType(classDefinitions.BASIC_SCOPE, jetExpression, false);
-        assertTrue(type + " != " + expectedType, TypeImpl.equalTypes(type, expectedType));
+        JetType type = semanticServices.getTypeInferrer(BindingTrace.DUMMY).getType(classDefinitions.BASIC_SCOPE, jetExpression, false);
+        assertTrue(type + " != " + expectedType, JetTypeImpl.equalTypes(type, expectedType));
     }
 
     private void assertErrorType(String expression) {
         Project project = getProject();
         JetExpression jetExpression = JetChangeUtil.createExpression(project, expression);
-        Type type = semanticServices.getTypeInferrer(BindingTrace.DUMMY).getType(classDefinitions.BASIC_SCOPE, jetExpression, false);
+        JetType type = semanticServices.getTypeInferrer(BindingTrace.DUMMY).getType(classDefinitions.BASIC_SCOPE, jetExpression, false);
         assertTrue("Error type expected but " + type + " returned", ErrorType.isErrorType(type));
     }
 
     private void assertType(String contextType, String expression, String expectedType) {
-        final Type thisType = makeType(contextType);
+        final JetType thisType = makeType(contextType);
         JetScope scope = new JetScopeAdapter(classDefinitions.BASIC_SCOPE) {
             @NotNull
             @Override
-            public Type getThisType() {
+            public JetType getThisType() {
                 return thisType;
             }
         };
@@ -479,16 +479,16 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
     private void assertType(JetScope scope, String expression, String expectedTypeStr) {
         Project project = getProject();
         JetExpression jetExpression = JetChangeUtil.createExpression(project, expression);
-        Type type = semanticServices.getTypeInferrer(BindingTrace.DUMMY).getType(scope, jetExpression, false);
-        Type expectedType = expectedTypeStr == null ? null : makeType(expectedTypeStr);
+        JetType type = semanticServices.getTypeInferrer(BindingTrace.DUMMY).getType(scope, jetExpression, false);
+        JetType expectedType = expectedTypeStr == null ? null : makeType(expectedTypeStr);
         assertEquals(expectedType, type);
     }
 
-    private Type makeType(String typeStr) {
+    private JetType makeType(String typeStr) {
         return makeType(classDefinitions.BASIC_SCOPE, typeStr);
     }
 
-    private Type makeType(JetScope scope, String typeStr) {
+    private JetType makeType(JetScope scope, String typeStr) {
         return new TypeResolver(BindingTrace.DUMMY, semanticServices).resolveType(scope, JetChangeUtil.createType(getProject(), typeStr));
     }
 

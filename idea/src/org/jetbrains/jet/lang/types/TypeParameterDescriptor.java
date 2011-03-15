@@ -11,10 +11,10 @@ import java.util.Set;
  */
 public class TypeParameterDescriptor extends DeclarationDescriptorImpl {
     private final Variance variance;
-    private final Set<Type> upperBounds;
+    private final Set<JetType> upperBounds;
     private final TypeConstructor typeConstructor;
 
-    public TypeParameterDescriptor(@NotNull DeclarationDescriptor containingDeclaration, List<Attribute> attributes, Variance variance, String name, Set<Type> upperBounds) {
+    public TypeParameterDescriptor(@NotNull DeclarationDescriptor containingDeclaration, List<Attribute> attributes, Variance variance, String name, Set<JetType> upperBounds) {
         super(containingDeclaration, attributes, name);
         this.variance = variance;
         this.upperBounds = upperBounds;
@@ -35,7 +35,7 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl {
         return variance;
     }
 
-    public Set<Type> getUpperBounds() {
+    public Set<JetType> getUpperBounds() {
         return upperBounds;
     }
 

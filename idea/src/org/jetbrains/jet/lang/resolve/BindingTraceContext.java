@@ -12,9 +12,9 @@ import java.util.Map;
  * @author abreslav
  */
 public class BindingTraceContext extends BindingTrace implements BindingContext {
-    private final Map<JetExpression, Type> expressionTypes = new HashMap<JetExpression, Type>();
+    private final Map<JetExpression, JetType> expressionTypes = new HashMap<JetExpression, JetType>();
     private final Map<JetReferenceExpression, DeclarationDescriptor> resolutionResults = new HashMap<JetReferenceExpression, DeclarationDescriptor>();
-    private final Map<JetTypeReference, Type> types = new HashMap<JetTypeReference, Type>();
+    private final Map<JetTypeReference, JetType> types = new HashMap<JetTypeReference, JetType>();
     private final Map<DeclarationDescriptor, PsiElement> descriptorToDeclarations = new HashMap<DeclarationDescriptor, PsiElement>();
     private final Map<PsiElement, DeclarationDescriptor> declarationsToDescriptors = new HashMap<PsiElement, DeclarationDescriptor>();
     private JetScope toplevelScope;
@@ -22,7 +22,7 @@ public class BindingTraceContext extends BindingTrace implements BindingContext 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
-    public void recordExpressionType(@NotNull JetExpression expression, @NotNull Type type) {
+    public void recordExpressionType(@NotNull JetExpression expression, @NotNull JetType type) {
         expressionTypes.put(expression, type);
     }
 
@@ -32,7 +32,7 @@ public class BindingTraceContext extends BindingTrace implements BindingContext 
     }
 
     @Override
-    public void recordTypeResolution(@NotNull JetTypeReference typeReference, @NotNull Type type) {
+    public void recordTypeResolution(@NotNull JetTypeReference typeReference, @NotNull JetType type) {
         types.put(typeReference, type);
     }
 
@@ -79,12 +79,12 @@ public class BindingTraceContext extends BindingTrace implements BindingContext 
     }
 
     @Override
-    public Type resolveTypeReference(JetTypeReference typeReference) {
+    public JetType resolveTypeReference(JetTypeReference typeReference) {
         return types.get(typeReference);
     }
 
     @Override
-    public Type getExpressionType(JetExpression expression) {
+    public JetType getExpressionType(JetExpression expression) {
         return expressionTypes.get(expression);
     }
 

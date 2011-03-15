@@ -11,7 +11,7 @@ import org.jetbrains.jet.lang.resolve.JetScope;
 public class BindingTrace {
     public static final BindingTrace DUMMY = new BindingTrace();
 
-    public void recordExpressionType(@NotNull JetExpression expression, @NotNull Type type) {
+    public void recordExpressionType(@NotNull JetExpression expression, @NotNull JetType type) {
     }
 
     public void recordReferenceResolution(@NotNull JetReferenceExpression expression, @NotNull DeclarationDescriptor descriptor) {
@@ -22,7 +22,7 @@ public class BindingTrace {
 
     }
 
-    public void recordTypeResolution(@NotNull JetTypeReference typeReference, @NotNull Type type) {
+    public void recordTypeResolution(@NotNull JetTypeReference typeReference, @NotNull JetType type) {
 
     }
 

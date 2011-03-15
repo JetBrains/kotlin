@@ -2,10 +2,7 @@ package org.jetbrains.jet.codegen;
 
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.types.FunctionDescriptor;
-import org.jetbrains.jet.lang.types.JetStandardClasses;
-import org.jetbrains.jet.lang.types.JetStandardLibrary;
-import org.jetbrains.jet.lang.types.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.types.*;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -38,7 +35,7 @@ public class FunctionCodegen {
         Type returnType;
         if (returnTypeRef == null) {
             final FunctionDescriptor functionDescriptor = bindingContext.getFunctionDescriptor(f);
-            final org.jetbrains.jet.lang.types.Type type = functionDescriptor.getUnsubstitutedReturnType();
+            final JetType type = functionDescriptor.getUnsubstitutedReturnType();
             if (type.equals(JetStandardClasses.getUnitType())) {
                 returnType = Type.VOID_TYPE;
             }
@@ -73,7 +70,7 @@ public class FunctionCodegen {
 
     private void generateReturn(MethodVisitor mv, JetExpression bodyExpression) {
         if (!endsWithReturn(bodyExpression)) {
-            final org.jetbrains.jet.lang.types.Type expressionType = bindingContext.getExpressionType(bodyExpression);
+            final JetType expressionType = bindingContext.getExpressionType(bodyExpression);
             if (expressionType.equals(JetStandardClasses.getUnitType())) {
                 mv.visitInsn(Opcodes.RETURN);
             }

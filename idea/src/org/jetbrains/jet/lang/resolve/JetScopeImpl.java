@@ -34,7 +34,7 @@ public abstract class JetScopeImpl implements JetScope {
 
     @NotNull
     @Override
-    public Type getThisType() {
+    public JetType getThisType() {
         return JetStandardClasses.getNothingType();
     }
 

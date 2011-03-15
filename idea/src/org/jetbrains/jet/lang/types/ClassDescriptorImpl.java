@@ -32,7 +32,7 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
 //
     public final ClassDescriptorImpl initialize(boolean sealed,
                                                 List<TypeParameterDescriptor> typeParameters,
-                                                Collection<? extends Type> superclasses, JetScope memberDeclarations) {
+                                                Collection<? extends JetType> superclasses, JetScope memberDeclarations) {
         this.typeConstructor = new TypeConstructor(getAttributes(), sealed, getName(), typeParameters, superclasses);
         this.memberDeclarations = memberDeclarations;
         return this;

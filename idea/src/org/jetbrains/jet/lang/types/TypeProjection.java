@@ -7,14 +7,14 @@ import org.jetbrains.annotations.NotNull;
  */
 public class TypeProjection {
     private final Variance projection;
-    private final Type type;
+    private final JetType type;
 
-    public TypeProjection(@NotNull Variance projection, @NotNull Type type) {
+    public TypeProjection(@NotNull Variance projection, @NotNull JetType type) {
         this.projection = projection;
         this.type = type;
     }
 
-    public TypeProjection(Type type) {
+    public TypeProjection(JetType type) {
         this(Variance.INVARIANT, type);
     }
 
@@ -22,7 +22,7 @@ public class TypeProjection {
         return projection;
     }
 
-    public Type getType() {
+    public JetType getType() {
         return type;
     }
 

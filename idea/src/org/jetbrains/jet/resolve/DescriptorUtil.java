@@ -15,7 +15,7 @@ public class DescriptorUtil {
                 new DeclarationDescriptorVisitor<Void, StringBuilder>() {
                     @Override
                     public Void visitPropertyDescriptor(PropertyDescriptor descriptor, StringBuilder builder) {
-                        Type type = descriptor.getType();
+                        JetType type = descriptor.getType();
                         builder.append(renderName(descriptor)).append(" : ").append(type);
                         return super.visitPropertyDescriptor(descriptor, builder); 
                     }
@@ -94,7 +94,7 @@ public class DescriptorUtil {
     private static void renderTypeParameter(TypeParameterDescriptor descriptor, StringBuilder builder) {
         builder.append(renderName(descriptor));
         if (!descriptor.getUpperBounds().isEmpty()) {
-            Type bound = descriptor.getUpperBounds().iterator().next();
+            JetType bound = descriptor.getUpperBounds().iterator().next();
             if (bound != JetStandardClasses.getAnyType()) {
                 builder.append(" : ").append(bound);
                 if (descriptor.getUpperBounds().size() > 1) {

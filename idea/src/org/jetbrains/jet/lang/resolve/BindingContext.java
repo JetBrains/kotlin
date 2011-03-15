@@ -16,13 +16,13 @@ public interface BindingContext {
 
     DeclarationDescriptor getDeclarationDescriptor(JetDeclaration declaration);
 
-    Type getExpressionType(JetExpression expression);
+    JetType getExpressionType(JetExpression expression);
 
     JetScope getTopLevelScope();
 
     DeclarationDescriptor resolveReferenceExpression(JetReferenceExpression referenceExpression);
 
-    Type resolveTypeReference(JetTypeReference typeReference);
+    JetType resolveTypeReference(JetTypeReference typeReference);
     PsiElement resolveToDeclarationPsiElement(JetReferenceExpression referenceExpression);
     PsiElement getDeclarationPsiElement(DeclarationDescriptor descriptor);
 }

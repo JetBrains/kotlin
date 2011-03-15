@@ -3,7 +3,7 @@ package org.jetbrains.jet.lang.resolve;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.types.FunctionDescriptor;
-import org.jetbrains.jet.lang.types.Type;
+import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.List;
 import java.util.Map;
@@ -15,13 +15,13 @@ public interface OverloadDomain {
     OverloadDomain EMPTY = new OverloadDomain() {
         @Nullable
         @Override
-        public FunctionDescriptor getFunctionDescriptorForNamedArguments(@NotNull List<Type> typeArguments, @NotNull Map<String, Type> valueArgumentTypes, @Nullable Type functionLiteralArgumentType) {
+        public FunctionDescriptor getFunctionDescriptorForNamedArguments(@NotNull List<JetType> typeArguments, @NotNull Map<String, JetType> valueArgumentTypes, @Nullable JetType functionLiteralArgumentType) {
             return null;
         }
 
         @Nullable
         @Override
-        public FunctionDescriptor getFunctionDescriptorForPositionedArguments(@NotNull List<Type> typeArguments, @NotNull List<Type> positionedValueArgumentTypes) {
+        public FunctionDescriptor getFunctionDescriptorForPositionedArguments(@NotNull List<JetType> typeArguments, @NotNull List<JetType> positionedValueArgumentTypes) {
             return null;
         }
     };
@@ -34,9 +34,9 @@ public interface OverloadDomain {
      */
     @Nullable
     FunctionDescriptor getFunctionDescriptorForNamedArguments(
-            @NotNull List<Type> typeArguments,
-            @NotNull Map<String, Type> valueArgumentTypes,
-            @Nullable Type functionLiteralArgumentType);
+            @NotNull List<JetType> typeArguments,
+            @NotNull Map<String, JetType> valueArgumentTypes,
+            @Nullable JetType functionLiteralArgumentType);
 
     /**
      * @param typeArguments
@@ -45,6 +45,6 @@ public interface OverloadDomain {
      */
     @Nullable
     FunctionDescriptor getFunctionDescriptorForPositionedArguments(
-            @NotNull List<Type> typeArguments,
-            @NotNull List<Type> positionedValueArgumentTypes);
+            @NotNull List<JetType> typeArguments,
+            @NotNull List<JetType> positionedValueArgumentTypes);
 }

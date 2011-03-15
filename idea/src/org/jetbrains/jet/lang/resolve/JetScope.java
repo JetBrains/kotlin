@@ -32,7 +32,7 @@ public interface JetScope {
     TypeParameterDescriptor getTypeParameter(@NotNull String name);
 
     @NotNull
-    Type getThisType();
+    JetType getThisType();
 
     @NotNull
     FunctionGroup getFunctionGroup(@NotNull String name);

@@ -11,22 +11,22 @@ import java.util.Set;
  * @author abreslav
  */
 public class TypeUtils {
-    public static Type makeNullable(Type type) {
+    public static JetType makeNullable(JetType type) {
         if (type.isNullable()) {
             return type;
         }
-        return new TypeImpl(type.getAttributes(), type.getConstructor(), true, type.getArguments(), type.getMemberScope());
+        return new JetTypeImpl(type.getAttributes(), type.getConstructor(), true, type.getArguments(), type.getMemberScope());
     }
 
-    public static Type makeNotNullable(Type type) {
+    public static JetType makeNotNullable(JetType type) {
         if (!type.isNullable()) {
             return type;
         }
-        return new TypeImpl(type.getAttributes(), type.getConstructor(), false, type.getArguments(), type.getMemberScope());
+        return new JetTypeImpl(type.getAttributes(), type.getConstructor(), false, type.getArguments(), type.getMemberScope());
     }
 
     @Nullable
-    public static Type intersect(JetTypeChecker typeChecker, Set<Type> types) {
+    public static JetType intersect(JetTypeChecker typeChecker, Set<JetType> types) {
         assert !types.isEmpty();
 
         if (types.size() == 1) {
@@ -35,11 +35,11 @@ public class TypeUtils {
 
         StringBuilder debugName = new StringBuilder();
         boolean nullable = false;
-        for (Iterator<Type> iterator = types.iterator(); iterator.hasNext();) {
-            Type type = iterator.next();
+        for (Iterator<JetType> iterator = types.iterator(); iterator.hasNext();) {
+            JetType type = iterator.next();
 
             if (!canHaveSubtypes(typeChecker, type)) {
-                for (Type other : types) {
+                for (JetType other : types) {
                     if (type != other || !typeChecker.isSubtypeOf(type, other)) {
                         return null;
                     }
@@ -57,7 +57,7 @@ public class TypeUtils {
 
         List<Attribute> noAttributes = Collections.<Attribute>emptyList();
         TypeConstructor constructor = new TypeConstructor(noAttributes, false, debugName.toString(), Collections.<TypeParameterDescriptor>emptyList(), types);
-        return new TypeImpl(
+        return new JetTypeImpl(
                 noAttributes,
                 constructor,
                 nullable,
@@ -65,7 +65,7 @@ public class TypeUtils {
                 JetStandardClasses.STUB);
     }
 
-    private static boolean canHaveSubtypes(JetTypeChecker typeChecker, Type type) {
+    private static boolean canHaveSubtypes(JetTypeChecker typeChecker, JetType type) {
         if (type.isNullable()) {
             return true;
         }
@@ -79,7 +79,7 @@ public class TypeUtils {
             TypeParameterDescriptor parameterDescriptor = parameters.get(i);
             TypeProjection typeProjection = arguments.get(i);
             Variance projectionKind = typeProjection.getProjectionKind();
-            Type argument = typeProjection.getType();
+            JetType argument = typeProjection.getType();
 
             switch (parameterDescriptor.getVariance()) {
                 case INVARIANT:
@@ -128,8 +128,8 @@ public class TypeUtils {
         return false;
     }
 
-    private static boolean lowerThanBound(JetTypeChecker typeChecker, Type argument, TypeParameterDescriptor parameterDescriptor) {
-        for (Type bound : parameterDescriptor.getUpperBounds()) {
+    private static boolean lowerThanBound(JetTypeChecker typeChecker, JetType argument, TypeParameterDescriptor parameterDescriptor) {
+        for (JetType bound : parameterDescriptor.getUpperBounds()) {
             if (typeChecker.isSubtypeOf(argument, bound)) {
                 if (!argument.getConstructor().equals(bound.getConstructor())) {
                     return true;
@@ -139,7 +139,7 @@ public class TypeUtils {
         return false;
     }
 
-    public static Type makeNullableIfNeeded(Type type, boolean nullable) {
+    public static JetType makeNullableIfNeeded(JetType type, boolean nullable) {
         if (nullable) {
             return makeNullable(type);
         }

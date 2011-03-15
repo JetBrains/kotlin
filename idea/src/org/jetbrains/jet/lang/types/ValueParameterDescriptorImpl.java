@@ -12,7 +12,7 @@ public class ValueParameterDescriptorImpl extends PropertyDescriptorImpl impleme
     private final boolean isVararg;
     private final int index;
 
-    public ValueParameterDescriptorImpl(@NotNull DeclarationDescriptor containingDeclaration, int index, List<Attribute> attributes, String name, Type type, boolean hasDefaultValue, boolean isVararg) {
+    public ValueParameterDescriptorImpl(@NotNull DeclarationDescriptor containingDeclaration, int index, List<Attribute> attributes, String name, JetType type, boolean hasDefaultValue, boolean isVararg) {
         super(containingDeclaration, attributes, name, type);
         this.index = index;
         this.hasDefaultValue = hasDefaultValue;

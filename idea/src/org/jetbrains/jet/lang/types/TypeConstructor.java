@@ -9,11 +9,11 @@ import java.util.List;
  */
 public class TypeConstructor extends AnnotatedImpl {
     private final List<TypeParameterDescriptor> parameters;
-    private final Collection<? extends Type> supertypes;
+    private final Collection<? extends JetType> supertypes;
     private final String debugName;
     private final boolean sealed;
 
-    public TypeConstructor(List<Attribute> attributes, boolean sealed, String debugName, List<TypeParameterDescriptor> parameters, Collection<? extends Type> supertypes) {
+    public TypeConstructor(List<Attribute> attributes, boolean sealed, String debugName, List<TypeParameterDescriptor> parameters, Collection<? extends JetType> supertypes) {
         super(attributes);
         this.sealed = sealed;
         this.debugName = debugName;
@@ -25,7 +25,7 @@ public class TypeConstructor extends AnnotatedImpl {
         return parameters;
     }
 
-    public Collection<? extends Type> getSupertypes() {
+    public Collection<? extends JetType> getSupertypes() {
         return supertypes;
     }
 

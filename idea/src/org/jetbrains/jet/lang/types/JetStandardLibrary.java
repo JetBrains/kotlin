@@ -50,15 +50,15 @@ public class JetStandardLibrary {
     private final ClassDescriptor stringClass;
     private final ClassDescriptor arrayClass;
 
-    private final Type byteType;
-    private final Type charType;
-    private final Type shortType;
-    private final Type intType;
-    private final Type longType;
-    private final Type floatType;
-    private final Type doubleType;
-    private final Type booleanType;
-    private final Type stringType;
+    private final JetType byteType;
+    private final JetType charType;
+    private final JetType shortType;
+    private final JetType intType;
+    private final JetType longType;
+    private final JetType floatType;
+    private final JetType doubleType;
+    private final JetType booleanType;
+    private final JetType stringType;
 
     private JetStandardLibrary(@NotNull Project project) {
         // TODO : review
@@ -87,15 +87,15 @@ public class JetStandardLibrary {
             this.stringClass = libraryScope.getClass("String");
             this.arrayClass = libraryScope.getClass("Array");
 
-            this.byteType = new TypeImpl(getByte());
-            this.charType = new TypeImpl(getChar());
-            this.shortType = new TypeImpl(getShort());
-            this.intType = new TypeImpl(getInt());
-            this.longType = new TypeImpl(getLong());
-            this.floatType = new TypeImpl(getFloat());
-            this.doubleType = new TypeImpl(getDouble());
-            this.booleanType = new TypeImpl(getBoolean());
-            this.stringType = new TypeImpl(getString());
+            this.byteType = new JetTypeImpl(getByte());
+            this.charType = new JetTypeImpl(getChar());
+            this.shortType = new JetTypeImpl(getShort());
+            this.intType = new JetTypeImpl(getInt());
+            this.longType = new JetTypeImpl(getLong());
+            this.floatType = new JetTypeImpl(getFloat());
+            this.doubleType = new JetTypeImpl(getDouble());
+            this.booleanType = new JetTypeImpl(getBoolean());
+            this.stringType = new JetTypeImpl(getString());
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
@@ -156,60 +156,60 @@ public class JetStandardLibrary {
     }
 
     @NotNull
-    public Type getIntType() {
+    public JetType getIntType() {
         return intType;
     }
 
     @NotNull
-    public Type getLongType() {
+    public JetType getLongType() {
         return longType;
     }
 
     @NotNull
-    public Type getDoubleType() {
+    public JetType getDoubleType() {
         return doubleType;
     }
 
     @NotNull
-    public Type getFloatType() {
+    public JetType getFloatType() {
         return floatType;
     }
 
     @NotNull
-    public Type getCharType() {
+    public JetType getCharType() {
         return charType;
     }
 
     @NotNull
-    public Type getBooleanType() {
+    public JetType getBooleanType() {
         return booleanType;
     }
 
     @NotNull
-    public Type getStringType() {
+    public JetType getStringType() {
         return stringType;
     }
 
     @NotNull
-    public Type getByteType() {
+    public JetType getByteType() {
         return byteType;
     }
 
     @NotNull
-    public Type getShortType() {
+    public JetType getShortType() {
         return shortType;
     }
 
     @NotNull
-    public Type getArrayType(@NotNull Type argument) {
+    public JetType getArrayType(@NotNull JetType argument) {
         Variance variance = Variance.INVARIANT;
         return getArrayType(variance, argument);
     }
 
     @NotNull
-    public Type getArrayType(@NotNull Variance variance, @NotNull Type argument) {
+    public JetType getArrayType(@NotNull Variance variance, @NotNull JetType argument) {
         List<TypeProjection> types = Collections.singletonList(new TypeProjection(variance, argument));
-        return new TypeImpl(
+        return new JetTypeImpl(
                 Collections.<Attribute>emptyList(),
                 getArray().getTypeConstructor(),
                 false,

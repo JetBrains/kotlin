@@ -27,7 +27,7 @@ public class LazySubstitutingFunctionGroup implements FunctionGroup {
 
     @NotNull
     @Override
-    public Collection<FunctionDescriptor> getPossiblyApplicableFunctions(@NotNull List<Type> typeArguments, @NotNull List<Type> positionedValueArgumentTypes) {
+    public Collection<FunctionDescriptor> getPossiblyApplicableFunctions(@NotNull List<JetType> typeArguments, @NotNull List<JetType> positionedValueArgumentTypes) {
         Collection<FunctionDescriptor> possiblyApplicableFunctions = functionGroup.getPossiblyApplicableFunctions(typeArguments, positionedValueArgumentTypes);
         Collection<FunctionDescriptor> result = new ArrayList<FunctionDescriptor>();
         for (FunctionDescriptor function : possiblyApplicableFunctions) {

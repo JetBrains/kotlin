@@ -38,7 +38,7 @@ public class ErrorType {
 
         @NotNull
         @Override
-        public Type getThisType() {
+        public JetType getThisType() {
             throw new UnsupportedOperationException(); // TODO
         }
 
@@ -58,23 +58,23 @@ public class ErrorType {
 
     private ErrorType() {}
 
-    public static Type createErrorType(String debugMessage) {
+    public static JetType createErrorType(String debugMessage) {
         return createErrorType(debugMessage, ERROR_SCOPE);
     }
 
-    private static Type createErrorType(String debugMessage, JetScope memberScope) {
-        return new ErrorTypeImpl(new TypeConstructor(Collections.<Attribute>emptyList(), false, "[ERROR : " + debugMessage + "]", Collections.<TypeParameterDescriptor>emptyList(), Collections.<Type>emptyList()), memberScope);
+    private static JetType createErrorType(String debugMessage, JetScope memberScope) {
+        return new ErrorTypeImpl(new TypeConstructor(Collections.<Attribute>emptyList(), false, "[ERROR : " + debugMessage + "]", Collections.<TypeParameterDescriptor>emptyList(), Collections.<JetType>emptyList()), memberScope);
     }
 
-    public static Type createWrongVarianceErrorType(TypeProjection value) {
+    public static JetType createWrongVarianceErrorType(TypeProjection value) {
         return createErrorType(value + " is not allowed here]", value.getType().getMemberScope());
     }
 
-    public static boolean isErrorType(Type type) {
+    public static boolean isErrorType(JetType type) {
         return type instanceof ErrorTypeImpl;
     }
 
-    private static class ErrorTypeImpl implements Type {
+    private static class ErrorTypeImpl implements JetType {
 
         private final TypeConstructor constructor;
         private final JetScope memberScope;

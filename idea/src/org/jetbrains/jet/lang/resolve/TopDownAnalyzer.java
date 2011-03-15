@@ -78,7 +78,7 @@ public class TopDownAnalyzer {
                         }
                         if (importDirective.isAllUnder()) {
                             JetExpression importedReference = importDirective.getImportedReference();
-                            Type type = semanticServices.getTypeInferrer(trace).getType(namespaceScope, importedReference, false);
+                            JetType type = semanticServices.getTypeInferrer(trace).getType(namespaceScope, importedReference, false);
                             if (type != null) {
                                 namespaceScope.importScope(type.getMemberScope());
                             }

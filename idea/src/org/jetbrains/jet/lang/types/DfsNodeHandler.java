@@ -5,11 +5,11 @@ package org.jetbrains.jet.lang.types;
  */
 public class DfsNodeHandler<R> {
 
-    public void beforeChildren(Type current) {
+    public void beforeChildren(JetType current) {
 
     }
 
-    public void afterChildren(Type current) {
+    public void afterChildren(JetType current) {
 
     }
 
