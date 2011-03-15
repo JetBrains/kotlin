@@ -25,238 +25,426 @@ class Range<in T : Comparable<T>> {
 }
 
 class Double : Comparable<Double>  {
+  fun compareTo(other : Float)  : Int
+  fun compareTo(other : Long)   : Int
+  fun compareTo(other : Int)    : Int
+  fun compareTo(other : Short)  : Int
+  fun compareTo(other : Byte)   : Int
+  fun compareTo(other : Char)   : Int
+
   fun plus(other : Double) : Double
+  fun plus(other : Float)  : Double
+  fun plus(other : Long)   : Double
+  fun plus(other : Int)    : Double
+  fun plus(other : Short)  : Double
+  fun plus(other : Byte)   : Double
+  fun plus(other : Char)   : Double
 
   fun minus(other : Double) : Double
+  fun minus(other : Float)  : Double
+  fun minus(other : Long)   : Double
+  fun minus(other : Int)    : Double
+  fun minus(other : Short)  : Double
+  fun minus(other : Byte)   : Double
+  fun minus(other : Char)   : Double
 
   fun times(other : Double) : Double
+  fun times(other : Float)  : Double
+  fun times(other : Long)   : Double
+  fun times(other : Int)    : Double
+  fun times(other : Short)  : Double
+  fun times(other : Byte)   : Double
+  fun times(other : Char)   : Double
 
   fun div(other : Double) : Double
+  fun div(other : Float)  : Double
+  fun div(other : Long)   : Double
+  fun div(other : Int)    : Double
+  fun div(other : Short)  : Double
+  fun div(other : Byte)   : Double
+  fun div(other : Char)   : Double
 
   fun mod(other : Double) : Double
+  fun mod(other : Float)  : Double
+  fun mod(other : Long)   : Double
+  fun mod(other : Int)    : Double
+  fun mod(other : Short)  : Double
+  fun mod(other : Byte)   : Double
 
   fun rangeTo(other : Double) : Range<Double>
+  fun rangeTo(other : Float)  : Range<Double>
+  fun rangeTo(other : Long)   : Range<Double>
+  fun rangeTo(other : Int)    : Range<Double>
+  fun rangeTo(other : Short)  : Range<Double>
+  fun rangeTo(other : Byte)   : Range<Double>
+  fun rangeTo(other : Char)   : Range<Double>
+
+  fun inc() : Double
+  fun dec() : Double
 }
 
 class Float : Comparable<Float>  {
   fun compareTo(other : Double) : Int
+  fun compareTo(other : Float)  : Int
+  fun compareTo(other : Long)   : Int
+  fun compareTo(other : Int)    : Int
+  fun compareTo(other : Short)  : Int
+  fun compareTo(other : Byte)   : Int
+  fun compareTo(other : Char)   : Int
 
   fun plus(other : Double) : Double
-  fun plus(other : Float) : Float
+  fun plus(other : Float)  : Float
+  fun plus(other : Long)   : Float
+  fun plus(other : Int)    : Float
+  fun plus(other : Short)  : Float
+  fun plus(other : Byte)   : Float
+  fun plus(other : Char)   : Float
 
   fun minus(other : Double) : Double
-  fun minus(other : Float) : Float
+  fun minus(other : Float)  : Float
+  fun minus(other : Long)   : Float
+  fun minus(other : Int)    : Float
+  fun minus(other : Short)  : Float
+  fun minus(other : Byte)   : Float
+  fun minus(other : Char)   : Float
 
   fun times(other : Double) : Double
-  fun times(other : Float) : Float
+  fun times(other : Float)  : Float
+  fun times(other : Long)   : Float
+  fun times(other : Int)    : Float
+  fun times(other : Short)  : Float
+  fun times(other : Byte)   : Float
+  fun times(other : Char)   : Float
 
   fun div(other : Double) : Double
-  fun div(other : Float) : Float
+  fun div(other : Float)  : Float
+  fun div(other : Long)   : Float
+  fun div(other : Int)    : Float
+  fun div(other : Short)  : Float
+  fun div(other : Byte)   : Float
+  fun div(other : Char)   : Float
 
   fun mod(other : Double) : Double
-  fun mod(other : Float) : Float
+  fun mod(other : Float)  : Float
+  fun mod(other : Long)   : Float
+  fun mod(other : Int)    : Float
+  fun mod(other : Short)  : Float
+  fun mod(other : Byte)   : Float
+  fun mod(other : Char)   : Float
 
   fun rangeTo(other : Double) : Range<Double>
-  fun rangeTo(other : Float) : Range<Float>
+  fun rangeTo(other : Float)  : Range<Float>
+  fun rangeTo(other : Long)   : Range<Float>
+  fun rangeTo(other : Int)    : Range<Float>
+  fun rangeTo(other : Short)  : Range<Float>
+  fun rangeTo(other : Byte)   : Range<Float>
+  fun rangeTo(other : Char)   : Range<Float>
+
+  fun inc() : Float
+  fun dec() : Float
 }
 
 class Long : Comparable<Long> {
   fun compareTo(other : Double) : Int
-  fun compareTo(other : Float) : Int
+  fun compareTo(other : Float)  : Int
+  fun compareTo(other : Long)   : Int
+  fun compareTo(other : Int)    : Int
+  fun compareTo(other : Short)  : Int
+  fun compareTo(other : Byte)   : Int
+  fun compareTo(other : Char)   : Int
 
   fun plus(other : Double) : Double
-  fun plus(other : Float) : Float
-  fun plus(other : Long) : Long
+  fun plus(other : Float)  : Float
+  fun plus(other : Long)   : Long
+  fun plus(other : Int)    : Long
+  fun plus(other : Short)  : Long
+  fun plus(other : Byte)   : Long
+  fun plus(other : Char)   : Long
 
   fun minus(other : Double) : Double
-  fun minus(other : Float) : Float
-  fun minus(other : Long) : Long
+  fun minus(other : Float)  : Float
+  fun minus(other : Long)   : Long
+  fun minus(other : Int)    : Long
+  fun minus(other : Short)  : Long
+  fun minus(other : Byte)   : Long
+  fun minus(other : Char)   : Long
 
   fun times(other : Double) : Double
-  fun times(other : Float) : Float
-  fun times(other : Long) : Long
+  fun times(other : Float)  : Float
+  fun times(other : Long)   : Long
+  fun times(other : Int)    : Long
+  fun times(other : Short)  : Long
+  fun times(other : Byte)   : Long
+  fun times(other : Char)   : Long
 
   fun div(other : Double) : Double
-  fun div(other : Float) : Float
-  fun div(other : Long) : Long
+  fun div(other : Float)  : Float
+  fun div(other : Long)   : Long
+  fun div(other : Int)    : Long
+  fun div(other : Short)  : Long
+  fun div(other : Byte)   : Long
+  fun div(other : Char)   : Long
 
   fun mod(other : Double) : Double
-  fun mod(other : Float) : Float
-  fun mod(other : Long) : Long
+  fun mod(other : Float)  : Float
+  fun mod(other : Long)   : Long
+  fun mod(other : Int)    : Long
+  fun mod(other : Short)  : Long
+  fun mod(other : Byte)   : Long
+  fun mod(other : Char)   : Long
 
   fun rangeTo(other : Double) : Range<Double>
-  fun rangeTo(other : Float) : Range<Float>
-  fun rangeTo(other : Long) : Range<Long>
+  fun rangeTo(other : Float)  : Range<Float>
+  fun rangeTo(other : Long)   : Range<Long>
+  fun rangeTo(other : Int)    : Range<Long>
+  fun rangeTo(other : Short)  : Range<Long>
+  fun rangeTo(other : Byte)   : Range<Long>
+  fun rangeTo(other : Char)   : Range<Long>
+
+  fun inc() : Long
+  fun dec() : Long
 }
 
 class Int : Comparable<Int> {
   fun compareTo(other : Double) : Int
-  fun compareTo(other : Float) : Int
-  fun compareTo(other : Long) : Int
+  fun compareTo(other : Float)  : Int
+  fun compareTo(other : Int)    : Int
+  fun compareTo(other : Int)    : Int
+  fun compareTo(other : Short)  : Int
+  fun compareTo(other : Byte)   : Int
+  fun compareTo(other : Char)   : Int
 
   fun plus(other : Double) : Double
-  fun plus(other : Float) : Float
-  fun plus(other : Long) : Long
-  fun plus(other : Int) : Int
+  fun plus(other : Float)  : Float
+  fun plus(other : Long)   : Long
+  fun plus(other : Int)    : Int
+  fun plus(other : Short)  : Int
+  fun plus(other : Byte)   : Int
+  fun plus(other : Char)   : Int
 
   fun minus(other : Double) : Double
-  fun minus(other : Float) : Float
-  fun minus(other : Long) : Long
-  fun minus(other : Int) : Int
+  fun minus(other : Float)  : Float
+  fun minus(other : Long)   : Long
+  fun minus(other : Int)    : Int
+  fun minus(other : Short)  : Int
+  fun minus(other : Byte)   : Int
+  fun minus(other : Char)   : Int
 
   fun times(other : Double) : Double
-  fun times(other : Float) : Float
-  fun times(other : Long) : Long
-  fun times(other : Int) : Int
+  fun times(other : Float)  : Float
+  fun times(other : Long)   : Long
+  fun times(other : Int)    : Int
+  fun times(other : Short)  : Int
+  fun times(other : Byte)   : Int
+  fun times(other : Char)   : Int
 
   fun div(other : Double) : Double
-  fun div(other : Float) : Float
-  fun div(other : Long) : Long
-  fun div(other : Int) : Int
+  fun div(other : Float)  : Float
+  fun div(other : Long)   : Long
+  fun div(other : Int)    : Int
+  fun div(other : Short)  : Int
+  fun div(other : Byte)   : Int
+  fun div(other : Char)   : Int
 
   fun mod(other : Double) : Double
-  fun mod(other : Float) : Float
-  fun mod(other : Long) : Long
-  fun mod(other : Int) : Int
+  fun mod(other : Float)  : Float
+  fun mod(other : Long)   : Long
+  fun mod(other : Int)    : Int
+  fun mod(other : Short)  : Int
+  fun mod(other : Byte)   : Int
+  fun mod(other : Char)   : Int
 
   fun rangeTo(other : Double) : Range<Double>
-  fun rangeTo(other : Float) : Range<Float>
-  fun rangeTo(other : Long) : Range<Long>
-  fun rangeTo(other : Int) : Range<Int>
+  fun rangeTo(other : Float)  : Range<Float>
+  fun rangeTo(other : Long)   : Range<Long>
+  fun rangeTo(other : Int)    : Range<Int>
+  fun rangeTo(other : Short)  : Range<Int>
+  fun rangeTo(other : Byte)   : Range<Int>
+  fun rangeTo(other : Char)   : Range<Int>
+
+  fun inc() : Int
+  fun dec() : Int
 }
 
 class Char : Comparable<Char> {
   fun compareTo(other : Double) : Int
-  fun compareTo(other : Float) : Int
-  fun compareTo(other : Long) : Int
-  fun compareTo(other : Int) : Int
+  fun compareTo(other : Float)  : Int
+  fun compareTo(other : Int)    : Int
+  fun compareTo(other : Int)    : Int
+  fun compareTo(other : Short)  : Int
+  fun compareTo(other : Byte)   : Int
+  fun compareTo(other : Char)   : Int
 
   fun plus(other : Double) : Double
-  fun plus(other : Float) : Float
-  fun plus(other : Long) : Long
-  fun plus(other : Int) : Int
-  fun plus(other : Char) : Char
+  fun plus(other : Float)  : Float
+  fun plus(other : Long)   : Long
+  fun plus(other : Int)    : Int
+  fun plus(other : Short)  : Int
+  fun plus(other : Byte)   : Int
+  fun plus(other : Char)   : Int
 
   fun minus(other : Double) : Double
-  fun minus(other : Float) : Float
-  fun minus(other : Long) : Long
-  fun minus(other : Int) : Int
-  fun minus(other : Char) : Char
+  fun minus(other : Float)  : Float
+  fun minus(other : Long)   : Long
+  fun minus(other : Int)    : Int
+  fun minus(other : Short)  : Int
+  fun minus(other : Byte)   : Int
+  fun minus(other : Char)   : Int
 
   fun times(other : Double) : Double
-  fun times(other : Float) : Float
-  fun times(other : Long) : Long
-  fun times(other : Int) : Int
-  fun times(other : Char) : Char
+  fun times(other : Float)  : Float
+  fun times(other : Long)   : Long
+  fun times(other : Int)    : Int
+  fun times(other : Short)  : Int
+  fun times(other : Byte)   : Int
+  fun times(other : Char)   : Int
 
   fun div(other : Double) : Double
-  fun div(other : Float) : Float
-  fun div(other : Long) : Long
-  fun div(other : Int) : Int
-  fun div(other : Char) : Char
+  fun div(other : Float)  : Float
+  fun div(other : Long)   : Long
+  fun div(other : Int)    : Int
+  fun div(other : Short)  : Int
+  fun div(other : Byte)   : Int
+  fun div(other : Char)   : Int
 
   fun mod(other : Double) : Double
-  fun mod(other : Float) : Float
-  fun mod(other : Long) : Long
-  fun mod(other : Int) : Int
-  fun mod(other : Char) : Char
+  fun mod(other : Float)  : Float
+  fun mod(other : Long)   : Long
+  fun mod(other : Int)    : Int
+  fun mod(other : Short)  : Int
+  fun mod(other : Byte)   : Int
+  fun mod(other : Char)   : Int
 
   fun rangeTo(other : Double) : Range<Double>
-  fun rangeTo(other : Float) : Range<Float>
-  fun rangeTo(other : Long) : Range<Long>
-  fun rangeTo(other : Int) : Range<Int>
-  fun rangeTo(other : Char) : Range<Char>
+  fun rangeTo(other : Float)  : Range<Float>
+  fun rangeTo(other : Long)   : Range<Long>
+  fun rangeTo(other : Int)    : Range<Int>
+  fun rangeTo(other : Short)  : Range<Int>
+  fun rangeTo(other : Byte)   : Range<Int>
+  fun rangeTo(other : Char)   : Range<Int>
+
+  fun inc() : Char
+  fun dec() : Char
 }
 
 class Short : Comparable<Char> {
   fun compareTo(other : Double) : Int
-  fun compareTo(other : Float) : Int
-  fun compareTo(other : Long) : Int
-  fun compareTo(other : Int) : Int
+  fun compareTo(other : Float)  : Int
+  fun compareTo(other : Int)    : Int
+  fun compareTo(other : Int)    : Int
+  fun compareTo(other : Short)  : Int
+  fun compareTo(other : Byte)   : Int
+  fun compareTo(other : Char)   : Int
 
   fun plus(other : Double) : Double
-  fun plus(other : Float) : Float
-  fun plus(other : Long) : Long
-  fun plus(other : Int) : Int
-  fun plus(other : Short) : Short
+  fun plus(other : Float)  : Float
+  fun plus(other : Long)   : Long
+  fun plus(other : Int)    : Int
+  fun plus(other : Short)  : Int
+  fun plus(other : Byte)   : Int
+  fun plus(other : Char)   : Int
 
   fun minus(other : Double) : Double
-  fun minus(other : Float) : Float
-  fun minus(other : Long) : Long
-  fun minus(other : Int) : Int
-  fun minus(other : Short) : Short
+  fun minus(other : Float)  : Float
+  fun minus(other : Long)   : Long
+  fun minus(other : Int)    : Int
+  fun minus(other : Short)  : Int
+  fun minus(other : Byte)   : Int
+  fun minus(other : Char)   : Int
 
   fun times(other : Double) : Double
-  fun times(other : Float) : Float
-  fun times(other : Long) : Long
-  fun times(other : Int) : Int
-  fun times(other : Short) : Short
+  fun times(other : Float)  : Float
+  fun times(other : Long)   : Long
+  fun times(other : Int)    : Int
+  fun times(other : Short)  : Int
+  fun times(other : Byte)   : Int
+  fun times(other : Char)   : Int
 
   fun div(other : Double) : Double
-  fun div(other : Float) : Float
-  fun div(other : Long) : Long
-  fun div(other : Int) : Int
-  fun div(other : Short) : Short
+  fun div(other : Float)  : Float
+  fun div(other : Long)   : Long
+  fun div(other : Int)    : Int
+  fun div(other : Short)  : Int
+  fun div(other : Byte)   : Int
+  fun div(other : Char)   : Int
 
   fun mod(other : Double) : Double
-  fun mod(other : Float) : Float
-  fun mod(other : Long) : Long
-  fun mod(other : Int) : Int
-  fun mod(other : Short) : Short
+  fun mod(other : Float)  : Float
+  fun mod(other : Long)   : Long
+  fun mod(other : Int)    : Int
+  fun mod(other : Short)  : Int
+  fun mod(other : Byte)   : Int
+  fun mod(other : Char)   : Int
 
   fun rangeTo(other : Double) : Range<Double>
-  fun rangeTo(other : Float) : Range<Float>
-  fun rangeTo(other : Long) : Range<Long>
-  fun rangeTo(other : Int) : Range<Int>
-  fun rangeTo(other : Short) : Range<Short>
+  fun rangeTo(other : Float)  : Range<Float>
+  fun rangeTo(other : Long)   : Range<Long>
+  fun rangeTo(other : Int)    : Range<Int>
+  fun rangeTo(other : Short)  : Range<Int>
+  fun rangeTo(other : Byte)   : Range<Int>
+  fun rangeTo(other : Char)   : Range<Int>
+
+  fun inc() : Short
+  fun dec() : Short
 }
 
 class Byte : Comparable<Char> {
   fun compareTo(other : Double) : Int
-  fun compareTo(other : Float) : Int
-  fun compareTo(other : Long) : Int
-  fun compareTo(other : Int) : Int
-  fun compareTo(other : Short) : Int
+  fun compareTo(other : Float)  : Int
+  fun compareTo(other : Int)    : Int
+  fun compareTo(other : Int)    : Int
+  fun compareTo(other : Short)  : Int
+  fun compareTo(other : Byte)   : Int
+  fun compareTo(other : Char)   : Int
 
   fun plus(other : Double) : Double
-  fun plus(other : Float) : Float
-  fun plus(other : Long) : Long
-  fun plus(other : Int) : Int
-  fun plus(other : Short) : Short
-  fun plus(other : Byte) : Byte
+  fun plus(other : Float)  : Float
+  fun plus(other : Long)   : Long
+  fun plus(other : Int)    : Int
+  fun plus(other : Short)  : Int
+  fun plus(other : Byte)   : Int
+  fun plus(other : Char)   : Int
 
   fun minus(other : Double) : Double
-  fun minus(other : Float) : Float
-  fun minus(other : Long) : Long
-  fun minus(other : Int) : Int
-  fun minus(other : Short) : Short
-  fun minus(other : Byte) : Byte
+  fun minus(other : Float)  : Float
+  fun minus(other : Long)   : Long
+  fun minus(other : Int)    : Int
+  fun minus(other : Short)  : Int
+  fun minus(other : Byte)   : Int
+  fun minus(other : Char)   : Int
 
   fun times(other : Double) : Double
-  fun times(other : Float) : Float
-  fun times(other : Long) : Long
-  fun times(other : Int) : Int
-  fun times(other : Short) : Short
-  fun times(other : Byte) : Byte
+  fun times(other : Float)  : Float
+  fun times(other : Long)   : Long
+  fun times(other : Int)    : Int
+  fun times(other : Short)  : Int
+  fun times(other : Byte)   : Int
+  fun times(other : Char)   : Int
 
   fun div(other : Double) : Double
-  fun div(other : Float) : Float
-  fun div(other : Long) : Long
-  fun div(other : Int) : Int
-  fun div(other : Short) : Short
-  fun div(other : Byte) : Byte
+  fun div(other : Float)  : Float
+  fun div(other : Long)   : Long
+  fun div(other : Int)    : Int
+  fun div(other : Short)  : Int
+  fun div(other : Byte)   : Int
+  fun div(other : Char)   : Int
 
   fun mod(other : Double) : Double
-  fun mod(other : Float) : Float
-  fun mod(other : Long) : Long
-  fun mod(other : Int) : Int
-  fun mod(other : Short) : Short
-  fun mod(other : Byte) : Byte
+  fun mod(other : Float)  : Float
+  fun mod(other : Long)   : Long
+  fun mod(other : Int)    : Int
+  fun mod(other : Short)  : Int
+  fun mod(other : Byte)   : Int
+  fun mod(other : Char)   : Int
 
   fun rangeTo(other : Double) : Range<Double>
-  fun rangeTo(other : Float) : Range<Float>
-  fun rangeTo(other : Long) : Range<Long>
-  fun rangeTo(other : Int) : Range<Int>
-  fun rangeTo(other : Short) : Range<Short>
-  fun rangeTo(other : Byte) : Range<Byte>
+  fun rangeTo(other : Float)  : Range<Float>
+  fun rangeTo(other : Long)   : Range<Long>
+  fun rangeTo(other : Int)    : Range<Int>
+  fun rangeTo(other : Short)  : Range<Int>
+  fun rangeTo(other : Byte)   : Range<Int>
+  fun rangeTo(other : Char)   : Range<Int>
+
+  fun inc() : Byte
+  fun dec() : Byte
 }

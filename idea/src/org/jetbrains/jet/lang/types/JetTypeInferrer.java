@@ -456,7 +456,9 @@ public class JetTypeInferrer {
         public void visitNewExpression(JetNewExpression expression) {
             // TODO : type argument inference
             JetTypeReference typeReference = expression.getTypeReference();
-            result = typeResolver.resolveType(scope, typeReference);
+            if (typeReference != null) {
+                result = typeResolver.resolveType(scope, typeReference);
+            }
         }
 
         @Override
@@ -465,7 +467,7 @@ public class JetTypeInferrer {
             JetExpression receiverExpression = expression.getReceiverExpression();
             JetExpression selectorExpression = expression.getSelectorExpression();
             JetType receiverType = getType(scope, receiverExpression, false);
-            if (receiverType != null) { // TODO : review
+            if (receiverType != null && selectorExpression != null) { // TODO : review
                 JetScope compositeScope = new ScopeWithReceiver(scope, receiverType);
                 result = getType(compositeScope, selectorExpression, false);
             }

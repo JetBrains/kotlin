@@ -356,19 +356,19 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
 
     public void testPlus() throws Exception {
         assertType("1d.plus(1d)", "Double");
-//        assertType("1d.plus(1f)", "Double");
-//        assertType("1d.plus(1L)", "Double");
-//        assertType("1d.plus(1)", "Double");
+        assertType("1d.plus(1f)", "Double");
+        assertType("1d.plus(1L)", "Double");
+        assertType("1d.plus(1)", "Double");
 
         assertType("1f.plus(1d)", "Double");
         assertType("1f.plus(1f)", "Float");
-//        assertType("1f.plus(1L)", "Float");
-//        assertType("1f.plus(1)", "Float");
+        assertType("1f.plus(1L)", "Float");
+        assertType("1f.plus(1)", "Float");
 
         assertType("1L.plus(1d)", "Double");
         assertType("1L.plus(1f)", "Float");
         assertType("1L.plus(1L)", "Long");
-//        assertType("1L.plus(1)", "Long");
+        assertType("1L.plus(1)", "Long");
 
         assertType("1.plus(1d)", "Double");
         assertType("1.plus(1f)", "Float");
@@ -379,20 +379,20 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertType("'1'.plus(1f)", "Float");
         assertType("'1'.plus(1L)", "Long");
         assertType("'1'.plus(1)", "Int");
-        assertType("'1'.plus('1')", "Char");
+        assertType("'1'.plus('1')", "Int");
 
-//        assertType("(1:Short).plus(1d)", "Double");
-//        assertType("(1:Short).plus(1f)", "Float");
-//        assertType("(1:Short).plus(1L)", "Long");
-//        assertType("(1:Short).plus(1)", "Int");
-//        assertType("(1:Short).plus(1:Short)", "Short");
-//
-//        assertType("(1:Byte).plus(1d)", "Double");
-//        assertType("(1:Byte).plus(1f)", "Float");
-//        assertType("(1:Byte).plus(1L)", "Long");
-//        assertType("(1:Byte).plus(1)", "Int");
-//        assertType("(1:Byte).plus(1:Short)", "Short");
-//        assertType("(1:Byte).plus(1:Byte)", "Byte");
+        assertType("(1:Short).plus(1d)", "Double");
+        assertType("(1:Short).plus(1f)", "Float");
+        assertType("(1:Short).plus(1L)", "Long");
+        assertType("(1:Short).plus(1)", "Int");
+        assertType("(1:Short).plus(1:Short)", "Int");
+
+        assertType("(1:Byte).plus(1d)", "Double");
+        assertType("(1:Byte).plus(1f)", "Float");
+        assertType("(1:Byte).plus(1L)", "Long");
+        assertType("(1:Byte).plus(1)", "Int");
+        assertType("(1:Byte).plus(1:Short)", "Int");
+        assertType("(1:Byte).plus(1:Byte)", "Int");
 
         assertType("\"1\".plus(1d)", "String");
         assertType("\"1\".plus(1f)", "String");
@@ -401,10 +401,6 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertType("\"1\".plus('1')", "String");
     }
 
-    //        assertConvertibleTo("1", JetStandardClasses.getByteType());
-    //    public void testImplicitConversions() throws Exception {
-//    }
-//
     private void assertSubtype(String type1, String type2) {
         assertSubtypingRelation(type1, type2, true);
     }
@@ -430,20 +426,6 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
                 typeNode2);
         String modifier = expected ? "not " : "";
         assertTrue(typeNode1 + " is " + modifier + "a subtype of " + typeNode2, result == expected);
-    }
-
-    private void assertConvertibleTo(String expression, JetType type) {
-        JetExpression jetExpression = JetChangeUtil.createExpression(getProject(), expression);
-        assertTrue(
-                expression + " must be convertible to " + type,
-                semanticServices.getTypeChecker().isConvertibleTo(jetExpression, type));
-    }
-
-    private void assertNotConvertibleTo(String expression, JetType type) {
-        JetExpression jetExpression = JetChangeUtil.createExpression(getProject(), expression);
-        assertFalse(
-                expression + " must not be convertible to " + type,
-                semanticServices.getTypeChecker().isConvertibleTo(jetExpression, type));
     }
 
     private void assertType(String expression, JetType expectedType) {
