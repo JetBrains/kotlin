@@ -400,6 +400,11 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
 
     public void testBinaryOperations() throws Exception {
         assertType("1 as Any", "Any");
+        assertType("1 is Char", "Boolean");
+        assertType("1 === null", "Boolean");
+        assertType("1 !== null", "Boolean");
+        assertType("true && false", "Boolean");
+        assertType("true || false", "Boolean");
     }
 
     private void assertSubtype(String type1, String type2) {

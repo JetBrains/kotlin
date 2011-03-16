@@ -586,6 +586,13 @@ public class JetTypeInferrer {
         }
 
         @Override
+        public void visitIsExpression(JetIsExpression expression) {
+            // TODO : patterns and everything
+            System.out.println("Pattern matching is not supported yet.");
+            result = semanticServices.getStandardLibrary().getBooleanType();
+        }
+
+        @Override
         public void visitUnaryExpression(JetUnaryExpression expression) {
             JetSimpleNameExpression operationSign = expression.getOperationSign();
             String name = unaryOperationNames.get(operationSign.getReferencedNameElementType());
@@ -607,6 +614,9 @@ public class JetTypeInferrer {
         public void visitBinaryExpression(JetBinaryExpression expression) {
             JetSimpleNameExpression operationSign = expression.getOperationReference();
 
+            JetExpression left = expression.getLeft();
+            JetExpression right = expression.getRight();
+
             IElementType operationType = operationSign.getReferencedNameElementType();
             if (operationType == JetTokens.IDENTIFIER) {
                 result = getTypeForBinaryCall(expression, operationSign.getReferencedName(), scope, true);
@@ -615,7 +625,6 @@ public class JetTypeInferrer {
                 result = getTypeForBinaryCall(expression, binaryOperationNames.get(operationType), scope, true);
             }
             else if (operationType == JetTokens.EQ) {
-                JetExpression left = expression.getLeft();
                 JetExpression deparenthesized = deparenthesize(left);
                 if (deparenthesized instanceof JetArrayAccessExpression) {
                     JetArrayAccessExpression arrayAccessExpression = (JetArrayAccessExpression) deparenthesized;
@@ -656,7 +665,6 @@ public class JetTypeInferrer {
                 assureBooleanResult(operationSign, name, equalsType);
             }
             else if (inOperations.contains(operationType)) {
-                JetExpression right = expression.getRight();
                 if (right == null) {
                     result = ErrorType.createErrorType("No right argument"); // TODO
                     return;
@@ -664,6 +672,24 @@ public class JetTypeInferrer {
                 String name = "contains";
                 JetType containsType = getTypeForBinaryCall(scope, right, expression.getOperationReference(), expression.getLeft(), name, true);
                 result = assureBooleanResult(operationSign, name, containsType);
+            }
+            else if (operationType == JetTokens.EQEQEQ || operationType == JetTokens.EXCLEQEQEQ) {
+                JetType leftType = getType(scope, left, false);
+                JetType rightType = right == null ? null : getType(scope, right, false);
+                // TODO : Check comparison pointlessness
+                result = semanticServices.getStandardLibrary().getBooleanType();
+            }
+            else if (operationType == JetTokens.ANDAND || operationType == JetTokens.OROR) {
+                JetType leftType = getType(scope, left, false);
+                JetType rightType = right == null ? null : getType(scope, right, false);
+                if (leftType != null && !isBoolean(leftType)) {
+                    semanticServices.getErrorHandler().typeMismatch(left, semanticServices.getStandardLibrary().getBooleanType(), leftType);
+                }
+                if (rightType != null && !isBoolean(rightType)) {
+                    semanticServices.getErrorHandler().typeMismatch(left, semanticServices.getStandardLibrary().getBooleanType(), rightType);
+                    semanticServices.getErrorHandler().typeMismatch(right, semanticServices.getStandardLibrary().getBooleanType(), rightType);
+                }
+                result = semanticServices.getStandardLibrary().getBooleanType();
             }
             else {
                 semanticServices.getErrorHandler().structuralError(operationSign.getNode(), "Unknown operation");
@@ -722,7 +748,7 @@ public class JetTypeInferrer {
 
         @Override
         public void visitJetElement(JetElement elem) {
-            throw new IllegalArgumentException("Unsupported element: " + elem);
+            throw new IllegalArgumentException("Unsupported element: " + elem + " " + elem.getClass().getCanonicalName());
         }
 
         private JetType getTypeForBinaryCall(JetBinaryExpression expression, @NotNull String name, JetScope scope, boolean reportUnresolved) {
