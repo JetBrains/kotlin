@@ -176,11 +176,18 @@ public class JetTypeInferrer {
 
     private void checkNullSafety(JetType receiverType, JetQualifiedExpression expression) {
         if (receiverType != null) {
-            if (receiverType.isNullable() && expression.getOperationSign() == JetTokens.DOT) {
+            boolean namespaceType = receiverType instanceof NamespaceType;
+            boolean nullable = !namespaceType && receiverType.isNullable();
+            if (nullable && expression.getOperationSign() == JetTokens.DOT) {
                 semanticServices.getErrorHandler().genericError(expression.getOperationTokenNode(), "Only safe calls (?.) are allowed on a nullable receiver of type " + receiverType);
             }
-            else if (!receiverType.isNullable() && expression.getOperationSign() == JetTokens.SAFE_ACCESS) {
-                semanticServices.getErrorHandler().genericWarning(expression.getOperationTokenNode(), "Unnecessary safe call on a non-null receiver of type  " + receiverType);
+            else if (!nullable && expression.getOperationSign() == JetTokens.SAFE_ACCESS) {
+                if (namespaceType) {
+                    semanticServices.getErrorHandler().genericError(expression.getOperationTokenNode(), "Safe calls are not allowed on namespaces");
+                }
+                else {
+                    semanticServices.getErrorHandler().genericWarning(expression.getOperationTokenNode(), "Unnecessary safe call on a non-null receiver of type  " + receiverType);
+                }
             }
         }
     }
@@ -547,11 +554,13 @@ public class JetTypeInferrer {
             JetType receiverType = getType(scope, receiverExpression, false);
             if (receiverType != null) {
                 checkNullSafety(receiverType, expression);
-                if (selectorExpression != null) {
-                    // TODO : review
-
+                if (selectorExpression instanceof JetSimpleNameExpression) {
                     JetScope compositeScope = new ScopeWithReceiver(scope, receiverType);
                     result = getType(compositeScope, selectorExpression, false);
+                }
+                else if (selectorExpression != null) {
+                    // TODO : not a simple name -> resolve in scope, expect property type or a function type
+                    throw new UnsupportedOperationException();
                 }
             }
         }
