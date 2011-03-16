@@ -405,6 +405,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertType("1 !== null", "Boolean");
         assertType("true && false", "Boolean");
         assertType("true || false", "Boolean");
+        assertType("null ?: false", "Boolean");
     }
 
     private void assertSubtype(String type1, String type2) {

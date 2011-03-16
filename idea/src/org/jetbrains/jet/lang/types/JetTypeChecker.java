@@ -17,6 +17,7 @@ public class JetTypeChecker {
         this.standardLibrary = standardLibrary;
     }
 
+    @NotNull
     private Map<TypeConstructor, Set<TypeConstructor>> getConversionMap() {
 //        if (conversionMap.size() == 0) {
 //            addConversion(standardLibrary.getByte(),
@@ -62,7 +63,13 @@ public class JetTypeChecker {
 //        conversionMap.put(actual.getTypeConstructor(), new HashSet<TypeConstructor>(Arrays.asList(constructors)));
 //    }
 //
-    public JetType commonSupertype(Collection<JetType> types) {
+    @NotNull
+    public JetType commonSupertype(@NotNull JetType... types) {
+        return commonSupertype(Arrays.asList(types));
+    }
+
+    @NotNull
+    public JetType commonSupertype(@NotNull Collection<JetType> types) {
         Collection<JetType> typeSet = new HashSet<JetType>(types);
         assert !typeSet.isEmpty();
         boolean nullable = false;
@@ -98,7 +105,8 @@ public class JetTypeChecker {
         return TypeUtils.makeNullableIfNeeded(result, nullable);
     }
 
-    private JetType computeSupertypeProjections(TypeConstructor constructor, Set<JetType> types) {
+    @NotNull
+    private JetType computeSupertypeProjections(@NotNull TypeConstructor constructor, @NotNull Set<JetType> types) {
         // we assume that all the given types are applications of the same type constructor
 
         assert !types.isEmpty();
@@ -127,7 +135,8 @@ public class JetTypeChecker {
         return new JetTypeImpl(Collections.<Attribute>emptyList(), constructor, nullable, newProjections, JetStandardClasses.STUB);
     }
 
-    private TypeProjection computeSupertypeProjection(TypeParameterDescriptor parameterDescriptor, Set<TypeProjection> typeProjections) {
+    @NotNull
+    private TypeProjection computeSupertypeProjection(@NotNull TypeParameterDescriptor parameterDescriptor, @NotNull Set<TypeProjection> typeProjections) {
         if (typeProjections.size() == 1) {
             return typeProjections.iterator().next();
         }
@@ -183,7 +192,8 @@ public class JetTypeChecker {
         }
     }
 
-    private Map<TypeConstructor, Set<JetType>> computeCommonRawSupertypes(Collection<JetType> types) {
+    @NotNull
+    private Map<TypeConstructor, Set<JetType>> computeCommonRawSupertypes(@NotNull Collection<JetType> types) {
         assert !types.isEmpty();
 
         final Map<TypeConstructor, Set<JetType>> constructorToAllInstances = new HashMap<TypeConstructor, Set<JetType>>();
@@ -244,19 +254,19 @@ public class JetTypeChecker {
         return result;
     }
 
-    private void markAll(TypeConstructor typeConstructor, Set<TypeConstructor> markerSet) {
+    private void markAll(@NotNull TypeConstructor typeConstructor, @NotNull Set<TypeConstructor> markerSet) {
         markerSet.add(typeConstructor);
         for (JetType type : typeConstructor.getSupertypes()) {
             markAll(type.getConstructor(), markerSet);
         }
     }
 
-    private <R> R dfs(JetType current, Set<TypeConstructor> visited, DfsNodeHandler<R> handler) {
+    private <R> R dfs(@NotNull JetType current, @NotNull Set<TypeConstructor> visited, @NotNull DfsNodeHandler<R> handler) {
         doDfs(current, visited, handler);
         return handler.result();
     }
 
-    private void doDfs(JetType current, Set<TypeConstructor> visited, DfsNodeHandler<?> handler) {
+    private void doDfs(@NotNull JetType current, @NotNull Set<TypeConstructor> visited, @NotNull DfsNodeHandler<?> handler) {
         if (!visited.add(current.getConstructor())) {
             return;
         }
@@ -307,7 +317,7 @@ public class JetTypeChecker {
     // This method returns the supertype of the first parameter that has the same constructor
     // as the second parameter, applying the substitution of type arguments to it
     @Nullable
-    private JetType findCorrespondingSupertype(JetType subtype, JetType supertype) {
+    private JetType findCorrespondingSupertype(@NotNull JetType subtype, @NotNull JetType supertype) {
         TypeConstructor constructor = subtype.getConstructor();
         if (constructor.equals(supertype.getConstructor())) {
             return subtype;
@@ -321,7 +331,7 @@ public class JetTypeChecker {
         return null;
     }
 
-    private boolean checkSubtypeForTheSameConstructor(JetType subtype, JetType supertype) {
+    private boolean checkSubtypeForTheSameConstructor(@NotNull JetType subtype, @NotNull JetType supertype) {
         TypeConstructor constructor = subtype.getConstructor();
         assert constructor.equals(supertype.getConstructor());
 

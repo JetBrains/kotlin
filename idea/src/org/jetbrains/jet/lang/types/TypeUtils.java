@@ -12,17 +12,18 @@ import java.util.Set;
  */
 public class TypeUtils {
     public static JetType makeNullable(JetType type) {
-        if (type.isNullable()) {
-            return type;
-        }
-        return new JetTypeImpl(type.getAttributes(), type.getConstructor(), true, type.getArguments(), type.getMemberScope());
+        return makeNullableAsSpecified(type, true);
     }
 
     public static JetType makeNotNullable(JetType type) {
-        if (!type.isNullable()) {
+        return makeNullableAsSpecified(type, false);
+    }
+
+    public static JetType makeNullableAsSpecified(JetType type, boolean nullable) {
+        if (type.isNullable() == nullable) {
             return type;
         }
-        return new JetTypeImpl(type.getAttributes(), type.getConstructor(), false, type.getArguments(), type.getMemberScope());
+        return new JetTypeImpl(type.getAttributes(), type.getConstructor(), nullable, type.getArguments(), type.getMemberScope());
     }
 
     @Nullable

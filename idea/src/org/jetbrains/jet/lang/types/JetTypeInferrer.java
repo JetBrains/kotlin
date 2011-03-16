@@ -728,6 +728,18 @@ public class JetTypeInferrer {
                 }
                 result = semanticServices.getStandardLibrary().getBooleanType();
             }
+            else if (operationType == JetTokens.ELVIS) {
+                JetType leftType = getType(scope, left, false);
+                JetType rightType = right == null ? null : getType(scope, right, false);
+                if (leftType != null) {
+                    if (!leftType.isNullable()) {
+                        semanticServices.getErrorHandler().genericWarning(left.getNode(), "Elvis operator (?:) is always returns the left operand of non-nullable type " + leftType);
+                    }
+                    if (rightType != null) {
+                        result = TypeUtils.makeNullableAsSpecified(semanticServices.getTypeChecker().commonSupertype(leftType, rightType), rightType.isNullable());
+                    }
+                }
+            }
             else {
                 semanticServices.getErrorHandler().genericError(operationSign.getNode(), "Unknown operation");
             }
