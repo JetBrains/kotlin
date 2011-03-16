@@ -271,19 +271,6 @@ JetFile: When.jet
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               EXPRESSION_PATTERN
-                LONG_CONSTANT
-                  PsiElement(LONG_LITERAL)('1l')
-            PsiWhiteSpace(' ')
-            PsiElement(DOUBLE_ARROW)('=>')
-            PsiWhiteSpace(' ')
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('foo')
-          PsiWhiteSpace('\n    ')
-          WHEN_ENTRY
-            WHEN_CONDITION
-              PsiElement(is)('is')
-              PsiWhiteSpace(' ')
-              EXPRESSION_PATTERN
                 FLOAT_CONSTANT
                   PsiElement(FLOAT_CONSTANT)('1.0')
             PsiWhiteSpace(' ')

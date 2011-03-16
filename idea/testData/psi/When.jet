@@ -21,7 +21,6 @@ fun foo() {
     is null => foo
     is 1 => foo
     is A.b => foo
-    is 1l => foo
     is 1.0 => foo
     is 'c' => foo
     is "sadfsa" => foo

@@ -38,13 +38,13 @@ class IntRange<T> : Range<T>, Iterable<T> {
 }
 
 class Number {
-  val d : Double
-  val f : Float
-  val l : Long
-  val i : Int
-  val c : Char
-  val s : Short
-  val b : Byte
+  val dbl : Double
+  val flt : Float
+  val lng : Long
+  val int : Int
+  val chr : Char
+  val sht : Short
+  val byt : Byte
 }
 
 class Double : Number, Comparable<Double>  {

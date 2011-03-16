@@ -134,8 +134,12 @@ JetFile: SimpleExpressions.jet
           PsiWhiteSpace(' ')
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
-          FLOAT_CONSTANT
-            PsiElement(FLOAT_CONSTANT)('10d')
+          DOT_QIALIFIED_EXPRESSION
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('10')
+            PsiElement(DOT)('.')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('dbl')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n    ')
         VALUE_PARAMETER
@@ -150,8 +154,12 @@ JetFile: SimpleExpressions.jet
           PsiWhiteSpace(' ')
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
-          FLOAT_CONSTANT
-            PsiElement(FLOAT_CONSTANT)('10f')
+          DOT_QIALIFIED_EXPRESSION
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('10')
+            PsiElement(DOT)('.')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('flt')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n    ')
         VALUE_PARAMETER
@@ -166,8 +174,12 @@ JetFile: SimpleExpressions.jet
           PsiWhiteSpace(' ')
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
-          FLOAT_CONSTANT
-            PsiElement(FLOAT_CONSTANT)('10.0d')
+          DOT_QIALIFIED_EXPRESSION
+            FLOAT_CONSTANT
+              PsiElement(FLOAT_CONSTANT)('10.0')
+            PsiElement(DOT)('.')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('dbl')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n    ')
         VALUE_PARAMETER
@@ -182,8 +194,12 @@ JetFile: SimpleExpressions.jet
           PsiWhiteSpace(' ')
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
-          LONG_CONSTANT
-            PsiElement(LONG_LITERAL)('10L')
+          DOT_QIALIFIED_EXPRESSION
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('10')
+            PsiElement(DOT)('.')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('lng')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n    ')
         VALUE_PARAMETER
