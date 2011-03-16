@@ -51,11 +51,6 @@ public class JetPsiChecker implements Annotator {
                     }
 
                     @Override
-                    public void structuralError(ASTNode node, String errorMessage) {
-                        holder.createErrorAnnotation(node, errorMessage);
-                    }
-
-                    @Override
                     public void typeMismatch(JetExpression expression, JetType expectedType, JetType actualType) {
                         holder.createErrorAnnotation(expression, "Type mismatch: inferred type is " + actualType + " but " + expectedType + " was expected");
                     }
@@ -64,6 +59,16 @@ public class JetPsiChecker implements Annotator {
                     public void redeclaration(DeclarationDescriptor existingDescriptor, DeclarationDescriptor redeclaredDescriptor) {
                         redeclarations.add(existingDescriptor);
                         redeclarations.add(redeclaredDescriptor);
+                    }
+
+                    @Override
+                    public void genericError(ASTNode node, String errorMessage) {
+                        holder.createErrorAnnotation(node, errorMessage);
+                    }
+
+                    @Override
+                    public void genericWarning(ASTNode node, String message) {
+                        holder.createWarningAnnotation(node, message);
                     }
                 });
                 for (DeclarationDescriptor redeclaration : redeclarations) {

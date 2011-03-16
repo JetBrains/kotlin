@@ -18,7 +18,7 @@ public class ErrorHandler {
         }
 
         @Override
-        public void structuralError(ASTNode node, String errorMessage) {
+        public void genericError(ASTNode node, String errorMessage) {
             throw new IllegalStateException(errorMessage);
         }
 
@@ -36,12 +36,15 @@ public class ErrorHandler {
     public void unresolvedReference(JetReferenceExpression referenceExpression) {
     }
 
-    public void structuralError(ASTNode node, String errorMessage) {
-    }
-
     public void typeMismatch(JetExpression expression, JetType expectedType, JetType actualType) {
     }
 
     public void redeclaration(DeclarationDescriptor existingDescriptor, DeclarationDescriptor redeclaredDescriptor) {
+    }
+
+    public void genericError(ASTNode node, String errorMessage) {
+    }
+
+    public void genericWarning(ASTNode node, String message) {
     }
 }

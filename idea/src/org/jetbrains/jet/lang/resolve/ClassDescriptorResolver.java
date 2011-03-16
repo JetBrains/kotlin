@@ -159,7 +159,7 @@ public class ClassDescriptorResolver {
             }
         } else {
             if (bodyExpression == null) {
-                semanticServices.getErrorHandler().structuralError(function.getNode(), "This function must either declare a return type or have a body expression");
+                semanticServices.getErrorHandler().genericError(function.getNode(), "This function must either declare a return type or have a body expression");
                 returnType = ErrorType.createErrorType("No type, no body");
             } else {
                 // TODO : Recursion possible
@@ -184,7 +184,7 @@ public class ClassDescriptorResolver {
 
             JetType type;
             if (typeReference == null) {
-                semanticServices.getErrorHandler().structuralError(valueParameter.getNode(), "A type annotation is required on a value parameter " + valueParameter.getName());
+                semanticServices.getErrorHandler().genericError(valueParameter.getNode(), "A type annotation is required on a value parameter " + valueParameter.getName());
                 type = ErrorType.createErrorType("Type annotation was missing");
             } else {
                 type = typeResolver.resolveType(parameterScope, typeReference);
@@ -265,7 +265,7 @@ public class ClassDescriptorResolver {
         if (propertyTypeRef == null) {
             JetExpression initializer = property.getInitializer();
             if (initializer == null) {
-                semanticServices.getErrorHandler().structuralError(property.getNode(), "This property must either have a type annotation or be initialized");
+                semanticServices.getErrorHandler().genericError(property.getNode(), "This property must either have a type annotation or be initialized");
                 type = ErrorType.createErrorType("No type, no body");
             } else {
                 // TODO : ??? Fix-point here: what if we have something like "val a = foo {a.bar()}"

@@ -137,11 +137,13 @@ public class JetTypeInferrer {
             @Override
             public void visitQualifiedExpression(JetQualifiedExpression expression) {
                 // . or ?.
+                JetType receiverType = getType(scope, expression.getReceiverExpression(), false);
+                checkNullSafety(receiverType, expression);
+
                 JetExpression selectorExpression = expression.getSelectorExpression();
                 if (selectorExpression instanceof JetSimpleNameExpression) {
                     JetSimpleNameExpression referenceExpression = (JetSimpleNameExpression) selectorExpression;
 
-                    JetType receiverType = getType(scope, expression.getReceiverExpression(), false);
                     if (receiverType != null) {
                         result[0] = semanticServices.getOverloadResolver().getOverloadDomain(receiverType, scope, referenceExpression.getReferencedName());
                         reference[0] = referenceExpression;
@@ -170,6 +172,17 @@ public class JetTypeInferrer {
             }
         });
         return wrapForTracing(result[0], reference[0], true);
+    }
+
+    private void checkNullSafety(JetType receiverType, JetQualifiedExpression expression) {
+        if (receiverType != null) {
+            if (receiverType.isNullable() && expression.getOperationSign() == JetTokens.DOT) {
+                semanticServices.getErrorHandler().genericError(expression.getOperationTokenNode(), "Only safe calls (?.) are allowed on a nullable receiver of type " + receiverType);
+            }
+            else if (!receiverType.isNullable() && expression.getOperationSign() == JetTokens.SAFE_ACCESS) {
+                semanticServices.getErrorHandler().genericWarning(expression.getOperationTokenNode(), "Unnecessary safe call on a non-null receiver of type  " + receiverType);
+            }
+        }
     }
 
     private OverloadDomain wrapForTracing(final OverloadDomain overloadDomain, @NotNull final JetReferenceExpression referenceExpression, final boolean reportUnresolved) {
@@ -408,7 +421,7 @@ public class JetTypeInferrer {
                     // TODO : Check for cast impossibility
                 }
                 else {
-                    semanticServices.getErrorHandler().structuralError(expression.getOperationSign().getNode(), "Unsupported binary operation");
+                    semanticServices.getErrorHandler().genericError(expression.getOperationSign().getNode(), "Unsupported binary operation");
                 }
                 result = targetType;
             }
@@ -422,7 +435,7 @@ public class JetTypeInferrer {
                 JetType conditionType = getType(scope, condition, false);
 
                 if (conditionType != null && !isBoolean(conditionType)) {
-                    semanticServices.getErrorHandler().structuralError(condition.getNode(), "Condition must be of type Boolean, but was of type " + conditionType);
+                    semanticServices.getErrorHandler().genericError(condition.getNode(), "Condition must be of type Boolean, but was of type " + conditionType);
                 }
             }
             // TODO : change types according to is and nullability checks
@@ -517,14 +530,29 @@ public class JetTypeInferrer {
         }
 
         @Override
-        public void visitDotQualifiedExpression(JetDotQualifiedExpression expression) {
+        public void visitHashQualifiedExpression(JetHashQualifiedExpression expression) {
+            throw new UnsupportedOperationException(); // TODO
+        }
+
+        @Override
+        public void visitPredicateExpression(JetPredicateExpression expression) {
+            throw new UnsupportedOperationException(); // TODO
+        }
+
+        @Override
+        public void visitQualifiedExpression(JetQualifiedExpression expression) {
             // TODO : functions
             JetExpression receiverExpression = expression.getReceiverExpression();
             JetExpression selectorExpression = expression.getSelectorExpression();
             JetType receiverType = getType(scope, receiverExpression, false);
-            if (receiverType != null && selectorExpression != null) { // TODO : review
-                JetScope compositeScope = new ScopeWithReceiver(scope, receiverType);
-                result = getType(compositeScope, selectorExpression, false);
+            if (receiverType != null) {
+                checkNullSafety(receiverType, expression);
+                if (selectorExpression != null) {
+                    // TODO : review
+
+                    JetScope compositeScope = new ScopeWithReceiver(scope, receiverType);
+                    result = getType(compositeScope, selectorExpression, false);
+                }
             }
         }
 
@@ -597,7 +625,7 @@ public class JetTypeInferrer {
             JetSimpleNameExpression operationSign = expression.getOperationSign();
             String name = unaryOperationNames.get(operationSign.getReferencedNameElementType());
             if (name == null) {
-                semanticServices.getErrorHandler().structuralError(operationSign.getNode(), "Unknown unary operation");
+                semanticServices.getErrorHandler().genericError(operationSign.getNode(), "Unknown unary operation");
             }
             else {
                 JetType type = getType(scope, expression.getBaseExpression(), false);
@@ -645,7 +673,7 @@ public class JetTypeInferrer {
                     if (constructor.equals(intTypeConstructor)) {
                         result = standardLibrary.getBooleanType();
                     } else {
-                        semanticServices.getErrorHandler().structuralError(operationSign.getNode(), "compareTo must return Int, but returns " + compareToReturnType);
+                        semanticServices.getErrorHandler().genericError(operationSign.getNode(), "compareTo must return Int, but returns " + compareToReturnType);
                     }
                 }
             }
@@ -692,7 +720,7 @@ public class JetTypeInferrer {
                 result = semanticServices.getStandardLibrary().getBooleanType();
             }
             else {
-                semanticServices.getErrorHandler().structuralError(operationSign.getNode(), "Unknown operation");
+                semanticServices.getErrorHandler().genericError(operationSign.getNode(), "Unknown operation");
             }
         }
 
@@ -700,7 +728,7 @@ public class JetTypeInferrer {
             if (resultType != null) {
                 // TODO : Relax?
                 if (!isBoolean(resultType)) {
-                    semanticServices.getErrorHandler().structuralError(operationSign.getNode(), "'" + name + "' must return Boolean but returns " + resultType);
+                    semanticServices.getErrorHandler().genericError(operationSign.getNode(), "'" + name + "' must return Boolean but returns " + resultType);
                     return null;
                 } else {
                     return resultType;
