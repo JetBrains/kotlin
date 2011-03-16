@@ -406,6 +406,9 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertType("true && false", "Boolean");
         assertType("true || false", "Boolean");
         assertType("null ?: false", "Boolean");
+        assertType("new WithPredicate()?isValid()", "WithPredicate?");
+        assertType("new WithPredicate()?isValid(1)", "WithPredicate?");
+        assertType("new WithPredicate()?p", "WithPredicate?");
     }
 
     private void assertSubtype(String type1, String type2) {
@@ -500,7 +503,12 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
                     "fun f(a : T) : Any {} " +
                     "fun f(a : (Int, Int)) : T {} " +
                     "fun f<E>(a : E) : T {} " +
-                    "}"
+                    "}",
+            "class WithPredicate { " +
+                    "fun isValid() : Boolean " +
+                    "fun isValid(x : Int) : Boolean " +
+                    "val p : Boolean " +
+            "}"
         };
         private String[] FUNCTION_DECLARATIONS = {
             "fun f() : Unit {}",

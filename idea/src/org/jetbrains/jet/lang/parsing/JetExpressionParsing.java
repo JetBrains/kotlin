@@ -409,7 +409,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     private void parseCallExpression() {
         PsiBuilder.Marker mark = mark();
         parseAtomicExpression();
-        if (parseCallSuffix()) {
+        if (!myBuilder.newlineBeforeCurrentToken() && parseCallSuffix()) {
             mark.done(CALL_EXPRESSION);
         }
         else {

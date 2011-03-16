@@ -544,24 +544,6 @@ public class JetTypeInferrer {
         }
 
         @Override
-        public void visitPredicateExpression(JetPredicateExpression expression) {
-//            JetExpression receiverExpression = expression.getReceiverExpression();
-//            JetExpression selectorExpression = expression.getSelectorExpression();
-//            JetType receiverType = getType(scope, receiverExpression, false);
-//            if (receiverType != null) {
-//                if (selectorExpression instanceof JetSimpleNameExpression) {
-//                    JetScope compositeScope = new ScopeWithReceiver(scope, receiverType);
-//                    result = getType(compositeScope, selectorExpression, false);
-//                }
-//                else if (selectorExpression != null) {
-//                    // TODO : not a simple name -> resolve in scope, expect property type or a function type
-//                    throw new UnsupportedOperationException();
-//                }
-//            }
-            throw new UnsupportedOperationException(); // TODO
-        }
-
-        @Override
         public void visitQualifiedExpression(JetQualifiedExpression expression) {
             // TODO : functions
             JetExpression selectorExpression = expression.getSelectorExpression();
@@ -569,30 +551,45 @@ public class JetTypeInferrer {
             JetType receiverType = getType(scope, receiverExpression, false);
             if (receiverType != null) {
                 checkNullSafety(receiverType, expression);
-                JetScope compositeScope = new ScopeWithReceiver(scope, receiverType);
-                if (selectorExpression instanceof JetCallExpression) {
-                    JetCallExpression callExpression = (JetCallExpression) selectorExpression;
-                    OverloadDomain overloadDomain = getOverloadDomain(compositeScope, callExpression.getCalleeExpression());
-                    resolveOverloads(scope, callExpression, overloadDomain);
+                JetType selectorReturnType = getSelectorReturnType(receiverType, selectorExpression);
+                if (expression.getOperationSign() == JetTokens.QUEST) {
+                    if (selectorReturnType != null && !isBoolean(selectorReturnType)) {
+                        // TODO : more comprehensible error message
+                        semanticServices.getErrorHandler().typeMismatch(selectorExpression, semanticServices.getStandardLibrary().getBooleanType(), selectorReturnType);
+                    }
+                    result = TypeUtils.makeNullable(receiverType);
                 }
-                else if (selectorExpression instanceof JetSimpleNameExpression) {
-                    result = getType(compositeScope, selectorExpression, false);
-                }
-                else if (selectorExpression != null) {
-                    // TODO : not a simple name -> resolve in scope, expect property type or a function type
-                    throw new UnsupportedOperationException();
+                else {
+                    result = selectorReturnType;
                 }
             }
+        }
+
+        private JetType getSelectorReturnType(JetType receiverType, JetExpression selectorExpression) {
+            JetScope compositeScope = new ScopeWithReceiver(scope, receiverType);
+            if (selectorExpression instanceof JetCallExpression) {
+                JetCallExpression callExpression = (JetCallExpression) selectorExpression;
+                OverloadDomain overloadDomain = getOverloadDomain(compositeScope, callExpression.getCalleeExpression());
+                return resolveOverloads(scope, callExpression, overloadDomain);
+            }
+            else if (selectorExpression instanceof JetSimpleNameExpression) {
+                return getType(compositeScope, selectorExpression, false);
+            }
+            else if (selectorExpression != null) {
+                // TODO : not a simple name -> resolve in scope, expect property type or a function type
+                throw new UnsupportedOperationException();
+            }
+            return receiverType;
         }
 
         @Override
         public void visitCallExpression(JetCallExpression expression) {
             JetExpression calleeExpression = expression.getCalleeExpression();
             OverloadDomain overloadDomain = getOverloadDomain(scope, calleeExpression);
-            resolveOverloads(scope, expression, overloadDomain);
+            result = resolveOverloads(scope, expression, overloadDomain);
         }
 
-        private void resolveOverloads(JetScope scope, JetCallExpression expression, OverloadDomain overloadDomain) {
+        private JetType resolveOverloads(JetScope scope, JetCallExpression expression, OverloadDomain overloadDomain) {
             // 1) ends with a name -> (scope, name) to look up
             // 2) ends with something else -> just check types
 
@@ -640,9 +637,10 @@ public class JetTypeInferrer {
 
                 FunctionDescriptor functionDescriptor = overloadDomain.getFunctionDescriptorForPositionedArguments(types, valueArgumentTypes);
                 if (functionDescriptor != null) {
-                    result = functionDescriptor.getUnsubstitutedReturnType();
+                    return functionDescriptor.getUnsubstitutedReturnType();
                 }
             }
+            return null;
         }
 
         @Override

@@ -45,7 +45,7 @@ public class JetChangeUtil {
         JetFile file = createFile(project, text);
         JetNamespace rootNamespace = file.getRootNamespace();
         List<JetDeclaration> dcls = rootNamespace.getDeclarations();
-        assert dcls.size() == 1;
+        assert dcls.size() == 1 : dcls.size();
         @SuppressWarnings("unchecked")
         T result = (T) dcls.get(0);
         return result;
