@@ -12,10 +12,16 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.ErrorHandler;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.types.DeclarationDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
+
+import java.util.Collection;
+import java.util.HashSet;
 
 /**
  * @author abreslav
@@ -29,6 +35,7 @@ public class JetPsiChecker implements Annotator {
 
             JetFile file = (JetFile) element;
             try {
+                final Collection<DeclarationDescriptor> redeclarations = new HashSet<DeclarationDescriptor>();
                 final BindingContext bindingContext = AnalyzingUtils.analyzeFile(file, new ErrorHandler() {
                     @Override
                     public void unresolvedReference(JetReferenceExpression referenceExpression) {
@@ -52,24 +59,19 @@ public class JetPsiChecker implements Annotator {
                     public void typeMismatch(JetExpression expression, JetType expectedType, JetType actualType) {
                         holder.createErrorAnnotation(expression, "Type mismatch: inferred type is " + actualType + " but " + expectedType + " was expected");
                     }
-                });
-                file.getRootNamespace().accept(new JetVisitor() {
-                    @Override
-                    public void visitClass(JetClass klass) {
-                        for (JetDelegationSpecifier specifier : klass.getDelegationSpecifiers()) {
-                            JetTypeReference typeReference = specifier.getTypeReference();
-                            JetType type = bindingContext.resolveTypeReference(typeReference);
-                            holder.createWeakWarningAnnotation(typeReference, type.toString());
-                        }
-                    }
 
                     @Override
-                    public void visitNamespace(JetNamespace namespace) {
-                        for (JetDeclaration declaration : namespace.getDeclarations()) {
-                            declaration.accept(this);
-                        }
+                    public void redeclaration(DeclarationDescriptor existingDescriptor, DeclarationDescriptor redeclaredDescriptor) {
+                        redeclarations.add(existingDescriptor);
+                        redeclarations.add(redeclaredDescriptor);
                     }
                 });
+                for (DeclarationDescriptor redeclaration : redeclarations) {
+                    PsiElement declarationPsiElement = bindingContext.getDeclarationPsiElement(redeclaration);
+                    if (declarationPsiElement != null) {
+                        holder.createErrorAnnotation(declarationPsiElement, "Redeclaration");
+                    }
+                }
             }
             catch (ProcessCanceledException e) {
                 throw e;

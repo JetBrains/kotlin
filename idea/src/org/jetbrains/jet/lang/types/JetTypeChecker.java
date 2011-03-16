@@ -2,7 +2,6 @@ package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.JetExpression;
 
 import java.util.*;
 
@@ -274,7 +273,7 @@ public class JetTypeChecker {
         handler.afterChildren(current);
     }
 
-    public boolean isConvertibleTo(JetType actual, JetType expected) {
+    public boolean isConvertibleTo(@NotNull JetType actual, @NotNull JetType expected) {
         if (isSubtypeOf(actual, expected)) return true;
         if (expected.getConstructor().equals(JetStandardClasses.getTuple(0).getTypeConstructor())) {
             return true;

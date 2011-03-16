@@ -7,9 +7,10 @@ import org.jetbrains.jet.lang.types.*;
  * @author abreslav
  */
 public class JetScopeAdapter implements JetScope {
+    @NotNull
     private final JetScope scope;
 
-    public JetScopeAdapter(JetScope scope) {
+    public JetScopeAdapter(@NotNull JetScope scope) {
         this.scope = scope;
     }
 

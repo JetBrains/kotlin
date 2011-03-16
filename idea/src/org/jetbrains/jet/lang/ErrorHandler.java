@@ -3,6 +3,7 @@ package org.jetbrains.jet.lang;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
+import org.jetbrains.jet.lang.types.DeclarationDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 
 /**
@@ -25,6 +26,11 @@ public class ErrorHandler {
         public void typeMismatch(JetExpression expression, JetType expectedType, JetType actualType) {
             throw new IllegalStateException("Type mismatch: inferred type is " + actualType + " but " + expectedType + " was expected");
         }
+
+        @Override
+        public void redeclaration(DeclarationDescriptor existingDescriptor, DeclarationDescriptor redeclaredDescriptor) {
+            throw new IllegalStateException("Redeclaration: " + existingDescriptor.getName());
+        }
     };
 
     public void unresolvedReference(JetReferenceExpression referenceExpression) {
@@ -34,5 +40,8 @@ public class ErrorHandler {
     }
 
     public void typeMismatch(JetExpression expression, JetType expectedType, JetType actualType) {
+    }
+
+    public void redeclaration(DeclarationDescriptor existingDescriptor, DeclarationDescriptor redeclaredDescriptor) {
     }
 }

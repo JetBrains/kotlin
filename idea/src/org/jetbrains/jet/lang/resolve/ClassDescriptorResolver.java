@@ -30,7 +30,7 @@ public class ClassDescriptorResolver {
                 scope.getContainingDeclaration(),
                 AttributeResolver.INSTANCE.resolveAttributes(classElement.getModifierList()),
                 classElement.getName());
-        WritableScope parameterScope = new WritableScope(scope, classDescriptor);
+        WritableScope parameterScope = semanticServices.createWritableScope(scope, classDescriptor);
 
         // This call has side-effects on the parameterScope (fills it in)
         List<TypeParameterDescriptor> typeParameters
@@ -100,7 +100,7 @@ public class ClassDescriptorResolver {
             final JetScope typeParameterScope,
             final Collection<? extends JetType> supertypes) {
 
-        final WritableScope memberDeclarations = new WritableScope(typeParameterScope, classDescriptor);
+        final WritableScope memberDeclarations = semanticServices.createWritableScope(typeParameterScope, classDescriptor);
 
         List<JetDeclaration> declarations = classElement.getDeclarations();
         for (JetDeclaration declaration : declarations) {
@@ -142,7 +142,7 @@ public class ClassDescriptorResolver {
                 AttributeResolver.INSTANCE.resolveAttributes(function.getModifierList()),
                 function.getName()
         );
-        WritableScope parameterScope = new WritableScope(scope, functionDescriptor);
+        WritableScope parameterScope = semanticServices.createWritableScope(scope, functionDescriptor);
 
         // The two calls below have side-effects on parameterScope
         List<TypeParameterDescriptor> typeParameterDescriptors = resolveTypeParameters(functionDescriptor, parameterScope, function.getTypeParameters());

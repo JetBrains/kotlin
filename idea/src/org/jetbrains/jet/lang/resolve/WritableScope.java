@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.types.*;
 
 import java.util.ArrayList;
@@ -13,6 +14,9 @@ import java.util.Map;
  * @author abreslav
  */
 public class WritableScope extends JetScopeAdapter {
+    @NotNull
+    private final ErrorHandler errorHandler;
+
     @Nullable
     private Map<String, PropertyDescriptor> propertyDescriptors;
     @Nullable
@@ -31,9 +35,10 @@ public class WritableScope extends JetScopeAdapter {
     @NotNull
     private final DeclarationDescriptor ownerDeclarationDescriptor;
 
-    public WritableScope(JetScope scope, @NotNull DeclarationDescriptor owner) {
+    public WritableScope(@NotNull JetScope scope, @NotNull DeclarationDescriptor owner, @NotNull ErrorHandler errorHandler) {
         super(scope);
         this.ownerDeclarationDescriptor = owner;
+        this.errorHandler = errorHandler;
     }
 
     @NotNull
@@ -42,7 +47,7 @@ public class WritableScope extends JetScopeAdapter {
         return ownerDeclarationDescriptor;
     }
 
-    public void importScope(JetScope imported) {
+    public void importScope(@NotNull JetScope imported) {
         getImports().add(0, imported);
     }
 
@@ -64,9 +69,11 @@ public class WritableScope extends JetScopeAdapter {
 
     public void addPropertyDescriptor(PropertyDescriptor propertyDescriptor) {
         Map<String, PropertyDescriptor> propertyDescriptors = getPropertyDescriptors();
-        if (propertyDescriptors.containsKey(propertyDescriptor.getName())) {
-            throw new UnsupportedOperationException("Property redeclared: " + propertyDescriptor.getName());
+        PropertyDescriptor existingDescriptor = propertyDescriptors.get(propertyDescriptor.getName());
+        if (existingDescriptor != null) {
+            errorHandler.redeclaration(existingDescriptor, propertyDescriptor);
         }
+        // TODO : Should this always happen?
         propertyDescriptors.put(propertyDescriptor.getName(), propertyDescriptor);
     }
 

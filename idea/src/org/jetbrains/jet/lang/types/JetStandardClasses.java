@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.resolve.JetScope;
 import org.jetbrains.jet.lang.resolve.WritableScope;
 
@@ -160,7 +161,7 @@ public class JetStandardClasses {
     /*package*/ static final JetScope STANDARD_CLASSES;
 
     static {
-        WritableScope writableScope = new WritableScope(JetScope.EMPTY, STANDARD_CLASSES_NAMESPACE);
+        WritableScope writableScope = new WritableScope(JetScope.EMPTY, STANDARD_CLASSES_NAMESPACE, ErrorHandler.DO_NOTHING);
         STANDARD_CLASSES = writableScope;
         writableScope.addClassAlias("Unit", getTuple(0));
 

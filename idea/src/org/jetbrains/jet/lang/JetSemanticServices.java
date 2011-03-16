@@ -3,11 +3,10 @@ package org.jetbrains.jet.lang;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.ClassDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.JetScope;
 import org.jetbrains.jet.lang.resolve.OverloadResolver;
-import org.jetbrains.jet.lang.types.BindingTrace;
-import org.jetbrains.jet.lang.types.JetStandardLibrary;
-import org.jetbrains.jet.lang.types.JetTypeChecker;
-import org.jetbrains.jet.lang.types.JetTypeInferrer;
+import org.jetbrains.jet.lang.resolve.WritableScope;
+import org.jetbrains.jet.lang.types.*;
 
 /**
  * @author abreslav
@@ -62,5 +61,10 @@ public class JetSemanticServices {
     @NotNull
     public OverloadResolver getOverloadResolver() {
         return overloadResolver;
+    }
+
+    @NotNull
+    public WritableScope createWritableScope(@NotNull JetScope scope, @NotNull DeclarationDescriptor owner) {
+        return new WritableScope(scope, owner, errorHandler);
     }
 }

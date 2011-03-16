@@ -32,7 +32,7 @@ public class TopDownAnalyzer {
     }
 
     public void process(@NotNull JetScope outerScope, @NotNull List<JetDeclaration> declarations) {
-        final WritableScope toplevelScope = new WritableScope(outerScope, outerScope.getContainingDeclaration()); // TODO ?!
+        final WritableScope toplevelScope = semanticServices.createWritableScope(outerScope, outerScope.getContainingDeclaration()); // TODO ?!
         trace.setToplevelScope(toplevelScope); // TODO : this is a hack
         collectTypeDeclarators(toplevelScope, declarations);
         resolveTypeDeclarations();
@@ -69,7 +69,7 @@ public class TopDownAnalyzer {
                         trace.recordDeclarationResolution(namespace, namespaceDescriptor);
                     }
 
-                    WritableScope namespaceScope = new WritableScope(declaringScope, namespaceDescriptor);
+                    WritableScope namespaceScope = semanticServices.createWritableScope(declaringScope, namespaceDescriptor);
                     namespaceScopes.put(namespace, namespaceScope);
 
                     for (JetImportDirective importDirective : importDirectives) {
@@ -104,7 +104,7 @@ public class TopDownAnalyzer {
     }
 
     private WritableScope processClass(@NotNull WritableScope declaringScope, JetClass klass) {
-        MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(declaringScope.getContainingDeclaration(), declaringScope);
+        MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(semanticServices, declaringScope.getContainingDeclaration(), declaringScope);
         mutableClassDescriptor.setName(klass.getName());
 
         declaringScope.addClassDescriptor(mutableClassDescriptor);
@@ -204,7 +204,7 @@ public class TopDownAnalyzer {
             WritableScope declaringScope = declaringScopes.get(function);
             assert declaringScope != null;
 
-            WritableScope parameterScope = new WritableScope(declaringScope, descriptor);
+            WritableScope parameterScope = semanticServices.createWritableScope(declaringScope, descriptor);
             for (TypeParameterDescriptor typeParameter : descriptor.getTypeParameters()) {
                 parameterScope.addTypeParameterDescriptor(typeParameter);
             }

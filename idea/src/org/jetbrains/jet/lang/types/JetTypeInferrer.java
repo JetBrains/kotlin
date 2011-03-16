@@ -25,7 +25,7 @@ public class JetTypeInferrer {
         this.trace = trace;
         this.semanticServices = semanticServices;
         this.typeResolver = new TypeResolver(trace, semanticServices);
-        this.classDescriptorResolver = new ClassDescriptorResolver(semanticServices, trace);
+        this.classDescriptorResolver = semanticServices.getClassDescriptorResolver(trace);
     }
 
     @NotNull
@@ -168,7 +168,7 @@ public class JetTypeInferrer {
             return JetStandardClasses.getUnitType();
         } else {
             DeclarationDescriptor containingDescriptor = outerScope.getContainingDeclaration();
-            WritableScope scope = new WritableScope(outerScope, containingDescriptor);
+            WritableScope scope = semanticServices.createWritableScope(outerScope, containingDescriptor);
             for (JetElement statement : block) {
                 // TODO: consider other declarations
                 if (statement instanceof JetProperty) {
@@ -181,7 +181,7 @@ public class JetTypeInferrer {
                     getType(scope, (JetExpression) statement, true);
                 }
                 else {
-                    throw new UnsupportedOperationException(); // TODO
+                    throw new UnsupportedOperationException(statement.getClass().getCanonicalName()); // TODO
                 }
             }
             JetElement lastElement = block.get(block.size() - 1);
@@ -278,7 +278,7 @@ public class JetTypeInferrer {
             if (returnTypeRef != null) {
                 returnType = typeResolver.resolveType(scope, returnTypeRef);
             } else {
-                WritableScope writableScope = new WritableScope(scope, functionDescriptor);
+                WritableScope writableScope = semanticServices.createWritableScope(scope, functionDescriptor);
                 for (PropertyDescriptor propertyDescriptor : parameterDescriptors.values()) {
                     writableScope.addPropertyDescriptor(propertyDescriptor);
                 }
@@ -689,8 +689,8 @@ public class JetTypeInferrer {
         }
 
         private JetType getTypeForBinaryCall(JetScope scope, JetExpression left, JetSimpleNameExpression operationSign, @NotNull JetExpression right, String name, boolean reportUnresolved) {
-            JetType leftType = getType(scope, left, false);
-            JetType rightType = getType(scope, right, false);
+            JetType leftType = safeGetType(scope, left, false);
+            JetType rightType = safeGetType(scope, right, false);
             FunctionDescriptor functionDescriptor = lookupFunction(scope, operationSign, name, leftType, Collections.singletonList(rightType), reportUnresolved);
             if (functionDescriptor != null) {
                 return functionDescriptor.getUnsubstitutedReturnType();
