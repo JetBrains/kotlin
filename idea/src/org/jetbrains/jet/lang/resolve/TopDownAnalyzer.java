@@ -117,11 +117,11 @@ public class TopDownAnalyzer {
     }
 
     private void processExtension(JetExtension extension) {
-        throw new UnsupportedOperationException(); // TODO
+        throw new UnsupportedOperationException(extension.getText()); // TODO
     }
 
-    private void processTypeDef(JetTypedef typedef) {
-        throw new UnsupportedOperationException(); // TODO
+    private void processTypeDef(@NotNull JetTypedef typedef) {
+        throw new UnsupportedOperationException(typedef.getText()); // TODO
     }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

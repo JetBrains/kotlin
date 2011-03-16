@@ -188,6 +188,12 @@ public class JetExpressionParsing extends AbstractJetParsing {
         IElementType[] usedOperations = ALL_OPERATIONS.getTypes();
         Set<IElementType> usedSet = new HashSet<IElementType>(Arrays.asList(usedOperations));
 
+//        if (opSet.size() > usedSet.size()) {
+//            opSet.removeAll(usedSet);
+//            assert false : opSet;
+//        }
+//        assert usedSet.size() == opSet.size();
+
         usedSet.removeAll(opSet);
 
         assert usedSet.isEmpty() : "" + usedSet;

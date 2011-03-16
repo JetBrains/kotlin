@@ -149,8 +149,9 @@ public class WritableScope extends JetScopeAdapter {
     public void addTypeParameterDescriptor(TypeParameterDescriptor typeParameterDescriptor) {
         String name = typeParameterDescriptor.getName();
         Map<String, TypeParameterDescriptor> typeParameterDescriptors = getTypeParameterDescriptors();
-        if (typeParameterDescriptors.containsKey(name)) {
-            throw new UnsupportedOperationException("Type parameter redeclared"); // TODO
+        TypeParameterDescriptor originalDescriptor = typeParameterDescriptors.get(name);
+        if (originalDescriptor != null) {
+            errorHandler.redeclaration(originalDescriptor, typeParameterDescriptor);
         }
         typeParameterDescriptors.put(name, typeParameterDescriptor);
     }
@@ -178,9 +179,11 @@ public class WritableScope extends JetScopeAdapter {
 
     public void addClassAlias(String name, ClassDescriptor classDescriptor) {
         Map<String, ClassDescriptor> classDescriptors = getClassDescriptors();
-        if (classDescriptors.put(name, classDescriptor) != null) {
-            throw new UnsupportedOperationException("Class redeclared: " + classDescriptor.getName());
+        ClassDescriptor originalDescriptor = classDescriptors.get(name);
+        if (originalDescriptor != null) {
+            errorHandler.redeclaration(originalDescriptor, classDescriptor);
         }
+        classDescriptors.put(name, classDescriptor);
     }
 
     @Override
@@ -219,7 +222,7 @@ public class WritableScope extends JetScopeAdapter {
     public void addNamespace(NamespaceDescriptor namespaceDescriptor) {
         NamespaceDescriptor oldValue = getNamespaceDescriptors().put(namespaceDescriptor.getName(), namespaceDescriptor);
         if (oldValue != null) {
-            throw new UnsupportedOperationException("Namespace redeclared: " + namespaceDescriptor.getName());
+            errorHandler.redeclaration(oldValue, namespaceDescriptor);
         }
     }
 

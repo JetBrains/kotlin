@@ -20,6 +20,8 @@ public class JetTypeInferrer {
     static {
         unaryOperationNames.put(JetTokens.PLUSPLUS, "inc");
         unaryOperationNames.put(JetTokens.MINUSMINUS, "dec");
+        unaryOperationNames.put(JetTokens.PLUS, "plus");
+        unaryOperationNames.put(JetTokens.MINUS, "minus");
         unaryOperationNames.put(JetTokens.EXCL, "not");
     }
 

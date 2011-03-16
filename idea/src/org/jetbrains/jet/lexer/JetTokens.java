@@ -6,7 +6,6 @@ package org.jetbrains.jet.lexer;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
-import org.jetbrains.jet.lang.parsing.JetExpressionParsing;
 
 public interface JetTokens {
     JetToken EOF   = new JetToken("EOF");
@@ -163,6 +162,8 @@ public interface JetTokens {
             MINUS, EXCL, DIV, PERC, LT, GT, LTEQ, GTEQ, EQEQEQ, ARROW, EXCLEQEQEQ, EQEQ, EXCLEQ, ANDAND, OROR,
             SAFE_ACCESS, ELVIS,
 //            MAP, FILTER,
-            QUEST, COLON, SEMICOLON, RANGE, EQ, MULTEQ, DIVEQ, PERCEQ, PLUSEQ, MINUSEQ,
+            QUEST, COLON,
+//            SEMICOLON,
+            RANGE, EQ, MULTEQ, DIVEQ, PERCEQ, PLUSEQ, MINUSEQ,
             NOT_IN, NOT_IS, HASH, IDENTIFIER, LABEL_IDENTIFIER, ATAT, AT);
 }
