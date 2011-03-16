@@ -28,7 +28,7 @@ public class JetBinaryExpressionWithTypeRHS extends JetExpression {
 
     @Nullable @IfNotParsed
     public JetTypeReference getRight() {
-        ASTNode node = getOperationReference().getNode();
+        ASTNode node = getOperationSign().getNode();
         while (node != null) {
             PsiElement psi = node.getPsi();
             if (psi instanceof JetTypeReference) {
@@ -40,7 +40,7 @@ public class JetBinaryExpressionWithTypeRHS extends JetExpression {
         return null;
     }
     @NotNull
-    public JetSimpleNameExpression getOperationReference() {
+    public JetSimpleNameExpression getOperationSign() {
         return (JetSimpleNameExpression) findChildByType(JetNodeTypes.OPERATION_REFERENCE);
     }
 

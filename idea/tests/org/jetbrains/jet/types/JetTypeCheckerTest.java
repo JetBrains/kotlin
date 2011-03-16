@@ -398,6 +398,10 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertType("\"1\".plus('1')", "String");
     }
 
+    public void testBinaryOperations() throws Exception {
+        assertType("1 as Any", "Any");
+    }
+
     private void assertSubtype(String type1, String type2) {
         assertSubtypingRelation(type1, type2, true);
     }
