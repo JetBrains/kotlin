@@ -343,16 +343,16 @@ JetFile: PolymorphicClassObjects.jet
                 PsiWhiteSpace(' ')
                 PsiElement(EQ)('=')
                 PsiWhiteSpace(' ')
-                CALL_EXPRESSION
-                  DOT_QIALIFIED_EXPRESSION
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('T')
-                    PsiElement(DOT)('.')
+                DOT_QIALIFIED_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('T')
+                  PsiElement(DOT)('.')
+                  CALL_EXPRESSION
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('newBuilder')
-                  VALUE_ARGUMENT_LIST
-                    PsiElement(LPAR)('(')
-                    PsiElement(RPAR)(')')
+                    VALUE_ARGUMENT_LIST
+                      PsiElement(LPAR)('(')
+                      PsiElement(RPAR)(')')
               PsiWhiteSpace('\n    ')
               FOR
                 PsiElement(for)('for')
@@ -392,16 +392,16 @@ JetFile: PolymorphicClassObjects.jet
                     PsiWhiteSpace('\n    ')
                     PsiElement(RBRACE)('}')
               PsiWhiteSpace('\n    ')
-              CALL_EXPRESSION
-                DOT_QIALIFIED_EXPRESSION
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('builder')
-                  PsiElement(DOT)('.')
+              DOT_QIALIFIED_EXPRESSION
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('builder')
+                PsiElement(DOT)('.')
+                CALL_EXPRESSION
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('result')
-                VALUE_ARGUMENT_LIST
-                  PsiElement(LPAR)('(')
-                  PsiElement(RPAR)(')')
+                  VALUE_ARGUMENT_LIST
+                    PsiElement(LPAR)('(')
+                    PsiElement(RPAR)(')')
             PsiWhiteSpace('\n  ')
             PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n')

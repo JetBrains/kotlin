@@ -183,6 +183,7 @@ public class ExpectedResolveData {
                 }
             }
 
+            assertNotNull(expression.getText(), expressionType);
             assertSame("At " + position + ": ", expectedTypeConstructor, expressionType.getConstructor());
         }
     }

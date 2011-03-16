@@ -41,56 +41,56 @@ JetFile: HashMap.jet
           PsiWhiteSpace('\n    ')
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
-          CALL_EXPRESSION
-            DOT_QIALIFIED_EXPRESSION
-              PARENTHESIZED
-                PsiElement(LPAR)('(')
-                BINARY_WITH_TYPE
-                  THIS_EXPRESSION
-                    PsiElement(this)('this')
-                  PsiWhiteSpace(' ')
-                  OPERATION_REFERENCE
-                    PsiElement(as)('as')
-                  PsiWhiteSpace(' ')
-                  TYPE_REFERENCE
+          DOT_QIALIFIED_EXPRESSION
+            PARENTHESIZED
+              PsiElement(LPAR)('(')
+              BINARY_WITH_TYPE
+                THIS_EXPRESSION
+                  PsiElement(this)('this')
+                PsiWhiteSpace(' ')
+                OPERATION_REFERENCE
+                  PsiElement(as)('as')
+                PsiWhiteSpace(' ')
+                TYPE_REFERENCE
+                  USER_TYPE
                     USER_TYPE
                       USER_TYPE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('java')
-                        PsiElement(DOT)('.')
                         REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('lang')
+                          PsiElement(IDENTIFIER)('java')
                       PsiElement(DOT)('.')
                       REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('Object')
-                PsiElement(RPAR)(')')
-              PsiElement(DOT)('.')
+                        PsiElement(IDENTIFIER)('lang')
+                    PsiElement(DOT)('.')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Object')
+              PsiElement(RPAR)(')')
+            PsiElement(DOT)('.')
+            CALL_EXPRESSION
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('equals')
-            VALUE_ARGUMENT_LIST
-              PsiElement(LPAR)('(')
-              VALUE_ARGUMENT
-                BINARY_WITH_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('other')
-                  PsiWhiteSpace(' ')
-                  OPERATION_REFERENCE
-                    PsiElement(as)('as')
-                  PsiWhiteSpace(' ')
-                  TYPE_REFERENCE
-                    USER_TYPE
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                VALUE_ARGUMENT
+                  BINARY_WITH_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('other')
+                    PsiWhiteSpace(' ')
+                    OPERATION_REFERENCE
+                      PsiElement(as)('as')
+                    PsiWhiteSpace(' ')
+                    TYPE_REFERENCE
                       USER_TYPE
                         USER_TYPE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('java')
+                          PsiElement(DOT)('.')
                           REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('java')
+                            PsiElement(IDENTIFIER)('lang')
                         PsiElement(DOT)('.')
                         REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('lang')
-                      PsiElement(DOT)('.')
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('Object')
-              PsiElement(RPAR)(')')
+                          PsiElement(IDENTIFIER)('Object')
+                PsiElement(RPAR)(')')
         PsiWhiteSpace('\n')
         PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n\n')
@@ -135,36 +135,36 @@ JetFile: HashMap.jet
             PsiWhiteSpace(' ')
             PsiElement(EQ)('=')
             PsiWhiteSpace(' ')
-            CALL_EXPRESSION
-              DOT_QIALIFIED_EXPRESSION
-                PARENTHESIZED
-                  PsiElement(LPAR)('(')
-                  BINARY_WITH_TYPE
-                    THIS_EXPRESSION
-                      PsiElement(this)('this')
-                    PsiWhiteSpace(' ')
-                    OPERATION_REFERENCE
-                      PsiElement(as)('as')
-                    PsiWhiteSpace(' ')
-                    TYPE_REFERENCE
+            DOT_QIALIFIED_EXPRESSION
+              PARENTHESIZED
+                PsiElement(LPAR)('(')
+                BINARY_WITH_TYPE
+                  THIS_EXPRESSION
+                    PsiElement(this)('this')
+                  PsiWhiteSpace(' ')
+                  OPERATION_REFERENCE
+                    PsiElement(as)('as')
+                  PsiWhiteSpace(' ')
+                  TYPE_REFERENCE
+                    USER_TYPE
                       USER_TYPE
                         USER_TYPE
-                          USER_TYPE
-                            REFERENCE_EXPRESSION
-                              PsiElement(IDENTIFIER)('java')
-                          PsiElement(DOT)('.')
                           REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('lang')
+                            PsiElement(IDENTIFIER)('java')
                         PsiElement(DOT)('.')
                         REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('Object')
-                  PsiElement(RPAR)(')')
-                PsiElement(DOT)('.')
+                          PsiElement(IDENTIFIER)('lang')
+                      PsiElement(DOT)('.')
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('Object')
+                PsiElement(RPAR)(')')
+              PsiElement(DOT)('.')
+              CALL_EXPRESSION
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('hashCode')
-              VALUE_ARGUMENT_LIST
-                PsiElement(LPAR)('(')
-                PsiElement(RPAR)(')')
+                VALUE_ARGUMENT_LIST
+                  PsiElement(LPAR)('(')
+                  PsiElement(RPAR)(')')
         PsiWhiteSpace('\n\n')
         PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n\n')
@@ -551,19 +551,19 @@ JetFile: HashMap.jet
           PsiWhiteSpace(' ')
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
-          CALL_EXPRESSION
-            DOT_QIALIFIED_EXPRESSION
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('a')
-              PsiElement(DOT)('.')
+          DOT_QIALIFIED_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
+            PsiElement(DOT)('.')
+            CALL_EXPRESSION
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('equals')
-            VALUE_ARGUMENT_LIST
-              PsiElement(LPAR)('(')
-              VALUE_ARGUMENT
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('b')
-              PsiElement(RPAR)(')')
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                VALUE_ARGUMENT
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('b')
+                PsiElement(RPAR)(')')
         PsiWhiteSpace('\n  ')
         FUN
           MODIFIER_LIST
@@ -677,27 +677,27 @@ JetFile: HashMap.jet
           PsiWhiteSpace('\n    ')
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
-          CALL_EXPRESSION
+          DOT_QIALIFIED_EXPRESSION
             DOT_QIALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('a')
+              PsiElement(DOT)('.')
               CALL_EXPRESSION
-                DOT_QIALIFIED_EXPRESSION
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('a')
-                  PsiElement(DOT)('.')
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('hashable')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('hashable')
                 VALUE_ARGUMENT_LIST
                   PsiElement(LPAR)('(')
                   PsiElement(RPAR)(')')
-              PsiElement(DOT)('.')
+            PsiElement(DOT)('.')
+            CALL_EXPRESSION
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('equals')
-            VALUE_ARGUMENT_LIST
-              PsiElement(LPAR)('(')
-              VALUE_ARGUMENT
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('b')
-              PsiElement(RPAR)(')')
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                VALUE_ARGUMENT
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('b')
+                PsiElement(RPAR)(')')
         PsiWhiteSpace('\n  ')
         FUN
           MODIFIER_LIST
@@ -731,16 +731,16 @@ JetFile: HashMap.jet
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
           DOT_QIALIFIED_EXPRESSION
-            CALL_EXPRESSION
-              DOT_QIALIFIED_EXPRESSION
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('a')
-                PsiElement(DOT)('.')
+            DOT_QIALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('a')
+              PsiElement(DOT)('.')
+              CALL_EXPRESSION
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('hashable')
-              VALUE_ARGUMENT_LIST
-                PsiElement(LPAR)('(')
-                PsiElement(RPAR)(')')
+                VALUE_ARGUMENT_LIST
+                  PsiElement(LPAR)('(')
+                  PsiElement(RPAR)(')')
             PsiElement(DOT)('.')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('hashCode')
@@ -822,16 +822,16 @@ JetFile: HashMap.jet
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
           DOT_QIALIFIED_EXPRESSION
-            CALL_EXPRESSION
-              DOT_QIALIFIED_EXPRESSION
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('a')
-                PsiElement(DOT)('.')
+            DOT_QIALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('a')
+              PsiElement(DOT)('.')
+              CALL_EXPRESSION
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('hashable')
-              VALUE_ARGUMENT_LIST
-                PsiElement(LPAR)('(')
-                PsiElement(RPAR)(')')
+                VALUE_ARGUMENT_LIST
+                  PsiElement(LPAR)('(')
+                  PsiElement(RPAR)(')')
             PsiElement(DOT)('.')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('hashCode')
@@ -881,16 +881,16 @@ JetFile: HashMap.jet
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
           BINARY_EXPRESSION
-            CALL_EXPRESSION
-              DOT_QIALIFIED_EXPRESSION
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('a')
-                PsiElement(DOT)('.')
+            DOT_QIALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('a')
+              PsiElement(DOT)('.')
+              CALL_EXPRESSION
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('hashable')
-              VALUE_ARGUMENT_LIST
-                PsiElement(LPAR)('(')
-                PsiElement(RPAR)(')')
+                VALUE_ARGUMENT_LIST
+                  PsiElement(LPAR)('(')
+                  PsiElement(RPAR)(')')
             PsiWhiteSpace(' ')
             OPERATION_REFERENCE
               PsiElement(EQEQ)('==')

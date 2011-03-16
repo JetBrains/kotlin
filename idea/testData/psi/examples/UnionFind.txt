@@ -69,19 +69,19 @@ JetFile: UnionFind.jet
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('size')
             PsiWhiteSpace('\n    ')
-            CALL_EXPRESSION
-              DOT_QIALIFIED_EXPRESSION
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('data')
-                PsiElement(DOT)('.')
+            DOT_QIALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('data')
+              PsiElement(DOT)('.')
+              CALL_EXPRESSION
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('add')
-              VALUE_ARGUMENT_LIST
-                PsiElement(LPAR)('(')
-                VALUE_ARGUMENT
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('size')
-                PsiElement(RPAR)(')')
+                VALUE_ARGUMENT_LIST
+                  PsiElement(LPAR)('(')
+                  VALUE_ARGUMENT
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('size')
+                  PsiElement(RPAR)(')')
             PsiWhiteSpace('\n    ')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('size')
@@ -298,16 +298,16 @@ JetFile: UnionFind.jet
                       PsiElement(LPAR)('(')
                       CONDITION
                         DOT_QIALIFIED_EXPRESSION
-                          CALL_EXPRESSION
-                            DOT_QIALIFIED_EXPRESSION
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('Random')
-                              PsiElement(DOT)('.')
+                          DOT_QIALIFIED_EXPRESSION
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('Random')
+                            PsiElement(DOT)('.')
+                            CALL_EXPRESSION
                               REFERENCE_EXPRESSION
                                 PsiElement(IDENTIFIER)('nextInt')
-                            VALUE_ARGUMENT_LIST
-                              PsiElement(LPAR)('(')
-                              PsiElement(RPAR)(')')
+                              VALUE_ARGUMENT_LIST
+                                PsiElement(LPAR)('(')
+                                PsiElement(RPAR)(')')
                           PsiElement(DOT)('.')
                           REFERENCE_EXPRESSION
                             PsiElement(IDENTIFIER)('isOdd')

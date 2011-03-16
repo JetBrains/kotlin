@@ -156,7 +156,7 @@ public class JetTypeInferrer {
             }
 
             @Override
-            public void visitReferenceExpression(JetSimpleNameExpression expression) {
+            public void visitSimpleNameExpression(JetSimpleNameExpression expression) {
                 // a -- create a hierarchical lookup domain for this.a
                 result[0] = semanticServices.getOverloadResolver().getOverloadDomain(null, scope, expression.getReferencedName());
                 reference[0] = expression;
@@ -285,7 +285,7 @@ public class JetTypeInferrer {
         }
 
         @Override
-        public void visitReferenceExpression(JetSimpleNameExpression expression) {
+        public void visitSimpleNameExpression(JetSimpleNameExpression expression) {
             // TODO : other members
             // TODO : type substitutions???
             String referencedName = expression.getReferencedName();
@@ -545,19 +545,37 @@ public class JetTypeInferrer {
 
         @Override
         public void visitPredicateExpression(JetPredicateExpression expression) {
+//            JetExpression receiverExpression = expression.getReceiverExpression();
+//            JetExpression selectorExpression = expression.getSelectorExpression();
+//            JetType receiverType = getType(scope, receiverExpression, false);
+//            if (receiverType != null) {
+//                if (selectorExpression instanceof JetSimpleNameExpression) {
+//                    JetScope compositeScope = new ScopeWithReceiver(scope, receiverType);
+//                    result = getType(compositeScope, selectorExpression, false);
+//                }
+//                else if (selectorExpression != null) {
+//                    // TODO : not a simple name -> resolve in scope, expect property type or a function type
+//                    throw new UnsupportedOperationException();
+//                }
+//            }
             throw new UnsupportedOperationException(); // TODO
         }
 
         @Override
         public void visitQualifiedExpression(JetQualifiedExpression expression) {
             // TODO : functions
-            JetExpression receiverExpression = expression.getReceiverExpression();
             JetExpression selectorExpression = expression.getSelectorExpression();
+            JetExpression receiverExpression = expression.getReceiverExpression();
             JetType receiverType = getType(scope, receiverExpression, false);
             if (receiverType != null) {
                 checkNullSafety(receiverType, expression);
-                if (selectorExpression instanceof JetSimpleNameExpression) {
-                    JetScope compositeScope = new ScopeWithReceiver(scope, receiverType);
+                JetScope compositeScope = new ScopeWithReceiver(scope, receiverType);
+                if (selectorExpression instanceof JetCallExpression) {
+                    JetCallExpression callExpression = (JetCallExpression) selectorExpression;
+                    OverloadDomain overloadDomain = getOverloadDomain(compositeScope, callExpression.getCalleeExpression());
+                    resolveOverloads(scope, callExpression, overloadDomain);
+                }
+                else if (selectorExpression instanceof JetSimpleNameExpression) {
                     result = getType(compositeScope, selectorExpression, false);
                 }
                 else if (selectorExpression != null) {
@@ -570,7 +588,11 @@ public class JetTypeInferrer {
         @Override
         public void visitCallExpression(JetCallExpression expression) {
             JetExpression calleeExpression = expression.getCalleeExpression();
+            OverloadDomain overloadDomain = getOverloadDomain(scope, calleeExpression);
+            resolveOverloads(scope, expression, overloadDomain);
+        }
 
+        private void resolveOverloads(JetScope scope, JetCallExpression expression, OverloadDomain overloadDomain) {
             // 1) ends with a name -> (scope, name) to look up
             // 2) ends with something else -> just check types
 
@@ -592,7 +614,6 @@ public class JetTypeInferrer {
             // TODO : must be a check
             assert functionLiteralArguments.size() <= 1;
 
-            OverloadDomain overloadDomain = getOverloadDomain(scope, calleeExpression);
             if (someNamed) {
                 // TODO : check that all are named
                 throw new UnsupportedOperationException(); // TODO

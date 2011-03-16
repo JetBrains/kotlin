@@ -60,16 +60,16 @@ JetFile: With.jet
       PsiWhiteSpace(' ')
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
-      CALL_EXPRESSION
-        DOT_QIALIFIED_EXPRESSION
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('receiver')
-          PsiElement(DOT)('.')
+      DOT_QIALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('receiver')
+        PsiElement(DOT)('.')
+        CALL_EXPRESSION
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('body')
-        VALUE_ARGUMENT_LIST
-          PsiElement(LPAR)('(')
-          PsiElement(RPAR)(')')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
     PsiWhiteSpace('\n\n')
     FUN
       PsiElement(fun)('fun')
@@ -134,15 +134,15 @@ JetFile: With.jet
             PsiWhiteSpace('\n  ')
             PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n\n  ')
-        CALL_EXPRESSION
+        DOT_QIALIFIED_EXPRESSION
           DOT_QIALIFIED_EXPRESSION
-            DOT_QIALIFIED_EXPRESSION
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('System')
-              PsiElement(DOT)('.')
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('out')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('System')
             PsiElement(DOT)('.')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('out')
+          PsiElement(DOT)('.')
+          CALL_EXPRESSION
             FUNCTION_LITERAL
               PsiElement(LBRACE)('{')
               PsiWhiteSpace('\n    ')
@@ -170,8 +170,8 @@ JetFile: With.jet
                 PsiElement(SEMICOLON)(';')
               PsiWhiteSpace('\n  ')
               PsiElement(RBRACE)('}')
-          VALUE_ARGUMENT_LIST
-            PsiElement(LPAR)('(')
-            PsiElement(RPAR)(')')
+            VALUE_ARGUMENT_LIST
+              PsiElement(LPAR)('(')
+              PsiElement(RPAR)(')')
         PsiWhiteSpace('\n\n')
         PsiElement(RBRACE)('}')

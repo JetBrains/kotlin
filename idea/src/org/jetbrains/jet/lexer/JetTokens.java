@@ -163,7 +163,6 @@ public interface JetTokens {
             SAFE_ACCESS, ELVIS,
 //            MAP, FILTER,
             QUEST, COLON,
-//            SEMICOLON,
             RANGE, EQ, MULTEQ, DIVEQ, PERCEQ, PLUSEQ, MINUSEQ,
             NOT_IN, NOT_IS, HASH, IDENTIFIER, LABEL_IDENTIFIER, ATAT, AT);
 }

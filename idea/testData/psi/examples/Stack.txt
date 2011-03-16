@@ -85,19 +85,19 @@ JetFile: Stack.jet
           BLOCK
             PsiElement(LBRACE)('{')
             PsiWhiteSpace('\n    ')
-            CALL_EXPRESSION
-              DOT_QIALIFIED_EXPRESSION
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('data')
-                PsiElement(DOT)('.')
+            DOT_QIALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('data')
+              PsiElement(DOT)('.')
+              CALL_EXPRESSION
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('add')
-              VALUE_ARGUMENT_LIST
-                PsiElement(LPAR)('(')
-                VALUE_ARGUMENT
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('item')
-                PsiElement(RPAR)(')')
+                VALUE_ARGUMENT_LIST
+                  PsiElement(LPAR)('(')
+                  VALUE_ARGUMENT
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('item')
+                  PsiElement(RPAR)(')')
             PsiWhiteSpace(' ')
             PsiComment(EOL_COMMENT)('// Problem: I would like to write push(...) = data.add(...), but the types do not match')
             PsiWhiteSpace('\n  ')
@@ -118,16 +118,16 @@ JetFile: Stack.jet
           PsiWhiteSpace(' ')
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
-          CALL_EXPRESSION
-            DOT_QIALIFIED_EXPRESSION
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('data')
-              PsiElement(DOT)('.')
+          DOT_QIALIFIED_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('data')
+            PsiElement(DOT)('.')
+            CALL_EXPRESSION
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('removeLast')
-            VALUE_ARGUMENT_LIST
-              PsiElement(LPAR)('(')
-              PsiElement(RPAR)(')')
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                PsiElement(RPAR)(')')
         PsiWhiteSpace('\n\n  ')
         PROPERTY
           MODIFIER_LIST

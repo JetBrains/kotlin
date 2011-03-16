@@ -98,23 +98,23 @@ JetFile: AnonymousObjects.jet
                         PsiElement(RPAR)(')')
                         PsiWhiteSpace(' ')
                         THEN
-                          CALL_EXPRESSION
-                            DOT_QIALIFIED_EXPRESSION
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('GOD')
-                              PsiElement(DOT)('.')
+                          DOT_QIALIFIED_EXPRESSION
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('GOD')
+                            PsiElement(DOT)('.')
+                            CALL_EXPRESSION
                               REFERENCE_EXPRESSION
                                 PsiElement(IDENTIFIER)('sendMessage')
-                            VALUE_ARGUMENT_LIST
-                              PsiElement(LPAR)('(')
-                              VALUE_ARGUMENT
-                                DOT_QIALIFIED_EXPRESSION
-                                  REFERENCE_EXPRESSION
-                                    PsiElement(IDENTIFIER)('GodMEssages')
-                                  PsiElement(DOT)('.')
-                                  REFERENCE_EXPRESSION
-                                    PsiElement(IDENTIFIER)('TOO_MANY_CLICKS')
-                              PsiElement(RPAR)(')')
+                              VALUE_ARGUMENT_LIST
+                                PsiElement(LPAR)('(')
+                                VALUE_ARGUMENT
+                                  DOT_QIALIFIED_EXPRESSION
+                                    REFERENCE_EXPRESSION
+                                      PsiElement(IDENTIFIER)('GodMEssages')
+                                    PsiElement(DOT)('.')
+                                    REFERENCE_EXPRESSION
+                                      PsiElement(IDENTIFIER)('TOO_MANY_CLICKS')
+                                PsiElement(RPAR)(')')
                           PsiElement(SEMICOLON)(';')
                       PsiWhiteSpace('\n  ')
                       PsiElement(RBRACE)('}')

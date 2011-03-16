@@ -225,116 +225,116 @@ JetFile: Labels.jet
           PsiElement(continue)('continue')
           PsiElement(ATAT)('@@')
         PsiWhiteSpace('\n\n  ')
-        CALL_EXPRESSION
-          DOT_QIALIFIED_EXPRESSION
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('a')
-            PsiElement(DOT)('.')
+        DOT_QIALIFIED_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('a')
+          PsiElement(DOT)('.')
+          CALL_EXPRESSION
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('filter')
-          PsiWhiteSpace(' ')
-          PREFIX_EXPRESSION
-            OPERATION_REFERENCE
-              PsiElement(LABEL_IDENTIFIER)('@f')
-            FUNCTION_LITERAL
-              PsiElement(LBRACE)('{')
-              PsiWhiteSpace('\n      ')
-              BODY
-                IF
-                  PsiElement(if)('if')
-                  PsiWhiteSpace(' ')
-                  PsiElement(LPAR)('(')
-                  CONDITION
-                    INTEGER_CONSTANT
-                      PsiElement(INTEGER_LITERAL)('1')
-                  PsiElement(RPAR)(')')
-                  PsiWhiteSpace(' ')
-                  THEN
-                    RETURN
-                      PsiElement(return)('return')
+            PsiWhiteSpace(' ')
+            PREFIX_EXPRESSION
+              OPERATION_REFERENCE
+                PsiElement(LABEL_IDENTIFIER)('@f')
+              FUNCTION_LITERAL
+                PsiElement(LBRACE)('{')
                 PsiWhiteSpace('\n      ')
-                RETURN
-                  PsiElement(return)('return')
-                  PsiElement(LABEL_IDENTIFIER)('@f')
-                  PsiWhiteSpace(' ')
-                  BOOLEAN_CONSTANT
-                    PsiElement(true)('true')
-              PsiWhiteSpace('\n  ')
-              PsiElement(RBRACE)('}')
+                BODY
+                  IF
+                    PsiElement(if)('if')
+                    PsiWhiteSpace(' ')
+                    PsiElement(LPAR)('(')
+                    CONDITION
+                      INTEGER_CONSTANT
+                        PsiElement(INTEGER_LITERAL)('1')
+                    PsiElement(RPAR)(')')
+                    PsiWhiteSpace(' ')
+                    THEN
+                      RETURN
+                        PsiElement(return)('return')
+                  PsiWhiteSpace('\n      ')
+                  RETURN
+                    PsiElement(return)('return')
+                    PsiElement(LABEL_IDENTIFIER)('@f')
+                    PsiWhiteSpace(' ')
+                    BOOLEAN_CONSTANT
+                      PsiElement(true)('true')
+                PsiWhiteSpace('\n  ')
+                PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n\n  ')
-        CALL_EXPRESSION
-          DOT_QIALIFIED_EXPRESSION
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('a')
-            PsiElement(DOT)('.')
+        DOT_QIALIFIED_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('a')
+          PsiElement(DOT)('.')
+          CALL_EXPRESSION
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('filter')
-          PsiWhiteSpace(' ')
-          PREFIX_EXPRESSION
-            OPERATION_REFERENCE
-              PsiElement(AT)('@')
-            FUNCTION_LITERAL
-              PsiElement(LBRACE)('{')
-              PsiWhiteSpace('\n      ')
-              BODY
-                IF
-                  PsiElement(if)('if')
-                  PsiWhiteSpace(' ')
-                  PsiElement(LPAR)('(')
-                  CONDITION
-                    INTEGER_CONSTANT
-                      PsiElement(INTEGER_LITERAL)('1')
-                  PsiElement(RPAR)(')')
-                  PsiWhiteSpace(' ')
-                  THEN
-                    RETURN
-                      PsiElement(return)('return')
+            PsiWhiteSpace(' ')
+            PREFIX_EXPRESSION
+              OPERATION_REFERENCE
+                PsiElement(AT)('@')
+              FUNCTION_LITERAL
+                PsiElement(LBRACE)('{')
                 PsiWhiteSpace('\n      ')
-                RETURN
-                  PsiElement(return)('return')
-                  PsiElement(AT)('@')
-                  PsiWhiteSpace(' ')
-                  BOOLEAN_CONSTANT
-                    PsiElement(true)('true')
-              PsiWhiteSpace('\n  ')
-              PsiElement(RBRACE)('}')
+                BODY
+                  IF
+                    PsiElement(if)('if')
+                    PsiWhiteSpace(' ')
+                    PsiElement(LPAR)('(')
+                    CONDITION
+                      INTEGER_CONSTANT
+                        PsiElement(INTEGER_LITERAL)('1')
+                    PsiElement(RPAR)(')')
+                    PsiWhiteSpace(' ')
+                    THEN
+                      RETURN
+                        PsiElement(return)('return')
+                  PsiWhiteSpace('\n      ')
+                  RETURN
+                    PsiElement(return)('return')
+                    PsiElement(AT)('@')
+                    PsiWhiteSpace(' ')
+                    BOOLEAN_CONSTANT
+                      PsiElement(true)('true')
+                PsiWhiteSpace('\n  ')
+                PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n\n  ')
-        CALL_EXPRESSION
-          DOT_QIALIFIED_EXPRESSION
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('a')
-            PsiElement(DOT)('.')
+        DOT_QIALIFIED_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('a')
+          PsiElement(DOT)('.')
+          CALL_EXPRESSION
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('filter')
-          PsiWhiteSpace(' ')
-          PREFIX_EXPRESSION
-            OPERATION_REFERENCE
-              PsiElement(ATAT)('@@')
-            FUNCTION_LITERAL
-              PsiElement(LBRACE)('{')
-              PsiWhiteSpace('\n      ')
-              BODY
-                IF
-                  PsiElement(if)('if')
-                  PsiWhiteSpace(' ')
-                  PsiElement(LPAR)('(')
-                  CONDITION
-                    INTEGER_CONSTANT
-                      PsiElement(INTEGER_LITERAL)('1')
-                  PsiElement(RPAR)(')')
-                  PsiWhiteSpace(' ')
-                  THEN
-                    RETURN
-                      PsiElement(return)('return')
+            PsiWhiteSpace(' ')
+            PREFIX_EXPRESSION
+              OPERATION_REFERENCE
+                PsiElement(ATAT)('@@')
+              FUNCTION_LITERAL
+                PsiElement(LBRACE)('{')
                 PsiWhiteSpace('\n      ')
-                RETURN
-                  PsiElement(return)('return')
-                  PsiElement(ATAT)('@@')
-                  PsiWhiteSpace(' ')
-                  BOOLEAN_CONSTANT
-                    PsiElement(true)('true')
-              PsiWhiteSpace('\n  ')
-              PsiElement(RBRACE)('}')
+                BODY
+                  IF
+                    PsiElement(if)('if')
+                    PsiWhiteSpace(' ')
+                    PsiElement(LPAR)('(')
+                    CONDITION
+                      INTEGER_CONSTANT
+                        PsiElement(INTEGER_LITERAL)('1')
+                    PsiElement(RPAR)(')')
+                    PsiWhiteSpace(' ')
+                    THEN
+                      RETURN
+                        PsiElement(return)('return')
+                  PsiWhiteSpace('\n      ')
+                  RETURN
+                    PsiElement(return)('return')
+                    PsiElement(ATAT)('@@')
+                    PsiWhiteSpace(' ')
+                    BOOLEAN_CONSTANT
+                      PsiElement(true)('true')
+                PsiWhiteSpace('\n  ')
+                PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n\n  ')
         THIS_EXPRESSION
           PsiElement(this)('this')

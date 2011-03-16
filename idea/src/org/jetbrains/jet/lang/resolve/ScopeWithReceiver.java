@@ -16,6 +16,12 @@ public class ScopeWithReceiver extends JetScopeImpl {
         this.receiverTypeScope = receiverType.getMemberScope();
     }
 
+    @NotNull
+    @Override
+    public FunctionGroup getFunctionGroup(@NotNull String name) {
+        return receiverTypeScope.getFunctionGroup(name); // TODO
+    }
+
     @Override
     public ClassDescriptor getClass(@NotNull String name) {
         return super.getClass(name); // TODO

@@ -352,30 +352,30 @@ JetFile: ArrayList.jet
                     PsiWhiteSpace(' ')
                     PsiElement(EQ)('=')
                     PsiWhiteSpace(' ')
-                    CALL_EXPRESSION
+                    DOT_QIALIFIED_EXPRESSION
                       DOT_QIALIFIED_EXPRESSION
-                        DOT_QIALIFIED_EXPRESSION
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('ArrayList')
-                          PsiElement(DOT)('.')
-                          THIS_EXPRESSION
-                            PsiElement(this)('this')
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('ArrayList')
                         PsiElement(DOT)('.')
+                        THIS_EXPRESSION
+                          PsiElement(this)('this')
+                      PsiElement(DOT)('.')
+                      CALL_EXPRESSION
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('remove')
-                      VALUE_ARGUMENT_LIST
-                        PsiElement(LPAR)('(')
-                        VALUE_ARGUMENT
-                          BINARY_EXPRESSION
-                            REFERENCE_EXPRESSION
-                              PsiElement(IDENTIFIER)('index')
-                            PsiWhiteSpace(' ')
-                            OPERATION_REFERENCE
-                              PsiElement(MINUS)('-')
-                            PsiWhiteSpace(' ')
-                            INTEGER_CONSTANT
-                              PsiElement(INTEGER_LITERAL)('1')
-                        PsiElement(RPAR)(')')
+                        VALUE_ARGUMENT_LIST
+                          PsiElement(LPAR)('(')
+                          VALUE_ARGUMENT
+                            BINARY_EXPRESSION
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('index')
+                              PsiWhiteSpace(' ')
+                              OPERATION_REFERENCE
+                                PsiElement(MINUS)('-')
+                              PsiWhiteSpace(' ')
+                              INTEGER_CONSTANT
+                                PsiElement(INTEGER_LITERAL)('1')
+                          PsiElement(RPAR)(')')
                   PsiWhiteSpace('\n      ')
                   BINARY_EXPRESSION
                     REFERENCE_EXPRESSION

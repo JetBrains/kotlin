@@ -88,7 +88,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
     @SuppressWarnings({"UnusedDeclaration"})
     private enum Precedence {
-        POSTFIX(PLUSPLUS, MINUSMINUS), // typeArguments? valueArguments : typeArguments : arrayAccess
+        POSTFIX(PLUSPLUS, MINUSMINUS,
+                HASH, DOT, SAFE_ACCESS, QUEST), // typeArguments? valueArguments : typeArguments : arrayAccess
 
         PREFIX(MINUS, PLUS, MINUSMINUS, PLUSPLUS, EXCL, LABEL_IDENTIFIER, AT, ATAT) { // attributes
 
@@ -188,11 +189,11 @@ public class JetExpressionParsing extends AbstractJetParsing {
         IElementType[] usedOperations = ALL_OPERATIONS.getTypes();
         Set<IElementType> usedSet = new HashSet<IElementType>(Arrays.asList(usedOperations));
 
-//        if (opSet.size() > usedSet.size()) {
-//            opSet.removeAll(usedSet);
-//            assert false : opSet;
-//        }
-//        assert usedSet.size() == opSet.size();
+        if (opSet.size() > usedSet.size()) {
+            opSet.removeAll(usedSet);
+            assert false : opSet;
+        }
+        assert usedSet.size() == opSet.size();
 
         usedSet.removeAll(opSet);
 
@@ -324,65 +325,96 @@ public class JetExpressionParsing extends AbstractJetParsing {
         while (true) {
             if (myBuilder.newlineBeforeCurrentToken()) {
                 break;
-            } else if (at(LBRACKET)) {
+            }
+            else if (at(LBRACKET)) {
                 parseArrayAccess();
                 expression.done(ARRAY_ACCESS_EXPRESSION);
-            } else if (atSet(Precedence.POSTFIX.getOperations())) {
-                parseOperationReference();
-                expression.done(POSTFIX_EXPRESSION);
-            } else if (parseCallWithClosure()) {
-                parseCallWithClosure();
+            }
+            else if (parseCallSuffix()) {
                 expression.done(CALL_EXPRESSION);
-            } else if (at(LPAR)) {
-                parseValueArgumentList();
-                parseCallWithClosure();
-                expression.done(CALL_EXPRESSION);
-            } else if (at(LT)) {
-                // TODO: be (even) more clever
-                int gtPos = matchTokenStreamPredicate(new FirstBefore(new At(GT), new AtSet(TYPE_ARGUMENT_LIST_STOPPERS, false)) {
-                    @Override
-                    public boolean isTopLevel(int openAngleBrackets, int openBrackets, int openBraces, int openParentheses) {
-                        return openAngleBrackets == 1 && openBrackets == 0 && openBraces == 0 && openParentheses == 0;
-                    }
-                });
-                if (gtPos >= 0) {
-                    myJetParsing.parseTypeArgumentList();
-                    if (!myBuilder.newlineBeforeCurrentToken() && at(LPAR)) parseValueArgumentList();
-                    parseCallWithClosure();
-                    expression.done(CALL_EXPRESSION);
-                } else {
-                    break;
-                }
-            } else if (at(DOT)) {
+            }
+            else if (at(DOT)) {
                 advance(); // DOT
 
-                parseAtomicExpression();
+                parseCallExpression();
 
                 expression.done(DOT_QIALIFIED_EXPRESSION);
-            } else if (at(SAFE_ACCESS)) {
+            }
+            else if (at(SAFE_ACCESS)) {
                 advance(); // SAFE_ACCESS
 
-                parseAtomicExpression();
+                parseCallExpression();
 
                 expression.done(SAFE_ACCESS_EXPRESSION);
-            } else if (at(QUEST)) {
+            }
+            else if (at(QUEST)) {
                 advance(); // QUEST
 
-                parseAtomicExpression();
+                parseCallExpression();
 
                 expression.done(PREDICATE_EXPRESSION);
-            } else if (at(HASH)) {
+            }
+            else if (at(HASH)) {
                 advance(); // HASH
 
                 expect(IDENTIFIER, "Expecting property or function name");
 
                 expression.done(HASH_QIALIFIED_EXPRESSION);
-            } else {
+            }
+            else if (atSet(Precedence.POSTFIX.getOperations())) {
+                parseOperationReference();
+                expression.done(POSTFIX_EXPRESSION);
+            }
+            else {
                 break;
             }
             expression = expression.precede();
         }
         expression.drop();
+    }
+
+    /*
+     * typeParameters? valueParameters? functionLiteral*
+     */
+    private boolean parseCallSuffix() {
+        if (parseCallWithClosure()) {
+            parseCallWithClosure();
+        }
+        else if (at(LPAR)) {
+            parseValueArgumentList();
+            parseCallWithClosure();
+        }
+        else if (at(LT)) {
+            // TODO: be (even) more clever
+            int gtPos = matchTokenStreamPredicate(new FirstBefore(new At(GT), new AtSet(TYPE_ARGUMENT_LIST_STOPPERS, false)) {
+                @Override
+                public boolean isTopLevel(int openAngleBrackets, int openBrackets, int openBraces, int openParentheses) {
+                    return openAngleBrackets == 1 && openBrackets == 0 && openBraces == 0 && openParentheses == 0;
+                }
+            });
+            if (gtPos >= 0) {
+                myJetParsing.parseTypeArgumentList();
+                if (!myBuilder.newlineBeforeCurrentToken() && at(LPAR)) parseValueArgumentList();
+                parseCallWithClosure();
+            }
+            else return false;
+        }
+        else return false;
+        return true;
+    }
+
+    /*
+     * atomicExpression typeParameters? valueParameters? functionLiteral*
+     */
+    private void parseCallExpression() {
+        PsiBuilder.Marker mark = mark();
+        parseAtomicExpression();
+        if (parseCallSuffix()) {
+            mark.done(CALL_EXPRESSION);
+        }
+        else {
+            mark.drop();
+        }
     }
 
     private void parseOperationReference() {

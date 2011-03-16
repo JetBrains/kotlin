@@ -65,7 +65,7 @@ public class JetSimpleNameExpression extends JetReferenceExpression {
 
     @Override
     public void accept(JetVisitor visitor) {
-        visitor.visitReferenceExpression(this);
+        visitor.visitSimpleNameExpression(this);
     }
 
 }
