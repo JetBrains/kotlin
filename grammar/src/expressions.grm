@@ -221,7 +221,7 @@ expressions
   ;
 
 constructorInvocation
-  : userType valueArguments?
+  : userType valueArguments
   ;
 
 arrayAccess

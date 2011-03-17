@@ -1361,7 +1361,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      * "new" constructorInvocation // identical to new nunctionCall
      *
      * constructorInvocation
-     *   : userType valueArguments?
+     *   : userType valueArguments
      */
     private void parseNew() {
         assert _at(NEW_KEYWORD);
@@ -1370,10 +1370,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
         advance(); // NEW_KEYWORD
 
         myJetParsing.parseTypeRef();
+        parseValueArgumentList();
 
-        if (!eol() && at(LPAR)) {
-            parseValueArgumentList();
-        }
         creation.done(NEW);
     }
 

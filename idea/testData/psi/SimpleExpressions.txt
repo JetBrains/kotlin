@@ -435,6 +435,9 @@ JetFile: SimpleExpressions.jet
               USER_TYPE
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('Foo')
+            VALUE_ARGUMENT_LIST
+              PsiElement(LPAR)('(')
+              PsiElement(RPAR)(')')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n    ')
         VALUE_PARAMETER
@@ -464,6 +467,9 @@ JetFile: SimpleExpressions.jet
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('bar')
                   PsiElement(GT)('>')
+            VALUE_ARGUMENT_LIST
+              PsiElement(LPAR)('(')
+              PsiElement(RPAR)(')')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n    ')
         VALUE_PARAMETER
@@ -514,6 +520,9 @@ JetFile: SimpleExpressions.jet
                 USER_TYPE
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('Foo')
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                PsiElement(RPAR)(')')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n    ')
         VALUE_PARAMETER

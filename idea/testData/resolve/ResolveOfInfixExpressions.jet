@@ -22,7 +22,7 @@ import util.*
   new X<String>() `plus`+ "1"
   new X<String>() `plus`plus "sadfas"
   new X<String>().`plus`plus("")
-  val x = new X<String>
+  val x = new X<String>()
   x `minus`- ""
   x `times`* ""
   x `div`/ ""
@@ -51,7 +51,7 @@ import util.*
 fun <T> tt(t : T) : T {
   val x : List = 0
   x`java::java.util.List.get()`[1]
-  val foo = new Bar
+  val foo = new Bar()
   foo`!`[null, 1]
   foo`get2`[1, 1]
   foo`get1`[1]
@@ -62,7 +62,7 @@ fun <T> tt(t : T) : T {
   x`!`[null] = null
   (x`!`[null, 2]) = null
   (`not`!foo)[1]`:std::Char`
-  val y = new Bar
+  val y = new Bar()
   y`inc`++
   `inc`++y
   `dec`--y
