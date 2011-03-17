@@ -32,13 +32,14 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
         this.original = original;
     }
 
-    public final void initialize(
+    public final FunctionDescriptor initialize(
             @NotNull List<TypeParameterDescriptor> typeParameters,
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
             @NotNull JetType unsubstitutedReturnType) {
         this.typeParameters = typeParameters;
         this.unsubstitutedValueParameters = unsubstitutedValueParameters;
         this.unsubstitutedReturnType = unsubstitutedReturnType;
+        return this;
     }
 
     @Override

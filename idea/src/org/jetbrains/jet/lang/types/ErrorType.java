@@ -3,6 +3,8 @@ package org.jetbrains.jet.lang.types;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.JetScope;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -10,50 +12,102 @@ import java.util.List;
  * @author abreslav
  */
 public class ErrorType {
+
+    private static final ModuleDescriptor ERROR_MODULE = new ModuleDescriptor("<ERROR MODULE>");
     private static final JetScope ERROR_SCOPE = new JetScope() {
+
         @Override
         public ClassDescriptor getClass(@NotNull String name) {
-            throw new UnsupportedOperationException(); // TODO
+            return ERROR_CLASS;
         }
 
         @Override
         public PropertyDescriptor getProperty(@NotNull String name) {
-            throw new UnsupportedOperationException(); // TODO
+            return ERROR_PROPERTY;
         }
 
         @Override
         public ExtensionDescriptor getExtension(@NotNull String name) {
-            throw new UnsupportedOperationException(); // TODO
+            return null; // TODO : review
         }
 
         @Override
         public NamespaceDescriptor getNamespace(@NotNull String name) {
-            throw new UnsupportedOperationException(); // TODO
+            return null; // TODO : review
         }
 
         @Override
         public TypeParameterDescriptor getTypeParameter(@NotNull String name) {
-            throw new UnsupportedOperationException(); // TODO
+            return null; // TODO : review
         }
 
         @NotNull
         @Override
         public JetType getThisType() {
-            throw new UnsupportedOperationException(); // TODO
+            return createErrorType("<ERROR TYPE>");
         }
 
         @NotNull
         @Override
         public FunctionGroup getFunctionGroup(@NotNull String name) {
-            throw new UnsupportedOperationException(); // TODO
+            return ERROR_FUNCTION_GROUP;
         }
 
         @NotNull
         @Override
         public DeclarationDescriptor getContainingDeclaration() {
-            throw new UnsupportedOperationException(); // TODO
+            return ERROR_MODULE;
         }
 
+    };
+
+    private static final ClassDescriptor ERROR_CLASS = new ClassDescriptorImpl(ERROR_MODULE, Collections.<Attribute>emptyList(), "<ERROR CLASS>").initialize(
+            true, Collections.<TypeParameterDescriptor>emptyList(), Collections.<JetType>emptyList(), getErrorScope()
+    );
+
+    private static JetScope getErrorScope() {
+        return ERROR_SCOPE;
+    }
+
+    private static final PropertyDescriptor ERROR_PROPERTY = new PropertyDescriptorImpl(ERROR_CLASS, Collections.<Attribute>emptyList(), "<ERROR PROPERTY>", createErrorType("<ERROR PROPERTY TYPE>"));
+    private static final FunctionGroup ERROR_FUNCTION_GROUP = new FunctionGroup() {
+        @NotNull
+        @Override
+        public String getName() {
+            return "<ERROR FUNCTION>";
+        }
+
+        @NotNull
+        @Override
+        public Collection<FunctionDescriptor> getPossiblyApplicableFunctions(@NotNull List<JetType> typeArguments, @NotNull List<JetType> positionedValueArgumentTypes) {
+            FunctionDescriptorImpl functionDescriptor = new FunctionDescriptorImpl(ERROR_CLASS, Collections.<Attribute>emptyList(), "<ERROR FUNCTION>");
+            return Collections.singletonList(functionDescriptor.initialize(
+                    Collections.<TypeParameterDescriptor>emptyList(),
+                    getValueParameters(functionDescriptor, positionedValueArgumentTypes),
+                    createErrorType("<ERROR FUNCTION RETURN>")
+            ));
+        }
+
+        private List<ValueParameterDescriptor> getValueParameters(FunctionDescriptor functionDescriptor, List<JetType> argumentTypes) {
+            List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>();
+            for (int i = 0, argumentTypesSize = argumentTypes.size(); i < argumentTypesSize; i++) {
+                JetType argumentType = argumentTypes.get(i);
+                result.add(new ValueParameterDescriptorImpl(
+                        functionDescriptor,
+                        i,
+                        Collections.<Attribute>emptyList(),
+                        "<ERROR PARAMETER>",
+                        createErrorType("<ERROR PARAMETER TYPE>"),
+                        false,
+                        false));
+            }
+            return result;
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return false;
+        }
     };
 
     private ErrorType() {}

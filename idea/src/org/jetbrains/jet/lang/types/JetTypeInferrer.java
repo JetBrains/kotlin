@@ -860,9 +860,9 @@ public class JetTypeInferrer {
             return resultType;
         }
 
-        private boolean isBoolean(@NotNull JetType resultType) {
+        private boolean isBoolean(@NotNull JetType type) {
             TypeConstructor booleanTypeConstructor = semanticServices.getStandardLibrary().getBoolean().getTypeConstructor();
-            return resultType.getConstructor().equals(booleanTypeConstructor);
+            return type.getConstructor().equals(booleanTypeConstructor) || ErrorType.isErrorType(type);
         }
 
         @Override

@@ -303,6 +303,9 @@ public class JetTypeChecker {
     }
 
     public boolean isSubtypeOf(@NotNull JetType subtype, @NotNull JetType supertype) {
+        if (ErrorType.isErrorType(subtype) || ErrorType.isErrorType(supertype)) {
+            return true;
+        }
         if (!supertype.isNullable() && subtype.isNullable()) {
             return false;
         }
