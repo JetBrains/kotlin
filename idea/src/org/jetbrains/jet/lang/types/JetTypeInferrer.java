@@ -165,7 +165,7 @@ public class JetTypeInferrer {
             @Override
             public void visitExpression(JetExpression expression) {
                 // <e> create a dummy domain for the type of e
-                throw new UnsupportedOperationException(); // TODO
+                throw new UnsupportedOperationException(expression.getText()); // TODO
             }
 
             @Override
@@ -437,55 +437,6 @@ public class JetTypeInferrer {
         }
 
         @Override
-        public void visitIfExpression(JetIfExpression expression) {
-            // TODO : check condition type
-            JetExpression condition = expression.getCondition();
-            if (condition != null) {
-                JetType conditionType = getType(scope, condition, false);
-
-                if (conditionType != null && !isBoolean(conditionType)) {
-                    semanticServices.getErrorHandler().genericError(condition.getNode(), "Condition must be of type Boolean, but was of type " + conditionType);
-                }
-            }
-            // TODO : change types according to is and nullability checks
-            JetExpression elseBranch = expression.getElse();
-            if (elseBranch == null) {
-                // TODO : type-check the branch
-                result = JetStandardClasses.getUnitType();
-            } else {
-                JetType thenType = getType(scope, expression.getThen(), true);
-                JetType elseType = getType(scope, elseBranch, true);
-                result = semanticServices.getTypeChecker().commonSupertype(Arrays.asList(thenType, elseType));
-            }
-        }
-
-        @Override
-        public void visitWhenExpression(JetWhenExpression expression) {
-            // TODO :change scope according to the bound value in the when header
-            List<JetType> expressions = new ArrayList<JetType>();
-            collectAllReturnTypes(expression, scope, expressions);
-            result = semanticServices.getTypeChecker().commonSupertype(expressions);
-        }
-
-        @Override
-        public void visitTryExpression(JetTryExpression expression) {
-            JetExpression tryBlock = expression.getTryBlock();
-            List<JetCatchClause> catchClauses = expression.getCatchClauses();
-            JetFinallySection finallyBlock = expression.getFinallyBlock();
-            List<JetType> types = new ArrayList<JetType>();
-            if (finallyBlock == null) {
-                for (JetCatchClause catchClause : catchClauses) {
-                    // TODO: change scope here
-                    types.add(getType(scope, catchClause.getCatchBody(), true));
-                }
-            } else {
-                types.add(getType(scope, finallyBlock.getFinalExpression(), true));
-            }
-            types.add(getType(scope, tryBlock, true));
-            result = semanticServices.getTypeChecker().commonSupertype(types);
-        }
-
-        @Override
         public void visitTupleExpression(JetTupleExpression expression) {
             List<JetExpression> entries = expression.getEntries();
             List<JetType> types = new ArrayList<JetType>();
@@ -525,7 +476,125 @@ public class JetTypeInferrer {
         }
 
         @Override
-        public void visitLoopExpression(JetLoopExpression expression) {
+        public void visitWhenExpression(JetWhenExpression expression) {
+            // TODO :change scope according to the bound value in the when header
+            List<JetType> expressions = new ArrayList<JetType>();
+            collectAllReturnTypes(expression, scope, expressions);
+            result = semanticServices.getTypeChecker().commonSupertype(expressions);
+        }
+
+        @Override
+        public void visitTryExpression(JetTryExpression expression) {
+            JetExpression tryBlock = expression.getTryBlock();
+            List<JetCatchClause> catchClauses = expression.getCatchClauses();
+            JetFinallySection finallyBlock = expression.getFinallyBlock();
+            List<JetType> types = new ArrayList<JetType>();
+            if (finallyBlock == null) {
+                for (JetCatchClause catchClause : catchClauses) {
+                    // TODO: change scope here
+                    types.add(getType(scope, catchClause.getCatchBody(), true));
+                }
+            } else {
+                types.add(getType(scope, finallyBlock.getFinalExpression(), true));
+            }
+            types.add(getType(scope, tryBlock, true));
+            result = semanticServices.getTypeChecker().commonSupertype(types);
+        }
+
+        @Override
+        public void visitIfExpression(JetIfExpression expression) {
+            checkCondition(scope, expression.getCondition());
+
+            // TODO : change types according to is and nullability checks
+            JetExpression elseBranch = expression.getElse();
+            if (elseBranch == null) {
+                // TODO : type-check the branch
+                result = JetStandardClasses.getUnitType();
+            } else {
+                JetType thenType = getType(scope, expression.getThen(), true);
+                JetType elseType = getType(scope, elseBranch, true);
+                result = semanticServices.getTypeChecker().commonSupertype(Arrays.asList(thenType, elseType));
+            }
+        }
+
+        private void checkCondition(@NotNull JetScope scope, @Nullable JetExpression condition) {
+            if (condition != null) {
+                JetType conditionType = getType(scope, condition, false);
+
+                if (conditionType != null && !isBoolean(conditionType)) {
+                    semanticServices.getErrorHandler().genericError(condition.getNode(), "Condition must be of type Boolean, but was of type " + conditionType);
+                }
+            }
+        }
+
+        @Override
+        public void visitWhileExpression(JetWhileExpression expression) {
+            checkCondition(scope, expression.getCondition());
+            JetExpression body = expression.getBody();
+            if (body != null) {
+                getType(scope, body, true);
+            }
+            result = JetStandardClasses.getUnitType();
+        }
+
+        @Override
+        public void visitDoWhileExpression(JetDoWhileExpression expression) {
+            JetExpression body = expression.getBody();
+            JetScope conditionScope = scope; // TODO
+            if (body != null) {
+                getType(scope, body, true);
+            }
+            checkCondition(conditionScope, expression.getCondition());
+            result = JetStandardClasses.getUnitType();
+        }
+
+        @Override
+        public void visitForExpression(JetForExpression expression) {
+            JetParameter loopParameter = expression.getLoopParameter();
+            JetExpression loopRange = expression.getLoopRange();
+            JetType loopRangeType = getType(scope, loopRange, false);
+            JetType expectedParameterType = null;
+            if (loopRangeType != null) {
+                if (!semanticServices.getTypeChecker().isSubtypeOf(loopRangeType, semanticServices.getStandardLibrary().getIterableType(JetStandardClasses.getNullableAnyType()))) {
+                    semanticServices.getErrorHandler().genericError(loopRange.getNode(), "Expecting an Iterable, but found " + loopRangeType);
+                }
+                else {
+                    TypeProjection typeProjection = loopRangeType.getArguments().get(0);
+                    if (!typeProjection.getProjectionKind().allowsOutPosition()) {
+                        expectedParameterType = JetStandardClasses.getDefaultBound();
+                    }
+                    else {
+                        expectedParameterType = typeProjection.getType();
+                    }
+                }
+            }
+
+            WritableScope loopScope = semanticServices.createWritableScope(scope, scope.getContainingDeclaration());
+
+            JetTypeReference typeReference = loopParameter.getTypeReference();
+            PropertyDescriptor propertyDescriptor;
+            if (typeReference != null) {
+                propertyDescriptor = semanticServices.getClassDescriptorResolver(trace).resolvePropertyDescriptor(scope.getContainingDeclaration(), scope, loopParameter);
+                JetType actualParameterType = propertyDescriptor.getType();
+                if (expectedParameterType != null &&
+                        !semanticServices.getTypeChecker().isSubtypeOf(expectedParameterType, actualParameterType)) {
+                    semanticServices.getErrorHandler().genericError(typeReference.getNode(), "The loop iterates over values of type " + expectedParameterType + " but the parameter is declared to be " + actualParameterType);
+                }
+            }
+            else {
+                if (expectedParameterType == null) {
+                    expectedParameterType = ErrorType.createErrorType("Error");
+                }
+                propertyDescriptor = semanticServices.getClassDescriptorResolver(trace).resolvePropertyDescriptor(scope.getContainingDeclaration(), loopParameter, expectedParameterType);
+            }
+            loopScope.addPropertyDescriptor(propertyDescriptor);
+            trace.recordDeclarationResolution(loopParameter, propertyDescriptor);
+
+            JetExpression body = expression.getBody();
+            if (body != null) {
+                getType(loopScope, body, true); // TODO
+            }
+
             result = JetStandardClasses.getUnitType();
         }
 
@@ -844,6 +913,9 @@ public class JetTypeInferrer {
         private JetType getTypeForBinaryCall(JetScope scope, JetExpression left, JetSimpleNameExpression operationSign, @NotNull JetExpression right, String name, boolean reportUnresolved) {
             JetType leftType = safeGetType(scope, left, false);
             JetType rightType = safeGetType(scope, right, false);
+            if (ErrorType.isErrorType(leftType)) {
+                return null;
+            }
             FunctionDescriptor functionDescriptor = lookupFunction(scope, operationSign, name, leftType, Collections.singletonList(rightType), reportUnresolved);
             if (functionDescriptor != null) {
                 return functionDescriptor.getUnsubstitutedReturnType();

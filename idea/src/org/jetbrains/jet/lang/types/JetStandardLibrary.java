@@ -49,6 +49,7 @@ public class JetStandardLibrary {
     private final ClassDescriptor booleanClass;
     private final ClassDescriptor stringClass;
     private final ClassDescriptor arrayClass;
+    private final ClassDescriptor iterableClass;
 
     private final JetType byteType;
     private final JetType charType;
@@ -86,6 +87,7 @@ public class JetStandardLibrary {
             this.booleanClass = libraryScope.getClass("Boolean");
             this.stringClass = libraryScope.getClass("String");
             this.arrayClass = libraryScope.getClass("Array");
+            this.iterableClass = libraryScope.getClass("Iterable");
 
             this.byteType = new JetTypeImpl(getByte());
             this.charType = new JetTypeImpl(getChar());
@@ -156,6 +158,11 @@ public class JetStandardLibrary {
     }
 
     @NotNull
+    public ClassDescriptor getIterable() {
+        return iterableClass;
+    }
+
+    @NotNull
     public JetType getIntType() {
         return intType;
     }
@@ -215,6 +222,18 @@ public class JetStandardLibrary {
                 false,
                 types,
                 getArray().getMemberScope(types)
+        );
+    }
+
+    @NotNull
+    public JetType getIterableType(@NotNull JetType argument) {
+        List<TypeProjection> types = Collections.singletonList(new TypeProjection(Variance.INVARIANT, argument));
+        return new JetTypeImpl(
+                Collections.<Attribute>emptyList(),
+                getIterable().getTypeConstructor(),
+                false,
+                types,
+                getIterable().getMemberScope(types)
         );
     }
 }

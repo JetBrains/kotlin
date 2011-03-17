@@ -141,7 +141,8 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertCommonSupertype("Derived_T<Int>", "DDerived_T<Int>", "Derived_T<Int>");
         assertCommonSupertype("Derived_T<Int>", "DDerived_T<Int>", "DDerived1_T<Int>");
 
-        assertCommonSupertype("Base_T<out Any>", "Base_T<Int>", "Base_T<Boolean>");
+        assertCommonSupertype("Comparable<*>", "Comparable<Int>", "Comparable<Boolean>");
+        assertCommonSupertype("Base_T<out Comparable<*>>", "Base_T<Int>", "Base_T<Boolean>");
         assertCommonSupertype("Base_T<in Int>", "Base_T<Int>", "Base_T<in Int>");
         assertCommonSupertype("Base_T<in Int>", "Derived_T<Int>", "Base_T<in Int>");
         assertCommonSupertype("Base_T<in Int>", "Derived_T<in Int>", "Base_T<Int>");

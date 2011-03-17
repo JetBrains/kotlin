@@ -177,11 +177,14 @@ public class JetTypeChecker {
         }
 
         if (ins != null) {
-            Variance projectionKind = variance == Variance.IN_VARIANCE ? Variance.INVARIANT : Variance.IN_VARIANCE;
             JetType intersection = TypeUtils.intersect(this, ins);
             if (intersection == null) {
+                if (outs != null) {
+                    return new TypeProjection(Variance.OUT_VARIANCE, commonSupertype(outs));
+                }
                 return new TypeProjection(Variance.OUT_VARIANCE, commonSupertype(parameterDescriptor.getUpperBounds()));
             }
+            Variance projectionKind = variance == Variance.IN_VARIANCE ? Variance.INVARIANT : Variance.IN_VARIANCE;
             return new TypeProjection(projectionKind, intersection);
         } else if (outs != null) {
             Variance projectionKind = variance == Variance.OUT_VARIANCE ? Variance.INVARIANT : Variance.OUT_VARIANCE;

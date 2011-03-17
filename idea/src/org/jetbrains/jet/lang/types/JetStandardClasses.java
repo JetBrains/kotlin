@@ -45,8 +45,8 @@ public class JetStandardClasses {
                 }
             }, JetScope.EMPTY
     );
-    private static final JetType NOTHING_TYPE = new JetTypeImpl(getNothing());
 
+    private static final JetType NOTHING_TYPE = new JetTypeImpl(getNothing());
     private static final JetType NULLABLE_NOTHING_TYPE = new JetTypeImpl(
             Collections.<Attribute>emptyList(),
             getNothing().getTypeConstructor(),
@@ -65,8 +65,8 @@ public class JetStandardClasses {
             Collections.<JetType>emptySet(),
             JetScope.EMPTY
     );
-    private static final JetType ANY_TYPE = new JetTypeImpl(ANY.getTypeConstructor(), JetScope.EMPTY);
 
+    private static final JetType ANY_TYPE = new JetTypeImpl(ANY.getTypeConstructor(), JetScope.EMPTY);
     private static final JetType NULLABLE_ANY_TYPE = TypeUtils.makeNullable(ANY_TYPE);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -76,8 +76,8 @@ public class JetStandardClasses {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     public static final int TUPLE_COUNT = 22;
-    private static final ClassDescriptor[] TUPLE = new ClassDescriptor[TUPLE_COUNT];
 
+    private static final ClassDescriptor[] TUPLE = new ClassDescriptor[TUPLE_COUNT];
     static {
         for (int i = 0; i < TUPLE_COUNT; i++) {
             List<TypeParameterDescriptor> parameters = new ArrayList<TypeParameterDescriptor>();
@@ -102,8 +102,8 @@ public class JetStandardClasses {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     public static final int FUNCTION_COUNT = 22;
-    private static final ClassDescriptor[] FUNCTION = new ClassDescriptor[FUNCTION_COUNT];
 
+    private static final ClassDescriptor[] FUNCTION = new ClassDescriptor[FUNCTION_COUNT];
     private static final ClassDescriptor[] RECEIVER_FUNCTION = new ClassDescriptor[FUNCTION_COUNT];
 
     static {
@@ -191,7 +191,14 @@ public class JetStandardClasses {
         }
     }
 
+    private static final JetType DEFAULT_BOUND = getNullableAnyType();
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    @NotNull
+    public static JetType getDefaultBound() {
+        return DEFAULT_BOUND;
+    }
 
     @NotNull
     public static ClassDescriptor getAny() {

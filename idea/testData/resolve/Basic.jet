@@ -17,3 +17,18 @@
 
     val x : `C.B`B
 }
+
+fun test() : Unit {
+    for (~i~i in 1..2) {
+      `i`i`:std::Int`
+    }
+    for (val ~j~j in 1..2) {
+      `j`j`:std::Int`
+    }
+    for (val ~k~k : Int in 1..2) {
+      `k`k`:std::Int`
+    }
+    for (~l~l : Int in 1..2) {
+      `l`l`:std::Int`
+    }
+}

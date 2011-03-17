@@ -37,6 +37,7 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
         return new SubstitutingScope(unsubstitutedMemberScope, substitutionContext);
     }
 
+    @NotNull
     public WritableScope getUnsubstitutedMemberScope() {
         return unsubstitutedMemberScope;
     }

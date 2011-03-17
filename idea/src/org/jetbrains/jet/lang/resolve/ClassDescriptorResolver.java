@@ -7,7 +7,10 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lexer.JetTokens;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author abreslav
@@ -57,6 +60,7 @@ public class ClassDescriptorResolver {
 
         WritableScope parameterScope = descriptor.getUnsubstitutedMemberScope();
 
+
         // This call has side-effects on the parameterScope (fills it in)
         List<TypeParameterDescriptor> typeParameters
                 = resolveTypeParameters(descriptor, parameterScope, classElement.getTypeParameters());
@@ -86,6 +90,7 @@ public class ClassDescriptorResolver {
 
         // TODO : importing may be a bad idea
         for (JetType supertype : superclasses) {
+            assert supertype != null : classElement.getName();
             parameterScope.importScope(supertype.getMemberScope());
         }
 
@@ -224,7 +229,7 @@ public class ClassDescriptorResolver {
                 typeParameter.getVariance(),
                 typeParameter.getName(),
                 extendsBound == null
-                        ? Collections.<JetType>singleton(JetStandardClasses.getAnyType())
+                        ? Collections.<JetType>singleton(JetStandardClasses.getDefaultBound())
                         : Collections.singleton(typeResolver.resolveType(extensibleScope, extendsBound))
         );
         extensibleScope.addTypeParameterDescriptor(typeParameterDescriptor);
@@ -250,11 +255,23 @@ public class ClassDescriptorResolver {
 
     @NotNull
     public PropertyDescriptor resolvePropertyDescriptor(@NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope scope, @NotNull JetParameter parameter) {
+        JetTypeReference typeReference = parameter.getTypeReference();
+        JetType type;
+        if (typeReference != null) {
+            type = typeResolver.resolveType(scope, typeReference);
+        }
+        else {
+            type = ErrorType.createErrorType("Annotation is absent");
+        }
+        return resolvePropertyDescriptor(containingDeclaration, parameter, type);
+    }
+
+    public PropertyDescriptor resolvePropertyDescriptor(@NotNull DeclarationDescriptor containingDeclaration, @NotNull JetParameter parameter, @NotNull JetType type) {
         return new PropertyDescriptorImpl(
                 containingDeclaration,
                 AttributeResolver.INSTANCE.resolveAttributes(parameter.getModifierList()),
                 parameter.getName(),
-                typeResolver.resolveType(scope, parameter.getTypeReference()));
+                type);
     }
 
     public PropertyDescriptor resolvePropertyDescriptor(@NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope scope, JetProperty property) {
