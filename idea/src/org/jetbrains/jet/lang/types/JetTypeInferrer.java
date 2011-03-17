@@ -231,29 +231,23 @@ public class JetTypeInferrer {
         } else {
             DeclarationDescriptor containingDescriptor = outerScope.getContainingDeclaration();
             WritableScope scope = semanticServices.createWritableScope(outerScope, containingDescriptor);
-            for (JetElement statement : block) {
-                // TODO: consider other declarations
-                if (statement instanceof JetProperty) {
-                    JetProperty property = (JetProperty) statement;
-                    PropertyDescriptor propertyDescriptor = classDescriptorResolver.resolvePropertyDescriptor(containingDescriptor, scope, property);
-                    scope.addPropertyDescriptor(propertyDescriptor);
-                    trace.recordDeclarationResolution(property, propertyDescriptor);
-                }
-                else if (statement instanceof JetExpression) {
-                    getType(scope, (JetExpression) statement, true);
-                }
-                else {
-                    throw new UnsupportedOperationException(statement.getClass().getCanonicalName()); // TODO
-                }
-            }
-            JetElement lastElement = block.get(block.size() - 1);
-            if (lastElement instanceof JetExpression) {
-                JetExpression expression = (JetExpression) lastElement;
-                return getType(scope, expression, true);
-            }
-            // TODO: functions, classes, etc.
-            throw new IllegalArgumentException("Last item in the block must be an expression, but was " + lastElement.getClass().getCanonicalName());
+            return getBlockReturnedTypeWithWritableScope(scope, block);
         }
+    }
+
+    private JetType getBlockReturnedTypeWithWritableScope(@NotNull WritableScope scope, @NotNull List<? extends JetElement> block) {
+        assert !block.isEmpty();
+        TypeInferrerVisitorWithWritableScope blockLevelVisitor = new TypeInferrerVisitorWithWritableScope(scope, true);
+        JetType result = null;
+        for (JetElement statement : block) {
+            statement.accept(blockLevelVisitor);
+            result = blockLevelVisitor.getResult();
+            if (result != null) {
+                trace.recordExpressionType((JetExpression) statement, result);
+            }
+            blockLevelVisitor.resetResult(); // TODO : maybe it's better to recreate the visitors with the same scope?
+        }
+        return result;
     }
 
     private void collectAllReturnTypes(JetWhenExpression whenExpression, JetScope scope, List<JetType> result) {
@@ -272,7 +266,7 @@ public class JetTypeInferrer {
 
     private class TypeInferrerVisitor extends JetVisitor {
         private final JetScope scope;
-        private JetType result;
+        protected JetType result;
         private final boolean preferBlock;
 
         public TypeInferrerVisitor(JetScope scope, boolean preferBlock) {
@@ -540,9 +534,21 @@ public class JetTypeInferrer {
         @Override
         public void visitDoWhileExpression(JetDoWhileExpression expression) {
             JetExpression body = expression.getBody();
-            JetScope conditionScope = scope; // TODO
-            if (body != null) {
-                getType(scope, body, true);
+            JetScope conditionScope = scope;
+            if (body instanceof JetFunctionLiteralExpression) {
+                JetFunctionLiteralExpression function = (JetFunctionLiteralExpression) body;
+                if (!function.hasParameterSpecification()) {
+                    WritableScope writableScope = semanticServices.createWritableScope(scope, scope.getContainingDeclaration());
+                    conditionScope = writableScope;
+                    getBlockReturnedTypeWithWritableScope(writableScope, function.getBody());
+                } else {
+                    getType(scope, body, true);
+                }
+            }
+            else if (body != null) {
+                WritableScope writableScope = semanticServices.createWritableScope(scope, scope.getContainingDeclaration());
+                conditionScope = writableScope;
+                getBlockReturnedTypeWithWritableScope(writableScope, Collections.singletonList(body));
             }
             checkCondition(conditionScope, expression.getCondition());
             result = JetStandardClasses.getUnitType();
@@ -762,16 +768,10 @@ public class JetTypeInferrer {
                 result = getTypeForBinaryCall(expression, binaryOperationNames.get(operationType), scope, true);
             }
             else if (operationType == JetTokens.EQ) {
-                JetExpression deparenthesized = deparenthesize(left);
-                if (deparenthesized instanceof JetArrayAccessExpression) {
-                    JetArrayAccessExpression arrayAccessExpression = (JetArrayAccessExpression) deparenthesized;
-                    resolveArrayAccessToLValue(arrayAccessExpression, expression.getRight(), expression.getOperationReference());
-                }
-                else {
-                    getType(scope, expression.getRight(), false);
-                    //throw new UnsupportedOperationException();
-                }
-                result = null; // TODO : This is not an expression, in fact!
+                visitAssignment(expression);
+            }
+            else if (assignmentOperationNames.containsKey(operationType)) {
+                visitAssignmentOperation(expression);
             }
             else if (comparisonOperations.contains(operationType)) {
                 JetType compareToReturnType = getTypeForBinaryCall(expression, "compareTo", scope, true);
@@ -785,16 +785,6 @@ public class JetTypeInferrer {
                         semanticServices.getErrorHandler().genericError(operationSign.getNode(), "compareTo must return Int, but returns " + compareToReturnType);
                     }
                 }
-            }
-            else if (assignmentOperationNames.containsKey(operationType)) {
-                String name = assignmentOperationNames.get(operationType);
-                JetType assignmentOperationType = getTypeForBinaryCall(expression, name, scope, false);
-
-                if (assignmentOperationType == null) {
-                    String counterpartName = binaryOperationNames.get(assignmentOperationCounterparts.get(operationType));
-                    getTypeForBinaryCall(expression, counterpartName, scope, true);
-                }
-                result = null; // TODO : not an expression
             }
             else if (equalsOperations.contains(operationType)) {
                 String name = "equals";
@@ -845,6 +835,18 @@ public class JetTypeInferrer {
             }
         }
 
+        protected void visitAssignmentOperation(JetBinaryExpression expression) {
+            assignmentIsNotAnExpressionError(expression);
+        }
+
+        protected void visitAssignment(JetBinaryExpression expression) {
+            assignmentIsNotAnExpressionError(expression);
+        }
+
+        private void assignmentIsNotAnExpressionError(JetBinaryExpression expression) {
+            semanticServices.getErrorHandler().genericError(expression.getNode(), "Assignments are not expressions, and only expressions are allowed in this context");
+        }
+
         private JetType assureBooleanResult(JetSimpleNameExpression operationSign, String name, JetType resultType) {
             if (resultType != null) {
                 // TODO : Relax?
@@ -877,30 +879,7 @@ public class JetTypeInferrer {
             }
         }
 
-        private void resolveArrayAccessToLValue(JetArrayAccessExpression arrayAccessExpression, JetExpression rightHandSide, JetSimpleNameExpression operationSign) {
-            List<JetType> argumentTypes = getTypes(scope, arrayAccessExpression.getIndexExpressions());
-            if (argumentTypes == null) return;
-            JetType rhsType = getType(scope, rightHandSide, false);
-            if (rhsType == null) return;
-            argumentTypes.add(rhsType);
-
-            JetType receiverType = getType(scope, arrayAccessExpression.getArrayExpression(), false);
-            if (receiverType == null) return;
-
-            // TODO : nasty hack: effort is duplicated
-            lookupFunction(scope, arrayAccessExpression, "set", receiverType, argumentTypes, true);
-            FunctionDescriptor functionDescriptor = lookupFunction(scope, operationSign, "set", receiverType, argumentTypes, true);
-            if (functionDescriptor != null) {
-                result = functionDescriptor.getUnsubstitutedReturnType();
-            }
-        }
-
-        @Override
-        public void visitJetElement(JetElement elem) {
-            throw new IllegalArgumentException("Unsupported element: " + elem + " " + elem.getClass().getCanonicalName());
-        }
-
-        private JetType getTypeForBinaryCall(JetBinaryExpression expression, @NotNull String name, JetScope scope, boolean reportUnresolved) {
+        protected JetType getTypeForBinaryCall(JetBinaryExpression expression, @NotNull String name, JetScope scope, boolean reportUnresolved) {
             JetExpression left = expression.getLeft();
             JetExpression right = expression.getRight();
             if (right == null) {
@@ -921,6 +900,120 @@ public class JetTypeInferrer {
                 return functionDescriptor.getUnsubstitutedReturnType();
             }
             return null;
+        }
+
+        @Override
+        public void visitDeclaration(JetDeclaration dcl) {
+            semanticServices.getErrorHandler().genericError(dcl.getNode(), "Declarations are not allowed in this position");
+        }
+
+        @Override
+        public void visitJetElement(JetElement elem) {
+            semanticServices.getErrorHandler().genericError(elem.getNode(), "Unsupported element: " + elem + " " + elem.getClass().getCanonicalName());
+        }
+    }
+
+    private class TypeInferrerVisitorWithWritableScope extends TypeInferrerVisitor {
+        private final WritableScope scope;
+
+        public TypeInferrerVisitorWithWritableScope(@NotNull WritableScope scope, boolean preferBlock) {
+            super(scope, preferBlock);
+            this.scope = scope;
+        }
+
+        public void resetResult() {
+            this.result = null;
+        }
+
+        @Override
+        public void visitProperty(JetProperty property) {
+            PropertyDescriptor propertyDescriptor = classDescriptorResolver.resolvePropertyDescriptor(scope.getContainingDeclaration(), scope, property);
+            scope.addPropertyDescriptor(propertyDescriptor);
+            trace.recordDeclarationResolution(property, propertyDescriptor);
+        }
+
+        @Override
+        public void visitFunction(JetFunction function) {
+            super.visitFunction(function); // TODO
+        }
+
+        @Override
+        public void visitClass(JetClass klass) {
+            super.visitClass(klass); // TODO
+        }
+
+        @Override
+        public void visitExtension(JetExtension extension) {
+            super.visitExtension(extension); // TODO
+        }
+
+        @Override
+        public void visitTypedef(JetTypedef typedef) {
+            super.visitTypedef(typedef); // TODO
+        }
+
+        @Override
+        public void visitDeclaration(JetDeclaration dcl) {
+            visitJetElement(dcl);
+        }
+
+        @Override
+        protected void visitAssignmentOperation(JetBinaryExpression expression) {
+            IElementType operationType = expression.getOperationReference().getReferencedNameElementType();
+            String name = assignmentOperationNames.get(operationType);
+            JetType assignmentOperationType = getTypeForBinaryCall(expression, name, scope, false);
+
+            if (assignmentOperationType == null) {
+                String counterpartName = binaryOperationNames.get(assignmentOperationCounterparts.get(operationType));
+                getTypeForBinaryCall(expression, counterpartName, scope, true);
+            }
+            result = null; // not an expression
+        }
+
+        @Override
+        protected void visitAssignment(JetBinaryExpression expression) {
+            JetExpression left = expression.getLeft();
+            JetExpression deparenthesized = deparenthesize(left);
+            JetExpression right = expression.getRight();
+            if (deparenthesized instanceof JetArrayAccessExpression) {
+                JetArrayAccessExpression arrayAccessExpression = (JetArrayAccessExpression) deparenthesized;
+                resolveArrayAccessToLValue(arrayAccessExpression, right, expression.getOperationReference());
+            }
+            else {
+                JetType leftType = getType(scope, left, false);
+                if (right != null) {
+                    JetType rightType = getType(scope, right, false);
+                    if (rightType != null &&
+                        leftType != null &&
+                            !semanticServices.getTypeChecker().isConvertibleTo(rightType, leftType)) {
+                        semanticServices.getErrorHandler().typeMismatch(right, leftType, rightType);
+                    }
+                }
+            }
+            result = null; // This is not an expression
+        }
+
+        private void resolveArrayAccessToLValue(JetArrayAccessExpression arrayAccessExpression, JetExpression rightHandSide, JetSimpleNameExpression operationSign) {
+            List<JetType> argumentTypes = getTypes(scope, arrayAccessExpression.getIndexExpressions());
+            if (argumentTypes == null) return;
+            JetType rhsType = getType(scope, rightHandSide, false);
+            if (rhsType == null) return;
+            argumentTypes.add(rhsType);
+
+            JetType receiverType = getType(scope, arrayAccessExpression.getArrayExpression(), false);
+            if (receiverType == null) return;
+
+            // TODO : nasty hack: effort is duplicated
+            lookupFunction(scope, arrayAccessExpression, "set", receiverType, argumentTypes, true);
+            FunctionDescriptor functionDescriptor = lookupFunction(scope, operationSign, "set", receiverType, argumentTypes, true);
+            if (functionDescriptor != null) {
+                result = functionDescriptor.getUnsubstitutedReturnType();
+            }
+        }
+
+        @Override
+        public void visitJetElement(JetElement elem) {
+            semanticServices.getErrorHandler().genericError(elem.getNode(), "Unsupported element in a block: " + elem + " " + elem.getClass().getCanonicalName());
         }
     }
 }

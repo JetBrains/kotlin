@@ -9,7 +9,7 @@ import org.jetbrains.jet.lexer.JetToken;
 /**
  * @author max
  */
-public abstract class JetDeclaration extends JetElement {
+public abstract class JetDeclaration extends JetExpression {
     public JetDeclaration(@NotNull ASTNode node) {
         super(node);
     }

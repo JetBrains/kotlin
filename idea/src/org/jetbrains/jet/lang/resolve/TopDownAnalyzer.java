@@ -97,7 +97,7 @@ public class TopDownAnalyzer {
 
                 @Override
                 public void visitDeclaration(JetDeclaration dcl) {
-                    throw new UnsupportedOperationException(); // TODO
+                    // Other declarations do not declare visible types
                 }
             });
         }

@@ -30,5 +30,8 @@ fun test() : Unit {
     }
     for (~l~l : Int in 1..2) {
       `l`l`:std::Int`
+      while (true) {
+        `l`l
+      }
     }
 }
