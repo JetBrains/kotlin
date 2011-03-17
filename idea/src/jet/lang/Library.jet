@@ -104,6 +104,8 @@ class Double : Number, Comparable<Double>  {
 
   fun inc() : Double
   fun dec() : Double
+  fun plus() : Double
+  fun minus() : Double
 }
 
 class Float : Number, Comparable<Float>  {
@@ -165,6 +167,8 @@ class Float : Number, Comparable<Float>  {
 
   fun inc() : Float
   fun dec() : Float
+  fun plus() : Float
+  fun minus() : Float
 }
 
 class Long : Number, Comparable<Long> {
@@ -226,6 +230,8 @@ class Long : Number, Comparable<Long> {
 
   fun inc() : Long
   fun dec() : Long
+  fun plus() : Long
+  fun minus() : Long
 }
 
 class Int : Number, Comparable<Int> {
@@ -287,6 +293,8 @@ class Int : Number, Comparable<Int> {
 
   fun inc() : Int
   fun dec() : Int
+  fun plus() : Int
+  fun minus() : Int
 }
 
 class Char : Number, Comparable<Char> {
@@ -348,6 +356,8 @@ class Char : Number, Comparable<Char> {
 
   fun inc() : Char
   fun dec() : Char
+  fun plus() : Int
+  fun minus() : Int
 }
 
 class Short : Number, Comparable<Char> {
@@ -409,6 +419,8 @@ class Short : Number, Comparable<Char> {
 
   fun inc() : Short
   fun dec() : Short
+  fun plus() : Int
+  fun minus() : Int
 }
 
 class Byte : Number, Comparable<Char> {
@@ -470,4 +482,6 @@ class Byte : Number, Comparable<Char> {
 
   fun inc() : Byte
   fun dec() : Byte
+  fun plus() : Int
+  fun minus() : Int
 }

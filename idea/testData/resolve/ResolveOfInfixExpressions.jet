@@ -44,8 +44,10 @@ import util.*
 
 ~Bar~class Bar : Foo {
   ~not~fun not() : String {}
-  ~inc~fun inc() : Unit
-  ~dec~fun dec() : Unit
+  ~inc~fun inc() : Bar
+  ~dec~fun dec() : Bar
+  ~-~fun minus() : Bar
+  ~+~fun plus() : Bar
 }
 
 fun <T> tt(t : T) : T {
@@ -68,6 +70,8 @@ fun <T> tt(t : T) : T {
   `dec`--y
   y`dec`--
   y `+=`+= 1
+  `+`+y
+  `-`-y
   1 `std::Int.compareTo(Double)`> 2.0
   1 `std::Int.compareTo(Double)`< 2.0
   1 `std::Int.compareTo(Double)`>= 2.0

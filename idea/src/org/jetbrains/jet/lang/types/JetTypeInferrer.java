@@ -653,16 +653,26 @@ public class JetTypeInferrer {
         @Override
         public void visitUnaryExpression(JetUnaryExpression expression) {
             JetSimpleNameExpression operationSign = expression.getOperationSign();
-            String name = unaryOperationNames.get(operationSign.getReferencedNameElementType());
+            IElementType operationType = operationSign.getReferencedNameElementType();
+            String name = unaryOperationNames.get(operationType);
             if (name == null) {
                 semanticServices.getErrorHandler().genericError(operationSign.getNode(), "Unknown unary operation");
             }
             else {
-                JetType type = getType(scope, expression.getBaseExpression(), false);
-                if (type != null) {
-                    FunctionDescriptor functionDescriptor = lookupFunction(scope, expression.getOperationSign(), name, type, Collections.<JetType>emptyList(), true);
+                JetType receiverType = getType(scope, expression.getBaseExpression(), false);
+                if (receiverType != null) {
+                    FunctionDescriptor functionDescriptor = lookupFunction(scope, expression.getOperationSign(), name, receiverType, Collections.<JetType>emptyList(), true);
                     if (functionDescriptor != null) {
-                        result = functionDescriptor.getUnsubstitutedReturnType();
+                        JetType returnType = functionDescriptor.getUnsubstitutedReturnType();
+                        if (operationType == JetTokens.PLUSPLUS || operationType == JetTokens.MINUSMINUS) {
+                            if (!semanticServices.getTypeChecker().isSubtypeOf(returnType, receiverType)) {
+                                 semanticServices.getErrorHandler().genericError(operationSign.getNode(), name + " must return " + receiverType + " but returns " + returnType);
+                            }
+                            // TODO : Maybe returnType?
+                            result = receiverType;
+                        } else {
+                            result = returnType;
+                        }
                     }
                 }
             }

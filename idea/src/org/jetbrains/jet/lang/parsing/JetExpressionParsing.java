@@ -1358,7 +1358,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     }
 
     /*
-     * "new" constructorInvocation // identical to new nunctionCall
+     * "new" constructorInvocation // identical to new functionCall
      *
      * constructorInvocation
      *   : userType valueArguments
