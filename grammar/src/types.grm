@@ -12,6 +12,7 @@ Foo<Bar<X>, T, Object> // user type
 type
   : attributes typeDescriptor
 
+// IF YOU CHANGE THIS, please, update TYPE_FIRST in JetParsing
 typeDescriptor
   : selfType
   : functionType

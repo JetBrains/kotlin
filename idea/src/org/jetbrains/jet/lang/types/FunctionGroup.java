@@ -11,6 +11,7 @@ import java.util.List;
  */
 public interface FunctionGroup extends Named {
     FunctionGroup EMPTY = new FunctionGroup() {
+        @NotNull
         @Override
         public String getName() {
             return "<empty>";
@@ -19,7 +20,8 @@ public interface FunctionGroup extends Named {
         @NotNull
         @Override
         public Collection<FunctionDescriptor> getPossiblyApplicableFunctions(@NotNull List<JetType> typeArguments, @NotNull List<JetType> positionedValueArgumentTypes) {
-            return Collections.emptySet();
+            return Collections.emptyList();
+//            return OverloadResolutionResult.nameNotFound();
         }
 
         @Override
@@ -35,6 +37,8 @@ public interface FunctionGroup extends Named {
 
     @NotNull
     Collection<FunctionDescriptor> getPossiblyApplicableFunctions(@NotNull List<JetType> typeArguments, @NotNull List<JetType> positionedValueArgumentTypes);
+//    @NotNull
+//    OverloadResolutionResult getPossiblyApplicableFunctions(@NotNull List<JetType> typeArguments, @NotNull List<JetType> positionedValueArgumentTypes);
 
     boolean isEmpty();
 }

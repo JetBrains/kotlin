@@ -122,7 +122,8 @@ public class JetTypeInferrer {
             boolean reportUnresolved) {
         OverloadDomain overloadDomain = semanticServices.getOverloadResolver().getOverloadDomain(receiverType, scope, name);
         overloadDomain = wrapForTracing(overloadDomain, reference, null, reportUnresolved);
-        return overloadDomain.getFunctionDescriptorForPositionedArguments(Collections.<JetType>emptyList(), argumentTypes);
+        OverloadResolutionResult resolutionResult = overloadDomain.getFunctionDescriptorForPositionedArguments(Collections.<JetType>emptyList(), argumentTypes);
+        return resolutionResult.isSuccess() ? resolutionResult.getFunctionDescriptor() : null;
     }
 
 
@@ -209,41 +210,54 @@ public class JetTypeInferrer {
             @Nullable final OverloadDomain overloadDomain,
             @NotNull final JetReferenceExpression referenceExpression,
             @Nullable final PsiElement argumentList,
-            final boolean reportUnresolved) {
+            final boolean reportErrors) {
         if (overloadDomain == null) return OverloadDomain.EMPTY;
         return new OverloadDomain() {
+            @NotNull
             @Override
-            public FunctionDescriptor getFunctionDescriptorForNamedArguments(@NotNull List<JetType> typeArguments, @NotNull Map<String, JetType> valueArgumentTypes, @Nullable JetType functionLiteralArgumentType) {
-                FunctionDescriptor descriptor = overloadDomain.getFunctionDescriptorForNamedArguments(typeArguments, valueArgumentTypes, functionLiteralArgumentType);
-                if (descriptor != null) {
-                    trace.recordReferenceResolution(referenceExpression, descriptor);
-                }
-                else {
-                    reportError();
-                }
-                return descriptor;
+            public OverloadResolutionResult getFunctionDescriptorForNamedArguments(@NotNull List<JetType> typeArguments, @NotNull Map<String, JetType> valueArgumentTypes, @Nullable JetType functionLiteralArgumentType) {
+                OverloadResolutionResult resolutionResult = overloadDomain.getFunctionDescriptorForNamedArguments(typeArguments, valueArgumentTypes, functionLiteralArgumentType);
+                report(resolutionResult);
+                return resolutionResult;
             }
 
+            @NotNull
             @Override
-            public FunctionDescriptor getFunctionDescriptorForPositionedArguments(@NotNull List<JetType> typeArguments, @NotNull List<JetType> positionedValueArgumentTypes) {
-                FunctionDescriptor descriptor = overloadDomain.getFunctionDescriptorForPositionedArguments(typeArguments, positionedValueArgumentTypes);
-                if (descriptor != null) {
-                    trace.recordReferenceResolution(referenceExpression, descriptor);
-                }
-                else {
-                    reportError();
-                }
-                return descriptor;
+            public OverloadResolutionResult getFunctionDescriptorForPositionedArguments(@NotNull List<JetType> typeArguments, @NotNull List<JetType> positionedValueArgumentTypes) {
+                OverloadResolutionResult resolutionResult = overloadDomain.getFunctionDescriptorForPositionedArguments(typeArguments, positionedValueArgumentTypes);
+                report(resolutionResult);
+                return resolutionResult;
             }
 
-            private void reportError() {
-                if (reportUnresolved) {
-                    if (overloadDomain.isEmpty() || argumentList == null) {
-                        semanticServices.getErrorHandler().unresolvedReference(referenceExpression);
-                    }
-                    else {
-                        // TODO : More helpful message. NOTE: there's a separate handling for this for constructors
-                        semanticServices.getErrorHandler().genericError(argumentList.getNode(), "No overload found for these arguments");
+            private void report(OverloadResolutionResult resolutionResult) {
+                if (resolutionResult.isSuccess() || resolutionResult.singleFunction()) {
+                    trace.recordReferenceResolution(referenceExpression, resolutionResult.getFunctionDescriptor());
+                }
+                if (reportErrors) {
+                    switch (resolutionResult.getResultCode()) {
+                        case NAME_NOT_FOUND:
+                            semanticServices.getErrorHandler().unresolvedReference(referenceExpression);
+                            break;
+                        case SINGLE_FUNCTION_ARGUMENT_MISMATCH:
+                            if (argumentList != null) {
+                                // TODO : More helpful message. NOTE: there's a separate handling for this for constructors
+                                semanticServices.getErrorHandler().genericError(argumentList.getNode(), "Arguments do not match " + resolutionResult.getFunctionDescriptor());
+                            }
+                            else {
+                                semanticServices.getErrorHandler().unresolvedReference(referenceExpression);
+                            }
+                            break;
+                        case AMBIGUITY:
+                            if (argumentList != null) {
+                                // TODO : More helpful message. NOTE: there's a separate handling for this for constructors
+                                semanticServices.getErrorHandler().genericError(argumentList.getNode(), "Overload ambiguity [TODO : more helpful message]");
+                            }
+                            else {
+                                semanticServices.getErrorHandler().unresolvedReference(referenceExpression);
+                            }
+                            break;
+                        default:
+                            // Not a success
                     }
                 }
             }
@@ -693,7 +707,9 @@ public class JetTypeInferrer {
                     }
                 }
                 else {
-                    semanticServices.getErrorHandler().genericError(typeElement.getNode(), "Calling a constructor is only supported for ordinary classes"); // TODO : Better message
+                    if (typeElement != null) {
+                        semanticServices.getErrorHandler().genericError(typeElement.getNode(), "Calling a constructor is only supported for ordinary classes"); // TODO : Better message
+                    }
                 }
             }
         }
@@ -799,7 +815,10 @@ public class JetTypeInferrer {
 
                 List<JetExpression> positionedValueArguments = new ArrayList<JetExpression>();
                 for (JetArgument argument : valueArguments) {
-                    positionedValueArguments.add(argument.getArgumentExpression());
+                    JetExpression argumentExpression = argument.getArgumentExpression();
+                    if (argumentExpression != null) {
+                        positionedValueArguments.add(argumentExpression);
+                    }
                 }
 
                 positionedValueArguments.addAll(functionLiteralArguments);
@@ -809,9 +828,9 @@ public class JetTypeInferrer {
                     valueArgumentTypes.add(safeGetType(scope, valueArgument, false));
                 }
 
-                FunctionDescriptor functionDescriptor = overloadDomain.getFunctionDescriptorForPositionedArguments(types, valueArgumentTypes);
-                if (functionDescriptor != null) {
-                    return functionDescriptor.getUnsubstitutedReturnType();
+                OverloadResolutionResult resolutionResult = overloadDomain.getFunctionDescriptorForPositionedArguments(types, valueArgumentTypes);
+                if (resolutionResult.isSuccess()) {
+                    return resolutionResult.getFunctionDescriptor().getUnsubstitutedReturnType();
                 }
             }
             return null;

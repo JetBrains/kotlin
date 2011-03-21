@@ -13,14 +13,12 @@ import java.util.Map;
 public class MutableClassDescriptor extends MutableDeclarationDescriptor implements ClassDescriptor {
     private final WritableScope unsubstitutedMemberScope;
     private final WritableFunctionGroup constructors = new WritableFunctionGroup("<init>");
-    private final JetSemanticServices semanticServices;
 
     private TypeConstructor typeConstructor;
 
     public MutableClassDescriptor(@NotNull JetSemanticServices semanticServices, @NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope outerScope) {
         super(containingDeclaration);
         this.unsubstitutedMemberScope = semanticServices.createWritableScope(outerScope, this);
-        this.semanticServices = semanticServices;
     }
 
     @NotNull

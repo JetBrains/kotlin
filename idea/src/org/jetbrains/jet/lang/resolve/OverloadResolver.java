@@ -34,11 +34,12 @@ public class OverloadResolver {
         }
 
         return new OverloadDomain() {
+            @NotNull
             @Override
-            public FunctionDescriptor getFunctionDescriptorForPositionedArguments(@NotNull final List<JetType> typeArguments, @NotNull List<JetType> positionedValueArgumentTypes) {
+            public OverloadResolutionResult getFunctionDescriptorForPositionedArguments(@NotNull final List<JetType> typeArguments, @NotNull List<JetType> positionedValueArgumentTypes) {
                 Collection<FunctionDescriptor> possiblyApplicableFunctions = functionGroup.getPossiblyApplicableFunctions(typeArguments, positionedValueArgumentTypes);
                 if (possiblyApplicableFunctions.isEmpty()) {
-                    return null;
+                    return OverloadResolutionResult.nameNotFound(); // TODO : it may be found, only the number of params did not match
                 }
 
                 List<FunctionDescriptor> applicable = new ArrayList<FunctionDescriptor>();
@@ -84,9 +85,9 @@ public class OverloadResolver {
                 }
 
                 if (applicable.size() == 0) {
-                    return null;
+                    return OverloadResolutionResult.nameNotFound();
                 } else if (applicable.size() == 1) {
-                    return applicable.get(0);
+                    return OverloadResolutionResult.success(applicable.get(0));
                 } else {
                     // TODO : varargs
 
@@ -100,10 +101,10 @@ public class OverloadResolver {
                         maximallySpecific.add(me);
                     }
                     if (maximallySpecific.isEmpty()) {
-                        return null;
+                        return OverloadResolutionResult.ambiguity(applicable);
                     }
                     if (maximallySpecific.size() == 1) {
-                        return maximallySpecific.get(0);
+                        return OverloadResolutionResult.success(maximallySpecific.get(0));
                     }
                     throw new UnsupportedOperationException();
                 }
@@ -114,8 +115,9 @@ public class OverloadResolver {
                 return functionGroup.isEmpty();
             }
 
+            @NotNull
             @Override
-            public FunctionDescriptor getFunctionDescriptorForNamedArguments(@NotNull List<JetType> typeArguments, @NotNull Map<String, JetType> valueArgumentTypes, @Nullable JetType functionLiteralArgumentType) {
+            public OverloadResolutionResult getFunctionDescriptorForNamedArguments(@NotNull List<JetType> typeArguments, @NotNull Map<String, JetType> valueArgumentTypes, @Nullable JetType functionLiteralArgumentType) {
                 throw new UnsupportedOperationException(); // TODO
             }
         };

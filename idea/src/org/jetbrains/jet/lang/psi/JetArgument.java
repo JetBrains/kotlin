@@ -13,7 +13,7 @@ public class JetArgument extends JetElement {
         super(node);
     }
 
-    public void accept(JetVisitor visitor) {
+    public void accept(@NotNull JetVisitor visitor) {
         visitor.visitArgument(this);
     }
 
@@ -25,6 +25,9 @@ public class JetArgument extends JetElement {
     @Nullable
     public String getArgumentName() {
         ASTNode firstChildNode = getNode().getFirstChildNode();
+        if (firstChildNode == null) {
+            return null;
+        }
         return firstChildNode.getElementType() == JetTokens.IDENTIFIER ? firstChildNode.getText() : null;
     }
 

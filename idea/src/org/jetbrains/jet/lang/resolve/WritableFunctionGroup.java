@@ -18,6 +18,7 @@ public class WritableFunctionGroup implements FunctionGroup {
         this.name = name;
     }
 
+    @NotNull
     @Override
     public String getName() {
         return name;
@@ -51,7 +52,8 @@ public class WritableFunctionGroup implements FunctionGroup {
         for (FunctionDescriptor functionDescriptor : getFunctionDescriptors()) {
             // TODO : type argument inference breaks this logic
             if (functionDescriptor.getTypeParameters().size() == typeArgCount) {
-                if (FunctionDescriptorUtil.getMinimumArity(functionDescriptor) <= valueArgCount && valueArgCount <= FunctionDescriptorUtil.getMaximumArity(functionDescriptor)) {
+                if (FunctionDescriptorUtil.getMinimumArity(functionDescriptor) <= valueArgCount &&
+                        valueArgCount <= FunctionDescriptorUtil.getMaximumArity(functionDescriptor)) {
                     result.add(FunctionDescriptorUtil.substituteFunctionDescriptor(typeArguments, functionDescriptor));
                 }
             }

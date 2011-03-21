@@ -41,9 +41,14 @@ public class TypeResolver {
             typeElement.accept(new JetVisitor() {
                 @Override
                 public void visitUserType(JetUserType type) {
+                    JetSimpleNameExpression referenceExpression = type.getReferenceExpression();
+                    String referencedName = type.getReferencedName();
+                    if (referenceExpression == null || referencedName == null) {
+                        return;
+                    }
                     ClassDescriptor classDescriptor = resolveClass(scope, type);
                     if (classDescriptor != null) {
-                        trace.recordReferenceResolution(type.getReferenceExpression(), classDescriptor);
+                        trace.recordReferenceResolution(referenceExpression, classDescriptor);
                         TypeConstructor typeConstructor = classDescriptor.getTypeConstructor();
                         List<TypeProjection> arguments = resolveTypeProjections(scope, typeConstructor, type.getTypeArguments());
                         if (arguments.size() != typeConstructor.getParameters().size()) {
@@ -59,9 +64,9 @@ public class TypeResolver {
                         }
                     }
                     else if (type.getTypeArguments().isEmpty()) {
-                        TypeParameterDescriptor typeParameterDescriptor = scope.getTypeParameter(type.getReferencedName());
+                        TypeParameterDescriptor typeParameterDescriptor = scope.getTypeParameter(referencedName);
                         if (typeParameterDescriptor != null) {
-                            trace.recordReferenceResolution(type.getReferenceExpression(), typeParameterDescriptor);
+                            trace.recordReferenceResolution(referenceExpression, typeParameterDescriptor);
                             result[0] = new JetTypeImpl(
                                     attributes,
                                     typeParameterDescriptor.getTypeConstructor(),
@@ -71,11 +76,11 @@ public class TypeResolver {
                                     JetStandardClasses.STUB
                             );
                         } else {
-                            semanticServices.getErrorHandler().unresolvedReference(type.getReferenceExpression());
+                            semanticServices.getErrorHandler().unresolvedReference(referenceExpression);
                         }
                     }
                     else {
-                        semanticServices.getErrorHandler().unresolvedReference(type.getReferenceExpression());
+                        semanticServices.getErrorHandler().unresolvedReference(referenceExpression);
                     }
                 }
 
@@ -171,14 +176,21 @@ public class TypeResolver {
     @Nullable
     public ClassDescriptor resolveClass(JetScope scope, JetUserType userType) {
         JetSimpleNameExpression expression = userType.getReferenceExpression();
+        if (expression == null) {
+            return null;
+        }
+        String referencedName = expression.getReferencedName();
+        if (referencedName == null) {
+            return null;
+        }
         if (userType.isAbsoluteInRootNamespace()) {
-            return JetModuleUtil.getRootNamespaceScope(userType).getClass(expression.getReferencedName());
+            return JetModuleUtil.getRootNamespaceScope(userType).getClass(referencedName);
         }
         JetUserType qualifier = userType.getQualifier();
         if (qualifier != null) {
             scope = resolveClassLookupScope(scope, qualifier);
         }
-        return scope.getClass(expression.getReferencedName());
+        return scope.getClass(referencedName);
     }
 
     private JetScope resolveClassLookupScope(JetScope scope, JetUserType userType) {

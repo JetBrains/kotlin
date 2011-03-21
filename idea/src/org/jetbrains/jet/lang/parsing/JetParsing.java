@@ -37,7 +37,7 @@ public class JetParsing extends AbstractJetParsing {
     private static final TokenSet TYPE_PARAMETER_GT_RECOVERY_SET = TokenSet.create(WHERE_KEYWORD, WRAPS_KEYWORD, LPAR, COLON, LBRACE, GT);
     private static final TokenSet PARAMETER_NAME_RECOVERY_SET = TokenSet.create(COLON, EQ, COMMA, RPAR);
     private static final TokenSet NAMESPACE_NAME_RECOVERY_SET = TokenSet.create(DOT, EOL_OR_SEMICOLON);
-    /*package*/ static final TokenSet TYPE_REF_FIRST = TokenSet.create(LBRACKET, IDENTIFIER, LBRACE, LPAR);
+    /*package*/ static final TokenSet TYPE_REF_FIRST = TokenSet.create(LBRACKET, IDENTIFIER, LBRACE, LPAR, CAPITALIZED_THIS_KEYWORD);
 
     public static JetParsing createForTopLevel(SemanticWhitespaceAwarePsiBuilder builder) {
         builder.setDebugMode(true);
@@ -835,9 +835,16 @@ public class JetParsing extends AbstractJetParsing {
 
         advance(); // FUN_KEYWORD
 
+        // Recovery for the case of class A { fun| }
+        if (at(RBRACE)) {
+            error("Function body expected");
+            return FUN;
+        }
+
         if (at(LT)) {
             parseTypeParameterList(TokenSet.create(LBRACKET, LBRACE, LPAR));
         }
+
 
         int lastDot = findLastBefore(TokenSet.create(DOT), TokenSet.create(LPAR), true);
 
@@ -1246,7 +1253,7 @@ public class JetParsing extends AbstractJetParsing {
 
         PsiBuilder.Marker reference = mark();
         while (true) {
-            expect(IDENTIFIER, "Type name expected", TokenSet.create(LT));
+            expect(IDENTIFIER, "Type name expected", TokenSet.orSet(JetExpressionParsing.EXPRESSION_FIRST, JetExpressionParsing.EXPRESSION_FOLLOW));
             reference.done(REFERENCE_EXPRESSION);
 
             parseTypeArgumentList();

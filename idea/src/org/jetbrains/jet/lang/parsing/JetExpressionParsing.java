@@ -31,7 +31,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             COLON
     );
 
-    private static final TokenSet EXPRESSION_FIRST = TokenSet.orSet(TokenSet.create(
+    /*package*/ static final TokenSet EXPRESSION_FIRST = TokenSet.orSet(TokenSet.create(
             // Prefix
             MINUS, PLUS, MINUSMINUS, PLUSPLUS, EXCL, LBRACKET, LABEL_IDENTIFIER, AT, ATAT,
             // Atomic
@@ -82,7 +82,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             NAMESPACE_KEYWORD // for absolute qualified names
     ), MODIFIER_KEYWORDS);
 
-    private static final TokenSet EXPRESSION_FOLLOW = TokenSet.create(
+    /*package*/ static final TokenSet EXPRESSION_FOLLOW = TokenSet.create(
             SEMICOLON, DOUBLE_ARROW, COMMA, RBRACE, RPAR, RBRACKET
     );
 
@@ -533,7 +533,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
         }
         else if (!parseLiteralConstant()) {
             // TODO: better recovery if FIRST(expression) did not match
-            errorAndAdvance("Expecting an expression");
+            errorWithRecovery("Expecting an expression", EXPRESSION_FOLLOW);
         }
     }
 
@@ -1494,7 +1494,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
         PsiBuilder.Marker list = mark();
 
         myBuilder.disableNewlines();
-        expect(LPAR, "Expecting an argument list", TokenSet.create(RPAR));
+        expect(LPAR, "Expecting an argument list", EXPRESSION_FOLLOW);
 
         if (!at(RPAR)) {
             while (true) {
@@ -1509,7 +1509,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             }
         }
 
-        expect(RPAR, "Expecting ')'");
+        expect(RPAR, "Expecting ')'", EXPRESSION_FOLLOW);
         myBuilder.restoreNewlinesState();
 
         list.done(VALUE_ARGUMENT_LIST);

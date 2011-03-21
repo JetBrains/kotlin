@@ -36,7 +36,7 @@ public class TopDownAnalyzer {
         trace.setToplevelScope(toplevelScope); // TODO : this is a hack
         collectTypeDeclarators(toplevelScope, declarations);
         resolveTypeDeclarations();
-        collectBehaviorDeclarators(toplevelScope, declarations);
+        processBehaviorDeclarators(toplevelScope, declarations);
         resolveBehaviorDeclarationBodies();
     }
 
@@ -136,24 +136,26 @@ public class TopDownAnalyzer {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void collectBehaviorDeclarators(@NotNull final WritableScope declaringScope, List<JetDeclaration> declarations) {
+    private void processBehaviorDeclarators(@NotNull final WritableScope declaringScope, List<JetDeclaration> declarations) {
         for (JetDeclaration declaration : declarations) {
             declaration.accept(new JetVisitor() {
                 @Override
                 public void visitClass(JetClass klass) {
-                    collectBehaviorDeclarators(classes.get(klass).getUnsubstitutedMemberScope(), klass.getDeclarations());
+                    MutableClassDescriptor mutableClassDescriptor = classes.get(klass);
+                    processBehaviorDeclarators(mutableClassDescriptor.getUnsubstitutedMemberScope(), klass.getDeclarations());
+                    processPrimaryConstructor(mutableClassDescriptor, klass);
                 }
 
                 @Override
                 public void visitClassObject(JetClassObject classObject) {
                     processClassObject(classObject);
-                    collectBehaviorDeclarators(declaringScope, classObject.getObject().getDeclarations());
+                    processBehaviorDeclarators(declaringScope, classObject.getObject().getDeclarations());
                 }
 
                 @Override
                 public void visitNamespace(JetNamespace namespace) {
                     WritableScope namespaceScope = namespaceScopes.get(namespace);
-                    collectBehaviorDeclarators(namespaceScope, namespace.getDeclarations());
+                    processBehaviorDeclarators(namespaceScope, namespace.getDeclarations());
                 }
 
                 @Override
@@ -179,11 +181,18 @@ public class TopDownAnalyzer {
 
                 @Override
                 public void visitDeclaration(JetDeclaration dcl) {
-                    throw new UnsupportedOperationException(); // TODO
+                    throw new UnsupportedOperationException(dcl.getText() + " " + dcl.getClass().getCanonicalName()); // TODO
                 }
             });
         }
 
+    }
+
+    private void processPrimaryConstructor(MutableClassDescriptor classDescriptor, JetClass klass) {
+        ConstructorDescriptor constructorDescriptor = classDescriptorResolver.resolvePrimaryConstructor(classDescriptor.getUnsubstitutedMemberScope(), classDescriptor, klass);
+        if (constructorDescriptor != null) {
+            classDescriptor.addConstructor(constructorDescriptor);
+        }
     }
 
     private void processConstructor(MutableClassDescriptor classDescriptor, JetConstructor constructor) {

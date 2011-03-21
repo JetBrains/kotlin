@@ -2,7 +2,6 @@ package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.types.FunctionDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.List;
@@ -12,17 +11,18 @@ import java.util.Map;
  * @author abreslav
  */
 public interface OverloadDomain {
+
     OverloadDomain EMPTY = new OverloadDomain() {
-        @Nullable
+        @NotNull
         @Override
-        public FunctionDescriptor getFunctionDescriptorForNamedArguments(@NotNull List<JetType> typeArguments, @NotNull Map<String, JetType> valueArgumentTypes, @Nullable JetType functionLiteralArgumentType) {
-            return null;
+        public OverloadResolutionResult getFunctionDescriptorForNamedArguments(@NotNull List<JetType> typeArguments, @NotNull Map<String, JetType> valueArgumentTypes, @Nullable JetType functionLiteralArgumentType) {
+            return OverloadResolutionResult.nameNotFound();
         }
 
-        @Nullable
+        @NotNull
         @Override
-        public FunctionDescriptor getFunctionDescriptorForPositionedArguments(@NotNull List<JetType> typeArguments, @NotNull List<JetType> positionedValueArgumentTypes) {
-            return null;
+        public OverloadResolutionResult getFunctionDescriptorForPositionedArguments(@NotNull List<JetType> typeArguments, @NotNull List<JetType> positionedValueArgumentTypes) {
+            return OverloadResolutionResult.nameNotFound();
         }
 
         @Override
@@ -32,24 +32,19 @@ public interface OverloadDomain {
     };
 
     /**
-     * @param typeArguments
-     * @param valueArgumentTypes
-     * @param functionLiteralArgumentType
-     * @return A function descriptor with NO type parameters (they are already substituted), or null
+     * @return A function descriptor with NO type parameters (they are already substituted) wrapped together with a result code
      */
-    @Nullable
-    FunctionDescriptor getFunctionDescriptorForNamedArguments(
+    @NotNull
+    OverloadResolutionResult getFunctionDescriptorForNamedArguments(
             @NotNull List<JetType> typeArguments,
             @NotNull Map<String, JetType> valueArgumentTypes,
             @Nullable JetType functionLiteralArgumentType);
 
     /**
-     * @param typeArguments
-     * @param positionedValueArgumentTypes
-     * @return A function descriptor with NO type parameters (they are already substituted), or null
+     * @return A function descriptor with NO type parameters (they are already substituted) wrapped together with a result code
      */
-    @Nullable
-    FunctionDescriptor getFunctionDescriptorForPositionedArguments(
+    @NotNull
+    OverloadResolutionResult getFunctionDescriptorForPositionedArguments(
             @NotNull List<JetType> typeArguments,
             @NotNull List<JetType> positionedValueArgumentTypes);
 

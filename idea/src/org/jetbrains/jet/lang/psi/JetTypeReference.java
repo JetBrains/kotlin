@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ public class JetTypeReference extends JetElement {
         return findChildrenByType(JetNodeTypes.ATTRIBUTE_ANNOTATION);
     }
 
+    @Nullable
     public JetTypeElement getTypeElement() {
         return findChildByClass(JetTypeElement.class);
     }
