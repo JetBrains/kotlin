@@ -15,6 +15,9 @@ public interface ClassDescriptor extends DeclarationDescriptor {
     @NotNull
     JetScope getMemberScope(List<TypeProjection> typeArguments);
 
+    @NotNull
+    FunctionGroup getConstructors(List<TypeProjection> typeArguments);
+
     @Override
     @NotNull
     DeclarationDescriptor getContainingDeclaration();

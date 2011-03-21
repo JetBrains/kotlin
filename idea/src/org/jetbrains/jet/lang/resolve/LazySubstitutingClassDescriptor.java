@@ -12,7 +12,7 @@ import java.util.Map;
 public class LazySubstitutingClassDescriptor implements ClassDescriptor {
 
     private final ClassDescriptor original;
-    private final Map<TypeConstructor,TypeProjection> substitutionContext;
+    private final Map<TypeConstructor, TypeProjection> substitutionContext;
 
     public LazySubstitutingClassDescriptor(ClassDescriptor descriptor, Map<TypeConstructor, TypeProjection> substitutionContext) {
         this.original = descriptor;
@@ -36,6 +36,12 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
             return memberScope;
         }
         return new SubstitutingScope(memberScope, substitutionContext);
+    }
+
+    @NotNull
+    @Override
+    public FunctionGroup getConstructors(List<TypeProjection> typeArguments) {
+        throw new UnsupportedOperationException(); // TODO
     }
 
     @Override

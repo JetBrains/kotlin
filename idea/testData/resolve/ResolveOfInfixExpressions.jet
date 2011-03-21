@@ -2,6 +2,7 @@ import java.*
 import util.*
 
 ~X~class X<~T~T> {
+  ~X()~this() {}
   fun foo(a : `T`T) : `X`X<`T`T>{}
   ~plus~fun plus(t : `T`T) : Int {}
   ~minus~fun minus(t : String) : Int {}
@@ -16,7 +17,7 @@ import util.*
 ~t~fun <~t.T~T> t(~t.t~t : `t.T`T) : `t.T`T {
   `t`t<Int>(1)`:std::Int`
   `t`t<`t.T`T>(`t.t`t)`:t.T`
-  new `X`X<`t.T`T>()
+  new `X()`X<`t.T`T>()
   1 `std::Int.plus(Int)`+ 1
   1 `std::Int.plus(Int)`+= 1
   new X<String>() `plus`+ "1"
@@ -43,6 +44,7 @@ import util.*
 }
 
 ~Bar~class Bar : Foo {
+  ~Bar()~this() {}
   ~not~fun not() : String {}
   ~inc~fun inc() : Bar
   ~dec~fun dec() : Bar
@@ -53,7 +55,7 @@ import util.*
 fun <T> tt(t : T) : T {
   val x : List = 0
   x`java::java.util.List.get()`[1]
-  val foo = new Bar()
+  val foo = new `Bar()`Bar()
   foo`!`[null, 1]
   foo`get2`[1, 1]
   foo`get1`[1]

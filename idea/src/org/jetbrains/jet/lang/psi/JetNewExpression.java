@@ -36,4 +36,10 @@ public class JetNewExpression extends JetExpression {
         JetArgumentList list = getArgumentList();
         return list != null ? list.getArguments() : Collections.<JetArgument>emptyList();
     }
+
+    @NotNull
+    public List<JetExpression> getFunctionLiteralArguments() {
+        return findChildrenByType(JetNodeTypes.FUNCTION_LITERAL);
+    }
+
 }

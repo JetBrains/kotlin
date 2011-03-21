@@ -32,7 +32,7 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
         this.original = original;
     }
 
-    public final FunctionDescriptor initialize(
+    public FunctionDescriptor initialize(
             @NotNull List<TypeParameterDescriptor> typeParameters,
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
             @NotNull JetType unsubstitutedReturnType) {

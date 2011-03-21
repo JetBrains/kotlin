@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.SubstitutingScope;
 
 import java.util.*;
 
@@ -13,7 +14,7 @@ public class TypeSubstitutor {
     private TypeSubstitutor() {}
 
     public JetType substitute(@NotNull JetType context, @NotNull JetType subject, @NotNull Variance howThisTypeIsUsed) {
-        return substitute(getSubstitutionContext(context), subject, howThisTypeIsUsed);
+        return substitute(buildSubstitutionContext(context), subject, howThisTypeIsUsed);
     }
 
     @NotNull
@@ -28,14 +29,46 @@ public class TypeSubstitutor {
             return value.getType();
         }
 
-        return specializeType(type, substituteInArguments(substitutionContext, type));
+        return specializeType(type, substitutionContext);
     }
 
-    public Map<TypeConstructor, TypeProjection> getSubstitutionContext(JetType context) {
-        List<TypeParameterDescriptor> parameters = context.getConstructor().getParameters();
-        List<TypeProjection> contextArguments = context.getArguments();
+    private JetType specializeType(JetType subjectType, Map<TypeConstructor, TypeProjection> substitutionContext) {
+        return new JetTypeImpl(
+                subjectType.getAttributes(),
+                subjectType.getConstructor(),
+                subjectType.isNullable(),
+                substituteInArguments(substitutionContext, subjectType),
+                new SubstitutingScope(subjectType.getMemberScope(), substitutionContext));
+    }
 
-        return buildSubstitutionContext(parameters, contextArguments);
+    private List<TypeProjection> substituteInArguments(Map<TypeConstructor, TypeProjection> substitutionContext, JetType subjectType) {
+        List<TypeProjection> newArguments = new ArrayList<TypeProjection>();
+        for (TypeProjection argument : subjectType.getArguments()) {
+            newArguments.add(substituteInProjection(substitutionContext, argument));
+        }
+        return newArguments;
+    }
+
+    @NotNull
+    private TypeProjection substituteInProjection(Map<TypeConstructor, TypeProjection> substitutionContext, TypeProjection subject) {
+        JetType subjectType = subject.getType();
+        TypeProjection value = substitutionContext.get(subjectType.getConstructor());
+        if (value != null) {
+            return value;
+        }
+        return new TypeProjection(subject.getProjectionKind(), specializeType(subjectType, substitutionContext));
+    }
+
+    public Set<JetType> substituteInSet(Map<TypeConstructor, TypeProjection> substitutionContext, Set<JetType> types, Variance howTheseTypesWillBeUsed) {
+        Set<JetType> result = new HashSet<JetType>();
+        for (JetType type : types) {
+            result.add(substitute(substitutionContext, type, howTheseTypesWillBeUsed));
+        }
+        return result;
+    }
+
+    public Map<TypeConstructor, TypeProjection> buildSubstitutionContext(JetType context) {
+        return buildSubstitutionContext(context.getConstructor().getParameters(), context.getArguments());
     }
 
     public Map<TypeConstructor, TypeProjection> buildSubstitutionContext(List<TypeParameterDescriptor> parameters, List<TypeProjection> contextArguments) {
@@ -46,36 +79,5 @@ public class TypeSubstitutor {
             parameterValues.put(parameter.getTypeConstructor(), value);
         }
         return parameterValues;
-    }
-
-    @NotNull
-    private TypeProjection substituteInProjection(Map<TypeConstructor, TypeProjection> parameterValues, TypeProjection subject) {
-        @NotNull JetType subjectType = subject.getType();
-        TypeProjection value = parameterValues.get(subjectType.getConstructor());
-        if (value != null) {
-            return value;
-        }
-        List<TypeProjection> newArguments = substituteInArguments(parameterValues, subjectType);
-        return new TypeProjection(subject.getProjectionKind(), specializeType(subjectType, newArguments));
-    }
-
-    private List<TypeProjection> substituteInArguments(Map<TypeConstructor, TypeProjection> parameterValues, JetType subjectType) {
-        List<TypeProjection> newArguments = new ArrayList<TypeProjection>();
-        for (TypeProjection argument : subjectType.getArguments()) {
-            newArguments.add(substituteInProjection(parameterValues, argument));
-        }
-        return newArguments;
-    }
-
-    private JetType specializeType(JetType type, List<TypeProjection> newArguments) {
-        return new JetTypeImpl(type.getAttributes(), type.getConstructor(), type.isNullable(), newArguments, type.getMemberScope());
-    }
-
-    public Set<JetType> substituteInSet(Map<TypeConstructor, TypeProjection> substitutionContext, Set<JetType> types, Variance howTheseTypesWillBeUsed) {
-        Set<JetType> result = new HashSet<JetType>();
-        for (JetType type : types) {
-            result.add(substitute(substitutionContext, type, howTheseTypesWillBeUsed));
-        }
-        return result;
     }
 }

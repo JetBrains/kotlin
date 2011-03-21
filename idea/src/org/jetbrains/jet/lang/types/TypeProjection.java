@@ -18,10 +18,12 @@ public class TypeProjection {
         this(Variance.INVARIANT, type);
     }
 
+    @NotNull
     public Variance getProjectionKind() {
         return projection;
     }
 
+    @NotNull
     public JetType getType() {
         return type;
     }

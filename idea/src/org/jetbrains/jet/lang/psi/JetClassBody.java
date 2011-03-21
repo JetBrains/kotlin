@@ -18,6 +18,10 @@ public class JetClassBody extends JetElement {
         return PsiTreeUtil.getChildrenOfTypeAsList(this, JetDeclaration.class);
     }
 
+    public List<JetConstructor> getSecondaryConstructors() {
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, JetConstructor.class);
+    }
+
     @Override
     public void accept(@NotNull JetVisitor visitor) {
         visitor.visitClassBody(this);

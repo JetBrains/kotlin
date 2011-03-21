@@ -38,6 +38,7 @@ public abstract class MutableDeclarationDescriptor implements DeclarationDescrip
         return this;
     }
 
+    @NotNull
     @Override
     public DeclarationDescriptor getContainingDeclaration() {
         return containingDeclaration;

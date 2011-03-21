@@ -27,4 +27,8 @@ public class DeclarationDescriptorVisitor<R, D> {
     public R visitModuleDeclaration(ModuleDescriptor moduleDescriptor, D data) {
         return null;
     }
+
+    public R visitConstructorDescriptor(ConstructorDescriptor constructorDescriptor, D data) {
+        return visitFunctionDescriptor(constructorDescriptor, data);
+    }
 }

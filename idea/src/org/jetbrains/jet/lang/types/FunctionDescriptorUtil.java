@@ -39,6 +39,7 @@ public class FunctionDescriptorUtil {
 
     @NotNull
     public static List<ValueParameterDescriptor> getSubstitutedValueParameters(FunctionDescriptor substitutedDescriptor, @NotNull FunctionDescriptor functionDescriptor, @NotNull List<JetType> typeArguments) {
+        // TODO : Review, maybe duplicates LazySubstitutingFunctionDescriptor
         List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>();
         Map<TypeConstructor, TypeProjection> context = createSubstitutionContext(functionDescriptor, typeArguments);
         List<ValueParameterDescriptor> unsubstitutedValueParameters = functionDescriptor.getUnsubstitutedValueParameters();
@@ -59,7 +60,7 @@ public class FunctionDescriptorUtil {
     }
 
     private static Map<TypeConstructor, TypeProjection> createSubstitutionContext(@NotNull FunctionDescriptor functionDescriptor, List<JetType> typeArguments) {
-        Map<TypeConstructor,TypeProjection> result = new HashMap<TypeConstructor, TypeProjection>();
+        Map<TypeConstructor, TypeProjection> result = new HashMap<TypeConstructor, TypeProjection>();
 
         int typeArgumentsSize = typeArguments.size();
         List<TypeParameterDescriptor> typeParameters = functionDescriptor.getTypeParameters();
@@ -74,6 +75,7 @@ public class FunctionDescriptorUtil {
 
     @NotNull
     public static JetType getSubstitutedReturnType(@NotNull FunctionDescriptor functionDescriptor, @NotNull List<JetType> typeArguments) {
+        // TODO : Review, maybe duplicates LazySubstitutingFunctionDescriptor
         return TypeSubstitutor.INSTANCE.substitute(createSubstitutionContext(functionDescriptor, typeArguments), functionDescriptor.getUnsubstitutedReturnType(), Variance.OUT_VARIANCE);
     }
 

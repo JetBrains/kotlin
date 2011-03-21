@@ -1,11 +1,10 @@
 package org.jetbrains.jet.lang.types;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.resolve.JetScope;
 
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author abreslav
@@ -145,5 +144,26 @@ public class TypeUtils {
             return makeNullable(type);
         }
         return type;
+    }
+
+    @NotNull
+    public static JetType makeUnsubstitutedType(ClassDescriptor classDescriptor) {
+        List<TypeProjection> arguments = getArguments(classDescriptor);
+        return new JetTypeImpl(
+                Collections.<Attribute>emptyList(),
+                classDescriptor.getTypeConstructor(),
+                false,
+                arguments,
+                classDescriptor.getMemberScope(arguments)
+        );
+    }
+
+    @NotNull
+    private static List<TypeProjection> getArguments(@NotNull ClassDescriptor classDescriptor) {
+        List<TypeProjection> result = new ArrayList<TypeProjection>();
+        for (TypeParameterDescriptor parameterDescriptor : classDescriptor.getTypeConstructor().getParameters()) {
+            result.add(new TypeProjection(new JetTypeImpl(parameterDescriptor.getTypeConstructor(), JetScope.EMPTY))); // TODO : scope?
+        }
+        return result;
     }
 }

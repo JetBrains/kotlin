@@ -274,7 +274,7 @@ public class JetTypeChecker {
             return;
         }
         handler.beforeChildren(current);
-        Map<TypeConstructor, TypeProjection> substitutionContext = TypeSubstitutor.INSTANCE.getSubstitutionContext(current);
+        Map<TypeConstructor, TypeProjection> substitutionContext = TypeSubstitutor.INSTANCE.buildSubstitutionContext(current);
         for (JetType supertype : current.getConstructor().getSupertypes()) {
             TypeConstructor supertypeConstructor = supertype.getConstructor();
             if (visited.contains(supertypeConstructor)) {

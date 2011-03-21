@@ -167,12 +167,27 @@ public class TopDownAnalyzer {
                 }
 
                 @Override
+                public void visitConstructor(JetConstructor constructor) {
+                    DeclarationDescriptor containingDeclaration = declaringScope.getContainingDeclaration();
+                    if (containingDeclaration instanceof ClassDescriptor) {
+                        processConstructor((MutableClassDescriptor) containingDeclaration, constructor);
+                    }
+                    else {
+                        semanticServices.getErrorHandler().genericError(constructor.getNode(), "Constructors are only allowed inside classes");
+                    }
+                }
+
+                @Override
                 public void visitDeclaration(JetDeclaration dcl) {
                     throw new UnsupportedOperationException(); // TODO
                 }
             });
         }
 
+    }
+
+    private void processConstructor(MutableClassDescriptor classDescriptor, JetConstructor constructor) {
+        classDescriptor.addConstructor(classDescriptorResolver.resolveConstructorDescriptor(classDescriptor.getUnsubstitutedMemberScope(), classDescriptor, constructor, false));
     }
 
     private void processFunction(@NotNull WritableScope declaringScope, JetFunction function) {

@@ -25,7 +25,8 @@ public class JetStandardClasses {
     private static final ClassDescriptor NOTHING_CLASS = new ClassDescriptorImpl(
             STANDARD_CLASSES_NAMESPACE,
             Collections.<Attribute>emptyList(),
-            "Nothing").initialize(
+            "Nothing"
+    ).initialize(
             true,
             Collections.<TypeParameterDescriptor>emptyList(),
             new AbstractCollection<JetType>() {
@@ -43,7 +44,9 @@ public class JetStandardClasses {
                 public int size() {
                     throw new UnsupportedOperationException();
                 }
-            }, JetScope.EMPTY
+            },
+            JetScope.EMPTY,
+            FunctionGroup.EMPTY
     );
 
     private static final JetType NOTHING_TYPE = new JetTypeImpl(getNothing());
@@ -63,7 +66,8 @@ public class JetStandardClasses {
             false,
             Collections.<TypeParameterDescriptor>emptyList(),
             Collections.<JetType>emptySet(),
-            JetScope.EMPTY
+            JetScope.EMPTY,
+            FunctionGroup.EMPTY
     );
 
     private static final JetType ANY_TYPE = new JetTypeImpl(ANY.getTypeConstructor(), JetScope.EMPTY);
@@ -72,6 +76,7 @@ public class JetStandardClasses {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     public static final JetScope STUB = JetScope.EMPTY;
+    public static final FunctionGroup STUB_FG = FunctionGroup.EMPTY;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -95,7 +100,9 @@ public class JetStandardClasses {
             TUPLE[i] = classDescriptor.initialize(
                     true,
                     parameters,
-                    Collections.singleton(getAnyType()), STUB);
+                    Collections.singleton(getAnyType()),
+                    STUB,
+                    STUB_FG);
         }
     }
 
@@ -115,7 +122,7 @@ public class JetStandardClasses {
             FUNCTION[i] = function.initialize(
                     false,
                     createTypeParameters(i, function),
-                    Collections.singleton(getAnyType()), STUB);
+                    Collections.singleton(getAnyType()), STUB, STUB_FG);
 
             ClassDescriptorImpl receiverFunction = new ClassDescriptorImpl(
                     STANDARD_CLASSES_NAMESPACE,
@@ -130,7 +137,7 @@ public class JetStandardClasses {
             RECEIVER_FUNCTION[i] = receiverFunction.initialize(
                     false,
                     parameters,
-                    Collections.singleton(getAnyType()), STUB);
+                    Collections.singleton(getAnyType()), STUB, STUB_FG);
         }
     }
 

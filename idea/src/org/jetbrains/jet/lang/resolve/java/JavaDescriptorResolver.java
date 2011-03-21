@@ -71,7 +71,25 @@ public class JavaDescriptorResolver {
                 modifierList == null ? false : modifierList.hasModifierProperty(PsiModifier.FINAL),
                 Collections.<TypeParameterDescriptor>emptyList(),
                 getSupertypes(psiClass),
-                new JavaClassMembersScope(classDescriptor, psiClass, semanticServices, false)
+                new JavaClassMembersScope(classDescriptor, psiClass, semanticServices, false),
+                new FunctionGroup() {
+                    @NotNull
+                    @Override
+                    public String getName() {
+                        throw new UnsupportedOperationException(); // TODO
+                    }
+
+                    @NotNull
+                    @Override
+                    public Collection<FunctionDescriptor> getPossiblyApplicableFunctions(@NotNull List<JetType> typeArguments, @NotNull List<JetType> positionedValueArgumentTypes) {
+                        throw new UnsupportedOperationException(); // TODO
+                    }
+
+                    @Override
+                    public boolean isEmpty() {
+                        throw new UnsupportedOperationException(); // TODO
+                    }
+                }
         );
         semanticServices.getTrace().recordDeclarationResolution(psiClass, classDescriptor);
         return classDescriptor;

@@ -47,11 +47,20 @@ public class ClassDescriptorResolver {
         boolean open = classElement.hasModifier(JetTokens.OPEN_KEYWORD);
         WritableScope members = resolveMembers(classDescriptor, classElement, typeParameters, scope, parameterScope, superclasses);
 
+        WritableFunctionGroup constructors = new WritableFunctionGroup("<init>");
+        for (JetConstructor constructor : classElement.getSecondaryConstructors()) {
+            constructors.addFunction(resolveConstructorDescriptor(members, classDescriptor, constructor, false));
+        }
+        ConstructorDescriptor primaryConstructorDescriptor = resolvePrimaryConstructor(scope, classDescriptor, classElement);
+        if (primaryConstructorDescriptor != null) {
+            constructors.addFunction(primaryConstructorDescriptor);
+        }
         return classDescriptor.initialize(
                 !open,
                 typeParameters,
                 superclasses,
-                members
+                members,
+                constructors
         );
     }
 
@@ -297,5 +306,52 @@ public class ClassDescriptorResolver {
                 AttributeResolver.INSTANCE.resolveAttributes(property.getModifierList()),
                 property.getName(),
                 type);
+    }
+
+    @NotNull
+    public ConstructorDescriptor resolveConstructorDescriptor(@NotNull JetScope scope, ClassDescriptor classDescriptor, JetConstructor constructor, boolean isPrimary) {
+        return createConstructorDescriptor(scope, classDescriptor, isPrimary, constructor.getModifierList(), constructor, constructor.getParameters());
+    }
+
+    @NotNull
+    private ConstructorDescriptor createConstructorDescriptor(JetScope scope, ClassDescriptor classDescriptor, boolean isPrimary, JetModifierList modifierList, JetDeclaration declarationToTrace, List<JetParameter> valueParameters) {
+        ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(
+                classDescriptor,
+                AttributeResolver.INSTANCE.resolveAttributes(modifierList),
+                isPrimary
+        );
+        trace.recordDeclarationResolution(declarationToTrace, constructorDescriptor);
+        return constructorDescriptor.initialize(
+                resolveValueParameters(
+                        constructorDescriptor,
+                        semanticServices.createWritableScope(scope, classDescriptor),
+                        valueParameters));
+    }
+
+    @Nullable
+    private ConstructorDescriptor resolvePrimaryConstructor(@NotNull JetScope scope, @NotNull ClassDescriptor classDescriptor, @NotNull JetClass classElement) {
+        JetParameterList primaryConstructorParameterList = classElement.getPrimaryConstructorParameterList();
+        if (primaryConstructorParameterList != null) {
+            return createConstructorDescriptor(
+                    scope,
+                    classDescriptor,
+                    true,
+                    classElement.getModifierList(), // TODO
+                    classElement,
+                    primaryConstructorParameterList.getParameters());
+        }
+        else {
+            List<JetConstructor> secondaryConstructors = classElement.getSecondaryConstructors();
+            if (secondaryConstructors.isEmpty()) {
+                return createConstructorDescriptor(
+                        scope,
+                        classDescriptor,
+                        true,
+                        classElement.getModifierList(), // TODO
+                        classElement,
+                        Collections.<JetParameter>emptyList());
+            }
+            else return null;
+        }
     }
 }

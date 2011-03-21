@@ -24,6 +24,11 @@ public class OverloadResolver {
 
         final FunctionGroup functionGroup = scope.getFunctionGroup(name);
 
+        return getOverloadDomain(functionGroup);
+    }
+
+    @NotNull
+    public OverloadDomain getOverloadDomain(@NotNull final FunctionGroup functionGroup) {
         if (functionGroup.isEmpty()) {
             return OverloadDomain.EMPTY;
         }

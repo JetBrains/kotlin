@@ -283,20 +283,22 @@ public class JetTypeInferrer {
             // TODO : other members
             // TODO : type substitutions???
             String referencedName = expression.getReferencedName();
-            PropertyDescriptor property = scope.getProperty(referencedName);
-            if (property != null) {
-                trace.recordReferenceResolution(expression, property);
-                result = property.getType();
-                return;
-            } else {
-                NamespaceDescriptor namespace = scope.getNamespace(referencedName);
-                if (namespace != null) {
-                    trace.recordReferenceResolution(expression, namespace);
-                    result = namespace.getNamespaceType();
+            if (referencedName != null) {
+                PropertyDescriptor property = scope.getProperty(referencedName);
+                if (property != null) {
+                    trace.recordReferenceResolution(expression, property);
+                    result = property.getType();
                     return;
+                } else {
+                    NamespaceDescriptor namespace = scope.getNamespace(referencedName);
+                    if (namespace != null) {
+                        trace.recordReferenceResolution(expression, namespace);
+                        result = namespace.getNamespaceType();
+                        return;
+                    }
                 }
+                semanticServices.getErrorHandler().unresolvedReference(expression);
             }
-            semanticServices.getErrorHandler().unresolvedReference(expression);
         }
 
         @Override
@@ -451,7 +453,7 @@ public class JetTypeInferrer {
                 JetUserType typeElement = (JetUserType) superTypeQualifier.getTypeElement();
                 ClassDescriptor superclass = typeResolver.resolveClass(scope, typeElement);
                 Collection<? extends JetType> supertypes = thisType.getConstructor().getSupertypes();
-                Map<TypeConstructor, TypeProjection> substitutionContext = TypeSubstitutor.INSTANCE.getSubstitutionContext(thisType);
+                Map<TypeConstructor, TypeProjection> substitutionContext = TypeSubstitutor.INSTANCE.buildSubstitutionContext(thisType);
                 for (JetType declaredSupertype : supertypes) {
                     if (declaredSupertype.getConstructor().equals(superclass.getTypeConstructor())) {
                         result = TypeSubstitutor.INSTANCE.substitute(substitutionContext, declaredSupertype, Variance.INVARIANT);
@@ -499,15 +501,27 @@ public class JetTypeInferrer {
         public void visitIfExpression(JetIfExpression expression) {
             checkCondition(scope, expression.getCondition());
 
-            // TODO : change types according to is and nullability checks
+            // TODO : change types according to is and null checks
             JetExpression elseBranch = expression.getElse();
-            if (elseBranch == null) {
-                // TODO : type-check the branch
-                result = JetStandardClasses.getUnitType();
-            } else {
-                JetType thenType = getType(scope, expression.getThen(), true);
+            JetExpression thenBranch = expression.getThen();
+            JetType thenType = null;
+            if (thenBranch != null) {
+                thenType = getType(scope, thenBranch, true);
+            }
+            if (elseBranch != null) {
                 JetType elseType = getType(scope, elseBranch, true);
-                result = semanticServices.getTypeChecker().commonSupertype(Arrays.asList(thenType, elseType));
+                if (thenType == null) {
+                    result = elseType;
+                }
+                else if (elseType == null) {
+                    result = thenType;
+                }
+                else {
+                    result = semanticServices.getTypeChecker().commonSupertype(Arrays.asList(thenType, elseType));
+                }
+            }
+            else {
+                result = JetStandardClasses.getUnitType();
             }
         }
 
@@ -609,7 +623,38 @@ public class JetTypeInferrer {
             // TODO : type argument inference
             JetTypeReference typeReference = expression.getTypeReference();
             if (typeReference != null) {
-                result = typeResolver.resolveType(scope, typeReference);
+                JetTypeElement typeElement = typeReference.getTypeElement();
+                if (typeElement instanceof JetUserType) {
+                    JetUserType userType = (JetUserType) typeElement;
+                    // TODO : to infer constructor parameters, one will need to
+                    //  1) resolve a _class_ from the typeReference
+                    //  2) rely on the overload domain of constructors of this class to infer type arguments
+                    // For now we assume that the type arguments are provided, and thus the typeReference can be
+                    // resolved into a valid type
+                    JetType receiverType = typeResolver.resolveType(scope, typeReference);
+                    DeclarationDescriptor declarationDescriptor = receiverType.getConstructor().getDeclarationDescriptor();
+                    if (declarationDescriptor instanceof ClassDescriptor) {
+                        ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
+
+                        JetSimpleNameExpression referenceExpression = userType.getReferenceExpression();
+                        if (referenceExpression != null) {
+                            FunctionGroup constructors = classDescriptor.getConstructors(receiverType.getArguments());
+                            OverloadDomain constructorsOverloadDomain = semanticServices.getOverloadResolver().getOverloadDomain(constructors);
+                            result = resolveOverloads(
+                                    scope,
+                                    wrapForTracing(constructorsOverloadDomain, referenceExpression, true),
+                                    Collections.<JetTypeProjection>emptyList(),
+                                    expression.getArguments(),
+                                    expression.getFunctionLiteralArguments());
+                        }
+                    }
+                    else {
+                        semanticServices.getErrorHandler().genericError(expression.getNode(), "Calling a constructor is only supported for ordinary classes"); // TODO : review the message
+                    }
+                }
+                else {
+                    semanticServices.getErrorHandler().genericError(typeElement.getNode(), "Calling a constructor is only supported for ordinary classes"); // TODO : Better message
+                }
             }
         }
 
@@ -664,14 +709,29 @@ public class JetTypeInferrer {
             result = resolveOverloads(scope, expression, overloadDomain);
         }
 
+        @Nullable
         private JetType resolveOverloads(JetScope scope, JetCallExpression expression, OverloadDomain overloadDomain) {
+            List<JetTypeProjection> typeArguments = expression.getTypeArguments();
+            List<JetArgument> valueArguments = expression.getValueArguments();
+            List<JetExpression> functionLiteralArguments = expression.getFunctionLiteralArguments();
+            return resolveOverloads(scope, overloadDomain, typeArguments, valueArguments, functionLiteralArguments);
+        }
+
+        @Nullable
+        private JetType resolveOverloads(
+                @NotNull JetScope scope,
+                @NotNull OverloadDomain overloadDomain,
+                @NotNull List<JetTypeProjection> typeArguments,
+                @NotNull List<JetArgument> valueArguments,
+                @NotNull List<JetExpression> functionLiteralArguments) {
             // 1) ends with a name -> (scope, name) to look up
             // 2) ends with something else -> just check types
 
-            // TODO : check somewhere that these are NOT projections
-            List<JetTypeProjection> typeArguments = expression.getTypeArguments();
-
-            List<JetArgument> valueArguments = expression.getValueArguments();
+            for (JetTypeProjection typeArgument : typeArguments) {
+                if (typeArgument.getProjectionKind() != JetProjectionKind.NONE) {
+                    semanticServices.getErrorHandler().genericError(typeArgument.getNode(), "Projections are not allowed on type parameters for methods"); // TODO : better positioning
+                }
+            }
 
             boolean someNamed = false;
             for (JetArgument argument : valueArguments) {
@@ -680,7 +740,6 @@ public class JetTypeInferrer {
                     break;
                 }
             }
-            List<JetExpression> functionLiteralArguments = expression.getFunctionLiteralArguments();
 
 //                JetExpression functionLiteralArgument = functionLiteralArguments.isEmpty() ? null : functionLiteralArguments.get(0);
             // TODO : must be a check
@@ -762,7 +821,10 @@ public class JetTypeInferrer {
 
             IElementType operationType = operationSign.getReferencedNameElementType();
             if (operationType == JetTokens.IDENTIFIER) {
-                result = getTypeForBinaryCall(expression, operationSign.getReferencedName(), scope, true);
+                String referencedName = operationSign.getReferencedName();
+                if (referencedName != null) {
+                    result = getTypeForBinaryCall(expression, referencedName, scope, true);
+                }
             }
             else if (binaryOperationNames.containsKey(operationType)) {
                 result = getTypeForBinaryCall(expression, binaryOperationNames.get(operationType), scope, true);
@@ -879,16 +941,18 @@ public class JetTypeInferrer {
             }
         }
 
+        @Nullable
         protected JetType getTypeForBinaryCall(JetBinaryExpression expression, @NotNull String name, JetScope scope, boolean reportUnresolved) {
             JetExpression left = expression.getLeft();
             JetExpression right = expression.getRight();
             if (right == null) {
-                return ErrorType.createErrorType("No right argument"); // TODO
+                return null;
             }
             JetSimpleNameExpression operationSign = expression.getOperationReference();
             return getTypeForBinaryCall(scope, left, operationSign, right, name, reportUnresolved);
         }
 
+        @Nullable
         private JetType getTypeForBinaryCall(JetScope scope, JetExpression left, JetSimpleNameExpression operationSign, @NotNull JetExpression right, String name, boolean reportUnresolved) {
             JetType leftType = safeGetType(scope, left, false);
             JetType rightType = safeGetType(scope, right, false);

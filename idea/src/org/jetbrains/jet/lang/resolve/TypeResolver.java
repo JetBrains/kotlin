@@ -46,13 +46,17 @@ public class TypeResolver {
                         trace.recordReferenceResolution(type.getReferenceExpression(), classDescriptor);
                         TypeConstructor typeConstructor = classDescriptor.getTypeConstructor();
                         List<TypeProjection> arguments = resolveTypeProjections(scope, typeConstructor, type.getTypeArguments());
-                        result[0] = new JetTypeImpl(
-                                attributes,
-                                typeConstructor,
-                                nullable,
-                                arguments,
-                                classDescriptor.getMemberScope(arguments)
-                        );
+                        if (arguments.size() != typeConstructor.getParameters().size()) {
+                            semanticServices.getErrorHandler().genericError(type.getNode(), typeConstructor.getParameters().size() + " type parameters expected"); // TODO : message
+                        } else {
+                            result[0] = new JetTypeImpl(
+                                    attributes,
+                                    typeConstructor,
+                                    nullable,
+                                    arguments,
+                                    classDescriptor.getMemberScope(arguments)
+                            );
+                        }
                     }
                     else if (type.getTypeArguments().isEmpty()) {
                         TypeParameterDescriptor typeParameterDescriptor = scope.getTypeParameter(type.getReferencedName());

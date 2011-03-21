@@ -4,13 +4,11 @@ import com.intellij.lang.documentation.QuickDocumentationProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.jet.lang.ErrorHandler;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.DeclarationDescriptor;
-import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.resolve.DescriptorUtil;
 
 /**
@@ -49,7 +47,7 @@ public class JetQuickDocumentationProvider extends QuickDocumentationProvider {
 
     private String render(DeclarationDescriptor declarationDescriptor) {
         String text = DescriptorUtil.renderPresentableText(declarationDescriptor);
-        text = text.replaceAll("<", "&lt;");
+//        text = text.replaceAll("<", "&lt;");
         return text;
     }
 

@@ -15,11 +15,12 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
     private TypeConstructor typeConstructor;
 
     private JetScope memberDeclarations;
+    private FunctionGroup constructors;
 
     public ClassDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
-            List<Attribute> attributes,
-            String name) {
+            @NotNull List<Attribute> attributes,
+            @NotNull String name) {
         super(containingDeclaration, attributes, name);
     }
 
@@ -31,10 +32,13 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
 //    }
 //
     public final ClassDescriptorImpl initialize(boolean sealed,
-                                                List<TypeParameterDescriptor> typeParameters,
-                                                Collection<? extends JetType> superclasses, JetScope memberDeclarations) {
+                                                @NotNull List<TypeParameterDescriptor> typeParameters,
+                                                @NotNull Collection<? extends JetType> superclasses,
+                                                @NotNull JetScope memberDeclarations,
+                                                @NotNull FunctionGroup constructors) {
         this.typeConstructor = new TypeConstructorImpl(this, getAttributes(), sealed, getName(), typeParameters, superclasses);
         this.memberDeclarations = memberDeclarations;
+        this.constructors = constructors;
         return this;
     }
 
@@ -47,11 +51,23 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
     @Override
     @NotNull
     public JetScope getMemberScope(List<TypeProjection> typeArguments) {
+        assert typeArguments.size() == typeConstructor.getParameters().size();
         if (typeConstructor.getParameters().isEmpty()) {
             return  memberDeclarations;
         }
-        Map<TypeConstructor,TypeProjection> substitutionContext = TypeSubstitutor.INSTANCE.buildSubstitutionContext(typeConstructor.getParameters(), typeArguments);
+        Map<TypeConstructor, TypeProjection> substitutionContext = TypeSubstitutor.INSTANCE.buildSubstitutionContext(typeConstructor.getParameters(), typeArguments);
         return new SubstitutingScope(memberDeclarations, substitutionContext);
+    }
+
+    @NotNull
+    @Override
+    public FunctionGroup getConstructors(List<TypeProjection> typeArguments) {
+        assert typeArguments.size() == getTypeConstructor().getParameters().size();
+        if (typeArguments.size() == 0) {
+            return constructors;
+        }
+        Map<TypeConstructor, TypeProjection> substitutionContext = TypeSubstitutor.INSTANCE.buildSubstitutionContext(getTypeConstructor().getParameters(), typeArguments);
+        return new LazySubstitutingFunctionGroup(substitutionContext, constructors);
     }
 
     @Override
