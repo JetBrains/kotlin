@@ -5,6 +5,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.resolve.WritableFunctionGroup;
 import org.jetbrains.jet.lang.types.*;
 
 import java.util.*;
@@ -53,7 +54,6 @@ public class JavaDescriptorResolver {
                 return null;
             }
             classDescriptor = createJavaClassDescriptor(psiClass);
-            classDescriptorCache.put(qualifiedName, classDescriptor);
         }
         return classDescriptor;
     }
@@ -66,31 +66,31 @@ public class JavaDescriptorResolver {
                 Collections.<Attribute>emptyList(), // TODO
                 name
         );
+
+        WritableFunctionGroup constructors = new WritableFunctionGroup("<init>");
         classDescriptor.initialize(
                 // TODO
                 modifierList == null ? false : modifierList.hasModifierProperty(PsiModifier.FINAL),
                 Collections.<TypeParameterDescriptor>emptyList(),
                 getSupertypes(psiClass),
                 new JavaClassMembersScope(classDescriptor, psiClass, semanticServices, false),
-                new FunctionGroup() {
-                    @NotNull
-                    @Override
-                    public String getName() {
-                        throw new UnsupportedOperationException(); // TODO
-                    }
-
-                    @NotNull
-                    @Override
-                    public Collection<FunctionDescriptor> getPossiblyApplicableFunctions(@NotNull List<JetType> typeArguments, @NotNull List<JetType> positionedValueArgumentTypes) {
-                        throw new UnsupportedOperationException(); // TODO
-                    }
-
-                    @Override
-                    public boolean isEmpty() {
-                        throw new UnsupportedOperationException(); // TODO
-                    }
-                }
+                constructors
         );
+
+        classDescriptorCache.put(psiClass.getQualifiedName(), classDescriptor);
+
+        // NOTE: this writes into constructors after it is remembered by the classDescriptor
+        PsiMethod[] psiConstructors = psiClass.getConstructors();
+        for (PsiMethod constructor : psiConstructors) {
+            ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(
+                    classDescriptor,
+                    Collections.<Attribute>emptyList(), // TODO
+                    false);
+            constructorDescriptor.initialize(resolveParameterDescriptors(constructorDescriptor, constructor.getParameterList().getParameters()));
+            constructors.addFunction(
+                    constructorDescriptor);
+        }
+
         semanticServices.getTrace().recordDeclarationResolution(psiClass, classDescriptor);
         return classDescriptor;
     }

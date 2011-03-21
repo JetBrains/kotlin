@@ -766,7 +766,7 @@ public class JetTypeInferrer {
 
                 List<JetType> valueArgumentTypes = new ArrayList<JetType>();
                 for (JetExpression valueArgument : positionedValueArguments) {
-                    valueArgumentTypes.add(getType(scope, valueArgument, false));
+                    valueArgumentTypes.add(safeGetType(scope, valueArgument, false));
                 }
 
                 FunctionDescriptor functionDescriptor = overloadDomain.getFunctionDescriptorForPositionedArguments(types, valueArgumentTypes);
