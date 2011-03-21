@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.OverloadResolutionResult;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.parsing.JetParsingTest;
 
@@ -93,8 +94,8 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
     private FunctionDescriptor standardFunction(ClassDescriptor classDescriptor, List<TypeProjection> typeArguments, String name, JetType... parameterType) {
         FunctionGroup functionGroup = classDescriptor.getMemberScope(typeArguments).getFunctionGroup(name);
         List<JetType> parameterTypeList = Arrays.asList(parameterType);
-        Collection<FunctionDescriptor> functions = functionGroup.getPossiblyApplicableFunctions(Collections.<JetType>emptyList(), parameterTypeList);
-        for (FunctionDescriptor function : functions) {
+        OverloadResolutionResult functions = functionGroup.getPossiblyApplicableFunctions(Collections.<JetType>emptyList(), parameterTypeList);
+        for (FunctionDescriptor function : functions.getFunctionDescriptors()) {
             List<ValueParameterDescriptor> unsubstitutedValueParameters = function.getUnsubstitutedValueParameters();
             for (int i = 0, unsubstitutedValueParametersSize = unsubstitutedValueParameters.size(); i < unsubstitutedValueParametersSize; i++) {
                 ValueParameterDescriptor unsubstitutedValueParameter = unsubstitutedValueParameters.get(i);

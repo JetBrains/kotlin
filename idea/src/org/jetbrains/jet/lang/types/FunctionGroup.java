@@ -1,9 +1,8 @@
 package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.OverloadResolutionResult;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -19,9 +18,8 @@ public interface FunctionGroup extends Named {
 
         @NotNull
         @Override
-        public Collection<FunctionDescriptor> getPossiblyApplicableFunctions(@NotNull List<JetType> typeArguments, @NotNull List<JetType> positionedValueArgumentTypes) {
-            return Collections.emptyList();
-//            return OverloadResolutionResult.nameNotFound();
+        public OverloadResolutionResult getPossiblyApplicableFunctions(@NotNull List<JetType> typeArguments, @NotNull List<JetType> positionedValueArgumentTypes) {
+            return OverloadResolutionResult.nameNotFound();
         }
 
         @Override
@@ -36,9 +34,7 @@ public interface FunctionGroup extends Named {
     String getName();
 
     @NotNull
-    Collection<FunctionDescriptor> getPossiblyApplicableFunctions(@NotNull List<JetType> typeArguments, @NotNull List<JetType> positionedValueArgumentTypes);
-//    @NotNull
-//    OverloadResolutionResult getPossiblyApplicableFunctions(@NotNull List<JetType> typeArguments, @NotNull List<JetType> positionedValueArgumentTypes);
+    OverloadResolutionResult getPossiblyApplicableFunctions(@NotNull List<JetType> typeArguments, @NotNull List<JetType> positionedValueArgumentTypes);
 
     boolean isEmpty();
 }

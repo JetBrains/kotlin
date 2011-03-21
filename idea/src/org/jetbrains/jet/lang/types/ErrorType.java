@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.JetScope;
+import org.jetbrains.jet.lang.resolve.OverloadResolutionResult;
 
 import java.util.*;
 
@@ -67,9 +68,9 @@ public class ErrorType {
 
         @NotNull
         @Override
-        public Collection<FunctionDescriptor> getPossiblyApplicableFunctions(@NotNull List<JetType> typeArguments, @NotNull List<JetType> positionedValueArgumentTypes) {
+        public OverloadResolutionResult getPossiblyApplicableFunctions(@NotNull List<JetType> typeArguments, @NotNull List<JetType> positionedValueArgumentTypes) {
             List<TypeParameterDescriptor> typeParameters = Collections.<TypeParameterDescriptor>emptyList();
-            return createErrorFunction(typeParameters, positionedValueArgumentTypes);
+            return OverloadResolutionResult.success(createErrorFunction(typeParameters, positionedValueArgumentTypes));
         }
 
         @Override
@@ -87,13 +88,13 @@ public class ErrorType {
 
     private static final PropertyDescriptor ERROR_PROPERTY = new PropertyDescriptorImpl(ERROR_CLASS, Collections.<Attribute>emptyList(), "<ERROR PROPERTY>", createErrorType("<ERROR PROPERTY TYPE>"));
 
-    private static Collection<FunctionDescriptor> createErrorFunction(List<TypeParameterDescriptor> typeParameters, List<JetType> positionedValueArgumentTypes) {
+    private static FunctionDescriptor createErrorFunction(List<TypeParameterDescriptor> typeParameters, List<JetType> positionedValueArgumentTypes) {
         FunctionDescriptorImpl functionDescriptor = new FunctionDescriptorImpl(ERROR_CLASS, Collections.<Attribute>emptyList(), "<ERROR FUNCTION>");
-        return Collections.singletonList(functionDescriptor.initialize(
+        return functionDescriptor.initialize(
                 typeParameters,
                 getValueParameters(functionDescriptor, positionedValueArgumentTypes),
                 createErrorType("<ERROR FUNCTION RETURN>")
-        ));
+        );
     }
 
     private static FunctionDescriptor createErrorFunction(int typeParameterCount, Map<String, JetType> valueParameters) {

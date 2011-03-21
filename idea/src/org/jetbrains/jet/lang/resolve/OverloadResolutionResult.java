@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.types.FunctionDescriptor;
 
 import java.util.Collection;
+import java.util.Collections;
 
 /**
 * @author abreslav
@@ -24,38 +25,43 @@ public class OverloadResolutionResult {
         boolean isSuccess() {
             return success;
         }
+
     }
 
     public static OverloadResolutionResult success(@NotNull FunctionDescriptor functionDescriptor) {
-        return new OverloadResolutionResult(Code.SUCCESS, functionDescriptor);
+        return new OverloadResolutionResult(Code.SUCCESS, Collections.singleton(functionDescriptor));
     }
 
     public static OverloadResolutionResult nameNotFound() {
-        return new OverloadResolutionResult(Code.NAME_NOT_FOUND, null);
+        return new OverloadResolutionResult(Code.NAME_NOT_FOUND, Collections.<FunctionDescriptor>emptyList());
     }
-
     public static OverloadResolutionResult singleFunctionArgumentMismatch(FunctionDescriptor functionDescriptor) {
-        return new OverloadResolutionResult(Code.SINGLE_FUNCTION_ARGUMENT_MISMATCH, functionDescriptor);
+        return new OverloadResolutionResult(Code.SINGLE_FUNCTION_ARGUMENT_MISMATCH, Collections.singleton(functionDescriptor));
     }
 
     public static OverloadResolutionResult ambiguity(Collection<FunctionDescriptor> functionDescriptors) {
-        return new OverloadResolutionResult(Code.AMBIGUITY, null); // TODO
+        return new OverloadResolutionResult(Code.AMBIGUITY, functionDescriptors);
     }
 
-    private final FunctionDescriptor functionDescriptor;
+    private final Collection<FunctionDescriptor> functionDescriptors;
+
     private final Code resultCode;
 
-    public OverloadResolutionResult(@NotNull Code resultCode, FunctionDescriptor functionDescriptor) {
-        this.functionDescriptor = functionDescriptor;
+    public OverloadResolutionResult(@NotNull Code resultCode, @NotNull Collection<FunctionDescriptor> functionDescriptors) {
+        this.functionDescriptors = functionDescriptors;
         this.resultCode = resultCode;
 
     }
 
-    @NotNull // This is done on purpose, despite the fact that errors may not carry a descriptor:
-             // one should not call this method at all in that case
+    @NotNull
+    public Collection<FunctionDescriptor> getFunctionDescriptors() {
+        return functionDescriptors;
+    }
+
+    @NotNull
     public FunctionDescriptor getFunctionDescriptor() {
-        assert functionDescriptor != null;
-        return functionDescriptor;
+        assert singleFunction();
+        return functionDescriptors.iterator().next();
     }
 
     @NotNull
@@ -71,5 +77,15 @@ public class OverloadResolutionResult {
         return isSuccess() || resultCode == Code.SINGLE_FUNCTION_ARGUMENT_MISMATCH;
     }
 
+    public boolean isNothing() {
+        return resultCode == Code.NAME_NOT_FOUND;
+    }
 
+    public boolean isAmbiguity() {
+        return resultCode == Code.AMBIGUITY;
+    }
+
+    public OverloadResolutionResult newContents(@NotNull Collection<FunctionDescriptor> functionDescriptors) {
+        return new OverloadResolutionResult(resultCode, functionDescriptors);
+    }
 }

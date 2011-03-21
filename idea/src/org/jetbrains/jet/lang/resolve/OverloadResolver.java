@@ -37,7 +37,11 @@ public class OverloadResolver {
             @NotNull
             @Override
             public OverloadResolutionResult getFunctionDescriptorForPositionedArguments(@NotNull final List<JetType> typeArguments, @NotNull List<JetType> positionedValueArgumentTypes) {
-                Collection<FunctionDescriptor> possiblyApplicableFunctions = functionGroup.getPossiblyApplicableFunctions(typeArguments, positionedValueArgumentTypes);
+                OverloadResolutionResult resolutionResult = functionGroup.getPossiblyApplicableFunctions(typeArguments, positionedValueArgumentTypes);
+                if (!resolutionResult.isAmbiguity() && !resolutionResult.isSuccess()) return resolutionResult;
+
+                Collection<FunctionDescriptor> possiblyApplicableFunctions = resolutionResult.getFunctionDescriptors();
+
                 if (possiblyApplicableFunctions.isEmpty()) {
                     return OverloadResolutionResult.nameNotFound(); // TODO : it may be found, only the number of params did not match
                 }
@@ -85,6 +89,9 @@ public class OverloadResolver {
                 }
 
                 if (applicable.size() == 0) {
+                    if (resolutionResult.singleFunction()) {
+                        return OverloadResolutionResult.singleFunctionArgumentMismatch(resolutionResult.getFunctionDescriptor());
+                    }
                     return OverloadResolutionResult.nameNotFound();
                 } else if (applicable.size() == 1) {
                     return OverloadResolutionResult.success(applicable.get(0));

@@ -9,6 +9,7 @@ import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.resolve.DescriptorUtil;
 
 import java.util.*;
 
@@ -241,7 +242,7 @@ public class JetTypeInferrer {
                         case SINGLE_FUNCTION_ARGUMENT_MISMATCH:
                             if (argumentList != null) {
                                 // TODO : More helpful message. NOTE: there's a separate handling for this for constructors
-                                semanticServices.getErrorHandler().genericError(argumentList.getNode(), "Arguments do not match " + resolutionResult.getFunctionDescriptor());
+                                semanticServices.getErrorHandler().genericError(argumentList.getNode(), "Arguments do not match " + DescriptorUtil.renderPresentableText(resolutionResult.getFunctionDescriptor()));
                             }
                             else {
                                 semanticServices.getErrorHandler().unresolvedReference(referenceExpression);

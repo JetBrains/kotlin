@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.OverloadResolutionResult;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,17 +28,19 @@ public class LazySubstitutingFunctionGroup implements FunctionGroup {
 
     @NotNull
     @Override
-    public Collection<FunctionDescriptor> getPossiblyApplicableFunctions(@NotNull List<JetType> typeArguments, @NotNull List<JetType> positionedValueArgumentTypes) {
-        Collection<FunctionDescriptor> possiblyApplicableFunctions = functionGroup.getPossiblyApplicableFunctions(typeArguments, positionedValueArgumentTypes);
+    public OverloadResolutionResult getPossiblyApplicableFunctions(@NotNull List<JetType> typeArguments, @NotNull List<JetType> positionedValueArgumentTypes) {
+        OverloadResolutionResult resolutionResult = functionGroup.getPossiblyApplicableFunctions(typeArguments, positionedValueArgumentTypes);
+        if (resolutionResult.isNothing()) return resolutionResult;
+
         Collection<FunctionDescriptor> result = new ArrayList<FunctionDescriptor>();
-        for (FunctionDescriptor function : possiblyApplicableFunctions) {
+        for (FunctionDescriptor function : resolutionResult.getFunctionDescriptors()) {
             if (substitutionContext.isEmpty()) {
                 result.add(function);
             } else {
                 result.add(new LazySubstitutingFunctionDescriptor(substitutionContext, function));
             }
         }
-        return result;
+        return resolutionResult.newContents(result);
     }
 
     @Override
