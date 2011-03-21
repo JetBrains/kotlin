@@ -87,8 +87,8 @@ public class JavaDescriptorResolver {
                     Collections.<Attribute>emptyList(), // TODO
                     false);
             constructorDescriptor.initialize(resolveParameterDescriptors(constructorDescriptor, constructor.getParameterList().getParameters()));
-            constructors.addFunction(
-                    constructorDescriptor);
+            constructors.addFunction(constructorDescriptor);
+            semanticServices.getTrace().recordDeclarationResolution(constructor, constructorDescriptor);
         }
 
         semanticServices.getTrace().recordDeclarationResolution(psiClass, classDescriptor);

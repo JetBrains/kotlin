@@ -24,6 +24,11 @@ public interface OverloadDomain {
         public FunctionDescriptor getFunctionDescriptorForPositionedArguments(@NotNull List<JetType> typeArguments, @NotNull List<JetType> positionedValueArgumentTypes) {
             return null;
         }
+
+        @Override
+        public boolean isEmpty() {
+            return true;
+        }
     };
 
     /**
@@ -47,4 +52,9 @@ public interface OverloadDomain {
     FunctionDescriptor getFunctionDescriptorForPositionedArguments(
             @NotNull List<JetType> typeArguments,
             @NotNull List<JetType> positionedValueArgumentTypes);
+
+    /**
+     * @return true if the domain is empty
+     */
+    boolean isEmpty();
 }

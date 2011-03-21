@@ -110,6 +110,11 @@ public class OverloadResolver {
             }
 
             @Override
+            public boolean isEmpty() {
+                return functionGroup.isEmpty();
+            }
+
+            @Override
             public FunctionDescriptor getFunctionDescriptorForNamedArguments(@NotNull List<JetType> typeArguments, @NotNull Map<String, JetType> valueArgumentTypes, @Nullable JetType functionLiteralArgumentType) {
                 throw new UnsupportedOperationException(); // TODO
             }

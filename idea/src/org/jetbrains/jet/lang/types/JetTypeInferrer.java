@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.types;
 
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -99,13 +100,6 @@ public class JetTypeInferrer {
     }
 
     @Nullable
-    private FunctionDescriptor lookupFunction(JetScope scope, JetReferenceExpression reference, String name, JetType receiverType, List<JetType> argumentTypes, boolean reportUnresolved) {
-        OverloadDomain overloadDomain = semanticServices.getOverloadResolver().getOverloadDomain(receiverType, scope, name);
-        overloadDomain = wrapForTracing(overloadDomain, reference, reportUnresolved);
-        return overloadDomain.getFunctionDescriptorForPositionedArguments(Collections.<JetType>emptyList(), argumentTypes);
-    }
-
-    @Nullable
     private List<JetType> getTypes(JetScope scope, List<JetExpression> indexExpressions) {
         List<JetType> argumentTypes = new ArrayList<JetType>();
         for (JetExpression indexExpression : indexExpressions) {
@@ -118,8 +112,25 @@ public class JetTypeInferrer {
         return argumentTypes;
     }
 
+    @Nullable
+    private FunctionDescriptor lookupFunction(
+            @NotNull JetScope scope,
+            @NotNull JetReferenceExpression reference,
+            @NotNull String name,
+            @NotNull JetType receiverType,
+            @NotNull List<JetType> argumentTypes,
+            boolean reportUnresolved) {
+        OverloadDomain overloadDomain = semanticServices.getOverloadResolver().getOverloadDomain(receiverType, scope, name);
+        overloadDomain = wrapForTracing(overloadDomain, reference, null, reportUnresolved);
+        return overloadDomain.getFunctionDescriptorForPositionedArguments(Collections.<JetType>emptyList(), argumentTypes);
+    }
 
-    private OverloadDomain getOverloadDomain(final JetScope scope, JetExpression calleeExpression) {
+
+    private OverloadDomain getOverloadDomain(
+            @NotNull final JetScope scope,
+            @NotNull JetExpression calleeExpression,
+            @Nullable PsiElement argumentList
+    ) {
         final OverloadDomain[] result = new OverloadDomain[1];
         final JetSimpleNameExpression[] reference = new JetSimpleNameExpression[1];
         calleeExpression.accept(new JetVisitor() {
@@ -173,7 +184,7 @@ public class JetTypeInferrer {
                 throw new IllegalArgumentException("Unsupported element: " + elem);
             }
         });
-        return wrapForTracing(result[0], reference[0], true);
+        return wrapForTracing(result[0], reference[0], argumentList, true);
     }
 
     private void checkNullSafety(JetType receiverType, JetQualifiedExpression expression) {
@@ -194,7 +205,11 @@ public class JetTypeInferrer {
         }
     }
 
-    private OverloadDomain wrapForTracing(final OverloadDomain overloadDomain, @NotNull final JetReferenceExpression referenceExpression, final boolean reportUnresolved) {
+    private OverloadDomain wrapForTracing(
+            @Nullable final OverloadDomain overloadDomain,
+            @NotNull final JetReferenceExpression referenceExpression,
+            @Nullable final PsiElement argumentList,
+            final boolean reportUnresolved) {
         if (overloadDomain == null) return OverloadDomain.EMPTY;
         return new OverloadDomain() {
             @Override
@@ -202,10 +217,9 @@ public class JetTypeInferrer {
                 FunctionDescriptor descriptor = overloadDomain.getFunctionDescriptorForNamedArguments(typeArguments, valueArgumentTypes, functionLiteralArgumentType);
                 if (descriptor != null) {
                     trace.recordReferenceResolution(referenceExpression, descriptor);
-                } else {
-                    if (reportUnresolved) {
-                        semanticServices.getErrorHandler().unresolvedReference(referenceExpression);
-                    }
+                }
+                else {
+                    reportError();
                 }
                 return descriptor;
             }
@@ -215,15 +229,32 @@ public class JetTypeInferrer {
                 FunctionDescriptor descriptor = overloadDomain.getFunctionDescriptorForPositionedArguments(typeArguments, positionedValueArgumentTypes);
                 if (descriptor != null) {
                     trace.recordReferenceResolution(referenceExpression, descriptor);
-                } else {
-                    if (reportUnresolved) {
-                        semanticServices.getErrorHandler().unresolvedReference(referenceExpression);
-                    }
+                }
+                else {
+                    reportError();
                 }
                 return descriptor;
             }
+
+            private void reportError() {
+                if (reportUnresolved) {
+                    if (overloadDomain.isEmpty() || argumentList == null) {
+                        semanticServices.getErrorHandler().unresolvedReference(referenceExpression);
+                    }
+                    else {
+                        // TODO : More helpful message. NOTE: there's a separate handling for this for constructors
+                        semanticServices.getErrorHandler().genericError(argumentList.getNode(), "No overload found for these arguments");
+                    }
+                }
+            }
+
+            @Override
+            public boolean isEmpty() {
+                return overloadDomain.isEmpty();
+            }
         };
     }
+
 
     private JetType getBlockReturnedType(@NotNull JetScope outerScope, List<JetElement> block) {
         if (block.isEmpty()) {
@@ -642,10 +673,19 @@ public class JetTypeInferrer {
                             OverloadDomain constructorsOverloadDomain = semanticServices.getOverloadResolver().getOverloadDomain(constructors);
                             result = resolveOverloads(
                                     scope,
-                                    wrapForTracing(constructorsOverloadDomain, referenceExpression, true),
+                                    wrapForTracing(constructorsOverloadDomain, referenceExpression, expression.getArgumentList(), false),
                                     Collections.<JetTypeProjection>emptyList(),
                                     expression.getArguments(),
                                     expression.getFunctionLiteralArguments());
+                            if (result == null && !ErrorType.isErrorType(receiverType)) {
+                                trace.recordReferenceResolution(referenceExpression, receiverType.getConstructor().getDeclarationDescriptor());
+                                // TODO : more helpful message
+                                JetArgumentList argumentList = expression.getArgumentList();
+                                if (argumentList != null) {
+                                    semanticServices.getErrorHandler().genericError(argumentList.getNode(), "Cannot find an overload for these arguments");
+                                }
+                                result = receiverType;
+                            }
                         }
                     }
                     else {
@@ -689,7 +729,7 @@ public class JetTypeInferrer {
             JetScope compositeScope = new ScopeWithReceiver(scope, receiverType);
             if (selectorExpression instanceof JetCallExpression) {
                 JetCallExpression callExpression = (JetCallExpression) selectorExpression;
-                OverloadDomain overloadDomain = getOverloadDomain(compositeScope, callExpression.getCalleeExpression());
+                OverloadDomain overloadDomain = getOverloadDomain(compositeScope, callExpression.getCalleeExpression(), callExpression.getValueArgumentList());
                 return resolveOverloads(scope, callExpression, overloadDomain);
             }
             else if (selectorExpression instanceof JetSimpleNameExpression) {
@@ -705,7 +745,7 @@ public class JetTypeInferrer {
         @Override
         public void visitCallExpression(JetCallExpression expression) {
             JetExpression calleeExpression = expression.getCalleeExpression();
-            OverloadDomain overloadDomain = getOverloadDomain(scope, calleeExpression);
+            OverloadDomain overloadDomain = getOverloadDomain(scope, calleeExpression, expression.getValueArgumentList());
             result = resolveOverloads(scope, expression, overloadDomain);
         }
 
