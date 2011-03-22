@@ -147,14 +147,14 @@ public class TypeUtils {
     }
 
     @NotNull
-    public static JetType makeUnsubstitutedType(ClassDescriptor classDescriptor) {
+    public static JetType makeUnsubstitutedType(ClassDescriptor classDescriptor, JetScope unsubstitutedMemberScope) {
         List<TypeProjection> arguments = getArguments(classDescriptor);
         return new JetTypeImpl(
                 Collections.<Attribute>emptyList(),
                 classDescriptor.getTypeConstructor(),
                 false,
                 arguments,
-                classDescriptor.getMemberScope(arguments)
+                unsubstitutedMemberScope
         );
     }
 
@@ -165,5 +165,26 @@ public class TypeUtils {
             result.add(new TypeProjection(new JetTypeImpl(parameterDescriptor.getTypeConstructor(), JetScope.EMPTY))); // TODO : scope?
         }
         return result;
+    }
+
+    @NotNull
+    public static Map<TypeConstructor, TypeProjection> buildSubstitutionContext(@NotNull  JetType context) {
+        return buildSubstitutionContext(context.getConstructor().getParameters(), context.getArguments());
+    }
+
+    @NotNull
+    public static Map<TypeConstructor, TypeProjection> buildSubstitutionContext(@NotNull List<TypeParameterDescriptor> parameters, @NotNull List<TypeProjection> contextArguments) {
+        Map<TypeConstructor, TypeProjection> parameterValues = new HashMap<TypeConstructor, TypeProjection>();
+        for (int i = 0, parametersSize = parameters.size(); i < parametersSize; i++) {
+            TypeParameterDescriptor parameter = parameters.get(i);
+            TypeProjection value = contextArguments.get(i);
+            parameterValues.put(parameter.getTypeConstructor(), value);
+        }
+        return parameterValues;
+    }
+
+    @NotNull
+    public static TypeProjection makeStarProjection(@NotNull TypeParameterDescriptor parameterDescriptor) {
+        return new TypeProjection(Variance.OUT_VARIANCE, parameterDescriptor.getBoundsAsType());
     }
 }

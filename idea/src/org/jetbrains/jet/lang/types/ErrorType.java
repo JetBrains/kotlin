@@ -179,6 +179,10 @@ public class ErrorType {
             return Collections.emptyList();
         }
 
+        @Override
+        public String toString() {
+            return constructor.toString();
+        }
     }
 
     private ErrorType() {}

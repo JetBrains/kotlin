@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.OverloadResolutionResult;
 
 import java.util.ArrayList;
@@ -14,10 +15,16 @@ import java.util.Map;
 public class LazySubstitutingFunctionGroup implements FunctionGroup {
     private final Map<TypeConstructor, TypeProjection> substitutionContext;
     private final FunctionGroup functionGroup;
+    private final TypeSubstitutor typeSubstitutor;
 
-    public LazySubstitutingFunctionGroup(Map<TypeConstructor, TypeProjection> substitutionContext, FunctionGroup functionGroup) {
+    public LazySubstitutingFunctionGroup(Map<TypeConstructor, TypeProjection> substitutionContext, FunctionGroup functionGroup, TypeSubstitutor typeSubstitutor) {
         this.substitutionContext = substitutionContext;
         this.functionGroup = functionGroup;
+        this.typeSubstitutor = typeSubstitutor;
+    }
+
+    public LazySubstitutingFunctionGroup(Map<TypeConstructor, TypeProjection> substitutionContext, FunctionGroup functionGroup) {
+        this(substitutionContext, functionGroup, TypeSubstitutor.INSTANCE);
     }
 
     @NotNull
@@ -34,13 +41,25 @@ public class LazySubstitutingFunctionGroup implements FunctionGroup {
 
         Collection<FunctionDescriptor> result = new ArrayList<FunctionDescriptor>();
         for (FunctionDescriptor function : resolutionResult.getFunctionDescriptors()) {
-            if (substitutionContext.isEmpty()) {
-                result.add(function);
-            } else {
-                result.add(new LazySubstitutingFunctionDescriptor(substitutionContext, function));
+            FunctionDescriptor functionDescriptor = substitute(substitutionContext, function, typeSubstitutor);
+            if (functionDescriptor != null) {
+                result.add(functionDescriptor);
             }
         }
         return resolutionResult.newContents(result);
+    }
+
+    @Nullable
+    public FunctionDescriptor substitute(
+            @NotNull Map<TypeConstructor, TypeProjection> substitutionContext,
+            @NotNull FunctionDescriptor functionDescriptor, TypeSubstitutor typeSubstitutor) {
+        if (substitutionContext.isEmpty()) return functionDescriptor;
+
+        FunctionDescriptor substituted = FunctionDescriptorUtil.substituteFunctionDescriptor(functionDescriptor, substitutionContext, typeSubstitutor);
+        if (substituted == null) {
+            return null;
+        }
+        return substituted;
     }
 
     @Override

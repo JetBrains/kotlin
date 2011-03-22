@@ -9,7 +9,6 @@ import org.jetbrains.jet.lang.types.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author abreslav
@@ -148,8 +147,8 @@ public class TypeResolver {
             JetProjectionKind projectionKind = argumentElement.getProjectionKind();
             JetType type;
             if (projectionKind == JetProjectionKind.STAR) {
-                Set<JetType> upperBounds = constructor.getParameters().get(i).getUpperBounds();
-                arguments.add(new TypeProjection(Variance.OUT_VARIANCE, TypeUtils.intersect(semanticServices.getTypeChecker(), upperBounds)));
+                TypeParameterDescriptor parameterDescriptor = constructor.getParameters().get(i);
+                arguments.add(TypeUtils.makeStarProjection(parameterDescriptor));
             }
             else {
                 // TODO : handle the Foo<in *> case

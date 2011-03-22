@@ -98,7 +98,7 @@ public class JetTypeChecker {
             }
             commonSupertypes = computeCommonRawSupertypes(merge);
         }
-        assert !commonSupertypes.isEmpty();
+        assert !commonSupertypes.isEmpty() : commonSupertypes;
         Map.Entry<TypeConstructor, Set<JetType>> entry = commonSupertypes.entrySet().iterator().next();
         JetType result = computeSupertypeProjections(entry.getKey(), entry.getValue());
 
@@ -274,13 +274,13 @@ public class JetTypeChecker {
             return;
         }
         handler.beforeChildren(current);
-        Map<TypeConstructor, TypeProjection> substitutionContext = TypeSubstitutor.INSTANCE.buildSubstitutionContext(current);
+        Map<TypeConstructor, TypeProjection> substitutionContext = TypeUtils.buildSubstitutionContext(current);
         for (JetType supertype : current.getConstructor().getSupertypes()) {
             TypeConstructor supertypeConstructor = supertype.getConstructor();
             if (visited.contains(supertypeConstructor)) {
                 continue;
             }
-            JetType substitutedSupertype = TypeSubstitutor.INSTANCE.substitute(substitutionContext, supertype, Variance.INVARIANT);
+            JetType substitutedSupertype = TypeSubstitutor.INSTANCE.safeSubstitute(substitutionContext, supertype, Variance.INVARIANT);
             dfs(substitutedSupertype, visited, handler);
         }
         handler.afterChildren(current);
@@ -331,7 +331,7 @@ public class JetTypeChecker {
         for (JetType immediateSupertype : constructor.getSupertypes()) {
             JetType correspondingSupertype = findCorrespondingSupertype(immediateSupertype, supertype);
             if (correspondingSupertype != null) {
-                return TypeSubstitutor.INSTANCE.substitute(subtype, correspondingSupertype, Variance.INVARIANT);
+                return TypeSubstitutor.INSTANCE.safeSubstitute(subtype, correspondingSupertype, Variance.INVARIANT);
             }
         }
         return null;
@@ -339,7 +339,7 @@ public class JetTypeChecker {
 
     private boolean checkSubtypeForTheSameConstructor(@NotNull JetType subtype, @NotNull JetType supertype) {
         TypeConstructor constructor = subtype.getConstructor();
-        assert constructor.equals(supertype.getConstructor());
+        assert constructor.equals(supertype.getConstructor()) : constructor + " is not " + supertype.getConstructor();
 
         List<TypeProjection> subArguments = subtype.getArguments();
         List<TypeProjection> superArguments = supertype.getArguments();

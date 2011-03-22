@@ -35,8 +35,14 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     @Override
     public JetScope getMemberScope(List<TypeProjection> typeArguments) {
         List<TypeParameterDescriptor> typeParameters = getTypeConstructor().getParameters();
-        Map<TypeConstructor,TypeProjection> substitutionContext = TypeSubstitutor.INSTANCE.buildSubstitutionContext(typeParameters, typeArguments);
+        Map<TypeConstructor,TypeProjection> substitutionContext = TypeUtils.buildSubstitutionContext(typeParameters, typeArguments);
         return new SubstitutingScope(unsubstitutedMemberScope, substitutionContext);
+    }
+
+    @NotNull
+    @Override
+    public JetType getDefaultType() {
+        return TypeUtils.makeUnsubstitutedType(this, unsubstitutedMemberScope);
     }
 
     public void addConstructor(@NotNull ConstructorDescriptor constructorDescriptor) {
@@ -49,11 +55,12 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     public FunctionGroup getConstructors(List<TypeProjection> typeArguments) {
         // TODO : Duplicates ClassDescriptorImpl
         assert typeArguments.size() == getTypeConstructor().getParameters().size();
+
         if (typeArguments.size() == 0) {
             return constructors;
         }
-        Map<TypeConstructor, TypeProjection> substitutionContext = TypeSubstitutor.INSTANCE.buildSubstitutionContext(getTypeConstructor().getParameters(), typeArguments);
-        return new LazySubstitutingFunctionGroup(substitutionContext, constructors);
+        Map<TypeConstructor, TypeProjection> substitutionContext = TypeUtils.buildSubstitutionContext(getTypeConstructor().getParameters(), typeArguments);
+        return new LazySubstitutingFunctionGroup(substitutionContext, constructors, TypeSubstitutor.INSTANCE_FOR_CONSTRUCTORS);
     }
 
     @NotNull

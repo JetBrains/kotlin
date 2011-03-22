@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -37,29 +38,9 @@ public class FunctionDescriptorUtil {
         return unsubstitutedValueParameters.size();
     }
 
-    @NotNull
-    public static List<ValueParameterDescriptor> getSubstitutedValueParameters(FunctionDescriptor substitutedDescriptor, @NotNull FunctionDescriptor functionDescriptor, @NotNull List<JetType> typeArguments) {
-        // TODO : Review, maybe duplicates LazySubstitutingFunctionDescriptor
-        List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>();
-        Map<TypeConstructor, TypeProjection> context = createSubstitutionContext(functionDescriptor, typeArguments);
-        List<ValueParameterDescriptor> unsubstitutedValueParameters = functionDescriptor.getUnsubstitutedValueParameters();
-        for (int i = 0, unsubstitutedValueParametersSize = unsubstitutedValueParameters.size(); i < unsubstitutedValueParametersSize; i++) {
-            ValueParameterDescriptor unsubstitutedValueParameter = unsubstitutedValueParameters.get(i);
-            // TODO : Lazy?
-            result.add(new ValueParameterDescriptorImpl(
-                    substitutedDescriptor,
-                    i,
-                    unsubstitutedValueParameter.getAttributes(),
-                    unsubstitutedValueParameter.getName(),
-                    TypeSubstitutor.INSTANCE.substitute(context, unsubstitutedValueParameter.getType(), Variance.IN_VARIANCE),
-                    unsubstitutedValueParameter.hasDefaultValue(),
-                    unsubstitutedValueParameter.isVararg()
-            ));
-        }
-        return result;
-    }
-
     private static Map<TypeConstructor, TypeProjection> createSubstitutionContext(@NotNull FunctionDescriptor functionDescriptor, List<JetType> typeArguments) {
+        if (functionDescriptor.getTypeParameters().isEmpty()) return Collections.emptyMap();
+
         Map<TypeConstructor, TypeProjection> result = new HashMap<TypeConstructor, TypeProjection>();
 
         int typeArgumentsSize = typeArguments.size();
@@ -73,26 +54,64 @@ public class FunctionDescriptorUtil {
         return result;
     }
 
-    @NotNull
-    public static JetType getSubstitutedReturnType(@NotNull FunctionDescriptor functionDescriptor, @NotNull List<JetType> typeArguments) {
-        // TODO : Review, maybe duplicates LazySubstitutingFunctionDescriptor
-        return TypeSubstitutor.INSTANCE.substitute(createSubstitutionContext(functionDescriptor, typeArguments), functionDescriptor.getUnsubstitutedReturnType(), Variance.OUT_VARIANCE);
+    @Nullable
+    private static List<ValueParameterDescriptor> getSubstitutedValueParameters(FunctionDescriptor substitutedDescriptor, @NotNull FunctionDescriptor functionDescriptor, Map<TypeConstructor, TypeProjection> substitutionContext, TypeSubstitutor typeSubstitutor) {
+        List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>();
+        List<ValueParameterDescriptor> unsubstitutedValueParameters = functionDescriptor.getUnsubstitutedValueParameters();
+        for (int i = 0, unsubstitutedValueParametersSize = unsubstitutedValueParameters.size(); i < unsubstitutedValueParametersSize; i++) {
+            ValueParameterDescriptor unsubstitutedValueParameter = unsubstitutedValueParameters.get(i);
+            // TODO : Lazy?
+            JetType substitutedType = typeSubstitutor.substitute(substitutionContext, unsubstitutedValueParameter.getType(), Variance.IN_VARIANCE);
+            if (substitutedType == null) return null;
+            result.add(new ValueParameterDescriptorImpl(
+                    substitutedDescriptor,
+                    i,
+                    unsubstitutedValueParameter.getAttributes(),
+                    unsubstitutedValueParameter.getName(),
+                    substitutedType,
+                    unsubstitutedValueParameter.hasDefaultValue(),
+                    unsubstitutedValueParameter.isVararg()
+            ));
+        }
+        return result;
     }
 
-    @NotNull
+    @Nullable
+    private static JetType getSubstitutedReturnType(@NotNull FunctionDescriptor functionDescriptor, Map<TypeConstructor, TypeProjection> substitutionContext, TypeSubstitutor typeSubstitutor) {
+        return typeSubstitutor.substitute(substitutionContext, functionDescriptor.getUnsubstitutedReturnType(), Variance.OUT_VARIANCE);
+    }
+
+    @Nullable
     public static FunctionDescriptor substituteFunctionDescriptor(@NotNull List<JetType> typeArguments, @NotNull FunctionDescriptor functionDescriptor) {
-        if (functionDescriptor.getTypeParameters().isEmpty()) {
+        Map<TypeConstructor, TypeProjection> substitutionContext = createSubstitutionContext(functionDescriptor, typeArguments);
+        return substituteFunctionDescriptor(functionDescriptor, substitutionContext, TypeSubstitutor.INSTANCE);
+    }
+
+    @Nullable
+    public static FunctionDescriptor substituteFunctionDescriptor(FunctionDescriptor functionDescriptor, Map<TypeConstructor, TypeProjection> substitutionContext, TypeSubstitutor typeSubstitutor) {
+        if (substitutionContext.isEmpty()) {
             return functionDescriptor;
         }
         FunctionDescriptorImpl substitutedDescriptor = new FunctionDescriptorImpl(
                 functionDescriptor,
-                // TODO : substitute
+                // TODO : safeSubstitute
                 functionDescriptor.getAttributes(),
                 functionDescriptor.getName());
+
+        List<ValueParameterDescriptor> substitutedValueParameters = getSubstitutedValueParameters(substitutedDescriptor, functionDescriptor, substitutionContext, typeSubstitutor);
+        if (substitutedValueParameters == null) {
+            return null;
+        }
+
+        JetType substitutedReturnType = getSubstitutedReturnType(functionDescriptor, substitutionContext, typeSubstitutor);
+        if (substitutedReturnType == null) {
+            return null;
+        }
+
         substitutedDescriptor.initialize(
                 Collections.<TypeParameterDescriptor>emptyList(), // TODO : questionable
-                getSubstitutedValueParameters(substitutedDescriptor, functionDescriptor, typeArguments),
-                getSubstitutedReturnType(functionDescriptor, typeArguments)
+                substitutedValueParameters,
+                substitutedReturnType
         );
         return substitutedDescriptor;
     }

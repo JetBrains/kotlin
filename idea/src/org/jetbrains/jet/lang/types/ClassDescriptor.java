@@ -21,4 +21,10 @@ public interface ClassDescriptor extends DeclarationDescriptor {
     @Override
     @NotNull
     DeclarationDescriptor getContainingDeclaration();
+
+    /**
+     * @return type A&lt;T&gt; for the class A&lt;T&gt;
+     */
+    @NotNull
+    JetType getDefaultType();
 }

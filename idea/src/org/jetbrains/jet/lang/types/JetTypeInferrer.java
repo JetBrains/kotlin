@@ -499,10 +499,10 @@ public class JetTypeInferrer {
                 JetUserType typeElement = (JetUserType) superTypeQualifier.getTypeElement();
                 ClassDescriptor superclass = typeResolver.resolveClass(scope, typeElement);
                 Collection<? extends JetType> supertypes = thisType.getConstructor().getSupertypes();
-                Map<TypeConstructor, TypeProjection> substitutionContext = TypeSubstitutor.INSTANCE.buildSubstitutionContext(thisType);
+                Map<TypeConstructor, TypeProjection> substitutionContext = TypeUtils.buildSubstitutionContext(thisType);
                 for (JetType declaredSupertype : supertypes) {
                     if (declaredSupertype.getConstructor().equals(superclass.getTypeConstructor())) {
-                        result = TypeSubstitutor.INSTANCE.substitute(substitutionContext, declaredSupertype, Variance.INVARIANT);
+                        result = TypeSubstitutor.INSTANCE.safeSubstitute(substitutionContext, declaredSupertype, Variance.INVARIANT);
                         break;
                     }
                 }

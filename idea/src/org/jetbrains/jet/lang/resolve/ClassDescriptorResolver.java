@@ -7,10 +7,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lexer.JetTokens;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author abreslav
@@ -222,7 +219,7 @@ public class ClassDescriptorResolver {
     }
 
     public List<TypeParameterDescriptor> resolveTypeParameters(DeclarationDescriptor containingDescriptor, WritableScope extensibleScope, List<JetTypeParameter> typeParameters) {
-        // TODO : When-clause
+        // TODO : Where-clause
         List<TypeParameterDescriptor> result = new ArrayList<TypeParameterDescriptor>();
         for (JetTypeParameter typeParameter : typeParameters) {
             result.add(resolveTypeParameter(containingDescriptor, extensibleScope, typeParameter));
@@ -231,15 +228,18 @@ public class ClassDescriptorResolver {
     }
 
     private TypeParameterDescriptor resolveTypeParameter(DeclarationDescriptor containingDescriptor, WritableScope extensibleScope, JetTypeParameter typeParameter) {
+        // TODO: other bounds from where-clause
         JetTypeReference extendsBound = typeParameter.getExtendsBound();
+        JetType bound = extendsBound == null
+                ? JetStandardClasses.getDefaultBound()
+                : typeResolver.resolveType(extensibleScope, extendsBound);
         TypeParameterDescriptor typeParameterDescriptor = new TypeParameterDescriptor(
                 containingDescriptor,
                 AttributeResolver.INSTANCE.resolveAttributes(typeParameter.getModifierList()),
                 typeParameter.getVariance(),
                 typeParameter.getName(),
-                extendsBound == null
-                        ? Collections.<JetType>singleton(JetStandardClasses.getDefaultBound())
-                        : Collections.singleton(typeResolver.resolveType(extensibleScope, extendsBound))
+                Collections.singleton(bound),
+                bound
         );
         extensibleScope.addTypeParameterDescriptor(typeParameterDescriptor);
         trace.recordDeclarationResolution(typeParameter, typeParameterDescriptor);

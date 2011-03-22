@@ -40,6 +40,12 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
 
     @NotNull
     @Override
+    public JetType getDefaultType() {
+        throw new UnsupportedOperationException(); // TODO
+    }
+
+    @NotNull
+    @Override
     public FunctionGroup getConstructors(List<TypeProjection> typeArguments) {
         throw new UnsupportedOperationException(); // TODO
     }

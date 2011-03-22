@@ -21,7 +21,7 @@ public class LazySubstitutedPropertyDescriptorImpl implements PropertyDescriptor
     @Override
     public JetType getType() {
         if (propertyType == null) {
-            propertyType = TypeSubstitutor.INSTANCE.substitute(substitutionContext, propertyDescriptor.getType(), Variance.OUT_VARIANCE);
+            propertyType = TypeSubstitutor.INSTANCE.safeSubstitute(substitutionContext, propertyDescriptor.getType(), Variance.OUT_VARIANCE);
         }
         return propertyType;
     }

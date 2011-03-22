@@ -1,0 +1,56 @@
+class In<in T> {
+  ~In.f:T->Unit~fun f(t : T) : Unit {}
+  ~In.f:Int->Int~fun f(t : Int) : Int {}
+  ~In.f1~fun f1(t : T) : Unit {}
+}
+
+class Out<out T> {
+  ~Out.f~fun f() : T {}
+  ~Out.f(a)~fun f(a : Int) : Int {a}
+}
+
+class Inv<T> {
+  ~Inv.f~fun f(t : T) : T {t}
+  ~Inv.inf~fun inf(t : T) : Unit {}
+  ~Inv.outf~fun outf() : T {}
+}
+
+fun testInOut() {
+  new In<String>().`In.f:T->Unit`f("1");
+  new In<in String>().`In.f:T->Unit`f("1");
+  new In<out String>().`!`f("1")
+  new In<*>().`!`f("1");
+
+  new In<String>().`In.f:Int->Int`f(1);
+  new In<in String>().`In.f:Int->Int`f(1);
+  new In<out String>().`In.f:Int->Int`f(1)
+  new In<out String>().`!`f1(1)
+  new In<*>().`In.f:Int->Int`f(1);
+
+  new Out<Int>().`Out.f(a)`f(1)
+  new Out<out Int>().`Out.f(a)`f(1)
+  new Out<in Int>().`Out.f(a)`f(1)
+  new Out<*>().`Out.f(a)`f(1)
+
+  new Out<Int>().`Out.f`f()
+  new Out<out Int>().`Out.f`f()
+  new Out<in Int>().`!`f()
+  new Out<*>().`Out.f`f()
+
+  new Inv<Int>().`Inv.f`f(1)
+  new Inv<in Int>().`!`f(1)
+  new Inv<out Int>().`!`f(1)
+  new Inv<*>().`!`f(1)
+
+  new Inv<Int>().`Inv.inf`inf(1)
+  new Inv<in Int>().`Inv.inf`inf(1)
+  new Inv<out Int>().`!`inf(1)
+  new Inv<*>().`!`inf(1)
+
+  new Inv<Int>().`Inv.outf`outf()
+  new Inv<in Int>().`!`outf()
+  new Inv<out Int>().`Inv.outf`outf()
+  new Inv<*>().`Inv.outf`outf()
+
+  new Inv<Int>().`Inv.outf`outf(1)
+}

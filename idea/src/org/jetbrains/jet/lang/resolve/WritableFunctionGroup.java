@@ -59,7 +59,9 @@ public class WritableFunctionGroup implements FunctionGroup {
             if (functionDescriptor.getTypeParameters().size() == typeArgCount) {
                 if (FunctionDescriptorUtil.getMinimumArity(functionDescriptor) <= valueArgCount &&
                         valueArgCount <= FunctionDescriptorUtil.getMaximumArity(functionDescriptor)) {
-                    result.add(FunctionDescriptorUtil.substituteFunctionDescriptor(typeArguments, functionDescriptor));
+                    FunctionDescriptor substitutedFunctionDescriptor = FunctionDescriptorUtil.substituteFunctionDescriptor(typeArguments, functionDescriptor);
+                    assert substitutedFunctionDescriptor != null;
+                    result.add(substitutedFunctionDescriptor);
                 }
             }
         }

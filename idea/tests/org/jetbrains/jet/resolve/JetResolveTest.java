@@ -142,4 +142,8 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
         doTest("/resolve/ResolveOfInfixExpressions.jet", true, true);
     }
 
+    public void testProjections() throws Exception {
+        doTest("/resolve/Projections.jet", true, true);
+    }
+
 }

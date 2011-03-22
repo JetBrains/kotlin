@@ -64,6 +64,6 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
     @NotNull
     @Override
     public JetType getUnsubstitutedReturnType() {
-        return TypeUtils.makeUnsubstitutedType(getContainingDeclaration());
+        return getContainingDeclaration().getDefaultType();
     }
 }

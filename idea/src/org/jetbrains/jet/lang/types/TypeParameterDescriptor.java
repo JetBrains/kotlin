@@ -13,8 +13,15 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl {
     private final Variance variance;
     private final Set<JetType> upperBounds;
     private final TypeConstructor typeConstructor;
+    private final JetType boundsAsType;
 
-    public TypeParameterDescriptor(@NotNull DeclarationDescriptor containingDeclaration, List<Attribute> attributes, Variance variance, String name, Set<JetType> upperBounds) {
+    public TypeParameterDescriptor(
+            @NotNull DeclarationDescriptor containingDeclaration,
+            @NotNull List<Attribute> attributes,
+            @NotNull Variance variance,
+            @NotNull String name,
+            @NotNull Set<JetType> upperBounds,
+            @NotNull JetType boundsAsType) {
         super(containingDeclaration, attributes, name);
         this.variance = variance;
         this.upperBounds = upperBounds;
@@ -26,10 +33,21 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl {
                 "&" + name,
                 Collections.<TypeParameterDescriptor>emptyList(),
                 upperBounds);
+        this.boundsAsType = boundsAsType;
     }
 
-    public TypeParameterDescriptor(@NotNull DeclarationDescriptor containingDeclaration, List<Attribute> attributes, Variance variance, String name) {
-        this(containingDeclaration, attributes, variance, name, Collections.singleton(JetStandardClasses.getNullableAnyType()));
+    public TypeParameterDescriptor(
+            @NotNull DeclarationDescriptor containingDeclaration,
+            @NotNull List<Attribute> attributes,
+            @NotNull Variance variance,
+            @NotNull String name) {
+        this(
+            containingDeclaration,
+            attributes,
+            variance,
+            name,
+            Collections.singleton(JetStandardClasses.getNullableAnyType()),
+            JetStandardClasses.getNullableAnyType());
     }
 
     public Variance getVariance() {
@@ -47,6 +65,11 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl {
     @Override
     public String toString() {
         return typeConstructor.toString();
+    }
+
+    @NotNull
+    public JetType getBoundsAsType() {
+        return boundsAsType;
     }
 
     @Override

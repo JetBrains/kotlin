@@ -3,6 +3,7 @@
     <words>
       <w>inferrer</w>
       <w>nullable</w>
+      <w>substitutor</w>
       <w>subtyping</w>
       <w>supertype</w>
       <w>supertypes</w>
