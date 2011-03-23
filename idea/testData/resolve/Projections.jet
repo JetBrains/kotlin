@@ -48,7 +48,7 @@ fun testInOut() {
   new Inv<*>().`!`inf(1)
 
   new Inv<Int>().`Inv.outf`outf()
-  new Inv<in Int>().`!`outf()
+  new Inv<in Int>().`Inv.outf`outf()`:std::Any?`
   new Inv<out Int>().`Inv.outf`outf()
   new Inv<*>().`Inv.outf`outf()
 

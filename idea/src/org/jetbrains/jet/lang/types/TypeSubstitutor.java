@@ -19,13 +19,6 @@ public class TypeSubstitutor {
 
     public static final TypeSubstitutor INSTANCE = new TypeSubstitutor();
 
-    public static final TypeSubstitutor INSTANCE_FOR_CONSTRUCTORS = new TypeSubstitutor() {
-        @Override
-        protected boolean errorCondition(Variance ve, Variance p1) {
-            return false;
-        }
-    };
-
     private TypeSubstitutor() {}
 
     public JetType safeSubstitute(@NotNull JetType context, @NotNull JetType subject, @NotNull Variance howThisTypeIsUsed) {
@@ -57,7 +50,7 @@ public class TypeSubstitutor {
         if (value != null) {
             assert constructor.getDeclarationDescriptor() instanceof TypeParameterDescriptor;
 
-            if (errorCondition(howThisTypeIsUsed, value.getProjectionKind())) {
+            if (!allows(howThisTypeIsUsed, value.getProjectionKind())) {
                 throw new SubstitutionException("!!" + value.toString());
             }
             return value.getType();
@@ -89,49 +82,49 @@ public class TypeSubstitutor {
     @NotNull
     private TypeProjection substituteInProjection(
             @NotNull Map<TypeConstructor, TypeProjection> substitutionContext,
-            @NotNull TypeProjection p0_E,
-            @NotNull TypeParameterDescriptor d_T, // variance of the parameter this projection is substituted for
-            @NotNull Variance v) throws SubstitutionException {
-        JetType E = p0_E.getType();
-        Variance p0 = p0_E.getProjectionKind();
-        Variance d = d_T.getVariance();
+            @NotNull TypeProjection passedProjection,
+            @NotNull TypeParameterDescriptor correspondingTypeParameter,
+            @NotNull Variance contextCallSiteVariance) throws SubstitutionException {
+        JetType typeToSubstituteIn = passedProjection.getType();
+        Variance passedProjectionKind = passedProjection.getProjectionKind();
+        Variance parameterVariance = correspondingTypeParameter.getVariance();
 
-        Variance p01 = (p0 == Variance.INVARIANT) ? d : p0;
-        Variance ve = v.superpose(p01);
+        Variance effectiveProjectionKind = (passedProjectionKind == Variance.INVARIANT) ? parameterVariance : passedProjectionKind;
+        Variance effectiveContextVariance = contextCallSiteVariance.superpose(effectiveProjectionKind);
 
-        TypeProjection p1_A = substitutionContext.get(E.getConstructor());
-        if (p1_A != null) {
-            assert E.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor;
+        TypeProjection projectionValue = substitutionContext.get(typeToSubstituteIn.getConstructor());
+        if (projectionValue != null) {
+            assert typeToSubstituteIn.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor;
 
-            JetType A = p1_A.getType();
-            Variance p1 = p1_A.getProjectionKind();
+            JetType typeValue = projectionValue.getType();
+            Variance projectionKindValue = projectionValue.getProjectionKind();
 
-            if (!allows(d, p0)) {
-                return TypeUtils.makeStarProjection(d_T);
+            if (!allows(parameterVariance, passedProjectionKind)) {
+                return TypeUtils.makeStarProjection( correspondingTypeParameter);
             }
 
-            if (errorCondition(ve, p1)) {
+            if (!allows(effectiveContextVariance, projectionKindValue)) {
                 throw new SubstitutionException(""); // TODO : error message
             }
 
-            return new TypeProjection(p0 == Variance.INVARIANT ? p1 : p0,  specializeType(A, substitutionContext, ve));
+            Variance effectiveProjectionKindValue = passedProjectionKind == Variance.INVARIANT ? projectionKindValue : passedProjectionKind;
+            return new TypeProjection(effectiveProjectionKindValue,  specializeType(typeValue, substitutionContext, effectiveContextVariance));
         }
         return new TypeProjection(
-                p0,
-                specializeType(E, substitutionContext, ve));
+                passedProjectionKind,
+                specializeType(
+                        typeToSubstituteIn,
+                        substitutionContext,
+                        effectiveContextVariance));
     }
 
-    protected boolean errorCondition(Variance ve, Variance p1) {
-        return !allows(ve, p1);
-    }
-
-    public Set<JetType> substituteInSet(Map<TypeConstructor, TypeProjection> substitutionContext, Set<JetType> types, Variance howTheseTypesWillBeUsed) {
-        Set<JetType> result = new HashSet<JetType>();
-        for (JetType type : types) {
-            result.add(safeSubstitute(substitutionContext, type, howTheseTypesWillBeUsed));
-        }
-        return result;
-    }
+    //    public Set<JetType> substituteInSet(Map<TypeConstructor, TypeProjection> substitutionContext, Set<JetType> types, Variance howTheseTypesWillBeUsed) {
+//        Set<JetType> result = new HashSet<JetType>();
+//        for (JetType type : types) {
+//            result.add(safeSubstitute(substitutionContext, type, howTheseTypesWillBeUsed));
+//        }
+//        return result;
+//    }
 
     private boolean allows(Variance declarationSiteVariance, Variance callSiteVariance) {
         switch (declarationSiteVariance) {

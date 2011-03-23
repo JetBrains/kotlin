@@ -55,13 +55,13 @@ public class FunctionDescriptorUtil {
     }
 
     @Nullable
-    private static List<ValueParameterDescriptor> getSubstitutedValueParameters(FunctionDescriptor substitutedDescriptor, @NotNull FunctionDescriptor functionDescriptor, Map<TypeConstructor, TypeProjection> substitutionContext, TypeSubstitutor typeSubstitutor) {
+    private static List<ValueParameterDescriptor> getSubstitutedValueParameters(FunctionDescriptor substitutedDescriptor, @NotNull FunctionDescriptor functionDescriptor, Map<TypeConstructor, TypeProjection> substitutionContext) {
         List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>();
         List<ValueParameterDescriptor> unsubstitutedValueParameters = functionDescriptor.getUnsubstitutedValueParameters();
         for (int i = 0, unsubstitutedValueParametersSize = unsubstitutedValueParameters.size(); i < unsubstitutedValueParametersSize; i++) {
             ValueParameterDescriptor unsubstitutedValueParameter = unsubstitutedValueParameters.get(i);
             // TODO : Lazy?
-            JetType substitutedType = typeSubstitutor.substitute(substitutionContext, unsubstitutedValueParameter.getType(), Variance.IN_VARIANCE);
+            JetType substitutedType = TypeSubstitutor.INSTANCE.substitute(substitutionContext, unsubstitutedValueParameter.getType(), Variance.IN_VARIANCE);
             if (substitutedType == null) return null;
             result.add(new ValueParameterDescriptorImpl(
                     substitutedDescriptor,
@@ -77,18 +77,18 @@ public class FunctionDescriptorUtil {
     }
 
     @Nullable
-    private static JetType getSubstitutedReturnType(@NotNull FunctionDescriptor functionDescriptor, Map<TypeConstructor, TypeProjection> substitutionContext, TypeSubstitutor typeSubstitutor) {
-        return typeSubstitutor.substitute(substitutionContext, functionDescriptor.getUnsubstitutedReturnType(), Variance.OUT_VARIANCE);
+    private static JetType getSubstitutedReturnType(@NotNull FunctionDescriptor functionDescriptor, Map<TypeConstructor, TypeProjection> substitutionContext) {
+        return TypeSubstitutor.INSTANCE.substitute(substitutionContext, functionDescriptor.getUnsubstitutedReturnType(), Variance.OUT_VARIANCE);
     }
 
     @Nullable
     public static FunctionDescriptor substituteFunctionDescriptor(@NotNull List<JetType> typeArguments, @NotNull FunctionDescriptor functionDescriptor) {
         Map<TypeConstructor, TypeProjection> substitutionContext = createSubstitutionContext(functionDescriptor, typeArguments);
-        return substituteFunctionDescriptor(functionDescriptor, substitutionContext, TypeSubstitutor.INSTANCE);
+        return substituteFunctionDescriptor(functionDescriptor, substitutionContext);
     }
 
     @Nullable
-    public static FunctionDescriptor substituteFunctionDescriptor(FunctionDescriptor functionDescriptor, Map<TypeConstructor, TypeProjection> substitutionContext, TypeSubstitutor typeSubstitutor) {
+    public static FunctionDescriptor substituteFunctionDescriptor(FunctionDescriptor functionDescriptor, Map<TypeConstructor, TypeProjection> substitutionContext) {
         if (substitutionContext.isEmpty()) {
             return functionDescriptor;
         }
@@ -98,12 +98,12 @@ public class FunctionDescriptorUtil {
                 functionDescriptor.getAttributes(),
                 functionDescriptor.getName());
 
-        List<ValueParameterDescriptor> substitutedValueParameters = getSubstitutedValueParameters(substitutedDescriptor, functionDescriptor, substitutionContext, typeSubstitutor);
+        List<ValueParameterDescriptor> substitutedValueParameters = getSubstitutedValueParameters(substitutedDescriptor, functionDescriptor, substitutionContext);
         if (substitutedValueParameters == null) {
             return null;
         }
 
-        JetType substitutedReturnType = getSubstitutedReturnType(functionDescriptor, substitutionContext, typeSubstitutor);
+        JetType substitutedReturnType = getSubstitutedReturnType(functionDescriptor, substitutionContext);
         if (substitutedReturnType == null) {
             return null;
         }

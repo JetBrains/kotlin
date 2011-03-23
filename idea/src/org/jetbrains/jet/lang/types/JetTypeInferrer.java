@@ -684,23 +684,52 @@ public class JetTypeInferrer {
 
                         JetSimpleNameExpression referenceExpression = userType.getReferenceExpression();
                         if (referenceExpression != null) {
-                            FunctionGroup constructors = classDescriptor.getConstructors(receiverType.getArguments());
+                            // When one writes 'new Array<in T>(...)' this does not make much sense, and an instance
+                            // of 'Array<T>' must be created anyway.
+                            // Thus, we should either prohibit projections in type arguments in such contexts,
+                            // or treat them as an automatic upcast to the desired type, i.e. for the user not
+                            // to be forced to write
+                            //   val a : Array<in T> = new Array<T>(...)
+                            // NOTE: Array may be a bad example here, some classes may have substantial functionality
+                            //       not involving their type parameters
+                            //
+                            // The code below upcasts the type automatically
+
+                            List<TypeProjection> typeArguments = receiverType.getArguments();
+                            System.out.println("typeArguments = " + typeArguments);
+
+                            List<TypeProjection> projectionsStripped = new ArrayList<TypeProjection>();
+                            for (TypeProjection typeArgument : typeArguments) {
+                                if (typeArgument.getProjectionKind() != Variance.INVARIANT) {
+                                    projectionsStripped.add(new TypeProjection(typeArgument.getType()));
+                                }
+                                else
+                                    projectionsStripped.add(typeArgument);
+                            }
+                            System.out.println("projectionsStripped = " + projectionsStripped);
+
+                            FunctionGroup constructors = classDescriptor.getConstructors(projectionsStripped);
                             OverloadDomain constructorsOverloadDomain = semanticServices.getOverloadResolver().getOverloadDomain(constructors);
-                            result = resolveOverloads(
+                            JetType constructorReturnedType = resolveOverloads(
                                     scope,
                                     wrapForTracing(constructorsOverloadDomain, referenceExpression, expression.getArgumentList(), false),
                                     Collections.<JetTypeProjection>emptyList(),
                                     expression.getArguments(),
                                     expression.getFunctionLiteralArguments());
-                            if (result == null && !ErrorType.isErrorType(receiverType)) {
+                            if (constructorReturnedType == null && !ErrorType.isErrorType(receiverType)) {
                                 trace.recordReferenceResolution(referenceExpression, receiverType.getConstructor().getDeclarationDescriptor());
                                 // TODO : more helpful message
                                 JetArgumentList argumentList = expression.getArgumentList();
                                 if (argumentList != null) {
                                     semanticServices.getErrorHandler().genericError(argumentList.getNode(), "Cannot find an overload for these arguments");
                                 }
-                                result = receiverType;
+                                constructorReturnedType = receiverType;
                             }
+                            // If no upcast needed:
+                            result = constructorReturnedType;
+
+                            // Automatic upcast:
+                            result = receiverType;
                         }
                     }
                     else {

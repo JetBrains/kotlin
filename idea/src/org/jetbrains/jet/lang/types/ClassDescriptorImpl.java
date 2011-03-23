@@ -66,7 +66,7 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
             return constructors;
         }
         Map<TypeConstructor, TypeProjection> substitutionContext = TypeUtils.buildSubstitutionContext(getTypeConstructor().getParameters(), typeArguments);
-        return new LazySubstitutingFunctionGroup(substitutionContext, constructors, TypeSubstitutor.INSTANCE_FOR_CONSTRUCTORS);
+        return new LazySubstitutingFunctionGroup(substitutionContext, constructors);
     }
 
     @Override

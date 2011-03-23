@@ -15,16 +15,10 @@ import java.util.Map;
 public class LazySubstitutingFunctionGroup implements FunctionGroup {
     private final Map<TypeConstructor, TypeProjection> substitutionContext;
     private final FunctionGroup functionGroup;
-    private final TypeSubstitutor typeSubstitutor;
-
-    public LazySubstitutingFunctionGroup(Map<TypeConstructor, TypeProjection> substitutionContext, FunctionGroup functionGroup, TypeSubstitutor typeSubstitutor) {
-        this.substitutionContext = substitutionContext;
-        this.functionGroup = functionGroup;
-        this.typeSubstitutor = typeSubstitutor;
-    }
 
     public LazySubstitutingFunctionGroup(Map<TypeConstructor, TypeProjection> substitutionContext, FunctionGroup functionGroup) {
-        this(substitutionContext, functionGroup, TypeSubstitutor.INSTANCE);
+        this.substitutionContext = substitutionContext;
+        this.functionGroup = functionGroup;
     }
 
     @NotNull
@@ -41,7 +35,7 @@ public class LazySubstitutingFunctionGroup implements FunctionGroup {
 
         Collection<FunctionDescriptor> result = new ArrayList<FunctionDescriptor>();
         for (FunctionDescriptor function : resolutionResult.getFunctionDescriptors()) {
-            FunctionDescriptor functionDescriptor = substitute(substitutionContext, function, typeSubstitutor);
+            FunctionDescriptor functionDescriptor = substitute(substitutionContext, function);
             if (functionDescriptor != null) {
                 result.add(functionDescriptor);
             }
@@ -52,10 +46,10 @@ public class LazySubstitutingFunctionGroup implements FunctionGroup {
     @Nullable
     public FunctionDescriptor substitute(
             @NotNull Map<TypeConstructor, TypeProjection> substitutionContext,
-            @NotNull FunctionDescriptor functionDescriptor, TypeSubstitutor typeSubstitutor) {
+            @NotNull FunctionDescriptor functionDescriptor) {
         if (substitutionContext.isEmpty()) return functionDescriptor;
 
-        FunctionDescriptor substituted = FunctionDescriptorUtil.substituteFunctionDescriptor(functionDescriptor, substitutionContext, typeSubstitutor);
+        FunctionDescriptor substituted = FunctionDescriptorUtil.substituteFunctionDescriptor(functionDescriptor, substitutionContext);
         if (substituted == null) {
             return null;
         }
