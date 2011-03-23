@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -8,16 +9,30 @@ import java.util.List;
  * @author abreslav
  */
 public class PropertyDescriptorImpl extends DeclarationDescriptorImpl implements PropertyDescriptor {
-    private JetType type;
+    private final JetType inType;
+    private final JetType outType;
 
-    public PropertyDescriptorImpl(@NotNull DeclarationDescriptor containingDeclaration, List<Attribute> attributes, String name, JetType type) {
+    public PropertyDescriptorImpl(
+            @NotNull DeclarationDescriptor containingDeclaration,
+            @NotNull List<Attribute> attributes,
+            @NotNull String name,
+            @Nullable JetType inType,
+            @Nullable JetType outType) {
         super(containingDeclaration, attributes, name);
-        this.type = type;
+        assert (inType != null) || (outType != null);
+
+        this.inType = inType;
+        this.outType = outType;
     }
 
     @Override
-    public JetType getType() {
-        return type;
+    public JetType getOutType() {
+        return outType;
+    }
+
+    @Override
+    public JetType getInType() {
+        return inType;
     }
 
     @Override

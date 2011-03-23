@@ -61,7 +61,7 @@ public class FunctionDescriptorUtil {
         for (int i = 0, unsubstitutedValueParametersSize = unsubstitutedValueParameters.size(); i < unsubstitutedValueParametersSize; i++) {
             ValueParameterDescriptor unsubstitutedValueParameter = unsubstitutedValueParameters.get(i);
             // TODO : Lazy?
-            JetType substitutedType = TypeSubstitutor.INSTANCE.substitute(substitutionContext, unsubstitutedValueParameter.getType(), Variance.IN_VARIANCE);
+            JetType substitutedType = TypeSubstitutor.INSTANCE.substitute(substitutionContext, unsubstitutedValueParameter.getOutType(), Variance.IN_VARIANCE);
             if (substitutedType == null) return null;
             result.add(new ValueParameterDescriptorImpl(
                     substitutedDescriptor,

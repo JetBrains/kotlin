@@ -36,7 +36,7 @@ import util.*
 }
 
 ~Foo~class Foo {
-  ~set1~fun set(i : Int, val : String) {}
+  ~set1~fun set(i : Int, val1 : String) {}
   ~get1~fun get(i : Int) : Int {}
   ~get2~fun get(i : Int, j : Int) : String {}
   ~get3~fun get(i : Object) : Any {return i }

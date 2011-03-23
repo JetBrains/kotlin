@@ -24,6 +24,10 @@ public class JetProperty extends JetNamedDeclaration {
         visitor.visitProperty(this);
     }
 
+    public boolean isVar() {
+        return getNode().findChildByType(JetTokens.VAR_KEYWORD) != null;
+    }
+
     @Nullable
     public JetTypeReference getReceiverTypeRef() {
         ASTNode node = getNode().getFirstChildNode();

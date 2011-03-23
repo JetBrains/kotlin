@@ -15,7 +15,7 @@ public class DescriptorUtil {
                 new DeclarationDescriptorVisitor<Void, StringBuilder>() {
                     @Override
                     public Void visitPropertyDescriptor(PropertyDescriptor descriptor, StringBuilder builder) {
-                        JetType type = descriptor.getType();
+                        JetType type = descriptor.getOutType();
                         builder.append(renderName(descriptor)).append(" : ").append(type);
                         return super.visitPropertyDescriptor(descriptor, builder); 
                     }

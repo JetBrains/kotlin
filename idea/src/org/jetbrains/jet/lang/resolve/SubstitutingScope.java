@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.types.*;
 
 import java.util.Map;
@@ -24,7 +25,26 @@ public class SubstitutingScope implements JetScope {
         if (property == null || substitutionContext.isEmpty()) {
             return property;
         }
-        return new LazySubstitutedPropertyDescriptorImpl(property, substitutionContext);
+
+        JetType inType = substitute(property.getInType(), Variance.IN_VARIANCE);
+        JetType outType = substitute(property.getOutType(), Variance.OUT_VARIANCE);
+        if (inType == null && outType == null) {
+            return null; // TODO : tell the user that the property was projected out
+        }
+        return new PropertyDescriptorImpl(
+                property.getContainingDeclaration(),
+                property.getAttributes(), // TODO
+                property.getName(),
+                inType,
+                outType
+        );
+    }
+
+    @Nullable
+    private JetType substitute(@Nullable JetType originalType, @NotNull Variance variance) {
+        if (originalType == null) return null;
+
+        return TypeSubstitutor.INSTANCE.substitute(substitutionContext, originalType, variance);
     }
 
     @Override

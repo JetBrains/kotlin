@@ -193,9 +193,10 @@ public class ClassDescriptorResolver {
             JetParameter valueParameter = valueParameters.get(i);
             JetTypeReference typeReference = valueParameter.getTypeReference();
 
+            String name = valueParameter.getName();
             JetType type;
             if (typeReference == null) {
-                semanticServices.getErrorHandler().genericError(valueParameter.getNode(), "A type annotation is required on a value parameter " + valueParameter.getName());
+                semanticServices.getErrorHandler().genericError(valueParameter.getNode(), "A type annotation is required on a value parameter");
                 type = ErrorType.createErrorType("Type annotation was missing");
             } else {
                 type = typeResolver.resolveType(parameterScope, typeReference);
@@ -204,7 +205,7 @@ public class ClassDescriptorResolver {
                     functionDescriptor,
                     i,
                     AttributeResolver.INSTANCE.resolveAttributes(valueParameter.getModifierList()),
-                    valueParameter.getName(),
+                    name == null ? "<no name provided>" : name,
                     type,
                     valueParameter.getDefaultValue() != null,
                     false // TODO : varargs
@@ -280,6 +281,7 @@ public class ClassDescriptorResolver {
                 containingDeclaration,
                 AttributeResolver.INSTANCE.resolveAttributes(parameter.getModifierList()),
                 parameter.getName(),
+                type, // TODO
                 type);
     }
 
@@ -305,6 +307,7 @@ public class ClassDescriptorResolver {
                 containingDeclaration,
                 AttributeResolver.INSTANCE.resolveAttributes(property.getModifierList()),
                 property.getName(),
+                property.isVar() ? type : null,
                 type);
     }
 

@@ -334,7 +334,7 @@ public class JetTypeInferrer {
                 PropertyDescriptor property = scope.getProperty(referencedName);
                 if (property != null) {
                     trace.recordReferenceResolution(expression, property);
-                    result = property.getType();
+                    result = property.getOutType();
                     return;
                 } else {
                     NamespaceDescriptor namespace = scope.getNamespace(referencedName);
@@ -377,7 +377,7 @@ public class JetTypeInferrer {
                 }
                 PropertyDescriptor propertyDescriptor = classDescriptorResolver.resolvePropertyDescriptor(functionDescriptor, scope, parameter);
                 parameterDescriptors.put(parameter.getName(), propertyDescriptor);
-                parameterTypes.add(propertyDescriptor.getType());
+                parameterTypes.add(propertyDescriptor.getOutType());
             }
             JetType returnType;
             if (returnTypeRef != null) {
@@ -642,7 +642,7 @@ public class JetTypeInferrer {
             PropertyDescriptor propertyDescriptor;
             if (typeReference != null) {
                 propertyDescriptor = semanticServices.getClassDescriptorResolver(trace).resolvePropertyDescriptor(scope.getContainingDeclaration(), scope, loopParameter);
-                JetType actualParameterType = propertyDescriptor.getType();
+                JetType actualParameterType = propertyDescriptor.getOutType();
                 if (expectedParameterType != null &&
                         !semanticServices.getTypeChecker().isSubtypeOf(expectedParameterType, actualParameterType)) {
                     semanticServices.getErrorHandler().genericError(typeReference.getNode(), "The loop iterates over values of type " + expectedParameterType + " but the parameter is declared to be " + actualParameterType);

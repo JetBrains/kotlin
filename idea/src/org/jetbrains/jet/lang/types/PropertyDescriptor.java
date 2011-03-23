@@ -1,12 +1,17 @@
 package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author abreslav
  */
 public interface PropertyDescriptor extends DeclarationDescriptor {
-    JetType getType();
+    @Nullable
+    JetType getOutType();
+
+    @Nullable
+    JetType getInType();
 
     @Override
     @NotNull

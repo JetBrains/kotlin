@@ -157,11 +157,12 @@ public class JavaDescriptorResolver {
         List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>();
         for (int i = 0, parametersLength = parameters.length; i < parametersLength; i++) {
             PsiParameter parameter = parameters[i];
+            String name = parameter.getName();
             result.add(new ValueParameterDescriptorImpl(
                     containingDeclaration,
                     i,
                     Collections.<Attribute>emptyList(), // TODO
-                    parameter.getName(),
+                    name == null ? "p" + i : name,
                     semanticServices.getTypeTransformer().transform(parameter.getType()),
                     false,
                     parameter.isVarArgs()

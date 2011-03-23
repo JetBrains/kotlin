@@ -289,7 +289,7 @@ public class JetStandardClasses {
     private static List<JetType> toTypes(List<ValueParameterDescriptor> labeledEntries) {
         List<JetType> result = new ArrayList<JetType>();
         for (ValueParameterDescriptor entry : labeledEntries) {
-            result.add(entry.getType());
+            result.add(entry.getOutType());
         }
         return result;
     }

@@ -333,7 +333,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertType("new Props<out Int>().p", "Int");
         assertType("new Props<Properties>().p.p", "Int");
 
-        assertErrorType("new Props<in Int>().p");
+        assertErrorType("(return : Props<in Int>).p");
     }
 
     public void testOverloads() throws Exception {
@@ -449,7 +449,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
     private void assertErrorType(String expression) {
         Project project = getProject();
         JetExpression jetExpression = JetChangeUtil.createExpression(project, expression);
-        JetType type = semanticServices.getTypeInferrer(BindingTrace.DUMMY).getType(classDefinitions.BASIC_SCOPE, jetExpression, false);
+        JetType type = semanticServices.getTypeInferrer(BindingTrace.DUMMY).safeGetType(classDefinitions.BASIC_SCOPE, jetExpression, false);
         assertTrue("Error type expected but " + type + " returned", ErrorType.isErrorType(type));
     }
 

@@ -61,7 +61,7 @@ public class OverloadResolver {
                         // possibly an array/list/etc passed as a whole vararg
                         for (int i = 0, positionedValueArgumentTypesSize = positionedValueArgumentTypes.size(); i < positionedValueArgumentTypesSize; i++) {
                             JetType argumentType = positionedValueArgumentTypes.get(i);
-                            JetType parameterType = parameters.get(i).getType();
+                            JetType parameterType = parameters.get(i).getOutType();
                             // TODO : handle vararg cases here
                             if (!typeChecker.isConvertibleTo(argumentType, parameterType)) {
                                 continue descLoop;
@@ -72,12 +72,12 @@ public class OverloadResolver {
                         int nonVarargs = parameters.size() - 1;
                         for (int i = 0; i < nonVarargs; i++) {
                             JetType argumentType = positionedValueArgumentTypes.get(i);
-                            JetType parameterType = parameters.get(i).getType();
+                            JetType parameterType = parameters.get(i).getOutType();
                             if (!typeChecker.isConvertibleTo(argumentType, parameterType)) {
                                 continue descLoop;
                             }
                         }
-                        JetType varArgType = parameters.get(nonVarargs).getType();
+                        JetType varArgType = parameters.get(nonVarargs).getOutType();
                         for (int i = nonVarargs, args = positionedValueArgumentTypes.size(); i < args; i++) {
                             JetType argumentType = positionedValueArgumentTypes.get(i);
                             if (!typeChecker.isConvertibleTo(argumentType, varArgType)) {
@@ -137,8 +137,8 @@ public class OverloadResolver {
         int fSize = fParams.size();
         if (fSize != gParams.size()) return false;
         for (int i = 0; i < fSize; i++) {
-            JetType fParamType = fParams.get(i).getType();
-            JetType gParamType = gParams.get(i).getType();
+            JetType fParamType = fParams.get(i).getOutType();
+            JetType gParamType = gParams.get(i).getOutType();
 
             // TODO : maybe isSubtypeOf is sufficient?
             if (!typeChecker.isConvertibleTo(fParamType, gParamType)) {

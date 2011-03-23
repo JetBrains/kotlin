@@ -20,6 +20,7 @@ public abstract class DeclarationDescriptorImpl extends AnnotatedImpl implements
         this.containingDeclaration = containingDeclaration;
     }
 
+    @NotNull
     @Override
     public String getName() {
         return name;

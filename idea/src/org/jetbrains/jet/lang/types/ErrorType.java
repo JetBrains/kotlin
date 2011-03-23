@@ -86,7 +86,9 @@ public class ErrorType {
         return ERROR_SCOPE;
     }
 
-    private static final PropertyDescriptor ERROR_PROPERTY = new PropertyDescriptorImpl(ERROR_CLASS, Collections.<Attribute>emptyList(), "<ERROR PROPERTY>", createErrorType("<ERROR PROPERTY TYPE>"));
+    private static final JetType ERROR_PROPERTY_TYPE = createErrorType("<ERROR PROPERTY TYPE>");
+    private static final PropertyDescriptor ERROR_PROPERTY = new PropertyDescriptorImpl(
+            ERROR_CLASS, Collections.<Attribute>emptyList(), "<ERROR PROPERTY>", ERROR_PROPERTY_TYPE, ERROR_PROPERTY_TYPE);
 
     private static FunctionDescriptor createErrorFunction(List<TypeParameterDescriptor> typeParameters, List<JetType> positionedValueArgumentTypes) {
         FunctionDescriptorImpl functionDescriptor = new FunctionDescriptorImpl(ERROR_CLASS, Collections.<Attribute>emptyList(), "<ERROR FUNCTION>");
