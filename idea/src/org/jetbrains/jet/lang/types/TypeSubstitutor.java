@@ -50,10 +50,12 @@ public class TypeSubstitutor {
         if (value != null) {
             assert constructor.getDeclarationDescriptor() instanceof TypeParameterDescriptor;
 
-            if (!allows(howThisTypeIsUsed, value.getProjectionKind())) {
-                throw new SubstitutionException("!!" + value.toString());
-            }
-            return value.getType();
+            return substitutionResult(substitutionContext, (TypeParameterDescriptor) constructor.getDeclarationDescriptor(), howThisTypeIsUsed, Variance.INVARIANT, value).getType();
+//
+//            if (!allows(howThisTypeIsUsed, value.getProjectionKind())) {
+//                throw new SubstitutionException("!!" + value.toString());
+//            }
+//            return value.getType();
         }
 
         return specializeType(type, substitutionContext, howThisTypeIsUsed);
@@ -96,19 +98,11 @@ public class TypeSubstitutor {
         if (projectionValue != null) {
             assert typeToSubstituteIn.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor;
 
-            JetType typeValue = projectionValue.getType();
-            Variance projectionKindValue = projectionValue.getProjectionKind();
-
             if (!allows(parameterVariance, passedProjectionKind)) {
-                return TypeUtils.makeStarProjection( correspondingTypeParameter);
+                return TypeUtils.makeStarProjection(correspondingTypeParameter);
             }
 
-            if (!allows(effectiveContextVariance, projectionKindValue)) {
-                throw new SubstitutionException(""); // TODO : error message
-            }
-
-            Variance effectiveProjectionKindValue = passedProjectionKind == Variance.INVARIANT ? projectionKindValue : passedProjectionKind;
-            return new TypeProjection(effectiveProjectionKindValue,  specializeType(typeValue, substitutionContext, effectiveContextVariance));
+            return substitutionResult(substitutionContext, correspondingTypeParameter, effectiveContextVariance, passedProjectionKind, projectionValue);
         }
         return new TypeProjection(
                 passedProjectionKind,
@@ -116,6 +110,51 @@ public class TypeSubstitutor {
                         typeToSubstituteIn,
                         substitutionContext,
                         effectiveContextVariance));
+    }
+
+    private TypeProjection substitutionResult(
+            Map<TypeConstructor, TypeProjection> substitutionContext,
+            TypeParameterDescriptor correspondingTypeParameter,
+            Variance effectiveContextVariance,
+            Variance passedProjectionKind,
+            TypeProjection value) throws SubstitutionException {
+        Variance projectionKindValue = value.getProjectionKind();
+        JetType typeValue = value.getType();
+        Variance effectiveProjectionKindValue = asymmetricOr(passedProjectionKind, projectionKindValue);
+        JetType effectiveTypeValue;
+        switch (effectiveContextVariance) {
+            case INVARIANT:
+                effectiveProjectionKindValue = projectionKindValue;
+                effectiveTypeValue = typeValue;
+                break;
+            case IN_VARIANCE:
+                if (projectionKindValue == Variance.OUT_VARIANCE) {
+                    throw new SubstitutionException(""); // TODO
+//                    effectiveProjectionKindValue = Variance.INVARIANT;
+//                    effectiveTypeValue = JetStandardClasses.getNothingType();
+                }
+                else {
+                    effectiveTypeValue = typeValue;
+                }
+                break;
+            case OUT_VARIANCE:
+                if (projectionKindValue == Variance.IN_VARIANCE) {
+                    effectiveProjectionKindValue = Variance.INVARIANT;
+                    effectiveTypeValue = correspondingTypeParameter.getBoundsAsType();
+                }
+                else {
+                    effectiveTypeValue = typeValue;
+                }
+                break;
+            default:
+                throw new IllegalStateException(effectiveContextVariance.toString());
+        }
+
+//            if (!allows(effectiveContextVariance, projectionKindValue)) {
+//                throw new SubstitutionException(""); // TODO : error message
+//            }
+//
+        return new TypeProjection(effectiveProjectionKindValue,  specializeType(effectiveTypeValue, substitutionContext, effectiveContextVariance));
     }
 
     private static Variance asymmetricOr(Variance a, Variance b) {

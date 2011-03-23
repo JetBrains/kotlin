@@ -34,11 +34,11 @@ fun testInOut() {
 
   new Out<Int>().`Out.f`f()
   (return : Out<out Int>).`Out.f`f()
-  (return : Out<in Int>).`!`f()
+  (return : Out<in Int>).`Out.f`f()
   (return : Out<*>).`Out.f`f()
 
   new Inv<Int>().`Inv.f`f(1)
-  (return : Inv<in Int>).`!`f(1)
+  (return : Inv<in Int>).`Inv.f`f(1)
   (return : Inv<out Int>).`!`f(1)
   (return : Inv<*>).`!`f(1)
 
@@ -48,7 +48,7 @@ fun testInOut() {
   (return : Inv<*>).`!`inf(1)
 
   new Inv<Int>().`Inv.outf`outf()
-  (return : Inv<in Int>).`Inv.outf`outf()`:std::Any?`
+  ((return : Inv<in Int>).`Inv.outf`outf())`:std::Any`
   (return : Inv<out Int>).`Inv.outf`outf()
   (return : Inv<*>).`Inv.outf`outf()
 

@@ -10,6 +10,7 @@ import java.util.List;
  */
 public class DescriptorUtil {
     public static String renderPresentableText(DeclarationDescriptor declarationDescriptor) {
+        if (declarationDescriptor == null) return "<null>";
         StringBuilder stringBuilder = new StringBuilder();
         declarationDescriptor.accept(
                 new DeclarationDescriptorVisitor<Void, StringBuilder>() {

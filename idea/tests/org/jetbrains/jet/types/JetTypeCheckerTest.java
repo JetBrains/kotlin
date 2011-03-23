@@ -333,7 +333,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertType("new Props<out Int>().p", "Int");
         assertType("new Props<Properties>().p.p", "Int");
 
-        assertErrorType("(return : Props<in Int>).p");
+        assertType("(return : Props<in Int>).p", "Any?");
     }
 
     public void testOverloads() throws Exception {

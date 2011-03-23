@@ -27,11 +27,12 @@ public class ExpectedResolveData {
     private final Map<Integer, String> positionToType = new HashMap<Integer, String>();
     private final Map<String, DeclarationDescriptor> nameToDescriptor;
     private final Map<String, PsiElement> nameToPsiElement;
+//    private final Map<String, JetType> nameToType;
 
-
-    public ExpectedResolveData(Map<String, DeclarationDescriptor> nameToDescriptor, Map<String, PsiElement> nameToPsiElement) {
+    public ExpectedResolveData(Map<String, DeclarationDescriptor> nameToDescriptor, Map<String, PsiElement> nameToPsiElement/*, Map<String, JetType> nameToType*/) {
         this.nameToDescriptor = nameToDescriptor;
         this.nameToPsiElement = nameToPsiElement;
+//        this.nameToType = nameToType;
     }
 
     public void extractData(final Document document) {
@@ -107,7 +108,18 @@ public class ExpectedResolveData {
 
             if ("!".equals(name)) {
                 JetReferenceExpression referenceExpression = PsiTreeUtil.getParentOfType(element, JetReferenceExpression.class);
-                assertTrue("Must have been unresolved: " + referenceExpression.getText(), unresolvedReferences.contains(referenceExpression));
+                JetExpression statement = referenceExpression;
+                while (true) {
+                    PsiElement parent = statement.getParent();
+                    if (!(parent instanceof JetExpression)) break;
+                    if (parent instanceof JetBlockExpression) break;
+                    statement = (JetExpression) parent;
+                }
+                assertTrue(
+                        "Must have been unresolved: " + referenceExpression.getText() +
+                        " in " + statement.getText() +
+                        " but was resolved to " + DescriptorUtil.renderPresentableText(bindingContext.resolveReferenceExpression(referenceExpression)),
+                        unresolvedReferences.contains(referenceExpression));
                 continue;
             }
 
@@ -160,7 +172,8 @@ public class ExpectedResolveData {
             TypeConstructor expectedTypeConstructor;
             if (typeName.startsWith("std::")) {
                 ClassDescriptor expectedClass = lib.getLibraryScope().getClass(typeName.substring(5));
-                assertNotNull("Expected class not found: " + typeName);
+
+                assertNotNull("Expected class not found: " + typeName, expectedClass);
                 expectedTypeConstructor = expectedClass.getTypeConstructor();
             } else {
                 Integer declarationPosition = declarationToPosition.get(typeName);
