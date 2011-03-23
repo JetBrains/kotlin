@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lexer.JetToken;
 
@@ -37,11 +38,16 @@ public class JetModifierList extends JetElement {
     }
 
     public boolean hasModifier(JetToken token) {
+        return getModifierNode(token) != null;
+    }
+
+    @Nullable
+    public ASTNode getModifierNode(JetToken token) {
         ASTNode node = getNode().getFirstChildNode();
         while (node != null) {
-            if (node.getElementType() == token) return true;
+            if (node.getElementType() == token) return node;
             node = node.getTreeNext();
         }
-        return false;
+        return null;
     }
 }

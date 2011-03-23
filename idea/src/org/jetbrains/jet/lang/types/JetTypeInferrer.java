@@ -183,7 +183,7 @@ public class JetTypeInferrer {
 
             @Override
             public void visitJetElement(JetElement elem) {
-                throw new IllegalArgumentException("Unsupported element: " + elem);
+                semanticServices.getErrorHandler().genericError(elem.getNode(), "Unsupported in call expression"); // TODO : Message
             }
         });
         return wrapForTracing(result[0], reference[0], argumentList, true);
@@ -209,10 +209,11 @@ public class JetTypeInferrer {
 
     private OverloadDomain wrapForTracing(
             @Nullable final OverloadDomain overloadDomain,
-            @NotNull final JetReferenceExpression referenceExpression,
+            final JetReferenceExpression referenceExpression,
             @Nullable final PsiElement argumentList,
             final boolean reportErrors) {
         if (overloadDomain == null) return OverloadDomain.EMPTY;
+        assert referenceExpression != null;
         return new OverloadDomain() {
             @NotNull
             @Override
@@ -682,6 +683,19 @@ public class JetTypeInferrer {
                     if (declarationDescriptor instanceof ClassDescriptor) {
                         ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
 
+                        for (JetTypeProjection typeProjection : userType.getTypeArguments()) {
+                            switch (typeProjection.getProjectionKind()) {
+                                case IN:
+                                case OUT:
+                                case STAR:
+                                    // TODO : Bug in the editor
+                                    semanticServices.getErrorHandler().genericError(typeProjection.getProjectionNode(), "Projections are not allowed in constructor type arguments");
+                                    break;
+                                case NONE:
+                                    break;
+                            }
+                        }
+
                         JetSimpleNameExpression referenceExpression = userType.getReferenceExpression();
                         if (referenceExpression != null) {
                             // When one writes 'new Array<in T>(...)' this does not make much sense, and an instance
@@ -696,7 +710,6 @@ public class JetTypeInferrer {
                             // The code below upcasts the type automatically
 
                             List<TypeProjection> typeArguments = receiverType.getArguments();
-                            System.out.println("typeArguments = " + typeArguments);
 
                             List<TypeProjection> projectionsStripped = new ArrayList<TypeProjection>();
                             for (TypeProjection typeArgument : typeArguments) {
@@ -706,7 +719,6 @@ public class JetTypeInferrer {
                                 else
                                     projectionsStripped.add(typeArgument);
                             }
-                            System.out.println("projectionsStripped = " + projectionsStripped);
 
                             FunctionGroup constructors = classDescriptor.getConstructors(projectionsStripped);
                             OverloadDomain constructorsOverloadDomain = semanticServices.getOverloadResolver().getOverloadDomain(constructors);
@@ -729,7 +741,7 @@ public class JetTypeInferrer {
                             result = constructorReturnedType;
 
                             // Automatic upcast:
-                            result = receiverType;
+//                            result = receiverType;
                         }
                     }
                     else {

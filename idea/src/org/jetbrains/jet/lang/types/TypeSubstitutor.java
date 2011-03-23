@@ -89,7 +89,7 @@ public class TypeSubstitutor {
         Variance passedProjectionKind = passedProjection.getProjectionKind();
         Variance parameterVariance = correspondingTypeParameter.getVariance();
 
-        Variance effectiveProjectionKind = (passedProjectionKind == Variance.INVARIANT) ? parameterVariance : passedProjectionKind;
+        Variance effectiveProjectionKind = asymmetricOr(passedProjectionKind, parameterVariance);
         Variance effectiveContextVariance = contextCallSiteVariance.superpose(effectiveProjectionKind);
 
         TypeProjection projectionValue = substitutionContext.get(typeToSubstituteIn.getConstructor());
@@ -118,15 +118,11 @@ public class TypeSubstitutor {
                         effectiveContextVariance));
     }
 
-    //    public Set<JetType> substituteInSet(Map<TypeConstructor, TypeProjection> substitutionContext, Set<JetType> types, Variance howTheseTypesWillBeUsed) {
-//        Set<JetType> result = new HashSet<JetType>();
-//        for (JetType type : types) {
-//            result.add(safeSubstitute(substitutionContext, type, howTheseTypesWillBeUsed));
-//        }
-//        return result;
-//    }
+    private static Variance asymmetricOr(Variance a, Variance b) {
+        return a == Variance.INVARIANT ? b : a;
+    }
 
-    private boolean allows(Variance declarationSiteVariance, Variance callSiteVariance) {
+    private static boolean allows(Variance declarationSiteVariance, Variance callSiteVariance) {
         switch (declarationSiteVariance) {
             case INVARIANT: return true;
             case IN_VARIANCE: return callSiteVariance != Variance.OUT_VARIANCE;
