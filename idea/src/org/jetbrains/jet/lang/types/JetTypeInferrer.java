@@ -1092,7 +1092,29 @@ public class JetTypeInferrer {
 
         @Override
         public void visitProperty(JetProperty property) {
+
+            JetPropertyAccessor getter = property.getGetter();
+            if (getter != null) {
+                semanticServices.getErrorHandler().genericError(getter.getNode(), "Local variables are not allowed to have getters");
+            }
+
+            JetPropertyAccessor setter = property.getSetter();
+            if (setter != null) {
+                semanticServices.getErrorHandler().genericError(setter.getNode(), "Local variables are not allowed to have setters");
+            }
+
             PropertyDescriptor propertyDescriptor = classDescriptorResolver.resolvePropertyDescriptor(scope.getContainingDeclaration(), scope, property);
+            JetExpression initializer = property.getInitializer();
+            if (property.getPropertyTypeRef() != null && initializer != null) {
+                JetType initializerType = getType(scope, initializer, false);
+                JetType outType = propertyDescriptor.getOutType();
+                if (outType != null &&
+                    initializerType != null &&
+                    !semanticServices.getTypeChecker().isConvertibleTo(initializerType, outType)) {
+                    semanticServices.getErrorHandler().typeMismatch(initializer, outType, initializerType);
+                }
+            }
+
             scope.addPropertyDescriptor(propertyDescriptor);
             trace.recordDeclarationResolution(property, propertyDescriptor);
         }
