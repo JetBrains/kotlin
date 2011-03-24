@@ -114,6 +114,10 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
 
     @Override
     protected Sdk getProjectJDK() {
+        return jdkFromIdeaHome();
+    }
+
+    public static Sdk jdkFromIdeaHome() {
         Properties properties = new Properties();
         try {
             FileReader reader = new FileReader(getHomeDirectory() + "/idea/idea.properties");

@@ -1,6 +1,9 @@
 package org.jetbrains.jet.codegen;
 
+import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.JetLightProjectDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespace;
 import org.jetbrains.jet.parsing.JetParsingTest;
@@ -24,7 +27,7 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
     }
 
     public void testPSVM() throws Exception {
-        myFixture.configureByFile(JetParsingTest.getTestDataDir() + "/codegen/PSVM.jet");
+        loadFile("PSVM.jet");
         final String text = generateToText();
         System.out.println(text);
 
@@ -67,6 +70,19 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
         assertEquals(new Integer(50), returnValue);
     }
 
+    public void testCurrentTime() throws Exception {
+        loadFile("currentTime.jet");
+        final Class aClass = generateToClass();
+        final Method main = firstMethod(aClass);
+        final long returnValue = (Long) main.invoke(null);
+        long currentTime = System.currentTimeMillis();
+        assertTrue(Math.abs(returnValue - currentTime) <= 1L);
+    }
+
+    private void loadFile(final String name) {
+        myFixture.configureByFile(JetParsingTest.getTestDataDir() + "/codegen/" + name);
+    }
+
     private String generateToText() {
         StringWriter writer = new StringWriter();
         JetFile jetFile = (JetFile) myFixture.getFile();
@@ -103,5 +119,11 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
       public Class<?> loadClass(String name) throws ClassNotFoundException {
         return super.loadClass(name);
       }
+    }
+
+    @NotNull
+    @Override
+    protected LightProjectDescriptor getProjectDescriptor() {
+        return JetLightProjectDescriptor.INSTANCE;
     }
 }

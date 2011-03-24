@@ -1,8 +1,10 @@
 package org.jetbrains.jet.codegen;
 
+import com.intellij.psi.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.DeclarationDescriptor;
+import org.jetbrains.jet.lang.types.FunctionDescriptor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -257,7 +259,6 @@ public class ExpressionCodegen extends JetVisitor {
         }
     }
 
-/*
     @Override
     public void visitCallExpression(JetCallExpression expression) {
         List<JetArgument> args = expression.getValueArguments();
@@ -270,6 +271,19 @@ public class ExpressionCodegen extends JetVisitor {
         if (callee instanceof JetSimpleNameExpression) {
             DeclarationDescriptor funDescriptor = bindingContext.resolveReferenceExpression((JetSimpleNameExpression) callee);
             if (funDescriptor instanceof FunctionDescriptor) {
+                PsiElement declarationPsiElement = bindingContext.getDeclarationPsiElement(funDescriptor);
+                if (declarationPsiElement instanceof PsiMethod) {
+                    PsiMethod method = (PsiMethod) declarationPsiElement;
+                    if (method.hasModifierProperty(PsiModifier.STATIC)) {
+                        PsiClass containingClass = method.getContainingClass();
+                        String owner = containingClass.getQualifiedName().replace(".", "/");
+                        v.visitMethodInsn(Opcodes.INVOKESTATIC, owner, method.getName(), getMethodDescriptor(method));
+                        boxIfNeeded(method.getReturnType());
+                    }
+                    else {
+                        throw new UnsupportedOperationException("don't know how to generate instance method calls");
+                    }
+                }
             }
             else {
                 throw new CompilationException();
@@ -280,10 +294,48 @@ public class ExpressionCodegen extends JetVisitor {
         }
     }
 
-    @Override
-    public void visitBinaryExpression(JetBinaryExpression expression) {
+    private void boxIfNeeded(PsiType type) {
+        if (type == PsiType.LONG) {
+            v.invokestatic("java/lang/Long", "valueOf", "(J)Ljava/lang/Long;");
+        }
+        else {
+            throw new UnsupportedOperationException("Don't know how to box type " + type);
+        }
     }
-*/
+
+    private String getMethodDescriptor(PsiMethod method) {
+        Type returnType = psiTypeToAsm(method.getReturnType());
+        PsiParameter[] parameters = method.getParameterList().getParameters();
+        Type[] parameterTypes = new Type[parameters.length];
+        for (int i = 0; i < parameters.length; i++) {
+            parameterTypes[i] = psiTypeToAsm(parameters [i].getType());
+        }
+        return Type.getMethodDescriptor(returnType, parameterTypes);
+    }
+
+    private Type psiTypeToAsm(PsiType type) {
+        if (type instanceof PsiPrimitiveType) {
+            if (type == PsiType.VOID) {
+                return Type.VOID_TYPE;
+            }
+            if (type == PsiType.LONG) {
+                return Type.LONG_TYPE;
+            }
+        }
+        throw new UnsupportedOperationException("don't know how to map  type " + type + " to ASM");
+    }
+
+    @Override
+    public void visitDotQualifiedExpression(JetDotQualifiedExpression expression) {
+//        gen(expression.getReceiverExpression());
+        expression.getSelectorExpression().accept(this);
+    }
+
+    /*
+        @Override
+        public void visitBinaryExpression(JetBinaryExpression expression) {
+        }
+    */
 
     private Type getType(JetProperty var) {
         return InstructionAdapter.OBJECT_TYPE;  // TODO:

@@ -117,6 +117,9 @@ public class FunctionCodegen {
         if ("Int".equals(name)) {
             return Type.getType(Integer.class);
         }
+        if ("Long".equals(name)) {
+            return Type.getType(Long.class);
+        }
         throw new UnsupportedOperationException("Unknown type " + name);
     }
 
