@@ -338,7 +338,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
                 parseCallExpression();
 
-                expression.done(DOT_QIALIFIED_EXPRESSION);
+                expression.done(DOT_QUALIFIED_EXPRESSION);
             }
             else if (at(SAFE_ACCESS)) {
                 advance(); // SAFE_ACCESS
@@ -359,7 +359,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
                 expect(IDENTIFIER, "Expecting property or function name");
 
-                expression.done(HASH_QIALIFIED_EXPRESSION);
+                expression.done(HASH_QUALIFIED_EXPRESSION);
             }
             else if (atSet(Precedence.POSTFIX.getOperations())) {
                 parseOperationReference();

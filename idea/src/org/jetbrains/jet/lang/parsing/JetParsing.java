@@ -171,7 +171,7 @@ public class JetParsing extends AbstractJetParsing {
             reference.done(REFERENCE_EXPRESSION);
 
             PsiBuilder.Marker precede = qualifiedName.precede();
-            qualifiedName.done(DOT_QIALIFIED_EXPRESSION);
+            qualifiedName.done(DOT_QUALIFIED_EXPRESSION);
             qualifiedName = precede;
         }
         qualifiedName.drop();
