@@ -56,7 +56,7 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
         assertEquals(new Integer(50), returnValue);
     }
 
-    public void testLocalPropery() throws Exception {
+    public void testLocalProperty() throws Exception {
         myFixture.configureByFile(JetParsingTest.getTestDataDir() + "/codegen/localProperty.jet");
         final String text = generateToText();
         System.out.println(text);
