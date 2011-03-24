@@ -564,7 +564,7 @@ JetFile: When.jet
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               DECOMPOSER_PATTERN
-                DOT_QIALIFIED_EXPRESSION
+                DOT_QUALIFIED_EXPRESSION
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('a')
                   PsiElement(DOT)('.')
@@ -601,7 +601,7 @@ JetFile: When.jet
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               DECOMPOSER_PATTERN
-                DOT_QIALIFIED_EXPRESSION
+                DOT_QUALIFIED_EXPRESSION
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('a')
                   PsiElement(DOT)('.')
@@ -646,8 +646,8 @@ JetFile: When.jet
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               DECOMPOSER_PATTERN
-                DOT_QIALIFIED_EXPRESSION
-                  DOT_QIALIFIED_EXPRESSION
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
                     ROOT_NAMESPACE
                       PsiElement(namespace)('namespace')
                     PsiElement(DOT)('.')
@@ -940,7 +940,7 @@ JetFile: When.jet
                     PsiElement(is)('is')
                     PsiWhiteSpace(' ')
                     DECOMPOSER_PATTERN
-                      DOT_QIALIFIED_EXPRESSION
+                      DOT_QUALIFIED_EXPRESSION
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('foo')
                         PsiElement(DOT)('.')
@@ -1205,7 +1205,7 @@ JetFile: When.jet
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               DECOMPOSER_PATTERN
-                DOT_QIALIFIED_EXPRESSION
+                DOT_QUALIFIED_EXPRESSION
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('a')
                   PsiElement(DOT)('.')

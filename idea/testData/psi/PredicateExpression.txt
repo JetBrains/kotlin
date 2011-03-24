@@ -13,7 +13,7 @@ JetFile: PredicateExpression.jet
       BLOCK
         PsiElement(LBRACE)('{')
         PsiWhiteSpace('\n  ')
-        DOT_QIALIFIED_EXPRESSION
+        DOT_QUALIFIED_EXPRESSION
           PREDICATE_EXPRESSION
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('a')

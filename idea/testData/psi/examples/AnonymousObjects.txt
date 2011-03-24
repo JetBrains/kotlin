@@ -98,7 +98,7 @@ JetFile: AnonymousObjects.jet
                         PsiElement(RPAR)(')')
                         PsiWhiteSpace(' ')
                         THEN
-                          DOT_QIALIFIED_EXPRESSION
+                          DOT_QUALIFIED_EXPRESSION
                             REFERENCE_EXPRESSION
                               PsiElement(IDENTIFIER)('GOD')
                             PsiElement(DOT)('.')
@@ -108,7 +108,7 @@ JetFile: AnonymousObjects.jet
                               VALUE_ARGUMENT_LIST
                                 PsiElement(LPAR)('(')
                                 VALUE_ARGUMENT
-                                  DOT_QIALIFIED_EXPRESSION
+                                  DOT_QUALIFIED_EXPRESSION
                                     REFERENCE_EXPRESSION
                                       PsiElement(IDENTIFIER)('GodMEssages')
                                     PsiElement(DOT)('.')
@@ -196,7 +196,7 @@ JetFile: AnonymousObjects.jet
                     VALUE_ARGUMENT_LIST
                       PsiElement(LPAR)('(')
                       VALUE_ARGUMENT
-                        DOT_QIALIFIED_EXPRESSION
+                        DOT_QUALIFIED_EXPRESSION
                           REFERENCE_EXPRESSION
                             PsiElement(IDENTIFIER)('message')
                           PsiElement(DOT)('.')

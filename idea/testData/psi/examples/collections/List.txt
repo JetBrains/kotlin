@@ -145,7 +145,7 @@ JetFile: List.jet
                     OPERATION_REFERENCE
                       PsiElement(PLUS)('+')
                     PsiWhiteSpace(' ')
-                    DOT_QIALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('tail')
                       PsiElement(DOT)('.')
@@ -251,7 +251,7 @@ JetFile: List.jet
                   PsiWhiteSpace(' ')
                   PsiElement(EQ)('=')
                   PsiWhiteSpace(' ')
-                  DOT_QIALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('List')
                     PsiElement(DOT)('.')
@@ -317,7 +317,7 @@ JetFile: List.jet
                       PsiWhiteSpace(' ')
                       PsiElement(EQ)('=')
                       PsiWhiteSpace(' ')
-                      DOT_QIALIFIED_EXPRESSION
+                      DOT_QUALIFIED_EXPRESSION
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('current')
                         PsiElement(DOT)('.')
@@ -331,7 +331,7 @@ JetFile: List.jet
                       OPERATION_REFERENCE
                         PsiElement(EQ)('=')
                       PsiWhiteSpace(' ')
-                      DOT_QIALIFIED_EXPRESSION
+                      DOT_QUALIFIED_EXPRESSION
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('current')
                         PsiElement(DOT)('.')

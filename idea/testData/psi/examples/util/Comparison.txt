@@ -102,7 +102,7 @@ JetFile: Comparison.jet
       PsiWhiteSpace(' ')
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
-      DOT_QIALIFIED_EXPRESSION
+      DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('a')
         PsiElement(DOT)('.')
@@ -155,7 +155,7 @@ JetFile: Comparison.jet
       PsiWhiteSpace(' ')
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
-      DOT_QIALIFIED_EXPRESSION
+      DOT_QUALIFIED_EXPRESSION
         PARENTHESIZED
           PsiElement(LPAR)('(')
           BINARY_WITH_TYPE
@@ -384,7 +384,7 @@ JetFile: Comparison.jet
               RETURN
                 PsiElement(return)('return')
                 PsiWhiteSpace(' ')
-                DOT_QIALIFIED_EXPRESSION
+                DOT_QUALIFIED_EXPRESSION
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('ComparisonResult')
                   PsiElement(DOT)('.')
@@ -411,7 +411,7 @@ JetFile: Comparison.jet
               RETURN
                 PsiElement(return)('return')
                 PsiWhiteSpace(' ')
-                DOT_QIALIFIED_EXPRESSION
+                DOT_QUALIFIED_EXPRESSION
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('ComparisonResult')
                   PsiElement(DOT)('.')
@@ -421,7 +421,7 @@ JetFile: Comparison.jet
           RETURN
             PsiElement(return)('return')
             PsiWhiteSpace(' ')
-            DOT_QIALIFIED_EXPRESSION
+            DOT_QUALIFIED_EXPRESSION
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('ComparisonResult')
               PsiElement(DOT)('.')

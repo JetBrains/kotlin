@@ -13,7 +13,7 @@ JetFile: Precedence.jet
       BLOCK
         PsiElement(LBRACE)('{')
         PsiWhiteSpace('\n  ')
-        DOT_QIALIFIED_EXPRESSION
+        DOT_QUALIFIED_EXPRESSION
           CALL_EXPRESSION
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('b')
@@ -24,7 +24,7 @@ JetFile: Precedence.jet
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('x')
         PsiWhiteSpace('\n  ')
-        DOT_QIALIFIED_EXPRESSION
+        DOT_QUALIFIED_EXPRESSION
           POSTFIX_EXPRESSION
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('x')
@@ -395,7 +395,7 @@ JetFile: Precedence.jet
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('d')
         PsiWhiteSpace('\n  ')
-        DOT_QIALIFIED_EXPRESSION
+        DOT_QUALIFIED_EXPRESSION
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('a')
           PsiElement(DOT)('.')
@@ -409,7 +409,7 @@ JetFile: Precedence.jet
           OPERATION_REFERENCE
             PsiElement(PLUS)('+')
           PsiWhiteSpace(' ')
-          DOT_QIALIFIED_EXPRESSION
+          DOT_QUALIFIED_EXPRESSION
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('b')
             PsiElement(DOT)('.')
@@ -417,7 +417,7 @@ JetFile: Precedence.jet
               PsiElement(IDENTIFIER)('c')
         PsiWhiteSpace('\n  ')
         BINARY_EXPRESSION
-          DOT_QIALIFIED_EXPRESSION
+          DOT_QUALIFIED_EXPRESSION
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('a')
             PsiElement(DOT)('.')
@@ -431,7 +431,7 @@ JetFile: Precedence.jet
             PsiElement(IDENTIFIER)('c')
         PsiWhiteSpace('\n  ')
         POSTFIX_EXPRESSION
-          DOT_QIALIFIED_EXPRESSION
+          DOT_QUALIFIED_EXPRESSION
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('a')
             PsiElement(DOT)('.')
@@ -444,7 +444,7 @@ JetFile: Precedence.jet
           OPERATION_REFERENCE
             PsiElement(MINUSMINUS)('--')
           POSTFIX_EXPRESSION
-            DOT_QIALIFIED_EXPRESSION
+            DOT_QUALIFIED_EXPRESSION
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('a')
               PsiElement(DOT)('.')
@@ -969,7 +969,7 @@ JetFile: Precedence.jet
         PsiWhiteSpace('\n  ')
         BINARY_EXPRESSION
           BINARY_WITH_TYPE
-            DOT_QIALIFIED_EXPRESSION
+            DOT_QUALIFIED_EXPRESSION
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('a')
               PsiElement(DOT)('.')

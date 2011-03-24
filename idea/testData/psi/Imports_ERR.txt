@@ -57,8 +57,8 @@ JetFile: Imports_ERR.jet
     IMPORT_DIRECTIVE
       PsiElement(import)('import')
       PsiWhiteSpace(' ')
-      DOT_QIALIFIED_EXPRESSION
-        DOT_QIALIFIED_EXPRESSION
+      DOT_QUALIFIED_EXPRESSION
+        DOT_QUALIFIED_EXPRESSION
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('foo')
           PsiElement(DOT)('.')
@@ -83,7 +83,7 @@ JetFile: Imports_ERR.jet
     IMPORT_DIRECTIVE
       PsiElement(import)('import')
       PsiWhiteSpace(' ')
-      DOT_QIALIFIED_EXPRESSION
+      DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('foo')
         PsiElement(DOT)('.')
@@ -100,7 +100,7 @@ JetFile: Imports_ERR.jet
     IMPORT_DIRECTIVE
       PsiElement(import)('import')
       PsiWhiteSpace(' ')
-      DOT_QIALIFIED_EXPRESSION
+      DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('foo')
         PsiElement(DOT)('.')
@@ -126,7 +126,7 @@ JetFile: Imports_ERR.jet
     IMPORT_DIRECTIVE
       PsiElement(import)('import')
       PsiWhiteSpace(' ')
-      DOT_QIALIFIED_EXPRESSION
+      DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('foo')
         PsiElement(DOT)('.')
@@ -139,8 +139,8 @@ JetFile: Imports_ERR.jet
     IMPORT_DIRECTIVE
       PsiElement(import)('import')
       PsiWhiteSpace(' ')
-      DOT_QIALIFIED_EXPRESSION
-        DOT_QIALIFIED_EXPRESSION
+      DOT_QUALIFIED_EXPRESSION
+        DOT_QUALIFIED_EXPRESSION
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('foo')
           PsiElement(DOT)('.')
@@ -156,7 +156,7 @@ JetFile: Imports_ERR.jet
     IMPORT_DIRECTIVE
       PsiElement(import)('import')
       PsiWhiteSpace(' ')
-      DOT_QIALIFIED_EXPRESSION
+      DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('foo')
         PsiElement(DOT)('.')
@@ -173,7 +173,7 @@ JetFile: Imports_ERR.jet
     IMPORT_DIRECTIVE
       PsiElement(import)('import')
       PsiWhiteSpace(' ')
-      DOT_QIALIFIED_EXPRESSION
+      DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('foo')
         PsiElement(DOT)('.')
@@ -192,7 +192,7 @@ JetFile: Imports_ERR.jet
     IMPORT_DIRECTIVE
       PsiElement(import)('import')
       PsiWhiteSpace(' ')
-      DOT_QIALIFIED_EXPRESSION
+      DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('foo')
         PsiElement(DOT)('.')

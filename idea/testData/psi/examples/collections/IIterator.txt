@@ -109,7 +109,7 @@ JetFile: IIterator.jet
                   PsiElement(COMMA)(',')
                   PsiWhiteSpace(' ')
                   VALUE_ARGUMENT
-                    DOT_QIALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('buffer')
                       PsiElement(DOT)('.')
@@ -211,7 +211,7 @@ JetFile: IIterator.jet
                         OPERATION_REFERENCE
                           PsiElement(GT)('>')
                         PsiWhiteSpace(' ')
-                        DOT_QIALIFIED_EXPRESSION
+                        DOT_QUALIFIED_EXPRESSION
                           REFERENCE_EXPRESSION
                             PsiElement(IDENTIFIER)('buffer')
                           PsiElement(DOT)('.')
@@ -242,7 +242,7 @@ JetFile: IIterator.jet
                       PsiElement(GT)('>')
                     PsiWhiteSpace(' ')
                     BINARY_EXPRESSION
-                      DOT_QIALIFIED_EXPRESSION
+                      DOT_QUALIFIED_EXPRESSION
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('buffer')
                         PsiElement(DOT)('.')

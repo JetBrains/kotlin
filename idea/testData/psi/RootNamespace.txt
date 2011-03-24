@@ -39,9 +39,9 @@ JetFile: RootNamespace.jet
           BLOCK
             PsiElement(LBRACE)('{')
             PsiWhiteSpace('\n    ')
-            DOT_QIALIFIED_EXPRESSION
-              DOT_QIALIFIED_EXPRESSION
-                DOT_QIALIFIED_EXPRESSION
+            DOT_QUALIFIED_EXPRESSION
+              DOT_QUALIFIED_EXPRESSION
+                DOT_QUALIFIED_EXPRESSION
                   ROOT_NAMESPACE
                     PsiElement(namespace)('namespace')
                   PsiElement(DOT)('.')
@@ -90,9 +90,9 @@ JetFile: RootNamespace.jet
                   PsiElement(is)('is')
                   PsiWhiteSpace(' ')
                   DECOMPOSER_PATTERN
-                    DOT_QIALIFIED_EXPRESSION
-                      DOT_QIALIFIED_EXPRESSION
-                        DOT_QIALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      DOT_QUALIFIED_EXPRESSION
+                        DOT_QUALIFIED_EXPRESSION
                           ROOT_NAMESPACE
                             PsiElement(namespace)('namespace')
                           PsiElement(DOT)('.')

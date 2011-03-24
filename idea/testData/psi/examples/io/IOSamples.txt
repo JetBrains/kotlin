@@ -184,7 +184,7 @@ JetFile: IOSamples.jet
           PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           BODY
-            DOT_QIALIFIED_EXPRESSION
+            DOT_QUALIFIED_EXPRESSION
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('t')
               PsiElement(DOT)('.')
@@ -464,7 +464,7 @@ JetFile: IOSamples.jet
                         OPERATION_REFERENCE
                           PsiElement(EQ)('=')
                         PsiWhiteSpace(' ')
-                        DOT_QIALIFIED_EXPRESSION
+                        DOT_QUALIFIED_EXPRESSION
                           REFERENCE_EXPRESSION
                             PsiElement(IDENTIFIER)('stream')
                           PsiElement(DOT)('.')
@@ -625,7 +625,7 @@ JetFile: IOSamples.jet
           BLOCK
             PsiElement(LBRACE)('{')
             PsiWhiteSpace('\n    ')
-            DOT_QIALIFIED_EXPRESSION
+            DOT_QUALIFIED_EXPRESSION
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('stream')
               PsiElement(DOT)('.')

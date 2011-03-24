@@ -41,7 +41,7 @@ JetFile: HashMap.jet
           PsiWhiteSpace('\n    ')
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
-          DOT_QIALIFIED_EXPRESSION
+          DOT_QUALIFIED_EXPRESSION
             PARENTHESIZED
               PsiElement(LPAR)('(')
               BINARY_WITH_TYPE
@@ -135,7 +135,7 @@ JetFile: HashMap.jet
             PsiWhiteSpace(' ')
             PsiElement(EQ)('=')
             PsiWhiteSpace(' ')
-            DOT_QIALIFIED_EXPRESSION
+            DOT_QUALIFIED_EXPRESSION
               PARENTHESIZED
                 PsiElement(LPAR)('(')
                 BINARY_WITH_TYPE
@@ -551,7 +551,7 @@ JetFile: HashMap.jet
           PsiWhiteSpace(' ')
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
-          DOT_QIALIFIED_EXPRESSION
+          DOT_QUALIFIED_EXPRESSION
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('a')
             PsiElement(DOT)('.')
@@ -596,7 +596,7 @@ JetFile: HashMap.jet
           PsiWhiteSpace(' ')
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
-          DOT_QIALIFIED_EXPRESSION
+          DOT_QUALIFIED_EXPRESSION
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('a')
             PsiElement(DOT)('.')
@@ -677,8 +677,8 @@ JetFile: HashMap.jet
           PsiWhiteSpace('\n    ')
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
-          DOT_QIALIFIED_EXPRESSION
-            DOT_QIALIFIED_EXPRESSION
+          DOT_QUALIFIED_EXPRESSION
+            DOT_QUALIFIED_EXPRESSION
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('a')
               PsiElement(DOT)('.')
@@ -730,8 +730,8 @@ JetFile: HashMap.jet
           PsiWhiteSpace('\n    ')
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
-          DOT_QIALIFIED_EXPRESSION
-            DOT_QIALIFIED_EXPRESSION
+          DOT_QUALIFIED_EXPRESSION
+            DOT_QUALIFIED_EXPRESSION
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('a')
               PsiElement(DOT)('.')
@@ -821,8 +821,8 @@ JetFile: HashMap.jet
           PsiWhiteSpace(' ')
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
-          DOT_QIALIFIED_EXPRESSION
-            DOT_QIALIFIED_EXPRESSION
+          DOT_QUALIFIED_EXPRESSION
+            DOT_QUALIFIED_EXPRESSION
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('a')
               PsiElement(DOT)('.')
@@ -881,7 +881,7 @@ JetFile: HashMap.jet
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
           BINARY_EXPRESSION
-            DOT_QIALIFIED_EXPRESSION
+            DOT_QUALIFIED_EXPRESSION
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('a')
               PsiElement(DOT)('.')

@@ -306,7 +306,7 @@ JetFile: Graph.jet
           BLOCK
             PsiElement(LBRACE)('{')
             PsiWhiteSpace('\n    ')
-            DOT_QIALIFIED_EXPRESSION
+            DOT_QUALIFIED_EXPRESSION
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('mutableEdges')
               PsiElement(DOT)('.')
@@ -367,7 +367,7 @@ JetFile: Graph.jet
           BLOCK
             PsiElement(LBRACE)('{')
             PsiWhiteSpace('\n    ')
-            DOT_QIALIFIED_EXPRESSION
+            DOT_QUALIFIED_EXPRESSION
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('mutableEdges')
               PsiElement(DOT)('.')
@@ -435,8 +435,8 @@ JetFile: Graph.jet
           PsiWhiteSpace(' ')
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
-          DOT_QIALIFIED_EXPRESSION
-            DOT_QIALIFIED_EXPRESSION
+          DOT_QUALIFIED_EXPRESSION
+            DOT_QUALIFIED_EXPRESSION
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('edges')
               PsiElement(DOT)('.')
@@ -447,7 +447,7 @@ JetFile: Graph.jet
                   PsiElement(LBRACE)('{')
                   BODY
                     BINARY_EXPRESSION
-                      DOT_QIALIFIED_EXPRESSION
+                      DOT_QUALIFIED_EXPRESSION
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('it')
                         PsiElement(DOT)('.')
@@ -467,7 +467,7 @@ JetFile: Graph.jet
               FUNCTION_LITERAL
                 PsiElement(LBRACE)('{')
                 BODY
-                  DOT_QIALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('it')
                     PsiElement(DOT)('.')
@@ -548,7 +548,7 @@ JetFile: Graph.jet
                   PsiElement(LPAR)('(')
                   PsiElement(RPAR)(')')
             PsiWhiteSpace('\n    ')
-            DOT_QIALIFIED_EXPRESSION
+            DOT_QUALIFIED_EXPRESSION
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('vertices')
               PsiElement(DOT)('.')
@@ -670,7 +670,7 @@ JetFile: Graph.jet
                     PREFIX_EXPRESSION
                       OPERATION_REFERENCE
                         PsiElement(EXCL)('!')
-                      DOT_QIALIFIED_EXPRESSION
+                      DOT_QUALIFIED_EXPRESSION
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('visited')
                         PsiElement(DOT)('.')
@@ -699,7 +699,7 @@ JetFile: Graph.jet
                         PsiElement(IDENTIFIER)('current')
                     PsiElement(RPAR)(')')
                 PsiWhiteSpace('\n      ')
-                DOT_QIALIFIED_EXPRESSION
+                DOT_QUALIFIED_EXPRESSION
                   CALL_EXPRESSION
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('neighbours')
@@ -835,7 +835,7 @@ JetFile: Graph.jet
           BLOCK
             PsiElement(LBRACE)('{')
             PsiWhiteSpace('\n    ')
-            DOT_QIALIFIED_EXPRESSION
+            DOT_QUALIFIED_EXPRESSION
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('vertices')
               PsiElement(DOT)('.')
@@ -855,7 +855,7 @@ JetFile: Graph.jet
                         PREFIX_EXPRESSION
                           OPERATION_REFERENCE
                             PsiElement(EXCL)('!')
-                          DOT_QIALIFIED_EXPRESSION
+                          DOT_QUALIFIED_EXPRESSION
                             REFERENCE_EXPRESSION
                               PsiElement(IDENTIFIER)('visited')
                             PsiElement(DOT)('.')
@@ -874,7 +874,7 @@ JetFile: Graph.jet
                         CONTINUE
                           PsiElement(continue)('continue')
                     PsiWhiteSpace('\n      ')
-                    DOT_QIALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('pending')
                       PsiElement(DOT)('.')
@@ -896,7 +896,7 @@ JetFile: Graph.jet
                         PREFIX_EXPRESSION
                           OPERATION_REFERENCE
                             PsiElement(EXCL)('!')
-                          DOT_QIALIFIED_EXPRESSION
+                          DOT_QUALIFIED_EXPRESSION
                             REFERENCE_EXPRESSION
                               PsiElement(IDENTIFIER)('pending')
                             PsiElement(DOT)('.')
@@ -916,7 +916,7 @@ JetFile: Graph.jet
                               PsiWhiteSpace(' ')
                               PsiElement(EQ)('=')
                               PsiWhiteSpace(' ')
-                              DOT_QIALIFIED_EXPRESSION
+                              DOT_QUALIFIED_EXPRESSION
                                 REFERENCE_EXPRESSION
                                   PsiElement(IDENTIFIER)('pending')
                                 PsiElement(DOT)('.')
@@ -938,7 +938,7 @@ JetFile: Graph.jet
                                 PsiElement(RPAR)(')')
                             PsiElement(SEMICOLON)(';')
                             PsiWhiteSpace('\n        ')
-                            DOT_QIALIFIED_EXPRESSION
+                            DOT_QUALIFIED_EXPRESSION
                               CALL_EXPRESSION
                                 REFERENCE_EXPRESSION
                                   PsiElement(IDENTIFIER)('neighbours')
@@ -967,7 +967,7 @@ JetFile: Graph.jet
                                       PsiWhiteSpace(' ')
                                       PsiElement(LPAR)('(')
                                       CONDITION
-                                        DOT_QIALIFIED_EXPRESSION
+                                        DOT_QUALIFIED_EXPRESSION
                                           REFERENCE_EXPRESSION
                                             PsiElement(IDENTIFIER)('visited')
                                           PsiElement(DOT)('.')
@@ -987,7 +987,7 @@ JetFile: Graph.jet
                                           PsiElement(LBRACE)('{')
                                           PsiWhiteSpace('\n            ')
                                           BODY
-                                            DOT_QIALIFIED_EXPRESSION
+                                            DOT_QUALIFIED_EXPRESSION
                                               REFERENCE_EXPRESSION
                                                 PsiElement(IDENTIFIER)('pending')
                                               PsiElement(DOT)('.')

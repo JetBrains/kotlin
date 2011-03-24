@@ -178,7 +178,7 @@ JetFile: BinaryTree.jet
             PsiElement(LBRACE)('{')
             PsiWhiteSpace('\n    ')
             BINARY_EXPRESSION
-              DOT_QIALIFIED_EXPRESSION
+              DOT_QUALIFIED_EXPRESSION
                 THIS_EXPRESSION
                   PsiElement(this)('this')
                 PsiElement(DOT)('.')
@@ -422,7 +422,7 @@ JetFile: BinaryTree.jet
                       PsiElement(COMMA)(',')
                       PsiWhiteSpace(' ')
                       VALUE_ARGUMENT
-                        DOT_QIALIFIED_EXPRESSION
+                        DOT_QUALIFIED_EXPRESSION
                           REFERENCE_EXPRESSION
                             PsiElement(IDENTIFIER)('node')
                           PsiElement(DOT)('.')
@@ -456,7 +456,7 @@ JetFile: BinaryTree.jet
                       VALUE_ARGUMENT_LIST
                         PsiElement(LPAR)('(')
                         VALUE_ARGUMENT
-                          DOT_QIALIFIED_EXPRESSION
+                          DOT_QUALIFIED_EXPRESSION
                             REFERENCE_EXPRESSION
                               PsiElement(IDENTIFIER)('node')
                             PsiElement(DOT)('.')
@@ -482,7 +482,7 @@ JetFile: BinaryTree.jet
                       VALUE_ARGUMENT_LIST
                         PsiElement(LPAR)('(')
                         VALUE_ARGUMENT
-                          DOT_QIALIFIED_EXPRESSION
+                          DOT_QUALIFIED_EXPRESSION
                             REFERENCE_EXPRESSION
                               PsiElement(IDENTIFIER)('node')
                             PsiElement(DOT)('.')
@@ -700,7 +700,7 @@ JetFile: BinaryTree.jet
                       PsiElement(COMMA)(',')
                       PsiWhiteSpace(' ')
                       VALUE_ARGUMENT
-                        DOT_QIALIFIED_EXPRESSION
+                        DOT_QUALIFIED_EXPRESSION
                           REFERENCE_EXPRESSION
                             PsiElement(IDENTIFIER)('node')
                           PsiElement(DOT)('.')
@@ -736,7 +736,7 @@ JetFile: BinaryTree.jet
                         VALUE_ARGUMENT
                           PsiElement(ref)('ref')
                           PsiWhiteSpace(' ')
-                          DOT_QIALIFIED_EXPRESSION
+                          DOT_QUALIFIED_EXPRESSION
                             REFERENCE_EXPRESSION
                               PsiElement(IDENTIFIER)('node')
                             PsiElement(DOT)('.')
@@ -764,7 +764,7 @@ JetFile: BinaryTree.jet
                         VALUE_ARGUMENT
                           PsiElement(ref)('ref')
                           PsiWhiteSpace(' ')
-                          DOT_QIALIFIED_EXPRESSION
+                          DOT_QUALIFIED_EXPRESSION
                             REFERENCE_EXPRESSION
                               PsiElement(IDENTIFIER)('node')
                             PsiElement(DOT)('.')
@@ -878,7 +878,7 @@ JetFile: BinaryTree.jet
                       PsiElement(COMMA)(',')
                       PsiWhiteSpace(' ')
                       VALUE_ARGUMENT
-                        DOT_QIALIFIED_EXPRESSION
+                        DOT_QUALIFIED_EXPRESSION
                           REFERENCE_EXPRESSION
                             PsiElement(IDENTIFIER)('node')
                           PsiElement(DOT)('.')
@@ -915,7 +915,7 @@ JetFile: BinaryTree.jet
                       PsiElement(LPAR)('(')
                       CONDITION
                         BINARY_EXPRESSION
-                          DOT_QIALIFIED_EXPRESSION
+                          DOT_QUALIFIED_EXPRESSION
                             REFERENCE_EXPRESSION
                               PsiElement(IDENTIFIER)('node')
                             PsiElement(DOT)('.')
@@ -935,7 +935,7 @@ JetFile: BinaryTree.jet
                           PsiWhiteSpace('\n            ')
                           BODY
                             BINARY_EXPRESSION
-                              DOT_QIALIFIED_EXPRESSION
+                              DOT_QUALIFIED_EXPRESSION
                                 REFERENCE_EXPRESSION
                                   PsiElement(IDENTIFIER)('node')
                                 PsiElement(DOT)('.')
@@ -980,7 +980,7 @@ JetFile: BinaryTree.jet
                             VALUE_ARGUMENT_LIST
                               PsiElement(LPAR)('(')
                               VALUE_ARGUMENT
-                                DOT_QIALIFIED_EXPRESSION
+                                DOT_QUALIFIED_EXPRESSION
                                   REFERENCE_EXPRESSION
                                     PsiElement(IDENTIFIER)('node')
                                   PsiElement(DOT)('.')
@@ -1001,7 +1001,7 @@ JetFile: BinaryTree.jet
                       PsiElement(LPAR)('(')
                       CONDITION
                         BINARY_EXPRESSION
-                          DOT_QIALIFIED_EXPRESSION
+                          DOT_QUALIFIED_EXPRESSION
                             REFERENCE_EXPRESSION
                               PsiElement(IDENTIFIER)('node')
                             PsiElement(DOT)('.')
@@ -1021,7 +1021,7 @@ JetFile: BinaryTree.jet
                           PsiWhiteSpace('\n            ')
                           BODY
                             BINARY_EXPRESSION
-                              DOT_QIALIFIED_EXPRESSION
+                              DOT_QUALIFIED_EXPRESSION
                                 REFERENCE_EXPRESSION
                                   PsiElement(IDENTIFIER)('node')
                                 PsiElement(DOT)('.')
@@ -1066,7 +1066,7 @@ JetFile: BinaryTree.jet
                             VALUE_ARGUMENT_LIST
                               PsiElement(LPAR)('(')
                               VALUE_ARGUMENT
-                                DOT_QIALIFIED_EXPRESSION
+                                DOT_QUALIFIED_EXPRESSION
                                   REFERENCE_EXPRESSION
                                     PsiElement(IDENTIFIER)('node')
                                   PsiElement(DOT)('.')
@@ -1252,7 +1252,7 @@ JetFile: BinaryTree.jet
                       PsiElement(COMMA)(',')
                       PsiWhiteSpace(' ')
                       VALUE_ARGUMENT
-                        DOT_QIALIFIED_EXPRESSION
+                        DOT_QUALIFIED_EXPRESSION
                           REFERENCE_EXPRESSION
                             PsiElement(IDENTIFIER)('node')
                           PsiElement(DOT)('.')
@@ -1286,7 +1286,7 @@ JetFile: BinaryTree.jet
                       VALUE_ARGUMENT_LIST
                         PsiElement(LPAR)('(')
                         VALUE_ARGUMENT
-                          DOT_QIALIFIED_EXPRESSION
+                          DOT_QUALIFIED_EXPRESSION
                             REFERENCE_EXPRESSION
                               PsiElement(IDENTIFIER)('node')
                             PsiElement(DOT)('.')
@@ -1307,7 +1307,7 @@ JetFile: BinaryTree.jet
                       VALUE_ARGUMENT_LIST
                         PsiElement(LPAR)('(')
                         VALUE_ARGUMENT
-                          DOT_QIALIFIED_EXPRESSION
+                          DOT_QUALIFIED_EXPRESSION
                             REFERENCE_EXPRESSION
                               PsiElement(IDENTIFIER)('node')
                             PsiElement(DOT)('.')
@@ -1530,7 +1530,7 @@ JetFile: BinaryTree.jet
                         VALUE_ARGUMENT_LIST
                           PsiElement(LPAR)('(')
                           VALUE_ARGUMENT
-                            DOT_QIALIFIED_EXPRESSION
+                            DOT_QUALIFIED_EXPRESSION
                               REFERENCE_EXPRESSION
                                 PsiElement(IDENTIFIER)('node')
                               PsiElement(DOT)('.')
@@ -1539,7 +1539,7 @@ JetFile: BinaryTree.jet
                           PsiElement(RPAR)(')')
                     PsiWhiteSpace('\n        ')
                     BINARY_EXPRESSION
-                      DOT_QIALIFIED_EXPRESSION
+                      DOT_QUALIFIED_EXPRESSION
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('node')
                         PsiElement(DOT)('.')
@@ -1549,7 +1549,7 @@ JetFile: BinaryTree.jet
                       OPERATION_REFERENCE
                         PsiElement(EQ)('=')
                       PsiWhiteSpace(' ')
-                      DOT_QIALIFIED_EXPRESSION
+                      DOT_QUALIFIED_EXPRESSION
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('min')
                         PsiElement(DOT)('.')
@@ -1645,8 +1645,8 @@ JetFile: BinaryTree.jet
                   PsiElement(LPAR)('(')
                   CONDITION
                     BINARY_EXPRESSION
-                      DOT_QIALIFIED_EXPRESSION
-                        DOT_QIALIFIED_EXPRESSION
+                      DOT_QUALIFIED_EXPRESSION
+                        DOT_QUALIFIED_EXPRESSION
                           REFERENCE_EXPRESSION
                             PsiElement(IDENTIFIER)('node')
                           PsiElement(DOT)('.')
@@ -1669,8 +1669,8 @@ JetFile: BinaryTree.jet
                       PsiWhiteSpace('\n        ')
                       BODY
                         BINARY_EXPRESSION
-                          DOT_QIALIFIED_EXPRESSION
-                            DOT_QIALIFIED_EXPRESSION
+                          DOT_QUALIFIED_EXPRESSION
+                            DOT_QUALIFIED_EXPRESSION
                               REFERENCE_EXPRESSION
                                 PsiElement(IDENTIFIER)('node')
                               PsiElement(DOT)('.')
@@ -1697,8 +1697,8 @@ JetFile: BinaryTree.jet
                       PsiElement(LPAR)('(')
                       CONDITION
                         BINARY_EXPRESSION
-                          DOT_QIALIFIED_EXPRESSION
-                            DOT_QIALIFIED_EXPRESSION
+                          DOT_QUALIFIED_EXPRESSION
+                            DOT_QUALIFIED_EXPRESSION
                               REFERENCE_EXPRESSION
                                 PsiElement(IDENTIFIER)('node')
                               PsiElement(DOT)('.')
@@ -1721,8 +1721,8 @@ JetFile: BinaryTree.jet
                           PsiWhiteSpace('\n        ')
                           BODY
                             BINARY_EXPRESSION
-                              DOT_QIALIFIED_EXPRESSION
-                                DOT_QIALIFIED_EXPRESSION
+                              DOT_QUALIFIED_EXPRESSION
+                                DOT_QUALIFIED_EXPRESSION
                                   REFERENCE_EXPRESSION
                                     PsiElement(IDENTIFIER)('node')
                                   PsiElement(DOT)('.')
@@ -1790,7 +1790,7 @@ JetFile: BinaryTree.jet
               PsiElement(LPAR)('(')
               CONDITION
                 BINARY_EXPRESSION
-                  DOT_QIALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('node')
                     PsiElement(DOT)('.')
@@ -1817,7 +1817,7 @@ JetFile: BinaryTree.jet
                   VALUE_ARGUMENT_LIST
                     PsiElement(LPAR)('(')
                     VALUE_ARGUMENT
-                      DOT_QIALIFIED_EXPRESSION
+                      DOT_QUALIFIED_EXPRESSION
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('node')
                         PsiElement(DOT)('.')
@@ -1914,8 +1914,8 @@ JetFile: BinaryTree.jet
                 PsiWhiteSpace(' ')
                 PsiElement(EQ)('=')
                 PsiWhiteSpace(' ')
-                DOT_QIALIFIED_EXPRESSION
-                  DOT_QIALIFIED_EXPRESSION
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('BinaryTree')
                     PsiElement(DOT)('.')
@@ -2007,7 +2007,7 @@ JetFile: BinaryTree.jet
                     PsiElement(RPAR)(')')
                     PsiWhiteSpace('\n        ')
                     THEN
-                      DOT_QIALIFIED_EXPRESSION
+                      DOT_QUALIFIED_EXPRESSION
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('down')
                         PsiElement(DOT)('.')
@@ -2093,7 +2093,7 @@ JetFile: BinaryTree.jet
                   RETURN
                     PsiElement(return)('return')
                     PsiWhiteSpace(' ')
-                    DOT_QIALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('lastNode')
                       PsiElement(DOT)('.')
@@ -2147,7 +2147,7 @@ JetFile: BinaryTree.jet
                               PREFIX_EXPRESSION
                                 OPERATION_REFERENCE
                                   PsiElement(EXCL)('!')
-                                DOT_QIALIFIED_EXPRESSION
+                                DOT_QUALIFIED_EXPRESSION
                                   REFERENCE_EXPRESSION
                                     PsiElement(IDENTIFIER)('down')
                                   PsiElement(DOT)('.')
@@ -2167,7 +2167,7 @@ JetFile: BinaryTree.jet
                                     PsiWhiteSpace(' ')
                                     PsiElement(EQ)('=')
                                     PsiWhiteSpace(' ')
-                                    DOT_QIALIFIED_EXPRESSION
+                                    DOT_QUALIFIED_EXPRESSION
                                       REFERENCE_EXPRESSION
                                         PsiElement(IDENTIFIER)('down')
                                       PsiElement(DOT)('.')
@@ -2184,7 +2184,7 @@ JetFile: BinaryTree.jet
                                     PsiElement(LPAR)('(')
                                     CONDITION
                                       BINARY_EXPRESSION
-                                        DOT_QIALIFIED_EXPRESSION
+                                        DOT_QUALIFIED_EXPRESSION
                                           REFERENCE_EXPRESSION
                                             PsiElement(IDENTIFIER)('curNode')
                                           PsiElement(DOT)('.')
@@ -2203,7 +2203,7 @@ JetFile: BinaryTree.jet
                                         PsiElement(LBRACE)('{')
                                         PsiWhiteSpace('\n            ')
                                         BODY
-                                          DOT_QIALIFIED_EXPRESSION
+                                          DOT_QUALIFIED_EXPRESSION
                                             REFERENCE_EXPRESSION
                                               PsiElement(IDENTIFIER)('up')
                                             PsiElement(DOT)('.')
@@ -2217,7 +2217,7 @@ JetFile: BinaryTree.jet
                                                     PsiElement(IDENTIFIER)('curNode')
                                                 PsiElement(RPAR)(')')
                                           PsiWhiteSpace('\n            ')
-                                          DOT_QIALIFIED_EXPRESSION
+                                          DOT_QUALIFIED_EXPRESSION
                                             REFERENCE_EXPRESSION
                                               PsiElement(IDENTIFIER)('down')
                                             PsiElement(DOT)('.')
@@ -2227,7 +2227,7 @@ JetFile: BinaryTree.jet
                                               VALUE_ARGUMENT_LIST
                                                 PsiElement(LPAR)('(')
                                                 VALUE_ARGUMENT
-                                                  DOT_QIALIFIED_EXPRESSION
+                                                  DOT_QUALIFIED_EXPRESSION
                                                     REFERENCE_EXPRESSION
                                                       PsiElement(IDENTIFIER)('curNode')
                                                     PsiElement(DOT)('.')
@@ -2250,7 +2250,7 @@ JetFile: BinaryTree.jet
                                             PsiElement(LPAR)('(')
                                             CONDITION
                                               BINARY_EXPRESSION
-                                                DOT_QIALIFIED_EXPRESSION
+                                                DOT_QUALIFIED_EXPRESSION
                                                   REFERENCE_EXPRESSION
                                                     PsiElement(IDENTIFIER)('curNode')
                                                   PsiElement(DOT)('.')
@@ -2269,7 +2269,7 @@ JetFile: BinaryTree.jet
                                                 PsiElement(LBRACE)('{')
                                                 PsiWhiteSpace('\n              ')
                                                 BODY
-                                                  DOT_QIALIFIED_EXPRESSION
+                                                  DOT_QUALIFIED_EXPRESSION
                                                     REFERENCE_EXPRESSION
                                                       PsiElement(IDENTIFIER)('down')
                                                     PsiElement(DOT)('.')
@@ -2279,7 +2279,7 @@ JetFile: BinaryTree.jet
                                                       VALUE_ARGUMENT_LIST
                                                         PsiElement(LPAR)('(')
                                                         VALUE_ARGUMENT
-                                                          DOT_QIALIFIED_EXPRESSION
+                                                          DOT_QUALIFIED_EXPRESSION
                                                             REFERENCE_EXPRESSION
                                                               PsiElement(IDENTIFIER)('curNode')
                                                             PsiElement(DOT)('.')
@@ -2314,7 +2314,7 @@ JetFile: BinaryTree.jet
                                     PsiWhiteSpace(' ')
                                     PsiElement(EQ)('=')
                                     PsiWhiteSpace(' ')
-                                    DOT_QIALIFIED_EXPRESSION
+                                    DOT_QUALIFIED_EXPRESSION
                                       REFERENCE_EXPRESSION
                                         PsiElement(IDENTIFIER)('up')
                                       PsiElement(DOT)('.')
@@ -2331,7 +2331,7 @@ JetFile: BinaryTree.jet
                                     PsiElement(LPAR)('(')
                                     CONDITION
                                       BINARY_EXPRESSION
-                                        DOT_QIALIFIED_EXPRESSION
+                                        DOT_QUALIFIED_EXPRESSION
                                           REFERENCE_EXPRESSION
                                             PsiElement(IDENTIFIER)('curNode')
                                           PsiElement(DOT)('.')
@@ -2350,7 +2350,7 @@ JetFile: BinaryTree.jet
                                         PsiElement(LBRACE)('{')
                                         PsiWhiteSpace('\n            ')
                                         BODY
-                                          DOT_QIALIFIED_EXPRESSION
+                                          DOT_QUALIFIED_EXPRESSION
                                             REFERENCE_EXPRESSION
                                               PsiElement(IDENTIFIER)('down')
                                             PsiElement(DOT)('.')
@@ -2360,7 +2360,7 @@ JetFile: BinaryTree.jet
                                               VALUE_ARGUMENT_LIST
                                                 PsiElement(LPAR)('(')
                                                 VALUE_ARGUMENT
-                                                  DOT_QIALIFIED_EXPRESSION
+                                                  DOT_QUALIFIED_EXPRESSION
                                                     REFERENCE_EXPRESSION
                                                       PsiElement(IDENTIFIER)('curNode')
                                                     PsiElement(DOT)('.')
@@ -2408,7 +2408,7 @@ JetFile: BinaryTree.jet
                     PREFIX_EXPRESSION
                       OPERATION_REFERENCE
                         PsiElement(EXCL)('!')
-                      DOT_QIALIFIED_EXPRESSION
+                      DOT_QUALIFIED_EXPRESSION
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('down')
                         PsiElement(DOT)('.')
@@ -2421,7 +2421,7 @@ JetFile: BinaryTree.jet
                     PREFIX_EXPRESSION
                       OPERATION_REFERENCE
                         PsiElement(EXCL)('!')
-                      DOT_QIALIFIED_EXPRESSION
+                      DOT_QUALIFIED_EXPRESSION
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('up')
                         PsiElement(DOT)('.')
@@ -2498,8 +2498,8 @@ JetFile: BinaryTree.jet
                       PsiElement(PLUSPLUS)('++')
                   PsiWhiteSpace('\n      ')
                   BINARY_EXPRESSION
-                    DOT_QIALIFIED_EXPRESSION
-                      DOT_QIALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      DOT_QUALIFIED_EXPRESSION
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('BinaryTree')
                         PsiElement(DOT)('.')
@@ -2545,8 +2545,8 @@ JetFile: BinaryTree.jet
                         OPERATION_REFERENCE
                           PsiElement(EXCLEQ)('!=')
                         PsiWhiteSpace(' ')
-                        DOT_QIALIFIED_EXPRESSION
-                          DOT_QIALIFIED_EXPRESSION
+                        DOT_QUALIFIED_EXPRESSION
+                          DOT_QUALIFIED_EXPRESSION
                             REFERENCE_EXPRESSION
                               PsiElement(IDENTIFIER)('BinaryTree')
                             PsiElement(DOT)('.')

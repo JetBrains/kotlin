@@ -67,7 +67,7 @@ JetFile: PriorityQueueAsPushPop.jet
           PsiWhiteSpace(' ')
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
-          DOT_QIALIFIED_EXPRESSION
+          DOT_QUALIFIED_EXPRESSION
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('wrapped')
             PsiElement(DOT)('.')
@@ -102,7 +102,7 @@ JetFile: PriorityQueueAsPushPop.jet
           PsiWhiteSpace(' ')
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
-          DOT_QIALIFIED_EXPRESSION
+          DOT_QUALIFIED_EXPRESSION
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('wrapped')
             PsiElement(DOT)('.')
@@ -131,7 +131,7 @@ JetFile: PriorityQueueAsPushPop.jet
             PsiWhiteSpace(' ')
             PsiElement(EQ)('=')
             PsiWhiteSpace(' ')
-            DOT_QIALIFIED_EXPRESSION
+            DOT_QUALIFIED_EXPRESSION
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('wrapped')
               PsiElement(DOT)('.')

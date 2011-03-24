@@ -25,7 +25,7 @@ JetFile: LINQ.jet
               FUNCTION_LITERAL
                 PsiElement(LBRACE)('{')
                 BODY
-                  DOT_QIALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('it')
                     PsiElement(DOT)('.')
@@ -39,7 +39,7 @@ JetFile: LINQ.jet
             FUNCTION_LITERAL
               PsiElement(LBRACE)('{')
               BODY
-                DOT_QIALIFIED_EXPRESSION
+                DOT_QUALIFIED_EXPRESSION
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('it')
                   PsiElement(DOT)('.')

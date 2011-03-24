@@ -73,7 +73,7 @@ JetFile: UpdateOperation.jet
                     PsiWhiteSpace(' ')
                     PsiElement(EQ)('=')
                     PsiWhiteSpace(' ')
-                    DOT_QIALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('from')
                       PsiElement(DOT)('.')
@@ -93,7 +93,7 @@ JetFile: UpdateOperation.jet
                     PsiWhiteSpace(' ')
                     PsiElement(EQ)('=')
                     PsiWhiteSpace(' ')
-                    DOT_QIALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('from')
                       PsiElement(DOT)('.')
@@ -161,7 +161,7 @@ JetFile: UpdateOperation.jet
       PsiWhiteSpace(' ')
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
-      DOT_QIALIFIED_EXPRESSION
+      DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('Point')
         PsiElement(DOT)('.')
@@ -191,7 +191,7 @@ JetFile: UpdateOperation.jet
       PsiWhiteSpace(' ')
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
-      DOT_QIALIFIED_EXPRESSION
+      DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('Point')
         PsiElement(DOT)('.')
@@ -224,7 +224,7 @@ JetFile: UpdateOperation.jet
       PsiWhiteSpace(' ')
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
-      DOT_QIALIFIED_EXPRESSION
+      DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('Point')
         PsiElement(DOT)('.')

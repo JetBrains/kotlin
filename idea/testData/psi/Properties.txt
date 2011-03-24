@@ -7,8 +7,8 @@ JetFile: Properties.jet
       PsiWhiteSpace(' ')
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
-      DOT_QIALIFIED_EXPRESSION
-        DOT_QIALIFIED_EXPRESSION
+      DOT_QUALIFIED_EXPRESSION
+        DOT_QUALIFIED_EXPRESSION
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('bar')
           PsiElement(DOT)('.')
@@ -761,7 +761,7 @@ JetFile: Properties.jet
         PsiElement(EQ)('=')
         PsiWhiteSpace(' ')
         BINARY_EXPRESSION
-          DOT_QIALIFIED_EXPRESSION
+          DOT_QUALIFIED_EXPRESSION
             THIS_EXPRESSION
               PsiElement(this)('this')
             PsiElement(DOT)('.')

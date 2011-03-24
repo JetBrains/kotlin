@@ -60,7 +60,7 @@ JetFile: With.jet
       PsiWhiteSpace(' ')
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
-      DOT_QIALIFIED_EXPRESSION
+      DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('receiver')
         PsiElement(DOT)('.')
@@ -90,9 +90,9 @@ JetFile: With.jet
           VALUE_ARGUMENT_LIST
             PsiElement(LPAR)('(')
             VALUE_ARGUMENT
-              DOT_QIALIFIED_EXPRESSION
-                DOT_QIALIFIED_EXPRESSION
-                  DOT_QIALIFIED_EXPRESSION
+              DOT_QUALIFIED_EXPRESSION
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('java')
                     PsiElement(DOT)('.')
@@ -134,8 +134,8 @@ JetFile: With.jet
             PsiWhiteSpace('\n  ')
             PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n\n  ')
-        DOT_QIALIFIED_EXPRESSION
-          DOT_QIALIFIED_EXPRESSION
+        DOT_QUALIFIED_EXPRESSION
+          DOT_QUALIFIED_EXPRESSION
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('System')
             PsiElement(DOT)('.')

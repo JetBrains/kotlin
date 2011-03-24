@@ -85,7 +85,7 @@ JetFile: Stack.jet
           BLOCK
             PsiElement(LBRACE)('{')
             PsiWhiteSpace('\n    ')
-            DOT_QIALIFIED_EXPRESSION
+            DOT_QUALIFIED_EXPRESSION
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('data')
               PsiElement(DOT)('.')
@@ -118,7 +118,7 @@ JetFile: Stack.jet
           PsiWhiteSpace(' ')
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
-          DOT_QIALIFIED_EXPRESSION
+          DOT_QUALIFIED_EXPRESSION
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('data')
             PsiElement(DOT)('.')
@@ -144,7 +144,7 @@ JetFile: Stack.jet
             PsiWhiteSpace(' ')
             PsiElement(EQ)('=')
             PsiWhiteSpace(' ')
-            DOT_QIALIFIED_EXPRESSION
+            DOT_QUALIFIED_EXPRESSION
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('data')
               PsiElement(DOT)('.')

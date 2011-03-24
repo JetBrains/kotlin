@@ -31,7 +31,7 @@ JetFile: NamespaceBlock.jet
         IMPORT_DIRECTIVE
           PsiElement(import)('import')
           PsiWhiteSpace(' ')
-          DOT_QIALIFIED_EXPRESSION
+          DOT_QUALIFIED_EXPRESSION
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('foo')
             PsiElement(DOT)('.')

@@ -384,7 +384,7 @@ JetFile: BitArith.jet
                   PsiElement(LPAR)('(')
                   VALUE_ARGUMENT
                     BINARY_EXPRESSION
-                      DOT_QIALIFIED_EXPRESSION
+                      DOT_QUALIFIED_EXPRESSION
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('x')
                         PsiElement(DOT)('.')

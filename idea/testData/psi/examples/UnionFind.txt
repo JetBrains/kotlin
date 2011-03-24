@@ -62,14 +62,14 @@ JetFile: UnionFind.jet
               PsiWhiteSpace(' ')
               PsiElement(EQ)('=')
               PsiWhiteSpace(' ')
-              DOT_QIALIFIED_EXPRESSION
+              DOT_QUALIFIED_EXPRESSION
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('data')
                 PsiElement(DOT)('.')
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('size')
             PsiWhiteSpace('\n    ')
-            DOT_QIALIFIED_EXPRESSION
+            DOT_QUALIFIED_EXPRESSION
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('data')
               PsiElement(DOT)('.')
@@ -297,8 +297,8 @@ JetFile: UnionFind.jet
                       PsiWhiteSpace(' ')
                       PsiElement(LPAR)('(')
                       CONDITION
-                        DOT_QIALIFIED_EXPRESSION
-                          DOT_QIALIFIED_EXPRESSION
+                        DOT_QUALIFIED_EXPRESSION
+                          DOT_QUALIFIED_EXPRESSION
                             REFERENCE_EXPRESSION
                               PsiElement(IDENTIFIER)('Random')
                             PsiElement(DOT)('.')

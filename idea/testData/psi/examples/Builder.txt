@@ -7,7 +7,7 @@ JetFile: Builder.jet
       PsiWhiteSpace(' ')
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
-      DOT_QIALIFIED_EXPRESSION
+      DOT_QUALIFIED_EXPRESSION
         OBJECT_LITERAL
           PsiElement(object)('object')
           PsiWhiteSpace(' ')
@@ -86,8 +86,8 @@ JetFile: Builder.jet
                   PsiElement(LBRACE)('{')
                   PsiWhiteSpace('\n    ')
                   BODY
-                    DOT_QIALIFIED_EXPRESSION
-                      DOT_QIALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      DOT_QUALIFIED_EXPRESSION
                         NEW
                           PsiElement(new)('new')
                           PsiWhiteSpace(' ')
@@ -417,7 +417,7 @@ JetFile: Builder.jet
                   PsiElement(LPAR)('(')
                   PsiElement(RPAR)(')')
             PsiWhiteSpace('\n    ')
-            DOT_QIALIFIED_EXPRESSION
+            DOT_QUALIFIED_EXPRESSION
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('lib')
               PsiElement(DOT)('.')

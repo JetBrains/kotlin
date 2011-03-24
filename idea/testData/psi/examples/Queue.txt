@@ -231,7 +231,7 @@ JetFile: Queue.jet
                   PsiWhiteSpace('\n      ')
                   BODY
                     BINARY_EXPRESSION
-                      DOT_QIALIFIED_EXPRESSION
+                      DOT_QUALIFIED_EXPRESSION
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('tail')
                         PsiElement(DOT)('.')
@@ -318,7 +318,7 @@ JetFile: Queue.jet
                     PsiWhiteSpace(' ')
                     PsiElement(EQ)('=')
                     PsiWhiteSpace(' ')
-                    DOT_QIALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('head')
                       PsiElement(DOT)('.')
@@ -332,7 +332,7 @@ JetFile: Queue.jet
                     OPERATION_REFERENCE
                       PsiElement(EQ)('=')
                     PsiWhiteSpace(' ')
-                    DOT_QIALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('head')
                       PsiElement(DOT)('.')

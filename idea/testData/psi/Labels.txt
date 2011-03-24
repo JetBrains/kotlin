@@ -225,7 +225,7 @@ JetFile: Labels.jet
           PsiElement(continue)('continue')
           PsiElement(ATAT)('@@')
         PsiWhiteSpace('\n\n  ')
-        DOT_QIALIFIED_EXPRESSION
+        DOT_QUALIFIED_EXPRESSION
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('a')
           PsiElement(DOT)('.')
@@ -262,7 +262,7 @@ JetFile: Labels.jet
                 PsiWhiteSpace('\n  ')
                 PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n\n  ')
-        DOT_QIALIFIED_EXPRESSION
+        DOT_QUALIFIED_EXPRESSION
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('a')
           PsiElement(DOT)('.')
@@ -299,7 +299,7 @@ JetFile: Labels.jet
                 PsiWhiteSpace('\n  ')
                 PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n\n  ')
-        DOT_QIALIFIED_EXPRESSION
+        DOT_QUALIFIED_EXPRESSION
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('a')
           PsiElement(DOT)('.')
