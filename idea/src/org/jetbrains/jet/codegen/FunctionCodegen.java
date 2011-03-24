@@ -18,36 +18,30 @@ public class FunctionCodegen {
     private final ClassVisitor v;
     private final BindingContext bindingContext;
     private final JetStandardLibrary standardLibrary;
+    private final JetTypeMapper typeMapper;
 
     public FunctionCodegen(ClassVisitor v, JetStandardLibrary standardLibrary, BindingContext bindingContext) {
         this.v = v;
         this.bindingContext = bindingContext;
         this.standardLibrary = standardLibrary;
+        typeMapper = new JetTypeMapper(standardLibrary);
     }
 
     public void gen(JetFunction f, JetNamespace owner) {
         final List<JetParameter> parameters = f.getValueParameters();
         Type[] parameterTypes = new Type[parameters.size()];
         for (int i = 0; i < parameters.size(); i++) {
-            parameterTypes[i] = mapTypeReference(parameters.get(i).getTypeReference());
+            parameterTypes[i] = typeMapper.mapType(bindingContext.resolveTypeReference(parameters.get(i).getTypeReference()));
         }
         final JetTypeReference returnTypeRef = f.getReturnTypeRef();
         Type returnType;
         if (returnTypeRef == null) {
             final FunctionDescriptor functionDescriptor = bindingContext.getFunctionDescriptor(f);
             final JetType type = functionDescriptor.getUnsubstitutedReturnType();
-            if (type.equals(JetStandardClasses.getUnitType())) {
-                returnType = Type.VOID_TYPE;
-            }
-            else if (type.equals(standardLibrary.getIntType())) {
-                returnType = Type.getType(Integer.class);
-            }
-            else {
-                throw new UnsupportedOperationException("don't know how to map type " + type);
-            }
+            returnType = typeMapper.mapType(type);
         }
         else {
-            returnType = mapTypeReference(returnTypeRef);
+            returnType = typeMapper.mapType(bindingContext.resolveTypeReference(returnTypeRef));
         }
         Method method = new Method(f.getName(), returnType, parameterTypes);
         final MethodVisitor mv = v.visitMethod(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC,
@@ -86,41 +80,6 @@ public class FunctionCodegen {
             return statements.size() > 0 && statements.get(statements.size()-1) instanceof JetReturnExpression;
         }
         return false;
-    }
-
-    private Type mapTypeReference(JetTypeReference typeRef) {
-        if (typeRef == null) {
-            throw new UnsupportedOperationException("Cannot evaluate type for parameter with no type ref");
-        }
-        final JetTypeElement typeElement = typeRef.getTypeElement();
-        if (typeElement instanceof JetUserType) {
-            final JetUserType userType = (JetUserType) typeElement;
-            return mapType(userType.getReferencedName(), userType.getTypeArguments());
-        }
-
-        throw new UnsupportedOperationException("Unknown type " + typeRef);
-    }
-
-    private Type mapType(final String name, final List<JetTypeProjection> typeArguments) {
-        if ("Array".equals(name)) {
-            if (typeArguments.size() != 1) {
-                throw new UnsupportedOperationException("arrays must have one type argument");
-            }
-            final JetTypeReference elementTypeRef = typeArguments.get(0).getTypeReference();
-            Type elementType = mapTypeReference(elementTypeRef);
-            return Type.getType("[" + elementType.getDescriptor());
-        }
-
-        if ("String".equals(name)) {
-            return Type.getType(String.class);
-        }
-        if ("Int".equals(name)) {
-            return Type.getType(Integer.class);
-        }
-        if ("Long".equals(name)) {
-            return Type.getType(Long.class);
-        }
-        throw new UnsupportedOperationException("Unknown type " + name);
     }
 
     public void gen(JetFunction f, JetClass owner) {

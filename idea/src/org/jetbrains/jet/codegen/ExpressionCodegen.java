@@ -276,8 +276,7 @@ public class ExpressionCodegen extends JetVisitor {
                     PsiMethod method = (PsiMethod) declarationPsiElement;
                     if (method.hasModifierProperty(PsiModifier.STATIC)) {
                         PsiClass containingClass = method.getContainingClass();
-                        String owner = containingClass.getQualifiedName().replace(".", "/");
-                        v.visitMethodInsn(Opcodes.INVOKESTATIC, owner, method.getName(), getMethodDescriptor(method));
+                        v.visitMethodInsn(Opcodes.INVOKESTATIC, jvmName(containingClass), method.getName(), getMethodDescriptor(method));
                         boxIfNeeded(method.getReturnType());
                     }
                     else {
@@ -294,9 +293,16 @@ public class ExpressionCodegen extends JetVisitor {
         }
     }
 
+    private static String jvmName(PsiClass containingClass) {
+        return containingClass.getQualifiedName().replace(".", "/");
+    }
+
     private void boxIfNeeded(PsiType type) {
         if (type == PsiType.LONG) {
             v.invokestatic("java/lang/Long", "valueOf", "(J)Ljava/lang/Long;");
+        }
+        else if (type == PsiType.INT) {
+            v.invokestatic("java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;");
         }
         else {
             throw new UnsupportedOperationException("Don't know how to box type " + type);
@@ -318,9 +324,19 @@ public class ExpressionCodegen extends JetVisitor {
             if (type == PsiType.VOID) {
                 return Type.VOID_TYPE;
             }
+            if (type == PsiType.INT) {
+                return Type.INT_TYPE;
+            }
             if (type == PsiType.LONG) {
                 return Type.LONG_TYPE;
             }
+        }
+        if (type instanceof PsiClassType) {
+            PsiClass psiClass = ((PsiClassType) type).resolve();
+            if (psiClass == null) {
+                throw new UnsupportedOperationException("unresolved PsiClassType: " + type);
+            }
+            return Type.getType("L" + jvmName(psiClass) + ";");
         }
         throw new UnsupportedOperationException("don't know how to map  type " + type + " to ASM");
     }

@@ -1,0 +1,1 @@
+fun f(o: Any) : Int { return System.identityHashCode(o); }
