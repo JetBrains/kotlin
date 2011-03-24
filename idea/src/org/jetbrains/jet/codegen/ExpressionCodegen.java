@@ -250,12 +250,27 @@ public class ExpressionCodegen extends JetVisitor {
     @Override
     public void visitSimpleNameExpression(JetSimpleNameExpression expression) {
         final DeclarationDescriptor descriptor = bindingContext.resolveReferenceExpression(expression);
-        int index = myMap.getIndex(descriptor);
-        if (index >= 0) {
-            v.visitVarInsn(Opcodes.ALOAD, index);
+        PsiElement declaration = bindingContext.getDeclarationPsiElement(descriptor);
+        if (declaration instanceof PsiField) {
+            PsiField psiField = (PsiField) declaration;
+            if (psiField.hasModifierProperty(PsiModifier.STATIC)) {
+                v.visitFieldInsn(Opcodes.GETSTATIC,
+                                 jvmName(psiField.getContainingClass()),
+                                 psiField.getName(),
+                                 psiTypeToAsm(psiField.getType()).getDescriptor());
+            }
+            else {
+                throw new UnsupportedOperationException("don't know how to generate field reference " + descriptor);
+            }
         }
         else {
-            throw new UnsupportedOperationException("don't know how to generate reference " + descriptor);
+            int index = myMap.getIndex(descriptor);
+            if (index >= 0) {
+                v.visitVarInsn(Opcodes.ALOAD, index);
+            }
+            else {
+                throw new UnsupportedOperationException("don't know how to generate reference " + descriptor);
+            }
         }
     }
 
@@ -275,8 +290,10 @@ public class ExpressionCodegen extends JetVisitor {
                 if (declarationPsiElement instanceof PsiMethod) {
                     PsiMethod method = (PsiMethod) declarationPsiElement;
                     if (method.hasModifierProperty(PsiModifier.STATIC)) {
-                        PsiClass containingClass = method.getContainingClass();
-                        v.visitMethodInsn(Opcodes.INVOKESTATIC, jvmName(containingClass), method.getName(), getMethodDescriptor(method));
+                        v.visitMethodInsn(Opcodes.INVOKESTATIC,
+                                          jvmName(method.getContainingClass()),
+                                          method.getName(),
+                                          getMethodDescriptor(method));
                         boxIfNeeded(method.getReturnType());
                     }
                     else {

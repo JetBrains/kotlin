@@ -88,6 +88,14 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
         assertEquals(returnValue, System.identityHashCode(o));
     }
 
+    public void testSystemOut() throws Exception {
+        loadFile("systemOut.jet");
+        final Class aClass = generateToClass();
+        final Method main = firstMethod(aClass);
+        final Object returnValue = main.invoke(null);
+        assertEquals(returnValue, System.out);
+    }
+
     private void loadFile(final String name) {
         myFixture.configureByFile(JetParsingTest.getTestDataDir() + "/codegen/" + name);
     }
