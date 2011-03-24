@@ -5,6 +5,8 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.DeclarationDescriptor;
 import org.jetbrains.jet.lang.types.FunctionDescriptor;
+import org.jetbrains.jet.lang.types.JetStandardClasses;
+import org.jetbrains.jet.lang.types.JetType;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -291,14 +293,17 @@ public class ExpressionCodegen extends JetVisitor {
                     PsiMethod method = (PsiMethod) declarationPsiElement;
                     if (method.hasModifierProperty(PsiModifier.STATIC)) {
                         v.visitMethodInsn(Opcodes.INVOKESTATIC,
+                                jvmName(method.getContainingClass()),
+                                method.getName(),
+                                getMethodDescriptor(method));
+                    }
+                    else {
+                        v.visitMethodInsn(Opcodes.INVOKEVIRTUAL,
                                           jvmName(method.getContainingClass()),
                                           method.getName(),
                                           getMethodDescriptor(method));
-                        boxIfNeeded(method.getReturnType());
                     }
-                    else {
-                        throw new UnsupportedOperationException("don't know how to generate instance method calls");
-                    }
+                    boxIfNeeded(method.getReturnType());
                 }
             }
             else {
@@ -315,14 +320,16 @@ public class ExpressionCodegen extends JetVisitor {
     }
 
     private void boxIfNeeded(PsiType type) {
-        if (type == PsiType.LONG) {
-            v.invokestatic("java/lang/Long", "valueOf", "(J)Ljava/lang/Long;");
-        }
-        else if (type == PsiType.INT) {
-            v.invokestatic("java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;");
-        }
-        else {
-            throw new UnsupportedOperationException("Don't know how to box type " + type);
+        if (type instanceof PsiPrimitiveType && type != PsiType.VOID) {
+            if (type == PsiType.LONG) {
+                v.invokestatic("java/lang/Long", "valueOf", "(J)Ljava/lang/Long;");
+            }
+            else if (type == PsiType.INT) {
+                v.invokestatic("java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;");
+            }
+            else {
+                throw new UnsupportedOperationException("Don't know how to box type " + type);
+            }
         }
     }
 
@@ -360,8 +367,40 @@ public class ExpressionCodegen extends JetVisitor {
 
     @Override
     public void visitDotQualifiedExpression(JetDotQualifiedExpression expression) {
-//        gen(expression.getReceiverExpression());
-        expression.getSelectorExpression().accept(this);
+        JetExpression receiver = expression.getReceiverExpression();
+        if (!resolvesToClassOrPackage(receiver)) {
+            gen(expression.getReceiverExpression());
+        }
+        gen(expression.getSelectorExpression());
+    }
+
+    private boolean resolvesToClassOrPackage(JetExpression receiver) {
+        if (receiver instanceof JetReferenceExpression) {
+            DeclarationDescriptor declaration = bindingContext.resolveReferenceExpression((JetReferenceExpression) receiver);
+            PsiElement declarationElement = bindingContext.getDeclarationPsiElement(declaration);
+            if (declarationElement instanceof PsiClass) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void visitSafeQualifiedExpression(JetSafeQualifiedExpression expression) {
+        gen(expression.getReceiverExpression());
+        Label ifnull = new Label();
+        Label end = new Label();
+        v.dup();
+        v.ifnull(ifnull);
+        gen(expression.getSelectorExpression());
+        v.goTo(end);
+        v.mark(ifnull);
+        // null is already on stack here after the dup
+        JetType expressionType = bindingContext.getExpressionType(expression);
+        if (expressionType.equals(JetStandardClasses.getUnitType())) {
+            v.pop();
+        }
+        v.mark(end);
     }
 
     /*
