@@ -37,6 +37,10 @@ public class JavaTypeTransformer {
                     return JetStandardClasses.getNullableAnyType();
                 }
 
+                if ("java.lang.String".equals(psiClass.getQualifiedName())) {
+                    return standardLibrary.getNullableStringType();
+                }
+
                 ClassDescriptor descriptor = resolver.resolveClass(psiClass);
                 // TODO : arguments & raw types
                 List<TypeProjection> arguments = Collections.<TypeProjection>emptyList(); // TODO

@@ -9,6 +9,8 @@ import java.util.List;
  * @author abreslav
  */
 public class DescriptorUtil {
+    private DescriptorUtil() {}
+
     public static String renderPresentableText(DeclarationDescriptor declarationDescriptor) {
         if (declarationDescriptor == null) return "<null>";
         StringBuilder stringBuilder = new StringBuilder();
@@ -16,8 +18,27 @@ public class DescriptorUtil {
                 new DeclarationDescriptorVisitor<Void, StringBuilder>() {
                     @Override
                     public Void visitPropertyDescriptor(PropertyDescriptor descriptor, StringBuilder builder) {
-                        JetType type = descriptor.getOutType();
-                        builder.append(renderName(descriptor)).append(" : ").append(type);
+                        JetType outType = descriptor.getOutType();
+                        JetType inType = descriptor.getInType();
+                        String typeString = "<no type>";
+                        if (inType != null && outType != null) {
+                            builder.append("var ");
+                            if (inType.equals(outType)) {
+                                typeString = outType.toString();
+                            }
+                            else {
+                                typeString = "<in " + inType + " out " + outType + ">";
+                            }
+                        }
+                        else if (outType != null) {
+                            builder.append("val ");
+                            typeString = outType.toString();
+                        }
+                        else if (inType != null) {
+                            builder.append("<write-only> ");
+                            typeString = inType.toString();
+                        }
+                        builder.append(renderName(descriptor)).append(" : ").append(typeString);
                         return super.visitPropertyDescriptor(descriptor, builder); 
                     }
 
