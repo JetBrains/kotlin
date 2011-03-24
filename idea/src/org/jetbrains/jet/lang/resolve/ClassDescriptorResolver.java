@@ -30,7 +30,10 @@ public class ClassDescriptorResolver {
         ClassDescriptorImpl classDescriptor = new ClassDescriptorImpl(
                 scope.getContainingDeclaration(),
                 AttributeResolver.INSTANCE.resolveAttributes(classElement.getModifierList()),
-                classElement.getName());
+                safeName(classElement.getName()));
+
+        trace.recordDeclarationResolution(classElement, classDescriptor);
+
         WritableScope parameterScope = semanticServices.createWritableScope(scope, classDescriptor);
 
         // This call has side-effects on the parameterScope (fills it in)
@@ -77,7 +80,7 @@ public class ClassDescriptorResolver {
                 descriptor,
                 AttributeResolver.INSTANCE.resolveAttributes(classElement.getModifierList()),
                 !open,
-                classElement.getName(),
+                safeName(classElement.getName()),
                 typeParameters,
                 supertypes);
         descriptor.setTypeConstructor(
@@ -198,7 +201,6 @@ public class ClassDescriptorResolver {
                 semanticServices.getErrorHandler().genericError(valOrVarNode, "'val' and 'var' are not allowed on ref-parameters");
             }
 
-            String name = valueParameter.getName();
             JetType type;
             if (typeReference == null) {
                 semanticServices.getErrorHandler().genericError(valueParameter.getNode(), "A type annotation is required on a value parameter");
@@ -210,7 +212,7 @@ public class ClassDescriptorResolver {
                     functionDescriptor,
                     i,
                     AttributeResolver.INSTANCE.resolveAttributes(valueParameter.getModifierList()),
-                    name == null ? "<no name provided>" : name,
+                    safeName(valueParameter.getName()),
                     valueParameter.isMutable() ? type : null,
                     type,
                     valueParameter.getDefaultValue() != null,
@@ -244,7 +246,7 @@ public class ClassDescriptorResolver {
                 containingDescriptor,
                 AttributeResolver.INSTANCE.resolveAttributes(typeParameter.getModifierList()),
                 typeParameter.getVariance(),
-                typeParameter.getName(),
+                safeName(typeParameter.getName()),
                 Collections.singleton(bound),
                 bound
         );
@@ -259,14 +261,15 @@ public class ClassDescriptorResolver {
         }
         Collection<JetType> result = new ArrayList<JetType>();
         for (JetDelegationSpecifier delegationSpecifier : delegationSpecifiers) {
-            result.add(resolveType(extensibleScope, delegationSpecifier));
+            JetTypeReference typeReference = delegationSpecifier.getTypeReference();
+            if (typeReference != null) {
+                result.add(typeResolver.resolveType(extensibleScope, typeReference));
+            }
+            else {
+                result.add(ErrorType.createErrorType("No type reference"));
+            }
         }
         return result;
-    }
-
-    private JetType resolveType(JetScope scope, JetDelegationSpecifier delegationSpecifier) {
-        JetTypeReference typeReference = delegationSpecifier.getTypeReference(); // TODO : make it not null
-        return typeResolver.resolveType(scope, typeReference);
     }
 
     @NotNull
@@ -292,7 +295,7 @@ public class ClassDescriptorResolver {
         PropertyDescriptor propertyDescriptor = new PropertyDescriptorImpl(
                 containingDeclaration,
                 AttributeResolver.INSTANCE.resolveAttributes(parameter.getModifierList()),
-                parameter.getName(),
+                safeName(parameter.getName()),
                 parameter.isMutable() ? null : type,
                 type);
         trace.recordDeclarationResolution(parameter, propertyDescriptor);
@@ -320,7 +323,7 @@ public class ClassDescriptorResolver {
         PropertyDescriptorImpl propertyDescriptor = new PropertyDescriptorImpl(
                 containingDeclaration,
                 AttributeResolver.INSTANCE.resolveAttributes(property.getModifierList()),
-                property.getName(),
+                safeName(property.getName()),
                 property.isVar() ? type : null,
                 type);
         trace.recordDeclarationResolution(property, propertyDescriptor);
@@ -388,5 +391,10 @@ public class ClassDescriptorResolver {
                 type);
         trace.recordDeclarationResolution(parameter, propertyDescriptor);
         return propertyDescriptor;
+    }
+
+    @NotNull
+    private static String safeName(String name) {
+        return name == null ? "<no name provided>" : name;
     }
 }

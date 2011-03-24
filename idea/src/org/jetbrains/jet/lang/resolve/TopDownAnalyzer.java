@@ -20,11 +20,13 @@ public class TopDownAnalyzer {
     private final JetSemanticServices semanticServices;
     private final ClassDescriptorResolver classDescriptorResolver;
     private final BindingTrace trace;
+    private final JetTypeInferrer typeInferrer;
 
     public TopDownAnalyzer(JetSemanticServices semanticServices, @NotNull BindingTrace bindingTrace) {
         this.semanticServices = semanticServices;
         this.classDescriptorResolver = new ClassDescriptorResolver(semanticServices, bindingTrace);
         this.trace = bindingTrace;
+        this.typeInferrer = semanticServices.getTypeInferrer(trace);
     }
 
     public void process(@NotNull JetScope outerScope, @NotNull JetDeclaration declaration) {
@@ -58,6 +60,9 @@ public class TopDownAnalyzer {
                     List<JetImportDirective> importDirectives = namespace.getImportDirectives();
 
                     String name = namespace.getName();
+                    if (name == null) {
+                        name = "<no name provided>";
+                    }
                     NamespaceDescriptor namespaceDescriptor = declaringScope.getDeclaredNamespace(name);
                     if (namespaceDescriptor == null) {
                         namespaceDescriptor = new NamespaceDescriptor(
@@ -78,9 +83,11 @@ public class TopDownAnalyzer {
                         }
                         if (importDirective.isAllUnder()) {
                             JetExpression importedReference = importDirective.getImportedReference();
-                            JetType type = semanticServices.getTypeInferrer(trace).getType(namespaceScope, importedReference, false);
-                            if (type != null) {
-                                namespaceScope.importScope(type.getMemberScope());
+                            if (importedReference != null) {
+                                JetType type = typeInferrer.getType(namespaceScope, importedReference, false);
+                                if (type != null) {
+                                    namespaceScope.importScope(type.getMemberScope());
+                                }
                             }
                         } else {
                             throw new UnsupportedOperationException();
@@ -110,7 +117,6 @@ public class TopDownAnalyzer {
         declaringScope.addClassDescriptor(mutableClassDescriptor);
 
         classes.put(klass, mutableClassDescriptor);
-        trace.recordDeclarationResolution(klass, mutableClassDescriptor);
         declaringScopes.put(klass, declaringScope);
 
         return mutableClassDescriptor.getUnsubstitutedMemberScope();
@@ -218,7 +224,6 @@ public class TopDownAnalyzer {
         FunctionDescriptor descriptor = classDescriptorResolver.resolveFunctionDescriptor(declaringScope.getContainingDeclaration(), declaringScope, function);
         declaringScope.addFunctionDescriptor(descriptor);
         functions.put(function, descriptor);
-        trace.recordDeclarationResolution(function, descriptor);
     }
 
     private void processProperty(WritableScope declaringScope, JetProperty property) {
@@ -258,7 +263,7 @@ public class TopDownAnalyzer {
     }
 
     private void resolveExpression(@NotNull JetScope scope, JetExpression expression, boolean preferBlock) {
-        semanticServices.getTypeInferrer(trace).getType(scope, expression, preferBlock);
+        typeInferrer.getType(scope, expression, preferBlock);
     }
 
 }

@@ -644,7 +644,7 @@ public class JetTypeInferrer {
             JetTypeReference typeReference = loopParameter.getTypeReference();
             PropertyDescriptor propertyDescriptor;
             if (typeReference != null) {
-                propertyDescriptor = semanticServices.getClassDescriptorResolver(trace).resolveValueParameterDescriptor(scope.getContainingDeclaration(), scope, loopParameter);
+                propertyDescriptor = classDescriptorResolver.resolveValueParameterDescriptor(scope.getContainingDeclaration(), scope, loopParameter);
                 JetType actualParameterType = propertyDescriptor.getOutType();
                 if (expectedParameterType != null &&
                         !semanticServices.getTypeChecker().isSubtypeOf(expectedParameterType, actualParameterType)) {
@@ -655,7 +655,7 @@ public class JetTypeInferrer {
                 if (expectedParameterType == null) {
                     expectedParameterType = ErrorType.createErrorType("Error");
                 }
-                propertyDescriptor = semanticServices.getClassDescriptorResolver(trace).resolveValueParameterDescriptor(scope.getContainingDeclaration(), loopParameter, expectedParameterType);
+                propertyDescriptor = classDescriptorResolver.resolveValueParameterDescriptor(scope.getContainingDeclaration(), loopParameter, expectedParameterType);
             }
             loopScope.addPropertyDescriptor(propertyDescriptor);
 
