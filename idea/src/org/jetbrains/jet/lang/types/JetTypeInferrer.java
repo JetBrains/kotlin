@@ -335,6 +335,9 @@ public class JetTypeInferrer {
                 if (property != null) {
                     trace.recordReferenceResolution(expression, property);
                     result = property.getOutType();
+                    if (result == null) {
+                        semanticServices.getErrorHandler().genericError(expression.getNode(), "This property is not readable in this context");
+                    }
                     return;
                 } else {
                     NamespaceDescriptor namespace = scope.getNamespace(referencedName);
@@ -1036,9 +1039,11 @@ public class JetTypeInferrer {
             List<JetType> argumentTypes = getTypes(scope, indexExpressions);
             if (argumentTypes == null) return;
 
-            FunctionDescriptor functionDescriptor = lookupFunction(scope, expression, "get", receiverType, argumentTypes, true);
-            if (functionDescriptor != null) {
-                result = functionDescriptor.getUnsubstitutedReturnType();
+            if (receiverType != null) {
+                FunctionDescriptor functionDescriptor = lookupFunction(scope, expression, "get", receiverType, argumentTypes, true);
+                if (functionDescriptor != null) {
+                    result = functionDescriptor.getUnsubstitutedReturnType();
+                }
             }
         }
 
