@@ -3,10 +3,7 @@ package org.jetbrains.jet.codegen;
 import com.intellij.psi.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.types.DeclarationDescriptor;
-import org.jetbrains.jet.lang.types.FunctionDescriptor;
-import org.jetbrains.jet.lang.types.JetStandardClasses;
-import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.*;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -24,10 +21,12 @@ public class ExpressionCodegen extends JetVisitor {
     private final Stack<Label> myLoopEnds = new Stack<Label>();
 
     private final InstructionAdapter v;
+    private final JetStandardLibrary stdlib;
     private final FrameMap myMap;
     private final BindingContext bindingContext;
 
-    public ExpressionCodegen(MethodVisitor v, BindingContext bindingContext, FrameMap myMap) {
+    public ExpressionCodegen(MethodVisitor v, BindingContext bindingContext, JetStandardLibrary stdlib, FrameMap myMap) {
+        this.stdlib = stdlib;
         this.myMap = myMap;
         this.v = new InstructionAdapter(v);
         this.bindingContext = bindingContext;
@@ -333,6 +332,17 @@ public class ExpressionCodegen extends JetVisitor {
         }
     }
 
+    private void unbox(PsiType type) {
+        if (type instanceof PsiPrimitiveType) {
+            if (type == PsiType.INT) {
+                v.invokevirtual("java/lang/Integer", "intValue", "()I");
+            }
+            else {
+                throw new UnsupportedOperationException("Don't know how to unbox type " + type);
+            }
+        }
+    }
+
     private String getMethodDescriptor(PsiMethod method) {
         Type returnType = psiTypeToAsm(method.getReturnType());
         PsiParameter[] parameters = method.getParameterList().getParameters();
@@ -403,11 +413,28 @@ public class ExpressionCodegen extends JetVisitor {
         v.mark(end);
     }
 
-    /*
-        @Override
-        public void visitBinaryExpression(JetBinaryExpression expression) {
+    @Override
+    public void visitBinaryExpression(JetBinaryExpression expression) {
+        DeclarationDescriptor op = bindingContext.resolveReferenceExpression(expression.getOperationReference());
+        if (op instanceof FunctionDescriptor) {
+            DeclarationDescriptor cls = op.getContainingDeclaration();
+            if (cls instanceof ClassDescriptor && cls.getName().equals("Int")) {
+                if (op.getName().equals("plus")) {
+                    JetType returnType = ((FunctionDescriptor) op).getUnsubstitutedReturnType();
+                    if (returnType.equals(stdlib.getIntType())) {
+                        gen(expression.getLeft());
+                        unbox(PsiType.INT);
+                        gen(expression.getRight());
+                        unbox(PsiType.INT);
+                        v.add(Type.INT_TYPE);
+                        boxIfNeeded(PsiType.INT);
+                        return;
+                    }
+                }
+            }
         }
-    */
+        throw new UnsupportedOperationException("Don't know how to generate binary op " + expression);
+    }
 
     private Type getType(JetProperty var) {
         return InstructionAdapter.OBJECT_TYPE;  // TODO:

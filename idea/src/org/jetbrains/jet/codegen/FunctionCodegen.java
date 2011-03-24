@@ -56,7 +56,7 @@ public class FunctionCodegen {
             frameMap.enter(parameter);
         }
 
-        bodyExpression.accept(new ExpressionCodegen(mv, bindingContext, frameMap));
+        bodyExpression.accept(new ExpressionCodegen(mv, bindingContext, standardLibrary, frameMap));
         generateReturn(mv, bodyExpression);
         mv.visitMaxs(0, 0);
         mv.visitEnd();

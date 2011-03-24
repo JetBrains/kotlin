@@ -96,11 +96,21 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
     public void testHelloWorld() throws Exception {
         loadFile("helloWorld.jet");
 
-        final String text = generateToText();
-        System.out.println(text);
+        System.out.println(generateToText());
+
+        final Class aClass = generateToClass();
+        final Method main = firstMethod(aClass);   // assert that it can be verified
+    }
+
+    public void testPlus() throws Exception {
+        loadFile("plus.jet");
+
+        System.out.println(generateToText());
 
         final Class aClass = generateToClass();
         final Method main = firstMethod(aClass);
+        final int returnValue = (Integer) main.invoke(null, 37, 5);
+        assertEquals(42, returnValue);
     }
 
     private void loadFile(final String name) {
@@ -115,6 +125,7 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
                 new TraceClassVisitor(new PrintWriter(writer)),
                 namespace.getFQName());
         codegen.generate(namespace);
+        codegen.done();
         return writer.toString();
     }
 
