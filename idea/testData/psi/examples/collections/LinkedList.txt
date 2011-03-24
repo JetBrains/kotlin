@@ -39,9 +39,9 @@ JetFile: LinkedList.jet
           PsiElement(IDENTIFIER)('Item')
           TYPE_PARAMETER_LIST
             <empty list>
-          PRIMARY_CONSTRUCTOR_PARAMETERS_LIST
+          VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
-            PRIMARY_CONSTRUCTOR_PARAMETER
+            VALUE_PARAMETER
               PsiElement(var)('var')
               PsiWhiteSpace(' ')
               PsiElement(IDENTIFIER)('value')

@@ -9,9 +9,9 @@ JetFile: Graph.jet
         TYPE_PARAMETER
           PsiElement(IDENTIFIER)('V')
         PsiElement(GT)('>')
-      PRIMARY_CONSTRUCTOR_PARAMETERS_LIST
+      VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(val)('val')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('data')
@@ -37,9 +37,9 @@ JetFile: Graph.jet
         TYPE_PARAMETER
           PsiElement(IDENTIFIER)('E')
         PsiElement(GT)('>')
-      PRIMARY_CONSTRUCTOR_PARAMETERS_LIST
+      VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(val)('val')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('from')
@@ -52,7 +52,7 @@ JetFile: Graph.jet
                 PsiElement(IDENTIFIER)('V')
         PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(val)('val')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('data')
@@ -65,7 +65,7 @@ JetFile: Graph.jet
                 PsiElement(IDENTIFIER)('E')
         PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(val)('val')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('to')

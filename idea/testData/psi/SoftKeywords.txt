@@ -125,9 +125,9 @@ JetFile: SoftKeywords.jet
       PsiWhiteSpace(' ')
       PsiElement(wraps)('wraps')
       PsiWhiteSpace(' ')
-      PRIMARY_CONSTRUCTOR_PARAMETERS_LIST
+      VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('a')
           PsiWhiteSpace(' ')
           PsiElement(COLON)(':')
@@ -1045,9 +1045,9 @@ JetFile: SoftKeywords.jet
       PsiElement(IDENTIFIER)('F')
       TYPE_PARAMETER_LIST
         <empty list>
-      PRIMARY_CONSTRUCTOR_PARAMETERS_LIST
+      VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(val)('val')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('foo')
@@ -1060,7 +1060,7 @@ JetFile: SoftKeywords.jet
                 PsiElement(IDENTIFIER)('bar')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n        ')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('abstract')
           PsiWhiteSpace('  ')
           PsiElement(COLON)(':')
@@ -1071,7 +1071,7 @@ JetFile: SoftKeywords.jet
                 PsiElement(IDENTIFIER)('t')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n        ')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('virtual')
           PsiWhiteSpace('   ')
           PsiElement(COLON)(':')
@@ -1082,7 +1082,7 @@ JetFile: SoftKeywords.jet
                 PsiElement(IDENTIFIER)('t')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n        ')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('enum')
           PsiWhiteSpace('      ')
           PsiElement(COLON)(':')
@@ -1093,7 +1093,7 @@ JetFile: SoftKeywords.jet
                 PsiElement(IDENTIFIER)('t')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n        ')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('open')
           PsiWhiteSpace('      ')
           PsiElement(COLON)(':')
@@ -1104,7 +1104,7 @@ JetFile: SoftKeywords.jet
                 PsiElement(IDENTIFIER)('t')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n        ')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('attribute')
           PsiWhiteSpace(' ')
           PsiElement(COLON)(':')
@@ -1115,7 +1115,7 @@ JetFile: SoftKeywords.jet
                 PsiElement(IDENTIFIER)('t')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n        ')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('override')
           PsiWhiteSpace('  ')
           PsiElement(COLON)(':')
@@ -1126,7 +1126,7 @@ JetFile: SoftKeywords.jet
                 PsiElement(IDENTIFIER)('t')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n        ')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('virtual')
           PsiWhiteSpace('   ')
           PsiElement(COLON)(':')
@@ -1137,7 +1137,7 @@ JetFile: SoftKeywords.jet
                 PsiElement(IDENTIFIER)('t')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n        ')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('abstract')
           PsiWhiteSpace('  ')
           PsiElement(COLON)(':')
@@ -1148,7 +1148,7 @@ JetFile: SoftKeywords.jet
                 PsiElement(IDENTIFIER)('t')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n        ')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('private')
           PsiWhiteSpace('   ')
           PsiElement(COLON)(':')
@@ -1159,7 +1159,7 @@ JetFile: SoftKeywords.jet
                 PsiElement(IDENTIFIER)('t')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n        ')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('protected')
           PsiWhiteSpace(' ')
           PsiElement(COLON)(':')
@@ -1170,7 +1170,7 @@ JetFile: SoftKeywords.jet
                 PsiElement(IDENTIFIER)('t')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n        ')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('public')
           PsiWhiteSpace('    ')
           PsiElement(COLON)(':')
@@ -1181,7 +1181,7 @@ JetFile: SoftKeywords.jet
                 PsiElement(IDENTIFIER)('t')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n        ')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('internal')
           PsiWhiteSpace('  ')
           PsiElement(COLON)(':')
@@ -1192,7 +1192,7 @@ JetFile: SoftKeywords.jet
                 PsiElement(IDENTIFIER)('t')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n        ')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('lazy')
           PsiWhiteSpace('      ')
           PsiElement(COLON)(':')
@@ -1203,7 +1203,7 @@ JetFile: SoftKeywords.jet
                 PsiElement(IDENTIFIER)('t')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n        ')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('wraps')
           PsiWhiteSpace('     ')
           PsiElement(COLON)(':')
@@ -1214,7 +1214,7 @@ JetFile: SoftKeywords.jet
                 PsiElement(IDENTIFIER)('t')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n        ')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('import')
           PsiWhiteSpace('    ')
           PsiElement(COLON)(':')
@@ -1225,7 +1225,7 @@ JetFile: SoftKeywords.jet
                 PsiElement(IDENTIFIER)('t')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n        ')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('where')
           PsiWhiteSpace('     ')
           PsiElement(COLON)(':')
@@ -1236,7 +1236,7 @@ JetFile: SoftKeywords.jet
                 PsiElement(IDENTIFIER)('t')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n        ')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('by')
           PsiWhiteSpace('        ')
           PsiElement(COLON)(':')
@@ -1247,7 +1247,7 @@ JetFile: SoftKeywords.jet
                 PsiElement(IDENTIFIER)('t')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n        ')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('get')
           PsiWhiteSpace('       ')
           PsiElement(COLON)(':')
@@ -1258,7 +1258,7 @@ JetFile: SoftKeywords.jet
                 PsiElement(IDENTIFIER)('t')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n        ')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('set')
           PsiWhiteSpace('       ')
           PsiElement(COLON)(':')
@@ -1269,7 +1269,7 @@ JetFile: SoftKeywords.jet
                 PsiElement(IDENTIFIER)('t')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n        ')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('public')
           PsiWhiteSpace('    ')
           PsiElement(COLON)(':')
@@ -1280,7 +1280,7 @@ JetFile: SoftKeywords.jet
                 PsiElement(IDENTIFIER)('t')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n        ')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('private')
           PsiWhiteSpace('   ')
           PsiElement(COLON)(':')
@@ -1291,7 +1291,7 @@ JetFile: SoftKeywords.jet
                 PsiElement(IDENTIFIER)('t')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n        ')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('protected')
           PsiWhiteSpace(' ')
           PsiElement(COLON)(':')
@@ -1302,7 +1302,7 @@ JetFile: SoftKeywords.jet
                 PsiElement(IDENTIFIER)('t')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n        ')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('internal')
           PsiWhiteSpace('  ')
           PsiElement(COLON)(':')
@@ -1313,7 +1313,7 @@ JetFile: SoftKeywords.jet
                 PsiElement(IDENTIFIER)('t')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n    ')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           MODIFIER_LIST
             PsiElement(public)('public')
             PsiWhiteSpace(' ')

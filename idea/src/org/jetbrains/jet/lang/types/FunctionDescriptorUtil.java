@@ -68,6 +68,7 @@ public class FunctionDescriptorUtil {
                     i,
                     unsubstitutedValueParameter.getAttributes(),
                     unsubstitutedValueParameter.getName(),
+                    unsubstitutedValueParameter.getInType() == null ? null : substitutedType,
                     substitutedType,
                     unsubstitutedValueParameter.hasDefaultValue(),
                     unsubstitutedValueParameter.isVararg()

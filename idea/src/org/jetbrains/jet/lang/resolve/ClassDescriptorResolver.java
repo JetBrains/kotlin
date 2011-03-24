@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.resolve;
 
+import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.JetSemanticServices;
@@ -65,7 +66,6 @@ public class ClassDescriptorResolver {
         descriptor.setName(classElement.getName());
 
         WritableScope parameterScope = descriptor.getUnsubstitutedMemberScope();
-
 
         // This call has side-effects on the parameterScope (fills it in)
         List<TypeParameterDescriptor> typeParameters
@@ -193,6 +193,11 @@ public class ClassDescriptorResolver {
             JetParameter valueParameter = valueParameters.get(i);
             JetTypeReference typeReference = valueParameter.getTypeReference();
 
+            ASTNode valOrVarNode = valueParameter.getValOrVarNode();
+            if (valueParameter.isRef() && valOrVarNode != null) {
+                semanticServices.getErrorHandler().genericError(valOrVarNode, "'val' and 'var' are not allowed on ref-parameters");
+            }
+
             String name = valueParameter.getName();
             JetType type;
             if (typeReference == null) {
@@ -206,6 +211,7 @@ public class ClassDescriptorResolver {
                     i,
                     AttributeResolver.INSTANCE.resolveAttributes(valueParameter.getModifierList()),
                     name == null ? "<no name provided>" : name,
+                    valueParameter.isMutable() ? type : null,
                     type,
                     valueParameter.getDefaultValue() != null,
                     false // TODO : varargs
@@ -264,25 +270,33 @@ public class ClassDescriptorResolver {
     }
 
     @NotNull
-    public PropertyDescriptor resolvePropertyDescriptor(@NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope scope, @NotNull JetParameter parameter) {
+    public PropertyDescriptor resolveValueParameterDescriptor(@NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope scope, @NotNull JetParameter parameter) {
+        JetType type = getParameterType(scope, parameter);
+        return resolveValueParameterDescriptor(containingDeclaration, parameter, type);
+    }
+
+    private JetType getParameterType(JetScope scope, JetParameter parameter) {
         JetTypeReference typeReference = parameter.getTypeReference();
         JetType type;
         if (typeReference != null) {
             type = typeResolver.resolveType(scope, typeReference);
         }
         else {
+            // Error is reported by the parser
             type = ErrorType.createErrorType("Annotation is absent");
         }
-        return resolvePropertyDescriptor(containingDeclaration, parameter, type);
+        return type;
     }
 
-    public PropertyDescriptor resolvePropertyDescriptor(@NotNull DeclarationDescriptor containingDeclaration, @NotNull JetParameter parameter, @NotNull JetType type) {
-        return new PropertyDescriptorImpl(
+    public PropertyDescriptor resolveValueParameterDescriptor(@NotNull DeclarationDescriptor containingDeclaration, @NotNull JetParameter parameter, @NotNull JetType type) {
+        PropertyDescriptor propertyDescriptor = new PropertyDescriptorImpl(
                 containingDeclaration,
                 AttributeResolver.INSTANCE.resolveAttributes(parameter.getModifierList()),
                 parameter.getName(),
-                type, // TODO
+                parameter.isMutable() ? null : type,
                 type);
+        trace.recordDeclarationResolution(parameter, propertyDescriptor);
+        return propertyDescriptor;
     }
 
     public PropertyDescriptor resolvePropertyDescriptor(@NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope scope, JetProperty property) {
@@ -303,12 +317,14 @@ public class ClassDescriptorResolver {
             type = typeResolver.resolveType(scope, propertyTypeRef);
         }
 
-        return new PropertyDescriptorImpl(
+        PropertyDescriptorImpl propertyDescriptor = new PropertyDescriptorImpl(
                 containingDeclaration,
                 AttributeResolver.INSTANCE.resolveAttributes(property.getModifierList()),
                 property.getName(),
                 property.isVar() ? type : null,
                 type);
+        trace.recordDeclarationResolution(property, propertyDescriptor);
+        return propertyDescriptor;
     }
 
     @NotNull
@@ -356,5 +372,21 @@ public class ClassDescriptorResolver {
             }
             else return null;
         }
+    }
+
+    public PropertyDescriptor resolvePrimaryConstructorParameterToAProperty(
+            @NotNull ClassDescriptor classDescriptor,
+            @NotNull JetScope scope,
+            @NotNull JetParameter parameter) {
+        JetType type = getParameterType(scope, parameter);
+        String name = parameter.getName();
+        PropertyDescriptorImpl propertyDescriptor = new PropertyDescriptorImpl(
+                classDescriptor,
+                AttributeResolver.INSTANCE.resolveAttributes(parameter.getModifierList()),
+                name == null ? "<no name>" : name,
+                parameter.isMutable() ? type : null,
+                type);
+        trace.recordDeclarationResolution(parameter, propertyDescriptor);
+        return propertyDescriptor;
     }
 }

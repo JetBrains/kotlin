@@ -54,11 +54,7 @@ functionParameters
   ;
 
 functionParameter
-  : modifiers functionParameterRest
-  ;
-
-functionParameterRest
-  : parameter ("=" expression)?
+  : modifiers ("val" | "var")? parameter ("=" expression)?
   ;
 
 initializer

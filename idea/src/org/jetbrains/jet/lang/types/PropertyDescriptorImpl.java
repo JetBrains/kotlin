@@ -25,6 +25,7 @@ public class PropertyDescriptorImpl extends DeclarationDescriptorImpl implements
         this.outType = outType;
     }
 
+    @NotNull
     @Override
     public JetType getOutType() {
         return outType;

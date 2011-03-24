@@ -163,6 +163,7 @@ public class JavaDescriptorResolver {
                     i,
                     Collections.<Attribute>emptyList(), // TODO
                     name == null ? "p" + i : name,
+                    null, // TODO : review
                     semanticServices.getTypeTransformer().transform(parameter.getType()),
                     false,
                     parameter.isVarArgs()

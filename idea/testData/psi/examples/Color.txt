@@ -9,9 +9,9 @@ JetFile: Color.jet
       PsiElement(IDENTIFIER)('Color')
       TYPE_PARAMETER_LIST
         <empty list>
-      PRIMARY_CONSTRUCTOR_PARAMETERS_LIST
+      VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(val)('val')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('r')
@@ -24,7 +24,7 @@ JetFile: Color.jet
                 PsiElement(IDENTIFIER)('Int')
         PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(val)('val')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('g')
@@ -37,7 +37,7 @@ JetFile: Color.jet
                 PsiElement(IDENTIFIER)('Int')
         PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(val)('val')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('sb')

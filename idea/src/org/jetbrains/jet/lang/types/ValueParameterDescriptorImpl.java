@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -17,10 +18,11 @@ public class ValueParameterDescriptorImpl extends PropertyDescriptorImpl impleme
             int index,
             @NotNull List<Attribute> attributes,
             @NotNull String name,
-            @NotNull JetType type,
+            @Nullable JetType inType,
+            @NotNull JetType outType,
             boolean hasDefaultValue,
             boolean isVararg) {
-        super(containingDeclaration, attributes, name, type, type); // TODO : writable?
+        super(containingDeclaration, attributes, name, inType, outType);
         this.index = index;
         this.hasDefaultValue = hasDefaultValue;
         this.isVararg = isVararg;

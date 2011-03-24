@@ -81,9 +81,9 @@ JetFile: IOSamples.jet
       PsiElement(IDENTIFIER)('JavaCloseableWrapper')
       TYPE_PARAMETER_LIST
         <empty list>
-      PRIMARY_CONSTRUCTOR_PARAMETERS_LIST
+      VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('closeable')
           PsiWhiteSpace(' ')
           PsiElement(COLON)(':')

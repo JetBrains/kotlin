@@ -111,16 +111,17 @@ public class ErrorType {
         );
     }
 
+    private static final JetType ERROR_PARAMETER_TYPE = createErrorType("<ERROR PARAMETER TYPE>");
     private static List<ValueParameterDescriptor> getValueParameters(FunctionDescriptor functionDescriptor, List<JetType> argumentTypes) {
         List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>();
         for (int i = 0, argumentTypesSize = argumentTypes.size(); i < argumentTypesSize; i++) {
-            JetType argumentType = argumentTypes.get(i);
             result.add(new ValueParameterDescriptorImpl(
                     functionDescriptor,
                     i,
                     Collections.<Attribute>emptyList(),
                     "<ERROR PARAMETER>",
-                    createErrorType("<ERROR PARAMETER TYPE>"),
+                    ERROR_PARAMETER_TYPE,
+                    ERROR_PARAMETER_TYPE,
                     false,
                     false));
         }

@@ -378,7 +378,7 @@ public class JetTypeInferrer {
                 if (typeReference == null) {
                     throw new UnsupportedOperationException("Type inference for parameters is not implemented yet");
                 }
-                PropertyDescriptor propertyDescriptor = classDescriptorResolver.resolvePropertyDescriptor(functionDescriptor, scope, parameter);
+                PropertyDescriptor propertyDescriptor = classDescriptorResolver.resolveValueParameterDescriptor(functionDescriptor, scope, parameter);
                 parameterDescriptors.put(parameter.getName(), propertyDescriptor);
                 parameterTypes.add(propertyDescriptor.getOutType());
             }
@@ -644,7 +644,7 @@ public class JetTypeInferrer {
             JetTypeReference typeReference = loopParameter.getTypeReference();
             PropertyDescriptor propertyDescriptor;
             if (typeReference != null) {
-                propertyDescriptor = semanticServices.getClassDescriptorResolver(trace).resolvePropertyDescriptor(scope.getContainingDeclaration(), scope, loopParameter);
+                propertyDescriptor = semanticServices.getClassDescriptorResolver(trace).resolveValueParameterDescriptor(scope.getContainingDeclaration(), scope, loopParameter);
                 JetType actualParameterType = propertyDescriptor.getOutType();
                 if (expectedParameterType != null &&
                         !semanticServices.getTypeChecker().isSubtypeOf(expectedParameterType, actualParameterType)) {
@@ -655,10 +655,9 @@ public class JetTypeInferrer {
                 if (expectedParameterType == null) {
                     expectedParameterType = ErrorType.createErrorType("Error");
                 }
-                propertyDescriptor = semanticServices.getClassDescriptorResolver(trace).resolvePropertyDescriptor(scope.getContainingDeclaration(), loopParameter, expectedParameterType);
+                propertyDescriptor = semanticServices.getClassDescriptorResolver(trace).resolveValueParameterDescriptor(scope.getContainingDeclaration(), loopParameter, expectedParameterType);
             }
             loopScope.addPropertyDescriptor(propertyDescriptor);
-            trace.recordDeclarationResolution(loopParameter, propertyDescriptor);
 
             JetExpression body = expression.getBody();
             if (body != null) {
@@ -783,6 +782,9 @@ public class JetTypeInferrer {
                 else {
                     result = selectorReturnType;
                 }
+                if (selectorExpression != null && result != null) {
+                    trace.recordExpressionType(selectorExpression, result);
+                }
             }
         }
 
@@ -798,7 +800,7 @@ public class JetTypeInferrer {
             }
             else if (selectorExpression != null) {
                 // TODO : not a simple name -> resolve in scope, expect property type or a function type
-                throw new UnsupportedOperationException();
+                semanticServices.getErrorHandler().genericError(selectorExpression.getNode(), "Unsupported selector expression type: " + selectorExpression);
             }
             return receiverType;
         }
@@ -1121,7 +1123,6 @@ public class JetTypeInferrer {
             }
 
             scope.addPropertyDescriptor(propertyDescriptor);
-            trace.recordDeclarationResolution(property, propertyDescriptor);
         }
 
         @Override

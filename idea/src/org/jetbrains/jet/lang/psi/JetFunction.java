@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * @author max
  */
-public class JetFunction extends JetTypeParameterListOwner {
+public class JetFunction extends JetTypeParameterListOwner implements JetDeclarationWithBody {
     public JetFunction(@NotNull ASTNode node) {
         super(node);
     }
@@ -35,6 +35,7 @@ public class JetFunction extends JetTypeParameterListOwner {
         return list != null ? list.getParameters() : Collections.<JetParameter>emptyList();
     }
 
+    @Override
     @Nullable
     public JetExpression getBodyExpression() {
         return findChildByClass(JetExpression.class);

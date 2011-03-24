@@ -16,7 +16,7 @@ fun foo(o : `java::java.lang.Object`Object, l : `java::java.util`util.`java::jav
 
 class B : `java::java.lang.Object`Object {
   fun bar(~o~o : `java::java.lang.Object`Object) {
-     `java::java.lang.System`System.`java::java.lang.System.out`out.`java::java.io.PrintStream.print(Object)`print(`o`o)
+     `java::java.lang.System`System.`java::java.lang.System.out`out.`java::java.io.PrintStream.print(Object)`print(`o`o)`:std::Unit`
   }
 
   fun f(a : `java::java.util`util.`java::java.util.List`List) {}

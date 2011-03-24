@@ -1,5 +1,7 @@
 package org.jetbrains.jet.lang.types;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * @author abreslav
  */
@@ -13,4 +15,8 @@ public interface ValueParameterDescriptor extends PropertyDescriptor {
     boolean hasDefaultValue();
     boolean isRef();
     boolean isVararg();
+
+    @Override
+    @NotNull
+    JetType getOutType();
 }

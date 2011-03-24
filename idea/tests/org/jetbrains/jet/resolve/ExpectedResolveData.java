@@ -108,16 +108,9 @@ public class ExpectedResolveData {
 
             if ("!".equals(name)) {
                 JetReferenceExpression referenceExpression = PsiTreeUtil.getParentOfType(element, JetReferenceExpression.class);
-                JetExpression statement = referenceExpression;
-                while (true) {
-                    PsiElement parent = statement.getParent();
-                    if (!(parent instanceof JetExpression)) break;
-                    if (parent instanceof JetBlockExpression) break;
-                    statement = (JetExpression) parent;
-                }
                 assertTrue(
-                        "Must have been unresolved: " + referenceExpression.getText() +
-                        " in " + statement.getText() +
+                        "Must have been unresolved: " +
+                        renderReferenceInContext(referenceExpression) +
                         " but was resolved to " + DescriptorUtil.renderPresentableText(bindingContext.resolveReferenceExpression(referenceExpression)),
                         unresolvedReferences.contains(referenceExpression));
                 continue;
@@ -157,7 +150,7 @@ public class ExpectedResolveData {
             }
             assertNotNull(reference);
             assertSame(
-                    "Reference `" + name + "`" + reference.getText() + " at " + reference.getTextOffset() + " is resolved into " + actualName + ".",
+                    "Reference `" + name + "`" + renderReferenceInContext(reference) + " is resolved into " + actualName + ".",
                     expected, actual);
         }
 
@@ -196,12 +189,25 @@ public class ExpectedResolveData {
                 }
             }
 
-            assertNotNull(expression.getText(), expressionType);
+            assertNotNull(expression.getText() + " type is null", expressionType);
             assertSame("At " + position + ": ", expectedTypeConstructor, expressionType.getConstructor());
         }
     }
 
-    private <T> T getAncestorOfType(Class<T> type, PsiElement element) {
+    private static String renderReferenceInContext(JetReferenceExpression referenceExpression) {
+        JetExpression statement = referenceExpression;
+        while (true) {
+            PsiElement parent = statement.getParent();
+            if (!(parent instanceof JetExpression)) break;
+            if (parent instanceof JetBlockExpression) break;
+            statement = (JetExpression) parent;
+        }
+        JetDeclaration declaration = PsiTreeUtil.getParentOfType(referenceExpression, JetDeclaration.class);
+        return referenceExpression.getText() +
+                                    " in " + statement.getText() + (declaration == null ? "" : " in " + declaration.getText());
+    }
+
+    private static <T> T getAncestorOfType(Class<T> type, PsiElement element) {
         while (element != null && !type.isInstance(element)) {
             element = element.getParent();
         }

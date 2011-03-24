@@ -15,9 +15,9 @@ JetFile: List.jet
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('T')
         PsiElement(GT)('>')
-      PRIMARY_CONSTRUCTOR_PARAMETERS_LIST
+      VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('theSize')
           PsiWhiteSpace(' ')
           PsiElement(COLON)(':')
@@ -83,9 +83,9 @@ JetFile: List.jet
             TYPE_PARAMETER
               PsiElement(IDENTIFIER)('T')
             PsiElement(GT)('>')
-          PRIMARY_CONSTRUCTOR_PARAMETERS_LIST
+          VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
-            PRIMARY_CONSTRUCTOR_PARAMETER
+            VALUE_PARAMETER
               PsiElement(val)('val')
               PsiWhiteSpace(' ')
               PsiElement(IDENTIFIER)('value')
@@ -98,7 +98,7 @@ JetFile: List.jet
                     PsiElement(IDENTIFIER)('T')
             PsiElement(COMMA)(',')
             PsiWhiteSpace(' ')
-            PRIMARY_CONSTRUCTOR_PARAMETER
+            VALUE_PARAMETER
               PsiElement(val)('val')
               PsiWhiteSpace(' ')
               PsiElement(IDENTIFIER)('tail')

@@ -28,7 +28,6 @@ public class JetStandardLibrary {
 
     // TODO : consider releasing this memory
     private static final Map<Project, JetStandardLibrary> standardLibraryCache = new HashMap<Project, JetStandardLibrary>();
-
     public static JetStandardLibrary getJetStandardLibrary(@NotNull Project project) {
         JetStandardLibrary standardLibrary = standardLibraryCache.get(project);
         if (standardLibrary == null) {
@@ -39,6 +38,7 @@ public class JetStandardLibrary {
     }
 
     private final JetScope libraryScope;
+
     private final ClassDescriptor byteClass;
     private final ClassDescriptor charClass;
     private final ClassDescriptor shortClass;
@@ -50,8 +50,8 @@ public class JetStandardLibrary {
     private final ClassDescriptor stringClass;
     private final ClassDescriptor arrayClass;
     private final ClassDescriptor iterableClass;
-
     private final JetType byteType;
+
     private final JetType charType;
     private final JetType shortType;
     private final JetType intType;
@@ -60,6 +60,7 @@ public class JetStandardLibrary {
     private final JetType doubleType;
     private final JetType booleanType;
     private final JetType stringType;
+    private final JetType nullableStringType;
 
     private JetStandardLibrary(@NotNull Project project) {
         // TODO : review
@@ -98,6 +99,7 @@ public class JetStandardLibrary {
             this.doubleType = new JetTypeImpl(getDouble());
             this.booleanType = new JetTypeImpl(getBoolean());
             this.stringType = new JetTypeImpl(getString());
+            this.nullableStringType = TypeUtils.makeNullable(stringType);
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
@@ -235,5 +237,9 @@ public class JetStandardLibrary {
                 types,
                 getIterable().getMemberScope(types)
         );
+    }
+
+    public JetType getNullableStringType() {
+        return nullableStringType;
     }
 }

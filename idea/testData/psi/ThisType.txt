@@ -23,9 +23,9 @@ JetFile: ThisType.jet
                       PsiElement(This)('This')
                 PsiElement(GT)('>')
         PsiElement(GT)('>')
-      PRIMARY_CONSTRUCTOR_PARAMETERS_LIST
+      VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('a')
           PsiWhiteSpace(' ')
           PsiElement(COLON)(':')
@@ -35,7 +35,7 @@ JetFile: ThisType.jet
               PsiElement(This)('This')
         PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('b')
           PsiWhiteSpace(' ')
           PsiElement(COLON)(':')

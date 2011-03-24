@@ -9,9 +9,9 @@ JetFile: Enums.jet
       PsiElement(IDENTIFIER)('Color')
       TYPE_PARAMETER_LIST
         <empty list>
-      PRIMARY_CONSTRUCTOR_PARAMETERS_LIST
+      VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(val)('val')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('rgb')
@@ -104,9 +104,9 @@ JetFile: Enums.jet
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('T')
         PsiElement(GT)('>')
-      PRIMARY_CONSTRUCTOR_PARAMETERS_LIST
+      VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(val)('val')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('size')
@@ -157,9 +157,9 @@ JetFile: Enums.jet
             TYPE_PARAMETER
               PsiElement(IDENTIFIER)('T')
             PsiElement(GT)('>')
-          PRIMARY_CONSTRUCTOR_PARAMETERS_LIST
+          VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
-            PRIMARY_CONSTRUCTOR_PARAMETER
+            VALUE_PARAMETER
               PsiElement(val)('val')
               PsiWhiteSpace(' ')
               PsiElement(IDENTIFIER)('value')
@@ -172,7 +172,7 @@ JetFile: Enums.jet
                     PsiElement(IDENTIFIER)('T')
             PsiElement(COMMA)(',')
             PsiWhiteSpace(' ')
-            PRIMARY_CONSTRUCTOR_PARAMETER
+            VALUE_PARAMETER
               PsiElement(val)('val')
               PsiWhiteSpace(' ')
               PsiElement(IDENTIFIER)('tail')

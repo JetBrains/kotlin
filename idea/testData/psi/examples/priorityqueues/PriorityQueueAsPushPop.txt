@@ -11,9 +11,9 @@ JetFile: PriorityQueueAsPushPop.jet
         PsiElement(GT)('>')
       PsiWhiteSpace(' ')
       PsiElement(wraps)('wraps')
-      PRIMARY_CONSTRUCTOR_PARAMETERS_LIST
+      VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('wrapped')
           PsiWhiteSpace(' ')
           PsiElement(COLON)(':')
