@@ -30,9 +30,6 @@ public interface JetNodeTypes {
     JetNodeType DELEGATOR_SUPER_CLASS               = new JetNodeType("DELEGATOR_SUPER_CLASS", JetDelegatorToSuperClass.class);
     JetNodeType VALUE_PARAMETER_LIST                = new JetNodeType("VALUE_PARAMETER_LIST", JetParameterList.class);
     JetNodeType VALUE_PARAMETER                     = new JetNodeType("VALUE_PARAMETER", JetParameter.class);
-    // TODO: Not sure if we really need separate PSI nodes for the class parameters?
-    JetNodeType PRIMARY_CONSTRUCTOR_PARAMETERS_LIST = new JetNodeType("PRIMARY_CONSTRUCTOR_PARAMETERS_LIST", JetParameterList.class);
-    JetNodeType PRIMARY_CONSTRUCTOR_PARAMETER       = new JetNodeType("PRIMARY_CONSTRUCTOR_PARAMETER", JetParameter.class);
 
     JetNodeType CLASS_BODY                          = new JetNodeType("CLASS_BODY", JetClassBody.class);
     JetNodeType IMPORT_DIRECTIVE                    = new JetNodeType("IMPORT_DIRECTIVE", JetImportDirective.class);

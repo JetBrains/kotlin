@@ -314,9 +314,9 @@ JetFile: HashMap.jet
         <empty list>
       PsiElement(wraps)('wraps')
       PsiWhiteSpace(' ')
-      PRIMARY_CONSTRUCTOR_PARAMETERS_LIST
+      VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(val)('val')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('obj')
@@ -915,9 +915,9 @@ JetFile: HashMap.jet
         TYPE_PARAMETER
           PsiElement(IDENTIFIER)('V')
         PsiElement(GT)('>')
-      PRIMARY_CONSTRUCTOR_PARAMETERS_LIST
+      VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('hashingStrategy')
           PsiWhiteSpace(' ')
           PsiElement(COLON)(':')

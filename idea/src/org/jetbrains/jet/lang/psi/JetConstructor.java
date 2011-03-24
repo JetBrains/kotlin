@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * @author max
  */
-public class JetConstructor extends JetDeclaration {
+public class JetConstructor extends JetDeclaration implements JetDeclarationWithBody {
     public JetConstructor(@NotNull ASTNode node) {
         super(node);
     }
@@ -41,5 +41,10 @@ public class JetConstructor extends JetDeclaration {
     public List<JetDelegationSpecifier> getInitializers() {
         JetInitializerList list = getInitializerList();
         return list != null ? list.getInitializers() : Collections.<JetDelegationSpecifier>emptyList();
+    }
+
+    @Override
+    public JetExpression getBodyExpression() {
+        return findChildByClass(JetExpression.class);
     }
 }

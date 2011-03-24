@@ -14,7 +14,7 @@ public class TopDownAnalyzer {
 
     private final Map<JetClass, MutableClassDescriptor> classes = new LinkedHashMap<JetClass, MutableClassDescriptor>();
     private final Map<JetNamespace, WritableScope> namespaceScopes = new LinkedHashMap<JetNamespace, WritableScope>();
-    private final Map<JetFunction, FunctionDescriptor> functions = new HashMap<JetFunction, FunctionDescriptor>();
+    private final Map<JetDeclaration, FunctionDescriptor> functions = new HashMap<JetDeclaration, FunctionDescriptor>();
     private final Map<JetDeclaration, WritableScope> declaringScopes = new HashMap<JetDeclaration, WritableScope>();
 
     private final JetSemanticServices semanticServices;
@@ -142,8 +142,8 @@ public class TopDownAnalyzer {
                 @Override
                 public void visitClass(JetClass klass) {
                     MutableClassDescriptor mutableClassDescriptor = classes.get(klass);
-                    processBehaviorDeclarators(mutableClassDescriptor.getUnsubstitutedMemberScope(), klass.getDeclarations());
                     processPrimaryConstructor(mutableClassDescriptor, klass);
+                    processBehaviorDeclarators(mutableClassDescriptor.getUnsubstitutedMemberScope(), klass.getDeclarations());
                 }
 
                 @Override
@@ -189,14 +189,28 @@ public class TopDownAnalyzer {
     }
 
     private void processPrimaryConstructor(MutableClassDescriptor classDescriptor, JetClass klass) {
-        ConstructorDescriptor constructorDescriptor = classDescriptorResolver.resolvePrimaryConstructor(classDescriptor.getUnsubstitutedMemberScope(), classDescriptor, klass);
+        // TODO : not all the parameters are real properties
+        WritableScope memberScope = classDescriptor.getUnsubstitutedMemberScope(); // TODO : this is REALLY questionable
+        ConstructorDescriptor constructorDescriptor = classDescriptorResolver.resolvePrimaryConstructor(memberScope, classDescriptor, klass);
+        for (JetParameter parameter : klass.getPrimaryConstructorParameters()) {
+            PropertyDescriptor propertyDescriptor = classDescriptorResolver.resolvePrimaryConstructorParameterToAProperty(
+                    classDescriptor,
+                    memberScope,
+                    parameter
+            );
+            memberScope.addPropertyDescriptor(
+                    propertyDescriptor);
+        }
         if (constructorDescriptor != null) {
             classDescriptor.addConstructor(constructorDescriptor);
         }
     }
 
     private void processConstructor(MutableClassDescriptor classDescriptor, JetConstructor constructor) {
-        classDescriptor.addConstructor(classDescriptorResolver.resolveConstructorDescriptor(classDescriptor.getUnsubstitutedMemberScope(), classDescriptor, constructor, false));
+        ConstructorDescriptor constructorDescriptor = classDescriptorResolver.resolveConstructorDescriptor(classDescriptor.getUnsubstitutedMemberScope(), classDescriptor, constructor, false);
+        classDescriptor.addConstructor(constructorDescriptor);
+        functions.put(constructor, constructorDescriptor);
+        declaringScopes.put(constructor, classDescriptor.getUnsubstitutedMemberScope());
     }
 
     private void processFunction(@NotNull WritableScope declaringScope, JetFunction function) {
@@ -211,7 +225,6 @@ public class TopDownAnalyzer {
         declaringScopes.put(property, declaringScope);
         PropertyDescriptor descriptor = classDescriptorResolver.resolvePropertyDescriptor(declaringScope.getContainingDeclaration(), declaringScope, property);
         declaringScope.addPropertyDescriptor(descriptor);
-        trace.recordDeclarationResolution(property, descriptor);
     }
 
     private void processClassObject(JetClassObject classObject) {
@@ -221,11 +234,11 @@ public class TopDownAnalyzer {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private void resolveBehaviorDeclarationBodies() {
-        for (Map.Entry<JetFunction, FunctionDescriptor> entry : functions.entrySet()) {
-            JetFunction function = entry.getKey();
+        for (Map.Entry<JetDeclaration, FunctionDescriptor> entry : functions.entrySet()) {
+            JetDeclaration declarations = entry.getKey();
             FunctionDescriptor descriptor = entry.getValue();
 
-            WritableScope declaringScope = declaringScopes.get(function);
+            WritableScope declaringScope = declaringScopes.get(declarations);
             assert declaringScope != null;
 
             WritableScope parameterScope = semanticServices.createWritableScope(declaringScope, descriptor);
@@ -236,7 +249,8 @@ public class TopDownAnalyzer {
                 parameterScope.addPropertyDescriptor(valueParameterDescriptor);
             }
 
-            JetExpression bodyExpression = function.getBodyExpression();
+            assert declarations instanceof JetFunction || declarations instanceof JetConstructor;
+            JetExpression bodyExpression = ((JetDeclarationWithBody) declarations).getBodyExpression();
             if (bodyExpression != null) {
                 resolveExpression(parameterScope, bodyExpression, true);
             }

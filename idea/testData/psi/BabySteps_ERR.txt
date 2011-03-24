@@ -17,9 +17,9 @@ JetFile: BabySteps_ERR.jet
         TYPE_PARAMETER
           PsiElement(IDENTIFIER)('a')
         PsiElement(GT)('>')
-      PRIMARY_CONSTRUCTOR_PARAMETERS_LIST
+      VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('a')
           PsiWhiteSpace(' ')
           PsiElement(COLON)(':')

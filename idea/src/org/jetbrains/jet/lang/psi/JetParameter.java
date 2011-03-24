@@ -39,13 +39,28 @@ public class JetParameter extends JetNamedDeclaration {
         return null;
     }
 
-    public boolean isOut() {
-        JetModifierList modifierList = getModifierList();
-        return modifierList != null && modifierList.hasModifier(JetTokens.OUT_KEYWORD);
+    public boolean isRef() {
+        ASTNode refNode = getRefNode();
+        return refNode != null;
     }
 
-    public boolean isRef() {
+    @Nullable
+    public ASTNode getRefNode() {
         JetModifierList modifierList = getModifierList();
-        return modifierList != null && modifierList.hasModifier(JetTokens.REF_KEYWORD);
+        return modifierList == null ? null : modifierList.getModifierNode(JetTokens.REF_KEYWORD);
     }
+
+    public boolean isMutable() {
+        return findChildByType(JetTokens.VAR_KEYWORD) != null || isRef();
+    }
+
+    @Nullable
+    public ASTNode getValOrVarNode() {
+        ASTNode val = getNode().findChildByType(JetTokens.VAL_KEYWORD);
+        if (val != null) return val;
+
+        return getNode().findChildByType(JetTokens.VAR_KEYWORD);
+    }
+
+
 }

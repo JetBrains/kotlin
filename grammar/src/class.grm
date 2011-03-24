@@ -14,14 +14,11 @@ class
   : modifiers "class" SimpleName
       typeParameters?
       "wraps"?
-      primaryConstructorParameters?
+      valueParameters?
       (":" attributes delegationSpecifier{","})?
       (classBody? | enumClassBody)
   ;
 
-primaryConstructorParameters
-  : "(" primaryConstructorParameter{","} ")"
-  ;
 
 typeParameters
   : "<" typeParameter{","} ">"
@@ -48,8 +45,4 @@ typeParameter
 typeConstraint
   : userType ":" type
   : "class" "object" userType ":" type
-  ;
-
-primaryConstructorParameter
-  : modifiers ("val" | "var")? functionParameterRest
   ;

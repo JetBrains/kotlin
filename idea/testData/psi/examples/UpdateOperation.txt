@@ -6,9 +6,9 @@ JetFile: UpdateOperation.jet
       PsiElement(IDENTIFIER)('Pair')
       TYPE_PARAMETER_LIST
         <empty list>
-      PRIMARY_CONSTRUCTOR_PARAMETERS_LIST
+      VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('x')
           PsiWhiteSpace(' ')
           PsiElement(COLON)(':')
@@ -19,7 +19,7 @@ JetFile: UpdateOperation.jet
                 PsiElement(IDENTIFIER)('Int')
         PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('y')
           PsiWhiteSpace(' ')
           PsiElement(COLON)(':')

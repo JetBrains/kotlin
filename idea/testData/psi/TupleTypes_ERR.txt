@@ -6,10 +6,10 @@ JetFile: TupleTypes_ERR.jet
       PsiElement(IDENTIFIER)('F')
       TYPE_PARAMETER_LIST
         <empty list>
-      PRIMARY_CONSTRUCTOR_PARAMETERS_LIST
+      VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
         PsiWhiteSpace('\n    ')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('a')
           PsiWhiteSpace(' ')
           PsiElement(COLON)(':')
@@ -20,7 +20,7 @@ JetFile: TupleTypes_ERR.jet
               PsiElement(RPAR)(')')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n    ')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('x')
           PsiWhiteSpace(' ')
           PsiElement(COLON)(':')
@@ -35,7 +35,7 @@ JetFile: TupleTypes_ERR.jet
               PsiElement(RPAR)(')')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n    ')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('b')
           PsiWhiteSpace(' ')
           PsiElement(COLON)(':')
@@ -54,7 +54,7 @@ JetFile: TupleTypes_ERR.jet
               PsiElement(RPAR)(')')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n    ')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('c')
           PsiWhiteSpace(' ')
           PsiElement(COLON)(':')
@@ -82,7 +82,7 @@ JetFile: TupleTypes_ERR.jet
               PsiElement(RPAR)(')')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n    ')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('a')
           PsiWhiteSpace(' ')
           PsiElement(COLON)(':')
@@ -102,7 +102,7 @@ JetFile: TupleTypes_ERR.jet
               PsiElement(RPAR)(')')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n    ')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('x')
           PsiWhiteSpace(' ')
           PsiElement(COLON)(':')
@@ -135,7 +135,7 @@ JetFile: TupleTypes_ERR.jet
               PsiElement(RPAR)(')')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n    ')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('b')
           PsiWhiteSpace(' ')
           PsiElement(COLON)(':')
@@ -182,7 +182,7 @@ JetFile: TupleTypes_ERR.jet
               PsiElement(RPAR)(')')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n    ')
-        PRIMARY_CONSTRUCTOR_PARAMETER
+        VALUE_PARAMETER
           PsiElement(IDENTIFIER)('c')
           PsiWhiteSpace(' ')
           PsiElement(COLON)(':')

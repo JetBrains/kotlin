@@ -386,7 +386,7 @@ public class JetParsing extends AbstractJetParsing {
 
         consumeIf(WRAPS_KEYWORD);
         if (at(LPAR)) {
-            parsePrimaryConstructorParameterList();
+            parseValueParameterList(false, TokenSet.EMPTY);
         }
 
         if (at(COLON)) {
@@ -464,8 +464,7 @@ public class JetParsing extends AbstractJetParsing {
         parseTypeParameterList(TokenSet.create(COLON, LPAR, SEMICOLON, LBRACE));
 
         if (at(LPAR)) {
-            parsePrimaryConstructorParameterList();
-//            parseValueParameterList(false, TokenSet.create(COLON, SEMICOLON, LBRACE));
+            parseValueParameterList(false, TokenSet.create(COLON, SEMICOLON, LBRACE));
         }
 
         if (at(COLON)) {
@@ -1009,72 +1008,6 @@ public class JetParsing extends AbstractJetParsing {
     }
 
     /*
-     * ("(" primaryConstructorParameter{","} ")")
-     */
-    private void parsePrimaryConstructorParameterList() {
-        assert _at(LPAR);
-        PsiBuilder.Marker cons = mark();
-
-        myBuilder.disableNewlines();
-        advance(); // LPAR
-
-        while (true) {
-            parsePrimaryConstructorParameter();
-            if (!at(COMMA)) break;
-            advance(); // COMMA
-        }
-
-        expect(RPAR, "')' expected");
-        myBuilder.restoreNewlinesState();
-
-        cons.done(PRIMARY_CONSTRUCTOR_PARAMETERS_LIST);
-    }
-
-    /*
-     * primaryConstructorParameter
-     *   : modifiers ("val" | "var")? functionParameterRest
-     *   ;
-     */
-    private void parsePrimaryConstructorParameter() {
-        PsiBuilder.Marker param = mark();
-
-        int lastId = findLastBefore(TokenSet.create(IDENTIFIER), TokenSet.create(COMMA, RPAR, COLON), false);
-        createTruncatedBuilder(lastId).parseModifierList();
-
-        if (at(VAR_KEYWORD) || at(VAL_KEYWORD)) {
-            advance(); // VAR_KEYWORD | VAL_KEYWORD
-        }
-
-        parseFunctionParameterRest();
-
-        param.done(PRIMARY_CONSTRUCTOR_PARAMETER);
-    }
-
-    /*
-     * functionParameterRest
-     *   : parameter ("=" expression)?
-     *   ;
-     */
-    private boolean parseFunctionParameterRest() {
-        expect(IDENTIFIER, "Parameter name expected", PARAMETER_NAME_RECOVERY_SET);
-
-        if (at(COLON)) {
-            advance(); // COLON
-            parseTypeRef();
-        }
-        else {
-            error("Parameters must have type annotation");
-            return false;
-        }
-
-        if (at(EQ)) {
-            advance(); // EQ
-            myExpressionParsing.parseExpression();
-        }
-        return true;
-    }
-
-    /*
      * typeParameters
      *   : ("<" typeParameter{","} ">"
      *      ("where" typeConstraint{","})?)?
@@ -1443,16 +1376,28 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * functionParameter
-     *   : modifiers functionParameterRest
+     *   : modifiers ("val" | "var")? parameter ("=" expression)?
      *   ;
      */
     private boolean tryParseValueParameter() {
+        return parseValueParameter(true);
+    }
+
+    private void parseValueParameter() {
+        parseValueParameter(false);
+    }
+
+    private boolean parseValueParameter(boolean rollbackOnFailure) {
         PsiBuilder.Marker parameter = mark();
 
         int lastId = findLastBefore(TokenSet.create(IDENTIFIER), TokenSet.create(COMMA, RPAR, COLON), false);
         createTruncatedBuilder(lastId).parseModifierList();
 
-        if (!parseFunctionParameterRest()) {
+        if (at(VAR_KEYWORD) || at(VAL_KEYWORD)) {
+            advance(); // VAR_KEYWORD | VAL_KEYWORD
+        }
+
+        if (!parseFunctionParameterRest() && rollbackOnFailure) {
             parameter.rollbackTo();
             return false;
         }
@@ -1462,19 +1407,27 @@ public class JetParsing extends AbstractJetParsing {
     }
 
     /*
-     * functionParameter
-     *   : modifiers functionParameterRest
+     * functionParameterRest
+     *   : parameter ("=" expression)?
      *   ;
      */
-    private void parseValueParameter() {
-        PsiBuilder.Marker parameter = mark();
+    private boolean parseFunctionParameterRest() {
+        expect(IDENTIFIER, "Parameter name expected", PARAMETER_NAME_RECOVERY_SET);
 
-        int lastId = findLastBefore(TokenSet.create(IDENTIFIER), TokenSet.create(COMMA, RPAR, COLON), false);
-        createTruncatedBuilder(lastId).parseModifierList();
+        if (at(COLON)) {
+            advance(); // COLON
+            parseTypeRef();
+        }
+        else {
+            error("Parameters must have type annotation");
+            return false;
+        }
 
-        parseFunctionParameterRest();
-
-        parameter.done(VALUE_PARAMETER);
+        if (at(EQ)) {
+            advance(); // EQ
+            myExpressionParsing.parseExpression();
+        }
+        return true;
     }
 
     @Override
