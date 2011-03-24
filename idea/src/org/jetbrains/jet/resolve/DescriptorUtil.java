@@ -9,6 +9,8 @@ import java.util.List;
  * @author abreslav
  */
 public class DescriptorUtil {
+    private DescriptorUtil() {}
+
     public static String renderPresentableText(DeclarationDescriptor declarationDescriptor) {
         if (declarationDescriptor == null) return "<null>";
         StringBuilder stringBuilder = new StringBuilder();
