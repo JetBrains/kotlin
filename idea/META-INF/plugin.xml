@@ -5,11 +5,12 @@
   <vendor>JetBrains</vendor>
 
   <application-components>
-    <!-- Add your application components here -->
   </application-components>
 
   <project-components>
-    <!-- Add your project components here -->
+      <component>
+          <implementation-class>org.jetbrains.jet.compiler.JetCompilerManager</implementation-class>
+      </component>
   </project-components>
 
   <actions>

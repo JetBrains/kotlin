@@ -18,12 +18,9 @@ import java.lang.reflect.Method;
  * @author yole
  */
 public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
-    private NamespaceCodegen codegen;
-
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        codegen = new NamespaceCodegen();
     }
 
     public void testPSVM() throws Exception {
@@ -114,7 +111,10 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
         StringWriter writer = new StringWriter();
         JetFile jetFile = (JetFile) myFixture.getFile();
         JetNamespace namespace = jetFile.getRootNamespace();
-        codegen.generate(namespace, new TraceClassVisitor(new PrintWriter(writer)), getProject());
+        NamespaceCodegen codegen = new NamespaceCodegen(getProject(),
+                new TraceClassVisitor(new PrintWriter(writer)),
+                namespace.getFQName());
+        codegen.generate(namespace);
         return writer.toString();
     }
 
@@ -122,10 +122,13 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
         JetFile jetFile = (JetFile) myFixture.getFile();
         ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
         final JetNamespace namespace = jetFile.getRootNamespace();
-        codegen.generate(namespace, writer, getProject());
+        NamespaceCodegen codegen = new NamespaceCodegen(getProject(),
+                writer,
+                namespace.getFQName());
+        codegen.generate(namespace);
         final byte[] data = writer.toByteArray();
         MyClassLoader classLoader = new MyClassLoader(NamespaceGenTest.class.getClassLoader());
-        final Class aClass = classLoader.doDefineClass(NamespaceCodegen.getJVMClassName(namespace).replace("/", "."), data);
+        final Class aClass = classLoader.doDefineClass(NamespaceCodegen.getJVMClassName(namespace.getFQName()).replace("/", "."), data);
         return aClass;
     }
 

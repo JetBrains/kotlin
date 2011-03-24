@@ -16,22 +16,28 @@ import org.objectweb.asm.Opcodes;
  * @author max
  */
 public class NamespaceCodegen {
-    public NamespaceCodegen() {
-    }
+    private final Project project;
+    private final ClassVisitor v;
 
-    public void generate(JetNamespace namespace, ClassVisitor v, Project project) {
-        BindingContext bindingContext = AnalyzingUtils.analyzeNamespace(namespace, ErrorHandler.THROW_EXCEPTION);
+    public NamespaceCodegen(Project project, ClassVisitor v, String fqName) {
+        this.project = project;
+        this.v = v;
 
-        final PropertyCodegen propertyCodegen = new PropertyCodegen(v);
-        final FunctionCodegen functionCodegen = new FunctionCodegen(v, JetStandardLibrary.getJetStandardLibrary(project), bindingContext);
         v.visit(Opcodes.V1_6,
                 Opcodes.ACC_PUBLIC,
-                getJVMClassName(namespace),
+                getJVMClassName(fqName),
                 null,
                 //"jet/lang/Namespace",
                 "java/lang/Object",
                 new String[0]
                 );
+    }
+
+    public void generate(JetNamespace namespace) {
+        BindingContext bindingContext = AnalyzingUtils.analyzeNamespace(namespace, ErrorHandler.THROW_EXCEPTION);
+
+        final PropertyCodegen propertyCodegen = new PropertyCodegen(v);
+        final FunctionCodegen functionCodegen = new FunctionCodegen(v, JetStandardLibrary.getJetStandardLibrary(project), bindingContext);
 
         for (JetDeclaration declaration : namespace.getDeclarations()) {
             if (declaration instanceof JetProperty) {
@@ -41,12 +47,17 @@ public class NamespaceCodegen {
                 functionCodegen.gen((JetFunction) declaration, namespace);
             }
         }
+    }
 
-
+    public void done() {
         v.visitEnd();
     }
 
-    public static String getJVMClassName(JetNamespace namespace) {
-        return namespace.getFQName().replace('.', '/') + "/namespace";
+    public static String getJVMClassName(String fqName) {
+        return fqName.replace('.', '/') + "/namespace";
+    }
+
+    public ClassVisitor getVisitor() {
+        return v;
     }
 }
