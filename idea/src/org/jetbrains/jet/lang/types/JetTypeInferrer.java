@@ -398,7 +398,10 @@ public class JetTypeInferrer {
 
         @Override
         public void visitParenthesizedExpression(JetParenthesizedExpression expression) {
-            result = getType(scope, expression.getExpression(), false);
+            JetExpression inner = expression.getExpression();
+            if (inner != null) {
+                result = getType(scope, inner, false);
+            }
         }
 
         @Override
