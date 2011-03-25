@@ -374,7 +374,10 @@ public class JetExpressionParsing extends AbstractJetParsing {
     }
 
     /*
-     * typeParameters? valueParameters? functionLiteral*
+     * callSuffix
+     *   : typeArguments? valueArguments (label? functionLiteral*)
+     *   : typeArguments (label? functionLiteral*)
+     *   ;
      */
     private boolean parseCallSuffix() {
         if (parseCallWithClosure()) {
@@ -1361,7 +1364,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      * "new" constructorInvocation // identical to new functionCall
      *
      * constructorInvocation
-     *   : userType valueArguments
+     *   : userType callSuffix
      */
     private void parseNew() {
         assert _at(NEW_KEYWORD);
@@ -1370,7 +1373,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
         advance(); // NEW_KEYWORD
 
         myJetParsing.parseTypeRef();
-        parseValueArgumentList();
+        parseCallSuffix();
 
         creation.done(NEW);
     }

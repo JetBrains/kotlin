@@ -174,10 +174,14 @@ prefixUnaryOperation
 
 postfixUnaryOperation
   : "++" : "--"
-  : typeArguments? valueArguments (label? functionLiteral)
-  : typeArguments (label? functionLiteral)
+  : callSuffix
   : arrayAccess
   : memberAccessOperation postfixUnaryOperation // TODO: Review
+  ;
+
+callSuffix
+  : typeArguments? valueArguments (label? functionLiteral)
+  : typeArguments (label? functionLiteral)
   ;
 
 memberAccessOperation
@@ -221,7 +225,7 @@ expressions
   ;
 
 constructorInvocation
-  : userType valueArguments
+  : userType callSuffix
   ;
 
 arrayAccess

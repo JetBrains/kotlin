@@ -11,12 +11,11 @@ enum class List<out T>(theSize : Int) : IList<T> {
     get() = this == Nil
 
 
-  override fun iterator() = new IIterator() {
+  override fun iterator() = object IIterator() {
     private var current = List.this
 
-    override val hasNext {
+    override val hasNext
       get() = current == Nil
-    }
 
     override fun next() {
       val result = current.value
