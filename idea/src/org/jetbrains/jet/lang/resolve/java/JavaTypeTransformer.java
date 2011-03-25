@@ -30,7 +30,7 @@ public class JavaTypeTransformer {
             public JetType visitClassType(PsiClassType classType) {
                 PsiClass psiClass = classType.resolveGenerics().getElement();
                 if (psiClass == null) {
-                    return ErrorType.createErrorType("Unresolved java class: " + classType.getPresentableText());
+                    return ErrorUtils.createErrorType("Unresolved java class: " + classType.getPresentableText());
                 }
 
                 if ("java.lang.Object".equals(psiClass.getQualifiedName())) {

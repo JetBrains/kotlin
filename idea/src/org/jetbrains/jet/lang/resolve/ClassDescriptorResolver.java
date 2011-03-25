@@ -174,7 +174,7 @@ public class ClassDescriptorResolver {
         } else {
             if (bodyExpression == null) {
                 semanticServices.getErrorHandler().genericError(function.getNode(), "This function must either declare a return type or have a body expression");
-                returnType = ErrorType.createErrorType("No type, no body");
+                returnType = ErrorUtils.createErrorType("No type, no body");
             } else {
                 // TODO : Recursion possible
                 returnType = semanticServices.getTypeInferrer(trace).safeGetType(parameterScope, bodyExpression, function.hasBlockBody());
@@ -204,7 +204,7 @@ public class ClassDescriptorResolver {
             JetType type;
             if (typeReference == null) {
                 semanticServices.getErrorHandler().genericError(valueParameter.getNode(), "A type annotation is required on a value parameter");
-                type = ErrorType.createErrorType("Type annotation was missing");
+                type = ErrorUtils.createErrorType("Type annotation was missing");
             } else {
                 type = typeResolver.resolveType(parameterScope, typeReference);
             }
@@ -266,7 +266,7 @@ public class ClassDescriptorResolver {
                 result.add(typeResolver.resolveType(extensibleScope, typeReference));
             }
             else {
-                result.add(ErrorType.createErrorType("No type reference"));
+                result.add(ErrorUtils.createErrorType("No type reference"));
             }
         }
         return result;
@@ -286,7 +286,7 @@ public class ClassDescriptorResolver {
         }
         else {
             // Error is reported by the parser
-            type = ErrorType.createErrorType("Annotation is absent");
+            type = ErrorUtils.createErrorType("Annotation is absent");
         }
         return type;
     }
@@ -311,7 +311,7 @@ public class ClassDescriptorResolver {
             JetExpression initializer = property.getInitializer();
             if (initializer == null) {
                 semanticServices.getErrorHandler().genericError(property.getNode(), "This property must either have a type annotation or be initialized");
-                type = ErrorType.createErrorType("No type, no body");
+                type = ErrorUtils.createErrorType("No type, no body");
             } else {
                 // TODO : ??? Fix-point here: what if we have something like "val a = foo {a.bar()}"
                 type = semanticServices.getTypeInferrer(trace).getType(scope, initializer, false);

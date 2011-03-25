@@ -9,7 +9,7 @@ import java.util.*;
 /**
  * @author abreslav
  */
-public class ErrorType {
+public class ErrorUtils {
 
     private static final ModuleDescriptor ERROR_MODULE = new ModuleDescriptor("<ERROR MODULE>");
     private static final JetScope ERROR_SCOPE = new JetScope() {
@@ -188,5 +188,5 @@ public class ErrorType {
         }
     }
 
-    private ErrorType() {}
+    private ErrorUtils() {}
 }

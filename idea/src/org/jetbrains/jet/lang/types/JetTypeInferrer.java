@@ -78,7 +78,7 @@ public class JetTypeInferrer {
         if (type != null) {
             return type;
         }
-        return ErrorType.createErrorType("Type for " + expression.getText());
+        return ErrorUtils.createErrorType("Type for " + expression.getText());
     }
 
     @Nullable
@@ -653,7 +653,7 @@ public class JetTypeInferrer {
             }
             else {
                 if (expectedParameterType == null) {
-                    expectedParameterType = ErrorType.createErrorType("Error");
+                    expectedParameterType = ErrorUtils.createErrorType("Error");
                 }
                 propertyDescriptor = classDescriptorResolver.resolveValueParameterDescriptor(scope.getContainingDeclaration(), loopParameter, expectedParameterType);
             }
@@ -730,7 +730,7 @@ public class JetTypeInferrer {
                                     Collections.<JetTypeProjection>emptyList(),
                                     expression.getArguments(),
                                     expression.getFunctionLiteralArguments());
-                            if (constructorReturnedType == null && !ErrorType.isErrorType(receiverType)) {
+                            if (constructorReturnedType == null && !ErrorUtils.isErrorType(receiverType)) {
                                 trace.recordReferenceResolution(referenceExpression, receiverType.getConstructor().getDeclarationDescriptor());
                                 // TODO : more helpful message
                                 JetArgumentList argumentList = expression.getArgumentList();
@@ -961,7 +961,7 @@ public class JetTypeInferrer {
             }
             else if (inOperations.contains(operationType)) {
                 if (right == null) {
-                    result = ErrorType.createErrorType("No right argument"); // TODO
+                    result = ErrorUtils.createErrorType("No right argument"); // TODO
                     return;
                 }
                 String name = "contains";
@@ -1030,7 +1030,7 @@ public class JetTypeInferrer {
 
         private boolean isBoolean(@NotNull JetType type) {
             TypeConstructor booleanTypeConstructor = semanticServices.getStandardLibrary().getBoolean().getTypeConstructor();
-            return type.getConstructor().equals(booleanTypeConstructor) || ErrorType.isErrorType(type);
+            return type.getConstructor().equals(booleanTypeConstructor) || ErrorUtils.isErrorType(type);
         }
 
         @Override
@@ -1064,7 +1064,7 @@ public class JetTypeInferrer {
         private JetType getTypeForBinaryCall(JetScope scope, JetExpression left, JetSimpleNameExpression operationSign, @NotNull JetExpression right, String name, boolean reportUnresolved) {
             JetType leftType = safeGetType(scope, left, false);
             JetType rightType = safeGetType(scope, right, false);
-            if (ErrorType.isErrorType(leftType)) {
+            if (ErrorUtils.isErrorType(leftType)) {
                 return null;
             }
             FunctionDescriptor functionDescriptor = lookupFunction(scope, operationSign, name, leftType, Collections.singletonList(rightType), reportUnresolved);

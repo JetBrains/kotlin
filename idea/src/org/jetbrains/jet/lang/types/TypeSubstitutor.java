@@ -30,7 +30,7 @@ public class TypeSubstitutor {
         try {
             return unsafeSubstitute(substitutionContext, type, howThisTypeIsUsed);
         } catch (SubstitutionException e) {
-            return ErrorType.createErrorType(e.getMessage());
+            return ErrorUtils.createErrorType(e.getMessage());
         }
     }
 

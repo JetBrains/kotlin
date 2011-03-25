@@ -450,7 +450,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         Project project = getProject();
         JetExpression jetExpression = JetChangeUtil.createExpression(project, expression);
         JetType type = semanticServices.getTypeInferrer(BindingTrace.DUMMY).safeGetType(classDefinitions.BASIC_SCOPE, jetExpression, false);
-        assertTrue("Error type expected but " + type + " returned", ErrorType.isErrorType(type));
+        assertTrue("Error type expected but " + type + " returned", ErrorUtils.isErrorType(type));
     }
 
     private void assertType(String contextType, String expression, String expectedType) {

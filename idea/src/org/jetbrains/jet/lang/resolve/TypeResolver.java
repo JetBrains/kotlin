@@ -116,7 +116,7 @@ public class TypeResolver {
             });
         }
         if (result[0] == null) {
-            return ErrorType.createErrorType(typeElement == null ? "No type element": typeElement.getText());
+            return ErrorUtils.createErrorType(typeElement == null ? "No type element" : typeElement.getText());
         }
         return result[0];
     }
