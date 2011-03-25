@@ -959,17 +959,13 @@ public class JetTypeInferrer {
                 JetType equalsType = getTypeForBinaryCall(expression, name, scope, true);
                 result = assureBooleanResult(operationSign, name, equalsType);
 
-                // Assure that the types on the left and on the right have nonempty intersection
-                if (right != null) {
-                    // TODO : duplicated effort
-                    JetType leftType = getType(scope, left, false);
-                    JetType rightType = getType(scope, right, false);
+                ensureNonemptyIntersectionOfOperandTypes(expression);
+            }
+            else if (operationType == JetTokens.EQEQEQ || operationType == JetTokens.EXCLEQEQEQ) {
+                ensureNonemptyIntersectionOfOperandTypes(expression);
 
-                    JetType intersect = TypeUtils.intersect(semanticServices.getTypeChecker(), new HashSet<JetType>(Arrays.asList(leftType, rightType)));
-                    if (intersect == null) {
-                        semanticServices.getErrorHandler().genericError(expression.getNode(), "Operator " + operationSign.getReferencedName() + " cannot be applied to " + leftType + " and " + rightType);
-                    }
-                }
+                // TODO : Check comparison pointlessness
+                result = semanticServices.getStandardLibrary().getBooleanType();
             }
             else if (inOperations.contains(operationType)) {
                 if (right == null) {
@@ -979,12 +975,6 @@ public class JetTypeInferrer {
                 String name = "contains";
                 JetType containsType = getTypeForBinaryCall(scope, right, expression.getOperationReference(), expression.getLeft(), name, true);
                 result = assureBooleanResult(operationSign, name, containsType);
-            }
-            else if (operationType == JetTokens.EQEQEQ || operationType == JetTokens.EXCLEQEQEQ) {
-                JetType leftType = getType(scope, left, false);
-                JetType rightType = right == null ? null : getType(scope, right, false);
-                // TODO : Check comparison pointlessness
-                result = semanticServices.getStandardLibrary().getBooleanType();
             }
             else if (operationType == JetTokens.ANDAND || operationType == JetTokens.OROR) {
                 JetType leftType = getType(scope, left, false);
@@ -1012,6 +1002,23 @@ public class JetTypeInferrer {
             }
             else {
                 semanticServices.getErrorHandler().genericError(operationSign.getNode(), "Unknown operation");
+            }
+        }
+
+        private void ensureNonemptyIntersectionOfOperandTypes(JetBinaryExpression expression) {
+            JetSimpleNameExpression operationSign = expression.getOperationReference();
+            JetExpression left = expression.getLeft();
+            JetExpression right = expression.getRight();
+
+            // TODO : duplicated effort for == and !=
+            JetType leftType = getType(scope, left, false);
+            if (right != null) {
+                JetType rightType = getType(scope, right, false);
+
+                JetType intersect = TypeUtils.intersect(semanticServices.getTypeChecker(), new HashSet<JetType>(Arrays.asList(leftType, rightType)));
+                if (intersect == null) {
+                    semanticServices.getErrorHandler().genericError(expression.getNode(), "Operator " + operationSign.getReferencedName() + " cannot be applied to " + leftType + " and " + rightType);
+                }
             }
         }
 

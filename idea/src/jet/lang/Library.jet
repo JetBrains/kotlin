@@ -19,7 +19,7 @@ class Boolean : Comparable<Boolean> {
 
   fun xor(other : Boolean) : Boolean
 
-  fun equals(other : Boolean?) : Boolean
+  fun equals(other : Any?) : Boolean
 }
 
 class String : Comparable<String> {
@@ -27,6 +27,7 @@ class String : Comparable<String> {
   val length : Int
 
   fun plus(other : Any?) : String
+  fun equals(other : Any?) : Boolean
 }
 
 class Range<in T : Comparable<T>> {
