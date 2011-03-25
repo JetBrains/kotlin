@@ -92,12 +92,13 @@ public class JetTypeInferrer {
         return result;
     }
 
-    @NotNull
-    private JetExpression deparenthesize(@NotNull JetExpression expression) {
-        while (expression instanceof JetParenthesizedExpression) {
-            expression = ((JetParenthesizedExpression) expression).getExpression();
+    @Nullable
+    private static JetExpression deparenthesize(@NotNull JetExpression expression) {
+        JetExpression result = expression;
+        while (result instanceof JetParenthesizedExpression) {
+            result = ((JetParenthesizedExpression) expression).getExpression();
         }
-        return expression;
+        return result;
     }
 
     @Nullable
@@ -158,9 +159,10 @@ public class JetTypeInferrer {
                 JetExpression selectorExpression = expression.getSelectorExpression();
                 if (selectorExpression instanceof JetSimpleNameExpression) {
                     JetSimpleNameExpression referenceExpression = (JetSimpleNameExpression) selectorExpression;
+                    String referencedName = referenceExpression.getReferencedName();
 
-                    if (receiverType != null) {
-                        result[0] = semanticServices.getOverloadResolver().getOverloadDomain(receiverType, scope, referenceExpression.getReferencedName());
+                    if (receiverType != null && referencedName != null) {
+                        result[0] = semanticServices.getOverloadResolver().getOverloadDomain(receiverType, scope, referencedName);
                         reference[0] = referenceExpression;
                     }
                 } else {
@@ -171,8 +173,11 @@ public class JetTypeInferrer {
             @Override
             public void visitSimpleNameExpression(JetSimpleNameExpression expression) {
                 // a -- create a hierarchical lookup domain for this.a
-                result[0] = semanticServices.getOverloadResolver().getOverloadDomain(null, scope, expression.getReferencedName());
-                reference[0] = expression;
+                String referencedName = expression.getReferencedName();
+                if (referencedName != null) {
+                    result[0] = semanticServices.getOverloadResolver().getOverloadDomain(null, scope, referencedName);
+                    reference[0] = expression;
+                }
             }
 
             @Override
@@ -498,22 +503,29 @@ public class JetTypeInferrer {
 
         @Override
         public void visitThisExpression(JetThisExpression expression) {
-            // TODO : qualified this, e.g. Foo.this<Bar>
+            // TODO : qualified this, e.g. this@Foo<Bar>
             JetType thisType = scope.getThisType();
             JetTypeReference superTypeQualifier = expression.getSuperTypeQualifier();
             if (superTypeQualifier != null) {
-                // This cast must be safe (assuming the PSI doesn't contain errors)
-                JetUserType typeElement = (JetUserType) superTypeQualifier.getTypeElement();
-                ClassDescriptor superclass = typeResolver.resolveClass(scope, typeElement);
-                Collection<? extends JetType> supertypes = thisType.getConstructor().getSupertypes();
-                Map<TypeConstructor, TypeProjection> substitutionContext = TypeUtils.buildSubstitutionContext(thisType);
-                for (JetType declaredSupertype : supertypes) {
-                    if (declaredSupertype.getConstructor().equals(superclass.getTypeConstructor())) {
-                        result = TypeSubstitutor.INSTANCE.safeSubstitute(substitutionContext, declaredSupertype, Variance.INVARIANT);
-                        break;
+                JetTypeElement superTypeElement = superTypeQualifier.getTypeElement();
+                // Errors are reported by the parser
+                if (superTypeElement instanceof JetUserType) {
+                    JetUserType typeElement = (JetUserType) superTypeElement;
+                    ClassDescriptor superclass = typeResolver.resolveClassByUserType(scope, typeElement);
+                    if (superclass != null) {
+                        Collection<? extends JetType> supertypes = thisType.getConstructor().getSupertypes();
+                        Map<TypeConstructor, TypeProjection> substitutionContext = TypeUtils.buildSubstitutionContext(thisType);
+                        for (JetType declaredSupertype : supertypes) {
+                            if (declaredSupertype.getConstructor().equals(superclass.getTypeConstructor())) {
+                                result = TypeSubstitutor.INSTANCE.safeSubstitute(substitutionContext, declaredSupertype, Variance.INVARIANT);
+                                break;
+                            }
+                        }
+                        if (result == null) {
+                            semanticServices.getErrorHandler().genericError(superTypeElement.getNode(), "Not a superclass");
+                        }
                     }
                 }
-                assert result != null;
             } else {
                 result = thisType;
             }
@@ -541,7 +553,10 @@ public class JetTypeInferrer {
             if (finallyBlock == null) {
                 for (JetCatchClause catchClause : catchClauses) {
                     // TODO: change scope here
-                    types.add(getType(scope, catchClause.getCatchBody(), true));
+                    JetExpression catchBody = catchClause.getCatchBody();
+                    if (catchBody != null) {
+                        types.add(getType(scope, catchBody, true));
+                    }
                 }
             } else {
                 types.add(getType(scope, finallyBlock.getFinalExpression(), true));
@@ -650,6 +665,7 @@ public class JetTypeInferrer {
                 propertyDescriptor = classDescriptorResolver.resolveValueParameterDescriptor(scope.getContainingDeclaration(), scope, loopParameter);
                 JetType actualParameterType = propertyDescriptor.getOutType();
                 if (expectedParameterType != null &&
+                        actualParameterType != null &&
                         !semanticServices.getTypeChecker().isSubtypeOf(expectedParameterType, actualParameterType)) {
                     semanticServices.getErrorHandler().genericError(typeReference.getNode(), "The loop iterates over values of type " + expectedParameterType + " but the parameter is declared to be " + actualParameterType);
                 }
@@ -860,7 +876,10 @@ public class JetTypeInferrer {
                 List<JetType> types = new ArrayList<JetType>();
                 for (JetTypeProjection projection : typeArguments) {
                     // TODO : check that there's no projection
-                    types.add(typeResolver.resolveType(scope, projection.getTypeReference()));
+                    JetTypeReference typeReference = projection.getTypeReference();
+                    if (typeReference != null) {
+                        types.add(typeResolver.resolveType(scope, typeReference));
+                    }
                 }
 
                 List<JetExpression> positionedValueArguments = new ArrayList<JetExpression>();
@@ -889,7 +908,6 @@ public class JetTypeInferrer {
         @Override
         public void visitIsExpression(JetIsExpression expression) {
             // TODO : patterns and everything
-            System.out.println("Pattern matching is not supported yet.");
             result = semanticServices.getStandardLibrary().getBooleanType();
         }
 

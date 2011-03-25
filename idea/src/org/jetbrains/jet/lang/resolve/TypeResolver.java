@@ -45,6 +45,23 @@ public class TypeResolver {
                     if (referenceExpression == null || referencedName == null) {
                         return;
                     }
+
+                    if (type.getTypeArguments().isEmpty() && type.getQualifier() == null) {
+                        TypeParameterDescriptor typeParameterDescriptor = scope.getTypeParameter(referencedName);
+                        if (typeParameterDescriptor != null) {
+                            trace.recordReferenceResolution(referenceExpression, typeParameterDescriptor);
+                            result[0] = new JetTypeImpl(
+                                    attributes,
+                                    typeParameterDescriptor.getTypeConstructor(),
+                                    nullable || hasNullableBound(typeParameterDescriptor),
+                                    Collections.<TypeProjection>emptyList(),
+                                    // TODO : joint domain
+                                    JetStandardClasses.STUB
+                            );
+                            return;
+                        }
+                    }
+
                     ClassDescriptor classDescriptor = resolveClass(scope, type);
                     if (classDescriptor != null) {
                         trace.recordReferenceResolution(referenceExpression, classDescriptor);
@@ -61,25 +78,6 @@ public class TypeResolver {
                                     classDescriptor.getMemberScope(arguments)
                             );
                         }
-                    }
-                    else if (type.getTypeArguments().isEmpty()) {
-                        TypeParameterDescriptor typeParameterDescriptor = scope.getTypeParameter(referencedName);
-                        if (typeParameterDescriptor != null) {
-                            trace.recordReferenceResolution(referenceExpression, typeParameterDescriptor);
-                            result[0] = new JetTypeImpl(
-                                    attributes,
-                                    typeParameterDescriptor.getTypeConstructor(),
-                                    nullable || hasNullableBound(typeParameterDescriptor),
-                                    Collections.<TypeProjection>emptyList(),
-                                    // TODO : joint domain
-                                    JetStandardClasses.STUB
-                            );
-                        } else {
-                            semanticServices.getErrorHandler().unresolvedReference(referenceExpression);
-                        }
-                    }
-                    else {
-                        semanticServices.getErrorHandler().unresolvedReference(referenceExpression);
                     }
                 }
 
@@ -173,7 +171,12 @@ public class TypeResolver {
     }
 
     @Nullable
-    public ClassDescriptor resolveClass(JetScope scope, JetUserType userType) {
+    public ClassDescriptor resolveClassByUserType(JetScope scope, JetUserType userType) {
+        return resolveClass(scope, userType);
+    }
+
+    @Nullable
+    private ClassDescriptor resolveClass(JetScope scope, JetUserType userType) {
         JetSimpleNameExpression expression = userType.getReferenceExpression();
         if (expression == null) {
             return null;
@@ -182,16 +185,29 @@ public class TypeResolver {
         if (referencedName == null) {
             return null;
         }
+        ClassDescriptor classDescriptor = null;
         if (userType.isAbsoluteInRootNamespace()) {
-            return JetModuleUtil.getRootNamespaceScope(userType).getClass(referencedName);
+            classDescriptor = JetModuleUtil.getRootNamespaceScope(userType).getClass(referencedName);
         }
-        JetUserType qualifier = userType.getQualifier();
-        if (qualifier != null) {
-            scope = resolveClassLookupScope(scope, qualifier);
+        else {
+            JetUserType qualifier = userType.getQualifier();
+            if (qualifier != null) {
+                scope = resolveClassLookupScope(scope, qualifier);
+            }
+            if (scope == null) {
+                return null;
+            }
+            classDescriptor = scope.getClass(referencedName);
         }
-        return scope.getClass(referencedName);
+
+        if (classDescriptor == null) {
+            semanticServices.getErrorHandler().unresolvedReference(expression);
+        }
+
+        return classDescriptor;
     }
 
+    @Nullable
     private JetScope resolveClassLookupScope(JetScope scope, JetUserType userType) {
         ClassDescriptor classDescriptor = resolveClass(scope, userType);
         if (classDescriptor != null) {
@@ -200,7 +216,7 @@ public class TypeResolver {
 
         NamespaceDescriptor namespaceDescriptor = resolveNamespace(scope, userType);
         if (namespaceDescriptor == null) {
-            return JetScope.EMPTY;
+            return null;
         }
         return namespaceDescriptor.getMemberScope();
     }

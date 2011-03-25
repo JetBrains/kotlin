@@ -47,7 +47,7 @@ public class JetQuickDocumentationProvider extends QuickDocumentationProvider {
 
     private String render(DeclarationDescriptor declarationDescriptor) {
         String text = DescriptorUtil.renderPresentableText(declarationDescriptor);
-//        text = text.replaceAll("<", "&lt;");
+        text = text.replaceAll("<", "&lt;");
         return text;
     }
 
