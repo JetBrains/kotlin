@@ -166,7 +166,7 @@ public class JetStandardClasses {
     static {
         WritableScope writableScope = new WritableScope(JetScope.EMPTY, STANDARD_CLASSES_NAMESPACE, ErrorHandler.DO_NOTHING);
         STANDARD_CLASSES = writableScope;
-        writableScope.addClassAlias("Unit", getTuple(0));
+        writableScope.addClassifierAlias("Unit", getTuple(0));
 
         Field[] declaredFields = JetStandardClasses.class.getDeclaredFields();
         for (Field field : declaredFields) {
@@ -177,7 +177,7 @@ public class JetStandardClasses {
             if (type == ClassDescriptor.class) {
                 try {
                     ClassDescriptor descriptor = (ClassDescriptor) field.get(null);
-                    writableScope.addClassDescriptor(descriptor);
+                    writableScope.addClassifierDescriptor(descriptor);
                 } catch (IllegalAccessException e) {
                     throw new IllegalStateException(e);
                 }
@@ -185,7 +185,7 @@ public class JetStandardClasses {
                 try {
                     ClassDescriptor[] array = (ClassDescriptor[]) field.get(null);
                     for (ClassDescriptor descriptor : array) {
-                        writableScope.addClassDescriptor(descriptor);
+                        writableScope.addClassifierDescriptor(descriptor);
                     }
                 } catch (IllegalAccessException e) {
                     throw new IllegalStateException(e);

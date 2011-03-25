@@ -154,4 +154,8 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
         doTest("/resolve/PrimaryConstructors.jet", true, true);
     }
 
+    public void testClassifiers() throws Exception {
+        doTest("/resolve/Classifiers.jet", true, true);
+    }
+
 }

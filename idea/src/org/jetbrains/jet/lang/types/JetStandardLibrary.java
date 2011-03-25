@@ -8,7 +8,6 @@ import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.JetFileType;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.JetScope;
 import org.jetbrains.jet.lang.resolve.TopDownAnalyzer;
@@ -74,21 +73,20 @@ public class JetStandardLibrary {
             BindingTraceContext bindingTraceContext = new BindingTraceContext();
             TopDownAnalyzer bootstrappingTDA = new TopDownAnalyzer(bootstrappingSemanticServices, bindingTraceContext);
             bootstrappingTDA.process(JetStandardClasses.STANDARD_CLASSES, file.getRootNamespace().getDeclarations());
-            BindingContext bindingContext = bindingTraceContext;
 
-            this.libraryScope = bindingContext.getTopLevelScope();
+            this.libraryScope = bindingTraceContext.getTopLevelScope();
 
-            this.byteClass = libraryScope.getClass("Byte");
-            this.charClass = libraryScope.getClass("Char");
-            this.shortClass = libraryScope.getClass("Short");
-            this.intClass = libraryScope.getClass("Int");
-            this.longClass = libraryScope.getClass("Long");
-            this.floatClass = libraryScope.getClass("Float");
-            this.doubleClass = libraryScope.getClass("Double");
-            this.booleanClass = libraryScope.getClass("Boolean");
-            this.stringClass = libraryScope.getClass("String");
-            this.arrayClass = libraryScope.getClass("Array");
-            this.iterableClass = libraryScope.getClass("Iterable");
+            this.byteClass = (ClassDescriptor) libraryScope.getClassifier("Byte");
+            this.charClass = (ClassDescriptor) libraryScope.getClassifier("Char");
+            this.shortClass = (ClassDescriptor) libraryScope.getClassifier("Short");
+            this.intClass = (ClassDescriptor) libraryScope.getClassifier("Int");
+            this.longClass = (ClassDescriptor) libraryScope.getClassifier("Long");
+            this.floatClass = (ClassDescriptor) libraryScope.getClassifier("Float");
+            this.doubleClass = (ClassDescriptor) libraryScope.getClassifier("Double");
+            this.booleanClass = (ClassDescriptor) libraryScope.getClassifier("Boolean");
+            this.stringClass = (ClassDescriptor) libraryScope.getClassifier("String");
+            this.arrayClass = (ClassDescriptor) libraryScope.getClassifier("Array");
+            this.iterableClass = (ClassDescriptor) libraryScope.getClassifier("Iterable");
 
             this.byteType = new JetTypeImpl(getByte());
             this.charType = new JetTypeImpl(getChar());

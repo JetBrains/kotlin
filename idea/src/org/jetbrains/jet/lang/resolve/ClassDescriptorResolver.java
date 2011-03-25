@@ -68,7 +68,7 @@ public class ClassDescriptorResolver {
     public void resolveMutableClassDescriptor(@NotNull JetScope scope, @NotNull JetClass classElement, @NotNull MutableClassDescriptor descriptor) {
         descriptor.setName(classElement.getName());
 
-        WritableScope parameterScope = descriptor.getUnsubstitutedMemberScope();
+        WritableScope parameterScope = descriptor.getClassHeaderScope();
 
         // This call has side-effects on the parameterScope (fills it in)
         List<TypeParameterDescriptor> typeParameters

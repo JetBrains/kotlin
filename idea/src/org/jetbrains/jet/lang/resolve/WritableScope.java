@@ -22,9 +22,7 @@ public class WritableScope extends JetScopeAdapter {
     @Nullable
     private Map<String, WritableFunctionGroup> functionGroups;
     @Nullable
-    private Map<String, TypeParameterDescriptor> typeParameterDescriptors;
-    @Nullable
-    private Map<String, ClassDescriptor> classDescriptors;
+    private Map<String, ClassifierDescriptor> classifierDescriptors;
     @Nullable
     private Map<String, NamespaceDescriptor> namespaceDescriptors;
     @Nullable
@@ -138,65 +136,48 @@ public class WritableScope extends JetScopeAdapter {
         return functionGroup;
     }
 
-    @NotNull
-    private Map<String, TypeParameterDescriptor> getTypeParameterDescriptors() {
-        if (typeParameterDescriptors == null) {
-            typeParameterDescriptors = new HashMap<String, TypeParameterDescriptor>();
-        }
-        return typeParameterDescriptors;
-    }
-
     public void addTypeParameterDescriptor(TypeParameterDescriptor typeParameterDescriptor) {
         String name = typeParameterDescriptor.getName();
-        Map<String, TypeParameterDescriptor> typeParameterDescriptors = getTypeParameterDescriptors();
-        TypeParameterDescriptor originalDescriptor = typeParameterDescriptors.get(name);
+        Map<String, ClassifierDescriptor> classifierDescriptors = getClassifierDescriptors();
+        ClassifierDescriptor originalDescriptor = classifierDescriptors.get(name);
         if (originalDescriptor != null) {
             errorHandler.redeclaration(originalDescriptor, typeParameterDescriptor);
         }
-        typeParameterDescriptors.put(name, typeParameterDescriptor);
-    }
-
-    @Override
-    public TypeParameterDescriptor getTypeParameter(@NotNull String name) {
-        TypeParameterDescriptor typeParameterDescriptor = getTypeParameterDescriptors().get(name);
-        if (typeParameterDescriptor != null) {
-            return typeParameterDescriptor;
-        }
-        return super.getTypeParameter(name);
+        classifierDescriptors.put(name, typeParameterDescriptor);
     }
 
     @NotNull
-    private Map<String, ClassDescriptor> getClassDescriptors() {
-        if (classDescriptors == null) {
-            classDescriptors = new HashMap<String, ClassDescriptor>();
+    private Map<String, ClassifierDescriptor> getClassifierDescriptors() {
+        if (classifierDescriptors == null) {
+            classifierDescriptors = new HashMap<String, ClassifierDescriptor>();
         }
-        return classDescriptors;
+        return classifierDescriptors;
     }
 
-    public void addClassDescriptor(@NotNull ClassDescriptor classDescriptor) {
-        addClassAlias(classDescriptor.getName(), classDescriptor);
+    public void addClassifierDescriptor(@NotNull ClassifierDescriptor classDescriptor) {
+        addClassifierAlias(classDescriptor.getName(), classDescriptor);
     }
 
-    public void addClassAlias(String name, ClassDescriptor classDescriptor) {
-        Map<String, ClassDescriptor> classDescriptors = getClassDescriptors();
-        ClassDescriptor originalDescriptor = classDescriptors.get(name);
+    public void addClassifierAlias(String name, ClassifierDescriptor classifierDescriptor) {
+        Map<String, ClassifierDescriptor> classifierDescriptors = getClassifierDescriptors();
+        ClassifierDescriptor originalDescriptor = classifierDescriptors.get(name);
         if (originalDescriptor != null) {
-            errorHandler.redeclaration(originalDescriptor, classDescriptor);
+            errorHandler.redeclaration(originalDescriptor, classifierDescriptor);
         }
-        classDescriptors.put(name, classDescriptor);
+        classifierDescriptors.put(name, classifierDescriptor);
     }
 
     @Override
-    public ClassDescriptor getClass(@NotNull String name) {
-        ClassDescriptor classDescriptor = getClassDescriptors().get(name);
-        if (classDescriptor != null) return classDescriptor;
+    public ClassifierDescriptor getClassifier(@NotNull String name) {
+        ClassifierDescriptor classifierDescriptor = getClassifierDescriptors().get(name);
+        if (classifierDescriptor != null) return classifierDescriptor;
 
-        classDescriptor = super.getClass(name);
-        if (classDescriptor != null) return classDescriptor;
+        classifierDescriptor = super.getClassifier(name);
+        if (classifierDescriptor != null) return classifierDescriptor;
         for (JetScope imported : getImports()) {
-            ClassDescriptor importedClass = imported.getClass(name);
-            if (importedClass != null) {
-                return importedClass;
+            ClassifierDescriptor importedClassifier = imported.getClassifier(name);
+            if (importedClassifier != null) {
+                return importedClassifier;
             }
         }
         return null;
@@ -246,11 +227,6 @@ public class WritableScope extends JetScopeAdapter {
             }
         }
         return null;
-    }
-
-    @Override
-    public ExtensionDescriptor getExtension(@NotNull String name) {
-        return super.getExtension(name); // TODO
     }
 
     public void setThisType(JetType thisType) {

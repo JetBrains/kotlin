@@ -17,25 +17,19 @@ public interface JetScope {
     };
 
     @Nullable
-    ClassDescriptor getClass(@NotNull String name);
-
-    @Nullable
-    PropertyDescriptor getProperty(@NotNull String name);
-
-    @Nullable
-    ExtensionDescriptor getExtension(@NotNull String name);
+    ClassifierDescriptor getClassifier(@NotNull String name);
 
     @Nullable
     NamespaceDescriptor getNamespace(@NotNull String name);
 
     @Nullable
-    TypeParameterDescriptor getTypeParameter(@NotNull String name);
-
-    @NotNull
-    JetType getThisType();
+    PropertyDescriptor getProperty(@NotNull String name);
 
     @NotNull
     FunctionGroup getFunctionGroup(@NotNull String name);
+
+    @NotNull
+    JetType getThisType();
 
     @NotNull
     DeclarationDescriptor getContainingDeclaration();

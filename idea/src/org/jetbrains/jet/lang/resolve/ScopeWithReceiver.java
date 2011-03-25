@@ -23,8 +23,8 @@ public class ScopeWithReceiver extends JetScopeImpl {
     }
 
     @Override
-    public ClassDescriptor getClass(@NotNull String name) {
-        return super.getClass(name); // TODO
+    public ClassifierDescriptor getClassifier(@NotNull String name) {
+        return super.getClassifier(name); // TODO
     }
 
     @Override
@@ -34,18 +34,8 @@ public class ScopeWithReceiver extends JetScopeImpl {
     }
 
     @Override
-    public ExtensionDescriptor getExtension(@NotNull String name) {
-        return super.getExtension(name); // TODO
-    }
-
-    @Override
     public NamespaceDescriptor getNamespace(@NotNull String name) {
         return receiverTypeScope.getNamespace(name);
-    }
-
-    @Override
-    public TypeParameterDescriptor getTypeParameter(@NotNull String name) {
-        return outerScope.getTypeParameter(name);
     }
 
     @NotNull

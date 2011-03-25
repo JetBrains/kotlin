@@ -9,7 +9,7 @@ import java.util.Set;
 /**
  * @author abreslav
  */
-public class TypeParameterDescriptor extends DeclarationDescriptorImpl {
+public class TypeParameterDescriptor extends DeclarationDescriptorImpl implements ClassifierDescriptor {
     private final Variance variance;
     private final Set<JetType> upperBounds;
     private final TypeConstructor typeConstructor;
@@ -58,6 +58,8 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl {
         return upperBounds;
     }
 
+    @NotNull
+    @Override
     public TypeConstructor getTypeConstructor() {
         return typeConstructor;
     }

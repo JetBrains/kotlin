@@ -2,7 +2,7 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.JetScopeImpl;
-import org.jetbrains.jet.lang.types.ClassDescriptor;
+import org.jetbrains.jet.lang.types.ClassifierDescriptor;
 import org.jetbrains.jet.lang.types.DeclarationDescriptor;
 import org.jetbrains.jet.lang.types.NamespaceDescriptor;
 
@@ -22,7 +22,7 @@ public class JavaPackageScope extends JetScopeImpl {
     }
 
     @Override
-    public ClassDescriptor getClass(@NotNull String name) {
+    public ClassifierDescriptor getClassifier(@NotNull String name) {
         return semanticServices.getDescriptorResolver().resolveClass(getQualifiedName(name));
     }
 

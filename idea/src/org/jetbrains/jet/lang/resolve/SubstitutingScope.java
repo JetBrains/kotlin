@@ -48,27 +48,20 @@ public class SubstitutingScope implements JetScope {
     }
 
     @Override
-    public ClassDescriptor getClass(@NotNull String name) {
-        ClassDescriptor descriptor = workerScope.getClass(name);
+    public ClassifierDescriptor getClassifier(@NotNull String name) {
+        ClassifierDescriptor descriptor = workerScope.getClassifier(name);
         if (descriptor == null) {
             return null;
         }
-        return new LazySubstitutingClassDescriptor(descriptor, substitutionContext);
-    }
-
-    @Override
-    public ExtensionDescriptor getExtension(@NotNull String name) {
-        throw new UnsupportedOperationException(); // TODO
+        if (descriptor instanceof ClassDescriptor) {
+            return new LazySubstitutingClassDescriptor((ClassDescriptor) descriptor, substitutionContext);
+        }
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public NamespaceDescriptor getNamespace(@NotNull String name) {
         return workerScope.getNamespace(name); // TODO
-    }
-
-    @Override
-    public TypeParameterDescriptor getTypeParameter(@NotNull String name) {
-        throw new UnsupportedOperationException(); // TODO
     }
 
     @NotNull

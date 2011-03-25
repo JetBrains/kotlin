@@ -15,7 +15,7 @@ public class ErrorUtils {
     private static final JetScope ERROR_SCOPE = new JetScope() {
 
         @Override
-        public ClassDescriptor getClass(@NotNull String name) {
+        public ClassifierDescriptor getClassifier(@NotNull String name) {
             return ERROR_CLASS;
         }
 
@@ -25,17 +25,7 @@ public class ErrorUtils {
         }
 
         @Override
-        public ExtensionDescriptor getExtension(@NotNull String name) {
-            return null; // TODO : review
-        }
-
-        @Override
         public NamespaceDescriptor getNamespace(@NotNull String name) {
-            return null; // TODO : review
-        }
-
-        @Override
-        public TypeParameterDescriptor getTypeParameter(@NotNull String name) {
             return null; // TODO : review
         }
 

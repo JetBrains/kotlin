@@ -27,28 +27,18 @@ public class JetScopeAdapter implements JetScope {
     }
 
     @Override
-    public TypeParameterDescriptor getTypeParameter(@NotNull String name) {
-        return scope.getTypeParameter(name);
-    }
-
-    @Override
     public NamespaceDescriptor getNamespace(@NotNull String name) {
         return scope.getNamespace(name);
     }
 
     @Override
-    public ClassDescriptor getClass(@NotNull String name) {
-        return scope.getClass(name);
+    public ClassifierDescriptor getClassifier(@NotNull String name) {
+        return scope.getClassifier(name);
     }
 
     @Override
     public PropertyDescriptor getProperty(@NotNull String name) {
         return scope.getProperty(name);
-    }
-
-    @Override
-    public ExtensionDescriptor getExtension(@NotNull String name) {
-        return scope.getExtension(name);
     }
 
     @NotNull

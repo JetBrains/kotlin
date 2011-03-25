@@ -520,7 +520,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
 
         public JetScope BASIC_SCOPE = new JetScopeAdapter(library.getLibraryScope()) {
             @Override
-            public ClassDescriptor getClass(@NotNull String name) {
+            public ClassifierDescriptor getClassifier(@NotNull String name) {
                 if (CLASSES.isEmpty()) {
                     for (String classDeclaration : CLASS_DECLARATIONS) {
                         JetClass classElement = JetChangeUtil.createClass(getProject(), classDeclaration);
@@ -532,7 +532,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
                 if (classDescriptor != null) {
                     return classDescriptor;
                 }
-                return super.getClass(name);
+                return super.getClassifier(name);
             }
 
             @NotNull

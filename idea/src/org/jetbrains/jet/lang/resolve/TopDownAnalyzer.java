@@ -114,7 +114,7 @@ public class TopDownAnalyzer {
         MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(semanticServices, declaringScope.getContainingDeclaration(), declaringScope);
         mutableClassDescriptor.setName(klass.getName());
 
-        declaringScope.addClassDescriptor(mutableClassDescriptor);
+        declaringScope.addClassifierDescriptor(mutableClassDescriptor);
 
         classes.put(klass, mutableClassDescriptor);
         declaringScopes.put(klass, declaringScope);

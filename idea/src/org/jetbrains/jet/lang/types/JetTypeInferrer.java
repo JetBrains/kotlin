@@ -511,8 +511,11 @@ public class JetTypeInferrer {
                 // Errors are reported by the parser
                 if (superTypeElement instanceof JetUserType) {
                     JetUserType typeElement = (JetUserType) superTypeElement;
-                    ClassDescriptor superclass = typeResolver.resolveClassByUserType(scope, typeElement);
-                    if (superclass != null) {
+
+                    ClassifierDescriptor classifierCandidate = typeResolver.resolveClass(scope, typeElement);
+                    if (classifierCandidate instanceof ClassDescriptor) {
+                        ClassDescriptor superclass = (ClassDescriptor) classifierCandidate;
+
                         Collection<? extends JetType> supertypes = thisType.getConstructor().getSupertypes();
                         Map<TypeConstructor, TypeProjection> substitutionContext = TypeUtils.buildSubstitutionContext(thisType);
                         for (JetType declaredSupertype : supertypes) {

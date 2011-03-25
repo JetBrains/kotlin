@@ -1,0 +1,11 @@
+class A<~T~T, ~E~E> {
+  val a : `T`T
+  val x : A<`T`T, `E`E>
+
+  class X<~X.T~T> : A<`X.T`T, `E`E> {
+    val a : `X.T`T
+    val b : `X.E`E
+
+    ~X.E~class E {}
+  }
+}

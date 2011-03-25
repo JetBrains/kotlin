@@ -8,7 +8,7 @@ import org.jetbrains.jet.lang.types.*;
 */
 public abstract class JetScopeImpl implements JetScope {
     @Override
-    public ClassDescriptor getClass(@NotNull String name) {
+    public ClassifierDescriptor getClassifier(@NotNull String name) {
         return null;
     }
 
@@ -18,17 +18,7 @@ public abstract class JetScopeImpl implements JetScope {
     }
 
     @Override
-    public ExtensionDescriptor getExtension(@NotNull String name) {
-        return null;
-    }
-
-    @Override
     public NamespaceDescriptor getNamespace(@NotNull String name) {
-        return null;
-    }
-
-    @Override
-    public TypeParameterDescriptor getTypeParameter(@NotNull String name) {
         return null;
     }
 

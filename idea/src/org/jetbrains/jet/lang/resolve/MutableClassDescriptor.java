@@ -11,6 +11,7 @@ import java.util.Map;
  * @author abreslav
  */
 public class MutableClassDescriptor extends MutableDeclarationDescriptor implements ClassDescriptor {
+    private final WritableScope classHeaderScope;
     private final WritableScope unsubstitutedMemberScope;
     private final WritableFunctionGroup constructors = new WritableFunctionGroup("<init>");
 
@@ -18,7 +19,8 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
 
     public MutableClassDescriptor(@NotNull JetSemanticServices semanticServices, @NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope outerScope) {
         super(containingDeclaration);
-        this.unsubstitutedMemberScope = semanticServices.createWritableScope(outerScope, this);
+        this.classHeaderScope = semanticServices.createWritableScope(outerScope, this);
+        this.unsubstitutedMemberScope = semanticServices.createWritableScope(classHeaderScope, this);
     }
 
     @NotNull
@@ -66,6 +68,11 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     @NotNull
     public WritableScope getUnsubstitutedMemberScope() {
         return unsubstitutedMemberScope;
+    }
+
+    @NotNull
+    public WritableScope getClassHeaderScope() {
+        return classHeaderScope;
     }
 
     @Override

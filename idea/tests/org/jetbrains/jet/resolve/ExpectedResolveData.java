@@ -74,6 +74,8 @@ public class ExpectedResolveData {
             document.replaceString(start, matcher.end(), "");
             text = document.getText();
         }
+
+//        System.out.println("text = " + text);
     }
 
     public void checkResult(JetFile file) {
@@ -133,7 +135,7 @@ public class ExpectedResolveData {
 
                 JetType actualType = bindingContext.resolveTypeReference(typeReference);
                 assertNotNull("Type " + name + " not resolved for reference " + name, actualType);
-                ClassDescriptor expectedClass = lib.getLibraryScope().getClass(name.substring(5));
+                ClassifierDescriptor expectedClass = lib.getLibraryScope().getClassifier(name.substring(5));
                 assertNotNull("Expected class not found: " + name);
                 assertSame("Type resolution mismatch: ", expectedClass.getTypeConstructor(), actualType.getConstructor());
                 continue;
@@ -164,7 +166,7 @@ public class ExpectedResolveData {
             JetType expressionType = bindingContext.getExpressionType(expression);
             TypeConstructor expectedTypeConstructor;
             if (typeName.startsWith("std::")) {
-                ClassDescriptor expectedClass = lib.getLibraryScope().getClass(typeName.substring(5));
+                ClassifierDescriptor expectedClass = lib.getLibraryScope().getClassifier(typeName.substring(5));
 
                 assertNotNull("Expected class not found: " + typeName, expectedClass);
                 expectedTypeConstructor = expectedClass.getTypeConstructor();

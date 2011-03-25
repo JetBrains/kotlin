@@ -8,9 +8,7 @@ import java.util.List;
 /**
  * @author abreslav
  */
-public interface ClassDescriptor extends DeclarationDescriptor {
-    @NotNull
-    TypeConstructor getTypeConstructor();
+public interface ClassDescriptor extends ClassifierDescriptor {
 
     @NotNull
     JetScope getMemberScope(List<TypeProjection> typeArguments);

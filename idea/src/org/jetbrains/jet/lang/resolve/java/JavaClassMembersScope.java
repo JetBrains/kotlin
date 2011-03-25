@@ -31,7 +31,7 @@ public class JavaClassMembersScope implements JetScope {
     }
 
     @Override
-    public ClassDescriptor getClass(@NotNull String name) {
+    public ClassifierDescriptor getClassifier(@NotNull String name) {
         for (PsiClass innerClass : psiClass.getAllInnerClasses()) {
             if (name.equals(innerClass.getName())) {
                 if (innerClass.hasModifierProperty(PsiModifier.STATIC) != staticMembers) return null;
@@ -91,17 +91,7 @@ public class JavaClassMembersScope implements JetScope {
     }
 
     @Override
-    public ExtensionDescriptor getExtension(@NotNull String name) {
-        return null;
-    }
-
-    @Override
     public NamespaceDescriptor getNamespace(@NotNull String name) {
-        return null;
-    }
-
-    @Override
-    public TypeParameterDescriptor getTypeParameter(@NotNull String name) {
         return null;
     }
 
