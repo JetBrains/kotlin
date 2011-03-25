@@ -957,7 +957,19 @@ public class JetTypeInferrer {
             else if (equalsOperations.contains(operationType)) {
                 String name = "equals";
                 JetType equalsType = getTypeForBinaryCall(expression, name, scope, true);
-                assureBooleanResult(operationSign, name, equalsType);
+                result = assureBooleanResult(operationSign, name, equalsType);
+
+                // Assure that the types on the left and on the right have nonempty intersection
+                if (right != null) {
+                    // TODO : duplicated effort
+                    JetType leftType = getType(scope, left, false);
+                    JetType rightType = getType(scope, right, false);
+
+                    JetType intersect = TypeUtils.intersect(semanticServices.getTypeChecker(), new HashSet<JetType>(Arrays.asList(leftType, rightType)));
+                    if (intersect == null) {
+                        semanticServices.getErrorHandler().genericError(expression.getNode(), "Operator " + operationSign.getReferencedName() + " cannot be applied to " + leftType + " and " + rightType);
+                    }
+                }
             }
             else if (inOperations.contains(operationType)) {
                 if (right == null) {
