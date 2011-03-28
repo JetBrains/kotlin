@@ -83,13 +83,7 @@ public class JetTypeInferrer {
 
     @Nullable
     public JetType getType(@NotNull final JetScope scope, @NotNull JetExpression expression, final boolean preferBlock) {
-        TypeInferrerVisitor visitor = new TypeInferrerVisitor(scope, preferBlock);
-        expression.accept(visitor);
-        JetType result = visitor.getResult();
-        if (result != null) {
-            trace.recordExpressionType(expression, result);
-        }
-        return result;
+        return new TypeInferrerVisitor(scope, preferBlock).getType(expression);
     }
 
     @Nullable
@@ -104,12 +98,14 @@ public class JetTypeInferrer {
     @Nullable
     private List<JetType> getTypes(JetScope scope, List<JetExpression> indexExpressions) {
         List<JetType> argumentTypes = new ArrayList<JetType>();
+        TypeInferrerVisitor typeInferrerVisitor = new TypeInferrerVisitor(scope, false);
         for (JetExpression indexExpression : indexExpressions) {
-            JetType type = getType(scope, indexExpression, false);
+            JetType type = typeInferrerVisitor.getType(indexExpression);
             if (type == null) {
                 return null;
             }
             argumentTypes.add(type);
+            typeInferrerVisitor.resetResult(); // TODO : recreate?
         }
         return argumentTypes;
     }
@@ -276,7 +272,6 @@ public class JetTypeInferrer {
         };
     }
 
-
     private JetType getBlockReturnedType(@NotNull JetScope outerScope, List<JetElement> block) {
         if (block.isEmpty()) {
             return JetStandardClasses.getUnitType();
@@ -292,11 +287,7 @@ public class JetTypeInferrer {
         TypeInferrerVisitorWithWritableScope blockLevelVisitor = new TypeInferrerVisitorWithWritableScope(scope, true);
         JetType result = null;
         for (JetElement statement : block) {
-            statement.accept(blockLevelVisitor);
-            result = blockLevelVisitor.getResult();
-            if (result != null) {
-                trace.recordExpressionType((JetExpression) statement, result);
-            }
+            result = blockLevelVisitor.getType((JetExpression) statement);
             blockLevelVisitor.resetResult(); // TODO : maybe it's better to recreate the visitors with the same scope?
         }
         return result;
@@ -318,16 +309,40 @@ public class JetTypeInferrer {
 
     private class TypeInferrerVisitor extends JetVisitor {
         private final JetScope scope;
-        protected JetType result;
         private final boolean preferBlock;
+        protected JetType result;
 
-        public TypeInferrerVisitor(JetScope scope, boolean preferBlock) {
+        private TypeInferrerVisitor(JetScope scope, boolean preferBlock) {
             this.scope = scope;
             this.preferBlock = preferBlock;
         }
 
-        public JetType getResult() {
+        @Nullable
+        public JetType getType(@NotNull final JetScope scope, @NotNull JetExpression expression, final boolean preferBlock) {
+            TypeInferrerVisitor visitor;
+            if (this.scope == scope && this.preferBlock == preferBlock && result == null) {
+                visitor = this;
+            }
+            else {
+                visitor = new TypeInferrerVisitor(scope, preferBlock);
+            }
+            JetType type = visitor.getType(expression);
+            visitor.result = null;
+            return type;
+        }
+
+        @Nullable
+        public JetType getType(@NotNull JetExpression expression) {
+            assert result == null;
+            expression.accept(this);
+            if (result != null) {
+                trace.recordExpressionType(expression, result);
+            }
             return result;
+        }
+
+        public void resetResult() {
+            result = null;
         }
 
         @Override
@@ -1170,10 +1185,6 @@ public class JetTypeInferrer {
         public TypeInferrerVisitorWithWritableScope(@NotNull WritableScope scope, boolean preferBlock) {
             super(scope, preferBlock);
             this.scope = scope;
-        }
-
-        public void resetResult() {
-            this.result = null;
         }
 
         @Override
