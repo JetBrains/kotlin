@@ -3,6 +3,7 @@ package org.jetbrains.jet.codegen;
 import com.intellij.codeInsight.daemon.LightDaemonAnalyzerTestCase;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.jet.lang.psi.JetProperty;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.util.TraceMethodVisitor;
 
 import java.io.IOException;
@@ -13,36 +14,7 @@ import java.io.StringWriter;
  * @author max
  */
 public class ExpressionGenTest extends LightDaemonAnalyzerTestCase {
-    public void testIntegerZeroExpression() throws Exception {
-        checkCode("0",
-                "LDC 0\n" +
-                "INVOKESTATIC java/lang/Integer.valueOf (I)Ljava/lang/Integer;");
-    }
-
     public void testIf() throws Exception {
-        checkCode("if (false) 15 else 20",
-                "LDC false\n" +
-                "INVOKESTATIC java/lang/Boolean.valueOf (Z)Ljava/lang/Boolean;\n" +
-                "INVOKEVIRTUAL java/lang/Boolean.booleanValue ()Z\n" +
-                "IFEQ L0\n" +
-                "LDC 15\n" +
-                "INVOKESTATIC java/lang/Integer.valueOf (I)Ljava/lang/Integer;\n" +
-                "GOTO L1\n" +
-                "L0\n" +
-                "LDC 20\n" +
-                "INVOKESTATIC java/lang/Integer.valueOf (I)Ljava/lang/Integer;\n" +
-                "L1");
-
-        checkCode("if (false) 15",
-                "LDC false\n" +
-                "INVOKESTATIC java/lang/Boolean.valueOf (Z)Ljava/lang/Boolean;\n" +
-                "INVOKEVIRTUAL java/lang/Boolean.booleanValue ()Z\n" +
-                "IFEQ L0\n" +
-                "LDC 15\n" +
-                "INVOKESTATIC java/lang/Integer.valueOf (I)Ljava/lang/Integer;\n" +
-                "POP\n" +
-                "L0");
-
         checkCode("if (false) else 20",
                 "LDC false\n" +
                 "INVOKESTATIC java/lang/Boolean.valueOf (Z)Ljava/lang/Boolean;\n" +
@@ -60,7 +32,7 @@ public class ExpressionGenTest extends LightDaemonAnalyzerTestCase {
         JetProperty p = PsiTreeUtil.getParentOfType(getFile().findElementAt(0), JetProperty.class);
 
         TraceMethodVisitor trace = new TraceMethodVisitor();
-        p.getInitializer().accept(new ExpressionCodegen(trace, null, null, new FrameMap()));
+        p.getInitializer().accept(new ExpressionCodegen(trace, null, null, new FrameMap(), new JetTypeMapper(null), Type.VOID_TYPE));
 
         StringWriter out = new StringWriter();
         trace.print(new PrintWriter(out));

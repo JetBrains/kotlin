@@ -56,20 +56,21 @@ public class FunctionCodegen {
             frameMap.enter(parameter);
         }
 
-        bodyExpression.accept(new ExpressionCodegen(mv, bindingContext, standardLibrary, frameMap));
-        generateReturn(mv, bodyExpression);
+        ExpressionCodegen codegen = new ExpressionCodegen(mv, bindingContext, standardLibrary, frameMap, typeMapper, returnType);
+        bodyExpression.accept(codegen);
+        generateReturn(mv, bodyExpression, codegen);
         mv.visitMaxs(0, 0);
         mv.visitEnd();
     }
 
-    private void generateReturn(MethodVisitor mv, JetExpression bodyExpression) {
+    private void generateReturn(MethodVisitor mv, JetExpression bodyExpression, ExpressionCodegen codegen) {
         if (!endsWithReturn(bodyExpression)) {
             final JetType expressionType = bindingContext.getExpressionType(bodyExpression);
             if (expressionType.equals(JetStandardClasses.getUnitType())) {
                 mv.visitInsn(Opcodes.RETURN);
             }
             else {
-                mv.visitInsn(Opcodes.ARETURN);
+                codegen.returnTopOfStack();
             }
         }
     }

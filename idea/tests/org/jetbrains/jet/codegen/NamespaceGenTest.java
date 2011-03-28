@@ -28,8 +28,7 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
         final String text = generateToText();
         System.out.println(text);
 
-        final Class aClass = generateToClass();
-        final Method main = firstMethod(aClass);
+        final Method main = generateFunction();
         Object[] args = new Object[] { new String[0] };
         main.invoke(null, args);
     }
@@ -39,8 +38,7 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
         final String text = generateToText();
         System.out.println(text);
 
-        final Class aClass = generateToClass();
-        final Method main = firstMethod(aClass);
+        final Method main = generateFunction();
         final Object returnValue = main.invoke(null, new Object[0]);
         assertEquals(new Integer(42), returnValue);
     }
@@ -50,8 +48,7 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
         final String text = generateToText();
         System.out.println(text);
 
-        final Class aClass = generateToClass();
-        final Method main = firstMethod(aClass);
+        final Method main = generateFunction();
         final Object returnValue = main.invoke(null, 50);
         assertEquals(new Integer(50), returnValue);
     }
@@ -61,16 +58,15 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
         final String text = generateToText();
         System.out.println(text);
 
-        final Class aClass = generateToClass();
-        final Method main = firstMethod(aClass);
+        final Method main = generateFunction();
         final Object returnValue = main.invoke(null, 76);
         assertEquals(new Integer(50), returnValue);
     }
 
     public void testCurrentTime() throws Exception {
         loadFile("currentTime.jet");
-        final Class aClass = generateToClass();
-        final Method main = firstMethod(aClass);
+        System.out.println(generateToText());
+        final Method main = generateFunction();
         final long returnValue = (Long) main.invoke(null);
         long currentTime = System.currentTimeMillis();
         assertTrue(Math.abs(returnValue - currentTime) <= 1L);
@@ -78,8 +74,8 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
 
     public void testIdentityHashCode() throws Exception {
         loadFile("identityHashCode.jet");
-        final Class aClass = generateToClass();
-        final Method main = firstMethod(aClass);
+        System.out.println(generateToText());
+        final Method main = generateFunction();
         Object o = new Object();
         final int returnValue = (Integer) main.invoke(null, o);
         assertEquals(returnValue, System.identityHashCode(o));
@@ -87,8 +83,7 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
 
     public void testSystemOut() throws Exception {
         loadFile("systemOut.jet");
-        final Class aClass = generateToClass();
-        final Method main = firstMethod(aClass);
+        final Method main = generateFunction();
         final Object returnValue = main.invoke(null);
         assertEquals(returnValue, System.out);
     }
@@ -98,8 +93,7 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
 
         System.out.println(generateToText());
 
-        final Class aClass = generateToClass();
-        final Method main = firstMethod(aClass);   // assert that it can be verified
+        generateFunction();  // assert that it can be verified
     }
 
     public void testPlus() throws Exception {
@@ -107,10 +101,35 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
 
         System.out.println(generateToText());
 
-        final Class aClass = generateToClass();
-        final Method main = firstMethod(aClass);
+        final Method main = generateFunction();
         final int returnValue = (Integer) main.invoke(null, 37, 5);
         assertEquals(42, returnValue);
+    }
+
+    public void testIf() throws Exception {
+        loadFile("if.jet");
+
+        System.out.println(generateToText());
+        final Method main = generateFunction();
+        assertEquals(15, main.invoke(null, true));
+        assertEquals(20, main.invoke(null, false));
+    }
+
+    public void testSingleBranchIf() throws Exception {
+        loadFile("singleBranchIf.jet");
+
+        System.out.println(generateToText());
+        final Method main = generateFunction();
+        assertEquals(15, main.invoke(null, true));
+        assertEquals(20, main.invoke(null, false));
+    }
+
+    public void testAssign() throws Exception {
+        loadFile("assign.jet");
+
+        System.out.println(generateToText());
+        final Method main = generateFunction();
+        assertEquals(2, main.invoke(null));
     }
 
     private void loadFile(final String name) {
@@ -143,7 +162,8 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
         return aClass;
     }
 
-    private static Method firstMethod(Class aClass) {
+    private Method generateFunction() {
+        Class aClass = generateToClass();
         return aClass.getMethods()[0];
     }
 

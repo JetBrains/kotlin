@@ -18,10 +18,13 @@ public class JetTypeMapper {
             return Type.VOID_TYPE;
         }
         if (jetType.equals(standardLibrary.getIntType())) {
-            return Type.getType(Integer.class);
+            return Type.INT_TYPE;
         }
         if (jetType.equals(standardLibrary.getLongType())) {
-            return Type.getType(Long.class);
+            return Type.LONG_TYPE;
+        }
+        if (jetType.equals(standardLibrary.getBooleanType())) {
+            return Type.BOOLEAN_TYPE;
         }
         if (jetType.equals(standardLibrary.getStringType())) {
             return Type.getType(String.class);
