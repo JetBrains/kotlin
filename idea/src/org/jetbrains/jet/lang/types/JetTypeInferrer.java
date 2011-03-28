@@ -275,16 +275,18 @@ public class JetTypeInferrer {
     private JetType getBlockReturnedType(@NotNull JetScope outerScope, List<JetElement> block) {
         if (block.isEmpty()) {
             return JetStandardClasses.getUnitType();
-        } else {
-            DeclarationDescriptor containingDescriptor = outerScope.getContainingDeclaration();
-            WritableScope scope = semanticServices.createWritableScope(outerScope, containingDescriptor);
-            return getBlockReturnedTypeWithWritableScope(scope, block);
         }
+
+        DeclarationDescriptor containingDescriptor = outerScope.getContainingDeclaration();
+        WritableScope scope = semanticServices.createWritableScope(outerScope, containingDescriptor);
+        return getBlockReturnedTypeWithWritableScope(scope, block);
     }
 
     private JetType getBlockReturnedTypeWithWritableScope(@NotNull WritableScope scope, @NotNull List<? extends JetElement> block) {
         assert !block.isEmpty();
+
         TypeInferrerVisitorWithWritableScope blockLevelVisitor = new TypeInferrerVisitorWithWritableScope(scope, true);
+
         JetType result = null;
         for (JetElement statement : block) {
             result = blockLevelVisitor.getType((JetExpression) statement);
@@ -344,6 +346,8 @@ public class JetTypeInferrer {
         public void resetResult() {
             result = null;
         }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         @Override
         public void visitSimpleNameExpression(JetSimpleNameExpression expression) {

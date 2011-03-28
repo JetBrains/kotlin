@@ -154,7 +154,7 @@ public class ClassDescriptorResolver {
         FunctionDescriptorImpl functionDescriptor = new FunctionDescriptorImpl(
                 containingDescriptor,
                 AttributeResolver.INSTANCE.resolveAttributes(function.getModifierList()),
-                function.getName()
+                safeName(function.getName())
         );
         WritableScope parameterScope = semanticServices.createWritableScope(scope, functionDescriptor);
 

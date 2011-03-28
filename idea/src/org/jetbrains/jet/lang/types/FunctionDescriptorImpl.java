@@ -19,7 +19,7 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
     public FunctionDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull List<Attribute> attributes,
-            String name) {
+            @NotNull String name) {
         super(containingDeclaration, attributes, name);
         this.original = this;
     }
@@ -27,7 +27,7 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
     public FunctionDescriptorImpl(
             @NotNull FunctionDescriptor original,
             @NotNull List<Attribute> attributes,
-            String name) {
+            @NotNull String name) {
         super(original.getContainingDeclaration(), attributes, name);
         this.original = original;
     }

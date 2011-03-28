@@ -187,7 +187,7 @@ public class TopDownAnalyzer {
 
                 @Override
                 public void visitDeclaration(JetDeclaration dcl) {
-                    throw new UnsupportedOperationException(dcl.getText() + " " + dcl.getClass().getCanonicalName()); // TODO
+                    semanticServices.getErrorHandler().genericError(dcl.getNode(), "Unsupported declaration: " + dcl); // TODO
                 }
             });
         }
