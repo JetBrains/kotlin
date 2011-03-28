@@ -14,10 +14,7 @@ import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.parsing.JetParsingTest;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author abreslav
@@ -147,6 +144,12 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertCommonSupertype("Base_T<in Int>", "Derived_T<Int>", "Base_T<in Int>");
         assertCommonSupertype("Base_T<in Int>", "Derived_T<in Int>", "Base_T<Int>");
         assertCommonSupertype("Base_T<*>", "Base_T<Int>", "Base_T<*>");
+    }
+
+    public void testIntersect() throws Exception {
+        assertIntersection("Int?", "Int?", "Int?");
+        assertIntersection("Int", "Int?", "Int");
+        assertIntersection("Int", "Int", "Int?");
     }
 
     public void testBasicSubtyping() throws Exception {
@@ -418,6 +421,16 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
 
     private void assertNotSubtype(String type1, String type2) {
         assertSubtypingRelation(type1, type2, false);
+    }
+
+    private void assertIntersection(String expected, String... types) {
+        Set<JetType> typesToIntersect = new LinkedHashSet<JetType>();
+        for (String type : types) {
+            typesToIntersect.add(makeType(type));
+        }
+        JetType result = TypeUtils.intersect(semanticServices.getTypeChecker(), typesToIntersect);
+//        assertNotNull("Intersection is null for " + typesToIntersect, result);
+        assertEquals(makeType(expected), result);
     }
 
     private void assertCommonSupertype(String expected, String... types) {

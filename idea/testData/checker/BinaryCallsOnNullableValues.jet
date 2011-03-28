@@ -1,0 +1,41 @@
+class A {
+  fun equals(a : Any?) : Boolean
+}
+
+class B {
+  fun equals(a : Any?) : Boolean?
+}
+
+class C {
+  fun equals(a : Any?) : Int
+}
+
+fun f(): Int {
+  var x: Int? = 1
+  x = 1
+  x <error>+</error> 1
+  x <error>plus</error> 1
+  x <error><</error> 1
+  x <error>+=</error> 1
+
+  x == 1
+  x != 1
+
+  <error>new A() == 1</error>
+  new B() <error>==</error> 1
+  new C() <error>==</error> 1
+
+  <error>x === "1"</error>
+  <error>x !== "1"</error>
+
+  x === 1
+  x !== 1
+
+  x<error>..</error>2
+  x <error>in</error> 1..2
+
+  val y : Boolean? = true
+  false || <error>y</error>
+  <error>y</error> && true
+  <error>y</error> && <error>1</error>
+}

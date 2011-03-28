@@ -20,7 +20,11 @@ public class JetPsiCheckerTest extends LightDaemonAnalyzerTestCase {
        return new File(PathManager.getResourceRoot(JetParsingTest.class, "/org/jetbrains/jet/parsing/JetParsingTest.class")).getParentFile().getParentFile().getParent();
     }
 
-    public void testFoo() throws Exception {
+    public void testProperties() throws Exception {
         doTest("/checker/Properties.jet", true, true);
+    }
+
+    public void testBinaryCallsOnNullableValues() throws Exception {
+        doTest("/checker/BinaryCallsOnNullableValues.jet", true, true);
     }
 }

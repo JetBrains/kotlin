@@ -1,6 +1,12 @@
 import java.*
 import util.*
 
+fun f_plus(): Int {
+  var x: Int = 1
+  x = x `std::Int.plus(Int)`+ 1
+  return x
+}
+
 ~X~class X<~T~T> {
   ~X()~this() {}
   fun foo(a : `T`T) : `X`X<`T`T>{}

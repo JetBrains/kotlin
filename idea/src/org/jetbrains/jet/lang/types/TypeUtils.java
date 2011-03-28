@@ -40,7 +40,7 @@ public class TypeUtils {
 
             if (!canHaveSubtypes(typeChecker, type)) {
                 for (JetType other : types) {
-                    if (type != other || !typeChecker.isSubtypeOf(type, other)) {
+                    if (!type.equals(other) && !typeChecker.isSubtypeOf(type, other)) {
                         return null;
                     }
                 }

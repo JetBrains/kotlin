@@ -980,10 +980,26 @@ public class JetTypeInferrer {
             }
             else if (equalsOperations.contains(operationType)) {
                 String name = "equals";
-                JetType equalsType = getTypeForBinaryCall(expression, name, scope, true);
-                result = assureBooleanResult(operationSign, name, equalsType);
-
-                ensureNonemptyIntersectionOfOperandTypes(expression);
+                if (right != null) {
+                    JetType leftType = getType(scope, left, false);
+                    if (leftType != null) {
+                        JetType rightType = getType(scope, right, false);
+                        if (rightType != null) {
+                            FunctionDescriptor equals = lookupFunction(
+                                    scope, operationSign, "equals",
+                                    leftType, Collections.singletonList(JetStandardClasses.getNullableAnyType()), false);
+                            if (equals != null) {
+                                if (ensureBooleanResult(operationSign, name, equals.getUnsubstitutedReturnType())) {
+                                    ensureNonemptyIntersectionOfOperandTypes(expression);
+                                }
+                            }
+                            else {
+                                semanticServices.getErrorHandler().genericError(operationSign.getNode(), "No method 'equals(Any?) : Boolean' available");
+                            }
+                        }
+                    }
+                }
+                result = semanticServices.getStandardLibrary().getBooleanType();
             }
             else if (operationType == JetTokens.EQEQEQ || operationType == JetTokens.EXCLEQEQEQ) {
                 ensureNonemptyIntersectionOfOperandTypes(expression);
@@ -998,7 +1014,8 @@ public class JetTypeInferrer {
                 }
                 String name = "contains";
                 JetType containsType = getTypeForBinaryCall(scope, right, expression.getOperationReference(), expression.getLeft(), name, true);
-                result = assureBooleanResult(operationSign, name, containsType);
+                ensureBooleanResult(operationSign, name, containsType);
+                result = semanticServices.getStandardLibrary().getBooleanType();
             }
             else if (operationType == JetTokens.ANDAND || operationType == JetTokens.OROR) {
                 JetType leftType = getType(scope, left, false);
@@ -1007,7 +1024,6 @@ public class JetTypeInferrer {
                     semanticServices.getErrorHandler().typeMismatch(left, semanticServices.getStandardLibrary().getBooleanType(), leftType);
                 }
                 if (rightType != null && !isBoolean(rightType)) {
-                    semanticServices.getErrorHandler().typeMismatch(left, semanticServices.getStandardLibrary().getBooleanType(), rightType);
                     semanticServices.getErrorHandler().typeMismatch(right, semanticServices.getStandardLibrary().getBooleanType(), rightType);
                 }
                 result = semanticServices.getStandardLibrary().getBooleanType();
@@ -1036,12 +1052,14 @@ public class JetTypeInferrer {
 
             // TODO : duplicated effort for == and !=
             JetType leftType = getType(scope, left, false);
-            if (right != null) {
+            if (leftType != null && right != null) {
                 JetType rightType = getType(scope, right, false);
 
-                JetType intersect = TypeUtils.intersect(semanticServices.getTypeChecker(), new HashSet<JetType>(Arrays.asList(leftType, rightType)));
-                if (intersect == null) {
-                    semanticServices.getErrorHandler().genericError(expression.getNode(), "Operator " + operationSign.getReferencedName() + " cannot be applied to " + leftType + " and " + rightType);
+                if (rightType != null) {
+                    JetType intersect = TypeUtils.intersect(semanticServices.getTypeChecker(), new HashSet<JetType>(Arrays.asList(leftType, rightType)));
+                    if (intersect == null) {
+                        semanticServices.getErrorHandler().genericError(expression.getNode(), "Operator " + operationSign.getReferencedName() + " cannot be applied to " + leftType + " and " + rightType);
+                    }
                 }
             }
         }
@@ -1058,20 +1076,19 @@ public class JetTypeInferrer {
             semanticServices.getErrorHandler().genericError(expression.getNode(), "Assignments are not expressions, and only expressions are allowed in this context");
         }
 
-        private JetType assureBooleanResult(JetSimpleNameExpression operationSign, String name, JetType resultType) {
+        private boolean ensureBooleanResult(JetSimpleNameExpression operationSign, String name, JetType resultType) {
             if (resultType != null) {
                 // TODO : Relax?
                 if (!isBoolean(resultType)) {
                     semanticServices.getErrorHandler().genericError(operationSign.getNode(), "'" + name + "' must return Boolean but returns " + resultType);
-                    return null;
-                } else {
-                    return resultType;
+                    return false;
                 }
             }
-            return resultType;
+            return true;
         }
 
         private boolean isBoolean(@NotNull JetType type) {
+            if (type.isNullable()) return false;
             TypeConstructor booleanTypeConstructor = semanticServices.getStandardLibrary().getBoolean().getTypeConstructor();
             return type.getConstructor().equals(booleanTypeConstructor) || ErrorUtils.isErrorType(type);
         }
@@ -1093,7 +1110,11 @@ public class JetTypeInferrer {
         }
 
         @Nullable
-        protected JetType getTypeForBinaryCall(JetBinaryExpression expression, @NotNull String name, JetScope scope, boolean reportUnresolved) {
+        protected JetType getTypeForBinaryCall(
+                @NotNull JetBinaryExpression expression,
+                @NotNull String name,
+                @NotNull JetScope scope,
+                boolean reportUnresolved) {
             JetExpression left = expression.getLeft();
             JetExpression right = expression.getRight();
             if (right == null) {
@@ -1104,14 +1125,29 @@ public class JetTypeInferrer {
         }
 
         @Nullable
-        private JetType getTypeForBinaryCall(JetScope scope, JetExpression left, JetSimpleNameExpression operationSign, @NotNull JetExpression right, String name, boolean reportUnresolved) {
-            JetType leftType = safeGetType(scope, left, false);
-            JetType rightType = safeGetType(scope, right, false);
-            if (ErrorUtils.isErrorType(leftType)) {
+        private JetType getTypeForBinaryCall(
+                @NotNull JetScope scope,
+                @NotNull JetExpression left,
+                @NotNull JetSimpleNameExpression operationSign,
+                @NotNull JetExpression right,
+                @NotNull String name,
+                boolean reportUnresolved) {
+            JetType leftType = getType(scope, left, false);
+            JetType rightType = getType(scope, right, false);
+            if (leftType == null || rightType == null) {
                 return null;
             }
             FunctionDescriptor functionDescriptor = lookupFunction(scope, operationSign, name, leftType, Collections.singletonList(rightType), reportUnresolved);
             if (functionDescriptor != null) {
+                if (leftType.isNullable()) {
+                    // TODO : better error message for '1 + nullableVar' case
+                    semanticServices.getErrorHandler().genericError(operationSign.getNode(),
+                            "Infix call corresponds to a dot-qualified call '" +
+                            left.getText() + "." + name + "(" + right.getText() + ")'" +
+                            " which is not allowed on a nullable receiver '" + right.getText() + "'." +
+                            " Use '?.'-qualified call instead");
+                }
+
                 return functionDescriptor.getUnsubstitutedReturnType();
             }
             return null;

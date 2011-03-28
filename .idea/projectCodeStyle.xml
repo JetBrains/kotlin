@@ -127,17 +127,6 @@
           <option name="LABEL_INDENT_ABSOLUTE" value="false" />
           <option name="USE_RELATIVE_INDENTS" value="false" />
         </ADDITIONAL_INDENT_OPTIONS>
-        <codeStyleSettings language="JavaScript">
-          <option name="ELSE_ON_NEW_LINE" value="true" />
-          <option name="ALIGN_MULTILINE_BINARY_OPERATION" value="true" />
-          <option name="IF_BRACE_FORCE" value="1" />
-          <option name="PARENT_SETTINGS_INSTALLED" value="true" />
-        </codeStyleSettings>
-        <codeStyleSettings language="PHP">
-          <option name="ELSE_ON_NEW_LINE" value="true" />
-          <option name="IF_BRACE_FORCE" value="1" />
-          <option name="PARENT_SETTINGS_INSTALLED" value="true" />
-        </codeStyleSettings>
       </value>
     </option>
     <option name="USE_PER_PROJECT_SETTINGS" value="true" />
