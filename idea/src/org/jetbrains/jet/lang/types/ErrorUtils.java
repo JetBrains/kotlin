@@ -47,6 +47,12 @@ public class ErrorUtils {
             return ERROR_MODULE;
         }
 
+        @NotNull
+        @Override
+        public Collection<DeclarationDescriptor> getDeclarationsByLabel(String labelName) {
+            return Collections.emptyList();
+        }
+
     };
 
     private static final FunctionGroup ERROR_FUNCTION_GROUP = new FunctionGroup() {

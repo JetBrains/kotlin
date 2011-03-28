@@ -9,6 +9,7 @@ import org.jetbrains.jet.JetNodeTypes;
  * @author max
  */
 public class JetThisExpression extends JetLabelQualifiedExpression {
+
     public JetThisExpression(@NotNull ASTNode node) {
         super(node);
     }
@@ -23,7 +24,15 @@ public class JetThisExpression extends JetLabelQualifiedExpression {
         return (JetTypeReference) findChildByType(JetNodeTypes.TYPE_REFERENCE);
     }
 
-    public boolean hasSuperTypeQualifier() {
-        return getSuperTypeQualifier() != null;
+    @Nullable
+    public JetSimpleNameExpression getLabelElement() {
+        return findChildByClass(JetSimpleNameExpression.class);
+    }
+
+    @Nullable
+    public String getLabelName() {
+        JetSimpleNameExpression labelElement = getLabelElement();
+        assert labelElement == null || labelElement.getText().startsWith("@");
+        return labelElement == null ? null : labelElement.getText().substring(1);
     }
 }

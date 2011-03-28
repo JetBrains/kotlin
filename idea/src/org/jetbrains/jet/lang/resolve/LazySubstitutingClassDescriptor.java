@@ -55,6 +55,7 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
         throw new UnsupportedOperationException(); // TODO
     }
 
+    @NotNull
     @Override
     public String getName() {
         return original.getName();

@@ -27,4 +27,8 @@ public class JetPsiCheckerTest extends LightDaemonAnalyzerTestCase {
     public void testBinaryCallsOnNullableValues() throws Exception {
         doTest("/checker/BinaryCallsOnNullableValues.jet", true, true);
     }
+
+    public void testQualifiedThis() throws Exception {
+        doTest("/checker/QualifiedThis.jet", true, true);
+    }
 }

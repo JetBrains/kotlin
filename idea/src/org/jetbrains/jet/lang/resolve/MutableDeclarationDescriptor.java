@@ -23,6 +23,7 @@ public abstract class MutableDeclarationDescriptor implements DeclarationDescrip
         throw new UnsupportedOperationException(); // TODO
     }
 
+    @NotNull
     @Override
     public String getName() {
         return name;

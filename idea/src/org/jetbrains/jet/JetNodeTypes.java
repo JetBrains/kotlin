@@ -92,6 +92,7 @@ public interface JetNodeTypes {
 
     JetNodeType REFERENCE_EXPRESSION      = new JetNodeType("REFERENCE_EXPRESSION", JetSimpleNameExpression.class);
     JetNodeType OPERATION_REFERENCE       = new JetNodeType("OPERATION_REFERENCE", JetSimpleNameExpression.class);
+    JetNodeType LABEL_REFERENCE           = new JetNodeType("LABEL_REFERENCE", JetSimpleNameExpression.class);
 
     JetNodeType THIS_EXPRESSION           = new JetNodeType("THIS_EXPRESSION", JetThisExpression.class);
     JetNodeType BINARY_EXPRESSION         = new JetNodeType("BINARY_EXPRESSION", JetBinaryExpression.class);

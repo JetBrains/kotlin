@@ -67,6 +67,7 @@ public class ClassDescriptorResolver {
 
     public void resolveMutableClassDescriptor(@NotNull JetScope scope, @NotNull JetClass classElement, @NotNull MutableClassDescriptor descriptor) {
         descriptor.setName(classElement.getName());
+        descriptor.getClassHeaderScope().addLabeledDeclaration(descriptor);
 
         WritableScope parameterScope = descriptor.getClassHeaderScope();
 
@@ -102,6 +103,8 @@ public class ClassDescriptorResolver {
             assert supertype != null : classElement.getName();
             parameterScope.importScope(supertype.getMemberScope());
         }
+
+        descriptor.getClassHeaderScope().setThisType(descriptor.getDefaultType());
 
         trace.recordDeclarationResolution(classElement, descriptor);
     }
@@ -156,20 +159,21 @@ public class ClassDescriptorResolver {
                 AttributeResolver.INSTANCE.resolveAttributes(function.getModifierList()),
                 safeName(function.getName())
         );
-        WritableScope parameterScope = semanticServices.createWritableScope(scope, functionDescriptor);
+        WritableScope innerScope = semanticServices.createWritableScope(scope, functionDescriptor);
+        innerScope.addLabeledDeclaration(functionDescriptor);
 
         // The two calls below have side-effects on parameterScope
-        List<TypeParameterDescriptor> typeParameterDescriptors = resolveTypeParameters(functionDescriptor, parameterScope, function.getTypeParameters());
-        List<ValueParameterDescriptor> valueParameterDescriptors = resolveValueParameters(functionDescriptor, parameterScope, function.getValueParameters());
+        List<TypeParameterDescriptor> typeParameterDescriptors = resolveTypeParameters(functionDescriptor, innerScope, function.getTypeParameters());
+        List<ValueParameterDescriptor> valueParameterDescriptors = resolveValueParameters(functionDescriptor, innerScope, function.getValueParameters());
 
         JetType returnType;
         JetTypeReference returnTypeRef = function.getReturnTypeRef();
         JetExpression bodyExpression = function.getBodyExpression();
         if (returnTypeRef != null) {
-            returnType = typeResolver.resolveType(parameterScope, returnTypeRef);
+            returnType = typeResolver.resolveType(innerScope, returnTypeRef);
             // TODO : check body type, consider recursion
             if (bodyExpression != null) {
-                semanticServices.getTypeInferrer(trace).getType(parameterScope, bodyExpression, function.hasBlockBody());
+                semanticServices.getTypeInferrer(trace).getType(innerScope, bodyExpression, function.hasBlockBody());
             }
         } else {
             if (bodyExpression == null) {
@@ -177,7 +181,7 @@ public class ClassDescriptorResolver {
                 returnType = ErrorUtils.createErrorType("No type, no body");
             } else {
                 // TODO : Recursion possible
-                returnType = semanticServices.getTypeInferrer(trace).safeGetType(parameterScope, bodyExpression, function.hasBlockBody());
+                returnType = semanticServices.getTypeInferrer(trace).safeGetType(innerScope, bodyExpression, function.hasBlockBody());
             }
         }
 

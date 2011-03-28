@@ -5,10 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.types.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author abreslav
@@ -16,6 +13,9 @@ import java.util.Map;
 public class WritableScope extends JetScopeAdapter {
     @NotNull
     private final ErrorHandler errorHandler;
+
+    @NotNull
+    private final DeclarationDescriptor ownerDeclarationDescriptor;
 
     @Nullable
     private Map<String, PropertyDescriptor> propertyDescriptors;
@@ -26,12 +26,12 @@ public class WritableScope extends JetScopeAdapter {
     @Nullable
     private Map<String, NamespaceDescriptor> namespaceDescriptors;
     @Nullable
+    private Map<String, List<DeclarationDescriptor>> labelsToDescriptors;
+    @Nullable
     private JetType thisType;
+
     @Nullable
     private List<JetScope> imports;
-
-    @NotNull
-    private final DeclarationDescriptor ownerDeclarationDescriptor;
 
     public WritableScope(@NotNull JetScope scope, @NotNull DeclarationDescriptor owner, @NotNull ErrorHandler errorHandler) {
         super(scope);
@@ -43,6 +43,41 @@ public class WritableScope extends JetScopeAdapter {
     @Override
     public DeclarationDescriptor getContainingDeclaration() {
         return ownerDeclarationDescriptor;
+    }
+
+    @NotNull
+    private Map<String, List<DeclarationDescriptor>> getLabelsToDescriptors() {
+        if (labelsToDescriptors == null) {
+            labelsToDescriptors = new HashMap<String, List<DeclarationDescriptor>>();
+        }
+        return labelsToDescriptors;
+    }
+
+    @NotNull
+    @Override
+    public Collection<DeclarationDescriptor> getDeclarationsByLabel(@NotNull String labelName) {
+        Map<String, List<DeclarationDescriptor>> labelsToDescriptors = getLabelsToDescriptors();
+        Collection<DeclarationDescriptor> superResult = super.getDeclarationsByLabel(labelName);
+        List<DeclarationDescriptor> declarationDescriptors = labelsToDescriptors.get(labelName);
+        if (declarationDescriptors == null) {
+            return superResult;
+        }
+        if (superResult.isEmpty()) return declarationDescriptors;
+        List<DeclarationDescriptor> result = new ArrayList<DeclarationDescriptor>(declarationDescriptors);
+        result.addAll(superResult);
+        return result;
+    }
+
+    public void addLabeledDeclaration(@NotNull DeclarationDescriptor descriptor) {
+        Map<String, List<DeclarationDescriptor>> labelsToDescriptors = getLabelsToDescriptors();
+        String name = descriptor.getName();
+        assert name != null;
+        List<DeclarationDescriptor> declarationDescriptors = labelsToDescriptors.get(name);
+        if (declarationDescriptors == null) {
+            declarationDescriptors = new ArrayList<DeclarationDescriptor>();
+            labelsToDescriptors.put(name, declarationDescriptors);
+        }
+        declarationDescriptors.add(descriptor);
     }
 
     public void importScope(@NotNull JetScope imported) {

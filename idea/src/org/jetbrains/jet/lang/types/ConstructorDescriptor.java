@@ -29,6 +29,7 @@ public interface ConstructorDescriptor extends FunctionDescriptor {
     /**
      * @return "&lt;init&gt;" -- name is not stored for constructors
      */
+    @NotNull
     @Override
     String getName();
 

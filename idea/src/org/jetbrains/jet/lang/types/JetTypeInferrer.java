@@ -523,33 +523,67 @@ public class JetTypeInferrer {
         @Override
         public void visitThisExpression(JetThisExpression expression) {
             // TODO : qualified this, e.g. this@Foo<Bar>
-            JetType thisType = scope.getThisType();
-            JetTypeReference superTypeQualifier = expression.getSuperTypeQualifier();
-            if (superTypeQualifier != null) {
-                JetTypeElement superTypeElement = superTypeQualifier.getTypeElement();
-                // Errors are reported by the parser
-                if (superTypeElement instanceof JetUserType) {
-                    JetUserType typeElement = (JetUserType) superTypeElement;
-
-                    ClassifierDescriptor classifierCandidate = typeResolver.resolveClass(scope, typeElement);
-                    if (classifierCandidate instanceof ClassDescriptor) {
-                        ClassDescriptor superclass = (ClassDescriptor) classifierCandidate;
-
-                        Collection<? extends JetType> supertypes = thisType.getConstructor().getSupertypes();
-                        Map<TypeConstructor, TypeProjection> substitutionContext = TypeUtils.buildSubstitutionContext(thisType);
-                        for (JetType declaredSupertype : supertypes) {
-                            if (declaredSupertype.getConstructor().equals(superclass.getTypeConstructor())) {
-                                result = TypeSubstitutor.INSTANCE.safeSubstitute(substitutionContext, declaredSupertype, Variance.INVARIANT);
-                                break;
-                            }
-                        }
-                        if (result == null) {
-                            semanticServices.getErrorHandler().genericError(superTypeElement.getNode(), "Not a superclass");
-                        }
+            JetType thisType = null;
+            String labelName = expression.getLabelName();
+            if (labelName != null) {
+                Collection<DeclarationDescriptor> declarationsByLabel = scope.getDeclarationsByLabel(labelName);
+                int size = declarationsByLabel.size();
+                if (size == 1) {
+                    DeclarationDescriptor declarationDescriptor = declarationsByLabel.iterator().next();
+                    if (declarationDescriptor instanceof ClassDescriptor) {
+                        ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
+                        thisType = classDescriptor.getDefaultType();
+                    }
+                    else {
+                        throw new UnsupportedOperationException(); // TODO
                     }
                 }
-            } else {
-                result = thisType;
+                else if (size == 0) {
+                    semanticServices.getErrorHandler().unresolvedReference(expression.getLabelElement());
+                }
+                else {
+                    JetSimpleNameExpression labelElement = expression.getLabelElement();
+                    assert labelElement != null;
+                    semanticServices.getErrorHandler().genericError(labelElement.getNode(), "Ambiguous label");
+                }
+            }
+            else {
+                thisType = scope.getThisType();
+            }
+
+            if (thisType != null) {
+                if (JetStandardClasses.isNothing(thisType)) {
+                    semanticServices.getErrorHandler().genericError(expression.getNode(), "'this' is not defined in this context");
+                }
+                else {
+                    JetTypeReference superTypeQualifier = expression.getSuperTypeQualifier();
+                    if (superTypeQualifier != null) {
+                        JetTypeElement superTypeElement = superTypeQualifier.getTypeElement();
+                        // Errors are reported by the parser
+                        if (superTypeElement instanceof JetUserType) {
+                            JetUserType typeElement = (JetUserType) superTypeElement;
+
+                            ClassifierDescriptor classifierCandidate = typeResolver.resolveClass(scope, typeElement);
+                            if (classifierCandidate instanceof ClassDescriptor) {
+                                ClassDescriptor superclass = (ClassDescriptor) classifierCandidate;
+
+                                Collection<? extends JetType> supertypes = thisType.getConstructor().getSupertypes();
+                                Map<TypeConstructor, TypeProjection> substitutionContext = TypeUtils.buildSubstitutionContext(thisType);
+                                for (JetType declaredSupertype : supertypes) {
+                                    if (declaredSupertype.getConstructor().equals(superclass.getTypeConstructor())) {
+                                        result = TypeSubstitutor.INSTANCE.safeSubstitute(substitutionContext, declaredSupertype, Variance.INVARIANT);
+                                        break;
+                                    }
+                                }
+                                if (result == null) {
+                                    semanticServices.getErrorHandler().genericError(superTypeElement.getNode(), "Not a superclass");
+                                }
+                            }
+                        }
+                    } else {
+                        result = thisType;
+                    }
+                }
             }
         }
 

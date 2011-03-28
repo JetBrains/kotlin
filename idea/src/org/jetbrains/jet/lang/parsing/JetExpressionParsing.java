@@ -1464,7 +1464,9 @@ public class JetExpressionParsing extends AbstractJetParsing {
         advance(); // THIS_KEYWORD
 
         if (atSet(LABELS)) {
+            PsiBuilder.Marker label = mark();
             advance(); // LABELS
+            label.done(LABEL_REFERENCE);
         }
 
         if (at(LT)) {

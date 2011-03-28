@@ -4,6 +4,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.types.*;
 
+import java.util.Collection;
+
 /**
  * @author abreslav
  */
@@ -33,4 +35,7 @@ public interface JetScope {
 
     @NotNull
     DeclarationDescriptor getContainingDeclaration();
+
+    @NotNull
+    Collection<DeclarationDescriptor> getDeclarationsByLabel(String labelName);
 }

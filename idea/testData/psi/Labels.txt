@@ -341,15 +341,18 @@ JetFile: Labels.jet
         PsiWhiteSpace('\n  ')
         THIS_EXPRESSION
           PsiElement(this)('this')
-          PsiElement(AT)('@')
+          LABEL_REFERENCE
+            PsiElement(AT)('@')
         PsiWhiteSpace('\n  ')
         THIS_EXPRESSION
           PsiElement(this)('this')
-          PsiElement(LABEL_IDENTIFIER)('@a')
+          LABEL_REFERENCE
+            PsiElement(LABEL_IDENTIFIER)('@a')
         PsiWhiteSpace('\n  ')
         THIS_EXPRESSION
           PsiElement(this)('this')
-          PsiElement(ATAT)('@@')
+          LABEL_REFERENCE
+            PsiElement(ATAT)('@@')
         PsiWhiteSpace('\n\n  ')
         THIS_EXPRESSION
           PsiElement(this)('this')
@@ -362,7 +365,8 @@ JetFile: Labels.jet
         PsiWhiteSpace('\n  ')
         THIS_EXPRESSION
           PsiElement(this)('this')
-          PsiElement(AT)('@')
+          LABEL_REFERENCE
+            PsiElement(AT)('@')
           PsiElement(LT)('<')
           TYPE_REFERENCE
             USER_TYPE
@@ -372,7 +376,8 @@ JetFile: Labels.jet
         PsiWhiteSpace('\n  ')
         THIS_EXPRESSION
           PsiElement(this)('this')
-          PsiElement(LABEL_IDENTIFIER)('@a')
+          LABEL_REFERENCE
+            PsiElement(LABEL_IDENTIFIER)('@a')
           PsiElement(LT)('<')
           TYPE_REFERENCE
             USER_TYPE
@@ -382,7 +387,8 @@ JetFile: Labels.jet
         PsiWhiteSpace('\n  ')
         THIS_EXPRESSION
           PsiElement(this)('this')
-          PsiElement(ATAT)('@@')
+          LABEL_REFERENCE
+            PsiElement(ATAT)('@@')
           PsiElement(LT)('<')
           TYPE_REFERENCE
             USER_TYPE

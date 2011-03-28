@@ -3,6 +3,8 @@ package org.jetbrains.jet.lang.resolve;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.types.*;
 
+import java.util.Collection;
+
 /**
  * @author abreslav
  */
@@ -45,5 +47,11 @@ public class JetScopeAdapter implements JetScope {
     @Override
     public DeclarationDescriptor getContainingDeclaration() {
         return scope.getContainingDeclaration();
+    }
+
+    @NotNull
+    @Override
+    public Collection<DeclarationDescriptor> getDeclarationsByLabel(String labelName) {
+        return scope.getDeclarationsByLabel(labelName);
     }
 }

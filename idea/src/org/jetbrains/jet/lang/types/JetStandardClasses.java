@@ -249,7 +249,7 @@ public class JetStandardClasses {
         return NULLABLE_NOTHING_TYPE;
     }
 
-    public static boolean isNothing(JetType type) {
+    public static boolean isNothing(@NotNull JetType type) {
         return type.getConstructor() == NOTHING_CLASS.getTypeConstructor();
     }
 
