@@ -6,6 +6,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -140,9 +141,12 @@ public class JetControlFlowProcessor {
                 builder.jump(afterCatches);
 
                 builder.bindLabel(catchBlock);
-                for (JetCatchClause catchClause : catchClauses) {
+                for (Iterator<JetCatchClause> iterator = catchClauses.iterator(); iterator.hasNext(); ) {
+                    JetCatchClause catchClause = iterator.next();
                     value(catchClause.getCatchBody(), true);
-                    builder.nondeterministicJump(afterCatches);
+                    if (iterator.hasNext()) {
+                        builder.nondeterministicJump(afterCatches);
+                    }
                 }
 
                 builder.bindLabel(afterCatches);

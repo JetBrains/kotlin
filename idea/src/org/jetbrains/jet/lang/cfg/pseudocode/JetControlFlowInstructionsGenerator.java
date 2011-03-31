@@ -154,7 +154,7 @@ public class JetControlFlowInstructionsGenerator implements JetControlFlowBuilde
 
     @Override
     public void nondeterministicJump(Label label) {
-        throw new UnsupportedOperationException(); // TODO
+        add(new NondeterministicJumpInstruction(label));
     }
 
     @Override

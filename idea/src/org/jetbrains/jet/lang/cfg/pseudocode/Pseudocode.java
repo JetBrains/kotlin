@@ -37,6 +37,12 @@ public class Pseudocode {
                 }
 
                 @Override
+                public void visitNondeterministicJump(NondeterministicJumpInstruction instruction) {
+                    instruction.setNext(getNextPosition(currentPosition));
+                    visitJump(instruction);
+                }
+
+                @Override
                 public void visitConditionalJump(ConditionalJumpInstruction instruction) {
                     Instruction nextInstruction = getNextPosition(currentPosition);
                     Instruction jumpTarget = getJumpTarget(instruction.getTargetLabel());
@@ -120,7 +126,13 @@ public class Pseudocode {
             if (newline >= 0) {
                 text = text.substring(0, newline);
             }
-            String shape = node instanceof ConditionalJumpInstruction ? "diamond" : "box";
+            String shape = "box";
+            if (node instanceof ConditionalJumpInstruction) {
+                shape = "diamond";
+            }
+            else if (node instanceof NondeterministicJumpInstruction) {
+                shape = "Mdiamond";
+            }
             out.println(name + "[label=\"" + text + "\", shape=" + shape + "];");
         }
 
@@ -134,6 +146,12 @@ public class Pseudocode {
                 @Override
                 public void visitJump(AbstractJumpInstruction instruction) {
                     writeEdge(out, nodeToName.get(instruction), nodeToName.get(instruction.getResolvedTarget()), null);
+                }
+
+                @Override
+                public void visitNondeterministicJump(NondeterministicJumpInstruction instruction) {
+                    visitJump(instruction);
+                    writeEdge(out, nodeToName.get(instruction), nodeToName.get(instruction.getNext()), null);
                 }
 
                 @Override

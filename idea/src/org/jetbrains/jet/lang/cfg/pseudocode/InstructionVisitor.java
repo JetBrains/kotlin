@@ -34,4 +34,8 @@ public class InstructionVisitor {
 
     public void visitInstruction(Instruction instruction) {
     }
+
+    public void visitNondeterministicJump(NondeterministicJumpInstruction instruction) {
+        visitJump(instruction);
+    }
 }
