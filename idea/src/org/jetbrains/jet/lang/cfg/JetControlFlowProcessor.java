@@ -1,22 +1,26 @@
 package org.jetbrains.jet.lang.cfg;
 
+import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetTokens;
 
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
 * @author abreslav
 */
 public class JetControlFlowProcessor {
 
-    private JetControlFlowBuilder builder;
+    private final Map<String, Stack<JetElement>> labeledElements = new HashMap<String, Stack<JetElement>>();
 
-    public JetControlFlowProcessor(JetControlFlowBuilder builder) {
+    private final JetSemanticServices semanticServices;
+    private final JetControlFlowBuilder builder;
+
+    public JetControlFlowProcessor(JetSemanticServices semanticServices, JetControlFlowBuilder builder) {
+        this.semanticServices = semanticServices;
         this.builder = builder;
     }
 
@@ -32,11 +36,25 @@ public class JetControlFlowProcessor {
         builder.exitSubroutine(subroutineElement);
     }
 
-    private void registerLabeledElement(@NotNull JetSimpleNameExpression label, @NotNull JetExpression labeledExpression) {
-        throw new UnsupportedOperationException(); // TODO
+    private void enterLabeledElement(@NotNull String labelName, @NotNull JetElement labeledElement) {
+        Stack<JetElement> stack = labeledElements.get(labelName);
+        if (stack == null) {
+            stack = new Stack<JetElement>();
+            labeledElements.put(labelName, stack);
+        }
+        stack.push(labeledElement);
     }
 
-    private JetElement resolveLabel(JetSimpleNameExpression labelElement) {
+    private void exitElement(JetElement element) {
+//        for (Iterator<Map.Entry<String, JetElement>> iterator = labeledElements.entrySet().iterator(); iterator.hasNext(); ) {
+//            Map.Entry<String, JetElement> entry = iterator.next();
+//            if (entry.getValue() == element) {
+//                iterator.remove();
+//            }
+//        }
+    }
+
+    private JetElement resolveLabel(@NotNull String labelName, @NotNull ASTNode labelNode) {
         throw new UnsupportedOperationException(); // TODO
     }
 
@@ -70,7 +88,7 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitLabelQualifiedExpression(JetLabelQualifiedExpression expression) {
-            registerLabeledElement(expression.getTargetLabel(), expression.getLabeledExpression());
+            enterLabeledElement(expression.getLabelName(), expression.getLabeledExpression());
             value(expression.getLabeledExpression(), false);
         }
 
@@ -216,7 +234,7 @@ public class JetControlFlowProcessor {
             }
             JetSimpleNameExpression labelElement = expression.getTargetLabel();
             JetElement subroutine = (labelElement != null)
-                    ? resolveLabel(labelElement)
+                    ? resolveLabel(expression.getLabelName(), expression.getTargetLabel().getNode())
                     : builder.getCurrentSubroutine();
             if (returnedExpression == null) {
                 builder.returnNoValue(subroutine);

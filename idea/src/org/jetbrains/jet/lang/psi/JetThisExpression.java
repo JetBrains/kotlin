@@ -24,15 +24,4 @@ public class JetThisExpression extends JetLabelQualifiedExpression {
         return (JetTypeReference) findChildByType(JetNodeTypes.TYPE_REFERENCE);
     }
 
-    @Nullable
-    public JetSimpleNameExpression getLabelElement() {
-        return findChildByClass(JetSimpleNameExpression.class);
-    }
-
-    @Nullable
-    public String getLabelName() {
-        JetSimpleNameExpression labelElement = getLabelElement();
-        assert labelElement == null || labelElement.getText().startsWith("@");
-        return labelElement == null ? null : labelElement.getText().substring(1);
-    }
 }

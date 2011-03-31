@@ -558,10 +558,10 @@ public class JetTypeInferrer {
                     }
                 }
                 else if (size == 0) {
-                    semanticServices.getErrorHandler().unresolvedReference(expression.getLabelElement());
+                    semanticServices.getErrorHandler().unresolvedReference(expression.getTargetLabel());
                 }
                 else {
-                    JetSimpleNameExpression labelElement = expression.getLabelElement();
+                    JetSimpleNameExpression labelElement = expression.getTargetLabel();
                     assert labelElement != null;
                     semanticServices.getErrorHandler().genericError(labelElement.getNode(), "Ambiguous label");
                 }
@@ -989,6 +989,11 @@ public class JetTypeInferrer {
         @Override
         public void visitUnaryExpression(JetUnaryExpression expression) {
             JetSimpleNameExpression operationSign = expression.getOperationSign();
+            if (JetTokens.LABELS.contains(operationSign.getReferencedNameElementType())) {
+                // TODO : Some processing for the label?
+                result = getType(expression.getBaseExpression());
+                return;
+            }
             IElementType operationType = operationSign.getReferencedNameElementType();
             String name = unaryOperationNames.get(operationType);
             if (name == null) {
