@@ -3,7 +3,6 @@ package org.jetbrains.jet.lang.psi;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
 /**
@@ -16,14 +15,13 @@ public class JetLabelQualifiedExpression extends JetExpression {
     }
     
     @Nullable
-    public JetToken getTargetLabel() {
-        ASTNode targetLabelNode = getTargetLabelNode();
-        if (targetLabelNode == null) return null;
-        return (JetToken) targetLabelNode.getElementType();
+    public JetSimpleNameExpression getTargetLabel() {
+        return (JetSimpleNameExpression) findChildByType(JetTokens.LABELS);
     }
-    
-    @Nullable
-    public ASTNode getTargetLabelNode() {
-        return getNode().findChildByType(JetTokens.LABELS);
+
+    @Nullable @IfNotParsed
+    public JetExpression getLabeledExpression() {
+        return findChildByClass(JetExpression.class);
     }
+
 }

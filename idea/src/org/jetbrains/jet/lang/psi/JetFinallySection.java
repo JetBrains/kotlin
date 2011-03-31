@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.JetNodeTypes;
 
 /**
  * @author max
@@ -16,7 +17,7 @@ public class JetFinallySection extends JetElement {
         visitor.visitFinallySection(this);
     }
 
-    public JetExpression getFinalExpression() {
-        return findChildByClass(JetExpression.class);
+    public JetBlockExpression getFinalExpression() {
+        return (JetBlockExpression) findChildByType(JetNodeTypes.BLOCK);
     }
 }

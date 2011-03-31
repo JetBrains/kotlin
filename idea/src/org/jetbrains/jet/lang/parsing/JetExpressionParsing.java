@@ -311,8 +311,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
      *
      * postfixUnaryOperation
      *   : "++" : "--"
-     *   : typeArguments? valueArguments (label? functionLiteral)
-     *   : typeArguments (label? functionLiteral)
+     *   : typeArguments? valueArguments (getEntryPoint? functionLiteral)
+     *   : typeArguments (getEntryPoint? functionLiteral)
      *   : arrayAccess
      *   : memberAccessOperation postfixUnaryOperation // TODO: Review
      *   ;
@@ -375,8 +375,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
     /*
      * callSuffix
-     *   : typeArguments? valueArguments (label? functionLiteral*)
-     *   : typeArguments (label? functionLiteral*)
+     *   : typeArguments? valueArguments (getEntryPoint? functionLiteral*)
+     *   : typeArguments (getEntryPoint? functionLiteral*)
      *   ;
      */
     private boolean parseCallSuffix() {
@@ -427,7 +427,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     }
 
     /*
-     * expression (label? functionLiteral)?
+     * expression (getEntryPoint? functionLiteral)?
      */
     protected boolean parseCallWithClosure() {
         boolean success = false;
@@ -448,7 +448,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     /*
      * atomicExpression
      *   : tupleLiteral // or parenthesized expression
-     *   : "this" label? ("<" type ">")?
+     *   : "this" getEntryPoint? ("<" type ">")?
      *   : "typeof" "(" expression ")"
      *   : "new" constructorInvocation
      *   : objectLiteral
@@ -1311,8 +1311,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
     }
 
     /*
-     * : "continue" label?
-     * : "break" label?
+     * : "continue" getEntryPoint?
+     * : "break" getEntryPoint?
      */
     private void parseJump(JetNodeType type) {
         assert _at(BREAK_KEYWORD) || _at(CONTINUE_KEYWORD);
@@ -1327,7 +1327,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     }
 
     /*
-     * "return" label? expression?
+     * "return" getEntryPoint? expression?
      */
     private void parseReturn() {
         assert _at(RETURN_KEYWORD);
@@ -1456,7 +1456,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     }
 
     /*
-     * "this" label? ("<" type ">")?
+     * "this" getEntryPoint? ("<" type ">")?
      */
     private void parseThisExpression() {
         assert _at(THIS_KEYWORD);

@@ -3,13 +3,15 @@
  */
 package org.jetbrains.jet.lang.annotations;
 
-import com.intellij.lang.ASTNode;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.JetHighlighter;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetLabelQualifiedExpression;
+import org.jetbrains.jet.lang.psi.JetPrefixExpression;
+import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
+import org.jetbrains.jet.lang.psi.JetVisitor;
 import org.jetbrains.jet.lexer.JetTokens;
 
 public class LabelsAnnotator implements Annotator {
@@ -25,9 +27,9 @@ public class LabelsAnnotator implements Annotator {
 
             @Override
             public void visitLabelQualifiedExpression(JetLabelQualifiedExpression expression) {
-                ASTNode targetLabelNode = expression.getTargetLabelNode();
-                if (targetLabelNode != null) {
-                    holder.createInfoAnnotation(targetLabelNode, null).setTextAttributes(JetHighlighter.JET_LABEL_IDENTIFIER);
+                JetSimpleNameExpression targetLabel = expression.getTargetLabel();
+                if (targetLabel != null) {
+                    holder.createInfoAnnotation(targetLabel, null).setTextAttributes(JetHighlighter.JET_LABEL_IDENTIFIER);
                 }
             }
 

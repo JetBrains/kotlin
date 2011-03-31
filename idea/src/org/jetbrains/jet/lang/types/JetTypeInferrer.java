@@ -116,6 +116,7 @@ public class JetTypeInferrer {
             @NotNull JetReferenceExpression reference,
             @NotNull String name,
             @NotNull JetType receiverType,
+
             @NotNull List<JetType> argumentTypes,
             boolean reportUnresolved) {
         OverloadDomain overloadDomain = semanticServices.getOverloadResolver().getOverloadDomain(receiverType, scope, name);
@@ -272,20 +273,20 @@ public class JetTypeInferrer {
         };
     }
 
-    private JetType getBlockReturnedType(@NotNull JetScope outerScope, List<JetElement> block) {
+    private JetType getBlockReturnedType(@NotNull JetScope outerScope, @NotNull List<JetElement> block, @NotNull LabeledJumpDomain jumpDomain) {
         if (block.isEmpty()) {
             return JetStandardClasses.getUnitType();
         }
 
         DeclarationDescriptor containingDescriptor = outerScope.getContainingDeclaration();
         WritableScope scope = semanticServices.createWritableScope(outerScope, containingDescriptor);
-        return getBlockReturnedTypeWithWritableScope(scope, block);
+        return getBlockReturnedTypeWithWritableScope(scope, block, jumpDomain);
     }
 
-    private JetType getBlockReturnedTypeWithWritableScope(@NotNull WritableScope scope, @NotNull List<? extends JetElement> block) {
+    private JetType getBlockReturnedTypeWithWritableScope(@NotNull WritableScope scope, @NotNull List<? extends JetElement> block, @NotNull LabeledJumpDomain jumpDomain) {
         assert !block.isEmpty();
 
-        TypeInferrerVisitorWithWritableScope blockLevelVisitor = new TypeInferrerVisitorWithWritableScope(scope, true);
+        TypeInferrerVisitorWithWritableScope blockLevelVisitor = new TypeInferrerVisitorWithWritableScope(scope, true, jumpDomain);
 
         JetType result = null;
         for (JetElement statement : block) {
@@ -312,11 +313,18 @@ public class JetTypeInferrer {
     private class TypeInferrerVisitor extends JetVisitor {
         private final JetScope scope;
         private final boolean preferBlock;
+        private final LabeledJumpDomain jumpDomain;
+
         protected JetType result;
 
-        private TypeInferrerVisitor(JetScope scope, boolean preferBlock) {
+        private TypeInferrerVisitor(@NotNull JetScope scope, boolean preferBlock, @NotNull LabeledJumpDomain jumpDomain) {
             this.scope = scope;
             this.preferBlock = preferBlock;
+            this.jumpDomain = jumpDomain;
+        }
+
+        private TypeInferrerVisitor(JetScope scope, boolean preferBlock) {
+            this(scope, preferBlock, LabeledJumpDomain.EMPTY);
         }
 
         @Nullable
@@ -378,7 +386,7 @@ public class JetTypeInferrer {
         @Override
         public void visitFunctionLiteralExpression(JetFunctionLiteralExpression expression) {
             if (preferBlock && !expression.hasParameterSpecification()) {
-                result = getBlockReturnedType(scope, expression.getBody());
+                result = getBlockReturnedType(scope, expression.getBody(), LabeledJumpDomain.ERROR);
                 return;
             }
 
@@ -415,7 +423,7 @@ public class JetTypeInferrer {
                     writableScope.addPropertyDescriptor(propertyDescriptor);
                 }
                 writableScope.setThisType(receiverType);
-                returnType = getBlockReturnedType(writableScope, body);
+                returnType = getBlockReturnedType(writableScope, body, LabeledJumpDomain.ERROR);
             }
             result = JetStandardClasses.getFunctionType(null, receiverTypeRef == null ? null : receiverType, parameterTypes, returnType);
         }
@@ -466,20 +474,31 @@ public class JetTypeInferrer {
         @Override
         public void visitReturnExpression(JetReturnExpression expression) {
             JetExpression returnedExpression = expression.getReturnedExpression();
+
+            JetType returnedType;
             if (returnedExpression != null) {
-                getType(scope, returnedExpression, false);
+                returnedType = getType(scope, returnedExpression, false);
             }
+            else {
+                returnedType = JetStandardClasses.getUnitType();
+            }
+            jumpDomain.registerReturn(expression, returnedType);
+
             result = JetStandardClasses.getNothingType();
         }
 
         @Override
         public void visitBreakExpression(JetBreakExpression expression) {
             result = JetStandardClasses.getNothingType();
+
+            jumpDomain.registerBreakOrContinue(expression);
         }
 
         @Override
         public void visitContinueExpression(JetContinueExpression expression) {
             result = JetStandardClasses.getNothingType();
+
+            jumpDomain.registerBreakOrContinue(expression);
         }
 
         @Override
@@ -589,7 +608,7 @@ public class JetTypeInferrer {
 
         @Override
         public void visitBlockExpression(JetBlockExpression expression) {
-            result = getBlockReturnedType(scope, expression.getStatements());
+            result = getBlockReturnedType(scope, expression.getStatements(), jumpDomain);
         }
 
         @Override
@@ -678,7 +697,7 @@ public class JetTypeInferrer {
                 if (!function.hasParameterSpecification()) {
                     WritableScope writableScope = semanticServices.createWritableScope(scope, scope.getContainingDeclaration());
                     conditionScope = writableScope;
-                    getBlockReturnedTypeWithWritableScope(writableScope, function.getBody());
+                    getBlockReturnedTypeWithWritableScope(writableScope, function.getBody(), LabeledJumpDomain.ERROR); // TODO
                 } else {
                     getType(scope, body, true);
                 }
@@ -686,7 +705,7 @@ public class JetTypeInferrer {
             else if (body != null) {
                 WritableScope writableScope = semanticServices.createWritableScope(scope, scope.getContainingDeclaration());
                 conditionScope = writableScope;
-                getBlockReturnedTypeWithWritableScope(writableScope, Collections.singletonList(body));
+                getBlockReturnedTypeWithWritableScope(writableScope, Collections.singletonList(body), LabeledJumpDomain.ERROR); // TODO
             }
             checkCondition(conditionScope, expression.getCondition());
             result = JetStandardClasses.getUnitType();
@@ -1220,8 +1239,8 @@ public class JetTypeInferrer {
     private class TypeInferrerVisitorWithWritableScope extends TypeInferrerVisitor {
         private final WritableScope scope;
 
-        public TypeInferrerVisitorWithWritableScope(@NotNull WritableScope scope, boolean preferBlock) {
-            super(scope, preferBlock);
+        public TypeInferrerVisitorWithWritableScope(@NotNull WritableScope scope, boolean preferBlock, @NotNull LabeledJumpDomain jumpDomain) {
+            super(scope, preferBlock, jumpDomain);
             this.scope = scope;
         }
 
@@ -1336,5 +1355,32 @@ public class JetTypeInferrer {
         public void visitJetElement(JetElement elem) {
             semanticServices.getErrorHandler().genericError(elem.getNode(), "Unsupported element in a block: " + elem + " " + elem.getClass().getCanonicalName());
         }
+    }
+
+    private interface LabeledJumpDomain {
+        LabeledJumpDomain EMPTY = new LabeledJumpDomain() {
+            @Override
+            public void registerReturn(@NotNull JetReturnExpression expression, JetType returnedExpressionType) {
+            }
+
+            @Override
+            public void registerBreakOrContinue(@NotNull JetLabelQualifiedExpression expression) {
+            }
+        };
+
+        LabeledJumpDomain ERROR = new LabeledJumpDomain() {
+            @Override
+            public void registerReturn(@NotNull JetReturnExpression expression, JetType returnedExpressionType) {
+//                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public void registerBreakOrContinue(@NotNull JetLabelQualifiedExpression expression) {
+//                throw new UnsupportedOperationException();
+            }
+        };
+
+        void registerReturn(@NotNull JetReturnExpression expression, JetType returnedExpressionType);
+        void registerBreakOrContinue(@NotNull JetLabelQualifiedExpression expression);
     }
 }

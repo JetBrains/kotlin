@@ -3,7 +3,9 @@
     <words>
       <w>accessor</w>
       <w>inferrer</w>
+      <w>nondeterministic</w>
       <w>nullable</w>
+      <w>pseudocode</w>
       <w>substitutor</w>
       <w>subtyping</w>
       <w>supertype</w>

@@ -149,9 +149,9 @@ public class ExpressionCodegen extends JetVisitor {
 
     @Override
     public void visitBreakExpression(JetBreakExpression expression) {
-        String labelName = expression.getLabelName();
+        JetSimpleNameExpression labelElement = expression.getTargetLabel();
 
-        Label label = labelName == null ? myLoopEnds.peek() : null; // TODO:
+        Label label = labelElement == null ? myLoopEnds.peek() : null; // TODO:
 
         v.goTo(label);
     }

@@ -21,8 +21,8 @@ public class JetTryExpression extends JetExpression {
     }
 
     @NotNull
-    public JetExpression getTryBlock() {
-        return (JetExpression) findChildByType(JetNodeTypes.BLOCK);
+    public JetBlockExpression getTryBlock() {
+        return (JetBlockExpression) findChildByType(JetNodeTypes.BLOCK);
     }
 
     @NotNull
