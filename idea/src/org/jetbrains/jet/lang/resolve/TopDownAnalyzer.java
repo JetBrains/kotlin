@@ -234,7 +234,7 @@ public class TopDownAnalyzer {
         if (bodyExpression != null) {
             System.out.println("-------------");
             JetControlFlowInstructionsGenerator instructionsGenerator = new JetControlFlowInstructionsGenerator();
-            new JetControlFlowProcessor(semanticServices, instructionsGenerator).generate(function, bodyExpression);
+            new JetControlFlowProcessor(semanticServices, trace, instructionsGenerator).generate(function, bodyExpression);
             Pseudocode pseudocode = instructionsGenerator.getPseudocode();
             pseudocode.postProcess();
             pseudocode.dumpInstructions(System.out);

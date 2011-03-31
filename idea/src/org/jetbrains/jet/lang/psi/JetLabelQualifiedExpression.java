@@ -3,7 +3,7 @@ package org.jetbrains.jet.lang.psi;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.JetNodeTypes;
 
 /**
  * @author abreslav
@@ -16,7 +16,9 @@ public class JetLabelQualifiedExpression extends JetExpression {
     
     @Nullable
     public JetSimpleNameExpression getTargetLabel() {
-        return (JetSimpleNameExpression) findChildByType(JetTokens.LABELS);
+        JetContainerNode qualifier = (JetContainerNode) findChildByType(JetNodeTypes.LABEL_QUALIFIER);
+        if (qualifier == null) return null;
+        return (JetSimpleNameExpression) qualifier.findChildByType(JetNodeTypes.LABEL_REFERENCE);
     }
 
     @Nullable @IfNotParsed

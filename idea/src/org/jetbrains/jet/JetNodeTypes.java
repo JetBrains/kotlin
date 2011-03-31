@@ -94,6 +94,8 @@ public interface JetNodeTypes {
     JetNodeType OPERATION_REFERENCE       = new JetNodeType("OPERATION_REFERENCE", JetSimpleNameExpression.class);
     JetNodeType LABEL_REFERENCE           = new JetNodeType("LABEL_REFERENCE", JetSimpleNameExpression.class);
 
+    JetNodeType LABEL_QUALIFIER           = new JetNodeType("LABEL_QUALIFIER", JetContainerNode.class);
+
     JetNodeType THIS_EXPRESSION           = new JetNodeType("THIS_EXPRESSION", JetThisExpression.class);
     JetNodeType BINARY_EXPRESSION         = new JetNodeType("BINARY_EXPRESSION", JetBinaryExpression.class);
     JetNodeType BINARY_WITH_TYPE          = new JetNodeType("BINARY_WITH_TYPE", JetBinaryExpressionWithTypeRHS.class);

@@ -60,7 +60,7 @@ JetFile: When_ERR.jet
           WHEN_ENTRY
             WHEN_CONDITION
               PsiElement(in)('in')
-              PsiErrorElement:Expecting an expression
+              PsiErrorElement:Expecting an element
                 <empty list>
             PsiWhiteSpace('  ')
             PsiElement(DOUBLE_ARROW)('=>')
@@ -71,7 +71,7 @@ JetFile: When_ERR.jet
           WHEN_ENTRY
             WHEN_CONDITION
               PsiElement(NOT_IN)('!in')
-              PsiErrorElement:Expecting an expression
+              PsiErrorElement:Expecting an element
                 <empty list>
             PsiWhiteSpace('  ')
             PsiElement(DOUBLE_ARROW)('=>')
@@ -81,7 +81,7 @@ JetFile: When_ERR.jet
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
             WHEN_CONDITION
-              PsiErrorElement:Expecting an expression, is-condition or in-condition
+              PsiErrorElement:Expecting an element, is-condition or in-condition
                 <empty list>
             PsiElement(DOUBLE_ARROW)('=>')
             PsiWhiteSpace(' ')
@@ -90,7 +90,7 @@ JetFile: When_ERR.jet
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
             PsiElement(else)('else')
-            PsiErrorElement:Expecting 'continue' or '=> expression'
+            PsiErrorElement:Expecting 'continue' or '=> element'
               <empty list>
           PsiWhiteSpace('\n  ')
           PsiElement(RBRACE)('}')
@@ -112,7 +112,7 @@ JetFile: When_ERR.jet
                 <empty list>
             PsiWhiteSpace('  ')
             PsiElement(DOUBLE_ARROW)('=>')
-            PsiErrorElement:Expecting an expression
+            PsiErrorElement:Expecting an element
               <empty list>
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
@@ -122,59 +122,59 @@ JetFile: When_ERR.jet
                 <empty list>
             PsiWhiteSpace('  ')
             PsiElement(DOUBLE_ARROW)('=>')
-            PsiErrorElement:Expecting an expression
+            PsiErrorElement:Expecting an element
               <empty list>
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
             WHEN_CONDITION
               PsiElement(in)('in')
-              PsiErrorElement:Expecting an expression
+              PsiErrorElement:Expecting an element
                 <empty list>
             PsiWhiteSpace('  ')
             PsiElement(DOUBLE_ARROW)('=>')
-            PsiErrorElement:Expecting an expression
+            PsiErrorElement:Expecting an element
               <empty list>
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
             WHEN_CONDITION
               PsiElement(NOT_IN)('!in')
-              PsiErrorElement:Expecting an expression
+              PsiErrorElement:Expecting an element
                 <empty list>
             PsiWhiteSpace('  ')
             PsiElement(DOUBLE_ARROW)('=>')
-            PsiErrorElement:Expecting an expression
+            PsiErrorElement:Expecting an element
               <empty list>
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
             WHEN_CONDITION
               PsiElement(NOT_IN)('!in')
-              PsiErrorElement:Expecting an expression
+              PsiErrorElement:Expecting an element
                 <empty list>
             PsiWhiteSpace('  ')
             PsiElement(DOUBLE_ARROW)('=>')
-            PsiErrorElement:Expecting an expression
+            PsiErrorElement:Expecting an element
               <empty list>
           PsiWhiteSpace(' ')
           PsiElement(SEMICOLON)(';')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
             WHEN_CONDITION
-              PsiErrorElement:Expecting an expression, is-condition or in-condition
+              PsiErrorElement:Expecting an element, is-condition or in-condition
                 <empty list>
             PsiElement(DOUBLE_ARROW)('=>')
-            PsiErrorElement:Expecting an expression
+            PsiErrorElement:Expecting an element
               <empty list>
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
             PsiElement(else)('else')
-            PsiErrorElement:Expecting 'continue' or '=> expression'
+            PsiErrorElement:Expecting 'continue' or '=> element'
               <empty list>
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
             PsiElement(else)('else')
             PsiWhiteSpace(' ')
             PsiElement(DOUBLE_ARROW)('=>')
-            PsiErrorElement:Expecting an expression
+            PsiErrorElement:Expecting an element
               <empty list>
           PsiWhiteSpace('\n  ')
           PsiElement(RBRACE)('}')

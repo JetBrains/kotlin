@@ -40,8 +40,8 @@ public interface JetControlFlowBuilder {
     void exitTryFinally();
 
     // Subroutines
-    void enterSubroutine(@NotNull JetElement subroutine);
-    void exitSubroutine(@NotNull JetElement subroutine);
+    void enterSubroutine(@NotNull JetElement subroutine, boolean isFunctionLiteral);
+    void exitSubroutine(@NotNull JetElement subroutine, boolean functionLiteral);
 
     @Nullable
     JetElement getCurrentSubroutine();

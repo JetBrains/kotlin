@@ -185,7 +185,7 @@ public class JetTypeInferrer {
 
             @Override
             public void visitJetElement(JetElement elem) {
-                semanticServices.getErrorHandler().genericError(elem.getNode(), "Unsupported in call expression"); // TODO : Message
+                semanticServices.getErrorHandler().genericError(elem.getNode(), "Unsupported in call element"); // TODO : Message
             }
         });
         return wrapForTracing(result[0], reference[0], argumentList, true);
@@ -894,7 +894,7 @@ public class JetTypeInferrer {
             }
             else if (selectorExpression != null) {
                 // TODO : not a simple name -> resolve in scope, expect property type or a function type
-                semanticServices.getErrorHandler().genericError(selectorExpression.getNode(), "Unsupported selector expression type: " + selectorExpression);
+                semanticServices.getErrorHandler().genericError(selectorExpression.getNode(), "Unsupported selector element type: " + selectorExpression);
             }
             return receiverType;
         }
@@ -1312,7 +1312,7 @@ public class JetTypeInferrer {
                 String counterpartName = binaryOperationNames.get(assignmentOperationCounterparts.get(operationType));
                 getTypeForBinaryCall(expression, counterpartName, scope, true);
             }
-            result = null; // not an expression
+            result = null; // not an element
         }
 
         @Override
@@ -1335,7 +1335,7 @@ public class JetTypeInferrer {
                     }
                 }
             }
-            result = null; // This is not an expression
+            result = null; // This is not an element
         }
 
         private void resolveArrayAccessToLValue(JetArrayAccessExpression arrayAccessExpression, JetExpression rightHandSide, JetSimpleNameExpression operationSign) {

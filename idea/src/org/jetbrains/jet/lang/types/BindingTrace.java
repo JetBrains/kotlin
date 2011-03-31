@@ -18,6 +18,10 @@ public class BindingTrace {
 
     }
 
+    public void recordLabelResolution(@NotNull JetReferenceExpression expression, @NotNull PsiElement element) {
+
+    }
+
     public void recordDeclarationResolution(@NotNull PsiElement declaration, @NotNull DeclarationDescriptor descriptor) {
 
     }

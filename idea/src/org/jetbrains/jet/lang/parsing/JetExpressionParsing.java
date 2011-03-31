@@ -227,9 +227,9 @@ public class JetExpressionParsing extends AbstractJetParsing {
     }
 
     /*
-     * expression
-     *   : attributes expression
-     *   : "(" expression ")" // see tupleLiteral
+     * element
+     *   : attributes element
+     *   : "(" element ")" // see tupleLiteral
      *   : literalConstant
      *   : functionLiteral
      *   : tupleLiteral
@@ -238,7 +238,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      *   : expressionWithPrecedences
      *   : if
      *   : try
-     *   : "typeof" "(" expression ")"
+     *   : "typeof" "(" element ")"
      *   : "new" constructorInvocation
      *   : objectLiteral
      *   : declaration
@@ -249,14 +249,14 @@ public class JetExpressionParsing extends AbstractJetParsing {
      */
     public void parseExpression() {
         if (!atSet(EXPRESSION_FIRST)) {
-            error("Expecting an expression");
+            error("Expecting an element");
             return;
         }
         parseBinaryExpression(Precedence.ASSIGNMENT);
     }
 
     /*
-     * expression (operation expression)*
+     * element (operation element)*
      *
      * see the precedence table
      */
@@ -427,7 +427,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     }
 
     /*
-     * expression (getEntryPoint? functionLiteral)?
+     * element (getEntryPoint? functionLiteral)?
      */
     protected boolean parseCallWithClosure() {
         boolean success = false;
@@ -447,9 +447,9 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
     /*
      * atomicExpression
-     *   : tupleLiteral // or parenthesized expression
+     *   : tupleLiteral // or parenthesized element
      *   : "this" getEntryPoint? ("<" type ">")?
-     *   : "typeof" "(" expression ")"
+     *   : "typeof" "(" element ")"
      *   : "new" constructorInvocation
      *   : objectLiteral
      *   : jump
@@ -535,8 +535,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
             parseFunctionLiteral();
         }
         else if (!parseLiteralConstant()) {
-            // TODO: better recovery if FIRST(expression) did not match
-            errorWithRecovery("Expecting an expression", EXPRESSION_FOLLOW);
+            // TODO: better recovery if FIRST(element) did not match
+            errorWithRecovery("Expecting an element", EXPRESSION_FOLLOW);
         }
     }
 
@@ -581,7 +581,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
     /*
      * when
-     *   : "when" "(" (modifiers "val" SimpleName "=")? expression ")" "{"
+     *   : "when" "(" (modifiers "val" SimpleName "=")? element ")" "{"
      *         whenEntry*
      *     "}"
      *   ;
@@ -622,8 +622,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
     /*
      * whenEntry
      *   // TODO : consider empty after =>
-     *   : whenConditionIf{","} (when  | "=>" expression SEMI)
-     *   : "else" ("continue" | "=>" expression SEMI)
+     *   : whenConditionIf{","} (when  | "=>" element SEMI)
+     *   : "else" ("continue" | "=>" element SEMI)
      *   ;
      */
     private void parseWhenEntry() {
@@ -633,7 +633,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             advance(); // ELSE_KEYWORD
 
             if (!at(CONTINUE_KEYWORD) && !at(DOUBLE_ARROW)) {
-                errorUntil("Expecting 'continue' or '=> expression'", TokenSet.create(CONTINUE_KEYWORD, DOUBLE_ARROW,
+                errorUntil("Expecting 'continue' or '=> element'", TokenSet.create(CONTINUE_KEYWORD, DOUBLE_ARROW,
                         RBRACE, EOL_OR_SEMICOLON));
             }
 
@@ -641,14 +641,14 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 advance(); // DOUBLE_ARROW
 
                 if (atSet(WHEN_CONDITION_RECOVERY_SET)) {
-                    error("Expecting an expression");
+                    error("Expecting an element");
                 } else {
                     parseExpression();
                 }
             } else if (at(CONTINUE_KEYWORD)) {
                 advance(); // CONTINUE_KEYWORD
             } else if (!atSet(WHEN_CONDITION_RECOVERY_SET)) {
-                 errorAndAdvance("Expecting 'continue' or '=> expression'");
+                 errorAndAdvance("Expecting 'continue' or '=> element'");
             }
         } else {
             parseWhenEntryNotElse();
@@ -659,7 +659,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     }
 
     /*
-     * : whenConditionIf{","} (when  | "=>" expression SEMI)
+     * : whenConditionIf{","} (when  | "=>" element SEMI)
      */
     private void parseWhenEntryNotElse() {
         while (true) {
@@ -673,7 +673,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
         } else {
             expect(DOUBLE_ARROW, "Expecting '=>' or 'when'", WHEN_CONDITION_RECOVERY_SET);
             if (atSet(WHEN_CONDITION_RECOVERY_SET)) {
-                error("Expecting an expression");
+                error("Expecting an element");
             } else {
                 parseExpression();
             }
@@ -683,7 +683,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
     /*
      * whenConditionIf
-     *   : pattern ("if" "(" expression ")")?
+     *   : pattern ("if" "(" element ")")?
      *   ;
      */
     private void parseWhenConditionIf() {
@@ -705,9 +705,9 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
     /*
      * whenCondition
-     *   : expression
+     *   : element
      *   : "." postfixExpression typeArguments? valueArguments?
-     *   : ("in" | "!in") expression
+     *   : ("in" | "!in") element
      *   : ("is" | "!is") isRHS
      *   ;
      */
@@ -718,7 +718,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             advance(); // IN_KEYWORD or NOT_IN
 
             if (atSet(WHEN_CONDITION_RECOVERY_SET_WITH_DOUBLE_ARROW)) {
-                error("Expecting an expression");
+                error("Expecting an element");
             } else {
                 parseExpression();
             }
@@ -739,7 +739,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             }
         } else {
             if (atSet(WHEN_CONDITION_RECOVERY_SET_WITH_DOUBLE_ARROW)) {
-                error("Expecting an expression, is-condition or in-condition");
+                error("Expecting an element, is-condition or in-condition");
             } else {
                 parseExpression();
             }
@@ -782,7 +782,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
                 myJetParsing.parseTypeRef();
                 if (at(AT)) {
-                    errorAndAdvance("'@' is allowed only after a decomposer expression, not after a type");
+                    errorAndAdvance("'@' is allowed only after a decomposer element, not after a type");
                 }
                 if (myBuilder.getCurrentOffset() < expressionEndOffset) {
                     rollbackMarker.rollbackTo();
@@ -853,8 +853,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
      * binding
      *   : "is" pattern
      *   : "!is" pattern
-     *   : "in" expression
-     *   : "!in" expression
+     *   : "in" element
+     *   : "!in" element
      *   : ":" type
      *   ;
      */
@@ -882,7 +882,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
     /*
      * arrayAccess
-     *   : "[" expression{","} "]"
+     *   : "[" element{","} "]"
      *   ;
      */
     private void parseArrayAccess() {
@@ -894,9 +894,9 @@ public class JetExpressionParsing extends AbstractJetParsing {
         advance(); // LBRACKET
 
         while (true) {
-            if (at(COMMA)) errorAndAdvance("Expecting an index expression");
+            if (at(COMMA)) errorAndAdvance("Expecting an index element");
             if (at(RBRACKET)) {
-                error("Expecting an index expression");
+                error("Expecting an index element");
                 break;
             }
             parseExpression();
@@ -1073,13 +1073,13 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
     /*
      * expressions
-     *   : SEMI* expression{SEMI+} SEMI*
+     *   : SEMI* element{SEMI+} SEMI*
      */
     public void parseExpressions() {
         while (at(SEMICOLON)) advance(); // SEMICOLON
         while (!eof() && !at(RBRACE)) {
             if (!atSet(EXPRESSION_FIRST)) {
-                errorAndAdvance("Expecting an expression");
+                errorAndAdvance("Expecting an element");
             }
             if (atSet(EXPRESSION_FIRST)) {
                 parseExpression();
@@ -1126,7 +1126,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
     /*
      * doWhile
-     *   : "do" expression "while" "(" expression ")"
+     *   : "do" element "while" "(" element ")"
      *   ;
      */
     private void parseDoWhile() {
@@ -1149,7 +1149,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
     /*
      * while
-     *   : "while" "(" expression ")" expression
+     *   : "while" "(" element ")" element
      *   ;
      */
     private void parseWhile() {
@@ -1168,7 +1168,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
     /*
      * for
-     *   : "for" "(" attributes valOrVar? SimpleName (":" type)? "in" expression ")" expression
+     *   : "for" "(" attributes valOrVar? SimpleName (":" type)? "in" element ")" element
      *   ;
      *
      *   TODO: empty loop body (at the end of the block)?
@@ -1207,7 +1207,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     }
 
     /*
-     * expression
+     * element
      */
     private void parseControlStructureBody() {
         PsiBuilder.Marker body = mark();
@@ -1263,7 +1263,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
     /*
      * if
-     *   : "if" "(" expression ")" expression SEMI? ("else" expression)?
+     *   : "if" "(" element ")" element SEMI? ("else" element)?
      *   ;
      */
     private void parseIf() {
@@ -1296,7 +1296,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     }
 
     /*
-     * "(" expression ")"
+     * "(" element ")"
      */
     private void parseCondition() {
         myBuilder.disableNewlines();
@@ -1321,13 +1321,13 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         advance(); // BREAK_KEYWORD or CONTINUE_KEYWORD
 
-        if (!eol() && atSet(LABELS)) advance(); // LABELS
+        parseLabel();
 
         marker.done(type);
     }
 
     /*
-     * "return" getEntryPoint? expression?
+     * "return" getEntryPoint? element?
      */
     private void parseReturn() {
         assert _at(RETURN_KEYWORD);
@@ -1336,9 +1336,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         advance(); // RETURN_KEYWORD
 
-        if (atSet(LABELS)) {
-            advance(); // LABELS
-        }
+        parseLabel();
 
         if (atSet(EXPRESSION_FIRST) && !at(EOL_OR_SEMICOLON)) parseExpression();
 
@@ -1346,7 +1344,22 @@ public class JetExpressionParsing extends AbstractJetParsing {
     }
 
     /*
-     * : "throw" expression
+     * labels
+     */
+    private void parseLabel() {
+        if (!eol() && atSet(LABELS)) {
+            PsiBuilder.Marker labelWrap = mark();
+
+            PsiBuilder.Marker mark = mark();
+            advance(); // LABELS
+            mark.done(LABEL_REFERENCE);
+
+            labelWrap.done(LABEL_QUALIFIER);
+        }
+    }
+
+    /*
+     * : "throw" element
      */
     private void parseThrow() {
         assert _at(THROW_KEYWORD);
@@ -1379,7 +1392,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     }
 
     /*
-     * "typeof" "(" expression ")"
+     * "typeof" "(" element ")"
      */
     private void parseTypeOf() {
         assert _at(TYPEOF_KEYWORD);
@@ -1399,13 +1412,13 @@ public class JetExpressionParsing extends AbstractJetParsing {
     }
 
     /*
-     * tupleLiteral // Ambiguity when after a SimpleName (infix call). In this case (e) is treated as an expression in parentheses
+     * tupleLiteral // Ambiguity when after a SimpleName (infix call). In this case (e) is treated as an element in parentheses
      *              // to put a tuple, write write ((e))
-     *   : "(" ((SimpleName "=")? expression){","} ")"
+     *   : "(" ((SimpleName "=")? element){","} ")"
      *   ;
      *
-     * expression
-     *   : "(" expression ")"
+     * element
+     *   : "(" element ")"
      *   ;
      *
      * TODO: duplication with valueArguments (but for the error messages)
@@ -1422,7 +1435,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             while (true) {
                 while (at(COMMA)) {
                     tuple = true;
-                    errorAndAdvance("Expecting a tuple entry (expression)");
+                    errorAndAdvance("Expecting a tuple entry (element)");
                 }
 
                 if (at(IDENTIFIER) && lookahead(1) == EQ) {
@@ -1441,7 +1454,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 tuple = true;
 
                 if (at(RPAR)) {
-                    error("Expecting a tuple entry (expression)");
+                    error("Expecting a tuple entry (element)");
                     break;
                 }
             }
@@ -1463,11 +1476,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
         PsiBuilder.Marker mark = mark();
         advance(); // THIS_KEYWORD
 
-        if (atSet(LABELS)) {
-            PsiBuilder.Marker label = mark();
-            advance(); // LABELS
-            label.done(LABEL_REFERENCE);
-        }
+        parseLabel();
 
         if (at(LT)) {
             // This may be "this < foo" or "this<foo>", thus the backtracking
@@ -1492,7 +1501,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
     /*
      * valueArguments
-     *   : "(" (SimpleName "=")? ("out" | "ref")? expression{","} ")"
+     *   : "(" (SimpleName "=")? ("out" | "ref")? element{","} ")"
      *   ;
      */
     public void parseValueArgumentList() {
@@ -1521,7 +1530,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     }
 
     /*
-     * (SimpleName "=")? ("out" | "ref")? expression
+     * (SimpleName "=")? ("out" | "ref")? element
      */
     private void parseValueArgument() {
         PsiBuilder.Marker argument = mark();

@@ -4,8 +4,12 @@ package org.jetbrains.jet.lang.cfg.pseudocode;
  * @author abreslav
  */
 public class InstructionVisitor {
-    public void visitRead(ValueInstruction instruction) {
-        visitInstruction(instruction);
+    public void visitReadValue(ReadValueInstruction instruction) {
+        visitInstructionWithNext(instruction);
+    }
+
+    public void visitFunctionLiteralValue(FunctionLiteralValueInstruction instruction) {
+        visitInstructionWithNext(instruction);
     }
 
     public void visitUnconditionalJump(UnconditionalJumpInstruction instruction) {
@@ -24,6 +28,14 @@ public class InstructionVisitor {
         visitJump(instruction);
     }
 
+    public void visitNondeterministicJump(NondeterministicJumpInstruction instruction) {
+        visitJump(instruction);
+    }
+
+    public void visitUnsupportedElementInstruction(UnsupportedElementInstruction instruction) {
+        visitInstructionWithNext(instruction);
+    }
+
     public void visitSubroutineExit(SubroutineExitInstruction instruction) {
         visitInstruction(instruction);
     }
@@ -32,10 +44,10 @@ public class InstructionVisitor {
         visitInstruction(instruction);
     }
 
-    public void visitInstruction(Instruction instruction) {
+    public void visitInstructionWithNext(InstructionWithNext instruction) {
+        visitInstruction(instruction);
     }
 
-    public void visitNondeterministicJump(NondeterministicJumpInstruction instruction) {
-        visitJump(instruction);
+    public void visitInstruction(Instruction instruction) {
     }
 }

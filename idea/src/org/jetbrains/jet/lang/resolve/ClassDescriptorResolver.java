@@ -177,7 +177,7 @@ public class ClassDescriptorResolver {
             }
         } else {
             if (bodyExpression == null) {
-                semanticServices.getErrorHandler().genericError(function.getNode(), "This function must either declare a return type or have a body expression");
+                semanticServices.getErrorHandler().genericError(function.getNode(), "This function must either declare a return type or have a body element");
                 returnType = ErrorUtils.createErrorType("No type, no body");
             } else {
                 // TODO : Recursion possible

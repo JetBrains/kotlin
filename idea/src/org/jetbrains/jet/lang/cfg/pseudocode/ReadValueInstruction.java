@@ -6,19 +6,19 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 /**
 * @author abreslav
 */
-public class ValueInstruction extends InstructionWithNext {
+public class ReadValueInstruction extends InstructionWithNext {
 
-    public ValueInstruction(@NotNull JetExpression expression) {
+    public ReadValueInstruction(@NotNull JetExpression expression) {
         super(expression);
     }
 
     @Override
     public void accept(InstructionVisitor visitor) {
-        visitor.visitRead(this);
+        visitor.visitReadValue(this);
     }
 
     @Override
     public String toString() {
-        return "r(" + expression.getText() + ")";
+        return "r(" + element.getText() + ")";
     }
 }

@@ -196,7 +196,7 @@ public class ExpressionCodegen extends JetVisitor {
     public void visitConstantExpression(JetConstantExpression expression) {
         myStack.push(StackValue.constant(expression.getValue()));
         /*
-        Object value = expression.getValue();
+        Object value = element.getValue();
         v.aconst(value);
 
         if (value instanceof Integer) {

@@ -311,7 +311,7 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * attribute
-     *   // : SimpleName{"."} (valueArguments | "=" expression)?
+     *   // : SimpleName{"."} (valueArguments | "=" element)?
      *   [for recovery: userType valueArguments?]
      *   ;
      */
@@ -683,7 +683,7 @@ public class JetParsing extends AbstractJetParsing {
      *   : modifiers ("val" | "var")
      *       typeParameters? (type "." | attributes)?
      *       SimpleName (":" type)?
-     *       ("=" expression SEMI?)?
+     *       ("=" element SEMI?)?
      *       (getter? setter? | setter? getter?) SEMI?
      *   ;
      */
@@ -883,7 +883,7 @@ public class JetParsing extends AbstractJetParsing {
     /*
      * functionBody
      *   : block
-     *   : "=" expression
+     *   : "=" element
      *   ;
      */
     private void parseFunctionBody() {
@@ -975,7 +975,7 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      *
      * explicitDelegation
-     *   : userType "by" expression
+     *   : userType "by" element
      *   ;
      */
     private void parseDelegationSpecifier() {
@@ -1336,7 +1336,7 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      *
      * functionParameterRest
-     *   : parameter ("=" expression)?
+     *   : parameter ("=" element)?
      *   ;
      */
     public void parseValueParameterList(boolean isFunctionTypeContents, TokenSet recoverySet) {
@@ -1376,7 +1376,7 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * functionParameter
-     *   : modifiers ("val" | "var")? parameter ("=" expression)?
+     *   : modifiers ("val" | "var")? parameter ("=" element)?
      *   ;
      */
     private boolean tryParseValueParameter() {
@@ -1408,7 +1408,7 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * functionParameterRest
-     *   : parameter ("=" expression)?
+     *   : parameter ("=" element)?
      *   ;
      */
     private boolean parseFunctionParameterRest() {

@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.cfg.pseudocode;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.Label;
 
 import java.io.PrintStream;
@@ -13,12 +14,28 @@ public class Pseudocode {
     private final List<Instruction> instructions = new ArrayList<Instruction>();
     private final Map<Label, Integer> labels = new LinkedHashMap<Label, Integer>();
 
-    public List<Instruction> getInstructions() {
-        return instructions;
+    @Nullable
+    private final Pseudocode parent;
+
+    public Pseudocode(Pseudocode parent) {
+        this.parent = parent;
     }
 
-    public Map<Label, Integer> getLabels() {
-        return labels;
+    public void addInstruction(Instruction instruction) {
+        instructions.add(instruction);
+    }
+
+    public void addLabel(Label label) {
+        labels.put(label, instructions.size());
+    }
+
+    @Nullable
+    private Integer resolveLabel(Label targetLabel) {
+        Integer result = labels.get(targetLabel);
+        if (result == null && parent != null) {
+            return parent.resolveLabel(targetLabel);
+        }
+        return result;
     }
 
     public void postProcess() {
@@ -27,7 +44,7 @@ public class Pseudocode {
             final int currentPosition = i;
             instruction.accept(new InstructionVisitor() {
                 @Override
-                public void visitRead(ValueInstruction instruction) {
+                public void visitInstructionWithNext(InstructionWithNext instruction) {
                     instruction.setNext(getNextPosition(currentPosition));
                 }
 
@@ -58,6 +75,12 @@ public class Pseudocode {
                 }
 
                 @Override
+                public void visitFunctionLiteralValue(FunctionLiteralValueInstruction instruction) {
+                    instruction.getBody().postProcess();
+                    super.visitFunctionLiteralValue(instruction);
+                }
+
+                @Override
                 public void visitSubroutineExit(SubroutineExitInstruction instruction) {
                     // Nothing
                 }
@@ -72,7 +95,7 @@ public class Pseudocode {
 
     @NotNull
     private Instruction getJumpTarget(@NotNull Label targetLabel) {
-        Integer targetPosition = labels.get(targetLabel);
+        Integer targetPosition = resolveLabel(targetLabel);
         return getTargetInstruction(targetPosition);
     }
 
@@ -87,7 +110,7 @@ public class Pseudocode {
             }
 
             Label label = ((UnconditionalJumpInstruction) targetInstruction).getTargetLabel();
-            targetPosition = labels.get(label);
+            targetPosition = resolveLabel(label);
         }
     }
 
@@ -111,15 +134,19 @@ public class Pseudocode {
     }
 
     public void dumpGraph(@NotNull final PrintStream out) {
-        out.println("digraph g {");
+        String graphHeader = "digraph g";
+        dumpSubgraph(out, graphHeader, new int[1], "");
+    }
+
+    private void dumpSubgraph(final PrintStream out, String graphHeader, final int[] count, String style) {
+        out.println(graphHeader + " {");
 
         final Map<Instruction, String> nodeToName = new HashMap<Instruction, String>();
-        int count = 0;
         for (Instruction node : instructions) {
             if (node instanceof UnconditionalJumpInstruction) {
                 continue;
             }
-            String name = "n" + count++;
+            String name = "n" + count[0]++;
             nodeToName.put(node, name);
             String text = node.toString();
             int newline = text.indexOf("\n");
@@ -133,11 +160,25 @@ public class Pseudocode {
             else if (node instanceof NondeterministicJumpInstruction) {
                 shape = "Mdiamond";
             }
+            else if (node instanceof UnsupportedElementInstruction) {
+                shape = "box, fillcolor=red, style=filled";
+            }
+            else if (node instanceof FunctionLiteralValueInstruction) {
+                shape = "Mcircle";
+            }
             out.println(name + "[label=\"" + text + "\", shape=" + shape + "];");
         }
 
         for (final Instruction fromInst : instructions) {
             fromInst.accept(new InstructionVisitor() {
+                @Override
+                public void visitFunctionLiteralValue(FunctionLiteralValueInstruction instruction) {
+                    int index = count[0];
+                    instruction.getBody().dumpSubgraph(out, "subgraph f" + index, count, "color=blue;\ntlabel = \"process #" + index + "\";");
+                    printEdge(out, nodeToName.get(instruction), "n" + index, null);
+                    visitInstructionWithNext(instruction);
+                }
+
                 @Override
                 public void visitUnconditionalJump(UnconditionalJumpInstruction instruction) {
                     // Nothing
@@ -145,13 +186,13 @@ public class Pseudocode {
 
                 @Override
                 public void visitJump(AbstractJumpInstruction instruction) {
-                    writeEdge(out, nodeToName.get(instruction), nodeToName.get(instruction.getResolvedTarget()), null);
+                    printEdge(out, nodeToName.get(instruction), nodeToName.get(instruction.getResolvedTarget()), null);
                 }
 
                 @Override
                 public void visitNondeterministicJump(NondeterministicJumpInstruction instruction) {
                     visitJump(instruction);
-                    writeEdge(out, nodeToName.get(instruction), nodeToName.get(instruction.getNext()), null);
+                    printEdge(out, nodeToName.get(instruction), nodeToName.get(instruction.getNext()), null);
                 }
 
                 @Override
@@ -167,13 +208,13 @@ public class Pseudocode {
                 @Override
                 public void visitConditionalJump(ConditionalJumpInstruction instruction) {
                     String from = nodeToName.get(instruction);
-                    writeEdge(out, from, nodeToName.get(instruction.getNextOnFalse()), "no");
-                    writeEdge(out, from, nodeToName.get(instruction.getNextOnTrue()), "yes");
+                    printEdge(out, from, nodeToName.get(instruction.getNextOnFalse()), "no");
+                    printEdge(out, from, nodeToName.get(instruction.getNextOnTrue()), "yes");
                 }
 
                 @Override
-                public void visitRead(ValueInstruction instruction) {
-                    writeEdge(out, nodeToName.get(instruction), nodeToName.get(instruction.getNext()), null);
+                public void visitInstructionWithNext(InstructionWithNext instruction) {
+                    printEdge(out, nodeToName.get(instruction), nodeToName.get(instruction.getNext()), null);
                 }
 
                 @Override
@@ -187,11 +228,11 @@ public class Pseudocode {
                 }
             });
         }
+        out.println(style);
         out.println("}");
-        out.close();
     }
 
-    private void writeEdge(PrintStream out, String from, String to, String label) {
+    private void printEdge(PrintStream out, String from, String to, String label) {
         if (label != null) {
             label = "[label=\"" + label + "\"]";
         }

@@ -155,8 +155,8 @@ package org.jetbrains.jet.lang.cfg;
 //    }
 //
 //    @Override
-//    public void readNode(JetExpression expression) {
-//        createNode(expression);
+//    public void readNode(JetExpression element) {
+//        createNode(element);
 //    }
 //
 //    @Override
@@ -236,7 +236,7 @@ package org.jetbrains.jet.lang.cfg;
 //    }
 //
 //    @Override
-//    public void enterTryFinally(JetBlockExpression expression) {
+//    public void enterTryFinally(JetBlockExpression element) {
 //        throw new UnsupportedOperationException(); // TODO
 //    }
 //

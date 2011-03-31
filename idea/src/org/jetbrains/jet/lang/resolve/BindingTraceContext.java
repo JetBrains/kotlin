@@ -14,6 +14,7 @@ import java.util.Map;
 public class BindingTraceContext extends BindingTrace implements BindingContext {
     private final Map<JetExpression, JetType> expressionTypes = new HashMap<JetExpression, JetType>();
     private final Map<JetReferenceExpression, DeclarationDescriptor> resolutionResults = new HashMap<JetReferenceExpression, DeclarationDescriptor>();
+    private final Map<JetReferenceExpression, PsiElement> labelResolutionResults = new HashMap<JetReferenceExpression, PsiElement>();
     private final Map<JetTypeReference, JetType> types = new HashMap<JetTypeReference, JetType>();
     private final Map<DeclarationDescriptor, PsiElement> descriptorToDeclarations = new HashMap<DeclarationDescriptor, PsiElement>();
     private final Map<PsiElement, DeclarationDescriptor> declarationsToDescriptors = new HashMap<PsiElement, DeclarationDescriptor>();
@@ -29,6 +30,11 @@ public class BindingTraceContext extends BindingTrace implements BindingContext 
     @Override
     public void recordReferenceResolution(@NotNull JetReferenceExpression expression, @NotNull DeclarationDescriptor descriptor) {
         resolutionResults.put(expression, descriptor);
+    }
+
+    @Override
+    public void recordLabelResolution(@NotNull JetReferenceExpression expression, @NotNull PsiElement element) {
+        labelResolutionResults.put(expression, element);
     }
 
     @Override
@@ -107,7 +113,7 @@ public class BindingTraceContext extends BindingTrace implements BindingContext 
     public PsiElement resolveToDeclarationPsiElement(JetReferenceExpression referenceExpression) {
         DeclarationDescriptor declarationDescriptor = resolveReferenceExpression(referenceExpression);
         if (declarationDescriptor == null) {
-            return null;
+            return labelResolutionResults.get(referenceExpression);
         }
         return descriptorToDeclarations.get(declarationDescriptor.getOriginal());
     }

@@ -640,7 +640,7 @@ class _JetLexer implements FlexLexer {
 
 
   /**
-   * Returns the text matched by the current regular expression.
+   * Returns the text matched by the current regular element.
    */
   public final CharSequence yytext() {
     return zzBuffer.subSequence(zzStartRead, zzMarkedPos);
@@ -727,7 +727,7 @@ class _JetLexer implements FlexLexer {
 
 
   /**
-   * Resumes scanning until the next regular expression is matched,
+   * Resumes scanning until the next regular element is matched,
    * the end of input is encountered or an I/O-Error occurs.
    *
    * @return      the next token

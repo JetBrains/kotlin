@@ -30,17 +30,17 @@ JetFile: Expressions_ERR.jet
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('dfsd')
               PsiWhiteSpace('\n  ')
-              PsiErrorElement:Expecting an expression
+              PsiErrorElement:Expecting an element
                 PsiElement(RPAR)(')')
               PsiElement(SEMICOLON)(';')
               PsiElement(SEMICOLON)(';')
               PsiElement(SEMICOLON)(';')
-              PsiErrorElement:Expecting an expression
+              PsiErrorElement:Expecting an element
                 PsiElement(RPAR)(')')
               PsiElement(SEMICOLON)(';')
               PsiElement(SEMICOLON)(';')
               PsiElement(SEMICOLON)(';')
-              PsiErrorElement:Expecting an expression
+              PsiErrorElement:Expecting an element
                 PsiElement(BAD_CHARACTER)('~')
               PsiElement(SEMICOLON)(';')
               PsiElement(SEMICOLON)(';')
@@ -49,10 +49,10 @@ JetFile: Expressions_ERR.jet
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('srgsdfg')
               PsiWhiteSpace('\n\n  ')
-              PsiErrorElement:Expecting an expression
+              PsiErrorElement:Expecting an element
                 PsiElement(BAD_CHARACTER)('~')
               PsiWhiteSpace('\n\n  ')
-              PsiErrorElement:Expecting an expression
+              PsiErrorElement:Expecting an element
                 PsiElement(RBRACKET)(']')
             PsiWhiteSpace('\n')
             PsiElement(RBRACE)('}')
