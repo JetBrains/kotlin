@@ -221,7 +221,7 @@ package org.jetbrains.jet.lang.cfg;
 //    }
 //
 //    @Override
-//    public void popFinally() {
+//    public void exitTryFinally() {
 //        throw new UnsupportedOperationException(); // TODO
 //    }
 //
@@ -236,7 +236,7 @@ package org.jetbrains.jet.lang.cfg;
 //    }
 //
 //    @Override
-//    public void pushFinally(JetBlockExpression expression) {
+//    public void enterTryFinally(JetBlockExpression expression) {
 //        throw new UnsupportedOperationException(); // TODO
 //    }
 //

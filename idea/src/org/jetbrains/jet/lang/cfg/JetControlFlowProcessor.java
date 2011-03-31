@@ -124,7 +124,7 @@ public class JetControlFlowProcessor {
         public void visitTryExpression(JetTryExpression expression) {
             JetFinallySection finallyBlock = expression.getFinallyBlock();
             if (finallyBlock != null) {
-                builder.pushFinally(finallyBlock.getFinalExpression());
+                builder.enterTryFinally(finallyBlock.getFinalExpression());
             }
 
             List<JetCatchClause> catchClauses = expression.getCatchClauses();
@@ -153,7 +153,7 @@ public class JetControlFlowProcessor {
             }
 
             if (finallyBlock != null) {
-                builder.popFinally();
+                builder.exitTryFinally();
             }
         }
 

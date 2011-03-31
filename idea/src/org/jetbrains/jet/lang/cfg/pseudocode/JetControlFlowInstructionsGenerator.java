@@ -158,12 +158,12 @@ public class JetControlFlowInstructionsGenerator implements JetControlFlowBuilde
     }
 
     @Override
-    public void popFinally() {
+    public void enterTryFinally(@NotNull JetBlockExpression expression) {
         throw new UnsupportedOperationException(); // TODO
     }
 
     @Override
-    public void pushFinally(@NotNull JetBlockExpression expression) {
+    public void exitTryFinally() {
         throw new UnsupportedOperationException(); // TODO
     }
 

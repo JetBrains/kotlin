@@ -36,8 +36,8 @@ public interface JetControlFlowBuilder {
     JetElement getCurrentLoop();
 
     // Finally
-    void pushFinally(@NotNull JetBlockExpression expression);
-    void popFinally();
+    void enterTryFinally(@NotNull JetBlockExpression expression);
+    void exitTryFinally();
 
     // Subroutines
     void enterSubroutine(@NotNull JetElement subroutine);
