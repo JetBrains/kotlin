@@ -15,8 +15,6 @@ import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.parsing.JetParsingTest;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.*;
 
 /**
@@ -118,16 +116,7 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
     }
 
     public static Sdk jdkFromIdeaHome() {
-        Properties properties = new Properties();
-        try {
-            FileReader reader = new FileReader(getHomeDirectory() + "/idea/idea.properties");
-            properties.load(reader);
-            reader.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        String home = properties.getProperty("idea.home");
-        return new JavaSdkImpl().createJdk("JDK", home + "/java/mockJDK-1.7/jre", true);
+        return new JavaSdkImpl().createJdk("JDK", "idea/testData/mockJDK-1.7/jre", true);
     }
 
     private static String getHomeDirectory() {
