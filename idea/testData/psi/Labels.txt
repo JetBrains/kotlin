@@ -37,18 +37,24 @@ JetFile: Labels.jet
         PsiWhiteSpace('\n\n  ')
         RETURN
           PsiElement(return)('return')
-          PsiElement(AT)('@')
+          LABEL_QUALIFIER
+            LABEL_REFERENCE
+              PsiElement(AT)('@')
         PsiWhiteSpace('\n  ')
         RETURN
           PsiElement(return)('return')
-          PsiElement(AT)('@')
+          LABEL_QUALIFIER
+            LABEL_REFERENCE
+              PsiElement(AT)('@')
           PsiWhiteSpace(' ')
           INTEGER_CONSTANT
             PsiElement(INTEGER_LITERAL)('1')
         PsiWhiteSpace('\n  ')
         RETURN
           PsiElement(return)('return')
-          PsiElement(AT)('@')
+          LABEL_QUALIFIER
+            LABEL_REFERENCE
+              PsiElement(AT)('@')
           PsiWhiteSpace(' ')
           PARENTHESIZED
             PsiElement(LPAR)('(')
@@ -62,7 +68,9 @@ JetFile: Labels.jet
         PsiWhiteSpace('\n  ')
         RETURN
           PsiElement(return)('return')
-          PsiElement(AT)('@')
+          LABEL_QUALIFIER
+            LABEL_REFERENCE
+              PsiElement(AT)('@')
           PsiWhiteSpace(' ')
           PREFIX_EXPRESSION
             OPERATION_REFERENCE
@@ -73,18 +81,24 @@ JetFile: Labels.jet
         PsiWhiteSpace('\n\n  ')
         RETURN
           PsiElement(return)('return')
-          PsiElement(LABEL_IDENTIFIER)('@a')
+          LABEL_QUALIFIER
+            LABEL_REFERENCE
+              PsiElement(LABEL_IDENTIFIER)('@a')
         PsiWhiteSpace('\n  ')
         RETURN
           PsiElement(return)('return')
-          PsiElement(LABEL_IDENTIFIER)('@a')
+          LABEL_QUALIFIER
+            LABEL_REFERENCE
+              PsiElement(LABEL_IDENTIFIER)('@a')
           PsiWhiteSpace(' ')
           INTEGER_CONSTANT
             PsiElement(INTEGER_LITERAL)('1')
         PsiWhiteSpace('\n  ')
         RETURN
           PsiElement(return)('return')
-          PsiElement(LABEL_IDENTIFIER)('@a')
+          LABEL_QUALIFIER
+            LABEL_REFERENCE
+              PsiElement(LABEL_IDENTIFIER)('@a')
           PsiWhiteSpace(' ')
           PARENTHESIZED
             PsiElement(LPAR)('(')
@@ -98,7 +112,9 @@ JetFile: Labels.jet
         PsiWhiteSpace('\n  ')
         RETURN
           PsiElement(return)('return')
-          PsiElement(LABEL_IDENTIFIER)('@a')
+          LABEL_QUALIFIER
+            LABEL_REFERENCE
+              PsiElement(LABEL_IDENTIFIER)('@a')
           PsiWhiteSpace(' ')
           PREFIX_EXPRESSION
             OPERATION_REFERENCE
@@ -109,18 +125,24 @@ JetFile: Labels.jet
         PsiWhiteSpace('\n\n  ')
         RETURN
           PsiElement(return)('return')
-          PsiElement(ATAT)('@@')
+          LABEL_QUALIFIER
+            LABEL_REFERENCE
+              PsiElement(ATAT)('@@')
         PsiWhiteSpace('\n  ')
         RETURN
           PsiElement(return)('return')
-          PsiElement(ATAT)('@@')
+          LABEL_QUALIFIER
+            LABEL_REFERENCE
+              PsiElement(ATAT)('@@')
           PsiWhiteSpace(' ')
           INTEGER_CONSTANT
             PsiElement(INTEGER_LITERAL)('1')
         PsiWhiteSpace('\n  ')
         RETURN
           PsiElement(return)('return')
-          PsiElement(ATAT)('@@')
+          LABEL_QUALIFIER
+            LABEL_REFERENCE
+              PsiElement(ATAT)('@@')
           PsiWhiteSpace(' ')
           PARENTHESIZED
             PsiElement(LPAR)('(')
@@ -134,7 +156,9 @@ JetFile: Labels.jet
         PsiWhiteSpace('\n  ')
         RETURN
           PsiElement(return)('return')
-          PsiElement(ATAT)('@@')
+          LABEL_QUALIFIER
+            LABEL_REFERENCE
+              PsiElement(ATAT)('@@')
           PsiWhiteSpace(' ')
           PREFIX_EXPRESSION
             OPERATION_REFERENCE
@@ -149,7 +173,9 @@ JetFile: Labels.jet
           PsiWhiteSpace(' ')
           RETURN
             PsiElement(return)('return')
-            PsiElement(ATAT)('@@')
+            LABEL_QUALIFIER
+              LABEL_REFERENCE
+                PsiElement(ATAT)('@@')
         PsiWhiteSpace('\n  ')
         PREFIX_EXPRESSION
           OPERATION_REFERENCE
@@ -157,7 +183,9 @@ JetFile: Labels.jet
           PsiWhiteSpace(' ')
           RETURN
             PsiElement(return)('return')
-            PsiElement(ATAT)('@@')
+            LABEL_QUALIFIER
+              LABEL_REFERENCE
+                PsiElement(ATAT)('@@')
             PsiWhiteSpace(' ')
             INTEGER_CONSTANT
               PsiElement(INTEGER_LITERAL)('1')
@@ -168,7 +196,9 @@ JetFile: Labels.jet
           PsiWhiteSpace(' ')
           RETURN
             PsiElement(return)('return')
-            PsiElement(ATAT)('@@')
+            LABEL_QUALIFIER
+              LABEL_REFERENCE
+                PsiElement(ATAT)('@@')
             PsiWhiteSpace(' ')
             PARENTHESIZED
               PsiElement(LPAR)('(')
@@ -186,7 +216,9 @@ JetFile: Labels.jet
           PsiWhiteSpace(' ')
           RETURN
             PsiElement(return)('return')
-            PsiElement(ATAT)('@@')
+            LABEL_QUALIFIER
+              LABEL_REFERENCE
+                PsiElement(ATAT)('@@')
             PsiWhiteSpace(' ')
             PREFIX_EXPRESSION
               OPERATION_REFERENCE
@@ -200,30 +232,42 @@ JetFile: Labels.jet
         PsiWhiteSpace('\n  ')
         BREAK
           PsiElement(break)('break')
-          PsiElement(AT)('@')
+          LABEL_QUALIFIER
+            LABEL_REFERENCE
+              PsiElement(AT)('@')
         PsiWhiteSpace('\n  ')
         BREAK
           PsiElement(break)('break')
-          PsiElement(LABEL_IDENTIFIER)('@a')
+          LABEL_QUALIFIER
+            LABEL_REFERENCE
+              PsiElement(LABEL_IDENTIFIER)('@a')
         PsiWhiteSpace('\n  ')
         BREAK
           PsiElement(break)('break')
-          PsiElement(ATAT)('@@')
+          LABEL_QUALIFIER
+            LABEL_REFERENCE
+              PsiElement(ATAT)('@@')
         PsiWhiteSpace('\n\n  ')
         CONTINUE
           PsiElement(continue)('continue')
         PsiWhiteSpace('\n  ')
         CONTINUE
           PsiElement(continue)('continue')
-          PsiElement(AT)('@')
+          LABEL_QUALIFIER
+            LABEL_REFERENCE
+              PsiElement(AT)('@')
         PsiWhiteSpace('\n  ')
         CONTINUE
           PsiElement(continue)('continue')
-          PsiElement(LABEL_IDENTIFIER)('@a')
+          LABEL_QUALIFIER
+            LABEL_REFERENCE
+              PsiElement(LABEL_IDENTIFIER)('@a')
         PsiWhiteSpace('\n  ')
         CONTINUE
           PsiElement(continue)('continue')
-          PsiElement(ATAT)('@@')
+          LABEL_QUALIFIER
+            LABEL_REFERENCE
+              PsiElement(ATAT)('@@')
         PsiWhiteSpace('\n\n  ')
         DOT_QUALIFIED_EXPRESSION
           REFERENCE_EXPRESSION
@@ -255,7 +299,9 @@ JetFile: Labels.jet
                   PsiWhiteSpace('\n      ')
                   RETURN
                     PsiElement(return)('return')
-                    PsiElement(LABEL_IDENTIFIER)('@f')
+                    LABEL_QUALIFIER
+                      LABEL_REFERENCE
+                        PsiElement(LABEL_IDENTIFIER)('@f')
                     PsiWhiteSpace(' ')
                     BOOLEAN_CONSTANT
                       PsiElement(true)('true')
@@ -292,7 +338,9 @@ JetFile: Labels.jet
                   PsiWhiteSpace('\n      ')
                   RETURN
                     PsiElement(return)('return')
-                    PsiElement(AT)('@')
+                    LABEL_QUALIFIER
+                      LABEL_REFERENCE
+                        PsiElement(AT)('@')
                     PsiWhiteSpace(' ')
                     BOOLEAN_CONSTANT
                       PsiElement(true)('true')
@@ -329,7 +377,9 @@ JetFile: Labels.jet
                   PsiWhiteSpace('\n      ')
                   RETURN
                     PsiElement(return)('return')
-                    PsiElement(ATAT)('@@')
+                    LABEL_QUALIFIER
+                      LABEL_REFERENCE
+                        PsiElement(ATAT)('@@')
                     PsiWhiteSpace(' ')
                     BOOLEAN_CONSTANT
                       PsiElement(true)('true')
@@ -341,18 +391,21 @@ JetFile: Labels.jet
         PsiWhiteSpace('\n  ')
         THIS_EXPRESSION
           PsiElement(this)('this')
-          LABEL_REFERENCE
-            PsiElement(AT)('@')
+          LABEL_QUALIFIER
+            LABEL_REFERENCE
+              PsiElement(AT)('@')
         PsiWhiteSpace('\n  ')
         THIS_EXPRESSION
           PsiElement(this)('this')
-          LABEL_REFERENCE
-            PsiElement(LABEL_IDENTIFIER)('@a')
+          LABEL_QUALIFIER
+            LABEL_REFERENCE
+              PsiElement(LABEL_IDENTIFIER)('@a')
         PsiWhiteSpace('\n  ')
         THIS_EXPRESSION
           PsiElement(this)('this')
-          LABEL_REFERENCE
-            PsiElement(ATAT)('@@')
+          LABEL_QUALIFIER
+            LABEL_REFERENCE
+              PsiElement(ATAT)('@@')
         PsiWhiteSpace('\n\n  ')
         THIS_EXPRESSION
           PsiElement(this)('this')
@@ -365,8 +418,9 @@ JetFile: Labels.jet
         PsiWhiteSpace('\n  ')
         THIS_EXPRESSION
           PsiElement(this)('this')
-          LABEL_REFERENCE
-            PsiElement(AT)('@')
+          LABEL_QUALIFIER
+            LABEL_REFERENCE
+              PsiElement(AT)('@')
           PsiElement(LT)('<')
           TYPE_REFERENCE
             USER_TYPE
@@ -376,8 +430,9 @@ JetFile: Labels.jet
         PsiWhiteSpace('\n  ')
         THIS_EXPRESSION
           PsiElement(this)('this')
-          LABEL_REFERENCE
-            PsiElement(LABEL_IDENTIFIER)('@a')
+          LABEL_QUALIFIER
+            LABEL_REFERENCE
+              PsiElement(LABEL_IDENTIFIER)('@a')
           PsiElement(LT)('<')
           TYPE_REFERENCE
             USER_TYPE
@@ -387,8 +442,9 @@ JetFile: Labels.jet
         PsiWhiteSpace('\n  ')
         THIS_EXPRESSION
           PsiElement(this)('this')
-          LABEL_REFERENCE
-            PsiElement(ATAT)('@@')
+          LABEL_QUALIFIER
+            LABEL_REFERENCE
+              PsiElement(ATAT)('@@')
           PsiElement(LT)('<')
           TYPE_REFERENCE
             USER_TYPE

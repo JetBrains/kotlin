@@ -86,7 +86,9 @@ JetFile: ControlStructures.jet
           BREAK
             PsiElement(break)('break')
             PsiWhiteSpace(' ')
-            PsiElement(LABEL_IDENTIFIER)('@la')
+            LABEL_QUALIFIER
+              LABEL_REFERENCE
+                PsiElement(LABEL_IDENTIFIER)('@la')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n    ')
         VALUE_PARAMETER
@@ -120,7 +122,9 @@ JetFile: ControlStructures.jet
           CONTINUE
             PsiElement(continue)('continue')
             PsiWhiteSpace(' ')
-            PsiElement(LABEL_IDENTIFIER)('@la')
+            LABEL_QUALIFIER
+              LABEL_REFERENCE
+                PsiElement(LABEL_IDENTIFIER)('@la')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n    ')
         VALUE_PARAMETER
@@ -207,7 +211,9 @@ JetFile: ControlStructures.jet
           BREAK
             PsiElement(break)('break')
             PsiWhiteSpace(' ')
-            PsiElement(LABEL_IDENTIFIER)('@la')
+            LABEL_QUALIFIER
+              LABEL_REFERENCE
+                PsiElement(LABEL_IDENTIFIER)('@la')
         PsiWhiteSpace('\n  ')
         CONTINUE
           PsiElement(continue)('continue')
@@ -219,7 +225,9 @@ JetFile: ControlStructures.jet
           CONTINUE
             PsiElement(continue)('continue')
             PsiWhiteSpace(' ')
-            PsiElement(LABEL_IDENTIFIER)('@la')
+            LABEL_QUALIFIER
+              LABEL_REFERENCE
+                PsiElement(LABEL_IDENTIFIER)('@la')
         PsiWhiteSpace('\n  ')
         IF
           PsiElement(if)('if')

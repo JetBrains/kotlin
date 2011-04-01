@@ -27,7 +27,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
     }
 
     private void pushBuilder() {
-        Pseudocode parentPseudocode = builder == null ? new Pseudocode(null) : builders.peek().getPseudocode();
+        Pseudocode parentPseudocode = builder == null ? new Pseudocode() : builders.peek().getPseudocode();
         JetControlFlowInstructionsGeneratorWorker worker = new JetControlFlowInstructionsGeneratorWorker(parentPseudocode);
         builders.push(worker);
         builder = worker;
@@ -90,16 +90,16 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         }
     }
 
-    private class JetControlFlowInstructionsGeneratorWorker implements JetControlFlowBuilder {
-        private final Stack<BlockInfo> loopInfo = new Stack<BlockInfo>();
-        private final Stack<BlockInfo> subroutineInfo = new Stack<BlockInfo>();
+    private final Stack<BlockInfo> loopInfo = new Stack<BlockInfo>();
+    private final Stack<BlockInfo> subroutineInfo = new Stack<BlockInfo>();
+    private final Map<JetElement, BlockInfo> elementToBlockInfo = new HashMap<JetElement, BlockInfo>();
 
-        private final Map<JetElement, BlockInfo> elementToBlockInfo = new HashMap<JetElement, BlockInfo>();
+    private class JetControlFlowInstructionsGeneratorWorker implements JetControlFlowBuilder {
 
         private final Pseudocode pseudocode;
 
         private JetControlFlowInstructionsGeneratorWorker(@Nullable Pseudocode parent) {
-            this.pseudocode = new Pseudocode(parent);
+            this.pseudocode = new Pseudocode();
         }
 
         public Pseudocode getPseudocode() {
@@ -113,7 +113,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         @NotNull
         @Override
         public final Label createUnboundLabel() {
-            return new Label("l" + labelCount++);
+            return pseudocode.createLabel("l" + labelCount++);
         }
 
         @Override

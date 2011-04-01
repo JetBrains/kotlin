@@ -230,21 +230,21 @@ public class TopDownAnalyzer {
         declaringScope.addFunctionDescriptor(descriptor);
         functions.put(function, descriptor);
 
-        JetExpression bodyExpression = function.getBodyExpression();
-        if (bodyExpression != null) {
-            System.out.println("-------------");
-            JetControlFlowInstructionsGenerator instructionsGenerator = new JetControlFlowInstructionsGenerator();
-            new JetControlFlowProcessor(semanticServices, trace, instructionsGenerator).generate(function, bodyExpression);
-            Pseudocode pseudocode = instructionsGenerator.getPseudocode();
-            pseudocode.postProcess();
-            pseudocode.dumpInstructions(System.out);
-            System.out.println("-------------");
-            try {
-                pseudocode.dumpGraph(new PrintStream("/Users/abreslav/work/cfg.dot"));
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            }
-        }
+//        JetExpression bodyExpression = function.getBodyExpression();
+//        if (bodyExpression != null) {
+//            System.out.println("-------------");
+//            JetControlFlowInstructionsGenerator instructionsGenerator = new JetControlFlowInstructionsGenerator();
+//            new JetControlFlowProcessor(semanticServices, trace, instructionsGenerator).generate(function, bodyExpression);
+//            Pseudocode pseudocode = instructionsGenerator.getPseudocode();
+//            pseudocode.postProcess();
+//            pseudocode.dumpInstructions(System.out);
+//            System.out.println("-------------");
+//            try {
+//                pseudocode.dumpGraph(new PrintStream("/Users/abreslav/work/cfg.dot"));
+//            } catch (FileNotFoundException e) {
+//                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+//            }
+//        }
     }
 
     private void processProperty(WritableScope declaringScope, JetProperty property) {

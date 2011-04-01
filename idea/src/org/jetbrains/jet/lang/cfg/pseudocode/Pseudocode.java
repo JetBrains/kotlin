@@ -11,14 +11,44 @@ import java.util.*;
 * @author abreslav
 */
 public class Pseudocode {
+    public class PseudocodeLabel implements Label {
+        private final String name;
+
+        private PseudocodeLabel(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
+
+        @Override
+        public String toString() {
+            return name;
+        }
+
+        @Nullable
+        private List<Instruction> resolve() {
+            Integer result = labels.get(this);
+            assert result != null;
+            return instructions.subList(result, instructions.size());
+        }
+
+    }
+
     private final List<Instruction> instructions = new ArrayList<Instruction>();
     private final Map<Label, Integer> labels = new LinkedHashMap<Label, Integer>();
 
-    @Nullable
-    private final Pseudocode parent;
+//    @Nullable
+//    private final Pseudocode parent;
+//
+//    public Pseudocode(Pseudocode parent) {
+//        this.parent = parent;
+//    }
 
-    public Pseudocode(Pseudocode parent) {
-        this.parent = parent;
+    public PseudocodeLabel createLabel(String name) {
+        return new PseudocodeLabel(name);
     }
 
     public void addInstruction(Instruction instruction) {
@@ -27,15 +57,6 @@ public class Pseudocode {
 
     public void addLabel(Label label) {
         labels.put(label, instructions.size());
-    }
-
-    @Nullable
-    private Integer resolveLabel(Label targetLabel) {
-        Integer result = labels.get(targetLabel);
-        if (result == null && parent != null) {
-            return parent.resolveLabel(targetLabel);
-        }
-        return result;
     }
 
     public void postProcess() {
@@ -95,22 +116,21 @@ public class Pseudocode {
 
     @NotNull
     private Instruction getJumpTarget(@NotNull Label targetLabel) {
-        Integer targetPosition = resolveLabel(targetLabel);
-        return getTargetInstruction(targetPosition);
+        return getTargetInstruction(((PseudocodeLabel) targetLabel).resolve());
     }
 
     @NotNull
-    private Instruction getTargetInstruction(@NotNull Integer targetPosition) {
+    private Instruction getTargetInstruction(@NotNull List<Instruction> instructions) {
         while (true) {
-            assert targetPosition != null;
-            Instruction targetInstruction = instructions.get(targetPosition);
+            assert instructions != null;
+            Instruction targetInstruction = instructions.get(0);
 
             if (false == targetInstruction instanceof UnconditionalJumpInstruction) {
                 return targetInstruction;
             }
 
             Label label = ((UnconditionalJumpInstruction) targetInstruction).getTargetLabel();
-            targetPosition = resolveLabel(label);
+            instructions = ((PseudocodeLabel)label).resolve();
         }
     }
 
@@ -118,7 +138,7 @@ public class Pseudocode {
     private Instruction getNextPosition(int currentPosition) {
         int targetPosition = currentPosition + 1;
         assert targetPosition < instructions.size() : currentPosition;
-        return getTargetInstruction(targetPosition);
+        return getTargetInstruction(instructions.subList(targetPosition, instructions.size()));
     }
 
     public void dumpInstructions(@NotNull PrintStream out) {
@@ -140,6 +160,7 @@ public class Pseudocode {
 
     private void dumpSubgraph(final PrintStream out, String graphHeader, final int[] count, String style) {
         out.println(graphHeader + " {");
+        out.println(style);
 
         final Map<Instruction, String> nodeToName = new HashMap<Instruction, String>();
         for (Instruction node : instructions) {
@@ -174,7 +195,7 @@ public class Pseudocode {
                 @Override
                 public void visitFunctionLiteralValue(FunctionLiteralValueInstruction instruction) {
                     int index = count[0];
-                    instruction.getBody().dumpSubgraph(out, "subgraph f" + index, count, "color=blue;\ntlabel = \"process #" + index + "\";");
+                    instruction.getBody().dumpSubgraph(out, "subgraph cluster_" + index, count, "color=blue;\nlabel = \"f" + index + "\";");
                     printEdge(out, nodeToName.get(instruction), "n" + index, null);
                     visitInstructionWithNext(instruction);
                 }
@@ -228,7 +249,6 @@ public class Pseudocode {
                 }
             });
         }
-        out.println(style);
         out.println("}");
     }
 
