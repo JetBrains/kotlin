@@ -3,5 +3,6 @@
         <unzip dest="ideaSDK">
             <fileset dir="ideaSDK" includes="ideaIC*.zip"/>
         </unzip>
+        <echo file="idea/idea.properties" message="idea.home=${basedir}/ideaSDK"/>
     </target>
 </project>
