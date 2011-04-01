@@ -310,14 +310,23 @@ public class JetControlFlowProcessor {
                 value(returnedExpression, false);
             }
             JetSimpleNameExpression labelElement = expression.getTargetLabel();
-            JetElement subroutine = (labelElement != null)
-                    ? resolveLabel(expression.getLabelName(), expression.getTargetLabel())
-                    : builder.getCurrentSubroutine();
-            if (returnedExpression == null) {
-                builder.returnNoValue(subroutine);
+            JetElement subroutine;
+            if (labelElement != null) {
+                String labelName = expression.getLabelName();
+                assert labelName != null;
+                subroutine = resolveLabel(labelName, labelElement);
             }
             else {
-                builder.returnValue(subroutine);
+                subroutine = builder.getCurrentSubroutine();
+                // TODO : a context check
+            }
+            if (subroutine != null) {
+                if (returnedExpression == null) {
+                    builder.returnNoValue(subroutine);
+                }
+                else {
+                    builder.returnValue(subroutine);
+                }
             }
         }
 

@@ -1274,7 +1274,7 @@ public class JetTypeInferrer {
 
         @Override
         public void visitFunction(JetFunction function) {
-            super.visitFunction(function); // TODO
+            scope.addFunctionDescriptor(classDescriptorResolver.resolveFunctionDescriptor(scope.getContainingDeclaration(), scope, function));
         }
 
         @Override
