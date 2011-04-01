@@ -141,11 +141,6 @@ public class JetControlFlowProcessor {
         }
 
         @Override
-        public void visitFunction(JetFunction function) {
-            generate(function, function.getBodyExpression());
-        }
-
-        @Override
         public void visitBinaryExpression(JetBinaryExpression expression) {
             IElementType operationType = expression.getOperationReference().getReferencedNameElementType();
             if (operationType == JetTokens.ANDAND) {
@@ -331,6 +326,11 @@ public class JetControlFlowProcessor {
             for (JetElement statement : expression.getStatements()) {
                 value(statement, true);
             }
+        }
+
+        @Override
+        public void visitFunction(JetFunction function) {
+            generate(function, function.getBodyExpression());
         }
 
         @Override

@@ -175,43 +175,20 @@ public class Pseudocode {
         out.println(graphHeader + " {");
         out.println(style);
 
-        for (Instruction node : instructions) {
-            if (node instanceof UnconditionalJumpInstruction) {
-                continue;
-            }
-            String name = "n" + count[0]++;
-            nodeToName.put(node, name);
-            String text = node.toString();
-            int newline = text.indexOf("\n");
-            if (newline >= 0) {
-                text = text.substring(0, newline);
-            }
-            String shape = "box";
-            if (node instanceof ConditionalJumpInstruction) {
-                shape = "diamond";
-            }
-            else if (node instanceof NondeterministicJumpInstruction) {
-                shape = "Mdiamond";
-            }
-            else if (node instanceof UnsupportedElementInstruction) {
-                shape = "box, fillcolor=red, style=filled";
-            }
-            else if (node instanceof FunctionLiteralValueInstruction) {
-                shape = "Mcircle";
-            }
-            else if (node instanceof SubroutineEnterInstruction || node instanceof SubroutineExitInstruction) {
-                shape = "roundrect, style=rounded";
-            }
-            out.println(name + "[label=\"" + text + "\", shape=" + shape + "];");
-        }
+        dumpNodes(out, count, nodeToName);
+        dumpEdges(out, count, nodeToName);
 
+        out.println("}");
+    }
+
+    public void dumpEdges(final PrintStream out, final int[] count, final Map<Instruction, String> nodeToName) {
         for (final Instruction fromInst : instructions) {
             fromInst.accept(new InstructionVisitor() {
                 @Override
                 public void visitFunctionLiteralValue(FunctionLiteralValueInstruction instruction) {
                     int index = count[0];
-                    instruction.getBody().dumpSubgraph(out, "subgraph cluster_" + index, count, "color=blue;\nlabel = \"f" + index + "\";", nodeToName);
-                    printEdge(out, nodeToName.get(instruction), "n" + index, null);
+//                    instruction.getBody().dumpSubgraph(out, "subgraph cluster_" + index, count, "color=blue;\nlabel = \"f" + index + "\";", nodeToName);
+                    printEdge(out, nodeToName.get(instruction), nodeToName.get(instruction.getBody().instructions.get(0)), null);
                     visitInstructionWithNext(instruction);
                 }
 
@@ -264,7 +241,38 @@ public class Pseudocode {
                 }
             });
         }
-        out.println("}");
+    }
+
+    public void dumpNodes(PrintStream out, int[] count, Map<Instruction, String> nodeToName) {
+        for (Instruction node : instructions) {
+            if (node instanceof UnconditionalJumpInstruction) {
+                continue;
+            }
+            String name = "n" + count[0]++;
+            nodeToName.put(node, name);
+            String text = node.toString();
+            int newline = text.indexOf("\n");
+            if (newline >= 0) {
+                text = text.substring(0, newline);
+            }
+            String shape = "box";
+            if (node instanceof ConditionalJumpInstruction) {
+                shape = "diamond";
+            }
+            else if (node instanceof NondeterministicJumpInstruction) {
+                shape = "Mdiamond";
+            }
+            else if (node instanceof UnsupportedElementInstruction) {
+                shape = "box, fillcolor=red, style=filled";
+            }
+            else if (node instanceof FunctionLiteralValueInstruction) {
+                shape = "Mcircle";
+            }
+            else if (node instanceof SubroutineEnterInstruction || node instanceof SubroutineExitInstruction) {
+                shape = "roundrect, style=rounded";
+            }
+            out.println(name + "[label=\"" + text + "\", shape=" + shape + "];");
+        }
     }
 
     private void printEdge(PrintStream out, String from, String to, String label) {

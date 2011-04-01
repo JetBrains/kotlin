@@ -8,9 +8,7 @@ import org.jetbrains.jet.lang.psi.JetBlockExpression;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetExpression;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * @author abreslav
@@ -23,10 +21,11 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
     private int labelCount = 0;
 
     private final Stack<JetControlFlowInstructionsGeneratorWorker> builders = new Stack<JetControlFlowInstructionsGeneratorWorker>();
+    private final JetControlFlowDataTrace trace;
 
-    public JetControlFlowInstructionsGenerator(JetElement subroutine) {
+    public JetControlFlowInstructionsGenerator(JetControlFlowDataTrace trace) {
         super(null);
-        pushBuilder(subroutine);
+        this.trace = trace;
     }
 
     private void pushBuilder(JetElement subroutine) {
@@ -35,9 +34,12 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         builder = worker;
     }
 
-    private JetControlFlowInstructionsGeneratorWorker popBuilder() {
+    private JetControlFlowInstructionsGeneratorWorker popBuilder(@NotNull JetElement element) {
         JetControlFlowInstructionsGeneratorWorker worker = builders.pop();
-        builder = builders.peek();
+        trace.recordControlFlowData(element, worker.getPseudocode());
+        if (!builders.isEmpty()) {
+            builder = builders.peek();
+        }
         return worker;
     }
 
@@ -45,27 +47,23 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
     public void enterSubroutine(@NotNull JetElement subroutine, boolean isFunctionLiteral) {
         if (isFunctionLiteral) {
             pushBuilder(builder.getCurrentSubroutine());
-            builder.enterSubroutine(subroutine, false);
         }
         else {
-            super.enterSubroutine(subroutine, isFunctionLiteral);
+            pushBuilder(subroutine);
         }
+        builder.enterSubroutine(subroutine, false);
     }
 
     @Override
     public void exitSubroutine(@NotNull JetElement subroutine, boolean functionLiteral) {
         super.exitSubroutine(subroutine, functionLiteral);
+        JetControlFlowInstructionsGeneratorWorker worker = popBuilder(subroutine);
         if (functionLiteral) {
-            JetControlFlowInstructionsGeneratorWorker worker = popBuilder();
             JetControlFlowInstructionsGeneratorWorker builder = builders.peek();
             FunctionLiteralValueInstruction instruction = new FunctionLiteralValueInstruction(subroutine);
             instruction.setBody(worker.getPseudocode());
             builder.add(instruction);
         }
-    }
-
-    public Pseudocode getPseudocode() {
-        return builders.peek().getPseudocode();
     }
 
     private class JetControlFlowInstructionsGeneratorWorker implements JetControlFlowBuilder {

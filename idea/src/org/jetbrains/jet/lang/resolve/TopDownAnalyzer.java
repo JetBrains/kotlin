@@ -4,6 +4,8 @@ import com.intellij.openapi.application.ApplicationManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.JetControlFlowProcessor;
+import org.jetbrains.jet.lang.cfg.pseudocode.Instruction;
+import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTrace;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowInstructionsGenerator;
 import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode;
 import org.jetbrains.jet.lang.psi.*;
@@ -233,20 +235,37 @@ public class TopDownAnalyzer {
 
         JetExpression bodyExpression = function.getBodyExpression();
         if (bodyExpression != null) {
-            JetControlFlowInstructionsGenerator instructionsGenerator = new JetControlFlowInstructionsGenerator(function);
+            JetControlFlowDataTrace controlFlowDataTrace = new JetControlFlowDataTrace();
+            JetControlFlowInstructionsGenerator instructionsGenerator = new JetControlFlowInstructionsGenerator(controlFlowDataTrace);
             new JetControlFlowProcessor(semanticServices, trace, instructionsGenerator).generate(function, bodyExpression);
-            Pseudocode pseudocode = instructionsGenerator.getPseudocode();
-            pseudocode.postProcess();
-
             if (!ApplicationManager.getApplication().isUnitTestMode()) {
-                System.out.println("-------------");
-                pseudocode.dumpInstructions(System.out);
-                System.out.println("-------------");
                 try {
-                    pseudocode.dumpGraph(new PrintStream("/Users/abreslav/work/cfg.dot"));
+                    PrintStream out = new PrintStream("/Users/abreslav/work/cfg.dot");
+                    out.println("digraph " + function.getName() + " {");
+                    Collection<Pseudocode> pseudocodes = controlFlowDataTrace.getAllData();
+                    int[] count = new int[1];
+                    Map<Instruction,String> nodeToName = new HashMap<Instruction, String>();
+                    for (Pseudocode pseudocode : pseudocodes) {
+                        pseudocode.postProcess();
+                        System.out.println("-------------");
+                        pseudocode.dumpInstructions(System.out);
+                        System.out.println("-------------");
+                        pseudocode.dumpNodes(out, count, nodeToName);
+                    }
+                    int i = 0;
+                    for (Pseudocode pseudocode : pseudocodes) {
+                        out.println("subgraph cluster_" + i + " {\n" +
+                                    "label=\"f" + i + "\";\n" +
+                                    "color=blue;\n");
+                        pseudocode.dumpEdges(out, count, nodeToName);
+                        out.println("}");
+                        i++;
+                    }
+                    out.println("}");
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                 }
+
             }
         }
     }
