@@ -121,6 +121,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
 //            subroutineInfo.push(blockInfo);
             elementToBlockInfo.put(subroutine, blockInfo);
             bindLabel(entryPoint);
+            add(new SubroutineEnterInstruction(subroutine));
         }
 
         @Override

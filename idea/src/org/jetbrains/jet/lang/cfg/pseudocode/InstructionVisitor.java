@@ -50,4 +50,8 @@ public class InstructionVisitor {
 
     public void visitInstruction(Instruction instruction) {
     }
+
+    public void visitSubroutineEnter(SubroutineEnterInstruction instruction) {
+        visitInstructionWithNext(instruction);
+    }
 }

@@ -87,15 +87,6 @@ public class JetTypeInferrer {
     }
 
     @Nullable
-    private static JetExpression deparenthesize(@NotNull JetExpression expression) {
-        JetExpression result = expression;
-        while (result instanceof JetParenthesizedExpression) {
-            result = ((JetParenthesizedExpression) expression).getExpression();
-        }
-        return result;
-    }
-
-    @Nullable
     private List<JetType> getTypes(JetScope scope, List<JetExpression> indexExpressions) {
         List<JetType> argumentTypes = new ArrayList<JetType>();
         TypeInferrerVisitor typeInferrerVisitor = new TypeInferrerVisitor(scope, false);
@@ -1318,7 +1309,7 @@ public class JetTypeInferrer {
         @Override
         protected void visitAssignment(JetBinaryExpression expression) {
             JetExpression left = expression.getLeft();
-            JetExpression deparenthesized = deparenthesize(left);
+            JetExpression deparenthesized = JetPsiUtil.deparenthesize(left);
             JetExpression right = expression.getRight();
             if (deparenthesized instanceof JetArrayAccessExpression) {
                 JetArrayAccessExpression arrayAccessExpression = (JetArrayAccessExpression) deparenthesized;

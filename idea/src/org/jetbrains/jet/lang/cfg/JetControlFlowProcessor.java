@@ -128,8 +128,11 @@ public class JetControlFlowProcessor {
         }
 
         private void visitLabeledExpression(@NotNull String labelName, @NotNull JetExpression labeledExpression) {
-            enterLabeledElement(labelName, labeledExpression);
-            value(labeledExpression, false);
+            JetExpression deparenthesized = JetPsiUtil.deparenthesize(labeledExpression);
+            if (deparenthesized != null) {
+                enterLabeledElement(labelName, deparenthesized);
+                value(labeledExpression, false);
+            }
         }
 
         @Override
@@ -259,22 +262,45 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitBreakExpression(JetBreakExpression expression) {
-            JetSimpleNameExpression labelElement = expression.getTargetLabel();
-            Label exitPoint = (labelElement != null)
-                    ? builder.getExitPoint(resolveLabel(expression.getLabelName(), expression.getTargetLabel()))
-                    : builder.getExitPoint(builder.getCurrentLoop());
-            builder.jump(exitPoint);
+            JetElement loop = getCorrespondingLoop(expression);
+            if (loop != null) {
+                builder.jump(builder.getExitPoint(loop));
+            }
         }
 
         @Override
         public void visitContinueExpression(JetContinueExpression expression) {
-            JetSimpleNameExpression labelElement = expression.getTargetLabel();
-            if (labelElement != null) {
-                builder.jump(builder.getEntryPoint(resolveLabel(expression.getLabelName(), expression.getTargetLabel())));
+            JetElement loop = getCorrespondingLoop(expression);
+            if (loop != null) {
+                builder.jump(builder.getEntryPoint(loop));
+            }
+        }
+
+        private JetElement getCorrespondingLoop(JetLabelQualifiedExpression expression) {
+            String labelName = expression.getLabelName();
+            JetElement loop;
+            if (labelName != null) {
+                JetSimpleNameExpression targetLabel = expression.getTargetLabel();
+                assert targetLabel != null;
+                loop = resolveLabel(labelName, targetLabel);
+                if (!isLoop(loop)) {
+                    semanticServices.getErrorHandler().genericError(expression.getNode(), "The label '" + targetLabel.getText() + "' does not denote a loop");
+                    loop = null;
+                }
             }
             else {
-                builder.jump(builder.getEntryPoint(builder.getCurrentLoop()));
+                loop = builder.getCurrentLoop();
+                if (loop == null) {
+                    semanticServices.getErrorHandler().genericError(expression.getNode(), "'break' and 'continue' are only allowed inside a loop");
+                }
             }
+            return loop;
+        }
+
+        private boolean isLoop(JetElement loop) {
+            return loop instanceof JetWhileExpression ||
+                   loop instanceof JetDoWhileExpression ||
+                   loop instanceof JetForExpression;
         }
 
         @Override

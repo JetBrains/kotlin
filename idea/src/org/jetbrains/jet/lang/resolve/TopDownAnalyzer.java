@@ -2,9 +2,14 @@ package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.JetSemanticServices;
+import org.jetbrains.jet.lang.cfg.JetControlFlowProcessor;
+import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowInstructionsGenerator;
+import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.*;
 
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.util.*;
 
 /**
@@ -225,21 +230,21 @@ public class TopDownAnalyzer {
         declaringScope.addFunctionDescriptor(descriptor);
         functions.put(function, descriptor);
 
-//        JetExpression bodyExpression = function.getBodyExpression();
-//        if (bodyExpression != null) {
-//            System.out.println("-------------");
-//            JetControlFlowInstructionsGenerator instructionsGenerator = new JetControlFlowInstructionsGenerator(function);
-//            new JetControlFlowProcessor(semanticServices, trace, instructionsGenerator).generate(function, bodyExpression);
-//            Pseudocode pseudocode = instructionsGenerator.getPseudocode();
-//            pseudocode.postProcess();
-//            pseudocode.dumpInstructions(System.out);
-//            System.out.println("-------------");
-//            try {
-//                pseudocode.dumpGraph(new PrintStream("/Users/abreslav/work/cfg.dot"));
-//            } catch (FileNotFoundException e) {
-//                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-//            }
-//        }
+        JetExpression bodyExpression = function.getBodyExpression();
+        if (bodyExpression != null) {
+            System.out.println("-------------");
+            JetControlFlowInstructionsGenerator instructionsGenerator = new JetControlFlowInstructionsGenerator(function);
+            new JetControlFlowProcessor(semanticServices, trace, instructionsGenerator).generate(function, bodyExpression);
+            Pseudocode pseudocode = instructionsGenerator.getPseudocode();
+            pseudocode.postProcess();
+            pseudocode.dumpInstructions(System.out);
+            System.out.println("-------------");
+            try {
+                pseudocode.dumpGraph(new PrintStream("/Users/abreslav/work/cfg.dot"));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+        }
     }
 
     private void processProperty(WritableScope declaringScope, JetProperty property) {

@@ -147,14 +147,22 @@ public class Pseudocode {
     }
 
     public void dumpInstructions(@NotNull PrintStream out) {
+        List<Pseudocode> locals = new ArrayList<Pseudocode>();
         for (int i = 0, instructionsSize = instructions.size(); i < instructionsSize; i++) {
             Instruction instruction = instructions.get(i);
+            if (instruction instanceof FunctionLiteralValueInstruction) {
+                FunctionLiteralValueInstruction functionLiteralValueInstruction = (FunctionLiteralValueInstruction) instruction;
+                locals.add(functionLiteralValueInstruction.getBody());
+            }
             for (PseudocodeLabel label: labels) {
                 if (label.getTargetInstructionIndex() == i) {
                     out.println(label.getName() + ":");
                 }
             }
             out.println("    " + instruction);
+        }
+        for (Pseudocode local : locals) {
+            local.dumpInstructions(out);
         }
     }
 
@@ -190,6 +198,9 @@ public class Pseudocode {
             }
             else if (node instanceof FunctionLiteralValueInstruction) {
                 shape = "Mcircle";
+            }
+            else if (node instanceof SubroutineEnterInstruction || node instanceof SubroutineExitInstruction) {
+                shape = "roundrect, style=rounded";
             }
             out.println(name + "[label=\"" + text + "\", shape=" + shape + "];");
         }
