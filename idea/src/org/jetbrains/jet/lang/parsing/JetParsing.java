@@ -1331,7 +1331,7 @@ public class JetParsing extends AbstractJetParsing {
      *   : "(" functionParameter{","}? ")" // default values
      *   ;
      *
-     * functionParameter                                         Машка Юдина Неееет! Зимой сельдерей не растет на улице!!! Как же так?
+     * functionParameter
      *   : modifiers functionParameterRest
      *   ;
      *
