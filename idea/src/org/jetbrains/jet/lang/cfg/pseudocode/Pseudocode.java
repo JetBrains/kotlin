@@ -11,8 +11,11 @@ import java.util.*;
 * @author abreslav
 */
 public class Pseudocode {
+
     public class PseudocodeLabel implements Label {
         private final String name;
+        private Integer targetInstructionIndex;
+
 
         private PseudocodeLabel(String name) {
             this.name = name;
@@ -28,35 +31,37 @@ public class Pseudocode {
             return name;
         }
 
+        public int getTargetInstructionIndex() {
+            return targetInstructionIndex;
+        }
+
+        public void setTargetInstructionIndex(int targetInstructionIndex) {
+            this.targetInstructionIndex = targetInstructionIndex;
+        }
+
         @Nullable
         private List<Instruction> resolve() {
-            Integer result = labels.get(this);
-            assert result != null;
-            return instructions.subList(result, instructions.size());
+            assert targetInstructionIndex != null;
+            return instructions.subList(getTargetInstructionIndex(), instructions.size());
         }
 
     }
 
     private final List<Instruction> instructions = new ArrayList<Instruction>();
-    private final Map<Label, Integer> labels = new LinkedHashMap<Label, Integer>();
-
-//    @Nullable
-//    private final Pseudocode parent;
-//
-//    public Pseudocode(Pseudocode parent) {
-//        this.parent = parent;
-//    }
+    private final List<PseudocodeLabel> labels = new ArrayList<PseudocodeLabel>();
 
     public PseudocodeLabel createLabel(String name) {
-        return new PseudocodeLabel(name);
+        PseudocodeLabel label = new PseudocodeLabel(name);
+        labels.add(label);
+        return label;
     }
 
     public void addInstruction(Instruction instruction) {
         instructions.add(instruction);
     }
 
-    public void addLabel(Label label) {
-        labels.put(label, instructions.size());
+    public void bindLabel(Label label) {
+        ((PseudocodeLabel) label).setTargetInstructionIndex(instructions.size());
     }
 
     public void postProcess() {
@@ -144,9 +149,9 @@ public class Pseudocode {
     public void dumpInstructions(@NotNull PrintStream out) {
         for (int i = 0, instructionsSize = instructions.size(); i < instructionsSize; i++) {
             Instruction instruction = instructions.get(i);
-            for (Map.Entry<Label, Integer> entry : labels.entrySet()) {
-                if (entry.getValue() == i) {
-                    out.println(entry.getKey() + ":");
+            for (PseudocodeLabel label: labels) {
+                if (label.getTargetInstructionIndex() == i) {
+                    out.println(label.getName() + ":");
                 }
             }
             out.println("    " + instruction);
@@ -155,14 +160,13 @@ public class Pseudocode {
 
     public void dumpGraph(@NotNull final PrintStream out) {
         String graphHeader = "digraph g";
-        dumpSubgraph(out, graphHeader, new int[1], "");
+        dumpSubgraph(out, graphHeader, new int[1], "", new HashMap<Instruction, String>());
     }
 
-    private void dumpSubgraph(final PrintStream out, String graphHeader, final int[] count, String style) {
+    private void dumpSubgraph(final PrintStream out, String graphHeader, final int[] count, String style, final Map<Instruction, String> nodeToName) {
         out.println(graphHeader + " {");
         out.println(style);
 
-        final Map<Instruction, String> nodeToName = new HashMap<Instruction, String>();
         for (Instruction node : instructions) {
             if (node instanceof UnconditionalJumpInstruction) {
                 continue;
@@ -195,7 +199,7 @@ public class Pseudocode {
                 @Override
                 public void visitFunctionLiteralValue(FunctionLiteralValueInstruction instruction) {
                     int index = count[0];
-                    instruction.getBody().dumpSubgraph(out, "subgraph cluster_" + index, count, "color=blue;\nlabel = \"f" + index + "\";");
+                    instruction.getBody().dumpSubgraph(out, "subgraph cluster_" + index, count, "color=blue;\nlabel = \"f" + index + "\";", nodeToName);
                     printEdge(out, nodeToName.get(instruction), "n" + index, null);
                     visitInstructionWithNext(instruction);
                 }

@@ -106,6 +106,11 @@ public class JetControlFlowProcessor {
         }
 
         @Override
+        public void visitParenthesizedExpression(JetParenthesizedExpression expression) {
+            value(expression.getExpression(), false);
+        }
+
+        @Override
         public void visitConstantExpression(JetConstantExpression expression) {
             builder.readNode(expression);
         }

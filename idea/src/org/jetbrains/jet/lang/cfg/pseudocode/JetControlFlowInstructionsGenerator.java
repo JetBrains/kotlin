@@ -1,7 +1,6 @@
 package org.jetbrains.jet.lang.cfg.pseudocode;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.JetControlFlowBuilder;
 import org.jetbrains.jet.lang.cfg.JetControlFlowBuilderAdapter;
 import org.jetbrains.jet.lang.cfg.Label;
@@ -18,17 +17,20 @@ import java.util.Stack;
  */
 public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAdapter {
 
+    private final Stack<BlockInfo> loopInfo = new Stack<BlockInfo>();
+//    private final Stack<BlockInfo> subroutineInfo = new Stack<BlockInfo>();
+    private final Map<JetElement, BlockInfo> elementToBlockInfo = new HashMap<JetElement, BlockInfo>();
     private int labelCount = 0;
+
     private final Stack<JetControlFlowInstructionsGeneratorWorker> builders = new Stack<JetControlFlowInstructionsGeneratorWorker>();
 
-    public JetControlFlowInstructionsGenerator() {
+    public JetControlFlowInstructionsGenerator(JetElement subroutine) {
         super(null);
-        pushBuilder();
+        pushBuilder(subroutine);
     }
 
-    private void pushBuilder() {
-        Pseudocode parentPseudocode = builder == null ? new Pseudocode() : builders.peek().getPseudocode();
-        JetControlFlowInstructionsGeneratorWorker worker = new JetControlFlowInstructionsGeneratorWorker(parentPseudocode);
+    private void pushBuilder(JetElement subroutine) {
+        JetControlFlowInstructionsGeneratorWorker worker = new JetControlFlowInstructionsGeneratorWorker(subroutine);
         builders.push(worker);
         builder = worker;
     }
@@ -42,7 +44,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
     @Override
     public void enterSubroutine(@NotNull JetElement subroutine, boolean isFunctionLiteral) {
         if (isFunctionLiteral) {
-            pushBuilder();
+            pushBuilder(builder.getCurrentSubroutine());
             builder.enterSubroutine(subroutine, false);
         }
         else {
@@ -57,8 +59,8 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
             JetControlFlowInstructionsGeneratorWorker worker = popBuilder();
             JetControlFlowInstructionsGeneratorWorker builder = builders.peek();
             FunctionLiteralValueInstruction instruction = new FunctionLiteralValueInstruction(subroutine);
-            builder.add(instruction);
             instruction.setBody(worker.getPseudocode());
+            builder.add(instruction);
         }
     }
 
@@ -66,40 +68,14 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         return builders.peek().getPseudocode();
     }
 
-    private static class BlockInfo {
-        private final JetElement element;
-        private final Label entryPoint;
-        private final Label exitPoint;
-
-        private BlockInfo(JetElement element, Label entryPoint, Label exitPoint) {
-            this.element = element;
-            this.entryPoint = entryPoint;
-            this.exitPoint = exitPoint;
-        }
-
-        public JetElement getElement() {
-            return element;
-        }
-
-        public Label getEntryPoint() {
-            return entryPoint;
-        }
-
-        public Label getExitPoint() {
-            return exitPoint;
-        }
-    }
-
-    private final Stack<BlockInfo> loopInfo = new Stack<BlockInfo>();
-    private final Stack<BlockInfo> subroutineInfo = new Stack<BlockInfo>();
-    private final Map<JetElement, BlockInfo> elementToBlockInfo = new HashMap<JetElement, BlockInfo>();
-
     private class JetControlFlowInstructionsGeneratorWorker implements JetControlFlowBuilder {
 
         private final Pseudocode pseudocode;
+        private final JetElement currentSubroutine;
 
-        private JetControlFlowInstructionsGeneratorWorker(@Nullable Pseudocode parent) {
+        private JetControlFlowInstructionsGeneratorWorker(JetElement currentSubroutine) {
             this.pseudocode = new Pseudocode();
+            this.currentSubroutine = currentSubroutine;
         }
 
         public Pseudocode getPseudocode() {
@@ -142,14 +118,14 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         public void enterSubroutine(@NotNull JetElement subroutine, boolean isFunctionLiteral) {
             Label entryPoint = createUnboundLabel();
             BlockInfo blockInfo = new BlockInfo(subroutine, entryPoint, createUnboundLabel());
-            subroutineInfo.push(blockInfo);
+//            subroutineInfo.push(blockInfo);
             elementToBlockInfo.put(subroutine, blockInfo);
             bindLabel(entryPoint);
         }
 
         @Override
         public JetElement getCurrentSubroutine() {
-            return subroutineInfo.empty() ? null : subroutineInfo.peek().getElement();
+            return currentSubroutine;// subroutineInfo.empty() ? null : subroutineInfo.peek().getElement();
         }
 
         @Override
@@ -159,7 +135,9 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
 
         @Override
         public Label getExitPoint(@NotNull JetElement labelElement) {
-            return elementToBlockInfo.get(labelElement).getExitPoint();
+            BlockInfo blockInfo = elementToBlockInfo.get(labelElement);
+            assert blockInfo != null : labelElement.getText();
+            return blockInfo.getExitPoint();
         }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -169,6 +147,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
             bindLabel(getExitPoint(subroutine));
             add(new SubroutineExitInstruction(subroutine));
             elementToBlockInfo.remove(subroutine);
+//            subroutineInfo.pop();
         }
 
         @Override
@@ -203,7 +182,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
 
         @Override
         public void bindLabel(@NotNull Label label) {
-            pseudocode.addLabel(label);
+            pseudocode.bindLabel(label);
         }
 
         @Override
@@ -227,4 +206,27 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         }
     }
 
+    private static class BlockInfo {
+        private final JetElement element;
+        private final Label entryPoint;
+        private final Label exitPoint;
+
+        private BlockInfo(JetElement element, Label entryPoint, Label exitPoint) {
+            this.element = element;
+            this.entryPoint = entryPoint;
+            this.exitPoint = exitPoint;
+        }
+
+        public JetElement getElement() {
+            return element;
+        }
+
+        public Label getEntryPoint() {
+            return entryPoint;
+        }
+
+        public Label getExitPoint() {
+            return exitPoint;
+        }
+    }
 }
