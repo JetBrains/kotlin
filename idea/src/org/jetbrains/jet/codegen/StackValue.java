@@ -30,7 +30,7 @@ public abstract class StackValue {
         return new IntCompare(opToken);
     }
 
-    public abstract void condJump(Label label, boolean inverse, InstructionAdapter v);
+    public abstract void condJump(Label label, boolean jumpIfFalse, InstructionAdapter v);
 
     public static class Local extends StackValue {
         private final int index;
@@ -48,9 +48,9 @@ public abstract class StackValue {
         }
 
         @Override
-        public void condJump(Label label, boolean inverse, InstructionAdapter v) {
+        public void condJump(Label label, boolean jumpIfFalse, InstructionAdapter v) {
             put(Type.INT_TYPE, v);
-            if (inverse) {
+            if (jumpIfFalse) {
                 v.ifeq(label);
             }
             else {
@@ -71,7 +71,7 @@ public abstract class StackValue {
         }
 
         @Override
-        public void condJump(Label label, boolean inverse, InstructionAdapter v) {
+        public void condJump(Label label, boolean jumpIfFalse, InstructionAdapter v) {
             throw new UnsupportedOperationException("don't know how to generate this condjump");
         }
     }
@@ -100,8 +100,16 @@ public abstract class StackValue {
         }
 
         @Override
-        public void condJump(Label label, boolean inverse, InstructionAdapter v) {
-            throw new UnsupportedOperationException("don't know how to generate this condjump");
+        public void condJump(Label label, boolean jumpIfFalse, InstructionAdapter v) {
+            if (value instanceof Boolean) {
+                boolean boolValue = ((Boolean) value).booleanValue();
+                if (boolValue ^ jumpIfFalse) {
+                    v.goTo(label);
+                }
+            }
+            else {
+                throw new UnsupportedOperationException("don't know how to generate this condjump");
+            }
         }
     }
 
@@ -118,16 +126,16 @@ public abstract class StackValue {
         }
 
         @Override
-        public void condJump(Label label, boolean inverse, InstructionAdapter v) {
+        public void condJump(Label label, boolean jumpIfFalse, InstructionAdapter v) {
             int opcode;
             if (opToken == JetTokens.GT) {
-                opcode = inverse ? Opcodes.IF_ICMPLE : Opcodes.IF_ICMPGT;
+                opcode = jumpIfFalse ? Opcodes.IF_ICMPLE : Opcodes.IF_ICMPGT;
             }
             else if (opToken == JetTokens.LT) {
-                opcode = inverse ? Opcodes.IF_ICMPGE : Opcodes.IF_ICMPLT;
+                opcode = jumpIfFalse ? Opcodes.IF_ICMPGE : Opcodes.IF_ICMPLT;
             }
             else if (opToken == JetTokens.LTEQ) {
-                opcode = inverse ? Opcodes.IF_ICMPGT : Opcodes.IF_ICMPLE;
+                opcode = jumpIfFalse ? Opcodes.IF_ICMPGT : Opcodes.IF_ICMPLE;
             }
             else {
                 throw new UnsupportedOperationException("don't know how to generate this condjump");

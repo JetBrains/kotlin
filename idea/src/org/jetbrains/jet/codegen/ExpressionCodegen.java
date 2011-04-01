@@ -459,24 +459,30 @@ public class ExpressionCodegen extends JetVisitor {
         DeclarationDescriptor op = bindingContext.resolveReferenceExpression(expression.getOperationReference());
         if (op instanceof FunctionDescriptor) {
             DeclarationDescriptor cls = op.getContainingDeclaration();
-            if (cls instanceof ClassDescriptor && cls.getName().equals("Int")) {
-                if (op.getName().equals("compareTo")) {
-                    generateCompareOp(expression, opToken);
-                }
-                else {
-                    int opcode;
-                    if (op.getName().equals("plus")) {
-                        opcode = Opcodes.IADD;
-                    }
-                    else if (op.getName().equals("times")) {
-                        opcode = Opcodes.IMUL;
+            if (cls instanceof ClassDescriptor) {
+                final String className = cls.getName();
+                if (className.equals("Int")) {
+                    if (op.getName().equals("compareTo")) {
+                        generateCompareOp(expression, opToken);
                     }
                     else {
-                        throw new UnsupportedOperationException("Don't know how to generate binary op method " + op.getName());
+                        int opcode;
+                        if (op.getName().equals("plus")) {
+                            opcode = Opcodes.IADD;
+                        }
+                        else if (op.getName().equals("times")) {
+                            opcode = Opcodes.IMUL;
+                        }
+                        else {
+                            throw new UnsupportedOperationException("Don't know how to generate binary op method " + op.getName());
+                        }
+                        generateBinaryOp(expression, (FunctionDescriptor) op, opcode);
                     }
-                    generateBinaryOp(expression, (FunctionDescriptor) op, opcode);
+                    return;
                 }
-                return;
+                else {
+                    throw new UnsupportedOperationException("Don't know how to generate binary op for class " + className);
+                }
             }
         }
         throw new UnsupportedOperationException("Don't know how to generate binary op " + expression);

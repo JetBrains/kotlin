@@ -150,6 +150,10 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
         factorialTest("doWhile.jet");
     }
 
+    public void testBreak() throws Exception {
+        factorialTest("break.jet");
+    }
+
     private void factorialTest(final String name) throws IllegalAccessException, InvocationTargetException {
         loadFile(name);
 
