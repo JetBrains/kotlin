@@ -30,7 +30,7 @@ public class ClassDescriptorResolver {
         ClassDescriptorImpl classDescriptor = new ClassDescriptorImpl(
                 scope.getContainingDeclaration(),
                 AttributeResolver.INSTANCE.resolveAttributes(classElement.getModifierList()),
-                safeName(classElement.getName()));
+                JetPsiUtil.safeName(classElement.getName()));
 
         trace.recordDeclarationResolution(classElement, classDescriptor);
 
@@ -81,7 +81,7 @@ public class ClassDescriptorResolver {
                 descriptor,
                 AttributeResolver.INSTANCE.resolveAttributes(classElement.getModifierList()),
                 !open,
-                safeName(classElement.getName()),
+                JetPsiUtil.safeName(classElement.getName()),
                 typeParameters,
                 supertypes);
         descriptor.setTypeConstructor(
@@ -157,7 +157,7 @@ public class ClassDescriptorResolver {
         FunctionDescriptorImpl functionDescriptor = new FunctionDescriptorImpl(
                 containingDescriptor,
                 AttributeResolver.INSTANCE.resolveAttributes(function.getModifierList()),
-                safeName(function.getName())
+                JetPsiUtil.safeName(function.getName())
         );
         WritableScope innerScope = semanticServices.createWritableScope(scope, functionDescriptor);
         innerScope.addLabeledDeclaration(functionDescriptor);
@@ -216,7 +216,7 @@ public class ClassDescriptorResolver {
                     functionDescriptor,
                     i,
                     AttributeResolver.INSTANCE.resolveAttributes(valueParameter.getModifierList()),
-                    safeName(valueParameter.getName()),
+                    JetPsiUtil.safeName(valueParameter.getName()),
                     valueParameter.isMutable() ? type : null,
                     type,
                     valueParameter.getDefaultValue() != null,
@@ -250,7 +250,7 @@ public class ClassDescriptorResolver {
                 containingDescriptor,
                 AttributeResolver.INSTANCE.resolveAttributes(typeParameter.getModifierList()),
                 typeParameter.getVariance(),
-                safeName(typeParameter.getName()),
+                JetPsiUtil.safeName(typeParameter.getName()),
                 Collections.singleton(bound),
                 bound
         );
@@ -299,7 +299,7 @@ public class ClassDescriptorResolver {
         PropertyDescriptor propertyDescriptor = new PropertyDescriptorImpl(
                 containingDeclaration,
                 AttributeResolver.INSTANCE.resolveAttributes(parameter.getModifierList()),
-                safeName(parameter.getName()),
+                JetPsiUtil.safeName(parameter.getName()),
                 parameter.isMutable() ? null : type,
                 type);
         trace.recordDeclarationResolution(parameter, propertyDescriptor);
@@ -327,7 +327,7 @@ public class ClassDescriptorResolver {
         PropertyDescriptorImpl propertyDescriptor = new PropertyDescriptorImpl(
                 containingDeclaration,
                 AttributeResolver.INSTANCE.resolveAttributes(property.getModifierList()),
-                safeName(property.getName()),
+                JetPsiUtil.safeName(property.getName()),
                 property.isVar() ? type : null,
                 type);
         trace.recordDeclarationResolution(property, propertyDescriptor);
@@ -397,8 +397,4 @@ public class ClassDescriptorResolver {
         return propertyDescriptor;
     }
 
-    @NotNull
-    private static String safeName(String name) {
-        return name == null ? "<no name provided>" : name;
-    }
 }

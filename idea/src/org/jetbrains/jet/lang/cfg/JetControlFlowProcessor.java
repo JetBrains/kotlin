@@ -34,7 +34,7 @@ public class JetControlFlowProcessor {
     public void generateSubroutineControlFlow(@NotNull JetElement subroutineElement, @NotNull List<? extends JetElement> body, boolean preferBlocks) {
         if (subroutineElement instanceof JetNamedDeclaration) {
             JetNamedDeclaration namedDeclaration = (JetNamedDeclaration) subroutineElement;
-            enterLabeledElement(namedDeclaration.getName(), namedDeclaration);
+            enterLabeledElement(JetPsiUtil.safeName(namedDeclaration.getName()), namedDeclaration);
         }
         boolean functionLiteral = subroutineElement instanceof JetFunctionLiteralExpression;
         builder.enterSubroutine(subroutineElement, functionLiteral);
@@ -107,7 +107,10 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitParenthesizedExpression(JetParenthesizedExpression expression) {
-            value(expression.getExpression(), false);
+            JetExpression innerExpression = expression.getExpression();
+            if (innerExpression != null) {
+                value(innerExpression, false);
+            }
         }
 
         @Override
@@ -129,7 +132,9 @@ public class JetControlFlowProcessor {
         public void visitLabelQualifiedExpression(JetLabelQualifiedExpression expression) {
             String labelName = expression.getLabelName();
             JetExpression labeledExpression = expression.getLabeledExpression();
-            visitLabeledExpression(labelName, labeledExpression);
+            if (labelName != null && labeledExpression != null) {
+                visitLabeledExpression(labelName, labeledExpression);
+            }
         }
 
         private void visitLabeledExpression(@NotNull String labelName, @NotNull JetExpression labeledExpression) {
@@ -143,23 +148,30 @@ public class JetControlFlowProcessor {
         @Override
         public void visitBinaryExpression(JetBinaryExpression expression) {
             IElementType operationType = expression.getOperationReference().getReferencedNameElementType();
+            JetExpression right = expression.getRight();
             if (operationType == JetTokens.ANDAND) {
                 value(expression.getLeft(), false);
                 Label resultLabel = builder.createUnboundLabel();
                 builder.jumpOnFalse(resultLabel);
-                value(expression.getRight(), false);
+                if (right != null) {
+                    value(right, false);
+                }
                 builder.bindLabel(resultLabel);
             }
             else if (operationType == JetTokens.OROR) {
                 value(expression.getLeft(), false);
                 Label resultLabel = builder.createUnboundLabel();
                 builder.jumpOnTrue(resultLabel);
-                value(expression.getRight(), false);
+                if (right != null) {
+                    value(right, false);
+                }
                 builder.bindLabel(resultLabel);
             }
             else {
                 value(expression.getLeft(), false);
-                value(expression.getRight(), false);
+                if (right != null) {
+                    value(right, false);
+                }
                 builder.readNode(expression);
             }
         }
@@ -168,7 +180,9 @@ public class JetControlFlowProcessor {
         public void visitUnaryExpression(JetUnaryExpression expression) {
             IElementType operationType = expression.getOperationSign().getReferencedNameElementType();
             if (JetTokens.LABELS.contains(operationType)) {
-                visitLabeledExpression(expression.getOperationSign().getReferencedName().substring(1), expression.getBaseExpression());
+                String referencedName = expression.getOperationSign().getReferencedName();
+                referencedName = referencedName == null ? " <?>" : referencedName;
+                visitLabeledExpression(referencedName.substring(1), expression.getBaseExpression());
             }
             else {
                 visitElement(expression);

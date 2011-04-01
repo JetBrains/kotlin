@@ -15,4 +15,9 @@ public class JetPsiUtil {
         }
         return result;
     }
+
+    @NotNull
+    public static String safeName(String name) {
+        return name == null ? "<no name provided>" : name;
+    }
 }
