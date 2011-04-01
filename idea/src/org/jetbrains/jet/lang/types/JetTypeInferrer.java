@@ -378,6 +378,7 @@ public class JetTypeInferrer {
         @Override
         public void visitFunctionLiteralExpression(JetFunctionLiteralExpression expression) {
             if (preferBlock && !expression.hasParameterSpecification()) {
+                trace.recordBlock(expression);
                 result = getBlockReturnedType(scope, expression.getBody(), LabeledJumpDomain.ERROR);
                 return;
             }

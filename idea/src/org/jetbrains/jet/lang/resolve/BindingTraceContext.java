@@ -6,7 +6,9 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.*;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author abreslav
@@ -18,6 +20,7 @@ public class BindingTraceContext extends BindingTrace implements BindingContext 
     private final Map<JetTypeReference, JetType> types = new HashMap<JetTypeReference, JetType>();
     private final Map<DeclarationDescriptor, PsiElement> descriptorToDeclarations = new HashMap<DeclarationDescriptor, PsiElement>();
     private final Map<PsiElement, DeclarationDescriptor> declarationsToDescriptors = new HashMap<PsiElement, DeclarationDescriptor>();
+    private final Set<JetFunctionLiteralExpression> blocks = new HashSet<JetFunctionLiteralExpression>();
     private JetScope toplevelScope;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -51,6 +54,11 @@ public class BindingTraceContext extends BindingTrace implements BindingContext 
     public void recordDeclarationResolution(@NotNull PsiElement declaration, @NotNull DeclarationDescriptor descriptor) {
         descriptorToDeclarations.put(descriptor.getOriginal(), declaration);
         declarationsToDescriptors.put(declaration, descriptor.getOriginal());
+    }
+
+    @Override
+    public void recordBlock(JetFunctionLiteralExpression expression) {
+        blocks.add(expression);
     }
 
     public void setToplevelScope(JetScope toplevelScope) {
@@ -121,5 +129,10 @@ public class BindingTraceContext extends BindingTrace implements BindingContext 
     @Override
     public PsiElement getDeclarationPsiElement(DeclarationDescriptor descriptor) {
         return descriptorToDeclarations.get(descriptor.getOriginal());
+    }
+
+    @Override
+    public boolean isBlock(JetFunctionLiteralExpression expression) {
+        return expression.hasParameterSpecification() || blocks.contains(expression);
     }
 }

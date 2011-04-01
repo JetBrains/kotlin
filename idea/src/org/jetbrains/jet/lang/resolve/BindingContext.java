@@ -25,4 +25,6 @@ public interface BindingContext {
     JetType resolveTypeReference(JetTypeReference typeReference);
     PsiElement resolveToDeclarationPsiElement(JetReferenceExpression referenceExpression);
     PsiElement getDeclarationPsiElement(DeclarationDescriptor descriptor);
+
+    boolean isBlock(JetFunctionLiteralExpression expression);
 }

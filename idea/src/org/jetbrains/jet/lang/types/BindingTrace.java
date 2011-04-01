@@ -34,6 +34,10 @@ public class BindingTrace {
 
     }
 
+    public void recordBlock(JetFunctionLiteralExpression expression) {
+
+    }
+
     public void removeReferenceResolution(@NotNull JetReferenceExpression referenceExpression) {
 
     }
