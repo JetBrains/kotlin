@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.resolve;
 
+import com.intellij.openapi.application.ApplicationManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.JetControlFlowProcessor;
@@ -232,17 +233,20 @@ public class TopDownAnalyzer {
 
         JetExpression bodyExpression = function.getBodyExpression();
         if (bodyExpression != null) {
-            System.out.println("-------------");
             JetControlFlowInstructionsGenerator instructionsGenerator = new JetControlFlowInstructionsGenerator(function);
             new JetControlFlowProcessor(semanticServices, trace, instructionsGenerator).generate(function, bodyExpression);
             Pseudocode pseudocode = instructionsGenerator.getPseudocode();
             pseudocode.postProcess();
-            pseudocode.dumpInstructions(System.out);
-            System.out.println("-------------");
-            try {
-                pseudocode.dumpGraph(new PrintStream("/Users/abreslav/work/cfg.dot"));
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+
+            if (!ApplicationManager.getApplication().isUnitTestMode()) {
+                System.out.println("-------------");
+                pseudocode.dumpInstructions(System.out);
+                System.out.println("-------------");
+                try {
+                    pseudocode.dumpGraph(new PrintStream("/Users/abreslav/work/cfg.dot"));
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                }
             }
         }
     }

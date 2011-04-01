@@ -111,6 +111,11 @@ public class JetControlFlowProcessor {
         }
 
         @Override
+        public void visitThisExpression(JetThisExpression expression) {
+            builder.readNode(expression);
+        }
+
+        @Override
         public void visitConstantExpression(JetConstantExpression expression) {
             builder.readNode(expression);
         }

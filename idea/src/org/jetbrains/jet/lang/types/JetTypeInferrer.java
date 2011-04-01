@@ -264,6 +264,7 @@ public class JetTypeInferrer {
         };
     }
 
+    @Nullable
     private JetType getBlockReturnedType(@NotNull JetScope outerScope, @NotNull List<JetElement> block, @NotNull LabeledJumpDomain jumpDomain) {
         if (block.isEmpty()) {
             return JetStandardClasses.getUnitType();
@@ -416,7 +417,9 @@ public class JetTypeInferrer {
                 writableScope.setThisType(receiverType);
                 returnType = getBlockReturnedType(writableScope, body, LabeledJumpDomain.ERROR);
             }
-            result = JetStandardClasses.getFunctionType(null, receiverTypeRef == null ? null : receiverType, parameterTypes, returnType);
+            JetType effectiveReceiverType = receiverTypeRef == null ? null : receiverType;
+            JetType safeReturnType = returnType == null ? ErrorUtils.createErrorType("<return type>") : returnType;
+            result = JetStandardClasses.getFunctionType(null, effectiveReceiverType, parameterTypes, safeReturnType);
         }
 
         @Override

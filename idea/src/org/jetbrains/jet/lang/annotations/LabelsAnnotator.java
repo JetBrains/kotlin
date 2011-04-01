@@ -5,6 +5,7 @@ package org.jetbrains.jet.lang.annotations;
 
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.JetHighlighter;
@@ -16,6 +17,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 
 public class LabelsAnnotator implements Annotator {
     public void annotate(@NotNull PsiElement element, @NotNull final AnnotationHolder holder) {
+        if (ApplicationManager.getApplication().isUnitTestMode()) return;
         element.accept(new JetVisitor() {
             @Override
             public void visitPrefixExpression(JetPrefixExpression expression) {

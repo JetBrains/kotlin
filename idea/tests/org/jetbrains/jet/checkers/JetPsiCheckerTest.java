@@ -31,4 +31,8 @@ public class JetPsiCheckerTest extends LightDaemonAnalyzerTestCase {
     public void testQualifiedThis() throws Exception {
         doTest("/checker/QualifiedThis.jet", true, true);
     }
+
+    public void testBreakContinue() throws Exception {
+        doTest("/checker/BreakContinue.jet", true, true);
+    }
 }
