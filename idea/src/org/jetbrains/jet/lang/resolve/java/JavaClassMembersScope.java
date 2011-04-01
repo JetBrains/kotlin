@@ -6,6 +6,7 @@ import org.jetbrains.jet.lang.resolve.JetScope;
 import org.jetbrains.jet.lang.resolve.WritableFunctionGroup;
 import org.jetbrains.jet.lang.types.*;
 
+import java.util.Collection;
 import java.util.Collections;
 
 /**
@@ -28,6 +29,12 @@ public class JavaClassMembersScope implements JetScope {
     @Override
     public DeclarationDescriptor getContainingDeclaration() {
         return containingDeclaration;
+    }
+
+    @NotNull
+    @Override
+    public Collection<DeclarationDescriptor> getDeclarationsByLabel(String labelName) {
+        throw new UnsupportedOperationException(); // TODO
     }
 
     @Override

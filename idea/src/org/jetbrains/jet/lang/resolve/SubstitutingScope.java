@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.types.*;
 
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -84,5 +85,11 @@ public class SubstitutingScope implements JetScope {
     @Override
     public DeclarationDescriptor getContainingDeclaration() {
         return workerScope.getContainingDeclaration();
+    }
+
+    @NotNull
+    @Override
+    public Collection<DeclarationDescriptor> getDeclarationsByLabel(String labelName) {
+        throw new UnsupportedOperationException(); // TODO
     }
 }
