@@ -12,6 +12,7 @@ import org.objectweb.asm.util.TraceClassVisitor;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
@@ -139,6 +140,23 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
         final Method main = generateFunction();
         assertEquals(true, main.invoke(null, 1));
         assertEquals(false, main.invoke(null, 0));
+    }
+
+    public void testWhile() throws Exception {
+        factorialTest("while.jet");
+    }
+
+    public void testDoWhile() throws Exception {
+        factorialTest("doWhile.jet");
+    }
+
+    private void factorialTest(final String name) throws IllegalAccessException, InvocationTargetException {
+        loadFile(name);
+
+        System.out.println(generateToText());
+        final Method main = generateFunction();
+        assertEquals(6, main.invoke(null, 3));
+        assertEquals(120, main.invoke(null, 5));
     }
 
     private void loadFile(final String name) {

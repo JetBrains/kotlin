@@ -119,10 +119,9 @@ public class ExpressionCodegen extends JetVisitor {
         myLoopEnds.push(end);
 
         gen(expression.getCondition());
-        unboxBoolean();
-        v.ifeq(end);
+        myStack.pop().condJump(end, true, v);
 
-        genToUnit(expression.getBody());
+        gen(expression.getBody(), Type.VOID_TYPE);
         v.goTo(condition);
 
         v.mark(end);
@@ -139,7 +138,7 @@ public class ExpressionCodegen extends JetVisitor {
         Label end = new Label();
         myLoopEnds.push(end);
 
-        genToUnit(expression.getBody());
+        gen(expression.getBody(), Type.VOID_TYPE);
 
         gen(expression.getCondition());
         unboxBoolean();
@@ -178,17 +177,9 @@ public class ExpressionCodegen extends JetVisitor {
 
         myStack.pop().condJump(endLabel, inverse, v);
 
-        genToUnit(expression);
+        gen(expression, Type.VOID_TYPE);
 
         v.mark(endLabel);
-    }
-
-    private void genToUnit(JetExpression expression) {
-        gen(expression);
-
-        if (!isUnitType(expression)) {
-            v.pop();
-        }
     }
 
     @Override
@@ -227,10 +218,24 @@ public class ExpressionCodegen extends JetVisitor {
 
     @Override
     public void visitBlockExpression(JetBlockExpression expression) {
+        List<JetElement> statements = expression.getStatements();
+        generateBlock(statements);
+    }
+
+    @Override
+    public void visitFunctionLiteralExpression(JetFunctionLiteralExpression expression) {
+        if (bindingContext.isBlock(expression)) {
+            generateBlock(expression.getBody());
+        }
+        else {
+            throw new UnsupportedOperationException("don't know how to generate non-block function literals");
+        }
+    }
+
+    private void generateBlock(List<JetElement> statements) {
         Label blockStart = new Label();
         v.mark(blockStart);
 
-        List<JetElement> statements = expression.getStatements();
         for (JetElement statement : statements) {
             if (statement instanceof JetProperty) {
                 myMap.enter(bindingContext.getPropertyDescriptor((JetProperty) statement));
@@ -254,7 +259,6 @@ public class ExpressionCodegen extends JetVisitor {
                 v.visitLocalVariable(var.getName(), outType.getDescriptor(), null, blockStart, blockEnd, index);
             }
         }
-
     }
 
     @Override
@@ -464,6 +468,9 @@ public class ExpressionCodegen extends JetVisitor {
                     if (op.getName().equals("plus")) {
                         opcode = Opcodes.IADD;
                     }
+                    else if (op.getName().equals("times")) {
+                        opcode = Opcodes.IMUL;
+                    }
                     else {
                         throw new UnsupportedOperationException("Don't know how to generate binary op method " + op.getName());
                     }
@@ -506,10 +513,6 @@ public class ExpressionCodegen extends JetVisitor {
         else {
             throw new UnsupportedOperationException("Don't know how to generate assignment to " + expression.getLeft().getText());
         }
-    }
-
-    private boolean isUnitType(JetExpression e) {
-        return false; // TODO:!!!
     }
 
     @Override

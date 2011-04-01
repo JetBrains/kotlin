@@ -123,6 +123,12 @@ public abstract class StackValue {
             if (opToken == JetTokens.GT) {
                 opcode = inverse ? Opcodes.IF_ICMPLE : Opcodes.IF_ICMPGT;
             }
+            else if (opToken == JetTokens.LT) {
+                opcode = inverse ? Opcodes.IF_ICMPGE : Opcodes.IF_ICMPLT;
+            }
+            else if (opToken == JetTokens.LTEQ) {
+                opcode = inverse ? Opcodes.IF_ICMPGT : Opcodes.IF_ICMPLE;
+            }
             else {
                 throw new UnsupportedOperationException("don't know how to generate this condjump");
             }
