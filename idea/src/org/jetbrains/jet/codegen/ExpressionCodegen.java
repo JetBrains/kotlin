@@ -1,6 +1,7 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.psi.*;
+import com.intellij.psi.tree.IElementType;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.*;
@@ -72,7 +73,9 @@ public class ExpressionCodegen extends JetVisitor {
     public void visitIfExpression(JetIfExpression expression) {
         JetType expressionType = bindingContext.getExpressionType(expression);
         Type asmType = typeMapper.mapType(expressionType);
-        gen(expression.getCondition(), Type.BOOLEAN_TYPE);
+        int oldStackDepth = myStack.size();
+        gen(expression.getCondition());
+        assert myStack.size() == oldStackDepth+1;
 
         JetExpression thenExpression = expression.getThen();
         JetExpression elseExpression = expression.getElse();
@@ -93,7 +96,7 @@ public class ExpressionCodegen extends JetVisitor {
 
 
         Label elseLabel = new Label();
-        v.ifeq(elseLabel); // == 0, i.e. false
+        myStack.pop().condJump(elseLabel, true, v);   // == 0, i.e. false
 
         gen(thenExpression, asmType);
 
@@ -173,12 +176,7 @@ public class ExpressionCodegen extends JetVisitor {
     private void generateSingleBranchIf(JetExpression expression, boolean inverse) {
         Label endLabel = new Label();
 
-        if (inverse) {
-            v.ifeq(endLabel);
-        }
-        else {
-            v.ifne(endLabel);
-        }
+        myStack.pop().condJump(endLabel, inverse, v);
 
         genToUnit(expression);
 
@@ -449,7 +447,8 @@ public class ExpressionCodegen extends JetVisitor {
 
     @Override
     public void visitBinaryExpression(JetBinaryExpression expression) {
-        if (expression.getOperationReference().getReferencedNameElementType() == JetTokens.EQ) {
+        final IElementType opToken = expression.getOperationReference().getReferencedNameElementType();
+        if (opToken == JetTokens.EQ) {
             generateAssignmentExpression(expression);
             return;
         }
@@ -457,19 +456,42 @@ public class ExpressionCodegen extends JetVisitor {
         if (op instanceof FunctionDescriptor) {
             DeclarationDescriptor cls = op.getContainingDeclaration();
             if (cls instanceof ClassDescriptor && cls.getName().equals("Int")) {
-                if (op.getName().equals("plus")) {
-                    JetType returnType = ((FunctionDescriptor) op).getUnsubstitutedReturnType();
-                    if (returnType.equals(stdlib.getIntType())) {
-                        gen(expression.getLeft(), Type.INT_TYPE);
-                        gen(expression.getRight(), Type.INT_TYPE);
-                        v.add(Type.INT_TYPE);
-                        myStack.push(StackValue.onStack(Type.INT_TYPE));
-                        return;
-                    }
+                if (op.getName().equals("compareTo")) {
+                    generateCompareOp(expression, opToken);
                 }
+                else {
+                    int opcode;
+                    if (op.getName().equals("plus")) {
+                        opcode = Opcodes.IADD;
+                    }
+                    else {
+                        throw new UnsupportedOperationException("Don't know how to generate binary op method " + op.getName());
+                    }
+                    generateBinaryOp(expression, (FunctionDescriptor) op, opcode);
+                }
+                return;
             }
         }
         throw new UnsupportedOperationException("Don't know how to generate binary op " + expression);
+    }
+
+    private void generateBinaryOp(JetBinaryExpression expression, FunctionDescriptor op, int opcode) {
+        JetType returnType = op.getUnsubstitutedReturnType();
+        if (returnType.equals(stdlib.getIntType())) {
+            gen(expression.getLeft(), Type.INT_TYPE);
+            gen(expression.getRight(), Type.INT_TYPE);
+            v.visitInsn(Type.INT_TYPE.getOpcode(opcode));
+            myStack.push(StackValue.onStack(Type.INT_TYPE));
+        }
+        else {
+            throw new UnsupportedOperationException("Don't know how to generate binary op with return type " + returnType);
+        }
+    }
+
+    private void generateCompareOp(JetBinaryExpression expression, IElementType opToken) {
+        gen(expression.getLeft(), Type.INT_TYPE);
+        gen(expression.getRight(), Type.INT_TYPE);
+        myStack.push(StackValue.icmp(opToken));
     }
 
     private void generateAssignmentExpression(JetBinaryExpression expression) {

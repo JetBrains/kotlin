@@ -1,6 +1,10 @@
 package org.jetbrains.jet.codegen;
 
+import com.intellij.psi.tree.IElementType;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lexer.JetTokens;
+import org.objectweb.asm.Label;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
 
@@ -22,6 +26,12 @@ public abstract class StackValue {
         return new Constant(value);
     }
 
+    public static StackValue icmp(IElementType opToken) {
+        return new IntCompare(opToken);
+    }
+
+    public abstract void condJump(Label label, boolean inverse, InstructionAdapter v);
+
     public static class Local extends StackValue {
         private final int index;
         private final JetType type;
@@ -36,6 +46,17 @@ public abstract class StackValue {
             v.load(index, type);
             // TODO box/unbox
         }
+
+        @Override
+        public void condJump(Label label, boolean inverse, InstructionAdapter v) {
+            put(Type.INT_TYPE, v);
+            if (inverse) {
+                v.ifeq(label);
+            }
+            else {
+                v.ifne(label);
+            }
+        }
     }
 
     public static class OnStack extends StackValue {
@@ -47,6 +68,11 @@ public abstract class StackValue {
 
         @Override
         public void put(Type type, InstructionAdapter v) {
+        }
+
+        @Override
+        public void condJump(Label label, boolean inverse, InstructionAdapter v) {
+            throw new UnsupportedOperationException("don't know how to generate this condjump");
         }
     }
 
@@ -71,6 +97,36 @@ public abstract class StackValue {
             else {
                 v.aconst(value);
             }
+        }
+
+        @Override
+        public void condJump(Label label, boolean inverse, InstructionAdapter v) {
+            throw new UnsupportedOperationException("don't know how to generate this condjump");
+        }
+    }
+
+    private static class IntCompare extends StackValue {
+        private final IElementType opToken;
+
+        public IntCompare(IElementType opToken) {
+            this.opToken = opToken;
+        }
+
+        @Override
+        public void put(Type type, InstructionAdapter v) {
+            throw new UnsupportedOperationException("don't know how to put an IntCompare on stack");
+        }
+
+        @Override
+        public void condJump(Label label, boolean inverse, InstructionAdapter v) {
+            int opcode;
+            if (opToken == JetTokens.GT) {
+                opcode = inverse ? Opcodes.IF_ICMPLE : Opcodes.IF_ICMPGT;
+            }
+            else {
+                throw new UnsupportedOperationException("don't know how to generate this condjump");
+            }
+            v.visitJumpInsn(opcode, label);
         }
     }
 }
