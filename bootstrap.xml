@@ -1,0 +1,7 @@
+<project name="Jet CI Bootstrap" default="unzipIdeaSDK">
+    <target name="unzipIdeaSDK">
+        <unzip dest="ideaSDK">
+            <fileset dir="ideaSDK" includes="ideaIC*.zip"/>
+        </unzip>
+    </target>
+</project>

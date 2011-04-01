@@ -4,6 +4,7 @@ import com.intellij.psi.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lexer.JetTokens;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -448,6 +449,10 @@ public class ExpressionCodegen extends JetVisitor {
 
     @Override
     public void visitBinaryExpression(JetBinaryExpression expression) {
+        if (expression.getOperationReference().getReferencedNameElementType() == JetTokens.EQ) {
+            generateAssignmentExpression(expression);
+            return;
+        }
         DeclarationDescriptor op = bindingContext.resolveReferenceExpression(expression.getOperationReference());
         if (op instanceof FunctionDescriptor) {
             DeclarationDescriptor cls = op.getContainingDeclaration();
@@ -465,6 +470,20 @@ public class ExpressionCodegen extends JetVisitor {
             }
         }
         throw new UnsupportedOperationException("Don't know how to generate binary op " + expression);
+    }
+
+    private void generateAssignmentExpression(JetBinaryExpression expression) {
+        if (expression.getLeft() instanceof JetReferenceExpression) {
+            final JetReferenceExpression lhs = (JetReferenceExpression) expression.getLeft();
+            final DeclarationDescriptor declarationDescriptor = bindingContext.resolveReferenceExpression(lhs);
+            final int index = myMap.getIndex(declarationDescriptor);
+            final Type type = typeMapper.mapType(bindingContext.getExpressionType(lhs));
+            gen(expression.getRight(), type);
+            v.store(index, type);
+        }
+        else {
+            throw new UnsupportedOperationException("Don't know how to generate assignment to " + expression.getLeft().getText());
+        }
     }
 
     private boolean isUnitType(JetExpression e) {
