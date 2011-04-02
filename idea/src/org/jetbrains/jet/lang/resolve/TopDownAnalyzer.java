@@ -241,8 +241,10 @@ public class TopDownAnalyzer {
             new JetControlFlowProcessor(semanticServices, trace, instructionsGenerator).generate(function, bodyExpression);
             if (!ApplicationManager.getApplication().isUnitTestMode()) {
                 try {
-                    File target = new File(System.getProperty("user.home") + "/work/cfg.dot").getAbsoluteFile();
-                    target.mkdirs();
+                    File workDirectory = new File(System.getProperty("user.home") + "/work/");
+                    workDirectory.mkdirs();
+                    File target = new File(workDirectory, "cfg.dot");
+
                     PrintStream out = new PrintStream(target);
                     out.println("digraph " + function.getName() + " {");
                     Collection<Pseudocode> pseudocodes = controlFlowDataTrace.getAllData();
