@@ -133,6 +133,6 @@ public class BindingTraceContext extends BindingTrace implements BindingContext 
 
     @Override
     public boolean isBlock(JetFunctionLiteralExpression expression) {
-        return expression.hasParameterSpecification() || blocks.contains(expression);
+        return !expression.hasParameterSpecification() && blocks.contains(expression);
     }
 }

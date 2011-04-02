@@ -693,6 +693,7 @@ public class JetTypeInferrer {
                     WritableScope writableScope = semanticServices.createWritableScope(scope, scope.getContainingDeclaration());
                     conditionScope = writableScope;
                     getBlockReturnedTypeWithWritableScope(writableScope, function.getBody(), LabeledJumpDomain.ERROR); // TODO
+                    trace.recordBlock(function);
                 } else {
                     getType(scope, body, true);
                 }
