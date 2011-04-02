@@ -11,6 +11,7 @@ import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.*;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.*;
@@ -240,11 +241,13 @@ public class TopDownAnalyzer {
             new JetControlFlowProcessor(semanticServices, trace, instructionsGenerator).generate(function, bodyExpression);
             if (!ApplicationManager.getApplication().isUnitTestMode()) {
                 try {
-                    PrintStream out = new PrintStream("/Users/abreslav/work/cfg.dot");
+                    File target = new File(System.getProperty("user.home") + "/work/cfg.dot").getAbsoluteFile();
+                    target.mkdirs();
+                    PrintStream out = new PrintStream(target);
                     out.println("digraph " + function.getName() + " {");
                     Collection<Pseudocode> pseudocodes = controlFlowDataTrace.getAllData();
                     int[] count = new int[1];
-                    Map<Instruction,String> nodeToName = new HashMap<Instruction, String>();
+                    Map<Instruction, String> nodeToName = new HashMap<Instruction, String>();
                     for (Pseudocode pseudocode : pseudocodes) {
                         pseudocode.postProcess();
                         System.out.println("-------------");
@@ -262,6 +265,7 @@ public class TopDownAnalyzer {
                         i++;
                     }
                     out.println("}");
+                    out.close();
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                 }
