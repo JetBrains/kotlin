@@ -115,7 +115,7 @@ public class JetCompiler implements TranslatingCompiler {
 
         private static File dirForPackage(VirtualFile root, String fqName) throws IOException {
             File result = new File(root.getPath(), fqName.replace(".", "/"));
-            if (!result.mkdirs()) {
+            if (!result.exists() && !result.mkdirs()) {
                 throw new IOException("Failed to create directory for package");
             }
             return result;
