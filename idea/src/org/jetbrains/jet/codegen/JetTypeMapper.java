@@ -42,6 +42,20 @@ public class JetTypeMapper {
         if (JetStandardClasses.getAny().equals(descriptor)) {
             return Type.getType(Object.class);
         }
+
+        if (descriptor instanceof ClassDescriptor) {
+            return Type.getObjectType(getFQName(descriptor).replace('.', '/'));
+        }
+
         throw new UnsupportedOperationException("Unknown type " + jetType);
+    }
+
+    private static String getFQName(DeclarationDescriptor descriptor) {
+        DeclarationDescriptor container = descriptor.getContainingDeclaration();
+        if (container != null && !(container instanceof ModuleDescriptor)) {
+            return getFQName(container) + "." + descriptor.getName();
+        }
+
+        return descriptor.getName();
     }
 }
