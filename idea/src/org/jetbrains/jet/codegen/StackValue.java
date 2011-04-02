@@ -128,7 +128,10 @@ public abstract class StackValue {
         @Override
         public void condJump(Label label, boolean jumpIfFalse, InstructionAdapter v) {
             int opcode;
-            if (opToken == JetTokens.GT) {
+            if (opToken == JetTokens.EQEQ) {
+                opcode = jumpIfFalse ? Opcodes.IF_ICMPNE : Opcodes.IF_ICMPEQ;
+            }
+            else if (opToken == JetTokens.GT) {
                 opcode = jumpIfFalse ? Opcodes.IF_ICMPLE : Opcodes.IF_ICMPGT;
             }
             else if (opToken == JetTokens.LT) {

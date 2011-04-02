@@ -480,6 +480,21 @@ public class ExpressionCodegen extends JetVisitor {
                     }
                     return;
                 }
+                else if (className.equals("Hashable")) {
+                    if (op.getName().equals("equals")) {
+                        final Type leftType = typeMapper.mapType(bindingContext.getExpressionType(expression.getLeft()));
+                        final Type rightType = typeMapper.mapType(bindingContext.getExpressionType(expression.getRight()));
+                        if (leftType == Type.INT_TYPE && rightType == Type.INT_TYPE) {
+                            gen(expression.getLeft(), Type.INT_TYPE);
+                            gen(expression.getRight(), Type.INT_TYPE);
+                            myStack.push(StackValue.icmp(JetTokens.EQEQ));
+                            return;
+                        }
+                        else {
+                            throw new UnsupportedOperationException("Don't know how to generate equality for these types");
+                        }
+                    }
+                }
                 else {
                     throw new UnsupportedOperationException("Don't know how to generate binary op for class " + className);
                 }
