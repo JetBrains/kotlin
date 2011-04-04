@@ -42,62 +42,83 @@ public class JetControlFlowTest extends JetTestCaseBase {
         configureByFile(getTestFilePath());
         JetFile file = (JetFile) getFile();
 
+        final Map<JetElement, Pseudocode> data = new LinkedHashMap<JetElement, Pseudocode>();
+        final JetControlFlowDataTrace jetControlFlowDataTrace = new JetControlFlowDataTrace() {
+
+            @Override
+            public void recordControlFlowData(@NotNull JetElement element, @NotNull Pseudocode pseudocode) {
+                data.put(element, pseudocode);
+            }
+
+            @Override
+            public void close() {
+            }
+
+        };
+
         AnalyzingUtils.analyzeNamespace(file.getRootNamespace(), ErrorHandler.THROW_EXCEPTION, new JetControlFlowDataTraceFactory() {
             @NotNull
             @Override
             public JetControlFlowDataTrace createTrace(JetElement element) {
-                return new JetControlFlowDataTrace() {
-                    private final Map<JetElement, Pseudocode> data = new LinkedHashMap<JetElement, Pseudocode>();
+                return jetControlFlowDataTrace;
+            }
+        });
 
-                    @Override
-                    public void recordControlFlowData(@NotNull JetElement element, @NotNull Pseudocode pseudocode) {
-                        data.put(element, pseudocode);
-                    }
+        try {
+            try {
+                processCFData(name, data);
+            } catch (AssertionFailedError e) {
+                dumpDot(name, data.values());
+                throw e;
+            }
+            dumpDot(name, data.values());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
-                    @Override
-                    public void close() {
-                        try {
-                            try {
-                                processCFData(name);
-                            } catch (AssertionFailedError e) {
-                                dumpDot(name, data.values());
-                                throw e;
-                            }
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
+    }
 
-                    private void processCFData(String name) throws IOException {
-                        Collection<Pseudocode> pseudocodes = data.values();
-                        for (Pseudocode pseudocode : pseudocodes) {
-                            pseudocode.postProcess();
-                        }
+    private void processCFData(String name, Map<JetElement, Pseudocode> data) throws IOException {
+        Collection<Pseudocode> pseudocodes = data.values();
+        for (Pseudocode pseudocode : pseudocodes) {
+            pseudocode.postProcess();
+        }
 
-                        StringBuilder instructionDump = new StringBuilder();
-                        for (Pseudocode pseudocode : pseudocodes) {
-                            pseudocode.dumpInstructions(instructionDump);
-                            instructionDump.append("=====================\n");
-                        }
+        StringBuilder instructionDump = new StringBuilder();
+        int i = 0;
+        for (Pseudocode pseudocode : pseudocodes) {
+            JetElement correspondingElement = pseudocode.getCorrespondingElement();
+            String label;
+            if (correspondingElement instanceof JetNamedDeclaration) {
+                JetNamedDeclaration namedDeclaration = (JetNamedDeclaration) correspondingElement;
+                label = namedDeclaration.getName();
+            }
+            else {
+                label = "anonymous_" + i++;
+            }
 
-                        String expectedInstructionsFileName = getTestDataPath() + "/" + getTestFilePath().replace(".jet", ".instructions");
-                        File expectedInstructionsFile = new File(expectedInstructionsFileName);
-                        if (!expectedInstructionsFile.exists()) {
-                            FileUtil.writeToFile(expectedInstructionsFile, instructionDump.toString());
-                            fail("No expected instructions for " + name + " generated result is written into " + expectedInstructionsFileName);
-                        }
-                        String expectedInstructions = FileUtil.loadFile(expectedInstructionsFile);
+            instructionDump.append("== ").append(label).append(" ==\n");
 
-                        assertEquals(expectedInstructions, instructionDump.toString());
+            instructionDump.append(correspondingElement.getText());
+            instructionDump.append("\n---------------------\n");
+            pseudocode.dumpInstructions(instructionDump);
+            instructionDump.append("=====================\n");
+        }
+
+        String expectedInstructionsFileName = getTestDataPath() + "/" + getTestFilePath().replace(".jet", ".instructions");
+        File expectedInstructionsFile = new File(expectedInstructionsFileName);
+        if (!expectedInstructionsFile.exists()) {
+            FileUtil.writeToFile(expectedInstructionsFile, instructionDump.toString());
+            fail("No expected instructions for " + name + " generated result is written into " + expectedInstructionsFileName);
+        }
+        String expectedInstructions = FileUtil.loadFile(expectedInstructionsFile);
+
+        assertEquals(expectedInstructions, instructionDump.toString());
 
 //                        StringBuilder graphDump = new StringBuilder();
 //                        for (Pseudocode pseudocode : pseudocodes) {
 //                            topOrderDump(pseudocode.)
 //                        }
-                    }
-                };
-            }
-        });
     }
 
     private void dumpDot(String name, Collection<Pseudocode> pseudocodes) throws FileNotFoundException {

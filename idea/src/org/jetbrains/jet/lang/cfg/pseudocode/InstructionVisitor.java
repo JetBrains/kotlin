@@ -54,4 +54,8 @@ public class InstructionVisitor {
     public void visitSubroutineEnter(SubroutineEnterInstruction instruction) {
         visitInstructionWithNext(instruction);
     }
+
+    public void visitWriteValue(WriteValueInstruction writeValueInstruction) {
+        visitInstructionWithNext(writeValueInstruction);
+    }
 }

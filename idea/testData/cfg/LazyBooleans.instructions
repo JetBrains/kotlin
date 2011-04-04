@@ -1,0 +1,68 @@
+== lazyBooleans ==
+fun lazyBooleans(a : Boolean, b : Boolean) : Unit {
+    if (a) {
+      1
+    }
+    else {
+      2
+    }
+    3
+    if (a && b) 5 else 6
+    7
+    if (a || b) 8 else 9
+    10
+    if (a) 11
+    12
+    if (a) else 13
+    14
+}
+---------------------
+l0:
+    <START>
+    r(a)
+    jf(l2)
+    r(1)
+    jmp(l3)
+l2:
+    r(2)
+l3:
+    r(3)
+    r(a)
+    jf(l4)
+    r(b)
+l4:
+    jf(l5)
+    r(5)
+    jmp(l6)
+l5:
+    r(6)
+l6:
+    r(7)
+    r(a)
+    jt(l7)
+    r(b)
+l7:
+    jf(l8)
+    r(8)
+    jmp(l9)
+l8:
+    r(9)
+l9:
+    r(10)
+    r(a)
+    jf(l10)
+    r(11)
+    jmp(l11)
+l10:
+l11:
+    r(12)
+    r(a)
+    jf(l12)
+    jmp(l13)
+l12:
+    r(13)
+l13:
+    r(14)
+l1:
+    <END>
+=====================

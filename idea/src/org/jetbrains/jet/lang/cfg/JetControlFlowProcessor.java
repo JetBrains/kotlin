@@ -167,11 +167,24 @@ public class JetControlFlowProcessor {
                 }
                 builder.bindLabel(resultLabel);
             }
+            else if (operationType == JetTokens.EQ) {
+                JetExpression left = expression.getLeft();
+                if (right != null) {
+                    value(right, false);
+                }
+                if (left instanceof JetSimpleNameExpression) {
+                    builder.writeNode(expression, left);
+                }
+                else {
+                    throw new UnsupportedOperationException("Assignments to " + left + " are not supported yet"); // TODO
+                }
+            }
             else {
                 value(expression.getLeft(), false);
                 if (right != null) {
                     value(right, false);
                 }
+                value(expression.getOperationReference(), false);
                 builder.readNode(expression);
             }
         }
@@ -194,7 +207,10 @@ public class JetControlFlowProcessor {
             value(expression.getCondition(), false);
             Label elseLabel = builder.createUnboundLabel();
             builder.jumpOnFalse(elseLabel);
-            value(expression.getThen(), true);
+            JetExpression then = expression.getThen();
+            if (then != null) {
+                value(then, true);
+            }
             Label resultLabel = builder.createUnboundLabel();
             builder.jump(resultLabel);
             builder.bindLabel(elseLabel);
@@ -366,6 +382,51 @@ public class JetControlFlowProcessor {
             else {
                 generateSubroutineControlFlow(expression, expression.getBody(), true);
             }
+        }
+
+        @Override
+        public void visitDotQualifiedExpression(JetDotQualifiedExpression expression) {
+            value(expression.getReceiverExpression(), false);
+            JetExpression selectorExpression = expression.getSelectorExpression();
+            if (selectorExpression != null) {
+                value(selectorExpression, false);
+            }
+            builder.readNode(expression);
+        }
+
+        @Override
+        public void visitCallExpression(JetCallExpression expression) {
+            for (JetTypeProjection typeArgument : expression.getTypeArguments()) {
+                value(typeArgument, false);
+            }
+
+            for (JetArgument argument : expression.getValueArguments()) {
+                JetExpression argumentExpression = argument.getArgumentExpression();
+                if (argumentExpression != null) {
+                    value(argumentExpression, false);
+                }
+            }
+
+            for (JetExpression functionLiteral : expression.getFunctionLiteralArguments()) {
+                value(functionLiteral, false);
+            }
+
+            value(expression.getCalleeExpression(), false);
+            builder.readNode(expression);
+        }
+
+        @Override
+        public void visitProperty(JetProperty property) {
+            JetExpression initializer = property.getInitializer();
+            if (initializer != null) {
+                value(initializer, false);
+                builder.writeNode(property, property);
+            }
+        }
+
+        @Override
+        public void visitTypeProjection(JetTypeProjection typeProjection) {
+            // TODO : Support Type Arguments. Class object may be initialized at this point");
         }
 
         @Override

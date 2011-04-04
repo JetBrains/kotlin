@@ -166,23 +166,10 @@ public class ClassDescriptorResolver {
         List<TypeParameterDescriptor> typeParameterDescriptors = resolveTypeParameters(functionDescriptor, innerScope, function.getTypeParameters());
         List<ValueParameterDescriptor> valueParameterDescriptors = resolveValueParameters(functionDescriptor, innerScope, function.getValueParameters());
 
-        JetType returnType;
         JetTypeReference returnTypeRef = function.getReturnTypeRef();
-        JetExpression bodyExpression = function.getBodyExpression();
+        JetType returnType = null;
         if (returnTypeRef != null) {
             returnType = typeResolver.resolveType(innerScope, returnTypeRef);
-            // TODO : check body type, consider recursion
-            if (bodyExpression != null) {
-                semanticServices.getTypeInferrer(trace).getType(innerScope, bodyExpression, function.hasBlockBody());
-            }
-        } else {
-            if (bodyExpression == null) {
-                semanticServices.getErrorHandler().genericError(function.getNode(), "This function must either declare a return type or have a body element");
-                returnType = ErrorUtils.createErrorType("No type, no body");
-            } else {
-                // TODO : Recursion possible
-                returnType = semanticServices.getTypeInferrer(trace).safeGetType(innerScope, bodyExpression, function.hasBlockBody());
-            }
         }
 
         functionDescriptor.initialize(

@@ -193,21 +193,6 @@ public class Pseudocode {
         }
     }
 
-    public void dumpGraph(@NotNull final PrintStream out) {
-        String graphHeader = "digraph g";
-        dumpSubgraph(out, graphHeader, new int[1], "", new HashMap<Instruction, String>());
-    }
-
-    private void dumpSubgraph(final PrintStream out, String graphHeader, final int[] count, String style, final Map<Instruction, String> nodeToName) {
-        out.println(graphHeader + " {");
-        out.println(style);
-
-        dumpNodes(out, count, nodeToName);
-        dumpEdges(out, count, nodeToName);
-
-        out.println("}");
-    }
-
     public void dumpEdges(final PrintStream out, final int[] count, final Map<Instruction, String> nodeToName) {
         for (final Instruction fromInst : instructions) {
             fromInst.accept(new InstructionVisitor() {

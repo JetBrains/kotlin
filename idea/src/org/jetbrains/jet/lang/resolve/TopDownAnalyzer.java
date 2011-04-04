@@ -1,16 +1,15 @@
 package org.jetbrains.jet.lang.resolve;
 
-import com.intellij.openapi.application.ApplicationManager;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.JetControlFlowProcessor;
-import org.jetbrains.jet.lang.cfg.pseudocode.*;
+import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTrace;
+import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
+import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowInstructionsGenerator;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.*;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintStream;
 import java.util.*;
 
 /**
@@ -20,7 +19,7 @@ public class TopDownAnalyzer {
 
     private final Map<JetClass, MutableClassDescriptor> classes = new LinkedHashMap<JetClass, MutableClassDescriptor>();
     private final Map<JetNamespace, WritableScope> namespaceScopes = new LinkedHashMap<JetNamespace, WritableScope>();
-    private final Map<JetDeclaration, FunctionDescriptor> functions = new HashMap<JetDeclaration, FunctionDescriptor>();
+    private final Map<JetDeclaration, FunctionDescriptor> functions = new LinkedHashMap<JetDeclaration, FunctionDescriptor>();
     private final Map<JetDeclaration, WritableScope> declaringScopes = new HashMap<JetDeclaration, WritableScope>();
 
     private final JetSemanticServices semanticServices;
@@ -28,6 +27,7 @@ public class TopDownAnalyzer {
     private final BindingTrace trace;
     private final JetTypeInferrer typeInferrer;
     private final JetControlFlowDataTraceFactory flowDataTraceFactory;
+    private boolean readyToProcessExpressions = false;
 
     public TopDownAnalyzer(JetSemanticServices semanticServices, @NotNull BindingTrace bindingTrace, @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory) {
         this.semanticServices = semanticServices;
@@ -55,6 +55,7 @@ public class TopDownAnalyzer {
         collectTypeDeclarators(toplevelScope, declarations);
         resolveTypeDeclarations();
         processBehaviorDeclarators(toplevelScope, declarations);
+        readyToProcessExpressions = true;
         resolveBehaviorDeclarationBodies();
     }
 
@@ -272,6 +273,7 @@ public class TopDownAnalyzer {
 
             assert declaration instanceof JetFunction || declaration instanceof JetConstructor;
             JetDeclarationWithBody declarationWithBody = (JetDeclarationWithBody) declaration;
+
             JetExpression bodyExpression = declarationWithBody.getBodyExpression();
 
             if (bodyExpression != null) {
@@ -286,13 +288,43 @@ public class TopDownAnalyzer {
                     preferBlock = jetFunction.hasBlockBody();
                 }
 
-                resolveExpression(parameterScope, bodyExpression, preferBlock, controlFlowDataTrace);
+                JetType returnType = resolveExpression(parameterScope, bodyExpression, preferBlock, controlFlowDataTrace);
+
+                if (declaration instanceof JetFunction) {
+                    JetFunction function = (JetFunction) declaration;
+                    if (function.getReturnTypeRef() != null) {
+                        if (returnType != null) {
+                            if (!semanticServices.getTypeChecker().isConvertibleTo(returnType, descriptor.getUnsubstitutedReturnType())) {
+                                semanticServices.getErrorHandler().typeMismatch(bodyExpression, descriptor.getUnsubstitutedReturnType(), returnType);
+                            }
+                        }
+                    }
+                    else {
+                        JetType safeReturnType = returnType;
+                        if (safeReturnType == null) {
+                            safeReturnType = ErrorUtils.createErrorType("Unable to infer body type");
+                        }
+                        ((FunctionDescriptorImpl) descriptor).setUnsubstitutedReturnType(safeReturnType);
+                    }
+                }
             }
+            else {
+                if (declaration instanceof JetFunction) {
+                    JetFunction function = (JetFunction) declaration;
+                    if (function.getReturnTypeRef() == null) {
+                        semanticServices.getErrorHandler().genericError(function.getNode(), "This function must either declare a return type or have a body element");
+                        ((FunctionDescriptorImpl) descriptor).setUnsubstitutedReturnType(ErrorUtils.createErrorType("No type, no body"));
+                    }
+                }
+            }
+            assert descriptor.getUnsubstitutedReturnType() != null;
         }
     }
 
-    private void resolveExpression(@NotNull JetScope scope, JetExpression expression, boolean preferBlock, JetControlFlowDataTrace controlFlowDataTrace) {
-        typeInferrer.getType(scope, expression, preferBlock);
+    @Nullable
+    private JetType resolveExpression(@NotNull JetScope scope, JetExpression expression, boolean preferBlock, JetControlFlowDataTrace controlFlowDataTrace) {
+        assert readyToProcessExpressions : "Must be ready collecting types";
+        return typeInferrer.getType(scope, expression, preferBlock);
     }
 
 }

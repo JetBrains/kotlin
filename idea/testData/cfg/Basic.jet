@@ -1,3 +1,23 @@
-fun f(a : Boolean) {
+fun f(a : Boolean) : Unit {
+    1
     a
+    2.lng
+    foo(a, 3)
+    genfun<Any>()
+    flfun {1}
+    3.equals(4)
+
+    3 equals 4
+
+    1 + 2
+
+    a && true
+    a || false
+
 }
+
+fun foo(a : Boolean, b : Int) : Unit {}
+
+fun genfun<T>() : Unit {}
+
+fun flfun(f : {() : Any}) : Unit {}

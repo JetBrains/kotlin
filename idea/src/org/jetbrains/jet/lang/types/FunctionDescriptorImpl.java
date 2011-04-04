@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -35,11 +36,15 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
     public FunctionDescriptor initialize(
             @NotNull List<TypeParameterDescriptor> typeParameters,
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
-            @NotNull JetType unsubstitutedReturnType) {
+            @Nullable JetType unsubstitutedReturnType) {
         this.typeParameters = typeParameters;
         this.unsubstitutedValueParameters = unsubstitutedValueParameters;
         this.unsubstitutedReturnType = unsubstitutedReturnType;
         return this;
+    }
+
+    public void setUnsubstitutedReturnType(@NotNull JetType unsubstitutedReturnType) {
+        this.unsubstitutedReturnType = unsubstitutedReturnType;
     }
 
     @Override

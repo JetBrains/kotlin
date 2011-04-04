@@ -1,0 +1,38 @@
+== assignments ==
+fun assignments() : Unit {
+    var x = 1
+    x = 2
+
+    x = if (true) 1 else 2
+
+    val y = true && false
+    val z = false && true
+}
+---------------------
+l0:
+    <START>
+    r(1)
+    x <- 
+    r(2)
+    x <-
+    r(true)
+    jf(l2)
+    r(1)
+    jmp(l3)
+l2:
+    r(2)
+l3:
+    x <-
+    r(true)
+    jf(l4)
+    r(false)
+l4:
+    y <- 
+    r(false)
+    jf(l5)
+    r(true)
+l5:
+    z <- 
+l1:
+    <END>
+=====================

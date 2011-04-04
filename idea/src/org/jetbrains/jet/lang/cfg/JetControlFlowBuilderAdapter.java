@@ -118,4 +118,9 @@ public class JetControlFlowBuilderAdapter implements JetControlFlowBuilder {
     public void unsupported(JetElement element) {
         builder.unsupported(element);
     }
+
+    @Override
+    public void writeNode(@NotNull JetElement assignment, @NotNull JetElement lValue) {
+        builder.writeNode(assignment, lValue);
+    }
 }

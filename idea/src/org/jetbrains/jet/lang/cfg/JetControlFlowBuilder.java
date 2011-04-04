@@ -49,6 +49,8 @@ public interface JetControlFlowBuilder {
     void returnValue(@NotNull JetElement subroutine);
     void returnNoValue(@NotNull JetElement subroutine);
 
+    void writeNode(@NotNull JetElement assignment, @NotNull JetElement lValue);
+
     // Other
     void unsupported(JetElement element);
 }

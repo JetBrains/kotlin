@@ -1,6 +1,97 @@
+== anonymous_0 ==
+{1}
+---------------------
+l2:
+    <START>
+    r(1)
+l3:
+    <END>
+=====================
+== f ==
+fun f(a : Boolean) : Unit {
+    1
+    a
+    2.lng
+    foo(a, 3)
+    genfun<Any>()
+    flfun {1}
+    3.equals(4)
+
+    3 equals 4
+
+    1 + 2
+
+    a && true
+    a || false
+
+}
+---------------------
 l0:
     <START>
+    r(1)
     r(a)
+    r(2)
+    r(lng)
+    r(2.lng)
+    r(a)
+    r(3)
+    r(foo)
+    r(foo(a, 3))
+    r(genfun)
+    r(genfun<Any>())
+    rf({1})
+    r(flfun)
+    r(flfun {1})
+    r(3)
+    r(4)
+    r(equals)
+    r(equals(4))
+    r(3.equals(4))
+    r(3)
+    r(4)
+    r(equals)
+    r(3 equals 4)
+    r(1)
+    r(2)
+    r(+)
+    r(1 + 2)
+    r(a)
+    jf(l4)
+    r(true)
+l4:
+    r(a)
+    jt(l5)
+    r(false)
+l1:
+l5:
+    <END>
+l2:
+    <START>
+    r(1)
+l3:
+    <END>
+=====================
+== foo ==
+fun foo(a : Boolean, b : Int) : Unit {}
+---------------------
+l0:
+    <START>
+l1:
+    <END>
+=====================
+== genfun ==
+fun genfun<T>() : Unit {}
+---------------------
+l0:
+    <START>
+l1:
+    <END>
+=====================
+== flfun ==
+fun flfun(f : {() : Any}) : Unit {}
+---------------------
+l0:
+    <START>
 l1:
     <END>
 =====================
