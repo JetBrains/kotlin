@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.JetSemanticServices;
+import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespace;
 import org.jetbrains.jet.lang.resolve.java.JavaPackageScope;
@@ -16,10 +17,14 @@ import org.jetbrains.jet.lang.types.ModuleDescriptor;
 public class AnalyzingUtils {
     public static BindingContext analyzeFile(@NotNull JetFile file, @NotNull ErrorHandler errorHandler) {
         JetNamespace rootNamespace = file.getRootNamespace();
-        return analyzeNamespace(rootNamespace, errorHandler);
+        return analyzeNamespace(rootNamespace, errorHandler, JetControlFlowDataTraceFactory.EMPTY);
     }
 
     public static BindingContext analyzeNamespace(@NotNull JetNamespace namespace, @NotNull ErrorHandler errorHandler) {
+        return analyzeNamespace(namespace, errorHandler, JetControlFlowDataTraceFactory.EMPTY);
+    }
+
+    public static BindingContext analyzeNamespace(@NotNull JetNamespace namespace, @NotNull ErrorHandler errorHandler, @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory) {
         Project project = namespace.getProject();
         JetSemanticServices semanticServices = JetSemanticServices.createSemanticServices(project, errorHandler);
 
@@ -33,7 +38,7 @@ public class AnalyzingUtils {
         scope.importScope(new JavaPackageScope("", null, javaSemanticServices));
         scope.importScope(new JavaPackageScope("java.lang", null, javaSemanticServices));
 
-        new TopDownAnalyzer(semanticServices, bindingTraceContext).process(scope, namespace);
+        new TopDownAnalyzer(semanticServices, bindingTraceContext, flowDataTraceFactory).process(scope, namespace);
         return bindingTraceContext;
     }
 }

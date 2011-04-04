@@ -9,4 +9,8 @@ public interface JetDeclarationWithBody {
 
     @Nullable
     JetExpression getBodyExpression();
+
+    @Nullable
+    String getName();
 }
+

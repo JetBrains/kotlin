@@ -3,6 +3,7 @@ package org.jetbrains.jet.lang.cfg.pseudocode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.Label;
+import org.jetbrains.jet.lang.psi.JetElement;
 
 import java.io.PrintStream;
 import java.util.*;
@@ -49,6 +50,16 @@ public class Pseudocode {
 
     private final List<Instruction> instructions = new ArrayList<Instruction>();
     private final List<PseudocodeLabel> labels = new ArrayList<PseudocodeLabel>();
+
+    private final JetElement correspondingElement;
+
+    public Pseudocode(JetElement correspondingElement) {
+        this.correspondingElement = correspondingElement;
+    }
+
+    public JetElement getCorrespondingElement() {
+        return correspondingElement;
+    }
 
     public PseudocodeLabel createLabel(String name) {
         PseudocodeLabel label = new PseudocodeLabel(name);
@@ -146,7 +157,23 @@ public class Pseudocode {
         return getTargetInstruction(instructions.subList(targetPosition, instructions.size()));
     }
 
-    public void dumpInstructions(@NotNull PrintStream out) {
+    public void dfsDump(StringBuilder nodes, StringBuilder edges, Map<Instruction, String> nodeNames) {
+        dfsDump(nodes, edges, instructions.get(0), nodeNames);
+    }
+
+    private void dfsDump(StringBuilder nodes, StringBuilder edges, Instruction instruction, Map<Instruction, String> nodeNames) {
+        if (nodeNames.containsKey(instruction)) return;
+        String name = "n" + nodeNames.size();
+        nodeNames.put(instruction, name);
+        nodes.append(name).append(" := ").append(renderName(instruction));
+
+    }
+
+    private String renderName(Instruction instruction) {
+        throw new UnsupportedOperationException(); // TODO
+    }
+
+    public void dumpInstructions(@NotNull StringBuilder out) {
         List<Pseudocode> locals = new ArrayList<Pseudocode>();
         for (int i = 0, instructionsSize = instructions.size(); i < instructionsSize; i++) {
             Instruction instruction = instructions.get(i);
@@ -156,10 +183,10 @@ public class Pseudocode {
             }
             for (PseudocodeLabel label: labels) {
                 if (label.getTargetInstructionIndex() == i) {
-                    out.println(label.getName() + ":");
+                    out.append(label.getName()).append(":\n");
                 }
             }
-            out.println("    " + instruction);
+            out.append("    ").append(instruction).append("\n");
         }
         for (Pseudocode local : locals) {
             local.dumpInstructions(out);

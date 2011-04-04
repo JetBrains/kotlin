@@ -28,8 +28,8 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         this.trace = trace;
     }
 
-    private void pushBuilder(JetElement subroutine) {
-        JetControlFlowInstructionsGeneratorWorker worker = new JetControlFlowInstructionsGeneratorWorker(subroutine);
+    private void pushBuilder(JetElement scopingElement, JetElement subroutine) {
+        JetControlFlowInstructionsGeneratorWorker worker = new JetControlFlowInstructionsGeneratorWorker(scopingElement, subroutine);
         builders.push(worker);
         builder = worker;
     }
@@ -46,10 +46,10 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
     @Override
     public void enterSubroutine(@NotNull JetElement subroutine, boolean isFunctionLiteral) {
         if (isFunctionLiteral) {
-            pushBuilder(builder.getCurrentSubroutine());
+            pushBuilder(subroutine, builder.getCurrentSubroutine());
         }
         else {
-            pushBuilder(subroutine);
+            pushBuilder(subroutine, subroutine);
         }
         builder.enterSubroutine(subroutine, false);
     }
@@ -71,8 +71,8 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         private final Pseudocode pseudocode;
         private final JetElement currentSubroutine;
 
-        private JetControlFlowInstructionsGeneratorWorker(JetElement currentSubroutine) {
-            this.pseudocode = new Pseudocode();
+        private JetControlFlowInstructionsGeneratorWorker(@NotNull JetElement scopingElement, @NotNull JetElement currentSubroutine) {
+            this.pseudocode = new Pseudocode(scopingElement);
             this.currentSubroutine = currentSubroutine;
         }
 

@@ -4,10 +4,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.JetControlFlowProcessor;
-import org.jetbrains.jet.lang.cfg.pseudocode.Instruction;
-import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTrace;
-import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowInstructionsGenerator;
-import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode;
+import org.jetbrains.jet.lang.cfg.pseudocode.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.*;
 
@@ -30,12 +27,22 @@ public class TopDownAnalyzer {
     private final ClassDescriptorResolver classDescriptorResolver;
     private final BindingTrace trace;
     private final JetTypeInferrer typeInferrer;
+    private final JetControlFlowDataTraceFactory flowDataTraceFactory;
+
+    public TopDownAnalyzer(JetSemanticServices semanticServices, @NotNull BindingTrace bindingTrace, @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory) {
+        this.semanticServices = semanticServices;
+        this.classDescriptorResolver = new ClassDescriptorResolver(semanticServices, bindingTrace);
+        this.trace = bindingTrace;
+        this.typeInferrer = semanticServices.getTypeInferrer(trace);
+        this.flowDataTraceFactory = flowDataTraceFactory;
+    }
 
     public TopDownAnalyzer(JetSemanticServices semanticServices, @NotNull BindingTrace bindingTrace) {
         this.semanticServices = semanticServices;
         this.classDescriptorResolver = new ClassDescriptorResolver(semanticServices, bindingTrace);
         this.trace = bindingTrace;
         this.typeInferrer = semanticServices.getTypeInferrer(trace);
+        this.flowDataTraceFactory = JetControlFlowDataTraceFactory.EMPTY;
     }
 
     public void process(@NotNull JetScope outerScope, @NotNull JetDeclaration declaration) {
@@ -233,47 +240,6 @@ public class TopDownAnalyzer {
         FunctionDescriptor descriptor = classDescriptorResolver.resolveFunctionDescriptor(declaringScope.getContainingDeclaration(), declaringScope, function);
         declaringScope.addFunctionDescriptor(descriptor);
         functions.put(function, descriptor);
-
-        JetExpression bodyExpression = function.getBodyExpression();
-        if (bodyExpression != null) {
-            JetControlFlowDataTrace controlFlowDataTrace = new JetControlFlowDataTrace();
-            JetControlFlowInstructionsGenerator instructionsGenerator = new JetControlFlowInstructionsGenerator(controlFlowDataTrace);
-            new JetControlFlowProcessor(semanticServices, trace, instructionsGenerator).generate(function, bodyExpression);
-            if (!ApplicationManager.getApplication().isUnitTestMode()) {
-                try {
-                    File workDirectory = new File(System.getProperty("user.home") + "/work/");
-                    workDirectory.mkdirs();
-                    File target = new File(workDirectory, "cfg.dot");
-
-                    PrintStream out = new PrintStream(target);
-                    out.println("digraph " + function.getName() + " {");
-                    Collection<Pseudocode> pseudocodes = controlFlowDataTrace.getAllData();
-                    int[] count = new int[1];
-                    Map<Instruction, String> nodeToName = new HashMap<Instruction, String>();
-                    for (Pseudocode pseudocode : pseudocodes) {
-                        pseudocode.postProcess();
-                        System.out.println("-------------");
-                        pseudocode.dumpInstructions(System.out);
-                        System.out.println("-------------");
-                        pseudocode.dumpNodes(out, count, nodeToName);
-                    }
-                    int i = 0;
-                    for (Pseudocode pseudocode : pseudocodes) {
-                        out.println("subgraph cluster_" + i + " {\n" +
-                                    "label=\"f" + i + "\";\n" +
-                                    "color=blue;\n");
-                        pseudocode.dumpEdges(out, count, nodeToName);
-                        out.println("}");
-                        i++;
-                    }
-                    out.println("}");
-                    out.close();
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                }
-
-            }
-        }
     }
 
     private void processProperty(WritableScope declaringScope, JetProperty property) {
@@ -290,10 +256,10 @@ public class TopDownAnalyzer {
 
     private void resolveBehaviorDeclarationBodies() {
         for (Map.Entry<JetDeclaration, FunctionDescriptor> entry : functions.entrySet()) {
-            JetDeclaration declarations = entry.getKey();
+            JetDeclaration declaration = entry.getKey();
             FunctionDescriptor descriptor = entry.getValue();
 
-            WritableScope declaringScope = declaringScopes.get(declarations);
+            WritableScope declaringScope = declaringScopes.get(declaration);
             assert declaringScope != null;
 
             WritableScope parameterScope = semanticServices.createWritableScope(declaringScope, descriptor);
@@ -304,15 +270,28 @@ public class TopDownAnalyzer {
                 parameterScope.addPropertyDescriptor(valueParameterDescriptor);
             }
 
-            assert declarations instanceof JetFunction || declarations instanceof JetConstructor;
-            JetExpression bodyExpression = ((JetDeclarationWithBody) declarations).getBodyExpression();
+            assert declaration instanceof JetFunction || declaration instanceof JetConstructor;
+            JetDeclarationWithBody declarationWithBody = (JetDeclarationWithBody) declaration;
+            JetExpression bodyExpression = declarationWithBody.getBodyExpression();
+
             if (bodyExpression != null) {
-                resolveExpression(parameterScope, bodyExpression, true);
+                JetControlFlowDataTrace controlFlowDataTrace = flowDataTraceFactory.createTrace(declaration);
+                JetControlFlowInstructionsGenerator instructionsGenerator = new JetControlFlowInstructionsGenerator(controlFlowDataTrace);
+                new JetControlFlowProcessor(semanticServices, trace, instructionsGenerator).generate(declaration, bodyExpression);
+                controlFlowDataTrace.close();
+
+                boolean preferBlock = true;
+                if (declaration instanceof JetFunction) {
+                    JetFunction jetFunction = (JetFunction) declaration;
+                    preferBlock = jetFunction.hasBlockBody();
+                }
+
+                resolveExpression(parameterScope, bodyExpression, preferBlock, controlFlowDataTrace);
             }
         }
     }
 
-    private void resolveExpression(@NotNull JetScope scope, JetExpression expression, boolean preferBlock) {
+    private void resolveExpression(@NotNull JetScope scope, JetExpression expression, boolean preferBlock, JetControlFlowDataTrace controlFlowDataTrace) {
         typeInferrer.getType(scope, expression, preferBlock);
     }
 

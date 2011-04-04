@@ -9,20 +9,18 @@ import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.ParsingTestCase;
+import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.JetTestCaseBase;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetVisitor;
 
 import java.io.File;
-import java.io.FileFilter;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 public class JetParsingTest extends ParsingTestCase {
     static {
@@ -101,40 +99,16 @@ public class JetParsingTest extends ParsingTestCase {
 
     public static TestSuite suite() {
         TestSuite suite = new TestSuite();
-        suite.addTest(suiteForDirectory("/", false));
-        suite.addTest(suiteForDirectory("examples", true));
-        return suite;
-    }
-
-    private static TestSuite suiteForDirectory(final String dataPath, boolean recursive) {
-        TestSuite suite = new TestSuite(dataPath);
-        final String extension = ".jet";
-        FilenameFilter extensionFilter = new FilenameFilter() {
+        JetTestCaseBase.NamedTestFactory factory = new JetTestCaseBase.NamedTestFactory() {
+            @NotNull
             @Override
-            public boolean accept(File dir, String name) {
-                return name.endsWith(extension);
+            public Test createTest(@NotNull String dataPath, @NotNull String name) {
+                return new JetParsingTest(dataPath, name);
             }
         };
-        File dir = new File(getTestDataDir() + "/psi/" + dataPath);
-        FileFilter dirFilter = new FileFilter() {
-            @Override
-            public boolean accept(File pathname) {
-                return pathname.isDirectory();
-            }
-        };
-        if (recursive) {
-            List<File> subdirs = Arrays.asList(dir.listFiles(dirFilter));
-            Collections.sort(subdirs);
-            for (File subdir : subdirs) {
-                suite.addTest(suiteForDirectory(dataPath + "/" + subdir.getName(), recursive));
-            }
-        }
-        List<File> files = Arrays.asList(dir.listFiles(extensionFilter));
-        Collections.sort(files);
-        for (File file : files) {
-            String fileName = file.getName();
-            suite.addTest(new JetParsingTest(dataPath, fileName.substring(0, fileName.length() - extension.length())));
-        }
+        String prefix = JetParsingTest.getTestDataDir() + "/psi/";
+        suite.addTest(JetTestCaseBase.suiteForDirectory(prefix, "/", false, factory));
+        suite.addTest(JetTestCaseBase.suiteForDirectory(prefix, "examples", true, factory));
         return suite;
     }
 
