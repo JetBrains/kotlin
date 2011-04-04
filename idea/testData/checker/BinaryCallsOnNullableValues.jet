@@ -10,7 +10,7 @@ class C {
   fun equals(a : Any?) : Int
 }
 
-fun f(): Int {
+fun f(): Unit {
   var x: Int? = 1
   x = 1
   x <error>+</error> 1

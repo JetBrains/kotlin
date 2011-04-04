@@ -270,6 +270,7 @@ public class TopDownAnalyzer {
             for (ValueParameterDescriptor valueParameterDescriptor : descriptor.getUnsubstitutedValueParameters()) {
                 parameterScope.addPropertyDescriptor(valueParameterDescriptor);
             }
+            parameterScope.addLabeledDeclaration(descriptor);
 
             assert declaration instanceof JetFunction || declaration instanceof JetConstructor;
             JetDeclarationWithBody declarationWithBody = (JetDeclarationWithBody) declaration;
@@ -283,9 +284,11 @@ public class TopDownAnalyzer {
                 controlFlowDataTrace.close();
 
                 boolean preferBlock = true;
+                FunctionDescriptorImpl functionDescriptorImpl = null;
                 if (declaration instanceof JetFunction) {
                     JetFunction jetFunction = (JetFunction) declaration;
                     preferBlock = jetFunction.hasBlockBody();
+                    functionDescriptorImpl = (FunctionDescriptorImpl) descriptor;
                 }
 
                 JetType returnType = resolveExpression(parameterScope, bodyExpression, preferBlock, controlFlowDataTrace);
@@ -304,7 +307,7 @@ public class TopDownAnalyzer {
                         if (safeReturnType == null) {
                             safeReturnType = ErrorUtils.createErrorType("Unable to infer body type");
                         }
-                        ((FunctionDescriptorImpl) descriptor).setUnsubstitutedReturnType(safeReturnType);
+                        functionDescriptorImpl.setUnsubstitutedReturnType(safeReturnType);
                     }
                 }
             }

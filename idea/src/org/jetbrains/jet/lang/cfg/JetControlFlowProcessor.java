@@ -176,7 +176,7 @@ public class JetControlFlowProcessor {
                     builder.writeNode(expression, left);
                 }
                 else {
-                    throw new UnsupportedOperationException("Assignments to " + left + " are not supported yet"); // TODO
+                    builder.unsupported(expression);
                 }
             }
             else {

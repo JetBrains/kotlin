@@ -75,4 +75,5 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
     public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
         return visitor.visitFunctionDescriptor(this, data);
     }
+
 }

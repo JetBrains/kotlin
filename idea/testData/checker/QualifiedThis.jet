@@ -5,7 +5,7 @@ class Dup {
 }
 
 class A {
-  fun foo() {
+  fun foo() : Unit {
     this@A
     this<error>@a</error>
     this
@@ -16,7 +16,7 @@ class A {
   val z = foo()
 }
 
-fun foo() {
+fun foo() : Unit {
   <error>this</error>
   this<error>@a</error>
 }
