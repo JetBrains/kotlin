@@ -4,7 +4,6 @@
 package org.jetbrains.jet.cfg;
 
 import com.intellij.openapi.util.io.FileUtil;
-import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.jetbrains.annotations.NotNull;
@@ -65,17 +64,13 @@ public class JetControlFlowTest extends JetTestCaseBase {
         });
 
         try {
-            try {
-                processCFData(name, data);
-            } catch (AssertionFailedError e) {
+            processCFData(name, data);
+            if ("true".equals(System.getProperty("jet.control.flow.test.dump.graphs"))) {
                 dumpDot(name, data.values());
-                throw e;
             }
-            dumpDot(name, data.values());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     private void processCFData(String name, Map<JetElement, Pseudocode> data) throws IOException {
