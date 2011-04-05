@@ -1,0 +1,18 @@
+<error>fun none()</error>
+
+fun unitEmptyInfer() {}
+fun unitEmpty() : Unit {}
+fun unitEmptyReturn() : Unit {return}
+fun unitShort() : Unit = ()
+fun unitShortConv() : Unit = 1
+fun unitShortNull() : Unit = null
+
+<error>fun intEmpty() : Int {}</error>
+fun intShortInfer() = 1
+fun intShort() : Int = 1
+fun intBlockInfer()  {1}
+fun intBlock() : Int {1}
+
+fun blockReturnUnitMismatch() : Int {<error>return</error>}
+fun blockReturnValueTypeMismatch() : Int {return <error>3.4</error>}
+fun blockReturnValueTypeMatch() : Int {return 1}

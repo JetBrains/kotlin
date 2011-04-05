@@ -439,6 +439,14 @@ public class JetControlFlowProcessor {
         }
 
         @Override
+        public void visitTupleExpression(JetTupleExpression expression) {
+            for (JetExpression entry : expression.getEntries()) {
+                value(entry, false);
+            }
+            builder.readNode(expression);
+        }
+
+        @Override
         public void visitTypeProjection(JetTypeProjection typeProjection) {
             // TODO : Support Type Arguments. Class object may be initialized at this point");
         }
