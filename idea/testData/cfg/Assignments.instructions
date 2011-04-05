@@ -2,6 +2,7 @@
 fun assignments() : Unit {
     var x = 1
     x = 2
+    x += 2
 
     x = if (true) 1 else 2
 
@@ -12,9 +13,12 @@ fun assignments() : Unit {
 l0:
     <START>
     r(1)
-    x <- 
+    w(x)
     r(2)
-    x <-
+    w(x)
+    r(x)
+    r(2)
+    w(x)
     r(true)
     jf(l2)
     r(1)
@@ -22,17 +26,17 @@ l0:
 l2:
     r(2)
 l3:
-    x <-
+    w(x)
     r(true)
     jf(l4)
     r(false)
 l4:
-    y <- 
+    w(y)
     r(false)
     jf(l5)
     r(true)
 l5:
-    z <- 
+    w(z)
 l1:
     <END>
 =====================

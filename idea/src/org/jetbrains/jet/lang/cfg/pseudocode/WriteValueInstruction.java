@@ -25,8 +25,8 @@ public class WriteValueInstruction extends InstructionWithNext {
     public String toString() {
         if (lValue instanceof JetNamedDeclaration) {
             JetNamedDeclaration value = (JetNamedDeclaration) lValue;
-            return value.getName() + " <- ";
+            return "w(" + value.getName() + ")";
         }
-        return lValue.getText() + " <-";
+        return "w(" + lValue.getText() + ")";
     }
 }

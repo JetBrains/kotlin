@@ -1,6 +1,7 @@
 fun assignments() : Unit {
     var x = 1
     x = 2
+    x += 2
 
     x = if (true) 1 else 2
 

@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.BindingTrace;
+import org.jetbrains.jet.lang.types.JetTypeInferrer;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.*;
@@ -169,6 +170,19 @@ public class JetControlFlowProcessor {
             }
             else if (operationType == JetTokens.EQ) {
                 JetExpression left = expression.getLeft();
+                if (right != null) {
+                    value(right, false);
+                }
+                if (left instanceof JetSimpleNameExpression) {
+                    builder.writeNode(expression, left);
+                }
+                else {
+                    builder.unsupported(expression);
+                }
+            }
+            else if (JetTypeInferrer.assignmentOperationNames.containsKey(operationType)) {
+                JetExpression left = expression.getLeft();
+                value(left, false);
                 if (right != null) {
                     value(right, false);
                 }

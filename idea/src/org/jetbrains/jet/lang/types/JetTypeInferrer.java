@@ -42,7 +42,7 @@ public class JetTypeInferrer {
     private static final Set<IElementType> equalsOperations = new HashSet<IElementType>(Arrays.asList(JetTokens.EQEQ, JetTokens.EXCLEQ));
     private static final Set<IElementType> inOperations = new HashSet<IElementType>(Arrays.asList(JetTokens.IN_KEYWORD, JetTokens.NOT_IN));
 
-    private static final Map<IElementType, String> assignmentOperationNames = new HashMap<IElementType, String>();
+    public static final Map<IElementType, String> assignmentOperationNames = new HashMap<IElementType, String>();
     static {
         assignmentOperationNames.put(JetTokens.MULTEQ, "timesAssign");
         assignmentOperationNames.put(JetTokens.DIVEQ, "divAssign");
