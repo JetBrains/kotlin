@@ -6,9 +6,9 @@ import org.jetbrains.jet.lang.psi.JetElement;
 /**
  * @author abreslav
  */
-public interface JetControlFlowDataTrace {
+public interface JetPseudocodeTrace {
 
-    JetControlFlowDataTrace EMPTY = new JetControlFlowDataTrace() {
+    JetPseudocodeTrace EMPTY = new JetPseudocodeTrace() {
         @Override
         public void recordControlFlowData(@NotNull JetElement element, @NotNull Pseudocode pseudocode) {
         }

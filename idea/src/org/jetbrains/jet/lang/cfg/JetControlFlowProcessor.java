@@ -366,7 +366,7 @@ public class JetControlFlowProcessor {
             }
             if (subroutine != null) {
                 if (returnedExpression == null) {
-                    builder.returnNoValue(subroutine);
+                    builder.returnNoValue(expression, subroutine);
                 }
                 else {
                     builder.returnValue(subroutine);

@@ -4,11 +4,15 @@ import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.JetSemanticServices;
+import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lexer.JetTokens;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author abreslav
@@ -305,7 +309,7 @@ public class ClassDescriptorResolver {
                 type = ErrorUtils.createErrorType("No type, no body");
             } else {
                 // TODO : ??? Fix-point here: what if we have something like "val a = foo {a.bar()}"
-                type = semanticServices.getTypeInferrer(trace).getType(scope, initializer, false);
+                type = semanticServices.getTypeInferrer(trace, JetFlowInformationProvider.ERROR).getType(scope, initializer, false);
             }
         } else {
             type = typeResolver.resolveType(scope, propertyTypeRef);

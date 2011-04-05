@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.JetSemanticServices;
+import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -60,16 +61,20 @@ public class JetTypeInferrer {
         assignmentOperationCounterparts.put(JetTokens.MINUSEQ, JetTokens.MINUS);
     }
 
+    private final Map<JetExpression, JetType> typeCache = new HashMap<JetExpression, JetType>();
+
     private final BindingTrace trace;
     private final JetSemanticServices semanticServices;
     private final TypeResolver typeResolver;
     private final ClassDescriptorResolver classDescriptorResolver;
+    private final JetFlowInformationProvider flowInformationProvider;
 
-    public JetTypeInferrer(BindingTrace trace, JetSemanticServices semanticServices) {
-        this.trace = trace;
+    public JetTypeInferrer(@NotNull BindingTrace trace, @NotNull JetFlowInformationProvider flowInformationProvider, @NotNull JetSemanticServices semanticServices) {
+        this.trace = new CachedBindingTrace(trace);
         this.semanticServices = semanticServices;
         this.typeResolver = new TypeResolver(trace, semanticServices);
         this.classDescriptorResolver = semanticServices.getClassDescriptorResolver(trace);
+        this.flowInformationProvider = flowInformationProvider;
     }
 
     @NotNull
@@ -107,7 +112,6 @@ public class JetTypeInferrer {
             @NotNull JetReferenceExpression reference,
             @NotNull String name,
             @NotNull JetType receiverType,
-
             @NotNull List<JetType> argumentTypes,
             boolean reportUnresolved) {
         OverloadDomain overloadDomain = semanticServices.getOverloadResolver().getOverloadDomain(receiverType, scope, name);
@@ -264,21 +268,75 @@ public class JetTypeInferrer {
         };
     }
 
+    @NotNull
+    public JetType getFunctionReturnType(@NotNull JetScope outerScope, JetFunction function, FunctionDescriptor functionDescriptor) {
+        Map<JetElement, JetType> typeMap = getReturnedExpressions(outerScope, function, functionDescriptor);
+        Collection<JetType> types = typeMap.values();
+        return types.isEmpty() ? JetStandardClasses.getNothingType() : semanticServices.getTypeChecker().commonSupertype(types);
+    }
+
+    private JetType getCachedType(@NotNull JetExpression expression) {
+//        assert typeCache.containsKey(expression) : "No type cached for " + expression.getText();
+        return typeCache.get(expression);
+    }
+
+    public void checkFunctionReturnType(@NotNull JetScope outerScope, @NotNull JetFunction function, @NotNull FunctionDescriptor functionDescriptor) {
+        Map<JetElement, JetType> typeMap = getReturnedExpressions(outerScope, function, functionDescriptor);
+        if (typeMap.isEmpty()) {
+            return; // The function returns Nothing
+        }
+        JetType expectedReturnType = functionDescriptor.getUnsubstitutedReturnType();
+        for (Map.Entry<JetElement, JetType> entry : typeMap.entrySet()) {
+            JetType actualType = entry.getValue();
+            JetElement element = entry.getKey();
+            if (!semanticServices.getTypeChecker().isConvertibleTo(actualType, expectedReturnType)) {
+                if (element instanceof JetExpression) {
+                    JetExpression expression = (JetExpression) element;
+                    semanticServices.getErrorHandler().typeMismatch(expression, expectedReturnType, actualType);
+                }
+                else {
+                    semanticServices.getErrorHandler().genericError(element.getNode(), "This function must return a value of type " + expectedReturnType);
+                }
+            }
+        }
+    }
+
+    private Map<JetElement, JetType> getReturnedExpressions(JetScope outerScope, JetFunction function, FunctionDescriptor functionDescriptor) {
+        JetExpression bodyExpression = function.getBodyExpression();
+        assert bodyExpression != null;
+        JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(outerScope, functionDescriptor, semanticServices);
+        getType(functionInnerScope, bodyExpression, function.hasBlockBody());
+        Collection<JetExpression> returnedExpressions = new ArrayList<JetExpression>();
+        Collection<JetElement> elementsReturningUnit = new ArrayList<JetElement>();
+        flowInformationProvider.collectReturnedInformation(function, returnedExpressions, elementsReturningUnit);
+        Map<JetElement,JetType> typeMap = new HashMap<JetElement, JetType>();
+        for (JetExpression returnedExpression : returnedExpressions) {
+            JetType cachedType = getCachedType(returnedExpression);
+            if (cachedType != null) {
+                typeMap.put(returnedExpression, cachedType);
+            }
+        }
+        for (JetElement jetElement : elementsReturningUnit) {
+            typeMap.put(jetElement, JetStandardClasses.getUnitType());
+        }
+        return typeMap;
+    }
+
     @Nullable
-    private JetType getBlockReturnedType(@NotNull JetScope outerScope, @NotNull List<JetElement> block, @NotNull LabeledJumpDomain jumpDomain) {
+    private JetType getBlockReturnedType(@NotNull JetScope outerScope, @NotNull List<JetElement> block) {
         if (block.isEmpty()) {
             return JetStandardClasses.getUnitType();
         }
 
         DeclarationDescriptor containingDescriptor = outerScope.getContainingDeclaration();
         WritableScope scope = semanticServices.createWritableScope(outerScope, containingDescriptor);
-        return getBlockReturnedTypeWithWritableScope(scope, block, jumpDomain);
+        return getBlockReturnedTypeWithWritableScope(scope, block);
     }
 
-    private JetType getBlockReturnedTypeWithWritableScope(@NotNull WritableScope scope, @NotNull List<? extends JetElement> block, @NotNull LabeledJumpDomain jumpDomain) {
+    private JetType getBlockReturnedTypeWithWritableScope(@NotNull WritableScope scope, @NotNull List<? extends JetElement> block) {
         assert !block.isEmpty();
 
-        TypeInferrerVisitorWithWritableScope blockLevelVisitor = new TypeInferrerVisitorWithWritableScope(scope, true, jumpDomain);
+        TypeInferrerVisitorWithWritableScope blockLevelVisitor = new TypeInferrerVisitorWithWritableScope(scope, true);
 
         JetType result = null;
         for (JetElement statement : block) {
@@ -305,18 +363,12 @@ public class JetTypeInferrer {
     private class TypeInferrerVisitor extends JetVisitor {
         private final JetScope scope;
         private final boolean preferBlock;
-        private final LabeledJumpDomain jumpDomain;
 
         protected JetType result;
 
-        private TypeInferrerVisitor(@NotNull JetScope scope, boolean preferBlock, @NotNull LabeledJumpDomain jumpDomain) {
+        private TypeInferrerVisitor(@NotNull JetScope scope, boolean preferBlock) {
             this.scope = scope;
             this.preferBlock = preferBlock;
-            this.jumpDomain = jumpDomain;
-        }
-
-        private TypeInferrerVisitor(JetScope scope, boolean preferBlock) {
-            this(scope, preferBlock, LabeledJumpDomain.EMPTY);
         }
 
         @Nullable
@@ -379,7 +431,7 @@ public class JetTypeInferrer {
         public void visitFunctionLiteralExpression(JetFunctionLiteralExpression expression) {
             if (preferBlock && !expression.hasParameterSpecification()) {
                 trace.recordBlock(expression);
-                result = getBlockReturnedType(scope, expression.getBody(), LabeledJumpDomain.ERROR);
+                result = getBlockReturnedType(scope, expression.getBody());
                 return;
             }
 
@@ -416,7 +468,7 @@ public class JetTypeInferrer {
                     writableScope.addPropertyDescriptor(propertyDescriptor);
                 }
                 writableScope.setThisType(receiverType);
-                returnType = getBlockReturnedType(writableScope, body, LabeledJumpDomain.ERROR);
+                returnType = getBlockReturnedType(writableScope, body);
             }
             JetType effectiveReceiverType = receiverTypeRef == null ? null : receiverType;
             JetType safeReturnType = returnType == null ? ErrorUtils.createErrorType("<return type>") : returnType;
@@ -477,7 +529,6 @@ public class JetTypeInferrer {
             else {
                 returnedType = JetStandardClasses.getUnitType();
             }
-            jumpDomain.registerReturn(expression, returnedType);
 
             result = JetStandardClasses.getNothingType();
         }
@@ -485,15 +536,11 @@ public class JetTypeInferrer {
         @Override
         public void visitBreakExpression(JetBreakExpression expression) {
             result = JetStandardClasses.getNothingType();
-
-            jumpDomain.registerBreakOrContinue(expression);
         }
 
         @Override
         public void visitContinueExpression(JetContinueExpression expression) {
             result = JetStandardClasses.getNothingType();
-
-            jumpDomain.registerBreakOrContinue(expression);
         }
 
         @Override
@@ -603,7 +650,7 @@ public class JetTypeInferrer {
 
         @Override
         public void visitBlockExpression(JetBlockExpression expression) {
-            result = getBlockReturnedType(scope, expression.getStatements(), jumpDomain);
+            result = getBlockReturnedType(scope, expression.getStatements());
         }
 
         @Override
@@ -692,7 +739,7 @@ public class JetTypeInferrer {
                 if (!function.hasParameterSpecification()) {
                     WritableScope writableScope = semanticServices.createWritableScope(scope, scope.getContainingDeclaration());
                     conditionScope = writableScope;
-                    getBlockReturnedTypeWithWritableScope(writableScope, function.getBody(), LabeledJumpDomain.ERROR); // TODO
+                    getBlockReturnedTypeWithWritableScope(writableScope, function.getBody());
                     trace.recordBlock(function);
                 } else {
                     getType(scope, body, true);
@@ -701,7 +748,7 @@ public class JetTypeInferrer {
             else if (body != null) {
                 WritableScope writableScope = semanticServices.createWritableScope(scope, scope.getContainingDeclaration());
                 conditionScope = writableScope;
-                getBlockReturnedTypeWithWritableScope(writableScope, Collections.singletonList(body), LabeledJumpDomain.ERROR); // TODO
+                getBlockReturnedTypeWithWritableScope(writableScope, Collections.singletonList(body));
             }
             checkCondition(conditionScope, expression.getCondition());
             result = JetStandardClasses.getUnitType();
@@ -1240,8 +1287,8 @@ public class JetTypeInferrer {
     private class TypeInferrerVisitorWithWritableScope extends TypeInferrerVisitor {
         private final WritableScope scope;
 
-        public TypeInferrerVisitorWithWritableScope(@NotNull WritableScope scope, boolean preferBlock, @NotNull LabeledJumpDomain jumpDomain) {
-            super(scope, preferBlock, jumpDomain);
+        public TypeInferrerVisitorWithWritableScope(@NotNull WritableScope scope, boolean preferBlock) {
+            super(scope, preferBlock);
             this.scope = scope;
         }
 
@@ -1358,30 +1405,44 @@ public class JetTypeInferrer {
         }
     }
 
-    private interface LabeledJumpDomain {
-        LabeledJumpDomain EMPTY = new LabeledJumpDomain() {
-            @Override
-            public void registerReturn(@NotNull JetReturnExpression expression, JetType returnedExpressionType) {
-            }
+    private class CachedBindingTrace extends BindingTrace {
+        private final BindingTrace originalTrace;
 
-            @Override
-            public void registerBreakOrContinue(@NotNull JetLabelQualifiedExpression expression) {
-            }
-        };
+        public CachedBindingTrace(BindingTrace originalTrace) {
+            this.originalTrace = originalTrace;
+        }
 
-        LabeledJumpDomain ERROR = new LabeledJumpDomain() {
-            @Override
-            public void registerReturn(@NotNull JetReturnExpression expression, JetType returnedExpressionType) {
-//                throw new UnsupportedOperationException();
-            }
+        public void recordExpressionType(@NotNull JetExpression expression, @NotNull JetType type) {
+            originalTrace.recordExpressionType(expression, type);
+            typeCache.put(expression, type);
+        }
 
-            @Override
-            public void registerBreakOrContinue(@NotNull JetLabelQualifiedExpression expression) {
-//                throw new UnsupportedOperationException();
-            }
-        };
+        public void recordReferenceResolution(@NotNull JetReferenceExpression expression, @NotNull DeclarationDescriptor descriptor) {
+            originalTrace.recordReferenceResolution(expression, descriptor);
+        }
 
-        void registerReturn(@NotNull JetReturnExpression expression, JetType returnedExpressionType);
-        void registerBreakOrContinue(@NotNull JetLabelQualifiedExpression expression);
+        public void recordLabelResolution(@NotNull JetReferenceExpression expression, @NotNull PsiElement element) {
+            originalTrace.recordLabelResolution(expression, element);
+        }
+
+        public void recordDeclarationResolution(@NotNull PsiElement declaration, @NotNull DeclarationDescriptor descriptor) {
+            originalTrace.recordDeclarationResolution(declaration, descriptor);
+        }
+
+        public void recordTypeResolution(@NotNull JetTypeReference typeReference, @NotNull JetType type) {
+            originalTrace.recordTypeResolution(typeReference, type);
+        }
+
+        public void setToplevelScope(JetScope toplevelScope) {
+            originalTrace.setToplevelScope(toplevelScope);
+        }
+
+        public void recordBlock(JetFunctionLiteralExpression expression) {
+            originalTrace.recordBlock(expression);
+        }
+
+        public void removeReferenceResolution(@NotNull JetReferenceExpression referenceExpression) {
+            originalTrace.removeReferenceResolution(referenceExpression);
+        }
     }
 }

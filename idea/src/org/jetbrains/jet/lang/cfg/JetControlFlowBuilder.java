@@ -47,7 +47,7 @@ public interface JetControlFlowBuilder {
     JetElement getCurrentSubroutine();
 
     void returnValue(@NotNull JetElement subroutine);
-    void returnNoValue(@NotNull JetElement subroutine);
+    void returnNoValue(@NotNull JetElement expression, @NotNull JetElement subroutine);
 
     void writeNode(@NotNull JetElement assignment, @NotNull JetElement lValue);
 

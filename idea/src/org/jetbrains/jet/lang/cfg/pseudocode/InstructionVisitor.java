@@ -9,7 +9,7 @@ public class InstructionVisitor {
     }
 
     public void visitFunctionLiteralValue(FunctionLiteralValueInstruction instruction) {
-        visitInstructionWithNext(instruction);
+        visitReadValue(instruction);
     }
 
     public void visitUnconditionalJump(UnconditionalJumpInstruction instruction) {

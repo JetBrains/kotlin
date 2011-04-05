@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang;
 
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.resolve.ClassDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.JetScope;
 import org.jetbrains.jet.lang.resolve.OverloadResolver;
@@ -44,8 +45,8 @@ public class JetSemanticServices {
     }
 
     @NotNull
-    public JetTypeInferrer getTypeInferrer(BindingTrace trace) {
-        return new JetTypeInferrer(trace, this);
+    public JetTypeInferrer getTypeInferrer(BindingTrace trace, JetFlowInformationProvider flowInformationProvider) {
+        return new JetTypeInferrer(trace, flowInformationProvider, this);
     }
 
     @NotNull

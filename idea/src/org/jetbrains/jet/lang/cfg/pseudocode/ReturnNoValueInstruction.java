@@ -1,14 +1,23 @@
 package org.jetbrains.jet.lang.cfg.pseudocode;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.cfg.Label;
+import org.jetbrains.jet.lang.psi.JetElement;
 
 /**
  * @author abreslav
  */
 public class ReturnNoValueInstruction extends AbstractJumpInstruction {
 
-    public ReturnNoValueInstruction(Label targetLabel) {
+    private final JetElement element;
+
+    public ReturnNoValueInstruction(@NotNull JetElement element, Label targetLabel) {
         super(targetLabel);
+        this.element = element;
+    }
+
+    public JetElement getElement() {
+        return element;
     }
 
     @Override

@@ -1,17 +1,17 @@
 package org.jetbrains.jet.lang.cfg.pseudocode;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetElement;
+import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression;
 
 /**
 * @author abreslav
 */
-public class FunctionLiteralValueInstruction extends InstructionWithNext {
+public class FunctionLiteralValueInstruction extends ReadValueInstruction {
 
     private Pseudocode body;
 
-    public FunctionLiteralValueInstruction(@NotNull JetElement element) {
-        super(element);
+    public FunctionLiteralValueInstruction(@NotNull JetFunctionLiteralExpression expression) {
+        super(expression);
     }
 
     public Pseudocode getBody() {

@@ -10,11 +10,11 @@ public interface JetControlFlowDataTraceFactory {
     JetControlFlowDataTraceFactory EMPTY = new JetControlFlowDataTraceFactory() {
         @NotNull
         @Override
-        public JetControlFlowDataTrace createTrace(JetElement element) {
-            return JetControlFlowDataTrace.EMPTY;
+        public JetPseudocodeTrace createTrace(JetElement element) {
+            return JetPseudocodeTrace.EMPTY;
         }
     };
 
     @NotNull
-    JetControlFlowDataTrace createTrace(JetElement element);
+    JetPseudocodeTrace createTrace(JetElement element);
 }

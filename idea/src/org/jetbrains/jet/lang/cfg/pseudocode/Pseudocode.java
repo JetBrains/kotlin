@@ -52,6 +52,8 @@ public class Pseudocode {
     private final List<PseudocodeLabel> labels = new ArrayList<PseudocodeLabel>();
 
     private final JetElement correspondingElement;
+    private SubroutineExitInstruction exitInstruction;
+    private boolean postPrecessed = false;
 
     public Pseudocode(JetElement correspondingElement) {
         this.correspondingElement = correspondingElement;
@@ -69,6 +71,16 @@ public class Pseudocode {
 
     public void addInstruction(Instruction instruction) {
         instructions.add(instruction);
+        if (instruction instanceof SubroutineExitInstruction) {
+            SubroutineExitInstruction exitInstruction = (SubroutineExitInstruction) instruction;
+            assert this.exitInstruction == null;
+            this.exitInstruction = exitInstruction;
+        }
+    }
+
+    @NotNull
+    public SubroutineExitInstruction getExitInstruction() {
+        return exitInstruction;
     }
 
     public void bindLabel(Label label) {
@@ -76,6 +88,8 @@ public class Pseudocode {
     }
 
     public void postProcess() {
+        if (postPrecessed) return;
+        postPrecessed = true;
         for (int i = 0, instructionsSize = instructions.size(); i < instructionsSize; i++) {
             Instruction instruction = instructions.get(i);
             final int currentPosition = i;

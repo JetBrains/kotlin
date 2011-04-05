@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestCaseBase;
 import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.cfg.pseudocode.Instruction;
-import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTrace;
+import org.jetbrains.jet.lang.cfg.pseudocode.JetPseudocodeTrace;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode;
 import org.jetbrains.jet.lang.psi.JetElement;
@@ -42,7 +42,7 @@ public class JetControlFlowTest extends JetTestCaseBase {
         JetFile file = (JetFile) getFile();
 
         final Map<JetElement, Pseudocode> data = new LinkedHashMap<JetElement, Pseudocode>();
-        final JetControlFlowDataTrace jetControlFlowDataTrace = new JetControlFlowDataTrace() {
+        final JetPseudocodeTrace pseudocodeTrace = new JetPseudocodeTrace() {
 
             @Override
             public void recordControlFlowData(@NotNull JetElement element, @NotNull Pseudocode pseudocode) {
@@ -51,6 +51,9 @@ public class JetControlFlowTest extends JetTestCaseBase {
 
             @Override
             public void close() {
+                for (Pseudocode pseudocode : data.values()) {
+                    pseudocode.postProcess();
+                }
             }
 
         };
@@ -58,8 +61,8 @@ public class JetControlFlowTest extends JetTestCaseBase {
         AnalyzingUtils.analyzeNamespace(file.getRootNamespace(), ErrorHandler.THROW_EXCEPTION, new JetControlFlowDataTraceFactory() {
             @NotNull
             @Override
-            public JetControlFlowDataTrace createTrace(JetElement element) {
-                return jetControlFlowDataTrace;
+            public JetPseudocodeTrace createTrace(JetElement element) {
+                return pseudocodeTrace;
             }
         });
 
@@ -75,9 +78,6 @@ public class JetControlFlowTest extends JetTestCaseBase {
 
     private void processCFData(String name, Map<JetElement, Pseudocode> data) throws IOException {
         Collection<Pseudocode> pseudocodes = data.values();
-        for (Pseudocode pseudocode : pseudocodes) {
-            pseudocode.postProcess();
-        }
 
         StringBuilder instructionDump = new StringBuilder();
         int i = 0;

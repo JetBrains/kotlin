@@ -7,6 +7,7 @@ import org.jetbrains.jet.lang.cfg.Label;
 import org.jetbrains.jet.lang.psi.JetBlockExpression;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression;
 
 import java.util.*;
 
@@ -21,9 +22,9 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
     private int labelCount = 0;
 
     private final Stack<JetControlFlowInstructionsGeneratorWorker> builders = new Stack<JetControlFlowInstructionsGeneratorWorker>();
-    private final JetControlFlowDataTrace trace;
+    private final JetPseudocodeTrace trace;
 
-    public JetControlFlowInstructionsGenerator(JetControlFlowDataTrace trace) {
+    public JetControlFlowInstructionsGenerator(JetPseudocodeTrace trace) {
         super(null);
         this.trace = trace;
     }
@@ -60,7 +61,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         JetControlFlowInstructionsGeneratorWorker worker = popBuilder(subroutine);
         if (functionLiteral) {
             JetControlFlowInstructionsGeneratorWorker builder = builders.peek();
-            FunctionLiteralValueInstruction instruction = new FunctionLiteralValueInstruction(subroutine);
+            FunctionLiteralValueInstruction instruction = new FunctionLiteralValueInstruction((JetFunctionLiteralExpression) subroutine);
             instruction.setBody(worker.getPseudocode());
             builder.add(instruction);
         }
@@ -155,8 +156,8 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         }
 
         @Override
-        public void returnNoValue(@NotNull JetElement subroutine) {
-            add(new ReturnNoValueInstruction(getExitPoint(subroutine)));
+        public void returnNoValue(@NotNull JetElement expression, @NotNull JetElement subroutine) {
+            add(new ReturnNoValueInstruction(expression, getExitPoint(subroutine)));
         }
 
         @Override

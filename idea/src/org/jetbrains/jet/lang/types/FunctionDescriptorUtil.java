@@ -2,6 +2,9 @@ package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.JetSemanticServices;
+import org.jetbrains.jet.lang.resolve.JetScope;
+import org.jetbrains.jet.lang.resolve.WritableScope;
 
 import java.util.*;
 
@@ -115,5 +118,18 @@ public class FunctionDescriptorUtil {
                 substitutedReturnType
         );
         return substitutedDescriptor;
+    }
+
+    @NotNull
+    public static JetScope getFunctionInnerScope(@NotNull JetScope outerScope, @NotNull FunctionDescriptor descriptor, @NotNull JetSemanticServices semanticServices) {
+        WritableScope parameterScope = semanticServices.createWritableScope(outerScope, descriptor);
+        for (TypeParameterDescriptor typeParameter : descriptor.getTypeParameters()) {
+            parameterScope.addTypeParameterDescriptor(typeParameter);
+        }
+        for (ValueParameterDescriptor valueParameterDescriptor : descriptor.getUnsubstitutedValueParameters()) {
+            parameterScope.addPropertyDescriptor(valueParameterDescriptor);
+        }
+        parameterScope.addLabeledDeclaration(descriptor);
+        return parameterScope;
     }
 }

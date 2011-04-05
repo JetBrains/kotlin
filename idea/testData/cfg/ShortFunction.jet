@@ -1,0 +1,1 @@
+fun short() = 1

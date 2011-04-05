@@ -1,12 +1,10 @@
 package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.JetControlFlowProcessor;
-import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTrace;
-import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
-import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowInstructionsGenerator;
+import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
+import org.jetbrains.jet.lang.cfg.pseudocode.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.*;
 
@@ -25,7 +23,6 @@ public class TopDownAnalyzer {
     private final JetSemanticServices semanticServices;
     private final ClassDescriptorResolver classDescriptorResolver;
     private final BindingTrace trace;
-    private final JetTypeInferrer typeInferrer;
     private final JetControlFlowDataTraceFactory flowDataTraceFactory;
     private boolean readyToProcessExpressions = false;
 
@@ -33,7 +30,6 @@ public class TopDownAnalyzer {
         this.semanticServices = semanticServices;
         this.classDescriptorResolver = new ClassDescriptorResolver(semanticServices, bindingTrace);
         this.trace = bindingTrace;
-        this.typeInferrer = semanticServices.getTypeInferrer(trace);
         this.flowDataTraceFactory = flowDataTraceFactory;
     }
 
@@ -41,7 +37,6 @@ public class TopDownAnalyzer {
         this.semanticServices = semanticServices;
         this.classDescriptorResolver = new ClassDescriptorResolver(semanticServices, bindingTrace);
         this.trace = bindingTrace;
-        this.typeInferrer = semanticServices.getTypeInferrer(trace);
         this.flowDataTraceFactory = JetControlFlowDataTraceFactory.EMPTY;
     }
 
@@ -101,7 +96,7 @@ public class TopDownAnalyzer {
                         if (importDirective.isAllUnder()) {
                             JetExpression importedReference = importDirective.getImportedReference();
                             if (importedReference != null) {
-                                JetType type = typeInferrer.getType(namespaceScope, importedReference, false);
+                                JetType type = semanticServices.getTypeInferrer(trace, JetFlowInformationProvider.ERROR).getType(namespaceScope, importedReference, false);
                                 if (type != null) {
                                     namespaceScope.importScope(type.getMemberScope());
                                 }
@@ -263,71 +258,137 @@ public class TopDownAnalyzer {
             WritableScope declaringScope = declaringScopes.get(declaration);
             assert declaringScope != null;
 
-            WritableScope parameterScope = semanticServices.createWritableScope(declaringScope, descriptor);
-            for (TypeParameterDescriptor typeParameter : descriptor.getTypeParameters()) {
-                parameterScope.addTypeParameterDescriptor(typeParameter);
-            }
-            for (ValueParameterDescriptor valueParameterDescriptor : descriptor.getUnsubstitutedValueParameters()) {
-                parameterScope.addPropertyDescriptor(valueParameterDescriptor);
-            }
-            parameterScope.addLabeledDeclaration(descriptor);
 
             assert declaration instanceof JetFunction || declaration instanceof JetConstructor;
             JetDeclarationWithBody declarationWithBody = (JetDeclarationWithBody) declaration;
 
             JetExpression bodyExpression = declarationWithBody.getBodyExpression();
 
-            if (bodyExpression != null) {
-                JetControlFlowDataTrace controlFlowDataTrace = flowDataTraceFactory.createTrace(declaration);
-                JetControlFlowInstructionsGenerator instructionsGenerator = new JetControlFlowInstructionsGenerator(controlFlowDataTrace);
-                new JetControlFlowProcessor(semanticServices, trace, instructionsGenerator).generate(declaration, bodyExpression);
-                controlFlowDataTrace.close();
+            if (declaration instanceof JetFunction) {
+                JetFunction function = (JetFunction) declaration;
+                FunctionDescriptorImpl functionDescriptorImpl = (FunctionDescriptorImpl) descriptor;
+                if (bodyExpression != null) {
+                    JetFlowInformationProvider flowInformationProvider = computeFlowData(declaration, bodyExpression);
+                    JetTypeInferrer typeInferrer = semanticServices.getTypeInferrer(trace, flowInformationProvider);
 
-                boolean preferBlock = true;
-                FunctionDescriptorImpl functionDescriptorImpl = null;
-                if (declaration instanceof JetFunction) {
-                    JetFunction jetFunction = (JetFunction) declaration;
-                    preferBlock = jetFunction.hasBlockBody();
-                    functionDescriptorImpl = (FunctionDescriptorImpl) descriptor;
-                }
+                    assert readyToProcessExpressions : "Must be ready collecting types";
 
-                JetType returnType = resolveExpression(parameterScope, bodyExpression, preferBlock, controlFlowDataTrace);
-
-                if (declaration instanceof JetFunction) {
-                    JetFunction function = (JetFunction) declaration;
                     if (function.getReturnTypeRef() != null) {
-                        if (returnType != null) {
-                            if (!semanticServices.getTypeChecker().isConvertibleTo(returnType, descriptor.getUnsubstitutedReturnType())) {
-                                semanticServices.getErrorHandler().typeMismatch(bodyExpression, descriptor.getUnsubstitutedReturnType(), returnType);
-                            }
-                        }
+                        typeInferrer.checkFunctionReturnType(declaringScope, function, descriptor);
                     }
                     else {
-                        JetType safeReturnType = returnType;
-                        if (safeReturnType == null) {
-                            safeReturnType = ErrorUtils.createErrorType("Unable to infer body type");
+                        JetType returnType = typeInferrer.getFunctionReturnType(declaringScope, function, descriptor);
+                        if (returnType == null) {
+                            returnType = ErrorUtils.createErrorType("Unable to infer body type");
                         }
-                        functionDescriptorImpl.setUnsubstitutedReturnType(safeReturnType);
+                        functionDescriptorImpl.setUnsubstitutedReturnType(returnType);
                     }
                 }
-            }
-            else {
-                if (declaration instanceof JetFunction) {
-                    JetFunction function = (JetFunction) declaration;
+                else {
                     if (function.getReturnTypeRef() == null) {
                         semanticServices.getErrorHandler().genericError(function.getNode(), "This function must either declare a return type or have a body element");
                         ((FunctionDescriptorImpl) descriptor).setUnsubstitutedReturnType(ErrorUtils.createErrorType("No type, no body"));
                     }
                 }
             }
+            else if (declaration instanceof JetConstructor) {
+                if (bodyExpression != null) {
+                    computeFlowData(declaration, bodyExpression);
+                    JetFlowInformationProvider flowInformationProvider = computeFlowData(declaration, bodyExpression);
+                    JetTypeInferrer typeInferrer = semanticServices.getTypeInferrer(trace, flowInformationProvider);
+                    typeInferrer.getType(FunctionDescriptorUtil.getFunctionInnerScope(declaringScope, descriptor, semanticServices), bodyExpression, true);
+                }
+
+            }
             assert descriptor.getUnsubstitutedReturnType() != null;
         }
     }
 
-    @Nullable
-    private JetType resolveExpression(@NotNull JetScope scope, JetExpression expression, boolean preferBlock, JetControlFlowDataTrace controlFlowDataTrace) {
-        assert readyToProcessExpressions : "Must be ready collecting types";
-        return typeInferrer.getType(scope, expression, preferBlock);
+    private JetFlowInformationProvider computeFlowData(@NotNull JetDeclaration declaration, @NotNull JetExpression bodyExpression) {
+        final JetPseudocodeTrace pseudocodeTrace = flowDataTraceFactory.createTrace(declaration);
+        final Map<JetElement, Pseudocode> pseudocodeMap = new HashMap<JetElement, Pseudocode>();
+        JetPseudocodeTrace wrappedTrace = new JetPseudocodeTrace() {
+            @Override
+            public void recordControlFlowData(@NotNull JetElement element, @NotNull Pseudocode pseudocode) {
+                pseudocodeTrace.recordControlFlowData(element, pseudocode);
+                pseudocodeMap.put(element, pseudocode);
+            }
+
+            @Override
+            public void close() {
+                pseudocodeTrace.close();
+                for (Pseudocode pseudocode : pseudocodeMap.values()) {
+                    pseudocode.postProcess();
+                }
+            }
+        };
+        JetControlFlowInstructionsGenerator instructionsGenerator = new JetControlFlowInstructionsGenerator(wrappedTrace);
+        new JetControlFlowProcessor(semanticServices, trace, instructionsGenerator).generate(declaration, bodyExpression);
+        wrappedTrace.close();
+        return new JetFlowInformationProvider() {
+            @Override
+            public void collectReturnedInformation(@NotNull JetFunction function, Collection<JetExpression> returnedExpressions, Collection<JetElement> elementsReturningUnit) {
+                Pseudocode pseudocode = pseudocodeMap.get(function);
+                assert pseudocode != null;
+
+                SubroutineExitInstruction exitInstruction = pseudocode.getExitInstruction();
+                processPreviousInstructions(exitInstruction, returnedExpressions, elementsReturningUnit);
+            }
+        };
+    }
+
+    private void processPreviousInstructions(Instruction previousFor, final Collection<JetExpression> returnedExpressions, final Collection<JetElement> elementsReturningUnit) {
+        Collection<Instruction> previousInstructions = previousFor.getPreviousInstructions();
+        InstructionVisitor visitor = new InstructionVisitor() {
+            @Override
+            public void visitReadValue(ReadValueInstruction instruction) {
+                returnedExpressions.add((JetExpression) instruction.getElement());
+            }
+
+            @Override
+            public void visitReturnValue(ReturnValueInstruction instruction) {
+                processPreviousInstructions(instruction, returnedExpressions, elementsReturningUnit);
+            }
+
+            @Override
+            public void visitReturnNoValue(ReturnNoValueInstruction instruction) {
+                elementsReturningUnit.add(instruction.getElement());
+            }
+
+            @Override
+            public void visitSubroutineEnter(SubroutineEnterInstruction instruction) {
+                elementsReturningUnit.add(instruction.getSubroutine());
+            }
+
+            @Override
+            public void visitUnsupportedElementInstruction(UnsupportedElementInstruction instruction) {
+                semanticServices.getErrorHandler().genericError(instruction.getElement().getNode(), "Unsupported by control-flow builder");
+            }
+
+            @Override
+            public void visitWriteValue(WriteValueInstruction writeValueInstruction) {
+                elementsReturningUnit.add(writeValueInstruction.getElement());
+            }
+
+            @Override
+            public void visitJump(AbstractJumpInstruction instruction) {
+                processPreviousInstructions(instruction, returnedExpressions, elementsReturningUnit);
+            }
+
+            @Override
+            public void visitInstruction(Instruction instruction) {
+                if (instruction instanceof JetElementInstruction) {
+                    JetElementInstruction elementInstruction = (JetElementInstruction) instruction;
+                    semanticServices.getErrorHandler().genericError(elementInstruction.getElement().getNode(), "Unsupported by control-flow builder " + elementInstruction.getElement());
+                }
+                else {
+                    throw new UnsupportedOperationException(instruction.toString());
+                }
+            }
+        };
+        for (Instruction previousInstruction : previousInstructions) {
+            previousInstruction.accept(visitor);
+        }
     }
 
 }
