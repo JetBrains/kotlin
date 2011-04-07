@@ -465,16 +465,7 @@ public class ExpressionCodegen extends JetVisitor {
                         generateCompareOp(expression, opToken);
                     }
                     else {
-                        int opcode;
-                        if (op.getName().equals("plus")) {
-                            opcode = Opcodes.IADD;
-                        }
-                        else if (op.getName().equals("times")) {
-                            opcode = Opcodes.IMUL;
-                        }
-                        else {
-                            throw new UnsupportedOperationException("Don't know how to generate binary op method " + op.getName());
-                        }
+                        int opcode = opcodeForMethod(op.getName());
                         generateBinaryOp(expression, (FunctionDescriptor) op, opcode);
                     }
                     return;
@@ -500,6 +491,19 @@ public class ExpressionCodegen extends JetVisitor {
             }
         }
         throw new UnsupportedOperationException("Don't know how to generate binary op " + expression);
+    }
+
+    private static int opcodeForMethod(final String name) {
+        if (name.equals("plus")) {
+            return Opcodes.IADD;
+        }
+        if (name.equals("minus")) {
+            return Opcodes.ISUB;
+        }
+        if (name.equals("times")) {
+            return Opcodes.IMUL;
+        }
+        throw new UnsupportedOperationException("Don't know how to generate binary op method " + name);
     }
 
     private void generateBinaryOp(JetBinaryExpression expression, FunctionDescriptor op, int opcode) {
