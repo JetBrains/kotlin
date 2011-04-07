@@ -513,26 +513,34 @@ public class JetTypeInferrer {
                     result = standardLibrary.getIntType();
                 }
                 // TODO : other ranges
-            } else if (elementType == JetNodeTypes.LONG_CONSTANT) {
+            }
+            else if (elementType == JetNodeTypes.LONG_CONSTANT) {
                 result = standardLibrary.getLongType();
-            } else if (elementType == JetNodeTypes.FLOAT_CONSTANT) {
+            }
+            else if (elementType == JetNodeTypes.FLOAT_CONSTANT) {
                 String text = expression.getText();
                 assert text.length() > 0;
                 char lastChar = text.charAt(text.length() - 1);
                 if (lastChar == 'f' || lastChar == 'F') {
                     result = standardLibrary.getFloatType();
-                } else {
+                }
+                else {
                     result = standardLibrary.getDoubleType();
                 }
-            } else if (elementType == JetNodeTypes.BOOLEAN_CONSTANT) {
+            }
+            else if (elementType == JetNodeTypes.BOOLEAN_CONSTANT) {
                 result = standardLibrary.getBooleanType();
-            } else if (elementType == JetNodeTypes.CHARACTER_CONSTANT) {
+            }
+            else if (elementType == JetNodeTypes.CHARACTER_CONSTANT) {
                 result = standardLibrary.getCharType();
-            } else if (elementType == JetNodeTypes.STRING_CONSTANT) {
+            }
+            else if (elementType == JetNodeTypes.STRING_CONSTANT) {
                 result = standardLibrary.getStringType();
-            } else if (elementType == JetNodeTypes.NULL) {
+            }
+            else if (elementType == JetNodeTypes.NULL) {
                 result = JetStandardClasses.getNullableNothingType();
-            } else {
+            }
+            else {
                 throw new IllegalArgumentException("Unsupported constant: " + expression);
             }
         }
@@ -546,12 +554,8 @@ public class JetTypeInferrer {
         public void visitReturnExpression(JetReturnExpression expression) {
             JetExpression returnedExpression = expression.getReturnedExpression();
 
-            JetType returnedType;
             if (returnedExpression != null) {
-                returnedType = getType(scope, returnedExpression, false);
-            }
-            else {
-                returnedType = JetStandardClasses.getUnitType();
+                getType(scope, returnedExpression, false);
             }
 
             result = JetStandardClasses.getNothingType();
