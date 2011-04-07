@@ -251,6 +251,14 @@ class Long : Number, Comparable<Long> {
   fun dec() : Long
   fun plus() : Long
   fun minus() : Long
+
+  fun shl(bits : Int) : Long
+  fun shr(bits : Int) : Long
+  fun ushr(bits : Int) : Long
+  fun and(other : Long) : Long
+  fun or(other : Long) : Long
+  fun xor(other : Long) : Long
+  fun inv() : Long
 }
 
 class Int : Number, Comparable<Int> {
@@ -314,6 +322,14 @@ class Int : Number, Comparable<Int> {
   fun dec() : Int
   fun plus() : Int
   fun minus() : Int
+
+  fun shl(bits : Int) : Int
+  fun shr(bits : Int) : Int
+  fun ushr(bits : Int) : Int
+  fun and(other : Int) : Int
+  fun or(other : Int) : Int
+  fun xor(other : Int) : Int
+  fun inv() : Int
 }
 
 class Char : Number, Comparable<Char> {
