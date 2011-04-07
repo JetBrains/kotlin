@@ -402,6 +402,9 @@ public class ExpressionCodegen extends JetVisitor {
             if (type == PsiType.LONG) {
                 return Type.LONG_TYPE;
             }
+            if (type == PsiType.BOOLEAN) {
+                return Type.BOOLEAN_TYPE;
+            }
         }
         if (type instanceof PsiClassType) {
             PsiClass psiClass = ((PsiClassType) type).resolve();

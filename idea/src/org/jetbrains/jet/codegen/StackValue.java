@@ -73,7 +73,17 @@ public abstract class StackValue {
 
         @Override
         public void condJump(Label label, boolean jumpIfFalse, InstructionAdapter v) {
-            throw new UnsupportedOperationException("don't know how to generate this condjump");
+            if (type == Type.BOOLEAN_TYPE) {
+                if (jumpIfFalse) {
+                    v.ifeq(label);
+                }
+                else {
+                    v.ifne(label);
+                }
+            }
+            else {
+                throw new UnsupportedOperationException("can't generate a cond jump for a non-boolean value on stack");
+            }
         }
     }
 

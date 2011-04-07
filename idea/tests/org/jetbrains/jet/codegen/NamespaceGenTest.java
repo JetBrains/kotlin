@@ -181,13 +181,15 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
     }
 
     public void testNE() throws Exception {
-        binOpTest("fun foo(a: Int, b: Int): Int = if (a != b) 1 else 0", 5, 5, 0);
-        binOpTest("fun foo(a: Int, b: Int): Int = if (a != b) 1 else 0", 5, 3, 1);
+        final String code = "fun foo(a: Int, b: Int): Int = if (a != b) 1 else 0";
+        binOpTest(code, 5, 5, 0);
+        binOpTest(code, 5, 3, 1);
     }
 
     public void testGE() throws Exception {
-        binOpTest("fun foo(a: Int, b: Int): Int = if (a >= b) 1 else 0", 5, 5, 1);
-        binOpTest("fun foo(a: Int, b: Int): Int = if (a >= b) 1 else 0", 3, 5, 0);
+        final String code = "fun foo(a: Int, b: Int): Int = if (a >= b) 1 else 0";
+        binOpTest(code, 5, 5, 1);
+        binOpTest(code, 3, 5, 0);
     }
 
     public void testIfNoElse() throws Exception {
@@ -196,6 +198,13 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
         final Method main = generateFunction();
         assertEquals(5, main.invoke(null, 5, true));
         assertEquals(10, main.invoke(null, 5, false));
+    }
+
+    public void testCondJumpOnStack() throws Exception {
+        loadText("fun foo(a: String): Int = if (Boolean.parseBoolean(a)) 5 else 10");
+        final Method main = generateFunction();
+        assertEquals(5, main.invoke(null, "true"));
+        assertEquals(10, main.invoke(null, "false"));
     }
 
     private void binOpTest(final String text, final int arg1, final int arg2, final int expected) throws Exception {
