@@ -52,8 +52,9 @@ public class FunctionCodegen {
 
         List<ValueParameterDescriptor> parameDescrs = bindingContext.getFunctionDescriptor(f).getUnsubstitutedValueParameters();
 
-        for (ValueParameterDescriptor parameter : parameDescrs) {
-            frameMap.enter(parameter);
+        for (int i = 0; i < parameDescrs.size(); i++) {
+            ValueParameterDescriptor parameter = parameDescrs.get(i);
+            frameMap.enter(parameter, parameterTypes[i].getSize());
         }
 
         ExpressionCodegen codegen = new ExpressionCodegen(mv, bindingContext, standardLibrary, frameMap, typeMapper, returnType);

@@ -240,7 +240,9 @@ public class ExpressionCodegen extends JetVisitor {
 
         for (JetElement statement : statements) {
             if (statement instanceof JetProperty) {
-                myMap.enter(bindingContext.getPropertyDescriptor((JetProperty) statement));
+                final PropertyDescriptor propertyDescriptor = bindingContext.getPropertyDescriptor((JetProperty) statement);
+                final Type type = typeMapper.mapType(propertyDescriptor.getOutType());
+                myMap.enter(propertyDescriptor, type.getSize());
             }
         }
 
@@ -466,7 +468,7 @@ public class ExpressionCodegen extends JetVisitor {
             DeclarationDescriptor cls = op.getContainingDeclaration();
             if (cls instanceof ClassDescriptor) {
                 final String className = cls.getName();
-                if (className.equals("Int")) {
+                if (className.equals("Int") || className.equals("Long")) {
                     if (op.getName().equals("compareTo")) {
                         generateCompareOp(expression, opToken);
                     }
@@ -510,11 +512,12 @@ public class ExpressionCodegen extends JetVisitor {
 
     private void generateBinaryOp(JetBinaryExpression expression, FunctionDescriptor op, int opcode) {
         JetType returnType = op.getUnsubstitutedReturnType();
-        if (returnType.equals(stdlib.getIntType())) {
-            gen(expression.getLeft(), Type.INT_TYPE);
-            gen(expression.getRight(), Type.INT_TYPE);
-            v.visitInsn(Type.INT_TYPE.getOpcode(opcode));
-            myStack.push(StackValue.onStack(Type.INT_TYPE));
+        final Type asmType = typeMapper.mapType(returnType);
+        if (asmType == Type.INT_TYPE || asmType == Type.LONG_TYPE) {
+            gen(expression.getLeft(), asmType);
+            gen(expression.getRight(), asmType);
+            v.visitInsn(asmType.getOpcode(opcode));
+            myStack.push(StackValue.onStack(asmType));
         }
         else {
             throw new UnsupportedOperationException("Don't know how to generate binary op with return type " + returnType);

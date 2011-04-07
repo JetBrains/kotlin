@@ -8,14 +8,19 @@ import org.jetbrains.jet.lang.types.DeclarationDescriptor;
  */
 public class FrameMap {
     private final TObjectIntHashMap<DeclarationDescriptor> myVarIndex = new TObjectIntHashMap<DeclarationDescriptor>();
+    private final TObjectIntHashMap<DeclarationDescriptor> myVarSizes = new TObjectIntHashMap<DeclarationDescriptor>();
     private int myMaxIndex = 0;
 
-    public void enter(DeclarationDescriptor descriptor) {
-        myVarIndex.put(descriptor, myMaxIndex++);
+    public void enter(DeclarationDescriptor descriptor, int size) {
+        myVarIndex.put(descriptor, myMaxIndex);
+        myMaxIndex += size;
+        myVarSizes.put(descriptor, size);
     }
 
     public int leave(DeclarationDescriptor descriptor) {
-        myMaxIndex--;
+        int size = myVarSizes.get(descriptor);
+        myMaxIndex -= size;
+        myVarSizes.remove(descriptor);
         return myVarIndex.remove(descriptor);
     }
 
