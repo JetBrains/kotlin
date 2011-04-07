@@ -582,6 +582,23 @@ public class ExpressionCodegen extends JetVisitor {
     }
 
     @Override
+    public void visitPrefixExpression(JetPrefixExpression expression) {
+        DeclarationDescriptor op = bindingContext.resolveReferenceExpression(expression.getOperationSign());
+        if (op instanceof FunctionDescriptor) {
+            JetType returnType = bindingContext.getExpressionType(expression);
+            final Type asmType = typeMapper.mapType(returnType);
+            DeclarationDescriptor cls = op.getContainingDeclaration();
+            if (isNumberPrimitive(cls) && op.getName().equals("minus")) {
+                gen(expression.getBaseExpression(), asmType);
+                v.neg(asmType);
+                myStack.push(StackValue.onStack(asmType));
+                return;
+            }
+        }
+        throw new UnsupportedOperationException("Don't know how to generate this prefix expression");
+    }
+
+    @Override
     public void visitProperty(JetProperty property) {
         PropertyDescriptor propertyDescriptor = bindingContext.getPropertyDescriptor(property);
         int index = myMap.getIndex(propertyDescriptor);

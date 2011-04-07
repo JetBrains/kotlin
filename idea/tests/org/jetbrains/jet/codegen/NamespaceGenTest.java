@@ -336,6 +336,12 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
         assertTrue(delta <= 1.0);
     }
 
+    public void testNeg() throws Exception {
+        loadText("fun foo(a: Int): Int = -a");
+        final Method main = generateFunction();
+        assertEquals(-10, main.invoke(null, 10));
+    }
+
     private void binOpTest(final String text, final Object arg1, final Object arg2, final Object expected) throws Exception {
         loadText(text);
         System.out.println(generateToText());
