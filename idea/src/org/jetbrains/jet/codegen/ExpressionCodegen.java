@@ -471,7 +471,8 @@ public class ExpressionCodegen extends JetVisitor {
             DeclarationDescriptor cls = op.getContainingDeclaration();
             if (cls instanceof ClassDescriptor) {
                 final String className = cls.getName();
-                if (className.equals("Int") || className.equals("Long") || className.equals("Short")) {
+                if (className.equals("Int") || className.equals("Long") || className.equals("Short") ||
+                    className.equals("Byte")) {
                     if (op.getName().equals("compareTo")) {
                         generateCompareOp(expression, opToken);
                     }
