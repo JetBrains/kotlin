@@ -27,8 +27,8 @@ public abstract class StackValue {
         return new Constant(value);
     }
 
-    public static StackValue icmp(IElementType opToken) {
-        return new IntCompare(opToken);
+    public static StackValue cmp(IElementType opToken, Type type) {
+        return new NumberCompare(opToken, type);
     }
 
     public abstract void condJump(Label label, boolean jumpIfFalse, InstructionAdapter v);
@@ -113,11 +113,13 @@ public abstract class StackValue {
         }
     }
 
-    private static class IntCompare extends StackValue {
+    private static class NumberCompare extends StackValue {
         private final IElementType opToken;
+        private final Type type;
 
-        public IntCompare(IElementType opToken) {
+        public NumberCompare(IElementType opToken, Type type) {
             this.opToken = opToken;
+            this.type = type;
         }
 
         @Override
@@ -136,25 +138,36 @@ public abstract class StackValue {
         public void condJump(Label label, boolean jumpIfFalse, InstructionAdapter v) {
             int opcode;
             if (opToken == JetTokens.EQEQ) {
-                opcode = jumpIfFalse ? Opcodes.IF_ICMPNE : Opcodes.IF_ICMPEQ;
+                opcode = jumpIfFalse ? Opcodes.IFNE : Opcodes.IFEQ;
             }
             else if (opToken == JetTokens.EXCLEQ) {
-                opcode = jumpIfFalse ? Opcodes.IF_ICMPEQ : Opcodes.IF_ICMPNE;
+                opcode = jumpIfFalse ? Opcodes.IFEQ : Opcodes.IFNE;
             }
             else if (opToken == JetTokens.GT) {
-                opcode = jumpIfFalse ? Opcodes.IF_ICMPLE : Opcodes.IF_ICMPGT;
+                opcode = jumpIfFalse ? Opcodes.IFLE : Opcodes.IFGT;
             }
             else if (opToken == JetTokens.GTEQ) {
-                opcode = jumpIfFalse ? Opcodes.IF_ICMPLT : Opcodes.IF_ICMPGE;
+                opcode = jumpIfFalse ? Opcodes.IFLT : Opcodes.IFGE;
             }
             else if (opToken == JetTokens.LT) {
-                opcode = jumpIfFalse ? Opcodes.IF_ICMPGE : Opcodes.IF_ICMPLT;
+                opcode = jumpIfFalse ? Opcodes.IFGE : Opcodes.IFLT;
             }
             else if (opToken == JetTokens.LTEQ) {
-                opcode = jumpIfFalse ? Opcodes.IF_ICMPGT : Opcodes.IF_ICMPLE;
+                opcode = jumpIfFalse ? Opcodes.IFGT : Opcodes.IFLE;
             }
             else {
                 throw new UnsupportedOperationException("don't know how to generate this condjump");
+            }
+            if (type == Type.FLOAT_TYPE) {
+                if (opToken == JetTokens.GT || opToken == JetTokens.GTEQ) {
+                    v.cmpg(type);
+                }
+                else {
+                    v.cmpl(type);
+                }
+            }
+            else {
+                opcode += (Opcodes.IF_ICMPEQ - Opcodes.IFEQ);
             }
             v.visitJumpInsn(opcode, label);
         }

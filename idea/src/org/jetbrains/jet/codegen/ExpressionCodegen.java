@@ -468,13 +468,14 @@ public class ExpressionCodegen extends JetVisitor {
         }
         DeclarationDescriptor op = bindingContext.resolveReferenceExpression(expression.getOperationReference());
         if (op instanceof FunctionDescriptor) {
+            JetType returnType = bindingContext.getExpressionType(expression);
+            final Type asmType = typeMapper.mapType(returnType);
             DeclarationDescriptor cls = op.getContainingDeclaration();
             if (cls instanceof ClassDescriptor) {
                 final String className = cls.getName();
-                if (className.equals("Int") || className.equals("Long") || className.equals("Short") ||
-                    className.equals("Byte") || className.equals("Char")) {
+                if (isNumberPrimitive(className)) {
                     if (op.getName().equals("compareTo")) {
-                        generateCompareOp(expression, opToken);
+                        generateCompareOp(expression, opToken, asmType);
                     }
                     else {
                         int opcode = opcodeForMethod(op.getName());
@@ -486,10 +487,8 @@ public class ExpressionCodegen extends JetVisitor {
                     if (op.getName().equals("equals")) {
                         final Type leftType = typeMapper.mapType(bindingContext.getExpressionType(expression.getLeft()));
                         final Type rightType = typeMapper.mapType(bindingContext.getExpressionType(expression.getRight()));
-                        if (isIntLikePrimitive(leftType) && isIntLikePrimitive(rightType)) {
-                            gen(expression.getLeft(), Type.INT_TYPE);
-                            gen(expression.getRight(), Type.INT_TYPE);
-                            myStack.push(StackValue.icmp(opToken));
+                        if (isNumberPrimitive(leftType) && leftType == rightType) {
+                            generateCompareOp(expression, opToken, leftType);
                             return;
                         }
                         else {
@@ -505,8 +504,14 @@ public class ExpressionCodegen extends JetVisitor {
         throw new UnsupportedOperationException("Don't know how to generate binary op " + expression);
     }
 
-    private static boolean isIntLikePrimitive(Type type) {
-        return type == Type.INT_TYPE || type == Type.SHORT_TYPE || type == Type.BYTE_TYPE || type == Type.CHAR_TYPE;
+    private static boolean isNumberPrimitive(String className) {
+        return className.equals("Int") || className.equals("Long") || className.equals("Short") ||
+               className.equals("Byte") || className.equals("Char") || className.equals("Float");
+    }
+
+    private static boolean isNumberPrimitive(Type type) {
+        return type == Type.INT_TYPE || type == Type.SHORT_TYPE || type == Type.BYTE_TYPE || type == Type.CHAR_TYPE ||
+               type == Type.FLOAT_TYPE;
     }
 
     private static int opcodeForMethod(final String name) {
@@ -521,7 +526,7 @@ public class ExpressionCodegen extends JetVisitor {
     private void generateBinaryOp(JetBinaryExpression expression, FunctionDescriptor op, int opcode) {
         JetType returnType = op.getUnsubstitutedReturnType();
         final Type asmType = typeMapper.mapType(returnType);
-        if (asmType == Type.INT_TYPE || asmType == Type.LONG_TYPE) {
+        if (asmType == Type.INT_TYPE || asmType == Type.LONG_TYPE || asmType == Type.FLOAT_TYPE) {
             gen(expression.getLeft(), asmType);
             gen(expression.getRight(), asmType);
             v.visitInsn(asmType.getOpcode(opcode));
@@ -532,10 +537,10 @@ public class ExpressionCodegen extends JetVisitor {
         }
     }
 
-    private void generateCompareOp(JetBinaryExpression expression, IElementType opToken) {
-        gen(expression.getLeft(), Type.INT_TYPE);
-        gen(expression.getRight(), Type.INT_TYPE);
-        myStack.push(StackValue.icmp(opToken));
+    private void generateCompareOp(JetBinaryExpression expression, IElementType opToken, Type type) {
+        gen(expression.getLeft(), type);
+        gen(expression.getRight(), type);
+        myStack.push(StackValue.cmp(opToken, type));
     }
 
     private void generateAssignmentExpression(JetBinaryExpression expression) {

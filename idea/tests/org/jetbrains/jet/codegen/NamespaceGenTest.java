@@ -279,6 +279,14 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
         binOpTest("fun foo(a: Char, b: Char): Int = a + b", 'A', (char) 3, (int) 'D');
     }
 
+    public void testFloat() throws Exception {
+        binOpTest("fun foo(a: Float, b: Float): Float = a + b", 1.0f, 2.0f, 3.0f);
+    }
+
+    public void testFloatCmp() throws Exception {
+        binOpTest("fun foo(a: Float, b: Float): Boolean = a == b", 1.0f, 1.0f, true);
+    }
+
     private void binOpTest(final String text, final Object arg1, final Object arg2, final Object expected) throws Exception {
         loadText(text);
         System.out.println(generateToText());
