@@ -506,12 +506,13 @@ public class ExpressionCodegen extends JetVisitor {
 
     private static boolean isNumberPrimitive(String className) {
         return className.equals("Int") || className.equals("Long") || className.equals("Short") ||
-               className.equals("Byte") || className.equals("Char") || className.equals("Float");
+               className.equals("Byte") || className.equals("Char") || className.equals("Float") ||
+               className.equals("Double");
     }
 
     private static boolean isNumberPrimitive(Type type) {
         return type == Type.INT_TYPE || type == Type.SHORT_TYPE || type == Type.BYTE_TYPE || type == Type.CHAR_TYPE ||
-               type == Type.FLOAT_TYPE;
+               type == Type.FLOAT_TYPE || type == Type.DOUBLE_TYPE;
     }
 
     private static int opcodeForMethod(final String name) {
@@ -526,7 +527,8 @@ public class ExpressionCodegen extends JetVisitor {
     private void generateBinaryOp(JetBinaryExpression expression, FunctionDescriptor op, int opcode) {
         JetType returnType = op.getUnsubstitutedReturnType();
         final Type asmType = typeMapper.mapType(returnType);
-        if (asmType == Type.INT_TYPE || asmType == Type.LONG_TYPE || asmType == Type.FLOAT_TYPE) {
+        if (asmType == Type.INT_TYPE || asmType == Type.LONG_TYPE ||
+            asmType == Type.FLOAT_TYPE || asmType == Type.DOUBLE_TYPE) {
             gen(expression.getLeft(), asmType);
             gen(expression.getRight(), asmType);
             v.visitInsn(asmType.getOpcode(opcode));

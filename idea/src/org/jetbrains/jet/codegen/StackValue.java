@@ -158,7 +158,7 @@ public abstract class StackValue {
             else {
                 throw new UnsupportedOperationException("don't know how to generate this condjump");
             }
-            if (type == Type.FLOAT_TYPE) {
+            if (type == Type.FLOAT_TYPE || type == Type.DOUBLE_TYPE) {
                 if (opToken == JetTokens.GT || opToken == JetTokens.GTEQ) {
                     v.cmpg(type);
                 }

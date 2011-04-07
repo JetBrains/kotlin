@@ -35,6 +35,9 @@ public class JetTypeMapper {
         if (jetType.equals(standardLibrary.getFloatType())) {
             return Type.FLOAT_TYPE;
         }
+        if (jetType.equals(standardLibrary.getDoubleType())) {
+            return Type.DOUBLE_TYPE;
+        }
         if (jetType.equals(standardLibrary.getBooleanType())) {
             return Type.BOOLEAN_TYPE;
         }
