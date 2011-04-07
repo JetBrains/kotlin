@@ -327,6 +327,15 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
         assertEquals(1.0, main.invoke(null));
     }
 
+    public void testCastOnStack() throws Exception {
+        loadText("fun foo(): Double = System.currentTimeMillis().dbl");
+        final Method main = generateFunction();
+        double currentTimeMillis = (double) System.currentTimeMillis();
+        double result = (Double) main.invoke(null);
+        double delta = Math.abs(currentTimeMillis - result);
+        assertTrue(delta <= 1.0);
+    }
+
     private void binOpTest(final String text, final Object arg1, final Object arg2, final Object expected) throws Exception {
         loadText(text);
         System.out.println(generateToText());

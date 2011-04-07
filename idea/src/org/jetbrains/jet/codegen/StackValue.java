@@ -108,6 +108,7 @@ public abstract class StackValue {
 
         @Override
         public void put(Type type, InstructionAdapter v) {
+            coerce(type, v);
         }
 
         @Override
