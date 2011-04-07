@@ -1,7 +1,6 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.psi.tree.IElementType;
-import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
@@ -14,7 +13,7 @@ import org.objectweb.asm.commons.InstructionAdapter;
 public abstract class StackValue {
     public abstract void put(Type type, InstructionAdapter v);
 
-    public static StackValue local(int index, JetType type) {
+    public static StackValue local(int index, Type type) {
         return new Local(index, type);
     }
 
@@ -35,17 +34,43 @@ public abstract class StackValue {
 
     public static class Local extends StackValue {
         private final int index;
-        private final JetType type;
+        private final Type type;
 
-        public Local(int index, JetType type) {
+        public Local(int index, Type type) {
             this.index = index;
             this.type = type;
         }
 
         @Override
         public void put(Type type, InstructionAdapter v) {
-            v.load(index, type);
-            // TODO box/unbox
+            v.load(index, this.type);
+            if (type.getSort() == Type.OBJECT) {
+                if (this.type == Type.INT_TYPE) {
+                    v.invokestatic("java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;");
+                }
+                else if (this.type == Type.BOOLEAN_TYPE) {
+                    v.invokestatic("java/lang/Boolean", "valueOf", "(Z)Ljava/lang/Boolean;");
+                }
+                else if (this.type == Type.CHAR_TYPE) {
+                    v.invokestatic("java/lang/Character", "valueOf", "(C)Ljava/lang/Character;");
+                }
+                else if (this.type == Type.SHORT_TYPE) {
+                    v.invokestatic("java/lang/Short", "valueOf", "(S)Ljava/lang/Short;");
+                }
+                else if (this.type == Type.LONG_TYPE) {
+                    v.invokestatic("java/lang/Long", "valueOf", "(J)Ljava/lang/Long;");
+                }
+                else if (this.type == Type.BYTE_TYPE) {
+                    v.invokestatic("java/lang/Byte", "valueOf", "(B)Ljava/lang/Byte;");
+                }
+                else if (this.type == Type.FLOAT_TYPE) {
+                    v.invokestatic("java/lang/Float", "valueOf", "(F)Ljava/lang/Float;");
+                }
+                else if (this.type == Type.DOUBLE_TYPE) {
+                    v.invokestatic("java/lang/Double", "valueOf", "(D)Ljava/lang/Double;");
+                }
+            }
+            // TODO unbox
         }
 
         @Override

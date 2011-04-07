@@ -233,6 +233,13 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
         assertEquals(239, main.invoke(null));
     }
 
+    public void testBoxVariable() throws Exception {
+        loadText("fun foo(): Int? { var x = 239; return x; }");
+        System.out.println(generateToText());
+        final Method main = generateFunction();
+        assertEquals(239, main.invoke(null));
+    }
+
     public void testLong() throws Exception {
         loadText("fun foo(a: Long, b: Long): Long = a + b");
         System.out.println(generateToText());

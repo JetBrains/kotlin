@@ -275,7 +275,8 @@ public class ExpressionCodegen extends JetVisitor {
         else {
             int index = myMap.getIndex(descriptor);
             if (index >= 0) {
-                myStack.push(StackValue.local(index, ((PropertyDescriptor) descriptor).getOutType()));
+                final JetType outType = ((PropertyDescriptor) descriptor).getOutType();
+                myStack.push(StackValue.local(index, typeMapper.mapType(outType)));
             }
             else {
                 throw new UnsupportedOperationException("don't know how to generate reference " + descriptor);
