@@ -259,6 +259,11 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
                 Byte.valueOf((byte) 127), Byte.valueOf((byte) 127), 1);
     }
 
+    public void testByteLess() throws Exception {
+        binOpTest("fun foo(a: Byte, b: Byte): Boolean = a < b",
+                Byte.valueOf((byte) 126), Byte.valueOf((byte) 127), 1);
+    }
+
     private void binOpTest(final String text, final Object arg1, final Object arg2, final int expected) throws Exception {
         loadText(text);
         System.out.println(generateToText());
