@@ -4,6 +4,7 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetLightProjectDescriptor;
+import org.jetbrains.jet.lang.JetFileType;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespace;
 import org.jetbrains.jet.parsing.JetParsingTest;
@@ -169,6 +170,25 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
         final Method main = generateFunction();
         assertEquals(3, main.invoke(null, 4));
         assertEquals(7, main.invoke(null, 5));
+    }
+
+    public void testDiv() throws Exception {
+        binOpTest("fun foo(a: Int, b: Int): Int = a / b", 12, 3, 4);
+    }
+
+    public void testMod() throws Exception {
+        binOpTest("fun foo(a: Int, b: Int): Int = a % b", 14, 3, 2);
+    }
+
+    private void binOpTest(final String text, final int arg1, final int arg2, final int expected) throws Exception {
+        loadText(text);
+        System.out.println(generateToText());
+        final Method main = generateFunction();
+        assertEquals(expected, main.invoke(null, arg1, arg2));
+    }
+
+    private void loadText(final String text) {
+        myFixture.configureByText(JetFileType.INSTANCE, text);
     }
 
     private void loadFile(final String name) {

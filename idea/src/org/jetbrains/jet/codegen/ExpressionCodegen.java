@@ -494,15 +494,11 @@ public class ExpressionCodegen extends JetVisitor {
     }
 
     private static int opcodeForMethod(final String name) {
-        if (name.equals("plus")) {
-            return Opcodes.IADD;
-        }
-        if (name.equals("minus")) {
-            return Opcodes.ISUB;
-        }
-        if (name.equals("times")) {
-            return Opcodes.IMUL;
-        }
+        if (name.equals("plus")) return Opcodes.IADD;
+        if (name.equals("minus")) return Opcodes.ISUB;
+        if (name.equals("times")) return Opcodes.IMUL;
+        if (name.equals("div")) return Opcodes.IDIV;
+        if (name.equals("mod")) return Opcodes.IREM;
         throw new UnsupportedOperationException("Don't know how to generate binary op method " + name);
     }
 
