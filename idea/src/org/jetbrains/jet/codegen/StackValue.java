@@ -97,6 +97,32 @@ public abstract class StackValue {
         @Override
         public void put(Type type, InstructionAdapter v) {
             v.aconst(value);
+            if (type.getSort() == Type.OBJECT) {
+                if (value instanceof Integer) {
+                    v.invokestatic("java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;");
+                }
+                else if (value instanceof Boolean) {
+                    v.invokestatic("java/lang/Boolean", "valueOf", "(Z)Ljava/lang/Boolean;");
+                }
+                else if (value instanceof Character) {
+                    v.invokestatic("java/lang/Character", "valueOf", "(C)Ljava/lang/Character;");
+                }
+                else if (value instanceof Short) {
+                    v.invokestatic("java/lang/Short", "valueOf", "(S)Ljava/lang/Short;");
+                }
+                else if (value instanceof Long) {
+                    v.invokestatic("java/lang/Long", "valueOf", "(J)Ljava/lang/Long;");
+                }
+                else if (value instanceof Byte) {
+                    v.invokestatic("java/lang/Byte", "valueOf", "(B)Ljava/lang/Byte;");
+                }
+                else if (value instanceof Float) {
+                    v.invokestatic("java/lang/Float", "valueOf", "(F)Ljava/lang/Float;");
+                }
+                else if (value instanceof Double) {
+                    v.invokestatic("java/lang/Double", "valueOf", "(D)Ljava/lang/Double;");
+                }
+            }
         }
 
         @Override

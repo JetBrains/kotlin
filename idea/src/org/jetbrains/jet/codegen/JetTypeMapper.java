@@ -20,6 +20,9 @@ public class JetTypeMapper {
         if (jetType.equals(standardLibrary.getIntType())) {
             return Type.INT_TYPE;
         }
+        if (jetType.equals(TypeUtils.makeNullable(standardLibrary.getIntType()))) {
+            return Type.getObjectType("java/lang/Integer");
+        }
         if (jetType.equals(standardLibrary.getLongType())) {
             return Type.LONG_TYPE;
         }

@@ -221,10 +221,16 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
         assertEquals(239, main.invoke(null, new Object[]{null}));
     }
 
-    public void testBoxingInCall() throws Exception {
+    public void testIntBoxed() throws Exception {
         loadText("fun foo(s: String): Int? = Integer.getInteger(s, 239)");
         final Method main = generateFunction();
         assertEquals(239, main.invoke(null, "no.such.system.property"));
+    }
+
+    public void testBoxConstant() throws Exception {
+        loadText("fun foo(): Int? = 239");
+        final Method main = generateFunction();
+        assertEquals(239, main.invoke(null));
     }
 
     public void testLong() throws Exception {
