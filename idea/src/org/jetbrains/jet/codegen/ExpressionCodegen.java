@@ -486,7 +486,7 @@ public class ExpressionCodegen extends JetVisitor {
                     if (op.getName().equals("equals")) {
                         final Type leftType = typeMapper.mapType(bindingContext.getExpressionType(expression.getLeft()));
                         final Type rightType = typeMapper.mapType(bindingContext.getExpressionType(expression.getRight()));
-                        if (leftType == Type.INT_TYPE && rightType == Type.INT_TYPE) {
+                        if (isIntLikePrimitive(leftType) && isIntLikePrimitive(rightType)) {
                             gen(expression.getLeft(), Type.INT_TYPE);
                             gen(expression.getRight(), Type.INT_TYPE);
                             myStack.push(StackValue.icmp(opToken));
@@ -503,6 +503,10 @@ public class ExpressionCodegen extends JetVisitor {
             }
         }
         throw new UnsupportedOperationException("Don't know how to generate binary op " + expression);
+    }
+
+    private static boolean isIntLikePrimitive(Type type) {
+        return type == Type.INT_TYPE || type == Type.BYTE_TYPE;
     }
 
     private static int opcodeForMethod(final String name) {

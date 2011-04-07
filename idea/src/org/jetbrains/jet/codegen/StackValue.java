@@ -133,7 +133,14 @@ public abstract class StackValue {
 
         @Override
         public void put(Type type, InstructionAdapter v) {
-            throw new UnsupportedOperationException("don't know how to put an IntCompare on stack");
+            Label ifTrue = new Label();
+            Label end = new Label();
+            condJump(ifTrue, false, v);
+            v.iconst(0);
+            v.goTo(end);
+            v.mark(ifTrue);
+            v.iconst(1);
+            v.mark(end);
         }
 
         @Override
