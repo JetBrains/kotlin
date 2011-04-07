@@ -223,6 +223,14 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
         assertEquals(expected, main.invoke(null, arg, arg));
     }
 
+    public void testLongCmp() throws Exception {
+        loadText("fun foo(a: Long, b: Long): Long = if (a == b) 0xffffffffL else 0L");
+        System.out.println(generateToText());
+        final Method main = generateFunction();
+        assertEquals(0xffffffffL, main.invoke(null, 1, 1));
+        assertEquals(0L, main.invoke(null, 1, 0));
+    }
+
     private void binOpTest(final String text, final int arg1, final int arg2, final int expected) throws Exception {
         loadText(text);
         System.out.println(generateToText());
