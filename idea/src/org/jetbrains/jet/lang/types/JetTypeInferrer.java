@@ -1082,11 +1082,16 @@ public class JetTypeInferrer {
                     if (functionDescriptor != null) {
                         JetType returnType = functionDescriptor.getUnsubstitutedReturnType();
                         if (operationType == JetTokens.PLUSPLUS || operationType == JetTokens.MINUSMINUS) {
-                            if (!semanticServices.getTypeChecker().isSubtypeOf(returnType, receiverType)) {
-                                 semanticServices.getErrorHandler().genericError(operationSign.getNode(), name + " must return " + receiverType + " but returns " + returnType);
+                            if (semanticServices.getTypeChecker().isSubtypeOf(returnType, JetStandardClasses.getUnitType())) {
+                                 result = JetStandardClasses.getUnitType();
                             }
-                            // TODO : Maybe returnType?
-                            result = receiverType;
+                            else {
+                                if (!semanticServices.getTypeChecker().isSubtypeOf(returnType, receiverType)) {
+                                    semanticServices.getErrorHandler().genericError(operationSign.getNode(), name + " must return " + receiverType + " but returns " + returnType);
+                                }
+                                // TODO : Maybe returnType?
+                                result = receiverType;
+                            }
                         } else {
                             result = returnType;
                         }
@@ -1386,7 +1391,7 @@ public class JetTypeInferrer {
                 String counterpartName = binaryOperationNames.get(assignmentOperationCounterparts.get(operationType));
                 getTypeForBinaryCall(expression, counterpartName, scope, true);
             }
-            result = null; // not an element
+            result = null; // not an expression
         }
 
         @Override

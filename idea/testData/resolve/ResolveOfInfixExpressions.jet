@@ -85,3 +85,15 @@ fun <T> tt(t : T) : T {
   1 `std::Int.compareTo(Double)`>= 2.0
   1 `std::Int.compareTo(Double)`<= 2.0
 }
+
+
+class UnitIncDec {
+  ~uinc~fun inc() : Unit
+  ~udec~fun dec() : Unit
+}
+
+fun testUnitIncDec() {
+  var x = new UnitIncDec()
+  x`uinc`++
+  x`udec`--
+}

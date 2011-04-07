@@ -213,16 +213,31 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitUnaryExpression(JetUnaryExpression expression) {
-            IElementType operationType = expression.getOperationSign().getReferencedNameElementType();
+            JetSimpleNameExpression operationSign = expression.getOperationSign();
+            IElementType operationType = operationSign.getReferencedNameElementType();
+            JetExpression baseExpression = expression.getBaseExpression();
             if (JetTokens.LABELS.contains(operationType)) {
-                String referencedName = expression.getOperationSign().getReferencedName();
+                String referencedName = operationSign.getReferencedName();
                 referencedName = referencedName == null ? " <?>" : referencedName;
-                visitLabeledExpression(referencedName.substring(1), expression.getBaseExpression());
+                visitLabeledExpression(referencedName.substring(1), baseExpression);
             }
             else {
-                visitElement(expression);
+                value(baseExpression, false, false);
+                value(operationSign, false, false);
+
+                boolean incrementOrDecrement = isIncrementOrDecrement(operationType);
+                if (incrementOrDecrement) {
+                    builder.writeNode(expression, baseExpression);
+                }
+
+                builder.readNode(expression);
             }
         }
+
+        private boolean isIncrementOrDecrement(IElementType operationType) {
+            return operationType == JetTokens.PLUSPLUS || operationType == JetTokens.MINUSMINUS;
+        }
+
 
         @Override
         public void visitIfExpression(JetIfExpression expression) {
@@ -460,6 +475,16 @@ public class JetControlFlowProcessor {
                 value(entry, false, false);
             }
             builder.readNode(expression);
+        }
+
+        @Override
+        public void visitBinaryWithTypeRHSExpression(JetBinaryExpressionWithTypeRHS expression) {
+            if (expression.getOperationSign().getReferencedNameElementType() == JetTokens.COLON) {
+                value(expression.getLeft(), false, false);
+            }
+            else {
+                visitJetElement(expression); // TODO
+            }
         }
 
         @Override

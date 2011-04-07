@@ -362,7 +362,7 @@ public class TopDownAnalyzer {
 
             @Override
             public void visitUnsupportedElementInstruction(UnsupportedElementInstruction instruction) {
-                semanticServices.getErrorHandler().genericError(instruction.getElement().getNode(), "Unsupported by control-flow builder");
+                semanticServices.getErrorHandler().genericError(instruction.getElement().getNode(), "Unsupported by control-flow builder " + instruction.getElement());
             }
 
             @Override

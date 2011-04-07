@@ -1,0 +1,46 @@
+class IncDec {
+  fun inc() : IncDec = this
+  fun dec() : IncDec = this
+}
+
+fun testIncDec() {
+  var x = new IncDec()
+  x++
+  ++x
+  x--
+  --x
+  x = x++
+  x = x--
+  x = ++x
+  x = --x
+}
+
+class WrongIncDec {
+  fun inc() : Int = 1
+  fun dec() : Int = 1
+}
+
+fun testWrongIncDec() {
+  var x = new WrongIncDec()
+  x<error>++</error>
+  <error>++</error>x
+  x<error>--</error>
+  <error>--</error>x
+}
+
+class UnitIncDec {
+  fun inc() : Unit {}
+  fun dec() : Unit {}
+}
+
+fun testUnitIncDec() {
+  var x = new UnitIncDec()
+  x++
+  ++x
+  x--
+  --x
+  x = <error>x++</error>
+  x = <error>x--</error>
+  x = <error>++x</error>
+  x = <error>--x</error>
+}
