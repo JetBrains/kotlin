@@ -166,6 +166,9 @@ public abstract class StackValue {
                     v.cmpl(type);
                 }
             }
+            else if (type == Type.LONG_TYPE) {
+                v.lcmp();
+            }
             else {
                 opcode += (Opcodes.IF_ICMPEQ - Opcodes.IFEQ);
             }

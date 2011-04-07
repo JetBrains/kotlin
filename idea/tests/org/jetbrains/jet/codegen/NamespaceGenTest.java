@@ -237,11 +237,11 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
     }
 
     public void testLongCmp() throws Exception {
-        loadText("fun foo(a: Long, b: Long): Long = if (a == b) 0xffffffff else 0.lng");
+        loadText("fun foo(a: Long, b: Long): Long = if (a == b) 0xffffffff else 0xfffffffe");
         System.out.println(generateToText());
         final Method main = generateFunction();
         assertEquals(0xffffffffL, main.invoke(null, 1, 1));
-        assertEquals(0L, main.invoke(null, 1, 0));
+        assertEquals(0xfffffffeL, main.invoke(null, 1, 0));
     }
 
     public void testShort() throws Exception {
@@ -266,7 +266,7 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
 
     public void testByteLess() throws Exception {
         binOpTest("fun foo(a: Byte, b: Byte): Boolean = a < b",
-                Byte.valueOf((byte) 126), Byte.valueOf((byte) 127), 1);
+                Byte.valueOf((byte) 126), Byte.valueOf((byte) 127), true);
     }
 
     public void testBooleanConstant() throws Exception {
