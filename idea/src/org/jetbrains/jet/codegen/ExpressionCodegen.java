@@ -107,6 +107,9 @@ public class ExpressionCodegen extends JetVisitor {
         gen(elseExpression, asmType);
 
         v.mark(endLabel);
+        if (asmType != Type.VOID_TYPE) {
+            myStack.push(StackValue.onStack(asmType));
+        }
     }
 
     @Override
@@ -141,7 +144,7 @@ public class ExpressionCodegen extends JetVisitor {
         gen(expression.getBody(), Type.VOID_TYPE);
 
         gen(expression.getCondition());
-        myStack.pop().condJump(condition, true, v);
+        myStack.pop().condJump(condition, false, v);
 
         v.mark(end);
 
@@ -477,7 +480,7 @@ public class ExpressionCodegen extends JetVisitor {
                         if (leftType == Type.INT_TYPE && rightType == Type.INT_TYPE) {
                             gen(expression.getLeft(), Type.INT_TYPE);
                             gen(expression.getRight(), Type.INT_TYPE);
-                            myStack.push(StackValue.icmp(JetTokens.EQEQ));
+                            myStack.push(StackValue.icmp(opToken));
                             return;
                         }
                         else {

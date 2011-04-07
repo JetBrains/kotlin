@@ -180,6 +180,11 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
         binOpTest("fun foo(a: Int, b: Int): Int = a % b", 14, 3, 2);
     }
 
+    public void testNE() throws Exception {
+        binOpTest("fun foo(a: Int, b: Int): Int = if (a != b) 1 else 0", 5, 5, 0);
+        binOpTest("fun foo(a: Int, b: Int): Int = if (a != b) 1 else 0", 5, 3, 1);
+    }
+
     public void testIfNoElse() throws Exception {
         loadFile("ifNoElse.jet");
         System.out.println(generateToText());

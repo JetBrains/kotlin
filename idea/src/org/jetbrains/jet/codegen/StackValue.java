@@ -19,6 +19,7 @@ public abstract class StackValue {
     }
 
     public static StackValue onStack(Type type) {
+        assert type != Type.VOID_TYPE;
         return new OnStack(type);
     }
 
@@ -130,6 +131,9 @@ public abstract class StackValue {
             int opcode;
             if (opToken == JetTokens.EQEQ) {
                 opcode = jumpIfFalse ? Opcodes.IF_ICMPNE : Opcodes.IF_ICMPEQ;
+            }
+            else if (opToken == JetTokens.EXCLEQ) {
+                opcode = jumpIfFalse ? Opcodes.IF_ICMPEQ : Opcodes.IF_ICMPNE;
             }
             else if (opToken == JetTokens.GT) {
                 opcode = jumpIfFalse ? Opcodes.IF_ICMPLE : Opcodes.IF_ICMPGT;
