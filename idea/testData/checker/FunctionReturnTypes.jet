@@ -29,44 +29,44 @@ fun blockAndAndMismatch() : Int {
 fun blockAndAndMismatch() : Int {
   <error>(return <error>true</error>) && (return <error>false</error>)</error>
 }
-/*
+
 fun blockAndAndMismatch() : Int {
-  true || false
-}
-fun blockAndAndMismatch() : Int {
-  return true || false
+  <error>true || false</error>
 }
 fun blockAndAndMismatch() : Int {
-  (return true) || (return false)
+  return <error>true || false</error>
+}
+fun blockAndAndMismatch() : Int {
+  <error>(return <error>true</error>) || (return <error>false</error>)</error>
 }
 fun blockReturnValueTypeMatch() : Int {
-  return if (1 > 2) 1.0 else 2.0
+  return if (1 > 2) <error>1.0</error> else <error>2.0</error>
 }
 fun blockReturnValueTypeMatch() : Int {
-  return if (1 > 2) 1.0
+  return <error>if (1 > 2) 1</error>
 }
 fun blockReturnValueTypeMatch() : Int {
-  return if (1 > 2) else 1.0
-}
-fun blockReturnValueTypeMatch() : Int {
-  if (1 > 2)
-    return 1.0
-  else return 2.0
-}
-fun blockReturnValueTypeMatch() : Int {
-  if (1 > 2)
-    return 1.0
-  return 2.0
+  return <error>if (1 > 2) else 1</error>
 }
 fun blockReturnValueTypeMatch() : Int {
   if (1 > 2)
-    else return 1.0
-  return 2.0
+    return <error>1.0</error>
+  else return <error>2.0</error>
 }
 fun blockReturnValueTypeMatch() : Int {
   if (1 > 2)
-    1.0
-  else 2.0
+    return <error>1.0</error>
+  return <error>2.0</error>
+}
+fun blockReturnValueTypeMatch() : Int {
+  if (1 > 2)
+    else return <error>1.0</error>
+  return <error>2.0</error>
+}
+fun blockReturnValueTypeMatch() : Int {
+  if (1 > 2)
+    <error>1.0</error>
+  else <error>2.0</error>
 }
 fun blockReturnValueTypeMatch() : Int {
   if (1 > 2)
@@ -75,16 +75,19 @@ fun blockReturnValueTypeMatch() : Int {
   return 1
 }
 fun blockReturnValueTypeMatch() : Int {
-  if (1 > 2)
-    1.0
+  <error>if (1 > 2)
+    <error>1.0</error></error>
 }
 fun blockReturnValueTypeMatch() : Int {
-  if (1 > 2)
-  else 1.0;
+  <error>if (1 > 2)
+    1</error>
+}
+fun blockReturnValueTypeMatch() : Int {
+  <error>if (1 > 2)
+  else <error>1.0</error></error>
 }
 fun blockReturnValueTypeMatch() : Int {
   if (1 > 2)
     1
-  else 1.0
+  else <error>1.0</error>
 }
-*/
