@@ -23,6 +23,9 @@ public class JetTypeMapper {
         if (jetType.equals(standardLibrary.getLongType())) {
             return Type.LONG_TYPE;
         }
+        if (jetType.equals(standardLibrary.getShortType())) {
+            return Type.SHORT_TYPE;
+        }
         if (jetType.equals(standardLibrary.getBooleanType())) {
             return Type.BOOLEAN_TYPE;
         }
