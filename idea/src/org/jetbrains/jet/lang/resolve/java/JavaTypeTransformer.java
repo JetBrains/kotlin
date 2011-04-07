@@ -17,6 +17,7 @@ public class JavaTypeTransformer {
     private final JavaDescriptorResolver resolver;
     private final JetStandardLibrary standardLibrary;
     private Map<String, JetType> primitiveTypesMap;
+    private Map<String, JetType> classTypesMap;
 
     public JavaTypeTransformer(JetStandardLibrary standardLibrary, JavaDescriptorResolver resolver) {
         this.resolver = resolver;
@@ -33,12 +34,9 @@ public class JavaTypeTransformer {
                     return ErrorUtils.createErrorType("Unresolved java class: " + classType.getPresentableText());
                 }
 
-                if ("java.lang.Object".equals(psiClass.getQualifiedName())) {
-                    return JetStandardClasses.getNullableAnyType();
-                }
-
-                if ("java.lang.String".equals(psiClass.getQualifiedName())) {
-                    return standardLibrary.getNullableStringType();
+                JetType jetAnalog = getClassTypesMap().get(psiClass.getQualifiedName());
+                if (jetAnalog != null) {
+                    return jetAnalog;
                 }
 
                 ClassDescriptor descriptor = resolver.resolveClass(psiClass);
@@ -85,7 +83,32 @@ public class JavaTypeTransformer {
             primitiveTypesMap.put("double", standardLibrary.getDoubleType());
             primitiveTypesMap.put("boolean", standardLibrary.getBooleanType());
             primitiveTypesMap.put("void", JetStandardClasses.getUnitType());
+            primitiveTypesMap.put("java.lang.Byte", TypeUtils.makeNullable(standardLibrary.getByteType()));
+            primitiveTypesMap.put("java.lang.Short", TypeUtils.makeNullable(standardLibrary.getShortType()));
+            primitiveTypesMap.put("java.lang.Character", TypeUtils.makeNullable(standardLibrary.getCharType()));
+            primitiveTypesMap.put("java.lang.Integer", TypeUtils.makeNullable(standardLibrary.getIntType()));
+            primitiveTypesMap.put("java.lang.Long", TypeUtils.makeNullable(standardLibrary.getLongType()));
+            primitiveTypesMap.put("java.lang.Float", TypeUtils.makeNullable(standardLibrary.getFloatType()));
+            primitiveTypesMap.put("java.lang.Double", TypeUtils.makeNullable(standardLibrary.getDoubleType()));
+            primitiveTypesMap.put("java.lang.Boolean", TypeUtils.makeNullable(standardLibrary.getBooleanType()));
         }
         return primitiveTypesMap;
+    }
+
+    public Map<String, JetType> getClassTypesMap() {
+        if (classTypesMap == null) {
+            classTypesMap = new HashMap<String, JetType>();
+            classTypesMap.put("java.lang.Byte", TypeUtils.makeNullable(standardLibrary.getByteType()));
+            classTypesMap.put("java.lang.Short", TypeUtils.makeNullable(standardLibrary.getShortType()));
+            classTypesMap.put("java.lang.Character", TypeUtils.makeNullable(standardLibrary.getCharType()));
+            classTypesMap.put("java.lang.Integer", TypeUtils.makeNullable(standardLibrary.getIntType()));
+            classTypesMap.put("java.lang.Long", TypeUtils.makeNullable(standardLibrary.getLongType()));
+            classTypesMap.put("java.lang.Float", TypeUtils.makeNullable(standardLibrary.getFloatType()));
+            classTypesMap.put("java.lang.Double", TypeUtils.makeNullable(standardLibrary.getDoubleType()));
+            classTypesMap.put("java.lang.Boolean", TypeUtils.makeNullable(standardLibrary.getBooleanType()));
+            classTypesMap.put("java.lang.Object", JetStandardClasses.getNullableAnyType());
+            classTypesMap.put("java.lang.String", standardLibrary.getNullableStringType());
+        }
+        return classTypesMap;
     }
 }

@@ -24,7 +24,12 @@ public class JetConstantExpression extends JetExpression {
 
         if (elementType == JetNodeTypes.INTEGER_CONSTANT) {
             if (nodeText.startsWith("0x") || nodeText.startsWith("0X")) {
-                return Integer.parseInt(nodeText.substring(2), 16);
+                String hexString = nodeText.substring(2);
+                long longValue = Long.parseLong(hexString, 16);
+                if (Integer.MIN_VALUE <= longValue && longValue <= Integer.MAX_VALUE) {
+                    return (int) longValue;
+                }
+                return longValue;
             }
             if (nodeText.startsWith("0b") || nodeText.startsWith("0B")) {
                 return Integer.parseInt(nodeText.substring(2), 2);

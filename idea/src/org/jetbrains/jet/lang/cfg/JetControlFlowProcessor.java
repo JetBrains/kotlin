@@ -40,7 +40,7 @@ public class JetControlFlowProcessor {
         boolean functionLiteral = subroutineElement instanceof JetFunctionLiteralExpression;
         builder.enterSubroutine(subroutineElement, functionLiteral);
         for (JetElement statement : body) {
-            statement.accept(new CFPVisitor(preferBlocks));
+            statement.accept(new CFPVisitor(preferBlocks, false));
         }
         builder.exitSubroutine(subroutineElement, functionLiteral);
     }
@@ -89,18 +89,20 @@ public class JetControlFlowProcessor {
 
     private class CFPVisitor extends JetVisitor {
         private final boolean preferBlock;
+        private final boolean inCondition;
 
-        private CFPVisitor(boolean preferBlock) {
+        private CFPVisitor(boolean preferBlock, boolean inCondition) {
             this.preferBlock = preferBlock;
+            this.inCondition = inCondition;
         }
 
-        private void value(@NotNull JetElement element, boolean preferBlock) {
+        private void value(@NotNull JetElement element, boolean preferBlock, boolean inCondition) {
             CFPVisitor visitor;
-            if (this.preferBlock == preferBlock) {
+            if (this.preferBlock == preferBlock && this.inCondition == inCondition) {
                 visitor = this;
             }
             else {
-                visitor = new CFPVisitor(preferBlock);
+                visitor = new CFPVisitor(preferBlock, inCondition);
             }
             element.accept(visitor);
             exitElement(element);
@@ -110,7 +112,7 @@ public class JetControlFlowProcessor {
         public void visitParenthesizedExpression(JetParenthesizedExpression expression) {
             JetExpression innerExpression = expression.getExpression();
             if (innerExpression != null) {
-                value(innerExpression, false);
+                value(innerExpression, false, inCondition);
             }
         }
 
@@ -142,7 +144,7 @@ public class JetControlFlowProcessor {
             JetExpression deparenthesized = JetPsiUtil.deparenthesize(labeledExpression);
             if (deparenthesized != null) {
                 enterLabeledElement(labelName, deparenthesized);
-                value(labeledExpression, false);
+                value(labeledExpression, false, inCondition);
             }
         }
 
@@ -151,27 +153,33 @@ public class JetControlFlowProcessor {
             IElementType operationType = expression.getOperationReference().getReferencedNameElementType();
             JetExpression right = expression.getRight();
             if (operationType == JetTokens.ANDAND) {
-                value(expression.getLeft(), false);
+                value(expression.getLeft(), false, true);
                 Label resultLabel = builder.createUnboundLabel();
                 builder.jumpOnFalse(resultLabel);
                 if (right != null) {
-                    value(right, false);
+                    value(right, false, true);
                 }
                 builder.bindLabel(resultLabel);
+                if (!inCondition) {
+                    builder.readNode(expression);
+                }
             }
             else if (operationType == JetTokens.OROR) {
-                value(expression.getLeft(), false);
+                value(expression.getLeft(), false, true);
                 Label resultLabel = builder.createUnboundLabel();
                 builder.jumpOnTrue(resultLabel);
                 if (right != null) {
-                    value(right, false);
+                    value(right, false, true);
                 }
                 builder.bindLabel(resultLabel);
+                if (!inCondition) {
+                    builder.readNode(expression);
+                }
             }
             else if (operationType == JetTokens.EQ) {
                 JetExpression left = expression.getLeft();
                 if (right != null) {
-                    value(right, false);
+                    value(right, false, false);
                 }
                 if (left instanceof JetSimpleNameExpression) {
                     builder.writeNode(expression, left);
@@ -182,9 +190,9 @@ public class JetControlFlowProcessor {
             }
             else if (JetTypeInferrer.assignmentOperationNames.containsKey(operationType)) {
                 JetExpression left = expression.getLeft();
-                value(left, false);
+                value(left, false, false);
                 if (right != null) {
-                    value(right, false);
+                    value(right, false, false);
                 }
                 if (left instanceof JetSimpleNameExpression) {
                     builder.writeNode(expression, left);
@@ -194,11 +202,11 @@ public class JetControlFlowProcessor {
                 }
             }
             else {
-                value(expression.getLeft(), false);
+                value(expression.getLeft(), false, false);
                 if (right != null) {
-                    value(right, false);
+                    value(right, false, false);
                 }
-                value(expression.getOperationReference(), false);
+                value(expression.getOperationReference(), false, false);
                 builder.readNode(expression);
             }
         }
@@ -218,22 +226,30 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitIfExpression(JetIfExpression expression) {
-            value(expression.getCondition(), false);
+            value(expression.getCondition(), false, true);
             Label elseLabel = builder.createUnboundLabel();
             builder.jumpOnFalse(elseLabel);
-            JetExpression then = expression.getThen();
-            if (then != null) {
-                value(then, true);
+            JetExpression thenBranch = expression.getThen();
+            if (thenBranch != null) {
+                value(thenBranch, true, inCondition);
+            }
+            else {
+                builder.readUnit(expression);
             }
             Label resultLabel = builder.createUnboundLabel();
             builder.jump(resultLabel);
             builder.bindLabel(elseLabel);
             JetExpression elseBranch = expression.getElse();
             if (elseBranch != null) {
-                value(elseBranch, true);
+                value(elseBranch, true, inCondition);
+            }
+            else {
+                builder.readUnit(expression);
             }
             builder.bindLabel(resultLabel);
-    //            builder.readNode(element);
+//            if (!inCondition) {
+//                builder.readNode(expression);
+//            }
         }
 
         @Override
@@ -245,13 +261,13 @@ public class JetControlFlowProcessor {
 
             List<JetCatchClause> catchClauses = expression.getCatchClauses();
             if (catchClauses.isEmpty()) {
-                value(expression.getTryBlock(), true);
+                value(expression.getTryBlock(), true, false);
             }
             else {
                 Label catchBlock = builder.createUnboundLabel();
                 builder.nondeterministicJump(catchBlock);
 
-                value(expression.getTryBlock(), true);
+                value(expression.getTryBlock(), true, false);
 
                 Label afterCatches = builder.createUnboundLabel();
                 builder.jump(afterCatches);
@@ -259,7 +275,7 @@ public class JetControlFlowProcessor {
                 builder.bindLabel(catchBlock);
                 for (Iterator<JetCatchClause> iterator = catchClauses.iterator(); iterator.hasNext(); ) {
                     JetCatchClause catchClause = iterator.next();
-                    value(catchClause.getCatchBody(), true);
+                    value(catchClause.getCatchBody(), true, false);
                     if (iterator.hasNext()) {
                         builder.nondeterministicJump(afterCatches);
                     }
@@ -277,9 +293,9 @@ public class JetControlFlowProcessor {
         public void visitWhileExpression(JetWhileExpression expression) {
             Label loopExitPoint = builder.createUnboundLabel();
             Label loopEntryPoint = builder.enterLoop(expression, loopExitPoint);
-            value(expression.getCondition(), false);
+            value(expression.getCondition(), false, true);
             builder.jumpOnFalse(loopExitPoint);
-            value(expression.getBody(), true);
+            value(expression.getBody(), true, false);
             builder.jump(loopEntryPoint);
             builder.exitLoop(expression);
         }
@@ -288,18 +304,18 @@ public class JetControlFlowProcessor {
         public void visitDoWhileExpression(JetDoWhileExpression expression) {
             Label loopExitPoint = builder.createUnboundLabel();
             Label loopEntryPoint = builder.enterLoop(expression, loopExitPoint);
-            value(expression.getBody(), true);
-            value(expression.getCondition(), false);
+            value(expression.getBody(), true, false);
+            value(expression.getCondition(), false, true);
             builder.jumpOnTrue(loopEntryPoint);
             builder.exitLoop(expression);
         }
 
         @Override
         public void visitForExpression(JetForExpression expression) {
-            value(expression.getLoopRange(), false);
+            value(expression.getLoopRange(), false, false);
             Label loopExitPoint = builder.createUnboundLabel();
             Label loopEntryPoint = builder.enterLoop(expression, loopExitPoint);
-            value(expression.getBody(), true);
+            value(expression.getBody(), true, false);
             builder.nondeterministicJump(loopEntryPoint);
             builder.exitLoop(expression);
         }
@@ -351,7 +367,7 @@ public class JetControlFlowProcessor {
         public void visitReturnExpression(JetReturnExpression expression) {
             JetExpression returnedExpression = expression.getReturnedExpression();
             if (returnedExpression != null) {
-                value(returnedExpression, false);
+                value(returnedExpression, false, false);
             }
             JetSimpleNameExpression labelElement = expression.getTargetLabel();
             JetElement subroutine;
@@ -377,7 +393,7 @@ public class JetControlFlowProcessor {
         @Override
         public void visitBlockExpression(JetBlockExpression expression) {
             for (JetElement statement : expression.getStatements()) {
-                value(statement, true);
+                value(statement, true, false);
             }
         }
 
@@ -390,7 +406,7 @@ public class JetControlFlowProcessor {
         public void visitFunctionLiteralExpression(JetFunctionLiteralExpression expression) {
             if (preferBlock && !expression.hasParameterSpecification()) {
                 for (JetElement statement : expression.getBody()) {
-                    value(statement, true);
+                    value(statement, true, false);
                 }
             }
             else {
@@ -400,10 +416,10 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitQualifiedExpression(JetQualifiedExpression expression) {
-            value(expression.getReceiverExpression(), false);
+            value(expression.getReceiverExpression(), false, false);
             JetExpression selectorExpression = expression.getSelectorExpression();
             if (selectorExpression != null) {
-                value(selectorExpression, false);
+                value(selectorExpression, false, false);
             }
             builder.readNode(expression);
         }
@@ -411,21 +427,21 @@ public class JetControlFlowProcessor {
         @Override
         public void visitCallExpression(JetCallExpression expression) {
             for (JetTypeProjection typeArgument : expression.getTypeArguments()) {
-                value(typeArgument, false);
+                value(typeArgument, false, false);
             }
 
             for (JetArgument argument : expression.getValueArguments()) {
                 JetExpression argumentExpression = argument.getArgumentExpression();
                 if (argumentExpression != null) {
-                    value(argumentExpression, false);
+                    value(argumentExpression, false, false);
                 }
             }
 
             for (JetExpression functionLiteral : expression.getFunctionLiteralArguments()) {
-                value(functionLiteral, false);
+                value(functionLiteral, false, false);
             }
 
-            value(expression.getCalleeExpression(), false);
+            value(expression.getCalleeExpression(), false, false);
             builder.readNode(expression);
         }
 
@@ -433,7 +449,7 @@ public class JetControlFlowProcessor {
         public void visitProperty(JetProperty property) {
             JetExpression initializer = property.getInitializer();
             if (initializer != null) {
-                value(initializer, false);
+                value(initializer, false, false);
                 builder.writeNode(property, property);
             }
         }
@@ -441,7 +457,7 @@ public class JetControlFlowProcessor {
         @Override
         public void visitTupleExpression(JetTupleExpression expression) {
             for (JetExpression entry : expression.getEntries()) {
-                value(entry, false);
+                value(entry, false, false);
             }
             builder.readNode(expression);
         }

@@ -31,11 +31,13 @@ l3:
     jf(l4)
     r(false)
 l4:
+    r(true && false)
     w(y)
     r(false)
     jf(l5)
     r(true)
 l5:
+    r(false && true)
     w(z)
 l1:
     <END>

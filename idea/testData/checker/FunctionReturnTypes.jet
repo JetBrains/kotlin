@@ -9,7 +9,7 @@ fun unitShort() : Unit = ()
 fun unitShortConv() : Unit = 1
 fun unitShortNull() : Unit = null
 
-<error>fun intEmpty() : Int {}</error>
+fun intEmpty() : Int <error>{}</error>
 fun intShortInfer() = 1
 fun intShort() : Int = 1
 fun intBlockInfer()  {1}
@@ -18,3 +18,73 @@ fun intBlock() : Int {1}
 fun blockReturnUnitMismatch() : Int {<error>return</error>}
 fun blockReturnValueTypeMismatch() : Int {return <error>3.4</error>}
 fun blockReturnValueTypeMatch() : Int {return 1}
+fun blockReturnValueTypeMismatchUnit() : Int {return <error>()</error>}
+
+fun blockAndAndMismatch() : Int {
+  <error>true && false</error>
+}
+fun blockAndAndMismatch() : Int {
+  return <error>true && false</error>
+}
+fun blockAndAndMismatch() : Int {
+  <error>(return <error>true</error>) && (return <error>false</error>)</error>
+}
+/*
+fun blockAndAndMismatch() : Int {
+  true || false
+}
+fun blockAndAndMismatch() : Int {
+  return true || false
+}
+fun blockAndAndMismatch() : Int {
+  (return true) || (return false)
+}
+fun blockReturnValueTypeMatch() : Int {
+  return if (1 > 2) 1.0 else 2.0
+}
+fun blockReturnValueTypeMatch() : Int {
+  return if (1 > 2) 1.0
+}
+fun blockReturnValueTypeMatch() : Int {
+  return if (1 > 2) else 1.0
+}
+fun blockReturnValueTypeMatch() : Int {
+  if (1 > 2)
+    return 1.0
+  else return 2.0
+}
+fun blockReturnValueTypeMatch() : Int {
+  if (1 > 2)
+    return 1.0
+  return 2.0
+}
+fun blockReturnValueTypeMatch() : Int {
+  if (1 > 2)
+    else return 1.0
+  return 2.0
+}
+fun blockReturnValueTypeMatch() : Int {
+  if (1 > 2)
+    1.0
+  else 2.0
+}
+fun blockReturnValueTypeMatch() : Int {
+  if (1 > 2)
+    1.0
+  else 2.0
+  return 1
+}
+fun blockReturnValueTypeMatch() : Int {
+  if (1 > 2)
+    1.0
+}
+fun blockReturnValueTypeMatch() : Int {
+  if (1 > 2)
+  else 1.0;
+}
+fun blockReturnValueTypeMatch() : Int {
+  if (1 > 2)
+    1
+  else 1.0
+}
+*/

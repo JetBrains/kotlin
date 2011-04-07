@@ -237,7 +237,7 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
     }
 
     public void testLongCmp() throws Exception {
-        loadText("fun foo(a: Long, b: Long): Long = if (a == b) 0xffffffffL else 0L");
+        loadText("fun foo(a: Long, b: Long): Long = if (a == b) 0xffffffff else 0.lng");
         System.out.println(generateToText());
         final Method main = generateFunction();
         assertEquals(0xffffffffL, main.invoke(null, 1, 1));

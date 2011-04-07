@@ -47,3 +47,7 @@ fun <T> t(t : T) : T {
   System.out.`java::java.io.PrintStream.print(Int)`print(1)
   System.out.`java::java.io.PrintStream.print(Double)`print(1.0)
 }
+
+fun typeTransform() {
+    Integer.getInteger("", 239)`:std::Int`
+}

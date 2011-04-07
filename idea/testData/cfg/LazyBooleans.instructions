@@ -54,10 +54,12 @@ l9:
     r(11)
     jmp(l11)
 l10:
+    read (Unit)
 l11:
     r(12)
     r(a)
     jf(l12)
+    read (Unit)
     jmp(l13)
 l12:
     r(13)

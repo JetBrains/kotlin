@@ -66,6 +66,7 @@ class Number : Hashable {
 }
 
 class Double : Number, Comparable<Double>  {
+  fun compareTo(other : Double)  : Int
   fun compareTo(other : Float)  : Int
   fun compareTo(other : Long)   : Int
   fun compareTo(other : Int)    : Int
@@ -128,6 +129,7 @@ class Double : Number, Comparable<Double>  {
 
 class Float : Number, Comparable<Float>  {
   fun compareTo(other : Double) : Int
+  fun compareTo(other : Float) : Int
   fun compareTo(other : Long)   : Int
   fun compareTo(other : Int)    : Int
   fun compareTo(other : Short)  : Int
@@ -191,6 +193,7 @@ class Float : Number, Comparable<Float>  {
 class Long : Number, Comparable<Long> {
   fun compareTo(other : Double) : Int
   fun compareTo(other : Float)  : Int
+  fun compareTo(other : Long)   : Int
   fun compareTo(other : Int)    : Int
   fun compareTo(other : Short)  : Int
   fun compareTo(other : Byte)   : Int
@@ -319,6 +322,7 @@ class Char : Number, Comparable<Char> {
   fun compareTo(other : Long)    : Int
   fun compareTo(other : Int)    : Int
   fun compareTo(other : Short)  : Int
+  fun compareTo(other : Char)  : Int
   fun compareTo(other : Byte)   : Int
 
   fun plus(other : Double) : Double
@@ -380,6 +384,7 @@ class Short : Number, Comparable<Short> {
   fun compareTo(other : Float)  : Int
   fun compareTo(other : Long)    : Int
   fun compareTo(other : Int)    : Int
+  fun compareTo(other : Short)    : Int
   fun compareTo(other : Byte)   : Int
   fun compareTo(other : Char)   : Int
 
@@ -444,6 +449,7 @@ class Byte : Number, Comparable<Byte> {
   fun compareTo(other : Int)    : Int
   fun compareTo(other : Short)  : Int
   fun compareTo(other : Char)   : Int
+  fun compareTo(other : Byte)   : Int
 
   fun plus(other : Double) : Double
   fun plus(other : Float)  : Float

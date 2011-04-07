@@ -59,11 +59,13 @@ l0:
     jf(l4)
     r(true)
 l4:
+    r(a && true)
     r(a)
     jt(l5)
     r(false)
-l1:
 l5:
+    r(a || false)
+l1:
     <END>
 l2:
     <START>

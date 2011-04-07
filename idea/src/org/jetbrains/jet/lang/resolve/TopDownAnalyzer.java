@@ -376,6 +376,11 @@ public class TopDownAnalyzer {
             }
 
             @Override
+            public void visitReadUnitValue(ReadUnitValueInstruction instruction) {
+                returnedExpressions.add((JetExpression) instruction.getElement());
+            }
+
+            @Override
             public void visitInstruction(Instruction instruction) {
                 if (instruction instanceof JetElementInstruction) {
                     JetElementInstruction elementInstruction = (JetElementInstruction) instruction;

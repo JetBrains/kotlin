@@ -11,8 +11,9 @@ l6:
     r(1)
     ret(*)
     jmp(l9)
-l7:
 l8:
+    read (Unit)
+l7:
 l9:
     <END>
 =====================
@@ -62,6 +63,7 @@ l0:
     ret(*)
     jmp(l3)
 l2:
+    read (Unit)
 l3:
     r(1)
     rf({a =>

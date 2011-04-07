@@ -171,6 +171,11 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         }
 
         @Override
+        public void readUnit(@NotNull JetExpression expression) {
+            add(new ReadUnitValueInstruction(expression));
+        }
+
+        @Override
         public void jump(@NotNull Label label) {
             add(new UnconditionalJumpInstruction(label));
         }

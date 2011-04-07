@@ -22,6 +22,11 @@ public class JetControlFlowBuilderAdapter implements JetControlFlowBuilder {
     }
 
     @Override
+    public void readUnit(@NotNull JetExpression expression) {
+        builder.readUnit(expression);
+    }
+
+    @Override
     @NotNull
     public Label createUnboundLabel() {
         return builder.createUnboundLabel();

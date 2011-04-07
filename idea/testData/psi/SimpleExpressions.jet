@@ -33,7 +33,8 @@ fun a(
     a : foo = 10,
     a : foo = 10,
     a : foo = 10,
-    a : foo = 10
+    a : foo = 10,
+    a : foo = 0xffffffff.lng
 ) {
     return 10
     return

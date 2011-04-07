@@ -298,7 +298,12 @@ public class JetTypeInferrer {
                     }
                 }
                 else {
-                    if (element instanceof JetExpression) {
+                    if (element == function) {
+                        JetExpression bodyExpression = function.getBodyExpression();
+                        assert bodyExpression != null;
+                        semanticServices.getErrorHandler().genericError(bodyExpression.getNode(), "This function must return a value of type " + expectedReturnType);
+                    }
+                    else if (element instanceof JetExpression) {
                         JetExpression expression = (JetExpression) element;
                         semanticServices.getErrorHandler().typeMismatch(expression, expectedReturnType, actualType);
                     }
@@ -497,7 +502,13 @@ public class JetTypeInferrer {
             IElementType elementType = expression.getNode().getElementType();
             JetStandardLibrary standardLibrary = semanticServices.getStandardLibrary();
             if (elementType == JetNodeTypes.INTEGER_CONSTANT) {
-                result = standardLibrary.getIntType();
+                if (expression.getValue() instanceof Long) {
+                    result = standardLibrary.getLongType();
+                }
+                else {
+                    result = standardLibrary.getIntType();
+                }
+                // TODO : other ranges
             } else if (elementType == JetNodeTypes.LONG_CONSTANT) {
                 result = standardLibrary.getLongType();
             } else if (elementType == JetNodeTypes.FLOAT_CONSTANT) {
@@ -1222,9 +1233,7 @@ public class JetTypeInferrer {
         }
 
         private boolean isBoolean(@NotNull JetType type) {
-            if (type.isNullable()) return false;
-            TypeConstructor booleanTypeConstructor = semanticServices.getStandardLibrary().getBoolean().getTypeConstructor();
-            return type.getConstructor().equals(booleanTypeConstructor) || ErrorUtils.isErrorType(type);
+            return semanticServices.getTypeChecker().isConvertibleTo(type,  semanticServices.getStandardLibrary().getBooleanType());
         }
 
         @Override

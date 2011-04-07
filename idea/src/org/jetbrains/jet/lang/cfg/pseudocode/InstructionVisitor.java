@@ -58,4 +58,8 @@ public class InstructionVisitor {
     public void visitWriteValue(WriteValueInstruction writeValueInstruction) {
         visitInstructionWithNext(writeValueInstruction);
     }
+
+    public void visitReadUnitValue(ReadUnitValueInstruction instruction) {
+        visitInstructionWithNext(instruction);
+    }
 }
