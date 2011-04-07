@@ -506,7 +506,7 @@ public class ExpressionCodegen extends JetVisitor {
     }
 
     private static boolean isIntLikePrimitive(Type type) {
-        return type == Type.INT_TYPE || type == Type.BYTE_TYPE;
+        return type == Type.INT_TYPE || type == Type.SHORT_TYPE || type == Type.BYTE_TYPE;
     }
 
     private static int opcodeForMethod(final String name) {
