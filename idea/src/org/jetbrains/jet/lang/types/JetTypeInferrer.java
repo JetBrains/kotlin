@@ -502,7 +502,11 @@ public class JetTypeInferrer {
             IElementType elementType = expression.getNode().getElementType();
             JetStandardLibrary standardLibrary = semanticServices.getStandardLibrary();
             if (elementType == JetNodeTypes.INTEGER_CONSTANT) {
-                if (expression.getValue() instanceof Long) {
+                Object value = expression.getValue();
+                if (value == null) {
+                    semanticServices.getErrorHandler().genericError(expression.getNode(), "Number is of range for Long");
+                }
+                else if (value instanceof Long) {
                     result = standardLibrary.getLongType();
                 }
                 else {

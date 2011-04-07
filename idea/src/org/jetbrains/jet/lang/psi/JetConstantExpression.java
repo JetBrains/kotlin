@@ -23,18 +23,23 @@ public class JetConstantExpression extends JetExpression {
         String nodeText = getNode().getText();
 
         if (elementType == JetNodeTypes.INTEGER_CONSTANT) {
-            if (nodeText.startsWith("0x") || nodeText.startsWith("0X")) {
-                String hexString = nodeText.substring(2);
-                long longValue = Long.parseLong(hexString, 16);
-                if (Integer.MIN_VALUE <= longValue && longValue <= Integer.MAX_VALUE) {
-                    return (int) longValue;
+            try {
+                if (nodeText.startsWith("0x") || nodeText.startsWith("0X")) {
+                    String hexString = nodeText.substring(2);
+                    int length = hexString.length();
+                    if (length > 8) {
+                        return Long.parseLong(hexString);
+                    }
+                    return getRangedValue(Long.parseLong(hexString, 16));
                 }
-                return longValue;
+                if (nodeText.startsWith("0b") || nodeText.startsWith("0B")) {
+                    return getRangedValue(Long.parseLong(nodeText.substring(2), 2));
+                }
+                return getRangedValue(Long.parseLong(nodeText));
             }
-            if (nodeText.startsWith("0b") || nodeText.startsWith("0B")) {
-                return Integer.parseInt(nodeText.substring(2), 2);
+            catch (NumberFormatException e) {
+                return null;
             }
-            return Integer.parseInt(nodeText);
         }
         else if (elementType == JetNodeTypes.LONG_CONSTANT) {
             if (nodeText.endsWith("l") || nodeText.endsWith("L")) {
@@ -72,5 +77,18 @@ public class JetConstantExpression extends JetExpression {
         else {
             throw new IllegalArgumentException("Unsupported constant: " + this);
         }
+    }
+
+    private Object getRangedValue(long longValue) {
+        if (Byte.MIN_VALUE <= longValue && longValue <= Byte.MAX_VALUE) {
+                    return (byte) longValue;
+                }
+        if (Short.MIN_VALUE <= longValue && longValue <= Short.MAX_VALUE) {
+                    return (short) longValue;
+                }
+        if (Integer.MIN_VALUE <= longValue && longValue <= Integer.MAX_VALUE) {
+                    return (int) longValue;
+                }
+        return longValue;
     }
 }
