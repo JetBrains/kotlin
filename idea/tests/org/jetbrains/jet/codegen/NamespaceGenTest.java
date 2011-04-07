@@ -342,6 +342,42 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
         assertEquals(-10, main.invoke(null, 10));
     }
 
+    public void testPreIncrement() throws Exception {
+        loadText("fun foo(a: Int): Int { var x = a; ++x; return x;");
+        final Method main = generateFunction();
+        assertEquals(11, main.invoke(null, 10));
+    }
+
+    public void testPreIncrementValue() throws Exception {
+        loadText("fun foo(a: Int): Int { var x = a; return ++x;");
+        final Method main = generateFunction();
+        assertEquals(11, main.invoke(null, 10));
+    }
+
+    public void testPreDecrement() throws Exception {
+        loadText("fun foo(a: Int): Int { return --a;");
+        final Method main = generateFunction();
+        assertEquals(9, main.invoke(null, 10));
+    }
+
+    public void testPreIncrementLong() throws Exception {
+        loadText("fun foo(a: Long): Long = ++a");
+        final Method main = generateFunction();
+        assertEquals(11L, main.invoke(null, 10L));
+    }
+
+    public void testPreIncrementFloat() throws Exception {
+        loadText("fun foo(a: Float): Float = ++a");
+        final Method main = generateFunction();
+        assertEquals(2.0f, main.invoke(null, 1.0f));
+    }
+
+    public void testPreIncrementDouble() throws Exception {
+        loadText("fun foo(a: Double): Double = ++a");
+        final Method main = generateFunction();
+        assertEquals(2.0, main.invoke(null, 1.0));
+    }
+
     private void binOpTest(final String text, final Object arg1, final Object arg2, final Object expected) throws Exception {
         loadText(text);
         System.out.println(generateToText());

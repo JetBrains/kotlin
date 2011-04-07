@@ -533,8 +533,11 @@ public class ExpressionCodegen extends JetVisitor {
     }
 
     private static boolean isNumberPrimitive(Type type) {
-        return type == Type.INT_TYPE || type == Type.SHORT_TYPE || type == Type.BYTE_TYPE || type == Type.CHAR_TYPE ||
-               type == Type.FLOAT_TYPE || type == Type.DOUBLE_TYPE || type == Type.LONG_TYPE;
+        return isIntPrimitive(type) || type == Type.FLOAT_TYPE || type == Type.DOUBLE_TYPE || type == Type.LONG_TYPE;
+    }
+
+    private static boolean isIntPrimitive(Type type) {
+        return type == Type.INT_TYPE || type == Type.SHORT_TYPE || type == Type.BYTE_TYPE || type == Type.CHAR_TYPE;
     }
 
     private static int opcodeForMethod(final String name) {
@@ -588,14 +591,55 @@ public class ExpressionCodegen extends JetVisitor {
             JetType returnType = bindingContext.getExpressionType(expression);
             final Type asmType = typeMapper.mapType(returnType);
             DeclarationDescriptor cls = op.getContainingDeclaration();
-            if (isNumberPrimitive(cls) && op.getName().equals("minus")) {
-                gen(expression.getBaseExpression(), asmType);
-                v.neg(asmType);
-                myStack.push(StackValue.onStack(asmType));
-                return;
+            if (isNumberPrimitive(cls)) {
+                if (generateUnaryOp(expression, op, asmType)) return;
             }
         }
         throw new UnsupportedOperationException("Don't know how to generate this prefix expression");
+    }
+
+    private boolean generateUnaryOp(JetPrefixExpression expression, DeclarationDescriptor op, Type asmType) {
+        final JetExpression operand = expression.getBaseExpression();
+        if (op.getName().equals("minus")) {
+            gen(operand, asmType);
+            v.neg(asmType);
+            myStack.push(StackValue.onStack(asmType));
+            return true;
+        }
+        else if (op.getName().equals("inc") || op.getName().equals("dec")) {
+            if (!(operand instanceof JetReferenceExpression)) {
+                throw new UnsupportedOperationException("cannot increment or decrement a non-lvalue");
+            }
+            int increment = op.getName().equals("inc") ? 1 : -1;
+            final DeclarationDescriptor descriptor = bindingContext.resolveReferenceExpression((JetReferenceExpression) operand);
+            final int index = myMap.getIndex(descriptor);
+            if (index >= 0) {
+                if (isIntPrimitive(asmType)) {
+                    v.iinc(index, increment);
+                }
+                else {
+                    gen(operand, asmType);
+                    if (asmType == Type.LONG_TYPE) {
+                        v.aconst(Long.valueOf(increment));
+                    }
+                    else if (asmType == Type.FLOAT_TYPE) {
+                        v.aconst(Float.valueOf(increment));
+                    }
+                    else if (asmType == Type.DOUBLE_TYPE) {
+                        v.aconst(Double.valueOf(increment));
+                    }
+                    else {
+                        return false;
+                    }
+                    v.add(asmType);
+                    v.store(index, asmType);
+                }
+                myStack.push(StackValue.local(index, asmType));
+                return true;
+            }
+
+        }
+        return false;
     }
 
     @Override

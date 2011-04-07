@@ -25,7 +25,7 @@ public class FrameMap {
     }
 
     public int getIndex(DeclarationDescriptor descriptor) {
-        return myVarIndex.get(descriptor);
+        return myVarIndex.contains(descriptor) ? myVarIndex.get(descriptor) : -1;
     }
 
 }
