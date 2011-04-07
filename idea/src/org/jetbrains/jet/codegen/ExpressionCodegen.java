@@ -141,8 +141,7 @@ public class ExpressionCodegen extends JetVisitor {
         gen(expression.getBody(), Type.VOID_TYPE);
 
         gen(expression.getCondition());
-        unboxBoolean();
-        v.ifne(condition);
+        myStack.pop().condJump(condition, true, v);
 
         v.mark(end);
 
