@@ -275,6 +275,10 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
         assertEquals(true, main.invoke(null));
     }
 
+    public void testChar() throws Exception {
+        binOpTest("fun foo(a: Char, b: Char): Int = a + b", 'A', (char) 3, (int) 'D');
+    }
+
     private void binOpTest(final String text, final Object arg1, final Object arg2, final Object expected) throws Exception {
         loadText(text);
         System.out.println(generateToText());

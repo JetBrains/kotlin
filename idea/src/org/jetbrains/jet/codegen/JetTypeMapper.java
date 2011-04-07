@@ -29,6 +29,9 @@ public class JetTypeMapper {
         if (jetType.equals(standardLibrary.getByteType())) {
             return Type.BYTE_TYPE;
         }
+        if (jetType.equals(standardLibrary.getCharType())) {
+            return Type.CHAR_TYPE;
+        }
         if (jetType.equals(standardLibrary.getBooleanType())) {
             return Type.BOOLEAN_TYPE;
         }

@@ -472,7 +472,7 @@ public class ExpressionCodegen extends JetVisitor {
             if (cls instanceof ClassDescriptor) {
                 final String className = cls.getName();
                 if (className.equals("Int") || className.equals("Long") || className.equals("Short") ||
-                    className.equals("Byte")) {
+                    className.equals("Byte") || className.equals("Char")) {
                     if (op.getName().equals("compareTo")) {
                         generateCompareOp(expression, opToken);
                     }
@@ -506,7 +506,7 @@ public class ExpressionCodegen extends JetVisitor {
     }
 
     private static boolean isIntLikePrimitive(Type type) {
-        return type == Type.INT_TYPE || type == Type.SHORT_TYPE || type == Type.BYTE_TYPE;
+        return type == Type.INT_TYPE || type == Type.SHORT_TYPE || type == Type.BYTE_TYPE || type == Type.CHAR_TYPE;
     }
 
     private static int opcodeForMethod(final String name) {
