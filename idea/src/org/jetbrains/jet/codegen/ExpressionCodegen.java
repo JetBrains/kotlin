@@ -344,7 +344,7 @@ public class ExpressionCodegen extends JetVisitor {
         }
     }
 
-    private String getMethodDescriptor(PsiMethod method) {
+    private static String getMethodDescriptor(PsiMethod method) {
         Type returnType = psiTypeToAsm(method.getReturnType());
         PsiParameter[] parameters = method.getParameterList().getParameters();
         Type[] parameterTypes = new Type[parameters.length];
@@ -354,7 +354,7 @@ public class ExpressionCodegen extends JetVisitor {
         return Type.getMethodDescriptor(returnType, parameterTypes);
     }
 
-    private Type psiTypeToAsm(PsiType type) {
+    private static Type psiTypeToAsm(PsiType type) {
         if (type instanceof PsiPrimitiveType) {
             if (type == PsiType.VOID) {
                 return Type.VOID_TYPE;
@@ -367,6 +367,21 @@ public class ExpressionCodegen extends JetVisitor {
             }
             if (type == PsiType.BOOLEAN) {
                 return Type.BOOLEAN_TYPE;
+            }
+            if (type == PsiType.BYTE) {
+                return Type.BYTE_TYPE;
+            }
+            if (type == PsiType.SHORT) {
+                return Type.SHORT_TYPE;
+            }
+            if (type == PsiType.CHAR) {
+                return Type.CHAR_TYPE;
+            }
+            if (type == PsiType.FLOAT) {
+                return Type.FLOAT_TYPE;
+            }
+            if (type == PsiType.DOUBLE) {
+                return Type.DOUBLE_TYPE;
             }
         }
         if (type instanceof PsiClassType) {

@@ -65,7 +65,7 @@ public class JetTypeMapper {
         if (jetType.equals(TypeUtils.makeNullable(standardLibrary.getBooleanType()))) {
             return Type.getObjectType("java/lang/Boolean");
         }
-        if (jetType.equals(standardLibrary.getStringType())) {
+        if (jetType.equals(standardLibrary.getStringType()) || jetType.equals(standardLibrary.getNullableStringType())) {
             return Type.getType(String.class);
         }
 
