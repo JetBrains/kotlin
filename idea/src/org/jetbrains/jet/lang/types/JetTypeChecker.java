@@ -287,7 +287,11 @@ public class JetTypeChecker {
     }
 
     public boolean isConvertibleTo(@NotNull JetType actual, @NotNull JetType expected) {
-        if (isSubtypeOf(actual, expected)) return true;
+        return isSubtypeOf(actual, expected) ||
+               isConvertibleBySpecialConversion(actual, expected);
+    }
+
+    public boolean isConvertibleBySpecialConversion(@NotNull JetType actual, @NotNull JetType expected) {
         if (expected.getConstructor().equals(JetStandardClasses.getTuple(0).getTypeConstructor())) {
             return true;
         }

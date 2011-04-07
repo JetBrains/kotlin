@@ -3,6 +3,8 @@
 fun unitEmptyInfer() {}
 fun unitEmpty() : Unit {}
 fun unitEmptyReturn() : Unit {return}
+fun unitIntReturn() : Unit {return <error>1</error>}
+fun unitUnitReturn() : Unit {return ()}
 fun unitShort() : Unit = ()
 fun unitShortConv() : Unit = 1
 fun unitShortNull() : Unit = null

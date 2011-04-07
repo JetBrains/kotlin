@@ -1,4 +1,4 @@
-fun nonlocals1(a : Boolean, b : Boolean) : Unit {
+fun nonlocals1(a : Boolean, b : Boolean) : Any? {
     if (a)
         return 1
     1

@@ -289,13 +289,22 @@ public class JetTypeInferrer {
         for (Map.Entry<JetElement, JetType> entry : typeMap.entrySet()) {
             JetType actualType = entry.getValue();
             JetElement element = entry.getKey();
-            if (!semanticServices.getTypeChecker().isConvertibleTo(actualType, expectedReturnType)) {
-                if (element instanceof JetExpression) {
-                    JetExpression expression = (JetExpression) element;
-                    semanticServices.getErrorHandler().typeMismatch(expression, expectedReturnType, actualType);
+            JetTypeChecker typeChecker = semanticServices.getTypeChecker();
+            if (!typeChecker.isSubtypeOf(actualType, expectedReturnType)) {
+                if (typeChecker.isConvertibleBySpecialConversion(actualType, expectedReturnType)) {
+                    if (expectedReturnType.getConstructor().equals(JetStandardClasses.getUnitType().getConstructor()) &&
+                        element.getParent() instanceof JetReturnExpression) {
+                        semanticServices.getErrorHandler().genericError(element.getNode(), "This function must return a value of type Unit");
+                    }
                 }
                 else {
-                    semanticServices.getErrorHandler().genericError(element.getNode(), "This function must return a value of type " + expectedReturnType);
+                    if (element instanceof JetExpression) {
+                        JetExpression expression = (JetExpression) element;
+                        semanticServices.getErrorHandler().typeMismatch(expression, expectedReturnType, actualType);
+                    }
+                    else {
+                        semanticServices.getErrorHandler().genericError(element.getNode(), "This function must return a value of type " + expectedReturnType);
+                    }
                 }
             }
         }
@@ -689,11 +698,19 @@ public class JetTypeInferrer {
             // TODO : change types according to is and null checks
             JetExpression elseBranch = expression.getElse();
             JetExpression thenBranch = expression.getThen();
-            JetType thenType = null;
-            if (thenBranch != null) {
-                thenType = getType(scope, thenBranch, true);
+
+            if (elseBranch == null) {
+                if (thenBranch != null) {
+                    getType(scope, thenBranch, true);
+                    result = JetStandardClasses.getUnitType();
+                }
             }
-            if (elseBranch != null) {
+            else if (thenBranch == null) {
+                getType(scope, elseBranch, true);
+                result = JetStandardClasses.getUnitType();
+            }
+            else {
+                JetType thenType = getType(scope, thenBranch, true);
                 JetType elseType = getType(scope, elseBranch, true);
                 if (thenType == null) {
                     result = elseType;
@@ -704,9 +721,6 @@ public class JetTypeInferrer {
                 else {
                     result = semanticServices.getTypeChecker().commonSupertype(Arrays.asList(thenType, elseType));
                 }
-            }
-            else {
-                result = JetStandardClasses.getUnitType();
             }
         }
 
