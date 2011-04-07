@@ -11,6 +11,12 @@ import org.objectweb.asm.commons.InstructionAdapter;
  * @author yole
  */
 public abstract class StackValue {
+    protected final Type type;
+
+    public StackValue(Type type) {
+        this.type = type;
+    }
+
     public abstract void put(Type type, InstructionAdapter v);
 
     public static StackValue local(int index, Type type) {
@@ -22,8 +28,8 @@ public abstract class StackValue {
         return new OnStack(type);
     }
 
-    public static StackValue constant(Object value) {
-        return new Constant(value);
+    public static StackValue constant(Object value, Type type) {
+        return new Constant(value, type);
     }
 
     public static StackValue cmp(IElementType opToken, Type type) {
@@ -32,44 +38,54 @@ public abstract class StackValue {
 
     public abstract void condJump(Label label, boolean jumpIfFalse, InstructionAdapter v);
 
+    private static void box(final Type type, InstructionAdapter v) {
+        if (type == Type.INT_TYPE) {
+            v.invokestatic("java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;");
+        }
+        else if (type == Type.BOOLEAN_TYPE) {
+            v.invokestatic("java/lang/Boolean", "valueOf", "(Z)Ljava/lang/Boolean;");
+        }
+        else if (type == Type.CHAR_TYPE) {
+            v.invokestatic("java/lang/Character", "valueOf", "(C)Ljava/lang/Character;");
+        }
+        else if (type == Type.SHORT_TYPE) {
+            v.invokestatic("java/lang/Short", "valueOf", "(S)Ljava/lang/Short;");
+        }
+        else if (type == Type.LONG_TYPE) {
+            v.invokestatic("java/lang/Long", "valueOf", "(J)Ljava/lang/Long;");
+        }
+        else if (type == Type.BYTE_TYPE) {
+            v.invokestatic("java/lang/Byte", "valueOf", "(B)Ljava/lang/Byte;");
+        }
+        else if (type == Type.FLOAT_TYPE) {
+            v.invokestatic("java/lang/Float", "valueOf", "(F)Ljava/lang/Float;");
+        }
+        else if (type == Type.DOUBLE_TYPE) {
+            v.invokestatic("java/lang/Double", "valueOf", "(D)Ljava/lang/Double;");
+        }
+    }
+
+    protected void coerce(Type type, InstructionAdapter v) {
+        if (type.getSort() == Type.OBJECT) {
+            box(this.type, v);
+        }
+        else if (type != this.type) {
+            v.cast(this.type, type);
+        }
+    }
+
     public static class Local extends StackValue {
         private final int index;
-        private final Type type;
 
         public Local(int index, Type type) {
+            super(type);
             this.index = index;
-            this.type = type;
         }
 
         @Override
         public void put(Type type, InstructionAdapter v) {
             v.load(index, this.type);
-            if (type.getSort() == Type.OBJECT) {
-                if (this.type == Type.INT_TYPE) {
-                    v.invokestatic("java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;");
-                }
-                else if (this.type == Type.BOOLEAN_TYPE) {
-                    v.invokestatic("java/lang/Boolean", "valueOf", "(Z)Ljava/lang/Boolean;");
-                }
-                else if (this.type == Type.CHAR_TYPE) {
-                    v.invokestatic("java/lang/Character", "valueOf", "(C)Ljava/lang/Character;");
-                }
-                else if (this.type == Type.SHORT_TYPE) {
-                    v.invokestatic("java/lang/Short", "valueOf", "(S)Ljava/lang/Short;");
-                }
-                else if (this.type == Type.LONG_TYPE) {
-                    v.invokestatic("java/lang/Long", "valueOf", "(J)Ljava/lang/Long;");
-                }
-                else if (this.type == Type.BYTE_TYPE) {
-                    v.invokestatic("java/lang/Byte", "valueOf", "(B)Ljava/lang/Byte;");
-                }
-                else if (this.type == Type.FLOAT_TYPE) {
-                    v.invokestatic("java/lang/Float", "valueOf", "(F)Ljava/lang/Float;");
-                }
-                else if (this.type == Type.DOUBLE_TYPE) {
-                    v.invokestatic("java/lang/Double", "valueOf", "(D)Ljava/lang/Double;");
-                }
-            }
+            coerce(type, v);
             // TODO unbox
         }
 
@@ -86,10 +102,8 @@ public abstract class StackValue {
     }
 
     public static class OnStack extends StackValue {
-        private final Type type;
-
         public OnStack(Type type) {
-            this.type = type;
+            super(type);
         }
 
         @Override
@@ -98,7 +112,7 @@ public abstract class StackValue {
 
         @Override
         public void condJump(Label label, boolean jumpIfFalse, InstructionAdapter v) {
-            if (type == Type.BOOLEAN_TYPE) {
+            if (this.type == Type.BOOLEAN_TYPE) {
                 if (jumpIfFalse) {
                     v.ifeq(label);
                 }
@@ -115,39 +129,15 @@ public abstract class StackValue {
     public static class Constant extends StackValue {
         private final Object value;
 
-        public Constant(Object value) {
+        public Constant(Object value, Type type) {
+            super(type);
             this.value = value;
         }
 
         @Override
         public void put(Type type, InstructionAdapter v) {
             v.aconst(value);
-            if (type.getSort() == Type.OBJECT) {
-                if (value instanceof Integer) {
-                    v.invokestatic("java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;");
-                }
-                else if (value instanceof Boolean) {
-                    v.invokestatic("java/lang/Boolean", "valueOf", "(Z)Ljava/lang/Boolean;");
-                }
-                else if (value instanceof Character) {
-                    v.invokestatic("java/lang/Character", "valueOf", "(C)Ljava/lang/Character;");
-                }
-                else if (value instanceof Short) {
-                    v.invokestatic("java/lang/Short", "valueOf", "(S)Ljava/lang/Short;");
-                }
-                else if (value instanceof Long) {
-                    v.invokestatic("java/lang/Long", "valueOf", "(J)Ljava/lang/Long;");
-                }
-                else if (value instanceof Byte) {
-                    v.invokestatic("java/lang/Byte", "valueOf", "(B)Ljava/lang/Byte;");
-                }
-                else if (value instanceof Float) {
-                    v.invokestatic("java/lang/Float", "valueOf", "(F)Ljava/lang/Float;");
-                }
-                else if (value instanceof Double) {
-                    v.invokestatic("java/lang/Double", "valueOf", "(D)Ljava/lang/Double;");
-                }
-            }
+            coerce(type, v);
         }
 
         @Override
@@ -166,11 +156,10 @@ public abstract class StackValue {
 
     private static class NumberCompare extends StackValue {
         private final IElementType opToken;
-        private final Type type;
 
         public NumberCompare(IElementType opToken, Type type) {
+            super(type);
             this.opToken = opToken;
-            this.type = type;
         }
 
         @Override

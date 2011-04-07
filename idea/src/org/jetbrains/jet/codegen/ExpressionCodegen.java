@@ -2,6 +2,7 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.psi.*;
 import com.intellij.psi.tree.IElementType;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.*;
@@ -186,7 +187,7 @@ public class ExpressionCodegen extends JetVisitor {
 
     @Override
     public void visitConstantExpression(JetConstantExpression expression) {
-        myStack.push(StackValue.constant(expression.getValue()));
+        myStack.push(StackValue.constant(expression.getValue(), expressionType(expression)));
     }
 
     @Override
@@ -259,6 +260,18 @@ public class ExpressionCodegen extends JetVisitor {
     @Override
     public void visitSimpleNameExpression(JetSimpleNameExpression expression) {
         final DeclarationDescriptor descriptor = bindingContext.resolveReferenceExpression(expression);
+        if (descriptor instanceof PropertyDescriptor) {
+            final DeclarationDescriptor container = descriptor.getContainingDeclaration();
+            if (isClass(container, "Number")) {
+                Type castType = getCastType(expression.getReferencedName());
+                if (castType != null) {
+                    final StackValue value = myStack.pop();
+                    value.put(castType, v);
+                    myStack.push(StackValue.onStack(castType));
+                    return;
+                }
+            }
+        }
         PsiElement declaration = bindingContext.getDeclarationPsiElement(descriptor);
         if (declaration instanceof PsiField) {
             PsiField psiField = (PsiField) declaration;
@@ -282,6 +295,32 @@ public class ExpressionCodegen extends JetVisitor {
                 throw new UnsupportedOperationException("don't know how to generate reference " + descriptor);
             }
         }
+    }
+
+    @Nullable
+    private static Type getCastType(String castMethodName) {
+        if ("dbl".equals(castMethodName)) {
+            return Type.DOUBLE_TYPE;
+        }
+        if ("flt".equals(castMethodName)) {
+            return Type.FLOAT_TYPE;
+        }
+        if ("lng".equals(castMethodName)) {
+            return Type.LONG_TYPE;
+        }
+        if ("int".equals(castMethodName)) {
+            return Type.INT_TYPE;
+        }
+        if ("chr".equals(castMethodName)) {
+            return Type.CHAR_TYPE;
+        }
+        if ("sht".equals(castMethodName)) {
+            return Type.SHORT_TYPE;
+        }
+        if ("byt".equals(castMethodName)) {
+            return Type.BYTE_TYPE;
+        }
+        return null;
     }
 
     @Override
@@ -352,6 +391,10 @@ public class ExpressionCodegen extends JetVisitor {
             parameterTypes[i] = psiTypeToAsm(parameters [i].getType());
         }
         return Type.getMethodDescriptor(returnType, parameterTypes);
+    }
+
+    private Type expressionType(JetExpression expr) {
+        return typeMapper.mapType(bindingContext.getExpressionType(expr));
     }
 
     private static Type psiTypeToAsm(PsiType type) {
@@ -444,43 +487,49 @@ public class ExpressionCodegen extends JetVisitor {
             JetType returnType = bindingContext.getExpressionType(expression);
             final Type asmType = typeMapper.mapType(returnType);
             DeclarationDescriptor cls = op.getContainingDeclaration();
-            if (cls instanceof ClassDescriptor) {
-                final String className = cls.getName();
-                if (isNumberPrimitive(className)) {
-                    if (op.getName().equals("compareTo")) {
-                        generateCompareOp(expression, opToken, asmType);
-                    }
-                    else {
-                        int opcode = opcodeForMethod(op.getName());
-                        generateBinaryOp(expression, (FunctionDescriptor) op, opcode);
-                    }
-                    return;
-                }
-                else if (className.equals("Hashable")) {
-                    if (op.getName().equals("equals")) {
-                        final Type leftType = typeMapper.mapType(bindingContext.getExpressionType(expression.getLeft()));
-                        final Type rightType = typeMapper.mapType(bindingContext.getExpressionType(expression.getRight()));
-                        if (isNumberPrimitive(leftType) && leftType == rightType) {
-                            generateCompareOp(expression, opToken, leftType);
-                            return;
-                        }
-                        else {
-                            throw new UnsupportedOperationException("Don't know how to generate equality for these types");
-                        }
-                    }
+            if (isNumberPrimitive(cls)) {
+                if (op.getName().equals("compareTo")) {
+                    generateCompareOp(expression, opToken, asmType);
                 }
                 else {
-                    throw new UnsupportedOperationException("Don't know how to generate binary op for class " + className);
+                    int opcode = opcodeForMethod(op.getName());
+                    generateBinaryOp(expression, (FunctionDescriptor) op, opcode);
+                }
+                return;
+            }
+            else if (isClass(cls, "Hashable")) {
+                if (op.getName().equals("equals")) {
+                    final Type leftType = typeMapper.mapType(bindingContext.getExpressionType(expression.getLeft()));
+                    final Type rightType = typeMapper.mapType(bindingContext.getExpressionType(expression.getRight()));
+                    if (isNumberPrimitive(leftType) && leftType == rightType) {
+                        generateCompareOp(expression, opToken, leftType);
+                        return;
+                    }
+                    else {
+                        throw new UnsupportedOperationException("Don't know how to generate equality for these types");
+                    }
                 }
             }
         }
         throw new UnsupportedOperationException("Don't know how to generate binary op " + expression);
     }
 
-    private static boolean isNumberPrimitive(String className) {
+    private static boolean isNumberPrimitive(DeclarationDescriptor descriptor) {
+        if (!(descriptor instanceof ClassDescriptor)) {
+            return false;
+        }
+        String className = descriptor.getName();
         return className.equals("Int") || className.equals("Long") || className.equals("Short") ||
                className.equals("Byte") || className.equals("Char") || className.equals("Float") ||
                className.equals("Double");
+    }
+
+    private static boolean isClass(DeclarationDescriptor descriptor, String name) {
+        if (!(descriptor instanceof ClassDescriptor)) {
+            return false;
+        }
+        String className = descriptor.getName();
+        return className.equals(name);
     }
 
     private static boolean isNumberPrimitive(Type type) {

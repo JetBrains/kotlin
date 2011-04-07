@@ -314,6 +314,19 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
         assertEquals("1.0", main.invoke(null, 1.0));
     }
 
+    public void testDoubleToInt() throws Exception {
+        loadText("fun foo(a: Double): Int = a.int");
+        System.out.println(generateToText());
+        final Method main = generateFunction();
+        assertEquals(1, main.invoke(null, 1.0));
+    }
+
+    public void testCastConstant() throws Exception {
+        loadText("fun foo(): Double = 1.dbl");
+        final Method main = generateFunction();
+        assertEquals(1.0, main.invoke(null));
+    }
+
     private void binOpTest(final String text, final Object arg1, final Object arg2, final Object expected) throws Exception {
         loadText(text);
         System.out.println(generateToText());
