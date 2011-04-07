@@ -399,7 +399,7 @@ public class JetControlFlowProcessor {
         }
 
         @Override
-        public void visitDotQualifiedExpression(JetDotQualifiedExpression expression) {
+        public void visitQualifiedExpression(JetQualifiedExpression expression) {
             value(expression.getReceiverExpression(), false);
             JetExpression selectorExpression = expression.getSelectorExpression();
             if (selectorExpression != null) {
