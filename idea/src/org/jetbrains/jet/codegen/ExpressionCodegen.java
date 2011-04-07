@@ -342,7 +342,10 @@ public class ExpressionCodegen extends JetVisitor {
                                           method.getName(),
                                           getMethodDescriptor(method));
                     }
-                    myStack.push(StackValue.onStack(psiTypeToAsm(method.getReturnType())));
+                    final Type type = psiTypeToAsm(method.getReturnType());
+                    if (type != Type.VOID_TYPE) {
+                        myStack.push(StackValue.onStack(type));
+                    }
                 }
             }
             else {
