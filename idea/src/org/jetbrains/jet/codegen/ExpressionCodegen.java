@@ -546,6 +546,12 @@ public class ExpressionCodegen extends JetVisitor {
         if (name.equals("times")) return Opcodes.IMUL;
         if (name.equals("div")) return Opcodes.IDIV;
         if (name.equals("mod")) return Opcodes.IREM;
+        if (name.equals("shl")) return Opcodes.ISHL;
+        if (name.equals("shr")) return Opcodes.ISHR;
+        if (name.equals("ushr")) return Opcodes.IUSHR;
+        if (name.equals("and")) return Opcodes.IAND;
+        if (name.equals("or")) return Opcodes.IOR;
+        if (name.equals("xor")) return Opcodes.IXOR;
         throw new UnsupportedOperationException("Don't know how to generate binary op method " + name);
     }
 
@@ -603,6 +609,13 @@ public class ExpressionCodegen extends JetVisitor {
         if (op.getName().equals("minus")) {
             gen(operand, asmType);
             v.neg(asmType);
+            myStack.push(StackValue.onStack(asmType));
+            return true;
+        }
+        else if (op.getName().equals("inv")) {
+            gen(operand, asmType);
+            v.aconst(-1);
+            v.xor(asmType);
             myStack.push(StackValue.onStack(asmType));
             return true;
         }
