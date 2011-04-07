@@ -138,6 +138,9 @@ public abstract class StackValue {
             else if (opToken == JetTokens.GT) {
                 opcode = jumpIfFalse ? Opcodes.IF_ICMPLE : Opcodes.IF_ICMPGT;
             }
+            else if (opToken == JetTokens.GTEQ) {
+                opcode = jumpIfFalse ? Opcodes.IF_ICMPLT : Opcodes.IF_ICMPGE;
+            }
             else if (opToken == JetTokens.LT) {
                 opcode = jumpIfFalse ? Opcodes.IF_ICMPGE : Opcodes.IF_ICMPLT;
             }
