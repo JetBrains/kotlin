@@ -269,6 +269,12 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
                 Byte.valueOf((byte) 126), Byte.valueOf((byte) 127), 1);
     }
 
+    public void testBooleanConstant() throws Exception {
+        loadText("fun foo(): Boolean = true");
+        final Method main = generateFunction();
+        assertEquals(true, main.invoke(null));
+    }
+
     private void binOpTest(final String text, final Object arg1, final Object arg2, final Object expected) throws Exception {
         loadText(text);
         System.out.println(generateToText());

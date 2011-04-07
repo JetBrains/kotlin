@@ -96,18 +96,7 @@ public abstract class StackValue {
 
         @Override
         public void put(Type type, InstructionAdapter v) {
-            if (type == Type.INT_TYPE) {
-                if (value instanceof Number) {
-                    v.iconst(((Number) value).intValue());
-                }
-                else {
-                    throw new UnsupportedOperationException("don't know how to put this value");
-                }
-            }
-            // TODO other primitive types
-            else {
-                v.aconst(value);
-            }
+            v.aconst(value);
         }
 
         @Override
