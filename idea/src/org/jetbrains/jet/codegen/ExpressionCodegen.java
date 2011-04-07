@@ -333,20 +333,6 @@ public class ExpressionCodegen extends JetVisitor {
         return containingClass.getQualifiedName().replace(".", "/");
     }
 
-    private void boxIfNeeded(PsiType type) {
-        if (type instanceof PsiPrimitiveType && type != PsiType.VOID) {
-            if (type == PsiType.LONG) {
-                v.invokestatic("java/lang/Long", "valueOf", "(J)Ljava/lang/Long;");
-            }
-            else if (type == PsiType.INT) {
-                v.invokestatic("java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;");
-            }
-            else {
-                throw new UnsupportedOperationException("Don't know how to box type " + type);
-            }
-        }
-    }
-
     private void unbox(PsiType type) {
         if (type instanceof PsiPrimitiveType) {
             if (type == PsiType.INT) {
