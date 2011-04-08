@@ -643,6 +643,10 @@ public class ExpressionCodegen extends JetVisitor {
             if (isNumberPrimitive(cls)) {
                 if (generateUnaryOp(op, asmType, expression.getBaseExpression())) return;
             }
+            else if (isClass(cls, "Boolean") && op.getName().equals("not")) {
+                generateNot(expression);
+                return;
+            }
         }
         throw new UnsupportedOperationException("Don't know how to generate this prefix expression");
     }
@@ -678,6 +682,13 @@ public class ExpressionCodegen extends JetVisitor {
             return true;
         }
         return false;
+    }
+
+    private void generateNot(JetPrefixExpression expression) {
+        int oldStackSize = myStack.size();
+        gen(expression.getBaseExpression());
+        assert myStack.size() == oldStackSize+1;
+        myStack.set(myStack.size()-1, StackValue.not(myStack.get(myStack.size() - 1)));
     }
 
     private int generateIncrement(DeclarationDescriptor op, Type asmType, JetExpression operand) {

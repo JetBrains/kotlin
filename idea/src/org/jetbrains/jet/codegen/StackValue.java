@@ -36,6 +36,10 @@ public abstract class StackValue {
         return new NumberCompare(opToken);
     }
 
+    public static StackValue not(StackValue stackValue) {
+        return new Invert(stackValue);
+    }
+
     public abstract void condJump(Label label, boolean jumpIfFalse, InstructionAdapter v);
 
     private static void box(final Type type, InstructionAdapter v) {
@@ -72,6 +76,17 @@ public abstract class StackValue {
         else if (type != this.type) {
             v.cast(this.type, type);
         }
+    }
+
+    protected void putAsBoolean(InstructionAdapter v) {
+        Label ifTrue = new Label();
+        Label end = new Label();
+        condJump(ifTrue, false, v);
+        v.iconst(0);
+        v.goTo(end);
+        v.mark(ifTrue);
+        v.iconst(1);
+        v.mark(end);
     }
 
     public static class Local extends StackValue {
@@ -168,14 +183,7 @@ public abstract class StackValue {
             if (type != Type.BOOLEAN_TYPE) {
                 throw new UnsupportedOperationException("don't know how to put a compare as a non-boolean type");
             }
-            Label ifTrue = new Label();
-            Label end = new Label();
-            condJump(ifTrue, false, v);
-            v.iconst(0);
-            v.goTo(end);
-            v.mark(ifTrue);
-            v.iconst(1);
-            v.mark(end);
+            putAsBoolean(v);
         }
 
         @Override
@@ -217,6 +225,28 @@ public abstract class StackValue {
                 opcode += (Opcodes.IF_ICMPEQ - Opcodes.IFEQ);
             }
             v.visitJumpInsn(opcode, label);
+        }
+    }
+
+    private static class Invert extends StackValue {
+        private StackValue myOperand;
+
+        private Invert(StackValue operand) {
+            super(operand.type);
+            myOperand = operand;
+        }
+
+        @Override
+        public void put(Type type, InstructionAdapter v) {
+            if (type != Type.BOOLEAN_TYPE) {
+                throw new UnsupportedOperationException("don't know how to put a compare as a non-boolean type");
+            }
+            putAsBoolean(v);
+        }
+
+        @Override
+        public void condJump(Label label, boolean jumpIfFalse, InstructionAdapter v) {
+            myOperand.condJump(label, !jumpIfFalse, v);
         }
     }
 }
