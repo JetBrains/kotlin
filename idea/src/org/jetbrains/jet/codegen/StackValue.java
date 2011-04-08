@@ -32,8 +32,8 @@ public abstract class StackValue {
         return new Constant(value, type);
     }
 
-    public static StackValue cmp(IElementType opToken, Type type) {
-        return new NumberCompare(opToken, type);
+    public static StackValue cmp(IElementType opToken) {
+        return new NumberCompare(opToken);
     }
 
     public abstract void condJump(Label label, boolean jumpIfFalse, InstructionAdapter v);
@@ -158,13 +158,16 @@ public abstract class StackValue {
     private static class NumberCompare extends StackValue {
         private final IElementType opToken;
 
-        public NumberCompare(IElementType opToken, Type type) {
-            super(type);
+        public NumberCompare(IElementType opToken) {
+            super(Type.BOOLEAN_TYPE);
             this.opToken = opToken;
         }
 
         @Override
         public void put(Type type, InstructionAdapter v) {
+            if (type != Type.BOOLEAN_TYPE) {
+                throw new UnsupportedOperationException("don't know how to put a compare as a non-boolean type");
+            }
             Label ifTrue = new Label();
             Label end = new Label();
             condJump(ifTrue, false, v);
