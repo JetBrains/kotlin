@@ -172,10 +172,12 @@ public abstract class StackValue {
 
     private static class NumberCompare extends StackValue {
         private final IElementType opToken;
+        private final Type operandType;
 
-        public NumberCompare(IElementType opToken, Type type) {
-            super(type);
+        public NumberCompare(IElementType opToken, Type operandType) {
+            super(Type.BOOLEAN_TYPE);
             this.opToken = opToken;
+            this.operandType = operandType;
         }
 
         @Override
@@ -210,15 +212,15 @@ public abstract class StackValue {
             else {
                 throw new UnsupportedOperationException("don't know how to generate this condjump");
             }
-            if (type == Type.FLOAT_TYPE || type == Type.DOUBLE_TYPE) {
+            if (operandType == Type.FLOAT_TYPE || operandType == Type.DOUBLE_TYPE) {
                 if (opToken == JetTokens.GT || opToken == JetTokens.GTEQ) {
-                    v.cmpg(type);
+                    v.cmpg(operandType);
                 }
                 else {
-                    v.cmpl(type);
+                    v.cmpl(operandType);
                 }
             }
-            else if (type == Type.LONG_TYPE) {
+            else if (operandType == Type.LONG_TYPE) {
                 v.lcmp();
             }
             else {
