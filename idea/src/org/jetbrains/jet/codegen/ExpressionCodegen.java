@@ -494,6 +494,10 @@ public class ExpressionCodegen extends JetVisitor {
             generateAssignmentExpression(expression);
             return;
         }
+        if (JetTokens.AUGMENTED_ASSIGNMENTS.contains(opToken)) {
+            generateAugmentedAssignment(expression);
+            return;
+        }
         DeclarationDescriptor op = bindingContext.resolveReferenceExpression(expression.getOperationReference());
         if (op instanceof FunctionDescriptor) {
             JetType returnType = bindingContext.getExpressionType(expression);
@@ -599,6 +603,31 @@ public class ExpressionCodegen extends JetVisitor {
         }
         else {
             throw new UnsupportedOperationException("Don't know how to generate assignment to " + expression.getLeft().getText());
+        }
+    }
+
+    private void generateAugmentedAssignment(JetBinaryExpression expression) {
+        final JetExpression lhs = expression.getLeft();
+        if (lhs instanceof JetReferenceExpression) {
+            DeclarationDescriptor op = bindingContext.resolveReferenceExpression(expression.getOperationReference());
+            final JetType leftType = bindingContext.getExpressionType(lhs);
+            final Type asmType = typeMapper.mapType(leftType);
+            if (isNumberPrimitive(asmType)) {
+                final DeclarationDescriptor declarationDescriptor = bindingContext.resolveReferenceExpression((JetReferenceExpression) lhs);
+                final int index = myMap.getIndex(declarationDescriptor);
+                assert index >= 0;
+                v.load(index, asmType);
+                gen(expression.getRight(), asmType);
+                int opcode = opcodeForMethod(op.getName());
+                v.visitInsn(asmType.getOpcode(opcode));
+                v.store(index, asmType);
+            }
+            else {
+                throw new UnsupportedOperationException("Don't know how to generate augmented assignment for non-numeric types");
+            }
+        }
+        else {
+            throw new UnsupportedOperationException("Don't know how to generate augmented assignment to " + lhs.getText());
         }
     }
 

@@ -167,4 +167,6 @@ public interface JetTokens {
             QUEST, COLON,
             RANGE, EQ, MULTEQ, DIVEQ, PERCEQ, PLUSEQ, MINUSEQ,
             NOT_IN, NOT_IS, HASH, IDENTIFIER, LABEL_IDENTIFIER, ATAT, AT);
+
+    TokenSet AUGMENTED_ASSIGNMENTS = TokenSet.create(PLUSEQ, MINUSEQ, MULTEQ, PERCEQ, DIVEQ);
 }
