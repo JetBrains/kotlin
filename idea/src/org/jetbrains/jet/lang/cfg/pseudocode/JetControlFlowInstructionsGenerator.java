@@ -17,7 +17,6 @@ import java.util.*;
 public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAdapter {
 
     private final Stack<BlockInfo> loopInfo = new Stack<BlockInfo>();
-//    private final Stack<BlockInfo> subroutineInfo = new Stack<BlockInfo>();
     private final Map<JetElement, BlockInfo> elementToBlockInfo = new HashMap<JetElement, BlockInfo>();
     private int labelCount = 0;
 

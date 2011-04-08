@@ -241,7 +241,10 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitIfExpression(JetIfExpression expression) {
-            value(expression.getCondition(), false, true);
+            JetExpression condition = expression.getCondition();
+            if (condition != null) {
+                value(condition, false, true);
+            }
             Label elseLabel = builder.createUnboundLabel();
             builder.jumpOnFalse(elseLabel);
             JetExpression thenBranch = expression.getThen();
@@ -290,7 +293,10 @@ public class JetControlFlowProcessor {
                 builder.bindLabel(catchBlock);
                 for (Iterator<JetCatchClause> iterator = catchClauses.iterator(); iterator.hasNext(); ) {
                     JetCatchClause catchClause = iterator.next();
-                    value(catchClause.getCatchBody(), true, false);
+                    JetExpression catchBody = catchClause.getCatchBody();
+                    if (catchBody != null) {
+                        value(catchBody, true, false);
+                    }
                     if (iterator.hasNext()) {
                         builder.nondeterministicJump(afterCatches);
                     }
@@ -308,9 +314,15 @@ public class JetControlFlowProcessor {
         public void visitWhileExpression(JetWhileExpression expression) {
             Label loopExitPoint = builder.createUnboundLabel();
             Label loopEntryPoint = builder.enterLoop(expression, loopExitPoint);
-            value(expression.getCondition(), false, true);
+            JetExpression condition = expression.getCondition();
+            if (condition != null) {
+                value(condition, false, true);
+            }
             builder.jumpOnFalse(loopExitPoint);
-            value(expression.getBody(), true, false);
+            JetExpression body = expression.getBody();
+            if (body != null) {
+                value(body, true, false);
+            }
             builder.jump(loopEntryPoint);
             builder.exitLoop(expression);
         }
@@ -319,8 +331,14 @@ public class JetControlFlowProcessor {
         public void visitDoWhileExpression(JetDoWhileExpression expression) {
             Label loopExitPoint = builder.createUnboundLabel();
             Label loopEntryPoint = builder.enterLoop(expression, loopExitPoint);
-            value(expression.getBody(), true, false);
-            value(expression.getCondition(), false, true);
+            JetExpression body = expression.getBody();
+            if (body != null) {
+                value(body, true, false);
+            }
+            JetExpression condition = expression.getCondition();
+            if (condition != null) {
+                value(condition, false, true);
+            }
             builder.jumpOnTrue(loopEntryPoint);
             builder.exitLoop(expression);
         }
@@ -330,7 +348,10 @@ public class JetControlFlowProcessor {
             value(expression.getLoopRange(), false, false);
             Label loopExitPoint = builder.createUnboundLabel();
             Label loopEntryPoint = builder.enterLoop(expression, loopExitPoint);
-            value(expression.getBody(), true, false);
+            JetExpression body = expression.getBody();
+            if (body != null) {
+                value(body, true, false);
+            }
             builder.nondeterministicJump(loopEntryPoint);
             builder.exitLoop(expression);
         }
@@ -414,7 +435,10 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitFunction(JetFunction function) {
-            generate(function, function.getBodyExpression());
+            JetExpression bodyExpression = function.getBodyExpression();
+            if (bodyExpression != null) {
+                generate(function, bodyExpression);
+            }
         }
 
         @Override
@@ -479,11 +503,12 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitBinaryWithTypeRHSExpression(JetBinaryExpressionWithTypeRHS expression) {
-            if (expression.getOperationSign().getReferencedNameElementType() == JetTokens.COLON) {
+            IElementType operationType = expression.getOperationSign().getReferencedNameElementType();
+            if (operationType == JetTokens.COLON || operationType == JetTokens.AS_KEYWORD || operationType == JetTokens.AS_SAFE) {
                 value(expression.getLeft(), false, false);
             }
             else {
-                visitJetElement(expression); // TODO
+                visitJetElement(expression);
             }
         }
 
@@ -497,5 +522,4 @@ public class JetControlFlowProcessor {
             builder.unsupported(elem);
         }
     }
-
 }
