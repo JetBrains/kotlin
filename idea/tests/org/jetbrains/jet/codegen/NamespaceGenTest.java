@@ -419,6 +419,24 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
         assertEquals(10, main.invoke(null, 5));
     }
 
+    public void testPostIncrementTypeInferenceFail() throws Exception {
+        loadText("fun foo(a: Int): Int { var x = a; var y = x++; if (y+1 != x) return -1; return x; }");
+        final Method main = generateFunction();
+        assertEquals(6, main.invoke(null, 5));
+    }
+
+    public void testPostIncrement() throws Exception {
+        loadText("fun foo(a: Int): Int { var x = a; var y = x++; return x*y; }");
+        final Method main = generateFunction();
+        assertEquals(6, main.invoke(null, 2));
+    }
+
+    public void testPostIncrementLong() throws Exception {
+        loadText("fun foo(a: Long): Long { var x = a; var y = x++; return x*y; }");
+        final Method main = generateFunction();
+        assertEquals(6L, main.invoke(null, 2L));
+    }
+
     private void binOpTest(final String text, final Object arg1, final Object arg2, final Object expected) throws Exception {
         loadText(text);
         System.out.println(generateToText());
