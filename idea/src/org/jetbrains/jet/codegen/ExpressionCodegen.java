@@ -497,42 +497,74 @@ public class ExpressionCodegen extends JetVisitor {
         final IElementType opToken = expression.getOperationReference().getReferencedNameElementType();
         if (opToken == JetTokens.EQ) {
             generateAssignmentExpression(expression);
-            return;
         }
-        if (JetTokens.AUGMENTED_ASSIGNMENTS.contains(opToken)) {
+        else if (JetTokens.AUGMENTED_ASSIGNMENTS.contains(opToken)) {
             generateAugmentedAssignment(expression);
-            return;
         }
-        DeclarationDescriptor op = bindingContext.resolveReferenceExpression(expression.getOperationReference());
-        if (op instanceof FunctionDescriptor) {
-            JetType returnType = bindingContext.getExpressionType(expression);
-            final Type asmType = typeMapper.mapType(returnType);
-            DeclarationDescriptor cls = op.getContainingDeclaration();
-            if (isNumberPrimitive(cls)) {
-                if (op.getName().equals("compareTo")) {
-                    generateCompareOp(expression, opToken, asmType);
-                }
-                else {
-                    int opcode = opcodeForMethod(op.getName());
-                    generateBinaryOp(expression, (FunctionDescriptor) op, opcode);
-                }
-                return;
-            }
-            else if (isClass(cls, "Hashable")) {
-                if (op.getName().equals("equals")) {
-                    final Type leftType = typeMapper.mapType(bindingContext.getExpressionType(expression.getLeft()));
-                    final Type rightType = typeMapper.mapType(bindingContext.getExpressionType(expression.getRight()));
-                    if (isNumberPrimitive(leftType) && leftType == rightType) {
-                        generateCompareOp(expression, opToken, leftType);
-                        return;
+        else if (opToken == JetTokens.ANDAND) {
+            generateBooleanAnd(expression);
+        }
+        else if (opToken == JetTokens.OROR) {
+            generateBooleanOr(expression);
+        }
+        else {
+            DeclarationDescriptor op = bindingContext.resolveReferenceExpression(expression.getOperationReference());
+            if (op instanceof FunctionDescriptor) {
+                JetType returnType = bindingContext.getExpressionType(expression);
+                final Type asmType = typeMapper.mapType(returnType);
+                DeclarationDescriptor cls = op.getContainingDeclaration();
+                if (isNumberPrimitive(cls)) {
+                    if (op.getName().equals("compareTo")) {
+                        generateCompareOp(expression, opToken, asmType);
                     }
                     else {
-                        throw new UnsupportedOperationException("Don't know how to generate equality for these types");
+                        int opcode = opcodeForMethod(op.getName());
+                        generateBinaryOp(expression, (FunctionDescriptor) op, opcode);
+                    }
+                    return;
+                }
+                else if (isClass(cls, "Hashable")) {
+                    if (op.getName().equals("equals")) {
+                        final Type leftType = typeMapper.mapType(bindingContext.getExpressionType(expression.getLeft()));
+                        final Type rightType = typeMapper.mapType(bindingContext.getExpressionType(expression.getRight()));
+                        if (isNumberPrimitive(leftType) && leftType == rightType) {
+                            generateCompareOp(expression, opToken, leftType);
+                            return;
+                        }
+                        else {
+                            throw new UnsupportedOperationException("Don't know how to generate equality for these types");
+                        }
                     }
                 }
             }
+            throw new UnsupportedOperationException("Don't know how to generate binary op " + expression);
         }
-        throw new UnsupportedOperationException("Don't know how to generate binary op " + expression);
+    }
+
+    private void generateBooleanAnd(JetBinaryExpression expression) {
+        gen(expression.getLeft(), Type.BOOLEAN_TYPE);
+        Label ifFalse = new Label();
+        v.ifeq(ifFalse);
+        gen(expression.getRight(), Type.BOOLEAN_TYPE);
+        Label end = new Label();
+        v.goTo(end);
+        v.mark(ifFalse);
+        v.aconst(false);
+        v.mark(end);
+        myStack.push(StackValue.onStack(Type.BOOLEAN_TYPE));
+    }
+
+    private void generateBooleanOr(JetBinaryExpression expression) {
+        gen(expression.getLeft(), Type.BOOLEAN_TYPE);
+        Label ifTrue = new Label();
+        v.ifne(ifTrue);
+        gen(expression.getRight(), Type.BOOLEAN_TYPE);
+        Label end = new Label();
+        v.goTo(end);
+        v.mark(ifTrue);
+        v.aconst(true);
+        v.mark(end);
+        myStack.push(StackValue.onStack(Type.BOOLEAN_TYPE));
     }
 
     private static boolean isNumberPrimitive(DeclarationDescriptor descriptor) {

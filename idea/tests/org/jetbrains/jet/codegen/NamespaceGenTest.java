@@ -451,6 +451,36 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
         assertEquals(0, main.invoke(null, 4));
     }
 
+    public void testAnd() throws Exception {
+        loadText("fun foo(a : Int): Boolean = a > 0 && a/0 > 0");
+        final Method main = generateFunction();
+        assertEquals(false, main.invoke(null, 0));
+        boolean hadException = false;
+        try {
+            main.invoke(null, 5);
+        } catch (InvocationTargetException e) {
+            if (e.getTargetException() instanceof ArithmeticException) {
+                hadException = true;
+            }
+        }
+        assertTrue(hadException);
+    }
+
+    public void testOr() throws Exception {
+        loadText("fun foo(a : Int): Boolean = a > 0 || a/0 > 0");
+        final Method main = generateFunction();
+        assertEquals(true, main.invoke(null, 5));
+        boolean hadException = false;
+        try {
+            main.invoke(null, 0);
+        } catch (InvocationTargetException e) {
+            if (e.getTargetException() instanceof ArithmeticException) {
+                hadException = true;
+            }
+        }
+        assertTrue(hadException);
+    }
+
     private void binOpTest(final String text, final Object arg1, final Object arg2, final Object expected) throws Exception {
         loadText(text);
         System.out.println(generateToText());
