@@ -330,6 +330,15 @@ public class ExpressionCodegen extends JetVisitor {
         if (callee instanceof JetSimpleNameExpression) {
             DeclarationDescriptor funDescriptor = bindingContext.resolveReferenceExpression((JetSimpleNameExpression) callee);
             if (funDescriptor instanceof FunctionDescriptor) {
+                if (isNumberPrimitive(funDescriptor.getContainingDeclaration())) {
+                    if (funDescriptor.getName().equals("inv")) {
+                        final StackValue value = myStack.pop();  // HACK we rely on the dot reference handler to put it on the stack
+                        final Type asmType = expressionType(expression);
+                        value.put(asmType, v);
+                        generateInv(asmType);
+                        return;
+                    }
+                }
                 PsiElement declarationPsiElement = bindingContext.getDeclarationPsiElement(funDescriptor);
                 if (declarationPsiElement instanceof PsiMethod) {
                     PsiMethod method = (PsiMethod) declarationPsiElement;
@@ -338,7 +347,7 @@ public class ExpressionCodegen extends JetVisitor {
                     List<JetArgument> args = expression.getValueArguments();
                     for (int i = 0, argsSize = args.size(); i < argsSize; i++) {
                         JetArgument arg = args.get(i);
-                        gen(arg.getArgumentExpression(), psiTypeToAsm(parameters [i].getType()));
+                        gen(arg.getArgumentExpression(), psiTypeToAsm(parameters[i].getType()));
                     }
 
                     if (method.hasModifierProperty(PsiModifier.STATIC)) {
@@ -349,14 +358,17 @@ public class ExpressionCodegen extends JetVisitor {
                     }
                     else {
                         v.visitMethodInsn(Opcodes.INVOKEVIRTUAL,
-                                          jvmName(method.getContainingClass()),
-                                          method.getName(),
-                                          getMethodDescriptor(method));
+                                jvmName(method.getContainingClass()),
+                                method.getName(),
+                                getMethodDescriptor(method));
                     }
                     final Type type = psiTypeToAsm(method.getReturnType());
                     if (type != Type.VOID_TYPE) {
                         myStack.push(StackValue.onStack(type));
                     }
+                }
+                else {
+                    throw new UnsupportedOperationException("don't know how to generate call to " + declarationPsiElement);
                 }
             }
             else {
@@ -612,13 +624,6 @@ public class ExpressionCodegen extends JetVisitor {
             myStack.push(StackValue.onStack(asmType));
             return true;
         }
-        else if (op.getName().equals("inv")) {
-            gen(operand, asmType);
-            v.aconst(-1);
-            v.xor(asmType);
-            myStack.push(StackValue.onStack(asmType));
-            return true;
-        }
         else if (op.getName().equals("inc") || op.getName().equals("dec")) {
             if (!(operand instanceof JetReferenceExpression)) {
                 throw new UnsupportedOperationException("cannot increment or decrement a non-lvalue");
@@ -653,6 +658,12 @@ public class ExpressionCodegen extends JetVisitor {
 
         }
         return false;
+    }
+
+    private void generateInv(Type asmType) {
+        v.aconst(-1);
+        v.xor(asmType);
+        myStack.push(StackValue.onStack(asmType));
     }
 
     @Override

@@ -398,8 +398,9 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
         binOpTest("fun foo(a: Int, b: Int): Int = a xor b", 0x70, 0x1f, 0x6f);
     }
 
-    public void _testBitInv() throws Exception {
-        loadText("fun foo(a: Int): Int = ~a");
+    public void testBitInv() throws Exception {
+        loadText("fun foo(a: Int): Int = a.inv()");
+        System.out.println(generateToText());
         final Method main = generateFunction();
         assertEquals(0xffff0000, main.invoke(null, 0x0000ffff));
     }
