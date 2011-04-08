@@ -32,8 +32,8 @@ public abstract class StackValue {
         return new Constant(value, type);
     }
 
-    public static StackValue cmp(IElementType opToken) {
-        return new NumberCompare(opToken);
+    public static StackValue cmp(IElementType opToken, Type type) {
+        return new NumberCompare(opToken, type);
     }
 
     public static StackValue not(StackValue stackValue) {
@@ -173,8 +173,8 @@ public abstract class StackValue {
     private static class NumberCompare extends StackValue {
         private final IElementType opToken;
 
-        public NumberCompare(IElementType opToken) {
-            super(Type.BOOLEAN_TYPE);
+        public NumberCompare(IElementType opToken, Type type) {
+            super(type);
             this.opToken = opToken;
         }
 

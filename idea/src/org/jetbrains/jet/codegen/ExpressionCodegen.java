@@ -594,7 +594,7 @@ public class ExpressionCodegen extends JetVisitor {
     private void generateCompareOp(JetBinaryExpression expression, IElementType opToken, Type type) {
         gen(expression.getLeft(), type);
         gen(expression.getRight(), type);
-        myStack.push(StackValue.cmp(opToken));
+        myStack.push(StackValue.cmp(opToken, type));
     }
 
     private void generateAssignmentExpression(JetBinaryExpression expression) {
