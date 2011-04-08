@@ -46,7 +46,7 @@ public abstract class JetTestCaseBase extends LightDaemonAnalyzerTestCase {
 
     @Override
     protected void runTest() throws Throwable {
-        doTest(getTestFilePath(), false, false);
+        doTest(getTestFilePath(), true, false);
     }
 
     @NotNull

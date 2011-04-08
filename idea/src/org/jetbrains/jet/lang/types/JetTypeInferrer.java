@@ -590,16 +590,34 @@ public class JetTypeInferrer {
                     result = targetType;
                 }
                 else if (operationType == JetTokens.AS_KEYWORD) {
-                    // TODO : Check for cast impossibility
+                    checkForCastImpossibility(expression, actualType, targetType);
                     result = targetType;
                 }
                 else if (operationType == JetTokens.AS_SAFE) {
-                    // TODO : Check for cast impossibility
-
+                    checkForCastImpossibility(expression, actualType, targetType);
                     result = TypeUtils.makeNullable(targetType);
                 }
                 else {
                     semanticServices.getErrorHandler().genericError(expression.getOperationSign().getNode(), "Unsupported binary operation");
+                }
+            }
+        }
+
+        private void checkForCastImpossibility(JetBinaryExpressionWithTypeRHS expression, JetType actualType, JetType targetType) {
+            if (actualType == null) return;
+
+            JetTypeChecker typeChecker = semanticServices.getTypeChecker();
+            if (!typeChecker.isSubtypeOf(targetType, actualType)) {
+                if (typeChecker.isSubtypeOf(actualType, targetType)) {
+                    semanticServices.getErrorHandler().genericWarning(expression.getOperationSign().getNode(), "No cast needed, use ':' instead");
+                }
+                else {
+                    semanticServices.getErrorHandler().genericError(expression.getOperationSign().getNode(), "This cast can never succeed");
+                }
+            }
+            else {
+                if (typeChecker.isSubtypeOf(actualType, targetType)) {
+                    semanticServices.getErrorHandler().genericWarning(expression.getOperationSign().getNode(), "No cast needed");
                 }
             }
         }

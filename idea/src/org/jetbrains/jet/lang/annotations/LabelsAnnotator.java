@@ -17,7 +17,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 
 public class LabelsAnnotator implements Annotator {
     public void annotate(@NotNull PsiElement element, @NotNull final AnnotationHolder holder) {
-        if (ApplicationManager.getApplication().isUnitTestMode()) return;
+//        if (ApplicationManager.getApplication().isUnitTestMode()) return;
         element.accept(new JetVisitor() {
             @Override
             public void visitPrefixExpression(JetPrefixExpression expression) {

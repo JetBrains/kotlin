@@ -5,12 +5,12 @@ fun test() : Unit {
   x : Int?
   y : Int
   x as Int : Int
-  y as Int : Int
-  x as Int? : Int?
-  y as Int? : Int?
+  y <warning>as</warning> Int : Int
+  x <warning>as</warning> Int? : Int?
+  y <warning>as</warning> Int? : Int?
   x as? Int : Int?
-  y as? Int : Int?
-  x as? Int? : Int?
-  y as? Int? : Int?
+  y <warning>as?</warning> Int : Int?
+  x <warning>as?</warning> Int? : Int?
+  y <warning>as?</warning> Int? : Int?
   ()
 }
