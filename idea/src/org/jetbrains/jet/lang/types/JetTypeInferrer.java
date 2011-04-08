@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.types;
 
+import com.google.common.collect.ImmutableMap;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
@@ -19,14 +20,13 @@ import java.util.*;
  */
 public class JetTypeInferrer {
 
-    private static final Map<IElementType, String> unaryOperationNames = new HashMap<IElementType, String>();
-    static {
-        unaryOperationNames.put(JetTokens.PLUSPLUS, "inc");
-        unaryOperationNames.put(JetTokens.MINUSMINUS, "dec");
-        unaryOperationNames.put(JetTokens.PLUS, "plus");
-        unaryOperationNames.put(JetTokens.MINUS, "minus");
-        unaryOperationNames.put(JetTokens.EXCL, "not");
-    }
+    private static final Map<IElementType, String> unaryOperationNames = ImmutableMap.<IElementType, String>builder()
+            .put(JetTokens.PLUSPLUS, "inc")
+            .put(JetTokens.MINUSMINUS, "dec")
+            .put(JetTokens.PLUS, "plus")
+            .put(JetTokens.MINUS, "minus")
+            .put(JetTokens.EXCL, "not")
+            .build();
 
     private static final Map<IElementType, String> binaryOperationNames = new HashMap<IElementType, String>();
     static {
