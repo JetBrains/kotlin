@@ -1,1 +1,0 @@
-fun foo(b: Boolean): Int { return if (b) 15 else 20 }
