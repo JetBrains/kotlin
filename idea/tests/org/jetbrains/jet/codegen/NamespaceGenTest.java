@@ -36,7 +36,7 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
     }
 
     public void testReturnOne() throws Exception {
-        myFixture.configureByFile(JetParsingTest.getTestDataDir() + "/codegen/returnOne.jet");
+        loadText("fun f() : Int { return 42; }");
         final String text = generateToText();
         System.out.println(text);
 
@@ -46,7 +46,7 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
     }
 
     public void testReturnA() throws Exception {
-        myFixture.configureByFile(JetParsingTest.getTestDataDir() + "/codegen/returnA.jet");
+        loadText("fun foo(a : Int) = a");
         final String text = generateToText();
         System.out.println(text);
 
@@ -66,7 +66,7 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
     }
 
     public void testCurrentTime() throws Exception {
-        loadFile("currentTime.jet");
+        loadText("fun f() : Long { return System.currentTimeMillis(); }");
         System.out.println(generateToText());
         final Method main = generateFunction();
         final long returnValue = (Long) main.invoke(null);
@@ -75,7 +75,7 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
     }
 
     public void testIdentityHashCode() throws Exception {
-        loadFile("identityHashCode.jet");
+        loadText("fun f(o: Any) : Int { return System.identityHashCode(o); }");
         System.out.println(generateToText());
         final Method main = generateFunction();
         Object o = new Object();
