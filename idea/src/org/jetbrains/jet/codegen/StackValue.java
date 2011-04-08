@@ -32,15 +32,15 @@ public abstract class StackValue {
         return new Constant(value, type);
     }
 
-    public static StackValue cmp(IElementType opToken, Type operandType) {
-        return new NumberCompare(opToken, operandType);
+    public static StackValue cmp(IElementType opToken) {
+        return new NumberCompare(opToken);
     }
 
     public static StackValue not(StackValue stackValue) {
         return new Invert(stackValue);
     }
 
-    public abstract void condJump(Label jumpIfTrue, Label jumpIfFalse, InstructionAdapter v);
+    public abstract void condJump(Label label, boolean jumpIfFalse, InstructionAdapter v);
 
     private static void box(final Type type, InstructionAdapter v) {
         if (type == Type.INT_TYPE) {
@@ -80,10 +80,8 @@ public abstract class StackValue {
 
     protected void putAsBoolean(InstructionAdapter v) {
         Label ifTrue = new Label();
-        Label ifFalse = new Label();
         Label end = new Label();
-        condJump(ifTrue, ifFalse, v);
-        v.mark(ifFalse);
+        condJump(ifTrue, false, v);
         v.iconst(0);
         v.goTo(end);
         v.mark(ifTrue);
@@ -107,11 +105,14 @@ public abstract class StackValue {
         }
 
         @Override
-        public void condJump(Label ifTrue, Label ifFalse, InstructionAdapter v) {
+        public void condJump(Label label, boolean jumpIfFalse, InstructionAdapter v) {
             put(Type.INT_TYPE, v);
-            // TODO optimize extra jump away
-            v.ifne(ifTrue);
-            v.goTo(ifFalse);
+            if (jumpIfFalse) {
+                v.ifeq(label);
+            }
+            else {
+                v.ifne(label);
+            }
         }
     }
 
@@ -126,11 +127,14 @@ public abstract class StackValue {
         }
 
         @Override
-        public void condJump(Label ifTrue, Label ifFalse, InstructionAdapter v) {
+        public void condJump(Label label, boolean jumpIfFalse, InstructionAdapter v) {
             if (this.type == Type.BOOLEAN_TYPE) {
-                // TODO optimize extra jump away
-                v.ifne(ifTrue);
-                v.goTo(ifFalse);
+                if (jumpIfFalse) {
+                    v.ifeq(label);
+                }
+                else {
+                    v.ifne(label);
+                }
             }
             else {
                 throw new UnsupportedOperationException("can't generate a cond jump for a non-boolean value on stack");
@@ -153,10 +157,12 @@ public abstract class StackValue {
         }
 
         @Override
-        public void condJump(Label ifTrue, Label ifFalse, InstructionAdapter v) {
+        public void condJump(Label label, boolean jumpIfFalse, InstructionAdapter v) {
             if (value instanceof Boolean) {
                 boolean boolValue = ((Boolean) value).booleanValue();
-                v.goTo(boolValue ? ifTrue : ifFalse);
+                if (boolValue ^ jumpIfFalse) {
+                    v.goTo(label);
+                }
             }
             else {
                 throw new UnsupportedOperationException("don't know how to generate this condjump");
@@ -166,12 +172,10 @@ public abstract class StackValue {
 
     private static class NumberCompare extends StackValue {
         private final IElementType opToken;
-        private final Type operandType;
 
-        public NumberCompare(IElementType opToken, Type operandType) {
+        public NumberCompare(IElementType opToken) {
             super(Type.BOOLEAN_TYPE);
             this.opToken = opToken;
-            this.operandType = operandType;
         }
 
         @Override
@@ -183,33 +187,44 @@ public abstract class StackValue {
         }
 
         @Override
-        public void condJump(Label ifTrue, Label ifFalse, InstructionAdapter v) {
+        public void condJump(Label label, boolean jumpIfFalse, InstructionAdapter v) {
             int opcode;
-            if (opToken == JetTokens.EQEQ) opcode = Opcodes.IFEQ;
-            else if (opToken == JetTokens.EXCLEQ) opcode = Opcodes.IFNE;
-            else if (opToken == JetTokens.GT) opcode = Opcodes.IFGT;
-            else if (opToken == JetTokens.GTEQ) opcode = Opcodes.IFGE;
-            else if (opToken == JetTokens.LT) opcode = Opcodes.IFLT;
-            else if (opToken == JetTokens.LTEQ) opcode = Opcodes.IFLE;
+            if (opToken == JetTokens.EQEQ) {
+                opcode = jumpIfFalse ? Opcodes.IFNE : Opcodes.IFEQ;
+            }
+            else if (opToken == JetTokens.EXCLEQ) {
+                opcode = jumpIfFalse ? Opcodes.IFEQ : Opcodes.IFNE;
+            }
+            else if (opToken == JetTokens.GT) {
+                opcode = jumpIfFalse ? Opcodes.IFLE : Opcodes.IFGT;
+            }
+            else if (opToken == JetTokens.GTEQ) {
+                opcode = jumpIfFalse ? Opcodes.IFLT : Opcodes.IFGE;
+            }
+            else if (opToken == JetTokens.LT) {
+                opcode = jumpIfFalse ? Opcodes.IFGE : Opcodes.IFLT;
+            }
+            else if (opToken == JetTokens.LTEQ) {
+                opcode = jumpIfFalse ? Opcodes.IFGT : Opcodes.IFLE;
+            }
             else {
                 throw new UnsupportedOperationException("don't know how to generate this condjump");
             }
-            if (operandType == Type.FLOAT_TYPE || operandType == Type.DOUBLE_TYPE) {
+            if (type == Type.FLOAT_TYPE || type == Type.DOUBLE_TYPE) {
                 if (opToken == JetTokens.GT || opToken == JetTokens.GTEQ) {
-                    v.cmpg(operandType);
+                    v.cmpg(type);
                 }
                 else {
-                    v.cmpl(operandType);
+                    v.cmpl(type);
                 }
             }
-            else if (operandType == Type.LONG_TYPE) {
+            else if (type == Type.LONG_TYPE) {
                 v.lcmp();
             }
             else {
                 opcode += (Opcodes.IF_ICMPEQ - Opcodes.IFEQ);
             }
-            v.visitJumpInsn(opcode, ifTrue);
-            v.goTo(ifFalse);
+            v.visitJumpInsn(opcode, label);
         }
     }
 
@@ -230,8 +245,8 @@ public abstract class StackValue {
         }
 
         @Override
-        public void condJump(Label ifTrue, Label ifFalse, InstructionAdapter v) {
-            myOperand.condJump(ifFalse, ifTrue, v);
+        public void condJump(Label label, boolean jumpIfFalse, InstructionAdapter v) {
+            myOperand.condJump(label, !jumpIfFalse, v);
         }
     }
 }

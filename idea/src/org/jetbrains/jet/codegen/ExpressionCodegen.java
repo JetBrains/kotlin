@@ -86,20 +86,18 @@ public class ExpressionCodegen extends JetVisitor {
         }
 
         if (thenExpression == null) {
-            generateSingleBranchIf(elseExpression, true);
+            generateSingleBranchIf(elseExpression, false);
             return;
         }
 
         if (elseExpression == null) {
-            generateSingleBranchIf(thenExpression, false);
+            generateSingleBranchIf(thenExpression, true);
             return;
         }
 
 
-        Label thenLabel = new Label();
         Label elseLabel = new Label();
-        myStack.pop().condJump(thenLabel, elseLabel, v);
-        v.mark(thenLabel);
+        myStack.pop().condJump(elseLabel, true, v);   // == 0, i.e. false
 
         gen(thenExpression, asmType);
 
@@ -125,9 +123,7 @@ public class ExpressionCodegen extends JetVisitor {
         myLoopEnds.push(end);
 
         gen(expression.getCondition());
-        Label thenLabel = new Label();
-        myStack.pop().condJump(thenLabel, end, v);
-        v.mark(thenLabel);
+        myStack.pop().condJump(end, true, v);
 
         gen(expression.getBody(), Type.VOID_TYPE);
         v.goTo(condition);
@@ -149,7 +145,7 @@ public class ExpressionCodegen extends JetVisitor {
         gen(expression.getBody(), Type.VOID_TYPE);
 
         gen(expression.getCondition());
-        myStack.pop().condJump(condition, end, v);
+        myStack.pop().condJump(condition, false, v);
 
         v.mark(end);
 
@@ -180,15 +176,13 @@ public class ExpressionCodegen extends JetVisitor {
     }
 
     private void generateSingleBranchIf(JetExpression expression, boolean inverse) {
-        Label ifTrue = new Label();
-        Label ifFalse = new Label();
+        Label endLabel = new Label();
 
-        myStack.pop().condJump(inverse ? ifFalse : ifTrue, inverse ? ifTrue : ifFalse, v);
-        v.mark(ifTrue);
+        myStack.pop().condJump(endLabel, inverse, v);
 
         gen(expression, Type.VOID_TYPE);
 
-        v.mark(ifFalse);
+        v.mark(endLabel);
     }
 
     @Override
@@ -503,49 +497,42 @@ public class ExpressionCodegen extends JetVisitor {
         final IElementType opToken = expression.getOperationReference().getReferencedNameElementType();
         if (opToken == JetTokens.EQ) {
             generateAssignmentExpression(expression);
+            return;
         }
-        else if (JetTokens.AUGMENTED_ASSIGNMENTS.contains(opToken)) {
+        if (JetTokens.AUGMENTED_ASSIGNMENTS.contains(opToken)) {
             generateAugmentedAssignment(expression);
+            return;
         }
-        else if (opToken == JetTokens.ANDAND) {
-            generateBooleanExpression(expression);
-        }
-        else {
-            DeclarationDescriptor op = bindingContext.resolveReferenceExpression(expression.getOperationReference());
-            if (op instanceof FunctionDescriptor) {
-                JetType returnType = bindingContext.getExpressionType(expression);
-                final Type asmType = typeMapper.mapType(returnType);
-                DeclarationDescriptor cls = op.getContainingDeclaration();
-                if (isNumberPrimitive(cls)) {
-                    if (op.getName().equals("compareTo")) {
-                        generateCompareOp(expression, opToken, asmType);
+        DeclarationDescriptor op = bindingContext.resolveReferenceExpression(expression.getOperationReference());
+        if (op instanceof FunctionDescriptor) {
+            JetType returnType = bindingContext.getExpressionType(expression);
+            final Type asmType = typeMapper.mapType(returnType);
+            DeclarationDescriptor cls = op.getContainingDeclaration();
+            if (isNumberPrimitive(cls)) {
+                if (op.getName().equals("compareTo")) {
+                    generateCompareOp(expression, opToken, asmType);
+                }
+                else {
+                    int opcode = opcodeForMethod(op.getName());
+                    generateBinaryOp(expression, (FunctionDescriptor) op, opcode);
+                }
+                return;
+            }
+            else if (isClass(cls, "Hashable")) {
+                if (op.getName().equals("equals")) {
+                    final Type leftType = typeMapper.mapType(bindingContext.getExpressionType(expression.getLeft()));
+                    final Type rightType = typeMapper.mapType(bindingContext.getExpressionType(expression.getRight()));
+                    if (isNumberPrimitive(leftType) && leftType == rightType) {
+                        generateCompareOp(expression, opToken, leftType);
+                        return;
                     }
                     else {
-                        int opcode = opcodeForMethod(op.getName());
-                        generateBinaryOp(expression, (FunctionDescriptor) op, opcode);
-                    }
-                    return;
-                }
-                else if (isClass(cls, "Hashable")) {
-                    if (op.getName().equals("equals")) {
-                        final Type leftType = typeMapper.mapType(bindingContext.getExpressionType(expression.getLeft()));
-                        final Type rightType = typeMapper.mapType(bindingContext.getExpressionType(expression.getRight()));
-                        if (isNumberPrimitive(leftType) && leftType == rightType) {
-                            generateCompareOp(expression, opToken, leftType);
-                            return;
-                        }
-                        else {
-                            throw new UnsupportedOperationException("Don't know how to generate equality for these types");
-                        }
+                        throw new UnsupportedOperationException("Don't know how to generate equality for these types");
                     }
                 }
             }
-            throw new UnsupportedOperationException("Don't know how to generate binary op " + expression);
         }
-    }
-
-    private void generateBooleanExpression(JetBinaryExpression expression) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Don't know how to generate binary op " + expression);
     }
 
     private static boolean isNumberPrimitive(DeclarationDescriptor descriptor) {
@@ -607,7 +594,7 @@ public class ExpressionCodegen extends JetVisitor {
     private void generateCompareOp(JetBinaryExpression expression, IElementType opToken, Type type) {
         gen(expression.getLeft(), type);
         gen(expression.getRight(), type);
-        myStack.push(StackValue.cmp(opToken, type));
+        myStack.push(StackValue.cmp(opToken));
     }
 
     private void generateAssignmentExpression(JetBinaryExpression expression) {

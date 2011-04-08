@@ -109,7 +109,7 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
     }
 
     public void testIf() throws Exception {
-        loadText("fun foo(b: Boolean): Int { return if (b) 15 else 20 }");
+        loadFile("if.jet");
 
         System.out.println(generateToText());
         final Method main = generateFunction();
@@ -118,7 +118,7 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
     }
 
     public void testSingleBranchIf() throws Exception {
-        loadText("fun foo(b: Boolean) : Int { if (b) return 15;\n return 20; }");
+        loadFile("singleBranchIf.jet");
 
         System.out.println(generateToText());
         final Method main = generateFunction();
@@ -449,21 +449,6 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
         final Method main = generateFunction();
         assertEquals(6, main.invoke(null, 6));
         assertEquals(0, main.invoke(null, 4));
-    }
-
-    public void _testAnd() throws Exception {
-        loadText("fun foo(a : Int): Boolean = a > 0 && a/0 > 0");
-        final Method main = generateFunction();
-        assertEquals(false, main.invoke(null, 0));
-        boolean hadException = false;
-        try {
-            main.invoke(null, 5);
-        } catch (InvocationTargetException e) {
-            if (e.getTargetException() instanceof ArithmeticException) {
-                hadException = true;
-            }
-        }
-        assertTrue(hadException);
     }
 
     private void binOpTest(final String text, final Object arg1, final Object arg2, final Object expected) throws Exception {
