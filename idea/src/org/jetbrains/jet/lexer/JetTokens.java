@@ -55,10 +55,12 @@ public interface JetTokens {
     JetKeywordToken CAPITALIZED_THIS_KEYWORD = JetKeywordToken.keyword("This");
 
 
+    JetToken AS_SAFE = new JetToken("as?");
+
     JetToken IDENTIFIER = new JetToken("IDENTIFIER");
     JetToken LABEL_IDENTIFIER = new JetToken("LABEL_IDENTIFIER");
-    JetToken FIELD_IDENTIFIER = new JetToken("FIELD_IDENTIFIER");
 
+    JetToken FIELD_IDENTIFIER = new JetToken("FIELD_IDENTIFIER");
     JetToken LBRACKET    = new JetToken("LBRACKET");
     JetToken RBRACKET    = new JetToken("RBRACKET");
     JetToken LBRACE      = new JetToken("LBRACE");
@@ -88,7 +90,7 @@ public interface JetTokens {
     JetToken OROR        = new JetToken("OROR");
     JetToken SAFE_ACCESS = new JetToken("SAFE_ACCESS");
     JetToken ELVIS       = new JetToken("ELVIS");
-//    JetToken MAP         = new JetToken("MAP");
+    //    JetToken MAP         = new JetToken("MAP");
 //    JetToken FILTER      = new JetToken("FILTER");
     JetToken QUEST       = new JetToken("QUEST");
     JetToken COLON       = new JetToken("COLON");
@@ -105,12 +107,12 @@ public interface JetTokens {
     JetToken HASH        = new JetToken("HASH");
     JetToken AT          = new JetToken("AT");
     JetToken ATAT          = new JetToken("ATAT");
+
     TokenSet LABELS = TokenSet.create(AT, ATAT, LABEL_IDENTIFIER);
 
     JetToken COMMA       = new JetToken("COMMA");
 
     JetToken EOL_OR_SEMICOLON   = new JetToken("EOL_OR_SEMICOLON");
-
     JetKeywordToken WRAPS_KEYWORD     = JetKeywordToken.softKeyword("wraps");
     JetKeywordToken IMPORT_KEYWORD    = JetKeywordToken.softKeyword("import");
     JetKeywordToken WHERE_KEYWORD     = JetKeywordToken.softKeyword("where");
@@ -129,6 +131,7 @@ public interface JetTokens {
     JetKeywordToken PROTECTED_KEYWORD = JetKeywordToken.softKeyword("protected");
     JetKeywordToken CATCH_KEYWORD     = JetKeywordToken.softKeyword("catch");
     JetKeywordToken OUT_KEYWORD       = JetKeywordToken.softKeyword("out");
+
     JetKeywordToken FINALLY_KEYWORD   = JetKeywordToken.softKeyword("finally");
 
     // TODO: support this as an annotation on arguments. Then, they it probably can not be a soft keyword
@@ -152,13 +155,12 @@ public interface JetTokens {
             OPEN_KEYWORD, ATTRIBUTE_KEYWORD, OVERRIDE_KEYWORD, PRIVATE_KEYWORD, PUBLIC_KEYWORD, INTERNAL_KEYWORD,
             PROTECTED_KEYWORD, REF_KEYWORD, OUT_KEYWORD, IN_KEYWORD
     );
-
     TokenSet WHITE_SPACE_OR_COMMENT_BIT_SET = TokenSet.create(WHITE_SPACE, BLOCK_COMMENT, EOL_COMMENT, DOC_COMMENT);
     TokenSet WHITESPACES = TokenSet.create(TokenType.WHITE_SPACE);
     TokenSet COMMENTS = TokenSet.create(EOL_COMMENT, BLOCK_COMMENT, DOC_COMMENT);
-    TokenSet STRINGS = TokenSet.create(CHARACTER_LITERAL, STRING_LITERAL, RAW_STRING_LITERAL);
 
-    TokenSet OPERATIONS = TokenSet.create(AS_KEYWORD, IS_KEYWORD, IN_KEYWORD, DOT, PLUSPLUS, MINUSMINUS, MUL, PLUS,
+    TokenSet STRINGS = TokenSet.create(CHARACTER_LITERAL, STRING_LITERAL, RAW_STRING_LITERAL);
+    TokenSet OPERATIONS = TokenSet.create(AS_KEYWORD, AS_SAFE, IS_KEYWORD, IN_KEYWORD, DOT, PLUSPLUS, MINUSMINUS, MUL, PLUS,
             MINUS, EXCL, DIV, PERC, LT, GT, LTEQ, GTEQ, EQEQEQ, ARROW, EXCLEQEQEQ, EQEQ, EXCLEQ, ANDAND, OROR,
             SAFE_ACCESS, ELVIS,
 //            MAP, FILTER,

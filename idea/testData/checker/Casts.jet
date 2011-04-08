@@ -1,0 +1,16 @@
+fun test() : Unit {
+  var x : Int? = 0
+  var y : Int = 0
+
+  x : Int?
+  y : Int
+  x as Int : Int
+  y as Int : Int
+  x as Int? : Int?
+  y as Int? : Int?
+  x as? Int : Int?
+  y as? Int : Int?
+  x as? Int? : Int?
+  y as? Int? : Int?
+  ()
+}

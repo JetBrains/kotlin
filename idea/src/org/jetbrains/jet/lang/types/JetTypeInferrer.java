@@ -587,14 +587,20 @@ public class JetTypeInferrer {
                     if (actualType != null && !semanticServices.getTypeChecker().isSubtypeOf(actualType, targetType)) {
                         semanticServices.getErrorHandler().typeMismatch(expression.getLeft(), targetType, actualType);
                     }
+                    result = targetType;
                 }
                 else if (operationType == JetTokens.AS_KEYWORD) {
                     // TODO : Check for cast impossibility
+                    result = targetType;
+                }
+                else if (operationType == JetTokens.AS_SAFE) {
+                    // TODO : Check for cast impossibility
+
+                    result = TypeUtils.makeNullable(targetType);
                 }
                 else {
                     semanticServices.getErrorHandler().genericError(expression.getOperationSign().getNode(), "Unsupported binary operation");
                 }
-                result = targetType;
             }
         }
 

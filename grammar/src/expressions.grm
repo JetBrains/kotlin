@@ -139,7 +139,7 @@ inOperation
   ;
 
 typeOperation
-  : "as" : ":"
+  : "as" : "as?" : ":"
   ;
 
 isOPeration

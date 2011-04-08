@@ -129,6 +129,7 @@ RAW_STRING_LITERAL = {THREE_QUO} {QUO_STRING_CHAR}* {THREE_QUO}?
 <YYINITIAL> "!=="        { return JetTokens.EXCLEQEQEQ; }
 <YYINITIAL> "!in"        { return JetTokens.NOT_IN; }
 <YYINITIAL> "!is"        { return JetTokens.NOT_IS; }
+<YYINITIAL> "as?"        { return JetTokens.AS_SAFE; }
 <YYINITIAL> "++"         { return JetTokens.PLUSPLUS  ; }
 <YYINITIAL> "--"         { return JetTokens.MINUSMINUS; }
 <YYINITIAL> "<="         { return JetTokens.LTEQ      ; }

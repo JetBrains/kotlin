@@ -803,6 +803,86 @@ JetFile: Precedence.jet
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('T')
               PsiElement(RBRACE)('}')
+        PsiWhiteSpace('\n  ')
+        BINARY_WITH_TYPE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('t')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(as?)('as?')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            NULLABLE_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Any')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_PROJECTION
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('T')
+                  PsiElement(GT)('>')
+              PsiElement(QUEST)('?')
+        PsiWhiteSpace('\n  ')
+        BINARY_WITH_TYPE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('t')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(as?)('as?')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Any')
+                PsiElement(DOT)('.')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Any')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_PROJECTION
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('T')
+                  PsiElement(GT)('>')
+              PsiElement(DOT)('.')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Any')
+              TYPE_ARGUMENT_LIST
+                PsiElement(LT)('<')
+                TYPE_PROJECTION
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('T')
+                PsiElement(GT)('>')
+        PsiWhiteSpace('\n  ')
+        BINARY_WITH_TYPE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('t')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(as?)('as?')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            FUNCTION_TYPE
+              PsiElement(LBRACE)('{')
+              VALUE_PARAMETER_LIST
+                PsiElement(LPAR)('(')
+                PsiElement(RPAR)(')')
+              PsiWhiteSpace(' ')
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('T')
+              PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n\n  ')
         BINARY_EXPRESSION
           BINARY_WITH_TYPE
@@ -923,6 +1003,107 @@ JetFile: Precedence.jet
             PsiWhiteSpace(' ')
             OPERATION_REFERENCE
               PsiElement(as)('as')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              FUNCTION_TYPE
+                PsiElement(LBRACE)('{')
+                VALUE_PARAMETER_LIST
+                  PsiElement(LPAR)('(')
+                  PsiElement(RPAR)(')')
+                PsiWhiteSpace(' ')
+                PsiElement(COLON)(':')
+                PsiWhiteSpace(' ')
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('T')
+                PsiElement(RBRACE)('}')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(MUL)('*')
+          PsiWhiteSpace(' ')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('1')
+        PsiWhiteSpace('\n  ')
+        BINARY_EXPRESSION
+          BINARY_WITH_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('t')
+            PsiWhiteSpace(' ')
+            OPERATION_REFERENCE
+              PsiElement(as?)('as?')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              NULLABLE_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Any')
+                  TYPE_ARGUMENT_LIST
+                    PsiElement(LT)('<')
+                    TYPE_PROJECTION
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('T')
+                    PsiElement(GT)('>')
+                PsiElement(QUEST)('?')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(MUL)('*')
+          PsiWhiteSpace(' ')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('1')
+        PsiWhiteSpace('\n  ')
+        BINARY_EXPRESSION
+          BINARY_WITH_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('t')
+            PsiWhiteSpace(' ')
+            OPERATION_REFERENCE
+              PsiElement(as?)('as?')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Any')
+                  PsiElement(DOT)('.')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Any')
+                  TYPE_ARGUMENT_LIST
+                    PsiElement(LT)('<')
+                    TYPE_PROJECTION
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('T')
+                    PsiElement(GT)('>')
+                PsiElement(DOT)('.')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Any')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_PROJECTION
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('T')
+                  PsiElement(GT)('>')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(MUL)('*')
+          PsiWhiteSpace(' ')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('1')
+        PsiWhiteSpace('\n  ')
+        BINARY_EXPRESSION
+          BINARY_WITH_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('t')
+            PsiWhiteSpace(' ')
+            OPERATION_REFERENCE
+              PsiElement(as?)('as?')
             PsiWhiteSpace(' ')
             TYPE_REFERENCE
               FUNCTION_TYPE
