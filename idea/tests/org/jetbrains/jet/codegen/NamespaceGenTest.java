@@ -8,13 +8,10 @@ import org.jetbrains.jet.lang.JetFileType;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespace;
 import org.jetbrains.jet.parsing.JetParsingTest;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.util.TraceClassVisitor;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * @author yole
@@ -497,29 +494,31 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
     }
 
     private String generateToText() {
-        StringWriter writer = new StringWriter();
+        Codegens state = new Codegens(getProject(), true);
         JetFile jetFile = (JetFile) myFixture.getFile();
         JetNamespace namespace = jetFile.getRootNamespace();
-        NamespaceCodegen codegen = new NamespaceCodegen(getProject(),
-                new TraceClassVisitor(new PrintWriter(writer)),
-                namespace.getFQName());
+        NamespaceCodegen codegen = state.forNamespace(namespace);
         codegen.generate(namespace);
-        codegen.done();
-        return writer.toString();
+
+        List<String> files = state.files();
+        assertEquals("This test only supposed to generate single class file", 1, files.size());
+
+        return state.asText(files.get(0));
     }
 
     private Class generateToClass() {
+        Codegens state = new Codegens(getProject(), false);
         JetFile jetFile = (JetFile) myFixture.getFile();
-        ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
         final JetNamespace namespace = jetFile.getRootNamespace();
-        NamespaceCodegen codegen = new NamespaceCodegen(getProject(),
-                writer,
-                namespace.getFQName());
+
+        NamespaceCodegen codegen = state.forNamespace(namespace);
         codegen.generate(namespace);
-        final byte[] data = writer.toByteArray();
+
+        List<String> files = state.files();
+        assertEquals("This test only supposed to generate single class file", 1, files.size());
+        final byte[] data = state.asBytes(files.get(0));
         MyClassLoader classLoader = new MyClassLoader(NamespaceGenTest.class.getClassLoader());
-        final Class aClass = classLoader.doDefineClass(NamespaceCodegen.getJVMClassName(namespace.getFQName()).replace("/", "."), data);
-        return aClass;
+        return classLoader.doDefineClass(NamespaceCodegen.getJVMClassName(namespace.getFQName()).replace("/", "."), data);
     }
 
     private Method generateFunction() {

@@ -28,6 +28,14 @@ public class FunctionCodegen {
     }
 
     public void gen(JetFunction f, JetNamespace owner) {
+        gen(f);
+    }
+
+    public void gen(JetFunction f, JetClass owner) {
+
+    }
+
+    private void gen(JetFunction f) {
         final List<JetParameter> parameters = f.getValueParameters();
         Type[] parameterTypes = new Type[parameters.size()];
         for (int i = 0; i < parameters.size(); i++) {
@@ -82,9 +90,5 @@ public class FunctionCodegen {
             return statements.size() > 0 && statements.get(statements.size()-1) instanceof JetReturnExpression;
         }
         return false;
-    }
-
-    public void gen(JetFunction f, JetClass owner) {
-
     }
 }
