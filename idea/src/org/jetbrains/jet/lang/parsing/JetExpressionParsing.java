@@ -1279,7 +1279,9 @@ public class JetExpressionParsing extends AbstractJetParsing {
         if (!at(ELSE_KEYWORD) && !at(SEMICOLON)) {
             parseExpression();
         }
-        consumeIf(SEMICOLON);
+        if (at(SEMICOLON) && lookahead(1) == ELSE_KEYWORD) {
+            advance(); // SEMICOLON
+        }
         thenBranch.done(THEN);
 
         if (at(ELSE_KEYWORD)) {

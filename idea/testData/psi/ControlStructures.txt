@@ -880,7 +880,7 @@ JetFile: ControlStructures.jet
           THEN
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('b')
-            PsiElement(SEMICOLON)(';')
+        PsiElement(SEMICOLON)(';')
         PsiWhiteSpace('\n\n    ')
         IF
           PsiElement(if)('if')

@@ -115,7 +115,7 @@ JetFile: AnonymousObjects.jet
                                     REFERENCE_EXPRESSION
                                       PsiElement(IDENTIFIER)('TOO_MANY_CLICKS')
                                 PsiElement(RPAR)(')')
-                          PsiElement(SEMICOLON)(';')
+                      PsiElement(SEMICOLON)(';')
                       PsiWhiteSpace('\n  ')
                       PsiElement(RBRACE)('}')
                   PsiWhiteSpace('\n')
