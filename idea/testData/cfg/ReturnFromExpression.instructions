@@ -1,17 +1,16 @@
 == blockAndAndMismatch ==
 fun blockAndAndMismatch() : Boolean {
-  (return true) || (return false)
+  false || (return false)
 }
 ---------------------
 l0:
     <START>
-    r(true)
-    ret(*)
+    r(false)
     jt(l2)
     r(false)
-    ret(*)
+    ret(*) l1
 l2:
-    r((return true) || (return false))
+    r(false || (return false))
 l1:
     <END>
 =====================

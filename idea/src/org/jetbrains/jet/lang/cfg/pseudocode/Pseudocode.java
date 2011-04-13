@@ -69,6 +69,11 @@ public class Pseudocode {
         return label;
     }
 
+    @NotNull
+    public Collection<Instruction> getInstructions() {
+        return instructions;
+    }
+
     public void addInstruction(Instruction instruction) {
         instructions.add(instruction);
         if (instruction instanceof SubroutineExitInstruction) {
@@ -81,6 +86,11 @@ public class Pseudocode {
     @NotNull
     public SubroutineExitInstruction getExitInstruction() {
         return exitInstruction;
+    }
+
+    @NotNull
+    public SubroutineEnterInstruction getEnterInstruction() {
+        return (SubroutineEnterInstruction) instructions.get(0);
     }
 
     public void bindLabel(Label label) {

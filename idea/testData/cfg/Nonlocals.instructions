@@ -9,7 +9,7 @@ l6:
     r(b)
     jf(l8)
     r(1)
-    ret(*)
+    ret(*) l5
     jmp(l9)
 l8:
     read (Unit)
@@ -32,7 +32,7 @@ l4:
     <START>
     r(2)
     r(5)
-    ret(*)
+    ret(*) l5
 l5:
     <END>
 =====================
@@ -60,7 +60,7 @@ l0:
     r(a)
     jf(l2)
     r(1)
-    ret(*)
+    ret(*) l1
     jmp(l3)
 l2:
     read (Unit)
@@ -84,7 +84,7 @@ l4:
     <START>
     r(2)
     r(5)
-    ret(*)
+    ret(*) l5
 l5:
     <END>
 =====================

@@ -1,0 +1,38 @@
+fun t1() {
+  return
+  <error>1</error>
+}
+
+fun t2() {
+  if (1 > 2)
+    return
+  else return
+  <error>1</error>
+}
+
+fun t3() {
+  if (1 > 2)
+    return 2
+  else return ""
+  <error>1</error>
+}
+
+fun t4(a : Boolean) {
+  do {
+    return
+  }
+  while (<error>a</error>)
+  <error>1</error>
+}
+
+//fun t5() {
+//  do {
+//    return
+//  }
+//  while (1 > 2)
+//  1
+//}
+
+//fun blockAndAndMismatch() : Boolean {
+//  (return true) || (return false)
+//}

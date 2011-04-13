@@ -348,7 +348,9 @@ public class JetTypeInferrer {
     }
 
     private JetType getBlockReturnedTypeWithWritableScope(@NotNull WritableScope scope, @NotNull List<? extends JetElement> block) {
-        assert !block.isEmpty();
+        if (block.isEmpty()) {
+            return JetStandardClasses.getUnitType();
+        }
 
         TypeInferrerVisitorWithWritableScope blockLevelVisitor = new TypeInferrerVisitorWithWritableScope(scope, true);
 

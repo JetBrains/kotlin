@@ -1,6 +1,10 @@
 package org.jetbrains.jet.lang.cfg.pseudocode;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.cfg.Label;
+
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
 * @author abreslav
@@ -33,6 +37,12 @@ public class ConditionalJumpInstruction extends AbstractJumpInstruction {
 
     public void setNextOnFalse(Instruction nextOnFalse) {
         this.nextOnFalse = outgoingEdgeTo(nextOnFalse);
+    }
+
+    @NotNull
+    @Override
+    public Collection<Instruction> getNextInstructions() {
+        return Arrays.asList(getNextOnFalse(), getNextOnTrue());
     }
 
     @Override

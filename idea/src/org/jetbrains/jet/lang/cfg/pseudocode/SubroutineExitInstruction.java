@@ -3,6 +3,9 @@ package org.jetbrains.jet.lang.cfg.pseudocode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetElement;
 
+import java.util.Collection;
+import java.util.Collections;
+
 /**
  * @author abreslav
  */
@@ -15,6 +18,12 @@ public class SubroutineExitInstruction extends Instruction {
 
     public JetElement getSubroutine() {
         return subroutine;
+    }
+
+    @NotNull
+    @Override
+    public Collection<Instruction> getNextInstructions() {
+        return Collections.emptyList();
     }
 
     @Override

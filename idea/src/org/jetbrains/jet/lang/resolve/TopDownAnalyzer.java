@@ -268,20 +268,26 @@ public class TopDownAnalyzer {
                 JetFunction function = (JetFunction) declaration;
                 FunctionDescriptorImpl functionDescriptorImpl = (FunctionDescriptorImpl) descriptor;
                 if (bodyExpression != null) {
-                    JetFlowInformationProvider flowInformationProvider = computeFlowData(declaration, bodyExpression);
+                    JetFlowInformationProvider flowInformationProvider = computeFlowData(function, bodyExpression);
                     JetTypeInferrer typeInferrer = semanticServices.getTypeInferrer(trace, flowInformationProvider);
 
                     assert readyToProcessExpressions : "Must be ready collecting types";
 
                     if (function.getReturnTypeRef() != null) {
-                        typeInferrer.checkFunctionReturnType(declaringScope, function, descriptor);
+                        typeInferrer.checkFunctionReturnType(declaringScope, function, functionDescriptorImpl);
                     }
                     else {
-                        JetType returnType = typeInferrer.getFunctionReturnType(declaringScope, function, descriptor);
+                        JetType returnType = typeInferrer.getFunctionReturnType(declaringScope, function, functionDescriptorImpl);
                         if (returnType == null) {
                             returnType = ErrorUtils.createErrorType("Unable to infer body type");
                         }
                         functionDescriptorImpl.setUnsubstitutedReturnType(returnType);
+                    }
+
+                    List<JetElement> unreachableElements = new ArrayList<JetElement>();
+                    flowInformationProvider.collectUnreachableExpressions(function, unreachableElements);
+                    for (JetElement unreachableElement : unreachableElements) {
+                        semanticServices.getErrorHandler().genericError(unreachableElement.getNode(), "Unreachable code");
                     }
                 }
                 else {
@@ -327,17 +333,44 @@ public class TopDownAnalyzer {
         wrappedTrace.close();
         return new JetFlowInformationProvider() {
             @Override
-            public void collectReturnedInformation(@NotNull JetFunction function, Collection<JetExpression> returnedExpressions, Collection<JetElement> elementsReturningUnit) {
-                Pseudocode pseudocode = pseudocodeMap.get(function);
+            public void collectReturnedInformation(@NotNull JetElement subroutine, Collection<JetExpression> returnedExpressions, Collection<JetElement> elementsReturningUnit) {
+                Pseudocode pseudocode = pseudocodeMap.get(subroutine);
                 assert pseudocode != null;
 
                 SubroutineExitInstruction exitInstruction = pseudocode.getExitInstruction();
-                processPreviousInstructions(exitInstruction, returnedExpressions, elementsReturningUnit);
+                processPreviousInstructions(exitInstruction, new HashSet<Instruction>(), returnedExpressions, elementsReturningUnit);
+            }
+
+            @Override
+            public void collectUnreachableExpressions(@NotNull JetElement subroutine, Collection<JetElement> unreachableElements) {
+                Pseudocode pseudocode = pseudocodeMap.get(subroutine);
+                assert pseudocode != null;
+
+                SubroutineEnterInstruction enterInstruction = pseudocode.getEnterInstruction();
+                Set<Instruction> visited = new HashSet<Instruction>();
+                collectReachable(enterInstruction, visited);
+
+                for (Instruction instruction : pseudocode.getInstructions()) {
+                    if (!visited.contains(instruction) && instruction instanceof JetElementInstruction) {
+                        unreachableElements.add(((JetElementInstruction) instruction).getElement());
+                    }
+                }
+
             }
         };
     }
 
-    private void processPreviousInstructions(Instruction previousFor, final Collection<JetExpression> returnedExpressions, final Collection<JetElement> elementsReturningUnit) {
+    private void collectReachable(Instruction current, Set<Instruction> visited) {
+        if (!visited.add(current)) return;
+
+        for (Instruction nextInstruction : current.getNextInstructions()) {
+            collectReachable(nextInstruction, visited);
+        }
+    }
+
+    private void processPreviousInstructions(Instruction previousFor, final Set<Instruction> visited, final Collection<JetExpression> returnedExpressions, final Collection<JetElement> elementsReturningUnit) {
+        if (!visited.add(previousFor)) return;
+
         Collection<Instruction> previousInstructions = previousFor.getPreviousInstructions();
         InstructionVisitor visitor = new InstructionVisitor() {
             @Override
@@ -347,7 +380,7 @@ public class TopDownAnalyzer {
 
             @Override
             public void visitReturnValue(ReturnValueInstruction instruction) {
-                processPreviousInstructions(instruction, returnedExpressions, elementsReturningUnit);
+                processPreviousInstructions(instruction, visited, returnedExpressions, elementsReturningUnit);
             }
 
             @Override
@@ -372,7 +405,7 @@ public class TopDownAnalyzer {
 
             @Override
             public void visitJump(AbstractJumpInstruction instruction) {
-                processPreviousInstructions(instruction, returnedExpressions, elementsReturningUnit);
+                processPreviousInstructions(instruction, visited, returnedExpressions, elementsReturningUnit);
             }
 
             @Override

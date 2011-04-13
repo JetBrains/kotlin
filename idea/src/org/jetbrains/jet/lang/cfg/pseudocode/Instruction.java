@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.cfg.pseudocode;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -14,6 +15,9 @@ public abstract class Instruction {
     public Collection<Instruction> getPreviousInstructions() {
         return previousInstructions;
     }
+
+    @NotNull
+    public abstract Collection<Instruction> getNextInstructions();
 
     @Nullable
     protected Instruction outgoingEdgeTo(@Nullable Instruction target) {

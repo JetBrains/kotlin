@@ -1,6 +1,10 @@
 package org.jetbrains.jet.lang.cfg.pseudocode;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.cfg.Label;
+
+import java.util.Collection;
+import java.util.Collections;
 
 /**
 * @author abreslav
@@ -19,6 +23,12 @@ public abstract class AbstractJumpInstruction extends Instruction {
 
     public Instruction getResolvedTarget() {
         return resolvedTarget;
+    }
+
+    @NotNull
+    @Override
+    public Collection<Instruction> getNextInstructions() {
+        return Collections.singleton(getResolvedTarget());
     }
 
     public void setResolvedTarget(Instruction resolvedTarget) {

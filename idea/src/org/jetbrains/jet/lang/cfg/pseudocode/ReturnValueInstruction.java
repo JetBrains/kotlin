@@ -18,6 +18,6 @@ public class ReturnValueInstruction extends AbstractJumpInstruction {
 
     @Override
     public String toString() {
-        return "ret(*)";
+        return "ret(*) " + getTargetLabel();
     }
 }
