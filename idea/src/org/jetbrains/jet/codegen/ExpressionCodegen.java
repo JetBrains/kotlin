@@ -22,6 +22,10 @@ import java.util.Stack;
  * @author max
  */
 public class ExpressionCodegen extends JetVisitor {
+    private static final String CLASS_OBJECT = "java/lang/Object";
+    private static final String CLASS_STRING = "java/lang/String";
+    private static final String CLASS_STRING_BUILDER = "java/lang/StringBuilder";
+
     private final Stack<Label> myLoopStarts = new Stack<Label>();
     private final Stack<Label> myLoopEnds = new Stack<Label>();
     private final Stack<StackValue> myStack = new Stack<StackValue>();
@@ -341,7 +345,7 @@ public class ExpressionCodegen extends JetVisitor {
                     final JetDotQualifiedExpression parent = (JetDotQualifiedExpression) expression.getParent();
                     if (!resolvesToClassOrPackage(parent.getReceiverExpression())) {
                         // we have a receiver on stack
-                        myStack.pop().put(Type.getObjectType("java/lang/Object"), v);
+                        myStack.pop().put(Type.getObjectType(CLASS_OBJECT), v);
                     }
                 }
 
@@ -523,6 +527,10 @@ public class ExpressionCodegen extends JetVisitor {
                     }
                     return;
                 }
+                else if (isClass(cls, "String") && op.getName().equals("plus")) {
+                    generateConcatenation(expression);
+                    return;
+                }
             }
             throw new UnsupportedOperationException("Don't know how to generate binary op " + expression);
         }
@@ -578,7 +586,7 @@ public class ExpressionCodegen extends JetVisitor {
         v.ifnull(rightNull);
         Label leftNull = new Label();
         v.ifnull(leftNull);
-        v.invokevirtual("java/lang/Object", "equals", "(Ljava/lang/Object;)Z");
+        v.invokevirtual(CLASS_OBJECT, "equals", "(Ljava/lang/Object;)Z");
         Label end = new Label();
         v.goTo(end);
         v.mark(rightNull);
@@ -700,6 +708,26 @@ public class ExpressionCodegen extends JetVisitor {
         else {
             throw new UnsupportedOperationException("Don't know how to generate augmented assignment to " + lhs.getText());
         }
+    }
+
+    private void generateConcatenation(JetBinaryExpression expression) {
+        Type type = Type.getObjectType(CLASS_STRING_BUILDER);
+        v.anew(type);
+        v.dup();
+        Method method = new Method("<init>", Type.VOID_TYPE, new Type[0]);
+        v.invokespecial(CLASS_STRING_BUILDER, method.getName(), method.getDescriptor());
+        invokeAppend(expression.getLeft());
+        invokeAppend(expression.getRight());
+        v.invokevirtual(CLASS_STRING_BUILDER, "toString", "()Ljava/lang/String;");
+        myStack.push(StackValue.onStack(Type.getObjectType(CLASS_STRING)));
+    }
+
+    private void invokeAppend(final JetExpression expr) {
+        Type exprType = expressionType(expr);
+        gen(expr, exprType);
+        Method appendDescriptor = new Method("append", Type.getObjectType(CLASS_STRING_BUILDER),
+                new Type[] { exprType.getSort() == Type.OBJECT ? Type.getObjectType(CLASS_OBJECT) : exprType});
+        v.invokevirtual(CLASS_STRING_BUILDER, "append", appendDescriptor.getDescriptor());
     }
 
     @Override
