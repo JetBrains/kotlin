@@ -275,9 +275,15 @@ public class JetControlFlowProcessor {
             final JetFinallySection finallyBlock = expression.getFinallyBlock();
             if (finallyBlock != null) {
                 builder.enterTryFinally(new GenerationTrigger() {
+                    private boolean working = false;
+
                     @Override
                     public void generate() {
+                        // This checks are needed for the case of having e.g. return inside finally: 'try {return} finally{return}'
+                        if (working) return;
+                        working = true;
                         value(finallyBlock.getFinalExpression(), true, inCondition);
+                        working = false;
                     }
                 });
             }

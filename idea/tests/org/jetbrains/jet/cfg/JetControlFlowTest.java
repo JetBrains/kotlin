@@ -58,7 +58,7 @@ public class JetControlFlowTest extends JetTestCaseBase {
 
         };
 
-        AnalyzingUtils.analyzeNamespace(file.getRootNamespace(), ErrorHandler.THROW_EXCEPTION, new JetControlFlowDataTraceFactory() {
+        AnalyzingUtils.analyzeNamespace(file.getRootNamespace(), ErrorHandler.DO_NOTHING, new JetControlFlowDataTraceFactory() {
             @NotNull
             @Override
             public JetPseudocodeTrace createTrace(JetElement element) {

@@ -129,3 +129,8 @@ fun blockAndAndMismatch() : Boolean {
   <error>(return true) || (return false)</error>
   <error>1</error>
 }
+
+fun tf() {
+  try {return} finally{return}
+  <error>1</error>
+}

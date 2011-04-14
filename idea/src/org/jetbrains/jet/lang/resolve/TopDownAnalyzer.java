@@ -290,6 +290,10 @@ public class TopDownAnalyzer {
                     // This is needed in order to highlight only '1 < 2' and not '1', '<' and '2' as well
                     Set<JetElement> rootElements = findRootExpressions(unreachableElements);
 
+                    // TODO : (return 1) || (return 2) -- only || and right of it is unreachable
+                    // TODO : try {return 1} finally {return 2}. Currently 'return 1' is reported as unreachable,
+                    //        though it'd better be reported more specifically
+
                     for (JetElement element : rootElements) {
                         semanticServices.getErrorHandler().genericError(element.getNode(), "Unreachable code");
                     }
