@@ -537,6 +537,24 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
         assertEquals(Boolean.FALSE, main.invoke(null, "jet"));
     }
 
+    public void testTripleEq() throws Exception {
+        loadText("fun foo(s1: String?, s2: String?) = s1 === s2");
+        final Method main = generateFunction();
+        String s1 = new String("jet");
+        String s2 = new String("jet");
+        assertEquals(Boolean.TRUE, main.invoke(null, s1, s1));
+        assertEquals(Boolean.FALSE, main.invoke(null, s1, s2));
+    }
+
+    public void testTripleNotEq() throws Exception {
+        loadText("fun foo(s1: String?, s2: String?) = s1 !== s2");
+        final Method main = generateFunction();
+        String s1 = new String("jet");
+        String s2 = new String("jet");
+        assertEquals(Boolean.FALSE, main.invoke(null, s1, s1));
+        assertEquals(Boolean.TRUE, main.invoke(null, s1, s2));
+    }
+
     public void testFunctionCall() throws Exception {
         loadFile("functionCall.jet");
         System.out.println(generateToText());

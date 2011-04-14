@@ -503,7 +503,8 @@ public class ExpressionCodegen extends JetVisitor {
         else if (opToken == JetTokens.OROR) {
             generateBooleanOr(expression);
         }
-        else if (opToken == JetTokens.EQEQ || opToken == JetTokens.EXCLEQ) {
+        else if (opToken == JetTokens.EQEQ || opToken == JetTokens.EXCLEQ ||
+                 opToken == JetTokens.EQEQEQ || opToken == JetTokens.EXCLEQEQEQ) {
             generateEquals(expression, opToken);
         }
         else {
@@ -562,34 +563,43 @@ public class ExpressionCodegen extends JetVisitor {
         else {
             gen(expression.getLeft(), leftType);
             gen(expression.getRight(), rightType);
-            v.dup2();   // left right left right
-            Label rightNull = new Label();
-            v.ifnull(rightNull);
-            Label leftNull = new Label();
-            v.ifnull(leftNull);
-            v.invokevirtual("java/lang/Object", "equals", "(Ljava/lang/Object;)Z");
-            Label end = new Label();
-            v.goTo(end);
-            v.mark(rightNull);
-            // left right left
-            Label bothNull = new Label();
-            v.ifnull(bothNull);
-            v.mark(leftNull);
-            v.pop2();
-            v.aconst(Boolean.FALSE);
-            v.goTo(end);
-            v.mark(bothNull);
-            v.pop2();
-            v.aconst(Boolean.TRUE);
-            v.mark(end);
-
-            final StackValue onStack = StackValue.onStack(Type.BOOLEAN_TYPE);
-            if (opToken == JetTokens.EXCLEQ) {
-                myStack.push(StackValue.not(onStack));
+            if (opToken == JetTokens.EQEQEQ || opToken == JetTokens.EXCLEQEQEQ) {
+                myStack.push(StackValue.cmp(opToken, leftType));
             }
             else {
-                myStack.push(onStack);
+                generateNullSafeEquals(opToken);
             }
+        }
+    }
+
+    private void generateNullSafeEquals(IElementType opToken) {
+        v.dup2();   // left right left right
+        Label rightNull = new Label();
+        v.ifnull(rightNull);
+        Label leftNull = new Label();
+        v.ifnull(leftNull);
+        v.invokevirtual("java/lang/Object", "equals", "(Ljava/lang/Object;)Z");
+        Label end = new Label();
+        v.goTo(end);
+        v.mark(rightNull);
+        // left right left
+        Label bothNull = new Label();
+        v.ifnull(bothNull);
+        v.mark(leftNull);
+        v.pop2();
+        v.aconst(Boolean.FALSE);
+        v.goTo(end);
+        v.mark(bothNull);
+        v.pop2();
+        v.aconst(Boolean.TRUE);
+        v.mark(end);
+
+        final StackValue onStack = StackValue.onStack(Type.BOOLEAN_TYPE);
+        if (opToken == JetTokens.EXCLEQ) {
+            myStack.push(StackValue.not(onStack));
+        }
+        else {
+            myStack.push(onStack);
         }
     }
 

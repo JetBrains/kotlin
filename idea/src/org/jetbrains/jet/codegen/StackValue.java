@@ -33,7 +33,7 @@ public abstract class StackValue {
     }
 
     public static StackValue cmp(IElementType opToken, Type type) {
-        return new NumberCompare(opToken, type);
+        return type.getSort() == Type.OBJECT ? new ObjectCompare(opToken, type) : new NumberCompare(opToken, type);
     }
 
     public static StackValue not(StackValue stackValue) {
@@ -171,7 +171,7 @@ public abstract class StackValue {
     }
 
     private static class NumberCompare extends StackValue {
-        private final IElementType opToken;
+        protected final IElementType opToken;
         private final Type operandType;
 
         public NumberCompare(IElementType opToken, Type operandType) {
@@ -225,6 +225,27 @@ public abstract class StackValue {
             }
             else {
                 opcode += (Opcodes.IF_ICMPEQ - Opcodes.IFEQ);
+            }
+            v.visitJumpInsn(opcode, label);
+        }
+    }
+
+    private static class ObjectCompare extends NumberCompare {
+        public ObjectCompare(IElementType opToken, Type operandType) {
+            super(opToken, operandType);
+        }
+
+        @Override
+        public void condJump(Label label, boolean jumpIfFalse, InstructionAdapter v) {
+            int opcode;
+            if (opToken == JetTokens.EQEQEQ) {
+                opcode = jumpIfFalse ? Opcodes.IF_ACMPNE : Opcodes.IF_ACMPEQ;
+            }
+            else if (opToken == JetTokens.EXCLEQEQEQ) {
+                opcode = jumpIfFalse ? Opcodes.IF_ACMPEQ : Opcodes.IF_ACMPNE;
+            }
+            else {
+                throw new UnsupportedOperationException("don't know how to generate this condjump");
             }
             v.visitJumpInsn(opcode, label);
         }
