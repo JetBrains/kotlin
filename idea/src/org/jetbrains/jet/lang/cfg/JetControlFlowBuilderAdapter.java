@@ -2,7 +2,6 @@ package org.jetbrains.jet.lang.cfg;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.JetBlockExpression;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetExpression;
 
@@ -84,8 +83,8 @@ public class JetControlFlowBuilderAdapter implements JetControlFlowBuilder {
     }
 
     @Override
-    public void enterTryFinally(@NotNull JetBlockExpression expression) {
-        builder.enterTryFinally(expression);
+    public void enterTryFinally(@NotNull GenerationTrigger trigger) {
+        builder.enterTryFinally(trigger);
     }
 
     @Override

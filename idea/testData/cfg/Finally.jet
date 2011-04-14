@@ -1,0 +1,125 @@
+fun t3() {
+  try {
+    1
+  } finally {
+    2
+  }
+}
+
+fun t3() {
+  try {
+    1
+    if (2 > 3) {
+      return
+    }
+  } finally {
+    2
+  }
+}
+
+fun t3() {
+  try {
+    1
+    @{ () =>
+        if (2 > 3) {
+          return@
+        }
+    }
+  } finally {
+    2
+  }
+}
+
+fun t3() {
+  @{ () =>
+    try {
+      1
+      if (2 > 3) {
+        return@
+      }
+    } finally {
+      2
+    }
+  }
+}
+
+fun t3() {
+  @ while(true) {
+    try {
+      1
+      if (2 > 3) {
+        break @
+      }
+    } finally {
+      2
+    }
+  }
+}
+
+fun t3() {
+  try {
+    @ while(true) {
+        1
+        if (2 > 3) {
+          break @
+        }
+      }
+      5
+  } finally {
+    2
+  }
+}
+
+fun t3() {
+  try {
+    @ while(true) {
+        1
+        if (2 > 3) {
+          break @
+        }
+      }
+  } finally {
+    2
+  }
+}
+
+fun t3(a : Int) {
+  @ for (i in 1..a) {
+    try {
+      1
+      if (2 > 3) {
+        continue @
+      }
+    } finally {
+      2
+    }
+  }
+}
+
+fun t3(a : Int) {
+  try {
+    @ for (i in 1..a) {
+        1
+        if (2 > 3) {
+          continue @
+        }
+      }
+      5
+  } finally {
+    2
+  }
+}
+
+fun t3(a : Int) {
+  try {
+    @ for (i in 1..a) {
+        1
+        if (2 > 3) {
+          continue @
+        }
+      }
+  } finally {
+    2
+  }
+}
+

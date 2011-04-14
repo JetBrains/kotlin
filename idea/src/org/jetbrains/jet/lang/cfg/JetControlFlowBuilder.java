@@ -2,7 +2,6 @@ package org.jetbrains.jet.lang.cfg;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.JetBlockExpression;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetExpression;
 
@@ -37,7 +36,7 @@ public interface JetControlFlowBuilder {
     @Nullable
     JetElement getCurrentLoop();
     // Finally
-    void enterTryFinally(@NotNull JetBlockExpression expression);
+    void enterTryFinally(@NotNull GenerationTrigger trigger);
 
     void exitTryFinally();
     // Subroutines

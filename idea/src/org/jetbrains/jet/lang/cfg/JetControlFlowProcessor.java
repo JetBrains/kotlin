@@ -272,25 +272,26 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitTryExpression(JetTryExpression expression) {
-            JetFinallySection finallyBlock = expression.getFinallyBlock();
+            final JetFinallySection finallyBlock = expression.getFinallyBlock();
             if (finallyBlock != null) {
-                builder.enterTryFinally(finallyBlock.getFinalExpression());
+                builder.enterTryFinally(new GenerationTrigger() {
+                    @Override
+                    public void generate() {
+                        value(finallyBlock.getFinalExpression(), true, inCondition);
+                    }
+                });
             }
+
+            Label onException = builder.createUnboundLabel();
+            builder.nondeterministicJump(onException);
+            value(expression.getTryBlock(), true, inCondition);
 
             List<JetCatchClause> catchClauses = expression.getCatchClauses();
-            if (catchClauses.isEmpty()) {
-                value(expression.getTryBlock(), true, false);
-            }
-            else {
-                Label catchBlock = builder.createUnboundLabel();
-                builder.nondeterministicJump(catchBlock);
-
-                value(expression.getTryBlock(), true, false);
-
+            if (!catchClauses.isEmpty()) {
                 Label afterCatches = builder.createUnboundLabel();
                 builder.jump(afterCatches);
 
-                builder.bindLabel(catchBlock);
+                builder.bindLabel(onException);
                 for (Iterator<JetCatchClause> iterator = catchClauses.iterator(); iterator.hasNext(); ) {
                     JetCatchClause catchClause = iterator.next();
                     JetExpression catchBody = catchClause.getCatchBody();
@@ -303,10 +304,13 @@ public class JetControlFlowProcessor {
                 }
 
                 builder.bindLabel(afterCatches);
+            } else {
+                builder.bindLabel(onException);
             }
 
             if (finallyBlock != null) {
                 builder.exitTryFinally();
+                value(finallyBlock.getFinalExpression(), true, inCondition);
             }
         }
 

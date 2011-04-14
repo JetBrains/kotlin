@@ -68,11 +68,14 @@ public class JetControlFlowTest extends JetTestCaseBase {
 
         try {
             processCFData(name, data);
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        finally {
             if ("true".equals(System.getProperty("jet.control.flow.test.dump.graphs"))) {
                 dumpDot(name, data.values());
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 

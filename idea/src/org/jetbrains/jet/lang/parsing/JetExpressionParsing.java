@@ -1238,7 +1238,9 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         myJetParsing.parseBlock();
 
+        boolean catchOrFinally = false;
         while (at(CATCH_KEYWORD)) {
+            catchOrFinally = true;
             PsiBuilder.Marker catchBlock = mark();
             advance(); // CATCH_KEYWORD
 
@@ -1249,6 +1251,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
         }
 
         if (at(FINALLY_KEYWORD)) {
+            catchOrFinally = true;
             PsiBuilder.Marker finallyBlock = mark();
 
             advance(); // FINALLY_KEYWORD
@@ -1256,6 +1259,10 @@ public class JetExpressionParsing extends AbstractJetParsing {
             myJetParsing.parseBlock();
 
             finallyBlock.done(FINALLY);
+        }
+
+        if (!catchOrFinally) {
+            error("Expecting 'catch' or 'finally'");
         }
 
         tryExpression.done(TRY);
