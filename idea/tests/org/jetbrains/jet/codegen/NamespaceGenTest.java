@@ -568,6 +568,15 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
         assertEquals("jetLang", main.invoke(null, "jet", "Lang"));
     }
 
+    public void testStringPlusChained() throws Exception {
+        loadText("fun foo(s1: String, s2: String, s3: String) = s1 + s2 + s3");
+        final String text = generateToText();
+        final int firstStringBuilderCreation = text.indexOf("NEW java/lang/StringBuilder");
+        assertEquals(-1, text.indexOf("NEW java/lang/StringBuilder", firstStringBuilderCreation+1));
+        final Method main = generateFunction();
+        assertEquals("jet Lang", main.invoke(null, "jet", " ", "Lang"));
+    }
+
     private void binOpTest(final String text, final Object arg1, final Object arg2, final Object expected) throws Exception {
         loadText(text);
         System.out.println(generateToText());

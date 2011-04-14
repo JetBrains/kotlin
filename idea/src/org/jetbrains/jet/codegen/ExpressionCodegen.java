@@ -723,6 +723,14 @@ public class ExpressionCodegen extends JetVisitor {
     }
 
     private void invokeAppend(final JetExpression expr) {
+        if (expr instanceof JetBinaryExpression) {
+            final JetBinaryExpression binaryExpression = (JetBinaryExpression) expr;
+            if (binaryExpression.getOperationToken() == JetTokens.PLUS) {
+                invokeAppend(binaryExpression.getLeft());
+                invokeAppend(binaryExpression.getRight());
+                return;
+            }
+        }
         Type exprType = expressionType(expr);
         gen(expr, exprType);
         Method appendDescriptor = new Method("append", Type.getObjectType(CLASS_STRING_BUILDER),
