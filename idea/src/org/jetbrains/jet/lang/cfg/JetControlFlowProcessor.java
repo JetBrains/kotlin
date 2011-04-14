@@ -186,26 +186,24 @@ public class JetControlFlowProcessor {
                 }
                 else if (left instanceof JetArrayAccessExpression) {
                     JetArrayAccessExpression arrayAccessExpression = (JetArrayAccessExpression) left;
-                    for (JetExpression index : arrayAccessExpression.getIndexExpressions()) {
-                        value(index, false, false);
-                    }
-                    value(arrayAccessExpression.getArrayExpression(), false, false);
-                    value(expression.getOperationReference(), false, false);
-                    builder.write(expression, left); // TODO : ???
+                    visitAssignToArrayAccess(expression, arrayAccessExpression);
                 } else {
                     builder.unsupported(expression); // TODO
                 }
             }
             else if (JetTypeInferrer.assignmentOperationNames.containsKey(operationType)) {
-                JetExpression left = expression.getLeft();
-                value(left, false, false);
+                JetExpression left = JetPsiUtil.deparenthesize(expression.getLeft());
+                if (left != null) {
+                    value(left, false, false);
+                }
                 if (right != null) {
                     value(right, false, false);
                 }
-                if (left instanceof JetSimpleNameExpression) {
+                if (left instanceof JetSimpleNameExpression || left instanceof JetArrayAccessExpression) {
+                    value(expression.getOperationReference(), false, false);
                     builder.write(expression, left);
                 }
-                else {
+                else if (left != null) {
                     builder.unsupported(expression); // TODO
                 }
             }
@@ -217,6 +215,15 @@ public class JetControlFlowProcessor {
                 value(expression.getOperationReference(), false, false);
                 builder.read(expression);
             }
+        }
+
+        private void visitAssignToArrayAccess(JetBinaryExpression expression, JetArrayAccessExpression arrayAccessExpression) {
+            for (JetExpression index : arrayAccessExpression.getIndexExpressions()) {
+                value(index, false, false);
+            }
+            value(arrayAccessExpression.getArrayExpression(), false, false);
+            value(expression.getOperationReference(), false, false);
+            builder.write(expression, arrayAccessExpression); // TODO : ???
         }
 
         @Override

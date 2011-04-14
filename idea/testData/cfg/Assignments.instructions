@@ -18,6 +18,7 @@ l0:
     w(x)
     r(x)
     r(2)
+    r(+=)
     w(x)
     r(true)
     jf(l2)
