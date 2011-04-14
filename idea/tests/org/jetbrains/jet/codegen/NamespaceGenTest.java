@@ -492,6 +492,36 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
         main.invoke(null);  // ensure no exception
     }
 
+    public void testJavaConstructor() throws Exception {
+        loadText("fun foo(): StringBuilder = new StringBuilder()");
+        final Method main = generateFunction();
+        final Object result = main.invoke(null);
+        assertTrue(result instanceof StringBuilder);
+    }
+
+    public void testJavaEquals() throws Exception {
+        loadText("fun foo(s1: String, s2: String) = s1 == s2");
+        System.out.println(generateToText());
+        final Method main = generateFunction();
+        assertEquals(Boolean.TRUE, main.invoke(null, new String("jet"), new String("jet")));
+        assertEquals(Boolean.FALSE, main.invoke(null, new String("jet"), new String("ceylon")));
+    }
+
+    public void testJavaNotEquals() throws Exception {
+        loadText("fun foo(s1: String, s2: String) = s1 != s2");
+        final Method main = generateFunction();
+        assertEquals(Boolean.FALSE, main.invoke(null, new String("jet"), new String("jet")));
+        assertEquals(Boolean.TRUE, main.invoke(null, new String("jet"), new String("ceylon")));
+    }
+
+    public void testJavaEqualsNull() throws Exception {
+        loadText("fun foo(s1: String?, s2: String?) = s1 == s2");
+        final Method main = generateFunction();
+        assertEquals(Boolean.TRUE, main.invoke(null, null, null));
+        assertEquals(Boolean.FALSE, main.invoke(null, "jet", null));
+        assertEquals(Boolean.FALSE, main.invoke(null, null, "jet"));
+    }
+
     private void binOpTest(final String text, final Object arg1, final Object arg2, final Object expected) throws Exception {
         loadText(text);
         System.out.println(generateToText());
