@@ -134,3 +134,20 @@ fun tf() {
   try {<error>return</error>} finally{return}
   <error>1</error>
 }
+
+fun failtest(a : Int) {
+  <error>if (fail() || true) {
+
+  }</error>
+  <error>1</error>
+}
+
+fun foo(a : Nothing) : Unit {
+  1
+  a
+  <error>2</error>
+}
+
+fun fail() : Nothing {
+  throw new java.lang.RuntimeException()
+}
