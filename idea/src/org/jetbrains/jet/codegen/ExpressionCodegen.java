@@ -720,11 +720,15 @@ public class ExpressionCodegen extends JetVisitor {
             final Type asmType = expressionType(expression);
             DeclarationDescriptor cls = op.getContainingDeclaration();
             if (isNumberPrimitive(cls) && (op.getName().equals("inc") || op.getName().equals("dec"))) {
-                int oldStackSize = myStack.size();
-                gen(expression.getBaseExpression(), asmType);
-                generateIncrement(op, asmType, expression.getBaseExpression());
-                myStack.push(StackValue.onStack(asmType));
-                assert myStack.size() == oldStackSize+1;
+                if (bindingContext.isStatement(expression)) {
+                    generateIncrement(op, asmType, expression.getBaseExpression());
+                }
+                else {
+                    int oldStackSize = myStack.size();
+                    gen(expression.getBaseExpression(), asmType);
+                    myStack.push(StackValue.onStack(asmType));
+                    assert myStack.size() == oldStackSize+1;
+                }
                 return;
             }
         }

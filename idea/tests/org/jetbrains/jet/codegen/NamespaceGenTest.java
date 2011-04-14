@@ -478,7 +478,7 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
         assertTrue(hadException);
     }
 
-    public void _testBottlesNeedToDistinguishExpressionsStatements() throws Exception {
+    public void testDecrementAsStatement() throws Exception {
         loadFile("bottles.jet");
         System.out.println(generateToText());
         final Method main = generateFunction();
