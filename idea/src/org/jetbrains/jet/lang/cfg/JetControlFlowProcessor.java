@@ -332,6 +332,7 @@ public class JetControlFlowProcessor {
             }
             builder.jump(loopEntryPoint);
             builder.exitLoop(expression);
+            builder.readUnit(expression);
         }
 
         @Override
@@ -348,6 +349,7 @@ public class JetControlFlowProcessor {
             }
             builder.jumpOnTrue(loopEntryPoint);
             builder.exitLoop(expression);
+            builder.readUnit(expression);
         }
 
         @Override
@@ -363,6 +365,7 @@ public class JetControlFlowProcessor {
             }
             builder.nondeterministicJump(loopEntryPoint);
             builder.exitLoop(expression);
+            builder.readUnit(expression);
         }
 
         @Override

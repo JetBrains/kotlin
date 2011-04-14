@@ -366,7 +366,10 @@ public class TopDownAnalyzer {
                 collectReachable(enterInstruction, visited);
 
                 for (Instruction instruction : pseudocode.getInstructions()) {
-                    if (!visited.contains(instruction) && instruction instanceof JetElementInstruction) {
+                    if (!visited.contains(instruction) &&
+                        instruction instanceof JetElementInstruction &&
+                        // TODO : do {return} while (1 > a)
+                        !(instruction instanceof ReadUnitValueInstruction)) {
                         unreachableElements.add(((JetElementInstruction) instruction).getElement());
                     }
                 }
@@ -376,13 +379,6 @@ public class TopDownAnalyzer {
             public void collectDominatedExpressions(@NotNull JetExpression dominator, @NotNull Collection<JetElement> dominated) {
                 Instruction dominatorInstruction = representativeInstructions.get(dominator);
                 if (dominatorInstruction == null) {
-//                    assert
-//                            dominator instanceof JetContinueExpression ||
-//                            dominator instanceof JetBreakExpression ||
-//                            dominator instanceof JetReturnExpression ||
-//                            dominator instanceof JetBlockExpression ||
-//                            dominator instanceof JetFunctionLiteralExpression
-//                        : "No representative instruction for a Nothing-typed expression: " + dominator.getText();
                     return;
                 }
                 SubroutineEnterInstruction enterInstruction = dominatorInstruction.getOwner().getEnterInstruction();

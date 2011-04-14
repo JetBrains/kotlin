@@ -227,8 +227,9 @@ l4:
 l6:
     r(2)
     jmp(l3)
-l1:
 l2:
+    read (Unit)
+l1:
     <END>
 =====================
 == t3 ==
@@ -265,6 +266,7 @@ l5:
 l6:
     jmp(l4)
 l3:
+    read (Unit)
     r(5)
 l2:
     r(2)
@@ -303,8 +305,9 @@ l5:
     read (Unit)
 l6:
     jmp(l4)
-l2:
 l3:
+    read (Unit)
+l2:
     r(2)
 l1:
     <END>
@@ -347,8 +350,9 @@ l4:
 l6:
     r(2)
     jmp?(l3)
-l1:
 l2:
+    read (Unit)
+l1:
     <END>
 =====================
 == t3 ==
@@ -388,6 +392,7 @@ l5:
 l6:
     jmp?(l4)
 l3:
+    read (Unit)
     r(5)
 l2:
     r(2)
@@ -429,8 +434,9 @@ l5:
     read (Unit)
 l6:
     jmp?(l4)
-l2:
 l3:
+    read (Unit)
+l2:
     r(2)
 l1:
     <END>

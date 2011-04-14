@@ -1,0 +1,42 @@
+== main ==
+fun main() {
+    while(1 > 0) {
+      2
+    }
+}
+---------------------
+l0:
+    <START>
+l3:
+    r(1)
+    r(0)
+    r(>)
+    r(1 > 0)
+    jf(l2)
+    r(2)
+    jmp(l3)
+l2:
+    read (Unit)
+l1:
+    <END>
+=====================
+== dowhile ==
+fun dowhile() {
+    do {return}
+    while(1 > 0)
+}
+---------------------
+l0:
+    <START>
+l3:
+    ret l1
+    r(1)
+    r(0)
+    r(>)
+    r(1 > 0)
+    jt(l3)
+l2:
+    read (Unit)
+l1:
+    <END>
+=====================
