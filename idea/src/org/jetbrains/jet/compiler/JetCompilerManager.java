@@ -15,5 +15,6 @@ public class JetCompilerManager {
         manager.addTranslatingCompiler(new JetCompiler(),
                 Collections.<FileType>singleton(JetFileType.INSTANCE),
                 Collections.singleton(StdFileTypes.CLASS));
+        manager.addCompilableFileType(JetFileType.INSTANCE);
     }
 }
