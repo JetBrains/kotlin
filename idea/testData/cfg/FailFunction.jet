@@ -1,0 +1,3 @@
+fun fail() : Nothing {
+  throw new java.lang.RuntimeException()
+}

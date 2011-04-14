@@ -19,6 +19,8 @@ l2:
     read (Unit)
 l1:
     <END>
+error:
+    <ERROR>
 =====================
 == dowhile ==
 fun dowhile() {
@@ -39,4 +41,6 @@ l2:
     read (Unit)
 l1:
     <END>
+error:
+    <ERROR>
 =====================

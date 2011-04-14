@@ -16,6 +16,8 @@ l8:
 l7:
 l9:
     <END>
+error:
+    <ERROR>
 =====================
 == anonymous_0 ==
 {a =>
@@ -35,6 +37,8 @@ l4:
     ret(*) l5
 l5:
     <END>
+error:
+    <ERROR>
 =====================
 == nonlocals1 ==
 fun nonlocals1(a : Boolean, b : Boolean) : Any? {
@@ -80,6 +84,8 @@ l3:
     r(1.lng)
 l1:
     <END>
+error:
+    <ERROR>
 l4:
     <START>
     r(2)
@@ -87,4 +93,6 @@ l4:
     ret(*) l5
 l5:
     <END>
+error:
+    <ERROR>
 =====================

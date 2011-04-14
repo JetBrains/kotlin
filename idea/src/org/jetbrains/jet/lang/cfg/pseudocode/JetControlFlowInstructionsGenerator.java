@@ -73,10 +73,12 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
     private class JetControlFlowInstructionsGeneratorWorker implements JetControlFlowBuilder {
 
         private final Pseudocode pseudocode;
+        private final Label error;
         private final JetElement currentSubroutine;
 
         private JetControlFlowInstructionsGeneratorWorker(@NotNull JetElement scopingElement, @NotNull JetElement currentSubroutine) {
             this.pseudocode = new Pseudocode(scopingElement);
+            this.error = pseudocode.createLabel("error");
             this.currentSubroutine = currentSubroutine;
         }
 
@@ -176,7 +178,9 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         @Override
         public void exitSubroutine(@NotNull JetElement subroutine, boolean functionLiteral) {
             bindLabel(getExitPoint(subroutine));
-            add(new SubroutineExitInstruction(subroutine));
+            pseudocode.addExitInstruction(new SubroutineExitInstruction(subroutine, "<END>"));
+            bindLabel(error);
+            add(new SubroutineExitInstruction(subroutine, "<ERROR>"));
             elementToBlockInfo.remove(subroutine);
             allBlocks.pop();
         }
@@ -241,7 +245,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
 
         @Override
         public void jumpToError(@NotNull JetThrowExpression expression) {
-//            add(new UnconditionalJumpInstruction(error));
+            add(new UnconditionalJumpInstruction(error));
         }
 
         @Override

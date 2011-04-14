@@ -1,0 +1,14 @@
+== fail ==
+fun fail() : Nothing {
+  throw new java.lang.RuntimeException()
+}
+---------------------
+l0:
+    <START>
+    r(new java.lang.RuntimeException())
+    jmp(error)
+l1:
+    <END>
+error:
+    <ERROR>
+=====================

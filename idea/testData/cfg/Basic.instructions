@@ -6,6 +6,8 @@ l2:
     r(1)
 l3:
     <END>
+error:
+    <ERROR>
 =====================
 == f ==
 fun f(a : Boolean) : Unit {
@@ -67,11 +69,15 @@ l5:
     r(a || false)
 l1:
     <END>
+error:
+    <ERROR>
 l2:
     <START>
     r(1)
 l3:
     <END>
+error:
+    <ERROR>
 =====================
 == foo ==
 fun foo(a : Boolean, b : Int) : Unit {}
@@ -80,6 +86,8 @@ l0:
     <START>
 l1:
     <END>
+error:
+    <ERROR>
 =====================
 == genfun ==
 fun genfun<T>() : Unit {}
@@ -88,6 +96,8 @@ l0:
     <START>
 l1:
     <END>
+error:
+    <ERROR>
 =====================
 == flfun ==
 fun flfun(f : {() : Any}) : Unit {}
@@ -96,4 +106,6 @@ l0:
     <START>
 l1:
     <END>
+error:
+    <ERROR>
 =====================

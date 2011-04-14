@@ -13,4 +13,6 @@ l2:
     r(false || (return false))
 l1:
     <END>
+error:
+    <ERROR>
 =====================

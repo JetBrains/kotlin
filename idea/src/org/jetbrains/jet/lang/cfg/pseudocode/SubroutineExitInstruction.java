@@ -11,9 +11,11 @@ import java.util.Collections;
  */
 public class SubroutineExitInstruction extends InstructionImpl {
     private final JetElement subroutine;
+    private final String debugLabel;
 
-    public SubroutineExitInstruction(@NotNull JetElement subroutine) {
+    public SubroutineExitInstruction(@NotNull JetElement subroutine, @NotNull String debugLabel) {
         this.subroutine = subroutine;
+        this.debugLabel = debugLabel;
     }
 
     public JetElement getSubroutine() {
@@ -33,6 +35,6 @@ public class SubroutineExitInstruction extends InstructionImpl {
 
     @Override
     public String toString() {
-        return "<END>";
+        return debugLabel;
     }
 }

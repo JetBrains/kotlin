@@ -74,14 +74,15 @@ public class Pseudocode {
         return instructions;
     }
 
+    public void addExitInstruction(SubroutineExitInstruction exitInstruction) {
+        addInstruction(exitInstruction);
+        assert this.exitInstruction == null;
+        this.exitInstruction = exitInstruction;
+    }
+
     public void addInstruction(Instruction instruction) {
         instructions.add(instruction);
         instruction.setOwner(this);
-        if (instruction instanceof SubroutineExitInstruction) {
-            SubroutineExitInstruction exitInstruction = (SubroutineExitInstruction) instruction;
-            assert this.exitInstruction == null;
-            this.exitInstruction = exitInstruction;
-        }
     }
 
     @NotNull
