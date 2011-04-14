@@ -286,8 +286,12 @@ public class TopDownAnalyzer {
 
                     List<JetElement> unreachableElements = new ArrayList<JetElement>();
                     flowInformationProvider.collectUnreachableExpressions(function, unreachableElements);
-                    for (JetElement unreachableElement : unreachableElements) {
-                        semanticServices.getErrorHandler().genericError(unreachableElement.getNode(), "Unreachable code");
+
+                    // This is needed in order to highlight only '1 < 2' and not '1', '<' and '2' as well
+                    Set<JetElement> rootElements = findRootExpressions(unreachableElements);
+
+                    for (JetElement element : rootElements) {
+                        semanticServices.getErrorHandler().genericError(element.getNode(), "Unreachable code");
                     }
                 }
                 else {
@@ -308,6 +312,28 @@ public class TopDownAnalyzer {
             }
             assert descriptor.getUnsubstitutedReturnType() != null;
         }
+    }
+
+    private Set<JetElement> findRootExpressions(List<JetElement> unreachableElements) {
+        Set<JetElement> rootElements = new HashSet<JetElement>();
+        final Set<JetElement> shadowedElements = new HashSet<JetElement>();
+        JetVisitor shadowAllChildren = new JetVisitor() {
+            @Override
+            public void visitJetElement(JetElement elem) {
+                if (shadowedElements.add(elem)) {
+                    elem.acceptChildren(this);
+                }
+            }
+        };
+
+        for (JetElement element : unreachableElements) {
+            if (shadowedElements.contains(element)) continue;
+            element.acceptChildren(shadowAllChildren);
+
+            rootElements.removeAll(shadowedElements);
+            rootElements.add(element);
+        }
+        return rootElements;
     }
 
     private JetFlowInformationProvider computeFlowData(@NotNull JetDeclaration declaration, @NotNull JetExpression bodyExpression) {
@@ -415,8 +441,8 @@ public class TopDownAnalyzer {
 
             @Override
             public void visitInstruction(Instruction instruction) {
-                if (instruction instanceof JetElementInstruction) {
-                    JetElementInstruction elementInstruction = (JetElementInstruction) instruction;
+                if (instruction instanceof JetElementInstructionImpl) {
+                    JetElementInstructionImpl elementInstruction = (JetElementInstructionImpl) instruction;
                     semanticServices.getErrorHandler().genericError(elementInstruction.getElement().getNode(), "Unsupported by control-flow builder " + elementInstruction.getElement());
                 }
                 else {

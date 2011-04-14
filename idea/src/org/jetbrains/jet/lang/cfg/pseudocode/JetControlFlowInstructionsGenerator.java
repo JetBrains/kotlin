@@ -150,13 +150,13 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         }
 
         @Override
-        public void returnValue(@NotNull JetElement subroutine) {
-            add(new ReturnValueInstruction(getExitPoint(subroutine)));
+        public void returnValue(@NotNull JetExpression returnExpression, @NotNull JetElement subroutine) {
+            add(new ReturnValueInstruction(returnExpression, getExitPoint(subroutine)));
         }
 
         @Override
-        public void returnNoValue(@NotNull JetElement expression, @NotNull JetElement subroutine) {
-            add(new ReturnNoValueInstruction(expression, getExitPoint(subroutine)));
+        public void returnNoValue(@NotNull JetElement returnExpression, @NotNull JetElement subroutine) {
+            add(new ReturnNoValueInstruction(returnExpression, getExitPoint(subroutine)));
         }
 
         @Override

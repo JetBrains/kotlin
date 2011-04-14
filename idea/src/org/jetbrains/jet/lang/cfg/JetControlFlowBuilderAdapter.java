@@ -110,13 +110,13 @@ public class JetControlFlowBuilderAdapter implements JetControlFlowBuilder {
     }
 
     @Override
-    public void returnValue(@NotNull JetElement subroutine) {
-        builder.returnValue(subroutine);
+    public void returnValue(@NotNull JetExpression returnExpression, @NotNull JetElement subroutine) {
+        builder.returnValue(returnExpression, subroutine);
     }
 
     @Override
-    public void returnNoValue(@NotNull JetElement expression, @NotNull JetElement subroutine) {
-        builder.returnNoValue(expression, subroutine);
+    public void returnNoValue(@NotNull JetElement returnExpression, @NotNull JetElement subroutine) {
+        builder.returnNoValue(returnExpression, subroutine);
     }
 
     @Override

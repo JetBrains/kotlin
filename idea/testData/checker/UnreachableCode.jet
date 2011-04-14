@@ -3,10 +3,38 @@ fun t1() {
   <error>1</error>
 }
 
+fun t1a() {
+  return
+  <error>return</error>
+  <error>1</error>
+}
+
+fun t1b() {
+  return
+  <error>return 1</error>
+  <error>1</error>
+}
+
+fun t1c() {
+  return 1
+  <error>return</error>
+  <error>1</error>
+}
+
 fun t2() {
   if (1 > 2)
     return
   else return
+  <error>1</error>
+}
+
+fun t2a() {
+  if (1 > 2) {
+    return
+    <error>1</error>
+  } else { return
+    <error>2</error>
+  }
   <error>1</error>
 }
 
@@ -25,14 +53,79 @@ fun t4(a : Boolean) {
   <error>1</error>
 }
 
-//fun t5() {
-//  do {
-//    return
-//  }
-//  while (1 > 2)
-//  1
-//}
+fun t4break(a : Boolean) {
+  do {
+    break
+  }
+  while (<error>a</error>)
+  1
+}
 
-//fun blockAndAndMismatch() : Boolean {
-//  (return true) || (return false)
-//}
+fun t5() {
+  do {
+    return
+    <error>2</error>
+  }
+  while (<error>1 > 2</error>)
+  <error>1</error>
+}
+
+fun t6() {
+  while (1 > 2) {
+    return
+    <error>2</error>
+  }
+  1
+}
+
+fun t6break() {
+  while (1 > 2) {
+    break
+    <error>2</error>
+  }
+  1
+}
+
+fun t7(b : Int) {
+  for (i in 1..b) {
+    return
+    <error>2</error>
+  }
+  1
+}
+
+fun t7break(b : Int) {
+  for (i in 1..b) {
+    return
+    <error>2</error>
+  }
+  1
+}
+
+fun t7() {
+  try {
+    return
+    <error>2</error>
+  }
+  catch (e : Any) {
+    2
+  }
+  1 // this is OK, like in Java
+}
+
+fun t8() {
+  try {
+    return
+    <error>2</error>
+  }
+  catch (e : Any) {
+    return
+    <error>2</error>
+  }
+  <error>1</error>
+}
+
+fun blockAndAndMismatch() : Boolean {
+  <error>(return true) || (return false)</error>
+  <error>1</error>
+}

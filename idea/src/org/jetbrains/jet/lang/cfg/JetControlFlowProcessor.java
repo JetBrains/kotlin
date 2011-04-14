@@ -346,7 +346,9 @@ public class JetControlFlowProcessor {
         @Override
         public void visitForExpression(JetForExpression expression) {
             value(expression.getLoopRange(), false, false);
+            // TODO : primitive cases
             Label loopExitPoint = builder.createUnboundLabel();
+            builder.nondeterministicJump(loopExitPoint);
             Label loopEntryPoint = builder.enterLoop(expression, loopExitPoint);
             JetExpression body = expression.getBody();
             if (body != null) {
@@ -421,7 +423,7 @@ public class JetControlFlowProcessor {
                     builder.returnNoValue(expression, subroutine);
                 }
                 else {
-                    builder.returnValue(subroutine);
+                    builder.returnValue(expression, subroutine);
                 }
             }
         }

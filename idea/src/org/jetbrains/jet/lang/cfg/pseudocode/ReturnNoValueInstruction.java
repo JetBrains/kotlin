@@ -7,7 +7,7 @@ import org.jetbrains.jet.lang.psi.JetElement;
 /**
  * @author abreslav
  */
-public class ReturnNoValueInstruction extends AbstractJumpInstruction {
+public class ReturnNoValueInstruction extends AbstractJumpInstruction implements  JetElementInstruction {
 
     private final JetElement element;
 
@@ -16,6 +16,8 @@ public class ReturnNoValueInstruction extends AbstractJumpInstruction {
         this.element = element;
     }
 
+    @NotNull
+    @Override
     public JetElement getElement() {
         return element;
     }

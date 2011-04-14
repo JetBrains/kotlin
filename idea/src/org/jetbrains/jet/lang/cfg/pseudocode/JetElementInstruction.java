@@ -6,15 +6,7 @@ import org.jetbrains.jet.lang.psi.JetElement;
 /**
  * @author abreslav
  */
-public abstract class JetElementInstruction extends Instruction {
-    protected final JetElement element;
-
-    public JetElementInstruction(@NotNull JetElement element) {
-        this.element = element;
-    }
-
+public interface JetElementInstruction {
     @NotNull
-    public JetElement getElement() {
-        return element;
-    }
+    JetElement getElement();
 }
