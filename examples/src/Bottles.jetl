@@ -1,0 +1,23 @@
+namespace bottles;
+
+fun main(args: Array<String>) {
+    var bottles: Int = 99;
+    while(bottles > 0) {
+        System.out?.print(bottles)
+        System.out?.print(if (bottles > 1) " bottles" else " bottle")
+        System.out?.print(" of beer on the wall, ")
+        System.out?.print(bottles)
+        System.out?.print(if (bottles > 1) " bottles" else " bottle")
+        System.out?.println(" of beer.")
+        System.out?.print("Take one down, pass it around, ")
+        bottles -= 1;
+        if (bottles == 0) {
+          System.out?.print("no more bottles of beer on the wall.")
+        }
+        else {
+          System.out?.print(bottles)
+          System.out?.print(if (bottles > 1) " bottles" else " bottle")
+          System.out?.println(" of beer on the wall.")
+        }
+    }
+}
