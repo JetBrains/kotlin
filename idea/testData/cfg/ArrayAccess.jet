@@ -1,0 +1,7 @@
+fun foo() {
+  val a = new Array<Int>
+  3
+  a[10] = 4
+  2
+  a[10]
+}

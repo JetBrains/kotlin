@@ -1,0 +1,28 @@
+== foo ==
+fun foo() {
+  val a = new Array<Int>
+  3
+  a[10] = 4
+  2
+  a[10]
+}
+---------------------
+l0:
+    <START>
+    r(new Array<Int>)
+    w(a)
+    r(3)
+    r(4)
+    r(10)
+    r(a)
+    r(=)
+    w(a[10])
+    r(2)
+    r(10)
+    r(a)
+    r(a[10])
+l1:
+    <END>
+error:
+    <ERROR>
+=====================

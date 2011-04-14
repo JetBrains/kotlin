@@ -593,7 +593,7 @@ public class JetTypeInferrer {
 
         @Override
         public void visitTypeofExpression(JetTypeofExpression expression) {
-            throw new UnsupportedOperationException("Return some reflection interface"); // TODO
+            semanticServices.getErrorHandler().genericError(expression.getNode(), "Return some reflection interface"); // TODO
         }
 
         @Override

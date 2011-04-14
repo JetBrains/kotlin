@@ -17,8 +17,8 @@ public class JetControlFlowBuilderAdapter implements JetControlFlowBuilder {
     }
 
     @Override
-    public void readNode(@NotNull JetExpression expression) {
-        builder.readNode(expression);
+    public void read(@NotNull JetExpression expression) {
+        builder.read(expression);
     }
 
     @Override
@@ -130,7 +130,7 @@ public class JetControlFlowBuilderAdapter implements JetControlFlowBuilder {
     }
 
     @Override
-    public void writeNode(@NotNull JetElement assignment, @NotNull JetElement lValue) {
-        builder.writeNode(assignment, lValue);
+    public void write(@NotNull JetElement assignment, @NotNull JetElement lValue) {
+        builder.write(assignment, lValue);
     }
 }

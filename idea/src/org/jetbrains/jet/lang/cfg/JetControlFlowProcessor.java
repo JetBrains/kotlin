@@ -118,17 +118,17 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitThisExpression(JetThisExpression expression) {
-            builder.readNode(expression);
+            builder.read(expression);
         }
 
         @Override
         public void visitConstantExpression(JetConstantExpression expression) {
-            builder.readNode(expression);
+            builder.read(expression);
         }
 
         @Override
         public void visitSimpleNameExpression(JetSimpleNameExpression expression) {
-            builder.readNode(expression);
+            builder.read(expression);
         }
 
         @Override
@@ -161,7 +161,7 @@ public class JetControlFlowProcessor {
                 }
                 builder.bindLabel(resultLabel);
                 if (!inCondition) {
-                    builder.readNode(expression);
+                    builder.read(expression);
                 }
             }
             else if (operationType == JetTokens.OROR) {
@@ -173,18 +173,26 @@ public class JetControlFlowProcessor {
                 }
                 builder.bindLabel(resultLabel);
                 if (!inCondition) {
-                    builder.readNode(expression);
+                    builder.read(expression);
                 }
             }
             else if (operationType == JetTokens.EQ) {
-                JetExpression left = expression.getLeft();
+                JetExpression left = JetPsiUtil.deparenthesize(expression.getLeft());
                 if (right != null) {
                     value(right, false, false);
                 }
                 if (left instanceof JetSimpleNameExpression) {
-                    builder.writeNode(expression, left);
+                    builder.write(expression, left);
                 }
-                else {
+                else if (left instanceof JetArrayAccessExpression) {
+                    JetArrayAccessExpression arrayAccessExpression = (JetArrayAccessExpression) left;
+                    for (JetExpression index : arrayAccessExpression.getIndexExpressions()) {
+                        value(index, false, false);
+                    }
+                    value(arrayAccessExpression.getArrayExpression(), false, false);
+                    value(expression.getOperationReference(), false, false);
+                    builder.write(expression, left); // TODO : ???
+                } else {
                     builder.unsupported(expression);
                 }
             }
@@ -195,7 +203,7 @@ public class JetControlFlowProcessor {
                     value(right, false, false);
                 }
                 if (left instanceof JetSimpleNameExpression) {
-                    builder.writeNode(expression, left);
+                    builder.write(expression, left);
                 }
                 else {
                     builder.unsupported(expression);
@@ -207,7 +215,7 @@ public class JetControlFlowProcessor {
                     value(right, false, false);
                 }
                 value(expression.getOperationReference(), false, false);
-                builder.readNode(expression);
+                builder.read(expression);
             }
         }
 
@@ -227,10 +235,10 @@ public class JetControlFlowProcessor {
 
                 boolean incrementOrDecrement = isIncrementOrDecrement(operationType);
                 if (incrementOrDecrement) {
-                    builder.writeNode(expression, baseExpression);
+                    builder.write(expression, baseExpression);
                 }
 
-                builder.readNode(expression);
+                builder.read(expression);
             }
         }
 
@@ -472,7 +480,7 @@ public class JetControlFlowProcessor {
             if (selectorExpression != null) {
                 value(selectorExpression, false, false);
             }
-            builder.readNode(expression);
+            builder.read(expression);
         }
 
         private void visitCall(JetCall call) {
@@ -497,7 +505,7 @@ public class JetControlFlowProcessor {
             visitCall(expression);
 
             value(expression.getCalleeExpression(), false, false);
-            builder.readNode(expression);
+            builder.read(expression);
         }
 
         @Override
@@ -505,7 +513,7 @@ public class JetControlFlowProcessor {
             // TODO : Instantiated class is loaded
             // TODO : type arguments?
             visitCall(expression);
-            builder.readNode(expression);
+            builder.read(expression);
         }
 
         @Override
@@ -513,7 +521,7 @@ public class JetControlFlowProcessor {
             JetExpression initializer = property.getInitializer();
             if (initializer != null) {
                 value(initializer, false, false);
-                builder.writeNode(property, property);
+                builder.write(property, property);
             }
         }
 
@@ -522,7 +530,7 @@ public class JetControlFlowProcessor {
             for (JetExpression entry : expression.getEntries()) {
                 value(entry, false, false);
             }
-            builder.readNode(expression);
+            builder.read(expression);
         }
 
         @Override
@@ -537,17 +545,48 @@ public class JetControlFlowProcessor {
         }
 
         @Override
-        public void visitTypeProjection(JetTypeProjection typeProjection) {
-            // TODO : Support Type Arguments. Class object may be initialized at this point");
-        }
-
-        @Override
         public void visitThrowExpression(JetThrowExpression expression) {
             JetExpression thrownExpression = expression.getThrownExpression();
             if (thrownExpression != null) {
                 value(thrownExpression, false, false);
             }
             builder.jumpToError(expression);
+        }
+
+        @Override
+        public void visitArrayAccessExpression(JetArrayAccessExpression expression) {
+            for (JetExpression index : expression.getIndexExpressions()) {
+                value(index, false, false);
+            }
+            value(expression.getArrayExpression(), false, false);
+            // TODO : read 'get' or 'set' function
+            builder.read(expression);
+        }
+
+        @Override
+        public void visitTypeofExpression(JetTypeofExpression expression) {
+            value(expression.getBaseExpression(), false, false);
+            builder.read(expression);
+        }
+
+        @Override
+        public void visitObjectLiteralExpression(JetObjectLiteralExpression expression) {
+            List<JetDelegationSpecifier> delegationSpecifiers = expression.getDelegationSpecifiers();
+            for (JetDelegationSpecifier delegationSpecifier : delegationSpecifiers) {
+                if (delegationSpecifier instanceof JetDelegatorByExpressionSpecifier) {
+                    JetDelegatorByExpressionSpecifier specifier = (JetDelegatorByExpressionSpecifier) delegationSpecifier;
+                    JetExpression delegateExpression = specifier.getDelegateExpression();
+                    if (delegateExpression != null) {
+                        value(delegateExpression, false, false);
+                    }
+                }
+            }
+            builder.read(expression);
+        }
+
+        @Override
+        public void visitTypeProjection(JetTypeProjection typeProjection) {
+            // TODO : Support Type Arguments. Class object may be initialized at this point");
         }
 
         @Override

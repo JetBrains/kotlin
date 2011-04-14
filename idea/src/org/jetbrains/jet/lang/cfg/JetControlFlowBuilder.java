@@ -10,7 +10,7 @@ import org.jetbrains.jet.lang.psi.JetThrowExpression;
  * @author abreslav
  */
 public interface JetControlFlowBuilder {
-    void readNode(@NotNull JetExpression expression);
+    void read(@NotNull JetExpression expression);
     void readUnit(@NotNull JetExpression expression);
 
     // General label management
@@ -52,7 +52,7 @@ public interface JetControlFlowBuilder {
 
     void returnNoValue(@NotNull JetElement returnExpression, @NotNull JetElement subroutine);
 
-    void writeNode(@NotNull JetElement assignment, @NotNull JetElement lValue);
+    void write(@NotNull JetElement assignment, @NotNull JetElement lValue);
 
     // Other
     void unsupported(JetElement element);

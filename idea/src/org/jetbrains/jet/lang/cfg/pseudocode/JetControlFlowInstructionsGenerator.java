@@ -200,12 +200,12 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         }
 
         @Override
-        public void writeNode(@NotNull JetElement assignment, @NotNull JetElement lValue) {
+        public void write(@NotNull JetElement assignment, @NotNull JetElement lValue) {
             add(new WriteValueInstruction(assignment, lValue));
         }
 
         @Override
-        public void readNode(@NotNull JetExpression expression) {
+        public void read(@NotNull JetExpression expression) {
             add(new ReadValueInstruction(expression));
         }
 
