@@ -36,22 +36,7 @@ public class FunctionCodegen {
     }
 
     private void gen(JetFunction f) {
-        final List<JetParameter> parameters = f.getValueParameters();
-        Type[] parameterTypes = new Type[parameters.size()];
-        for (int i = 0; i < parameters.size(); i++) {
-            parameterTypes[i] = typeMapper.mapType(bindingContext.resolveTypeReference(parameters.get(i).getTypeReference()));
-        }
-        final JetTypeReference returnTypeRef = f.getReturnTypeRef();
-        Type returnType;
-        if (returnTypeRef == null) {
-            final FunctionDescriptor functionDescriptor = bindingContext.getFunctionDescriptor(f);
-            final JetType type = functionDescriptor.getUnsubstitutedReturnType();
-            returnType = typeMapper.mapType(type);
-        }
-        else {
-            returnType = typeMapper.mapType(bindingContext.resolveTypeReference(returnTypeRef));
-        }
-        Method method = new Method(f.getName(), returnType, parameterTypes);
+        Method method = typeMapper.mapSignature(f);
         final MethodVisitor mv = v.visitMethod(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC,
                 method.getName(), method.getDescriptor(), null, null);
         mv.visitCode();
@@ -60,12 +45,13 @@ public class FunctionCodegen {
 
         List<ValueParameterDescriptor> parameDescrs = bindingContext.getFunctionDescriptor(f).getUnsubstitutedValueParameters();
 
+        Type[] argTypes = method.getArgumentTypes();
         for (int i = 0; i < parameDescrs.size(); i++) {
             ValueParameterDescriptor parameter = parameDescrs.get(i);
-            frameMap.enter(parameter, parameterTypes[i].getSize());
+            frameMap.enter(parameter, argTypes[i].getSize());
         }
 
-        ExpressionCodegen codegen = new ExpressionCodegen(mv, bindingContext, frameMap, typeMapper, returnType);
+        ExpressionCodegen codegen = new ExpressionCodegen(mv, bindingContext, frameMap, typeMapper, method.getReturnType());
         bodyExpression.accept(codegen);
         generateReturn(mv, bodyExpression, codegen);
         mv.visitMaxs(0, 0);

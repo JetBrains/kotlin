@@ -54,6 +54,9 @@ public class NamespaceCodegen {
     }
 
     public static String getJVMClassName(String fqName) {
+        if (fqName.length() == 0) {
+            return "namespace";
+        }
         return fqName.replace('.', '/') + "/namespace";
     }
 

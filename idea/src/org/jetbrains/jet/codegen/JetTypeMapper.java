@@ -2,9 +2,15 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.jet.lang.psi.JetFunction;
+import org.jetbrains.jet.lang.psi.JetParameter;
+import org.jetbrains.jet.lang.psi.JetTypeReference;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.*;
 import org.objectweb.asm.Type;
+import org.objectweb.asm.commons.Method;
+
+import java.util.List;
 
 /**
  * @author yole
@@ -104,5 +110,24 @@ public class JetTypeMapper {
         }
 
         throw new UnsupportedOperationException("Unknown type " + jetType);
+    }
+
+    public Method mapSignature(JetFunction f) {
+        final List<JetParameter> parameters = f.getValueParameters();
+        Type[] parameterTypes = new Type[parameters.size()];
+        for (int i = 0; i < parameters.size(); i++) {
+            parameterTypes[i] = mapType(bindingContext.resolveTypeReference(parameters.get(i).getTypeReference()));
+        }
+        final JetTypeReference returnTypeRef = f.getReturnTypeRef();
+        Type returnType;
+        if (returnTypeRef == null) {
+            final FunctionDescriptor functionDescriptor = bindingContext.getFunctionDescriptor(f);
+            final JetType type = functionDescriptor.getUnsubstitutedReturnType();
+            returnType = mapType(type);
+        }
+        else {
+            returnType = mapType(bindingContext.resolveTypeReference(returnTypeRef));
+        }
+        return new Method(f.getName(), returnType, parameterTypes);
     }
 }

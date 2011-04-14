@@ -7,11 +7,13 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.resolve.DescriptorUtil;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
+import org.objectweb.asm.commons.Method;
 
 import java.util.List;
 import java.util.Stack;
@@ -324,7 +326,8 @@ public class ExpressionCodegen extends JetVisitor {
         if (callee instanceof JetSimpleNameExpression) {
             DeclarationDescriptor funDescriptor = bindingContext.resolveReferenceExpression((JetSimpleNameExpression) callee);
             if (funDescriptor instanceof FunctionDescriptor) {
-                if (isNumberPrimitive(funDescriptor.getContainingDeclaration())) {
+                final DeclarationDescriptor functionParent = funDescriptor.getContainingDeclaration();
+                if (isNumberPrimitive(functionParent)) {
                     if (funDescriptor.getName().equals("inv")) {
                         final StackValue value = myStack.pop();  // HACK we rely on the dot reference handler to put it on the stack
                         final Type asmType = expressionType(expression);
@@ -333,23 +336,41 @@ public class ExpressionCodegen extends JetVisitor {
                         return;
                     }
                 }
-                PsiElement declarationPsiElement = bindingContext.getDeclarationPsiElement(funDescriptor);
-                if (declarationPsiElement instanceof PsiMethod) {
-                    PsiMethod method = (PsiMethod) declarationPsiElement;
-                    pushMethodArguments(expression, method);
 
-                    final boolean isStatic = method.hasModifierProperty(PsiModifier.STATIC);
-                    v.visitMethodInsn(isStatic ? Opcodes.INVOKESTATIC : Opcodes.INVOKEVIRTUAL,
-                            JetTypeMapper.jvmName(method.getContainingClass()),
-                            method.getName(),
-                            getMethodDescriptor(method));
-                    final Type type = psiTypeToAsm(method.getReturnType());
-                    if (type != Type.VOID_TYPE) {
-                        myStack.push(StackValue.onStack(type));
+                if (expression.getParent() instanceof JetDotQualifiedExpression) {
+                    final JetDotQualifiedExpression parent = (JetDotQualifiedExpression) expression.getParent();
+                    if (!resolvesToClassOrPackage(parent.getReceiverExpression())) {
+                        // we have a receiver on stack
+                        myStack.pop().put(Type.getObjectType("java/lang/Object"), v);
                     }
                 }
+
+                PsiElement declarationPsiElement = bindingContext.getDeclarationPsiElement(funDescriptor);
+                Method methodDescriptor;
+                if (declarationPsiElement instanceof PsiMethod) {
+                    PsiMethod psiMethod = (PsiMethod) declarationPsiElement;
+                    methodDescriptor = getMethodDescriptor(psiMethod);
+                    pushMethodArguments(expression, methodDescriptor);
+
+                    final boolean isStatic = psiMethod.hasModifierProperty(PsiModifier.STATIC);
+                    v.visitMethodInsn(isStatic ? Opcodes.INVOKESTATIC : Opcodes.INVOKEVIRTUAL,
+                            JetTypeMapper.jvmName(psiMethod.getContainingClass()),
+                            methodDescriptor.getName(),
+                            methodDescriptor.getDescriptor());
+                }
                 else {
-                    throw new UnsupportedOperationException("don't know how to generate call to " + declarationPsiElement);
+                    if (functionParent instanceof NamespaceDescriptor && declarationPsiElement instanceof JetFunction) {
+                        methodDescriptor = typeMapper.mapSignature((JetFunction) declarationPsiElement);
+                        pushMethodArguments(expression, methodDescriptor);
+                        final String owner = NamespaceCodegen.getJVMClassName(DescriptorUtil.getFQName(functionParent));
+                        v.invokestatic(owner, methodDescriptor.getName(), methodDescriptor.getDescriptor());
+                    }
+                    else {
+                        throw new UnsupportedOperationException("don't know how to generate call to " + declarationPsiElement);
+                    }
+                }
+                if (methodDescriptor.getReturnType() != Type.VOID_TYPE) {
+                    myStack.push(StackValue.onStack(methodDescriptor.getReturnType()));
                 }
             }
             else {
@@ -361,24 +382,23 @@ public class ExpressionCodegen extends JetVisitor {
         }
     }
 
-    private void pushMethodArguments(JetCall expression, PsiMethod method) {
-        PsiParameter[] parameters = method.getParameterList().getParameters();
-
+    private void pushMethodArguments(JetCall expression, Method method) {
+        final Type[] argTypes = method.getArgumentTypes();
         List<JetArgument> args = expression.getValueArguments();
         for (int i = 0, argsSize = args.size(); i < argsSize; i++) {
             JetArgument arg = args.get(i);
-            gen(arg.getArgumentExpression(), psiTypeToAsm(parameters[i].getType()));
+            gen(arg.getArgumentExpression(), argTypes[i]);
         }
     }
 
-    private static String getMethodDescriptor(PsiMethod method) {
+    private static Method getMethodDescriptor(PsiMethod method) {
         Type returnType = method.isConstructor() ? Type.VOID_TYPE : psiTypeToAsm(method.getReturnType());
         PsiParameter[] parameters = method.getParameterList().getParameters();
         Type[] parameterTypes = new Type[parameters.length];
         for (int i = 0; i < parameters.length; i++) {
             parameterTypes[i] = psiTypeToAsm(parameters [i].getType());
         }
-        return Type.getMethodDescriptor(returnType, parameterTypes);
+        return new Method(method.getName(), Type.getMethodDescriptor(returnType, parameterTypes));
     }
 
     private Type expressionType(JetExpression expr) {
@@ -798,8 +818,9 @@ public class ExpressionCodegen extends JetVisitor {
             Type type = JetTypeMapper.psiClassType(javaClass);
             v.anew(type);
             v.dup();
-            pushMethodArguments(expression, constructor);
-            v.invokespecial(JetTypeMapper.jvmName(javaClass), "<init>", getMethodDescriptor(constructor));
+            final Method constructorDescriptor = getMethodDescriptor(constructor);
+            pushMethodArguments(expression, constructorDescriptor);
+            v.invokespecial(JetTypeMapper.jvmName(javaClass), "<init>", constructorDescriptor.getDescriptor());
             myStack.push(StackValue.onStack(type));
             return;
         }

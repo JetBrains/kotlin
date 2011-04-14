@@ -530,6 +530,13 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
         assertEquals(Boolean.FALSE, main.invoke(null, null, "jet"));
     }
 
+    public void testFunctionCall() throws Exception {
+        loadFile("functionCall.jet");
+        System.out.println(generateToText());
+        final Method main = generateFunction();
+        assertEquals("foo", main.invoke(null));
+    }
+
     private void binOpTest(final String text, final Object arg1, final Object arg2, final Object expected) throws Exception {
         loadText(text);
         System.out.println(generateToText());
