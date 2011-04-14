@@ -25,15 +25,13 @@ public class ExpressionCodegen extends JetVisitor {
     private final Stack<StackValue> myStack = new Stack<StackValue>();
 
     private final InstructionAdapter v;
-    private final JetStandardLibrary stdlib;
     private final FrameMap myMap;
     private final JetTypeMapper typeMapper;
     private final Type returnType;
     private final BindingContext bindingContext;
 
-    public ExpressionCodegen(MethodVisitor v, BindingContext bindingContext, JetStandardLibrary stdlib, FrameMap myMap,
-                             JetTypeMapper typeMapper, Type returnType) {
-        this.stdlib = stdlib;
+    public ExpressionCodegen(MethodVisitor v, BindingContext bindingContext, FrameMap myMap, JetTypeMapper typeMapper,
+                             Type returnType) {
         this.myMap = myMap;
         this.typeMapper = typeMapper;
         this.returnType = returnType;
@@ -169,10 +167,6 @@ public class ExpressionCodegen extends JetVisitor {
         Label label = labelName == null ? myLoopStarts.peek() : null; // TODO:
 
         v.goTo(label);
-    }
-
-    private void unboxBoolean() {
-        v.invokevirtual("java/lang/Boolean", "booleanValue", "()Z");
     }
 
     private void generateSingleBranchIf(JetExpression expression, boolean inverse) {
@@ -344,18 +338,11 @@ public class ExpressionCodegen extends JetVisitor {
                     PsiMethod method = (PsiMethod) declarationPsiElement;
                     pushMethodArguments(expression, method);
 
-                    if (method.hasModifierProperty(PsiModifier.STATIC)) {
-                        v.visitMethodInsn(Opcodes.INVOKESTATIC,
-                                JetTypeMapper.jvmName(method.getContainingClass()),
-                                method.getName(),
-                                getMethodDescriptor(method));
-                    }
-                    else {
-                        v.visitMethodInsn(Opcodes.INVOKEVIRTUAL,
-                                JetTypeMapper.jvmName(method.getContainingClass()),
-                                method.getName(),
-                                getMethodDescriptor(method));
-                    }
+                    final boolean isStatic = method.hasModifierProperty(PsiModifier.STATIC);
+                    v.visitMethodInsn(isStatic ? Opcodes.INVOKESTATIC : Opcodes.INVOKEVIRTUAL,
+                            JetTypeMapper.jvmName(method.getContainingClass()),
+                            method.getName(),
+                            getMethodDescriptor(method));
                     final Type type = psiTypeToAsm(method.getReturnType());
                     if (type != Type.VOID_TYPE) {
                         myStack.push(StackValue.onStack(type));
@@ -381,17 +368,6 @@ public class ExpressionCodegen extends JetVisitor {
         for (int i = 0, argsSize = args.size(); i < argsSize; i++) {
             JetArgument arg = args.get(i);
             gen(arg.getArgumentExpression(), psiTypeToAsm(parameters[i].getType()));
-        }
-    }
-
-    private void unbox(PsiType type) {
-        if (type instanceof PsiPrimitiveType) {
-            if (type == PsiType.INT) {
-                v.invokevirtual("java/lang/Integer", "intValue", "()I");
-            }
-            else {
-                throw new UnsupportedOperationException("Don't know how to unbox type " + type);
-            }
         }
     }
 
