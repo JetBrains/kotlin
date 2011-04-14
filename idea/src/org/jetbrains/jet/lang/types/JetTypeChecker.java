@@ -295,7 +295,7 @@ public class JetTypeChecker {
         if (expected.getConstructor().equals(JetStandardClasses.getTuple(0).getTypeConstructor())) {
             return true;
         }
-//        if (actual.getArguments().isEmpty()) {
+//        if (actual.getValueArguments().isEmpty()) {
 //            TypeConstructor actualConstructor = actual.getConstructor();
 //            TypeConstructor constructor = expected.getConstructor();
 //            Set<TypeConstructor> convertibleTo = getConversionMap().get(actualConstructor);

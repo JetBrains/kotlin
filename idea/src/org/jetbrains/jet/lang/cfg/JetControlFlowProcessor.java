@@ -472,25 +472,36 @@ public class JetControlFlowProcessor {
             builder.readNode(expression);
         }
 
-        @Override
-        public void visitCallExpression(JetCallExpression expression) {
-            for (JetTypeProjection typeArgument : expression.getTypeArguments()) {
-                value(typeArgument, false, false);
-            }
-
-            for (JetArgument argument : expression.getValueArguments()) {
+        private void visitCall(JetCall call) {
+            for (JetArgument argument : call.getValueArguments()) {
                 JetExpression argumentExpression = argument.getArgumentExpression();
                 if (argumentExpression != null) {
                     value(argumentExpression, false, false);
                 }
             }
 
-            for (JetExpression functionLiteral : expression.getFunctionLiteralArguments()) {
+            for (JetExpression functionLiteral : call.getFunctionLiteralArguments()) {
                 value(functionLiteral, false, false);
             }
+        }
+
+        @Override
+        public void visitCallExpression(JetCallExpression expression) {
+            for (JetTypeProjection typeArgument : expression.getTypeArguments()) {
+                value(typeArgument, false, false);
+            }
+
+            visitCall(expression);
 
             value(expression.getCalleeExpression(), false, false);
             builder.readNode(expression);
+        }
+
+        @Override
+        public void visitNewExpression(JetNewExpression expression) {
+            // TODO : Instantiated class is loaded
+            // TODO : type arguments?
+            visitCall(expression);
         }
 
         @Override

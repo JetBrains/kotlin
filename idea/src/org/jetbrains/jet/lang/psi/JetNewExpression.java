@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * @author max
  */
-public class JetNewExpression extends JetExpression {
+public class JetNewExpression extends JetExpression implements JetCall {
     public JetNewExpression(@NotNull ASTNode node) {
         super(node);
     }
@@ -26,17 +26,20 @@ public class JetNewExpression extends JetExpression {
         return (JetTypeReference) findChildByType(JetNodeTypes.TYPE_REFERENCE);
     }
 
+    @Override
     @Nullable
-    public JetArgumentList getArgumentList() {
+    public JetArgumentList getValueArgumentList() {
         return (JetArgumentList) findChildByType(JetNodeTypes.VALUE_ARGUMENT_LIST);
     }
 
+    @Override
     @NotNull
-    public List<JetArgument> getArguments() {
-        JetArgumentList list = getArgumentList();
+    public List<JetArgument> getValueArguments() {
+        JetArgumentList list = getValueArgumentList();
         return list != null ? list.getArguments() : Collections.<JetArgument>emptyList();
     }
 
+    @Override
     @NotNull
     public List<JetExpression> getFunctionLiteralArguments() {
         return findChildrenByType(JetNodeTypes.FUNCTION_LITERAL);

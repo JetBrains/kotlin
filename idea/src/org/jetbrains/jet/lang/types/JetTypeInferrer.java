@@ -940,14 +940,14 @@ public class JetTypeInferrer {
                             OverloadDomain constructorsOverloadDomain = semanticServices.getOverloadResolver().getOverloadDomain(constructors);
                             JetType constructorReturnedType = resolveOverloads(
                                     scope,
-                                    wrapForTracing(constructorsOverloadDomain, referenceExpression, expression.getArgumentList(), false),
+                                    wrapForTracing(constructorsOverloadDomain, referenceExpression, expression.getValueArgumentList(), false),
                                     Collections.<JetTypeProjection>emptyList(),
-                                    expression.getArguments(),
+                                    expression.getValueArguments(),
                                     expression.getFunctionLiteralArguments());
                             if (constructorReturnedType == null && !ErrorUtils.isErrorType(receiverType)) {
                                 trace.recordReferenceResolution(referenceExpression, receiverType.getConstructor().getDeclarationDescriptor());
                                 // TODO : more helpful message
-                                JetArgumentList argumentList = expression.getArgumentList();
+                                JetArgumentList argumentList = expression.getValueArgumentList();
                                 if (argumentList != null) {
                                     semanticServices.getErrorHandler().genericError(argumentList.getNode(), "Cannot find an overload for these arguments");
                                 }
