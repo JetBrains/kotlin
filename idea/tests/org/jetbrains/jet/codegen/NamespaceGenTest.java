@@ -500,6 +500,13 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
         assertTrue(result instanceof StringBuilder);
     }
 
+    public void testJavaConstructorWithParameters() throws Exception {
+        loadText("fun foo(): StringBuilder = new StringBuilder(\"beer\")");
+        final Method main = generateFunction();
+        final StringBuilder result = (StringBuilder) main.invoke(null);
+        assertEquals("beer", result.toString());
+    }
+
     public void testJavaEquals() throws Exception {
         loadText("fun foo(s1: String, s2: String) = s1 == s2");
         System.out.println(generateToText());
