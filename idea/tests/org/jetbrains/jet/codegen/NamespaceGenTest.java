@@ -478,6 +478,20 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
         assertTrue(hadException);
     }
 
+    public void _testBottlesNeedToDistinguishExpressionsStatements() throws Exception {
+        loadFile("bottles.jet");
+        System.out.println(generateToText());
+        final Method main = generateFunction();
+        main.invoke(null);  // ensure no exception
+    }
+
+    public void testBottles2() throws Exception {
+        loadFile("bottles2.jet");
+        System.out.println(generateToText());
+        final Method main = generateFunction();
+        main.invoke(null);  // ensure no exception
+    }
+
     private void binOpTest(final String text, final Object arg1, final Object arg2, final Object expected) throws Exception {
         loadText(text);
         System.out.println(generateToText());
