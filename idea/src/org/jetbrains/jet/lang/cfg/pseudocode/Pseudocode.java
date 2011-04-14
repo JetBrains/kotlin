@@ -76,6 +76,7 @@ public class Pseudocode {
 
     public void addInstruction(Instruction instruction) {
         instructions.add(instruction);
+        instruction.setOwner(this);
         if (instruction instanceof SubroutineExitInstruction) {
             SubroutineExitInstruction exitInstruction = (SubroutineExitInstruction) instruction;
             assert this.exitInstruction == null;

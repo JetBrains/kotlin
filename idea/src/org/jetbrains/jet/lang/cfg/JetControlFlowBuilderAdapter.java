@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetThrowExpression;
 
 /**
  * @author abreslav
@@ -54,6 +55,11 @@ public class JetControlFlowBuilderAdapter implements JetControlFlowBuilder {
     @Override
     public void nondeterministicJump(Label label) {
         builder.nondeterministicJump(label);
+    }
+
+    @Override
+    public void jumpToError(@NotNull JetThrowExpression expression) {
+        builder.jumpToError(expression);
     }
 
     @Override

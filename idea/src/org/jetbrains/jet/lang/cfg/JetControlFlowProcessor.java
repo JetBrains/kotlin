@@ -505,6 +505,7 @@ public class JetControlFlowProcessor {
             // TODO : Instantiated class is loaded
             // TODO : type arguments?
             visitCall(expression);
+            builder.readNode(expression);
         }
 
         @Override
@@ -538,6 +539,15 @@ public class JetControlFlowProcessor {
         @Override
         public void visitTypeProjection(JetTypeProjection typeProjection) {
             // TODO : Support Type Arguments. Class object may be initialized at this point");
+        }
+
+        @Override
+        public void visitThrowExpression(JetThrowExpression expression) {
+            JetExpression thrownExpression = expression.getThrownExpression();
+            if (thrownExpression != null) {
+                value(thrownExpression, false, false);
+            }
+            builder.jumpToError(expression);
         }
 
         @Override

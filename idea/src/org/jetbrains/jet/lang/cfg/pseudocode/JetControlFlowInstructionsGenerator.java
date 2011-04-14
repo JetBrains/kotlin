@@ -8,6 +8,7 @@ import org.jetbrains.jet.lang.cfg.Label;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression;
+import org.jetbrains.jet.lang.psi.JetThrowExpression;
 
 import java.util.*;
 
@@ -85,7 +86,6 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
 
         private void add(@NotNull Instruction instruction) {
             pseudocode.addInstruction(instruction);
-            instruction.setOwner(pseudocode);
             if (instruction instanceof JetElementInstruction) {
                 JetElementInstruction elementInstruction = (JetElementInstruction) instruction;
                 trace.recordRepresentativeInstruction(elementInstruction.getElement(), instruction);
@@ -237,6 +237,11 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         public void nondeterministicJump(Label label) {
             handleJumpInsideTryFinally(label);
             add(new NondeterministicJumpInstruction(label));
+        }
+
+        @Override
+        public void jumpToError(@NotNull JetThrowExpression expression) {
+//            add(new UnconditionalJumpInstruction(error));
         }
 
         @Override

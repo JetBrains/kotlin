@@ -24,6 +24,7 @@ public abstract class InstructionImpl implements Instruction {
 
     @Override
     public void setOwner(@NotNull Pseudocode owner) {
+        assert this.owner == null || this.owner == owner;
         this.owner = owner;
     }
 
