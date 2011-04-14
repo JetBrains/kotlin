@@ -494,6 +494,7 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
 
     public void testJavaConstructor() throws Exception {
         loadText("fun foo(): StringBuilder = new StringBuilder()");
+        System.out.println(generateToText());
         final Method main = generateFunction();
         final Object result = main.invoke(null);
         assertTrue(result instanceof StringBuilder);

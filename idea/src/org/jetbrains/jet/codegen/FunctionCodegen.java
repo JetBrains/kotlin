@@ -24,7 +24,7 @@ public class FunctionCodegen {
         this.v = v;
         this.bindingContext = bindingContext;
         this.standardLibrary = standardLibrary;
-        typeMapper = new JetTypeMapper(standardLibrary);
+        typeMapper = new JetTypeMapper(standardLibrary, bindingContext);
     }
 
     public void gen(JetFunction f, JetNamespace owner) {

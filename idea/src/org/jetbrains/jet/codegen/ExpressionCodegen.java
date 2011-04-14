@@ -277,7 +277,7 @@ public class ExpressionCodegen extends JetVisitor {
             PsiField psiField = (PsiField) declaration;
             if (psiField.hasModifierProperty(PsiModifier.STATIC)) {
                 v.visitFieldInsn(Opcodes.GETSTATIC,
-                                 jvmName(psiField.getContainingClass()),
+                                 JetTypeMapper.jvmName(psiField.getContainingClass()),
                                  psiField.getName(),
                                  psiTypeToAsm(psiField.getType()).getDescriptor());
             }
@@ -342,23 +342,17 @@ public class ExpressionCodegen extends JetVisitor {
                 PsiElement declarationPsiElement = bindingContext.getDeclarationPsiElement(funDescriptor);
                 if (declarationPsiElement instanceof PsiMethod) {
                     PsiMethod method = (PsiMethod) declarationPsiElement;
-                    PsiParameter[] parameters = method.getParameterList().getParameters();
-
-                    List<JetArgument> args = expression.getValueArguments();
-                    for (int i = 0, argsSize = args.size(); i < argsSize; i++) {
-                        JetArgument arg = args.get(i);
-                        gen(arg.getArgumentExpression(), psiTypeToAsm(parameters[i].getType()));
-                    }
+                    pushMethodArguments(expression, method);
 
                     if (method.hasModifierProperty(PsiModifier.STATIC)) {
                         v.visitMethodInsn(Opcodes.INVOKESTATIC,
-                                jvmName(method.getContainingClass()),
+                                JetTypeMapper.jvmName(method.getContainingClass()),
                                 method.getName(),
                                 getMethodDescriptor(method));
                     }
                     else {
                         v.visitMethodInsn(Opcodes.INVOKEVIRTUAL,
-                                jvmName(method.getContainingClass()),
+                                JetTypeMapper.jvmName(method.getContainingClass()),
                                 method.getName(),
                                 getMethodDescriptor(method));
                     }
@@ -380,8 +374,14 @@ public class ExpressionCodegen extends JetVisitor {
         }
     }
 
-    private static String jvmName(PsiClass containingClass) {
-        return containingClass.getQualifiedName().replace(".", "/");
+    private void pushMethodArguments(JetCall expression, PsiMethod method) {
+        PsiParameter[] parameters = method.getParameterList().getParameters();
+
+        List<JetArgument> args = expression.getValueArguments();
+        for (int i = 0, argsSize = args.size(); i < argsSize; i++) {
+            JetArgument arg = args.get(i);
+            gen(arg.getArgumentExpression(), psiTypeToAsm(parameters[i].getType()));
+        }
     }
 
     private void unbox(PsiType type) {
@@ -396,7 +396,7 @@ public class ExpressionCodegen extends JetVisitor {
     }
 
     private static String getMethodDescriptor(PsiMethod method) {
-        Type returnType = psiTypeToAsm(method.getReturnType());
+        Type returnType = method.isConstructor() ? Type.VOID_TYPE : psiTypeToAsm(method.getReturnType());
         PsiParameter[] parameters = method.getParameterList().getParameters();
         Type[] parameterTypes = new Type[parameters.length];
         for (int i = 0; i < parameters.length; i++) {
@@ -449,9 +449,9 @@ public class ExpressionCodegen extends JetVisitor {
             if (psiClass == null) {
                 throw new UnsupportedOperationException("unresolved PsiClassType: " + type);
             }
-            return Type.getType("L" + jvmName(psiClass) + ";");
+            return JetTypeMapper.psiClassType(psiClass);
         }
-        throw new UnsupportedOperationException("don't know how to map  type " + type + " to ASM");
+        throw new UnsupportedOperationException("don't know how to map type " + type + " to ASM");
     }
 
     @Override
@@ -726,6 +726,7 @@ public class ExpressionCodegen extends JetVisitor {
                 else {
                     int oldStackSize = myStack.size();
                     gen(expression.getBaseExpression(), asmType);
+                    generateIncrement(op, asmType, expression.getBaseExpression());
                     myStack.push(StackValue.onStack(asmType));
                     assert myStack.size() == oldStackSize+1;
                 }
@@ -808,6 +809,26 @@ public class ExpressionCodegen extends JetVisitor {
             gen(initializer, type);
             v.store(index, type);
         }
+    }
+
+    @Override
+    public void visitNewExpression(JetNewExpression expression) {
+        final JetUserType constructorType = (JetUserType) expression.getTypeReference().getTypeElement();
+        final JetSimpleNameExpression constructorReference = constructorType.getReferenceExpression();
+        final PsiElement declaration = bindingContext.getDeclarationPsiElement(bindingContext.resolveReferenceExpression(constructorReference));
+        if (declaration instanceof PsiMethod) {
+            final PsiMethod constructor = (PsiMethod) declaration;
+            PsiClass javaClass = constructor.getContainingClass();
+            Type type = JetTypeMapper.psiClassType(javaClass);
+            v.anew(type);
+            v.dup();
+            pushMethodArguments(expression, constructor);
+            v.invokespecial(JetTypeMapper.jvmName(javaClass), "<init>", getMethodDescriptor(constructor));
+            myStack.push(StackValue.onStack(type));
+            return;
+        }
+
+        throw new UnsupportedOperationException("don't know how to generate this new expression");
     }
 
     private static class CompilationException extends RuntimeException {

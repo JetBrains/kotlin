@@ -1,5 +1,8 @@
 package org.jetbrains.jet.codegen;
 
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.*;
 import org.objectweb.asm.Type;
 
@@ -8,9 +11,19 @@ import org.objectweb.asm.Type;
  */
 public class JetTypeMapper {
     private final JetStandardLibrary standardLibrary;
+    private final BindingContext bindingContext;
 
-    public JetTypeMapper(JetStandardLibrary standardLibrary) {
+    public JetTypeMapper(JetStandardLibrary standardLibrary, BindingContext bindingContext) {
         this.standardLibrary = standardLibrary;
+        this.bindingContext = bindingContext;
+    }
+
+    static String jvmName(PsiClass psiClass) {
+        return psiClass.getQualifiedName().replace(".", "/");
+    }
+
+    static Type psiClassType(PsiClass psiClass) {
+        return Type.getType("L" + jvmName(psiClass) + ";");
     }
 
     public Type mapType(final JetType jetType) {
@@ -83,6 +96,10 @@ public class JetTypeMapper {
         }
 
         if (descriptor instanceof ClassDescriptor) {
+            final PsiElement declaration = bindingContext.getDeclarationPsiElement(descriptor);
+            if (declaration instanceof PsiClass) {
+                return psiClassType((PsiClass) declaration);
+            }
             return Type.getObjectType(CodeGenUtil.getInternalInterfaceName((ClassDescriptor) descriptor));
         }
 
