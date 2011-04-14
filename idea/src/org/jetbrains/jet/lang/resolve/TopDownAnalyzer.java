@@ -96,7 +96,7 @@ public class TopDownAnalyzer {
                         if (importDirective.isAllUnder()) {
                             JetExpression importedReference = importDirective.getImportedReference();
                             if (importedReference != null) {
-                                JetType type = semanticServices.getTypeInferrer(trace, JetFlowInformationProvider.ERROR).getType(namespaceScope, importedReference, false);
+                                JetType type = semanticServices.getTypeInferrer(trace, JetFlowInformationProvider.THROW_EXCEPTION).getType(namespaceScope, importedReference, false);
                                 if (type != null) {
                                     namespaceScope.importScope(type.getMemberScope());
                                 }
@@ -288,7 +288,7 @@ public class TopDownAnalyzer {
                     flowInformationProvider.collectUnreachableExpressions(function, unreachableElements);
 
                     // This is needed in order to highlight only '1 < 2' and not '1', '<' and '2' as well
-                    Set<JetElement> rootElements = findRootExpressions(unreachableElements);
+                    Set<JetElement> rootElements = JetPsiUtil.findRootExpressions(unreachableElements);
 
                     // TODO : (return 1) || (return 2) -- only || and right of it is unreachable
                     // TODO : try {return 1} finally {return 2}. Currently 'return 1' is reported as unreachable,
@@ -318,36 +318,21 @@ public class TopDownAnalyzer {
         }
     }
 
-    private Set<JetElement> findRootExpressions(List<JetElement> unreachableElements) {
-        Set<JetElement> rootElements = new HashSet<JetElement>();
-        final Set<JetElement> shadowedElements = new HashSet<JetElement>();
-        JetVisitor shadowAllChildren = new JetVisitor() {
-            @Override
-            public void visitJetElement(JetElement elem) {
-                if (shadowedElements.add(elem)) {
-                    elem.acceptChildren(this);
-                }
-            }
-        };
-
-        for (JetElement element : unreachableElements) {
-            if (shadowedElements.contains(element)) continue;
-            element.acceptChildren(shadowAllChildren);
-
-            rootElements.removeAll(shadowedElements);
-            rootElements.add(element);
-        }
-        return rootElements;
-    }
-
     private JetFlowInformationProvider computeFlowData(@NotNull JetDeclaration declaration, @NotNull JetExpression bodyExpression) {
         final JetPseudocodeTrace pseudocodeTrace = flowDataTraceFactory.createTrace(declaration);
         final Map<JetElement, Pseudocode> pseudocodeMap = new HashMap<JetElement, Pseudocode>();
+        final Map<JetElement, Instruction> representativeInstructions = new HashMap<JetElement, Instruction>();
         JetPseudocodeTrace wrappedTrace = new JetPseudocodeTrace() {
             @Override
             public void recordControlFlowData(@NotNull JetElement element, @NotNull Pseudocode pseudocode) {
                 pseudocodeTrace.recordControlFlowData(element, pseudocode);
                 pseudocodeMap.put(element, pseudocode);
+            }
+
+            @Override
+            public void recordRepresentativeInstruction(@NotNull JetElement element, @NotNull Instruction instruction) {
+                Instruction oldValue = representativeInstructions.put(element, instruction);
+//                assert oldValue == null : element.getText();
             }
 
             @Override
@@ -363,7 +348,7 @@ public class TopDownAnalyzer {
         wrappedTrace.close();
         return new JetFlowInformationProvider() {
             @Override
-            public void collectReturnedInformation(@NotNull JetElement subroutine, Collection<JetExpression> returnedExpressions, Collection<JetElement> elementsReturningUnit) {
+            public void collectReturnedInformation(@NotNull JetElement subroutine, @NotNull Collection<JetExpression> returnedExpressions, @NotNull Collection<JetElement> elementsReturningUnit) {
                 Pseudocode pseudocode = pseudocodeMap.get(subroutine);
                 assert pseudocode != null;
 
@@ -372,7 +357,7 @@ public class TopDownAnalyzer {
             }
 
             @Override
-            public void collectUnreachableExpressions(@NotNull JetElement subroutine, Collection<JetElement> unreachableElements) {
+            public void collectUnreachableExpressions(@NotNull JetElement subroutine, @NotNull Collection<JetElement> unreachableElements) {
                 Pseudocode pseudocode = pseudocodeMap.get(subroutine);
                 assert pseudocode != null;
 
@@ -385,7 +370,38 @@ public class TopDownAnalyzer {
                         unreachableElements.add(((JetElementInstruction) instruction).getElement());
                     }
                 }
+            }
 
+            @Override
+            public void collectDominatedExpressions(@NotNull JetExpression dominator, @NotNull Collection<JetElement> dominated) {
+                Instruction dominatorInstruction = representativeInstructions.get(dominator);
+                if (dominatorInstruction == null) {
+//                    assert
+//                            dominator instanceof JetContinueExpression ||
+//                            dominator instanceof JetBreakExpression ||
+//                            dominator instanceof JetReturnExpression ||
+//                            dominator instanceof JetBlockExpression ||
+//                            dominator instanceof JetFunctionLiteralExpression
+//                        : "No representative instruction for a Nothing-typed expression: " + dominator.getText();
+                    return;
+                }
+                SubroutineEnterInstruction enterInstruction = dominatorInstruction.getOwner().getEnterInstruction();
+
+                Set<Instruction> reachable = new HashSet<Instruction>();
+                collectReachable(enterInstruction, reachable);
+
+                Set<Instruction> reachableWithDominatorProhibited = new HashSet<Instruction>();
+                reachableWithDominatorProhibited.add(dominatorInstruction);
+                collectReachable(enterInstruction, reachableWithDominatorProhibited);
+
+                for (Instruction instruction : reachable) {
+                    if (instruction instanceof JetElementInstruction
+                            && reachable.contains(instruction)
+                            && !reachableWithDominatorProhibited.contains(instruction)) {
+                        JetElementInstruction elementInstruction = (JetElementInstruction) instruction;
+                        dominated.add(elementInstruction.getElement());
+                    }
+                }
             }
         };
     }

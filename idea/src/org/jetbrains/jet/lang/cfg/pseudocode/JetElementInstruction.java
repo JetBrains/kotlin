@@ -6,7 +6,7 @@ import org.jetbrains.jet.lang.psi.JetElement;
 /**
  * @author abreslav
  */
-public interface JetElementInstruction {
+public interface JetElementInstruction extends Instruction {
     @NotNull
     JetElement getElement();
 }

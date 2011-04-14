@@ -27,4 +27,5 @@ public interface BindingContext {
     PsiElement getDeclarationPsiElement(DeclarationDescriptor descriptor);
 
     boolean isBlock(JetFunctionLiteralExpression expression);
+    boolean isStatement(JetExpression expression);
 }

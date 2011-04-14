@@ -265,9 +265,6 @@ public class JetControlFlowProcessor {
                 builder.readUnit(expression);
             }
             builder.bindLabel(resultLabel);
-//            if (!inCondition) {
-//                builder.readNode(expression);
-//            }
         }
 
         @Override

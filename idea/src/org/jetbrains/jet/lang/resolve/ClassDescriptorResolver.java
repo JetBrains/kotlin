@@ -309,7 +309,7 @@ public class ClassDescriptorResolver {
                 type = ErrorUtils.createErrorType("No type, no body");
             } else {
                 // TODO : ??? Fix-point here: what if we have something like "val a = foo {a.bar()}"
-                type = semanticServices.getTypeInferrer(trace, JetFlowInformationProvider.ERROR).getType(scope, initializer, false);
+                type = semanticServices.getTypeInferrer(trace, JetFlowInformationProvider.THROW_EXCEPTION).getType(scope, initializer, false);
             }
         } else {
             type = typeResolver.resolveType(scope, propertyTypeRef);

@@ -83,8 +83,13 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
             return pseudocode;
         }
 
-        private void add(Instruction instruction) {
+        private void add(@NotNull Instruction instruction) {
             pseudocode.addInstruction(instruction);
+            instruction.setOwner(pseudocode);
+            if (instruction instanceof JetElementInstruction) {
+                JetElementInstruction elementInstruction = (JetElementInstruction) instruction;
+                trace.recordRepresentativeInstruction(elementInstruction.getElement(), instruction);
+            }
         }
 
         @NotNull

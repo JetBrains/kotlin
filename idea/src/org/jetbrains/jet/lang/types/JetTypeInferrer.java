@@ -356,7 +356,9 @@ public class JetTypeInferrer {
 
         JetType result = null;
         for (JetElement statement : block) {
-            result = blockLevelVisitor.getType((JetExpression) statement);
+            trace.recordStatement(statement);
+            JetExpression statementExpression = (JetExpression) statement;
+            result = blockLevelVisitor.getType(statementExpression);
             blockLevelVisitor.resetResult(); // TODO : maybe it's better to recreate the visitors with the same scope?
         }
         return result;
@@ -407,12 +409,28 @@ public class JetTypeInferrer {
             expression.accept(this);
             if (result != null) {
                 trace.recordExpressionType(expression, result);
+                if (JetStandardClasses.isNothing(result)) {
+                    markDominatedExpressionsAsUnreachable(expression);
+                }
             }
+
             return result;
         }
 
         public void resetResult() {
             result = null;
+        }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        private void markDominatedExpressionsAsUnreachable(JetExpression expression) {
+            List<JetElement> dominated = new ArrayList<JetElement>();
+            flowInformationProvider.collectDominatedExpressions(expression, dominated);
+            Set<JetElement> rootExpressions = JetPsiUtil.findRootExpressions(dominated);
+            for (JetElement rootExpression : rootExpressions) {
+                semanticServices.getErrorHandler().genericError(rootExpression.getNode(),
+                        "This code is unreachable, because '" + expression.getText() + "' never terminates normally");
+            }
         }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -488,7 +506,7 @@ public class JetTypeInferrer {
             }
             JetType effectiveReceiverType = receiverTypeRef == null ? null : receiverType;
             JetType safeReturnType = returnType == null ? ErrorUtils.createErrorType("<return type>") : returnType;
-            result = JetStandardClasses.getFunctionType(null, effectiveReceiverType, parameterTypes, safeReturnType);
+            result = JetStandardClasses.getFunctionType(Collections.<Attribute>emptyList(), effectiveReceiverType, parameterTypes, safeReturnType);
         }
 
         @Override

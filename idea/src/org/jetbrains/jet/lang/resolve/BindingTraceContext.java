@@ -21,6 +21,8 @@ public class BindingTraceContext extends BindingTrace implements BindingContext 
     private final Map<DeclarationDescriptor, PsiElement> descriptorToDeclarations = new HashMap<DeclarationDescriptor, PsiElement>();
     private final Map<PsiElement, DeclarationDescriptor> declarationsToDescriptors = new HashMap<PsiElement, DeclarationDescriptor>();
     private final Set<JetFunctionLiteralExpression> blocks = new HashSet<JetFunctionLiteralExpression>();
+    private final Set<JetElement> statements = new HashSet<JetElement>();
+
     private JetScope toplevelScope;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -59,6 +61,11 @@ public class BindingTraceContext extends BindingTrace implements BindingContext 
     @Override
     public void recordBlock(JetFunctionLiteralExpression expression) {
         blocks.add(expression);
+    }
+
+    @Override
+    public void recordStatement(@NotNull JetElement statement) {
+        statements.add(statement);
     }
 
     public void setToplevelScope(JetScope toplevelScope) {
@@ -134,5 +141,10 @@ public class BindingTraceContext extends BindingTrace implements BindingContext 
     @Override
     public boolean isBlock(JetFunctionLiteralExpression expression) {
         return !expression.hasParameterSpecification() && blocks.contains(expression);
+    }
+
+    @Override
+    public boolean isStatement(@NotNull JetExpression expression) {
+        return statements.contains(expression);
     }
 }

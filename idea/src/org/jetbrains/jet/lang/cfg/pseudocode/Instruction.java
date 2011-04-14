@@ -1,31 +1,22 @@
 package org.jetbrains.jet.lang.cfg.pseudocode;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.LinkedHashSet;
 
 /**
-* @author abreslav
-*/
-public abstract class Instruction {
-    private Collection<Instruction> previousInstructions = new LinkedHashSet<Instruction>();
+ * @author abreslav
+ */
+public interface Instruction {
+    @NotNull
+    Pseudocode getOwner();
 
-    public Collection<Instruction> getPreviousInstructions() {
-        return previousInstructions;
-    }
+    void setOwner(@NotNull Pseudocode owner);
+
+    Collection<Instruction> getPreviousInstructions();
 
     @NotNull
-    public abstract Collection<Instruction> getNextInstructions();
+    Collection<Instruction> getNextInstructions();
 
-    @Nullable
-    protected Instruction outgoingEdgeTo(@Nullable Instruction target) {
-        if (target != null) {
-            target.getPreviousInstructions().add(this);
-        }
-        return target;
-    }
-
-    public abstract void accept(InstructionVisitor visitor);
+    void accept(InstructionVisitor visitor);
 }

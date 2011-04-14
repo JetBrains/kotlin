@@ -14,11 +14,17 @@ public interface JetPseudocodeTrace {
         }
 
         @Override
+        public void recordRepresentativeInstruction(@NotNull JetElement element, @NotNull Instruction instruction) {
+
+        }
+
+        @Override
         public void close() {
         }
     };
 
     void recordControlFlowData(@NotNull JetElement element, @NotNull Pseudocode pseudocode);
+    void recordRepresentativeInstruction(@NotNull JetElement element, @NotNull Instruction instruction);
     void close();
 
 }

@@ -1,7 +1,8 @@
 package org.jetbrains.jet.plugin;
 
-import com.intellij.lang.documentation.QuickDocumentationProvider;
+import com.intellij.lang.documentation.DocumentationProvider;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -11,10 +12,13 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.DeclarationDescriptor;
 import org.jetbrains.jet.resolve.DescriptorUtil;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * @author abreslav
  */
-public class JetQuickDocumentationProvider extends QuickDocumentationProvider {
+public class JetQuickDocumentationProvider implements DocumentationProvider {
 
     @Override
     public String getQuickNavigateInfo(PsiElement element, PsiElement originalElement) {
@@ -51,5 +55,23 @@ public class JetQuickDocumentationProvider extends QuickDocumentationProvider {
         return text;
     }
 
+    @Override
+    public List<String> getUrlFor(PsiElement element, PsiElement originalElement) {
+        return Collections.emptyList();
+    }
 
+    @Override
+    public String generateDoc(PsiElement element, PsiElement originalElement) {
+        return "<no doc>";
+    }
+
+    @Override
+    public PsiElement getDocumentationElementForLookupItem(PsiManager psiManager, Object object, PsiElement element) {
+        return null;
+    }
+
+    @Override
+    public PsiElement getDocumentationElementForLink(PsiManager psiManager, String link, PsiElement context) {
+        return null;
+    }
 }

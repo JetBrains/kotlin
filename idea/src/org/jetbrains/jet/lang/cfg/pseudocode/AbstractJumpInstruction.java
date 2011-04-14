@@ -9,7 +9,7 @@ import java.util.Collections;
 /**
 * @author abreslav
 */
-public abstract class AbstractJumpInstruction extends Instruction {
+public abstract class AbstractJumpInstruction extends InstructionImpl {
     private final Label targetLabel;
     private Instruction resolvedTarget;
 

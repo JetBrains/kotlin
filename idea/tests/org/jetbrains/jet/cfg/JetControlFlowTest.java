@@ -56,6 +56,10 @@ public class JetControlFlowTest extends JetTestCaseBase {
                 }
             }
 
+            @Override
+            public void recordRepresentativeInstruction(@NotNull JetElement element, @NotNull Instruction instruction) {
+            }
+
         };
 
         AnalyzingUtils.analyzeNamespace(file.getRootNamespace(), ErrorHandler.DO_NOTHING, new JetControlFlowDataTraceFactory() {

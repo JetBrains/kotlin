@@ -3,6 +3,10 @@ package org.jetbrains.jet.lang.psi;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * @author abreslav
  */
@@ -19,5 +23,28 @@ public class JetPsiUtil {
     @NotNull
     public static String safeName(String name) {
         return name == null ? "<no name provided>" : name;
+    }
+
+    @NotNull
+    public static Set<JetElement> findRootExpressions(@NotNull Collection<JetElement> unreachableElements) {
+        Set<JetElement> rootElements = new HashSet<JetElement>();
+        final Set<JetElement> shadowedElements = new HashSet<JetElement>();
+        JetVisitor shadowAllChildren = new JetVisitor() {
+            @Override
+            public void visitJetElement(JetElement elem) {
+                if (shadowedElements.add(elem)) {
+                    elem.acceptChildren(this);
+                }
+            }
+        };
+
+        for (JetElement element : unreachableElements) {
+            if (shadowedElements.contains(element)) continue;
+            element.acceptChildren(shadowAllChildren);
+
+            rootElements.removeAll(shadowedElements);
+            rootElements.add(element);
+        }
+        return rootElements;
     }
 }

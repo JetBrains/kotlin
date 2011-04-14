@@ -6,7 +6,7 @@ import org.jetbrains.jet.lang.psi.JetElement;
 /**
  * @author abreslav
  */
-public abstract class JetElementInstructionImpl extends Instruction implements JetElementInstruction {
+public abstract class JetElementInstructionImpl extends InstructionImpl implements JetElementInstruction {
     protected final JetElement element;
 
     public JetElementInstructionImpl(@NotNull JetElement element) {

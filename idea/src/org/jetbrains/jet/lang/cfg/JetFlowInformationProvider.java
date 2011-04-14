@@ -10,18 +10,50 @@ import java.util.Collection;
  * @author abreslav
  */
 public interface JetFlowInformationProvider {
-    JetFlowInformationProvider ERROR = new JetFlowInformationProvider() {
+    JetFlowInformationProvider THROW_EXCEPTION = new JetFlowInformationProvider() {
         @Override
-        public void collectReturnedInformation(@NotNull JetElement subroutine, Collection<JetExpression> returnedExpressions, Collection<JetElement> elementsReturningUnit) {
+        public void collectReturnedInformation(@NotNull JetElement subroutine, @NotNull Collection<JetExpression> returnedExpressions, @NotNull Collection<JetElement> elementsReturningUnit) {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public void collectUnreachableExpressions(@NotNull JetElement subroutine, Collection<JetElement> unreachableElements) {
+        public void collectUnreachableExpressions(@NotNull JetElement subroutine, @NotNull Collection<JetElement> unreachableElements) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void collectDominatedExpressions(@NotNull JetExpression dominator, @NotNull Collection<JetElement> dominated) {
             throw new UnsupportedOperationException();
         }
     };
 
-    void collectReturnedInformation(@NotNull JetElement subroutine, Collection<JetExpression> returnedExpressions, Collection<JetElement> elementsReturningUnit);
-    void collectUnreachableExpressions(@NotNull JetElement subroutine, Collection<JetElement> unreachableElements);
+    JetFlowInformationProvider NONE = new JetFlowInformationProvider() {
+        @Override
+        public void collectReturnedInformation(@NotNull JetElement subroutine, @NotNull Collection<JetExpression> returnedExpressions, @NotNull Collection<JetElement> elementsReturningUnit) {
+
+        }
+
+        @Override
+        public void collectUnreachableExpressions(@NotNull JetElement subroutine, @NotNull Collection<JetElement> unreachableElements) {
+
+        }
+
+        @Override
+        public void collectDominatedExpressions(@NotNull JetExpression dominator, @NotNull Collection<JetElement> dominated) {
+
+        }
+    };
+
+    void collectReturnedInformation(
+            @NotNull JetElement subroutine,
+            @NotNull Collection<JetExpression> returnedExpressions,
+            @NotNull Collection<JetElement> elementsReturningUnit);
+
+    void collectUnreachableExpressions(
+            @NotNull JetElement subroutine,
+            @NotNull Collection<JetElement> unreachableElements);
+
+    void collectDominatedExpressions(
+            @NotNull JetExpression dominator,
+            @NotNull Collection<JetElement> dominated);
 }

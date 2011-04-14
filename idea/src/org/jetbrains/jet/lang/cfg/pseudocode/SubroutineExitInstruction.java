@@ -9,7 +9,7 @@ import java.util.Collections;
 /**
  * @author abreslav
  */
-public class SubroutineExitInstruction extends Instruction {
+public class SubroutineExitInstruction extends InstructionImpl {
     private final JetElement subroutine;
 
     public SubroutineExitInstruction(@NotNull JetElement subroutine) {

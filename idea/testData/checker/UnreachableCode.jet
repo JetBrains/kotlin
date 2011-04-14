@@ -127,10 +127,10 @@ fun t8() {
 
 fun blockAndAndMismatch() : Boolean {
   <error>(return true) || (return false)</error>
-  <error>1</error>
+  <error>true</error>
 }
 
 fun tf() {
-  try {return} finally{return}
+  try {<error>return</error>} finally{return}
   <error>1</error>
 }

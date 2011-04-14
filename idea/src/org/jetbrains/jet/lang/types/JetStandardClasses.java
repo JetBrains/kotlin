@@ -250,7 +250,8 @@ public class JetStandardClasses {
     }
 
     public static boolean isNothing(@NotNull JetType type) {
-        return type.getConstructor() == NOTHING_CLASS.getTypeConstructor();
+        return !(type instanceof NamespaceType) &&
+               type.getConstructor() == NOTHING_CLASS.getTypeConstructor();
     }
 
     public static JetType getTupleType(List<Attribute> attributes, List<JetType> arguments) {
