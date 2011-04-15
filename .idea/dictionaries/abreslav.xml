@@ -4,6 +4,7 @@
       <w>accessor</w>
       <w>dominator</w>
       <w>inferrer</w>
+      <w>iterable</w>
       <w>nondeterministic</w>
       <w>nullable</w>
       <w>pseudocode</w>

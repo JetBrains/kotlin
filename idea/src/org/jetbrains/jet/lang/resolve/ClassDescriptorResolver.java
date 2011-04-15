@@ -70,7 +70,7 @@ public class ClassDescriptorResolver {
     }
 
     public void resolveMutableClassDescriptor(@NotNull JetScope scope, @NotNull JetClass classElement, @NotNull MutableClassDescriptor descriptor) {
-        descriptor.setName(classElement.getName());
+        descriptor.setName(JetPsiUtil.safeName(classElement.getName()));
         descriptor.getClassHeaderScope().addLabeledDeclaration(descriptor);
 
         WritableScope parameterScope = descriptor.getClassHeaderScope();

@@ -124,7 +124,7 @@ public class TopDownAnalyzer {
 
     private WritableScope processClass(@NotNull WritableScope declaringScope, JetClass klass) {
         MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(semanticServices, declaringScope.getContainingDeclaration(), declaringScope);
-        mutableClassDescriptor.setName(klass.getName());
+        mutableClassDescriptor.setName(JetPsiUtil.safeName(klass.getName()));
 
         declaringScope.addClassifierDescriptor(mutableClassDescriptor);
 

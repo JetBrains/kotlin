@@ -1,0 +1,76 @@
+class NotRange1 {
+
+}
+
+class NotRange2 {
+  fun iterator() : Unit
+}
+
+class ImproperIterator1 {
+  fun hasNext() : Boolean
+}
+
+class NotRange3 {
+  fun iterator() : ImproperIterator1
+}
+
+class ImproperIterator2 {
+  fun next() : Boolean
+}
+
+class NotRange4 {
+  fun iterator() : ImproperIterator2
+}
+
+class ImproperIterator3 {
+  fun hasNext() : Int
+  fun next() : Int
+}
+
+class NotRange5 {
+  fun iterator() : ImproperIterator3
+}
+
+class AmbiguousHasNextIterator {
+  fun hasNext() : Boolean
+  val hasNext : Boolean
+  fun next() : Int
+}
+
+class NotRange6 {
+  fun iterator() : AmbiguousHasNextIterator
+}
+
+class ImproperIterator4 {
+  val hasNext : Int
+  fun next() : Int
+}
+
+class NotRange7 {
+  fun iterator() : ImproperIterator3
+}
+
+class GoodIterator {
+  fun hasNext() : Boolean
+  fun next() : Int
+}
+
+class Range0 {
+  fun iterator() : GoodIterator
+}
+
+class Range1 {
+  fun iterator() : Iterator<Int>
+}
+
+fun test() {
+  for (i in <error>new NotRange1()</error>);
+  for (i in <error>new NotRange2()</error>);
+  for (i in <error>new NotRange3()</error>);
+  for (i in <error>new NotRange4()</error>);
+  for (i in <error>new NotRange5()</error>);
+  for (i in <error>new NotRange6()</error>);
+  for (i in <error>new NotRange7()</error>);
+  for (i in new Range0());
+  for (i in new Range1());
+}

@@ -188,7 +188,8 @@ public class JetControlFlowProcessor {
                     JetArrayAccessExpression arrayAccessExpression = (JetArrayAccessExpression) left;
                     visitAssignToArrayAccess(expression, arrayAccessExpression);
                 } else if (left instanceof JetQualifiedExpression) {
-                    //
+                    assert !(left instanceof JetPredicateExpression) : left; // TODO
+                    assert !(left instanceof JetHashQualifiedExpression) : left; // TODO
                     JetQualifiedExpression qualifiedExpression = (JetQualifiedExpression) left;
                     value(qualifiedExpression.getReceiverExpression(), false, false);
                     value(expression.getOperationReference(), false, false);
@@ -375,7 +376,10 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitForExpression(JetForExpression expression) {
-            value(expression.getLoopRange(), false, false);
+            JetExpression loopRange = expression.getLoopRange();
+            if (loopRange != null) {
+                value(loopRange, false, false);
+            }
             // TODO : primitive cases
             Label loopExitPoint = builder.createUnboundLabel();
             builder.nondeterministicJump(loopExitPoint);

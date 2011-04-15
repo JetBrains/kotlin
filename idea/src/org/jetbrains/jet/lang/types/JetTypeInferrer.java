@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.types;
 
 import com.google.common.collect.ImmutableMap;
+import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
@@ -834,43 +835,37 @@ public class JetTypeInferrer {
         public void visitForExpression(JetForExpression expression) {
             JetParameter loopParameter = expression.getLoopParameter();
             JetExpression loopRange = expression.getLoopRange();
-            JetType loopRangeType = getType(scope, loopRange, false);
+            JetType loopRangeType = null;
+            if (loopRange != null) {
+                loopRangeType = getType(scope, loopRange, false);
+            }
             JetType expectedParameterType = null;
             if (loopRangeType != null) {
-                if (!semanticServices.getTypeChecker().isSubtypeOf(loopRangeType, semanticServices.getStandardLibrary().getIterableType(JetStandardClasses.getNullableAnyType()))) {
-                    semanticServices.getErrorHandler().genericError(loopRange.getNode(), "Expecting an Iterable, but found " + loopRangeType);
-                }
-                else {
-                    TypeProjection typeProjection = loopRangeType.getArguments().get(0);
-                    if (!typeProjection.getProjectionKind().allowsOutPosition()) {
-                        expectedParameterType = JetStandardClasses.getDefaultBound();
-                    }
-                    else {
-                        expectedParameterType = typeProjection.getType();
-                    }
-                }
+                expectedParameterType = checkIterableConvention(loopRangeType, loopRange.getNode());
             }
 
             WritableScope loopScope = semanticServices.createWritableScope(scope, scope.getContainingDeclaration());
 
-            JetTypeReference typeReference = loopParameter.getTypeReference();
-            PropertyDescriptor propertyDescriptor;
-            if (typeReference != null) {
-                propertyDescriptor = classDescriptorResolver.resolveValueParameterDescriptor(scope.getContainingDeclaration(), scope, loopParameter);
-                JetType actualParameterType = propertyDescriptor.getOutType();
-                if (expectedParameterType != null &&
-                        actualParameterType != null &&
-                        !semanticServices.getTypeChecker().isSubtypeOf(expectedParameterType, actualParameterType)) {
-                    semanticServices.getErrorHandler().genericError(typeReference.getNode(), "The loop iterates over values of type " + expectedParameterType + " but the parameter is declared to be " + actualParameterType);
+            if (loopParameter != null) {
+                JetTypeReference typeReference = loopParameter.getTypeReference();
+                PropertyDescriptor propertyDescriptor;
+                if (typeReference != null) {
+                    propertyDescriptor = classDescriptorResolver.resolveValueParameterDescriptor(scope.getContainingDeclaration(), scope, loopParameter);
+                    JetType actualParameterType = propertyDescriptor.getOutType();
+                    if (expectedParameterType != null &&
+                            actualParameterType != null &&
+                            !semanticServices.getTypeChecker().isSubtypeOf(expectedParameterType, actualParameterType)) {
+                        semanticServices.getErrorHandler().genericError(typeReference.getNode(), "The loop iterates over values of type " + expectedParameterType + " but the parameter is declared to be " + actualParameterType);
+                    }
                 }
-            }
-            else {
-                if (expectedParameterType == null) {
-                    expectedParameterType = ErrorUtils.createErrorType("Error");
+                else {
+                    if (expectedParameterType == null) {
+                        expectedParameterType = ErrorUtils.createErrorType("Error");
+                    }
+                    propertyDescriptor = classDescriptorResolver.resolveValueParameterDescriptor(scope.getContainingDeclaration(), loopParameter, expectedParameterType);
                 }
-                propertyDescriptor = classDescriptorResolver.resolveValueParameterDescriptor(scope.getContainingDeclaration(), loopParameter, expectedParameterType);
+                loopScope.addPropertyDescriptor(propertyDescriptor);
             }
-            loopScope.addPropertyDescriptor(propertyDescriptor);
 
             JetExpression body = expression.getBody();
             if (body != null) {
@@ -878,6 +873,79 @@ public class JetTypeInferrer {
             }
 
             result = JetStandardClasses.getUnitType();
+        }
+
+        @Nullable
+        private JetType checkIterableConvention(@NotNull JetType type, @NotNull ASTNode reportErrorsOn) {
+            OverloadResolutionResult iteratorResolutionResult = resolveNoParametersFunction(type, scope, "iterator");
+            if (iteratorResolutionResult.isSuccess()) {
+                JetType iteratorType = iteratorResolutionResult.getFunctionDescriptor().getUnsubstitutedReturnType();
+                boolean hasNextFunctionSupported = checkHasNextFunctionSupport(reportErrorsOn, iteratorType);
+                boolean hasNextPropertySupported = checkHasNextPropertySupport(reportErrorsOn, iteratorType);
+                if (hasNextFunctionSupported && hasNextPropertySupported) {
+                    // TODO : overload resolution rules impose priorities here???
+                    semanticServices.getErrorHandler().genericError(reportErrorsOn, "An ambiguity between 'iterator().hasNext()' function and 'iterator().hasNext()' property");
+                }
+                else if (!hasNextFunctionSupported && !hasNextPropertySupported) {
+                    semanticServices.getErrorHandler().genericError(reportErrorsOn, "Loop range must have an 'iterator().hasNext()' function or an 'iterator().hasNext' property");
+                }
+
+                OverloadResolutionResult nextResolutionResult = resolveNoParametersFunction(iteratorType, scope, "next");
+                if (nextResolutionResult.isAmbiguity()) {
+                    semanticServices.getErrorHandler().genericError(reportErrorsOn, "Method 'iterator().next()' is ambiguous for this expression");
+                } else if (nextResolutionResult.isNothing()) {
+                    semanticServices.getErrorHandler().genericError(reportErrorsOn, "Loop range must have an 'iterator().next()' method");
+                } else {
+                    return nextResolutionResult.getFunctionDescriptor().getUnsubstitutedReturnType();
+                }
+            }
+            else {
+                String errorMessage = "For-loop range must have an iterator() method";
+                if (iteratorResolutionResult.isAmbiguity()) {
+                    errorMessage = "Method 'iterator()' is ambiguous for this expression";
+                }
+                semanticServices.getErrorHandler().genericError(reportErrorsOn, errorMessage);
+            }
+            return null;
+        }
+
+        private boolean checkHasNextFunctionSupport(@NotNull ASTNode reportErrorsOn, @NotNull JetType iteratorType) {
+            OverloadResolutionResult hasNextResolutionResult = resolveNoParametersFunction(iteratorType, scope, "hasNext");
+            if (hasNextResolutionResult.isAmbiguity()) {
+                semanticServices.getErrorHandler().genericError(reportErrorsOn, "Method 'iterator().hasNext()' is ambiguous for this expression");
+            } else if (hasNextResolutionResult.isNothing()) {
+                return false;
+            } else {
+                JetType hasNextReturnType = hasNextResolutionResult.getFunctionDescriptor().getUnsubstitutedReturnType();
+                if (!isBoolean(hasNextReturnType)) {
+                    semanticServices.getErrorHandler().genericError(reportErrorsOn, "The 'iterator().hasNext()' method of the loop range must return Boolean, but returns " + hasNextReturnType);
+                }
+            }
+            return true;
+        }
+
+        private boolean checkHasNextPropertySupport(@NotNull ASTNode reportErrorsOn, @NotNull JetType iteratorType) {
+            PropertyDescriptor hasNextProperty = iteratorType.getMemberScope().getProperty("hasNext");
+            // TODO :extension properties
+            if (hasNextProperty == null) {
+                return false;
+            } else {
+                JetType hasNextReturnType = hasNextProperty.getOutType();
+                if (hasNextReturnType == null) {
+                    // TODO : accessibility
+                    semanticServices.getErrorHandler().genericError(reportErrorsOn, "The 'iterator().hasNext' property of the loop range must be readable");
+                }
+                else if (!isBoolean(hasNextReturnType)) {
+                    semanticServices.getErrorHandler().genericError(reportErrorsOn, "The 'iterator().hasNext' property of the loop range must return Boolean, but returns " + hasNextReturnType);
+                }
+            }
+            return true;
+        }
+
+        @NotNull
+        private OverloadResolutionResult resolveNoParametersFunction(@NotNull JetType receiverType, @NotNull JetScope scope, @NotNull String name) {
+            OverloadDomain overloadDomain = semanticServices.getOverloadResolver().getOverloadDomain(receiverType, scope, name);
+            return overloadDomain.getFunctionDescriptorForPositionedArguments(Collections.<JetType>emptyList(), Collections.<JetType>emptyList());
         }
 
         @Override

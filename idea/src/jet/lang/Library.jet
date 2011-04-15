@@ -9,9 +9,11 @@ class Iterable<out T> {
   fun iterator() : Iterator<T>
 }
 
-class Array<T> : Iterable<T> {
+class Array<T> {
   fun get(index : Int) : T
   fun set(index : Int, value : T) : Unit
+
+  fun iterator() : Iterator<T>
 }
 
 virtual class Comparable<in T> {
