@@ -27,6 +27,8 @@ public class ExpressionCodegen extends JetVisitor {
     private static final String CLASS_STRING_BUILDER = "java/lang/StringBuilder";
     private static final String CLASS_COMPARABLE = "java/lang/Comparable";
 
+    private static final Type TYPE_OBJECT = Type.getObjectType(CLASS_OBJECT);
+
     private final Stack<Label> myLoopStarts = new Stack<Label>();
     private final Stack<Label> myLoopEnds = new Stack<Label>();
     private final Stack<StackValue> myStack = new Stack<StackValue>();
@@ -387,7 +389,7 @@ public class ExpressionCodegen extends JetVisitor {
             final JetDotQualifiedExpression parent = (JetDotQualifiedExpression) expression.getParent();
             if (!resolvesToClassOrPackage(parent.getReceiverExpression())) {
                 // we have a receiver on stack
-                myStack.pop().put(Type.getObjectType(CLASS_OBJECT), v);
+                myStack.pop().put(TYPE_OBJECT, v);
             }
         }
     }
@@ -521,6 +523,9 @@ public class ExpressionCodegen extends JetVisitor {
                  opToken == JetTokens.GT || opToken == JetTokens.GTEQ) {
             generateCompareOp(expression, opToken, expressionType(expression.getLeft()));
         }
+        else if (opToken == JetTokens.ELVIS) {
+            generateElvis(expression);
+        }
         else {
             DeclarationDescriptor op = bindingContext.resolveReferenceExpression(expression.getOperationReference());
             if (op instanceof FunctionDescriptor) {
@@ -612,6 +617,21 @@ public class ExpressionCodegen extends JetVisitor {
         else {
             myStack.push(onStack);
         }
+    }
+
+    private void generateElvis(JetBinaryExpression expression) {
+        final Type exprType = expressionType(expression);
+        gen(expression.getLeft(), exprType);
+        v.dup();
+        Label end = new Label();
+        Label ifNull = new Label();
+        v.ifnull(ifNull);
+        v.goTo(end);
+        v.mark(ifNull);
+        v.pop();
+        gen(expression.getRight(), exprType);
+        v.mark(end);
+        myStack.push(StackValue.onStack(exprType));
     }
 
     private static boolean isNumberPrimitive(DeclarationDescriptor descriptor) {
@@ -756,7 +776,7 @@ public class ExpressionCodegen extends JetVisitor {
         Type exprType = expressionType(expr);
         gen(expr, exprType);
         Method appendDescriptor = new Method("append", Type.getObjectType(CLASS_STRING_BUILDER),
-                new Type[] { exprType.getSort() == Type.OBJECT ? Type.getObjectType(CLASS_OBJECT) : exprType});
+                new Type[] { exprType.getSort() == Type.OBJECT ? TYPE_OBJECT : exprType});
         v.invokevirtual(CLASS_STRING_BUILDER, "append", appendDescriptor.getDescriptor());
     }
 
