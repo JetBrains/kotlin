@@ -1,3 +1,5 @@
+import java.util.*;
+
 class NotRange1 {
 
 }
@@ -73,4 +75,7 @@ fun test() {
   for (i in <error>new NotRange7()</error>);
   for (i in new Range0());
   for (i in new Range1());
+
+  for (i in (new ArrayList() : List));
 }
+

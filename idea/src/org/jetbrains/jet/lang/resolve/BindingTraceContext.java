@@ -80,6 +80,11 @@ public class BindingTraceContext extends BindingTrace implements BindingContext 
         statements.add(statement);
     }
 
+    @Override
+    public void removeStatementRecord(@NotNull JetElement statement) {
+        statements.remove(statement);
+    }
+
     public void setToplevelScope(JetScope toplevelScope) {
         this.toplevelScope = toplevelScope;
     }

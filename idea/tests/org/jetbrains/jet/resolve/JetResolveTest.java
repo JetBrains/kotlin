@@ -3,13 +3,13 @@ package org.jetbrains.jet.resolve;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.projectRoots.impl.JavaSdkImpl;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.JetTestCaseBase;
 import org.jetbrains.jet.lang.resolve.OverloadResolutionResult;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.parsing.JetParsingTest;
@@ -112,11 +112,7 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
 
     @Override
     protected Sdk getProjectJDK() {
-        return jdkFromIdeaHome();
-    }
-
-    public static Sdk jdkFromIdeaHome() {
-        return new JavaSdkImpl().createJdk("JDK", "idea/testData/mockJDK-1.7/jre", true);
+        return JetTestCaseBase.jdkFromIdeaHome();
     }
 
     private static String getHomeDirectory() {

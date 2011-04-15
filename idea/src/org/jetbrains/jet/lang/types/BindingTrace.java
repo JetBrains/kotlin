@@ -42,6 +42,10 @@ public class BindingTrace {
 
     }
 
+    public void removeStatementRecord(@NotNull JetElement statement) {
+
+    }
+
     public void removeReferenceResolution(@NotNull JetReferenceExpression referenceExpression) {
 
     }

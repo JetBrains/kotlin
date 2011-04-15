@@ -270,7 +270,7 @@ public class JetTypeInferrer {
 
     @NotNull
     public JetType getFunctionReturnType(@NotNull JetScope outerScope, JetFunction function, FunctionDescriptor functionDescriptor) {
-        Map<JetElement, JetType> typeMap = getReturnedExpressions(outerScope, function, functionDescriptor);
+        Map<JetElement, JetType> typeMap = collectReturnedExpressions(outerScope, function, functionDescriptor);
         Collection<JetType> types = typeMap.values();
         return types.isEmpty() ? JetStandardClasses.getNothingType() : semanticServices.getTypeChecker().commonSupertype(types);
     }
@@ -281,7 +281,7 @@ public class JetTypeInferrer {
     }
 
     public void checkFunctionReturnType(@NotNull JetScope outerScope, @NotNull JetFunction function, @NotNull FunctionDescriptor functionDescriptor) {
-        Map<JetElement, JetType> typeMap = getReturnedExpressions(outerScope, function, functionDescriptor);
+        Map<JetElement, JetType> typeMap = collectReturnedExpressions(outerScope, function, functionDescriptor);
         if (typeMap.isEmpty()) {
             return; // The function returns Nothing
         }
@@ -315,7 +315,7 @@ public class JetTypeInferrer {
         }
     }
 
-    private Map<JetElement, JetType> getReturnedExpressions(JetScope outerScope, JetFunction function, FunctionDescriptor functionDescriptor) {
+    private Map<JetElement, JetType> collectReturnedExpressions(JetScope outerScope, JetFunction function, FunctionDescriptor functionDescriptor) {
         JetExpression bodyExpression = function.getBodyExpression();
         assert bodyExpression != null;
         JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(outerScope, functionDescriptor, semanticServices);
@@ -326,6 +326,7 @@ public class JetTypeInferrer {
         Map<JetElement,JetType> typeMap = new HashMap<JetElement, JetType>();
         for (JetExpression returnedExpression : returnedExpressions) {
             JetType cachedType = getCachedType(returnedExpression);
+            trace.removeStatementRecord(returnedExpression);
             if (cachedType != null) {
                 typeMap.put(returnedExpression, cachedType);
             }
@@ -882,7 +883,7 @@ public class JetTypeInferrer {
                 JetType iteratorType = iteratorResolutionResult.getFunctionDescriptor().getUnsubstitutedReturnType();
                 boolean hasNextFunctionSupported = checkHasNextFunctionSupport(reportErrorsOn, iteratorType);
                 boolean hasNextPropertySupported = checkHasNextPropertySupport(reportErrorsOn, iteratorType);
-                if (hasNextFunctionSupported && hasNextPropertySupported) {
+                if (hasNextFunctionSupported && hasNextPropertySupported && !ErrorUtils.isErrorType(iteratorType)) {
                     // TODO : overload resolution rules impose priorities here???
                     semanticServices.getErrorHandler().genericError(reportErrorsOn, "An ambiguity between 'iterator().hasNext()' function and 'iterator().hasNext()' property");
                 }
@@ -1595,6 +1596,11 @@ public class JetTypeInferrer {
         @Override
         public void recordStatement(@NotNull JetElement statement) {
             originalTrace.recordStatement(statement);
+        }
+
+        @Override
+        public void removeStatementRecord(@NotNull JetElement statement) {
+            originalTrace.removeStatementRecord(statement);
         }
     }
 }

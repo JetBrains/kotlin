@@ -2,6 +2,8 @@ package org.jetbrains.jet;
 
 import com.intellij.codeInsight.daemon.LightDaemonAnalyzerTestCase;
 import com.intellij.openapi.application.PathManager;
+import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.projectRoots.impl.JavaSdkImpl;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +28,10 @@ public abstract class JetTestCaseBase extends LightDaemonAnalyzerTestCase {
         this.name = name;
     }
 
+    public static Sdk jdkFromIdeaHome() {
+        return new JavaSdkImpl().createJdk("JDK", "idea/testData/mockJDK-1.7/jre", true);
+    }
+
     @Override
     protected String getTestDataPath() {
         return getTestDataPathBase();
@@ -37,6 +43,11 @@ public abstract class JetTestCaseBase extends LightDaemonAnalyzerTestCase {
 
     private static String getHomeDirectory() {
        return new File(PathManager.getResourceRoot(JetTestCaseBase.class, "/org/jetbrains/jet/JetTestCaseBase.class")).getParentFile().getParentFile().getParent();
+    }
+
+    @Override
+    protected Sdk getProjectJDK() {
+        return jdkFromIdeaHome();
     }
 
     @Override
