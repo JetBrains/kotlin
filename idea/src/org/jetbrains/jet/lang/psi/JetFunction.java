@@ -76,6 +76,6 @@ public class JetFunction extends JetTypeParameterListOwner implements JetDeclara
     }
 
     public boolean hasBlockBody() {
-        return findChildByType(JetTokens.EQ) != null;
+        return findChildByType(JetTokens.EQ) == null;
     }
 }

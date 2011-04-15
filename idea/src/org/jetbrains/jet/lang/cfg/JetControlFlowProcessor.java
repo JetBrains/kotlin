@@ -188,6 +188,7 @@ public class JetControlFlowProcessor {
                     JetArrayAccessExpression arrayAccessExpression = (JetArrayAccessExpression) left;
                     visitAssignToArrayAccess(expression, arrayAccessExpression);
                 } else if (left instanceof JetQualifiedExpression) {
+                    //
                     JetQualifiedExpression qualifiedExpression = (JetQualifiedExpression) left;
                     value(qualifiedExpression.getReceiverExpression(), false, false);
                     value(expression.getOperationReference(), false, false);

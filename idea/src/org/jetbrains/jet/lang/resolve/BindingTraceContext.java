@@ -66,6 +66,7 @@ public class BindingTraceContext extends BindingTrace implements BindingContext 
 
     private <K, V> void safePut(Map<K, V> map, K key, V value) {
         V oldValue = map.put(key, value);
+        // TODO:
 //        assert oldValue == null || oldValue == value : key + ": " + oldValue + " and " + value;
     }
 
