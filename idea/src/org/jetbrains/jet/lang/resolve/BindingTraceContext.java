@@ -20,6 +20,7 @@ public class BindingTraceContext extends BindingTrace implements BindingContext 
     private final Map<JetTypeReference, JetType> types = new HashMap<JetTypeReference, JetType>();
     private final Map<DeclarationDescriptor, PsiElement> descriptorToDeclarations = new HashMap<DeclarationDescriptor, PsiElement>();
     private final Map<PsiElement, DeclarationDescriptor> declarationsToDescriptors = new HashMap<PsiElement, DeclarationDescriptor>();
+    private final Map<PsiElement, ConstructorDescriptor> constructorDeclarationsToDescriptors = new HashMap<PsiElement, ConstructorDescriptor>();
     private final Set<JetFunctionLiteralExpression> blocks = new HashSet<JetFunctionLiteralExpression>();
     private final Set<JetElement> statements = new HashSet<JetElement>();
 
@@ -54,8 +55,18 @@ public class BindingTraceContext extends BindingTrace implements BindingContext 
 
     @Override
     public void recordDeclarationResolution(@NotNull PsiElement declaration, @NotNull DeclarationDescriptor descriptor) {
-        descriptorToDeclarations.put(descriptor.getOriginal(), declaration);
-        declarationsToDescriptors.put(declaration, descriptor.getOriginal());
+        safePut(descriptorToDeclarations, descriptor.getOriginal(), declaration);
+        if (descriptor instanceof ConstructorDescriptor) {
+            safePut(constructorDeclarationsToDescriptors, declaration, (ConstructorDescriptor) descriptor);
+        }
+        else {
+            safePut(declarationsToDescriptors, declaration, descriptor.getOriginal());
+        }
+    }
+
+    private <K, V> void safePut(Map<K, V> map, K key, V value) {
+        V oldValue = map.put(key, value);
+//        assert oldValue == null || oldValue == value : key + ": " + oldValue + " and " + value;
     }
 
     @Override
@@ -74,11 +85,6 @@ public class BindingTraceContext extends BindingTrace implements BindingContext 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-    @Override
-    public DeclarationDescriptor getDeclarationDescriptor(JetDeclaration declaration) {
-        return declarationsToDescriptors.get(declaration);
-    }
 
     public NamespaceDescriptor getNamespaceDescriptor(JetNamespace declaration) {
         return (NamespaceDescriptor) declarationsToDescriptors.get(declaration);

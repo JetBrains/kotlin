@@ -14,8 +14,6 @@ public interface BindingContext {
     FunctionDescriptor getFunctionDescriptor(JetFunction declaration);
     PropertyDescriptor getPropertyDescriptor(JetProperty declaration);
 
-    DeclarationDescriptor getDeclarationDescriptor(JetDeclaration declaration);
-
     JetType getExpressionType(JetExpression expression);
 
     JetScope getTopLevelScope();

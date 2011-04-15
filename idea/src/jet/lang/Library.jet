@@ -1,6 +1,15 @@
 namespace jet.lang
 
-class Array<T> {
+class Iterator<out T> {
+  fun next() : T
+  val hasNext : Boolean
+}
+
+class Iterable<out T> {
+  fun iterator() : Iterator<T>
+}
+
+class Array<T> : Iterable<T> {
   fun get(index : Int) : T
   fun set(index : Int, value : T) : Unit
 }
@@ -32,15 +41,6 @@ class String : Comparable<String> {
 
 class Range<in T : Comparable<T>> {
   fun contains(item : T) : Boolean
-}
-
-class Iterator<out T> {
-  fun next() : T
-  val hasNext : Boolean
-}
-
-class Iterable<out T> {
-  fun iterator() : Iterator<T>
 }
 
 class IntRange<T> : Range<T>, Iterable<T> {
