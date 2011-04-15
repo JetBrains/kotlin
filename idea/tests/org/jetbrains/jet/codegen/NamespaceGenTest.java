@@ -578,6 +578,14 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
         assertEquals("jet Lang", main.invoke(null, "jet", " ", "Lang"));
     }
 
+    public void testStringCompare() throws Exception {
+        loadText("fun foo(s1: String, s2: String) = s1 < s2");
+        System.out.println(generateToText());
+        final Method main = generateFunction();
+        assertEquals(Boolean.TRUE, main.invoke(null, "Ceylon", "Java"));
+        assertEquals(Boolean.FALSE, main.invoke(null, "Jet", "Java"));
+    }
+
     private void binOpTest(final String text, final Object arg1, final Object arg2, final Object expected) throws Exception {
         loadText(text);
         System.out.println(generateToText());

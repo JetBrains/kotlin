@@ -25,6 +25,7 @@ public class ExpressionCodegen extends JetVisitor {
     private static final String CLASS_OBJECT = "java/lang/Object";
     private static final String CLASS_STRING = "java/lang/String";
     private static final String CLASS_STRING_BUILDER = "java/lang/StringBuilder";
+    private static final String CLASS_COMPARABLE = "java/lang/Comparable";
 
     private final Stack<Label> myLoopStarts = new Stack<Label>();
     private final Stack<Label> myLoopEnds = new Stack<Label>();
@@ -511,20 +512,17 @@ public class ExpressionCodegen extends JetVisitor {
                  opToken == JetTokens.EQEQEQ || opToken == JetTokens.EXCLEQEQEQ) {
             generateEquals(expression, opToken);
         }
+        else if (opToken == JetTokens.LT || opToken == JetTokens.LTEQ ||
+                 opToken == JetTokens.GT || opToken == JetTokens.GTEQ) {
+            generateCompareOp(expression, opToken, expressionType(expression.getLeft()));
+        }
         else {
             DeclarationDescriptor op = bindingContext.resolveReferenceExpression(expression.getOperationReference());
             if (op instanceof FunctionDescriptor) {
-                JetType returnType = bindingContext.getExpressionType(expression);
-                final Type asmType = typeMapper.mapType(returnType);
                 DeclarationDescriptor cls = op.getContainingDeclaration();
                 if (isNumberPrimitive(cls)) {
-                    if (op.getName().equals("compareTo")) {
-                        generateCompareOp(expression, opToken, asmType);
-                    }
-                    else {
-                        int opcode = opcodeForMethod(op.getName());
-                        generateBinaryOp(expression, (FunctionDescriptor) op, opcode);
-                    }
+                    int opcode = opcodeForMethod(op.getName());
+                    generateBinaryOp(expression, (FunctionDescriptor) op, opcode);
                     return;
                 }
                 else if (isClass(cls, "String") && op.getName().equals("plus")) {
@@ -667,10 +665,15 @@ public class ExpressionCodegen extends JetVisitor {
         }
     }
 
-    private void generateCompareOp(JetBinaryExpression expression, IElementType opToken, Type type) {
-        gen(expression.getLeft(), type);
-        gen(expression.getRight(), type);
-        myStack.push(StackValue.cmp(opToken, type));
+    private void generateCompareOp(JetBinaryExpression expression, IElementType opToken, Type operandType) {
+        gen(expression.getLeft(), operandType);
+        gen(expression.getRight(), operandType);
+        if (operandType.getSort() == Type.OBJECT) {
+            v.invokeinterface(CLASS_COMPARABLE, "compareTo", "(Ljava/lang/Object;)I");
+            v.aconst(0);
+            operandType = Type.INT_TYPE;
+        }
+        myStack.push(StackValue.cmp(opToken, operandType));
     }
 
     private void generateAssignmentExpression(JetBinaryExpression expression) {
