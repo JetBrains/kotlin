@@ -120,7 +120,6 @@ public class JetTypeInferrer {
         return resolutionResult.isSuccess() ? resolutionResult.getFunctionDescriptor() : null;
     }
 
-
     private OverloadDomain getOverloadDomain(
             @NotNull final JetScope scope,
             @NotNull JetExpression calleeExpression,
@@ -409,7 +408,7 @@ public class JetTypeInferrer {
             expression.accept(this);
             if (result != null) {
                 trace.recordExpressionType(expression, result);
-                if (JetStandardClasses.isNothing(result)) {
+                if (JetStandardClasses.isNothing(result) && !result.isNullable()) {
                     markDominatedExpressionsAsUnreachable(expression);
                 }
             }
