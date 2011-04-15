@@ -1,3 +1,7 @@
+class Test {
+  var x : Int;
+}
+
 fun assignments() : Unit {
     var x = 1
     x = 2
@@ -7,4 +11,7 @@ fun assignments() : Unit {
 
     val y = true && false
     val z = false && true
+
+    val t = new Test();
+    t.x = 1
 }

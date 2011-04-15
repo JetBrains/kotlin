@@ -8,6 +8,9 @@ fun assignments() : Unit {
 
     val y = true && false
     val z = false && true
+
+    val t = new Test();
+    t.x = 1
 }
 ---------------------
 l0:
@@ -40,6 +43,12 @@ l4:
 l5:
     r(false && true)
     w(z)
+    r(new Test())
+    w(t)
+    r(1)
+    r(t)
+    r(=)
+    w(t.x)
 l1:
     <END>
 error:
