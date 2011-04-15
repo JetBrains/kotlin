@@ -19,6 +19,25 @@ public abstract class StackValue {
 
     public abstract void put(Type type, InstructionAdapter v);
 
+    public void store(InstructionAdapter v) {
+        throw new UnsupportedOperationException("cannot store to value " + this);
+    }
+
+    public void condJump(Label label, boolean jumpIfFalse, InstructionAdapter v) {
+        if (this.type == Type.BOOLEAN_TYPE) {
+            put(Type.BOOLEAN_TYPE, v);
+            if (jumpIfFalse) {
+                v.ifeq(label);
+            }
+            else {
+                v.ifne(label);
+            }
+        }
+        else {
+            throw new UnsupportedOperationException("can't generate a cond jump for a non-boolean value");
+        }
+    }
+
     public static StackValue local(int index, Type type) {
         return new Local(index, type);
     }
@@ -40,7 +59,13 @@ public abstract class StackValue {
         return new Invert(stackValue);
     }
 
-    public abstract void condJump(Label label, boolean jumpIfFalse, InstructionAdapter v);
+    public static StackValue arrayElement(Type type) {
+        return new ArrayElement(type);
+    }
+
+    public static StackValue field(Type type, String owner, String name, boolean isStatic) {
+        return new Field(type, owner, name, isStatic);
+    }
 
     private static void box(final Type type, InstructionAdapter v) {
         if (type == Type.INT_TYPE) {
@@ -135,14 +160,8 @@ public abstract class StackValue {
         }
 
         @Override
-        public void condJump(Label label, boolean jumpIfFalse, InstructionAdapter v) {
-            put(Type.INT_TYPE, v);
-            if (jumpIfFalse) {
-                v.ifeq(label);
-            }
-            else {
-                v.ifne(label);
-            }
+        public void store(InstructionAdapter v) {
+            v.store(index, this.type);
         }
     }
 
@@ -163,21 +182,6 @@ public abstract class StackValue {
             }
             else {
                 coerce(type, v);
-            }
-        }
-
-        @Override
-        public void condJump(Label label, boolean jumpIfFalse, InstructionAdapter v) {
-            if (this.type == Type.BOOLEAN_TYPE) {
-                if (jumpIfFalse) {
-                    v.ifeq(label);
-                }
-                else {
-                    v.ifne(label);
-                }
-            }
-            else {
-                throw new UnsupportedOperationException("can't generate a cond jump for a non-boolean value on stack");
             }
         }
     }
@@ -310,6 +314,45 @@ public abstract class StackValue {
         @Override
         public void condJump(Label label, boolean jumpIfFalse, InstructionAdapter v) {
             myOperand.condJump(label, !jumpIfFalse, v);
+        }
+    }
+
+    private static class ArrayElement extends StackValue {
+        public ArrayElement(Type type) {
+            super(type);
+        }
+
+        @Override
+        public void put(Type type, InstructionAdapter v) {
+            v.aload(type);    // assumes array and index are on the stack
+        }
+
+        @Override
+        public void store(InstructionAdapter v) {
+            v.astore(type);   // assumes array and index are on the stack
+        }
+    }
+
+    private static class Field extends StackValue {
+        private final String owner;
+        private final String name;
+        private final boolean isStatic;
+
+        public Field(Type type, String owner, String name, boolean isStatic) {
+            super(type);
+            this.owner = owner;
+            this.name = name;
+            this.isStatic = isStatic;
+        }
+
+        @Override
+        public void put(Type type, InstructionAdapter v) {
+            v.visitFieldInsn(isStatic ? Opcodes.GETSTATIC : Opcodes.GETFIELD, owner, name, this.type.getDescriptor());
+        }
+
+        @Override
+        public void store(InstructionAdapter v) {
+            v.visitFieldInsn(isStatic ? Opcodes.PUTSTATIC : Opcodes.PUTFIELD, owner, name, this.type.getDescriptor());
         }
     }
 }

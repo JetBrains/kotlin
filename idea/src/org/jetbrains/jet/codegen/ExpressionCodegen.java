@@ -62,7 +62,7 @@ public class ExpressionCodegen extends JetVisitor {
         }
     }
 
-    private void genToStack(JetExpression expr) {
+    private void genToJVMStack(JetExpression expr) {
         gen(expr, expressionType(expr));
     }
 
@@ -349,14 +349,11 @@ public class ExpressionCodegen extends JetVisitor {
             PsiField psiField = (PsiField) declaration;
             final String owner = JetTypeMapper.jvmName(psiField.getContainingClass());
             final Type fieldType = psiTypeToAsm(psiField.getType());
-            if (psiField.hasModifierProperty(PsiModifier.STATIC)) {
-                v.visitFieldInsn(Opcodes.GETSTATIC, owner, psiField.getName(), fieldType.getDescriptor());
-            }
-            else {
+            final boolean isStatic = psiField.hasModifierProperty(PsiModifier.STATIC);
+            if (!isStatic) {
                 ensureReceiverOnStack(expression);
-                v.visitFieldInsn(Opcodes.GETFIELD, owner, psiField.getName(), fieldType.getDescriptor());
             }
-            myStack.push(StackValue.onStack(fieldType));
+            myStack.push(StackValue.field(fieldType, owner, psiField.getName(), isStatic));
         }
         else {
             int index = myMap.getIndex(descriptor);
@@ -553,7 +550,7 @@ public class ExpressionCodegen extends JetVisitor {
 
     @Override
     public void visitSafeQualifiedExpression(JetSafeQualifiedExpression expression) {
-        genToStack(expression.getReceiverExpression());
+        genToJVMStack(expression.getReceiverExpression());
         Label ifnull = new Label();
         Label end = new Label();
         v.dup();
@@ -773,31 +770,15 @@ public class ExpressionCodegen extends JetVisitor {
     }
 
     private void generateAssignmentExpression(JetBinaryExpression expression) {
-        if (expression.getLeft() instanceof JetArrayAccessExpression) {
-            final JetArrayAccessExpression arrayAccess = (JetArrayAccessExpression) expression.getLeft();
-            final Type arrayType = expressionType(arrayAccess.getArrayExpression());
-            if (arrayType.getSort() == Type.ARRAY) {
-                gen(arrayAccess.getArrayExpression(), arrayType);
-                generateArrayIndex(arrayAccess);
-                final Type elementType = arrayType.getElementType();
-                gen(expression.getRight(), elementType);
-                v.astore(elementType);
-            }
-            else {
-                throw new UnsupportedOperationException("Don't know how to generate assignment to non-Java array " + expression.getLeft().getText());
-            }
+        int oldStackSize = myStack.size();
+        gen(expression.getLeft());
+        genToJVMStack(expression.getRight());
+        if (myStack.size() != oldStackSize+1) {
+            throw new UnsupportedClassVersionError("generated something which doesn't seem to be an lvalue");
         }
-        else if (expression.getLeft() instanceof JetReferenceExpression) {
-            final JetReferenceExpression lhs = (JetReferenceExpression) expression.getLeft();
-            final int index = indexOfLocal(lhs);
-            final Type type = typeMapper.mapType(bindingContext.getExpressionType(lhs));
-            gen(expression.getRight(), type);
-            v.store(index, type);
-        }
-        else {
-            throw new UnsupportedOperationException("Don't know how to generate assignment to " + expression.getLeft().getText());
-        }
+        myStack.pop().store(v);
     }
+
 
     private void generateAugmentedAssignment(JetBinaryExpression expression) {
         final JetExpression lhs = expression.getLeft();
@@ -995,8 +976,7 @@ public class ExpressionCodegen extends JetVisitor {
             gen(array, arrayType);
             generateArrayIndex(expression);
             final Type elementType = arrayType.getElementType();
-            v.aload(elementType);
-            myStack.push(StackValue.onStack(elementType));
+            myStack.push(StackValue.arrayElement(elementType));
         }
         else {
             throw new UnsupportedOperationException("array access to non-Java arrays is not supported");

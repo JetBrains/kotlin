@@ -313,6 +313,7 @@ public class NamespaceGenTest extends CodegenTestCase {
 
     public void testArrayWrite() throws Exception {
         loadText("fun foo(c: Array<String>) { c[0] = \"jet\"; }");
+        System.out.println(generateToText());
         final Method main = generateFunction();
         String[] array = new String[] { null };
         main.invoke(null, new Object[] { array });
