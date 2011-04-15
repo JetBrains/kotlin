@@ -682,7 +682,21 @@ public class ExpressionCodegen extends JetVisitor {
     }
 
     private void generateAssignmentExpression(JetBinaryExpression expression) {
-        if (expression.getLeft() instanceof JetReferenceExpression) {
+        if (expression.getLeft() instanceof JetArrayAccessExpression) {
+            final JetArrayAccessExpression arrayAccess = (JetArrayAccessExpression) expression.getLeft();
+            final Type arrayType = expressionType(arrayAccess.getArrayExpression());
+            if (arrayType.getSort() == Type.ARRAY) {
+                gen(arrayAccess.getArrayExpression(), arrayType);
+                generateArrayIndex(arrayAccess);
+                final Type elementType = arrayType.getElementType();
+                gen(expression.getRight(), elementType);
+                v.astore(elementType);
+            }
+            else {
+                throw new UnsupportedOperationException("Don't know how to generate assignment to non-Java array " + expression.getLeft().getText());
+            }
+        }
+        else if (expression.getLeft() instanceof JetReferenceExpression) {
             final JetReferenceExpression lhs = (JetReferenceExpression) expression.getLeft();
             final int index = indexOfLocal(lhs);
             final Type type = typeMapper.mapType(bindingContext.getExpressionType(lhs));
@@ -880,6 +894,33 @@ public class ExpressionCodegen extends JetVisitor {
         }
 
         throw new UnsupportedOperationException("don't know how to generate this new expression");
+    }
+
+    @Override
+    public void visitArrayAccessExpression(JetArrayAccessExpression expression) {
+        final JetExpression array = expression.getArrayExpression();
+        final Type arrayType = expressionType(array);
+        if (arrayType.getSort() == Type.ARRAY) {
+            gen(array, arrayType);
+            generateArrayIndex(expression);
+            final Type elementType = arrayType.getElementType();
+            v.aload(elementType);
+            myStack.push(StackValue.onStack(elementType));
+        }
+        else {
+            throw new UnsupportedOperationException("array access to non-Java arrays is not supported");
+        }
+    }
+
+    private void generateArrayIndex(JetArrayAccessExpression expression) {
+        final List<JetExpression> indices = expression.getIndexExpressions();
+        if (indices.size() != 1) {
+            throw new UnsupportedOperationException("array access with more than one index is not supported");
+        }
+        if (!expressionType(indices.get(0)).equals(Type.INT_TYPE)) {
+            throw new UnsupportedOperationException("array access with non-integer is not supported");
+        }
+        gen(indices.get(0), Type.INT_TYPE);
     }
 
     private static class CompilationException extends RuntimeException {
