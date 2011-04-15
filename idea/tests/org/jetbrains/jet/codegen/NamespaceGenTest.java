@@ -305,6 +305,21 @@ public class NamespaceGenTest extends CodegenTestCase {
         assertEquals(239, c.gridx);
     }
 
+    public void testFieldIncrement() throws Exception {
+        loadText("import java.awt.*; fun foo(c: GridBagConstraints) { c.gridx++; return; }");
+        System.out.println(generateToText());
+        final Method main = generateFunction();
+        GridBagConstraints c = new GridBagConstraints();
+        c.gridx = 609;
+        main.invoke(null, c);
+        assertEquals(610, c.gridx);
+    }
+
+    public void testIncrementAsLastOperation() throws Exception {
+        loadText("fun foo() { var a = 0; a++; }");
+        generateFunction();  // make sure we're not falling off end of code
+    }
+
     public void testArrayRead() throws Exception {
         loadText("fun foo(c: Array<String>) = c[0]");
         final Method main = generateFunction();

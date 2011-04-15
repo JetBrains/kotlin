@@ -19,7 +19,7 @@ public abstract class StackValue {
 
     public abstract void put(Type type, InstructionAdapter v);
 
-    public void store(InstructionAdapter v) {
+    public void store(InstructionAdapter v, boolean valueBeforeReceiver) {
         throw new UnsupportedOperationException("cannot store to value " + this);
     }
 
@@ -160,7 +160,7 @@ public abstract class StackValue {
         }
 
         @Override
-        public void store(InstructionAdapter v) {
+        public void store(InstructionAdapter v, boolean valueBeforeReceiver) {
             v.store(index, this.type);
         }
     }
@@ -328,7 +328,7 @@ public abstract class StackValue {
         }
 
         @Override
-        public void store(InstructionAdapter v) {
+        public void store(InstructionAdapter v, boolean valueBeforeReceiver) {
             v.astore(type);   // assumes array and index are on the stack
         }
     }
@@ -351,7 +351,11 @@ public abstract class StackValue {
         }
 
         @Override
-        public void store(InstructionAdapter v) {
+        public void store(InstructionAdapter v, boolean valueBeforeReceiver) {
+            // HACK should find some way to avoid this swap
+            if (valueBeforeReceiver && !isStatic) {
+                v.swap();
+            }
             v.visitFieldInsn(isStatic ? Opcodes.PUTSTATIC : Opcodes.PUTFIELD, owner, name, this.type.getDescriptor());
         }
     }

@@ -66,6 +66,15 @@ public class ExpressionCodegen extends JetVisitor {
         gen(expr, expressionType(expr));
     }
 
+    private StackValue generateIntermediateValue(final JetExpression baseExpression) {
+        int oldStackSize = myStack.size();
+        gen(baseExpression);
+        if (myStack.size() != oldStackSize+1) {
+            throw new UnsupportedOperationException("intermediate value expected");
+        }
+        return myStack.pop();
+    }
+
     @Override
     public void visitExpression(JetExpression expression) {
         throw new UnsupportedOperationException("Codegen for " + expression + " is not yet implemented");
@@ -770,15 +779,10 @@ public class ExpressionCodegen extends JetVisitor {
     }
 
     private void generateAssignmentExpression(JetBinaryExpression expression) {
-        int oldStackSize = myStack.size();
-        gen(expression.getLeft());
+        StackValue stackValue = generateIntermediateValue(expression.getLeft());
         genToJVMStack(expression.getRight());
-        if (myStack.size() != oldStackSize+1) {
-            throw new UnsupportedClassVersionError("generated something which doesn't seem to be an lvalue");
-        }
-        myStack.pop().store(v);
+        stackValue.store(v, false);
     }
-
 
     private void generateAugmentedAssignment(JetBinaryExpression expression) {
         final JetExpression lhs = expression.getLeft();
@@ -880,50 +884,47 @@ public class ExpressionCodegen extends JetVisitor {
             return true;
         }
         else if (op.getName().equals("inc") || op.getName().equals("dec")) {
-            final int index = generateIncrement(op, asmType, operand);
-            myStack.push(StackValue.local(index, asmType));
+            myStack.push(generateIncrement(op, asmType, operand));
             return true;
         }
         return false;
     }
 
     private void generateNot(JetPrefixExpression expression) {
-        int oldStackSize = myStack.size();
-        gen(expression.getBaseExpression());
-        assert myStack.size() == oldStackSize+1;
-        myStack.set(myStack.size()-1, StackValue.not(myStack.get(myStack.size() - 1)));
+        final StackValue stackValue = generateIntermediateValue(expression.getBaseExpression());
+        myStack.push(StackValue.not(stackValue));
     }
 
-    private int generateIncrement(DeclarationDescriptor op, Type asmType, JetExpression operand) {
-        if (!(operand instanceof JetReferenceExpression)) {
-            throw new UnsupportedOperationException("cannot increment or decrement a non-lvalue");
-        }
+    private StackValue generateIncrement(DeclarationDescriptor op, Type asmType, JetExpression operand) {
         int increment = op.getName().equals("inc") ? 1 : -1;
-        final int index = indexOfLocal((JetReferenceExpression) operand);
-        if (index < 0) {
-            throw new UnsupportedOperationException("don't know how to increment or decrement something which is not a local var");
+        if (operand instanceof JetReferenceExpression) {
+            final int index = indexOfLocal((JetReferenceExpression) operand);
+            if (index < 0) {
+                throw new UnsupportedOperationException("don't know how to increment or decrement something which is not a local var");
+            }
+            if (isIntPrimitive(asmType)) {
+                v.iinc(index, increment);
+                return StackValue.local(index, asmType);
+            }
         }
-        if (isIntPrimitive(asmType)) {
-            v.iinc(index, increment);
+        StackValue value = generateIntermediateValue(operand);
+        value.put(asmType, v);
+        if (asmType == Type.LONG_TYPE) {
+            v.aconst(Long.valueOf(increment));
+        }
+        else if (asmType == Type.FLOAT_TYPE) {
+            v.aconst(Float.valueOf(increment));
+        }
+        else if (asmType == Type.DOUBLE_TYPE) {
+            v.aconst(Double.valueOf(increment));
         }
         else {
-            gen(operand, asmType);
-            if (asmType == Type.LONG_TYPE) {
-                v.aconst(Long.valueOf(increment));
-            }
-            else if (asmType == Type.FLOAT_TYPE) {
-                v.aconst(Float.valueOf(increment));
-            }
-            else if (asmType == Type.DOUBLE_TYPE) {
-                v.aconst(Double.valueOf(increment));
-            }
-            else {
-                throw new UnsupportedOperationException("unknown type in increment: " + asmType);
-            }
-            v.add(asmType);
-            v.store(index, asmType);
+            v.aconst(increment);
         }
-        return index;
+        v.add(asmType);
+        value = generateIntermediateValue(operand);
+        value.store(v, true);
+        return value;
     }
 
     private void generateInv(Type asmType) {
