@@ -276,15 +276,16 @@ public class ExpressionCodegen extends JetVisitor {
         PsiElement declaration = bindingContext.getDeclarationPsiElement(descriptor);
         if (declaration instanceof PsiField) {
             PsiField psiField = (PsiField) declaration;
+            final String owner = JetTypeMapper.jvmName(psiField.getContainingClass());
+            final Type fieldType = psiTypeToAsm(psiField.getType());
             if (psiField.hasModifierProperty(PsiModifier.STATIC)) {
-                v.visitFieldInsn(Opcodes.GETSTATIC,
-                                 JetTypeMapper.jvmName(psiField.getContainingClass()),
-                                 psiField.getName(),
-                                 psiTypeToAsm(psiField.getType()).getDescriptor());
+                v.visitFieldInsn(Opcodes.GETSTATIC, owner, psiField.getName(), fieldType.getDescriptor());
             }
             else {
-                throw new UnsupportedOperationException("don't know how to generate field reference " + descriptor);
+                ensureReceiverOnStack(expression);
+                v.visitFieldInsn(Opcodes.GETFIELD, owner, psiField.getName(), fieldType.getDescriptor());
             }
+            myStack.push(StackValue.onStack(fieldType));
         }
         else {
             int index = myMap.getIndex(descriptor);
@@ -342,13 +343,7 @@ public class ExpressionCodegen extends JetVisitor {
                     }
                 }
 
-                if (expression.getParent() instanceof JetDotQualifiedExpression) {
-                    final JetDotQualifiedExpression parent = (JetDotQualifiedExpression) expression.getParent();
-                    if (!resolvesToClassOrPackage(parent.getReceiverExpression())) {
-                        // we have a receiver on stack
-                        myStack.pop().put(Type.getObjectType(CLASS_OBJECT), v);
-                    }
-                }
+                ensureReceiverOnStack(expression);
 
                 PsiElement declarationPsiElement = bindingContext.getDeclarationPsiElement(funDescriptor);
                 Method methodDescriptor;
@@ -384,6 +379,16 @@ public class ExpressionCodegen extends JetVisitor {
         }
         else {
             throw new UnsupportedOperationException("Don't know how to generate a call");
+        }
+    }
+
+    private void ensureReceiverOnStack(JetElement expression) {
+        if (expression.getParent() instanceof JetDotQualifiedExpression) {
+            final JetDotQualifiedExpression parent = (JetDotQualifiedExpression) expression.getParent();
+            if (!resolvesToClassOrPackage(parent.getReceiverExpression())) {
+                // we have a receiver on stack
+                myStack.pop().put(Type.getObjectType(CLASS_OBJECT), v);
+            }
         }
     }
 

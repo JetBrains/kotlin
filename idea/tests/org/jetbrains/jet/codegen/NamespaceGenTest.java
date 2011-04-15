@@ -2,6 +2,7 @@ package org.jetbrains.jet.codegen;
 
 import org.jetbrains.jet.parsing.JetParsingTest;
 
+import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -271,5 +272,22 @@ public class NamespaceGenTest extends CodegenTestCase {
         loadText("fun foo() = java.util.Arrays.asList(\"IntelliJ\", \"IDEA\")");
         final Method main = generateFunction();
         ArrayList arrayList = (ArrayList) main.invoke(null);
+    }
+
+    public void testFieldRead() throws Exception {
+        loadText("import java.awt.*; fun foo(c: GridBagConstraints) = c.gridx");
+        System.out.println(generateToText());
+        final Method main = generateFunction();
+        GridBagConstraints c = new GridBagConstraints();
+        c.gridx = 239;
+        assertEquals(239, main.invoke(null, c));
+    }
+
+    public void testFieldWrite() throws Exception {
+        loadText("import java.awt.*; fun foo(c: GridBagConstraints) { c.gridx = 239 }");
+        final Method main = generateFunction();
+        GridBagConstraints c = new GridBagConstraints();
+        main.invoke(null, c);
+        assertEquals(239, c.gridx);
     }
 }
