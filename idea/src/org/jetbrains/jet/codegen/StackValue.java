@@ -153,7 +153,17 @@ public abstract class StackValue {
 
         @Override
         public void put(Type type, InstructionAdapter v) {
-            coerce(type, v);
+            if (type == Type.VOID_TYPE && this.type != Type.VOID_TYPE) {
+                if (this.type.getSize() == 2) {
+                    v.pop2();
+                }
+                else {
+                    v.pop();
+                }
+            }
+            else {
+                coerce(type, v);
+            }
         }
 
         @Override

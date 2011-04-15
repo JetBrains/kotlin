@@ -29,8 +29,8 @@ public class ExpressionCodegen extends JetVisitor {
 
     private static final Type TYPE_OBJECT = Type.getObjectType(CLASS_OBJECT);
 
-    private final Stack<Label> myLoopStarts = new Stack<Label>();
-    private final Stack<Label> myLoopEnds = new Stack<Label>();
+    private final Stack<Label> myContinueTargets = new Stack<Label>();
+    private final Stack<Label> myBreakTargets = new Stack<Label>();
     private final Stack<StackValue> myStack = new Stack<StackValue>();
 
     private final InstructionAdapter v;
@@ -127,11 +127,11 @@ public class ExpressionCodegen extends JetVisitor {
     @Override
     public void visitWhileExpression(JetWhileExpression expression) {
         Label condition = new Label();
-        myLoopStarts.push(condition);
+        myContinueTargets.push(condition);
         v.mark(condition);
 
         Label end = new Label();
-        myLoopEnds.push(end);
+        myBreakTargets.push(end);
 
         gen(expression.getCondition());
         myStack.pop().condJump(end, true, v);
@@ -140,18 +140,18 @@ public class ExpressionCodegen extends JetVisitor {
         v.goTo(condition);
 
         v.mark(end);
-        myLoopEnds.pop();
-        myLoopStarts.pop();
+        myBreakTargets.pop();
+        myContinueTargets.pop();
     }
 
     @Override
     public void visitDoWhileExpression(JetDoWhileExpression expression) {
         Label condition = new Label();
         v.mark(condition);
-        myLoopStarts.push(condition);
+        myContinueTargets.push(condition);
 
         Label end = new Label();
-        myLoopEnds.push(end);
+        myBreakTargets.push(end);
 
         gen(expression.getBody(), Type.VOID_TYPE);
 
@@ -160,64 +160,74 @@ public class ExpressionCodegen extends JetVisitor {
 
         v.mark(end);
 
-        myLoopEnds.pop();
-        myLoopStarts.pop();
+        myBreakTargets.pop();
+        myContinueTargets.pop();
     }
 
     @Override
     public void visitForExpression(JetForExpression expression) {
         final JetExpression loopRange = expression.getLoopRange();
-        final JetParameter parameter = expression.getLoopParameter();
-        final DeclarationDescriptor descriptor = bindingContext.getParameterDescriptor(parameter);
         Type loopRangeType = expressionType(loopRange);
         if (loopRangeType.getSort() == Type.ARRAY) {
-            generateForInArray(expression, descriptor, loopRangeType);
+            generateForInArray(expression, loopRangeType);
         }
         else {
             throw new UnsupportedOperationException("for/in loop currently only supported for arrays");
         }
     }
 
-    private void generateForInArray(JetForExpression expression, DeclarationDescriptor descriptor, Type loopRangeType) {
-        JetType paramType = bindingContext.getExpressionType(expression.getLoopParameter());
+    private void generateForInArray(JetForExpression expression, Type loopRangeType) {
+        final JetParameter loopParameter = expression.getLoopParameter();
+        final PropertyDescriptor parameterDescriptor = bindingContext.getParameterDescriptor(loopParameter);
+        JetType paramType = parameterDescriptor.getInType();
         Type asmParamType = typeMapper.mapType(paramType);
 
+        int lengthVar = myMap.enterTemp();
+        gen(expression.getLoopRange(), loopRangeType);
+        v.arraylength();
+        v.store(lengthVar, Type.INT_TYPE);
         int indexVar = myMap.enterTemp();
         v.aconst(0);
         v.store(indexVar, Type.INT_TYPE);
-        int paramVar = myMap.getIndex(descriptor);
+        myMap.enter(parameterDescriptor, asmParamType.getSize());
 
         Label condition = new Label();
+        Label increment = new Label();
         Label end = new Label();
         v.mark(condition);
-        myLoopStarts.push(condition);
+        myContinueTargets.push(increment);
+        myBreakTargets.push(end);
 
         v.load(indexVar, Type.INT_TYPE);
-        gen(expression.getLoopRange(), loopRangeType);  // index array
-        v.dup2();                                       // index array index array
-        v.arraylength();                                // index array index array.length
-        v.ifge(end);                                    // index array
-        v.swap();                                       // array index
+        v.load(lengthVar, Type.INT_TYPE);
+        v.ificmpge(end);
+
+        gen(expression.getLoopRange(), loopRangeType);  // array
+        v.load(indexVar, Type.INT_TYPE);
         v.aload(loopRangeType.getElementType());
         StackValue.onStack(loopRangeType.getElementType()).put(asmParamType, v);
-        v.store(paramVar, asmParamType);
+        v.store(myMap.getIndex(parameterDescriptor), asmParamType);
 
         gen(expression.getBody(), Type.VOID_TYPE);
 
+        v.mark(increment);
+        v.iinc(indexVar, 1);
         v.goTo(condition);
+        v.mark(end);
 
-        myLoopEnds.push(end);
-
-        myMap.leave(descriptor);
-//        TODO v.visitLocalVariable(parameter.getName(), );
+        final int paramIndex = myMap.leave(parameterDescriptor);
+        v.visitLocalVariable(loopParameter.getName(), asmParamType.getDescriptor(), null, condition, end, paramIndex);
         myMap.leaveTemp();
+        myMap.leaveTemp();
+        myBreakTargets.pop();
+        myContinueTargets.pop();
     }
 
     @Override
     public void visitBreakExpression(JetBreakExpression expression) {
         JetSimpleNameExpression labelElement = expression.getTargetLabel();
 
-        Label label = labelElement == null ? myLoopEnds.peek() : null; // TODO:
+        Label label = labelElement == null ? myBreakTargets.peek() : null; // TODO:
 
         v.goTo(label);
     }
@@ -226,7 +236,7 @@ public class ExpressionCodegen extends JetVisitor {
     public void visitContinueExpression(JetContinueExpression expression) {
         String labelName = expression.getLabelName();
 
-        Label label = labelName == null ? myLoopStarts.peek() : null; // TODO:
+        Label label = labelName == null ? myContinueTargets.peek() : null; // TODO:
 
         v.goTo(label);
     }
@@ -274,8 +284,14 @@ public class ExpressionCodegen extends JetVisitor {
             }
         }
 
-        for (JetElement statement : statements) {
-            gen(statement);
+        for (int i = 0, statementsSize = statements.size(); i < statementsSize; i++) {
+            JetElement statement = statements.get(i);
+            if (i == statements.size() - 1) {
+                gen(statement);
+            }
+            else {
+                gen(statement, Type.VOID_TYPE);
+            }
         }
 
         Label blockEnd = new Label();
@@ -537,7 +553,7 @@ public class ExpressionCodegen extends JetVisitor {
 
     @Override
     public void visitSafeQualifiedExpression(JetSafeQualifiedExpression expression) {
-        gen(expression.getReceiverExpression());
+        genToStack(expression.getReceiverExpression());
         Label ifnull = new Label();
         Label end = new Label();
         v.dup();

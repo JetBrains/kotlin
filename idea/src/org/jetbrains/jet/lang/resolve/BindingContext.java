@@ -13,7 +13,7 @@ public interface BindingContext {
     TypeParameterDescriptor getTypeParameterDescriptor(JetTypeParameter declaration);
     FunctionDescriptor getFunctionDescriptor(JetFunction declaration);
     PropertyDescriptor getPropertyDescriptor(JetProperty declaration);
-    DeclarationDescriptor getParameterDescriptor(JetParameter declaration);
+    PropertyDescriptor getParameterDescriptor(JetParameter declaration);
 
     JetType getExpressionType(JetExpression expression);
 

@@ -80,8 +80,9 @@ public class ControlStructuresTest extends CodegenTestCase {
 
     public void testForInArray() throws Exception {
         loadFile("forInArray.jet");
+        System.out.println(generateToText());
         final Method main = generateFunction();
         String[] args = new String[] { "IntelliJ", " ", "IDEA" };
-        assertEquals("IntelliJ IDEA", main.invoke(args));
+        assertEquals("IntelliJ IDEA", main.invoke(null, new Object[] { args }));
     }
 }
