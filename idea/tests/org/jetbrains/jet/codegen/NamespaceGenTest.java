@@ -1,28 +1,15 @@
 package org.jetbrains.jet.codegen;
 
-import com.intellij.testFramework.LightProjectDescriptor;
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetLightProjectDescriptor;
-import org.jetbrains.jet.lang.JetFileType;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetNamespace;
 import org.jetbrains.jet.parsing.JetParsingTest;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author yole
  */
-public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-    }
-
+public class NamespaceGenTest extends CodegenTestCase {
     public void testPSVM() throws Exception {
         loadFile("PSVM.jet");
         final String text = generateToText();
@@ -141,35 +128,6 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
         assertEquals(false, main.invoke(null, 0));
     }
 
-    public void testWhile() throws Exception {
-        factorialTest("while.jet");
-    }
-
-    public void testDoWhile() throws Exception {
-        factorialTest("doWhile.jet");
-    }
-
-    public void testBreak() throws Exception {
-        factorialTest("break.jet");
-    }
-
-    private void factorialTest(final String name) throws IllegalAccessException, InvocationTargetException {
-        loadFile(name);
-
-        System.out.println(generateToText());
-        final Method main = generateFunction();
-        assertEquals(6, main.invoke(null, 3));
-        assertEquals(120, main.invoke(null, 5));
-    }
-
-    public void testContinue() throws Exception {
-        loadFile("continue.jet");
-        System.out.println(generateToText());
-        final Method main = generateFunction();
-        assertEquals(3, main.invoke(null, 4));
-        assertEquals(7, main.invoke(null, 5));
-    }
-
     public void testDiv() throws Exception {
         binOpTest("fun foo(a: Int, b: Int): Int = a / b", 12, 3, 4);
     }
@@ -188,21 +146,6 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
         final String code = "fun foo(a: Int, b: Int): Int = if (a >= b) 1 else 0";
         binOpTest(code, 5, 5, 1);
         binOpTest(code, 3, 5, 0);
-    }
-
-    public void testIfNoElse() throws Exception {
-        loadFile("ifNoElse.jet");
-        System.out.println(generateToText());
-        final Method main = generateFunction();
-        assertEquals(5, main.invoke(null, 5, true));
-        assertEquals(10, main.invoke(null, 5, false));
-    }
-
-    public void testCondJumpOnStack() throws Exception {
-        loadText("fun foo(a: String): Int = if (Boolean.parseBoolean(a)) 5 else 10");
-        final Method main = generateFunction();
-        assertEquals(5, main.invoke(null, "true"));
-        assertEquals(10, main.invoke(null, "false"));
     }
 
     public void testReturnCmp() throws Exception {
@@ -559,7 +502,7 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
     public void testFunctionCall() throws Exception {
         loadFile("functionCall.jet");
         System.out.println(generateToText());
-        final Method main = generateFunction();
+        final Method main = generateFunction("f");
         assertEquals("foo", main.invoke(null));
     }
 
@@ -597,67 +540,5 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
         loadText("fun foo() = java.util.Arrays.asList(\"IntelliJ\", \"IDEA\")");
         final Method main = generateFunction();
         ArrayList arrayList = (ArrayList) main.invoke(null);
-    }
-
-    private void loadText(final String text) {
-        myFixture.configureByText(JetFileType.INSTANCE, text);
-    }
-
-    private void loadFile(final String name) {
-        myFixture.configureByFile(JetParsingTest.getTestDataDir() + "/codegen/" + name);
-    }
-
-    private String generateToText() {
-        Codegens state = new Codegens(getProject(), true);
-        JetFile jetFile = (JetFile) myFixture.getFile();
-        JetNamespace namespace = jetFile.getRootNamespace();
-        NamespaceCodegen codegen = state.forNamespace(namespace);
-        codegen.generate(namespace);
-
-        List<String> files = state.files();
-        assertEquals("This test only supposed to generate single class file", 1, files.size());
-
-        return state.asText(files.get(0));
-    }
-
-    private Class generateToClass() {
-        Codegens state = new Codegens(getProject(), false);
-        JetFile jetFile = (JetFile) myFixture.getFile();
-        final JetNamespace namespace = jetFile.getRootNamespace();
-
-        NamespaceCodegen codegen = state.forNamespace(namespace);
-        codegen.generate(namespace);
-
-        List<String> files = state.files();
-        assertEquals("This test only supposed to generate single class file", 1, files.size());
-        final byte[] data = state.asBytes(files.get(0));
-        MyClassLoader classLoader = new MyClassLoader(NamespaceGenTest.class.getClassLoader());
-        return classLoader.doDefineClass(NamespaceCodegen.getJVMClassName(namespace.getFQName()).replace("/", "."), data);
-    }
-
-    private Method generateFunction() {
-        Class aClass = generateToClass();
-        return aClass.getMethods()[0];
-    }
-
-    private static class MyClassLoader extends ClassLoader {
-      public MyClassLoader(ClassLoader parent) {
-        super(parent);
-      }
-
-      public Class doDefineClass(String name, byte[] data) {
-        return defineClass(name, data, 0, data.length);
-      }
-
-      @Override
-      public Class<?> loadClass(String name) throws ClassNotFoundException {
-        return super.loadClass(name);
-      }
-    }
-
-    @NotNull
-    @Override
-    protected LightProjectDescriptor getProjectDescriptor() {
-        return JetLightProjectDescriptor.INSTANCE;
     }
 }
