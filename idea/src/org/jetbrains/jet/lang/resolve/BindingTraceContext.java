@@ -112,6 +112,11 @@ public class BindingTraceContext extends BindingTrace implements BindingContext 
     }
 
     @Override
+    public DeclarationDescriptor getParameterDescriptor(JetParameter declaration) {
+        return declarationsToDescriptors.get(declaration);
+    }
+
+    @Override
     public JetType resolveTypeReference(JetTypeReference typeReference) {
         return types.get(typeReference);
     }

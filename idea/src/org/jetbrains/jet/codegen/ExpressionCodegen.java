@@ -165,6 +165,55 @@ public class ExpressionCodegen extends JetVisitor {
     }
 
     @Override
+    public void visitForExpression(JetForExpression expression) {
+        final JetExpression loopRange = expression.getLoopRange();
+        final JetParameter parameter = expression.getLoopParameter();
+        final DeclarationDescriptor descriptor = bindingContext.getParameterDescriptor(parameter);
+        Type loopRangeType = expressionType(loopRange);
+        if (loopRangeType.getSort() == Type.ARRAY) {
+            generateForInArray(expression, descriptor, loopRangeType);
+        }
+        else {
+            throw new UnsupportedOperationException("for/in loop currently only supported for arrays");
+        }
+    }
+
+    private void generateForInArray(JetForExpression expression, DeclarationDescriptor descriptor, Type loopRangeType) {
+        JetType paramType = bindingContext.getExpressionType(expression.getLoopParameter());
+        Type asmParamType = typeMapper.mapType(paramType);
+
+        int indexVar = myMap.enterTemp();
+        v.aconst(0);
+        v.store(indexVar, Type.INT_TYPE);
+        int paramVar = myMap.getIndex(descriptor);
+
+        Label condition = new Label();
+        Label end = new Label();
+        v.mark(condition);
+        myLoopStarts.push(condition);
+
+        v.load(indexVar, Type.INT_TYPE);
+        gen(expression.getLoopRange(), loopRangeType);  // index array
+        v.dup2();                                       // index array index array
+        v.arraylength();                                // index array index array.length
+        v.ifge(end);                                    // index array
+        v.swap();                                       // array index
+        v.aload(loopRangeType.getElementType());
+        StackValue.onStack(loopRangeType.getElementType()).put(asmParamType, v);
+        v.store(paramVar, asmParamType);
+
+        gen(expression.getBody(), Type.VOID_TYPE);
+
+        v.goTo(condition);
+
+        myLoopEnds.push(end);
+
+        myMap.leave(descriptor);
+//        TODO v.visitLocalVariable(parameter.getName(), );
+        myMap.leaveTemp();
+    }
+
+    @Override
     public void visitBreakExpression(JetBreakExpression expression) {
         JetSimpleNameExpression labelElement = expression.getTargetLabel();
 

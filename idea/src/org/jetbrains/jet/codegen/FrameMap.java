@@ -24,6 +24,14 @@ public class FrameMap {
         return myVarIndex.remove(descriptor);
     }
 
+    public int enterTemp() {
+        return myMaxIndex++;
+    }
+
+    public void leaveTemp() {
+        myMaxIndex--;
+    }
+
     public int getIndex(DeclarationDescriptor descriptor) {
         return myVarIndex.contains(descriptor) ? myVarIndex.get(descriptor) : -1;
     }
