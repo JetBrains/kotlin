@@ -69,7 +69,7 @@ public class FunctionCodegen {
     private void generateReturn(MethodVisitor mv, JetExpression bodyExpression, ExpressionCodegen codegen) {
         if (!endsWithReturn(bodyExpression)) {
             final JetType expressionType = bindingContext.getExpressionType(bodyExpression);
-            if (expressionType.equals(JetStandardClasses.getUnitType())) {
+            if (expressionType == null || expressionType.equals(JetStandardClasses.getUnitType())) {
                 mv.visitInsn(Opcodes.RETURN);
             }
             else {
