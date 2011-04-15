@@ -2,6 +2,7 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.psi.JetNamespace;
+import org.jetbrains.jet.lang.types.ClassDescriptor;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.util.TraceClassVisitor;
@@ -39,6 +40,18 @@ public class Codegens {
 
         generators.put(filePath, visitor);
         return visitor;
+    }
+
+    public ClassVisitor forClassInterface(ClassDescriptor aClass) {
+        return newVisitor(CodeGenUtil.getInternalInterfaceName(aClass));
+    }
+
+    public ClassVisitor forClassImplementation(ClassDescriptor aClass) {
+        return newVisitor(CodeGenUtil.getInternalImplementationName(aClass));
+    }
+
+    public ClassVisitor forClassDelegatingImplementation(ClassDescriptor aClass) {
+        return newVisitor(CodeGenUtil.getInternalDelegatingImplementationName(aClass));
     }
 
     public NamespaceCodegen forNamespace(JetNamespace namespace) {

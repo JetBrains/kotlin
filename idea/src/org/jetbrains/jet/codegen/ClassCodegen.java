@@ -7,6 +7,7 @@ import org.jetbrains.jet.lang.types.ClassDescriptor;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.JetType;
 import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.Opcodes;
 
 import java.util.List;
 
@@ -15,25 +16,29 @@ import java.util.List;
  */
 public class ClassCodegen {
     private final Project project;
-    private final ClassVisitor v;
     private final BindingContext bindingContext;
+    private final Codegens factory;
 
-    public ClassCodegen(Project project, Codegens v, JetClass jetClass, BindingContext bindingContext) {
+    public ClassCodegen(Project project, Codegens factory, BindingContext bindingContext) {
         this.project = project;
-        this.v = null;
+        this.factory = factory;
         this.bindingContext = bindingContext;
 
-        ClassDescriptor descriptor =  bindingContext.getClassDescriptor(jetClass);
+    }
+
+    public void generate(JetClass aClass) {
+        ClassDescriptor descriptor =  bindingContext.getClassDescriptor(aClass);
         String fqName = CodeGenUtil.getInternalInterfaceName(descriptor);
 
-        List<JetDelegationSpecifier> delegationSpecifiers = jetClass.getDelegationSpecifiers();
+        List<JetDelegationSpecifier> delegationSpecifiers = aClass.getDelegationSpecifiers();
         for (JetDelegationSpecifier specifier : delegationSpecifiers) {
             JetType superType = bindingContext.resolveTypeReference(specifier.getTypeReference());
             String superClassFQN = CodeGenUtil.getInternalInterfaceName((ClassDescriptor) superType.getConstructor().getDeclarationDescriptor());
         }
+
         //descriptor.
 
-/*
+        ClassVisitor v = factory.forClassImplementation(descriptor);
         v.visit(Opcodes.V1_6,
                 Opcodes.ACC_PUBLIC,
                 fqName.replace('.', '/'),
@@ -42,24 +47,17 @@ public class ClassCodegen {
                 "java/lang/Object",
                 new String[0]
                 );
-*/
-    }
 
-    public void generate(JetNamespace namespace) {
         final PropertyCodegen propertyCodegen = new PropertyCodegen(v);
         final FunctionCodegen functionCodegen = new FunctionCodegen(v, JetStandardLibrary.getJetStandardLibrary(project), bindingContext);
 
-        for (JetDeclaration declaration : namespace.getDeclarations()) {
+        for (JetDeclaration declaration : aClass.getDeclarations()) {
             if (declaration instanceof JetProperty) {
-                propertyCodegen.gen((JetProperty) declaration, namespace);
+                propertyCodegen.genInInterface((JetProperty) declaration);
             }
             else if (declaration instanceof JetFunction) {
-                functionCodegen.gen((JetFunction) declaration, namespace);
+                functionCodegen.genInInterface((JetFunction) declaration);
             }
         }
-    }
-
-    public ClassVisitor getVisitor() {
-        return v;
     }
 }

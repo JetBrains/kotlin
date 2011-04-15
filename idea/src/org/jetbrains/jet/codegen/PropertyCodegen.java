@@ -1,7 +1,5 @@
 package org.jetbrains.jet.codegen;
 
-import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.lang.psi.JetNamespace;
 import org.jetbrains.jet.lang.psi.JetProperty;
 import org.objectweb.asm.ClassVisitor;
 
@@ -15,11 +13,19 @@ public class PropertyCodegen {
         this.v = v;
     }
 
-    public void gen(JetProperty p, JetNamespace owner) {
+    public void genInNamespace(JetProperty p) {
 
     }
 
-    public void gen(JetProperty p, JetClass owner) {
+    public void genInInterface(JetProperty p) {
+
+    }
+
+    public void genInImplementation(JetProperty p) {
+
+    }
+
+    public void genInDelegatingImplementation(JetProperty p) {
 
     }
 }

@@ -41,10 +41,10 @@ public class NamespaceCodegen {
 
         for (JetDeclaration declaration : namespace.getDeclarations()) {
             if (declaration instanceof JetProperty) {
-                propertyCodegen.gen((JetProperty) declaration, namespace);
+                propertyCodegen.genInNamespace((JetProperty) declaration);
             }
             else if (declaration instanceof JetFunction) {
-                functionCodegen.gen((JetFunction) declaration, namespace);
+                functionCodegen.genInNamespace((JetFunction) declaration);
             }
         }
     }
@@ -58,9 +58,5 @@ public class NamespaceCodegen {
             return "namespace";
         }
         return fqName.replace('.', '/') + "/namespace";
-    }
-
-    public ClassVisitor getVisitor() {
-        return v;
     }
 }

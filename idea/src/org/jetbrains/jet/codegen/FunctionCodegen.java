@@ -27,11 +27,19 @@ public class FunctionCodegen {
         typeMapper = new JetTypeMapper(standardLibrary, bindingContext);
     }
 
-    public void gen(JetFunction f, JetNamespace owner) {
+    public void genInNamespace(JetFunction f) {
         gen(f);
     }
 
-    public void gen(JetFunction f, JetClass owner) {
+    public void genInInterface(JetFunction f) {
+
+    }
+
+    public void genInImplementation(JetFunction f) {
+
+    }
+
+    public void genInDelegatingImplementation(JetFunction f) {
 
     }
 
