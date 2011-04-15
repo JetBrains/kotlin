@@ -77,4 +77,11 @@ public class ControlStructuresTest extends CodegenTestCase {
         List<String> args = Arrays.asList("IntelliJ", " ", "IDEA");
         assertEquals("IntelliJ IDEA", main.invoke(args));
     }
+
+    public void testForInArray() throws Exception {
+        loadFile("forInArray.jet");
+        final Method main = generateFunction();
+        String[] args = new String[] { "IntelliJ", " ", "IDEA" };
+        assertEquals("IntelliJ IDEA", main.invoke(args));
+    }
 }
