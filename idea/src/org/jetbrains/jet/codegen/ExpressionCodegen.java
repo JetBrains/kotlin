@@ -62,6 +62,10 @@ public class ExpressionCodegen extends JetVisitor {
         }
     }
 
+    private void genToStack(JetExpression expr) {
+        gen(expr, expressionType(expr));
+    }
+
     @Override
     public void visitExpression(JetExpression expression) {
         throw new UnsupportedOperationException("Codegen for " + expression + " is not yet implemented");
@@ -621,11 +625,13 @@ public class ExpressionCodegen extends JetVisitor {
 
     private void generateElvis(JetBinaryExpression expression) {
         final Type exprType = expressionType(expression);
-        gen(expression.getLeft(), exprType);
+        final Type leftType = expressionType(expression.getLeft());
+        gen(expression.getLeft(), leftType);
         v.dup();
         Label end = new Label();
         Label ifNull = new Label();
         v.ifnull(ifNull);
+        StackValue.onStack(leftType).put(exprType, v);
         v.goTo(end);
         v.mark(ifNull);
         v.pop();

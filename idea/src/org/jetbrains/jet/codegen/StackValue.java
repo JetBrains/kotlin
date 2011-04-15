@@ -69,9 +69,39 @@ public abstract class StackValue {
         }
     }
 
+    private static void unbox(final Type type, InstructionAdapter v) {
+        if (type == Type.INT_TYPE) {
+            v.invokevirtual("java/lang/Number", "intValue", "()I");
+        }
+        else if (type == Type.BOOLEAN_TYPE) {
+            v.invokevirtual("java/lang/Boolean", "booleanValue", "()Z");
+        }
+        else if (type == Type.CHAR_TYPE) {
+            v.invokevirtual("java/lang/Character", "charValue", "()C");
+        }
+        else if (type == Type.SHORT_TYPE) {
+            v.invokevirtual("java/lang/Number", "shortValue", "()S");
+        }
+        else if (type == Type.LONG_TYPE) {
+            v.invokevirtual("java/lang/Number", "longValue", "()J");
+        }
+        else if (type == Type.BYTE_TYPE) {
+            v.invokevirtual("java/lang/Number", "byteValue", "()B");
+        }
+        else if (type == Type.FLOAT_TYPE) {
+            v.invokevirtual("java/lang/Number", "floatValue", "()F");
+        }
+        else if (type == Type.DOUBLE_TYPE) {
+            v.invokevirtual("java/lang/Number", "doubleValue", "()D");
+        }
+    }
+
     protected void coerce(Type type, InstructionAdapter v) {
         if (type.getSort() == Type.OBJECT) {
             box(this.type, v);
+        }
+        else if (this.type.getSort() == Type.OBJECT && type.getSort() <= Type.DOUBLE) {
+            unbox(type, v);
         }
         else if (type != this.type) {
             v.cast(this.type, type);

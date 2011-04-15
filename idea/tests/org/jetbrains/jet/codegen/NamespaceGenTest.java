@@ -275,6 +275,13 @@ public class NamespaceGenTest extends CodegenTestCase {
         assertEquals("null", main.invoke(null, new Object[] { null }));
     }
 
+    public void testElvisInt() throws Exception {
+        loadText("fun foo(a: Int?): Int = a ?: 239");
+        final Method main = generateFunction();
+        assertEquals(610, main.invoke(null, 610));
+        assertEquals(239, main.invoke(null, new Object[]{null}));
+    }
+
     public void _testVarargs() throws Exception {
         loadText("fun foo() = java.util.Arrays.asList(\"IntelliJ\", \"IDEA\")");
         final Method main = generateFunction();
