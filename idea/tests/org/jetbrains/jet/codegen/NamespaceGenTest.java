@@ -11,6 +11,7 @@ import org.jetbrains.jet.parsing.JetParsingTest;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -582,6 +583,12 @@ public class NamespaceGenTest extends LightCodeInsightFixtureTestCase {
         System.out.println(generateToText());
         final Method main = generateFunction();
         assertEquals(expected, main.invoke(null, arg1, arg2));
+    }
+
+    public void _testVarargs() throws Exception {
+        loadText("fun foo() = java.util.Arrays.asList(\"IntelliJ\", \"IDEA\")");
+        final Method main = generateFunction();
+        ArrayList arrayList = (ArrayList) main.invoke(null);
     }
 
     private void loadText(final String text) {
