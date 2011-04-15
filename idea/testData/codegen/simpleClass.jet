@@ -1,0 +1,5 @@
+class SimpleClass {
+    fun foo() {
+      return 0;
+    }
+}

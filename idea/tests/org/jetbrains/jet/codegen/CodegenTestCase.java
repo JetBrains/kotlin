@@ -1,12 +1,12 @@
 package org.jetbrains.jet.codegen;
 
+import com.intellij.openapi.util.Ref;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetLightProjectDescriptor;
 import org.jetbrains.jet.lang.JetFileType;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetNamespace;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.parsing.JetParsingTest;
 
 import java.lang.reflect.Method;
@@ -37,7 +37,7 @@ public abstract class CodegenTestCase extends LightCodeInsightFixtureTestCase {
         return state.asText(files.get(0));
     }
 
-    private Class generateToClass() {
+    private Class generateNamespaceClass() {
         Codegens state = new Codegens(getProject(), false);
         JetFile jetFile = (JetFile) myFixture.getFile();
         final JetNamespace namespace = jetFile.getRootNamespace();
@@ -45,20 +45,47 @@ public abstract class CodegenTestCase extends LightCodeInsightFixtureTestCase {
         NamespaceCodegen codegen = state.forNamespace(namespace);
         codegen.generate(namespace);
 
+        return getJVMClass(state, NamespaceCodegen.getJVMClassName(namespace.getFQName()).replace("/", "."));
+    }
+
+    protected Class generateClass() {
+        final Codegens state = new Codegens(getProject(), false);
+        JetFile jetFile = (JetFile) myFixture.getFile();
+        final Ref<Class> result = new Ref<Class>();
+        jetFile.acceptChildren(new JetVisitor() {
+            @Override
+            public void visitJetElement(JetElement elem) {
+                elem.acceptChildren(this);
+            }
+
+            @Override
+            public void visitClass(JetClass klass) {
+                final ClassCodegen codegen = state.forClassImplementation(klass);
+                codegen.generate(klass);
+                result.set(getJVMClass(state, klass.getName()));
+            }
+        });
+        if (result.isNull()) {
+            throw new IllegalArgumentException("found no classes in the file to generate");
+        }
+        return result.get();
+    }
+
+    private static Class getJVMClass(Codegens state, final String fqName) {
         List<String> files = state.files();
         assertEquals("This test only supposed to generate single class file", 1, files.size());
         final byte[] data = state.asBytes(files.get(0));
         MyClassLoader classLoader = new MyClassLoader(NamespaceGenTest.class.getClassLoader());
-        return classLoader.doDefineClass(NamespaceCodegen.getJVMClassName(namespace.getFQName()).replace("/", "."), data);
+        return classLoader.doDefineClass(fqName, data);
     }
 
     protected Method generateFunction() {
-        Class aClass = generateToClass();
+        Class aClass = generateNamespaceClass();
         return aClass.getMethods()[0];
     }
 
     protected Method generateFunction(String name) {
-        Class aClass = generateToClass();
+        Class aClass = generateNamespaceClass();
         for (Method method : aClass.getMethods()) {
             if (method.getName().equals(name)) {
                 return method;

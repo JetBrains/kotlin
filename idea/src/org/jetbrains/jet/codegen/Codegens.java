@@ -1,7 +1,12 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.project.Project;
+import org.jetbrains.jet.lang.ErrorHandler;
+import org.jetbrains.jet.lang.psi.JetClass;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespace;
+import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.ClassDescriptor;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
@@ -44,6 +49,13 @@ public class Codegens {
 
     public ClassVisitor forClassInterface(ClassDescriptor aClass) {
         return newVisitor(CodeGenUtil.getInternalInterfaceName(aClass));
+    }
+
+    public ClassCodegen forClassImplementation(JetClass aClass) {
+        String fqName = aClass.getName();   // TODO
+        final BindingContext bindingContext = AnalyzingUtils.analyzeFile((JetFile) aClass.getContainingFile(),
+                ErrorHandler.THROW_EXCEPTION);
+        return new ClassCodegen(project, this, bindingContext);
     }
 
     public ClassVisitor forClassImplementation(ClassDescriptor aClass) {
