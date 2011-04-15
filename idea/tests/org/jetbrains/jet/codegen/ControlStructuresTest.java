@@ -2,6 +2,8 @@ package org.jetbrains.jet.codegen;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author yole
@@ -49,5 +51,12 @@ public class ControlStructuresTest extends CodegenTestCase {
         final Method main = generateFunction();
         assertEquals(5, main.invoke(null, "true"));
         assertEquals(10, main.invoke(null, "false"));
+    }
+
+    public void _testFor() throws Exception {
+        loadFile("for.jet");
+        final Method main = generateFunction();
+        List<String> args = Arrays.asList("IntelliJ", " ", "IDEA");
+        assertEquals("IntelliJ IDEA", main.invoke(args));
     }
 }

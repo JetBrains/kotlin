@@ -1,0 +1,9 @@
+import java.util.*
+
+fun concat(l: List): String {
+  val sb = new StringBuilder()
+  for(s in l) {
+    sb.append(s)
+  }
+  s.toString()
+}
