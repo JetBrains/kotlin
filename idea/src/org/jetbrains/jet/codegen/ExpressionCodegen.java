@@ -785,27 +785,15 @@ public class ExpressionCodegen extends JetVisitor {
     }
 
     private void generateAugmentedAssignment(JetBinaryExpression expression) {
+        DeclarationDescriptor op = bindingContext.resolveReferenceExpression(expression.getOperationReference());
         final JetExpression lhs = expression.getLeft();
-        if (lhs instanceof JetReferenceExpression) {
-            DeclarationDescriptor op = bindingContext.resolveReferenceExpression(expression.getOperationReference());
-            final JetType leftType = bindingContext.getExpressionType(lhs);
-            final Type asmType = typeMapper.mapType(leftType);
-            if (isNumberPrimitive(asmType)) {
-                final int index = indexOfLocal((JetReferenceExpression) lhs);
-                assert index >= 0;
-                v.load(index, asmType);
-                gen(expression.getRight(), asmType);
-                int opcode = opcodeForMethod(op.getName());
-                v.visitInsn(asmType.getOpcode(opcode));
-                v.store(index, asmType);
-            }
-            else {
-                throw new UnsupportedOperationException("Don't know how to generate augmented assignment for non-numeric types");
-            }
-        }
-        else {
-            throw new UnsupportedOperationException("Don't know how to generate augmented assignment to " + lhs.getText());
-        }
+        Type asmType = expressionType(lhs);
+        StackValue value = generateIntermediateValue(lhs);
+        value.put(asmType, v);
+        genToJVMStack(expression.getRight());
+        v.visitInsn(asmType.getOpcode(opcodeForMethod(op.getName())));
+        value = generateIntermediateValue(lhs);
+        value.store(v, true);
     }
 
     private void generateConcatenation(JetBinaryExpression expression) {
