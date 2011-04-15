@@ -9,6 +9,24 @@ import java.util.List;
  * @author yole
  */
 public class ControlStructuresTest extends CodegenTestCase {
+    public void testIf() throws Exception {
+        loadFile("if.jet");
+
+        System.out.println(generateToText());
+        final Method main = generateFunction();
+        assertEquals(15, main.invoke(null, true));
+        assertEquals(20, main.invoke(null, false));
+    }
+
+    public void testSingleBranchIf() throws Exception {
+        loadFile("singleBranchIf.jet");
+
+        System.out.println(generateToText());
+        final Method main = generateFunction();
+        assertEquals(15, main.invoke(null, true));
+        assertEquals(20, main.invoke(null, false));
+    }
+
     public void testWhile() throws Exception {
         factorialTest("while.jet");
     }

@@ -1,4 +1,0 @@
-fun foo(f: Int): Boolean {
-    if (f > 0) return true;
-    return false;
-}
