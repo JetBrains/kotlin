@@ -781,7 +781,7 @@ public class ExpressionCodegen extends JetVisitor {
     private void generateAssignmentExpression(JetBinaryExpression expression) {
         StackValue stackValue = generateIntermediateValue(expression.getLeft());
         genToJVMStack(expression.getRight());
-        stackValue.store(v, false);
+        stackValue.store(v);
     }
 
     private void generateAugmentedAssignment(JetBinaryExpression expression) {
@@ -789,11 +789,11 @@ public class ExpressionCodegen extends JetVisitor {
         final JetExpression lhs = expression.getLeft();
         Type asmType = expressionType(lhs);
         StackValue value = generateIntermediateValue(lhs);
+        value.dupReceiver(v);
         value.put(asmType, v);
         genToJVMStack(expression.getRight());
         v.visitInsn(asmType.getOpcode(opcodeForMethod(op.getName())));
-        value = generateIntermediateValue(lhs);
-        value.store(v, true);
+        value.store(v);
     }
 
     private void generateConcatenation(JetBinaryExpression expression) {
@@ -896,6 +896,7 @@ public class ExpressionCodegen extends JetVisitor {
             }
         }
         StackValue value = generateIntermediateValue(operand);
+        value.dupReceiver(v);
         value.put(asmType, v);
         if (asmType == Type.LONG_TYPE) {
             v.aconst(Long.valueOf(increment));
@@ -910,8 +911,7 @@ public class ExpressionCodegen extends JetVisitor {
             v.aconst(increment);
         }
         v.add(asmType);
-        value = generateIntermediateValue(operand);
-        value.store(v, true);
+        value.store(v);
         return value;
     }
 

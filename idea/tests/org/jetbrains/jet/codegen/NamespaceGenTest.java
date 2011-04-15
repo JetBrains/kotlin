@@ -338,10 +338,18 @@ public class NamespaceGenTest extends CodegenTestCase {
 
     public void testArrayWrite() throws Exception {
         loadText("fun foo(c: Array<String>) { c[0] = \"jet\"; }");
-        System.out.println(generateToText());
         final Method main = generateFunction();
         String[] array = new String[] { null };
         main.invoke(null, new Object[] { array });
         assertEquals("jet", array[0]);
+    }
+
+    public void testArrayAugAssign() throws Exception {
+        loadText("fun foo(c: Array<Int>) { c[0] *= 2 }");
+        System.out.println(generateToText());
+        final Method main = generateFunction();
+        int[] data = new int[] { 5 };
+        main.invoke(null, new Object[] { data });
+        assertEquals(10, data[0]);
     }
 }
