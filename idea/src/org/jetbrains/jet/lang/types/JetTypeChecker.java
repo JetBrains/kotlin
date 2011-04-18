@@ -275,13 +275,14 @@ public class JetTypeChecker {
             return;
         }
         handler.beforeChildren(current);
-        Map<TypeConstructor, TypeProjection> substitutionContext = TypeUtils.buildSubstitutionContext(current);
+//        Map<TypeConstructor, TypeProjection> substitutionContext = TypeUtils.buildSubstitutionContext(current);
+        TypeSubstitutor substitutor = TypeSubstitutor.create(current);
         for (JetType supertype : current.getConstructor().getSupertypes()) {
             TypeConstructor supertypeConstructor = supertype.getConstructor();
             if (visited.contains(supertypeConstructor)) {
                 continue;
             }
-            JetType substitutedSupertype = TypeSubstitutor.INSTANCE.safeSubstitute(substitutionContext, supertype, Variance.INVARIANT);
+            JetType substitutedSupertype = substitutor.safeSubstitute(supertype, Variance.INVARIANT);
             dfs(substitutedSupertype, visited, handler);
         }
         handler.afterChildren(current);
@@ -336,7 +337,7 @@ public class JetTypeChecker {
         for (JetType immediateSupertype : constructor.getSupertypes()) {
             JetType correspondingSupertype = findCorrespondingSupertype(immediateSupertype, supertype);
             if (correspondingSupertype != null) {
-                return TypeSubstitutor.INSTANCE.safeSubstitute(subtype, correspondingSupertype, Variance.INVARIANT);
+                return TypeSubstitutor.create(subtype).safeSubstitute(correspondingSupertype, Variance.INVARIANT);
             }
         }
         return null;

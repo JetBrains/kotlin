@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * @author abreslav
  */
-public class ValueParameterDescriptorImpl extends PropertyDescriptorImpl implements ValueParameterDescriptor {
+public class ValueParameterDescriptorImpl extends VariableDescriptorImpl implements ValueParameterDescriptor {
     private final boolean hasDefaultValue;
     private final boolean isVararg;
     private final int index;
@@ -52,5 +52,16 @@ public class ValueParameterDescriptorImpl extends PropertyDescriptorImpl impleme
     @Override
     public boolean isVararg() {
         return isVararg;
+    }
+
+    @NotNull
+    @Override
+    public VariableDescriptor substitute(TypeSubstitutor substitutor) {
+        throw new UnsupportedOperationException(); // TODO
+    }
+
+    @Override
+    public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
+        return visitor.visitValueParameterDescriptor(this, data);
     }
 }

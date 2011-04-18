@@ -74,6 +74,12 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
         return boundsAsType;
     }
 
+    @NotNull
+    @Override
+    public TypeParameterDescriptor substitute(TypeSubstitutor substitutor) {
+        throw new UnsupportedOperationException(); // TODO
+    }
+
     @Override
     public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
         return visitor.visitTypeParameterDescriptor(this, data);

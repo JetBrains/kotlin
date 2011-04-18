@@ -112,13 +112,13 @@ public class BindingTraceContext extends BindingTrace implements BindingContext 
     }
 
     @Override
-    public PropertyDescriptor getPropertyDescriptor(JetProperty declaration) {
-        return (PropertyDescriptor) declarationsToDescriptors.get(declaration);
+    public VariableDescriptor getPropertyDescriptor(JetProperty declaration) {
+        return (VariableDescriptor) declarationsToDescriptors.get(declaration);
     }
 
     @Override
-    public PropertyDescriptor getParameterDescriptor(JetParameter declaration) {
-        return (PropertyDescriptor) declarationsToDescriptors.get(declaration);
+    public VariableDescriptor getParameterDescriptor(JetParameter declaration) {
+        return (VariableDescriptor) declarationsToDescriptors.get(declaration);
     }
 
     @Override

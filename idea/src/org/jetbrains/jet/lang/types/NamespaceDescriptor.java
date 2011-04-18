@@ -35,6 +35,12 @@ public class NamespaceDescriptor extends DeclarationDescriptorImpl {
         return namespaceType;
     }
 
+    @NotNull
+    @Override
+    public NamespaceDescriptor substitute(TypeSubstitutor substitutor) {
+        return this;
+    }
+
     @Override
     public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
         return visitor.visitNamespaceDescriptor(this, data);

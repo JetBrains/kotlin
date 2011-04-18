@@ -8,11 +8,11 @@ import java.util.List;
 /**
  * @author abreslav
  */
-public class PropertyDescriptorImpl extends DeclarationDescriptorImpl implements PropertyDescriptor {
+public abstract class VariableDescriptorImpl extends DeclarationDescriptorImpl implements VariableDescriptor {
     private final JetType inType;
     private final JetType outType;
 
-    public PropertyDescriptorImpl(
+    public VariableDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull List<Attribute> attributes,
             @NotNull String name,
@@ -34,10 +34,5 @@ public class PropertyDescriptorImpl extends DeclarationDescriptorImpl implements
     @Override
     public JetType getInType() {
         return inType;
-    }
-
-    @Override
-    public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
-        return visitor.visitPropertyDescriptor(this, data);
     }
 }

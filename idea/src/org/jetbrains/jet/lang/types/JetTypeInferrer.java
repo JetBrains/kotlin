@@ -442,12 +442,12 @@ public class JetTypeInferrer {
             // TODO : type substitutions???
             String referencedName = expression.getReferencedName();
             if (referencedName != null) {
-                PropertyDescriptor property = scope.getProperty(referencedName);
-                if (property != null) {
-                    trace.recordReferenceResolution(expression, property);
-                    result = property.getOutType();
+                VariableDescriptor variable = scope.getVariable(referencedName);
+                if (variable != null) {
+                    trace.recordReferenceResolution(expression, variable);
+                    result = variable.getOutType();
                     if (result == null) {
-                        semanticServices.getErrorHandler().genericError(expression.getNode(), "This property is not readable in this context");
+                        semanticServices.getErrorHandler().genericError(expression.getNode(), "This variable is not readable in this context");
                     }
                     return;
                 } else {
@@ -483,24 +483,24 @@ public class JetTypeInferrer {
             }
 
             List<JetElement> body = expression.getBody();
-            final Map<String, PropertyDescriptor> parameterDescriptors = new HashMap<String, PropertyDescriptor>();
+            final Map<String, VariableDescriptor> parameterDescriptors = new HashMap<String, VariableDescriptor>();
             List<JetType> parameterTypes = new ArrayList<JetType>();
             for (JetParameter parameter : expression.getParameters()) {
                 JetTypeReference typeReference = parameter.getTypeReference();
                 if (typeReference == null) {
                     throw new UnsupportedOperationException("Type inference for parameters is not implemented yet");
                 }
-                PropertyDescriptor propertyDescriptor = classDescriptorResolver.resolveValueParameterDescriptor(functionDescriptor, scope, parameter);
-                parameterDescriptors.put(parameter.getName(), propertyDescriptor);
-                parameterTypes.add(propertyDescriptor.getOutType());
+                VariableDescriptor variableDescriptor = classDescriptorResolver.resolveLocalVariableDescriptor(functionDescriptor, scope, parameter);
+                parameterDescriptors.put(parameter.getName(), variableDescriptor);
+                parameterTypes.add(variableDescriptor.getOutType());
             }
             JetType returnType;
             if (returnTypeRef != null) {
                 returnType = typeResolver.resolveType(scope, returnTypeRef);
             } else {
                 WritableScope writableScope = semanticServices.createWritableScope(scope, functionDescriptor);
-                for (PropertyDescriptor propertyDescriptor : parameterDescriptors.values()) {
-                    writableScope.addPropertyDescriptor(propertyDescriptor);
+                for (VariableDescriptor variableDescriptor : parameterDescriptors.values()) {
+                    writableScope.addVariableDescriptor(variableDescriptor);
                 }
                 writableScope.setThisType(receiverType);
                 returnType = getBlockReturnedType(writableScope, body);
@@ -702,10 +702,10 @@ public class JetTypeInferrer {
                                 ClassDescriptor superclass = (ClassDescriptor) classifierCandidate;
 
                                 Collection<? extends JetType> supertypes = thisType.getConstructor().getSupertypes();
-                                Map<TypeConstructor, TypeProjection> substitutionContext = TypeUtils.buildSubstitutionContext(thisType);
+                                TypeSubstitutor substitutor = TypeSubstitutor.create(thisType);
                                 for (JetType declaredSupertype : supertypes) {
                                     if (declaredSupertype.getConstructor().equals(superclass.getTypeConstructor())) {
-                                        result = TypeSubstitutor.INSTANCE.safeSubstitute(substitutionContext, declaredSupertype, Variance.INVARIANT);
+                                        result = substitutor.safeSubstitute(declaredSupertype, Variance.INVARIANT);
                                         break;
                                     }
                                 }
@@ -849,10 +849,10 @@ public class JetTypeInferrer {
 
             if (loopParameter != null) {
                 JetTypeReference typeReference = loopParameter.getTypeReference();
-                PropertyDescriptor propertyDescriptor;
+                VariableDescriptor variableDescriptor;
                 if (typeReference != null) {
-                    propertyDescriptor = classDescriptorResolver.resolveValueParameterDescriptor(scope.getContainingDeclaration(), scope, loopParameter);
-                    JetType actualParameterType = propertyDescriptor.getOutType();
+                    variableDescriptor = classDescriptorResolver.resolveLocalVariableDescriptor(scope.getContainingDeclaration(), scope, loopParameter);
+                    JetType actualParameterType = variableDescriptor.getOutType();
                     if (expectedParameterType != null &&
                             actualParameterType != null &&
                             !semanticServices.getTypeChecker().isSubtypeOf(expectedParameterType, actualParameterType)) {
@@ -863,9 +863,9 @@ public class JetTypeInferrer {
                     if (expectedParameterType == null) {
                         expectedParameterType = ErrorUtils.createErrorType("Error");
                     }
-                    propertyDescriptor = classDescriptorResolver.resolveValueParameterDescriptor(scope.getContainingDeclaration(), loopParameter, expectedParameterType);
+                    variableDescriptor = classDescriptorResolver.resolveLocalVariableDescriptor(scope.getContainingDeclaration(), loopParameter, expectedParameterType);
                 }
-                loopScope.addPropertyDescriptor(propertyDescriptor);
+                loopScope.addVariableDescriptor(variableDescriptor);
             }
 
             JetExpression body = expression.getBody();
@@ -926,7 +926,7 @@ public class JetTypeInferrer {
         }
 
         private boolean checkHasNextPropertySupport(@NotNull ASTNode reportErrorsOn, @NotNull JetType iteratorType) {
-            PropertyDescriptor hasNextProperty = iteratorType.getMemberScope().getProperty("hasNext");
+            VariableDescriptor hasNextProperty = iteratorType.getMemberScope().getVariable("hasNext");
             // TODO :extension properties
             if (hasNextProperty == null) {
                 return false;
@@ -1453,7 +1453,7 @@ public class JetTypeInferrer {
                 semanticServices.getErrorHandler().genericError(setter.getNode(), "Local variables are not allowed to have setters");
             }
 
-            PropertyDescriptor propertyDescriptor = classDescriptorResolver.resolvePropertyDescriptor(scope.getContainingDeclaration(), scope, property);
+            VariableDescriptor propertyDescriptor = classDescriptorResolver.resolveLocalVariableDescriptor(scope.getContainingDeclaration(), scope, property);
             JetExpression initializer = property.getInitializer();
             if (property.getPropertyTypeRef() != null && initializer != null) {
                 JetType initializerType = getType(scope, initializer, false);
@@ -1465,7 +1465,7 @@ public class JetTypeInferrer {
                 }
             }
 
-            scope.addPropertyDescriptor(propertyDescriptor);
+            scope.addVariableDescriptor(propertyDescriptor);
         }
 
         @Override

@@ -49,7 +49,7 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
             return  memberDeclarations;
         }
         Map<TypeConstructor, TypeProjection> substitutionContext = TypeUtils.buildSubstitutionContext(typeConstructor.getParameters(), typeArguments);
-        return new SubstitutingScope(memberDeclarations, substitutionContext);
+        return new SubstitutingScope(memberDeclarations, TypeSubstitutor.create(substitutionContext));
     }
 
     @NotNull
@@ -66,7 +66,13 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
             return constructors;
         }
         Map<TypeConstructor, TypeProjection> substitutionContext = TypeUtils.buildSubstitutionContext(getTypeConstructor().getParameters(), typeArguments);
-        return new LazySubstitutingFunctionGroup(substitutionContext, constructors);
+        return new LazySubstitutingFunctionGroup(TypeSubstitutor.create(substitutionContext), constructors);
+    }
+
+    @NotNull
+    @Override
+    public ClassDescriptor substitute(TypeSubstitutor substitutor) {
+        throw new UnsupportedOperationException(); // TODO
     }
 
     @Override

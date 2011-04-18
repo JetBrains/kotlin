@@ -28,8 +28,8 @@ public class ScopeWithReceiver extends JetScopeImpl {
     }
 
     @Override
-    public PropertyDescriptor getProperty(@NotNull String name) {
-        return receiverTypeScope.getProperty(name);
+    public VariableDescriptor getVariable(@NotNull String name) {
+        return receiverTypeScope.getVariable(name);
         // TODO : extension properties
     }
 

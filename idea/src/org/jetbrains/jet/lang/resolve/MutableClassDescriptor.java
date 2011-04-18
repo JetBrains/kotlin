@@ -37,8 +37,8 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     @Override
     public JetScope getMemberScope(List<TypeProjection> typeArguments) {
         List<TypeParameterDescriptor> typeParameters = getTypeConstructor().getParameters();
-        Map<TypeConstructor,TypeProjection> substitutionContext = TypeUtils.buildSubstitutionContext(typeParameters, typeArguments);
-        return new SubstitutingScope(unsubstitutedMemberScope, substitutionContext);
+        Map<TypeConstructor, TypeProjection> substitutionContext = TypeUtils.buildSubstitutionContext(typeParameters, typeArguments);
+        return new SubstitutingScope(unsubstitutedMemberScope, TypeSubstitutor.create(substitutionContext));
     }
 
     @NotNull
@@ -62,7 +62,7 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
             return constructors;
         }
         Map<TypeConstructor, TypeProjection> substitutionContext = TypeUtils.buildSubstitutionContext(getTypeConstructor().getParameters(), typeArguments);
-        return new LazySubstitutingFunctionGroup(substitutionContext, constructors);
+        return new LazySubstitutingFunctionGroup(TypeSubstitutor.create(substitutionContext), constructors);
     }
 
     @NotNull
@@ -73,6 +73,12 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     @NotNull
     public WritableScope getClassHeaderScope() {
         return classHeaderScope;
+    }
+
+    @NotNull
+    @Override
+    public ClassDescriptor substitute(TypeSubstitutor substitutor) {
+        throw new UnsupportedOperationException(); // TODO
     }
 
     @Override

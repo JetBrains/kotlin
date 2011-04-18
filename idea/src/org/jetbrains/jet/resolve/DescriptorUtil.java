@@ -17,7 +17,7 @@ public class DescriptorUtil {
         declarationDescriptor.accept(
                 new DeclarationDescriptorVisitor<Void, StringBuilder>() {
                     @Override
-                    public Void visitPropertyDescriptor(PropertyDescriptor descriptor, StringBuilder builder) {
+                    public Void visitVariableDescriptor(VariableDescriptor descriptor, StringBuilder builder) {
                         JetType outType = descriptor.getOutType();
                         JetType inType = descriptor.getInType();
                         String typeString = "<no type>";
@@ -39,7 +39,7 @@ public class DescriptorUtil {
                             typeString = inType.toString();
                         }
                         builder.append(renderName(descriptor)).append(" : ").append(typeString);
-                        return super.visitPropertyDescriptor(descriptor, builder); 
+                        return super.visitVariableDescriptor(descriptor, builder);
                     }
 
                     @Override
@@ -50,7 +50,7 @@ public class DescriptorUtil {
                         builder.append("(");
                         for (Iterator<ValueParameterDescriptor> iterator = descriptor.getUnsubstitutedValueParameters().iterator(); iterator.hasNext(); ) {
                             ValueParameterDescriptor parameterDescriptor = iterator.next();
-                            visitPropertyDescriptor(parameterDescriptor, builder);
+                            visitVariableDescriptor(parameterDescriptor, builder);
                             if (iterator.hasNext()) {
                                 builder.append(", ");
                             }

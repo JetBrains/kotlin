@@ -187,8 +187,8 @@ public class ExpressionCodegen extends JetVisitor {
 
     private void generateForInArray(JetForExpression expression, Type loopRangeType) {
         final JetParameter loopParameter = expression.getLoopParameter();
-        final PropertyDescriptor parameterDescriptor = bindingContext.getParameterDescriptor(loopParameter);
-        JetType paramType = parameterDescriptor.getInType();
+        final VariableDescriptor parameterDescriptor = bindingContext.getParameterDescriptor(loopParameter);
+        JetType paramType = parameterDescriptor.getOutType();
         Type asmParamType = typeMapper.mapType(paramType);
 
         int lengthVar = myMap.enterTemp();
@@ -287,9 +287,9 @@ public class ExpressionCodegen extends JetVisitor {
 
         for (JetElement statement : statements) {
             if (statement instanceof JetProperty) {
-                final PropertyDescriptor propertyDescriptor = bindingContext.getPropertyDescriptor((JetProperty) statement);
-                final Type type = typeMapper.mapType(propertyDescriptor.getOutType());
-                myMap.enter(propertyDescriptor, type.getSize());
+                final VariableDescriptor variableDescriptor = bindingContext.getPropertyDescriptor((JetProperty) statement);
+                final Type type = typeMapper.mapType(variableDescriptor.getOutType());
+                myMap.enter(variableDescriptor, type.getSize());
             }
         }
 
@@ -309,10 +309,10 @@ public class ExpressionCodegen extends JetVisitor {
         for (JetElement statement : statements) {
             if (statement instanceof JetProperty) {
                 JetProperty var = (JetProperty) statement;
-                PropertyDescriptor propertyDescriptor = bindingContext.getPropertyDescriptor(var);
-                Type outType = typeMapper.mapType(propertyDescriptor.getOutType());
+                VariableDescriptor variableDescriptor = bindingContext.getPropertyDescriptor(var);
+                Type outType = typeMapper.mapType(variableDescriptor.getOutType());
 
-                int index = myMap.leave(propertyDescriptor);
+                int index = myMap.leave(variableDescriptor);
                 v.visitLocalVariable(var.getName(), outType.getDescriptor(), null, blockStart, blockEnd, index);
             }
         }
@@ -341,7 +341,7 @@ public class ExpressionCodegen extends JetVisitor {
     @Override
     public void visitSimpleNameExpression(JetSimpleNameExpression expression) {
         final DeclarationDescriptor descriptor = bindingContext.resolveReferenceExpression(expression);
-        if (descriptor instanceof PropertyDescriptor) {
+        if (descriptor instanceof VariableDescriptor) {
             final DeclarationDescriptor container = descriptor.getContainingDeclaration();
             if (isClass(container, "Number")) {
                 Type castType = getCastType(expression.getReferencedName());
@@ -367,7 +367,7 @@ public class ExpressionCodegen extends JetVisitor {
         else {
             int index = myMap.getIndex(descriptor);
             if (index >= 0) {
-                final JetType outType = ((PropertyDescriptor) descriptor).getOutType();
+                final JetType outType = ((VariableDescriptor) descriptor).getOutType();
                 myStack.push(StackValue.local(index, typeMapper.mapType(outType)));
             }
             else {
@@ -923,14 +923,14 @@ public class ExpressionCodegen extends JetVisitor {
 
     @Override
     public void visitProperty(JetProperty property) {
-        PropertyDescriptor propertyDescriptor = bindingContext.getPropertyDescriptor(property);
-        int index = myMap.getIndex(propertyDescriptor);
+        VariableDescriptor variableDescriptor = bindingContext.getPropertyDescriptor(property);
+        int index = myMap.getIndex(variableDescriptor);
 
         assert index >= 0;
 
         JetExpression initializer = property.getInitializer();
         if (initializer != null) {
-            Type type = typeMapper.mapType(propertyDescriptor.getOutType());
+            Type type = typeMapper.mapType(variableDescriptor.getOutType());
             gen(initializer, type);
             v.store(index, type);
         }

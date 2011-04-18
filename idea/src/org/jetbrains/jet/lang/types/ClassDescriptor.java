@@ -25,4 +25,8 @@ public interface ClassDescriptor extends ClassifierDescriptor {
      */
     @NotNull
     JetType getDefaultType();
+
+    @NotNull
+    @Override
+    ClassDescriptor substitute(TypeSubstitutor substitutor);
 }

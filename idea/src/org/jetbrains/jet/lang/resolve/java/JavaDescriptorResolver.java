@@ -16,6 +16,12 @@ import java.util.*;
 public class JavaDescriptorResolver {
 
     /*package*/ static final DeclarationDescriptor JAVA_ROOT = new DeclarationDescriptorImpl(null, Collections.<Attribute>emptyList(), "<java_root>") {
+        @NotNull
+        @Override
+        public DeclarationDescriptor substitute(TypeSubstitutor substitutor) {
+            throw new UnsupportedOperationException(); // TODO
+        }
+
         @Override
         public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
             throw new UnsupportedOperationException(); // TODO

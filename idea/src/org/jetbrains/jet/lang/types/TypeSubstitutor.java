@@ -17,51 +17,71 @@ public class TypeSubstitutor {
         }
     }
 
-    public static final TypeSubstitutor INSTANCE = new TypeSubstitutor();
+    public static TypeSubstitutor create(@NotNull Map<TypeConstructor, TypeProjection> substitutionContext) {
+        return new TypeSubstitutor(substitutionContext);
+    }
 
-    private TypeSubstitutor() {}
+    public static TypeSubstitutor create(@NotNull JetType context) {
+        return create(TypeUtils.buildSubstitutionContext(context));
+    }
 
-    public JetType safeSubstitute(@NotNull JetType context, @NotNull JetType subject, @NotNull Variance howThisTypeIsUsed) {
-        return safeSubstitute(TypeUtils.buildSubstitutionContext(context), subject, howThisTypeIsUsed);
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private final @NotNull Map<TypeConstructor, TypeProjection> substitutionContext;
+
+    private TypeSubstitutor(@NotNull Map<TypeConstructor, TypeProjection> substitutionContext) {
+        this.substitutionContext = substitutionContext;
+    }
+
+    public boolean isEmpty() {
+        return substitutionContext.isEmpty();
     }
 
     @NotNull
-    public JetType safeSubstitute(@NotNull Map<TypeConstructor, TypeProjection> substitutionContext, @NotNull JetType type, @NotNull Variance howThisTypeIsUsed) {
+    public JetType safeSubstitute(@NotNull JetType type, @NotNull Variance howThisTypeIsUsed) {
+        if (isEmpty()) {
+            return type;
+        }
+
         try {
-            return unsafeSubstitute(substitutionContext, type, howThisTypeIsUsed);
+            return unsafeSubstitute(type, howThisTypeIsUsed);
         } catch (SubstitutionException e) {
             return ErrorUtils.createErrorType(e.getMessage());
         }
     }
 
     @Nullable
-    public JetType substitute(@NotNull Map<TypeConstructor, TypeProjection> substitutionContext, @NotNull JetType type, @NotNull Variance howThisTypeIsUsed) {
+    public JetType substitute(@NotNull JetType type, @NotNull Variance howThisTypeIsUsed) {
+        if (isEmpty()) {
+            return type;
+        }
+
         try {
-            return unsafeSubstitute(substitutionContext, type, howThisTypeIsUsed);
+            return unsafeSubstitute(type, howThisTypeIsUsed);
         } catch (SubstitutionException e) {
             return null;
         }
     }
 
     @NotNull
-    private JetType unsafeSubstitute(@NotNull Map<TypeConstructor, TypeProjection> substitutionContext, @NotNull JetType type, @NotNull Variance howThisTypeIsUsed) throws SubstitutionException {
+    private JetType unsafeSubstitute(@NotNull JetType type, @NotNull Variance howThisTypeIsUsed) throws SubstitutionException {
         TypeConstructor constructor = type.getConstructor();
         TypeProjection value = substitutionContext.get(constructor);
         if (value != null) {
             assert constructor.getDeclarationDescriptor() instanceof TypeParameterDescriptor;
 
-            return substitutionResult(substitutionContext, (TypeParameterDescriptor) constructor.getDeclarationDescriptor(), howThisTypeIsUsed, Variance.INVARIANT, value).getType();
-//
+            return substitutionResult((TypeParameterDescriptor) constructor.getDeclarationDescriptor(), howThisTypeIsUsed, Variance.INVARIANT, value).getType();
+
 //            if (!allows(howThisTypeIsUsed, value.getProjectionKind())) {
 //                throw new SubstitutionException("!!" + value.toString());
 //            }
 //            return value.getType();
         }
 
-        return specializeType(type, substitutionContext, howThisTypeIsUsed);
+        return specializeType(type, howThisTypeIsUsed);
     }
 
-    private JetType specializeType(JetType subjectType, Map<TypeConstructor, TypeProjection> substitutionContext, Variance callSiteVariance) throws SubstitutionException {
+    private JetType specializeType(JetType subjectType, Variance callSiteVariance) throws SubstitutionException {
         List<TypeProjection> newArguments = new ArrayList<TypeProjection>();
         List<TypeProjection> arguments = subjectType.getArguments();
         for (int i = 0, argumentsSize = arguments.size(); i < argumentsSize; i++) {
@@ -78,7 +98,7 @@ public class TypeSubstitutor {
                 subjectType.getConstructor(),
                 subjectType.isNullable(),
                 newArguments,
-                new SubstitutingScope(subjectType.getMemberScope(), substitutionContext));
+                new SubstitutingScope(subjectType.getMemberScope(), this));
     }
 
     @NotNull
@@ -102,18 +122,16 @@ public class TypeSubstitutor {
                 return TypeUtils.makeStarProjection(correspondingTypeParameter);
             }
 
-            return substitutionResult(substitutionContext, correspondingTypeParameter, effectiveContextVariance, passedProjectionKind, projectionValue);
+            return substitutionResult(correspondingTypeParameter, effectiveContextVariance, passedProjectionKind, projectionValue);
         }
         return new TypeProjection(
                 passedProjectionKind,
                 specializeType(
                         typeToSubstituteIn,
-                        substitutionContext,
                         effectiveContextVariance));
     }
 
     private TypeProjection substitutionResult(
-            Map<TypeConstructor, TypeProjection> substitutionContext,
             TypeParameterDescriptor correspondingTypeParameter,
             Variance effectiveContextVariance,
             Variance passedProjectionKind,
@@ -154,7 +172,7 @@ public class TypeSubstitutor {
 //                throw new SubstitutionException(""); // TODO : error message
 //            }
 //
-        return new TypeProjection(effectiveProjectionKindValue,  specializeType(effectiveTypeValue, substitutionContext, effectiveContextVariance));
+        return new TypeProjection(effectiveProjectionKindValue,  specializeType(effectiveTypeValue, effectiveContextVariance));
     }
 
     private static Variance asymmetricOr(Variance a, Variance b) {

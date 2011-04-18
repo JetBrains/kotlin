@@ -72,6 +72,11 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
     }
 
     @Override
+    public FunctionDescriptor substitute(TypeSubstitutor substitutor) {
+        return FunctionDescriptorUtil.substituteFunctionDescriptor(this, substitutor);
+    }
+
+    @Override
     public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
         return visitor.visitFunctionDescriptor(this, data);
     }

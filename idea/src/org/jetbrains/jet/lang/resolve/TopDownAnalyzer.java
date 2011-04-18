@@ -211,12 +211,12 @@ public class TopDownAnalyzer {
         WritableScope memberScope = classDescriptor.getUnsubstitutedMemberScope(); // TODO : this is REALLY questionable
         ConstructorDescriptor constructorDescriptor = classDescriptorResolver.resolvePrimaryConstructor(memberScope, classDescriptor, klass);
         for (JetParameter parameter : klass.getPrimaryConstructorParameters()) {
-            PropertyDescriptor propertyDescriptor = classDescriptorResolver.resolvePrimaryConstructorParameterToAProperty(
+            VariableDescriptor propertyDescriptor = classDescriptorResolver.resolvePrimaryConstructorParameterToAProperty(
                     classDescriptor,
                     memberScope,
                     parameter
             );
-            memberScope.addPropertyDescriptor(
+            memberScope.addVariableDescriptor(
                     propertyDescriptor);
         }
         if (constructorDescriptor != null) {
@@ -240,8 +240,8 @@ public class TopDownAnalyzer {
 
     private void processProperty(WritableScope declaringScope, JetProperty property) {
         declaringScopes.put(property, declaringScope);
-        PropertyDescriptor descriptor = classDescriptorResolver.resolvePropertyDescriptor(declaringScope.getContainingDeclaration(), declaringScope, property);
-        declaringScope.addPropertyDescriptor(descriptor);
+        VariableDescriptor descriptor = classDescriptorResolver.resolvePropertyDescriptor(declaringScope.getContainingDeclaration(), declaringScope, property);
+        declaringScope.addVariableDescriptor(descriptor);
     }
 
     private void processClassObject(JetClassObject classObject) {

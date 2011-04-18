@@ -25,7 +25,7 @@ public interface JetScope {
     NamespaceDescriptor getNamespace(@NotNull String name);
 
     @Nullable
-    PropertyDescriptor getProperty(@NotNull String name);
+    VariableDescriptor getVariable(@NotNull String name);
 
     @NotNull
     FunctionGroup getFunctionGroup(@NotNull String name);

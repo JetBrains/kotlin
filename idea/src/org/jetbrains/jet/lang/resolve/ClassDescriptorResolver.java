@@ -129,7 +129,7 @@ public class ClassDescriptorResolver {
                 @Override
                 public void visitProperty(JetProperty property) {
                     if (property.getPropertyTypeRef() != null) {
-                        memberDeclarations.addPropertyDescriptor(resolvePropertyDescriptor(classDescriptor, typeParameterScope, property));
+                        memberDeclarations.addVariableDescriptor(resolvePropertyDescriptor(classDescriptor, typeParameterScope, property));
                     } else {
                         // TODO : Caution: a cyclic dependency possible
                         throw new UnsupportedOperationException();
@@ -217,7 +217,7 @@ public class ClassDescriptorResolver {
 
             result.add(valueParameterDescriptor);
             trace.recordDeclarationResolution(valueParameter, valueParameterDescriptor);
-            parameterScope.addPropertyDescriptor(valueParameterDescriptor);
+            parameterScope.addVariableDescriptor(valueParameterDescriptor);
         }
         return result;
     }
@@ -268,9 +268,9 @@ public class ClassDescriptorResolver {
     }
 
     @NotNull
-    public PropertyDescriptor resolveValueParameterDescriptor(@NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope scope, @NotNull JetParameter parameter) {
+    public VariableDescriptor resolveLocalVariableDescriptor(@NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope scope, @NotNull JetParameter parameter) {
         JetType type = getParameterType(scope, parameter);
-        return resolveValueParameterDescriptor(containingDeclaration, parameter, type);
+        return resolveLocalVariableDescriptor(containingDeclaration, parameter, type);
     }
 
     private JetType getParameterType(JetScope scope, JetParameter parameter) {
@@ -286,18 +286,45 @@ public class ClassDescriptorResolver {
         return type;
     }
 
-    public PropertyDescriptor resolveValueParameterDescriptor(@NotNull DeclarationDescriptor containingDeclaration, @NotNull JetParameter parameter, @NotNull JetType type) {
-        PropertyDescriptor propertyDescriptor = new PropertyDescriptorImpl(
+    public VariableDescriptor resolveLocalVariableDescriptor(@NotNull DeclarationDescriptor containingDeclaration, @NotNull JetParameter parameter, @NotNull JetType type) {
+        VariableDescriptor variableDescriptor = new LocalVariableDescriptor(
                 containingDeclaration,
                 AttributeResolver.INSTANCE.resolveAttributes(parameter.getModifierList()),
                 JetPsiUtil.safeName(parameter.getName()),
-                parameter.isMutable() ? null : type,
-                type);
-        trace.recordDeclarationResolution(parameter, propertyDescriptor);
+                type,
+                parameter.isMutable());
+        trace.recordDeclarationResolution(parameter, variableDescriptor);
+        return variableDescriptor;
+    }
+
+    public VariableDescriptor resolveLocalVariableDescriptor(DeclarationDescriptor containingDeclaration, WritableScope scope, JetProperty property) {
+        JetType type = getType(scope, property);
+
+        VariableDescriptorImpl propertyDescriptor = new LocalVariableDescriptor(
+                containingDeclaration,
+                AttributeResolver.INSTANCE.resolveAttributes(property.getModifierList()),
+                JetPsiUtil.safeName(property.getName()),
+                type,
+                property.isVar());
+        trace.recordDeclarationResolution(property, propertyDescriptor);
         return propertyDescriptor;
     }
 
-    public PropertyDescriptor resolvePropertyDescriptor(@NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope scope, JetProperty property) {
+    public VariableDescriptor resolvePropertyDescriptor(@NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope scope, JetProperty property) {
+        JetType type = getType(scope, property);
+
+        VariableDescriptorImpl propertyDescriptor = new PropertyDescriptor(
+                containingDeclaration,
+                AttributeResolver.INSTANCE.resolveAttributes(property.getModifierList()),
+                JetPsiUtil.safeName(property.getName()),
+                property.isVar() ? type : null,
+                type);
+        trace.recordDeclarationResolution(property, propertyDescriptor);
+        return propertyDescriptor;
+    }
+
+    @NotNull
+    private JetType getType(@NotNull JetScope scope, @NotNull JetProperty property) {
         // TODO : receiver?
         JetTypeReference propertyTypeRef = property.getPropertyTypeRef();
 
@@ -314,15 +341,7 @@ public class ClassDescriptorResolver {
         } else {
             type = typeResolver.resolveType(scope, propertyTypeRef);
         }
-
-        PropertyDescriptorImpl propertyDescriptor = new PropertyDescriptorImpl(
-                containingDeclaration,
-                AttributeResolver.INSTANCE.resolveAttributes(property.getModifierList()),
-                JetPsiUtil.safeName(property.getName()),
-                property.isVar() ? type : null,
-                type);
-        trace.recordDeclarationResolution(property, propertyDescriptor);
-        return propertyDescriptor;
+        return type;
     }
 
     @NotNull
@@ -372,13 +391,13 @@ public class ClassDescriptorResolver {
         }
     }
 
-    public PropertyDescriptor resolvePrimaryConstructorParameterToAProperty(
+    public VariableDescriptor resolvePrimaryConstructorParameterToAProperty(
             @NotNull ClassDescriptor classDescriptor,
             @NotNull JetScope scope,
             @NotNull JetParameter parameter) {
         JetType type = getParameterType(scope, parameter);
         String name = parameter.getName();
-        PropertyDescriptorImpl propertyDescriptor = new PropertyDescriptorImpl(
+        VariableDescriptorImpl propertyDescriptor = new PropertyDescriptor(
                 classDescriptor,
                 AttributeResolver.INSTANCE.resolveAttributes(parameter.getModifierList()),
                 name == null ? "<no name>" : name,

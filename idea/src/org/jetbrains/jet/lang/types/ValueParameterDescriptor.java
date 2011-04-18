@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author abreslav
  */
-public interface ValueParameterDescriptor extends PropertyDescriptor {
+public interface ValueParameterDescriptor extends VariableDescriptor {
     /**
      * Returns the 0-based index of the value parameter in the parameter list of its containing function.
      *

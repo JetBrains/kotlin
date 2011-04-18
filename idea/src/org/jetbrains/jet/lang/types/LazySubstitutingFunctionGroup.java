@@ -7,17 +7,16 @@ import org.jetbrains.jet.lang.resolve.OverloadResolutionResult;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author abreslav
  */
 public class LazySubstitutingFunctionGroup implements FunctionGroup {
-    private final Map<TypeConstructor, TypeProjection> substitutionContext;
+    private final TypeSubstitutor substitutor;
     private final FunctionGroup functionGroup;
 
-    public LazySubstitutingFunctionGroup(Map<TypeConstructor, TypeProjection> substitutionContext, FunctionGroup functionGroup) {
-        this.substitutionContext = substitutionContext;
+    public LazySubstitutingFunctionGroup(TypeSubstitutor substitutor, FunctionGroup functionGroup) {
+        this.substitutor = substitutor;
         this.functionGroup = functionGroup;
     }
 
@@ -35,7 +34,7 @@ public class LazySubstitutingFunctionGroup implements FunctionGroup {
 
         Collection<FunctionDescriptor> result = new ArrayList<FunctionDescriptor>();
         for (FunctionDescriptor function : resolutionResult.getFunctionDescriptors()) {
-            FunctionDescriptor functionDescriptor = substitute(substitutionContext, function);
+            FunctionDescriptor functionDescriptor = substitute(function);
             if (functionDescriptor != null) {
                 result.add(functionDescriptor);
             }
@@ -44,16 +43,11 @@ public class LazySubstitutingFunctionGroup implements FunctionGroup {
     }
 
     @Nullable
-    public FunctionDescriptor substitute(
-            @NotNull Map<TypeConstructor, TypeProjection> substitutionContext,
+    private FunctionDescriptor substitute(
             @NotNull FunctionDescriptor functionDescriptor) {
-        if (substitutionContext.isEmpty()) return functionDescriptor;
+        if (substitutor.isEmpty()) return functionDescriptor;
 
-        FunctionDescriptor substituted = FunctionDescriptorUtil.substituteFunctionDescriptor(functionDescriptor, substitutionContext);
-        if (substituted == null) {
-            return null;
-        }
-        return substituted;
+        return functionDescriptor.substitute(substitutor);
     }
 
     @Override

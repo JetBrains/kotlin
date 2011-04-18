@@ -16,7 +16,7 @@ public abstract class JetScopeImpl implements JetScope {
     }
 
     @Override
-    public PropertyDescriptor getProperty(@NotNull String name) {
+    public VariableDescriptor getVariable(@NotNull String name) {
         return null;
     }
 

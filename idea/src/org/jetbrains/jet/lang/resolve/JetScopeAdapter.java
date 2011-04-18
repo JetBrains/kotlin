@@ -39,8 +39,8 @@ public class JetScopeAdapter implements JetScope {
     }
 
     @Override
-    public PropertyDescriptor getProperty(@NotNull String name) {
-        return scope.getProperty(name);
+    public VariableDescriptor getVariable(@NotNull String name) {
+        return scope.getVariable(name);
     }
 
     @NotNull

@@ -4,7 +4,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.types.*;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author abreslav
@@ -12,17 +11,17 @@ import java.util.Map;
 public class LazySubstitutingClassDescriptor implements ClassDescriptor {
 
     private final ClassDescriptor original;
-    private final Map<TypeConstructor, TypeProjection> substitutionContext;
+    private final TypeSubstitutor substitutor;
 
-    public LazySubstitutingClassDescriptor(ClassDescriptor descriptor, Map<TypeConstructor, TypeProjection> substitutionContext) {
+    public LazySubstitutingClassDescriptor(ClassDescriptor descriptor, TypeSubstitutor substitutor) {
         this.original = descriptor;
-        this.substitutionContext = substitutionContext;
+        this.substitutor = substitutor;
     }
 
     @NotNull
     @Override
     public TypeConstructor getTypeConstructor() {
-        if (substitutionContext.isEmpty()) {
+        if (substitutor.isEmpty()) {
             return original.getTypeConstructor();
         }
         throw new UnsupportedOperationException(); // TODO
@@ -32,10 +31,10 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
     @Override
     public JetScope getMemberScope(List<TypeProjection> typeArguments) {
         JetScope memberScope = original.getMemberScope(typeArguments);
-        if (substitutionContext.isEmpty()) {
+        if (substitutor.isEmpty()) {
             return memberScope;
         }
-        return new SubstitutingScope(memberScope, substitutionContext);
+        return new SubstitutingScope(memberScope, substitutor); // TODO : compose substitutors
     }
 
     @NotNull
@@ -71,6 +70,12 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
     @Override
     public DeclarationDescriptor getContainingDeclaration() {
         return original.getContainingDeclaration();
+    }
+
+    @NotNull
+    @Override
+    public ClassDescriptor substitute(TypeSubstitutor substitutor) {
+        throw new UnsupportedOperationException(); // TODO
     }
 
     @Override

@@ -58,13 +58,13 @@ public class FunctionDescriptorUtil {
     }
 
     @Nullable
-    private static List<ValueParameterDescriptor> getSubstitutedValueParameters(FunctionDescriptor substitutedDescriptor, @NotNull FunctionDescriptor functionDescriptor, Map<TypeConstructor, TypeProjection> substitutionContext) {
+    private static List<ValueParameterDescriptor> getSubstitutedValueParameters(FunctionDescriptor substitutedDescriptor, @NotNull FunctionDescriptor functionDescriptor, TypeSubstitutor substitutor) {
         List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>();
         List<ValueParameterDescriptor> unsubstitutedValueParameters = functionDescriptor.getUnsubstitutedValueParameters();
         for (int i = 0, unsubstitutedValueParametersSize = unsubstitutedValueParameters.size(); i < unsubstitutedValueParametersSize; i++) {
             ValueParameterDescriptor unsubstitutedValueParameter = unsubstitutedValueParameters.get(i);
             // TODO : Lazy?
-            JetType substitutedType = TypeSubstitutor.INSTANCE.substitute(substitutionContext, unsubstitutedValueParameter.getOutType(), Variance.IN_VARIANCE);
+            JetType substitutedType = substitutor.substitute(unsubstitutedValueParameter.getOutType(), Variance.IN_VARIANCE);
             if (substitutedType == null) return null;
             result.add(new ValueParameterDescriptorImpl(
                     substitutedDescriptor,
@@ -81,19 +81,19 @@ public class FunctionDescriptorUtil {
     }
 
     @Nullable
-    private static JetType getSubstitutedReturnType(@NotNull FunctionDescriptor functionDescriptor, Map<TypeConstructor, TypeProjection> substitutionContext) {
-        return TypeSubstitutor.INSTANCE.substitute(substitutionContext, functionDescriptor.getUnsubstitutedReturnType(), Variance.OUT_VARIANCE);
+    private static JetType getSubstitutedReturnType(@NotNull FunctionDescriptor functionDescriptor, TypeSubstitutor substitutor) {
+        return substitutor.substitute(functionDescriptor.getUnsubstitutedReturnType(), Variance.OUT_VARIANCE);
     }
 
     @Nullable
     public static FunctionDescriptor substituteFunctionDescriptor(@NotNull List<JetType> typeArguments, @NotNull FunctionDescriptor functionDescriptor) {
         Map<TypeConstructor, TypeProjection> substitutionContext = createSubstitutionContext(functionDescriptor, typeArguments);
-        return substituteFunctionDescriptor(functionDescriptor, substitutionContext);
+        return substituteFunctionDescriptor(functionDescriptor, TypeSubstitutor.create(substitutionContext));
     }
 
     @Nullable
-    public static FunctionDescriptor substituteFunctionDescriptor(FunctionDescriptor functionDescriptor, Map<TypeConstructor, TypeProjection> substitutionContext) {
-        if (substitutionContext.isEmpty()) {
+    public static FunctionDescriptor substituteFunctionDescriptor(FunctionDescriptor functionDescriptor, TypeSubstitutor substitutor) {
+        if (substitutor.isEmpty()) {
             return functionDescriptor;
         }
         FunctionDescriptorImpl substitutedDescriptor = new FunctionDescriptorImpl(
@@ -102,12 +102,12 @@ public class FunctionDescriptorUtil {
                 functionDescriptor.getAttributes(),
                 functionDescriptor.getName());
 
-        List<ValueParameterDescriptor> substitutedValueParameters = getSubstitutedValueParameters(substitutedDescriptor, functionDescriptor, substitutionContext);
+        List<ValueParameterDescriptor> substitutedValueParameters = getSubstitutedValueParameters(substitutedDescriptor, functionDescriptor, substitutor);
         if (substitutedValueParameters == null) {
             return null;
         }
 
-        JetType substitutedReturnType = getSubstitutedReturnType(functionDescriptor, substitutionContext);
+        JetType substitutedReturnType = getSubstitutedReturnType(functionDescriptor, substitutor);
         if (substitutedReturnType == null) {
             return null;
         }
@@ -127,7 +127,7 @@ public class FunctionDescriptorUtil {
             parameterScope.addTypeParameterDescriptor(typeParameter);
         }
         for (ValueParameterDescriptor valueParameterDescriptor : descriptor.getUnsubstitutedValueParameters()) {
-            parameterScope.addPropertyDescriptor(valueParameterDescriptor);
+            parameterScope.addVariableDescriptor(valueParameterDescriptor);
         }
         parameterScope.addLabeledDeclaration(descriptor);
         return parameterScope;

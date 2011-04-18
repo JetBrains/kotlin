@@ -23,4 +23,7 @@ public interface FunctionDescriptor extends DeclarationDescriptor {
     @Override
     @NotNull
     DeclarationDescriptor getContainingDeclaration();
+
+    @Override
+    FunctionDescriptor substitute(TypeSubstitutor substitutor);
 }

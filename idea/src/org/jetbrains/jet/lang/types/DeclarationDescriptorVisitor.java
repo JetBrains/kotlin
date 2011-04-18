@@ -4,7 +4,7 @@ package org.jetbrains.jet.lang.types;
  * @author abreslav
  */
 public class DeclarationDescriptorVisitor<R, D> {
-    public R visitPropertyDescriptor(PropertyDescriptor descriptor, D data) {
+    public R visitVariableDescriptor(VariableDescriptor descriptor, D data) {
         return null;
     }
 
@@ -24,11 +24,23 @@ public class DeclarationDescriptorVisitor<R, D> {
         return null;
     }
 
-    public R visitModuleDeclaration(ModuleDescriptor moduleDescriptor, D data) {
+    public R visitModuleDeclaration(ModuleDescriptor descriptor, D data) {
         return null;
     }
 
     public R visitConstructorDescriptor(ConstructorDescriptor constructorDescriptor, D data) {
         return visitFunctionDescriptor(constructorDescriptor, data);
+    }
+
+    public R visitLocalVariableDescriptor(LocalVariableDescriptor descriptor, D data) {
+        return visitVariableDescriptor(descriptor, data);
+    }
+
+    public R visitPropertyDescriptor(PropertyDescriptor descriptor, D data) {
+        return visitVariableDescriptor(descriptor, data);
+    }
+
+    public R visitValueParameterDescriptor(ValueParameterDescriptor descriptor, D data) {
+        return visitVariableDescriptor(descriptor, data);
     }
 }

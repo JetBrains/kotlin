@@ -20,7 +20,7 @@ public class ErrorUtils {
         }
 
         @Override
-        public PropertyDescriptor getProperty(@NotNull String name) {
+        public VariableDescriptor getVariable(@NotNull String name) {
             return ERROR_PROPERTY;
         }
 
@@ -83,7 +83,7 @@ public class ErrorUtils {
     }
 
     private static final JetType ERROR_PROPERTY_TYPE = createErrorType("<ERROR PROPERTY TYPE>");
-    private static final PropertyDescriptor ERROR_PROPERTY = new PropertyDescriptorImpl(
+    private static final VariableDescriptor ERROR_PROPERTY = new PropertyDescriptor(
             ERROR_CLASS, Collections.<Attribute>emptyList(), "<ERROR PROPERTY>", ERROR_PROPERTY_TYPE, ERROR_PROPERTY_TYPE);
 
     private static FunctionDescriptor createErrorFunction(List<TypeParameterDescriptor> typeParameters, List<JetType> positionedValueArgumentTypes) {

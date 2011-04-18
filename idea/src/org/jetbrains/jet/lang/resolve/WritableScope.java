@@ -18,7 +18,7 @@ public class WritableScope extends JetScopeAdapter {
     private final DeclarationDescriptor ownerDeclarationDescriptor;
 
     @Nullable
-    private Map<String, PropertyDescriptor> propertyDescriptors;
+    private Map<String, VariableDescriptor> variableDescriptors;
     @Nullable
     private Map<String, WritableFunctionGroup> functionGroups;
     @Nullable
@@ -93,37 +93,37 @@ public class WritableScope extends JetScopeAdapter {
     }
 
     @NotNull
-    private Map<String, PropertyDescriptor> getPropertyDescriptors() {
-        if (propertyDescriptors == null) {
-            propertyDescriptors = new HashMap<String, PropertyDescriptor>();
+    private Map<String, VariableDescriptor> getVariableDescriptors() {
+        if (variableDescriptors == null) {
+            variableDescriptors = new HashMap<String, VariableDescriptor>();
         }
-        return propertyDescriptors;
+        return variableDescriptors;
     }
 
-    public void addPropertyDescriptor(PropertyDescriptor propertyDescriptor) {
-        Map<String, PropertyDescriptor> propertyDescriptors = getPropertyDescriptors();
-        PropertyDescriptor existingDescriptor = propertyDescriptors.get(propertyDescriptor.getName());
+    public void addVariableDescriptor(VariableDescriptor variableDescriptor) {
+        Map<String, VariableDescriptor> propertyDescriptors = getVariableDescriptors();
+        VariableDescriptor existingDescriptor = propertyDescriptors.get(variableDescriptor.getName());
         if (existingDescriptor != null) {
-            errorHandler.redeclaration(existingDescriptor, propertyDescriptor);
+            errorHandler.redeclaration(existingDescriptor, variableDescriptor);
         }
         // TODO : Should this always happen?
-        propertyDescriptors.put(propertyDescriptor.getName(), propertyDescriptor);
+        propertyDescriptors.put(variableDescriptor.getName(), variableDescriptor);
     }
 
     @Override
-    public PropertyDescriptor getProperty(@NotNull String name) {
+    public VariableDescriptor getVariable(@NotNull String name) {
         @NotNull
-        Map<String, PropertyDescriptor> propertyDescriptors = getPropertyDescriptors();
-        PropertyDescriptor propertyDescriptor = propertyDescriptors.get(name);
-        if (propertyDescriptor != null) {
-            return propertyDescriptor;
+        Map<String, VariableDescriptor> propertyDescriptors = getVariableDescriptors();
+        VariableDescriptor variableDescriptor = propertyDescriptors.get(name);
+        if (variableDescriptor != null) {
+            return variableDescriptor;
         }
-        propertyDescriptor = super.getProperty(name);
-        if (propertyDescriptor != null) {
-            return propertyDescriptor;
+        variableDescriptor = super.getVariable(name);
+        if (variableDescriptor != null) {
+            return variableDescriptor;
         }
         for (JetScope imported : getImports()) {
-            PropertyDescriptor importedDescriptor = imported.getProperty(name);
+            VariableDescriptor importedDescriptor = imported.getVariable(name);
             if (importedDescriptor != null) {
                 return importedDescriptor;
             }

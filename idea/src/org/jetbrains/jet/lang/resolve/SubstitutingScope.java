@@ -1,11 +1,9 @@
 package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.types.*;
 
 import java.util.Collection;
-import java.util.Map;
 
 /**
  * @author abreslav
@@ -13,39 +11,22 @@ import java.util.Map;
 public class SubstitutingScope implements JetScope {
 
     private final JetScope workerScope;
-    private final Map<TypeConstructor, TypeProjection> substitutionContext;
+//    private final Map<TypeConstructor, TypeProjection> substitutionContext;
+    private final TypeSubstitutor substitutor;
 
-    public SubstitutingScope(JetScope workerScope, Map<TypeConstructor, TypeProjection> substitutionContext) {
+    public SubstitutingScope(JetScope workerScope, @NotNull TypeSubstitutor substitutor) {
         this.workerScope = workerScope;
-        this.substitutionContext = substitutionContext;
+        this.substitutor = substitutor;
     }
 
     @Override
-    public PropertyDescriptor getProperty(@NotNull String name) {
-        PropertyDescriptor property = workerScope.getProperty(name);
-        if (property == null || substitutionContext.isEmpty()) {
-            return property;
+    public VariableDescriptor getVariable(@NotNull String name) {
+        VariableDescriptor variable = workerScope.getVariable(name);
+        if (variable == null || substitutor.isEmpty()) {
+            return variable;
         }
 
-        JetType inType = substitute(property.getInType(), Variance.IN_VARIANCE);
-        JetType outType = substitute(property.getOutType(), Variance.OUT_VARIANCE);
-        if (inType == null && outType == null) {
-            return null; // TODO : tell the user that the property was projected out
-        }
-        return new PropertyDescriptorImpl(
-                property.getContainingDeclaration(),
-                property.getAttributes(), // TODO
-                property.getName(),
-                inType,
-                outType
-        );
-    }
-
-    @Nullable
-    private JetType substitute(@Nullable JetType originalType, @NotNull Variance variance) {
-        if (originalType == null) return null;
-
-        return TypeSubstitutor.INSTANCE.substitute(substitutionContext, originalType, variance);
+        return variable.substitute(substitutor);
     }
 
     @Override
@@ -55,7 +36,7 @@ public class SubstitutingScope implements JetScope {
             return null;
         }
         if (descriptor instanceof ClassDescriptor) {
-            return new LazySubstitutingClassDescriptor((ClassDescriptor) descriptor, substitutionContext);
+            return new LazySubstitutingClassDescriptor((ClassDescriptor) descriptor, substitutor);
         }
         throw new UnsupportedOperationException();
     }
@@ -75,10 +56,10 @@ public class SubstitutingScope implements JetScope {
     @Override
     public FunctionGroup getFunctionGroup(@NotNull String name) {
         FunctionGroup functionGroup = workerScope.getFunctionGroup(name);
-        if (substitutionContext.isEmpty()) {
+        if (substitutor.isEmpty()) {
             return functionGroup;
         }
-        return new LazySubstitutingFunctionGroup(substitutionContext, functionGroup);
+        return new LazySubstitutingFunctionGroup(substitutor, functionGroup);
     }
 
     @NotNull

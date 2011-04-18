@@ -49,7 +49,7 @@ public class JavaClassMembersScope implements JetScope {
     }
 
     @Override
-    public PropertyDescriptor getProperty(@NotNull String name) {
+    public VariableDescriptor getVariable(@NotNull String name) {
         PsiField field = psiClass.findFieldByName(name, true);
         if (field == null) return null;
         if (field.hasModifierProperty(PsiModifier.STATIC) != staticMembers) {
@@ -57,7 +57,7 @@ public class JavaClassMembersScope implements JetScope {
         }
 
         JetType type = semanticServices.getTypeTransformer().transform(field.getType());
-        PropertyDescriptorImpl propertyDescriptor = new PropertyDescriptorImpl(
+        VariableDescriptorImpl propertyDescriptor = new PropertyDescriptor(
                 containingDeclaration,
                 Collections.<Attribute>emptyList(),
                 field.getName(),
