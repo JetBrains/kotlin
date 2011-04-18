@@ -73,4 +73,9 @@ public class SubstitutingScope implements JetScope {
     public Collection<DeclarationDescriptor> getDeclarationsByLabel(String labelName) {
         throw new UnsupportedOperationException(); // TODO
     }
+
+    @Override
+    public PropertyDescriptor getPropertyByFieldReference(@NotNull String fieldName) {
+        throw new UnsupportedOperationException(); // TODO
+    }
 }

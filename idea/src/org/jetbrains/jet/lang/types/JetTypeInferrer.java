@@ -440,25 +440,38 @@ public class JetTypeInferrer {
         public void visitSimpleNameExpression(JetSimpleNameExpression expression) {
             // TODO : other members
             // TODO : type substitutions???
-            String referencedName = expression.getReferencedName();
-            if (referencedName != null) {
-                VariableDescriptor variable = scope.getVariable(referencedName);
-                if (variable != null) {
-                    trace.recordReferenceResolution(expression, variable);
-                    result = variable.getOutType();
-                    if (result == null) {
-                        semanticServices.getErrorHandler().genericError(expression.getNode(), "This variable is not readable in this context");
-                    }
-                    return;
-                } else {
-                    NamespaceDescriptor namespace = scope.getNamespace(referencedName);
-                    if (namespace != null) {
-                        trace.recordReferenceResolution(expression, namespace);
-                        result = namespace.getNamespaceType();
-                        return;
-                    }
+            if (expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER) {
+                PropertyDescriptor property = scope.getPropertyByFieldReference(expression.getReferencedName());
+                if (property == null) {
+                    semanticServices.getErrorHandler().unresolvedReference(expression);
                 }
-                semanticServices.getErrorHandler().unresolvedReference(expression);
+                else {
+                    trace.recordReferenceResolution(expression, property);
+                    result = property.getOutType();
+                }
+            }
+            else {
+                assert  expression.getReferencedNameElementType() == JetTokens.IDENTIFIER;
+                String referencedName = expression.getReferencedName();
+                if (referencedName != null) {
+                    VariableDescriptor variable = scope.getVariable(referencedName);
+                    if (variable != null) {
+                        trace.recordReferenceResolution(expression, variable);
+                        result = variable.getOutType();
+                        if (result == null) {
+                            semanticServices.getErrorHandler().genericError(expression.getNode(), "This variable is not readable in this context");
+                        }
+                        return;
+                    } else {
+                        NamespaceDescriptor namespace = scope.getNamespace(referencedName);
+                        if (namespace != null) {
+                            trace.recordReferenceResolution(expression, namespace);
+                            result = namespace.getNamespaceType();
+                            return;
+                        }
+                    }
+                    semanticServices.getErrorHandler().unresolvedReference(expression);
+                }
             }
         }
 

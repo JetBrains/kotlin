@@ -243,6 +243,7 @@ public class TopDownAnalyzer {
         declaringScopes.put(property, declaringScope);
         PropertyDescriptor descriptor = classDescriptorResolver.resolvePropertyDescriptor(declaringScope.getContainingDeclaration(), declaringScope, property);
         declaringScope.addVariableDescriptor(descriptor);
+        declaringScope.addPropertyDescriptorByFieldName("$" + descriptor.getName(), descriptor);
         properties.put(property, descriptor);
     }
 

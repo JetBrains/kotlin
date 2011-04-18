@@ -17,6 +17,10 @@ public class WritableScope extends JetScopeAdapter {
     @NotNull
     private final DeclarationDescriptor ownerDeclarationDescriptor;
 
+    // FieldNames include "$"
+    @Nullable
+    private Map<String, PropertyDescriptor> propertyDescriptorsByFieldNames;
+
     @Nullable
     private Map<String, VariableDescriptor> variableDescriptors;
     @Nullable
@@ -269,5 +273,25 @@ public class WritableScope extends JetScopeAdapter {
             throw new UnsupportedOperationException("Receiver redeclared");
         }
         this.thisType = thisType;
+    }
+
+    @SuppressWarnings({"NullableProblems"})
+    @NotNull
+    private Map<String, PropertyDescriptor> getPropertyDescriptorsByFieldNames() {
+        if (propertyDescriptorsByFieldNames == null) {
+            propertyDescriptorsByFieldNames = new HashMap<String, PropertyDescriptor>();
+        }
+        return propertyDescriptorsByFieldNames;
+    }
+
+    public void addPropertyDescriptorByFieldName(@NotNull String fieldName, PropertyDescriptor propertyDescriptor) {
+        getPropertyDescriptorsByFieldNames().put(fieldName, propertyDescriptor);
+    }
+
+    @Override
+    public PropertyDescriptor getPropertyByFieldReference(@NotNull String fieldName) {
+        PropertyDescriptor descriptor = getPropertyDescriptorsByFieldNames().get(fieldName);
+        if (descriptor != null) return descriptor;
+        return super.getPropertyByFieldReference(fieldName);
     }
 }

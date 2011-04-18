@@ -38,6 +38,11 @@ public class JavaClassMembersScope implements JetScope {
     }
 
     @Override
+    public PropertyDescriptor getPropertyByFieldReference(@NotNull String fieldName) {
+        return null;
+    }
+
+    @Override
     public ClassifierDescriptor getClassifier(@NotNull String name) {
         for (PsiClass innerClass : psiClass.getAllInnerClasses()) {
             if (name.equals(innerClass.getName())) {

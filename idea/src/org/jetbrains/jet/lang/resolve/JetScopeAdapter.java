@@ -54,4 +54,9 @@ public class JetScopeAdapter implements JetScope {
     public Collection<DeclarationDescriptor> getDeclarationsByLabel(String labelName) {
         return scope.getDeclarationsByLabel(labelName);
     }
+
+    @Override
+    public PropertyDescriptor getPropertyByFieldReference(@NotNull String fieldName) {
+        return scope.getPropertyByFieldReference(fieldName);
+    }
 }

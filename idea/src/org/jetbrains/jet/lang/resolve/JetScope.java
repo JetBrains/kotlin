@@ -38,4 +38,11 @@ public interface JetScope {
 
     @NotNull
     Collection<DeclarationDescriptor> getDeclarationsByLabel(String labelName);
+
+    /**
+     * @param fieldName includes the "$"
+     * @return the property declaring this field, if any
+     */
+    @Nullable
+    PropertyDescriptor getPropertyByFieldReference(@NotNull String fieldName);
 }

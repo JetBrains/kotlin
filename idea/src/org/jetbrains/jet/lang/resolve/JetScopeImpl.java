@@ -42,4 +42,9 @@ public abstract class JetScopeImpl implements JetScope {
     public Collection<DeclarationDescriptor> getDeclarationsByLabel(String labelName) {
         return Collections.emptyList();
     }
+
+    @Override
+    public PropertyDescriptor getPropertyByFieldReference(@NotNull String fieldName) {
+        return null;
+    }
 }

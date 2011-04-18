@@ -53,6 +53,11 @@ public class ErrorUtils {
             return Collections.emptyList();
         }
 
+        @Override
+        public PropertyDescriptor getPropertyByFieldReference(@NotNull String fieldName) {
+            return null; // TODO : review
+        }
+
     };
 
     private static final FunctionGroup ERROR_FUNCTION_GROUP = new FunctionGroup() {
