@@ -140,6 +140,10 @@ public class ErrorUtils {
         return type instanceof ErrorTypeImpl;
     }
 
+    public static ClassifierDescriptor getErrorClass() {
+        return ERROR_CLASS;
+    }
+
     private static class ErrorTypeImpl implements JetType {
 
         private final TypeConstructor constructor;

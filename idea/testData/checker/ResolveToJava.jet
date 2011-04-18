@@ -1,0 +1,11 @@
+import java.*
+import util.*
+import <error>utils</error>.*
+
+fun test(l : java.util.List) {
+  val x : java.<error>List</error>
+  val y : java.util.List
+  val b : java.lang.Object
+  val a : util.List
+  val z : java.<error>utils</error>.List
+}

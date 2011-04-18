@@ -174,6 +174,17 @@ public class TypeResolver {
 
     @Nullable
     public ClassifierDescriptor resolveClass(JetScope scope, JetUserType userType) {
+        ClassifierDescriptor classifierDescriptor = resolveClassWithoutErrorReporting(scope, userType);
+
+        if (classifierDescriptor == null) {
+            semanticServices.getErrorHandler().unresolvedReference(userType.getReferenceExpression());
+        }
+
+        return classifierDescriptor;
+    }
+
+    @Nullable
+    private ClassifierDescriptor resolveClassWithoutErrorReporting(JetScope scope, JetUserType userType) {
         JetSimpleNameExpression expression = userType.getReferenceExpression();
         if (expression == null) {
             return null;
@@ -192,21 +203,16 @@ public class TypeResolver {
                 scope = resolveClassLookupScope(scope, qualifier);
             }
             if (scope == null) {
-                return null;
+                return ErrorUtils.getErrorClass();
             }
             classifierDescriptor = scope.getClassifier(referencedName);
         }
-
-        if (classifierDescriptor == null) {
-            semanticServices.getErrorHandler().unresolvedReference(expression);
-        }
-
         return classifierDescriptor;
     }
 
     @Nullable
     private JetScope resolveClassLookupScope(JetScope scope, JetUserType userType) {
-        ClassifierDescriptor classifierDescriptor = resolveClass(scope, userType);
+        ClassifierDescriptor classifierDescriptor = resolveClassWithoutErrorReporting(scope, userType);
         if (classifierDescriptor instanceof ClassDescriptor) {
             List<TypeProjection> typeArguments = resolveTypeProjections(scope, classifierDescriptor.getTypeConstructor(), userType.getTypeArguments());
             return ((ClassDescriptor) classifierDescriptor).getMemberScope(typeArguments);
@@ -214,6 +220,7 @@ public class TypeResolver {
 
         NamespaceDescriptor namespaceDescriptor = resolveNamespace(scope, userType);
         if (namespaceDescriptor == null) {
+            semanticServices.getErrorHandler().unresolvedReference(userType.getReferenceExpression());
             return null;
         }
         return namespaceDescriptor.getMemberScope();
