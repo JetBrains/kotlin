@@ -5,8 +5,10 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetLightProjectDescriptor;
+import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.JetFileType;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.parsing.JetParsingTest;
 
 import java.lang.reflect.Method;
@@ -52,6 +54,7 @@ public abstract class CodegenTestCase extends LightCodeInsightFixtureTestCase {
         final Codegens state = new Codegens(getProject(), false);
         JetFile jetFile = (JetFile) myFixture.getFile();
         final Ref<Class> result = new Ref<Class>();
+        final ClassCodegen codegen = state.forClass(AnalyzingUtils.analyzeFile(jetFile, ErrorHandler.THROW_EXCEPTION));
         jetFile.acceptChildren(new JetVisitor() {
             @Override
             public void visitJetElement(JetElement elem) {
@@ -60,9 +63,8 @@ public abstract class CodegenTestCase extends LightCodeInsightFixtureTestCase {
 
             @Override
             public void visitClass(JetClass klass) {
-                final ClassCodegen codegen = state.forClassImplementation(klass);
                 codegen.generate(klass);
-                result.set(getJVMClass(state, klass.getName()));
+                result.set(getJVMClass(state, klass.getName() + "$$Impl"));
             }
         });
         if (result.isNull()) {

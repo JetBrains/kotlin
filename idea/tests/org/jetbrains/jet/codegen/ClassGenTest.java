@@ -9,7 +9,7 @@ public class ClassGenTest extends CodegenTestCase {
     public void testPSVMClass() throws Exception {
         loadFile("simpleClass.jet");
         final Class aClass = generateClass();
-        final Method[] methods = aClass.getMethods();
+        final Method[] methods = aClass.getDeclaredMethods();
         assertEquals(1, methods.length);
     }
 }

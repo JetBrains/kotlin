@@ -28,11 +28,11 @@ public class FunctionCodegen {
     }
 
     public void genInNamespace(JetFunction f) {
-        gen(f);
+        gen(f, OwnerKind.NAMESPACE);
     }
 
     public void genInInterface(JetFunction f) {
-
+        gen(f, OwnerKind.INTERFACE);
     }
 
     public void genInImplementation(JetFunction f) {
@@ -43,27 +43,40 @@ public class FunctionCodegen {
 
     }
 
-    private void gen(JetFunction f) {
-        Method method = typeMapper.mapSignature(f);
-        final MethodVisitor mv = v.visitMethod(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC,
-                method.getName(), method.getDescriptor(), null, null);
-        mv.visitCode();
+    private void gen(JetFunction f, OwnerKind kind) {
+        int flags = Opcodes.ACC_PUBLIC; // TODO.
+
+        boolean isStatic = kind == OwnerKind.NAMESPACE;
+        if (isStatic) flags |= Opcodes.ACC_STATIC;
+
         final JetExpression bodyExpression = f.getBodyExpression();
-        FrameMap frameMap = new FrameMap();
+        boolean isAbstract = kind == OwnerKind.INTERFACE || bodyExpression == null;
+        if (isAbstract) flags |= Opcodes.ACC_ABSTRACT;
 
-        List<ValueParameterDescriptor> parameDescrs = bindingContext.getFunctionDescriptor(f).getUnsubstitutedValueParameters();
+        Method method = typeMapper.mapSignature(f);
+        final MethodVisitor mv = v.visitMethod(flags, method.getName(), method.getDescriptor(), null, null);
+        if (kind != OwnerKind.INTERFACE) {
+            mv.visitCode();
+            FrameMap frameMap = new FrameMap();
 
-        Type[] argTypes = method.getArgumentTypes();
-        for (int i = 0; i < parameDescrs.size(); i++) {
-            ValueParameterDescriptor parameter = parameDescrs.get(i);
-            frameMap.enter(parameter, argTypes[i].getSize());
+            if (kind != OwnerKind.NAMESPACE) {
+                frameMap.enterTemp();  // 0 slot for this
+            }
+
+            List<ValueParameterDescriptor> parameDescrs = bindingContext.getFunctionDescriptor(f).getUnsubstitutedValueParameters();
+
+            Type[] argTypes = method.getArgumentTypes();
+            for (int i = 0; i < parameDescrs.size(); i++) {
+                ValueParameterDescriptor parameter = parameDescrs.get(i);
+                frameMap.enter(parameter, argTypes[i].getSize());
+            }
+
+            ExpressionCodegen codegen = new ExpressionCodegen(mv, bindingContext, frameMap, typeMapper, method.getReturnType());
+            bodyExpression.accept(codegen);
+            generateReturn(mv, bodyExpression, codegen);
+            mv.visitMaxs(0, 0);
+            mv.visitEnd();
         }
-
-        ExpressionCodegen codegen = new ExpressionCodegen(mv, bindingContext, frameMap, typeMapper, method.getReturnType());
-        bodyExpression.accept(codegen);
-        generateReturn(mv, bodyExpression, codegen);
-        mv.visitMaxs(0, 0);
-        mv.visitEnd();
     }
 
     private void generateReturn(MethodVisitor mv, JetExpression bodyExpression, ExpressionCodegen codegen) {

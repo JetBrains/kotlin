@@ -23,20 +23,17 @@ public class ClassCodegen {
         this.project = project;
         this.factory = factory;
         this.bindingContext = bindingContext;
-
     }
 
     public void generate(JetClass aClass) {
         ClassDescriptor descriptor =  bindingContext.getClassDescriptor(aClass);
-        String fqName = CodeGenUtil.getInternalInterfaceName(descriptor);
+        String fqName = CodeGenUtil.getInternalImplementationName(descriptor);
 
         List<JetDelegationSpecifier> delegationSpecifiers = aClass.getDelegationSpecifiers();
         for (JetDelegationSpecifier specifier : delegationSpecifiers) {
             JetType superType = bindingContext.resolveTypeReference(specifier.getTypeReference());
             String superClassFQN = CodeGenUtil.getInternalInterfaceName((ClassDescriptor) superType.getConstructor().getDeclarationDescriptor());
         }
-
-        //descriptor.
 
         ClassVisitor v = factory.forClassImplementation(descriptor);
         v.visit(Opcodes.V1_6,
@@ -59,5 +56,7 @@ public class ClassCodegen {
                 functionCodegen.genInInterface((JetFunction) declaration);
             }
         }
+
+        v.visitEnd();
     }
 }

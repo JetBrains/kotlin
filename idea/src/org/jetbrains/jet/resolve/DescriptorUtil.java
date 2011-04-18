@@ -129,7 +129,8 @@ public class DescriptorUtil {
     public static String getFQName(DeclarationDescriptor descriptor) {
         DeclarationDescriptor container = descriptor.getContainingDeclaration();
         if (container != null && !(container instanceof ModuleDescriptor)) {
-            return getFQName(container) + "." + descriptor.getName();
+            String baseName = getFQName(container);
+            if (!baseName.isEmpty()) return baseName + "." + descriptor.getName();
         }
 
         return descriptor.getName();
