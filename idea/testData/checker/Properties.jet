@@ -1,1 +1,7 @@
-val x : Int
+ var x : Int = 1 + x
+   get() : Int = 1
+   set(<error>ref</error> value : <error>Long</error>) {$x = value}
+
+ val xx : Int = 1 + x
+   get() : Int = 1
+   <error>set(ref value : Long) {$x = value}</error>

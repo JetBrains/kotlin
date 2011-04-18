@@ -235,9 +235,10 @@ JetFile: Properties_ERR.jet
       PROPERTY_ACCESSOR
         PsiElement(set)('set')
         PsiElement(LPAR)('(')
-        VALUE_PARAMETER
-          PsiErrorElement:Expecting parameter name
-            <empty list>
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER
+            PsiErrorElement:Expecting parameter name
+              <empty list>
         PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         BLOCK

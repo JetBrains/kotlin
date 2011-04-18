@@ -8,9 +8,10 @@ import java.util.List;
 /**
  * @author abreslav
  */
-public class ValueParameterDescriptorImpl extends VariableDescriptorImpl implements ValueParameterDescriptor {
+public class ValueParameterDescriptorImpl extends VariableDescriptorImpl implements MutableValueParameterDescriptor {
     private final boolean hasDefaultValue;
     private final boolean isVararg;
+    private final boolean isVar;
     private final int index;
 
     public ValueParameterDescriptorImpl(
@@ -26,6 +27,32 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
         this.index = index;
         this.hasDefaultValue = hasDefaultValue;
         this.isVararg = isVararg;
+        this.isVar = inType != null;
+    }
+
+    public ValueParameterDescriptorImpl(
+            @NotNull DeclarationDescriptor containingDeclaration,
+            int index,
+            @NotNull List<Attribute> attributes,
+            @NotNull String name,
+            boolean isVar,
+            boolean hasDefaultValue,
+            boolean isVararg) {
+        super(containingDeclaration, attributes, name, null, null);
+        this.index = index;
+        this.hasDefaultValue = hasDefaultValue;
+        this.isVararg = isVararg;
+        this.isVar = isVar;
+    }
+
+    @Override
+    public void setType(@NotNull JetType type) {
+        assert getOutType() == null;
+        setOutType(type);
+        if (isVar) {
+            assert getInType() == null;
+            setInType(type);
+        }
     }
 
     @Override

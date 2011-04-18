@@ -4,6 +4,7 @@ import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Collections;
 import java.util.List;
@@ -46,5 +47,16 @@ public class JetConstructor extends JetDeclaration implements JetDeclarationWith
     @Override
     public JetExpression getBodyExpression() {
         return findChildByClass(JetExpression.class);
+    }
+
+    @Override
+    public boolean hasBlockBody() {
+        return findChildByType(JetTokens.EQ) == null;
+    }
+
+    @NotNull
+    @Override
+    public JetElement asElement() {
+        return this;
     }
 }

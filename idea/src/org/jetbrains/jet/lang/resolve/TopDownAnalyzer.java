@@ -18,6 +18,7 @@ public class TopDownAnalyzer {
     private final Map<JetClass, MutableClassDescriptor> classes = new LinkedHashMap<JetClass, MutableClassDescriptor>();
     private final Map<JetNamespace, WritableScope> namespaceScopes = new LinkedHashMap<JetNamespace, WritableScope>();
     private final Map<JetDeclaration, FunctionDescriptor> functions = new LinkedHashMap<JetDeclaration, FunctionDescriptor>();
+    private final Map<JetProperty, PropertyDescriptor> properties = new LinkedHashMap<JetProperty, PropertyDescriptor>();
     private final Map<JetDeclaration, WritableScope> declaringScopes = new HashMap<JetDeclaration, WritableScope>();
 
     private final JetSemanticServices semanticServices;
@@ -240,8 +241,9 @@ public class TopDownAnalyzer {
 
     private void processProperty(WritableScope declaringScope, JetProperty property) {
         declaringScopes.put(property, declaringScope);
-        VariableDescriptor descriptor = classDescriptorResolver.resolvePropertyDescriptor(declaringScope.getContainingDeclaration(), declaringScope, property);
+        PropertyDescriptor descriptor = classDescriptorResolver.resolvePropertyDescriptor(declaringScope.getContainingDeclaration(), declaringScope, property);
         declaringScope.addVariableDescriptor(descriptor);
+        properties.put(property, descriptor);
     }
 
     private void processClassObject(JetClassObject classObject) {
@@ -258,52 +260,13 @@ public class TopDownAnalyzer {
             WritableScope declaringScope = declaringScopes.get(declaration);
             assert declaringScope != null;
 
-
             assert declaration instanceof JetFunction || declaration instanceof JetConstructor;
             JetDeclarationWithBody declarationWithBody = (JetDeclarationWithBody) declaration;
 
             JetExpression bodyExpression = declarationWithBody.getBodyExpression();
 
             if (declaration instanceof JetFunction) {
-                JetFunction function = (JetFunction) declaration;
-                FunctionDescriptorImpl functionDescriptorImpl = (FunctionDescriptorImpl) descriptor;
-                if (bodyExpression != null) {
-                    JetFlowInformationProvider flowInformationProvider = computeFlowData(function, bodyExpression);
-                    JetTypeInferrer typeInferrer = semanticServices.getTypeInferrer(trace, flowInformationProvider);
-
-                    assert readyToProcessExpressions : "Must be ready collecting types";
-
-                    if (function.getReturnTypeRef() != null) {
-                        typeInferrer.checkFunctionReturnType(declaringScope, function, functionDescriptorImpl);
-                    }
-                    else {
-                        JetType returnType = typeInferrer.getFunctionReturnType(declaringScope, function, functionDescriptorImpl);
-                        if (returnType == null) {
-                            returnType = ErrorUtils.createErrorType("Unable to infer body type");
-                        }
-                        functionDescriptorImpl.setUnsubstitutedReturnType(returnType);
-                    }
-
-                    List<JetElement> unreachableElements = new ArrayList<JetElement>();
-                    flowInformationProvider.collectUnreachableExpressions(function, unreachableElements);
-
-                    // This is needed in order to highlight only '1 < 2' and not '1', '<' and '2' as well
-                    Set<JetElement> rootElements = JetPsiUtil.findRootExpressions(unreachableElements);
-
-                    // TODO : (return 1) || (return 2) -- only || and right of it is unreachable
-                    // TODO : try {return 1} finally {return 2}. Currently 'return 1' is reported as unreachable,
-                    //        though it'd better be reported more specifically
-
-                    for (JetElement element : rootElements) {
-                        semanticServices.getErrorHandler().genericError(element.getNode(), "Unreachable code");
-                    }
-                }
-                else {
-                    if (function.getReturnTypeRef() == null) {
-                        semanticServices.getErrorHandler().genericError(function.getNode(), "This function must either declare a return type or have a body element");
-                        ((FunctionDescriptorImpl) descriptor).setUnsubstitutedReturnType(ErrorUtils.createErrorType("No type, no body"));
-                    }
-                }
+                resolveFunctionBody((JetFunction) declaration, (FunctionDescriptorImpl) descriptor, declaringScope);
             }
             else if (declaration instanceof JetConstructor) {
                 if (bodyExpression != null) {
@@ -316,9 +279,77 @@ public class TopDownAnalyzer {
             }
             assert descriptor.getUnsubstitutedReturnType() != null;
         }
+
+        for (Map.Entry<JetProperty, PropertyDescriptor> entry : properties.entrySet()) {
+            JetProperty declaration = entry.getKey();
+            PropertyDescriptor descriptor = entry.getValue();
+            WritableScope declaringScope = declaringScopes.get(declaration);
+
+            JetExpression initializer = declaration.getInitializer();
+            if (initializer != null) {
+                JetFlowInformationProvider flowInformationProvider = computeFlowData(declaration, initializer);
+                JetTypeInferrer typeInferrer = semanticServices.getTypeInferrer(trace, flowInformationProvider);
+                JetType type = typeInferrer.getType(declaringScope, initializer, false);
+                // TODO : check type
+            }
+
+            JetPropertyAccessor getter = declaration.getGetter();
+            PropertyGetterDescriptor getterDescriptor = descriptor.getGetter();
+            if (getter != null && getterDescriptor != null) {
+                resolveFunctionBody(getter, getterDescriptor, declaringScope);
+            }
+
+            JetPropertyAccessor setter = declaration.getSetter();
+            PropertySetterDescriptor setterDescriptor = descriptor.getSetter();
+            if (setter != null && setterDescriptor != null) {
+                resolveFunctionBody(setter, setterDescriptor, declaringScope);
+            }
+
+        }
     }
 
-    private JetFlowInformationProvider computeFlowData(@NotNull JetDeclaration declaration, @NotNull JetExpression bodyExpression) {
+    private void resolveFunctionBody(@NotNull JetDeclarationWithBody function, @NotNull MutableFunctionDescriptor functionDescriptor, @NotNull WritableScope declaringScope) {
+        JetExpression bodyExpression = function.getBodyExpression();
+        if (bodyExpression != null) {
+            JetFlowInformationProvider flowInformationProvider = computeFlowData(function.asElement(), bodyExpression);
+            JetTypeInferrer typeInferrer = semanticServices.getTypeInferrer(trace, flowInformationProvider);
+
+            assert readyToProcessExpressions : "Must be ready collecting types";
+
+            if (functionDescriptor.isReturnTypeSet()) {
+                typeInferrer.checkFunctionReturnType(declaringScope, function, functionDescriptor);
+            }
+            else {
+                JetType returnType = typeInferrer.getFunctionReturnType(declaringScope, function, functionDescriptor);
+                if (returnType == null) {
+                    returnType = ErrorUtils.createErrorType("Unable to infer body type");
+                }
+                functionDescriptor.setUnsubstitutedReturnType(returnType);
+            }
+
+            List<JetElement> unreachableElements = new ArrayList<JetElement>();
+            flowInformationProvider.collectUnreachableExpressions(function.asElement(), unreachableElements);
+
+            // This is needed in order to highlight only '1 < 2' and not '1', '<' and '2' as well
+            Set<JetElement> rootElements = JetPsiUtil.findRootExpressions(unreachableElements);
+
+            // TODO : (return 1) || (return 2) -- only || and right of it is unreachable
+            // TODO : try {return 1} finally {return 2}. Currently 'return 1' is reported as unreachable,
+            //        though it'd better be reported more specifically
+
+            for (JetElement element : rootElements) {
+                semanticServices.getErrorHandler().genericError(element.getNode(), "Unreachable code");
+            }
+        }
+        else {
+            if (!functionDescriptor.isReturnTypeSet()) {
+                semanticServices.getErrorHandler().genericError(function.asElement().getNode(), "This function must either declare a return type or have a body element");
+                functionDescriptor.setUnsubstitutedReturnType(ErrorUtils.createErrorType("No type, no body"));
+            }
+        }
+    }
+
+    private JetFlowInformationProvider computeFlowData(@NotNull JetElement declaration, @NotNull JetExpression bodyExpression) {
         final JetPseudocodeTrace pseudocodeTrace = flowDataTraceFactory.createTrace(declaration);
         final Map<JetElement, Pseudocode> pseudocodeMap = new HashMap<JetElement, Pseudocode>();
         final Map<JetElement, Instruction> representativeInstructions = new HashMap<JetElement, Instruction>();

@@ -43,4 +43,16 @@ public class DeclarationDescriptorVisitor<R, D> {
     public R visitValueParameterDescriptor(ValueParameterDescriptor descriptor, D data) {
         return visitVariableDescriptor(descriptor, data);
     }
+
+    public R visitPropertyGetterDescriptor(PropertyGetterDescriptor descriptor, D data) {
+        return visitPropertyAccessorDescriptor(descriptor, data);
+    }
+
+    private R visitPropertyAccessorDescriptor(PropertyAccessorDescriptor descriptor, D data) {
+        return visitFunctionDescriptor(descriptor, data);
+    }
+
+    public R visitPropertySetterDescriptor(PropertySetterDescriptor descriptor, D data) {
+        return visitPropertyAccessorDescriptor(descriptor, data);
+    }
 }

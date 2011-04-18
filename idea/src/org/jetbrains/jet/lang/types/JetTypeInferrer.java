@@ -269,7 +269,7 @@ public class JetTypeInferrer {
     }
 
     @NotNull
-    public JetType getFunctionReturnType(@NotNull JetScope outerScope, JetFunction function, FunctionDescriptor functionDescriptor) {
+    public JetType getFunctionReturnType(@NotNull JetScope outerScope, JetDeclarationWithBody function, FunctionDescriptor functionDescriptor) {
         Map<JetElement, JetType> typeMap = collectReturnedExpressions(outerScope, function, functionDescriptor);
         Collection<JetType> types = typeMap.values();
         return types.isEmpty() ? JetStandardClasses.getNothingType() : semanticServices.getTypeChecker().commonSupertype(types);
@@ -280,7 +280,7 @@ public class JetTypeInferrer {
         return typeCache.get(expression);
     }
 
-    public void checkFunctionReturnType(@NotNull JetScope outerScope, @NotNull JetFunction function, @NotNull FunctionDescriptor functionDescriptor) {
+    public void checkFunctionReturnType(@NotNull JetScope outerScope, @NotNull JetDeclarationWithBody function, @NotNull FunctionDescriptor functionDescriptor) {
         Map<JetElement, JetType> typeMap = collectReturnedExpressions(outerScope, function, functionDescriptor);
         if (typeMap.isEmpty()) {
             return; // The function returns Nothing
@@ -292,8 +292,8 @@ public class JetTypeInferrer {
             JetTypeChecker typeChecker = semanticServices.getTypeChecker();
             if (!typeChecker.isSubtypeOf(actualType, expectedReturnType)) {
                 if (typeChecker.isConvertibleBySpecialConversion(actualType, expectedReturnType)) {
-                    if (expectedReturnType.getConstructor().equals(JetStandardClasses.getUnitType().getConstructor()) &&
-                        element.getParent() instanceof JetReturnExpression) {
+                    if (expectedReturnType.getConstructor().equals(JetStandardClasses.getUnitType().getConstructor())
+                        && element.getParent() instanceof JetReturnExpression) {
                         semanticServices.getErrorHandler().genericError(element.getNode(), "This function must return a value of type Unit");
                     }
                 }
@@ -315,14 +315,14 @@ public class JetTypeInferrer {
         }
     }
 
-    private Map<JetElement, JetType> collectReturnedExpressions(JetScope outerScope, JetFunction function, FunctionDescriptor functionDescriptor) {
+    private Map<JetElement, JetType> collectReturnedExpressions(JetScope outerScope, JetDeclarationWithBody function, FunctionDescriptor functionDescriptor) {
         JetExpression bodyExpression = function.getBodyExpression();
         assert bodyExpression != null;
         JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(outerScope, functionDescriptor, semanticServices);
         getType(functionInnerScope, bodyExpression, function.hasBlockBody());
         Collection<JetExpression> returnedExpressions = new ArrayList<JetExpression>();
         Collection<JetElement> elementsReturningUnit = new ArrayList<JetElement>();
-        flowInformationProvider.collectReturnedInformation(function, returnedExpressions, elementsReturningUnit);
+        flowInformationProvider.collectReturnedInformation(function.asElement(), returnedExpressions, elementsReturningUnit);
         Map<JetElement,JetType> typeMap = new HashMap<JetElement, JetType>();
         for (JetExpression returnedExpression : returnedExpressions) {
             JetType cachedType = getCachedType(returnedExpression);

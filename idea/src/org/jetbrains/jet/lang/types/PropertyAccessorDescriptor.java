@@ -8,40 +8,10 @@ import java.util.List;
 /**
  * @author abreslav
  */
-public class PropertyAccessorDescriptor extends DeclarationDescriptorImpl implements FunctionDescriptor {
-    public enum AccessorType {
-        GETTER("get"),
-        SETTER("set");
+public abstract class PropertyAccessorDescriptor extends DeclarationDescriptorImpl implements FunctionDescriptor {
 
-        private final String name;
-
-        AccessorType(String name) {
-            this.name = name;
-        }
-
-        public String getName() {
-            return name;
-        }
-    }
-
-    public static PropertyAccessorDescriptor createGetterDescriptor(
-        @NotNull PropertyDescriptor correspondingProperty,
-        @NotNull List<Attribute> attributes,
-        @NotNull JetType returnType
-    ) {
-        return new PropertyAccessorDescriptor(correspondingProperty, attributes, AccessorType.GETTER);
-    }
-
-    public static PropertyAccessorDescriptor createSetterDescriptor(
-        @NotNull PropertyDescriptor correspondingProperty,
-        @NotNull List<Attribute> attributes,
-        @NotNull ValueParameterDescriptor parameter
-    ) {
-        return new PropertyAccessorDescriptor(correspondingProperty, attributes, AccessorType.SETTER);
-    }
-
-    protected PropertyAccessorDescriptor(@NotNull PropertyDescriptor correspondingProperty, @NotNull List<Attribute> attributes, @NotNull AccessorType accessorType) {
-        super(correspondingProperty.getContainingDeclaration(), attributes, accessorType.getName());
+    protected PropertyAccessorDescriptor(@NotNull PropertyDescriptor correspondingProperty, @NotNull List<Attribute> attributes, @NotNull String name) {
+        super(correspondingProperty.getContainingDeclaration(), attributes, name);
     }
 
     @NotNull
@@ -60,22 +30,5 @@ public class PropertyAccessorDescriptor extends DeclarationDescriptorImpl implem
     @Override
     public List<TypeParameterDescriptor> getTypeParameters() {
         return Collections.emptyList();
-    }
-
-    @NotNull
-    @Override
-    public List<ValueParameterDescriptor> getUnsubstitutedValueParameters() {
-        throw new UnsupportedOperationException(); // TODO
-    }
-
-    @NotNull
-    @Override
-    public JetType getUnsubstitutedReturnType() {
-        throw new UnsupportedOperationException(); // TODO
-    }
-
-    @Override
-    public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
-        throw new UnsupportedOperationException(); // TODO
     }
 }

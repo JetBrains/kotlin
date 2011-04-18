@@ -86,6 +86,7 @@ public class JetProperty extends JetNamedDeclaration {
         return null;
     }
 
+    @Nullable
     public JetExpression getInitializer() {
         PsiElement eq = findChildByType(JetTokens.EQ);
         return PsiTreeUtil.getNextSiblingOfType(eq, JetExpression.class);

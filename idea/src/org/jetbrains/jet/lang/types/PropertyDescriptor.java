@@ -10,8 +10,8 @@ import java.util.List;
  */
 public class PropertyDescriptor extends VariableDescriptorImpl {
 
-    private PropertyAccessorDescriptor getter;
-    private PropertyAccessorDescriptor setter;
+    private PropertyGetterDescriptor getter;
+    private PropertySetterDescriptor setter;
     private boolean hasBackingField;
 
     public PropertyDescriptor(
@@ -23,11 +23,18 @@ public class PropertyDescriptor extends VariableDescriptorImpl {
         super(containingDeclaration, attributes, name, inType, outType);
     }
 
-    public PropertyAccessorDescriptor getGetter() {
+    public void initialize(@Nullable PropertyGetterDescriptor getter, @Nullable PropertySetterDescriptor setter) {
+        this.getter = getter;
+        this.setter = setter;
+    }
+
+    @Nullable
+    public PropertyGetterDescriptor getGetter() {
         return getter;
     }
 
-    public PropertyAccessorDescriptor getSetter() {
+    @Nullable
+    public PropertySetterDescriptor getSetter() {
         return setter;
     }
 

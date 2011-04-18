@@ -6,10 +6,12 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lexer.JetTokens;
 
+import java.util.List;
+
 /**
  * @author max
  */
-public class JetPropertyAccessor extends JetDeclaration {
+public class JetPropertyAccessor extends JetDeclaration implements JetDeclarationWithBody {
     public JetPropertyAccessor(@NotNull ASTNode node) {
         super(node);
     }
@@ -29,11 +31,32 @@ public class JetPropertyAccessor extends JetDeclaration {
 
     @Nullable
     public JetParameter getParameter() {
-        return (JetParameter) findChildByType(JetNodeTypes.VALUE_PARAMETER);
+        JetParameterList parameterList = (JetParameterList) findChildByType(JetNodeTypes.VALUE_PARAMETER_LIST);
+        if (parameterList == null) return null;
+        List<JetParameter> parameters = parameterList.getParameters();
+        if (parameters.isEmpty()) return null;
+        return parameters.get(0);
     }
 
     @Nullable
-    public JetExpression getBody() {
+    @Override
+    public JetExpression getBodyExpression() {
         return findChildByClass(JetExpression.class);
+    }
+
+    @Override
+    public boolean hasBlockBody() {
+        return findChildByType(JetTokens.EQ) == null;
+    }
+
+    @NotNull
+    @Override
+    public JetElement asElement() {
+        return this;
+    }
+
+    @Nullable
+    public JetTypeReference getReturnTypeReference() {
+        return findChildByClass(JetTypeReference.class);
     }
 }

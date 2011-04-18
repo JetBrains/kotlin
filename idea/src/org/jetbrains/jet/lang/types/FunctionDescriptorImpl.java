@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * @author abreslav
  */
-public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements FunctionDescriptor {
+public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements MutableFunctionDescriptor {
 
     private List<TypeParameterDescriptor> typeParameters;
 
@@ -43,8 +43,14 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
         return this;
     }
 
+    @Override
     public void setUnsubstitutedReturnType(@NotNull JetType unsubstitutedReturnType) {
         this.unsubstitutedReturnType = unsubstitutedReturnType;
+    }
+
+    @Override
+    public boolean isReturnTypeSet() {
+        return unsubstitutedReturnType != null;
     }
 
     @Override

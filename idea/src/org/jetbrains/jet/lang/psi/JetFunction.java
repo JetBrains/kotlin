@@ -41,7 +41,6 @@ public class JetFunction extends JetTypeParameterListOwner implements JetDeclara
         return findChildByClass(JetExpression.class);
     }
 
-
     @Nullable
     public JetTypeReference getReceiverTypeRef() {
         PsiElement child = getFirstChild();
@@ -75,7 +74,14 @@ public class JetFunction extends JetTypeParameterListOwner implements JetDeclara
         return null;
     }
 
+    @Override
     public boolean hasBlockBody() {
         return findChildByType(JetTokens.EQ) == null;
+    }
+
+    @NotNull
+    @Override
+    public JetElement asElement() {
+        return this;
     }
 }

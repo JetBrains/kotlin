@@ -88,10 +88,12 @@ property
   ;
 
 getter
+  : modifiers "get"
   : modifiers "get" "(" ")" (":" type)? functionBody
   ;
 
 setter
+  : modifiers "set"
   : modifiers "set" "(" modifiers (SimpleName | parameter) ")" functionBody
   ;
 

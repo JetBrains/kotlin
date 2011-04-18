@@ -761,7 +761,7 @@ public class JetParsing extends AbstractJetParsing {
     }
 
     /*
-     * getter
+     * getterOrSetter
      *   : modifiers ("get" | "set")
      *   :
      *        (     "get" "(" ")"
@@ -791,6 +791,7 @@ public class JetParsing extends AbstractJetParsing {
         myBuilder.disableNewlines();
         expect(LPAR, "Expecting '('", TokenSet.create(RPAR, IDENTIFIER, COLON, LBRACE, EQ));
         if (setter) {
+            PsiBuilder.Marker parameterList = mark();
             PsiBuilder.Marker setterParameter = mark();
             int lastId = findLastBefore(TokenSet.create(IDENTIFIER), TokenSet.create(RPAR, COMMA, COLON), false);
             createTruncatedBuilder(lastId).parseModifierList();
@@ -802,6 +803,7 @@ public class JetParsing extends AbstractJetParsing {
                 parseTypeRef();
             }
             setterParameter.done(VALUE_PARAMETER);
+            parameterList.done(VALUE_PARAMETER_LIST);
         }
         if (!at(RPAR)) errorUntil("Expecting ')'", TokenSet.create(RPAR, COLON, LBRACE, EQ, EOL_OR_SEMICOLON));
         expect(RPAR, "Expecting ')'", TokenSet.create(RPAR, COLON, LBRACE, EQ));

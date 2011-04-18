@@ -185,7 +185,8 @@ public class ClassDescriptorResolver {
         return functionDescriptor;
     }
 
-    private List<ValueParameterDescriptor> resolveValueParameters(FunctionDescriptorImpl functionDescriptor, WritableScope parameterScope, List<JetParameter> valueParameters) {
+    @NotNull
+    private List<ValueParameterDescriptor> resolveValueParameters(MutableFunctionDescriptor functionDescriptor, WritableScope parameterScope, List<JetParameter> valueParameters) {
         List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>();
         for (int i = 0, valueParametersSize = valueParameters.size(); i < valueParametersSize; i++) {
             JetParameter valueParameter = valueParameters.get(i);
@@ -203,23 +204,30 @@ public class ClassDescriptorResolver {
             } else {
                 type = typeResolver.resolveType(parameterScope, typeReference);
             }
-            ValueParameterDescriptor valueParameterDescriptor = new ValueParameterDescriptorImpl(
-                    functionDescriptor,
-                    i,
-                    AttributeResolver.INSTANCE.resolveAttributes(valueParameter.getModifierList()),
-                    JetPsiUtil.safeName(valueParameter.getName()),
-                    valueParameter.isMutable() ? type : null,
-                    type,
-                    valueParameter.getDefaultValue() != null,
-                    false // TODO : varargs
-            );
-            // TODO : Default values???
 
-            result.add(valueParameterDescriptor);
-            trace.recordDeclarationResolution(valueParameter, valueParameterDescriptor);
+            ValueParameterDescriptor valueParameterDescriptor = resolveValueParameterDescriptor(functionDescriptor, valueParameter, i, type);
             parameterScope.addVariableDescriptor(valueParameterDescriptor);
+            result.add(valueParameterDescriptor);
         }
         return result;
+    }
+
+    @NotNull
+    private MutableValueParameterDescriptor resolveValueParameterDescriptor(DeclarationDescriptor declarationDescriptor, JetParameter valueParameter, int index, JetType type) {
+        MutableValueParameterDescriptor valueParameterDescriptor = new ValueParameterDescriptorImpl(
+            declarationDescriptor,
+            index,
+            AttributeResolver.INSTANCE.resolveAttributes(valueParameter.getModifierList()),
+            JetPsiUtil.safeName(valueParameter.getName()),
+            valueParameter.isMutable() ? type : null,
+            type,
+            valueParameter.getDefaultValue() != null,
+            false // TODO : varargs
+    );
+        // TODO : Default values???
+
+        trace.recordDeclarationResolution(valueParameter, valueParameterDescriptor);
+        return valueParameterDescriptor;
     }
 
     public List<TypeParameterDescriptor> resolveTypeParameters(DeclarationDescriptor containingDescriptor, WritableScope extensibleScope, List<JetTypeParameter> typeParameters) {
@@ -269,11 +277,11 @@ public class ClassDescriptorResolver {
 
     @NotNull
     public VariableDescriptor resolveLocalVariableDescriptor(@NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope scope, @NotNull JetParameter parameter) {
-        JetType type = getParameterType(scope, parameter);
+        JetType type = resolveParameterType(scope, parameter);
         return resolveLocalVariableDescriptor(containingDeclaration, parameter, type);
     }
 
-    private JetType getParameterType(JetScope scope, JetParameter parameter) {
+    private JetType resolveParameterType(JetScope scope, JetParameter parameter) {
         JetTypeReference typeReference = parameter.getTypeReference();
         JetType type;
         if (typeReference != null) {
@@ -310,17 +318,91 @@ public class ClassDescriptorResolver {
         return propertyDescriptor;
     }
 
-    public VariableDescriptor resolvePropertyDescriptor(@NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope scope, JetProperty property) {
+    public PropertyDescriptor resolvePropertyDescriptor(@NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope scope, JetProperty property) {
         JetType type = getType(scope, property);
 
-        VariableDescriptorImpl propertyDescriptor = new PropertyDescriptor(
+        PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                 containingDeclaration,
                 AttributeResolver.INSTANCE.resolveAttributes(property.getModifierList()),
                 JetPsiUtil.safeName(property.getName()),
                 property.isVar() ? type : null,
                 type);
+
+        propertyDescriptor.initialize(
+                resolvePropertyGetterDescriptor(scope, property, propertyDescriptor),
+                resolvePropertySetterDescriptors(scope, property, propertyDescriptor));
+
         trace.recordDeclarationResolution(property, propertyDescriptor);
         return propertyDescriptor;
+    }
+
+    @Nullable
+    private PropertySetterDescriptor resolvePropertySetterDescriptors(@NotNull JetScope scope, @NotNull JetProperty property, @NotNull PropertyDescriptor propertyDescriptor) {
+        JetPropertyAccessor setter = property.getSetter();
+        if (setter != null && !property.isVar()) {
+            semanticServices.getErrorHandler().genericError(setter.asElement().getNode(), "A 'val'-property cannot have a setter");
+            return null;
+        }
+        PropertySetterDescriptor setterDescriptor = null;
+        if (setter != null) {
+            List<Attribute> attributes = AttributeResolver.INSTANCE.resolveAttributes(setter.getModifierList());
+            JetParameter parameter = setter.getParameter();
+
+            setterDescriptor = new PropertySetterDescriptor(propertyDescriptor, attributes);
+            if (parameter != null) {
+                if (parameter.isRef()) {
+                    semanticServices.getErrorHandler().genericError(parameter.getRefNode(), "Setter parameters can not be 'ref'");
+                }
+
+                // This check is redundant: the parser does not allow a default value, but we'll keep it just in case
+                JetExpression defaultValue = parameter.getDefaultValue();
+                if (defaultValue != null) {
+                    semanticServices.getErrorHandler().genericError(defaultValue.getNode(), "Setter parameters can not have default values");
+                }
+
+                JetType type;
+                JetTypeReference typeReference = parameter.getTypeReference();
+                if (typeReference == null) {
+                    type = propertyDescriptor.getInType(); // TODO : this maybe unknown at this point
+                }
+                else {
+                    type = typeResolver.resolveType(scope, typeReference);
+                    JetType inType = propertyDescriptor.getInType();
+                    if (inType != null) {
+                        if (!semanticServices.getTypeChecker().isSubtypeOf(type, inType)) {
+                            semanticServices.getErrorHandler().genericError(typeReference.getNode(), "Setter parameter type must be a subtype of the type of the property, i.e. " + inType);
+                        }
+                    }
+                    else {
+                        // TODO : the same check may be needed later???
+                    }
+                }
+
+                MutableValueParameterDescriptor valueParameterDescriptor = resolveValueParameterDescriptor(setterDescriptor, parameter, 0, type);
+                setterDescriptor.initialize(valueParameterDescriptor);
+            }
+            trace.recordDeclarationResolution(setter, setterDescriptor);
+        }
+        return setterDescriptor;
+    }
+
+    @Nullable
+    private PropertyGetterDescriptor resolvePropertyGetterDescriptor(@NotNull JetScope scope, @NotNull JetProperty property, @NotNull PropertyDescriptor propertyDescriptor) {
+        PropertyGetterDescriptor getterDescriptor = null;
+        JetPropertyAccessor getter = property.getGetter();
+        if (getter != null) {
+            List<Attribute> attributes = AttributeResolver.INSTANCE.resolveAttributes(getter.getModifierList());
+
+            JetType returnType = null;
+            JetTypeReference returnTypeReference = getter.getReturnTypeReference();
+            if (returnTypeReference != null) {
+                returnType = typeResolver.resolveType(scope, returnTypeReference);
+            }
+
+            getterDescriptor = new PropertyGetterDescriptor(propertyDescriptor, attributes, returnType);
+            trace.recordDeclarationResolution(getter, getterDescriptor);
+        }
+        return getterDescriptor;
     }
 
     @NotNull
@@ -336,7 +418,7 @@ public class ClassDescriptorResolver {
                 type = ErrorUtils.createErrorType("No type, no body");
             } else {
                 // TODO : ??? Fix-point here: what if we have something like "val a = foo {a.bar()}"
-                type = semanticServices.getTypeInferrer(trace, JetFlowInformationProvider.THROW_EXCEPTION).getType(scope, initializer, false);
+                type = semanticServices.getTypeInferrer(trace, JetFlowInformationProvider.THROW_EXCEPTION).safeGetType(scope, initializer, false);
             }
         } else {
             type = typeResolver.resolveType(scope, propertyTypeRef);
@@ -395,7 +477,7 @@ public class ClassDescriptorResolver {
             @NotNull ClassDescriptor classDescriptor,
             @NotNull JetScope scope,
             @NotNull JetParameter parameter) {
-        JetType type = getParameterType(scope, parameter);
+        JetType type = resolveParameterType(scope, parameter);
         String name = parameter.getName();
         VariableDescriptorImpl propertyDescriptor = new PropertyDescriptor(
                 classDescriptor,

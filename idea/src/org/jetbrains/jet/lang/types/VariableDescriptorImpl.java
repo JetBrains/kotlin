@@ -9,8 +9,8 @@ import java.util.List;
  * @author abreslav
  */
 public abstract class VariableDescriptorImpl extends DeclarationDescriptorImpl implements VariableDescriptor {
-    private final JetType inType;
-    private final JetType outType;
+    private JetType inType;
+    private JetType outType;
 
     public VariableDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
@@ -25,7 +25,6 @@ public abstract class VariableDescriptorImpl extends DeclarationDescriptorImpl i
         this.outType = outType;
     }
 
-    @NotNull
     @Override
     public JetType getOutType() {
         return outType;
@@ -34,5 +33,13 @@ public abstract class VariableDescriptorImpl extends DeclarationDescriptorImpl i
     @Override
     public JetType getInType() {
         return inType;
+    }
+
+    protected void setInType(JetType inType) {
+        this.inType = inType;
+    }
+
+    protected void setOutType(JetType outType) {
+        this.outType = outType;
     }
 }

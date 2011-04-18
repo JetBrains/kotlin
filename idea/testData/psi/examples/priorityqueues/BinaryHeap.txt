@@ -1081,8 +1081,9 @@ JetFile: BinaryHeap.jet
               PROPERTY_ACCESSOR
                 PsiElement(set)('set')
                 PsiElement(LPAR)('(')
-                VALUE_PARAMETER
-                  PsiElement(IDENTIFIER)('it')
+                VALUE_PARAMETER_LIST
+                  VALUE_PARAMETER
+                    PsiElement(IDENTIFIER)('it')
                 PsiElement(RPAR)(')')
                 PsiWhiteSpace(' ')
                 BLOCK
