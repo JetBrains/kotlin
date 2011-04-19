@@ -43,7 +43,7 @@ public class FunctionCodegen {
 
     }
 
-    private void gen(JetFunction f, OwnerKind kind) {
+    public void gen(JetFunction f, OwnerKind kind) {
         int flags = Opcodes.ACC_PUBLIC; // TODO.
 
         boolean isStatic = kind == OwnerKind.NAMESPACE;

@@ -45,7 +45,7 @@ public class Codegens {
     }
 
     public ClassVisitor forClassInterface(ClassDescriptor aClass) {
-        return newVisitor(CodeGenUtil.getInternalInterfaceName(aClass));
+        return newVisitor(CodeGenUtil.getInternalInterfaceName(aClass) + ".class");
     }
 
     public ClassCodegen forClass(BindingContext bindingContext) {
@@ -53,11 +53,11 @@ public class Codegens {
     }
 
     public ClassVisitor forClassImplementation(ClassDescriptor aClass) {
-        return newVisitor(CodeGenUtil.getInternalImplementationName(aClass));
+        return newVisitor(CodeGenUtil.getInternalImplementationName(aClass) + ".class");
     }
 
     public ClassVisitor forClassDelegatingImplementation(ClassDescriptor aClass) {
-        return newVisitor(CodeGenUtil.getInternalDelegatingImplementationName(aClass));
+        return newVisitor(CodeGenUtil.getInternalDelegatingImplementationName(aClass)  + ".class");
     }
 
     public NamespaceCodegen forNamespace(JetNamespace namespace) {
@@ -65,7 +65,7 @@ public class Codegens {
         String fqName = namespace.getFQName();
         NamespaceCodegen codegen = ns2codegen.get(fqName);
         if (codegen == null) {
-            codegen = new NamespaceCodegen(project, newVisitor(NamespaceCodegen.getJVMClassName(fqName) + ".class"), fqName);
+            codegen = new NamespaceCodegen(project, newVisitor(NamespaceCodegen.getJVMClassName(fqName) + ".class"), fqName, this);
             ns2codegen.put(fqName, codegen);
         }
 

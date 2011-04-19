@@ -2,10 +2,7 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.ErrorHandler;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lang.psi.JetFunction;
-import org.jetbrains.jet.lang.psi.JetNamespace;
-import org.jetbrains.jet.lang.psi.JetProperty;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
@@ -18,10 +15,12 @@ import org.objectweb.asm.Opcodes;
 public class NamespaceCodegen {
     private final Project project;
     private final ClassVisitor v;
+    private final Codegens codegens;
 
-    public NamespaceCodegen(Project project, ClassVisitor v, String fqName) {
+    public NamespaceCodegen(Project project, ClassVisitor v, String fqName, Codegens codegens) {
         this.project = project;
         this.v = v;
+        this.codegens = codegens;
 
         v.visit(Opcodes.V1_6,
                 Opcodes.ACC_PUBLIC,
@@ -38,6 +37,7 @@ public class NamespaceCodegen {
 
         final PropertyCodegen propertyCodegen = new PropertyCodegen(v);
         final FunctionCodegen functionCodegen = new FunctionCodegen(v, JetStandardLibrary.getJetStandardLibrary(project), bindingContext);
+        final ClassCodegen classCodegen = codegens.forClass(bindingContext);
 
         for (JetDeclaration declaration : namespace.getDeclarations()) {
             if (declaration instanceof JetProperty) {
@@ -45,6 +45,9 @@ public class NamespaceCodegen {
             }
             else if (declaration instanceof JetFunction) {
                 functionCodegen.genInNamespace((JetFunction) declaration);
+            }
+            else if (declaration instanceof JetClass) {
+                classCodegen.generate((JetClass) declaration);
             }
         }
     }
