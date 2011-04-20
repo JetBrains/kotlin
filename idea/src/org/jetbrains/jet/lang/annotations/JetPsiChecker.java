@@ -12,13 +12,14 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.ErrorHandler;
-import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetReferenceExpression;
+import org.jetbrains.jet.lang.JetHighlighter;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.DeclarationDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.PropertyDescriptor;
+import org.jetbrains.jet.lang.types.VariableDescriptor;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -77,6 +78,8 @@ public class JetPsiChecker implements Annotator {
                         holder.createErrorAnnotation(declarationPsiElement, "Redeclaration");
                     }
                 }
+
+                highlightBackingFields(holder, file, bindingContext);
             }
             catch (ProcessCanceledException e) {
                 throw e;
@@ -87,5 +90,27 @@ public class JetPsiChecker implements Annotator {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void highlightBackingFields(final AnnotationHolder holder, JetFile file, final BindingContext bindingContext) {
+        file.acceptChildren(new JetVisitor() {
+            @Override
+            public void visitProperty(JetProperty property) {
+                VariableDescriptor propertyDescriptor = bindingContext.getVariableDescriptor(property);
+                if (propertyDescriptor instanceof PropertyDescriptor) {
+                    if (bindingContext.hasBackingField((PropertyDescriptor) propertyDescriptor)) {
+                        holder.createInfoAnnotation(
+                                property.getNameIdentifier(),
+                                "This property has a backing field")
+                            .setTextAttributes(JetHighlighter.JET_PROPERTY_WITH_BACKING_FIELD_IDENTIFIER);
+                    }
+                }
+            }
+
+            @Override
+            public void visitJetElement(JetElement elem) {
+                elem.acceptChildren(this);
+            }
+        });
     }
 }

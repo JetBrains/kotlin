@@ -20,12 +20,18 @@ import java.util.List;
  */
 public abstract class JetTestCaseBase extends LightDaemonAnalyzerTestCase {
 
+    private boolean checkInfos = false;
     private String dataPath;
     protected final String name;
 
     public JetTestCaseBase(String dataPath, String name) {
         this.dataPath = dataPath;
         this.name = name;
+    }
+
+    public final JetTestCaseBase setCheckInfos(boolean checkInfos) {
+        this.checkInfos = checkInfos;
+        return this;
     }
 
     public static Sdk jdkFromIdeaHome() {
@@ -57,7 +63,7 @@ public abstract class JetTestCaseBase extends LightDaemonAnalyzerTestCase {
 
     @Override
     protected void runTest() throws Throwable {
-        doTest(getTestFilePath(), true, false);
+        doTest(getTestFilePath(), true, checkInfos);
     }
 
     @NotNull

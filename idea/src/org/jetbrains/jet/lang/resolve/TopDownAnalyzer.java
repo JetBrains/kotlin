@@ -301,9 +301,10 @@ public class TopDownAnalyzer {
                     super.recordReferenceResolution(expression, descriptor);
                     if (expression instanceof JetSimpleNameExpression) {
                         JetSimpleNameExpression simpleNameExpression = (JetSimpleNameExpression) expression;
-                        if (simpleNameExpression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER
-                            && descriptor == propertyDescriptor) { // TODO : original?
-                            recordFieldAccessFromAccessor(propertyDescriptor);
+                        if (simpleNameExpression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER) {
+                            if (descriptor == propertyDescriptor) { // TODO : original?
+                                recordFieldAccessFromAccessor(propertyDescriptor);
+                            }
                         }
                     }
                 }
@@ -320,7 +321,6 @@ public class TopDownAnalyzer {
             if (setter != null && setterDescriptor != null) {
                 resolveFunctionBody(fieldAccessTrackingTrace, setter, setterDescriptor, declaringScope);
             }
-
         }
     }
 

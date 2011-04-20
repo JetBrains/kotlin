@@ -1,0 +1,31 @@
+class Test {
+    <info>abstract</info> val x : Int
+    <info>abstract</info> val x1 : Int <info>get</info>
+    <info>abstract</info> val x2 : Int <info>get</info>() = 1
+
+    val <info>a</info> : Int
+    val <info>b</info> : Int <info>get</info>
+    val <info>c</info> = 1
+
+    val <info>c1</info> = 1
+      <info>get</info>
+    val c2 : Int
+        <info>get</info>() = 1
+    val c3 : Int
+        <info>get</info>() { return 1 }
+    val c4 : Int
+        <info>get</info>() { 1 }
+
+    <info>abstract</info> var y : Int
+    <info>abstract</info> var y1 : Int <info>get</info>
+    <info>abstract</info> var y2 : Int <info>set</info>
+    <info>abstract</info> var y3 : Int <info>set</info> <info>get</info>
+    <info>abstract</info> var y4 : Int <info>set</info> <info>get</info>() = 1
+    <info>abstract</info> var y5 : Int <info>set</info>(x) {} <info>get</info>() = 1
+
+    var <info>v</info> : Int
+    var <info>v1</info> : Int <info>get</info>
+    var <info>v2</info> : Int <info>get</info> <info>set</info>
+    var <info>v3</info> : Int <info>get</info>() = 1; <info>set</info>
+    var v4 : Int <info>get</info>() = 1; <info>set</info>(x){}
+}

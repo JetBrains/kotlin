@@ -287,7 +287,7 @@ public class ExpressionCodegen extends JetVisitor {
 
         for (JetElement statement : statements) {
             if (statement instanceof JetProperty) {
-                final VariableDescriptor variableDescriptor = bindingContext.getPropertyDescriptor((JetProperty) statement);
+                final VariableDescriptor variableDescriptor = bindingContext.getVariableDescriptor((JetProperty) statement);
                 final Type type = typeMapper.mapType(variableDescriptor.getOutType());
                 myMap.enter(variableDescriptor, type.getSize());
             }
@@ -309,7 +309,7 @@ public class ExpressionCodegen extends JetVisitor {
         for (JetElement statement : statements) {
             if (statement instanceof JetProperty) {
                 JetProperty var = (JetProperty) statement;
-                VariableDescriptor variableDescriptor = bindingContext.getPropertyDescriptor(var);
+                VariableDescriptor variableDescriptor = bindingContext.getVariableDescriptor(var);
                 Type outType = typeMapper.mapType(variableDescriptor.getOutType());
 
                 int index = myMap.leave(variableDescriptor);
@@ -923,7 +923,7 @@ public class ExpressionCodegen extends JetVisitor {
 
     @Override
     public void visitProperty(JetProperty property) {
-        VariableDescriptor variableDescriptor = bindingContext.getPropertyDescriptor(property);
+        VariableDescriptor variableDescriptor = bindingContext.getVariableDescriptor(property);
         int index = myMap.getIndex(variableDescriptor);
 
         assert index >= 0;

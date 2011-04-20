@@ -37,6 +37,12 @@ public class JetHighlighter extends SyntaxHighlighterBase {
                                                   SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()
                                                  );
 
+    public static final TextAttributesKey JET_PROPERTY_WITH_BACKING_FIELD_IDENTIFIER = TextAttributesKey.createTextAttributesKey(
+                                                  "JET.PROPERTY.WITH.BACKING.FIELD.IDENTIFIER",
+// TODO: proper attributes
+                                                  SyntaxHighlighterColors.NUMBER.getDefaultAttributes()
+                                                 );
+
     public static final TextAttributesKey JET_LABEL_IDENTIFIER = TextAttributesKey.createTextAttributesKey(
                                                   "JET.LABEL.IDENTIFIER",
 // TODO: proper attributes

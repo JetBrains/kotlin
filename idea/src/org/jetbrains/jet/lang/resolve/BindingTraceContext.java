@@ -118,7 +118,7 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
     }
 
     @Override
-    public VariableDescriptor getPropertyDescriptor(JetProperty declaration) {
+    public VariableDescriptor getVariableDescriptor(JetProperty declaration) {
         return (VariableDescriptor) declarationsToDescriptors.get(declaration);
     }
 

@@ -16,11 +16,18 @@ public class JetPsiCheckerTest extends JetTestCaseBase {
 
     public static Test suite() {
         TestSuite suite = new TestSuite();
-        suite.addTest(JetTestCaseBase.suiteForDirectory(getTestDataPathBase(), "/checker/", true, new JetTestCaseBase.NamedTestFactory() {
+        suite.addTest(JetTestCaseBase.suiteForDirectory(getTestDataPathBase(), "/checker/", false, new JetTestCaseBase.NamedTestFactory() {
             @NotNull
             @Override
             public Test createTest(@NotNull String dataPath, @NotNull String name) {
                 return new JetPsiCheckerTest(dataPath, name);
+            }
+        }));
+        suite.addTest(JetTestCaseBase.suiteForDirectory(getTestDataPathBase(), "/checker/infos/", false, new JetTestCaseBase.NamedTestFactory() {
+            @NotNull
+            @Override
+            public Test createTest(@NotNull String dataPath, @NotNull String name) {
+                return new JetPsiCheckerTest(dataPath, name).setCheckInfos(true);
             }
         }));
         return suite;
