@@ -19,6 +19,8 @@ import java.util.List;
  */
 public class ClassDescriptorResolver {
 
+    private static final MemberModifiers DEFAULT_MODIFIERS = new MemberModifiers(false, false, false);
+
     private final JetSemanticServices semanticServices;
     private final TypeResolver typeResolver;
     private final BindingTrace trace;
@@ -321,23 +323,37 @@ public class ClassDescriptorResolver {
     public PropertyDescriptor resolvePropertyDescriptor(@NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope scope, JetProperty property) {
         JetType type = getType(scope, property);
 
+        boolean isVar = property.isVar();
+        JetModifierList modifierList = property.getModifierList();
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                 containingDeclaration,
-                AttributeResolver.INSTANCE.resolveAttributes(property.getModifierList()),
+                AttributeResolver.INSTANCE.resolveAttributes(modifierList),
+                resolveModifiers(modifierList, DEFAULT_MODIFIERS), // TODO : default modifiers differ in different contexts
+                isVar,
                 JetPsiUtil.safeName(property.getName()),
-                property.isVar() ? type : null,
+                isVar ? type : null,
                 type);
 
         propertyDescriptor.initialize(
                 resolvePropertyGetterDescriptor(scope, property, propertyDescriptor),
-                resolvePropertySetterDescriptors(scope, property, propertyDescriptor));
+                resolvePropertySetterDescriptor(scope, property, propertyDescriptor));
 
         trace.recordDeclarationResolution(property, propertyDescriptor);
         return propertyDescriptor;
     }
 
+    @NotNull
+    private MemberModifiers resolveModifiers(@Nullable JetModifierList modifierList, @NotNull MemberModifiers defaultModifiers) {
+        if (modifierList == null) return defaultModifiers;
+        return new MemberModifiers(
+                modifierList.hasModifier(JetTokens.ABSTRACT_KEYWORD),
+                modifierList.hasModifier(JetTokens.VIRTUAL_KEYWORD),
+                modifierList.hasModifier(JetTokens.OVERRIDE_KEYWORD)
+        );
+    }
+
     @Nullable
-    private PropertySetterDescriptor resolvePropertySetterDescriptors(@NotNull JetScope scope, @NotNull JetProperty property, @NotNull PropertyDescriptor propertyDescriptor) {
+    private PropertySetterDescriptor resolvePropertySetterDescriptor(@NotNull JetScope scope, @NotNull JetProperty property, @NotNull PropertyDescriptor propertyDescriptor) {
         JetPropertyAccessor setter = property.getSetter();
         if (setter != null && !property.isVar()) {
             semanticServices.getErrorHandler().genericError(setter.asElement().getNode(), "A 'val'-property cannot have a setter");
@@ -348,7 +364,7 @@ public class ClassDescriptorResolver {
             List<Attribute> attributes = AttributeResolver.INSTANCE.resolveAttributes(setter.getModifierList());
             JetParameter parameter = setter.getParameter();
 
-            setterDescriptor = new PropertySetterDescriptor(propertyDescriptor, attributes);
+            setterDescriptor = new PropertySetterDescriptor(propertyDescriptor, attributes, setter.getBodyExpression() != null);
             if (parameter != null) {
                 if (parameter.isRef()) {
                     semanticServices.getErrorHandler().genericError(parameter.getRefNode(), "Setter parameters can not be 'ref'");
@@ -399,7 +415,7 @@ public class ClassDescriptorResolver {
                 returnType = typeResolver.resolveType(scope, returnTypeReference);
             }
 
-            getterDescriptor = new PropertyGetterDescriptor(propertyDescriptor, attributes, returnType);
+            getterDescriptor = new PropertyGetterDescriptor(propertyDescriptor, attributes, returnType, getter.getBodyExpression() != null);
             trace.recordDeclarationResolution(getter, getterDescriptor);
         }
         return getterDescriptor;
@@ -479,12 +495,17 @@ public class ClassDescriptorResolver {
             @NotNull JetParameter parameter) {
         JetType type = resolveParameterType(scope, parameter);
         String name = parameter.getName();
-        VariableDescriptorImpl propertyDescriptor = new PropertyDescriptor(
+        boolean isMutable = parameter.isMutable();
+        JetModifierList modifierList = parameter.getModifierList();
+        PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                 classDescriptor,
-                AttributeResolver.INSTANCE.resolveAttributes(parameter.getModifierList()),
+                AttributeResolver.INSTANCE.resolveAttributes(modifierList),
+                resolveModifiers(modifierList, DEFAULT_MODIFIERS),
+                isMutable,
                 name == null ? "<no name>" : name,
-                parameter.isMutable() ? type : null,
+                isMutable ? type : null,
                 type);
+        propertyDescriptor.initialize(null, null);
         trace.recordDeclarationResolution(parameter, propertyDescriptor);
         return propertyDescriptor;
     }

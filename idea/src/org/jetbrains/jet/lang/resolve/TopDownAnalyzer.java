@@ -7,6 +7,7 @@ import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.cfg.pseudocode.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.*;
 
@@ -267,7 +268,7 @@ public class TopDownAnalyzer {
             JetExpression bodyExpression = declarationWithBody.getBodyExpression();
 
             if (declaration instanceof JetFunction) {
-                resolveFunctionBody((JetFunction) declaration, (FunctionDescriptorImpl) descriptor, declaringScope);
+                resolveFunctionBody(trace, (JetFunction) declaration, (FunctionDescriptorImpl) descriptor, declaringScope);
             }
             else if (declaration instanceof JetConstructor) {
                 if (bodyExpression != null) {
@@ -283,7 +284,7 @@ public class TopDownAnalyzer {
 
         for (Map.Entry<JetProperty, PropertyDescriptor> entry : properties.entrySet()) {
             JetProperty declaration = entry.getKey();
-            PropertyDescriptor descriptor = entry.getValue();
+            final PropertyDescriptor propertyDescriptor = entry.getValue();
             WritableScope declaringScope = declaringScopes.get(declaration);
 
             JetExpression initializer = declaration.getInitializer();
@@ -294,22 +295,40 @@ public class TopDownAnalyzer {
                 // TODO : check type
             }
 
+            BindingTraceAdapter fieldAccessTrackingTrace = new BindingTraceAdapter(trace) {
+                @Override
+                public void recordReferenceResolution(@NotNull JetReferenceExpression expression, @NotNull DeclarationDescriptor descriptor) {
+                    super.recordReferenceResolution(expression, descriptor);
+                    if (expression instanceof JetSimpleNameExpression) {
+                        JetSimpleNameExpression simpleNameExpression = (JetSimpleNameExpression) expression;
+                        if (simpleNameExpression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER
+                            && descriptor == propertyDescriptor) { // TODO : original?
+                            recordFieldAccessFromAccessor(propertyDescriptor);
+                        }
+                    }
+                }
+            };
+
             JetPropertyAccessor getter = declaration.getGetter();
-            PropertyGetterDescriptor getterDescriptor = descriptor.getGetter();
+            PropertyGetterDescriptor getterDescriptor = propertyDescriptor.getGetter();
             if (getter != null && getterDescriptor != null) {
-                resolveFunctionBody(getter, getterDescriptor, declaringScope);
+                resolveFunctionBody(fieldAccessTrackingTrace, getter, getterDescriptor, declaringScope);
             }
 
             JetPropertyAccessor setter = declaration.getSetter();
-            PropertySetterDescriptor setterDescriptor = descriptor.getSetter();
+            PropertySetterDescriptor setterDescriptor = propertyDescriptor.getSetter();
             if (setter != null && setterDescriptor != null) {
-                resolveFunctionBody(setter, setterDescriptor, declaringScope);
+                resolveFunctionBody(fieldAccessTrackingTrace, setter, setterDescriptor, declaringScope);
             }
 
         }
     }
 
-    private void resolveFunctionBody(@NotNull JetDeclarationWithBody function, @NotNull MutableFunctionDescriptor functionDescriptor, @NotNull WritableScope declaringScope) {
+    private void resolveFunctionBody(
+            @NotNull BindingTrace trace,
+            @NotNull JetDeclarationWithBody function,
+            @NotNull MutableFunctionDescriptor functionDescriptor,
+            @NotNull WritableScope declaringScope) {
         JetExpression bodyExpression = function.getBodyExpression();
         if (bodyExpression != null) {
             JetFlowInformationProvider flowInformationProvider = computeFlowData(function.asElement(), bodyExpression);

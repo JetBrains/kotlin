@@ -10,8 +10,15 @@ import java.util.List;
  */
 public abstract class PropertyAccessorDescriptor extends DeclarationDescriptorImpl implements FunctionDescriptor {
 
-    protected PropertyAccessorDescriptor(@NotNull PropertyDescriptor correspondingProperty, @NotNull List<Attribute> attributes, @NotNull String name) {
+    private final boolean hasBody;
+
+    protected PropertyAccessorDescriptor(@NotNull PropertyDescriptor correspondingProperty, @NotNull List<Attribute> attributes, @NotNull String name, boolean hasBody) {
         super(correspondingProperty.getContainingDeclaration(), attributes, name);
+        this.hasBody = hasBody;
+    }
+
+    public boolean hasBody() {
+        return hasBody;
     }
 
     @NotNull

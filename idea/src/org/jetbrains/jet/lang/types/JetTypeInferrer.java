@@ -440,8 +440,10 @@ public class JetTypeInferrer {
         public void visitSimpleNameExpression(JetSimpleNameExpression expression) {
             // TODO : other members
             // TODO : type substitutions???
-            if (expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER) {
-                PropertyDescriptor property = scope.getPropertyByFieldReference(expression.getReferencedName());
+            String referencedName = expression.getReferencedName();
+            if (expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER
+                    && referencedName != null) {
+                PropertyDescriptor property = scope.getPropertyByFieldReference(referencedName);
                 if (property == null) {
                     semanticServices.getErrorHandler().unresolvedReference(expression);
                 }
@@ -452,7 +454,6 @@ public class JetTypeInferrer {
             }
             else {
                 assert  expression.getReferencedNameElementType() == JetTokens.IDENTIFIER;
-                String referencedName = expression.getReferencedName();
                 if (referencedName != null) {
                     VariableDescriptor variable = scope.getVariable(referencedName);
                     if (variable != null) {
@@ -1566,54 +1567,16 @@ public class JetTypeInferrer {
         }
     }
 
-    private class CachedBindingTrace extends BindingTrace {
-        private final BindingTrace originalTrace;
+    private class CachedBindingTrace extends BindingTraceAdapter {
 
         public CachedBindingTrace(BindingTrace originalTrace) {
-            this.originalTrace = originalTrace;
+            super(originalTrace);
         }
 
+        @Override
         public void recordExpressionType(@NotNull JetExpression expression, @NotNull JetType type) {
-            originalTrace.recordExpressionType(expression, type);
+            super.recordExpressionType(expression, type);
             typeCache.put(expression, type);
-        }
-
-        public void recordReferenceResolution(@NotNull JetReferenceExpression expression, @NotNull DeclarationDescriptor descriptor) {
-            originalTrace.recordReferenceResolution(expression, descriptor);
-        }
-
-        public void recordLabelResolution(@NotNull JetReferenceExpression expression, @NotNull PsiElement element) {
-            originalTrace.recordLabelResolution(expression, element);
-        }
-
-        public void recordDeclarationResolution(@NotNull PsiElement declaration, @NotNull DeclarationDescriptor descriptor) {
-            originalTrace.recordDeclarationResolution(declaration, descriptor);
-        }
-
-        public void recordTypeResolution(@NotNull JetTypeReference typeReference, @NotNull JetType type) {
-            originalTrace.recordTypeResolution(typeReference, type);
-        }
-
-        public void setToplevelScope(JetScope toplevelScope) {
-            originalTrace.setToplevelScope(toplevelScope);
-        }
-
-        public void recordBlock(JetFunctionLiteralExpression expression) {
-            originalTrace.recordBlock(expression);
-        }
-
-        public void removeReferenceResolution(@NotNull JetReferenceExpression referenceExpression) {
-            originalTrace.removeReferenceResolution(referenceExpression);
-        }
-
-        @Override
-        public void recordStatement(@NotNull JetElement statement) {
-            originalTrace.recordStatement(statement);
-        }
-
-        @Override
-        public void removeStatementRecord(@NotNull JetElement statement) {
-            originalTrace.removeStatementRecord(statement);
         }
     }
 }

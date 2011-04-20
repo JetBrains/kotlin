@@ -62,11 +62,14 @@ public class JavaClassMembersScope implements JetScope {
         }
 
         JetType type = semanticServices.getTypeTransformer().transform(field.getType());
-        VariableDescriptorImpl propertyDescriptor = new PropertyDescriptor(
+        boolean isFinal = field.hasModifierProperty(PsiModifier.FINAL);
+        PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                 containingDeclaration,
                 Collections.<Attribute>emptyList(),
+                new MemberModifiers(false, false, false),
+                !isFinal,
                 field.getName(),
-                field.hasModifierProperty(PsiModifier.FINAL) ? null : type,
+                isFinal ? null : type,
                 type);
         semanticServices.getTrace().recordDeclarationResolution(field, propertyDescriptor);
         return propertyDescriptor;

@@ -27,4 +27,5 @@ public interface BindingContext {
 
     boolean isBlock(JetFunctionLiteralExpression expression);
     boolean isStatement(JetExpression expression);
+    boolean hasBackingField(PropertyDescriptor propertyDescriptor);
 }

@@ -59,4 +59,5 @@ public class JetPropertyAccessor extends JetDeclaration implements JetDeclaratio
     public JetTypeReference getReturnTypeReference() {
         return findChildByClass(JetTypeReference.class);
     }
+
 }

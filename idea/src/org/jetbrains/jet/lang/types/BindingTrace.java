@@ -8,45 +8,73 @@ import org.jetbrains.jet.lang.resolve.JetScope;
 /**
  * @author abreslav
  */
-public class BindingTrace {
-    public static final BindingTrace DUMMY = new BindingTrace();
+public interface BindingTrace {
+    public static final BindingTrace DUMMY = new BindingTrace() {
 
-    public void recordExpressionType(@NotNull JetExpression expression, @NotNull JetType type) {
-    }
+        @Override
+        public void recordExpressionType(@NotNull JetExpression expression, @NotNull JetType type) {
+        }
 
-    public void recordReferenceResolution(@NotNull JetReferenceExpression expression, @NotNull DeclarationDescriptor descriptor) {
+        @Override
+        public void recordReferenceResolution(@NotNull JetReferenceExpression expression, @NotNull DeclarationDescriptor descriptor) {
+        }
 
-    }
+        @Override
+        public void recordLabelResolution(@NotNull JetReferenceExpression expression, @NotNull PsiElement element) {
+        }
 
-    public void recordLabelResolution(@NotNull JetReferenceExpression expression, @NotNull PsiElement element) {
+        @Override
+        public void recordDeclarationResolution(@NotNull PsiElement declaration, @NotNull DeclarationDescriptor descriptor) {
+        }
 
-    }
+        @Override
+        public void recordTypeResolution(@NotNull JetTypeReference typeReference, @NotNull JetType type) {
+        }
 
-    public void recordDeclarationResolution(@NotNull PsiElement declaration, @NotNull DeclarationDescriptor descriptor) {
+        @Override
+        public void setToplevelScope(JetScope toplevelScope) {
+        }
 
-    }
+        @Override
+        public void recordBlock(JetFunctionLiteralExpression expression) {
+        }
 
-    public void recordTypeResolution(@NotNull JetTypeReference typeReference, @NotNull JetType type) {
+        @Override
+        public void recordStatement(@NotNull JetElement statement) {
+        }
 
-    }
+        @Override
+        public void removeStatementRecord(@NotNull JetElement statement) {
+        }
 
-    public void setToplevelScope(JetScope toplevelScope) {
+        @Override
+        public void removeReferenceResolution(@NotNull JetReferenceExpression referenceExpression) {
+        }
 
-    }
+        @Override
+        public void recordFieldAccessFromAccessor(@NotNull PropertyDescriptor propertyDescriptor) {
+        }
+    };
 
-    public void recordBlock(JetFunctionLiteralExpression expression) {
+    public void recordExpressionType(@NotNull JetExpression expression, @NotNull JetType type);
 
-    }
+    public void recordReferenceResolution(@NotNull JetReferenceExpression expression, @NotNull DeclarationDescriptor descriptor);
 
-    public void recordStatement(@NotNull JetElement statement) {
+    public void recordLabelResolution(@NotNull JetReferenceExpression expression, @NotNull PsiElement element);
 
-    }
+    public void recordDeclarationResolution(@NotNull PsiElement declaration, @NotNull DeclarationDescriptor descriptor);
 
-    public void removeStatementRecord(@NotNull JetElement statement) {
+    public void recordTypeResolution(@NotNull JetTypeReference typeReference, @NotNull JetType type);
 
-    }
+    public void setToplevelScope(JetScope toplevelScope);
 
-    public void removeReferenceResolution(@NotNull JetReferenceExpression referenceExpression) {
+    public void recordBlock(JetFunctionLiteralExpression expression);
 
-    }
+    public void recordStatement(@NotNull JetElement statement);
+
+    public void removeStatementRecord(@NotNull JetElement statement);
+
+    public void removeReferenceResolution(@NotNull JetReferenceExpression referenceExpression);
+
+    public void recordFieldAccessFromAccessor(@NotNull PropertyDescriptor propertyDescriptor);
 }

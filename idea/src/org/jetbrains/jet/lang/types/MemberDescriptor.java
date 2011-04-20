@@ -1,10 +1,11 @@
 package org.jetbrains.jet.lang.types;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * @author abreslav
  */
 public interface MemberDescriptor {
-    boolean isAbstract();
-    boolean isVirtual();
-    boolean isOverride();
+    @NotNull
+    MemberModifiers getModifiers();
 }

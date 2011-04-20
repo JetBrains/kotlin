@@ -13,7 +13,7 @@ import java.util.Set;
 /**
  * @author abreslav
  */
-public class BindingTraceContext extends BindingTrace implements BindingContext {
+public class BindingTraceContext implements BindingContext, BindingTrace {
     private final Map<JetExpression, JetType> expressionTypes = new HashMap<JetExpression, JetType>();
     private final Map<JetReferenceExpression, DeclarationDescriptor> resolutionResults = new HashMap<JetReferenceExpression, DeclarationDescriptor>();
     private final Map<JetReferenceExpression, PsiElement> labelResolutionResults = new HashMap<JetReferenceExpression, PsiElement>();
@@ -23,6 +23,7 @@ public class BindingTraceContext extends BindingTrace implements BindingContext 
     private final Map<PsiElement, ConstructorDescriptor> constructorDeclarationsToDescriptors = new HashMap<PsiElement, ConstructorDescriptor>();
     private final Set<JetFunctionLiteralExpression> blocks = new HashSet<JetFunctionLiteralExpression>();
     private final Set<JetElement> statements = new HashSet<JetElement>();
+    private final Set<PropertyDescriptor> fieldMentionedInAccessor = new HashSet<PropertyDescriptor>();
 
     private JetScope toplevelScope;
 
@@ -68,6 +69,11 @@ public class BindingTraceContext extends BindingTrace implements BindingContext 
         V oldValue = map.put(key, value);
         // TODO:
 //        assert oldValue == null || oldValue == value : key + ": " + oldValue + " and " + value;
+    }
+
+    @Override
+    public void recordFieldAccessFromAccessor(@NotNull PropertyDescriptor propertyDescriptor) {
+        fieldMentionedInAccessor.add(propertyDescriptor);
     }
 
     @Override
@@ -163,5 +169,25 @@ public class BindingTraceContext extends BindingTrace implements BindingContext 
     @Override
     public boolean isStatement(@NotNull JetExpression expression) {
         return statements.contains(expression);
+    }
+
+    @Override
+    public boolean hasBackingField(@NotNull PropertyDescriptor propertyDescriptor) {
+        if (propertyDescriptor.getModifiers().isAbstract()) return false;
+        PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
+        PropertySetterDescriptor setter = propertyDescriptor.getSetter();
+        if (getter == null) {
+            return true;
+        }
+        else if (propertyDescriptor.isVar() && setter == null) {
+            return true;
+        }
+        else if (setter != null && !setter.hasBody()) {
+            return true;
+        }
+        else if (!getter.hasBody()) {
+            return true;
+        }
+        return fieldMentionedInAccessor.contains(propertyDescriptor);
     }
 }
