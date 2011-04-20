@@ -244,7 +244,6 @@ public class TopDownAnalyzer {
         declaringScopes.put(property, declaringScope);
         PropertyDescriptor descriptor = classDescriptorResolver.resolvePropertyDescriptor(declaringScope.getContainingDeclaration(), declaringScope, property);
         declaringScope.addVariableDescriptor(descriptor);
-        declaringScope.addPropertyDescriptorByFieldName("$" + descriptor.getName(), descriptor);
         properties.put(property, descriptor);
     }
 
@@ -302,6 +301,7 @@ public class TopDownAnalyzer {
                     if (expression instanceof JetSimpleNameExpression) {
                         JetSimpleNameExpression simpleNameExpression = (JetSimpleNameExpression) expression;
                         if (simpleNameExpression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER) {
+                            // This check may be considered redundant as long as $x is only accessible from accessors to $x
                             if (descriptor == propertyDescriptor) { // TODO : original?
                                 recordFieldAccessFromAccessor(propertyDescriptor);
                             }
@@ -310,16 +310,19 @@ public class TopDownAnalyzer {
                 }
             };
 
+            WritableScope accessorScope = semanticServices.createWritableScope(declaringScope, declaringScope.getContainingDeclaration());
+            accessorScope.addPropertyDescriptorByFieldName("$" + propertyDescriptor.getName(), propertyDescriptor);
+
             JetPropertyAccessor getter = declaration.getGetter();
             PropertyGetterDescriptor getterDescriptor = propertyDescriptor.getGetter();
             if (getter != null && getterDescriptor != null) {
-                resolveFunctionBody(fieldAccessTrackingTrace, getter, getterDescriptor, declaringScope);
+                resolveFunctionBody(fieldAccessTrackingTrace, getter, getterDescriptor, accessorScope);
             }
 
             JetPropertyAccessor setter = declaration.getSetter();
             PropertySetterDescriptor setterDescriptor = propertyDescriptor.getSetter();
             if (setter != null && setterDescriptor != null) {
-                resolveFunctionBody(fieldAccessTrackingTrace, setter, setterDescriptor, declaringScope);
+                resolveFunctionBody(fieldAccessTrackingTrace, setter, setterDescriptor, accessorScope);
             }
         }
     }

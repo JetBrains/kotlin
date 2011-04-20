@@ -15,6 +15,8 @@ class Test {
         <info>get</info>() { return 1 }
     val c4 : Int
         <info>get</info>() { 1 }
+    val <info>c5</info> : Int
+        <info>get</info>() { $c5 + 1 }
 
     <info>abstract</info> var y : Int
     <info>abstract</info> var y1 : Int <info>get</info>
@@ -28,4 +30,7 @@ class Test {
     var <info>v2</info> : Int <info>get</info> <info>set</info>
     var <info>v3</info> : Int <info>get</info>() = 1; <info>set</info>
     var v4 : Int <info>get</info>() = 1; <info>set</info>(x){}
+
+    var <info>v5</info> : Int <info>get</info>() = 1; <info>set</info>(x){$v5 = x}
+    var <info>v6</info> : Int <info>get</info>() = $v6 + 1; <info>set</info>(x){}
 }

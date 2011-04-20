@@ -8,3 +8,13 @@
  val xx : Int = 1 + x
    get() : Int = 1
    <error>set(ref value : Long) {$x = value}</error>
+
+class Test {
+    var a : Int
+    var b : Int get() = <error>$a</error>; set(x) {a = x; <error>$a</error> = x}
+
+   this() {
+    <error>$b</error> = <error>$a</error>
+    a = <error>$b</error>
+   }
+}
