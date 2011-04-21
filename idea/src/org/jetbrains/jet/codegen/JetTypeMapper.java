@@ -2,7 +2,9 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFunction;
+import org.jetbrains.jet.lang.psi.JetNamespace;
 import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.psi.JetTypeReference;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -30,6 +32,10 @@ public class JetTypeMapper {
 
     static Type psiClassType(PsiClass psiClass) {
         return Type.getType("L" + jvmName(psiClass) + ";");
+    }
+
+    static String jvmName(JetNamespace namespace) {
+        return NamespaceCodegen.getJVMClassName(namespace.getFQName());
     }
 
     public Type mapType(final JetType jetType) {
@@ -129,5 +135,23 @@ public class JetTypeMapper {
             returnType = mapType(bindingContext.resolveTypeReference(returnTypeRef));
         }
         return new Method(f.getName(), returnType, parameterTypes);
+    }
+
+    @Nullable
+    public Method mapGetterSignature(PropertyDescriptor descriptor) {
+        if (descriptor.getGetter() == null) {
+            return null;
+        }
+        Type returnType = mapType(descriptor.getOutType());
+        return new Method(PropertyCodegen.getterName(descriptor.getName()), returnType, new Type[0]);
+    }
+
+    @Nullable
+    public Method mapSetterSignature(PropertyDescriptor descriptor) {
+        if (descriptor.getSetter() == null) {
+            return null;
+        }
+        Type paramType = mapType(descriptor.getInType());
+        return new Method(PropertyCodegen.setterName(descriptor.getName()), Type.VOID_TYPE, new Type[] { paramType });
     }
 }

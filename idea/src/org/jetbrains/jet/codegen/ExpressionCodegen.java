@@ -370,6 +370,28 @@ public class ExpressionCodegen extends JetVisitor {
                 final JetType outType = ((VariableDescriptor) descriptor).getOutType();
                 myStack.push(StackValue.local(index, typeMapper.mapType(outType)));
             }
+            else if (descriptor instanceof PropertyDescriptor) {
+                final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
+                if (descriptor.getContainingDeclaration() instanceof NamespaceDescriptor) {
+                    JetNamespace ns = (JetNamespace) bindingContext.getDeclarationPsiElement(descriptor.getContainingDeclaration());
+                    String owner = JetTypeMapper.jvmName(ns);
+                    final JetType outType = ((VariableDescriptor) descriptor).getOutType();
+                    Method getter;
+                    Method setter;
+                    if (expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER) {
+                        getter = null;
+                        setter = null;
+                    }
+                    else {
+                        getter = typeMapper.mapGetterSignature(propertyDescriptor);
+                        setter = typeMapper.mapSetterSignature(propertyDescriptor);
+                    }
+                    myStack.push(StackValue.property(descriptor.getName(), owner, typeMapper.mapType(outType), getter, setter));
+                }
+                else {
+                    throw new UnsupportedOperationException("don't know how to generate non-namespace property reference " + descriptor);
+                }
+            }
             else {
                 throw new UnsupportedOperationException("don't know how to generate reference " + descriptor);
             }
@@ -887,10 +909,7 @@ public class ExpressionCodegen extends JetVisitor {
         int increment = op.getName().equals("inc") ? 1 : -1;
         if (operand instanceof JetReferenceExpression) {
             final int index = indexOfLocal((JetReferenceExpression) operand);
-            if (index < 0) {
-                throw new UnsupportedOperationException("don't know how to increment or decrement something which is not a local var");
-            }
-            if (isIntPrimitive(asmType)) {
+            if (index >= 0 && isIntPrimitive(asmType)) {
                 v.iinc(index, increment);
                 return StackValue.local(index, asmType);
             }

@@ -11,6 +11,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Opcodes;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -151,8 +152,9 @@ public class ClassCodegen {
     }
 
     private void generateClassBody(JetClass aClass, ClassVisitor v, OwnerKind kind) {
-        final PropertyCodegen propertyCodegen = new PropertyCodegen(v);
-        final FunctionCodegen functionCodegen = new FunctionCodegen(v, JetStandardLibrary.getJetStandardLibrary(project), bindingContext);
+        final JetStandardLibrary standardLibrary = JetStandardLibrary.getJetStandardLibrary(project);
+        final FunctionCodegen functionCodegen = new FunctionCodegen(v, standardLibrary, bindingContext);
+        final PropertyCodegen propertyCodegen = new PropertyCodegen(v, standardLibrary, bindingContext, functionCodegen);
 
         for (JetDeclaration declaration : aClass.getDeclarations()) {
             if (declaration instanceof JetProperty) {

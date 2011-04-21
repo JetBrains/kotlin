@@ -42,7 +42,7 @@ public abstract class CodegenTestCase extends LightCodeInsightFixtureTestCase {
         return answer.toString();
     }
 
-    private Class generateNamespaceClass() {
+    protected Class generateNamespaceClass() {
         JetFile jetFile = (JetFile) myFixture.getFile();
         final JetNamespace namespace = jetFile.getRootNamespace();
         String fqName = NamespaceCodegen.getJVMClassName(namespace.getFQName()).replace("/", ".");
@@ -87,6 +87,11 @@ public abstract class CodegenTestCase extends LightCodeInsightFixtureTestCase {
             }
         }
         throw new IllegalArgumentException("couldn't find method " + name);
+    }
+
+    protected void assertIsCurrentTime(long returnValue) {
+        long currentTime = System.currentTimeMillis();
+        assertTrue(Math.abs(returnValue - currentTime) <= 1L);
     }
 
     private static class MyClassLoader extends ClassLoader {

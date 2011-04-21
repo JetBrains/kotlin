@@ -44,6 +44,12 @@ public class FunctionCodegen {
     }
 
     public void gen(JetFunction f, OwnerKind kind) {
+        Method method = typeMapper.mapSignature(f);
+        List<ValueParameterDescriptor> paramDescrs = bindingContext.getFunctionDescriptor(f).getUnsubstitutedValueParameters();
+        generateMethod(f, kind, method, paramDescrs);
+    }
+
+    public void generateMethod(JetDeclarationWithBody f, OwnerKind kind, Method jvmSignature, List<ValueParameterDescriptor> paramDescrs) {
         int flags = Opcodes.ACC_PUBLIC; // TODO.
 
         boolean isStatic = kind == OwnerKind.NAMESPACE;
@@ -53,8 +59,7 @@ public class FunctionCodegen {
         boolean isAbstract = kind == OwnerKind.INTERFACE || bodyExpression == null;
         if (isAbstract) flags |= Opcodes.ACC_ABSTRACT;
 
-        Method method = typeMapper.mapSignature(f);
-        final MethodVisitor mv = v.visitMethod(flags, method.getName(), method.getDescriptor(), null, null);
+        final MethodVisitor mv = v.visitMethod(flags, jvmSignature.getName(), jvmSignature.getDescriptor(), null, null);
         if (kind != OwnerKind.INTERFACE) {
             mv.visitCode();
             FrameMap frameMap = new FrameMap();
@@ -63,15 +68,13 @@ public class FunctionCodegen {
                 frameMap.enterTemp();  // 0 slot for this
             }
 
-            List<ValueParameterDescriptor> parameDescrs = bindingContext.getFunctionDescriptor(f).getUnsubstitutedValueParameters();
-
-            Type[] argTypes = method.getArgumentTypes();
-            for (int i = 0; i < parameDescrs.size(); i++) {
-                ValueParameterDescriptor parameter = parameDescrs.get(i);
+            Type[] argTypes = jvmSignature.getArgumentTypes();
+            for (int i = 0; i < paramDescrs.size(); i++) {
+                ValueParameterDescriptor parameter = paramDescrs.get(i);
                 frameMap.enter(parameter, argTypes[i].getSize());
             }
 
-            ExpressionCodegen codegen = new ExpressionCodegen(mv, bindingContext, frameMap, typeMapper, method.getReturnType());
+            ExpressionCodegen codegen = new ExpressionCodegen(mv, bindingContext, frameMap, typeMapper, jvmSignature.getReturnType());
             bodyExpression.accept(codegen);
             generateReturn(mv, bodyExpression, codegen);
             mv.visitMaxs(0, 0);

@@ -35,8 +35,9 @@ public class NamespaceCodegen {
     public void generate(JetNamespace namespace) {
         BindingContext bindingContext = AnalyzingUtils.analyzeNamespace(namespace, ErrorHandler.THROW_EXCEPTION);
 
-        final PropertyCodegen propertyCodegen = new PropertyCodegen(v);
-        final FunctionCodegen functionCodegen = new FunctionCodegen(v, JetStandardLibrary.getJetStandardLibrary(project), bindingContext);
+        final JetStandardLibrary standardLibrary = JetStandardLibrary.getJetStandardLibrary(project);
+        final FunctionCodegen functionCodegen = new FunctionCodegen(v, standardLibrary, bindingContext);
+        final PropertyCodegen propertyCodegen = new PropertyCodegen(v, standardLibrary, bindingContext, functionCodegen);
         final ClassCodegen classCodegen = codegens.forClass(bindingContext);
 
         for (JetDeclaration declaration : namespace.getDeclarations()) {

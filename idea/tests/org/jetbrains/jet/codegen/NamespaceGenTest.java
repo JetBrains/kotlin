@@ -56,8 +56,7 @@ public class NamespaceGenTest extends CodegenTestCase {
         System.out.println(generateToText());
         final Method main = generateFunction();
         final long returnValue = (Long) main.invoke(null);
-        long currentTime = System.currentTimeMillis();
-        assertTrue(Math.abs(returnValue - currentTime) <= 1L);
+        assertIsCurrentTime(returnValue);
     }
 
     public void testIdentityHashCode() throws Exception {

@@ -6,6 +6,7 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
+import org.objectweb.asm.commons.Method;
 
 /**
  * @author yole
@@ -68,6 +69,10 @@ public abstract class StackValue {
 
     public static StackValue field(Type type, String owner, String name, boolean isStatic) {
         return new Field(type, owner, name, isStatic);
+    }
+
+    public static StackValue property(String name, String owner, Type type, Method getter, Method setter) {
+        return new Property(name, owner, getter, setter, type);
     }
 
     private static void box(final Type type, InstructionAdapter v) {
@@ -366,6 +371,41 @@ public abstract class StackValue {
         @Override
         public void store(InstructionAdapter v) {
             v.visitFieldInsn(isStatic ? Opcodes.PUTSTATIC : Opcodes.PUTFIELD, owner, name, this.type.getDescriptor());
+        }
+    }
+
+    private static class Property extends StackValue {
+        private final String name;
+        private final String owner;
+        private final Method getter;
+        private final Method setter;
+
+        public Property(String name, String owner, Method getter, Method setter, Type type) {
+            super(type);
+            this.name = name;
+            this.owner = owner;
+            this.getter = getter;
+            this.setter = setter;
+        }
+
+        @Override
+        public void put(Type type, InstructionAdapter v) {
+            if (getter == null) {
+                v.visitFieldInsn(Opcodes.GETSTATIC, owner, name, type.getDescriptor());
+            }
+            else {
+                v.invokestatic(owner, getter.getName(), getter.getDescriptor());
+            }
+        }
+
+        @Override
+        public void store(InstructionAdapter v) {
+            if (setter == null) {
+                v.visitFieldInsn(Opcodes.PUTSTATIC, owner, name, type.getDescriptor());
+            }
+            else {
+                v.invokestatic(owner, setter.getName(), setter.getDescriptor());
+            }
         }
     }
 }
