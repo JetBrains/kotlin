@@ -75,12 +75,15 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     public void testAccessorsWithoutBody() throws Exception {
-        loadText("class AccessorsWithoutBody { public var foo: Int = 349\n  get\n  private set } ");
+        loadText("class AccessorsWithoutBody { public var foo: Int = 349\n  get\n  private set\n fun setter() { foo = 610; } } ");
         final Class aClass = loadImplementationClass(generateClassesInFile(), "AccessorsWithoutBody");
         final Object instance = aClass.newInstance();
         final Method getFoo = findMethodByName(aClass, "getFoo");
         assertEquals(349, getFoo.invoke(instance));
         assertNull(findMethodByName(aClass, "setFoo"));
+        final Method setter = findMethodByName(aClass,  "setter");
+        setter.invoke(instance);
+        assertEquals(610, getFoo.invoke(instance));
     }
 
     public void testInitializersForNamespaceProperties() throws Exception {
