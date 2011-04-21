@@ -157,19 +157,19 @@ public class PrimitiveTypesTest extends CodegenTestCase {
     }
 
     public void testPreIncrement() throws Exception {
-        loadText("fun foo(a: Int): Int { var x = a; ++x; return x;");
+        loadText("fun foo(a: Int): Int { var x = a; ++x; return x;}");
         final Method main = generateFunction();
         assertEquals(11, main.invoke(null, 10));
     }
 
     public void testPreIncrementValue() throws Exception {
-        loadText("fun foo(a: Int): Int { var x = a; return ++x;");
+        loadText("fun foo(a: Int): Int { var x = a; return ++x;}");
         final Method main = generateFunction();
         assertEquals(11, main.invoke(null, 10));
     }
 
     public void testPreDecrement() throws Exception {
-        loadText("fun foo(a: Int): Int { return --a;");
+        loadText("fun foo(a: Int): Int { return --a;}");
         final Method main = generateFunction();
         assertEquals(9, main.invoke(null, 10));
     }

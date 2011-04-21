@@ -7,6 +7,7 @@ import org.jetbrains.jet.JetLightProjectDescriptor;
 import org.jetbrains.jet.lang.JetFileType;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespace;
+import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.parsing.JetParsingTest;
 
 import java.lang.reflect.Method;
@@ -41,6 +42,7 @@ public abstract class CodegenTestCase extends LightCodeInsightFixtureTestCase {
     protected String generateToText() {
         Codegens state = new Codegens(getProject(), true);
         JetFile jetFile = (JetFile) myFixture.getFile();
+        AnalyzingUtils.checkForSyntacticErrors(jetFile);
         JetNamespace namespace = jetFile.getRootNamespace();
         NamespaceCodegen codegen = state.forNamespace(namespace);
         codegen.generate(namespace);
@@ -80,6 +82,7 @@ public abstract class CodegenTestCase extends LightCodeInsightFixtureTestCase {
     protected Codegens generateClassesInFile() {
         Codegens state = new Codegens(getProject(), false);
         JetFile jetFile = (JetFile) myFixture.getFile();
+        AnalyzingUtils.checkForSyntacticErrors(jetFile);
         final JetNamespace namespace = jetFile.getRootNamespace();
 
         NamespaceCodegen codegen = state.forNamespace(namespace);
