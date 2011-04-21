@@ -34,15 +34,17 @@ public class PrimitiveTypesTest extends CodegenTestCase {
     }
 
     public void testNE() throws Exception {
-        final String code = "fun foo(a: Int, b: Int): Int = if (a != b) 1 else 0";
-        binOpTest(code, 5, 5, 0);
-        binOpTest(code, 5, 3, 1);
+        loadText("fun foo(a: Int, b: Int): Int = if (a != b) 1 else 0");
+        final Method main = generateFunction();
+        assertEquals(0, main.invoke(null, 5, 5));
+        assertEquals(1, main.invoke(null, 5, 3));
     }
 
     public void testGE() throws Exception {
-        final String code = "fun foo(a: Int, b: Int): Int = if (a >= b) 1 else 0";
-        binOpTest(code, 5, 5, 1);
-        binOpTest(code, 3, 5, 0);
+        loadText("fun foo(a: Int, b: Int): Int = if (a >= b) 1 else 0");
+        final Method main = generateFunction();
+        assertEquals(1, main.invoke(null, 5, 5));
+        assertEquals(0, main.invoke(null, 3, 5));
     }
 
     public void testReturnCmp() throws Exception {
