@@ -50,7 +50,7 @@ public class ClassDescriptorResolver {
         // TODO : assuming that the hierarchy is acyclic
         Collection<? extends JetType> superclasses = delegationSpecifiers.isEmpty()
                 ? Collections.singleton(JetStandardClasses.getAnyType())
-                : resolveTypes(parameterScope, delegationSpecifiers);
+                : resolveDelegationSpecifiers(parameterScope, delegationSpecifiers);
         boolean open = classElement.hasModifier(JetTokens.OPEN_KEYWORD);
         WritableScope members = resolveMembers(classDescriptor, classElement, typeParameters, scope, parameterScope, superclasses);
 
@@ -98,7 +98,7 @@ public class ClassDescriptorResolver {
         // TODO : assuming that the hierarchy is acyclic
         Collection<? extends JetType> superclasses = delegationSpecifiers.isEmpty()
                 ? Collections.singleton(JetStandardClasses.getAnyType())
-                : resolveTypes(parameterScope, delegationSpecifiers);
+                : resolveDelegationSpecifiers(parameterScope, delegationSpecifiers);
 
         // TODO : UGLY HACK
         supertypes.addAll(superclasses);
@@ -260,7 +260,7 @@ public class ClassDescriptorResolver {
         return typeParameterDescriptor;
     }
 
-    public Collection<? extends JetType> resolveTypes(WritableScope extensibleScope, List<JetDelegationSpecifier> delegationSpecifiers) {
+    public Collection<? extends JetType> resolveDelegationSpecifiers(WritableScope extensibleScope, List<JetDelegationSpecifier> delegationSpecifiers) {
         if (delegationSpecifiers.isEmpty()) {
             return Collections.emptyList();
         }

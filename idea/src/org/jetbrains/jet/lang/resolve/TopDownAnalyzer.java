@@ -296,18 +296,55 @@ public class TopDownAnalyzer {
         }
     }
 
-    private void resolveConstructorBody(JetConstructor declaration, FunctionDescriptor descriptor, WritableScope declaringScope) {
+    private void resolveConstructorBody(JetConstructor declaration, FunctionDescriptor descriptor, final WritableScope declaringScope) {
+        WritableScope constructorScope = semanticServices.createWritableScope(declaringScope, declaringScope.getContainingDeclaration());
+        for (PropertyDescriptor propertyDescriptor : declaringScopesToProperties.get(descriptor.getContainingDeclaration())) {
+            constructorScope.addPropertyDescriptorByFieldName("$" + propertyDescriptor.getName(), propertyDescriptor);
+        }
+        final JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(constructorScope, descriptor, semanticServices);
+        final JetTypeInferrer typeInferrerForInitializers = semanticServices.getTypeInferrer(traceForConstructors, JetFlowInformationProvider.NONE);
+        for (JetDelegationSpecifier initializer : declaration.getInitializers()) {
+            // TODO : check that the type being referenced is actually a supertype
+            initializer.accept(new JetVisitor() {
+                @Override
+                public void visitDelegationToSuperCallSpecifier(JetDelegatorToSuperCall call) {
+                    JetTypeReference typeReference = call.getTypeReference();
+                    if (typeReference != null) {
+                        typeInferrerForInitializers.getTypeForConstructorCall(functionInnerScope, typeReference, call);
+                    }
+                }
+
+                @Override
+                public void visitDelegationToThisCall(JetDelegatorToThisCall call) {
+                    JetTypeReference typeReference = call.getTypeReference(); // TODO : use explicit type here
+                    if (typeReference != null) {
+                        typeInferrerForInitializers.getTypeForConstructorCall(functionInnerScope, typeReference, call);
+                    }
+                }
+
+                @Override
+                public void visitDelegationByExpressionSpecifier(JetDelegatorByExpressionSpecifier specifier) {
+                    semanticServices.getErrorHandler().genericError(specifier.getNode(), "'by'-clause is only supported for primary constructors");
+                }
+
+                @Override
+                public void visitDelegationToSuperClassSpecifier(JetDelegatorToSuperClass specifier) {
+                    semanticServices.getErrorHandler().genericError(specifier.getNode(), "Constructor parameters required");
+                }
+
+                @Override
+                public void visitDelegationSpecifier(JetDelegationSpecifier specifier) {
+                    throw new IllegalStateException();
+                }
+            });
+        }
         JetExpression bodyExpression = declaration.getBodyExpression();
         if (bodyExpression != null) {
             computeFlowData(declaration, bodyExpression);
             JetFlowInformationProvider flowInformationProvider = computeFlowData(declaration, bodyExpression);
             JetTypeInferrer typeInferrer = semanticServices.getTypeInferrer(traceForConstructors, flowInformationProvider);
-            WritableScope constructorScope = semanticServices.createWritableScope(declaringScope, declaringScope.getContainingDeclaration());
-            for (PropertyDescriptor propertyDescriptor : declaringScopesToProperties.get(descriptor.getContainingDeclaration())) {
-                constructorScope.addPropertyDescriptorByFieldName("$" + propertyDescriptor.getName(), propertyDescriptor);
-            }
 
-            typeInferrer.getType(FunctionDescriptorUtil.getFunctionInnerScope(constructorScope, descriptor, semanticServices), bodyExpression, true);
+            typeInferrer.getType(functionInnerScope, bodyExpression, true);
         }
     }
 

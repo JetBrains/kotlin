@@ -68,8 +68,15 @@ public class TypeResolver {
                             trace.recordReferenceResolution(referenceExpression, classifierDescriptor);
                             TypeConstructor typeConstructor = classifierDescriptor.getTypeConstructor();
                             List<TypeProjection> arguments = resolveTypeProjections(scope, typeConstructor, type.getTypeArguments());
-                            if (arguments.size() != typeConstructor.getParameters().size()) {
-                                semanticServices.getErrorHandler().genericError(type.getNode(), typeConstructor.getParameters().size() + " type parameters expected"); // TODO : message
+                            int expectedArgumentCount = typeConstructor.getParameters().size();
+                            int actualArgumentCount = arguments.size();
+                            if (actualArgumentCount != expectedArgumentCount) {
+                                String errorMessage = (expectedArgumentCount == 0 ? "No" : expectedArgumentCount) + " type arguments expected";
+                                if (actualArgumentCount == 0) {
+                                    semanticServices.getErrorHandler().genericError(type.getNode(), errorMessage);
+                                } else if (expectedArgumentCount == 0) {
+                                    semanticServices.getErrorHandler().genericError(type.getTypeArgumentList().getNode(), errorMessage);
+                                }
                             } else {
                                 result[0] = new JetTypeImpl(
                                         attributes,

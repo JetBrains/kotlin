@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.resolve.java;
 
+import com.google.common.collect.Lists;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.types.*;
@@ -29,7 +30,8 @@ public class JavaTypeTransformer {
         return javaType.accept(new PsiTypeVisitor<JetType>() {
             @Override
             public JetType visitClassType(PsiClassType classType) {
-                PsiClass psiClass = classType.resolveGenerics().getElement();
+                PsiClassType.ClassResolveResult classResolveResult = classType.resolveGenerics();
+                PsiClass psiClass = classResolveResult.getElement();
                 if (psiClass == null) {
                     return ErrorUtils.createErrorType("Unresolved java class: " + classType.getPresentableText());
                 }
@@ -40,8 +42,19 @@ public class JavaTypeTransformer {
                 }
 
                 ClassDescriptor descriptor = resolver.resolveClass(psiClass);
-                // TODO : arguments & raw types
-                List<TypeProjection> arguments = Collections.<TypeProjection>emptyList(); // TODO
+
+                List<TypeProjection> arguments = Lists.newArrayList();
+                if (classType.isRaw()) { // TODO
+//                    List<TypeParameterDescriptor> parameters = descriptor.getTypeConstructor().getParameters();
+//                    for (TypeParameterDescriptor parameter : parameters) {
+//                        arguments.add(TypeUtils.makeStarProjection(parameter));
+//                    }
+                } else { // TODO
+//                    PsiType[] psiArguments = classType.getParameters();
+//                    for (PsiType psiArgument : psiArguments) {
+//                        arguments.add(new TypeProjection(transform(psiArgument)));
+//                    }
+                }
                 return new JetTypeImpl(
                         Collections.<Attribute>emptyList(),
                         descriptor.getTypeConstructor(),
@@ -62,6 +75,12 @@ public class JavaTypeTransformer {
             public JetType visitArrayType(PsiArrayType arrayType) {
                 JetType type = transform(arrayType.getComponentType());
                 return TypeUtils.makeNullable(standardLibrary.getArrayType(type));
+            }
+
+            @Override
+            public JetType visitWildcardType(PsiWildcardType wildcardType) {
+                System.out.println("!!!");
+                return JetStandardClasses.getNullableAnyType(); // TODO
             }
 
             @Override

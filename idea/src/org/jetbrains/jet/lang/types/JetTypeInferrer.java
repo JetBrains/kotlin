@@ -379,6 +379,171 @@ public class JetTypeInferrer {
         }
     }
 
+    @Nullable
+    private JetType resolveOverloads(JetScope scope, JetCallExpression expression, OverloadDomain overloadDomain) {
+        List<JetTypeProjection> typeArguments = expression.getTypeArguments();
+        List<JetArgument> valueArguments = expression.getValueArguments();
+        List<JetExpression> functionLiteralArguments = expression.getFunctionLiteralArguments();
+        return resolveOverloads(scope, overloadDomain, typeArguments, valueArguments, functionLiteralArguments);
+    }
+
+    @Nullable
+    private JetType resolveOverloads(
+            @NotNull JetScope scope,
+            @NotNull OverloadDomain overloadDomain,
+            @NotNull List<JetTypeProjection> typeArguments,
+            @NotNull List<JetArgument> valueArguments,
+            @NotNull List<JetExpression> functionLiteralArguments) {
+        // 1) ends with a name -> (scope, name) to look up
+        // 2) ends with something else -> just check types
+
+        for (JetTypeProjection typeArgument : typeArguments) {
+            if (typeArgument.getProjectionKind() != JetProjectionKind.NONE) {
+                semanticServices.getErrorHandler().genericError(typeArgument.getNode(), "Projections are not allowed on type parameters for methods"); // TODO : better positioning
+            }
+        }
+
+        boolean someNamed = false;
+        for (JetArgument argument : valueArguments) {
+            if (argument.isNamed()) {
+                someNamed = true;
+                break;
+            }
+        }
+
+//                JetExpression functionLiteralArgument = functionLiteralArguments.isEmpty() ? null : functionLiteralArguments.get(0);
+        // TODO : must be a check
+        assert functionLiteralArguments.size() <= 1;
+
+        if (someNamed) {
+            // TODO : check that all are named
+            throw new UnsupportedOperationException(); // TODO
+
+//                    result = overloadDomain.getFunctionDescriptorForNamedArguments(typeArguments, valueArguments, functionLiteralArgument);
+        } else {
+            List<JetType> types = new ArrayList<JetType>();
+            for (JetTypeProjection projection : typeArguments) {
+                // TODO : check that there's no projection
+                JetTypeReference typeReference = projection.getTypeReference();
+                if (typeReference != null) {
+                    types.add(typeResolver.resolveType(scope, typeReference));
+                }
+            }
+
+            List<JetExpression> positionedValueArguments = new ArrayList<JetExpression>();
+            for (JetArgument argument : valueArguments) {
+                JetExpression argumentExpression = argument.getArgumentExpression();
+                if (argumentExpression != null) {
+                    positionedValueArguments.add(argumentExpression);
+                }
+            }
+
+            positionedValueArguments.addAll(functionLiteralArguments);
+
+            List<JetType> valueArgumentTypes = new ArrayList<JetType>();
+            for (JetExpression valueArgument : positionedValueArguments) {
+                valueArgumentTypes.add(safeGetType(scope, valueArgument, false));
+            }
+
+            OverloadResolutionResult resolutionResult = overloadDomain.getFunctionDescriptorForPositionedArguments(types, valueArgumentTypes);
+            if (resolutionResult.isSuccess()) {
+                return resolutionResult.getFunctionDescriptor().getUnsubstitutedReturnType();
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    public JetType getTypeForConstructorCall(JetScope scope, @NotNull JetTypeReference typeReference, @NotNull JetCall call) {
+        JetTypeElement typeElement = typeReference.getTypeElement();
+        if (typeElement instanceof JetUserType) {
+            JetUserType userType = (JetUserType) typeElement;
+            // TODO : to infer constructor parameters, one will need to
+            //  1) resolve a _class_ from the typeReference
+            //  2) rely on the overload domain of constructors of this class to infer type arguments
+            // For now we assume that the type arguments are provided, and thus the typeReference can be
+            // resolved into a valid type
+            JetType receiverType = typeResolver.resolveType(scope, typeReference);
+            DeclarationDescriptor declarationDescriptor = receiverType.getConstructor().getDeclarationDescriptor();
+            if (declarationDescriptor instanceof ClassDescriptor) {
+                ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
+
+                for (JetTypeProjection typeProjection : userType.getTypeArguments()) {
+                    switch (typeProjection.getProjectionKind()) {
+                        case IN:
+                        case OUT:
+                        case STAR:
+                            // TODO : Bug in the editor
+                            semanticServices.getErrorHandler().genericError(typeProjection.getProjectionNode(), "Projections are not allowed in constructor type arguments");
+                            break;
+                        case NONE:
+                            break;
+                    }
+                }
+
+                JetSimpleNameExpression referenceExpression = userType.getReferenceExpression();
+                if (referenceExpression != null) {
+                    // When one writes 'new Array<in T>(...)' this does not make much sense, and an instance
+                    // of 'Array<T>' must be created anyway.
+                    // Thus, we should either prohibit projections in type arguments in such contexts,
+                    // or treat them as an automatic upcast to the desired type, i.e. for the user not
+                    // to be forced to write
+                    //   val a : Array<in T> = new Array<T>(...)
+                    // NOTE: Array may be a bad example here, some classes may have substantial functionality
+                    //       not involving their type parameters
+                    //
+                    // The code below upcasts the type automatically
+
+                    List<TypeProjection> typeArguments = receiverType.getArguments();
+
+                    List<TypeProjection> projectionsStripped = new ArrayList<TypeProjection>();
+                    for (TypeProjection typeArgument : typeArguments) {
+                        if (typeArgument.getProjectionKind() != Variance.INVARIANT) {
+                            projectionsStripped.add(new TypeProjection(typeArgument.getType()));
+                        }
+                        else
+                            projectionsStripped.add(typeArgument);
+                    }
+
+                    FunctionGroup constructors = classDescriptor.getConstructors(projectionsStripped);
+                    OverloadDomain constructorsOverloadDomain = semanticServices.getOverloadResolver().getOverloadDomain(constructors);
+                    JetType constructorReturnedType = resolveOverloads(
+                            scope,
+                            wrapForTracing(constructorsOverloadDomain, referenceExpression, call.getValueArgumentList(), false),
+                            Collections.<JetTypeProjection>emptyList(),
+                            call.getValueArguments(),
+                            call.getFunctionLiteralArguments());
+                    if (constructorReturnedType == null && !ErrorUtils.isErrorType(receiverType)) {
+                        trace.recordReferenceResolution(referenceExpression, receiverType.getConstructor().getDeclarationDescriptor());
+                        // TODO : more helpful message
+                        JetArgumentList argumentList = call.getValueArgumentList();
+                        if (argumentList != null) {
+                            semanticServices.getErrorHandler().genericError(argumentList.getNode(), "Cannot find an overload for these arguments");
+                        }
+                        constructorReturnedType = receiverType;
+                    }
+                    // If no upcast needed:
+                    return constructorReturnedType;
+
+                    // Automatic upcast:
+//                            result = receiverType;
+                }
+            }
+            else {
+                semanticServices.getErrorHandler().genericError(((JetElement) call).getNode(), "Calling a constructor is only supported for ordinary classes"); // TODO : review the message
+            }
+        }
+        else {
+            if (typeElement != null) {
+                semanticServices.getErrorHandler().genericError(typeElement.getNode(), "Calling a constructor is only supported for ordinary classes"); // TODO : Better message
+            }
+        }
+        return null;
+    }
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     private class TypeInferrerVisitor extends JetVisitor {
         private final JetScope scope;
         private final boolean preferBlock;
@@ -968,89 +1133,7 @@ public class JetTypeInferrer {
             // TODO : type argument inference
             JetTypeReference typeReference = expression.getTypeReference();
             if (typeReference != null) {
-                JetTypeElement typeElement = typeReference.getTypeElement();
-                if (typeElement instanceof JetUserType) {
-                    JetUserType userType = (JetUserType) typeElement;
-                    // TODO : to infer constructor parameters, one will need to
-                    //  1) resolve a _class_ from the typeReference
-                    //  2) rely on the overload domain of constructors of this class to infer type arguments
-                    // For now we assume that the type arguments are provided, and thus the typeReference can be
-                    // resolved into a valid type
-                    JetType receiverType = typeResolver.resolveType(scope, typeReference);
-                    DeclarationDescriptor declarationDescriptor = receiverType.getConstructor().getDeclarationDescriptor();
-                    if (declarationDescriptor instanceof ClassDescriptor) {
-                        ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
-
-                        for (JetTypeProjection typeProjection : userType.getTypeArguments()) {
-                            switch (typeProjection.getProjectionKind()) {
-                                case IN:
-                                case OUT:
-                                case STAR:
-                                    // TODO : Bug in the editor
-                                    semanticServices.getErrorHandler().genericError(typeProjection.getProjectionNode(), "Projections are not allowed in constructor type arguments");
-                                    break;
-                                case NONE:
-                                    break;
-                            }
-                        }
-
-                        JetSimpleNameExpression referenceExpression = userType.getReferenceExpression();
-                        if (referenceExpression != null) {
-                            // When one writes 'new Array<in T>(...)' this does not make much sense, and an instance
-                            // of 'Array<T>' must be created anyway.
-                            // Thus, we should either prohibit projections in type arguments in such contexts,
-                            // or treat them as an automatic upcast to the desired type, i.e. for the user not
-                            // to be forced to write
-                            //   val a : Array<in T> = new Array<T>(...)
-                            // NOTE: Array may be a bad example here, some classes may have substantial functionality
-                            //       not involving their type parameters
-                            //
-                            // The code below upcasts the type automatically
-
-                            List<TypeProjection> typeArguments = receiverType.getArguments();
-
-                            List<TypeProjection> projectionsStripped = new ArrayList<TypeProjection>();
-                            for (TypeProjection typeArgument : typeArguments) {
-                                if (typeArgument.getProjectionKind() != Variance.INVARIANT) {
-                                    projectionsStripped.add(new TypeProjection(typeArgument.getType()));
-                                }
-                                else
-                                    projectionsStripped.add(typeArgument);
-                            }
-
-                            FunctionGroup constructors = classDescriptor.getConstructors(projectionsStripped);
-                            OverloadDomain constructorsOverloadDomain = semanticServices.getOverloadResolver().getOverloadDomain(constructors);
-                            JetType constructorReturnedType = resolveOverloads(
-                                    scope,
-                                    wrapForTracing(constructorsOverloadDomain, referenceExpression, expression.getValueArgumentList(), false),
-                                    Collections.<JetTypeProjection>emptyList(),
-                                    expression.getValueArguments(),
-                                    expression.getFunctionLiteralArguments());
-                            if (constructorReturnedType == null && !ErrorUtils.isErrorType(receiverType)) {
-                                trace.recordReferenceResolution(referenceExpression, receiverType.getConstructor().getDeclarationDescriptor());
-                                // TODO : more helpful message
-                                JetArgumentList argumentList = expression.getValueArgumentList();
-                                if (argumentList != null) {
-                                    semanticServices.getErrorHandler().genericError(argumentList.getNode(), "Cannot find an overload for these arguments");
-                                }
-                                constructorReturnedType = receiverType;
-                            }
-                            // If no upcast needed:
-                            result = constructorReturnedType;
-
-                            // Automatic upcast:
-//                            result = receiverType;
-                        }
-                    }
-                    else {
-                        semanticServices.getErrorHandler().genericError(expression.getNode(), "Calling a constructor is only supported for ordinary classes"); // TODO : review the message
-                    }
-                }
-                else {
-                    if (typeElement != null) {
-                        semanticServices.getErrorHandler().genericError(typeElement.getNode(), "Calling a constructor is only supported for ordinary classes"); // TODO : Better message
-                    }
-                }
+                result = getTypeForConstructorCall(scope, typeReference, expression);
             }
         }
 
@@ -1106,80 +1189,6 @@ public class JetTypeInferrer {
             JetExpression calleeExpression = expression.getCalleeExpression();
             OverloadDomain overloadDomain = getOverloadDomain(scope, calleeExpression, expression.getValueArgumentList());
             result = resolveOverloads(scope, expression, overloadDomain);
-        }
-
-        @Nullable
-        private JetType resolveOverloads(JetScope scope, JetCallExpression expression, OverloadDomain overloadDomain) {
-            List<JetTypeProjection> typeArguments = expression.getTypeArguments();
-            List<JetArgument> valueArguments = expression.getValueArguments();
-            List<JetExpression> functionLiteralArguments = expression.getFunctionLiteralArguments();
-            return resolveOverloads(scope, overloadDomain, typeArguments, valueArguments, functionLiteralArguments);
-        }
-
-        @Nullable
-        private JetType resolveOverloads(
-                @NotNull JetScope scope,
-                @NotNull OverloadDomain overloadDomain,
-                @NotNull List<JetTypeProjection> typeArguments,
-                @NotNull List<JetArgument> valueArguments,
-                @NotNull List<JetExpression> functionLiteralArguments) {
-            // 1) ends with a name -> (scope, name) to look up
-            // 2) ends with something else -> just check types
-
-            for (JetTypeProjection typeArgument : typeArguments) {
-                if (typeArgument.getProjectionKind() != JetProjectionKind.NONE) {
-                    semanticServices.getErrorHandler().genericError(typeArgument.getNode(), "Projections are not allowed on type parameters for methods"); // TODO : better positioning
-                }
-            }
-
-            boolean someNamed = false;
-            for (JetArgument argument : valueArguments) {
-                if (argument.isNamed()) {
-                    someNamed = true;
-                    break;
-                }
-            }
-
-//                JetExpression functionLiteralArgument = functionLiteralArguments.isEmpty() ? null : functionLiteralArguments.get(0);
-            // TODO : must be a check
-            assert functionLiteralArguments.size() <= 1;
-
-            if (someNamed) {
-                // TODO : check that all are named
-                throw new UnsupportedOperationException(); // TODO
-
-//                    result = overloadDomain.getFunctionDescriptorForNamedArguments(typeArguments, valueArguments, functionLiteralArgument);
-            } else {
-                List<JetType> types = new ArrayList<JetType>();
-                for (JetTypeProjection projection : typeArguments) {
-                    // TODO : check that there's no projection
-                    JetTypeReference typeReference = projection.getTypeReference();
-                    if (typeReference != null) {
-                        types.add(typeResolver.resolveType(scope, typeReference));
-                    }
-                }
-
-                List<JetExpression> positionedValueArguments = new ArrayList<JetExpression>();
-                for (JetArgument argument : valueArguments) {
-                    JetExpression argumentExpression = argument.getArgumentExpression();
-                    if (argumentExpression != null) {
-                        positionedValueArguments.add(argumentExpression);
-                    }
-                }
-
-                positionedValueArguments.addAll(functionLiteralArguments);
-
-                List<JetType> valueArgumentTypes = new ArrayList<JetType>();
-                for (JetExpression valueArgument : positionedValueArguments) {
-                    valueArgumentTypes.add(safeGetType(scope, valueArgument, false));
-                }
-
-                OverloadResolutionResult resolutionResult = overloadDomain.getFunctionDescriptorForPositionedArguments(types, valueArgumentTypes);
-                if (resolutionResult.isSuccess()) {
-                    return resolutionResult.getFunctionDescriptor().getUnsubstitutedReturnType();
-                }
-            }
-            return null;
         }
 
         @Override

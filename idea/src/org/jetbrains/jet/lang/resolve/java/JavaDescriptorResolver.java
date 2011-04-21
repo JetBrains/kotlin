@@ -1,5 +1,7 @@
 package org.jetbrains.jet.lang.resolve.java;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -77,7 +79,7 @@ public class JavaDescriptorResolver {
         classDescriptor.initialize(
                 // TODO
                 modifierList == null ? false : modifierList.hasModifierProperty(PsiModifier.FINAL),
-                Collections.<TypeParameterDescriptor>emptyList(),
+                resolveTypeParameters(psiClass, classDescriptor),
                 getSupertypes(psiClass),
                 new JavaClassMembersScope(classDescriptor, psiClass, semanticServices, false),
                 constructors
@@ -99,6 +101,41 @@ public class JavaDescriptorResolver {
 
         semanticServices.getTrace().recordDeclarationResolution(psiClass, classDescriptor);
         return classDescriptor;
+    }
+
+    private List<TypeParameterDescriptor> resolveTypeParameters(@NotNull PsiClass psiClass, @NotNull ClassDescriptor classDescriptor) {
+        if (1 < 2) return Collections.emptyList(); // TODO
+        List<TypeParameterDescriptor> result = Lists.newArrayList();
+        PsiTypeParameter[] typeParameters = psiClass.getTypeParameters();
+        for (PsiTypeParameter typeParameter : typeParameters) {
+            PsiClassType[] referencedTypes = typeParameter.getExtendsList().getReferencedTypes();
+            Set<JetType> upperBounds;
+            JetType boundsAsType;
+            if (referencedTypes.length == 0){
+                boundsAsType = JetStandardClasses.getNullableAnyType();
+                upperBounds = Collections.singleton(boundsAsType);
+            }
+            else if (referencedTypes.length == 1) {
+                boundsAsType = semanticServices.getTypeTransformer().transform(referencedTypes[0]);
+                upperBounds = Collections.singleton(boundsAsType);
+            }
+            else {
+                upperBounds = Sets.newLinkedHashSet();
+                for (PsiClassType referencedType : referencedTypes) {
+                    upperBounds.add(semanticServices.getTypeTransformer().transform(referencedType));
+                }
+                boundsAsType = TypeUtils.safeIntersect(semanticServices.getTypeChecker(), upperBounds);
+            }
+            result.add(new TypeParameterDescriptor(
+                    classDescriptor,
+                    Collections.<Attribute>emptyList(), // TODO
+                    Variance.INVARIANT,
+                    typeParameter.getName(),
+                    upperBounds,
+                    boundsAsType
+            ));
+        }
+        return result;
     }
 
     private Collection<? extends JetType> getSupertypes(PsiClass psiClass) {

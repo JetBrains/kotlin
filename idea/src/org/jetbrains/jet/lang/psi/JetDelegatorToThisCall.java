@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 
 import java.util.Collections;
@@ -10,7 +11,7 @@ import java.util.List;
 /**
  * @author max
  */
-public class JetDelegatorToThisCall extends JetDelegationSpecifier {
+public class JetDelegatorToThisCall extends JetDelegationSpecifier implements JetCall {
     public JetDelegatorToThisCall(@NotNull ASTNode node) {
         super(node);
     }
@@ -20,12 +21,20 @@ public class JetDelegatorToThisCall extends JetDelegationSpecifier {
         visitor.visitDelegationToThisCall(this);
     }
 
-    public JetArgumentList getArgumentList() {
+    @Nullable
+    public JetArgumentList getValueArgumentList() {
         return (JetArgumentList) findChildByType(JetNodeTypes.VALUE_ARGUMENT_LIST);
     }
 
-    public List<JetArgument> getArguments() {
-        JetArgumentList list = getArgumentList();
+    @NotNull
+    public List<JetArgument> getValueArguments() {
+        JetArgumentList list = getValueArgumentList();
         return list != null ? list.getArguments() : Collections.<JetArgument>emptyList();
+    }
+
+    @NotNull
+    @Override
+    public List<JetExpression> getFunctionLiteralArguments() {
+        return Collections.emptyList();
     }
 }

@@ -44,7 +44,7 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
     @Override
     @NotNull
     public JetScope getMemberScope(List<TypeProjection> typeArguments) {
-        assert typeArguments.size() == typeConstructor.getParameters().size();
+        assert typeArguments.size() == typeConstructor.getParameters().size() : typeArguments;
         if (typeConstructor.getParameters().isEmpty()) {
             return  memberDeclarations;
         }

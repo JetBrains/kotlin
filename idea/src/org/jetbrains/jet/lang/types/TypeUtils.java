@@ -27,6 +27,13 @@ public class TypeUtils {
         return new JetTypeImpl(type.getAttributes(), type.getConstructor(), nullable, type.getArguments(), type.getMemberScope());
     }
 
+    @NotNull
+    public static JetType safeIntersect(JetTypeChecker typeChecker, Set<JetType> types) {
+        JetType intersection = intersect(typeChecker, types);
+        if (intersection == null) return ErrorUtils.createErrorType("No intersection for " + types); // TODO : message
+        return intersection;
+    }
+
     @Nullable
     public static JetType intersect(JetTypeChecker typeChecker, Set<JetType> types) {
         assert !types.isEmpty();
@@ -212,12 +219,11 @@ public class TypeUtils {
         }
     }
 
+
     @NotNull
     public static Set<JetType> getAllSupertypes(@NotNull JetType type) {
         Set<JetType> result = Sets.newLinkedHashSet();
         collectAllSupertypes(type, result);
         return result;
     }
-
-
 }
