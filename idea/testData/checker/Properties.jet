@@ -14,6 +14,11 @@ class Test {
     var b : Int get() = <error>$a</error>; set(x) {a = x; <error>$a</error> = x}
 
    this() {
+    <error>$b</error> = $a
+    $a = <error>$b</error>
+    a = <error>$b</error>
+   }
+   fun f() {
     <error>$b</error> = <error>$a</error>
     a = <error>$b</error>
    }

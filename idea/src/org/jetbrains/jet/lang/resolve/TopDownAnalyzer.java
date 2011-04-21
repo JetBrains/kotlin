@@ -1,5 +1,7 @@
 package org.jetbrains.jet.lang.resolve;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.JetControlFlowProcessor;
@@ -21,25 +23,38 @@ public class TopDownAnalyzer {
     private final Map<JetDeclaration, FunctionDescriptor> functions = new LinkedHashMap<JetDeclaration, FunctionDescriptor>();
     private final Map<JetProperty, PropertyDescriptor> properties = new LinkedHashMap<JetProperty, PropertyDescriptor>();
     private final Map<JetDeclaration, WritableScope> declaringScopes = new HashMap<JetDeclaration, WritableScope>();
+    private final Multimap<DeclarationDescriptor, PropertyDescriptor> declaringScopesToProperties = ArrayListMultimap.create();
 
     private final JetSemanticServices semanticServices;
     private final ClassDescriptorResolver classDescriptorResolver;
-    private final BindingTrace trace;
+    private final BindingTraceContext trace;
     private final JetControlFlowDataTraceFactory flowDataTraceFactory;
     private boolean readyToProcessExpressions = false;
+    private final BindingTraceAdapter traceForConstructors;
 
-    public TopDownAnalyzer(JetSemanticServices semanticServices, @NotNull BindingTrace bindingTrace, @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory) {
+    public TopDownAnalyzer(JetSemanticServices semanticServices, @NotNull BindingTraceContext bindingTrace, @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory) {
         this.semanticServices = semanticServices;
         this.classDescriptorResolver = new ClassDescriptorResolver(semanticServices, bindingTrace);
         this.trace = bindingTrace;
         this.flowDataTraceFactory = flowDataTraceFactory;
+        this.traceForConstructors = new BindingTraceAdapter(trace) {
+            @Override
+            public void recordReferenceResolution(@NotNull JetReferenceExpression expression, @NotNull DeclarationDescriptor descriptor) {
+                super.recordReferenceResolution(expression, descriptor);
+                if (expression instanceof JetSimpleNameExpression) {
+                    JetSimpleNameExpression simpleNameExpression = (JetSimpleNameExpression) expression;
+                    if (simpleNameExpression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER) {
+                        if (!trace.hasBackingField((PropertyDescriptor) descriptor)) {
+                            TopDownAnalyzer.this.semanticServices.getErrorHandler().genericError(expression.getNode(), "This property does not have a backing field");
+                        }
+                    }
+                }
+            }
+        };
     }
 
-    public TopDownAnalyzer(JetSemanticServices semanticServices, @NotNull BindingTrace bindingTrace) {
-        this.semanticServices = semanticServices;
-        this.classDescriptorResolver = new ClassDescriptorResolver(semanticServices, bindingTrace);
-        this.trace = bindingTrace;
-        this.flowDataTraceFactory = JetControlFlowDataTraceFactory.EMPTY;
+    public TopDownAnalyzer(JetSemanticServices semanticServices, @NotNull BindingTraceContext bindingTrace) {
+        this(semanticServices, bindingTrace, JetControlFlowDataTraceFactory.EMPTY);
     }
 
     public void process(@NotNull JetScope outerScope, @NotNull JetDeclaration declaration) {
@@ -244,6 +259,7 @@ public class TopDownAnalyzer {
         declaringScopes.put(property, declaringScope);
         PropertyDescriptor descriptor = classDescriptorResolver.resolvePropertyDescriptor(declaringScope.getContainingDeclaration(), declaringScope, property);
         declaringScope.addVariableDescriptor(descriptor);
+        declaringScopesToProperties.put(declaringScope.getContainingDeclaration(), descriptor);
         properties.put(property, descriptor);
     }
 
@@ -254,6 +270,11 @@ public class TopDownAnalyzer {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private void resolveBehaviorDeclarationBodies() {
+        resolvePropertyDeclarationBodies();
+        resolveFunctionDeclarationBodies();
+    }
+
+    private void resolveFunctionDeclarationBodies() {
         for (Map.Entry<JetDeclaration, FunctionDescriptor> entry : functions.entrySet()) {
             JetDeclaration declaration = entry.getKey();
             FunctionDescriptor descriptor = entry.getValue();
@@ -261,26 +282,36 @@ public class TopDownAnalyzer {
             WritableScope declaringScope = declaringScopes.get(declaration);
             assert declaringScope != null;
 
-            assert declaration instanceof JetFunction || declaration instanceof JetConstructor;
-            JetDeclarationWithBody declarationWithBody = (JetDeclarationWithBody) declaration;
-
-            JetExpression bodyExpression = declarationWithBody.getBodyExpression();
-
             if (declaration instanceof JetFunction) {
                 resolveFunctionBody(trace, (JetFunction) declaration, (FunctionDescriptorImpl) descriptor, declaringScope);
             }
             else if (declaration instanceof JetConstructor) {
-                if (bodyExpression != null) {
-                    computeFlowData(declaration, bodyExpression);
-                    JetFlowInformationProvider flowInformationProvider = computeFlowData(declaration, bodyExpression);
-                    JetTypeInferrer typeInferrer = semanticServices.getTypeInferrer(trace, flowInformationProvider);
-                    typeInferrer.getType(FunctionDescriptorUtil.getFunctionInnerScope(declaringScope, descriptor, semanticServices), bodyExpression, true);
-                }
-
+                resolveConstructorBody((JetConstructor) declaration, descriptor, declaringScope);
             }
+            else {
+                throw new UnsupportedOperationException(); // TODO
+            }
+
             assert descriptor.getUnsubstitutedReturnType() != null;
         }
+    }
 
+    private void resolveConstructorBody(JetConstructor declaration, FunctionDescriptor descriptor, WritableScope declaringScope) {
+        JetExpression bodyExpression = declaration.getBodyExpression();
+        if (bodyExpression != null) {
+            computeFlowData(declaration, bodyExpression);
+            JetFlowInformationProvider flowInformationProvider = computeFlowData(declaration, bodyExpression);
+            JetTypeInferrer typeInferrer = semanticServices.getTypeInferrer(traceForConstructors, flowInformationProvider);
+            WritableScope constructorScope = semanticServices.createWritableScope(declaringScope, declaringScope.getContainingDeclaration());
+            for (PropertyDescriptor propertyDescriptor : declaringScopesToProperties.get(descriptor.getContainingDeclaration())) {
+                constructorScope.addPropertyDescriptorByFieldName("$" + propertyDescriptor.getName(), propertyDescriptor);
+            }
+
+            typeInferrer.getType(FunctionDescriptorUtil.getFunctionInnerScope(constructorScope, descriptor, semanticServices), bodyExpression, true);
+        }
+    }
+
+    private void resolvePropertyDeclarationBodies() {
         for (Map.Entry<JetProperty, PropertyDescriptor> entry : properties.entrySet()) {
             JetProperty declaration = entry.getKey();
             final PropertyDescriptor propertyDescriptor = entry.getValue();
