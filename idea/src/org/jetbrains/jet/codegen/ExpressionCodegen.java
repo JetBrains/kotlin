@@ -60,7 +60,7 @@ public class ExpressionCodegen extends JetVisitor {
         }
     }
 
-    private void genToJVMStack(JetExpression expr) {
+    public void genToJVMStack(JetExpression expr) {
         gen(expr, expressionType(expr));
     }
 

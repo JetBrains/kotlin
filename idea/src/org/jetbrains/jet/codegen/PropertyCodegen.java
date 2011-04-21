@@ -1,10 +1,7 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.util.text.StringUtil;
-import org.jetbrains.jet.lang.psi.JetConstantExpression;
-import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetProperty;
-import org.jetbrains.jet.lang.psi.JetPropertyAccessor;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -71,28 +68,38 @@ public class PropertyCodegen {
             }
             final JetPropertyAccessor getter = p.getGetter();
             if (getter != null) {
-                functionCodegen.generateMethod(getter, kind, mapper.mapGetterSignature(propertyDescriptor),
-                        Collections.<ValueParameterDescriptor>emptyList());
+                if (getter.getBodyExpression() != null) {
+                    functionCodegen.generateMethod(getter, kind, mapper.mapGetterSignature(propertyDescriptor),
+                            Collections.<ValueParameterDescriptor>emptyList());
+                }
+                else if (!getter.hasModifier(JetTokens.PRIVATE_KEYWORD)) {
+                    generateDefaultGetter(p, getter, kind);
+                }
             }
             else if (p.hasModifier(JetTokens.PUBLIC_KEYWORD)) {
-                generateDefaultGetter(p, kind);
+                generateDefaultGetter(p, p, kind);
             }
             final JetPropertyAccessor setter = p.getSetter();
             if (setter != null) {
-                final PropertySetterDescriptor setterDescriptor = propertyDescriptor.getSetter();
-                assert setterDescriptor != null;
-                functionCodegen.generateMethod(setter, kind, mapper.mapSetterSignature(propertyDescriptor),
-                        setterDescriptor.getUnsubstitutedValueParameters());
+                if (setter.getBodyExpression() != null) {
+                    final PropertySetterDescriptor setterDescriptor = propertyDescriptor.getSetter();
+                    assert setterDescriptor != null;
+                    functionCodegen.generateMethod(setter, kind, mapper.mapSetterSignature(propertyDescriptor),
+                            setterDescriptor.getUnsubstitutedValueParameters());
+                }
+                else if (!p.hasModifier(JetTokens.PRIVATE_KEYWORD)) {
+                    generateDefaultSetter(p, setter, kind);
+                }
             }
             else if (p.hasModifier(JetTokens.PUBLIC_KEYWORD) && p.isVar()) {
-                generateDefaultSetter(p, kind);
+                generateDefaultSetter(p, p, kind);
             }
         }
     }
 
-    private void generateDefaultGetter(JetProperty p, OwnerKind kind) {
+    private void generateDefaultGetter(JetProperty p, JetDeclaration declaration, OwnerKind kind) {
         final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) context.getVariableDescriptor(p);
-        int flags = JetTypeMapper.getAccessModifiers(p, Opcodes.ACC_PUBLIC);
+        int flags = JetTypeMapper.getAccessModifiers(declaration, Opcodes.ACC_PUBLIC);
         if (kind == OwnerKind.NAMESPACE) {
             flags |= Opcodes.ACC_STATIC;
         }
@@ -112,9 +119,9 @@ public class PropertyCodegen {
         mv.visitEnd();
     }
 
-    private void generateDefaultSetter(JetProperty p, OwnerKind kind) {
+    private void generateDefaultSetter(JetProperty p, JetDeclaration declaration, OwnerKind kind) {
         final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) context.getVariableDescriptor(p);
-        int flags = JetTypeMapper.getAccessModifiers(p, Opcodes.ACC_PUBLIC);
+        int flags = JetTypeMapper.getAccessModifiers(declaration, Opcodes.ACC_PUBLIC);
         if (kind == OwnerKind.NAMESPACE) {
             flags |= Opcodes.ACC_STATIC;
         }

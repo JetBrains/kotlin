@@ -8,6 +8,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.ClassDescriptor;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.PropertyDescriptor;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -161,13 +162,42 @@ public class ClassCodegen {
         Method method = new Method("<init>", Type.VOID_TYPE, new Type[0]);
         final MethodVisitor mv = v.visitMethod(flags, "<init>", method.getDescriptor(), null, null);
         mv.visitCode();
+
+        FrameMap frameMap = new FrameMap();
+        frameMap.enterTemp();   // this
+
         final InstructionAdapter iv = new InstructionAdapter(mv);
         String superClass = getSuperClass(aClass, kind);
         iv.load(0, Type.getType("L" + superClass + ";"));
         iv.invokespecial(superClass, "<init>", method.getDescriptor());
+
+        final JetStandardLibrary standardLibrary = JetStandardLibrary.getJetStandardLibrary(project);
+        final JetTypeMapper typeMapper = new JetTypeMapper(standardLibrary, bindingContext);
+        ExpressionCodegen codegen = new ExpressionCodegen(mv, bindingContext, frameMap,
+                typeMapper, Type.VOID_TYPE);
+        generateInitializers(aClass, kind, codegen, iv, typeMapper);
+
         iv.visitInsn(Opcodes.RETURN);
         mv.visitMaxs(0, 0);
         mv.visitEnd();
+    }
+
+    private void generateInitializers(JetClass aClass, OwnerKind kind, ExpressionCodegen codegen, InstructionAdapter iv, JetTypeMapper typeMapper) {
+        for (JetDeclaration declaration : aClass.getDeclarations()) {
+            if (declaration instanceof JetProperty) {
+                final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) bindingContext.getVariableDescriptor((JetProperty) declaration);
+                if (bindingContext.hasBackingField(propertyDescriptor)) {
+                    final JetExpression initializer = ((JetProperty) declaration).getInitializer();
+                    if (initializer != null) {
+                        iv.load(0, JetTypeMapper.TYPE_OBJECT);
+                        codegen.genToJVMStack(initializer);
+                        iv.putfield(JetTypeMapper.getOwner(propertyDescriptor), propertyDescriptor.getName(),
+                                typeMapper.mapType(propertyDescriptor.getOutType()).getDescriptor());
+                    }
+
+                }
+            }
+        }
     }
 
     private void generateClassBody(JetClass aClass, ClassVisitor v, OwnerKind kind) {

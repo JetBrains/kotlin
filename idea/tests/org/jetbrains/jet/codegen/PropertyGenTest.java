@@ -73,4 +73,13 @@ public class PropertyGenTest extends CodegenTestCase {
         String value = (String) method.invoke(null, "IDEA");
         assertEquals(value, "IntelliJ IDEA");
     }
+
+    public void testAccessorsWithoutBody() throws Exception {
+        loadText("class AccessorsWithoutBody { public var foo: Int = 349\n  get\n  private set } ");
+        final Class aClass = loadImplementationClass(generateClassesInFile(), "AccessorsWithoutBody");
+        final Object instance = aClass.newInstance();
+        final Method getFoo = findMethodByName(aClass, "getFoo");
+        assertEquals(349, getFoo.invoke(instance));
+        assertNull(findMethodByName(aClass, "setFoo"));
+    }
 }

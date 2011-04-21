@@ -3,6 +3,7 @@ package org.jetbrains.jet.codegen;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetLightProjectDescriptor;
 import org.jetbrains.jet.lang.JetFileType;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -97,16 +98,21 @@ public abstract class CodegenTestCase extends LightCodeInsightFixtureTestCase {
 
     protected Method generateFunction(String name) {
         Class aClass = generateNamespaceClass();
-        return findMethodByName(aClass, name);
+        final Method method = findMethodByName(aClass, name);
+        if (method == null) {
+            throw new IllegalArgumentException("couldn't find method " + name);
+        }
+        return method;
     }
 
+    @Nullable
     protected static Method findMethodByName(Class aClass, String name) {
         for (Method method : aClass.getMethods()) {
             if (method.getName().equals(name)) {
                 return method;
             }
         }
-        throw new IllegalArgumentException("couldn't find method " + name);
+        return null;
     }
 
     protected static void assertIsCurrentTime(long returnValue) {
