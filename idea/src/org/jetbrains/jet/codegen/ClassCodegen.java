@@ -11,7 +11,6 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Opcodes;
 
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -32,6 +31,8 @@ public class ClassCodegen {
 
     public void generate(JetClass aClass) {
         generateInterface(aClass);
+        generateImplementation(aClass, OwnerKind.IMPLEMENTATION);
+        generateImplementation(aClass, OwnerKind.DELEGATING_IMPLEMENTATION);
     }
 
     private void generateInterface(JetClass aClass) {
@@ -43,15 +44,72 @@ public class ClassCodegen {
         ClassVisitor v = factory.forClassInterface(descriptor);
         v.visit(Opcodes.V1_6,
                 Opcodes.ACC_PUBLIC | Opcodes.ACC_INTERFACE | Opcodes.ACC_ABSTRACT,
-                fqName.replace('.', '/'),
+                fqName,
                 null,
                 "java/lang/Object",
                 superInterfaces.toArray(new String[superInterfaces.size()])
         );
 
-        generateClassBody(aClass, v);
+        generateClassBody(aClass, v, OwnerKind.INTERFACE);
 
         v.visitEnd();
+    }
+
+    private void generateImplementation(JetClass aClass, OwnerKind kind) {
+        ClassDescriptor descriptor =  bindingContext.getClassDescriptor(aClass);
+
+        String superClass = getSuperClass(aClass, kind);
+
+        ClassVisitor v = kind == OwnerKind.IMPLEMENTATION ? factory.forClassImplementation(descriptor) : factory.forClassDelegatingImplementation(descriptor);
+        v.visit(Opcodes.V1_6,
+                Opcodes.ACC_PUBLIC,
+                CodeGenUtil.getInternalImplementationName(descriptor),
+                null,
+                superClass,
+                new String[] {CodeGenUtil.getInternalInterfaceName(descriptor)}
+        );
+
+        generateClassBody(aClass, v, kind);
+
+        v.visitEnd();
+    }
+
+    private String getSuperClass(JetClass aClass, OwnerKind kind) {
+        List<JetDelegationSpecifier> delegationSpecifiers = aClass.getDelegationSpecifiers();
+        String superClassName = null;
+        Set<ClassDescriptor> superInterfaces = new LinkedHashSet<ClassDescriptor>();
+        for (JetDelegationSpecifier specifier : delegationSpecifiers) {
+            JetType superType = bindingContext.resolveTypeReference(specifier.getTypeReference());
+            ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
+            PsiElement superPsi = bindingContext.getDeclarationPsiElement(superClassDescriptor);
+
+            if (superPsi instanceof PsiClass) {
+                PsiClass psiClass = (PsiClass) superPsi;
+                String fqn = psiClass.getQualifiedName();
+                if (!psiClass.isInterface()) {
+                    if (superClassName == null) {
+                        superClassName = fqn.replace('.', '/');
+                    }
+                    else {
+                        throw new RuntimeException("Cannot determine single class to inherit from");
+                    }
+                }
+            }
+            else {
+                superInterfaces.add(superClassDescriptor);
+            }
+        }
+
+        if (superClassName != null) {
+            return superClassName;
+        }
+
+        if (superInterfaces.size() > 0) {
+            ClassDescriptor first = superInterfaces.iterator().next();
+            return kind == OwnerKind.IMPLEMENTATION ? CodeGenUtil.getInternalImplementationName(first) : CodeGenUtil.getInternalDelegatingImplementationName(first);
+        }
+
+        return "java/lang/Object";
     }
 
     private Set<String> getSuperInterfaces(JetClass aClass) {
@@ -92,16 +150,16 @@ public class ClassCodegen {
         return superInterfaces;
     }
 
-    private void generateClassBody(JetClass aClass, ClassVisitor v) {
+    private void generateClassBody(JetClass aClass, ClassVisitor v, OwnerKind kind) {
         final PropertyCodegen propertyCodegen = new PropertyCodegen(v);
         final FunctionCodegen functionCodegen = new FunctionCodegen(v, JetStandardLibrary.getJetStandardLibrary(project), bindingContext);
 
         for (JetDeclaration declaration : aClass.getDeclarations()) {
             if (declaration instanceof JetProperty) {
-                propertyCodegen.gen((JetProperty) declaration, OwnerKind.INTERFACE);
+                propertyCodegen.gen((JetProperty) declaration, kind);
             }
             else if (declaration instanceof JetFunction) {
-                functionCodegen.gen((JetFunction) declaration, OwnerKind.INTERFACE);
+                functionCodegen.gen((JetFunction) declaration, kind);
             }
         }
     }
