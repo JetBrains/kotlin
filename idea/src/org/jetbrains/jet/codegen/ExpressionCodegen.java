@@ -1001,6 +1001,12 @@ public class ExpressionCodegen extends JetVisitor {
         gen(indices.get(0), Type.INT_TYPE);
     }
 
+    @Override
+    public void visitThrowExpression(JetThrowExpression expression) {
+        gen(expression.getThrownExpression(), JetTypeMapper.TYPE_OBJECT);
+        v.athrow();
+    }
+
     private static class CompilationException extends RuntimeException {
     }
 }

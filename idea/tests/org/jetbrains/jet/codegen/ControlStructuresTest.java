@@ -85,4 +85,18 @@ public class ControlStructuresTest extends CodegenTestCase {
         String[] args = new String[] { "IntelliJ", " ", "IDEA" };
         assertEquals("IntelliJ IDEA", main.invoke(null, new Object[] { args }));
     }
+
+    public void testThrowCheckedException() throws Exception {
+        loadText("fun foo() { throw new Exception(); }");
+        final Method main = generateFunction();
+        boolean caught = false;
+        try {
+            main.invoke(null);
+        } catch (InvocationTargetException e) {
+            if (e.getTargetException().getClass() == Exception.class) {
+                caught = true;
+            }
+        }
+        assertTrue(caught);
+    }
 }
