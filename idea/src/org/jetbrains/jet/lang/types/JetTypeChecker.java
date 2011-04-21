@@ -93,13 +93,13 @@ public class JetTypeChecker {
 
         Map<TypeConstructor, Set<JetType>> commonSupertypes = computeCommonRawSupertypes(typeSet);
         while (commonSupertypes.size() > 1) {
-            HashSet<JetType> merge = new HashSet<JetType>();
+            Set<JetType> merge = new HashSet<JetType>();
             for (Set<JetType> supertypes : commonSupertypes.values()) {
                 merge.addAll(supertypes);
             }
             commonSupertypes = computeCommonRawSupertypes(merge);
         }
-        assert !commonSupertypes.isEmpty() : commonSupertypes;
+        assert !commonSupertypes.isEmpty() : types;
         Map.Entry<TypeConstructor, Set<JetType>> entry = commonSupertypes.entrySet().iterator().next();
         JetType result = computeSupertypeProjections(entry.getKey(), entry.getValue());
 
@@ -413,4 +413,5 @@ public class JetTypeChecker {
         }
         return true;
     }
+
 }

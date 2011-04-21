@@ -1,5 +1,7 @@
 package org.jetbrains.jet.lang.types;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.JetScope;
@@ -187,4 +189,35 @@ public class TypeUtils {
     public static TypeProjection makeStarProjection(@NotNull TypeParameterDescriptor parameterDescriptor) {
         return new TypeProjection(Variance.OUT_VARIANCE, parameterDescriptor.getBoundsAsType());
     }
+
+    private static void collectImmediateSupertypes(@NotNull JetType type, @NotNull Collection<JetType> result) {
+        TypeSubstitutor substitutor = TypeSubstitutor.create(type);
+        for (JetType supertype : type.getConstructor().getSupertypes()) {
+            result.add(substitutor.substitute(supertype, Variance.INVARIANT));
+        }
+    }
+
+    @NotNull
+    public static List<JetType> getImmediateSupertypes(@NotNull JetType type) {
+        List<JetType> result = Lists.newArrayList();
+        collectImmediateSupertypes(type, result);
+        return result;
+    }
+
+    private static void collectAllSupertypes(@NotNull JetType type, @NotNull Set<JetType> result) {
+        List<JetType> immediateSupertypes = getImmediateSupertypes(type);
+        result.addAll(immediateSupertypes);
+        for (JetType supertype : immediateSupertypes) {
+            collectAllSupertypes(supertype, result);
+        }
+    }
+
+    @NotNull
+    public static Set<JetType> getAllSupertypes(@NotNull JetType type) {
+        Set<JetType> result = Sets.newLinkedHashSet();
+        collectAllSupertypes(type, result);
+        return result;
+    }
+
+
 }

@@ -1,5 +1,6 @@
 package org.jetbrains.jet.types;
 
+import com.google.common.collect.Sets;
 import com.intellij.codeInsight.daemon.LightDaemonAnalyzerTestCase;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.project.Project;
@@ -419,6 +420,24 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertType("new WithPredicate()?p", "WithPredicate?");
     }
 
+    public void testSupertypes() throws Exception {
+        assertSupertypes("DDerived1_T<Int>", "Derived_T<Int>", "Base_T<Int>", "Any");
+        assertSupertypes("DDerived2_T<Int>", "Derived_T<Int>", "Base_T<Int>", "Any");
+        assertSupertypes("Derived1_inT<Int>", "Derived_T<Int>", "Base_T<Int>", "Any", "Base_inT<Int>");
+    }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private void assertSupertypes(String typeStr, String... supertypeStrs) {
+        Set<JetType> allSupertypes = TypeUtils.getAllSupertypes(makeType(classDefinitions.BASIC_SCOPE, typeStr));
+        Set<JetType> expected = Sets.newHashSet();
+        for (String supertypeStr : supertypeStrs) {
+            JetType supertype = makeType(classDefinitions.BASIC_SCOPE, supertypeStr);
+            expected.add(supertype);
+        }
+        assertEquals(expected, allSupertypes);
+    }
+
     private void assertSubtype(String type1, String type2) {
         assertSubtypingRelation(type1, type2, true);
     }
@@ -509,8 +528,10 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
             "open class Derived_T<T> : Base_T<T>",
             "open class DDerived_T<T> : Derived_T<T>",
             "open class DDerived1_T<T> : Derived_T<T>",
+            "open class DDerived2_T<T> : Derived_T<T>, Base_T<T>",
             "open class Base_inT<in T>",
             "open class Derived_inT<in T> : Base_inT<T>",
+            "open class Derived1_inT<in T> : Base_inT<T>, Derived_T<T>",
             "open class Base_outT<out T>",
             "open class Derived_outT<out T> : Base_outT<T>",
             "class Properties { val p : Int }",
