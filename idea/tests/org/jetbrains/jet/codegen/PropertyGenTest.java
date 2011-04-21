@@ -11,7 +11,21 @@ public class PropertyGenTest extends CodegenTestCase {
     public void testPrivateVal() throws Exception {
         loadFile("privateVal.jet");
         System.out.println(generateToText());
-        // TODO
+        final Class aClass = loadImplementationClass(generateClassesInFile(), "PrivateVal");
+        final Field[] fields = aClass.getDeclaredFields();
+        assertEquals(1, fields.length);
+        final Field field = fields[0];
+        assertEquals("prop", field.getName());
+    }
+
+    public void testPrivateVar() throws Exception {
+        loadFile("privateVar.jet");
+        final Class aClass = loadImplementationClass(generateClassesInFile(), "PrivateVar");
+        final Object instance = aClass.newInstance();
+        Method setter = findMethodByName(aClass, "setValueOfX");
+        setter.invoke(instance, 239);
+        Method getter = findMethodByName(aClass, "getValueOfX");
+        assertEquals(239, ((Integer) getter.invoke(instance)).intValue());
     }
 
     public void testPropertyInNamespace() throws Exception {

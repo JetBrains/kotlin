@@ -1,0 +1,6 @@
+class PrivateVar {
+  private var x = 0;
+
+  fun setValueOfX(val: Int) { x = val }
+  fun getValueOfX() = x
+}

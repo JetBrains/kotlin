@@ -16,6 +16,20 @@ import java.util.List;
  * @author yole
  */
 public abstract class CodegenTestCase extends LightCodeInsightFixtureTestCase {
+    private MyClassLoader myClassLoader;
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        myClassLoader = new MyClassLoader(NamespaceGenTest.class.getClassLoader());
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        myClassLoader = null;
+        super.tearDown();
+    }
+
     protected void loadText(final String text) {
         myFixture.configureByText(JetFileType.INSTANCE, text);
     }
@@ -55,8 +69,7 @@ public abstract class CodegenTestCase extends LightCodeInsightFixtureTestCase {
         for (String file : files) {
             if (file.equals(fqName.replace('.', '/') + ".class")) {
                 final byte[] data = state.asBytes(file);
-                MyClassLoader classLoader = new MyClassLoader(NamespaceGenTest.class.getClassLoader());
-                return classLoader.doDefineClass(fqName, data);
+                return myClassLoader.doDefineClass(fqName, data);
             }
         }
 
@@ -81,6 +94,10 @@ public abstract class CodegenTestCase extends LightCodeInsightFixtureTestCase {
 
     protected Method generateFunction(String name) {
         Class aClass = generateNamespaceClass();
+        return findMethodByName(aClass, name);
+    }
+
+    protected static Method findMethodByName(Class aClass, String name) {
         for (Method method : aClass.getMethods()) {
             if (method.getName().equals(name)) {
                 return method;
@@ -89,9 +106,14 @@ public abstract class CodegenTestCase extends LightCodeInsightFixtureTestCase {
         throw new IllegalArgumentException("couldn't find method " + name);
     }
 
-    protected void assertIsCurrentTime(long returnValue) {
+    protected static void assertIsCurrentTime(long returnValue) {
         long currentTime = System.currentTimeMillis();
         assertTrue(Math.abs(returnValue - currentTime) <= 1L);
+    }
+
+    protected Class loadImplementationClass(Codegens codegens, final String name) {
+        loadClass(name, codegens);
+        return loadClass(name + "$$Impl", codegens);
     }
 
     private static class MyClassLoader extends ClassLoader {

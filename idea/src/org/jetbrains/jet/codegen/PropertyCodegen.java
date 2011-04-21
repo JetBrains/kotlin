@@ -45,7 +45,7 @@ public class PropertyCodegen {
     }
 
     public void gen(JetProperty p, OwnerKind kind) {
-        if (kind == OwnerKind.NAMESPACE) {
+        if (kind == OwnerKind.NAMESPACE || kind == OwnerKind.IMPLEMENTATION) {
             final VariableDescriptor descriptor = context.getVariableDescriptor(p);
             if (!(descriptor instanceof PropertyDescriptor)) {
                 throw new UnsupportedOperationException("expect a property to have a property descriptor");
@@ -59,8 +59,11 @@ public class PropertyCodegen {
                         value = ((JetConstantExpression) initializer).getValue();
                     }
                 }
-                v.visitField(Opcodes.ACC_STATIC | Opcodes.ACC_PRIVATE,
-                        p.getName(),
+                int modifiers = Opcodes.ACC_PRIVATE;
+                if (kind == OwnerKind.NAMESPACE) {
+                    modifiers |= Opcodes.ACC_STATIC;
+                }
+                v.visitField(modifiers, p.getName(),
                         mapper.mapType(descriptor.getOutType()).getDescriptor(),
                         null, value);
             }
