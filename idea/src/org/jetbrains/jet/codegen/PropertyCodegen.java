@@ -7,8 +7,12 @@ import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.psi.JetPropertyAccessor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lexer.JetTokens;
 import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
+import org.objectweb.asm.commons.InstructionAdapter;
 
 import java.util.Collections;
 
@@ -63,14 +67,15 @@ public class PropertyCodegen {
                 if (kind == OwnerKind.NAMESPACE) {
                     modifiers |= Opcodes.ACC_STATIC;
                 }
-                v.visitField(modifiers, p.getName(),
-                        mapper.mapType(descriptor.getOutType()).getDescriptor(),
-                        null, value);
+                v.visitField(modifiers, p.getName(), mapper.mapType(descriptor.getOutType()).getDescriptor(), null, value);
             }
             final JetPropertyAccessor getter = p.getGetter();
             if (getter != null) {
                 functionCodegen.generateMethod(getter, kind, mapper.mapGetterSignature(propertyDescriptor),
                         Collections.<ValueParameterDescriptor>emptyList());
+            }
+            else if (p.hasModifier(JetTokens.PUBLIC_KEYWORD)) {
+                generateDefaultGetter(p, kind);
             }
             final JetPropertyAccessor setter = p.getSetter();
             if (setter != null) {
@@ -79,7 +84,58 @@ public class PropertyCodegen {
                 functionCodegen.generateMethod(setter, kind, mapper.mapSetterSignature(propertyDescriptor),
                         setterDescriptor.getUnsubstitutedValueParameters());
             }
+            else if (p.hasModifier(JetTokens.PUBLIC_KEYWORD) && p.isVar()) {
+                generateDefaultSetter(p, kind);
+            }
         }
+    }
+
+    private void generateDefaultGetter(JetProperty p, OwnerKind kind) {
+        final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) context.getVariableDescriptor(p);
+        int flags = JetTypeMapper.getAccessModifiers(p, Opcodes.ACC_PUBLIC);
+        if (kind == OwnerKind.NAMESPACE) {
+            flags |= Opcodes.ACC_STATIC;
+        }
+        final String signature = mapper.mapGetterSignature(propertyDescriptor).getDescriptor();
+        MethodVisitor mv = v.visitMethod(flags, getterName(p.getName()), signature, null, null);
+        mv.visitCode();
+        InstructionAdapter iv = new InstructionAdapter(mv);
+        if (kind != OwnerKind.NAMESPACE) {
+            iv.load(0, JetTypeMapper.TYPE_OBJECT);
+        }
+        final Type type = mapper.mapType(propertyDescriptor.getOutType());
+        iv.visitFieldInsn(kind == OwnerKind.NAMESPACE ? Opcodes.GETSTATIC : Opcodes.GETFIELD,
+                JetTypeMapper.getOwner(propertyDescriptor), propertyDescriptor.getName(),
+                type.getDescriptor());
+        iv.areturn(type);
+        mv.visitMaxs(0, 0);
+        mv.visitEnd();
+    }
+
+    private void generateDefaultSetter(JetProperty p, OwnerKind kind) {
+        final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) context.getVariableDescriptor(p);
+        int flags = JetTypeMapper.getAccessModifiers(p, Opcodes.ACC_PUBLIC);
+        if (kind == OwnerKind.NAMESPACE) {
+            flags |= Opcodes.ACC_STATIC;
+        }
+        final String signature = mapper.mapSetterSignature(propertyDescriptor).getDescriptor();
+        MethodVisitor mv = v.visitMethod(flags, setterName(p.getName()), signature, null, null);
+        mv.visitCode();
+        InstructionAdapter iv = new InstructionAdapter(mv);
+        final Type type = mapper.mapType(propertyDescriptor.getOutType());
+        if (kind != OwnerKind.NAMESPACE) {
+            iv.load(0, JetTypeMapper.TYPE_OBJECT);
+            iv.load(1, type);
+        }
+        else {
+            iv.load(0, type);
+        }
+        iv.visitFieldInsn(kind == OwnerKind.NAMESPACE ? Opcodes.PUTSTATIC : Opcodes.PUTFIELD,
+                JetTypeMapper.getOwner(propertyDescriptor), propertyDescriptor.getName(),
+                type.getDescriptor());
+        iv.visitInsn(Opcodes.RETURN);
+        mv.visitMaxs(0, 0);
+        mv.visitEnd();
     }
 
     public static String getterName(String propertyName) {

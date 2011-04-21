@@ -29,6 +29,17 @@ public class PropertyGenTest extends CodegenTestCase {
         assertEquals(239, ((Integer) getter.invoke(instance)).intValue());
     }
 
+    public void testPublicVar() throws Exception {
+        loadText("class PublicVar { public var foo = 0; }");
+        System.out.println(generateToText());
+        final Class aClass = loadImplementationClass(generateClassesInFile(), "PublicVar");
+        final Object instance = aClass.newInstance();
+        Method setter = findMethodByName(aClass, "setFoo");
+        setter.invoke(instance, 239);
+        Method getter = findMethodByName(aClass, "getFoo");
+        assertEquals(239, ((Integer) getter.invoke(instance)).intValue());
+    }
+
     public void testPropertyInNamespace() throws Exception {
         loadText("private val x = 239");
         final Class nsClass = generateNamespaceClass();

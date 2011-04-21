@@ -2,14 +2,12 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.JetFunction;
-import org.jetbrains.jet.lang.psi.JetNamespace;
-import org.jetbrains.jet.lang.psi.JetParameter;
-import org.jetbrains.jet.lang.psi.JetTypeReference;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.resolve.DescriptorUtil;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.Method;
 
@@ -19,6 +17,8 @@ import java.util.List;
  * @author yole
  */
 public class JetTypeMapper {
+    static final Type TYPE_OBJECT = Type.getObjectType("java/lang/Object");
+
     private final JetStandardLibrary standardLibrary;
     private final BindingContext bindingContext;
 
@@ -39,6 +39,10 @@ public class JetTypeMapper {
         return NamespaceCodegen.getJVMClassName(namespace.getFQName());
     }
 
+    static String jvmName(NamespaceDescriptor namespace) {
+        return NamespaceCodegen.getJVMClassName(DescriptorUtil.getFQName(namespace));
+    }
+
     public static String jvmNameForInterface(ClassDescriptor descriptor) {
         return DescriptorUtil.getFQName(descriptor).replace('.', '/');
     }
@@ -49,6 +53,21 @@ public class JetTypeMapper {
 
     public static String jvmNameForDelegatingImplementation(ClassDescriptor descriptor) {
         return jvmNameForInterface(descriptor) + "$$DImpl";
+    }
+
+    static String getOwner(DeclarationDescriptor descriptor) {
+        String owner;
+        if (descriptor.getContainingDeclaration() instanceof NamespaceDescriptor) {
+            owner = jvmName((NamespaceDescriptor) descriptor.getContainingDeclaration());
+        }
+        else if (descriptor.getContainingDeclaration() instanceof ClassDescriptor) {
+            ClassDescriptor classDescriptor = (ClassDescriptor) descriptor.getContainingDeclaration();
+            owner = jvmNameForImplementation(classDescriptor);
+        }
+        else {
+            throw new UnsupportedOperationException("don't know how to generate owner for parent " + descriptor.getContainingDeclaration());
+        }
+        return owner;
     }
 
     public Type mapType(final JetType jetType) {
@@ -150,21 +169,27 @@ public class JetTypeMapper {
         return new Method(f.getName(), returnType, parameterTypes);
     }
 
-    @Nullable
     public Method mapGetterSignature(PropertyDescriptor descriptor) {
-        if (descriptor.getGetter() == null) {
-            return null;
-        }
         Type returnType = mapType(descriptor.getOutType());
         return new Method(PropertyCodegen.getterName(descriptor.getName()), returnType, new Type[0]);
     }
 
-    @Nullable
     public Method mapSetterSignature(PropertyDescriptor descriptor) {
-        if (descriptor.getSetter() == null) {
-            return null;
-        }
         Type paramType = mapType(descriptor.getInType());
         return new Method(PropertyCodegen.setterName(descriptor.getName()), Type.VOID_TYPE, new Type[] { paramType });
+    }
+
+    static int getAccessModifiers(JetDeclaration p, int defaultFlags) {
+        int flags = 0;
+        if (p.hasModifier(JetTokens.PUBLIC_KEYWORD)) {
+            flags |= Opcodes.ACC_PUBLIC;
+        }
+        else if (p.hasModifier(JetTokens.PRIVATE_KEYWORD)) {
+            flags |= Opcodes.ACC_PRIVATE;
+        }
+        else {
+            flags |= defaultFlags;
+        }
+        return flags;
     }
 }

@@ -27,8 +27,6 @@ public class ExpressionCodegen extends JetVisitor {
     private static final String CLASS_STRING_BUILDER = "java/lang/StringBuilder";
     private static final String CLASS_COMPARABLE = "java/lang/Comparable";
 
-    private static final Type TYPE_OBJECT = Type.getObjectType(CLASS_OBJECT);
-
     private final Stack<Label> myContinueTargets = new Stack<Label>();
     private final Stack<Label> myBreakTargets = new Stack<Label>();
     private final Stack<StackValue> myStack = new Stack<StackValue>();
@@ -372,21 +370,8 @@ public class ExpressionCodegen extends JetVisitor {
             }
             else if (descriptor instanceof PropertyDescriptor) {
                 final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
-                String owner;
-                boolean isStatic;
-                if (descriptor.getContainingDeclaration() instanceof NamespaceDescriptor) {
-                    JetNamespace ns = (JetNamespace) bindingContext.getDeclarationPsiElement(descriptor.getContainingDeclaration());
-                    owner = JetTypeMapper.jvmName(ns);
-                    isStatic = true;
-                }
-                else if (descriptor.getContainingDeclaration() instanceof ClassDescriptor) {
-                    ClassDescriptor classDescriptor = (ClassDescriptor) descriptor.getContainingDeclaration();
-                    owner = JetTypeMapper.jvmNameForImplementation(classDescriptor);
-                    isStatic = false;
-                }
-                else {
-                    throw new UnsupportedOperationException("don't know how to generate property reference with parent " + descriptor.getContainingDeclaration());
-                }
+                boolean isStatic = descriptor.getContainingDeclaration() instanceof NamespaceDescriptor;
+                String owner = JetTypeMapper.getOwner(descriptor);
                 final JetType outType = ((VariableDescriptor) descriptor).getOutType();
                 Method getter;
                 Method setter;
@@ -395,8 +380,8 @@ public class ExpressionCodegen extends JetVisitor {
                     setter = null;
                 }
                 else {
-                    getter = typeMapper.mapGetterSignature(propertyDescriptor);
-                    setter = typeMapper.mapSetterSignature(propertyDescriptor);
+                    getter = propertyDescriptor.getGetter() == null ? null : typeMapper.mapGetterSignature(propertyDescriptor);
+                    setter = propertyDescriptor.getSetter() == null ? null : typeMapper.mapSetterSignature(propertyDescriptor);
                 }
                 if (!isStatic) {
                     ensureReceiverOnStack(expression);
@@ -497,11 +482,11 @@ public class ExpressionCodegen extends JetVisitor {
             final JetDotQualifiedExpression parent = (JetDotQualifiedExpression) expression.getParent();
             if (!resolvesToClassOrPackage(parent.getReceiverExpression())) {
                 // we have a receiver on stack
-                myStack.pop().put(TYPE_OBJECT, v);
+                myStack.pop().put(JetTypeMapper.TYPE_OBJECT, v);
             }
         }
         else if (!(expression.getParent() instanceof JetSafeQualifiedExpression)) {
-            v.load(0, TYPE_OBJECT);  // TODO hope it works; really need more checks here :)
+            v.load(0, JetTypeMapper.TYPE_OBJECT);  // TODO hope it works; really need more checks here :)
         }
     }
 
@@ -856,7 +841,7 @@ public class ExpressionCodegen extends JetVisitor {
         Type exprType = expressionType(expr);
         gen(expr, exprType);
         Method appendDescriptor = new Method("append", Type.getObjectType(CLASS_STRING_BUILDER),
-                new Type[] { exprType.getSort() == Type.OBJECT ? TYPE_OBJECT : exprType});
+                new Type[] { exprType.getSort() == Type.OBJECT ? JetTypeMapper.TYPE_OBJECT : exprType});
         v.invokevirtual(CLASS_STRING_BUILDER, "append", appendDescriptor.getDescriptor());
     }
 
