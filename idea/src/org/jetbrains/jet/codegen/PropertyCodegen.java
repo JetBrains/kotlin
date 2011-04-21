@@ -34,7 +34,7 @@ public class PropertyCodegen {
     }
 
     public void genInInterface(JetProperty p) {
-        gen(p, OwnerKind.INTERFACE);
+
     }
 
     public void genInImplementation(JetProperty p) {
@@ -46,54 +46,88 @@ public class PropertyCodegen {
     }
 
     public void gen(JetProperty p, OwnerKind kind) {
+        final VariableDescriptor descriptor = context.getVariableDescriptor(p);
+        if (!(descriptor instanceof PropertyDescriptor)) {
+            throw new UnsupportedOperationException("expect a property to have a property descriptor");
+        }
+        final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
         if (kind == OwnerKind.NAMESPACE || kind == OwnerKind.IMPLEMENTATION) {
-            final VariableDescriptor descriptor = context.getVariableDescriptor(p);
-            if (!(descriptor instanceof PropertyDescriptor)) {
-                throw new UnsupportedOperationException("expect a property to have a property descriptor");
-            }
-            final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
-            if (context.hasBackingField(propertyDescriptor)) {
-                Object value = null;
-                final JetExpression initializer = p.getInitializer();
-                if (initializer != null) {
-                    if (initializer instanceof JetConstantExpression) {
-                        value = ((JetConstantExpression) initializer).getValue();
-                    }
-                }
-                int modifiers = Opcodes.ACC_PRIVATE;
-                if (kind == OwnerKind.NAMESPACE) {
-                    modifiers |= Opcodes.ACC_STATIC;
-                }
-                v.visitField(modifiers, p.getName(), mapper.mapType(descriptor.getOutType()).getDescriptor(), null, value);
-            }
+            generateBackingField(p, kind, propertyDescriptor);
+            generateGetter(p, kind, propertyDescriptor);
+            generateSetter(p, kind, propertyDescriptor);
+        }
+        else if (kind == OwnerKind.INTERFACE) {
             final JetPropertyAccessor getter = p.getGetter();
-            if (getter != null) {
-                if (getter.getBodyExpression() != null) {
-                    functionCodegen.generateMethod(getter, kind, mapper.mapGetterSignature(propertyDescriptor),
-                            Collections.<ValueParameterDescriptor>emptyList());
-                }
-                else if (!getter.hasModifier(JetTokens.PRIVATE_KEYWORD)) {
-                    generateDefaultGetter(p, getter, kind);
-                }
-            }
-            else if (p.hasModifier(JetTokens.PUBLIC_KEYWORD)) {
-                generateDefaultGetter(p, p, kind);
+            if ((getter != null && !getter.hasModifier(JetTokens.PRIVATE_KEYWORD) ||
+                 (getter == null && isExternallyAccessible(p)))) {
+                v.visitMethod(Opcodes.ACC_ABSTRACT | Opcodes.ACC_PUBLIC,
+                        getterName(p.getName()),
+                        mapper.mapGetterSignature(propertyDescriptor).getDescriptor(),
+                        null, null);
             }
             final JetPropertyAccessor setter = p.getSetter();
-            if (setter != null) {
-                if (setter.getBodyExpression() != null) {
-                    final PropertySetterDescriptor setterDescriptor = propertyDescriptor.getSetter();
-                    assert setterDescriptor != null;
-                    functionCodegen.generateMethod(setter, kind, mapper.mapSetterSignature(propertyDescriptor),
-                            setterDescriptor.getUnsubstitutedValueParameters());
-                }
-                else if (!p.hasModifier(JetTokens.PRIVATE_KEYWORD)) {
-                    generateDefaultSetter(p, setter, kind);
+            if ((setter != null && !setter.hasModifier(JetTokens.PRIVATE_KEYWORD) ||
+                (setter == null && isExternallyAccessible(p) && p.isVar()))) {
+                v.visitMethod(Opcodes.ACC_ABSTRACT | Opcodes.ACC_PUBLIC,
+                        setterName(p.getName()),
+                        mapper.mapSetterSignature(propertyDescriptor).getDescriptor(),
+                        null, null);
+            }
+        }
+    }
+
+    private void generateBackingField(JetProperty p, OwnerKind kind, PropertyDescriptor propertyDescriptor) {
+        if (context.hasBackingField(propertyDescriptor)) {
+            Object value = null;
+            final JetExpression initializer = p.getInitializer();
+            if (initializer != null) {
+                if (initializer instanceof JetConstantExpression) {
+                    value = ((JetConstantExpression) initializer).getValue();
                 }
             }
-            else if (p.hasModifier(JetTokens.PUBLIC_KEYWORD) && p.isVar()) {
-                generateDefaultSetter(p, p, kind);
+            int modifiers = Opcodes.ACC_PRIVATE;
+            if (kind == OwnerKind.NAMESPACE) {
+                modifiers |= Opcodes.ACC_STATIC;
             }
+            v.visitField(modifiers, p.getName(), mapper.mapType(propertyDescriptor.getOutType()).getDescriptor(), null, value);
+        }
+    }
+
+    private void generateGetter(JetProperty p, OwnerKind kind, PropertyDescriptor propertyDescriptor) {
+        final JetPropertyAccessor getter = p.getGetter();
+        if (getter != null) {
+            if (getter.getBodyExpression() != null) {
+                functionCodegen.generateMethod(getter, kind, mapper.mapGetterSignature(propertyDescriptor),
+                        Collections.<ValueParameterDescriptor>emptyList());
+            }
+            else if (!getter.hasModifier(JetTokens.PRIVATE_KEYWORD)) {
+                generateDefaultGetter(p, getter, kind);
+            }
+        }
+        else if (isExternallyAccessible(p)) {
+            generateDefaultGetter(p, p, kind);
+        }
+    }
+
+    private static boolean isExternallyAccessible(JetProperty p) {
+        return p.hasModifier(JetTokens.PUBLIC_KEYWORD);
+    }
+
+    private void generateSetter(JetProperty p, OwnerKind kind, PropertyDescriptor propertyDescriptor) {
+        final JetPropertyAccessor setter = p.getSetter();
+        if (setter != null) {
+            if (setter.getBodyExpression() != null) {
+                final PropertySetterDescriptor setterDescriptor = propertyDescriptor.getSetter();
+                assert setterDescriptor != null;
+                functionCodegen.generateMethod(setter, kind, mapper.mapSetterSignature(propertyDescriptor),
+                        setterDescriptor.getUnsubstitutedValueParameters());
+            }
+            else if (!p.hasModifier(JetTokens.PRIVATE_KEYWORD)) {
+                generateDefaultSetter(p, setter, kind);
+            }
+        }
+        else if (isExternallyAccessible(p) && p.isVar()) {
+            generateDefaultSetter(p, p, kind);
         }
     }
 

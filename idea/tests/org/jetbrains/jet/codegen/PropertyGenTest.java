@@ -40,6 +40,13 @@ public class PropertyGenTest extends CodegenTestCase {
         assertEquals(239, ((Integer) getter.invoke(instance)).intValue());
     }
 
+    public void testAccessorsInInterface() {
+        loadText("class AccessorsInInterface { public var foo = 0; }");
+        final Class aClass = loadClass("AccessorsInInterface", generateClassesInFile());
+        assertNotNull(findMethodByName(aClass, "getFoo"));
+        assertNotNull(findMethodByName(aClass, "setFoo"));
+    }
+
     public void testPropertyInNamespace() throws Exception {
         loadText("private val x = 239");
         final Class nsClass = generateNamespaceClass();
