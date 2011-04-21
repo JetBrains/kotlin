@@ -191,8 +191,7 @@ public class ClassCodegen {
                     if (initializer != null) {
                         iv.load(0, JetTypeMapper.TYPE_OBJECT);
                         codegen.genToJVMStack(initializer);
-                        iv.putfield(JetTypeMapper.getOwner(propertyDescriptor), propertyDescriptor.getName(),
-                                typeMapper.mapType(propertyDescriptor.getOutType()).getDescriptor());
+                        codegen.intermediateValueForProperty(propertyDescriptor, false).store(iv);
                     }
 
                 }

@@ -371,27 +371,34 @@ public class ExpressionCodegen extends JetVisitor {
             else if (descriptor instanceof PropertyDescriptor) {
                 final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
                 boolean isStatic = descriptor.getContainingDeclaration() instanceof NamespaceDescriptor;
-                String owner = JetTypeMapper.getOwner(descriptor);
-                final JetType outType = ((VariableDescriptor) descriptor).getOutType();
-                Method getter;
-                Method setter;
-                if (expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER) {
-                    getter = null;
-                    setter = null;
-                }
-                else {
-                    getter = propertyDescriptor.getGetter() == null ? null : typeMapper.mapGetterSignature(propertyDescriptor);
-                    setter = propertyDescriptor.getSetter() == null ? null : typeMapper.mapSetterSignature(propertyDescriptor);
-                }
+                final boolean directToField = expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER;
+                final StackValue iValue = intermediateValueForProperty(propertyDescriptor, directToField);
                 if (!isStatic) {
                     ensureReceiverOnStack(expression);
                 }
-                myStack.push(StackValue.property(descriptor.getName(), owner, typeMapper.mapType(outType), isStatic, getter, setter));
+                myStack.push(iValue);
             }
             else {
                 throw new UnsupportedOperationException("don't know how to generate reference " + descriptor);
             }
         }
+    }
+
+    public StackValue intermediateValueForProperty(PropertyDescriptor propertyDescriptor, final boolean directToField) {
+        boolean isStatic = propertyDescriptor.getContainingDeclaration() instanceof NamespaceDescriptor;
+        String owner = JetTypeMapper.getOwner(propertyDescriptor);
+        final JetType outType = propertyDescriptor.getOutType();
+        Method getter;
+        Method setter;
+        if (directToField) {
+            getter = null;
+            setter = null;
+        }
+        else {
+            getter = propertyDescriptor.getGetter() == null ? null : typeMapper.mapGetterSignature(propertyDescriptor);
+            setter = propertyDescriptor.getSetter() == null ? null : typeMapper.mapSetterSignature(propertyDescriptor);
+        }
+        return StackValue.property(propertyDescriptor.getName(), owner, typeMapper.mapType(outType), isStatic, getter, setter);
     }
 
     @Nullable

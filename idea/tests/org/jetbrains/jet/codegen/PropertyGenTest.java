@@ -82,4 +82,11 @@ public class PropertyGenTest extends CodegenTestCase {
         assertEquals(349, getFoo.invoke(instance));
         assertNull(findMethodByName(aClass, "setFoo"));
     }
+
+    public void testInitializersForNamespaceProperties() throws Exception {
+        loadText("public val x = System.currentTimeMillis()");
+        System.out.println(generateToText());
+        final Method method = generateFunction("getX");
+        assertIsCurrentTime((Long) method.invoke(null));
+    }
 }

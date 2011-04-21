@@ -6,8 +6,13 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
+import org.jetbrains.jet.lang.types.PropertyDescriptor;
 import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
+import org.objectweb.asm.commons.InstructionAdapter;
+import org.objectweb.asm.commons.Method;
 
 /**
  * @author max
@@ -40,6 +45,10 @@ public class NamespaceCodegen {
         final PropertyCodegen propertyCodegen = new PropertyCodegen(v, standardLibrary, bindingContext, functionCodegen);
         final ClassCodegen classCodegen = codegens.forClass(bindingContext);
 
+        if (hasNonConstantPropertyInitializers(namespace)) {
+            generateStaticInitializers(namespace, bindingContext);
+        }
+
         for (JetDeclaration declaration : namespace.getDeclarations()) {
             if (declaration instanceof JetProperty) {
                 propertyCodegen.genInNamespace((JetProperty) declaration);
@@ -51,6 +60,45 @@ public class NamespaceCodegen {
                 classCodegen.generate((JetClass) declaration);
             }
         }
+    }
+
+    private void generateStaticInitializers(JetNamespace namespace, BindingContext bindingContext) {
+        MethodVisitor mv = v.visitMethod(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC,
+                "<clinit>", new Method("<clinit>", Type.VOID_TYPE, new Type[0]).getDescriptor(),
+                null, null);
+        mv.visitCode();
+
+        FrameMap frameMap = new FrameMap();
+        JetTypeMapper typeMapper = new JetTypeMapper(JetStandardLibrary.getJetStandardLibrary(namespace.getProject()), bindingContext);
+        ExpressionCodegen codegen = new ExpressionCodegen(mv, bindingContext, frameMap,
+                typeMapper, Type.VOID_TYPE);
+
+        for (JetDeclaration declaration : namespace.getDeclarations()) {
+            if (declaration instanceof JetProperty) {
+                final JetExpression initializer = ((JetProperty) declaration).getInitializer();
+                if (initializer != null && !(initializer instanceof JetConstantExpression)) {
+                    final PropertyDescriptor descriptor = (PropertyDescriptor) bindingContext.getVariableDescriptor((JetProperty) declaration);
+                    codegen.genToJVMStack(initializer);
+                    codegen.intermediateValueForProperty(descriptor, false).store(new InstructionAdapter(mv));
+                }
+            }
+        }
+        mv.visitInsn(Opcodes.RETURN);
+        mv.visitMaxs(0, 0);
+        mv.visitEnd();
+    }
+
+    private static boolean hasNonConstantPropertyInitializers(JetNamespace namespace) {
+        for (JetDeclaration declaration : namespace.getDeclarations()) {
+            if (declaration instanceof JetProperty) {
+                final JetExpression initializer = ((JetProperty) declaration).getInitializer();
+                if (initializer != null && !(initializer instanceof JetConstantExpression)) {
+                    return true;
+                }
+
+            }
+        }
+        return false;
     }
 
     public void done() {
