@@ -71,8 +71,8 @@ public abstract class StackValue {
         return new Field(type, owner, name, isStatic);
     }
 
-    public static StackValue property(String name, String owner, Type type, Method getter, Method setter) {
-        return new Property(name, owner, getter, setter, type);
+    public static StackValue property(String name, String owner, Type type, boolean isStatic, Method getter, Method setter) {
+        return new Property(name, owner, getter, setter, isStatic, type);
     }
 
     private static void box(final Type type, InstructionAdapter v) {
@@ -379,32 +379,34 @@ public abstract class StackValue {
         private final String owner;
         private final Method getter;
         private final Method setter;
+        private final boolean isStatic;
 
-        public Property(String name, String owner, Method getter, Method setter, Type type) {
+        public Property(String name, String owner, Method getter, Method setter, boolean aStatic, Type type) {
             super(type);
             this.name = name;
             this.owner = owner;
             this.getter = getter;
             this.setter = setter;
+            isStatic = aStatic;
         }
 
         @Override
         public void put(Type type, InstructionAdapter v) {
             if (getter == null) {
-                v.visitFieldInsn(Opcodes.GETSTATIC, owner, name, type.getDescriptor());
+                v.visitFieldInsn(isStatic ? Opcodes.GETSTATIC : Opcodes.GETFIELD, owner, name, type.getDescriptor());
             }
             else {
-                v.invokestatic(owner, getter.getName(), getter.getDescriptor());
+                v.visitMethodInsn(isStatic ? Opcodes.INVOKESTATIC : Opcodes.INVOKEVIRTUAL, owner, getter.getName(), getter.getDescriptor());
             }
         }
 
         @Override
         public void store(InstructionAdapter v) {
             if (setter == null) {
-                v.visitFieldInsn(Opcodes.PUTSTATIC, owner, name, type.getDescriptor());
+                v.visitFieldInsn(isStatic ? Opcodes.PUTSTATIC : Opcodes.PUTFIELD, owner, name, type.getDescriptor());
             }
             else {
-                v.invokestatic(owner, setter.getName(), setter.getDescriptor());
+                v.visitMethodInsn(isStatic ? Opcodes.INVOKESTATIC : Opcodes.INVOKEVIRTUAL, owner, setter.getName(), setter.getDescriptor());
             }
         }
     }

@@ -1,7 +1,6 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.project.Project;
-import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetNamespace;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.ClassDescriptor;
@@ -45,7 +44,7 @@ public class Codegens {
     }
 
     public ClassVisitor forClassInterface(ClassDescriptor aClass) {
-        return newVisitor(CodeGenUtil.getInternalInterfaceName(aClass) + ".class");
+        return newVisitor(JetTypeMapper.jvmNameForInterface(aClass) + ".class");
     }
 
     public ClassCodegen forClass(BindingContext bindingContext) {
@@ -53,11 +52,11 @@ public class Codegens {
     }
 
     public ClassVisitor forClassImplementation(ClassDescriptor aClass) {
-        return newVisitor(CodeGenUtil.getInternalImplementationName(aClass) + ".class");
+        return newVisitor(JetTypeMapper.jvmNameForImplementation(aClass) + ".class");
     }
 
     public ClassVisitor forClassDelegatingImplementation(ClassDescriptor aClass) {
-        return newVisitor(CodeGenUtil.getInternalDelegatingImplementationName(aClass)  + ".class");
+        return newVisitor(JetTypeMapper.jvmNameForDelegatingImplementation(aClass)  + ".class");
     }
 
     public NamespaceCodegen forNamespace(JetNamespace namespace) {

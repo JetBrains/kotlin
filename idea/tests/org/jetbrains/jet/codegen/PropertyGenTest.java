@@ -20,6 +20,7 @@ public class PropertyGenTest extends CodegenTestCase {
 
     public void testPrivateVar() throws Exception {
         loadFile("privateVar.jet");
+        System.out.println(generateToText());
         final Class aClass = loadImplementationClass(generateClassesInFile(), "PrivateVar");
         final Object instance = aClass.newInstance();
         Method setter = findMethodByName(aClass, "setValueOfX");

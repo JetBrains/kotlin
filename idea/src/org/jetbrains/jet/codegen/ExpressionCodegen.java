@@ -372,25 +372,36 @@ public class ExpressionCodegen extends JetVisitor {
             }
             else if (descriptor instanceof PropertyDescriptor) {
                 final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
+                String owner;
+                boolean isStatic;
                 if (descriptor.getContainingDeclaration() instanceof NamespaceDescriptor) {
                     JetNamespace ns = (JetNamespace) bindingContext.getDeclarationPsiElement(descriptor.getContainingDeclaration());
-                    String owner = JetTypeMapper.jvmName(ns);
-                    final JetType outType = ((VariableDescriptor) descriptor).getOutType();
-                    Method getter;
-                    Method setter;
-                    if (expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER) {
-                        getter = null;
-                        setter = null;
-                    }
-                    else {
-                        getter = typeMapper.mapGetterSignature(propertyDescriptor);
-                        setter = typeMapper.mapSetterSignature(propertyDescriptor);
-                    }
-                    myStack.push(StackValue.property(descriptor.getName(), owner, typeMapper.mapType(outType), getter, setter));
+                    owner = JetTypeMapper.jvmName(ns);
+                    isStatic = true;
+                }
+                else if (descriptor.getContainingDeclaration() instanceof ClassDescriptor) {
+                    ClassDescriptor classDescriptor = (ClassDescriptor) descriptor.getContainingDeclaration();
+                    owner = JetTypeMapper.jvmNameForImplementation(classDescriptor);
+                    isStatic = false;
                 }
                 else {
-                    throw new UnsupportedOperationException("don't know how to generate non-namespace property reference " + descriptor);
+                    throw new UnsupportedOperationException("don't know how to generate property reference with parent " + descriptor.getContainingDeclaration());
                 }
+                final JetType outType = ((VariableDescriptor) descriptor).getOutType();
+                Method getter;
+                Method setter;
+                if (expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER) {
+                    getter = null;
+                    setter = null;
+                }
+                else {
+                    getter = typeMapper.mapGetterSignature(propertyDescriptor);
+                    setter = typeMapper.mapSetterSignature(propertyDescriptor);
+                }
+                if (!isStatic) {
+                    ensureReceiverOnStack(expression);
+                }
+                myStack.push(StackValue.property(descriptor.getName(), owner, typeMapper.mapType(outType), isStatic, getter, setter));
             }
             else {
                 throw new UnsupportedOperationException("don't know how to generate reference " + descriptor);
@@ -488,6 +499,9 @@ public class ExpressionCodegen extends JetVisitor {
                 // we have a receiver on stack
                 myStack.pop().put(TYPE_OBJECT, v);
             }
+        }
+        else if (!(expression.getParent() instanceof JetSafeQualifiedExpression)) {
+            v.load(0, TYPE_OBJECT);  // TODO hope it works; really need more checks here :)
         }
     }
 

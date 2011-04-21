@@ -9,9 +9,12 @@ import org.jetbrains.jet.lang.types.ClassDescriptor;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.JetType;
 import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
+import org.objectweb.asm.commons.InstructionAdapter;
+import org.objectweb.asm.commons.Method;
 
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -41,7 +44,7 @@ public class ClassCodegen {
 
         Set<String> superInterfaces = getSuperInterfaces(aClass);
 
-        String fqName = CodeGenUtil.getInternalInterfaceName(descriptor);
+        String fqName = JetTypeMapper.jvmNameForInterface(descriptor);
         ClassVisitor v = factory.forClassInterface(descriptor);
         v.visit(Opcodes.V1_6,
                 Opcodes.ACC_PUBLIC | Opcodes.ACC_INTERFACE | Opcodes.ACC_ABSTRACT,
@@ -64,11 +67,13 @@ public class ClassCodegen {
         ClassVisitor v = kind == OwnerKind.IMPLEMENTATION ? factory.forClassImplementation(descriptor) : factory.forClassDelegatingImplementation(descriptor);
         v.visit(Opcodes.V1_6,
                 Opcodes.ACC_PUBLIC,
-                CodeGenUtil.getInternalImplementationName(descriptor),
+                JetTypeMapper.jvmNameForImplementation(descriptor),
                 null,
                 superClass,
-                new String[] {CodeGenUtil.getInternalInterfaceName(descriptor)}
+                new String[] {JetTypeMapper.jvmNameForInterface(descriptor)}
         );
+
+        generatePrimaryConstructor(aClass, v, kind);
 
         generateClassBody(aClass, v, kind);
 
@@ -107,7 +112,7 @@ public class ClassCodegen {
 
         if (superInterfaces.size() > 0) {
             ClassDescriptor first = superInterfaces.iterator().next();
-            return kind == OwnerKind.IMPLEMENTATION ? CodeGenUtil.getInternalImplementationName(first) : CodeGenUtil.getInternalDelegatingImplementationName(first);
+            return kind == OwnerKind.IMPLEMENTATION ? JetTypeMapper.jvmNameForImplementation(first) : JetTypeMapper.jvmNameForDelegatingImplementation(first);
         }
 
         return "java/lang/Object";
@@ -145,10 +150,24 @@ public class ClassCodegen {
                 }
             }
             else {
-                superInterfaces.add(CodeGenUtil.getInternalInterfaceName(superClassDescriptor));
+                superInterfaces.add(JetTypeMapper.jvmNameForInterface(superClassDescriptor));
             }
         }
         return superInterfaces;
+    }
+
+    private void generatePrimaryConstructor(JetClass aClass, ClassVisitor v, OwnerKind kind) {
+        int flags = Opcodes.ACC_PUBLIC; // TODO
+        Method method = new Method("<init>", Type.VOID_TYPE, new Type[0]);
+        final MethodVisitor mv = v.visitMethod(flags, "<init>", method.getDescriptor(), null, null);
+        mv.visitCode();
+        final InstructionAdapter iv = new InstructionAdapter(mv);
+        String superClass = getSuperClass(aClass, kind);
+        iv.load(0, Type.getType("L" + superClass + ";"));
+        iv.invokespecial(superClass, "<init>", method.getDescriptor());
+        iv.visitInsn(Opcodes.RETURN);
+        mv.visitMaxs(0, 0);
+        mv.visitEnd();
     }
 
     private void generateClassBody(JetClass aClass, ClassVisitor v, OwnerKind kind) {

@@ -9,6 +9,7 @@ import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.psi.JetTypeReference;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.resolve.DescriptorUtil;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.Method;
 
@@ -36,6 +37,18 @@ public class JetTypeMapper {
 
     static String jvmName(JetNamespace namespace) {
         return NamespaceCodegen.getJVMClassName(namespace.getFQName());
+    }
+
+    public static String jvmNameForInterface(ClassDescriptor descriptor) {
+        return DescriptorUtil.getFQName(descriptor).replace('.', '/');
+    }
+
+    public static String jvmNameForImplementation(ClassDescriptor descriptor) {
+        return jvmNameForInterface(descriptor) + "$$Impl";
+    }
+
+    public static String jvmNameForDelegatingImplementation(ClassDescriptor descriptor) {
+        return jvmNameForInterface(descriptor) + "$$DImpl";
     }
 
     public Type mapType(final JetType jetType) {
@@ -112,7 +125,7 @@ public class JetTypeMapper {
             if (declaration instanceof PsiClass) {
                 return psiClassType((PsiClass) declaration);
             }
-            return Type.getObjectType(CodeGenUtil.getInternalInterfaceName((ClassDescriptor) descriptor));
+            return Type.getObjectType(jvmNameForInterface((ClassDescriptor) descriptor));
         }
 
         throw new UnsupportedOperationException("Unknown type " + jetType);
