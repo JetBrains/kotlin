@@ -1,14 +1,12 @@
 package org.jetbrains.jet.codegen;
 
-import com.intellij.openapi.util.Ref;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetLightProjectDescriptor;
-import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.JetFileType;
-import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetNamespace;
 import org.jetbrains.jet.parsing.JetParsingTest;
 
 import java.lang.reflect.Method;
@@ -47,7 +45,7 @@ public abstract class CodegenTestCase extends LightCodeInsightFixtureTestCase {
     private Class generateNamespaceClass() {
         JetFile jetFile = (JetFile) myFixture.getFile();
         final JetNamespace namespace = jetFile.getRootNamespace();
-        String fqName = NamespaceCodegen.getJVMClassName(namespace.getFQName());
+        String fqName = NamespaceCodegen.getJVMClassName(namespace.getFQName()).replace("/", ".");
         Codegens state = generateClassesInFile();
         return loadClass(fqName, state);
     }
