@@ -10,4 +10,12 @@ fun test(l : java.util.List<Int>) {
   val b : java.lang.Object
   val a : util.List<Int>
   val z : java.<error>utils</error>.List<Int>
+
+  val f : java.io.File? = null
+
+  Collections.<error>emptyList</error>
+  Collections.emptyList<Int>
+  Collections.emptyList<Int>()
+  Collections.emptyList<error>()</error>
+
 }

@@ -88,7 +88,7 @@ public class JavaDescriptorResolver {
                 // TODO
                 modifierList == null ? false : modifierList.hasModifierProperty(PsiModifier.FINAL),
                 name,
-                resolveTypeParameters(psiClass, classDescriptor),
+                resolveTypeParameters(psiClass.getTypeParameters()),
                 supertypes
 
         ));
@@ -113,9 +113,8 @@ public class JavaDescriptorResolver {
         return classDescriptor;
     }
 
-    private List<TypeParameterDescriptor> resolveTypeParameters(@NotNull PsiClass psiClass, @NotNull ClassDescriptor classDescriptor) {
+    private List<TypeParameterDescriptor> resolveTypeParameters(@NotNull PsiTypeParameter[] typeParameters) {
         List<TypeParameterDescriptor> result = Lists.newArrayList();
-        PsiTypeParameter[] typeParameters = psiClass.getTypeParameters();
         for (PsiTypeParameter typeParameter : typeParameters) {
             TypeParameterDescriptor typeParameterDescriptor = resolveTypeParameter(typeParameter);
             result.add(typeParameterDescriptor);
@@ -237,5 +236,34 @@ public class JavaDescriptorResolver {
             ));
         }
         return result;
+    }
+
+    @NotNull
+    public FunctionGroup resolveFunctionGroup(@NotNull PsiClass psiClass, @NotNull String methodName, boolean staticMembers) {
+        WritableFunctionGroup writableFunctionGroup = new WritableFunctionGroup(methodName);
+        PsiMethod[] allMethods = psiClass.getMethods(); // TODO : look into superclasses
+        for (PsiMethod method : allMethods) {
+            if (method.hasModifierProperty(PsiModifier.STATIC) != staticMembers) {
+                continue;
+            }
+            if (!methodName.equals(method.getName())) {
+                 continue;
+            }
+            final PsiParameter[] parameters = method.getParameterList().getParameters();
+
+            FunctionDescriptorImpl functionDescriptor = new FunctionDescriptorImpl(
+                    JavaDescriptorResolver.JAVA_ROOT,
+                    Collections.<Attribute>emptyList(), // TODO
+                    methodName
+            );
+            functionDescriptor.initialize(
+                    resolveTypeParameters(method.getTypeParameters()),
+                    semanticServices.getDescriptorResolver().resolveParameterDescriptors(functionDescriptor, parameters),
+                    semanticServices.getTypeTransformer().transformToType(method.getReturnType())
+            );
+            semanticServices.getTrace().recordDeclarationResolution(method, functionDescriptor);
+            writableFunctionGroup.addFunction(functionDescriptor);
+        }
+        return writableFunctionGroup;
     }
 }

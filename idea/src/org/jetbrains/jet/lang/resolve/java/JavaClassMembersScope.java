@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.resolve.java;
 
+import com.google.common.collect.Maps;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.JetScope;
@@ -8,6 +9,7 @@ import org.jetbrains.jet.lang.types.*;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 
 /**
  * @author abreslav
@@ -17,6 +19,7 @@ public class JavaClassMembersScope implements JetScope {
     private final JavaSemanticServices semanticServices;
     private final boolean staticMembers;
     private final DeclarationDescriptor containingDeclaration;
+    private final Map<String, FunctionGroup> functionGroups = Maps.newHashMap();
 
     public JavaClassMembersScope(@NotNull DeclarationDescriptor classDescriptor, PsiClass psiClass, JavaSemanticServices semanticServices, boolean staticMembers) {
         this.containingDeclaration = classDescriptor;
@@ -78,31 +81,12 @@ public class JavaClassMembersScope implements JetScope {
     @NotNull
     @Override
     public FunctionGroup getFunctionGroup(@NotNull String name) {
-        WritableFunctionGroup writableFunctionGroup = new WritableFunctionGroup(name);
-        PsiMethod[] allMethods = psiClass.getMethods(); // TODO : look into superclasses
-        for (PsiMethod method : allMethods) {
-            if (method.hasModifierProperty(PsiModifier.STATIC) != staticMembers) {
-                continue;
-            }
-            if (!name.equals(method.getName())) {
-                 continue;
-            }
-            final PsiParameter[] parameters = method.getParameterList().getParameters();
-
-            FunctionDescriptorImpl functionDescriptor = new FunctionDescriptorImpl(
-                    JavaDescriptorResolver.JAVA_ROOT,
-                    Collections.<Attribute>emptyList(), // TODO
-                    name
-            );
-            functionDescriptor.initialize(
-                    Collections.<TypeParameterDescriptor>emptyList(), // TODO
-                    semanticServices.getDescriptorResolver().resolveParameterDescriptors(functionDescriptor, parameters),
-                    semanticServices.getTypeTransformer().transformToType(method.getReturnType())
-            );
-            semanticServices.getTrace().recordDeclarationResolution(method, functionDescriptor);
-            writableFunctionGroup.addFunction(functionDescriptor);
+        FunctionGroup functionGroup = functionGroups.get(name);
+        if (functionGroup == null) {
+            functionGroup = semanticServices.getDescriptorResolver().resolveFunctionGroup(psiClass, name, staticMembers);
+            functionGroups.put(name, functionGroup);
         }
-        return writableFunctionGroup;
+        return functionGroup;
     }
 
     @Override
