@@ -2,6 +2,7 @@ package org.jetbrains.jet.resolve;
 
 import org.jetbrains.jet.lang.types.*;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -91,6 +92,17 @@ public class DescriptorUtil {
                     public Void visitClassDescriptor(ClassDescriptor descriptor, StringBuilder builder) {
                         builder.append("class ").append(renderName(descriptor));
                         renderTypeParameters(descriptor.getTypeConstructor().getParameters(), builder);
+                        Collection<? extends JetType> supertypes = descriptor.getTypeConstructor().getSupertypes();
+                        if (!supertypes.isEmpty()) {
+                            builder.append(" : ");
+                            for (Iterator<? extends JetType> iterator = supertypes.iterator(); iterator.hasNext(); ) {
+                                JetType supertype = iterator.next();
+                                builder.append(supertype);
+                                if (iterator.hasNext()) {
+                                    builder.append(", ");
+                                }
+                            }
+                        }
                         return super.visitClassDescriptor(descriptor, builder);
                     }
                 },

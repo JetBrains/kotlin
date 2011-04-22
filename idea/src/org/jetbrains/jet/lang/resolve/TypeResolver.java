@@ -56,7 +56,7 @@ public class TypeResolver {
                             result[0] = new JetTypeImpl(
                                     attributes,
                                     typeParameterDescriptor.getTypeConstructor(),
-                                    nullable || hasNullableBound(typeParameterDescriptor),
+                                    nullable || TypeUtils.hasNullableBound(typeParameterDescriptor),
                                     Collections.<TypeProjection>emptyList(),
                                     // TODO : joint domain
                                     JetStandardClasses.STUB
@@ -70,21 +70,32 @@ public class TypeResolver {
                             List<TypeProjection> arguments = resolveTypeProjections(scope, typeConstructor, type.getTypeArguments());
                             int expectedArgumentCount = typeConstructor.getParameters().size();
                             int actualArgumentCount = arguments.size();
-                            if (actualArgumentCount != expectedArgumentCount) {
-                                String errorMessage = (expectedArgumentCount == 0 ? "No" : expectedArgumentCount) + " type arguments expected";
-                                if (actualArgumentCount == 0) {
-                                    semanticServices.getErrorHandler().genericError(type.getNode(), errorMessage);
-                                } else if (expectedArgumentCount == 0) {
-                                    semanticServices.getErrorHandler().genericError(type.getTypeArgumentList().getNode(), errorMessage);
-                                }
-                            } else {
+                            if (ErrorUtils.isError(typeConstructor)) {
                                 result[0] = new JetTypeImpl(
                                         attributes,
                                         typeConstructor,
                                         nullable,
-                                        arguments,
-                                        classDescriptor.getMemberScope(arguments)
+                                        arguments, // TODO : review
+                                        classDescriptor.getMemberScope(Collections.<TypeProjection>emptyList())
                                 );
+                            }
+                            else {
+                                if (actualArgumentCount != expectedArgumentCount) {
+                                    String errorMessage = (expectedArgumentCount == 0 ? "No" : expectedArgumentCount) + " type arguments expected";
+                                    if (actualArgumentCount == 0) {
+                                        semanticServices.getErrorHandler().genericError(type.getNode(), errorMessage);
+                                    } else if (expectedArgumentCount == 0) {
+                                        semanticServices.getErrorHandler().genericError(type.getTypeArgumentList().getNode(), errorMessage);
+                                    }
+                                } else {
+                                    result[0] = new JetTypeImpl(
+                                            attributes,
+                                            typeConstructor,
+                                            nullable,
+                                            arguments,
+                                            classDescriptor.getMemberScope(arguments)
+                                    );
+                                }
                             }
                         }
                     }
@@ -126,15 +137,6 @@ public class TypeResolver {
             return ErrorUtils.createErrorType(typeElement == null ? "No type element" : typeElement.getText());
         }
         return result[0];
-    }
-
-    private boolean hasNullableBound(TypeParameterDescriptor typeParameterDescriptor) {
-        for (JetType bound : typeParameterDescriptor.getUpperBounds()) {
-            if (bound.isNullable()) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private List<JetType> resolveTypes(JetScope scope, List<JetTypeReference> argumentElements) {

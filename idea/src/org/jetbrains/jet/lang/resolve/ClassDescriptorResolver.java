@@ -48,11 +48,11 @@ public class ClassDescriptorResolver {
 
         List<JetDelegationSpecifier> delegationSpecifiers = classElement.getDelegationSpecifiers();
         // TODO : assuming that the hierarchy is acyclic
-        Collection<? extends JetType> superclasses = delegationSpecifiers.isEmpty()
+        Collection<? extends JetType> supertypes = delegationSpecifiers.isEmpty()
                 ? Collections.singleton(JetStandardClasses.getAnyType())
                 : resolveDelegationSpecifiers(parameterScope, delegationSpecifiers);
         boolean open = classElement.hasModifier(JetTokens.OPEN_KEYWORD);
-        WritableScope members = resolveMembers(classDescriptor, classElement, typeParameters, scope, parameterScope, superclasses);
+        WritableScope members = resolveMembers(classDescriptor, classElement, typeParameters, scope, parameterScope, supertypes);
 
         WritableFunctionGroup constructors = new WritableFunctionGroup("<init>");
         for (JetConstructor constructor : classElement.getSecondaryConstructors()) {
@@ -65,7 +65,7 @@ public class ClassDescriptorResolver {
         return classDescriptor.initialize(
                 !open,
                 typeParameters,
-                superclasses,
+                supertypes,
                 members,
                 constructors
         );

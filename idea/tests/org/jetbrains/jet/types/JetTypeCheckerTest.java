@@ -267,6 +267,10 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertSubtype("Derived_outT<Int>", "Base_outT<Any>");
         assertSubtype("Derived_T<Int>", "Base_T<out Any>");
         assertSubtype("Derived_T<Any>", "Base_T<in Int>");
+
+        assertSubtype("Derived_T<Int>", "Base_T<in Int>");
+        assertSubtype("MDerived_T<Int>", "Base_T<in Int>");
+        assertSubtype("ArrayList<Int>", "List<in Int>");
     }
 
     public void testNullable() throws Exception {
@@ -438,12 +442,12 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertEquals(expected, allSupertypes);
     }
 
-    private void assertSubtype(String type1, String type2) {
-        assertSubtypingRelation(type1, type2, true);
+    private void assertSubtype(String subtype, String supertype) {
+        assertSubtypingRelation(subtype, supertype, true);
     }
 
-    private void assertNotSubtype(String type1, String type2) {
-        assertSubtypingRelation(type1, type2, false);
+    private void assertNotSubtype(String subtype, String supertype) {
+        assertSubtypingRelation(subtype, supertype, false);
     }
 
     private void assertIntersection(String expected, String... types) {
@@ -465,9 +469,9 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertTrue(result + " != " + expected, JetTypeImpl.equalTypes(result, makeType(expected)));
     }
 
-    private void assertSubtypingRelation(String type1, String type2, boolean expected) {
-        JetType typeNode1 = makeType(type1);
-        JetType typeNode2 = makeType(type2);
+    private void assertSubtypingRelation(String subtype, String supertype, boolean expected) {
+        JetType typeNode1 = makeType(subtype);
+        JetType typeNode2 = makeType(supertype);
         boolean result = semanticServices.getTypeChecker().isSubtypeOf(
                 typeNode1,
                 typeNode2);
@@ -534,6 +538,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
             "open class Derived1_inT<in T> : Base_inT<T>, Derived_T<T>",
             "open class Base_outT<out T>",
             "open class Derived_outT<out T> : Base_outT<T>",
+            "open class MDerived_T> : Base_outT<out T>, Base_T<T>",
             "class Properties { val p : Int }",
             "class Props<T> { val p : T }",
             "class Functions<T> { " +
@@ -547,7 +552,12 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
                     "fun isValid() : Boolean " +
                     "fun isValid(x : Int) : Boolean " +
                     "val p : Boolean " +
-            "}"
+            "}",
+
+            "open class List<E>",
+            "open class AbstractList<E> : List<E?>",
+            "open class ArrayList<E> : Any, AbstractList<E?>, List<E?>"
+
         };
         private String[] FUNCTION_DECLARATIONS = {
             "fun f() : Unit {}",

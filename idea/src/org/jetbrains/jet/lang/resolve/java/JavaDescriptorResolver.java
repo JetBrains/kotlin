@@ -1,12 +1,14 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.resolve.MutableClassDescriptor;
 import org.jetbrains.jet.lang.resolve.WritableFunctionGroup;
 import org.jetbrains.jet.lang.types.*;
 
@@ -31,6 +33,7 @@ public class JavaDescriptorResolver {
     };
 
     protected final Map<String, ClassDescriptor> classDescriptorCache = new HashMap<String, ClassDescriptor>();
+    protected final Map<PsiTypeParameter, TypeParameterDescriptor> typeParameterDescriptorCache = Maps.newHashMap();
     protected final Map<String, NamespaceDescriptor> namespaceDescriptorCache = new HashMap<String, NamespaceDescriptor>();
     protected final JavaPsiFacade javaFacade;
     protected final GlobalSearchScope javaSearchScope;
@@ -67,25 +70,32 @@ public class JavaDescriptorResolver {
     }
 
     private ClassDescriptor createJavaClassDescriptor(@NotNull final PsiClass psiClass) {
+        assert !classDescriptorCache.containsKey(psiClass.getQualifiedName()) : psiClass.getQualifiedName();
+        classDescriptorCache.put(psiClass.getQualifiedName(), null); // TODO
+
         String name = psiClass.getName();
         PsiModifierList modifierList = psiClass.getModifierList();
-        ClassDescriptorImpl classDescriptor = new ClassDescriptorImpl(
-                JAVA_ROOT,
-                Collections.<Attribute>emptyList(), // TODO
-                name
+        MutableClassDescriptor classDescriptor = new MutableClassDescriptor(
+                JAVA_ROOT
         );
+        classDescriptor.setName(name);
 
         WritableFunctionGroup constructors = new WritableFunctionGroup("<init>");
-        classDescriptor.initialize(
+        List<JetType> supertypes = new ArrayList<JetType>();
+        classDescriptor.setTypeConstructor(new TypeConstructorImpl(
+                classDescriptor,
+                Collections.<Attribute>emptyList(), // TODO
                 // TODO
                 modifierList == null ? false : modifierList.hasModifierProperty(PsiModifier.FINAL),
+                name,
                 resolveTypeParameters(psiClass, classDescriptor),
-                getSupertypes(psiClass),
-                new JavaClassMembersScope(classDescriptor, psiClass, semanticServices, false),
-                constructors
-        );
+                supertypes
 
+        ));
         classDescriptorCache.put(psiClass.getQualifiedName(), classDescriptor);
+        // UGLY HACK
+        supertypes.addAll(getSupertypes(psiClass));
+        classDescriptor.setUnsubstitutedMemberScope(new JavaClassMembersScope(classDescriptor, psiClass, semanticServices, false));
 
         // NOTE: this writes into constructors after it is remembered by the classDescriptor
         PsiMethod[] psiConstructors = psiClass.getConstructors();
@@ -95,7 +105,7 @@ public class JavaDescriptorResolver {
                     Collections.<Attribute>emptyList(), // TODO
                     false);
             constructorDescriptor.initialize(resolveParameterDescriptors(constructorDescriptor, constructor.getParameterList().getParameters()));
-            constructors.addFunction(constructorDescriptor);
+            classDescriptor.addConstructor(constructorDescriptor);
             semanticServices.getTrace().recordDeclarationResolution(constructor, constructorDescriptor);
         }
 
@@ -104,38 +114,52 @@ public class JavaDescriptorResolver {
     }
 
     private List<TypeParameterDescriptor> resolveTypeParameters(@NotNull PsiClass psiClass, @NotNull ClassDescriptor classDescriptor) {
-        if (1 < 2) return Collections.emptyList(); // TODO
         List<TypeParameterDescriptor> result = Lists.newArrayList();
         PsiTypeParameter[] typeParameters = psiClass.getTypeParameters();
         for (PsiTypeParameter typeParameter : typeParameters) {
-            PsiClassType[] referencedTypes = typeParameter.getExtendsList().getReferencedTypes();
-            Set<JetType> upperBounds;
-            JetType boundsAsType;
-            if (referencedTypes.length == 0){
-                boundsAsType = JetStandardClasses.getNullableAnyType();
-                upperBounds = Collections.singleton(boundsAsType);
-            }
-            else if (referencedTypes.length == 1) {
-                boundsAsType = semanticServices.getTypeTransformer().transform(referencedTypes[0]);
-                upperBounds = Collections.singleton(boundsAsType);
-            }
-            else {
-                upperBounds = Sets.newLinkedHashSet();
-                for (PsiClassType referencedType : referencedTypes) {
-                    upperBounds.add(semanticServices.getTypeTransformer().transform(referencedType));
-                }
-                boundsAsType = TypeUtils.safeIntersect(semanticServices.getTypeChecker(), upperBounds);
-            }
-            result.add(new TypeParameterDescriptor(
-                    classDescriptor,
-                    Collections.<Attribute>emptyList(), // TODO
-                    Variance.INVARIANT,
-                    typeParameter.getName(),
-                    upperBounds,
-                    boundsAsType
-            ));
+            TypeParameterDescriptor typeParameterDescriptor = resolveTypeParameter(typeParameter);
+            result.add(typeParameterDescriptor);
         }
         return result;
+    }
+
+    private TypeParameterDescriptor createJavaTypeParameterDescriptor(@NotNull DeclarationDescriptor owner, @NotNull PsiTypeParameter typeParameter) {
+        PsiClassType[] referencedTypes = typeParameter.getExtendsList().getReferencedTypes();
+        Set<JetType> upperBounds;
+        JetType boundsAsType;
+        if (referencedTypes.length == 0){
+            boundsAsType = JetStandardClasses.getNullableAnyType();
+            upperBounds = Collections.singleton(boundsAsType);
+        }
+        else if (referencedTypes.length == 1) {
+            boundsAsType = semanticServices.getTypeTransformer().transformToType(referencedTypes[0]);
+            upperBounds = Collections.singleton(boundsAsType);
+        }
+        else {
+            upperBounds = Sets.newLinkedHashSet();
+            for (PsiClassType referencedType : referencedTypes) {
+                upperBounds.add(semanticServices.getTypeTransformer().transformToType(referencedType));
+            }
+            boundsAsType = TypeUtils.safeIntersect(semanticServices.getJetSemanticServices().getTypeChecker(), upperBounds);
+        }
+        return new TypeParameterDescriptor(
+                owner,
+                Collections.<Attribute>emptyList(), // TODO
+                Variance.INVARIANT,
+                typeParameter.getName(),
+                upperBounds,
+                boundsAsType
+        );
+    }
+
+    @NotNull
+    public TypeParameterDescriptor resolveTypeParameter(@NotNull PsiTypeParameter psiTypeParameter) {
+        TypeParameterDescriptor typeParameterDescriptor = typeParameterDescriptorCache.get(psiTypeParameter);
+        if (typeParameterDescriptor == null) {
+            typeParameterDescriptor = createJavaTypeParameterDescriptor(JAVA_ROOT, psiTypeParameter);
+            typeParameterDescriptorCache.put(psiTypeParameter, typeParameterDescriptor);
+        }
+        return typeParameterDescriptor;
     }
 
     private Collection<? extends JetType> getSupertypes(PsiClass psiClass) {
@@ -148,7 +172,7 @@ public class JavaDescriptorResolver {
 
     private void transformSupertypeList(List<JetType> result, PsiClassType[] extendsListTypes) {
         for (PsiClassType type : extendsListTypes) {
-            JetType transform = semanticServices.getTypeTransformer().transform(type);
+            JetType transform = semanticServices.getTypeTransformer().transformToType(type);
 
             result.add(TypeUtils.makeNotNullable(transform));
         }
@@ -207,7 +231,7 @@ public class JavaDescriptorResolver {
                     Collections.<Attribute>emptyList(), // TODO
                     name == null ? "p" + i : name,
                     null, // TODO : review
-                    semanticServices.getTypeTransformer().transform(parameter.getType()),
+                    semanticServices.getTypeTransformer().transformToType(parameter.getType()),
                     false,
                     parameter.isVarArgs()
             ));

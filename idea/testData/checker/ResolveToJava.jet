@@ -2,10 +2,12 @@ import java.*
 import util.*
 import <error>utils</error>.*
 
-fun test(l : java.util.List) {
+val l : List<in Int> = new ArrayList<Int>()
+
+fun test(l : java.util.List<Int>) {
   val x : java.<error>List</error>
-  val y : java.util.List
+  val y : java.util.List<Int>
   val b : java.lang.Object
-  val a : util.List
-  val z : java.<error>utils</error>.List
+  val a : util.List<Int>
+  val z : java.<error>utils</error>.List<Int>
 }

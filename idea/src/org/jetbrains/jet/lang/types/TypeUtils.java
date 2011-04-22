@@ -226,4 +226,13 @@ public class TypeUtils {
         collectAllSupertypes(type, result);
         return result;
     }
+
+    public static boolean hasNullableBound(@NotNull TypeParameterDescriptor typeParameterDescriptor) {
+        for (JetType bound : typeParameterDescriptor.getUpperBounds()) {
+            if (bound.isNullable()) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

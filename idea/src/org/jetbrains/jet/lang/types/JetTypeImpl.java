@@ -55,7 +55,8 @@ public final class JetTypeImpl extends AnnotatedImpl implements JetType {
     @Override
     public JetScope getMemberScope() {
         if (memberScope == null) {
-            // TODO
+            // TODO : this was supposed to mean something...
+            throw new IllegalStateException(this.toString());
         }
         return memberScope;
     }

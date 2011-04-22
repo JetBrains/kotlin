@@ -59,7 +59,7 @@ fun f_plus(): Int {
 }
 
 fun <T> tt(t : T) : T {
-  val x : List = 0
+  val x : List<Int> = 0
   x`java::java.util.List.get()`[1]
   val foo = new `Bar()`Bar()
   foo`!`[null, 1]

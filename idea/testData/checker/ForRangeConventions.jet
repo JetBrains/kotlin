@@ -76,6 +76,6 @@ fun test() {
   for (i in new Range0());
   for (i in new Range1());
 
-  for (i in (new ArrayList() : List));
+  for (i in (new ArrayList<Int>() : List<Int>));
 }
 

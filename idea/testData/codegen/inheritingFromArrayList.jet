@@ -1,1 +1,1 @@
-class Foo : java.util.ArrayList
+class Foo : java.util.ArrayList<*>

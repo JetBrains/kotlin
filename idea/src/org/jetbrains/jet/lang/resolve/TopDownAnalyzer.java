@@ -148,7 +148,7 @@ public class TopDownAnalyzer {
         classes.put(klass, mutableClassDescriptor);
         declaringScopes.put(klass, declaringScope);
 
-        return mutableClassDescriptor.getUnsubstitutedMemberScope();
+        return mutableClassDescriptor.getWritableUnsubstitutedMemberScope();
     }
 
     private void processExtension(JetExtension extension) {
@@ -178,7 +178,7 @@ public class TopDownAnalyzer {
                 public void visitClass(JetClass klass) {
                     MutableClassDescriptor mutableClassDescriptor = classes.get(klass);
                     processPrimaryConstructor(mutableClassDescriptor, klass);
-                    processBehaviorDeclarators(mutableClassDescriptor.getUnsubstitutedMemberScope(), klass.getDeclarations());
+                    processBehaviorDeclarators(mutableClassDescriptor.getWritableUnsubstitutedMemberScope(), klass.getDeclarations());
                 }
 
                 @Override
@@ -225,7 +225,7 @@ public class TopDownAnalyzer {
 
     private void processPrimaryConstructor(MutableClassDescriptor classDescriptor, JetClass klass) {
         // TODO : not all the parameters are real properties
-        WritableScope memberScope = classDescriptor.getUnsubstitutedMemberScope(); // TODO : this is REALLY questionable
+        WritableScope memberScope = classDescriptor.getWritableUnsubstitutedMemberScope(); // TODO : this is REALLY questionable
         ConstructorDescriptor constructorDescriptor = classDescriptorResolver.resolvePrimaryConstructor(memberScope, classDescriptor, klass);
         for (JetParameter parameter : klass.getPrimaryConstructorParameters()) {
             VariableDescriptor propertyDescriptor = classDescriptorResolver.resolvePrimaryConstructorParameterToAProperty(
@@ -242,10 +242,10 @@ public class TopDownAnalyzer {
     }
 
     private void processConstructor(MutableClassDescriptor classDescriptor, JetConstructor constructor) {
-        ConstructorDescriptor constructorDescriptor = classDescriptorResolver.resolveConstructorDescriptor(classDescriptor.getUnsubstitutedMemberScope(), classDescriptor, constructor, false);
+        ConstructorDescriptor constructorDescriptor = classDescriptorResolver.resolveConstructorDescriptor(classDescriptor.getWritableUnsubstitutedMemberScope(), classDescriptor, constructor, false);
         classDescriptor.addConstructor(constructorDescriptor);
         functions.put(constructor, constructorDescriptor);
-        declaringScopes.put(constructor, classDescriptor.getUnsubstitutedMemberScope());
+        declaringScopes.put(constructor, classDescriptor.getWritableUnsubstitutedMemberScope());
     }
 
     private void processFunction(@NotNull WritableScope declaringScope, JetFunction function) {
@@ -359,7 +359,22 @@ public class TopDownAnalyzer {
                 JetFlowInformationProvider flowInformationProvider = computeFlowData(declaration, initializer);
                 JetTypeInferrer typeInferrer = semanticServices.getTypeInferrer(trace, flowInformationProvider);
                 JetType type = typeInferrer.getType(declaringScope, initializer, false);
-                // TODO : check type
+
+                JetType expectedType;
+                PropertySetterDescriptor setter = propertyDescriptor.getSetter();
+                if (setter != null) {
+                    expectedType = setter.getUnsubstitutedReturnType();
+                }
+                else {
+                    expectedType = propertyDescriptor.getInType();
+                    if (expectedType == null) {
+                        expectedType = propertyDescriptor.getOutType();
+                    }
+                }
+                if (type != null && expectedType != null
+                    && !semanticServices.getTypeChecker().isConvertibleTo(type, expectedType)) {
+                    semanticServices.getErrorHandler().typeMismatch(initializer, expectedType, type);
+                }
             }
 
             BindingTraceAdapter fieldAccessTrackingTrace = new BindingTraceAdapter(trace) {

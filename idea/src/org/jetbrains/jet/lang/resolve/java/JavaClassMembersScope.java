@@ -61,7 +61,7 @@ public class JavaClassMembersScope implements JetScope {
             return null;
         }
 
-        JetType type = semanticServices.getTypeTransformer().transform(field.getType());
+        JetType type = semanticServices.getTypeTransformer().transformToType(field.getType());
         boolean isFinal = field.hasModifierProperty(PsiModifier.FINAL);
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                 containingDeclaration,
@@ -97,7 +97,7 @@ public class JavaClassMembersScope implements JetScope {
             functionDescriptor.initialize(
                     Collections.<TypeParameterDescriptor>emptyList(), // TODO
                     semanticServices.getDescriptorResolver().resolveParameterDescriptors(functionDescriptor, parameters),
-                    semanticServices.getTypeTransformer().transform(method.getReturnType())
+                    semanticServices.getTypeTransformer().transformToType(method.getReturnType())
             );
             semanticServices.getTrace().recordDeclarationResolution(method, functionDescriptor);
             writableFunctionGroup.addFunction(functionDescriptor);

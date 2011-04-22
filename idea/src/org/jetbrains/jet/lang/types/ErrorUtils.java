@@ -149,6 +149,10 @@ public class ErrorUtils {
         return ERROR_CLASS;
     }
 
+    public static boolean isError(@NotNull TypeConstructor typeConstructor) {
+        return typeConstructor == ERROR_CLASS.getTypeConstructor();
+    }
+
     private static class ErrorTypeImpl implements JetType {
 
         private final TypeConstructor constructor;
