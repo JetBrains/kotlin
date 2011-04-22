@@ -392,6 +392,10 @@ public class TopDownAnalyzer {
             if (setter != null && setterDescriptor != null) {
                 resolveFunctionBody(fieldAccessTrackingTrace, setter, setterDescriptor, accessorScope);
             }
+
+            if (!declaration.isVar() && initializer != null && !trace.hasBackingField(propertyDescriptor)) {
+                semanticServices.getErrorHandler().genericError(initializer.getNode(), "Initializer is not allowed here because this property has no setter and no backing field either");
+            }
         }
     }
 

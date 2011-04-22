@@ -5,9 +5,12 @@
       $x = <error>1.lng</error>
     }
 
- val xx : Int = 1 + x
+ val xx : Int = <error>1 + x</error>
    get() : Int = 1
    <error>set(ref value : Long) {$x = value}</error>
+
+  val p : Int = <error>1</error>
+    get() = 1
 
 class Test {
     var a : Int
