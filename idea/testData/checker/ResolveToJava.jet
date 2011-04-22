@@ -18,4 +18,6 @@ fun test(l : java.util.List<Int>) {
   Collections.emptyList<Int>()
   Collections.emptyList<error>()</error>
 
+  Collections.singleton<Int>(1) : Set<Int>?
+  Collections.singleton<Int><error>(1.0)</error>
 }
