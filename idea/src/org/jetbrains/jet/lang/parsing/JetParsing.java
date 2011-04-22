@@ -623,7 +623,9 @@ public class JetParsing extends AbstractJetParsing {
 
         IElementType type;
         if (at(THIS_KEYWORD)) {
+            PsiBuilder.Marker mark = mark();
             advance(); // THIS_KEYWORD
+            mark.done(THIS_CONSTRUCTOR_REFERENCE);
             type = THIS_CALL;
         }
         else if (atSet(TYPE_REF_FIRST)) {

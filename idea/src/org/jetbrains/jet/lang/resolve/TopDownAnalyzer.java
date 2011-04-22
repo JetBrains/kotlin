@@ -270,81 +270,61 @@ public class TopDownAnalyzer {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private void resolveBehaviorDeclarationBodies() {
+        resolveDelegationSpecifierLists();
+
+
+        //TODO : anonymous initializers
+
         resolvePropertyDeclarationBodies();
         resolveFunctionDeclarationBodies();
     }
 
-    private void resolveFunctionDeclarationBodies() {
-        for (Map.Entry<JetDeclaration, FunctionDescriptor> entry : functions.entrySet()) {
-            JetDeclaration declaration = entry.getKey();
-            FunctionDescriptor descriptor = entry.getValue();
+    private void resolveDelegationSpecifierLists() {
+        final JetTypeInferrer typeInferrer = semanticServices.getTypeInferrer(trace, JetFlowInformationProvider.NONE);
+        for (Map.Entry<JetClass, MutableClassDescriptor> entry : classes.entrySet()) {
+            final JetClass declaration = entry.getKey();
+            final MutableClassDescriptor descriptor = entry.getValue();
 
-            WritableScope declaringScope = declaringScopes.get(declaration);
-            assert declaringScope != null;
-
-            if (declaration instanceof JetFunction) {
-                resolveFunctionBody(trace, (JetFunction) declaration, (FunctionDescriptorImpl) descriptor, declaringScope);
-            }
-            else if (declaration instanceof JetConstructor) {
-                resolveConstructorBody((JetConstructor) declaration, descriptor, declaringScope);
-            }
-            else {
-                throw new UnsupportedOperationException(); // TODO
-            }
-
-            assert descriptor.getUnsubstitutedReturnType() != null;
-        }
-    }
-
-    private void resolveConstructorBody(JetConstructor declaration, FunctionDescriptor descriptor, final WritableScope declaringScope) {
-        WritableScope constructorScope = semanticServices.createWritableScope(declaringScope, declaringScope.getContainingDeclaration());
-        for (PropertyDescriptor propertyDescriptor : declaringScopesToProperties.get(descriptor.getContainingDeclaration())) {
-            constructorScope.addPropertyDescriptorByFieldName("$" + propertyDescriptor.getName(), propertyDescriptor);
-        }
-        final JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(constructorScope, descriptor, semanticServices);
-        final JetTypeInferrer typeInferrerForInitializers = semanticServices.getTypeInferrer(traceForConstructors, JetFlowInformationProvider.NONE);
-        for (JetDelegationSpecifier initializer : declaration.getInitializers()) {
-            // TODO : check that the type being referenced is actually a supertype
-            initializer.accept(new JetVisitor() {
-                @Override
-                public void visitDelegationToSuperCallSpecifier(JetDelegatorToSuperCall call) {
-                    JetTypeReference typeReference = call.getTypeReference();
-                    if (typeReference != null) {
-                        typeInferrerForInitializers.getTypeForConstructorCall(functionInnerScope, typeReference, call);
+            for (JetDelegationSpecifier delegationSpecifier : declaration.getDelegationSpecifiers()) {
+                delegationSpecifier.accept(new JetVisitor() {
+                    @Override
+                    public void visitDelegationByExpressionSpecifier(JetDelegatorByExpressionSpecifier specifier) {
+                        JetExpression delegateExpression = specifier.getDelegateExpression();
+                        if (delegateExpression != null) {
+                            JetType type = typeInferrer.getType(descriptor.getWritableUnsubstitutedMemberScope(), delegateExpression, false);
+                            JetType supertype = trace.resolveTypeReference(specifier.getTypeReference());
+                            if (type != null && !semanticServices.getTypeChecker().isSubtypeOf(type, supertype)) { // TODO : Convertible?
+                                semanticServices.getErrorHandler().typeMismatch(delegateExpression, supertype, type);
+                            }
+                        }
                     }
-                }
 
-                @Override
-                public void visitDelegationToThisCall(JetDelegatorToThisCall call) {
-                    JetTypeReference typeReference = call.getTypeReference(); // TODO : use explicit type here
-                    if (typeReference != null) {
-                        typeInferrerForInitializers.getTypeForConstructorCall(functionInnerScope, typeReference, call);
+                    @Override
+                    public void visitDelegationToSuperCallSpecifier(JetDelegatorToSuperCall call) {
+                        JetTypeReference typeReference = call.getTypeReference();
+                        if (typeReference != null) {
+                            typeInferrer.checkConstructorCall(descriptor.getWritableUnsubstitutedMemberScope(), typeReference, call);
+                        }
                     }
-                }
 
-                @Override
-                public void visitDelegationByExpressionSpecifier(JetDelegatorByExpressionSpecifier specifier) {
-                    semanticServices.getErrorHandler().genericError(specifier.getNode(), "'by'-clause is only supported for primary constructors");
-                }
+                    @Override
+                    public void visitDelegationToSuperClassSpecifier(JetDelegatorToSuperClass specifier) {
+                        if (declaration.getPrimaryConstructorParameterList() != null) {
+                            semanticServices.getErrorHandler().genericError(specifier.getNode(), "Constructor parameters required in initializer");
+                        }
+                    }
 
-                @Override
-                public void visitDelegationToSuperClassSpecifier(JetDelegatorToSuperClass specifier) {
-                    semanticServices.getErrorHandler().genericError(specifier.getNode(), "Constructor parameters required");
-                }
+                    @Override
+                    public void visitDelegationToThisCall(JetDelegatorToThisCall thisCall) {
+                        throw new IllegalStateException("This-calls should be prohibitied by the parser");
+                    }
 
-                @Override
-                public void visitDelegationSpecifier(JetDelegationSpecifier specifier) {
-                    throw new IllegalStateException();
-                }
-            });
-        }
-        JetExpression bodyExpression = declaration.getBodyExpression();
-        if (bodyExpression != null) {
-            computeFlowData(declaration, bodyExpression);
-            JetFlowInformationProvider flowInformationProvider = computeFlowData(declaration, bodyExpression);
-            JetTypeInferrer typeInferrer = semanticServices.getTypeInferrer(traceForConstructors, flowInformationProvider);
-
-            typeInferrer.getType(functionInnerScope, bodyExpression, true);
+                    @Override
+                    public void visitJetElement(JetElement elem) {
+                        throw new UnsupportedOperationException(elem.getText() + " : " + elem);
+                    }
+                });
+            }
         }
     }
 
@@ -411,6 +391,85 @@ public class TopDownAnalyzer {
             if (!declaration.isVar() && initializer != null && !trace.hasBackingField(propertyDescriptor)) {
                 semanticServices.getErrorHandler().genericError(initializer.getNode(), "Initializer is not allowed here because this property has no setter and no backing field either");
             }
+        }
+    }
+
+    private void resolveFunctionDeclarationBodies() {
+        for (Map.Entry<JetDeclaration, FunctionDescriptor> entry : functions.entrySet()) {
+            JetDeclaration declaration = entry.getKey();
+            FunctionDescriptor descriptor = entry.getValue();
+
+            WritableScope declaringScope = declaringScopes.get(declaration);
+            assert declaringScope != null;
+
+            if (declaration instanceof JetFunction) {
+                resolveFunctionBody(trace, (JetFunction) declaration, (FunctionDescriptorImpl) descriptor, declaringScope);
+            }
+            else if (declaration instanceof JetConstructor) {
+                resolveConstructorBody((JetConstructor) declaration, descriptor, declaringScope);
+            }
+            else {
+                throw new UnsupportedOperationException(); // TODO
+            }
+
+            assert descriptor.getUnsubstitutedReturnType() != null;
+        }
+    }
+
+    private void resolveConstructorBody(JetConstructor declaration, final FunctionDescriptor descriptor, final WritableScope declaringScope) {
+        WritableScope constructorScope = semanticServices.createWritableScope(declaringScope, declaringScope.getContainingDeclaration());
+        for (PropertyDescriptor propertyDescriptor : declaringScopesToProperties.get(descriptor.getContainingDeclaration())) {
+            constructorScope.addPropertyDescriptorByFieldName("$" + propertyDescriptor.getName(), propertyDescriptor);
+        }
+        final JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(constructorScope, descriptor, semanticServices);
+        final JetTypeInferrer typeInferrerForInitializers = semanticServices.getTypeInferrer(traceForConstructors, JetFlowInformationProvider.NONE);
+        for (JetDelegationSpecifier initializer : declaration.getInitializers()) {
+            // TODO : check that the type being referenced is actually a supertype
+            initializer.accept(new JetVisitor() {
+                @Override
+                public void visitDelegationToSuperCallSpecifier(JetDelegatorToSuperCall call) {
+                    JetTypeReference typeReference = call.getTypeReference();
+                    if (typeReference != null) {
+                        typeInferrerForInitializers.checkConstructorCall(functionInnerScope, typeReference, call);
+                    }
+                }
+
+                @Override
+                public void visitDelegationToThisCall(JetDelegatorToThisCall call) {
+                    // TODO : check that there's no recursion in this() calls
+                    // TODO : check: if a this() call is present, no other initializers are allowed
+                    ClassDescriptor classDescriptor = (ClassDescriptor) descriptor.getContainingDeclaration();
+                    typeInferrerForInitializers.checkClassConstructorCall(
+                            functionInnerScope,
+                            call.getThisReference(),
+                            classDescriptor,
+                            classDescriptor.getDefaultType(),
+                            call);
+                }
+
+                @Override
+                public void visitDelegationByExpressionSpecifier(JetDelegatorByExpressionSpecifier specifier) {
+                    semanticServices.getErrorHandler().genericError(specifier.getNode(), "'by'-clause is only supported for primary constructors");
+                }
+
+                @Override
+                public void visitDelegationToSuperClassSpecifier(JetDelegatorToSuperClass specifier) {
+                    semanticServices.getErrorHandler().genericError(specifier.getNode(), "Constructor parameters required");
+                }
+
+                @Override
+                public void visitDelegationSpecifier(JetDelegationSpecifier specifier) {
+                    throw new IllegalStateException();
+                }
+            });
+        }
+        JetExpression bodyExpression = declaration.getBodyExpression();
+        if (bodyExpression != null) {
+            computeFlowData(declaration, bodyExpression);
+            JetFlowInformationProvider flowInformationProvider = computeFlowData(declaration, bodyExpression);
+            JetTypeInferrer typeInferrer = semanticServices.getTypeInferrer(traceForConstructors, flowInformationProvider);
+
+            typeInferrer.getType(functionInnerScope, bodyExpression, true);
         }
     }
 

@@ -1,0 +1,9 @@
+class Z {
+  this() : this(1, true) {}
+
+  this(x : Int, y : Boolean) : this<error>(1)</error> {}
+}
+
+class Foo() : <error>Z</error>, <error>this</error>() {
+
+}

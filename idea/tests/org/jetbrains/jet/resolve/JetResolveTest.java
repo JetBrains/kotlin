@@ -143,4 +143,8 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
         doTest("/resolve/Classifiers.jet", true, true);
     }
 
+    public void testConstructorsAndInitializers() throws Exception {
+        doTest("/resolve/ConstructorsAndInitializers.jet", true, true);
+    }
+
 }

@@ -12,6 +12,7 @@ import java.util.List;
  * @author max
  */
 public class JetDelegatorToThisCall extends JetDelegationSpecifier implements JetCall {
+
     public JetDelegatorToThisCall(@NotNull ASTNode node) {
         super(node);
     }
@@ -36,5 +37,9 @@ public class JetDelegatorToThisCall extends JetDelegationSpecifier implements Je
     @Override
     public List<JetExpression> getFunctionLiteralArguments() {
         return Collections.emptyList();
+    }
+
+    public JetReferenceExpression getThisReference() {
+        return findChildByClass(JetThisReferenceExpression.class);
     }
 }

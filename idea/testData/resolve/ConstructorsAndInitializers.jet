@@ -1,0 +1,12 @@
+class Z {
+  ~c1~this() : `c2`this(1, true) {}
+
+  ~c2~this(x : Int, y : Boolean) : `c1`this() {}
+}
+
+~Z1.c()~class Z1() : Z {
+
+  this(x : Int, y : Boolean) : `Z1.c()`this() {}
+}
+
+class Foo

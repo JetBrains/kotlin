@@ -91,7 +91,8 @@ JetFile: SimpleClassMembers_ERR.jet
           PsiWhiteSpace(' ')
           INITIALIZER_LIST
             THIS_CALL
-              PsiElement(this)('this')
+              THIS_CONSTRUCTOR_REFERENCE
+                PsiElement(this)('this')
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
@@ -141,7 +142,8 @@ JetFile: SimpleClassMembers_ERR.jet
           PsiWhiteSpace(' ')
           INITIALIZER_LIST
             THIS_CALL
-              PsiElement(this)('this')
+              THIS_CONSTRUCTOR_REFERENCE
+                PsiElement(this)('this')
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
