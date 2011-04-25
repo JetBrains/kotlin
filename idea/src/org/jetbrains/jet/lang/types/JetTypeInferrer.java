@@ -759,6 +759,11 @@ public class JetTypeInferrer {
 
         @Override
         public void visitThrowExpression(JetThrowExpression expression) {
+            JetExpression thrownExpression = expression.getThrownExpression();
+            if (thrownExpression != null) {
+                JetType type = getType(scope, thrownExpression, false);
+                // TODO : check that it inherits Throwable
+            }
             result = JetStandardClasses.getNothingType();
         }
 

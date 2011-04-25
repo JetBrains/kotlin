@@ -157,7 +157,7 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
     }
 
     @Override
-    public PsiElement getDeclarationPsiElement(DeclarationDescriptor descriptor) {
+    public PsiElement getDeclarationPsiElement(@NotNull DeclarationDescriptor descriptor) {
         return descriptorToDeclarations.get(descriptor.getOriginal());
     }
 
