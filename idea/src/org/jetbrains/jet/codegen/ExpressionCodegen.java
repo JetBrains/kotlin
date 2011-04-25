@@ -461,11 +461,15 @@ public class ExpressionCodegen extends JetVisitor {
                             methodDescriptor.getDescriptor());
                 }
                 else {
+                    methodDescriptor = typeMapper.mapSignature((JetFunction) declarationPsiElement);
+                    pushMethodArguments(expression, methodDescriptor);
                     if (functionParent instanceof NamespaceDescriptor && declarationPsiElement instanceof JetFunction) {
-                        methodDescriptor = typeMapper.mapSignature((JetFunction) declarationPsiElement);
-                        pushMethodArguments(expression, methodDescriptor);
                         final String owner = NamespaceCodegen.getJVMClassName(DescriptorUtil.getFQName(functionParent));
                         v.invokestatic(owner, methodDescriptor.getName(), methodDescriptor.getDescriptor());
+                    }
+                    else if (functionParent instanceof ClassDescriptor && declarationPsiElement instanceof JetFunction) {
+                        final String owner = JetTypeMapper.jvmNameForInterface((ClassDescriptor) functionParent);
+                        v.invokeinterface(owner, methodDescriptor.getName(), methodDescriptor.getDescriptor());
                     }
                     else {
                         throw new UnsupportedOperationException("don't know how to generate call to " + declarationPsiElement);
@@ -965,16 +969,29 @@ public class ExpressionCodegen extends JetVisitor {
     public void visitNewExpression(JetNewExpression expression) {
         final JetUserType constructorType = (JetUserType) expression.getTypeReference().getTypeElement();
         final JetSimpleNameExpression constructorReference = constructorType.getReferenceExpression();
-        final PsiElement declaration = bindingContext.getDeclarationPsiElement(bindingContext.resolveReferenceExpression(constructorReference));
+        DeclarationDescriptor constructorDescriptor = bindingContext.resolveReferenceExpression(constructorReference);
+        final PsiElement declaration = bindingContext.getDeclarationPsiElement(constructorDescriptor);
         if (declaration instanceof PsiMethod) {
             final PsiMethod constructor = (PsiMethod) declaration;
             PsiClass javaClass = constructor.getContainingClass();
             Type type = JetTypeMapper.psiClassType(javaClass);
             v.anew(type);
             v.dup();
-            final Method constructorDescriptor = getMethodDescriptor(constructor);
-            pushMethodArguments(expression, constructorDescriptor);
-            v.invokespecial(JetTypeMapper.jvmName(javaClass), "<init>", constructorDescriptor.getDescriptor());
+            final Method jvmConstructor = getMethodDescriptor(constructor);
+            pushMethodArguments(expression, jvmConstructor);
+            v.invokespecial(JetTypeMapper.jvmName(javaClass), "<init>", jvmConstructor.getDescriptor());
+            myStack.push(StackValue.onStack(type));
+            return;
+        }
+        else if (constructorDescriptor instanceof ConstructorDescriptor) {
+            ClassDescriptor classDecl = (ClassDescriptor) constructorDescriptor.getContainingDeclaration();
+            Type type = JetTypeMapper.jetImplementationType(classDecl);
+            v.anew(type);
+            v.dup();
+
+            Method method = typeMapper.mapConstructorSignature((ConstructorDescriptor) constructorDescriptor);
+            pushMethodArguments(expression, method);
+            v.invokespecial(JetTypeMapper.jvmNameForImplementation(classDecl), "<init>", method.getDescriptor());
             myStack.push(StackValue.onStack(type));
             return;
         }

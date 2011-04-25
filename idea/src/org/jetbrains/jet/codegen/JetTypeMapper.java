@@ -35,6 +35,14 @@ public class JetTypeMapper {
         return Type.getType("L" + jvmName(psiClass) + ";");
     }
 
+    static Type jetInterfaceType(ClassDescriptor classDescriptor) {
+        return Type.getType("L" + jvmNameForInterface(classDescriptor) + ";");
+    }
+
+    static Type jetImplementationType(ClassDescriptor classDescriptor) {
+        return Type.getType("L" + jvmNameForImplementation(classDescriptor) + ";");
+    }
+
     static String jvmName(JetNamespace namespace) {
         return NamespaceCodegen.getJVMClassName(namespace.getFQName());
     }
@@ -177,6 +185,16 @@ public class JetTypeMapper {
     public Method mapSetterSignature(PropertyDescriptor descriptor) {
         Type paramType = mapType(descriptor.getInType());
         return new Method(PropertyCodegen.setterName(descriptor.getName()), Type.VOID_TYPE, new Type[] { paramType });
+    }
+
+    public Method mapConstructorSignature(ConstructorDescriptor descriptor) {
+        List<ValueParameterDescriptor> parameters = descriptor.getUnsubstitutedValueParameters();
+        Type[] parameterTypes = new Type[parameters.size()];
+        for (int i = 0; i < parameters.size(); i++) {
+            parameterTypes[i] = mapType(parameters.get(i).getOutType());
+        }
+        Type returnType = mapType(descriptor.getUnsubstitutedReturnType());
+        return new Method("<init>", Type.VOID_TYPE, parameterTypes);
     }
 
     static int getAccessModifiers(JetDeclaration p, int defaultFlags) {
