@@ -92,6 +92,10 @@ public class JetTypeInferrer {
         return new TypeInferrerVisitor(scope, preferBlock).getType(expression);
     }
 
+    public JetType getTypeWithNamespaces(@NotNull final JetScope scope, @NotNull JetExpression expression, final boolean preferBlock) {
+        return new TypeInferrerVisitorWithNamespaces(scope, preferBlock).getType(expression);
+    }
+
     @Nullable
     private List<JetType> getTypes(JetScope scope, List<JetExpression> indexExpressions) {
         List<JetType> argumentTypes = new ArrayList<JetType>();
@@ -557,7 +561,7 @@ public class JetTypeInferrer {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private class TypeInferrerVisitor extends JetVisitor {
-        private final JetScope scope;
+        protected final JetScope scope;
         private final boolean preferBlock;
 
         protected JetType result;
@@ -574,11 +578,16 @@ public class JetTypeInferrer {
                 visitor = this;
             }
             else {
-                visitor = new TypeInferrerVisitor(scope, preferBlock);
+                visitor = createNew(scope, preferBlock);
             }
             JetType type = visitor.getType(expression);
             visitor.result = null;
             return type;
+        }
+
+        @NotNull
+        public TypeInferrerVisitor createNew(JetScope scope, boolean preferBlock) {
+            return new TypeInferrerVisitor(scope, preferBlock);
         }
 
         @Nullable
@@ -640,17 +649,31 @@ public class JetTypeInferrer {
                             semanticServices.getErrorHandler().genericError(expression.getNode(), "This variable is not readable in this context");
                         }
                         return;
-                    } else {
-                        NamespaceDescriptor namespace = scope.getNamespace(referencedName);
-                        if (namespace != null) {
-                            trace.recordReferenceResolution(expression, namespace);
-                            result = namespace.getNamespaceType();
-                            return;
-                        }
+                    } else if (furtherNameLookup(expression, referencedName)) {
+                        return;
                     }
                     semanticServices.getErrorHandler().unresolvedReference(expression);
                 }
             }
+        }
+
+        protected boolean furtherNameLookup(@NotNull JetSimpleNameExpression expression, @NotNull String referencedName) {
+            NamespaceType namespaceType = lookupNamespaceType(expression, referencedName);
+            if (namespaceType != null) {
+                semanticServices.getErrorHandler().genericError(expression.getNode(), "Expression expected, but a namespace name found");
+                return true;
+            }
+            return false;
+        }
+
+        @Nullable
+        protected NamespaceType lookupNamespaceType(@NotNull JetSimpleNameExpression expression, @NotNull String referencedName) {
+            NamespaceDescriptor namespace = scope.getNamespace(referencedName);
+            if (namespace == null) {
+                return null;
+            }
+            trace.recordReferenceResolution(expression, namespace);
+            return namespace.getNamespaceType();
         }
 
         @Override
@@ -1164,7 +1187,7 @@ public class JetTypeInferrer {
             // TODO : functions
             JetExpression selectorExpression = expression.getSelectorExpression();
             JetExpression receiverExpression = expression.getReceiverExpression();
-            JetType receiverType = getType(scope, receiverExpression, false);
+            JetType receiverType = new TypeInferrerVisitorWithNamespaces(scope, false).getType(receiverExpression);
             if (receiverType != null) {
                 checkNullSafety(receiverType, expression);
                 JetType selectorReturnType = getSelectorReturnType(receiverType, selectorExpression);
@@ -1467,9 +1490,39 @@ public class JetTypeInferrer {
         }
 
         @Override
-        public void visitJetElement(JetElement elem) {
-            semanticServices.getErrorHandler().genericError(elem.getNode(), "Unsupported element: " + elem + " " + elem.getClass().getCanonicalName());
+        public void visitRootNamespaceExpression(JetRootNamespaceExpression expression) {
+            semanticServices.getErrorHandler().genericError(expression.getNode(), "'namespace' is not an expression");
+            result = null;
         }
+
+        @Override
+        public void visitJetElement(JetElement elem) {
+            semanticServices.getErrorHandler().genericError(elem.getNode(), "[JetTypeInferrer] Unsupported element: " + elem + " " + elem.getClass().getCanonicalName());
+        }
+    }
+
+    private class TypeInferrerVisitorWithNamespaces extends TypeInferrerVisitor {
+        private TypeInferrerVisitorWithNamespaces(@NotNull JetScope scope, boolean preferBlock) {
+            super(scope, preferBlock);
+        }
+
+        @NotNull
+        @Override
+        public TypeInferrerVisitor createNew(JetScope scope, boolean preferBlock) {
+            return new TypeInferrerVisitorWithNamespaces(scope, preferBlock);
+        }
+
+        @Override
+        public void visitRootNamespaceExpression(JetRootNamespaceExpression expression) {
+            result = JetModuleUtil.getRootNamespaceType(expression);
+        }
+
+        @Override
+        protected boolean furtherNameLookup(@NotNull JetSimpleNameExpression expression, @NotNull String referencedName) {
+            result = lookupNamespaceType(expression, referencedName);
+            return result != null;
+        }
+
     }
 
     private class TypeInferrerVisitorWithWritableScope extends TypeInferrerVisitor {

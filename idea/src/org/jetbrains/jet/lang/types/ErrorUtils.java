@@ -150,7 +150,8 @@ public class ErrorUtils {
     }
 
     public static boolean isErrorType(JetType type) {
-        return type instanceof ErrorTypeImpl || isError(type.getConstructor());
+        return type instanceof ErrorTypeImpl ||
+               isError(type.getConstructor());
     }
 
     private static class ErrorTypeImpl implements JetType {

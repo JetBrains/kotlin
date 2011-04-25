@@ -202,9 +202,9 @@ public class TypeResolver {
         if (referencedName == null) {
             return null;
         }
-        ClassifierDescriptor classifierDescriptor = null;
+        ClassifierDescriptor classifierDescriptor;
         if (userType.isAbsoluteInRootNamespace()) {
-            classifierDescriptor = JetModuleUtil.getRootNamespaceScope(userType).getClassifier(referencedName);
+            classifierDescriptor = JetModuleUtil.getRootNamespaceType(userType).getMemberScope().getClassifier(referencedName);
         }
         else {
             JetUserType qualifier = userType.getQualifier();
@@ -238,7 +238,7 @@ public class TypeResolver {
     @Nullable
     private NamespaceDescriptor resolveNamespace(JetScope scope, JetUserType userType) {
         if (userType.isAbsoluteInRootNamespace()) {
-            return resolveNamespace(JetModuleUtil.getRootNamespaceScope(userType), userType);
+            return resolveNamespace(JetModuleUtil.getRootNamespaceType(userType).getMemberScope(), userType);
         }
 
         JetUserType qualifier = userType.getQualifier();
