@@ -118,10 +118,15 @@ public class JetParsing extends AbstractJetParsing {
         parseModifierList();
 
         if (at(NAMESPACE_KEYWORD)) {
-            firstEntry.drop();
             advance(); // NAMESPACE_KEYWORD
 
             parseNamespaceName();
+
+            if (at(LBRACE)) {
+                firstEntry.rollbackTo();
+                return;
+            }
+            firstEntry.drop();
 
             consumeIf(SEMICOLON);
         } else {

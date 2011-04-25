@@ -1,0 +1,36 @@
+JetFile: NamespaceBlockFirst.jet
+  NAMESPACE
+    NAMESPACE
+      PsiElement(namespace)('namespace')
+      PsiWhiteSpace(' ')
+      NAMESPACE_NAME
+        PsiElement(IDENTIFIER)('foobar')
+      PsiWhiteSpace(' ')
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n  ')
+      NAMESPACE_BODY
+        PROPERTY
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('a')
+          PsiWhiteSpace(' ')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('1')
+        PsiWhiteSpace('\n  ')
+        PROPERTY
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('b')
+          PsiWhiteSpace(' ')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          DOT_QUALIFIED_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('foobar')
+            PsiElement(DOT)('.')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('a')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
