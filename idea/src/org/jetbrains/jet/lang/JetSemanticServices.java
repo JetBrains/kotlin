@@ -3,10 +3,7 @@ package org.jetbrains.jet.lang;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
-import org.jetbrains.jet.lang.resolve.ClassDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.JetScope;
-import org.jetbrains.jet.lang.resolve.OverloadResolver;
-import org.jetbrains.jet.lang.resolve.WritableScope;
+import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.types.*;
 
 /**
@@ -66,6 +63,6 @@ public class JetSemanticServices {
 
     @NotNull
     public WritableScope createWritableScope(@NotNull JetScope scope, @NotNull DeclarationDescriptor owner) {
-        return new WritableScope(scope, owner, errorHandler);
+        return new WritableScopeImpl(scope, owner, errorHandler);
     }
 }

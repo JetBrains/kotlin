@@ -99,11 +99,12 @@ public class TopDownAnalyzer {
                                 Collections.<Attribute>emptyList(), // TODO
                                 name
                         );
+                        namespaceDescriptor.initialize(semanticServices.createWritableScope(JetScope.EMPTY, namespaceDescriptor));
                         declaringScope.addNamespace(namespaceDescriptor);
                         trace.recordDeclarationResolution(namespace, namespaceDescriptor);
                     }
 
-                    WritableScope namespaceScope = semanticServices.createWritableScope(declaringScope, namespaceDescriptor);
+                    WritableScope namespaceScope = new WriteThroughScope(declaringScope, (WritableScope) namespaceDescriptor.getMemberScope());
                     namespaceScopes.put(namespace, namespaceScope);
 
                     for (JetImportDirective importDirective : importDirectives) {
@@ -264,7 +265,7 @@ public class TopDownAnalyzer {
     }
 
     private void processClassObject(JetClassObject classObject) {
-        throw new UnsupportedOperationException(); // TODO
+        semanticServices.getErrorHandler().genericError(classObject.getNode(), "Class objects are not supported yet"); // TODO
     }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

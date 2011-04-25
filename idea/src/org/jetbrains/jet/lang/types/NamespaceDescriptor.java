@@ -30,6 +30,7 @@ public class NamespaceDescriptor extends DeclarationDescriptorImpl {
     @NotNull
     public NamespaceType getNamespaceType() {
         if (namespaceType == null) {
+            assert memberScope != null : "Member scope not set";
             namespaceType = new NamespaceType(getName(), memberScope);
         }
         return namespaceType;

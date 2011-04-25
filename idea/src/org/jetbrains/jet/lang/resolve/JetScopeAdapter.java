@@ -17,6 +17,11 @@ public class JetScopeAdapter implements JetScope {
     }
 
     @NotNull
+    protected final JetScope getWorkerScope() {
+        return scope;
+    }
+
+    @NotNull
     @Override
     public JetType getThisType() {
         return scope.getThisType();

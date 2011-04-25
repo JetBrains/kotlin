@@ -13,7 +13,7 @@ internal class Example<X, T : Comparable<X>>(protected val x : Foo<X, T>, y : So
 class
   : modifiers "class" SimpleName
       typeParameters?
-      "wraps"?
+      ("wraps" | modifiers)?
       valueParameters?
       (":" attributes delegationSpecifier{","})?
       (classBody? | enumClassBody)

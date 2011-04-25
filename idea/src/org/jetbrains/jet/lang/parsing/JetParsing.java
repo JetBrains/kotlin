@@ -371,7 +371,7 @@ public class JetParsing extends AbstractJetParsing {
      * class
      *   : modifiers "class" SimpleName
      *       typeParameters?
-     *       "wraps"?
+     *       ("wraps" | modifiers)?
      *       ("(" primaryConstructorParameter{","} ")")?
      *       (":" attributes delegationSpecifier{","})?
      *       (classBody? | enumClassBody)
@@ -384,7 +384,13 @@ public class JetParsing extends AbstractJetParsing {
         expect(IDENTIFIER, "Class name expected", CLASS_NAME_RECOVERY_SET);
         parseTypeParameterList(TYPE_PARAMETER_GT_RECOVERY_SET);
 
-        consumeIf(WRAPS_KEYWORD);
+        if (at(WRAPS_KEYWORD)) {
+            advance(); // WRAPS_KEYWORD
+        }
+        else {
+            parseModifierList();
+        }
+
         if (at(LPAR)) {
             parseValueParameterList(false, TokenSet.EMPTY);
         }

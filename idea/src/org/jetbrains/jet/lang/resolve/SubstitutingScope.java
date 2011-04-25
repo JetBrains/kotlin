@@ -38,7 +38,7 @@ public class SubstitutingScope implements JetScope {
         if (descriptor instanceof ClassDescriptor) {
             return new LazySubstitutingClassDescriptor((ClassDescriptor) descriptor, substitutor);
         }
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException(); // TODO
     }
 
     @Override

@@ -141,16 +141,16 @@ public class ErrorUtils {
         return createErrorType(value + " is not allowed here]", value.getType().getMemberScope());
     }
 
-    public static boolean isErrorType(JetType type) {
-        return type instanceof ErrorTypeImpl;
-    }
-
     public static ClassifierDescriptor getErrorClass() {
         return ERROR_CLASS;
     }
 
     public static boolean isError(@NotNull TypeConstructor typeConstructor) {
         return typeConstructor == ERROR_CLASS.getTypeConstructor();
+    }
+
+    public static boolean isErrorType(JetType type) {
+        return type instanceof ErrorTypeImpl || isError(type.getConstructor());
     }
 
     private static class ErrorTypeImpl implements JetType {

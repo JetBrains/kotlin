@@ -1,0 +1,52 @@
+namespace foobar
+
+namespace a {
+    import java.*
+
+    val a : util.List<Int>? = null
+    val a1 : <error>List</error><Int>? = null
+
+}
+
+namespace a {
+    import java.util.*
+
+    val b : List<Int>? = a
+    val b1 : <error>util</error>.List<Int>? = a
+}
+
+val x1 = a.a
+
+val y1 = a.b
+
+
+/////////////////////////////////////////////////////////////////////////
+
+fun done<O>(result : O) : Iteratee<Any?, O>
+
+class Iteratee<in I, out O> {
+  abstract fun process(item : I) : Iteratee<I, O>
+  abstract val isDone : Boolean
+  abstract val result : O
+  abstract fun done() : O
+}
+
+class Sum : Iteratee<Int, Int> {
+  override fun process(item : Int) : Iteratee<Int, Int> {
+    return foobar.done<Int>(item);
+  }
+  override val isDone : Boolean
+  override val result : Int
+  override fun done() : Int
+}
+
+class Collection<E> : Iterable<E> {
+  fun iterate<O>(iteratee : Iteratee<E, O>) : O {
+      for (x in this) {
+        val it = iteratee.process(x)
+        if (it.isDone) return it.result
+        iteratee = it
+      }
+      return iteratee.done()
+  }
+}

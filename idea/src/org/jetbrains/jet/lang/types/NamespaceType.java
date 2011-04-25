@@ -13,9 +13,10 @@ import java.util.List;
  */
 public class NamespaceType implements JetType {
     private final String name;
+    @NotNull
     private final JetScope memberScope;
 
-    public NamespaceType(String name, JetScope memberScope) {
+    public NamespaceType(@NotNull String name, @NotNull JetScope memberScope) {
         this.name = name;
         this.memberScope = memberScope;
     }
