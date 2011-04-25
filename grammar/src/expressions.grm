@@ -89,7 +89,7 @@ atomicExpression
   : "typeof" "(" expression ")"
   : "new" constructorInvocation
   : objectLiteral
-  : declaration
+//  : declaration
   : jump
   : loop
   : SimpleName
@@ -124,6 +124,11 @@ declaration
   : extension
   : class
   : typedef
+  ;
+
+statement
+  : declaration
+  : expression
   ;
 
 multiplicativeOperation
@@ -215,13 +220,13 @@ tupleLiteral // Ambiguity when after a SimpleName (infix call). In this case (e)
   ;
 
 functionLiteral  // one can use "it" as a parameter name
-  : "{" expressions "}"
-  : "{" (type ".")? modifiers SimpleName "=>" expressions "}"
-  : "{" (type ".")? "(" (modifiers SimpleName (":" type)?){","} ")" (":" type)? "=>" expressions "}"
+  : "{" statements "}"
+  : "{" (type ".")? modifiers SimpleName "=>" statements "}"
+  : "{" (type ".")? "(" (modifiers SimpleName (":" type)?){","} ")" (":" type)? "=>" statements "}"
   ;
 
-expressions
-  : SEMI* expression{SEMI+} SEMI*
+statements
+  : SEMI* statement{SEMI+} SEMI*
   ;
 
 constructorInvocation

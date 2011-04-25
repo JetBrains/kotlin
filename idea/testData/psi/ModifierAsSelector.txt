@@ -1,0 +1,47 @@
+JetFile: ModifierAsSelector.jet
+  PsiComment(EOL_COMMENT)('// JET-1')
+  PsiWhiteSpace('\n\n')
+  NAMESPACE
+    PROPERTY
+      PsiElement(val)('val')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('z')
+      PsiWhiteSpace(' ')
+      PsiElement(EQ)('=')
+      PsiWhiteSpace(' ')
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('System')
+        PsiElement(DOT)('.')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('out')
+    PsiWhiteSpace('\n\n')
+    FUN
+      PsiElement(fun)('fun')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('foo')
+      TYPE_PARAMETER_LIST
+        <empty list>
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      BLOCK
+        PsiElement(LBRACE)('{')
+        PsiWhiteSpace(' ')
+        THROW
+          PsiElement(throw)('throw')
+          PsiWhiteSpace(' ')
+          NEW
+            PsiElement(new)('new')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Exception')
+            VALUE_ARGUMENT_LIST
+              PsiElement(LPAR)('(')
+              PsiElement(RPAR)(')')
+        PsiElement(SEMICOLON)(';')
+        PsiWhiteSpace(' ')
+        PsiElement(RBRACE)('}')

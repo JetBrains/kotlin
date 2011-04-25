@@ -921,7 +921,7 @@ public class JetParsing extends AbstractJetParsing {
         myBuilder.enableNewlines();
         expect(LBRACE, "Expecting '{' to open a block");
 
-        myExpressionParsing.parseExpressions();
+        myExpressionParsing.parseStatements();
 
         expect(RBRACE, "Expecting '}");
         myBuilder.restoreNewlinesState();

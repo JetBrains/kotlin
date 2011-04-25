@@ -31,7 +31,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             COLON
     );
 
-    /*package*/ static final TokenSet EXPRESSION_FIRST = TokenSet.orSet(TokenSet.create(
+    /*package*/ static final TokenSet EXPRESSION_FIRST = TokenSet.create(
             // Prefix
             MINUS, PLUS, MINUSMINUS, PLUSPLUS, EXCL, LBRACKET, LABEL_IDENTIFIER, AT, ATAT,
             // Atomic
@@ -57,14 +57,6 @@ public class JetExpressionParsing extends AbstractJetParsing {
             NEW_KEYWORD, // new
             OBJECT_KEYWORD, // object
 
-            // declaration
-            LBRACKET, // attribute
-            FUN_KEYWORD,
-            VAL_KEYWORD, VAR_KEYWORD,
-            EXTENSION_KEYWORD,
-            CLASS_KEYWORD,
-            TYPE_KEYWORD,
-
             // jump
             THROW_KEYWORD,
             RETURN_KEYWORD,
@@ -80,7 +72,21 @@ public class JetExpressionParsing extends AbstractJetParsing {
             FIELD_IDENTIFIER, // Field reference
 
             NAMESPACE_KEYWORD // for absolute qualified names
-    ), MODIFIER_KEYWORDS);
+    );
+
+    private static final TokenSet STATEMENT_FIRST = TokenSet.orSet(
+        EXPRESSION_FIRST,
+        TokenSet.create(
+            // declaration
+            LBRACKET, // attribute
+            FUN_KEYWORD,
+            VAL_KEYWORD, VAR_KEYWORD,
+            EXTENSION_KEYWORD,
+            CLASS_KEYWORD,
+            TYPE_KEYWORD
+        ),
+        MODIFIER_KEYWORDS
+    );
 
     /*package*/ static final TokenSet EXPRESSION_FOLLOW = TokenSet.create(
             SEMICOLON, DOUBLE_ARROW, COMMA, RBRACE, RPAR, RBRACKET
@@ -523,13 +529,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             parseSimpleNameExpression();
         }
         else if (at(IDENTIFIER)) {
-            if (JetParsing.MODIFIER_KEYWORD_MAP.containsKey(myBuilder.getTokenText())) {
-                if (!parseLocalDeclaration()) {
-                    parseSimpleNameExpression();
-                }
-            } else {
-                parseSimpleNameExpression();
-            }
+            parseSimpleNameExpression();
         }
         else if (at(LBRACE)) {
             parseFunctionLiteral();
@@ -1022,7 +1022,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
         }
 
         PsiBuilder.Marker body = mark();
-        parseExpressions();
+        parseStatements();
         body.done(BODY);
 
         expect(RBRACE, "Expecting '}'");
@@ -1073,24 +1073,36 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
     /*
      * expressions
-     *   : SEMI* element{SEMI+} SEMI*
+     *   : SEMI* statement{SEMI+} SEMI*
      */
-    public void parseExpressions() {
+    public void parseStatements() {
         while (at(SEMICOLON)) advance(); // SEMICOLON
         while (!eof() && !at(RBRACE)) {
-            if (!atSet(EXPRESSION_FIRST)) {
+            if (!atSet(STATEMENT_FIRST)) {
                 errorAndAdvance("Expecting an element");
             }
-            if (atSet(EXPRESSION_FIRST)) {
-                parseExpression();
+            if (atSet(STATEMENT_FIRST)) {
+                parseStatement();
             }
             if (at(SEMICOLON)) {
                 while (at(SEMICOLON)) advance(); // SEMICOLON
             } else if (at(RBRACE)) {
                 break;
             } else if (!myBuilder.newlineBeforeCurrentToken()) {
-                errorUntil("Unexpected tokens (use ';' to separate expressions on the same line", TokenSet.create(EOL_OR_SEMICOLON));
+                errorUntil("Unexpected tokens (use ';' to separate expressions on the same line)", TokenSet.create(EOL_OR_SEMICOLON));
             }
+        }
+    }
+
+    /*
+     * statement
+     *  : expression
+     *  : declaration
+     *  ;
+     */
+    private void parseStatement() {
+        if (!parseLocalDeclaration()) {
+            parseExpression();
         }
     }
 

@@ -172,11 +172,13 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
                 myBuilder.remapCurrentToken(keywordToken);
                 return true;
             }
-        } else {
+        }
+        else {
             // We know at this point that <code>set</code> does not contain <code>token</code>
             if (set.contains(IDENTIFIER) && token instanceof JetKeywordToken) {
                 if (((JetKeywordToken) token).isSoft()) {
                     myBuilder.remapCurrentToken(IDENTIFIER);
+                    return true;
                 }
             }
         }

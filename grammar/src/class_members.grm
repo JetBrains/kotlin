@@ -63,7 +63,7 @@ initializer
   ;
 
 block
-  : "{" expressions "}"
+  : "{" statements "}"
   ;
 
 function
