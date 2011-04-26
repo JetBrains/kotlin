@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.resolve;
 
+import com.google.common.collect.Maps;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,9 +23,10 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
     private final Map<DeclarationDescriptor, PsiElement> descriptorToDeclarations = new HashMap<DeclarationDescriptor, PsiElement>();
     private final Map<PsiElement, DeclarationDescriptor> declarationsToDescriptors = new HashMap<PsiElement, DeclarationDescriptor>();
     private final Map<PsiElement, ConstructorDescriptor> constructorDeclarationsToDescriptors = new HashMap<PsiElement, ConstructorDescriptor>();
+    private final Map<PsiElement, PropertyDescriptor> propertyDeclarationsToDescriptors = Maps.newHashMap();
     private final Set<JetFunctionLiteralExpression> blocks = new HashSet<JetFunctionLiteralExpression>();
     private final Set<JetElement> statements = new HashSet<JetElement>();
-    private final Set<PropertyDescriptor> fieldMentionedInAccessor = new HashSet<PropertyDescriptor>();
+    private final Set<PropertyDescriptor> backingFieldRequired = new HashSet<PropertyDescriptor>();
 
     private JetScope toplevelScope;
 
@@ -58,23 +60,32 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
     @Override
     public void recordDeclarationResolution(@NotNull PsiElement declaration, @NotNull DeclarationDescriptor descriptor) {
         safePut(descriptorToDeclarations, descriptor.getOriginal(), declaration);
-        if (descriptor instanceof ConstructorDescriptor) {
-            safePut(constructorDeclarationsToDescriptors, declaration, (ConstructorDescriptor) descriptor);
-        }
-        else {
-            safePut(declarationsToDescriptors, declaration, descriptor.getOriginal());
-        }
+        descriptor.accept(new DeclarationDescriptorVisitor<Void, PsiElement>() {
+                    @Override
+                    public Void visitConstructorDescriptor(ConstructorDescriptor constructorDescriptor, PsiElement declaration) {
+                        safePut(constructorDeclarationsToDescriptors, declaration, constructorDescriptor);
+                        return null;
+                    }
+
+
+
+                    @Override
+                    public Void visitDeclarationDescriptor(DeclarationDescriptor descriptor, PsiElement declaration) {
+                        safePut(declarationsToDescriptors, declaration, descriptor.getOriginal());
+                        return null;
+                    }
+                }, declaration);
     }
 
     private <K, V> void safePut(Map<K, V> map, K key, V value) {
         V oldValue = map.put(key, value);
         // TODO:
-//        assert oldValue == null || oldValue == value : key + ": " + oldValue + " and " + value;
+        assert oldValue == null || oldValue == value : key + ": " + oldValue + " and " + value;
     }
 
     @Override
-    public void recordFieldAccessFromAccessor(@NotNull PropertyDescriptor propertyDescriptor) {
-        fieldMentionedInAccessor.add(propertyDescriptor);
+    public void requireBackingField(@NotNull PropertyDescriptor propertyDescriptor) {
+        backingFieldRequired.add(propertyDescriptor);
     }
 
     @Override
@@ -195,6 +206,6 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
         else if (!getter.hasBody()) {
             return true;
         }
-        return fieldMentionedInAccessor.contains(propertyDescriptor);
+        return backingFieldRequired.contains(propertyDescriptor);
     }
 }

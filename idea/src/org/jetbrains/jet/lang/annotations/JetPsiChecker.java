@@ -107,6 +107,11 @@ public class JetPsiChecker implements Annotator {
                 }
             }
 
+//            @Override
+//            public void visitParameter(JetParameter parameter) {
+//                bindingContext.get
+//            }
+
             @Override
             public void visitJetElement(JetElement elem) {
                 elem.acceptChildren(this);

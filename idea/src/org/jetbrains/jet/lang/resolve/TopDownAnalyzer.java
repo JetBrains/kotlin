@@ -28,6 +28,7 @@ public class TopDownAnalyzer {
     private final Map<JetProperty, PropertyDescriptor> properties = new LinkedHashMap<JetProperty, PropertyDescriptor>();
     private final Map<JetDeclaration, WritableScope> declaringScopes = new HashMap<JetDeclaration, WritableScope>();
     private final Multimap<DeclarationDescriptor, PropertyDescriptor> declaringScopesToProperties = ArrayListMultimap.create();
+    private final Set<PropertyDescriptor> primaryConstructorParameterProperties = Sets.newHashSet();
 
     private final JetSemanticServices semanticServices;
     private final ClassDescriptorResolver classDescriptorResolver;
@@ -35,6 +36,7 @@ public class TopDownAnalyzer {
     private final JetControlFlowDataTraceFactory flowDataTraceFactory;
     private boolean readyToProcessExpressions = false;
     private final BindingTraceAdapter traceForConstructors;
+    private final BindingTraceAdapter traceForMembers;
 
     public TopDownAnalyzer(JetSemanticServices semanticServices, @NotNull BindingTraceContext bindingTrace, @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory) {
         this.semanticServices = semanticServices;
@@ -43,7 +45,7 @@ public class TopDownAnalyzer {
         this.flowDataTraceFactory = flowDataTraceFactory;
 
         // This allows access to backing fields
-        this.traceForConstructors = new BindingTraceAdapter(trace) {
+        this.traceForConstructors = new BindingTraceAdapter(bindingTrace) {
             @Override
             public void recordReferenceResolution(@NotNull JetReferenceExpression expression, @NotNull DeclarationDescriptor descriptor) {
                 super.recordReferenceResolution(expression, descriptor);
@@ -53,6 +55,20 @@ public class TopDownAnalyzer {
                         if (!trace.hasBackingField((PropertyDescriptor) descriptor)) {
                             TopDownAnalyzer.this.semanticServices.getErrorHandler().genericError(expression.getNode(), "This property does not have a backing field");
                         }
+                    }
+                }
+            }
+        };
+
+        // This tracks access to properties in order to register primary constructor parameters that yield real fields (JET-9)
+        this.traceForMembers = new BindingTraceAdapter(bindingTrace) {
+            @Override
+            public void recordReferenceResolution(@NotNull JetReferenceExpression expression, @NotNull DeclarationDescriptor descriptor) {
+                super.recordReferenceResolution(expression, descriptor);
+                if (descriptor instanceof PropertyDescriptor) {
+                    PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
+                    if (primaryConstructorParameterProperties.contains(propertyDescriptor)) {
+                        requireBackingField(propertyDescriptor);
                     }
                 }
             }
@@ -242,13 +258,14 @@ public class TopDownAnalyzer {
         WritableScope memberScope = classDescriptor.getWritableUnsubstitutedMemberScope(); // TODO : this is REALLY questionable
         ConstructorDescriptor constructorDescriptor = classDescriptorResolver.resolvePrimaryConstructorDescriptor(memberScope, classDescriptor, klass);
         for (JetParameter parameter : klass.getPrimaryConstructorParameters()) {
-            VariableDescriptor propertyDescriptor = classDescriptorResolver.resolvePrimaryConstructorParameterToAProperty(
+            PropertyDescriptor propertyDescriptor = classDescriptorResolver.resolvePrimaryConstructorParameterToAProperty(
                     classDescriptor,
                     memberScope,
                     parameter
             );
             memberScope.addVariableDescriptor(
                     propertyDescriptor);
+            primaryConstructorParameterProperties.add(propertyDescriptor);
         }
         if (constructorDescriptor != null) {
             classDescriptor.setPrimaryConstructor(constructorDescriptor);
@@ -552,7 +569,7 @@ public class TopDownAnalyzer {
     }
 
     private BindingTraceAdapter createFieldTrackingTrace(final PropertyDescriptor propertyDescriptor) {
-        return new BindingTraceAdapter(trace) {
+        return new BindingTraceAdapter(traceForMembers) {
             @Override
             public void recordReferenceResolution(@NotNull JetReferenceExpression expression, @NotNull DeclarationDescriptor descriptor) {
                 super.recordReferenceResolution(expression, descriptor);
@@ -561,7 +578,7 @@ public class TopDownAnalyzer {
                     if (simpleNameExpression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER) {
                         // This check may be considered redundant as long as $x is only accessible from accessors to $x
                         if (descriptor == propertyDescriptor) { // TODO : original?
-                            recordFieldAccessFromAccessor(propertyDescriptor);
+                            requireBackingField(propertyDescriptor);
                         }
                     }
                 }
@@ -571,7 +588,7 @@ public class TopDownAnalyzer {
 
     private void resolvePropertyInitializer(JetProperty property, PropertyDescriptor propertyDescriptor, JetExpression initializer, JetScope scope) {
         JetFlowInformationProvider flowInformationProvider = computeFlowData(property, initializer); // TODO : flow JET-15
-        JetTypeInferrer typeInferrer = semanticServices.getTypeInferrer(trace, flowInformationProvider);
+        JetTypeInferrer typeInferrer = semanticServices.getTypeInferrer(traceForConstructors, flowInformationProvider);
         JetType type = typeInferrer.getType(scope, initializer, false);
 
         JetType expectedType;
@@ -599,7 +616,7 @@ public class TopDownAnalyzer {
             WritableScope declaringScope = declaringScopes.get(declaration);
             assert declaringScope != null;
 
-            resolveFunctionBody(trace, (JetFunction) declaration, (FunctionDescriptorImpl) descriptor, declaringScope);
+            resolveFunctionBody(traceForMembers, (JetFunction) declaration, (FunctionDescriptorImpl) descriptor, declaringScope);
 
             assert descriptor.getUnsubstitutedReturnType() != null;
         }

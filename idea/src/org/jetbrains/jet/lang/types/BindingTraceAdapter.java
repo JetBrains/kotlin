@@ -53,8 +53,8 @@ public class BindingTraceAdapter implements BindingTrace {
     }
 
     @Override
-    public void recordFieldAccessFromAccessor(@NotNull PropertyDescriptor propertyDescriptor) {
-        originalTrace.recordFieldAccessFromAccessor(propertyDescriptor);
+    public void requireBackingField(@NotNull PropertyDescriptor propertyDescriptor) {
+        originalTrace.requireBackingField(propertyDescriptor);
     }
 
     @Override

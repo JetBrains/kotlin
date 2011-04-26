@@ -52,7 +52,7 @@ public interface BindingTrace {
         }
 
         @Override
-        public void recordFieldAccessFromAccessor(@NotNull PropertyDescriptor propertyDescriptor) {
+        public void requireBackingField(@NotNull PropertyDescriptor propertyDescriptor) {
         }
     };
 
@@ -76,5 +76,5 @@ public interface BindingTrace {
 
     public void removeReferenceResolution(@NotNull JetReferenceExpression referenceExpression);
 
-    public void recordFieldAccessFromAccessor(@NotNull PropertyDescriptor propertyDescriptor);
+    public void requireBackingField(@NotNull PropertyDescriptor propertyDescriptor);
 }
