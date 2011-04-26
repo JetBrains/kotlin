@@ -1,10 +1,10 @@
 import java.util.*;
 
-class NotRange1 {
+class NotRange1() {
 
 }
 
-class NotRange2 {
+class NotRange2() {
   fun iterator() : Unit
 }
 
@@ -12,7 +12,7 @@ class ImproperIterator1 {
   fun hasNext() : Boolean
 }
 
-class NotRange3 {
+class NotRange3() {
   fun iterator() : ImproperIterator1
 }
 
@@ -20,7 +20,7 @@ class ImproperIterator2 {
   fun next() : Boolean
 }
 
-class NotRange4 {
+class NotRange4() {
   fun iterator() : ImproperIterator2
 }
 
@@ -29,7 +29,7 @@ class ImproperIterator3 {
   fun next() : Int
 }
 
-class NotRange5 {
+class NotRange5() {
   fun iterator() : ImproperIterator3
 }
 
@@ -39,7 +39,7 @@ class AmbiguousHasNextIterator {
   fun next() : Int
 }
 
-class NotRange6 {
+class NotRange6() {
   fun iterator() : AmbiguousHasNextIterator
 }
 
@@ -48,7 +48,7 @@ class ImproperIterator4 {
   fun next() : Int
 }
 
-class NotRange7 {
+class NotRange7() {
   fun iterator() : ImproperIterator3
 }
 
@@ -57,11 +57,11 @@ class GoodIterator {
   fun next() : Int
 }
 
-class Range0 {
+class Range0() {
   fun iterator() : GoodIterator
 }
 
-class Range1 {
+class Range1() {
   fun iterator() : Iterator<Int>
 }
 

@@ -80,8 +80,12 @@ public class ErrorUtils {
         }
     };
 
-    private static final ClassDescriptor ERROR_CLASS = new ClassDescriptorImpl(ERROR_MODULE, Collections.<Attribute>emptyList(), "<ERROR CLASS>").initialize(
-            true, Collections.<TypeParameterDescriptor>emptyList(), Collections.<JetType>emptyList(), getErrorScope(), ERROR_FUNCTION_GROUP);
+    private static final ClassDescriptorImpl ERROR_CLASS = new ClassDescriptorImpl(ERROR_MODULE, Collections.<Attribute>emptyList(), "<ERROR CLASS>");
+    private static final ConstructorDescriptor ERROR_CONSTRUCTOR = new ConstructorDescriptorImpl(ERROR_CLASS, Collections.<Attribute>emptyList(), true);
+    static {
+        ERROR_CLASS.initialize(
+            true, Collections.<TypeParameterDescriptor>emptyList(), Collections.<JetType>emptyList(), getErrorScope(), ERROR_FUNCTION_GROUP, ERROR_CONSTRUCTOR);
+    }
 
     private static JetScope getErrorScope() {
         return ERROR_SCOPE;

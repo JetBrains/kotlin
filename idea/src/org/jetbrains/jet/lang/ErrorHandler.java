@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang;
 
 import com.intellij.lang.ASTNode;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.types.DeclarationDescriptor;
@@ -18,7 +19,7 @@ public class ErrorHandler {
         }
 
         @Override
-        public void genericError(ASTNode node, String errorMessage) {
+        public void genericError(@NotNull ASTNode node, String errorMessage) {
             throw new IllegalStateException(errorMessage);
         }
 
@@ -42,7 +43,7 @@ public class ErrorHandler {
     public void redeclaration(DeclarationDescriptor existingDescriptor, DeclarationDescriptor redeclaredDescriptor) {
     }
 
-    public void genericError(ASTNode node, String errorMessage) {
+    public void genericError(@NotNull ASTNode node, String errorMessage) {
     }
 
     public void genericWarning(ASTNode node, String message) {

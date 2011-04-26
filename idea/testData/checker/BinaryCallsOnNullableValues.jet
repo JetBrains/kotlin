@@ -1,12 +1,12 @@
-class A {
+class A() {
   fun equals(a : Any?) : Boolean
 }
 
-class B {
+class B() {
   fun equals(a : Any?) : Boolean?
 }
 
-class C {
+class C() {
   fun equals(a : Any?) : Int
 }
 

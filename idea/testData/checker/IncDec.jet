@@ -1,4 +1,4 @@
-class IncDec {
+class IncDec() {
   fun inc() : IncDec = this
   fun dec() : IncDec = this
 }
@@ -15,7 +15,7 @@ fun testIncDec() {
   x = --x
 }
 
-class WrongIncDec {
+class WrongIncDec() {
   fun inc() : Int = 1
   fun dec() : Int = 1
 }
@@ -28,7 +28,7 @@ fun testWrongIncDec() {
   <error>--</error>x
 }
 
-class UnitIncDec {
+class UnitIncDec() {
   fun inc() : Unit {}
   fun dec() : Unit {}
 }

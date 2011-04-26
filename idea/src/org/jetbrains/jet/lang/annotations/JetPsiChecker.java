@@ -63,7 +63,7 @@ public class JetPsiChecker implements Annotator {
                     }
 
                     @Override
-                    public void genericError(ASTNode node, String errorMessage) {
+                    public void genericError(@NotNull ASTNode node, String errorMessage) {
                         holder.createErrorAnnotation(node, errorMessage);
                     }
 

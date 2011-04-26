@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.JetScope;
 import org.jetbrains.jet.lang.resolve.SubstitutingScope;
 
@@ -16,6 +17,7 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
 
     private JetScope memberDeclarations;
     private FunctionGroup constructors;
+    private ConstructorDescriptor primaryConstructor;
 
     public ClassDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
@@ -28,10 +30,13 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
                                                 @NotNull List<TypeParameterDescriptor> typeParameters,
                                                 @NotNull Collection<? extends JetType> superclasses,
                                                 @NotNull JetScope memberDeclarations,
-                                                @NotNull FunctionGroup constructors) {
+                                                @NotNull FunctionGroup constructors,
+                                                @Nullable ConstructorDescriptor primaryConstructor) {
         this.typeConstructor = new TypeConstructorImpl(this, getAttributes(), sealed, getName(), typeParameters, superclasses);
         this.memberDeclarations = memberDeclarations;
         this.constructors = constructors;
+        this.primaryConstructor = primaryConstructor;
+        assert !constructors.isEmpty() || primaryConstructor == null;
         return this;
     }
 
@@ -78,5 +83,10 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
     @Override
     public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
         return visitor.visitClassDescriptor(this, data);
+    }
+
+    @Override
+    public ConstructorDescriptor getUnsubstitutedPrimaryConstructor() {
+        return primaryConstructor;
     }
 }

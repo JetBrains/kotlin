@@ -12,11 +12,11 @@
   val p : Int = <error>1</error>
     get() = 1
 
-class Test {
+class Test() {
     var a : Int
     var b : Int get() = <error>$a</error>; set(x) {a = x; <error>$a</error> = x}
 
-   this() {
+   this(i : Int) : this() {
     <error>$b</error> = $a
     $a = <error>$b</error>
     a = <error>$b</error>

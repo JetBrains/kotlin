@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.types.*;
 
@@ -14,6 +15,7 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     private final WritableScope classHeaderScope;
     private final WritableScope writableMemberScope;
     private final WritableFunctionGroup constructors = new WritableFunctionGroup("<init>");
+    private ConstructorDescriptor primaryConstructor;
 
     private TypeConstructor typeConstructor;
     private JetScope unsubstitutedMemberScope;
@@ -97,5 +99,17 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     @Override
     public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
         return visitor.visitClassDescriptor(this, data);
+    }
+
+    public void setPrimaryConstructor(@NotNull ConstructorDescriptor constructorDescriptor) {
+        assert this.primaryConstructor == null : "Primary constructor assigned twice " + this;
+        this.primaryConstructor = constructorDescriptor;
+        addConstructor(constructorDescriptor);
+    }
+
+    @Override
+    @Nullable
+    public ConstructorDescriptor getUnsubstitutedPrimaryConstructor() {
+        return primaryConstructor;
     }
 }

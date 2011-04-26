@@ -115,7 +115,7 @@ public class JetParsing extends AbstractJetParsing {
          *   ;
          */
         PsiBuilder.Marker firstEntry = mark();
-        parseModifierList();
+        parseModifierList(MODIFIER_LIST);
 
         if (at(NAMESPACE_KEYWORD)) {
             advance(); // NAMESPACE_KEYWORD
@@ -218,7 +218,7 @@ public class JetParsing extends AbstractJetParsing {
         PsiBuilder.Marker decl = mark();
 
         TokenDetector detector = new TokenDetector(ENUM_KEYWORD);
-        parseModifierList(detector);
+        parseModifierList(MODIFIER_LIST, detector);
 
         IElementType keywordToken = tt();
         JetNodeType declType = null;
@@ -253,8 +253,8 @@ public class JetParsing extends AbstractJetParsing {
     /*
      * (modifier | attribute)*
      */
-    public void parseModifierList() {
-        parseModifierList(null);
+    public void parseModifierList(JetNodeType nodeType) {
+        parseModifierList(nodeType, null);
     }
 
     /**
@@ -262,7 +262,7 @@ public class JetParsing extends AbstractJetParsing {
      *
      * Feeds modifiers (not attributes) into the passed consumer, if it is not null
      */
-    public void parseModifierList(Consumer<IElementType> tokenConsumer) {
+    public void parseModifierList(JetNodeType nodeType, Consumer<IElementType> tokenConsumer) {
         PsiBuilder.Marker list = mark();
         boolean empty = true;
         while (!eof()) {
@@ -280,7 +280,7 @@ public class JetParsing extends AbstractJetParsing {
         if (empty) {
             list.drop();
         } else {
-            list.done(MODIFIER_LIST);
+            list.done(nodeType);
         }
     }
 
@@ -393,7 +393,7 @@ public class JetParsing extends AbstractJetParsing {
             advance(); // WRAPS_KEYWORD
         }
         else {
-            parseModifierList();
+            parseModifierList(PRIMARY_CONSTRUCTOR_MODIFIER_LIST);
         }
 
         if (at(LPAR)) {
@@ -436,7 +436,7 @@ public class JetParsing extends AbstractJetParsing {
             TokenSet constructorNameFollow = TokenSet.create(SEMICOLON, COLON, LPAR, LT, LBRACE);
             int lastId = findLastBefore(ENUM_MEMBER_FIRST, constructorNameFollow, false);
             TokenDetector enumDetector = new TokenDetector(ENUM_KEYWORD);
-            createTruncatedBuilder(lastId).parseModifierList(enumDetector);
+            createTruncatedBuilder(lastId).parseModifierList(MODIFIER_LIST, enumDetector);
 
             IElementType type;
             if (at(IDENTIFIER)) {
@@ -535,7 +535,7 @@ public class JetParsing extends AbstractJetParsing {
         PsiBuilder.Marker decl = mark();
 
         TokenDetector enumDetector = new TokenDetector(ENUM_KEYWORD);
-        parseModifierList(enumDetector);
+        parseModifierList(MODIFIER_LIST, enumDetector);
 
         JetNodeType declType = parseMemberDeclarationRest(enumDetector.isDetected());
 
@@ -786,7 +786,7 @@ public class JetParsing extends AbstractJetParsing {
     private boolean parsePropertyGetterOrSetter() {
         PsiBuilder.Marker getterOrSetter = mark();
 
-        parseModifierList();
+        parseModifierList(MODIFIER_LIST);
 
         if (!at(GET_KEYWORD) && !at(SET_KEYWORD)) {
             getterOrSetter.rollbackTo();
@@ -807,7 +807,7 @@ public class JetParsing extends AbstractJetParsing {
             PsiBuilder.Marker parameterList = mark();
             PsiBuilder.Marker setterParameter = mark();
             int lastId = findLastBefore(TokenSet.create(IDENTIFIER), TokenSet.create(RPAR, COMMA, COLON), false);
-            createTruncatedBuilder(lastId).parseModifierList();
+            createTruncatedBuilder(lastId).parseModifierList(MODIFIER_LIST);
             expect(IDENTIFIER, "Expecting parameter name", TokenSet.create(RPAR, COLON, LBRACE, EQ));
 
             if (at(COLON)) {
@@ -1111,7 +1111,7 @@ public class JetParsing extends AbstractJetParsing {
         PsiBuilder.Marker mark = mark();
 
         int lastId = findLastBefore(TokenSet.create(IDENTIFIER), TokenSet.create(COMMA, GT, COLON), false);
-        createTruncatedBuilder(lastId).parseModifierList();
+        createTruncatedBuilder(lastId).parseModifierList(MODIFIER_LIST);
 
         expect(IDENTIFIER, "Type parameter name expected", TokenSet.EMPTY);
 
@@ -1235,7 +1235,7 @@ public class JetParsing extends AbstractJetParsing {
             PsiBuilder.Marker projection = mark();
 
             int lastId = findLastBefore(TokenSet.create(IDENTIFIER), TokenSet.create(COMMA, COLON, GT), false);
-            createTruncatedBuilder(lastId).parseModifierList();
+            createTruncatedBuilder(lastId).parseModifierList(MODIFIER_LIST);
 
             if (at(MUL)) {
                 advance(); // MUL
@@ -1372,7 +1372,7 @@ public class JetParsing extends AbstractJetParsing {
                 if (isFunctionTypeContents) {
                     if (!tryParseValueParameter()) {
                         PsiBuilder.Marker valueParameter = mark();
-                        parseModifierList(); // lazy, out, ref
+                        parseModifierList(MODIFIER_LIST); // lazy, out, ref
                         parseTypeRef();
                         valueParameter.done(VALUE_PARAMETER);
                     }
@@ -1406,7 +1406,7 @@ public class JetParsing extends AbstractJetParsing {
         PsiBuilder.Marker parameter = mark();
 
         int lastId = findLastBefore(TokenSet.create(IDENTIFIER), TokenSet.create(COMMA, RPAR, COLON), false);
-        createTruncatedBuilder(lastId).parseModifierList();
+        createTruncatedBuilder(lastId).parseModifierList(MODIFIER_LIST);
 
         if (at(VAR_KEYWORD) || at(VAL_KEYWORD)) {
             advance(); // VAR_KEYWORD | VAL_KEYWORD

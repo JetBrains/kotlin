@@ -56,9 +56,9 @@ public class ClassDescriptorResolver {
 
         WritableFunctionGroup constructors = new WritableFunctionGroup("<init>");
         for (JetConstructor constructor : classElement.getSecondaryConstructors()) {
-            constructors.addFunction(resolveConstructorDescriptor(members, classDescriptor, constructor, false));
+            constructors.addFunction(resolveSecondaryConstructorDescriptor(members, classDescriptor, constructor));
         }
-        ConstructorDescriptor primaryConstructorDescriptor = resolvePrimaryConstructor(scope, classDescriptor, classElement);
+        ConstructorDescriptor primaryConstructorDescriptor = resolvePrimaryConstructorDescriptor(scope, classDescriptor, classElement);
         if (primaryConstructorDescriptor != null) {
             constructors.addFunction(primaryConstructorDescriptor);
         }
@@ -67,7 +67,8 @@ public class ClassDescriptorResolver {
                 typeParameters,
                 supertypes,
                 members,
-                constructors
+                constructors,
+                primaryConstructorDescriptor
         );
     }
 
@@ -159,7 +160,7 @@ public class ClassDescriptorResolver {
     }
 
     @NotNull
-    public FunctionDescriptor resolveFunctionDescriptor(DeclarationDescriptor containingDescriptor, JetScope scope, JetFunction function) {
+    public FunctionDescriptorImpl resolveFunctionDescriptor(DeclarationDescriptor containingDescriptor, JetScope scope, JetFunction function) {
         FunctionDescriptorImpl functionDescriptor = new FunctionDescriptorImpl(
                 containingDescriptor,
                 AttributeResolver.INSTANCE.resolveAttributes(function.getModifierList()),
@@ -307,19 +308,21 @@ public class ClassDescriptorResolver {
         return variableDescriptor;
     }
 
+    @NotNull
     public VariableDescriptor resolveLocalVariableDescriptor(DeclarationDescriptor containingDeclaration, WritableScope scope, JetProperty property) {
         JetType type = getType(scope, property);
 
-        VariableDescriptorImpl propertyDescriptor = new LocalVariableDescriptor(
+        VariableDescriptorImpl variableDescriptor = new LocalVariableDescriptor(
                 containingDeclaration,
                 AttributeResolver.INSTANCE.resolveAttributes(property.getModifierList()),
                 JetPsiUtil.safeName(property.getName()),
                 type,
                 property.isVar());
-        trace.recordDeclarationResolution(property, propertyDescriptor);
-        return propertyDescriptor;
+        trace.recordDeclarationResolution(property, variableDescriptor);
+        return variableDescriptor;
     }
 
+    @NotNull
     public PropertyDescriptor resolvePropertyDescriptor(@NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope scope, JetProperty property) {
         JetType type = getType(scope, property);
 
@@ -443,12 +446,18 @@ public class ClassDescriptorResolver {
     }
 
     @NotNull
-    public ConstructorDescriptor resolveConstructorDescriptor(@NotNull JetScope scope, ClassDescriptor classDescriptor, JetConstructor constructor, boolean isPrimary) {
-        return createConstructorDescriptor(scope, classDescriptor, isPrimary, constructor.getModifierList(), constructor, constructor.getParameters());
+    public ConstructorDescriptor resolveSecondaryConstructorDescriptor(@NotNull JetScope scope, @NotNull ClassDescriptor classDescriptor, @NotNull JetConstructor constructor) {
+        return createConstructorDescriptor(scope, classDescriptor, false, constructor.getModifierList(), constructor, constructor.getParameters());
     }
 
     @NotNull
-    private ConstructorDescriptor createConstructorDescriptor(JetScope scope, ClassDescriptor classDescriptor, boolean isPrimary, JetModifierList modifierList, JetDeclaration declarationToTrace, List<JetParameter> valueParameters) {
+    private ConstructorDescriptor createConstructorDescriptor(
+            @NotNull JetScope scope,
+            @NotNull ClassDescriptor classDescriptor,
+            boolean isPrimary,
+            @Nullable JetModifierList modifierList,
+            @NotNull JetDeclaration declarationToTrace,
+            @NotNull List<JetParameter> valueParameters) {
         ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(
                 classDescriptor,
                 AttributeResolver.INSTANCE.resolveAttributes(modifierList),
@@ -463,33 +472,20 @@ public class ClassDescriptorResolver {
     }
 
     @Nullable
-    public ConstructorDescriptor resolvePrimaryConstructor(@NotNull JetScope scope, @NotNull ClassDescriptor classDescriptor, @NotNull JetClass classElement) {
+    public ConstructorDescriptor resolvePrimaryConstructorDescriptor(@NotNull JetScope scope, @NotNull ClassDescriptor classDescriptor, @NotNull JetClass classElement) {
         JetParameterList primaryConstructorParameterList = classElement.getPrimaryConstructorParameterList();
-        if (primaryConstructorParameterList != null) {
-            return createConstructorDescriptor(
-                    scope,
-                    classDescriptor,
-                    true,
-                    classElement.getModifierList(), // TODO
-                    classElement,
-                    primaryConstructorParameterList.getParameters());
-        }
-        else {
-            List<JetConstructor> secondaryConstructors = classElement.getSecondaryConstructors();
-            if (secondaryConstructors.isEmpty()) {
-                return createConstructorDescriptor(
-                        scope,
-                        classDescriptor,
-                        true,
-                        classElement.getModifierList(), // TODO
-                        classElement,
-                        Collections.<JetParameter>emptyList());
-            }
-            else return null;
-        }
+        if (primaryConstructorParameterList == null) return null;
+        return createConstructorDescriptor(
+                scope,
+                classDescriptor,
+                true,
+                classElement.getPrimaryConstructorModifierList(),
+                classElement,
+                primaryConstructorParameterList.getParameters());
     }
 
-    public VariableDescriptor resolvePrimaryConstructorParameterToAProperty(
+    @NotNull
+    public PropertyDescriptor resolvePrimaryConstructorParameterToAProperty(
             @NotNull ClassDescriptor classDescriptor,
             @NotNull JetScope scope,
             @NotNull JetParameter parameter) {
@@ -497,6 +493,14 @@ public class ClassDescriptorResolver {
         String name = parameter.getName();
         boolean isMutable = parameter.isMutable();
         JetModifierList modifierList = parameter.getModifierList();
+
+        if (modifierList != null) {
+            ASTNode abstractNode = modifierList.getModifierNode(JetTokens.ABSTRACT_KEYWORD);
+            if (abstractNode != null) {
+                semanticServices.getErrorHandler().genericError(abstractNode, "This property cannot be declared abstract");
+            }
+        }
+
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                 classDescriptor,
                 AttributeResolver.INSTANCE.resolveAttributes(modifierList),

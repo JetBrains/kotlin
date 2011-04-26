@@ -1,9 +1,34 @@
-class Z {
-  this() : this(1, true) {}
 
-  this(x : Int, y : Boolean) : this<error>(1)</error> {}
+class NoC
+class NoC1 : NoC
+
+class WithC0() : NoC<error>()</error>
+class WithC1() : NoC
+class NoC2 : <error>WithC1</error>
+class NoC3 : WithC1<error>()</error>
+class WithC2() : <error>WithC1</error>
+
+class NoPC {
+  <error>this</error>() {}
 }
 
-class Foo() : <error>Z</error>, <error>this</error>() {
+class WithPC0() {
+  this(a : Int) : this() {}
+}
+
+class WithPC1(a : Int) {
+  <error>this</error>() {}
+
+  this(b : Long) : this("") {}
+
+  this(s : String) : this(1) {}
+
+  this(b : Char) : this<error>("", 2)</error> {}
+
+  this(b : Byte) : this(""), <error>this(1)</error> {}
+}
+
+
+class Foo() : <error>WithPC0</error>, <error>this</error>() {
 
 }

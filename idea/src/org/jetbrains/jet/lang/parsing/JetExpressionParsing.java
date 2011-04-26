@@ -929,7 +929,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     private boolean parseLocalDeclaration() {
         PsiBuilder.Marker decls = mark();
         JetParsing.TokenDetector enumDetector = new JetParsing.TokenDetector(ENUM_KEYWORD);
-        myJetParsing.parseModifierList(enumDetector);
+        myJetParsing.parseModifierList(MODIFIER_LIST, enumDetector);
 
         JetNodeType declType = parseLocalDeclarationRest(enumDetector.isDetected());
 
@@ -1002,7 +1002,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 PsiBuilder.Marker parameter = mark();
                 int parameterNamePos = matchTokenStreamPredicate(new LastBefore(new At(IDENTIFIER), new AtOffset(doubleArrowPos)));
 
-                createTruncatedBuilder(parameterNamePos).parseModifierList();
+                createTruncatedBuilder(parameterNamePos).parseModifierList(MODIFIER_LIST);
 
                 expect(IDENTIFIER, "Expecting parameter name", TokenSet.create(DOUBLE_ARROW));
 
@@ -1046,7 +1046,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
                 PsiBuilder.Marker parameter = mark();
                 int parameterNamePos = matchTokenStreamPredicate(new LastBefore(new At(IDENTIFIER), new AtSet(COMMA, RPAR, COLON, DOUBLE_ARROW)));
-                createTruncatedBuilder(parameterNamePos).parseModifierList();
+                createTruncatedBuilder(parameterNamePos).parseModifierList(MODIFIER_LIST);
 
                 expect(IDENTIFIER, "Expecting parameter declaration");
 

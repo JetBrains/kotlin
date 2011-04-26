@@ -61,4 +61,9 @@ public class JetClass extends JetTypeParameterListOwner implements JetClassOrObj
         JetDelegationSpecifierList list = getDelegationSpecifierList();
         return list != null ? list.getDelegationSpecifiers() : Collections.<JetDelegationSpecifier>emptyList();
     }
+
+    @Nullable
+    public JetModifierList getPrimaryConstructorModifierList() {
+        return (JetModifierList) findChildByType(JetNodeTypes.PRIMARY_CONSTRUCTOR_MODIFIER_LIST);
+    }
 }

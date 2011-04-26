@@ -47,7 +47,8 @@ public class JetStandardClasses {
                 }
             },
             JetScope.EMPTY,
-            FunctionGroup.EMPTY
+            FunctionGroup.EMPTY,
+            null
     );
 
     private static final JetType NOTHING_TYPE = new JetTypeImpl(getNothing());
@@ -68,7 +69,8 @@ public class JetStandardClasses {
             Collections.<TypeParameterDescriptor>emptyList(),
             Collections.<JetType>emptySet(),
             JetScope.EMPTY,
-            FunctionGroup.EMPTY
+            FunctionGroup.EMPTY,
+            null
     );
 
     private static final JetType ANY_TYPE = new JetTypeImpl(ANY.getTypeConstructor(), JetScope.EMPTY);
@@ -102,7 +104,8 @@ public class JetStandardClasses {
                     parameters,
                     Collections.singleton(getAnyType()),
                     STUB,
-                    STUB_FG);
+                    STUB_FG,
+                    null); // TODO : constructor
         }
     }
 
@@ -122,7 +125,7 @@ public class JetStandardClasses {
             FUNCTION[i] = function.initialize(
                     false,
                     createTypeParameters(i, function),
-                    Collections.singleton(getAnyType()), STUB, STUB_FG);
+                    Collections.singleton(getAnyType()), STUB, FunctionGroup.EMPTY, null);
 
             ClassDescriptorImpl receiverFunction = new ClassDescriptorImpl(
                     STANDARD_CLASSES_NAMESPACE,
@@ -136,7 +139,7 @@ public class JetStandardClasses {
             RECEIVER_FUNCTION[i] = receiverFunction.initialize(
                     false,
                     parameters,
-                    Collections.singleton(getAnyType()), STUB, STUB_FG);
+                    Collections.singleton(getAnyType()), STUB, FunctionGroup.EMPTY, null);
         }
     }
 

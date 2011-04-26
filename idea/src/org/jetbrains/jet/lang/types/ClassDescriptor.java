@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.JetScope;
 
 import java.util.List;
@@ -15,6 +16,9 @@ public interface ClassDescriptor extends ClassifierDescriptor {
 
     @NotNull
     FunctionGroup getConstructors(List<TypeProjection> typeArguments);
+
+    @Nullable
+    ConstructorDescriptor getUnsubstitutedPrimaryConstructor();
 
     @Override
     @NotNull

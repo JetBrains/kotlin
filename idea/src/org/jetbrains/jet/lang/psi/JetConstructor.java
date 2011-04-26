@@ -59,4 +59,8 @@ public class JetConstructor extends JetDeclaration implements JetDeclarationWith
     public JetElement asElement() {
         return this;
     }
+
+    public ASTNode getNameNode() {
+        return getNode().findChildByType(JetTokens.THIS_KEYWORD);
+    }
 }
