@@ -20,6 +20,8 @@ public interface ClassDescriptor extends ClassifierDescriptor {
     @Nullable
     ConstructorDescriptor getUnsubstitutedPrimaryConstructor();
 
+    boolean hasConstructors();
+
     @Override
     @NotNull
     DeclarationDescriptor getContainingDeclaration();

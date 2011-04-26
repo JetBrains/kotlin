@@ -112,4 +112,9 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     public ConstructorDescriptor getUnsubstitutedPrimaryConstructor() {
         return primaryConstructor;
     }
+
+    @Override
+    public boolean hasConstructors() {
+        return !constructors.isEmpty();
+    }
 }

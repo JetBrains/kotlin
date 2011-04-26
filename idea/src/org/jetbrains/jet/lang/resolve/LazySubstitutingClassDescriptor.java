@@ -55,6 +55,11 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
     }
 
     @Override
+    public boolean hasConstructors() {
+        return original.hasConstructors();
+    }
+
+    @Override
     public List<Attribute> getAttributes() {
         throw new UnsupportedOperationException(); // TODO
     }

@@ -473,15 +473,14 @@ public class ClassDescriptorResolver {
 
     @Nullable
     public ConstructorDescriptor resolvePrimaryConstructorDescriptor(@NotNull JetScope scope, @NotNull ClassDescriptor classDescriptor, @NotNull JetClass classElement) {
-        JetParameterList primaryConstructorParameterList = classElement.getPrimaryConstructorParameterList();
-        if (primaryConstructorParameterList == null) return null;
+        if (!classElement.hasPrimaryConstructor()) return null;
         return createConstructorDescriptor(
                 scope,
                 classDescriptor,
                 true,
                 classElement.getPrimaryConstructorModifierList(),
                 classElement,
-                primaryConstructorParameterList.getParameters());
+                classElement.getPrimaryConstructorParameters());
     }
 
     @NotNull

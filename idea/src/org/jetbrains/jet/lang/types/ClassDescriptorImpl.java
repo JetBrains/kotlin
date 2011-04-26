@@ -89,4 +89,9 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
     public ConstructorDescriptor getUnsubstitutedPrimaryConstructor() {
         return primaryConstructor;
     }
+
+    @Override
+    public boolean hasConstructors() {
+        return !constructors.isEmpty();
+    }
 }

@@ -122,9 +122,11 @@ public class TypeResolver {
                         parameterTypes.add(resolveType(scope, parameter.getTypeReference()));
                     }
 
-                    JetType returnType = resolveType(scope, type.getReturnTypeRef());
-
-                    result[0] = JetStandardClasses.getFunctionType(attributes, receiverType, parameterTypes, returnType);
+                    JetTypeReference returnTypeRef = type.getReturnTypeRef();
+                    if (returnTypeRef != null) {
+                        JetType returnType = resolveType(scope, returnTypeRef);
+                        result[0] = JetStandardClasses.getFunctionType(attributes, receiverType, parameterTypes, returnType);
+                    }
                 }
 
                 @Override

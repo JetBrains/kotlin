@@ -1,0 +1,34 @@
+class NoC {
+  <error>{
+
+  }</error>
+
+  val a : Int get() = 1
+
+  <error>{
+
+  }</error>
+}
+
+class WithC() {
+  val x : Int
+  {
+    $x = 1
+    <error>$y</error> = 2
+    val b = x
+
+  }
+
+  val a : Int get() = 1
+
+  {
+    val z = <error>b</error>
+    val zz = x
+    val zzz = <error>$a</error>
+  }
+
+  this(a : Int) : this() {
+    val b = x
+  }
+
+}

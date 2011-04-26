@@ -66,4 +66,16 @@ public class JetClass extends JetTypeParameterListOwner implements JetClassOrObj
     public JetModifierList getPrimaryConstructorModifierList() {
         return (JetModifierList) findChildByType(JetNodeTypes.PRIMARY_CONSTRUCTOR_MODIFIER_LIST);
     }
+
+    @NotNull
+    public List<JetClassInitializer> getAnonymousInitializers() {
+        JetClassBody body = (JetClassBody) findChildByType(JetNodeTypes.CLASS_BODY);
+        if (body == null) return Collections.emptyList();
+
+        return body.getAnonymousInitializers();
+    }
+
+    public boolean hasPrimaryConstructor() {
+        return getPrimaryConstructorParameterList() != null;
+    }
 }

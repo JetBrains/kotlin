@@ -221,8 +221,13 @@ public class TopDownAnalyzer {
                 }
 
                 @Override
+                public void visitAnonymousInitializer(JetClassInitializer initializer) {
+                    // Nothing
+                }
+
+                @Override
                 public void visitDeclaration(JetDeclaration dcl) {
-                    semanticServices.getErrorHandler().genericError(dcl.getNode(), "Unsupported declaration: " + dcl); // TODO
+                    semanticServices.getErrorHandler().genericError(dcl.getNode(), "[TopDownAnalyzer] Unsupported declaration: " + dcl); // TODO
                 }
             });
         }
@@ -230,7 +235,7 @@ public class TopDownAnalyzer {
     }
 
     private void processPrimaryConstructor(MutableClassDescriptor classDescriptor, JetClass klass) {
-        if (klass.getPrimaryConstructorParameterList() == null) return; // No constructors
+        if (!klass.hasPrimaryConstructor()) return;
 
         // TODO : not all the parameters are real properties
         WritableScope memberScope = classDescriptor.getWritableUnsubstitutedMemberScope(); // TODO : this is REALLY questionable
@@ -282,6 +287,9 @@ public class TopDownAnalyzer {
 
     private void resolveBehaviorDeclarationBodies() {
         resolveDelegationSpecifierLists();
+
+        resolveAnonymousInitializers();
+
         resolveSecondaryConstructorBodies();
 
         //TODO : anonymous initializers
@@ -316,7 +324,7 @@ public class TopDownAnalyzer {
                         JetTypeReference typeReference = call.getTypeReference();
                         if (typeReference != null) {
                             typeInferrer.checkConstructorCall(descriptor.getWritableUnsubstitutedMemberScope(), typeReference, call);
-                            if (jetClass.getPrimaryConstructorParameterList() == null) {
+                            if (!jetClass.hasPrimaryConstructor()) {
                                 JetArgumentList valueArgumentList = call.getValueArgumentList();
                                 assert valueArgumentList != null;
                                 semanticServices.getErrorHandler().genericError(valueArgumentList.getNode(),
@@ -332,7 +340,7 @@ public class TopDownAnalyzer {
                             DeclarationDescriptor declarationDescriptor = supertype.getConstructor().getDeclarationDescriptor();
                             if (declarationDescriptor instanceof ClassDescriptor) {
                                 ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
-                                if (classDescriptor.getUnsubstitutedPrimaryConstructor() != null) {
+                                if (classDescriptor.hasConstructors()) {
                                     semanticServices.getErrorHandler().genericError(specifier.getNode(), "This type has a constructor, and thus must be initialized here");
                                 }
                             }
@@ -357,6 +365,29 @@ public class TopDownAnalyzer {
         }
     }
 
+    private void resolveAnonymousInitializers() {
+        for (Map.Entry<JetClass, MutableClassDescriptor> entry : classes.entrySet()) {
+            JetClass jetClass = entry.getKey();
+            MutableClassDescriptor classDescriptor = entry.getValue();
+
+            List<JetClassInitializer> anonymousInitializers = jetClass.getAnonymousInitializers();
+            if (jetClass.hasPrimaryConstructor()) {
+                ConstructorDescriptor primaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
+                assert primaryConstructor != null;
+                final JetScope scopeForConstructor = getInnerScopeForConstructor(primaryConstructor, classDescriptor.getWritableUnsubstitutedMemberScope());
+                JetTypeInferrer typeInferrer = semanticServices.getTypeInferrer(traceForConstructors, JetFlowInformationProvider.NONE); // TODO : flow
+                for (JetClassInitializer anonymousInitializer : anonymousInitializers) {
+                    typeInferrer.getType(scopeForConstructor, anonymousInitializer.getBody(), true);
+                }
+            }
+            else {
+                for (JetClassInitializer anonymousInitializer : anonymousInitializers) {
+                    semanticServices.getErrorHandler().genericError(anonymousInitializer.getNode(), "Anonymous initializers are only allowed in the presence of a primary constructor");
+                }
+            }
+        }
+    }
+
     private void resolveSecondaryConstructorBodies() {
         for (Map.Entry<JetDeclaration, ConstructorDescriptor> entry : constructors.entrySet()) {
             JetDeclaration declaration = entry.getKey();
@@ -372,17 +403,13 @@ public class TopDownAnalyzer {
     }
 
     private void resolveSecondaryConstructorBody(JetConstructor declaration, final ConstructorDescriptor descriptor, final WritableScope declaringScope) {
-        WritableScope constructorScope = semanticServices.createWritableScope(declaringScope, declaringScope.getContainingDeclaration());
-        for (PropertyDescriptor propertyDescriptor : declaringScopesToProperties.get(descriptor.getContainingDeclaration())) {
-            constructorScope.addPropertyDescriptorByFieldName("$" + propertyDescriptor.getName(), propertyDescriptor);
-        }
-        final JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(constructorScope, descriptor, semanticServices);
+        final JetScope functionInnerScope = getInnerScopeForConstructor(descriptor, declaringScope);
 
         final JetTypeInferrer typeInferrerForInitializers = semanticServices.getTypeInferrer(traceForConstructors, JetFlowInformationProvider.NONE);
 
         JetClass containingClass = PsiTreeUtil.getParentOfType(declaration, JetClass.class);
         assert containingClass != null : "This must be guaranteed by the parser";
-        if (containingClass.getPrimaryConstructorParameterList() == null) {
+        if (!containingClass.hasPrimaryConstructor()) {
             semanticServices.getErrorHandler().genericError(declaration.getNameNode(), "A secondary constructor may appear only in a class that has a primary constructor");
         }
         else {
@@ -442,6 +469,15 @@ public class TopDownAnalyzer {
 
             typeInferrer.getType(functionInnerScope, bodyExpression, true);
         }
+    }
+
+    @NotNull
+    private JetScope getInnerScopeForConstructor(@NotNull ConstructorDescriptor descriptor, @NotNull JetScope declaringScope) {
+        WritableScope constructorScope = semanticServices.createWritableScope(declaringScope, declaringScope.getContainingDeclaration());
+        for (PropertyDescriptor propertyDescriptor : declaringScopesToProperties.get(descriptor.getContainingDeclaration())) {
+            constructorScope.addPropertyDescriptorByFieldName("$" + propertyDescriptor.getName(), propertyDescriptor);
+        }
+        return FunctionDescriptorUtil.getFunctionInnerScope(constructorScope, descriptor, semanticServices);
     }
 
     private void resolvePropertyDeclarationBodies() {

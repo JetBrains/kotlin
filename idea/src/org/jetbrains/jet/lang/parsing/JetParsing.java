@@ -253,8 +253,8 @@ public class JetParsing extends AbstractJetParsing {
     /*
      * (modifier | attribute)*
      */
-    public void parseModifierList(JetNodeType nodeType) {
-        parseModifierList(nodeType, null);
+    public boolean parseModifierList(JetNodeType nodeType) {
+        return parseModifierList(nodeType, null);
     }
 
     /**
@@ -262,7 +262,7 @@ public class JetParsing extends AbstractJetParsing {
      *
      * Feeds modifiers (not attributes) into the passed consumer, if it is not null
      */
-    public void parseModifierList(JetNodeType nodeType, Consumer<IElementType> tokenConsumer) {
+    public boolean parseModifierList(JetNodeType nodeType, Consumer<IElementType> tokenConsumer) {
         PsiBuilder.Marker list = mark();
         boolean empty = true;
         while (!eof()) {
@@ -282,6 +282,7 @@ public class JetParsing extends AbstractJetParsing {
         } else {
             list.done(nodeType);
         }
+        return !empty;
     }
 
     /*
@@ -376,8 +377,9 @@ public class JetParsing extends AbstractJetParsing {
      * class
      *   : modifiers "class" SimpleName
      *       typeParameters?
-     *       ("wraps" | modifiers)?
-     *       ("(" primaryConstructorParameter{","} ")")?
+     *       (
+     *          ("wraps" "(" primaryConstructorParameter{","} ")") |
+     *          (modifiers "(" primaryConstructorParameter{","} ")"))?
      *       (":" attributes delegationSpecifier{","})?
      *       (classBody? | enumClassBody)
      *   ;
@@ -391,13 +393,17 @@ public class JetParsing extends AbstractJetParsing {
 
         if (at(WRAPS_KEYWORD)) {
             advance(); // WRAPS_KEYWORD
+            parseValueParameterList(false, TokenSet.create(COLON, LBRACE));
         }
         else {
-            parseModifierList(PRIMARY_CONSTRUCTOR_MODIFIER_LIST);
-        }
-
-        if (at(LPAR)) {
-            parseValueParameterList(false, TokenSet.EMPTY);
+            if (parseModifierList(PRIMARY_CONSTRUCTOR_MODIFIER_LIST)) {
+                parseValueParameterList(false, TokenSet.create(COLON, LBRACE));
+            }
+            else {
+                if (at(LPAR)) {
+                    parseValueParameterList(false, TokenSet.create(COLON, LBRACE));
+                }
+            }
         }
 
         if (at(COLON)) {
