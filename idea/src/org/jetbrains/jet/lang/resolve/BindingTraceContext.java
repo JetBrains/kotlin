@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.resolve;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.*;
 
@@ -135,6 +136,12 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
     @Override
     public JetType getExpressionType(JetExpression expression) {
         return expressionTypes.get(expression);
+    }
+
+    @Nullable
+    @Override
+    public ConstructorDescriptor getConstructorDescriptor(@NotNull JetElement declaration) {
+        return constructorDeclarationsToDescriptors.get(declaration);
     }
 
     @Override
