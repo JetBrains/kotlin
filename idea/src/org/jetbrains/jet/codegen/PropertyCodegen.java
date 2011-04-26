@@ -85,9 +85,13 @@ public class PropertyCodegen {
                     value = ((JetConstantExpression) initializer).getValue();
                 }
             }
-            int modifiers = Opcodes.ACC_PRIVATE;
+            final int modifiers;
             if (kind == OwnerKind.NAMESPACE) {
-                modifiers |= Opcodes.ACC_STATIC;
+                int access = isExternallyAccessible(p) ? Opcodes.ACC_PUBLIC : Opcodes.ACC_PRIVATE;
+                modifiers = access | Opcodes.ACC_STATIC;
+            }
+            else {
+                modifiers = Opcodes.ACC_PRIVATE;
             }
             v.visitField(modifiers, p.getName(), mapper.mapType(propertyDescriptor.getOutType()).getDescriptor(), null, value);
         }
