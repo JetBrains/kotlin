@@ -3,6 +3,7 @@ package org.jetbrains.jet.lang.resolve;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.JetSemanticServices;
@@ -273,6 +274,7 @@ public class TopDownAnalyzer {
 
     private void processProperty(WritableScope declaringScope, JetProperty property) {
         declaringScopes.put(property, declaringScope);
+        // TODO : Do not infer the type from the initializer here: the scope is wrong, and not ready anyway
         PropertyDescriptor descriptor = classDescriptorResolver.resolvePropertyDescriptor(declaringScope.getContainingDeclaration(), declaringScope, property);
         declaringScope.addVariableDescriptor(descriptor);
         declaringScopesToProperties.put(declaringScope.getContainingDeclaration(), descriptor);
@@ -289,12 +291,9 @@ public class TopDownAnalyzer {
         resolveDelegationSpecifierLists();
 
         resolveAnonymousInitializers();
+        resolvePropertyDeclarationBodies();
 
         resolveSecondaryConstructorBodies();
-
-        //TODO : anonymous initializers
-
-        resolvePropertyDeclarationBodies();
         resolveFunctionBodies();
     }
 
@@ -481,68 +480,114 @@ public class TopDownAnalyzer {
     }
 
     private void resolvePropertyDeclarationBodies() {
-        for (Map.Entry<JetProperty, PropertyDescriptor> entry : properties.entrySet()) {
-            JetProperty declaration = entry.getKey();
-            final PropertyDescriptor propertyDescriptor = entry.getValue();
-            WritableScope declaringScope = declaringScopes.get(declaration);
 
-            JetExpression initializer = declaration.getInitializer();
-            if (initializer != null) {
-                JetFlowInformationProvider flowInformationProvider = computeFlowData(declaration, initializer);
-                JetTypeInferrer typeInferrer = semanticServices.getTypeInferrer(trace, flowInformationProvider);
-                JetType type = typeInferrer.getType(declaringScope, initializer, false);
+        // Member properties
+        Set<JetProperty> processed = Sets.newHashSet();
+        for (Map.Entry<JetClass, MutableClassDescriptor> entry : classes.entrySet()) {
+            JetClass jetClass = entry.getKey();
+            MutableClassDescriptor classDescriptor = entry.getValue();
 
-                JetType expectedType;
-                PropertySetterDescriptor setter = propertyDescriptor.getSetter();
-                if (setter != null) {
-                    expectedType = setter.getUnsubstitutedReturnType();
-                }
-                else {
-                    expectedType = propertyDescriptor.getInType();
-                    if (expectedType == null) {
-                        expectedType = propertyDescriptor.getOutType();
+            for (JetProperty property : jetClass.getProperties()) {
+                final PropertyDescriptor propertyDescriptor = properties.get(property);
+                assert propertyDescriptor != null;
+
+                WritableScope declaringScope = declaringScopes.get(property);
+
+                JetExpression initializer = property.getInitializer();
+                if (initializer != null) {
+                    ConstructorDescriptor primaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
+                    if (primaryConstructor == null) {
+                        semanticServices.getErrorHandler().genericError(initializer.getNode(), "Property initializers are not allowed when no primary constructor is present");
+                    }
+                    else {
+                        JetScope scope = getInnerScopeForConstructor(primaryConstructor, classDescriptor.getWritableUnsubstitutedMemberScope());
+                        resolvePropertyInitializer(property, propertyDescriptor, initializer, scope);
                     }
                 }
-                if (type != null && expectedType != null
-                    && !semanticServices.getTypeChecker().isConvertibleTo(type, expectedType)) {
-                    semanticServices.getErrorHandler().typeMismatch(initializer, expectedType, type);
-                }
+
+                resolvePropertyAccessors(property, propertyDescriptor, declaringScope);
+                processed.add(property);
+            }
+        }
+
+        // Top-level properties
+        for (Map.Entry<JetProperty, PropertyDescriptor> entry : properties.entrySet()) {
+            JetProperty property = entry.getKey();
+            if (processed.contains(property)) continue;
+
+            final PropertyDescriptor propertyDescriptor = entry.getValue();
+            WritableScope declaringScope = declaringScopes.get(property);
+
+            JetExpression initializer = property.getInitializer();
+            if (initializer != null) {
+                resolvePropertyInitializer(property, propertyDescriptor, initializer, declaringScope);
             }
 
-            BindingTraceAdapter fieldAccessTrackingTrace = new BindingTraceAdapter(trace) {
-                @Override
-                public void recordReferenceResolution(@NotNull JetReferenceExpression expression, @NotNull DeclarationDescriptor descriptor) {
-                    super.recordReferenceResolution(expression, descriptor);
-                    if (expression instanceof JetSimpleNameExpression) {
-                        JetSimpleNameExpression simpleNameExpression = (JetSimpleNameExpression) expression;
-                        if (simpleNameExpression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER) {
-                            // This check may be considered redundant as long as $x is only accessible from accessors to $x
-                            if (descriptor == propertyDescriptor) { // TODO : original?
-                                recordFieldAccessFromAccessor(propertyDescriptor);
-                            }
+            resolvePropertyAccessors(property, propertyDescriptor, declaringScope);
+        }
+    }
+
+    private void resolvePropertyAccessors(JetProperty property, PropertyDescriptor propertyDescriptor, WritableScope declaringScope) {
+        BindingTraceAdapter fieldAccessTrackingTrace = createFieldTrackingTrace(propertyDescriptor);
+
+        WritableScope accessorScope = semanticServices.createWritableScope(declaringScope, declaringScope.getContainingDeclaration());
+        accessorScope.addPropertyDescriptorByFieldName("$" + propertyDescriptor.getName(), propertyDescriptor);
+
+        JetPropertyAccessor getter = property.getGetter();
+        PropertyGetterDescriptor getterDescriptor = propertyDescriptor.getGetter();
+        if (getter != null && getterDescriptor != null) {
+            resolveFunctionBody(fieldAccessTrackingTrace, getter, getterDescriptor, accessorScope);
+        }
+
+        JetPropertyAccessor setter = property.getSetter();
+        PropertySetterDescriptor setterDescriptor = propertyDescriptor.getSetter();
+        if (setter != null && setterDescriptor != null) {
+            resolveFunctionBody(fieldAccessTrackingTrace, setter, setterDescriptor, accessorScope);
+        }
+
+        JetExpression initializer = property.getInitializer();
+        if (!property.isVar() && initializer != null && !trace.hasBackingField(propertyDescriptor)) {
+            semanticServices.getErrorHandler().genericError(initializer.getNode(), "Initializer is not allowed here because this property has no setter and no backing field either");
+        }
+    }
+
+    private BindingTraceAdapter createFieldTrackingTrace(final PropertyDescriptor propertyDescriptor) {
+        return new BindingTraceAdapter(trace) {
+            @Override
+            public void recordReferenceResolution(@NotNull JetReferenceExpression expression, @NotNull DeclarationDescriptor descriptor) {
+                super.recordReferenceResolution(expression, descriptor);
+                if (expression instanceof JetSimpleNameExpression) {
+                    JetSimpleNameExpression simpleNameExpression = (JetSimpleNameExpression) expression;
+                    if (simpleNameExpression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER) {
+                        // This check may be considered redundant as long as $x is only accessible from accessors to $x
+                        if (descriptor == propertyDescriptor) { // TODO : original?
+                            recordFieldAccessFromAccessor(propertyDescriptor);
                         }
                     }
                 }
-            };
-
-            WritableScope accessorScope = semanticServices.createWritableScope(declaringScope, declaringScope.getContainingDeclaration());
-            accessorScope.addPropertyDescriptorByFieldName("$" + propertyDescriptor.getName(), propertyDescriptor);
-
-            JetPropertyAccessor getter = declaration.getGetter();
-            PropertyGetterDescriptor getterDescriptor = propertyDescriptor.getGetter();
-            if (getter != null && getterDescriptor != null) {
-                resolveFunctionBody(fieldAccessTrackingTrace, getter, getterDescriptor, accessorScope);
             }
+        };
+    }
 
-            JetPropertyAccessor setter = declaration.getSetter();
-            PropertySetterDescriptor setterDescriptor = propertyDescriptor.getSetter();
-            if (setter != null && setterDescriptor != null) {
-                resolveFunctionBody(fieldAccessTrackingTrace, setter, setterDescriptor, accessorScope);
-            }
+    private void resolvePropertyInitializer(JetProperty property, PropertyDescriptor propertyDescriptor, JetExpression initializer, JetScope scope) {
+        JetFlowInformationProvider flowInformationProvider = computeFlowData(property, initializer); // TODO : flow JET-15
+        JetTypeInferrer typeInferrer = semanticServices.getTypeInferrer(trace, flowInformationProvider);
+        JetType type = typeInferrer.getType(scope, initializer, false);
 
-            if (!declaration.isVar() && initializer != null && !trace.hasBackingField(propertyDescriptor)) {
-                semanticServices.getErrorHandler().genericError(initializer.getNode(), "Initializer is not allowed here because this property has no setter and no backing field either");
+        JetType expectedType;
+        PropertySetterDescriptor setter = propertyDescriptor.getSetter();
+        if (setter != null) {
+            expectedType = setter.getUnsubstitutedReturnType();
+        }
+        else {
+            expectedType = propertyDescriptor.getInType();
+            if (expectedType == null) {
+                expectedType = propertyDescriptor.getOutType();
             }
+        }
+        if (type != null && expectedType != null
+            && !semanticServices.getTypeChecker().isConvertibleTo(type, expectedType)) {
+            semanticServices.getErrorHandler().typeMismatch(initializer, expectedType, type);
         }
     }
 

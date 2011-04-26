@@ -4,7 +4,7 @@ class Dup {
   }
 }
 
-class A {
+class A() {
   fun foo() : Unit {
     this@A
     this<error>@a</error>

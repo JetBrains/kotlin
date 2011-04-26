@@ -32,3 +32,20 @@ class WithPC1(a : Int) {
 class Foo() : <error>WithPC0</error>, <error>this</error>() {
 
 }
+
+class WithCPI_Dup(<error>x : Int</error>) {
+  <error>var x : Int</error>
+}
+
+class WithCPI(x : Int) {
+  val a = 1
+  val b : Int = $a
+  val xy : Int = x
+}
+
+class NoCPI {
+  val a = <error>1</error>
+  var ab = <error>1</error>
+    get() = 1
+    set(v) {}
+}

@@ -1,4 +1,4 @@
-class Test {
+class Test() {
     <info>abstract</info> val x : Int
     <info>abstract</info> val x1 : Int <info>get</info>
     <info>abstract</info> val x2 : Int <info>get</info>() = 1

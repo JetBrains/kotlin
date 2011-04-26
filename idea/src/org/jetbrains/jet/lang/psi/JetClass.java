@@ -78,4 +78,11 @@ public class JetClass extends JetTypeParameterListOwner implements JetClassOrObj
     public boolean hasPrimaryConstructor() {
         return getPrimaryConstructorParameterList() != null;
     }
+
+    public List<JetProperty> getProperties() {
+        JetClassBody body = (JetClassBody) findChildByType(JetNodeTypes.CLASS_BODY);
+        if (body == null) return Collections.emptyList();
+
+        return body.getProperties();
+    }
 }

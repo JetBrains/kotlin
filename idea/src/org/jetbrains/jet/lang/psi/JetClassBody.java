@@ -32,4 +32,9 @@ public class JetClassBody extends JetElement {
     public List<JetClassInitializer> getAnonymousInitializers() {
         return findChildrenByType(JetNodeTypes.ANONYMOUS_INITIALIZER);
     }
+
+    @NotNull
+    public List<JetProperty> getProperties() {
+        return findChildrenByType(JetNodeTypes.PROPERTY);
+    }
 }

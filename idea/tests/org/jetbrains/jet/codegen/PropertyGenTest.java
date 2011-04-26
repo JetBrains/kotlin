@@ -30,7 +30,7 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     public void testPublicVar() throws Exception {
-        loadText("class PublicVar { public var foo = 0; }");
+        loadText("class PublicVar() { public var foo = 0; }");
         System.out.println(generateToText());
         final Class aClass = loadImplementationClass(generateClassesInFile(), "PublicVar");
         final Object instance = aClass.newInstance();
@@ -41,7 +41,7 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     public void testAccessorsInInterface() {
-        loadText("class AccessorsInInterface { public var foo = 0; }");
+        loadText("class AccessorsInInterface() { public var foo = 0; }");
         final Class aClass = loadClass("AccessorsInInterface", generateClassesInFile());
         assertNotNull(findMethodByName(aClass, "getFoo"));
         assertNotNull(findMethodByName(aClass, "setFoo"));
@@ -82,7 +82,7 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     public void testAccessorsWithoutBody() throws Exception {
-        loadText("class AccessorsWithoutBody { public var foo: Int = 349\n  get\n  private set\n fun setter() { foo = 610; } } ");
+        loadText("class AccessorsWithoutBody() { public var foo: Int = 349\n  get\n  private set\n fun setter() { foo = 610; } } ");
         final Class aClass = loadImplementationClass(generateClassesInFile(), "AccessorsWithoutBody");
         final Object instance = aClass.newInstance();
         final Method getFoo = findMethodByName(aClass, "getFoo");
