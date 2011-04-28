@@ -79,7 +79,7 @@ public class JetTypeMapper {
     }
 
     public Type mapType(final JetType jetType) {
-        if (jetType.equals(JetStandardClasses.getUnitType())) {
+        if (jetType.equals(JetStandardClasses.getUnitType()) || jetType.equals(JetStandardClasses.getNothingType())) {
             return Type.VOID_TYPE;
         }
         if (jetType.equals(standardLibrary.getIntType())) {
