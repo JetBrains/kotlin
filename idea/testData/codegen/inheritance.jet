@@ -9,3 +9,7 @@ class P1(x : Int, y : Y) : Abstract, X(x), Y by y {}
 class P2(x : Int, y : Y) : X(x), Abstract, Y by y {}
 class P3(x : Int, y : Y) : X(x), Y by y, Abstract {}
 class P4(x : Int, y : Y) : Y by y, Abstract, X(x) {}
+
+fun box() : String {
+    "OK"
+}

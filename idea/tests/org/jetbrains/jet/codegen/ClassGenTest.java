@@ -23,14 +23,12 @@ public class ClassGenTest extends CodegenTestCase {
         final Class aClass = loadClass("Foo", generateClassesInFile());
         checkInterface(aClass, List.class);
     }
+
     public void testArrayInheritance() throws Exception {
         loadFile("inheritance.jet");
         System.out.println(generateToText());
 
-/*
-        final Class aClass = loadClass("Foo", generateClassesInFile());
-        checkInterface(aClass, List.class);
-*/
+        assertEquals("OK", blackBox());
     }
 
     private static void checkInterface(Class aClass, Class ifs) {
