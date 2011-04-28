@@ -100,4 +100,11 @@ public class ControlStructuresTest extends CodegenTestCase {
         }
         assertTrue(caught);
     }
+
+    public void testTryCatch() throws Exception {
+        loadFile("tryCatch.jet");
+        final Method main = generateFunction();
+        assertEquals("no message", main.invoke(null, "0"));
+        assertEquals("xxx", main.invoke(null, "a"));
+    }
 }
