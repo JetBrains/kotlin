@@ -207,8 +207,9 @@ public class ClassCodegen {
                 JetType superType = bindingContext.resolveTypeReference(specifier.getTypeReference());
                 ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
                 String delegateField = "$delegate_" + n;
-                v.visitField(Opcodes.ACC_PRIVATE, delegateField, JetTypeMapper.jvmNameForInterface(superClassDescriptor), /*TODO*/null, null);
-                iv.putfield(classname, delegateField, JetTypeMapper.jetInterfaceType(superClassDescriptor).getDescriptor());
+                String fieldDesc = JetTypeMapper.jetInterfaceType(superClassDescriptor).getDescriptor();
+                v.visitField(Opcodes.ACC_PRIVATE, delegateField, fieldDesc, /*TODO*/null, null);
+                iv.putfield(classname, delegateField, fieldDesc);
             }
 
             n++;
