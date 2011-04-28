@@ -193,7 +193,6 @@ public class JetTypeMapper {
         for (int i = 0; i < parameters.size(); i++) {
             parameterTypes[i] = mapType(parameters.get(i).getOutType());
         }
-        Type returnType = mapType(descriptor.getUnsubstitutedReturnType());
         return new Method("<init>", Type.VOID_TYPE, parameterTypes);
     }
 
