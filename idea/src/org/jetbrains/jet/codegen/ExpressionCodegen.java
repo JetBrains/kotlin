@@ -828,25 +828,44 @@ public class ExpressionCodegen extends JetVisitor {
     private void generateAugmentedAssignment(JetBinaryExpression expression) {
         DeclarationDescriptor op = bindingContext.resolveReferenceExpression(expression.getOperationReference());
         final JetExpression lhs = expression.getLeft();
-        Type asmType = expressionType(lhs);
-        StackValue value = generateIntermediateValue(lhs);
-        value.dupReceiver(v);
-        value.put(asmType, v);
-        genToJVMStack(expression.getRight());
-        v.visitInsn(asmType.getOpcode(opcodeForMethod(op.getName())));
-        value.store(v);
+        Type lhsType = expressionType(lhs);
+        if (isNumberPrimitive(lhsType)) {
+            StackValue value = generateIntermediateValue(lhs);              // receiver
+            value.dupReceiver(v, 0);                                        // receiver receiver
+            value.put(lhsType, v);                                          // receiver lhs
+            genToJVMStack(expression.getRight());                           // receiver lhs rhs
+            v.visitInsn(lhsType.getOpcode(opcodeForMethod(op.getName())));  // receiver result
+            value.store(v);
+        }
+        else if ("java.lang.String".equals(lhsType.getClassName()) && op.getName().equals("plus")) {
+            generateStringBuilderConstructor();                          // StringBuilder
+            StackValue value = generateIntermediateValue(lhs);           // StringBuilder receiver
+            value.dupReceiver(v, 1);                                     // receiver StringBuilder receiver
+            value.put(lhsType, v);                                       // receiver StringBuilder value
+            invokeAppendMethod(lhsType);                                 // receiver StringBuilder
+            invokeAppend(expression.getRight());                         // receiver StringBuilder
+            v.invokevirtual(CLASS_STRING_BUILDER, "toString", "()Ljava/lang/String;");
+            value.store(v);
+        }
+        else {
+            throw new UnsupportedOperationException("Augmented assignment for non-primitive types not yet implemented");
+        }
     }
 
     private void generateConcatenation(JetBinaryExpression expression) {
+        generateStringBuilderConstructor();
+        invokeAppend(expression.getLeft());
+        invokeAppend(expression.getRight());
+        v.invokevirtual(CLASS_STRING_BUILDER, "toString", "()Ljava/lang/String;");
+        myStack.push(StackValue.onStack(Type.getObjectType(CLASS_STRING)));
+    }
+
+    private void generateStringBuilderConstructor() {
         Type type = Type.getObjectType(CLASS_STRING_BUILDER);
         v.anew(type);
         v.dup();
         Method method = new Method("<init>", Type.VOID_TYPE, new Type[0]);
         v.invokespecial(CLASS_STRING_BUILDER, method.getName(), method.getDescriptor());
-        invokeAppend(expression.getLeft());
-        invokeAppend(expression.getRight());
-        v.invokevirtual(CLASS_STRING_BUILDER, "toString", "()Ljava/lang/String;");
-        myStack.push(StackValue.onStack(Type.getObjectType(CLASS_STRING)));
     }
 
     private void invokeAppend(final JetExpression expr) {
@@ -860,6 +879,10 @@ public class ExpressionCodegen extends JetVisitor {
         }
         Type exprType = expressionType(expr);
         gen(expr, exprType);
+        invokeAppendMethod(exprType);
+    }
+
+    private void invokeAppendMethod(Type exprType) {
         Method appendDescriptor = new Method("append", Type.getObjectType(CLASS_STRING_BUILDER),
                 new Type[] { exprType.getSort() == Type.OBJECT ? JetTypeMapper.TYPE_OBJECT : exprType});
         v.invokevirtual(CLASS_STRING_BUILDER, "append", appendDescriptor.getDescriptor());
@@ -934,7 +957,7 @@ public class ExpressionCodegen extends JetVisitor {
             }
         }
         StackValue value = generateIntermediateValue(operand);
-        value.dupReceiver(v);
+        value.dupReceiver(v, 0);
         value.put(asmType, v);
         if (asmType == Type.LONG_TYPE) {
             v.aconst(Long.valueOf(increment));

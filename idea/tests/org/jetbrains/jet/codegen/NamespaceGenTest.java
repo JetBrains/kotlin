@@ -259,6 +259,13 @@ public class NamespaceGenTest extends CodegenTestCase {
         assertEquals("jet Lang", main.invoke(null, "jet", " ", "Lang"));
     }
 
+    public void testStringPlusEq() throws Exception {
+        loadText("fun foo(s: String) { val result = s; result += s; return result; } ");
+        System.out.println(generateToText());
+        final Method main = generateFunction();
+        assertEquals("JarJar", main.invoke(null, "Jar"));
+    }
+
     public void testStringCompare() throws Exception {
         loadText("fun foo(s1: String, s2: String) = s1 < s2");
         System.out.println(generateToText());
