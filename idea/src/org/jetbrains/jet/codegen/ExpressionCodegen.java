@@ -1,6 +1,8 @@
 package org.jetbrains.jet.codegen;
 
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
+import com.intellij.psi.search.ProjectScope;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
@@ -15,6 +17,7 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
 import org.objectweb.asm.commons.Method;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
@@ -26,6 +29,14 @@ public class ExpressionCodegen extends JetVisitor {
     private static final String CLASS_STRING = "java/lang/String";
     private static final String CLASS_STRING_BUILDER = "java/lang/StringBuilder";
     private static final String CLASS_COMPARABLE = "java/lang/Comparable";
+    private static final String CLASS_ITERABLE = "java/lang/Iterable";
+    private static final String CLASS_ITERATOR = "java/util/Iterator";
+
+    private static final String ITERABLE_ITERATOR_DESCRIPTOR = "()Ljava/util/Iterator;";
+    private static final String ITERATOR_HASNEXT_DESCRIPTOR = "()Z";
+    private static final String ITERATOR_NEXT_DESCRIPTOR = "()Ljava/lang/Object;";
+
+    private static final Type ITERATOR_TYPE = Type.getType(Iterator.class);
 
     private final Stack<Label> myContinueTargets = new Stack<Label>();
     private final Stack<Label> myBreakTargets = new Stack<Label>();
@@ -183,12 +194,23 @@ public class ExpressionCodegen extends JetVisitor {
     @Override
     public void visitForExpression(JetForExpression expression) {
         final JetExpression loopRange = expression.getLoopRange();
-        Type loopRangeType = expressionType(loopRange);
+        final JetType expressionType = bindingContext.getExpressionType(loopRange);
+        Type loopRangeType = typeMapper.mapType(expressionType);
         if (loopRangeType.getSort() == Type.ARRAY) {
             generateForInArray(expression, loopRangeType);
         }
         else {
-            throw new UnsupportedOperationException("for/in loop currently only supported for arrays");
+            final DeclarationDescriptor descriptor = expressionType.getConstructor().getDeclarationDescriptor();
+            final PsiElement declaration = bindingContext.getDeclarationPsiElement(descriptor);
+            if (declaration instanceof PsiClass) {
+                final Project project = declaration.getProject();
+                final PsiClass iterable = JavaPsiFacade.getInstance(project).findClass("java.lang.Iterable", ProjectScope.getAllScope(project));
+                if (((PsiClass) declaration).isInheritor(iterable, true)) {
+                    generateForInIterable(expression, loopRangeType);
+                    return;
+                }
+            }
+            throw new UnsupportedOperationException("for/in loop currently only supported for arrays and Iterable instances");
         }
     }
 
@@ -234,6 +256,48 @@ public class ExpressionCodegen extends JetVisitor {
         final int paramIndex = myMap.leave(parameterDescriptor);
         v.visitLocalVariable(loopParameter.getName(), asmParamType.getDescriptor(), null, condition, end, paramIndex);
         myMap.leaveTemp();
+        myMap.leaveTemp();
+        myBreakTargets.pop();
+        myContinueTargets.pop();
+    }
+
+    private void generateForInIterable(JetForExpression expression, Type loopRangeType) {
+        final JetParameter loopParameter = expression.getLoopParameter();
+        final VariableDescriptor parameterDescriptor = bindingContext.getParameterDescriptor(loopParameter);
+        JetType paramType = parameterDescriptor.getOutType();
+        Type asmParamType = typeMapper.mapType(paramType);
+
+        int iteratorVar = myMap.enterTemp();
+        gen(expression.getLoopRange(), loopRangeType);
+        v.invokeinterface(CLASS_ITERABLE, "iterator", ITERABLE_ITERATOR_DESCRIPTOR);
+        v.store(iteratorVar, ITERATOR_TYPE);
+
+        Label begin = new Label();
+        Label end = new Label();
+        myContinueTargets.push(begin);
+        myBreakTargets.push(end);
+
+        v.mark(begin);
+        v.load(iteratorVar, ITERATOR_TYPE);
+        v.invokeinterface(CLASS_ITERATOR, "hasNext", ITERATOR_HASNEXT_DESCRIPTOR);
+        v.ifeq(end);
+
+        myMap.enter(parameterDescriptor, asmParamType.getSize());
+        v.load(iteratorVar, ITERATOR_TYPE);
+        v.invokeinterface(CLASS_ITERATOR, "next", ITERATOR_NEXT_DESCRIPTOR);
+        // TODO checkcast should be generated via StackValue
+        if (asmParamType.getSort() == Type.OBJECT && !"java.lang.Object".equals(asmParamType.getClassName())) {
+            v.checkcast(asmParamType);
+        }
+        v.store(myMap.getIndex(parameterDescriptor), asmParamType);
+
+        gen(expression.getBody(), Type.VOID_TYPE);
+
+        v.goTo(begin);
+        v.mark(end);
+
+        int paramIndex = myMap.leave(parameterDescriptor);
+        v.visitLocalVariable(loopParameter.getName(), asmParamType.getDescriptor(), null, begin, end, paramIndex);
         myMap.leaveTemp();
         myBreakTargets.pop();
         myContinueTargets.pop();
