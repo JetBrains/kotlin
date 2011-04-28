@@ -60,10 +60,14 @@ public abstract class CodegenTestCase extends LightCodeInsightFixtureTestCase {
     }
 
     protected Class generateNamespaceClass() {
+        Codegens state = generateClassesInFile();
+        return loadRootNamespaceClass(state);
+    }
+
+    protected Class loadRootNamespaceClass(Codegens state) {
         JetFile jetFile = (JetFile) myFixture.getFile();
         final JetNamespace namespace = jetFile.getRootNamespace();
         String fqName = NamespaceCodegen.getJVMClassName(namespace.getFQName()).replace("/", ".");
-        Codegens state = generateClassesInFile();
         return loadClass(fqName, state);
     }
 
