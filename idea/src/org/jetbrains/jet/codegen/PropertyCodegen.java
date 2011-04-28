@@ -29,22 +29,6 @@ public class PropertyCodegen {
         this.mapper = new JetTypeMapper(standardLibrary, context);
     }
 
-    public void genInNamespace(JetProperty p) {
-       gen(p, OwnerKind.NAMESPACE);
-    }
-
-    public void genInInterface(JetProperty p) {
-
-    }
-
-    public void genInImplementation(JetProperty p) {
-        gen(p, OwnerKind.IMPLEMENTATION);
-    }
-
-    public void genInDelegatingImplementation(JetProperty p) {
-        gen(p, OwnerKind.DELEGATING_IMPLEMENTATION);
-    }
-
     public void gen(JetProperty p, OwnerKind kind) {
         final VariableDescriptor descriptor = context.getVariableDescriptor(p);
         if (!(descriptor instanceof PropertyDescriptor)) {

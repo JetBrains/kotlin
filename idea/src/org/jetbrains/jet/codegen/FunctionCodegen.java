@@ -15,32 +15,16 @@ import java.util.List;
  * @author max
  */
 public class FunctionCodegen {
+    private final JetDeclaration owner;
     private final ClassVisitor v;
     private final BindingContext bindingContext;
-    private final JetStandardLibrary standardLibrary;
     private final JetTypeMapper typeMapper;
 
-    public FunctionCodegen(ClassVisitor v, JetStandardLibrary standardLibrary, BindingContext bindingContext) {
+    public FunctionCodegen(JetDeclaration owner, ClassVisitor v, JetStandardLibrary standardLibrary, BindingContext bindingContext) {
+        this.owner = owner;
         this.v = v;
         this.bindingContext = bindingContext;
-        this.standardLibrary = standardLibrary;
         typeMapper = new JetTypeMapper(standardLibrary, bindingContext);
-    }
-
-    public void genInNamespace(JetFunction f) {
-        gen(f, OwnerKind.NAMESPACE);
-    }
-
-    public void genInInterface(JetFunction f) {
-        gen(f, OwnerKind.INTERFACE);
-    }
-
-    public void genInImplementation(JetFunction f) {
-
-    }
-
-    public void genInDelegatingImplementation(JetFunction f) {
-
     }
 
     public void gen(JetFunction f, OwnerKind kind) {
@@ -59,6 +43,8 @@ public class FunctionCodegen {
         boolean isAbstract = kind == OwnerKind.INTERFACE || bodyExpression == null;
         if (isAbstract) flags |= Opcodes.ACC_ABSTRACT;
 
+        ClassDescriptor ownerClass = owner instanceof JetClass ? bindingContext.getClassDescriptor((JetClass) owner) : null;
+
         final MethodVisitor mv = v.visitMethod(flags, jvmSignature.getName(), jvmSignature.getDescriptor(), null, null);
         if (kind != OwnerKind.INTERFACE) {
             mv.visitCode();
@@ -74,7 +60,7 @@ public class FunctionCodegen {
                 frameMap.enter(parameter, argTypes[i].getSize());
             }
 
-            ExpressionCodegen codegen = new ExpressionCodegen(mv, bindingContext, frameMap, typeMapper, jvmSignature.getReturnType());
+            ExpressionCodegen codegen = new ExpressionCodegen(mv, bindingContext, frameMap, typeMapper, jvmSignature.getReturnType(), ownerClass, kind);
             bodyExpression.accept(codegen);
             generateReturn(mv, bodyExpression, codegen);
             mv.visitMaxs(0, 0);

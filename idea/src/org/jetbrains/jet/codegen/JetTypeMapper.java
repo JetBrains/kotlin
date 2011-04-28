@@ -31,6 +31,22 @@ public class JetTypeMapper {
         return psiClass.getQualifiedName().replace(".", "/");
     }
 
+    static String jvmName(ClassDescriptor jetClass, OwnerKind kind) {
+        switch (kind) {
+
+            case INTERFACE:
+                return jvmNameForInterface(jetClass);
+            case IMPLEMENTATION:
+                return jvmNameForImplementation(jetClass);
+            case DELEGATING_IMPLEMENTATION:
+                return jvmNameForDelegatingImplementation(jetClass);
+
+            default:
+                assert false : "Unsuitable kind";
+                return "java/lang/Object";
+        }
+    }
+
     static Type psiClassType(PsiClass psiClass) {
         return Type.getType("L" + jvmName(psiClass) + ";");
     }
@@ -41,6 +57,10 @@ public class JetTypeMapper {
 
     static Type jetImplementationType(ClassDescriptor classDescriptor) {
         return Type.getType("L" + jvmNameForImplementation(classDescriptor) + ";");
+    }
+
+    static Type jetDelegatingImplementationType(ClassDescriptor classDescriptor) {
+        return Type.getType("L" + jvmNameForDelegatingImplementation(classDescriptor) + ";");
     }
 
     static String jvmName(JetNamespace namespace) {
@@ -187,11 +207,18 @@ public class JetTypeMapper {
         return new Method(PropertyCodegen.setterName(descriptor.getName()), Type.VOID_TYPE, new Type[] { paramType });
     }
 
-    public Method mapConstructorSignature(ConstructorDescriptor descriptor) {
+    public Method mapConstructorSignature(ConstructorDescriptor descriptor, OwnerKind kind) {
+        boolean delegate = kind == OwnerKind.DELEGATING_IMPLEMENTATION;
         List<ValueParameterDescriptor> parameters = descriptor.getUnsubstitutedValueParameters();
-        Type[] parameterTypes = new Type[parameters.size()];
-        for (int i = 0; i < parameters.size(); i++) {
-            parameterTypes[i] = mapType(parameters.get(i).getOutType());
+        int count = parameters.size();
+        int first = delegate ? 1 : 0;
+        Type[] parameterTypes = new Type[count + first];
+        if (delegate) {
+            parameterTypes[0] = jetInterfaceType(descriptor.getContainingDeclaration());
+        }
+
+        for (int i = 0; i < count; i++) {
+            parameterTypes[i + first] = mapType(parameters.get(i).getOutType());
         }
         return new Method("<init>", Type.VOID_TYPE, parameterTypes);
     }

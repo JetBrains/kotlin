@@ -41,7 +41,7 @@ public class NamespaceCodegen {
         BindingContext bindingContext = AnalyzingUtils.analyzeNamespace(namespace, ErrorHandler.THROW_EXCEPTION);
 
         final JetStandardLibrary standardLibrary = JetStandardLibrary.getJetStandardLibrary(project);
-        final FunctionCodegen functionCodegen = new FunctionCodegen(v, standardLibrary, bindingContext);
+        final FunctionCodegen functionCodegen = new FunctionCodegen(namespace, v, standardLibrary, bindingContext);
         final PropertyCodegen propertyCodegen = new PropertyCodegen(v, standardLibrary, bindingContext, functionCodegen);
         final ClassCodegen classCodegen = codegens.forClass(bindingContext);
 
@@ -51,10 +51,10 @@ public class NamespaceCodegen {
 
         for (JetDeclaration declaration : namespace.getDeclarations()) {
             if (declaration instanceof JetProperty) {
-                propertyCodegen.genInNamespace((JetProperty) declaration);
+                propertyCodegen.gen((JetProperty) declaration, OwnerKind.NAMESPACE);
             }
             else if (declaration instanceof JetFunction) {
-                functionCodegen.genInNamespace((JetFunction) declaration);
+                functionCodegen.gen((JetFunction) declaration, OwnerKind.NAMESPACE);
             }
             else if (declaration instanceof JetClass) {
                 classCodegen.generate((JetClass) declaration);
@@ -70,8 +70,7 @@ public class NamespaceCodegen {
 
         FrameMap frameMap = new FrameMap();
         JetTypeMapper typeMapper = new JetTypeMapper(JetStandardLibrary.getJetStandardLibrary(namespace.getProject()), bindingContext);
-        ExpressionCodegen codegen = new ExpressionCodegen(mv, bindingContext, frameMap,
-                typeMapper, Type.VOID_TYPE);
+        ExpressionCodegen codegen = new ExpressionCodegen(mv, bindingContext, frameMap, typeMapper, Type.VOID_TYPE, null, OwnerKind.NAMESPACE);
 
         for (JetDeclaration declaration : namespace.getDeclarations()) {
             if (declaration instanceof JetProperty) {
