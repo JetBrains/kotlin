@@ -192,8 +192,16 @@ public class ClassCodegen {
             frameMap.enter(parameter, argTypes[i].getSize());
         }
 
+        List<JetDelegationSpecifier> specifiers = aClass.getDelegationSpecifiers();
+
+        if (specifiers.isEmpty() || !(specifiers.get(0) instanceof JetDelegatorToSuperCall)) {
+            String superClass = getSuperClass(aClass, kind);
+            iv.load(0, Type.getType("L" + superClass + ";"));
+            iv.invokespecial(superClass, "<init>", method.getDescriptor());
+        }
+
         int n = 0;
-        for (JetDelegationSpecifier specifier : aClass.getDelegationSpecifiers()) {
+        for (JetDelegationSpecifier specifier : specifiers) {
             boolean instanceOnStack = pushDelegateInstance(specifier, kind, codegen, iv, n);
             if (instanceOnStack) {
                 JetType superType = bindingContext.resolveTypeReference(specifier.getTypeReference());
