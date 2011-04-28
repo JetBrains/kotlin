@@ -1,5 +1,5 @@
-class X(x : Int) {}
-class Y(y : Int) {}
+class X(val x : Int) {}
+class Y(val y : Int) {}
 
 class Point(x : Int, y : Int) : X(x), Y(y) {}
 
@@ -11,5 +11,25 @@ class P3(x : Int, y : Y) : X(x), Y by y, Abstract {}
 class P4(x : Int, y : Y) : Y by y, Abstract, X(x) {}
 
 fun box() : String {
+    if (new X(239).x != 239) return "FAIL #1"
+    if (new Y(239).y != 239) return "FAIL #2"
+
+    val p = new Point(240, -1)
+    if (p.x + p.y != 239) return "FAIL #3"
+
+    val y = new Y(-1)
+
+    val p1 = new P1(240, y)
+    if (p1.x + p1.y != 239) return "FAIL #4"
+
+    val p2 = new P2(240, y)
+    if (p2.x + p2.y != 239) return "FAIL #5"
+
+    val p3 = new P3(240, y)
+    if (p3.x + p3.y != 239) return "FAIL #6"
+
+    val p4 = new P4(240, y)
+    if (p4.x + p4.y != 239) return "FAIL #7"
+
     "OK"
 }
