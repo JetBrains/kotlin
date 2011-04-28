@@ -1,5 +1,6 @@
 package org.jetbrains.jet.codegen;
 
+import jet.IntRange;
 import org.jetbrains.jet.parsing.JetParsingTest;
 
 import java.awt.*;
@@ -357,5 +358,14 @@ public class NamespaceGenTest extends CodegenTestCase {
         int[] data = new int[] { 5 };
         main.invoke(null, new Object[] { data });
         assertEquals(10, data[0]);
+    }
+
+    public void testIntRange() throws Exception {
+        loadText("fun foo() = 1..10");
+        final Method main = generateFunction();
+        IntRange result = (IntRange) main.invoke(null);
+        assertTrue(result.contains(1));
+        assertTrue(result.contains(10));
+        assertFalse(result.contains(11));
     }
 }

@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.search.ProjectScope;
 import com.intellij.psi.tree.IElementType;
+import jet.IntRange;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -32,11 +33,15 @@ public class ExpressionCodegen extends JetVisitor {
     private static final String CLASS_ITERABLE = "java/lang/Iterable";
     private static final String CLASS_ITERATOR = "java/util/Iterator";
 
+    private static final String CLASS_INT_RANGE = "jet/IntRange";
+
     private static final String ITERABLE_ITERATOR_DESCRIPTOR = "()Ljava/util/Iterator;";
     private static final String ITERATOR_HASNEXT_DESCRIPTOR = "()Z";
     private static final String ITERATOR_NEXT_DESCRIPTOR = "()Ljava/lang/Object;";
+    private static final String INT_RANGE_CONSTRUCTOR_DESCRIPTOR = "(II)V";
 
     private static final Type ITERATOR_TYPE = Type.getType(Iterator.class);
+    private static final Type INT_RANGE_TYPE = Type.getType(IntRange.class);
 
     private final Stack<Label> myContinueTargets = new Stack<Label>();
     private final Stack<Label> myBreakTargets = new Stack<Label>();
@@ -706,6 +711,9 @@ public class ExpressionCodegen extends JetVisitor {
         else if (opToken == JetTokens.ELVIS) {
             generateElvis(expression);
         }
+        else if (opToken == JetTokens.RANGE) {
+            generateRange(expression);
+        }
         else {
             DeclarationDescriptor op = bindingContext.resolveReferenceExpression(expression.getOperationReference());
             if (op instanceof FunctionDescriptor) {
@@ -814,6 +822,21 @@ public class ExpressionCodegen extends JetVisitor {
         gen(expression.getRight(), exprType);
         v.mark(end);
         myStack.push(StackValue.onStack(exprType));
+    }
+
+    private void generateRange(JetBinaryExpression expression) {
+        final Type leftType = expressionType(expression.getLeft());
+        if (isIntPrimitive(leftType)) {
+            v.anew(INT_RANGE_TYPE);
+            v.dup();
+            gen(expression.getLeft(), Type.INT_TYPE);
+            gen(expression.getRight(), Type.INT_TYPE);
+            v.invokespecial(CLASS_INT_RANGE, "<init>", INT_RANGE_CONSTRUCTOR_DESCRIPTOR);
+            myStack.push(StackValue.onStack(INT_RANGE_TYPE));
+        }
+        else {
+            throw new UnsupportedOperationException("ranges are only supported for int objects");
+        }
     }
 
     private static boolean isNumberPrimitive(DeclarationDescriptor descriptor) {
