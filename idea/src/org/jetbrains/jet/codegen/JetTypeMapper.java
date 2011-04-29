@@ -203,7 +203,11 @@ public class JetTypeMapper {
     }
 
     public Method mapSetterSignature(PropertyDescriptor descriptor) {
-        Type paramType = mapType(descriptor.getInType());
+        final JetType inType = descriptor.getInType();
+        if (inType == null) {
+            return null;
+        }
+        Type paramType = mapType(inType);
         return new Method(PropertyCodegen.setterName(descriptor.getName()), Type.VOID_TYPE, new Type[] { paramType });
     }
 

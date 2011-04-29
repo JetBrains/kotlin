@@ -69,7 +69,7 @@ public class ClassCodegen {
         ClassVisitor v = kind == OwnerKind.IMPLEMENTATION ? factory.forClassImplementation(descriptor) : factory.forClassDelegatingImplementation(descriptor);
         v.visit(Opcodes.V1_6,
                 Opcodes.ACC_PUBLIC,
-                JetTypeMapper.jvmNameForImplementation(descriptor),
+                JetTypeMapper.jvmName(descriptor, kind),
                 null,
                 superClass,
                 new String[] {JetTypeMapper.jvmNameForInterface(descriptor)}
@@ -197,7 +197,7 @@ public class ClassCodegen {
         if (specifiers.isEmpty() || !(specifiers.get(0) instanceof JetDelegatorToSuperCall)) {
             String superClass = getSuperClass(aClass, kind);
             iv.load(0, Type.getType("L" + superClass + ";"));
-            iv.invokespecial(superClass, "<init>", method.getDescriptor());
+            iv.invokespecial(superClass, "<init>", /* TODO super constructor descriptor */"()V");
         }
 
         int n = 0;

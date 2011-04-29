@@ -466,6 +466,7 @@ public class ExpressionCodegen extends JetVisitor {
         boolean isStatic = propertyDescriptor.getContainingDeclaration() instanceof NamespaceDescriptor;
         String owner = JetTypeMapper.getOwner(propertyDescriptor);
         final JetType outType = propertyDescriptor.getOutType();
+        boolean isInsideClass = propertyDescriptor.getContainingDeclaration() == contextType;
         Method getter;
         Method setter;
         if (directToField) {
@@ -473,8 +474,8 @@ public class ExpressionCodegen extends JetVisitor {
             setter = null;
         }
         else {
-            getter = propertyDescriptor.getGetter() == null ? null : typeMapper.mapGetterSignature(propertyDescriptor);
-            setter = propertyDescriptor.getSetter() == null ? null : typeMapper.mapSetterSignature(propertyDescriptor);
+            getter = isInsideClass && propertyDescriptor.getGetter() == null ? null : typeMapper.mapGetterSignature(propertyDescriptor);
+            setter = isInsideClass && propertyDescriptor.getSetter() == null ? null : typeMapper.mapSetterSignature(propertyDescriptor);
         }
         return StackValue.property(propertyDescriptor.getName(), owner, typeMapper.mapType(outType), isStatic, getter, setter);
     }
