@@ -1,15 +1,32 @@
-class BinaryHeap<T>(_data : IIterable<T>, compare : Comparison<T> = naturalOrder<T>) : IPriorityQueue<T> {
-  private val data : IMutableList<T> = new ArrayList(_data)
+class BinaryHeap<T> : IPriorityQueue<T> {
+  private val data : IMutableList<T>
+  private val compare : Comparison<T>
 
-  {
+  this(data : IIterable<T>, compare : Comparison<T> = naturalOrder<T>) {
+    this.compare = compare
+    this.data = ArrayList(data)
+//    siftDown(* this.data.size / 2 .. 0)
+
     for (val i in data.size / 2 .. 0) {
       siftDown(i)
     }
+
+  }
+
+  this(compare : Comparison<T>) {
+    this.compare = compare
+    this.data = ArrayList()
+  }
+
+  this() {
+    this.data = ArrayList()
+    Assert(T is IComparable<T>)
+    this.comparator = naturalOrder<T>
   }
 
   override fun extract() : T {
     if (this.isEmpty)
-      throw new UnderflowException()
+      throw UnderflowException()
     data.swap(0, data.lastIndex)
     data.remove(data.lastIndex)
     siftDown(0)
@@ -73,17 +90,17 @@ class BinaryHeap<T>(_data : IIterable<T>, compare : Comparison<T> = naturalOrder
   }
 
   private extension for T {
-    fun compareTo(other : T) : Int = compare(this, other)
+    [operator] fun compareTo(other : T) : Int = compare(this, other)
   }
 
 }
 
-fun <T> IMutableList<T>.swap(a : Int, b : Int) {
+fun IMutableList<T>.swap(a : Int, b : Int) {
   val t = this[a]
   this[a] = this[b]
   this[b] = t
 }
 
-val <T> IList<T>.lastIndex : Int
+val IList<T>.lastIndex : Int
   get() = this.size - 1
 
