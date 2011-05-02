@@ -24,7 +24,7 @@ public abstract class StackValue {
         throw new UnsupportedOperationException("cannot store to value " + this);
     }
 
-    public void dupReceiver(InstructionAdapter v) {
+    public void dupReceiver(InstructionAdapter v, int below) {
     }
 
     public void condJump(Label label, boolean jumpIfFalse, InstructionAdapter v) {
@@ -341,8 +341,13 @@ public abstract class StackValue {
         }
 
         @Override
-        public void dupReceiver(InstructionAdapter v) {
-            v.dup2();   // array and index
+        public void dupReceiver(InstructionAdapter v, int below) {
+            if (below == 1) {
+                v.dup2X1();
+            }
+            else {
+                v.dup2();   // array and index
+            }
         }
     }
 
@@ -364,8 +369,15 @@ public abstract class StackValue {
         }
 
         @Override
-        public void dupReceiver(InstructionAdapter v) {
-            if (!isStatic) v.dup();
+        public void dupReceiver(InstructionAdapter v, int below) {
+            if (!isStatic) {
+                if (below == 1) {
+                    v.dupX1();
+                }
+                else {
+                    v.dup();
+                }
+            }
         }
 
         @Override

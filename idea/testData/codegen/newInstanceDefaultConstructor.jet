@@ -1,0 +1,8 @@
+class SimpleClass() {
+    fun foo() = 610
+}
+
+fun test() {
+  val c = new SimpleClass()
+  return c.foo()
+}

@@ -1,7 +1,11 @@
 package org.jetbrains.jet.codegen;
 
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
+import com.intellij.psi.search.ProjectScope;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.util.PsiTreeUtil;
+import jet.IntRange;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -15,6 +19,7 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
 import org.objectweb.asm.commons.Method;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
@@ -26,6 +31,18 @@ public class ExpressionCodegen extends JetVisitor {
     private static final String CLASS_STRING = "java/lang/String";
     private static final String CLASS_STRING_BUILDER = "java/lang/StringBuilder";
     private static final String CLASS_COMPARABLE = "java/lang/Comparable";
+    private static final String CLASS_ITERABLE = "java/lang/Iterable";
+    private static final String CLASS_ITERATOR = "java/util/Iterator";
+
+    private static final String CLASS_INT_RANGE = "jet/IntRange";
+
+    private static final String ITERABLE_ITERATOR_DESCRIPTOR = "()Ljava/util/Iterator;";
+    private static final String ITERATOR_HASNEXT_DESCRIPTOR = "()Z";
+    private static final String ITERATOR_NEXT_DESCRIPTOR = "()Ljava/lang/Object;";
+    private static final String INT_RANGE_CONSTRUCTOR_DESCRIPTOR = "(II)V";
+
+    private static final Type ITERATOR_TYPE = Type.getType(Iterator.class);
+    private static final Type INT_RANGE_TYPE = Type.getType(IntRange.class);
 
     private final Stack<Label> myContinueTargets = new Stack<Label>();
     private final Stack<Label> myBreakTargets = new Stack<Label>();
@@ -35,13 +52,22 @@ public class ExpressionCodegen extends JetVisitor {
     private final FrameMap myMap;
     private final JetTypeMapper typeMapper;
     private final Type returnType;
+    private final ClassDescriptor contextType;
+    private final OwnerKind contextKind;
     private final BindingContext bindingContext;
 
-    public ExpressionCodegen(MethodVisitor v, BindingContext bindingContext, FrameMap myMap, JetTypeMapper typeMapper,
-                             Type returnType) {
+    public ExpressionCodegen(MethodVisitor v,
+                             BindingContext bindingContext,
+                             FrameMap myMap,
+                             JetTypeMapper typeMapper,
+                             Type returnType,
+                             ClassDescriptor contextType,
+                             OwnerKind contextKind) {
         this.myMap = myMap;
         this.typeMapper = typeMapper;
         this.returnType = returnType;
+        this.contextType = contextType;
+        this.contextKind = contextKind;
         this.v = new InstructionAdapter(v);
         this.bindingContext = bindingContext;
     }
@@ -51,7 +77,7 @@ public class ExpressionCodegen extends JetVisitor {
         expr.accept(this);
     }
 
-    private void gen(JetElement expr, Type type) {
+    public void gen(JetElement expr, Type type) {
         int oldStackDepth = myStack.size();
         gen(expr);
         if (myStack.size() == oldStackDepth+1) {
@@ -174,12 +200,23 @@ public class ExpressionCodegen extends JetVisitor {
     @Override
     public void visitForExpression(JetForExpression expression) {
         final JetExpression loopRange = expression.getLoopRange();
-        Type loopRangeType = expressionType(loopRange);
+        final JetType expressionType = bindingContext.getExpressionType(loopRange);
+        Type loopRangeType = typeMapper.mapType(expressionType);
         if (loopRangeType.getSort() == Type.ARRAY) {
             generateForInArray(expression, loopRangeType);
         }
         else {
-            throw new UnsupportedOperationException("for/in loop currently only supported for arrays");
+            final DeclarationDescriptor descriptor = expressionType.getConstructor().getDeclarationDescriptor();
+            final PsiElement declaration = bindingContext.getDeclarationPsiElement(descriptor);
+            if (declaration instanceof PsiClass) {
+                final Project project = declaration.getProject();
+                final PsiClass iterable = JavaPsiFacade.getInstance(project).findClass("java.lang.Iterable", ProjectScope.getAllScope(project));
+                if (((PsiClass) declaration).isInheritor(iterable, true)) {
+                    generateForInIterable(expression, loopRangeType);
+                    return;
+                }
+            }
+            throw new UnsupportedOperationException("for/in loop currently only supported for arrays and Iterable instances");
         }
     }
 
@@ -225,6 +262,48 @@ public class ExpressionCodegen extends JetVisitor {
         final int paramIndex = myMap.leave(parameterDescriptor);
         v.visitLocalVariable(loopParameter.getName(), asmParamType.getDescriptor(), null, condition, end, paramIndex);
         myMap.leaveTemp();
+        myMap.leaveTemp();
+        myBreakTargets.pop();
+        myContinueTargets.pop();
+    }
+
+    private void generateForInIterable(JetForExpression expression, Type loopRangeType) {
+        final JetParameter loopParameter = expression.getLoopParameter();
+        final VariableDescriptor parameterDescriptor = bindingContext.getParameterDescriptor(loopParameter);
+        JetType paramType = parameterDescriptor.getOutType();
+        Type asmParamType = typeMapper.mapType(paramType);
+
+        int iteratorVar = myMap.enterTemp();
+        gen(expression.getLoopRange(), loopRangeType);
+        v.invokeinterface(CLASS_ITERABLE, "iterator", ITERABLE_ITERATOR_DESCRIPTOR);
+        v.store(iteratorVar, ITERATOR_TYPE);
+
+        Label begin = new Label();
+        Label end = new Label();
+        myContinueTargets.push(begin);
+        myBreakTargets.push(end);
+
+        v.mark(begin);
+        v.load(iteratorVar, ITERATOR_TYPE);
+        v.invokeinterface(CLASS_ITERATOR, "hasNext", ITERATOR_HASNEXT_DESCRIPTOR);
+        v.ifeq(end);
+
+        myMap.enter(parameterDescriptor, asmParamType.getSize());
+        v.load(iteratorVar, ITERATOR_TYPE);
+        v.invokeinterface(CLASS_ITERATOR, "next", ITERATOR_NEXT_DESCRIPTOR);
+        // TODO checkcast should be generated via StackValue
+        if (asmParamType.getSort() == Type.OBJECT && !"java.lang.Object".equals(asmParamType.getClassName())) {
+            v.checkcast(asmParamType);
+        }
+        v.store(myMap.getIndex(parameterDescriptor), asmParamType);
+
+        gen(expression.getBody(), Type.VOID_TYPE);
+
+        v.goTo(begin);
+        v.mark(end);
+
+        int paramIndex = myMap.leave(parameterDescriptor);
+        v.visitLocalVariable(loopParameter.getName(), asmParamType.getDescriptor(), null, begin, end, paramIndex);
         myMap.leaveTemp();
         myBreakTargets.pop();
         myContinueTargets.pop();
@@ -370,6 +449,23 @@ public class ExpressionCodegen extends JetVisitor {
             }
             else if (descriptor instanceof PropertyDescriptor) {
                 final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
+
+                //TODO: hack, will not need if resolve goes to right descriptor itself
+                if (declaration instanceof JetParameter) {
+                    if (PsiTreeUtil.getParentOfType(expression, JetDelegationSpecifier.class)  != null) {
+                        JetClass aClass = PsiTreeUtil.getParentOfType(expression, JetClass.class);
+                        ConstructorDescriptor constructorDescriptor = bindingContext.getConstructorDescriptor(aClass);
+                        List<ValueParameterDescriptor> parameters = constructorDescriptor.getUnsubstitutedValueParameters();
+                        for (ValueParameterDescriptor parameter : parameters) {
+                            if (parameter.getName().equals(descriptor.getName())) {
+                                final JetType outType = ((VariableDescriptor) descriptor).getOutType();
+                                myStack.push(StackValue.local(myMap.getIndex(parameter), typeMapper.mapType(outType)));
+                                return;
+                            }
+                        }
+                    }
+                }
+
                 boolean isStatic = descriptor.getContainingDeclaration() instanceof NamespaceDescriptor;
                 final boolean directToField = expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER;
                 final StackValue iValue = intermediateValueForProperty(propertyDescriptor, directToField);
@@ -388,6 +484,7 @@ public class ExpressionCodegen extends JetVisitor {
         boolean isStatic = propertyDescriptor.getContainingDeclaration() instanceof NamespaceDescriptor;
         String owner = JetTypeMapper.getOwner(propertyDescriptor);
         final JetType outType = propertyDescriptor.getOutType();
+        boolean isInsideClass = propertyDescriptor.getContainingDeclaration() == contextType;
         Method getter;
         Method setter;
         if (directToField) {
@@ -395,8 +492,8 @@ public class ExpressionCodegen extends JetVisitor {
             setter = null;
         }
         else {
-            getter = propertyDescriptor.getGetter() == null ? null : typeMapper.mapGetterSignature(propertyDescriptor);
-            setter = propertyDescriptor.getSetter() == null ? null : typeMapper.mapSetterSignature(propertyDescriptor);
+            getter = isInsideClass && propertyDescriptor.getGetter() == null ? null : typeMapper.mapGetterSignature(propertyDescriptor);
+            setter = isInsideClass && propertyDescriptor.getSetter() == null ? null : typeMapper.mapSetterSignature(propertyDescriptor);
         }
         return StackValue.property(propertyDescriptor.getName(), owner, typeMapper.mapType(outType), isStatic, getter, setter);
     }
@@ -633,6 +730,9 @@ public class ExpressionCodegen extends JetVisitor {
         else if (opToken == JetTokens.ELVIS) {
             generateElvis(expression);
         }
+        else if (opToken == JetTokens.RANGE) {
+            generateRange(expression);
+        }
         else {
             DeclarationDescriptor op = bindingContext.resolveReferenceExpression(expression.getOperationReference());
             if (op instanceof FunctionDescriptor) {
@@ -743,6 +843,21 @@ public class ExpressionCodegen extends JetVisitor {
         myStack.push(StackValue.onStack(exprType));
     }
 
+    private void generateRange(JetBinaryExpression expression) {
+        final Type leftType = expressionType(expression.getLeft());
+        if (isIntPrimitive(leftType)) {
+            v.anew(INT_RANGE_TYPE);
+            v.dup();
+            gen(expression.getLeft(), Type.INT_TYPE);
+            gen(expression.getRight(), Type.INT_TYPE);
+            v.invokespecial(CLASS_INT_RANGE, "<init>", INT_RANGE_CONSTRUCTOR_DESCRIPTOR);
+            myStack.push(StackValue.onStack(INT_RANGE_TYPE));
+        }
+        else {
+            throw new UnsupportedOperationException("ranges are only supported for int objects");
+        }
+    }
+
     private static boolean isNumberPrimitive(DeclarationDescriptor descriptor) {
         if (!(descriptor instanceof ClassDescriptor)) {
             return false;
@@ -819,25 +934,44 @@ public class ExpressionCodegen extends JetVisitor {
     private void generateAugmentedAssignment(JetBinaryExpression expression) {
         DeclarationDescriptor op = bindingContext.resolveReferenceExpression(expression.getOperationReference());
         final JetExpression lhs = expression.getLeft();
-        Type asmType = expressionType(lhs);
-        StackValue value = generateIntermediateValue(lhs);
-        value.dupReceiver(v);
-        value.put(asmType, v);
-        genToJVMStack(expression.getRight());
-        v.visitInsn(asmType.getOpcode(opcodeForMethod(op.getName())));
-        value.store(v);
+        Type lhsType = expressionType(lhs);
+        if (isNumberPrimitive(lhsType)) {
+            StackValue value = generateIntermediateValue(lhs);              // receiver
+            value.dupReceiver(v, 0);                                        // receiver receiver
+            value.put(lhsType, v);                                          // receiver lhs
+            genToJVMStack(expression.getRight());                           // receiver lhs rhs
+            v.visitInsn(lhsType.getOpcode(opcodeForMethod(op.getName())));  // receiver result
+            value.store(v);
+        }
+        else if ("java.lang.String".equals(lhsType.getClassName()) && op.getName().equals("plus")) {
+            generateStringBuilderConstructor();                          // StringBuilder
+            StackValue value = generateIntermediateValue(lhs);           // StringBuilder receiver
+            value.dupReceiver(v, 1);                                     // receiver StringBuilder receiver
+            value.put(lhsType, v);                                       // receiver StringBuilder value
+            invokeAppendMethod(lhsType);                                 // receiver StringBuilder
+            invokeAppend(expression.getRight());                         // receiver StringBuilder
+            v.invokevirtual(CLASS_STRING_BUILDER, "toString", "()Ljava/lang/String;");
+            value.store(v);
+        }
+        else {
+            throw new UnsupportedOperationException("Augmented assignment for non-primitive types not yet implemented");
+        }
     }
 
     private void generateConcatenation(JetBinaryExpression expression) {
+        generateStringBuilderConstructor();
+        invokeAppend(expression.getLeft());
+        invokeAppend(expression.getRight());
+        v.invokevirtual(CLASS_STRING_BUILDER, "toString", "()Ljava/lang/String;");
+        myStack.push(StackValue.onStack(Type.getObjectType(CLASS_STRING)));
+    }
+
+    private void generateStringBuilderConstructor() {
         Type type = Type.getObjectType(CLASS_STRING_BUILDER);
         v.anew(type);
         v.dup();
         Method method = new Method("<init>", Type.VOID_TYPE, new Type[0]);
         v.invokespecial(CLASS_STRING_BUILDER, method.getName(), method.getDescriptor());
-        invokeAppend(expression.getLeft());
-        invokeAppend(expression.getRight());
-        v.invokevirtual(CLASS_STRING_BUILDER, "toString", "()Ljava/lang/String;");
-        myStack.push(StackValue.onStack(Type.getObjectType(CLASS_STRING)));
     }
 
     private void invokeAppend(final JetExpression expr) {
@@ -851,6 +985,10 @@ public class ExpressionCodegen extends JetVisitor {
         }
         Type exprType = expressionType(expr);
         gen(expr, exprType);
+        invokeAppendMethod(exprType);
+    }
+
+    private void invokeAppendMethod(Type exprType) {
         Method appendDescriptor = new Method("append", Type.getObjectType(CLASS_STRING_BUILDER),
                 new Type[] { exprType.getSort() == Type.OBJECT ? JetTypeMapper.TYPE_OBJECT : exprType});
         v.invokevirtual(CLASS_STRING_BUILDER, "append", appendDescriptor.getDescriptor());
@@ -925,7 +1063,7 @@ public class ExpressionCodegen extends JetVisitor {
             }
         }
         StackValue value = generateIntermediateValue(operand);
-        value.dupReceiver(v);
+        value.dupReceiver(v, 0);
         value.put(asmType, v);
         if (asmType == Type.LONG_TYPE) {
             v.aconst(Long.valueOf(increment));
@@ -989,7 +1127,7 @@ public class ExpressionCodegen extends JetVisitor {
             v.anew(type);
             v.dup();
 
-            Method method = typeMapper.mapConstructorSignature((ConstructorDescriptor) constructorDescriptor);
+            Method method = typeMapper.mapConstructorSignature((ConstructorDescriptor) constructorDescriptor, OwnerKind.IMPLEMENTATION);
             pushMethodArguments(expression, method);
             v.invokespecial(JetTypeMapper.jvmNameForImplementation(classDecl), "<init>", method.getDescriptor());
             myStack.push(StackValue.onStack(type));
@@ -1029,6 +1167,27 @@ public class ExpressionCodegen extends JetVisitor {
     public void visitThrowExpression(JetThrowExpression expression) {
         gen(expression.getThrownExpression(), JetTypeMapper.TYPE_OBJECT);
         v.athrow();
+    }
+
+    @Override
+    public void visitThisExpression(JetThisExpression expression) {
+        thisToStack();
+    }
+
+    public void thisToStack() {
+        if (contextKind == OwnerKind.NAMESPACE) {
+            throw new UnsupportedOperationException("Cannot generate this expression in top level context");
+        }
+
+        if (contextKind == OwnerKind.IMPLEMENTATION) {
+            v.load(0, JetTypeMapper.jetImplementationType(contextType));
+        }
+        else if (contextKind == OwnerKind.DELEGATING_IMPLEMENTATION) {
+            v.getfield(JetTypeMapper.jvmName(contextType, contextKind), "$this", JetTypeMapper.jetInterfaceType(contextType).getDescriptor());
+        }
+        else {
+            throw new UnsupportedOperationException("Unknown kind: " + contextKind);
+        }
     }
 
     private static class CompilationException extends RuntimeException {

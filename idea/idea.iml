@@ -10,6 +10,7 @@
     <orderEntry type="jdk" jdkName="IDEA 10.x" jdkType="IDEA JDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="asm" level="project" />
+    <orderEntry type="module" module-name="stdlib" />
   </component>
 </module>
 

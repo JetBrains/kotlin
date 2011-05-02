@@ -71,11 +71,12 @@ public class ControlStructuresTest extends CodegenTestCase {
         assertEquals(10, main.invoke(null, "false"));
     }
 
-    public void _testFor() throws Exception {
+    public void testFor() throws Exception {
         loadFile("for.jet");
+        System.out.println(generateToText());
         final Method main = generateFunction();
         List<String> args = Arrays.asList("IntelliJ", " ", "IDEA");
-        assertEquals("IntelliJ IDEA", main.invoke(args));
+        assertEquals("IntelliJ IDEA", main.invoke(null, args));
     }
 
     public void testForInArray() throws Exception {
@@ -98,5 +99,12 @@ public class ControlStructuresTest extends CodegenTestCase {
             }
         }
         assertTrue(caught);
+    }
+
+    public void testTryCatch() throws Exception {
+        loadFile("tryCatch.jet");
+        final Method main = generateFunction();
+        assertEquals("no message", main.invoke(null, "0"));
+        assertEquals("xxx", main.invoke(null, "a"));
     }
 }

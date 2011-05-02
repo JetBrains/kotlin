@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.codegen.ClassCodegen;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.*;
 
@@ -207,5 +208,16 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
             return true;
         }
         return backingFieldRequired.contains(propertyDescriptor);
+    }
+
+    public ConstructorDescriptor resolveSuperConstructor(JetDelegatorToSuperCall superCall, ClassCodegen classCodegen) {
+        JetTypeReference typeReference = superCall.getTypeReference();
+        if (typeReference == null) return null;
+
+        JetTypeElement typeElement = typeReference.getTypeElement();
+        if (!(typeElement instanceof JetUserType)) return null;
+
+        DeclarationDescriptor descriptor = resolveReferenceExpression(((JetUserType) typeElement).getReferenceExpression());
+        return descriptor instanceof ConstructorDescriptor ? (ConstructorDescriptor) descriptor : null;
     }
 }

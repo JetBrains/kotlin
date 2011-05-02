@@ -40,6 +40,18 @@ public abstract class CodegenTestCase extends LightCodeInsightFixtureTestCase {
         myFixture.configureByFile(JetParsingTest.getTestDataDir() + "/codegen/" + name);
     }
 
+    protected String blackBox() throws Exception {
+        Codegens codegens = generateClassesInFile();
+        CodegensClassLoader loader = new CodegensClassLoader(codegens);
+
+        JetFile jetFile = (JetFile) myFixture.getFile();
+        final JetNamespace namespace = jetFile.getRootNamespace();
+        String fqName = NamespaceCodegen.getJVMClassName(namespace.getFQName()).replace("/", ".");
+        Class<?> namespaceClass = loader.loadClass(fqName);
+        Method method = namespaceClass.getMethod("box");
+        return (String) method.invoke(null);
+    }
+
     protected String generateToText() {
         Codegens state = new Codegens(getProject(), true);
         JetFile jetFile = (JetFile) myFixture.getFile();
@@ -60,10 +72,14 @@ public abstract class CodegenTestCase extends LightCodeInsightFixtureTestCase {
     }
 
     protected Class generateNamespaceClass() {
+        Codegens state = generateClassesInFile();
+        return loadRootNamespaceClass(state);
+    }
+
+    protected Class loadRootNamespaceClass(Codegens state) {
         JetFile jetFile = (JetFile) myFixture.getFile();
         final JetNamespace namespace = jetFile.getRootNamespace();
         String fqName = NamespaceCodegen.getJVMClassName(namespace.getFQName()).replace("/", ".");
-        Codegens state = generateClassesInFile();
         return loadClass(fqName, state);
     }
 
@@ -138,6 +154,25 @@ public abstract class CodegenTestCase extends LightCodeInsightFixtureTestCase {
       public Class<?> loadClass(String name) throws ClassNotFoundException {
         return super.loadClass(name);
       }
+    }
+
+    private static class CodegensClassLoader extends ClassLoader {
+        private final Codegens state;
+
+        public CodegensClassLoader(Codegens state) {
+            super(CodegenTestCase.class.getClassLoader());
+            this.state = state;
+        }
+
+        @Override
+        protected Class<?> findClass(String name) throws ClassNotFoundException {
+            String file = name.replace('.', '/') + ".class";
+            if (state.files().contains(file)) {
+                byte[] bytes = state.asBytes(file);
+                return defineClass(name, bytes, 0, bytes.length);
+            }
+            return super.findClass(name);
+        }
     }
 
     @NotNull

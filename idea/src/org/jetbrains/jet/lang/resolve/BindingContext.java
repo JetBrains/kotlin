@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.resolve;
 
 import com.intellij.psi.PsiElement;
+import org.jetbrains.jet.codegen.ClassCodegen;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.*;
 
@@ -29,4 +30,6 @@ public interface BindingContext {
     boolean isBlock(JetFunctionLiteralExpression expression);
     boolean isStatement(JetExpression expression);
     boolean hasBackingField(PropertyDescriptor propertyDescriptor);
+
+    ConstructorDescriptor resolveSuperConstructor(JetDelegatorToSuperCall superCall, ClassCodegen classCodegen);
 }

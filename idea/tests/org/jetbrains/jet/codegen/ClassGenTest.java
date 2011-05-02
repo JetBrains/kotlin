@@ -24,10 +24,28 @@ public class ClassGenTest extends CodegenTestCase {
         checkInterface(aClass, List.class);
     }
 
-    private void checkInterface(Class aClass, Class ifs) {
+    public void testArrayInheritance() throws Exception {
+        loadFile("inheritance.jet");
+        System.out.println(generateToText());
+
+        assertEquals("OK", blackBox());
+    }
+
+    private static void checkInterface(Class aClass, Class ifs) {
         for (Class anInterface : aClass.getInterfaces()) {
             if (anInterface == ifs) return;
         }
         fail(aClass.getName() + " must have " + ifs.getName() + " in its interfaces");
+    }
+
+    public void testNewInstanceExplicitConstructor() throws Exception {
+        loadFile("newInstanceDefaultConstructor.jet");
+        System.out.println(generateToText());
+        final Codegens codegens = generateClassesInFile();
+        loadImplementationClass(codegens, "SimpleClass");
+        Class ns = loadRootNamespaceClass(codegens);
+        final Method method = findMethodByName(ns, "test");
+        final Integer returnValue = (Integer) method.invoke(null);
+        assertEquals(610, returnValue.intValue());
     }
 }

@@ -1,5 +1,6 @@
 package org.jetbrains.jet.codegen;
 
+import jet.IntRange;
 import org.jetbrains.jet.parsing.JetParsingTest;
 
 import java.awt.*;
@@ -259,6 +260,13 @@ public class NamespaceGenTest extends CodegenTestCase {
         assertEquals("jet Lang", main.invoke(null, "jet", " ", "Lang"));
     }
 
+    public void testStringPlusEq() throws Exception {
+        loadText("fun foo(s: String) { val result = s; result += s; return result; } ");
+        System.out.println(generateToText());
+        final Method main = generateFunction();
+        assertEquals("JarJar", main.invoke(null, "Jar"));
+    }
+
     public void testStringCompare() throws Exception {
         loadText("fun foo(s1: String, s2: String) = s1 < s2");
         System.out.println(generateToText());
@@ -350,5 +358,14 @@ public class NamespaceGenTest extends CodegenTestCase {
         int[] data = new int[] { 5 };
         main.invoke(null, new Object[] { data });
         assertEquals(10, data[0]);
+    }
+
+    public void testIntRange() throws Exception {
+        loadText("fun foo() = 1..10");
+        final Method main = generateFunction();
+        IntRange result = (IntRange) main.invoke(null);
+        assertTrue(result.contains(1));
+        assertTrue(result.contains(10));
+        assertFalse(result.contains(11));
     }
 }

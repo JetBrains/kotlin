@@ -96,11 +96,21 @@ public class FunctionDescriptorUtil {
         if (substitutor.isEmpty()) {
             return functionDescriptor;
         }
-        FunctionDescriptorImpl substitutedDescriptor = new FunctionDescriptorImpl(
-                functionDescriptor,
-                // TODO : safeSubstitute
-                functionDescriptor.getAttributes(),
-                functionDescriptor.getName());
+        FunctionDescriptorImpl substitutedDescriptor;
+        if (functionDescriptor instanceof ConstructorDescriptor) {
+            ConstructorDescriptor original = (ConstructorDescriptor) functionDescriptor;
+
+            substitutedDescriptor = new ConstructorDescriptorImpl(
+                   original, functionDescriptor.getAttributes(), original.isPrimary()
+            );
+        }
+        else {
+            substitutedDescriptor = new FunctionDescriptorImpl(
+                    functionDescriptor,
+                    // TODO : safeSubstitute
+                    functionDescriptor.getAttributes(),
+                    functionDescriptor.getName());
+        }
 
         List<ValueParameterDescriptor> substitutedValueParameters = getSubstitutedValueParameters(substitutedDescriptor, functionDescriptor, substitutor);
         if (substitutedValueParameters == null) {

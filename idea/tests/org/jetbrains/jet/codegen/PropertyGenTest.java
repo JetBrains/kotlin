@@ -81,6 +81,15 @@ public class PropertyGenTest extends CodegenTestCase {
         assertEquals(value, "IntelliJ IDEA");
     }
 
+    public void testFieldSetterPlusEq() throws Exception {
+        loadFile("fieldSetterPlusEq.jet");
+        System.out.println(generateToText());
+        final Method method = generateFunction("append");
+        method.invoke(null, "IntelliJ ");
+        String value = (String) method.invoke(null, "IDEA");
+        assertEquals(value, "IntelliJ IDEA");
+    }
+
     public void testAccessorsWithoutBody() throws Exception {
         loadText("class AccessorsWithoutBody() { public var foo: Int = 349\n  get\n  private set\n fun setter() { foo = 610; } } ");
         final Class aClass = loadImplementationClass(generateClassesInFile(), "AccessorsWithoutBody");
