@@ -49,15 +49,3 @@ class NoCPI {
     get() = 1
     set(v) {}
 }
-
-a.select(it => it.toString()).where(it => it < 1)
-a.select{it.toString()}.where{it < 1}
-
-
-for (a in 1..10)
-
-for ((val a, val b) in range)
-
-for ((a, b) in range) {
-  is Foo => sdgfsdg
-}
