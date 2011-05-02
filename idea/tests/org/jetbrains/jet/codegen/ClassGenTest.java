@@ -40,6 +40,7 @@ public class ClassGenTest extends CodegenTestCase {
 
     public void testNewInstanceExplicitConstructor() throws Exception {
         loadFile("newInstanceDefaultConstructor.jet");
+        System.out.println(generateToText());
         final Codegens codegens = generateClassesInFile();
         loadImplementationClass(codegens, "SimpleClass");
         Class ns = loadRootNamespaceClass(codegens);

@@ -122,49 +122,78 @@ public class PropertyCodegen {
     private void generateDefaultGetter(JetProperty p, JetDeclaration declaration, OwnerKind kind) {
         final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) context.getVariableDescriptor(p);
         int flags = JetTypeMapper.getAccessModifiers(declaration, Opcodes.ACC_PUBLIC);
+        generateDefaultGetter(propertyDescriptor, flags, kind);
+    }
+
+    public void generateDefaultGetter(PropertyDescriptor propertyDescriptor, int flags, OwnerKind kind) {
         if (kind == OwnerKind.NAMESPACE) {
             flags |= Opcodes.ACC_STATIC;
         }
-        final String signature = mapper.mapGetterSignature(propertyDescriptor).getDescriptor();
-        MethodVisitor mv = v.visitMethod(flags, getterName(p.getName()), signature, null, null);
-        mv.visitCode();
-        InstructionAdapter iv = new InstructionAdapter(mv);
-        if (kind != OwnerKind.NAMESPACE) {
-            iv.load(0, JetTypeMapper.TYPE_OBJECT);
+        else if (kind == OwnerKind.INTERFACE) {
+            flags |= Opcodes.ACC_ABSTRACT;
         }
-        final Type type = mapper.mapType(propertyDescriptor.getOutType());
-        iv.visitFieldInsn(kind == OwnerKind.NAMESPACE ? Opcodes.GETSTATIC : Opcodes.GETFIELD,
-                JetTypeMapper.getOwner(propertyDescriptor), propertyDescriptor.getName(),
-                type.getDescriptor());
-        iv.areturn(type);
-        mv.visitMaxs(0, 0);
-        mv.visitEnd();
+
+        final String signature = mapper.mapGetterSignature(propertyDescriptor).getDescriptor();
+        String getterName = getterName(propertyDescriptor.getName());
+        MethodVisitor mv = v.visitMethod(flags, getterName, signature, null, null);
+        if (kind != OwnerKind.INTERFACE) {
+            mv.visitCode();
+            InstructionAdapter iv = new InstructionAdapter(mv);
+            if (kind != OwnerKind.NAMESPACE) {
+                iv.load(0, JetTypeMapper.TYPE_OBJECT);
+            }
+            final Type type = mapper.mapType(propertyDescriptor.getOutType());
+            if (kind instanceof OwnerKind.DelegateKind) {
+                OwnerKind.DelegateKind dk = (OwnerKind.DelegateKind) kind;
+                dk.getDelegate().put(JetTypeMapper.TYPE_OBJECT, iv);
+                iv.invokeinterface(dk.getOwnerClass(), getterName, signature);
+            }
+            else {
+                iv.visitFieldInsn(kind == OwnerKind.NAMESPACE ? Opcodes.GETSTATIC : Opcodes.GETFIELD,
+                        JetTypeMapper.getOwner(propertyDescriptor), propertyDescriptor.getName(),
+                        type.getDescriptor());
+            }
+            iv.areturn(type);
+            mv.visitMaxs(0, 0);
+            mv.visitEnd();
+        }
     }
 
     private void generateDefaultSetter(JetProperty p, JetDeclaration declaration, OwnerKind kind) {
         final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) context.getVariableDescriptor(p);
         int flags = JetTypeMapper.getAccessModifiers(declaration, Opcodes.ACC_PUBLIC);
+        generateDefaultSetter(propertyDescriptor, flags, kind);
+    }
+
+    public void generateDefaultSetter(PropertyDescriptor propertyDescriptor, int flags, OwnerKind kind) {
         if (kind == OwnerKind.NAMESPACE) {
             flags |= Opcodes.ACC_STATIC;
         }
+        else if (kind == OwnerKind.INTERFACE) {
+            flags |= Opcodes.ACC_ABSTRACT;
+        }
+
         final String signature = mapper.mapSetterSignature(propertyDescriptor).getDescriptor();
-        MethodVisitor mv = v.visitMethod(flags, setterName(p.getName()), signature, null, null);
-        mv.visitCode();
-        InstructionAdapter iv = new InstructionAdapter(mv);
-        final Type type = mapper.mapType(propertyDescriptor.getOutType());
-        if (kind != OwnerKind.NAMESPACE) {
-            iv.load(0, JetTypeMapper.TYPE_OBJECT);
-            iv.load(1, type);
+        MethodVisitor mv = v.visitMethod(flags, setterName(propertyDescriptor.getName()), signature, null, null);
+        if (kind != OwnerKind.INTERFACE) {
+            mv.visitCode();
+            InstructionAdapter iv = new InstructionAdapter(mv);
+            final Type type = mapper.mapType(propertyDescriptor.getOutType());
+            if (kind != OwnerKind.NAMESPACE) {
+                iv.load(0, JetTypeMapper.TYPE_OBJECT);
+                iv.load(1, type);
+            }
+            else {
+                iv.load(0, type);
+            }
+            //TODO: kind inst Delegate
+            iv.visitFieldInsn(kind == OwnerKind.NAMESPACE ? Opcodes.PUTSTATIC : Opcodes.PUTFIELD,
+                    JetTypeMapper.getOwner(propertyDescriptor), propertyDescriptor.getName(),
+                    type.getDescriptor());
+            iv.visitInsn(Opcodes.RETURN);
+            mv.visitMaxs(0, 0);
+            mv.visitEnd();
         }
-        else {
-            iv.load(0, type);
-        }
-        iv.visitFieldInsn(kind == OwnerKind.NAMESPACE ? Opcodes.PUTSTATIC : Opcodes.PUTFIELD,
-                JetTypeMapper.getOwner(propertyDescriptor), propertyDescriptor.getName(),
-                type.getDescriptor());
-        iv.visitInsn(Opcodes.RETURN);
-        mv.visitMaxs(0, 0);
-        mv.visitEnd();
     }
 
     public static String getterName(String propertyName) {

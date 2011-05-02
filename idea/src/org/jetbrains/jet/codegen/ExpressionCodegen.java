@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.search.ProjectScope;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.util.PsiTreeUtil;
 import jet.IntRange;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
@@ -448,6 +449,23 @@ public class ExpressionCodegen extends JetVisitor {
             }
             else if (descriptor instanceof PropertyDescriptor) {
                 final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
+
+                //TODO: hack, will not need if resolve goes to right descriptor itself
+                if (declaration instanceof JetParameter) {
+                    if (PsiTreeUtil.getParentOfType(expression, JetDelegationSpecifier.class)  != null) {
+                        JetClass aClass = PsiTreeUtil.getParentOfType(expression, JetClass.class);
+                        ConstructorDescriptor constructorDescriptor = bindingContext.getConstructorDescriptor(aClass);
+                        List<ValueParameterDescriptor> parameters = constructorDescriptor.getUnsubstitutedValueParameters();
+                        for (ValueParameterDescriptor parameter : parameters) {
+                            if (parameter.getName().equals(descriptor.getName())) {
+                                final JetType outType = ((VariableDescriptor) descriptor).getOutType();
+                                myStack.push(StackValue.local(myMap.getIndex(parameter), typeMapper.mapType(outType)));
+                                return;
+                            }
+                        }
+                    }
+                }
+
                 boolean isStatic = descriptor.getContainingDeclaration() instanceof NamespaceDescriptor;
                 final boolean directToField = expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER;
                 final StackValue iValue = intermediateValueForProperty(propertyDescriptor, directToField);

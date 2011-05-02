@@ -32,18 +32,18 @@ public class JetTypeMapper {
     }
 
     static String jvmName(ClassDescriptor jetClass, OwnerKind kind) {
-        switch (kind) {
-
-            case INTERFACE:
-                return jvmNameForInterface(jetClass);
-            case IMPLEMENTATION:
-                return jvmNameForImplementation(jetClass);
-            case DELEGATING_IMPLEMENTATION:
-                return jvmNameForDelegatingImplementation(jetClass);
-
-            default:
-                assert false : "Unsuitable kind";
-                return "java/lang/Object";
+        if (kind == OwnerKind.INTERFACE) {
+            return jvmNameForInterface(jetClass);
+        }
+        else if (kind == OwnerKind.IMPLEMENTATION) {
+            return jvmNameForImplementation(jetClass);
+        }
+        else if (kind == OwnerKind.DELEGATING_IMPLEMENTATION) {
+            return jvmNameForDelegatingImplementation(jetClass);
+        }
+        else {
+            assert false : "Unsuitable kind";
+            return "java/lang/Object";
         }
     }
 
