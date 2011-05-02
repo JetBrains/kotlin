@@ -1179,7 +1179,7 @@ public class JetTypeInferrer {
 
         @Override
         public void visitHashQualifiedExpression(JetHashQualifiedExpression expression) {
-            throw new UnsupportedOperationException(); // TODO
+            semanticServices.getErrorHandler().genericError(expression.getOperationTokenNode(), "Unsupported");
         }
 
         @Override

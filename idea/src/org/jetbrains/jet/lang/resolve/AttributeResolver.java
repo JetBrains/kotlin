@@ -19,10 +19,10 @@ public class AttributeResolver {
 
     @NotNull
     public List<Attribute> resolveAttributes(@NotNull List<JetAttribute> attributeElements) {
-        if (attributeElements.isEmpty()) {
-            return Collections.emptyList();
-        }
-        throw new UnsupportedOperationException(); // TODO
+        return Collections.emptyList(); // TODO
+//        if (attributeElements.isEmpty()) {
+//        }
+//        throw new UnsupportedOperationException(); // TODO
     }
 
     @NotNull
