@@ -18,8 +18,6 @@ fun box() : String {
     if (p.x + p.y != 239) return "FAIL #3"
 
     val y = new Y(-1)
-/*
-
     val p1 = new P1(240, y)
     if (p1.x + p1.y != 239) return "FAIL #4"
     val p2 = new P2(240, y)
@@ -30,6 +28,6 @@ fun box() : String {
 
     val p4 = new P4(240, y)
     if (p4.x + p4.y != 239) return "FAIL #7"
-*/
+
     "OK"
 }

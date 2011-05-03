@@ -35,7 +35,7 @@ public class PropertyCodegen {
             throw new UnsupportedOperationException("expect a property to have a property descriptor");
         }
         final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
-        if (kind == OwnerKind.NAMESPACE || kind == OwnerKind.IMPLEMENTATION) {
+        if (kind == OwnerKind.NAMESPACE || kind == OwnerKind.IMPLEMENTATION || kind == OwnerKind.DELEGATING_IMPLEMENTATION) {
             generateBackingField(p, kind, propertyDescriptor);
             generateGetter(p, kind, propertyDescriptor);
             generateSetter(p, kind, propertyDescriptor);
@@ -150,7 +150,7 @@ public class PropertyCodegen {
             }
             else {
                 iv.visitFieldInsn(kind == OwnerKind.NAMESPACE ? Opcodes.GETSTATIC : Opcodes.GETFIELD,
-                        JetTypeMapper.getOwner(propertyDescriptor), propertyDescriptor.getName(),
+                        JetTypeMapper.getOwner(propertyDescriptor, kind), propertyDescriptor.getName(),
                         type.getDescriptor());
             }
             iv.areturn(type);
@@ -188,7 +188,7 @@ public class PropertyCodegen {
             }
             //TODO: kind inst Delegate
             iv.visitFieldInsn(kind == OwnerKind.NAMESPACE ? Opcodes.PUTSTATIC : Opcodes.PUTFIELD,
-                    JetTypeMapper.getOwner(propertyDescriptor), propertyDescriptor.getName(),
+                    JetTypeMapper.getOwner(propertyDescriptor, kind), propertyDescriptor.getName(),
                     type.getDescriptor());
             iv.visitInsn(Opcodes.RETURN);
             mv.visitMaxs(0, 0);

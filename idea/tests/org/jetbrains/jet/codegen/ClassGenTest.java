@@ -24,7 +24,7 @@ public class ClassGenTest extends CodegenTestCase {
         checkInterface(aClass, List.class);
     }
 
-    public void testArrayInheritance() throws Exception {
+    public void testInheritanceAndDelegation_DelegatingDefaultConstructorProperties() throws Exception {
         loadFile("inheritance.jet");
         System.out.println(generateToText());
 

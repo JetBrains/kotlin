@@ -482,7 +482,6 @@ public class ExpressionCodegen extends JetVisitor {
 
     public StackValue intermediateValueForProperty(PropertyDescriptor propertyDescriptor, final boolean directToField) {
         boolean isStatic = propertyDescriptor.getContainingDeclaration() instanceof NamespaceDescriptor;
-        String owner = JetTypeMapper.getOwner(propertyDescriptor);
         final JetType outType = propertyDescriptor.getOutType();
         boolean isInsideClass = propertyDescriptor.getContainingDeclaration() == contextType;
         Method getter;
@@ -495,7 +494,18 @@ public class ExpressionCodegen extends JetVisitor {
             getter = isInsideClass && propertyDescriptor.getGetter() == null ? null : typeMapper.mapGetterSignature(propertyDescriptor);
             setter = isInsideClass && propertyDescriptor.getSetter() == null ? null : typeMapper.mapSetterSignature(propertyDescriptor);
         }
-        return StackValue.property(propertyDescriptor.getName(), owner, typeMapper.mapType(outType), isStatic, getter, setter);
+
+        String fieldOwner;
+        String interfaceOwner;
+        if (isInsideClass || isStatic) {
+            fieldOwner = interfaceOwner = JetTypeMapper.getOwner(propertyDescriptor, contextKind);
+        }
+        else {
+            fieldOwner = null;
+            interfaceOwner = JetTypeMapper.getOwner(propertyDescriptor, OwnerKind.INTERFACE);
+        }
+
+        return StackValue.property(propertyDescriptor.getName(), fieldOwner, interfaceOwner, typeMapper.mapType(outType), isStatic, getter, setter);
     }
 
     @Nullable

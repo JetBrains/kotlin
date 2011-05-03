@@ -71,8 +71,8 @@ public abstract class StackValue {
         return new Field(type, owner, name, isStatic);
     }
 
-    public static StackValue property(String name, String owner, Type type, boolean isStatic, Method getter, Method setter) {
-        return new Property(name, owner, getter, setter, isStatic, type);
+    public static StackValue property(String name, String fieldOwner, String interfaceOwner, Type type, boolean isStatic, Method getter, Method setter) {
+        return new Property(name, fieldOwner, interfaceOwner, getter, setter, isStatic, type);
     }
 
     private static void box(final Type type, InstructionAdapter v) {
@@ -388,15 +388,17 @@ public abstract class StackValue {
 
     private static class Property extends StackValue {
         private final String name;
-        private final String owner;
         private final Method getter;
         private final Method setter;
         private final boolean isStatic;
+        private final String fieldOwner;
+        private final String interfaceOwner;
 
-        public Property(String name, String owner, Method getter, Method setter, boolean aStatic, Type type) {
+        public Property(String name, String fieldOwner, String interfaceOwner, Method getter, Method setter, boolean aStatic, Type type) {
             super(type);
             this.name = name;
-            this.owner = owner;
+            this.fieldOwner = fieldOwner;
+            this.interfaceOwner = interfaceOwner;
             this.getter = getter;
             this.setter = setter;
             isStatic = aStatic;
@@ -405,20 +407,20 @@ public abstract class StackValue {
         @Override
         public void put(Type type, InstructionAdapter v) {
             if (getter == null) {
-                v.visitFieldInsn(isStatic ? Opcodes.GETSTATIC : Opcodes.GETFIELD, owner, name, type.getDescriptor());
+                v.visitFieldInsn(isStatic ? Opcodes.GETSTATIC : Opcodes.GETFIELD, fieldOwner, name, type.getDescriptor());
             }
             else {
-                v.visitMethodInsn(isStatic ? Opcodes.INVOKESTATIC : Opcodes.INVOKEVIRTUAL, owner, getter.getName(), getter.getDescriptor());
+                v.visitMethodInsn(isStatic ? Opcodes.INVOKESTATIC : fieldOwner == null ? Opcodes.INVOKEINTERFACE : Opcodes.INVOKEVIRTUAL, interfaceOwner, getter.getName(), getter.getDescriptor());
             }
         }
 
         @Override
         public void store(InstructionAdapter v) {
             if (setter == null) {
-                v.visitFieldInsn(isStatic ? Opcodes.PUTSTATIC : Opcodes.PUTFIELD, owner, name, type.getDescriptor());
+                v.visitFieldInsn(isStatic ? Opcodes.PUTSTATIC : Opcodes.PUTFIELD, fieldOwner, name, type.getDescriptor());
             }
             else {
-                v.visitMethodInsn(isStatic ? Opcodes.INVOKESTATIC : Opcodes.INVOKEVIRTUAL, owner, setter.getName(), setter.getDescriptor());
+                v.visitMethodInsn(isStatic ? Opcodes.INVOKESTATIC : fieldOwner == null ? Opcodes.INVOKEINTERFACE : Opcodes.INVOKEVIRTUAL, interfaceOwner, setter.getName(), setter.getDescriptor());
             }
         }
     }

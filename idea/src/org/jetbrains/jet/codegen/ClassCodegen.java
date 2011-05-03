@@ -84,37 +84,26 @@ public class ClassCodegen {
 
     private String getSuperClass(JetClass aClass, OwnerKind kind) {
         List<JetDelegationSpecifier> delegationSpecifiers = aClass.getDelegationSpecifiers();
-        String superClassName = null;
-        Set<ClassDescriptor> superInterfaces = new LinkedHashSet<ClassDescriptor>();
-        for (JetDelegationSpecifier specifier : delegationSpecifiers) {
-            JetType superType = bindingContext.resolveTypeReference(specifier.getTypeReference());
+
+        if (delegationSpecifiers.isEmpty()) return "java/lang/Object";
+
+        JetDelegationSpecifier first = delegationSpecifiers.get(0);
+        if (first instanceof JetDelegatorToSuperClass) {
+            JetType superType = bindingContext.resolveTypeReference(first.getTypeReference());
             ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
             PsiElement superPsi = bindingContext.getDeclarationPsiElement(superClassDescriptor);
-
             if (superPsi instanceof PsiClass) {
                 PsiClass psiClass = (PsiClass) superPsi;
                 String fqn = psiClass.getQualifiedName();
                 if (!psiClass.isInterface()) {
-                    if (superClassName == null) {
-                        superClassName = fqn.replace('.', '/');
-                    }
-                    else {
-                        throw new RuntimeException("Cannot determine single class to inherit from");
-                    }
+                    return fqn.replace('.', '/');
                 }
             }
-            else {
-                superInterfaces.add(superClassDescriptor);
-            }
         }
-
-        if (superClassName != null) {
-            return superClassName;
-        }
-
-        if (superInterfaces.size() > 0) {
-            ClassDescriptor first = superInterfaces.iterator().next();
-            return kind == OwnerKind.IMPLEMENTATION ? JetTypeMapper.jvmNameForImplementation(first) : JetTypeMapper.jvmNameForDelegatingImplementation(first);
+        else if (first instanceof JetDelegatorToSuperCall) {
+            JetType superType = bindingContext.resolveTypeReference(first.getTypeReference());
+            ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
+            return JetTypeMapper.jvmName(superClassDescriptor, kind);
         }
 
         return "java/lang/Object";
@@ -259,7 +248,7 @@ public class ClassCodegen {
                 JetClass superClass = (JetClass) bindingContext.getDeclarationPsiElement(superClassDescriptor);
                 generateDelegates(aClass, superClass, v,
                         new OwnerKind.DelegateKind(StackValue.field(fieldType, classname, delegateField, false),
-                        JetTypeMapper.jvmNameForInterface(superClassDescriptor)));
+                                JetTypeMapper.jvmNameForInterface(superClassDescriptor)));
             }
 
             n++;

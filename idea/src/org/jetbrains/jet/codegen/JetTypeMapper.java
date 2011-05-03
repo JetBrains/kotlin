@@ -83,14 +83,14 @@ public class JetTypeMapper {
         return jvmNameForInterface(descriptor) + "$$DImpl";
     }
 
-    static String getOwner(DeclarationDescriptor descriptor) {
+    static String getOwner(DeclarationDescriptor descriptor, OwnerKind kind) {
         String owner;
         if (descriptor.getContainingDeclaration() instanceof NamespaceDescriptor) {
             owner = jvmName((NamespaceDescriptor) descriptor.getContainingDeclaration());
         }
         else if (descriptor.getContainingDeclaration() instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) descriptor.getContainingDeclaration();
-            owner = jvmNameForImplementation(classDescriptor);
+            owner = jvmName(classDescriptor, kind instanceof OwnerKind.DelegateKind ? OwnerKind.INTERFACE : kind);
         }
         else {
             throw new UnsupportedOperationException("don't know how to generate owner for parent " + descriptor.getContainingDeclaration());
