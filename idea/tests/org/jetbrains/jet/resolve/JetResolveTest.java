@@ -151,4 +151,8 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
         doTest("/resolve/Namespaces.jet", true, true);
     }
 
+    public void testTryCatch() throws Exception {
+        doTest("/resolve/TryCatch.jet", true, true);
+    }
+
 }

@@ -959,19 +959,38 @@ public class JetTypeInferrer {
             List<JetCatchClause> catchClauses = expression.getCatchClauses();
             JetFinallySection finallyBlock = expression.getFinallyBlock();
             List<JetType> types = new ArrayList<JetType>();
-            if (finallyBlock == null) {
-                for (JetCatchClause catchClause : catchClauses) {
-                    // TODO: change scope here
-                    JetExpression catchBody = catchClause.getCatchBody();
+            for (JetCatchClause catchClause : catchClauses) {
+                JetParameter catchParameter = catchClause.getCatchParameter();
+                JetExpression catchBody = catchClause.getCatchBody();
+                if (catchParameter != null) {
+                    VariableDescriptor variableDescriptor = classDescriptorResolver.resolveLocalVariableDescriptor(scope.getContainingDeclaration(), scope, catchParameter);
                     if (catchBody != null) {
-                        types.add(getType(scope, catchBody, true));
+                        WritableScope catchScope = semanticServices.createWritableScope(scope, scope.getContainingDeclaration());
+                        catchScope.addVariableDescriptor(variableDescriptor);
+                        JetType type = getType(catchScope, catchBody, true);
+                        if (type != null) {
+                            types.add(type);
+                        }
                     }
                 }
-            } else {
-                types.add(getType(scope, finallyBlock.getFinalExpression(), true));
             }
-            types.add(getType(scope, tryBlock, true));
-            result = semanticServices.getTypeChecker().commonSupertype(types);
+            if (finallyBlock != null) {
+                types.clear(); // Do not need the list for the check, but need the code above to typecheck catch bodies
+                JetType type = getType(scope, finallyBlock.getFinalExpression(), true);
+                if (type != null) {
+                    types.add(type);
+                }
+            }
+            JetType type = getType(scope, tryBlock, true);
+            if (type != null) {
+                types.add(type);
+            }
+            if (types.isEmpty()) {
+                result = null;
+            }
+            else {
+                result = semanticServices.getTypeChecker().commonSupertype(types);
+            }
         }
 
         @Override

@@ -75,6 +75,7 @@ public class JetTypeChecker {
         boolean nullable = false;
         for (Iterator<JetType> iterator = typeSet.iterator(); iterator.hasNext();) {
             JetType type = iterator.next();
+            assert type != null;
             // TODO : This admits 'Nothing?'. Review
             if (JetStandardClasses.isNothing(type)) {
                 iterator.remove();
