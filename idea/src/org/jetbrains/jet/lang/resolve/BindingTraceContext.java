@@ -24,7 +24,8 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
     private final Map<DeclarationDescriptor, PsiElement> descriptorToDeclarations = new HashMap<DeclarationDescriptor, PsiElement>();
     private final Map<PsiElement, DeclarationDescriptor> declarationsToDescriptors = new HashMap<PsiElement, DeclarationDescriptor>();
     private final Map<PsiElement, ConstructorDescriptor> constructorDeclarationsToDescriptors = new HashMap<PsiElement, ConstructorDescriptor>();
-    private final Map<PsiElement, PropertyDescriptor> propertyDeclarationsToDescriptors = Maps.newHashMap();
+    private final Map<PsiElement, NamespaceDescriptor> namespaceDeclarationsToDescriptors = Maps.newHashMap();
+    private final Map<PsiElement, PropertyDescriptor> primaryConstructorParameterDeclarationsToPropertyDescriptors = Maps.newHashMap();
     private final Set<JetFunctionLiteralExpression> blocks = new HashSet<JetFunctionLiteralExpression>();
     private final Set<JetElement> statements = new HashSet<JetElement>();
     private final Set<PropertyDescriptor> backingFieldRequired = new HashSet<PropertyDescriptor>();
@@ -68,9 +69,12 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
                         return null;
                     }
 
-
-
                     @Override
+                    public Void visitNamespaceDescriptor(NamespaceDescriptor descriptor, PsiElement declaration) {
+                        namespaceDeclarationsToDescriptors.put(declaration, descriptor);
+                        return null;
+                    }
+
                     public Void visitDeclarationDescriptor(DeclarationDescriptor descriptor, PsiElement declaration) {
                         safePut(declarationsToDescriptors, declaration, descriptor.getOriginal());
                         return null;
@@ -78,10 +82,16 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
                 }, declaration);
     }
 
+    @Override
+    public void recordValueParameterAsPropertyResolution(@NotNull JetParameter declaration, @NotNull PropertyDescriptor descriptor) {
+        safePut(primaryConstructorParameterDeclarationsToPropertyDescriptors, declaration, descriptor);
+        safePut(descriptorToDeclarations, descriptor.getOriginal(), declaration);
+    }
+
     private <K, V> void safePut(Map<K, V> map, K key, V value) {
         V oldValue = map.put(key, value);
         // TODO:
-//        assert oldValue == null || oldValue == value : key + ": " + oldValue + " and " + value;
+        assert oldValue == null || oldValue == value : key + ": " + oldValue + " and " + value;
     }
 
     @Override
@@ -112,7 +122,7 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
 
 
     public NamespaceDescriptor getNamespaceDescriptor(JetNamespace declaration) {
-        return (NamespaceDescriptor) declarationsToDescriptors.get(declaration);
+        return namespaceDeclarationsToDescriptors.get(declaration);
     }
 
     @Override
@@ -136,8 +146,14 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
     }
 
     @Override
-    public VariableDescriptor getParameterDescriptor(JetParameter declaration) {
+    public VariableDescriptor getVariableDescriptor(JetParameter declaration) {
         return (VariableDescriptor) declarationsToDescriptors.get(declaration);
+    }
+
+    @Override
+    public PropertyDescriptor getPropertyDescriptor(JetParameter primaryConstructorParameter) {
+        PropertyDescriptor descriptor = primaryConstructorParameterDeclarationsToPropertyDescriptors.get(primaryConstructorParameter);
+        return descriptor;
     }
 
     @Override
@@ -192,6 +208,12 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
 
     @Override
     public boolean hasBackingField(@NotNull PropertyDescriptor propertyDescriptor) {
+        PsiElement declarationPsiElement = getDeclarationPsiElement(propertyDescriptor);
+        if (declarationPsiElement instanceof JetParameter) {
+            JetParameter jetParameter = (JetParameter) declarationPsiElement;
+            return jetParameter.getValOrVarNode() != null ||
+                   backingFieldRequired.contains(propertyDescriptor);
+        }
         if (propertyDescriptor.getModifiers().isAbstract()) return false;
         PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
         PropertySetterDescriptor setter = propertyDescriptor.getSetter();

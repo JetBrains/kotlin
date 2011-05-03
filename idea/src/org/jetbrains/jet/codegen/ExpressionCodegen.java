@@ -222,7 +222,7 @@ public class ExpressionCodegen extends JetVisitor {
 
     private void generateForInArray(JetForExpression expression, Type loopRangeType) {
         final JetParameter loopParameter = expression.getLoopParameter();
-        final VariableDescriptor parameterDescriptor = bindingContext.getParameterDescriptor(loopParameter);
+        final VariableDescriptor parameterDescriptor = bindingContext.getVariableDescriptor(loopParameter);
         JetType paramType = parameterDescriptor.getOutType();
         Type asmParamType = typeMapper.mapType(paramType);
 
@@ -269,7 +269,7 @@ public class ExpressionCodegen extends JetVisitor {
 
     private void generateForInIterable(JetForExpression expression, Type loopRangeType) {
         final JetParameter loopParameter = expression.getLoopParameter();
-        final VariableDescriptor parameterDescriptor = bindingContext.getParameterDescriptor(loopParameter);
+        final VariableDescriptor parameterDescriptor = bindingContext.getVariableDescriptor(loopParameter);
         JetType paramType = parameterDescriptor.getOutType();
         Type asmParamType = typeMapper.mapType(paramType);
 

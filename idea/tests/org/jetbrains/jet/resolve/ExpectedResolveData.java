@@ -151,7 +151,7 @@ public class ExpectedResolveData {
                 }
             }
             assertNotNull(reference);
-            assertSame(
+            assertEquals(
                     "Reference `" + name + "`" + renderReferenceInContext(reference) + " is resolved into " + actualName + ".",
                     expected, actual);
         }

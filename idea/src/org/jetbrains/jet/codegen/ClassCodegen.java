@@ -307,9 +307,8 @@ public class ClassCodegen {
 
         for (JetParameter p : aClass.getPrimaryConstructorParameters()) {
             if (p.getValOrVarNode() != null) {
-                VariableDescriptor descriptor = bindingContext.getParameterDescriptor(p);
-                if (descriptor instanceof PropertyDescriptor) {
-                    PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
+                PropertyDescriptor propertyDescriptor = bindingContext.getPropertyDescriptor(p);
+                if (propertyDescriptor != null) {
                     propertyCodegen.generateDefaultGetter(propertyDescriptor, Opcodes.ACC_PUBLIC, kind);
                     if (propertyDescriptor.isVar()) {
                         propertyCodegen.generateDefaultSetter(propertyDescriptor, Opcodes.ACC_PUBLIC, kind);
@@ -341,9 +340,8 @@ public class ClassCodegen {
 
         for (JetParameter p : toClass.getPrimaryConstructorParameters()) {
             if (p.getValOrVarNode() != null) {
-                VariableDescriptor descriptor = bindingContext.getParameterDescriptor(p);
-                if (descriptor instanceof PropertyDescriptor) {
-                    PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
+                PropertyDescriptor propertyDescriptor = bindingContext.getPropertyDescriptor(p);
+                if (propertyDescriptor != null) {
                     propertyCodegen.generateDefaultGetter(propertyDescriptor, Opcodes.ACC_PUBLIC, kind);
                     if (propertyDescriptor.isVar()) {
                         propertyCodegen.generateDefaultSetter(propertyDescriptor, Opcodes.ACC_PUBLIC, kind);

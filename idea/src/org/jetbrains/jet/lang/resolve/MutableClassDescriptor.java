@@ -51,6 +51,10 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     @NotNull
     @Override
     public JetScope getMemberScope(List<TypeProjection> typeArguments) {
+        assert typeArguments.size() == typeConstructor.getParameters().size();
+        assert unsubstitutedMemberScope != null;
+        if (typeArguments.isEmpty()) return unsubstitutedMemberScope;
+
         List<TypeParameterDescriptor> typeParameters = getTypeConstructor().getParameters();
         Map<TypeConstructor, TypeProjection> substitutionContext = TypeUtils.buildSubstitutionContext(typeParameters, typeArguments);
         return new SubstitutingScope(unsubstitutedMemberScope, TypeSubstitutor.create(substitutionContext));

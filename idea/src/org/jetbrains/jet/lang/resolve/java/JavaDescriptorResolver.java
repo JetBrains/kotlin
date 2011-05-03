@@ -93,9 +93,9 @@ public class JavaDescriptorResolver {
 
         ));
         classDescriptorCache.put(psiClass.getQualifiedName(), classDescriptor);
+        classDescriptor.setUnsubstitutedMemberScope(new JavaClassMembersScope(classDescriptor, psiClass, semanticServices, false));
         // UGLY HACK
         supertypes.addAll(getSupertypes(psiClass));
-        classDescriptor.setUnsubstitutedMemberScope(new JavaClassMembersScope(classDescriptor, psiClass, semanticServices, false));
 
         // NOTE: this writes into constructors after it is remembered by the classDescriptor
         PsiMethod[] psiConstructors = psiClass.getConstructors();

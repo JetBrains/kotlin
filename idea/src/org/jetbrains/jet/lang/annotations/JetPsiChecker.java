@@ -99,23 +99,30 @@ public class JetPsiChecker implements Annotator {
                 VariableDescriptor propertyDescriptor = bindingContext.getVariableDescriptor(property);
                 if (propertyDescriptor instanceof PropertyDescriptor) {
                     if (bindingContext.hasBackingField((PropertyDescriptor) propertyDescriptor)) {
-                        holder.createInfoAnnotation(
-                                property.getNameIdentifier(),
-                                "This property has a backing field")
-                            .setTextAttributes(JetHighlighter.JET_PROPERTY_WITH_BACKING_FIELD_IDENTIFIER);
+                        putBackingfieldAnnotation(holder, property);
                     }
                 }
             }
 
-//            @Override
-//            public void visitParameter(JetParameter parameter) {
-//                bindingContext.get
-//            }
+            @Override
+            public void visitParameter(JetParameter parameter) {
+                PropertyDescriptor propertyDescriptor = bindingContext.getPropertyDescriptor(parameter);
+                if (propertyDescriptor != null && bindingContext.hasBackingField(propertyDescriptor)) {
+                    putBackingfieldAnnotation(holder, parameter);
+                }
+            }
 
             @Override
             public void visitJetElement(JetElement elem) {
                 elem.acceptChildren(this);
             }
         });
+    }
+
+    private void putBackingfieldAnnotation(AnnotationHolder holder, JetNamedDeclaration element) {
+        holder.createInfoAnnotation(
+                element.getNameIdentifier(),
+                "This property has a backing field")
+            .setTextAttributes(JetHighlighter.JET_PROPERTY_WITH_BACKING_FIELD_IDENTIFIER);
     }
 }

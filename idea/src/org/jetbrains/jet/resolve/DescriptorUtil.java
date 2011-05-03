@@ -18,6 +18,12 @@ public class DescriptorUtil {
         declarationDescriptor.accept(
                 new DeclarationDescriptorVisitor<Void, StringBuilder>() {
                     @Override
+                    public Void visitValueParameterDescriptor(ValueParameterDescriptor descriptor, StringBuilder builder) {
+                        builder.append("value-parameter ");
+                        return super.visitValueParameterDescriptor(descriptor, builder);
+                    }
+
+                    @Override
                     public Void visitVariableDescriptor(VariableDescriptor descriptor, StringBuilder builder) {
                         JetType outType = descriptor.getOutType();
                         JetType inType = descriptor.getInType();

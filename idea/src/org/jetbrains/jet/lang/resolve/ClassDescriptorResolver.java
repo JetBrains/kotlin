@@ -509,7 +509,7 @@ public class ClassDescriptorResolver {
                 isMutable ? type : null,
                 type);
         propertyDescriptor.initialize(null, null);
-        trace.recordDeclarationResolution(parameter, propertyDescriptor);
+        trace.recordValueParameterAsPropertyResolution(parameter, propertyDescriptor);
         return propertyDescriptor;
     }
 

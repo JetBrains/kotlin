@@ -31,6 +31,11 @@ public class BindingTraceAdapter implements BindingTrace {
         originalTrace.recordDeclarationResolution(declaration, descriptor);
     }
 
+    @Override
+    public void recordValueParameterAsPropertyResolution(@NotNull JetParameter declaration, @NotNull PropertyDescriptor descriptor) {
+        originalTrace.recordValueParameterAsPropertyResolution(declaration, descriptor);
+    }
+
     public void recordTypeResolution(@NotNull JetTypeReference typeReference, @NotNull JetType type) {
         originalTrace.recordTypeResolution(typeReference, type);
     }

@@ -14,8 +14,11 @@ public interface BindingContext {
     TypeParameterDescriptor getTypeParameterDescriptor(JetTypeParameter declaration);
     FunctionDescriptor getFunctionDescriptor(JetFunction declaration);
     ConstructorDescriptor getConstructorDescriptor(JetElement declaration);
+
     VariableDescriptor getVariableDescriptor(JetProperty declaration);
-    VariableDescriptor getParameterDescriptor(JetParameter declaration);
+    VariableDescriptor getVariableDescriptor(JetParameter declaration);
+
+    PropertyDescriptor getPropertyDescriptor(JetParameter primaryConstructorParameter);
 
     JetType getExpressionType(JetExpression expression);
 

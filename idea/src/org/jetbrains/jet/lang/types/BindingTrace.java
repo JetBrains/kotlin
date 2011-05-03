@@ -28,6 +28,11 @@ public interface BindingTrace {
         }
 
         @Override
+        public void recordValueParameterAsPropertyResolution(@NotNull JetParameter declaration, @NotNull PropertyDescriptor descriptor) {
+
+        }
+
+        @Override
         public void recordTypeResolution(@NotNull JetTypeReference typeReference, @NotNull JetType type) {
         }
 
@@ -63,6 +68,8 @@ public interface BindingTrace {
     public void recordLabelResolution(@NotNull JetReferenceExpression expression, @NotNull PsiElement element);
 
     public void recordDeclarationResolution(@NotNull PsiElement declaration, @NotNull DeclarationDescriptor descriptor);
+
+    public void recordValueParameterAsPropertyResolution(@NotNull JetParameter declaration, @NotNull PropertyDescriptor descriptor);
 
     public void recordTypeResolution(@NotNull JetTypeReference typeReference, @NotNull JetType type);
 
