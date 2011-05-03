@@ -58,7 +58,7 @@ public class FunctionDescriptorUtil {
     }
 
     @Nullable
-    private static List<ValueParameterDescriptor> getSubstitutedValueParameters(FunctionDescriptor substitutedDescriptor, @NotNull FunctionDescriptor functionDescriptor, TypeSubstitutor substitutor) {
+    public static List<ValueParameterDescriptor> getSubstitutedValueParameters(FunctionDescriptor substitutedDescriptor, @NotNull FunctionDescriptor functionDescriptor, TypeSubstitutor substitutor) {
         List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>();
         List<ValueParameterDescriptor> unsubstitutedValueParameters = functionDescriptor.getUnsubstitutedValueParameters();
         for (int i = 0, unsubstitutedValueParametersSize = unsubstitutedValueParameters.size(); i < unsubstitutedValueParametersSize; i++) {
@@ -81,53 +81,14 @@ public class FunctionDescriptorUtil {
     }
 
     @Nullable
-    private static JetType getSubstitutedReturnType(@NotNull FunctionDescriptor functionDescriptor, TypeSubstitutor substitutor) {
+    public static JetType getSubstitutedReturnType(@NotNull FunctionDescriptor functionDescriptor, TypeSubstitutor substitutor) {
         return substitutor.substitute(functionDescriptor.getUnsubstitutedReturnType(), Variance.OUT_VARIANCE);
     }
 
     @Nullable
     public static FunctionDescriptor substituteFunctionDescriptor(@NotNull List<JetType> typeArguments, @NotNull FunctionDescriptor functionDescriptor) {
         Map<TypeConstructor, TypeProjection> substitutionContext = createSubstitutionContext(functionDescriptor, typeArguments);
-        return substituteFunctionDescriptor(functionDescriptor, TypeSubstitutor.create(substitutionContext));
-    }
-
-    @Nullable
-    public static FunctionDescriptor substituteFunctionDescriptor(FunctionDescriptor functionDescriptor, TypeSubstitutor substitutor) {
-        if (substitutor.isEmpty()) {
-            return functionDescriptor;
-        }
-        FunctionDescriptorImpl substitutedDescriptor;
-        if (functionDescriptor instanceof ConstructorDescriptor) {
-            ConstructorDescriptor original = (ConstructorDescriptor) functionDescriptor;
-
-            substitutedDescriptor = new ConstructorDescriptorImpl(
-                   original, functionDescriptor.getAttributes(), original.isPrimary()
-            );
-        }
-        else {
-            substitutedDescriptor = new FunctionDescriptorImpl(
-                    functionDescriptor,
-                    // TODO : safeSubstitute
-                    functionDescriptor.getAttributes(),
-                    functionDescriptor.getName());
-        }
-
-        List<ValueParameterDescriptor> substitutedValueParameters = getSubstitutedValueParameters(substitutedDescriptor, functionDescriptor, substitutor);
-        if (substitutedValueParameters == null) {
-            return null;
-        }
-
-        JetType substitutedReturnType = getSubstitutedReturnType(functionDescriptor, substitutor);
-        if (substitutedReturnType == null) {
-            return null;
-        }
-
-        substitutedDescriptor.initialize(
-                Collections.<TypeParameterDescriptor>emptyList(), // TODO : questionable
-                substitutedValueParameters,
-                substitutedReturnType
-        );
-        return substitutedDescriptor;
+        return functionDescriptor.substitute(TypeSubstitutor.create(substitutionContext));
     }
 
     @NotNull

@@ -29,7 +29,7 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
     }
 
     public ConstructorDescriptor initialize(@NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters) {
-        super.initialize(Collections.<TypeParameterDescriptor>emptyList(), unsubstitutedValueParameters, JetStandardClasses.getNothingType());
+        super.initialize(Collections.<TypeParameterDescriptor>emptyList(), unsubstitutedValueParameters, getContainingDeclaration().getDefaultType());
         return this;
     }
 
@@ -61,9 +61,11 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
         return Collections.emptyList();
     }
 
-    @NotNull
     @Override
-    public JetType getUnsubstitutedReturnType() {
-        return getContainingDeclaration().getDefaultType();
+    protected FunctionDescriptorImpl createSubstitutedCopy() {
+        return new ConstructorDescriptorImpl(
+                this,
+                Collections.<Attribute>emptyList(), // TODO
+                isPrimary);
     }
 }

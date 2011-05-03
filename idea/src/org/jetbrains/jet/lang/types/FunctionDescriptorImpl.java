@@ -3,6 +3,7 @@ package org.jetbrains.jet.lang.types;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -78,8 +79,37 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
     }
 
     @Override
-    public FunctionDescriptor substitute(TypeSubstitutor substitutor) {
-        return FunctionDescriptorUtil.substituteFunctionDescriptor(this, substitutor);
+    public final FunctionDescriptor substitute(TypeSubstitutor substitutor) {
+        if (substitutor.isEmpty()) {
+            return this;
+        }
+        FunctionDescriptorImpl substitutedDescriptor;
+        substitutedDescriptor = createSubstitutedCopy();
+
+        List<ValueParameterDescriptor> substitutedValueParameters = FunctionDescriptorUtil.getSubstitutedValueParameters(substitutedDescriptor, this, substitutor);
+        if (substitutedValueParameters == null) {
+            return null;
+        }
+
+        JetType substitutedReturnType = FunctionDescriptorUtil.getSubstitutedReturnType(this, substitutor);
+        if (substitutedReturnType == null) {
+            return null;
+        }
+
+        substitutedDescriptor.initialize(
+                Collections.<TypeParameterDescriptor>emptyList(), // TODO : questionable
+                substitutedValueParameters,
+                substitutedReturnType
+        );
+        return substitutedDescriptor;
+    }
+
+    protected FunctionDescriptorImpl createSubstitutedCopy() {
+        return new FunctionDescriptorImpl(
+                this,
+                // TODO : safeSubstitute
+                getAttributes(),
+                getName());
     }
 
     @Override
