@@ -14,8 +14,8 @@ public abstract class DeclarationDescriptorImpl extends AnnotatedImpl implements
     private final String name;
     private final DeclarationDescriptor containingDeclaration;
 
-    public DeclarationDescriptorImpl(@Nullable DeclarationDescriptor containingDeclaration, List<Attribute> attributes, String name) {
-        super(attributes);
+    public DeclarationDescriptorImpl(@Nullable DeclarationDescriptor containingDeclaration, List<Annotation> annotations, String name) {
+        super(annotations);
         this.name = name;
         this.containingDeclaration = containingDeclaration;
     }

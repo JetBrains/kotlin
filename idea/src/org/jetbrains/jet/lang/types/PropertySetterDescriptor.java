@@ -12,8 +12,8 @@ public class PropertySetterDescriptor extends PropertyAccessorDescriptor impleme
 
     private MutableValueParameterDescriptor parameter;
 
-    public PropertySetterDescriptor(@NotNull PropertyDescriptor correspondingProperty, @NotNull List<Attribute> attributes, boolean hasBody) {
-        super(correspondingProperty, attributes, "set-" + correspondingProperty.getName(), hasBody);
+    public PropertySetterDescriptor(@NotNull PropertyDescriptor correspondingProperty, @NotNull List<Annotation> annotations, boolean hasBody) {
+        super(correspondingProperty, annotations, "set-" + correspondingProperty.getName(), hasBody);
     }
 
     public void initialize(@NotNull MutableValueParameterDescriptor parameter) {

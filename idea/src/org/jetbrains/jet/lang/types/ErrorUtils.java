@@ -80,8 +80,8 @@ public class ErrorUtils {
         }
     };
 
-    private static final ClassDescriptorImpl ERROR_CLASS = new ClassDescriptorImpl(ERROR_MODULE, Collections.<Attribute>emptyList(), "<ERROR CLASS>");
-    private static final ConstructorDescriptor ERROR_CONSTRUCTOR = new ConstructorDescriptorImpl(ERROR_CLASS, Collections.<Attribute>emptyList(), true);
+    private static final ClassDescriptorImpl ERROR_CLASS = new ClassDescriptorImpl(ERROR_MODULE, Collections.<Annotation>emptyList(), "<ERROR CLASS>");
+    private static final ConstructorDescriptor ERROR_CONSTRUCTOR = new ConstructorDescriptorImpl(ERROR_CLASS, Collections.<Annotation>emptyList(), true);
     static {
         ERROR_CLASS.initialize(
             true, Collections.<TypeParameterDescriptor>emptyList(), Collections.<JetType>emptyList(), getErrorScope(), ERROR_FUNCTION_GROUP, ERROR_CONSTRUCTOR);
@@ -93,10 +93,10 @@ public class ErrorUtils {
 
     private static final JetType ERROR_PROPERTY_TYPE = createErrorType("<ERROR PROPERTY TYPE>");
     private static final VariableDescriptor ERROR_PROPERTY = new PropertyDescriptor(
-            ERROR_CLASS, Collections.<Attribute>emptyList(), new MemberModifiers(false, false, false), true, "<ERROR PROPERTY>", ERROR_PROPERTY_TYPE, ERROR_PROPERTY_TYPE);
+            ERROR_CLASS, Collections.<Annotation>emptyList(), new MemberModifiers(false, false, false), true, "<ERROR PROPERTY>", ERROR_PROPERTY_TYPE, ERROR_PROPERTY_TYPE);
 
     private static FunctionDescriptor createErrorFunction(List<TypeParameterDescriptor> typeParameters, List<JetType> positionedValueArgumentTypes) {
-        FunctionDescriptorImpl functionDescriptor = new FunctionDescriptorImpl(ERROR_CLASS, Collections.<Attribute>emptyList(), "<ERROR FUNCTION>");
+        FunctionDescriptorImpl functionDescriptor = new FunctionDescriptorImpl(ERROR_CLASS, Collections.<Annotation>emptyList(), "<ERROR FUNCTION>");
         return functionDescriptor.initialize(
                 typeParameters,
                 getValueParameters(functionDescriptor, positionedValueArgumentTypes),
@@ -109,7 +109,7 @@ public class ErrorUtils {
     }
 
     private static FunctionDescriptor createErrorFunction(int typeParameterCount, List<JetType> positionedValueParameterTypes) {
-        return new FunctionDescriptorImpl(ERROR_CLASS, Collections.<Attribute>emptyList(), "<ERROR FUNCTION>").initialize(
+        return new FunctionDescriptorImpl(ERROR_CLASS, Collections.<Annotation>emptyList(), "<ERROR FUNCTION>").initialize(
                 Collections.<TypeParameterDescriptor>emptyList(), // TODO
                 Collections.<ValueParameterDescriptor>emptyList(), // TODO
                 createErrorType("<ERROR FUNCTION RETURN TYPE>")
@@ -123,7 +123,7 @@ public class ErrorUtils {
             result.add(new ValueParameterDescriptorImpl(
                     functionDescriptor,
                     i,
-                    Collections.<Attribute>emptyList(),
+                    Collections.<Annotation>emptyList(),
                     "<ERROR PARAMETER>",
                     ERROR_PARAMETER_TYPE,
                     ERROR_PARAMETER_TYPE,
@@ -138,7 +138,7 @@ public class ErrorUtils {
     }
 
     private static JetType createErrorType(String debugMessage, JetScope memberScope) {
-        return new ErrorTypeImpl(new TypeConstructorImpl(ERROR_CLASS, Collections.<Attribute>emptyList(), false, "[ERROR : " + debugMessage + "]", Collections.<TypeParameterDescriptor>emptyList(), Collections.<JetType>emptyList()), memberScope);
+        return new ErrorTypeImpl(new TypeConstructorImpl(ERROR_CLASS, Collections.<Annotation>emptyList(), false, "[ERROR : " + debugMessage + "]", Collections.<TypeParameterDescriptor>emptyList(), Collections.<JetType>emptyList()), memberScope);
     }
 
     public static JetType createWrongVarianceErrorType(TypeProjection value) {
@@ -192,7 +192,7 @@ public class ErrorUtils {
         }
 
         @Override
-        public List<Attribute> getAttributes() {
+        public List<Annotation> getAnnotations() {
             return Collections.emptyList();
         }
 

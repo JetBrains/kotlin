@@ -9,7 +9,7 @@ import java.util.Collections;
  */
 public class ModuleDescriptor extends DeclarationDescriptorImpl {
     public ModuleDescriptor(String name) {
-        super(null, Collections.<Attribute>emptyList(), name);
+        super(null, Collections.<Annotation>emptyList(), name);
     }
 
     @NotNull

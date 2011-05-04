@@ -25,16 +25,16 @@ public class TypeResolver {
 
     @NotNull
     public JetType resolveType(@NotNull final JetScope scope, @NotNull final JetTypeReference typeReference) {
-        final List<Attribute> attributes = AttributeResolver.INSTANCE.resolveAttributes(typeReference.getAttributes());
+        final List<Annotation> annotations = AnnotationResolver.INSTANCE.resolveAnnotations(typeReference.getAttributes());
 
         JetTypeElement typeElement = typeReference.getTypeElement();
-        JetType type = resolveTypeElement(scope, attributes, typeElement, false);
+        JetType type = resolveTypeElement(scope, annotations, typeElement, false);
         trace.recordTypeResolution(typeReference, type);
         return type;
     }
 
     @NotNull
-    private JetType resolveTypeElement(final JetScope scope, final List<Attribute> attributes, JetTypeElement typeElement, final boolean nullable) {
+    private JetType resolveTypeElement(final JetScope scope, final List<Annotation> annotations, JetTypeElement typeElement, final boolean nullable) {
         final JetType[] result = new JetType[1];
         if (typeElement != null) {
             typeElement.accept(new JetVisitor() {
@@ -54,7 +54,7 @@ public class TypeResolver {
                             trace.recordReferenceResolution(referenceExpression, typeParameterDescriptor);
 
                             result[0] = new JetTypeImpl(
-                                    attributes,
+                                    annotations,
                                     typeParameterDescriptor.getTypeConstructor(),
                                     nullable || TypeUtils.hasNullableBound(typeParameterDescriptor),
                                     Collections.<TypeProjection>emptyList(),
@@ -72,7 +72,7 @@ public class TypeResolver {
                             int actualArgumentCount = arguments.size();
                             if (ErrorUtils.isError(typeConstructor)) {
                                 result[0] = new JetTypeImpl(
-                                        attributes,
+                                        annotations,
                                         typeConstructor,
                                         nullable,
                                         arguments, // TODO : review
@@ -89,7 +89,7 @@ public class TypeResolver {
                                     }
                                 } else {
                                     result[0] = new JetTypeImpl(
-                                            attributes,
+                                            annotations,
                                             typeConstructor,
                                             nullable,
                                             arguments,
@@ -103,7 +103,7 @@ public class TypeResolver {
 
                 @Override
                 public void visitNullableType(JetNullableType nullableType) {
-                    result[0] = resolveTypeElement(scope, attributes, nullableType.getInnerType(), true);
+                    result[0] = resolveTypeElement(scope, annotations, nullableType.getInnerType(), true);
                 }
 
                 @Override
@@ -125,7 +125,7 @@ public class TypeResolver {
                     JetTypeReference returnTypeRef = type.getReturnTypeRef();
                     if (returnTypeRef != null) {
                         JetType returnType = resolveType(scope, returnTypeRef);
-                        result[0] = JetStandardClasses.getFunctionType(attributes, receiverType, parameterTypes, returnType);
+                        result[0] = JetStandardClasses.getFunctionType(annotations, receiverType, parameterTypes, returnType);
                     }
                 }
 

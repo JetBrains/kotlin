@@ -24,7 +24,7 @@ public class TypeUtils {
         if (type.isNullable() == nullable) {
             return type;
         }
-        return new JetTypeImpl(type.getAttributes(), type.getConstructor(), nullable, type.getArguments(), type.getMemberScope());
+        return new JetTypeImpl(type.getAnnotations(), type.getConstructor(), nullable, type.getArguments(), type.getMemberScope());
     }
 
     @NotNull
@@ -64,10 +64,10 @@ public class TypeUtils {
             }
         }
 
-        List<Attribute> noAttributes = Collections.<Attribute>emptyList();
-        TypeConstructor constructor = new TypeConstructorImpl(null, noAttributes, false, debugName.toString(), Collections.<TypeParameterDescriptor>emptyList(), types);
+        List<Annotation> noAnnotations = Collections.<Annotation>emptyList();
+        TypeConstructor constructor = new TypeConstructorImpl(null, noAnnotations, false, debugName.toString(), Collections.<TypeParameterDescriptor>emptyList(), types);
         return new JetTypeImpl(
-                noAttributes,
+                noAnnotations,
                 constructor,
                 nullable,
                 Collections.<TypeProjection>emptyList(),
@@ -159,7 +159,7 @@ public class TypeUtils {
     public static JetType makeUnsubstitutedType(ClassDescriptor classDescriptor, JetScope unsubstitutedMemberScope) {
         List<TypeProjection> arguments = getArguments(classDescriptor);
         return new JetTypeImpl(
-                Collections.<Attribute>emptyList(),
+                Collections.<Annotation>emptyList(),
                 classDescriptor.getTypeConstructor(),
                 false,
                 arguments,

@@ -35,7 +35,7 @@ public class ClassDescriptorResolver {
     public ClassDescriptor resolveClassDescriptor(@NotNull JetScope scope, @NotNull JetClass classElement) {
         ClassDescriptorImpl classDescriptor = new ClassDescriptorImpl(
                 scope.getContainingDeclaration(),
-                AttributeResolver.INSTANCE.resolveAttributes(classElement.getModifierList()),
+                AnnotationResolver.INSTANCE.resolveAnnotations(classElement.getModifierList()),
                 JetPsiUtil.safeName(classElement.getName()));
 
         trace.recordDeclarationResolution(classElement, classDescriptor);
@@ -86,7 +86,7 @@ public class ClassDescriptorResolver {
         List<JetType> supertypes = new ArrayList<JetType>();
         TypeConstructorImpl typeConstructor = new TypeConstructorImpl(
                 descriptor,
-                AttributeResolver.INSTANCE.resolveAttributes(classElement.getModifierList()),
+                AnnotationResolver.INSTANCE.resolveAnnotations(classElement.getModifierList()),
                 !open,
                 JetPsiUtil.safeName(classElement.getName()),
                 typeParameters,
@@ -163,7 +163,7 @@ public class ClassDescriptorResolver {
     public FunctionDescriptorImpl resolveFunctionDescriptor(DeclarationDescriptor containingDescriptor, JetScope scope, JetFunction function) {
         FunctionDescriptorImpl functionDescriptor = new FunctionDescriptorImpl(
                 containingDescriptor,
-                AttributeResolver.INSTANCE.resolveAttributes(function.getModifierList()),
+                AnnotationResolver.INSTANCE.resolveAnnotations(function.getModifierList()),
                 JetPsiUtil.safeName(function.getName())
         );
         WritableScope innerScope = semanticServices.createWritableScope(scope, functionDescriptor);
@@ -220,7 +220,7 @@ public class ClassDescriptorResolver {
         MutableValueParameterDescriptor valueParameterDescriptor = new ValueParameterDescriptorImpl(
             declarationDescriptor,
             index,
-            AttributeResolver.INSTANCE.resolveAttributes(valueParameter.getModifierList()),
+            AnnotationResolver.INSTANCE.resolveAnnotations(valueParameter.getModifierList()),
             JetPsiUtil.safeName(valueParameter.getName()),
             valueParameter.isMutable() ? type : null,
             type,
@@ -250,7 +250,7 @@ public class ClassDescriptorResolver {
                 : typeResolver.resolveType(extensibleScope, extendsBound);
         TypeParameterDescriptor typeParameterDescriptor = new TypeParameterDescriptor(
                 containingDescriptor,
-                AttributeResolver.INSTANCE.resolveAttributes(typeParameter.getModifierList()),
+                AnnotationResolver.INSTANCE.resolveAnnotations(typeParameter.getModifierList()),
                 typeParameter.getVariance(),
                 JetPsiUtil.safeName(typeParameter.getName()),
                 Collections.singleton(bound),
@@ -300,7 +300,7 @@ public class ClassDescriptorResolver {
     public VariableDescriptor resolveLocalVariableDescriptor(@NotNull DeclarationDescriptor containingDeclaration, @NotNull JetParameter parameter, @NotNull JetType type) {
         VariableDescriptor variableDescriptor = new LocalVariableDescriptor(
                 containingDeclaration,
-                AttributeResolver.INSTANCE.resolveAttributes(parameter.getModifierList()),
+                AnnotationResolver.INSTANCE.resolveAnnotations(parameter.getModifierList()),
                 JetPsiUtil.safeName(parameter.getName()),
                 type,
                 parameter.isMutable());
@@ -314,7 +314,7 @@ public class ClassDescriptorResolver {
 
         VariableDescriptorImpl variableDescriptor = new LocalVariableDescriptor(
                 containingDeclaration,
-                AttributeResolver.INSTANCE.resolveAttributes(property.getModifierList()),
+                AnnotationResolver.INSTANCE.resolveAnnotations(property.getModifierList()),
                 JetPsiUtil.safeName(property.getName()),
                 type,
                 property.isVar());
@@ -330,7 +330,7 @@ public class ClassDescriptorResolver {
         JetModifierList modifierList = property.getModifierList();
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                 containingDeclaration,
-                AttributeResolver.INSTANCE.resolveAttributes(modifierList),
+                AnnotationResolver.INSTANCE.resolveAnnotations(modifierList),
                 resolveModifiers(modifierList, DEFAULT_MODIFIERS), // TODO : default modifiers differ in different contexts
                 isVar,
                 JetPsiUtil.safeName(property.getName()),
@@ -364,10 +364,10 @@ public class ClassDescriptorResolver {
         }
         PropertySetterDescriptor setterDescriptor = null;
         if (setter != null) {
-            List<Attribute> attributes = AttributeResolver.INSTANCE.resolveAttributes(setter.getModifierList());
+            List<Annotation> annotations = AnnotationResolver.INSTANCE.resolveAnnotations(setter.getModifierList());
             JetParameter parameter = setter.getParameter();
 
-            setterDescriptor = new PropertySetterDescriptor(propertyDescriptor, attributes, setter.getBodyExpression() != null);
+            setterDescriptor = new PropertySetterDescriptor(propertyDescriptor, annotations, setter.getBodyExpression() != null);
             if (parameter != null) {
                 if (parameter.isRef()) {
                     semanticServices.getErrorHandler().genericError(parameter.getRefNode(), "Setter parameters can not be 'ref'");
@@ -410,7 +410,7 @@ public class ClassDescriptorResolver {
         PropertyGetterDescriptor getterDescriptor = null;
         JetPropertyAccessor getter = property.getGetter();
         if (getter != null) {
-            List<Attribute> attributes = AttributeResolver.INSTANCE.resolveAttributes(getter.getModifierList());
+            List<Annotation> annotations = AnnotationResolver.INSTANCE.resolveAnnotations(getter.getModifierList());
 
             JetType returnType = null;
             JetTypeReference returnTypeReference = getter.getReturnTypeReference();
@@ -418,7 +418,7 @@ public class ClassDescriptorResolver {
                 returnType = typeResolver.resolveType(scope, returnTypeReference);
             }
 
-            getterDescriptor = new PropertyGetterDescriptor(propertyDescriptor, attributes, returnType, getter.getBodyExpression() != null);
+            getterDescriptor = new PropertyGetterDescriptor(propertyDescriptor, annotations, returnType, getter.getBodyExpression() != null);
             trace.recordDeclarationResolution(getter, getterDescriptor);
         }
         return getterDescriptor;
@@ -460,7 +460,7 @@ public class ClassDescriptorResolver {
             @NotNull List<JetParameter> valueParameters) {
         ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(
                 classDescriptor,
-                AttributeResolver.INSTANCE.resolveAttributes(modifierList),
+                AnnotationResolver.INSTANCE.resolveAnnotations(modifierList),
                 isPrimary
         );
         trace.recordDeclarationResolution(declarationToTrace, constructorDescriptor);
@@ -502,7 +502,7 @@ public class ClassDescriptorResolver {
 
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                 classDescriptor,
-                AttributeResolver.INSTANCE.resolveAttributes(modifierList),
+                AnnotationResolver.INSTANCE.resolveAnnotations(modifierList),
                 resolveModifiers(modifierList, DEFAULT_MODIFIERS),
                 isMutable,
                 name == null ? "<no name>" : name,

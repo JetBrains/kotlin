@@ -11,11 +11,11 @@ import java.util.List;
 public class LocalVariableDescriptor extends VariableDescriptorImpl {
     public LocalVariableDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull List<Attribute> attributes,
+            @NotNull List<Annotation> annotations,
             @NotNull String name,
             @Nullable JetType type,
             boolean mutable) {
-        super(containingDeclaration, attributes, name, mutable ? type : null, type);
+        super(containingDeclaration, annotations, name, mutable ? type : null, type);
     }
 
     @NotNull

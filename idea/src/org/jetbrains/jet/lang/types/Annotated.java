@@ -6,5 +6,5 @@ import java.util.List;
  * @author abreslav
  */
 public interface Annotated {
-    List<Attribute> getAttributes();
+    List<Annotation> getAnnotations();
 }

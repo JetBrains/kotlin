@@ -69,7 +69,7 @@ public class FunctionDescriptorUtil {
             result.add(new ValueParameterDescriptorImpl(
                     substitutedDescriptor,
                     i,
-                    unsubstitutedValueParameter.getAttributes(),
+                    unsubstitutedValueParameter.getAnnotations(),
                     unsubstitutedValueParameter.getName(),
                     unsubstitutedValueParameter.getInType() == null ? null : substitutedType,
                     substitutedType,

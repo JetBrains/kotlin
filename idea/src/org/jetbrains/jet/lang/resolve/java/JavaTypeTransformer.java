@@ -69,7 +69,7 @@ public class JavaTypeTransformer {
                     PsiTypeParameter typeParameter = (PsiTypeParameter) psiClass;
                     TypeParameterDescriptor typeParameterDescriptor = resolver.resolveTypeParameter(typeParameter);
                     return new JetTypeImpl(
-                            Collections.<Attribute>emptyList(),
+                            Collections.<Annotation>emptyList(),
                             typeParameterDescriptor.getTypeConstructor(),
                             !TypeUtils.hasNullableBound(typeParameterDescriptor),
                             Collections.<TypeProjection>emptyList(),
@@ -99,7 +99,7 @@ public class JavaTypeTransformer {
                         }
                     }
                     return new JetTypeImpl(
-                            Collections.<Attribute>emptyList(),
+                            Collections.<Annotation>emptyList(),
                             descriptor.getTypeConstructor(),
                             true,
                             arguments,

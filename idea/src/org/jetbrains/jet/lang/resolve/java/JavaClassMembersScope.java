@@ -88,7 +88,7 @@ public class JavaClassMembersScope implements JetScope {
         boolean isFinal = field.hasModifierProperty(PsiModifier.FINAL);
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                 containingDeclaration,
-                Collections.<Attribute>emptyList(),
+                Collections.<Annotation>emptyList(),
                 new MemberModifiers(false, false, false),
                 !isFinal,
                 field.getName(),

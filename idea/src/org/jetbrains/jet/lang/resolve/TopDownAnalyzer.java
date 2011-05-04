@@ -119,7 +119,7 @@ public class TopDownAnalyzer {
                     if (namespaceDescriptor == null) {
                         namespaceDescriptor = new NamespaceDescriptor(
                                 declaringScope.getContainingDeclaration(),
-                                Collections.<Attribute>emptyList(), // TODO
+                                Collections.<Annotation>emptyList(), // TODO
                                 name
                         );
                         namespaceDescriptor.initialize(semanticServices.createWritableScope(JetScope.EMPTY, namespaceDescriptor));

@@ -14,11 +14,11 @@ public abstract class VariableDescriptorImpl extends DeclarationDescriptorImpl i
 
     public VariableDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull List<Attribute> attributes,
+            @NotNull List<Annotation> annotations,
             @NotNull String name,
             @Nullable JetType inType,
             @Nullable JetType outType) {
-        super(containingDeclaration, attributes, name);
+        super(containingDeclaration, annotations, name);
         assert (inType != null) || (outType != null);
 
         this.inType = inType;

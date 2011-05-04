@@ -17,13 +17,13 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
     public ValueParameterDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
             int index,
-            @NotNull List<Attribute> attributes,
+            @NotNull List<Annotation> annotations,
             @NotNull String name,
             @Nullable JetType inType,
             @NotNull JetType outType,
             boolean hasDefaultValue,
             boolean isVararg) {
-        super(containingDeclaration, attributes, name, inType, outType);
+        super(containingDeclaration, annotations, name, inType, outType);
         this.index = index;
         this.hasDefaultValue = hasDefaultValue;
         this.isVararg = isVararg;
@@ -33,12 +33,12 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
     public ValueParameterDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
             int index,
-            @NotNull List<Attribute> attributes,
+            @NotNull List<Annotation> annotations,
             @NotNull String name,
             boolean isVar,
             boolean hasDefaultValue,
             boolean isVararg) {
-        super(containingDeclaration, attributes, name, null, null);
+        super(containingDeclaration, annotations, name, null, null);
         this.index = index;
         this.hasDefaultValue = hasDefaultValue;
         this.isVararg = isVararg;

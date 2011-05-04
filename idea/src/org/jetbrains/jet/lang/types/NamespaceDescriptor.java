@@ -14,8 +14,8 @@ public class NamespaceDescriptor extends DeclarationDescriptorImpl {
 
     private JetScope memberScope;
 
-    public NamespaceDescriptor(@Nullable DeclarationDescriptor containingDeclaration, @NotNull List<Attribute> attributes, @NotNull String name) {
-        super(containingDeclaration, attributes, name);
+    public NamespaceDescriptor(@Nullable DeclarationDescriptor containingDeclaration, @NotNull List<Annotation> annotations, @NotNull String name) {
+        super(containingDeclaration, annotations, name);
     }
 
     public void initialize(@NotNull JetScope memberScope) {

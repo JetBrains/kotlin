@@ -12,13 +12,13 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
 
     private final boolean isPrimary;
 
-    public ConstructorDescriptorImpl(@NotNull ClassDescriptor containingDeclaration, @NotNull List<Attribute> attributes, boolean isPrimary) {
-        super(containingDeclaration, attributes, "<init>");
+    public ConstructorDescriptorImpl(@NotNull ClassDescriptor containingDeclaration, @NotNull List<Annotation> annotations, boolean isPrimary) {
+        super(containingDeclaration, annotations, "<init>");
         this.isPrimary = isPrimary;
     }
 
-    public ConstructorDescriptorImpl(@NotNull ConstructorDescriptor original, @NotNull List<Attribute> attributes, boolean isPrimary) {
-        super(original, attributes, "<init>");
+    public ConstructorDescriptorImpl(@NotNull ConstructorDescriptor original, @NotNull List<Annotation> annotations, boolean isPrimary) {
+        super(original, annotations, "<init>");
         this.isPrimary = isPrimary;
     }
 
@@ -65,7 +65,7 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
     protected FunctionDescriptorImpl createSubstitutedCopy() {
         return new ConstructorDescriptorImpl(
                 this,
-                Collections.<Attribute>emptyList(), // TODO
+                Collections.<Annotation>emptyList(), // TODO
                 isPrimary);
     }
 }

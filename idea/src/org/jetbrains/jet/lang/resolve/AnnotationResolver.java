@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetAttribute;
 import org.jetbrains.jet.lang.psi.JetModifierList;
-import org.jetbrains.jet.lang.types.Attribute;
+import org.jetbrains.jet.lang.types.Annotation;
 
 import java.util.Collections;
 import java.util.List;
@@ -12,13 +12,13 @@ import java.util.List;
 /**
  * @author abreslav
  */
-public class AttributeResolver {
-    public static final AttributeResolver INSTANCE = new AttributeResolver();
+public class AnnotationResolver {
+    public static final AnnotationResolver INSTANCE = new AnnotationResolver();
 
-    private AttributeResolver() {}
+    private AnnotationResolver() {}
 
     @NotNull
-    public List<Attribute> resolveAttributes(@NotNull List<JetAttribute> attributeElements) {
+    public List<Annotation> resolveAnnotations(@NotNull List<JetAttribute> attributeElements) {
         return Collections.emptyList(); // TODO
 //        if (attributeElements.isEmpty()) {
 //        }
@@ -26,10 +26,10 @@ public class AttributeResolver {
     }
 
     @NotNull
-    public List<Attribute> resolveAttributes(@Nullable JetModifierList modifierList) {
+    public List<Annotation> resolveAnnotations(@Nullable JetModifierList modifierList) {
         if (modifierList == null) {
             return Collections.emptyList();
         }
-        return resolveAttributes(modifierList.getAttributes());
+        return resolveAnnotations(modifierList.getAttributes());
     }
 }

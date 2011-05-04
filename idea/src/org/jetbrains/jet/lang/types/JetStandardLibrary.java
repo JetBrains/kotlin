@@ -217,7 +217,7 @@ public class JetStandardLibrary {
     public JetType getArrayType(@NotNull Variance variance, @NotNull JetType argument) {
         List<TypeProjection> types = Collections.singletonList(new TypeProjection(variance, argument));
         return new JetTypeImpl(
-                Collections.<Attribute>emptyList(),
+                Collections.<Annotation>emptyList(),
                 getArray().getTypeConstructor(),
                 false,
                 types,
@@ -229,7 +229,7 @@ public class JetStandardLibrary {
     public JetType getIterableType(@NotNull JetType argument) {
         List<TypeProjection> types = Collections.singletonList(new TypeProjection(Variance.INVARIANT, argument));
         return new JetTypeImpl(
-                Collections.<Attribute>emptyList(),
+                Collections.<Annotation>emptyList(),
                 getIterable().getTypeConstructor(),
                 false,
                 types,

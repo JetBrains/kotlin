@@ -17,13 +17,13 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Member
 
     public PropertyDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull List<Attribute> attributes,
+            @NotNull List<Annotation> annotations,
             @NotNull MemberModifiers memberModifiers,
             boolean isVar,
             @NotNull String name,
             @Nullable JetType inType,
             @Nullable JetType outType) {
-        super(containingDeclaration, attributes, name, inType, outType);
+        super(containingDeclaration, annotations, name, inType, outType);
         assert !isVar || inType != null;
         assert outType != null;
         this.isVar = isVar;
@@ -36,7 +36,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Member
             @Nullable JetType outType) {
         this(
                 original.getContainingDeclaration(),
-                original.getAttributes(), // TODO : substitute?
+                original.getAnnotations(), // TODO : substitute?
                 original.getModifiers(),
                 original.isVar,
                 original.getName(),

@@ -20,17 +20,17 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
 
     public FunctionDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull List<Attribute> attributes,
+            @NotNull List<Annotation> annotations,
             @NotNull String name) {
-        super(containingDeclaration, attributes, name);
+        super(containingDeclaration, annotations, name);
         this.original = this;
     }
 
     public FunctionDescriptorImpl(
             @NotNull FunctionDescriptor original,
-            @NotNull List<Attribute> attributes,
+            @NotNull List<Annotation> annotations,
             @NotNull String name) {
-        super(original.getContainingDeclaration(), attributes, name);
+        super(original.getContainingDeclaration(), annotations, name);
         this.original = original;
     }
 
@@ -108,7 +108,7 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
         return new FunctionDescriptorImpl(
                 this,
                 // TODO : safeSubstitute
-                getAttributes(),
+                getAnnotations(),
                 getName());
     }
 

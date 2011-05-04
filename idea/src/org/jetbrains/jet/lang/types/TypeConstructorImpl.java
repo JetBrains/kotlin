@@ -21,12 +21,12 @@ public class TypeConstructorImpl extends AnnotatedImpl implements TypeConstructo
 
     public TypeConstructorImpl(
             @Nullable DeclarationDescriptor declarationDescriptor,
-            @NotNull List<Attribute> attributes,
+            @NotNull List<Annotation> annotations,
             boolean sealed,
             @NotNull String debugName,
             @NotNull List<TypeParameterDescriptor> parameters,
             @NotNull Collection<? extends JetType> supertypes) {
-        super(attributes);
+        super(annotations);
         this.declarationDescriptor = declarationDescriptor;
         this.sealed = sealed;
         this.debugName = debugName;

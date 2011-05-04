@@ -12,8 +12,8 @@ import java.util.List;
 public class PropertyGetterDescriptor extends PropertyAccessorDescriptor implements MutableFunctionDescriptor {
     private JetType returnType;
 
-    public PropertyGetterDescriptor(@NotNull PropertyDescriptor correspondingProperty, @NotNull List<Attribute> attributes, @Nullable JetType returnType, boolean hasBody) {
-        super(correspondingProperty, attributes, "get-" + correspondingProperty.getName(), hasBody);
+    public PropertyGetterDescriptor(@NotNull PropertyDescriptor correspondingProperty, @NotNull List<Annotation> annotations, @Nullable JetType returnType, boolean hasBody) {
+        super(correspondingProperty, annotations, "get-" + correspondingProperty.getName(), hasBody);
         this.returnType = returnType == null ? correspondingProperty.getOutType() : returnType;
     }
 

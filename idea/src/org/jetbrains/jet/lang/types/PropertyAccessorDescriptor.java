@@ -12,8 +12,8 @@ public abstract class PropertyAccessorDescriptor extends DeclarationDescriptorIm
 
     private final boolean hasBody;
 
-    protected PropertyAccessorDescriptor(@NotNull PropertyDescriptor correspondingProperty, @NotNull List<Attribute> attributes, @NotNull String name, boolean hasBody) {
-        super(correspondingProperty.getContainingDeclaration(), attributes, name);
+    protected PropertyAccessorDescriptor(@NotNull PropertyDescriptor correspondingProperty, @NotNull List<Annotation> annotations, @NotNull String name, boolean hasBody) {
+        super(correspondingProperty.getContainingDeclaration(), annotations, name);
         this.hasBody = hasBody;
     }
 

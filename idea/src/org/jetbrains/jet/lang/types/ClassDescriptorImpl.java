@@ -21,9 +21,9 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
 
     public ClassDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull List<Attribute> attributes,
+            @NotNull List<Annotation> annotations,
             @NotNull String name) {
-        super(containingDeclaration, attributes, name);
+        super(containingDeclaration, annotations, name);
     }
 
     public final ClassDescriptorImpl initialize(boolean sealed,
@@ -32,7 +32,7 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
                                                 @NotNull JetScope memberDeclarations,
                                                 @NotNull FunctionGroup constructors,
                                                 @Nullable ConstructorDescriptor primaryConstructor) {
-        this.typeConstructor = new TypeConstructorImpl(this, getAttributes(), sealed, getName(), typeParameters, superclasses);
+        this.typeConstructor = new TypeConstructorImpl(this, getAnnotations(), sealed, getName(), typeParameters, superclasses);
         this.memberDeclarations = memberDeclarations;
         this.constructors = constructors;
         this.primaryConstructor = primaryConstructor;

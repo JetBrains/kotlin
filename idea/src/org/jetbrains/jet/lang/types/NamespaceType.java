@@ -51,7 +51,7 @@ public class NamespaceType implements JetType {
     }
 
     @Override
-    public List<Attribute> getAttributes() {
+    public List<Annotation> getAnnotations() {
         throwException();
         return null;
     }

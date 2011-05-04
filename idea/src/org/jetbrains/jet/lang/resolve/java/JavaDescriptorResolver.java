@@ -19,7 +19,7 @@ import java.util.*;
  */
 public class JavaDescriptorResolver {
 
-    /*package*/ static final DeclarationDescriptor JAVA_ROOT = new DeclarationDescriptorImpl(null, Collections.<Attribute>emptyList(), "<java_root>") {
+    /*package*/ static final DeclarationDescriptor JAVA_ROOT = new DeclarationDescriptorImpl(null, Collections.<Annotation>emptyList(), "<java_root>") {
         @NotNull
         @Override
         public DeclarationDescriptor substitute(TypeSubstitutor substitutor) {
@@ -84,7 +84,7 @@ public class JavaDescriptorResolver {
         List<JetType> supertypes = new ArrayList<JetType>();
         classDescriptor.setTypeConstructor(new TypeConstructorImpl(
                 classDescriptor,
-                Collections.<Attribute>emptyList(), // TODO
+                Collections.<Annotation>emptyList(), // TODO
                 // TODO
                 modifierList == null ? false : modifierList.hasModifierProperty(PsiModifier.FINAL),
                 name,
@@ -102,7 +102,7 @@ public class JavaDescriptorResolver {
         for (PsiMethod constructor : psiConstructors) {
             ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(
                     classDescriptor,
-                    Collections.<Attribute>emptyList(), // TODO
+                    Collections.<Annotation>emptyList(), // TODO
                     false);
             constructorDescriptor.initialize(resolveParameterDescriptors(constructorDescriptor, constructor.getParameterList().getParameters()));
             classDescriptor.addConstructor(constructorDescriptor);
@@ -143,7 +143,7 @@ public class JavaDescriptorResolver {
         }
         return new TypeParameterDescriptor(
                 owner,
-                Collections.<Attribute>emptyList(), // TODO
+                Collections.<Annotation>emptyList(), // TODO
                 Variance.INVARIANT,
                 typeParameter.getName(),
                 upperBounds,
@@ -200,7 +200,7 @@ public class JavaDescriptorResolver {
     private NamespaceDescriptor createJavaNamespaceDescriptor(PsiPackage psiPackage) {
         NamespaceDescriptor namespaceDescriptor = new NamespaceDescriptor(
                 JAVA_ROOT,
-                Collections.<Attribute>emptyList(), // TODO
+                Collections.<Annotation>emptyList(), // TODO
                 psiPackage.getName()
         );
         namespaceDescriptor.initialize(new JavaPackageScope(psiPackage.getQualifiedName(), namespaceDescriptor, semanticServices));
@@ -211,7 +211,7 @@ public class JavaDescriptorResolver {
     private NamespaceDescriptor createJavaNamespaceDescriptor(@NotNull final PsiClass psiClass) {
         NamespaceDescriptor namespaceDescriptor = new NamespaceDescriptor(
                 JAVA_ROOT,
-                Collections.<Attribute>emptyList(), // TODO
+                Collections.<Annotation>emptyList(), // TODO
                 psiClass.getName()
         );
         namespaceDescriptor.initialize(new JavaClassMembersScope(namespaceDescriptor, psiClass, semanticServices, true));
@@ -227,7 +227,7 @@ public class JavaDescriptorResolver {
             result.add(new ValueParameterDescriptorImpl(
                     containingDeclaration,
                     i,
-                    Collections.<Attribute>emptyList(), // TODO
+                    Collections.<Annotation>emptyList(), // TODO
                     name == null ? "p" + i : name,
                     null, // TODO : review
                     semanticServices.getTypeTransformer().transformToType(parameter.getType()),
@@ -253,7 +253,7 @@ public class JavaDescriptorResolver {
 
             FunctionDescriptorImpl functionDescriptor = new FunctionDescriptorImpl(
                     JavaDescriptorResolver.JAVA_ROOT,
-                    Collections.<Attribute>emptyList(), // TODO
+                    Collections.<Annotation>emptyList(), // TODO
                     methodName
             );
             functionDescriptor.initialize(

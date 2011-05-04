@@ -94,7 +94,7 @@ public class TypeSubstitutor {
                     callSiteVariance));
         }
         return new JetTypeImpl(
-                subjectType.getAttributes(),
+                subjectType.getAnnotations(),
                 subjectType.getConstructor(),
                 subjectType.isNullable(),
                 newArguments,

@@ -684,7 +684,7 @@ public class JetTypeInferrer {
                 return;
             }
 
-            FunctionDescriptorImpl functionDescriptor = new FunctionDescriptorImpl(scope.getContainingDeclaration(), Collections.<Attribute>emptyList(), "<anonymous>");
+            FunctionDescriptorImpl functionDescriptor = new FunctionDescriptorImpl(scope.getContainingDeclaration(), Collections.<Annotation>emptyList(), "<anonymous>");
 
             JetTypeReference returnTypeRef = expression.getReturnTypeRef();
 
@@ -721,7 +721,7 @@ public class JetTypeInferrer {
             }
             JetType effectiveReceiverType = receiverTypeRef == null ? null : receiverType;
             JetType safeReturnType = returnType == null ? ErrorUtils.createErrorType("<return type>") : returnType;
-            result = JetStandardClasses.getFunctionType(Collections.<Attribute>emptyList(), effectiveReceiverType, parameterTypes, safeReturnType);
+            result = JetStandardClasses.getFunctionType(Collections.<Annotation>emptyList(), effectiveReceiverType, parameterTypes, safeReturnType);
         }
 
         @Override

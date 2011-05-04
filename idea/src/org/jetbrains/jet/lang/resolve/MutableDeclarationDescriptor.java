@@ -1,7 +1,7 @@
 package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.types.Attribute;
+import org.jetbrains.jet.lang.types.Annotation;
 import org.jetbrains.jet.lang.types.DeclarationDescriptor;
 import org.jetbrains.jet.lang.types.DeclarationDescriptorVisitor;
 
@@ -19,7 +19,7 @@ public abstract class MutableDeclarationDescriptor implements DeclarationDescrip
     }
 
     @Override
-    public List<Attribute> getAttributes() {
+    public List<Annotation> getAnnotations() {
         throw new UnsupportedOperationException(); // TODO
     }
 

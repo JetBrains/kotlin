@@ -60,7 +60,7 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
     }
 
     @Override
-    public List<Attribute> getAttributes() {
+    public List<Annotation> getAnnotations() {
         throw new UnsupportedOperationException(); // TODO
     }
 

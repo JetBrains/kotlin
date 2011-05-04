@@ -17,18 +17,18 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
 
     public TypeParameterDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull List<Attribute> attributes,
+            @NotNull List<Annotation> annotations,
             @NotNull Variance variance,
             @NotNull String name,
             @NotNull Set<JetType> upperBounds,
             @NotNull JetType boundsAsType) {
-        super(containingDeclaration, attributes, name);
+        super(containingDeclaration, annotations, name);
         this.variance = variance;
         this.upperBounds = upperBounds;
-        // TODO: Should we actually pass the attributes on to the type constructor?
+        // TODO: Should we actually pass the annotations on to the type constructor?
         this.typeConstructor = new TypeConstructorImpl(
                 this,
-                attributes,
+                annotations,
                 false,
                 "&" + name,
                 Collections.<TypeParameterDescriptor>emptyList(),
@@ -38,12 +38,12 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
 
     public TypeParameterDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull List<Attribute> attributes,
+            @NotNull List<Annotation> annotations,
             @NotNull Variance variance,
             @NotNull String name) {
         this(
             containingDeclaration,
-            attributes,
+                annotations,
             variance,
             name,
             Collections.singleton(JetStandardClasses.getNullableAnyType()),
