@@ -43,7 +43,7 @@ class WithCPI(x : Int) {
   val xy : Int = x
 }
 
-class NoCPI {
+class <error>NoCPI</error> {
   val a = <error>1</error>
   var ab = <error>1</error>
     get() = 1

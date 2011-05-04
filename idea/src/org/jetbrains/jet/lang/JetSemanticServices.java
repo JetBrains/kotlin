@@ -63,6 +63,11 @@ public class JetSemanticServices {
 
     @NotNull
     public WritableScope createWritableScope(@NotNull JetScope scope, @NotNull DeclarationDescriptor owner) {
-        return new WritableScopeImpl(scope, owner, errorHandler);
+        return new WritableScopeImpl(scope, owner, errorHandler, null);
+    }
+
+    @NotNull
+    public WritableScope createWritableScope(@NotNull JetScope scope, @NotNull DeclarationDescriptor owner, @NotNull DeclarationDescriptorVisitor<?, ? super WritableScope> modificationListener) {
+        return new WritableScopeImpl(scope, owner, errorHandler, modificationListener);
     }
 }

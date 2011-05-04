@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.resolve;
 
+import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.JetSemanticServices;
@@ -7,14 +8,16 @@ import org.jetbrains.jet.lang.types.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author abreslav
  */
 public class MutableClassDescriptor extends MutableDeclarationDescriptor implements ClassDescriptor {
+    private final WritableFunctionGroup constructors = new WritableFunctionGroup("<init>");
     private final WritableScope classHeaderScope;
     private final WritableScope writableMemberScope;
-    private final WritableFunctionGroup constructors = new WritableFunctionGroup("<init>");
+    private final Set<PropertyDescriptor> properties = Sets.newHashSet();
     private ConstructorDescriptor primaryConstructor;
 
     private TypeConstructor typeConstructor;
@@ -23,7 +26,13 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     public MutableClassDescriptor(@NotNull JetSemanticServices semanticServices, @NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope outerScope) {
         super(containingDeclaration);
         this.classHeaderScope = semanticServices.createWritableScope(outerScope, this);
-        this.writableMemberScope = semanticServices.createWritableScope(classHeaderScope, this);
+        this.writableMemberScope = semanticServices.createWritableScope(classHeaderScope, this, new DeclarationDescriptorVisitor<Void, WritableScope>() {
+            @Override
+            public Void visitPropertyDescriptor(PropertyDescriptor descriptor, WritableScope data) {
+                properties.add(descriptor);
+                return null;
+            }
+        });
         this.unsubstitutedMemberScope = this.writableMemberScope;
     }
 
@@ -46,6 +55,10 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
 
     public void setTypeConstructor(@NotNull TypeConstructor typeConstructor) {
         this.typeConstructor = typeConstructor;
+    }
+
+    public Set<PropertyDescriptor> getProperties() {
+        return properties;
     }
 
     @NotNull

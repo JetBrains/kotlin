@@ -31,7 +31,7 @@ class Iteratee<in I, out O> {
   abstract fun done() : O
 }
 
-class Sum : Iteratee<Int, Int> {
+class Sum() : Iteratee<Int, Int> {
   override fun process(item : Int) : Iteratee<Int, Int> {
     return foobar.done<Int>(item);
   }

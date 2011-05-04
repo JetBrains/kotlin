@@ -35,7 +35,7 @@ class NotRange5() {
 
 class AmbiguousHasNextIterator {
   fun hasNext() : Boolean
-  val hasNext : Boolean
+  val hasNext : Boolean get() = false
   fun next() : Int
 }
 
@@ -44,7 +44,7 @@ class NotRange6() {
 }
 
 class ImproperIterator4 {
-  val hasNext : Int
+  val hasNext : Int get() = 1
   fun next() : Int
 }
 

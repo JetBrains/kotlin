@@ -4,6 +4,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.JetSemanticServices;
@@ -312,6 +313,23 @@ public class TopDownAnalyzer {
 
         resolveSecondaryConstructorBodies();
         resolveFunctionBodies();
+
+        for (Map.Entry<JetClass, MutableClassDescriptor> entry : classes.entrySet()) {
+            MutableClassDescriptor classDescriptor = entry.getValue();
+            JetClass jetClass = entry.getKey();
+            if (!jetClass.hasPrimaryConstructor()) {
+                for (PropertyDescriptor propertyDescriptor : classDescriptor.getProperties()) {
+                    if (trace.hasBackingField(propertyDescriptor)) {
+                        PsiElement nameIdentifier = jetClass.getNameIdentifier();
+                        if (nameIdentifier != null) {
+                            semanticServices.getErrorHandler().genericError(nameIdentifier.getNode(),
+                                    "This class must have a primary constructor, because property " + propertyDescriptor.getName() + " has a backing field");
+                        }
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     private void resolveDelegationSpecifierLists() {

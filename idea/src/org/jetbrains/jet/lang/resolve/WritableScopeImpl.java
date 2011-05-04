@@ -34,16 +34,26 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     @Nullable
     private JetType thisType;
 
-    public WritableScopeImpl(@NotNull JetScope scope, @NotNull DeclarationDescriptor owner, @NotNull ErrorHandler errorHandler) {
+    @Nullable
+    private final DeclarationDescriptorVisitor<?, ? super WritableScopeImpl> modificationListener;
+
+    public WritableScopeImpl(@NotNull JetScope scope, @NotNull DeclarationDescriptor owner, @NotNull ErrorHandler errorHandler, @Nullable DeclarationDescriptorVisitor<?, ? super WritableScopeImpl> modificationListener) {
         super(scope);
         this.ownerDeclarationDescriptor = owner;
         this.errorHandler = errorHandler;
+        this.modificationListener = modificationListener;
     }
 
     @NotNull
     @Override
     public DeclarationDescriptor getContainingDeclaration() {
         return ownerDeclarationDescriptor;
+    }
+
+    private void notifyListeners(DeclarationDescriptor descriptor) {
+        if (modificationListener != null) {
+            descriptor.accept(modificationListener, this);
+        }
     }
 
     @NotNull
@@ -80,6 +90,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
             labelsToDescriptors.put(name, declarationDescriptors);
         }
         declarationDescriptors.add(descriptor);
+        notifyListeners(descriptor);
     }
 
     @NotNull
@@ -99,6 +110,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
         }
         // TODO : Should this always happen?
         propertyDescriptors.put(variableDescriptor.getName(), variableDescriptor);
+        notifyListeners(variableDescriptor);
     }
 
     @Override
@@ -143,6 +155,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
             functionGroups.put(name, functionGroup);
         }
         functionGroup.addFunction(functionDescriptor);
+        notifyListeners(functionDescriptor);
     }
 
     @Override
@@ -174,6 +187,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
             errorHandler.redeclaration(originalDescriptor, typeParameterDescriptor);
         }
         classifierDescriptors.put(name, typeParameterDescriptor);
+        notifyListeners(typeParameterDescriptor);
     }
 
     @NotNull
@@ -197,6 +211,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
             errorHandler.redeclaration(originalDescriptor, classifierDescriptor);
         }
         classifierDescriptors.put(name, classifierDescriptor);
+        notifyListeners(classifierDescriptor);
     }
 
     @Override
@@ -239,6 +254,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
         if (oldValue != null) {
             errorHandler.redeclaration(oldValue, namespaceDescriptor);
         }
+        notifyListeners(namespaceDescriptor);
     }
 
     @Override
@@ -285,6 +301,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     @Override
     public void addPropertyDescriptorByFieldName(@NotNull String fieldName, @NotNull PropertyDescriptor propertyDescriptor) {
         getPropertyDescriptorsByFieldNames().put(fieldName, propertyDescriptor);
+        notifyListeners(propertyDescriptor);
     }
 
     @Override
