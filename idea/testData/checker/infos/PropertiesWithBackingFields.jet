@@ -34,3 +34,17 @@ class Test() {
     var <info>v5</info> : Int <info>get</info>() = 1; <info>set</info>(x){$v5 = x}
     var <info>v6</info> : Int <info>get</info>() = $v6 + 1; <info>set</info>(x){}
 }
+
+<info>open</info> class Super(i : Int)
+
+class TestPCParameters(w : Int, <info>x</info> : Int, val <info>y</info> : Int, var <info>z</info> : Int) : Super(w) {
+
+  val <info>xx</info> = w
+
+  {
+    w + 1
+  }
+
+  fun foo() = x
+
+}
