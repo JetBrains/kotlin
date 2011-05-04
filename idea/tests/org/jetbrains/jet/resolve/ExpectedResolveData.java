@@ -119,6 +119,9 @@ public class ExpectedResolveData {
             }
 
             PsiElement expected = nameToDeclaration.get(name);
+            if (expected == null && name.startsWith("$")) {
+                expected = nameToDeclaration.get(name.substring(1));
+            }
             if (expected == null) {
                 expected = nameToPsiElement.get(name);
             }
@@ -143,6 +146,7 @@ public class ExpectedResolveData {
             assert expected != null : "No declaration for " + name;
 
             PsiElement actual = bindingContext.resolveToDeclarationPsiElement(reference);
+
             String actualName = null;
             if (actual != null) {
                 actualName = declarationToName.get(actual);
@@ -151,9 +155,31 @@ public class ExpectedResolveData {
                 }
             }
             assertNotNull(reference);
-            assertEquals(
-                    "Reference `" + name + "`" + renderReferenceInContext(reference) + " is resolved into " + actualName + ".",
-                    expected, actual);
+
+            if (expected instanceof JetParameter || actual instanceof JetParameter) {
+                DeclarationDescriptor expectedDescriptor;
+                if (name.startsWith("$")) {
+                    expectedDescriptor = bindingContext.getPropertyDescriptor((JetParameter) expected);
+                }
+                else {
+                    expectedDescriptor = bindingContext.getDeclarationDescriptor(expected);
+                    if (expectedDescriptor == null) {
+                        expectedDescriptor = bindingContext.getConstructorDescriptor((JetElement) expected);
+                    }
+                }
+
+
+                DeclarationDescriptor actualDescriptor = bindingContext.resolveReferenceExpression(reference);
+
+                assertEquals(
+                        "Reference `" + name + "`" + renderReferenceInContext(reference) + " is resolved into " + actualName + ".",
+                        expectedDescriptor, actualDescriptor);
+            }
+            else {
+                assertEquals(
+                        "Reference `" + name + "`" + renderReferenceInContext(reference) + " is resolved into " + actualName + ".",
+                        expected, actual);
+            }
         }
 
         for (Map.Entry<Integer, String> entry : positionToType.entrySet()) {

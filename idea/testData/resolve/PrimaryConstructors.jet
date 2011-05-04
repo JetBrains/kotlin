@@ -1,12 +1,12 @@
 class A(~a~val a : Int) {
-    this() {`a`a}
+    this() {`$a`a}
     ~b~val b = `a`a
-    ~f~fun f() = `a`a
+    ~f~fun f() = `$a`a
 }
 
 fun test() {
     ~va~val a = new A()
-    `va`a.`a`a`:std::Int`
+    `va`a.`$a`a`:std::Int`
     a.`b`b`:std::Int`
     a.`f`f()`:std::Int`
 }

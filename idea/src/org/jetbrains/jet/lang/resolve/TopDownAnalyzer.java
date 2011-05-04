@@ -316,10 +316,12 @@ public class TopDownAnalyzer {
 
     private void resolveDelegationSpecifierLists() {
         // TODO : Make sure the same thing is not initialized twice
-        final JetTypeInferrer typeInferrer = semanticServices.getTypeInferrer(trace, JetFlowInformationProvider.NONE);
         for (Map.Entry<JetClass, MutableClassDescriptor> entry : classes.entrySet()) {
             final JetClass jetClass = entry.getKey();
             final MutableClassDescriptor descriptor = entry.getValue();
+            final ConstructorDescriptor primaryConstructor = descriptor.getUnsubstitutedPrimaryConstructor();
+            final JetScope scopeForConstructor = primaryConstructor == null ? null : getInnerScopeForConstructor(primaryConstructor, descriptor.getWritableUnsubstitutedMemberScope());
+            final JetTypeInferrer typeInferrer = semanticServices.getTypeInferrer(traceForConstructors, JetFlowInformationProvider.NONE); // TODO : flow
 
             for (JetDelegationSpecifier delegationSpecifier : jetClass.getDelegationSpecifiers()) {
                 delegationSpecifier.accept(new JetVisitor() {
@@ -327,7 +329,8 @@ public class TopDownAnalyzer {
                     public void visitDelegationByExpressionSpecifier(JetDelegatorByExpressionSpecifier specifier) {
                         JetExpression delegateExpression = specifier.getDelegateExpression();
                         if (delegateExpression != null) {
-                            JetType type = typeInferrer.getType(descriptor.getWritableUnsubstitutedMemberScope(), delegateExpression, false);
+                            JetScope scope = scopeForConstructor == null ? descriptor.getWritableUnsubstitutedMemberScope() : scopeForConstructor;
+                            JetType type = typeInferrer.getType(scope, delegateExpression, false);
                             JetType supertype = trace.resolveTypeReference(specifier.getTypeReference());
                             if (type != null && !semanticServices.getTypeChecker().isSubtypeOf(type, supertype)) { // TODO : Convertible?
                                 semanticServices.getErrorHandler().typeMismatch(delegateExpression, supertype, type);
@@ -339,12 +342,14 @@ public class TopDownAnalyzer {
                     public void visitDelegationToSuperCallSpecifier(JetDelegatorToSuperCall call) {
                         JetTypeReference typeReference = call.getTypeReference();
                         if (typeReference != null) {
-                            typeInferrer.checkConstructorCall(descriptor.getWritableUnsubstitutedMemberScope(), typeReference, call);
                             if (!jetClass.hasPrimaryConstructor()) {
                                 JetArgumentList valueArgumentList = call.getValueArgumentList();
                                 assert valueArgumentList != null;
                                 semanticServices.getErrorHandler().genericError(valueArgumentList.getNode(),
                                         "Class " + JetPsiUtil.safeName(jetClass.getName()) + " must have a constructor in order to be able to initialize supertypes");
+                            }
+                            else {
+                                typeInferrer.checkConstructorCall(scopeForConstructor, typeReference, call);
                             }
                         }
                     }

@@ -1,0 +1,19 @@
+
+class C(~x~x : Int, ~y~val y : Int) : Base(`x`x /*parameter*/), Base1 by new Base1(`x`x) {
+  var z = `x`x // parameter
+    get() = `$x`x // property
+
+  {
+    val z = `x`x // parameter
+  }
+
+  this() : this(1, 2) {
+    val z = x // inaccessible
+    val zz = `$y`y // property
+  }
+
+  fun f() : Int {
+    return `$x`x // property
+  }
+}
+

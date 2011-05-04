@@ -9,6 +9,9 @@ import org.jetbrains.jet.lang.types.*;
  * @author abreslav
  */
 public interface BindingContext {
+    @Deprecated // "Tests only"
+    DeclarationDescriptor getDeclarationDescriptor(PsiElement declaration);
+
     NamespaceDescriptor getNamespaceDescriptor(JetNamespace declaration);
     ClassDescriptor getClassDescriptor(JetClass declaration);
     TypeParameterDescriptor getTypeParameterDescriptor(JetTypeParameter declaration);

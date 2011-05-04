@@ -8,6 +8,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.search.GlobalSearchScope;
+import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestCaseBase;
 import org.jetbrains.jet.lang.resolve.OverloadResolutionResult;
@@ -21,6 +22,14 @@ import java.util.*;
  * @author abreslav
  */
 public class JetResolveTest extends ExtensibleResolveTestCase {
+
+    private final String path;
+    private final String name;
+
+    public JetResolveTest(String path, String name) {
+        this.path = path;
+        this.name = name;
+    }
 
     @Override
     protected ExpectedResolveData getExpectedResolveData() {
@@ -116,43 +125,62 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
     }
 
     private static String getHomeDirectory() {
-       return new File(PathManager.getResourceRoot(JetParsingTest.class, "/org/jetbrains/jet/parsing/JetParsingTest.class")).getParentFile().getParentFile().getParent();
+        return new File(PathManager.getResourceRoot(JetParsingTest.class, "/org/jetbrains/jet/parsing/JetParsingTest.class")).getParentFile().getParentFile().getParent();
     }
 
-    public void testBasic() throws Exception {
-        doTest("/resolve/Basic.jet", true, true);
+    @Override
+    public String getName() {
+        return "test" + name;
     }
 
-    public void testResolveToJava() throws Exception {
-        doTest("/resolve/ResolveToJava.jet", true, true);
+    @Override
+    protected void runTest() throws Throwable {
+        doTest(path, true, false);
     }
 
-    public void testResolveOfInfixExpressions() throws Exception {
-        doTest("/resolve/ResolveOfInfixExpressions.jet", true, true);
-    }
+//    public void testBasic() throws Exception {
+//        doTest("/resolve/Basic.jet", true, true);
+//    }
+//
+//    public void testResolveToJava() throws Exception {
+//        doTest("/resolve/ResolveToJava.jet", true, true);
+//    }
+//
+//    public void testResolveOfInfixExpressions() throws Exception {
+//        doTest("/resolve/ResolveOfInfixExpressions.jet", true, true);
+//    }
+//
+//    public void testProjections() throws Exception {
+//        doTest("/resolve/Projections.jet", true, true);
+//    }
+//
+//    public void testPrimaryConstructors() throws Exception {
+//        doTest("/resolve/PrimaryConstructors.jet", true, true);
+//    }
+//
+//    public void testClassifiers() throws Exception {
+//        doTest("/resolve/Classifiers.jet", true, true);
+//    }
+//
+//    public void testConstructorsAndInitializers() throws Exception {
+//        doTest("/resolve/ConstructorsAndInitializers.jet", true, true);
+//    }
+//
+//    public void testNamespaces() throws Exception {
+//        doTest("/resolve/Namespaces.jet", true, true);
+//    }
+//
+//    public void testTryCatch() throws Exception {
+//        doTest("/resolve/TryCatch.jet", true, true);
+//    }
 
-    public void testProjections() throws Exception {
-        doTest("/resolve/Projections.jet", true, true);
+    public static Test suite() {
+        return JetTestCaseBase.suiteForDirectory(getHomeDirectory() + "/idea/testData/", "/resolve/", true, new JetTestCaseBase.NamedTestFactory() {
+            @NotNull
+            @Override
+            public Test createTest(@NotNull String dataPath, @NotNull String name) {
+                return new JetResolveTest(dataPath + "/" + name + ".jet", name);
+            }
+        });
     }
-
-    public void testPrimaryConstructors() throws Exception {
-        doTest("/resolve/PrimaryConstructors.jet", true, true);
-    }
-
-    public void testClassifiers() throws Exception {
-        doTest("/resolve/Classifiers.jet", true, true);
-    }
-
-    public void testConstructorsAndInitializers() throws Exception {
-        doTest("/resolve/ConstructorsAndInitializers.jet", true, true);
-    }
-
-    public void testNamespaces() throws Exception {
-        doTest("/resolve/Namespaces.jet", true, true);
-    }
-
-    public void testTryCatch() throws Exception {
-        doTest("/resolve/TryCatch.jet", true, true);
-    }
-
 }

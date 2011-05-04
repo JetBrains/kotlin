@@ -121,6 +121,15 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+    @Override
+    public DeclarationDescriptor getDeclarationDescriptor(PsiElement declaration) {
+        if (declaration instanceof JetNamespace) {
+            JetNamespace namespace = (JetNamespace) declaration;
+            return getNamespaceDescriptor(namespace);
+        }
+        return declarationsToDescriptors.get(declaration);
+    }
+
     public NamespaceDescriptor getNamespaceDescriptor(JetNamespace declaration) {
         return namespaceDeclarationsToDescriptors.get(declaration);
     }
@@ -152,8 +161,13 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
 
     @Override
     public PropertyDescriptor getPropertyDescriptor(JetParameter primaryConstructorParameter) {
-        PropertyDescriptor descriptor = primaryConstructorParameterDeclarationsToPropertyDescriptors.get(primaryConstructorParameter);
-        return descriptor;
+        return primaryConstructorParameterDeclarationsToPropertyDescriptors.get(primaryConstructorParameter);
+    }
+
+    @Nullable
+    @Override
+    public ConstructorDescriptor getConstructorDescriptor(@NotNull JetElement declaration) {
+        return constructorDeclarationsToDescriptors.get(declaration);
     }
 
     @Override
@@ -164,12 +178,6 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
     @Override
     public JetType getExpressionType(JetExpression expression) {
         return expressionTypes.get(expression);
-    }
-
-    @Nullable
-    @Override
-    public ConstructorDescriptor getConstructorDescriptor(@NotNull JetElement declaration) {
-        return constructorDeclarationsToDescriptors.get(declaration);
     }
 
     @Override
