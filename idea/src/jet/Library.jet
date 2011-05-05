@@ -1,4 +1,9 @@
-namespace jet.lang
+namespace jet
+
+class TypeInfo<T> {
+  fun isSubtypeOf(other : TypeInfo<*>) : Boolean
+  fun isInstance(obj : Any?) : Boolean
+}
 
 class Iterator<out T> {
   fun next() : T

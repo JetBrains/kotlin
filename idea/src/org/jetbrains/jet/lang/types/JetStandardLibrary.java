@@ -63,7 +63,7 @@ public class JetStandardLibrary {
 
     private JetStandardLibrary(@NotNull Project project) {
         // TODO : review
-        InputStream stream = JetStandardClasses.class.getClassLoader().getResourceAsStream("jet/lang/Library.jet");
+        InputStream stream = JetStandardClasses.class.getClassLoader().getResourceAsStream("jet/Library.jet");
         try {
             //noinspection IOResourceOpenedButNotSafelyClosed
             JetFile file = (JetFile) PsiFileFactory.getInstance(project).createFileFromText("Library.jet",
