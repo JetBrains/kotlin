@@ -8,4 +8,7 @@ import org.jetbrains.annotations.NotNull;
 public interface ClassifierDescriptor extends DeclarationDescriptor {
     @NotNull
     TypeConstructor getTypeConstructor();
+
+    @NotNull
+    JetType getDefaultType();
 }

@@ -466,7 +466,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
             subtypes.add(makeType(type));
         }
         JetType result = semanticServices.getTypeChecker().commonSupertype(subtypes);
-        assertTrue(result + " != " + expected, JetTypeImpl.equalTypes(result, makeType(expected)));
+        assertTrue(result + " != " + expected, result.equals(makeType(expected)));
     }
 
     private void assertSubtypingRelation(String subtype, String supertype, boolean expected) {
@@ -483,7 +483,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         Project project = getProject();
         JetExpression jetExpression = JetChangeUtil.createExpression(project, expression);
         JetType type = semanticServices.getTypeInferrer(BindingTrace.DUMMY, JetFlowInformationProvider.NONE).getType(classDefinitions.BASIC_SCOPE, jetExpression, false);
-        assertTrue(type + " != " + expectedType, JetTypeImpl.equalTypes(type, expectedType));
+        assertTrue(type + " != " + expectedType, type.equals(expectedType));
     }
 
     private void assertErrorType(String expression) {

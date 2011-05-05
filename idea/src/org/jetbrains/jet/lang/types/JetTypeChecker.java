@@ -362,7 +362,7 @@ public class JetTypeChecker {
                 case INVARIANT:
                     switch (superArgument.getProjectionKind()) {
                         case INVARIANT:
-                            if (!JetTypeImpl.equalTypes(subArgumentType, superArgumentType)) {
+                            if (!subArgumentType.equals(superArgumentType)) {
                                 return false;
                             }
                             break;

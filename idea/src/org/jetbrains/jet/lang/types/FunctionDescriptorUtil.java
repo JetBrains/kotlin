@@ -1,5 +1,8 @@
 package org.jetbrains.jet.lang.types;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.JetSemanticServices;
@@ -102,5 +105,126 @@ public class FunctionDescriptorUtil {
         }
         parameterScope.addLabeledDeclaration(descriptor);
         return parameterScope;
+    }
+
+    public static class OverrideCompatibilityInfo {
+
+        private static final OverrideCompatibilityInfo SUCCESS = new OverrideCompatibilityInfo(false, "SUCCESS");
+
+        @NotNull
+        public static OverrideCompatibilityInfo nameMismatch() {
+            return new OverrideCompatibilityInfo(true, "nameMismatch"); // TODO
+        }
+
+        @NotNull
+        public static OverrideCompatibilityInfo typeParameterNumberMismatch() {
+            return new OverrideCompatibilityInfo(true, "typeParameterNumberMismatch"); // TODO
+        }
+
+        @NotNull
+        public static OverrideCompatibilityInfo valueParameterNumberMismatch() {
+            return new OverrideCompatibilityInfo(true, "valueParameterNumberMismatch"); // TODO
+        }
+
+        @NotNull
+        public static OverrideCompatibilityInfo boundsMismatch(TypeParameterDescriptor superTypeParameter, TypeParameterDescriptor subTypeParameter) {
+            return new OverrideCompatibilityInfo(true, "boundsMismatch"); // TODO
+        }
+
+        @NotNull
+        public static OverrideCompatibilityInfo valueParameterTypeMismatch(ValueParameterDescriptor superValueParameter, ValueParameterDescriptor subValueParameter) {
+            return new OverrideCompatibilityInfo(true, "valueParameterTypeMismatch"); // TODO
+        }
+
+        @NotNull
+        public static OverrideCompatibilityInfo returnTypeMismatch(JetType substitutedSuperReturnType, JetType unsubstitutedSubReturnType) {
+            return new OverrideCompatibilityInfo(true, "returnTypeMismatch: " + unsubstitutedSubReturnType + " >< " + substitutedSuperReturnType); // TODO
+        }
+
+        @NotNull
+        public static OverrideCompatibilityInfo success() {
+            return SUCCESS;
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        private final boolean isError;
+        private final String message;
+
+        public OverrideCompatibilityInfo(boolean error, String message) {
+            isError = error;
+            this.message = message;
+        }
+
+        public boolean isError() {
+            return isError;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+    }
+
+    @NotNull
+    public static OverrideCompatibilityInfo isOverridableWith(@NotNull JetTypeChecker typeChecker, @NotNull FunctionDescriptor superFunction, @NotNull FunctionDescriptor subFunction) {
+        if (!superFunction.getName().equals(subFunction.getName())) {
+            return OverrideCompatibilityInfo.nameMismatch();
+        }
+
+        // TODO : Visibility
+
+        if (superFunction.getTypeParameters().size() != subFunction.getTypeParameters().size()) {
+            return OverrideCompatibilityInfo.typeParameterNumberMismatch();
+        }
+
+        if (superFunction.getUnsubstitutedValueParameters().size() != subFunction.getUnsubstitutedValueParameters().size()) {
+            return OverrideCompatibilityInfo.valueParameterNumberMismatch();
+        }
+
+        List<TypeParameterDescriptor> superTypeParameters = superFunction.getTypeParameters();
+        List<TypeParameterDescriptor> subTypeParameters = subFunction.getTypeParameters();
+
+        Map<TypeConstructor, TypeProjection> substitutionContext = Maps.newHashMap();
+        BiMap<TypeConstructor, TypeConstructor> axioms = HashBiMap.create();
+        for (int i = 0, typeParametersSize = superTypeParameters.size(); i < typeParametersSize; i++) {
+            TypeParameterDescriptor superTypeParameter = superTypeParameters.get(i);
+            TypeParameterDescriptor subTypeParameter = subTypeParameters.get(i);
+            substitutionContext.put(
+                    superTypeParameter.getTypeConstructor(),
+                    new TypeProjection(subTypeParameter.getDefaultType()));
+            axioms.put(superTypeParameter.getTypeConstructor(), subTypeParameter.getTypeConstructor());
+        }
+
+        for (int i = 0, typeParametersSize = superTypeParameters.size(); i < typeParametersSize; i++) {
+            TypeParameterDescriptor superTypeParameter = superTypeParameters.get(i);
+            TypeParameterDescriptor subTypeParameter = subTypeParameters.get(i);
+
+
+            if (!JetTypeImpl.equalTypes(superTypeParameter.getBoundsAsType(), subTypeParameter.getBoundsAsType(), axioms)) {
+                return OverrideCompatibilityInfo.boundsMismatch(superTypeParameter, subTypeParameter);
+            }
+        }
+
+        List<ValueParameterDescriptor> superValueParameters = superFunction.getUnsubstitutedValueParameters();
+        List<ValueParameterDescriptor> subValueParameters = subFunction.getUnsubstitutedValueParameters();
+        for (int i = 0, unsubstitutedValueParametersSize = superValueParameters.size(); i < unsubstitutedValueParametersSize; i++) {
+            ValueParameterDescriptor superValueParameter = superValueParameters.get(i);
+            ValueParameterDescriptor subValueParameter = subValueParameters.get(i);
+
+            if (!JetTypeImpl.equalTypes(superValueParameter.getOutType(), subValueParameter.getOutType(), axioms)) {
+                return OverrideCompatibilityInfo.valueParameterTypeMismatch(superValueParameter, subValueParameter);
+            }
+        }
+
+        // TODO : Default values, varargs etc
+
+        TypeSubstitutor typeSubstitutor = TypeSubstitutor.create(substitutionContext);
+        JetType substitutedSuperReturnType = typeSubstitutor.substitute(superFunction.getUnsubstitutedReturnType(), Variance.OUT_VARIANCE);
+        assert substitutedSuperReturnType != null;
+        if (!typeChecker.isSubtypeOf(subFunction.getUnsubstitutedReturnType(), substitutedSuperReturnType)) {
+            return OverrideCompatibilityInfo.returnTypeMismatch(substitutedSuperReturnType, subFunction.getUnsubstitutedReturnType());
+        }
+
+        return OverrideCompatibilityInfo.success();
     }
 }

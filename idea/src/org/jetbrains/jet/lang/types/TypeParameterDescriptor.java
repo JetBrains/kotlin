@@ -14,6 +14,7 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
     private final Set<JetType> upperBounds;
     private final TypeConstructor typeConstructor;
     private final JetType boundsAsType;
+    private JetType type;
 
     public TypeParameterDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
@@ -83,5 +84,19 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
     @Override
     public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
         return visitor.visitTypeParameterDescriptor(this, data);
+    }
+
+    @NotNull
+    @Override
+    public JetType getDefaultType() {
+        if (type == null) {
+            type = new JetTypeImpl(
+                            Collections.<Annotation>emptyList(),
+                            getTypeConstructor(),
+                            TypeUtils.hasNullableBound(this),
+                            Collections.<TypeProjection>emptyList(),
+                            getBoundsAsType().getMemberScope());
+        }
+        return type;
     }
 }

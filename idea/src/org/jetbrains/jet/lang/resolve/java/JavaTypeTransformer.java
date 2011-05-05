@@ -68,13 +68,7 @@ public class JavaTypeTransformer {
                 if (psiClass instanceof PsiTypeParameter) {
                     PsiTypeParameter typeParameter = (PsiTypeParameter) psiClass;
                     TypeParameterDescriptor typeParameterDescriptor = resolver.resolveTypeParameter(typeParameter);
-                    return new JetTypeImpl(
-                            Collections.<Annotation>emptyList(),
-                            typeParameterDescriptor.getTypeConstructor(),
-                            !TypeUtils.hasNullableBound(typeParameterDescriptor),
-                            Collections.<TypeProjection>emptyList(),
-                            typeParameterDescriptor.getBoundsAsType().getMemberScope());
-
+                    return typeParameterDescriptor.getDefaultType();
                 }
                 else {
                     JetType jetAnalog = getClassTypesMap().get(psiClass.getQualifiedName());
