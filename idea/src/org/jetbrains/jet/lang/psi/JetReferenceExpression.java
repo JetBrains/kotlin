@@ -5,7 +5,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 
@@ -19,7 +18,7 @@ public abstract class JetReferenceExpression extends JetExpression {
 
     protected PsiElement doResolve() {
         JetFile file = (JetFile) getContainingFile();
-        BindingContext bindingContext = AnalyzingUtils.analyzeFile(file, ErrorHandler.DO_NOTHING);
+        BindingContext bindingContext = AnalyzingUtils.analyzeFileWithCache(file);
         PsiElement psiElement = bindingContext.resolveToDeclarationPsiElement(this);
         return psiElement == null
                 ? file

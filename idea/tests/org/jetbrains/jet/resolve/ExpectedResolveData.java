@@ -7,6 +7,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.JetSemanticServices;
+import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -81,16 +82,16 @@ public class ExpectedResolveData {
 
     public void checkResult(JetFile file) {
         final Set<PsiElement> unresolvedReferences = new HashSet<PsiElement>();
-        ErrorHandler errorHandler = new ErrorHandler() {
-            @Override
-            public void unresolvedReference(@NotNull JetReferenceExpression referenceExpression) {
-                unresolvedReferences.add(referenceExpression);
-            }
-        };
         JetSemanticServices semanticServices = JetSemanticServices.createSemanticServices(file.getProject());
         JetStandardLibrary lib = semanticServices.getStandardLibrary();
 
-        BindingContext bindingContext = AnalyzingUtils.analyzeFile(file, errorHandler);
+        BindingContext bindingContext = AnalyzingUtils.analyzeNamespace(file.getRootNamespace(), JetControlFlowDataTraceFactory.EMPTY);
+        AnalyzingUtils.applyHandler(new ErrorHandler() {
+                    @Override
+                    public void unresolvedReference(@NotNull JetReferenceExpression referenceExpression) {
+                        unresolvedReferences.add(referenceExpression);
+                    }
+                }, bindingContext);
 
         Map<String, JetDeclaration> nameToDeclaration = new HashMap<String, JetDeclaration>();
 

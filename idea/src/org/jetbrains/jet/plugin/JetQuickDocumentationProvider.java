@@ -4,7 +4,6 @@ import com.intellij.lang.documentation.DocumentationProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.util.PsiTreeUtil;
-import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
@@ -30,7 +29,7 @@ public class JetQuickDocumentationProvider implements DocumentationProvider {
             ref = PsiTreeUtil.getParentOfType(originalElement, JetReferenceExpression.class);
         }
         if (ref != null) {
-            BindingContext bindingContext = AnalyzingUtils.analyzeFile((JetFile) element.getContainingFile(), ErrorHandler.DO_NOTHING);
+            BindingContext bindingContext = AnalyzingUtils.analyzeFileWithCache((JetFile) element.getContainingFile());
             DeclarationDescriptor declarationDescriptor = bindingContext.resolveReferenceExpression(ref);
             if (declarationDescriptor != null) {
                 return render(declarationDescriptor);
@@ -40,7 +39,7 @@ public class JetQuickDocumentationProvider implements DocumentationProvider {
 
 //        if (originalElement.getNode().getElementType() == JetTokens.IDENTIFIER) {
 //            JetDeclaration declaration = PsiTreeUtil.getParentOfType(originalElement, JetDeclaration.class);
-//            BindingContext bindingContext = AnalyzingUtils.analyzeFile((JetFile) element.getContainingFile(), ErrorHandler.DO_NOTHING);
+//            BindingContext bindingContext = AnalyzingUtils.analyzeFileWithCache((JetFile) element.getContainingFile(), ErrorHandler.DO_NOTHING);
 //            DeclarationDescriptor declarationDescriptor = bindingContext.getDeclarationDescriptor(declaration);
 //            if (declarationDescriptor != null) {
 //                return render(declarationDescriptor);

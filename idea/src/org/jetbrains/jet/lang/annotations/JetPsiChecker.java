@@ -37,7 +37,7 @@ public class JetPsiChecker implements Annotator {
 
             JetFile file = (JetFile) element;
             try {
-                final BindingContext bindingContext = AnalyzingUtils.analyzeFile(file);
+                final BindingContext bindingContext = AnalyzingUtils.analyzeFileWithCache(file);
 
                 ErrorHandler errorHandler = new ErrorHandler() {
                     private final Set<DeclarationDescriptor> redeclarations = new HashSet<DeclarationDescriptor>();

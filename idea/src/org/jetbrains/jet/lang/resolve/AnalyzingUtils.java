@@ -26,9 +26,8 @@ import org.jetbrains.jet.lang.types.ModuleDescriptor;
 public class AnalyzingUtils {
     private final static Key<CachedValue<BindingContext>> BINDING_CONTEXT = Key.create("BINDING_CONTEXT");
 
-    public static BindingContext analyzeFile(@NotNull final JetFile file) {
+    public static BindingContext analyzeFileWithCache(@NotNull final JetFile file) {
         // TODO : Synchronization?
-        // TODO : Error handler may be ignored
         CachedValue<BindingContext> bindingContextCachedValue = file.getUserData(BINDING_CONTEXT);
         if (bindingContextCachedValue == null) {
             bindingContextCachedValue = CachedValuesManager.getManager(file.getProject()).createCachedValue(new CachedValueProvider<BindingContext>() {
@@ -42,10 +41,6 @@ public class AnalyzingUtils {
             file.putUserData(BINDING_CONTEXT, bindingContextCachedValue);
         }
         return bindingContextCachedValue.getValue();
-    }
-
-    public static BindingContext analyzeNamespace(@NotNull JetNamespace namespace) {
-        return analyzeNamespace(namespace, JetControlFlowDataTraceFactory.EMPTY);
     }
 
     public static BindingContext analyzeNamespace(@NotNull JetNamespace namespace, @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory) {
@@ -66,6 +61,12 @@ public class AnalyzingUtils {
         return bindingTraceContext;
     }
 
+    public static void applyHandler(@NotNull ErrorHandler errorHandler, @NotNull BindingContext bindingContext) {
+        for (JetDiagnostic jetDiagnostic : bindingContext.getDiagnostics()) {
+            jetDiagnostic.acceptHandler(errorHandler);
+        }
+    }
+
     public static void checkForSyntacticErrors(@NotNull PsiElement root) {
         root.acceptChildren(new PsiElementVisitor() {
             @Override
@@ -78,23 +79,5 @@ public class AnalyzingUtils {
                 throw new IllegalArgumentException(element.getErrorDescription() + " at offset " + element.getTextRange().getStartOffset());
             }
         });
-    }
-
-    public static BindingContext analyzeNamespace(@NotNull JetNamespace namespace, @NotNull ErrorHandler errorHandler) {
-        BindingContext bindingContext = analyzeNamespace(namespace);
-        applyHandler(errorHandler, bindingContext);
-        return bindingContext;
-    }
-
-    private static void applyHandler(@NotNull ErrorHandler errorHandler, @NotNull BindingContext bindingContext) {
-        for (JetDiagnostic jetDiagnostic : bindingContext.getDiagnostics()) {
-            jetDiagnostic.acceptHandler(errorHandler);
-        }
-    }
-
-    public static BindingContext analyzeFile(@NotNull JetFile file, @NotNull ErrorHandler errorHandler) {
-        BindingContext bindingContext = analyzeFile(file);
-        applyHandler(errorHandler, bindingContext);
-        return bindingContext;
     }
 }

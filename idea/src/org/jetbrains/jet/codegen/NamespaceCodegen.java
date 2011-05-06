@@ -2,6 +2,7 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.ErrorHandler;
+import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -38,7 +39,9 @@ public class NamespaceCodegen {
     }
 
     public void generate(JetNamespace namespace) {
-        BindingContext bindingContext = AnalyzingUtils.analyzeNamespace(namespace, ErrorHandler.THROW_EXCEPTION);
+        BindingContext bindingContext1 = AnalyzingUtils.analyzeNamespace(namespace, JetControlFlowDataTraceFactory.EMPTY);
+        AnalyzingUtils.applyHandler(ErrorHandler.THROW_EXCEPTION, bindingContext1);
+        BindingContext bindingContext = bindingContext1;
 
         final JetStandardLibrary standardLibrary = JetStandardLibrary.getJetStandardLibrary(project);
         final FunctionCodegen functionCodegen = new FunctionCodegen(namespace, v, standardLibrary, bindingContext);

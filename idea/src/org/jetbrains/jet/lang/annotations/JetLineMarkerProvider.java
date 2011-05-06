@@ -43,7 +43,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
 
             JetFile file = PsiTreeUtil.getParentOfType(element, JetFile.class);
             assert file != null;
-            final BindingContext bindingContext = AnalyzingUtils.analyzeFile(file);
+            final BindingContext bindingContext = AnalyzingUtils.analyzeFileWithCache(file);
             FunctionDescriptor functionDescriptor = bindingContext.getFunctionDescriptor(jetFunction);
             final Set<? extends FunctionDescriptor> overriddenFunctions = functionDescriptor.getOverriddenFunctions();
             if (!overriddenFunctions.isEmpty()) {
