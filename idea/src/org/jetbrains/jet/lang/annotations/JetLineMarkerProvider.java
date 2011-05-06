@@ -22,6 +22,7 @@ import org.jetbrains.jet.lang.psi.JetFunction;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.FunctionDescriptor;
+import org.jetbrains.jet.resolve.DescriptorUtil;
 
 import javax.swing.*;
 import java.awt.event.MouseEvent;
@@ -81,7 +82,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
                                                 public String getElementText(PsiElement element) {
                                                     if (element instanceof JetFunction) {
                                                         JetFunction function = (JetFunction) element;
-                                                        return bindingContext.getFunctionDescriptor(function).toString();
+                                                        return DescriptorUtil.renderPresentableText(bindingContext.getFunctionDescriptor(function));
                                                     }
                                                     return super.getElementText(element);
                                                 }

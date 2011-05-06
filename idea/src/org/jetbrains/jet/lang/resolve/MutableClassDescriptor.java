@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.resolve.DescriptorUtil;
 
 import java.util.List;
 import java.util.Map;
@@ -159,5 +160,10 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     @Override
     public boolean hasConstructors() {
         return !constructors.isEmpty();
+    }
+
+    @Override
+    public String toString() {
+        return DescriptorUtil.renderPresentableText(this) + "[" + getClass().getCanonicalName() + "@" + System.identityHashCode(this) + "]";
     }
 }
