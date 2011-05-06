@@ -81,15 +81,16 @@ public class ExpectedResolveData {
 
     public void checkResult(JetFile file) {
         final Set<PsiElement> unresolvedReferences = new HashSet<PsiElement>();
-        JetSemanticServices semanticServices = JetSemanticServices.createSemanticServices(file.getProject(), new ErrorHandler() {
+        ErrorHandler errorHandler = new ErrorHandler() {
             @Override
             public void unresolvedReference(@NotNull JetReferenceExpression referenceExpression) {
                 unresolvedReferences.add(referenceExpression);
             }
-        });
+        };
+        JetSemanticServices semanticServices = JetSemanticServices.createSemanticServices(file.getProject());
         JetStandardLibrary lib = semanticServices.getStandardLibrary();
 
-        BindingContext bindingContext = AnalyzingUtils.analyzeFile(file, semanticServices.getErrorHandler());
+        BindingContext bindingContext = AnalyzingUtils.analyzeFile(file, errorHandler);
 
         Map<String, JetDeclaration> nameToDeclaration = new HashMap<String, JetDeclaration>();
 

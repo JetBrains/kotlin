@@ -10,23 +10,21 @@ import org.jetbrains.jet.lang.types.*;
  * @author abreslav
  */
 public class JetSemanticServices {
-    public static JetSemanticServices createSemanticServices(JetStandardLibrary standardLibrary, ErrorHandler errorHandler) {
-        return new JetSemanticServices(standardLibrary, errorHandler);
+    public static JetSemanticServices createSemanticServices(JetStandardLibrary standardLibrary) {
+        return new JetSemanticServices(standardLibrary);
     }
 
-    public static JetSemanticServices createSemanticServices(Project project, ErrorHandler errorHandler) {
-        return new JetSemanticServices(JetStandardLibrary.getJetStandardLibrary(project), errorHandler);
+    public static JetSemanticServices createSemanticServices(Project project) {
+        return new JetSemanticServices(JetStandardLibrary.getJetStandardLibrary(project));
     }
 
     private final JetStandardLibrary standardLibrary;
     private final JetTypeChecker typeChecker;
     private final OverloadResolver overloadResolver;
 
-    private final ErrorHandler errorHandler;
 
-    private JetSemanticServices(JetStandardLibrary standardLibrary, ErrorHandler errorHandler) {
+    private JetSemanticServices(JetStandardLibrary standardLibrary) {
         this.standardLibrary = standardLibrary;
-        this.errorHandler = errorHandler;
         this.typeChecker = new JetTypeChecker(standardLibrary);
         this.overloadResolver = new OverloadResolver(typeChecker);
     }
@@ -46,11 +44,11 @@ public class JetSemanticServices {
         return new JetTypeInferrer(trace, flowInformationProvider, this);
     }
 
-    @NotNull
-    public ErrorHandler getErrorHandler() {
-        return errorHandler;
-    }
-
+//    @NotNull
+//    public ErrorHandler getErrorHandler() {
+//        return errorHandler;
+//    }
+//
     @NotNull
     public JetTypeChecker getTypeChecker() {
         return typeChecker;
@@ -61,13 +59,4 @@ public class JetSemanticServices {
         return overloadResolver;
     }
 
-    @NotNull
-    public WritableScope createWritableScope(@NotNull JetScope scope, @NotNull DeclarationDescriptor owner) {
-        return new WritableScopeImpl(scope, owner, errorHandler, null);
-    }
-
-    @NotNull
-    public WritableScope createWritableScope(@NotNull JetScope scope, @NotNull DeclarationDescriptor owner, @NotNull DeclarationDescriptorVisitor<?, ? super WritableScope> modificationListener) {
-        return new WritableScopeImpl(scope, owner, errorHandler, modificationListener);
-    }
 }

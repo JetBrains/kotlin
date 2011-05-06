@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.types;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.JetScope;
 
@@ -60,6 +61,12 @@ public class BindingTraceAdapter implements BindingTrace {
     @Override
     public void requireBackingField(@NotNull PropertyDescriptor propertyDescriptor) {
         originalTrace.requireBackingField(propertyDescriptor);
+    }
+
+    @NotNull
+    @Override
+    public ErrorHandler getErrorHandler() {
+        return originalTrace.getErrorHandler();
     }
 
     @Override

@@ -17,7 +17,6 @@ import com.intellij.psi.util.PsiUtilBase;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.Function;
 import com.intellij.util.PsiNavigateUtil;
-import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetFunction;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
@@ -44,12 +43,12 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
 
             JetFile file = PsiTreeUtil.getParentOfType(element, JetFile.class);
             assert file != null;
-            final BindingContext bindingContext = AnalyzingUtils.analyzeFile(file, ErrorHandler.DO_NOTHING);
+            final BindingContext bindingContext = AnalyzingUtils.analyzeFile(file);
             FunctionDescriptor functionDescriptor = bindingContext.getFunctionDescriptor(jetFunction);
             final Set<? extends FunctionDescriptor> overriddenFunctions = functionDescriptor.getOverriddenFunctions();
             if (!overriddenFunctions.isEmpty()) {
                 return new LineMarkerInfo<JetFunction>(
-                    jetFunction, jetFunction.getTextOffset(), OVERRIDING_FUNCTION, Pass.UPDATE_ALL,
+                        jetFunction, jetFunction.getTextOffset(), OVERRIDING_FUNCTION, Pass.UPDATE_ALL,
                         new Function<JetFunction, String>() {
                             @Override
                             public String fun(JetFunction jetFunction) {
@@ -66,32 +65,30 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
                                 }
                                 if (list.isEmpty()) {
                                     String myEmptyText = "empty text";
-                                    if (myEmptyText != null) {
                                     final JComponent renderer = HintUtil.createErrorLabel(myEmptyText);
                                     final JBPopup popup = JBPopupFactory.getInstance().createComponentPopupBuilder(renderer, renderer).createPopup();
                                     if (event != null) {
-                                      popup.show(new RelativePoint(event));
+                                        popup.show(new RelativePoint(event));
                                     }
-                                  }
-                                  return;
+                                    return;
                                 }
                                 if (list.size() == 1) {
-                                  PsiNavigateUtil.navigate(list.iterator().next());
+                                    PsiNavigateUtil.navigate(list.iterator().next());
                                 }
                                 else {
-                                  final JBPopup popup = NavigationUtil.getPsiElementPopup(PsiUtilBase.toPsiElementArray(list), new DefaultPsiElementCellRenderer() {
-                                              @Override
-                                              public String getElementText(PsiElement element) {
-                                                  if (element instanceof JetFunction) {
-                                                      JetFunction function = (JetFunction) element;
-                                                      return bindingContext.getFunctionDescriptor(function).toString();
-                                                  }
-                                                  return super.getElementText(element);
-                                              }
-                                          }, "title");
-                                  if (event != null) {
-                                    popup.show(new RelativePoint(event));
-                                  }
+                                    final JBPopup popup = NavigationUtil.getPsiElementPopup(PsiUtilBase.toPsiElementArray(list), new DefaultPsiElementCellRenderer() {
+                                                @Override
+                                                public String getElementText(PsiElement element) {
+                                                    if (element instanceof JetFunction) {
+                                                        JetFunction function = (JetFunction) element;
+                                                        return bindingContext.getFunctionDescriptor(function).toString();
+                                                    }
+                                                    return super.getElementText(element);
+                                                }
+                                            }, "title");
+                                    if (event != null) {
+                                        popup.show(new RelativePoint(event));
+                                    }
                                 }
                             }
                         }

@@ -55,7 +55,7 @@ public class TopDownAnalyzer {
                     JetSimpleNameExpression simpleNameExpression = (JetSimpleNameExpression) expression;
                     if (simpleNameExpression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER) {
                         if (!trace.hasBackingField((PropertyDescriptor) descriptor)) {
-                            TopDownAnalyzer.this.semanticServices.getErrorHandler().genericError(expression.getNode(), "This property does not have a backing field");
+                            TopDownAnalyzer.this.trace.getErrorHandler().genericError(expression.getNode(), "This property does not have a backing field");
                         }
                     }
                 }
@@ -86,7 +86,7 @@ public class TopDownAnalyzer {
     }
 
     public void process(@NotNull JetScope outerScope, @NotNull List<JetDeclaration> declarations) {
-        final WritableScope toplevelScope = semanticServices.createWritableScope(outerScope, outerScope.getContainingDeclaration()); // TODO ?!
+        final WritableScope toplevelScope = new WritableScopeImpl(outerScope, outerScope.getContainingDeclaration(), trace.getErrorHandler(), null); // TODO ?!
         trace.setToplevelScope(toplevelScope); // TODO : this is a hack
         collectTypeDeclarators(toplevelScope, declarations);
         resolveTypeDeclarations();
@@ -123,7 +123,7 @@ public class TopDownAnalyzer {
                                 Collections.<Annotation>emptyList(), // TODO
                                 name
                         );
-                        namespaceDescriptor.initialize(semanticServices.createWritableScope(JetScope.EMPTY, namespaceDescriptor));
+                        namespaceDescriptor.initialize(new WritableScopeImpl(JetScope.EMPTY, namespaceDescriptor, trace.getErrorHandler(), null));
                         declaringScope.addNamespace(namespaceDescriptor);
                         trace.recordDeclarationResolution(namespace, namespaceDescriptor);
                     }
@@ -165,7 +165,7 @@ public class TopDownAnalyzer {
     }
 
     private WritableScope processClass(@NotNull WritableScope declaringScope, JetClass klass) {
-        MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(semanticServices, declaringScope.getContainingDeclaration(), declaringScope);
+        MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(trace, declaringScope.getContainingDeclaration(), declaringScope);
         mutableClassDescriptor.setName(JetPsiUtil.safeName(klass.getName()));
 
         declaringScope.addClassifierDescriptor(mutableClassDescriptor);
@@ -235,7 +235,7 @@ public class TopDownAnalyzer {
                         processSecondaryConstructor((MutableClassDescriptor) containingDeclaration, constructor);
                     }
                     else {
-                        semanticServices.getErrorHandler().genericError(constructor.getNode(), "Constructors are only allowed inside classes");
+                        trace.getErrorHandler().genericError(constructor.getNode(), "Constructors are only allowed inside classes");
                     }
                 }
 
@@ -246,7 +246,7 @@ public class TopDownAnalyzer {
 
                 @Override
                 public void visitDeclaration(JetDeclaration dcl) {
-                    semanticServices.getErrorHandler().genericError(dcl.getNode(), "[TopDownAnalyzer] Unsupported declaration: " + dcl); // TODO
+                    trace.getErrorHandler().genericError(dcl.getNode(), "[TopDownAnalyzer] Unsupported declaration: " + dcl); // TODO
                 }
             });
         }
@@ -301,7 +301,7 @@ public class TopDownAnalyzer {
     }
 
     private void processClassObject(JetClassObject classObject) {
-        semanticServices.getErrorHandler().genericError(classObject.getNode(), "Class objects are not supported yet"); // TODO
+        trace.getErrorHandler().genericError(classObject.getNode(), "Class objects are not supported yet"); // TODO
     }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -357,7 +357,7 @@ public class TopDownAnalyzer {
                     if (trace.hasBackingField(propertyDescriptor)) {
                         PsiElement nameIdentifier = jetClass.getNameIdentifier();
                         if (nameIdentifier != null) {
-                            semanticServices.getErrorHandler().genericError(nameIdentifier.getNode(),
+                            trace.getErrorHandler().genericError(nameIdentifier.getNode(),
                                     "This class must have a primary constructor, because property " + propertyDescriptor.getName() + " has a backing field");
                         }
                         break;
@@ -386,7 +386,7 @@ public class TopDownAnalyzer {
                             JetType type = typeInferrer.getType(scope, delegateExpression, false);
                             JetType supertype = trace.resolveTypeReference(specifier.getTypeReference());
                             if (type != null && !semanticServices.getTypeChecker().isSubtypeOf(type, supertype)) { // TODO : Convertible?
-                                semanticServices.getErrorHandler().typeMismatch(delegateExpression, supertype, type);
+                                trace.getErrorHandler().typeMismatch(delegateExpression, supertype, type);
                             }
                         }
                     }
@@ -398,7 +398,7 @@ public class TopDownAnalyzer {
                             if (!jetClass.hasPrimaryConstructor()) {
                                 JetArgumentList valueArgumentList = call.getValueArgumentList();
                                 assert valueArgumentList != null;
-                                semanticServices.getErrorHandler().genericError(valueArgumentList.getNode(),
+                                trace.getErrorHandler().genericError(valueArgumentList.getNode(),
                                         "Class " + JetPsiUtil.safeName(jetClass.getName()) + " must have a constructor in order to be able to initialize supertypes");
                             }
                             else {
@@ -415,11 +415,11 @@ public class TopDownAnalyzer {
                             if (declarationDescriptor instanceof ClassDescriptor) {
                                 ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
                                 if (classDescriptor.hasConstructors()) {
-                                    semanticServices.getErrorHandler().genericError(specifier.getNode(), "This type has a constructor, and thus must be initialized here");
+                                    trace.getErrorHandler().genericError(specifier.getNode(), "This type has a constructor, and thus must be initialized here");
                                 }
                             }
                             else {
-                                semanticServices.getErrorHandler().genericError(specifier.getNode(), "Only classes may serve as supertypes");
+                                trace.getErrorHandler().genericError(specifier.getNode(), "Only classes may serve as supertypes");
                             }
 
                         }
@@ -456,7 +456,7 @@ public class TopDownAnalyzer {
             }
             else {
                 for (JetClassInitializer anonymousInitializer : anonymousInitializers) {
-                    semanticServices.getErrorHandler().genericError(anonymousInitializer.getNode(), "Anonymous initializers are only allowed in the presence of a primary constructor");
+                    trace.getErrorHandler().genericError(anonymousInitializer.getNode(), "Anonymous initializers are only allowed in the presence of a primary constructor");
                 }
             }
         }
@@ -484,12 +484,12 @@ public class TopDownAnalyzer {
         JetClass containingClass = PsiTreeUtil.getParentOfType(declaration, JetClass.class);
         assert containingClass != null : "This must be guaranteed by the parser";
         if (!containingClass.hasPrimaryConstructor()) {
-            semanticServices.getErrorHandler().genericError(declaration.getNameNode(), "A secondary constructor may appear only in a class that has a primary constructor");
+            trace.getErrorHandler().genericError(declaration.getNameNode(), "A secondary constructor may appear only in a class that has a primary constructor");
         }
         else {
             List<JetDelegationSpecifier> initializers = declaration.getInitializers();
             if (initializers.isEmpty()) {
-                semanticServices.getErrorHandler().genericError(declaration.getNameNode(), "Secondary constructors must have an initializer list");
+                trace.getErrorHandler().genericError(declaration.getNameNode(), "Secondary constructors must have an initializer list");
             }
             else {
                 initializers.get(0).accept(new JetVisitor() {
@@ -516,12 +516,12 @@ public class TopDownAnalyzer {
 
                     @Override
                     public void visitDelegationByExpressionSpecifier(JetDelegatorByExpressionSpecifier specifier) {
-                        semanticServices.getErrorHandler().genericError(specifier.getNode(), "'by'-clause is only supported for primary constructors");
+                        trace.getErrorHandler().genericError(specifier.getNode(), "'by'-clause is only supported for primary constructors");
                     }
 
                     @Override
                     public void visitDelegationToSuperClassSpecifier(JetDelegatorToSuperClass specifier) {
-                        semanticServices.getErrorHandler().genericError(specifier.getNode(), "Constructor parameters required");
+                        trace.getErrorHandler().genericError(specifier.getNode(), "Constructor parameters required");
                     }
 
                     @Override
@@ -531,7 +531,7 @@ public class TopDownAnalyzer {
                 });
                 for (int i = 1, initializersSize = initializers.size(); i < initializersSize; i++) {
                     JetDelegationSpecifier initializer = initializers.get(i);
-                    semanticServices.getErrorHandler().genericError(initializer.getNode(), "Only one call to 'this(...)' is allowed");
+                    trace.getErrorHandler().genericError(initializer.getNode(), "Only one call to 'this(...)' is allowed");
                 }
             }
         }
@@ -547,11 +547,11 @@ public class TopDownAnalyzer {
 
     @NotNull
     private JetScope getInnerScopeForConstructor(@NotNull ConstructorDescriptor descriptor, @NotNull JetScope declaringScope) {
-        WritableScope constructorScope = semanticServices.createWritableScope(declaringScope, declaringScope.getContainingDeclaration());
+        WritableScope constructorScope = new WritableScopeImpl(declaringScope, declaringScope.getContainingDeclaration(), trace.getErrorHandler(), null);
         for (PropertyDescriptor propertyDescriptor : declaringScopesToProperties.get(descriptor.getContainingDeclaration())) {
             constructorScope.addPropertyDescriptorByFieldName("$" + propertyDescriptor.getName(), propertyDescriptor);
         }
-        return FunctionDescriptorUtil.getFunctionInnerScope(constructorScope, descriptor, semanticServices);
+        return FunctionDescriptorUtil.getFunctionInnerScope(constructorScope, descriptor, trace);
     }
 
     private void resolvePropertyDeclarationBodies() {
@@ -572,7 +572,7 @@ public class TopDownAnalyzer {
                 if (initializer != null) {
                     ConstructorDescriptor primaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
                     if (primaryConstructor == null) {
-                        semanticServices.getErrorHandler().genericError(initializer.getNode(), "Property initializers are not allowed when no primary constructor is present");
+                        trace.getErrorHandler().genericError(initializer.getNode(), "Property initializers are not allowed when no primary constructor is present");
                     }
                     else {
                         JetScope scope = getInnerScopeForConstructor(primaryConstructor, classDescriptor.getWritableUnsubstitutedMemberScope());
@@ -605,7 +605,7 @@ public class TopDownAnalyzer {
     private void resolvePropertyAccessors(JetProperty property, PropertyDescriptor propertyDescriptor, WritableScope declaringScope) {
         BindingTraceAdapter fieldAccessTrackingTrace = createFieldTrackingTrace(propertyDescriptor);
 
-        WritableScope accessorScope = semanticServices.createWritableScope(declaringScope, declaringScope.getContainingDeclaration());
+        WritableScope accessorScope = new WritableScopeImpl(declaringScope, declaringScope.getContainingDeclaration(), trace.getErrorHandler(), null);
         accessorScope.addPropertyDescriptorByFieldName("$" + propertyDescriptor.getName(), propertyDescriptor);
 
         JetPropertyAccessor getter = property.getGetter();
@@ -622,7 +622,7 @@ public class TopDownAnalyzer {
 
         JetExpression initializer = property.getInitializer();
         if (!property.isVar() && initializer != null && !trace.hasBackingField(propertyDescriptor)) {
-            semanticServices.getErrorHandler().genericError(initializer.getNode(), "Initializer is not allowed here because this property has no setter and no backing field either");
+            trace.getErrorHandler().genericError(initializer.getNode(), "Initializer is not allowed here because this property has no setter and no backing field either");
         }
     }
 
@@ -662,7 +662,7 @@ public class TopDownAnalyzer {
         }
         if (type != null && expectedType != null
             && !semanticServices.getTypeChecker().isConvertibleTo(type, expectedType)) {
-            semanticServices.getErrorHandler().typeMismatch(initializer, expectedType, type);
+            trace.getErrorHandler().typeMismatch(initializer, expectedType, type);
         }
     }
 
@@ -714,12 +714,12 @@ public class TopDownAnalyzer {
             //        though it'd better be reported more specifically
 
             for (JetElement element : rootElements) {
-                semanticServices.getErrorHandler().genericError(element.getNode(), "Unreachable code");
+                trace.getErrorHandler().genericError(element.getNode(), "Unreachable code");
             }
         }
         else {
             if (!functionDescriptor.isReturnTypeSet()) {
-                semanticServices.getErrorHandler().genericError(function.asElement().getNode(), "This function must either declare a return type or have a body element");
+                trace.getErrorHandler().genericError(function.asElement().getNode(), "This function must either declare a return type or have a body element");
                 functionDescriptor.setUnsubstitutedReturnType(ErrorUtils.createErrorType("No type, no body"));
             }
         }
@@ -844,7 +844,7 @@ public class TopDownAnalyzer {
 
             @Override
             public void visitUnsupportedElementInstruction(UnsupportedElementInstruction instruction) {
-                semanticServices.getErrorHandler().genericError(instruction.getElement().getNode(), "Unsupported by control-flow builder " + instruction.getElement());
+                trace.getErrorHandler().genericError(instruction.getElement().getNode(), "Unsupported by control-flow builder " + instruction.getElement());
             }
 
             @Override
@@ -866,7 +866,7 @@ public class TopDownAnalyzer {
             public void visitInstruction(Instruction instruction) {
                 if (instruction instanceof JetElementInstructionImpl) {
                     JetElementInstructionImpl elementInstruction = (JetElementInstructionImpl) instruction;
-                    semanticServices.getErrorHandler().genericError(elementInstruction.getElement().getNode(), "Unsupported by control-flow builder " + elementInstruction.getElement());
+                    trace.getErrorHandler().genericError(elementInstruction.getElement().getNode(), "Unsupported by control-flow builder " + elementInstruction.getElement());
                 }
                 else {
                     throw new UnsupportedOperationException(instruction.toString());

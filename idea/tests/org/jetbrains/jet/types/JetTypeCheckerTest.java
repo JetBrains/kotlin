@@ -5,7 +5,6 @@ import com.intellij.codeInsight.daemon.LightDaemonAnalyzerTestCase;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.psi.JetChangeUtil;
@@ -32,7 +31,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
     public void setUp() throws Exception {
         super.setUp();
         library          = JetStandardLibrary.getJetStandardLibrary(getProject());
-        semanticServices = JetSemanticServices.createSemanticServices(library, ErrorHandler.DO_NOTHING);
+        semanticServices = JetSemanticServices.createSemanticServices(library);
         classDefinitions = new ClassDefinitions();
         classDescriptorResolver = semanticServices.getClassDescriptorResolver(BindingTrace.DUMMY);
     }

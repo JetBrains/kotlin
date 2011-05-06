@@ -83,9 +83,9 @@ public class TypeResolver {
                                 if (actualArgumentCount != expectedArgumentCount) {
                                     String errorMessage = (expectedArgumentCount == 0 ? "No" : expectedArgumentCount) + " type arguments expected";
                                     if (actualArgumentCount == 0) {
-                                        semanticServices.getErrorHandler().genericError(type.getNode(), errorMessage);
+                                        trace.getErrorHandler().genericError(type.getNode(), errorMessage);
                                     } else if (expectedArgumentCount == 0) {
-                                        semanticServices.getErrorHandler().genericError(type.getTypeArgumentList().getNode(), errorMessage);
+                                        trace.getErrorHandler().genericError(type.getTypeArgumentList().getNode(), errorMessage);
                                     }
                                 } else {
                                     result[0] = new JetTypeImpl(
@@ -188,7 +188,7 @@ public class TypeResolver {
         ClassifierDescriptor classifierDescriptor = resolveClassWithoutErrorReporting(scope, userType);
 
         if (classifierDescriptor == null) {
-            semanticServices.getErrorHandler().unresolvedReference(userType.getReferenceExpression());
+            trace.getErrorHandler().unresolvedReference(userType.getReferenceExpression());
         }
 
         return classifierDescriptor;
@@ -231,7 +231,7 @@ public class TypeResolver {
 
         NamespaceDescriptor namespaceDescriptor = resolveNamespace(scope, userType);
         if (namespaceDescriptor == null) {
-            semanticServices.getErrorHandler().unresolvedReference(userType.getReferenceExpression());
+            trace.getErrorHandler().unresolvedReference(userType.getReferenceExpression());
             return null;
         }
         return namespaceDescriptor.getMemberScope();

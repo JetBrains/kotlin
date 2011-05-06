@@ -2,7 +2,6 @@ package org.jetbrains.jet.types;
 
 import com.intellij.codeInsight.daemon.LightDaemonAnalyzerTestCase;
 import com.intellij.openapi.application.PathManager;
-import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.psi.JetChangeUtil;
 import org.jetbrains.jet.lang.psi.JetFunction;
@@ -26,7 +25,7 @@ public class JetOverridingTest extends LightDaemonAnalyzerTestCase {
     public void setUp() throws Exception {
         super.setUp();
         library          = JetStandardLibrary.getJetStandardLibrary(getProject());
-        semanticServices = JetSemanticServices.createSemanticServices(library, ErrorHandler.DO_NOTHING);
+        semanticServices = JetSemanticServices.createSemanticServices(library);
         classDescriptorResolver = semanticServices.getClassDescriptorResolver(BindingTrace.DUMMY);
     }
 

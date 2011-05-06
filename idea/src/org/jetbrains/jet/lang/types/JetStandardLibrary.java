@@ -4,7 +4,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiFileFactory;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.JetFileType;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -69,7 +68,7 @@ public class JetStandardLibrary {
             JetFile file = (JetFile) PsiFileFactory.getInstance(project).createFileFromText("Library.jet",
                     JetFileType.INSTANCE, FileUtil.loadTextAndClose(new InputStreamReader(stream)));
 
-            JetSemanticServices bootstrappingSemanticServices = JetSemanticServices.createSemanticServices(this, ErrorHandler.DO_NOTHING);
+            JetSemanticServices bootstrappingSemanticServices = JetSemanticServices.createSemanticServices(this);
             BindingTraceContext bindingTraceContext = new BindingTraceContext();
             TopDownAnalyzer bootstrappingTDA = new TopDownAnalyzer(bootstrappingSemanticServices, bindingTraceContext);
             bootstrappingTDA.process(JetStandardClasses.STANDARD_CLASSES, file.getRootNamespace().getDeclarations());

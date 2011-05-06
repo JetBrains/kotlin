@@ -40,7 +40,7 @@ public class ClassDescriptorResolver {
 
         trace.recordDeclarationResolution(classElement, classDescriptor);
 
-        WritableScope parameterScope = semanticServices.createWritableScope(scope, classDescriptor);
+        WritableScope parameterScope = new WritableScopeImpl(scope, classDescriptor, trace.getErrorHandler(), null);
 
         // This call has side-effects on the parameterScope (fills it in)
         List<TypeParameterDescriptor> typeParameters
@@ -124,7 +124,7 @@ public class ClassDescriptorResolver {
             final JetScope typeParameterScope,
             final Collection<? extends JetType> supertypes) {
 
-        final WritableScope memberDeclarations = semanticServices.createWritableScope(typeParameterScope, classDescriptor);
+        final WritableScope memberDeclarations = new WritableScopeImpl(typeParameterScope, classDescriptor, trace.getErrorHandler(), null);
 
         List<JetDeclaration> declarations = classElement.getDeclarations();
         for (JetDeclaration declaration : declarations) {
@@ -166,7 +166,7 @@ public class ClassDescriptorResolver {
                 AnnotationResolver.INSTANCE.resolveAnnotations(function.getModifierList()),
                 JetPsiUtil.safeName(function.getName())
         );
-        WritableScope innerScope = semanticServices.createWritableScope(scope, functionDescriptor);
+        WritableScope innerScope = new WritableScopeImpl(scope, functionDescriptor, trace.getErrorHandler(), null);
         innerScope.addLabeledDeclaration(functionDescriptor);
 
         // The two calls below have side-effects on parameterScope
@@ -197,12 +197,12 @@ public class ClassDescriptorResolver {
 
             ASTNode valOrVarNode = valueParameter.getValOrVarNode();
             if (valueParameter.isRef() && valOrVarNode != null) {
-                semanticServices.getErrorHandler().genericError(valOrVarNode, "'val' and 'var' are not allowed on ref-parameters");
+                trace.getErrorHandler().genericError(valOrVarNode, "'val' and 'var' are not allowed on ref-parameters");
             }
 
             JetType type;
             if (typeReference == null) {
-                semanticServices.getErrorHandler().genericError(valueParameter.getNode(), "A type annotation is required on a value parameter");
+                trace.getErrorHandler().genericError(valueParameter.getNode(), "A type annotation is required on a value parameter");
                 type = ErrorUtils.createErrorType("Type annotation was missing");
             } else {
                 type = typeResolver.resolveType(parameterScope, typeReference);
@@ -359,7 +359,7 @@ public class ClassDescriptorResolver {
     private PropertySetterDescriptor resolvePropertySetterDescriptor(@NotNull JetScope scope, @NotNull JetProperty property, @NotNull PropertyDescriptor propertyDescriptor) {
         JetPropertyAccessor setter = property.getSetter();
         if (setter != null && !property.isVar()) {
-            semanticServices.getErrorHandler().genericError(setter.asElement().getNode(), "A 'val'-property cannot have a setter");
+            trace.getErrorHandler().genericError(setter.asElement().getNode(), "A 'val'-property cannot have a setter");
             return null;
         }
         PropertySetterDescriptor setterDescriptor = null;
@@ -370,13 +370,13 @@ public class ClassDescriptorResolver {
             setterDescriptor = new PropertySetterDescriptor(propertyDescriptor, annotations, setter.getBodyExpression() != null);
             if (parameter != null) {
                 if (parameter.isRef()) {
-                    semanticServices.getErrorHandler().genericError(parameter.getRefNode(), "Setter parameters can not be 'ref'");
+                    trace.getErrorHandler().genericError(parameter.getRefNode(), "Setter parameters can not be 'ref'");
                 }
 
                 // This check is redundant: the parser does not allow a default value, but we'll keep it just in case
                 JetExpression defaultValue = parameter.getDefaultValue();
                 if (defaultValue != null) {
-                    semanticServices.getErrorHandler().genericError(defaultValue.getNode(), "Setter parameters can not have default values");
+                    trace.getErrorHandler().genericError(defaultValue.getNode(), "Setter parameters can not have default values");
                 }
 
                 JetType type;
@@ -389,7 +389,7 @@ public class ClassDescriptorResolver {
                     JetType inType = propertyDescriptor.getInType();
                     if (inType != null) {
                         if (!semanticServices.getTypeChecker().isSubtypeOf(type, inType)) {
-                            semanticServices.getErrorHandler().genericError(typeReference.getNode(), "Setter parameter type must be a subtype of the type of the property, i.e. " + inType);
+                            trace.getErrorHandler().genericError(typeReference.getNode(), "Setter parameter type must be a subtype of the type of the property, i.e. " + inType);
                         }
                     }
                     else {
@@ -433,7 +433,7 @@ public class ClassDescriptorResolver {
         if (propertyTypeRef == null) {
             JetExpression initializer = property.getInitializer();
             if (initializer == null) {
-                semanticServices.getErrorHandler().genericError(property.getNode(), "This property must either have a type annotation or be initialized");
+                trace.getErrorHandler().genericError(property.getNode(), "This property must either have a type annotation or be initialized");
                 type = ErrorUtils.createErrorType("No type, no body");
             } else {
                 // TODO : ??? Fix-point here: what if we have something like "val a = foo {a.bar()}"
@@ -467,7 +467,7 @@ public class ClassDescriptorResolver {
         return constructorDescriptor.initialize(
                 resolveValueParameters(
                         constructorDescriptor,
-                        semanticServices.createWritableScope(scope, classDescriptor),
+                        new WritableScopeImpl(scope, classDescriptor, trace.getErrorHandler(), null),
                         valueParameters));
     }
 
@@ -496,7 +496,7 @@ public class ClassDescriptorResolver {
         if (modifierList != null) {
             ASTNode abstractNode = modifierList.getModifierNode(JetTokens.ABSTRACT_KEYWORD);
             if (abstractNode != null) {
-                semanticServices.getErrorHandler().genericError(abstractNode, "This property cannot be declared abstract");
+                trace.getErrorHandler().genericError(abstractNode, "This property cannot be declared abstract");
             }
         }
 

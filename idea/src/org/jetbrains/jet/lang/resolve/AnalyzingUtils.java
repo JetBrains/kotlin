@@ -52,11 +52,11 @@ public class AnalyzingUtils {
         Project project = namespace.getProject();
 
         BindingTraceContext bindingTraceContext = new BindingTraceContext();
-        JetSemanticServices semanticServices = JetSemanticServices.createSemanticServices(project, bindingTraceContext.getErrorHandler());
+        JetSemanticServices semanticServices = JetSemanticServices.createSemanticServices(project);
         JavaSemanticServices javaSemanticServices = new JavaSemanticServices(project, semanticServices, bindingTraceContext);
 
         JetScope libraryScope = semanticServices.getStandardLibrary().getLibraryScope();
-        WritableScope scope = semanticServices.createWritableScope(libraryScope, new ModuleDescriptor("<module>"));
+        WritableScope scope = new WritableScopeImpl(libraryScope, new ModuleDescriptor("<module>"), bindingTraceContext.getErrorHandler(), null);
 //        scope.importScope(javaSemanticServices.getDescriptorResolver().resolveNamespace("").getMemberScope());
 //        scope.importScope(javaSemanticServices.getDescriptorResolver().resolveNamespace("java.lang").getMemberScope());
         scope.importScope(new JavaPackageScope("", null, javaSemanticServices));

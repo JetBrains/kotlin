@@ -75,11 +75,11 @@ public class JetControlFlowProcessor {
     private JetElement resolveLabel(@NotNull String labelName, @NotNull JetSimpleNameExpression labelExpression) {
         Stack<JetElement> stack = labeledElements.get(labelName);
         if (stack == null || stack.isEmpty()) {
-            semanticServices.getErrorHandler().unresolvedReference(labelExpression);
+            trace.getErrorHandler().unresolvedReference(labelExpression);
             return null;
         }
         else if (stack.size() > 1) {
-            semanticServices.getErrorHandler().genericWarning(labelExpression.getNode(), "There is more than one label with such a name in this scope");
+            trace.getErrorHandler().genericWarning(labelExpression.getNode(), "There is more than one label with such a name in this scope");
         }
 
         JetElement result = stack.peek();
@@ -417,14 +417,14 @@ public class JetControlFlowProcessor {
                 assert targetLabel != null;
                 loop = resolveLabel(labelName, targetLabel);
                 if (!isLoop(loop)) {
-                    semanticServices.getErrorHandler().genericError(expression.getNode(), "The label '" + targetLabel.getText() + "' does not denote a loop");
+                    trace.getErrorHandler().genericError(expression.getNode(), "The label '" + targetLabel.getText() + "' does not denote a loop");
                     loop = null;
                 }
             }
             else {
                 loop = builder.getCurrentLoop();
                 if (loop == null) {
-                    semanticServices.getErrorHandler().genericError(expression.getNode(), "'break' and 'continue' are only allowed inside a loop");
+                    trace.getErrorHandler().genericError(expression.getNode(), "'break' and 'continue' are only allowed inside a loop");
                 }
             }
             return loop;

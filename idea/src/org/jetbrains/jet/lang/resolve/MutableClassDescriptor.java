@@ -3,7 +3,6 @@ package org.jetbrains.jet.lang.resolve;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.types.*;
 
 import java.util.List;
@@ -26,10 +25,10 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     private final WritableScope writableMemberScope;
     private JetScope unsubstitutedMemberScope;
 
-    public MutableClassDescriptor(@NotNull JetSemanticServices semanticServices, @NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope outerScope) {
+    public MutableClassDescriptor(@NotNull BindingTrace trace, @NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope outerScope) {
         super(containingDeclaration);
-        this.classHeaderScope = semanticServices.createWritableScope(outerScope, this);
-        this.writableMemberScope = semanticServices.createWritableScope(classHeaderScope, this, new DeclarationDescriptorVisitor<Void, WritableScope>() {
+        this.classHeaderScope = new WritableScopeImpl(outerScope, this, trace.getErrorHandler(), null);
+        this.writableMemberScope = new WritableScopeImpl(classHeaderScope, this, trace.getErrorHandler(), new DeclarationDescriptorVisitor<Void, WritableScope>() {
             @Override
             public Void visitPropertyDescriptor(PropertyDescriptor descriptor, WritableScope data) {
                 properties.add(descriptor);
