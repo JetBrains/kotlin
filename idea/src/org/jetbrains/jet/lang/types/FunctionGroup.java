@@ -3,7 +3,9 @@ package org.jetbrains.jet.lang.types;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.OverloadResolutionResult;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author abreslav
@@ -26,6 +28,12 @@ public interface FunctionGroup extends Named {
         public boolean isEmpty() {
             return true;
         }
+
+        @NotNull
+        @Override
+        public Set<FunctionDescriptor> getFunctionDescriptors() {
+            return Collections.emptySet();
+        }
     };
 
 
@@ -37,4 +45,7 @@ public interface FunctionGroup extends Named {
     OverloadResolutionResult getPossiblyApplicableFunctions(@NotNull List<JetType> typeArguments, @NotNull List<JetType> positionedValueArgumentTypes);
 
     boolean isEmpty();
+
+    @NotNull
+    Set<FunctionDescriptor> getFunctionDescriptors();
 }

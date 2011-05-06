@@ -27,5 +27,6 @@
       <annotator language="jet" implementationClass="org.jetbrains.jet.lang.annotations.JetPsiChecker"/>
       <documentationProvider implementation="org.jetbrains.jet.plugin.JetQuickDocumentationProvider"/>
       <configurationType implementation="org.jetbrains.jet.run.JetRunConfigurationType"/>
+      <codeInsight.lineMarkerProvider language="jet" implementationClass="org.jetbrains.jet.lang.annotations.JetLineMarkerProvider"/>
   </extensions>
 </idea-plugin>

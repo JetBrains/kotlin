@@ -8,10 +8,9 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestCaseBase;
-import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.cfg.pseudocode.Instruction;
-import org.jetbrains.jet.lang.cfg.pseudocode.JetPseudocodeTrace;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
+import org.jetbrains.jet.lang.cfg.pseudocode.JetPseudocodeTrace;
 import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -62,7 +61,7 @@ public class JetControlFlowTest extends JetTestCaseBase {
 
         };
 
-        AnalyzingUtils.analyzeNamespace(file.getRootNamespace(), ErrorHandler.DO_NOTHING, new JetControlFlowDataTraceFactory() {
+        AnalyzingUtils.analyzeNamespace(file.getRootNamespace(), new JetControlFlowDataTraceFactory() {
             @NotNull
             @Override
             public JetPseudocodeTrace createTrace(JetElement element) {

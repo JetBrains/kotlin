@@ -10,6 +10,8 @@ import java.util.*;
  */
 public class JetTypeChecker {
 
+    public static final JetTypeChecker INSTANCE = new JetTypeChecker(null);
+
     private final Map<TypeConstructor, Set<TypeConstructor>> conversionMap = new HashMap<TypeConstructor, Set<TypeConstructor>>();
     private final JetStandardLibrary standardLibrary;
 

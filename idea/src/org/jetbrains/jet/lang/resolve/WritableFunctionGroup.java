@@ -1,20 +1,19 @@
 package org.jetbrains.jet.lang.resolve;
 
+import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.types.FunctionDescriptor;
-import org.jetbrains.jet.lang.types.FunctionDescriptorUtil;
-import org.jetbrains.jet.lang.types.FunctionGroup;
-import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author abreslav
  */
 public class WritableFunctionGroup implements FunctionGroup {
     private final String name;
-    private List<FunctionDescriptor> functionDescriptors;
+    private Set<FunctionDescriptor> functionDescriptors;
 
     public WritableFunctionGroup(String name) {
         this.name = name;
@@ -38,9 +37,9 @@ public class WritableFunctionGroup implements FunctionGroup {
     }
 
     @NotNull
-    private List<FunctionDescriptor> getFunctionDescriptors() {
+    public Set<FunctionDescriptor> getFunctionDescriptors() {
         if (functionDescriptors == null) {
-            functionDescriptors = new ArrayList<FunctionDescriptor>();
+            functionDescriptors = Sets.newLinkedHashSet();
         }
         return functionDescriptors;
     }
@@ -48,7 +47,7 @@ public class WritableFunctionGroup implements FunctionGroup {
     @NotNull
     @Override
     public OverloadResolutionResult getPossiblyApplicableFunctions(@NotNull List<JetType> typeArguments, @NotNull List<JetType> positionedValueArgumentTypes) {
-        List<FunctionDescriptor> functionDescriptors = getFunctionDescriptors();
+        Set<FunctionDescriptor> functionDescriptors = getFunctionDescriptors();
         if (functionDescriptors.isEmpty()) return OverloadResolutionResult.nameNotFound();
 
         int typeArgCount = typeArguments.size();
@@ -68,7 +67,7 @@ public class WritableFunctionGroup implements FunctionGroup {
         if (result.isEmpty()) {
             assert !functionDescriptors.isEmpty();
             if (functionDescriptors.size() == 1) {
-                return OverloadResolutionResult.singleFunctionArgumentMismatch(functionDescriptors.get(0));
+                return OverloadResolutionResult.singleFunctionArgumentMismatch(functionDescriptors.iterator().next());
             }
         }
         if (result.size() == 1) {

@@ -1,9 +1,11 @@
 package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author abreslav
@@ -59,6 +61,17 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
     @Override
     public List<TypeParameterDescriptor> getTypeParameters() {
         return Collections.emptyList();
+    }
+
+    @NotNull
+    @Override
+    public Set<? extends FunctionDescriptor> getOverriddenFunctions() {
+        return null;
+    }
+
+    @Override
+    public void addOverriddenFunction(@NotNull FunctionDescriptor overriddenFunction) {
+        throw new UnsupportedOperationException("Constructors cannot override anything");
     }
 
     @Override

@@ -78,6 +78,12 @@ public class ErrorUtils {
         public boolean isEmpty() {
             return false;
         }
+
+        @NotNull
+        @Override
+        public Set<FunctionDescriptor> getFunctionDescriptors() {
+            return Collections.singleton(createErrorFunction(0, Collections.<JetType>emptyList()));
+        }
     };
 
     private static final ClassDescriptorImpl ERROR_CLASS = new ClassDescriptorImpl(ERROR_MODULE, Collections.<Annotation>emptyList(), "<ERROR CLASS>");

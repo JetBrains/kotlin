@@ -4,6 +4,7 @@ import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.psi.*;
@@ -82,7 +83,7 @@ public class ExpectedResolveData {
         final Set<PsiElement> unresolvedReferences = new HashSet<PsiElement>();
         JetSemanticServices semanticServices = JetSemanticServices.createSemanticServices(file.getProject(), new ErrorHandler() {
             @Override
-            public void unresolvedReference(JetReferenceExpression referenceExpression) {
+            public void unresolvedReference(@NotNull JetReferenceExpression referenceExpression) {
                 unresolvedReferences.add(referenceExpression);
             }
         });

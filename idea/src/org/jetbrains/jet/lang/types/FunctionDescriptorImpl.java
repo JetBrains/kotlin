@@ -1,10 +1,12 @@
 package org.jetbrains.jet.lang.types;
 
+import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author abreslav
@@ -12,10 +14,11 @@ import java.util.List;
 public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements MutableFunctionDescriptor {
 
     private List<TypeParameterDescriptor> typeParameters;
-
     private List<ValueParameterDescriptor> unsubstitutedValueParameters;
-
     private JetType unsubstitutedReturnType;
+
+    private final Set<FunctionDescriptor> overriddenFunctions = Sets.newHashSet();
+
     private final FunctionDescriptor original;
 
     public FunctionDescriptorImpl(
@@ -42,6 +45,16 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
         this.unsubstitutedValueParameters = unsubstitutedValueParameters;
         this.unsubstitutedReturnType = unsubstitutedReturnType;
         return this;
+    }
+
+    @NotNull
+    @Override
+    public Set<? extends FunctionDescriptor> getOverriddenFunctions() {
+        return overriddenFunctions;
+    }
+
+    public void addOverriddenFunction(@NotNull FunctionDescriptor overriddenFunction) {
+        overriddenFunctions.add(overriddenFunction);
     }
 
     @Override

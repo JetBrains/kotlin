@@ -156,8 +156,8 @@ public class FunctionDescriptorUtil {
             this.message = message;
         }
 
-        public boolean isError() {
-            return isError;
+        public boolean isSuccess() {
+            return !isError;
         }
 
         public String getMessage() {
@@ -166,7 +166,7 @@ public class FunctionDescriptorUtil {
     }
 
     @NotNull
-    public static OverrideCompatibilityInfo isOverridableWith(@NotNull JetTypeChecker typeChecker, @NotNull FunctionDescriptor superFunction, @NotNull FunctionDescriptor subFunction) {
+    public static OverrideCompatibilityInfo isOverridableBy(@NotNull JetTypeChecker typeChecker, @NotNull FunctionDescriptor superFunction, @NotNull FunctionDescriptor subFunction) {
         if (!superFunction.getName().equals(subFunction.getName())) {
             return OverrideCompatibilityInfo.nameMismatch();
         }

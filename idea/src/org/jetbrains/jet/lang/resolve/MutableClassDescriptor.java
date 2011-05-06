@@ -14,13 +14,16 @@ import java.util.Set;
  * @author abreslav
  */
 public class MutableClassDescriptor extends MutableDeclarationDescriptor implements ClassDescriptor {
-    private final WritableFunctionGroup constructors = new WritableFunctionGroup("<init>");
-    private final WritableScope classHeaderScope;
-    private final WritableScope writableMemberScope;
-    private final Set<PropertyDescriptor> properties = Sets.newHashSet();
     private ConstructorDescriptor primaryConstructor;
+    private final WritableFunctionGroup constructors = new WritableFunctionGroup("<init>");
+    private final Set<FunctionDescriptor> functions = Sets.newHashSet();
+    private final Set<PropertyDescriptor> properties = Sets.newHashSet();
+    private final Set<MutableClassDescriptor> classes = Sets.newHashSet();
 
     private TypeConstructor typeConstructor;
+
+    private final WritableScope classHeaderScope;
+    private final WritableScope writableMemberScope;
     private JetScope unsubstitutedMemberScope;
 
     public MutableClassDescriptor(@NotNull JetSemanticServices semanticServices, @NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope outerScope) {
@@ -32,6 +35,12 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
                 properties.add(descriptor);
                 return null;
             }
+
+            @Override
+            public Void visitFunctionDescriptor(FunctionDescriptor descriptor, WritableScope data) {
+                functions.add(descriptor);
+                return null;
+            }
         });
         this.unsubstitutedMemberScope = this.writableMemberScope;
     }
@@ -41,6 +50,45 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
         this.classHeaderScope = null;
         this.writableMemberScope = null;
     }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public void setPrimaryConstructor(@NotNull ConstructorDescriptor constructorDescriptor) {
+        assert this.primaryConstructor == null : "Primary constructor assigned twice " + this;
+        this.primaryConstructor = constructorDescriptor;
+        addConstructor(constructorDescriptor);
+    }
+
+    @Override
+    @Nullable
+    public ConstructorDescriptor getUnsubstitutedPrimaryConstructor() {
+        return primaryConstructor;
+    }
+
+    public void addConstructor(@NotNull ConstructorDescriptor constructorDescriptor) {
+        assert constructorDescriptor.getContainingDeclaration() == this;
+        constructors.addFunction(constructorDescriptor);
+    }
+
+    public void addProperty(@NotNull PropertyDescriptor propertyDescriptor) {
+        properties.add(propertyDescriptor);
+    }
+
+    @NotNull
+    public Set<PropertyDescriptor> getProperties() {
+        return properties;
+    }
+
+    public void addFunction(@NotNull FunctionDescriptor functionDescriptor) {
+        functions.add(functionDescriptor);
+    }
+
+    @NotNull
+    public Set<FunctionDescriptor> getFunctions() {
+        return functions;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     public void setUnsubstitutedMemberScope(@NotNull JetScope unsubstitutedMemberScope) {
         assert writableMemberScope == null;
@@ -55,10 +103,6 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
 
     public void setTypeConstructor(@NotNull TypeConstructor typeConstructor) {
         this.typeConstructor = typeConstructor;
-    }
-
-    public Set<PropertyDescriptor> getProperties() {
-        return properties;
     }
 
     @NotNull
@@ -77,11 +121,6 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     @Override
     public JetType getDefaultType() {
         return TypeUtils.makeUnsubstitutedType(this, unsubstitutedMemberScope);
-    }
-
-    public void addConstructor(@NotNull ConstructorDescriptor constructorDescriptor) {
-        assert constructorDescriptor.getContainingDeclaration() == this;
-        constructors.addFunction(constructorDescriptor);
     }
 
     @NotNull
@@ -116,18 +155,6 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     @Override
     public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
         return visitor.visitClassDescriptor(this, data);
-    }
-
-    public void setPrimaryConstructor(@NotNull ConstructorDescriptor constructorDescriptor) {
-        assert this.primaryConstructor == null : "Primary constructor assigned twice " + this;
-        this.primaryConstructor = constructorDescriptor;
-        addConstructor(constructorDescriptor);
-    }
-
-    @Override
-    @Nullable
-    public ConstructorDescriptor getUnsubstitutedPrimaryConstructor() {
-        return primaryConstructor;
     }
 
     @Override

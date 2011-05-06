@@ -14,38 +14,38 @@ public class ErrorHandler {
     public static final ErrorHandler DO_NOTHING = new ErrorHandler();
     public static final ErrorHandler THROW_EXCEPTION = new ErrorHandler() {
         @Override
-        public void unresolvedReference(JetReferenceExpression referenceExpression) {
+        public void unresolvedReference(@NotNull JetReferenceExpression referenceExpression) {
             throw new IllegalStateException("Unresolved reference: " + referenceExpression.getText());
         }
 
         @Override
-        public void genericError(@NotNull ASTNode node, String errorMessage) {
+        public void genericError(@NotNull ASTNode node, @NotNull String errorMessage) {
             throw new IllegalStateException(errorMessage);
         }
 
         @Override
-        public void typeMismatch(JetExpression expression, JetType expectedType, JetType actualType) {
+        public void typeMismatch(@NotNull JetExpression expression, @NotNull JetType expectedType, @NotNull JetType actualType) {
             throw new IllegalStateException("Type mismatch: inferred type is " + actualType + " but " + expectedType + " was expected");
         }
 
         @Override
-        public void redeclaration(DeclarationDescriptor existingDescriptor, DeclarationDescriptor redeclaredDescriptor) {
+        public void redeclaration(@NotNull DeclarationDescriptor existingDescriptor, @NotNull DeclarationDescriptor redeclaredDescriptor) {
             throw new IllegalStateException("Redeclaration: " + existingDescriptor.getName());
         }
     };
 
-    public void unresolvedReference(JetReferenceExpression referenceExpression) {
+    public void unresolvedReference(@NotNull JetReferenceExpression referenceExpression) {
     }
 
-    public void typeMismatch(JetExpression expression, JetType expectedType, JetType actualType) {
+    public void typeMismatch(@NotNull JetExpression expression, @NotNull JetType expectedType, @NotNull JetType actualType) {
     }
 
-    public void redeclaration(DeclarationDescriptor existingDescriptor, DeclarationDescriptor redeclaredDescriptor) {
+    public void redeclaration(@NotNull DeclarationDescriptor existingDescriptor, @NotNull DeclarationDescriptor redeclaredDescriptor) {
     }
 
-    public void genericError(@NotNull ASTNode node, String errorMessage) {
+    public void genericError(@NotNull ASTNode node, @NotNull String errorMessage) {
     }
 
-    public void genericWarning(ASTNode node, String message) {
+    public void genericWarning(@NotNull ASTNode node, @NotNull String message) {
     }
 }

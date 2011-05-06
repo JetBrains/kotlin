@@ -3,11 +3,16 @@ package org.jetbrains.jet.lang.types;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author abreslav
  */
 public interface FunctionDescriptor extends DeclarationDescriptor {
+    @Override
+    @NotNull
+    DeclarationDescriptor getContainingDeclaration();
+
     @NotNull
     List<TypeParameterDescriptor> getTypeParameters();
 
@@ -21,9 +26,8 @@ public interface FunctionDescriptor extends DeclarationDescriptor {
     FunctionDescriptor getOriginal();
 
     @Override
-    @NotNull
-    DeclarationDescriptor getContainingDeclaration();
-
-    @Override
     FunctionDescriptor substitute(TypeSubstitutor substitutor);
+
+    @NotNull
+    Set<? extends FunctionDescriptor> getOverriddenFunctions();
 }

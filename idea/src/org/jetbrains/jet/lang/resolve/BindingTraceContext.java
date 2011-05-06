@@ -1,17 +1,18 @@
 package org.jetbrains.jet.lang.resolve;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.ClassCodegen;
+import org.jetbrains.jet.lang.ErrorHandler;
+import org.jetbrains.jet.lang.JetDiagnostic;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.*;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author abreslav
@@ -30,9 +31,42 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
     private final Set<JetElement> statements = new HashSet<JetElement>();
     private final Set<PropertyDescriptor> backingFieldRequired = new HashSet<PropertyDescriptor>();
 
+    private Collection<JetDiagnostic> diagnostics = Lists.newArrayList();
+    private ErrorHandler errorHandler = new ErrorHandler() {
+        @Override
+        public void unresolvedReference(@NotNull JetReferenceExpression referenceExpression) {
+            diagnostics.add(new JetDiagnostic.UnresolvedReferenceError(referenceExpression));
+        }
+
+        @Override
+        public void typeMismatch(@NotNull JetExpression expression, @NotNull JetType expectedType, @NotNull JetType actualType) {
+            diagnostics.add(new JetDiagnostic.TypeMismatchError(expression, expectedType, actualType));
+        }
+
+        @Override
+        public void redeclaration(@NotNull DeclarationDescriptor existingDescriptor, @NotNull DeclarationDescriptor redeclaredDescriptor) {
+            diagnostics.add(new JetDiagnostic.RedeclarationError(existingDescriptor, redeclaredDescriptor));
+        }
+
+        @Override
+        public void genericError(@NotNull ASTNode node, @NotNull String errorMessage) {
+            diagnostics.add(new JetDiagnostic.GenericError(node, errorMessage));
+        }
+
+        @Override
+        public void genericWarning(@NotNull ASTNode node, @NotNull String message) {
+            diagnostics.add(new JetDiagnostic.GenericWarning(node, message));
+        }
+    };
+
     private JetScope toplevelScope;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    @NotNull
+    public ErrorHandler getErrorHandler() {
+        return errorHandler;
+    }
 
     @Override
     public void recordExpressionType(@NotNull JetExpression expression, @NotNull JetType type) {
@@ -249,5 +283,10 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
 
         DeclarationDescriptor descriptor = resolveReferenceExpression(((JetUserType) typeElement).getReferenceExpression());
         return descriptor instanceof ConstructorDescriptor ? (ConstructorDescriptor) descriptor : null;
+    }
+
+    @Override
+    public Collection<JetDiagnostic> getDiagnostics() {
+        return diagnostics;
     }
 }

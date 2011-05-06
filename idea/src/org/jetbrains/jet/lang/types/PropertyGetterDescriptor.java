@@ -1,20 +1,33 @@
 package org.jetbrains.jet.lang.types;
 
+import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author abreslav
  */
 public class PropertyGetterDescriptor extends PropertyAccessorDescriptor implements MutableFunctionDescriptor {
+    private final Set<PropertyGetterDescriptor> overriddenGetters = Sets.newHashSet();
     private JetType returnType;
 
     public PropertyGetterDescriptor(@NotNull PropertyDescriptor correspondingProperty, @NotNull List<Annotation> annotations, @Nullable JetType returnType, boolean hasBody) {
         super(correspondingProperty, annotations, "get-" + correspondingProperty.getName(), hasBody);
         this.returnType = returnType == null ? correspondingProperty.getOutType() : returnType;
+    }
+
+    @NotNull
+    @Override
+    public Set<? extends FunctionDescriptor> getOverriddenFunctions() {
+        return overriddenGetters;
+    }
+
+    public void addOverriddenFunction(@NotNull PropertyGetterDescriptor overriddenGetter) {
+        overriddenGetters.add(overriddenGetter);
     }
 
     @NotNull

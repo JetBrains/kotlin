@@ -7,6 +7,7 @@ import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.JetControlFlowProcessor;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
@@ -314,6 +315,40 @@ public class TopDownAnalyzer {
         resolveSecondaryConstructorBodies();
         resolveFunctionBodies();
 
+        checkIfPrimaryConstructorIsNecessary();
+
+        bindOverrides();
+    }
+
+    private void bindOverrides() {
+        for (Map.Entry<JetClass, MutableClassDescriptor> entry : classes.entrySet()) {
+            MutableClassDescriptor classDescriptor = entry.getValue();
+//            JetClass jetClass = entry.getKey();
+
+            for (FunctionDescriptor declaredFunction : classDescriptor.getFunctions()) {
+                for (JetType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
+                    FunctionDescriptor overridden = findFunctionOverridableBy(declaredFunction, supertype);
+                    if (overridden != null) {
+                        ((FunctionDescriptorImpl) declaredFunction).addOverriddenFunction(overridden);
+                    }
+                }
+            }
+        }
+
+    }
+
+    @Nullable
+    private FunctionDescriptor findFunctionOverridableBy(@NotNull FunctionDescriptor declaredFunction, @NotNull JetType supertype) {
+        FunctionGroup functionGroup = supertype.getMemberScope().getFunctionGroup(declaredFunction.getName());
+        for (FunctionDescriptor functionDescriptor : functionGroup.getFunctionDescriptors()) {
+            if (FunctionDescriptorUtil.isOverridableBy(semanticServices.getTypeChecker(), functionDescriptor, declaredFunction).isSuccess()) {
+                return functionDescriptor;
+            }
+        }
+        return null;
+    }
+
+    private void checkIfPrimaryConstructorIsNecessary() {
         for (Map.Entry<JetClass, MutableClassDescriptor> entry : classes.entrySet()) {
             MutableClassDescriptor classDescriptor = entry.getValue();
             JetClass jetClass = entry.getKey();

@@ -2,8 +2,11 @@ package org.jetbrains.jet.lang.resolve;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.jet.codegen.ClassCodegen;
+import org.jetbrains.jet.lang.JetDiagnostic;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.*;
+
+import java.util.Collection;
 
 /**
  * @author abreslav
@@ -38,4 +41,6 @@ public interface BindingContext {
     boolean hasBackingField(PropertyDescriptor propertyDescriptor);
 
     ConstructorDescriptor resolveSuperConstructor(JetDelegatorToSuperCall superCall, ClassCodegen classCodegen);
+
+    Collection<JetDiagnostic> getDiagnostics();
 }
