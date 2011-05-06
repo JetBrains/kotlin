@@ -27,6 +27,7 @@ import org.jetbrains.jet.resolve.DescriptorUtil;
 import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -53,7 +54,15 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
                         new Function<JetFunction, String>() {
                             @Override
                             public String fun(JetFunction jetFunction) {
-                                return overriddenFunctions.toString();
+                                StringBuilder builder = new StringBuilder();
+                                for (Iterator<? extends FunctionDescriptor> iterator = overriddenFunctions.iterator(); iterator.hasNext(); ) {
+                                    FunctionDescriptor overriddenFunction = iterator.next();
+                                    builder.append(DescriptorUtil.renderPresentableText(overriddenFunction).replace("<", "&lt;"));
+                                    if (iterator.hasNext()) {
+                                        builder.append("<br/>");
+                                    }
+                                }
+                                return builder.toString();
                             }
                         },
                         new GutterIconNavigationHandler<JetFunction>() {
