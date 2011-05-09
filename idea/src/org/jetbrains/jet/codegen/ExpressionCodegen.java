@@ -552,8 +552,6 @@ public class ExpressionCodegen extends JetVisitor {
                     }
                 }
 
-                ensureReceiverOnStack(expression);
-
                 PsiElement declarationPsiElement = bindingContext.getDeclarationPsiElement(funDescriptor);
                 Method methodDescriptor;
                 if (declarationPsiElement instanceof PsiMethod) {
@@ -562,6 +560,11 @@ public class ExpressionCodegen extends JetVisitor {
                     pushMethodArguments(expression, methodDescriptor);
 
                     final boolean isStatic = psiMethod.hasModifierProperty(PsiModifier.STATIC);
+
+                    if (!isStatic) {
+                        ensureReceiverOnStack(expression);
+                    }
+
                     v.visitMethodInsn(isStatic ? Opcodes.INVOKESTATIC : Opcodes.INVOKEVIRTUAL,
                             JetTypeMapper.jvmName(psiMethod.getContainingClass()),
                             methodDescriptor.getName(),
@@ -575,6 +578,7 @@ public class ExpressionCodegen extends JetVisitor {
                         v.invokestatic(owner, methodDescriptor.getName(), methodDescriptor.getDescriptor());
                     }
                     else if (functionParent instanceof ClassDescriptor && declarationPsiElement instanceof JetFunction) {
+                        ensureReceiverOnStack(expression);
                         final String owner = JetTypeMapper.jvmNameForInterface((ClassDescriptor) functionParent);
                         v.invokeinterface(owner, methodDescriptor.getName(), methodDescriptor.getDescriptor());
                     }
