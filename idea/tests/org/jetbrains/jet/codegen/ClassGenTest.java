@@ -25,10 +25,11 @@ public class ClassGenTest extends CodegenTestCase {
     }
 
     public void testInheritanceAndDelegation_DelegatingDefaultConstructorProperties() throws Exception {
-        loadFile("inheritance.jet");
-        System.out.println(generateToText());
+        blackBoxFile("inheritance.jet");
+    }
 
-        assertEquals("OK", blackBox());
+    public void testFunDelegation() throws Exception {
+        blackBoxFile("funDelegation.jet");
     }
 
     private static void checkInterface(Class aClass, Class ifs) {

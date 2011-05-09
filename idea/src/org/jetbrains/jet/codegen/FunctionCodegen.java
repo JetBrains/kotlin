@@ -7,6 +7,7 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
+import org.objectweb.asm.commons.InstructionAdapter;
 import org.objectweb.asm.commons.Method;
 
 import java.util.List;
@@ -61,8 +62,22 @@ public class FunctionCodegen {
             }
 
             ExpressionCodegen codegen = new ExpressionCodegen(mv, bindingContext, frameMap, typeMapper, jvmSignature.getReturnType(), ownerClass, kind);
-            bodyExpression.accept(codegen);
-            generateReturn(mv, bodyExpression, codegen);
+            if (kind instanceof OwnerKind.DelegateKind) {
+                OwnerKind.DelegateKind dk = (OwnerKind.DelegateKind) kind;
+                InstructionAdapter iv = new InstructionAdapter(mv);
+                iv.load(0, JetTypeMapper.TYPE_OBJECT);
+                dk.getDelegate().put(JetTypeMapper.TYPE_OBJECT, iv);
+                for (int i = 0; i < argTypes.length; i++) {
+                    Type argType = argTypes[i];
+                    iv.load(i + 1, argType);
+                }
+                iv.invokeinterface(dk.getOwnerClass(), jvmSignature.getName(), jvmSignature.getDescriptor());
+                iv.areturn(jvmSignature.getReturnType());
+            }
+            else {
+                bodyExpression.accept(codegen);
+                generateReturn(mv, bodyExpression, codegen);
+            }
             mv.visitMaxs(0, 0);
             mv.visitEnd();
         }

@@ -327,7 +327,6 @@ public class ClassCodegen {
         final FunctionCodegen functionCodegen = new FunctionCodegen(toClass, v, standardLibrary, bindingContext);
         final PropertyCodegen propertyCodegen = new PropertyCodegen(v, standardLibrary, bindingContext, functionCodegen);
 
-/* TODO
         for (JetDeclaration declaration : toClass.getDeclarations()) {
             if (declaration instanceof JetProperty) {
                 propertyCodegen.gen((JetProperty) declaration, kind);
@@ -336,7 +335,6 @@ public class ClassCodegen {
                 functionCodegen.gen((JetFunction) declaration, kind);
             }
         }
-*/
 
         for (JetParameter p : toClass.getPrimaryConstructorParameters()) {
             if (p.getValOrVarNode() != null) {

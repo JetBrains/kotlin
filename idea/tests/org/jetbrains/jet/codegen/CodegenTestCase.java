@@ -40,6 +40,11 @@ public abstract class CodegenTestCase extends LightCodeInsightFixtureTestCase {
         myFixture.configureByFile(JetParsingTest.getTestDataDir() + "/codegen/" + name);
     }
 
+    protected void blackBoxFile(String filename) throws Exception {
+        loadFile(filename);
+        assertEquals("OK", blackBox());
+    }
+
     protected String blackBox() throws Exception {
         Codegens codegens = generateClassesInFile();
         CodegensClassLoader loader = new CodegensClassLoader(codegens);

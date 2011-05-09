@@ -1,0 +1,17 @@
+class Base() {
+    fun n(n : Int) : Int = n + 1
+}
+
+class Abstract {}
+
+class Derived1() : Base(), Abstract {}
+class Derived2() : Abstract, Base() {}
+
+fun test(s : Base) : Boolean = s.n(238) == 239
+
+fun box() : String {
+    if (!test(new Base())) return "Fail #1"
+    if (!test(new Derived1())) return "Fail #2"
+    if (!test(new Derived2())) return "Fail #3"
+    return "OK"
+}
