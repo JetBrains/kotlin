@@ -557,13 +557,12 @@ public class ExpressionCodegen extends JetVisitor {
                 if (declarationPsiElement instanceof PsiMethod) {
                     PsiMethod psiMethod = (PsiMethod) declarationPsiElement;
                     methodDescriptor = getMethodDescriptor(psiMethod);
-                    pushMethodArguments(expression, methodDescriptor);
-
                     final boolean isStatic = psiMethod.hasModifierProperty(PsiModifier.STATIC);
 
                     if (!isStatic) {
                         ensureReceiverOnStack(expression);
                     }
+                    pushMethodArguments(expression, methodDescriptor);
 
                     v.visitMethodInsn(isStatic ? Opcodes.INVOKESTATIC : Opcodes.INVOKEVIRTUAL,
                             JetTypeMapper.jvmName(psiMethod.getContainingClass()),
@@ -572,13 +571,14 @@ public class ExpressionCodegen extends JetVisitor {
                 }
                 else {
                     methodDescriptor = typeMapper.mapSignature((JetFunction) declarationPsiElement);
-                    pushMethodArguments(expression, methodDescriptor);
                     if (functionParent instanceof NamespaceDescriptor && declarationPsiElement instanceof JetFunction) {
+                        pushMethodArguments(expression, methodDescriptor);
                         final String owner = NamespaceCodegen.getJVMClassName(DescriptorUtil.getFQName(functionParent));
                         v.invokestatic(owner, methodDescriptor.getName(), methodDescriptor.getDescriptor());
                     }
                     else if (functionParent instanceof ClassDescriptor && declarationPsiElement instanceof JetFunction) {
                         ensureReceiverOnStack(expression);
+                        pushMethodArguments(expression, methodDescriptor);
                         final String owner = JetTypeMapper.jvmNameForInterface((ClassDescriptor) functionParent);
                         v.invokeinterface(owner, methodDescriptor.getName(), methodDescriptor.getDescriptor());
                     }
