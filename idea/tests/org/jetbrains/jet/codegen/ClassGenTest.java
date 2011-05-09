@@ -32,6 +32,10 @@ public class ClassGenTest extends CodegenTestCase {
         blackBoxFile("funDelegation.jet");
     }
 
+    public void testPropertyDelegation() throws Exception {
+        blackBoxFile("propertyDelegation.jet");
+    }
+
     private static void checkInterface(Class aClass, Class ifs) {
         for (Class anInterface : aClass.getInterfaces()) {
             if (anInterface == ifs) return;

@@ -58,6 +58,12 @@ public class PropertyCodegen {
                         null, null);
             }
         }
+        else if (kind instanceof OwnerKind.DelegateKind) {
+            generateDefaultGetter(propertyDescriptor, Opcodes.ACC_PUBLIC, kind);
+            if (propertyDescriptor.isVar()) {
+                generateDefaultSetter(propertyDescriptor, Opcodes.ACC_PUBLIC, kind);
+            }
+        }
     }
 
     private void generateBackingField(JetProperty p, OwnerKind kind, PropertyDescriptor propertyDescriptor) {
@@ -179,17 +185,27 @@ public class PropertyCodegen {
             mv.visitCode();
             InstructionAdapter iv = new InstructionAdapter(mv);
             final Type type = mapper.mapType(propertyDescriptor.getOutType());
+            int paramCode = 0;
             if (kind != OwnerKind.NAMESPACE) {
                 iv.load(0, JetTypeMapper.TYPE_OBJECT);
-                iv.load(1, type);
+                paramCode = 1;
+            }
+
+            if (kind instanceof OwnerKind.DelegateKind) {
+                OwnerKind.DelegateKind dk = (OwnerKind.DelegateKind) kind;
+                iv.load(0, JetTypeMapper.TYPE_OBJECT);
+                dk.getDelegate().put(JetTypeMapper.TYPE_OBJECT, iv);
+
+                iv.load(paramCode, type);
+                iv.invokeinterface(dk.getOwnerClass(), setterName(propertyDescriptor.getName()), signature);
             }
             else {
-                iv.load(0, type);
+                iv.load(paramCode, type);
+                iv.visitFieldInsn(kind == OwnerKind.NAMESPACE ? Opcodes.PUTSTATIC : Opcodes.PUTFIELD,
+                        JetTypeMapper.getOwner(propertyDescriptor, kind), propertyDescriptor.getName(),
+                        type.getDescriptor());
             }
-            //TODO: kind inst Delegate
-            iv.visitFieldInsn(kind == OwnerKind.NAMESPACE ? Opcodes.PUTSTATIC : Opcodes.PUTFIELD,
-                    JetTypeMapper.getOwner(propertyDescriptor, kind), propertyDescriptor.getName(),
-                    type.getDescriptor());
+
             iv.visitInsn(Opcodes.RETURN);
             mv.visitMaxs(0, 0);
             mv.visitEnd();
