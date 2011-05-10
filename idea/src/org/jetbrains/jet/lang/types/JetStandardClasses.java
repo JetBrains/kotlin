@@ -79,6 +79,10 @@ public class JetStandardClasses {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    private static final JetType DEFAULT_BOUND = getNullableAnyType();
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     public static final JetScope STUB = JetScope.EMPTY;
     public static final FunctionGroup STUB_FG = FunctionGroup.EMPTY;
 
@@ -95,7 +99,7 @@ public class JetStandardClasses {
                     Collections.<Annotation>emptyList(),
                     "Tuple" + i);
             for (int j = 0; j < i; j++) {
-                parameters.add(new TypeParameterDescriptor(
+                parameters.add(TypeParameterDescriptor.createWithDefaultBound(
                         classDescriptor,
                         Collections.<Annotation>emptyList(),
                         Variance.OUT_VARIANCE, "T" + j));
@@ -133,7 +137,7 @@ public class JetStandardClasses {
                     Collections.<Annotation>emptyList(),
                     "ReceiverFunction" + i);
             List<TypeParameterDescriptor> parameters = createTypeParameters(i, receiverFunction);
-            parameters.add(0, new TypeParameterDescriptor(
+            parameters.add(0, TypeParameterDescriptor.createWithDefaultBound(
                     receiverFunction,
                     Collections.<Annotation>emptyList(),
                     Variance.IN_VARIANCE, "T"));
@@ -147,12 +151,12 @@ public class JetStandardClasses {
     private static List<TypeParameterDescriptor> createTypeParameters(int parameterCount, ClassDescriptorImpl function) {
         List<TypeParameterDescriptor> parameters = new ArrayList<TypeParameterDescriptor>();
         for (int j = 0; j < parameterCount; j++) {
-            parameters.add(new TypeParameterDescriptor(
+            parameters.add(TypeParameterDescriptor.createWithDefaultBound(
                     function,
                     Collections.<Annotation>emptyList(),
                     Variance.IN_VARIANCE, "P" + j));
         }
-        parameters.add(new TypeParameterDescriptor(
+        parameters.add(TypeParameterDescriptor.createWithDefaultBound(
                 function,
                 Collections.<Annotation>emptyList(),
                 Variance.OUT_VARIANCE, "R"));
@@ -198,8 +202,6 @@ public class JetStandardClasses {
             }
         }
     }
-
-    private static final JetType DEFAULT_BOUND = getNullableAnyType();
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

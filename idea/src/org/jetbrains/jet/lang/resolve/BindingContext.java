@@ -29,8 +29,6 @@ public interface BindingContext {
 
     JetType getExpressionType(JetExpression expression);
 
-    JetScope getTopLevelScope();
-
     DeclarationDescriptor resolveReferenceExpression(JetReferenceExpression referenceExpression);
 
     JetType resolveTypeReference(JetTypeReference typeReference);

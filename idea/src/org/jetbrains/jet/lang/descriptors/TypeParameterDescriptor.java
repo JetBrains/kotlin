@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.descriptors;
 
+import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.types.*;
 
@@ -11,22 +12,38 @@ import java.util.Set;
  * @author abreslav
  */
 public class TypeParameterDescriptor extends DeclarationDescriptorImpl implements ClassifierDescriptor {
-    private final Variance variance;
-    private final Set<JetType> upperBounds;
-    private final TypeConstructor typeConstructor;
-    private final JetType boundsAsType;
-    private JetType type;
-
-    public TypeParameterDescriptor(
+    public static TypeParameterDescriptor createWithDefaultBound(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull List<Annotation> annotations,
             @NotNull Variance variance,
-            @NotNull String name,
-            @NotNull Set<JetType> upperBounds,
-            @NotNull JetType boundsAsType) {
+            @NotNull String name) {
+        TypeParameterDescriptor typeParameterDescriptor = createForFurtherModification(containingDeclaration, annotations, variance, name);
+        typeParameterDescriptor.addUpperBound(JetStandardClasses.getDefaultBound());
+        return typeParameterDescriptor;
+    }
+
+    public static TypeParameterDescriptor createForFurtherModification(
+            @NotNull DeclarationDescriptor containingDeclaration,
+            @NotNull List<Annotation> annotations,
+            @NotNull Variance variance,
+            @NotNull String name) {
+        return new TypeParameterDescriptor(containingDeclaration, annotations, variance, name);
+    }
+
+    private final Variance variance;
+    private final Set<JetType> upperBounds;
+    private final TypeConstructor typeConstructor;
+    private JetType boundsAsType;
+    private JetType type;
+
+    private TypeParameterDescriptor(
+            @NotNull DeclarationDescriptor containingDeclaration,
+            @NotNull List<Annotation> annotations,
+            @NotNull Variance variance,
+            @NotNull String name) {
         super(containingDeclaration, annotations, name);
         this.variance = variance;
-        this.upperBounds = upperBounds;
+        this.upperBounds = Sets.newLinkedHashSet();
         // TODO: Should we actually pass the annotations on to the type constructor?
         this.typeConstructor = new TypeConstructorImpl(
                 this,
@@ -35,25 +52,14 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
                 "&" + name,
                 Collections.<TypeParameterDescriptor>emptyList(),
                 upperBounds);
-        this.boundsAsType = boundsAsType;
-    }
-
-    public TypeParameterDescriptor(
-            @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull List<Annotation> annotations,
-            @NotNull Variance variance,
-            @NotNull String name) {
-        this(
-            containingDeclaration,
-                annotations,
-            variance,
-            name,
-            Collections.singleton(JetStandardClasses.getNullableAnyType()),
-            JetStandardClasses.getNullableAnyType());
     }
 
     public Variance getVariance() {
         return variance;
+    }
+
+    public void addUpperBound(@NotNull JetType bound) {
+        upperBounds.add(bound);
     }
 
     public Set<JetType> getUpperBounds() {
@@ -73,6 +79,14 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
 
     @NotNull
     public JetType getBoundsAsType() {
+        if (boundsAsType == null) {
+            assert upperBounds != null;
+            assert upperBounds.size() > 0;
+            boundsAsType = upperBounds.size() == 1 ? upperBounds.iterator().next() : TypeUtils.intersect(JetTypeChecker.INSTANCE, upperBounds);
+            if (boundsAsType == null) {
+                boundsAsType = JetStandardClasses.getNothingType(); // TODO : some error message?
+            }
+        }
         return boundsAsType;
     }
 

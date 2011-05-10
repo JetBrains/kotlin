@@ -2,15 +2,12 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.MutableClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.WritableFunctionGroup;
 import org.jetbrains.jet.lang.types.*;
 
 import java.util.*;
@@ -124,32 +121,25 @@ public class JavaDescriptorResolver {
     }
 
     private TypeParameterDescriptor createJavaTypeParameterDescriptor(@NotNull DeclarationDescriptor owner, @NotNull PsiTypeParameter typeParameter) {
-        PsiClassType[] referencedTypes = typeParameter.getExtendsList().getReferencedTypes();
-        Set<JetType> upperBounds;
-        JetType boundsAsType;
-        if (referencedTypes.length == 0){
-            boundsAsType = JetStandardClasses.getNullableAnyType();
-            upperBounds = Collections.singleton(boundsAsType);
-        }
-        else if (referencedTypes.length == 1) {
-            boundsAsType = semanticServices.getTypeTransformer().transformToType(referencedTypes[0]);
-            upperBounds = Collections.singleton(boundsAsType);
-        }
-        else {
-            upperBounds = Sets.newLinkedHashSet();
-            for (PsiClassType referencedType : referencedTypes) {
-                upperBounds.add(semanticServices.getTypeTransformer().transformToType(referencedType));
-            }
-            boundsAsType = TypeUtils.safeIntersect(semanticServices.getJetSemanticServices().getTypeChecker(), upperBounds);
-        }
-        return new TypeParameterDescriptor(
+        TypeParameterDescriptor typeParameterDescriptor = TypeParameterDescriptor.createForFurtherModification(
                 owner,
                 Collections.<Annotation>emptyList(), // TODO
                 Variance.INVARIANT,
-                typeParameter.getName(),
-                upperBounds,
-                boundsAsType
+                typeParameter.getName()
         );
+        PsiClassType[] referencedTypes = typeParameter.getExtendsList().getReferencedTypes();
+        if (referencedTypes.length == 0){
+            typeParameterDescriptor.addUpperBound(JetStandardClasses.getNullableAnyType());
+        }
+        else if (referencedTypes.length == 1) {
+            typeParameterDescriptor.addUpperBound(semanticServices.getTypeTransformer().transformToType(referencedTypes[0]));
+        }
+        else {
+            for (PsiClassType referencedType : referencedTypes) {
+                typeParameterDescriptor.addUpperBound(semanticServices.getTypeTransformer().transformToType(referencedType));
+            }
+        }
+        return typeParameterDescriptor;
     }
 
     @NotNull

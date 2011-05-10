@@ -60,8 +60,6 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
         }
     };
 
-    private JetScope toplevelScope;
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @NotNull
@@ -149,11 +147,7 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
         statements.remove(statement);
     }
 
-    public void setToplevelScope(JetScope toplevelScope) {
-        this.toplevelScope = toplevelScope;
-    }
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
     @Override
@@ -218,11 +212,6 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
     @Override
     public DeclarationDescriptor resolveReferenceExpression(JetReferenceExpression referenceExpression) {
         return resolutionResults.get(referenceExpression);
-    }
-
-    @Override
-    public JetScope getTopLevelScope() {
-        return toplevelScope;
     }
 
     @Override

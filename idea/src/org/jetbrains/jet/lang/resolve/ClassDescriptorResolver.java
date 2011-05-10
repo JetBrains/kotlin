@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.resolve;
 
+import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -72,6 +73,61 @@ public class ClassDescriptorResolver {
                 primaryConstructorDescriptor
         );
     }
+
+    public void resolveMutableClassDescriptor(@NotNull JetClass classElement, @NotNull MutableClassDescriptor descriptor) {
+        descriptor.setName(JetPsiUtil.safeName(classElement.getName()));
+        descriptor.getClassHeaderScope().addLabeledDeclaration(descriptor);
+
+        WritableScope parameterScope = descriptor.getClassHeaderScope();
+
+        // TODO : Where-clause
+        List<TypeParameterDescriptor> typeParameters = Lists.newArrayList();
+        for (JetTypeParameter typeParameter : classElement.getTypeParameters()) {
+            TypeParameterDescriptor typeParameterDescriptor = TypeParameterDescriptor.createForFurtherModification(
+                    descriptor,
+                    AnnotationResolver.INSTANCE.resolveAnnotations(typeParameter.getModifierList()),
+                    typeParameter.getVariance(),
+                    JetPsiUtil.safeName(typeParameter.getName())
+            );
+            parameterScope.addTypeParameterDescriptor(typeParameterDescriptor);
+            trace.recordDeclarationResolution(typeParameter, typeParameterDescriptor);
+            typeParameters.add(typeParameterDescriptor);
+        }
+
+        boolean open = classElement.hasModifier(JetTokens.OPEN_KEYWORD);
+        List<JetType> supertypes = new ArrayList<JetType>();
+        TypeConstructorImpl typeConstructor = new TypeConstructorImpl(
+                descriptor,
+                AnnotationResolver.INSTANCE.resolveAnnotations(classElement.getModifierList()),
+                !open,
+                JetPsiUtil.safeName(classElement.getName()),
+                typeParameters,
+                supertypes);
+        descriptor.setTypeConstructor(
+                typeConstructor
+        );
+
+//        List<JetDelegationSpecifier> delegationSpecifiers = classElement.getDelegationSpecifiers();
+        // TODO : assuming that the hierarchy is acyclic
+//        Collection<? extends JetType> superclasses = delegationSpecifiers.isEmpty()
+//                ? Collections.singleton(JetStandardClasses.getAnyType())
+//                : resolveDelegationSpecifiers(parameterScope, delegationSpecifiers);
+
+        // TODO : UGLY HACK
+//        supertypes.addAll(superclasses);
+
+
+        // TODO : importing may be a bad idea
+//        for (JetType supertype : superclasses) {
+//            assert supertype != null : classElement.getName();
+//            parameterScope.importScope(supertype.getMemberScope());
+//        }
+
+        descriptor.getClassHeaderScope().setThisType(descriptor.getDefaultType());
+
+        trace.recordDeclarationResolution(classElement, descriptor);
+    }
+
 
     public void resolveMutableClassDescriptor(@NotNull JetScope scope, @NotNull JetClass classElement, @NotNull MutableClassDescriptor descriptor) {
         descriptor.setName(JetPsiUtil.safeName(classElement.getName()));
@@ -249,14 +305,13 @@ public class ClassDescriptorResolver {
         JetType bound = extendsBound == null
                 ? JetStandardClasses.getDefaultBound()
                 : typeResolver.resolveType(extensibleScope, extendsBound);
-        TypeParameterDescriptor typeParameterDescriptor = new TypeParameterDescriptor(
+        TypeParameterDescriptor typeParameterDescriptor = TypeParameterDescriptor.createForFurtherModification(
                 containingDescriptor,
                 AnnotationResolver.INSTANCE.resolveAnnotations(typeParameter.getModifierList()),
                 typeParameter.getVariance(),
-                JetPsiUtil.safeName(typeParameter.getName()),
-                Collections.singleton(bound),
-                bound
+                JetPsiUtil.safeName(typeParameter.getName())
         );
+        typeParameterDescriptor.addUpperBound(bound);
         extensibleScope.addTypeParameterDescriptor(typeParameterDescriptor);
         trace.recordDeclarationResolution(typeParameter, typeParameterDescriptor);
         return typeParameterDescriptor;

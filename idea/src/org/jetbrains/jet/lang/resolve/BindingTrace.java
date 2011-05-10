@@ -40,10 +40,6 @@ public interface BindingTrace {
         }
 
         @Override
-        public void setToplevelScope(JetScope toplevelScope) {
-        }
-
-        @Override
         public void recordBlock(JetFunctionLiteralExpression expression) {
         }
 
@@ -81,8 +77,6 @@ public interface BindingTrace {
     public void recordValueParameterAsPropertyResolution(@NotNull JetParameter declaration, @NotNull PropertyDescriptor descriptor);
 
     public void recordTypeResolution(@NotNull JetTypeReference typeReference, @NotNull JetType type);
-
-    public void setToplevelScope(JetScope toplevelScope);
 
     public void recordBlock(JetFunctionLiteralExpression expression);
 

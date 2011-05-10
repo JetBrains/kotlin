@@ -43,10 +43,6 @@ public class BindingTraceAdapter implements BindingTrace {
         originalTrace.recordTypeResolution(typeReference, type);
     }
 
-    public void setToplevelScope(JetScope toplevelScope) {
-        originalTrace.setToplevelScope(toplevelScope);
-    }
-
     public void recordBlock(JetFunctionLiteralExpression expression) {
         originalTrace.recordBlock(expression);
     }
