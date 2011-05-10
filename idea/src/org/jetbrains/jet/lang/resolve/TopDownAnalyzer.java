@@ -12,6 +12,7 @@ import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.JetControlFlowProcessor;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.cfg.pseudocode.*;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -96,6 +97,33 @@ public class TopDownAnalyzer {
     }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private void collectNamespacesAndClassifiers(
+            @NotNull Collection<JetDeclaration> declarations) {
+        for (JetDeclaration declaration : declarations) {
+            declaration.accept(new JetVisitor() {
+                @Override
+                public void visitNamespace(JetNamespace namespace) {
+                    super.visitNamespace(namespace); // TODO
+                }
+
+                @Override
+                public void visitClass(JetClass klass) {
+                    super.visitClass(klass); // TODO
+                }
+
+                @Override
+                public void visitTypedef(JetTypedef typedef) {
+                    super.visitTypedef(typedef); // TODO
+                }
+
+                @Override
+                public void visitExtension(JetExtension extension) {
+                    super.visitExtension(extension); // TODO
+                }
+            });
+        }
+    }
 
     private void collectTypeDeclarators(
             @NotNull final WritableScope declaringScope,
@@ -334,7 +362,6 @@ public class TopDownAnalyzer {
                 }
             }
         }
-
     }
 
     @Nullable

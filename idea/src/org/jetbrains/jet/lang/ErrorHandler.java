@@ -2,9 +2,9 @@ package org.jetbrains.jet.lang;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
-import org.jetbrains.jet.lang.types.DeclarationDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 
 /**

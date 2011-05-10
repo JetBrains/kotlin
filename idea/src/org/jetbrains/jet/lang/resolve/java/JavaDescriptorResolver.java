@@ -8,8 +8,9 @@ import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.MutableClassDescriptor;
-import org.jetbrains.jet.lang.resolve.WritableFunctionGroup;
+import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.MutableClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.WritableFunctionGroup;
 import org.jetbrains.jet.lang.types.*;
 
 import java.util.*;

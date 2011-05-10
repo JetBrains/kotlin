@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.Annotated;
 import org.jetbrains.jet.lang.resolve.JetScope;
 
 import java.util.List;

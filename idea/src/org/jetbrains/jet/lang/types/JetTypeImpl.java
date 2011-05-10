@@ -3,6 +3,9 @@ package org.jetbrains.jet.lang.types;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.AnnotatedImpl;
+import org.jetbrains.jet.lang.descriptors.Annotation;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.resolve.JetScope;
 
 import java.util.Collections;

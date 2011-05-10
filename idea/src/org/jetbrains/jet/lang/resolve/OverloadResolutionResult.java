@@ -1,7 +1,7 @@
 package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.types.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 
 import java.util.Collection;
 import java.util.Collections;

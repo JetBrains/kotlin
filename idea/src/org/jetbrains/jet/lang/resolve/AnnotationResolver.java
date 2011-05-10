@@ -2,9 +2,9 @@ package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.Annotation;
 import org.jetbrains.jet.lang.psi.JetAttribute;
 import org.jetbrains.jet.lang.psi.JetModifierList;
-import org.jetbrains.jet.lang.types.Annotation;
 
 import java.util.Collections;
 import java.util.List;

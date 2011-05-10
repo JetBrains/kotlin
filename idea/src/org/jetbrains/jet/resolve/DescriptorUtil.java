@@ -1,5 +1,6 @@
 package org.jetbrains.jet.resolve;
 
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.types.*;
 
 import java.util.Collection;

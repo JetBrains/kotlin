@@ -1,8 +1,7 @@
 package org.jetbrains.jet.codegen;
 
 import gnu.trove.TObjectIntHashMap;
-import org.jetbrains.jet.lang.types.DeclarationDescriptor;
-import org.objectweb.asm.Type;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 
 /**
  * @author max

@@ -2,9 +2,9 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.JetScopeImpl;
-import org.jetbrains.jet.lang.types.ClassifierDescriptor;
-import org.jetbrains.jet.lang.types.DeclarationDescriptor;
-import org.jetbrains.jet.lang.types.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 
 /**
  * @author abreslav

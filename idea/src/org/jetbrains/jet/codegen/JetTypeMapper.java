@@ -2,6 +2,7 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.*;

@@ -3,6 +3,7 @@ package org.jetbrains.jet.lang.resolve;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.jet.codegen.ClassCodegen;
 import org.jetbrains.jet.lang.JetDiagnostic;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.*;
 

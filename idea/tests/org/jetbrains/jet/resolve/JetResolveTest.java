@@ -11,6 +11,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestCaseBase;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.OverloadResolutionResult;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.parsing.JetParsingTest;

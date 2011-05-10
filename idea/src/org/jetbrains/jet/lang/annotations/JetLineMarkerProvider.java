@@ -17,11 +17,11 @@ import com.intellij.psi.util.PsiUtilBase;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.Function;
 import com.intellij.util.PsiNavigateUtil;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetFunction;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.types.FunctionDescriptor;
 import org.jetbrains.jet.resolve.DescriptorUtil;
 
 import javax.swing.*;

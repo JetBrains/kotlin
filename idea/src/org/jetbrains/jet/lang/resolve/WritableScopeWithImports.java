@@ -2,10 +2,10 @@ package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.types.ClassifierDescriptor;
-import org.jetbrains.jet.lang.types.FunctionGroup;
-import org.jetbrains.jet.lang.types.NamespaceDescriptor;
-import org.jetbrains.jet.lang.types.VariableDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionGroup;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 
 import java.util.ArrayList;
 import java.util.List;

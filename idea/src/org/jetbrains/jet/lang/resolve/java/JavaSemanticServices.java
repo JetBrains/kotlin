@@ -3,7 +3,7 @@ package org.jetbrains.jet.lang.resolve.java;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.JetSemanticServices;
-import org.jetbrains.jet.lang.types.BindingTrace;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
 
 /**
  * @author abreslav

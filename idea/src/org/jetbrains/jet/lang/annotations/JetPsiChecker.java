@@ -17,10 +17,10 @@ import org.jetbrains.jet.lang.JetHighlighter;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.types.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.PropertyDescriptor;
-import org.jetbrains.jet.lang.types.VariableDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 
 import java.util.HashSet;
 import java.util.Set;

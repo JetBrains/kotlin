@@ -3,6 +3,7 @@ package org.jetbrains.jet.lang.resolve.java;
 import com.google.common.collect.Maps;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.JetScope;
 import org.jetbrains.jet.lang.types.*;
 
