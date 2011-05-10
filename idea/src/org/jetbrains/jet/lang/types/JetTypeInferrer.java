@@ -74,7 +74,7 @@ public class JetTypeInferrer {
     public JetTypeInferrer(@NotNull BindingTrace trace, @NotNull JetFlowInformationProvider flowInformationProvider, @NotNull JetSemanticServices semanticServices) {
         this.trace = new CachedBindingTrace(trace);
         this.semanticServices = semanticServices;
-        this.typeResolver = new TypeResolver(trace, semanticServices);
+        this.typeResolver = new TypeResolver(semanticServices, trace, true);
         this.classDescriptorResolver = semanticServices.getClassDescriptorResolver(trace);
         this.flowInformationProvider = flowInformationProvider;
     }

@@ -132,9 +132,12 @@ public class JetPsiChecker implements Annotator {
     }
 
     private void putBackingfieldAnnotation(AnnotationHolder holder, JetNamedDeclaration element) {
-        holder.createInfoAnnotation(
-                element.getNameIdentifier(),
-                "This property has a backing field")
-            .setTextAttributes(JetHighlighter.JET_PROPERTY_WITH_BACKING_FIELD_IDENTIFIER);
+        PsiElement nameIdentifier = element.getNameIdentifier();
+        if (nameIdentifier != null) {
+            holder.createInfoAnnotation(
+                    nameIdentifier,
+                    "This property has a backing field")
+                .setTextAttributes(JetHighlighter.JET_PROPERTY_WITH_BACKING_FIELD_IDENTIFIER);
+        }
     }
 }

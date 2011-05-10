@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.psi;
 
+import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
@@ -8,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lexer.JetTokens;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -17,6 +19,24 @@ import java.util.List;
 public class JetFunctionType extends JetTypeElement {
     public JetFunctionType(@NotNull ASTNode node) {
         super(node);
+    }
+
+    @NotNull
+    @Override
+    public List<JetTypeReference> getTypeArgumentsAsTypes() {
+        ArrayList<JetTypeReference> result = Lists.newArrayList();
+        JetTypeReference receiverTypeRef = getReceiverTypeRef();
+        if (receiverTypeRef != null) {
+            result.add(receiverTypeRef);
+        }
+        for (JetParameter jetParameter : getParameters()) {
+            result.add(jetParameter.getTypeReference());
+        }
+        JetTypeReference returnTypeRef = getReturnTypeRef();
+        if (returnTypeRef != null) {
+            result.add(returnTypeRef);
+        }
+        return result;
     }
 
     @Override

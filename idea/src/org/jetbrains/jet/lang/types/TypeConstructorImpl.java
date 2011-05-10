@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class TypeConstructorImpl extends AnnotatedImpl implements TypeConstructor {
     private final List<TypeParameterDescriptor> parameters;
-    private Collection<? extends JetType> supertypes;
+    private Collection<JetType> supertypes;
     private final String debugName;
     private final boolean sealed;
 
@@ -29,7 +29,7 @@ public class TypeConstructorImpl extends AnnotatedImpl implements TypeConstructo
             boolean sealed,
             @NotNull String debugName,
             @NotNull List<TypeParameterDescriptor> parameters,
-            @NotNull Collection<? extends JetType> supertypes) {
+            @NotNull Collection<JetType> supertypes) {
         super(annotations);
         this.declarationDescriptor = declarationDescriptor;
         this.sealed = sealed;
@@ -46,7 +46,7 @@ public class TypeConstructorImpl extends AnnotatedImpl implements TypeConstructo
 
     @Override
     @NotNull
-    public Collection<? extends JetType> getSupertypes() {
+    public Collection<JetType> getSupertypes() {
         return supertypes;
     }
 

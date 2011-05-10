@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.psi;
 
+import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,10 +31,21 @@ public class JetUserType extends JetTypeElement {
         return (JetTypeArgumentList) findChildByType(JetNodeTypes.TYPE_ARGUMENT_LIST);
     }
 
+    @NotNull
     public List<JetTypeProjection> getTypeArguments() {
         // TODO: empty elements in PSI
         JetTypeArgumentList typeArgumentList = getTypeArgumentList();
         return typeArgumentList == null ? Collections.<JetTypeProjection>emptyList() : typeArgumentList.getArguments();
+    }
+
+    @NotNull
+    @Override
+    public List<JetTypeReference> getTypeArgumentsAsTypes() {
+        List<JetTypeReference> result = Lists.newArrayList();
+        for (JetTypeProjection projection : getTypeArguments()) {
+            result.add(projection.getTypeReference());
+        }
+        return result;
     }
 
     @Nullable @IfNotParsed

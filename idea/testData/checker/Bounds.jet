@@ -1,0 +1,8 @@
+  class A
+  class B<T : A>()
+
+  class C<T : B<<error>Int</error>>, X : {(B<<error>Char</error>>) : (B<<error>Any</error>>, B<A>)}>() : B<<error>Any</error>>() { // 2 errors
+    val a = new B<<error>Char</error>>() // error
+
+    val x : {(B<<error>Char</error>>) : B<<error>Any</error>>}
+  }

@@ -2,7 +2,6 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetNodeTypes;
 
 import java.util.List;
 
@@ -12,6 +11,12 @@ import java.util.List;
 public class JetNullableType extends JetTypeElement {
     public JetNullableType(@NotNull ASTNode node) {
         super(node);
+    }
+
+    @NotNull
+    @Override
+    public List<JetTypeReference> getTypeArgumentsAsTypes() {
+        return getInnerType().getTypeArgumentsAsTypes();
     }
 
     @Override

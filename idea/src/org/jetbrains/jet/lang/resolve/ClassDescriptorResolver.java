@@ -25,11 +25,13 @@ public class ClassDescriptorResolver {
 
     private final JetSemanticServices semanticServices;
     private final TypeResolver typeResolver;
+    private final TypeResolver typeResolverNotCheckingBounds;
     private final BindingTrace trace;
 
     public ClassDescriptorResolver(JetSemanticServices semanticServices, BindingTrace trace) {
         this.semanticServices = semanticServices;
-        this.typeResolver = new TypeResolver(trace, semanticServices);
+        this.typeResolver = new TypeResolver(semanticServices, trace, true);
+        this.typeResolverNotCheckingBounds = new TypeResolver(semanticServices, trace, false);
         this.trace = trace;
     }
 
@@ -50,7 +52,7 @@ public class ClassDescriptorResolver {
 
         List<JetDelegationSpecifier> delegationSpecifiers = classElement.getDelegationSpecifiers();
         // TODO : assuming that the hierarchy is acyclic
-        Collection<? extends JetType> supertypes = delegationSpecifiers.isEmpty()
+        Collection<JetType> supertypes = delegationSpecifiers.isEmpty()
                 ? Collections.singleton(JetStandardClasses.getAnyType())
                 : resolveDelegationSpecifiers(parameterScope, delegationSpecifiers);
         boolean open = classElement.hasModifier(JetTokens.OPEN_KEYWORD);
@@ -107,27 +109,33 @@ public class ClassDescriptorResolver {
                 typeConstructor
         );
 
-//        List<JetDelegationSpecifier> delegationSpecifiers = classElement.getDelegationSpecifiers();
-        // TODO : assuming that the hierarchy is acyclic
-//        Collection<? extends JetType> superclasses = delegationSpecifiers.isEmpty()
-//                ? Collections.singleton(JetStandardClasses.getAnyType())
-//                : resolveDelegationSpecifiers(parameterScope, delegationSpecifiers);
-
-        // TODO : UGLY HACK
-//        supertypes.addAll(superclasses);
-
-
-        // TODO : importing may be a bad idea
-//        for (JetType supertype : superclasses) {
-//            assert supertype != null : classElement.getName();
-//            parameterScope.importScope(supertype.getMemberScope());
-//        }
-
         descriptor.getClassHeaderScope().setThisType(descriptor.getDefaultType());
 
         trace.recordDeclarationResolution(classElement, descriptor);
     }
 
+    public void resolveGenericBounds(@NotNull JetClass jetClass, @NotNull MutableClassDescriptor classDescriptor) {
+        List<JetTypeParameter> typeParameters = jetClass.getTypeParameters();
+        List<TypeParameterDescriptor> parameters = classDescriptor.getTypeConstructor().getParameters();
+        for (int i = 0, typeParametersSize = typeParameters.size(); i < typeParametersSize; i++) {
+            JetTypeParameter jetTypeParameter = typeParameters.get(i);
+            TypeParameterDescriptor typeParameterDescriptor = parameters.get(i);
+            JetTypeReference extendsBound = jetTypeParameter.getExtendsBound();
+            if (extendsBound != null) {
+                typeParameterDescriptor.addUpperBound(typeResolverNotCheckingBounds.resolveType(classDescriptor.getClassHeaderScope(), extendsBound));
+            }
+        }
+        // TODO : Bounds from with
+    }
+
+    public void resolveSupertypes(@NotNull JetClass jetClass, @NotNull MutableClassDescriptor descriptor) {
+        List<JetDelegationSpecifier> delegationSpecifiers = jetClass.getDelegationSpecifiers();
+//        TODO : assuming that the hierarchy is acyclic
+        Collection<? extends JetType> superclasses = delegationSpecifiers.isEmpty()
+                ? Collections.singleton(JetStandardClasses.getAnyType())
+                : resolveDelegationSpecifiers(descriptor.getClassHeaderScope(), delegationSpecifiers);
+        ((TypeConstructorImpl) descriptor.getTypeConstructor()).getSupertypes().addAll(superclasses);
+    }
 
     public void resolveMutableClassDescriptor(@NotNull JetScope scope, @NotNull JetClass classElement, @NotNull MutableClassDescriptor descriptor) {
         descriptor.setName(JetPsiUtil.safeName(classElement.getName()));
@@ -317,7 +325,7 @@ public class ClassDescriptorResolver {
         return typeParameterDescriptor;
     }
 
-    public Collection<? extends JetType> resolveDelegationSpecifiers(WritableScope extensibleScope, List<JetDelegationSpecifier> delegationSpecifiers) {
+    private Collection<JetType> resolveDelegationSpecifiers(WritableScope extensibleScope, List<JetDelegationSpecifier> delegationSpecifiers) {
         if (delegationSpecifiers.isEmpty()) {
             return Collections.emptyList();
         }
@@ -569,4 +577,37 @@ public class ClassDescriptorResolver {
         return propertyDescriptor;
     }
 
+    public void checkBounds(JetTypeReference typeReference, JetType type) {
+        if (ErrorUtils.isErrorType(type)) return;
+
+        JetTypeElement typeElement = typeReference.getTypeElement();
+        if (typeElement == null) return;
+
+        List<TypeParameterDescriptor> parameters = type.getConstructor().getParameters();
+        List<TypeProjection> arguments = type.getArguments();
+        assert parameters.size() == arguments.size();
+
+        List<JetTypeReference> typeReferences = typeElement.getTypeArgumentsAsTypes();
+        assert typeReferences.size() == arguments.size() : typeElement.getText();
+
+        for (int i = 0, projectionsSize = typeReferences.size(); i < projectionsSize; i++) {
+            JetTypeReference argumentTypeReference = typeReferences.get(i);
+
+            if (argumentTypeReference == null) continue;
+
+            JetType typeArgument = arguments.get(i).getType();
+            checkBounds(argumentTypeReference, typeArgument);
+
+            TypeParameterDescriptor typeParameterDescriptor = parameters.get(i);
+            checkBounds(argumentTypeReference, typeArgument, typeParameterDescriptor);
+        }
+    }
+
+    public void checkBounds(@NotNull JetTypeReference argumentTypeReference, @NotNull JetType typeArgument, @NotNull TypeParameterDescriptor typeParameterDescriptor) {
+        for (JetType bound : typeParameterDescriptor.getUpperBounds()) {
+            if (!semanticServices.getTypeChecker().isSubtypeOf(typeArgument, bound)) {
+                trace.getErrorHandler().genericError(argumentTypeReference.getNode(), "An upper bound " + bound + " is violated"); // TODO : Message
+            }
+        }
+    }
 }

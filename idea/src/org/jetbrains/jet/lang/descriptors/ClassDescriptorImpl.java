@@ -29,7 +29,7 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
 
     public final ClassDescriptorImpl initialize(boolean sealed,
                                                 @NotNull List<TypeParameterDescriptor> typeParameters,
-                                                @NotNull Collection<? extends JetType> superclasses,
+                                                @NotNull Collection<JetType> superclasses,
                                                 @NotNull JetScope memberDeclarations,
                                                 @NotNull FunctionGroup constructors,
                                                 @Nullable ConstructorDescriptor primaryConstructor) {

@@ -16,12 +16,14 @@ import java.util.List;
  */
 public class TypeResolver {
 
-    private final BindingTrace trace;
     private final JetSemanticServices semanticServices;
+    private final BindingTrace trace;
+    private final boolean checkBounds;
 
-    public TypeResolver(BindingTrace trace, JetSemanticServices semanticServices) {
-        this.trace = trace;
+    public TypeResolver(JetSemanticServices semanticServices, BindingTrace trace, boolean checkBounds) {
         this.semanticServices = semanticServices;
+        this.trace = trace;
+        this.checkBounds = checkBounds;
     }
 
     @NotNull
@@ -69,7 +71,8 @@ public class TypeResolver {
                             trace.recordReferenceResolution(referenceExpression, classifierDescriptor);
                             TypeConstructor typeConstructor = classifierDescriptor.getTypeConstructor();
                             List<TypeProjection> arguments = resolveTypeProjections(scope, typeConstructor, type.getTypeArguments());
-                            int expectedArgumentCount = typeConstructor.getParameters().size();
+                            List<TypeParameterDescriptor> parameters = typeConstructor.getParameters();
+                            int expectedArgumentCount = parameters.size();
                             int actualArgumentCount = arguments.size();
                             if (ErrorUtils.isError(typeConstructor)) {
                                 result[0] = new JetTypeImpl(
@@ -89,6 +92,17 @@ public class TypeResolver {
                                         trace.getErrorHandler().genericError(type.getTypeArgumentList().getNode(), errorMessage);
                                     }
                                 } else {
+                                    if (checkBounds) {
+                                        for (int i = 0, parametersSize = parameters.size(); i < parametersSize; i++) {
+                                            TypeParameterDescriptor parameter = parameters.get(i);
+                                            JetType argument = arguments.get(i).getType();
+                                            JetTypeReference typeReference = type.getTypeArguments().get(i).getTypeReference();
+
+                                            if (typeReference != null) {
+                                                semanticServices.getClassDescriptorResolver(trace).checkBounds(typeReference, argument, parameter);
+                                            }
+                                        }
+                                    }
                                     result[0] = new JetTypeImpl(
                                             annotations,
                                             typeConstructor,

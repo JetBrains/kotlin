@@ -123,7 +123,7 @@ public class TopDownAnalyzer {
                         trace.recordDeclarationResolution(namespace, namespaceDescriptor);
                     }
 
-                    WritableScope namespaceScope = new WritableScopeImpl(outerScope, owner,  trace.getErrorHandler(), null);
+                    WritableScope namespaceScope = new WritableScopeImpl(outerScope, owner, trace.getErrorHandler(), null);
                     namespaceScopes.put(namespace, namespaceScope);
 
                     for (JetImportDirective importDirective : importDirectives) {
@@ -143,8 +143,23 @@ public class TopDownAnalyzer {
                         }
                     }
 
-                    // TODO: !!!
-//                    collectNamespacesAndClassifiers(namespaceScope, namespaceDescriptor, namespace.getDeclarations());
+                    final NamespaceDescriptor finalNamespaceDescriptor = namespaceDescriptor;
+                    collectNamespacesAndClassifiers(namespaceScope, new NamespaceLike.Adapter(finalNamespaceDescriptor) {
+                                @Override
+                                public NamespaceDescriptor getNamespace(String name) {
+                                    return ((WritableScope) finalNamespaceDescriptor.getMemberScope()).getDeclaredNamespace(name);
+                                }
+
+                                @Override
+                                public void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
+                                    ((WritableScope) namespaceDescriptor.getMemberScope()).addNamespace(namespaceDescriptor);
+                                }
+
+                                @Override
+                                public void addClassifierDescriptor(MutableClassDescriptor classDescriptor) {
+                                    ((WritableScope) finalNamespaceDescriptor.getMemberScope()).addClassifierDescriptor(classDescriptor);
+                                }
+                            }, namespace.getDeclarations());
                 }
 
                 @Override
@@ -183,11 +198,34 @@ public class TopDownAnalyzer {
     }
 
     private void resolveTypesInClassHeaders() {
-        throw new UnsupportedOperationException(); // TODO
+        for (Map.Entry<JetClass, MutableClassDescriptor> entry : classes.entrySet()) {
+            JetClass jetClass = entry.getKey();
+            MutableClassDescriptor descriptor = entry.getValue();
+            classDescriptorResolver.resolveGenericBounds(jetClass, descriptor);
+            classDescriptorResolver.resolveSupertypes(jetClass, descriptor);
+        }
     }
 
     private void checkGenericBoundsInClassHeaders() {
-        throw new UnsupportedOperationException(); // TODO
+        for (Map.Entry<JetClass, MutableClassDescriptor> entry : classes.entrySet()) {
+            JetClass jetClass = entry.getKey();
+
+            for (JetDelegationSpecifier delegationSpecifier : jetClass.getDelegationSpecifiers()) {
+                JetType type = trace.resolveTypeReference(delegationSpecifier.getTypeReference());
+                classDescriptorResolver.checkBounds(delegationSpecifier.getTypeReference(), type);
+            }
+
+            for (JetTypeParameter jetTypeParameter : jetClass.getTypeParameters()) {
+                JetTypeReference extendsBound = jetTypeParameter.getExtendsBound();
+                if (extendsBound != null) {
+                    JetType type = trace.resolveTypeReference(extendsBound);
+                    classDescriptorResolver.checkBounds(extendsBound, type);
+                }
+            }
+
+            // TODO : where-bounds
+        }
+
     }
 
     private void resolveFunctionAndPropertyHeaders() {
@@ -426,6 +464,8 @@ public class TopDownAnalyzer {
         checkIfPrimaryConstructorIsNecessary();
 
         bindOverrides();
+
+        checkGenericBoundsInClassHeaders();
     }
 
     private void bindOverrides() {

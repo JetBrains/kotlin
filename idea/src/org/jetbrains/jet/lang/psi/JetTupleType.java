@@ -14,6 +14,12 @@ public class JetTupleType extends JetTypeElement {
         super(node);
     }
 
+    @NotNull
+    @Override
+    public List<JetTypeReference> getTypeArgumentsAsTypes() {
+        return getComponentTypeRefs();
+    }
+
     @Override
     public void accept(JetVisitor visitor) {
         visitor.visitTupleType(this);

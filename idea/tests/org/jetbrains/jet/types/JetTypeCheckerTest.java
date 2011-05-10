@@ -522,7 +522,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
     }
 
     private JetType makeType(JetScope scope, String typeStr) {
-        return new TypeResolver(BindingTrace.DUMMY, semanticServices).resolveType(scope, JetChangeUtil.createType(getProject(), typeStr));
+        return new TypeResolver(semanticServices, BindingTrace.DUMMY, true).resolveType(scope, JetChangeUtil.createType(getProject(), typeStr));
     }
 
     private class ClassDefinitions {
