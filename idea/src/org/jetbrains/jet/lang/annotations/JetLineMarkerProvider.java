@@ -47,6 +47,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
             assert file != null;
             final BindingContext bindingContext = AnalyzingUtils.analyzeFileWithCache(file);
             FunctionDescriptor functionDescriptor = bindingContext.getFunctionDescriptor(jetFunction);
+            if (functionDescriptor == null) return null;
             final Set<? extends FunctionDescriptor> overriddenFunctions = functionDescriptor.getOverriddenFunctions();
             if (!overriddenFunctions.isEmpty()) {
                 return new LineMarkerInfo<JetFunction>(

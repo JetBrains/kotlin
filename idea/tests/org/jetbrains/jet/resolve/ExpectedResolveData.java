@@ -81,7 +81,7 @@ public class ExpectedResolveData {
             text = document.getText();
         }
 
-//        System.out.println("text = " + text);
+        System.out.println("text = " + text);
     }
 
     public void checkResult(JetFile file) {

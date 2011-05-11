@@ -23,33 +23,26 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
 
     private TypeConstructor typeConstructor;
 
-    private final WritableScope classHeaderScope;
-    private final WritableScope writableMemberScope;
-    private JetScope unsubstitutedMemberScope;
+    private final WritableScope scopeForMemberResolution;
+    private final WritableScope scopeForMemberLookup;
 
     public MutableClassDescriptor(@NotNull BindingTrace trace, @NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope outerScope) {
         super(containingDeclaration);
-        this.classHeaderScope = new WritableScopeImpl(outerScope, this, trace.getErrorHandler(), null);
-        this.writableMemberScope = new WritableScopeImpl(classHeaderScope, this, trace.getErrorHandler(), new DeclarationDescriptorVisitor<Void, WritableScope>() {
-            @Override
-            public Void visitPropertyDescriptor(PropertyDescriptor descriptor, WritableScope data) {
-                properties.add(descriptor);
-                return null;
-            }
-
-            @Override
-            public Void visitFunctionDescriptor(FunctionDescriptor descriptor, WritableScope data) {
-                functions.add(descriptor);
-                return null;
-            }
-        });
-        this.unsubstitutedMemberScope = this.writableMemberScope;
-    }
-
-    public MutableClassDescriptor(@NotNull DeclarationDescriptor containingDeclaration) {
-        super(containingDeclaration);
-        this.classHeaderScope = null;
-        this.writableMemberScope = null;
+        this.scopeForMemberResolution = new WritableScopeImpl(outerScope, this, trace.getErrorHandler(), null);
+        this.scopeForMemberLookup = new WritableScopeImpl(scopeForMemberResolution, this, trace.getErrorHandler(), null);
+//        this.scopeForMemberLookup = new WritableScopeImpl(scopeForMemberResolution, this, trace.getErrorHandler(), new DeclarationDescriptorVisitor<Void, WritableScope>() {
+//            @Override
+//            public Void visitPropertyDescriptor(PropertyDescriptor descriptor, WritableScope data) {
+//                properties.add(descriptor);
+//                return null;
+//            }
+//
+//            @Override
+//            public Void visitFunctionDescriptor(FunctionDescriptor descriptor, WritableScope data) {
+//                functions.add(descriptor);
+//                return null;
+//            }
+//        });
     }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -74,6 +67,8 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     @Override
     public void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor) {
         properties.add(propertyDescriptor);
+        scopeForMemberLookup.addVariableDescriptor(propertyDescriptor);
+        scopeForMemberResolution.addVariableDescriptor(propertyDescriptor);
     }
 
     @NotNull
@@ -84,6 +79,8 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     @Override
     public void addFunctionDescriptor(@NotNull FunctionDescriptor functionDescriptor) {
         functions.add(functionDescriptor);
+        scopeForMemberLookup.addFunctionDescriptor(functionDescriptor);
+        scopeForMemberResolution.addFunctionDescriptor(functionDescriptor);
     }
 
     @NotNull
@@ -104,14 +101,11 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     @Override
     public void addClassifierDescriptor(@NotNull MutableClassDescriptor classDescriptor) {
         classes.add(classDescriptor);
+        scopeForMemberLookup.addClassifierDescriptor(classDescriptor);
+        scopeForMemberResolution.addClassifierDescriptor(classDescriptor);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    public void setUnsubstitutedMemberScope(@NotNull JetScope unsubstitutedMemberScope) {
-        assert writableMemberScope == null;
-        this.unsubstitutedMemberScope = unsubstitutedMemberScope;
-    }
 
     @NotNull
     @Override
@@ -128,18 +122,17 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     @Override
     public JetScope getMemberScope(List<TypeProjection> typeArguments) {
         assert typeArguments.size() == typeConstructor.getParameters().size();
-        assert unsubstitutedMemberScope != null;
-        if (typeArguments.isEmpty()) return unsubstitutedMemberScope;
+        if (typeArguments.isEmpty()) return scopeForMemberLookup;
 
         List<TypeParameterDescriptor> typeParameters = getTypeConstructor().getParameters();
         Map<TypeConstructor, TypeProjection> substitutionContext = TypeUtils.buildSubstitutionContext(typeParameters, typeArguments);
-        return new SubstitutingScope(unsubstitutedMemberScope, TypeSubstitutor.create(substitutionContext));
+        return new SubstitutingScope(scopeForMemberLookup, TypeSubstitutor.create(substitutionContext));
     }
 
     @NotNull
     @Override
     public JetType getDefaultType() {
-        return TypeUtils.makeUnsubstitutedType(this, unsubstitutedMemberScope);
+        return TypeUtils.makeUnsubstitutedType(this, scopeForMemberLookup);
     }
 
     @NotNull
@@ -156,13 +149,13 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     }
 
     @NotNull
-    public WritableScope getWritableUnsubstitutedMemberScope() {
-        return writableMemberScope;
+    public WritableScope getScopeForMemberLookup() {
+        return scopeForMemberLookup;
     }
 
     @NotNull
-    public WritableScope getClassHeaderScope() {
-        return classHeaderScope;
+    public WritableScope getScopeForMemberResolution() {
+        return scopeForMemberResolution;
     }
 
     @NotNull

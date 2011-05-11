@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.resolve;
 
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiElement;
@@ -29,16 +30,29 @@ import java.util.Collections;
 public class AnalyzingUtils {
     private final static Key<CachedValue<BindingContext>> BINDING_CONTEXT = Key.create("BINDING_CONTEXT");
 
+    synchronized // TODO
     public static BindingContext analyzeFileWithCache(@NotNull final JetFile file) {
         // TODO : Synchronization?
         CachedValue<BindingContext> bindingContextCachedValue = file.getUserData(BINDING_CONTEXT);
         if (bindingContextCachedValue == null) {
             bindingContextCachedValue = CachedValuesManager.getManager(file.getProject()).createCachedValue(new CachedValueProvider<BindingContext>() {
                 @Override
+                synchronized // TODO : make it more granular
                 public Result<BindingContext> compute() {
-                    JetNamespace rootNamespace = file.getRootNamespace();
-                    BindingContext bindingContext = analyzeNamespace(rootNamespace, JetControlFlowDataTraceFactory.EMPTY);
-                    return new Result<BindingContext>(bindingContext, PsiModificationTracker.MODIFICATION_COUNT);
+                    try {
+                        JetNamespace rootNamespace = file.getRootNamespace();
+                        BindingContext bindingContext = analyzeNamespace(rootNamespace, JetControlFlowDataTraceFactory.EMPTY);
+                        return new Result<BindingContext>(bindingContext, PsiModificationTracker.MODIFICATION_COUNT);
+                    }
+                    catch (ProcessCanceledException e) {
+                        throw e;
+                    }
+                    catch (Throwable e) {
+                        e.printStackTrace();
+                        BindingTraceContext bindingTraceContext = new BindingTraceContext();
+                        bindingTraceContext.getErrorHandler().genericError(file.getNode(), e.getClass().getSimpleName() + ": " + e.getMessage());
+                        return new Result<BindingContext>(bindingTraceContext, PsiModificationTracker.MODIFICATION_COUNT);
+                    }
                 }
             }, false);
             file.putUserData(BINDING_CONTEXT, bindingContextCachedValue);
@@ -50,7 +64,7 @@ public class AnalyzingUtils {
         Project project = namespace.getProject();
 
         BindingTraceContext bindingTraceContext = new BindingTraceContext();
-        JetSemanticServices semanticServices = JetSemanticServices.createSemanticServices(project);
+        JetSemanticServices semanticServices = JetSemanticServices.createSemanticServices(project, flowDataTraceFactory);
         JavaSemanticServices javaSemanticServices = new JavaSemanticServices(project, semanticServices, bindingTraceContext);
 
         JetScope libraryScope = semanticServices.getStandardLibrary().getLibraryScope();
@@ -61,7 +75,7 @@ public class AnalyzingUtils {
         scope.importScope(new JavaPackageScope("", null, javaSemanticServices));
         scope.importScope(new JavaPackageScope("java.lang", null, javaSemanticServices));
 
-        TopDownAnalyzer topDownAnalyzer = new TopDownAnalyzer(semanticServices, bindingTraceContext, flowDataTraceFactory);
+        TopDownAnalyzer topDownAnalyzer = new TopDownAnalyzer(semanticServices, bindingTraceContext);
 //        topDownAnalyzer.process(scope, Collections.<JetDeclaration>singletonList(namespace));
 //        if (false)
         topDownAnalyzer.process(scope, new NamespaceLike.Adapter(owner) {

@@ -73,7 +73,7 @@ public class JavaDescriptorResolver {
 
         String name = psiClass.getName();
         PsiModifierList modifierList = psiClass.getModifierList();
-        MutableClassDescriptor classDescriptor = new MutableClassDescriptor(
+        JavaClassDescriptor classDescriptor = new JavaClassDescriptor(
                 JAVA_ROOT
         );
         classDescriptor.setName(name);

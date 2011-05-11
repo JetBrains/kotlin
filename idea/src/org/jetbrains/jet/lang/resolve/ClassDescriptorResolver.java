@@ -5,16 +5,15 @@ import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.JetSemanticServices;
+import org.jetbrains.jet.lang.cfg.JetControlFlowProcessor;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
+import org.jetbrains.jet.lang.cfg.pseudocode.*;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lexer.JetTokens;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author abreslav
@@ -27,12 +26,14 @@ public class ClassDescriptorResolver {
     private final TypeResolver typeResolver;
     private final TypeResolver typeResolverNotCheckingBounds;
     private final BindingTrace trace;
+    private final JetControlFlowDataTraceFactory flowDataTraceFactory;
 
-    public ClassDescriptorResolver(JetSemanticServices semanticServices, BindingTrace trace) {
+    public ClassDescriptorResolver(JetSemanticServices semanticServices, BindingTrace trace, JetControlFlowDataTraceFactory flowDataTraceFactory) {
         this.semanticServices = semanticServices;
         this.typeResolver = new TypeResolver(semanticServices, trace, true);
         this.typeResolverNotCheckingBounds = new TypeResolver(semanticServices, trace, false);
         this.trace = trace;
+        this.flowDataTraceFactory = flowDataTraceFactory;
     }
 
     @Nullable
@@ -78,9 +79,9 @@ public class ClassDescriptorResolver {
 
     public void resolveMutableClassDescriptor(@NotNull JetClass classElement, @NotNull MutableClassDescriptor descriptor) {
         descriptor.setName(JetPsiUtil.safeName(classElement.getName()));
-        descriptor.getClassHeaderScope().addLabeledDeclaration(descriptor);
+        descriptor.getScopeForMemberResolution().addLabeledDeclaration(descriptor);
 
-        WritableScope parameterScope = descriptor.getClassHeaderScope();
+        WritableScope scopeForMemberResolution = descriptor.getScopeForMemberResolution();
 
         // TODO : Where-clause
         List<TypeParameterDescriptor> typeParameters = Lists.newArrayList();
@@ -91,7 +92,7 @@ public class ClassDescriptorResolver {
                     typeParameter.getVariance(),
                     JetPsiUtil.safeName(typeParameter.getName())
             );
-            parameterScope.addTypeParameterDescriptor(typeParameterDescriptor);
+            scopeForMemberResolution.addTypeParameterDescriptor(typeParameterDescriptor);
             trace.recordDeclarationResolution(typeParameter, typeParameterDescriptor);
             typeParameters.add(typeParameterDescriptor);
         }
@@ -109,7 +110,7 @@ public class ClassDescriptorResolver {
                 typeConstructor
         );
 
-        descriptor.getClassHeaderScope().setThisType(descriptor.getDefaultType());
+        descriptor.getScopeForMemberResolution().setThisType(descriptor.getDefaultType());
 
         trace.recordDeclarationResolution(classElement, descriptor);
     }
@@ -122,7 +123,7 @@ public class ClassDescriptorResolver {
             TypeParameterDescriptor typeParameterDescriptor = parameters.get(i);
             JetTypeReference extendsBound = jetTypeParameter.getExtendsBound();
             if (extendsBound != null) {
-                typeParameterDescriptor.addUpperBound(typeResolverNotCheckingBounds.resolveType(classDescriptor.getClassHeaderScope(), extendsBound));
+                typeParameterDescriptor.addUpperBound(typeResolverNotCheckingBounds.resolveType(classDescriptor.getScopeForMemberResolution(), extendsBound));
             }
             else {
                 typeParameterDescriptor.addUpperBound(JetStandardClasses.getDefaultBound());
@@ -136,15 +137,21 @@ public class ClassDescriptorResolver {
 //        TODO : assuming that the hierarchy is acyclic
         Collection<? extends JetType> superclasses = delegationSpecifiers.isEmpty()
                 ? Collections.singleton(JetStandardClasses.getAnyType())
-                : resolveDelegationSpecifiers(descriptor.getClassHeaderScope(), delegationSpecifiers, typeResolverNotCheckingBounds);
+                : resolveDelegationSpecifiers(descriptor.getScopeForMemberResolution(), delegationSpecifiers, typeResolverNotCheckingBounds);
         ((TypeConstructorImpl) descriptor.getTypeConstructor()).getSupertypes().addAll(superclasses);
+
+        // TODO : remove the importing
+        for (JetType superclass : superclasses) {
+            descriptor.getScopeForMemberResolution().importScope(superclass.getMemberScope());
+
+        }
     }
 
     public void resolveMutableClassDescriptor(@NotNull JetScope scope, @NotNull JetClass classElement, @NotNull MutableClassDescriptor descriptor) {
         descriptor.setName(JetPsiUtil.safeName(classElement.getName()));
-        descriptor.getClassHeaderScope().addLabeledDeclaration(descriptor);
+        descriptor.getScopeForMemberResolution().addLabeledDeclaration(descriptor);
 
-        WritableScope parameterScope = descriptor.getClassHeaderScope();
+        WritableScope parameterScope = descriptor.getScopeForMemberResolution();
 
         // This call has side-effects on the parameterScope (fills it in)
         List<TypeParameterDescriptor> typeParameters
@@ -179,7 +186,7 @@ public class ClassDescriptorResolver {
             parameterScope.importScope(supertype.getMemberScope());
         }
 
-        descriptor.getClassHeaderScope().setThisType(descriptor.getDefaultType());
+        descriptor.getScopeForMemberResolution().setThisType(descriptor.getDefaultType());
 
         trace.recordDeclarationResolution(classElement, descriptor);
     }
@@ -228,8 +235,8 @@ public class ClassDescriptorResolver {
     }
 
     @NotNull
-    public FunctionDescriptorImpl resolveFunctionDescriptor(DeclarationDescriptor containingDescriptor, JetScope scope, JetFunction function) {
-        FunctionDescriptorImpl functionDescriptor = new FunctionDescriptorImpl(
+    public FunctionDescriptorImpl resolveFunctionDescriptor(DeclarationDescriptor containingDescriptor, final JetScope scope, final JetFunction function) {
+        final FunctionDescriptorImpl functionDescriptor = new FunctionDescriptorImpl(
                 containingDescriptor,
                 AnnotationResolver.INSTANCE.resolveAnnotations(function.getModifierList()),
                 JetPsiUtil.safeName(function.getName())
@@ -245,6 +252,18 @@ public class ClassDescriptorResolver {
         JetType returnType = null;
         if (returnTypeRef != null) {
             returnType = typeResolver.resolveType(innerScope, returnTypeRef);
+        }
+        else {
+            final JetExpression bodyExpression = function.getBodyExpression();
+            if (bodyExpression != null) {
+                returnType = new DeferredType(new LazyValue<JetType>() {
+                    @Override
+                    protected JetType compute() {
+                        JetFlowInformationProvider flowInformationProvider = computeFlowData(function.asElement(), bodyExpression);
+                        return semanticServices.getTypeInferrer(trace, flowInformationProvider).getFunctionReturnType(scope, function, functionDescriptor);
+                    }
+                });
+            }
         }
 
         functionDescriptor.initialize(
@@ -625,4 +644,158 @@ public class ClassDescriptorResolver {
             }
         }
     }
+
+    public JetFlowInformationProvider computeFlowData(@NotNull JetElement declaration, @NotNull JetExpression bodyExpression) {
+        final JetPseudocodeTrace pseudocodeTrace = flowDataTraceFactory.createTrace(declaration);
+        final Map<JetElement, Pseudocode> pseudocodeMap = new HashMap<JetElement, Pseudocode>();
+        final Map<JetElement, Instruction> representativeInstructions = new HashMap<JetElement, Instruction>();
+        JetPseudocodeTrace wrappedTrace = new JetPseudocodeTrace() {
+            @Override
+            public void recordControlFlowData(@NotNull JetElement element, @NotNull Pseudocode pseudocode) {
+                pseudocodeTrace.recordControlFlowData(element, pseudocode);
+                pseudocodeMap.put(element, pseudocode);
+            }
+
+            @Override
+            public void recordRepresentativeInstruction(@NotNull JetElement element, @NotNull Instruction instruction) {
+                Instruction oldValue = representativeInstructions.put(element, instruction);
+//                assert oldValue == null : element.getText();
+            }
+
+            @Override
+            public void close() {
+                pseudocodeTrace.close();
+                for (Pseudocode pseudocode : pseudocodeMap.values()) {
+                    pseudocode.postProcess();
+                }
+            }
+        };
+        JetControlFlowInstructionsGenerator instructionsGenerator = new JetControlFlowInstructionsGenerator(wrappedTrace);
+        new JetControlFlowProcessor(semanticServices, trace, instructionsGenerator).generate(declaration, bodyExpression);
+        wrappedTrace.close();
+        return new JetFlowInformationProvider() {
+            @Override
+            public void collectReturnedInformation(@NotNull JetElement subroutine, @NotNull Collection<JetExpression> returnedExpressions, @NotNull Collection<JetElement> elementsReturningUnit) {
+                Pseudocode pseudocode = pseudocodeMap.get(subroutine);
+                assert pseudocode != null;
+
+                SubroutineExitInstruction exitInstruction = pseudocode.getExitInstruction();
+                processPreviousInstructions(exitInstruction, new HashSet<Instruction>(), returnedExpressions, elementsReturningUnit);
+            }
+
+            @Override
+            public void collectUnreachableExpressions(@NotNull JetElement subroutine, @NotNull Collection<JetElement> unreachableElements) {
+                Pseudocode pseudocode = pseudocodeMap.get(subroutine);
+                assert pseudocode != null;
+
+                SubroutineEnterInstruction enterInstruction = pseudocode.getEnterInstruction();
+                Set<Instruction> visited = new HashSet<Instruction>();
+                collectReachable(enterInstruction, visited);
+
+                for (Instruction instruction : pseudocode.getInstructions()) {
+                    if (!visited.contains(instruction) &&
+                        instruction instanceof JetElementInstruction &&
+                        // TODO : do {return} while (1 > a)
+                        !(instruction instanceof ReadUnitValueInstruction)) {
+                        unreachableElements.add(((JetElementInstruction) instruction).getElement());
+                    }
+                }
+            }
+
+            @Override
+            public void collectDominatedExpressions(@NotNull JetExpression dominator, @NotNull Collection<JetElement> dominated) {
+                Instruction dominatorInstruction = representativeInstructions.get(dominator);
+                if (dominatorInstruction == null) {
+                    return;
+                }
+                SubroutineEnterInstruction enterInstruction = dominatorInstruction.getOwner().getEnterInstruction();
+
+                Set<Instruction> reachable = new HashSet<Instruction>();
+                collectReachable(enterInstruction, reachable);
+
+                Set<Instruction> reachableWithDominatorProhibited = new HashSet<Instruction>();
+                reachableWithDominatorProhibited.add(dominatorInstruction);
+                collectReachable(enterInstruction, reachableWithDominatorProhibited);
+
+                for (Instruction instruction : reachable) {
+                    if (instruction instanceof JetElementInstruction
+                            && reachable.contains(instruction)
+                            && !reachableWithDominatorProhibited.contains(instruction)) {
+                        JetElementInstruction elementInstruction = (JetElementInstruction) instruction;
+                        dominated.add(elementInstruction.getElement());
+                    }
+                }
+            }
+        };
+    }
+
+    private void collectReachable(Instruction current, Set<Instruction> visited) {
+        if (!visited.add(current)) return;
+
+        for (Instruction nextInstruction : current.getNextInstructions()) {
+            collectReachable(nextInstruction, visited);
+        }
+    }
+
+    private void processPreviousInstructions(Instruction previousFor, final Set<Instruction> visited, final Collection<JetExpression> returnedExpressions, final Collection<JetElement> elementsReturningUnit) {
+        if (!visited.add(previousFor)) return;
+
+        Collection<Instruction> previousInstructions = previousFor.getPreviousInstructions();
+        InstructionVisitor visitor = new InstructionVisitor() {
+            @Override
+            public void visitReadValue(ReadValueInstruction instruction) {
+                returnedExpressions.add((JetExpression) instruction.getElement());
+            }
+
+            @Override
+            public void visitReturnValue(ReturnValueInstruction instruction) {
+                processPreviousInstructions(instruction, visited, returnedExpressions, elementsReturningUnit);
+            }
+
+            @Override
+            public void visitReturnNoValue(ReturnNoValueInstruction instruction) {
+                elementsReturningUnit.add(instruction.getElement());
+            }
+
+            @Override
+            public void visitSubroutineEnter(SubroutineEnterInstruction instruction) {
+                elementsReturningUnit.add(instruction.getSubroutine());
+            }
+
+            @Override
+            public void visitUnsupportedElementInstruction(UnsupportedElementInstruction instruction) {
+                trace.getErrorHandler().genericError(instruction.getElement().getNode(), "Unsupported by control-flow builder " + instruction.getElement());
+            }
+
+            @Override
+            public void visitWriteValue(WriteValueInstruction writeValueInstruction) {
+                elementsReturningUnit.add(writeValueInstruction.getElement());
+            }
+
+            @Override
+            public void visitJump(AbstractJumpInstruction instruction) {
+                processPreviousInstructions(instruction, visited, returnedExpressions, elementsReturningUnit);
+            }
+
+            @Override
+            public void visitReadUnitValue(ReadUnitValueInstruction instruction) {
+                returnedExpressions.add((JetExpression) instruction.getElement());
+            }
+
+            @Override
+            public void visitInstruction(Instruction instruction) {
+                if (instruction instanceof JetElementInstructionImpl) {
+                    JetElementInstructionImpl elementInstruction = (JetElementInstructionImpl) instruction;
+                    trace.getErrorHandler().genericError(elementInstruction.getElement().getNode(), "Unsupported by control-flow builder " + elementInstruction.getElement());
+                }
+                else {
+                    throw new UnsupportedOperationException(instruction.toString());
+                }
+            }
+        };
+        for (Instruction previousInstruction : previousInstructions) {
+            previousInstruction.accept(visitor);
+        }
+    }
+
 }
