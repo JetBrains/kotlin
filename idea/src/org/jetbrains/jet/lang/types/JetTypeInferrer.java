@@ -594,12 +594,18 @@ public class JetTypeInferrer {
         @Nullable
         public JetType getType(@NotNull JetExpression expression) {
             assert result == null;
-            expression.accept(this);
-            if (result != null) {
-                trace.recordExpressionType(expression, result);
-                if (JetStandardClasses.isNothing(result) && !result.isNullable()) {
-                    markDominatedExpressionsAsUnreachable(expression);
+            try {
+                expression.accept(this);
+                if (result != null) {
+                    trace.recordExpressionType(expression, result);
+                    if (JetStandardClasses.isNothing(result) && !result.isNullable()) {
+                        markDominatedExpressionsAsUnreachable(expression);
+                    }
                 }
+            }
+            catch (ReenteringLazyValueComputationException e) {
+                trace.getErrorHandler().genericError(expression.getNode(), "Type inference has run into a recursive problem"); // TODO : message
+                result = null;
             }
 
             return result;

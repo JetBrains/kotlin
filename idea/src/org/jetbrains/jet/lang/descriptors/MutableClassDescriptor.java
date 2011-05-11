@@ -14,7 +14,7 @@ import java.util.Set;
 /**
  * @author abreslav
  */
-public class MutableClassDescriptor extends MutableDeclarationDescriptor implements ClassDescriptor {
+public class MutableClassDescriptor extends MutableDeclarationDescriptor implements ClassDescriptor, NamespaceLike {
     private ConstructorDescriptor primaryConstructor;
     private final WritableFunctionGroup constructors = new WritableFunctionGroup("<init>");
     private final Set<FunctionDescriptor> functions = Sets.newHashSet();
@@ -71,7 +71,8 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
         constructors.addFunction(constructorDescriptor);
     }
 
-    public void addProperty(@NotNull PropertyDescriptor propertyDescriptor) {
+    @Override
+    public void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor) {
         properties.add(propertyDescriptor);
     }
 
@@ -80,13 +81,29 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
         return properties;
     }
 
-    public void addFunction(@NotNull FunctionDescriptor functionDescriptor) {
+    @Override
+    public void addFunctionDescriptor(@NotNull FunctionDescriptor functionDescriptor) {
         functions.add(functionDescriptor);
     }
 
     @NotNull
     public Set<FunctionDescriptor> getFunctions() {
         return functions;
+    }
+
+    @Override
+    public NamespaceDescriptorImpl getNamespace(String name) {
+        throw new UnsupportedOperationException("Classes do not define namespaces");
+    }
+
+    @Override
+    public void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
+        throw new UnsupportedOperationException("Classes do not define namespaces");
+    }
+
+    @Override
+    public void addClassifierDescriptor(@NotNull MutableClassDescriptor classDescriptor) {
+        classes.add(classDescriptor);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -99,6 +116,7 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     @NotNull
     @Override
     public TypeConstructor getTypeConstructor() {
+        assert typeConstructor != null : "Type constructor is not set for " + getName();
         return typeConstructor;
     }
 

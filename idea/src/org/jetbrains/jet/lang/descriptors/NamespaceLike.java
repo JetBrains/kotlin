@@ -58,9 +58,13 @@ public interface NamespaceLike extends DeclarationDescriptor {
     }
 
     @Nullable
-    NamespaceDescriptor getNamespace(String name);
+    NamespaceDescriptorImpl getNamespace(String name);
 
     void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor);
 
-    void addClassifierDescriptor(MutableClassDescriptor classDescriptor);
+    void addClassifierDescriptor(@NotNull MutableClassDescriptor classDescriptor);
+
+    void addFunctionDescriptor(@NotNull FunctionDescriptor functionDescriptor);
+
+    void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor);
 }

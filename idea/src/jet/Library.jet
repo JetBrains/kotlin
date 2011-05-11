@@ -7,7 +7,7 @@ class TypeInfo<T> {
 
 class Iterator<out T> {
   fun next() : T
-  val hasNext : Boolean
+  abstract val hasNext : Boolean
 }
 
 class Iterable<out T> {
@@ -38,7 +38,7 @@ class Boolean : Comparable<Boolean> {
   fun equals(other : Any?) : Boolean
 }
 
-class String : Comparable<String> {
+class String() : Comparable<String> {
   fun get(index : Int) : Char
   val length : Int
 
@@ -50,19 +50,18 @@ class Range<in T : Comparable<T>> {
   fun contains(item : T) : Boolean
 }
 
-class IntRange<T> : Range<T>, Iterable<T> {
+class IntRange<T : Comparable<T>> : Range<T>, Iterable<T> {
 
 }
 
 class Number : Hashable {
-  val dbl : Double
-  val flt : Float
-  val lng : Long
-  val int : Int
-  val chr : Char
-  val sht : Short
-  val byt : Byte
-
+  abstract val dbl : Double
+  abstract val flt : Float
+  abstract val lng : Long
+  abstract val int : Int
+  abstract val chr : Char
+  abstract val sht : Short
+  abstract val byt : Byte
 //  fun equals(other : Double) : Boolean
 //  fun equals(other : Float) : Boolean
 //  fun equals(other : Long) : Boolean

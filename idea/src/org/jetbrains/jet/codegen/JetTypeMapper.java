@@ -86,7 +86,7 @@ public class JetTypeMapper {
 
     static String getOwner(DeclarationDescriptor descriptor, OwnerKind kind) {
         String owner;
-        if (descriptor.getContainingDeclaration() instanceof NamespaceDescriptor) {
+        if (descriptor.getContainingDeclaration() instanceof NamespaceDescriptorImpl) {
             owner = jvmName((NamespaceDescriptor) descriptor.getContainingDeclaration());
         }
         else if (descriptor.getContainingDeclaration() instanceof ClassDescriptor) {

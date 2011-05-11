@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.resolve;
 
+import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.ErrorHandler;
@@ -244,7 +245,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     @NotNull
     public Map<String, NamespaceDescriptor> getNamespaceDescriptors() {
         if (namespaceDescriptors == null) {
-            namespaceDescriptors = new HashMap<String, NamespaceDescriptor>();
+            namespaceDescriptors = Maps.newHashMap();
         }
         return namespaceDescriptors;
     }

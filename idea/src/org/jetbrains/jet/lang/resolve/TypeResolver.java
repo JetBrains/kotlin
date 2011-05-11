@@ -92,17 +92,6 @@ public class TypeResolver {
                                         trace.getErrorHandler().genericError(type.getTypeArgumentList().getNode(), errorMessage);
                                     }
                                 } else {
-                                    if (checkBounds) {
-                                        for (int i = 0, parametersSize = parameters.size(); i < parametersSize; i++) {
-                                            TypeParameterDescriptor parameter = parameters.get(i);
-                                            JetType argument = arguments.get(i).getType();
-                                            JetTypeReference typeReference = type.getTypeArguments().get(i).getTypeReference();
-
-                                            if (typeReference != null) {
-                                                semanticServices.getClassDescriptorResolver(trace).checkBounds(typeReference, argument, parameter);
-                                            }
-                                        }
-                                    }
                                     result[0] = new JetTypeImpl(
                                             annotations,
                                             typeConstructor,
@@ -110,6 +99,18 @@ public class TypeResolver {
                                             arguments,
                                             classDescriptor.getMemberScope(arguments)
                                     );
+                                    if (checkBounds) {
+                                        TypeSubstitutor substitutor = TypeSubstitutor.create(result[0]);
+                                        for (int i = 0, parametersSize = parameters.size(); i < parametersSize; i++) {
+                                            TypeParameterDescriptor parameter = parameters.get(i);
+                                            JetType argument = arguments.get(i).getType();
+                                            JetTypeReference typeReference = type.getTypeArguments().get(i).getTypeReference();
+
+                                            if (typeReference != null) {
+                                                semanticServices.getClassDescriptorResolver(trace).checkBounds(typeReference, argument, parameter, substitutor);
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }

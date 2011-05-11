@@ -54,7 +54,7 @@ public class ClassDescriptorResolver {
         // TODO : assuming that the hierarchy is acyclic
         Collection<JetType> supertypes = delegationSpecifiers.isEmpty()
                 ? Collections.singleton(JetStandardClasses.getAnyType())
-                : resolveDelegationSpecifiers(parameterScope, delegationSpecifiers);
+                : resolveDelegationSpecifiers(parameterScope, delegationSpecifiers, typeResolver);
         boolean open = classElement.hasModifier(JetTokens.OPEN_KEYWORD);
         WritableScope members = resolveMembers(classDescriptor, classElement, typeParameters, scope, parameterScope, supertypes);
 
@@ -124,6 +124,9 @@ public class ClassDescriptorResolver {
             if (extendsBound != null) {
                 typeParameterDescriptor.addUpperBound(typeResolverNotCheckingBounds.resolveType(classDescriptor.getClassHeaderScope(), extendsBound));
             }
+            else {
+                typeParameterDescriptor.addUpperBound(JetStandardClasses.getDefaultBound());
+            }
         }
         // TODO : Bounds from with
     }
@@ -133,7 +136,7 @@ public class ClassDescriptorResolver {
 //        TODO : assuming that the hierarchy is acyclic
         Collection<? extends JetType> superclasses = delegationSpecifiers.isEmpty()
                 ? Collections.singleton(JetStandardClasses.getAnyType())
-                : resolveDelegationSpecifiers(descriptor.getClassHeaderScope(), delegationSpecifiers);
+                : resolveDelegationSpecifiers(descriptor.getClassHeaderScope(), delegationSpecifiers, typeResolverNotCheckingBounds);
         ((TypeConstructorImpl) descriptor.getTypeConstructor()).getSupertypes().addAll(superclasses);
     }
 
@@ -164,7 +167,7 @@ public class ClassDescriptorResolver {
         // TODO : assuming that the hierarchy is acyclic
         Collection<? extends JetType> superclasses = delegationSpecifiers.isEmpty()
                 ? Collections.singleton(JetStandardClasses.getAnyType())
-                : resolveDelegationSpecifiers(parameterScope, delegationSpecifiers);
+                : resolveDelegationSpecifiers(parameterScope, delegationSpecifiers, typeResolver);
 
         // TODO : UGLY HACK
         supertypes.addAll(superclasses);
@@ -325,7 +328,7 @@ public class ClassDescriptorResolver {
         return typeParameterDescriptor;
     }
 
-    private Collection<JetType> resolveDelegationSpecifiers(WritableScope extensibleScope, List<JetDelegationSpecifier> delegationSpecifiers) {
+    private Collection<JetType> resolveDelegationSpecifiers(WritableScope extensibleScope, List<JetDelegationSpecifier> delegationSpecifiers, @NotNull TypeResolver resolver) {
         if (delegationSpecifiers.isEmpty()) {
             return Collections.emptyList();
         }
@@ -333,7 +336,7 @@ public class ClassDescriptorResolver {
         for (JetDelegationSpecifier delegationSpecifier : delegationSpecifiers) {
             JetTypeReference typeReference = delegationSpecifier.getTypeReference();
             if (typeReference != null) {
-                result.add(typeResolver.resolveType(extensibleScope, typeReference));
+                result.add(resolver.resolveType(extensibleScope, typeReference));
             }
             else {
                 result.add(ErrorUtils.createErrorType("No type reference"));
@@ -489,19 +492,25 @@ public class ClassDescriptorResolver {
     }
 
     @NotNull
-    private JetType getType(@NotNull JetScope scope, @NotNull JetProperty property) {
+    private JetType getType(@NotNull final JetScope scope, @NotNull JetProperty property) {
         // TODO : receiver?
         JetTypeReference propertyTypeRef = property.getPropertyTypeRef();
 
         JetType type;
         if (propertyTypeRef == null) {
-            JetExpression initializer = property.getInitializer();
+            final JetExpression initializer = property.getInitializer();
             if (initializer == null) {
                 trace.getErrorHandler().genericError(property.getNode(), "This property must either have a type annotation or be initialized");
                 type = ErrorUtils.createErrorType("No type, no body");
             } else {
                 // TODO : ??? Fix-point here: what if we have something like "val a = foo {a.bar()}"
-                type = semanticServices.getTypeInferrer(trace, JetFlowInformationProvider.THROW_EXCEPTION).safeGetType(scope, initializer, false);
+                // TODO : a risk of a memory leak
+                type = new DeferredType(new LazyValue<JetType>() {
+                    @Override
+                    protected JetType compute() {
+                        return semanticServices.getTypeInferrer(trace, JetFlowInformationProvider.THROW_EXCEPTION).safeGetType(scope, initializer, false);
+                    }
+                });
             }
         } else {
             type = typeResolver.resolveType(scope, propertyTypeRef);
@@ -590,6 +599,7 @@ public class ClassDescriptorResolver {
         List<JetTypeReference> typeReferences = typeElement.getTypeArgumentsAsTypes();
         assert typeReferences.size() == arguments.size() : typeElement.getText();
 
+        TypeSubstitutor substitutor = TypeSubstitutor.create(type);
         for (int i = 0, projectionsSize = typeReferences.size(); i < projectionsSize; i++) {
             JetTypeReference argumentTypeReference = typeReferences.get(i);
 
@@ -599,14 +609,19 @@ public class ClassDescriptorResolver {
             checkBounds(argumentTypeReference, typeArgument);
 
             TypeParameterDescriptor typeParameterDescriptor = parameters.get(i);
-            checkBounds(argumentTypeReference, typeArgument, typeParameterDescriptor);
+            checkBounds(argumentTypeReference, typeArgument, typeParameterDescriptor, substitutor);
         }
     }
 
-    public void checkBounds(@NotNull JetTypeReference argumentTypeReference, @NotNull JetType typeArgument, @NotNull TypeParameterDescriptor typeParameterDescriptor) {
+    public void checkBounds(
+            @NotNull JetTypeReference argumentTypeReference,
+            @NotNull JetType typeArgument,
+            @NotNull TypeParameterDescriptor typeParameterDescriptor,
+            @NotNull TypeSubstitutor substitutor) {
         for (JetType bound : typeParameterDescriptor.getUpperBounds()) {
-            if (!semanticServices.getTypeChecker().isSubtypeOf(typeArgument, bound)) {
-                trace.getErrorHandler().genericError(argumentTypeReference.getNode(), "An upper bound " + bound + " is violated"); // TODO : Message
+            JetType substitutedBound = substitutor.safeSubstitute(bound, Variance.INVARIANT);
+            if (!semanticServices.getTypeChecker().isSubtypeOf(typeArgument, substitutedBound)) {
+                trace.getErrorHandler().genericError(argumentTypeReference.getNode(), "An upper bound " + substitutedBound + " is violated"); // TODO : Message
             }
         }
     }

@@ -1,3 +1,20 @@
+namespace boundsWithSubstitutors {
+    class A<T>
+    class B<X : A<X>>()
+
+    class C : A<C>
+
+    val a = new B<C>()
+    val a1 = new B<<error>Int</error>>()
+
+    class X<A, B : A>()
+
+    val b = new X<Any, X<A<C>, C>>
+    val b0 = new X<Any, <error>Any?</error>>
+    val b1 = new X<Any, X<A<C>, <error>String</error>>>
+
+}
+
   class A
   class B<T : A>()
 

@@ -4,14 +4,13 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiFileFactory;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.JetFileType;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.Annotation;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.BindingTraceContext;
-import org.jetbrains.jet.lang.resolve.JetScope;
-import org.jetbrains.jet.lang.resolve.TopDownAnalyzer;
+import org.jetbrains.jet.lang.resolve.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -73,7 +72,11 @@ public class JetStandardLibrary {
             JetSemanticServices bootstrappingSemanticServices = JetSemanticServices.createSemanticServices(this);
             BindingTraceContext bindingTraceContext = new BindingTraceContext();
             TopDownAnalyzer bootstrappingTDA = new TopDownAnalyzer(bootstrappingSemanticServices, bindingTraceContext);
-            this.libraryScope = bootstrappingTDA.process(JetStandardClasses.STANDARD_CLASSES, file.getRootNamespace().getDeclarations());
+            WritableScopeImpl writableScope = new WritableScopeImpl(JetStandardClasses.STANDARD_CLASSES, JetStandardClasses.STANDARD_CLASSES_NAMESPACE, ErrorHandler.THROW_EXCEPTION, null);
+//            this.libraryScope = bootstrappingTDA.process(JetStandardClasses.STANDARD_CLASSES, file.getRootNamespace().getDeclarations());
+            bootstrappingTDA.process(writableScope, JetStandardClasses.STANDARD_CLASSES_NAMESPACE, file.getRootNamespace().getDeclarations());
+            this.libraryScope = JetStandardClasses.STANDARD_CLASSES_NAMESPACE.getMemberScope();
+            AnalyzingUtils.applyHandler(ErrorHandler.THROW_EXCEPTION, bindingTraceContext);
 
             this.byteClass = (ClassDescriptor) libraryScope.getClassifier("Byte");
             this.charClass = (ClassDescriptor) libraryScope.getClassifier("Char");

@@ -467,7 +467,7 @@ public class ExpressionCodegen extends JetVisitor {
                     }
                 }
 
-                boolean isStatic = descriptor.getContainingDeclaration() instanceof NamespaceDescriptor;
+                boolean isStatic = descriptor.getContainingDeclaration() instanceof NamespaceDescriptorImpl;
                 final boolean directToField = expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER;
                 final StackValue iValue = intermediateValueForProperty(propertyDescriptor, directToField);
                 if (!isStatic) {
@@ -482,7 +482,7 @@ public class ExpressionCodegen extends JetVisitor {
     }
 
     public StackValue intermediateValueForProperty(PropertyDescriptor propertyDescriptor, final boolean directToField) {
-        boolean isStatic = propertyDescriptor.getContainingDeclaration() instanceof NamespaceDescriptor;
+        boolean isStatic = propertyDescriptor.getContainingDeclaration() instanceof NamespaceDescriptorImpl;
         final JetType outType = propertyDescriptor.getOutType();
         boolean isInsideClass = propertyDescriptor.getContainingDeclaration() == contextType;
         Method getter;
@@ -572,7 +572,7 @@ public class ExpressionCodegen extends JetVisitor {
                 }
                 else {
                     methodDescriptor = typeMapper.mapSignature((JetFunction) declarationPsiElement);
-                    if (functionParent instanceof NamespaceDescriptor && declarationPsiElement instanceof JetFunction) {
+                    if (functionParent instanceof NamespaceDescriptorImpl && declarationPsiElement instanceof JetFunction) {
                         pushMethodArguments(expression, methodDescriptor);
                         final String owner = NamespaceCodegen.getJVMClassName(DescriptorUtil.getFQName(functionParent));
                         v.invokestatic(owner, methodDescriptor.getName(), methodDescriptor.getDescriptor());

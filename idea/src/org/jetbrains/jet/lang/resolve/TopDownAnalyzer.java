@@ -25,8 +25,10 @@ import java.util.*;
 public class TopDownAnalyzer {
 
     private final Map<JetClass, MutableClassDescriptor> classes = Maps.newLinkedHashMap();
-    private final Map<JetNamespace, WritableScope> namespaceScopes = new LinkedHashMap<JetNamespace, WritableScope>();
-    private final Map<JetDeclaration, FunctionDescriptorImpl> functions = Maps.newLinkedHashMap();
+    private final Map<JetNamespace, WritableScope> namespaceScopes = Maps.newHashMap();
+    private final Map<JetNamespace, NamespaceDescriptorImpl> namespaceDescriptors = Maps.newHashMap();
+
+    private final Map<JetFunction, FunctionDescriptorImpl> functions = Maps.newLinkedHashMap();
     private final Map<JetDeclaration, ConstructorDescriptor> constructors = Maps.newLinkedHashMap();
     private final Map<JetProperty, PropertyDescriptor> properties = new LinkedHashMap<JetProperty, PropertyDescriptor>();
     private final Map<JetDeclaration, JetScope> declaringScopes = Maps.newHashMap();
@@ -82,19 +84,24 @@ public class TopDownAnalyzer {
         this(semanticServices, bindingTrace, JetControlFlowDataTraceFactory.EMPTY);
     }
 
-    public void process(@NotNull JetScope outerScope, @NotNull JetDeclaration declaration) {
-        process(outerScope, Collections.singletonList(declaration));
-    }
+//    public void process(@NotNull JetScope outerScope, @NotNull JetDeclaration declaration) {
+//        process(outerScope, Collections.singletonList(declaration));
+//    }
 
-    public <T extends NamespaceDescriptor & NamespaceLike> void process(@NotNull WritableScope outerScope, T owner, @NotNull List<JetDeclaration> declarations) {
+    public void process(@NotNull WritableScope outerScope, NamespaceLike owner, @NotNull List<JetDeclaration> declarations) {
         collectNamespacesAndClassifiers(outerScope, owner, declarations); // namespaceScopes, classes
 
         createTypeConstructors(); // create type constructors for classes and generic parameters
         resolveTypesInClassHeaders(); // Generic bounds and types in supertype lists (no expressions or constructor resolution)
         checkGenericBoundsInClassHeaders(); // For the types resolved so far
 
-        resolveFunctionAndPropertyHeaders(); // TODO : for now, fail fast if something is unknown yet (i.e. some type annotation is omitted)
+        resolveFunctionAndPropertyHeaders(declarations); // TODO : for now, fail fast if something is unknown yet (i.e. some type annotation is omitted)
         resolveExecutableCode();
+//        processBehaviorDeclarators(outerScope, declarations);
+
+//        readyToProcessExpressions = true;
+//        resolveBehaviorDeclarationBodies();
+
     }
 
     private void collectNamespacesAndClassifiers(
@@ -111,10 +118,10 @@ public class TopDownAnalyzer {
                     if (name == null) {
                         name = "<no name provided>";
                     }
-                    NamespaceDescriptor namespaceDescriptor = owner.getNamespace(name);
+                    NamespaceDescriptorImpl namespaceDescriptor = owner.getNamespace(name);
                     if (namespaceDescriptor == null) {
-                        namespaceDescriptor = new NamespaceDescriptor(
-                                owner, //declaringScope.getContainingDeclaration(),
+                        namespaceDescriptor = new NamespaceDescriptorImpl(
+                                owner.getOriginal(), //declaringScope.getContainingDeclaration(),
                                 Collections.<Annotation>emptyList(), // TODO
                                 name
                         );
@@ -122,8 +129,9 @@ public class TopDownAnalyzer {
                         owner.addNamespace(namespaceDescriptor);
                         trace.recordDeclarationResolution(namespace, namespaceDescriptor);
                     }
+                    namespaceDescriptors.put(namespace, namespaceDescriptor);
 
-                    WritableScope namespaceScope = new WritableScopeImpl(outerScope, owner, trace.getErrorHandler(), null);
+                    WritableScope namespaceScope = new WriteThroughScope(outerScope, (WritableScope) namespaceDescriptor.getMemberScope());
                     namespaceScopes.put(namespace, namespaceScope);
 
                     for (JetImportDirective importDirective : importDirectives) {
@@ -143,23 +151,7 @@ public class TopDownAnalyzer {
                         }
                     }
 
-                    final NamespaceDescriptor finalNamespaceDescriptor = namespaceDescriptor;
-                    collectNamespacesAndClassifiers(namespaceScope, new NamespaceLike.Adapter(finalNamespaceDescriptor) {
-                                @Override
-                                public NamespaceDescriptor getNamespace(String name) {
-                                    return ((WritableScope) finalNamespaceDescriptor.getMemberScope()).getDeclaredNamespace(name);
-                                }
-
-                                @Override
-                                public void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
-                                    ((WritableScope) namespaceDescriptor.getMemberScope()).addNamespace(namespaceDescriptor);
-                                }
-
-                                @Override
-                                public void addClassifierDescriptor(MutableClassDescriptor classDescriptor) {
-                                    ((WritableScope) finalNamespaceDescriptor.getMemberScope()).addClassifierDescriptor(classDescriptor);
-                                }
-                            }, namespace.getDeclarations());
+                    collectNamespacesAndClassifiers(namespaceScope, namespaceDescriptor, namespace.getDeclarations());
                 }
 
                 @Override
@@ -228,12 +220,53 @@ public class TopDownAnalyzer {
 
     }
 
-    private void resolveFunctionAndPropertyHeaders() {
-        throw new UnsupportedOperationException(); // TODO
+    private void resolveFunctionAndPropertyHeaders(@NotNull List<JetDeclaration> declarations) {
+        for (Map.Entry<JetNamespace, WritableScope> entry : namespaceScopes.entrySet()) {
+            JetNamespace namespace = entry.getKey();
+            final WritableScope namespaceScope = entry.getValue();
+            final NamespaceLike namespaceDescriptor = namespaceDescriptors.get(namespace);
+
+            resolveFunctionAndPropertyHeaders(namespace.getDeclarations(), namespaceScope, namespaceDescriptor);
+        }
+        for (Map.Entry<JetClass, MutableClassDescriptor> entry : classes.entrySet()) {
+            JetClass jetClass = entry.getKey();
+            final MutableClassDescriptor classDescriptor = entry.getValue();
+
+            resolveFunctionAndPropertyHeaders(jetClass.getDeclarations(), classDescriptor.getClassHeaderScope(), classDescriptor);
+            processPrimaryConstructor(classDescriptor, jetClass);
+//            processBehaviorDeclarators(classDescriptor.getWritableUnsubstitutedMemberScope(), jetClass.getDeclarations());
+
+            // TODO : Constructors
+        }
+
+        // TODO : Extensions
+    }
+
+    private void resolveFunctionAndPropertyHeaders(@NotNull List<JetDeclaration> declarations, final @NotNull JetScope scope, final @NotNull NamespaceLike namespaceLike) {
+        for (JetDeclaration declaration : declarations) {
+            declaration.accept(new JetVisitor() {
+                @Override
+                public void visitFunction(JetFunction function) {
+                    FunctionDescriptorImpl functionDescriptor = classDescriptorResolver.resolveFunctionDescriptor(namespaceLike, scope, function);
+                    namespaceLike.addFunctionDescriptor(functionDescriptor);
+                    functions.put(function, functionDescriptor);
+                    declaringScopes.put(function, scope);
+                }
+
+                @Override
+                public void visitProperty(JetProperty property) {
+                    PropertyDescriptor propertyDescriptor = classDescriptorResolver.resolvePropertyDescriptor(namespaceLike, scope, property);
+                    namespaceLike.addPropertyDescriptor(propertyDescriptor);
+                    properties.put(property, propertyDescriptor);
+                    declaringScopes.put(property, scope);
+                }
+            });
+        }
     }
 
     private void resolveExecutableCode() {
-        throw new UnsupportedOperationException(); // TODO
+        readyToProcessExpressions = true;
+        resolveBehaviorDeclarationBodies();
     }
 
     @NotNull
@@ -263,9 +296,9 @@ public class TopDownAnalyzer {
                     if (name == null) {
                         name = "<no name provided>";
                     }
-                    NamespaceDescriptor namespaceDescriptor = declaringScope.getDeclaredNamespace(name);
+                    NamespaceDescriptorImpl namespaceDescriptor = (NamespaceDescriptorImpl) declaringScope.getDeclaredNamespace(name);
                     if (namespaceDescriptor == null) {
-                        namespaceDescriptor = new NamespaceDescriptor(
+                        namespaceDescriptor = new NamespaceDescriptorImpl(
                                 declaringScope.getContainingDeclaration(),
                                 Collections.<Annotation>emptyList(), // TODO
                                 name
@@ -814,7 +847,7 @@ public class TopDownAnalyzer {
     }
 
     private void resolveFunctionBodies() {
-        for (Map.Entry<JetDeclaration, FunctionDescriptorImpl> entry : functions.entrySet()) {
+        for (Map.Entry<JetFunction, FunctionDescriptorImpl> entry : functions.entrySet()) {
             JetDeclaration declaration = entry.getKey();
             FunctionDescriptor descriptor = entry.getValue();
 

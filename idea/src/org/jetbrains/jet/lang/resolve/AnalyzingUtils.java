@@ -14,11 +14,14 @@ import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.JetDiagnostic;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespace;
 import org.jetbrains.jet.lang.resolve.java.JavaPackageScope;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
+
+import java.util.Collections;
 
 /**
  * @author abreslav
@@ -51,13 +54,43 @@ public class AnalyzingUtils {
         JavaSemanticServices javaSemanticServices = new JavaSemanticServices(project, semanticServices, bindingTraceContext);
 
         JetScope libraryScope = semanticServices.getStandardLibrary().getLibraryScope();
-        WritableScope scope = new WritableScopeImpl(libraryScope, new ModuleDescriptor("<module>"), bindingTraceContext.getErrorHandler(), null);
+        ModuleDescriptor owner = new ModuleDescriptor("<module>");
+        final WritableScope scope = new WritableScopeImpl(libraryScope, owner, bindingTraceContext.getErrorHandler(), null);
 //        scope.importScope(javaSemanticServices.getDescriptorResolver().resolveNamespace("").getMemberScope());
 //        scope.importScope(javaSemanticServices.getDescriptorResolver().resolveNamespace("java.lang").getMemberScope());
         scope.importScope(new JavaPackageScope("", null, javaSemanticServices));
         scope.importScope(new JavaPackageScope("java.lang", null, javaSemanticServices));
 
-        new TopDownAnalyzer(semanticServices, bindingTraceContext, flowDataTraceFactory).process(scope, namespace);
+        TopDownAnalyzer topDownAnalyzer = new TopDownAnalyzer(semanticServices, bindingTraceContext, flowDataTraceFactory);
+//        topDownAnalyzer.process(scope, Collections.<JetDeclaration>singletonList(namespace));
+//        if (false)
+        topDownAnalyzer.process(scope, new NamespaceLike.Adapter(owner) {
+
+                    @Override
+                    public NamespaceDescriptorImpl getNamespace(String name) {
+                        return null;
+                    }
+
+                    @Override
+                    public void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
+                        scope.addNamespace(namespaceDescriptor);
+                    }
+
+                    @Override
+                    public void addClassifierDescriptor(@NotNull MutableClassDescriptor classDescriptor) {
+                        scope.addClassifierDescriptor(classDescriptor);
+                    }
+
+                    @Override
+                    public void addFunctionDescriptor(@NotNull FunctionDescriptor functionDescriptor) {
+                        scope.addFunctionDescriptor(functionDescriptor);
+                    }
+
+                    @Override
+                    public void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor) {
+                        scope.addVariableDescriptor(propertyDescriptor);
+                    }
+                }, Collections.<JetDeclaration>singletonList(namespace));
         return bindingTraceContext;
     }
 

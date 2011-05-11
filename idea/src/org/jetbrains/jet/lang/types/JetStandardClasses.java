@@ -22,7 +22,7 @@ public class JetStandardClasses {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private static NamespaceDescriptor STANDARD_CLASSES_NAMESPACE = new NamespaceDescriptor(null, Collections.<Annotation>emptyList(), "jet");
+    /*package*/ static NamespaceDescriptorImpl STANDARD_CLASSES_NAMESPACE = new NamespaceDescriptorImpl(null, Collections.<Annotation>emptyList(), "jet");
 
     private static final ClassDescriptor NOTHING_CLASS = new ClassDescriptorImpl(
             STANDARD_CLASSES_NAMESPACE,
@@ -201,6 +201,7 @@ public class JetStandardClasses {
                 }
             }
         }
+        STANDARD_CLASSES_NAMESPACE.initialize(writableScope);
     }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -189,23 +189,23 @@ public class JavaDescriptorResolver {
     }
 
     private NamespaceDescriptor createJavaNamespaceDescriptor(PsiPackage psiPackage) {
-        NamespaceDescriptor namespaceDescriptor = new NamespaceDescriptor(
+        JavaNamespaceDescriptor namespaceDescriptor = new JavaNamespaceDescriptor(
                 JAVA_ROOT,
                 Collections.<Annotation>emptyList(), // TODO
                 psiPackage.getName()
         );
-        namespaceDescriptor.initialize(new JavaPackageScope(psiPackage.getQualifiedName(), namespaceDescriptor, semanticServices));
+        namespaceDescriptor.setMemberScope(new JavaPackageScope(psiPackage.getQualifiedName(), namespaceDescriptor, semanticServices));
         semanticServices.getTrace().recordDeclarationResolution(psiPackage, namespaceDescriptor);
         return namespaceDescriptor;
     }
 
     private NamespaceDescriptor createJavaNamespaceDescriptor(@NotNull final PsiClass psiClass) {
-        NamespaceDescriptor namespaceDescriptor = new NamespaceDescriptor(
+        JavaNamespaceDescriptor namespaceDescriptor = new JavaNamespaceDescriptor(
                 JAVA_ROOT,
                 Collections.<Annotation>emptyList(), // TODO
                 psiClass.getName()
         );
-        namespaceDescriptor.initialize(new JavaClassMembersScope(namespaceDescriptor, psiClass, semanticServices, true));
+        namespaceDescriptor.setMemberScope(new JavaClassMembersScope(namespaceDescriptor, psiClass, semanticServices, true));
         semanticServices.getTrace().recordDeclarationResolution(psiClass, namespaceDescriptor);
         return namespaceDescriptor;
     }
