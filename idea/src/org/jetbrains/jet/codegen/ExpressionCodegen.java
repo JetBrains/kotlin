@@ -53,7 +53,7 @@ public class ExpressionCodegen extends JetVisitor {
     private final FrameMap myMap;
     private final JetTypeMapper typeMapper;
     private final Type returnType;
-    private final ClassDescriptor contextType;
+    private final DeclarationDescriptor contextType;
     private final OwnerKind contextKind;
     private final BindingContext bindingContext;
 
@@ -62,7 +62,7 @@ public class ExpressionCodegen extends JetVisitor {
                              FrameMap myMap,
                              JetTypeMapper typeMapper,
                              Type returnType,
-                             ClassDescriptor contextType,
+                             DeclarationDescriptor contextType,
                              OwnerKind contextKind) {
         this.myMap = myMap;
         this.typeMapper = typeMapper;
@@ -1194,11 +1194,12 @@ public class ExpressionCodegen extends JetVisitor {
             throw new UnsupportedOperationException("Cannot generate this expression in top level context");
         }
 
+        ClassDescriptor contextClass = (ClassDescriptor) contextType;
         if (contextKind == OwnerKind.IMPLEMENTATION) {
-            v.load(0, JetTypeMapper.jetImplementationType(contextType));
+            v.load(0, JetTypeMapper.jetImplementationType(contextClass));
         }
         else if (contextKind == OwnerKind.DELEGATING_IMPLEMENTATION) {
-            v.getfield(JetTypeMapper.jvmName(contextType, contextKind), "$this", JetTypeMapper.jetInterfaceType(contextType).getDescriptor());
+            v.getfield(JetTypeMapper.jvmName(contextClass, contextKind), "$this", JetTypeMapper.jetInterfaceType(contextClass).getDescriptor());
         }
         else {
             throw new UnsupportedOperationException("Unknown kind: " + contextKind);
