@@ -103,8 +103,9 @@ public class ControlStructuresTest extends CodegenTestCase {
 
     public void testTryCatch() throws Exception {
         loadFile("tryCatch.jet");
+        System.out.println(generateToText());
         final Method main = generateFunction();
         assertEquals("no message", main.invoke(null, "0"));
-        assertEquals("xxx", main.invoke(null, "a"));
+        assertEquals("For input string: \"a\"", main.invoke(null, "a"));
     }
 }

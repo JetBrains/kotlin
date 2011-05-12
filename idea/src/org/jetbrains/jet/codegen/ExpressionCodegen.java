@@ -1206,6 +1206,48 @@ public class ExpressionCodegen extends JetVisitor {
         }
     }
 
+    @Override
+    public void visitTryExpression(JetTryExpression expression) {
+        if (expression.getFinallyBlock() != null) {
+            throw new UnsupportedOperationException("finally block in try/catch not yet supported");
+        }
+        Label tryStart = new Label();
+        v.mark(tryStart);
+        gen(expression.getTryBlock(), Type.VOID_TYPE);
+        Label tryEnd = new Label();
+        v.mark(tryEnd);
+        Label end = new Label();
+        v.goTo(end);         // TODO don't generate goto if there's no code following try/catch
+        for (JetCatchClause clause : expression.getCatchClauses()) {
+            Label clauseStart = new Label();
+            v.mark(clauseStart);
+
+            VariableDescriptor descriptor = bindingContext.getVariableDescriptor(clause.getCatchParameter());
+            Type descriptorType = typeMapper.mapType(descriptor.getOutType());
+            myMap.enter(descriptor, 1);
+            int index = myMap.getIndex(descriptor);
+            v.store(index, descriptorType);
+
+            gen(clause.getCatchBody(), Type.VOID_TYPE);
+            v.goTo(end);     // TODO don't generate goto if there's no code following try/catch
+
+            myMap.leave(descriptor);
+            v.visitTryCatchBlock(tryStart, tryEnd, clauseStart, descriptorType.getInternalName());
+        }
+        v.mark(end);
+    }
+
+    @Override
+    public void visitBinaryWithTypeRHSExpression(JetBinaryExpressionWithTypeRHS expression) {
+        JetSimpleNameExpression operationSign = expression.getOperationSign();
+        if (operationSign.getReferencedNameElementType() == JetTokens.COLON) {
+            gen(expression.getLeft());
+        }
+        else {
+            throw new UnsupportedOperationException("should generate a cast, but don't know how");
+        }
+    }
+
     private static class CompilationException extends RuntimeException {
     }
 }
