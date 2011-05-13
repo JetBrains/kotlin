@@ -1,0 +1,8 @@
+class Wrapper<T>() {
+  fun isSameWrapper(wrapper: Any) = wrapper is Wrapper<T>
+}
+
+fun foo() {
+  val wrapper = new Wrapper<Int>()
+  return wrapper.isSameWrapper(new Wrapper<String>())
+}
