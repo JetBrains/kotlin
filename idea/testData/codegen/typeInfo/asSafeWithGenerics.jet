@@ -1,0 +1,8 @@
+class Wrapper<T>() {
+  fun castToSelf(wrapper: Any) = wrapper as? Wrapper<T>
+}
+
+fun foo() {
+  val wrapper = new Wrapper<Int>()
+  return wrapper.castToSelf(new Wrapper<String>())
+}
