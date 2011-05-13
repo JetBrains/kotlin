@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.types.*;
-import org.jetbrains.jet.resolve.DescriptorUtil;
+import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.util.List;
 import java.util.Map;
@@ -176,6 +176,6 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
 
     @Override
     public String toString() {
-        return DescriptorUtil.renderPresentableText(this) + "[" + getClass().getCanonicalName() + "@" + System.identityHashCode(this) + "]";
+        return DescriptorRenderer.TEXT.render(this) + "[" + getClass().getCanonicalName() + "@" + System.identityHashCode(this) + "]";
     }
 }

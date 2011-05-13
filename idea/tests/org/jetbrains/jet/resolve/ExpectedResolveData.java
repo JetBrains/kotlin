@@ -120,7 +120,7 @@ public class ExpectedResolveData {
                 assertTrue(
                         "Must have been unresolved: " +
                         renderReferenceInContext(referenceExpression) +
-                        " but was resolved to " + DescriptorUtil.renderPresentableText(bindingContext.resolveReferenceExpression(referenceExpression)),
+                        " but was resolved to " + DescriptorRenderer.TEXT.render(bindingContext.resolveReferenceExpression(referenceExpression)),
                         unresolvedReferences.contains(referenceExpression));
                 continue;
             }

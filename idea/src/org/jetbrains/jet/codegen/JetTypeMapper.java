@@ -8,7 +8,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.resolve.DescriptorUtil;
+import org.jetbrains.jet.resolve.DescriptorRenderer;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.Method;
@@ -87,11 +87,11 @@ public class JetTypeMapper {
     }
 
     static String jvmName(NamespaceDescriptor namespace) {
-        return NamespaceCodegen.getJVMClassName(DescriptorUtil.getFQName(namespace));
+        return NamespaceCodegen.getJVMClassName(DescriptorRenderer.getFQName(namespace));
     }
 
     public static String jvmNameForInterface(ClassDescriptor descriptor) {
-        return DescriptorUtil.getFQName(descriptor).replace('.', '/');
+        return DescriptorRenderer.getFQName(descriptor).replace('.', '/');
     }
 
     public static String jvmNameForImplementation(ClassDescriptor descriptor) {

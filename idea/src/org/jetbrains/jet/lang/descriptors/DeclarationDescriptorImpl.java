@@ -2,7 +2,7 @@ package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.resolve.DescriptorUtil;
+import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.util.List;
 
@@ -44,6 +44,6 @@ public abstract class DeclarationDescriptorImpl extends AnnotatedImpl implements
 
     @Override
     public String toString() {
-        return DescriptorUtil.renderPresentableText(this) + "[" + getClass().getCanonicalName() + "@" + System.identityHashCode(this) + "]";
+        return DescriptorRenderer.TEXT.render(this) + "[" + getClass().getCanonicalName() + "@" + System.identityHashCode(this) + "]";
     }
 }

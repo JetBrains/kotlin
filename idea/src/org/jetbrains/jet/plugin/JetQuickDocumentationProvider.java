@@ -9,7 +9,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.resolve.DescriptorUtil;
+import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.util.Collections;
 import java.util.List;
@@ -49,9 +49,7 @@ public class JetQuickDocumentationProvider implements DocumentationProvider {
     }
 
     private String render(DeclarationDescriptor declarationDescriptor) {
-        String text = DescriptorUtil.renderPresentableText(declarationDescriptor);
-        text = text.replaceAll("<", "&lt;");
-        return text;
+        return DescriptorRenderer.HTML.render(declarationDescriptor);
     }
 
     @Override

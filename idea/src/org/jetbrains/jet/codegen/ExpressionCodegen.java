@@ -13,7 +13,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.resolve.DescriptorUtil;
+import org.jetbrains.jet.resolve.DescriptorRenderer;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -588,7 +588,7 @@ public class ExpressionCodegen extends JetVisitor {
                     methodDescriptor = typeMapper.mapSignature((JetFunction) declarationPsiElement);
                     if (functionParent instanceof NamespaceDescriptorImpl && declarationPsiElement instanceof JetFunction) {
                         pushMethodArguments(expression, methodDescriptor);
-                        final String owner = NamespaceCodegen.getJVMClassName(DescriptorUtil.getFQName(functionParent));
+                        final String owner = NamespaceCodegen.getJVMClassName(DescriptorRenderer.getFQName(functionParent));
                         v.invokestatic(owner, methodDescriptor.getName(), methodDescriptor.getDescriptor());
                     }
                     else if (functionParent instanceof ClassDescriptor && declarationPsiElement instanceof JetFunction) {

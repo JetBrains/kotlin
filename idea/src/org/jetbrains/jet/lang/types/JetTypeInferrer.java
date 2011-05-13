@@ -13,7 +13,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.resolve.DescriptorUtil;
+import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.util.*;
 
@@ -245,7 +245,7 @@ public class JetTypeInferrer {
                         case SINGLE_FUNCTION_ARGUMENT_MISMATCH:
                             if (argumentList != null) {
                                 // TODO : More helpful message. NOTE: there's a separate handling for this for constructors
-                                trace.getErrorHandler().genericError(argumentList.getNode(), "Arguments do not match " + DescriptorUtil.renderPresentableText(resolutionResult.getFunctionDescriptor()));
+                                trace.getErrorHandler().genericError(argumentList.getNode(), "Arguments do not match " + DescriptorRenderer.TEXT.render(resolutionResult.getFunctionDescriptor()));
                             }
                             else {
                                 trace.getErrorHandler().unresolvedReference(referenceExpression);

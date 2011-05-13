@@ -10,22 +10,7 @@ import java.util.List;
 /**
  * @author abreslav
  */
-public class DescriptorUtil {
-
-    private static final DeclarationDescriptorVisitor<Void, StringBuilder> rootVisitor = new RenderDeclarationDescriptorVisitor();
-    private static final DeclarationDescriptorVisitor<Void, StringBuilder> subVisitor = new RenderDeclarationDescriptorVisitor() {
-        @Override
-        protected void renderName(DeclarationDescriptor descriptor, StringBuilder stringBuilder) {
-            stringBuilder.append(descriptor.getName());
-        }
-    };
-
-    public static String renderPresentableText(DeclarationDescriptor declarationDescriptor) {
-        if (declarationDescriptor == null) return "<null>";
-        StringBuilder stringBuilder = new StringBuilder();
-        declarationDescriptor.accept(rootVisitor, stringBuilder);
-        return stringBuilder.toString();
-    }
+public class DescriptorRenderer {
 
     public static String getFQName(DeclarationDescriptor descriptor) {
         DeclarationDescriptor container = descriptor.getContainingDeclaration();
@@ -37,12 +22,57 @@ public class DescriptorUtil {
         return descriptor.getName();
     }
 
-    private DescriptorUtil() {}
+    public static final DescriptorRenderer TEXT = new DescriptorRenderer();
+    public static final DescriptorRenderer HTML = new DescriptorRenderer() {
 
-    private static class RenderDeclarationDescriptorVisitor extends DeclarationDescriptorVisitor<Void, StringBuilder> {
+        @Override
+        protected String escape(String s) {
+            return s.replaceAll("<", "&lt;");
+        }
+
+        @Override
+        public String renderKeyword(String keyword) {
+            return "<b>" + keyword + "</b>";
+        }
+    };
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private final DeclarationDescriptorVisitor<Void, StringBuilder> rootVisitor = new RenderDeclarationDescriptorVisitor();
+
+    private final DeclarationDescriptorVisitor<Void, StringBuilder> subVisitor = new RenderDeclarationDescriptorVisitor() {
+        @Override
+        protected void renderName(DeclarationDescriptor descriptor, StringBuilder stringBuilder) {
+            stringBuilder.append(descriptor.getName());
+        }
+    };
+
+    private DescriptorRenderer() {}
+
+    protected String renderKeyword(String keyword) {
+        return keyword;
+    }
+
+    protected String escape(String s) {
+        return s;
+    }
+
+    private String lt() {
+        return escape("<");
+    }
+
+    public String render(DeclarationDescriptor declarationDescriptor) {
+        if (declarationDescriptor == null) return lt() + "null>";
+        StringBuilder stringBuilder = new StringBuilder();
+        declarationDescriptor.accept(rootVisitor, stringBuilder);
+        return stringBuilder.toString();
+    }
+
+    private class RenderDeclarationDescriptorVisitor extends DeclarationDescriptorVisitor<Void, StringBuilder> {
         @Override
         public Void visitValueParameterDescriptor(ValueParameterDescriptor descriptor, StringBuilder builder) {
-            builder.append("value-parameter ");
+            builder.append(renderKeyword("value-parameter")).append(" ");
             return super.visitValueParameterDescriptor(descriptor, builder);
         }
 
@@ -50,32 +80,32 @@ public class DescriptorUtil {
         public Void visitVariableDescriptor(VariableDescriptor descriptor, StringBuilder builder) {
             JetType outType = descriptor.getOutType();
             JetType inType = descriptor.getInType();
-            String typeString = "<no type>";
+            String typeString = lt() + "no type>";
             if (inType != null && outType != null) {
-                builder.append("var ");
+                builder.append(renderKeyword("var")).append(" ");
                 if (inType.equals(outType)) {
                     typeString = outType.toString();
                 }
                 else {
-                    typeString = "<in " + inType + " out " + outType + ">";
+                    typeString = "<" + renderKeyword("in") + ": " + inType + " " + renderKeyword("out") + ": " + outType + ">";
                 }
             }
             else if (outType != null) {
-                builder.append("val ");
+                builder.append(renderKeyword("val")).append(" ");
                 typeString = outType.toString();
             }
             else if (inType != null) {
-                builder.append("<write-only> ");
+                builder.append(lt()).append("write-only> ");
                 typeString = inType.toString();
             }
             renderName(descriptor, builder);
-            builder.append(" : ").append(typeString);
+            builder.append(" : ").append(escape(typeString));
             return super.visitVariableDescriptor(descriptor, builder);
         }
 
         @Override
         public Void visitFunctionDescriptor(FunctionDescriptor descriptor, StringBuilder builder) {
-            builder.append("fun ");
+            builder.append(renderKeyword("fun")).append(" ");
             renderName(descriptor, builder);
             List<TypeParameterDescriptor> typeParameters = descriptor.getTypeParameters();
             renderTypeParameters(typeParameters, builder);
@@ -87,13 +117,13 @@ public class DescriptorUtil {
                     builder.append(", ");
                 }
             }
-            builder.append(") : ").append(descriptor.getUnsubstitutedReturnType());
+            builder.append(") : ").append(escape(descriptor.getUnsubstitutedReturnType().toString()));
             return super.visitFunctionDescriptor(descriptor, builder);
         }
 
         private void renderTypeParameters(List<TypeParameterDescriptor> typeParameters, StringBuilder builder) {
             if (!typeParameters.isEmpty()) {
-                builder.append("<");
+                builder.append(lt());
                 for (Iterator<TypeParameterDescriptor> iterator = typeParameters.iterator(); iterator.hasNext(); ) {
                     TypeParameterDescriptor typeParameterDescriptor = iterator.next();
                     typeParameterDescriptor.accept(subVisitor, builder);
@@ -107,7 +137,7 @@ public class DescriptorUtil {
 
         @Override
         public Void visitTypeParameterDescriptor(TypeParameterDescriptor descriptor, StringBuilder builder) {
-            builder.append("<");
+            builder.append(lt());
             renderTypeParameter(descriptor, builder);
             builder.append(">");
             return super.visitTypeParameterDescriptor(descriptor, builder);
@@ -115,14 +145,14 @@ public class DescriptorUtil {
 
         @Override
         public Void visitNamespaceDescriptor(NamespaceDescriptor namespaceDescriptor, StringBuilder builder) {
-            builder.append("namespace ");
+            builder.append(renderKeyword("namespace")).append(" ");
             renderName(namespaceDescriptor, builder);
             return super.visitNamespaceDescriptor(namespaceDescriptor, builder);
         }
 
         @Override
         public Void visitClassDescriptor(ClassDescriptor descriptor, StringBuilder builder) {
-            builder.append("class ");
+            builder.append(renderKeyword("class")).append(" ");
             renderName(descriptor, builder);
             renderTypeParameters(descriptor.getTypeConstructor().getParameters(), builder);
             Collection<? extends JetType> supertypes = descriptor.getTypeConstructor().getSupertypes();
@@ -145,7 +175,7 @@ public class DescriptorUtil {
                 renderName(containingDeclaration, stringBuilder);
                 stringBuilder.append("::");
             }
-            stringBuilder.append(descriptor.getName());
+            stringBuilder.append(escape(descriptor.getName()));
         }
 
         private void renderTypeParameter(TypeParameterDescriptor descriptor, StringBuilder builder) {
