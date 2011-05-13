@@ -8,7 +8,12 @@ import jet.JetObject;
 public class TypeInfo<T> implements JetObject {
 
     private TypeInfo<?> typeInfo;
-    private final TypeInfo<?> typeArgument;
+    private TypeInfo<?> typeArgument;
+    private Class<T> theClass;
+
+    public TypeInfo(Class<T> theClass) {
+        this.theClass = theClass;
+    }
 
     private TypeInfo(TypeInfo<?> typeArgument) {
         this.typeArgument = typeArgument;

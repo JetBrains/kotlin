@@ -1,0 +1,7 @@
+class Point() {
+}
+
+fun foo() {
+  val p = new Point();
+  return typeof(p);
+}

@@ -3,6 +3,7 @@ package org.jetbrains.jet.codegen;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
+import jet.typeinfo.TypeInfo;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -26,6 +27,8 @@ public class ClassCodegen {
     private final BindingContext bindingContext;
     private final Codegens factory;
     private final JetTypeMapper typeMapper;
+
+    private  static final Type TYPEINFO_TYPE = Type.getType(TypeInfo.class);
 
     public ClassCodegen(Project project, Codegens factory, BindingContext bindingContext) {
         this.project = project;
@@ -73,10 +76,16 @@ public class ClassCodegen {
                 JetTypeMapper.jvmName(descriptor, kind),
                 null,
                 superClass,
-                new String[] {JetTypeMapper.jvmNameForInterface(descriptor)}
+                new String[] { "jet/JetObject", JetTypeMapper.jvmNameForInterface(descriptor) }
         );
 
+        v.visitField(Opcodes.ACC_PRIVATE | Opcodes.ACC_STATIC, "$typeInfo", "Ljet/typeinfo/TypeInfo;", null, null);
+
+        generateStaticInitializer(descriptor, v);
+
         generatePrimaryConstructor(aClass, v, kind);
+
+        generateGetTypeInfo(aClass, v);
 
         generateClassBody(aClass, v, kind);
 
@@ -348,5 +357,38 @@ public class ClassCodegen {
                 }
             }
         }
+    }
+
+    private void generateStaticInitializer(ClassDescriptor descriptor, ClassVisitor cv) {
+        final MethodVisitor mv = cv.visitMethod(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC,
+                "<clinit>", "()V", null, null);
+        mv.visitCode();
+
+        InstructionAdapter v = new InstructionAdapter(mv);
+        v.anew(TYPEINFO_TYPE);
+        v.dup();
+        v.aconst(Type.getObjectType(JetTypeMapper.jvmNameForInterface(descriptor)));
+        v.invokespecial("jet/typeinfo/TypeInfo", "<init>", "(Ljava/lang/Class;)V");
+        v.putstatic(JetTypeMapper.jvmNameForImplementation(descriptor), "$typeInfo", "Ljet/typeinfo/TypeInfo;");
+
+        mv.visitInsn(Opcodes.RETURN);
+        mv.visitMaxs(0, 0);
+
+        mv.visitEnd();
+    }
+
+    private void generateGetTypeInfo(JetClass aClass, ClassVisitor cv) {
+        final MethodVisitor mv = cv.visitMethod(Opcodes.ACC_PUBLIC,
+                "getTypeInfo",
+                "()Ljet/typeinfo/TypeInfo;",
+                null /* TODO */,
+                null);
+        mv.visitCode();
+        InstructionAdapter v = new InstructionAdapter(mv);
+        ClassDescriptor descriptor = bindingContext.getClassDescriptor(aClass);
+        v.getstatic(JetTypeMapper.jvmNameForImplementation(descriptor), "$typeInfo", "Ljet/typeinfo/TypeInfo;");
+        v.areturn(TYPEINFO_TYPE);
+        mv.visitMaxs(0, 0);
+        mv.visitEnd();
     }
 }

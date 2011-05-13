@@ -67,8 +67,7 @@ public class NamespaceCodegen {
 
     private void generateStaticInitializers(JetNamespace namespace, BindingContext bindingContext) {
         MethodVisitor mv = v.visitMethod(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC,
-                "<clinit>", new Method("<clinit>", Type.VOID_TYPE, new Type[0]).getDescriptor(),
-                null, null);
+                "<clinit>", "()V", null, null);
         mv.visitCode();
 
         FrameMap frameMap = new FrameMap();

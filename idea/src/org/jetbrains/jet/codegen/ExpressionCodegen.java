@@ -6,6 +6,7 @@ import com.intellij.psi.search.ProjectScope;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import jet.IntRange;
+import jet.JetObject;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
@@ -44,6 +45,7 @@ public class ExpressionCodegen extends JetVisitor {
 
     private static final Type ITERATOR_TYPE = Type.getType(Iterator.class);
     private static final Type INT_RANGE_TYPE = Type.getType(IntRange.class);
+    private static final Type JET_OBJECT_TYPE = Type.getType(JetObject.class);
 
     private final Stack<Label> myContinueTargets = new Stack<Label>();
     private final Stack<Label> myBreakTargets = new Stack<Label>();
@@ -1246,6 +1248,12 @@ public class ExpressionCodegen extends JetVisitor {
         else {
             throw new UnsupportedOperationException("should generate a cast, but don't know how");
         }
+    }
+
+    @Override
+    public void visitTypeofExpression(JetTypeofExpression expression) {
+        gen(expression.getBaseExpression(), JET_OBJECT_TYPE);
+        v.invokeinterface("jet/JetObject", "getTypeInfo", "()Ljet/typeinfo/TypeInfo;");
     }
 
     private static class CompilationException extends RuntimeException {
