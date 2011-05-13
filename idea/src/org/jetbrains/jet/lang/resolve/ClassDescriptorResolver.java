@@ -259,7 +259,7 @@ public class ClassDescriptorResolver {
                 returnType = new DeferredType(new LazyValue<JetType>() {
                     @Override
                     protected JetType compute() {
-                        JetFlowInformationProvider flowInformationProvider = computeFlowData(function.asElement(), bodyExpression);
+                        JetFlowInformationProvider flowInformationProvider = computeFlowData(function, bodyExpression);
                         return semanticServices.getTypeInferrer(trace, flowInformationProvider).getFunctionReturnType(scope, function, functionDescriptor);
                     }
                 });

@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
@@ -31,6 +32,7 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
     private final Set<JetFunctionLiteralExpression> blocks = new HashSet<JetFunctionLiteralExpression>();
     private final Set<JetElement> statements = new HashSet<JetElement>();
     private final Set<PropertyDescriptor> backingFieldRequired = new HashSet<PropertyDescriptor>();
+    private final Set<JetExpression> processed = Sets.newHashSet();
 
     private Collection<JetDiagnostic> diagnostics = Lists.newArrayList();
     private ErrorHandler errorHandler = new ErrorHandler() {
@@ -70,6 +72,7 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
     @Override
     public void recordExpressionType(@NotNull JetExpression expression, @NotNull JetType type) {
         expressionTypes.put(expression, type);
+        markAsProcessed(expression);
     }
 
     @Override
@@ -278,5 +281,20 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
     @Override
     public Collection<JetDiagnostic> getDiagnostics() {
         return diagnostics;
+    }
+
+    @Override
+    public void markAsProcessed(@NotNull JetExpression expression) {
+        processed.add(expression);
+    }
+
+    @Override
+    public boolean isProcessed(@NotNull JetExpression expression) {
+        return processed.contains(expression);
+    }
+
+    @Override
+    public BindingContext getBindingContext() {
+        return this;
     }
 }

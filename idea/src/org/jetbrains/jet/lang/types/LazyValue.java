@@ -23,7 +23,6 @@ public abstract class LazyValue<T> {
         return state;
     }
 
-    @NotNull
     public final T get() {
         switch (state) {
             case NOT_COMPUTED:

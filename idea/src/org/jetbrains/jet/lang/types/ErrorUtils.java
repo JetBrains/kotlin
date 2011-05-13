@@ -161,7 +161,8 @@ public class ErrorUtils {
     }
 
     public static boolean isErrorType(JetType type) {
-        return type instanceof ErrorTypeImpl ||
+        return  (type instanceof DeferredType && ((DeferredType) type).getActualType() == null) ||
+                type instanceof ErrorTypeImpl ||
                isError(type.getConstructor());
     }
 

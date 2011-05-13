@@ -63,7 +63,7 @@ public class JetTypeInferrer {
         assignmentOperationCounterparts.put(JetTokens.MINUSEQ, JetTokens.MINUS);
     }
 
-    private final Map<JetExpression, JetType> typeCache = new HashMap<JetExpression, JetType>();
+//    private final Map<JetExpression, JetType> typeCache = new HashMap<JetExpression, JetType>();
 
     private final BindingTrace trace;
     private final JetSemanticServices semanticServices;
@@ -72,7 +72,7 @@ public class JetTypeInferrer {
     private final JetFlowInformationProvider flowInformationProvider;
 
     public JetTypeInferrer(@NotNull BindingTrace trace, @NotNull JetFlowInformationProvider flowInformationProvider, @NotNull JetSemanticServices semanticServices) {
-        this.trace = new CachedBindingTrace(trace);
+        this.trace = trace; //new CachedBindingTrace(trace);
         this.semanticServices = semanticServices;
         this.typeResolver = new TypeResolver(semanticServices, trace, true);
         this.classDescriptorResolver = semanticServices.getClassDescriptorResolver(trace);
@@ -280,10 +280,10 @@ public class JetTypeInferrer {
         return types.isEmpty() ? JetStandardClasses.getNothingType() : semanticServices.getTypeChecker().commonSupertype(types);
     }
 
-    private JetType getCachedType(@NotNull JetExpression expression) {
-//        assert typeCache.containsKey(expression) : "No type cached for " + expression.getText();
-        return typeCache.get(expression);
-    }
+//    private JetType getCachedType(@NotNull JetExpression expression) {
+////        assert typeCache.containsKey(expression) : "No type cached for " + expression.getText();
+//        return typeCache.get(expression);
+//    }
 
     public void checkFunctionReturnType(@NotNull JetScope outerScope, @NotNull JetDeclarationWithBody function, @NotNull FunctionDescriptor functionDescriptor) {
         Map<JetElement, JetType> typeMap = collectReturnedExpressions(outerScope, function, functionDescriptor);
@@ -330,7 +330,7 @@ public class JetTypeInferrer {
         flowInformationProvider.collectReturnedInformation(function.asElement(), returnedExpressions, elementsReturningUnit);
         Map<JetElement,JetType> typeMap = new HashMap<JetElement, JetType>();
         for (JetExpression returnedExpression : returnedExpressions) {
-            JetType cachedType = getCachedType(returnedExpression);
+            JetType cachedType = trace.getBindingContext().getExpressionType(returnedExpression);// getCachedType(returnedExpression);
             trace.removeStatementRecord(returnedExpression);
             if (cachedType != null) {
                 typeMap.put(returnedExpression, cachedType);
@@ -592,10 +592,17 @@ public class JetTypeInferrer {
         }
 
         @Nullable
-        public JetType getType(@NotNull JetExpression expression) {
+        public final JetType getType(@NotNull JetExpression expression) {
             assert result == null;
+            if (trace.isProcessed(expression)) {
+                return trace.getBindingContext().getExpressionType(expression);
+            }
             try {
                 expression.accept(this);
+                trace.markAsProcessed(expression);
+                if (result instanceof DeferredType) {
+                    result = ((DeferredType) result).getActualType();
+                }
                 if (result != null) {
                     trace.recordExpressionType(expression, result);
                     if (JetStandardClasses.isNothing(result) && !result.isNullable()) {
@@ -1688,16 +1695,16 @@ public class JetTypeInferrer {
         }
     }
 
-    private class CachedBindingTrace extends BindingTraceAdapter {
-
-        public CachedBindingTrace(BindingTrace originalTrace) {
-            super(originalTrace);
-        }
-
-        @Override
-        public void recordExpressionType(@NotNull JetExpression expression, @NotNull JetType type) {
-            super.recordExpressionType(expression, type);
-            typeCache.put(expression, type);
-        }
-    }
+//    private class CachedBindingTrace extends BindingTraceAdapter {
+//
+//        public CachedBindingTrace(BindingTrace originalTrace) {
+//            super(originalTrace);
+//        }
+//
+//        @Override
+//        public void recordExpressionType(@NotNull JetExpression expression, @NotNull JetType type) {
+//            super.recordExpressionType(expression, type);
+//            typeCache.put(expression, type);
+//        }
+//    }
 }

@@ -16,4 +16,7 @@ public interface JetType extends Annotated {
 
     @NotNull
     JetScope getMemberScope();
+
+    @Override
+    public boolean equals(Object other);
 }

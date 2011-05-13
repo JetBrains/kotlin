@@ -57,4 +57,14 @@ public class DeferredType implements JetType {
             return "<Failed to compute this type>";
         }
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return getActualType().equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return getActualType().hashCode();
+    }
 }

@@ -64,30 +64,51 @@ public interface BindingTrace {
         public ErrorHandler getErrorHandler() {
             return ErrorHandler.DO_NOTHING;
         }
+
+        @Override
+        public boolean isProcessed(@NotNull JetExpression expression) {
+            return false;
+        }
+
+        @Override
+        public void markAsProcessed(@NotNull JetExpression expression) {
+
+        }
+
+        @Override
+        public BindingContext getBindingContext() {
+            throw new UnsupportedOperationException();
+        }
     };
 
-    public void recordExpressionType(@NotNull JetExpression expression, @NotNull JetType type);
+    void recordExpressionType(@NotNull JetExpression expression, @NotNull JetType type);
 
-    public void recordReferenceResolution(@NotNull JetReferenceExpression expression, @NotNull DeclarationDescriptor descriptor);
+    void recordReferenceResolution(@NotNull JetReferenceExpression expression, @NotNull DeclarationDescriptor descriptor);
 
-    public void recordLabelResolution(@NotNull JetReferenceExpression expression, @NotNull PsiElement element);
+    void recordLabelResolution(@NotNull JetReferenceExpression expression, @NotNull PsiElement element);
 
-    public void recordDeclarationResolution(@NotNull PsiElement declaration, @NotNull DeclarationDescriptor descriptor);
+    void recordDeclarationResolution(@NotNull PsiElement declaration, @NotNull DeclarationDescriptor descriptor);
 
-    public void recordValueParameterAsPropertyResolution(@NotNull JetParameter declaration, @NotNull PropertyDescriptor descriptor);
+    void recordValueParameterAsPropertyResolution(@NotNull JetParameter declaration, @NotNull PropertyDescriptor descriptor);
 
-    public void recordTypeResolution(@NotNull JetTypeReference typeReference, @NotNull JetType type);
+    void recordTypeResolution(@NotNull JetTypeReference typeReference, @NotNull JetType type);
 
-    public void recordBlock(JetFunctionLiteralExpression expression);
+    void recordBlock(JetFunctionLiteralExpression expression);
 
-    public void recordStatement(@NotNull JetElement statement);
+    void recordStatement(@NotNull JetElement statement);
 
-    public void removeStatementRecord(@NotNull JetElement statement);
+    void removeStatementRecord(@NotNull JetElement statement);
 
-    public void removeReferenceResolution(@NotNull JetReferenceExpression referenceExpression);
+    void removeReferenceResolution(@NotNull JetReferenceExpression referenceExpression);
 
-    public void requireBackingField(@NotNull PropertyDescriptor propertyDescriptor);
+    void requireBackingField(@NotNull PropertyDescriptor propertyDescriptor);
 
     @NotNull
-    public ErrorHandler getErrorHandler();
+    ErrorHandler getErrorHandler();
+
+    boolean isProcessed(@NotNull JetExpression expression);
+
+    void markAsProcessed(@NotNull JetExpression expression);
+
+    BindingContext getBindingContext();
 }

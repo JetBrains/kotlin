@@ -71,4 +71,19 @@ public class BindingTraceAdapter implements BindingTrace {
     public void removeStatementRecord(@NotNull JetElement statement) {
         originalTrace.removeStatementRecord(statement);
     }
+
+    @Override
+    public void markAsProcessed(@NotNull JetExpression expression) {
+        originalTrace.markAsProcessed(expression);
+    }
+
+    @Override
+    public boolean isProcessed(@NotNull JetExpression expression) {
+        return originalTrace.isProcessed(expression);
+    }
+
+    @Override
+    public BindingContext getBindingContext() {
+        return originalTrace.getBindingContext();
+    }
 }

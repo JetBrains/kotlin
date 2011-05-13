@@ -863,6 +863,7 @@ public class TopDownAnalyzer {
             @NotNull MutableFunctionDescriptor functionDescriptor,
             @NotNull JetScope declaringScope) {
         JetExpression bodyExpression = function.getBodyExpression();
+
         if (bodyExpression != null) {
             JetFlowInformationProvider flowInformationProvider = classDescriptorResolver.computeFlowData(function.asElement(), bodyExpression);
             JetTypeInferrer typeInferrer = semanticServices.getTypeInferrer(trace, flowInformationProvider);
