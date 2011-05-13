@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class ControlStructuresTest extends CodegenTestCase {
     public void testIf() throws Exception {
-        loadFile("if.jet");
+        loadFile("controlStructures/if.jet");
 
         System.out.println(generateToText());
         final Method main = generateFunction();
@@ -19,7 +19,7 @@ public class ControlStructuresTest extends CodegenTestCase {
     }
 
     public void testSingleBranchIf() throws Exception {
-        loadFile("singleBranchIf.jet");
+        loadFile("controlStructures/singleBranchIf.jet");
 
         System.out.println(generateToText());
         final Method main = generateFunction();
@@ -28,15 +28,15 @@ public class ControlStructuresTest extends CodegenTestCase {
     }
 
     public void testWhile() throws Exception {
-        factorialTest("while.jet");
+        factorialTest("controlStructures/while.jet");
     }
 
     public void testDoWhile() throws Exception {
-        factorialTest("doWhile.jet");
+        factorialTest("controlStructures/doWhile.jet");
     }
 
     public void testBreak() throws Exception {
-        factorialTest("break.jet");
+        factorialTest("controlStructures/break.jet");
     }
 
     private void factorialTest(final String name) throws IllegalAccessException, InvocationTargetException {
@@ -49,7 +49,7 @@ public class ControlStructuresTest extends CodegenTestCase {
     }
 
     public void testContinue() throws Exception {
-        loadFile("continue.jet");
+        loadFile("controlStructures/continue.jet");
         System.out.println(generateToText());
         final Method main = generateFunction();
         assertEquals(3, main.invoke(null, 4));
@@ -57,7 +57,7 @@ public class ControlStructuresTest extends CodegenTestCase {
     }
 
     public void testIfNoElse() throws Exception {
-        loadFile("ifNoElse.jet");
+        loadFile("controlStructures/ifNoElse.jet");
         System.out.println(generateToText());
         final Method main = generateFunction();
         assertEquals(5, main.invoke(null, 5, true));
@@ -72,7 +72,7 @@ public class ControlStructuresTest extends CodegenTestCase {
     }
 
     public void testFor() throws Exception {
-        loadFile("for.jet");
+        loadFile("controlStructures/for.jet");
         System.out.println(generateToText());
         final Method main = generateFunction();
         List<String> args = Arrays.asList("IntelliJ", " ", "IDEA");
@@ -80,7 +80,7 @@ public class ControlStructuresTest extends CodegenTestCase {
     }
 
     public void testForInArray() throws Exception {
-        loadFile("forInArray.jet");
+        loadFile("controlStructures/forInArray.jet");
         System.out.println(generateToText());
         final Method main = generateFunction();
         String[] args = new String[] { "IntelliJ", " ", "IDEA" };
@@ -102,7 +102,7 @@ public class ControlStructuresTest extends CodegenTestCase {
     }
 
     public void testTryCatch() throws Exception {
-        loadFile("tryCatch.jet");
+        loadFile("controlStructures/tryCatch.jet");
         System.out.println(generateToText());
         final Method main = generateFunction();
         assertEquals("no message", main.invoke(null, "0"));

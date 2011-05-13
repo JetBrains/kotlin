@@ -9,7 +9,7 @@ import java.lang.reflect.Modifier;
  */
 public class PropertyGenTest extends CodegenTestCase {
     public void testPrivateVal() throws Exception {
-        loadFile("privateVal.jet");
+        loadFile("properties/privateVal.jet");
         System.out.println(generateToText());
         final Class aClass = loadImplementationClass(generateClassesInFile(), "PrivateVal");
         final Field[] fields = aClass.getDeclaredFields();
@@ -19,7 +19,7 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     public void testPrivateVar() throws Exception {
-        loadFile("privateVar.jet");
+        loadFile("properties/privateVar.jet");
         System.out.println(generateToText());
         final Class aClass = loadImplementationClass(generateClassesInFile(), "PrivateVar");
         final Object instance = aClass.newInstance();
@@ -60,7 +60,7 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     public void testFieldPropertyAccess() throws Exception {
-        loadFile("fieldPropertyAccess.jet");
+        loadFile("properties/fieldPropertyAccess.jet");
         final Method method = generateFunction();
         assertEquals(1, method.invoke(null));
         assertEquals(2, method.invoke(null));
@@ -73,7 +73,7 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     public void testFieldSetter() throws Exception {
-        loadFile("fieldSetter.jet");
+        loadFile("properties/fieldSetter.jet");
         System.out.println(generateToText());
         final Method method = generateFunction("append");
         method.invoke(null, "IntelliJ ");
@@ -82,7 +82,7 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     public void testFieldSetterPlusEq() throws Exception {
-        loadFile("fieldSetterPlusEq.jet");
+        loadFile("properties/fieldSetterPlusEq.jet");
         System.out.println(generateToText());
         final Method method = generateFunction("append");
         method.invoke(null, "IntelliJ ");
