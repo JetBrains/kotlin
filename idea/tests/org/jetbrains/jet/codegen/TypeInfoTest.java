@@ -52,6 +52,13 @@ public class TypeInfoTest extends CodegenTestCase {
         assertFalse((Boolean) foo.invoke(null));
     }
 
+    public void testNotIsOperator() throws Exception {
+        loadText("fun foo(x: Any) = x !is Runnable");
+        Method foo = generateFunction();
+        assertTrue((Boolean) foo.invoke(null, new Object()));
+        assertFalse((Boolean) foo.invoke(null, newRunnable()));
+    }
+
     private Runnable newRunnable() {
         return new Runnable() {
             @Override

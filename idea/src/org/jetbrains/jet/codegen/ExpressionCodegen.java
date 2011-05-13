@@ -1310,7 +1310,8 @@ public class ExpressionCodegen extends JetVisitor {
             Type type = typeMapper.jvmType((ClassDescriptor) descriptor, OwnerKind.INTERFACE);
             v.instanceOf(type);
         }
-        myStack.push(StackValue.onStack(Type.BOOLEAN_TYPE));
+        StackValue value = StackValue.onStack(Type.BOOLEAN_TYPE);
+        myStack.push(expression.isNot() ? StackValue.not(value) : value);
     }
 
     private void newTypeInfo(JetType jetType) {
