@@ -16,8 +16,9 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull List<Annotation> annotations,
             @NotNull Variance variance,
-            @NotNull String name) {
-        TypeParameterDescriptor typeParameterDescriptor = createForFurtherModification(containingDeclaration, annotations, variance, name);
+            @NotNull String name,
+            int index) {
+        TypeParameterDescriptor typeParameterDescriptor = createForFurtherModification(containingDeclaration, annotations, variance, name, index);
         typeParameterDescriptor.addUpperBound(JetStandardClasses.getDefaultBound());
         return typeParameterDescriptor;
     }
@@ -26,10 +27,12 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull List<Annotation> annotations,
             @NotNull Variance variance,
-            @NotNull String name) {
-        return new TypeParameterDescriptor(containingDeclaration, annotations, variance, name);
+            @NotNull String name,
+            int index) {
+        return new TypeParameterDescriptor(containingDeclaration, annotations, variance, name, index);
     }
 
+    private final int index;
     private final Variance variance;
     private final Set<JetType> upperBounds;
     private final TypeConstructor typeConstructor;
@@ -40,8 +43,10 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull List<Annotation> annotations,
             @NotNull Variance variance,
-            @NotNull String name) {
+            @NotNull String name,
+            int index) {
         super(containingDeclaration, annotations, name);
+        this.index = index;
         this.variance = variance;
         this.upperBounds = Sets.newLinkedHashSet();
         // TODO: Should we actually pass the annotations on to the type constructor?
@@ -113,5 +118,9 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
                             getBoundsAsType().getMemberScope());
         }
         return type;
+    }
+
+    public int getIndex() {
+        return index;
     }
 }

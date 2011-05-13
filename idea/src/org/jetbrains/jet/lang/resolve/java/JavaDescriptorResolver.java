@@ -125,7 +125,8 @@ public class JavaDescriptorResolver {
                 owner,
                 Collections.<Annotation>emptyList(), // TODO
                 Variance.INVARIANT,
-                typeParameter.getName()
+                typeParameter.getName(),
+                typeParameter.getIndex()
         );
         PsiClassType[] referencedTypes = typeParameter.getExtendsList().getReferencedTypes();
         if (referencedTypes.length == 0){
