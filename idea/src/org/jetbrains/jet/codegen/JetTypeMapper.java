@@ -2,6 +2,7 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
+import jet.typeinfo.TypeInfo;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -12,6 +13,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.Method;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,6 +21,7 @@ import java.util.List;
  */
 public class JetTypeMapper {
     static final Type TYPE_OBJECT = Type.getObjectType("java/lang/Object");
+    static final Type TYPE_TYPEINFO = Type.getType(TypeInfo.class);
 
     private final JetStandardLibrary standardLibrary;
     private final BindingContext bindingContext;
@@ -57,6 +60,9 @@ public class JetTypeMapper {
     }
 
     public Type jvmType(ClassDescriptor jetClass, OwnerKind kind) {
+        if (jetClass == standardLibrary.getString()) {
+            return Type.getType(String.class);
+        }
         return Type.getType("L" + jvmName(jetClass, kind) + ";");
     }
 
@@ -227,17 +233,21 @@ public class JetTypeMapper {
     public Method mapConstructorSignature(ConstructorDescriptor descriptor, OwnerKind kind) {
         boolean delegate = kind == OwnerKind.DELEGATING_IMPLEMENTATION;
         List<ValueParameterDescriptor> parameters = descriptor.getUnsubstitutedValueParameters();
-        int count = parameters.size();
-        int first = delegate ? 1 : 0;
-        Type[] parameterTypes = new Type[count + first];
+        List<Type> parameterTypes = new ArrayList<Type>();
+        ClassDescriptor classDescriptor = descriptor.getContainingDeclaration();
         if (delegate) {
-            parameterTypes[0] = jetInterfaceType(descriptor.getContainingDeclaration());
+            parameterTypes.add(jetInterfaceType(classDescriptor));
+        }
+        for (ValueParameterDescriptor parameter : parameters) {
+            parameterTypes.add(mapType(parameter.getOutType()));
         }
 
-        for (int i = 0; i < count; i++) {
-            parameterTypes[i + first] = mapType(parameters.get(i).getOutType());
+        List<TypeParameterDescriptor> typeParameters = classDescriptor.getTypeConstructor().getParameters();
+        for (TypeParameterDescriptor typeParameter : typeParameters) {
+            parameterTypes.add(TYPE_TYPEINFO);
         }
-        return new Method("<init>", Type.VOID_TYPE, parameterTypes);
+
+        return new Method("<init>", Type.VOID_TYPE, parameterTypes.toArray(new Type[parameterTypes.size()]));
     }
 
     static int getAccessModifiers(JetDeclaration p, int defaultFlags) {

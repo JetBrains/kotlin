@@ -1,0 +1,7 @@
+class Wrapper<T>() {
+}
+
+fun foo() {
+  val wrapper = new Wrapper<Int>()
+  return wrapper is Wrapper<String>
+}

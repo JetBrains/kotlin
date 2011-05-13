@@ -1147,6 +1147,13 @@ public class ExpressionCodegen extends JetVisitor {
 
             Method method = typeMapper.mapConstructorSignature((ConstructorDescriptor) constructorDescriptor, OwnerKind.IMPLEMENTATION);
             pushMethodArguments(expression, method);
+
+            for (JetTypeReference typeArgumentReference : constructorType.getTypeArgumentsAsTypes()) {
+                JetType typeArgument = bindingContext.resolveTypeReference(typeArgumentReference);
+                // TODO is the makeNullable() call correct here?
+                ClassCodegen.newTypeInfo(v, typeMapper.mapType(TypeUtils.makeNullable(typeArgument)));
+            }
+
             v.invokespecial(JetTypeMapper.jvmNameForImplementation(classDecl), "<init>", method.getDescriptor());
             myStack.push(StackValue.onStack(type));
             return;
@@ -1289,17 +1296,45 @@ public class ExpressionCodegen extends JetVisitor {
         }
         JetTypeReference typeReference = ((JetTypePattern) pattern).getTypeReference();
         JetType jetType = bindingContext.resolveTypeReference(typeReference);
-        if (jetType.getArguments().size() > 0) {
-            throw new UnsupportedOperationException("don't know how to handle type arguments in is");
-        }
         DeclarationDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
         if (!(descriptor instanceof ClassDescriptor)) {
             throw new UnsupportedOperationException("don't know how to handle non-class types in is");
         }
-        gen(expression.getLeftHandSide(), OBJECT_TYPE);
-        Type type = typeMapper.jvmType((ClassDescriptor) descriptor, OwnerKind.INTERFACE);
-        v.instanceOf(type);
+        if (jetType.getArguments().size() > 0) {
+            newTypeInfo(jetType);
+            gen(expression.getLeftHandSide(), OBJECT_TYPE);
+            v.invokevirtual("jet/typeinfo/TypeInfo", "isInstance", "(Ljava/lang/Object;)Z");
+        }
+        else {
+            gen(expression.getLeftHandSide(), OBJECT_TYPE);
+            Type type = typeMapper.jvmType((ClassDescriptor) descriptor, OwnerKind.INTERFACE);
+            v.instanceOf(type);
+        }
         myStack.push(StackValue.onStack(Type.BOOLEAN_TYPE));
+    }
+
+    private void newTypeInfo(JetType jetType) {
+        v.anew(JetTypeMapper.TYPE_TYPEINFO);
+        v.dup();
+
+        v.aconst(typeMapper.jvmType((ClassDescriptor) jetType.getConstructor().getDeclarationDescriptor(), OwnerKind.INTERFACE));
+        List<TypeProjection> arguments = jetType.getArguments();
+        if (arguments.size() > 0) {
+            v.iconst(arguments.size());
+            v.newarray(JetTypeMapper.TYPE_TYPEINFO);
+
+            for (int i = 0, argumentsSize = arguments.size(); i < argumentsSize; i++) {
+                TypeProjection argument = arguments.get(i);
+                v.dup();
+                v.iconst(i);
+                newTypeInfo(argument.getType());
+                v.astore(JetTypeMapper.TYPE_OBJECT);
+            }
+            v.invokespecial("jet/typeinfo/TypeInfo", "<init>", "(Ljava/lang/Class;[Ljet/typeinfo/TypeInfo;)V");
+        }
+        else {
+            v.invokespecial("jet/typeinfo/TypeInfo", "<init>", "(Ljava/lang/Class;)V");
+        }
     }
 
     private static class CompilationException extends RuntimeException {

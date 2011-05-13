@@ -45,6 +45,13 @@ public class TypeInfoTest extends CodegenTestCase {
         assertTrue((Boolean) foo.invoke(null, newRunnable()));
     }
 
+    public void testIsWithGenerics() throws Exception {
+        loadFile();
+        System.out.println(generateToText());
+        Method foo = generateFunction();
+        assertFalse((Boolean) foo.invoke(null));
+    }
+
     private Runnable newRunnable() {
         return new Runnable() {
             @Override
