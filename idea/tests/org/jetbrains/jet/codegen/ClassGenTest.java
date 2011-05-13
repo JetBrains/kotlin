@@ -8,7 +8,7 @@ import java.util.List;
  */
 public class ClassGenTest extends CodegenTestCase {
     public void testPSVMClass() throws Exception {
-        loadFile("simpleClass.jet");
+        loadFile("classes/simpleClass.jet");
         System.out.println(generateToText());
 
         final Class aClass = loadClass("SimpleClass", generateClassesInFile());
@@ -17,7 +17,7 @@ public class ClassGenTest extends CodegenTestCase {
     }
 
     public void testArrayListInheritance() throws Exception {
-        loadFile("inheritingFromArrayList.jet");
+        loadFile("classes/inheritingFromArrayList.jet");
         System.out.println(generateToText());
 
         final Class aClass = loadClass("Foo", generateClassesInFile());
@@ -25,15 +25,15 @@ public class ClassGenTest extends CodegenTestCase {
     }
 
     public void testInheritanceAndDelegation_DelegatingDefaultConstructorProperties() throws Exception {
-        blackBoxFile("inheritance.jet");
+        blackBoxFile("classes/inheritance.jet");
     }
 
     public void testFunDelegation() throws Exception {
-        blackBoxFile("funDelegation.jet");
+        blackBoxFile("classes/funDelegation.jet");
     }
 
     public void testPropertyDelegation() throws Exception {
-        blackBoxFile("propertyDelegation.jet");
+        blackBoxFile("classes/propertyDelegation.jet");
     }
 
     private static void checkInterface(Class aClass, Class ifs) {
@@ -44,7 +44,7 @@ public class ClassGenTest extends CodegenTestCase {
     }
 
     public void testNewInstanceExplicitConstructor() throws Exception {
-        loadFile("newInstanceDefaultConstructor.jet");
+        loadFile("classes/newInstanceDefaultConstructor.jet");
         System.out.println(generateToText());
         final Codegens codegens = generateClassesInFile();
         loadImplementationClass(codegens, "SimpleClass");

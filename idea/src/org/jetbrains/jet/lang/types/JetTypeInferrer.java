@@ -820,7 +820,8 @@ public class JetTypeInferrer {
 
         @Override
         public void visitTypeofExpression(JetTypeofExpression expression) {
-            trace.getErrorHandler().genericError(expression.getNode(), "Return some reflection interface"); // TODO
+            JetType type = safeGetType(scope, expression.getBaseExpression(), false);
+            result = semanticServices.getStandardLibrary().getTypeInfoType(type);
         }
 
         @Override

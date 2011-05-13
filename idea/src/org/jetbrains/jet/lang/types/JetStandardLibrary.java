@@ -49,6 +49,7 @@ public class JetStandardLibrary {
     private final ClassDescriptor stringClass;
     private final ClassDescriptor arrayClass;
     private final ClassDescriptor iterableClass;
+    private final ClassDescriptor typeInfoClass;
     private final JetType byteType;
 
     private final JetType charType;
@@ -89,6 +90,7 @@ public class JetStandardLibrary {
             this.stringClass = (ClassDescriptor) libraryScope.getClassifier("String");
             this.arrayClass = (ClassDescriptor) libraryScope.getClassifier("Array");
             this.iterableClass = (ClassDescriptor) libraryScope.getClassifier("Iterable");
+            this.typeInfoClass = (ClassDescriptor) libraryScope.getClassifier("TypeInfo");
 
             this.byteType = new JetTypeImpl(getByte());
             this.charType = new JetTypeImpl(getChar());
@@ -162,6 +164,17 @@ public class JetStandardLibrary {
     @NotNull
     public ClassDescriptor getIterable() {
         return iterableClass;
+    }
+
+    public ClassDescriptor getTypeInfo() {
+        return typeInfoClass;
+    }
+
+    @NotNull
+    public JetType getTypeInfoType(@NotNull JetType type) {
+        TypeProjection typeProjection = new TypeProjection(type);
+        List<TypeProjection> arguments = Collections.singletonList(typeProjection);
+        return new JetTypeImpl(Collections.<Annotation>emptyList(), getTypeInfo().getTypeConstructor(), false, arguments, getTypeInfo().getMemberScope(arguments));
     }
 
     @NotNull
