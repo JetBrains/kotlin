@@ -81,6 +81,11 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertType("(1, 'a')", JetStandardClasses.getTupleType(library.getIntType(), library.getCharType()));
     }
 
+    public void testTypeInfo() throws Exception {
+        assertType("typeof(1)", "TypeInfo<Int>");
+        assertType("typeof(typeof(1))", "TypeInfo<TypeInfo<Int>>");
+    }
+
     public void testJumps() throws Exception {
         assertType("throw e", JetStandardClasses.getNothingType());
         assertType("return", JetStandardClasses.getNothingType());
