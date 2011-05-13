@@ -1281,6 +1281,27 @@ public class ExpressionCodegen extends JetVisitor {
         v.invokeinterface("jet/JetObject", "getTypeInfo", "()Ljet/typeinfo/TypeInfo;");
     }
 
+    @Override
+    public void visitIsExpression(JetIsExpression expression) {
+        JetPattern pattern = expression.getPattern();
+        if (!(pattern instanceof JetTypePattern)) {
+            throw new UnsupportedOperationException("can only generate a type pattern with 'is'");
+        }
+        JetTypeReference typeReference = ((JetTypePattern) pattern).getTypeReference();
+        JetType jetType = bindingContext.resolveTypeReference(typeReference);
+        if (jetType.getArguments().size() > 0) {
+            throw new UnsupportedOperationException("don't know how to handle type arguments in is");
+        }
+        DeclarationDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
+        if (!(descriptor instanceof ClassDescriptor)) {
+            throw new UnsupportedOperationException("don't know how to handle non-class types in is");
+        }
+        gen(expression.getLeftHandSide(), OBJECT_TYPE);
+        Type type = typeMapper.jvmType((ClassDescriptor) descriptor, OwnerKind.INTERFACE);
+        v.instanceOf(type);
+        myStack.push(StackValue.onStack(Type.BOOLEAN_TYPE));
+    }
+
     private static class CompilationException extends RuntimeException {
     }
 }

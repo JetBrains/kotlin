@@ -34,12 +34,23 @@ public class TypeInfoTest extends CodegenTestCase {
         System.out.println(generateToText());
         Method foo = generateFunction();
         assertNull(foo.invoke(null, new Object()));
-        Runnable r = new Runnable() {
+        Runnable r = newRunnable();
+        assertSame(r, foo.invoke(null, r));
+    }
+
+    public void testIsOperator() throws Exception {
+        loadText("fun foo(x: Any) = x is Runnable");
+        Method foo = generateFunction();
+        assertFalse((Boolean) foo.invoke(null, new Object()));
+        assertTrue((Boolean) foo.invoke(null, newRunnable()));
+    }
+
+    private Runnable newRunnable() {
+        return new Runnable() {
             @Override
             public void run() {
             }
         };
-        assertSame(r, foo.invoke(null, r));
     }
 }
 
