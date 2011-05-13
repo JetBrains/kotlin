@@ -1,5 +1,6 @@
 package org.jetbrains.jet.codegen;
 
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
@@ -12,7 +13,10 @@ import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.parsing.JetParsingTest;
 
 import java.lang.reflect.Method;
+import java.nio.channels.NonWritableChannelException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author yole
@@ -38,6 +42,14 @@ public abstract class CodegenTestCase extends LightCodeInsightFixtureTestCase {
 
     protected void loadFile(final String name) {
         myFixture.configureByFile(JetParsingTest.getTestDataDir() + "/codegen/" + name);
+    }
+
+    protected void loadFile() {
+        loadFile(getPrefix() + "/" + getTestName(true) + ".jet");
+    }
+
+    protected String getPrefix() {
+        throw new UnsupportedOperationException();
     }
 
     protected void blackBoxFile(String filename) throws Exception {
@@ -86,7 +98,8 @@ public abstract class CodegenTestCase extends LightCodeInsightFixtureTestCase {
         JetFile jetFile = (JetFile) myFixture.getFile();
         final JetNamespace namespace = jetFile.getRootNamespace();
         String fqName = NamespaceCodegen.getJVMClassName(namespace.getFQName()).replace("/", ".");
-        return loadClass(fqName, state);
+        Map<String, Class> classMap = loadAllClasses(state);
+        return classMap.get(fqName);
     }
 
     protected Class loadClass(String fqName, Codegens state) {
@@ -100,6 +113,17 @@ public abstract class CodegenTestCase extends LightCodeInsightFixtureTestCase {
 
         fail("No classfile was generated for: " + fqName);
         return null;
+    }
+
+    protected Map<String, Class> loadAllClasses(Codegens state) {
+        Map<String, Class> result = new HashMap<String, Class>();
+        for (String fileName : state.files()) {
+            String className = StringUtil.trimEnd(fileName, ".class").replace('/', '.');
+            byte[] data = state.asBytes(fileName);
+            Class aClass = myClassLoader.doDefineClass(className, data);
+            result.put(className, aClass);
+        }
+        return result;
     }
 
     protected Codegens generateClassesInFile() {

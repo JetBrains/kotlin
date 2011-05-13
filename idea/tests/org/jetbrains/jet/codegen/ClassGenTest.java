@@ -46,10 +46,7 @@ public class ClassGenTest extends CodegenTestCase {
     public void testNewInstanceExplicitConstructor() throws Exception {
         loadFile("classes/newInstanceDefaultConstructor.jet");
         System.out.println(generateToText());
-        final Codegens codegens = generateClassesInFile();
-        loadImplementationClass(codegens, "SimpleClass");
-        Class ns = loadRootNamespaceClass(codegens);
-        final Method method = findMethodByName(ns, "test");
+        final Method method = generateFunction("test");
         final Integer returnValue = (Integer) method.invoke(null);
         assertEquals(610, returnValue.intValue());
     }

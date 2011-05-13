@@ -10,10 +10,7 @@ import org.objectweb.asm.util.TraceClassVisitor;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author max
@@ -22,7 +19,7 @@ public class Codegens {
     private final Project project;
     private final boolean isText;
     private final Map<String, NamespaceCodegen> ns2codegen = new HashMap<String, NamespaceCodegen>();
-    private final Map<String, ClassVisitor> generators = new HashMap<String, ClassVisitor>();
+    private final Map<String, ClassVisitor> generators = new LinkedHashMap<String, ClassVisitor>();
     private boolean isDone = false;
 
     public Codegens(Project project, boolean text) {

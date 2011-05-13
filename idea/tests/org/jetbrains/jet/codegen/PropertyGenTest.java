@@ -8,18 +8,23 @@ import java.lang.reflect.Modifier;
  * @author yole
  */
 public class PropertyGenTest extends CodegenTestCase {
+    @Override
+    protected String getPrefix() {
+        return "properties";
+    }
+
     public void testPrivateVal() throws Exception {
-        loadFile("properties/privateVal.jet");
+        loadFile();
         System.out.println(generateToText());
         final Class aClass = loadImplementationClass(generateClassesInFile(), "PrivateVal");
         final Field[] fields = aClass.getDeclaredFields();
-        assertEquals(1, fields.length);
-        final Field field = fields[0];
+        assertEquals(2, fields.length);  // $typeInfo, prop
+        final Field field = fields[1];
         assertEquals("prop", field.getName());
     }
 
     public void testPrivateVar() throws Exception {
-        loadFile("properties/privateVar.jet");
+        loadFile();
         System.out.println(generateToText());
         final Class aClass = loadImplementationClass(generateClassesInFile(), "PrivateVar");
         final Object instance = aClass.newInstance();
@@ -73,7 +78,7 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     public void testFieldSetter() throws Exception {
-        loadFile("properties/fieldSetter.jet");
+        loadFile();
         System.out.println(generateToText());
         final Method method = generateFunction("append");
         method.invoke(null, "IntelliJ ");
@@ -82,7 +87,7 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     public void testFieldSetterPlusEq() throws Exception {
-        loadFile("properties/fieldSetterPlusEq.jet");
+        loadFile();
         System.out.println(generateToText());
         final Method method = generateFunction("append");
         method.invoke(null, "IntelliJ ");

@@ -1,0 +1,4 @@
+class Point() {
+}
+
+fun foo() = new Point()
