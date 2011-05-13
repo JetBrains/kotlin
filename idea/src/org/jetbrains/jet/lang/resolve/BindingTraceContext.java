@@ -72,7 +72,6 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
     @Override
     public void recordExpressionType(@NotNull JetExpression expression, @NotNull JetType type) {
         expressionTypes.put(expression, type);
-        markAsProcessed(expression);
     }
 
     @Override

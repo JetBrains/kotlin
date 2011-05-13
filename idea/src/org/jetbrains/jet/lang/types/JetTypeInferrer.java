@@ -599,7 +599,6 @@ public class JetTypeInferrer {
             }
             try {
                 expression.accept(this);
-                trace.markAsProcessed(expression);
                 if (result instanceof DeferredType) {
                     result = ((DeferredType) result).getActualType();
                 }
@@ -615,6 +614,7 @@ public class JetTypeInferrer {
                 result = null;
             }
 
+            trace.markAsProcessed(expression);
             return result;
         }
 

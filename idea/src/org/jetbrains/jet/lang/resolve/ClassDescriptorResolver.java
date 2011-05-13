@@ -401,7 +401,7 @@ public class ClassDescriptorResolver {
 
     @NotNull
     public VariableDescriptor resolveLocalVariableDescriptor(DeclarationDescriptor containingDeclaration, WritableScope scope, JetProperty property) {
-        JetType type = getType(scope, property);
+        JetType type = getType(scope, property, false); // For a local variable the type must not be deferred
 
         VariableDescriptorImpl variableDescriptor = new LocalVariableDescriptor(
                 containingDeclaration,
@@ -415,7 +415,7 @@ public class ClassDescriptorResolver {
 
     @NotNull
     public PropertyDescriptor resolvePropertyDescriptor(@NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope scope, JetProperty property) {
-        JetType type = getType(scope, property);
+        JetType type = getType(scope, property, true);
 
         boolean isVar = property.isVar();
         JetModifierList modifierList = property.getModifierList();
@@ -434,6 +434,39 @@ public class ClassDescriptorResolver {
 
         trace.recordDeclarationResolution(property, propertyDescriptor);
         return propertyDescriptor;
+    }
+
+    @NotNull
+    private JetType getType(@NotNull final JetScope scope, @NotNull JetProperty property, boolean allowDeferred) {
+        // TODO : receiver?
+        JetTypeReference propertyTypeRef = property.getPropertyTypeRef();
+
+        JetType type;
+        if (propertyTypeRef == null) {
+            final JetExpression initializer = property.getInitializer();
+            if (initializer == null) {
+                trace.getErrorHandler().genericError(property.getNode(), "This property must either have a type annotation or be initialized");
+                type = ErrorUtils.createErrorType("No type, no body");
+            } else {
+                // TODO : ??? Fix-point here: what if we have something like "val a = foo {a.bar()}"
+                // TODO : a risk of a memory leak
+                LazyValue<JetType> lazyValue = new LazyValue<JetType>() {
+                    @Override
+                    protected JetType compute() {
+                        return semanticServices.getTypeInferrer(trace, JetFlowInformationProvider.THROW_EXCEPTION).safeGetType(scope, initializer, false);
+                    }
+                };
+                if (allowDeferred) {
+                    type = new DeferredType(lazyValue);
+                }
+                else {
+                    type = lazyValue.get();
+                }
+            }
+        } else {
+            type = typeResolver.resolveType(scope, propertyTypeRef);
+        }
+        return type;
     }
 
     @NotNull
@@ -513,33 +546,6 @@ public class ClassDescriptorResolver {
             trace.recordDeclarationResolution(getter, getterDescriptor);
         }
         return getterDescriptor;
-    }
-
-    @NotNull
-    private JetType getType(@NotNull final JetScope scope, @NotNull JetProperty property) {
-        // TODO : receiver?
-        JetTypeReference propertyTypeRef = property.getPropertyTypeRef();
-
-        JetType type;
-        if (propertyTypeRef == null) {
-            final JetExpression initializer = property.getInitializer();
-            if (initializer == null) {
-                trace.getErrorHandler().genericError(property.getNode(), "This property must either have a type annotation or be initialized");
-                type = ErrorUtils.createErrorType("No type, no body");
-            } else {
-                // TODO : ??? Fix-point here: what if we have something like "val a = foo {a.bar()}"
-                // TODO : a risk of a memory leak
-                type = new DeferredType(new LazyValue<JetType>() {
-                    @Override
-                    protected JetType compute() {
-                        return semanticServices.getTypeInferrer(trace, JetFlowInformationProvider.THROW_EXCEPTION).safeGetType(scope, initializer, false);
-                    }
-                });
-            }
-        } else {
-            type = typeResolver.resolveType(scope, propertyTypeRef);
-        }
-        return type;
     }
 
     @NotNull
