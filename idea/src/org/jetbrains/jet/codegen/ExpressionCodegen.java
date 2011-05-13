@@ -1330,9 +1330,8 @@ public class ExpressionCodegen extends JetVisitor {
         if (declarationDescriptor instanceof TypeParameterDescriptor) {
             DeclarationDescriptor containingDeclaration = declarationDescriptor.getContainingDeclaration();
             if (containingDeclaration == contextType && contextType instanceof ClassDescriptor) {
-                int index = indexOfTypeParameter((ClassDescriptor) contextType, (TypeParameterDescriptor) declarationDescriptor);
                 loadTypeInfo((ClassDescriptor) contextType, v);
-                v.iconst(index);
+                v.iconst(((TypeParameterDescriptor) declarationDescriptor).getIndex());
                 v.invokevirtual("jet/typeinfo/TypeInfo", "getTypeParameter", "(I)Ljet/typeinfo/TypeInfo;");
                 return;
             }
@@ -1359,15 +1358,6 @@ public class ExpressionCodegen extends JetVisitor {
         else {
             v.invokespecial("jet/typeinfo/TypeInfo", "<init>", "(Ljava/lang/Class;)V");
         }
-    }
-
-    private int indexOfTypeParameter(ClassDescriptor classDescriptor, TypeParameterDescriptor typeParameterDescriptor) {
-        List<TypeParameterDescriptor> parameters = classDescriptor.getTypeConstructor().getParameters();
-        int index = parameters.indexOf(typeParameterDescriptor);
-        if (index < 0) {
-            throw new UnsupportedOperationException("can't find type parameter index");
-        }
-        return index;
     }
 
     private static class CompilationException extends RuntimeException {
