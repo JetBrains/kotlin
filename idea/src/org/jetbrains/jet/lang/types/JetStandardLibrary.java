@@ -90,7 +90,7 @@ public class JetStandardLibrary {
             this.stringClass = (ClassDescriptor) libraryScope.getClassifier("String");
             this.arrayClass = (ClassDescriptor) libraryScope.getClassifier("Array");
             this.iterableClass = (ClassDescriptor) libraryScope.getClassifier("Iterable");
-            this.typeInfoClass = (ClassDescriptor) libraryScope.getClassifier("TypeInfo");
+            this.typeInfoClass = (ClassDescriptor) libraryScope.getNamespace("typeinfo").getMemberScope().getClassifier("TypeInfo");
 
             this.byteType = new JetTypeImpl(getByte());
             this.charType = new JetTypeImpl(getChar());

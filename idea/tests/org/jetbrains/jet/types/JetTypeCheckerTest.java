@@ -82,8 +82,8 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
     }
 
     public void testTypeInfo() throws Exception {
-        assertType("typeof(1)", "TypeInfo<Int>");
-        assertType("typeof(typeof(1))", "TypeInfo<TypeInfo<Int>>");
+        assertType("typeof(1)", "typeinfo.TypeInfo<Int>");
+        assertType("typeof(typeof(1))", "typeinfo.TypeInfo<typeinfo.TypeInfo<Int>>");
     }
 
     public void testJumps() throws Exception {
