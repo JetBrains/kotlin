@@ -1,0 +1,7 @@
+fun test() {
+   if (1 is Int) {
+     if (<warning>1 is Boolean</warning>) {
+
+     }
+   }
+}

@@ -864,6 +864,8 @@ public class JetTypeInferrer {
             }
         }
 
+
+
         @Override
         public void visitTupleExpression(JetTupleExpression expression) {
             List<JetExpression> entries = expression.getEntries();
@@ -1255,6 +1257,19 @@ public class JetTypeInferrer {
         @Override
         public void visitIsExpression(JetIsExpression expression) {
             // TODO : patterns and everything
+            JetType knownType = getType(scope, expression.getLeftHandSide(), false);
+            JetPattern pattern = expression.getPattern();
+            if (pattern instanceof JetTypePattern) {
+                JetTypePattern typePattern = (JetTypePattern) pattern;
+                JetTypeReference typeReference = typePattern.getTypeReference();
+                if (typeReference != null && knownType != null) {
+                    JetType targetType = typeResolver.resolveType(scope, typeReference);
+                    if (!semanticServices.getTypeChecker().isSubtypeOf(targetType, knownType)) {
+                        trace.getErrorHandler().genericWarning(expression.getNode(), "Expression always evaluates to false"); // TODO : make an error?
+                    }
+                }
+
+            }
             result = semanticServices.getStandardLibrary().getBooleanType();
         }
 

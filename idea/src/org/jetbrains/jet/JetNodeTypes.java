@@ -117,7 +117,7 @@ public interface JetNodeTypes {
     JetNodeType ROOT_NAMESPACE            = new JetNodeType("ROOT_NAMESPACE", JetRootNamespaceExpression.class);
     JetNodeType DECOMPOSER_ARGUMENT_LIST  = new JetNodeType("DECOMPOSER_ARGUMENT_LIST");
     JetNodeType DECOMPOSER_ARGUMENT       = new JetNodeType("DECOMPOSER_ARGUMENT");
-    JetNodeType TYPE_PATTERN              = new JetNodeType("TYPE_PATTERN");
+    JetNodeType TYPE_PATTERN              = new JetNodeType("TYPE_PATTERN", JetTypePattern.class);
     JetNodeType EXPRESSION_PATTERN        = new JetNodeType("EXPRESSION_PATTERN");
     JetNodeType BINDING_PATTERN           = new JetNodeType("BINDING_PATTERN");
     JetNodeType WILDCARD_PATTERN          = new JetNodeType("WILDCARD_PATTERN");

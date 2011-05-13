@@ -601,6 +601,14 @@ public class JetControlFlowProcessor {
             builder.read(expression);
         }
 
+
+        @Override
+        public void visitIsExpression(JetIsExpression expression) {
+            value(expression.getLeftHandSide(), false, inCondition);
+            // TODO : builder.read(expression.getPattern());
+            builder.read(expression);
+        }
+
         @Override
         public void visitTypeProjection(JetTypeProjection typeProjection) {
             // TODO : Support Type Arguments. Class object may be initialized at this point");
