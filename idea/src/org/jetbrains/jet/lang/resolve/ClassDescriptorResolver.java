@@ -85,16 +85,19 @@ public class ClassDescriptorResolver {
 
         // TODO : Where-clause
         List<TypeParameterDescriptor> typeParameters = Lists.newArrayList();
+        int index = 0;
         for (JetTypeParameter typeParameter : classElement.getTypeParameters()) {
             TypeParameterDescriptor typeParameterDescriptor = TypeParameterDescriptor.createForFurtherModification(
                     descriptor,
                     AnnotationResolver.INSTANCE.resolveAnnotations(typeParameter.getModifierList()),
                     typeParameter.getVariance(),
-                    JetPsiUtil.safeName(typeParameter.getName())
+                    JetPsiUtil.safeName(typeParameter.getName()),
+                    index
             );
             scopeForMemberResolution.addTypeParameterDescriptor(typeParameterDescriptor);
             trace.recordDeclarationResolution(typeParameter, typeParameterDescriptor);
             typeParameters.add(typeParameterDescriptor);
+            index++;
         }
 
         boolean open = classElement.hasModifier(JetTokens.OPEN_KEYWORD);
@@ -323,13 +326,14 @@ public class ClassDescriptorResolver {
     public List<TypeParameterDescriptor> resolveTypeParameters(DeclarationDescriptor containingDescriptor, WritableScope extensibleScope, List<JetTypeParameter> typeParameters) {
         // TODO : Where-clause
         List<TypeParameterDescriptor> result = new ArrayList<TypeParameterDescriptor>();
-        for (JetTypeParameter typeParameter : typeParameters) {
-            result.add(resolveTypeParameter(containingDescriptor, extensibleScope, typeParameter));
+        for (int i = 0, typeParametersSize = typeParameters.size(); i < typeParametersSize; i++) {
+            JetTypeParameter typeParameter = typeParameters.get(i);
+            result.add(resolveTypeParameter(containingDescriptor, extensibleScope, typeParameter, i));
         }
         return result;
     }
 
-    private TypeParameterDescriptor resolveTypeParameter(DeclarationDescriptor containingDescriptor, WritableScope extensibleScope, JetTypeParameter typeParameter) {
+    private TypeParameterDescriptor resolveTypeParameter(DeclarationDescriptor containingDescriptor, WritableScope extensibleScope, JetTypeParameter typeParameter, int index) {
         // TODO: other bounds from where-clause
         JetTypeReference extendsBound = typeParameter.getExtendsBound();
         JetType bound = extendsBound == null
@@ -339,7 +343,8 @@ public class ClassDescriptorResolver {
                 containingDescriptor,
                 AnnotationResolver.INSTANCE.resolveAnnotations(typeParameter.getModifierList()),
                 typeParameter.getVariance(),
-                JetPsiUtil.safeName(typeParameter.getName())
+                JetPsiUtil.safeName(typeParameter.getName()),
+                index
         );
         typeParameterDescriptor.addUpperBound(bound);
         extensibleScope.addTypeParameterDescriptor(typeParameterDescriptor);

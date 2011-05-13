@@ -47,6 +47,10 @@ public class TypeInfo<T> implements JetObject {
         return true;
     }
 
+    public TypeInfo getTypeParameter(int index) {
+        return typeParameters[index];
+    }
+
     @Override
     public TypeInfo<?> getTypeInfo() {
         if (typeInfo == null) {

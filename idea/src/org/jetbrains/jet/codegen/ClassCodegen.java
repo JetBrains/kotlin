@@ -425,14 +425,7 @@ public class ClassCodegen {
                 null);
         mv.visitCode();
         InstructionAdapter v = new InstructionAdapter(mv);
-        String owner = JetTypeMapper.jvmNameForImplementation(descriptor);
-        if (descriptor.getTypeConstructor().getParameters().size() > 0) {
-            v.load(0, JetTypeMapper.TYPE_OBJECT);
-            v.getfield(owner, "$typeInfo", "Ljet/typeinfo/TypeInfo;");
-        }
-        else {
-            v.getstatic(owner, "$typeInfo", "Ljet/typeinfo/TypeInfo;");
-        }
+        ExpressionCodegen.loadTypeInfo(descriptor, v);
         v.areturn(JetTypeMapper.TYPE_TYPEINFO);
         mv.visitMaxs(0, 0);
         mv.visitEnd();
