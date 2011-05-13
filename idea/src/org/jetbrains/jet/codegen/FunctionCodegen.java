@@ -1,6 +1,7 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -46,7 +47,9 @@ public class FunctionCodegen {
         boolean isAbstract = kind == OwnerKind.INTERFACE || bodyExpression == null;
         if (isAbstract) flags |= Opcodes.ACC_ABSTRACT;
 
-        ClassDescriptor ownerClass = owner instanceof JetClass ? bindingContext.getClassDescriptor((JetClass) owner) : null;
+        DeclarationDescriptor contextDescriptor = owner instanceof JetClass
+                ? bindingContext.getClassDescriptor((JetClass) owner)
+                : bindingContext.getNamespaceDescriptor((JetNamespace) owner);
 
         final MethodVisitor mv = v.visitMethod(flags, jvmSignature.getName(), jvmSignature.getDescriptor(), null, null);
         if (kind != OwnerKind.INTERFACE) {
@@ -63,7 +66,7 @@ public class FunctionCodegen {
                 frameMap.enter(parameter, argTypes[i].getSize());
             }
 
-            ExpressionCodegen codegen = new ExpressionCodegen(mv, bindingContext, frameMap, typeMapper, jvmSignature.getReturnType(), ownerClass, kind);
+            ExpressionCodegen codegen = new ExpressionCodegen(mv, bindingContext, frameMap, typeMapper, jvmSignature.getReturnType(), contextDescriptor, kind);
             if (kind instanceof OwnerKind.DelegateKind) {
                 OwnerKind.DelegateKind dk = (OwnerKind.DelegateKind) kind;
                 InstructionAdapter iv = new InstructionAdapter(mv);
