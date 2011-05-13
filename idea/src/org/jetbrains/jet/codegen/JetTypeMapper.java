@@ -32,7 +32,15 @@ public class JetTypeMapper {
         return psiClass.getQualifiedName().replace(".", "/");
     }
 
-    static String jvmName(ClassDescriptor jetClass, OwnerKind kind) {
+    public String jvmName(ClassDescriptor jetClass, OwnerKind kind) {
+        PsiElement declaration = bindingContext.getDeclarationPsiElement(jetClass);
+        if (declaration instanceof PsiClass) {
+            return jvmName((PsiClass) declaration);
+        }
+        return jetJvmName(jetClass, kind);
+    }
+
+    public static String jetJvmName(ClassDescriptor jetClass, OwnerKind kind) {
         if (kind == OwnerKind.INTERFACE) {
             return jvmNameForInterface(jetClass);
         }
@@ -46,6 +54,10 @@ public class JetTypeMapper {
             assert false : "Unsuitable kind";
             return "java/lang/Object";
         }
+    }
+
+    public Type jvmType(ClassDescriptor jetClass, OwnerKind kind) {
+        return Type.getType("L" + jvmName(jetClass, kind) + ";");
     }
 
     static Type psiClassType(PsiClass psiClass) {
@@ -84,7 +96,7 @@ public class JetTypeMapper {
         return jvmNameForInterface(descriptor) + "$$DImpl";
     }
 
-    static String getOwner(DeclarationDescriptor descriptor, OwnerKind kind) {
+    public String getOwner(DeclarationDescriptor descriptor, OwnerKind kind) {
         String owner;
         if (descriptor.getContainingDeclaration() instanceof NamespaceDescriptor) {
             owner = jvmName((NamespaceDescriptor) descriptor.getContainingDeclaration());

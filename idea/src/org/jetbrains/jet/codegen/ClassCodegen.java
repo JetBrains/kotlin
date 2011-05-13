@@ -73,7 +73,7 @@ public class ClassCodegen {
         ClassVisitor v = kind == OwnerKind.IMPLEMENTATION ? factory.forClassImplementation(descriptor) : factory.forClassDelegatingImplementation(descriptor);
         v.visit(Opcodes.V1_6,
                 Opcodes.ACC_PUBLIC,
-                JetTypeMapper.jvmName(descriptor, kind),
+                JetTypeMapper.jetJvmName(descriptor, kind),
                 null,
                 superClass,
                 new String[] { "jet/JetObject", JetTypeMapper.jvmNameForInterface(descriptor) }
@@ -113,7 +113,7 @@ public class ClassCodegen {
         else if (first instanceof JetDelegatorToSuperCall) {
             JetType superType = bindingContext.resolveTypeReference(first.getTypeReference());
             ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
-            return JetTypeMapper.jvmName(superClassDescriptor, kind);
+            return typeMapper.jvmName(superClassDescriptor, kind);
         }
 
         return "java/lang/Object";
@@ -177,7 +177,7 @@ public class ClassCodegen {
         final InstructionAdapter iv = new InstructionAdapter(mv);
         ExpressionCodegen codegen = new ExpressionCodegen(mv, bindingContext, frameMap, typeMapper, Type.VOID_TYPE, classDescriptor, kind);
 
-        String classname = JetTypeMapper.jvmName(classDescriptor, kind);
+        String classname = typeMapper.jvmName(classDescriptor, kind);
         final Type classType = Type.getType("L" + classname + ";");
 
         if (kind == OwnerKind.DELEGATING_IMPLEMENTATION) {

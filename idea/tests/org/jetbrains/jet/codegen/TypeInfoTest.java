@@ -28,5 +28,18 @@ public class TypeInfoTest extends CodegenTestCase {
         TypeInfo typeInfo = (TypeInfo) foo.invoke(null);
         assertNotNull(typeInfo);
     }
+
+    public void testAsSafeOperator() throws Exception {
+        loadText("fun foo(x: Any) = x as? Runnable");
+        System.out.println(generateToText());
+        Method foo = generateFunction();
+        assertNull(foo.invoke(null, new Object()));
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+            }
+        };
+        assertSame(r, foo.invoke(null, r));
+    }
 }
 
