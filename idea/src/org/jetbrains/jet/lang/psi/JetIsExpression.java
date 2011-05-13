@@ -3,6 +3,8 @@ package org.jetbrains.jet.lang.psi;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lexer.JetTokens;
 
 /**
  * @author abreslav
@@ -25,6 +27,15 @@ public class JetIsExpression extends JetExpression {
     @Nullable @IfNotParsed
     public JetPattern getPattern() {
         return findChildByClass(JetPattern.class);
+    }
+
+    @NotNull
+    public JetSimpleNameExpression getOperationReference() {
+        return (JetSimpleNameExpression) findChildByType(JetNodeTypes.OPERATION_REFERENCE);
+    }
+
+    public boolean isNot() {
+        return getOperationReference().getReferencedNameElementType() == JetTokens.NOT_IS;
     }
 
 }

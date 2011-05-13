@@ -43,6 +43,7 @@ public class ExpressionCodegen extends JetVisitor {
     private static final String ITERATOR_NEXT_DESCRIPTOR = "()Ljava/lang/Object;";
     private static final String INT_RANGE_CONSTRUCTOR_DESCRIPTOR = "(II)V";
 
+    private static final Type OBJECT_TYPE = Type.getType(Object.class);
     private static final Type ITERATOR_TYPE = Type.getType(Iterator.class);
     private static final Type INT_RANGE_TYPE = Type.getType(IntRange.class);
     private static final Type JET_OBJECT_TYPE = Type.getType(JetObject.class);
@@ -501,11 +502,11 @@ public class ExpressionCodegen extends JetVisitor {
         String fieldOwner;
         String interfaceOwner;
         if (isInsideClass || isStatic) {
-            fieldOwner = interfaceOwner = JetTypeMapper.getOwner(propertyDescriptor, contextKind);
+            fieldOwner = interfaceOwner = typeMapper.getOwner(propertyDescriptor, contextKind);
         }
         else {
             fieldOwner = null;
-            interfaceOwner = JetTypeMapper.getOwner(propertyDescriptor, OwnerKind.INTERFACE);
+            interfaceOwner = typeMapper.getOwner(propertyDescriptor, OwnerKind.INTERFACE);
         }
 
         return StackValue.property(propertyDescriptor.getName(), fieldOwner, interfaceOwner, typeMapper.mapType(outType), isStatic, getter, setter);
@@ -1146,6 +1147,13 @@ public class ExpressionCodegen extends JetVisitor {
 
             Method method = typeMapper.mapConstructorSignature((ConstructorDescriptor) constructorDescriptor, OwnerKind.IMPLEMENTATION);
             pushMethodArguments(expression, method);
+
+            for (JetTypeReference typeArgumentReference : constructorType.getTypeArgumentsAsTypes()) {
+                JetType typeArgument = bindingContext.resolveTypeReference(typeArgumentReference);
+                // TODO is the makeNullable() call correct here?
+                ClassCodegen.newTypeInfo(v, typeMapper.mapType(TypeUtils.makeNullable(typeArgument)));
+            }
+
             v.invokespecial(JetTypeMapper.jvmNameForImplementation(classDecl), "<init>", method.getDescriptor());
             myStack.push(StackValue.onStack(type));
             return;
@@ -1201,7 +1209,7 @@ public class ExpressionCodegen extends JetVisitor {
             v.load(0, JetTypeMapper.jetImplementationType(contextClass));
         }
         else if (contextKind == OwnerKind.DELEGATING_IMPLEMENTATION) {
-            v.getfield(JetTypeMapper.jvmName(contextClass, contextKind), "$this", JetTypeMapper.jetInterfaceType(contextClass).getDescriptor());
+            v.getfield(typeMapper.jvmName(contextClass, contextKind), "$this", JetTypeMapper.jetInterfaceType(contextClass).getDescriptor());
         }
         else {
             throw new UnsupportedOperationException("Unknown kind: " + contextKind);
@@ -1242,11 +1250,35 @@ public class ExpressionCodegen extends JetVisitor {
     @Override
     public void visitBinaryWithTypeRHSExpression(JetBinaryExpressionWithTypeRHS expression) {
         JetSimpleNameExpression operationSign = expression.getOperationSign();
-        if (operationSign.getReferencedNameElementType() == JetTokens.COLON) {
+        IElementType opToken = operationSign.getReferencedNameElementType();
+        if (opToken == JetTokens.COLON) {
             gen(expression.getLeft());
         }
         else {
-            throw new UnsupportedOperationException("should generate a cast, but don't know how");
+            JetTypeReference typeReference = expression.getRight();
+            JetType jetType = bindingContext.resolveTypeReference(typeReference);
+            if (jetType.getArguments().size() > 0) {
+                throw new UnsupportedOperationException("don't know how to handle type arguments in as/as?");
+            }
+            DeclarationDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
+            if (!(descriptor instanceof ClassDescriptor)) {
+                throw new UnsupportedOperationException("don't know how to handle non-class types in as/as?");
+            }
+            Type type = typeMapper.jvmType((ClassDescriptor) descriptor, OwnerKind.INTERFACE);
+            gen(expression.getLeft(), OBJECT_TYPE);
+            if (opToken == JetTokens.AS_SAFE) {
+                v.dup();
+                v.instanceOf(type);
+                Label isInstance = new Label();
+                v.ifne(isInstance);
+                v.pop();
+                v.aconst(null);
+                v.mark(isInstance);
+                myStack.push(StackValue.onStack(type));
+            }
+            else {
+                throw new UnsupportedOperationException("as not yet implemented");
+            }
         }
     }
 
@@ -1254,6 +1286,56 @@ public class ExpressionCodegen extends JetVisitor {
     public void visitTypeofExpression(JetTypeofExpression expression) {
         gen(expression.getBaseExpression(), JET_OBJECT_TYPE);
         v.invokeinterface("jet/JetObject", "getTypeInfo", "()Ljet/typeinfo/TypeInfo;");
+    }
+
+    @Override
+    public void visitIsExpression(JetIsExpression expression) {
+        JetPattern pattern = expression.getPattern();
+        if (!(pattern instanceof JetTypePattern)) {
+            throw new UnsupportedOperationException("can only generate a type pattern with 'is'");
+        }
+        JetTypeReference typeReference = ((JetTypePattern) pattern).getTypeReference();
+        JetType jetType = bindingContext.resolveTypeReference(typeReference);
+        DeclarationDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
+        if (!(descriptor instanceof ClassDescriptor)) {
+            throw new UnsupportedOperationException("don't know how to handle non-class types in is");
+        }
+        if (jetType.getArguments().size() > 0) {
+            newTypeInfo(jetType);
+            gen(expression.getLeftHandSide(), OBJECT_TYPE);
+            v.invokevirtual("jet/typeinfo/TypeInfo", "isInstance", "(Ljava/lang/Object;)Z");
+        }
+        else {
+            gen(expression.getLeftHandSide(), OBJECT_TYPE);
+            Type type = typeMapper.jvmType((ClassDescriptor) descriptor, OwnerKind.INTERFACE);
+            v.instanceOf(type);
+        }
+        StackValue value = StackValue.onStack(Type.BOOLEAN_TYPE);
+        myStack.push(expression.isNot() ? StackValue.not(value) : value);
+    }
+
+    private void newTypeInfo(JetType jetType) {
+        v.anew(JetTypeMapper.TYPE_TYPEINFO);
+        v.dup();
+
+        v.aconst(typeMapper.jvmType((ClassDescriptor) jetType.getConstructor().getDeclarationDescriptor(), OwnerKind.INTERFACE));
+        List<TypeProjection> arguments = jetType.getArguments();
+        if (arguments.size() > 0) {
+            v.iconst(arguments.size());
+            v.newarray(JetTypeMapper.TYPE_TYPEINFO);
+
+            for (int i = 0, argumentsSize = arguments.size(); i < argumentsSize; i++) {
+                TypeProjection argument = arguments.get(i);
+                v.dup();
+                v.iconst(i);
+                newTypeInfo(argument.getType());
+                v.astore(JetTypeMapper.TYPE_OBJECT);
+            }
+            v.invokespecial("jet/typeinfo/TypeInfo", "<init>", "(Ljava/lang/Class;[Ljet/typeinfo/TypeInfo;)V");
+        }
+        else {
+            v.invokespecial("jet/typeinfo/TypeInfo", "<init>", "(Ljava/lang/Class;)V");
+        }
     }
 
     private static class CompilationException extends RuntimeException {

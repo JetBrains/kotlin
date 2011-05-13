@@ -160,7 +160,7 @@ public class PropertyCodegen {
             }
             else {
                 iv.visitFieldInsn(kind == OwnerKind.NAMESPACE ? Opcodes.GETSTATIC : Opcodes.GETFIELD,
-                        JetTypeMapper.getOwner(propertyDescriptor, kind), propertyDescriptor.getName(),
+                        mapper.getOwner(propertyDescriptor, kind), propertyDescriptor.getName(),
                         type.getDescriptor());
             }
             iv.areturn(type);
@@ -206,7 +206,7 @@ public class PropertyCodegen {
             else {
                 iv.load(paramCode, type);
                 iv.visitFieldInsn(kind == OwnerKind.NAMESPACE ? Opcodes.PUTSTATIC : Opcodes.PUTFIELD,
-                        JetTypeMapper.getOwner(propertyDescriptor, kind), propertyDescriptor.getName(),
+                        mapper.getOwner(propertyDescriptor, kind), propertyDescriptor.getName(),
                         type.getDescriptor());
             }
 

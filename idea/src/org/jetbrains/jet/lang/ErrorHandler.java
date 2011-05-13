@@ -15,7 +15,8 @@ public class ErrorHandler {
     public static final ErrorHandler THROW_EXCEPTION = new ErrorHandler() {
         @Override
         public void unresolvedReference(@NotNull JetReferenceExpression referenceExpression) {
-            throw new IllegalStateException("Unresolved reference: " + referenceExpression.getText());
+            throw new IllegalStateException("Unresolved reference: " + referenceExpression.getText() +
+                                            " at offset "  + referenceExpression.getTextRange().getStartOffset());
         }
 
         @Override
