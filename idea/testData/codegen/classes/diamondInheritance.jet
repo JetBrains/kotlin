@@ -1,0 +1,22 @@
+class Base() {
+    public var v : Int
+}
+
+class Left() : Base() {}
+class Right() : Base() {}
+
+class D() : Left(), Right()
+
+fun vl(l : Left) : Int = l.v
+fun vr(r : Right) : Int = r.v
+
+fun box() : String {
+    val d = new D()
+    d.v = 42
+
+    if (d.v != 42) return "Fail #1"
+    if (vl(d) != 42) return "Fail #2"
+    if (vr(d) != 42) return "Fail #3"
+
+    return "OK"
+}

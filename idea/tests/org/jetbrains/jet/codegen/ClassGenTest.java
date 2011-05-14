@@ -36,6 +36,14 @@ public class ClassGenTest extends CodegenTestCase {
         blackBoxFile("classes/propertyDelegation.jet");
     }
 
+    public void testDiamondInheritance() throws Exception {
+        blackBoxFile("classes/diamondInheritance.jet");
+    }
+
+    public void testRightHandOverride() throws Exception {
+        blackBoxFile("classes/rightHandOverride.jet");
+    }
+
     private static void checkInterface(Class aClass, Class ifs) {
         for (Class anInterface : aClass.getInterfaces()) {
             if (anInterface == ifs) return;
