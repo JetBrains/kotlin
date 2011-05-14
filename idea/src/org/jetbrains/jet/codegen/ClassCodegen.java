@@ -6,7 +6,8 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.JetStandardLibrary;
+import org.jetbrains.jet.lang.types.JetType;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -14,6 +15,7 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
 import org.objectweb.asm.commons.Method;
 
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -210,6 +212,14 @@ public class ClassCodegen {
             iv.invokespecial(superClass, "<init>", /* TODO super constructor descriptor */"()V");
         }
 
+        HashSet<FunctionDescriptor> overriden = new HashSet<FunctionDescriptor>();
+        for (JetDeclaration declaration : aClass.getDeclarations()) {
+            if (declaration instanceof JetFunction) {
+                overriden.addAll(bindingContext.getFunctionDescriptor((JetFunction) declaration).getOverriddenFunctions());
+            }
+        }
+
+
         int n = 0;
         for (JetDelegationSpecifier specifier : specifiers) {
             boolean delegateOnStack = specifier instanceof JetDelegatorToSuperCall && n > 0 ||
@@ -267,7 +277,7 @@ public class ClassCodegen {
                 JetClass superClass = (JetClass) bindingContext.getDeclarationPsiElement(superClassDescriptor);
                 generateDelegates(aClass, superClass, v,
                         new OwnerKind.DelegateKind(StackValue.field(fieldType, classname, delegateField, false),
-                                JetTypeMapper.jvmNameForInterface(superClassDescriptor)));
+                                JetTypeMapper.jvmNameForInterface(superClassDescriptor)), overriden);
             }
 
             n++;
@@ -364,7 +374,7 @@ public class ClassCodegen {
         }
     }
 
-    private void generateDelegates(JetClass inClass, JetClass toClass, ClassVisitor v, OwnerKind kind) {
+    private void generateDelegates(JetClass inClass, JetClass toClass, ClassVisitor v, OwnerKind kind, Set<FunctionDescriptor> overriden) {
         final JetStandardLibrary standardLibrary = JetStandardLibrary.getJetStandardLibrary(project);
         final FunctionCodegen functionCodegen = new FunctionCodegen(toClass, v, standardLibrary, bindingContext);
         final PropertyCodegen propertyCodegen = new PropertyCodegen(v, standardLibrary, bindingContext, functionCodegen);
@@ -374,7 +384,9 @@ public class ClassCodegen {
                 propertyCodegen.gen((JetProperty) declaration, kind);
             }
             else if (declaration instanceof JetFunction) {
-                functionCodegen.gen((JetFunction) declaration, kind);
+                if (!overriden.contains(bindingContext.getFunctionDescriptor((JetFunction) declaration))) {
+                    functionCodegen.gen((JetFunction) declaration, kind);
+                }
             }
         }
 
