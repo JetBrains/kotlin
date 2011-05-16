@@ -173,7 +173,7 @@ public class JetStandardClasses {
     /*package*/ static final JetScope STANDARD_CLASSES;
 
     static {
-        WritableScope writableScope = new WritableScopeImpl(JetScope.EMPTY, STANDARD_CLASSES_NAMESPACE, ErrorHandler.DO_NOTHING, null);
+        WritableScope writableScope = new WritableScopeImpl(JetScope.EMPTY, STANDARD_CLASSES_NAMESPACE, ErrorHandler.DO_NOTHING);
         STANDARD_CLASSES = writableScope;
         writableScope.addClassifierAlias("Unit", getTuple(0));
 

@@ -69,7 +69,7 @@ public class AnalyzingUtils {
 
         JetScope libraryScope = semanticServices.getStandardLibrary().getLibraryScope();
         ModuleDescriptor owner = new ModuleDescriptor("<module>");
-        final WritableScope scope = new WritableScopeImpl(libraryScope, owner, bindingTraceContext.getErrorHandler(), null);
+        final WritableScope scope = new WritableScopeImpl(libraryScope, owner, bindingTraceContext.getErrorHandler());
 //        scope.importScope(javaSemanticServices.getDescriptorResolver().resolveNamespace("").getMemberScope());
 //        scope.importScope(javaSemanticServices.getDescriptorResolver().resolveNamespace("java.lang").getMemberScope());
         scope.importScope(new JavaPackageScope("", null, javaSemanticServices));

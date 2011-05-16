@@ -38,14 +38,14 @@ public class ClassDescriptorResolver {
 
     @Nullable
     public ClassDescriptor resolveClassDescriptor(@NotNull JetScope scope, @NotNull JetClass classElement) {
-        ClassDescriptorImpl classDescriptor = new ClassDescriptorImpl(
+        final ClassDescriptorImpl classDescriptor = new ClassDescriptorImpl(
                 scope.getContainingDeclaration(),
                 AnnotationResolver.INSTANCE.resolveAnnotations(classElement.getModifierList()),
                 JetPsiUtil.safeName(classElement.getName()));
 
         trace.recordDeclarationResolution(classElement, classDescriptor);
 
-        WritableScope parameterScope = new WritableScopeImpl(scope, classDescriptor, trace.getErrorHandler(), null);
+        final WritableScope parameterScope = new WritableScopeImpl(scope, classDescriptor, trace.getErrorHandler());
 
         // This call has side-effects on the parameterScope (fills it in)
         List<TypeParameterDescriptor> typeParameters
@@ -57,11 +57,42 @@ public class ClassDescriptorResolver {
                 ? Collections.singleton(JetStandardClasses.getAnyType())
                 : resolveDelegationSpecifiers(parameterScope, delegationSpecifiers, typeResolver);
         boolean open = classElement.hasModifier(JetTokens.OPEN_KEYWORD);
-        WritableScope members = resolveMembers(classDescriptor, classElement, typeParameters, scope, parameterScope, supertypes);
+
+        final WritableScope memberDeclarations = new WritableScopeImpl(parameterScope, classDescriptor, trace.getErrorHandler());
+
+        List<JetDeclaration> declarations = classElement.getDeclarations();
+        for (JetDeclaration declaration : declarations) {
+            declaration.accept(new JetVisitor() {
+                @Override
+                public void visitProperty(JetProperty property) {
+                    if (property.getPropertyTypeRef() != null) {
+                        memberDeclarations.addVariableDescriptor(resolvePropertyDescriptor(classDescriptor, parameterScope, property));
+                    } else {
+                        // TODO : Caution: a cyclic dependency possible
+                        throw new UnsupportedOperationException();
+                    }
+                }
+
+                @Override
+                public void visitFunction(JetFunction function) {
+                    if (function.getReturnTypeRef() != null) {
+                        memberDeclarations.addFunctionDescriptor(resolveFunctionDescriptor(classDescriptor, parameterScope, function));
+                    } else {
+                        // TODO : Caution: a cyclic dependency possible
+                        throw new UnsupportedOperationException();
+                    }
+                }
+
+                @Override
+                public void visitJetElement(JetElement elem) {
+                    throw new UnsupportedOperationException(elem.toString());
+                }
+            });
+        }
 
         WritableFunctionGroup constructors = new WritableFunctionGroup("<init>");
         for (JetConstructor constructor : classElement.getSecondaryConstructors()) {
-            constructors.addFunction(resolveSecondaryConstructorDescriptor(members, classDescriptor, constructor));
+            constructors.addFunction(resolveSecondaryConstructorDescriptor(memberDeclarations, classDescriptor, constructor));
         }
         ConstructorDescriptor primaryConstructorDescriptor = resolvePrimaryConstructorDescriptor(scope, classDescriptor, classElement);
         if (primaryConstructorDescriptor != null) {
@@ -71,7 +102,7 @@ public class ClassDescriptorResolver {
                 !open,
                 typeParameters,
                 supertypes,
-                members,
+                memberDeclarations,
                 constructors,
                 primaryConstructorDescriptor
         );
@@ -149,93 +180,6 @@ public class ClassDescriptorResolver {
         }
     }
 
-    public void resolveMutableClassDescriptor(@NotNull JetScope scope, @NotNull JetClass classElement, @NotNull MutableClassDescriptor descriptor) {
-        descriptor.setName(JetPsiUtil.safeName(classElement.getName()));
-        descriptor.getScopeForMemberResolution().addLabeledDeclaration(descriptor);
-
-        WritableScope parameterScope = descriptor.getScopeForSupertypeResolution();
-
-        // This call has side-effects on the parameterScope (fills it in)
-        List<TypeParameterDescriptor> typeParameters
-                = resolveTypeParameters(descriptor, parameterScope, classElement.getTypeParameters());
-
-        boolean open = classElement.hasModifier(JetTokens.OPEN_KEYWORD);
-        List<JetType> supertypes = new ArrayList<JetType>();
-        TypeConstructorImpl typeConstructor = new TypeConstructorImpl(
-                descriptor,
-                AnnotationResolver.INSTANCE.resolveAnnotations(classElement.getModifierList()),
-                !open,
-                JetPsiUtil.safeName(classElement.getName()),
-                typeParameters,
-                supertypes);
-        descriptor.setTypeConstructor(
-                typeConstructor
-        );
-
-        List<JetDelegationSpecifier> delegationSpecifiers = classElement.getDelegationSpecifiers();
-        // TODO : assuming that the hierarchy is acyclic
-        Collection<? extends JetType> superclasses = delegationSpecifiers.isEmpty()
-                ? Collections.singleton(JetStandardClasses.getAnyType())
-                : resolveDelegationSpecifiers(parameterScope, delegationSpecifiers, typeResolver);
-
-        // TODO : UGLY HACK
-        supertypes.addAll(superclasses);
-
-
-        // TODO : importing may be a bad idea
-        for (JetType supertype : superclasses) {
-            assert supertype != null : classElement.getName();
-            parameterScope.importScope(supertype.getMemberScope());
-        }
-
-        descriptor.getScopeForMemberResolution().setThisType(descriptor.getDefaultType());
-
-        trace.recordDeclarationResolution(classElement, descriptor);
-    }
-
-    private WritableScope resolveMembers(
-            final ClassDescriptor classDescriptor,
-            final JetClass classElement,
-            List<TypeParameterDescriptor> typeParameters,
-            final JetScope outerScope,
-            final JetScope typeParameterScope,
-            final Collection<? extends JetType> supertypes) {
-
-        final WritableScope memberDeclarations = new WritableScopeImpl(typeParameterScope, classDescriptor, trace.getErrorHandler(), null);
-
-        List<JetDeclaration> declarations = classElement.getDeclarations();
-        for (JetDeclaration declaration : declarations) {
-            declaration.accept(new JetVisitor() {
-                @Override
-                public void visitProperty(JetProperty property) {
-                    if (property.getPropertyTypeRef() != null) {
-                        memberDeclarations.addVariableDescriptor(resolvePropertyDescriptor(classDescriptor, typeParameterScope, property));
-                    } else {
-                        // TODO : Caution: a cyclic dependency possible
-                        throw new UnsupportedOperationException();
-                    }
-                }
-
-                @Override
-                public void visitFunction(JetFunction function) {
-                    if (function.getReturnTypeRef() != null) {
-                        memberDeclarations.addFunctionDescriptor(resolveFunctionDescriptor(classDescriptor, typeParameterScope, function));
-                    } else {
-                        // TODO : Caution: a cyclic dependency possible
-                        throw new UnsupportedOperationException();
-                    }
-                }
-
-                @Override
-                public void visitJetElement(JetElement elem) {
-                    throw new UnsupportedOperationException(elem.toString());
-                }
-            });
-        }
-
-        return memberDeclarations;
-    }
-
     @NotNull
     public FunctionDescriptorImpl resolveFunctionDescriptor(DeclarationDescriptor containingDescriptor, final JetScope scope, final JetFunction function) {
         final FunctionDescriptorImpl functionDescriptor = new FunctionDescriptorImpl(
@@ -243,7 +187,7 @@ public class ClassDescriptorResolver {
                 AnnotationResolver.INSTANCE.resolveAnnotations(function.getModifierList()),
                 JetPsiUtil.safeName(function.getName())
         );
-        WritableScope innerScope = new WritableScopeImpl(scope, functionDescriptor, trace.getErrorHandler(), null);
+        WritableScope innerScope = new WritableScopeImpl(scope, functionDescriptor, trace.getErrorHandler());
         innerScope.addLabeledDeclaration(functionDescriptor);
 
         // The two calls below have side-effects on parameterScope
@@ -569,7 +513,7 @@ public class ClassDescriptorResolver {
         return constructorDescriptor.initialize(
                 resolveValueParameters(
                         constructorDescriptor,
-                        new WritableScopeImpl(scope, classDescriptor, trace.getErrorHandler(), null),
+                        new WritableScopeImpl(scope, classDescriptor, trace.getErrorHandler()),
                         valueParameters));
     }
 

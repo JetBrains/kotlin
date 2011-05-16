@@ -349,7 +349,7 @@ public class JetTypeInferrer {
         }
 
         DeclarationDescriptor containingDescriptor = outerScope.getContainingDeclaration();
-        WritableScope scope = new WritableScopeImpl(outerScope, containingDescriptor, trace.getErrorHandler(), null);
+        WritableScope scope = new WritableScopeImpl(outerScope, containingDescriptor, trace.getErrorHandler());
         return getBlockReturnedTypeWithWritableScope(scope, block);
     }
 
@@ -727,7 +727,7 @@ public class JetTypeInferrer {
             if (returnTypeRef != null) {
                 returnType = typeResolver.resolveType(scope, returnTypeRef);
             } else {
-                WritableScope writableScope = new WritableScopeImpl(scope, functionDescriptor, trace.getErrorHandler(), null);
+                WritableScope writableScope = new WritableScopeImpl(scope, functionDescriptor, trace.getErrorHandler());
                 for (VariableDescriptor variableDescriptor : parameterDescriptors.values()) {
                     writableScope.addVariableDescriptor(variableDescriptor);
                 }
@@ -983,7 +983,7 @@ public class JetTypeInferrer {
                 if (catchParameter != null) {
                     VariableDescriptor variableDescriptor = classDescriptorResolver.resolveLocalVariableDescriptor(scope.getContainingDeclaration(), scope, catchParameter);
                     if (catchBody != null) {
-                        WritableScope catchScope = new WritableScopeImpl(scope, scope.getContainingDeclaration(), trace.getErrorHandler(), null);
+                        WritableScope catchScope = new WritableScopeImpl(scope, scope.getContainingDeclaration(), trace.getErrorHandler());
                         catchScope.addVariableDescriptor(variableDescriptor);
                         JetType type = getType(catchScope, catchBody, true);
                         if (type != null) {
@@ -1071,7 +1071,7 @@ public class JetTypeInferrer {
             if (body instanceof JetFunctionLiteralExpression) {
                 JetFunctionLiteralExpression function = (JetFunctionLiteralExpression) body;
                 if (!function.hasParameterSpecification()) {
-                    WritableScope writableScope = new WritableScopeImpl(scope, scope.getContainingDeclaration(), trace.getErrorHandler(), null);
+                    WritableScope writableScope = new WritableScopeImpl(scope, scope.getContainingDeclaration(), trace.getErrorHandler());
                     conditionScope = writableScope;
                     getBlockReturnedTypeWithWritableScope(writableScope, function.getBody());
                     trace.recordBlock(function);
@@ -1080,7 +1080,7 @@ public class JetTypeInferrer {
                 }
             }
             else if (body != null) {
-                WritableScope writableScope = new WritableScopeImpl(scope, scope.getContainingDeclaration(), trace.getErrorHandler(), null);
+                WritableScope writableScope = new WritableScopeImpl(scope, scope.getContainingDeclaration(), trace.getErrorHandler());
                 conditionScope = writableScope;
                 getBlockReturnedTypeWithWritableScope(writableScope, Collections.singletonList(body));
             }
@@ -1101,7 +1101,7 @@ public class JetTypeInferrer {
                 expectedParameterType = checkIterableConvention(loopRangeType, loopRange.getNode());
             }
 
-            WritableScope loopScope = new WritableScopeImpl(scope, scope.getContainingDeclaration(), trace.getErrorHandler(), null);
+            WritableScope loopScope = new WritableScopeImpl(scope, scope.getContainingDeclaration(), trace.getErrorHandler());
 
             if (loopParameter != null) {
                 JetTypeReference typeReference = loopParameter.getTypeReference();

@@ -29,22 +29,9 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
 
     public MutableClassDescriptor(@NotNull BindingTrace trace, @NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope outerScope) {
         super(containingDeclaration);
-        this.scopeForMemberLookup = new WritableScopeImpl(JetScope.EMPTY, this, trace.getErrorHandler(), null);
-        this.scopeForSupertypeResolution = new WritableScopeImpl(outerScope, this, trace.getErrorHandler(), null);
-        this.scopeForMemberResolution = new WritableScopeImpl(scopeForSupertypeResolution, this, trace.getErrorHandler(), null);
-//        this.scopeForMemberLookup = new WritableScopeImpl(scopeForMemberResolution, this, trace.getErrorHandler(), new DeclarationDescriptorVisitor<Void, WritableScope>() {
-//            @Override
-//            public Void visitPropertyDescriptor(PropertyDescriptor descriptor, WritableScope data) {
-//                properties.add(descriptor);
-//                return null;
-//            }
-//
-//            @Override
-//            public Void visitFunctionDescriptor(FunctionDescriptor descriptor, WritableScope data) {
-//                functions.add(descriptor);
-//                return null;
-//            }
-//        });
+        this.scopeForMemberLookup = new WritableScopeImpl(JetScope.EMPTY, this, trace.getErrorHandler());
+        this.scopeForSupertypeResolution = new WritableScopeImpl(outerScope, this, trace.getErrorHandler());
+        this.scopeForMemberResolution = new WritableScopeImpl(scopeForSupertypeResolution, this, trace.getErrorHandler());
     }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
