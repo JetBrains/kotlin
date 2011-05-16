@@ -12,6 +12,7 @@ import org.jetbrains.jet.lang.psi.JetNamespace;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.parsing.JetParsingTest;
 
+import javax.swing.JComponent;
 import java.lang.reflect.Method;
 import java.nio.channels.NonWritableChannelException;
 import java.util.HashMap;

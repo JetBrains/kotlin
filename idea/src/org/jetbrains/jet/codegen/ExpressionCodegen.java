@@ -1268,9 +1268,6 @@ public class ExpressionCodegen extends JetVisitor {
         else {
             JetTypeReference typeReference = expression.getRight();
             JetType jetType = bindingContext.resolveTypeReference(typeReference);
-            if (jetType.getArguments().size() > 0) {
-                throw new UnsupportedOperationException("don't know how to handle type arguments in as/as?");
-            }
             DeclarationDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
             if (!(descriptor instanceof ClassDescriptor)) {
                 throw new UnsupportedOperationException("don't know how to handle non-class types in as/as?");
@@ -1278,8 +1275,7 @@ public class ExpressionCodegen extends JetVisitor {
             Type type = typeMapper.jvmType((ClassDescriptor) descriptor, OwnerKind.INTERFACE);
             gen(expression.getLeft(), OBJECT_TYPE);
             if (opToken == JetTokens.AS_SAFE) {
-                v.dup();
-                v.instanceOf(type);
+                generateInstanceOf(expression.getLeft(), jetType, true);
                 Label isInstance = new Label();
                 v.ifne(isInstance);
                 v.pop();
@@ -1288,7 +1284,7 @@ public class ExpressionCodegen extends JetVisitor {
                 myStack.push(StackValue.onStack(type));
             }
             else {
-                throw new UnsupportedOperationException("as not yet implemented");
+                throw new UnsupportedOperationException("'as' not yet implemented");
             }
         }
     }
@@ -1307,22 +1303,32 @@ public class ExpressionCodegen extends JetVisitor {
         }
         JetTypeReference typeReference = ((JetTypePattern) pattern).getTypeReference();
         JetType jetType = bindingContext.resolveTypeReference(typeReference);
+        generateInstanceOf(expression.getLeftHandSide(), jetType, false);
+        StackValue value = StackValue.onStack(Type.BOOLEAN_TYPE);
+        myStack.push(expression.isNot() ? StackValue.not(value) : value);
+    }
+
+    private void generateInstanceOf(JetExpression expression, JetType jetType, boolean leaveExpressionOnStack) {
         DeclarationDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
         if (!(descriptor instanceof ClassDescriptor)) {
-            throw new UnsupportedOperationException("don't know how to handle non-class types in is");
+            throw new UnsupportedOperationException("don't know how to handle non-class types");
         }
         if (jetType.getArguments().size() > 0) {
             generateTypeInfo(jetType);
-            gen(expression.getLeftHandSide(), OBJECT_TYPE);
+            gen(expression, OBJECT_TYPE);
+            if (leaveExpressionOnStack) {
+                v.dupX1();
+            }
             v.invokevirtual("jet/typeinfo/TypeInfo", "isInstance", "(Ljava/lang/Object;)Z");
         }
         else {
-            gen(expression.getLeftHandSide(), OBJECT_TYPE);
+            gen(expression, OBJECT_TYPE);
+            if (leaveExpressionOnStack) {
+                v.dup();
+            }
             Type type = typeMapper.jvmType((ClassDescriptor) descriptor, OwnerKind.INTERFACE);
             v.instanceOf(type);
         }
-        StackValue value = StackValue.onStack(Type.BOOLEAN_TYPE);
-        myStack.push(expression.isNot() ? StackValue.not(value) : value);
     }
 
     private void generateTypeInfo(JetType jetType) {
@@ -1330,9 +1336,8 @@ public class ExpressionCodegen extends JetVisitor {
         if (declarationDescriptor instanceof TypeParameterDescriptor) {
             DeclarationDescriptor containingDeclaration = declarationDescriptor.getContainingDeclaration();
             if (containingDeclaration == contextType && contextType instanceof ClassDescriptor) {
-                int index = indexOfTypeParameter((ClassDescriptor) contextType, (TypeParameterDescriptor) declarationDescriptor);
                 loadTypeInfo((ClassDescriptor) contextType, v);
-                v.iconst(index);
+                v.iconst(((TypeParameterDescriptor) declarationDescriptor).getIndex());
                 v.invokevirtual("jet/typeinfo/TypeInfo", "getTypeParameter", "(I)Ljet/typeinfo/TypeInfo;");
                 return;
             }
@@ -1359,15 +1364,6 @@ public class ExpressionCodegen extends JetVisitor {
         else {
             v.invokespecial("jet/typeinfo/TypeInfo", "<init>", "(Ljava/lang/Class;)V");
         }
-    }
-
-    private int indexOfTypeParameter(ClassDescriptor classDescriptor, TypeParameterDescriptor typeParameterDescriptor) {
-        List<TypeParameterDescriptor> parameters = classDescriptor.getTypeConstructor().getParameters();
-        int index = parameters.indexOf(typeParameterDescriptor);
-        if (index < 0) {
-            throw new UnsupportedOperationException("can't find type parameter index");
-        }
-        return index;
     }
 
     private static class CompilationException extends RuntimeException {

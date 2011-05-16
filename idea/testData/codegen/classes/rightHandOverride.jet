@@ -1,0 +1,18 @@
+class Left() {}
+class Right() {
+    virtual fun f() = 42
+}
+
+class D() : Left(), Right() {
+    override fun f() = 239
+}
+
+fun box() : String {
+    val r : Right = new Right()
+    val d : D = new D()
+
+    if (r.f() != 42) return "Fail #1"
+    if (d.f() != 239) return "Fail #2"
+
+    return "OK"
+}
