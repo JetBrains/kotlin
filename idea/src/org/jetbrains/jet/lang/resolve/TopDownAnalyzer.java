@@ -150,7 +150,7 @@ public class TopDownAnalyzer {
                     classes.put(klass, mutableClassDescriptor);
                     declaringScopes.put(klass, outerScope);
 
-                    WritableScope classScope = mutableClassDescriptor.getScopeForMemberResolution();
+                    JetScope classScope = mutableClassDescriptor.getScopeForMemberResolution();
                     collectNamespacesAndClassifiers(classScope, mutableClassDescriptor, klass.getDeclarations());
                 }
 
@@ -261,7 +261,7 @@ public class TopDownAnalyzer {
         if (!klass.hasPrimaryConstructor()) return;
 
         // TODO : not all the parameters are real properties
-        WritableScope memberScope = classDescriptor.getScopeForMemberResolution(); // TODO : this is REALLY questionable
+        JetScope memberScope = classDescriptor.getScopeForMemberResolution(); // TODO : this is REALLY questionable
         ConstructorDescriptor constructorDescriptor = classDescriptorResolver.resolvePrimaryConstructorDescriptor(memberScope, classDescriptor, klass);
         for (JetParameter parameter : klass.getPrimaryConstructorParameters()) {
             PropertyDescriptor propertyDescriptor = classDescriptorResolver.resolvePrimaryConstructorParameterToAProperty(

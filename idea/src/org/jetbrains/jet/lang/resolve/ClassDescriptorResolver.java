@@ -109,11 +109,6 @@ public class ClassDescriptorResolver {
     }
 
     public void resolveMutableClassDescriptor(@NotNull JetClass classElement, @NotNull MutableClassDescriptor descriptor) {
-        descriptor.setName(JetPsiUtil.safeName(classElement.getName()));
-        descriptor.getScopeForMemberResolution().addLabeledDeclaration(descriptor);
-
-        WritableScope scopeForMemberResolution = descriptor.getScopeForSupertypeResolution();
-
         // TODO : Where-clause
         List<TypeParameterDescriptor> typeParameters = Lists.newArrayList();
         int index = 0;
@@ -125,26 +120,13 @@ public class ClassDescriptorResolver {
                     JetPsiUtil.safeName(typeParameter.getName()),
                     index
             );
-            scopeForMemberResolution.addTypeParameterDescriptor(typeParameterDescriptor);
             trace.recordDeclarationResolution(typeParameter, typeParameterDescriptor);
             typeParameters.add(typeParameterDescriptor);
             index++;
         }
+        descriptor.setTypeParameterDescriptors(typeParameters);
 
-        boolean open = classElement.hasModifier(JetTokens.OPEN_KEYWORD);
-        List<JetType> supertypes = new ArrayList<JetType>();
-        TypeConstructorImpl typeConstructor = new TypeConstructorImpl(
-                descriptor,
-                AnnotationResolver.INSTANCE.resolveAnnotations(classElement.getModifierList()),
-                !open,
-                JetPsiUtil.safeName(classElement.getName()),
-                typeParameters,
-                supertypes);
-        descriptor.setTypeConstructor(
-                typeConstructor
-        );
-
-        descriptor.getScopeForMemberResolution().setThisType(descriptor.getDefaultType());
+        descriptor.setOpen(classElement.hasModifier(JetTokens.OPEN_KEYWORD));
 
         trace.recordDeclarationResolution(classElement, descriptor);
     }
@@ -171,8 +153,10 @@ public class ClassDescriptorResolver {
 //        TODO : assuming that the hierarchy is acyclic
         Collection<? extends JetType> superclasses = delegationSpecifiers.isEmpty()
                 ? Collections.singleton(JetStandardClasses.getAnyType())
-                : resolveDelegationSpecifiers(descriptor.getScopeForSupertypeResolution(), delegationSpecifiers, typeResolverNotCheckingBounds);
-        ((TypeConstructorImpl) descriptor.getTypeConstructor()).getSupertypes().addAll(superclasses);
+                : resolveDelegationSpecifiers(
+                    descriptor.getScopeForSupertypeResolution(),
+                    delegationSpecifiers,
+                    typeResolverNotCheckingBounds);
 
         // TODO : remove the importing
         for (JetType superclass : superclasses) {
@@ -295,7 +279,7 @@ public class ClassDescriptorResolver {
         return typeParameterDescriptor;
     }
 
-    private Collection<JetType> resolveDelegationSpecifiers(WritableScope extensibleScope, List<JetDelegationSpecifier> delegationSpecifiers, @NotNull TypeResolver resolver) {
+    private Collection<JetType> resolveDelegationSpecifiers(JetScope extensibleScope, List<JetDelegationSpecifier> delegationSpecifiers, @NotNull TypeResolver resolver) {
         if (delegationSpecifiers.isEmpty()) {
             return Collections.emptyList();
         }

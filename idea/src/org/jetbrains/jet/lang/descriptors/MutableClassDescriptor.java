@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.descriptors;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -7,9 +8,7 @@ import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author abreslav
@@ -19,9 +18,11 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     private final WritableFunctionGroup constructors = new WritableFunctionGroup("<init>");
     private final Set<FunctionDescriptor> functions = Sets.newHashSet();
     private final Set<PropertyDescriptor> properties = Sets.newHashSet();
+    private List<TypeParameterDescriptor> typeParameters = Lists.newArrayList();
+    private Collection<JetType> supertypes = Lists.newArrayList();
 
+    private boolean open;
     private TypeConstructor typeConstructor;
-
     private final WritableScope scopeForMemberResolution;
     private final WritableScope scopeForMemberLookup;
     // This scope contains type parameters but does not contain inner classes
@@ -31,7 +32,8 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
         super(containingDeclaration);
         this.scopeForMemberLookup = new WritableScopeImpl(JetScope.EMPTY, this, trace.getErrorHandler());
         this.scopeForSupertypeResolution = new WritableScopeImpl(outerScope, this, trace.getErrorHandler());
-        this.scopeForMemberResolution = new WritableScopeImpl(scopeForSupertypeResolution, this, trace.getErrorHandler());
+        this.scopeForMemberResolution = new WritableScopeImpl(scopeForMemberLookup, this, trace.getErrorHandler());
+        scopeForMemberResolution.importScope(scopeForSupertypeResolution);
     }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -57,7 +59,6 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     public void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor) {
         properties.add(propertyDescriptor);
         scopeForMemberLookup.addVariableDescriptor(propertyDescriptor);
-        scopeForMemberResolution.addVariableDescriptor(propertyDescriptor);
     }
 
     @NotNull
@@ -69,7 +70,6 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     public void addFunctionDescriptor(@NotNull FunctionDescriptor functionDescriptor) {
         functions.add(functionDescriptor);
         scopeForMemberLookup.addFunctionDescriptor(functionDescriptor);
-        scopeForMemberResolution.addFunctionDescriptor(functionDescriptor);
     }
 
     @NotNull
@@ -90,20 +90,51 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     @Override
     public void addClassifierDescriptor(@NotNull MutableClassDescriptor classDescriptor) {
         scopeForMemberLookup.addClassifierDescriptor(classDescriptor);
-        scopeForMemberResolution.addClassifierDescriptor(classDescriptor);
     }
 
+    public void addSupertype(@NotNull JetType supertype) {
+        scopeForMemberLookup.importScope(supertype.getMemberScope());
+        supertypes.add(supertype);
+    }
+
+    public void setTypeParameterDescriptors(List<TypeParameterDescriptor> typeParameters) {
+        for (TypeParameterDescriptor typeParameterDescriptor : typeParameters) {
+            this.typeParameters.add(typeParameterDescriptor);
+            scopeForSupertypeResolution.addTypeParameterDescriptor(typeParameterDescriptor);
+        }
+        scopeForMemberResolution.setThisType(getDefaultType());
+    }
+
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    @Override
+    public void setName(@NotNull String name) {
+        super.setName(name);
+        scopeForMemberResolution.addLabeledDeclaration(this);
+    }
+
+    public boolean isOpen() {
+        return open;
+    }
+
+    public void setOpen(boolean open) {
+        this.open = open;
+    }
 
     @NotNull
     @Override
     public TypeConstructor getTypeConstructor() {
-        assert typeConstructor != null : "Type constructor is not set for " + getName();
+        if (typeConstructor == null) {
+            this.typeConstructor = new TypeConstructorImpl(
+                    this,
+                    Collections.<Annotation>emptyList(), // TODO : pass annotations from the class?
+                    !open,
+                    getName(),
+                    typeParameters,
+                    supertypes);
+        }
         return typeConstructor;
-    }
-
-    public void setTypeConstructor(@NotNull TypeConstructor typeConstructor) {
-        this.typeConstructor = typeConstructor;
     }
 
     @NotNull
@@ -137,12 +168,17 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     }
 
     @NotNull
-    public WritableScope getScopeForMemberLookup() {
+    public JetScope getScopeForSupertypeResolution() {
+        return scopeForSupertypeResolution;
+    }
+
+    @NotNull
+    public JetScope getScopeForMemberLookup() {
         return scopeForMemberLookup;
     }
 
     @NotNull
-    public WritableScope getScopeForMemberResolution() {
+    public JetScope getScopeForMemberResolution() {
         return scopeForMemberResolution;
     }
 
@@ -165,15 +201,5 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     @Override
     public String toString() {
         return DescriptorRenderer.TEXT.render(this) + "[" + getClass().getCanonicalName() + "@" + System.identityHashCode(this) + "]";
-    }
-
-    public void addSupertype(@NotNull JetType supertype) {
-        scopeForMemberLookup.importScope(supertype.getMemberScope());
-        scopeForMemberResolution.importScope(supertype.getMemberScope());
-    }
-
-    @NotNull
-    public WritableScope getScopeForSupertypeResolution() {
-        return scopeForSupertypeResolution;
     }
 }

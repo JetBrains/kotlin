@@ -27,6 +27,7 @@ public abstract class MutableDeclarationDescriptor implements DeclarationDescrip
     }
 
     public void setName(@NotNull String name) {
+        assert this.name == null : this.name;
         this.name = name;
     }
 
