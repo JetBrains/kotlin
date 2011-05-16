@@ -1,0 +1,4 @@
+// JET-11 Redeclaration & Forward reference for classes cause an exception
+class <error>NoC</error>
+class NoC1 : NoC
+class <error>NoC</error>
