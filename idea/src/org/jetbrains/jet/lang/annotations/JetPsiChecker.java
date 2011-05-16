@@ -70,7 +70,10 @@ public class JetPsiChecker implements Annotator {
                     private void markRedeclaration(DeclarationDescriptor redeclaration) {
                         if (!redeclarations.add(redeclaration)) return;
                         PsiElement declarationPsiElement = bindingContext.getDeclarationPsiElement(redeclaration);
-                        if (declarationPsiElement != null) {
+                        if (declarationPsiElement instanceof JetNamedDeclaration) {
+                            holder.createErrorAnnotation(((JetNamedDeclaration) declarationPsiElement).getNameIdentifier(), "Redeclaration");
+                        }
+                        else if (declarationPsiElement != null) {
                             holder.createErrorAnnotation(declarationPsiElement, "Redeclaration");
                         }
                     }
