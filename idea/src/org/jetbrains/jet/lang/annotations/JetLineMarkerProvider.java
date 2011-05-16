@@ -19,10 +19,8 @@ import com.intellij.util.Function;
 import com.intellij.util.Icons;
 import com.intellij.util.PsiNavigateUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetFunction;
+import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
@@ -42,12 +40,53 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
 
     @Override
     public LineMarkerInfo getLineMarkerInfo(PsiElement element) {
+        JetFile file = PsiTreeUtil.getParentOfType(element, JetFile.class);
+
+        if (file == null) return null;
+        final BindingContext bindingContext = AnalyzingUtils.analyzeFileWithCache(file);
+
+        if (element instanceof JetClass) {
+            JetClass jetClass = (JetClass) element;
+            return new LineMarkerInfo<JetClass>(jetClass, jetClass.getTextOffset(), Icons.CLASS_ICON, Pass.UPDATE_ALL,
+                    new Function<JetClass, String>() {
+                        @Override
+                        public String fun(JetClass jetClass) {
+                            ClassDescriptor classDescriptor = bindingContext.getClassDescriptor(jetClass);
+                            if (classDescriptor == null) {
+                                return "<it>Unresolved</it>";
+                            }
+                            return DescriptorRenderer.HTML.render(classDescriptor);
+                        }
+                    },
+                    new GutterIconNavigationHandler<JetClass>() {
+                        @Override
+                        public void navigate(MouseEvent e, JetClass elt) {
+                        }
+                    });
+        }
+
+        if (element instanceof JetProperty) {
+            JetProperty jetProperty = (JetProperty) element;
+            final VariableDescriptor variableDescriptor = bindingContext.getVariableDescriptor(jetProperty);
+            if (variableDescriptor instanceof PropertyDescriptor) {
+                return new LineMarkerInfo<JetProperty>(jetProperty, jetProperty.getTextOffset(), Icons.PROPERTY_ICON, Pass.UPDATE_ALL,
+                        new Function<JetProperty, String>() {
+                            @Override
+                            public String fun(JetProperty property) {
+                                return DescriptorRenderer.HTML.render(variableDescriptor);
+                            }
+                        },
+                        new GutterIconNavigationHandler<JetProperty>() {
+                            @Override
+                            public void navigate(MouseEvent e, JetProperty elt) {
+                            }
+                        });
+            }
+        }
+
         if (element instanceof JetFunction) {
             JetFunction jetFunction = (JetFunction) element;
 
-            JetFile file = PsiTreeUtil.getParentOfType(element, JetFile.class);
-            assert file != null;
-            final BindingContext bindingContext = AnalyzingUtils.analyzeFileWithCache(file);
             final FunctionDescriptor functionDescriptor = bindingContext.getFunctionDescriptor(jetFunction);
             if (functionDescriptor == null) return null;
             final Set<? extends FunctionDescriptor> overriddenFunctions = functionDescriptor.getOverriddenFunctions();
@@ -77,6 +116,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
                     new GutterIconNavigationHandler<JetFunction>() {
                         @Override
                         public void navigate(MouseEvent event, JetFunction elt) {
+                            if (overriddenFunctions.isEmpty()) return;
                             final List<PsiElement> list = Lists.newArrayList();
                             for (FunctionDescriptor overriddenFunction : overriddenFunctions) {
                                 PsiElement declarationPsiElement = bindingContext.getDeclarationPsiElement(overriddenFunction);
@@ -109,6 +149,25 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
                                     popup.show(new RelativePoint(event));
                                 }
                             }
+                        }
+                    }
+            );
+        }
+
+        if (element instanceof JetNamespace) {
+            JetNamespace jetNamespace = (JetNamespace) element;
+            return new LineMarkerInfo<JetNamespace>(
+                    jetNamespace, jetNamespace.getTextOffset(), Icons.PACKAGE_ICON, Pass.UPDATE_ALL,
+                    new Function<JetNamespace, String>() {
+                        @Override
+                        public String fun(JetNamespace jetNamespace) {
+                            NamespaceDescriptor namespaceDescriptor = bindingContext.getNamespaceDescriptor(jetNamespace);
+                            return DescriptorRenderer.HTML.render(namespaceDescriptor);
+                        }
+                    },
+                    new GutterIconNavigationHandler<JetNamespace>() {
+                        @Override
+                        public void navigate(MouseEvent e, JetNamespace elt) {
                         }
                     }
             );

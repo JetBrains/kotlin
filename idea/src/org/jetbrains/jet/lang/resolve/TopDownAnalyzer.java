@@ -84,10 +84,10 @@ public class TopDownAnalyzer {
         resolveTypesInClassHeaders(); // Generic bounds and types in supertype lists (no expressions or constructor resolution)
         checkGenericBoundsInClassHeaders(); // For the types resolved so far
 
-        resolveFunctionAndPropertyHeaders(declarations); // TODO : for now, fail fast if something is unknown yet (i.e. some type annotation is omitted)
-                                                         // Constructor headers are resolved as well
+        resolveFunctionAndPropertyHeaders(declarations); // Constructor headers are resolved as well
 
-        resolveExecutableCode();
+        readyToProcessExpressions = true;
+        resolveBehaviorDeclarationBodies();
     }
 
     private void collectNamespacesAndClassifiers(
@@ -250,11 +250,6 @@ public class TopDownAnalyzer {
                 }
             });
         }
-    }
-
-    private void resolveExecutableCode() {
-        readyToProcessExpressions = true;
-        resolveBehaviorDeclarationBodies();
     }
 
     private void processPrimaryConstructor(MutableClassDescriptor classDescriptor, JetClass klass) {
