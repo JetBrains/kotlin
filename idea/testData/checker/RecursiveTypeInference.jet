@@ -1,0 +1,42 @@
+namespace a {
+    val foo = <error>bar()</error>
+
+    fun bar() = foo
+}
+
+namespace b {
+    fun foo() = <error>bar()</error>
+
+    fun bar() = foo()
+}
+
+namespace c {
+    fun bazz() = <error>bar()</error>
+
+    fun foo() = bazz()
+
+    fun bar() = foo()
+}
+
+namespace ok {
+
+    namespace a {
+        val foo = bar()
+
+        fun bar() : Int = foo
+    }
+
+    namespace b {
+        fun foo() : Int = bar()
+
+        fun bar() = foo()
+    }
+
+    namespace c {
+        fun bazz() = bar()
+
+        fun foo() : Int = bazz()
+
+        fun bar() = foo()
+    }
+}
