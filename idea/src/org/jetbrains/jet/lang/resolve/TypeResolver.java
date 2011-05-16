@@ -28,6 +28,9 @@ public class TypeResolver {
 
     @NotNull
     public JetType resolveType(@NotNull final JetScope scope, @NotNull final JetTypeReference typeReference) {
+        JetType cachedType = trace.getBindingContext().resolveTypeReference(typeReference);
+        if (cachedType != null) return cachedType;
+
         final List<Annotation> annotations = AnnotationResolver.INSTANCE.resolveAnnotations(typeReference.getAttributes());
 
         JetTypeElement typeElement = typeReference.getTypeElement();

@@ -71,7 +71,7 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
 
     @Override
     public void recordExpressionType(@NotNull JetExpression expression, @NotNull JetType type) {
-        expressionTypes.put(expression, type);
+        safePut(expressionTypes, expression, type);
     }
 
     @Override
@@ -81,7 +81,7 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
 
     @Override
     public void recordLabelResolution(@NotNull JetReferenceExpression expression, @NotNull PsiElement element) {
-        labelResolutionResults.put(expression, element);
+        safePut(labelResolutionResults, expression, element);
     }
 
     @Override
@@ -91,7 +91,7 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
 
     @Override
     public void recordTypeResolution(@NotNull JetTypeReference typeReference, @NotNull JetType type) {
-        types.put(typeReference, type);
+        safePut(types, typeReference, type);
     }
 
     @Override
@@ -106,7 +106,7 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
 
                     @Override
                     public Void visitNamespaceDescriptor(NamespaceDescriptor descriptor, PsiElement declaration) {
-                        namespaceDeclarationsToDescriptors.put(declaration, descriptor);
+                        safePut(namespaceDeclarationsToDescriptors, declaration, descriptor);
                         return null;
                     }
 

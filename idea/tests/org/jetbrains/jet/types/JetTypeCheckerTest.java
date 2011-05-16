@@ -5,6 +5,7 @@ import com.intellij.codeInsight.daemon.LightDaemonAnalyzerTestCase;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -34,7 +35,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         library          = JetStandardLibrary.getJetStandardLibrary(getProject());
         semanticServices = JetSemanticServices.createSemanticServices(library);
         classDefinitions = new ClassDefinitions();
-        classDescriptorResolver = semanticServices.getClassDescriptorResolver(BindingTrace.DUMMY);
+        classDescriptorResolver = semanticServices.getClassDescriptorResolver(JetTestUtils.DUMMY);
     }
 
     @Override
@@ -487,14 +488,14 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
     private void assertType(String expression, JetType expectedType) {
         Project project = getProject();
         JetExpression jetExpression = JetChangeUtil.createExpression(project, expression);
-        JetType type = semanticServices.getTypeInferrer(BindingTrace.DUMMY, JetFlowInformationProvider.NONE).getType(classDefinitions.BASIC_SCOPE, jetExpression, false);
+        JetType type = semanticServices.getTypeInferrer(JetTestUtils.DUMMY, JetFlowInformationProvider.NONE).getType(classDefinitions.BASIC_SCOPE, jetExpression, false);
         assertTrue(type + " != " + expectedType, type.equals(expectedType));
     }
 
     private void assertErrorType(String expression) {
         Project project = getProject();
         JetExpression jetExpression = JetChangeUtil.createExpression(project, expression);
-        JetType type = semanticServices.getTypeInferrer(BindingTrace.DUMMY, JetFlowInformationProvider.NONE).safeGetType(classDefinitions.BASIC_SCOPE, jetExpression, false);
+        JetType type = semanticServices.getTypeInferrer(JetTestUtils.DUMMY, JetFlowInformationProvider.NONE).safeGetType(classDefinitions.BASIC_SCOPE, jetExpression, false);
         assertTrue("Error type expected but " + type + " returned", ErrorUtils.isErrorType(type));
     }
 
@@ -517,7 +518,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
     private void assertType(JetScope scope, String expression, String expectedTypeStr) {
         Project project = getProject();
         JetExpression jetExpression = JetChangeUtil.createExpression(project, expression);
-        JetType type = semanticServices.getTypeInferrer(BindingTrace.DUMMY, JetFlowInformationProvider.NONE).getType(scope, jetExpression, false);
+        JetType type = semanticServices.getTypeInferrer(JetTestUtils.DUMMY, JetFlowInformationProvider.NONE).getType(scope, jetExpression, false);
         JetType expectedType = expectedTypeStr == null ? null : makeType(expectedTypeStr);
         assertEquals(expectedType, type);
     }
@@ -527,7 +528,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
     }
 
     private JetType makeType(JetScope scope, String typeStr) {
-        return new TypeResolver(semanticServices, BindingTrace.DUMMY, true).resolveType(scope, JetChangeUtil.createType(getProject(), typeStr));
+        return new TypeResolver(semanticServices, JetTestUtils.DUMMY, true).resolveType(scope, JetChangeUtil.createType(getProject(), typeStr));
     }
 
     private class ClassDefinitions {

@@ -494,6 +494,7 @@ public class JetTypeInferrer {
             else {
                 trace.getErrorHandler().genericError(((JetElement) call).getNode(), "Calling a constructor is only supported for ordinary classes"); // TODO : review the message
             }
+            return null;
         }
         else {
             if (typeElement != null) {

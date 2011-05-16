@@ -573,14 +573,14 @@ public class TopDownAnalyzer {
                     public void visitDelegationToSuperCallSpecifier(JetDelegatorToSuperCall call) {
                         JetTypeReference typeReference = call.getTypeReference();
                         if (typeReference != null) {
-                            if (!jetClass.hasPrimaryConstructor()) {
+                            if (jetClass.hasPrimaryConstructor()) {
+                                typeInferrer.checkConstructorCall(scopeForConstructor, typeReference, call);
+                            }
+                            else {
                                 JetArgumentList valueArgumentList = call.getValueArgumentList();
                                 assert valueArgumentList != null;
                                 trace.getErrorHandler().genericError(valueArgumentList.getNode(),
                                         "Class " + JetPsiUtil.safeName(jetClass.getName()) + " must have a constructor in order to be able to initialize supertypes");
-                            }
-                            else {
-                                typeInferrer.checkConstructorCall(scopeForConstructor, typeReference, call);
                             }
                         }
                     }
