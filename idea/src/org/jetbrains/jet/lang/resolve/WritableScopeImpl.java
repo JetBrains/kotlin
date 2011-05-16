@@ -183,13 +183,14 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     @Override
     public void addTypeParameterDescriptor(@NotNull TypeParameterDescriptor typeParameterDescriptor) {
         String name = typeParameterDescriptor.getName();
-        Map<String, ClassifierDescriptor> classifierDescriptors = getClassifierDescriptors();
-        ClassifierDescriptor originalDescriptor = classifierDescriptors.get(name);
-        if (originalDescriptor != null) {
-            errorHandler.redeclaration(originalDescriptor, typeParameterDescriptor);
-        }
-        classifierDescriptors.put(name, typeParameterDescriptor);
-        notifyListeners(typeParameterDescriptor);
+        addClassifierAlias(name, typeParameterDescriptor);
+//        Map<String, ClassifierDescriptor> classifierDescriptors = getClassifierDescriptors();
+//        ClassifierDescriptor originalDescriptor = classifierDescriptors.get(name);
+//        if (originalDescriptor != null) {
+//            errorHandler.redeclaration(originalDescriptor, typeParameterDescriptor);
+//        }
+//        classifierDescriptors.put(name, typeParameterDescriptor);
+//        notifyListeners(typeParameterDescriptor);
     }
 
     @NotNull

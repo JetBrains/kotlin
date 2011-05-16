@@ -81,7 +81,7 @@ public class ClassDescriptorResolver {
         descriptor.setName(JetPsiUtil.safeName(classElement.getName()));
         descriptor.getScopeForMemberResolution().addLabeledDeclaration(descriptor);
 
-        WritableScope scopeForMemberResolution = descriptor.getScopeForMemberResolution();
+        WritableScope scopeForMemberResolution = descriptor.getScopeForSupertypeResolution();
 
         // TODO : Where-clause
         List<TypeParameterDescriptor> typeParameters = Lists.newArrayList();
@@ -126,7 +126,7 @@ public class ClassDescriptorResolver {
             TypeParameterDescriptor typeParameterDescriptor = parameters.get(i);
             JetTypeReference extendsBound = jetTypeParameter.getExtendsBound();
             if (extendsBound != null) {
-                typeParameterDescriptor.addUpperBound(typeResolverNotCheckingBounds.resolveType(classDescriptor.getScopeForMemberResolution(), extendsBound));
+                typeParameterDescriptor.addUpperBound(typeResolverNotCheckingBounds.resolveType(classDescriptor.getScopeForSupertypeResolution(), extendsBound));
             }
             else {
                 typeParameterDescriptor.addUpperBound(JetStandardClasses.getDefaultBound());
@@ -140,13 +140,12 @@ public class ClassDescriptorResolver {
 //        TODO : assuming that the hierarchy is acyclic
         Collection<? extends JetType> superclasses = delegationSpecifiers.isEmpty()
                 ? Collections.singleton(JetStandardClasses.getAnyType())
-                : resolveDelegationSpecifiers(descriptor.getScopeForMemberResolution(), delegationSpecifiers, typeResolverNotCheckingBounds);
+                : resolveDelegationSpecifiers(descriptor.getScopeForSupertypeResolution(), delegationSpecifiers, typeResolverNotCheckingBounds);
         ((TypeConstructorImpl) descriptor.getTypeConstructor()).getSupertypes().addAll(superclasses);
 
         // TODO : remove the importing
         for (JetType superclass : superclasses) {
-            descriptor.getScopeForMemberResolution().importScope(superclass.getMemberScope());
-
+            descriptor.addSupertype(superclass);
         }
     }
 
@@ -154,7 +153,7 @@ public class ClassDescriptorResolver {
         descriptor.setName(JetPsiUtil.safeName(classElement.getName()));
         descriptor.getScopeForMemberResolution().addLabeledDeclaration(descriptor);
 
-        WritableScope parameterScope = descriptor.getScopeForMemberResolution();
+        WritableScope parameterScope = descriptor.getScopeForSupertypeResolution();
 
         // This call has side-effects on the parameterScope (fills it in)
         List<TypeParameterDescriptor> typeParameters

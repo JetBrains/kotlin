@@ -266,174 +266,174 @@ public class TopDownAnalyzer {
         resolveBehaviorDeclarationBodies();
     }
 
-    @NotNull
-    public JetScope process(@NotNull JetScope outerScope, @NotNull List<JetDeclaration> declarations) {
-        final WritableScope toplevelScope = new WritableScopeImpl(outerScope, outerScope.getContainingDeclaration(), trace.getErrorHandler(), null); // TODO ?!
-
-        collectTypeDeclarators(toplevelScope, declarations);
-        resolveTypeDeclarations();
-        processBehaviorDeclarators(toplevelScope, declarations);
-        readyToProcessExpressions = true;
-        resolveBehaviorDeclarationBodies();
-        return toplevelScope;
-    }
+//    @NotNull
+//    public JetScope process(@NotNull JetScope outerScope, @NotNull List<JetDeclaration> declarations) {
+//        final WritableScope toplevelScope = new WritableScopeImpl(outerScope, outerScope.getContainingDeclaration(), trace.getErrorHandler(), null); // TODO ?!
+//
+//        collectTypeDeclarators(toplevelScope, declarations);
+//        resolveTypeDeclarations();
+//        processBehaviorDeclarators(toplevelScope, declarations);
+//        readyToProcessExpressions = true;
+//        resolveBehaviorDeclarationBodies();
+//        return toplevelScope;
+//    }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void collectTypeDeclarators(
-            @NotNull final WritableScope declaringScope,
-            List<JetDeclaration> declarations) {
-        for (JetDeclaration declaration : declarations) {
-            declaration.accept(new JetVisitor() {
-                @Override
-                public void visitNamespace(JetNamespace namespace) {
-                    List<JetImportDirective> importDirectives = namespace.getImportDirectives();
-
-                    String name = namespace.getName();
-                    if (name == null) {
-                        name = "<no name provided>";
-                    }
-                    NamespaceDescriptorImpl namespaceDescriptor = (NamespaceDescriptorImpl) declaringScope.getDeclaredNamespace(name);
-                    if (namespaceDescriptor == null) {
-                        namespaceDescriptor = new NamespaceDescriptorImpl(
-                                declaringScope.getContainingDeclaration(),
-                                Collections.<Annotation>emptyList(), // TODO
-                                name
-                        );
-                        namespaceDescriptor.initialize(new WritableScopeImpl(JetScope.EMPTY, namespaceDescriptor, trace.getErrorHandler(), null));
-                        declaringScope.addNamespace(namespaceDescriptor);
-                        trace.recordDeclarationResolution(namespace, namespaceDescriptor);
-                    }
-
-                    WritableScope namespaceScope = new WriteThroughScope(declaringScope, (WritableScope) namespaceDescriptor.getMemberScope());
-                    namespaceScopes.put(namespace, namespaceScope);
-
-                    for (JetImportDirective importDirective : importDirectives) {
-                        if (importDirective.isAbsoluteInRootNamespace()) {
-                            throw new UnsupportedOperationException();
-                        }
-                        if (importDirective.isAllUnder()) {
-                            JetExpression importedReference = importDirective.getImportedReference();
-                            if (importedReference != null) {
-                                JetType type = semanticServices.getTypeInferrer(trace, JetFlowInformationProvider.THROW_EXCEPTION).getTypeWithNamespaces(namespaceScope, importedReference, false);
-                                if (type != null) {
-                                    namespaceScope.importScope(type.getMemberScope());
-                                }
-                            }
-                        } else {
-                            throw new UnsupportedOperationException();
-                        }
-                    }
-
-                    collectTypeDeclarators(namespaceScope, namespace.getDeclarations());
-                }
-
-                @Override
-                public void visitClass(JetClass klass) {
-                    MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(trace, declaringScope.getContainingDeclaration(), declaringScope);
-                    mutableClassDescriptor.setName(JetPsiUtil.safeName(klass.getName()));
-
-                    declaringScope.addClassifierDescriptor(mutableClassDescriptor);
-
-                    classes.put(klass, mutableClassDescriptor);
-                    declaringScopes.put(klass, declaringScope);
-
-                    WritableScope classScope = mutableClassDescriptor.getScopeForMemberLookup();
-                    collectTypeDeclarators(classScope, klass.getDeclarations());
-                }
-
-                @Override
-                public void visitTypedef(JetTypedef typedef) {
-                    trace.getErrorHandler().genericError(typedef.getNode(), "Unsupported [TopDownAnalyzer]");
-                }
-
-                @Override
-                public void visitExtension(JetExtension extension) {
-                    trace.getErrorHandler().genericError(extension.getNode(), "Unsupported [TopDownAnalyzer]");
-                }
-
-                @Override
-                public void visitDeclaration(JetDeclaration dcl) {
-                    // Other declarations do not declare visible types
-                }
-            });
-        }
-    }
+//    private void collectTypeDeclarators(
+//            @NotNull final WritableScope declaringScope,
+//            List<JetDeclaration> declarations) {
+//        for (JetDeclaration declaration : declarations) {
+//            declaration.accept(new JetVisitor() {
+//                @Override
+//                public void visitNamespace(JetNamespace namespace) {
+//                    List<JetImportDirective> importDirectives = namespace.getImportDirectives();
+//
+//                    String name = namespace.getName();
+//                    if (name == null) {
+//                        name = "<no name provided>";
+//                    }
+//                    NamespaceDescriptorImpl namespaceDescriptor = (NamespaceDescriptorImpl) declaringScope.getDeclaredNamespace(name);
+//                    if (namespaceDescriptor == null) {
+//                        namespaceDescriptor = new NamespaceDescriptorImpl(
+//                                declaringScope.getContainingDeclaration(),
+//                                Collections.<Annotation>emptyList(), // TODO
+//                                name
+//                        );
+//                        namespaceDescriptor.initialize(new WritableScopeImpl(JetScope.EMPTY, namespaceDescriptor, trace.getErrorHandler(), null));
+//                        declaringScope.addNamespace(namespaceDescriptor);
+//                        trace.recordDeclarationResolution(namespace, namespaceDescriptor);
+//                    }
+//
+//                    WritableScope namespaceScope = new WriteThroughScope(declaringScope, (WritableScope) namespaceDescriptor.getMemberScope());
+//                    namespaceScopes.put(namespace, namespaceScope);
+//
+//                    for (JetImportDirective importDirective : importDirectives) {
+//                        if (importDirective.isAbsoluteInRootNamespace()) {
+//                            throw new UnsupportedOperationException();
+//                        }
+//                        if (importDirective.isAllUnder()) {
+//                            JetExpression importedReference = importDirective.getImportedReference();
+//                            if (importedReference != null) {
+//                                JetType type = semanticServices.getTypeInferrer(trace, JetFlowInformationProvider.THROW_EXCEPTION).getTypeWithNamespaces(namespaceScope, importedReference, false);
+//                                if (type != null) {
+//                                    namespaceScope.importScope(type.getMemberScope());
+//                                }
+//                            }
+//                        } else {
+//                            throw new UnsupportedOperationException();
+//                        }
+//                    }
+//
+//                    collectTypeDeclarators(namespaceScope, namespace.getDeclarations());
+//                }
+//
+//                @Override
+//                public void visitClass(JetClass klass) {
+//                    MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(trace, declaringScope.getContainingDeclaration(), declaringScope);
+//                    mutableClassDescriptor.setName(JetPsiUtil.safeName(klass.getName()));
+//
+//                    declaringScope.addClassifierDescriptor(mutableClassDescriptor);
+//
+//                    classes.put(klass, mutableClassDescriptor);
+//                    declaringScopes.put(klass, declaringScope);
+//
+//                    WritableScope classScope = mutableClassDescriptor.getScopeForMemberLookup();
+//                    collectTypeDeclarators(classScope, klass.getDeclarations());
+//                }
+//
+//                @Override
+//                public void visitTypedef(JetTypedef typedef) {
+//                    trace.getErrorHandler().genericError(typedef.getNode(), "Unsupported [TopDownAnalyzer]");
+//                }
+//
+//                @Override
+//                public void visitExtension(JetExtension extension) {
+//                    trace.getErrorHandler().genericError(extension.getNode(), "Unsupported [TopDownAnalyzer]");
+//                }
+//
+//                @Override
+//                public void visitDeclaration(JetDeclaration dcl) {
+//                    // Other declarations do not declare visible types
+//                }
+//            });
+//        }
+//    }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void resolveTypeDeclarations() {
-        for (Map.Entry<JetClass, MutableClassDescriptor> entry : classes.entrySet()) {
-            JetClass jetClass = entry.getKey();
-            MutableClassDescriptor descriptor = entry.getValue();
-            classDescriptorResolver.resolveMutableClassDescriptor(declaringScopes.get(jetClass), jetClass, descriptor);
-        }
-    }
+//    private void resolveTypeDeclarations() {
+//        for (Map.Entry<JetClass, MutableClassDescriptor> entry : classes.entrySet()) {
+//            JetClass jetClass = entry.getKey();
+//            MutableClassDescriptor descriptor = entry.getValue();
+//            classDescriptorResolver.resolveMutableClassDescriptor(declaringScopes.get(jetClass), jetClass, descriptor);
+//        }
+//    }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void processBehaviorDeclarators(@NotNull final WritableScope declaringScope, List<JetDeclaration> declarations) {
-        for (JetDeclaration declaration : declarations) {
-            declaration.accept(new JetVisitor() {
-                @Override
-                public void visitClass(JetClass klass) {
-                    MutableClassDescriptor mutableClassDescriptor = classes.get(klass);
-                    processPrimaryConstructor(mutableClassDescriptor, klass);
-                    processBehaviorDeclarators(mutableClassDescriptor.getScopeForMemberLookup(), klass.getDeclarations());
-                }
-
-                @Override
-                public void visitClassObject(JetClassObject classObject) {
-                    processClassObject(classObject);
-                    processBehaviorDeclarators(declaringScope, classObject.getObject().getDeclarations());
-                }
-
-                @Override
-                public void visitNamespace(JetNamespace namespace) {
-                    WritableScope namespaceScope = namespaceScopes.get(namespace);
-                    processBehaviorDeclarators(namespaceScope, namespace.getDeclarations());
-                }
-
-                @Override
-                public void visitFunction(JetFunction function) {
-                    processFunction(declaringScope, function);
-                }
-
-                @Override
-                public void visitProperty(JetProperty property) {
-                    processProperty(declaringScope, property);
-                }
-
-                @Override
-                public void visitConstructor(JetConstructor constructor) {
-                    DeclarationDescriptor containingDeclaration = declaringScope.getContainingDeclaration();
-                    if (containingDeclaration instanceof ClassDescriptor) {
-                        processSecondaryConstructor((MutableClassDescriptor) containingDeclaration, constructor);
-                    }
-                    else {
-                        trace.getErrorHandler().genericError(constructor.getNode(), "Constructors are only allowed inside classes");
-                    }
-                }
-
-                @Override
-                public void visitAnonymousInitializer(JetClassInitializer initializer) {
-                    // Nothing
-                }
-
-                @Override
-                public void visitDeclaration(JetDeclaration dcl) {
-                    trace.getErrorHandler().genericError(dcl.getNode(), "[TopDownAnalyzer] Unsupported declaration: " + dcl); // TODO
-                }
-            });
-        }
-
-    }
+//    private void processBehaviorDeclarators(@NotNull final WritableScope declaringScope, List<JetDeclaration> declarations) {
+//        for (JetDeclaration declaration : declarations) {
+//            declaration.accept(new JetVisitor() {
+//                @Override
+//                public void visitClass(JetClass klass) {
+//                    MutableClassDescriptor mutableClassDescriptor = classes.get(klass);
+//                    processPrimaryConstructor(mutableClassDescriptor, klass);
+//                    processBehaviorDeclarators(mutableClassDescriptor.getScopeForMemberLookup(), klass.getDeclarations());
+//                }
+//
+//                @Override
+//                public void visitClassObject(JetClassObject classObject) {
+//                    processClassObject(classObject);
+//                    processBehaviorDeclarators(declaringScope, classObject.getObject().getDeclarations());
+//                }
+//
+//                @Override
+//                public void visitNamespace(JetNamespace namespace) {
+//                    WritableScope namespaceScope = namespaceScopes.get(namespace);
+//                    processBehaviorDeclarators(namespaceScope, namespace.getDeclarations());
+//                }
+//
+//                @Override
+//                public void visitFunction(JetFunction function) {
+//                    processFunction(declaringScope, function);
+//                }
+//
+//                @Override
+//                public void visitProperty(JetProperty property) {
+//                    processProperty(declaringScope, property);
+//                }
+//
+//                @Override
+//                public void visitConstructor(JetConstructor constructor) {
+//                    DeclarationDescriptor containingDeclaration = declaringScope.getContainingDeclaration();
+//                    if (containingDeclaration instanceof ClassDescriptor) {
+//                        processSecondaryConstructor((MutableClassDescriptor) containingDeclaration, constructor);
+//                    }
+//                    else {
+//                        trace.getErrorHandler().genericError(constructor.getNode(), "Constructors are only allowed inside classes");
+//                    }
+//                }
+//
+//                @Override
+//                public void visitAnonymousInitializer(JetClassInitializer initializer) {
+//                    // Nothing
+//                }
+//
+//                @Override
+//                public void visitDeclaration(JetDeclaration dcl) {
+//                    trace.getErrorHandler().genericError(dcl.getNode(), "[TopDownAnalyzer] Unsupported declaration: " + dcl); // TODO
+//                }
+//            });
+//        }
+//
+//    }
 
     private void processPrimaryConstructor(MutableClassDescriptor classDescriptor, JetClass klass) {
         if (!klass.hasPrimaryConstructor()) return;
 
         // TODO : not all the parameters are real properties
-        WritableScope memberScope = classDescriptor.getScopeForMemberLookup(); // TODO : this is REALLY questionable
+        WritableScope memberScope = classDescriptor.getScopeForMemberResolution(); // TODO : this is REALLY questionable
         ConstructorDescriptor constructorDescriptor = classDescriptorResolver.resolvePrimaryConstructorDescriptor(memberScope, classDescriptor, klass);
         for (JetParameter parameter : klass.getPrimaryConstructorParameters()) {
             PropertyDescriptor propertyDescriptor = classDescriptorResolver.resolvePrimaryConstructorParameterToAProperty(
@@ -441,8 +441,7 @@ public class TopDownAnalyzer {
                     memberScope,
                     parameter
             );
-            memberScope.addVariableDescriptor(
-                    propertyDescriptor);
+            classDescriptor.addPropertyDescriptor(propertyDescriptor);
             primaryConstructorParameterProperties.add(propertyDescriptor);
         }
         if (constructorDescriptor != null) {
@@ -452,7 +451,7 @@ public class TopDownAnalyzer {
 
     private void processSecondaryConstructor(MutableClassDescriptor classDescriptor, JetConstructor constructor) {
         ConstructorDescriptor constructorDescriptor = classDescriptorResolver.resolveSecondaryConstructorDescriptor(
-                classDescriptor.getScopeForMemberLookup(),
+                classDescriptor.getScopeForMemberResolution(),
                 classDescriptor,
                 constructor);
         classDescriptor.addConstructor(constructorDescriptor);
@@ -460,25 +459,25 @@ public class TopDownAnalyzer {
         declaringScopes.put(constructor, classDescriptor.getScopeForMemberLookup());
     }
 
-    private void processFunction(@NotNull WritableScope declaringScope, JetFunction function) {
-        declaringScopes.put(function, declaringScope);
-        FunctionDescriptorImpl descriptor = classDescriptorResolver.resolveFunctionDescriptor(declaringScope.getContainingDeclaration(), declaringScope, function);
-        declaringScope.addFunctionDescriptor(descriptor);
-        functions.put(function, descriptor);
-    }
-
-    private void processProperty(WritableScope declaringScope, JetProperty property) {
-        declaringScopes.put(property, declaringScope);
-        // TODO : Do not infer the type from the initializer here: the scope is wrong, and not ready anyway
-        PropertyDescriptor descriptor = classDescriptorResolver.resolvePropertyDescriptor(declaringScope.getContainingDeclaration(), declaringScope, property);
-        declaringScope.addVariableDescriptor(descriptor);
-        declaringScopesToProperties.put(declaringScope.getContainingDeclaration(), descriptor);
-        properties.put(property, descriptor);
-    }
-
-    private void processClassObject(JetClassObject classObject) {
-        trace.getErrorHandler().genericError(classObject.getNode(), "Class objects are not supported yet"); // TODO
-    }
+//    private void processFunction(@NotNull WritableScope declaringScope, JetFunction function) {
+//        declaringScopes.put(function, declaringScope);
+//        FunctionDescriptorImpl descriptor = classDescriptorResolver.resolveFunctionDescriptor(declaringScope.getContainingDeclaration(), declaringScope, function);
+//        declaringScope.addFunctionDescriptor(descriptor);
+//        functions.put(function, descriptor);
+//    }
+//
+//    private void processProperty(WritableScope declaringScope, JetProperty property) {
+//        declaringScopes.put(property, declaringScope);
+//        // TODO : Do not infer the type from the initializer here: the scope is wrong, and not ready anyway
+//        PropertyDescriptor descriptor = classDescriptorResolver.resolvePropertyDescriptor(declaringScope.getContainingDeclaration(), declaringScope, property);
+//        declaringScope.addVariableDescriptor(descriptor);
+//        declaringScopesToProperties.put(declaringScope.getContainingDeclaration(), descriptor);
+//        properties.put(property, descriptor);
+//    }
+//
+//    private void processClassObject(JetClassObject classObject) {
+//        trace.getErrorHandler().genericError(classObject.getNode(), "Class objects are not supported yet"); // TODO
+//    }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -550,7 +549,9 @@ public class TopDownAnalyzer {
             final JetClass jetClass = entry.getKey();
             final MutableClassDescriptor descriptor = entry.getValue();
             final ConstructorDescriptor primaryConstructor = descriptor.getUnsubstitutedPrimaryConstructor();
-            final JetScope scopeForConstructor = primaryConstructor == null ? null : getInnerScopeForConstructor(primaryConstructor, descriptor.getScopeForMemberLookup());
+            final JetScope scopeForConstructor = primaryConstructor == null
+                    ? null
+                    : getInnerScopeForConstructor(primaryConstructor, descriptor.getScopeForMemberResolution());
             final JetTypeInferrer typeInferrer = semanticServices.getTypeInferrer(traceForConstructors, JetFlowInformationProvider.NONE); // TODO : flow
 
             for (JetDelegationSpecifier delegationSpecifier : jetClass.getDelegationSpecifiers()) {
@@ -559,7 +560,7 @@ public class TopDownAnalyzer {
                     public void visitDelegationByExpressionSpecifier(JetDelegatorByExpressionSpecifier specifier) {
                         JetExpression delegateExpression = specifier.getDelegateExpression();
                         if (delegateExpression != null) {
-                            JetScope scope = scopeForConstructor == null ? descriptor.getScopeForMemberLookup() : scopeForConstructor;
+                            JetScope scope = scopeForConstructor == null ? descriptor.getScopeForMemberResolution() : scopeForConstructor;
                             JetType type = typeInferrer.getType(scope, delegateExpression, false);
                             JetType supertype = trace.resolveTypeReference(specifier.getTypeReference());
                             if (type != null && !semanticServices.getTypeChecker().isSubtypeOf(type, supertype)) { // TODO : Convertible?
@@ -625,7 +626,7 @@ public class TopDownAnalyzer {
             if (jetClass.hasPrimaryConstructor()) {
                 ConstructorDescriptor primaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
                 assert primaryConstructor != null;
-                final JetScope scopeForConstructor = getInnerScopeForConstructor(primaryConstructor, classDescriptor.getScopeForMemberLookup());
+                final JetScope scopeForConstructor = getInnerScopeForConstructor(primaryConstructor, classDescriptor.getScopeForMemberResolution());
                 JetTypeInferrer typeInferrer = semanticServices.getTypeInferrer(traceForConstructors, JetFlowInformationProvider.NONE); // TODO : flow
                 for (JetClassInitializer anonymousInitializer : anonymousInitializers) {
                     typeInferrer.getType(scopeForConstructor, anonymousInitializer.getBody(), true);
@@ -725,7 +726,7 @@ public class TopDownAnalyzer {
     @NotNull
     private JetScope getInnerScopeForConstructor(@NotNull ConstructorDescriptor descriptor, @NotNull JetScope declaringScope) {
         WritableScope constructorScope = new WritableScopeImpl(declaringScope, declaringScope.getContainingDeclaration(), trace.getErrorHandler(), null);
-        for (PropertyDescriptor propertyDescriptor : declaringScopesToProperties.get(descriptor.getContainingDeclaration())) {
+        for (PropertyDescriptor propertyDescriptor : ((MutableClassDescriptor) descriptor.getContainingDeclaration()).getProperties()) {
             constructorScope.addPropertyDescriptorByFieldName("$" + propertyDescriptor.getName(), propertyDescriptor);
         }
         return FunctionDescriptorUtil.getFunctionInnerScope(constructorScope, descriptor, trace);
@@ -752,7 +753,7 @@ public class TopDownAnalyzer {
                         trace.getErrorHandler().genericError(initializer.getNode(), "Property initializers are not allowed when no primary constructor is present");
                     }
                     else {
-                        JetScope scope = getInnerScopeForConstructor(primaryConstructor, classDescriptor.getScopeForMemberLookup());
+                        JetScope scope = getInnerScopeForConstructor(primaryConstructor, classDescriptor.getScopeForMemberResolution());
                         resolvePropertyInitializer(property, propertyDescriptor, initializer, scope);
                     }
                 }

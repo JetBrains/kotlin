@@ -19,17 +19,19 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     private final WritableFunctionGroup constructors = new WritableFunctionGroup("<init>");
     private final Set<FunctionDescriptor> functions = Sets.newHashSet();
     private final Set<PropertyDescriptor> properties = Sets.newHashSet();
-    private final Set<MutableClassDescriptor> classes = Sets.newHashSet();
 
     private TypeConstructor typeConstructor;
 
     private final WritableScope scopeForMemberResolution;
     private final WritableScope scopeForMemberLookup;
+    // This scope contains type parameters but does not contain inner classes
+    private final WritableScope scopeForSupertypeResolution;
 
     public MutableClassDescriptor(@NotNull BindingTrace trace, @NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope outerScope) {
         super(containingDeclaration);
-        this.scopeForMemberResolution = new WritableScopeImpl(outerScope, this, trace.getErrorHandler(), null);
-        this.scopeForMemberLookup = new WritableScopeImpl(scopeForMemberResolution, this, trace.getErrorHandler(), null);
+        this.scopeForMemberLookup = new WritableScopeImpl(JetScope.EMPTY, this, trace.getErrorHandler(), null);
+        this.scopeForSupertypeResolution = new WritableScopeImpl(outerScope, this, trace.getErrorHandler(), null);
+        this.scopeForMemberResolution = new WritableScopeImpl(scopeForSupertypeResolution, this, trace.getErrorHandler(), null);
 //        this.scopeForMemberLookup = new WritableScopeImpl(scopeForMemberResolution, this, trace.getErrorHandler(), new DeclarationDescriptorVisitor<Void, WritableScope>() {
 //            @Override
 //            public Void visitPropertyDescriptor(PropertyDescriptor descriptor, WritableScope data) {
@@ -100,7 +102,6 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
 
     @Override
     public void addClassifierDescriptor(@NotNull MutableClassDescriptor classDescriptor) {
-        classes.add(classDescriptor);
         scopeForMemberLookup.addClassifierDescriptor(classDescriptor);
         scopeForMemberResolution.addClassifierDescriptor(classDescriptor);
     }
@@ -177,5 +178,15 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     @Override
     public String toString() {
         return DescriptorRenderer.TEXT.render(this) + "[" + getClass().getCanonicalName() + "@" + System.identityHashCode(this) + "]";
+    }
+
+    public void addSupertype(@NotNull JetType supertype) {
+        scopeForMemberLookup.importScope(supertype.getMemberScope());
+        scopeForMemberResolution.importScope(supertype.getMemberScope());
+    }
+
+    @NotNull
+    public WritableScope getScopeForSupertypeResolution() {
+        return scopeForSupertypeResolution;
     }
 }

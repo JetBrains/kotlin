@@ -1,0 +1,9 @@
+var xxxx = 1
+
+~SimpleClass~class SimpleClass(x : Int) {
+    fun foo() = x
+}
+
+fun foo() {
+  new `SimpleClass`SimpleClass(1).`!`xxxx
+}
