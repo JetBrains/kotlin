@@ -44,7 +44,7 @@ JetFile: When.jet
                 PsiElement(LBRACE)('{')
                 PsiWhiteSpace(' ')
                 WHEN_ENTRY
-                  WHEN_CONDITION
+                  WHEN_CONDITION_IS_PATTERN
                     PsiElement(is)('is')
                     PsiWhiteSpace(' ')
                     TYPE_PATTERN
@@ -115,7 +115,7 @@ JetFile: When.jet
           PsiElement(LBRACE)('{')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IS_PATTERN
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               TYPE_PATTERN
@@ -142,7 +142,7 @@ JetFile: When.jet
           PsiElement(LBRACE)('{')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IS_PATTERN
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               DECOMPOSER_PATTERN
@@ -175,7 +175,7 @@ JetFile: When.jet
               PsiElement(IDENTIFIER)('foo')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IS_PATTERN
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               DECOMPOSER_PATTERN
@@ -222,7 +222,7 @@ JetFile: When.jet
               PsiElement(IDENTIFIER)('foo')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IS_PATTERN
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               EXPRESSION_PATTERN
@@ -235,7 +235,7 @@ JetFile: When.jet
               PsiElement(IDENTIFIER)('foo')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IS_PATTERN
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               EXPRESSION_PATTERN
@@ -248,7 +248,7 @@ JetFile: When.jet
               PsiElement(IDENTIFIER)('foo')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IS_PATTERN
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               TYPE_PATTERN
@@ -267,7 +267,7 @@ JetFile: When.jet
               PsiElement(IDENTIFIER)('foo')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IS_PATTERN
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               EXPRESSION_PATTERN
@@ -280,7 +280,7 @@ JetFile: When.jet
               PsiElement(IDENTIFIER)('foo')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IS_PATTERN
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               EXPRESSION_PATTERN
@@ -293,7 +293,7 @@ JetFile: When.jet
               PsiElement(IDENTIFIER)('foo')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IS_PATTERN
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               EXPRESSION_PATTERN
@@ -306,7 +306,7 @@ JetFile: When.jet
               PsiElement(IDENTIFIER)('foo')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IS_PATTERN
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               EXPRESSION_PATTERN
@@ -319,7 +319,7 @@ JetFile: When.jet
               PsiElement(IDENTIFIER)('foo')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IS_PATTERN
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               WILDCARD_PATTERN
@@ -331,7 +331,7 @@ JetFile: When.jet
               PsiElement(IDENTIFIER)('foo')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IS_PATTERN
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               BINDING_PATTERN
@@ -353,7 +353,7 @@ JetFile: When.jet
               PsiElement(IDENTIFIER)('foo')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IS_PATTERN
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               TUPLE_PATTERN
@@ -449,7 +449,7 @@ JetFile: When.jet
           PsiElement(LBRACE)('{')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IS_PATTERN
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               TYPE_PATTERN
@@ -464,7 +464,7 @@ JetFile: When.jet
               PsiElement(IDENTIFIER)('c')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IS_PATTERN
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               DECOMPOSER_PATTERN
@@ -494,7 +494,7 @@ JetFile: When.jet
               PsiElement(IDENTIFIER)('c')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IS_PATTERN
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               DECOMPOSER_PATTERN
@@ -527,7 +527,7 @@ JetFile: When.jet
               PsiElement(IDENTIFIER)('c')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IS_PATTERN
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               DECOMPOSER_PATTERN
@@ -560,7 +560,7 @@ JetFile: When.jet
               PsiElement(IDENTIFIER)('c')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IS_PATTERN
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               DECOMPOSER_PATTERN
@@ -597,7 +597,7 @@ JetFile: When.jet
               PsiElement(IDENTIFIER)('c')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IS_PATTERN
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               DECOMPOSER_PATTERN
@@ -642,7 +642,7 @@ JetFile: When.jet
               PsiElement(IDENTIFIER)('c')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IS_PATTERN
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               DECOMPOSER_PATTERN
@@ -683,7 +683,7 @@ JetFile: When.jet
               PsiElement(IDENTIFIER)('c')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IS_PATTERN
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               DECOMPOSER_PATTERN
@@ -723,7 +723,7 @@ JetFile: When.jet
               PsiElement(IDENTIFIER)('c')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IS_PATTERN
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               DECOMPOSER_PATTERN
@@ -754,7 +754,7 @@ JetFile: When.jet
               PsiElement(IDENTIFIER)('c')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IN_RANGE
               PsiElement(in)('in')
               PsiWhiteSpace(' ')
               BINARY_EXPRESSION
@@ -771,7 +771,7 @@ JetFile: When.jet
               PsiElement(IDENTIFIER)('dsf')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IN_RANGE
               PsiElement(NOT_IN)('!in')
               PsiWhiteSpace(' ')
               INTEGER_CONSTANT
@@ -783,7 +783,7 @@ JetFile: When.jet
               PsiElement(IDENTIFIER)('sd')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IS_PATTERN
               PsiElement(NOT_IS)('!is')
               PsiWhiteSpace(' ')
               TYPE_PATTERN
@@ -798,7 +798,7 @@ JetFile: When.jet
               PsiElement(IDENTIFIER)('d')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IS_PATTERN
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               TYPE_PATTERN
@@ -828,7 +828,7 @@ JetFile: When.jet
               PsiElement(IDENTIFIER)('fgpp')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IS_PATTERN
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               TUPLE_PATTERN
@@ -881,7 +881,7 @@ JetFile: When.jet
               PsiElement(IDENTIFIER)('d')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IS_PATTERN
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               TUPLE_PATTERN
@@ -975,7 +975,7 @@ JetFile: When.jet
               PsiElement(IDENTIFIER)('d')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IS_PATTERN
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               TUPLE_PATTERN
@@ -1002,7 +1002,7 @@ JetFile: When.jet
               PsiElement(INTEGER_LITERAL)('2')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IS_PATTERN
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               BINDING_PATTERN
@@ -1069,7 +1069,7 @@ JetFile: When.jet
           PsiElement(LBRACE)('{')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IS_PATTERN
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               TYPE_PATTERN
@@ -1079,7 +1079,7 @@ JetFile: When.jet
                       PsiElement(IDENTIFIER)('Tree')
             PsiElement(COMMA)(',')
             PsiWhiteSpace('\n    ')
-            WHEN_CONDITION
+            WHEN_CONDITION_IS_PATTERN
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               DECOMPOSER_PATTERN
@@ -1104,7 +1104,7 @@ JetFile: When.jet
                   PsiElement(RPAR)(')')
             PsiElement(COMMA)(',')
             PsiWhiteSpace('\n    ')
-            WHEN_CONDITION
+            WHEN_CONDITION_IS_PATTERN
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               DECOMPOSER_PATTERN
@@ -1137,12 +1137,12 @@ JetFile: When.jet
               PsiElement(IDENTIFIER)('c')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_EXPRESSION
               INTEGER_CONSTANT
                 PsiElement(INTEGER_LITERAL)('1')
             PsiElement(COMMA)(',')
             PsiWhiteSpace(' ')
-            WHEN_CONDITION
+            WHEN_CONDITION_EXPRESSION
               CALL_EXPRESSION
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('foo')
@@ -1151,12 +1151,12 @@ JetFile: When.jet
                   PsiElement(RPAR)(')')
             PsiElement(COMMA)(',')
             PsiWhiteSpace(' ')
-            WHEN_CONDITION
+            WHEN_CONDITION_EXPRESSION
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('bar')
             PsiElement(COMMA)(',')
             PsiWhiteSpace(' ')
-            WHEN_CONDITION
+            WHEN_CONDITION_EXPRESSION
               BINARY_EXPRESSION
                 INTEGER_CONSTANT
                   PsiElement(INTEGER_LITERAL)('2')
@@ -1168,7 +1168,7 @@ JetFile: When.jet
                   PsiElement(INTEGER_LITERAL)('3')
             PsiElement(COMMA)(',')
             PsiWhiteSpace('\n    ')
-            WHEN_CONDITION
+            WHEN_CONDITION_IS_PATTERN
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               DECOMPOSER_PATTERN
@@ -1201,7 +1201,7 @@ JetFile: When.jet
               PsiElement(IDENTIFIER)('c')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IS_PATTERN
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               DECOMPOSER_PATTERN

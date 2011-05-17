@@ -24,7 +24,7 @@ JetFile: CallsInWhen.jet
           PsiElement(LBRACE)('{')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_CALL
               PsiElement(DOT)('.')
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('foo')
@@ -35,7 +35,7 @@ JetFile: CallsInWhen.jet
               PsiElement(IDENTIFIER)('a')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_CALL
               PsiElement(DOT)('.')
               CALL_EXPRESSION
                 REFERENCE_EXPRESSION
@@ -50,7 +50,7 @@ JetFile: CallsInWhen.jet
               PsiElement(IDENTIFIER)('a')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_CALL
               PsiElement(DOT)('.')
               CALL_EXPRESSION
                 REFERENCE_EXPRESSION
@@ -70,7 +70,7 @@ JetFile: CallsInWhen.jet
               PsiElement(IDENTIFIER)('a')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_CALL
               PsiElement(DOT)('.')
               CALL_EXPRESSION
                 REFERENCE_EXPRESSION
@@ -96,7 +96,7 @@ JetFile: CallsInWhen.jet
               PsiElement(IDENTIFIER)('a')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_CALL
               PsiElement(DOT)('.')
               CALL_EXPRESSION
                 REFERENCE_EXPRESSION
@@ -127,7 +127,7 @@ JetFile: CallsInWhen.jet
               PsiElement(IDENTIFIER)('a')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_CALL
               PsiElement(DOT)('.')
               FUNCTION_LITERAL
                 PsiElement(LBRACE)('{')
@@ -142,7 +142,7 @@ JetFile: CallsInWhen.jet
               PsiElement(IDENTIFIER)('a')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_CALL
               PsiElement(DOT)('.')
               FUNCTION_LITERAL
                 PsiElement(LBRACE)('{')
@@ -160,7 +160,7 @@ JetFile: CallsInWhen.jet
               PsiElement(IDENTIFIER)('a')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_CALL
               PsiElement(DOT)('.')
               FUNCTION_LITERAL
                 PsiElement(LBRACE)('{')

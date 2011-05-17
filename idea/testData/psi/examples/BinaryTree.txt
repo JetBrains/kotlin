@@ -435,7 +435,7 @@ JetFile: BinaryTree.jet
                   PsiElement(LBRACE)('{')
                   PsiWhiteSpace('\n        ')
                   WHEN_ENTRY
-                    WHEN_CONDITION
+                    WHEN_CONDITION_EXPRESSION
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('EQ')
                     PsiWhiteSpace(' ')
@@ -445,7 +445,7 @@ JetFile: BinaryTree.jet
                       PsiElement(true)('true')
                   PsiWhiteSpace('\n        ')
                   WHEN_ENTRY
-                    WHEN_CONDITION
+                    WHEN_CONDITION_EXPRESSION
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('LS')
                     PsiWhiteSpace(' ')
@@ -471,7 +471,7 @@ JetFile: BinaryTree.jet
                         PsiElement(RPAR)(')')
                   PsiWhiteSpace('\n        ')
                   WHEN_ENTRY
-                    WHEN_CONDITION
+                    WHEN_CONDITION_EXPRESSION
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('GT')
                     PsiWhiteSpace(' ')
@@ -713,7 +713,7 @@ JetFile: BinaryTree.jet
                   PsiElement(LBRACE)('{')
                   PsiWhiteSpace('\n        ')
                   WHEN_ENTRY
-                    WHEN_CONDITION
+                    WHEN_CONDITION_EXPRESSION
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('EQ')
                     PsiWhiteSpace(' ')
@@ -723,7 +723,7 @@ JetFile: BinaryTree.jet
                       PsiElement(false)('false')
                   PsiWhiteSpace('\n        ')
                   WHEN_ENTRY
-                    WHEN_CONDITION
+                    WHEN_CONDITION_EXPRESSION
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('LS')
                     PsiWhiteSpace(' ')
@@ -751,7 +751,7 @@ JetFile: BinaryTree.jet
                         PsiElement(RPAR)(')')
                   PsiWhiteSpace('\n        ')
                   WHEN_ENTRY
-                    WHEN_CONDITION
+                    WHEN_CONDITION_EXPRESSION
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('GT')
                     PsiWhiteSpace(' ')
@@ -891,7 +891,7 @@ JetFile: BinaryTree.jet
                   PsiElement(LBRACE)('{')
                   PsiWhiteSpace('\n        ')
                   WHEN_ENTRY
-                    WHEN_CONDITION
+                    WHEN_CONDITION_EXPRESSION
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('EQ')
                     PsiWhiteSpace(' ')
@@ -904,7 +904,7 @@ JetFile: BinaryTree.jet
                         PsiElement(false)('false')
                   PsiWhiteSpace('\n        ')
                   WHEN_ENTRY
-                    WHEN_CONDITION
+                    WHEN_CONDITION_EXPRESSION
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('LS')
                     PsiWhiteSpace(' ')
@@ -990,7 +990,7 @@ JetFile: BinaryTree.jet
                               PsiElement(RPAR)(')')
                   PsiWhiteSpace('\n        ')
                   WHEN_ENTRY
-                    WHEN_CONDITION
+                    WHEN_CONDITION_EXPRESSION
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('GT')
                     PsiWhiteSpace(' ')
@@ -1265,7 +1265,7 @@ JetFile: BinaryTree.jet
                   PsiElement(LBRACE)('{')
                   PsiWhiteSpace('\n        ')
                   WHEN_ENTRY
-                    WHEN_CONDITION
+                    WHEN_CONDITION_EXPRESSION
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('EQ')
                     PsiWhiteSpace(' ')
@@ -1275,7 +1275,7 @@ JetFile: BinaryTree.jet
                       PsiElement(IDENTIFIER)('node')
                   PsiWhiteSpace('\n        ')
                   WHEN_ENTRY
-                    WHEN_CONDITION
+                    WHEN_CONDITION_EXPRESSION
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('LS')
                     PsiWhiteSpace(' ')
@@ -1296,7 +1296,7 @@ JetFile: BinaryTree.jet
                         PsiElement(RPAR)(')')
                   PsiWhiteSpace('\n        ')
                   WHEN_ENTRY
-                    WHEN_CONDITION
+                    WHEN_CONDITION_EXPRESSION
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('GT')
                     PsiWhiteSpace(' ')
@@ -1358,7 +1358,7 @@ JetFile: BinaryTree.jet
               PsiElement(LBRACE)('{')
               PsiWhiteSpace('\n      ')
               WHEN_ENTRY
-                WHEN_CONDITION
+                WHEN_CONDITION_IS_PATTERN
                   PsiElement(is)('is')
                   PsiWhiteSpace(' ')
                   DECOMPOSER_PATTERN
@@ -1399,7 +1399,7 @@ JetFile: BinaryTree.jet
                     PsiElement(RPAR)(')')
               PsiWhiteSpace('\n      ')
               WHEN_ENTRY
-                WHEN_CONDITION
+                WHEN_CONDITION_IS_PATTERN
                   PsiElement(is)('is')
                   PsiWhiteSpace(' ')
                   DECOMPOSER_PATTERN
@@ -1442,7 +1442,7 @@ JetFile: BinaryTree.jet
                     PsiElement(RPAR)(')')
               PsiWhiteSpace('\n      ')
               WHEN_ENTRY
-                WHEN_CONDITION
+                WHEN_CONDITION_IS_PATTERN
                   PsiElement(is)('is')
                   PsiWhiteSpace(' ')
                   DECOMPOSER_PATTERN
@@ -1485,7 +1485,7 @@ JetFile: BinaryTree.jet
                     PsiElement(RPAR)(')')
               PsiWhiteSpace('\n      ')
               WHEN_ENTRY
-                WHEN_CONDITION
+                WHEN_CONDITION_IS_PATTERN
                   PsiElement(is)('is')
                   PsiWhiteSpace(' ')
                   DECOMPOSER_PATTERN

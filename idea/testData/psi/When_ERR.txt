@@ -36,7 +36,7 @@ JetFile: When_ERR.jet
           PsiElement(LBRACE)('{')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IS_PATTERN
               PsiElement(is)('is')
               PsiErrorElement:Expecting a type or a decomposer pattern
                 <empty list>
@@ -47,7 +47,7 @@ JetFile: When_ERR.jet
               PsiElement(IDENTIFIER)('foo')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IS_PATTERN
               PsiElement(NOT_IS)('!is')
               PsiErrorElement:Expecting a type or a decomposer pattern
                 <empty list>
@@ -58,7 +58,7 @@ JetFile: When_ERR.jet
               PsiElement(IDENTIFIER)('foo')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IN_RANGE
               PsiElement(in)('in')
               PsiErrorElement:Expecting an element
                 <empty list>
@@ -69,7 +69,7 @@ JetFile: When_ERR.jet
               PsiElement(IDENTIFIER)('foo')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IN_RANGE
               PsiElement(NOT_IN)('!in')
               PsiErrorElement:Expecting an element
                 <empty list>
@@ -80,7 +80,7 @@ JetFile: When_ERR.jet
               PsiElement(IDENTIFIER)('foo')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_EXPRESSION
               PsiErrorElement:Expecting an element, is-condition or in-condition
                 <empty list>
             PsiElement(DOUBLE_ARROW)('=>')
@@ -106,7 +106,7 @@ JetFile: When_ERR.jet
           PsiElement(LBRACE)('{')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IS_PATTERN
               PsiElement(is)('is')
               PsiErrorElement:Expecting a type or a decomposer pattern
                 <empty list>
@@ -116,7 +116,7 @@ JetFile: When_ERR.jet
               <empty list>
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IS_PATTERN
               PsiElement(NOT_IS)('!is')
               PsiErrorElement:Expecting a type or a decomposer pattern
                 <empty list>
@@ -126,7 +126,7 @@ JetFile: When_ERR.jet
               <empty list>
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IN_RANGE
               PsiElement(in)('in')
               PsiErrorElement:Expecting an element
                 <empty list>
@@ -136,7 +136,7 @@ JetFile: When_ERR.jet
               <empty list>
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IN_RANGE
               PsiElement(NOT_IN)('!in')
               PsiErrorElement:Expecting an element
                 <empty list>
@@ -146,7 +146,7 @@ JetFile: When_ERR.jet
               <empty list>
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IN_RANGE
               PsiElement(NOT_IN)('!in')
               PsiErrorElement:Expecting an element
                 <empty list>
@@ -158,7 +158,7 @@ JetFile: When_ERR.jet
           PsiElement(SEMICOLON)(';')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_EXPRESSION
               PsiErrorElement:Expecting an element, is-condition or in-condition
                 <empty list>
             PsiElement(DOUBLE_ARROW)('=>')
@@ -190,7 +190,7 @@ JetFile: When_ERR.jet
           PsiElement(LBRACE)('{')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IS_PATTERN
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               PsiErrorElement:Pattern expected
@@ -202,7 +202,7 @@ JetFile: When_ERR.jet
               PsiElement(IDENTIFIER)('foo')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IS_PATTERN
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               TUPLE_PATTERN

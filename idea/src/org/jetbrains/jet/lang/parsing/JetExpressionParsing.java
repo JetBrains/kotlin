@@ -705,9 +705,9 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
     /*
      * whenCondition
-     *   : element
+     *   : expression
      *   : "." postfixExpression typeArguments? valueArguments?
-     *   : ("in" | "!in") element
+     *   : ("in" | "!in") expression
      *   : ("is" | "!is") isRHS
      *   ;
      */
@@ -722,6 +722,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             } else {
                 parseExpression();
             }
+            condition.done(WHEN_CONDITION_IN_RANGE);
         } else if (at(IS_KEYWORD) || at(NOT_IS)) {
             advance(); // IS_KEYWORD or NOT_IS
 
@@ -730,6 +731,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             } else {
                 parsePattern();
             }
+            condition.done(WHEN_CONDITION_IS_PATTERN);
         } else if (at(DOT)) {
             advance(); // DOT
             parsePostfixExpression();
@@ -737,15 +739,16 @@ public class JetExpressionParsing extends AbstractJetParsing {
             if (at(LPAR)) {
                 parseValueArgumentList();
             }
+            condition.done(WHEN_CONDITION_CALL);
         } else {
             if (atSet(WHEN_CONDITION_RECOVERY_SET_WITH_DOUBLE_ARROW)) {
                 error("Expecting an element, is-condition or in-condition");
             } else {
                 parseExpression();
             }
+            condition.done(WHEN_CONDITION_EXPRESSION);
         }
         myBuilder.restoreNewlinesState();
-        condition.done(WHEN_CONDITION);
     }
 
     /*

@@ -24,7 +24,7 @@ JetFile: AttributesOnPatterns.jet
           PsiElement(LBRACE)('{')
           PsiWhiteSpace('\n      ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IS_PATTERN
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               BINDING_PATTERN
@@ -47,7 +47,7 @@ JetFile: AttributesOnPatterns.jet
               PsiElement(IDENTIFIER)('d')
           PsiWhiteSpace('\n      ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IS_PATTERN
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               BINDING_PATTERN
@@ -78,7 +78,7 @@ JetFile: AttributesOnPatterns.jet
               PsiElement(IDENTIFIER)('d')
           PsiWhiteSpace('\n      ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IS_PATTERN
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               WILDCARD_PATTERN
@@ -99,7 +99,7 @@ JetFile: AttributesOnPatterns.jet
               PsiElement(IDENTIFIER)('d')
           PsiWhiteSpace('\n      ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IS_PATTERN
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               EXPRESSION_PATTERN
@@ -121,7 +121,7 @@ JetFile: AttributesOnPatterns.jet
               PsiElement(IDENTIFIER)('d')
           PsiWhiteSpace('\n      ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IS_PATTERN
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               TYPE_PATTERN
@@ -145,7 +145,7 @@ JetFile: AttributesOnPatterns.jet
               PsiElement(IDENTIFIER)('d')
           PsiWhiteSpace('\n      ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IS_PATTERN
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               DECOMPOSER_PATTERN

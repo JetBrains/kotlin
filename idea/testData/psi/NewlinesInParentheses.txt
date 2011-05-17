@@ -234,7 +234,7 @@ JetFile: NewlinesInParentheses.jet
           PsiElement(LBRACE)('{')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IS_PATTERN
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               DECOMPOSER_PATTERN
@@ -253,7 +253,7 @@ JetFile: NewlinesInParentheses.jet
               PsiElement(IDENTIFIER)('a')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IN_RANGE
               PsiElement(in)('in')
               PsiWhiteSpace(' ')
               CALL_EXPRESSION
@@ -270,7 +270,7 @@ JetFile: NewlinesInParentheses.jet
               PsiElement(IDENTIFIER)('a')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IS_PATTERN
               PsiElement(NOT_IS)('!is')
               PsiWhiteSpace(' ')
               DECOMPOSER_PATTERN
@@ -289,7 +289,7 @@ JetFile: NewlinesInParentheses.jet
               PsiElement(IDENTIFIER)('a')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_IN_RANGE
               PsiElement(NOT_IN)('!in')
               PsiWhiteSpace(' ')
               CALL_EXPRESSION
@@ -306,7 +306,7 @@ JetFile: NewlinesInParentheses.jet
               PsiElement(IDENTIFIER)('a')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION
+            WHEN_CONDITION_EXPRESSION
               CALL_EXPRESSION
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('f')

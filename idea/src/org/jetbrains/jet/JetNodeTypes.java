@@ -123,7 +123,10 @@ public interface JetNodeTypes {
     JetNodeType WILDCARD_PATTERN          = new JetNodeType("WILDCARD_PATTERN");
     JetNodeType WHEN                      = new JetNodeType("WHEN", JetWhenExpression.class);
     JetNodeType WHEN_ENTRY                = new JetNodeType("WHEN_ENTRY", JetWhenEntry.class);
-    JetNodeType WHEN_CONDITION            = new JetNodeType("WHEN_CONDITION");
+    JetNodeType WHEN_CONDITION_IN_RANGE   = new JetNodeType("WHEN_CONDITION_IN_RANGE");
+    JetNodeType WHEN_CONDITION_IS_PATTERN = new JetNodeType("WHEN_CONDITION_IS_PATTERN");
+    JetNodeType WHEN_CONDITION_CALL       = new JetNodeType("WHEN_CONDITION_CALL");
+    JetNodeType WHEN_CONDITION_EXPRESSION = new JetNodeType("WHEN_CONDITION_EXPRESSION");
     JetNodeType TUPLE_PATTERN_ENTRY       = new JetNodeType("TUPLE_PATTERN_ENTRY");
     JetNodeType NULLABLE_TYPE             = new JetNodeType("NULLABLE_TYPE", JetNullableType.class);
     JetNodeType TYPE_PROJECTION           = new JetNodeType("TYPE_PROJECTION", JetTypeProjection.class);

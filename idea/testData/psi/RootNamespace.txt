@@ -86,7 +86,7 @@ JetFile: RootNamespace.jet
               PsiElement(LBRACE)('{')
               PsiWhiteSpace('\n      ')
               WHEN_ENTRY
-                WHEN_CONDITION
+                WHEN_CONDITION_IS_PATTERN
                   PsiElement(is)('is')
                   PsiWhiteSpace(' ')
                   DECOMPOSER_PATTERN
