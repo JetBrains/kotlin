@@ -37,4 +37,9 @@ public class JetWhenEntry extends JetElement {
     public void accept(@NotNull JetVisitor visitor) {
         visitor.visitWhenEntry(this);
     }
+
+    @Nullable
+    public JetWhenCondition getCondition() {
+        return findChildByClass(JetWhenCondition.class);
+    }
 }

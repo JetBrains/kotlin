@@ -59,7 +59,8 @@ JetFile: When_ERR.jet
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
             WHEN_CONDITION_IN_RANGE
-              PsiElement(in)('in')
+              OPERATION_REFERENCE
+                PsiElement(in)('in')
               PsiErrorElement:Expecting an element
                 <empty list>
             PsiWhiteSpace('  ')
@@ -70,7 +71,8 @@ JetFile: When_ERR.jet
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
             WHEN_CONDITION_IN_RANGE
-              PsiElement(NOT_IN)('!in')
+              OPERATION_REFERENCE
+                PsiElement(NOT_IN)('!in')
               PsiErrorElement:Expecting an element
                 <empty list>
             PsiWhiteSpace('  ')
@@ -127,7 +129,8 @@ JetFile: When_ERR.jet
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
             WHEN_CONDITION_IN_RANGE
-              PsiElement(in)('in')
+              OPERATION_REFERENCE
+                PsiElement(in)('in')
               PsiErrorElement:Expecting an element
                 <empty list>
             PsiWhiteSpace('  ')
@@ -137,7 +140,8 @@ JetFile: When_ERR.jet
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
             WHEN_CONDITION_IN_RANGE
-              PsiElement(NOT_IN)('!in')
+              OPERATION_REFERENCE
+                PsiElement(NOT_IN)('!in')
               PsiErrorElement:Expecting an element
                 <empty list>
             PsiWhiteSpace('  ')
@@ -147,7 +151,8 @@ JetFile: When_ERR.jet
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
             WHEN_CONDITION_IN_RANGE
-              PsiElement(NOT_IN)('!in')
+              OPERATION_REFERENCE
+                PsiElement(NOT_IN)('!in')
               PsiErrorElement:Expecting an element
                 <empty list>
             PsiWhiteSpace('  ')

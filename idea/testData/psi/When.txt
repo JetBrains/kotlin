@@ -755,7 +755,8 @@ JetFile: When.jet
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
             WHEN_CONDITION_IN_RANGE
-              PsiElement(in)('in')
+              OPERATION_REFERENCE
+                PsiElement(in)('in')
               PsiWhiteSpace(' ')
               BINARY_EXPRESSION
                 INTEGER_CONSTANT
@@ -772,7 +773,8 @@ JetFile: When.jet
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
             WHEN_CONDITION_IN_RANGE
-              PsiElement(NOT_IN)('!in')
+              OPERATION_REFERENCE
+                PsiElement(NOT_IN)('!in')
               PsiWhiteSpace(' ')
               INTEGER_CONSTANT
                 PsiElement(INTEGER_LITERAL)('2')

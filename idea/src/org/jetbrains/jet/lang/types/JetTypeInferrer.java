@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.types;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
@@ -151,7 +152,7 @@ public class JetTypeInferrer {
             public void visitQualifiedExpression(JetQualifiedExpression expression) {
                 // . or ?.
                 JetType receiverType = getType(scope, expression.getReceiverExpression(), false);
-                checkNullSafety(receiverType, expression);
+                checkNullSafety(receiverType, expression.getOperationTokenNode());
 
                 JetExpression selectorExpression = expression.getSelectorExpression();
                 if (selectorExpression instanceof JetSimpleNameExpression) {
@@ -191,19 +192,20 @@ public class JetTypeInferrer {
         return wrapForTracing(result[0], reference[0], argumentList, true);
     }
 
-    private void checkNullSafety(JetType receiverType, JetQualifiedExpression expression) {
+    private void checkNullSafety(JetType receiverType, ASTNode operationTokenNode) {
         if (receiverType != null) {
             boolean namespaceType = receiverType instanceof NamespaceType;
             boolean nullable = !namespaceType && receiverType.isNullable();
-            if (nullable && expression.getOperationSign() == JetTokens.DOT) {
-                trace.getErrorHandler().genericError(expression.getOperationTokenNode(), "Only safe calls (?.) are allowed on a nullable receiver of type " + receiverType);
+            IElementType operationSign = operationTokenNode.getElementType();
+            if (nullable && operationSign == JetTokens.DOT) {
+                trace.getErrorHandler().genericError(operationTokenNode, "Only safe calls (?.) are allowed on a nullable receiver of type " + receiverType);
             }
-            else if (!nullable && expression.getOperationSign() == JetTokens.SAFE_ACCESS) {
+            else if (!nullable && operationSign == JetTokens.SAFE_ACCESS) {
                 if (namespaceType) {
-                    trace.getErrorHandler().genericError(expression.getOperationTokenNode(), "Safe calls are not allowed on namespaces");
+                    trace.getErrorHandler().genericError(operationTokenNode, "Safe calls are not allowed on namespaces");
                 }
                 else {
-                    trace.getErrorHandler().genericWarning(expression.getOperationTokenNode(), "Unnecessary safe call on a non-null receiver of type  " + receiverType);
+                    trace.getErrorHandler().genericWarning(operationTokenNode, "Unnecessary safe call on a non-null receiver of type  " + receiverType);
                 }
             }
         }
@@ -378,7 +380,10 @@ public class JetTypeInferrer {
             } else {
                 JetExpression resultExpression = entry.getExpression();
                 if (resultExpression != null) {
-                    result.add(getType(scope, resultExpression, true));
+                    JetType type = getType(scope, resultExpression, true);
+                    if (type != null) {
+                        result.add(type);
+                    }
                 }
             }
         }
@@ -964,11 +969,75 @@ public class JetTypeInferrer {
         }
 
         @Override
-        public void visitWhenExpression(JetWhenExpression expression) {
+        public void visitWhenExpression(final JetWhenExpression expression) {
             // TODO :change scope according to the bound value in the when header
-            List<JetType> expressions = new ArrayList<JetType>();
-            collectAllReturnTypes(expression, scope, expressions);
-            result = semanticServices.getTypeChecker().commonSupertype(expressions);
+            final JetExpression subjectExpression = expression.getSubjectExpression();
+
+            JetType subjectType = null;
+            if (subjectExpression != null) {
+                subjectType = getType(scope, subjectExpression, false);
+            }
+
+            // TODO : exhaustive patterns
+
+            for (JetWhenEntry whenEntry : expression.getEntries()) {
+                final JetType finalSubjectType = subjectType;
+                JetWhenCondition condition = whenEntry.getCondition();
+                if (condition != null) {
+                    condition.accept(new JetVisitor() {
+                        @Override
+                        public void visitWhenConditionWithExpression(JetWhenConditionWithExpression condition) {
+                            JetExpression conditionExpression = condition.getExpression();
+                            if (conditionExpression != null) {
+                                JetType type = getType(scope, conditionExpression, false);
+                                if (type != null && finalSubjectType != null) {
+                                    if (TypeUtils.intersect(semanticServices.getTypeChecker(), Sets.newHashSet(finalSubjectType, type)) == null) {
+                                        trace.getErrorHandler().genericError(conditionExpression.getNode(), "This condition can never hold");
+                                    }
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void visitWhenConditionCall(JetWhenConditionCall condition) {
+                            checkNullSafety(finalSubjectType, condition.getOperationTokenNode());
+                            JetExpression callSuffixExpression = condition.getCallSuffixExpression();
+                            JetScope compositeScope = new ScopeWithReceiver(scope, finalSubjectType);
+                            if (callSuffixExpression != null) {
+                                JetType selectorReturnType = getType(compositeScope, callSuffixExpression, false);
+                                ensureBooleanResultWithCustomSubject(callSuffixExpression, selectorReturnType, "This expression");
+                            }
+                        }
+
+                        @Override
+                        public void visitWhenConditionInRange(JetWhenConditionInRange condition) {
+                            JetExpression rangeExpression = condition.getRangeExpression();
+                            if (rangeExpression != null) {
+                                checkInExpression(condition.getOperationReference(), subjectExpression, rangeExpression);
+                            }
+                        }
+
+                        @Override
+                        public void visitWhenConditionIsPattern(JetWhenConditionIsPattern condition) {
+                            super.visitWhenConditionIsPattern(condition); // TODO
+                        }
+
+                        @Override
+                        public void visitJetElement(JetElement elem) {
+                            trace.getErrorHandler().genericError(elem.getNode(), "Unsupported [JetTypeInferrer] : " + elem);
+                        }
+                    });
+                }
+            }
+
+            List<JetType> expressionTypes = new ArrayList<JetType>();
+            collectAllReturnTypes(expression, scope, expressionTypes);
+            if (!expressionTypes.isEmpty()) {
+                result = semanticServices.getTypeChecker().commonSupertype(expressionTypes);
+            }
+            else {
+                trace.getErrorHandler().genericError(expression.getNode(), "Entries required for when-expression"); // TODO : Scope, and maybe this should not an error
+            }
         }
 
         @Override
@@ -1226,10 +1295,10 @@ public class JetTypeInferrer {
             JetExpression receiverExpression = expression.getReceiverExpression();
             JetType receiverType = new TypeInferrerVisitorWithNamespaces(scope, false).getType(receiverExpression);
             if (receiverType != null) {
-                checkNullSafety(receiverType, expression);
+                checkNullSafety(receiverType, expression.getOperationTokenNode());
                 JetType selectorReturnType = getSelectorReturnType(receiverType, selectorExpression);
                 if (expression.getOperationSign() == JetTokens.QUEST) {
-                    if (selectorReturnType != null && !isBoolean(selectorReturnType)) {
+                    if (selectorReturnType != null && !isBoolean(selectorReturnType) && selectorExpression != null) {
                         // TODO : more comprehensible error message
                         trace.getErrorHandler().typeMismatch(selectorExpression, semanticServices.getStandardLibrary().getBooleanType(), selectorReturnType);
                     }
@@ -1395,9 +1464,7 @@ public class JetTypeInferrer {
                     result = ErrorUtils.createErrorType("No right argument"); // TODO
                     return;
                 }
-                String name = "contains";
-                JetType containsType = getTypeForBinaryCall(scope, right, expression.getOperationReference(), expression.getLeft(), name, true);
-                ensureBooleanResult(operationSign, name, containsType);
+                checkInExpression(operationSign, left, right);
                 result = semanticServices.getStandardLibrary().getBooleanType();
             }
             else if (operationType == JetTokens.ANDAND || operationType == JetTokens.OROR) {
@@ -1426,6 +1493,12 @@ public class JetTypeInferrer {
             else {
                 trace.getErrorHandler().genericError(operationSign.getNode(), "Unknown operation");
             }
+        }
+
+        private void checkInExpression(JetSimpleNameExpression operationSign, JetExpression left, JetExpression right) {
+            String name = "contains";
+            JetType containsType = getTypeForBinaryCall(scope, right, operationSign, left, name, true);
+            ensureBooleanResult(operationSign, name, containsType);
         }
 
         private void ensureNonemptyIntersectionOfOperandTypes(JetBinaryExpression expression) {
@@ -1459,11 +1532,15 @@ public class JetTypeInferrer {
             trace.getErrorHandler().genericError(expression.getNode(), "Assignments are not expressions, and only expressions are allowed in this context");
         }
 
-        private boolean ensureBooleanResult(JetSimpleNameExpression operationSign, String name, JetType resultType) {
+        private boolean ensureBooleanResult(JetExpression operationSign, String name, JetType resultType) {
+            return ensureBooleanResultWithCustomSubject(operationSign, resultType, "'" + name + "'");
+        }
+
+        private boolean ensureBooleanResultWithCustomSubject(JetExpression operationSign, JetType resultType, String subjectName) {
             if (resultType != null) {
                 // TODO : Relax?
                 if (!isBoolean(resultType)) {
-                    trace.getErrorHandler().genericError(operationSign.getNode(), "'" + name + "' must return Boolean but returns " + resultType);
+                    trace.getErrorHandler().genericError(operationSign.getNode(), subjectName + " must return Boolean but returns " + resultType);
                     return false;
                 }
             }

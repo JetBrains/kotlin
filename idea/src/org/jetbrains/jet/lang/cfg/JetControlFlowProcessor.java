@@ -96,7 +96,8 @@ public class JetControlFlowProcessor {
             this.inCondition = inCondition;
         }
 
-        private void value(@NotNull JetElement element, boolean preferBlock, boolean inCondition) {
+        private void value(@Nullable JetElement element, boolean preferBlock, boolean inCondition) {
+            if (element == null) return;
             CFPVisitor visitor;
             if (this.preferBlock == preferBlock && this.inCondition == inCondition) {
                 visitor = this;
@@ -607,6 +608,61 @@ public class JetControlFlowProcessor {
             value(expression.getLeftHandSide(), false, inCondition);
             // TODO : builder.read(expression.getPattern());
             builder.read(expression);
+        }
+
+        @Override
+        public void visitWhenExpression(JetWhenExpression expression) {
+            // TODO : no more than one else
+            // TODO : else must be the last
+            JetExpression subjectExpression = expression.getSubjectExpression();
+            if (subjectExpression != null) {
+                value(subjectExpression, false, inCondition);
+            }
+
+            Label nextLabel = builder.createUnboundLabel();
+            for (JetWhenEntry whenEntry : expression.getEntries()) {
+                if (whenEntry.getSubWhen() != null) throw new UnsupportedOperationException(); // TODO
+
+                if (whenEntry.isElseContinue()) throw new UnsupportedOperationException(); // TODO
+
+                JetWhenCondition condition = whenEntry.getCondition();
+                if (condition != null) {
+                    condition.accept(new JetVisitor() {
+                        @Override
+                        public void visitWhenConditionWithExpression(JetWhenConditionWithExpression condition) {
+                            value(condition.getExpression(), false, inCondition); // TODO : inCondition?
+                        }
+
+                        @Override
+                        public void visitWhenConditionCall(JetWhenConditionCall condition) {
+                            value(condition.getCallSuffixExpression(), false, inCondition); // TODO : inCondition?
+                        }
+
+                        @Override
+                        public void visitWhenConditionInRange(JetWhenConditionInRange condition) {
+                            value(condition.getRangeExpression(), false, inCondition); // TODO : inCondition?
+                            value(condition.getOperationReference(), false, inCondition); // TODO : inCondition?
+                            // TODO : read the call to contains()...
+                        }
+
+                        @Override
+                        public void visitWhenConditionIsPattern(JetWhenConditionIsPattern condition) {
+                            super.visitWhenConditionIsPattern(condition); // TODO
+                        }
+
+                        @Override
+                        public void visitJetElement(JetElement elem) {
+                            throw new UnsupportedOperationException();
+                        }
+                    });
+                }
+
+                builder.nondeterministicJump(nextLabel);
+
+                value(whenEntry.getExpression(), true, inCondition);
+                builder.bindLabel(nextLabel);
+                nextLabel = builder.createUnboundLabel();
+            }
         }
 
         @Override

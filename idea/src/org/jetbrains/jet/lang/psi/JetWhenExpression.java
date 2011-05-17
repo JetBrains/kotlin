@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 
 import java.util.List;
@@ -17,6 +18,11 @@ public class JetWhenExpression extends JetExpression {
     @NotNull
     public List<JetWhenEntry> getEntries() {
         return findChildrenByType(JetNodeTypes.WHEN_ENTRY);
+    }
+
+    @Nullable @IfNotParsed
+    public JetExpression getSubjectExpression() {
+        return findChildByClass(JetExpression.class);
     }
 
     @Override

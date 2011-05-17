@@ -254,7 +254,8 @@ JetFile: NewlinesInParentheses.jet
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
             WHEN_CONDITION_IN_RANGE
-              PsiElement(in)('in')
+              OPERATION_REFERENCE
+                PsiElement(in)('in')
               PsiWhiteSpace(' ')
               CALL_EXPRESSION
                 REFERENCE_EXPRESSION
@@ -290,7 +291,8 @@ JetFile: NewlinesInParentheses.jet
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
             WHEN_CONDITION_IN_RANGE
-              PsiElement(NOT_IN)('!in')
+              OPERATION_REFERENCE
+                PsiElement(NOT_IN)('!in')
               PsiWhiteSpace(' ')
               CALL_EXPRESSION
                 REFERENCE_EXPRESSION

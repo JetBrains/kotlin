@@ -706,7 +706,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     /*
      * whenCondition
      *   : expression
-     *   : "." postfixExpression typeArguments? valueArguments?
+     *   : ("." | "?." postfixExpression typeArguments? valueArguments?
      *   : ("in" | "!in") expression
      *   : ("is" | "!is") isRHS
      *   ;
@@ -715,7 +715,10 @@ public class JetExpressionParsing extends AbstractJetParsing {
         PsiBuilder.Marker condition = mark();
         myBuilder.disableNewlines();
         if (at(IN_KEYWORD) || at(NOT_IN)) {
+            PsiBuilder.Marker mark = mark();
             advance(); // IN_KEYWORD or NOT_IN
+            mark.done(OPERATION_REFERENCE);
+
 
             if (atSet(WHEN_CONDITION_RECOVERY_SET_WITH_DOUBLE_ARROW)) {
                 error("Expecting an element");
@@ -732,13 +735,20 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 parsePattern();
             }
             condition.done(WHEN_CONDITION_IS_PATTERN);
-        } else if (at(DOT)) {
-            advance(); // DOT
+        } else if (at(DOT) || at(SAFE_ACCESS)) {
+            advance(); // DOT or SAFE_ACCESS
+            PsiBuilder.Marker mark = mark();
             parsePostfixExpression();
-            myJetParsing.parseTypeArgumentList();
-            if (at(LPAR)) {
-                parseValueArgumentList();
+            if (parseCallSuffix()) {
+                mark.done(CALL_EXPRESSION);
             }
+            else {
+                mark.drop();
+            }
+//            myJetParsing.parseTypeArgumentList();
+//            if (at(LPAR)) {
+//                parseValueArgumentList();
+//            }
             condition.done(WHEN_CONDITION_CALL);
         } else {
             if (atSet(WHEN_CONDITION_RECOVERY_SET_WITH_DOUBLE_ARROW)) {

@@ -1,0 +1,18 @@
+fun foo() {
+    val s = ""
+    val x = 1
+    when (x) {
+      <error>s</error> => 1
+      1 => 1
+      1 + <error>a</error> => 1
+      in 1..<error>a</error> => 1
+      !in 1..<error>a</error> => 1
+      .<error>a</error> => 1
+      .equals(1).<error>a</error> => 1
+      <warning>?.</warning>equals(1) => 1
+    }
+    when (<warning>x</warning>?:null) {
+      <error>.</error>equals(1) => 1
+      ?.equals(1).equals(2) => 1
+    }
+}
