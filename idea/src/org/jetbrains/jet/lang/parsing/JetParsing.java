@@ -861,8 +861,10 @@ public class JetParsing extends AbstractJetParsing {
             return FUN;
         }
 
+        boolean parameterListOccured = false;
         if (at(LT)) {
             parseTypeParameterList(TokenSet.create(LBRACKET, LBRACE, LPAR));
+            parameterListOccured = true;
         }
 
 
@@ -881,7 +883,16 @@ public class JetParsing extends AbstractJetParsing {
 
         TokenSet valueParametersFollow = TokenSet.create(COLON, EQ, LBRACE, SEMICOLON, RPAR);
 
-        parseTypeParameterList(TokenSet.orSet(TokenSet.create(LPAR), valueParametersFollow));
+        if (at(LT)) {
+            PsiBuilder.Marker error = mark();
+            parseTypeParameterList(TokenSet.orSet(TokenSet.create(LPAR), valueParametersFollow));
+            if (parameterListOccured) {
+                error.error("Only one type parameter list is allowed for a function"); // TODO : discuss
+            }
+            else {
+                error.drop();
+            }
+        }
 
         parseValueParameterList(false, valueParametersFollow);
 

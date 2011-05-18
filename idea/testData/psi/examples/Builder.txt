@@ -250,8 +250,6 @@ JetFile: Builder.jet
               PsiElement(fun)('fun')
               PsiWhiteSpace(' ')
               PsiElement(IDENTIFIER)('classpath')
-              TYPE_PARAMETER_LIST
-                <empty list>
               VALUE_PARAMETER_LIST
                 PsiElement(LPAR)('(')
                 VALUE_PARAMETER
@@ -289,8 +287,6 @@ JetFile: Builder.jet
               PsiElement(fun)('fun')
               PsiWhiteSpace(' ')
               PsiElement(IDENTIFIER)('src')
-              TYPE_PARAMETER_LIST
-                <empty list>
               VALUE_PARAMETER_LIST
                 PsiElement(LPAR)('(')
                 VALUE_PARAMETER
@@ -336,8 +332,6 @@ JetFile: Builder.jet
               PsiElement(fun)('fun')
               PsiWhiteSpace(' ')
               PsiElement(IDENTIFIER)('classpath')
-              TYPE_PARAMETER_LIST
-                <empty list>
               VALUE_PARAMETER_LIST
                 PsiElement(LPAR)('(')
                 VALUE_PARAMETER
@@ -365,8 +359,6 @@ JetFile: Builder.jet
           PsiElement(fun)('fun')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('library')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -440,8 +432,6 @@ JetFile: Builder.jet
           PsiElement(fun)('fun')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('classpath')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiComment(BLOCK_COMMENT)('/*...*/')
@@ -451,8 +441,6 @@ JetFile: Builder.jet
           PsiElement(fun)('fun')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('module')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiComment(BLOCK_COMMENT)('/*...*/')

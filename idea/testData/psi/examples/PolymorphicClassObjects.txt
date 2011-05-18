@@ -34,8 +34,6 @@ JetFile: PolymorphicClassObjects.jet
           PsiElement(fun)('fun')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('plusAssign')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -53,8 +51,6 @@ JetFile: PolymorphicClassObjects.jet
           PsiElement(fun)('fun')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('result')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')

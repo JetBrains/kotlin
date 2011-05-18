@@ -23,8 +23,6 @@ JetFile: IOSamples.jet
           PsiElement(fun)('fun')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('add')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -64,8 +62,6 @@ JetFile: IOSamples.jet
           PsiElement(fun)('fun')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('close')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -340,8 +336,6 @@ JetFile: IOSamples.jet
           PsiElement(fun)('fun')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('next')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -607,8 +601,6 @@ JetFile: IOSamples.jet
           PsiElement(fun)('fun')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('add')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -647,8 +639,6 @@ JetFile: IOSamples.jet
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('example')
-      TYPE_PARAMETER_LIST
-        <empty list>
       VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
         PsiElement(RPAR)(')')

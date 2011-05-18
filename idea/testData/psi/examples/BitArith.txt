@@ -4,8 +4,6 @@ JetFile: BitArith.jet
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('oneBit')
-      TYPE_PARAMETER_LIST
-        <empty list>
       VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
         VALUE_PARAMETER
@@ -35,8 +33,6 @@ JetFile: BitArith.jet
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('setBit')
-      TYPE_PARAMETER_LIST
-        <empty list>
       VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
         VALUE_PARAMETER
@@ -84,8 +80,6 @@ JetFile: BitArith.jet
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('unsetBit')
-      TYPE_PARAMETER_LIST
-        <empty list>
       VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
         VALUE_PARAMETER
@@ -140,8 +134,6 @@ JetFile: BitArith.jet
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('getBit')
-      TYPE_PARAMETER_LIST
-        <empty list>
       VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
         VALUE_PARAMETER
@@ -196,8 +188,6 @@ JetFile: BitArith.jet
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('getBit')
-      TYPE_PARAMETER_LIST
-        <empty list>
       VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
         VALUE_PARAMETER
@@ -255,8 +245,6 @@ JetFile: BitArith.jet
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('countOnes')
-      TYPE_PARAMETER_LIST
-        <empty list>
       VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
         VALUE_PARAMETER
@@ -349,8 +337,6 @@ JetFile: BitArith.jet
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('mostSignificantBit')
-      TYPE_PARAMETER_LIST
-        <empty list>
       VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
         VALUE_PARAMETER
@@ -417,8 +403,6 @@ JetFile: BitArith.jet
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('countOnes')
-      TYPE_PARAMETER_LIST
-        <empty list>
       VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
         VALUE_PARAMETER
@@ -497,8 +481,6 @@ JetFile: BitArith.jet
             PsiElement(IDENTIFIER)('Int')
       PsiElement(DOT)('.')
       PsiElement(IDENTIFIER)('matchMask')
-      TYPE_PARAMETER_LIST
-        <empty list>
       VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
         VALUE_PARAMETER
@@ -586,8 +568,6 @@ JetFile: BitArith.jet
           PsiElement(fun)('fun')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('plus')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -620,8 +600,6 @@ JetFile: BitArith.jet
           PsiElement(fun)('fun')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('shl')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             VALUE_PARAMETER

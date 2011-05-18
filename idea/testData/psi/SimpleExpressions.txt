@@ -4,8 +4,6 @@ JetFile: SimpleExpressions.jet
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('a')
-      TYPE_PARAMETER_LIST
-        <empty list>
       VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
         PsiWhiteSpace('\n    ')

@@ -40,8 +40,6 @@ JetFile: IMutableIterable.jet
           PsiElement(fun)('fun')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('mutableIterator')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')

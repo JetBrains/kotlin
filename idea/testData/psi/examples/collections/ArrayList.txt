@@ -83,8 +83,6 @@ JetFile: ArrayList.jet
           PsiElement(fun)('fun')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('iterator')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -120,8 +118,6 @@ JetFile: ArrayList.jet
           PsiElement(fun)('fun')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('mutableIterator')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -194,8 +190,6 @@ JetFile: ArrayList.jet
                 PsiElement(fun)('fun')
                 PsiWhiteSpace(' ')
                 PsiElement(IDENTIFIER)('checkVersion')
-                TYPE_PARAMETER_LIST
-                  <empty list>
                 VALUE_PARAMETER_LIST
                   PsiElement(LPAR)('(')
                   PsiElement(RPAR)(')')
@@ -243,8 +237,6 @@ JetFile: ArrayList.jet
                 PsiElement(fun)('fun')
                 PsiWhiteSpace(' ')
                 PsiElement(IDENTIFIER)('next')
-                TYPE_PARAMETER_LIST
-                  <empty list>
                 VALUE_PARAMETER_LIST
                   PsiElement(LPAR)('(')
                   PsiElement(RPAR)(')')
@@ -329,8 +321,6 @@ JetFile: ArrayList.jet
                 PsiElement(fun)('fun')
                 PsiWhiteSpace(' ')
                 PsiElement(IDENTIFIER)('remove')
-                TYPE_PARAMETER_LIST
-                  <empty list>
                 VALUE_PARAMETER_LIST
                   PsiElement(LPAR)('(')
                   PsiElement(RPAR)(')')
@@ -401,8 +391,6 @@ JetFile: ArrayList.jet
           PsiElement(fun)('fun')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('get')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -447,8 +435,6 @@ JetFile: ArrayList.jet
           PsiElement(fun)('fun')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('checkIndex')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -551,8 +537,6 @@ JetFile: ArrayList.jet
           PsiElement(fun)('fun')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('set')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -634,8 +618,6 @@ JetFile: ArrayList.jet
           PsiElement(fun)('fun')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('add')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -851,8 +833,6 @@ JetFile: ArrayList.jet
           PsiElement(fun)('fun')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('remove')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             VALUE_PARAMETER

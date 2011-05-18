@@ -372,8 +372,6 @@ JetFile: BinaryHeap.jet
           PsiElement(fun)('fun')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('extract')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -472,8 +470,6 @@ JetFile: BinaryHeap.jet
           PsiElement(fun)('fun')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('add')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -527,8 +523,6 @@ JetFile: BinaryHeap.jet
           PsiElement(fun)('fun')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('siftDown')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -760,8 +754,6 @@ JetFile: BinaryHeap.jet
           PsiElement(fun)('fun')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('siftUp')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -1188,8 +1180,6 @@ JetFile: BinaryHeap.jet
               PsiElement(fun)('fun')
               PsiWhiteSpace(' ')
               PsiElement(IDENTIFIER)('compareTo')
-              TYPE_PARAMETER_LIST
-                <empty list>
               VALUE_PARAMETER_LIST
                 PsiElement(LPAR)('(')
                 VALUE_PARAMETER
@@ -1248,8 +1238,6 @@ JetFile: BinaryHeap.jet
             PsiElement(GT)('>')
       PsiElement(DOT)('.')
       PsiElement(IDENTIFIER)('swap')
-      TYPE_PARAMETER_LIST
-        <empty list>
       VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
         VALUE_PARAMETER

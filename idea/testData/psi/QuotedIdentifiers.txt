@@ -14,8 +14,6 @@ JetFile: QuotedIdentifiers.jet
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('`namespace`')
-      TYPE_PARAMETER_LIST
-        <empty list>
       VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
         PsiElement(RPAR)(')')

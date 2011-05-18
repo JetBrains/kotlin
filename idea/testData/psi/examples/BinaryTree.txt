@@ -257,8 +257,6 @@ JetFile: BinaryTree.jet
                 PsiElement(IDENTIFIER)('T')
           PsiElement(DOT)('.')
           PsiElement(IDENTIFIER)('compareTo')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -303,8 +301,6 @@ JetFile: BinaryTree.jet
           PsiElement(fun)('fun')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('contains')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -350,8 +346,6 @@ JetFile: BinaryTree.jet
               PsiElement(fun)('fun')
               PsiWhiteSpace(' ')
               PsiElement(IDENTIFIER)('contains')
-              TYPE_PARAMETER_LIST
-                <empty list>
               VALUE_PARAMETER_LIST
                 PsiElement(LPAR)('(')
                 VALUE_PARAMETER
@@ -509,8 +503,6 @@ JetFile: BinaryTree.jet
           PsiElement(fun)('fun')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('add')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -596,8 +588,6 @@ JetFile: BinaryTree.jet
               PsiElement(fun)('fun')
               PsiWhiteSpace(' ')
               PsiElement(IDENTIFIER)('add')
-              TYPE_PARAMETER_LIST
-                <empty list>
               VALUE_PARAMETER_LIST
                 PsiElement(LPAR)('(')
                 VALUE_PARAMETER
@@ -788,8 +778,6 @@ JetFile: BinaryTree.jet
               PsiElement(fun)('fun')
               PsiWhiteSpace(' ')
               PsiElement(IDENTIFIER)('addNoRef')
-              TYPE_PARAMETER_LIST
-                <empty list>
               VALUE_PARAMETER_LIST
                 PsiElement(LPAR)('(')
                 VALUE_PARAMETER
@@ -1088,8 +1076,6 @@ JetFile: BinaryTree.jet
           PsiElement(fun)('fun')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('remove')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -1190,8 +1176,6 @@ JetFile: BinaryTree.jet
               PsiElement(fun)('fun')
               PsiWhiteSpace(' ')
               PsiElement(IDENTIFIER)('find')
-              TYPE_PARAMETER_LIST
-                <empty list>
               VALUE_PARAMETER_LIST
                 PsiElement(LPAR)('(')
                 VALUE_PARAMETER
@@ -1329,8 +1313,6 @@ JetFile: BinaryTree.jet
           PsiElement(fun)('fun')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('remove')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -1575,8 +1557,6 @@ JetFile: BinaryTree.jet
               PsiElement(fun)('fun')
               PsiWhiteSpace(' ')
               PsiElement(IDENTIFIER)('replace')
-              TYPE_PARAMETER_LIST
-                <empty list>
               VALUE_PARAMETER_LIST
                 PsiElement(LPAR)('(')
                 VALUE_PARAMETER
@@ -1767,8 +1747,6 @@ JetFile: BinaryTree.jet
           PsiElement(fun)('fun')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('min')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -1835,8 +1813,6 @@ JetFile: BinaryTree.jet
           PsiElement(fun)('fun')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('iterator')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -1872,8 +1848,6 @@ JetFile: BinaryTree.jet
           PsiElement(fun)('fun')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('mutableIterator')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -2031,8 +2005,6 @@ JetFile: BinaryTree.jet
                 PsiElement(fun)('fun')
                 PsiWhiteSpace(' ')
                 PsiElement(IDENTIFIER)('next')
-                TYPE_PARAMETER_LIST
-                  <empty list>
                 VALUE_PARAMETER_LIST
                   PsiElement(LPAR)('(')
                   PsiElement(RPAR)(')')
@@ -2110,8 +2082,6 @@ JetFile: BinaryTree.jet
                 PsiElement(fun)('fun')
                 PsiWhiteSpace(' ')
                 PsiElement(IDENTIFIER)('nextNode')
-                TYPE_PARAMETER_LIST
-                  <empty list>
                 VALUE_PARAMETER_LIST
                   PsiElement(LPAR)('(')
                   PsiElement(RPAR)(')')
@@ -2436,8 +2406,6 @@ JetFile: BinaryTree.jet
                 PsiElement(fun)('fun')
                 PsiWhiteSpace(' ')
                 PsiElement(IDENTIFIER)('remove')
-                TYPE_PARAMETER_LIST
-                  <empty list>
                 VALUE_PARAMETER_LIST
                   PsiElement(LPAR)('(')
                   PsiElement(RPAR)(')')
@@ -2525,8 +2493,6 @@ JetFile: BinaryTree.jet
                 PsiElement(fun)('fun')
                 PsiWhiteSpace(' ')
                 PsiElement(IDENTIFIER)('checkVersion')
-                TYPE_PARAMETER_LIST
-                  <empty list>
                 VALUE_PARAMETER_LIST
                   PsiElement(LPAR)('(')
                   PsiElement(RPAR)(')')

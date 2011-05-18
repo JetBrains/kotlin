@@ -322,8 +322,6 @@ JetFile: SoftKeywords.jet
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('abstract')
           PsiWhiteSpace('  ')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -340,8 +338,6 @@ JetFile: SoftKeywords.jet
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('virtual')
           PsiWhiteSpace('   ')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -358,8 +354,6 @@ JetFile: SoftKeywords.jet
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('enum')
           PsiWhiteSpace('      ')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -376,8 +370,6 @@ JetFile: SoftKeywords.jet
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('open')
           PsiWhiteSpace('      ')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -394,8 +386,6 @@ JetFile: SoftKeywords.jet
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('attribute')
           PsiWhiteSpace(' ')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -412,8 +402,6 @@ JetFile: SoftKeywords.jet
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('override')
           PsiWhiteSpace('  ')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -430,8 +418,6 @@ JetFile: SoftKeywords.jet
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('virtual')
           PsiWhiteSpace('   ')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -448,8 +434,6 @@ JetFile: SoftKeywords.jet
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('abstract')
           PsiWhiteSpace('  ')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -466,8 +450,6 @@ JetFile: SoftKeywords.jet
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('private')
           PsiWhiteSpace('   ')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -484,8 +466,6 @@ JetFile: SoftKeywords.jet
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('protected')
           PsiWhiteSpace(' ')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -502,8 +482,6 @@ JetFile: SoftKeywords.jet
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('public')
           PsiWhiteSpace('    ')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -520,8 +498,6 @@ JetFile: SoftKeywords.jet
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('internal')
           PsiWhiteSpace('  ')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -538,8 +514,6 @@ JetFile: SoftKeywords.jet
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('lazy')
           PsiWhiteSpace('      ')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -556,8 +530,6 @@ JetFile: SoftKeywords.jet
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('wraps')
           PsiWhiteSpace('     ')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -574,8 +546,6 @@ JetFile: SoftKeywords.jet
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('import')
           PsiWhiteSpace('    ')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -592,8 +562,6 @@ JetFile: SoftKeywords.jet
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('where')
           PsiWhiteSpace('     ')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -610,8 +578,6 @@ JetFile: SoftKeywords.jet
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('by')
           PsiWhiteSpace('        ')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -628,8 +594,6 @@ JetFile: SoftKeywords.jet
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('get')
           PsiWhiteSpace('       ')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -646,8 +610,6 @@ JetFile: SoftKeywords.jet
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('set')
           PsiWhiteSpace('       ')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -664,8 +626,6 @@ JetFile: SoftKeywords.jet
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('public')
           PsiWhiteSpace('    ')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -682,8 +642,6 @@ JetFile: SoftKeywords.jet
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('private')
           PsiWhiteSpace('   ')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -700,8 +658,6 @@ JetFile: SoftKeywords.jet
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('protected')
           PsiWhiteSpace(' ')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -718,8 +674,6 @@ JetFile: SoftKeywords.jet
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('internal')
           PsiWhiteSpace('  ')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -735,8 +689,6 @@ JetFile: SoftKeywords.jet
           PsiElement(fun)('fun')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('test')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiWhiteSpace('\n        ')

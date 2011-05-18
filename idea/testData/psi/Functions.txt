@@ -4,8 +4,6 @@ JetFile: Functions.jet
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('foo')
-      TYPE_PARAMETER_LIST
-        <empty list>
       VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
         PsiElement(RPAR)(')')
@@ -23,8 +21,6 @@ JetFile: Functions.jet
         PsiElement(RBRACKET)(']')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('foo')
-      TYPE_PARAMETER_LIST
-        <empty list>
       VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
         PsiElement(RPAR)(')')
@@ -47,8 +43,6 @@ JetFile: Functions.jet
             PsiElement(IDENTIFIER)('T')
       PsiElement(DOT)('.')
       PsiElement(IDENTIFIER)('foo')
-      TYPE_PARAMETER_LIST
-        <empty list>
       VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
         PsiElement(RPAR)(')')
@@ -107,8 +101,6 @@ JetFile: Functions.jet
           PsiElement(RBRACE)('}')
       PsiElement(DOT)('.')
       PsiElement(IDENTIFIER)('foo')
-      TYPE_PARAMETER_LIST
-        <empty list>
       VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
         PsiElement(RPAR)(')')
@@ -131,8 +123,6 @@ JetFile: Functions.jet
             PsiElement(IDENTIFIER)('T')
       PsiElement(DOT)('.')
       PsiElement(IDENTIFIER)('foo')
-      TYPE_PARAMETER_LIST
-        <empty list>
       VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
         VALUE_PARAMETER
@@ -225,8 +215,6 @@ JetFile: Functions.jet
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('foo')
-      TYPE_PARAMETER_LIST
-        <empty list>
       VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
         PsiElement(RPAR)(')')
@@ -245,8 +233,6 @@ JetFile: Functions.jet
         PsiElement(RBRACKET)(']')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('foo')
-      TYPE_PARAMETER_LIST
-        <empty list>
       VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
         PsiElement(RPAR)(')')
@@ -270,8 +256,6 @@ JetFile: Functions.jet
             PsiElement(IDENTIFIER)('T')
       PsiElement(DOT)('.')
       PsiElement(IDENTIFIER)('foo')
-      TYPE_PARAMETER_LIST
-        <empty list>
       VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
         PsiElement(RPAR)(')')
@@ -331,8 +315,6 @@ JetFile: Functions.jet
           PsiElement(RBRACE)('}')
       PsiElement(DOT)('.')
       PsiElement(IDENTIFIER)('foo')
-      TYPE_PARAMETER_LIST
-        <empty list>
       VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
         PsiElement(RPAR)(')')
@@ -356,8 +338,6 @@ JetFile: Functions.jet
             PsiElement(IDENTIFIER)('T')
       PsiElement(DOT)('.')
       PsiElement(IDENTIFIER)('foo')
-      TYPE_PARAMETER_LIST
-        <empty list>
       VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
         VALUE_PARAMETER
@@ -452,8 +432,6 @@ JetFile: Functions.jet
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('foo')
-      TYPE_PARAMETER_LIST
-        <empty list>
       VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
         PsiElement(RPAR)(')')
@@ -475,8 +453,6 @@ JetFile: Functions.jet
         PsiElement(RBRACKET)(']')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('foo')
-      TYPE_PARAMETER_LIST
-        <empty list>
       VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
         PsiElement(RPAR)(')')
@@ -503,8 +479,6 @@ JetFile: Functions.jet
             PsiElement(IDENTIFIER)('T')
       PsiElement(DOT)('.')
       PsiElement(IDENTIFIER)('foo')
-      TYPE_PARAMETER_LIST
-        <empty list>
       VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
         PsiElement(RPAR)(')')
@@ -567,8 +541,6 @@ JetFile: Functions.jet
           PsiElement(RBRACE)('}')
       PsiElement(DOT)('.')
       PsiElement(IDENTIFIER)('foo')
-      TYPE_PARAMETER_LIST
-        <empty list>
       VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
         PsiElement(RPAR)(')')
@@ -595,8 +567,6 @@ JetFile: Functions.jet
             PsiElement(IDENTIFIER)('T')
       PsiElement(DOT)('.')
       PsiElement(IDENTIFIER)('foo')
-      TYPE_PARAMETER_LIST
-        <empty list>
       VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
         VALUE_PARAMETER
@@ -756,8 +726,6 @@ JetFile: Functions.jet
           PsiElement(RBRACE)('}')
       PsiElement(DOT)('.')
       PsiElement(IDENTIFIER)('foo')
-      TYPE_PARAMETER_LIST
-        <empty list>
       VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
         PsiElement(RPAR)(')')

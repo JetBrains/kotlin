@@ -4,8 +4,6 @@ JetFile: AnonymousObjects.jet
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('foo')
-      TYPE_PARAMETER_LIST
-        <empty list>
       VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
         PsiElement(RPAR)(')')
@@ -56,8 +54,6 @@ JetFile: AnonymousObjects.jet
                     PsiElement(fun)('fun')
                     PsiWhiteSpace(' ')
                     PsiElement(IDENTIFIER)('mouseClicked')
-                    TYPE_PARAMETER_LIST
-                      <empty list>
                     VALUE_PARAMETER_LIST
                       PsiElement(LPAR)('(')
                       VALUE_PARAMETER
@@ -166,8 +162,6 @@ JetFile: AnonymousObjects.jet
                 PsiElement(fun)('fun')
                 PsiWhiteSpace(' ')
                 PsiElement(IDENTIFIER)('sendMessage')
-                TYPE_PARAMETER_LIST
-                  <empty list>
                 VALUE_PARAMETER_LIST
                   PsiElement(LPAR)('(')
                   VALUE_PARAMETER

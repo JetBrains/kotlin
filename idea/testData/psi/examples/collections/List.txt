@@ -217,8 +217,6 @@ JetFile: List.jet
           PsiElement(fun)('fun')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('iterator')
-          TYPE_PARAMETER_LIST
-            <empty list>
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -290,8 +288,6 @@ JetFile: List.jet
                 PsiElement(fun)('fun')
                 PsiWhiteSpace(' ')
                 PsiElement(IDENTIFIER)('next')
-                TYPE_PARAMETER_LIST
-                  <empty list>
                 VALUE_PARAMETER_LIST
                   PsiElement(LPAR)('(')
                   PsiElement(RPAR)(')')

@@ -4,8 +4,6 @@ JetFile: Functions_ERR.jet
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('foo')
-      TYPE_PARAMETER_LIST
-        <empty list>
       VALUE_PARAMETER_LIST
         PsiErrorElement:Expecting '(
           <empty list>
@@ -25,8 +23,6 @@ JetFile: Functions_ERR.jet
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('f')
       PsiWhiteSpace(' ')
-      TYPE_PARAMETER_LIST
-        <empty list>
       VALUE_PARAMETER_LIST
         PsiErrorElement:Expecting '(
           PsiElement(IDENTIFIER)('foo')
@@ -55,8 +51,6 @@ JetFile: Functions_ERR.jet
             PsiElement(IDENTIFIER)('T')
       PsiElement(DOT)('.')
       PsiElement(IDENTIFIER)('foo')
-      TYPE_PARAMETER_LIST
-        <empty list>
       VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
         VALUE_PARAMETER
@@ -370,8 +364,6 @@ JetFile: Functions_ERR.jet
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('foo')
-      TYPE_PARAMETER_LIST
-        <empty list>
       VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
         PsiElement(RPAR)(')')
@@ -442,8 +434,6 @@ JetFile: Functions_ERR.jet
       PsiElement(DOT)('.')
       PsiErrorElement:Expecting function name
         PsiElement(MINUS)('-')
-      TYPE_PARAMETER_LIST
-        <empty list>
       VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
         PsiElement(RPAR)(')')
