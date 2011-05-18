@@ -58,7 +58,7 @@ public class JetControlFlowBuilderAdapter implements JetControlFlowBuilder {
     }
 
     @Override
-    public void jumpToError(@NotNull JetThrowExpression expression) {
+    public void jumpToError(JetThrowExpression expression) {
         builder.jumpToError(expression);
     }
 

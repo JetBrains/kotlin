@@ -244,7 +244,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         }
 
         @Override
-        public void jumpToError(@NotNull JetThrowExpression expression) {
+        public void jumpToError(JetThrowExpression expression) {
             add(new UnconditionalJumpInstruction(error));
         }
 

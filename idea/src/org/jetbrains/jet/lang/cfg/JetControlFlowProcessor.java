@@ -619,6 +619,8 @@ public class JetControlFlowProcessor {
                 value(subjectExpression, false, inCondition);
             }
 
+            Label doneLabel = builder.createUnboundLabel();
+
             Label nextLabel = builder.createUnboundLabel();
             for (JetWhenEntry whenEntry : expression.getEntries()) {
                 if (whenEntry.getSubWhen() != null) throw new UnsupportedOperationException(); // TODO
@@ -660,9 +662,12 @@ public class JetControlFlowProcessor {
                 builder.nondeterministicJump(nextLabel);
 
                 value(whenEntry.getExpression(), true, inCondition);
+                builder.jump(doneLabel);
                 builder.bindLabel(nextLabel);
                 nextLabel = builder.createUnboundLabel();
             }
+            builder.jumpToError(null);
+            builder.bindLabel(doneLabel);
         }
 
         @Override

@@ -16,3 +16,5 @@ fun foo() {
       ?.equals(1).equals(2) => 1
     }
 }
+
+val _type_test : Int = foo() // this is needed to ensure the inferred return type of foo()
