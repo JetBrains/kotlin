@@ -13,7 +13,7 @@ import java.util.Set;
 /**
  * @author abreslav
  */
-public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements MutableFunctionDescriptor {
+public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements FunctionDescriptor {
 
     private List<TypeParameterDescriptor> typeParameters;
     private List<ValueParameterDescriptor> unsubstitutedValueParameters;
@@ -57,16 +57,6 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
 
     public void addOverriddenFunction(@NotNull FunctionDescriptor overriddenFunction) {
         overriddenFunctions.add(overriddenFunction);
-    }
-
-    @Override
-    public void setUnsubstitutedReturnType(@NotNull JetType unsubstitutedReturnType) {
-        this.unsubstitutedReturnType = unsubstitutedReturnType;
-    }
-
-    @Override
-    public boolean isReturnTypeSet() {
-        return unsubstitutedReturnType != null;
     }
 
     @Override

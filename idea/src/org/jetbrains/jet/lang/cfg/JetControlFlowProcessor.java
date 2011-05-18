@@ -666,6 +666,7 @@ public class JetControlFlowProcessor {
                 builder.bindLabel(nextLabel);
                 nextLabel = builder.createUnboundLabel();
             }
+            // TODO : if there's else, no error can happen
             builder.jumpToError(null);
             builder.bindLabel(doneLabel);
         }

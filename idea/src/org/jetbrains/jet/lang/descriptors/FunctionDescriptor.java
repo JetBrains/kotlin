@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
@@ -14,6 +15,9 @@ public interface FunctionDescriptor extends DeclarationDescriptor {
     @Override
     @NotNull
     DeclarationDescriptor getContainingDeclaration();
+
+//    @Nullable
+//    JetType getReceiverType();
 
     @NotNull
     List<TypeParameterDescriptor> getTypeParameters();

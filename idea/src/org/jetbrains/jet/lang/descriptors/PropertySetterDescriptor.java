@@ -12,7 +12,7 @@ import java.util.Set;
 /**
  * @author abreslav
  */
-public class PropertySetterDescriptor extends PropertyAccessorDescriptor implements MutableFunctionDescriptor {
+public class PropertySetterDescriptor extends PropertyAccessorDescriptor {
 
     private MutableValueParameterDescriptor parameter;
     private final Set<PropertySetterDescriptor> overriddenSetters = Sets.newHashSet();
@@ -57,13 +57,4 @@ public class PropertySetterDescriptor extends PropertyAccessorDescriptor impleme
         return visitor.visitPropertySetterDescriptor(this, data);
     }
 
-    @Override
-    public void setUnsubstitutedReturnType(@NotNull JetType type) {
-        throw new UnsupportedOperationException("Can't set return type for a setter");
-    }
-
-    @Override
-    public boolean isReturnTypeSet() {
-        return true;
-    }
 }

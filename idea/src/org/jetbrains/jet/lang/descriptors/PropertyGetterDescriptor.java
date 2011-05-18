@@ -12,7 +12,7 @@ import java.util.Set;
 /**
  * @author abreslav
  */
-public class PropertyGetterDescriptor extends PropertyAccessorDescriptor implements MutableFunctionDescriptor {
+public class PropertyGetterDescriptor extends PropertyAccessorDescriptor {
     private final Set<PropertyGetterDescriptor> overriddenGetters = Sets.newHashSet();
     private JetType returnType;
 
@@ -41,17 +41,6 @@ public class PropertyGetterDescriptor extends PropertyAccessorDescriptor impleme
     @Override
     public JetType getUnsubstitutedReturnType() {
         return returnType;
-    }
-
-    @Override
-    public void setUnsubstitutedReturnType(@NotNull JetType type) {
-        assert this.returnType == null : this.returnType;
-        this.returnType = type;
-    }
-
-    @Override
-    public boolean isReturnTypeSet() {
-        return returnType != null;
     }
 
     @Override

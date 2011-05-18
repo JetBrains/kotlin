@@ -179,7 +179,7 @@ public class ClassDescriptorResolver {
         List<ValueParameterDescriptor> valueParameterDescriptors = resolveValueParameters(functionDescriptor, innerScope, function.getValueParameters());
 
         JetTypeReference returnTypeRef = function.getReturnTypeRef();
-        JetType returnType = null;
+        JetType returnType;
         if (returnTypeRef != null) {
             returnType = typeResolver.resolveType(innerScope, returnTypeRef);
         }
@@ -194,6 +194,10 @@ public class ClassDescriptorResolver {
                     }
                 });
             }
+            else {
+                trace.getErrorHandler().genericError(function.asElement().getNode(), "This function must either declare a return type or have a body element");
+                returnType = ErrorUtils.createErrorType("No type, no body");
+            }
         }
 
         functionDescriptor.initialize(
@@ -206,7 +210,7 @@ public class ClassDescriptorResolver {
     }
 
     @NotNull
-    private List<ValueParameterDescriptor> resolveValueParameters(MutableFunctionDescriptor functionDescriptor, WritableScope parameterScope, List<JetParameter> valueParameters) {
+    private List<ValueParameterDescriptor> resolveValueParameters(FunctionDescriptor functionDescriptor, WritableScope parameterScope, List<JetParameter> valueParameters) {
         List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>();
         for (int i = 0, valueParametersSize = valueParameters.size(); i < valueParametersSize; i++) {
             JetParameter valueParameter = valueParameters.get(i);

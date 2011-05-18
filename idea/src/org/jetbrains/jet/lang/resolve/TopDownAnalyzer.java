@@ -664,7 +664,7 @@ public class TopDownAnalyzer {
     private void resolveFunctionBody(
             @NotNull BindingTrace trace,
             @NotNull JetDeclarationWithBody function,
-            @NotNull MutableFunctionDescriptor functionDescriptor,
+            @NotNull FunctionDescriptor functionDescriptor,
             @NotNull JetScope declaringScope) {
         JetExpression bodyExpression = function.getBodyExpression();
 
@@ -674,16 +674,7 @@ public class TopDownAnalyzer {
 
             assert readyToProcessExpressions : "Must be ready collecting types";
 
-            if (functionDescriptor.isReturnTypeSet()) {
-                typeInferrer.checkFunctionReturnType(declaringScope, function, functionDescriptor);
-            }
-            else {
-                JetType returnType = typeInferrer.getFunctionReturnType(declaringScope, function, functionDescriptor);
-                if (returnType == null) {
-                    returnType = ErrorUtils.createErrorType("Unable to infer body type");
-                }
-                functionDescriptor.setUnsubstitutedReturnType(returnType);
-            }
+            typeInferrer.checkFunctionReturnType(declaringScope, function, functionDescriptor);
 
             List<JetElement> unreachableElements = new ArrayList<JetElement>();
             flowInformationProvider.collectUnreachableExpressions(function.asElement(), unreachableElements);
@@ -699,12 +690,8 @@ public class TopDownAnalyzer {
                 trace.getErrorHandler().genericError(element.getNode(), "Unreachable code");
             }
         }
-        else {
-            if (!functionDescriptor.isReturnTypeSet()) {
-                trace.getErrorHandler().genericError(function.asElement().getNode(), "This function must either declare a return type or have a body element");
-                functionDescriptor.setUnsubstitutedReturnType(ErrorUtils.createErrorType("No type, no body"));
-            }
-        }
+
+        assert functionDescriptor.getUnsubstitutedReturnType() != null;
     }
 
 }
