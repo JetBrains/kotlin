@@ -31,6 +31,11 @@ public class PropertyGetterDescriptor extends PropertyAccessorDescriptor {
         overriddenGetters.add(overriddenGetter);
     }
 
+    @Override
+    public JetType getReceiverType() {
+        return null; // TODO
+    }
+
     @NotNull
     @Override
     public List<ValueParameterDescriptor> getUnsubstitutedValueParameters() {

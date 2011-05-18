@@ -105,6 +105,7 @@ public class ErrorUtils {
     private static FunctionDescriptor createErrorFunction(List<TypeParameterDescriptor> typeParameters, List<JetType> positionedValueArgumentTypes) {
         FunctionDescriptorImpl functionDescriptor = new FunctionDescriptorImpl(ERROR_CLASS, Collections.<Annotation>emptyList(), "<ERROR FUNCTION>");
         return functionDescriptor.initialize(
+                null,
                 typeParameters,
                 getValueParameters(functionDescriptor, positionedValueArgumentTypes),
                 createErrorType("<ERROR FUNCTION RETURN>")
@@ -117,6 +118,7 @@ public class ErrorUtils {
 
     private static FunctionDescriptor createErrorFunction(int typeParameterCount, List<JetType> positionedValueParameterTypes) {
         return new FunctionDescriptorImpl(ERROR_CLASS, Collections.<Annotation>emptyList(), "<ERROR FUNCTION>").initialize(
+                null,
                 Collections.<TypeParameterDescriptor>emptyList(), // TODO
                 Collections.<ValueParameterDescriptor>emptyList(), // TODO
                 createErrorType("<ERROR FUNCTION RETURN TYPE>")

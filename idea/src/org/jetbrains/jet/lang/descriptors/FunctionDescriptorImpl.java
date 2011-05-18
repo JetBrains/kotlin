@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
+import org.jetbrains.jet.lang.types.Variance;
 
 import java.util.Collections;
 import java.util.List;
@@ -18,9 +19,9 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
     private List<TypeParameterDescriptor> typeParameters;
     private List<ValueParameterDescriptor> unsubstitutedValueParameters;
     private JetType unsubstitutedReturnType;
+    private JetType receiverType;
 
     private final Set<FunctionDescriptor> overriddenFunctions = Sets.newHashSet();
-
     private final FunctionDescriptor original;
 
     public FunctionDescriptorImpl(
@@ -40,13 +41,20 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
     }
 
     public FunctionDescriptor initialize(
+            @Nullable JetType receiverType,
             @NotNull List<TypeParameterDescriptor> typeParameters,
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
             @Nullable JetType unsubstitutedReturnType) {
+        this.receiverType = receiverType;
         this.typeParameters = typeParameters;
         this.unsubstitutedValueParameters = unsubstitutedValueParameters;
         this.unsubstitutedReturnType = unsubstitutedReturnType;
         return this;
+    }
+
+    @Override
+    public JetType getReceiverType() {
+        return receiverType;
     }
 
     @NotNull
@@ -91,6 +99,15 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
         FunctionDescriptorImpl substitutedDescriptor;
         substitutedDescriptor = createSubstitutedCopy();
 
+        JetType receiverType = getReceiverType();
+        JetType substitutedReceiverType = null;
+        if (receiverType != null) {
+            substitutedReceiverType = substitutor.substitute(receiverType, Variance.IN_VARIANCE);
+            if (substitutedReceiverType == null) {
+                return null;
+            }
+        }
+
         List<ValueParameterDescriptor> substitutedValueParameters = FunctionDescriptorUtil.getSubstitutedValueParameters(substitutedDescriptor, this, substitutor);
         if (substitutedValueParameters == null) {
             return null;
@@ -102,6 +119,7 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
         }
 
         substitutedDescriptor.initialize(
+                substitutedReceiverType,
                 Collections.<TypeParameterDescriptor>emptyList(), // TODO : questionable
                 substitutedValueParameters,
                 substitutedReturnType

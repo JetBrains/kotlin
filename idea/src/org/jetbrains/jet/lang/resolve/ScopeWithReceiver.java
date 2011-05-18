@@ -1,8 +1,11 @@
 package org.jetbrains.jet.lang.resolve;
 
+import com.google.common.base.Function;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.JetTypeChecker;
 
 /**
  * @author abreslav
@@ -11,16 +14,33 @@ public class ScopeWithReceiver extends JetScopeImpl {
 
     private final JetScope receiverTypeScope;
     private final JetScope outerScope;
+    private final JetTypeChecker typeChecker;
 
-    public ScopeWithReceiver(JetScope outerScope, JetType receiverType) {
+    public ScopeWithReceiver(JetScope outerScope, JetType receiverType, JetTypeChecker typeChecker) {
         this.outerScope = outerScope;
         this.receiverTypeScope = receiverType.getMemberScope();
+        this.typeChecker = typeChecker;
     }
 
     @NotNull
     @Override
     public FunctionGroup getFunctionGroup(@NotNull String name) {
-        return receiverTypeScope.getFunctionGroup(name); // TODO
+        FunctionGroup functionGroup = receiverTypeScope.getFunctionGroup(name);
+        if (functionGroup.isEmpty()) {
+            return FunctionDescriptorUtil.filteredFunctionGroup(outerScope.getFunctionGroup(name),
+                    new Function<FunctionDescriptor, Boolean>() {
+                        @Override
+                        public Boolean apply(@Nullable FunctionDescriptor functionDescriptor) {
+                            if (functionDescriptor == null) return false;
+                            JetType functionReceiverType = functionDescriptor.getReceiverType();
+                            if (functionReceiverType == null) {
+                                return false;
+                            }
+                            return typeChecker.isSubtypeOf(receiverTypeScope.getThisType(), functionReceiverType);
+                        }
+                    });
+        }
+        return functionGroup; // TODO
     }
 
     @Override

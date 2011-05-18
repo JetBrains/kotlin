@@ -249,6 +249,7 @@ public class JavaDescriptorResolver {
                     methodName
             );
             functionDescriptor.initialize(
+                    null,
                     resolveTypeParameters(method.getTypeParameters()),
                     semanticServices.getDescriptorResolver().resolveParameterDescriptors(functionDescriptor, parameters),
                     semanticServices.getTypeTransformer().transformToType(method.getReturnType())

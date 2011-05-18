@@ -46,6 +46,17 @@ public class DescriptorRenderer {
         protected void renderName(DeclarationDescriptor descriptor, StringBuilder stringBuilder) {
             stringBuilder.append(descriptor.getName());
         }
+
+        @Override
+        public Void visitTypeParameterDescriptor(TypeParameterDescriptor descriptor, StringBuilder builder) {
+            renderTypeParameter(descriptor, builder);
+            return null;
+        }
+
+        @Override
+        public Void visitValueParameterDescriptor(ValueParameterDescriptor descriptor, StringBuilder builder) {
+            return super.visitVariableDescriptor(descriptor, builder);
+        }
     };
 
     private DescriptorRenderer() {}
@@ -106,9 +117,18 @@ public class DescriptorRenderer {
         @Override
         public Void visitFunctionDescriptor(FunctionDescriptor descriptor, StringBuilder builder) {
             builder.append(renderKeyword("fun")).append(" ");
-            renderName(descriptor, builder);
             List<TypeParameterDescriptor> typeParameters = descriptor.getTypeParameters();
             renderTypeParameters(typeParameters, builder);
+            if (!typeParameters.isEmpty()) {
+                builder.append(" ");
+            }
+
+            JetType receiverType = descriptor.getReceiverType();
+            if (receiverType != null) {
+                builder.append(escape(receiverType.toString())).append(".");
+            }
+
+            renderName(descriptor, builder);
             builder.append("(");
             for (Iterator<ValueParameterDescriptor> iterator = descriptor.getUnsubstitutedValueParameters().iterator(); iterator.hasNext(); ) {
                 ValueParameterDescriptor parameterDescriptor = iterator.next();
@@ -178,7 +198,7 @@ public class DescriptorRenderer {
             stringBuilder.append(escape(descriptor.getName()));
         }
 
-        private void renderTypeParameter(TypeParameterDescriptor descriptor, StringBuilder builder) {
+        protected void renderTypeParameter(TypeParameterDescriptor descriptor, StringBuilder builder) {
             renderName(descriptor, builder);
             if (!descriptor.getUpperBounds().isEmpty()) {
                 JetType bound = descriptor.getUpperBounds().iterator().next();

@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Collections;
@@ -26,12 +27,13 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
 
     @Override
     @Deprecated
-    public FunctionDescriptor initialize(@NotNull List<TypeParameterDescriptor> typeParameters, @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters, @NotNull JetType unsubstitutedReturnType) {
-        return super.initialize(typeParameters, unsubstitutedValueParameters, unsubstitutedReturnType);
+    public FunctionDescriptor initialize(@Nullable JetType receiverType, @NotNull List<TypeParameterDescriptor> typeParameters, @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters, @NotNull JetType unsubstitutedReturnType) {
+        assert receiverType == null;
+        return super.initialize(null, typeParameters, unsubstitutedValueParameters, unsubstitutedReturnType);
     }
 
     public ConstructorDescriptor initialize(@NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters) {
-        super.initialize(Collections.<TypeParameterDescriptor>emptyList(), unsubstitutedValueParameters, getContainingDeclaration().getDefaultType());
+        super.initialize(null, Collections.<TypeParameterDescriptor>emptyList(), unsubstitutedValueParameters, getContainingDeclaration().getDefaultType());
         return this;
     }
 

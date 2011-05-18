@@ -23,7 +23,7 @@ public class OverloadResolver {
     @NotNull
     public OverloadDomain getOverloadDomain(JetType receiverType, @NotNull JetScope outerScope, @NotNull String name) {
         // TODO : extension lookup
-        JetScope scope = receiverType == null ? outerScope : receiverType.getMemberScope();
+        JetScope scope = receiverType == null ? outerScope : new ScopeWithReceiver(outerScope, receiverType, typeChecker);
 
         final FunctionGroup functionGroup = scope.getFunctionGroup(name);
 

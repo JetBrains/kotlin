@@ -174,8 +174,19 @@ public class ClassDescriptorResolver {
         WritableScope innerScope = new WritableScopeImpl(scope, functionDescriptor, trace.getErrorHandler());
         innerScope.addLabeledDeclaration(functionDescriptor);
 
-        // The two calls below have side-effects on parameterScope
+
         List<TypeParameterDescriptor> typeParameterDescriptors = resolveTypeParameters(functionDescriptor, innerScope, function.getTypeParameters());
+
+        JetType receiverType = null;
+        JetTypeReference receiverTypeRef = function.getReceiverTypeRef();
+        if (receiverTypeRef != null) {
+            JetScope scopeForReceiver =
+                    function.hasTypeParameterListBeforeFunctionName()
+                    ? innerScope
+                    : scope;
+            receiverType = typeResolver.resolveType(scopeForReceiver, receiverTypeRef);
+        }
+
         List<ValueParameterDescriptor> valueParameterDescriptors = resolveValueParameters(functionDescriptor, innerScope, function.getValueParameters());
 
         JetTypeReference returnTypeRef = function.getReturnTypeRef();
@@ -201,6 +212,7 @@ public class ClassDescriptorResolver {
         }
 
         functionDescriptor.initialize(
+                receiverType,
                 typeParameterDescriptors,
                 valueParameterDescriptors,
                 returnType);

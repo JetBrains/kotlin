@@ -16,8 +16,8 @@ public interface FunctionDescriptor extends DeclarationDescriptor {
     @NotNull
     DeclarationDescriptor getContainingDeclaration();
 
-//    @Nullable
-//    JetType getReceiverType();
+    @Nullable
+    JetType getReceiverType();
 
     @NotNull
     List<TypeParameterDescriptor> getTypeParameters();

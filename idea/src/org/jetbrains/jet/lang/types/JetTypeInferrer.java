@@ -1002,7 +1002,7 @@ public class JetTypeInferrer {
                         public void visitWhenConditionCall(JetWhenConditionCall condition) {
                             checkNullSafety(finalSubjectType, condition.getOperationTokenNode());
                             JetExpression callSuffixExpression = condition.getCallSuffixExpression();
-                            JetScope compositeScope = new ScopeWithReceiver(scope, finalSubjectType);
+                            JetScope compositeScope = new ScopeWithReceiver(scope, finalSubjectType, semanticServices.getTypeChecker());
                             if (callSuffixExpression != null) {
                                 JetType selectorReturnType = getType(compositeScope, callSuffixExpression, false);
                                 ensureBooleanResultWithCustomSubject(callSuffixExpression, selectorReturnType, "This expression");
@@ -1290,11 +1290,12 @@ public class JetTypeInferrer {
 
         @Override
         public void visitQualifiedExpression(JetQualifiedExpression expression) {
-            // TODO : functions
+            // TODO : functions as values
             JetExpression selectorExpression = expression.getSelectorExpression();
             JetExpression receiverExpression = expression.getReceiverExpression();
             JetType receiverType = new TypeInferrerVisitorWithNamespaces(scope, false).getType(receiverExpression);
             if (receiverType != null) {
+                // TODO : extensions to 'Any?'
                 checkNullSafety(receiverType, expression.getOperationTokenNode());
                 JetType selectorReturnType = getSelectorReturnType(receiverType, selectorExpression);
                 if (expression.getOperationSign() == JetTokens.QUEST) {
@@ -1314,7 +1315,7 @@ public class JetTypeInferrer {
         }
 
         private JetType getSelectorReturnType(JetType receiverType, JetExpression selectorExpression) {
-            JetScope compositeScope = new ScopeWithReceiver(scope, receiverType);
+            JetScope compositeScope = new ScopeWithReceiver(scope, receiverType, semanticServices.getTypeChecker());
             if (selectorExpression instanceof JetCallExpression) {
                 JetCallExpression callExpression = (JetCallExpression) selectorExpression;
                 OverloadDomain overloadDomain = getOverloadDomain(compositeScope, callExpression.getCalleeExpression(), callExpression.getValueArgumentList());

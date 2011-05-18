@@ -24,6 +24,18 @@ public class JetFunction extends JetTypeParameterListOwner implements JetDeclara
         visitor.visitFunction(this);
     }
 
+    public boolean hasTypeParameterListBeforeFunctionName() {
+        JetTypeParameterList typeParameterList = getTypeParameterList();
+        if (typeParameterList == null) {
+            return false;
+        }
+        PsiElement nameIdentifier = getNameIdentifier();
+        if (nameIdentifier == null) {
+            return false;
+        }
+        return nameIdentifier.getTextOffset() > typeParameterList.getTextOffset();
+    }
+
     @Nullable @IfNotParsed
     public JetParameterList getValueParameterList() {
         return (JetParameterList) findChildByType(JetNodeTypes.VALUE_PARAMETER_LIST);

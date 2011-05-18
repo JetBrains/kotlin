@@ -1,14 +1,13 @@
 package org.jetbrains.jet.lang.descriptors;
 
+import com.google.common.base.Function;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.JetScope;
-import org.jetbrains.jet.lang.resolve.WritableScope;
-import org.jetbrains.jet.lang.resolve.WritableScopeImpl;
+import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.types.*;
 
 import java.util.*;
@@ -99,6 +98,10 @@ public class FunctionDescriptorUtil {
     @NotNull
     public static JetScope getFunctionInnerScope(@NotNull JetScope outerScope, @NotNull FunctionDescriptor descriptor, @NotNull BindingTrace trace) {
         WritableScope parameterScope = new WritableScopeImpl(outerScope, descriptor, trace.getErrorHandler());
+        JetType receiverType = descriptor.getReceiverType();
+        if (receiverType != null) {
+            parameterScope.setThisType(receiverType);
+        }
         for (TypeParameterDescriptor typeParameter : descriptor.getTypeParameters()) {
             parameterScope.addTypeParameterDescriptor(typeParameter);
         }
@@ -228,5 +231,55 @@ public class FunctionDescriptorUtil {
         }
 
         return OverrideCompatibilityInfo.success();
+    }
+
+    @NotNull
+    public static FunctionGroup filteredFunctionGroup(@NotNull final FunctionGroup functionGroup, @NotNull final Function<FunctionDescriptor, Boolean> criterion) {
+        return new FunctionGroup() {
+            @NotNull
+            @Override
+            public String getName() {
+                return functionGroup.getName();
+            }
+
+            @NotNull
+            @Override
+            public OverloadResolutionResult getPossiblyApplicableFunctions(@NotNull List<JetType> typeArguments, @NotNull List<JetType> positionedValueArgumentTypes) {
+                OverloadResolutionResult possiblyApplicableFunctions = functionGroup.getPossiblyApplicableFunctions(typeArguments, positionedValueArgumentTypes);
+                List<FunctionDescriptor> functionDescriptors = Lists.newArrayList(possiblyApplicableFunctions.getFunctionDescriptors());
+                for (Iterator<FunctionDescriptor> iterator = functionDescriptors.iterator(); iterator.hasNext(); ) {
+                    FunctionDescriptor functionDescriptor = iterator.next();
+                    if (!criterion.apply(functionDescriptor)) {
+                        iterator.remove();
+                    }
+                }
+                if (functionDescriptors.isEmpty()) {
+                    return OverloadResolutionResult.nameNotFound();
+                }
+                if (possiblyApplicableFunctions.isSuccess() || possiblyApplicableFunctions.isAmbiguity()) {
+                    if (functionDescriptors.size() == 1) {
+                        return OverloadResolutionResult.success(functionDescriptors.get(0));
+                    }
+                    return OverloadResolutionResult.ambiguity(functionDescriptors);
+                }
+                if (functionDescriptors.size() == 1) {
+                    return OverloadResolutionResult.singleFunctionArgumentMismatch(functionDescriptors.get(0));
+                }
+                return OverloadResolutionResult.ambiguity(functionDescriptors);
+            }
+
+            @Override
+            public boolean isEmpty() {
+                // TODO: not implemented
+                return false;
+            }
+
+            @NotNull
+            @Override
+            public Set<FunctionDescriptor> getFunctionDescriptors() {
+                // TODO: not implemented
+                return null;
+            }
+        };
     }
 }

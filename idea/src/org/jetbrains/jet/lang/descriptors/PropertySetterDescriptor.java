@@ -40,6 +40,11 @@ public class PropertySetterDescriptor extends PropertyAccessorDescriptor {
         overriddenSetters.add(overriddenSetter);
     }
 
+    @Override
+    public JetType getReceiverType() {
+        return null; // TODO
+    }
+
     @NotNull
     @Override
     public List<ValueParameterDescriptor> getUnsubstitutedValueParameters() {
