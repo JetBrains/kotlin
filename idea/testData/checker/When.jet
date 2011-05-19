@@ -2,6 +2,9 @@ fun foo() {
     val s = ""
     val x = 1
     when (x) {
+      is <error>String</error> => 1
+      !is Int => 1
+      is Any? => 1
       <error>s</error> => 1
       1 => 1
       1 + <error>a</error> => 1

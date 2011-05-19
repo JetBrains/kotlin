@@ -365,4 +365,12 @@ public class JetVisitor extends PsiElementVisitor {
     public void visitWhenConditionInRange(JetWhenConditionInRange condition) {
         visitJetElement(condition);
     }
+
+    public void visitTypePattern(JetTypePattern typePattern) {
+        visitPattern(typePattern);
+    }
+
+    public void visitPattern(JetPattern pattern) {
+        visitJetElement(pattern);
+    }
 }

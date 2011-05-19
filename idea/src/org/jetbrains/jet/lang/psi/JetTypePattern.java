@@ -16,4 +16,9 @@ public class JetTypePattern extends JetPattern {
     public JetTypeReference getTypeReference() {
         return findChildByClass(JetTypeReference.class);
     }
+
+    @Override
+    public void accept(@NotNull JetVisitor visitor) {
+        visitor.visitTypePattern(this);
+    }
 }
