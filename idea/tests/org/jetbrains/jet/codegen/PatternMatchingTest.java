@@ -49,4 +49,10 @@ public class PatternMatchingTest extends CodegenTestCase {
         assertEquals("digit", foo.invoke(null, 9));
         assertEquals("something", foo.invoke(null, 19));
     }
+
+    public void testWildcardPattern() throws Exception {
+        loadText("fun foo(x: String) = when(x) { is * => \"something\" }");
+        Method foo = generateFunction();
+        assertEquals("something", foo.invoke(null, ""));
+    }
 }

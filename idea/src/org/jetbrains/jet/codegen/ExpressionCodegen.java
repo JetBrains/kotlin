@@ -1347,14 +1347,19 @@ public class ExpressionCodegen extends JetVisitor {
     }
 
     private void generatePatternMatch(JetPattern pattern, boolean negated, Runnable expressionGen) {
-        if (!(pattern instanceof JetTypePattern)) {
-            throw new UnsupportedOperationException("can only generate a type pattern with 'is'");
+        if (pattern instanceof JetTypePattern) {
+            JetTypeReference typeReference = ((JetTypePattern) pattern).getTypeReference();
+            JetType jetType = bindingContext.resolveTypeReference(typeReference);
+            generateInstanceOf(expressionGen, jetType, false);
+            StackValue value = StackValue.onStack(Type.BOOLEAN_TYPE);
+            myStack.push(negated ? StackValue.not(value) : value);
         }
-        JetTypeReference typeReference = ((JetTypePattern) pattern).getTypeReference();
-        JetType jetType = bindingContext.resolveTypeReference(typeReference);
-        generateInstanceOf(expressionGen, jetType, false);
-        StackValue value = StackValue.onStack(Type.BOOLEAN_TYPE);
-        myStack.push(negated ? StackValue.not(value) : value);
+        else if (pattern instanceof JetWildcardPattern) {
+            myStack.push(StackValue.constant(!negated, Type.BOOLEAN_TYPE));
+        }
+        else {
+            throw new UnsupportedOperationException("Unsupported pattern type: " + pattern);
+        }
     }
 
     private void generateInstanceOf(Runnable expressionGen, JetType jetType, boolean leaveExpressionOnStack) {
