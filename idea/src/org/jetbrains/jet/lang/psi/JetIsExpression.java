@@ -34,7 +34,7 @@ public class JetIsExpression extends JetExpression {
         return (JetSimpleNameExpression) findChildByType(JetNodeTypes.OPERATION_REFERENCE);
     }
 
-    public boolean isNot() {
+    public boolean isNegated() {
         return getOperationReference().getReferencedNameElementType() == JetTokens.NOT_IS;
     }
 
