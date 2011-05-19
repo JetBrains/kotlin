@@ -22,3 +22,26 @@ fun foo() {
 }
 
 val _type_test : Int = foo() // this is needed to ensure the inferred return type of foo()
+
+fun test() {
+  val x = 1;
+  val s = "";
+
+  when (x) {
+    <error>s</error> => 1
+    is <error>""</error> => 1
+    x => 1
+    is 1 => 1
+    is <error>(1, 1)</error> => 1
+  }
+
+  val z = (1, 1)
+
+  when (z) {
+    is (*, *) => 1
+    is (*, 1) => 1
+    is (1, 1) => 1
+    is (1, <error>"1"</error>) => 1
+    is <error>(1, "1", *)</error> => 1
+  }
+}

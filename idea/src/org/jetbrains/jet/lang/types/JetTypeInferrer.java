@@ -1019,49 +1019,7 @@ public class JetTypeInferrer {
 
                         @Override
                         public void visitWhenConditionIsPattern(JetWhenConditionIsPattern condition) {
-                            JetPattern pattern = condition.getPattern();
-                            if (pattern != null) {
-                                pattern.accept(new JetVisitor() {
-                                    @Override
-                                    public void visitTypePattern(JetTypePattern typePattern) {
-                                        JetTypeReference typeReference = typePattern.getTypeReference();
-                                        if (typeReference != null) {
-                                            JetType type = typeResolver.resolveType(scope, typeReference);
-                                            if (TypeUtils.intersect(semanticServices.getTypeChecker(), Sets.newHashSet(type, finalSubjectType)) == null) {
-                                                trace.getErrorHandler().genericError(typePattern.getNode(), "Incompatible types"); // TODO : message
-                                            }
-                                        }
-                                    }
-
-                                    @Override
-                                    public void visitWildcardPattern(JetWildcardPattern pattern) {
-                                        // Nothing
-                                    }
-
-                                    @Override
-                                    public void visitExpressionPattern(JetExpressionPattern pattern) {
-                                        getType(scope, pattern.getExpression(), false); // TODO : check type compatibility
-                                        trace.getErrorHandler().genericWarning(pattern.getNode(), "TODO : Types not checked");
-                                    }
-
-                                    @Override
-                                    public void visitTuplePattern(JetTuplePattern pattern) {
-                                        for (JetTuplePatternEntry entry : pattern.getEntries()) {
-                                            // TODO : is a name always allowed, ie for tuple patterns, not decomposer arg lists?
-                                            String nameLabel = entry.getNameLabel();
-                                            JetPattern entryPattern = entry.getPattern();
-                                            if (entryPattern != null) {
-                                                entryPattern.accept(this); // TODO : type checking
-                                            }
-                                        }
-                                    }
-
-                                    @Override
-                                    public void visitJetElement(JetElement elem) {
-                                        trace.getErrorHandler().genericError(elem.getNode(), "Unsupported [JetTypeInferrer]");
-                                    }
-                                });
-                            }
+                            checkPatternType(condition.getPattern(), finalSubjectType);
                         }
 
                         @Override
@@ -1080,6 +1038,71 @@ public class JetTypeInferrer {
             else {
                 trace.getErrorHandler().genericError(expression.getNode(), "Entries required for when-expression"); // TODO : Scope, and maybe this should not an error
             }
+        }
+
+        private void checkPatternType(@NotNull JetPattern pattern, @NotNull final JetType subjectType) {
+            pattern.accept(new JetVisitor() {
+                @Override
+                public void visitTypePattern(JetTypePattern typePattern) {
+                    JetTypeReference typeReference = typePattern.getTypeReference();
+                    if (typeReference != null) {
+                        JetType type = typeResolver.resolveType(scope, typeReference);
+                        checkTypeCompatibility(type, subjectType, typePattern);
+                    }
+                }
+
+                @Override
+                public void visitWildcardPattern(JetWildcardPattern pattern) {
+                    // Nothing
+                }
+
+                @Override
+                public void visitExpressionPattern(JetExpressionPattern pattern) {
+                    JetType type = getType(scope, pattern.getExpression(), false);
+                    checkTypeCompatibility(type, subjectType, pattern);
+                }
+
+                @Override
+                public void visitTuplePattern(JetTuplePattern pattern) {
+                    List<JetTuplePatternEntry> entries = pattern.getEntries();
+                    TypeConstructor typeConstructor = subjectType.getConstructor();
+                    if (!JetStandardClasses.getTuple(entries.size()).getTypeConstructor().equals(typeConstructor)
+                            || typeConstructor.getParameters().size() != entries.size()) {
+                        trace.getErrorHandler().genericError(pattern.getNode(), "Type mismatch: subject is of type " + subjectType + " but the pattern if of type Tuple" + entries.size()); // TODO : message
+                    }
+                    else {
+                        for (int i = 0, entriesSize = entries.size(); i < entriesSize; i++) {
+                            JetTuplePatternEntry entry = entries.get(i);
+                            JetType type = subjectType.getArguments().get(i).getType();
+
+                            // TODO : is a name always allowed, ie for tuple patterns, not decomposer arg lists?
+                            ASTNode nameLabelNode = entry.getNameLabelNode();
+                            if (nameLabelNode != null) {
+                                trace.getErrorHandler().genericError(nameLabelNode, "Unsupported [JetTypeInferrer]");
+                            }
+
+                            JetPattern entryPattern = entry.getPattern();
+                            if (entryPattern != null) {
+                                checkPatternType(entryPattern, type);
+                            }
+                        }
+                    }
+                }
+
+                private void checkTypeCompatibility(@Nullable JetType type, @NotNull JetType subjectType, @NotNull JetElement reportErrorOn) {
+                    if (type == null) {
+                        return;
+                    }
+                    if (TypeUtils.intersect(semanticServices.getTypeChecker(), Sets.newHashSet(type, subjectType)) == null) {
+                        trace.getErrorHandler().genericError(reportErrorOn.getNode(), "Incompatible types: " + type + " and " + subjectType); // TODO : message
+                    }
+                }
+
+                @Override
+                public void visitJetElement(JetElement elem) {
+                    trace.getErrorHandler().genericError(elem.getNode(), "Unsupported [JetTypeInferrer]");
+                }
+            });
         }
 
         @Override
