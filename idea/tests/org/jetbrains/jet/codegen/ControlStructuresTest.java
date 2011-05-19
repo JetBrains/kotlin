@@ -9,8 +9,13 @@ import java.util.List;
  * @author yole
  */
 public class ControlStructuresTest extends CodegenTestCase {
+    @Override
+    protected String getPrefix() {
+        return "controlStructures";
+    }
+
     public void testIf() throws Exception {
-        loadFile("controlStructures/if.jet");
+        loadFile();
 
         System.out.println(generateToText());
         final Method main = generateFunction();
@@ -19,7 +24,7 @@ public class ControlStructuresTest extends CodegenTestCase {
     }
 
     public void testSingleBranchIf() throws Exception {
-        loadFile("controlStructures/singleBranchIf.jet");
+        loadFile();
 
         System.out.println(generateToText());
         final Method main = generateFunction();
@@ -49,7 +54,7 @@ public class ControlStructuresTest extends CodegenTestCase {
     }
 
     public void testContinue() throws Exception {
-        loadFile("controlStructures/continue.jet");
+        loadFile();
         System.out.println(generateToText());
         final Method main = generateFunction();
         assertEquals(3, main.invoke(null, 4));
@@ -57,7 +62,7 @@ public class ControlStructuresTest extends CodegenTestCase {
     }
 
     public void testIfNoElse() throws Exception {
-        loadFile("controlStructures/ifNoElse.jet");
+        loadFile();
         System.out.println(generateToText());
         final Method main = generateFunction();
         assertEquals(5, main.invoke(null, 5, true));
@@ -72,7 +77,7 @@ public class ControlStructuresTest extends CodegenTestCase {
     }
 
     public void testFor() throws Exception {
-        loadFile("controlStructures/for.jet");
+        loadFile();
         System.out.println(generateToText());
         final Method main = generateFunction();
         List<String> args = Arrays.asList("IntelliJ", " ", "IDEA");
@@ -80,7 +85,7 @@ public class ControlStructuresTest extends CodegenTestCase {
     }
 
     public void testForInArray() throws Exception {
-        loadFile("controlStructures/forInArray.jet");
+        loadFile();
         System.out.println(generateToText());
         final Method main = generateFunction();
         String[] args = new String[] { "IntelliJ", " ", "IDEA" };
@@ -102,10 +107,29 @@ public class ControlStructuresTest extends CodegenTestCase {
     }
 
     public void testTryCatch() throws Exception {
-        loadFile("controlStructures/tryCatch.jet");
+        loadFile();
         System.out.println(generateToText());
         final Method main = generateFunction();
         assertEquals("no message", main.invoke(null, "0"));
         assertEquals("For input string: \"a\"", main.invoke(null, "a"));
+    }
+
+    public void testTryFinally() throws Exception {
+        loadFile();
+        System.out.println(generateToText());
+        final Method main = generateFunction();
+        StringBuilder sb = new StringBuilder();
+        main.invoke(null, sb, "9");
+        assertEquals("foo9bar", sb.toString());
+        sb = new StringBuilder();
+        boolean caught = false;
+        try {
+            main.invoke(null, sb, "x");
+        }
+        catch(InvocationTargetException e) {
+            caught = e.getTargetException() instanceof NumberFormatException;
+        }
+        assertTrue(caught);
+        assertEquals("foobar", sb.toString());
     }
 }

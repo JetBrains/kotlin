@@ -52,6 +52,8 @@ public class ExpressionCodegen extends JetVisitor {
 
     private static final Type OBJECT_TYPE = Type.getType(Object.class);
     private static final Type ITERATOR_TYPE = Type.getType(Iterator.class);
+    private static final Type THROWABLE_TYPE = Type.getType(Throwable.class);
+
     private static final Type RANGE_TYPE = Type.getType(Range.class);
     private static final Type INT_RANGE_TYPE = Type.getType(IntRange.class);
     private static final Type JET_OBJECT_TYPE = Type.getType(JetObject.class);
@@ -1246,14 +1248,15 @@ public class ExpressionCodegen extends JetVisitor {
 
     @Override
     public void visitTryExpression(JetTryExpression expression) {
-        if (expression.getFinallyBlock() != null) {
-            throw new UnsupportedOperationException("finally block in try/catch not yet supported");
-        }
         Label tryStart = new Label();
         v.mark(tryStart);
         gen(expression.getTryBlock(), Type.VOID_TYPE);
         Label tryEnd = new Label();
         v.mark(tryEnd);
+        JetFinallySection finallyBlock = expression.getFinallyBlock();
+        if (finallyBlock != null) {
+            gen(finallyBlock.getFinalExpression(), Type.VOID_TYPE);
+        }
         Label end = new Label();
         v.goTo(end);         // TODO don't generate goto if there's no code following try/catch
         for (JetCatchClause clause : expression.getCatchClauses()) {
@@ -1271,6 +1274,22 @@ public class ExpressionCodegen extends JetVisitor {
 
             myMap.leave(descriptor);
             v.visitTryCatchBlock(tryStart, tryEnd, clauseStart, descriptorType.getInternalName());
+        }
+        if (finallyBlock != null) {
+            Label finallyStart = new Label();
+            v.mark(finallyStart);
+
+            int index = myMap.enterTemp();
+            v.store(index, THROWABLE_TYPE);
+
+            gen(finallyBlock.getFinalExpression(), Type.VOID_TYPE);
+
+            v.load(index, THROWABLE_TYPE);
+            v.athrow();
+
+            myMap.leaveTemp();
+
+            v.visitTryCatchBlock(tryStart, tryEnd, finallyStart, null);
         }
         v.mark(end);
     }

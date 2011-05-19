@@ -1,11 +1,10 @@
 package org.jetbrains.jet.codegen;
 
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -81,17 +80,16 @@ public class FunctionCodegen {
             }
             else {
                 bodyExpression.accept(codegen);
-                generateReturn(mv, bodyExpression, codegen);
+                generateReturn(mv, bodyExpression, codegen, jvmSignature);
             }
             mv.visitMaxs(0, 0);
             mv.visitEnd();
         }
     }
 
-    private void generateReturn(MethodVisitor mv, JetExpression bodyExpression, ExpressionCodegen codegen) {
+    private void generateReturn(MethodVisitor mv, JetExpression bodyExpression, ExpressionCodegen codegen, Method jvmSignature) {
         if (!endsWithReturn(bodyExpression)) {
-            final JetType expressionType = bindingContext.getExpressionType(bodyExpression);
-            if (expressionType == null || expressionType.equals(JetStandardClasses.getUnitType())) {
+            if (jvmSignature.getReturnType() == Type.VOID_TYPE) {
                 mv.visitInsn(Opcodes.RETURN);
             }
             else {
