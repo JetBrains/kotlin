@@ -663,6 +663,16 @@ public class JetControlFlowProcessor {
                                     }
 
                                     @Override
+                                    public void visitExpressionPattern(JetExpressionPattern pattern) {
+                                        value(pattern.getExpression(), false, inCondition);
+                                    }
+
+                                    @Override
+                                    public void visitTuplePattern(JetTuplePattern pattern) {
+                                        // TODO
+                                    }
+
+                                    @Override
                                     public void visitJetElement(JetElement elem) {
                                         throw new UnsupportedOperationException("[JetControlFlowProcessor] " + elem.toString());
                                     }

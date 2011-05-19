@@ -17,7 +17,7 @@ class Iterable<out T> {
   fun iterator() : Iterator<T>
 }
 
-class Array<T> {
+class Array<T>(val size : Int) {
   fun get(index : Int) : T
   fun set(index : Int, value : T) : Unit
 

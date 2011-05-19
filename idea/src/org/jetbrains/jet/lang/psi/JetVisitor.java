@@ -366,15 +366,23 @@ public class JetVisitor extends PsiElementVisitor {
         visitJetElement(condition);
     }
 
-    public void visitTypePattern(JetTypePattern typePattern) {
-        visitPattern(typePattern);
-    }
-
-    public void visitPattern(JetPattern pattern) {
-        visitJetElement(pattern);
+    public void visitTypePattern(JetTypePattern pattern) {
+        visitPattern(pattern);
     }
 
     public void visitWildcardPattern(JetWildcardPattern pattern) {
         visitPattern(pattern);
+    }
+
+    public void visitExpressionPattern(JetExpressionPattern pattern) {
+        visitPattern(pattern);
+    }
+
+    public void visitTuplePattern(JetTuplePattern pattern) {
+        visitPattern(pattern);
+    }
+
+    private void visitPattern(JetPattern pattern) {
+        visitJetElement(pattern);
     }
 }

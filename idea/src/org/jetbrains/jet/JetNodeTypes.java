@@ -117,13 +117,13 @@ public interface JetNodeTypes {
     JetNodeType OBJECT_LITERAL            = new JetNodeType("OBJECT_LITERAL", JetObjectLiteralExpression.class);
     JetNodeType ROOT_NAMESPACE            = new JetNodeType("ROOT_NAMESPACE", JetRootNamespaceExpression.class);
 
-    JetNodeType EXPRESSION_PATTERN        = new JetNodeType("EXPRESSION_PATTERN", JetPattern.class); // TODO
+    JetNodeType EXPRESSION_PATTERN        = new JetNodeType("EXPRESSION_PATTERN", JetExpressionPattern.class);
     JetNodeType TYPE_PATTERN              = new JetNodeType("TYPE_PATTERN", JetTypePattern.class);
     JetNodeType WILDCARD_PATTERN          = new JetNodeType("WILDCARD_PATTERN", JetWildcardPattern.class);
-    JetNodeType BINDING_PATTERN           = new JetNodeType("BINDING_PATTERN", JetPattern.class); // TODO
-    JetNodeType TUPLE_PATTERN             = new JetNodeType("TUPLE_PATTERN", JetPattern.class); // TODO
-    JetNodeType TUPLE_PATTERN_ENTRY       = new JetNodeType("TUPLE_PATTERN_ENTRY");
-    JetNodeType DECOMPOSER_PATTERN        = new JetNodeType("DECOMPOSER_PATTERN", JetPattern.class); // TODO
+    JetNodeType BINDING_PATTERN           = new JetNodeType("BINDING_PATTERN", JetBindingPattern.class);
+    JetNodeType TUPLE_PATTERN             = new JetNodeType("TUPLE_PATTERN", JetTuplePattern.class);
+    JetNodeType TUPLE_PATTERN_ENTRY       = new JetNodeType("TUPLE_PATTERN_ENTRY", JetTuplePatternEntry.class);
+    JetNodeType DECOMPOSER_PATTERN        = new JetNodeType("DECOMPOSER_PATTERN", JetDecomposerPattern.class);
     JetNodeType DECOMPOSER_ARGUMENT_LIST  = new JetNodeType("DECOMPOSER_ARGUMENT_LIST");
     JetNodeType DECOMPOSER_ARGUMENT       = new JetNodeType("DECOMPOSER_ARGUMENT");
 

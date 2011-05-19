@@ -1039,6 +1039,24 @@ public class JetTypeInferrer {
                                     }
 
                                     @Override
+                                    public void visitExpressionPattern(JetExpressionPattern pattern) {
+                                        getType(scope, pattern.getExpression(), false); // TODO : check type compatibility
+                                        trace.getErrorHandler().genericWarning(pattern.getNode(), "TODO : Types not checked");
+                                    }
+
+                                    @Override
+                                    public void visitTuplePattern(JetTuplePattern pattern) {
+                                        for (JetTuplePatternEntry entry : pattern.getEntries()) {
+                                            // TODO : is a name always allowed, ie for tuple patterns, not decomposer arg lists?
+                                            String nameLabel = entry.getNameLabel();
+                                            JetPattern entryPattern = entry.getPattern();
+                                            if (entryPattern != null) {
+                                                entryPattern.accept(this); // TODO : type checking
+                                            }
+                                        }
+                                    }
+
+                                    @Override
                                     public void visitJetElement(JetElement elem) {
                                         trace.getErrorHandler().genericError(elem.getNode(), "Unsupported [JetTypeInferrer]");
                                     }
