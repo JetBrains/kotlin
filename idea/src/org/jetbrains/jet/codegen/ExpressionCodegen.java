@@ -7,11 +7,15 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import jet.IntRange;
 import jet.JetObject;
+import jet.NoPatternMatchedException;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.JetStandardClasses;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeProjection;
+import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 import org.objectweb.asm.Label;
@@ -37,6 +41,7 @@ public class ExpressionCodegen extends JetVisitor {
     private static final String CLASS_ITERATOR = "java/util/Iterator";
 
     private static final String CLASS_INT_RANGE = "jet/IntRange";
+    private static final String CLASS_NO_PATTERN_MATCHED_EXCEPTION = "jet/NoPatternMatchedException";
 
     private static final String ITERABLE_ITERATOR_DESCRIPTOR = "()Ljava/util/Iterator;";
     private static final String ITERATOR_HASNEXT_DESCRIPTOR = "()Z";
@@ -47,6 +52,7 @@ public class ExpressionCodegen extends JetVisitor {
     private static final Type ITERATOR_TYPE = Type.getType(Iterator.class);
     private static final Type INT_RANGE_TYPE = Type.getType(IntRange.class);
     private static final Type JET_OBJECT_TYPE = Type.getType(JetObject.class);
+    private static final Type NO_PATTERN_MATCHED_EXCEPTION_TYPE = Type.getType(NoPatternMatchedException.class);
 
     private final Stack<Label> myContinueTargets = new Stack<Label>();
     private final Stack<Label> myBreakTargets = new Stack<Label>();
@@ -750,11 +756,11 @@ public class ExpressionCodegen extends JetVisitor {
         }
         else if (opToken == JetTokens.EQEQ || opToken == JetTokens.EXCLEQ ||
                  opToken == JetTokens.EQEQEQ || opToken == JetTokens.EXCLEQEQEQ) {
-            generateEquals(expression, opToken);
+            generateEquals(expression.getLeft(), expression.getRight(), opToken);
         }
         else if (opToken == JetTokens.LT || opToken == JetTokens.LTEQ ||
                  opToken == JetTokens.GT || opToken == JetTokens.GTEQ) {
-            generateCompareOp(expression, opToken, expressionType(expression.getLeft()));
+            generateCompareOp(expression.getLeft(), expression.getRight(), opToken, expressionType(expression.getLeft()));
         }
         else if (opToken == JetTokens.ELVIS) {
             generateElvis(expression);
@@ -806,15 +812,19 @@ public class ExpressionCodegen extends JetVisitor {
         myStack.push(StackValue.onStack(Type.BOOLEAN_TYPE));
     }
 
-    private void generateEquals(JetBinaryExpression expression, IElementType opToken) {
-        final Type leftType = expressionType(expression.getLeft());
-        final Type rightType = expressionType(expression.getRight());
+    private void generateEquals(JetExpression left, JetExpression right, IElementType opToken) {
+        final Type leftType = expressionType(left);
+        final Type rightType = expressionType(right);
+        gen(left, leftType);
+        gen(right, rightType);
+        generateEqualsForExpressionsOnStack(opToken, leftType, rightType);
+    }
+
+    private void generateEqualsForExpressionsOnStack(IElementType opToken, Type leftType, Type rightType) {
         if (isNumberPrimitive(leftType) && leftType == rightType) {
-            generateCompareOp(expression, opToken, leftType);
+            compareExpressionsOnStack(opToken, leftType);
         }
         else {
-            gen(expression.getLeft(), leftType);
-            gen(expression.getRight(), rightType);
             if (opToken == JetTokens.EQEQEQ || opToken == JetTokens.EXCLEQEQEQ) {
                 myStack.push(StackValue.cmp(opToken, leftType));
             }
@@ -943,9 +953,13 @@ public class ExpressionCodegen extends JetVisitor {
         }
     }
 
-    private void generateCompareOp(JetBinaryExpression expression, IElementType opToken, Type operandType) {
-        gen(expression.getLeft(), operandType);
-        gen(expression.getRight(), operandType);
+    private void generateCompareOp(JetExpression left, JetExpression right, IElementType opToken, Type operandType) {
+        gen(left, operandType);
+        gen(right, operandType);
+        compareExpressionsOnStack(opToken, operandType);
+    }
+
+    private void compareExpressionsOnStack(IElementType opToken, Type operandType) {
         if (operandType.getSort() == Type.OBJECT) {
             v.invokeinterface(CLASS_COMPARABLE, "compareTo", "(Ljava/lang/Object;)I");
             v.aconst(0);
@@ -1364,6 +1378,55 @@ public class ExpressionCodegen extends JetVisitor {
         else {
             v.invokespecial("jet/typeinfo/TypeInfo", "<init>", "(Ljava/lang/Class;)V");
         }
+    }
+
+    @Override
+    public void visitWhenExpression(JetWhenExpression expression) {
+        JetExpression expr = expression.getSubjectExpression();
+        Type subjectType = expressionType(expr);
+        int subjectLocal = myMap.enterTemp(subjectType.getSize());
+        gen(expr, subjectType);
+        v.store(subjectLocal, subjectType);
+
+        Label end = new Label();
+        Label nextEntry = null;
+        boolean hasElse = false;
+        for (JetWhenEntry whenEntry : expression.getEntries()) {
+            if (nextEntry != null) {
+                v.mark(nextEntry);
+            }
+            nextEntry = new Label();
+            if (!whenEntry.isElse()) {
+                JetWhenCondition condition = whenEntry.getCondition();
+                if (condition instanceof JetWhenConditionWithExpression) {
+                    v.load(subjectLocal, subjectType);
+                    JetExpression condExpression = ((JetWhenConditionWithExpression) condition).getExpression();
+                    Type condType = expressionType(condExpression);
+                    gen(condExpression, condType);
+                    generateEqualsForExpressionsOnStack(JetTokens.EQEQ, subjectType, condType);
+                    myStack.pop().condJump(nextEntry, true, v);
+                }
+                else {
+                    throw new UnsupportedOperationException("unsupported kind of when condition");
+                }
+            }
+            else {
+                hasElse = true;
+            }
+            genToJVMStack(whenEntry.getExpression());
+            v.goTo(end);
+        }
+        if (!hasElse && nextEntry != null) {
+            v.mark(nextEntry);
+            v.anew(NO_PATTERN_MATCHED_EXCEPTION_TYPE);
+            v.dup();
+            v.invokespecial(CLASS_NO_PATTERN_MATCHED_EXCEPTION, "<init>", "()V");
+            v.athrow();
+        }
+        v.mark(end);
+        myStack.push(StackValue.onStack(expressionType(expression)));
+
+        myMap.leaveTemp(subjectType.getSize());
     }
 
     private static class CompilationException extends RuntimeException {

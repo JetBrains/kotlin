@@ -28,8 +28,18 @@ public class FrameMap {
         return myMaxIndex++;
     }
 
+    public int enterTemp(int size) {
+        int result = myMaxIndex;
+        myMaxIndex += size;
+        return result;
+    }
+
     public void leaveTemp() {
         myMaxIndex--;
+    }
+
+    public void leaveTemp(int size) {
+        myMaxIndex -= size;
     }
 
     public int getIndex(DeclarationDescriptor descriptor) {
