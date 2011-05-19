@@ -6,6 +6,15 @@
   <component name="EntryPointsManager">
     <entry_points version="2.0" />
   </component>
+  <component name="FacetAutodetectingManager">
+    <autodetection-disabled>
+      <facet-type id="Python">
+        <modules>
+          <module name="Jet" />
+        </modules>
+      </facet-type>
+    </autodetection-disabled>
+  </component>
   <component name="IdProvider" IDEtalkID="71A301FF1940049D6D82F12C40F1E1D5" />
   <component name="JavadocGenerationManager">
     <option name="OUTPUT_DIRECTORY" />
