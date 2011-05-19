@@ -8,6 +8,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import jet.IntRange;
 import jet.JetObject;
 import jet.NoPatternMatchedException;
+import jet.Range;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
@@ -40,6 +41,7 @@ public class ExpressionCodegen extends JetVisitor {
     private static final String CLASS_ITERABLE = "java/lang/Iterable";
     private static final String CLASS_ITERATOR = "java/util/Iterator";
 
+    private static final String CLASS_RANGE = "jet/Range";
     private static final String CLASS_INT_RANGE = "jet/IntRange";
     private static final String CLASS_NO_PATTERN_MATCHED_EXCEPTION = "jet/NoPatternMatchedException";
 
@@ -50,6 +52,7 @@ public class ExpressionCodegen extends JetVisitor {
 
     private static final Type OBJECT_TYPE = Type.getType(Object.class);
     private static final Type ITERATOR_TYPE = Type.getType(Iterator.class);
+    private static final Type RANGE_TYPE = Type.getType(Range.class);
     private static final Type INT_RANGE_TYPE = Type.getType(IntRange.class);
     private static final Type JET_OBJECT_TYPE = Type.getType(JetObject.class);
     private static final Type NO_PATTERN_MATCHED_EXCEPTION_TYPE = Type.getType(NoPatternMatchedException.class);
@@ -1405,6 +1408,13 @@ public class ExpressionCodegen extends JetVisitor {
                     gen(condExpression, condType);
                     generateEqualsForExpressionsOnStack(JetTokens.EQEQ, subjectType, condType);
                     myStack.pop().condJump(nextEntry, true, v);
+                }
+                else if (condition instanceof JetWhenConditionInRange) {
+                    JetExpression range = ((JetWhenConditionInRange) condition).getRangeExpression();
+                    gen(range, RANGE_TYPE);
+                    new StackValue.Local(subjectLocal, subjectType).put(OBJECT_TYPE, v);
+                    v.invokeinterface(CLASS_RANGE, "contains", "(Ljava/lang/Comparable;)Z");
+                    new StackValue.OnStack(Type.BOOLEAN_TYPE).condJump(nextEntry, true, v);
                 }
                 else {
                     throw new UnsupportedOperationException("unsupported kind of when condition");

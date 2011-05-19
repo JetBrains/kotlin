@@ -1,0 +1,4 @@
+fun isDigit(a: Int) = when(a) {
+  in 0..9 => "digit"
+  else => "something"
+}
