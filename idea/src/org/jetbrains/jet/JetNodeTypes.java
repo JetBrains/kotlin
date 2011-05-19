@@ -49,6 +49,8 @@ public interface JetNodeTypes {
     JetNodeType TUPLE_TYPE    = new JetNodeType("TUPLE_TYPE", JetTupleType.class);
     JetNodeType FUNCTION_TYPE = new JetNodeType("FUNCTION_TYPE", JetFunctionType.class);
     JetNodeType SELF_TYPE     = new JetNodeType("SELF_TYPE", JetSelfType.class);
+    JetNodeType NULLABLE_TYPE             = new JetNodeType("NULLABLE_TYPE", JetNullableType.class);
+    JetNodeType TYPE_PROJECTION           = new JetNodeType("TYPE_PROJECTION", JetTypeProjection.class);
 
     // TODO: review
     JetNodeType PROPERTY_ACCESSOR        = new JetNodeType("PROPERTY_ACCESSOR", JetPropertyAccessor.class);
@@ -111,25 +113,27 @@ public interface JetNodeTypes {
     JetNodeType HASH_QUALIFIED_EXPRESSION = new JetNodeType("HASH_QUALIFIED_EXPRESSION", JetHashQualifiedExpression.class);
     JetNodeType SAFE_ACCESS_EXPRESSION    = new JetNodeType("SAFE_ACCESS_EXPRESSION", JetSafeQualifiedExpression.class);
     JetNodeType PREDICATE_EXPRESSION       = new JetNodeType("PREDICATE_EXPRESSION", JetPredicateExpression.class);
-    JetNodeType DECOMPOSER_PATTERN        = new JetNodeType("DECOMPOSER_PATTERN", JetPattern.class); // TODO
-    JetNodeType TUPLE_PATTERN             = new JetNodeType("TUPLE_PATTERN", JetPattern.class); // TODO
+
     JetNodeType OBJECT_LITERAL            = new JetNodeType("OBJECT_LITERAL", JetObjectLiteralExpression.class);
     JetNodeType ROOT_NAMESPACE            = new JetNodeType("ROOT_NAMESPACE", JetRootNamespaceExpression.class);
+
+    JetNodeType EXPRESSION_PATTERN        = new JetNodeType("EXPRESSION_PATTERN", JetPattern.class); // TODO
+    JetNodeType TYPE_PATTERN              = new JetNodeType("TYPE_PATTERN", JetTypePattern.class);
+    JetNodeType WILDCARD_PATTERN          = new JetNodeType("WILDCARD_PATTERN", JetWildcardPattern.class);
+    JetNodeType BINDING_PATTERN           = new JetNodeType("BINDING_PATTERN", JetPattern.class); // TODO
+    JetNodeType TUPLE_PATTERN             = new JetNodeType("TUPLE_PATTERN", JetPattern.class); // TODO
+    JetNodeType TUPLE_PATTERN_ENTRY       = new JetNodeType("TUPLE_PATTERN_ENTRY");
+    JetNodeType DECOMPOSER_PATTERN        = new JetNodeType("DECOMPOSER_PATTERN", JetPattern.class); // TODO
     JetNodeType DECOMPOSER_ARGUMENT_LIST  = new JetNodeType("DECOMPOSER_ARGUMENT_LIST");
     JetNodeType DECOMPOSER_ARGUMENT       = new JetNodeType("DECOMPOSER_ARGUMENT");
-    JetNodeType TYPE_PATTERN              = new JetNodeType("TYPE_PATTERN", JetTypePattern.class);
-    JetNodeType EXPRESSION_PATTERN        = new JetNodeType("EXPRESSION_PATTERN", JetPattern.class); // TODO
-    JetNodeType BINDING_PATTERN           = new JetNodeType("BINDING_PATTERN", JetPattern.class); // TODO
-    JetNodeType WILDCARD_PATTERN          = new JetNodeType("WILDCARD_PATTERN", JetPattern.class); // TODO
+
     JetNodeType WHEN                      = new JetNodeType("WHEN", JetWhenExpression.class);
     JetNodeType WHEN_ENTRY                = new JetNodeType("WHEN_ENTRY", JetWhenEntry.class);
+
     JetNodeType WHEN_CONDITION_IN_RANGE   = new JetNodeType("WHEN_CONDITION_IN_RANGE", JetWhenConditionInRange.class);
     JetNodeType WHEN_CONDITION_IS_PATTERN = new JetNodeType("WHEN_CONDITION_IS_PATTERN", JetWhenConditionIsPattern.class);
     JetNodeType WHEN_CONDITION_CALL       = new JetNodeType("WHEN_CONDITION_CALL", JetWhenConditionCall.class);
     JetNodeType WHEN_CONDITION_EXPRESSION = new JetNodeType("WHEN_CONDITION_EXPRESSION", JetWhenConditionWithExpression.class);
-    JetNodeType TUPLE_PATTERN_ENTRY       = new JetNodeType("TUPLE_PATTERN_ENTRY");
-    JetNodeType NULLABLE_TYPE             = new JetNodeType("NULLABLE_TYPE", JetNullableType.class);
-    JetNodeType TYPE_PROJECTION           = new JetNodeType("TYPE_PROJECTION", JetTypeProjection.class);
 
     JetNodeType NAMESPACE_NAME = new JetNodeType("NAMESPACE_NAME", JetContainerNode.class);
 }

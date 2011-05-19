@@ -373,4 +373,8 @@ public class JetVisitor extends PsiElementVisitor {
     public void visitPattern(JetPattern pattern) {
         visitJetElement(pattern);
     }
+
+    public void visitWildcardPattern(JetWildcardPattern pattern) {
+        visitPattern(pattern);
+    }
 }

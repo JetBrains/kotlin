@@ -1034,6 +1034,11 @@ public class JetTypeInferrer {
                                     }
 
                                     @Override
+                                    public void visitWildcardPattern(JetWildcardPattern pattern) {
+                                        // Nothing
+                                    }
+
+                                    @Override
                                     public void visitJetElement(JetElement elem) {
                                         trace.getErrorHandler().genericError(elem.getNode(), "Unsupported [JetTypeInferrer]");
                                     }

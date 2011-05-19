@@ -658,8 +658,13 @@ public class JetControlFlowProcessor {
                                     }
 
                                     @Override
+                                    public void visitWildcardPattern(JetWildcardPattern pattern) {
+                                        // TODO
+                                    }
+
+                                    @Override
                                     public void visitJetElement(JetElement elem) {
-                                        throw new UnsupportedOperationException(elem.toString());
+                                        throw new UnsupportedOperationException("[JetControlFlowProcessor] " + elem.toString());
                                     }
                                 });
                             }
@@ -667,7 +672,7 @@ public class JetControlFlowProcessor {
 
                         @Override
                         public void visitJetElement(JetElement elem) {
-                            throw new UnsupportedOperationException(elem.toString());
+                            throw new UnsupportedOperationException("[JetControlFlowProcessor] " + elem.toString());
                         }
                     });
                 }
