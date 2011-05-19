@@ -1019,7 +1019,31 @@ public class JetTypeInferrer {
 
                         @Override
                         public void visitWhenConditionIsPattern(JetWhenConditionIsPattern condition) {
-                            super.visitWhenConditionIsPattern(condition); // TODO
+                            JetPattern pattern = condition.getPattern();
+                            if (pattern != null) {
+                                pattern.accept(new JetVisitor() {
+                                    @Override
+                                    public void visitTypePattern(JetTypePattern typePattern) {
+                                        JetTypeReference typeReference = typePattern.getTypeReference();
+                                        if (typeReference != null) {
+                                            JetType type = typeResolver.resolveType(scope, typeReference);
+                                            if (TypeUtils.intersect(semanticServices.getTypeChecker(), Sets.newHashSet(type, finalSubjectType)) == null) {
+                                                trace.getErrorHandler().genericError(typePattern.getNode(), "Incompatible types"); // TODO : message
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void visitWildcardPattern(JetWildcardPattern pattern) {
+                                        // Nothing
+                                    }
+
+                                    @Override
+                                    public void visitJetElement(JetElement elem) {
+                                        trace.getErrorHandler().genericError(elem.getNode(), "Unsupported [JetTypeInferrer]");
+                                    }
+                                });
+                            }
                         }
 
                         @Override

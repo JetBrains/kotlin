@@ -649,12 +649,30 @@ public class JetControlFlowProcessor {
 
                         @Override
                         public void visitWhenConditionIsPattern(JetWhenConditionIsPattern condition) {
-                            super.visitWhenConditionIsPattern(condition); // TODO
+                            JetPattern pattern = condition.getPattern();
+                            if (pattern != null) {
+                                pattern.accept(new JetVisitor() {
+                                    @Override
+                                    public void visitTypePattern(JetTypePattern typePattern) {
+                                        // TODO
+                                    }
+
+                                    @Override
+                                    public void visitWildcardPattern(JetWildcardPattern pattern) {
+                                        // TODO
+                                    }
+
+                                    @Override
+                                    public void visitJetElement(JetElement elem) {
+                                        throw new UnsupportedOperationException("[JetControlFlowProcessor] " + elem.toString());
+                                    }
+                                });
+                            }
                         }
 
                         @Override
                         public void visitJetElement(JetElement elem) {
-                            throw new UnsupportedOperationException();
+                            throw new UnsupportedOperationException("[JetControlFlowProcessor] " + elem.toString());
                         }
                     });
                 }
