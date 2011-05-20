@@ -1730,6 +1730,11 @@ public class JetTypeInferrer {
         @Override
         public void visitProperty(JetProperty property) {
 
+            JetTypeReference receiverTypeRef = property.getReceiverTypeRef();
+            if (receiverTypeRef != null) {
+                trace.getErrorHandler().genericError(receiverTypeRef.getNode(), "Local receiver-properties are not allowed");
+            }
+
             JetPropertyAccessor getter = property.getGetter();
             if (getter != null) {
                 trace.getErrorHandler().genericError(getter.getNode(), "Local variables are not allowed to have getters");

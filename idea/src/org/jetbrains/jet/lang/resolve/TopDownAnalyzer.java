@@ -583,10 +583,22 @@ public class TopDownAnalyzer {
         }
     }
 
+    private JetScope getPropertyDeclarationInnerScope(@NotNull JetScope outerScope, @NotNull PropertyDescriptor propertyDescriptor) {
+        WritableScopeImpl result = new WritableScopeImpl(outerScope, propertyDescriptor, trace.getErrorHandler());
+        for (TypeParameterDescriptor typeParameterDescriptor : propertyDescriptor.getTypeParemeters()) {
+            result.addTypeParameterDescriptor(typeParameterDescriptor);
+        }
+        JetType receiverType = propertyDescriptor.getReceiverType();
+        if (receiverType != null) {
+            result.setThisType(receiverType);
+        }
+        return result;
+    }
+
     private void resolvePropertyAccessors(JetProperty property, PropertyDescriptor propertyDescriptor, JetScope declaringScope) {
         BindingTraceAdapter fieldAccessTrackingTrace = createFieldTrackingTrace(propertyDescriptor);
 
-        WritableScope accessorScope = new WritableScopeImpl(declaringScope, declaringScope.getContainingDeclaration(), trace.getErrorHandler());
+        WritableScope accessorScope = new WritableScopeImpl(getPropertyDeclarationInnerScope(declaringScope, propertyDescriptor), declaringScope.getContainingDeclaration(), trace.getErrorHandler());
         accessorScope.addPropertyDescriptorByFieldName("$" + propertyDescriptor.getName(), propertyDescriptor);
 
         JetPropertyAccessor getter = property.getGetter();
@@ -628,7 +640,7 @@ public class TopDownAnalyzer {
     private void resolvePropertyInitializer(JetProperty property, PropertyDescriptor propertyDescriptor, JetExpression initializer, JetScope scope) {
         JetFlowInformationProvider flowInformationProvider = classDescriptorResolver.computeFlowData(property, initializer); // TODO : flow JET-15
         JetTypeInferrer typeInferrer = semanticServices.getTypeInferrer(traceForConstructors, flowInformationProvider);
-        JetType type = typeInferrer.getType(scope, initializer, false);
+        JetType type = typeInferrer.getType(getPropertyDeclarationInnerScope(scope, propertyDescriptor), initializer, false);
 
         JetType expectedType;
         PropertySetterDescriptor setter = propertyDescriptor.getSetter();

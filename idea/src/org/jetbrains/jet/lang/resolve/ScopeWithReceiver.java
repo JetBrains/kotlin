@@ -36,6 +36,7 @@ public class ScopeWithReceiver extends JetScopeImpl {
                             if (functionReceiverType == null) {
                                 return false;
                             }
+                            // TODO : in case of inferred type arguments, substitute the receiver type first
                             return typeChecker.isSubtypeOf(receiverTypeScope.getThisType(), functionReceiverType);
                         }
                     });
@@ -50,8 +51,21 @@ public class ScopeWithReceiver extends JetScopeImpl {
 
     @Override
     public VariableDescriptor getVariable(@NotNull String name) {
-        return receiverTypeScope.getVariable(name);
-        // TODO : extension properties
+        VariableDescriptor variable = receiverTypeScope.getVariable(name);
+        if (variable != null) {
+            return variable;
+        }
+        variable = outerScope.getVariable(name);
+        if (variable instanceof PropertyDescriptor) {
+            PropertyDescriptor propertyDescriptor = (PropertyDescriptor) variable;
+            JetType receiverType = propertyDescriptor.getReceiverType();
+            // TODO : in case of type arguments, substitute the receiver type first
+            if (receiverType != null
+                    && typeChecker.isSubtypeOf(receiverTypeScope.getThisType(), receiverType)) {
+                return variable;
+            }
+        }
+        return null;
     }
 
     @Override

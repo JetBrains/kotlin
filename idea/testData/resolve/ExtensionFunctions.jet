@@ -19,3 +19,13 @@ fun <~T~T, ~E~E> `T`T.foo(x : `E`E, y : `A`A) : `T`T   {
 }
 
 ~-~fun <T> T.minus(t : T) : Int = 1
+
+fun test() {
+  val y = 1.`abs`abs
+}
+~abs~val Int.abs : Int
+  get() = if (this`:std::Int` > 0) this else -this`:std::Int`;
+
+val <~TT~T> `TT`T.foo : `TT`T
+
+fun Int.foo() = this`:std::Int`
