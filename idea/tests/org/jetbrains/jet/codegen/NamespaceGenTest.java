@@ -360,6 +360,13 @@ public class NamespaceGenTest extends CodegenTestCase {
         assertEquals(10, data[0]);
     }
 
+    public void testArrayNew() throws Exception {
+        loadText("fun foo() = new Array<Int>(4)");
+        final Method main = generateFunction();
+        int[] result = (int[]) main.invoke(null);
+        assertEquals(4, result.length);
+    }
+
     public void testIntRange() throws Exception {
         loadText("fun foo() = 1..10");
         final Method main = generateFunction();

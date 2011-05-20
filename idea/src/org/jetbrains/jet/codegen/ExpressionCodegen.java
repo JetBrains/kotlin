@@ -26,6 +26,7 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
 import org.objectweb.asm.commons.Method;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
@@ -1153,43 +1154,61 @@ public class ExpressionCodegen extends JetVisitor {
 
     @Override
     public void visitNewExpression(JetNewExpression expression) {
-        final JetUserType constructorType = (JetUserType) expression.getTypeReference().getTypeElement();
+        JetTypeReference typeReference = expression.getTypeReference();
+        final JetUserType constructorType = (JetUserType) typeReference.getTypeElement();
         final JetSimpleNameExpression constructorReference = constructorType.getReferenceExpression();
         DeclarationDescriptor constructorDescriptor = bindingContext.resolveReferenceExpression(constructorReference);
         final PsiElement declaration = bindingContext.getDeclarationPsiElement(constructorDescriptor);
+        Type type;
         if (declaration instanceof PsiMethod) {
-            final PsiMethod constructor = (PsiMethod) declaration;
-            PsiClass javaClass = constructor.getContainingClass();
-            Type type = JetTypeMapper.psiClassType(javaClass);
-            v.anew(type);
-            v.dup();
-            final Method jvmConstructor = getMethodDescriptor(constructor);
-            pushMethodArguments(expression, jvmConstructor);
-            v.invokespecial(JetTypeMapper.jvmName(javaClass), "<init>", jvmConstructor.getDescriptor());
-            myStack.push(StackValue.onStack(type));
-            return;
+            type = generateJavaConstructorCall(expression, (PsiMethod) declaration);
         }
         else if (constructorDescriptor instanceof ConstructorDescriptor) {
-            ClassDescriptor classDecl = (ClassDescriptor) constructorDescriptor.getContainingDeclaration();
-            Type type = JetTypeMapper.jetImplementationType(classDecl);
-            v.anew(type);
-            v.dup();
-
-            Method method = typeMapper.mapConstructorSignature((ConstructorDescriptor) constructorDescriptor, OwnerKind.IMPLEMENTATION);
-            pushMethodArguments(expression, method);
-
-            for (JetTypeReference typeArgumentReference : constructorType.getTypeArgumentsAsTypes()) {
-                JetType typeArgument = bindingContext.resolveTypeReference(typeArgumentReference);
-                // TODO is the makeNullable() call correct here?
-                ClassCodegen.newTypeInfo(v, typeMapper.mapType(TypeUtils.makeNullable(typeArgument)));
+            type = typeMapper.mapType(bindingContext.resolveTypeReference(typeReference), OwnerKind.IMPLEMENTATION);
+            if (type.getSort() == Type.ARRAY) {
+                generateNewArray(expression, type);
             }
+            else {
+                v.anew(type);
+                v.dup();
 
-            v.invokespecial(JetTypeMapper.jvmNameForImplementation(classDecl), "<init>", method.getDescriptor());
-            myStack.push(StackValue.onStack(type));
-            return;
+                Method method = typeMapper.mapConstructorSignature((ConstructorDescriptor) constructorDescriptor, OwnerKind.IMPLEMENTATION);
+                pushMethodArguments(expression, method);
+
+                for (JetTypeReference typeArgumentReference : constructorType.getTypeArgumentsAsTypes()) {
+                    JetType typeArgument = bindingContext.resolveTypeReference(typeArgumentReference);
+                    // TODO is the makeNullable() call correct here?
+                    ClassCodegen.newTypeInfo(v, typeMapper.mapType(TypeUtils.makeNullable(typeArgument)));
+                }
+
+                ClassDescriptor classDecl = (ClassDescriptor) constructorDescriptor.getContainingDeclaration();
+                v.invokespecial(JetTypeMapper.jvmNameForImplementation(classDecl), "<init>", method.getDescriptor());
+            }
         }
+        else {
+            throw new UnsupportedOperationException("don't know how to generate this new expression");
+        }
+        myStack.push(StackValue.onStack(type));
+    }
 
-        throw new UnsupportedOperationException("don't know how to generate this new expression");
+    private Type generateJavaConstructorCall(JetNewExpression expression, PsiMethod constructor) {
+        PsiClass javaClass = constructor.getContainingClass();
+        Type type = JetTypeMapper.psiClassType(javaClass);
+        v.anew(type);
+        v.dup();
+        final Method jvmConstructor = getMethodDescriptor(constructor);
+        pushMethodArguments(expression, jvmConstructor);
+        v.invokespecial(JetTypeMapper.jvmName(javaClass), "<init>", jvmConstructor.getDescriptor());
+        return type;
+    }
+
+    private void generateNewArray(JetNewExpression expression, Type type) {
+        List<JetArgument> args = expression.getValueArguments();
+        if (args.size() != 1) {
+            throw new CompilationException("array constructor requires one value argument");
+        }
+        gen(args.get(0).getArgumentExpression(), Type.INT_TYPE);
+        v.newarray(type.getElementType());
     }
 
     @Override
@@ -1308,7 +1327,7 @@ public class ExpressionCodegen extends JetVisitor {
             if (!(descriptor instanceof ClassDescriptor)) {
                 throw new UnsupportedOperationException("don't know how to handle non-class types in as/as?");
             }
-            Type type = typeMapper.jvmType((ClassDescriptor) descriptor, OwnerKind.INTERFACE);
+            Type type = typeMapper.mapType(jetType, OwnerKind.INTERFACE);
             gen(expression.getLeft(), OBJECT_TYPE);
             if (opToken == JetTokens.AS_SAFE) {
                 generateInstanceOf(new Runnable() {
@@ -1380,7 +1399,7 @@ public class ExpressionCodegen extends JetVisitor {
             if (leaveExpressionOnStack) {
                 v.dup();
             }
-            Type type = typeMapper.jvmType((ClassDescriptor) descriptor, OwnerKind.INTERFACE);
+            Type type = typeMapper.mapType(jetType, OwnerKind.INTERFACE);
             v.instanceOf(type);
         }
     }
@@ -1487,5 +1506,11 @@ public class ExpressionCodegen extends JetVisitor {
     }
 
     private static class CompilationException extends RuntimeException {
+        private CompilationException() {
+        }
+
+        private CompilationException(String message) {
+            super(message);
+        }
     }
 }
