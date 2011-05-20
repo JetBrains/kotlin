@@ -26,7 +26,6 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
 import org.objectweb.asm.commons.Method;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
@@ -230,7 +229,7 @@ public class ExpressionCodegen extends JetVisitor {
         final JetType expressionType = bindingContext.getExpressionType(loopRange);
         Type loopRangeType = typeMapper.mapType(expressionType);
         if (loopRangeType.getSort() == Type.ARRAY) {
-            generateForInArray(expression, loopRangeType);
+            new ForInArrayLoopGenerator(expression, loopRangeType).invoke();
         }
         else {
             final DeclarationDescriptor descriptor = expressionType.getConstructor().getDeclarationDescriptor();
@@ -243,55 +242,12 @@ public class ExpressionCodegen extends JetVisitor {
                     return;
                 }
             }
+            if (isClass(descriptor, "IntRange")) {       // TODO IntRange subclasses
+                new ForInRangeLoopGenerator(expression, loopRangeType).invoke();
+                return;
+            }
             throw new UnsupportedOperationException("for/in loop currently only supported for arrays and Iterable instances");
         }
-    }
-
-    private void generateForInArray(JetForExpression expression, Type loopRangeType) {
-        final JetParameter loopParameter = expression.getLoopParameter();
-        final VariableDescriptor parameterDescriptor = bindingContext.getVariableDescriptor(loopParameter);
-        JetType paramType = parameterDescriptor.getOutType();
-        Type asmParamType = typeMapper.mapType(paramType);
-
-        int lengthVar = myMap.enterTemp();
-        gen(expression.getLoopRange(), loopRangeType);
-        v.arraylength();
-        v.store(lengthVar, Type.INT_TYPE);
-        int indexVar = myMap.enterTemp();
-        v.aconst(0);
-        v.store(indexVar, Type.INT_TYPE);
-        myMap.enter(parameterDescriptor, asmParamType.getSize());
-
-        Label condition = new Label();
-        Label increment = new Label();
-        Label end = new Label();
-        v.mark(condition);
-        myContinueTargets.push(increment);
-        myBreakTargets.push(end);
-
-        v.load(indexVar, Type.INT_TYPE);
-        v.load(lengthVar, Type.INT_TYPE);
-        v.ificmpge(end);
-
-        gen(expression.getLoopRange(), loopRangeType);  // array
-        v.load(indexVar, Type.INT_TYPE);
-        v.aload(loopRangeType.getElementType());
-        StackValue.onStack(loopRangeType.getElementType()).put(asmParamType, v);
-        v.store(myMap.getIndex(parameterDescriptor), asmParamType);
-
-        gen(expression.getBody(), Type.VOID_TYPE);
-
-        v.mark(increment);
-        v.iinc(indexVar, 1);
-        v.goTo(condition);
-        v.mark(end);
-
-        final int paramIndex = myMap.leave(parameterDescriptor);
-        v.visitLocalVariable(loopParameter.getName(), asmParamType.getDescriptor(), null, condition, end, paramIndex);
-        myMap.leaveTemp();
-        myMap.leaveTemp();
-        myBreakTargets.pop();
-        myContinueTargets.pop();
     }
 
     private void generateForInIterable(JetForExpression expression, Type loopRangeType) {
@@ -334,6 +290,140 @@ public class ExpressionCodegen extends JetVisitor {
         myMap.leaveTemp();
         myBreakTargets.pop();
         myContinueTargets.pop();
+    }
+
+    private abstract class ForLoopGenerator {
+        protected JetForExpression expression;
+        protected Type loopRangeType;
+        protected VariableDescriptor parameterDescriptor;
+
+        public ForLoopGenerator(JetForExpression expression, Type loopRangeType) {
+            this.expression = expression;
+            this.loopRangeType = loopRangeType;
+            final JetParameter loopParameter = expression.getLoopParameter();
+            this.parameterDescriptor = bindingContext.getVariableDescriptor(loopParameter);
+        }
+
+        public void invoke() {
+            JetType paramType = parameterDescriptor.getOutType();
+            Type asmParamType = typeMapper.mapType(paramType);
+
+            myMap.enter(parameterDescriptor, asmParamType.getSize());
+            generatePrologue();
+
+            Label condition = new Label();
+            Label increment = new Label();
+            Label end = new Label();
+            v.mark(condition);
+            myContinueTargets.push(increment);
+            myBreakTargets.push(end);
+
+            generateCondition(asmParamType, end);
+
+            gen(expression.getBody(), Type.VOID_TYPE);
+
+            v.mark(increment);
+            generateIncrement();
+            v.goTo(condition);
+            v.mark(end);
+
+            cleanupTemp();
+            final int paramIndex = myMap.leave(parameterDescriptor);
+            v.visitLocalVariable(expression.getLoopParameter().getName(), asmParamType.getDescriptor(), null, condition, end, paramIndex);
+            myBreakTargets.pop();
+            myContinueTargets.pop();
+        }
+
+        protected void generatePrologue() {
+        }
+
+        protected abstract void generateCondition(Type asmParamType, Label end);
+
+        protected abstract void generateIncrement();
+
+        protected void cleanupTemp() {
+        }
+    }
+
+    private class ForInArrayLoopGenerator extends ForLoopGenerator {
+        private int myLengthVar;
+        private int myIndexVar;
+
+        public ForInArrayLoopGenerator(JetForExpression expression, Type loopRangeType) {
+            super(expression, loopRangeType);
+        }
+
+        @Override
+        protected void generatePrologue() {
+            myLengthVar = myMap.enterTemp();
+            gen(expression.getLoopRange(), loopRangeType);
+            v.arraylength();
+            v.store(myLengthVar, Type.INT_TYPE);
+            myIndexVar = myMap.enterTemp();
+            v.aconst(0);
+            v.store(myIndexVar, Type.INT_TYPE);
+        }
+
+        protected void generateCondition(Type asmParamType, Label end) {
+            v.load(myIndexVar, Type.INT_TYPE);
+            v.load(myLengthVar, Type.INT_TYPE);
+            v.ificmpge(end);
+
+            gen(expression.getLoopRange(), loopRangeType);  // array
+            v.load(myIndexVar, Type.INT_TYPE);
+            v.aload(loopRangeType.getElementType());
+            StackValue.onStack(loopRangeType.getElementType()).put(asmParamType, v);
+            v.store(myMap.getIndex(parameterDescriptor), asmParamType);
+        }
+
+        protected void generateIncrement() {
+            v.iinc(myIndexVar, 1);
+        }
+
+        protected void cleanupTemp() {
+            myMap.leaveTemp(2);
+        }
+    }
+
+    private class ForInRangeLoopGenerator extends ForLoopGenerator {
+        private int myRangeVar;
+        private int myEndVar;
+
+        public ForInRangeLoopGenerator(JetForExpression expression, Type loopRangeType) {
+            super(expression, loopRangeType);
+        }
+
+        @Override
+        protected void generatePrologue() {
+            myRangeVar = myMap.enterTemp();
+            myEndVar = myMap.enterTemp();
+            gen(expression.getLoopRange(), loopRangeType);
+            v.dup();
+            v.dup();
+            v.store(myRangeVar, loopRangeType);
+
+            v.invokevirtual("jet/IntRange", "getStartValue", "()I");
+            v.store(myMap.getIndex(parameterDescriptor), Type.INT_TYPE);
+            v.invokevirtual("jet/IntRange", "getEndValue", "()I");
+            v.store(myEndVar, Type.INT_TYPE);
+        }
+
+        @Override
+        protected void generateCondition(Type asmParamType, Label end) {
+            v.load(myMap.getIndex(parameterDescriptor), Type.INT_TYPE);
+            v.load(myEndVar, Type.INT_TYPE);
+            v.ificmpgt(end);
+        }
+
+        @Override
+        protected void generateIncrement() {
+            v.iinc(myMap.getIndex(parameterDescriptor), 1);  // TODO support decreasing order
+        }
+
+        @Override
+        protected void cleanupTemp() {
+            myMap.leaveTemp(2);
+        }
     }
 
     @Override
