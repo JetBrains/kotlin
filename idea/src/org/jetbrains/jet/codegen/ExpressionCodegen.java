@@ -229,7 +229,7 @@ public class ExpressionCodegen extends JetVisitor {
         final JetType expressionType = bindingContext.getExpressionType(loopRange);
         Type loopRangeType = typeMapper.mapType(expressionType);
         if (loopRangeType.getSort() == Type.ARRAY) {
-            generateForInArray(expression, loopRangeType);
+            new ForInArrayLoopGenerator(expression, loopRangeType).invoke();
         }
         else {
             final DeclarationDescriptor descriptor = expressionType.getConstructor().getDeclarationDescriptor();
@@ -242,55 +242,12 @@ public class ExpressionCodegen extends JetVisitor {
                     return;
                 }
             }
+            if (isClass(descriptor, "IntRange")) {       // TODO IntRange subclasses
+                new ForInRangeLoopGenerator(expression, loopRangeType).invoke();
+                return;
+            }
             throw new UnsupportedOperationException("for/in loop currently only supported for arrays and Iterable instances");
         }
-    }
-
-    private void generateForInArray(JetForExpression expression, Type loopRangeType) {
-        final JetParameter loopParameter = expression.getLoopParameter();
-        final VariableDescriptor parameterDescriptor = bindingContext.getVariableDescriptor(loopParameter);
-        JetType paramType = parameterDescriptor.getOutType();
-        Type asmParamType = typeMapper.mapType(paramType);
-
-        int lengthVar = myMap.enterTemp();
-        gen(expression.getLoopRange(), loopRangeType);
-        v.arraylength();
-        v.store(lengthVar, Type.INT_TYPE);
-        int indexVar = myMap.enterTemp();
-        v.aconst(0);
-        v.store(indexVar, Type.INT_TYPE);
-        myMap.enter(parameterDescriptor, asmParamType.getSize());
-
-        Label condition = new Label();
-        Label increment = new Label();
-        Label end = new Label();
-        v.mark(condition);
-        myContinueTargets.push(increment);
-        myBreakTargets.push(end);
-
-        v.load(indexVar, Type.INT_TYPE);
-        v.load(lengthVar, Type.INT_TYPE);
-        v.ificmpge(end);
-
-        gen(expression.getLoopRange(), loopRangeType);  // array
-        v.load(indexVar, Type.INT_TYPE);
-        v.aload(loopRangeType.getElementType());
-        StackValue.onStack(loopRangeType.getElementType()).put(asmParamType, v);
-        v.store(myMap.getIndex(parameterDescriptor), asmParamType);
-
-        gen(expression.getBody(), Type.VOID_TYPE);
-
-        v.mark(increment);
-        v.iinc(indexVar, 1);
-        v.goTo(condition);
-        v.mark(end);
-
-        final int paramIndex = myMap.leave(parameterDescriptor);
-        v.visitLocalVariable(loopParameter.getName(), asmParamType.getDescriptor(), null, condition, end, paramIndex);
-        myMap.leaveTemp();
-        myMap.leaveTemp();
-        myBreakTargets.pop();
-        myContinueTargets.pop();
     }
 
     private void generateForInIterable(JetForExpression expression, Type loopRangeType) {
@@ -333,6 +290,140 @@ public class ExpressionCodegen extends JetVisitor {
         myMap.leaveTemp();
         myBreakTargets.pop();
         myContinueTargets.pop();
+    }
+
+    private abstract class ForLoopGenerator {
+        protected JetForExpression expression;
+        protected Type loopRangeType;
+        protected VariableDescriptor parameterDescriptor;
+
+        public ForLoopGenerator(JetForExpression expression, Type loopRangeType) {
+            this.expression = expression;
+            this.loopRangeType = loopRangeType;
+            final JetParameter loopParameter = expression.getLoopParameter();
+            this.parameterDescriptor = bindingContext.getVariableDescriptor(loopParameter);
+        }
+
+        public void invoke() {
+            JetType paramType = parameterDescriptor.getOutType();
+            Type asmParamType = typeMapper.mapType(paramType);
+
+            myMap.enter(parameterDescriptor, asmParamType.getSize());
+            generatePrologue();
+
+            Label condition = new Label();
+            Label increment = new Label();
+            Label end = new Label();
+            v.mark(condition);
+            myContinueTargets.push(increment);
+            myBreakTargets.push(end);
+
+            generateCondition(asmParamType, end);
+
+            gen(expression.getBody(), Type.VOID_TYPE);
+
+            v.mark(increment);
+            generateIncrement();
+            v.goTo(condition);
+            v.mark(end);
+
+            cleanupTemp();
+            final int paramIndex = myMap.leave(parameterDescriptor);
+            v.visitLocalVariable(expression.getLoopParameter().getName(), asmParamType.getDescriptor(), null, condition, end, paramIndex);
+            myBreakTargets.pop();
+            myContinueTargets.pop();
+        }
+
+        protected void generatePrologue() {
+        }
+
+        protected abstract void generateCondition(Type asmParamType, Label end);
+
+        protected abstract void generateIncrement();
+
+        protected void cleanupTemp() {
+        }
+    }
+
+    private class ForInArrayLoopGenerator extends ForLoopGenerator {
+        private int myLengthVar;
+        private int myIndexVar;
+
+        public ForInArrayLoopGenerator(JetForExpression expression, Type loopRangeType) {
+            super(expression, loopRangeType);
+        }
+
+        @Override
+        protected void generatePrologue() {
+            myLengthVar = myMap.enterTemp();
+            gen(expression.getLoopRange(), loopRangeType);
+            v.arraylength();
+            v.store(myLengthVar, Type.INT_TYPE);
+            myIndexVar = myMap.enterTemp();
+            v.aconst(0);
+            v.store(myIndexVar, Type.INT_TYPE);
+        }
+
+        protected void generateCondition(Type asmParamType, Label end) {
+            v.load(myIndexVar, Type.INT_TYPE);
+            v.load(myLengthVar, Type.INT_TYPE);
+            v.ificmpge(end);
+
+            gen(expression.getLoopRange(), loopRangeType);  // array
+            v.load(myIndexVar, Type.INT_TYPE);
+            v.aload(loopRangeType.getElementType());
+            StackValue.onStack(loopRangeType.getElementType()).put(asmParamType, v);
+            v.store(myMap.getIndex(parameterDescriptor), asmParamType);
+        }
+
+        protected void generateIncrement() {
+            v.iinc(myIndexVar, 1);
+        }
+
+        protected void cleanupTemp() {
+            myMap.leaveTemp(2);
+        }
+    }
+
+    private class ForInRangeLoopGenerator extends ForLoopGenerator {
+        private int myRangeVar;
+        private int myEndVar;
+
+        public ForInRangeLoopGenerator(JetForExpression expression, Type loopRangeType) {
+            super(expression, loopRangeType);
+        }
+
+        @Override
+        protected void generatePrologue() {
+            myRangeVar = myMap.enterTemp();
+            myEndVar = myMap.enterTemp();
+            gen(expression.getLoopRange(), loopRangeType);
+            v.dup();
+            v.dup();
+            v.store(myRangeVar, loopRangeType);
+
+            v.invokevirtual("jet/IntRange", "getStartValue", "()I");
+            v.store(myMap.getIndex(parameterDescriptor), Type.INT_TYPE);
+            v.invokevirtual("jet/IntRange", "getEndValue", "()I");
+            v.store(myEndVar, Type.INT_TYPE);
+        }
+
+        @Override
+        protected void generateCondition(Type asmParamType, Label end) {
+            v.load(myMap.getIndex(parameterDescriptor), Type.INT_TYPE);
+            v.load(myEndVar, Type.INT_TYPE);
+            v.ificmpgt(end);
+        }
+
+        @Override
+        protected void generateIncrement() {
+            v.iinc(myMap.getIndex(parameterDescriptor), 1);  // TODO support decreasing order
+        }
+
+        @Override
+        protected void cleanupTemp() {
+            myMap.leaveTemp(2);
+        }
     }
 
     @Override
@@ -444,8 +535,8 @@ public class ExpressionCodegen extends JetVisitor {
     @Override
     public void visitSimpleNameExpression(JetSimpleNameExpression expression) {
         final DeclarationDescriptor descriptor = bindingContext.resolveReferenceExpression(expression);
+        final DeclarationDescriptor container = descriptor.getContainingDeclaration();
         if (descriptor instanceof VariableDescriptor) {
-            final DeclarationDescriptor container = descriptor.getContainingDeclaration();
             if (isClass(container, "Number")) {
                 Type castType = getCastType(expression.getReferencedName());
                 if (castType != null) {
@@ -492,13 +583,20 @@ public class ExpressionCodegen extends JetVisitor {
                     }
                 }
 
-                boolean isStatic = descriptor.getContainingDeclaration() instanceof NamespaceDescriptorImpl;
-                final boolean directToField = expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER;
-                final StackValue iValue = intermediateValueForProperty(propertyDescriptor, directToField);
-                if (!isStatic) {
+                if (isClass(container, "Array") && propertyDescriptor.getName().equals("size")) {
                     ensureReceiverOnStack(expression);
+                    v.arraylength();
+                    myStack.push(StackValue.onStack(Type.INT_TYPE));
                 }
-                myStack.push(iValue);
+                else {
+                    boolean isStatic = container instanceof NamespaceDescriptorImpl;
+                    final boolean directToField = expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER;
+                    final StackValue iValue = intermediateValueForProperty(propertyDescriptor, directToField);
+                    if (!isStatic) {
+                        ensureReceiverOnStack(expression);
+                    }
+                    myStack.push(iValue);
+                }
             }
             else {
                 throw new UnsupportedOperationException("don't know how to generate reference " + descriptor);
@@ -1153,43 +1251,61 @@ public class ExpressionCodegen extends JetVisitor {
 
     @Override
     public void visitNewExpression(JetNewExpression expression) {
-        final JetUserType constructorType = (JetUserType) expression.getTypeReference().getTypeElement();
+        JetTypeReference typeReference = expression.getTypeReference();
+        final JetUserType constructorType = (JetUserType) typeReference.getTypeElement();
         final JetSimpleNameExpression constructorReference = constructorType.getReferenceExpression();
         DeclarationDescriptor constructorDescriptor = bindingContext.resolveReferenceExpression(constructorReference);
         final PsiElement declaration = bindingContext.getDeclarationPsiElement(constructorDescriptor);
+        Type type;
         if (declaration instanceof PsiMethod) {
-            final PsiMethod constructor = (PsiMethod) declaration;
-            PsiClass javaClass = constructor.getContainingClass();
-            Type type = JetTypeMapper.psiClassType(javaClass);
-            v.anew(type);
-            v.dup();
-            final Method jvmConstructor = getMethodDescriptor(constructor);
-            pushMethodArguments(expression, jvmConstructor);
-            v.invokespecial(JetTypeMapper.jvmName(javaClass), "<init>", jvmConstructor.getDescriptor());
-            myStack.push(StackValue.onStack(type));
-            return;
+            type = generateJavaConstructorCall(expression, (PsiMethod) declaration);
         }
         else if (constructorDescriptor instanceof ConstructorDescriptor) {
-            ClassDescriptor classDecl = (ClassDescriptor) constructorDescriptor.getContainingDeclaration();
-            Type type = JetTypeMapper.jetImplementationType(classDecl);
-            v.anew(type);
-            v.dup();
-
-            Method method = typeMapper.mapConstructorSignature((ConstructorDescriptor) constructorDescriptor, OwnerKind.IMPLEMENTATION);
-            pushMethodArguments(expression, method);
-
-            for (JetTypeReference typeArgumentReference : constructorType.getTypeArgumentsAsTypes()) {
-                JetType typeArgument = bindingContext.resolveTypeReference(typeArgumentReference);
-                // TODO is the makeNullable() call correct here?
-                ClassCodegen.newTypeInfo(v, typeMapper.mapType(TypeUtils.makeNullable(typeArgument)));
+            type = typeMapper.mapType(bindingContext.resolveTypeReference(typeReference), OwnerKind.IMPLEMENTATION);
+            if (type.getSort() == Type.ARRAY) {
+                generateNewArray(expression, type);
             }
+            else {
+                v.anew(type);
+                v.dup();
 
-            v.invokespecial(JetTypeMapper.jvmNameForImplementation(classDecl), "<init>", method.getDescriptor());
-            myStack.push(StackValue.onStack(type));
-            return;
+                Method method = typeMapper.mapConstructorSignature((ConstructorDescriptor) constructorDescriptor, OwnerKind.IMPLEMENTATION);
+                pushMethodArguments(expression, method);
+
+                for (JetTypeReference typeArgumentReference : constructorType.getTypeArgumentsAsTypes()) {
+                    JetType typeArgument = bindingContext.resolveTypeReference(typeArgumentReference);
+                    // TODO is the makeNullable() call correct here?
+                    ClassCodegen.newTypeInfo(v, typeMapper.mapType(TypeUtils.makeNullable(typeArgument)));
+                }
+
+                ClassDescriptor classDecl = (ClassDescriptor) constructorDescriptor.getContainingDeclaration();
+                v.invokespecial(JetTypeMapper.jvmNameForImplementation(classDecl), "<init>", method.getDescriptor());
+            }
         }
+        else {
+            throw new UnsupportedOperationException("don't know how to generate this new expression");
+        }
+        myStack.push(StackValue.onStack(type));
+    }
 
-        throw new UnsupportedOperationException("don't know how to generate this new expression");
+    private Type generateJavaConstructorCall(JetNewExpression expression, PsiMethod constructor) {
+        PsiClass javaClass = constructor.getContainingClass();
+        Type type = JetTypeMapper.psiClassType(javaClass);
+        v.anew(type);
+        v.dup();
+        final Method jvmConstructor = getMethodDescriptor(constructor);
+        pushMethodArguments(expression, jvmConstructor);
+        v.invokespecial(JetTypeMapper.jvmName(javaClass), "<init>", jvmConstructor.getDescriptor());
+        return type;
+    }
+
+    private void generateNewArray(JetNewExpression expression, Type type) {
+        List<JetArgument> args = expression.getValueArguments();
+        if (args.size() != 1) {
+            throw new CompilationException("array constructor requires one value argument");
+        }
+        gen(args.get(0).getArgumentExpression(), Type.INT_TYPE);
+        v.newarray(type.getElementType());
     }
 
     @Override
@@ -1308,7 +1424,7 @@ public class ExpressionCodegen extends JetVisitor {
             if (!(descriptor instanceof ClassDescriptor)) {
                 throw new UnsupportedOperationException("don't know how to handle non-class types in as/as?");
             }
-            Type type = typeMapper.jvmType((ClassDescriptor) descriptor, OwnerKind.INTERFACE);
+            Type type = typeMapper.mapType(jetType, OwnerKind.INTERFACE);
             gen(expression.getLeft(), OBJECT_TYPE);
             if (opToken == JetTokens.AS_SAFE) {
                 generateInstanceOf(new Runnable() {
@@ -1380,7 +1496,7 @@ public class ExpressionCodegen extends JetVisitor {
             if (leaveExpressionOnStack) {
                 v.dup();
             }
-            Type type = typeMapper.jvmType((ClassDescriptor) descriptor, OwnerKind.INTERFACE);
+            Type type = typeMapper.mapType(jetType, OwnerKind.INTERFACE);
             v.instanceOf(type);
         }
     }
@@ -1487,5 +1603,11 @@ public class ExpressionCodegen extends JetVisitor {
     }
 
     private static class CompilationException extends RuntimeException {
+        private CompilationException() {
+        }
+
+        private CompilationException(String message) {
+            super(message);
+        }
     }
 }

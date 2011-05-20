@@ -17,4 +17,12 @@ public class IntRange implements Range<Integer> {
         }
         return item <= startValue && item >= endValue;
     }
+
+    public int getStartValue() {
+        return startValue;
+    }
+
+    public int getEndValue() {
+        return endValue;
+    }
 }

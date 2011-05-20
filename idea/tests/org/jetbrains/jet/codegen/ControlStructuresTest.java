@@ -92,6 +92,14 @@ public class ControlStructuresTest extends CodegenTestCase {
         assertEquals("IntelliJ IDEA", main.invoke(null, new Object[] { args }));
     }
 
+    public void testForInRange() throws Exception {
+        loadText("fun foo(sb: StringBuilder) { for(x in 1..4) sb.append(x) }");
+        final Method main = generateFunction();
+        StringBuilder stringBuilder = new StringBuilder();
+        main.invoke(null, stringBuilder);
+        assertEquals("1234", stringBuilder.toString());
+    }
+
     public void testThrowCheckedException() throws Exception {
         loadText("fun foo() { throw new Exception(); }");
         final Method main = generateFunction();
