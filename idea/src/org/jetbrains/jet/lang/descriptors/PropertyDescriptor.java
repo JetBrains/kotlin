@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.descriptors;
 
+import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.types.JetType;
@@ -15,6 +16,8 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Member
 
     private final MemberModifiers memberModifiers;
     private final boolean isVar;
+    private final JetType receiverType;
+    private final List<TypeParameterDescriptor> typeParemeters = Lists.newArrayListWithCapacity(0);
     private PropertyGetterDescriptor getter;
     private PropertySetterDescriptor setter;
 
@@ -23,34 +26,50 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Member
             @NotNull List<Annotation> annotations,
             @NotNull MemberModifiers memberModifiers,
             boolean isVar,
+            @Nullable JetType receiverType,
             @NotNull String name,
             @Nullable JetType inType,
-            @Nullable JetType outType) {
+            @NotNull JetType outType) {
         super(containingDeclaration, annotations, name, inType, outType);
         assert !isVar || inType != null;
-        assert outType != null;
+//        assert outType != null;
         this.isVar = isVar;
         this.memberModifiers = memberModifiers;
+        this.receiverType = receiverType;
     }
 
-    public PropertyDescriptor(
+    private PropertyDescriptor(
             @NotNull PropertyDescriptor original,
+            @Nullable JetType receiverType,
             @Nullable JetType inType,
-            @Nullable JetType outType) {
+            @NotNull JetType outType) {
         this(
                 original.getContainingDeclaration(),
                 original.getAnnotations(), // TODO : substitute?
                 original.getModifiers(),
                 original.isVar,
+                receiverType,
                 original.getName(),
                 inType,
                 outType);
     }
 
-    public void initialize(@Nullable PropertyGetterDescriptor getter, @Nullable PropertySetterDescriptor setter) {
+    public void initialize(@NotNull List<TypeParameterDescriptor> typeParameters, @Nullable PropertyGetterDescriptor getter, @Nullable PropertySetterDescriptor setter) {
+        this.typeParemeters.addAll(typeParameters);
         this.getter = getter;
         this.setter = setter;
     }
+
+    @NotNull
+    public List<TypeParameterDescriptor> getTypeParemeters() {
+        return typeParemeters;
+    }
+
+    @Nullable
+    public JetType getReceiverType() {
+        return receiverType;
+    }
+
 
     public boolean isVar() {
         return isVar;
@@ -78,12 +97,14 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Member
         JetType originalInType = getInType();
         JetType inType = originalInType == null ? null : substitutor.substitute(originalInType, Variance.IN_VARIANCE);
         JetType originalOutType = getOutType();
-        JetType outType = originalOutType == null ? null : substitutor.substitute(originalOutType, Variance.OUT_VARIANCE);
+        JetType outType = substitutor.substitute(originalOutType, Variance.OUT_VARIANCE);
         if (inType == null && outType == null) {
             return null; // TODO : tell the user that the property was projected out
         }
+        JetType receiverType = getReceiverType();
         return new PropertyDescriptor(
                 this,
+                receiverType == null ? null : substitutor.substitute(receiverType, Variance.IN_VARIANCE),
                 inType,
                 outType
         );

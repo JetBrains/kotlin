@@ -358,22 +358,45 @@ public class ClassDescriptorResolver {
 
     @NotNull
     public PropertyDescriptor resolvePropertyDescriptor(@NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope scope, JetProperty property) {
-        JetType type = getType(scope, property, true);
 
-        boolean isVar = property.isVar();
+        JetScope scopeWithTypeParameters;
+        List<TypeParameterDescriptor> typeParameterDescriptors;
+        List<JetTypeParameter> typeParameters = property.getTypeParameters();
+        if (typeParameters.isEmpty()) {
+            scopeWithTypeParameters = scope;
+            typeParameterDescriptors = Collections.emptyList();
+        }
+        else {
+            WritableScope writableScope = new WritableScopeImpl(scope, containingDeclaration, trace.getErrorHandler());
+            typeParameterDescriptors = resolveTypeParameters(containingDeclaration, writableScope, typeParameters);
+            scopeWithTypeParameters = writableScope;
+        }
+
+        JetType receiverType = null;
+        JetTypeReference receiverTypeRef = property.getReceiverTypeRef();
+        if (receiverTypeRef != null) {
+            receiverType = typeResolver.resolveType(scopeWithTypeParameters, receiverTypeRef);
+        }
+
         JetModifierList modifierList = property.getModifierList();
+        boolean isVar = property.isVar();
+
+        JetType type = getType(scopeWithTypeParameters, property, true);
+
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                 containingDeclaration,
                 AnnotationResolver.INSTANCE.resolveAnnotations(modifierList),
                 resolveModifiers(modifierList, DEFAULT_MODIFIERS), // TODO : default modifiers differ in different contexts
                 isVar,
+                receiverType,
                 JetPsiUtil.safeName(property.getName()),
                 isVar ? type : null,
                 type);
 
         propertyDescriptor.initialize(
-                resolvePropertyGetterDescriptor(scope, property, propertyDescriptor),
-                resolvePropertySetterDescriptor(scope, property, propertyDescriptor));
+                typeParameterDescriptors,
+                resolvePropertyGetterDescriptor(scopeWithTypeParameters, property, propertyDescriptor),
+                resolvePropertySetterDescriptor(scopeWithTypeParameters, property, propertyDescriptor));
 
         trace.recordDeclarationResolution(property, propertyDescriptor);
         return propertyDescriptor;
@@ -384,14 +407,12 @@ public class ClassDescriptorResolver {
         // TODO : receiver?
         JetTypeReference propertyTypeRef = property.getPropertyTypeRef();
 
-        JetType type;
         if (propertyTypeRef == null) {
             final JetExpression initializer = property.getInitializer();
             if (initializer == null) {
                 trace.getErrorHandler().genericError(property.getNode(), "This property must either have a type annotation or be initialized");
-                type = ErrorUtils.createErrorType("No type, no body");
+                return ErrorUtils.createErrorType("No type, no body");
             } else {
-                // TODO : ??? Fix-point here: what if we have something like "val a = foo {a.bar()}"
                 // TODO : a risk of a memory leak
                 LazyValue<JetType> lazyValue = new LazyValue<JetType>() {
                     @Override
@@ -400,16 +421,15 @@ public class ClassDescriptorResolver {
                     }
                 };
                 if (allowDeferred) {
-                    type = new DeferredType(lazyValue);
+                    return new DeferredType(lazyValue);
                 }
                 else {
-                    type = lazyValue.get();
+                    return lazyValue.get();
                 }
             }
         } else {
-            type = typeResolver.resolveType(scope, propertyTypeRef);
+            return typeResolver.resolveType(scope, propertyTypeRef);
         }
-        return type;
     }
 
     @NotNull
@@ -551,10 +571,11 @@ public class ClassDescriptorResolver {
                 AnnotationResolver.INSTANCE.resolveAnnotations(modifierList),
                 resolveModifiers(modifierList, DEFAULT_MODIFIERS),
                 isMutable,
+                null,
                 name == null ? "<no name>" : name,
                 isMutable ? type : null,
                 type);
-        propertyDescriptor.initialize(null, null);
+        propertyDescriptor.initialize(Collections.<TypeParameterDescriptor>emptyList(), null, null);
         trace.recordValueParameterAsPropertyResolution(parameter, propertyDescriptor);
         return propertyDescriptor;
     }

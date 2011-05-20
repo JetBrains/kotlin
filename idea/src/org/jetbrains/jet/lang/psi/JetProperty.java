@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * @author max
  */
-public class JetProperty extends JetNamedDeclaration {
+public class JetProperty extends JetTypeParameterListOwner {
     public JetProperty(@NotNull ASTNode node) {
         super(node);
     }
@@ -43,7 +43,6 @@ public class JetProperty extends JetNamedDeclaration {
 
         return null;
     }
-
 
     @Nullable
     public JetTypeReference getPropertyTypeRef() {

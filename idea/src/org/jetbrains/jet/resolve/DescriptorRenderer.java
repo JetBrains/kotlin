@@ -1,9 +1,12 @@
 package org.jetbrains.jet.resolve;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.types.*;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -89,8 +92,18 @@ public class DescriptorRenderer {
 
         @Override
         public Void visitVariableDescriptor(VariableDescriptor descriptor, StringBuilder builder) {
-            JetType outType = descriptor.getOutType();
-            JetType inType = descriptor.getInType();
+            String typeString = renderPropertyPrefixAndComputeTypeString(builder, Collections.<TypeParameterDescriptor>emptyList(), null, descriptor.getOutType(), descriptor.getInType());
+            renderName(descriptor, builder);
+            builder.append(" : ").append(escape(typeString));
+            return super.visitVariableDescriptor(descriptor, builder);
+        }
+
+        private String renderPropertyPrefixAndComputeTypeString(
+                @NotNull StringBuilder builder,
+                @NotNull List<TypeParameterDescriptor> typeParameters,
+                @Nullable JetType receiverType,
+                @Nullable JetType outType,
+                @Nullable JetType inType) {
             String typeString = lt() + "no type>";
             if (inType != null && outType != null) {
                 builder.append(renderKeyword("var")).append(" ");
@@ -109,9 +122,26 @@ public class DescriptorRenderer {
                 builder.append(lt()).append("write-only> ");
                 typeString = inType.toString();
             }
+
+            renderTypeParameters(typeParameters, builder);
+
+            if (receiverType != null) {
+                builder.append(escape(receiverType.toString())).append(".");
+            }
+
+            return typeString;
+        }
+
+        @Override
+        public Void visitPropertyDescriptor(PropertyDescriptor descriptor, StringBuilder builder) {
+            String typeString = renderPropertyPrefixAndComputeTypeString(
+                    builder, descriptor.getTypeParemeters(),
+                    descriptor.getReceiverType(),
+                    descriptor.getOutType(),
+                    descriptor.getInType());
             renderName(descriptor, builder);
             builder.append(" : ").append(escape(typeString));
-            return super.visitVariableDescriptor(descriptor, builder);
+            return null;
         }
 
         @Override
@@ -119,9 +149,6 @@ public class DescriptorRenderer {
             builder.append(renderKeyword("fun")).append(" ");
             List<TypeParameterDescriptor> typeParameters = descriptor.getTypeParameters();
             renderTypeParameters(typeParameters, builder);
-            if (!typeParameters.isEmpty()) {
-                builder.append(" ");
-            }
 
             JetType receiverType = descriptor.getReceiverType();
             if (receiverType != null) {
@@ -151,7 +178,7 @@ public class DescriptorRenderer {
                         builder.append(", ");
                     }
                 }
-                builder.append(">");
+                builder.append("> ");
             }
         }
 

@@ -883,8 +883,6 @@ public class JetTypeInferrer {
             }
         }
 
-
-
         @Override
         public void visitTupleExpression(JetTupleExpression expression) {
             List<JetExpression> entries = expression.getEntries();
@@ -1019,7 +1017,10 @@ public class JetTypeInferrer {
 
                         @Override
                         public void visitWhenConditionIsPattern(JetWhenConditionIsPattern condition) {
-                            checkPatternType(condition.getPattern(), finalSubjectType);
+                            JetPattern pattern = condition.getPattern();
+                            if (pattern != null) {
+                                checkPatternType(pattern, finalSubjectType);
+                            }
                         }
 
                         @Override

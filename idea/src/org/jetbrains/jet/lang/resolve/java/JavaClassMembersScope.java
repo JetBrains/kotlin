@@ -92,6 +92,7 @@ public class JavaClassMembersScope implements JetScope {
                 Collections.<Annotation>emptyList(),
                 new MemberModifiers(false, false, false),
                 !isFinal,
+                null,
                 field.getName(),
                 isFinal ? null : type,
                 type);
