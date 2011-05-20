@@ -445,8 +445,8 @@ public class ExpressionCodegen extends JetVisitor {
     @Override
     public void visitSimpleNameExpression(JetSimpleNameExpression expression) {
         final DeclarationDescriptor descriptor = bindingContext.resolveReferenceExpression(expression);
+        final DeclarationDescriptor container = descriptor.getContainingDeclaration();
         if (descriptor instanceof VariableDescriptor) {
-            final DeclarationDescriptor container = descriptor.getContainingDeclaration();
             if (isClass(container, "Number")) {
                 Type castType = getCastType(expression.getReferencedName());
                 if (castType != null) {
@@ -493,13 +493,20 @@ public class ExpressionCodegen extends JetVisitor {
                     }
                 }
 
-                boolean isStatic = descriptor.getContainingDeclaration() instanceof NamespaceDescriptorImpl;
-                final boolean directToField = expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER;
-                final StackValue iValue = intermediateValueForProperty(propertyDescriptor, directToField);
-                if (!isStatic) {
+                if (isClass(container, "Array") && propertyDescriptor.getName().equals("size")) {
                     ensureReceiverOnStack(expression);
+                    v.arraylength();
+                    myStack.push(StackValue.onStack(Type.INT_TYPE));
                 }
-                myStack.push(iValue);
+                else {
+                    boolean isStatic = container instanceof NamespaceDescriptorImpl;
+                    final boolean directToField = expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER;
+                    final StackValue iValue = intermediateValueForProperty(propertyDescriptor, directToField);
+                    if (!isStatic) {
+                        ensureReceiverOnStack(expression);
+                    }
+                    myStack.push(iValue);
+                }
             }
             else {
                 throw new UnsupportedOperationException("don't know how to generate reference " + descriptor);

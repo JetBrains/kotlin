@@ -367,6 +367,16 @@ public class NamespaceGenTest extends CodegenTestCase {
         assertEquals(4, result.length);
     }
 
+    public void testArraySize() throws Exception {
+        loadText("fun foo(a: Array<Int>) = a.size");
+        System.out.println(generateToText());
+        final Method main = generateFunction();
+        Object[] args = new Object[] { new int[4] };
+        int result = (Integer) main.invoke(null, args);
+        assertEquals(4, result);
+
+    }
+
     public void testIntRange() throws Exception {
         loadText("fun foo() = 1..10");
         final Method main = generateFunction();
