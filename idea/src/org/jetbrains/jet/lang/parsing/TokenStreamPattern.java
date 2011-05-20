@@ -1,5 +1,7 @@
 package org.jetbrains.jet.lang.parsing;
 
+import com.intellij.psi.tree.IElementType;
+
 /**
  * @author abreslav
  */
@@ -18,9 +20,16 @@ public interface TokenStreamPattern {
      */
     int result();
 
-    /*
+    /**
      * Decides if the combination of open bracet counts makes a "top level position"
      * Straightforward meaning would be: if all counts are zero, then it's a top level
      */
     boolean isTopLevel(int openAngleBrackets, int openBrackets, int openBraces, int openParentheses);
+
+    /**
+     * Called on right parentheses, brackets, braces and angles (>)
+     * @param token the closing bracket
+     * @return true to stop matching, false to proceed
+     */
+    boolean handleUnmatchedClosing(IElementType token);
 }

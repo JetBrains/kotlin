@@ -107,7 +107,7 @@ JetFile: RootNamespace.jet
                     PsiWhiteSpace(' ')
                     DECOMPOSER_ARGUMENT_LIST
                       PsiElement(LPAR)('(')
-                      DECOMPOSER_ARGUMENT
+                      TUPLE_PATTERN_ENTRY
                         TYPE_PATTERN
                           TYPE_REFERENCE
                             USER_TYPE

@@ -1351,13 +1351,13 @@ JetFile: BinaryTree.jet
                     PsiWhiteSpace(' ')
                     DECOMPOSER_ARGUMENT_LIST
                       PsiElement(LPAR)('(')
-                      DECOMPOSER_ARGUMENT
+                      TUPLE_PATTERN_ENTRY
                         EXPRESSION_PATTERN
                           NULL
                             PsiElement(null)('null')
                       PsiElement(COMMA)(',')
                       PsiWhiteSpace(' ')
-                      DECOMPOSER_ARGUMENT
+                      TUPLE_PATTERN_ENTRY
                         EXPRESSION_PATTERN
                           NULL
                             PsiElement(null)('null')
@@ -1392,13 +1392,13 @@ JetFile: BinaryTree.jet
                     PsiWhiteSpace(' ')
                     DECOMPOSER_ARGUMENT_LIST
                       PsiElement(LPAR)('(')
-                      DECOMPOSER_ARGUMENT
+                      TUPLE_PATTERN_ENTRY
                         EXPRESSION_PATTERN
                           NULL
                             PsiElement(null)('null')
                       PsiElement(COMMA)(',')
                       PsiWhiteSpace(' ')
-                      DECOMPOSER_ARGUMENT
+                      TUPLE_PATTERN_ENTRY
                         TYPE_PATTERN
                           TYPE_REFERENCE
                             USER_TYPE
@@ -1435,7 +1435,7 @@ JetFile: BinaryTree.jet
                     PsiWhiteSpace(' ')
                     DECOMPOSER_ARGUMENT_LIST
                       PsiElement(LPAR)('(')
-                      DECOMPOSER_ARGUMENT
+                      TUPLE_PATTERN_ENTRY
                         TYPE_PATTERN
                           TYPE_REFERENCE
                             USER_TYPE
@@ -1443,7 +1443,7 @@ JetFile: BinaryTree.jet
                                 PsiElement(IDENTIFIER)('left')
                       PsiElement(COMMA)(',')
                       PsiWhiteSpace(' ')
-                      DECOMPOSER_ARGUMENT
+                      TUPLE_PATTERN_ENTRY
                         EXPRESSION_PATTERN
                           NULL
                             PsiElement(null)('null')
@@ -1478,7 +1478,7 @@ JetFile: BinaryTree.jet
                     PsiWhiteSpace(' ')
                     DECOMPOSER_ARGUMENT_LIST
                       PsiElement(LPAR)('(')
-                      DECOMPOSER_ARGUMENT
+                      TUPLE_PATTERN_ENTRY
                         TYPE_PATTERN
                           TYPE_REFERENCE
                             USER_TYPE
@@ -1486,7 +1486,7 @@ JetFile: BinaryTree.jet
                                 PsiElement(IDENTIFIER)('left')
                       PsiElement(COMMA)(',')
                       PsiWhiteSpace(' ')
-                      DECOMPOSER_ARGUMENT
+                      TUPLE_PATTERN_ENTRY
                         TYPE_PATTERN
                           TYPE_REFERENCE
                             USER_TYPE

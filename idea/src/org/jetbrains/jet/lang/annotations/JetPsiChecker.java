@@ -33,8 +33,6 @@ public class JetPsiChecker implements Annotator {
     @Override
     public void annotate(@NotNull PsiElement element, @NotNull final AnnotationHolder holder) {
         if (element instanceof JetFile) {
-            Project project = element.getProject();
-
             JetFile file = (JetFile) element;
             try {
                 final BindingContext bindingContext = AnalyzingUtils.analyzeFileWithCache(file);
@@ -89,9 +87,7 @@ public class JetPsiChecker implements Annotator {
                     }
                 };
 
-                for (JetDiagnostic diagnostic : bindingContext.getDiagnostics()) {
-                    diagnostic.acceptHandler(errorHandler);
-                }
+                AnalyzingUtils.applyHandler(errorHandler, bindingContext);
 
                 highlightBackingFields(holder, file, bindingContext);
             }

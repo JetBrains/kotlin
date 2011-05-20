@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.parsing;
 
+import com.intellij.codeInspection.dataFlow.instructions.ReturnFromSubInstruction;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
@@ -9,6 +10,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
 
 import static org.jetbrains.jet.lexer.JetTokens.*;
 
@@ -109,6 +111,10 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
      */
     protected boolean _at(IElementType expectation) {
         IElementType token = tt();
+        return tokenMatches(token, expectation);
+    }
+
+    private boolean tokenMatches(IElementType token, IElementType expectation) {
         if (token == expectation) return true;
         if (expectation == EOL_OR_SEMICOLON) {
             if (eof()) return true;
@@ -217,6 +223,7 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
 
     protected int matchTokenStreamPredicate(TokenStreamPattern pattern) {
         PsiBuilder.Marker currentPosition = mark();
+        Stack<IElementType> opens = new Stack<IElementType>();
         int openAngleBrackets = 0;
         int openBraces = 0;
         int openParentheses = 0;
@@ -229,18 +236,27 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
             }
             if (at(LPAR)) {
                 openParentheses++;
+                opens.push(LPAR);
             }
             else if (at(LT)) {
                 openAngleBrackets++;
+                opens.push(LT);
             }
             else if (at(LBRACE)) {
                 openBraces++;
+                opens.push(LBRACE);
             }
             else if (at(LBRACKET)) {
                 openBrackets++;
+                opens.push(LBRACKET);
             }
             else if (at(RPAR)) {
                 openParentheses--;
+                if (opens.isEmpty() || opens.pop() != LPAR) {
+                    if (pattern.handleUnmatchedClosing(RPAR)) {
+                        break;
+                    }
+                }
             }
             else if (at(GT)) {
                 openAngleBrackets--;
@@ -279,7 +295,7 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
         return create(new TruncatedSemanticWhitespaceAwarePsiBuilder(myBuilder, eofPosition));
     }
 
-    protected class AtOffset implements TokenStreamPredicate {
+    protected class AtOffset extends AbstractTokenStreamPredicate {
 
         private final int offset;
 
@@ -294,7 +310,7 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
 
     }
 
-    protected class At implements TokenStreamPredicate {
+    protected class At extends AbstractTokenStreamPredicate {
 
         private final IElementType lookFor;
         private final boolean topLevelOnly;
@@ -315,28 +331,52 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
 
     }
 
-    protected class AtSet implements TokenStreamPredicate {
+    protected class AtSet extends AbstractTokenStreamPredicate {
         private final TokenSet lookFor;
-        private final boolean topLevelOnly;
+        private final TokenSet topLevelOnly;
 
-        public AtSet(TokenSet lookFor, boolean topLevelOnly) {
+        public AtSet(TokenSet lookFor, TokenSet topLevelOnly) {
             this.lookFor = lookFor;
             this.topLevelOnly = topLevelOnly;
         }
 
         public AtSet(TokenSet lookFor) {
-            this(lookFor, true);
+            this(lookFor, lookFor);
         }
 
         public AtSet(IElementType... lookFor) {
-            this(TokenSet.create(lookFor), true);
+            this(TokenSet.create(lookFor), TokenSet.create(lookFor));
         }
 
         @Override
         public boolean matching(boolean topLevel) {
-            return (topLevel || !topLevelOnly) && atSet(lookFor);
+            return (topLevel || !atSet(topLevelOnly)) && atSet(lookFor);
         }
     }
 
+    protected class AtFirstTokenOfTokens extends AbstractTokenStreamPredicate {
+
+        private final IElementType[] tokens;
+
+        public AtFirstTokenOfTokens(IElementType... tokens) {
+            assert tokens.length > 0;
+            this.tokens = tokens;
+        }
+
+        @Override
+        public boolean matching(boolean topLevel) {
+            int length = tokens.length;
+            if (!at(tokens[0])) return false;
+
+            for (int i = 1; i < length; i++) {
+                IElementType lookAhead = myBuilder.lookAhead(i);
+                if (lookAhead == null || !tokenMatches(lookAhead, tokens[i])) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+    }
 
 }

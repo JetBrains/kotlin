@@ -43,5 +43,9 @@ fun test() {
     is (1, 1) => 1
     is (1, <error>"1"</error>) => 1
     is <error>(1, "1", *)</error> => 1
+    is boo @ (1, <error>"a"</error>, *) => 1
+    is boo @ <error>(1, *)</error> => 1
   }
 }
+
+val (Int, Int).boo : (Int, Int, Int) = (1, 1, 1)

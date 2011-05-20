@@ -395,10 +395,20 @@ public class JetExpressionParsing extends AbstractJetParsing {
         }
         else if (at(LT)) {
             // TODO: be (even) more clever
-            int gtPos = matchTokenStreamPredicate(new FirstBefore(new At(GT), new AtSet(TYPE_ARGUMENT_LIST_STOPPERS, false)) {
+            int gtPos = matchTokenStreamPredicate(new FirstBefore(
+                    new At(GT),
+                    new AtSet(TYPE_ARGUMENT_LIST_STOPPERS, TokenSet.create(RPAR, RBRACE, RBRACKET))
+                        .or(new AtFirstTokenOfTokens(IDENTIFIER, LPAR))
+            ) {
                 @Override
                 public boolean isTopLevel(int openAngleBrackets, int openBrackets, int openBraces, int openParentheses) {
                     return openAngleBrackets == 1 && openBrackets == 0 && openBraces == 0 && openParentheses == 0;
+                }
+
+                @Override
+                public boolean handleUnmatchedClosing(IElementType token) {
+                    fail();
+                    return true;
                 }
             });
             if (gtPos >= 0) {

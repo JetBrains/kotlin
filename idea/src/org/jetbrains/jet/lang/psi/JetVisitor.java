@@ -385,4 +385,8 @@ public class JetVisitor extends PsiElementVisitor {
     private void visitPattern(JetPattern pattern) {
         visitJetElement(pattern);
     }
+
+    public void visitDecomposerPattern(JetDecomposerPattern pattern) {
+        visitPattern(pattern);
+    }
 }

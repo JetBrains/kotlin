@@ -145,7 +145,7 @@ JetFile: When.jet
                 PsiWhiteSpace(' ')
                 DECOMPOSER_ARGUMENT_LIST
                   PsiElement(LPAR)('(')
-                  DECOMPOSER_ARGUMENT
+                  TUPLE_PATTERN_ENTRY
                     TYPE_PATTERN
                       TYPE_REFERENCE
                         USER_TYPE
@@ -153,7 +153,7 @@ JetFile: When.jet
                             PsiElement(IDENTIFIER)('a')
                   PsiElement(COMMA)(',')
                   PsiWhiteSpace(' ')
-                  DECOMPOSER_ARGUMENT
+                  TUPLE_PATTERN_ENTRY
                     TYPE_PATTERN
                       TYPE_REFERENCE
                         USER_TYPE
@@ -178,7 +178,7 @@ JetFile: When.jet
                 PsiWhiteSpace(' ')
                 DECOMPOSER_ARGUMENT_LIST
                   PsiElement(LPAR)('(')
-                  DECOMPOSER_ARGUMENT
+                  TUPLE_PATTERN_ENTRY
                     TYPE_PATTERN
                       TYPE_REFERENCE
                         USER_TYPE
@@ -186,7 +186,7 @@ JetFile: When.jet
                             PsiElement(IDENTIFIER)('a')
                   PsiElement(COMMA)(',')
                   PsiWhiteSpace(' ')
-                  DECOMPOSER_ARGUMENT
+                  TUPLE_PATTERN_ENTRY
                     TYPE_PATTERN
                       TYPE_REFERENCE
                         USER_TYPE
@@ -465,13 +465,13 @@ JetFile: When.jet
                 PsiWhiteSpace(' ')
                 DECOMPOSER_ARGUMENT_LIST
                   PsiElement(LPAR)('(')
-                  DECOMPOSER_ARGUMENT
+                  TUPLE_PATTERN_ENTRY
                     EXPRESSION_PATTERN
                       NULL
                         PsiElement(null)('null')
                   PsiElement(COMMA)(',')
                   PsiWhiteSpace(' ')
-                  DECOMPOSER_ARGUMENT
+                  TUPLE_PATTERN_ENTRY
                     BINDING_PATTERN
                       PsiElement(val)('val')
                       PsiWhiteSpace(' ')
@@ -495,7 +495,7 @@ JetFile: When.jet
                 PsiWhiteSpace(' ')
                 DECOMPOSER_ARGUMENT_LIST
                   PsiElement(LPAR)('(')
-                  DECOMPOSER_ARGUMENT
+                  TUPLE_PATTERN_ENTRY
                     TYPE_PATTERN
                       TYPE_REFERENCE
                         USER_TYPE
@@ -503,7 +503,7 @@ JetFile: When.jet
                             PsiElement(IDENTIFIER)('a')
                   PsiElement(COMMA)(',')
                   PsiWhiteSpace(' ')
-                  DECOMPOSER_ARGUMENT
+                  TUPLE_PATTERN_ENTRY
                     TYPE_PATTERN
                       TYPE_REFERENCE
                         USER_TYPE
@@ -528,7 +528,7 @@ JetFile: When.jet
                 PsiWhiteSpace(' ')
                 DECOMPOSER_ARGUMENT_LIST
                   PsiElement(LPAR)('(')
-                  DECOMPOSER_ARGUMENT
+                  TUPLE_PATTERN_ENTRY
                     TYPE_PATTERN
                       TYPE_REFERENCE
                         USER_TYPE
@@ -536,7 +536,7 @@ JetFile: When.jet
                             PsiElement(IDENTIFIER)('a')
                   PsiElement(COMMA)(',')
                   PsiWhiteSpace(' ')
-                  DECOMPOSER_ARGUMENT
+                  TUPLE_PATTERN_ENTRY
                     TYPE_PATTERN
                       TYPE_REFERENCE
                         USER_TYPE
@@ -565,7 +565,7 @@ JetFile: When.jet
                 PsiWhiteSpace(' ')
                 DECOMPOSER_ARGUMENT_LIST
                   PsiElement(LPAR)('(')
-                  DECOMPOSER_ARGUMENT
+                  TUPLE_PATTERN_ENTRY
                     TYPE_PATTERN
                       TYPE_REFERENCE
                         USER_TYPE
@@ -573,7 +573,7 @@ JetFile: When.jet
                             PsiElement(IDENTIFIER)('a')
                   PsiElement(COMMA)(',')
                   PsiWhiteSpace(' ')
-                  DECOMPOSER_ARGUMENT
+                  TUPLE_PATTERN_ENTRY
                     TYPE_PATTERN
                       TYPE_REFERENCE
                         USER_TYPE
@@ -602,7 +602,7 @@ JetFile: When.jet
                 PsiWhiteSpace(' ')
                 DECOMPOSER_ARGUMENT_LIST
                   PsiElement(LPAR)('(')
-                  DECOMPOSER_ARGUMENT
+                  TUPLE_PATTERN_ENTRY
                     PsiElement(IDENTIFIER)('foo')
                     PsiWhiteSpace(' ')
                     PsiElement(EQ)('=')
@@ -614,7 +614,7 @@ JetFile: When.jet
                             PsiElement(IDENTIFIER)('a')
                   PsiElement(COMMA)(',')
                   PsiWhiteSpace(' ')
-                  DECOMPOSER_ARGUMENT
+                  TUPLE_PATTERN_ENTRY
                     PsiElement(IDENTIFIER)('bar')
                     PsiWhiteSpace(' ')
                     PsiElement(EQ)('=')
@@ -651,7 +651,7 @@ JetFile: When.jet
                 PsiWhiteSpace(' ')
                 DECOMPOSER_ARGUMENT_LIST
                   PsiElement(LPAR)('(')
-                  DECOMPOSER_ARGUMENT
+                  TUPLE_PATTERN_ENTRY
                     TYPE_PATTERN
                       TYPE_REFERENCE
                         USER_TYPE
@@ -659,7 +659,7 @@ JetFile: When.jet
                             PsiElement(IDENTIFIER)('a')
                   PsiElement(COMMA)(',')
                   PsiWhiteSpace(' ')
-                  DECOMPOSER_ARGUMENT
+                  TUPLE_PATTERN_ENTRY
                     TYPE_PATTERN
                       TYPE_REFERENCE
                         USER_TYPE
@@ -684,7 +684,7 @@ JetFile: When.jet
                 PsiWhiteSpace(' ')
                 DECOMPOSER_ARGUMENT_LIST
                   PsiElement(LPAR)('(')
-                  DECOMPOSER_ARGUMENT
+                  TUPLE_PATTERN_ENTRY
                     BINDING_PATTERN
                       PsiElement(val)('val')
                       PsiWhiteSpace(' ')
@@ -699,7 +699,7 @@ JetFile: When.jet
                               PsiElement(IDENTIFIER)('T')
                   PsiElement(COMMA)(',')
                   PsiWhiteSpace(' ')
-                  DECOMPOSER_ARGUMENT
+                  TUPLE_PATTERN_ENTRY
                     TYPE_PATTERN
                       TYPE_REFERENCE
                         USER_TYPE
@@ -724,7 +724,7 @@ JetFile: When.jet
                 PsiWhiteSpace(' ')
                 DECOMPOSER_ARGUMENT_LIST
                   PsiElement(LPAR)('(')
-                  DECOMPOSER_ARGUMENT
+                  TUPLE_PATTERN_ENTRY
                     TYPE_PATTERN
                       TYPE_REFERENCE
                         USER_TYPE
@@ -732,7 +732,7 @@ JetFile: When.jet
                             PsiElement(IDENTIFIER)('b')
                   PsiElement(COMMA)(',')
                   PsiWhiteSpace(' ')
-                  DECOMPOSER_ARGUMENT
+                  TUPLE_PATTERN_ENTRY
                     EXPRESSION_PATTERN
                       INTEGER_CONSTANT
                         PsiElement(INTEGER_LITERAL)('1')
@@ -952,7 +952,7 @@ JetFile: When.jet
                       PsiWhiteSpace(' ')
                       DECOMPOSER_ARGUMENT_LIST
                         PsiElement(LPAR)('(')
-                        DECOMPOSER_ARGUMENT
+                        TUPLE_PATTERN_ENTRY
                           TYPE_PATTERN
                             TYPE_REFERENCE
                               USER_TYPE
@@ -1080,13 +1080,13 @@ JetFile: When.jet
                 PsiWhiteSpace(' ')
                 DECOMPOSER_ARGUMENT_LIST
                   PsiElement(LPAR)('(')
-                  DECOMPOSER_ARGUMENT
+                  TUPLE_PATTERN_ENTRY
                     EXPRESSION_PATTERN
                       NULL
                         PsiElement(null)('null')
                   PsiElement(COMMA)(',')
                   PsiWhiteSpace(' ')
-                  DECOMPOSER_ARGUMENT
+                  TUPLE_PATTERN_ENTRY
                     BINDING_PATTERN
                       PsiElement(val)('val')
                       PsiWhiteSpace(' ')
@@ -1105,7 +1105,7 @@ JetFile: When.jet
                 PsiWhiteSpace(' ')
                 DECOMPOSER_ARGUMENT_LIST
                   PsiElement(LPAR)('(')
-                  DECOMPOSER_ARGUMENT
+                  TUPLE_PATTERN_ENTRY
                     TYPE_PATTERN
                       TYPE_REFERENCE
                         USER_TYPE
@@ -1113,7 +1113,7 @@ JetFile: When.jet
                             PsiElement(IDENTIFIER)('a')
                   PsiElement(COMMA)(',')
                   PsiWhiteSpace(' ')
-                  DECOMPOSER_ARGUMENT
+                  TUPLE_PATTERN_ENTRY
                     TYPE_PATTERN
                       TYPE_REFERENCE
                         USER_TYPE
@@ -1169,7 +1169,7 @@ JetFile: When.jet
                 PsiWhiteSpace(' ')
                 DECOMPOSER_ARGUMENT_LIST
                   PsiElement(LPAR)('(')
-                  DECOMPOSER_ARGUMENT
+                  TUPLE_PATTERN_ENTRY
                     TYPE_PATTERN
                       TYPE_REFERENCE
                         USER_TYPE
@@ -1177,7 +1177,7 @@ JetFile: When.jet
                             PsiElement(IDENTIFIER)('a')
                   PsiElement(COMMA)(',')
                   PsiWhiteSpace(' ')
-                  DECOMPOSER_ARGUMENT
+                  TUPLE_PATTERN_ENTRY
                     TYPE_PATTERN
                       TYPE_REFERENCE
                         USER_TYPE
@@ -1206,14 +1206,14 @@ JetFile: When.jet
                 PsiWhiteSpace(' ')
                 DECOMPOSER_ARGUMENT_LIST
                   PsiElement(LPAR)('(')
-                  DECOMPOSER_ARGUMENT
+                  TUPLE_PATTERN_ENTRY
                     BINDING_PATTERN
                       PsiElement(val)('val')
                       PsiWhiteSpace(' ')
                       PsiElement(IDENTIFIER)('b')
                   PsiElement(COMMA)(',')
                   PsiWhiteSpace(' ')
-                  DECOMPOSER_ARGUMENT
+                  TUPLE_PATTERN_ENTRY
                     TYPE_PATTERN
                       TYPE_REFERENCE
                         USER_TYPE

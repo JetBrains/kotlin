@@ -673,6 +673,12 @@ public class JetControlFlowProcessor {
                                     }
 
                                     @Override
+                                    public void visitDecomposerPattern(JetDecomposerPattern pattern) {
+                                        value(pattern.getDecomposerExpression(), false, inCondition);
+                                        pattern.getArgumentList().accept(this);
+                                    }
+
+                                    @Override
                                     public void visitJetElement(JetElement elem) {
                                         throw new UnsupportedOperationException("[JetControlFlowProcessor] " + elem.toString());
                                     }

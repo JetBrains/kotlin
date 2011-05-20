@@ -725,13 +725,14 @@ public class JetParsing extends AbstractJetParsing {
 
         // TODO: extract constant
         int lastDot = matchTokenStreamPredicate(new FirstBefore(
-                new TokenStreamPredicate() {
+                new AbstractTokenStreamPredicate() {
                     @Override
                     public boolean matching(boolean topLevel) {
                         return topLevel
                                 && at(DOT);
                     }
-                }, new TokenStreamPredicate() {
+                },
+                new AbstractTokenStreamPredicate() {
                     @Override
                     public boolean matching(boolean topLevel) {
                         if (topLevel && (at(EQ) || at(COLON))) return true;

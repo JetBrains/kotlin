@@ -888,7 +888,7 @@ public class JetTypeInferrer {
             List<JetExpression> entries = expression.getEntries();
             List<JetType> types = new ArrayList<JetType>();
             for (JetExpression entry : entries) {
-                types.add(getType(scope, entry, false));
+                types.add(safeGetType(scope, entry, false));
             }
             // TODO : labels
             result = JetStandardClasses.getTupleType(types);
@@ -1069,7 +1069,7 @@ public class JetTypeInferrer {
                     TypeConstructor typeConstructor = subjectType.getConstructor();
                     if (!JetStandardClasses.getTuple(entries.size()).getTypeConstructor().equals(typeConstructor)
                             || typeConstructor.getParameters().size() != entries.size()) {
-                        trace.getErrorHandler().genericError(pattern.getNode(), "Type mismatch: subject is of type " + subjectType + " but the pattern if of type Tuple" + entries.size()); // TODO : message
+                        trace.getErrorHandler().genericError(pattern.getNode(), "Type mismatch: subject is of type " + subjectType + " but the pattern is of type Tuple" + entries.size()); // TODO : message
                     }
                     else {
                         for (int i = 0, entriesSize = entries.size(); i < entriesSize; i++) {
@@ -1088,6 +1088,13 @@ public class JetTypeInferrer {
                             }
                         }
                     }
+                }
+
+                @Override
+                public void visitDecomposerPattern(JetDecomposerPattern pattern) {
+                    JetType selectorReturnType = getSelectorReturnType(subjectType, pattern.getDecomposerExpression());
+
+                    checkPatternType(pattern.getArgumentList(), selectorReturnType == null ? ErrorUtils.createErrorType("No type") : selectorReturnType);
                 }
 
                 private void checkTypeCompatibility(@Nullable JetType type, @NotNull JetType subjectType, @NotNull JetElement reportErrorOn) {

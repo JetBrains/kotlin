@@ -125,7 +125,7 @@ public interface JetNodeTypes {
     JetNodeType TUPLE_PATTERN_ENTRY       = new JetNodeType("TUPLE_PATTERN_ENTRY", JetTuplePatternEntry.class);
     JetNodeType DECOMPOSER_PATTERN        = new JetNodeType("DECOMPOSER_PATTERN", JetDecomposerPattern.class);
     JetNodeType DECOMPOSER_ARGUMENT_LIST  = new JetNodeType("DECOMPOSER_ARGUMENT_LIST", JetTuplePattern.class);
-    JetNodeType DECOMPOSER_ARGUMENT       = new JetNodeType("DECOMPOSER_ARGUMENT", JetTuplePatternEntry.class);
+    JetNodeType DECOMPOSER_ARGUMENT       = TUPLE_PATTERN_ENTRY;//new JetNodeType("DECOMPOSER_ARGUMENT", JetTuplePatternEntry.class);
 
     JetNodeType WHEN                      = new JetNodeType("WHEN", JetWhenExpression.class);
     JetNodeType WHEN_ENTRY                = new JetNodeType("WHEN_ENTRY", JetWhenEntry.class);

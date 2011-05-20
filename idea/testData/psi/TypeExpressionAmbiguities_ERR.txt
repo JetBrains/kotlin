@@ -13,6 +13,78 @@ JetFile: TypeExpressionAmbiguities_ERR.jet
         PsiWhiteSpace('\n    ')
         CALL_EXPRESSION
           REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('dd')
+          TYPE_ARGUMENT_LIST
+            PsiElement(LT)('<')
+            TYPE_PROJECTION
+              TYPE_REFERENCE
+                TUPLE_TYPE
+                  PsiElement(LPAR)('(')
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('Int')
+                  PsiElement(COMMA)(',')
+                  PsiWhiteSpace(' ')
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('Int')
+                  PsiElement(COMMA)(',')
+                  PsiWhiteSpace(' ')
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('Int')
+                  PsiElement(RPAR)(')')
+            PsiElement(GT)('>')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            VALUE_ARGUMENT
+              IF
+                PsiElement(if)('if')
+                PsiWhiteSpace(' ')
+                PsiElement(LPAR)('(')
+                CONDITION
+                  BOOLEAN_CONSTANT
+                    PsiElement(true)('true')
+                PsiElement(RPAR)(')')
+                PsiWhiteSpace(' ')
+                THEN
+                  TUPLE
+                    PsiElement(LPAR)('(')
+                    INTEGER_CONSTANT
+                      PsiElement(INTEGER_LITERAL)('1')
+                    PsiElement(COMMA)(',')
+                    PsiWhiteSpace(' ')
+                    INTEGER_CONSTANT
+                      PsiElement(INTEGER_LITERAL)('1')
+                    PsiElement(COMMA)(',')
+                    PsiWhiteSpace(' ')
+                    INTEGER_CONSTANT
+                      PsiElement(INTEGER_LITERAL)('1')
+                    PsiElement(RPAR)(')')
+                PsiWhiteSpace(' ')
+                PsiElement(else)('else')
+                PsiWhiteSpace(' ')
+                ELSE
+                  TUPLE
+                    PsiElement(LPAR)('(')
+                    INTEGER_CONSTANT
+                      PsiElement(INTEGER_LITERAL)('2')
+                    PsiElement(COMMA)(',')
+                    PsiWhiteSpace(' ')
+                    INTEGER_CONSTANT
+                      PsiElement(INTEGER_LITERAL)('2')
+                    PsiElement(COMMA)(',')
+                    PsiWhiteSpace(' ')
+                    INTEGER_CONSTANT
+                      PsiElement(INTEGER_LITERAL)('2')
+                    PsiElement(RPAR)(')')
+            PsiElement(RPAR)(')')
+        PsiWhiteSpace('\n    ')
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('foo')
           VALUE_ARGUMENT_LIST
             PsiElement(LPAR)('(')
