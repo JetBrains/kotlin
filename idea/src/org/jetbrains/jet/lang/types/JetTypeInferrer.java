@@ -1425,7 +1425,9 @@ public class JetTypeInferrer {
                         trace.getErrorHandler().genericWarning(expression.getNode(), "Expression always evaluates to false"); // TODO : make an error?
                     }
                 }
-
+            }
+            else {
+                trace.getErrorHandler().genericError(pattern.getNode(), "Unsupported [JetTypeInferrer]");
             }
             result = semanticServices.getStandardLibrary().getBooleanType();
         }

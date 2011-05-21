@@ -862,23 +862,39 @@ public class JetParsing extends AbstractJetParsing {
             return FUN;
         }
 
-        boolean parameterListOccured = false;
+        boolean typeParameterListOccured = false;
         if (at(LT)) {
             parseTypeParameterList(TokenSet.create(LBRACKET, LBRACE, LPAR));
-            parameterListOccured = true;
+            typeParameterListOccured = true;
         }
 
-
-        int lastDot = findLastBefore(TokenSet.create(DOT), TokenSet.create(LPAR), true);
+        TokenSet receiverTypeTerminators = TokenSet.create(DOT, SAFE_ACCESS);
+        int lastDot = findLastBefore(receiverTypeTerminators, TokenSet.create(LPAR), true);
 
         if (lastDot == -1) { // There's no explicit receiver type specified
             parseAttributeList();
             expect(IDENTIFIER, "Expecting function name or receiver type");
         } else {
-            createTruncatedBuilder(lastDot).parseTypeRef();
+            PsiBuilder.Marker typeRefMarker = mark();
+            PsiBuilder.Marker nullableType = mark();
+            typeRefMarker = createTruncatedBuilder(lastDot).parseTypeRefContents(typeRefMarker);
+            if (at(SAFE_ACCESS)) {
+                nullableType.done(NULLABLE_TYPE);
+            }
+            else {
+                nullableType.drop();
+            }
+            typeRefMarker.done(TYPE_REFERENCE);
 
             TokenSet functionNameFollow = TokenSet.create(LT, LPAR, COLON, EQ);
-            expect(DOT, "Expecting '.' before a function name", functionNameFollow);
+            if (atSet(receiverTypeTerminators)) {
+                advance(); // expectation
+            }
+            else {
+                errorWithRecovery("Expecting '.' before a function name", functionNameFollow);
+            }
+
+//            expect(DOT, "Expecting '.' before a function name", functionNameFollow);
             expect(IDENTIFIER, "Expecting function name", functionNameFollow);
         }
 
@@ -887,7 +903,7 @@ public class JetParsing extends AbstractJetParsing {
         if (at(LT)) {
             PsiBuilder.Marker error = mark();
             parseTypeParameterList(TokenSet.orSet(TokenSet.create(LPAR), valueParametersFollow));
-            if (parameterListOccured) {
+            if (typeParameterListOccured) {
                 error.error("Only one type parameter list is allowed for a function"); // TODO : discuss
             }
             else {
@@ -1158,8 +1174,10 @@ public class JetParsing extends AbstractJetParsing {
      *   : typeDescriptor "?"
      */
     public void parseTypeRef() {
-        PsiBuilder.Marker type = mark();
+        parseTypeRefContents(mark()).done(TYPE_REFERENCE);
+    }
 
+    private PsiBuilder.Marker parseTypeRefContents(PsiBuilder.Marker typeRefMarker) {
         parseAttributeList();
 
         if (at(IDENTIFIER) || at(NAMESPACE_KEYWORD)) {
@@ -1181,14 +1199,14 @@ public class JetParsing extends AbstractJetParsing {
         }
 
         while (at(QUEST)) {
-            PsiBuilder.Marker precede = type.precede();
+            PsiBuilder.Marker precede = typeRefMarker.precede();
 
             advance(); // QUEST
-            type.done(NULLABLE_TYPE);
+            typeRefMarker.done(NULLABLE_TYPE);
 
-            type = precede;
+            typeRefMarker = precede;
         }
-        type.done(TYPE_REFERENCE);
+        return typeRefMarker;
     }
 
     /*

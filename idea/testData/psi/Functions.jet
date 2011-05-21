@@ -21,3 +21,5 @@ fun [a()] T.foo<T : {(a) : b}>(a : foo) : bar {}
 
 fun [a] {[a] T<T>.(A<B>) : ()}.foo() {}
 fun [a()] T.foo<T : [a] {(a) : b}>(a : foo) : bar {}
+
+fun A?.foo() : bar?
