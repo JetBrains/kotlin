@@ -622,10 +622,17 @@ public class JetControlFlowProcessor {
             Label doneLabel = builder.createUnboundLabel();
 
             Label nextLabel = builder.createUnboundLabel();
-            for (JetWhenEntry whenEntry : expression.getEntries()) {
+            for (Iterator<JetWhenEntry> iterator = expression.getEntries().iterator(); iterator.hasNext(); ) {
+                JetWhenEntry whenEntry = iterator.next();
                 if (whenEntry.getSubWhen() != null) throw new UnsupportedOperationException(); // TODO
 
                 if (whenEntry.isElseContinue()) throw new UnsupportedOperationException(); // TODO
+
+                if (whenEntry.isElse()) {
+                    if (iterator.hasNext()) {
+                        trace.getErrorHandler().genericError(whenEntry.getNode(), "'else' entry must be the last one in a when-expression");
+                    }
+                }
 
                 JetWhenCondition condition = whenEntry.getCondition();
                 if (condition != null) {
