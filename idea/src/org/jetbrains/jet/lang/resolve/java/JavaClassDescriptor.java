@@ -66,7 +66,7 @@ public class JavaClassDescriptor extends MutableDeclarationDescriptor implements
 
     @Override
     public boolean hasConstructors() {
-        return constructors.isEmpty();
+        return !constructors.isEmpty();
     }
 
     @NotNull

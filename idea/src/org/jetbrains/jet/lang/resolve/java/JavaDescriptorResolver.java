@@ -78,13 +78,12 @@ public class JavaDescriptorResolver {
         );
         classDescriptor.setName(name);
 
-        WritableFunctionGroup constructors = new WritableFunctionGroup("<init>");
         List<JetType> supertypes = new ArrayList<JetType>();
         classDescriptor.setTypeConstructor(new TypeConstructorImpl(
                 classDescriptor,
                 Collections.<Annotation>emptyList(), // TODO
                 // TODO
-                modifierList == null ? false : modifierList.hasModifierProperty(PsiModifier.FINAL),
+                psiClass.hasModifierProperty(PsiModifier.FINAL),
                 name,
                 resolveTypeParameters(psiClass.getTypeParameters()),
                 supertypes
@@ -95,16 +94,29 @@ public class JavaDescriptorResolver {
         // UGLY HACK
         supertypes.addAll(getSupertypes(psiClass));
 
-        // NOTE: this writes into constructors after it is remembered by the classDescriptor
         PsiMethod[] psiConstructors = psiClass.getConstructors();
-        for (PsiMethod constructor : psiConstructors) {
-            ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(
-                    classDescriptor,
-                    Collections.<Annotation>emptyList(), // TODO
-                    false);
-            constructorDescriptor.initialize(resolveParameterDescriptors(constructorDescriptor, constructor.getParameterList().getParameters()));
-            classDescriptor.addConstructor(constructorDescriptor);
-            semanticServices.getTrace().recordDeclarationResolution(constructor, constructorDescriptor);
+
+        if (psiConstructors.length == 0) {
+            if (!psiClass.hasModifierProperty(PsiModifier.ABSTRACT) && !psiClass.isInterface()) {
+                ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(
+                        classDescriptor,
+                        Collections.<Annotation>emptyList(),
+                        false);
+                constructorDescriptor.initialize(Collections.<ValueParameterDescriptor>emptyList());
+                classDescriptor.addConstructor(constructorDescriptor);
+                semanticServices.getTrace().recordDeclarationResolution(psiClass, constructorDescriptor);
+            }
+        }
+        else {
+            for (PsiMethod constructor : psiConstructors) {
+                ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(
+                        classDescriptor,
+                        Collections.<Annotation>emptyList(), // TODO
+                        false);
+                constructorDescriptor.initialize(resolveParameterDescriptors(constructorDescriptor, constructor.getParameterList().getParameters()));
+                classDescriptor.addConstructor(constructorDescriptor);
+                semanticServices.getTrace().recordDeclarationResolution(constructor, constructorDescriptor);
+            }
         }
 
         semanticServices.getTrace().recordDeclarationResolution(psiClass, classDescriptor);
