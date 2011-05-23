@@ -73,3 +73,5 @@ fun foo() {
 
 val IList<T>.lastIndex : Int
   get() = this.size - 1
+
+val Int?.opt : Int

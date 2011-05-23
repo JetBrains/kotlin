@@ -1,0 +1,2 @@
+fun Int?.optint() : Unit
+val Int?.optval : Unit

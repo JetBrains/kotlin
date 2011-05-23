@@ -3,7 +3,7 @@ fun <~T~T, ~E~E> `T`T.foo(x : `E`E, y : `A`A) : `T`T   {
   y `+`plus 1
   y `+1`+ 1.0
 
-  this?.`-`minus<T>(this)
+  this?.minus<T>(this)
 
   this
 }
@@ -11,6 +11,10 @@ fun <~T~T, ~E~E> `T`T.foo(x : `E`E, y : `A`A) : `T`T   {
 ~A~class A
 
 ~+1~fun `A`A.plus(a : Any) {
+
+  1.`foo`foo()
+  true.`!`foo()
+
   1
 }
 
@@ -28,4 +32,4 @@ fun test() {
 
 val <~TT~T> `TT`T.foo : `TT`T
 
-fun Int.foo() = this`:std::Int`
+~foo~fun Int.foo() = this`:std::Int`

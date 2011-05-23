@@ -161,7 +161,7 @@ public class ExpectedResolveData {
                     actualName = actual.toString();
                 }
             }
-            assertNotNull(reference);
+            assertNotNull(element.getText(), reference);
 
             if (expected instanceof JetParameter || actual instanceof JetParameter) {
                 DeclarationDescriptor expectedDescriptor;

@@ -38,6 +38,7 @@ public class JetParsing extends AbstractJetParsing {
     private static final TokenSet PARAMETER_NAME_RECOVERY_SET = TokenSet.create(COLON, EQ, COMMA, RPAR);
     private static final TokenSet NAMESPACE_NAME_RECOVERY_SET = TokenSet.create(DOT, EOL_OR_SEMICOLON);
     /*package*/ static final TokenSet TYPE_REF_FIRST = TokenSet.create(LBRACKET, IDENTIFIER, LBRACE, LPAR, CAPITALIZED_THIS_KEYWORD);
+    private static final TokenSet RECEIVER_TYPE_TERMINATORS = TokenSet.create(DOT, SAFE_ACCESS);
 
     public static JetParsing createForTopLevel(SemanticWhitespaceAwarePsiBuilder builder) {
         builder.setDebugMode(true);
@@ -725,35 +726,38 @@ public class JetParsing extends AbstractJetParsing {
 
         // TODO: extract constant
         int lastDot = matchTokenStreamPredicate(new FirstBefore(
-                new AbstractTokenStreamPredicate() {
-                    @Override
-                    public boolean matching(boolean topLevel) {
-                        return topLevel
-                                && at(DOT);
-                    }
-                },
+//                new AbstractTokenStreamPredicate() {
+//                    @Override
+//                    public boolean matching(boolean topLevel) {
+//                        return topLevel
+//                                && at(DOT);
+//                    }
+//                },
+                new AtSet(DOT, SAFE_ACCESS),
                 new AbstractTokenStreamPredicate() {
                     @Override
                     public boolean matching(boolean topLevel) {
                         if (topLevel && (at(EQ) || at(COLON))) return true;
                         if (topLevel && at(IDENTIFIER)) {
                             IElementType lookahead = lookahead(1);
-                            return lookahead != LT && lookahead != DOT;
+                            return lookahead != LT && lookahead != DOT && lookahead != SAFE_ACCESS;
                         }
                         return false;
                     }
                 }));
 
-        if (lastDot == -1) {
-            parseAttributeList();
-            expect(IDENTIFIER, "Expecting property name or receiver type", propertyNameFollow);
-        }
-        else {
-            createTruncatedBuilder(lastDot).parseTypeRef();
+        parseReceiverType("property", propertyNameFollow, lastDot);
 
-            expect(DOT, "Expecting '.' before a property name", propertyNameFollow);
-            expect(IDENTIFIER, "Expecting property name", propertyNameFollow);
-        }
+//        if (lastDot == -1) {
+//            parseAttributeList();
+//            expect(IDENTIFIER, "Expecting property name or receiver type", propertyNameFollow);
+//        }
+//        else {
+//            createTruncatedBuilder(lastDot).parseTypeRef();
+//
+//            expect(DOT, "Expecting '.' before a property name", propertyNameFollow);
+//            expect(IDENTIFIER, "Expecting property name", propertyNameFollow);
+//        }
 
         if (at(COLON)) {
             advance(); // COLON
@@ -868,35 +872,8 @@ public class JetParsing extends AbstractJetParsing {
             typeParameterListOccured = true;
         }
 
-        TokenSet receiverTypeTerminators = TokenSet.create(DOT, SAFE_ACCESS);
-        int lastDot = findLastBefore(receiverTypeTerminators, TokenSet.create(LPAR), true);
-
-        if (lastDot == -1) { // There's no explicit receiver type specified
-            parseAttributeList();
-            expect(IDENTIFIER, "Expecting function name or receiver type");
-        } else {
-            PsiBuilder.Marker typeRefMarker = mark();
-            PsiBuilder.Marker nullableType = mark();
-            typeRefMarker = createTruncatedBuilder(lastDot).parseTypeRefContents(typeRefMarker);
-            if (at(SAFE_ACCESS)) {
-                nullableType.done(NULLABLE_TYPE);
-            }
-            else {
-                nullableType.drop();
-            }
-            typeRefMarker.done(TYPE_REFERENCE);
-
-            TokenSet functionNameFollow = TokenSet.create(LT, LPAR, COLON, EQ);
-            if (atSet(receiverTypeTerminators)) {
-                advance(); // expectation
-            }
-            else {
-                errorWithRecovery("Expecting '.' before a function name", functionNameFollow);
-            }
-
-//            expect(DOT, "Expecting '.' before a function name", functionNameFollow);
-            expect(IDENTIFIER, "Expecting function name", functionNameFollow);
-        }
+        int lastDot = findLastBefore(RECEIVER_TYPE_TERMINATORS, TokenSet.create(LPAR), true);
+        parseReceiverType("function", TokenSet.create(LT, LPAR, COLON, EQ), lastDot);
 
         TokenSet valueParametersFollow = TokenSet.create(COLON, EQ, LBRACE, SEMICOLON, RPAR);
 
@@ -927,6 +904,38 @@ public class JetParsing extends AbstractJetParsing {
         }
 
         return FUN;
+    }
+
+    /*
+     * :
+     *   (type "." | attributes)?
+     */
+    private void parseReceiverType(String title, TokenSet nameFollow, int lastDot) {
+
+        if (lastDot == -1) { // There's no explicit receiver type specified
+            parseAttributeList();
+            expect(IDENTIFIER, "Expecting " + title + " name or receiver type", nameFollow);
+        } else {
+            PsiBuilder.Marker typeRefMarker = mark();
+            PsiBuilder.Marker nullableType = mark();
+            typeRefMarker = createTruncatedBuilder(lastDot).parseTypeRefContents(typeRefMarker);
+            if (at(SAFE_ACCESS)) {
+                nullableType.done(NULLABLE_TYPE);
+            }
+            else {
+                nullableType.drop();
+            }
+            typeRefMarker.done(TYPE_REFERENCE);
+
+            if (atSet(RECEIVER_TYPE_TERMINATORS)) {
+                advance(); // expectation
+            }
+            else {
+                errorWithRecovery("Expecting '.' before a " + title + " name", nameFollow);
+            }
+
+            expect(IDENTIFIER, "Expecting " + title + " name", nameFollow);
+        }
     }
 
     /*

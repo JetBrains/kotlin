@@ -1,10 +1,7 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import com.google.common.base.Function;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import com.google.common.collect.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.*;
@@ -270,15 +267,21 @@ public class FunctionDescriptorUtil {
 
             @Override
             public boolean isEmpty() {
-                // TODO: not implemented
-                return false;
+                return getFunctionDescriptors().isEmpty();
             }
 
             @NotNull
             @Override
             public Set<FunctionDescriptor> getFunctionDescriptors() {
-                // TODO: not implemented
-                return null;
+                Set<FunctionDescriptor> functionDescriptors = Sets.newHashSet(functionGroup.getFunctionDescriptors());
+                for (Iterator<FunctionDescriptor> iterator = functionDescriptors.iterator(); iterator.hasNext(); ) {
+                    FunctionDescriptor functionDescriptor = iterator.next();
+                    if (!criterion.apply(functionDescriptor)) {
+                        iterator.remove();
+                    }
+                }
+
+                return functionDescriptors;
             }
         };
     }

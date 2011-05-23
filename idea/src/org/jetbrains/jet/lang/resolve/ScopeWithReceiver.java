@@ -12,20 +12,20 @@ import org.jetbrains.jet.lang.types.JetTypeChecker;
  */
 public class ScopeWithReceiver extends JetScopeImpl {
 
-    private final JetScope receiverTypeScope;
+    private final JetType receiverType;
     private final JetScope outerScope;
     private final JetTypeChecker typeChecker;
 
     public ScopeWithReceiver(JetScope outerScope, JetType receiverType, JetTypeChecker typeChecker) {
         this.outerScope = outerScope;
-        this.receiverTypeScope = receiverType.getMemberScope();
+        this.receiverType = receiverType;
         this.typeChecker = typeChecker;
     }
 
     @NotNull
     @Override
     public FunctionGroup getFunctionGroup(@NotNull String name) {
-        FunctionGroup functionGroup = receiverTypeScope.getFunctionGroup(name);
+        FunctionGroup functionGroup = receiverType.getMemberScope().getFunctionGroup(name);
         if (functionGroup.isEmpty()) {
             return FunctionDescriptorUtil.filteredFunctionGroup(outerScope.getFunctionGroup(name),
                     new Function<FunctionDescriptor, Boolean>() {
@@ -37,7 +37,7 @@ public class ScopeWithReceiver extends JetScopeImpl {
                                 return false;
                             }
                             // TODO : in case of inferred type arguments, substitute the receiver type first
-                            return typeChecker.isSubtypeOf(receiverTypeScope.getThisType(), functionReceiverType);
+                            return typeChecker.isSubtypeOf(receiverType, functionReceiverType);
                         }
                     });
         }
@@ -51,7 +51,7 @@ public class ScopeWithReceiver extends JetScopeImpl {
 
     @Override
     public VariableDescriptor getVariable(@NotNull String name) {
-        VariableDescriptor variable = receiverTypeScope.getVariable(name);
+        VariableDescriptor variable = receiverType.getMemberScope().getVariable(name);
         if (variable != null) {
             return variable;
         }
@@ -61,7 +61,7 @@ public class ScopeWithReceiver extends JetScopeImpl {
             JetType receiverType = propertyDescriptor.getReceiverType();
             // TODO : in case of type arguments, substitute the receiver type first
             if (receiverType != null
-                    && typeChecker.isSubtypeOf(receiverTypeScope.getThisType(), receiverType)) {
+                    && typeChecker.isSubtypeOf(receiverType, receiverType)) {
                 return variable;
             }
         }
@@ -70,13 +70,13 @@ public class ScopeWithReceiver extends JetScopeImpl {
 
     @Override
     public NamespaceDescriptor getNamespace(@NotNull String name) {
-        return receiverTypeScope.getNamespace(name);
+        return receiverType.getMemberScope().getNamespace(name);
     }
 
     @NotNull
     @Override
     public JetType getThisType() {
-        return receiverTypeScope.getThisType();
+        return receiverType;
     }
 
     @NotNull
