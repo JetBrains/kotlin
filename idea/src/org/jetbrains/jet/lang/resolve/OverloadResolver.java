@@ -63,10 +63,6 @@ public class OverloadResolver {
                     if (receiverType != null) {
                         // ASSERT : either the receiver in not present or we are in a scope with no top-level functions
                         final JetType functionReceiverType = descriptor.getReceiverType();
-//                        final ClassDescriptor containingDeclaration = (ClassDescriptor) descriptor.getContainingDeclaration();
-//                        assert functionReceiverType != null || containingDeclaration != null &&
-//                           containingDeclaration.getTypeConstructor().equals(receiverType.getConstructor());
-
                         if (functionReceiverType != null && !typeChecker.isSubtypeOf(receiverType, functionReceiverType)) {
                             continue;
                         }

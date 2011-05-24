@@ -13,6 +13,42 @@ JetFile: TypeExpressionAmbiguities_ERR.jet
         PsiWhiteSpace('\n    ')
         CALL_EXPRESSION
           REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('foo')
+          TYPE_ARGUMENT_LIST
+            PsiElement(LT)('<')
+            TYPE_PROJECTION
+              TYPE_REFERENCE
+                NULLABLE_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Int')
+                  PsiElement(QUEST)('?')
+            PsiElement(GT)('>')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+        PsiWhiteSpace('\n    ')
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('fooo')
+          TYPE_ARGUMENT_LIST
+            PsiElement(LT)('<')
+            TYPE_PROJECTION
+              TYPE_REFERENCE
+                NULLABLE_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Double')
+                  PsiElement(QUEST)('?')
+            PsiErrorElement:Expecting a '>'
+              PsiElement(IDENTIFIER)('addddd')
+            PsiElement(GT)('>')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+        PsiWhiteSpace('\n    ')
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('dd')
           TYPE_ARGUMENT_LIST
             PsiElement(LT)('<')

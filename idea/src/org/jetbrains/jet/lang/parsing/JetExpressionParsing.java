@@ -26,7 +26,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             CONTINUE_KEYWORD, OBJECT_KEYWORD, IF_KEYWORD, TRY_KEYWORD, ELSE_KEYWORD, WHILE_KEYWORD, DO_KEYWORD,
             WHEN_KEYWORD, RBRACKET, RBRACE, RPAR, PLUSPLUS, MINUSMINUS, MUL, PLUS, MINUS, EXCL, DIV, PERC, LTEQ,
             // TODO GTEQ,   foo<bar, baz>=x
-            EQEQEQ, ARROW, DOUBLE_ARROW, EXCLEQEQEQ, EQEQ, EXCLEQ, ANDAND, OROR, SAFE_ACCESS, ELVIS, QUEST,
+            EQEQEQ, ARROW, DOUBLE_ARROW, EXCLEQEQEQ, EQEQ, EXCLEQ, ANDAND, OROR, SAFE_ACCESS, ELVIS,
             SEMICOLON, RANGE, EQ, MULTEQ, DIVEQ, PERCEQ, PLUSEQ, MINUSEQ, NOT_IN, NOT_IS, HASH,
             COLON
     );
@@ -398,7 +398,9 @@ public class JetExpressionParsing extends AbstractJetParsing {
             int gtPos = matchTokenStreamPredicate(new FirstBefore(
                     new At(GT),
                     new AtSet(TYPE_ARGUMENT_LIST_STOPPERS, TokenSet.create(RPAR, RBRACE, RBRACKET))
-                        .or(new AtFirstTokenOfTokens(IDENTIFIER, LPAR))
+                        .or(new AtFirstTokenOfTokens(IDENTIFIER, LPAR)
+//                        .or(new AtFirstTokenOfTokens(QUEST, IDENTIFIER))
+                        )
             ) {
                 @Override
                 public boolean isTopLevel(int openAngleBrackets, int openBrackets, int openBraces, int openParentheses) {
@@ -412,7 +414,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 }
             });
             if (gtPos >= 0) {
-                myJetParsing.parseTypeArgumentList();
+                myJetParsing.parseTypeArgumentList(gtPos);
                 if (!myBuilder.newlineBeforeCurrentToken() && at(LPAR)) parseValueArgumentList();
                 parseCallWithClosure();
             }

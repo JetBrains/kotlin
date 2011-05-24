@@ -122,9 +122,17 @@ public class JetTypeInferrer {
             @NotNull List<JetType> argumentTypes,
             boolean reportUnresolved) {
         OverloadDomain overloadDomain = semanticServices.getOverloadResolver().getOverloadDomain(receiverType, scope, name);
+        // No generics. Guaranteed
         overloadDomain = wrapForTracing(overloadDomain, reference, null, reportUnresolved);
         OverloadResolutionResult resolutionResult = overloadDomain.getFunctionDescriptorForPositionedArguments(Collections.<JetType>emptyList(), argumentTypes);
         return resolutionResult.isSuccess() ? resolutionResult.getFunctionDescriptor() : null;
+    }
+
+    @NotNull
+    private OverloadResolutionResult resolveNoParametersFunction(@NotNull JetType receiverType, @NotNull JetScope scope, @NotNull String name) {
+        OverloadDomain overloadDomain = semanticServices.getOverloadResolver().getOverloadDomain(receiverType, scope, name);
+        // No generics. Guaranteed
+        return overloadDomain.getFunctionDescriptorForPositionedArguments(Collections.<JetType>emptyList(), Collections.<JetType>emptyList());
     }
 
     private OverloadDomain getOverloadDomain(
@@ -163,6 +171,7 @@ public class JetTypeInferrer {
                     String referencedName = referenceExpression.getReferencedName();
 
                     if (receiverType != null && referencedName != null) {
+                        // No generics. Guaranteed
                         result[0] = semanticServices.getOverloadResolver().getOverloadDomain(receiverType, scope, referencedName);
                         reference[0] = referenceExpression;
                     }
@@ -176,6 +185,7 @@ public class JetTypeInferrer {
                 // a -- create a hierarchical lookup domain for this.a
                 String referencedName = expression.getReferencedName();
                 if (referencedName != null) {
+                    // No generics. Guaranteed
                     result[0] = semanticServices.getOverloadResolver().getOverloadDomain(receiverType, scope, referencedName);
                     reference[0] = expression;
                 }
@@ -215,12 +225,10 @@ public class JetTypeInferrer {
     }
 
     private OverloadDomain wrapForTracing(
-            @Nullable final OverloadDomain overloadDomain,
-            final JetReferenceExpression referenceExpression,
+            @NotNull final OverloadDomain overloadDomain,
+            @NotNull final JetReferenceExpression referenceExpression,
             @Nullable final PsiElement argumentList,
             final boolean reportErrors) {
-        if (overloadDomain == null) return OverloadDomain.EMPTY;
-        assert referenceExpression != null;
         return new OverloadDomain() {
             @NotNull
             @Override
@@ -400,9 +408,9 @@ public class JetTypeInferrer {
         // 1) ends with a name -> (scope, name) to look up
         // 2) ends with something else -> just check types
 
-        final List<JetTypeProjection> typeArguments = call.getTypeArguments();
+        final List<JetTypeProjection> jetTypeArguments = call.getTypeArguments();
 
-        for (JetTypeProjection typeArgument : typeArguments) {
+        for (JetTypeProjection typeArgument : jetTypeArguments) {
             if (typeArgument.getProjectionKind() != JetProjectionKind.NONE) {
                 trace.getErrorHandler().genericError(typeArgument.getNode(), "Projections are not allowed on type parameters for methods"); // TODO : better positioning
             }
@@ -429,12 +437,12 @@ public class JetTypeInferrer {
 
 //                    result = overloadDomain.getFunctionDescriptorForNamedArguments(typeArguments, valueArguments, functionLiteralArgument);
         } else {
-            List<JetType> types = new ArrayList<JetType>();
-            for (JetTypeProjection projection : typeArguments) {
+            List<JetType> typeArguments = new ArrayList<JetType>();
+            for (JetTypeProjection projection : jetTypeArguments) {
                 // TODO : check that there's no projection
                 JetTypeReference typeReference = projection.getTypeReference();
                 if (typeReference != null) {
-                    types.add(typeResolver.resolveType(scope, typeReference));
+                    typeArguments.add(typeResolver.resolveType(scope, typeReference));
                 }
             }
 
@@ -453,9 +461,20 @@ public class JetTypeInferrer {
                 valueArgumentTypes.add(safeGetType(scope, valueArgument, false));
             }
 
-            OverloadResolutionResult resolutionResult = overloadDomain.getFunctionDescriptorForPositionedArguments(types, valueArgumentTypes);
+            OverloadResolutionResult resolutionResult = overloadDomain.getFunctionDescriptorForPositionedArguments(typeArguments, valueArgumentTypes);
             if (resolutionResult.isSuccess()) {
-                return resolutionResult.getFunctionDescriptor().getUnsubstitutedReturnType();
+                final FunctionDescriptor functionDescriptor = resolutionResult.getFunctionDescriptor();
+
+                List<TypeParameterDescriptor> typeParameters = functionDescriptor.getOriginal().getTypeParameters();
+                for (int i = 0, typeParametersSize = typeParameters.size(); i < typeParametersSize; i++) {
+                    TypeParameterDescriptor typeParameterDescriptor = typeParameters.get(i);
+                    final JetType typeArgument = typeArguments.get(i);
+                    if (!semanticServices.getTypeChecker().isSubtypeOf(typeArgument, typeParameterDescriptor.getBoundsAsType())) {
+                        trace.getErrorHandler().genericError(jetTypeArguments.get(i).getNode(), "Bound of the type parameter " + DescriptorRenderer.TEXT.render(typeParameterDescriptor) + " is not respected by the type " + typeArgument);
+                    }
+
+                }
+                return functionDescriptor.getUnsubstitutedReturnType();
             }
         }
         return null;
@@ -1340,12 +1359,6 @@ public class JetTypeInferrer {
             return true;
         }
 
-        @NotNull
-        private OverloadResolutionResult resolveNoParametersFunction(@NotNull JetType receiverType, @NotNull JetScope scope, @NotNull String name) {
-            OverloadDomain overloadDomain = semanticServices.getOverloadResolver().getOverloadDomain(receiverType, scope, name);
-            return overloadDomain.getFunctionDescriptorForPositionedArguments(Collections.<JetType>emptyList(), Collections.<JetType>emptyList());
-        }
-
         @Override
         public void visitNewExpression(JetNewExpression expression) {
             // TODO : type argument inference
@@ -1386,11 +1399,14 @@ public class JetTypeInferrer {
             }
         }
 
+        private JetType getCallExpressionType(@Nullable JetType receiverType, @NotNull JetCallExpression callExpression) {
+            OverloadDomain overloadDomain = getOverloadDomain(receiverType, scope, callExpression.getCalleeExpression(), callExpression.getValueArgumentList());
+            return resolveCall(scope, overloadDomain, callExpression);
+        }
+
         private JetType getSelectorReturnType(JetType receiverType, JetExpression selectorExpression) {
             if (selectorExpression instanceof JetCallExpression) {
-                JetCallExpression callExpression = (JetCallExpression) selectorExpression;
-                OverloadDomain overloadDomain = getOverloadDomain(receiverType, scope, callExpression.getCalleeExpression(), callExpression.getValueArgumentList());
-                return resolveCall(scope, overloadDomain, callExpression);
+                return getCallExpressionType(receiverType, (JetCallExpression) selectorExpression);
             }
             else if (selectorExpression instanceof JetSimpleNameExpression) {
                 JetScope compositeScope = new ScopeWithReceiver(scope, receiverType, semanticServices.getTypeChecker());
@@ -1405,9 +1421,7 @@ public class JetTypeInferrer {
 
         @Override
         public void visitCallExpression(JetCallExpression expression) {
-            JetExpression calleeExpression = expression.getCalleeExpression();
-            OverloadDomain overloadDomain = getOverloadDomain(null, scope, calleeExpression, expression.getValueArgumentList());
-            result = resolveCall(scope, overloadDomain, expression);
+            result = getCallExpressionType(null, expression);
         }
 
         @Override

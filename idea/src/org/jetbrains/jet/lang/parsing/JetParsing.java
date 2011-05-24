@@ -1249,7 +1249,7 @@ public class JetParsing extends AbstractJetParsing {
             expect(IDENTIFIER, "Type name expected", TokenSet.orSet(JetExpressionParsing.EXPRESSION_FIRST, JetExpressionParsing.EXPRESSION_FOLLOW));
             reference.done(REFERENCE_EXPRESSION);
 
-            parseTypeArgumentList();
+            parseTypeArgumentList(-1);
             if (!at(DOT)) {
                 break;
             }
@@ -1268,7 +1268,7 @@ public class JetParsing extends AbstractJetParsing {
     /*
      *  (optionalProjection type){","}
      */
-    public PsiBuilder.Marker parseTypeArgumentList() {
+    public PsiBuilder.Marker parseTypeArgumentList(int expectedGtOffset) {
         if (!at(LT)) return null;
 
         PsiBuilder.Marker list = mark();
@@ -1290,6 +1290,14 @@ public class JetParsing extends AbstractJetParsing {
             projection.done(TYPE_PROJECTION);
             if (!at(COMMA)) break;
             advance(); // COMMA
+        }
+
+        if (expectedGtOffset >= 0 && myBuilder.getCurrentOffset() < expectedGtOffset) {
+            final PsiBuilder.Marker error = mark();
+            while (myBuilder.getCurrentOffset() < expectedGtOffset) {
+                advance();
+            }
+            error.error("Expecting a '>'");
         }
 
         expect(GT, "Expecting a '>'");
