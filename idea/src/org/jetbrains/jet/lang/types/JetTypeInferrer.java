@@ -1394,13 +1394,13 @@ public class JetTypeInferrer {
         }
 
         private JetType getSelectorReturnType(JetType receiverType, JetExpression selectorExpression) {
-            JetScope compositeScope = new ScopeWithReceiver(scope, receiverType, semanticServices.getTypeChecker());
             if (selectorExpression instanceof JetCallExpression) {
                 JetCallExpression callExpression = (JetCallExpression) selectorExpression;
-                OverloadDomain overloadDomain = getOverloadDomain(receiverType, compositeScope, callExpression.getCalleeExpression(), callExpression.getValueArgumentList());
+                OverloadDomain overloadDomain = getOverloadDomain(receiverType, scope, callExpression.getCalleeExpression(), callExpression.getValueArgumentList());
                 return resolveOverloads(scope, callExpression, overloadDomain);
             }
             else if (selectorExpression instanceof JetSimpleNameExpression) {
+                JetScope compositeScope = new ScopeWithReceiver(scope, receiverType, semanticServices.getTypeChecker());
                 return getType(compositeScope, selectorExpression, false);
             }
             else if (selectorExpression != null) {
