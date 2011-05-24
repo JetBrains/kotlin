@@ -47,6 +47,12 @@ public class JetNewExpression extends JetExpression implements JetCall {
 
     @NotNull
     @Override
+    public List<JetTypeProjection> getTypeArguments() {
+        return Collections.emptyList();
+    }
+
+    @NotNull
+    @Override
     public JetElement asElement() {
         return this;
     }

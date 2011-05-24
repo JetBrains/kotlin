@@ -40,6 +40,12 @@ public class JetDelegatorToSuperCall extends JetDelegationSpecifier implements J
 
     @NotNull
     @Override
+    public List<JetTypeProjection> getTypeArguments() {
+        return Collections.emptyList();
+    }
+
+    @NotNull
+    @Override
     public JetElement asElement() {
         return this;
     }

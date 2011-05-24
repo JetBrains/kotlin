@@ -393,28 +393,22 @@ public class JetTypeInferrer {
     }
 
     @Nullable
-    private JetType resolveOverloads(JetScope scope, JetCallExpression expression, OverloadDomain overloadDomain) {
-        List<JetTypeProjection> typeArguments = expression.getTypeArguments();
-        List<JetArgument> valueArguments = expression.getValueArguments();
-        List<JetExpression> functionLiteralArguments = expression.getFunctionLiteralArguments();
-        return resolveOverloads(scope, overloadDomain, typeArguments, valueArguments, functionLiteralArguments);
-    }
-
-    @Nullable
-    private JetType resolveOverloads(
+    private JetType resolveCall(
             @NotNull JetScope scope,
             @NotNull OverloadDomain overloadDomain,
-            @NotNull List<JetTypeProjection> typeArguments,
-            @NotNull List<JetArgument> valueArguments,
-            @NotNull List<JetExpression> functionLiteralArguments) {
+            @NotNull JetCall call) {
         // 1) ends with a name -> (scope, name) to look up
         // 2) ends with something else -> just check types
+
+        final List<JetTypeProjection> typeArguments = call.getTypeArguments();
 
         for (JetTypeProjection typeArgument : typeArguments) {
             if (typeArgument.getProjectionKind() != JetProjectionKind.NONE) {
                 trace.getErrorHandler().genericError(typeArgument.getNode(), "Projections are not allowed on type parameters for methods"); // TODO : better positioning
             }
         }
+
+        final List<JetArgument> valueArguments = call.getValueArguments();
 
         boolean someNamed = false;
         for (JetArgument argument : valueArguments) {
@@ -424,7 +418,8 @@ public class JetTypeInferrer {
             }
         }
 
-//                JetExpression functionLiteralArgument = functionLiteralArguments.isEmpty() ? null : functionLiteralArguments.get(0);
+        final List<JetExpression> functionLiteralArguments = call.getFunctionLiteralArguments();
+
         // TODO : must be a check
         assert functionLiteralArguments.size() <= 1;
 
@@ -543,12 +538,10 @@ public class JetTypeInferrer {
 
         FunctionGroup constructors = classDescriptor.getConstructors(projectionsStripped);
         OverloadDomain constructorsOverloadDomain = semanticServices.getOverloadResolver().getOverloadDomain(null, constructors);
-        JetType constructorReturnedType = resolveOverloads(
+        JetType constructorReturnedType = resolveCall(
                 scope,
                 wrapForTracing(constructorsOverloadDomain, referenceExpression, call.getValueArgumentList(), false),
-                Collections.<JetTypeProjection>emptyList(),
-                call.getValueArguments(),
-                call.getFunctionLiteralArguments());
+                call);
         if (constructorReturnedType == null && !ErrorUtils.isErrorType(receiverType)) {
             DeclarationDescriptor declarationDescriptor = receiverType.getConstructor().getDeclarationDescriptor();
             assert declarationDescriptor != null;
@@ -1397,7 +1390,7 @@ public class JetTypeInferrer {
             if (selectorExpression instanceof JetCallExpression) {
                 JetCallExpression callExpression = (JetCallExpression) selectorExpression;
                 OverloadDomain overloadDomain = getOverloadDomain(receiverType, scope, callExpression.getCalleeExpression(), callExpression.getValueArgumentList());
-                return resolveOverloads(scope, callExpression, overloadDomain);
+                return resolveCall(scope, overloadDomain, callExpression);
             }
             else if (selectorExpression instanceof JetSimpleNameExpression) {
                 JetScope compositeScope = new ScopeWithReceiver(scope, receiverType, semanticServices.getTypeChecker());
@@ -1414,7 +1407,7 @@ public class JetTypeInferrer {
         public void visitCallExpression(JetCallExpression expression) {
             JetExpression calleeExpression = expression.getCalleeExpression();
             OverloadDomain overloadDomain = getOverloadDomain(null, scope, calleeExpression, expression.getValueArgumentList());
-            result = resolveOverloads(scope, expression, overloadDomain);
+            result = resolveCall(scope, overloadDomain, expression);
         }
 
         @Override

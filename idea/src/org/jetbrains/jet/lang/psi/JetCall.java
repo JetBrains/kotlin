@@ -19,5 +19,8 @@ public interface JetCall {
     List<JetExpression> getFunctionLiteralArguments();
 
     @NotNull
+    List<JetTypeProjection> getTypeArguments();
+
+    @NotNull
     JetElement asElement();
 }
