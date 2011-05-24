@@ -1,8 +1,6 @@
 package org.jetbrains.jet.lang.resolve;
 
-import com.google.common.base.Function;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeChecker;
@@ -27,19 +25,20 @@ public class ScopeWithReceiver extends JetScopeImpl {
     public FunctionGroup getFunctionGroup(@NotNull String name) {
         FunctionGroup functionGroup = receiverType.getMemberScope().getFunctionGroup(name);
         if (functionGroup.isEmpty()) {
-            return FunctionDescriptorUtil.filteredFunctionGroup(outerScope.getFunctionGroup(name),
-                    new Function<FunctionDescriptor, Boolean>() {
-                        @Override
-                        public Boolean apply(@Nullable FunctionDescriptor functionDescriptor) {
-                            if (functionDescriptor == null) return false;
-                            JetType functionReceiverType = functionDescriptor.getReceiverType();
-                            if (functionReceiverType == null) {
-                                return false;
-                            }
-                            // TODO : in case of inferred type arguments, substitute the receiver type first
-                            return typeChecker.isSubtypeOf(receiverType, functionReceiverType);
-                        }
-                    });
+            return outerScope.getFunctionGroup(name);
+//            return FunctionDescriptorUtil.filteredFunctionGroup(outerScope.getFunctionGroup(name),
+//                    new Function<FunctionDescriptor, Boolean>() {
+//                        @Override
+//                        public Boolean apply(@Nullable FunctionDescriptor functionDescriptor) {
+//                            if (functionDescriptor == null) return false;
+//                            JetType functionReceiverType = functionDescriptor.getReceiverType();
+//                            if (functionReceiverType == null) {
+//                                return false;
+//                            }
+//                            // TODO : in case of inferred type arguments, substitute the receiver type first
+//                            return typeChecker.isSubtypeOf(receiverType, functionReceiverType);
+//                        }
+//                    });
         }
         return functionGroup; // TODO
     }

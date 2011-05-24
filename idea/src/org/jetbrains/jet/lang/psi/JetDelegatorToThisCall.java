@@ -39,6 +39,12 @@ public class JetDelegatorToThisCall extends JetDelegationSpecifier implements Je
         return Collections.emptyList();
     }
 
+    @NotNull
+    @Override
+    public JetElement asElement() {
+        return this;
+    }
+
     public JetReferenceExpression getThisReference() {
         return findChildByClass(JetThisReferenceExpression.class);
     }

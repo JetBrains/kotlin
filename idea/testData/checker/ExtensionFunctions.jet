@@ -1,2 +1,38 @@
 fun Int?.optint() : Unit
 val Int?.optval : Unit
+
+fun <T, E> T.foo(x : E, y : A) : T   {
+  y.plus(1)
+  y plus 1
+  y + 1.0
+
+  this?.minus<T>(this)
+
+  this
+}
+
+class A
+
+fun A.plus(a : Any) {
+
+  1.foo()
+  true.foo<error>()</error>
+
+  1
+}
+
+fun A.plus(a : Int) {
+  1
+}
+
+fun <T> T.minus(t : T) : Int = 1
+
+fun test() {
+  val y = 1.abs
+}
+val Int.abs : Int
+  get() = if (this > 0) this else -this;
+
+val <T> T.foo : T
+
+fun Int.foo() = this

@@ -37,6 +37,11 @@ public class DescriptorRenderer {
         public String renderKeyword(String keyword) {
             return "<b>" + keyword + "</b>";
         }
+
+        @Override
+        public String renderMessage(String s) {
+            return "<i>" + s + "</i>";
+        }
     };
 
 
@@ -45,11 +50,6 @@ public class DescriptorRenderer {
     private final DeclarationDescriptorVisitor<Void, StringBuilder> rootVisitor = new RenderDeclarationDescriptorVisitor();
 
     private final DeclarationDescriptorVisitor<Void, StringBuilder> subVisitor = new RenderDeclarationDescriptorVisitor() {
-        @Override
-        protected void renderName(DeclarationDescriptor descriptor, StringBuilder stringBuilder) {
-            stringBuilder.append(descriptor.getName());
-        }
-
         @Override
         public Void visitTypeParameterDescriptor(TypeParameterDescriptor descriptor, StringBuilder builder) {
             renderTypeParameter(descriptor, builder);
@@ -80,10 +80,30 @@ public class DescriptorRenderer {
         if (declarationDescriptor == null) return lt() + "null>";
         StringBuilder stringBuilder = new StringBuilder();
         declarationDescriptor.accept(rootVisitor, stringBuilder);
+        stringBuilder.append(" " + renderMessage("defined in") + " ");
+
+        final DeclarationDescriptor containingDeclaration = declarationDescriptor.getContainingDeclaration();
+        if (containingDeclaration != null) {
+            renderFullyQualifiedName(containingDeclaration, stringBuilder);
+        }
         return stringBuilder.toString();
     }
 
+    public String renderMessage(String s) {
+        return s;
+    }
+
+    private void renderFullyQualifiedName(DeclarationDescriptor descriptor, StringBuilder stringBuilder) {
+        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+        if (containingDeclaration != null) {
+            renderFullyQualifiedName(containingDeclaration, stringBuilder);
+            stringBuilder.append(".");
+        }
+        stringBuilder.append(escape(descriptor.getName()));
+    }
+
     private class RenderDeclarationDescriptorVisitor extends DeclarationDescriptorVisitor<Void, StringBuilder> {
+
         @Override
         public Void visitValueParameterDescriptor(ValueParameterDescriptor descriptor, StringBuilder builder) {
             builder.append(renderKeyword("value-parameter")).append(" ");
@@ -217,11 +237,6 @@ public class DescriptorRenderer {
         }
 
         protected void renderName(DeclarationDescriptor descriptor, StringBuilder stringBuilder) {
-            DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-            if (containingDeclaration != null) {
-                renderName(containingDeclaration, stringBuilder);
-                stringBuilder.append("::");
-            }
             stringBuilder.append(escape(descriptor.getName()));
         }
 

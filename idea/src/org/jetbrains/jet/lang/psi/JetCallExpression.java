@@ -45,6 +45,12 @@ public class JetCallExpression extends JetExpression implements JetCall {
         return findChildrenByType(JetNodeTypes.FUNCTION_LITERAL);
     }
 
+    @NotNull
+    @Override
+    public JetElement asElement() {
+        return this;
+    }
+
     @Override
     @NotNull
     public List<JetArgument> getValueArguments() {

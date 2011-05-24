@@ -17,4 +17,7 @@ public interface JetCall {
 
     @NotNull
     List<JetExpression> getFunctionLiteralArguments();
+
+    @NotNull
+    JetElement asElement();
 }

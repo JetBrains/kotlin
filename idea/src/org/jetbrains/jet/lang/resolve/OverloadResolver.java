@@ -5,9 +5,13 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionGroup;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.JetTypeChecker;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author abreslav
@@ -21,17 +25,17 @@ public class OverloadResolver {
     }
 
     @NotNull
-    public OverloadDomain getOverloadDomain(JetType receiverType, @NotNull JetScope outerScope, @NotNull String name) {
+    public OverloadDomain getOverloadDomain(@Nullable JetType receiverType, @NotNull JetScope outerScope, @NotNull String name) {
         // TODO : extension lookup
         JetScope scope = receiverType == null ? outerScope : new ScopeWithReceiver(outerScope, receiverType, typeChecker);
 
         final FunctionGroup functionGroup = scope.getFunctionGroup(name);
 
-        return getOverloadDomain(functionGroup);
+        return getOverloadDomain(receiverType, functionGroup);
     }
 
     @NotNull
-    public OverloadDomain getOverloadDomain(@NotNull final FunctionGroup functionGroup) {
+    public OverloadDomain getOverloadDomain(@Nullable final JetType receiverType, @NotNull final FunctionGroup functionGroup) {
         if (functionGroup.isEmpty()) {
             return OverloadDomain.EMPTY;
         }
@@ -55,6 +59,21 @@ public class OverloadResolver {
                 for (FunctionDescriptor descriptor : possiblyApplicableFunctions) {
                     // ASSERT: type arguments are figured out and substituted by this time!!!
                     assert descriptor.getTypeParameters().isEmpty();
+
+                    if (receiverType != null) {
+                        // ASSERT : either the receiver in not present or we are in a scope with no top-level functions
+                        final JetType functionReceiverType = descriptor.getReceiverType();
+//                        final ClassDescriptor containingDeclaration = (ClassDescriptor) descriptor.getContainingDeclaration();
+//                        assert functionReceiverType != null || containingDeclaration != null &&
+//                           containingDeclaration.getTypeConstructor().equals(receiverType.getConstructor());
+
+                        if (functionReceiverType != null && !typeChecker.isSubtypeOf(receiverType, functionReceiverType)) {
+                            continue;
+                        }
+                    }
+                    else if (descriptor.getReceiverType() != null) {
+                        continue;
+                    }
 
                     List<ValueParameterDescriptor> parameters = descriptor.getUnsubstitutedValueParameters();
                     if (parameters.size() >= positionedValueArgumentTypes.size()) {

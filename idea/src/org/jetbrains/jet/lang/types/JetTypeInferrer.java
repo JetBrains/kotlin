@@ -128,6 +128,7 @@ public class JetTypeInferrer {
     }
 
     private OverloadDomain getOverloadDomain(
+            @Nullable final JetType receiverType,
             @NotNull final JetScope scope,
             @NotNull JetExpression calleeExpression,
             @Nullable PsiElement argumentList
@@ -150,6 +151,8 @@ public class JetTypeInferrer {
 
             @Override
             public void visitQualifiedExpression(JetQualifiedExpression expression) {
+                trace.getErrorHandler().genericError(expression.getNode(), "Unsupported [JetTypeInferrer]");
+
                 // . or ?.
                 JetType receiverType = getType(scope, expression.getReceiverExpression(), false);
                 checkNullSafety(receiverType, expression.getOperationTokenNode());
@@ -173,7 +176,7 @@ public class JetTypeInferrer {
                 // a -- create a hierarchical lookup domain for this.a
                 String referencedName = expression.getReferencedName();
                 if (referencedName != null) {
-                    result[0] = semanticServices.getOverloadResolver().getOverloadDomain(null, scope, referencedName);
+                    result[0] = semanticServices.getOverloadResolver().getOverloadDomain(receiverType, scope, referencedName);
                     reference[0] = expression;
                 }
             }
@@ -539,7 +542,7 @@ public class JetTypeInferrer {
         }
 
         FunctionGroup constructors = classDescriptor.getConstructors(projectionsStripped);
-        OverloadDomain constructorsOverloadDomain = semanticServices.getOverloadResolver().getOverloadDomain(constructors);
+        OverloadDomain constructorsOverloadDomain = semanticServices.getOverloadResolver().getOverloadDomain(null, constructors);
         JetType constructorReturnedType = resolveOverloads(
                 scope,
                 wrapForTracing(constructorsOverloadDomain, referenceExpression, call.getValueArgumentList(), false),
@@ -554,6 +557,9 @@ public class JetTypeInferrer {
             JetArgumentList argumentList = call.getValueArgumentList();
             if (argumentList != null) {
                 trace.getErrorHandler().genericError(argumentList.getNode(), "Cannot find an overload for these arguments");
+            }
+            else {
+                trace.getErrorHandler().genericError(call.asElement().getNode(), "Cannot find an overload for these arguments");
             }
             constructorReturnedType = receiverType;
         }
@@ -1391,7 +1397,7 @@ public class JetTypeInferrer {
             JetScope compositeScope = new ScopeWithReceiver(scope, receiverType, semanticServices.getTypeChecker());
             if (selectorExpression instanceof JetCallExpression) {
                 JetCallExpression callExpression = (JetCallExpression) selectorExpression;
-                OverloadDomain overloadDomain = getOverloadDomain(compositeScope, callExpression.getCalleeExpression(), callExpression.getValueArgumentList());
+                OverloadDomain overloadDomain = getOverloadDomain(receiverType, compositeScope, callExpression.getCalleeExpression(), callExpression.getValueArgumentList());
                 return resolveOverloads(scope, callExpression, overloadDomain);
             }
             else if (selectorExpression instanceof JetSimpleNameExpression) {
@@ -1407,7 +1413,7 @@ public class JetTypeInferrer {
         @Override
         public void visitCallExpression(JetCallExpression expression) {
             JetExpression calleeExpression = expression.getCalleeExpression();
-            OverloadDomain overloadDomain = getOverloadDomain(scope, calleeExpression, expression.getValueArgumentList());
+            OverloadDomain overloadDomain = getOverloadDomain(null, scope, calleeExpression, expression.getValueArgumentList());
             result = resolveOverloads(scope, expression, overloadDomain);
         }
 

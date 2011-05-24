@@ -45,4 +45,10 @@ public class JetNewExpression extends JetExpression implements JetCall {
         return findChildrenByType(JetNodeTypes.FUNCTION_LITERAL);
     }
 
+    @NotNull
+    @Override
+    public JetElement asElement() {
+        return this;
+    }
+
 }

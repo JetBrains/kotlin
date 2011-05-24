@@ -37,4 +37,10 @@ public class JetDelegatorToSuperCall extends JetDelegationSpecifier implements J
     public List<JetExpression> getFunctionLiteralArguments() {
         return Collections.emptyList();
     }
+
+    @NotNull
+    @Override
+    public JetElement asElement() {
+        return this;
+    }
 }
