@@ -238,7 +238,7 @@ arrayAccess
   ;
 
 objectLiteral
-  : "object" delegationSpecifier{","}? classBody // Cannot make class body optional: foo(object F, a)
+  : "object" ":" delegationSpecifier{","}? classBody // Cannot make class body optional: foo(object F, a)
   ;
 
 /* Factory methods:

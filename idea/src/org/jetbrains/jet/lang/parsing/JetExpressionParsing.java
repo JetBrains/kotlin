@@ -1591,7 +1591,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
     /*
      * objectLiteral
-     *   : "object" delegationSpecifier{","}? classBody // Cannot make class body optional: foo(object F, a)
+     *   : "object" ":" delegationSpecifier{","}? classBody // Cannot make class body optional: foo(object F, a)
      *   ;
      */
     public void parseObjectLiteral() {
@@ -1605,6 +1605,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
             myJetParsing.parseClassBody();
         }
         else {
+            expect(COLON, "Expecting ':'", TokenSet.create(IDENTIFIER, NAMESPACE_KEYWORD));
+
             myJetParsing.parseDelegationSpecifierList();
             if (at(LBRACE)) {
                 myJetParsing.parseClassBody();

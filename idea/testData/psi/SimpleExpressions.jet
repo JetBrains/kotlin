@@ -23,7 +23,7 @@ fun a(
     a : foo = new Foo<A>(bar),
     a : foo = new Foo(),
     a : foo = new Foo<bar>(),
-    a : foo = object Foo{},
+    a : foo = object : Foo{},
     a : foo = throw new Foo(),
     a : foo = return 10,
     a : foo = break,

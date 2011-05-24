@@ -1,6 +1,6 @@
 fun foo() {
 
-addMouseListener(object MouseAdapter() {
+addMouseListener(object : MouseAdapter() {
 
   private var clickCount = 0;
 

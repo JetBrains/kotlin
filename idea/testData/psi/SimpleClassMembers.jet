@@ -28,15 +28,15 @@ class foo {
 
             }
 
-            private class object Fooo {
+            private class object : Fooo {
 
             }
 
-            private class object Fooo, Bar by foo {
+            private class object : Fooo, Bar by foo {
 
             }
 
-            private class object Fooo, Bar by foo, Goo()
+            private class object : Fooo, Bar by foo, Goo()
         }
 
         class Bar {}
@@ -74,15 +74,15 @@ class foo {
 
     }
 
-    private class object Fooo {
+    private class object : Fooo {
 
     }
 
-    private class object Fooo, Bar by foo {
+    private class object : Fooo, Bar by foo {
 
     }
 
-    private class object Fooo, Bar by foo, Goo()
+    private class object : Fooo, Bar by foo, Goo()
 
 
 }

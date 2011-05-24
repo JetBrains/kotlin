@@ -11,7 +11,7 @@ enum class List<out T>(theSize : Int) : IList<T> {
     get() = this == Nil
 
 
-  override fun iterator() = object IIterator() {
+  override fun iterator() = object : IIterator() {
     private var current = List.this
 
     override val hasNext

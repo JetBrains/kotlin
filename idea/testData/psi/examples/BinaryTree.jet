@@ -129,7 +129,7 @@ class BinaryTree<T> : IMutableSet<T> {
 
   override fun iterator() : IIterator<T> = mutableIterator()
 
-  override fun mutableIterator() : IMutableIterator<T> = object IMutableIterator {
+  override fun mutableIterator() : IMutableIterator<T> = object : IMutableIterator {
     val version = BinaryTree.this.version
     val down = Stack<TreeNode>()
     val up = Stack<TreeNode>()

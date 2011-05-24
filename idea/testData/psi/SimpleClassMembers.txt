@@ -202,6 +202,8 @@ JetFile: SimpleClassMembers.jet
                   OBJECT_LITERAL
                     PsiElement(object)('object')
                     PsiWhiteSpace(' ')
+                    PsiElement(COLON)(':')
+                    PsiWhiteSpace(' ')
                     DELEGATION_SPECIFIER_LIST
                       DELEGATOR_SUPER_CLASS
                         TYPE_REFERENCE
@@ -222,6 +224,8 @@ JetFile: SimpleClassMembers.jet
                   PsiWhiteSpace(' ')
                   OBJECT_LITERAL
                     PsiElement(object)('object')
+                    PsiWhiteSpace(' ')
+                    PsiElement(COLON)(':')
                     PsiWhiteSpace(' ')
                     DELEGATION_SPECIFIER_LIST
                       DELEGATOR_SUPER_CLASS
@@ -255,6 +259,8 @@ JetFile: SimpleClassMembers.jet
                   PsiWhiteSpace(' ')
                   OBJECT_LITERAL
                     PsiElement(object)('object')
+                    PsiWhiteSpace(' ')
+                    PsiElement(COLON)(':')
                     PsiWhiteSpace(' ')
                     DELEGATION_SPECIFIER_LIST
                       DELEGATOR_SUPER_CLASS
@@ -553,6 +559,8 @@ JetFile: SimpleClassMembers.jet
           OBJECT_LITERAL
             PsiElement(object)('object')
             PsiWhiteSpace(' ')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
             DELEGATION_SPECIFIER_LIST
               DELEGATOR_SUPER_CLASS
                 TYPE_REFERENCE
@@ -573,6 +581,8 @@ JetFile: SimpleClassMembers.jet
           PsiWhiteSpace(' ')
           OBJECT_LITERAL
             PsiElement(object)('object')
+            PsiWhiteSpace(' ')
+            PsiElement(COLON)(':')
             PsiWhiteSpace(' ')
             DELEGATION_SPECIFIER_LIST
               DELEGATOR_SUPER_CLASS
@@ -606,6 +616,8 @@ JetFile: SimpleClassMembers.jet
           PsiWhiteSpace(' ')
           OBJECT_LITERAL
             PsiElement(object)('object')
+            PsiWhiteSpace(' ')
+            PsiElement(COLON)(':')
             PsiWhiteSpace(' ')
             DELEGATION_SPECIFIER_LIST
               DELEGATOR_SUPER_CLASS

@@ -9,7 +9,7 @@ virtual class Buildable {
 
 class List<T> {
 
-  class object Buildable {
+  class object : Buildable {
     override fun newBuilder<E, R>() : Builder<E, R>
 
   }

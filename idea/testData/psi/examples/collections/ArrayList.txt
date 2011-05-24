@@ -142,6 +142,8 @@ JetFile: ArrayList.jet
           OBJECT_LITERAL
             PsiElement(object)('object')
             PsiWhiteSpace(' ')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
             DELEGATION_SPECIFIER_LIST
               DELEGATOR_SUPER_CALL
                 TYPE_REFERENCE
