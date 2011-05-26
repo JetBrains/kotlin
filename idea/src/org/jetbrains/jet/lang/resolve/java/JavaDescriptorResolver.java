@@ -141,6 +141,7 @@ public class JavaDescriptorResolver {
                 typeParameter.getName(),
                 typeParameter.getIndex()
         );
+        typeParameterDescriptorCache.put(typeParameter, typeParameterDescriptor);
         PsiClassType[] referencedTypes = typeParameter.getExtendsList().getReferencedTypes();
         if (referencedTypes.length == 0){
             typeParameterDescriptor.addUpperBound(JetStandardClasses.getNullableAnyType());
@@ -161,7 +162,7 @@ public class JavaDescriptorResolver {
         TypeParameterDescriptor typeParameterDescriptor = typeParameterDescriptorCache.get(psiTypeParameter);
         if (typeParameterDescriptor == null) {
             typeParameterDescriptor = createJavaTypeParameterDescriptor(JAVA_ROOT, psiTypeParameter);
-            typeParameterDescriptorCache.put(psiTypeParameter, typeParameterDescriptor);
+//            Tis is done inside the method: typeParameterDescriptorCache.put(psiTypeParameter, typeParameterDescriptor);
         }
         return typeParameterDescriptor;
     }
