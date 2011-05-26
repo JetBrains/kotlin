@@ -26,4 +26,12 @@ fun test(l : java.util.List<Int>) {
 //  Collections.sort<Integer>(new ArrayList<Integer>())
 
   val o = "sdf" <warning>as</warning> Object
+
+  try {
+    // ...
+  }
+  catch(e: Exception) {
+    System.out?.println(e.getMessage())
+  }
+
 }
