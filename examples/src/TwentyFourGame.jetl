@@ -3,17 +3,31 @@ namespace TwentyFourGame;
 import java.util.*
 import java.io.*
 
+fun evaluate(expr: String?, numbers: ArrayList<Int>) = 0
+
 fun main(args: Array<String>) {
   System.out?.println("24 game")
-  val numbers = new Array<Int>(4)
+  val numbers = new ArrayList<Int>(4)
   val rnd = new Random();
   val prompt = new StringBuilder()
   for(val i in 0..3) {
-    numbers[i] = rnd.nextInt(9) + 1
+    val n = rnd.nextInt(9) + 1
+    numbers.add(n)
     if (i > 0) prompt.append(" ");
-    prompt.append(numbers [i])
+    prompt.append(n)
   }
   System.out?.println("Your numbers: " + prompt)
-  System.out?.println("Enter your expression:");
-//  val reader = new BufferedReader(System.`in`)
+  System.out?.println("Enter your expression:")
+  val reader = new BufferedReader(new InputStreamReader(System.`in`))
+  val expr = reader.readLine()
+  try {
+    val result = evaluate(expr, numbers)
+    if (result != 24)
+      System.out?.println("Sorry, that's " + result)
+    else
+      System.out?.println("You won!");
+  }
+  catch(e: Throwable) {
+    System.out?.println(e.getMessage())
+  }
 }
