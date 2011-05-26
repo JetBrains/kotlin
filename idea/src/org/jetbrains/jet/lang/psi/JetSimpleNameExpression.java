@@ -24,7 +24,14 @@ public class JetSimpleNameExpression extends JetReferenceExpression {
     @Nullable @IfNotParsed
     public String getReferencedName() {
         PsiElement referencedNameElement = getReferencedNameElement();
-        return referencedNameElement == null ? null : referencedNameElement.getNode().getText();
+        if (referencedNameElement == null) {
+            return null;
+        }
+        final String text = referencedNameElement.getNode().getText();
+        if (text.startsWith("`") && text.endsWith("`") && text.length() >= 2) {
+            return text.substring(1, text.length()-1);
+        }
+        return text;
     }
 
     @Nullable @IfNotParsed
