@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.types;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
@@ -465,19 +466,30 @@ public class JetTypeInferrer {
             if (resolutionResult.isSuccess()) {
                 final FunctionDescriptor functionDescriptor = resolutionResult.getFunctionDescriptor();
 
-                List<TypeParameterDescriptor> typeParameters = functionDescriptor.getOriginal().getTypeParameters();
-                for (int i = 0, typeParametersSize = typeParameters.size(); i < typeParametersSize; i++) {
-                    TypeParameterDescriptor typeParameterDescriptor = typeParameters.get(i);
-                    final JetType typeArgument = typeArguments.get(i);
-                    if (!semanticServices.getTypeChecker().isSubtypeOf(typeArgument, typeParameterDescriptor.getBoundsAsType())) {
-                        trace.getErrorHandler().genericError(jetTypeArguments.get(i).getNode(), "Bound of the type parameter " + DescriptorRenderer.TEXT.render(typeParameterDescriptor) + " is not respected by the type " + typeArgument);
-                    }
-
-                }
+                checkGenericBoundsInAFunctionCall(jetTypeArguments, typeArguments, functionDescriptor);
                 return functionDescriptor.getUnsubstitutedReturnType();
             }
         }
         return null;
+    }
+
+    private void checkGenericBoundsInAFunctionCall(List<JetTypeProjection> jetTypeArguments, List<JetType> typeArguments, FunctionDescriptor functionDescriptor) {
+        Map<TypeConstructor, TypeProjection> context = Maps.newHashMap();
+
+        List<TypeParameterDescriptor> typeParameters = functionDescriptor.getOriginal().getTypeParameters();
+        for (int i = 0, typeParametersSize = typeParameters.size(); i < typeParametersSize; i++) {
+            TypeParameterDescriptor typeParameter = typeParameters.get(i);
+            JetType typeArgument = typeArguments.get(i);
+            context.put(typeParameter.getTypeConstructor(), new TypeProjection(typeArgument));
+        }
+        TypeSubstitutor substitutor = TypeSubstitutor.create(context);
+        for (int i = 0, typeParametersSize = typeParameters.size(); i < typeParametersSize; i++) {
+            TypeParameterDescriptor typeParameterDescriptor = typeParameters.get(i);
+            JetType typeArgument = typeArguments.get(i);
+            JetTypeReference typeReference = jetTypeArguments.get(i).getTypeReference();
+            assert typeReference != null;
+            classDescriptorResolver.checkBounds(typeReference, typeArgument, typeParameterDescriptor, substitutor);
+        }
     }
 
     @Nullable
@@ -891,7 +903,8 @@ public class JetTypeInferrer {
                     trace.getErrorHandler().genericWarning(expression.getOperationSign().getNode(), "No cast needed, use ':' instead");
                 }
                 else {
-                    trace.getErrorHandler().genericError(expression.getOperationSign().getNode(), "This cast can never succeed");
+                    // See JET-58 Make 'as never succeeds' a warning, or even never check for Java (external) types
+                    trace.getErrorHandler().genericWarning(expression.getOperationSign().getNode(), "This cast can never succeed");
                 }
             }
             else {

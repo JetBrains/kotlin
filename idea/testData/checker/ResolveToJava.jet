@@ -22,4 +22,8 @@ fun test(l : java.util.List<Int>) {
   Collections.singleton<Int><error>(1.0)</error>
 
   <error>new List<Int></error>
+
+//  Collections.sort<Integer>(new ArrayList<Integer>())
+
+  val o = "sdf" <warning>as</warning> Object
 }
