@@ -1,0 +1,19 @@
+namespace TwentyFourGame;
+
+import java.util.*
+import java.io.*
+
+fun main(args: Array<String>) {
+  System.out?.println("24 game")
+  val numbers = new Array<Int>(4)
+  val rnd = new Random();
+  val prompt = new StringBuilder()
+  for(val i in 0..3) {
+    numbers[i] = rnd.nextInt(9) + 1
+    if (i > 0) prompt.append(" ");
+    prompt.append(numbers [i])
+  }
+  System.out?.println("Your numbers: " + prompt)
+  System.out?.println("Enter your expression:");
+//  val reader = new BufferedReader(System.`in`)
+}
