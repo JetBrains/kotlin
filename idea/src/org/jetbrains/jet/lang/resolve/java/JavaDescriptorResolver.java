@@ -245,8 +245,9 @@ public class JavaDescriptorResolver {
     @NotNull
     public FunctionGroup resolveFunctionGroup(@NotNull PsiClass psiClass, @NotNull String methodName, boolean staticMembers) {
         WritableFunctionGroup writableFunctionGroup = new WritableFunctionGroup(methodName);
-        PsiMethod[] allMethods = psiClass.getMethods(); // TODO : look into superclasses
-        for (PsiMethod method : allMethods) {
+        final Collection<HierarchicalMethodSignature> signatures = psiClass.getVisibleSignatures();
+        for (HierarchicalMethodSignature signature: signatures) {
+            final PsiMethod method = signature.getMethod();
             if (method.hasModifierProperty(PsiModifier.STATIC) != staticMembers) {
                 continue;
             }
