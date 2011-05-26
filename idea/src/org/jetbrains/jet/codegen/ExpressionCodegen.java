@@ -680,16 +680,21 @@ public class ExpressionCodegen extends JetVisitor {
                 Method methodDescriptor;
                 if (declarationPsiElement instanceof PsiMethod) {
                     PsiMethod psiMethod = (PsiMethod) declarationPsiElement;
+                    String owner = JetTypeMapper.jvmName(psiMethod.getContainingClass());
                     methodDescriptor = getMethodDescriptor(psiMethod);
                     final boolean isStatic = psiMethod.hasModifierProperty(PsiModifier.STATIC);
 
                     if (!isStatic) {
                         ensureReceiverOnStack(expression);
+                        if (expression.getParent() instanceof JetQualifiedExpression) {
+                            final JetExpression receiver = ((JetQualifiedExpression) expression.getParent()).getReceiverExpression();
+                            owner = expressionType(receiver).getInternalName();
+                        }
                     }
                     pushMethodArguments(expression, methodDescriptor);
 
                     v.visitMethodInsn(isStatic ? Opcodes.INVOKESTATIC : Opcodes.INVOKEVIRTUAL,
-                            JetTypeMapper.jvmName(psiMethod.getContainingClass()),
+                            owner,
                             methodDescriptor.getName(),
                             methodDescriptor.getDescriptor());
                 }
