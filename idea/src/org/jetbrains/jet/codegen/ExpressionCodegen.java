@@ -66,6 +66,7 @@ public class ExpressionCodegen extends JetVisitor {
     private final InstructionAdapter v;
     private final FrameMap myMap;
     private final JetTypeMapper typeMapper;
+    private final JetType receiverType;
     private final Type returnType;
     private final DeclarationDescriptor contextType;
     private final OwnerKind contextKind;
@@ -75,11 +76,13 @@ public class ExpressionCodegen extends JetVisitor {
                              BindingContext bindingContext,
                              FrameMap myMap,
                              JetTypeMapper typeMapper,
+                             JetType receiverType,
                              Type returnType,
                              DeclarationDescriptor contextType,
                              OwnerKind contextKind) {
         this.myMap = myMap;
         this.typeMapper = typeMapper;
+        this.receiverType = receiverType;
         this.returnType = returnType;
         this.contextType = contextType;
         this.contextKind = contextKind;
@@ -107,9 +110,13 @@ public class ExpressionCodegen extends JetVisitor {
         int oldStackDepth = myStack.size();
         gen(expr);
         if (myStack.size() == oldStackDepth+1) {
-            StackValue value = myStack.pop();
-            value.put(type, v);
+            putTopOfStack(type);
         }
+    }
+
+    private void putTopOfStack(Type type) {
+        StackValue value = myStack.pop();
+        value.put(type, v);
     }
 
     public void genToJVMStack(JetExpression expr) {
@@ -526,8 +533,7 @@ public class ExpressionCodegen extends JetVisitor {
 
     public void returnTopOfStack() {
         if (myStack.size() > 0) {
-            StackValue value = myStack.pop();
-            value.put(returnType, v);
+            putTopOfStack(returnType);
             v.areturn(returnType);
         }
     }
@@ -1354,23 +1360,37 @@ public class ExpressionCodegen extends JetVisitor {
 
     @Override
     public void visitThisExpression(JetThisExpression expression) {
-        thisToStack();
+        generateThis();
     }
 
     public void thisToStack() {
-        if (contextKind == OwnerKind.NAMESPACE) {
-            throw new UnsupportedOperationException("Cannot generate this expression in top level context");
-        }
+        generateThis();
+        putTopOfStack(JetTypeMapper.TYPE_OBJECT);
+    }
 
-        ClassDescriptor contextClass = (ClassDescriptor) contextType;
-        if (contextKind == OwnerKind.IMPLEMENTATION) {
-            v.load(0, JetTypeMapper.jetImplementationType(contextClass));
-        }
-        else if (contextKind == OwnerKind.DELEGATING_IMPLEMENTATION) {
-            v.getfield(typeMapper.jvmName(contextClass, contextKind), "$this", JetTypeMapper.jetInterfaceType(contextClass).getDescriptor());
+    private void generateThis() {
+        if (contextKind == OwnerKind.NAMESPACE) {
+            if (receiverType != null) {
+                myStack.push(StackValue.local(0, typeMapper.mapType(receiverType)));
+            }
+            else {
+                throw new UnsupportedOperationException("Cannot generate this expression in top level context");
+            }
         }
         else {
-            throw new UnsupportedOperationException("Unknown kind: " + contextKind);
+            ClassDescriptor contextClass = (ClassDescriptor) contextType;
+            if (contextKind == OwnerKind.IMPLEMENTATION) {
+                myStack.push(StackValue.local(0, JetTypeMapper.jetImplementationType(contextClass)));
+            }
+            else if (contextKind == OwnerKind.DELEGATING_IMPLEMENTATION) {
+                myStack.push(StackValue.field(JetTypeMapper.jetInterfaceType(contextClass),
+                        typeMapper.jvmName(contextClass, contextKind),
+                        "$this",
+                        false));
+            }
+            else {
+                throw new UnsupportedOperationException("Unknown kind: " + contextKind);
+            }
         }
     }
 

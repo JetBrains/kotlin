@@ -96,7 +96,7 @@ public class PropertyCodegen {
         if (getter != null) {
             if (getter.getBodyExpression() != null) {
                 functionCodegen.generateMethod(getter, kind, mapper.mapGetterSignature(propertyDescriptor),
-                        Collections.<ValueParameterDescriptor>emptyList());
+                        null, Collections.<ValueParameterDescriptor>emptyList());
             }
             else if (!getter.hasModifier(JetTokens.PRIVATE_KEYWORD)) {
                 generateDefaultGetter(p, getter, kind);
@@ -118,7 +118,7 @@ public class PropertyCodegen {
                 final PropertySetterDescriptor setterDescriptor = propertyDescriptor.getSetter();
                 assert setterDescriptor != null;
                 functionCodegen.generateMethod(setter, kind, mapper.mapSetterSignature(propertyDescriptor),
-                        setterDescriptor.getUnsubstitutedValueParameters());
+                        null, setterDescriptor.getUnsubstitutedValueParameters());
             }
             else if (!p.hasModifier(JetTokens.PRIVATE_KEYWORD)) {
                 generateDefaultSetter(p, setter, kind);

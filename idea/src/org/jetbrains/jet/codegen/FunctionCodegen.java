@@ -1,10 +1,12 @@
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
+import org.jetbrains.jet.lang.types.JetType;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -31,12 +33,18 @@ public class FunctionCodegen {
     }
 
     public void gen(JetFunction f, OwnerKind kind) {
+        final JetTypeReference receiverTypeRef = f.getReceiverTypeRef();
+        final JetType receiverType = receiverTypeRef == null ? null : bindingContext.resolveTypeReference(receiverTypeRef);
         Method method = typeMapper.mapSignature(f);
         List<ValueParameterDescriptor> paramDescrs = bindingContext.getFunctionDescriptor(f).getUnsubstitutedValueParameters();
-        generateMethod(f, kind, method, paramDescrs);
+        generateMethod(f, kind, method, receiverType, paramDescrs);
     }
 
-    public void generateMethod(JetDeclarationWithBody f, OwnerKind kind, Method jvmSignature, List<ValueParameterDescriptor> paramDescrs) {
+    public void generateMethod(JetDeclarationWithBody f,
+                               OwnerKind kind,
+                               Method jvmSignature,
+                               @Nullable JetType receiverType,
+                               List<ValueParameterDescriptor> paramDescrs) {
         int flags = Opcodes.ACC_PUBLIC; // TODO.
 
         boolean isStatic = kind == OwnerKind.NAMESPACE;
@@ -55,7 +63,7 @@ public class FunctionCodegen {
             mv.visitCode();
             FrameMap frameMap = new FrameMap();
 
-            if (kind != OwnerKind.NAMESPACE) {
+            if (kind != OwnerKind.NAMESPACE || receiverType != null) {
                 frameMap.enterTemp();  // 0 slot for this
             }
 
@@ -65,7 +73,8 @@ public class FunctionCodegen {
                 frameMap.enter(parameter, argTypes[i].getSize());
             }
 
-            ExpressionCodegen codegen = new ExpressionCodegen(mv, bindingContext, frameMap, typeMapper, jvmSignature.getReturnType(), contextDescriptor, kind);
+            ExpressionCodegen codegen = new ExpressionCodegen(mv, bindingContext, frameMap, typeMapper, receiverType,
+                    jvmSignature.getReturnType(), contextDescriptor, kind);
             if (kind instanceof OwnerKind.DelegateKind) {
                 OwnerKind.DelegateKind dk = (OwnerKind.DelegateKind) kind;
                 InstructionAdapter iv = new InstructionAdapter(mv);

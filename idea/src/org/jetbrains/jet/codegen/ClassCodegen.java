@@ -175,7 +175,7 @@ public class ClassCodegen {
         frameMap.enterTemp();   // this
 
         final InstructionAdapter iv = new InstructionAdapter(mv);
-        ExpressionCodegen codegen = new ExpressionCodegen(mv, bindingContext, frameMap, typeMapper, Type.VOID_TYPE, classDescriptor, kind);
+        ExpressionCodegen codegen = new ExpressionCodegen(mv, bindingContext, frameMap, typeMapper, null, Type.VOID_TYPE, classDescriptor, kind);
 
         String classname = typeMapper.jvmName(classDescriptor, kind);
         final Type classType = Type.getType("L" + classname + ";");

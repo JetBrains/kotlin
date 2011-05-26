@@ -206,10 +206,15 @@ public class JetTypeMapper {
     }
 
     public Method mapSignature(JetFunction f) {
+        final JetTypeReference receiverTypeRef = f.getReceiverTypeRef();
+        final JetType receiverType = receiverTypeRef == null ? null : bindingContext.resolveTypeReference(receiverTypeRef);
         final List<JetParameter> parameters = f.getValueParameters();
-        Type[] parameterTypes = new Type[parameters.size()];
-        for (int i = 0; i < parameters.size(); i++) {
-            parameterTypes[i] = mapType(bindingContext.resolveTypeReference(parameters.get(i).getTypeReference()));
+        List<Type> parameterTypes = new ArrayList<Type>();
+        if (receiverType != null) {
+            parameterTypes.add(mapType(receiverType));
+        }
+        for (JetParameter parameter : parameters) {
+            parameterTypes.add(mapType(bindingContext.resolveTypeReference(parameter.getTypeReference())));
         }
         final JetTypeReference returnTypeRef = f.getReturnTypeRef();
         Type returnType;
@@ -221,7 +226,7 @@ public class JetTypeMapper {
         else {
             returnType = mapType(bindingContext.resolveTypeReference(returnTypeRef));
         }
-        return new Method(f.getName(), returnType, parameterTypes);
+        return new Method(f.getName(), returnType, parameterTypes.toArray(new Type[parameterTypes.size()]));
     }
 
     public Method mapGetterSignature(PropertyDescriptor descriptor) {
