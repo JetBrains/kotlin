@@ -56,7 +56,11 @@ public class NamespaceCodegen {
                 propertyCodegen.gen((JetProperty) declaration, OwnerKind.NAMESPACE);
             }
             else if (declaration instanceof JetFunction) {
-                functionCodegen.gen((JetFunction) declaration, OwnerKind.NAMESPACE);
+                try {
+                    functionCodegen.gen((JetFunction) declaration, OwnerKind.NAMESPACE);
+                } catch (Exception e) {
+                    throw new RuntimeException("Failed to generate function " + declaration.getName(), e);
+                }
             }
             else if (declaration instanceof JetClass) {
                 classCodegen.generate((JetClass) declaration);
