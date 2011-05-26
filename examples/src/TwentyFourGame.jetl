@@ -3,7 +3,40 @@ namespace TwentyFourGame;
 import java.util.*
 import java.io.*
 
-fun evaluate(expr: String?, numbers: ArrayList<Int>) = 0
+fun takeFirst(expr: StringBuilder): Char {
+  val c = expr.charAt(0)
+  expr.deleteCharAt(0)
+  return c
+}
+
+fun evaluateArg(expr: StringBuilder, numbers: ArrayList<Int>): Int {
+  if (expr.length() == 0) throw new Exception("Syntax error: Character expected");
+  val c = takeFirst(expr)
+  if (c >= '0' && c <= '9') {
+    val n = c - '0'
+    if (!numbers.contains(n)) throw new Exception("You used incorrect number: " + n)
+    numbers.remove(n)
+    return n
+  }
+  throw new Exception("Syntax error: Unrecognized character " + c)
+}
+
+fun evaluateAdd(expr: StringBuilder, numbers: ArrayList<Int>): Int {
+  val lhs = evaluateArg(expr, numbers)
+  if (expr.length() > 0) {
+
+  }
+  return lhs
+}
+
+fun evaluate(expr: StringBuilder, numbers: ArrayList<Int>): Int {
+  val lhs = evaluateAdd(expr, numbers)
+  if (expr.length() > 0) {
+    val c = expr.charAt(0)
+    expr.deleteCharAt(0)
+  }
+  return lhs
+}
 
 fun main(args: Array<String>) {
   System.out?.println("24 game")
@@ -19,7 +52,7 @@ fun main(args: Array<String>) {
   System.out?.println("Your numbers: " + prompt)
   System.out?.println("Enter your expression:")
   val reader = new BufferedReader(new InputStreamReader(System.`in`))
-  val expr = reader.readLine()
+  val expr = new StringBuilder(reader.readLine())
   try {
     val result = evaluate(expr, numbers)
     if (result != 24)
