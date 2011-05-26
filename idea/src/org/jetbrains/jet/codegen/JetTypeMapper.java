@@ -3,7 +3,6 @@ package org.jetbrains.jet.codegen;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import jet.typeinfo.TypeInfo;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -33,7 +32,11 @@ public class JetTypeMapper {
     }
 
     static String jvmName(PsiClass psiClass) {
-        return psiClass.getQualifiedName().replace(".", "/");
+        final String qName = psiClass.getQualifiedName();
+        if (qName == null) {
+            throw new UnsupportedOperationException("can't evaluate JVM name for anonymous class " + psiClass);
+        }
+        return qName.replace(".", "/");
     }
 
     public String jvmName(ClassDescriptor jetClass, OwnerKind kind) {

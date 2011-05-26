@@ -385,4 +385,12 @@ public class NamespaceGenTest extends CodegenTestCase {
         assertTrue(result.contains(10));
         assertFalse(result.contains(11));
     }
+
+    public void testSubstituteJavaMethodTypeParameters() throws Exception {
+        loadText("import java.util.*; fun foo(l: ArrayList<Int>) { l.add(10) }");
+        final Method main = generateFunction();
+        final ArrayList<Integer> l = new ArrayList<Integer>();
+        main.invoke(null, l);
+        assertEquals(10, l.get(0).intValue());
+    }
 }

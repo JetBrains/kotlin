@@ -796,6 +796,13 @@ public class ExpressionCodegen extends JetVisitor {
         }
         if (type instanceof PsiClassType) {
             PsiClass psiClass = ((PsiClassType) type).resolve();
+            if (psiClass instanceof PsiTypeParameter) {
+                final PsiClassType[] extendsListTypes = psiClass.getExtendsListTypes();
+                if (extendsListTypes.length > 0) {
+                    throw new UnsupportedOperationException("should return common supertype");
+                }
+                return OBJECT_TYPE;
+            }
             if (psiClass == null) {
                 throw new UnsupportedOperationException("unresolved PsiClassType: " + type);
             }
