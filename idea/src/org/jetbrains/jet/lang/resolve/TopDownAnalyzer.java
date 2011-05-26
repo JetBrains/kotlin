@@ -12,7 +12,8 @@ import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.JetTypeInferrer;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.*;
@@ -133,7 +134,39 @@ public class TopDownAnalyzer {
                                 }
                             }
                         } else {
-                            throw new UnsupportedOperationException();
+                            ClassifierDescriptor classifierDescriptor = null;
+                            JetSimpleNameExpression referenceExpression = null;
+
+                            JetExpression importedReference = importDirective.getImportedReference();
+                            if (importedReference instanceof JetDotQualifiedExpression) {
+                                JetDotQualifiedExpression reference = (JetDotQualifiedExpression) importedReference;
+                                JetType type = semanticServices.getTypeInferrer(trace, JetFlowInformationProvider.THROW_EXCEPTION).getTypeWithNamespaces(namespaceScope, reference.getReceiverExpression(), false);
+                                JetExpression selectorExpression = reference.getSelectorExpression();
+                                if (selectorExpression != null) {
+                                    referenceExpression = (JetSimpleNameExpression) selectorExpression;
+                                    String referencedName = referenceExpression.getReferencedName();
+                                    if (type != null && referencedName != null) {
+                                        classifierDescriptor = type.getMemberScope().getClassifier(referencedName);
+                                    }
+                                }
+                            }
+                            else {
+                                assert importedReference instanceof JetSimpleNameExpression;
+                                referenceExpression = (JetSimpleNameExpression) importedReference;
+
+                                String referencedName = referenceExpression.getReferencedName();
+                                if (referencedName != null) {
+                                    classifierDescriptor = outerScope.getClassifier(referencedName);
+                                }
+                            }
+
+                            if (classifierDescriptor != null) {
+                                trace.recordReferenceResolution(referenceExpression, classifierDescriptor);
+
+                                String aliasName = importDirective.getAliasName();
+                                String importedClassifierName = aliasName != null ? aliasName : classifierDescriptor.getName();
+                                namespaceScope.addClassifierAlias(importedClassifierName, classifierDescriptor);
+                            }
                         }
                     }
 

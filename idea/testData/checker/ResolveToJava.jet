@@ -2,6 +2,9 @@ import java.*
 import util.*
 import <error>utils</error>.*
 
+import java.io.PrintStream
+import java.lang.Comparable as Com
+
 val l : List<in Int> = new ArrayList<Int>()
 
 fun test(l : java.util.List<Int>) {
@@ -34,4 +37,9 @@ fun test(l : java.util.List<Int>) {
     System.out?.println(e.getMessage())
   }
 
+  new PrintStream("sdf")
+
+  val c : Com<Int>? = null
+
+  c : java.lang.Comparable<Int>?
 }
