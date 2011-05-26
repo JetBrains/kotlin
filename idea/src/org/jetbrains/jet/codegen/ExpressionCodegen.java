@@ -682,7 +682,24 @@ public class ExpressionCodegen extends JetVisitor {
                     }
                 }
 
+
                 PsiElement declarationPsiElement = bindingContext.getDeclarationPsiElement(funDescriptor);
+                if (declarationPsiElement == null && isClass(functionParent, "String")) {
+                    final Project project = expression.getProject();
+                    PsiClass jlString = JavaPsiFacade.getInstance(project).findClass("java.lang.String",
+                            ProjectScope.getAllScope(project));
+                    // TODO better overload mapping
+                    final PsiMethod[] methods = jlString.findMethodsByName(funDescriptor.getName(), false);
+                    final int arity = ((FunctionDescriptor) funDescriptor).getUnsubstitutedValueParameters().size();
+                    for (PsiMethod method : methods) {
+                        if (method.getParameterList().getParametersCount() == arity) {
+                            declarationPsiElement = method;
+                        }
+                    }
+                }
+                if (declarationPsiElement == null) {
+                    throw new UnsupportedOperationException("couldn't find declaration for " + funDescriptor);
+                }
                 Method methodDescriptor;
                 if (declarationPsiElement instanceof PsiMethod) {
                     PsiMethod psiMethod = (PsiMethod) declarationPsiElement;
@@ -1629,7 +1646,10 @@ public class ExpressionCodegen extends JetVisitor {
             v.athrow();
         }
         v.mark(end);
-        myStack.push(StackValue.onStack(expressionType(expression)));
+        final Type type = expressionType(expression);
+        if (type.getSort() != Type.VOID) {
+            myStack.push(StackValue.onStack(type));
+        }
 
         myMap.leaveTemp(subjectType.getSize());
     }

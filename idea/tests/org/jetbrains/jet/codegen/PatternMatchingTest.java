@@ -55,4 +55,10 @@ public class PatternMatchingTest extends CodegenTestCase {
         Method foo = generateFunction();
         assertEquals("something", foo.invoke(null, ""));
     }
+
+    public void testNoReturnType() throws Exception {
+        loadText("fun foo(x: String) = when(x) { is * => return \"x\" }");
+        Method foo = generateFunction();
+        assertEquals("x", foo.invoke(null, ""));
+    }
 }
