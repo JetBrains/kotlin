@@ -51,6 +51,7 @@ public class ExpressionCodegen extends JetVisitor {
     private static final String INT_RANGE_CONSTRUCTOR_DESCRIPTOR = "(II)V";
 
     private static final Type OBJECT_TYPE = Type.getType(Object.class);
+    private static final Type INTEGER_TYPE = Type.getType(Integer.class);
     private static final Type ITERATOR_TYPE = Type.getType(Iterator.class);
     private static final Type THROWABLE_TYPE = Type.getType(Throwable.class);
 
@@ -1026,7 +1027,7 @@ public class ExpressionCodegen extends JetVisitor {
 
     private void generateRange(JetBinaryExpression expression) {
         final Type leftType = expressionType(expression.getLeft());
-        if (isIntPrimitive(leftType)) {
+        if (JetTypeMapper.isIntPrimitive(leftType)) {
             v.anew(INT_RANGE_TYPE);
             v.dup();
             gen(expression.getLeft(), Type.INT_TYPE);
@@ -1058,11 +1059,7 @@ public class ExpressionCodegen extends JetVisitor {
     }
 
     private static boolean isNumberPrimitive(Type type) {
-        return isIntPrimitive(type) || type == Type.FLOAT_TYPE || type == Type.DOUBLE_TYPE || type == Type.LONG_TYPE;
-    }
-
-    private static boolean isIntPrimitive(Type type) {
-        return type == Type.INT_TYPE || type == Type.SHORT_TYPE || type == Type.BYTE_TYPE || type == Type.CHAR_TYPE;
+        return JetTypeMapper.isIntPrimitive(type) || type == Type.FLOAT_TYPE || type == Type.DOUBLE_TYPE || type == Type.LONG_TYPE;
     }
 
     private static int opcodeForMethod(final String name) {
@@ -1242,7 +1239,7 @@ public class ExpressionCodegen extends JetVisitor {
         int increment = op.getName().equals("inc") ? 1 : -1;
         if (operand instanceof JetReferenceExpression) {
             final int index = indexOfLocal((JetReferenceExpression) operand);
-            if (index >= 0 && isIntPrimitive(asmType)) {
+            if (index >= 0 && JetTypeMapper.isIntPrimitive(asmType)) {
                 v.iinc(index, increment);
                 return StackValue.local(index, asmType);
             }
@@ -1617,7 +1614,7 @@ public class ExpressionCodegen extends JetVisitor {
                 else if (condition instanceof JetWhenConditionInRange) {
                     JetExpression range = ((JetWhenConditionInRange) condition).getRangeExpression();
                     gen(range, RANGE_TYPE);
-                    new StackValue.Local(subjectLocal, subjectType).put(OBJECT_TYPE, v);
+                    new StackValue.Local(subjectLocal, subjectType).put(INTEGER_TYPE, v);
                     v.invokeinterface(CLASS_RANGE, "contains", "(Ljava/lang/Comparable;)Z");
                     myStack.push(new StackValue.OnStack(Type.BOOLEAN_TYPE));
                 }

@@ -155,7 +155,12 @@ public abstract class CodegenTestCase extends LightCodeInsightFixtureTestCase {
 
     protected Method generateFunction() {
         Class aClass = generateNamespaceClass();
-        return aClass.getMethods()[0];
+        try {
+            return aClass.getMethods()[0];
+        } catch (Error e) {
+            System.out.println(generateToText());
+            throw e;
+        }
     }
 
     protected Method generateFunction(String name) {

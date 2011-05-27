@@ -42,6 +42,14 @@ public class PatternMatchingTest extends CodegenTestCase {
         assertEquals("something", foo.invoke(null, 19));
     }
 
+    public void testRangeChar() throws Exception {
+        loadFile();
+        System.out.println(generateToText());
+        Method foo = generateFunction();
+        assertEquals("digit", foo.invoke(null, '0'));
+        assertEquals("something", foo.invoke(null, 'A'));
+    }
+
     public void testWildcardPattern() throws Exception {
         loadText("fun foo(x: String) = when(x) { is * => \"something\" }");
         Method foo = generateFunction();

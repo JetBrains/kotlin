@@ -75,8 +75,9 @@ public abstract class StackValue {
         return new Property(name, fieldOwner, interfaceOwner, getter, setter, isStatic, type);
     }
 
-    private static void box(final Type type, InstructionAdapter v) {
-        if (type == Type.INT_TYPE) {
+    private static void box(final Type type, final Type toType, InstructionAdapter v) {
+        // TODO handle toType correctly
+        if (type == Type.INT_TYPE || (JetTypeMapper.isIntPrimitive(type) && toType.getInternalName().equals("java/lang/Integer"))) {
             v.invokestatic("java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;");
         }
         else if (type == Type.BOOLEAN_TYPE) {
@@ -131,7 +132,7 @@ public abstract class StackValue {
 
     protected void coerce(Type type, InstructionAdapter v) {
         if (type.getSort() == Type.OBJECT) {
-            box(this.type, v);
+            box(this.type, type, v);
         }
         else if (this.type.getSort() == Type.OBJECT && type.getSort() <= Type.DOUBLE) {
             unbox(type, v);

@@ -40,6 +40,10 @@ public class JetTypeMapper {
         return qName.replace(".", "/");
     }
 
+    static boolean isIntPrimitive(Type type) {
+        return type == Type.INT_TYPE || type == Type.SHORT_TYPE || type == Type.BYTE_TYPE || type == Type.CHAR_TYPE;
+    }
+
     public String jvmName(ClassDescriptor jetClass, OwnerKind kind) {
         PsiElement declaration = bindingContext.getDeclarationPsiElement(jetClass);
         if (declaration instanceof PsiClass) {
