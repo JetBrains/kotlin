@@ -1407,9 +1407,9 @@ public class JetTypeInferrer {
                 else {
                     result = selectorReturnType;
                 }
-                if (selectorExpression != null && result != null) {
-                    trace.recordExpressionType(selectorExpression, result);
-                }
+//                if (selectorExpression != null && result != null) {
+//                    trace.recordExpressionType(selectorExpression, result);
+//                }
             }
         }
 

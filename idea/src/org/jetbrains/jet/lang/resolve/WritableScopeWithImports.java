@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionGroup;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
@@ -19,9 +20,12 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
 
     @Nullable
     private List<JetScope> imports;
+    private WritableScope currentIndividualImportScope;
+    protected final ErrorHandler errorHandler;
 
-    public WritableScopeWithImports(@NotNull JetScope scope) {
+    public WritableScopeWithImports(@NotNull JetScope scope, @NotNull ErrorHandler errorHandler) {
         super(scope);
+        this.errorHandler = errorHandler;
     }
 
     public WritableScopeWithImports setDebugName(@NotNull String debugName) {
@@ -41,6 +45,7 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
     @Override
     public void importScope(@NotNull JetScope imported) {
         getImports().add(0, imported);
+        currentIndividualImportScope = null;
     }
 
     @Override
@@ -89,8 +94,18 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
         return null;
     }
 
+    public void importClassifierAlias(@NotNull String importedClassifierName, @NotNull ClassifierDescriptor classifierDescriptor) {
+        if (currentIndividualImportScope == null) {
+            WritableScopeImpl writableScope = new WritableScopeImpl(JetScope.EMPTY, getContainingDeclaration(), ErrorHandler.DO_NOTHING);
+            importScope(writableScope);
+            currentIndividualImportScope = writableScope;
+        }
+        currentIndividualImportScope.addClassifierAlias(importedClassifierName, classifierDescriptor);
+    }
+
     @Override
     public String toString() {
         return debugName + " for " + getContainingDeclaration();
     }
+
 }

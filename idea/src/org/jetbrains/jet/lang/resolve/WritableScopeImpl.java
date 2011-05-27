@@ -13,8 +13,6 @@ import java.util.*;
  * @author abreslav
  */
 public class WritableScopeImpl extends WritableScopeWithImports {
-    @NotNull
-    private final ErrorHandler errorHandler;
 
     @NotNull
     private final DeclarationDescriptor ownerDeclarationDescriptor;
@@ -37,9 +35,8 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     private JetType thisType;
 
     public WritableScopeImpl(@NotNull JetScope scope, @NotNull DeclarationDescriptor owner, @NotNull ErrorHandler errorHandler) {
-        super(scope);
+        super(scope, errorHandler);
         this.ownerDeclarationDescriptor = owner;
-        this.errorHandler = errorHandler;
     }
 
     @NotNull

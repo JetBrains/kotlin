@@ -43,7 +43,7 @@ fun test(l : java.util.List<Int>) {
   c : java.lang.Comparable<Int>?
 
 //  Collections.sort<Integer>(new ArrayList<Integer>())
-  //new xxx.error>Class/error>()
+  new xxx.<error>Class</error>()
 }
 
 
