@@ -579,11 +579,12 @@ public class JetTypeInferrer {
             trace.recordReferenceResolution(referenceExpression, declarationDescriptor);
             // TODO : more helpful message
             JetArgumentList argumentList = call.getValueArgumentList();
+            final String errorMessage = "Cannot find a constructor overload for class " + classDescriptor.getName() + " with these arguments";
             if (argumentList != null) {
-                trace.getErrorHandler().genericError(argumentList.getNode(), "Cannot find an overload for these arguments");
+                trace.getErrorHandler().genericError(argumentList.getNode(), errorMessage);
             }
             else {
-                trace.getErrorHandler().genericError(call.asElement().getNode(), "Cannot find an overload for these arguments");
+                trace.getErrorHandler().genericError(call.asElement().getNode(), errorMessage);
             }
             constructorReturnedType = receiverType;
         }
