@@ -3,39 +3,64 @@ namespace TwentyFourGame;
 import java.util.*
 import java.io.*
 
-fun takeFirst(expr: StringBuilder): Char {
-  val c = expr.charAt(0)
-  expr.deleteCharAt(0)
+fun StringBuilder.takeFirst(): Char {
+  if (this.length() == 0) return '\0'
+  val c = this.charAt(0)
+  this.deleteCharAt(0)
   return c
 }
-
-fun evaluateArg(expr: StringBuilder, numbers: ArrayList<Int>): Int {
-  if (expr.length() == 0) throw new Exception("Syntax error: Character expected");
-  val c = takeFirst(expr)
-  if (c >= '0' && c <= '9') {
-    val n = c - '0'
-    if (!numbers.contains(n)) throw new Exception("You used incorrect number: " + n)
-    numbers.remove(n)
-    return n
+class Evaluator(val expr: StringBuilder, val numbers: ArrayList<Int>) {
+  fun checkFirst(expect: Char): Boolean {
+    if (expr.length() > 0 && expr.charAt(0) == expect) {
+      expr.deleteCharAt(0)
+      return true
+    }
+    return false
   }
-  throw new Exception("Syntax error: Unrecognized character " + c)
-}
 
-fun evaluateAdd(expr: StringBuilder, numbers: ArrayList<Int>): Int {
-  val lhs = evaluateArg(expr, numbers)
-  if (expr.length() > 0) {
-
+  fun evaluateArg(): Int {
+    val c = expr.takeFirst()
+    when(c) {
+      in '0'..'9' => {
+        val n = c - '0'
+        val index = numbers.indexOf(n)
+        if (index < 0) throw new Exception("You used incorrect number: " + n)
+        numbers.remove(index) // gotcha: conflict between remove(Object) and remove(int)
+        return n
+      }
+      '(' => {
+        val result = evaluate()
+        if (expr.takeFirst() != ')') throw new Exception(") expected")
+        return result
+      }
+      '\0' => throw new Exception("Syntax error: Character expected")
+      else => throw new Exception("Syntax error: Unrecognized character " + c)
+    }
   }
-  return lhs
-}
 
-fun evaluate(expr: StringBuilder, numbers: ArrayList<Int>): Int {
-  val lhs = evaluateAdd(expr, numbers)
-  if (expr.length() > 0) {
-    val c = expr.charAt(0)
-    expr.deleteCharAt(0)
+  fun evaluateMult(): Int {
+    val lhs = evaluateArg()
+    if (checkFirst('*'))
+      return lhs * evaluateMult()
+    if (checkFirst('/'))
+      return lhs / evaluateMult()
+    return lhs
   }
-  return lhs
+
+  fun evaluate(): Int {
+    val lhs = evaluateMult()
+    if (checkFirst('+'))
+      return lhs + evaluate()
+    if (checkFirst('-'))
+      return lhs - evaluate()
+    return lhs
+  }
+
+  fun evaluateAll(): Int {
+    val result = evaluate()
+    if (expr.length() > 0) throw new Exception("unexpected text: " + expr)
+    return result
+  }
 }
 
 fun main(args: Array<String>) {
@@ -54,7 +79,7 @@ fun main(args: Array<String>) {
   val reader = new BufferedReader(new InputStreamReader(System.`in`))
   val expr = new StringBuilder(reader.readLine())
   try {
-    val result = evaluate(expr, numbers)
+    val result = new Evaluator(expr, numbers).evaluateAll()
     if (result != 24)
       System.out?.println("Sorry, that's " + result)
     else
