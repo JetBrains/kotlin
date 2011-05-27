@@ -350,7 +350,8 @@ JetFile: ArrayList.jet
                           PsiElement(IDENTIFIER)('ArrayList')
                         PsiElement(DOT)('.')
                         THIS_EXPRESSION
-                          PsiElement(this)('this')
+                          REFERENCE_EXPRESSION
+                            PsiElement(this)('this')
                       PsiElement(DOT)('.')
                       CALL_EXPRESSION
                         REFERENCE_EXPRESSION

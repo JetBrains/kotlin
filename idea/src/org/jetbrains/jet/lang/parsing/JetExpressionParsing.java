@@ -1520,7 +1520,10 @@ public class JetExpressionParsing extends AbstractJetParsing {
     private void parseThisExpression() {
         assert _at(THIS_KEYWORD);
         PsiBuilder.Marker mark = mark();
+
+        PsiBuilder.Marker thisReference = mark();
         advance(); // THIS_KEYWORD
+        thisReference.done(REFERENCE_EXPRESSION);
 
         parseLabel();
 

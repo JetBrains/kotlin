@@ -2,8 +2,13 @@ namespace qualified_this {
     ~qtA~class A(val a:Int) {
 
       ~qtB~class B() {
-        val x = this`qtB`@B
-        val y = this`qtA`@A
+        val x = `qtB`this`qtB`@B
+        val y = `qtA`this`qtA`@A
+        val z = `qtB`this
+        ~xx~val Int.xx = `xx`this : Int
+        ~xx()~fun Int.xx() {
+            `xx()`this : Int
+        }
       }
     }
 }

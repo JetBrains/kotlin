@@ -3,6 +3,7 @@ package org.jetbrains.jet.codegen;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import jet.typeinfo.TypeInfo;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -125,7 +126,7 @@ public class JetTypeMapper {
         return mapType(jetType, OwnerKind.INTERFACE);
     }
 
-    public Type mapType(final JetType jetType, OwnerKind kind) {
+    public Type mapType(@NotNull final JetType jetType, OwnerKind kind) {
         if (jetType.equals(JetStandardClasses.getUnitType()) || jetType.equals(JetStandardClasses.getNothingType())) {
             return Type.VOID_TYPE;
         }

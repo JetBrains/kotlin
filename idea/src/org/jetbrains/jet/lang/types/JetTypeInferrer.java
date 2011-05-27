@@ -933,28 +933,34 @@ public class JetTypeInferrer {
             if (labelName != null) {
                 Collection<DeclarationDescriptor> declarationsByLabel = scope.getDeclarationsByLabel(labelName);
                 int size = declarationsByLabel.size();
+                final JetSimpleNameExpression targetLabel = expression.getTargetLabel();
+                assert targetLabel != null;
                 if (size == 1) {
                     DeclarationDescriptor declarationDescriptor = declarationsByLabel.iterator().next();
                     if (declarationDescriptor instanceof ClassDescriptor) {
                         ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
                         thisType = classDescriptor.getDefaultType();
-                        trace.recordReferenceResolution(expression.getTargetLabel(), classDescriptor);
+                        trace.recordReferenceResolution(targetLabel, classDescriptor);
+                        trace.recordReferenceResolution(expression.getThisReference(), classDescriptor);
                     }
                     else {
                         throw new UnsupportedOperationException(); // TODO
                     }
                 }
                 else if (size == 0) {
-                    trace.getErrorHandler().unresolvedReference(expression.getTargetLabel());
+                    trace.getErrorHandler().unresolvedReference(targetLabel);
                 }
                 else {
-                    JetSimpleNameExpression labelElement = expression.getTargetLabel();
-                    assert labelElement != null;
-                    trace.getErrorHandler().genericError(labelElement.getNode(), "Ambiguous label");
+                    trace.getErrorHandler().genericError(targetLabel.getNode(), "Ambiguous label");
                 }
             }
             else {
                 thisType = scope.getThisType();
+
+                DeclarationDescriptor declarationDescriptorForUnqualifiedThis = scope.getDeclarationDescriptorForUnqualifiedThis();
+                if (declarationDescriptorForUnqualifiedThis != null) {
+                    trace.recordReferenceResolution(expression.getThisReference(), declarationDescriptorForUnqualifiedThis);
+                }
             }
 
             if (thisType != null) {
@@ -988,6 +994,9 @@ public class JetTypeInferrer {
                         }
                     } else {
                         result = thisType;
+                    }
+                    if (result != null) {
+                        trace.recordExpressionType(expression.getThisReference(), result);
                     }
                 }
             }
@@ -1407,9 +1416,9 @@ public class JetTypeInferrer {
                 else {
                     result = selectorReturnType;
                 }
-//                if (selectorExpression != null && result != null) {
-//                    trace.recordExpressionType(selectorExpression, result);
-//                }
+                if (selectorExpression != null && result != null) {
+                    trace.recordExpressionType(selectorExpression, result);
+                }
             }
         }
 

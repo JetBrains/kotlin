@@ -48,6 +48,11 @@ public class JavaClassMembersScope implements JetScope {
     }
 
     @Override
+    public DeclarationDescriptor getDeclarationDescriptorForUnqualifiedThis() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public ClassifierDescriptor getClassifier(@NotNull String name) {
         ClassifierDescriptor classifierDescriptor = classifiers.get(name);
         if (classifierDescriptor == null) {

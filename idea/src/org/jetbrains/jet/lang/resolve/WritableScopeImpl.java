@@ -45,6 +45,14 @@ public class WritableScopeImpl extends WritableScopeWithImports {
         return ownerDeclarationDescriptor;
     }
 
+    @Override
+    public DeclarationDescriptor getDeclarationDescriptorForUnqualifiedThis() {
+        if (DescriptorUtils.definesItsOwnThis(ownerDeclarationDescriptor)) {
+            return ownerDeclarationDescriptor;
+        }
+        return super.getDeclarationDescriptorForUnqualifiedThis();
+    }
+
     @NotNull
     private Map<String, List<DeclarationDescriptor>> getLabelsToDescriptors() {
         if (labelsToDescriptors == null) {

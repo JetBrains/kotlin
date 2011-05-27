@@ -174,7 +174,6 @@ public class ClassDescriptorResolver {
         WritableScope innerScope = new WritableScopeImpl(scope, functionDescriptor, trace.getErrorHandler());
         innerScope.addLabeledDeclaration(functionDescriptor);
 
-
         List<TypeParameterDescriptor> typeParameterDescriptors = resolveTypeParameters(functionDescriptor, innerScope, function.getTypeParameters());
 
         JetType receiverType = null;

@@ -92,4 +92,19 @@ public class ChainedScope implements JetScope {
         }
         return null;
     }
+
+    @Override
+    public DeclarationDescriptor getDeclarationDescriptorForUnqualifiedThis() {
+        if (DescriptorUtils.definesItsOwnThis(getContainingDeclaration())) {
+            return getContainingDeclaration();
+        }
+
+        for (JetScope jetScope : scopeChain) {
+            DeclarationDescriptor containingDeclaration = jetScope.getContainingDeclaration();
+            if (DescriptorUtils.definesItsOwnThis(containingDeclaration)) {
+                return containingDeclaration;
+            }
+        }
+        return null;
+    }
 }

@@ -15,7 +15,7 @@ import org.jetbrains.jet.lexer.JetTokens;
  * @author max
  */
 public class JetSimpleNameExpression extends JetReferenceExpression {
-    public static final TokenSet REFERENCE_TOKENS = TokenSet.orSet(JetTokens.LABELS, TokenSet.create(JetTokens.IDENTIFIER, JetTokens.FIELD_IDENTIFIER));
+    public static final TokenSet REFERENCE_TOKENS = TokenSet.orSet(JetTokens.LABELS, TokenSet.create(JetTokens.IDENTIFIER, JetTokens.FIELD_IDENTIFIER, JetTokens.THIS_KEYWORD));
 
     public JetSimpleNameExpression(@NotNull ASTNode node) {
         super(node);

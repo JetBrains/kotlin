@@ -768,7 +768,8 @@ JetFile: Properties.jet
         BINARY_EXPRESSION
           DOT_QUALIFIED_EXPRESSION
             THIS_EXPRESSION
-              PsiElement(this)('this')
+              REFERENCE_EXPRESSION
+                PsiElement(this)('this')
             PsiElement(DOT)('.')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('size')

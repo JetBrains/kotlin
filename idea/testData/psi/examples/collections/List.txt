@@ -202,7 +202,8 @@ JetFile: List.jet
             PsiWhiteSpace(' ')
             BINARY_EXPRESSION
               THIS_EXPRESSION
-                PsiElement(this)('this')
+                REFERENCE_EXPRESSION
+                  PsiElement(this)('this')
               PsiWhiteSpace(' ')
               OPERATION_REFERENCE
                 PsiElement(EQEQ)('==')
@@ -256,7 +257,8 @@ JetFile: List.jet
                     PsiElement(IDENTIFIER)('List')
                   PsiElement(DOT)('.')
                   THIS_EXPRESSION
-                    PsiElement(this)('this')
+                    REFERENCE_EXPRESSION
+                      PsiElement(this)('this')
               PsiWhiteSpace('\n\n    ')
               PROPERTY
                 MODIFIER_LIST

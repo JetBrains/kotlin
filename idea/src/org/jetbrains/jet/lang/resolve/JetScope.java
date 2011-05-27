@@ -46,4 +46,7 @@ public interface JetScope {
      */
     @Nullable
     PropertyDescriptor getPropertyByFieldReference(@NotNull String fieldName);
+
+    @Nullable
+    DeclarationDescriptor getDeclarationDescriptorForUnqualifiedThis();
 }

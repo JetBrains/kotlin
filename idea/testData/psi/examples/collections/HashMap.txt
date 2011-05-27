@@ -44,7 +44,8 @@ JetFile: HashMap.jet
               PsiElement(LPAR)('(')
               BINARY_WITH_TYPE
                 THIS_EXPRESSION
-                  PsiElement(this)('this')
+                  REFERENCE_EXPRESSION
+                    PsiElement(this)('this')
                 PsiWhiteSpace(' ')
                 OPERATION_REFERENCE
                   PsiElement(as)('as')
@@ -138,7 +139,8 @@ JetFile: HashMap.jet
                 PsiElement(LPAR)('(')
                 BINARY_WITH_TYPE
                   THIS_EXPRESSION
-                    PsiElement(this)('this')
+                    REFERENCE_EXPRESSION
+                      PsiElement(this)('this')
                   PsiWhiteSpace(' ')
                   OPERATION_REFERENCE
                     PsiElement(as)('as')
@@ -373,7 +375,8 @@ JetFile: HashMap.jet
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
             THIS_EXPRESSION
-              PsiElement(this)('this')
+              REFERENCE_EXPRESSION
+                PsiElement(this)('this')
           PsiElement(RPAR)(')')
     PsiWhiteSpace('\n\n')
     CLASS

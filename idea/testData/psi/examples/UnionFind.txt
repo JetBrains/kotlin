@@ -388,7 +388,8 @@ JetFile: UnionFind.jet
         BINARY_EXPRESSION
           BINARY_EXPRESSION
             THIS_EXPRESSION
-              PsiElement(this)('this')
+              REFERENCE_EXPRESSION
+                PsiElement(this)('this')
             PsiWhiteSpace(' ')
             OPERATION_REFERENCE
               PsiElement(PERC)('%')
