@@ -261,7 +261,8 @@ JetFile: SimpleExpressions.jet
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
           THIS_EXPRESSION
-            PsiElement(this)('this')
+            REFERENCE_EXPRESSION
+              PsiElement(this)('this')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n    ')
         VALUE_PARAMETER
@@ -277,7 +278,8 @@ JetFile: SimpleExpressions.jet
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
           THIS_EXPRESSION
-            PsiElement(this)('this')
+            REFERENCE_EXPRESSION
+              PsiElement(this)('this')
             PsiElement(LT)('<')
             TYPE_REFERENCE
               USER_TYPE

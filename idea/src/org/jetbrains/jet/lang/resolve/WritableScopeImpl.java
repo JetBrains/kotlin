@@ -13,8 +13,6 @@ import java.util.*;
  * @author abreslav
  */
 public class WritableScopeImpl extends WritableScopeWithImports {
-    @NotNull
-    private final ErrorHandler errorHandler;
 
     @NotNull
     private final DeclarationDescriptor ownerDeclarationDescriptor;
@@ -37,15 +35,22 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     private JetType thisType;
 
     public WritableScopeImpl(@NotNull JetScope scope, @NotNull DeclarationDescriptor owner, @NotNull ErrorHandler errorHandler) {
-        super(scope);
+        super(scope, errorHandler);
         this.ownerDeclarationDescriptor = owner;
-        this.errorHandler = errorHandler;
     }
 
     @NotNull
     @Override
     public DeclarationDescriptor getContainingDeclaration() {
         return ownerDeclarationDescriptor;
+    }
+
+    @Override
+    public DeclarationDescriptor getDeclarationDescriptorForUnqualifiedThis() {
+        if (DescriptorUtils.definesItsOwnThis(ownerDeclarationDescriptor)) {
+            return ownerDeclarationDescriptor;
+        }
+        return super.getDeclarationDescriptorForUnqualifiedThis();
     }
 
     @NotNull
@@ -59,8 +64,8 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     @NotNull
     @Override
     public Collection<DeclarationDescriptor> getDeclarationsByLabel(@NotNull String labelName) {
-        Map<String, List<DeclarationDescriptor>> labelsToDescriptors = getLabelsToDescriptors();
         Collection<DeclarationDescriptor> superResult = super.getDeclarationsByLabel(labelName);
+        Map<String, List<DeclarationDescriptor>> labelsToDescriptors = getLabelsToDescriptors();
         List<DeclarationDescriptor> declarationDescriptors = labelsToDescriptors.get(labelName);
         if (declarationDescriptors == null) {
             return superResult;

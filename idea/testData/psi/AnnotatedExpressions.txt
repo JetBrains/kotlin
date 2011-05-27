@@ -38,6 +38,7 @@ JetFile: AnnotatedExpressions.jet
             PsiElement(RBRACKET)(']')
           PsiWhiteSpace(' ')
           THIS_EXPRESSION
-            PsiElement(this)('this')
+            REFERENCE_EXPRESSION
+              PsiElement(this)('this')
         PsiWhiteSpace('\n')
         PsiElement(RBRACE)('}')

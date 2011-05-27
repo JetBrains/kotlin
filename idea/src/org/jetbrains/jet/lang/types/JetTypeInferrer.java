@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.types;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
@@ -465,19 +466,30 @@ public class JetTypeInferrer {
             if (resolutionResult.isSuccess()) {
                 final FunctionDescriptor functionDescriptor = resolutionResult.getFunctionDescriptor();
 
-                List<TypeParameterDescriptor> typeParameters = functionDescriptor.getOriginal().getTypeParameters();
-                for (int i = 0, typeParametersSize = typeParameters.size(); i < typeParametersSize; i++) {
-                    TypeParameterDescriptor typeParameterDescriptor = typeParameters.get(i);
-                    final JetType typeArgument = typeArguments.get(i);
-                    if (!semanticServices.getTypeChecker().isSubtypeOf(typeArgument, typeParameterDescriptor.getBoundsAsType())) {
-                        trace.getErrorHandler().genericError(jetTypeArguments.get(i).getNode(), "Bound of the type parameter " + DescriptorRenderer.TEXT.render(typeParameterDescriptor) + " is not respected by the type " + typeArgument);
-                    }
-
-                }
+                checkGenericBoundsInAFunctionCall(jetTypeArguments, typeArguments, functionDescriptor);
                 return functionDescriptor.getUnsubstitutedReturnType();
             }
         }
         return null;
+    }
+
+    private void checkGenericBoundsInAFunctionCall(List<JetTypeProjection> jetTypeArguments, List<JetType> typeArguments, FunctionDescriptor functionDescriptor) {
+        Map<TypeConstructor, TypeProjection> context = Maps.newHashMap();
+
+        List<TypeParameterDescriptor> typeParameters = functionDescriptor.getOriginal().getTypeParameters();
+        for (int i = 0, typeParametersSize = typeParameters.size(); i < typeParametersSize; i++) {
+            TypeParameterDescriptor typeParameter = typeParameters.get(i);
+            JetType typeArgument = typeArguments.get(i);
+            context.put(typeParameter.getTypeConstructor(), new TypeProjection(typeArgument));
+        }
+        TypeSubstitutor substitutor = TypeSubstitutor.create(context);
+        for (int i = 0, typeParametersSize = typeParameters.size(); i < typeParametersSize; i++) {
+            TypeParameterDescriptor typeParameterDescriptor = typeParameters.get(i);
+            JetType typeArgument = typeArguments.get(i);
+            JetTypeReference typeReference = jetTypeArguments.get(i).getTypeReference();
+            assert typeReference != null;
+            classDescriptorResolver.checkBounds(typeReference, typeArgument, typeParameterDescriptor, substitutor);
+        }
     }
 
     @Nullable
@@ -891,7 +903,8 @@ public class JetTypeInferrer {
                     trace.getErrorHandler().genericWarning(expression.getOperationSign().getNode(), "No cast needed, use ':' instead");
                 }
                 else {
-                    trace.getErrorHandler().genericError(expression.getOperationSign().getNode(), "This cast can never succeed");
+                    // See JET-58 Make 'as never succeeds' a warning, or even never check for Java (external) types
+                    trace.getErrorHandler().genericWarning(expression.getOperationSign().getNode(), "This cast can never succeed");
                 }
             }
             else {
@@ -920,27 +933,34 @@ public class JetTypeInferrer {
             if (labelName != null) {
                 Collection<DeclarationDescriptor> declarationsByLabel = scope.getDeclarationsByLabel(labelName);
                 int size = declarationsByLabel.size();
+                final JetSimpleNameExpression targetLabel = expression.getTargetLabel();
+                assert targetLabel != null;
                 if (size == 1) {
                     DeclarationDescriptor declarationDescriptor = declarationsByLabel.iterator().next();
                     if (declarationDescriptor instanceof ClassDescriptor) {
                         ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
                         thisType = classDescriptor.getDefaultType();
+                        trace.recordReferenceResolution(targetLabel, classDescriptor);
+                        trace.recordReferenceResolution(expression.getThisReference(), classDescriptor);
                     }
                     else {
                         throw new UnsupportedOperationException(); // TODO
                     }
                 }
                 else if (size == 0) {
-                    trace.getErrorHandler().unresolvedReference(expression.getTargetLabel());
+                    trace.getErrorHandler().unresolvedReference(targetLabel);
                 }
                 else {
-                    JetSimpleNameExpression labelElement = expression.getTargetLabel();
-                    assert labelElement != null;
-                    trace.getErrorHandler().genericError(labelElement.getNode(), "Ambiguous label");
+                    trace.getErrorHandler().genericError(targetLabel.getNode(), "Ambiguous label");
                 }
             }
             else {
                 thisType = scope.getThisType();
+
+                DeclarationDescriptor declarationDescriptorForUnqualifiedThis = scope.getDeclarationDescriptorForUnqualifiedThis();
+                if (declarationDescriptorForUnqualifiedThis != null) {
+                    trace.recordReferenceResolution(expression.getThisReference(), declarationDescriptorForUnqualifiedThis);
+                }
             }
 
             if (thisType != null) {
@@ -974,6 +994,9 @@ public class JetTypeInferrer {
                         }
                     } else {
                         result = thisType;
+                    }
+                    if (result != null) {
+                        trace.recordExpressionType(expression.getThisReference(), result);
                     }
                 }
             }

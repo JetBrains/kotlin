@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.types.*;
 
@@ -78,5 +79,11 @@ public class SubstitutingScope implements JetScope {
     @Override
     public PropertyDescriptor getPropertyByFieldReference(@NotNull String fieldName) {
         throw new UnsupportedOperationException(); // TODO
+    }
+
+    @Override
+    @Nullable
+    public DeclarationDescriptor getDeclarationDescriptorForUnqualifiedThis() {
+        return workerScope.getDeclarationDescriptorForUnqualifiedThis();
     }
 }

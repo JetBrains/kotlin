@@ -2,6 +2,8 @@ package org.jetbrains.jet.lang.descriptors;
 
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.JetScope;
+import org.jetbrains.jet.lang.resolve.LazyScopeAdapter;
 import org.jetbrains.jet.lang.types.*;
 
 import java.util.Collections;
@@ -115,7 +117,12 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
                             getTypeConstructor(),
                             TypeUtils.hasNullableBound(this),
                             Collections.<TypeProjection>emptyList(),
-                            getBoundsAsType().getMemberScope());
+                            new LazyScopeAdapter(new LazyValue<JetScope>() {
+                                @Override
+                                protected JetScope compute() {
+                                    return getBoundsAsType().getMemberScope();
+                                }
+                            }));
         }
         return type;
     }

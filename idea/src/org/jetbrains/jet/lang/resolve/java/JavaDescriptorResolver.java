@@ -32,6 +32,7 @@ public class JavaDescriptorResolver {
 
     protected final Map<String, ClassDescriptor> classDescriptorCache = new HashMap<String, ClassDescriptor>();
     protected final Map<PsiTypeParameter, TypeParameterDescriptor> typeParameterDescriptorCache = Maps.newHashMap();
+    protected final Map<PsiMethod, FunctionDescriptor> methodDescriptorCache = Maps.newHashMap();
     protected final Map<String, NamespaceDescriptor> namespaceDescriptorCache = new HashMap<String, NamespaceDescriptor>();
     protected final JavaPsiFacade javaFacade;
     protected final GlobalSearchScope javaSearchScope;
@@ -140,6 +141,7 @@ public class JavaDescriptorResolver {
                 typeParameter.getName(),
                 typeParameter.getIndex()
         );
+        typeParameterDescriptorCache.put(typeParameter, typeParameterDescriptor);
         PsiClassType[] referencedTypes = typeParameter.getExtendsList().getReferencedTypes();
         if (referencedTypes.length == 0){
             typeParameterDescriptor.addUpperBound(JetStandardClasses.getNullableAnyType());
@@ -160,7 +162,7 @@ public class JavaDescriptorResolver {
         TypeParameterDescriptor typeParameterDescriptor = typeParameterDescriptorCache.get(psiTypeParameter);
         if (typeParameterDescriptor == null) {
             typeParameterDescriptor = createJavaTypeParameterDescriptor(JAVA_ROOT, psiTypeParameter);
-            typeParameterDescriptorCache.put(psiTypeParameter, typeParameterDescriptor);
+//            Tis is done inside the method: typeParameterDescriptorCache.put(psiTypeParameter, typeParameterDescriptor);
         }
         return typeParameterDescriptor;
     }
@@ -247,28 +249,34 @@ public class JavaDescriptorResolver {
         WritableFunctionGroup writableFunctionGroup = new WritableFunctionGroup(methodName);
         final Collection<HierarchicalMethodSignature> signatures = psiClass.getVisibleSignatures();
         for (HierarchicalMethodSignature signature: signatures) {
-            final PsiMethod method = signature.getMethod();
+            PsiMethod method = signature.getMethod();
             if (method.hasModifierProperty(PsiModifier.STATIC) != staticMembers) {
                 continue;
             }
             if (!methodName.equals(method.getName())) {
                  continue;
             }
-            final PsiParameter[] parameters = method.getParameterList().getParameters();
+            FunctionDescriptor functionDescriptor = methodDescriptorCache.get(method);
+            if (functionDescriptor != null) {
+                writableFunctionGroup.addFunction(functionDescriptor);
+                continue;
+            }
 
-            FunctionDescriptorImpl functionDescriptor = new FunctionDescriptorImpl(
+            PsiParameter[] parameters = method.getParameterList().getParameters();
+            FunctionDescriptorImpl functionDescriptorImpl = new FunctionDescriptorImpl(
                     JavaDescriptorResolver.JAVA_ROOT,
                     Collections.<Annotation>emptyList(), // TODO
                     methodName
             );
-            functionDescriptor.initialize(
+            functionDescriptorImpl.initialize(
                     null,
                     resolveTypeParameters(method.getTypeParameters()),
-                    semanticServices.getDescriptorResolver().resolveParameterDescriptors(functionDescriptor, parameters),
+                    semanticServices.getDescriptorResolver().resolveParameterDescriptors(functionDescriptorImpl, parameters),
                     semanticServices.getTypeTransformer().transformToType(method.getReturnType())
             );
-            semanticServices.getTrace().recordDeclarationResolution(method, functionDescriptor);
-            writableFunctionGroup.addFunction(functionDescriptor);
+            semanticServices.getTrace().recordDeclarationResolution(method, functionDescriptorImpl);
+            writableFunctionGroup.addFunction(functionDescriptorImpl);
+            methodDescriptorCache.put(method, functionDescriptorImpl);
         }
         return writableFunctionGroup;
     }

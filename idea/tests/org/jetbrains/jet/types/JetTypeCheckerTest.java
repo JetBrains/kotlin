@@ -277,6 +277,8 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertSubtype("Derived_T<Int>", "Base_T<in Int>");
         assertSubtype("MDerived_T<Int>", "Base_T<in Int>");
         assertSubtype("ArrayList<Int>", "List<in Int>");
+
+        assertSubtype("Integer", "java.lang.Comparable<Integer>?");
     }
 
     public void testNullable() throws Exception {

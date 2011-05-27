@@ -30,10 +30,9 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
 
     public MutableClassDescriptor(@NotNull BindingTrace trace, @NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope outerScope) {
         super(containingDeclaration);
-        this.scopeForMemberLookup = new WritableScopeImpl(JetScope.EMPTY, this, trace.getErrorHandler());
-        this.scopeForSupertypeResolution = new WritableScopeImpl(outerScope, this, trace.getErrorHandler());
-        this.scopeForMemberResolution = new WritableScopeImpl(scopeForMemberLookup, this, trace.getErrorHandler());
-        scopeForMemberResolution.importScope(scopeForSupertypeResolution);
+        this.scopeForMemberLookup = new WritableScopeImpl(JetScope.EMPTY, this, trace.getErrorHandler()).setDebugName("MemberLookup");
+        this.scopeForSupertypeResolution = new WritableScopeImpl(outerScope, this, trace.getErrorHandler()).setDebugName("SupertypeResolution");
+        this.scopeForMemberResolution = new WritableScopeImpl(new ChainedScope(this, scopeForMemberLookup, scopeForSupertypeResolution), this, trace.getErrorHandler()).setDebugName("MemberResolution");
     }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

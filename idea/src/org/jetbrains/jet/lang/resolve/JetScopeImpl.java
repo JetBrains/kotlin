@@ -48,4 +48,9 @@ public abstract class JetScopeImpl implements JetScope {
     public PropertyDescriptor getPropertyByFieldReference(@NotNull String fieldName) {
         return null;
     }
+
+    @Override
+    public DeclarationDescriptor getDeclarationDescriptorForUnqualifiedThis() {
+        return null;
+    }
 }

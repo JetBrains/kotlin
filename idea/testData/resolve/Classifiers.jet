@@ -1,3 +1,19 @@
+namespace qualified_this {
+    ~qtA~class A(val a:Int) {
+
+      ~qtB~class B() {
+        val x = `qtB`this`qtB`@B
+        val y = `qtA`this`qtA`@A
+        val z = `qtB`this
+        ~xx~val Int.xx = `xx`this : Int
+        ~xx()~fun Int.xx() {
+            `xx()`this : Int
+        }
+      }
+    }
+}
+
+
 class A<~T~T, ~E~E> {
   val a : `T`T
   val x : A<`T`T, `E`E>
@@ -9,3 +25,4 @@ class A<~T~T, ~E~E> {
     ~X.E~class E {}
   }
 }
+

@@ -12,7 +12,8 @@ import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.JetTypeInferrer;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.*;
@@ -98,7 +99,6 @@ public class TopDownAnalyzer {
             declaration.accept(new JetVisitor() {
                 @Override
                 public void visitNamespace(JetNamespace namespace) {
-                    List<JetImportDirective> importDirectives = namespace.getImportDirectives();
 
                     String name = namespace.getName();
                     if (name == null) {
@@ -117,25 +117,10 @@ public class TopDownAnalyzer {
                     }
                     namespaceDescriptors.put(namespace, namespaceDescriptor);
 
-                    WritableScope namespaceScope = new WriteThroughScope(outerScope, (WritableScope) namespaceDescriptor.getMemberScope());
+                    WriteThroughScope namespaceScope = new WriteThroughScope(outerScope, namespaceDescriptor.getMemberScope(), trace.getErrorHandler());
                     namespaceScopes.put(namespace, namespaceScope);
 
-                    for (JetImportDirective importDirective : importDirectives) {
-                        if (importDirective.isAbsoluteInRootNamespace()) {
-                            throw new UnsupportedOperationException();
-                        }
-                        if (importDirective.isAllUnder()) {
-                            JetExpression importedReference = importDirective.getImportedReference();
-                            if (importedReference != null) {
-                                JetType type = semanticServices.getTypeInferrer(trace, JetFlowInformationProvider.THROW_EXCEPTION).getTypeWithNamespaces(namespaceScope, importedReference, false);
-                                if (type != null) {
-                                    namespaceScope.importScope(type.getMemberScope());
-                                }
-                            }
-                        } else {
-                            throw new UnsupportedOperationException();
-                        }
-                    }
+                    processImports(namespace, namespaceScope, outerScope);
 
                     collectNamespacesAndClassifiers(namespaceScope, namespaceDescriptor, namespace.getDeclarations());
                 }
@@ -164,6 +149,58 @@ public class TopDownAnalyzer {
                     trace.getErrorHandler().genericError(extension.getNode(), "Unsupported [TopDownAnalyzer]");
                 }
             });
+        }
+    }
+
+    private void processImports(@NotNull JetNamespace namespace, @NotNull WriteThroughScope namespaceScope, @NotNull JetScope outerScope) {
+        List<JetImportDirective> importDirectives = namespace.getImportDirectives();
+        for (JetImportDirective importDirective : importDirectives) {
+            if (importDirective.isAbsoluteInRootNamespace()) {
+                throw new UnsupportedOperationException();
+            }
+            if (importDirective.isAllUnder()) {
+                JetExpression importedReference = importDirective.getImportedReference();
+                if (importedReference != null) {
+                    JetType type = semanticServices.getTypeInferrer(trace, JetFlowInformationProvider.THROW_EXCEPTION).getTypeWithNamespaces(namespaceScope, importedReference, false);
+                    if (type != null) {
+                        namespaceScope.importScope(type.getMemberScope());
+                    }
+                }
+            } else {
+                ClassifierDescriptor classifierDescriptor = null;
+                JetSimpleNameExpression referenceExpression = null;
+
+                JetExpression importedReference = importDirective.getImportedReference();
+                if (importedReference instanceof JetDotQualifiedExpression) {
+                    JetDotQualifiedExpression reference = (JetDotQualifiedExpression) importedReference;
+                    JetType type = semanticServices.getTypeInferrer(trace, JetFlowInformationProvider.THROW_EXCEPTION).getTypeWithNamespaces(namespaceScope, reference.getReceiverExpression(), false);
+                    JetExpression selectorExpression = reference.getSelectorExpression();
+                    if (selectorExpression != null) {
+                        referenceExpression = (JetSimpleNameExpression) selectorExpression;
+                        String referencedName = referenceExpression.getReferencedName();
+                        if (type != null && referencedName != null) {
+                            classifierDescriptor = type.getMemberScope().getClassifier(referencedName);
+                        }
+                    }
+                }
+                else {
+                    assert importedReference instanceof JetSimpleNameExpression;
+                    referenceExpression = (JetSimpleNameExpression) importedReference;
+
+                    String referencedName = referenceExpression.getReferencedName();
+                    if (referencedName != null) {
+                        classifierDescriptor = outerScope.getClassifier(referencedName);
+                    }
+                }
+
+                if (classifierDescriptor != null) {
+                    trace.recordReferenceResolution(referenceExpression, classifierDescriptor);
+
+                    String aliasName = importDirective.getAliasName();
+                    String importedClassifierName = aliasName != null ? aliasName : classifierDescriptor.getName();
+                    namespaceScope.importClassifierAlias(importedClassifierName, classifierDescriptor);
+                }
+            }
         }
     }
 

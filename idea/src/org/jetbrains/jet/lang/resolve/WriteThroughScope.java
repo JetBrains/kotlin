@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.types.*;
 
@@ -13,8 +14,8 @@ import java.util.Collection;
 public class WriteThroughScope extends WritableScopeWithImports {
     private final WritableScope writableWorker;
 
-    public WriteThroughScope(@NotNull JetScope outerScope, @NotNull WritableScope scope) {
-        super(outerScope);
+    public WriteThroughScope(@NotNull JetScope outerScope, @NotNull WritableScope scope, @NotNull ErrorHandler errorHandler) {
+        super(outerScope, errorHandler);
         this.writableWorker = scope;
     }
 

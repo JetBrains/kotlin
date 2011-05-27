@@ -363,7 +363,8 @@ JetFile: PolymorphicClassObjects.jet
                 PsiWhiteSpace(' ')
                 LOOP_RANGE
                   THIS_EXPRESSION
-                    PsiElement(this)('this')
+                    REFERENCE_EXPRESSION
+                      PsiElement(this)('this')
                 PsiElement(RPAR)(')')
                 PsiWhiteSpace(' ')
                 BODY

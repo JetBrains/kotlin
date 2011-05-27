@@ -1,0 +1,66 @@
+import java.*
+import util.*
+
+import java.io.*
+
+fun takeFirst(expr: StringBuilder): Char {
+  val c = expr.charAt(0)
+  expr.deleteCharAt(0)
+  return c
+}
+
+fun evaluateArg(expr: AbstractStringBuilder, numbers: ArrayList<Int>): Int {
+  if (expr.length() == 0) throw new Exception("Syntax error: Character expected");
+  val c = takeFirst<error>(expr)</error>
+  if (c <error>>=</error> '0' && c <error><=</error> '9') {
+    val n = c - '0'
+    if (!numbers.contains(n)) throw new Exception("You used incorrect number: " + n)
+    numbers.remove(n)
+    return n                                                                                                                                       \
+  }
+  throw new Exception("Syntax error: Unrecognized character " + c)
+}
+
+fun evaluateAdd(expr: StringBuilder, numbers: ArrayList<Int>): Int {
+  val lhs = evaluateArg(expr, numbers)
+  if (expr.length() > 0) {
+
+  }
+  return lhs
+}
+
+fun evaluate(expr: StringBuilder, numbers: ArrayList<Int>): Int {
+  val lhs = evaluateAdd(expr, numbers)
+  if (expr.length() > 0) {
+    val c = expr.charAt(0)
+    expr.deleteCharAt(0)
+  }
+  return lhs
+}
+
+fun main(args: Array<String>) {
+  System.out?.println("24 game")
+  val numbers = new ArrayList<Int>(4)
+  val rnd = new Random();
+  val prompt = new StringBuilder()
+  for(val i in 0..3) {
+    val n = rnd.nextInt(9) + 1
+    numbers.add(n)
+    if (i > 0) prompt.append(" ");
+    prompt.append(n)
+  }
+  System.out?.println("Your numbers: " + prompt)
+  System.out?.println("Enter your expression:")
+  val reader = new BufferedReader(new InputStreamReader(System.`in`))
+  val expr = new StringBuilder(reader.readLine())
+  try {
+    val result = evaluate(expr, numbers)
+    if (result != 24)
+      System.out?.println("Sorry, that's " + result)
+    else
+      System.out?.println("You won!");
+  }
+  catch(e: Throwable) {
+    System.out?.println(e.getMessage())
+  }
+}

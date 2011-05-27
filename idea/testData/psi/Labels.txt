@@ -385,28 +385,33 @@ JetFile: Labels.jet
                 PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n\n  ')
         THIS_EXPRESSION
-          PsiElement(this)('this')
+          REFERENCE_EXPRESSION
+            PsiElement(this)('this')
         PsiWhiteSpace('\n  ')
         THIS_EXPRESSION
-          PsiElement(this)('this')
+          REFERENCE_EXPRESSION
+            PsiElement(this)('this')
           LABEL_QUALIFIER
             LABEL_REFERENCE
               PsiElement(AT)('@')
         PsiWhiteSpace('\n  ')
         THIS_EXPRESSION
-          PsiElement(this)('this')
+          REFERENCE_EXPRESSION
+            PsiElement(this)('this')
           LABEL_QUALIFIER
             LABEL_REFERENCE
               PsiElement(LABEL_IDENTIFIER)('@a')
         PsiWhiteSpace('\n  ')
         THIS_EXPRESSION
-          PsiElement(this)('this')
+          REFERENCE_EXPRESSION
+            PsiElement(this)('this')
           LABEL_QUALIFIER
             LABEL_REFERENCE
               PsiElement(ATAT)('@@')
         PsiWhiteSpace('\n\n  ')
         THIS_EXPRESSION
-          PsiElement(this)('this')
+          REFERENCE_EXPRESSION
+            PsiElement(this)('this')
           PsiElement(LT)('<')
           TYPE_REFERENCE
             USER_TYPE
@@ -415,7 +420,8 @@ JetFile: Labels.jet
           PsiElement(GT)('>')
         PsiWhiteSpace('\n  ')
         THIS_EXPRESSION
-          PsiElement(this)('this')
+          REFERENCE_EXPRESSION
+            PsiElement(this)('this')
           LABEL_QUALIFIER
             LABEL_REFERENCE
               PsiElement(AT)('@')
@@ -427,7 +433,8 @@ JetFile: Labels.jet
           PsiElement(GT)('>')
         PsiWhiteSpace('\n  ')
         THIS_EXPRESSION
-          PsiElement(this)('this')
+          REFERENCE_EXPRESSION
+            PsiElement(this)('this')
           LABEL_QUALIFIER
             LABEL_REFERENCE
               PsiElement(LABEL_IDENTIFIER)('@a')
@@ -439,7 +446,8 @@ JetFile: Labels.jet
           PsiElement(GT)('>')
         PsiWhiteSpace('\n  ')
         THIS_EXPRESSION
-          PsiElement(this)('this')
+          REFERENCE_EXPRESSION
+            PsiElement(this)('this')
           LABEL_QUALIFIER
             LABEL_REFERENCE
               PsiElement(ATAT)('@@')

@@ -178,6 +178,7 @@ public class JetTestUtils {
                 public Collection<JetDiagnostic> getDiagnostics() {
                     throw new UnsupportedOperationException(); // TODO
                 }
+
             };
         }
     };

@@ -24,4 +24,9 @@ public class JetThisExpression extends JetLabelQualifiedExpression {
         return (JetTypeReference) findChildByType(JetNodeTypes.TYPE_REFERENCE);
     }
 
+    @NotNull
+    public JetReferenceExpression getThisReference() {
+        return (JetReferenceExpression) findChildByType(JetNodeTypes.REFERENCE_EXPRESSION);
+    }
+
 }
