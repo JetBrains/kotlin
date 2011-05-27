@@ -1,5 +1,6 @@
 package org.jetbrains.jet.codegen;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -15,7 +16,6 @@ public class PropertyGenTest extends CodegenTestCase {
 
     public void testPrivateVal() throws Exception {
         loadFile();
-        System.out.println(generateToText());
         final Class aClass = loadImplementationClass(generateClassesInFile(), "PrivateVal");
         final Field[] fields = aClass.getDeclaredFields();
         assertEquals(2, fields.length);  // $typeInfo, prop
@@ -25,7 +25,6 @@ public class PropertyGenTest extends CodegenTestCase {
 
     public void testPrivateVar() throws Exception {
         loadFile();
-        System.out.println(generateToText());
         final Class aClass = loadImplementationClass(generateClassesInFile(), "PrivateVar");
         final Object instance = aClass.newInstance();
         Method setter = findMethodByName(aClass, "setValueOfX");
@@ -36,7 +35,6 @@ public class PropertyGenTest extends CodegenTestCase {
 
     public void testPublicVar() throws Exception {
         loadText("class PublicVar() { public var foo = 0; }");
-        System.out.println(generateToText());
         final Class aClass = loadImplementationClass(generateClassesInFile(), "PublicVar");
         final Object instance = aClass.newInstance();
         Method setter = findMethodByName(aClass, "setFoo");
@@ -79,7 +77,6 @@ public class PropertyGenTest extends CodegenTestCase {
 
     public void testFieldSetter() throws Exception {
         loadFile();
-        System.out.println(generateToText());
         final Method method = generateFunction("append");
         method.invoke(null, "IntelliJ ");
         String value = (String) method.invoke(null, "IDEA");
@@ -88,7 +85,6 @@ public class PropertyGenTest extends CodegenTestCase {
 
     public void testFieldSetterPlusEq() throws Exception {
         loadFile();
-        System.out.println(generateToText());
         final Method method = generateFunction("append");
         method.invoke(null, "IntelliJ ");
         String value = (String) method.invoke(null, "IDEA");
@@ -109,8 +105,19 @@ public class PropertyGenTest extends CodegenTestCase {
 
     public void testInitializersForNamespaceProperties() throws Exception {
         loadText("public val x = System.currentTimeMillis()");
-        System.out.println(generateToText());
         final Method method = generateFunction("getX");
         assertIsCurrentTime((Long) method.invoke(null));
+    }
+
+    public void testPropertyReceiverOnStack() throws Exception {
+        loadFile();
+        System.out.println(generateToText());
+        final Class aClass = loadImplementationClass(generateClassesInFile(), "Evaluator");
+        final Constructor constructor = aClass.getConstructor(StringBuilder.class);
+        StringBuilder sb = new StringBuilder("xyzzy");
+        final Object instance = constructor.newInstance(sb);
+        final Method method = aClass.getMethod("evaluateArg");
+        Integer result = (Integer) method.invoke(instance);
+        assertEquals(5, result.intValue());
     }
 }

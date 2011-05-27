@@ -353,7 +353,11 @@ public class ClassCodegen {
                 propertyCodegen.gen((JetProperty) declaration, kind);
             }
             else if (declaration instanceof JetFunction) {
-                functionCodegen.gen((JetFunction) declaration, kind);
+                try {
+                    functionCodegen.gen((JetFunction) declaration, kind);
+                } catch (RuntimeException e) {
+                    throw new RuntimeException("Error generating method "+ aClass.getName() + "." + declaration.getName(), e);
+                }
             }
         }
 

@@ -757,16 +757,28 @@ public class ExpressionCodegen extends JetVisitor {
     }
 
     private void ensureReceiverOnStack(JetElement expression) {
-        if (expression.getParent() instanceof JetDotQualifiedExpression) {
+        if (expression.getParent() instanceof JetDotQualifiedExpression && !isReceiver(expression)) {
             final JetDotQualifiedExpression parent = (JetDotQualifiedExpression) expression.getParent();
             if (!resolvesToClassOrPackage(parent.getReceiverExpression())) {
                 // we have a receiver on stack
+                if (myStack.isEmpty()) {
+                    throw new IllegalStateException("expected receiver on stack but it's not there: " + parent.getReceiverExpression().getText());
+                }
                 myStack.pop().put(JetTypeMapper.TYPE_OBJECT, v);
             }
         }
         else if (!(expression.getParent() instanceof JetSafeQualifiedExpression)) {
             v.load(0, JetTypeMapper.TYPE_OBJECT);  // TODO hope it works; really need more checks here :)
         }
+    }
+
+    private static boolean isReceiver(JetElement expression) {
+        final PsiElement parent = expression.getParent();
+        if (parent instanceof JetQualifiedExpression) {
+            final JetExpression receiverExpression = ((JetQualifiedExpression) parent).getReceiverExpression();
+            return expression == receiverExpression;
+        }
+        return false;
     }
 
     private void pushMethodArguments(JetCall expression, Method method) {

@@ -408,7 +408,7 @@ public abstract class StackValue {
         @Override
         public void put(Type type, InstructionAdapter v) {
             if (getter == null) {
-                v.visitFieldInsn(isStatic ? Opcodes.GETSTATIC : Opcodes.GETFIELD, fieldOwner, name, type.getDescriptor());
+                v.visitFieldInsn(isStatic ? Opcodes.GETSTATIC : Opcodes.GETFIELD, fieldOwner, name, this.type.getDescriptor());
             }
             else {
                 v.visitMethodInsn(isStatic ? Opcodes.INVOKESTATIC : fieldOwner == null ? Opcodes.INVOKEINTERFACE : Opcodes.INVOKEVIRTUAL, interfaceOwner, getter.getName(), getter.getDescriptor());
@@ -418,7 +418,7 @@ public abstract class StackValue {
         @Override
         public void store(InstructionAdapter v) {
             if (setter == null) {
-                v.visitFieldInsn(isStatic ? Opcodes.PUTSTATIC : Opcodes.PUTFIELD, fieldOwner, name, type.getDescriptor());
+                v.visitFieldInsn(isStatic ? Opcodes.PUTSTATIC : Opcodes.PUTFIELD, fieldOwner, name, this.type.getDescriptor());
             }
             else {
                 v.visitMethodInsn(isStatic ? Opcodes.INVOKESTATIC : fieldOwner == null ? Opcodes.INVOKEINTERFACE : Opcodes.INVOKEVIRTUAL, interfaceOwner, setter.getName(), setter.getDescriptor());
