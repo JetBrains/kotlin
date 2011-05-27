@@ -59,8 +59,8 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     @NotNull
     @Override
     public Collection<DeclarationDescriptor> getDeclarationsByLabel(@NotNull String labelName) {
-        Map<String, List<DeclarationDescriptor>> labelsToDescriptors = getLabelsToDescriptors();
         Collection<DeclarationDescriptor> superResult = super.getDeclarationsByLabel(labelName);
+        Map<String, List<DeclarationDescriptor>> labelsToDescriptors = getLabelsToDescriptors();
         List<DeclarationDescriptor> declarationDescriptors = labelsToDescriptors.get(labelName);
         if (declarationDescriptors == null) {
             return superResult;

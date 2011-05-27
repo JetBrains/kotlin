@@ -938,6 +938,7 @@ public class JetTypeInferrer {
                     if (declarationDescriptor instanceof ClassDescriptor) {
                         ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
                         thisType = classDescriptor.getDefaultType();
+                        trace.recordReferenceResolution(expression.getTargetLabel(), classDescriptor);
                     }
                     else {
                         throw new UnsupportedOperationException(); // TODO

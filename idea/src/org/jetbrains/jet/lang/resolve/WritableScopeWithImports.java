@@ -15,11 +15,19 @@ import java.util.List;
  */
 public abstract class WritableScopeWithImports extends JetScopeAdapter implements WritableScope {
 
+    private String debugName;
+
     @Nullable
     private List<JetScope> imports;
 
     public WritableScopeWithImports(@NotNull JetScope scope) {
         super(scope);
+    }
+
+    public WritableScopeWithImports setDebugName(@NotNull String debugName) {
+        assert this.debugName == null : this.debugName;
+        this.debugName = debugName;
+        return this;
     }
 
     @NotNull
@@ -79,5 +87,10 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
             }
         }
         return null;
+    }
+
+    @Override
+    public String toString() {
+        return debugName + " for " + getContainingDeclaration();
     }
 }

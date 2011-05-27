@@ -26,7 +26,6 @@ fun test(l : java.util.List<Int>) {
 
   <error>new List<Int></error>
 
-//  Collections.sort<Integer>(new ArrayList<Integer>())
 
   val o = "sdf" <warning>as</warning> Object
 
@@ -42,4 +41,12 @@ fun test(l : java.util.List<Int>) {
   val c : Com<Int>? = null
 
   c : java.lang.Comparable<Int>?
+
+//  Collections.sort<Integer>(new ArrayList<Integer>())
+  //new xxx.error>Class/error>()
+}
+
+
+namespace xxx {
+  import java.lang.Class;
 }
