@@ -17,4 +17,10 @@ public class ExtensionFunctionsTest extends CodegenTestCase {
         final Character c = (Character) foo.invoke(null);
         assertEquals('f', c.charValue());
     }
+
+    public void testWhenFail() throws Exception {
+        loadFile();
+        Method foo = generateFunction("foo");
+        assertThrows(foo, Exception.class, null, new StringBuilder());
+    }
 }

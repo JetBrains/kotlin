@@ -12,9 +12,8 @@ import org.jetbrains.jet.lang.psi.JetNamespace;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.parsing.JetParsingTest;
 
-import javax.swing.JComponent;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.nio.channels.NonWritableChannelException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +23,17 @@ import java.util.Map;
  */
 public abstract class CodegenTestCase extends LightCodeInsightFixtureTestCase {
     private MyClassLoader myClassLoader;
+
+    protected static void assertThrows(Method foo, Class<? extends Throwable> exceptionClass, Object instance, Object... args) throws IllegalAccessException {
+        boolean caught = false;
+        try {
+            foo.invoke(instance, args);
+        }
+        catch(InvocationTargetException ex) {
+            caught = exceptionClass.isInstance(ex.getTargetException());
+        }
+        assertTrue(caught);
+    }
 
     @Override
     protected void setUp() throws Exception {
@@ -128,14 +138,19 @@ public abstract class CodegenTestCase extends LightCodeInsightFixtureTestCase {
     }
 
     protected Codegens generateClassesInFile() {
-        Codegens state = new Codegens(getProject(), false);
-        JetFile jetFile = (JetFile) myFixture.getFile();
-        AnalyzingUtils.checkForSyntacticErrors(jetFile);
-        final JetNamespace namespace = jetFile.getRootNamespace();
+        try {
+            Codegens state = new Codegens(getProject(), false);
+            JetFile jetFile = (JetFile) myFixture.getFile();
+            AnalyzingUtils.checkForSyntacticErrors(jetFile);
+            final JetNamespace namespace = jetFile.getRootNamespace();
 
-        NamespaceCodegen codegen = state.forNamespace(namespace);
-        codegen.generate(namespace);
-        return state;
+            NamespaceCodegen codegen = state.forNamespace(namespace);
+            codegen.generate(namespace);
+            return state;
+        } catch (RuntimeException e) {
+            System.out.println(generateToText());
+            throw e;
+        }
     }
 
     protected Method generateFunction() {

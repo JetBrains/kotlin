@@ -722,13 +722,17 @@ public class ExpressionCodegen extends JetVisitor {
                             methodDescriptor.getDescriptor());
                 }
                 else {
-                    methodDescriptor = typeMapper.mapSignature((JetFunction) declarationPsiElement);
-                    if (functionParent instanceof NamespaceDescriptorImpl && declarationPsiElement instanceof JetFunction) {
+                    final JetFunction jetFunction = (JetFunction) declarationPsiElement;
+                    methodDescriptor = typeMapper.mapSignature(jetFunction);
+                    if (functionParent instanceof NamespaceDescriptorImpl) {
+                        if (jetFunction.getReceiverTypeRef() != null) {
+                            ensureReceiverOnStack(expression);
+                        }
                         pushMethodArguments(expression, methodDescriptor);
                         final String owner = NamespaceCodegen.getJVMClassName(DescriptorRenderer.getFQName(functionParent));
                         v.invokestatic(owner, methodDescriptor.getName(), methodDescriptor.getDescriptor());
                     }
-                    else if (functionParent instanceof ClassDescriptor && declarationPsiElement instanceof JetFunction) {
+                    else if (functionParent instanceof ClassDescriptor) {
                         ensureReceiverOnStack(expression);
                         pushMethodArguments(expression, methodDescriptor);
                         final String owner = JetTypeMapper.jvmNameForInterface((ClassDescriptor) functionParent);

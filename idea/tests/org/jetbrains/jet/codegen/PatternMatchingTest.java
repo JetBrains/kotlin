@@ -2,7 +2,6 @@ package org.jetbrains.jet.codegen;
 
 import jet.NoPatternMatchedException;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
@@ -25,14 +24,7 @@ public class PatternMatchingTest extends CodegenTestCase {
         loadFile();
         Method foo = generateFunction();
         assertTrue((Boolean) foo.invoke(null, 0));
-        boolean caught = false;
-        try {
-            foo.invoke(null, 1);
-        }
-        catch(InvocationTargetException ex) {
-            caught = ex.getTargetException() instanceof NoPatternMatchedException;
-        }
-        assertTrue(caught);
+        assertThrows(foo, NoPatternMatchedException.class, null, 1);
     }
 
     public void testPattern() throws Exception {

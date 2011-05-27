@@ -1,0 +1,14 @@
+fun StringBuilder.takeFirst(): Char {
+  if (this.length() == 0) return '\0'
+  val c = this.charAt(0)
+  this.deleteCharAt(0)
+  return c
+}
+
+fun foo(expr: StringBuilder): Int {
+  val c = expr.takeFirst()
+  when(c) {
+    '\0' => throw new Exception("zero")
+    else => throw new Exception("nonzero" + c)
+  }
+}
