@@ -1,0 +1,29 @@
+namespace ColossalCave;
+
+class World() {
+  class Room {
+    abstract val name: String
+  }
+
+  val atEndOfRoad: Room
+
+  class AtEndOfRoad(): Room {
+    val name: String = "At End of Road"
+  }
+
+  {
+    atEndOfRoad = new AtEndOfRoad()
+  }
+
+  fun startRoom() = atEndOfRoad
+}
+
+class Player(var room: World.Room) {
+
+}
+
+fun main(args: Array<String>) {
+  val w = new World()
+  val p = new Player(w.startRoom())
+  System.out?.println(p.room.name)
+}
