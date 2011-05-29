@@ -561,7 +561,7 @@ public class ExpressionCodegen extends JetVisitor {
             final Type fieldType = psiTypeToAsm(psiField.getType());
             final boolean isStatic = psiField.hasModifierProperty(PsiModifier.STATIC);
             if (!isStatic) {
-                ensureReceiverOnStack(expression);
+                ensureReceiverOnStack(expression, null);
             }
             myStack.push(StackValue.field(fieldType, owner, psiField.getName(), isStatic));
         }
@@ -591,7 +591,7 @@ public class ExpressionCodegen extends JetVisitor {
                 }
 
                 if (isClass(container, "Array") && propertyDescriptor.getName().equals("size")) {
-                    ensureReceiverOnStack(expression);
+                    ensureReceiverOnStack(expression, null);
                     v.arraylength();
                     myStack.push(StackValue.onStack(Type.INT_TYPE));
                 }
@@ -600,7 +600,7 @@ public class ExpressionCodegen extends JetVisitor {
                     final boolean directToField = expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER;
                     final StackValue iValue = intermediateValueForProperty(propertyDescriptor, directToField);
                     if (!isStatic) {
-                        ensureReceiverOnStack(expression);
+                        ensureReceiverOnStack(expression, container instanceof ClassDescriptor ? (ClassDescriptor) container : null);
                     }
                     myStack.push(iValue);
                 }
@@ -709,7 +709,7 @@ public class ExpressionCodegen extends JetVisitor {
                     final boolean isStatic = psiMethod.hasModifierProperty(PsiModifier.STATIC);
 
                     if (!isStatic) {
-                        ensureReceiverOnStack(expression);
+                        ensureReceiverOnStack(expression, null);
                         if (expression.getParent() instanceof JetQualifiedExpression) {
                             final JetExpression receiver = ((JetQualifiedExpression) expression.getParent()).getReceiverExpression();
                             owner = expressionType(receiver).getInternalName();
@@ -727,14 +727,14 @@ public class ExpressionCodegen extends JetVisitor {
                     methodDescriptor = typeMapper.mapSignature(jetFunction);
                     if (functionParent instanceof NamespaceDescriptorImpl) {
                         if (jetFunction.getReceiverTypeRef() != null) {
-                            ensureReceiverOnStack(expression);
+                            ensureReceiverOnStack(expression, null);
                         }
                         pushMethodArguments(expression, methodDescriptor);
                         final String owner = NamespaceCodegen.getJVMClassName(DescriptorRenderer.getFQName(functionParent));
                         v.invokestatic(owner, methodDescriptor.getName(), methodDescriptor.getDescriptor());
                     }
                     else if (functionParent instanceof ClassDescriptor) {
-                        ensureReceiverOnStack(expression);
+                        ensureReceiverOnStack(expression, (ClassDescriptor) functionParent);
                         pushMethodArguments(expression, methodDescriptor);
                         final String owner = JetTypeMapper.jvmNameForInterface((ClassDescriptor) functionParent);
                         v.invokeinterface(owner, methodDescriptor.getName(), methodDescriptor.getDescriptor());
@@ -756,7 +756,7 @@ public class ExpressionCodegen extends JetVisitor {
         }
     }
 
-    private void ensureReceiverOnStack(JetElement expression) {
+    private void ensureReceiverOnStack(JetElement expression, @Nullable ClassDescriptor calleeContainingClass) {
         if (expression.getParent() instanceof JetDotQualifiedExpression && !isReceiver(expression)) {
             final JetDotQualifiedExpression parent = (JetDotQualifiedExpression) expression.getParent();
             if (!resolvesToClassOrPackage(parent.getReceiverExpression())) {
@@ -769,6 +769,12 @@ public class ExpressionCodegen extends JetVisitor {
         }
         else if (!(expression.getParent() instanceof JetSafeQualifiedExpression)) {
             v.load(0, JetTypeMapper.TYPE_OBJECT);  // TODO hope it works; really need more checks here :)
+            if (calleeContainingClass != null && contextType instanceof ClassDescriptor &&
+                calleeContainingClass == contextType.getContainingDeclaration()) {
+                v.getfield(typeMapper.jvmName((ClassDescriptor) contextType, OwnerKind.IMPLEMENTATION),
+                        "this$0", typeMapper.jvmType(calleeContainingClass, OwnerKind.INTERFACE).getDescriptor());
+                // TODO handle more levels of class nestng
+            }
         }
     }
 
@@ -1314,8 +1320,13 @@ public class ExpressionCodegen extends JetVisitor {
                 generateNewArray(expression, type);
             }
             else {
+                ClassDescriptor classDecl = (ClassDescriptor) constructorDescriptor.getContainingDeclaration();
+
                 v.anew(type);
                 v.dup();
+
+                // TODO typechecker must verify that we're the outer class of the instance being created
+                pushOuterClassArguments(classDecl);
 
                 Method method = typeMapper.mapConstructorSignature((ConstructorDescriptor) constructorDescriptor, OwnerKind.IMPLEMENTATION);
                 pushMethodArguments(expression, method);
@@ -1326,7 +1337,6 @@ public class ExpressionCodegen extends JetVisitor {
                     ClassCodegen.newTypeInfo(v, typeMapper.mapType(TypeUtils.makeNullable(typeArgument)));
                 }
 
-                ClassDescriptor classDecl = (ClassDescriptor) constructorDescriptor.getContainingDeclaration();
                 v.invokespecial(JetTypeMapper.jvmNameForImplementation(classDecl), "<init>", method.getDescriptor());
             }
         }
@@ -1334,6 +1344,14 @@ public class ExpressionCodegen extends JetVisitor {
             throw new UnsupportedOperationException("don't know how to generate this new expression");
         }
         myStack.push(StackValue.onStack(type));
+    }
+
+    private void pushOuterClassArguments(ClassDescriptor classDecl) {
+        final List<ClassDescriptor> outerClassDescriptors = JetTypeMapper.getOuterClassDescriptors(classDecl);
+        if (outerClassDescriptors.size() > 0) {
+            v.load(0, JetTypeMapper.jetImplementationType(classDecl));
+        }
+        // TODO push further outer classes
     }
 
     private Type generateJavaConstructorCall(JetNewExpression expression, PsiMethod constructor) {

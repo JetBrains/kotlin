@@ -253,6 +253,9 @@ public class JetTypeMapper {
         List<ValueParameterDescriptor> parameters = descriptor.getUnsubstitutedValueParameters();
         List<Type> parameterTypes = new ArrayList<Type>();
         ClassDescriptor classDescriptor = descriptor.getContainingDeclaration();
+        for (ClassDescriptor outerDescriptor : getOuterClassDescriptors(classDescriptor)) {
+            parameterTypes.add(jvmType(outerDescriptor, OwnerKind.IMPLEMENTATION));
+        }
         if (delegate) {
             parameterTypes.add(jetInterfaceType(classDescriptor));
         }
@@ -266,6 +269,16 @@ public class JetTypeMapper {
         }
 
         return new Method("<init>", Type.VOID_TYPE, parameterTypes.toArray(new Type[parameterTypes.size()]));
+    }
+
+    public static List<ClassDescriptor> getOuterClassDescriptors(ClassDescriptor classDescriptor) {
+        List<ClassDescriptor> result = new ArrayList<ClassDescriptor>();
+        DeclarationDescriptor outerClass = classDescriptor.getContainingDeclaration();
+        while (outerClass instanceof ClassDescriptor) {
+            result.add((ClassDescriptor) outerClass);
+            outerClass = outerClass.getContainingDeclaration();
+        }
+        return result;
     }
 
     static int getAccessModifiers(JetDeclaration p, int defaultFlags) {

@@ -42,6 +42,12 @@ public class ClassCodegen {
         generateInterface(aClass);
         generateImplementation(aClass, OwnerKind.IMPLEMENTATION);
         generateImplementation(aClass, OwnerKind.DELEGATING_IMPLEMENTATION);
+
+        for (JetDeclaration declaration : aClass.getDeclarations()) {
+            if (declaration instanceof JetClass) {
+                generate((JetClass) declaration);
+            }
+        }
     }
 
     private void generateInterface(JetClass aClass) {
@@ -70,12 +76,13 @@ public class ClassCodegen {
         String superClass = getSuperClass(aClass, kind);
 
         ClassVisitor v = kind == OwnerKind.IMPLEMENTATION ? factory.forClassImplementation(descriptor) : factory.forClassDelegatingImplementation(descriptor);
+        final String defaultInterfaceName = JetTypeMapper.jvmNameForInterface(descriptor);
         v.visit(Opcodes.V1_6,
                 Opcodes.ACC_PUBLIC,
                 JetTypeMapper.jetJvmName(descriptor, kind),
                 null,
                 superClass,
-                new String[] { "jet/JetObject", JetTypeMapper.jvmNameForInterface(descriptor) }
+                new String[] { "jet/JetObject", defaultInterfaceName}
         );
 
         int typeinfoStatic = descriptor.getTypeConstructor().getParameters().size() > 0 ? 0 : Opcodes.ACC_STATIC;
@@ -180,9 +187,29 @@ public class ClassCodegen {
         String classname = typeMapper.jvmName(classDescriptor, kind);
         final Type classType = Type.getType("L" + classname + ";");
 
+        List<JetDelegationSpecifier> specifiers = aClass.getDelegationSpecifiers();
+
+        if (specifiers.isEmpty() || !(specifiers.get(0) instanceof JetDelegatorToSuperCall)) {
+            String superClass = getSuperClass(aClass, kind);
+            iv.load(0, Type.getType("L" + superClass + ";"));
+            iv.invokespecial(superClass, "<init>", /* TODO super constructor descriptor */"()V");
+        }
+
+        int index = 0;
+        for (ClassDescriptor outerClassDescriptor : JetTypeMapper.getOuterClassDescriptors(classDescriptor)) {
+            final Type type = JetTypeMapper.jetInterfaceType(outerClassDescriptor);
+            String interfaceDesc = type.getDescriptor();
+            final String fieldName = "this$" + index;
+            v.visitField(Opcodes.ACC_PRIVATE | Opcodes.ACC_FINAL, fieldName, interfaceDesc, null, null);
+            iv.load(0, classType);
+            iv.load(index + 1, type);
+            iv.putfield(classname, fieldName, interfaceDesc);
+            frameMap.enterTemp();
+        }
+
         if (kind == OwnerKind.DELEGATING_IMPLEMENTATION) {
             String interfaceDesc = JetTypeMapper.jetInterfaceType(classDescriptor).getDescriptor();
-            v.visitField(Opcodes.ACC_PRIVATE, "$this", interfaceDesc, /*TODO*/null, null);
+            v.visitField(Opcodes.ACC_PRIVATE | Opcodes.ACC_FINAL, "$this", interfaceDesc, /*TODO*/null, null);
             iv.load(1, argTypes[0]);
             iv.putfield(classname, "$this", interfaceDesc);
             frameMap.enterTemp();
@@ -202,14 +229,6 @@ public class ClassCodegen {
                     frameMap.enterTemp();
                 }
             }
-        }
-
-        List<JetDelegationSpecifier> specifiers = aClass.getDelegationSpecifiers();
-
-        if (specifiers.isEmpty() || !(specifiers.get(0) instanceof JetDelegatorToSuperCall)) {
-            String superClass = getSuperClass(aClass, kind);
-            iv.load(0, Type.getType("L" + superClass + ";"));
-            iv.invokespecial(superClass, "<init>", /* TODO super constructor descriptor */"()V");
         }
 
         HashSet<FunctionDescriptor> overriden = new HashSet<FunctionDescriptor>();

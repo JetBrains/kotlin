@@ -58,4 +58,8 @@ public class ClassGenTest extends CodegenTestCase {
         final Integer returnValue = (Integer) method.invoke(null);
         assertEquals(610, returnValue.intValue());
     }
+
+    public void testInnerClass() throws Exception {
+        blackBoxFile("classes/innerClass.jet");
+    }
 }

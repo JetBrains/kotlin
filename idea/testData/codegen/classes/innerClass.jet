@@ -1,0 +1,19 @@
+class Outer(val foo: StringBuilder) {
+  class Inner() {
+    fun len() {
+      return foo.length()
+    }
+  }
+
+  fun test() {
+    return new Inner()
+  }
+}
+
+fun box(): String {
+  val sb = new StringBuilder("xyzzy")
+  val o = new Outer(sb)
+  val i = o.test()
+  val l = i.len()
+  return if (l != 5) "fail" else "OK"
+}

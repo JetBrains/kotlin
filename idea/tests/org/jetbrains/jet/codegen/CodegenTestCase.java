@@ -65,8 +65,14 @@ public abstract class CodegenTestCase extends LightCodeInsightFixtureTestCase {
 
     protected void blackBoxFile(String filename) throws Exception {
         loadFile(filename);
-        //System.out.println(generateToText());
-        assertEquals("OK", blackBox());
+        String actual;
+        try {
+            actual = blackBox();
+        } catch (Exception e) {
+            System.out.println(generateToText());
+            throw e;
+        }
+        assertEquals("OK", actual);
     }
 
     protected String blackBox() throws Exception {
