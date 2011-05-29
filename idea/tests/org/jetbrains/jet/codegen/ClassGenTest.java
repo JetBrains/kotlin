@@ -62,4 +62,8 @@ public class ClassGenTest extends CodegenTestCase {
     public void testInnerClass() throws Exception {
         blackBoxFile("classes/innerClass.jet");
     }
+
+    public void testInitializerBlock() throws Exception {
+        blackBoxFile("classes/initializerBlock.jet");
+    }
 }

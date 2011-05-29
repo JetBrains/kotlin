@@ -124,6 +124,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (kind == OwnerKind.DELEGATING_IMPLEMENTATION) {
             String interfaceDesc = JetTypeMapper.jetInterfaceType(descriptor).getDescriptor();
             v.visitField(Opcodes.ACC_PRIVATE | Opcodes.ACC_FINAL, "$this", interfaceDesc, /*TODO*/null, null);
+            iv.load(0, classType);
             iv.load(1, argTypes[0]);
             iv.putfield(classname, "$this", interfaceDesc);
             frameMap.enterTemp();
@@ -272,6 +273,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     }
 
                 }
+            }
+            else if (declaration instanceof JetClassInitializer) {
+                codegen.gen(((JetClassInitializer) declaration).getBody(), Type.VOID_TYPE);
             }
         }
     }
