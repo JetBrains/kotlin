@@ -39,7 +39,7 @@ public interface BindingContext {
     boolean isStatement(JetExpression expression);
     boolean hasBackingField(PropertyDescriptor propertyDescriptor);
 
-    ConstructorDescriptor resolveSuperConstructor(JetDelegatorToSuperCall superCall, ClassCodegen classCodegen);
+    ConstructorDescriptor resolveSuperConstructor(JetDelegatorToSuperCall superCall);
 
     Collection<JetDiagnostic> getDiagnostics();
 }

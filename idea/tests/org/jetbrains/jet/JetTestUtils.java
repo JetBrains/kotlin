@@ -170,7 +170,7 @@ public class JetTestUtils {
                 }
 
                 @Override
-                public ConstructorDescriptor resolveSuperConstructor(JetDelegatorToSuperCall superCall, ClassCodegen classCodegen) {
+                public ConstructorDescriptor resolveSuperConstructor(JetDelegatorToSuperCall superCall) {
                     throw new UnsupportedOperationException(); // TODO
                 }
 

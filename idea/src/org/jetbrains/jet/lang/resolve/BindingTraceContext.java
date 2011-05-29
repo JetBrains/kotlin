@@ -7,12 +7,11 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.codegen.ClassCodegen;
 import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.JetDiagnostic;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.*;
 
@@ -266,7 +265,7 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
         return backingFieldRequired.contains(propertyDescriptor);
     }
 
-    public ConstructorDescriptor resolveSuperConstructor(JetDelegatorToSuperCall superCall, ClassCodegen classCodegen) {
+    public ConstructorDescriptor resolveSuperConstructor(JetDelegatorToSuperCall superCall) {
         JetTypeReference typeReference = superCall.getTypeReference();
         if (typeReference == null) return null;
 
