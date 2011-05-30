@@ -75,7 +75,7 @@ public class NamespaceCodegen {
 
         FrameMap frameMap = new FrameMap();
         JetTypeMapper typeMapper = new JetTypeMapper(JetStandardLibrary.getJetStandardLibrary(namespace.getProject()), bindingContext);
-        ExpressionCodegen codegen = new ExpressionCodegen(mv, bindingContext, frameMap, typeMapper, null, Type.VOID_TYPE, null, OwnerKind.NAMESPACE);
+        ExpressionCodegen codegen = new ExpressionCodegen(mv, bindingContext, frameMap, typeMapper, Type.VOID_TYPE, null, OwnerKind.NAMESPACE, null);
 
         for (JetDeclaration declaration : namespace.getDeclarations()) {
             if (declaration instanceof JetProperty) {

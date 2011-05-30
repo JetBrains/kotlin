@@ -25,9 +25,7 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
 import org.objectweb.asm.commons.Method;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * @author max
@@ -66,28 +64,33 @@ public class ExpressionCodegen extends JetVisitor {
     private final InstructionAdapter v;
     private final FrameMap myMap;
     private final JetTypeMapper typeMapper;
-    private final JetType receiverType;
     private final Type returnType;
     private final DeclarationDescriptor contextType;
     private final OwnerKind contextKind;
     private final BindingContext bindingContext;
+    private final StackValue thisExpression;
+    private final Map<ClassDescriptor, StackValue> outerThisExpressions = new HashMap<ClassDescriptor, StackValue>();
 
     public ExpressionCodegen(MethodVisitor v,
                              BindingContext bindingContext,
                              FrameMap myMap,
                              JetTypeMapper typeMapper,
-                             JetType receiverType,
                              Type returnType,
                              DeclarationDescriptor contextType,
-                             OwnerKind contextKind) {
+                             OwnerKind contextKind,
+                             @Nullable StackValue thisExpression) {
         this.myMap = myMap;
         this.typeMapper = typeMapper;
-        this.receiverType = receiverType;
         this.returnType = returnType;
         this.contextType = contextType;
         this.contextKind = contextKind;
         this.v = new InstructionAdapter(v);
         this.bindingContext = bindingContext;
+        this.thisExpression = thisExpression;
+    }
+
+    public void addOuterThis(ClassDescriptor outer, StackValue expression) {
+        outerThisExpressions.put(outer, expression);
     }
 
     static void loadTypeInfo(ClassDescriptor descriptor, InstructionAdapter v) {
@@ -772,12 +775,18 @@ public class ExpressionCodegen extends JetVisitor {
     }
 
     public void generateThisOrOuter(ClassDescriptor calleeContainingClass) {
-        v.load(0, JetTypeMapper.TYPE_OBJECT);  // TODO hope it works; really need more checks here :)
-        if (calleeContainingClass != null && contextType instanceof ClassDescriptor &&
-            calleeContainingClass == contextType.getContainingDeclaration()) {
-            v.getfield(typeMapper.jvmName((ClassDescriptor) contextType, OwnerKind.IMPLEMENTATION),
-                    "this$0", typeMapper.jvmType(calleeContainingClass, OwnerKind.IMPLEMENTATION).getDescriptor());
-            // TODO handle more levels of class nestng
+        final StackValue value = outerThisExpressions.get(calleeContainingClass);
+        if (value != null) {
+            value.put(value.type, v);
+        }
+        else {
+            v.load(0, JetTypeMapper.TYPE_OBJECT);  // TODO hope it works; really need more checks here :)
+            if (calleeContainingClass != null && contextType instanceof ClassDescriptor &&
+                calleeContainingClass == contextType.getContainingDeclaration()) {
+                v.getfield(typeMapper.jvmName((ClassDescriptor) contextType, OwnerKind.IMPLEMENTATION),
+                        "this$0", typeMapper.jvmType(calleeContainingClass, OwnerKind.IMPLEMENTATION).getDescriptor());
+                // TODO handle more levels of class nestng
+            }
         }
     }
 
@@ -1418,19 +1427,16 @@ public class ExpressionCodegen extends JetVisitor {
     }
 
     private void generateThis() {
-        if (contextKind == OwnerKind.NAMESPACE) {
-            if (receiverType != null) {
-                myStack.push(StackValue.local(0, typeMapper.mapType(receiverType)));
-            }
-            else {
-                throw new UnsupportedOperationException("Cannot generate this expression in top level context");
-            }
+        if (thisExpression != null) {
+            myStack.push(thisExpression);
+            return;
         }
-        else {
+        if (contextKind == OwnerKind.NAMESPACE) {
             ClassDescriptor contextClass = (ClassDescriptor) contextType;
             final Type thisType = typeMapper.jvmType(contextClass, contextKind);
             if (contextKind == OwnerKind.IMPLEMENTATION) {
                 myStack.push(StackValue.local(0, thisType));
+                return;
             }
             else if (contextKind == OwnerKind.DELEGATING_IMPLEMENTATION) {
                 v.load(0, thisType);
@@ -1438,11 +1444,10 @@ public class ExpressionCodegen extends JetVisitor {
                         thisType.getInternalName(),
                         "$this",
                         false));
-            }
-            else {
-                throw new UnsupportedOperationException("Unknown kind: " + contextKind);
+                return;
             }
         }
+        throw new UnsupportedOperationException("'this' expression is not defined in the context");
     }
 
     @Override

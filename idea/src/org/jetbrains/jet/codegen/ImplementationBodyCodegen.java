@@ -87,7 +87,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         frameMap.enterTemp();   // this
 
         final InstructionAdapter iv = new InstructionAdapter(mv);
-        ExpressionCodegen codegen = new ExpressionCodegen(mv, bindingContext, frameMap, typeMapper, null, Type.VOID_TYPE, descriptor, kind);
+        ExpressionCodegen codegen = new ExpressionCodegen(mv, bindingContext, frameMap, typeMapper, Type.VOID_TYPE,
+                descriptor, kind, StackValue.local(0, typeMapper.jvmType(descriptor, kind)));
 
         String classname = typeMapper.jvmName(descriptor, kind);
         final Type classType = Type.getType("L" + classname + ";");
@@ -108,11 +109,12 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             iv.invokespecial(superClass, "<init>", /* TODO super constructor descriptor */"()V");
         }
 
-        int index = 1;  // this
+        int index = 1;  // 0 = this
         final DeclarationDescriptor outerDescriptor = descriptor.getContainingDeclaration();
         if (outerDescriptor instanceof ClassDescriptor) {
             final ClassDescriptor outerClassDescriptor = (ClassDescriptor) outerDescriptor;
             final Type type = JetTypeMapper.jetImplementationType(outerClassDescriptor);
+            codegen.addOuterThis(outerClassDescriptor, StackValue.local(1, type));
             String interfaceDesc = type.getDescriptor();
             final String fieldName = "this$0";
             v.visitField(Opcodes.ACC_PRIVATE | Opcodes.ACC_FINAL, fieldName, interfaceDesc, null, null);

@@ -87,4 +87,8 @@ public class ClassGenTest extends CodegenTestCase {
     public void testInitializerBlockDImpl() throws Exception {
         blackBoxFile("classes/initializerBlockDImpl.jet");
     }
+
+    public void testPropertyInInitializer() throws Exception {
+        blackBoxFile("classes/propertyInInitializer.jet");
+    }
 }

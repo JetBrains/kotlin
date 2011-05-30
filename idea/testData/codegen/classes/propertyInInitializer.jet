@@ -1,0 +1,16 @@
+class Outer() {
+  public val s = "xyzzy"
+
+  class InnerBase(public val name: String) {
+  }
+
+  class InnerDerived(): InnerBase(s) {
+  }
+
+  public val x = new InnerDerived()
+}
+
+fun box() {
+  val o = new Outer()
+  return if (o.x.name != "xyzzy") "fail" else "OK"
+}

@@ -77,8 +77,9 @@ public class FunctionCodegen {
                 frameMap.enter(parameter, argTypes[i].getSize());
             }
 
-            ExpressionCodegen codegen = new ExpressionCodegen(mv, bindingContext, frameMap, typeMapper, receiverType,
-                    jvmSignature.getReturnType(), contextDescriptor, kind);
+            StackValue thisExpression = receiverType == null ? null : StackValue.local(0, typeMapper.mapType(receiverType));
+            ExpressionCodegen codegen = new ExpressionCodegen(mv, bindingContext, frameMap, typeMapper,
+                    jvmSignature.getReturnType(), contextDescriptor, kind, thisExpression);
             if (kind instanceof OwnerKind.DelegateKind) {
                 OwnerKind.DelegateKind dk = (OwnerKind.DelegateKind) kind;
                 InstructionAdapter iv = new InstructionAdapter(mv);
