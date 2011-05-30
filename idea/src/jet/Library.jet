@@ -7,6 +7,8 @@ namespace typeinfo {
     }
 }
 
+fun Any?.equals(other : Any?) : Boolean = this === other
+
 
 class Iterator<out T> {
   fun next() : T

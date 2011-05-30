@@ -52,10 +52,10 @@ public class JetParsingTest extends ParsingTestCase {
     protected void checkResult(@NonNls String targetDataName, PsiFile file) throws IOException {
         file.acceptChildren(new JetVisitor() {
             @Override
-            public void visitJetElement(JetElement elem) {
-                elem.acceptChildren(this);
+            public void visitJetElement(JetElement element) {
+                element.acceptChildren(this);
                 try {
-                    checkPsiGetters(elem);
+                    checkPsiGetters(element);
                 } catch (Throwable throwable) {
                     throw new RuntimeException(throwable);
                 }

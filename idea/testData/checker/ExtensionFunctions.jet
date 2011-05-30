@@ -6,7 +6,7 @@ fun <T, E> T.foo(x : E, y : A) : T   {
   y plus 1
   y + 1.0
 
-  this?.minus<T>(this)
+  this<warning>?.</warning>minus<T>(this)
 
   this
 }
@@ -36,3 +36,35 @@ val Int.abs : Int
 val <T> T.foo : T
 
 fun Int.foo() = this
+
+namespace null_safety {
+
+        fun parse(cmd: String): Command? { return null  }
+        class Command() {
+        //  fun equals(other : Any?) : Boolean
+          val foo : Int
+        }
+
+        fun Any.equals(other : Any?) : Boolean
+        fun Any?.equals1(other : Any?) : Boolean
+
+        fun main(args: Array<String>) {
+
+            System.out?.print(1)
+
+            val command = parse("")
+
+            command<error>.</error>foo
+
+            command<error>.</error>equals(null)
+            command?.equals(null)
+            command.equals1(null)
+            command<warning>?.</warning>equals1(null)
+
+            val c = new Command()
+            c<warning>?.</warning>equals(null)
+
+            if (command == null) 1
+        }
+
+}

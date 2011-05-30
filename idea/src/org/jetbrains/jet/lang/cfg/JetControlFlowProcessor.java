@@ -694,16 +694,16 @@ public class JetControlFlowProcessor {
                                     }
 
                                     @Override
-                                    public void visitJetElement(JetElement elem) {
-                                        throw new UnsupportedOperationException("[JetControlFlowProcessor] " + elem.toString());
+                                    public void visitJetElement(JetElement element) {
+                                        throw new UnsupportedOperationException("[JetControlFlowProcessor] " + element.toString());
                                     }
                                 });
                             }
                         }
 
                         @Override
-                        public void visitJetElement(JetElement elem) {
-                            throw new UnsupportedOperationException("[JetControlFlowProcessor] " + elem.toString());
+                        public void visitJetElement(JetElement element) {
+                            throw new UnsupportedOperationException("[JetControlFlowProcessor] " + element.toString());
                         }
                     });
                 }
@@ -726,8 +726,8 @@ public class JetControlFlowProcessor {
         }
 
         @Override
-        public void visitJetElement(JetElement elem) {
-            builder.unsupported(elem);
+        public void visitJetElement(JetElement element) {
+            builder.unsupported(element);
         }
     }
 }

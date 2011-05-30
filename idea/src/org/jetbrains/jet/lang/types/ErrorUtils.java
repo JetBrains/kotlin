@@ -123,11 +123,7 @@ public class ErrorUtils {
         );
     }
 
-    private static FunctionDescriptor createErrorFunction(int typeParameterCount, Map<String, JetType> valueParameters) {
-        throw new UnsupportedOperationException(); // TODO
-    }
-
-    private static FunctionDescriptor createErrorFunction(int typeParameterCount, List<JetType> positionedValueParameterTypes) {
+    public static FunctionDescriptor createErrorFunction(int typeParameterCount, List<JetType> positionedValueParameterTypes) {
         return new FunctionDescriptorImpl(ERROR_CLASS, Collections.<Annotation>emptyList(), "<ERROR FUNCTION>").initialize(
                 null,
                 Collections.<TypeParameterDescriptor>emptyList(), // TODO

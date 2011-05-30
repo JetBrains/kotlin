@@ -84,8 +84,8 @@ public class ClassDescriptorResolver {
                 }
 
                 @Override
-                public void visitJetElement(JetElement elem) {
-                    throw new UnsupportedOperationException(elem.toString());
+                public void visitJetElement(JetElement element) {
+                    throw new UnsupportedOperationException(element.toString());
                 }
             });
         }
