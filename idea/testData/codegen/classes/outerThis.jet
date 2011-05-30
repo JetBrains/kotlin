@@ -1,0 +1,12 @@
+class Outer() {
+  class Inner() {
+    val outer: Outer get() = this@Outer
+  }
+
+  public val x = new Inner()
+}
+
+fun box() {
+  val o = new Outer()
+  return if (o === o.x.outer) "OK" else "fail"
+}

@@ -770,22 +770,29 @@ public class ExpressionCodegen extends JetVisitor {
             }
         }
         else if (!(expression.getParent() instanceof JetSafeQualifiedExpression)) {
-            generateThisOrOuter(calleeContainingClass);
+            final StackValue value = generateThisOrOuter(calleeContainingClass);
+            value.put(value.type, v);
         }
     }
 
-    public void generateThisOrOuter(ClassDescriptor calleeContainingClass) {
+    public StackValue generateThisOrOuter(ClassDescriptor calleeContainingClass) {
         final StackValue value = outerThisExpressions.get(calleeContainingClass);
         if (value != null) {
-            value.put(value.type, v);
+            return value;
         }
         else {
-            v.load(0, JetTypeMapper.TYPE_OBJECT);  // TODO hope it works; really need more checks here :)
+            // TODO hope it works; really need more checks here :)
             if (calleeContainingClass != null && contextType instanceof ClassDescriptor &&
                 calleeContainingClass == contextType.getContainingDeclaration()) {
-                v.getfield(typeMapper.jvmName((ClassDescriptor) contextType, OwnerKind.IMPLEMENTATION),
-                        "this$0", typeMapper.jvmType(calleeContainingClass, OwnerKind.IMPLEMENTATION).getDescriptor());
+                v.load(0, JetTypeMapper.TYPE_OBJECT);
+                return StackValue.field(typeMapper.jvmType(calleeContainingClass, OwnerKind.IMPLEMENTATION),
+                        typeMapper.jvmName((ClassDescriptor) contextType, OwnerKind.IMPLEMENTATION),
+                        "this$0",
+                        false);
                 // TODO handle more levels of class nestng
+            }
+            else {
+                return StackValue.local(0, JetTypeMapper.TYPE_OBJECT);
             }
         }
     }
@@ -1418,7 +1425,13 @@ public class ExpressionCodegen extends JetVisitor {
 
     @Override
     public void visitThisExpression(JetThisExpression expression) {
-        generateThis();
+        final DeclarationDescriptor descriptor = bindingContext.resolveReferenceExpression(expression.getThisReference());
+        if (descriptor instanceof ClassDescriptor) {
+            myStack.push(generateThisOrOuter((ClassDescriptor) descriptor));
+        }
+        else {
+            generateThis();
+        }
     }
 
     public void thisToStack() {
@@ -1431,7 +1444,7 @@ public class ExpressionCodegen extends JetVisitor {
             myStack.push(thisExpression);
             return;
         }
-        if (contextKind == OwnerKind.NAMESPACE) {
+        if (contextKind != OwnerKind.NAMESPACE) {
             ClassDescriptor contextClass = (ClassDescriptor) contextType;
             final Type thisType = typeMapper.jvmType(contextClass, contextKind);
             if (contextKind == OwnerKind.IMPLEMENTATION) {

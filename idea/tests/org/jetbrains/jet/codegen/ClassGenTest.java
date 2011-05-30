@@ -91,4 +91,8 @@ public class ClassGenTest extends CodegenTestCase {
     public void testPropertyInInitializer() throws Exception {
         blackBoxFile("classes/propertyInInitializer.jet");
     }
+
+    public void testOuterThis() throws Exception {
+        blackBoxFile("classes/outerThis.jet");
+    }
 }
