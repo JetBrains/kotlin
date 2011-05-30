@@ -34,6 +34,13 @@ public class JetQuickDocumentationProvider implements DocumentationProvider {
             if (declarationDescriptor != null) {
                 return render(declarationDescriptor);
             }
+            PsiElement psiElement = bindingContext.resolveToDeclarationPsiElement(ref);
+            if (psiElement != null) {
+                declarationDescriptor = bindingContext.getDeclarationDescriptor(psiElement);
+                if (declarationDescriptor != null) {
+                    return render(declarationDescriptor);
+                }
+            }
             return "Unresolved";
         }
 

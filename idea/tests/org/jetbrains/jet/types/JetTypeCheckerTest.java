@@ -12,7 +12,10 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetChangeUtil;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.ClassDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.JetScope;
+import org.jetbrains.jet.lang.resolve.JetScopeAdapter;
+import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.parsing.JetParsingTest;
 

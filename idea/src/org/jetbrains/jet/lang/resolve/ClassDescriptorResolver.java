@@ -248,7 +248,7 @@ public class ClassDescriptorResolver {
     }
 
     @NotNull
-    private MutableValueParameterDescriptor resolveValueParameterDescriptor(DeclarationDescriptor declarationDescriptor, JetParameter valueParameter, int index, JetType type) {
+    public MutableValueParameterDescriptor resolveValueParameterDescriptor(DeclarationDescriptor declarationDescriptor, JetParameter valueParameter, int index, JetType type) {
         MutableValueParameterDescriptor valueParameterDescriptor = new ValueParameterDescriptorImpl(
             declarationDescriptor,
             index,
@@ -343,7 +343,7 @@ public class ClassDescriptorResolver {
 
     @NotNull
     public VariableDescriptor resolveLocalVariableDescriptor(DeclarationDescriptor containingDeclaration, WritableScope scope, JetProperty property) {
-        JetType type = getType(scope, property, false); // For a local variable the type must not be deferred
+        JetType type = getVariableType(scope, property, false); // For a local variable the type must not be deferred
 
         VariableDescriptorImpl variableDescriptor = new LocalVariableDescriptor(
                 containingDeclaration,
@@ -380,7 +380,7 @@ public class ClassDescriptorResolver {
         JetModifierList modifierList = property.getModifierList();
         boolean isVar = property.isVar();
 
-        JetType type = getType(scopeWithTypeParameters, property, true);
+        JetType type = getVariableType(scopeWithTypeParameters, property, true);
 
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                 containingDeclaration,
@@ -402,7 +402,7 @@ public class ClassDescriptorResolver {
     }
 
     @NotNull
-    private JetType getType(@NotNull final JetScope scope, @NotNull JetProperty property, boolean allowDeferred) {
+    private JetType getVariableType(@NotNull final JetScope scope, @NotNull JetProperty property, boolean allowDeferred) {
         // TODO : receiver?
         JetTypeReference propertyTypeRef = property.getPropertyTypeRef();
 
