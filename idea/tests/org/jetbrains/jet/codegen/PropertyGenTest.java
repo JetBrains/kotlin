@@ -111,7 +111,6 @@ public class PropertyGenTest extends CodegenTestCase {
 
     public void testPropertyReceiverOnStack() throws Exception {
         loadFile();
-        System.out.println(generateToText());
         final Class aClass = loadImplementationClass(generateClassesInFile(), "Evaluator");
         final Constructor constructor = aClass.getConstructor(StringBuilder.class);
         StringBuilder sb = new StringBuilder("xyzzy");
@@ -119,5 +118,12 @@ public class PropertyGenTest extends CodegenTestCase {
         final Method method = aClass.getMethod("evaluateArg");
         Integer result = (Integer) method.invoke(instance);
         assertEquals(5, result.intValue());
+    }
+
+    public void testAbstractVal() throws Exception {
+        loadText("class Foo { public abstract val x: String }");
+        final Codegens codegens = generateClassesInFile();
+        final Class aClass = loadClass("Foo", codegens);
+        assertNotNull(aClass.getMethod("getX"));
     }
 }
