@@ -453,7 +453,9 @@ public class ClassDescriptorResolver {
             List<Annotation> annotations = AnnotationResolver.INSTANCE.resolveAnnotations(setter.getModifierList());
             JetParameter parameter = setter.getParameter();
 
-            setterDescriptor = new PropertySetterDescriptor(propertyDescriptor, annotations, setter.getBodyExpression() != null);
+            setterDescriptor = new PropertySetterDescriptor(
+                    resolveModifiers(setter.getModifierList(), DEFAULT_MODIFIERS), // TODO : default modifiers differ in different contexts
+                    propertyDescriptor, annotations, setter.getBodyExpression() != null);
             if (parameter != null) {
                 if (parameter.isRef()) {
                     trace.getErrorHandler().genericError(parameter.getRefNode(), "Setter parameters can not be 'ref'");
@@ -504,7 +506,9 @@ public class ClassDescriptorResolver {
                 returnType = typeResolver.resolveType(scope, returnTypeReference);
             }
 
-            getterDescriptor = new PropertyGetterDescriptor(propertyDescriptor, annotations, returnType, getter.getBodyExpression() != null);
+            getterDescriptor = new PropertyGetterDescriptor(
+                    resolveModifiers(getter.getModifierList(), DEFAULT_MODIFIERS), // TODO : default modifiers differ in different contexts
+                    propertyDescriptor, annotations, returnType, getter.getBodyExpression() != null);
             trace.recordDeclarationResolution(getter, getterDescriptor);
         }
         return getterDescriptor;

@@ -256,10 +256,10 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
         else if (propertyDescriptor.isVar() && setter == null) {
             return true;
         }
-        else if (setter != null && !setter.hasBody()) {
+        else if (setter != null && !setter.hasBody() && !setter.getModifiers().isAbstract()) {
             return true;
         }
-        else if (!getter.hasBody()) {
+        else if (!getter.hasBody() && !getter.getModifiers().isAbstract()) {
             return true;
         }
         return backingFieldRequired.contains(propertyDescriptor);

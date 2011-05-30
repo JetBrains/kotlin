@@ -33,6 +33,12 @@ class Test() {
 
     var <info>v5</info> : Int <info>get</info>() = 1; <info>set</info>(x){$v5 = x}
     var <info>v6</info> : Int <info>get</info>() = $v6 + 1; <info>set</info>(x){}
+
+  val v7 : Int <info>abstract</info> <info>get</info>
+  var v8 : Int <info>abstract</info> <info>get</info> <info>abstract</info> <info>set</info>
+  var <info>v9</info> : Int <info>abstract</info> <info>set</info>
+  var <info>v10</info> : Int <info>abstract</info> <info>get</info>
+
 }
 
 <info>open</info> class Super(i : Int)
