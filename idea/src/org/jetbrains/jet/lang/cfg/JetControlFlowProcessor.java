@@ -72,10 +72,12 @@ public class JetControlFlowProcessor {
     }
 
     @Nullable
-    private JetElement resolveLabel(@NotNull String labelName, @NotNull JetSimpleNameExpression labelExpression) {
+    private JetElement resolveLabel(@NotNull String labelName, @NotNull JetSimpleNameExpression labelExpression, boolean reportUnresolved) {
         Stack<JetElement> stack = labeledElements.get(labelName);
         if (stack == null || stack.isEmpty()) {
-            trace.getErrorHandler().unresolvedReference(labelExpression);
+            if (reportUnresolved) {
+                trace.getErrorHandler().unresolvedReference(labelExpression);
+            }
             return null;
         }
         else if (stack.size() > 1) {
@@ -119,6 +121,12 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitThisExpression(JetThisExpression expression) {
+            JetSimpleNameExpression targetLabel = expression.getTargetLabel();
+            if (targetLabel != null) {
+                String labelName = expression.getLabelName();
+                assert labelName != null;
+                resolveLabel(labelName, targetLabel, false);
+            }
             builder.read(expression);
         }
 
@@ -416,7 +424,7 @@ public class JetControlFlowProcessor {
             if (labelName != null) {
                 JetSimpleNameExpression targetLabel = expression.getTargetLabel();
                 assert targetLabel != null;
-                loop = resolveLabel(labelName, targetLabel);
+                loop = resolveLabel(labelName, targetLabel, true);
                 if (!isLoop(loop)) {
                     trace.getErrorHandler().genericError(expression.getNode(), "The label '" + targetLabel.getText() + "' does not denote a loop");
                     loop = null;
@@ -448,7 +456,7 @@ public class JetControlFlowProcessor {
             if (labelElement != null) {
                 String labelName = expression.getLabelName();
                 assert labelName != null;
-                subroutine = resolveLabel(labelName, labelElement);
+                subroutine = resolveLabel(labelName, labelElement, true);
             }
             else {
                 subroutine = builder.getCurrentSubroutine();

@@ -40,7 +40,7 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
         this.original = original;
     }
 
-    public FunctionDescriptor initialize(
+    public FunctionDescriptorImpl initialize(
             @Nullable JetType receiverType,
             @NotNull List<TypeParameterDescriptor> typeParameters,
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
@@ -50,6 +50,10 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
         this.unsubstitutedValueParameters = unsubstitutedValueParameters;
         this.unsubstitutedReturnType = unsubstitutedReturnType;
         return this;
+    }
+
+    public void setReturnType(JetType unsubstitutedReturnType) {
+        this.unsubstitutedReturnType = unsubstitutedReturnType;
     }
 
     @Override

@@ -20,3 +20,22 @@ fun foo() : Unit {
   <error>this</error>
   this<error>@a</error>
 }
+
+namespace closures {
+    class A(val a:Int) {
+
+      class B() {
+        val x = this@B : B
+        val y = this@A : A
+        val z = this : B
+        val Int.xx = this : Int
+        fun Char.xx() {
+          this : Char
+          val a = {Double.() => this : Double + this@xx : Char}
+          val b = @a{Double.() => this@a : Double + this@xx : Char}
+          val c = @a{() => <error>this@a</error> + this@xx : Char}
+          return (@a{Double.() => this@a : Double + this@xx : Char})
+        }
+      }
+    }
+}

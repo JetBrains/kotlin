@@ -9,12 +9,19 @@ import java.util.List;
 /**
  * @author abreslav
  */
-public abstract class PropertyAccessorDescriptor extends DeclarationDescriptorImpl implements FunctionDescriptor {
+public abstract class PropertyAccessorDescriptor extends DeclarationDescriptorImpl implements FunctionDescriptor, MemberDescriptor {
 
     private final boolean hasBody;
+    private final MemberModifiers modifiers;
 
-    protected PropertyAccessorDescriptor(@NotNull PropertyDescriptor correspondingProperty, @NotNull List<Annotation> annotations, @NotNull String name, boolean hasBody) {
+    protected PropertyAccessorDescriptor(
+            @NotNull MemberModifiers modifiers,
+            @NotNull PropertyDescriptor correspondingProperty,
+            @NotNull List<Annotation> annotations,
+            @NotNull String name,
+            boolean hasBody) {
         super(correspondingProperty.getContainingDeclaration(), annotations, name);
+        this.modifiers = modifiers;
         this.hasBody = hasBody;
     }
 
@@ -38,5 +45,11 @@ public abstract class PropertyAccessorDescriptor extends DeclarationDescriptorIm
     @Override
     public List<TypeParameterDescriptor> getTypeParameters() {
         return Collections.emptyList();
+    }
+
+    @NotNull
+    @Override
+    public MemberModifiers getModifiers() {
+        return modifiers;
     }
 }

@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.types;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
@@ -735,10 +736,6 @@ public class JetTypeInferrer {
                 return;
             }
 
-            FunctionDescriptorImpl functionDescriptor = new FunctionDescriptorImpl(scope.getContainingDeclaration(), Collections.<Annotation>emptyList(), "<anonymous>");
-
-            JetTypeReference returnTypeRef = expression.getReturnTypeRef();
-
             JetTypeReference receiverTypeRef = expression.getReceiverTypeRef();
             final JetType receiverType;
             if (receiverTypeRef != null) {
@@ -747,31 +744,44 @@ public class JetTypeInferrer {
                 receiverType = scope.getThisType();
             }
 
-            List<JetElement> body = expression.getBody();
-            final Map<String, VariableDescriptor> parameterDescriptors = new HashMap<String, VariableDescriptor>();
+            FunctionDescriptorImpl functionDescriptor = new FunctionDescriptorImpl(
+                    scope.getContainingDeclaration(), Collections.<Annotation>emptyList(), "<anonymous>");
+
             List<JetType> parameterTypes = new ArrayList<JetType>();
-            for (JetParameter parameter : expression.getParameters()) {
+            List<ValueParameterDescriptor> valueParameterDescriptors = Lists.newArrayList();
+            List<JetParameter> parameters = expression.getParameters();
+            for (int i = 0, parametersSize = parameters.size(); i < parametersSize; i++) {
+                JetParameter parameter = parameters.get(i);
                 JetTypeReference typeReference = parameter.getTypeReference();
                 if (typeReference == null) {
                     throw new UnsupportedOperationException("Type inference for parameters is not implemented yet");
                 }
-                VariableDescriptor variableDescriptor = classDescriptorResolver.resolveLocalVariableDescriptor(functionDescriptor, scope, parameter);
-                parameterDescriptors.put(parameter.getName(), variableDescriptor);
-                parameterTypes.add(variableDescriptor.getOutType());
+                JetType type = typeResolver.resolveType(scope, typeReference);
+                ValueParameterDescriptor valueParameterDescriptor = classDescriptorResolver.resolveValueParameterDescriptor(functionDescriptor, parameter, i, type);
+                parameterTypes.add(valueParameterDescriptor.getOutType());
+                valueParameterDescriptors.add(valueParameterDescriptor);
             }
+
+            JetType effectiveReceiverType = receiverTypeRef == null ? null : receiverType;
+            functionDescriptor.initialize(effectiveReceiverType, Collections.<TypeParameterDescriptor>emptyList(), valueParameterDescriptors, null);
+            trace.recordDeclarationResolution(expression, functionDescriptor);
+
+            JetTypeReference returnTypeRef = expression.getReturnTypeRef();
             JetType returnType;
             if (returnTypeRef != null) {
                 returnType = typeResolver.resolveType(scope, returnTypeRef);
             } else {
                 WritableScope writableScope = new WritableScopeImpl(scope, functionDescriptor, trace.getErrorHandler());
-                for (VariableDescriptor variableDescriptor : parameterDescriptors.values()) {
+                for (VariableDescriptor variableDescriptor : valueParameterDescriptors) {
                     writableScope.addVariableDescriptor(variableDescriptor);
                 }
                 writableScope.setThisType(receiverType);
-                returnType = getBlockReturnedType(writableScope, body);
+                returnType = getBlockReturnedType(writableScope, expression.getBody());
             }
-            JetType effectiveReceiverType = receiverTypeRef == null ? null : receiverType;
             JetType safeReturnType = returnType == null ? ErrorUtils.createErrorType("<return type>") : returnType;
+            functionDescriptor.setReturnType(safeReturnType);
+
+
             result = JetStandardClasses.getFunctionType(Collections.<Annotation>emptyList(), effectiveReceiverType, parameterTypes, safeReturnType);
         }
 
@@ -928,7 +938,6 @@ public class JetTypeInferrer {
 
         @Override
         public void visitThisExpression(JetThisExpression expression) {
-            // TODO : qualified this, e.g. this@Foo<Bar>
             JetType thisType = null;
             String labelName = expression.getLabelName();
             if (labelName != null) {
@@ -941,15 +950,39 @@ public class JetTypeInferrer {
                     if (declarationDescriptor instanceof ClassDescriptor) {
                         ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
                         thisType = classDescriptor.getDefaultType();
-                        trace.recordReferenceResolution(targetLabel, classDescriptor);
-                        trace.recordReferenceResolution(expression.getThisReference(), classDescriptor);
+                    }
+                    else if (declarationDescriptor instanceof FunctionDescriptor) {
+                        FunctionDescriptor functionDescriptor = (FunctionDescriptor) declarationDescriptor;
+                        thisType = functionDescriptor.getReceiverType();
                     }
                     else {
                         throw new UnsupportedOperationException(); // TODO
                     }
+                    trace.recordReferenceResolution(targetLabel, declarationDescriptor);
+                    trace.recordReferenceResolution(expression.getThisReference(), declarationDescriptor);
                 }
                 else if (size == 0) {
-                    trace.getErrorHandler().unresolvedReference(targetLabel);
+                    // This uses the info written by the control flow processor
+                    PsiElement psiElement = trace.getBindingContext().resolveToDeclarationPsiElement(targetLabel);
+                    if (psiElement instanceof JetFunctionLiteralExpression) {
+                        DeclarationDescriptor declarationDescriptor = trace.getBindingContext().getDeclarationDescriptor(psiElement);
+                        if (declarationDescriptor instanceof FunctionDescriptor) {
+                            thisType = ((FunctionDescriptor) declarationDescriptor).getReceiverType();
+                            if (thisType == null) {
+                                thisType = JetStandardClasses.getNothingType();
+                            }
+                            else {
+                                trace.recordReferenceResolution(targetLabel, declarationDescriptor);
+                                trace.recordReferenceResolution(expression.getThisReference(), declarationDescriptor);
+                            }
+                        }
+                        else {
+                            trace.getErrorHandler().unresolvedReference(targetLabel);
+                        }
+                    }
+                    else {
+                        trace.getErrorHandler().unresolvedReference(targetLabel);
+                    }
                 }
                 else {
                     trace.getErrorHandler().genericError(targetLabel.getNode(), "Ambiguous label");
