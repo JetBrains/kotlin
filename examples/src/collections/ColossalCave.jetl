@@ -1,18 +1,30 @@
 namespace ColossalCave;
 
+import java.io.*
+
 class World() {
   class Room {
-    abstract val name: String
+    public abstract val name: String
+    public val west: Room? get() = null
+    public val east: Room? get() = null
   }
 
-  val atEndOfRoad: Room
+  public val atEndOfRoad: Room
+  public val atHillInRoad: Room
 
   class AtEndOfRoad(): Room {
-    val name: String = "At End of Road"
+    public val name: String = "At End of Road"
+    public val west: Room? get() = atHillInRoad
+  }
+
+  class AtHillInRoad(): Room {
+    public val name: String = "At Hill in Road"
+    public val east: Room? get() = atEndOfRoad
   }
 
   {
     atEndOfRoad = new AtEndOfRoad()
+    atHillInRoad = new AtHillInRoad()
   }
 
   fun startRoom() = atEndOfRoad
@@ -22,8 +34,58 @@ class Player(var room: World.Room) {
 
 }
 
+class Command {
+  abstract fun execute(p: Player): Unit
+}
+
+class QuitCommand() : Command {
+  fun execute(p: Player): Unit {
+    System.exit(0)
+  }
+}
+
+class MoveCommand: Command {
+  fun moveTo(p: Player, room: World.Room?) {
+    if (room === null) {
+      System.out?.println("You can't go that way")
+      return
+    }
+    p.room = room as World.Room
+    System.out?.println(p.room.name)
+  }
+}
+
+class WestCommand(): MoveCommand {
+  fun execute(p: Player): Unit {
+    moveTo(p, p.room.west)
+  }
+}
+
+class EastCommand(): MoveCommand {
+  fun execute(p: Player): Unit {
+    moveTo(p, p.room.east)
+  }
+}
+
+fun parse(cmd: String): Command? {
+  if (cmd == "quit") return new QuitCommand()
+  if (cmd == "west") return new WestCommand()
+  if (cmd == "east") return new EastCommand()
+  return null
+}
+
 fun main(args: Array<String>) {
   val w = new World()
   val p = new Player(w.startRoom())
   System.out?.println(p.room.name)
+  val reader = new BufferedReader(new InputStreamReader(System.`in`))
+  while(true) {
+    System.out?.print("> ")
+    val cmd = reader.readLine() as String
+    val command = parse(cmd)
+    if (command === null)
+      System.out?.println("Unrecognized command");
+    else
+      command?.execute(p)
+  }
 }
