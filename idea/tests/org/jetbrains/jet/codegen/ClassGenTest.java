@@ -79,4 +79,8 @@ public class ClassGenTest extends CodegenTestCase {
     public void testInheritedMethod() throws Exception {
         blackBoxFile("classes/inheritedMethod.jet");
     }
+
+    public void testInitializerBlockDImpl() throws Exception {
+        blackBoxFile("classes/initializerBlockDImpl.jet");
+    }
 }

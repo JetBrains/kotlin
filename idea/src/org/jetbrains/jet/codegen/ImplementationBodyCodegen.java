@@ -61,7 +61,12 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         generateStaticInitializer();
 
-        generatePrimaryConstructor();
+        try {
+            generatePrimaryConstructor();
+        }
+        catch(RuntimeException e) {
+            throw new RuntimeException("Error generating primary constructor of class " + myClass.getName() + " with kind " + kind, e);
+        }
 
         generateGetTypeInfo();
     }
@@ -103,23 +108,26 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             iv.invokespecial(superClass, "<init>", /* TODO super constructor descriptor */"()V");
         }
 
-        int index = 0;
-        for (ClassDescriptor outerClassDescriptor : JetTypeMapper.getOuterClassDescriptors(descriptor)) {
+        int index = 1;  // this
+        final DeclarationDescriptor outerDescriptor = descriptor.getContainingDeclaration();
+        if (outerDescriptor instanceof ClassDescriptor) {
+            final ClassDescriptor outerClassDescriptor = (ClassDescriptor) outerDescriptor;
             final Type type = JetTypeMapper.jetInterfaceType(outerClassDescriptor);
             String interfaceDesc = type.getDescriptor();
-            final String fieldName = "this$" + index;
+            final String fieldName = "this$0";
             v.visitField(Opcodes.ACC_PRIVATE | Opcodes.ACC_FINAL, fieldName, interfaceDesc, null, null);
             iv.load(0, classType);
-            iv.load(index + 1, type);
+            iv.load(index, type);
             iv.putfield(classname, fieldName, interfaceDesc);
             frameMap.enterTemp();
+            index++;
         }
 
         if (kind == OwnerKind.DELEGATING_IMPLEMENTATION) {
             String interfaceDesc = JetTypeMapper.jetInterfaceType(descriptor).getDescriptor();
             v.visitField(Opcodes.ACC_PRIVATE | Opcodes.ACC_FINAL, "$this", interfaceDesc, /*TODO*/null, null);
             iv.load(0, classType);
-            iv.load(1, argTypes[0]);
+            iv.load(index, argTypes[0]);
             iv.putfield(classname, "$this", interfaceDesc);
             frameMap.enterTemp();
         }

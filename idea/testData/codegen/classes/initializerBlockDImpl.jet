@@ -1,0 +1,20 @@
+import java.util.*
+import java.io.*
+
+class World() {
+  public val items: ArrayList<Item> = new ArrayList<Item>
+
+  class Item() {
+    {
+      items.add(this)
+    }
+  }
+
+  val foo = new Item()
+}
+
+fun box() {
+  val w = new World()
+  if (w.items.size() != 1) return "fail"
+  return "OK"
+}

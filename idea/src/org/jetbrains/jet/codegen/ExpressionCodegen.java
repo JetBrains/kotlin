@@ -1346,11 +1346,9 @@ public class ExpressionCodegen extends JetVisitor {
     }
 
     private void pushOuterClassArguments(ClassDescriptor classDecl) {
-        final List<ClassDescriptor> outerClassDescriptors = JetTypeMapper.getOuterClassDescriptors(classDecl);
-        if (outerClassDescriptors.size() > 0) {
+        if (classDecl.getContainingDeclaration() instanceof ClassDescriptor) {
             v.load(0, JetTypeMapper.jetImplementationType(classDecl));
         }
-        // TODO push further outer classes
     }
 
     private Type generateJavaConstructorCall(JetNewExpression expression, PsiMethod constructor) {
@@ -1426,12 +1424,14 @@ public class ExpressionCodegen extends JetVisitor {
         }
         else {
             ClassDescriptor contextClass = (ClassDescriptor) contextType;
+            final Type thisType = typeMapper.jvmType(contextClass, contextKind);
             if (contextKind == OwnerKind.IMPLEMENTATION) {
-                myStack.push(StackValue.local(0, JetTypeMapper.jetImplementationType(contextClass)));
+                myStack.push(StackValue.local(0, thisType));
             }
             else if (contextKind == OwnerKind.DELEGATING_IMPLEMENTATION) {
+                v.load(0, thisType);
                 myStack.push(StackValue.field(JetTypeMapper.jetInterfaceType(contextClass),
-                        typeMapper.jvmName(contextClass, contextKind),
+                        thisType.getInternalName(),
                         "$this",
                         false));
             }
