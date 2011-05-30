@@ -1,30 +1,54 @@
 namespace ColossalCave;
 
+import java.util.*
 import java.io.*
 
 class World() {
-  class Room {
-    public abstract val name: String
+  class Room(val name: String) {
     public val west: Room? get() = null
     public val east: Room? get() = null
+
+    public val world: World get() = this@World
   }
 
-  public val atEndOfRoad: Room
-  public val atHillInRoad: Room
+  public val items = new ArrayList<Item>
 
-  class AtEndOfRoad(): Room {
-    public val name: String = "At End of Road"
+  class Item(val name: String, var room: Room) {
+    {
+      items.add(this)
+    }
+  }
+
+  fun describeRoom(room: Room) {
+    System.out?.println(room.name)
+    for(val anItem: Any? in items) {
+      val item = anItem as Item
+      if (item.room === room) {
+        System.out?.println("You see " + item.name)
+      }
+    }
+  }
+
+  public val atEndOfRoad = new AtEndOfRoad()
+  public val atHillInRoad = new AtHillInRoad()
+  public val insideBuilding = new InsideBuilding()
+
+  public val brassLantern = new BrassLantern()
+
+  class AtEndOfRoad(): Room("At End of Road") {
     public val west: Room? get() = atHillInRoad
+    public val east: Room? get() = insideBuilding
   }
 
-  class AtHillInRoad(): Room {
-    public val name: String = "At Hill in Road"
+  class AtHillInRoad(): Room("At Hill in Road") {
     public val east: Room? get() = atEndOfRoad
   }
 
-  {
-    atEndOfRoad = new AtEndOfRoad()
-    atHillInRoad = new AtHillInRoad()
+  class InsideBuilding(): Room("Inside Building") {
+    public val west: Room? get() = atHillInRoad
+  }
+
+  class BrassLantern(): Item("Brass Lantern", insideBuilding) {
   }
 
   fun startRoom() = atEndOfRoad
@@ -51,7 +75,7 @@ class MoveCommand: Command {
       return
     }
     p.room = room as World.Room
-    System.out?.println(p.room.name)
+    room?.world.describeRoom(p.room)
   }
 }
 
