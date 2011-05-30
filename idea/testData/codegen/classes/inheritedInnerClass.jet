@@ -1,0 +1,14 @@
+class Outer() {
+  class InnerBase() {
+  }
+
+  class InnerDerived(): InnerBase() {
+  }
+
+  public val foo: InnerBase? = new InnerDerived()
+}
+
+fun box() {
+  val o = new Outer()
+  return if (o.foo === null) "fail" else "OK"
+}

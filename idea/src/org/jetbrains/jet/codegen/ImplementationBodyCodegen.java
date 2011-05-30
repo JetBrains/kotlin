@@ -112,7 +112,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         final DeclarationDescriptor outerDescriptor = descriptor.getContainingDeclaration();
         if (outerDescriptor instanceof ClassDescriptor) {
             final ClassDescriptor outerClassDescriptor = (ClassDescriptor) outerDescriptor;
-            final Type type = JetTypeMapper.jetInterfaceType(outerClassDescriptor);
+            final Type type = JetTypeMapper.jetImplementationType(outerClassDescriptor);
             String interfaceDesc = type.getDescriptor();
             final String fieldName = "this$0";
             v.visitField(Opcodes.ACC_PRIVATE | Opcodes.ACC_FINAL, fieldName, interfaceDesc, null, null);
@@ -187,6 +187,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     iv.dup();
                 }
 
+                if (classDecl.getContainingDeclaration() instanceof ClassDescriptor) {
+                    iv.load(1, typeMapper.jvmType((ClassDescriptor) descriptor.getContainingDeclaration(), OwnerKind.IMPLEMENTATION));
+                    // TODO handle classes further out
+                }
+
                 Method method1 = typeMapper.mapConstructorSignature(constructorDescriptor1, kind);
                 final Type[] argTypes1 = method1.getArgumentTypes();
                 List<JetArgument> args = superCall.getValueArguments();
@@ -195,7 +200,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     codegen.gen(arg.getArgumentExpression(), argTypes1[i]);
                 }
 
-                iv.invokespecial(type.getClassName(), "<init>", method1.getDescriptor());
+                iv.invokespecial(type.getInternalName(), "<init>", method1.getDescriptor());
             }
             else if (specifier instanceof JetDelegatorByExpressionSpecifier) {
                 codegen.genToJVMStack(((JetDelegatorByExpressionSpecifier) specifier).getDelegateExpression());

@@ -767,13 +767,17 @@ public class ExpressionCodegen extends JetVisitor {
             }
         }
         else if (!(expression.getParent() instanceof JetSafeQualifiedExpression)) {
-            v.load(0, JetTypeMapper.TYPE_OBJECT);  // TODO hope it works; really need more checks here :)
-            if (calleeContainingClass != null && contextType instanceof ClassDescriptor &&
-                calleeContainingClass == contextType.getContainingDeclaration()) {
-                v.getfield(typeMapper.jvmName((ClassDescriptor) contextType, OwnerKind.IMPLEMENTATION),
-                        "this$0", typeMapper.jvmType(calleeContainingClass, OwnerKind.INTERFACE).getDescriptor());
-                // TODO handle more levels of class nestng
-            }
+            generateThisOrOuter(calleeContainingClass);
+        }
+    }
+
+    public void generateThisOrOuter(ClassDescriptor calleeContainingClass) {
+        v.load(0, JetTypeMapper.TYPE_OBJECT);  // TODO hope it works; really need more checks here :)
+        if (calleeContainingClass != null && contextType instanceof ClassDescriptor &&
+            calleeContainingClass == contextType.getContainingDeclaration()) {
+            v.getfield(typeMapper.jvmName((ClassDescriptor) contextType, OwnerKind.IMPLEMENTATION),
+                    "this$0", typeMapper.jvmType(calleeContainingClass, OwnerKind.IMPLEMENTATION).getDescriptor());
+            // TODO handle more levels of class nestng
         }
     }
 
