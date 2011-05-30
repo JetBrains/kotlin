@@ -1,7 +1,5 @@
 package org.jetbrains.jet.codegen;
 
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -47,19 +45,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (delegationSpecifiers.isEmpty()) return "java/lang/Object";
 
         JetDelegationSpecifier first = delegationSpecifiers.get(0);
-        if (first instanceof JetDelegatorToSuperClass) {
-            JetType superType = bindingContext.resolveTypeReference(first.getTypeReference());
-            ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
-            PsiElement superPsi = bindingContext.getDeclarationPsiElement(superClassDescriptor);
-            if (superPsi instanceof PsiClass) {
-                PsiClass psiClass = (PsiClass) superPsi;
-                String fqn = psiClass.getQualifiedName();
-                if (!psiClass.isInterface()) {
-                    return fqn.replace('.', '/');
-                }
-            }
-        }
-        else if (first instanceof JetDelegatorToSuperCall) {
+        if (first instanceof JetDelegatorToSuperClass || first instanceof JetDelegatorToSuperCall) {
             JetType superType = bindingContext.resolveTypeReference(first.getTypeReference());
             ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
             return typeMapper.jvmName(superClassDescriptor, kind);
@@ -104,7 +90,15 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         List<JetDelegationSpecifier> specifiers = myClass.getDelegationSpecifiers();
 
         if (specifiers.isEmpty() || !(specifiers.get(0) instanceof JetDelegatorToSuperCall)) {
-            String superClass = getSuperClass();
+            // TODO correct calculation of super class
+            String superClass = "java/lang/Object";
+            if (!specifiers.isEmpty()) {
+                final JetType superType = bindingContext.resolveTypeReference(specifiers.get(0).getTypeReference());
+                ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
+                if (superClassDescriptor.hasConstructors()) {
+                    superClass = getSuperClass();
+                }
+            }
             iv.load(0, Type.getType("L" + superClass + ";"));
             iv.invokespecial(superClass, "<init>", /* TODO super constructor descriptor */"()V");
         }

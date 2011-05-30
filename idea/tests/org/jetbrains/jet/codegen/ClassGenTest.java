@@ -75,4 +75,8 @@ public class ClassGenTest extends CodegenTestCase {
         assertNull(findMethodByName(implClass, "x"));
         assertNotNull(findMethodByName(implClass, "y"));
     }
+
+    public void testInheritedMethod() throws Exception {
+        blackBoxFile("classes/inheritedMethod.jet");
+    }
 }
