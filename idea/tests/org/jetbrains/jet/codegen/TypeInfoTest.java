@@ -1,6 +1,7 @@
 package org.jetbrains.jet.codegen;
 
 import jet.JetObject;
+import jet.TypeCastException;
 import jet.typeinfo.TypeInfo;
 
 import java.lang.reflect.Method;
@@ -31,11 +32,18 @@ public class TypeInfoTest extends CodegenTestCase {
 
     public void testAsSafeOperator() throws Exception {
         loadText("fun foo(x: Any) = x as? Runnable");
-        System.out.println(generateToText());
         Method foo = generateFunction();
         assertNull(foo.invoke(null, new Object()));
         Runnable r = newRunnable();
         assertSame(r, foo.invoke(null, r));
+    }
+
+    public void testAsOperator() throws Exception {
+        loadText("fun foo(x: Any) = x as Runnable");
+        Method foo = generateFunction();
+        Runnable r = newRunnable();
+        assertSame(r, foo.invoke(null, r));
+        assertThrows(foo, TypeCastException.class, null, new Object());
     }
 
     public void testIsOperator() throws Exception {

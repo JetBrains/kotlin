@@ -7,7 +7,6 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import jet.IntRange;
 import jet.JetObject;
-import jet.NoPatternMatchedException;
 import jet.Range;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -44,6 +43,7 @@ public class ExpressionCodegen extends JetVisitor {
     private static final String CLASS_RANGE = "jet/Range";
     private static final String CLASS_INT_RANGE = "jet/IntRange";
     private static final String CLASS_NO_PATTERN_MATCHED_EXCEPTION = "jet/NoPatternMatchedException";
+    private static final String CLASS_TYPE_CAST_EXCEPTION = "jet/TypeCastException";
 
     private static final String ITERABLE_ITERATOR_DESCRIPTOR = "()Ljava/util/Iterator;";
     private static final String ITERATOR_HASNEXT_DESCRIPTOR = "()Z";
@@ -58,7 +58,6 @@ public class ExpressionCodegen extends JetVisitor {
     private static final Type RANGE_TYPE = Type.getType(Range.class);
     private static final Type INT_RANGE_TYPE = Type.getType(IntRange.class);
     private static final Type JET_OBJECT_TYPE = Type.getType(JetObject.class);
-    private static final Type NO_PATTERN_MATCHED_EXCEPTION_TYPE = Type.getType(NoPatternMatchedException.class);
 
     private final Stack<Label> myContinueTargets = new Stack<Label>();
     private final Stack<Label> myBreakTargets = new Stack<Label>();
@@ -1506,23 +1505,23 @@ public class ExpressionCodegen extends JetVisitor {
             }
             Type type = typeMapper.mapType(jetType, OwnerKind.INTERFACE);
             gen(expression.getLeft(), OBJECT_TYPE);
+            generateInstanceOf(new Runnable() {
+                        @Override
+                        public void run() {
+                            gen(expression.getLeft(), OBJECT_TYPE);
+                        }
+                    }, jetType, true);
+            Label isInstance = new Label();
+            v.ifne(isInstance);
+            v.pop();
             if (opToken == JetTokens.AS_SAFE) {
-                generateInstanceOf(new Runnable() {
-                            @Override
-                            public void run() {
-                                gen(expression.getLeft(), OBJECT_TYPE);
-                            }
-                        }, jetType, true);
-                Label isInstance = new Label();
-                v.ifne(isInstance);
-                v.pop();
                 v.aconst(null);
-                v.mark(isInstance);
-                myStack.push(StackValue.onStack(type));
             }
             else {
-                throw new UnsupportedOperationException("'as' not yet implemented");
+                throwNewException(CLASS_TYPE_CAST_EXCEPTION);
             }
+            v.mark(isInstance);
+            myStack.push(StackValue.onStack(type));
         }
     }
 
@@ -1671,10 +1670,7 @@ public class ExpressionCodegen extends JetVisitor {
         }
         if (!hasElse && nextEntry != null) {
             v.mark(nextEntry);
-            v.anew(NO_PATTERN_MATCHED_EXCEPTION_TYPE);
-            v.dup();
-            v.invokespecial(CLASS_NO_PATTERN_MATCHED_EXCEPTION, "<init>", "()V");
-            v.athrow();
+            throwNewException(CLASS_NO_PATTERN_MATCHED_EXCEPTION);
         }
         v.mark(end);
         final Type type = expressionType(expression);
@@ -1683,6 +1679,13 @@ public class ExpressionCodegen extends JetVisitor {
         }
 
         myMap.leaveTemp(subjectType.getSize());
+    }
+
+    private void throwNewException(final String className) {
+        v.anew(Type.getObjectType(className));
+        v.dup();
+        v.invokespecial(className, "<init>", "()V");
+        v.athrow();
     }
 
     private static class CompilationException extends RuntimeException {
