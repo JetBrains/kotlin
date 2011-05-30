@@ -9,7 +9,6 @@ import java.util.List;
 public class ClassGenTest extends CodegenTestCase {
     public void testPSVMClass() throws Exception {
         loadFile("classes/simpleClass.jet");
-        System.out.println(generateToText());
 
         final Class aClass = loadClass("SimpleClass", generateClassesInFile());
         final Method[] methods = aClass.getDeclaredMethods();
@@ -18,7 +17,6 @@ public class ClassGenTest extends CodegenTestCase {
 
     public void testArrayListInheritance() throws Exception {
         loadFile("classes/inheritingFromArrayList.jet");
-        System.out.println(generateToText());
 
         final Class aClass = loadClass("Foo", generateClassesInFile());
         checkInterface(aClass, List.class);
@@ -65,5 +63,16 @@ public class ClassGenTest extends CodegenTestCase {
 
     public void testInitializerBlock() throws Exception {
         blackBoxFile("classes/initializerBlock.jet");
+    }
+
+    public void testAbstractMethod() throws Exception {
+        loadText("class Foo { abstract fun x(): String; fun y(): Int = 0 }");
+
+        final Codegens codegens = generateClassesInFile();
+        final Class aClass = loadClass("Foo", codegens);
+        assertNotNull(aClass.getMethod("x"));
+        final Class implClass = loadClass("Foo$$Impl", codegens);
+        assertNull(findMethodByName(implClass, "x"));
+        assertNotNull(findMethodByName(implClass, "y"));
     }
 }

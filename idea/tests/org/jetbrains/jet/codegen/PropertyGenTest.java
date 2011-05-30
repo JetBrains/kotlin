@@ -97,7 +97,8 @@ public class PropertyGenTest extends CodegenTestCase {
         final Object instance = aClass.newInstance();
         final Method getFoo = findMethodByName(aClass, "getFoo");
         assertEquals(349, getFoo.invoke(instance));
-        assertNull(findMethodByName(aClass, "setFoo"));
+        final Method setFoo = findMethodByName(aClass, "setFoo");
+        assertTrue((setFoo.getModifiers() & Modifier.PRIVATE) != 0);
         final Method setter = findMethodByName(aClass,  "setter");
         setter.invoke(instance);
         assertEquals(610, getFoo.invoke(instance));

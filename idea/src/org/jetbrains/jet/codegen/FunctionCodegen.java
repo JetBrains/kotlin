@@ -54,6 +54,10 @@ public class FunctionCodegen {
         boolean isAbstract = kind == OwnerKind.INTERFACE || bodyExpression == null;
         if (isAbstract) flags |= Opcodes.ACC_ABSTRACT;
 
+        if (isAbstract && (kind == OwnerKind.IMPLEMENTATION || kind == OwnerKind.DELEGATING_IMPLEMENTATION)) {
+            return;
+        }
+
         DeclarationDescriptor contextDescriptor = owner instanceof JetClass
                 ? bindingContext.getClassDescriptor((JetClass) owner)
                 : bindingContext.getNamespaceDescriptor((JetNamespace) owner);
@@ -87,7 +91,7 @@ public class FunctionCodegen {
                 iv.invokeinterface(dk.getOwnerClass(), jvmSignature.getName(), jvmSignature.getDescriptor());
                 iv.areturn(jvmSignature.getReturnType());
             }
-            else {
+            else if (!isAbstract) {
                 bodyExpression.accept(codegen);
                 generateReturn(mv, bodyExpression, codegen, jvmSignature);
             }

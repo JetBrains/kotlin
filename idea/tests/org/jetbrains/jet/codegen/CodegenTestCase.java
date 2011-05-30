@@ -180,7 +180,7 @@ public abstract class CodegenTestCase extends LightCodeInsightFixtureTestCase {
 
     @Nullable
     protected static Method findMethodByName(Class aClass, String name) {
-        for (Method method : aClass.getMethods()) {
+        for (Method method : aClass.getDeclaredMethods()) {
             if (method.getName().equals(name)) {
                 return method;
             }
