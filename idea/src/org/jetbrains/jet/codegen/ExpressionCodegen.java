@@ -1504,7 +1504,6 @@ public class ExpressionCodegen extends JetVisitor {
                 throw new UnsupportedOperationException("don't know how to handle non-class types in as/as?");
             }
             Type type = typeMapper.mapType(jetType, OwnerKind.INTERFACE);
-            gen(expression.getLeft(), OBJECT_TYPE);
             generateInstanceOf(new Runnable() {
                         @Override
                         public void run() {

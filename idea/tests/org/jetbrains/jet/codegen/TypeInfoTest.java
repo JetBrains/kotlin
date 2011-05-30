@@ -79,6 +79,11 @@ public class TypeInfoTest extends CodegenTestCase {
         assertNull(foo.invoke(null));
     }
 
+    public void testAsInLoop() throws Exception {
+        loadFile();
+        generateFunction();  // assert no exception
+    }
+
     private Runnable newRunnable() {
         return new Runnable() {
             @Override
