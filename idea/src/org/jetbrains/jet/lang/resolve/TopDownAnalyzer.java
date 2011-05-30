@@ -449,8 +449,8 @@ public class TopDownAnalyzer {
                     }
 
                     @Override
-                    public void visitJetElement(JetElement elem) {
-                        throw new UnsupportedOperationException(elem.getText() + " : " + elem);
+                    public void visitJetElement(JetElement element) {
+                        throw new UnsupportedOperationException(element.getText() + " : " + element);
                     }
                 });
             }

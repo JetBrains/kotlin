@@ -15,15 +15,16 @@ import java.util.*;
  * @author abreslav
  */
 public class TypeUtils {
-    public static JetType makeNullable(JetType type) {
+    public static JetType makeNullable(@NotNull JetType type) {
         return makeNullableAsSpecified(type, true);
     }
 
-    public static JetType makeNotNullable(JetType type) {
+    public static JetType makeNotNullable(@NotNull JetType type) {
         return makeNullableAsSpecified(type, false);
     }
 
-    public static JetType makeNullableAsSpecified(JetType type, boolean nullable) {
+    @NotNull
+    public static JetType makeNullableAsSpecified(@NotNull JetType type, boolean nullable) {
         if (type.isNullable() == nullable) {
             return type;
         }

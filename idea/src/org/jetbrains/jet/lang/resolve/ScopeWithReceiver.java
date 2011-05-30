@@ -14,7 +14,7 @@ public class ScopeWithReceiver extends JetScopeImpl {
     private final JetScope outerScope;
     private final JetTypeChecker typeChecker;
 
-    public ScopeWithReceiver(JetScope outerScope, JetType receiverType, JetTypeChecker typeChecker) {
+    public ScopeWithReceiver(@NotNull JetScope outerScope, @NotNull JetType receiverType, @NotNull JetTypeChecker typeChecker) {
         this.outerScope = outerScope;
         this.receiverType = receiverType;
         this.typeChecker = typeChecker;
@@ -23,7 +23,9 @@ public class ScopeWithReceiver extends JetScopeImpl {
     @NotNull
     @Override
     public FunctionGroup getFunctionGroup(@NotNull String name) {
-        FunctionGroup functionGroup = receiverType.getMemberScope().getFunctionGroup(name);
+        JetScope memberScope = receiverType.getMemberScope();
+        assert memberScope != null : receiverType;
+        FunctionGroup functionGroup = memberScope.getFunctionGroup(name);
         if (functionGroup.isEmpty()) {
             return outerScope.getFunctionGroup(name);
 //            return FunctionDescriptorUtil.filteredFunctionGroup(outerScope.getFunctionGroup(name),

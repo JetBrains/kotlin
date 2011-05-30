@@ -31,9 +31,9 @@ public class JetPsiUtil {
         final Set<JetElement> shadowedElements = new HashSet<JetElement>();
         JetVisitor shadowAllChildren = new JetVisitor() {
             @Override
-            public void visitJetElement(JetElement elem) {
-                if (shadowedElements.add(elem)) {
-                    elem.acceptChildren(this);
+            public void visitJetElement(JetElement element) {
+                if (shadowedElements.add(element)) {
+                    element.acceptChildren(this);
                 }
             }
         };

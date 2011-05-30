@@ -164,22 +164,22 @@ public class JetTypeInferrer {
                 trace.getErrorHandler().genericError(expression.getNode(), "Unsupported [JetTypeInferrer]");
 
                 // . or ?.
-                JetType receiverType = getType(scope, expression.getReceiverExpression(), false);
-                checkNullSafety(receiverType, expression.getOperationTokenNode());
-
-                JetExpression selectorExpression = expression.getSelectorExpression();
-                if (selectorExpression instanceof JetSimpleNameExpression) {
-                    JetSimpleNameExpression referenceExpression = (JetSimpleNameExpression) selectorExpression;
-                    String referencedName = referenceExpression.getReferencedName();
-
-                    if (receiverType != null && referencedName != null) {
-                        // No generics. Guaranteed
-                        result[0] = semanticServices.getOverloadResolver().getOverloadDomain(receiverType, scope, referencedName);
-                        reference[0] = referenceExpression;
-                    }
-                } else {
-                    throw new UnsupportedOperationException(); // TODO
-                }
+//                JetType receiverType = getType(scope, expression.getReceiverExpression(), false);
+//                checkNullSafety(receiverType, expression.getOperationTokenNode());
+//
+//                JetExpression selectorExpression = expression.getSelectorExpression();
+//                if (selectorExpression instanceof JetSimpleNameExpression) {
+//                    JetSimpleNameExpression referenceExpression = (JetSimpleNameExpression) selectorExpression;
+//                    String referencedName = referenceExpression.getReferencedName();
+//
+//                    if (receiverType != null && referencedName != null) {
+//                        // No generics. Guaranteed
+//                        result[0] = semanticServices.getOverloadResolver().getOverloadDomain(receiverType, scope, referencedName);
+//                        reference[0] = referenceExpression;
+//                    }
+//                } else {
+//                    throw new UnsupportedOperationException(); // TODO
+//                }
             }
 
             @Override
@@ -200,22 +200,25 @@ public class JetTypeInferrer {
             }
 
             @Override
-            public void visitJetElement(JetElement elem) {
-                trace.getErrorHandler().genericError(elem.getNode(), "Unsupported in call element"); // TODO : Message
+            public void visitJetElement(JetElement element) {
+                trace.getErrorHandler().genericError(element.getNode(), "Unsupported in call element"); // TODO : Message
             }
         });
         return wrapForTracing(result[0], reference[0], argumentList, true);
     }
 
-    private void checkNullSafety(JetType receiverType, ASTNode operationTokenNode) {
-        if (receiverType != null) {
+    private void checkNullSafety(@Nullable JetType receiverType, @NotNull ASTNode operationTokenNode, @Nullable FunctionDescriptor callee) {
+        if (receiverType != null && callee != null) {
             boolean namespaceType = receiverType instanceof NamespaceType;
-            boolean nullable = !namespaceType && receiverType.isNullable();
+            JetType calleeReceiverType = callee.getReceiverType();
+            boolean nullableReceiver = !namespaceType && receiverType.isNullable();
+            boolean calleeForbidsNullableReceiver = calleeReceiverType == null || !calleeReceiverType.isNullable();
+
             IElementType operationSign = operationTokenNode.getElementType();
-            if (nullable && operationSign == JetTokens.DOT) {
+            if (nullableReceiver && calleeForbidsNullableReceiver && operationSign == JetTokens.DOT) {
                 trace.getErrorHandler().genericError(operationTokenNode, "Only safe calls (?.) are allowed on a nullable receiver of type " + receiverType);
             }
-            else if (!nullable && operationSign == JetTokens.SAFE_ACCESS) {
+            else if ((!nullableReceiver || !calleeForbidsNullableReceiver) && operationSign == JetTokens.SAFE_ACCESS) {
                 if (namespaceType) {
                     trace.getErrorHandler().genericError(operationTokenNode, "Safe calls are not allowed on namespaces");
                 }
@@ -1054,7 +1057,7 @@ public class JetTypeInferrer {
             // TODO : exhaustive patterns
 
             for (JetWhenEntry whenEntry : expression.getEntries()) {
-                final JetType finalSubjectType = subjectType;
+                final JetType finalSubjectType = subjectType != null ? subjectType : ErrorUtils.createErrorType("Unknown type");
                 JetWhenCondition condition = whenEntry.getCondition();
                 if (condition != null) {
                     condition.accept(new JetVisitor() {
@@ -1073,12 +1076,12 @@ public class JetTypeInferrer {
 
                         @Override
                         public void visitWhenConditionCall(JetWhenConditionCall condition) {
-                            checkNullSafety(finalSubjectType, condition.getOperationTokenNode());
                             JetExpression callSuffixExpression = condition.getCallSuffixExpression();
                             JetScope compositeScope = new ScopeWithReceiver(scope, finalSubjectType, semanticServices.getTypeChecker());
                             if (callSuffixExpression != null) {
                                 JetType selectorReturnType = getType(compositeScope, callSuffixExpression, false);
                                 ensureBooleanResultWithCustomSubject(callSuffixExpression, selectorReturnType, "This expression");
+                                checkNullSafety(finalSubjectType, condition.getOperationTokenNode(), getCalleeFunctionDescriptor(callSuffixExpression));
                             }
                         }
 
@@ -1099,8 +1102,8 @@ public class JetTypeInferrer {
                         }
 
                         @Override
-                        public void visitJetElement(JetElement elem) {
-                            trace.getErrorHandler().genericError(elem.getNode(), "Unsupported [JetTypeInferrer] : " + elem);
+                        public void visitJetElement(JetElement element) {
+                            trace.getErrorHandler().genericError(element.getNode(), "Unsupported [JetTypeInferrer] : " + element);
                         }
                     });
                 }
@@ -1182,8 +1185,8 @@ public class JetTypeInferrer {
                 }
 
                 @Override
-                public void visitJetElement(JetElement elem) {
-                    trace.getErrorHandler().genericError(elem.getNode(), "Unsupported [JetTypeInferrer]");
+                public void visitJetElement(JetElement element) {
+                    trace.getErrorHandler().genericError(element.getNode(), "Unsupported [JetTypeInferrer]");
                 }
             });
         }
@@ -1437,8 +1440,6 @@ public class JetTypeInferrer {
             JetExpression receiverExpression = expression.getReceiverExpression();
             JetType receiverType = new TypeInferrerVisitorWithNamespaces(scope, false).getType(receiverExpression);
             if (receiverType != null) {
-                // TODO : extensions to 'Any?'
-                checkNullSafety(receiverType, expression.getOperationTokenNode());
                 JetType selectorReturnType = getSelectorReturnType(receiverType, selectorExpression);
                 if (expression.getOperationSign() == JetTokens.QUEST) {
                     if (selectorReturnType != null && !isBoolean(selectorReturnType) && selectorExpression != null) {
@@ -1453,7 +1454,55 @@ public class JetTypeInferrer {
                 if (selectorExpression != null && result != null) {
                     trace.recordExpressionType(selectorExpression, result);
                 }
+                if (selectorReturnType != null) {
+                    // TODO : extensions to 'Any?'
+                    assert selectorExpression != null;
+                    checkNullSafety(receiverType, expression.getOperationTokenNode(), getCalleeFunctionDescriptor(selectorExpression));
+                }
             }
+        }
+
+        @NotNull
+        private FunctionDescriptor getCalleeFunctionDescriptor(@NotNull JetExpression selectorExpression) {
+            final FunctionDescriptor[] result = new FunctionDescriptor[1];
+            selectorExpression.accept(new JetVisitor() {
+                @Override
+                public void visitCallExpression(JetCallExpression callExpression) {
+                    callExpression.getCalleeExpression().accept(this);
+                }
+
+                @Override
+                public void visitReferenceExpression(JetReferenceExpression referenceExpression) {
+                    DeclarationDescriptor declarationDescriptor = trace.getBindingContext().resolveReferenceExpression(referenceExpression);
+                    if (declarationDescriptor instanceof FunctionDescriptor) {
+                        result[0] = (FunctionDescriptor) declarationDescriptor;
+                    }
+                }
+
+                @Override
+                public void visitArrayAccessExpression(JetArrayAccessExpression expression) {
+                    expression.getArrayExpression().accept(this);
+                }
+
+                @Override
+                public void visitBinaryExpression(JetBinaryExpression expression) {
+                    expression.getLeft().accept(this);
+                }
+
+                @Override
+                public void visitQualifiedExpression(JetQualifiedExpression expression) {
+                    expression.getReceiverExpression().accept(this);
+                }
+
+                @Override
+                public void visitJetElement(JetElement element) {
+                    trace.getErrorHandler().genericError(element.getNode(), "Unsupported [getCalleeFunctionDescriptor]: " + element);
+                }
+            });
+            if (result[0] == null) {
+                result[0] = ErrorUtils.createErrorFunction(0, Collections.<JetType>emptyList());
+            }
+            return result[0];
         }
 
         private JetType getCallExpressionType(@Nullable JetType receiverType, @NotNull JetCallExpression callExpression) {
@@ -1769,8 +1818,8 @@ public class JetTypeInferrer {
         }
 
         @Override
-        public void visitJetElement(JetElement elem) {
-            trace.getErrorHandler().genericError(elem.getNode(), "[JetTypeInferrer] Unsupported element: " + elem + " " + elem.getClass().getCanonicalName());
+        public void visitJetElement(JetElement element) {
+            trace.getErrorHandler().genericError(element.getNode(), "[JetTypeInferrer] Unsupported element: " + element + " " + element.getClass().getCanonicalName());
         }
     }
 
@@ -1919,9 +1968,10 @@ public class JetTypeInferrer {
         }
 
         @Override
-        public void visitJetElement(JetElement elem) {
-            trace.getErrorHandler().genericError(elem.getNode(), "Unsupported element in a block: " + elem + " " + elem.getClass().getCanonicalName());
+        public void visitJetElement(JetElement element) {
+            trace.getErrorHandler().genericError(element.getNode(), "Unsupported element in a block: " + element + " " + element.getClass().getCanonicalName());
         }
+
     }
 
 //    private class CachedBindingTrace extends BindingTraceAdapter {

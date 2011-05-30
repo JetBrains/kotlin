@@ -59,6 +59,7 @@ public final class JetTypeImpl extends AnnotatedImpl implements JetType {
         return nullable;
     }
 
+    @NotNull
     @Override
     public JetScope getMemberScope() {
         if (memberScope == null) {

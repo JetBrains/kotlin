@@ -149,8 +149,8 @@ public class TypeResolver {
                 }
 
                 @Override
-                public void visitJetElement(JetElement elem) {
-                    throw new IllegalArgumentException("Unsupported type: " + elem);
+                public void visitJetElement(JetElement element) {
+                    throw new IllegalArgumentException("Unsupported type: " + element);
                 }
             });
         }

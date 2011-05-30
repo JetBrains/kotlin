@@ -7,6 +7,7 @@ import org.jetbrains.jet.lang.descriptors.FunctionGroup;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeChecker;
+import org.jetbrains.jet.lang.types.TypeUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -62,9 +63,12 @@ public class OverloadResolver {
 
                     if (receiverType != null) {
                         // ASSERT : either the receiver in not present or we are in a scope with no top-level functions
-                        final JetType functionReceiverType = descriptor.getReceiverType();
-                        if (functionReceiverType != null && !typeChecker.isSubtypeOf(receiverType, functionReceiverType)) {
-                            continue;
+                        JetType functionReceiverType = descriptor.getReceiverType();
+                        if (functionReceiverType != null) {
+                            functionReceiverType = TypeUtils.makeNullable(functionReceiverType); // Too look things up in T for T?, and later check receiver's nullability
+                            if (!typeChecker.isSubtypeOf(receiverType, functionReceiverType)) {
+                                continue;
+                            }
                         }
                     }
                     else if (descriptor.getReceiverType() != null) {

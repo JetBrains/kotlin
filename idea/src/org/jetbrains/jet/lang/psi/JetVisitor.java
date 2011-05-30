@@ -6,8 +6,8 @@ import com.intellij.psi.PsiElementVisitor;
  * @author max
  */
 public class JetVisitor extends PsiElementVisitor {
-    public void visitJetElement(JetElement elem) {
-        visitElement(elem);
+    public void visitJetElement(JetElement element) {
+        visitElement(element);
     }
 
     public void visitDeclaration(JetDeclaration dcl) {
@@ -143,6 +143,10 @@ public class JetVisitor extends PsiElementVisitor {
     }
 
     public void visitSimpleNameExpression(JetSimpleNameExpression expression) {
+        visitReferenceExpression(expression);
+    }
+
+    public void visitReferenceExpression(JetReferenceExpression expression) {
         visitExpression(expression);
     }
 
@@ -231,7 +235,7 @@ public class JetVisitor extends PsiElementVisitor {
     }
 
     public void visitArrayAccessExpression(JetArrayAccessExpression expression) {
-        visitExpression(expression);
+        visitReferenceExpression(expression);
     }
 
     public void visitQualifiedExpression(JetQualifiedExpression expression) {

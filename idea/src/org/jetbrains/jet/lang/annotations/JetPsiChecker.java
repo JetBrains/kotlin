@@ -5,14 +5,12 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.progress.ProcessCanceledException;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.MultiRangeReference;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.ErrorHandler;
-import org.jetbrains.jet.lang.JetDiagnostic;
 import org.jetbrains.jet.lang.JetHighlighter;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
@@ -124,8 +122,8 @@ public class JetPsiChecker implements Annotator {
             }
 
             @Override
-            public void visitJetElement(JetElement elem) {
-                elem.acceptChildren(this);
+            public void visitJetElement(JetElement element) {
+                element.acceptChildren(this);
             }
         });
     }

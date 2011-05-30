@@ -2,7 +2,6 @@ package org.jetbrains.jet;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.codegen.ClassCodegen;
 import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.JetDiagnostic;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -136,7 +135,7 @@ public class JetTestUtils {
 
                 @Override
                 public DeclarationDescriptor resolveReferenceExpression(JetReferenceExpression referenceExpression) {
-                    throw new UnsupportedOperationException(); // TODO
+                    return null;
                 }
 
                 @Override
