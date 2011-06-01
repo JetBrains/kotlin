@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.types;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -185,15 +186,46 @@ public class TypeUtils {
         return buildSubstitutionContext(context.getConstructor().getParameters(), context.getArguments());
     }
 
+    /**
+     * Builds a context with all the supertypes' parameters substituted
+     */
+    @NotNull
+    public static TypeSubstitutor buildDeepSubstitutor(@NotNull JetType type) {
+        TypeSubstitutor typeSubstitutor = TypeSubstitutor.create(Maps.<TypeConstructor, TypeProjection>newHashMap());
+        fillInDeepSubstitutor(type, typeSubstitutor);
+        return typeSubstitutor;
+    }
+
+    private static void fillInDeepSubstitutor(JetType context, TypeSubstitutor substitutor) {
+        List<TypeParameterDescriptor> parameters = context.getConstructor().getParameters();
+        List<TypeProjection> arguments = context.getArguments();
+        for (int i = 0; i < arguments.size(); i++) {
+            TypeProjection argument = arguments.get(i);
+            TypeParameterDescriptor typeParameterDescriptor = parameters.get(i);
+
+            JetType substitute = substitutor.substitute(argument.getType(), Variance.INVARIANT);
+            assert substitute != null;
+            TypeProjection substitutedTypeProjection = new TypeProjection(argument.getProjectionKind(), substitute);
+            substitutor.addSubstitution(typeParameterDescriptor.getTypeConstructor(), substitutedTypeProjection);
+        }
+        for (JetType supertype : context.getConstructor().getSupertypes()) {
+            fillInDeepSubstitutor(supertype, substitutor);
+        }
+    }
+
     @NotNull
     public static Map<TypeConstructor, TypeProjection> buildSubstitutionContext(@NotNull List<TypeParameterDescriptor> parameters, @NotNull List<TypeProjection> contextArguments) {
         Map<TypeConstructor, TypeProjection> parameterValues = new HashMap<TypeConstructor, TypeProjection>();
+        fillInSubstitutionContext(parameters, contextArguments, parameterValues);
+        return parameterValues;
+    }
+
+    private static void fillInSubstitutionContext(List<TypeParameterDescriptor> parameters, List<TypeProjection> contextArguments, Map<TypeConstructor, TypeProjection> parameterValues) {
         for (int i = 0, parametersSize = parameters.size(); i < parametersSize; i++) {
             TypeParameterDescriptor parameter = parameters.get(i);
             TypeProjection value = contextArguments.get(i);
             parameterValues.put(parameter.getTypeConstructor(), value);
         }
-        return parameterValues;
     }
 
     @NotNull

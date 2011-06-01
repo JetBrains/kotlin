@@ -1,0 +1,17 @@
+// JET-72 Type inference doesn't work when iterating over ArrayList
+
+import java.util.ArrayList
+
+class Item(val room: Object) {
+   val name : String
+}
+
+val items: ArrayList<Item> = new ArrayList<Item>
+
+fun test(room : Object) {
+  for(val item: Item in items) {
+    if (item.room === room) {
+      System.out?.println("You see " + item.name)
+    }
+  }
+}

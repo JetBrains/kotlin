@@ -110,7 +110,11 @@ public class JavaClassMembersScope implements JetScope {
     public FunctionGroup getFunctionGroup(@NotNull String name) {
         FunctionGroup functionGroup = functionGroups.get(name);
         if (functionGroup == null) {
-            functionGroup = semanticServices.getDescriptorResolver().resolveFunctionGroup(psiClass, name, staticMembers);
+            functionGroup = semanticServices.getDescriptorResolver().resolveFunctionGroup(
+                    psiClass,
+                    staticMembers ? null : (ClassDescriptor) containingDeclaration,
+                    name,
+                    staticMembers);
             functionGroups.put(name, functionGroup);
         }
         return functionGroup;

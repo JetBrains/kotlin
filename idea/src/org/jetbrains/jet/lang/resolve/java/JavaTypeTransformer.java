@@ -70,7 +70,7 @@ public class JavaTypeTransformer {
 
                 if (psiClass instanceof PsiTypeParameter) {
                     PsiTypeParameter typeParameter = (PsiTypeParameter) psiClass;
-                    TypeParameterDescriptor typeParameterDescriptor = resolver.resolveTypeParameter(typeParameter);
+                    TypeParameterDescriptor typeParameterDescriptor = resolver.resolveTypeParameter(JavaDescriptorResolver.JAVA_ROOT, typeParameter);
                     return typeParameterDescriptor.getDefaultType();
                 }
                 else {

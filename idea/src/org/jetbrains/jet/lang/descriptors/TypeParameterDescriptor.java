@@ -81,7 +81,7 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
 
     @Override
     public String toString() {
-        return typeConstructor.toString();
+        return getContainingDeclaration() + "::" + typeConstructor.toString();
     }
 
     @NotNull

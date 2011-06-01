@@ -91,4 +91,9 @@ public class JavaClassDescriptor extends MutableDeclarationDescriptor implements
     public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
         return visitor.visitClassDescriptor(this, data);
     }
+
+    @Override
+    public String toString() {
+        return "java class " + typeConstructor;
+    }
 }

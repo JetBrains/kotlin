@@ -26,7 +26,7 @@ public class JavaDescriptorResolver {
 
         @Override
         public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
-            throw new UnsupportedOperationException(); // TODO
+            return visitor.visitDeclarationDescriptor(this, data);
         }
     };
 
@@ -73,7 +73,6 @@ public class JavaDescriptorResolver {
         classDescriptorCache.put(psiClass.getQualifiedName(), null); // TODO
 
         String name = psiClass.getName();
-        PsiModifierList modifierList = psiClass.getModifierList();
         JavaClassDescriptor classDescriptor = new JavaClassDescriptor(
                 JAVA_ROOT
         );
@@ -86,7 +85,7 @@ public class JavaDescriptorResolver {
                 // TODO
                 psiClass.hasModifierProperty(PsiModifier.FINAL),
                 name,
-                resolveTypeParameters(psiClass.getTypeParameters()),
+                resolveTypeParameters(classDescriptor, psiClass.getTypeParameters()),
                 supertypes
 
         ));
@@ -124,10 +123,10 @@ public class JavaDescriptorResolver {
         return classDescriptor;
     }
 
-    private List<TypeParameterDescriptor> resolveTypeParameters(@NotNull PsiTypeParameter[] typeParameters) {
+    private List<TypeParameterDescriptor> resolveTypeParameters(@NotNull DeclarationDescriptor containingDeclaration, @NotNull PsiTypeParameter[] typeParameters) {
         List<TypeParameterDescriptor> result = Lists.newArrayList();
         for (PsiTypeParameter typeParameter : typeParameters) {
-            TypeParameterDescriptor typeParameterDescriptor = resolveTypeParameter(typeParameter);
+            TypeParameterDescriptor typeParameterDescriptor = resolveTypeParameter(containingDeclaration, typeParameter);
             result.add(typeParameterDescriptor);
         }
         return result;
@@ -158,11 +157,11 @@ public class JavaDescriptorResolver {
     }
 
     @NotNull
-    public TypeParameterDescriptor resolveTypeParameter(@NotNull PsiTypeParameter psiTypeParameter) {
+    public TypeParameterDescriptor resolveTypeParameter(@NotNull DeclarationDescriptor containingDeclaration, @NotNull PsiTypeParameter psiTypeParameter) {
         TypeParameterDescriptor typeParameterDescriptor = typeParameterDescriptorCache.get(psiTypeParameter);
         if (typeParameterDescriptor == null) {
-            typeParameterDescriptor = createJavaTypeParameterDescriptor(JAVA_ROOT, psiTypeParameter);
-//            Tis is done inside the method: typeParameterDescriptorCache.put(psiTypeParameter, typeParameterDescriptor);
+            typeParameterDescriptor = createJavaTypeParameterDescriptor(containingDeclaration, psiTypeParameter);
+//            This is done inside the method: typeParameterDescriptorCache.put(psiTypeParameter, typeParameterDescriptor);
         }
         return typeParameterDescriptor;
     }
@@ -245,9 +244,16 @@ public class JavaDescriptorResolver {
     }
 
     @NotNull
-    public FunctionGroup resolveFunctionGroup(@NotNull PsiClass psiClass, @NotNull String methodName, boolean staticMembers) {
+    public FunctionGroup resolveFunctionGroup(@NotNull PsiClass psiClass, @Nullable ClassDescriptor classDescriptor, @NotNull String methodName, boolean staticMembers) {
         WritableFunctionGroup writableFunctionGroup = new WritableFunctionGroup(methodName);
         final Collection<HierarchicalMethodSignature> signatures = psiClass.getVisibleSignatures();
+        TypeSubstitutor typeSubstitutor;
+        if (classDescriptor != null) {
+            typeSubstitutor = TypeUtils.buildDeepSubstitutor(classDescriptor.getDefaultType());
+        }
+        else {
+            typeSubstitutor = TypeSubstitutor.EMPTY;
+        }
         for (HierarchicalMethodSignature signature: signatures) {
             PsiMethod method = signature.getMethod();
             if (method.hasModifierProperty(PsiModifier.STATIC) != staticMembers) {
@@ -258,6 +264,9 @@ public class JavaDescriptorResolver {
             }
             FunctionDescriptor functionDescriptor = methodDescriptorCache.get(method);
             if (functionDescriptor != null) {
+                if (method.getContainingClass() != psiClass) {
+                    functionDescriptor = functionDescriptor.substitute(typeSubstitutor);
+                }
                 writableFunctionGroup.addFunction(functionDescriptor);
                 continue;
             }
@@ -270,12 +279,18 @@ public class JavaDescriptorResolver {
             );
             functionDescriptorImpl.initialize(
                     null,
-                    resolveTypeParameters(method.getTypeParameters()),
+                    resolveTypeParameters(functionDescriptorImpl, method.getTypeParameters()),
                     semanticServices.getDescriptorResolver().resolveParameterDescriptors(functionDescriptorImpl, parameters),
                     semanticServices.getTypeTransformer().transformToType(method.getReturnType())
             );
             semanticServices.getTrace().recordDeclarationResolution(method, functionDescriptorImpl);
-            writableFunctionGroup.addFunction(functionDescriptorImpl);
+            FunctionDescriptor substitutedFunctionDescriptor = functionDescriptorImpl;
+            if (method.getContainingClass() != psiClass) {
+                substitutedFunctionDescriptor = functionDescriptorImpl.substitute(typeSubstitutor);
+            }
+            if (substitutedFunctionDescriptor != null) {
+                writableFunctionGroup.addFunction(substitutedFunctionDescriptor);
+            }
             methodDescriptorCache.put(method, functionDescriptorImpl);
         }
         return writableFunctionGroup;

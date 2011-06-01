@@ -5,12 +5,17 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.SubstitutingScope;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author abreslav
  */
 public class TypeSubstitutor {
+
+    public static final TypeSubstitutor EMPTY = create(Collections.<TypeConstructor, TypeProjection>emptyMap());
 
     public static final class SubstitutionException extends Exception {
         public SubstitutionException(String message) {
@@ -174,6 +179,10 @@ public class TypeSubstitutor {
 //            }
 //
         return new TypeProjection(effectiveProjectionKindValue,  specializeType(effectiveTypeValue, effectiveContextVariance));
+    }
+
+    /*package*/ void addSubstitution(@NotNull TypeConstructor typeConstructor, @NotNull TypeProjection typeProjection) {
+        substitutionContext.put(typeConstructor, typeProjection);
     }
 
     private static Variance asymmetricOr(Variance a, Variance b) {
