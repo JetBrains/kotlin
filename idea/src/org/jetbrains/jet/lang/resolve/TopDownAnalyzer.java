@@ -77,6 +77,12 @@ public class TopDownAnalyzer {
         };
     }
 
+    @Deprecated // For JetStandardLibraryOnly
+    public void processStandardLibraryNamespace(@NotNull WritableScope outerScope, @NotNull NamespaceDescriptorImpl standardLibraryNamespace, @NotNull JetNamespace namespace) {
+        namespaceScopes.put(namespace, standardLibraryNamespace.getMemberScope());
+        namespaceDescriptors.put(namespace, standardLibraryNamespace);
+        process(outerScope, standardLibraryNamespace, namespace.getDeclarations());
+    }
 
     public void process(@NotNull WritableScope outerScope, NamespaceLike owner, @NotNull List<JetDeclaration> declarations) {
         collectNamespacesAndClassifiers(outerScope, owner, declarations); // namespaceScopes, classes
