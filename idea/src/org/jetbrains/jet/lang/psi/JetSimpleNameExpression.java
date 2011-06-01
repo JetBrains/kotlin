@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.psi;
 
+import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
@@ -8,7 +9,11 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.parsing.JetExpressionParsing;
+import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
 
 /**
@@ -66,6 +71,32 @@ public class JetSimpleNameExpression extends JetReferenceExpression {
             @Override
             public TextRange getRangeInElement() {
                 return new TextRange(0, getElement().getTextLength());
+            }
+
+            @NotNull
+            @Override
+            public Object[] getVariants() {
+                PsiElement parent = getParent();
+                if (parent instanceof JetQualifiedExpression) {
+                    JetQualifiedExpression qualifiedExpression = (JetQualifiedExpression) parent;
+                    JetExpression receiverExpression = qualifiedExpression.getReceiverExpression();
+                    JetFile file = (JetFile) getContainingFile();
+                    BindingContext bindingContext = AnalyzingUtils.analyzeFileWithCache(file);
+                    final JetType expressionType = bindingContext.getExpressionType(receiverExpression);
+                    if (expressionType != null) {
+                        return new Object[] {
+                                new LookupElement() {
+                                    @NotNull
+                                    @Override
+                                    public String getLookupString() {
+                                        return expressionType.toString();
+                                    }
+                                }
+                        };
+                    }
+                }
+
+                return EMPTY_ARRAY;
             }
         };
     }
