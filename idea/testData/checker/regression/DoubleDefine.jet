@@ -16,7 +16,7 @@ fun evaluateArg(expr: AbstractStringBuilder, numbers: ArrayList<Int>): Int {
     val n = c - '0'
     if (!numbers.contains(n)) throw new Exception("You used incorrect number: " + n)
     numbers.remove(n)
-    return n                                                                                                                                       \
+    return n
   }
   throw new Exception("Syntax error: Unrecognized character " + c)
 }
