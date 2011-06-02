@@ -1,6 +1,6 @@
 class A(~a~val a : Int) {
     this() {`$a`a}
-    ~b~val b = `a`a
+    ~b~val b = `$a`a
     ~f~fun f() = `$a`a
 }
 
@@ -9,4 +9,21 @@ fun test() {
     `va`a.`$a`a`:std::Int`
     a.`b`b`:std::Int`
     a.`f`f()`:std::Int`
+}
+
+namespace Jet65 {
+
+  class Foo(~bar~var bar : Int, ~barr~barr : Int, ~barrr~val barrr : Int) {
+    {
+      `$bar`bar = 1
+      `barr`barr = 1
+      `$barrr`barrr = 1
+    }
+
+    this(~s.bar~val bar : Int) : this(1, 1, 1) {
+      `s.bar`bar = 1
+      this.`$bar`bar
+    }
+  }
+
 }

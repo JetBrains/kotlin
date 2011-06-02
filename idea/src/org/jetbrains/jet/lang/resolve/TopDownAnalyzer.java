@@ -37,7 +37,6 @@ public class TopDownAnalyzer {
     private final JetSemanticServices semanticServices;
     private final ClassDescriptorResolver classDescriptorResolver;
     private final BindingTraceContext trace;
-    private boolean readyToProcessExpressions = false;
     private final BindingTraceAdapter traceForConstructors;
     private final BindingTraceAdapter traceForMembers;
 
@@ -93,7 +92,6 @@ public class TopDownAnalyzer {
 
         resolveFunctionAndPropertyHeaders(declarations); // Constructor headers are resolved as well
 
-        readyToProcessExpressions = true;
         resolveBehaviorDeclarationBodies();
     }
 
@@ -397,7 +395,7 @@ public class TopDownAnalyzer {
             final ConstructorDescriptor primaryConstructor = descriptor.getUnsubstitutedPrimaryConstructor();
             final JetScope scopeForConstructor = primaryConstructor == null
                     ? null
-                    : getInnerScopeForConstructor(primaryConstructor, descriptor.getScopeForMemberResolution());
+                    : getInnerScopeForConstructor(primaryConstructor, descriptor.getScopeForMemberResolution(), true);
             final JetTypeInferrer typeInferrer = semanticServices.getTypeInferrer(traceForConstructors, JetFlowInformationProvider.NONE); // TODO : flow
 
             for (JetDelegationSpecifier delegationSpecifier : jetClass.getDelegationSpecifiers()) {
@@ -472,7 +470,7 @@ public class TopDownAnalyzer {
             if (jetClass.hasPrimaryConstructor()) {
                 ConstructorDescriptor primaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
                 assert primaryConstructor != null;
-                final JetScope scopeForConstructor = getInnerScopeForConstructor(primaryConstructor, classDescriptor.getScopeForMemberResolution());
+                final JetScope scopeForConstructor = getInnerScopeForConstructor(primaryConstructor, classDescriptor.getScopeForMemberResolution(), true);
                 JetTypeInferrer typeInferrer = semanticServices.getTypeInferrer(traceForConstructors, JetFlowInformationProvider.NONE); // TODO : flow
                 for (JetClassInitializer anonymousInitializer : anonymousInitializers) {
                     typeInferrer.getType(scopeForConstructor, anonymousInitializer.getBody(), true);
@@ -491,17 +489,14 @@ public class TopDownAnalyzer {
             JetDeclaration declaration = entry.getKey();
             ConstructorDescriptor descriptor = entry.getValue();
 
-            JetScope declaringScope = declaringScopes.get(declaration);
-            assert declaringScope != null;
-
-            resolveSecondaryConstructorBody((JetConstructor) declaration, descriptor, declaringScope);
+            resolveSecondaryConstructorBody((JetConstructor) declaration, descriptor, ((MutableClassDescriptor) descriptor.getContainingDeclaration()).getScopeForMemberResolution());
 
             assert descriptor.getUnsubstitutedReturnType() != null;
         }
     }
 
     private void resolveSecondaryConstructorBody(JetConstructor declaration, final ConstructorDescriptor descriptor, final JetScope declaringScope) {
-        final JetScope functionInnerScope = getInnerScopeForConstructor(descriptor, declaringScope);
+        final JetScope functionInnerScope = getInnerScopeForConstructor(descriptor, declaringScope, false);
 
         final JetTypeInferrer typeInferrerForInitializers = semanticServices.getTypeInferrer(traceForConstructors, JetFlowInformationProvider.NONE);
 
@@ -529,7 +524,7 @@ public class TopDownAnalyzer {
                     public void visitDelegationToThisCall(JetDelegatorToThisCall call) {
                         // TODO : check that there's no recursion in this() calls
                         // TODO : check: if a this() call is present, no other initializers are allowed
-                        ClassDescriptor classDescriptor = (ClassDescriptor) descriptor.getContainingDeclaration();
+                        ClassDescriptor classDescriptor = descriptor.getContainingDeclaration();
                         typeInferrerForInitializers.checkClassConstructorCall(
                                 functionInnerScope,
                                 call.getThisReference(),
@@ -570,12 +565,24 @@ public class TopDownAnalyzer {
     }
 
     @NotNull
-    private JetScope getInnerScopeForConstructor(@NotNull ConstructorDescriptor descriptor, @NotNull JetScope declaringScope) {
+    private JetScope getInnerScopeForConstructor(@NotNull ConstructorDescriptor descriptor, @NotNull JetScope declaringScope, boolean primary) {
         WritableScope constructorScope = new WritableScopeImpl(declaringScope, declaringScope.getContainingDeclaration(), trace.getErrorHandler());
         for (PropertyDescriptor propertyDescriptor : ((MutableClassDescriptor) descriptor.getContainingDeclaration()).getProperties()) {
             constructorScope.addPropertyDescriptorByFieldName("$" + propertyDescriptor.getName(), propertyDescriptor);
         }
-        return FunctionDescriptorUtil.getFunctionInnerScope(constructorScope, descriptor, trace);
+
+        constructorScope.setThisType(descriptor.getContainingDeclaration().getDefaultType());
+
+        for (ValueParameterDescriptor valueParameterDescriptor : descriptor.getUnsubstitutedValueParameters()) {
+            JetParameter parameter = (JetParameter) trace.getDeclarationPsiElement(valueParameterDescriptor);
+            if (parameter.getValOrVarNode() == null || !primary) {
+                constructorScope.addVariableDescriptor(valueParameterDescriptor);
+            }
+        }
+
+        constructorScope.addLabeledDeclaration(descriptor); // TODO : Labels for constructors?!
+
+        return constructorScope;
     }
 
     private void resolvePropertyDeclarationBodies() {
@@ -599,7 +606,7 @@ public class TopDownAnalyzer {
                         trace.getErrorHandler().genericError(initializer.getNode(), "Property initializers are not allowed when no primary constructor is present");
                     }
                     else {
-                        JetScope scope = getInnerScopeForConstructor(primaryConstructor, classDescriptor.getScopeForMemberResolution());
+                        JetScope scope = getInnerScopeForConstructor(primaryConstructor, classDescriptor.getScopeForMemberResolution(), true);
                         resolvePropertyInitializer(property, propertyDescriptor, initializer, scope);
                     }
                 }
@@ -726,8 +733,6 @@ public class TopDownAnalyzer {
         if (bodyExpression != null) {
             JetFlowInformationProvider flowInformationProvider = classDescriptorResolver.computeFlowData(function.asElement(), bodyExpression);
             JetTypeInferrer typeInferrer = semanticServices.getTypeInferrer(trace, flowInformationProvider);
-
-            assert readyToProcessExpressions : "Must be ready collecting types";
 
             typeInferrer.checkFunctionReturnType(declaringScope, function, functionDescriptor);
 
