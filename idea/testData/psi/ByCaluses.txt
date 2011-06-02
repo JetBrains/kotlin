@@ -293,32 +293,33 @@ JetFile: ByCaluses.jet
           PsiElement(by)('by')
           PsiWhiteSpace(' ')
           OBJECT_LITERAL
-            PsiElement(object)('object')
-            PsiWhiteSpace(' ')
-            CLASS_BODY
-              PsiElement(LBRACE)('{')
-              PsiWhiteSpace('\n  ')
-              FUN
-                PsiElement(fun)('fun')
-                PsiWhiteSpace(' ')
-                PsiElement(IDENTIFIER)('f')
-                VALUE_PARAMETER_LIST
-                  PsiElement(LPAR)('(')
-                  PsiElement(RPAR)(')')
-                PsiWhiteSpace(' ')
-                PsiElement(EQ)('=')
-                PsiWhiteSpace(' ')
-                CALL_EXPRESSION
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('a')
+            OBJECT_DECLARATION
+              PsiElement(object)('object')
+              PsiWhiteSpace(' ')
+              CLASS_BODY
+                PsiElement(LBRACE)('{')
+                PsiWhiteSpace('\n  ')
+                FUN
+                  PsiElement(fun)('fun')
                   PsiWhiteSpace(' ')
-                  FUNCTION_LITERAL
-                    PsiElement(LBRACE)('{')
-                    BODY
-                      <empty list>
-                    PsiElement(RBRACE)('}')
-              PsiWhiteSpace('\n')
-              PsiElement(RBRACE)('}')
+                  PsiElement(IDENTIFIER)('f')
+                  VALUE_PARAMETER_LIST
+                    PsiElement(LPAR)('(')
+                    PsiElement(RPAR)(')')
+                  PsiWhiteSpace(' ')
+                  PsiElement(EQ)('=')
+                  PsiWhiteSpace(' ')
+                  CALL_EXPRESSION
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('a')
+                    PsiWhiteSpace(' ')
+                    FUNCTION_LITERAL
+                      PsiElement(LBRACE)('{')
+                      BODY
+                        <empty list>
+                      PsiElement(RBRACE)('}')
+                PsiWhiteSpace('\n')
+                PsiElement(RBRACE)('}')
       PsiWhiteSpace(' ')
       CLASS_BODY
         PsiElement(LBRACE)('{')

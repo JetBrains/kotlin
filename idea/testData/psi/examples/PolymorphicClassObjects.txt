@@ -135,63 +135,64 @@ JetFile: PolymorphicClassObjects.jet
           PsiElement(class)('class')
           PsiWhiteSpace(' ')
           OBJECT_LITERAL
-            PsiElement(object)('object')
-            PsiWhiteSpace(' ')
-            PsiElement(COLON)(':')
-            PsiWhiteSpace(' ')
-            DELEGATION_SPECIFIER_LIST
-              DELEGATOR_SUPER_CLASS
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('Buildable')
-            PsiWhiteSpace(' ')
-            CLASS_BODY
-              PsiElement(LBRACE)('{')
-              PsiWhiteSpace('\n    ')
-              FUN
-                MODIFIER_LIST
-                  PsiElement(override)('override')
-                PsiWhiteSpace(' ')
-                PsiElement(fun)('fun')
-                PsiWhiteSpace(' ')
-                PsiElement(IDENTIFIER)('newBuilder')
-                TYPE_PARAMETER_LIST
-                  PsiElement(LT)('<')
-                  TYPE_PARAMETER
-                    PsiElement(IDENTIFIER)('E')
-                  PsiElement(COMMA)(',')
+            OBJECT_DECLARATION
+              PsiElement(object)('object')
+              PsiWhiteSpace(' ')
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              DELEGATION_SPECIFIER_LIST
+                DELEGATOR_SUPER_CLASS
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('Buildable')
+              PsiWhiteSpace(' ')
+              CLASS_BODY
+                PsiElement(LBRACE)('{')
+                PsiWhiteSpace('\n    ')
+                FUN
+                  MODIFIER_LIST
+                    PsiElement(override)('override')
                   PsiWhiteSpace(' ')
-                  TYPE_PARAMETER
-                    PsiElement(IDENTIFIER)('R')
-                  PsiElement(GT)('>')
-                VALUE_PARAMETER_LIST
-                  PsiElement(LPAR)('(')
-                  PsiElement(RPAR)(')')
-                PsiWhiteSpace(' ')
-                PsiElement(COLON)(':')
-                PsiWhiteSpace(' ')
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('Builder')
-                    TYPE_ARGUMENT_LIST
-                      PsiElement(LT)('<')
-                      TYPE_PROJECTION
-                        TYPE_REFERENCE
-                          USER_TYPE
-                            REFERENCE_EXPRESSION
-                              PsiElement(IDENTIFIER)('E')
-                      PsiElement(COMMA)(',')
-                      PsiWhiteSpace(' ')
-                      TYPE_PROJECTION
-                        TYPE_REFERENCE
-                          USER_TYPE
-                            REFERENCE_EXPRESSION
-                              PsiElement(IDENTIFIER)('R')
-                      PsiElement(GT)('>')
-              PsiWhiteSpace('\n\n  ')
-              PsiElement(RBRACE)('}')
+                  PsiElement(fun)('fun')
+                  PsiWhiteSpace(' ')
+                  PsiElement(IDENTIFIER)('newBuilder')
+                  TYPE_PARAMETER_LIST
+                    PsiElement(LT)('<')
+                    TYPE_PARAMETER
+                      PsiElement(IDENTIFIER)('E')
+                    PsiElement(COMMA)(',')
+                    PsiWhiteSpace(' ')
+                    TYPE_PARAMETER
+                      PsiElement(IDENTIFIER)('R')
+                    PsiElement(GT)('>')
+                  VALUE_PARAMETER_LIST
+                    PsiElement(LPAR)('(')
+                    PsiElement(RPAR)(')')
+                  PsiWhiteSpace(' ')
+                  PsiElement(COLON)(':')
+                  PsiWhiteSpace(' ')
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('Builder')
+                      TYPE_ARGUMENT_LIST
+                        PsiElement(LT)('<')
+                        TYPE_PROJECTION
+                          TYPE_REFERENCE
+                            USER_TYPE
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('E')
+                        PsiElement(COMMA)(',')
+                        PsiWhiteSpace(' ')
+                        TYPE_PROJECTION
+                          TYPE_REFERENCE
+                            USER_TYPE
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('R')
+                        PsiElement(GT)('>')
+                PsiWhiteSpace('\n\n  ')
+                PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n\n')
         PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n\n')

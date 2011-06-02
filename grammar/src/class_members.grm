@@ -32,6 +32,7 @@ class Example(a : Foo, i : Int) : Bar(i), Some {
 
 memberDeclaration
   : classObject
+  : object
   : constructor
   : function
   : property
@@ -100,3 +101,6 @@ setter
 parameter
   : SimpleName ":" type
   ;
+
+object
+  : "object" SimpleName ":" ":" delegationSpecifier{","}? classBody? // Class body can be optional: this is a declaration

@@ -213,6 +213,7 @@ public class JetParsing extends AbstractJetParsing {
      *   : function
      *   : property
      *   : typedef
+     *   : object
      *   ;
      */
     private void parseTopLevelObject() {
@@ -240,6 +241,10 @@ public class JetParsing extends AbstractJetParsing {
         }
         else if (keywordToken == TYPE_KEYWORD) {
             declType = parseTypeDef();
+        }
+        else if (keywordToken == OBJECT_KEYWORD) {
+            parseObject(true);
+            declType = OBJECT_DECLARATION;
         }
 
         if (declType == null) {
@@ -504,11 +509,10 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      */
     /*package*/ void parseClassBody() {
-        assert _at(LBRACE);
         PsiBuilder.Marker body = mark();
 
         myBuilder.enableNewlines();
-        advance(); // LBRACE
+        expect(LBRACE, "Expecting a class body", TokenSet.create(LBRACE));
 
         while (!eof()) {
             if (at(RBRACE)) {
@@ -536,6 +540,7 @@ public class JetParsing extends AbstractJetParsing {
      *   : extension
      *   : typedef
      *   : anonymousInitializer
+     *   : object
      *   ;
      */
     private void parseMemberDeclaration() {
@@ -580,11 +585,55 @@ public class JetParsing extends AbstractJetParsing {
         }
         else if (keywordToken == THIS_KEYWORD) {
             declType = parseConstructor();
+        }
+        else if (keywordToken == OBJECT_KEYWORD) {
+            parseObject(true);
+            declType = OBJECT_DECLARATION;
         } else if (keywordToken == LBRACE) {
             parseBlock();
             declType = ANONYMOUS_INITIALIZER;
         }
         return declType;
+    }
+
+    /*
+     * object
+     *   : "object" SimpleName? ":" delegationSpecifier{","}? classBody // Cannot make class body optional: foo(object F, a)
+     *   ;
+     */
+    public void parseObject(boolean declaration) {
+        assert _at(OBJECT_KEYWORD);
+
+        advance(); // OBJECT_KEYWORD
+
+        if (declaration) {
+            expect(IDENTIFIER, "Expecting object name", TokenSet.create(LBRACE));
+        }
+        else {
+            if (at(IDENTIFIER)) {
+                error("An object expression cannot bind a name");
+            }
+        }
+
+        if (declaration) { // Body is optional
+            if (at(COLON)) {
+                advance(); // COLON
+                parseDelegationSpecifierList();
+            }
+            if (at(LBRACE)) {
+                parseClassBody();
+            }
+        }
+        else {
+            if (at(LBRACE)) {
+                parseClassBody();
+            }
+            else {
+                expect(COLON, "Expecting ':'", TokenSet.create(IDENTIFIER, NAMESPACE_KEYWORD));
+                parseDelegationSpecifierList();
+                parseClassBody();
+            }
+        }
     }
 
     /*

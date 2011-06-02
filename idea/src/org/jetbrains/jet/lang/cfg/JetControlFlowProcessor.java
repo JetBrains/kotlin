@@ -597,7 +597,7 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitObjectLiteralExpression(JetObjectLiteralExpression expression) {
-            List<JetDelegationSpecifier> delegationSpecifiers = expression.getDelegationSpecifiers();
+            List<JetDelegationSpecifier> delegationSpecifiers = expression.getObjectDeclaration().getDelegationSpecifiers();
             for (JetDelegationSpecifier delegationSpecifier : delegationSpecifiers) {
                 if (delegationSpecifier instanceof JetDelegatorByExpressionSpecifier) {
                     JetDelegatorByExpressionSpecifier specifier = (JetDelegatorByExpressionSpecifier) delegationSpecifier;

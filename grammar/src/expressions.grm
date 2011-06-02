@@ -124,6 +124,7 @@ declaration
   : extension
   : class
   : typedef
+  : object
   ;
 
 statement

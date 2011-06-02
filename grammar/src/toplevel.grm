@@ -21,6 +21,7 @@ import
 toplevelObject
   : namespace
   : class
+  : object
   : extension
   : function
   : property

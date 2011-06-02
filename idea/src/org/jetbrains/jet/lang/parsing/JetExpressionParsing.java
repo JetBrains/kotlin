@@ -1140,6 +1140,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      *   : extension
      *   : class
      *   : typedef
+     *   : object
      *   ;
      */
     private JetNodeType parseLocalDeclarationRest(boolean isEnum) {
@@ -1159,6 +1160,10 @@ public class JetExpressionParsing extends AbstractJetParsing {
          }
          else if (keywordToken == TYPE_KEYWORD) {
              declType = myJetParsing.parseTypeDef();
+         }
+         else if (keywordToken == OBJECT_KEYWORD) {
+             myJetParsing.parseObject(true);
+             declType = OBJECT_DECLARATION;
          }
          return declType;
      }
@@ -1594,29 +1599,11 @@ public class JetExpressionParsing extends AbstractJetParsing {
         argument.done(VALUE_ARGUMENT);
     }
 
-    /*
-     * objectLiteral
-     *   : "object" ":" delegationSpecifier{","}? classBody // Cannot make class body optional: foo(object F, a)
-     *   ;
-     */
     public void parseObjectLiteral() {
-        assert _at(OBJECT_KEYWORD);
-
         PsiBuilder.Marker literal = mark();
-
-        advance(); // OBJECT_KEYWORD
-
-        if (at(LBRACE)) {
-            myJetParsing.parseClassBody();
-        }
-        else {
-            expect(COLON, "Expecting ':'", TokenSet.create(IDENTIFIER, NAMESPACE_KEYWORD));
-
-            myJetParsing.parseDelegationSpecifierList();
-            if (at(LBRACE)) {
-                myJetParsing.parseClassBody();
-            }
-        }
+        PsiBuilder.Marker declaration = mark();
+        myJetParsing.parseObject(false);
+        declaration.done(OBJECT_DECLARATION);
         literal.done(OBJECT_LITERAL);
     }
 
