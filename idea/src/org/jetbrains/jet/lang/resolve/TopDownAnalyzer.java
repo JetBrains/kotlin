@@ -12,6 +12,7 @@ import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeInferrer;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -85,8 +86,6 @@ public class TopDownAnalyzer {
     }
 
     public void processObject(@NotNull JetScope outerScope, @NotNull DeclarationDescriptor containingDeclaration, @NotNull JetObjectDeclaration object) {
-//        objects.put(object, mutableClassDescriptor);
-//        WritableScopeImpl writableScope = new WritableScopeImpl(outerScope, outerScope.getContainingDeclaration(), trace.getErrorHandler());
         process(outerScope, new NamespaceLike.Adapter(containingDeclaration) {
 
             @Override
@@ -181,7 +180,9 @@ public class TopDownAnalyzer {
                     MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(trace, owner, outerScope);
                     mutableClassDescriptor.setName(JetPsiUtil.safeName(declaration.getName()));
 
-                    owner.addClassifierDescriptor(mutableClassDescriptor);
+                    if (declaration instanceof JetClass) {
+                        owner.addClassifierDescriptor(mutableClassDescriptor);
+                    }
 
                     map.put(declaration, mutableClassDescriptor);
                     declaringScopes.put((JetDeclaration) declaration, outerScope);
@@ -503,7 +504,7 @@ public class TopDownAnalyzer {
                             DeclarationDescriptor declarationDescriptor = supertype.getConstructor().getDeclarationDescriptor();
                             if (declarationDescriptor instanceof ClassDescriptor) {
                                 ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
-                                if (classDescriptor.hasConstructors()) {
+                                if (classDescriptor.hasConstructors() && !ErrorUtils.isError(classDescriptor.getTypeConstructor())) {
                                     trace.getErrorHandler().genericError(specifier.getNode(), "This type has a constructor, and thus must be initialized here");
                                 }
                             }
