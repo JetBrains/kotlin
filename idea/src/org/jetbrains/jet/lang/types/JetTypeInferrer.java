@@ -756,10 +756,15 @@ public class JetTypeInferrer {
             for (int i = 0, parametersSize = parameters.size(); i < parametersSize; i++) {
                 JetParameter parameter = parameters.get(i);
                 JetTypeReference typeReference = parameter.getTypeReference();
-                if (typeReference == null) {
-                    throw new UnsupportedOperationException("Type inference for parameters is not implemented yet");
+
+                JetType type;
+                if (typeReference != null) {
+                    type = typeResolver.resolveType(scope, typeReference);
                 }
-                JetType type = typeResolver.resolveType(scope, typeReference);
+                else {
+                    trace.getErrorHandler().genericError(parameter.getNode(), "Type inference for parameters is not implemented yet");
+                    type = ErrorUtils.createErrorType("Not inferred");
+                }
                 ValueParameterDescriptor valueParameterDescriptor = classDescriptorResolver.resolveValueParameterDescriptor(functionDescriptor, parameter, i, type);
                 parameterTypes.add(valueParameterDescriptor.getOutType());
                 valueParameterDescriptors.add(valueParameterDescriptor);

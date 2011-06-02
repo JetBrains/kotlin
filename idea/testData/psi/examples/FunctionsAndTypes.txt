@@ -600,8 +600,9 @@ JetFile: FunctionsAndTypes.jet
       PsiWhiteSpace(' ')
       FUNCTION_LITERAL
         PsiElement(LBRACE)('{')
-        VALUE_PARAMETER
-          PsiElement(IDENTIFIER)('t')
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('t')
         PsiWhiteSpace(' ')
         PsiElement(DOUBLE_ARROW)('=>')
         PsiWhiteSpace(' ')

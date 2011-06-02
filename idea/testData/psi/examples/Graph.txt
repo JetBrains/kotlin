@@ -944,8 +944,9 @@ JetFile: Graph.jet
                                 FUNCTION_LITERAL
                                   PsiElement(LBRACE)('{')
                                   PsiWhiteSpace(' ')
-                                  VALUE_PARAMETER
-                                    PsiElement(IDENTIFIER)('n')
+                                  VALUE_PARAMETER_LIST
+                                    VALUE_PARAMETER
+                                      PsiElement(IDENTIFIER)('n')
                                   PsiWhiteSpace(' ')
                                   PsiElement(DOUBLE_ARROW)('=>')
                                   PsiWhiteSpace('\n          ')

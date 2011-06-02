@@ -26,8 +26,9 @@ JetFile: FunctionLiterals.jet
         PsiWhiteSpace('\n\n    ')
         FUNCTION_LITERAL
           PsiElement(LBRACE)('{')
-          VALUE_PARAMETER
-            PsiElement(IDENTIFIER)('a')
+          VALUE_PARAMETER_LIST
+            VALUE_PARAMETER
+              PsiElement(IDENTIFIER)('a')
           PsiWhiteSpace(' ')
           PsiElement(DOUBLE_ARROW)('=>')
           PsiWhiteSpace(' ')

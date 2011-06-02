@@ -1024,6 +1024,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
                     }
                 }
             } else if (!dontExpectParameters) {
+                PsiBuilder.Marker parameterList = mark();
                 PsiBuilder.Marker parameter = mark();
                 int parameterNamePos = matchTokenStreamPredicate(new LastBefore(new At(IDENTIFIER), new AtOffset(doubleArrowPos)));
 
@@ -1041,6 +1042,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
                     errorUntilOffset("Expecting '=>'", doubleArrowPos);
                 }
 
+                parameterList.done(VALUE_PARAMETER_LIST);
             }
 
             expectNoAdvance(DOUBLE_ARROW, "Expecting '=>'");

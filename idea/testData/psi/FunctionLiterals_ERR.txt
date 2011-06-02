@@ -14,9 +14,10 @@ JetFile: FunctionLiterals_ERR.jet
         FUNCTION_LITERAL
           PsiElement(LBRACE)('{')
           PsiWhiteSpace(' ')
-          VALUE_PARAMETER
-            PsiErrorElement:Expecting parameter name
-              <empty list>
+          VALUE_PARAMETER_LIST
+            VALUE_PARAMETER
+              PsiErrorElement:Expecting parameter name
+                <empty list>
           PsiElement(DOUBLE_ARROW)('=>')
           PsiWhiteSpace(' ')
           BODY
@@ -26,12 +27,13 @@ JetFile: FunctionLiterals_ERR.jet
         PsiWhiteSpace('\n    ')
         FUNCTION_LITERAL
           PsiElement(LBRACE)('{')
-          VALUE_PARAMETER
-            PsiElement(IDENTIFIER)('a')
-          PsiErrorElement:To specify many parameters, use the full notation: {(p1, p2, ...) => ...}
-            PsiElement(COMMA)(',')
-            PsiWhiteSpace(' ')
-            PsiElement(IDENTIFIER)('b')
+          VALUE_PARAMETER_LIST
+            VALUE_PARAMETER
+              PsiElement(IDENTIFIER)('a')
+            PsiErrorElement:To specify many parameters, use the full notation: {(p1, p2, ...) => ...}
+              PsiElement(COMMA)(',')
+              PsiWhiteSpace(' ')
+              PsiElement(IDENTIFIER)('b')
           PsiWhiteSpace(' ')
           PsiElement(DOUBLE_ARROW)('=>')
           PsiWhiteSpace(' ')
@@ -275,13 +277,14 @@ JetFile: FunctionLiterals_ERR.jet
         PsiWhiteSpace('\n\n    ')
         FUNCTION_LITERAL
           PsiElement(LBRACE)('{')
-          VALUE_PARAMETER
-            PsiElement(IDENTIFIER)('a')
-          PsiWhiteSpace(' ')
-          PsiErrorElement:To specify a type of a parameter or a return type, use the full notation: {(parameter : Type) : ReturnType => ...}
-            PsiElement(COLON)(':')
+          VALUE_PARAMETER_LIST
+            VALUE_PARAMETER
+              PsiElement(IDENTIFIER)('a')
             PsiWhiteSpace(' ')
-            PsiElement(IDENTIFIER)('b')
+            PsiErrorElement:To specify a type of a parameter or a return type, use the full notation: {(parameter : Type) : ReturnType => ...}
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              PsiElement(IDENTIFIER)('b')
           PsiWhiteSpace(' ')
           PsiElement(DOUBLE_ARROW)('=>')
           PsiWhiteSpace(' ')
