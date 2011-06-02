@@ -47,7 +47,7 @@ public class DescriptorRenderer {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private final DeclarationDescriptorVisitor<Void, StringBuilder> rootVisitor = new RenderDeclarationDescriptorVisitor();
+    private final RenderDeclarationDescriptorVisitor rootVisitor = new RenderDeclarationDescriptorVisitor();
 
     private final DeclarationDescriptorVisitor<Void, StringBuilder> subVisitor = new RenderDeclarationDescriptorVisitor() {
         @Override
@@ -80,12 +80,23 @@ public class DescriptorRenderer {
         if (declarationDescriptor == null) return lt() + "null>";
         StringBuilder stringBuilder = new StringBuilder();
         declarationDescriptor.accept(rootVisitor, stringBuilder);
-        stringBuilder.append(" " + renderMessage("defined in") + " ");
+        appendDefinedIn(declarationDescriptor, stringBuilder);
+        return stringBuilder.toString();
+    }
+
+    private void appendDefinedIn(DeclarationDescriptor declarationDescriptor, StringBuilder stringBuilder) {
+        stringBuilder.append(" ").append(renderMessage("defined in")).append(" ");
 
         final DeclarationDescriptor containingDeclaration = declarationDescriptor.getContainingDeclaration();
         if (containingDeclaration != null) {
             renderFullyQualifiedName(containingDeclaration, stringBuilder);
         }
+    }
+
+    public String renderAsObject(@NotNull ClassDescriptor classDescriptor) {
+        StringBuilder stringBuilder = new StringBuilder();
+        rootVisitor.renderClassDescriptor(classDescriptor, stringBuilder, "object");
+        appendDefinedIn(classDescriptor, stringBuilder);
         return stringBuilder.toString();
     }
 
@@ -219,7 +230,13 @@ public class DescriptorRenderer {
 
         @Override
         public Void visitClassDescriptor(ClassDescriptor descriptor, StringBuilder builder) {
-            builder.append(renderKeyword("class")).append(" ");
+            String keyword = "class";
+            renderClassDescriptor(descriptor, builder, keyword);
+            return super.visitClassDescriptor(descriptor, builder);
+        }
+
+        public void renderClassDescriptor(ClassDescriptor descriptor, StringBuilder builder, String keyword) {
+            builder.append(renderKeyword(keyword)).append(" ");
             renderName(descriptor, builder);
             renderTypeParameters(descriptor.getTypeConstructor().getParameters(), builder);
             Collection<? extends JetType> supertypes = descriptor.getTypeConstructor().getSupertypes();
@@ -233,7 +250,6 @@ public class DescriptorRenderer {
                     }
                 }
             }
-            return super.visitClassDescriptor(descriptor, builder);
         }
 
         protected void renderName(DeclarationDescriptor descriptor, StringBuilder stringBuilder) {

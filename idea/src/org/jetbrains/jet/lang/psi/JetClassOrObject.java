@@ -16,4 +16,13 @@ public interface JetClassOrObject {
 
     @NotNull
     List<JetDelegationSpecifier> getDelegationSpecifiers();
+
+    @NotNull
+    List<JetClassInitializer> getAnonymousInitializers();
+
+    // Objects always "have" a primary constructor
+    boolean hasPrimaryConstructor();
+
+    @Nullable
+    String getName();
 }

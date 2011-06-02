@@ -732,6 +732,16 @@ public class JetTypeInferrer {
         }
 
         @Override
+        public void visitObjectLiteralExpression(JetObjectLiteralExpression expression) {
+            TopDownAnalyzer topDownAnalyzer = new TopDownAnalyzer(semanticServices, trace);
+            topDownAnalyzer.processObject(scope, scope.getContainingDeclaration(), expression.getObjectDeclaration());
+            ClassDescriptor classDescriptor = trace.getBindingContext().getClassDescriptor(expression.getObjectDeclaration());
+            if (classDescriptor != null) {
+                result = classDescriptor.getDefaultType();
+            }
+        }
+
+        @Override
         public void visitFunctionLiteralExpression(JetFunctionLiteralExpression expression) {
             if (preferBlock && !expression.hasParameterSpecification()) {
                 trace.recordBlock(expression);

@@ -172,6 +172,26 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
                     }
             );
         }
+
+        if (element instanceof JetObjectDeclaration) {
+            JetObjectDeclaration jetObjectDeclaration = (JetObjectDeclaration) element;
+            return new LineMarkerInfo<JetObjectDeclaration>(
+                    jetObjectDeclaration, jetObjectDeclaration.getTextOffset(), Icons.ANONYMOUS_CLASS_ICON, Pass.UPDATE_ALL,
+                    new Function<JetObjectDeclaration, String>() {
+                        @Override
+                        public String fun(JetObjectDeclaration jetObjectDeclaration) {
+                            ClassDescriptor classDescriptor = bindingContext.getClassDescriptor(jetObjectDeclaration);
+                            return DescriptorRenderer.HTML.renderAsObject(classDescriptor);
+                        }
+                    },
+                    new GutterIconNavigationHandler<JetObjectDeclaration>() {
+                        @Override
+                        public void navigate(MouseEvent e, JetObjectDeclaration elt) {
+                        }
+                    }
+            );
+        }
+
         return null;
     }
 

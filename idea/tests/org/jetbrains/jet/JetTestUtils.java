@@ -94,7 +94,7 @@ public class JetTestUtils {
                 }
 
                 @Override
-                public ClassDescriptor getClassDescriptor(JetClass declaration) {
+                public ClassDescriptor getClassDescriptor(JetClassOrObject declaration) {
                     throw new UnsupportedOperationException(); // TODO
                 }
 

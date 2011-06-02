@@ -148,7 +148,7 @@ public class ClassDescriptorResolver {
         // TODO : Bounds from with
     }
 
-    public void resolveSupertypes(@NotNull JetClass jetClass, @NotNull MutableClassDescriptor descriptor) {
+    public void resolveSupertypes(@NotNull JetClassOrObject jetClass, @NotNull MutableClassDescriptor descriptor) {
         List<JetDelegationSpecifier> delegationSpecifiers = jetClass.getDelegationSpecifiers();
 //        TODO : assuming that the hierarchy is acyclic
         Collection<? extends JetType> superclasses = delegationSpecifiers.isEmpty()
@@ -353,6 +353,30 @@ public class ClassDescriptorResolver {
                 property.isVar());
         trace.recordDeclarationResolution(property, variableDescriptor);
         return variableDescriptor;
+    }
+
+    public PropertyDescriptor resolveObjectDeclarationAsPropertyDescriptor(@NotNull DeclarationDescriptor containingDeclaration, JetObjectDeclaration objectDeclaration, @NotNull ClassDescriptor classDescriptor) {
+        JetModifierList modifierList = objectDeclaration.getModifierList();
+        PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
+                containingDeclaration,
+                AnnotationResolver.INSTANCE.resolveAnnotations(modifierList),
+                resolveModifiers(modifierList, DEFAULT_MODIFIERS), // TODO : default modifiers differ in different contexts
+                false,
+                null,
+                JetPsiUtil.safeName(objectDeclaration.getName()),
+                null,
+                classDescriptor.getDefaultType());
+
+        propertyDescriptor.initialize(
+                Collections.<TypeParameterDescriptor>emptyList(),
+                null, // TODO : is it really OK?
+                null);
+
+        JetObjectDeclarationName nameAsDeclaration = objectDeclaration.getNameAsDeclaration();
+        if (nameAsDeclaration != null) {
+            trace.recordDeclarationResolution(nameAsDeclaration, propertyDescriptor);
+        }
+        return propertyDescriptor;
     }
 
     @NotNull

@@ -1,11 +1,10 @@
 package org.jetbrains.jet.lang.resolve;
 
 import com.intellij.psi.PsiElement;
-import org.jetbrains.jet.codegen.ClassCodegen;
 import org.jetbrains.jet.lang.JetDiagnostic;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Collection;
 
@@ -17,7 +16,7 @@ public interface BindingContext {
     DeclarationDescriptor getDeclarationDescriptor(PsiElement declaration);
 
     NamespaceDescriptor getNamespaceDescriptor(JetNamespace declaration);
-    ClassDescriptor getClassDescriptor(JetClass declaration);
+    ClassDescriptor getClassDescriptor(JetClassOrObject declaration);
     TypeParameterDescriptor getTypeParameterDescriptor(JetTypeParameter declaration);
     FunctionDescriptor getFunctionDescriptor(JetFunction declaration);
     ConstructorDescriptor getConstructorDescriptor(JetElement declaration);

@@ -24,6 +24,7 @@ import java.util.*;
 public class TopDownAnalyzer {
 
     private final Map<JetClass, MutableClassDescriptor> classes = Maps.newLinkedHashMap();
+    private final Map<JetObjectDeclaration, MutableClassDescriptor> objects = Maps.newLinkedHashMap();
     private final Map<JetNamespace, WritableScope> namespaceScopes = Maps.newHashMap();
     private final Map<JetNamespace, NamespaceDescriptorImpl> namespaceDescriptors = Maps.newHashMap();
 
@@ -36,11 +37,11 @@ public class TopDownAnalyzer {
 
     private final JetSemanticServices semanticServices;
     private final ClassDescriptorResolver classDescriptorResolver;
-    private final BindingTraceContext trace;
+    private final BindingTrace trace;
     private final BindingTraceAdapter traceForConstructors;
     private final BindingTraceAdapter traceForMembers;
 
-    public TopDownAnalyzer(JetSemanticServices semanticServices, @NotNull BindingTraceContext bindingTrace) {
+    public TopDownAnalyzer(JetSemanticServices semanticServices, @NotNull BindingTrace bindingTrace) {
         this.semanticServices = semanticServices;
         this.classDescriptorResolver = semanticServices.getClassDescriptorResolver(bindingTrace);
         this.trace = bindingTrace;
@@ -53,7 +54,7 @@ public class TopDownAnalyzer {
                 if (expression instanceof JetSimpleNameExpression) {
                     JetSimpleNameExpression simpleNameExpression = (JetSimpleNameExpression) expression;
                     if (simpleNameExpression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER) {
-                        if (!trace.hasBackingField((PropertyDescriptor) descriptor)) {
+                        if (!trace.getBindingContext().hasBackingField((PropertyDescriptor) descriptor)) {
                             TopDownAnalyzer.this.trace.getErrorHandler().genericError(expression.getNode(), "This property does not have a backing field");
                         }
                     }
@@ -83,14 +84,46 @@ public class TopDownAnalyzer {
         process(outerScope, standardLibraryNamespace, namespace.getDeclarations());
     }
 
-    public void process(@NotNull WritableScope outerScope, NamespaceLike owner, @NotNull List<JetDeclaration> declarations) {
+    public void processObject(@NotNull JetScope outerScope, @NotNull DeclarationDescriptor containingDeclaration, @NotNull JetObjectDeclaration object) {
+//        objects.put(object, mutableClassDescriptor);
+//        WritableScopeImpl writableScope = new WritableScopeImpl(outerScope, outerScope.getContainingDeclaration(), trace.getErrorHandler());
+        process(outerScope, new NamespaceLike.Adapter(containingDeclaration) {
+
+            @Override
+            public NamespaceDescriptorImpl getNamespace(String name) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public void addClassifierDescriptor(@NotNull MutableClassDescriptor classDescriptor) {
+
+            }
+
+            @Override
+            public void addFunctionDescriptor(@NotNull FunctionDescriptor functionDescriptor) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor) {
+
+            }
+        }, Collections.<JetDeclaration>singletonList(object));
+    }
+
+    public void process(@NotNull JetScope outerScope, NamespaceLike owner, @NotNull List<JetDeclaration> declarations) {
         collectNamespacesAndClassifiers(outerScope, owner, declarations); // namespaceScopes, classes
 
         createTypeConstructors(); // create type constructors for classes and generic parameters
         resolveTypesInClassHeaders(); // Generic bounds and types in supertype lists (no expressions or constructor resolution)
         checkGenericBoundsInClassHeaders(); // For the types resolved so far
 
-        resolveFunctionAndPropertyHeaders(declarations); // Constructor headers are resolved as well
+        resolveFunctionAndPropertyHeaders(); // Constructor headers are resolved as well
 
         resolveBehaviorDeclarationBodies();
     }
@@ -131,16 +164,32 @@ public class TopDownAnalyzer {
 
                 @Override
                 public void visitClass(JetClass klass) {
+                    visitClassOrObject(klass, (Map) classes, owner, outerScope);
+                }
+
+                @Override
+                public void visitObjectDeclaration(JetObjectDeclaration declaration) {
+                    MutableClassDescriptor mutableClassDescriptor = visitClassOrObject(declaration, (Map) objects, owner, outerScope);
+                    ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(mutableClassDescriptor, Collections.<Annotation>emptyList(), true);
+                    constructorDescriptor.initialize(Collections.<ValueParameterDescriptor>emptyList());
+                    // TODO : make the constructor private?
+                    mutableClassDescriptor.setPrimaryConstructor(constructorDescriptor);
+                    trace.recordDeclarationResolution(declaration, mutableClassDescriptor);
+                }
+
+                private MutableClassDescriptor visitClassOrObject(JetClassOrObject declaration, Map<JetClassOrObject, MutableClassDescriptor> map, NamespaceLike owner, JetScope outerScope) {
                     MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(trace, owner, outerScope);
-                    mutableClassDescriptor.setName(JetPsiUtil.safeName(klass.getName()));
+                    mutableClassDescriptor.setName(JetPsiUtil.safeName(declaration.getName()));
 
                     owner.addClassifierDescriptor(mutableClassDescriptor);
 
-                    classes.put(klass, mutableClassDescriptor);
-                    declaringScopes.put(klass, outerScope);
+                    map.put(declaration, mutableClassDescriptor);
+                    declaringScopes.put((JetDeclaration) declaration, outerScope);
 
                     JetScope classScope = mutableClassDescriptor.getScopeForMemberResolution();
-                    collectNamespacesAndClassifiers(classScope, mutableClassDescriptor, klass.getDeclarations());
+                    collectNamespacesAndClassifiers(classScope, mutableClassDescriptor, declaration.getDeclarations());
+
+                    return mutableClassDescriptor;
                 }
 
                 @Override
@@ -155,6 +204,7 @@ public class TopDownAnalyzer {
             });
         }
     }
+
 
     private void processImports(@NotNull JetNamespace namespace, @NotNull WriteThroughScope namespaceScope, @NotNull JetScope outerScope) {
         List<JetImportDirective> importDirectives = namespace.getImportDirectives();
@@ -223,6 +273,11 @@ public class TopDownAnalyzer {
             classDescriptorResolver.resolveGenericBounds(jetClass, descriptor);
             classDescriptorResolver.resolveSupertypes(jetClass, descriptor);
         }
+        for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : objects.entrySet()) {
+            JetClassOrObject jetClass = entry.getKey();
+            MutableClassDescriptor descriptor = entry.getValue();
+            classDescriptorResolver.resolveSupertypes(jetClass, descriptor);
+        }
     }
 
     private void checkGenericBoundsInClassHeaders() {
@@ -230,14 +285,14 @@ public class TopDownAnalyzer {
             JetClass jetClass = entry.getKey();
 
             for (JetDelegationSpecifier delegationSpecifier : jetClass.getDelegationSpecifiers()) {
-                JetType type = trace.resolveTypeReference(delegationSpecifier.getTypeReference());
+                JetType type = trace.getBindingContext().resolveTypeReference(delegationSpecifier.getTypeReference());
                 classDescriptorResolver.checkBounds(delegationSpecifier.getTypeReference(), type);
             }
 
             for (JetTypeParameter jetTypeParameter : jetClass.getTypeParameters()) {
                 JetTypeReference extendsBound = jetTypeParameter.getExtendsBound();
                 if (extendsBound != null) {
-                    JetType type = trace.resolveTypeReference(extendsBound);
+                    JetType type = trace.getBindingContext().resolveTypeReference(extendsBound);
                     classDescriptorResolver.checkBounds(extendsBound, type);
                 }
             }
@@ -247,17 +302,17 @@ public class TopDownAnalyzer {
 
     }
 
-    private void resolveFunctionAndPropertyHeaders(@NotNull List<JetDeclaration> declarations) {
+    private void resolveFunctionAndPropertyHeaders() {
         for (Map.Entry<JetNamespace, WritableScope> entry : namespaceScopes.entrySet()) {
             JetNamespace namespace = entry.getKey();
-            final WritableScope namespaceScope = entry.getValue();
-            final NamespaceLike namespaceDescriptor = namespaceDescriptors.get(namespace);
+            WritableScope namespaceScope = entry.getValue();
+            NamespaceLike namespaceDescriptor = namespaceDescriptors.get(namespace);
 
             resolveFunctionAndPropertyHeaders(namespace.getDeclarations(), namespaceScope, namespaceDescriptor);
         }
         for (Map.Entry<JetClass, MutableClassDescriptor> entry : classes.entrySet()) {
             JetClass jetClass = entry.getKey();
-            final MutableClassDescriptor classDescriptor = entry.getValue();
+            MutableClassDescriptor classDescriptor = entry.getValue();
 
             resolveFunctionAndPropertyHeaders(jetClass.getDeclarations(), classDescriptor.getScopeForMemberResolution(), classDescriptor);
             processPrimaryConstructor(classDescriptor, jetClass);
@@ -266,6 +321,12 @@ public class TopDownAnalyzer {
             }
 
             // TODO : Constructors
+        }
+        for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : objects.entrySet()) {
+            JetObjectDeclaration object = entry.getKey();
+            MutableClassDescriptor classDescriptor = entry.getValue();
+
+            resolveFunctionAndPropertyHeaders(object.getDeclarations(), classDescriptor.getScopeForMemberResolution(), classDescriptor);
         }
 
         // TODO : Extensions
@@ -288,6 +349,12 @@ public class TopDownAnalyzer {
                     namespaceLike.addPropertyDescriptor(propertyDescriptor);
                     properties.put(property, propertyDescriptor);
                     declaringScopes.put(property, scope);
+                }
+
+                @Override
+                public void visitObjectDeclaration(JetObjectDeclaration declaration) {
+                    PropertyDescriptor propertyDescriptor = classDescriptorResolver.resolveObjectDeclarationAsPropertyDescriptor(namespaceLike, declaration, objects.get(declaration));
+                    namespaceLike.addPropertyDescriptor(propertyDescriptor);
                 }
             });
         }
@@ -374,7 +441,7 @@ public class TopDownAnalyzer {
             JetClass jetClass = entry.getKey();
             if (!jetClass.hasPrimaryConstructor()) {
                 for (PropertyDescriptor propertyDescriptor : classDescriptor.getProperties()) {
-                    if (trace.hasBackingField(propertyDescriptor)) {
+                    if (trace.getBindingContext().hasBackingField(propertyDescriptor)) {
                         PsiElement nameIdentifier = jetClass.getNameIdentifier();
                         if (nameIdentifier != null) {
                             trace.getErrorHandler().genericError(nameIdentifier.getNode(),
@@ -406,7 +473,7 @@ public class TopDownAnalyzer {
                         if (delegateExpression != null) {
                             JetScope scope = scopeForConstructor == null ? descriptor.getScopeForMemberResolution() : scopeForConstructor;
                             JetType type = typeInferrer.getType(scope, delegateExpression, false);
-                            JetType supertype = trace.resolveTypeReference(specifier.getTypeReference());
+                            JetType supertype = trace.getBindingContext().resolveTypeReference(specifier.getTypeReference());
                             if (type != null && !semanticServices.getTypeChecker().isSubtypeOf(type, supertype)) { // TODO : Convertible?
                                 trace.getErrorHandler().typeMismatch(delegateExpression, supertype, type);
                             }
@@ -431,7 +498,7 @@ public class TopDownAnalyzer {
 
                     @Override
                     public void visitDelegationToSuperClassSpecifier(JetDelegatorToSuperClass specifier) {
-                        JetType supertype = trace.resolveTypeReference(specifier.getTypeReference());
+                        JetType supertype = trace.getBindingContext().resolveTypeReference(specifier.getTypeReference());
                         if (supertype != null) {
                             DeclarationDescriptor declarationDescriptor = supertype.getConstructor().getDeclarationDescriptor();
                             if (declarationDescriptor instanceof ClassDescriptor) {
@@ -463,23 +530,27 @@ public class TopDownAnalyzer {
 
     private void resolveAnonymousInitializers() {
         for (Map.Entry<JetClass, MutableClassDescriptor> entry : classes.entrySet()) {
-            JetClass jetClass = entry.getKey();
-            MutableClassDescriptor classDescriptor = entry.getValue();
+            resolveAnonymousInitializers(entry.getKey(), entry.getValue());
+        }
+        for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : objects.entrySet()) {
+            resolveAnonymousInitializers(entry.getKey(), entry.getValue());
+        }
+    }
 
-            List<JetClassInitializer> anonymousInitializers = jetClass.getAnonymousInitializers();
-            if (jetClass.hasPrimaryConstructor()) {
-                ConstructorDescriptor primaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
-                assert primaryConstructor != null;
-                final JetScope scopeForConstructor = getInnerScopeForConstructor(primaryConstructor, classDescriptor.getScopeForMemberResolution(), true);
-                JetTypeInferrer typeInferrer = semanticServices.getTypeInferrer(traceForConstructors, JetFlowInformationProvider.NONE); // TODO : flow
-                for (JetClassInitializer anonymousInitializer : anonymousInitializers) {
-                    typeInferrer.getType(scopeForConstructor, anonymousInitializer.getBody(), true);
-                }
+    private void resolveAnonymousInitializers(JetClassOrObject jetClassOrObject, MutableClassDescriptor classDescriptor) {
+        List<JetClassInitializer> anonymousInitializers = jetClassOrObject.getAnonymousInitializers();
+        if (jetClassOrObject.hasPrimaryConstructor()) {
+            ConstructorDescriptor primaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
+            assert primaryConstructor != null;
+            final JetScope scopeForConstructor = getInnerScopeForConstructor(primaryConstructor, classDescriptor.getScopeForMemberResolution(), true);
+            JetTypeInferrer typeInferrer = semanticServices.getTypeInferrer(traceForConstructors, JetFlowInformationProvider.NONE); // TODO : flow
+            for (JetClassInitializer anonymousInitializer : anonymousInitializers) {
+                typeInferrer.getType(scopeForConstructor, anonymousInitializer.getBody(), true);
             }
-            else {
-                for (JetClassInitializer anonymousInitializer : anonymousInitializers) {
-                    trace.getErrorHandler().genericError(anonymousInitializer.getNode(), "Anonymous initializers are only allowed in the presence of a primary constructor");
-                }
+        }
+        else {
+            for (JetClassInitializer anonymousInitializer : anonymousInitializers) {
+                trace.getErrorHandler().genericError(anonymousInitializer.getNode(), "Anonymous initializers are only allowed in the presence of a primary constructor");
             }
         }
     }
@@ -574,7 +645,7 @@ public class TopDownAnalyzer {
         constructorScope.setThisType(descriptor.getContainingDeclaration().getDefaultType());
 
         for (ValueParameterDescriptor valueParameterDescriptor : descriptor.getUnsubstitutedValueParameters()) {
-            JetParameter parameter = (JetParameter) trace.getDeclarationPsiElement(valueParameterDescriptor);
+            JetParameter parameter = (JetParameter) trace.getBindingContext().getDeclarationPsiElement(valueParameterDescriptor);
             if (parameter.getValOrVarNode() == null || !primary) {
                 constructorScope.addVariableDescriptor(valueParameterDescriptor);
             }
@@ -664,7 +735,7 @@ public class TopDownAnalyzer {
         }
 
         JetExpression initializer = property.getInitializer();
-        if (!property.isVar() && initializer != null && !trace.hasBackingField(propertyDescriptor)) {
+        if (!property.isVar() && initializer != null && !trace.getBindingContext().hasBackingField(propertyDescriptor)) {
             trace.getErrorHandler().genericError(initializer.getNode(), "Initializer is not allowed here because this property has no setter and no backing field either");
         }
     }

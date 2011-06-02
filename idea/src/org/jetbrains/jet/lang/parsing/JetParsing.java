@@ -607,7 +607,9 @@ public class JetParsing extends AbstractJetParsing {
         advance(); // OBJECT_KEYWORD
 
         if (declaration) {
+            PsiBuilder.Marker propertyDeclaration = mark();
             expect(IDENTIFIER, "Expecting object name", TokenSet.create(LBRACE));
+            propertyDeclaration.done(OBJECT_DECLARATION_NAME);
         }
         else {
             if (at(IDENTIFIER)) {

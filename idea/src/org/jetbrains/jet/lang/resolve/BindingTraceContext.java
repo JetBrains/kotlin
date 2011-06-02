@@ -165,8 +165,8 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
     }
 
     @Override
-    public ClassDescriptor getClassDescriptor(JetClass declaration) {
-        return (ClassDescriptor) declarationsToDescriptors.get(declaration);
+    public ClassDescriptor getClassDescriptor(JetClassOrObject declaration) {
+        return (ClassDescriptor) declarationsToDescriptors.get((JetDeclaration) declaration);
     }
 
     @Override
