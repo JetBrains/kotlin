@@ -19,6 +19,14 @@ public class JetThisExpression extends JetLabelQualifiedExpression {
         visitor.visitThisExpression(this);
     }
 
+    /**
+     * class A : B, C {
+     *     override fun foo() {
+     *         this<B>.foo()
+     *         this<C>.foo()
+     *     }
+     * }
+     */
     @Nullable
     public JetTypeReference getSuperTypeQualifier() {
         return (JetTypeReference) findChildByType(JetNodeTypes.TYPE_REFERENCE);
