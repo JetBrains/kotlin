@@ -1,0 +1,22 @@
+// JET-81 Assertion fails when processing self-referring anonymous objects
+
+val y = object {
+  val a = y;
+}
+
+val z = y.a;
+
+object A {
+  val x = A
+}
+
+val a = object {
+  {
+    b + 1
+  }
+  val x = <error>b</error>
+  val y = 1
+}
+
+val b = a.x
+val c = a.y

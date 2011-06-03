@@ -732,13 +732,22 @@ public class JetTypeInferrer {
         }
 
         @Override
-        public void visitObjectLiteralExpression(JetObjectLiteralExpression expression) {
-            TopDownAnalyzer topDownAnalyzer = new TopDownAnalyzer(semanticServices, trace);
+        public void visitObjectLiteralExpression(final JetObjectLiteralExpression expression) {
+            TopDownAnalyzer topDownAnalyzer = new TopDownAnalyzer(semanticServices, new BindingTraceAdapter(trace) {
+                @Override
+                public void recordDeclarationResolution(@NotNull PsiElement declaration, @NotNull DeclarationDescriptor descriptor) {
+                    if (declaration == expression.getObjectDeclaration()) {
+                        JetType defaultType = ((ClassDescriptor) descriptor).getDefaultType();
+                        result = defaultType;
+                        if (!trace.isProcessed(expression)) {
+                            recordExpressionType(expression, defaultType);
+                            markAsProcessed(expression);
+                        }
+                    }
+                    super.recordDeclarationResolution(declaration, descriptor);
+                }
+            });
             topDownAnalyzer.processObject(scope, scope.getContainingDeclaration(), expression.getObjectDeclaration());
-            ClassDescriptor classDescriptor = trace.getBindingContext().getClassDescriptor(expression.getObjectDeclaration());
-            if (classDescriptor != null) {
-                result = classDescriptor.getDefaultType();
-            }
         }
 
         @Override
