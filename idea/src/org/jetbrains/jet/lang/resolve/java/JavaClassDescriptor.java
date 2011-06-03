@@ -88,6 +88,11 @@ public class JavaClassDescriptor extends MutableDeclarationDescriptor implements
     }
 
     @Override
+    public JetType getClassObjectType() {
+        return null; // TODO : static members as class object members
+    }
+
+    @Override
     public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
         return visitor.visitClassDescriptor(this, data);
     }

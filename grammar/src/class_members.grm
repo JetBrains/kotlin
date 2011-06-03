@@ -43,7 +43,7 @@ memberDeclaration
   ;
 
 classObject
-  : modifiers "class" objectLiteral
+  : modifiers "class" object
   ;
 
 constructor

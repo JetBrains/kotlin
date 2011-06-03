@@ -51,4 +51,9 @@ public class NamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl imp
     public void addPropertyDescriptor(@NotNull PropertyDescriptor variableDescriptor) {
         memberScope.addVariableDescriptor(variableDescriptor);
     }
+
+    @Override
+    public void setClassObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor) {
+        throw new IllegalStateException("Must be guaranteed not to happen by the parser");
+    }
 }

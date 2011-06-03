@@ -704,8 +704,23 @@ public class JetTypeInferrer {
                             trace.getErrorHandler().genericError(expression.getNode(), "This variable is not readable in this context");
                         }
                         return;
-                    } else if (furtherNameLookup(expression, referencedName)) {
-                        return;
+                    }
+                    else {
+                        ClassifierDescriptor classifier = scope.getClassifier(referencedName);
+                        if (classifier != null) {
+                            JetType classObjectType = classifier.getClassObjectType();
+                            if (classObjectType != null) {
+                                result = classObjectType;
+                            }
+                            else {
+                                trace.getErrorHandler().genericError(expression.getNode(), "This class does not have a class object");
+                            }
+                            trace.recordReferenceResolution(expression, classifier);
+                            return;
+                        }
+                        else if (furtherNameLookup(expression, referencedName)) {
+                            return;
+                        }
                     }
                     trace.getErrorHandler().unresolvedReference(expression);
                 }

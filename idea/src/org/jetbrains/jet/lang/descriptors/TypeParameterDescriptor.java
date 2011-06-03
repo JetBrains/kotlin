@@ -37,9 +37,11 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
     private final int index;
     private final Variance variance;
     private final Set<JetType> upperBounds;
-    private final TypeConstructor typeConstructor;
     private JetType boundsAsType;
-    private JetType type;
+    private final TypeConstructor typeConstructor;
+    private JetType defaultType;
+    private final Set<JetType> classObjectUpperBounds = Sets.newLinkedHashSet();
+    private JetType classObjectBoundsAsType;
 
     private TypeParameterDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
@@ -89,7 +91,7 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
         if (boundsAsType == null) {
             assert upperBounds != null;
             assert upperBounds.size() > 0;
-            boundsAsType = upperBounds.size() == 1 ? upperBounds.iterator().next() : TypeUtils.intersect(JetTypeChecker.INSTANCE, upperBounds);
+            boundsAsType = TypeUtils.intersect(JetTypeChecker.INSTANCE, upperBounds);
             if (boundsAsType == null) {
                 boundsAsType = JetStandardClasses.getNothingType(); // TODO : some error message?
             }
@@ -111,8 +113,8 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
     @NotNull
     @Override
     public JetType getDefaultType() {
-        if (type == null) {
-            type = new JetTypeImpl(
+        if (defaultType == null) {
+            defaultType = new JetTypeImpl(
                             Collections.<Annotation>emptyList(),
                             getTypeConstructor(),
                             TypeUtils.hasNullableBound(this),
@@ -124,7 +126,18 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
                                 }
                             }));
         }
-        return type;
+        return defaultType;
+    }
+
+    @Override
+    public JetType getClassObjectType() {
+        if (classObjectUpperBounds.isEmpty()) return null;
+
+        if (classObjectBoundsAsType == null) {
+            classObjectBoundsAsType = TypeUtils.intersect(JetTypeChecker.INSTANCE, classObjectUpperBounds);
+            assert classObjectBoundsAsType != null; // TODO : Error message
+        }
+        return classObjectBoundsAsType;
     }
 
     public int getIndex() {

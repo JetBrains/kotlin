@@ -112,6 +112,11 @@ public class TopDownAnalyzer {
             public void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor) {
 
             }
+
+            @Override
+            public void setClassObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor) {
+
+            }
         }, Collections.<JetDeclaration>singletonList(object));
     }
 
@@ -168,15 +173,20 @@ public class TopDownAnalyzer {
 
                 @Override
                 public void visitObjectDeclaration(JetObjectDeclaration declaration) {
+                    createClassDescriptorForObject(declaration);
+                }
+
+                private MutableClassDescriptor createClassDescriptorForObject(@NotNull JetObjectDeclaration declaration) {
                     MutableClassDescriptor mutableClassDescriptor = visitClassOrObject(declaration, (Map) objects, owner, outerScope);
                     ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(mutableClassDescriptor, Collections.<Annotation>emptyList(), true);
                     constructorDescriptor.initialize(Collections.<ValueParameterDescriptor>emptyList());
                     // TODO : make the constructor private?
                     mutableClassDescriptor.setPrimaryConstructor(constructorDescriptor);
                     trace.recordDeclarationResolution(declaration, mutableClassDescriptor);
+                    return mutableClassDescriptor;
                 }
 
-                private MutableClassDescriptor visitClassOrObject(JetClassOrObject declaration, Map<JetClassOrObject, MutableClassDescriptor> map, NamespaceLike owner, JetScope outerScope) {
+                private MutableClassDescriptor visitClassOrObject(@NotNull JetClassOrObject declaration, Map<JetClassOrObject, MutableClassDescriptor> map, NamespaceLike owner, JetScope outerScope) {
                     MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(trace, owner, outerScope);
                     mutableClassDescriptor.setName(JetPsiUtil.safeName(declaration.getName()));
 
@@ -201,6 +211,11 @@ public class TopDownAnalyzer {
                 @Override
                 public void visitExtension(JetExtension extension) {
                     trace.getErrorHandler().genericError(extension.getNode(), "Unsupported [TopDownAnalyzer]");
+                }
+
+                @Override
+                public void visitClassObject(JetClassObject classObject) {
+                    owner.setClassObjectDescriptor(createClassDescriptorForObject(classObject.getObjectDeclaration()));
                 }
             });
         }

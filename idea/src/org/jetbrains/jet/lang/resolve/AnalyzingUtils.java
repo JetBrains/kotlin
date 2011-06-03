@@ -81,31 +81,36 @@ public class AnalyzingUtils {
 //        if (false)
         topDownAnalyzer.process(scope, new NamespaceLike.Adapter(owner) {
 
-                    @Override
-                    public NamespaceDescriptorImpl getNamespace(String name) {
-                        return null;
-                    }
+            @Override
+            public NamespaceDescriptorImpl getNamespace(String name) {
+                return null;
+            }
 
-                    @Override
-                    public void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
-                        scope.addNamespace(namespaceDescriptor);
-                    }
+            @Override
+            public void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
+                scope.addNamespace(namespaceDescriptor);
+            }
 
-                    @Override
-                    public void addClassifierDescriptor(@NotNull MutableClassDescriptor classDescriptor) {
-                        scope.addClassifierDescriptor(classDescriptor);
-                    }
+            @Override
+            public void addClassifierDescriptor(@NotNull MutableClassDescriptor classDescriptor) {
+                scope.addClassifierDescriptor(classDescriptor);
+            }
 
-                    @Override
-                    public void addFunctionDescriptor(@NotNull FunctionDescriptor functionDescriptor) {
-                        scope.addFunctionDescriptor(functionDescriptor);
-                    }
+            @Override
+            public void addFunctionDescriptor(@NotNull FunctionDescriptor functionDescriptor) {
+                scope.addFunctionDescriptor(functionDescriptor);
+            }
 
-                    @Override
-                    public void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor) {
-                        scope.addVariableDescriptor(propertyDescriptor);
-                    }
-                }, Collections.<JetDeclaration>singletonList(namespace));
+            @Override
+            public void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor) {
+                scope.addVariableDescriptor(propertyDescriptor);
+            }
+
+            @Override
+            public void setClassObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor) {
+                throw new IllegalStateException("Must be guaranteed not to happen by the parser");
+            }
+        }, Collections.<JetDeclaration>singletonList(namespace));
         return bindingTraceContext;
     }
 

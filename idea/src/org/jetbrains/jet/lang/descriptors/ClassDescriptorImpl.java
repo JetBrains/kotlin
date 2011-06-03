@@ -82,6 +82,11 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
     }
 
     @Override
+    public JetType getClassObjectType() {
+        return null;
+    }
+
+    @Override
     public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
         return visitor.visitClassDescriptor(this, data);
     }

@@ -712,7 +712,7 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * classObject
-     *   : modifiers "class" objectLiteral
+     *   : modifiers "class" object
      *   ;
      */
     private JetNodeType parseClassObject() {
@@ -720,8 +720,9 @@ public class JetParsing extends AbstractJetParsing {
 
         advance(); // CLASS_KEYWORD
 
-        myExpressionParsing.parseObjectLiteral();
-
+        final PsiBuilder.Marker objectDeclaration = mark();
+        parseObject(false);
+        objectDeclaration.done(OBJECT_DECLARATION);
 
         return CLASS_OBJECT;
     }

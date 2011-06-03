@@ -27,6 +27,8 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     private final WritableScope scopeForMemberLookup;
     // This scope contains type parameters but does not contain inner classes
     private final WritableScope scopeForSupertypeResolution;
+    private MutableClassDescriptor classObjectDescriptor;
+    private JetType classObjectType;
 
     public MutableClassDescriptor(@NotNull BindingTrace trace, @NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope outerScope) {
         super(containingDeclaration);
@@ -36,6 +38,16 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    @Override
+    public void setClassObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor) {
+        this.classObjectDescriptor = classObjectDescriptor;
+    }
+
+    @Nullable
+    public MutableClassDescriptor getClassObjectDescriptor() {
+        return classObjectDescriptor;
+    }
 
     public void setPrimaryConstructor(@NotNull ConstructorDescriptor constructorDescriptor) {
         assert this.primaryConstructor == null : "Primary constructor assigned twice " + this;
@@ -185,6 +197,14 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     @Override
     public ClassDescriptor substitute(TypeSubstitutor substitutor) {
         throw new UnsupportedOperationException(); // TODO
+    }
+
+    @Override
+    public JetType getClassObjectType() {
+        if (classObjectType == null && classObjectDescriptor != null) {
+            classObjectType = classObjectDescriptor.getDefaultType();
+        }
+        return classObjectType;
     }
 
     @Override

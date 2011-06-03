@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 
 /**
@@ -17,8 +18,9 @@ public class JetClassObject extends JetDeclaration {
         visitor.visitClassObject(this);
     }
 
-    public JetObjectLiteralExpression getObject() {
-        return (JetObjectLiteralExpression) findChildByType(JetNodeTypes.OBJECT_LITERAL);
+    @Nullable @IfNotParsed
+    public JetObjectDeclaration getObjectDeclaration() {
+        return (JetObjectDeclaration) findChildByType(JetNodeTypes.OBJECT_DECLARATION);
     }
 
 }

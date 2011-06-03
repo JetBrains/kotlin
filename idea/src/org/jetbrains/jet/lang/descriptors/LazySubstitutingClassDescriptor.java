@@ -91,6 +91,11 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
     }
 
     @Override
+    public JetType getClassObjectType() {
+        return original.getClassObjectType();
+    }
+
+    @Override
     public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
         return visitor.visitClassDescriptor(this, data);
     }
