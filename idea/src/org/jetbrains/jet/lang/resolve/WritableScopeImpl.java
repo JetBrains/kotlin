@@ -22,13 +22,10 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     private Map<String, PropertyDescriptor> propertyDescriptorsByFieldNames;
 
     @Nullable
-    private Map<String, VariableDescriptor> variableDescriptors;
-    @Nullable
     private Map<String, WritableFunctionGroup> functionGroups;
     @Nullable
-    private Map<String, ClassifierDescriptor> classifierDescriptors;
-    @Nullable
-    private Map<String, NamespaceDescriptor> namespaceDescriptors;
+    private Map<String, DeclarationDescriptor> variableClassOrNamespaceDescriptors;
+
     @Nullable
     private Map<String, List<DeclarationDescriptor>> labelsToDescriptors;
     @Nullable
@@ -90,43 +87,35 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     }
 
     @NotNull
-    private Map<String, VariableDescriptor> getVariableDescriptors() {
-        if (variableDescriptors == null) {
-            variableDescriptors = new HashMap<String, VariableDescriptor>();
+    private Map<String, DeclarationDescriptor> getVariableClassOrNamespaceDescriptors() {
+        if (variableClassOrNamespaceDescriptors == null) {
+            variableClassOrNamespaceDescriptors = Maps.newHashMap();
         }
-        return variableDescriptors;
+        return variableClassOrNamespaceDescriptors;
     }
 
     @Override
     public void addVariableDescriptor(@NotNull VariableDescriptor variableDescriptor) {
-        Map<String, VariableDescriptor> propertyDescriptors = getVariableDescriptors();
-        VariableDescriptor existingDescriptor = propertyDescriptors.get(variableDescriptor.getName());
+        Map<String, DeclarationDescriptor> variableClassOrNamespaceDescriptors = getVariableClassOrNamespaceDescriptors();
+        DeclarationDescriptor existingDescriptor = variableClassOrNamespaceDescriptors.get(variableDescriptor.getName());
         if (existingDescriptor != null) {
             errorHandler.redeclaration(existingDescriptor, variableDescriptor);
         }
         // TODO : Should this always happen?
-        propertyDescriptors.put(variableDescriptor.getName(), variableDescriptor);
+        variableClassOrNamespaceDescriptors.put(variableDescriptor.getName(), variableDescriptor);
     }
 
     @Override
     public VariableDescriptor getVariable(@NotNull String name) {
-        @NotNull
-        Map<String, VariableDescriptor> propertyDescriptors = getVariableDescriptors();
-        VariableDescriptor variableDescriptor = propertyDescriptors.get(name);
+        Map<String, DeclarationDescriptor> variableClassOrNamespaceDescriptors = getVariableClassOrNamespaceDescriptors();
+        DeclarationDescriptor descriptor = variableClassOrNamespaceDescriptors.get(name);
+        if (descriptor instanceof VariableDescriptor) {
+            return (VariableDescriptor) descriptor;
+        }
+        VariableDescriptor variableDescriptor = getWorkerScope().getVariable(name);
         if (variableDescriptor != null) {
             return variableDescriptor;
         }
-        variableDescriptor = getWorkerScope().getVariable(name);
-        if (variableDescriptor != null) {
-            return variableDescriptor;
-        }
-//        for (JetScope imported : getImports()) {
-//            VariableDescriptor importedDescriptor = imported.getVariable(name);
-//            if (importedDescriptor != null) {
-//                return importedDescriptor;
-//            }
-//        }
-//        return null;
         return super.getVariable(name);
     }
 
@@ -176,21 +165,6 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     public void addTypeParameterDescriptor(@NotNull TypeParameterDescriptor typeParameterDescriptor) {
         String name = typeParameterDescriptor.getName();
         addClassifierAlias(name, typeParameterDescriptor);
-//        Map<String, ClassifierDescriptor> classifierDescriptors = getClassifierDescriptors();
-//        ClassifierDescriptor originalDescriptor = classifierDescriptors.get(name);
-//        if (originalDescriptor != null) {
-//            errorHandler.redeclaration(originalDescriptor, typeParameterDescriptor);
-//        }
-//        classifierDescriptors.put(name, typeParameterDescriptor);
-//        notifyListeners(typeParameterDescriptor);
-    }
-
-    @NotNull
-    private Map<String, ClassifierDescriptor> getClassifierDescriptors() {
-        if (classifierDescriptors == null) {
-            classifierDescriptors = new HashMap<String, ClassifierDescriptor>();
-        }
-        return classifierDescriptors;
     }
 
     @Override
@@ -200,28 +174,23 @@ public class WritableScopeImpl extends WritableScopeWithImports {
 
     @Override
     public void addClassifierAlias(@NotNull String name, @NotNull ClassifierDescriptor classifierDescriptor) {
-        Map<String, ClassifierDescriptor> classifierDescriptors = getClassifierDescriptors();
-        ClassifierDescriptor originalDescriptor = classifierDescriptors.get(name);
+        Map<String, DeclarationDescriptor> variableClassOrNamespaceDescriptors = getVariableClassOrNamespaceDescriptors();
+        DeclarationDescriptor originalDescriptor = variableClassOrNamespaceDescriptors.get(name);
         if (originalDescriptor != null) {
             errorHandler.redeclaration(originalDescriptor, classifierDescriptor);
         }
-        classifierDescriptors.put(name, classifierDescriptor);
+        variableClassOrNamespaceDescriptors.put(name, classifierDescriptor);
     }
 
     @Override
     public ClassifierDescriptor getClassifier(@NotNull String name) {
-        ClassifierDescriptor classifierDescriptor = getClassifierDescriptors().get(name);
+        Map<String, DeclarationDescriptor> variableClassOrNamespaceDescriptors = getVariableClassOrNamespaceDescriptors();
+        DeclarationDescriptor descriptor = variableClassOrNamespaceDescriptors.get(name);
+        if (descriptor instanceof ClassifierDescriptor) return (ClassifierDescriptor) descriptor;
+
+        ClassifierDescriptor classifierDescriptor = getWorkerScope().getClassifier(name);
         if (classifierDescriptor != null) return classifierDescriptor;
 
-        classifierDescriptor = getWorkerScope().getClassifier(name);
-        if (classifierDescriptor != null) return classifierDescriptor;
-//        for (JetScope imported : getImports()) {
-//            ClassifierDescriptor importedClassifier = imported.getClassifier(name);
-//            if (importedClassifier != null) {
-//                return importedClassifier;
-//            }
-//        }
-//        return null;
         return super.getClassifier(name);
     }
 
@@ -234,17 +203,10 @@ public class WritableScopeImpl extends WritableScopeWithImports {
         return thisType;
     }
 
-    @NotNull
-    public Map<String, NamespaceDescriptor> getNamespaceDescriptors() {
-        if (namespaceDescriptors == null) {
-            namespaceDescriptors = Maps.newHashMap();
-        }
-        return namespaceDescriptors;
-    }
-
     @Override
     public void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
-        NamespaceDescriptor oldValue = getNamespaceDescriptors().put(namespaceDescriptor.getName(), namespaceDescriptor);
+        Map<String, DeclarationDescriptor> variableClassOrNamespaceDescriptors = getVariableClassOrNamespaceDescriptors();
+        DeclarationDescriptor oldValue = variableClassOrNamespaceDescriptors.put(namespaceDescriptor.getName(), namespaceDescriptor);
         if (oldValue != null) {
             errorHandler.redeclaration(oldValue, namespaceDescriptor);
         }
@@ -252,8 +214,9 @@ public class WritableScopeImpl extends WritableScopeWithImports {
 
     @Override
     public NamespaceDescriptor getDeclaredNamespace(@NotNull String name) {
-        NamespaceDescriptor namespaceDescriptor = getNamespaceDescriptors().get(name);
-        if (namespaceDescriptor != null) return namespaceDescriptor;
+        Map<String, DeclarationDescriptor> variableClassOrNamespaceDescriptors = getVariableClassOrNamespaceDescriptors();
+        DeclarationDescriptor namespaceDescriptor = variableClassOrNamespaceDescriptors.get(name);
+        if (namespaceDescriptor instanceof NamespaceDescriptor) return (NamespaceDescriptor) namespaceDescriptor;
         return null;
     }
 
@@ -264,13 +227,6 @@ public class WritableScopeImpl extends WritableScopeWithImports {
 
         NamespaceDescriptor namespace = getWorkerScope().getNamespace(name);
         if (namespace != null) return namespace;
-//        for (JetScope imported : getImports()) {
-//            NamespaceDescriptor importedDescriptor = imported.getNamespace(name);
-//            if (importedDescriptor != null) {
-//                return importedDescriptor;
-//            }
-//        }
-//        return null;
         return super.getNamespace(name);
     }
 

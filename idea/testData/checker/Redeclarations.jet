@@ -1,0 +1,16 @@
+namespace redeclarations {
+  object <error>A</error> {
+    val x : Int
+
+    val A = 1
+  }
+
+  namespace <error>A</error> {
+    class A {}
+  }
+
+  class <error>A</error> {}
+
+  val <error>A</error> = 1
+
+}
