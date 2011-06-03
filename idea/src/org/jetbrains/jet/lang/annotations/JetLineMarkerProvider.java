@@ -173,15 +173,19 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
             );
         }
 
-        if (element instanceof JetObjectDeclaration) {
+        if (element instanceof JetObjectDeclaration && !(element.getParent() instanceof JetExpression)) {
             JetObjectDeclaration jetObjectDeclaration = (JetObjectDeclaration) element;
+
             return new LineMarkerInfo<JetObjectDeclaration>(
                     jetObjectDeclaration, jetObjectDeclaration.getTextOffset(), Icons.ANONYMOUS_CLASS_ICON, Pass.UPDATE_ALL,
                     new Function<JetObjectDeclaration, String>() {
                         @Override
                         public String fun(JetObjectDeclaration jetObjectDeclaration) {
                             ClassDescriptor classDescriptor = bindingContext.getClassDescriptor(jetObjectDeclaration);
-                            return DescriptorRenderer.HTML.renderAsObject(classDescriptor);
+                            if (classDescriptor != null) {
+                                return DescriptorRenderer.HTML.renderAsObject(classDescriptor);
+                            }
+                            return "&lt;none>";
                         }
                     },
                     new GutterIconNavigationHandler<JetObjectDeclaration>() {

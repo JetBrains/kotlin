@@ -29,29 +29,30 @@ import java.util.Collections;
  */
 public class AnalyzingUtils {
     private final static Key<CachedValue<BindingContext>> BINDING_CONTEXT = Key.create("BINDING_CONTEXT");
+    private static final Object lock = new Object();
 
-    synchronized // TODO
     public static BindingContext analyzeFileWithCache(@NotNull final JetFile file) {
         // TODO : Synchronization?
         CachedValue<BindingContext> bindingContextCachedValue = file.getUserData(BINDING_CONTEXT);
         if (bindingContextCachedValue == null) {
             bindingContextCachedValue = CachedValuesManager.getManager(file.getProject()).createCachedValue(new CachedValueProvider<BindingContext>() {
                 @Override
-                synchronized // TODO : make it more granular
                 public Result<BindingContext> compute() {
-                    try {
-                        JetNamespace rootNamespace = file.getRootNamespace();
-                        BindingContext bindingContext = analyzeNamespace(rootNamespace, JetControlFlowDataTraceFactory.EMPTY);
-                        return new Result<BindingContext>(bindingContext, PsiModificationTracker.MODIFICATION_COUNT);
-                    }
-                    catch (ProcessCanceledException e) {
-                        throw e;
-                    }
-                    catch (Throwable e) {
-                        e.printStackTrace();
-                        BindingTraceContext bindingTraceContext = new BindingTraceContext();
-                        bindingTraceContext.getErrorHandler().genericError(file.getNode(), e.getClass().getSimpleName() + ": " + e.getMessage());
-                        return new Result<BindingContext>(bindingTraceContext, PsiModificationTracker.MODIFICATION_COUNT);
+                    synchronized (lock) {
+                        try {
+                            JetNamespace rootNamespace = file.getRootNamespace();
+                            BindingContext bindingContext = analyzeNamespace(rootNamespace, JetControlFlowDataTraceFactory.EMPTY);
+                            return new Result<BindingContext>(bindingContext, PsiModificationTracker.MODIFICATION_COUNT);
+                        }
+                        catch (ProcessCanceledException e) {
+                            throw e;
+                        }
+                        catch (Throwable e) {
+                            e.printStackTrace();
+                            BindingTraceContext bindingTraceContext = new BindingTraceContext();
+                            bindingTraceContext.getErrorHandler().genericError(file.getNode(), e.getClass().getSimpleName() + ": " + e.getMessage());
+                            return new Result<BindingContext>(bindingTraceContext, PsiModificationTracker.MODIFICATION_COUNT);
+                        }
                     }
                 }
             }, false);

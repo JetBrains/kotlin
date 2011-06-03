@@ -411,15 +411,20 @@ public class TopDownAnalyzer {
 
     private void bindOverrides() {
         for (Map.Entry<JetClass, MutableClassDescriptor> entry : classes.entrySet()) {
-            MutableClassDescriptor classDescriptor = entry.getValue();
-//            JetClass jetClass = entry.getKey();
+            bindOverridesInAClass(entry.getValue());
+        }
+        for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : objects.entrySet()) {
+            bindOverridesInAClass(entry.getValue());
+        }
+    }
 
-            for (FunctionDescriptor declaredFunction : classDescriptor.getFunctions()) {
-                for (JetType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
-                    FunctionDescriptor overridden = findFunctionOverridableBy(declaredFunction, supertype);
-                    if (overridden != null) {
-                        ((FunctionDescriptorImpl) declaredFunction).addOverriddenFunction(overridden);
-                    }
+    private void bindOverridesInAClass(MutableClassDescriptor classDescriptor) {
+
+        for (FunctionDescriptor declaredFunction : classDescriptor.getFunctions()) {
+            for (JetType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
+                FunctionDescriptor overridden = findFunctionOverridableBy(declaredFunction, supertype);
+                if (overridden != null) {
+                    ((FunctionDescriptorImpl) declaredFunction).addOverriddenFunction(overridden);
                 }
             }
         }
@@ -458,74 +463,79 @@ public class TopDownAnalyzer {
     private void resolveDelegationSpecifierLists() {
         // TODO : Make sure the same thing is not initialized twice
         for (Map.Entry<JetClass, MutableClassDescriptor> entry : classes.entrySet()) {
-            final JetClass jetClass = entry.getKey();
-            final MutableClassDescriptor descriptor = entry.getValue();
-            final ConstructorDescriptor primaryConstructor = descriptor.getUnsubstitutedPrimaryConstructor();
-            final JetScope scopeForConstructor = primaryConstructor == null
-                    ? null
-                    : getInnerScopeForConstructor(primaryConstructor, descriptor.getScopeForMemberResolution(), true);
-            final JetTypeInferrer typeInferrer = semanticServices.getTypeInferrer(traceForConstructors, JetFlowInformationProvider.NONE); // TODO : flow
+            resolveDelegationSpecifierList(entry.getKey(), entry.getValue());
+        }
+        for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : objects.entrySet()) {
+            resolveDelegationSpecifierList(entry.getKey(), entry.getValue());
+        }
+    }
 
-            for (JetDelegationSpecifier delegationSpecifier : jetClass.getDelegationSpecifiers()) {
-                delegationSpecifier.accept(new JetVisitor() {
-                    @Override
-                    public void visitDelegationByExpressionSpecifier(JetDelegatorByExpressionSpecifier specifier) {
-                        JetExpression delegateExpression = specifier.getDelegateExpression();
-                        if (delegateExpression != null) {
-                            JetScope scope = scopeForConstructor == null ? descriptor.getScopeForMemberResolution() : scopeForConstructor;
-                            JetType type = typeInferrer.getType(scope, delegateExpression, false);
-                            JetType supertype = trace.getBindingContext().resolveTypeReference(specifier.getTypeReference());
-                            if (type != null && !semanticServices.getTypeChecker().isSubtypeOf(type, supertype)) { // TODO : Convertible?
-                                trace.getErrorHandler().typeMismatch(delegateExpression, supertype, type);
-                            }
-                        }
-                    }
+    private void resolveDelegationSpecifierList(final JetClassOrObject jetClass, final MutableClassDescriptor descriptor) {
+        final ConstructorDescriptor primaryConstructor = descriptor.getUnsubstitutedPrimaryConstructor();
+        final JetScope scopeForConstructor = primaryConstructor == null
+                ? null
+                : getInnerScopeForConstructor(primaryConstructor, descriptor.getScopeForMemberResolution(), true);
+        final JetTypeInferrer typeInferrer = semanticServices.getTypeInferrer(traceForConstructors, JetFlowInformationProvider.NONE); // TODO : flow
 
-                    @Override
-                    public void visitDelegationToSuperCallSpecifier(JetDelegatorToSuperCall call) {
-                        JetTypeReference typeReference = call.getTypeReference();
-                        if (typeReference != null) {
-                            if (jetClass.hasPrimaryConstructor()) {
-                                typeInferrer.checkConstructorCall(scopeForConstructor, typeReference, call);
-                            }
-                            else {
-                                JetArgumentList valueArgumentList = call.getValueArgumentList();
-                                assert valueArgumentList != null;
-                                trace.getErrorHandler().genericError(valueArgumentList.getNode(),
-                                        "Class " + JetPsiUtil.safeName(jetClass.getName()) + " must have a constructor in order to be able to initialize supertypes");
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void visitDelegationToSuperClassSpecifier(JetDelegatorToSuperClass specifier) {
+        for (JetDelegationSpecifier delegationSpecifier : jetClass.getDelegationSpecifiers()) {
+            delegationSpecifier.accept(new JetVisitor() {
+                @Override
+                public void visitDelegationByExpressionSpecifier(JetDelegatorByExpressionSpecifier specifier) {
+                    JetExpression delegateExpression = specifier.getDelegateExpression();
+                    if (delegateExpression != null) {
+                        JetScope scope = scopeForConstructor == null ? descriptor.getScopeForMemberResolution() : scopeForConstructor;
+                        JetType type = typeInferrer.getType(scope, delegateExpression, false);
                         JetType supertype = trace.getBindingContext().resolveTypeReference(specifier.getTypeReference());
-                        if (supertype != null) {
-                            DeclarationDescriptor declarationDescriptor = supertype.getConstructor().getDeclarationDescriptor();
-                            if (declarationDescriptor instanceof ClassDescriptor) {
-                                ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
-                                if (classDescriptor.hasConstructors() && !ErrorUtils.isError(classDescriptor.getTypeConstructor())) {
-                                    trace.getErrorHandler().genericError(specifier.getNode(), "This type has a constructor, and thus must be initialized here");
-                                }
-                            }
-                            else {
-                                trace.getErrorHandler().genericError(specifier.getNode(), "Only classes may serve as supertypes");
-                            }
-
+                        if (type != null && !semanticServices.getTypeChecker().isSubtypeOf(type, supertype)) { // TODO : Convertible?
+                            trace.getErrorHandler().typeMismatch(delegateExpression, supertype, type);
                         }
                     }
+                }
 
-                    @Override
-                    public void visitDelegationToThisCall(JetDelegatorToThisCall thisCall) {
-                        throw new IllegalStateException("This-calls should be prohibited by the parser");
+                @Override
+                public void visitDelegationToSuperCallSpecifier(JetDelegatorToSuperCall call) {
+                    JetTypeReference typeReference = call.getTypeReference();
+                    if (typeReference != null) {
+                        if (jetClass.hasPrimaryConstructor()) {
+                            typeInferrer.checkConstructorCall(scopeForConstructor, typeReference, call);
+                        }
+                        else {
+                            JetArgumentList valueArgumentList = call.getValueArgumentList();
+                            assert valueArgumentList != null;
+                            trace.getErrorHandler().genericError(valueArgumentList.getNode(),
+                                    "Class " + JetPsiUtil.safeName(jetClass.getName()) + " must have a constructor in order to be able to initialize supertypes");
+                        }
                     }
+                }
 
-                    @Override
-                    public void visitJetElement(JetElement element) {
-                        throw new UnsupportedOperationException(element.getText() + " : " + element);
+                @Override
+                public void visitDelegationToSuperClassSpecifier(JetDelegatorToSuperClass specifier) {
+                    JetType supertype = trace.getBindingContext().resolveTypeReference(specifier.getTypeReference());
+                    if (supertype != null) {
+                        DeclarationDescriptor declarationDescriptor = supertype.getConstructor().getDeclarationDescriptor();
+                        if (declarationDescriptor instanceof ClassDescriptor) {
+                            ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
+                            if (classDescriptor.hasConstructors() && !ErrorUtils.isError(classDescriptor.getTypeConstructor())) {
+                                trace.getErrorHandler().genericError(specifier.getNode(), "This type has a constructor, and thus must be initialized here");
+                            }
+                        }
+                        else {
+                            trace.getErrorHandler().genericError(specifier.getNode(), "Only classes may serve as supertypes");
+                        }
+
                     }
-                });
-            }
+                }
+
+                @Override
+                public void visitDelegationToThisCall(JetDelegatorToThisCall thisCall) {
+                    throw new IllegalStateException("This-calls should be prohibited by the parser");
+                }
+
+                @Override
+                public void visitJetElement(JetElement element) {
+                    throw new UnsupportedOperationException(element.getText() + " : " + element);
+                }
+            });
         }
     }
 
@@ -688,7 +698,7 @@ public class TopDownAnalyzer {
             }
         }
 
-        // Top-level properties
+        // Top-level properties & properties of objects
         for (Map.Entry<JetProperty, PropertyDescriptor> entry : properties.entrySet()) {
             JetProperty property = entry.getKey();
             if (processed.contains(property)) continue;

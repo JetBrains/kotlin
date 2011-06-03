@@ -27,7 +27,9 @@ public class JetStandardLibrary {
 
     // TODO : consider releasing this memory
     private static final Map<Project, JetStandardLibrary> standardLibraryCache = new HashMap<Project, JetStandardLibrary>();
-    public static JetStandardLibrary getJetStandardLibrary(@NotNull Project project) {
+
+    // TODO : double checked locking
+    synchronized public static JetStandardLibrary getJetStandardLibrary(@NotNull Project project) {
         JetStandardLibrary standardLibrary = standardLibraryCache.get(project);
         if (standardLibrary == null) {
             standardLibrary = new JetStandardLibrary(project);

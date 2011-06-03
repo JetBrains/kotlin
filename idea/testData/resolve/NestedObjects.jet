@@ -1,0 +1,28 @@
+~ns~namespace nestedObjects {
+  object ~A~A {
+    val b = `A.B`B
+    val d = `A`A.`A.B`B.`A.B.A`A
+
+    object ~A.B~B {
+      val a = `A.B.A`A
+      val e = `A.B`B.`A.B.A`A
+
+      object ~A.B.A~A {
+        val a = `A.B.A`A
+        val b = `A.B`B
+        val x = `ns`nestedObjects.`A`A.`A.B`B.`A.B.A`A
+      }
+    }
+
+  }
+  object ~B~B {
+    val b = `B`B
+    val c = `A`A.`A.B`B
+  }
+
+  val a = `A`A
+  val b = `B`B
+  val c = `A`A.`A.B`B
+  val d = A.B.`A.B.A`A
+  val e = B.`!`A.B
+}
