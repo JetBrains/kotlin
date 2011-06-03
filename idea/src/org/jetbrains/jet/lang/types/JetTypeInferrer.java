@@ -713,7 +713,7 @@ public class JetTypeInferrer {
                                 result = classObjectType;
                             }
                             else {
-                                trace.getErrorHandler().genericError(expression.getNode(), "This class does not have a class object");
+                                trace.getErrorHandler().genericError(expression.getNode(), "Classifier " + classifier.getName() +  " does not have a class object");
                             }
                             trace.recordReferenceResolution(expression, classifier);
                             return;

@@ -6,6 +6,7 @@ import org.jetbrains.jet.lang.resolve.JetScope;
 import org.jetbrains.jet.lang.resolve.SubstitutingScope;
 import org.jetbrains.jet.lang.types.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -16,6 +17,7 @@ public class JavaClassDescriptor extends MutableDeclarationDescriptor implements
 
     private TypeConstructor typeConstructor;
     private JavaClassMembersScope unsubstitutedMemberScope;
+    private JetType classObjectType;
     private final WritableFunctionGroup constructors = new WritableFunctionGroup("<init>");
 
     public JavaClassDescriptor(DeclarationDescriptor containingDeclaration) {
@@ -28,6 +30,20 @@ public class JavaClassDescriptor extends MutableDeclarationDescriptor implements
 
     public void setUnsubstitutedMemberScope(JavaClassMembersScope memberScope) {
         this.unsubstitutedMemberScope = memberScope;
+    }
+
+    public void setClassObjectMemberScope(JavaClassMembersScope memberScope) {
+        classObjectType = new JetTypeImpl(
+                new TypeConstructorImpl(
+                        JavaDescriptorResolver.JAVA_CLASS_OBJECT,
+                        Collections.<Annotation>emptyList(),
+                        true,
+                        "Class object emulation for " + getName(),
+                        Collections.<TypeParameterDescriptor>emptyList(),
+                        Collections.<JetType>emptyList()
+                ),
+                memberScope
+        );
     }
 
     public void addConstructor(ConstructorDescriptor constructorDescriptor) {
@@ -89,7 +105,7 @@ public class JavaClassDescriptor extends MutableDeclarationDescriptor implements
 
     @Override
     public JetType getClassObjectType() {
-        return null; // TODO : static members as class object members
+        return classObjectType;
     }
 
     @Override

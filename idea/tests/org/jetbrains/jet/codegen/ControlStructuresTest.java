@@ -70,7 +70,7 @@ public class ControlStructuresTest extends CodegenTestCase {
     }
 
     public void testCondJumpOnStack() throws Exception {
-        loadText("fun foo(a: String): Int = if (Boolean.parseBoolean(a)) 5 else 10");
+        loadText("fun foo(a: String): Int = if (java.lang.Boolean.parseBoolean(a)) 5 else 10");
         final Method main = generateFunction();
         assertEquals(5, main.invoke(null, "true"));
         assertEquals(10, main.invoke(null, "false"));

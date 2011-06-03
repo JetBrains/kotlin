@@ -30,6 +30,19 @@ public class JavaDescriptorResolver {
         }
     };
 
+    /*package*/ static final DeclarationDescriptor JAVA_CLASS_OBJECT = new DeclarationDescriptorImpl(null, Collections.<Annotation>emptyList(), "<java_class_object_emulation>") {
+        @NotNull
+        @Override
+        public DeclarationDescriptor substitute(TypeSubstitutor substitutor) {
+            throw new UnsupportedOperationException(); // TODO
+        }
+
+        @Override
+        public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
+            return visitor.visitDeclarationDescriptor(this, data);
+        }
+    };
+
     protected final Map<String, ClassDescriptor> classDescriptorCache = new HashMap<String, ClassDescriptor>();
     protected final Map<PsiTypeParameter, TypeParameterDescriptor> typeParameterDescriptorCache = Maps.newHashMap();
     protected final Map<PsiMethod, FunctionDescriptor> methodDescriptorCache = Maps.newHashMap();
@@ -91,6 +104,7 @@ public class JavaDescriptorResolver {
         ));
         classDescriptorCache.put(psiClass.getQualifiedName(), classDescriptor);
         classDescriptor.setUnsubstitutedMemberScope(new JavaClassMembersScope(classDescriptor, psiClass, semanticServices, false));
+        classDescriptor.setClassObjectMemberScope(new JavaClassMembersScope(classDescriptor, psiClass, semanticServices, true));
         // UGLY HACK
         supertypes.addAll(getSupertypes(psiClass));
 
