@@ -201,16 +201,17 @@ public class JavaDescriptorResolver {
         if (namespaceDescriptor == null) {
             // TODO : packages
 
-            PsiClass psiClass = javaFacade.findClass(qualifiedName, javaSearchScope);
-            if (psiClass == null) {
+//            PsiClass psiClass = javaFacade.findClass(qualifiedName, javaSearchScope);
+//            if (psiClass != null) {
+//                namespaceDescriptor = createJavaNamespaceDescriptor(psiClass);
+//            }
+//            else {
                 PsiPackage psiPackage = javaFacade.findPackage(qualifiedName);
                 if (psiPackage == null) {
                     return null;
                 }
                 namespaceDescriptor = createJavaNamespaceDescriptor(psiPackage);
-            } else {
-                namespaceDescriptor = createJavaNamespaceDescriptor(psiClass);
-            }
+//            }
             namespaceDescriptorCache.put(qualifiedName, namespaceDescriptor);
         }
         return namespaceDescriptor;

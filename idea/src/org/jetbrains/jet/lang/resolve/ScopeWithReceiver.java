@@ -24,7 +24,6 @@ public class ScopeWithReceiver extends JetScopeImpl {
     @Override
     public FunctionGroup getFunctionGroup(@NotNull String name) {
         JetScope memberScope = receiverType.getMemberScope();
-        assert memberScope != null : receiverType;
         FunctionGroup functionGroup = memberScope.getFunctionGroup(name);
         if (functionGroup.isEmpty()) {
             return outerScope.getFunctionGroup(name);
@@ -47,7 +46,7 @@ public class ScopeWithReceiver extends JetScopeImpl {
 
     @Override
     public ClassifierDescriptor getClassifier(@NotNull String name) {
-        return super.getClassifier(name); // TODO
+        return receiverType.getMemberScope().getClassifier(name);
     }
 
     @Override
