@@ -1,7 +1,5 @@
 package org.jetbrains.jet.lang.types;
 
-import org.jetbrains.annotations.NotNull;
-
 /**
  * @author abreslav
  */
@@ -19,8 +17,8 @@ public abstract class LazyValue<T> {
 
     protected abstract T compute();
 
-    public State getState() {
-        return state;
+    public boolean isComputed() {
+        return state == State.ERROR || state == State.COMPUTED;
     }
 
     public final T get() {

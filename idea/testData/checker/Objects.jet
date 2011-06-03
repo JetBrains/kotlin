@@ -57,3 +57,27 @@ namespace nestedObejcts {
   val d = A.B.A
   val e = B.<error>A</error>.B
 }
+
+namespace localObjects {
+  object A {
+    val x : Int
+  }
+
+  class Foo {
+    fun foo() : Int
+  }
+
+  fun test() {
+    A.x
+    val b = object : Foo {
+    }
+    b.foo()
+
+    object B {
+      fun foo() {}
+    }
+    B.foo()
+  }
+
+  val bb = <error>B</error>.foo()
+}

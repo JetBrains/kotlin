@@ -1871,6 +1871,17 @@ public class JetTypeInferrer {
         }
 
         @Override
+        public void visitObjectDeclaration(JetObjectDeclaration declaration) {
+            TopDownAnalyzer topDownAnalyzer = new TopDownAnalyzer(semanticServices, trace);
+            topDownAnalyzer.processObject(scope, scope.getContainingDeclaration(), declaration);
+            ClassDescriptor classDescriptor = trace.getBindingContext().getClassDescriptor(declaration);
+            if (classDescriptor != null) {
+                PropertyDescriptor propertyDescriptor = classDescriptorResolver.resolveObjectDeclarationAsPropertyDescriptor(scope.getContainingDeclaration(), declaration, classDescriptor);
+                scope.addVariableDescriptor(propertyDescriptor);
+            }
+        }
+
+        @Override
         public void visitProperty(JetProperty property) {
 
             JetTypeReference receiverTypeRef = property.getReceiverTypeRef();

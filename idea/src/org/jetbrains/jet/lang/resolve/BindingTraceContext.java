@@ -194,6 +194,11 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
         return primaryConstructorParameterDeclarationsToPropertyDescriptors.get(primaryConstructorParameter);
     }
 
+    @Override
+    public PropertyDescriptor getPropertyDescriptor(JetObjectDeclarationName objectDeclarationName) {
+        return (PropertyDescriptor) declarationsToDescriptors.get(objectDeclarationName);
+    }
+
     @Nullable
     @Override
     public ConstructorDescriptor getConstructorDescriptor(@NotNull JetElement declaration) {

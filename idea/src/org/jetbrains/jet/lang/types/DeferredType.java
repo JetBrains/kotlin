@@ -16,6 +16,10 @@ public class DeferredType implements JetType {
         this.lazyValue = lazyValue;
     }
 
+    public boolean isComputed() {
+        return lazyValue.isComputed();
+    }
+
     public JetType getActualType() {
         return lazyValue.get();
     }

@@ -129,6 +129,11 @@ public class JetTestUtils {
                 }
 
                 @Override
+                public PropertyDescriptor getPropertyDescriptor(JetObjectDeclarationName objectDeclarationName) {
+                    throw new UnsupportedOperationException(); // TODO
+                }
+
+                @Override
                 public JetType getExpressionType(JetExpression expression) {
                     throw new UnsupportedOperationException(); // TODO
                 }

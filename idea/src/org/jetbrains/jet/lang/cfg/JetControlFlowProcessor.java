@@ -596,22 +596,6 @@ public class JetControlFlowProcessor {
         }
 
         @Override
-        public void visitObjectLiteralExpression(JetObjectLiteralExpression expression) {
-            List<JetDelegationSpecifier> delegationSpecifiers = expression.getObjectDeclaration().getDelegationSpecifiers();
-            for (JetDelegationSpecifier delegationSpecifier : delegationSpecifiers) {
-                if (delegationSpecifier instanceof JetDelegatorByExpressionSpecifier) {
-                    JetDelegatorByExpressionSpecifier specifier = (JetDelegatorByExpressionSpecifier) delegationSpecifier;
-                    JetExpression delegateExpression = specifier.getDelegateExpression();
-                    if (delegateExpression != null) {
-                        value(delegateExpression, false, false);
-                    }
-                }
-            }
-            builder.read(expression);
-        }
-
-
-        @Override
         public void visitIsExpression(JetIsExpression expression) {
             value(expression.getLeftHandSide(), false, inCondition);
             // TODO : builder.read(expression.getPattern());
@@ -721,6 +705,32 @@ public class JetControlFlowProcessor {
         }
 
         @Override
+        public void visitObjectLiteralExpression(JetObjectLiteralExpression expression) {
+//            List<JetDelegationSpecifier> delegationSpecifiers = expression.getObjectDeclaration().getDelegationSpecifiers();
+//            for (JetDelegationSpecifier delegationSpecifier : delegationSpecifiers) {
+//                if (delegationSpecifier instanceof JetDelegatorByExpressionSpecifier) {
+//                    JetDelegatorByExpressionSpecifier specifier = (JetDelegatorByExpressionSpecifier) delegationSpecifier;
+//                    JetExpression delegateExpression = specifier.getDelegateExpression();
+//                    if (delegateExpression != null) {
+//                        value(delegateExpression, false, false);
+//                    }
+//                }
+//            }
+            value(expression.getObjectDeclaration(), false, inCondition);
+            builder.read(expression);
+        }
+
+        @Override
+        public void visitObjectDeclaration(JetObjectDeclaration declaration) {
+            for (JetDelegationSpecifier delegationSpecifier : declaration.getDelegationSpecifiers()) {
+                value(delegationSpecifier, false, inCondition);
+            }
+            for (JetDeclaration jetDeclaration : declaration.getDeclarations()) {
+                FOR_LOCAL_CLASSES.value(jetDeclaration, false, false);
+            }
+        }
+
+        @Override
         public void visitTypeProjection(JetTypeProjection typeProjection) {
             // TODO : Support Type Arguments. Class object may be initialized at this point");
         }
@@ -730,4 +740,11 @@ public class JetControlFlowProcessor {
             builder.unsupported(element);
         }
     }
+
+    private final CFPVisitor FOR_LOCAL_CLASSES = new CFPVisitor(false, false) {
+        @Override
+        public void visitFunction(JetFunction function) {
+            // Nothing
+        }
+    };
 }

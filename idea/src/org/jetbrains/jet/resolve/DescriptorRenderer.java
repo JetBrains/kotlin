@@ -26,6 +26,16 @@ public class DescriptorRenderer {
     }
 
     public static final DescriptorRenderer TEXT = new DescriptorRenderer();
+    public static final DescriptorRenderer TEXT_FOR_DEBUG = new DescriptorRenderer() {
+        @Override
+        public String renderType(JetType type) {
+            if (type instanceof DeferredType) {
+                DeferredType deferredType = (DeferredType) type;
+                if (!deferredType.isComputed()) return "<Deferred>";
+            }
+            return "" + type;
+        }
+    };
     public static final DescriptorRenderer HTML = new DescriptorRenderer() {
 
         @Override
@@ -66,6 +76,10 @@ public class DescriptorRenderer {
 
     protected String renderKeyword(String keyword) {
         return keyword;
+    }
+
+    public String renderType(JetType type) {
+        return "" + type;
     }
 
     protected String escape(String s) {
@@ -139,25 +153,25 @@ public class DescriptorRenderer {
             if (inType != null && outType != null) {
                 builder.append(renderKeyword("var")).append(" ");
                 if (inType.equals(outType)) {
-                    typeString = outType.toString();
+                    typeString = renderType(outType);
                 }
                 else {
-                    typeString = "<" + renderKeyword("in") + ": " + inType + " " + renderKeyword("out") + ": " + outType + ">";
+                    typeString = "<" + renderKeyword("in") + ": " + renderType(inType) + " " + renderKeyword("out") + ": " + renderType(outType) + ">";
                 }
             }
             else if (outType != null) {
                 builder.append(renderKeyword("val")).append(" ");
-                typeString = outType.toString();
+                typeString = renderType(outType);
             }
             else if (inType != null) {
                 builder.append(lt()).append("write-only> ");
-                typeString = inType.toString();
+                typeString = renderType(inType);
             }
 
             renderTypeParameters(typeParameters, builder);
 
             if (receiverType != null) {
-                builder.append(escape(receiverType.toString())).append(".");
+                builder.append(escape(renderType(receiverType))).append(".");
             }
 
             return typeString;
@@ -183,7 +197,7 @@ public class DescriptorRenderer {
 
             JetType receiverType = descriptor.getReceiverType();
             if (receiverType != null) {
-                builder.append(escape(receiverType.toString())).append(".");
+                builder.append(escape(renderType(receiverType))).append(".");
             }
 
             renderName(descriptor, builder);
@@ -195,7 +209,7 @@ public class DescriptorRenderer {
                     builder.append(", ");
                 }
             }
-            builder.append(") : ").append(escape(descriptor.getUnsubstitutedReturnType().toString()));
+            builder.append(") : ").append(escape(renderType(descriptor.getUnsubstitutedReturnType())));
             return super.visitFunctionDescriptor(descriptor, builder);
         }
 
@@ -244,7 +258,7 @@ public class DescriptorRenderer {
                 builder.append(" : ");
                 for (Iterator<? extends JetType> iterator = supertypes.iterator(); iterator.hasNext(); ) {
                     JetType supertype = iterator.next();
-                    builder.append(supertype);
+                    builder.append(renderType(supertype));
                     if (iterator.hasNext()) {
                         builder.append(", ");
                     }
@@ -261,7 +275,7 @@ public class DescriptorRenderer {
             if (!descriptor.getUpperBounds().isEmpty()) {
                 JetType bound = descriptor.getUpperBounds().iterator().next();
                 if (bound != JetStandardClasses.getAnyType()) {
-                    builder.append(" : ").append(bound);
+                    builder.append(" : ").append(renderType(bound));
                     if (descriptor.getUpperBounds().size() > 1) {
                         builder.append(" (...)");
                     }

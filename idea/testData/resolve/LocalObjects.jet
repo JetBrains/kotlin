@@ -1,0 +1,23 @@
+namespace localObjects {
+  object ~A~A {
+    ~x~val x : Int
+  }
+
+  class Foo {
+    ~foo()~fun foo() : Int
+  }
+
+  fun test() {
+    `A`A.`x`x
+    val b = object : Foo {
+    }
+    b.`foo()`foo()
+
+    object ~B~B {
+      ~B.foo()~fun foo() {}
+    }
+    `B`B.`B.foo()`foo()
+  }
+
+  val bb = `!`B.foo()
+}

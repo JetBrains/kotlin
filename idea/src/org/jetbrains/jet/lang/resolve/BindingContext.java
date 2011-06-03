@@ -25,6 +25,7 @@ public interface BindingContext {
     VariableDescriptor getVariableDescriptor(JetParameter declaration);
 
     PropertyDescriptor getPropertyDescriptor(JetParameter primaryConstructorParameter);
+    PropertyDescriptor getPropertyDescriptor(JetObjectDeclarationName objectDeclarationName);
 
     JetType getExpressionType(JetExpression expression);
 
