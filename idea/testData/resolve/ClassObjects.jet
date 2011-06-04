@@ -1,0 +1,15 @@
+namespace Jet86
+
+~A~class A {
+  class object {
+    ~A.x~val x = 1
+  }
+}
+
+~B~class B() {
+  ~B.x~val x = 12
+}
+
+val a = `A`A.`A.x`x
+val c = `B`B.`!null`x
+val d = new B().`B.x`x

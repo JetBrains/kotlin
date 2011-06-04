@@ -709,7 +709,7 @@ public class JetTypeInferrer {
                         ClassifierDescriptor classifier = scope.getClassifier(referencedName);
                         if (classifier != null) {
                             JetType classObjectType = classifier.getClassObjectType();
-                            if (classObjectType != null) {
+                            if (classObjectType != null && (isNamespacePosition() || classifier.isClassObjectAValue())) {
                                 result = classObjectType;
                             }
                             else {
@@ -725,6 +725,10 @@ public class JetTypeInferrer {
                     trace.getErrorHandler().unresolvedReference(expression);
                 }
             }
+        }
+
+        public boolean isNamespacePosition() {
+            return false;
         }
 
         protected boolean furtherNameLookup(@NotNull JetSimpleNameExpression expression, @NotNull String referencedName) {
@@ -1865,6 +1869,11 @@ public class JetTypeInferrer {
     private class TypeInferrerVisitorWithNamespaces extends TypeInferrerVisitor {
         private TypeInferrerVisitorWithNamespaces(@NotNull JetScope scope, boolean preferBlock) {
             super(scope, preferBlock);
+        }
+
+        @Override
+        public boolean isNamespacePosition() {
+            return true;
         }
 
         @NotNull

@@ -140,6 +140,11 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
         return classObjectBoundsAsType;
     }
 
+    @Override
+    public boolean isClassObjectAValue() {
+        return true;
+    }
+
     public int getIndex() {
         return index;
     }

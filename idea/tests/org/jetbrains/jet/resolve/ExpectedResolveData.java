@@ -115,13 +115,22 @@ public class ExpectedResolveData {
             String name = entry.getValue();
             PsiElement element = file.findElementAt(position);
 
+            JetReferenceExpression referenceExpression = PsiTreeUtil.getParentOfType(element, JetReferenceExpression.class);
             if ("!".equals(name)) {
-                JetReferenceExpression referenceExpression = PsiTreeUtil.getParentOfType(element, JetReferenceExpression.class);
                 assertTrue(
                         "Must have been unresolved: " +
                         renderReferenceInContext(referenceExpression) +
                         " but was resolved to " + DescriptorRenderer.TEXT.render(bindingContext.resolveReferenceExpression(referenceExpression)),
                         unresolvedReferences.contains(referenceExpression));
+                continue;
+            }
+            else if ("!null".equals(name)) {
+                assertTrue(
+                       "Must have been resolved to null: " +
+                        renderReferenceInContext(referenceExpression) +
+                        " but was resolved to " + DescriptorRenderer.TEXT.render(bindingContext.resolveReferenceExpression(referenceExpression)),
+                        bindingContext.getExpressionType(referenceExpression) == null
+                );
                 continue;
             }
 
