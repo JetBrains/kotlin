@@ -183,6 +183,7 @@ public class ClassDescriptorResolver {
                 }
             }
         }
+
         for (TypeParameterDescriptor parameter : parameters) {
             if (JetStandardClasses.isNothing(parameter.getBoundsAsType())) {
                 PsiElement nameIdentifier = typeParameters.get(parameter.getIndex()).getNameIdentifier();
@@ -652,7 +653,7 @@ public class ClassDescriptorResolver {
         return propertyDescriptor;
     }
 
-    public void checkBounds(JetTypeReference typeReference, JetType type) {
+    public void checkBounds(@NotNull JetTypeReference typeReference, @NotNull JetType type) {
         if (ErrorUtils.isErrorType(type)) return;
 
         JetTypeElement typeElement = typeReference.getTypeElement();

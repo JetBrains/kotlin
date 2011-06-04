@@ -169,7 +169,7 @@ public class ErrorUtils {
         return typeConstructor == ERROR_CLASS.getTypeConstructor();
     }
 
-    public static boolean isErrorType(JetType type) {
+    public static boolean isErrorType(@NotNull JetType type) {
         return  (type instanceof DeferredType && ((DeferredType) type).getActualType() == null) ||
                 type instanceof ErrorTypeImpl ||
                isError(type.getConstructor());

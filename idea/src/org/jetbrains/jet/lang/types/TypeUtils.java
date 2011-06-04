@@ -94,7 +94,7 @@ public class TypeUtils {
                 new ChainedScope(null, scopes)); // TODO : check intersectibility, don't use a chanied scope
     }
 
-    private static boolean canHaveSubtypes(JetTypeChecker typeChecker, JetType type) {
+    public static boolean canHaveSubtypes(JetTypeChecker typeChecker, JetType type) {
         if (type.isNullable()) {
             return true;
         }

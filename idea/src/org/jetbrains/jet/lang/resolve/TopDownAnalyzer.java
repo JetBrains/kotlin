@@ -325,15 +325,30 @@ public class TopDownAnalyzer {
             JetClass jetClass = entry.getKey();
 
             for (JetDelegationSpecifier delegationSpecifier : jetClass.getDelegationSpecifiers()) {
-                JetType type = trace.getBindingContext().resolveTypeReference(delegationSpecifier.getTypeReference());
-                classDescriptorResolver.checkBounds(delegationSpecifier.getTypeReference(), type);
+                JetTypeReference typeReference = delegationSpecifier.getTypeReference();
+                if (typeReference != null) {
+                    JetType type = trace.getBindingContext().resolveTypeReference(typeReference);
+                    classDescriptorResolver.checkBounds(typeReference, type);
+                }
             }
 
             for (JetTypeParameter jetTypeParameter : jetClass.getTypeParameters()) {
                 JetTypeReference extendsBound = jetTypeParameter.getExtendsBound();
                 if (extendsBound != null) {
                     JetType type = trace.getBindingContext().resolveTypeReference(extendsBound);
-                    classDescriptorResolver.checkBounds(extendsBound, type);
+                    if (type != null) {
+                        classDescriptorResolver.checkBounds(extendsBound, type);
+                    }
+                }
+            }
+
+            for (JetTypeConstraint constraint : jetClass.getTypeConstaints()) {
+                JetTypeReference extendsBound = constraint.getBoundTypeReference();
+                if (extendsBound != null) {
+                    JetType type = trace.getBindingContext().resolveTypeReference(extendsBound);
+                    if (type != null) {
+                        classDescriptorResolver.checkBounds(extendsBound, type);
+                    }
                 }
             }
 

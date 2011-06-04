@@ -1,0 +1,47 @@
+namespace Jet87
+
+open class A() {
+  fun foo() : Int
+}
+
+open class B() {
+  fun bar() : Double;
+}
+
+class C() : A(), B()
+
+class D() {
+  class object : A(), B () {}
+}
+
+class Test1<T : A>
+  where
+    T : B,
+    <error>B</error> : T, // error
+    class object T : A,
+    class object T : B,
+    class object <error>B</error> : T
+  () {
+
+  fun test(t : T) {
+    T.foo()
+    T.bar()
+    t.foo()
+    t.bar()
+  }
+}
+
+fun test() {
+  new Test1<<error>B</error>>()
+  new Test1<<error>A</error>>()
+  new Test1<C>()
+}
+
+class Foo() {}
+
+class Bar<T : Foo>
+
+class Buzz<T> where T : Bar<<error>Int</error>>, T : <error>nioho</error>
+
+class X<T : Foo>
+class Y<<error>T</error> : Foo> where T : Bar<Foo>
