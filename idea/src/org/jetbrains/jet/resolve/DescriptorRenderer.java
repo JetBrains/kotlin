@@ -274,7 +274,7 @@ public class DescriptorRenderer {
             renderName(descriptor, builder);
             if (!descriptor.getUpperBounds().isEmpty()) {
                 JetType bound = descriptor.getUpperBounds().iterator().next();
-                if (bound != JetStandardClasses.getAnyType()) {
+                if (bound != JetStandardClasses.getDefaultBound()) {
                     builder.append(" : ").append(renderType(bound));
                     if (descriptor.getUpperBounds().size() > 1) {
                         builder.append(" (...)");

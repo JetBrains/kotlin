@@ -52,7 +52,7 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
         return this;
     }
 
-    public void setReturnType(JetType unsubstitutedReturnType) {
+    public void setReturnType(@NotNull JetType unsubstitutedReturnType) {
         this.unsubstitutedReturnType = unsubstitutedReturnType;
     }
 

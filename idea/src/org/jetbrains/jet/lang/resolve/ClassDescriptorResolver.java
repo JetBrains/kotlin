@@ -1,7 +1,9 @@
 package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.JetSemanticServices;
@@ -134,9 +136,11 @@ public class ClassDescriptorResolver {
     public void resolveGenericBounds(@NotNull JetClass jetClass, @NotNull MutableClassDescriptor classDescriptor) {
         List<JetTypeParameter> typeParameters = jetClass.getTypeParameters();
         List<TypeParameterDescriptor> parameters = classDescriptor.getTypeConstructor().getParameters();
+        Map<String, TypeParameterDescriptor> parameterByName = Maps.newHashMap();
         for (int i = 0, typeParametersSize = typeParameters.size(); i < typeParametersSize; i++) {
             JetTypeParameter jetTypeParameter = typeParameters.get(i);
             TypeParameterDescriptor typeParameterDescriptor = parameters.get(i);
+            parameterByName.put(typeParameterDescriptor.getName(), typeParameterDescriptor);
             JetTypeReference extendsBound = jetTypeParameter.getExtendsBound();
             if (extendsBound != null) {
                 typeParameterDescriptor.addUpperBound(typeResolverNotCheckingBounds.resolveType(classDescriptor.getScopeForSupertypeResolution(), extendsBound));
@@ -145,7 +149,48 @@ public class ClassDescriptorResolver {
                 typeParameterDescriptor.addUpperBound(JetStandardClasses.getDefaultBound());
             }
         }
-        // TODO : Bounds from with
+        for (JetTypeConstraint constraint : jetClass.getTypeConstaints()) {
+            JetSimpleNameExpression subjectTypeParameterName = constraint.getSubjectTypeParameterName();
+            if (subjectTypeParameterName == null) {
+                continue;
+            }
+            String referencedName = subjectTypeParameterName.getReferencedName();
+            if (referencedName == null) {
+                continue;
+            }
+            TypeParameterDescriptor typeParameterDescriptor = parameterByName.get(referencedName);
+            if (typeParameterDescriptor == null) {
+                // To tell the user that we look only for locally defined type parameters
+                ClassifierDescriptor classifier = classDescriptor.getScopeForSupertypeResolution().getClassifier(referencedName);
+                if (classifier != null) {
+                    trace.getErrorHandler().genericError(subjectTypeParameterName.getNode(), referencedName + " does not refer to a type parameter of class " + classDescriptor.getName());
+                    trace.recordReferenceResolution(subjectTypeParameterName, classifier);
+                }
+                else {
+                    trace.getErrorHandler().unresolvedReference(subjectTypeParameterName);
+                }
+            }
+            else {
+                JetTypeReference boundTypeReference = constraint.getBoundTypeReference();
+                if (boundTypeReference != null) {
+                    JetType bound = typeResolverNotCheckingBounds.resolveType(classDescriptor.getScopeForSupertypeResolution(), boundTypeReference);
+                    if (constraint.isClassObjectContraint()) {
+                        typeParameterDescriptor.addClassObjectBound(bound);
+                    }
+                    else {
+                        typeParameterDescriptor.addUpperBound(bound);
+                    }
+                }
+            }
+        }
+        for (TypeParameterDescriptor parameter : parameters) {
+            if (JetStandardClasses.isNothing(parameter.getBoundsAsType())) {
+                PsiElement nameIdentifier = typeParameters.get(parameter.getIndex()).getNameIdentifier();
+                if (nameIdentifier != null) {
+                    trace.getErrorHandler().genericError(nameIdentifier.getNode(), "Upper bounds of " + parameter.getName() + " have empty intersection");
+                }
+            }
+        }
     }
 
     public void resolveSupertypes(@NotNull JetClassOrObject jetClass, @NotNull MutableClassDescriptor descriptor) {

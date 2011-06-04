@@ -92,5 +92,15 @@ public abstract class JetDiagnostic {
         }
     }
 
+//    private final StackTraceElement[] stackTrace;
+//
+//    protected JetDiagnostic() {
+//        stackTrace = Thread.currentThread().getStackTrace();
+//    }
+//
+//    public StackTraceElement[] getStackTrace() {
+//        return stackTrace;
+//    }
+
     public abstract void acceptHandler(@NonNls ErrorHandler handler);
 }

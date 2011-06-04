@@ -26,20 +26,12 @@ public class JetTypeConstraint extends JetElement {
     }
 
     @Nullable @IfNotParsed
-    public JetTypeReference getSubjectTypeReference() {
-        ASTNode node = getNode().getFirstChildNode();
-        while (node != null) {
-            IElementType tt = node.getElementType();
-            if (tt == JetTokens.COLON) break;
-            if (tt == JetNodeTypes.TYPE_REFERENCE) return (JetTypeReference) node.getPsi();
-            node = node.getTreeNext();
-        }
-
-        return null;
+    public JetSimpleNameExpression getSubjectTypeParameterName() {
+        return (JetSimpleNameExpression) findChildByType(JetNodeTypes.REFERENCE_EXPRESSION);
     }
 
     @Nullable @IfNotParsed
-    public JetTypeReference getExtendsTypeReference() {
+    public JetTypeReference getBoundTypeReference() {
         boolean passedColon = false;
         ASTNode node = getNode().getFirstChildNode();
         while (node != null) {

@@ -1170,12 +1170,14 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * typeConstraint
-     *   : userType ":" type
-     *   : "class" "object" userType ":" type
+     *   : attributes SimpleName ":" type
+     *   : attributes "class" "object" SimpleName ":" type
      *   ;
      */
     private void parseTypeConstraint() {
         PsiBuilder.Marker constraint = mark();
+
+        parseAttributeList();
 
         if (at(CLASS_KEYWORD)) {
             advance(); // CLASS_KEYWORD
@@ -1183,7 +1185,10 @@ public class JetParsing extends AbstractJetParsing {
             expect(OBJECT_KEYWORD, "Expecting 'object'", TYPE_REF_FIRST);
 
         }
-        parseTypeRef();
+
+        PsiBuilder.Marker reference = mark();
+        expect(IDENTIFIER, "Expecting type parameter name", TokenSet.orSet(TokenSet.create(COLON, COMMA), TYPE_REF_FIRST));
+        reference.done(REFERENCE_EXPRESSION);
 
         expect(COLON, "Expecting ':' before the upper bound", TYPE_REF_FIRST);
 

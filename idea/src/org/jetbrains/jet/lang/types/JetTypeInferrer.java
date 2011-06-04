@@ -640,6 +640,11 @@ public class JetTypeInferrer {
             }
             try {
                 expression.accept(this);
+                // Some recursive definitions (object expressions) must put their types in the cache manually:
+                if (trace.isProcessed(expression)) {
+                    return trace.getBindingContext().getExpressionType(expression);
+                }
+
                 if (result instanceof DeferredType) {
                     result = ((DeferredType) result).getActualType();
                 }
@@ -754,9 +759,14 @@ public class JetTypeInferrer {
         public void visitObjectLiteralExpression(final JetObjectLiteralExpression expression) {
             TopDownAnalyzer topDownAnalyzer = new TopDownAnalyzer(semanticServices, new BindingTraceAdapter(trace) {
                 @Override
-                public void recordDeclarationResolution(@NotNull PsiElement declaration, @NotNull DeclarationDescriptor descriptor) {
+                public void recordDeclarationResolution(@NotNull PsiElement declaration, @NotNull final DeclarationDescriptor descriptor) {
                     if (declaration == expression.getObjectDeclaration()) {
-                        JetType defaultType = ((ClassDescriptor) descriptor).getDefaultType();
+                        JetType defaultType = new DeferredType(new LazyValue<JetType>() {
+                            @Override
+                            protected JetType compute() {
+                                return ((ClassDescriptor) descriptor).getDefaultType();
+                            }
+                        });
                         result = defaultType;
                         if (!trace.isProcessed(expression)) {
                             recordExpressionType(expression, defaultType);

@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.JetScope;
+import org.jetbrains.jet.lang.resolve.JetScopeImpl;
 import org.jetbrains.jet.lang.resolve.WritableScope;
 import org.jetbrains.jet.lang.resolve.WritableScopeImpl;
 
@@ -74,7 +75,18 @@ public class JetStandardClasses {
             null
     );
 
-    private static final JetType ANY_TYPE = new JetTypeImpl(ANY.getTypeConstructor(), JetScope.EMPTY);
+    private static final JetType ANY_TYPE = new JetTypeImpl(ANY.getTypeConstructor(), new JetScopeImpl() {
+        @NotNull
+        @Override
+        public DeclarationDescriptor getContainingDeclaration() {
+            return STANDARD_CLASSES_NAMESPACE;
+        }
+
+        @Override
+        public String toString() {
+            return "Scope for Any";
+        }
+    });
     private static final JetType NULLABLE_ANY_TYPE = TypeUtils.makeNullable(ANY_TYPE);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

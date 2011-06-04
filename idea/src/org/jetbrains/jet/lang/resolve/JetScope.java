@@ -17,6 +17,11 @@ public interface JetScope {
         public DeclarationDescriptor getContainingDeclaration() {
             throw new UnsupportedOperationException(); // TODO
         }
+
+        @Override
+        public String toString() {
+            return "EMPTY";
+        }
     };
 
     @Nullable

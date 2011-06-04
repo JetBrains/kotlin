@@ -117,6 +117,7 @@ public class JavaDescriptorResolver {
                         Collections.<Annotation>emptyList(),
                         false);
                 constructorDescriptor.initialize(Collections.<ValueParameterDescriptor>emptyList());
+                constructorDescriptor.setReturnType(classDescriptor.getDefaultType());
                 classDescriptor.addConstructor(constructorDescriptor);
                 semanticServices.getTrace().recordDeclarationResolution(psiClass, constructorDescriptor);
             }
@@ -128,12 +129,14 @@ public class JavaDescriptorResolver {
                         Collections.<Annotation>emptyList(), // TODO
                         false);
                 constructorDescriptor.initialize(resolveParameterDescriptors(constructorDescriptor, constructor.getParameterList().getParameters()));
+                constructorDescriptor.setReturnType(classDescriptor.getDefaultType());
                 classDescriptor.addConstructor(constructorDescriptor);
                 semanticServices.getTrace().recordDeclarationResolution(constructor, constructorDescriptor);
             }
         }
 
         semanticServices.getTrace().recordDeclarationResolution(psiClass, classDescriptor);
+
         return classDescriptor;
     }
 

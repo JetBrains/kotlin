@@ -138,7 +138,7 @@ public class JetTypeChecker {
         }
 
         // TODO : attributes?
-        return new JetTypeImpl(Collections.<Annotation>emptyList(), constructor, nullable, newProjections, JetStandardClasses.STUB);
+        return new JetTypeImpl(Collections.<Annotation>emptyList(), constructor, nullable, newProjections, JetStandardClasses.STUB); // TODO : scope
     }
 
     @NotNull

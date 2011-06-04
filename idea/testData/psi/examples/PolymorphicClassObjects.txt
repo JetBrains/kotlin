@@ -213,10 +213,8 @@ JetFile: PolymorphicClassObjects.jet
         PsiWhiteSpace('\n    ')
         TYPE_CONSTRAINT_LIST
           TYPE_CONSTRAINT
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('T')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('T')
             PsiWhiteSpace(' ')
             PsiElement(COLON)(':')
             PsiWhiteSpace(' ')
@@ -239,10 +237,8 @@ JetFile: PolymorphicClassObjects.jet
             PsiWhiteSpace(' ')
             PsiElement(object)('object')
             PsiWhiteSpace(' ')
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('T')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('T')
             PsiWhiteSpace(' ')
             PsiElement(COLON)(':')
             PsiWhiteSpace(' ')

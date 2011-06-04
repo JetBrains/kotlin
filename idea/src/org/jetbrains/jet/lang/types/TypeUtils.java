@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.Annotation;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
+import org.jetbrains.jet.lang.resolve.ChainedScope;
 import org.jetbrains.jet.lang.resolve.JetScope;
 
 import java.util.*;
@@ -70,13 +71,27 @@ public class TypeUtils {
         }
 
         List<Annotation> noAnnotations = Collections.<Annotation>emptyList();
-        TypeConstructor constructor = new TypeConstructorImpl(null, noAnnotations, false, debugName.toString(), Collections.<TypeParameterDescriptor>emptyList(), types);
+        TypeConstructor constructor = new TypeConstructorImpl(
+                null,
+                noAnnotations,
+                false,
+                debugName.toString(),
+                Collections.<TypeParameterDescriptor>emptyList(),
+                types);
+
+        JetScope[] scopes = new JetScope[types.size()];
+        int i = 0;
+        for (JetType type : types) {
+            scopes[i] = type.getMemberScope();
+            i++;
+        }
+
         return new JetTypeImpl(
                 noAnnotations,
                 constructor,
                 nullable,
                 Collections.<TypeProjection>emptyList(),
-                JetStandardClasses.STUB);
+                new ChainedScope(null, scopes)); // TODO : check intersectibility, don't use a chanied scope
     }
 
     private static boolean canHaveSubtypes(JetTypeChecker typeChecker, JetType type) {
@@ -176,7 +191,7 @@ public class TypeUtils {
     private static List<TypeProjection> getArguments(@NotNull ClassDescriptor classDescriptor) {
         List<TypeProjection> result = new ArrayList<TypeProjection>();
         for (TypeParameterDescriptor parameterDescriptor : classDescriptor.getTypeConstructor().getParameters()) {
-            result.add(new TypeProjection(new JetTypeImpl(parameterDescriptor.getTypeConstructor(), JetScope.EMPTY))); // TODO : scope?
+            result.add(new TypeProjection(parameterDescriptor.getDefaultType()));
         }
         return result;
     }

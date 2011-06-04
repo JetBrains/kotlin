@@ -64,8 +64,7 @@ public class TypeResolver {
                                     typeParameterDescriptor.getTypeConstructor(),
                                     nullable || TypeUtils.hasNullableBound(typeParameterDescriptor),
                                     Collections.<TypeProjection>emptyList(),
-                                    // TODO : joint domain
-                                    JetStandardClasses.STUB
+                                    getScopeForTypeParameter(typeParameterDescriptor)
                             );
                         }
                         else if (classifierDescriptor instanceof ClassDescriptor) {
@@ -158,6 +157,20 @@ public class TypeResolver {
             return ErrorUtils.createErrorType(typeElement == null ? "No type element" : typeElement.getText());
         }
         return result[0];
+    }
+
+    private JetScope getScopeForTypeParameter(final TypeParameterDescriptor typeParameterDescriptor) {
+        if (checkBounds) {
+            return typeParameterDescriptor.getBoundsAsType().getMemberScope();
+        }
+        else {
+            return new LazyScopeAdapter(new LazyValue<JetScope>() {
+                @Override
+                protected JetScope compute() {
+                    return typeParameterDescriptor.getBoundsAsType().getMemberScope();
+                }
+            });
+        }
     }
 
     private List<JetType> resolveTypes(JetScope scope, List<JetTypeReference> argumentElements) {

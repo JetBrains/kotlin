@@ -22,6 +22,19 @@ public class JetTypeParameterListOwner extends JetNamedDeclaration {
     }
 
     @NotNull
+    public List<JetTypeConstraint> getTypeConstaints() {
+        JetTypeParameterList typeParameterList = getTypeParameterList();
+        if (typeParameterList == null) {
+            return Collections.emptyList();
+        }
+        JetTypeConstraintList typeConstraintList = typeParameterList.getTypeConstraintList();
+        if (typeConstraintList == null) {
+            return Collections.emptyList();
+        }
+        return typeConstraintList.getConstraints();
+    }
+
+    @NotNull
     public List<JetTypeParameter> getTypeParameters() {
         JetTypeParameterList list = getTypeParameterList();
         if (list == null) return Collections.emptyList();

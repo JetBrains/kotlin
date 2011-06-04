@@ -42,6 +42,6 @@ typeParameter
   ;
 
 typeConstraint
-  : userType ":" type
-  : "class" "object" userType ":" type
+  : attributes SimpleName ":" type
+  : attributes "class" "object" SimpleName ":" type
   ;

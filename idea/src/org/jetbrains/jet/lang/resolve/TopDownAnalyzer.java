@@ -298,6 +298,11 @@ public class TopDownAnalyzer {
             JetClass jetClass = entry.getKey();
             MutableClassDescriptor descriptor = entry.getValue();
             classDescriptorResolver.resolveMutableClassDescriptor(jetClass, descriptor);
+            descriptor.createTypeConstructor();
+        }
+        for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : objects.entrySet()) {
+            MutableClassDescriptor descriptor = entry.getValue();
+            descriptor.createTypeConstructor();
         }
     }
 
@@ -439,8 +444,6 @@ public class TopDownAnalyzer {
         checkIfPrimaryConstructorIsNecessary();
 
         bindOverrides();
-
-        checkGenericBoundsInClassHeaders();
     }
 
     private void bindOverrides() {

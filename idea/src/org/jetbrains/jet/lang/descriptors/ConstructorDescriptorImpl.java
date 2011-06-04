@@ -33,7 +33,7 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
     }
 
     public ConstructorDescriptor initialize(@NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters) {
-        super.initialize(null, Collections.<TypeParameterDescriptor>emptyList(), unsubstitutedValueParameters, getContainingDeclaration().getDefaultType());
+        super.initialize(null, Collections.<TypeParameterDescriptor>emptyList(), unsubstitutedValueParameters, null);
         return this;
     }
 

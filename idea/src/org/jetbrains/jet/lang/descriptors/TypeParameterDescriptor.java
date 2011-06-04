@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.descriptors;
 
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.psi.JetTupleType;
 import org.jetbrains.jet.lang.resolve.JetScope;
 import org.jetbrains.jet.lang.resolve.LazyScopeAdapter;
 import org.jetbrains.jet.lang.types.*;
@@ -68,7 +69,7 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
     }
 
     public void addUpperBound(@NotNull JetType bound) {
-        upperBounds.add(bound);
+        upperBounds.add(bound); // TODO : Duplicates?
     }
 
     public Set<JetType> getUpperBounds() {
@@ -93,7 +94,7 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
             assert upperBounds.size() > 0;
             boundsAsType = TypeUtils.intersect(JetTypeChecker.INSTANCE, upperBounds);
             if (boundsAsType == null) {
-                boundsAsType = JetStandardClasses.getNothingType(); // TODO : some error message?
+                boundsAsType = JetStandardClasses.getNothingType();
             }
         }
         return boundsAsType;
@@ -143,6 +144,10 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
     @Override
     public boolean isClassObjectAValue() {
         return true;
+    }
+
+    public void addClassObjectBound(@NotNull JetType bound) {
+        classObjectUpperBounds.add(bound); // TODO : Duplicates?
     }
 
     public int getIndex() {

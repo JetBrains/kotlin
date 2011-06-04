@@ -29,6 +29,7 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     private final WritableScope scopeForSupertypeResolution;
     private MutableClassDescriptor classObjectDescriptor;
     private JetType classObjectType;
+    private JetType defaultType;
 
     public MutableClassDescriptor(@NotNull BindingTrace trace, @NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope outerScope) {
         super(containingDeclaration);
@@ -66,6 +67,9 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     public void addConstructor(@NotNull ConstructorDescriptor constructorDescriptor) {
         assert constructorDescriptor.getContainingDeclaration() == this;
         constructors.addFunction(constructorDescriptor);
+        if (defaultType != null) {
+            ((ConstructorDescriptorImpl) constructorDescriptor).setReturnType(getDefaultType());
+        }
     }
 
     @Override
@@ -115,9 +119,7 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
             this.typeParameters.add(typeParameterDescriptor);
             scopeForSupertypeResolution.addTypeParameterDescriptor(typeParameterDescriptor);
         }
-        scopeForMemberResolution.setThisType(getDefaultType());
     }
-
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -138,16 +140,22 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     @NotNull
     @Override
     public TypeConstructor getTypeConstructor() {
-        if (typeConstructor == null) {
-            this.typeConstructor = new TypeConstructorImpl(
-                    this,
-                    Collections.<Annotation>emptyList(), // TODO : pass annotations from the class?
-                    !open,
-                    getName(),
-                    typeParameters,
-                    supertypes);
-        }
         return typeConstructor;
+    }
+
+    public void createTypeConstructor() {
+        assert typeConstructor == null : typeConstructor;
+        this.typeConstructor = new TypeConstructorImpl(
+                this,
+                Collections.<Annotation>emptyList(), // TODO : pass annotations from the class?
+                !open,
+                getName(),
+                typeParameters,
+                supertypes);
+        scopeForMemberResolution.setThisType(getDefaultType());
+        for (FunctionDescriptor functionDescriptor : constructors.getFunctionDescriptors()) {
+            ((ConstructorDescriptorImpl) functionDescriptor).setReturnType(getDefaultType());
+        }
     }
 
     @NotNull
@@ -164,7 +172,10 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     @NotNull
     @Override
     public JetType getDefaultType() {
-        return TypeUtils.makeUnsubstitutedType(this, scopeForMemberLookup);
+        if (defaultType == null) {
+            defaultType = TypeUtils.makeUnsubstitutedType(this, scopeForMemberLookup);
+        }
+        return defaultType;
     }
 
     @NotNull
@@ -226,6 +237,6 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
 
     @Override
     public String toString() {
-        return DescriptorRenderer.TEXT.render(this) + "[" + getClass().getCanonicalName() + "@" + System.identityHashCode(this) + "]";
+        return DescriptorRenderer.TEXT_FOR_DEBUG.render(this) + "[" + getClass().getCanonicalName() + "@" + System.identityHashCode(this) + "]";
     }
 }
