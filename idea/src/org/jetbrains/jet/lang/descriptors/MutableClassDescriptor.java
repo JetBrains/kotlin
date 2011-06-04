@@ -40,8 +40,10 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
-    public void setClassObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor) {
+    public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor) {
+        if (this.classObjectDescriptor != null) return ClassObjectStatus.DUPLICATE;
         this.classObjectDescriptor = classObjectDescriptor;
+        return ClassObjectStatus.OK;
     }
 
     @Nullable

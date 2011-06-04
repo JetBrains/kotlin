@@ -68,5 +68,11 @@ public interface NamespaceLike extends DeclarationDescriptor {
 
     void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor);
 
-    void setClassObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor);
+    enum ClassObjectStatus {
+        OK,
+        DUPLICATE,
+        NOT_ALLOWED
+    }
+
+    ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor);
 }

@@ -53,7 +53,7 @@ public class NamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl imp
     }
 
     @Override
-    public void setClassObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor) {
+    public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor) {
         throw new IllegalStateException("Must be guaranteed not to happen by the parser");
     }
 }

@@ -88,36 +88,36 @@ public class TopDownAnalyzer {
     public void processObject(@NotNull JetScope outerScope, @NotNull DeclarationDescriptor containingDeclaration, @NotNull JetObjectDeclaration object) {
         process(outerScope, new NamespaceLike.Adapter(containingDeclaration) {
 
-            @Override
-            public NamespaceDescriptorImpl getNamespace(String name) {
-                throw new UnsupportedOperationException();
-            }
+                    @Override
+                    public NamespaceDescriptorImpl getNamespace(String name) {
+                        throw new UnsupportedOperationException();
+                    }
 
-            @Override
-            public void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
-                throw new UnsupportedOperationException();
-            }
+                    @Override
+                    public void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
+                        throw new UnsupportedOperationException();
+                    }
 
-            @Override
-            public void addClassifierDescriptor(@NotNull MutableClassDescriptor classDescriptor) {
+                    @Override
+                    public void addClassifierDescriptor(@NotNull MutableClassDescriptor classDescriptor) {
 
-            }
+                    }
 
-            @Override
-            public void addFunctionDescriptor(@NotNull FunctionDescriptor functionDescriptor) {
-                throw new UnsupportedOperationException();
-            }
+                    @Override
+                    public void addFunctionDescriptor(@NotNull FunctionDescriptor functionDescriptor) {
+                        throw new UnsupportedOperationException();
+                    }
 
-            @Override
-            public void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor) {
+                    @Override
+                    public void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor) {
 
-            }
+                    }
 
-            @Override
-            public void setClassObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor) {
-
-            }
-        }, Collections.<JetDeclaration>singletonList(object));
+                    @Override
+                    public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor) {
+                        return ClassObjectStatus.NOT_ALLOWED;
+                    }
+                }, Collections.<JetDeclaration>singletonList(object));
     }
 
     public void process(@NotNull JetScope outerScope, NamespaceLike owner, @NotNull List<JetDeclaration> declarations) {
@@ -168,7 +168,12 @@ public class TopDownAnalyzer {
 
                 @Override
                 public void visitClass(JetClass klass) {
-                    visitClassOrObject(klass, (Map) classes, owner, outerScope);
+                    visitClassOrObject(
+                            klass,
+                            (Map) classes,
+                            owner,
+                            outerScope,
+                            new MutableClassDescriptor(trace, owner, outerScope));
                 }
 
                 @Override
@@ -177,7 +182,13 @@ public class TopDownAnalyzer {
                 }
 
                 private MutableClassDescriptor createClassDescriptorForObject(@NotNull JetObjectDeclaration declaration) {
-                    MutableClassDescriptor mutableClassDescriptor = visitClassOrObject(declaration, (Map) objects, owner, outerScope);
+                    MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(trace, owner, outerScope) {
+                        @Override
+                        public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor) {
+                            return ClassObjectStatus.NOT_ALLOWED;
+                        }
+                    };
+                    visitClassOrObject(declaration, (Map) objects, owner, outerScope, mutableClassDescriptor);
                     ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(mutableClassDescriptor, Collections.<Annotation>emptyList(), true);
                     constructorDescriptor.initialize(Collections.<ValueParameterDescriptor>emptyList());
                     // TODO : make the constructor private?
@@ -186,8 +197,7 @@ public class TopDownAnalyzer {
                     return mutableClassDescriptor;
                 }
 
-                private MutableClassDescriptor visitClassOrObject(@NotNull JetClassOrObject declaration, Map<JetClassOrObject, MutableClassDescriptor> map, NamespaceLike owner, JetScope outerScope) {
-                    MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(trace, owner, outerScope);
+                private void visitClassOrObject(@NotNull JetClassOrObject declaration, Map<JetClassOrObject, MutableClassDescriptor> map, NamespaceLike owner, JetScope outerScope, MutableClassDescriptor mutableClassDescriptor) {
                     mutableClassDescriptor.setName(JetPsiUtil.safeName(declaration.getName()));
 
                     if (declaration instanceof JetClass) {
@@ -199,8 +209,6 @@ public class TopDownAnalyzer {
 
                     JetScope classScope = mutableClassDescriptor.getScopeForMemberResolution();
                     collectNamespacesAndClassifiers(classScope, mutableClassDescriptor, declaration.getDeclarations());
-
-                    return mutableClassDescriptor;
                 }
 
                 @Override
@@ -215,7 +223,18 @@ public class TopDownAnalyzer {
 
                 @Override
                 public void visitClassObject(JetClassObject classObject) {
-                    owner.setClassObjectDescriptor(createClassDescriptorForObject(classObject.getObjectDeclaration()));
+                    JetObjectDeclaration objectDeclaration = classObject.getObjectDeclaration();
+                    if (objectDeclaration != null) {
+                        NamespaceLike.ClassObjectStatus status = owner.setClassObjectDescriptor(createClassDescriptorForObject(objectDeclaration));
+                        switch (status) {
+                            case DUPLICATE:
+                                trace.getErrorHandler().genericError(classObject.getNode(), "Only one class object is allowed per class");
+                                break;
+                            case NOT_ALLOWED:
+                                trace.getErrorHandler().genericError(classObject.getNode(), "A class object is not allowed here");
+                                break;
+                        }
+                    }
                 }
             });
         }
