@@ -92,7 +92,13 @@ public class ErrorUtils {
         }
     };
 
-    private static final ClassDescriptorImpl ERROR_CLASS = new ClassDescriptorImpl(ERROR_MODULE, Collections.<Annotation>emptyList(), "<ERROR CLASS>");
+    private static final ClassDescriptorImpl ERROR_CLASS = new ClassDescriptorImpl(ERROR_MODULE, Collections.<Annotation>emptyList(), "<ERROR CLASS>") {
+        @NotNull
+        @Override
+        public FunctionGroup getConstructors(List<TypeProjection> typeArguments) {
+            return ERROR_FUNCTION_GROUP;
+        }
+    };
     private static final ConstructorDescriptor ERROR_CONSTRUCTOR = new ConstructorDescriptorImpl(ERROR_CLASS, Collections.<Annotation>emptyList(), true);
     static {
         ERROR_CLASS.initialize(

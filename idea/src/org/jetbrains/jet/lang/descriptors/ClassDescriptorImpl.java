@@ -67,7 +67,7 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
     @NotNull
     @Override
     public FunctionGroup getConstructors(List<TypeProjection> typeArguments) {
-        assert typeArguments.size() == getTypeConstructor().getParameters().size();
+        assert typeArguments.size() == getTypeConstructor().getParameters().size() : "Argument list length mismatch for " + getName();
         if (typeArguments.size() == 0) {
             return constructors;
         }

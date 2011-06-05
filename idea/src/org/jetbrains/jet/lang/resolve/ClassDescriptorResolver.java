@@ -52,6 +52,7 @@ public class ClassDescriptorResolver {
         // This call has side-effects on the parameterScope (fills it in)
         List<TypeParameterDescriptor> typeParameters
                 = resolveTypeParameters(classDescriptor, parameterScope, classElement.getTypeParameters());
+        resolveGenericBounds(classElement, parameterScope, typeParameters);
 
         List<JetDelegationSpecifier> delegationSpecifiers = classElement.getDelegationSpecifiers();
         // TODO : assuming that the hierarchy is acyclic
@@ -133,67 +134,6 @@ public class ClassDescriptorResolver {
         trace.recordDeclarationResolution(classElement, descriptor);
     }
 
-    public void resolveGenericBounds(@NotNull JetClass jetClass, @NotNull MutableClassDescriptor classDescriptor) {
-        List<JetTypeParameter> typeParameters = jetClass.getTypeParameters();
-        List<TypeParameterDescriptor> parameters = classDescriptor.getTypeConstructor().getParameters();
-        Map<String, TypeParameterDescriptor> parameterByName = Maps.newHashMap();
-        for (int i = 0, typeParametersSize = typeParameters.size(); i < typeParametersSize; i++) {
-            JetTypeParameter jetTypeParameter = typeParameters.get(i);
-            TypeParameterDescriptor typeParameterDescriptor = parameters.get(i);
-            parameterByName.put(typeParameterDescriptor.getName(), typeParameterDescriptor);
-            JetTypeReference extendsBound = jetTypeParameter.getExtendsBound();
-            if (extendsBound != null) {
-                typeParameterDescriptor.addUpperBound(typeResolverNotCheckingBounds.resolveType(classDescriptor.getScopeForSupertypeResolution(), extendsBound));
-            }
-            else {
-                typeParameterDescriptor.addUpperBound(JetStandardClasses.getDefaultBound());
-            }
-        }
-        for (JetTypeConstraint constraint : jetClass.getTypeConstaints()) {
-            JetSimpleNameExpression subjectTypeParameterName = constraint.getSubjectTypeParameterName();
-            if (subjectTypeParameterName == null) {
-                continue;
-            }
-            String referencedName = subjectTypeParameterName.getReferencedName();
-            if (referencedName == null) {
-                continue;
-            }
-            TypeParameterDescriptor typeParameterDescriptor = parameterByName.get(referencedName);
-            if (typeParameterDescriptor == null) {
-                // To tell the user that we look only for locally defined type parameters
-                ClassifierDescriptor classifier = classDescriptor.getScopeForSupertypeResolution().getClassifier(referencedName);
-                if (classifier != null) {
-                    trace.getErrorHandler().genericError(subjectTypeParameterName.getNode(), referencedName + " does not refer to a type parameter of class " + classDescriptor.getName());
-                    trace.recordReferenceResolution(subjectTypeParameterName, classifier);
-                }
-                else {
-                    trace.getErrorHandler().unresolvedReference(subjectTypeParameterName);
-                }
-            }
-            else {
-                JetTypeReference boundTypeReference = constraint.getBoundTypeReference();
-                if (boundTypeReference != null) {
-                    JetType bound = typeResolverNotCheckingBounds.resolveType(classDescriptor.getScopeForSupertypeResolution(), boundTypeReference);
-                    if (constraint.isClassObjectContraint()) {
-                        typeParameterDescriptor.addClassObjectBound(bound);
-                    }
-                    else {
-                        typeParameterDescriptor.addUpperBound(bound);
-                    }
-                }
-            }
-        }
-
-        for (TypeParameterDescriptor parameter : parameters) {
-            if (JetStandardClasses.isNothing(parameter.getBoundsAsType())) {
-                PsiElement nameIdentifier = typeParameters.get(parameter.getIndex()).getNameIdentifier();
-                if (nameIdentifier != null) {
-                    trace.getErrorHandler().genericError(nameIdentifier.getNode(), "Upper bounds of " + parameter.getName() + " have empty intersection");
-                }
-            }
-        }
-    }
-
     public void resolveSupertypes(@NotNull JetClassOrObject jetClass, @NotNull MutableClassDescriptor descriptor) {
         List<JetDelegationSpecifier> delegationSpecifiers = jetClass.getDelegationSpecifiers();
 //        TODO : assuming that the hierarchy is acyclic
@@ -221,14 +161,15 @@ public class ClassDescriptorResolver {
         innerScope.addLabeledDeclaration(functionDescriptor);
 
         List<TypeParameterDescriptor> typeParameterDescriptors = resolveTypeParameters(functionDescriptor, innerScope, function.getTypeParameters());
+        resolveGenericBounds(function, innerScope, typeParameterDescriptors);
 
         JetType receiverType = null;
         JetTypeReference receiverTypeRef = function.getReceiverTypeRef();
         if (receiverTypeRef != null) {
             JetScope scopeForReceiver =
                     function.hasTypeParameterListBeforeFunctionName()
-                    ? innerScope
-                    : scope;
+                            ? innerScope
+                            : scope;
             receiverType = typeResolver.resolveType(scopeForReceiver, receiverTypeRef);
         }
 
@@ -312,7 +253,6 @@ public class ClassDescriptorResolver {
     }
 
     public List<TypeParameterDescriptor> resolveTypeParameters(DeclarationDescriptor containingDescriptor, WritableScope extensibleScope, List<JetTypeParameter> typeParameters) {
-        // TODO : Where-clause
         List<TypeParameterDescriptor> result = new ArrayList<TypeParameterDescriptor>();
         for (int i = 0, typeParametersSize = typeParameters.size(); i < typeParametersSize; i++) {
             JetTypeParameter typeParameter = typeParameters.get(i);
@@ -322,11 +262,10 @@ public class ClassDescriptorResolver {
     }
 
     private TypeParameterDescriptor resolveTypeParameter(DeclarationDescriptor containingDescriptor, WritableScope extensibleScope, JetTypeParameter typeParameter, int index) {
-        // TODO: other bounds from where-clause
-        JetTypeReference extendsBound = typeParameter.getExtendsBound();
-        JetType bound = extendsBound == null
-                ? JetStandardClasses.getDefaultBound()
-                : typeResolver.resolveType(extensibleScope, extendsBound);
+//        JetTypeReference extendsBound = typeParameter.getExtendsBound();
+//        JetType bound = extendsBound == null
+//                ? JetStandardClasses.getDefaultBound()
+//                : typeResolver.resolveType(extensibleScope, extendsBound);
         TypeParameterDescriptor typeParameterDescriptor = TypeParameterDescriptor.createForFurtherModification(
                 containingDescriptor,
                 AnnotationResolver.INSTANCE.resolveAnnotations(typeParameter.getModifierList()),
@@ -334,10 +273,94 @@ public class ClassDescriptorResolver {
                 JetPsiUtil.safeName(typeParameter.getName()),
                 index
         );
-        typeParameterDescriptor.addUpperBound(bound);
+//        typeParameterDescriptor.addUpperBound(bound);
         extensibleScope.addTypeParameterDescriptor(typeParameterDescriptor);
         trace.recordDeclarationResolution(typeParameter, typeParameterDescriptor);
         return typeParameterDescriptor;
+    }
+
+    public void resolveGenericBounds(@NotNull JetTypeParameterListOwner declaration, JetScope scope, List<TypeParameterDescriptor> parameters) {
+        List<JetTypeParameter> typeParameters = declaration.getTypeParameters();
+        Map<String, TypeParameterDescriptor> parameterByName = Maps.newHashMap();
+        for (int i = 0, typeParametersSize = typeParameters.size(); i < typeParametersSize; i++) {
+            JetTypeParameter jetTypeParameter = typeParameters.get(i);
+            TypeParameterDescriptor typeParameterDescriptor = parameters.get(i);
+            parameterByName.put(typeParameterDescriptor.getName(), typeParameterDescriptor);
+            JetTypeReference extendsBound = jetTypeParameter.getExtendsBound();
+            if (extendsBound != null) {
+                typeParameterDescriptor.addUpperBound(resolveAndCheckUpperBoundType(extendsBound, scope, false));
+            }
+        }
+        for (JetTypeConstraint constraint : declaration.getTypeConstaints()) {
+            JetSimpleNameExpression subjectTypeParameterName = constraint.getSubjectTypeParameterName();
+            if (subjectTypeParameterName == null) {
+                continue;
+            }
+            String referencedName = subjectTypeParameterName.getReferencedName();
+            if (referencedName == null) {
+                continue;
+            }
+            TypeParameterDescriptor typeParameterDescriptor = parameterByName.get(referencedName);
+            if (typeParameterDescriptor == null) {
+                // To tell the user that we look only for locally defined type parameters
+                ClassifierDescriptor classifier = scope.getClassifier(referencedName);
+                if (classifier != null) {
+                    trace.getErrorHandler().genericError(subjectTypeParameterName.getNode(), referencedName + " does not refer to a type parameter of " + declaration.getName());
+                    trace.recordReferenceResolution(subjectTypeParameterName, classifier);
+                }
+                else {
+                    trace.getErrorHandler().unresolvedReference(subjectTypeParameterName);
+                }
+            }
+            else {
+                trace.recordReferenceResolution(subjectTypeParameterName, typeParameterDescriptor);
+                JetTypeReference boundTypeReference = constraint.getBoundTypeReference();
+                if (boundTypeReference != null) {
+                    JetType bound = resolveAndCheckUpperBoundType(boundTypeReference, scope, constraint.isClassObjectContraint());
+                    if (constraint.isClassObjectContraint()) {
+                        typeParameterDescriptor.addClassObjectBound(bound);
+                    }
+                    else {
+                        typeParameterDescriptor.addUpperBound(bound);
+                    }
+                }
+            }
+        }
+
+        for (TypeParameterDescriptor parameter : parameters) {
+            if (parameter.getUpperBounds().isEmpty()) {
+                parameter.addUpperBound(JetStandardClasses.getDefaultBound());
+            }
+
+            if (JetStandardClasses.isNothing(parameter.getBoundsAsType())) {
+                PsiElement nameIdentifier = typeParameters.get(parameter.getIndex()).getNameIdentifier();
+                if (nameIdentifier != null) {
+                    trace.getErrorHandler().genericError(nameIdentifier.getNode(), "Upper bounds of " + parameter.getName() + " have empty intersection");
+                }
+            }
+
+            JetType classObjectType = parameter.getClassObjectType();
+            if (classObjectType != null && JetStandardClasses.isNothing(classObjectType)) {
+                PsiElement nameIdentifier = typeParameters.get(parameter.getIndex()).getNameIdentifier();
+                if (nameIdentifier != null) {
+                    trace.getErrorHandler().genericError(nameIdentifier.getNode(), "Class object upper bounds of " + parameter.getName() + " have empty intersection");
+                }
+            }
+        }
+    }
+
+    private JetType resolveAndCheckUpperBoundType(@NotNull JetTypeReference upperBound, @NotNull JetScope scope, boolean classObjectConstaint) {
+        JetType jetType = typeResolverNotCheckingBounds.resolveType(scope, upperBound);
+        if (!TypeUtils.canHaveSubtypes(semanticServices.getTypeChecker(), jetType)) {
+            String message = jetType + " is a final type, and thus a class object cannot extend it";
+            if (classObjectConstaint) {
+                trace.getErrorHandler().genericError(upperBound.getNode(), message);
+            }
+            else {
+                trace.getErrorHandler().genericWarning(upperBound.getNode(), message);
+            }
+        }
+        return jetType;
     }
 
     private Collection<JetType> resolveDelegationSpecifiers(JetScope extensibleScope, List<JetDelegationSpecifier> delegationSpecifiers, @NotNull TypeResolver resolver) {
@@ -438,6 +461,7 @@ public class ClassDescriptorResolver {
         else {
             WritableScope writableScope = new WritableScopeImpl(scope, containingDeclaration, trace.getErrorHandler());
             typeParameterDescriptors = resolveTypeParameters(containingDeclaration, writableScope, typeParameters);
+            resolveGenericBounds(property, writableScope, typeParameterDescriptors);
             scopeWithTypeParameters = writableScope;
         }
 

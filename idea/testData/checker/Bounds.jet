@@ -1,5 +1,5 @@
 namespace boundsWithSubstitutors {
-    class A<T>
+    open class A<T>
     class B<X : A<X>>()
 
     class C : A<C>
@@ -15,8 +15,8 @@ namespace boundsWithSubstitutors {
 
 }
 
-  class A
-  class B<T : A>()
+  open class A {}
+  open class B<T : A>()
 
   class C<T : B<<error>Int</error>>, X : {(B<<error>Char</error>>) : (B<<error>Any</error>>, B<A>)}>() : B<<error>Any</error>>() { // 2 errors
     val a = new B<<error>Char</error>>() // error
@@ -37,4 +37,4 @@ fun test() {
 
 fun foo<T : Any>() {}
 fun bar<T : Int?>() {}
-fun <T : Int> Int.buzz() : Unit {}
+fun <T : <warning>Int</warning>> Int.buzz() : Unit {}

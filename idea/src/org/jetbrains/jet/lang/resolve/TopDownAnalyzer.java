@@ -310,7 +310,7 @@ public class TopDownAnalyzer {
         for (Map.Entry<JetClass, MutableClassDescriptor> entry : classes.entrySet()) {
             JetClass jetClass = entry.getKey();
             MutableClassDescriptor descriptor = entry.getValue();
-            classDescriptorResolver.resolveGenericBounds(jetClass, descriptor);
+            classDescriptorResolver.resolveGenericBounds(jetClass, descriptor.getScopeForSupertypeResolution(), descriptor.getTypeConstructor().getParameters());
             classDescriptorResolver.resolveSupertypes(jetClass, descriptor);
         }
         for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : objects.entrySet()) {
@@ -351,10 +351,7 @@ public class TopDownAnalyzer {
                     }
                 }
             }
-
-            // TODO : where-bounds
         }
-
     }
 
     private void resolveFunctionAndPropertyHeaders() {

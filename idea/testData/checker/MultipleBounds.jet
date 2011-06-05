@@ -39,9 +39,34 @@ fun test() {
 
 class Foo() {}
 
-class Bar<T : Foo>
+class Bar<T : <warning>Foo</warning>>
 
-class Buzz<T> where T : Bar<<error>Int</error>>, T : <error>nioho</error>
+class Buzz<T> where T : <warning>Bar<<error>Int</error>></warning>, T : <error>nioho</error>
 
-class X<T : Foo>
-class Y<<error>T</error> : Foo> where T : Bar<Foo>
+class X<T : <warning>Foo</warning>>
+class Y<<error>T</error> : <warning>Foo</warning>> where T : <warning>Bar<Foo></warning>
+
+fun <T : A>
+  where
+    T : B,
+    <error>B</error> : T,
+    class object <error>B</error> : T,
+    class object T : B,
+    class object T : A
+  test2(t : T) {
+  T.foo()
+  T.bar()
+  t.foo()
+  t.bar()
+}
+
+val test1 = test2<<error>A</error>>(new A())
+val test2 = test2<<error>B</error>>(new B())
+val test3 = test2<C>(new C())
+
+class Test<<error>T</error>>
+  where
+    class object T : <error>Foo</error>,
+    class object T : A {}
+
+val <T, B : T> x : Int

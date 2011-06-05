@@ -90,8 +90,8 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
     @NotNull
     public JetType getBoundsAsType() {
         if (boundsAsType == null) {
-            assert upperBounds != null;
-            assert upperBounds.size() > 0;
+            assert upperBounds != null : "Upper bound list is null in " + getName();
+            assert upperBounds.size() > 0 : "Upper bound list is empty in " + getName();
             boundsAsType = TypeUtils.intersect(JetTypeChecker.INSTANCE, upperBounds);
             if (boundsAsType == null) {
                 boundsAsType = JetStandardClasses.getNothingType();
@@ -136,7 +136,9 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
 
         if (classObjectBoundsAsType == null) {
             classObjectBoundsAsType = TypeUtils.intersect(JetTypeChecker.INSTANCE, classObjectUpperBounds);
-            assert classObjectBoundsAsType != null; // TODO : Error message
+            if (classObjectBoundsAsType == null) {
+                classObjectBoundsAsType = JetStandardClasses.getNothingType();
+            }
         }
         return classObjectBoundsAsType;
     }
