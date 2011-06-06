@@ -123,7 +123,7 @@ public class PrimitiveTypesTest extends CodegenTestCase {
     }
 
     public void testDoubleToJava() throws Exception {
-        loadText("fun foo(d: Double): String? = java.lang.Double.toString(d)");
+        loadText("import java.lang.Double as jlDouble; fun foo(d: Double): String? = jlDouble.toString(d)");
         final Method main = generateFunction();
         assertEquals("1.0", main.invoke(null, 1.0));
     }
