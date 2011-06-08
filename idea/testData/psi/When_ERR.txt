@@ -155,7 +155,7 @@ JetFile: When_ERR.jet
                 <empty list>
             PsiWhiteSpace('  ')
             PsiElement(DOUBLE_ARROW)('=>')
-            PsiErrorElement:Expecting an element
+            PsiErrorElement:Expecting an expression
               <empty list>
           PsiWhiteSpace(' ')
           PsiElement(SEMICOLON)(';')

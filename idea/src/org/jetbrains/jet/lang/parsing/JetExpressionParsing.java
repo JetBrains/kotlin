@@ -255,7 +255,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      */
     public void parseExpression() {
         if (!atSet(EXPRESSION_FIRST)) {
-            error("Expecting an element");
+            error("Expecting an expression");
             return;
         }
         parseBinaryExpression(Precedence.ASSIGNMENT);
@@ -952,17 +952,17 @@ public class JetExpressionParsing extends AbstractJetParsing {
      * modifiers declarationRest
      */
     private boolean parseLocalDeclaration() {
-        PsiBuilder.Marker decls = mark();
+        PsiBuilder.Marker decl = mark();
         JetParsing.TokenDetector enumDetector = new JetParsing.TokenDetector(ENUM_KEYWORD);
         myJetParsing.parseModifierList(MODIFIER_LIST, enumDetector);
 
         JetNodeType declType = parseLocalDeclarationRest(enumDetector.isDetected());
 
         if (declType != null) {
-            decls.done(declType);
+            decl.done(declType);
             return true;
         } else {
-            decls.rollbackTo();
+            decl.rollbackTo();
             return false;
         }
     }
@@ -1129,7 +1129,12 @@ public class JetExpressionParsing extends AbstractJetParsing {
      */
     private void parseStatement() {
         if (!parseLocalDeclaration()) {
-            parseExpression();
+            if (!atSet(EXPRESSION_FIRST)) {
+                errorAndAdvance("Expecting a statement");
+            }
+            else {
+                parseExpression();
+            }
         }
     }
 
