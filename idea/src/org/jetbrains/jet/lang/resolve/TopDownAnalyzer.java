@@ -255,7 +255,8 @@ public class TopDownAnalyzer {
                         namespaceScope.importScope(type.getMemberScope());
                     }
                 }
-            } else {
+            }
+            else {
                 ClassifierDescriptor classifierDescriptor = null;
                 JetSimpleNameExpression referenceExpression = null;
 
