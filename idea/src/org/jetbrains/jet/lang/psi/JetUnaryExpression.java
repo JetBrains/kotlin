@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 
 /**
@@ -12,7 +13,6 @@ public abstract class JetUnaryExpression extends JetExpression {
         super(node);
     }
 
-    @NotNull
     public abstract JetExpression getBaseExpression();
 
     @NotNull

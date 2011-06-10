@@ -1403,6 +1403,25 @@ public class JetTypeInferrer {
                         }
                     }
                 }
+
+                @Override
+                public void visitUnaryExpression(JetUnaryExpression expression) {
+                    IElementType operationTokenType = expression.getOperationSign().getReferencedNameElementType();
+                    if (operationTokenType == JetTokens.EXCL) {
+                        JetExpression baseExpression = expression.getBaseExpression();
+                        if (baseExpression != null) {
+                            result[0] = extractDataFlowInfoFromCondition(baseExpression, !conditionValue);
+                        }
+                    }
+                }
+
+                @Override
+                public void visitParenthesizedExpression(JetParenthesizedExpression expression) {
+                    JetExpression body = expression.getExpression();
+                    if (body != null) {
+                        body.accept(this);
+                    }
+                }
             });
             return result[0];
         }

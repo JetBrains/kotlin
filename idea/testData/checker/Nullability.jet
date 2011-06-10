@@ -214,3 +214,44 @@ fun f6(s : String?) {
   } while (s == null)
   s.get(0)
 }
+
+fun f7(s : String?, t : String?) {
+  s?.get(0)
+  if (!(s == null)) {
+    s.get(0)
+  }
+  s?.get(0)
+  if (!(s != null)) {
+    s?.get(0)
+  }
+  else {
+    s.get(0)
+  }
+  s?.get(0)
+  if (!!(s != null)) {
+    s.get(0)
+  }
+  else {
+    s?.get(0)
+  }
+  s?.get(0)
+  t?.get(0)
+  if (!(s == null || t == null)) {
+    s.get(0)
+    t.get(0)
+  }
+  else {
+    s?.get(0)
+    t?.get(0)
+  }
+  s?.get(0)
+  t?.get(0)
+  if (!(s == null && s == null)) {
+    s.get(0)
+    t?.get(0)
+  }
+  else {
+    s?.get(0)
+    t?.get(0)
+  }
+}
