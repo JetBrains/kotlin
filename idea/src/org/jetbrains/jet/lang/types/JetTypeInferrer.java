@@ -1323,52 +1323,66 @@ public class JetTypeInferrer {
             }
         }
 
-        private DataFlowInfo extractDataFlowInfoFromCondition(JetExpression condition, final boolean conditionValue) {
+        private DataFlowInfo extractDataFlowInfoFromCondition(@NotNull JetExpression condition, final boolean conditionValue) {
             final DataFlowInfo[] result = new DataFlowInfo[] {dataFlowInfo};
             condition.accept(new JetVisitor() {
                 @Override
                 public void visitBinaryExpression(JetBinaryExpression expression) {
                     IElementType operationToken = expression.getOperationToken();
-                    if (operationToken != JetTokens.EQEQ
-                            && operationToken != JetTokens.EXCLEQ
-                            && operationToken != JetTokens.EQEQEQ
-                            && operationToken != JetTokens.EXCLEQEQEQ) {
-                        return;
+                    if (operationToken == JetTokens.ANDAND || operationToken == JetTokens.OROR) {
+                        DataFlowInfo dataFlowInfo = extractDataFlowInfoFromCondition(expression.getLeft(), conditionValue);
+                        JetExpression expressionRight = expression.getRight();
+                        if (expressionRight != null) {
+                            DataFlowInfo rightInfo = extractDataFlowInfoFromCondition(expressionRight, conditionValue);
+                            DataFlowInfo.CompositionOperator operator;
+                            if (operationToken == JetTokens.ANDAND) {
+                                operator = conditionValue ? DataFlowInfo.AND : DataFlowInfo.OR;
+                            }
+                            else {
+                                operator = conditionValue ? DataFlowInfo.OR : DataFlowInfo.AND;
+                            }
+                            dataFlowInfo = operator.compose(dataFlowInfo, rightInfo);
+                        }
+                        result[0] = dataFlowInfo;
                     }
+                    else if (operationToken == JetTokens.EQEQ
+                             || operationToken == JetTokens.EXCLEQ
+                             || operationToken == JetTokens.EQEQEQ
+                             || operationToken == JetTokens.EXCLEQEQEQ) {
+                        JetExpression left = expression.getLeft();
+                        JetExpression right = expression.getRight();
+                        if (left instanceof JetConstantExpression) {
+                            JetExpression tmp = left;
+                            left = right;
+                            right = tmp;
+                        }
 
-                    JetExpression left = expression.getLeft();
-                    JetExpression right = expression.getRight();
-                    if (left instanceof JetConstantExpression) {
-                        JetExpression tmp = left;
-                        left = right;
-                        right = tmp;
-                    }
+                        if (!(left instanceof JetSimpleNameExpression)) {
+                            return;
+                        }
+                        JetSimpleNameExpression nameExpression = (JetSimpleNameExpression) left;
+                        DeclarationDescriptor declarationDescriptor = trace.getBindingContext().resolveReferenceExpression(nameExpression);
+                        if (!(declarationDescriptor instanceof VariableDescriptor)) {
+                            return;
+                        }
+                        VariableDescriptor variableDescriptor = (VariableDescriptor) declarationDescriptor;
 
-                    if (!(left instanceof JetSimpleNameExpression)) {
-                        return;
-                    }
-                    JetSimpleNameExpression nameExpression = (JetSimpleNameExpression) left;
-                    DeclarationDescriptor declarationDescriptor = trace.getBindingContext().resolveReferenceExpression(nameExpression);
-                    if (!(declarationDescriptor instanceof VariableDescriptor)) {
-                        return;
-                    }
-                    VariableDescriptor variableDescriptor = (VariableDescriptor) declarationDescriptor;
+                        // TODO : validate that DF makes sense for this variable: local, val, internal w/backing field, etc
 
-                    // TODO : validate that DF makes sense for this variable: local, val, internal w/backing field, etc
+                        if (!(right instanceof JetConstantExpression)) {
+                            return;
+                        }
+                        JetConstantExpression constantExpression = (JetConstantExpression) right;
+                        if (constantExpression.getNode().getElementType() != JetNodeTypes.NULL) {
+                            return;
+                        }
 
-                    if (!(right instanceof JetConstantExpression)) {
-                        return;
-                    }
-                    JetConstantExpression constantExpression = (JetConstantExpression) right;
-                    if (constantExpression.getNode().getElementType() != JetNodeTypes.NULL) {
-                        return;
-                    }
-
-                    if (operationToken == JetTokens.EQEQ || operationToken == JetTokens.EQEQEQ) {
-                        result[0] = dataFlowInfo.equalsToNull(variableDescriptor, !conditionValue);
-                    }
-                    else if (operationToken == JetTokens.EXCLEQ || operationToken == JetTokens.EXCLEQEQEQ) {
-                        result[0] = dataFlowInfo.equalsToNull(variableDescriptor, conditionValue);
+                        if (operationToken == JetTokens.EQEQ || operationToken == JetTokens.EQEQEQ) {
+                            result[0] = dataFlowInfo.equalsToNull(variableDescriptor, !conditionValue);
+                        }
+                        else if (operationToken == JetTokens.EXCLEQ || operationToken == JetTokens.EXCLEQEQEQ) {
+                            result[0] = dataFlowInfo.equalsToNull(variableDescriptor, conditionValue);
+                        }
                     }
                 }
             });
@@ -1567,11 +1581,11 @@ public class JetTypeInferrer {
                 }
                 if (selectorReturnType != null) {
                     // TODO : extensions to 'Any?'
-                    assert selectorExpression != null;
+                    if (selectorExpression != null) {
+                        receiverType = enrichOutType(receiverExpression, receiverType);
 
-                    receiverType = enrichOutType(receiverExpression, receiverType);
-
-                    checkNullSafety(receiverType, expression.getOperationTokenNode(), getCalleeFunctionDescriptor(selectorExpression));
+                        checkNullSafety(receiverType, expression.getOperationTokenNode(), getCalleeFunctionDescriptor(selectorExpression));
+                    }
                 }
             }
         }
@@ -1648,7 +1662,7 @@ public class JetTypeInferrer {
                 // TODO : not a simple name -> resolve in scope, expect property type or a function type
                 trace.getErrorHandler().genericError(selectorExpression.getNode(), "Unsupported selector element type: " + selectorExpression);
             }
-            return receiverType;
+            return null;
         }
 
         @Override
@@ -1790,7 +1804,8 @@ public class JetTypeInferrer {
             }
             else if (operationType == JetTokens.ANDAND || operationType == JetTokens.OROR) {
                 JetType leftType = getType(scope, left, false);
-                JetType rightType = right == null ? null : getType(scope, right, false);
+                DataFlowInfo flowInfoLeft = extractDataFlowInfoFromCondition(left, operationType == JetTokens.ANDAND);  // TODO: This gets computed twice: here and in extractDataFlowInfoFromCondition() for the whole condition
+                JetType rightType = right == null ? null : getType(scope, right, false, flowInfoLeft);
                 if (leftType != null && !isBoolean(leftType)) {
                     trace.getErrorHandler().typeMismatch(left, semanticServices.getStandardLibrary().getBooleanType(), leftType);
                 }

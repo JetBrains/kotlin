@@ -1,0 +1,68 @@
+fun test() {
+  val a : Int? = 0
+  if (a != null) {
+    a.plus(1)
+  }
+  else {
+    a?.plus(1)
+  }
+
+  val out : java.io.PrintStream? = null//= System.out
+  val ins = System.`in`
+
+  out?.println()
+  ins?.read()
+
+  if (ins != null) {
+    ins.read()
+    out?.println()
+    if (out != null) {
+      ins.read();
+      out.println();
+    }
+  }
+
+  if (out != null && ins != null) {
+    ins.read();
+    out.println();
+  }
+
+  if (out == null) {
+    out?.println()
+  } else {
+    out.println()
+  }
+
+  if (out != null && ins != null || out != null) {
+    ins?.read();
+    out.println();
+  }
+
+  if (out == null || out.println(0) == ()) {
+    out?.println(1)
+  }
+  else {
+    out.println(2)
+  }
+
+  if (out != null && out.println() == ()) {
+    out.println();
+  }
+  else {
+    out?.println();
+  }
+
+  if (out == null || out != null && out.println() == ()) {
+    out?.println();
+  }
+  else {
+    out.println();
+  }
+
+  if (1 == 2 || out != null && out.println(1) == ()) {
+    out?.println(2);
+  }
+  else {
+    out?.println(3)
+  }
+}
