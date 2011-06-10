@@ -1345,6 +1345,18 @@ public class JetTypeInferrer {
             final DataFlowInfo[] result = new DataFlowInfo[] {dataFlowInfo};
             condition.accept(new JetVisitor() {
                 @Override
+                public void visitIsExpression(JetIsExpression expression) {
+                    VariableDescriptor variableDescriptor = getVariableDescriptorFromSimpleName(expression.getLeftHandSide());
+                    if (variableDescriptor != null) {
+                        JetPattern pattern = expression.getPattern();
+                        if (pattern instanceof JetTypePattern) {
+                            JetTypePattern jetTypePattern = (JetTypePattern) pattern;
+                            result[0] = dataFlowInfo.isInstanceOf(variableDescriptor, trace.getBindingContext().resolveTypeReference(jetTypePattern.getTypeReference()));
+                        }
+                    }
+                }
+
+                @Override
                 public void visitBinaryExpression(JetBinaryExpression expression) {
                     IElementType operationToken = expression.getOperationToken();
                     if (operationToken == JetTokens.ANDAND || operationToken == JetTokens.OROR) {
@@ -1612,6 +1624,20 @@ public class JetTypeInferrer {
             JetType receiverType = new TypeInferrerVisitorWithNamespaces(scope, false, dataFlowInfo).getType(receiverExpression);
             if (receiverType != null) {
                 JetType selectorReturnType = getSelectorReturnType(receiverType, selectorExpression);
+                
+                if (selectorReturnType == null) {
+                    VariableDescriptor variableDescriptor = getVariableDescriptorFromSimpleName(receiverExpression);
+                    if (variableDescriptor != null) {
+                        Collection<JetType> possibleTypes = dataFlowInfo.getPossibleTypes(variableDescriptor);
+                        for (JetType possibleType : possibleTypes) {
+                            selectorReturnType = getSelectorReturnType(possibleType, selectorExpression);
+                            if (selectorReturnType != null) {
+                                break;
+                            }
+                        }
+                    }
+                }
+
                 if (expression.getOperationSign() == JetTokens.QUEST) {
                     if (selectorReturnType != null && !isBoolean(selectorReturnType) && selectorExpression != null) {
                         // TODO : more comprehensible error message
@@ -1637,15 +1663,24 @@ public class JetTypeInferrer {
         }
 
         private JetType enrichOutType(JetExpression receiverExpression, JetType receiverType) {
+            VariableDescriptor variableDescriptor = getVariableDescriptorFromSimpleName(receiverExpression);
+            if (variableDescriptor != null) {
+                return dataFlowInfo.getOutType(variableDescriptor);
+            }
+            return receiverType;
+        }
+
+        @Nullable
+        private VariableDescriptor getVariableDescriptorFromSimpleName(@NotNull JetExpression receiverExpression) {
+            VariableDescriptor variableDescriptor = null;
             if (receiverExpression instanceof JetSimpleNameExpression) {
                 JetSimpleNameExpression nameExpression = (JetSimpleNameExpression) receiverExpression;
                 DeclarationDescriptor declarationDescriptor = trace.getBindingContext().resolveReferenceExpression(nameExpression);
                 if (declarationDescriptor instanceof VariableDescriptor) {
-                    VariableDescriptor variableDescriptor = (VariableDescriptor) declarationDescriptor;
-                    return dataFlowInfo.getOutType(variableDescriptor);
+                    variableDescriptor = (VariableDescriptor) declarationDescriptor;
                 }
             }
-            return receiverType;
+            return variableDescriptor;
         }
 
         @NotNull

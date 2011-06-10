@@ -1,19 +1,25 @@
 package org.jetbrains.jet.lang.types;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
+import com.google.common.base.Supplier;
+import com.google.common.collect.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author abreslav
  */
 public class DataFlowInfo {
 
-    private static DataFlowInfo EMPTY = new DataFlowInfo(ImmutableMap.<VariableDescriptor, NullabilityFlags>of());
+    private static DataFlowInfo EMPTY = new DataFlowInfo(ImmutableMap.<VariableDescriptor, NullabilityFlags>of(), Multimaps.forMap(Collections.<VariableDescriptor, JetType>emptyMap()));
+    public static final Supplier<SortedSet<JetType>> SORTED_SET_SUPPLIER = new Supplier<SortedSet<JetType>>() {
+        @Override
+        public SortedSet<JetType> get() {
+            return new TreeSet<JetType>();
+        }
+    };
 
     public static DataFlowInfo getEmpty() {
         return EMPTY;
@@ -40,9 +46,11 @@ public class DataFlowInfo {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private final ImmutableMap<VariableDescriptor, NullabilityFlags> nullabilityInfo;
+    private final Multimap<VariableDescriptor, JetType> typeInfo;
 
-    public DataFlowInfo(ImmutableMap<VariableDescriptor, NullabilityFlags> nullabilityInfo) {
+    public DataFlowInfo(ImmutableMap<VariableDescriptor, NullabilityFlags> nullabilityInfo, Multimap<VariableDescriptor, JetType> typeInfo) {
         this.nullabilityInfo = nullabilityInfo;
+        this.typeInfo = typeInfo;
     }
 
     @Nullable
@@ -57,27 +65,51 @@ public class DataFlowInfo {
         return outType;
     }
 
+    @NotNull
+    public Collection<JetType> getPossibleTypes(VariableDescriptor variableDescriptor) {
+        return typeInfo.get(variableDescriptor);
+    }
+
     public DataFlowInfo equalsToNull(@NotNull VariableDescriptor variableDescriptor, boolean notNull) {
+        return new DataFlowInfo(getEqualsToNullMap(variableDescriptor, notNull), typeInfo);
+    }
+
+    private ImmutableMap<VariableDescriptor, NullabilityFlags> getEqualsToNullMap(VariableDescriptor variableDescriptor, boolean notNull) {
         Map<VariableDescriptor, NullabilityFlags> builder = Maps.newHashMap(nullabilityInfo);
         builder.put(variableDescriptor, new NullabilityFlags(!notNull, notNull));
-        return new DataFlowInfo(ImmutableMap.copyOf(builder));
+        return ImmutableMap.copyOf(builder);
+    }
+
+    public DataFlowInfo isInstanceOf(@NotNull VariableDescriptor variableDescriptor, @NotNull JetType type) {
+        Multimap<VariableDescriptor, JetType> newTypeInfo = copyTypeInfo();
+        newTypeInfo.put(variableDescriptor, type);
+        return new DataFlowInfo(getEqualsToNullMap(variableDescriptor, false), newTypeInfo);
     }
 
     public DataFlowInfo and(DataFlowInfo other) {
-        Map<VariableDescriptor, NullabilityFlags> builder = Maps.newHashMap();
-        builder.putAll(nullabilityInfo);
+        Map<VariableDescriptor, NullabilityFlags> nullabilityMapBuilder = Maps.newHashMap();
+        nullabilityMapBuilder.putAll(nullabilityInfo);
         for (Map.Entry<VariableDescriptor, NullabilityFlags> entry : other.nullabilityInfo.entrySet()) {
             VariableDescriptor variableDescriptor = entry.getKey();
             NullabilityFlags otherFlags = entry.getValue();
             NullabilityFlags thisFlags = nullabilityInfo.get(variableDescriptor);
             if (thisFlags != null) {
-                builder.put(variableDescriptor, thisFlags.and(otherFlags));
+                nullabilityMapBuilder.put(variableDescriptor, thisFlags.and(otherFlags));
             }
             else {
-                builder.put(variableDescriptor, otherFlags);
+                nullabilityMapBuilder.put(variableDescriptor, otherFlags);
             }
         }
-        return new DataFlowInfo(ImmutableMap.copyOf(builder));
+
+        Multimap<VariableDescriptor, JetType> newTypeInfo = copyTypeInfo();
+        newTypeInfo.putAll(other.typeInfo);
+        return new DataFlowInfo(ImmutableMap.copyOf(nullabilityMapBuilder), newTypeInfo);
+    }
+
+    private Multimap<VariableDescriptor, JetType> copyTypeInfo() {
+        Multimap<VariableDescriptor, JetType> newTypeInfo = Multimaps.newSortedSetMultimap(Maps.<VariableDescriptor, Collection<JetType>>newHashMap(), SORTED_SET_SUPPLIER);
+        newTypeInfo.putAll(typeInfo);
+        return newTypeInfo;
     }
 
     public DataFlowInfo or(DataFlowInfo other) {
@@ -90,7 +122,23 @@ public class DataFlowInfo {
             assert (otherFlags != null);
             builder.put(variableDescriptor, thisFlags.or(otherFlags));
         }
-        return new DataFlowInfo(ImmutableMap.copyOf(builder));
+
+        Multimap<VariableDescriptor, JetType> newTypeInfo = copyTypeInfo();
+
+        Set<VariableDescriptor> keys = newTypeInfo.keySet();
+        keys.retainAll(other.typeInfo.keySet());
+
+        for (VariableDescriptor variableDescriptor : keys) {
+            Collection<JetType> thisTypes = typeInfo.get(variableDescriptor);
+            Collection<JetType> otherTypes = other.typeInfo.get(variableDescriptor);
+
+            Collection<JetType> newTypes = Sets.newHashSet(thisTypes);
+            newTypes.retainAll(otherTypes);
+
+            newTypeInfo.putAll(variableDescriptor, newTypes);
+        }
+
+        return new DataFlowInfo(ImmutableMap.copyOf(builder), newTypeInfo);
     }
 
     private static class NullabilityFlags {
