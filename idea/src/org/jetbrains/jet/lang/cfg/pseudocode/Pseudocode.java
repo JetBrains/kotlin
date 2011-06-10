@@ -46,6 +46,11 @@ public class Pseudocode {
             return instructions.subList(getTargetInstructionIndex(), instructions.size());
         }
 
+        public Instruction resolveToInstruction() {
+            assert targetInstructionIndex != null;
+            return instructions.get(targetInstructionIndex);
+        }
+
     }
 
     private final List<Instruction> instructions = new ArrayList<Instruction>();

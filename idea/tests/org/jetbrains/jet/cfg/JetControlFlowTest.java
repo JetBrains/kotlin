@@ -8,11 +8,13 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestCaseBase;
+import org.jetbrains.jet.lang.cfg.LoopInfo;
 import org.jetbrains.jet.lang.cfg.pseudocode.Instruction;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetPseudocodeTrace;
 import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode;
 import org.jetbrains.jet.lang.psi.JetElement;
+import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
@@ -53,6 +55,10 @@ public class JetControlFlowTest extends JetTestCaseBase {
                 for (Pseudocode pseudocode : data.values()) {
                     pseudocode.postProcess();
                 }
+            }
+
+            @Override
+            public void recordLoopInfo(JetExpression expression, LoopInfo blockInfo) {
             }
 
             @Override

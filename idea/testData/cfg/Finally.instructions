@@ -224,26 +224,28 @@ fun t3() {
 ---------------------
 l0:
     <START>
-l3:
+l2:
+l5:
     r(true)
-    jf(l2)
-    jmp?(l4)
+    jf(l3)
+l4:
+    jmp?(l6)
     r(1)
     r(2)
     r(3)
     r(>)
     r(2 > 3)
-    jf(l5)
-    r(2)
-    jmp(l2)
-    jmp(l6)
-l5:
-    read (Unit)
-l4:
-l6:
+    jf(l7)
     r(2)
     jmp(l3)
-l2:
+    jmp(l8)
+l7:
+    read (Unit)
+l6:
+l8:
+    r(2)
+    jmp(l2)
+l3:
     read (Unit)
 l1:
     <END>
@@ -268,22 +270,24 @@ fun t3() {
 l0:
     <START>
     jmp?(l2)
-l4:
+l3:
+l6:
     r(true)
-    jf(l3)
+    jf(l4)
+l5:
     r(1)
     r(2)
     r(3)
     r(>)
     r(2 > 3)
-    jf(l5)
-    jmp(l3)
-    jmp(l6)
-l5:
-    read (Unit)
-l6:
+    jf(l7)
     jmp(l4)
-l3:
+    jmp(l8)
+l7:
+    read (Unit)
+l8:
+    jmp(l3)
+l4:
     read (Unit)
     r(5)
 l2:
@@ -310,22 +314,24 @@ fun t3() {
 l0:
     <START>
     jmp?(l2)
-l4:
+l3:
+l6:
     r(true)
-    jf(l3)
+    jf(l4)
+l5:
     r(1)
     r(2)
     r(3)
     r(>)
     r(2 > 3)
-    jf(l5)
-    jmp(l3)
-    jmp(l6)
-l5:
-    read (Unit)
-l6:
+    jf(l7)
     jmp(l4)
-l3:
+    jmp(l8)
+l7:
+    read (Unit)
+l8:
+    jmp(l3)
+l4:
     read (Unit)
 l2:
     r(2)
@@ -354,24 +360,26 @@ l0:
     r(a)
     r(..)
     r(1..a)
-    jmp?(l2)
 l3:
-    jmp?(l4)
+    jmp?(l2)
+l4:
+l5:
+    jmp?(l6)
     r(1)
     r(2)
     r(3)
     r(>)
     r(2 > 3)
-    jf(l5)
+    jf(l7)
     r(2)
-    jmp(l3)
-    jmp(l6)
-l5:
+    jmp(l4)
+    jmp(l8)
+l7:
     read (Unit)
-l4:
 l6:
+l8:
     r(2)
-    jmp?(l3)
+    jmp?(l4)
 l2:
     read (Unit)
 l1:
@@ -401,20 +409,22 @@ l0:
     r(a)
     r(..)
     r(1..a)
-    jmp?(l3)
 l4:
+    jmp?(l3)
+l5:
+l6:
     r(1)
     r(2)
     r(3)
     r(>)
     r(2 > 3)
-    jf(l5)
-    jmp(l4)
-    jmp(l6)
-l5:
+    jf(l7)
+    jmp(l5)
+    jmp(l8)
+l7:
     read (Unit)
-l6:
-    jmp?(l4)
+l8:
+    jmp?(l5)
 l3:
     read (Unit)
     r(5)
@@ -446,20 +456,22 @@ l0:
     r(a)
     r(..)
     r(1..a)
-    jmp?(l3)
 l4:
+    jmp?(l3)
+l5:
+l6:
     r(1)
     r(2)
     r(3)
     r(>)
     r(2 > 3)
-    jf(l5)
-    jmp(l4)
-    jmp(l6)
-l5:
+    jf(l7)
+    jmp(l5)
+    jmp(l8)
+l7:
     read (Unit)
-l6:
-    jmp?(l4)
+l8:
+    jmp?(l5)
 l3:
     read (Unit)
 l2:

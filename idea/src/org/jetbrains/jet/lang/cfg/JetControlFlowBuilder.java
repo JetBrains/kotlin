@@ -31,7 +31,7 @@ public interface JetControlFlowBuilder {
     Label getExitPoint(@NotNull JetElement labelElement);
 
     // Loops
-    Label enterLoop(@NotNull JetExpression expression, Label loopExitPoint);
+    LoopInfo enterLoop(@NotNull JetExpression expression, @Nullable Label loopExitPoint, @Nullable Label conditionEntryPoint);
 
     void exitLoop(@NotNull JetExpression expression);
     @Nullable

@@ -7,15 +7,17 @@ fun main() {
 ---------------------
 l0:
     <START>
-l3:
+l2:
+l5:
     r(1)
     r(0)
     r(>)
     r(1 > 0)
-    jf(l2)
+    jf(l3)
+l4:
     r(2)
-    jmp(l3)
-l2:
+    jmp(l2)
+l3:
     read (Unit)
 l1:
     <END>
@@ -30,14 +32,16 @@ fun dowhile() {
 ---------------------
 l0:
     <START>
-l3:
+l2:
+l4:
     ret l1
+l5:
     r(1)
     r(0)
     r(>)
     r(1 > 0)
-    jt(l3)
-l2:
+    jt(l2)
+l3:
     read (Unit)
 l1:
     <END>

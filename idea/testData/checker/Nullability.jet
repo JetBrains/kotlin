@@ -139,3 +139,78 @@ fun test() {
   out.println()
 
 }
+
+
+fun f(out : String?) {
+  out?.get(0)
+  if (out != null) else return;
+  out.get(0)
+}
+
+fun f1(out : String?) {
+  out?.get(0)
+  if (out != null) else {
+    1 + 2
+    return;
+  }
+  out.get(0)
+}
+
+fun f2(out : String?) {
+  out?.get(0)
+  if (out == null) {
+    1 + 2
+    return;
+  }
+  out.get(0)
+}
+
+fun f3(out : String?) {
+  out?.get(0)
+  if (out == null) {
+    1 + 2
+    return;
+  }
+  else {
+    1 + 2
+  }
+  out.get(0)
+}
+
+fun f4(s : String?) {
+  s?.get(0)
+  while (1 < 2 && s != null) {
+    s.get(0)
+  }
+  s?.get(0)
+  while (s == null || 1 < 2) {
+     s?.get(0)
+  }
+  s.get(0)
+}
+
+fun f5(s : String?) {
+  s?.get(0)
+  while (1 < 2 && s != null) {
+    s.get(0)
+  }
+  s?.get(0)
+  while (s == null || 1 < 2) {
+    if (1 > 2) break
+     s?.get(0)
+  }
+  s?.get(0);
+}
+
+fun f6(s : String?) {
+  s?.get(0)
+  do {
+    s?.get(0)
+    if (1 < 2) break;
+  } while (s == null)
+  s?.get(0)
+  do {
+    s?.get(0)
+  } while (s == null)
+  s.get(0)
+}

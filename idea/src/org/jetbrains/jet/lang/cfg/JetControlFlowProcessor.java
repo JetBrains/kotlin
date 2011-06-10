@@ -350,35 +350,40 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitWhileExpression(JetWhileExpression expression) {
-            Label loopExitPoint = builder.createUnboundLabel();
-            Label loopEntryPoint = builder.enterLoop(expression, loopExitPoint);
+            LoopInfo loopInfo = builder.enterLoop(expression, null, null);
+
+            builder.bindLabel(loopInfo.getConditionEntryPoint());
             JetExpression condition = expression.getCondition();
             if (condition != null) {
                 value(condition, false, true);
             }
-            builder.jumpOnFalse(loopExitPoint);
+            builder.jumpOnFalse(loopInfo.getExitPoint());
+
+            builder.bindLabel(loopInfo.getBodyEntryPoint());
             JetExpression body = expression.getBody();
             if (body != null) {
                 value(body, true, false);
             }
-            builder.jump(loopEntryPoint);
+            builder.jump(loopInfo.getEntryPoint());
             builder.exitLoop(expression);
             builder.readUnit(expression);
         }
 
         @Override
         public void visitDoWhileExpression(JetDoWhileExpression expression) {
-            Label loopExitPoint = builder.createUnboundLabel();
-            Label loopEntryPoint = builder.enterLoop(expression, loopExitPoint);
+            LoopInfo loopInfo = builder.enterLoop(expression, null, null);
+
+            builder.bindLabel(loopInfo.getBodyEntryPoint());
             JetExpression body = expression.getBody();
             if (body != null) {
                 value(body, true, false);
             }
+            builder.bindLabel(loopInfo.getConditionEntryPoint());
             JetExpression condition = expression.getCondition();
             if (condition != null) {
                 value(condition, false, true);
             }
-            builder.jumpOnTrue(loopEntryPoint);
+            builder.jumpOnTrue(loopInfo.getEntryPoint());
             builder.exitLoop(expression);
             builder.readUnit(expression);
         }
@@ -391,13 +396,20 @@ public class JetControlFlowProcessor {
             }
             // TODO : primitive cases
             Label loopExitPoint = builder.createUnboundLabel();
+            Label conditionEntryPoint = builder.createUnboundLabel();
+
+            builder.bindLabel(conditionEntryPoint);
             builder.nondeterministicJump(loopExitPoint);
-            Label loopEntryPoint = builder.enterLoop(expression, loopExitPoint);
+
+            LoopInfo loopInfo = builder.enterLoop(expression, loopExitPoint, conditionEntryPoint);
+
+            builder.bindLabel(loopInfo.getBodyEntryPoint());
             JetExpression body = expression.getBody();
             if (body != null) {
                 value(body, true, false);
             }
-            builder.nondeterministicJump(loopEntryPoint);
+
+            builder.nondeterministicJump(loopInfo.getEntryPoint());
             builder.exitLoop(expression);
             builder.readUnit(expression);
         }

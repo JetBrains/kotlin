@@ -1307,12 +1307,16 @@ public class JetTypeInferrer {
                 }
             }
             else if (thenBranch == null) {
-                getType(scope, elseBranch, true, elseInfo);
+                JetType type = getType(scope, elseBranch, true, elseInfo);
+                if (type != null && JetStandardClasses.isNothing(type)) {
+                    resultDataFlowInfo = thenInfo;
+                }
                 result = JetStandardClasses.getUnitType();
             }
             else {
                 JetType thenType = getType(scope, thenBranch, true, thenInfo);
                 JetType elseType = getType(scope, elseBranch, true, elseInfo);
+
                 if (thenType == null) {
                     result = elseType;
                 }
@@ -1322,10 +1326,22 @@ public class JetTypeInferrer {
                 else {
                     result = semanticServices.getTypeChecker().commonSupertype(Arrays.asList(thenType, elseType));
                 }
+
+                boolean jumpInThen = thenType != null && JetStandardClasses.isNothing(thenType);
+                boolean jumpInElse = elseType != null && JetStandardClasses.isNothing(elseType);
+
+                if (jumpInThen && !jumpInElse) {
+                    resultDataFlowInfo = elseInfo;
+                }
+                else if (jumpInElse && !jumpInThen) {
+                    resultDataFlowInfo = thenInfo;
+                }
+
             }
         }
 
-        private DataFlowInfo extractDataFlowInfoFromCondition(@NotNull JetExpression condition, final boolean conditionValue) {
+        private DataFlowInfo extractDataFlowInfoFromCondition(@Nullable JetExpression condition, final boolean conditionValue) {
+            if (condition == null) return dataFlowInfo;
             final DataFlowInfo[] result = new DataFlowInfo[] {dataFlowInfo};
             condition.accept(new JetVisitor() {
                 @Override
@@ -1410,7 +1426,9 @@ public class JetTypeInferrer {
                 DataFlowInfo conditionInfo = condition == null ? dataFlowInfo : extractDataFlowInfoFromCondition(condition, true);
                 getType(scope, body, true, conditionInfo);
             }
-            resultDataFlowInfo = condition == null ? null : extractDataFlowInfoFromCondition(condition, false);
+            if (!flowInformationProvider.isBreakable(expression)) {
+                resultDataFlowInfo = extractDataFlowInfoFromCondition(condition, false);
+            }
             result = JetStandardClasses.getUnitType();
         }
 
@@ -1434,7 +1452,11 @@ public class JetTypeInferrer {
                 conditionScope = writableScope;
                 getBlockReturnedTypeWithWritableScope(writableScope, Collections.singletonList(body), dataFlowInfo);
             }
-            checkCondition(conditionScope, expression.getCondition());
+            JetExpression condition = expression.getCondition();
+            checkCondition(conditionScope, condition);
+            if (!flowInformationProvider.isBreakable(expression)) {
+                resultDataFlowInfo = extractDataFlowInfoFromCondition(condition, false);
+            }
             result = JetStandardClasses.getUnitType();
         }
 
@@ -1918,6 +1940,7 @@ public class JetTypeInferrer {
             if (receiverType != null) {
                 FunctionDescriptor functionDescriptor = lookupFunction(scope, expression, "get", receiverType, argumentTypes, true);
                 if (functionDescriptor != null) {
+//                    checkNullSafety(receiverType, expression.getIndexExpressions().get(0).getNode(), functionDescriptor);
                     result = functionDescriptor.getUnsubstitutedReturnType();
                 }
             }

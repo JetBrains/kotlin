@@ -1,10 +1,7 @@
 package org.jetbrains.jet.lang.cfg.pseudocode;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.cfg.GenerationTrigger;
-import org.jetbrains.jet.lang.cfg.JetControlFlowBuilder;
-import org.jetbrains.jet.lang.cfg.JetControlFlowBuilderAdapter;
-import org.jetbrains.jet.lang.cfg.Label;
+import org.jetbrains.jet.lang.cfg.*;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression;
@@ -101,14 +98,20 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         }
 
         @Override
-        public final Label enterLoop(@NotNull JetExpression expression, Label loopExitPoint) {
+        public final LoopInfo enterLoop(@NotNull JetExpression expression, Label loopExitPoint, Label conditionEntryPoint) {
             Label label = createUnboundLabel();
             bindLabel(label);
-            BreakableBlockInfo blockInfo = new BreakableBlockInfo(expression, label, loopExitPoint);
+            LoopInfo blockInfo = new LoopInfo(
+                    expression,
+                    label,
+                    loopExitPoint != null ? loopExitPoint : createUnboundLabel(),
+                    createUnboundLabel(),
+                    conditionEntryPoint != null ? conditionEntryPoint : createUnboundLabel());
             loopInfo.push(blockInfo);
             elementToBlockInfo.put(expression, blockInfo);
             allBlocks.push(blockInfo);
-            return label;
+            trace.recordLoopInfo(expression, blockInfo);
+            return blockInfo;
         }
 
         @Override
@@ -265,9 +268,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         }
     }
 
-    private static abstract class BlockInfo {}
-
-    private static class TryFinallyBlockInfo extends BlockInfo {
+    public static class TryFinallyBlockInfo extends BlockInfo {
         private final GenerationTrigger finallyBlock;
 
         private TryFinallyBlockInfo(GenerationTrigger finallyBlock) {
@@ -279,27 +280,4 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         }
     }
 
-    private static class BreakableBlockInfo extends BlockInfo {
-        private final JetElement element;
-        private final Label entryPoint;
-        private final Label exitPoint;
-
-        private BreakableBlockInfo(JetElement element, Label entryPoint, Label exitPoint) {
-            this.element = element;
-            this.entryPoint = entryPoint;
-            this.exitPoint = exitPoint;
-        }
-
-        public JetElement getElement() {
-            return element;
-        }
-
-        public Label getEntryPoint() {
-            return entryPoint;
-        }
-
-        public Label getExitPoint() {
-            return exitPoint;
-        }
-    }
 }

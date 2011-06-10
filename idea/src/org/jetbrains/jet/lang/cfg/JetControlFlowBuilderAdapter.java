@@ -73,8 +73,8 @@ public class JetControlFlowBuilderAdapter implements JetControlFlowBuilder {
     }
 
     @Override
-    public Label enterLoop(@NotNull JetExpression expression, Label loopExitPoint) {
-        return builder.enterLoop(expression, loopExitPoint);
+    public LoopInfo enterLoop(@NotNull JetExpression expression, Label loopExitPoint, Label conditionEntryPoint) {
+        return builder.enterLoop(expression, loopExitPoint, conditionEntryPoint);
     }
 
     @Override

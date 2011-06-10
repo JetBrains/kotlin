@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
@@ -9,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.JetControlFlowProcessor;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
+import org.jetbrains.jet.lang.cfg.LoopInfo;
 import org.jetbrains.jet.lang.cfg.pseudocode.*;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
@@ -721,6 +723,7 @@ public class ClassDescriptorResolver {
         final JetPseudocodeTrace pseudocodeTrace = flowDataTraceFactory.createTrace(declaration);
         final Map<JetElement, Pseudocode> pseudocodeMap = new HashMap<JetElement, Pseudocode>();
         final Map<JetElement, Instruction> representativeInstructions = new HashMap<JetElement, Instruction>();
+        final Map<JetExpression, LoopInfo> loopInfo = Maps.newHashMap();
         JetPseudocodeTrace wrappedTrace = new JetPseudocodeTrace() {
             @Override
             public void recordControlFlowData(@NotNull JetElement element, @NotNull Pseudocode pseudocode) {
@@ -732,6 +735,13 @@ public class ClassDescriptorResolver {
             public void recordRepresentativeInstruction(@NotNull JetElement element, @NotNull Instruction instruction) {
                 Instruction oldValue = representativeInstructions.put(element, instruction);
 //                assert oldValue == null : element.getText();
+                pseudocodeTrace.recordRepresentativeInstruction(element, instruction);
+            }
+
+            @Override
+            public void recordLoopInfo(JetExpression expression, LoopInfo blockInfo) {
+                loopInfo.put(expression, blockInfo);
+                pseudocodeTrace.recordLoopInfo(expression, blockInfo);
             }
 
             @Override
@@ -762,7 +772,7 @@ public class ClassDescriptorResolver {
 
                 SubroutineEnterInstruction enterInstruction = pseudocode.getEnterInstruction();
                 Set<Instruction> visited = new HashSet<Instruction>();
-                collectReachable(enterInstruction, visited);
+                collectReachable(enterInstruction, visited, null);
 
                 for (Instruction instruction : pseudocode.getInstructions()) {
                     if (!visited.contains(instruction) &&
@@ -783,11 +793,11 @@ public class ClassDescriptorResolver {
                 SubroutineEnterInstruction enterInstruction = dominatorInstruction.getOwner().getEnterInstruction();
 
                 Set<Instruction> reachable = new HashSet<Instruction>();
-                collectReachable(enterInstruction, reachable);
+                collectReachable(enterInstruction, reachable, null);
 
                 Set<Instruction> reachableWithDominatorProhibited = new HashSet<Instruction>();
                 reachableWithDominatorProhibited.add(dominatorInstruction);
-                collectReachable(enterInstruction, reachableWithDominatorProhibited);
+                collectReachable(enterInstruction, reachableWithDominatorProhibited, null);
 
                 for (Instruction instruction : reachable) {
                     if (instruction instanceof JetElementInstruction
@@ -798,15 +808,39 @@ public class ClassDescriptorResolver {
                     }
                 }
             }
+
+            @Override
+            public boolean isBreakable(JetLoopExpression loop) {
+                LoopInfo info = loopInfo.get(loop);
+                Pseudocode.PseudocodeLabel bodyEntryPoint = (Pseudocode.PseudocodeLabel) info.getBodyEntryPoint();
+                Pseudocode.PseudocodeLabel exitPoint = (Pseudocode.PseudocodeLabel) info.getExitPoint();
+                HashSet<Instruction> visited = Sets.newHashSet();
+                Pseudocode.PseudocodeLabel conditionEntryPoint = (Pseudocode.PseudocodeLabel) info.getConditionEntryPoint();
+                visited.add(conditionEntryPoint.resolveToInstruction());
+                return collectReachable(bodyEntryPoint.resolveToInstruction(), visited, exitPoint.resolveToInstruction());
+            }
+
+            public boolean isReachable(JetExpression from, JetExpression to) {
+                Instruction fromInstr = representativeInstructions.get(from);
+                assert fromInstr != null : "No representative instruction for " + from.getText();
+                Instruction toInstr = representativeInstructions.get(to);
+                assert toInstr != null : "No representative instruction for " + to.getText();
+
+                return collectReachable(fromInstr, Sets.<Instruction>newHashSet(), toInstr);
+            }
         };
     }
 
-    private void collectReachable(Instruction current, Set<Instruction> visited) {
-        if (!visited.add(current)) return;
+    private boolean collectReachable(Instruction current, Set<Instruction> visited, @Nullable Instruction lookFor) {
+        if (!visited.add(current)) return false;
+        if (current == lookFor) return true;
 
         for (Instruction nextInstruction : current.getNextInstructions()) {
-            collectReachable(nextInstruction, visited);
+            if (collectReachable(nextInstruction, visited, lookFor)) {
+                return true;
+            }
         }
+        return false;
     }
 
     private void processPreviousInstructions(Instruction previousFor, final Set<Instruction> visited, final Collection<JetExpression> returnedExpressions, final Collection<JetElement> elementsReturningUnit) {
