@@ -1291,7 +1291,6 @@ public class JetTypeInferrer {
             JetExpression condition = expression.getCondition();
             checkCondition(scope, condition);
 
-            // TODO : change types according to is and null checks
             JetExpression elseBranch = expression.getElse();
             JetExpression thenBranch = expression.getThen();
 
@@ -1300,7 +1299,10 @@ public class JetTypeInferrer {
 
             if (elseBranch == null) {
                 if (thenBranch != null) {
-                    getType(scope, thenBranch, true, thenInfo);
+                    JetType type = getType(scope, thenBranch, true, thenInfo);
+                    if (type != null && JetStandardClasses.isNothing(type)) {
+                        resultDataFlowInfo = elseInfo;
+                    }
                     result = JetStandardClasses.getUnitType();
                 }
             }
@@ -1401,11 +1403,14 @@ public class JetTypeInferrer {
 
         @Override
         public void visitWhileExpression(JetWhileExpression expression) {
-            checkCondition(scope, expression.getCondition());
+            JetExpression condition = expression.getCondition();
+            checkCondition(scope, condition);
             JetExpression body = expression.getBody();
             if (body != null) {
-                getType(scope, body, true);
+                DataFlowInfo conditionInfo = condition == null ? dataFlowInfo : extractDataFlowInfoFromCondition(condition, true);
+                getType(scope, body, true, conditionInfo);
             }
+            resultDataFlowInfo = condition == null ? null : extractDataFlowInfoFromCondition(condition, false);
             result = JetStandardClasses.getUnitType();
         }
 

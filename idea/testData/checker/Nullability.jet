@@ -65,4 +65,77 @@ fun test() {
   else {
     out?.println(3)
   }
+
+  out?.println()
+  ins?.read()
+
+  if (ins != null) {
+    ins.read()
+    out?.println()
+    if (out != null) {
+      ins.read();
+      out.println();
+    }
+  }
+
+  if (out != null && ins != null) {
+    ins.read();
+    out.println();
+  }
+
+  if (out == null) {
+    out?.println()
+  } else {
+    out.println()
+  }
+
+  if (out != null && ins != null || out != null) {
+    ins?.read();
+    out.println();
+  }
+
+  if (out == null || out.println(0) == ()) {
+    out?.println(1)
+  }
+  else {
+    out.println(2)
+  }
+
+  if (out != null && out.println() == ()) {
+    out.println();
+  }
+  else {
+    out?.println();
+  }
+
+  if (out == null || out != null && out.println() == ()) {
+    out?.println();
+  }
+  else {
+    out.println();
+  }
+
+  if (1 == 2 || out != null && out.println(1) == ()) {
+    out?.println(2);
+  }
+  else {
+    out?.println(3)
+  }
+
+  if (1 > 2) {
+    if (out == null) return;
+    out.println();
+  }
+  out?.println();
+
+  while (out != null) {
+    out.println();
+  }
+  out?.println();
+
+  while (out == null) {
+    out?.println();
+  }
+  out.println()
+
 }
