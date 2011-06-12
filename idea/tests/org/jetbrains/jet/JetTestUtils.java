@@ -3,6 +3,7 @@ package org.jetbrains.jet;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.ErrorHandler;
+import org.jetbrains.jet.lang.ErrorHandlerWithRegions;
 import org.jetbrains.jet.lang.JetDiagnostic;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
@@ -63,10 +64,15 @@ public class JetTestUtils {
         public void requireBackingField(@NotNull PropertyDescriptor propertyDescriptor) {
         }
 
+        @Override
+        public void recordAutoCast(@NotNull JetExpression expression, @NotNull JetType type) {
+
+        }
+
         @NotNull
         @Override
-        public ErrorHandler getErrorHandler() {
-            return ErrorHandler.DO_NOTHING;
+        public ErrorHandlerWithRegions getErrorHandler() {
+            return new ErrorHandlerWithRegions(ErrorHandler.DO_NOTHING);
         }
 
         @Override
@@ -175,6 +181,11 @@ public class JetTestUtils {
 
                 @Override
                 public ConstructorDescriptor resolveSuperConstructor(JetDelegatorToSuperCall superCall) {
+                    throw new UnsupportedOperationException(); // TODO
+                }
+
+                @Override
+                public JetType getAutoCastType(@NotNull JetExpression expression) {
                     throw new UnsupportedOperationException(); // TODO
                 }
 

@@ -1,6 +1,8 @@
 package org.jetbrains.jet.lang.resolve;
 
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.JetDiagnostic;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
@@ -40,6 +42,9 @@ public interface BindingContext {
     boolean hasBackingField(PropertyDescriptor propertyDescriptor);
 
     ConstructorDescriptor resolveSuperConstructor(JetDelegatorToSuperCall superCall);
+
+    @Nullable
+    JetType getAutoCastType(@NotNull JetExpression expression);
 
     Collection<JetDiagnostic> getDiagnostics();
 }

@@ -2,7 +2,7 @@ package org.jetbrains.jet.lang.resolve;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.ErrorHandler;
+import org.jetbrains.jet.lang.ErrorHandlerWithRegions;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -35,8 +35,10 @@ public interface BindingTrace {
 
     void requireBackingField(@NotNull PropertyDescriptor propertyDescriptor);
 
+    void recordAutoCast(@NotNull JetExpression expression, @NotNull JetType type);
+
     @NotNull
-    ErrorHandler getErrorHandler();
+    ErrorHandlerWithRegions getErrorHandler();
 
     boolean isProcessed(@NotNull JetExpression expression);
 

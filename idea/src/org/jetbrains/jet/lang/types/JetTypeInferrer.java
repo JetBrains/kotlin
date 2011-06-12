@@ -10,6 +10,7 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lang.ErrorHandlerWithRegions;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -1346,12 +1347,14 @@ public class JetTypeInferrer {
             condition.accept(new JetVisitor() {
                 @Override
                 public void visitIsExpression(JetIsExpression expression) {
-                    VariableDescriptor variableDescriptor = getVariableDescriptorFromSimpleName(expression.getLeftHandSide());
-                    if (variableDescriptor != null) {
-                        JetPattern pattern = expression.getPattern();
-                        if (pattern instanceof JetTypePattern) {
-                            JetTypePattern jetTypePattern = (JetTypePattern) pattern;
-                            result[0] = dataFlowInfo.isInstanceOf(variableDescriptor, trace.getBindingContext().resolveTypeReference(jetTypePattern.getTypeReference()));
+                    if (conditionValue) {
+                        VariableDescriptor variableDescriptor = getVariableDescriptorFromSimpleName(expression.getLeftHandSide());
+                        if (variableDescriptor != null) {
+                            JetPattern pattern = expression.getPattern();
+                            if (pattern instanceof JetTypePattern) {
+                                JetTypePattern jetTypePattern = (JetTypePattern) pattern;
+                                result[0] = dataFlowInfo.isInstanceOf(variableDescriptor, trace.getBindingContext().resolveTypeReference(jetTypePattern.getTypeReference()));
+                            }
                         }
                     }
                 }
@@ -1642,25 +1645,37 @@ public class JetTypeInferrer {
             JetExpression receiverExpression = expression.getReceiverExpression();
             JetType receiverType = new TypeInferrerVisitorWithNamespaces(scope, false, dataFlowInfo).getType(receiverExpression);
             if (receiverType != null) {
+                ErrorHandlerWithRegions errorHandler = trace.getErrorHandler();
+                errorHandler.openRegion();
                 JetType selectorReturnType = getSelectorReturnType(receiverType, selectorExpression);
-                
-                if (selectorReturnType == null) {
+
+                if (selectorReturnType != null) {
+                    errorHandler.closeAndCommitCurrentRegion();
+                }
+                else {
+                    ErrorHandlerWithRegions.DiagnosticsRegion regionToCommit = errorHandler.closeAndReturnCurrentRegion();
+
                     VariableDescriptor variableDescriptor = getVariableDescriptorFromSimpleName(receiverExpression);
                     if (variableDescriptor != null) {
                         Collection<JetType> possibleTypes = dataFlowInfo.getPossibleTypes(variableDescriptor);
                         for (JetType possibleType : possibleTypes) {
+                            errorHandler.openRegion();
                             selectorReturnType = getSelectorReturnType(possibleType, selectorExpression);
                             if (selectorReturnType != null) {
+                                regionToCommit = errorHandler.closeAndReturnCurrentRegion();
+                                trace.recordAutoCast(receiverExpression, possibleType);
                                 break;
                             }
                         }
                     }
+
+                    regionToCommit.commit();
                 }
 
                 if (expression.getOperationSign() == JetTokens.QUEST) {
                     if (selectorReturnType != null && !isBoolean(selectorReturnType) && selectorExpression != null) {
                         // TODO : more comprehensible error message
-                        trace.getErrorHandler().typeMismatch(selectorExpression, semanticServices.getStandardLibrary().getBooleanType(), selectorReturnType);
+                        errorHandler.typeMismatch(selectorExpression, semanticServices.getStandardLibrary().getBooleanType(), selectorReturnType);
                     }
                     result = TypeUtils.makeNullable(receiverType);
                 }

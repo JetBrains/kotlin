@@ -22,6 +22,7 @@ import org.jetbrains.jet.lang.psi.JetNamespace;
 import org.jetbrains.jet.lang.resolve.java.JavaPackageScope;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 
+import java.util.Collection;
 import java.util.Collections;
 
 /**
@@ -115,7 +116,12 @@ public class AnalyzingUtils {
     }
 
     public static void applyHandler(@NotNull ErrorHandler errorHandler, @NotNull BindingContext bindingContext) {
-        for (JetDiagnostic jetDiagnostic : bindingContext.getDiagnostics()) {
+        Collection<JetDiagnostic> diagnostics = bindingContext.getDiagnostics();
+        applyHandler(errorHandler, diagnostics);
+    }
+
+    public static void applyHandler(@NotNull ErrorHandler errorHandler, @NotNull Collection<JetDiagnostic> diagnostics) {
+        for (JetDiagnostic jetDiagnostic : diagnostics) {
             jetDiagnostic.acceptHandler(errorHandler);
         }
     }

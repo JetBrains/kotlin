@@ -2,7 +2,7 @@ package org.jetbrains.jet.lang.resolve;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.ErrorHandler;
+import org.jetbrains.jet.lang.ErrorHandlerWithRegions;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -13,6 +13,11 @@ import org.jetbrains.jet.lang.types.JetType;
  */
 public class BindingTraceAdapter implements BindingTrace {
     private final BindingTrace originalTrace;
+
+    @Override
+    public void recordAutoCast(@NotNull JetExpression expression, @NotNull JetType type) {
+        originalTrace.recordAutoCast(expression, type);
+    }
 
     public BindingTraceAdapter(BindingTrace originalTrace) {
         this.originalTrace = originalTrace;
@@ -63,7 +68,7 @@ public class BindingTraceAdapter implements BindingTrace {
 
     @NotNull
     @Override
-    public ErrorHandler getErrorHandler() {
+    public ErrorHandlerWithRegions getErrorHandler() {
         return originalTrace.getErrorHandler();
     }
 

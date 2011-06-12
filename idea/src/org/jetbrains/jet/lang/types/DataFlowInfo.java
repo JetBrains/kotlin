@@ -14,10 +14,10 @@ import java.util.*;
 public class DataFlowInfo {
 
     private static DataFlowInfo EMPTY = new DataFlowInfo(ImmutableMap.<VariableDescriptor, NullabilityFlags>of(), Multimaps.forMap(Collections.<VariableDescriptor, JetType>emptyMap()));
-    public static final Supplier<SortedSet<JetType>> SORTED_SET_SUPPLIER = new Supplier<SortedSet<JetType>>() {
+        public static final Supplier<List<JetType>> ARRAY_LIST_SUPPLIER = new Supplier<List<JetType>>() {
         @Override
-        public SortedSet<JetType> get() {
-            return new TreeSet<JetType>();
+        public List<JetType> get() {
+            return Lists.newArrayList();
         }
     };
 
@@ -83,7 +83,7 @@ public class DataFlowInfo {
     public DataFlowInfo isInstanceOf(@NotNull VariableDescriptor variableDescriptor, @NotNull JetType type) {
         Multimap<VariableDescriptor, JetType> newTypeInfo = copyTypeInfo();
         newTypeInfo.put(variableDescriptor, type);
-        return new DataFlowInfo(getEqualsToNullMap(variableDescriptor, false), newTypeInfo);
+        return new DataFlowInfo(getEqualsToNullMap(variableDescriptor, !type.isNullable()), newTypeInfo);
     }
 
     public DataFlowInfo and(DataFlowInfo other) {
@@ -107,7 +107,7 @@ public class DataFlowInfo {
     }
 
     private Multimap<VariableDescriptor, JetType> copyTypeInfo() {
-        Multimap<VariableDescriptor, JetType> newTypeInfo = Multimaps.newSortedSetMultimap(Maps.<VariableDescriptor, Collection<JetType>>newHashMap(), SORTED_SET_SUPPLIER);
+        Multimap<VariableDescriptor, JetType> newTypeInfo = Multimaps.newListMultimap(Maps.<VariableDescriptor, Collection<JetType>>newHashMap(), ARRAY_LIST_SUPPLIER);
         newTypeInfo.putAll(typeInfo);
         return newTypeInfo;
     }

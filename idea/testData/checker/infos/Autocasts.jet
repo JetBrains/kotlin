@@ -1,0 +1,41 @@
+class A() {
+  fun foo() {}
+}
+
+class B() : A() {
+  fun bar() {}
+}
+
+fun f9() {
+  val a : A?
+  a?.foo()
+  a?.<error>bar</error>()
+  if (a is B) {
+    <info descr="Automatically cast to B">a</info>.bar()
+    a.foo()
+  }
+  a?.foo()
+  a?.<error>bar</error>()
+  if (!(a is B)) {
+    a?.<error>bar</error>()
+    a?.foo()
+  }
+  if (!(a is B) || <info descr="Automatically cast to B">a</info>.bar() == ()) {
+      a?.<error>bar</error>()
+  }
+  if (!(a is B)) {
+    return;
+  }
+  <info descr="Automatically cast to B">a</info>.bar()
+  a.foo()
+}
+
+fun f10() {
+  val a : A?
+  if (!(a is B)) {
+    return;
+  }
+  if (!(a is B)) {
+    return;
+  }
+}

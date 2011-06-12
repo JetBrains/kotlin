@@ -7,6 +7,7 @@ import com.intellij.lexer.Lexer;
 import com.intellij.openapi.editor.HighlighterColors;
 import com.intellij.openapi.editor.SyntaxHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
+import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
@@ -14,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lexer.JetLexer;
 import org.jetbrains.jet.lexer.JetTokens;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,7 +56,7 @@ public class JetHighlighter extends SyntaxHighlighterBase {
                                                  SyntaxHighlighterColors.NUMBER.getDefaultAttributes()
                                                 );
 
-    private static final TextAttributesKey JET_STRING = TextAttributesKey.createTextAttributesKey(
+    public static final TextAttributesKey JET_STRING = TextAttributesKey.createTextAttributesKey(
                                                  "JET.STRING",
                                                  SyntaxHighlighterColors.STRING.getDefaultAttributes()
                                                 );
@@ -68,6 +70,14 @@ public class JetHighlighter extends SyntaxHighlighterBase {
                                                     "JET.BADCHARACTER",
                                                     HighlighterColors.BAD_CHARACTER.getDefaultAttributes()
                                                   );
+
+    public static final TextAttributesKey JET_AUTO_CAST_EXPRESSION;
+    static {
+        TextAttributes clone = SyntaxHighlighterColors.STRING.getDefaultAttributes().clone();
+        clone.setFontType(Font.PLAIN);
+// TODO: proper attributes
+        JET_AUTO_CAST_EXPRESSION = TextAttributesKey.createTextAttributesKey("JET.AUTO.CAST.EXPRESSION", clone);
+    }
 
     @NotNull
     public Lexer getHighlightingLexer() {

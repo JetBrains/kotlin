@@ -88,6 +88,22 @@ public class JetPsiChecker implements Annotator {
                 AnalyzingUtils.applyHandler(errorHandler, bindingContext);
 
                 highlightBackingFields(holder, file, bindingContext);
+
+                file.acceptChildren(new JetVisitor() {
+                    @Override
+                    public void visitExpression(JetExpression expression) {
+                        JetType autoCast = bindingContext.getAutoCastType(expression);
+                        if (autoCast != null) {
+                            holder.createInfoAnnotation(expression, "Automatically cast to " + autoCast).setTextAttributes(JetHighlighter.JET_AUTO_CAST_EXPRESSION);
+                        }
+                        expression.acceptChildren(this);
+                    }
+
+                    @Override
+                    public void visitJetElement(JetElement element) {
+                        element.acceptChildren(this);
+                    }
+                });
             }
             catch (ProcessCanceledException e) {
                 throw e;
