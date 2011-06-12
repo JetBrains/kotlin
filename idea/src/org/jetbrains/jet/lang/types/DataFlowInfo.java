@@ -80,10 +80,32 @@ public class DataFlowInfo {
         return ImmutableMap.copyOf(builder);
     }
 
+    private ImmutableMap<VariableDescriptor, NullabilityFlags> getEqualsToNullMap(VariableDescriptor[] variableDescriptors, boolean notNull) {
+        if (variableDescriptors.length == 0) return nullabilityInfo;
+        Map<VariableDescriptor, NullabilityFlags> builder = Maps.newHashMap(nullabilityInfo);
+        for (VariableDescriptor variableDescriptor : variableDescriptors) {
+            if (variableDescriptor != null) {
+                builder.put(variableDescriptor, new NullabilityFlags(!notNull, notNull));
+            }
+        }
+        return ImmutableMap.copyOf(builder);
+    }
+
     public DataFlowInfo isInstanceOf(@NotNull VariableDescriptor variableDescriptor, @NotNull JetType type) {
         ListMultimap<VariableDescriptor, JetType> newTypeInfo = copyTypeInfo();
         newTypeInfo.put(variableDescriptor, type);
         return new DataFlowInfo(getEqualsToNullMap(variableDescriptor, !type.isNullable()), newTypeInfo);
+    }
+
+    public DataFlowInfo isInstanceOf(@NotNull VariableDescriptor[] variableDescriptors, @NotNull JetType type) {
+        if (variableDescriptors.length == 0) return this;
+        ListMultimap<VariableDescriptor, JetType> newTypeInfo = copyTypeInfo();
+        for (VariableDescriptor variableDescriptor : variableDescriptors) {
+            if (variableDescriptor != null) {
+                newTypeInfo.put(variableDescriptor, type);
+            }
+        }
+        return new DataFlowInfo(getEqualsToNullMap(variableDescriptors, !type.isNullable()), newTypeInfo);
     }
 
     public DataFlowInfo and(DataFlowInfo other) {

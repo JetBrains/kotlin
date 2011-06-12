@@ -71,7 +71,8 @@ fun f12(a : A?) {
     is Any => a.foo();
     is Any? => a.<error>bar</error>()
     is val c : <error>B</error> => c.foo()
-    is val c is C => c.foo()
+    is val c is C => <info descr="Automatically cast to C">c</info>.bar()
+    is val c is C => <info descr="Automatically cast to C">a</info>.bar()
     else => a?.foo()
   }
 }
