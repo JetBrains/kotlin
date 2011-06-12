@@ -641,6 +641,8 @@ public class JetControlFlowProcessor {
                 JetWhenCondition condition = whenEntry.getCondition();
                 if (condition != null) {
                     condition.accept(new JetVisitor() {
+                        private final JetVisitor conditionVisitor = this;
+
                         @Override
                         public void visitWhenConditionWithExpression(JetWhenConditionWithExpression condition) {
                             value(condition.getExpression(), false, inCondition); // TODO : inCondition?
@@ -687,6 +689,14 @@ public class JetControlFlowProcessor {
                                     public void visitDecomposerPattern(JetDecomposerPattern pattern) {
                                         value(pattern.getDecomposerExpression(), false, inCondition);
                                         pattern.getArgumentList().accept(this);
+                                    }
+
+                                    @Override
+                                    public void visitBindingPattern(JetBindingPattern pattern) {
+                                        JetWhenCondition condition = pattern.getCondition();
+                                        if (condition != null) {
+                                            condition.accept(conditionVisitor);
+                                        }
                                     }
 
                                     @Override

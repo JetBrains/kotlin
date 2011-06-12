@@ -2,7 +2,8 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.JetNodeTypes;
 
 /**
  * @author abreslav
@@ -12,10 +13,18 @@ public class JetBindingPattern extends JetPattern {
         super(node);
     }
 
-    public boolean isVar() {
-        return findChildByType(JetTokens.VAR_KEYWORD) != null;
+    @NotNull
+    public JetProperty getVariableDeclaration() {
+        return (JetProperty) findChildByType(JetNodeTypes.PROPERTY);
     }
 
+    @Nullable
+    public JetWhenCondition getCondition() {
+        return findChildByClass(JetWhenCondition.class);
+    }
 
-
+    @Override
+    public void accept(@NotNull JetVisitor visitor) {
+        visitor.visitBindingPattern(this);
+    }
 }

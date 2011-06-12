@@ -104,7 +104,7 @@ public class JetTypeChecker {
             }
             commonSupertypes = computeCommonRawSupertypes(merge);
         }
-        assert !commonSupertypes.isEmpty() : types;
+        assert !commonSupertypes.isEmpty() : commonSupertypes + " <- " + types;
         Map.Entry<TypeConstructor, Set<JetType>> entry = commonSupertypes.entrySet().iterator().next();
         JetType result = computeSupertypeProjections(entry.getKey(), entry.getValue());
 

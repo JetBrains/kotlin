@@ -327,17 +327,19 @@ JetFile: When.jet
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               BINDING_PATTERN
-                PsiElement(val)('val')
+                PROPERTY
+                  PsiElement(val)('val')
+                  PsiWhiteSpace(' ')
+                  PsiElement(IDENTIFIER)('a')
                 PsiWhiteSpace(' ')
-                PsiElement(IDENTIFIER)('a')
-                PsiWhiteSpace(' ')
-                PsiElement(is)('is')
-                PsiWhiteSpace(' ')
-                TYPE_PATTERN
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('Foo')
+                WHEN_CONDITION_IS_PATTERN
+                  PsiElement(is)('is')
+                  PsiWhiteSpace(' ')
+                  TYPE_PATTERN
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('Foo')
             PsiWhiteSpace(' ')
             PsiElement(DOUBLE_ARROW)('=>')
             PsiWhiteSpace(' ')
@@ -352,17 +354,19 @@ JetFile: When.jet
                 PsiElement(LPAR)('(')
                 TUPLE_PATTERN_ENTRY
                   BINDING_PATTERN
-                    PsiElement(val)('val')
+                    PROPERTY
+                      PsiElement(val)('val')
+                      PsiWhiteSpace(' ')
+                      PsiElement(IDENTIFIER)('a')
                     PsiWhiteSpace(' ')
-                    PsiElement(IDENTIFIER)('a')
-                    PsiWhiteSpace(' ')
-                    PsiElement(is)('is')
-                    PsiWhiteSpace(' ')
-                    TYPE_PATTERN
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('Foo')
+                    WHEN_CONDITION_IS_PATTERN
+                      PsiElement(is)('is')
+                      PsiWhiteSpace(' ')
+                      TYPE_PATTERN
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('Foo')
                 PsiElement(COMMA)(',')
                 PsiWhiteSpace(' ')
                 TUPLE_PATTERN_ENTRY
@@ -473,9 +477,10 @@ JetFile: When.jet
                   PsiWhiteSpace(' ')
                   TUPLE_PATTERN_ENTRY
                     BINDING_PATTERN
-                      PsiElement(val)('val')
-                      PsiWhiteSpace(' ')
-                      PsiElement(IDENTIFIER)('r')
+                      PROPERTY
+                        PsiElement(val)('val')
+                        PsiWhiteSpace(' ')
+                        PsiElement(IDENTIFIER)('r')
                   PsiElement(RPAR)(')')
             PsiWhiteSpace(' ')
             PsiElement(DOUBLE_ARROW)('=>')
@@ -686,17 +691,19 @@ JetFile: When.jet
                   PsiElement(LPAR)('(')
                   TUPLE_PATTERN_ENTRY
                     BINDING_PATTERN
-                      PsiElement(val)('val')
+                      PROPERTY
+                        PsiElement(val)('val')
+                        PsiWhiteSpace(' ')
+                        PsiElement(IDENTIFIER)('a')
                       PsiWhiteSpace(' ')
-                      PsiElement(IDENTIFIER)('a')
-                      PsiWhiteSpace(' ')
-                      PsiElement(is)('is')
-                      PsiWhiteSpace(' ')
-                      TYPE_PATTERN
-                        TYPE_REFERENCE
-                          USER_TYPE
-                            REFERENCE_EXPRESSION
-                              PsiElement(IDENTIFIER)('T')
+                      WHEN_CONDITION_IS_PATTERN
+                        PsiElement(is)('is')
+                        PsiWhiteSpace(' ')
+                        TYPE_PATTERN
+                          TYPE_REFERENCE
+                            USER_TYPE
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('T')
                   PsiElement(COMMA)(',')
                   PsiWhiteSpace(' ')
                   TUPLE_PATTERN_ENTRY
@@ -833,17 +840,19 @@ JetFile: When.jet
                 PsiWhiteSpace(' ')
                 TUPLE_PATTERN_ENTRY
                   BINDING_PATTERN
-                    PsiElement(val)('val')
+                    PROPERTY
+                      PsiElement(val)('val')
+                      PsiWhiteSpace(' ')
+                      PsiElement(IDENTIFIER)('a')
                     PsiWhiteSpace(' ')
-                    PsiElement(IDENTIFIER)('a')
-                    PsiWhiteSpace(' ')
-                    PsiElement(is)('is')
-                    PsiWhiteSpace(' ')
-                    TYPE_PATTERN
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('Foo')
+                    WHEN_CONDITION_IS_PATTERN
+                      PsiElement(is)('is')
+                      PsiWhiteSpace(' ')
+                      TYPE_PATTERN
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('Foo')
                 PsiElement(COMMA)(',')
                 PsiWhiteSpace(' ')
                 TUPLE_PATTERN_ENTRY
@@ -888,19 +897,22 @@ JetFile: When.jet
                 PsiWhiteSpace(' ')
                 TUPLE_PATTERN_ENTRY
                   BINDING_PATTERN
-                    PsiElement(val)('val')
+                    PROPERTY
+                      PsiElement(val)('val')
+                      PsiWhiteSpace(' ')
+                      PsiElement(IDENTIFIER)('a')
                     PsiWhiteSpace(' ')
-                    PsiElement(IDENTIFIER)('a')
-                    PsiWhiteSpace(' ')
-                    PsiElement(in)('in')
-                    PsiWhiteSpace(' ')
-                    BINARY_EXPRESSION
-                      INTEGER_CONSTANT
-                        PsiElement(INTEGER_LITERAL)('1')
+                    WHEN_CONDITION_IN_RANGE
                       OPERATION_REFERENCE
-                        PsiElement(RANGE)('..')
-                      INTEGER_CONSTANT
-                        PsiElement(INTEGER_LITERAL)('2')
+                        PsiElement(in)('in')
+                      PsiWhiteSpace(' ')
+                      BINARY_EXPRESSION
+                        INTEGER_CONSTANT
+                          PsiElement(INTEGER_LITERAL)('1')
+                        OPERATION_REFERENCE
+                          PsiElement(RANGE)('..')
+                        INTEGER_CONSTANT
+                          PsiElement(INTEGER_LITERAL)('2')
                 PsiElement(COMMA)(',')
                 PsiWhiteSpace(' ')
                 TUPLE_PATTERN_ENTRY
@@ -910,55 +922,59 @@ JetFile: When.jet
                 PsiWhiteSpace(' ')
                 TUPLE_PATTERN_ENTRY
                   BINDING_PATTERN
-                    PsiElement(val)('val')
+                    PROPERTY
+                      PsiElement(val)('val')
+                      PsiWhiteSpace(' ')
+                      PsiElement(IDENTIFIER)('_')
                     PsiWhiteSpace(' ')
-                    PsiElement(IDENTIFIER)('_')
-                    PsiWhiteSpace(' ')
-                    PsiElement(NOT_IS)('!is')
-                    PsiWhiteSpace(' ')
-                    TYPE_PATTERN
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('Foo')
+                    WHEN_CONDITION_IS_PATTERN
+                      PsiElement(NOT_IS)('!is')
+                      PsiWhiteSpace(' ')
+                      TYPE_PATTERN
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('Foo')
                 PsiElement(COMMA)(',')
                 PsiWhiteSpace(' ')
                 TUPLE_PATTERN_ENTRY
                   BINDING_PATTERN
-                    PsiElement(val)('val')
+                    PROPERTY
+                      PsiElement(val)('val')
+                      PsiWhiteSpace(' ')
+                      PsiElement(IDENTIFIER)('bar')
                     PsiWhiteSpace(' ')
-                    PsiElement(IDENTIFIER)('bar')
-                    PsiWhiteSpace(' ')
-                    PsiElement(is)('is')
-                    PsiWhiteSpace(' ')
-                    DECOMPOSER_PATTERN
-                      DOT_QUALIFIED_EXPRESSION
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('foo')
-                        PsiElement(DOT)('.')
-                        CALL_EXPRESSION
+                    WHEN_CONDITION_IS_PATTERN
+                      PsiElement(is)('is')
+                      PsiWhiteSpace(' ')
+                      DECOMPOSER_PATTERN
+                        DOT_QUALIFIED_EXPRESSION
                           REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('bar')
-                          TYPE_ARGUMENT_LIST
-                            PsiElement(LT)('<')
-                            TYPE_PROJECTION
+                            PsiElement(IDENTIFIER)('foo')
+                          PsiElement(DOT)('.')
+                          CALL_EXPRESSION
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('bar')
+                            TYPE_ARGUMENT_LIST
+                              PsiElement(LT)('<')
+                              TYPE_PROJECTION
+                                TYPE_REFERENCE
+                                  USER_TYPE
+                                    REFERENCE_EXPRESSION
+                                      PsiElement(IDENTIFIER)('a')
+                              PsiElement(GT)('>')
+                        PsiWhiteSpace(' ')
+                        PsiElement(AT)('@')
+                        PsiWhiteSpace(' ')
+                        DECOMPOSER_ARGUMENT_LIST
+                          PsiElement(LPAR)('(')
+                          TUPLE_PATTERN_ENTRY
+                            TYPE_PATTERN
                               TYPE_REFERENCE
                                 USER_TYPE
                                   REFERENCE_EXPRESSION
                                     PsiElement(IDENTIFIER)('a')
-                            PsiElement(GT)('>')
-                      PsiWhiteSpace(' ')
-                      PsiElement(AT)('@')
-                      PsiWhiteSpace(' ')
-                      DECOMPOSER_ARGUMENT_LIST
-                        PsiElement(LPAR)('(')
-                        TUPLE_PATTERN_ENTRY
-                          TYPE_PATTERN
-                            TYPE_REFERENCE
-                              USER_TYPE
-                                REFERENCE_EXPRESSION
-                                  PsiElement(IDENTIFIER)('a')
-                        PsiElement(RPAR)(')')
+                          PsiElement(RPAR)(')')
                 PsiElement(RPAR)(')')
             PsiWhiteSpace(' ')
             PsiElement(DOUBLE_ARROW)('=>')
@@ -998,16 +1014,17 @@ JetFile: When.jet
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               BINDING_PATTERN
-                PsiElement(val)('val')
-                PsiWhiteSpace(' ')
-                PsiElement(IDENTIFIER)('a')
-                PsiWhiteSpace(' ')
-                PsiElement(COLON)(':')
-                PsiWhiteSpace(' ')
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('Foo')
+                PROPERTY
+                  PsiElement(val)('val')
+                  PsiWhiteSpace(' ')
+                  PsiElement(IDENTIFIER)('a')
+                  PsiWhiteSpace(' ')
+                  PsiElement(COLON)(':')
+                  PsiWhiteSpace(' ')
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('Foo')
             PsiWhiteSpace(' ')
             PsiElement(DOUBLE_ARROW)('=>')
             PsiWhiteSpace(' ')
@@ -1088,9 +1105,10 @@ JetFile: When.jet
                   PsiWhiteSpace(' ')
                   TUPLE_PATTERN_ENTRY
                     BINDING_PATTERN
-                      PsiElement(val)('val')
-                      PsiWhiteSpace(' ')
-                      PsiElement(IDENTIFIER)('r')
+                      PROPERTY
+                        PsiElement(val)('val')
+                        PsiWhiteSpace(' ')
+                        PsiElement(IDENTIFIER)('r')
                   PsiElement(RPAR)(')')
             PsiElement(COMMA)(',')
             PsiWhiteSpace('\n    ')
@@ -1208,9 +1226,10 @@ JetFile: When.jet
                   PsiElement(LPAR)('(')
                   TUPLE_PATTERN_ENTRY
                     BINDING_PATTERN
-                      PsiElement(val)('val')
-                      PsiWhiteSpace(' ')
-                      PsiElement(IDENTIFIER)('b')
+                      PROPERTY
+                        PsiElement(val)('val')
+                        PsiWhiteSpace(' ')
+                        PsiElement(IDENTIFIER)('b')
                   PsiElement(COMMA)(',')
                   PsiWhiteSpace(' ')
                   TUPLE_PATTERN_ENTRY

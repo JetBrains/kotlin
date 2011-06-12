@@ -397,4 +397,8 @@ public class JetVisitor extends PsiElementVisitor {
     public void visitObjectDeclaration(JetObjectDeclaration declaration) {
         visitNamedDeclaration(declaration);
     }
+
+    public void visitBindingPattern(JetBindingPattern pattern) {
+        visitPattern(pattern);
+    }
 }

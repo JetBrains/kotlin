@@ -53,3 +53,25 @@ fun f10(a : A?) {
     }
   }
 }
+
+fun f11(a : A?) {
+  when (a) {
+    is B => <info descr="Automatically cast to B">a</info>.bar()
+    is A => a.foo()
+    is Any => a.foo()
+    is Any? => a.<error>bar</error>()
+    else => a?.foo()
+  }
+}
+
+fun f12(a : A?) {
+  when (a) {
+    is B => <info descr="Automatically cast to B">a</info>.bar()
+    is A => a.foo()
+    is Any => a.foo();
+    is Any? => a.<error>bar</error>()
+    is val c : <error>B</error> => c.foo()
+    is val c is C => c.foo()
+    else => a?.foo()
+  }
+}

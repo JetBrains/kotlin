@@ -378,23 +378,6 @@ public class JetTypeInferrer {
         return result;
     }
 
-    private void collectAllReturnTypes(JetWhenExpression whenExpression, JetScope scope, List<JetType> result) {
-        for (JetWhenEntry entry : whenExpression.getEntries()) {
-            JetWhenExpression subWhen = entry.getSubWhen();
-            if (subWhen != null) {
-                collectAllReturnTypes(subWhen, scope, result);
-            } else {
-                JetExpression resultExpression = entry.getExpression();
-                if (resultExpression != null) {
-                    JetType type = getType(scope, resultExpression, true);
-                    if (type != null) {
-                        result.add(type);
-                    }
-                }
-            }
-        }
-    }
-
     @Nullable
     private JetType resolveCall(
             @NotNull JetScope scope,
@@ -1105,77 +1088,91 @@ public class JetTypeInferrer {
             // TODO :change scope according to the bound value in the when header
             final JetExpression subjectExpression = expression.getSubjectExpression();
 
-            JetType subjectType = null;
-            if (subjectExpression != null) {
-                subjectType = getType(scope, subjectExpression, false);
-            }
+            final JetType subjectType = subjectExpression != null ? safeGetType(scope, subjectExpression, false) : ErrorUtils.createErrorType("Unknown type");
+            final VariableDescriptor variableDescriptor = subjectExpression != null ? getVariableDescriptorFromSimpleName(subjectExpression) : null;
 
             // TODO : exhaustive patterns
 
+            Set<JetType> expressionTypes = Sets.newHashSet();
             for (JetWhenEntry whenEntry : expression.getEntries()) {
-                final JetType finalSubjectType = subjectType != null ? subjectType : ErrorUtils.createErrorType("Unknown type");
                 JetWhenCondition condition = whenEntry.getCondition();
+                WritableScope scopeToExtend = new WritableScopeImpl(scope, scope.getContainingDeclaration(), trace.getErrorHandler());
+                DataFlowInfo newDataFlowInfo = dataFlowInfo;
                 if (condition != null) {
-                    condition.accept(new JetVisitor() {
-                        @Override
-                        public void visitWhenConditionWithExpression(JetWhenConditionWithExpression condition) {
-                            JetExpression conditionExpression = condition.getExpression();
-                            if (conditionExpression != null) {
-                                JetType type = getType(scope, conditionExpression, false);
-                                if (type != null && finalSubjectType != null) {
-                                    if (TypeUtils.intersect(semanticServices.getTypeChecker(), Sets.newHashSet(finalSubjectType, type)) == null) {
-                                        trace.getErrorHandler().genericError(conditionExpression.getNode(), "This condition can never hold");
-                                    }
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void visitWhenConditionCall(JetWhenConditionCall condition) {
-                            JetExpression callSuffixExpression = condition.getCallSuffixExpression();
-                            JetScope compositeScope = new ScopeWithReceiver(scope, finalSubjectType, semanticServices.getTypeChecker());
-                            if (callSuffixExpression != null) {
-                                JetType selectorReturnType = getType(compositeScope, callSuffixExpression, false);
-                                ensureBooleanResultWithCustomSubject(callSuffixExpression, selectorReturnType, "This expression");
-                                checkNullSafety(finalSubjectType, condition.getOperationTokenNode(), getCalleeFunctionDescriptor(callSuffixExpression));
-                            }
-                        }
-
-                        @Override
-                        public void visitWhenConditionInRange(JetWhenConditionInRange condition) {
-                            JetExpression rangeExpression = condition.getRangeExpression();
-                            if (rangeExpression != null) {
-                                checkInExpression(condition.getOperationReference(), subjectExpression, rangeExpression);
-                            }
-                        }
-
-                        @Override
-                        public void visitWhenConditionIsPattern(JetWhenConditionIsPattern condition) {
-                            JetPattern pattern = condition.getPattern();
-                            if (pattern != null) {
-                                checkPatternType(pattern, finalSubjectType);
-                            }
-                        }
-
-                        @Override
-                        public void visitJetElement(JetElement element) {
-                            trace.getErrorHandler().genericError(element.getNode(), "Unsupported [JetTypeInferrer] : " + element);
-                        }
-                    });
+                    newDataFlowInfo = checkWhenCondition(subjectExpression, subjectType, variableDescriptor, condition, scopeToExtend);
+                }
+                JetWhenExpression subWhen = whenEntry.getSubWhen();
+                JetExpression bodyExpression = subWhen == null ? whenEntry.getExpression() : subWhen;
+                if (bodyExpression != null) {
+                    JetType type = getType(scopeToExtend, bodyExpression, false, newDataFlowInfo);
+                    if (type != null) {
+                        expressionTypes.add(type);
+                    }
                 }
             }
 
-            List<JetType> expressionTypes = new ArrayList<JetType>();
-            collectAllReturnTypes(expression, scope, expressionTypes);
             if (!expressionTypes.isEmpty()) {
                 result = semanticServices.getTypeChecker().commonSupertype(expressionTypes);
             }
-            else {
+            else if (expression.getEntries().isEmpty()) {
                 trace.getErrorHandler().genericError(expression.getNode(), "Entries required for when-expression"); // TODO : Scope, and maybe this should not an error
             }
         }
 
-        private void checkPatternType(@NotNull JetPattern pattern, @NotNull final JetType subjectType) {
+        private DataFlowInfo checkWhenCondition(@Nullable final JetExpression subjectExpression, final JetType subjectType, final VariableDescriptor variableDescriptor, JetWhenCondition condition, final WritableScope scopeToExtend) {
+            final DataFlowInfo[] newDataFlowInfo = new DataFlowInfo[]{dataFlowInfo};
+            condition.accept(new JetVisitor() {
+                @Override
+                public void visitWhenConditionWithExpression(JetWhenConditionWithExpression condition) {
+                    JetExpression conditionExpression = condition.getExpression();
+                    if (conditionExpression != null) {
+                        JetType type = getType(scope, conditionExpression, false);
+                        if (type != null && subjectType != null) {
+                            if (TypeUtils.intersect(semanticServices.getTypeChecker(), Sets.newHashSet(subjectType, type)) == null) {
+                                trace.getErrorHandler().genericError(conditionExpression.getNode(), "This condition can never hold");
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void visitWhenConditionCall(JetWhenConditionCall condition) {
+                    JetExpression callSuffixExpression = condition.getCallSuffixExpression();
+                    JetScope compositeScope = new ScopeWithReceiver(scope, subjectType, semanticServices.getTypeChecker());
+                    if (callSuffixExpression != null) {
+                        JetType selectorReturnType = getType(compositeScope, callSuffixExpression, false);
+                        ensureBooleanResultWithCustomSubject(callSuffixExpression, selectorReturnType, "This expression");
+                        checkNullSafety(subjectType, condition.getOperationTokenNode(), getCalleeFunctionDescriptor(callSuffixExpression));
+                    }
+                }
+
+                @Override
+                public void visitWhenConditionInRange(JetWhenConditionInRange condition) {
+                    JetExpression rangeExpression = condition.getRangeExpression();
+                    if (rangeExpression != null) {
+                        assert subjectExpression != null;
+                        checkInExpression(condition.getOperationReference(), subjectExpression, rangeExpression);
+                    }
+                }
+
+                @Override
+                public void visitWhenConditionIsPattern(JetWhenConditionIsPattern condition) {
+                    JetPattern pattern = condition.getPattern();
+                    if (pattern != null) {
+                        newDataFlowInfo[0] = checkPatternType(variableDescriptor, pattern, subjectType, scopeToExtend);
+                    }
+                }
+
+                @Override
+                public void visitJetElement(JetElement element) {
+                    trace.getErrorHandler().genericError(element.getNode(), "Unsupported [JetTypeInferrer] : " + element);
+                }
+            });
+            return newDataFlowInfo[0];
+        }
+
+        private DataFlowInfo checkPatternType(@Nullable final VariableDescriptor subjectVariable, @NotNull JetPattern pattern, @NotNull final JetType subjectType, @NotNull final WritableScope scopeToExtend) {
+            final DataFlowInfo[] result = new DataFlowInfo[] {dataFlowInfo};
             pattern.accept(new JetVisitor() {
                 @Override
                 public void visitTypePattern(JetTypePattern typePattern) {
@@ -1183,18 +1180,10 @@ public class JetTypeInferrer {
                     if (typeReference != null) {
                         JetType type = typeResolver.resolveType(scope, typeReference);
                         checkTypeCompatibility(type, subjectType, typePattern);
+                        if (subjectVariable != null) {
+                            result[0] = dataFlowInfo.isInstanceOf(subjectVariable, type);
+                        }
                     }
-                }
-
-                @Override
-                public void visitWildcardPattern(JetWildcardPattern pattern) {
-                    // Nothing
-                }
-
-                @Override
-                public void visitExpressionPattern(JetExpressionPattern pattern) {
-                    JetType type = getType(scope, pattern.getExpression(), false);
-                    checkTypeCompatibility(type, subjectType, pattern);
                 }
 
                 @Override
@@ -1202,7 +1191,7 @@ public class JetTypeInferrer {
                     List<JetTuplePatternEntry> entries = pattern.getEntries();
                     TypeConstructor typeConstructor = subjectType.getConstructor();
                     if (!JetStandardClasses.getTuple(entries.size()).getTypeConstructor().equals(typeConstructor)
-                            || typeConstructor.getParameters().size() != entries.size()) {
+                        || typeConstructor.getParameters().size() != entries.size()) {
                         trace.getErrorHandler().genericError(pattern.getNode(), "Type mismatch: subject is of type " + subjectType + " but the pattern is of type Tuple" + entries.size()); // TODO : message
                     }
                     else {
@@ -1218,7 +1207,7 @@ public class JetTypeInferrer {
 
                             JetPattern entryPattern = entry.getPattern();
                             if (entryPattern != null) {
-                                checkPatternType(entryPattern, type);
+                                result[0] = checkPatternType(null, entryPattern, type, scopeToExtend);
                             }
                         }
                     }
@@ -1228,10 +1217,41 @@ public class JetTypeInferrer {
                 public void visitDecomposerPattern(JetDecomposerPattern pattern) {
                     JetType selectorReturnType = getSelectorReturnType(subjectType, pattern.getDecomposerExpression());
 
-                    checkPatternType(pattern.getArgumentList(), selectorReturnType == null ? ErrorUtils.createErrorType("No type") : selectorReturnType);
+                    result[0] = checkPatternType(null, pattern.getArgumentList(), selectorReturnType == null ? ErrorUtils.createErrorType("No type") : selectorReturnType, scopeToExtend);
+                }
+
+                @Override
+                public void visitWildcardPattern(JetWildcardPattern pattern) {
+                    // Nothing
+                }
+
+                @Override
+                public void visitExpressionPattern(JetExpressionPattern pattern) {
+                    JetType type = getType(scope, pattern.getExpression(), false);
+                    checkTypeCompatibility(type, subjectType, pattern);
+                }
+
+                @Override
+                public void visitBindingPattern(JetBindingPattern pattern) {
+                    JetProperty variableDeclaration = pattern.getVariableDeclaration();
+                    JetTypeReference propertyTypeRef = variableDeclaration.getPropertyTypeRef();
+                    JetType type = propertyTypeRef == null ? subjectType : typeResolver.resolveType(scope, propertyTypeRef);
+                    VariableDescriptor variableDescriptor = classDescriptorResolver.resolveLocalVariableDescriptorWithType(scope.getContainingDeclaration(), variableDeclaration, type);
+                    scopeToExtend.addVariableDescriptor(variableDescriptor);
+                    if (propertyTypeRef != null) {
+                        if (!semanticServices.getTypeChecker().isSubtypeOf(subjectType, type)) {
+                            trace.getErrorHandler().genericError(propertyTypeRef.getNode(), type + " must be a supertype of " + subjectType + ". Use 'is' to match against " + type);
+                        }
+                    }
+
+                    JetWhenCondition condition = pattern.getCondition();
+                    if (condition != null) {
+                        result[0] = checkWhenCondition(null, subjectType, variableDescriptor, condition, scopeToExtend);
+                    }
                 }
 
                 private void checkTypeCompatibility(@Nullable JetType type, @NotNull JetType subjectType, @NotNull JetElement reportErrorOn) {
+                    // TODO : Take auto casts into account?
                     if (type == null) {
                         return;
                     }
@@ -1245,6 +1265,7 @@ public class JetTypeInferrer {
                     trace.getErrorHandler().genericError(element.getNode(), "Unsupported [JetTypeInferrer]");
                 }
             });
+            return result[0];
         }
 
         @Override
@@ -1667,6 +1688,9 @@ public class JetTypeInferrer {
                                 trace.recordAutoCast(receiverExpression, possibleType);
                                 break;
                             }
+                            else {
+                                errorHandler.closeAndReturnCurrentRegion();
+                            }
                         }
                     }
 
@@ -1789,6 +1813,7 @@ public class JetTypeInferrer {
         @Override
         public void visitIsExpression(JetIsExpression expression) {
             // TODO : patterns and everything
+            // TODO : Unify with WhenExpression
             JetType knownType = getType(scope, expression.getLeftHandSide(), false);
             JetPattern pattern = expression.getPattern();
             if (pattern instanceof JetTypePattern) {

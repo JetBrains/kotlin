@@ -35,9 +35,10 @@ JetFile: AttributesOnPatterns.jet
                           PsiElement(IDENTIFIER)('a')
                   PsiElement(RBRACKET)(']')
                 PsiWhiteSpace(' ')
-                PsiElement(val)('val')
-                PsiWhiteSpace(' ')
-                PsiElement(IDENTIFIER)('a')
+                PROPERTY
+                  PsiElement(val)('val')
+                  PsiWhiteSpace(' ')
+                  PsiElement(IDENTIFIER)('a')
             PsiWhiteSpace(' ')
             PsiElement(DOUBLE_ARROW)('=>')
             PsiWhiteSpace(' ')
@@ -58,17 +59,19 @@ JetFile: AttributesOnPatterns.jet
                           PsiElement(IDENTIFIER)('a')
                   PsiElement(RBRACKET)(']')
                 PsiWhiteSpace(' ')
-                PsiElement(val)('val')
+                PROPERTY
+                  PsiElement(val)('val')
+                  PsiWhiteSpace(' ')
+                  PsiElement(IDENTIFIER)('a')
                 PsiWhiteSpace(' ')
-                PsiElement(IDENTIFIER)('a')
-                PsiWhiteSpace(' ')
-                PsiElement(is)('is')
-                PsiWhiteSpace(' ')
-                TYPE_PATTERN
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('foo')
+                WHEN_CONDITION_IS_PATTERN
+                  PsiElement(is)('is')
+                  PsiWhiteSpace(' ')
+                  TYPE_PATTERN
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('foo')
             PsiWhiteSpace(' ')
             PsiElement(DOUBLE_ARROW)('=>')
             PsiWhiteSpace(' ')

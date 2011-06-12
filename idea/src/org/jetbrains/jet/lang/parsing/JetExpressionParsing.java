@@ -886,22 +886,37 @@ public class JetExpressionParsing extends AbstractJetParsing {
     private void parseBindingPattern() {
         assert _at(VAL_KEYWORD);
 
+        PsiBuilder.Marker declaration = mark();
+
         advance(); // VAL_KEYWORD
 
         expect(IDENTIFIER, "Expecting an identifier");
 
-        if (at(IS_KEYWORD) || at(NOT_IS)) {
-            advance(); // IS_KEYWORD or NOT_IS
-
-            parsePattern();
-        } else if (at(IN_KEYWORD) || at(NOT_IN)) {
-            advance(); // IN_KEYWORD ot NOT_IN
-
-            parseExpression();
-        } else if (at(COLON)) {
+        if (at(COLON)) {
             advance(); // EQ
 
             myJetParsing.parseTypeRef();
+            declaration.done(PROPERTY);
+        }
+        else {
+            declaration.done(PROPERTY);
+            PsiBuilder.Marker subCondition = mark();
+            if (at(IS_KEYWORD) || at(NOT_IS)) {
+
+                advance(); // IS_KEYWORD or NOT_IS
+
+                parsePattern();
+                subCondition.done(WHEN_CONDITION_IS_PATTERN);
+            } else if (at(IN_KEYWORD) || at(NOT_IN)) {
+                PsiBuilder.Marker mark = mark();
+                advance(); // IN_KEYWORD ot NOT_IN
+                mark.done(OPERATION_REFERENCE);
+
+                parseExpression();
+                subCondition.done(WHEN_CONDITION_IN_RANGE);
+            } else {
+                subCondition.drop();
+            }
         }
     }
 

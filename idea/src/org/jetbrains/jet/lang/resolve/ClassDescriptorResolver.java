@@ -413,9 +413,14 @@ public class ClassDescriptorResolver {
     }
 
     @NotNull
-    public VariableDescriptor resolveLocalVariableDescriptor(DeclarationDescriptor containingDeclaration, WritableScope scope, JetProperty property) {
+    public VariableDescriptor resolveLocalVariableDescriptor(DeclarationDescriptor containingDeclaration, JetScope scope, JetProperty property) {
         JetType type = getVariableType(scope, property, false); // For a local variable the type must not be deferred
 
+        return resolveLocalVariableDescriptorWithType(containingDeclaration, property, type);
+    }
+
+    @NotNull
+    public VariableDescriptor resolveLocalVariableDescriptorWithType(DeclarationDescriptor containingDeclaration, JetProperty property, JetType type) {
         VariableDescriptorImpl variableDescriptor = new LocalVariableDescriptor(
                 containingDeclaration,
                 AnnotationResolver.INSTANCE.resolveAnnotations(property.getModifierList()),
