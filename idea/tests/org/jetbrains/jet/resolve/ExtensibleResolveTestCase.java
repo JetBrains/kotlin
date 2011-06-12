@@ -34,7 +34,7 @@ public abstract class ExtensibleResolveTestCase extends LightCodeInsightTestCase
     protected void setUp() throws Exception {
         super.setUp();
         expectedResolveData = getExpectedResolveData();
-        ((DaemonCodeAnalyzerImpl) DaemonCodeAnalyzer.getInstance(getProject())).prepareForTest(true);
+        ((DaemonCodeAnalyzerImpl) DaemonCodeAnalyzer.getInstance(getProject())).prepareForTest();
         DaemonCodeAnalyzerSettings.getInstance().setImportHintEnabled(false);
     }
 
@@ -42,7 +42,7 @@ public abstract class ExtensibleResolveTestCase extends LightCodeInsightTestCase
 
     @Override
     protected void tearDown() throws Exception {
-        ((DaemonCodeAnalyzerImpl) DaemonCodeAnalyzer.getInstance(getProject())).cleanupAfterTest(); // has to cleanup by hand since light project does not get disposed any time soon
+        ((DaemonCodeAnalyzerImpl) DaemonCodeAnalyzer.getInstance(getProject())).cleanupAfterTest(false); // has to cleanup by hand since light project does not get disposed any time soon
         super.tearDown();
     }
 
