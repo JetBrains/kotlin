@@ -255,3 +255,20 @@ fun f7(s : String?, t : String?) {
     t?.get(0)
   }
 }
+
+fun f8(b : String?, a : String) {
+  b?.get(0)
+  if (b == a) {
+    b.get(0);
+  }
+  b?.get(0)
+  if (a == b) {
+    b.get(0)
+  }
+  if (a != b) {
+    b?.get(0)
+  }
+  else {
+    b.get(0)
+  }
+}

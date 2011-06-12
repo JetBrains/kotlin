@@ -1381,24 +1381,39 @@ public class JetTypeInferrer {
                              || operationToken == JetTokens.EXCLEQEQEQ) {
                         JetExpression left = expression.getLeft();
                         JetExpression right = expression.getRight();
-                        if (left instanceof JetConstantExpression) {
+                        if (right == null) return;
+
+                        if (!(left instanceof JetSimpleNameExpression)) {
                             JetExpression tmp = left;
                             left = right;
                             right = tmp;
+
+                            if (!(left instanceof JetSimpleNameExpression)) {
+                                return;
+                            }
                         }
 
-                        if (!(left instanceof JetSimpleNameExpression)) {
-                            return;
-                        }
-                        JetSimpleNameExpression nameExpression = (JetSimpleNameExpression) left;
-                        DeclarationDescriptor declarationDescriptor = trace.getBindingContext().resolveReferenceExpression(nameExpression);
-                        if (!(declarationDescriptor instanceof VariableDescriptor)) {
-                            return;
-                        }
-                        VariableDescriptor variableDescriptor = (VariableDescriptor) declarationDescriptor;
+                        VariableDescriptor variableDescriptor = getVariableDescriptorFromSimpleName(left);
 
                         // TODO : validate that DF makes sense for this variable: local, val, internal w/backing field, etc
 
+                        // Comparison to a non-null expression
+                        JetType rhsType = trace.getBindingContext().getExpressionType(right);
+                        if (rhsType != null && !rhsType.isNullable()) {
+                            extendDataFlowWithNullComparison(operationToken, variableDescriptor, !conditionValue);
+                            return;
+                        }
+
+                        VariableDescriptor rightVariable = getVariableDescriptorFromSimpleName(right);
+                        if (rightVariable != null) {
+                            JetType lhsType = trace.getBindingContext().getExpressionType(left);
+                            if (lhsType != null && !lhsType.isNullable()) {
+                                extendDataFlowWithNullComparison(operationToken, rightVariable, !conditionValue);
+                                return;
+                            }
+                        }
+
+                        // Comparison to 'null'
                         if (!(right instanceof JetConstantExpression)) {
                             return;
                         }
@@ -1407,12 +1422,16 @@ public class JetTypeInferrer {
                             return;
                         }
 
-                        if (operationToken == JetTokens.EQEQ || operationToken == JetTokens.EQEQEQ) {
-                            result[0] = dataFlowInfo.equalsToNull(variableDescriptor, !conditionValue);
-                        }
-                        else if (operationToken == JetTokens.EXCLEQ || operationToken == JetTokens.EXCLEQEQEQ) {
-                            result[0] = dataFlowInfo.equalsToNull(variableDescriptor, conditionValue);
-                        }
+                        extendDataFlowWithNullComparison(operationToken, variableDescriptor, conditionValue);
+                    }
+                }
+
+                private void extendDataFlowWithNullComparison(IElementType operationToken, VariableDescriptor variableDescriptor, boolean equalsToNull) {
+                    if (operationToken == JetTokens.EQEQ || operationToken == JetTokens.EQEQEQ) {
+                        result[0] = dataFlowInfo.equalsToNull(variableDescriptor, !equalsToNull);
+                    }
+                    else if (operationToken == JetTokens.EXCLEQ || operationToken == JetTokens.EXCLEQEQEQ) {
+                        result[0] = dataFlowInfo.equalsToNull(variableDescriptor, equalsToNull);
                     }
                 }
 
