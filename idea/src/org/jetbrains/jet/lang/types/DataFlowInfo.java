@@ -13,18 +13,6 @@ import java.util.*;
  */
 public class DataFlowInfo {
 
-    private static DataFlowInfo EMPTY = new DataFlowInfo(ImmutableMap.<VariableDescriptor, NullabilityFlags>of(), Multimaps.forMap(Collections.<VariableDescriptor, JetType>emptyMap()));
-        public static final Supplier<List<JetType>> ARRAY_LIST_SUPPLIER = new Supplier<List<JetType>>() {
-        @Override
-        public List<JetType> get() {
-            return Lists.newArrayList();
-        }
-    };
-
-    public static DataFlowInfo getEmpty() {
-        return EMPTY;
-    }
-
     public static abstract class CompositionOperator {
         public abstract DataFlowInfo compose(DataFlowInfo a, DataFlowInfo b);
     }
@@ -43,12 +31,24 @@ public class DataFlowInfo {
         }
     };
 
+    public static final Supplier<List<JetType>> ARRAY_LIST_SUPPLIER = new Supplier<List<JetType>>() {
+        @Override
+        public List<JetType> get() {
+            return Lists.newArrayList();
+        }
+    };
+    private static DataFlowInfo EMPTY = new DataFlowInfo(ImmutableMap.<VariableDescriptor, NullabilityFlags>of(), Multimaps.newListMultimap(Collections.<VariableDescriptor, Collection<JetType>>emptyMap(), ARRAY_LIST_SUPPLIER));
+
+    public static DataFlowInfo getEmpty() {
+        return EMPTY;
+    }
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private final ImmutableMap<VariableDescriptor, NullabilityFlags> nullabilityInfo;
-    private final Multimap<VariableDescriptor, JetType> typeInfo;
+    private final ListMultimap<VariableDescriptor, JetType> typeInfo;
 
-    public DataFlowInfo(ImmutableMap<VariableDescriptor, NullabilityFlags> nullabilityInfo, Multimap<VariableDescriptor, JetType> typeInfo) {
+    private DataFlowInfo(ImmutableMap<VariableDescriptor, NullabilityFlags> nullabilityInfo, ListMultimap<VariableDescriptor, JetType> typeInfo) {
         this.nullabilityInfo = nullabilityInfo;
         this.typeInfo = typeInfo;
     }
@@ -66,7 +66,7 @@ public class DataFlowInfo {
     }
 
     @NotNull
-    public Collection<JetType> getPossibleTypes(VariableDescriptor variableDescriptor) {
+    public List<JetType> getPossibleTypes(VariableDescriptor variableDescriptor) {
         return typeInfo.get(variableDescriptor);
     }
 
@@ -81,7 +81,7 @@ public class DataFlowInfo {
     }
 
     public DataFlowInfo isInstanceOf(@NotNull VariableDescriptor variableDescriptor, @NotNull JetType type) {
-        Multimap<VariableDescriptor, JetType> newTypeInfo = copyTypeInfo();
+        ListMultimap<VariableDescriptor, JetType> newTypeInfo = copyTypeInfo();
         newTypeInfo.put(variableDescriptor, type);
         return new DataFlowInfo(getEqualsToNullMap(variableDescriptor, !type.isNullable()), newTypeInfo);
     }
@@ -101,13 +101,13 @@ public class DataFlowInfo {
             }
         }
 
-        Multimap<VariableDescriptor, JetType> newTypeInfo = copyTypeInfo();
+        ListMultimap<VariableDescriptor, JetType> newTypeInfo = copyTypeInfo();
         newTypeInfo.putAll(other.typeInfo);
         return new DataFlowInfo(ImmutableMap.copyOf(nullabilityMapBuilder), newTypeInfo);
     }
 
-    private Multimap<VariableDescriptor, JetType> copyTypeInfo() {
-        Multimap<VariableDescriptor, JetType> newTypeInfo = Multimaps.newListMultimap(Maps.<VariableDescriptor, Collection<JetType>>newHashMap(), ARRAY_LIST_SUPPLIER);
+    private ListMultimap<VariableDescriptor, JetType> copyTypeInfo() {
+        ListMultimap<VariableDescriptor, JetType> newTypeInfo = Multimaps.newListMultimap(Maps.<VariableDescriptor, Collection<JetType>>newHashMap(), ARRAY_LIST_SUPPLIER);
         newTypeInfo.putAll(typeInfo);
         return newTypeInfo;
     }
@@ -123,7 +123,7 @@ public class DataFlowInfo {
             builder.put(variableDescriptor, thisFlags.or(otherFlags));
         }
 
-        Multimap<VariableDescriptor, JetType> newTypeInfo = copyTypeInfo();
+        ListMultimap<VariableDescriptor, JetType> newTypeInfo = copyTypeInfo();
 
         Set<VariableDescriptor> keys = newTypeInfo.keySet();
         keys.retainAll(other.typeInfo.keySet());

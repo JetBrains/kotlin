@@ -1657,7 +1657,8 @@ public class JetTypeInferrer {
 
                     VariableDescriptor variableDescriptor = getVariableDescriptorFromSimpleName(receiverExpression);
                     if (variableDescriptor != null) {
-                        Collection<JetType> possibleTypes = dataFlowInfo.getPossibleTypes(variableDescriptor);
+                        List<JetType> possibleTypes = Lists.newArrayList(dataFlowInfo.getPossibleTypes(variableDescriptor));
+                        Collections.reverse(possibleTypes);
                         for (JetType possibleType : possibleTypes) {
                             errorHandler.openRegion();
                             selectorReturnType = getSelectorReturnType(possibleType, selectorExpression);
@@ -1801,7 +1802,9 @@ public class JetTypeInferrer {
                 }
             }
             else {
-                trace.getErrorHandler().genericError(pattern.getNode(), "Unsupported [JetTypeInferrer]");
+                if (pattern != null) {
+                    trace.getErrorHandler().genericError(pattern.getNode(), "Unsupported [JetTypeInferrer]");
+                }
             }
             result = semanticServices.getStandardLibrary().getBooleanType();
         }

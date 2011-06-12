@@ -39,3 +39,17 @@ fun f10() {
     return;
   }
 }
+
+class C() : A() {
+  fun bar() {
+
+  }
+}
+
+fun f10(a : A?) {
+  if (a is B) {
+    if (a is C) {
+      <info descr="Automatically cast to C">a</info>.bar();
+    }
+  }
+}
