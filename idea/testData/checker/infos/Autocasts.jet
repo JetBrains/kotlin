@@ -86,3 +86,60 @@ fun f12(a : A?) {
     <info descr="Automatically cast to B">b</info>.bar()
   }
 }
+
+fun f13(a : A?) {
+  if (a is val c is B) {
+    c.foo()
+    <info descr="Automatically cast to B">c</info>.bar()
+  }
+  else {
+    a?.foo()
+    <error>c</error>.bar()
+  }
+
+  a?.foo()
+  if (!(a is val c is B)) {
+    a?.foo()
+    <error>c</error>.bar()
+  }
+  else {
+    a.foo()
+    <info descr="Automatically cast to B">c</info>.bar()
+  }
+
+  a?.foo()
+  if (a is val c is B && a.foo() == () && <info descr="Automatically cast to B">c</info>.bar() == ()) {
+    c.foo()
+    <info descr="Automatically cast to B">c</info>.bar()
+  }
+  else {
+    a?.foo()
+    <error>c</error>.bar()
+  }
+
+//  a?.foo()
+//  if ((a is val c is B) || (a is val c is A)) {
+//    c.foo()
+//    c.bar()
+//  }
+//  else {
+//    a?.foo()
+//    c.bar()
+//  }
+
+  if (!(a is val c is B)) return
+  <info descr="Automatically cast to B">a</info>.bar()
+  c.foo()
+  <info descr="Automatically cast to B">c</info>.bar()
+}
+
+fun f14(a : A?) {
+  while (!(a is val c is B)) {
+  }
+  <info descr="Automatically cast to B">c</info>.bar()
+}
+fun f15(a : A?) {
+  do {
+  } while (!(a is val c is B))
+  <info descr="Automatically cast to B">c</info>.bar()
+}
