@@ -75,4 +75,14 @@ fun f12(a : A?) {
     is val c is C => <info descr="Automatically cast to C">a</info>.bar()
     else => a?.foo()
   }
+
+  if (a is val b) {
+    a?.<error>bar</error>()
+    b?.foo()
+  }
+  if (a is val b is B) {
+    b.foo()
+    <info descr="Automatically cast to B">a</info>.bar()
+    <info descr="Automatically cast to B">b</info>.bar()
+  }
 }

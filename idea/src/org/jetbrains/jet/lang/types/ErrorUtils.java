@@ -155,6 +155,7 @@ public class ErrorUtils {
         return result;
     }
 
+    @NotNull
     public static JetType createErrorType(String debugMessage) {
         return createErrorType(debugMessage, ERROR_SCOPE);
     }

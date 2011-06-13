@@ -72,6 +72,8 @@ public class JetTypeInferrer {
     private final TypeResolver typeResolver;
     private final ClassDescriptorResolver classDescriptorResolver;
     private final JetFlowInformationProvider flowInformationProvider;
+    private final Map<JetPattern, DataFlowInfo> patternsToDataFlowInfo = Maps.newHashMap();
+    private final Map<JetPattern, List<VariableDescriptor>> patternsToBoundVariableLists = Maps.newHashMap();
 
     public JetTypeInferrer(@NotNull BindingTrace trace, @NotNull JetFlowInformationProvider flowInformationProvider, @NotNull JetSemanticServices semanticServices) {
         this.trace = trace; //new CachedBindingTrace(trace);
@@ -368,8 +370,15 @@ public class JetTypeInferrer {
             JetExpression statementExpression = (JetExpression) statement;
             result = blockLevelVisitor.getType(statementExpression);
             DataFlowInfo newDataFlowInfo = blockLevelVisitor.getResultingDataFlowInfo();
-            if (newDataFlowInfo != null) {
-                blockLevelVisitor = new TypeInferrerVisitorWithWritableScope(scope, true, newDataFlowInfo);
+            if (newDataFlowInfo == null) {
+                newDataFlowInfo = dataFlowInfo;
+            }
+            WritableScope newScope = blockLevelVisitor.getResultScope();
+            if (newScope == null) {
+                newScope = scope;
+            }
+            if (newDataFlowInfo != dataFlowInfo || newScope != scope) {
+                blockLevelVisitor = new TypeInferrerVisitorWithWritableScope(newScope, true, newDataFlowInfo);
             }
             else {
                 blockLevelVisitor.resetResult(); // TODO : maybe it's better to recreate the visitors with the same scope?
@@ -582,6 +591,7 @@ public class JetTypeInferrer {
 
         protected JetType result;
         protected DataFlowInfo resultDataFlowInfo;
+        protected WritableScope resultScope;
 
         private TypeInferrerVisitor(@NotNull JetScope scope, boolean preferBlock, @NotNull DataFlowInfo dataFlowInfo) {
             this.scope = scope;
@@ -592,6 +602,16 @@ public class JetTypeInferrer {
         @Nullable
         public DataFlowInfo getResultingDataFlowInfo() {
             return resultDataFlowInfo;
+        }
+
+        public WritableScope getResultScope() {
+            if (resultScope instanceof WritableScopeImpl) {
+                WritableScopeImpl writableScope = (WritableScopeImpl) resultScope;
+                if (!writableScope.hasDeclaredItems()) {
+                    return null;
+                }
+            }
+            return resultScope;
         }
 
         @Nullable
@@ -652,6 +672,8 @@ public class JetTypeInferrer {
 
         public void resetResult() {
             result = null;
+            resultDataFlowInfo = null;
+            resultScope = null;
         }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1096,7 +1118,7 @@ public class JetTypeInferrer {
             Set<JetType> expressionTypes = Sets.newHashSet();
             for (JetWhenEntry whenEntry : expression.getEntries()) {
                 JetWhenCondition condition = whenEntry.getCondition();
-                WritableScope scopeToExtend = new WritableScopeImpl(scope, scope.getContainingDeclaration(), trace.getErrorHandler());
+                WritableScope scopeToExtend = newWritableScopeImpl();
                 DataFlowInfo newDataFlowInfo = dataFlowInfo;
                 if (condition != null) {
                     newDataFlowInfo = checkWhenCondition(subjectExpression, subjectType, condition, scopeToExtend, variableDescriptor);
@@ -1225,7 +1247,7 @@ public class JetTypeInferrer {
 
                 @Override
                 public void visitExpressionPattern(JetExpressionPattern pattern) {
-                    JetType type = getType(scope, pattern.getExpression(), false);
+                    JetType type = getType(scopeToExtend, pattern.getExpression(), false);
                     checkTypeCompatibility(type, subjectType, pattern);
                 }
 
@@ -1282,7 +1304,7 @@ public class JetTypeInferrer {
                 if (catchParameter != null) {
                     VariableDescriptor variableDescriptor = classDescriptorResolver.resolveLocalVariableDescriptor(scope.getContainingDeclaration(), scope, catchParameter);
                     if (catchBody != null) {
-                        WritableScope catchScope = new WritableScopeImpl(scope, scope.getContainingDeclaration(), trace.getErrorHandler());
+                        WritableScope catchScope = newWritableScopeImpl();
                         catchScope.addVariableDescriptor(variableDescriptor);
                         JetType type = getType(catchScope, catchBody, true);
                         if (type != null) {
@@ -1318,12 +1340,14 @@ public class JetTypeInferrer {
             JetExpression elseBranch = expression.getElse();
             JetExpression thenBranch = expression.getThen();
 
-            DataFlowInfo thenInfo = extractDataFlowInfoFromCondition(condition, true);
-            DataFlowInfo elseInfo = extractDataFlowInfoFromCondition(condition, false);
+            WritableScopeImpl thenScope = newWritableScopeImpl();
+            DataFlowInfo thenInfo = extractDataFlowInfoFromCondition(condition, true, thenScope);
+            WritableScopeImpl elseScope = newWritableScopeImpl();
+            DataFlowInfo elseInfo = extractDataFlowInfoFromCondition(condition, false, elseScope);
 
             if (elseBranch == null) {
                 if (thenBranch != null) {
-                    JetType type = getType(scope, thenBranch, true, thenInfo);
+                    JetType type = getType(thenScope, thenBranch, true, thenInfo);
                     if (type != null && JetStandardClasses.isNothing(type)) {
                         resultDataFlowInfo = elseInfo;
                     }
@@ -1331,15 +1355,15 @@ public class JetTypeInferrer {
                 }
             }
             else if (thenBranch == null) {
-                JetType type = getType(scope, elseBranch, true, elseInfo);
+                JetType type = getType(elseScope, elseBranch, true, elseInfo);
                 if (type != null && JetStandardClasses.isNothing(type)) {
                     resultDataFlowInfo = thenInfo;
                 }
                 result = JetStandardClasses.getUnitType();
             }
             else {
-                JetType thenType = getType(scope, thenBranch, true, thenInfo);
-                JetType elseType = getType(scope, elseBranch, true, elseInfo);
+                JetType thenType = getType(thenScope, thenBranch, true, thenInfo);
+                JetType elseType = getType(elseScope, elseBranch, true, elseInfo);
 
                 if (thenType == null) {
                     result = elseType;
@@ -1364,21 +1388,35 @@ public class JetTypeInferrer {
             }
         }
 
-        private DataFlowInfo extractDataFlowInfoFromCondition(@Nullable JetExpression condition, final boolean conditionValue) {
+        private DataFlowInfo extractDataFlowInfoFromCondition(@Nullable JetExpression condition, final boolean conditionValue, @NotNull final WritableScope scopeToExtend) {
             if (condition == null) return dataFlowInfo;
             final DataFlowInfo[] result = new DataFlowInfo[] {dataFlowInfo};
             condition.accept(new JetVisitor() {
                 @Override
                 public void visitIsExpression(JetIsExpression expression) {
                     if (conditionValue) {
-                        VariableDescriptor variableDescriptor = getVariableDescriptorFromSimpleName(expression.getLeftHandSide());
-                        if (variableDescriptor != null) {
-                            JetPattern pattern = expression.getPattern();
-                            if (pattern instanceof JetTypePattern) {
-                                JetTypePattern jetTypePattern = (JetTypePattern) pattern;
-                                result[0] = dataFlowInfo.isInstanceOf(variableDescriptor, trace.getBindingContext().resolveTypeReference(jetTypePattern.getTypeReference()));
-                            }
+                        JetPattern pattern = expression.getPattern();
+                        for (VariableDescriptor variableDescriptor : patternsToBoundVariableLists.get(pattern)) {
+                            scopeToExtend.addVariableDescriptor(variableDescriptor);
                         }
+                        result[0] = patternsToDataFlowInfo.get(pattern);
+
+//                        VariableDescriptor variableDescriptor = getVariableDescriptorFromSimpleName(expression.getLeftHandSide());
+//                        if (variableDescriptor != null && pattern != null) {
+//                            JetType outType = variableDescriptor.getOutType();
+//                            if (outType == null) {
+//                                outType = ErrorUtils.createErrorType("<Unknown>");
+//                            }
+//                            trace.getErrorHandler().openRegion();
+//                            result[0] = checkPatternType(pattern, outType, scopeToExtend, variableDescriptor);
+//                            trace.getErrorHandler().closeAndReturnCurrentRegion();
+//
+//                        }
+////                            if (pattern instanceof JetTypePattern) {
+////                                JetTypePattern jetTypePattern = (JetTypePattern) pattern;
+////                                result[0] = dataFlowInfo.isInstanceOf(variableDescriptor, trace.getBindingContext().resolveTypeReference(jetTypePattern.getTypeReference()));
+////                            }
+////                        }
                     }
                 }
 
@@ -1386,10 +1424,10 @@ public class JetTypeInferrer {
                 public void visitBinaryExpression(JetBinaryExpression expression) {
                     IElementType operationToken = expression.getOperationToken();
                     if (operationToken == JetTokens.ANDAND || operationToken == JetTokens.OROR) {
-                        DataFlowInfo dataFlowInfo = extractDataFlowInfoFromCondition(expression.getLeft(), conditionValue);
+                        DataFlowInfo dataFlowInfo = extractDataFlowInfoFromCondition(expression.getLeft(), conditionValue, scopeToExtend); // TODO
                         JetExpression expressionRight = expression.getRight();
                         if (expressionRight != null) {
-                            DataFlowInfo rightInfo = extractDataFlowInfoFromCondition(expressionRight, conditionValue);
+                            DataFlowInfo rightInfo = extractDataFlowInfoFromCondition(expressionRight, conditionValue, scopeToExtend); // TODO
                             DataFlowInfo.CompositionOperator operator;
                             if (operationToken == JetTokens.ANDAND) {
                                 operator = conditionValue ? DataFlowInfo.AND : DataFlowInfo.OR;
@@ -1467,7 +1505,7 @@ public class JetTypeInferrer {
                     if (operationTokenType == JetTokens.EXCL) {
                         JetExpression baseExpression = expression.getBaseExpression();
                         if (baseExpression != null) {
-                            result[0] = extractDataFlowInfoFromCondition(baseExpression, !conditionValue);
+                            result[0] = extractDataFlowInfoFromCondition(baseExpression, !conditionValue, scopeToExtend); // TODO
                         }
                     }
                 }
@@ -1499,11 +1537,13 @@ public class JetTypeInferrer {
             checkCondition(scope, condition);
             JetExpression body = expression.getBody();
             if (body != null) {
-                DataFlowInfo conditionInfo = condition == null ? dataFlowInfo : extractDataFlowInfoFromCondition(condition, true);
-                getType(scope, body, true, conditionInfo);
+                WritableScopeImpl scopeToExtend = newWritableScopeImpl();
+                DataFlowInfo conditionInfo = condition == null ? dataFlowInfo : extractDataFlowInfoFromCondition(condition, true, scopeToExtend);
+                getType(scopeToExtend, body, true, conditionInfo);
             }
             if (!flowInformationProvider.isBreakable(expression)) {
-                resultDataFlowInfo = extractDataFlowInfoFromCondition(condition, false);
+                resultScope = newWritableScopeImpl();
+                resultDataFlowInfo = extractDataFlowInfoFromCondition(condition, false, resultScope);
             }
             result = JetStandardClasses.getUnitType();
         }
@@ -1515,7 +1555,7 @@ public class JetTypeInferrer {
             if (body instanceof JetFunctionLiteralExpression) {
                 JetFunctionLiteralExpression function = (JetFunctionLiteralExpression) body;
                 if (!function.hasParameterSpecification()) {
-                    WritableScope writableScope = new WritableScopeImpl(scope, scope.getContainingDeclaration(), trace.getErrorHandler());
+                    WritableScope writableScope = newWritableScopeImpl();
                     conditionScope = writableScope;
                     getBlockReturnedTypeWithWritableScope(writableScope, function.getBody(), dataFlowInfo);
                     trace.recordBlock(function);
@@ -1524,16 +1564,21 @@ public class JetTypeInferrer {
                 }
             }
             else if (body != null) {
-                WritableScope writableScope = new WritableScopeImpl(scope, scope.getContainingDeclaration(), trace.getErrorHandler());
+                WritableScope writableScope = newWritableScopeImpl();
                 conditionScope = writableScope;
                 getBlockReturnedTypeWithWritableScope(writableScope, Collections.singletonList(body), dataFlowInfo);
             }
             JetExpression condition = expression.getCondition();
             checkCondition(conditionScope, condition);
             if (!flowInformationProvider.isBreakable(expression)) {
-                resultDataFlowInfo = extractDataFlowInfoFromCondition(condition, false);
+                resultScope = newWritableScopeImpl();
+                resultDataFlowInfo = extractDataFlowInfoFromCondition(condition, false, resultScope);
             }
             result = JetStandardClasses.getUnitType();
+        }
+
+        protected WritableScopeImpl newWritableScopeImpl() {
+            return new WritableScopeImpl(scope, scope.getContainingDeclaration(), trace.getErrorHandler());
         }
 
         @Override
@@ -1549,7 +1594,7 @@ public class JetTypeInferrer {
                 expectedParameterType = checkIterableConvention(loopRangeType, loopRange.getNode());
             }
 
-            WritableScope loopScope = new WritableScopeImpl(scope, scope.getContainingDeclaration(), trace.getErrorHandler());
+            WritableScope loopScope = newWritableScopeImpl();
 
             if (loopParameter != null) {
                 JetTypeReference typeReference = loopParameter.getTypeReference();
@@ -1733,6 +1778,12 @@ public class JetTypeInferrer {
 
         @Nullable
         private VariableDescriptor getVariableDescriptorFromSimpleName(@NotNull JetExpression receiverExpression) {
+            if (receiverExpression instanceof JetBinaryExpressionWithTypeRHS) {
+                JetBinaryExpressionWithTypeRHS expression = (JetBinaryExpressionWithTypeRHS) receiverExpression;
+                if (expression.getOperationSign().getReferencedNameElementType() == JetTokens.COLON) {
+                    return getVariableDescriptorFromSimpleName(expression.getLeft());
+                }
+            }
             VariableDescriptor variableDescriptor = null;
             if (receiverExpression instanceof JetSimpleNameExpression) {
                 JetSimpleNameExpression nameExpression = (JetSimpleNameExpression) receiverExpression;
@@ -1815,27 +1866,14 @@ public class JetTypeInferrer {
         @Override
         public void visitIsExpression(JetIsExpression expression) {
             // TODO : patterns and everything
-            // TODO : Unify with WhenExpression
             JetType knownType = getType(scope, expression.getLeftHandSide(), false);
             JetPattern pattern = expression.getPattern();
             if (pattern != null && knownType != null) {
-                checkPatternType(pattern, knownType, new WritableScopeImpl(scope, scope.getContainingDeclaration(), trace.getErrorHandler()));
+                WritableScopeImpl scopeToExtend = newWritableScopeImpl();
+                DataFlowInfo newDataFlowInfo = checkPatternType(pattern, knownType, scopeToExtend, getVariableDescriptorFromSimpleName(expression.getLeftHandSide()));
+                patternsToDataFlowInfo.put(pattern, newDataFlowInfo);
+                patternsToBoundVariableLists.put(pattern, scopeToExtend.getDeclaredVariables());
             }
-//            if (pattern instanceof JetTypePattern) {
-//                JetTypePattern typePattern = (JetTypePattern) pattern;
-//                JetTypeReference typeReference = typePattern.getTypeReference();
-//                if (typeReference != null && knownType != null) {
-//                    JetType targetType = typeResolver.resolveType(scope, typeReference);
-//                    if (!semanticServices.getTypeChecker().isSubtypeOf(targetType, knownType)) {
-//                        trace.getErrorHandler().genericWarning(expression.getNode(), "Expression always evaluates to false"); // TODO : make an error?
-//                    }
-//                }
-//            }
-//            else {
-//                if (pattern != null) {
-//                    trace.getErrorHandler().genericError(pattern.getNode(), "Unsupported [JetTypeInferrer]");
-//                }
-//            }
             result = semanticServices.getStandardLibrary().getBooleanType();
         }
 
@@ -1952,7 +1990,8 @@ public class JetTypeInferrer {
             }
             else if (operationType == JetTokens.ANDAND || operationType == JetTokens.OROR) {
                 JetType leftType = getType(scope, left, false);
-                DataFlowInfo flowInfoLeft = extractDataFlowInfoFromCondition(left, operationType == JetTokens.ANDAND);  // TODO: This gets computed twice: here and in extractDataFlowInfoFromCondition() for the whole condition
+                // TODO!!!
+                DataFlowInfo flowInfoLeft = extractDataFlowInfoFromCondition(left, operationType == JetTokens.ANDAND, newWritableScopeImpl());  // TODO: This gets computed twice: here and in extractDataFlowInfoFromCondition() for the whole condition
                 JetType rightType = right == null ? null : getType(scope, right, false, flowInfoLeft);
                 if (leftType != null && !isBoolean(leftType)) {
                     trace.getErrorHandler().typeMismatch(left, semanticServices.getStandardLibrary().getBooleanType(), leftType);
@@ -2293,6 +2332,14 @@ public class JetTypeInferrer {
             trace.getErrorHandler().genericError(element.getNode(), "Unsupported element in a block: " + element + " " + element.getClass().getCanonicalName());
         }
 
+        @NotNull
+        @Override
+        public TypeInferrerVisitor createNew(JetScope scope, boolean preferBlock, DataFlowInfo dataFlowInfo) {
+//            if (scope instanceof WritableScope) {
+//                return new TypeInferrerVisitorWithWritableScope((WritableScope) scope, preferBlock, dataFlowInfo);
+//            }
+            return new TypeInferrerVisitorWithWritableScope(new WritableScopeImpl(scope, scope.getContainingDeclaration(), trace.getErrorHandler()), preferBlock, dataFlowInfo);
+        }
     }
 
 //    private class CachedBindingTrace extends BindingTraceAdapter {

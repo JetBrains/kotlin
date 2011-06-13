@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.resolve;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -257,5 +258,20 @@ public class WritableScopeImpl extends WritableScopeWithImports {
         PropertyDescriptor descriptor = getPropertyDescriptorsByFieldNames().get(fieldName);
         if (descriptor != null) return descriptor;
         return super.getPropertyByFieldReference(fieldName);
+    }
+
+    public List<VariableDescriptor> getDeclaredVariables() {
+        List<VariableDescriptor> result = Lists.newArrayList();
+        for (DeclarationDescriptor descriptor : getVariableClassOrNamespaceDescriptors().values()) {
+            if (descriptor instanceof VariableDescriptor) {
+                VariableDescriptor variableDescriptor = (VariableDescriptor) descriptor;
+                result.add(variableDescriptor);
+            }
+        }
+        return result;
+    }
+
+    public boolean hasDeclaredItems() {
+        return variableClassOrNamespaceDescriptors != null  && !variableClassOrNamespaceDescriptors.isEmpty();
     }
 }
