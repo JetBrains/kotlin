@@ -373,12 +373,12 @@ public class JetTypeInferrer {
             if (newDataFlowInfo == null) {
                 newDataFlowInfo = dataFlowInfo;
             }
-            WritableScope newScope = blockLevelVisitor.getResultScope();
-            if (newScope == null) {
-                newScope = scope;
-            }
-            if (newDataFlowInfo != dataFlowInfo || newScope != scope) {
-                blockLevelVisitor = new TypeInferrerVisitorWithWritableScope(newScope, true, newDataFlowInfo);
+//            WritableScope newScope = blockLevelVisitor.getResultScope();
+//            if (newScope == null) {
+//                newScope = scope;
+//            }
+            if (newDataFlowInfo != dataFlowInfo) {// || newScope != scope) {
+                blockLevelVisitor = new TypeInferrerVisitorWithWritableScope(scope, true, newDataFlowInfo);
             }
             else {
                 blockLevelVisitor.resetResult(); // TODO : maybe it's better to recreate the visitors with the same scope?
@@ -591,7 +591,7 @@ public class JetTypeInferrer {
 
         protected JetType result;
         protected DataFlowInfo resultDataFlowInfo;
-        protected WritableScope resultScope;
+//        protected WritableScope resultScope;
 
         private TypeInferrerVisitor(@NotNull JetScope scope, boolean preferBlock, @NotNull DataFlowInfo dataFlowInfo) {
             this.scope = scope;
@@ -604,16 +604,16 @@ public class JetTypeInferrer {
             return resultDataFlowInfo;
         }
 
-        public WritableScope getResultScope() {
-            if (resultScope instanceof WritableScopeImpl) {
-                WritableScopeImpl writableScope = (WritableScopeImpl) resultScope;
-                if (!writableScope.hasDeclaredItems()) {
-                    return null;
-                }
-            }
-            return resultScope;
-        }
-
+//        public WritableScope getResultScope() {
+//            if (resultScope instanceof WritableScopeImpl) {
+//                WritableScopeImpl writableScope = (WritableScopeImpl) resultScope;
+//                if (!writableScope.hasDeclaredItems()) {
+//                    return null;
+//                }
+//            }
+//            return resultScope;
+//        }
+//
         @Nullable
         public JetType getType(@NotNull JetScope scope, @NotNull JetExpression expression, boolean preferBlock) {
             return getType(scope, expression, preferBlock, dataFlowInfo);
@@ -673,7 +673,7 @@ public class JetTypeInferrer {
         public void resetResult() {
             result = null;
             resultDataFlowInfo = null;
-            resultScope = null;
+//            resultScope = null;
         }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1350,7 +1350,7 @@ public class JetTypeInferrer {
                     JetType type = getType(thenScope, thenBranch, true, thenInfo);
                     if (type != null && JetStandardClasses.isNothing(type)) {
                         resultDataFlowInfo = elseInfo;
-                        resultScope = elseScope;
+//                        resultScope = elseScope;
                     }
                     result = JetStandardClasses.getUnitType();
                 }
@@ -1359,7 +1359,7 @@ public class JetTypeInferrer {
                 JetType type = getType(elseScope, elseBranch, true, elseInfo);
                 if (type != null && JetStandardClasses.isNothing(type)) {
                     resultDataFlowInfo = thenInfo;
-                    resultScope = thenScope;
+//                    resultScope = thenScope;
                 }
                 result = JetStandardClasses.getUnitType();
             }
@@ -1382,16 +1382,16 @@ public class JetTypeInferrer {
 
                 if (jumpInThen && !jumpInElse) {
                     resultDataFlowInfo = elseInfo;
-                    resultScope = elseScope;
+//                    resultScope = elseScope;
                 }
                 else if (jumpInElse && !jumpInThen) {
                     resultDataFlowInfo = thenInfo;
-                    resultScope = thenScope;
+//                    resultScope = thenScope;
                 }
             }
         }
 
-        private DataFlowInfo extractDataFlowInfoFromCondition(@Nullable JetExpression condition, final boolean conditionValue, @NotNull final WritableScope scopeToExtend) {
+        private DataFlowInfo extractDataFlowInfoFromCondition(@Nullable JetExpression condition, final boolean conditionValue, @Nullable final WritableScope scopeToExtend) {
             if (condition == null) return dataFlowInfo;
             final DataFlowInfo[] result = new DataFlowInfo[] {dataFlowInfo};
             condition.accept(new JetVisitor() {
@@ -1399,72 +1399,39 @@ public class JetTypeInferrer {
                 public void visitIsExpression(JetIsExpression expression) {
                     if (conditionValue) {
                         JetPattern pattern = expression.getPattern();
-                        for (VariableDescriptor variableDescriptor : patternsToBoundVariableLists.get(pattern)) {
-                            scopeToExtend.addVariableDescriptor(variableDescriptor);
-                        }
                         result[0] = patternsToDataFlowInfo.get(pattern);
+                        if (scopeToExtend != null) {
+                            for (VariableDescriptor variableDescriptor : patternsToBoundVariableLists.get(pattern)) {
+                                scopeToExtend.addVariableDescriptor(variableDescriptor);
+                            }
+                        }
                     }
                 }
 
                 @Override
                 public void visitBinaryExpression(JetBinaryExpression expression) {
                     IElementType operationToken = expression.getOperationToken();
-                    if (operationToken == JetTokens.ANDAND) {
-                        DataFlowInfo dataFlowInfo = extractDataFlowInfoFromCondition(expression.getLeft(), conditionValue, scopeToExtend);
+                    if (operationToken == JetTokens.ANDAND || operationToken == JetTokens.OROR) {
+                        WritableScope actualScopeToExtend;
+                        if (operationToken == JetTokens.ANDAND) {
+                            actualScopeToExtend = conditionValue ? scopeToExtend : null;
+                        }
+                        else {
+                            actualScopeToExtend = conditionValue ? null : scopeToExtend;
+                        }
+
+                        DataFlowInfo dataFlowInfo = extractDataFlowInfoFromCondition(expression.getLeft(), conditionValue, actualScopeToExtend);
                         JetExpression expressionRight = expression.getRight();
                         if (expressionRight != null) {
-                            DataFlowInfo rightInfo = extractDataFlowInfoFromCondition(expressionRight, conditionValue, scopeToExtend);
-                            DataFlowInfo.CompositionOperator operator = conditionValue ? DataFlowInfo.AND : DataFlowInfo.OR;
-                            dataFlowInfo = operator.compose(dataFlowInfo, rightInfo);
-                        }
-                        // TODO : intersect scopes when condition is false
-                        result[0] = dataFlowInfo;
-                    }
-                    else if (operationToken == JetTokens.OROR) {
-                        WritableScopeImpl leftScope = newWritableScopeImpl(scopeToExtend);
-                        DataFlowInfo dataFlowInfo = extractDataFlowInfoFromCondition(expression.getLeft(), conditionValue, leftScope);
-                        JetExpression expressionRight = expression.getRight();
-                        WritableScopeImpl rightScope = newWritableScopeImpl(scopeToExtend);
-                        if (expressionRight != null) {
-                            DataFlowInfo rightInfo = extractDataFlowInfoFromCondition(expressionRight, conditionValue, rightScope);
-                            DataFlowInfo.CompositionOperator operator = conditionValue ? DataFlowInfo.OR : DataFlowInfo.AND;
-                            dataFlowInfo = operator.compose(dataFlowInfo, rightInfo);
-                        }
-                        // TODO : this is incorrect, we need to intersect only when condition is true (and on && and condition being false), and intersect together with dataFlowInfo
-                        if (leftScope.hasDeclaredItems() && rightScope.hasDeclaredItems()) {
-                            Map<String, VariableDescriptor> leftVariableMap = Maps.newHashMap();
-                            for (VariableDescriptor leftVariable : leftScope.getDeclaredVariables()) {
-                                leftVariableMap.put(leftVariable.getName(), leftVariable);
+                            DataFlowInfo rightInfo = extractDataFlowInfoFromCondition(expressionRight, conditionValue, actualScopeToExtend);
+                            DataFlowInfo.CompositionOperator operator;
+                            if (operationToken == JetTokens.ANDAND) {
+                                operator = conditionValue ? DataFlowInfo.AND : DataFlowInfo.OR;
                             }
-                            for (VariableDescriptor rightVariable : rightScope.getDeclaredVariables()) {
-                                VariableDescriptor leftVariable = leftVariableMap.get(rightVariable.getName());
-                                if (leftVariable != null) {
-                                    // TODO : allow only vals
-                                    JetType leftType = leftVariable.getOutType();
-                                    if (leftType == null) {
-                                        continue;
-                                    }
-                                    JetType rightType = rightVariable.getOutType();
-                                    if (rightType == null) {
-                                        continue;
-                                    }
-                                    List<JetType> leftPossibleTypes = dataFlowInfo.getPossibleTypes(leftVariable);
-                                    List<JetType> rightPossibleTypes = dataFlowInfo.getPossibleTypes(rightVariable);
-
-
-                                    VariableDescriptor variable;
-                                    if (semanticServices.getTypeChecker().isSubtypeOf(rightType, leftType)) {
-                                        variable = leftVariable;
-                                    }
-                                    else if (semanticServices.getTypeChecker().isSubtypeOf(leftType, rightType)) {
-                                        variable = rightVariable;
-                                    }
-                                    else {
-                                        continue;
-                                    }
-                                    scopeToExtend.addVariableDescriptor(variable);
-                                }
+                            else {
+                                operator = conditionValue ? DataFlowInfo.OR : DataFlowInfo.AND;
                             }
+                            dataFlowInfo = operator.compose(dataFlowInfo, rightInfo);
                         }
                         result[0] = dataFlowInfo;
                     }
@@ -1571,8 +1538,8 @@ public class JetTypeInferrer {
                 getType(scopeToExtend, body, true, conditionInfo);
             }
             if (!flowInformationProvider.isBreakable(expression)) {
-                resultScope = newWritableScopeImpl();
-                resultDataFlowInfo = extractDataFlowInfoFromCondition(condition, false, resultScope);
+//                resultScope = newWritableScopeImpl();
+                resultDataFlowInfo = extractDataFlowInfoFromCondition(condition, false, null);
             }
             result = JetStandardClasses.getUnitType();
         }
@@ -1600,8 +1567,8 @@ public class JetTypeInferrer {
             JetExpression condition = expression.getCondition();
             checkCondition(conditionScope, condition);
             if (!flowInformationProvider.isBreakable(expression)) {
-                resultScope = newWritableScopeImpl();
-                resultDataFlowInfo = extractDataFlowInfoFromCondition(condition, false, resultScope);
+//                resultScope = newWritableScopeImpl();
+                resultDataFlowInfo = extractDataFlowInfoFromCondition(condition, false, null);
             }
             result = JetStandardClasses.getUnitType();
         }

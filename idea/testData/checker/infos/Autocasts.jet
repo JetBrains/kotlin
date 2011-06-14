@@ -117,29 +117,33 @@ fun f13(a : A?) {
     <error>c</error>.bar()
   }
 
-//  a?.foo()
-//  if ((a is val c is B) || (a is val c is A)) {
-//    c.foo()
-//    c.bar()
-//  }
-//  else {
-//    a?.foo()
-//    c.bar()
-//  }
+  if (!(a is val c is B) || !(a is val x is C)) {
+    <error>x</error>
+    <error>c</error>
+  }
+  else {
+    <info descr="Automatically cast to C">x</info>.bar()
+    <info descr="Automatically cast to B">c</info>.bar()
+  }
+
+  if (!(a is val <error>c</error> is B) || !(a is val <error>c</error> is C)) {
+  }
 
   if (!(a is val c is B)) return
   <info descr="Automatically cast to B">a</info>.bar()
-  c.foo()
-  <info descr="Automatically cast to B">c</info>.bar()
+  <error>c</error>.foo()
+  <error>c</error>.bar()
 }
 
 fun f14(a : A?) {
   while (!(a is val c is B)) {
   }
-  <info descr="Automatically cast to B">c</info>.bar()
+  <info descr="Automatically cast to B">a</info>.bar()
+  <error>c</error>.bar()
 }
 fun f15(a : A?) {
   do {
   } while (!(a is val c is B))
-  <info descr="Automatically cast to B">c</info>.bar()
+  <info descr="Automatically cast to B">a</info>.bar()
+  <error>c</error>.bar()
 }
