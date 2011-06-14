@@ -54,7 +54,8 @@ JetFile: Color.jet
         PsiElement(LBRACE)('{')
         PsiWhiteSpace('\n  ')
         ENUM_ENTRY
-          PsiElement(IDENTIFIER)('RED')
+          OBJECT_DECLARATION_NAME
+            PsiElement(IDENTIFIER)('RED')
           PsiWhiteSpace(' ')
           TYPE_PARAMETER_LIST
             <empty list>
@@ -84,7 +85,8 @@ JetFile: Color.jet
                 PsiElement(RPAR)(')')
         PsiWhiteSpace('\n  ')
         ENUM_ENTRY
-          PsiElement(IDENTIFIER)('GREEN')
+          OBJECT_DECLARATION_NAME
+            PsiElement(IDENTIFIER)('GREEN')
           PsiWhiteSpace(' ')
           TYPE_PARAMETER_LIST
             <empty list>
@@ -114,7 +116,8 @@ JetFile: Color.jet
                 PsiElement(RPAR)(')')
         PsiWhiteSpace('\n  ')
         ENUM_ENTRY
-          PsiElement(IDENTIFIER)('BLUE')
+          OBJECT_DECLARATION_NAME
+            PsiElement(IDENTIFIER)('BLUE')
           PsiWhiteSpace(' ')
           TYPE_PARAMETER_LIST
             <empty list>

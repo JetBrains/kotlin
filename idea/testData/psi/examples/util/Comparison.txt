@@ -218,19 +218,22 @@ JetFile: Comparison.jet
         PsiElement(LBRACE)('{')
         PsiWhiteSpace('\n  ')
         ENUM_ENTRY
-          PsiElement(IDENTIFIER)('LS')
+          OBJECT_DECLARATION_NAME
+            PsiElement(IDENTIFIER)('LS')
           TYPE_PARAMETER_LIST
             <empty list>
           PsiElement(SEMICOLON)(';')
         PsiWhiteSpace(' ')
         ENUM_ENTRY
-          PsiElement(IDENTIFIER)('EQ')
+          OBJECT_DECLARATION_NAME
+            PsiElement(IDENTIFIER)('EQ')
           TYPE_PARAMETER_LIST
             <empty list>
           PsiElement(SEMICOLON)(';')
         PsiWhiteSpace(' ')
         ENUM_ENTRY
-          PsiElement(IDENTIFIER)('GR')
+          OBJECT_DECLARATION_NAME
+            PsiElement(IDENTIFIER)('GR')
           PsiWhiteSpace('\n')
           TYPE_PARAMETER_LIST
             <empty list>

@@ -23,6 +23,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import javax.swing.*;
@@ -37,6 +38,7 @@ import java.util.Set;
 public class JetLineMarkerProvider implements LineMarkerProvider {
 
     public static final Icon OVERRIDING_FUNCTION = IconLoader.getIcon("/general/overridingMethod.png");
+    public static final Icon ICON_FOR_OBJECT = Icons.ANONYMOUS_CLASS_ICON;
 
     @Override
     public LineMarkerInfo getLineMarkerInfo(PsiElement element) {
@@ -47,7 +49,14 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
 
         if (element instanceof JetClass) {
             JetClass jetClass = (JetClass) element;
-            return new LineMarkerInfo<JetClass>(jetClass, jetClass.getTextOffset(), Icons.CLASS_ICON, Pass.UPDATE_ALL,
+            Icon icon = jetClass.hasModifier(JetTokens.ENUM_KEYWORD) ? Icons.ENUM_ICON : Icons.CLASS_ICON;
+            if (jetClass instanceof JetEnumEntry) {
+                JetEnumEntry enumEntry = (JetEnumEntry) jetClass;
+                if (enumEntry.getPrimaryConstructorParameterList() == null) {
+                    icon = ICON_FOR_OBJECT;
+                }
+            }
+            return new LineMarkerInfo<JetClass>(jetClass, jetClass.getTextOffset(), icon, Pass.UPDATE_ALL,
                     new Function<JetClass, String>() {
                         @Override
                         public String fun(JetClass jetClass) {

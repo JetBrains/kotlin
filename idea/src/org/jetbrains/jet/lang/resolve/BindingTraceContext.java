@@ -94,7 +94,7 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
 
     @Override
     public void recordValueParameterAsPropertyResolution(@NotNull JetParameter declaration, @NotNull PropertyDescriptor descriptor) {
-        safePut(primaryConstructorParameterDeclarationsToPropertyDescriptors, declaration, descriptor);
+        safePut(primaryConstructorParameterDeclarationsToPropertyDescriptors, declaration, (PropertyDescriptor) descriptor.getOriginal());
         safePut(descriptorToDeclarations, descriptor.getOriginal(), declaration);
     }
 

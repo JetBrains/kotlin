@@ -49,7 +49,8 @@ JetFile: List.jet
         PsiElement(LBRACE)('{')
         PsiWhiteSpace('\n  ')
         ENUM_ENTRY
-          PsiElement(IDENTIFIER)('Nil')
+          OBJECT_DECLARATION_NAME
+            PsiElement(IDENTIFIER)('Nil')
           PsiWhiteSpace(' ')
           TYPE_PARAMETER_LIST
             <empty list>
@@ -77,7 +78,8 @@ JetFile: List.jet
                 PsiElement(RPAR)(')')
         PsiWhiteSpace('\n\n  ')
         ENUM_ENTRY
-          PsiElement(IDENTIFIER)('Cons')
+          OBJECT_DECLARATION_NAME
+            PsiElement(IDENTIFIER)('Cons')
           TYPE_PARAMETER_LIST
             PsiElement(LT)('<')
             TYPE_PARAMETER

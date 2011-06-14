@@ -253,14 +253,16 @@ public class DescriptorRenderer {
             builder.append(renderKeyword(keyword)).append(" ");
             renderName(descriptor, builder);
             renderTypeParameters(descriptor.getTypeConstructor().getParameters(), builder);
-            Collection<? extends JetType> supertypes = descriptor.getTypeConstructor().getSupertypes();
-            if (!supertypes.isEmpty()) {
-                builder.append(" : ");
-                for (Iterator<? extends JetType> iterator = supertypes.iterator(); iterator.hasNext(); ) {
-                    JetType supertype = iterator.next();
-                    builder.append(renderType(supertype));
-                    if (iterator.hasNext()) {
-                        builder.append(", ");
+            if (!descriptor.equals(JetStandardClasses.getNothing())) {
+                Collection<? extends JetType> supertypes = descriptor.getTypeConstructor().getSupertypes();
+                if (!supertypes.isEmpty()) {
+                    builder.append(" : ");
+                    for (Iterator<? extends JetType> iterator = supertypes.iterator(); iterator.hasNext(); ) {
+                        JetType supertype = iterator.next();
+                        builder.append(renderType(supertype));
+                        if (iterator.hasNext()) {
+                            builder.append(", ");
+                        }
                     }
                 }
             }

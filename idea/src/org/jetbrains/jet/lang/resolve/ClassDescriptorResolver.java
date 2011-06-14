@@ -431,7 +431,7 @@ public class ClassDescriptorResolver {
         return variableDescriptor;
     }
 
-    public PropertyDescriptor resolveObjectDeclarationAsPropertyDescriptor(@NotNull DeclarationDescriptor containingDeclaration, JetObjectDeclaration objectDeclaration, @NotNull ClassDescriptor classDescriptor) {
+    public PropertyDescriptor resolveObjectDeclarationAsPropertyDescriptor(@NotNull DeclarationDescriptor containingDeclaration, JetClassOrObject objectDeclaration, @NotNull ClassDescriptor classDescriptor) {
         JetModifierList modifierList = objectDeclaration.getModifierList();
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                 containingDeclaration,

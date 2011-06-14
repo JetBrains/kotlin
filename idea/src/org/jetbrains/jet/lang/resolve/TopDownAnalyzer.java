@@ -168,20 +168,51 @@ public class TopDownAnalyzer {
 
                 @Override
                 public void visitClass(JetClass klass) {
+                    MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(trace, owner, outerScope);
+
+                    if (klass.hasModifier(JetTokens.ENUM_KEYWORD)) {
+                        MutableClassDescriptor classObjectDescriptor = new MutableClassDescriptor(trace, mutableClassDescriptor, outerScope);
+                        classObjectDescriptor.setName("class-object-for-" + klass.getName());
+                        classObjectDescriptor.createTypeConstructor();
+                        createPrimaryConstructor(classObjectDescriptor);
+                        mutableClassDescriptor.setClassObjectDescriptor(classObjectDescriptor);
+                    }
                     visitClassOrObject(
                             klass,
                             (Map) classes,
                             owner,
                             outerScope,
-                            new MutableClassDescriptor(trace, owner, outerScope));
+                            mutableClassDescriptor);
+                    owner.addClassifierDescriptor(mutableClassDescriptor);
                 }
 
                 @Override
                 public void visitObjectDeclaration(JetObjectDeclaration declaration) {
-                    createClassDescriptorForObject(declaration);
+                    createClassDescriptorForObject(declaration, owner);
                 }
 
-                private MutableClassDescriptor createClassDescriptorForObject(@NotNull JetObjectDeclaration declaration) {
+                @Override
+                public void visitEnumEntry(JetEnumEntry enumEntry) {
+                    MutableClassDescriptor classObjectDescriptor = ((MutableClassDescriptor) owner).getClassObjectDescriptor();
+                    assert classObjectDescriptor != null : enumEntry.getParent().getText();
+                    if (enumEntry.getPrimaryConstructorParameterList() == null) {
+                        MutableClassDescriptor classDescriptor = createClassDescriptorForObject(enumEntry, classObjectDescriptor);
+                        objects.remove(enumEntry);
+                        classes.put(enumEntry, classDescriptor);
+                    }
+                    else {
+                        MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(trace, classObjectDescriptor, outerScope);
+                        visitClassOrObject(
+                                enumEntry,
+                                (Map) classes,
+                                classObjectDescriptor,
+                                outerScope,
+                                mutableClassDescriptor);
+                        classObjectDescriptor.addClassifierDescriptor(mutableClassDescriptor);
+                    }
+                }
+
+                private MutableClassDescriptor createClassDescriptorForObject(@NotNull JetClassOrObject declaration, @NotNull NamespaceLike owner) {
                     MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(trace, owner, outerScope) {
                         @Override
                         public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor) {
@@ -189,20 +220,20 @@ public class TopDownAnalyzer {
                         }
                     };
                     visitClassOrObject(declaration, (Map) objects, owner, outerScope, mutableClassDescriptor);
+                    createPrimaryConstructor(mutableClassDescriptor);
+                    trace.recordDeclarationResolution((PsiElement) declaration, mutableClassDescriptor);
+                    return mutableClassDescriptor;
+                }
+
+                private void createPrimaryConstructor(MutableClassDescriptor mutableClassDescriptor) {
                     ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(mutableClassDescriptor, Collections.<Annotation>emptyList(), true);
                     constructorDescriptor.initialize(Collections.<ValueParameterDescriptor>emptyList());
                     // TODO : make the constructor private?
                     mutableClassDescriptor.setPrimaryConstructor(constructorDescriptor);
-                    trace.recordDeclarationResolution(declaration, mutableClassDescriptor);
-                    return mutableClassDescriptor;
                 }
 
                 private void visitClassOrObject(@NotNull JetClassOrObject declaration, Map<JetClassOrObject, MutableClassDescriptor> map, NamespaceLike owner, JetScope outerScope, MutableClassDescriptor mutableClassDescriptor) {
                     mutableClassDescriptor.setName(JetPsiUtil.safeName(declaration.getName()));
-
-                    if (declaration instanceof JetClass) {
-                        owner.addClassifierDescriptor(mutableClassDescriptor);
-                    }
 
                     map.put(declaration, mutableClassDescriptor);
                     declaringScopes.put((JetDeclaration) declaration, outerScope);
@@ -225,7 +256,7 @@ public class TopDownAnalyzer {
                 public void visitClassObject(JetClassObject classObject) {
                     JetObjectDeclaration objectDeclaration = classObject.getObjectDeclaration();
                     if (objectDeclaration != null) {
-                        NamespaceLike.ClassObjectStatus status = owner.setClassObjectDescriptor(createClassDescriptorForObject(objectDeclaration));
+                        NamespaceLike.ClassObjectStatus status = owner.setClassObjectDescriptor(createClassDescriptorForObject(objectDeclaration, owner));
                         switch (status) {
                             case DUPLICATE:
                                 trace.getErrorHandler().genericError(classObject.getNode(), "Only one class object is allowed per class");
@@ -239,7 +270,6 @@ public class TopDownAnalyzer {
             });
         }
     }
-
 
     private void processImports(@NotNull JetNamespace namespace, @NotNull WriteThroughScope namespaceScope, @NotNull JetScope outerScope) {
         List<JetImportDirective> importDirectives = namespace.getImportDirectives();
@@ -372,8 +402,6 @@ public class TopDownAnalyzer {
             for (JetConstructor jetConstructor : jetClass.getSecondaryConstructors()) {
                 processSecondaryConstructor(classDescriptor, jetConstructor);
             }
-
-            // TODO : Constructors
         }
         for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : objects.entrySet()) {
             JetObjectDeclaration object = entry.getKey();
@@ -408,6 +436,16 @@ public class TopDownAnalyzer {
                 public void visitObjectDeclaration(JetObjectDeclaration declaration) {
                     PropertyDescriptor propertyDescriptor = classDescriptorResolver.resolveObjectDeclarationAsPropertyDescriptor(namespaceLike, declaration, objects.get(declaration));
                     namespaceLike.addPropertyDescriptor(propertyDescriptor);
+                }
+
+                @Override
+                public void visitEnumEntry(JetEnumEntry enumEntry) {
+                    if (enumEntry.getPrimaryConstructorParameterList() == null) {
+                        PropertyDescriptor propertyDescriptor = classDescriptorResolver.resolveObjectDeclarationAsPropertyDescriptor(namespaceLike, enumEntry, classes.get(enumEntry));
+                        MutableClassDescriptor classObjectDescriptor = ((MutableClassDescriptor) namespaceLike).getClassObjectDescriptor();
+                        assert classObjectDescriptor != null;
+                        classObjectDescriptor.addPropertyDescriptor(propertyDescriptor);
+                    }
                 }
             });
         }
@@ -495,7 +533,7 @@ public class TopDownAnalyzer {
         for (Map.Entry<JetClass, MutableClassDescriptor> entry : classes.entrySet()) {
             MutableClassDescriptor classDescriptor = entry.getValue();
             JetClass jetClass = entry.getKey();
-            if (!jetClass.hasPrimaryConstructor()) {
+            if (classDescriptor.getUnsubstitutedPrimaryConstructor() == null) {
                 for (PropertyDescriptor propertyDescriptor : classDescriptor.getProperties()) {
                     if (trace.getBindingContext().hasBackingField(propertyDescriptor)) {
                         PsiElement nameIdentifier = jetClass.getNameIdentifier();
@@ -546,7 +584,7 @@ public class TopDownAnalyzer {
                 public void visitDelegationToSuperCallSpecifier(JetDelegatorToSuperCall call) {
                     JetTypeReference typeReference = call.getTypeReference();
                     if (typeReference != null) {
-                        if (jetClass.hasPrimaryConstructor()) {
+                        if (descriptor.getUnsubstitutedPrimaryConstructor() != null) {
                             typeInferrer.checkConstructorCall(scopeForConstructor, typeReference, call);
                         }
                         else {

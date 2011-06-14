@@ -44,6 +44,6 @@ public abstract class DeclarationDescriptorImpl extends AnnotatedImpl implements
 
     @Override
     public String toString() {
-        return DescriptorRenderer.TEXT_FOR_DEBUG.render(this) + "[" + getClass().getCanonicalName() + "@" + System.identityHashCode(this) + "]";
+        return DescriptorRenderer.TEXT_FOR_DEBUG.render(this) + "[" + getClass().getSimpleName() + "@" + Integer.toHexString(System.identityHashCode(this)) + "]";
     }
 }

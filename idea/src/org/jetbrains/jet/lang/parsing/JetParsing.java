@@ -482,7 +482,9 @@ public class JetParsing extends AbstractJetParsing {
     private void parseEnumEntry() {
         assert _at(IDENTIFIER);
 
+        PsiBuilder.Marker nameAsDeclaration = mark();
         advance(); // IDENTIFIER
+        nameAsDeclaration.done(OBJECT_DECLARATION_NAME);
 
         parseTypeParameterList(TokenSet.create(COLON, LPAR, SEMICOLON, LBRACE));
 

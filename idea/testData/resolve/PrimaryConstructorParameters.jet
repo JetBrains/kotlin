@@ -7,6 +7,8 @@ class C(~x~x : Int, ~y~val y : Int) : Base(`x`x /*parameter*/), Base1 by new Bas
     val z = `x`x // parameter
   }
 
+  val foo = `$y`y
+
   this() : this(1, 2) {
     val z = x // inaccessible
     val zz = `$y`y // property

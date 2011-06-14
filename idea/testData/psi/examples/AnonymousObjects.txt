@@ -135,12 +135,14 @@ JetFile: AnonymousObjects.jet
             PsiElement(LBRACE)('{')
             PsiWhiteSpace('\n  ')
             ENUM_ENTRY
-              PsiElement(IDENTIFIER)('TOO_MANY_CLICKS')
+              OBJECT_DECLARATION_NAME
+                PsiElement(IDENTIFIER)('TOO_MANY_CLICKS')
               PsiWhiteSpace('\n  ')
               TYPE_PARAMETER_LIST
                 <empty list>
             ENUM_ENTRY
-              PsiElement(IDENTIFIER)('ONE_MORE_MESSAGE')
+              OBJECT_DECLARATION_NAME
+                PsiElement(IDENTIFIER)('ONE_MORE_MESSAGE')
               PsiWhiteSpace('\n')
               TYPE_PARAMETER_LIST
                 <empty list>

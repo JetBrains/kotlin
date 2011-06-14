@@ -25,4 +25,10 @@ public interface JetClassOrObject {
 
     @Nullable
     String getName();
+
+    @Nullable
+    JetModifierList getModifierList();
+
+    @Nullable
+    JetObjectDeclarationName getNameAsDeclaration();
 }
