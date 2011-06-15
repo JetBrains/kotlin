@@ -17,6 +17,7 @@ import java.util.*;
 public class WritableScopeImpl extends WritableScopeWithImports {
 
     private final Collection<DeclarationDescriptor> allDescriptors = Sets.newHashSet();
+    private boolean allDescriptorsDone = false;
 
     @NotNull
     private final DeclarationDescriptor ownerDeclarationDescriptor;
@@ -38,7 +39,6 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     public WritableScopeImpl(@NotNull JetScope scope, @NotNull DeclarationDescriptor owner, @NotNull ErrorHandler errorHandler) {
         super(scope, errorHandler);
         this.ownerDeclarationDescriptor = owner;
-        this.allDescriptors.addAll(scope.getAllDescriptors());
     }
 
     @NotNull
@@ -57,7 +57,6 @@ public class WritableScopeImpl extends WritableScopeWithImports {
 
     @Override
     public void importScope(@NotNull JetScope imported) {
-        allDescriptors.addAll(imported.getAllDescriptors());
         super.importScope(imported);
     }
 
@@ -69,6 +68,13 @@ public class WritableScopeImpl extends WritableScopeWithImports {
 
     @Override
     public Collection<DeclarationDescriptor> getAllDescriptors() {
+        if (!allDescriptorsDone) {
+            allDescriptorsDone = true;
+            allDescriptors.addAll(getWorkerScope().getAllDescriptors());
+            for (JetScope imported : getImports()) {
+                allDescriptors.addAll(imported.getAllDescriptors());
+            }
+        }
         return allDescriptors;
     }
 
