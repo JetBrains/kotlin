@@ -91,4 +91,9 @@ public class BindingTraceAdapter implements BindingTrace {
     public BindingContext getBindingContext() {
         return originalTrace.getBindingContext();
     }
+
+    @Override
+    public void recordResolutionScope(@NotNull JetExpression expression, @NotNull JetScope scope) {
+        originalTrace.recordResolutionScope(expression, scope);
+    }
 }

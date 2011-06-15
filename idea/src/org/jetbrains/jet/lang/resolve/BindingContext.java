@@ -46,5 +46,8 @@ public interface BindingContext {
     @Nullable
     JetType getAutoCastType(@NotNull JetExpression expression);
 
+    @Nullable
+    JetScope getResolutionScope(@NotNull JetExpression expression);
+
     Collection<JetDiagnostic> getDiagnostics();
 }

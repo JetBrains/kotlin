@@ -667,6 +667,7 @@ public class JetTypeInferrer {
             }
 
             trace.markAsProcessed(expression);
+            trace.recordResolutionScope(expression, scope);
             return result;
         }
 

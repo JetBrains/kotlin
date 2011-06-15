@@ -61,4 +61,9 @@ public abstract class AbstractScopeAdapter implements JetScope {
     public DeclarationDescriptor getDeclarationDescriptorForUnqualifiedThis() {
         return getWorkerScope().getDeclarationDescriptorForUnqualifiedThis();
     }
+
+    @Override
+    public Collection<DeclarationDescriptor> getAllDescriptors() {
+        return getWorkerScope().getAllDescriptors();
+    }
 }

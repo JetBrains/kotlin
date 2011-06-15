@@ -9,6 +9,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Collection;
@@ -50,6 +51,10 @@ public class JetTestUtils {
 
         @Override
         public void recordStatement(@NotNull JetElement statement) {
+        }
+
+        @Override
+        public void recordResolutionScope(@NotNull JetExpression expression, @NotNull JetScope scope) {
         }
 
         @Override
@@ -186,6 +191,11 @@ public class JetTestUtils {
 
                 @Override
                 public JetType getAutoCastType(@NotNull JetExpression expression) {
+                    throw new UnsupportedOperationException(); // TODO
+                }
+
+                @Override
+                public JetScope getResolutionScope(@NotNull JetExpression expression) {
                     throw new UnsupportedOperationException(); // TODO
                 }
 

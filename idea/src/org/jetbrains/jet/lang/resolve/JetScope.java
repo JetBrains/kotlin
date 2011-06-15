@@ -54,4 +54,6 @@ public interface JetScope {
 
     @Nullable
     DeclarationDescriptor getDeclarationDescriptorForUnqualifiedThis();
+
+    Collection<DeclarationDescriptor> getAllDescriptors();
 }

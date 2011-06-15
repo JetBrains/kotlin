@@ -46,6 +46,7 @@ public class JavaDescriptorResolver {
     protected final Map<String, ClassDescriptor> classDescriptorCache = new HashMap<String, ClassDescriptor>();
     protected final Map<PsiTypeParameter, TypeParameterDescriptor> typeParameterDescriptorCache = Maps.newHashMap();
     protected final Map<PsiMethod, FunctionDescriptor> methodDescriptorCache = Maps.newHashMap();
+    protected final Map<PsiField, VariableDescriptor> fieldDescriptorCache = Maps.newHashMap();
     protected final Map<String, NamespaceDescriptor> namespaceDescriptorCache = new HashMap<String, NamespaceDescriptor>();
     protected final JavaPsiFacade javaFacade;
     protected final GlobalSearchScope javaSearchScope;
@@ -262,17 +263,32 @@ public class JavaDescriptorResolver {
         return result;
     }
 
+    public VariableDescriptor resolveFieldToVariableDescriptor(DeclarationDescriptor containingDeclaration, PsiField field) {
+        VariableDescriptor variableDescriptor = fieldDescriptorCache.get(field);
+        if (variableDescriptor != null) {
+            return variableDescriptor;
+        }
+        JetType type = semanticServices.getTypeTransformer().transformToType(field.getType());
+        boolean isFinal = field.hasModifierProperty(PsiModifier.FINAL);
+        PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
+                containingDeclaration,
+                Collections.<Annotation>emptyList(),
+                new MemberModifiers(false, false, false),
+                !isFinal,
+                null,
+                field.getName(),
+                isFinal ? null : type,
+                type);
+        semanticServices.getTrace().recordDeclarationResolution(field, propertyDescriptor);
+        fieldDescriptorCache.put(field, propertyDescriptor);
+        return propertyDescriptor;
+    }
+
     @NotNull
     public FunctionGroup resolveFunctionGroup(@NotNull PsiClass psiClass, @Nullable ClassDescriptor classDescriptor, @NotNull String methodName, boolean staticMembers) {
         WritableFunctionGroup writableFunctionGroup = new WritableFunctionGroup(methodName);
         final Collection<HierarchicalMethodSignature> signatures = psiClass.getVisibleSignatures();
-        TypeSubstitutor typeSubstitutor;
-        if (classDescriptor != null) {
-            typeSubstitutor = TypeUtils.buildDeepSubstitutor(classDescriptor.getDefaultType());
-        }
-        else {
-            typeSubstitutor = TypeSubstitutor.EMPTY;
-        }
+        TypeSubstitutor typeSubstitutor = createSubstitutorForGenericSupertypes(classDescriptor);
         for (HierarchicalMethodSignature signature: signatures) {
             PsiMethod method = signature.getMethod();
             if (method.hasModifierProperty(PsiModifier.STATIC) != staticMembers) {
@@ -281,37 +297,57 @@ public class JavaDescriptorResolver {
             if (!methodName.equals(method.getName())) {
                  continue;
             }
-            FunctionDescriptor functionDescriptor = methodDescriptorCache.get(method);
-            if (functionDescriptor != null) {
-                if (method.getContainingClass() != psiClass) {
-                    functionDescriptor = functionDescriptor.substitute(typeSubstitutor);
-                }
-                writableFunctionGroup.addFunction(functionDescriptor);
-                continue;
-            }
 
-            PsiParameter[] parameters = method.getParameterList().getParameters();
-            FunctionDescriptorImpl functionDescriptorImpl = new FunctionDescriptorImpl(
-                    JavaDescriptorResolver.JAVA_ROOT,
-                    Collections.<Annotation>emptyList(), // TODO
-                    methodName
-            );
-            functionDescriptorImpl.initialize(
-                    null,
-                    resolveTypeParameters(functionDescriptorImpl, method.getTypeParameters()),
-                    semanticServices.getDescriptorResolver().resolveParameterDescriptors(functionDescriptorImpl, parameters),
-                    semanticServices.getTypeTransformer().transformToType(method.getReturnType())
-            );
-            semanticServices.getTrace().recordDeclarationResolution(method, functionDescriptorImpl);
-            FunctionDescriptor substitutedFunctionDescriptor = functionDescriptorImpl;
-            if (method.getContainingClass() != psiClass) {
-                substitutedFunctionDescriptor = functionDescriptorImpl.substitute(typeSubstitutor);
-            }
+            FunctionDescriptor substitutedFunctionDescriptor = resolveMethodToFunctionDescriptor(psiClass, typeSubstitutor, method);
             if (substitutedFunctionDescriptor != null) {
                 writableFunctionGroup.addFunction(substitutedFunctionDescriptor);
             }
-            methodDescriptorCache.put(method, functionDescriptorImpl);
         }
         return writableFunctionGroup;
+    }
+
+    public TypeSubstitutor createSubstitutorForGenericSupertypes(ClassDescriptor classDescriptor) {
+        TypeSubstitutor typeSubstitutor;
+        if (classDescriptor != null) {
+            typeSubstitutor = TypeUtils.buildDeepSubstitutor(classDescriptor.getDefaultType());
+        }
+        else {
+            typeSubstitutor = TypeSubstitutor.EMPTY;
+        }
+        return typeSubstitutor;
+    }
+
+    @Nullable
+    public FunctionDescriptor resolveMethodToFunctionDescriptor(PsiClass psiClass, TypeSubstitutor typeSubstitutorForGenericSuperclasses, PsiMethod method) {
+        PsiType returnType = method.getReturnType();
+        if (returnType == null) {
+            return null;
+        }
+        FunctionDescriptor functionDescriptor = methodDescriptorCache.get(method);
+        if (functionDescriptor != null) {
+            if (method.getContainingClass() != psiClass) {
+                functionDescriptor = functionDescriptor.substitute(typeSubstitutorForGenericSuperclasses);
+            }
+            return functionDescriptor;
+        }
+        PsiParameter[] parameters = method.getParameterList().getParameters();
+        FunctionDescriptorImpl functionDescriptorImpl = new FunctionDescriptorImpl(
+                JavaDescriptorResolver.JAVA_ROOT,
+                Collections.<Annotation>emptyList(), // TODO
+                method.getName()
+        );
+        methodDescriptorCache.put(method, functionDescriptorImpl);
+        functionDescriptorImpl.initialize(
+                null,
+                resolveTypeParameters(functionDescriptorImpl, method.getTypeParameters()),
+                semanticServices.getDescriptorResolver().resolveParameterDescriptors(functionDescriptorImpl, parameters),
+                semanticServices.getTypeTransformer().transformToType(returnType)
+        );
+        semanticServices.getTrace().recordDeclarationResolution(method, functionDescriptorImpl);
+        FunctionDescriptor substitutedFunctionDescriptor = functionDescriptorImpl;
+        if (method.getContainingClass() != psiClass) {
+            substitutedFunctionDescriptor = functionDescriptorImpl.substitute(typeSubstitutorForGenericSuperclasses);
+        }
+        return substitutedFunctionDescriptor;
     }
 }

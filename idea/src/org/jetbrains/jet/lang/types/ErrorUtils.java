@@ -64,6 +64,11 @@ public class ErrorUtils {
             return ERROR_CLASS; // TODO : review
         }
 
+        @Override
+        public Collection<DeclarationDescriptor> getAllDescriptors() {
+            return Collections.emptyList();
+        }
+
     };
 
     private static final FunctionGroup ERROR_FUNCTION_GROUP = new FunctionGroup() {

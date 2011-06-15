@@ -36,6 +36,7 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
 
     private final List<JetDiagnostic> diagnostics = Lists.newArrayList();
     private final ErrorHandlerWithRegions errorHandler = new ErrorHandlerWithRegions(new CollectingErrorHandler(diagnostics));
+    private Map<JetExpression, JetScope> resolutionScopes = Maps.newHashMap();
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -122,6 +123,11 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
     @Override
     public void recordStatement(@NotNull JetElement statement) {
         statements.add(statement);
+    }
+
+    @Override
+    public void recordResolutionScope(@NotNull JetExpression expression, @NotNull JetScope scope) {
+        safePut(resolutionScopes, expression, scope);
     }
 
     @Override
@@ -265,6 +271,11 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
     @Override
     public JetType getAutoCastType(@NotNull JetExpression expression) {
         return autoCasts.get(expression);
+    }
+
+    @Override
+    public JetScope getResolutionScope(@NotNull JetExpression expression) {
+        return resolutionScopes.get(expression);
     }
 
     @Override

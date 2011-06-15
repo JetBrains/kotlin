@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.resolve;
 
+import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -15,6 +16,7 @@ public class SubstitutingScope implements JetScope {
     private final JetScope workerScope;
 //    private final Map<TypeConstructor, TypeProjection> substitutionContext;
     private final TypeSubstitutor substitutor;
+    private Collection<DeclarationDescriptor> allDescriptors;
 
     public SubstitutingScope(JetScope workerScope, @NotNull TypeSubstitutor substitutor) {
         this.workerScope = workerScope;
@@ -85,5 +87,16 @@ public class SubstitutingScope implements JetScope {
     @Nullable
     public DeclarationDescriptor getDeclarationDescriptorForUnqualifiedThis() {
         return workerScope.getDeclarationDescriptorForUnqualifiedThis();
+    }
+
+    @Override
+    public Collection<DeclarationDescriptor> getAllDescriptors() {
+        if (allDescriptors == null) {
+            allDescriptors = Sets.newHashSet();
+            for (DeclarationDescriptor descriptor : workerScope.getAllDescriptors()) {
+                allDescriptors.add(descriptor.substitute(substitutor));
+            }
+        }
+        return allDescriptors;
     }
 }

@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.resolve;
 
+import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.types.JetType;
@@ -13,6 +14,7 @@ import java.util.Collections;
 public class ChainedScope implements JetScope {
     private final DeclarationDescriptor containingDeclaration;
     private final JetScope[] scopeChain;
+    private Collection<DeclarationDescriptor> allDescriptors;
 
     public ChainedScope(DeclarationDescriptor containingDeclaration, JetScope... scopes) {
         this.containingDeclaration = containingDeclaration;
@@ -106,5 +108,16 @@ public class ChainedScope implements JetScope {
             }
         }
         return null;
+    }
+
+    @Override
+    public Collection<DeclarationDescriptor> getAllDescriptors() {
+        if (allDescriptors == null) {
+            allDescriptors = Sets.newHashSet();
+            for (JetScope scope : scopeChain) {
+                allDescriptors.addAll(scope.getAllDescriptors());
+            }
+        }
+        return allDescriptors;
     }
 }

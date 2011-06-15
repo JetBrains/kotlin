@@ -1,6 +1,8 @@
 package org.jetbrains.jet.lang.psi;
 
+import com.google.common.collect.Lists;
 import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
@@ -15,6 +17,9 @@ import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.resolve.DescriptorRenderer;
+
+import java.util.List;
 
 /**
  * @author max
@@ -84,15 +89,25 @@ public class JetSimpleNameExpression extends JetReferenceExpression {
                     BindingContext bindingContext = AnalyzingUtils.analyzeFileWithCache(file);
                     final JetType expressionType = bindingContext.getExpressionType(receiverExpression);
                     if (expressionType != null) {
-                        return new Object[] {
-                                new LookupElement() {
-                                    @NotNull
-                                    @Override
-                                    public String getLookupString() {
-                                        return expressionType.toString();
+                        List<LookupElement> result = Lists.newArrayList();
+                        for (final DeclarationDescriptor descriptor : expressionType.getMemberScope().getAllDescriptors()) {
+                            result.add(
+                                    new LookupElement() {
+                                        @NotNull
+                                        @Override
+                                        public String getLookupString() {
+                                            return descriptor.getName();
+                                        }
+
+                                        @Override
+                                        public void renderElement(LookupElementPresentation presentation) {
+                                            presentation.setItemText(descriptor.getName());
+                                            presentation.setTypeText(DescriptorRenderer.TEXT.render(descriptor));
+                                        }
                                     }
-                                }
-                        };
+                            );
+                        }
+                        return result.toArray();
                     }
                 }
 

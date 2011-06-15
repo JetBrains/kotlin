@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.ErrorHandler;
@@ -14,6 +15,8 @@ import java.util.*;
  * @author abreslav
  */
 public class WritableScopeImpl extends WritableScopeWithImports {
+
+    private final Collection<DeclarationDescriptor> allDescriptors = Sets.newHashSet();
 
     @NotNull
     private final DeclarationDescriptor ownerDeclarationDescriptor;
@@ -49,6 +52,23 @@ public class WritableScopeImpl extends WritableScopeWithImports {
             return ownerDeclarationDescriptor;
         }
         return super.getDeclarationDescriptorForUnqualifiedThis();
+    }
+
+    @Override
+    public void importScope(@NotNull JetScope imported) {
+        allDescriptors.addAll(imported.getAllDescriptors());
+        super.importScope(imported);
+    }
+
+    @Override
+    public void importClassifierAlias(@NotNull String importedClassifierName, @NotNull ClassifierDescriptor classifierDescriptor) {
+        allDescriptors.add(classifierDescriptor);
+        super.importClassifierAlias(importedClassifierName, classifierDescriptor);
+    }
+
+    @Override
+    public Collection<DeclarationDescriptor> getAllDescriptors() {
+        return allDescriptors;
     }
 
     @NotNull
@@ -104,6 +124,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
         }
         // TODO : Should this always happen?
         variableClassOrNamespaceDescriptors.put(variableDescriptor.getName(), variableDescriptor);
+        allDescriptors.add(variableDescriptor);
     }
 
     @Override
@@ -140,6 +161,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
             functionGroups.put(name, functionGroup);
         }
         functionGroup.addFunction(functionDescriptor);
+        allDescriptors.add(functionDescriptor);
     }
 
     @Override
@@ -202,6 +224,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
             errorHandler.redeclaration(originalDescriptor, classifierDescriptor);
         }
         variableClassOrNamespaceDescriptors.put(name, classifierDescriptor);
+        allDescriptors.add(classifierDescriptor);
     }
 
     @Override
@@ -232,6 +255,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
         if (oldValue != null) {
             errorHandler.redeclaration(oldValue, namespaceDescriptor);
         }
+        allDescriptors.add(namespaceDescriptor);
     }
 
     @Override

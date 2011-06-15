@@ -53,4 +53,9 @@ public abstract class JetScopeImpl implements JetScope {
     public DeclarationDescriptor getDeclarationDescriptorForUnqualifiedThis() {
         return null;
     }
+
+    @Override
+    public Collection<DeclarationDescriptor> getAllDescriptors() {
+        return Collections.emptyList();
+    }
 }

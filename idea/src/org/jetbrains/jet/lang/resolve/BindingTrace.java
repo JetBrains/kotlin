@@ -29,6 +29,8 @@ public interface BindingTrace {
 
     void recordStatement(@NotNull JetElement statement);
 
+    void recordResolutionScope(@NotNull JetExpression expression, @NotNull JetScope scope);
+
     void removeStatementRecord(@NotNull JetElement statement);
 
     void removeReferenceResolution(@NotNull JetReferenceExpression referenceExpression);

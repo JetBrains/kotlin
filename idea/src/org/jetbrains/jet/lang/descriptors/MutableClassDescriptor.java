@@ -213,7 +213,10 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     @NotNull
     @Override
     public ClassDescriptor substitute(TypeSubstitutor substitutor) {
-        throw new UnsupportedOperationException(); // TODO
+        if (substitutor.isEmpty()) {
+            return this;
+        }
+        return new LazySubstitutingClassDescriptor(this, substitutor);
     }
 
     @Override
