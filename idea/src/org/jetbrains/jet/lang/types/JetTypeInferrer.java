@@ -1878,10 +1878,14 @@ public class JetTypeInferrer {
 
         @Override
         public void visitUnaryExpression(JetUnaryExpression expression) {
+            JetExpression baseExpression = expression.getBaseExpression();
+            if (baseExpression == null) {
+                return;
+            }
             JetSimpleNameExpression operationSign = expression.getOperationSign();
             if (JetTokens.LABELS.contains(operationSign.getReferencedNameElementType())) {
                 // TODO : Some processing for the label?
-                result = getType(expression.getBaseExpression());
+                result = getType(baseExpression);
                 return;
             }
             IElementType operationType = operationSign.getReferencedNameElementType();
@@ -1890,7 +1894,7 @@ public class JetTypeInferrer {
                 trace.getErrorHandler().genericError(operationSign.getNode(), "Unknown unary operation");
             }
             else {
-                JetType receiverType = getType(scope, expression.getBaseExpression(), false);
+                JetType receiverType = getType(scope, baseExpression, false);
                 if (receiverType != null) {
                     FunctionDescriptor functionDescriptor = lookupFunction(scope, expression.getOperationSign(), name, receiverType, Collections.<JetType>emptyList(), true);
                     if (functionDescriptor != null) {
