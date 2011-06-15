@@ -1801,7 +1801,10 @@ public class JetTypeInferrer {
             selectorExpression.accept(new JetVisitor() {
                 @Override
                 public void visitCallExpression(JetCallExpression callExpression) {
-                    callExpression.getCalleeExpression().accept(this);
+                    JetExpression calleeExpression = callExpression.getCalleeExpression();
+                    if (calleeExpression != null) {
+                        calleeExpression.accept(this);
+                    }
                 }
 
                 @Override
@@ -1839,7 +1842,11 @@ public class JetTypeInferrer {
         }
 
         private JetType getCallExpressionType(@Nullable JetType receiverType, @NotNull JetCallExpression callExpression) {
-            OverloadDomain overloadDomain = getOverloadDomain(receiverType, scope, callExpression.getCalleeExpression(), callExpression.getValueArgumentList());
+            JetExpression calleeExpression = callExpression.getCalleeExpression();
+            if (calleeExpression == null) {
+                return null;
+            }
+            OverloadDomain overloadDomain = getOverloadDomain(receiverType, scope, calleeExpression, callExpression.getValueArgumentList());
             return resolveCall(scope, overloadDomain, callExpression);
         }
 

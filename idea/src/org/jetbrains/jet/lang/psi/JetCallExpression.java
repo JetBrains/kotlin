@@ -21,11 +21,9 @@ public class JetCallExpression extends JetExpression implements JetCall {
         visitor.visitCallExpression(this);
     }
 
-    @NotNull
+    @Nullable
     public JetExpression getCalleeExpression() {
-        JetExpression callee = findChildByClass(JetExpression.class);
-        assert callee != null;
-        return callee;
+        return findChildByClass(JetExpression.class);
     }
 
     @Override
