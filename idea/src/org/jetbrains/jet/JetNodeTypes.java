@@ -4,7 +4,7 @@
 package org.jetbrains.jet;
 
 import com.intellij.psi.tree.IFileElementType;
-import org.jetbrains.jet.lang.JetLanguage;
+import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.lang.psi.*;
 
 public interface JetNodeTypes {

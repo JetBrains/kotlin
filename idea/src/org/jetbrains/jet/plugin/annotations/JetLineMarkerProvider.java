@@ -1,4 +1,4 @@
-package org.jetbrains.jet.lang.annotations;
+package org.jetbrains.jet.plugin.annotations;
 
 import com.google.common.collect.Lists;
 import com.intellij.codeHighlighting.Pass;

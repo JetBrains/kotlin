@@ -1,4 +1,4 @@
-package org.jetbrains.jet.run;
+package org.jetbrains.jet.plugin.run;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;

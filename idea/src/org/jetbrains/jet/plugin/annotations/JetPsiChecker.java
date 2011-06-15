@@ -1,4 +1,4 @@
-package org.jetbrains.jet.lang.annotations;
+package org.jetbrains.jet.plugin.annotations;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.lang.ASTNode;
@@ -11,7 +11,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.ErrorHandler;
-import org.jetbrains.jet.lang.JetHighlighter;
+import org.jetbrains.jet.plugin.JetHighlighter;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;

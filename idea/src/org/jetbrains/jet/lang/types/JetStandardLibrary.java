@@ -5,7 +5,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiFileFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.ErrorHandler;
-import org.jetbrains.jet.lang.JetFileType;
+import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.Annotation;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;

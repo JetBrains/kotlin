@@ -3,19 +3,14 @@
  */
 package org.jetbrains.jet;
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
-import com.intellij.lang.Language;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.JetLanguage;
+import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.lang.psi.JetElement;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 
 public class JetNodeType extends IElementType {
     private Constructor<? extends JetElement> myPsiFactory;

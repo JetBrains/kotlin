@@ -5,7 +5,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
 import com.intellij.psi.PsiElementVisitor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.JetLanguage;
+import org.jetbrains.jet.plugin.JetLanguage;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

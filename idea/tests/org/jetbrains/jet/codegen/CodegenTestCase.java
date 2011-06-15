@@ -6,7 +6,7 @@ import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetLightProjectDescriptor;
-import org.jetbrains.jet.lang.JetFileType;
+import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespace;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;

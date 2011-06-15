@@ -1,14 +1,14 @@
 /*
  * @author max
  */
-package org.jetbrains.jet.lang.annotations;
+package org.jetbrains.jet.plugin.annotations;
 
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.JetHighlighter;
+import org.jetbrains.jet.plugin.JetHighlighter;
 import org.jetbrains.jet.lexer.JetTokens;
 
 public class SoftKeywordsAnnotator implements Annotator {

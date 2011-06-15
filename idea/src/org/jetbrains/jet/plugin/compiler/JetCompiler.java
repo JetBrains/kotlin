@@ -1,4 +1,4 @@
-package org.jetbrains.jet.compiler;
+package org.jetbrains.jet.plugin.compiler;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.CompileContext;
@@ -14,7 +14,7 @@ import com.intellij.util.Chunk;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.Codegens;
 import org.jetbrains.jet.codegen.NamespaceCodegen;
-import org.jetbrains.jet.lang.JetFileType;
+import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespace;
 

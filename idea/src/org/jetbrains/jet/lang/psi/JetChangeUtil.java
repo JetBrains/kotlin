@@ -5,7 +5,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.util.LocalTimeCounter;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.JetFileType;
+import org.jetbrains.jet.plugin.JetFileType;
 
 import java.util.List;
 

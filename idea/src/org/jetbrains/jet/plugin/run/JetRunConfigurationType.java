@@ -1,9 +1,9 @@
-package org.jetbrains.jet.run;
+package org.jetbrains.jet.plugin.run;
 
 import com.intellij.execution.configurations.*;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.JetFileType;
+import org.jetbrains.jet.plugin.JetFileType;
 
 /**
  * @author yole

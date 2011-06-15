@@ -1,7 +1,7 @@
 /*
  * @author max
  */
-package org.jetbrains.jet.lang;
+package org.jetbrains.jet.plugin;
 
 import com.intellij.lang.BracePair;
 import com.intellij.lang.PairedBraceMatcher;
@@ -9,7 +9,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
 public class JetPairMatcher implements PairedBraceMatcher {

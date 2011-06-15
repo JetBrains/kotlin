@@ -1,4 +1,4 @@
-package org.jetbrains.jet.run;
+package org.jetbrains.jet.plugin.run;
 
 import com.intellij.execution.ui.ConfigurationModuleSelector;
 import com.intellij.openapi.options.ConfigurationException;

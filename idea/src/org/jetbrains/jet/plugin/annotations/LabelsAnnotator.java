@@ -1,14 +1,13 @@
 /*
  * @author max
  */
-package org.jetbrains.jet.lang.annotations;
+package org.jetbrains.jet.plugin.annotations;
 
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.JetHighlighter;
+import org.jetbrains.jet.plugin.JetHighlighter;
 import org.jetbrains.jet.lang.psi.JetLabelQualifiedExpression;
 import org.jetbrains.jet.lang.psi.JetPrefixExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;

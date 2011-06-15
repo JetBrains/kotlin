@@ -1,9 +1,8 @@
 /*
  * @author max
  */
-package org.jetbrains.jet.lang;
+package org.jetbrains.jet.plugin;
 
-import com.intellij.lang.Language;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.util.Icons;
 import org.jetbrains.annotations.NotNull;

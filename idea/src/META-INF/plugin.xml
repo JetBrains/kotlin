@@ -9,7 +9,7 @@
 
   <project-components>
       <component>
-          <implementation-class>org.jetbrains.jet.compiler.JetCompilerManager</implementation-class>
+          <implementation-class>org.jetbrains.jet.plugin.compiler.JetCompilerManager</implementation-class>
       </component>
   </project-components>
 
@@ -18,17 +18,17 @@
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
-      <fileTypeFactory implementation="org.jetbrains.jet.lang.JetFileFactory"/>
-      <lang.braceMatcher language="jet" implementationClass="org.jetbrains.jet.lang.JetPairMatcher"/>
+      <fileTypeFactory implementation="org.jetbrains.jet.plugin.JetFileFactory"/>
+      <lang.braceMatcher language="jet" implementationClass="org.jetbrains.jet.plugin.JetPairMatcher"/>
       <lang.parserDefinition language="jet" implementationClass="org.jetbrains.jet.lang.parsing.JetParserDefinition"/>
       <lang.commenter language="jet" implementationClass="org.jetbrains.jet.plugin.JetCommenter"/>
       <lang.psiStructureViewFactory language="jet" implementationClass="org.jetbrains.jet.plugin.structureView.JetStructureViewFactory"/>
-      <annotator language="jet" implementationClass="org.jetbrains.jet.lang.annotations.SoftKeywordsAnnotator"/>
-      <annotator language="jet" implementationClass="org.jetbrains.jet.lang.annotations.LabelsAnnotator"/>
-      <annotator language="jet" implementationClass="org.jetbrains.jet.lang.annotations.JetPsiChecker"/>
+      <annotator language="jet" implementationClass="org.jetbrains.jet.plugin.annotations.SoftKeywordsAnnotator"/>
+      <annotator language="jet" implementationClass="org.jetbrains.jet.plugin.annotations.LabelsAnnotator"/>
+      <annotator language="jet" implementationClass="org.jetbrains.jet.plugin.annotations.JetPsiChecker"/>
       <documentationProvider implementation="org.jetbrains.jet.plugin.JetQuickDocumentationProvider"/>
-      <configurationType implementation="org.jetbrains.jet.run.JetRunConfigurationType"/>
-      <codeInsight.lineMarkerProvider language="jet" implementationClass="org.jetbrains.jet.lang.annotations.JetLineMarkerProvider"/>
+      <configurationType implementation="org.jetbrains.jet.plugin.run.JetRunConfigurationType"/>
+      <codeInsight.lineMarkerProvider language="jet" implementationClass="org.jetbrains.jet.plugin.annotations.JetLineMarkerProvider"/>
       <iconProvider implementation="org.jetbrains.jet.plugin.JetIconProvider"/>
   </extensions>
 </idea-plugin>

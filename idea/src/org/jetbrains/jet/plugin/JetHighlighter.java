@@ -1,7 +1,7 @@
 /*
  * @author max
  */
-package org.jetbrains.jet.lang;
+package org.jetbrains.jet.plugin;
 
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.editor.HighlighterColors;

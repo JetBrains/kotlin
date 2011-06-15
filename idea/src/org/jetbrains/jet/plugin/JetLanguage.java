@@ -1,13 +1,12 @@
 /*
  * @author max
  */
-package org.jetbrains.jet.lang;
+package org.jetbrains.jet.plugin;
 
 import com.intellij.lang.Language;
 import com.intellij.openapi.fileTypes.SingleLazyInstanceSyntaxHighlighterFactory;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 public class JetLanguage extends Language {

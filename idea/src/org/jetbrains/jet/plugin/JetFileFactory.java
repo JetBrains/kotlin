@@ -1,7 +1,7 @@
 /*
  * @author max
  */
-package org.jetbrains.jet.lang;
+package org.jetbrains.jet.plugin;
 
 import com.intellij.openapi.fileTypes.FileTypeConsumer;
 import com.intellij.openapi.fileTypes.FileTypeFactory;
