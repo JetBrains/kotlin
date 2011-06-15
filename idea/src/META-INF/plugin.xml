@@ -14,7 +14,11 @@
   </project-components>
 
   <actions>
-    <!-- Add your actions here -->
+     <action id="ShowJetExpressionType" class="org.jetbrains.jet.plugin.actions.ShowExpressionTypeAction"
+             text="Show Expression Type">
+         <keyboard-shortcut keymap="$default" first-keystroke="control shift Q"/>
+         <add-to-group group-id="CodeMenu" anchor="last"/>
+     </action>
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
