@@ -104,7 +104,7 @@ fun f13(a : A?) {
   }
   else {
     a.foo()
-    <info descr="Automatically cast to B">c</info>.bar()
+    <error>c</error>.bar()
   }
 
   a?.foo()
@@ -122,11 +122,11 @@ fun f13(a : A?) {
     <error>c</error>
   }
   else {
-    <info descr="Automatically cast to C">x</info>.bar()
-    <info descr="Automatically cast to B">c</info>.bar()
+    <error>x</error>
+    <error>c</error>
   }
 
-  if (!(a is val <error>c</error> is B) || !(a is val <error>c</error> is C)) {
+  if (!(a is val c is B) || !(a is val c is C)) {
   }
 
   if (!(a is val c is B)) return

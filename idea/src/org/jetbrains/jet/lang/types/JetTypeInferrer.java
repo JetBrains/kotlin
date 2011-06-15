@@ -1342,8 +1342,7 @@ public class JetTypeInferrer {
 
             WritableScopeImpl thenScope = newWritableScopeImpl();
             DataFlowInfo thenInfo = extractDataFlowInfoFromCondition(condition, true, thenScope);
-            WritableScopeImpl elseScope = newWritableScopeImpl();
-            DataFlowInfo elseInfo = extractDataFlowInfoFromCondition(condition, false, elseScope);
+            DataFlowInfo elseInfo = extractDataFlowInfoFromCondition(condition, false, null);
 
             if (elseBranch == null) {
                 if (thenBranch != null) {
@@ -1356,7 +1355,7 @@ public class JetTypeInferrer {
                 }
             }
             else if (thenBranch == null) {
-                JetType type = getType(elseScope, elseBranch, true, elseInfo);
+                JetType type = getType(scope, elseBranch, true, elseInfo);
                 if (type != null && JetStandardClasses.isNothing(type)) {
                     resultDataFlowInfo = thenInfo;
 //                    resultScope = thenScope;
@@ -1365,7 +1364,7 @@ public class JetTypeInferrer {
             }
             else {
                 JetType thenType = getType(thenScope, thenBranch, true, thenInfo);
-                JetType elseType = getType(elseScope, elseBranch, true, elseInfo);
+                JetType elseType = getType(scope, elseBranch, true, elseInfo);
 
                 if (thenType == null) {
                     result = elseType;
@@ -2335,41 +2334,7 @@ public class JetTypeInferrer {
         @NotNull
         @Override
         public TypeInferrerVisitor createNew(JetScope scope, boolean preferBlock, DataFlowInfo dataFlowInfo) {
-//            if (scope instanceof WritableScope) {
-//                return new TypeInferrerVisitorWithWritableScope((WritableScope) scope, preferBlock, dataFlowInfo);
-//            }
             return new TypeInferrerVisitorWithWritableScope(new WritableScopeImpl(scope, scope.getContainingDeclaration(), trace.getErrorHandler()), preferBlock, dataFlowInfo);
-        }
-    }
-
-//    private class CachedBindingTrace extends BindingTraceAdapter {
-//
-//        public CachedBindingTrace(BindingTrace originalTrace) {
-//            super(originalTrace);
-//        }
-//
-//        @Override
-//        public void recordExpressionType(@NotNull JetExpression expression, @NotNull JetType type) {
-//            super.recordExpressionType(expression, type);
-//            typeCache.put(expression, type);
-//        }
-//    }
-
-    private static class TypeAndDataFlowInfo {
-        private final JetType type;
-        private final DataFlowInfo dataFlowInfo;
-
-        private TypeAndDataFlowInfo(JetType type, DataFlowInfo dataFlowInfo) {
-            this.type = type;
-            this.dataFlowInfo = dataFlowInfo;
-        }
-
-        public JetType getType() {
-            return type;
-        }
-
-        public DataFlowInfo getDataFlowInfo() {
-            return dataFlowInfo;
         }
     }
 }
