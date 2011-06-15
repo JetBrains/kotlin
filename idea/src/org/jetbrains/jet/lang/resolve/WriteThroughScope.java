@@ -146,4 +146,9 @@ public class WriteThroughScope extends WritableScopeWithImports {
     public void setThisType(@NotNull JetType thisType) {
         writableWorker.setThisType(thisType);
     }
+
+    @Override
+    public Collection<DeclarationDescriptor> getAllDescriptors() {
+        return writableWorker.getAllDescriptors();
+    }
 }

@@ -127,7 +127,7 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
 
     @Override
     public void recordResolutionScope(@NotNull JetExpression expression, @NotNull JetScope scope) {
-        safePut(resolutionScopes, expression, scope);
+        resolutionScopes.put(expression, scope);
     }
 
     @Override

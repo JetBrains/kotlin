@@ -641,6 +641,7 @@ public class JetTypeInferrer {
         @Nullable
         public final JetType getType(@NotNull JetExpression expression) {
             assert result == null;
+            trace.recordResolutionScope(expression, scope);
             if (trace.isProcessed(expression)) {
                 return trace.getBindingContext().getExpressionType(expression);
             }
@@ -667,7 +668,6 @@ public class JetTypeInferrer {
             }
 
             trace.markAsProcessed(expression);
-            trace.recordResolutionScope(expression, scope);
             return result;
         }
 
@@ -1127,7 +1127,7 @@ public class JetTypeInferrer {
                 JetWhenExpression subWhen = whenEntry.getSubWhen();
                 JetExpression bodyExpression = subWhen == null ? whenEntry.getExpression() : subWhen;
                 if (bodyExpression != null) {
-                    JetType type = getType(scopeToExtend, bodyExpression, false, newDataFlowInfo);
+                    JetType type = getType(scopeToExtend, bodyExpression, true, newDataFlowInfo);
                     if (type != null) {
                         expressionTypes.add(type);
                     }

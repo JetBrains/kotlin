@@ -15,6 +15,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.parsing.JetExpressionParsing;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
@@ -89,31 +90,43 @@ public class JetSimpleNameExpression extends JetReferenceExpression {
                     BindingContext bindingContext = AnalyzingUtils.analyzeFileWithCache(file);
                     final JetType expressionType = bindingContext.getExpressionType(receiverExpression);
                     if (expressionType != null) {
-                        List<LookupElement> result = Lists.newArrayList();
-                        for (final DeclarationDescriptor descriptor : expressionType.getMemberScope().getAllDescriptors()) {
-                            result.add(
-                                    new LookupElement() {
-                                        @NotNull
-                                        @Override
-                                        public String getLookupString() {
-                                            return descriptor.getName();
-                                        }
-
-                                        @Override
-                                        public void renderElement(LookupElementPresentation presentation) {
-                                            presentation.setItemText(descriptor.getName());
-                                            presentation.setTypeText(DescriptorRenderer.TEXT.render(descriptor));
-                                        }
-                                    }
-                            );
-                        }
-                        return result.toArray();
+                        return collectLookupElements(expressionType.getMemberScope());
+                    }
+                }
+                else {
+                    JetFile file = (JetFile) getContainingFile();
+                    BindingContext bindingContext = AnalyzingUtils.analyzeFileWithCache(file);
+                    JetScope resolutionScope = bindingContext.getResolutionScope(JetSimpleNameExpression.this);
+                    if (resolutionScope != null) {
+                        return collectLookupElements(resolutionScope);
                     }
                 }
 
                 return EMPTY_ARRAY;
             }
         };
+    }
+
+    private Object[] collectLookupElements(JetScope scope) {
+        List<LookupElement> result = Lists.newArrayList();
+        for (final DeclarationDescriptor descriptor : scope.getAllDescriptors()) {
+            result.add(
+                    new LookupElement() {
+                        @NotNull
+                        @Override
+                        public String getLookupString() {
+                            return descriptor.getName();
+                        }
+
+                        @Override
+                        public void renderElement(LookupElementPresentation presentation) {
+                            presentation.setItemText(descriptor.getName());
+                            presentation.setTypeText(DescriptorRenderer.TEXT.render(descriptor));
+                        }
+                    }
+            );
+        }
+        return result.toArray();
     }
 
     @Override

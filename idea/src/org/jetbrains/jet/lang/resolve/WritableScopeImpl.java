@@ -38,6 +38,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     public WritableScopeImpl(@NotNull JetScope scope, @NotNull DeclarationDescriptor owner, @NotNull ErrorHandler errorHandler) {
         super(scope, errorHandler);
         this.ownerDeclarationDescriptor = owner;
+        this.allDescriptors.addAll(scope.getAllDescriptors());
     }
 
     @NotNull
