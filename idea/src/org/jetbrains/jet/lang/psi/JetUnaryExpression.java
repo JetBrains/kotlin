@@ -13,6 +13,7 @@ public abstract class JetUnaryExpression extends JetExpression {
         super(node);
     }
 
+    @Nullable @IfNotParsed
     public abstract JetExpression getBaseExpression();
 
     @NotNull
