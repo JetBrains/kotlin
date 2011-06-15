@@ -16,7 +16,7 @@ fun main(args: Array<String>) {
 }
 
 fun bottlesOfBeer(count: Int): String {
-    val result = new StringBuilder()
+    val result = StringBuilder()
     result.append(count)
     result.append(if (count > 1) " bottles of beer" else " bottle of beer")
     return result.toString() ?: ""

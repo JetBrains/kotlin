@@ -11,7 +11,7 @@ class World() {
     public val world: World get() = this@World
   }
 
-  public val items = new ArrayList<Item>
+  public val items = ArrayList<Item>()
 
   class Item(val name: String, var room: Room) {
     {
@@ -29,11 +29,11 @@ class World() {
     }
   }
 
-  public val atEndOfRoad = new AtEndOfRoad()
-  public val atHillInRoad = new AtHillInRoad()
-  public val insideBuilding = new InsideBuilding()
+  public val atEndOfRoad = AtEndOfRoad()
+  public val atHillInRoad = AtHillInRoad()
+  public val insideBuilding = InsideBuilding()
 
-  public val brassLantern = new BrassLantern()
+  public val brassLantern = BrassLantern()
 
   class AtEndOfRoad(): Room("At End of Road") {
     public val west: Room? get() = atHillInRoad
@@ -92,17 +92,17 @@ class EastCommand(): MoveCommand {
 }
 
 fun parse(cmd: String): Command? {
-  if (cmd == "quit") return new QuitCommand()
-  if (cmd == "west") return new WestCommand()
-  if (cmd == "east") return new EastCommand()
+  if (cmd == "quit") return QuitCommand()
+  if (cmd == "west") return WestCommand()
+  if (cmd == "east") return EastCommand()
   return null
 }
 
 fun main(args: Array<String>) {
-  val w = new World()
-  val p = new Player(w.startRoom())
+  val w = World()
+  val p = Player(w.startRoom())
   System.out?.println(p.room.name)
-  val reader = new BufferedReader(new InputStreamReader(System.`in`))
+  val reader = BufferedReader(InputStreamReader(System.`in`))
   while(true) {
     System.out?.print("> ")
     val cmd = reader.readLine() as String
