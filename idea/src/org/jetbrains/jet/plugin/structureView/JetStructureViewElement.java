@@ -5,9 +5,14 @@ import com.intellij.ide.util.treeView.smartTree.TreeElement;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.util.Iconable;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.NavigatablePsiElement;
+import com.intellij.util.PsiIconUtil;
+import org.jetbrains.jet.lang.psi.*;
 
 import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author yole
@@ -44,7 +49,13 @@ public class JetStructureViewElement implements StructureViewTreeElement {
         return new ItemPresentation() {
             @Override
             public String getPresentableText() {
-                return "";
+                String name = myElement.getName();
+                if (StringUtil.isEmpty(name)) {
+                    if (myElement instanceof JetClassInitializer) {
+                        return "<class initializer>";
+                    }
+                }
+                return name;
             }
 
             @Override
@@ -54,7 +65,7 @@ public class JetStructureViewElement implements StructureViewTreeElement {
 
             @Override
             public Icon getIcon(boolean open) {
-                return myElement.getIcon(open ? Iconable.ICON_FLAG_OPEN : Iconable.ICON_FLAG_CLOSED);
+                return PsiIconUtil.getProvidersIcon(myElement, open ? Iconable.ICON_FLAG_OPEN : Iconable.ICON_FLAG_CLOSED);
             }
 
             @Override
@@ -66,6 +77,36 @@ public class JetStructureViewElement implements StructureViewTreeElement {
 
     @Override
     public TreeElement[] getChildren() {
-        return new TreeElement[0];  //To change body of implemented methods use File | Settings | File Templates.
+        if (myElement instanceof JetFile) {
+            JetNamespace rootNamespace = ((JetFile) myElement).getRootNamespace();
+            return new TreeElement[] { new JetStructureViewElement((rootNamespace)) };
+        }
+        else if (myElement instanceof JetNamespace) {
+            return wrapDeclarations(((JetNamespace) myElement).getDeclarations());
+        }
+        else if (myElement instanceof JetClass) {
+            JetClass jetClass = (JetClass) myElement;
+            List<JetDeclaration> declarations = new ArrayList<JetDeclaration>();
+            for (JetParameter parameter : jetClass.getPrimaryConstructorParameters()) {
+                if (parameter.getValOrVarNode() != null) {
+                    declarations.add(parameter);
+                }
+            }
+            declarations.addAll(jetClass.getDeclarations());
+            return wrapDeclarations(declarations);
+
+        }
+        else if (myElement instanceof JetClassOrObject) {
+            return wrapDeclarations(((JetClassOrObject) myElement).getDeclarations());
+        }
+        return new TreeElement[0];
+    }
+
+    private static TreeElement[] wrapDeclarations(List<JetDeclaration> declarations) {
+        TreeElement[] result = new TreeElement[declarations.size()];
+        for (int i = 0; i < declarations.size(); i++) {
+            result[i]  = new JetStructureViewElement(declarations.get(i));
+        }
+        return result;
     }
 }

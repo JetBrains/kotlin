@@ -11,19 +11,20 @@ import com.intellij.ide.util.DefaultPsiElementCellRenderer;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.IconLoader;
+import com.intellij.openapi.util.Iconable;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilBase;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.Function;
 import com.intellij.util.Icons;
+import com.intellij.util.PsiIconUtil;
 import com.intellij.util.PsiNavigateUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import javax.swing.*;
@@ -38,7 +39,6 @@ import java.util.Set;
 public class JetLineMarkerProvider implements LineMarkerProvider {
 
     public static final Icon OVERRIDING_FUNCTION = IconLoader.getIcon("/general/overridingMethod.png");
-    public static final Icon ICON_FOR_OBJECT = Icons.ANONYMOUS_CLASS_ICON;
 
     @Override
     public LineMarkerInfo getLineMarkerInfo(PsiElement element) {
@@ -49,47 +49,16 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
 
         if (element instanceof JetClass) {
             JetClass jetClass = (JetClass) element;
-            Icon icon = jetClass.hasModifier(JetTokens.ENUM_KEYWORD) ? Icons.ENUM_ICON : Icons.CLASS_ICON;
-            if (jetClass instanceof JetEnumEntry) {
-                JetEnumEntry enumEntry = (JetEnumEntry) jetClass;
-                if (enumEntry.getPrimaryConstructorParameterList() == null) {
-                    icon = ICON_FOR_OBJECT;
-                }
-            }
-            return new LineMarkerInfo<JetClass>(jetClass, jetClass.getTextOffset(), icon, Pass.UPDATE_ALL,
-                    new Function<JetClass, String>() {
-                        @Override
-                        public String fun(JetClass jetClass) {
-                            ClassDescriptor classDescriptor = bindingContext.getClassDescriptor(jetClass);
-                            if (classDescriptor == null) {
-                                return "<it>Unresolved</it>";
-                            }
-                            return DescriptorRenderer.HTML.render(classDescriptor);
-                        }
-                    },
-                    new GutterIconNavigationHandler<JetClass>() {
-                        @Override
-                        public void navigate(MouseEvent e, JetClass elt) {
-                        }
-                    });
+            ClassDescriptor classDescriptor = bindingContext.getClassDescriptor(jetClass);
+            String text = classDescriptor == null ? "<i>Unresolved</i>" : DescriptorRenderer.HTML.render(classDescriptor);
+            return createLineMarkerInfo(jetClass, text);
         }
 
         if (element instanceof JetProperty) {
             JetProperty jetProperty = (JetProperty) element;
             final VariableDescriptor variableDescriptor = bindingContext.getVariableDescriptor(jetProperty);
             if (variableDescriptor instanceof PropertyDescriptor) {
-                return new LineMarkerInfo<JetProperty>(jetProperty, jetProperty.getTextOffset(), Icons.PROPERTY_ICON, Pass.UPDATE_ALL,
-                        new Function<JetProperty, String>() {
-                            @Override
-                            public String fun(JetProperty property) {
-                                return DescriptorRenderer.HTML.render(variableDescriptor);
-                            }
-                        },
-                        new GutterIconNavigationHandler<JetProperty>() {
-                            @Override
-                            public void navigate(MouseEvent e, JetProperty elt) {
-                            }
-                        });
+                return createLineMarkerInfo(element, DescriptorRenderer.HTML.render(variableDescriptor));
             }
         }
 
@@ -164,22 +133,8 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
         }
 
         if (element instanceof JetNamespace) {
-            JetNamespace jetNamespace = (JetNamespace) element;
-            return new LineMarkerInfo<JetNamespace>(
-                    jetNamespace, jetNamespace.getTextOffset(), Icons.PACKAGE_ICON, Pass.UPDATE_ALL,
-                    new Function<JetNamespace, String>() {
-                        @Override
-                        public String fun(JetNamespace jetNamespace) {
-                            NamespaceDescriptor namespaceDescriptor = bindingContext.getNamespaceDescriptor(jetNamespace);
-                            return DescriptorRenderer.HTML.render(namespaceDescriptor);
-                        }
-                    },
-                    new GutterIconNavigationHandler<JetNamespace>() {
-                        @Override
-                        public void navigate(MouseEvent e, JetNamespace elt) {
-                        }
-                    }
-            );
+            return createLineMarkerInfo((JetNamespace) element,
+                    DescriptorRenderer.HTML.render(bindingContext.getNamespaceDescriptor((JetNamespace) element)));
         }
 
         if (element instanceof JetObjectDeclaration && !(element.getParent() instanceof JetExpression)) {
@@ -206,6 +161,23 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
         }
 
         return null;
+    }
+
+    private <T extends PsiElement> LineMarkerInfo<T> createLineMarkerInfo(T element, final String text) {
+        return new LineMarkerInfo<T>(
+                element, element.getTextOffset(), PsiIconUtil.getProvidersIcon(element, Iconable.ICON_FLAG_CLOSED), Pass.UPDATE_ALL,
+                new Function<T, String>() {
+                    @Override
+                    public String fun(T jetNamespace) {
+                        return text;
+                    }
+                },
+                new GutterIconNavigationHandler<T>() {
+                    @Override
+                    public void navigate(MouseEvent e, T elt) {
+                    }
+                }
+        );
     }
 
     private boolean isMember(@NotNull FunctionDescriptor functionDescriptor) {
