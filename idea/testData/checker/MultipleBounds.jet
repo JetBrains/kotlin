@@ -32,9 +32,9 @@ class Test1<T : A>
 }
 
 fun test() {
-  new Test1<<error>B</error>>()
-  new Test1<<error>A</error>>()
-  new Test1<C>()
+  Test1<<error>B</error>>()
+  Test1<<error>A</error>>()
+  Test1<C>()
 }
 
 class Foo() {}
@@ -60,9 +60,9 @@ fun <T : A>
   t.bar()
 }
 
-val test1 = test2<<error>A</error>>(new A())
-val test2 = test2<<error>B</error>>(new B())
-val test3 = test2<C>(new C())
+val test1 = test2<<error>A</error>>(A())
+val test2 = test2<<error>B</error>>(B())
+val test3 = test2<C>(C())
 
 class Test<<error>T</error>>
   where

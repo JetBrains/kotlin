@@ -546,13 +546,13 @@ public class JetControlFlowProcessor {
             builder.read(expression);
         }
 
-        @Override
-        public void visitNewExpression(JetNewExpression expression) {
-            // TODO : Instantiated class is loaded
-            // TODO : type arguments?
-            visitCall(expression);
-            builder.read(expression);
-        }
+//        @Override
+//        public void visitNewExpression(JetNewExpression expression) {
+//            // TODO : Instantiated class is loaded
+//            // TODO : type arguments?
+//            visitCall(expression);
+//            builder.read(expression);
+//        }
 
         @Override
         public void visitProperty(JetProperty property) {

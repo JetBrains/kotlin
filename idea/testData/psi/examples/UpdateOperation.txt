@@ -101,13 +101,9 @@ JetFile: UpdateOperation.jet
                 PsiWhiteSpace(' ')
                 PsiElement(EQ)('=')
                 PsiWhiteSpace(' ')
-                NEW
-                  PsiElement(new)('new')
-                  PsiWhiteSpace(' ')
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('Pair')
+                CALL_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Pair')
                   VALUE_ARGUMENT_LIST
                     PsiElement(LPAR)('(')
                     VALUE_ARGUMENT
@@ -133,13 +129,9 @@ JetFile: UpdateOperation.jet
       PsiWhiteSpace(' ')
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
-      NEW
-        PsiElement(new)('new')
-        PsiWhiteSpace(' ')
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('Point')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('Point')
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT

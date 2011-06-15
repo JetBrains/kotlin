@@ -1,5 +1,5 @@
 fun foo() {
-  val a = new Array<Int>
+  val a = Array<Int>
   3
   a[10] = 4
   2

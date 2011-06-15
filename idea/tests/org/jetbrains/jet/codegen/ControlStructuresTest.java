@@ -101,7 +101,7 @@ public class ControlStructuresTest extends CodegenTestCase {
     }
 
     public void testThrowCheckedException() throws Exception {
-        loadText("fun foo() { throw new Exception(); }");
+        loadText("fun foo() { throw Exception(); }");
         final Method main = generateFunction();
         boolean caught = false;
         try {

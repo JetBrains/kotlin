@@ -1,4 +1,4 @@
 class Point() {
 }
 
-fun foo() = new Point()
+fun foo() = Point()

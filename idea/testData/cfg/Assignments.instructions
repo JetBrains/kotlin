@@ -9,7 +9,7 @@ fun assignments() : Unit {
     val y = true && false
     val z = false && true
 
-    val t = new Test();
+    val t = Test();
     t.x = 1
 }
 ---------------------
@@ -43,7 +43,8 @@ l4:
 l5:
     r(false && true)
     w(z)
-    r(new Test())
+    r(Test)
+    r(Test())
     w(t)
     r(1)
     r(t)

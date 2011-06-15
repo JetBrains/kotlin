@@ -347,26 +347,26 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
     }
 
     public void testNew() throws Exception {
-        assertType("new Base_T<Int>()", "Base_T<Int>");
+        assertType("Base_T<Int>()", "Base_T<Int>");
     }
 
     public void testPropertiesInClasses() throws Exception {
-        assertType("new Properties().p", "Int");
-        assertType("new Props<Int>().p", "Int");
-        assertType("new Props<out Int>().p", "Int");
-        assertType("new Props<Properties>().p.p", "Int");
+        assertType("Properties().p", "Int");
+        assertType("Props<Int>().p", "Int");
+        assertType("Props<out Int>().p", "Int");
+        assertType("Props<Properties>().p.p", "Int");
 
         assertType("(return : Props<in Int>).p", "Any?");
     }
 
     public void testOverloads() throws Exception {
-        assertType("new Functions<String>().f()", "Unit");
-        assertType("new Functions<String>().f(1)", "Int");
-        assertType("new Functions<String>().f(1.0)", (String) null);
-        assertType("new Functions<Double>().f((1, 1))", "Double");
-        assertType("new Functions<Double>().f(1.0)", "Any");
-        assertType("new Functions<Byte>().f<String>(\"\")", "Byte");
-        assertType("new Functions<Byte>().f<String>(1)", (String) null);
+        assertType("Functions<String>().f()", "Unit");
+        assertType("Functions<String>().f(1)", "Int");
+        assertType("Functions<String>().f(1.0)", (String) null);
+        assertType("Functions<Double>().f((1, 1))", "Double");
+        assertType("Functions<Double>().f(1.0)", "Any");
+        assertType("Functions<Byte>().f<String>(\"\")", "Byte");
+        assertType("Functions<Byte>().f<String>(1)", (String) null);
 
         assertType("f()", "Unit");
         assertType("f(1)", "Int");
@@ -430,9 +430,9 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertType("true && false", "Boolean");
         assertType("true || false", "Boolean");
         assertType("null ?: false", "Boolean");
-        assertType("new WithPredicate()?isValid()", "WithPredicate?");
-        assertType("new WithPredicate()?isValid(1)", "WithPredicate?");
-        assertType("new WithPredicate()?p", "WithPredicate?");
+        assertType("WithPredicate()?isValid()", "WithPredicate?");
+        assertType("WithPredicate()?isValid(1)", "WithPredicate?");
+        assertType("WithPredicate()?p", "WithPredicate?");
     }
 
     public void testSupertypes() throws Exception {
@@ -539,35 +539,35 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
     private class ClassDefinitions {
         private Map<String, ClassDescriptor> CLASSES = new HashMap<String, ClassDescriptor>();
         private String[] CLASS_DECLARATIONS = {
-            "open class Base_T<T>",
-            "open class Derived_T<T> : Base_T<T>",
-            "open class DDerived_T<T> : Derived_T<T>",
-            "open class DDerived1_T<T> : Derived_T<T>",
-            "open class DDerived2_T<T> : Derived_T<T>, Base_T<T>",
-            "open class Base_inT<in T>",
-            "open class Derived_inT<in T> : Base_inT<T>",
-            "open class Derived1_inT<in T> : Base_inT<T>, Derived_T<T>",
-            "open class Base_outT<out T>",
-            "open class Derived_outT<out T> : Base_outT<T>",
-            "open class MDerived_T> : Base_outT<out T>, Base_T<T>",
-            "class Properties { val p : Int }",
-            "class Props<T> { val p : T }",
-            "class Functions<T> { " +
+            "open class Base_T<T>()",
+            "open class Derived_T<T>() : Base_T<T>",
+            "open class DDerived_T<T>() : Derived_T<T>",
+            "open class DDerived1_T<T>() : Derived_T<T>",
+            "open class DDerived2_T<T>() : Derived_T<T>, Base_T<T>",
+            "open class Base_inT<in T>()",
+            "open class Derived_inT<in T>() : Base_inT<T>",
+            "open class Derived1_inT<in T>() : Base_inT<T>, Derived_T<T>",
+            "open class Base_outT<out T>()",
+            "open class Derived_outT<out T>() : Base_outT<T>",
+            "open class MDerived_T<T>() : Base_outT<out T>, Base_T<T>",
+            "class Properties() { val p : Int }",
+            "class Props<T>() { val p : T }",
+            "class Functions<T>() { " +
                     "fun f() : Unit {} " +
                     "fun f(a : Int) : Int {} " +
                     "fun f(a : T) : Any {} " +
                     "fun f(a : (Int, Int)) : T {} " +
                     "fun f<E>(a : E) : T {} " +
                     "}",
-            "class WithPredicate { " +
+            "class WithPredicate() { " +
                     "fun isValid() : Boolean " +
                     "fun isValid(x : Int) : Boolean " +
                     "val p : Boolean " +
             "}",
 
-            "open class List<E>",
+            "open class List<E>()",
             "open class AbstractList<E> : List<E?>",
-            "open class ArrayList<E> : Any, AbstractList<E?>, List<E?>"
+            "open class ArrayList<E>() : Any, AbstractList<E?>, List<E?>"
 
         };
         private String[] FUNCTION_DECLARATIONS = {
@@ -597,6 +597,11 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
             @NotNull
             @Override
             public FunctionGroup getFunctionGroup(@NotNull String name) {
+                ClassifierDescriptor classifier = getClassifier(name);
+                if (classifier instanceof ClassDescriptor) {
+                    ClassDescriptor classDescriptor = (ClassDescriptor) classifier;
+                    return classDescriptor.getConstructors();
+                }
                 WritableFunctionGroup writableFunctionGroup = new WritableFunctionGroup(name);
                 for (String funDecl : FUNCTION_DECLARATIONS) {
                     FunctionDescriptor functionDescriptor = classDescriptorResolver.resolveFunctionDescriptor(JetStandardClasses.getAny(), this, JetChangeUtil.createFunction(getProject(), funDecl));

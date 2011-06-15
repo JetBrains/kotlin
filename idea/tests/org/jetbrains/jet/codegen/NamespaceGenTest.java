@@ -176,7 +176,7 @@ public class NamespaceGenTest extends CodegenTestCase {
     }
 
     public void testJavaConstructor() throws Exception {
-        loadText("fun foo(): StringBuilder = new StringBuilder()");
+        loadText("fun foo(): StringBuilder = StringBuilder()");
         System.out.println(generateToText());
         final Method main = generateFunction();
         final Object result = main.invoke(null);
@@ -184,7 +184,7 @@ public class NamespaceGenTest extends CodegenTestCase {
     }
 
     public void testJavaConstructorWithParameters() throws Exception {
-        loadText("fun foo(): StringBuilder = new StringBuilder(\"beer\")");
+        loadText("fun foo(): StringBuilder = StringBuilder(\"beer\")");
         final Method main = generateFunction();
         final StringBuilder result = (StringBuilder) main.invoke(null);
         assertEquals("beer", result.toString());
@@ -361,7 +361,7 @@ public class NamespaceGenTest extends CodegenTestCase {
     }
 
     public void testArrayNew() throws Exception {
-        loadText("fun foo() = new Array<Int>(4)");
+        loadText("fun foo() = Array<Int>(4)");
         final Method main = generateFunction();
         int[] result = (int[]) main.invoke(null);
         assertEquals(4, result.length);

@@ -6,7 +6,7 @@
   ~foo~fun foo(~foo.a~a : `std::Char`Char) = `foo.a`a`:std::Char`
   ~fooB~fun fooB() = `foo`foo('1')`:std::Char`
   ~foo.1~fun foo() : Int = (1.`std::Int.plus(Int)`plus(1))`:std::Int`
-  ~foo1~fun foo1() : `B`B = new `B()`B()`:B`
+  ~foo1~fun foo1() : `B`B = `B()`B()`:B`
   ~A.a~val a : `std::Int`Int
 }
 

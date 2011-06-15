@@ -96,21 +96,26 @@ public class ClassDescriptorResolver {
         }
 
         WritableFunctionGroup constructors = new WritableFunctionGroup("<init>");
-        for (JetConstructor constructor : classElement.getSecondaryConstructors()) {
-            constructors.addFunction(resolveSecondaryConstructorDescriptor(memberDeclarations, classDescriptor, constructor));
-        }
-        ConstructorDescriptor primaryConstructorDescriptor = resolvePrimaryConstructorDescriptor(scope, classDescriptor, classElement);
-        if (primaryConstructorDescriptor != null) {
-            constructors.addFunction(primaryConstructorDescriptor);
-        }
-        return classDescriptor.initialize(
+        classDescriptor.initialize(
                 !open,
                 typeParameters,
                 supertypes,
                 memberDeclarations,
                 constructors,
-                primaryConstructorDescriptor
+                null
         );
+        for (JetConstructor constructor : classElement.getSecondaryConstructors()) {
+            ConstructorDescriptorImpl functionDescriptor = resolveSecondaryConstructorDescriptor(memberDeclarations, classDescriptor, constructor);
+            functionDescriptor.setReturnType(classDescriptor.getDefaultType());
+            constructors.addFunction(functionDescriptor);
+        }
+        ConstructorDescriptorImpl primaryConstructorDescriptor = resolvePrimaryConstructorDescriptor(scope, classDescriptor, classElement);
+        if (primaryConstructorDescriptor != null) {
+            primaryConstructorDescriptor.setReturnType(classDescriptor.getDefaultType());
+            constructors.addFunction(primaryConstructorDescriptor);
+            classDescriptor.setPrimaryConstructor(primaryConstructorDescriptor);
+        }
+        return classDescriptor;
     }
 
     public void resolveMutableClassDescriptor(@NotNull JetClass classElement, @NotNull MutableClassDescriptor descriptor) {
@@ -616,18 +621,18 @@ public class ClassDescriptorResolver {
     }
 
     @NotNull
-    public ConstructorDescriptor resolveSecondaryConstructorDescriptor(@NotNull JetScope scope, @NotNull ClassDescriptor classDescriptor, @NotNull JetConstructor constructor) {
-        return createConstructorDescriptor(scope, classDescriptor, false, constructor.getModifierList(), constructor, constructor.getParameters());
+    public ConstructorDescriptorImpl resolveSecondaryConstructorDescriptor(@NotNull JetScope scope, @NotNull ClassDescriptor classDescriptor, @NotNull JetConstructor constructor) {
+        return createConstructorDescriptor(scope, classDescriptor, false, constructor.getModifierList(), constructor, classDescriptor.getTypeConstructor().getParameters(), constructor.getParameters());
     }
 
     @NotNull
-    private ConstructorDescriptor createConstructorDescriptor(
+    private ConstructorDescriptorImpl createConstructorDescriptor(
             @NotNull JetScope scope,
             @NotNull ClassDescriptor classDescriptor,
             boolean isPrimary,
             @Nullable JetModifierList modifierList,
             @NotNull JetDeclaration declarationToTrace,
-            @NotNull List<JetParameter> valueParameters) {
+            List<TypeParameterDescriptor> typeParameters, @NotNull List<JetParameter> valueParameters) {
         ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(
                 classDescriptor,
                 AnnotationResolver.INSTANCE.resolveAnnotations(modifierList),
@@ -635,6 +640,7 @@ public class ClassDescriptorResolver {
         );
         trace.recordDeclarationResolution(declarationToTrace, constructorDescriptor);
         return constructorDescriptor.initialize(
+                typeParameters,
                 resolveValueParameters(
                         constructorDescriptor,
                         new WritableScopeImpl(scope, classDescriptor, trace.getErrorHandler()),
@@ -642,7 +648,7 @@ public class ClassDescriptorResolver {
     }
 
     @Nullable
-    public ConstructorDescriptor resolvePrimaryConstructorDescriptor(@NotNull JetScope scope, @NotNull ClassDescriptor classDescriptor, @NotNull JetClass classElement) {
+    public ConstructorDescriptorImpl resolvePrimaryConstructorDescriptor(@NotNull JetScope scope, @NotNull ClassDescriptor classDescriptor, @NotNull JetClass classElement) {
         if (!classElement.hasPrimaryConstructor()) return null;
         return createConstructorDescriptor(
                 scope,
@@ -650,7 +656,7 @@ public class ClassDescriptorResolver {
                 true,
                 classElement.getPrimaryConstructorModifierList(),
                 classElement,
-                classElement.getPrimaryConstructorParameters());
+                classDescriptor.getTypeConstructor().getParameters(), classElement.getPrimaryConstructorParameters());
     }
 
     @NotNull

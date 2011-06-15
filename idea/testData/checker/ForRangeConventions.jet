@@ -66,16 +66,16 @@ class Range1() {
 }
 
 fun test() {
-  for (i in <error>new NotRange1()</error>);
-  for (i in <error>new NotRange2()</error>);
-  for (i in <error>new NotRange3()</error>);
-  for (i in <error>new NotRange4()</error>);
-  for (i in <error>new NotRange5()</error>);
-  for (i in <error>new NotRange6()</error>);
-  for (i in <error>new NotRange7()</error>);
-  for (i in new Range0());
-  for (i in new Range1());
+  for (i in <error>NotRange1()</error>);
+  for (i in <error>NotRange2()</error>);
+  for (i in <error>NotRange3()</error>);
+  for (i in <error>NotRange4()</error>);
+  for (i in <error>NotRange5()</error>);
+  for (i in <error>NotRange6()</error>);
+  for (i in <error>NotRange7()</error>);
+  for (i in Range0());
+  for (i in Range1());
 
-  for (i in (new ArrayList<Int>() : List<Int>));
+  for (i in (ArrayList<Int>() : List<Int>));
 }
 

@@ -3,6 +3,6 @@ class SimpleClass() {
 }
 
 fun test() {
-  val c = new SimpleClass()
+  val c = SimpleClass()
   return c.foo()
 }

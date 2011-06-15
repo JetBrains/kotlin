@@ -52,26 +52,24 @@ JetFile: RootNamespace.jet
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('X')
             PsiWhiteSpace('\n    ')
-            NEW
-              PsiElement(new)('new')
-              PsiWhiteSpace(' ')
-              TYPE_REFERENCE
-                USER_TYPE
-                  USER_TYPE
-                    USER_TYPE
-                      PsiElement(namespace)('namespace')
-                      PsiElement(DOT)('.')
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('foo')
-                    PsiElement(DOT)('.')
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('bar')
+            DOT_QUALIFIED_EXPRESSION
+              DOT_QUALIFIED_EXPRESSION
+                DOT_QUALIFIED_EXPRESSION
+                  ROOT_NAMESPACE
+                    PsiElement(namespace)('namespace')
                   PsiElement(DOT)('.')
                   REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('X')
-              VALUE_ARGUMENT_LIST
-                PsiElement(LPAR)('(')
-                PsiElement(RPAR)(')')
+                    PsiElement(IDENTIFIER)('foo')
+                PsiElement(DOT)('.')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('bar')
+              PsiElement(DOT)('.')
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('X')
+                VALUE_ARGUMENT_LIST
+                  PsiElement(LPAR)('(')
+                  PsiElement(RPAR)(')')
             PsiWhiteSpace('\n    ')
             WHEN
               PsiElement(when)('when')

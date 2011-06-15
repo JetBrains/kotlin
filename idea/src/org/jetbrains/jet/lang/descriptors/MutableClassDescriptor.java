@@ -66,8 +66,10 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
 
     public void addConstructor(@NotNull ConstructorDescriptor constructorDescriptor) {
         assert constructorDescriptor.getContainingDeclaration() == this;
+//        assert constructorDescriptor.getTypeParameters().size() == getTypeConstructor().getParameters().size();
         constructors.addFunction(constructorDescriptor);
         if (defaultType != null) {
+//            constructorDescriptor.getTypeParameters().addAll(typeParameters);
             ((ConstructorDescriptorImpl) constructorDescriptor).setReturnType(getDefaultType());
         }
     }
@@ -154,6 +156,7 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
                 supertypes);
         scopeForMemberResolution.setThisType(getDefaultType());
         for (FunctionDescriptor functionDescriptor : constructors.getFunctionDescriptors()) {
+//            functionDescriptor.getTypeParameters().addAll(typeParameters);
             ((ConstructorDescriptorImpl) functionDescriptor).setReturnType(getDefaultType());
         }
     }
@@ -180,15 +183,16 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
 
     @NotNull
     @Override
-    public FunctionGroup getConstructors(List<TypeProjection> typeArguments) {
+    public FunctionGroup getConstructors() {
         // TODO : Duplicates ClassDescriptorImpl
-        assert typeArguments.size() == getTypeConstructor().getParameters().size();
+//        assert typeArguments.size() == getTypeConstructor().getParameters().size();
 
-        if (typeArguments.size() == 0) {
-            return constructors;
-        }
-        Map<TypeConstructor, TypeProjection> substitutionContext = TypeUtils.buildSubstitutionContext(getTypeConstructor().getParameters(), typeArguments);
-        return new LazySubstitutingFunctionGroup(TypeSubstitutor.create(substitutionContext), constructors);
+//        if (typeArguments.size() == 0) {
+//            return constructors;
+//        }
+//        Map<TypeConstructor, TypeProjection> substitutionContext = TypeUtils.buildSubstitutionContext(getTypeConstructor().getParameters(), typeArguments);
+//        return new LazySubstitutingFunctionGroup(TypeSubstitutor.create(substitutionContext), constructors);
+        return constructors;
     }
 
     @NotNull

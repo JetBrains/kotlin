@@ -37,8 +37,12 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
         this.memberDeclarations = memberDeclarations;
         this.constructors = constructors;
         this.primaryConstructor = primaryConstructor;
-        assert !constructors.isEmpty() || primaryConstructor == null;
+//        assert !constructors.isEmpty() || primaryConstructor == null;
         return this;
+    }
+
+    public void setPrimaryConstructor(@NotNull ConstructorDescriptor primaryConstructor) {
+        this.primaryConstructor = primaryConstructor;
     }
 
     @Override
@@ -66,13 +70,13 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
 
     @NotNull
     @Override
-    public FunctionGroup getConstructors(List<TypeProjection> typeArguments) {
-        assert typeArguments.size() == getTypeConstructor().getParameters().size() : "Argument list length mismatch for " + getName();
-        if (typeArguments.size() == 0) {
-            return constructors;
-        }
-        Map<TypeConstructor, TypeProjection> substitutionContext = TypeUtils.buildSubstitutionContext(getTypeConstructor().getParameters(), typeArguments);
-        return new LazySubstitutingFunctionGroup(TypeSubstitutor.create(substitutionContext), constructors);
+    public FunctionGroup getConstructors() {
+//        assert typeArguments.size() == getTypeConstructor().getParameters().size() : "Argument list length mismatch for " + getName();
+//        if (typeArguments.size() == 0) {
+//            return constructors;
+//        }
+//        Map<TypeConstructor, TypeProjection> substitutionContext = TypeUtils.buildSubstitutionContext(getTypeConstructor().getParameters(), typeArguments);
+        return constructors;// LazySubstitutingFunctionGroup(TypeSubstitutor.create(substitutionContext), constructors);
     }
 
     @NotNull

@@ -35,7 +35,7 @@ public interface JetTokens {
     JetKeywordToken FOR_KEYWORD              = JetKeywordToken.keyword("for");
     JetKeywordToken NULL_KEYWORD             = JetKeywordToken.keyword("null");
     JetKeywordToken TYPEOF_KEYWORD           = JetKeywordToken.keyword("typeof");
-    JetKeywordToken NEW_KEYWORD              = JetKeywordToken.keyword("new");
+//    JetKeywordToken NEW_KEYWORD              = JetKeywordToken.keyword("new");
     JetKeywordToken TRUE_KEYWORD             = JetKeywordToken.keyword("true");
     JetKeywordToken FALSE_KEYWORD            = JetKeywordToken.keyword("false");
     JetKeywordToken IS_KEYWORD               = JetKeywordToken.keyword("is");
@@ -139,7 +139,9 @@ public interface JetTokens {
 
     TokenSet KEYWORDS = TokenSet.create(NAMESPACE_KEYWORD, AS_KEYWORD, TYPE_KEYWORD, CLASS_KEYWORD,
             THIS_KEYWORD, VAL_KEYWORD, VAR_KEYWORD, FUN_KEYWORD, EXTENSION_KEYWORD, FOR_KEYWORD,
-            NULL_KEYWORD, TYPEOF_KEYWORD, NEW_KEYWORD, TRUE_KEYWORD, FALSE_KEYWORD, IS_KEYWORD,
+            NULL_KEYWORD, TYPEOF_KEYWORD,
+//            NEW_KEYWORD,
+            TRUE_KEYWORD, FALSE_KEYWORD, IS_KEYWORD,
             IN_KEYWORD, THROW_KEYWORD, RETURN_KEYWORD, BREAK_KEYWORD, CONTINUE_KEYWORD, OBJECT_KEYWORD, IF_KEYWORD,
             ELSE_KEYWORD, WHILE_KEYWORD, DO_KEYWORD, TRY_KEYWORD, WHEN_KEYWORD,
             NOT_IN, NOT_IS, CAPITALIZED_THIS_KEYWORD

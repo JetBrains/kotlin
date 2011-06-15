@@ -364,13 +364,9 @@ JetFile: HashMap.jet
       PsiWhiteSpace(' ')
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
-      NEW
-        PsiElement(new)('new')
-        PsiWhiteSpace(' ')
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('HashableWrapper')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('HashableWrapper')
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
@@ -955,21 +951,17 @@ JetFile: HashMap.jet
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
-                  NEW
-                    PsiElement(new)('new')
-                    PsiWhiteSpace(' ')
-                    TYPE_REFERENCE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('JavaObjectHashingStrategy')
-                        TYPE_ARGUMENT_LIST
-                          PsiElement(LT)('<')
-                          TYPE_PROJECTION
-                            TYPE_REFERENCE
-                              USER_TYPE
-                                REFERENCE_EXPRESSION
-                                  PsiElement(IDENTIFIER)('K')
-                          PsiElement(GT)('>')
+                  CALL_EXPRESSION
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('JavaObjectHashingStrategy')
+                    TYPE_ARGUMENT_LIST
+                      PsiElement(LT)('<')
+                      TYPE_PROJECTION
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('K')
+                      PsiElement(GT)('>')
                     VALUE_ARGUMENT_LIST
                       PsiElement(LPAR)('(')
                       PsiElement(RPAR)(')')
@@ -979,7 +971,7 @@ JetFile: HashMap.jet
             PsiElement(LBRACE)('{')
             PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n\n  ')
-        PsiComment(EOL_COMMENT)('//this() where (K : IHashable) : this(new DefaultHashingStrategy<K>()) {}')
+        PsiComment(EOL_COMMENT)('//this() where (K : IHashable) : this(DefaultHashingStrategy<K>()) {}')
         PsiWhiteSpace('\n  ')
         PsiComment(EOL_COMMENT)('//...')
         PsiWhiteSpace('\n\n')

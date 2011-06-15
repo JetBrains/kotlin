@@ -1,10 +1,8 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.JetScopeImpl;
-import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 
 /**
  * @author abreslav
@@ -29,6 +27,17 @@ public class JavaPackageScope extends JetScopeImpl {
     @Override
     public NamespaceDescriptor getNamespace(@NotNull String name) {
         return semanticServices.getDescriptorResolver().resolveNamespace(getQualifiedName(name));
+    }
+
+    @NotNull
+    @Override
+    public FunctionGroup getFunctionGroup(@NotNull String name) {
+        ClassifierDescriptor classifier = getClassifier(name);
+        if (classifier instanceof ClassDescriptor) {
+            ClassDescriptor classDescriptor = (ClassDescriptor) classifier;
+            return classDescriptor.getConstructors();
+        }
+        return FunctionGroup.EMPTY;
     }
 
     @NotNull

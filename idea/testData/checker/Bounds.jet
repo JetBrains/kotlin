@@ -4,14 +4,14 @@ namespace boundsWithSubstitutors {
 
     class C : A<C>
 
-    val a = new B<C>()
-    val a1 = new B<<error>Int</error>>()
+    val a = B<C>()
+    val a1 = B<<error>Int</error>>()
 
     class X<A, B : A>()
 
-    val b = new X<Any, X<A<C>, C>>
-    val b0 = new X<Any, <error>Any?</error>>
-    val b1 = new X<Any, X<A<C>, <error>String</error>>>
+    val b = X<Any, X<A<C>, C>>
+    val b0 = X<Any, <error>Any?</error>>
+    val b1 = X<Any, X<A<C>, <error>String</error>>>
 
 }
 
@@ -19,7 +19,7 @@ namespace boundsWithSubstitutors {
   open class B<T : A>()
 
   class C<T : B<<error>Int</error>>, X : {(B<<error>Char</error>>) : (B<<error>Any</error>>, B<A>)}>() : B<<error>Any</error>>() { // 2 errors
-    val a = new B<<error>Char</error>>() // error
+    val a = B<<error>Char</error>>() // error
 
     val x : {(B<<error>Char</error>>) : B<<error>Any</error>>}
   }

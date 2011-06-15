@@ -2,4 +2,4 @@
 
 val z = System.out
 
-fun foo() { throw new Exception(); }
+fun foo() { throw Exception(); }

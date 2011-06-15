@@ -5,7 +5,7 @@ val foo = object : AntBuilder() {
   }
 
   [lazy] val gant = library {
-    new File("$gantHome/lib").files.each {
+    File("$gantHome/lib").files.each {
       classpath(it)
     }
   }
@@ -32,7 +32,7 @@ class AntBuilder {
   }
 
   fun library(initializer : { Library.() : Library}) {
-    val lib = new Library()
+    val lib = Library()
     lib.initializer()
     return lib
   }

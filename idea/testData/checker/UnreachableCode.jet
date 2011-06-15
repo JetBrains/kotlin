@@ -149,7 +149,7 @@ fun foo(a : Nothing) : Unit {
 }
 
 fun fail() : Nothing {
-  throw new java.lang.RuntimeException()
+  throw java.lang.RuntimeException()
 }
 
 fun nullIsNotNothing() : Unit {

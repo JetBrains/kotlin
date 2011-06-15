@@ -146,9 +146,30 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     @NotNull
     public FunctionGroup getFunctionGroup(@NotNull String name) {
         FunctionGroup functionGroup = getFunctionGroups().get(name);
+        FunctionGroup constructors = null;
+        ClassifierDescriptor classifier = getClassifier(name);
+        if (classifier instanceof ClassDescriptor) {
+            ClassDescriptor classDescriptor = (ClassDescriptor) classifier;
+            constructors = classDescriptor.getConstructors();
+        }
         if (functionGroup != null && !functionGroup.isEmpty()) {
+            if (constructors != null) {
+                WritableFunctionGroup result = new WritableFunctionGroup(name);
+                for (FunctionDescriptor functionDescriptor : functionGroup.getFunctionDescriptors()) {
+                    result.addFunction(functionDescriptor);
+                }
+                for (FunctionDescriptor functionDescriptor : constructors.getFunctionDescriptors()) {
+                    result.addFunction(functionDescriptor);
+                }
+                return result;
+            }
             return functionGroup;
         }
+
+        if (constructors != null && !constructors.isEmpty()) {
+            return constructors;
+        }
+
         // TODO : this logic is questionable
         functionGroup = getWorkerScope().getFunctionGroup(name);
         if (!functionGroup.isEmpty()) return functionGroup;

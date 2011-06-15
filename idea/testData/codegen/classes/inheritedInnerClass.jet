@@ -5,10 +5,10 @@ class Outer() {
   class InnerDerived(): InnerBase() {
   }
 
-  public val foo: InnerBase? = new InnerDerived()
+  public val foo: InnerBase? = InnerDerived()
 }
 
 fun box() {
-  val o = new Outer()
+  val o = Outer()
   return if (o.foo === null) "fail" else "OK"
 }

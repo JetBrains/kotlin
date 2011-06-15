@@ -174,10 +174,10 @@ public class JetVisitor extends PsiElementVisitor {
         visitExpression(expression);
     }
 
-    public void visitNewExpression(JetNewExpression expression) {
-        visitExpression(expression);
-    }
-
+//    public void visitNewExpression(JetNewExpression expression) {
+//        visitExpression(expression);
+//    }
+//
     public void visitReturnExpression(JetReturnExpression expression) {
         visitLabelQualifiedExpression(expression);
     }

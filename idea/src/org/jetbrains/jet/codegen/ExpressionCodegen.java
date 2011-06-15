@@ -673,7 +673,10 @@ public class ExpressionCodegen extends JetVisitor {
 
         if (callee instanceof JetSimpleNameExpression) {
             DeclarationDescriptor funDescriptor = bindingContext.resolveReferenceExpression((JetSimpleNameExpression) callee);
-            if (funDescriptor instanceof FunctionDescriptor) {
+            if (funDescriptor instanceof ConstructorDescriptor) {
+                generateConstructorCall(expression, (JetSimpleNameExpression) callee);
+            }
+            else if (funDescriptor instanceof FunctionDescriptor) {
                 final DeclarationDescriptor functionParent = funDescriptor.getContainingDeclaration();
                 if (isNumberPrimitive(functionParent)) {
                     if (funDescriptor.getName().equals("inv")) {
@@ -1322,11 +1325,7 @@ public class ExpressionCodegen extends JetVisitor {
         }
     }
 
-    @Override
-    public void visitNewExpression(JetNewExpression expression) {
-        JetTypeReference typeReference = expression.getTypeReference();
-        final JetUserType constructorType = (JetUserType) typeReference.getTypeElement();
-        final JetSimpleNameExpression constructorReference = constructorType.getReferenceExpression();
+    private void generateConstructorCall(JetCallExpression expression, JetSimpleNameExpression constructorReference) {
         DeclarationDescriptor constructorDescriptor = bindingContext.resolveReferenceExpression(constructorReference);
         final PsiElement declaration = bindingContext.getDeclarationPsiElement(constructorDescriptor);
         Type type;
@@ -1334,7 +1333,7 @@ public class ExpressionCodegen extends JetVisitor {
             type = generateJavaConstructorCall(expression, (PsiMethod) declaration);
         }
         else if (constructorDescriptor instanceof ConstructorDescriptor) {
-            type = typeMapper.mapType(bindingContext.resolveTypeReference(typeReference), OwnerKind.IMPLEMENTATION);
+            type = typeMapper.mapType(bindingContext.getExpressionType(expression), OwnerKind.IMPLEMENTATION);
             if (type.getSort() == Type.ARRAY) {
                 generateNewArray(expression, type);
             }
@@ -1350,8 +1349,8 @@ public class ExpressionCodegen extends JetVisitor {
                 Method method = typeMapper.mapConstructorSignature((ConstructorDescriptor) constructorDescriptor, OwnerKind.IMPLEMENTATION);
                 pushMethodArguments(expression, method);
 
-                for (JetTypeReference typeArgumentReference : constructorType.getTypeArgumentsAsTypes()) {
-                    JetType typeArgument = bindingContext.resolveTypeReference(typeArgumentReference);
+                for (JetTypeProjection jetTypeArgument : expression.getTypeArguments()) {
+                    JetType typeArgument = bindingContext.resolveTypeReference(jetTypeArgument.getTypeReference());
                     // TODO is the makeNullable() call correct here?
                     ClassCodegen.newTypeInfo(v, typeMapper.mapType(TypeUtils.makeNullable(typeArgument)));
                 }
@@ -1371,7 +1370,7 @@ public class ExpressionCodegen extends JetVisitor {
         }
     }
 
-    private Type generateJavaConstructorCall(JetNewExpression expression, PsiMethod constructor) {
+    private Type generateJavaConstructorCall(JetCallExpression expression, PsiMethod constructor) {
         PsiClass javaClass = constructor.getContainingClass();
         Type type = JetTypeMapper.psiClassType(javaClass);
         v.anew(type);
@@ -1382,7 +1381,7 @@ public class ExpressionCodegen extends JetVisitor {
         return type;
     }
 
-    private void generateNewArray(JetNewExpression expression, Type type) {
+    private void generateNewArray(JetCallExpression expression, Type type) {
         List<JetArgument> args = expression.getValueArguments();
         if (args.size() != 1) {
             throw new CompilationException("array constructor requires one value argument");

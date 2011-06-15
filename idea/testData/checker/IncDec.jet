@@ -4,7 +4,7 @@ class IncDec() {
 }
 
 fun testIncDec() {
-  var x = new IncDec()
+  var x = IncDec()
   x++
   ++x
   x--
@@ -21,7 +21,7 @@ class WrongIncDec() {
 }
 
 fun testWrongIncDec() {
-  var x = new WrongIncDec()
+  var x = WrongIncDec()
   x<error>++</error>
   <error>++</error>x
   x<error>--</error>
@@ -34,7 +34,7 @@ class UnitIncDec() {
 }
 
 fun testUnitIncDec() {
-  var x = new UnitIncDec()
+  var x = UnitIncDec()
   x++
   ++x
   x--

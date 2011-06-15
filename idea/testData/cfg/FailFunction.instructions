@@ -1,11 +1,16 @@
 == fail ==
 fun fail() : Nothing {
-  throw new java.lang.RuntimeException()
+  throw java.lang.RuntimeException()
 }
 ---------------------
 l0:
     <START>
-    r(new java.lang.RuntimeException())
+    r(java)
+    r(lang)
+    r(java.lang)
+    r(RuntimeException)
+    r(RuntimeException())
+    r(java.lang.RuntimeException())
     jmp(error)
 l1:
     <END>

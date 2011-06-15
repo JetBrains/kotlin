@@ -95,7 +95,7 @@ public class ErrorUtils {
     private static final ClassDescriptorImpl ERROR_CLASS = new ClassDescriptorImpl(ERROR_MODULE, Collections.<Annotation>emptyList(), "<ERROR CLASS>") {
         @NotNull
         @Override
-        public FunctionGroup getConstructors(List<TypeProjection> typeArguments) {
+        public FunctionGroup getConstructors() {
             return ERROR_FUNCTION_GROUP;
         }
     };

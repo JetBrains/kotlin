@@ -23,13 +23,13 @@ fun f_plus(): Int {
 ~t~fun <~t.T~T> t(~t.t~t : `t.T`T) : `t.T`T {
   `t`t<Int>(1)`:std::Int`
   `t`t<`t.T`T>(`t.t`t)`:t.T`
-  new `X()`X<`t.T`T>()
+  `X()`X<`t.T`T>()
   1 `std::Int.plus(Int)`+ 1
   1 `std::Int.plus(Int)`+= 1
-  new X<String>() `plus`+ "1"
-  new X<String>() `plus`plus "sadfas"
-  new X<String>().`plus`plus("")
-  val x = new X<String>()
+  X<String>() `plus`+ "1"
+  X<String>() `plus`plus "sadfas"
+  X<String>().`plus`plus("")
+  val x = X<String>()
   x `minus`- ""
   x `times`* ""
   x `div`/ ""
@@ -61,7 +61,7 @@ fun f_plus(): Int {
 fun <T> tt(t : T) : T {
   val x : List<Int> = 0
   x`java::java.util.List.get()`[1]
-  val foo = new `Bar()`Bar()
+  val foo = `Bar()`Bar()
   foo`!`[null, 1]
   foo`get2`[1, 1]
   foo`get1`[1]
@@ -72,7 +72,7 @@ fun <T> tt(t : T) : T {
   x`!`[null] = null
   (x`!`[null, 2]) = null
   (`not`!foo)[1]`:std::Char`
-  val y = new Bar()
+  val y = Bar()
   y`inc`++
   `inc`++y
   `dec`--y
@@ -87,13 +87,13 @@ fun <T> tt(t : T) : T {
 }
 
 
-class UnitIncDec {
+class UnitIncDec() {
   ~uinc~fun inc() : Unit
   ~udec~fun dec() : Unit
 }
 
 fun testUnitIncDec() {
-  var x = new UnitIncDec()
+  var x = UnitIncDec()
   x`uinc`++
   x`udec`--
 }

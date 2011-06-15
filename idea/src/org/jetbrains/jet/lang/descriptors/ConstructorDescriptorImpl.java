@@ -32,8 +32,8 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
         return super.initialize(null, typeParameters, unsubstitutedValueParameters, unsubstitutedReturnType);
     }
 
-    public ConstructorDescriptor initialize(@NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters) {
-        super.initialize(null, Collections.<TypeParameterDescriptor>emptyList(), unsubstitutedValueParameters, null);
+    public ConstructorDescriptorImpl initialize(@NotNull List<TypeParameterDescriptor> typeParameters, @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters) {
+        super.initialize(null, typeParameters, unsubstitutedValueParameters, null);
         return this;
     }
 
@@ -57,12 +57,6 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
     @Override
     public boolean isPrimary() {
         return isPrimary;
-    }
-
-    @NotNull
-    @Override
-    public List<TypeParameterDescriptor> getTypeParameters() {
-        return Collections.emptyList();
     }
 
     @NotNull

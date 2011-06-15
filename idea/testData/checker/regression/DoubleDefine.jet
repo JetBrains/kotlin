@@ -10,15 +10,15 @@ fun takeFirst(expr: StringBuilder): Char {
 }
 
 fun evaluateArg(expr: AbstractStringBuilder, numbers: ArrayList<Int>): Int {
-  if (expr.length() == 0) throw new Exception("Syntax error: Character expected");
+  if (expr.length() == 0) throw Exception("Syntax error: Character expected");
   val c = takeFirst<error>(expr)</error>
   if (c <error>>=</error> '0' && c <error><=</error> '9') {
     val n = c - '0'
-    if (!numbers.contains(n)) throw new Exception("You used incorrect number: " + n)
+    if (!numbers.contains(n)) throw Exception("You used incorrect number: " + n)
     numbers.remove(n)
     return n
   }
-  throw new Exception("Syntax error: Unrecognized character " + c)
+  throw Exception("Syntax error: Unrecognized character " + c)
 }
 
 fun evaluateAdd(expr: StringBuilder, numbers: ArrayList<Int>): Int {
@@ -40,9 +40,9 @@ fun evaluate(expr: StringBuilder, numbers: ArrayList<Int>): Int {
 
 fun main(args: Array<String>) {
   System.out?.println("24 game")
-  val numbers = new ArrayList<Int>(4)
-  val rnd = new Random();
-  val prompt = new StringBuilder()
+  val numbers = ArrayList<Int>(4)
+  val rnd = Random();
+  val prompt = StringBuilder()
   for(val i in 0..3) {
     val n = rnd.nextInt(9) + 1
     numbers.add(n)
@@ -51,8 +51,8 @@ fun main(args: Array<String>) {
   }
   System.out?.println("Your numbers: " + prompt)
   System.out?.println("Enter your expression:")
-  val reader = new BufferedReader(new InputStreamReader(System.`in`))
-  val expr = new StringBuilder(reader.readLine())
+  val reader = BufferedReader(InputStreamReader(System.`in`))
+  val expr = StringBuilder(reader.readLine())
   try {
     val result = evaluate(expr, numbers)
     if (result != 24)

@@ -5,7 +5,7 @@ import <error>utils</error>.*
 import java.io.PrintStream
 import java.lang.Comparable as Com
 
-val l : List<in Int> = new ArrayList<Int>()
+val l : List<in Int> = ArrayList<Int>()
 
 fun test(l : java.util.List<Int>) {
   val x : java.<error>List</error>
@@ -24,7 +24,7 @@ fun test(l : java.util.List<Int>) {
   Collections.singleton<Int>(1) : Set<Int>?
   Collections.singleton<Int><error>(1.0)</error>
 
-  <error>new List<Int></error>
+  <error>List</error><Int>
 
 
   val o = "sdf" <warning>as</warning> Object
@@ -36,14 +36,14 @@ fun test(l : java.util.List<Int>) {
     System.out?.println(e.getMessage())
   }
 
-  new PrintStream("sdf")
+  PrintStream("sdf")
 
   val c : Com<Int>? = null
 
   c : java.lang.Comparable<Int>?
 
-//  Collections.sort<Integer>(new ArrayList<Integer>())
-  new xxx.<error>Class</error>()
+//  Collections.sort<Integer>(ArrayList<Integer>())
+  xxx.Class<error>()</error>
 }
 
 

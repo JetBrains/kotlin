@@ -186,13 +186,9 @@ JetFile: AnonymousObjects.jet
                   THROW
                     PsiElement(throw)('throw')
                     PsiWhiteSpace(' ')
-                    NEW
-                      PsiElement(new)('new')
-                      PsiWhiteSpace(' ')
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('RuntimeException')
+                    CALL_EXPRESSION
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('RuntimeException')
                       VALUE_ARGUMENT_LIST
                         PsiElement(LPAR)('(')
                         VALUE_ARGUMENT

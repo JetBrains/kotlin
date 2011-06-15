@@ -11,7 +11,7 @@ fun vl(l : Left) : Int = l.v
 fun vr(r : Right) : Int = r.v
 
 fun box() : String {
-    val d = new D()
+    val d = D()
     d.v = 42
 
     if (d.v != 42) return "Fail #1"

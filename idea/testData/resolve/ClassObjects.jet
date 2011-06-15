@@ -12,4 +12,4 @@ namespace Jet86
 
 val a = `A`A.`A.x`x
 val c = `B`B.`!null`x
-val d = new B().`B.x`x
+val d = B().`B.x`x

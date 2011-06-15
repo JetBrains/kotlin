@@ -11,22 +11,22 @@ class P3(x : Int, yy : Y) : X(x), Y by yy, Abstract {}
 class P4(x : Int, yy : Y) : Y by yy, Abstract, X(x) {}
 
 fun box() : String {
-    if (new X(239).x != 239) return "FAIL #1"
-    if (new Y(239).y != 239) return "FAIL #2"
+    if (X(239).x != 239) return "FAIL #1"
+    if (Y(239).y != 239) return "FAIL #2"
 
-    val p = new Point(240, -1)
+    val p = Point(240, -1)
     if (p.x + p.y != 239) return "FAIL #3"
 
-    val y = new Y(-1)
-    val p1 = new P1(240, y)
+    val y = Y(-1)
+    val p1 = P1(240, y)
     if (p1.x + p1.y != 239) return "FAIL #4"
-    val p2 = new P2(240, y)
+    val p2 = P2(240, y)
     if (p2.x + p2.y != 239) return "FAIL #5"
 
-    val p3 = new P3(240, y)
+    val p3 = P3(240, y)
     if (p3.x + p3.y != 239) return "FAIL #6"
 
-    val p4 = new P4(240, y)
+    val p4 = P4(240, y)
     if (p4.x + p4.y != 239) return "FAIL #7"
 
     "OK"

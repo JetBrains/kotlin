@@ -47,7 +47,7 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
 
     @NotNull
     @Override
-    public FunctionGroup getConstructors(List<TypeProjection> typeArguments) {
+    public FunctionGroup getConstructors() {
         throw new UnsupportedOperationException(); // TODO
     }
 

@@ -19,7 +19,7 @@ virtual class IMap<K, V> {
 class HashableWrapper wraps (val obj : Any) : IHashable
   // equals and hashCode implementations are inherited
 
-[inline] fun Any.hashable() : HashableWrapper = new HashableWrapper(this)
+[inline] fun Any.hashable() : HashableWrapper = HashableWrapper(this)
 
 virtual class IHashingStrategy<K> {
   fun equals(a : K, b : K) : Boolean
@@ -50,9 +50,9 @@ class StrategyHashMap<K, V>(hashingStrategy : IHashingStrategy<K>) : IMap<K, V> 
 
 
   // where !(K : IHashable)
-  this() : this(new JavaObjectHashingStrategy<K>()) {}
+  this() : this(JavaObjectHashingStrategy<K>()) {}
 
-  //this() where (K : IHashable) : this(new DefaultHashingStrategy<K>()) {}
+  //this() where (K : IHashable) : this(DefaultHashingStrategy<K>()) {}
   //...
 
 }

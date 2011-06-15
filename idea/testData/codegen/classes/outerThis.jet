@@ -3,10 +3,10 @@ class Outer() {
     val outer: Outer get() = this@Outer
   }
 
-  public val x = new Inner()
+  public val x = Inner()
 }
 
 fun box() {
-  val o = new Outer()
+  val o = Outer()
   return if (o === o.x.outer) "OK" else "fail"
 }

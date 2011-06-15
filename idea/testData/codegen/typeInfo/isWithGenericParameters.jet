@@ -3,6 +3,6 @@ class Wrapper<T>() {
 }
 
 fun foo() {
-  val wrapper = new Wrapper<Int>()
-  return wrapper.isSameWrapper(new Wrapper<String>())
+  val wrapper = Wrapper<Int>()
+  return wrapper.isSameWrapper(Wrapper<String>())
 }

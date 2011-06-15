@@ -69,10 +69,11 @@ public class JavaClassDescriptor extends MutableDeclarationDescriptor implements
 
     @NotNull
     @Override
-    public FunctionGroup getConstructors(List<TypeProjection> typeArguments) {
-        assert typeArguments.size() == typeConstructor.getParameters().size();
-        if (typeArguments.isEmpty()) return constructors;
-        return new LazySubstitutingFunctionGroup(createTypeSubstitutor(typeArguments), constructors);
+    public FunctionGroup getConstructors() {
+//        assert typeArguments.size() == typeConstructor.getParameters().size();
+//        if (typeArguments.isEmpty()) return constructors;
+//        return new LazySubstitutingFunctionGroup(createTypeSubstitutor(typeArguments), constructors);
+        return constructors;
     }
 
     @Override

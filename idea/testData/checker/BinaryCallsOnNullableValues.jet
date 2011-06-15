@@ -21,9 +21,9 @@ fun f(): Unit {
   x == 1
   x != 1
 
-  <error>new A() == 1</error>
-  new B() <error>==</error> 1
-  new C() <error>==</error> 1
+  <error>A() == 1</error>
+  B() <error>==</error> 1
+  C() <error>==</error> 1
 
   <error>x === "1"</error>
   <error>x !== "1"</error>

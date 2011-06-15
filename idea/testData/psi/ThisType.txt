@@ -131,20 +131,16 @@ JetFile: ThisType.jet
               PsiWhiteSpace(' ')
               PsiElement(EQ)('=')
               PsiWhiteSpace(' ')
-              NEW
-                PsiElement(new)('new')
-                PsiWhiteSpace(' ')
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('Foo')
-                    TYPE_ARGUMENT_LIST
-                      PsiElement(LT)('<')
-                      TYPE_PROJECTION
-                        TYPE_REFERENCE
-                          SELF_TYPE
-                            PsiElement(This)('This')
-                      PsiElement(GT)('>')
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Foo')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_PROJECTION
+                    TYPE_REFERENCE
+                      SELF_TYPE
+                        PsiElement(This)('This')
+                  PsiElement(GT)('>')
                 VALUE_ARGUMENT_LIST
                   PsiElement(LPAR)('(')
                   PsiElement(RPAR)(')')

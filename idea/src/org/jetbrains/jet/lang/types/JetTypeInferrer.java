@@ -553,7 +553,7 @@ public class JetTypeInferrer {
                 projectionsStripped.add(typeArgument);
         }
 
-        FunctionGroup constructors = classDescriptor.getConstructors(projectionsStripped);
+        FunctionGroup constructors = classDescriptor.getConstructors();
         OverloadDomain constructorsOverloadDomain = semanticServices.getOverloadResolver().getOverloadDomain(null, constructors);
         JetType constructorReturnedType = resolveCall(
                 scope,
@@ -1691,14 +1691,14 @@ public class JetTypeInferrer {
             return true;
         }
 
-        @Override
-        public void visitNewExpression(JetNewExpression expression) {
-            // TODO : type argument inference
-            JetTypeReference typeReference = expression.getTypeReference();
-            if (typeReference != null) {
-                result = checkConstructorCall(scope, typeReference, expression);
-            }
-        }
+//        @Override
+//        public void visitNewExpression(JetNewExpression expression) {
+//            // TODO : type argument inference
+//            JetTypeReference typeReference = expression.getTypeReference();
+//            if (typeReference != null) {
+//                result = checkConstructorCall(scope, typeReference, expression);
+//            }
+//        }
 
         @Override
         public void visitHashQualifiedExpression(JetHashQualifiedExpression expression) {

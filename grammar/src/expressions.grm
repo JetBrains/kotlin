@@ -87,7 +87,7 @@ atomicExpression
   : when
   : try
   : "typeof" "(" expression ")"
-  : "new" constructorInvocation
+//  : "new" constructorInvocation
   : objectLiteral
 //  : declaration
   : jump

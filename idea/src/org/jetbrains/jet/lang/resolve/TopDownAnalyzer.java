@@ -227,7 +227,7 @@ public class TopDownAnalyzer {
 
                 private void createPrimaryConstructor(MutableClassDescriptor mutableClassDescriptor) {
                     ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(mutableClassDescriptor, Collections.<Annotation>emptyList(), true);
-                    constructorDescriptor.initialize(Collections.<ValueParameterDescriptor>emptyList());
+                    constructorDescriptor.initialize(Collections.<TypeParameterDescriptor>emptyList(), Collections.<ValueParameterDescriptor>emptyList());
                     // TODO : make the constructor private?
                     mutableClassDescriptor.setPrimaryConstructor(constructorDescriptor);
                 }

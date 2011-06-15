@@ -22,13 +22,9 @@ JetFile: ControlStructures.jet
           THROW
             PsiElement(throw)('throw')
             PsiWhiteSpace(' ')
-            NEW
-              PsiElement(new)('new')
-              PsiWhiteSpace(' ')
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('Foo')
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Foo')
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 PsiElement(RPAR)(')')

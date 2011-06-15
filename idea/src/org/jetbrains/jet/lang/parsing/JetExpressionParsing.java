@@ -22,7 +22,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
             INTEGER_LITERAL, LONG_LITERAL, FLOAT_LITERAL, CHARACTER_LITERAL, STRING_LITERAL, RAW_STRING_LITERAL,
             NAMESPACE_KEYWORD, AS_KEYWORD, TYPE_KEYWORD, CLASS_KEYWORD, THIS_KEYWORD, VAL_KEYWORD, VAR_KEYWORD,
             FUN_KEYWORD, EXTENSION_KEYWORD, FOR_KEYWORD, NULL_KEYWORD, TYPEOF_KEYWORD,
-            NEW_KEYWORD, TRUE_KEYWORD, FALSE_KEYWORD, IS_KEYWORD, THROW_KEYWORD, RETURN_KEYWORD, BREAK_KEYWORD,
+//            NEW_KEYWORD,
+            TRUE_KEYWORD, FALSE_KEYWORD, IS_KEYWORD, THROW_KEYWORD, RETURN_KEYWORD, BREAK_KEYWORD,
             CONTINUE_KEYWORD, OBJECT_KEYWORD, IF_KEYWORD, TRY_KEYWORD, ELSE_KEYWORD, WHILE_KEYWORD, DO_KEYWORD,
             WHEN_KEYWORD, RBRACKET, RBRACE, RPAR, PLUSPLUS, MINUSMINUS, MUL, PLUS, MINUS, EXCL, DIV, PERC, LTEQ,
             // TODO GTEQ,   foo<bar, baz>=x
@@ -54,7 +55,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             WHEN_KEYWORD, // when
             TRY_KEYWORD, // try
             TYPEOF_KEYWORD, // typeof
-            NEW_KEYWORD, // new
+//            NEW_KEYWORD, // new
             OBJECT_KEYWORD, // object
 
             // jump
@@ -497,9 +498,9 @@ public class JetExpressionParsing extends AbstractJetParsing {
         else if (at(TYPEOF_KEYWORD)) {
             parseTypeOf();
         }
-        else if (at(NEW_KEYWORD)) {
-            parseNew();
-        }
+//        else if (at(NEW_KEYWORD)) {
+//            parseNew();
+//        }
         else if (at(OBJECT_KEYWORD)) {
             parseObjectLiteral();
         }
@@ -1446,23 +1447,23 @@ public class JetExpressionParsing extends AbstractJetParsing {
         marker.done(THROW);
     }
 
-    /*
-     * "new" constructorInvocation // identical to new functionCall
-     *
-     * constructorInvocation
-     *   : userType callSuffix
-     */
-    private void parseNew() {
-        assert _at(NEW_KEYWORD);
-
-        PsiBuilder.Marker creation = mark();
-        advance(); // NEW_KEYWORD
-
-        myJetParsing.parseTypeRef();
-        parseCallSuffix();
-
-        creation.done(NEW);
-    }
+//    /*
+//     * "new" constructorInvocation // identical to new functionCall
+//     *
+//     * constructorInvocation
+//     *   : userType callSuffix
+//     */
+//    private void parseNew() {
+//        assert _at(NEW_KEYWORD);
+//
+//        PsiBuilder.Marker creation = mark();
+//        advance(); // NEW_KEYWORD
+//
+//        myJetParsing.parseTypeRef();
+//        parseCallSuffix();
+//
+//        creation.done(NEW);
+//    }
 
     /*
      * "typeof" "(" element ")"

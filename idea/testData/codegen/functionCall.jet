@@ -1,5 +1,5 @@
 fun f() {
-  val x = new StringBuilder();
+  val x = StringBuilder();
   g(x);
   return x.toString();
 }

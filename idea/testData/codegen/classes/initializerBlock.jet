@@ -7,7 +7,7 @@ class C() {
 }
 
 fun box(): String {
-  val c = new C()
+  val c = C()
   if (c.f != 610) return "fail"
   return "OK"
 }

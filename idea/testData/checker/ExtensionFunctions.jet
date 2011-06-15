@@ -61,7 +61,7 @@ namespace null_safety {
             command.equals1(null)
             command<warning>?.</warning>equals1(null)
 
-            val c = new Command()
+            val c = Command()
             c<warning>?.</warning>equals(null)
 
             if (command == null) 1

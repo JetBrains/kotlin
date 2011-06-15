@@ -8,7 +8,7 @@ fun StringBuilder.takeFirst(): Char {
 fun foo(expr: StringBuilder): Int {
   val c = expr.takeFirst()
   when(c) {
-    '\0' => throw new Exception("zero")
-    else => throw new Exception("nonzero" + c)
+    '\0' => throw Exception("zero")
+    else => throw Exception("nonzero" + c)
   }
 }

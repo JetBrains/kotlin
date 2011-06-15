@@ -1,5 +1,5 @@
 
-class C(~x~x : Int, ~y~val y : Int) : Base(`x`x /*parameter*/), Base1 by new Base1(`x`x) {
+class C(~x~x : Int, ~y~val y : Int) : Base(`x`x /*parameter*/), Base1 by Base1(`x`x) {
   var z = `x`x // parameter
     get() = `$x`x // property
 

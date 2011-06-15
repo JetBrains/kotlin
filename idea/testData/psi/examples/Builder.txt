@@ -91,13 +91,9 @@ JetFile: Builder.jet
                     BODY
                       DOT_QUALIFIED_EXPRESSION
                         DOT_QUALIFIED_EXPRESSION
-                          NEW
-                            PsiElement(new)('new')
-                            PsiWhiteSpace(' ')
-                            TYPE_REFERENCE
-                              USER_TYPE
-                                REFERENCE_EXPRESSION
-                                  PsiElement(IDENTIFIER)('File')
+                          CALL_EXPRESSION
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('File')
                             VALUE_ARGUMENT_LIST
                               PsiElement(LPAR)('(')
                               VALUE_ARGUMENT
@@ -401,13 +397,9 @@ JetFile: Builder.jet
               PsiWhiteSpace(' ')
               PsiElement(EQ)('=')
               PsiWhiteSpace(' ')
-              NEW
-                PsiElement(new)('new')
-                PsiWhiteSpace(' ')
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('Library')
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Library')
                 VALUE_ARGUMENT_LIST
                   PsiElement(LPAR)('(')
                   PsiElement(RPAR)(')')

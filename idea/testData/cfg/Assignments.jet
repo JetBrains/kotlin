@@ -12,6 +12,6 @@ fun assignments() : Unit {
     val y = true && false
     val z = false && true
 
-    val t = new Test();
+    val t = Test();
     t.x = 1
 }

@@ -2,7 +2,7 @@ import java.util.*
 import java.io.*
 
 class World() {
-  public val items: ArrayList<Item> = new ArrayList<Item>
+  public val items: ArrayList<Item> = ArrayList<Item>
 
   class Item() {
     {
@@ -10,11 +10,11 @@ class World() {
     }
   }
 
-  val foo = new Item()
+  val foo = Item()
 }
 
 fun box() {
-  val w = new World()
+  val w = World()
   if (w.items.size() != 1) return "fail"
   return "OK"
 }

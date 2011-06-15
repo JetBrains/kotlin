@@ -220,13 +220,9 @@ JetFile: ArrayList.jet
                         THROW
                           PsiElement(throw)('throw')
                           PsiWhiteSpace(' ')
-                          NEW
-                            PsiElement(new)('new')
-                            PsiWhiteSpace(' ')
-                            TYPE_REFERENCE
-                              USER_TYPE
-                                REFERENCE_EXPRESSION
-                                  PsiElement(IDENTIFIER)('ConcurrentModificationException')
+                          CALL_EXPRESSION
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('ConcurrentModificationException')
                             VALUE_ARGUMENT_LIST
                               PsiElement(LPAR)('(')
                               PsiElement(RPAR)(')')
@@ -267,13 +263,9 @@ JetFile: ArrayList.jet
                         THROW
                           PsiElement(throw)('throw')
                           PsiWhiteSpace(' ')
-                          NEW
-                            PsiElement(new)('new')
-                            PsiWhiteSpace(' ')
-                            TYPE_REFERENCE
-                              USER_TYPE
-                                REFERENCE_EXPRESSION
-                                  PsiElement(IDENTIFIER)('NoMoreElementsException')
+                          CALL_EXPRESSION
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('NoMoreElementsException')
                             VALUE_ARGUMENT_LIST
                               PsiElement(LPAR)('(')
                               PsiElement(RPAR)(')')
@@ -475,13 +467,9 @@ JetFile: ArrayList.jet
                 THROW
                   PsiElement(throw)('throw')
                   PsiWhiteSpace(' ')
-                  NEW
-                    PsiElement(new)('new')
-                    PsiWhiteSpace(' ')
-                    TYPE_REFERENCE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('IndexOutOfBoundsException')
+                  CALL_EXPRESSION
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('IndexOutOfBoundsException')
                     VALUE_ARGUMENT_LIST
                       PsiElement(LPAR)('(')
                       VALUE_ARGUMENT

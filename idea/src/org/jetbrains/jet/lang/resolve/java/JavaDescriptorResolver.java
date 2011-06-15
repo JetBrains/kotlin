@@ -92,13 +92,14 @@ public class JavaDescriptorResolver {
         classDescriptor.setName(name);
 
         List<JetType> supertypes = new ArrayList<JetType>();
+        List<TypeParameterDescriptor> typeParameters = resolveTypeParameters(classDescriptor, psiClass.getTypeParameters());
         classDescriptor.setTypeConstructor(new TypeConstructorImpl(
                 classDescriptor,
                 Collections.<Annotation>emptyList(), // TODO
                 // TODO
                 psiClass.hasModifierProperty(PsiModifier.FINAL),
                 name,
-                resolveTypeParameters(classDescriptor, psiClass.getTypeParameters()),
+                typeParameters,
                 supertypes
 
         ));
@@ -116,7 +117,7 @@ public class JavaDescriptorResolver {
                         classDescriptor,
                         Collections.<Annotation>emptyList(),
                         false);
-                constructorDescriptor.initialize(Collections.<ValueParameterDescriptor>emptyList());
+                constructorDescriptor.initialize(typeParameters, Collections.<ValueParameterDescriptor>emptyList());
                 constructorDescriptor.setReturnType(classDescriptor.getDefaultType());
                 classDescriptor.addConstructor(constructorDescriptor);
                 semanticServices.getTrace().recordDeclarationResolution(psiClass, constructorDescriptor);
@@ -128,7 +129,7 @@ public class JavaDescriptorResolver {
                         classDescriptor,
                         Collections.<Annotation>emptyList(), // TODO
                         false);
-                constructorDescriptor.initialize(resolveParameterDescriptors(constructorDescriptor, constructor.getParameterList().getParameters()));
+                constructorDescriptor.initialize(typeParameters, resolveParameterDescriptors(constructorDescriptor, constructor.getParameterList().getParameters()));
                 constructorDescriptor.setReturnType(classDescriptor.getDefaultType());
                 classDescriptor.addConstructor(constructorDescriptor);
                 semanticServices.getTrace().recordDeclarationResolution(constructor, constructorDescriptor);

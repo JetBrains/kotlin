@@ -18,7 +18,7 @@ public interface ClassDescriptor extends ClassifierDescriptor {
     JetScope getMemberScope(List<TypeProjection> typeArguments);
 
     @NotNull
-    FunctionGroup getConstructors(List<TypeProjection> typeArguments);
+    FunctionGroup getConstructors();
 
     @Nullable
     ConstructorDescriptor getUnsubstitutedPrimaryConstructor();

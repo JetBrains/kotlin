@@ -11,13 +11,13 @@ class ArrayList<T> : IMutableList<T> {
 
     private fun checkVersion() {
       if (version != myVersion)
-        throw new ConcurrentModificationException()
+        throw ConcurrentModificationException()
     }
 
     override fun next() {
       checkVersion()
       if (hasNext)
-        throw new NoMoreElementsException()
+        throw NoMoreElementsException()
       data[index++]
     }
 
@@ -40,7 +40,7 @@ class ArrayList<T> : IMutableList<T> {
 
   private fun checkIndex(index : Int) {
     if (index > used)
-      throw new IndexOutOfBoundsException(index)
+      throw IndexOutOfBoundsException(index)
   }
 
   override val isEmpty

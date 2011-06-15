@@ -5,7 +5,7 @@ class A(~a~val a : Int) {
 }
 
 fun test() {
-    ~va~val a = new A()
+    ~va~val a = A()
     `va`a.`$a`a`:std::Int`
     a.`b`b`:std::Int`
     a.`f`f()`:std::Int`

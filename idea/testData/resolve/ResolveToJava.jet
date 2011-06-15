@@ -8,7 +8,7 @@ fun foo(~a~a : `std::Array`Array<`std::Int`Int>) : `java::java.util.List`List {
 
 fun foo(o : `java::java.lang.Object`Object, l : `java::java.util`util.`java::java.util.List`List) : `java::java.util.List`List {}
 
-~A~class A  {
+~A~class A()  {
   fun f(a : `java::java.util`util.`java::java.util.List`List) {}
   fun f(a : `java::java.util.List`List) {}
 
@@ -31,7 +31,7 @@ class B : `java::java.lang.Object`Object {
   }
 
   fun barrr() : `std::Int`Int {
-    `foo`foo(new `A`A())
+    `foo`foo(`A`A())
   }
 }
 
@@ -40,7 +40,7 @@ class B : `java::java.lang.Object`Object {
 }
 
 fun <T> t(t : T) : T {
-  `c`c(new java.lang.Integer(1))
+  `c`c(java.lang.Integer(1))
   System.out.`java::java.io.PrintStream.print(Object)`print(t)
   System.out.`java::java.io.PrintStream.print(char[])`print(null : Array<Char>?)
   System.out.`java::java.io.PrintStream.print(Object)`print(null : Object?)

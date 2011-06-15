@@ -2,6 +2,6 @@ class Point() {
 }
 
 fun foo() {
-  val p = new Point();
+  val p = Point();
   return typeof(p);
 }

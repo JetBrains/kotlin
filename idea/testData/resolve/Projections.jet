@@ -1,56 +1,56 @@
-class In<in T> {
+class In<in T>() {
   ~In.f:T->Unit~fun f(t : T) : Unit {}
   ~In.f:Int->Int~fun f(t : Int) : Int {}
   ~In.f1~fun f1(t : T) : Unit {}
 }
 
-class Out<out T> {
+class Out<out T>() {
   ~Out.f~fun f() : T {}
   ~Out.f(a)~fun f(a : Int) : Int {a}
 }
 
-class Inv<T> {
+class Inv<T>() {
   ~Inv.f~fun f(t : T) : T {t}
   ~Inv.inf~fun inf(t : T) : Unit {}
   ~Inv.outf~fun outf() : T {}
 }
 
 fun testInOut() {
-  new In<String>().`In.f:T->Unit`f("1");
+  In<String>().`In.f:T->Unit`f("1");
   (return : In<in String>).`In.f:T->Unit`f("1");
   (return : In<out String>).`!`f("1")
   (return : In<*>).`!`f("1");
 
-  new In<String>().`In.f:Int->Int`f(1);
+  In<String>().`In.f:Int->Int`f(1);
   (return : In<in String>).`In.f:Int->Int`f(1);
   (return : In<out String>).`In.f:Int->Int`f(1)
   (return : In<out String>).`!`f1(1)
   (return : In<*>).`In.f:Int->Int`f(1);
 
-  new Out<Int>().`Out.f(a)`f(1)
+  Out<Int>().`Out.f(a)`f(1)
   (return : Out<out Int>).`Out.f(a)`f(1)
   (return : Out<in Int>).`Out.f(a)`f(1)
   (return : Out<*>).`Out.f(a)`f(1)
 
-  new Out<Int>().`Out.f`f()
+  Out<Int>().`Out.f`f()
   (return : Out<out Int>).`Out.f`f()
   (return : Out<in Int>).`Out.f`f()
   (return : Out<*>).`Out.f`f()
 
-  new Inv<Int>().`Inv.f`f(1)
+  Inv<Int>().`Inv.f`f(1)
   (return : Inv<in Int>).`Inv.f`f(1)
   (return : Inv<out Int>).`!`f(1)
   (return : Inv<*>).`!`f(1)
 
-  new Inv<Int>().`Inv.inf`inf(1)
+  Inv<Int>().`Inv.inf`inf(1)
   (return : Inv<in Int>).`Inv.inf`inf(1)
   (return : Inv<out Int>).`!`inf(1)
   (return : Inv<*>).`!`inf(1)
 
-  new Inv<Int>().`Inv.outf`outf()
+  Inv<Int>().`Inv.outf`outf()
   ((return : Inv<in Int>).`Inv.outf`outf())`:std::Any`
   (return : Inv<out Int>).`Inv.outf`outf()
   (return : Inv<*>).`Inv.outf`outf()
 
-  new Inv<Int>().`Inv.outf`outf(1)
+  Inv<Int>().`Inv.outf`outf(1)
 }

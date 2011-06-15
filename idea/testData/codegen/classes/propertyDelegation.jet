@@ -26,8 +26,8 @@ fun code(s : Base) : Int {
 fun test(s : Base) : Boolean = code(s) == 0
 
 fun box() : String {
-    if (!test(new Base())) return "Fail #1"
-    if (!test(new Derived1())) return "Fail #2"
-    if (!test(new Derived2())) return "Fail #3"
+    if (!test(Base())) return "Fail #1"
+    if (!test(Derived1())) return "Fail #2"
+    if (!test(Derived2())) return "Fail #3"
     return "OK"
 }

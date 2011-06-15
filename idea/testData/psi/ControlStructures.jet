@@ -1,6 +1,6 @@
 
 fun a(
-    a : foo = throw new Foo(),
+    a : foo = throw Foo(),
     a : foo = return 10,
     a : foo = break,
     a : foo = break @la,
