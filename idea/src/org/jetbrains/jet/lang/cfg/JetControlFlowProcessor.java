@@ -576,6 +576,7 @@ public class JetControlFlowProcessor {
             IElementType operationType = expression.getOperationSign().getReferencedNameElementType();
             if (operationType == JetTokens.COLON || operationType == JetTokens.AS_KEYWORD || operationType == JetTokens.AS_SAFE) {
                 value(expression.getLeft(), false, false);
+                builder.read(expression);
             }
             else {
                 visitJetElement(expression);

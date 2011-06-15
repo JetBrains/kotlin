@@ -1,7 +1,7 @@
 class Wrapper<T>() {
 }
 
-fun foo() {
+fun foo() : Boolean {
   val wrapper = Wrapper<Int>()
   return wrapper is Wrapper<String>
 }

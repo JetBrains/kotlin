@@ -1,4 +1,4 @@
-<error>fun none()</error>
+fun none()
 
 fun unitEmptyInfer() {}
 fun unitEmpty() : Unit {}
@@ -12,7 +12,7 @@ fun unitShortNull() : Unit = null
 fun intEmpty() : Int <error>{}</error>
 fun intShortInfer() = 1
 fun intShort() : Int = 1
-fun intBlockInfer()  {1}
+//fun intBlockInfer()  {1}
 fun intBlock() : Int {1}
 
 fun blockReturnUnitMismatch() : Int {<error>return</error>}

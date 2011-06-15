@@ -1,4 +1,4 @@
-fun f() {
+fun f() : String? {
   val x = StringBuilder();
   g(x);
   return x.toString();

@@ -1,5 +1,5 @@
 class SimpleClass {
-    fun foo() {
+    fun foo() : Int {
       return 0;
     }
 }

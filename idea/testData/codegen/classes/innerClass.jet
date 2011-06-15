@@ -1,16 +1,16 @@
 class Outer(val foo: StringBuilder) {
   class Inner() {
-    fun len() {
+    fun len() : Int {
       return foo.length()
     }
   }
 
-  fun test() {
+  fun test() : Inner {
     return Inner()
   }
 }
 
-fun box(): String {
+fun box() : String {
   val sb = StringBuilder("xyzzy")
   val o = Outer(sb)
   val i = o.test()

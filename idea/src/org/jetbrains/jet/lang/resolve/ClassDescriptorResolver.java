@@ -187,6 +187,9 @@ public class ClassDescriptorResolver {
         if (returnTypeRef != null) {
             returnType = typeResolver.resolveType(innerScope, returnTypeRef);
         }
+        else if (function.hasBlockBody()) {
+            returnType = JetStandardClasses.getUnitType();
+        }
         else {
             final JetExpression bodyExpression = function.getBodyExpression();
             if (bodyExpression != null) {

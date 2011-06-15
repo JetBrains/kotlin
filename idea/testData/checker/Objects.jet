@@ -8,7 +8,7 @@ namespace toplevelObjectDeclarations {
   object A : <error>Foo</error> {
     val x : Int = 2
 
-    fun test() {
+    fun test() : Int {
       return x + foo()
     }
   }

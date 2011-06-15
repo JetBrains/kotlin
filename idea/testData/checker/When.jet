@@ -1,4 +1,4 @@
-fun foo() {
+fun foo() : Int {
     val s = ""
     val x = 1
     when (x) {

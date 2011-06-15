@@ -8,7 +8,7 @@ class Outer() {
   public val foo: InnerBase? = InnerDerived()
 }
 
-fun box() {
+fun box() : String {
   val o = Outer()
   return if (o.foo === null) "fail" else "OK"
 }

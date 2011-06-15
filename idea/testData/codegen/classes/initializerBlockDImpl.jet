@@ -13,7 +13,7 @@ class World() {
   val foo = Item()
 }
 
-fun box() {
+fun box() : String {
   val w = World()
   if (w.items.size() != 1) return "fail"
   return "OK"

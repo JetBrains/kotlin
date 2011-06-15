@@ -261,7 +261,7 @@ public class NamespaceGenTest extends CodegenTestCase {
     }
 
     public void testStringPlusEq() throws Exception {
-        loadText("fun foo(s: String) { val result = s; result += s; return result; } ");
+        loadText("fun foo(s: String) : String { val result = s; result += s; return result; } ");
         System.out.println(generateToText());
         final Method main = generateFunction();
         assertEquals("JarJar", main.invoke(null, "Jar"));
