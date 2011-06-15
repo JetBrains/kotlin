@@ -75,7 +75,7 @@ class MoveCommand: Command {
       return
     }
     p.room = room as World.Room
-    room?.world.describeRoom(p.room)
+    room.world.describeRoom(p.room)
   }
 }
 
@@ -110,6 +110,6 @@ fun main(args: Array<String>) {
     if (command === null)
       System.out?.println("Unrecognized command");
     else
-      command?.execute(p)
+      command.execute(p)
   }
 }
