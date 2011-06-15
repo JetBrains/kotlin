@@ -9,6 +9,10 @@ import org.jetbrains.jet.plugin.JetFileType;
  * @author yole
  */
 public class JetRunConfigurationType extends ConfigurationTypeBase {
+    public static JetRunConfigurationType getInstance() {
+        return ConfigurationTypeUtil.findConfigurationType(JetRunConfigurationType.class);
+    }
+
     public JetRunConfigurationType() {
         super("JetRunConfigurationType", "Jet", "Jet", JetFileType.INSTANCE.getIcon());
         addFactory(new JetRunConfigurationFactory(this));

@@ -34,6 +34,7 @@
       <annotator language="jet" implementationClass="org.jetbrains.jet.plugin.annotations.JetPsiChecker"/>
       <documentationProvider implementation="org.jetbrains.jet.plugin.JetQuickDocumentationProvider"/>
       <configurationType implementation="org.jetbrains.jet.plugin.run.JetRunConfigurationType"/>
+      <configurationProducer implementation="org.jetbrains.jet.plugin.run.JetRunConfigurationProducer"/>
       <codeInsight.lineMarkerProvider language="jet" implementationClass="org.jetbrains.jet.plugin.annotations.JetLineMarkerProvider"/>
       <iconProvider implementation="org.jetbrains.jet.plugin.JetIconProvider"/>
       <fileTypeIndentOptionsProvider implementation="org.jetbrains.jet.plugin.formatter.JetIndentOptionsProvider"/>
