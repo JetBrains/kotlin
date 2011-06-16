@@ -62,8 +62,8 @@ public class NamespaceCodegen {
                     throw new RuntimeException("Failed to generate function " + declaration.getName(), e);
                 }
             }
-            else if (declaration instanceof JetClass) {
-                classCodegen.generate((JetClass) declaration);
+            else if (declaration instanceof JetClassOrObject) {
+                classCodegen.generate((JetClassOrObject) declaration);
             }
         }
     }

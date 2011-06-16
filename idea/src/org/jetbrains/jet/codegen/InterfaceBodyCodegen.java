@@ -3,7 +3,7 @@ package org.jetbrains.jet.codegen;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.psi.JetClass;
+import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetDelegationSpecifier;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
@@ -19,7 +19,7 @@ import java.util.Set;
  * @author yole
  */
 public class InterfaceBodyCodegen extends ClassBodyCodegen {
-    public InterfaceBodyCodegen(BindingContext bindingContext, JetStandardLibrary stdlib, JetClass aClass, ClassVisitor v) {
+    public InterfaceBodyCodegen(BindingContext bindingContext, JetStandardLibrary stdlib, JetClassOrObject aClass, ClassVisitor v) {
         super(bindingContext, stdlib, aClass, OwnerKind.INTERFACE, v);
     }
 
