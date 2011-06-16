@@ -171,7 +171,7 @@ public class TopDownAnalyzer {
                     MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(trace, owner, outerScope);
 
                     if (klass.hasModifier(JetTokens.ENUM_KEYWORD)) {
-                        MutableClassDescriptor classObjectDescriptor = new MutableClassDescriptor(trace, mutableClassDescriptor, outerScope);
+                        MutableClassDescriptor classObjectDescriptor = new MutableClassDescriptor(trace, mutableClassDescriptor, outerScope, true);
                         classObjectDescriptor.setName("class-object-for-" + klass.getName());
                         classObjectDescriptor.createTypeConstructor();
                         createPrimaryConstructor(classObjectDescriptor);
@@ -213,7 +213,7 @@ public class TopDownAnalyzer {
                 }
 
                 private MutableClassDescriptor createClassDescriptorForObject(@NotNull JetClassOrObject declaration, @NotNull NamespaceLike owner) {
-                    MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(trace, owner, outerScope) {
+                    MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(trace, owner, outerScope, true) {
                         @Override
                         public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor) {
                             return ClassObjectStatus.NOT_ALLOWED;

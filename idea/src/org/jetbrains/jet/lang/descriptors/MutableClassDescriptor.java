@@ -30,12 +30,18 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     private MutableClassDescriptor classObjectDescriptor;
     private JetType classObjectType;
     private JetType defaultType;
+    private final boolean isObject;
 
     public MutableClassDescriptor(@NotNull BindingTrace trace, @NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope outerScope) {
+        this(trace, containingDeclaration, outerScope, false);
+    }
+
+    public MutableClassDescriptor(@NotNull BindingTrace trace, @NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope outerScope, boolean isObject) {
         super(containingDeclaration);
         this.scopeForMemberLookup = new WritableScopeImpl(JetScope.EMPTY, this, trace.getErrorHandler()).setDebugName("MemberLookup");
         this.scopeForSupertypeResolution = new WritableScopeImpl(outerScope, this, trace.getErrorHandler()).setDebugName("SupertypeResolution");
         this.scopeForMemberResolution = new WritableScopeImpl(new ChainedScope(this, scopeForMemberLookup, scopeForSupertypeResolution), this, trace.getErrorHandler()).setDebugName("MemberResolution");
+        this.isObject = isObject;
     }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -43,6 +49,7 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     @Override
     public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor) {
         if (this.classObjectDescriptor != null) return ClassObjectStatus.DUPLICATE;
+        assert classObjectDescriptor.isObject();
         this.classObjectDescriptor = classObjectDescriptor;
         return ClassObjectStatus.OK;
     }
@@ -240,6 +247,11 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     @Override
     public boolean hasConstructors() {
         return !constructors.isEmpty();
+    }
+
+    @Override
+    public boolean isObject() {
+        return isObject;
     }
 
     @Override

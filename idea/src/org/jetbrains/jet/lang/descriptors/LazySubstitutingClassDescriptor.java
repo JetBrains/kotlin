@@ -96,6 +96,11 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
     }
 
     @Override
+    public boolean isObject() {
+        return original.isObject();
+    }
+
+    @Override
     public boolean isClassObjectAValue() {
         return original.isClassObjectAValue();
     }

@@ -41,4 +41,6 @@ public interface ClassDescriptor extends ClassifierDescriptor {
 
     @Nullable
     JetType getClassObjectType();
+
+    boolean isObject();
 }

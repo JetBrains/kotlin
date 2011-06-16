@@ -91,6 +91,11 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
     }
 
     @Override
+    public boolean isObject() {
+        return false;
+    }
+
+    @Override
     public boolean isClassObjectAValue() {
         return true;
     }

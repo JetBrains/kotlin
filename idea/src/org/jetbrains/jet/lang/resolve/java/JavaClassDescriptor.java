@@ -110,6 +110,11 @@ public class JavaClassDescriptor extends MutableDeclarationDescriptor implements
     }
 
     @Override
+    public boolean isObject() {
+        return false;
+    }
+
+    @Override
     public boolean isClassObjectAValue() {
         return false;
     }
