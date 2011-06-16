@@ -615,7 +615,7 @@ public class ExpressionCodegen extends JetVisitor {
                     myStack.push(iValue);
                 }
             }
-            else {
+            else if (!(descriptor instanceof NamespaceDescriptor)) {
                 throw new UnsupportedOperationException("don't know how to generate reference " + descriptor);
             }
         }

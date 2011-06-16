@@ -400,4 +400,8 @@ public class NamespaceGenTest extends CodegenTestCase {
         final StringBuilder sb = new StringBuilder("x");
         assertEquals('x', ((Character) main.invoke(null, sb)).charValue());
     }
+
+    public void testNamespaceQualifiedMethod() throws Exception {
+        blackBoxFile("namespaceQualifiedMethod.jet");
+    }
 }
