@@ -38,7 +38,10 @@ public class NamespaceCodegen {
     }
 
     public void generate(JetNamespace namespace) {
-        BindingContext bindingContext = AnalyzingUtils.analyzeNamespace(namespace, JetControlFlowDataTraceFactory.EMPTY);
+        generate(namespace, AnalyzingUtils.analyzeNamespace(namespace, JetControlFlowDataTraceFactory.EMPTY));
+    }
+
+    public void generate(JetNamespace namespace, BindingContext bindingContext) {
         AnalyzingUtils.applyHandler(ErrorHandler.THROW_EXCEPTION, bindingContext);
 
         final JetStandardLibrary standardLibrary = JetStandardLibrary.getJetStandardLibrary(project);
@@ -66,7 +69,7 @@ public class NamespaceCodegen {
             }
             else if (declaration instanceof JetNamespace) {
                 JetNamespace childNamespace = (JetNamespace) declaration;
-                codegens.forNamespace(childNamespace).generate(childNamespace);
+                codegens.forNamespace(childNamespace).generate(childNamespace, bindingContext);
             }
         }
     }
