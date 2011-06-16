@@ -31,4 +31,10 @@ public abstract class JetNamedDeclaration extends JetDeclaration implements PsiN
     public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
         return getNameIdentifier().replace(JetChangeUtil.createNameIdentifier(getProject(), name));
     }
+
+    @Override
+    public int getTextOffset() {
+        PsiElement identifier = getNameIdentifier();
+        return identifier != null ? identifier.getTextRange().getStartOffset() : getTextRange().getStartOffset();
+    }
 }

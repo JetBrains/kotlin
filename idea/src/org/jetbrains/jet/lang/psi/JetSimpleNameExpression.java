@@ -11,6 +11,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.Function;
+import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -105,6 +106,12 @@ public class JetSimpleNameExpression extends JetReferenceExpression {
                 }
 
                 return EMPTY_ARRAY;
+            }
+
+            @Override
+            public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
+                PsiElement element = JetChangeUtil.createNameIdentifier(getProject(), newElementName);
+                return getReferencedNameElement().replace(element);
             }
         };
     }
