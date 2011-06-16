@@ -65,7 +65,9 @@ public class JetStructureViewElement implements StructureViewTreeElement {
 
             @Override
             public Icon getIcon(boolean open) {
-                return PsiIconUtil.getProvidersIcon(myElement, open ? Iconable.ICON_FLAG_OPEN : Iconable.ICON_FLAG_CLOSED);
+                return myElement.isValid()
+                        ? PsiIconUtil.getProvidersIcon(myElement, open ? Iconable.ICON_FLAG_OPEN : Iconable.ICON_FLAG_CLOSED)
+                        : null;
             }
 
             @Override
