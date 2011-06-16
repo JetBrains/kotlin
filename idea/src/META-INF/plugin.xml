@@ -29,6 +29,7 @@
       <lang.psiStructureViewFactory language="jet" implementationClass="org.jetbrains.jet.plugin.structureView.JetStructureViewFactory"/>
       <lang.foldingBuilder language="jet" implementationClass="org.jetbrains.jet.plugin.JetFoldingBuilder"/>
       <lang.formatter language="jet" implementationClass="org.jetbrains.jet.plugin.formatter.JetFormattingModelBuilder"/>
+      <lang.findUsagesProvider language="jet" implementationClass="org.jetbrains.jet.plugin.findUsages.JetFindUsagesProvider"/>
       <annotator language="jet" implementationClass="org.jetbrains.jet.plugin.annotations.SoftKeywordsAnnotator"/>
       <annotator language="jet" implementationClass="org.jetbrains.jet.plugin.annotations.LabelsAnnotator"/>
       <annotator language="jet" implementationClass="org.jetbrains.jet.plugin.annotations.JetPsiChecker"/>
@@ -38,5 +39,6 @@
       <codeInsight.lineMarkerProvider language="jet" implementationClass="org.jetbrains.jet.plugin.annotations.JetLineMarkerProvider"/>
       <iconProvider implementation="org.jetbrains.jet.plugin.JetIconProvider"/>
       <fileTypeIndentOptionsProvider implementation="org.jetbrains.jet.plugin.formatter.JetIndentOptionsProvider"/>
+      <elementDescriptionProvider implementation="org.jetbrains.jet.plugin.findUsages.JetElementDescriptionProvider"/>
   </extensions>
 </idea-plugin>
