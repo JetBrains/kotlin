@@ -403,6 +403,19 @@ public class JetTypeInferrer {
             }
         }
 
+        List<JetType> typeArguments = new ArrayList<JetType>();
+        for (JetTypeProjection projection : jetTypeArguments) {
+            // TODO : check that there's no projection
+            JetTypeReference typeReference = projection.getTypeReference();
+            if (typeReference != null) {
+                typeArguments.add(typeResolver.resolveType(scope, typeReference));
+            }
+        }
+
+        return resolveCallWithTypeArguments(scope, overloadDomain, call, typeArguments);
+    }
+
+    private JetType resolveCallWithTypeArguments(JetScope scope, OverloadDomain overloadDomain, JetCall call, List<JetType> typeArguments) {
         final List<JetArgument> valueArguments = call.getValueArguments();
 
         boolean someNamed = false;
@@ -424,15 +437,6 @@ public class JetTypeInferrer {
 
 //                    result = overloadDomain.getFunctionDescriptorForNamedArguments(typeArguments, valueArguments, functionLiteralArgument);
         } else {
-            List<JetType> typeArguments = new ArrayList<JetType>();
-            for (JetTypeProjection projection : jetTypeArguments) {
-                // TODO : check that there's no projection
-                JetTypeReference typeReference = projection.getTypeReference();
-                if (typeReference != null) {
-                    typeArguments.add(typeResolver.resolveType(scope, typeReference));
-                }
-            }
-
             List<JetExpression> positionedValueArguments = new ArrayList<JetExpression>();
             for (JetArgument argument : valueArguments) {
                 JetExpression argumentExpression = argument.getArgumentExpression();
@@ -452,7 +456,7 @@ public class JetTypeInferrer {
             if (resolutionResult.isSuccess()) {
                 final FunctionDescriptor functionDescriptor = resolutionResult.getFunctionDescriptor();
 
-                checkGenericBoundsInAFunctionCall(jetTypeArguments, typeArguments, functionDescriptor);
+                checkGenericBoundsInAFunctionCall(call.getTypeArguments(), typeArguments, functionDescriptor);
                 return functionDescriptor.getUnsubstitutedReturnType();
             }
         }
@@ -542,23 +546,30 @@ public class JetTypeInferrer {
         //
         // The code below upcasts the type automatically
 
-        List<TypeProjection> typeArguments = receiverType.getArguments();
-
-        List<TypeProjection> projectionsStripped = new ArrayList<TypeProjection>();
-        for (TypeProjection typeArgument : typeArguments) {
-            if (typeArgument.getProjectionKind() != Variance.INVARIANT) {
-                projectionsStripped.add(new TypeProjection(typeArgument.getType()));
-            }
-            else
-                projectionsStripped.add(typeArgument);
-        }
 
         FunctionGroup constructors = classDescriptor.getConstructors();
         OverloadDomain constructorsOverloadDomain = semanticServices.getOverloadResolver().getOverloadDomain(null, constructors);
-        JetType constructorReturnedType = resolveCall(
-                scope,
-                wrapForTracing(constructorsOverloadDomain, referenceExpression, call.getValueArgumentList(), false),
-                call);
+
+        JetType constructorReturnedType;
+        if (call instanceof JetDelegatorToThisCall) {
+            List<TypeProjection> typeArguments = receiverType.getArguments();
+
+            List<JetType> projectionsStripped = Lists.newArrayList();
+            for (TypeProjection typeArgument : typeArguments) {
+                projectionsStripped.add(typeArgument.getType());
+            }
+
+            constructorReturnedType = resolveCallWithTypeArguments(
+                    scope,
+                    wrapForTracing(constructorsOverloadDomain, referenceExpression, call.getValueArgumentList(), false),
+                    call, projectionsStripped);
+        }
+        else {
+            constructorReturnedType = resolveCall(
+                    scope,
+                    wrapForTracing(constructorsOverloadDomain, referenceExpression, call.getValueArgumentList(), false),
+                    call);
+        }
         if (constructorReturnedType == null && !ErrorUtils.isErrorType(receiverType)) {
             DeclarationDescriptor declarationDescriptor = receiverType.getConstructor().getDeclarationDescriptor();
             assert declarationDescriptor != null;
