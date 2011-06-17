@@ -10,6 +10,9 @@ namespace typeinfo {
 // Can't write a body due to a bootstrapping problem (see JET-74)
 fun Any?.equals(other : Any?) : Boolean// = this === other
 
+// Returns "null" for null
+fun Any?.toString() : String// = this === other
+
 class Iterator<out T> {
   fun next() : T
   abstract val hasNext : Boolean
