@@ -108,7 +108,7 @@ public class PropertyCodegen {
     }
 
     private static boolean isExternallyAccessible(JetProperty p) {
-        return p.hasModifier(JetTokens.PUBLIC_KEYWORD);
+        return !p.hasModifier(JetTokens.PRIVATE_KEYWORD);
     }
 
     private void generateSetter(JetProperty p, OwnerKind kind, PropertyDescriptor propertyDescriptor) {

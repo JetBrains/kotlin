@@ -24,7 +24,8 @@ public class JetArrayAccessExpression extends JetReferenceExpression {
 
     @Override
     public PsiReference getReference() {
-        return new JetArrayAccessReference();
+        JetContainerNode indicesNode = getIndicesNode();
+        return indicesNode == null ? null : new JetArrayAccessReference();
     }
 
     @Override
@@ -41,9 +42,13 @@ public class JetArrayAccessExpression extends JetReferenceExpression {
 
     @NotNull
     public List<JetExpression> getIndexExpressions() {
-        PsiElement container = findChildByType(JetNodeTypes.INDICES);
+        PsiElement container = getIndicesNode();
         if (container == null) return Collections.emptyList();
         return PsiTreeUtil.getChildrenOfTypeAsList(container, JetExpression.class);
+    }
+
+    public JetContainerNode getIndicesNode() {
+        return (JetContainerNode) findChildByType(JetNodeTypes.INDICES);
     }
 
     private class JetArrayAccessReference extends JetPsiReference implements MultiRangeReference {
@@ -62,7 +67,7 @@ public class JetArrayAccessExpression extends JetReferenceExpression {
         public List<TextRange> getRanges() {
             List<TextRange> list = new ArrayList<TextRange>();
 
-            JetContainerNode indices = (JetContainerNode) findChildByType(JetNodeTypes.INDICES);
+            JetContainerNode indices = getIndicesNode();
             TextRange textRange = indices.getNode().findChildByType(JetTokens.LBRACKET).getTextRange();
             TextRange lBracketRange = textRange.shiftRight(-getTextOffset());
 

@@ -597,6 +597,14 @@ public class ExpressionCodegen extends JetVisitor {
                     v.arraylength();
                     myStack.push(StackValue.onStack(Type.INT_TYPE));
                 }
+                else if (declaration instanceof JetObjectDeclarationName) {
+                    JetObjectDeclaration objectDeclaration = PsiTreeUtil.getParentOfType(declaration, JetObjectDeclaration.class);
+                    ClassDescriptor classDescriptor = bindingContext.getClassDescriptor(objectDeclaration);
+                    myStack.push(StackValue.field(typeMapper.jvmType(classDescriptor, OwnerKind.IMPLEMENTATION),
+                            typeMapper.jvmName(classDescriptor, OwnerKind.IMPLEMENTATION),
+                            "$instance",
+                            true));
+                }
                 else {
                     boolean isStatic = container instanceof NamespaceDescriptorImpl;
                     final boolean directToField = expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER;
@@ -607,16 +615,17 @@ public class ExpressionCodegen extends JetVisitor {
                     myStack.push(iValue);
                 }
             }
-            else {
+            else if (!(descriptor instanceof NamespaceDescriptor)) {
                 throw new UnsupportedOperationException("don't know how to generate reference " + descriptor);
             }
         }
     }
 
     public StackValue intermediateValueForProperty(PropertyDescriptor propertyDescriptor, final boolean directToField) {
-        boolean isStatic = propertyDescriptor.getContainingDeclaration() instanceof NamespaceDescriptorImpl;
+        DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
+        boolean isStatic = containingDeclaration instanceof NamespaceDescriptorImpl;
         final JetType outType = propertyDescriptor.getOutType();
-        boolean isInsideClass = propertyDescriptor.getContainingDeclaration() == contextType;
+        boolean isInsideClass = containingDeclaration == contextType;
         Method getter;
         Method setter;
         if (directToField) {
@@ -628,17 +637,18 @@ public class ExpressionCodegen extends JetVisitor {
             setter = isInsideClass && propertyDescriptor.getSetter() == null ? null : typeMapper.mapSetterSignature(propertyDescriptor);
         }
 
-        String fieldOwner;
-        String interfaceOwner;
+        String owner;
+        boolean isInterface;
         if (isInsideClass || isStatic) {
-            fieldOwner = interfaceOwner = typeMapper.getOwner(propertyDescriptor, contextKind);
+            owner = typeMapper.getOwner(propertyDescriptor, contextKind);
+            isInterface = false;
         }
         else {
-            fieldOwner = null;
-            interfaceOwner = typeMapper.getOwner(propertyDescriptor, OwnerKind.INTERFACE);
+            owner = typeMapper.getOwner(propertyDescriptor, OwnerKind.INTERFACE);
+            isInterface = !(containingDeclaration instanceof ClassDescriptor && ((ClassDescriptor) containingDeclaration).isObject());
         }
 
-        return StackValue.property(propertyDescriptor.getName(), fieldOwner, interfaceOwner, typeMapper.mapType(outType), isStatic, getter, setter);
+        return StackValue.property(propertyDescriptor.getName(), owner, typeMapper.mapType(outType), isStatic, isInterface, getter, setter);
     }
 
     @Nullable

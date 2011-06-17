@@ -53,6 +53,9 @@ public class JetTypeMapper {
     }
 
     public static String jetJvmName(ClassDescriptor jetClass, OwnerKind kind) {
+        if (jetClass.isObject()) {
+            return jvmNameForImplementation(jetClass);
+        }
         if (kind == OwnerKind.INTERFACE) {
             return jvmNameForInterface(jetClass);
         }
@@ -118,7 +121,13 @@ public class JetTypeMapper {
         }
         else if (descriptor.getContainingDeclaration() instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) descriptor.getContainingDeclaration();
-            owner = jvmName(classDescriptor, kind instanceof OwnerKind.DelegateKind ? OwnerKind.INTERFACE : kind);
+            if (kind instanceof OwnerKind.DelegateKind) {
+                kind = OwnerKind.INTERFACE;
+            }
+            else if (classDescriptor.isObject()) {
+                kind = OwnerKind.IMPLEMENTATION;
+            }
+            owner = jvmName(classDescriptor, kind);
         }
         else {
             throw new UnsupportedOperationException("don't know how to generate owner for parent " + descriptor.getContainingDeclaration());

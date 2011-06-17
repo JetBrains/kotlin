@@ -8,6 +8,9 @@ import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Opcodes;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * @author max
  * @author yole
@@ -16,12 +19,12 @@ public abstract class ClassBodyCodegen {
     protected final BindingContext bindingContext;
     protected final JetStandardLibrary stdlib;
     protected final JetTypeMapper typeMapper;
-    protected final JetClass myClass;
+    protected final JetClassOrObject myClass;
     protected final OwnerKind kind;
     protected final ClassDescriptor descriptor;
     protected final ClassVisitor v;
 
-    public ClassBodyCodegen(BindingContext bindingContext, JetStandardLibrary stdlib, JetClass aClass, OwnerKind kind, ClassVisitor v) {
+    public ClassBodyCodegen(BindingContext bindingContext, JetStandardLibrary stdlib, JetClassOrObject aClass, OwnerKind kind, ClassVisitor v) {
         this.bindingContext = bindingContext;
         this.stdlib = stdlib;
         this.typeMapper = new JetTypeMapper(stdlib, bindingContext);
@@ -47,7 +50,7 @@ public abstract class ClassBodyCodegen {
     }
 
     private void generateClassBody() {
-        final FunctionCodegen functionCodegen = new FunctionCodegen(myClass, v, stdlib, bindingContext);
+        final FunctionCodegen functionCodegen = new FunctionCodegen((JetDeclaration) myClass, v, stdlib, bindingContext);
         final PropertyCodegen propertyCodegen = new PropertyCodegen(v, stdlib, bindingContext, functionCodegen);
 
         for (JetDeclaration declaration : myClass.getDeclarations()) {
@@ -63,7 +66,11 @@ public abstract class ClassBodyCodegen {
             }
         }
 
-        for (JetParameter p : myClass.getPrimaryConstructorParameters()) {
+        generatePrimaryConstructorProperties(propertyCodegen);
+    }
+
+    private void generatePrimaryConstructorProperties(PropertyCodegen propertyCodegen) {
+        for (JetParameter p : getPrimaryConstructorParameters()) {
             if (p.getValOrVarNode() != null) {
                 PropertyDescriptor propertyDescriptor = bindingContext.getPropertyDescriptor(p);
                 if (propertyDescriptor != null) {
@@ -78,6 +85,13 @@ public abstract class ClassBodyCodegen {
                 }
             }
         }
+    }
+
+    protected List<JetParameter> getPrimaryConstructorParameters() {
+        if (myClass instanceof JetClass) {
+            return ((JetClass) myClass).getPrimaryConstructorParameters();
+        }
+        return Collections.emptyList();
     }
 
 }
