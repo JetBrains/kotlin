@@ -29,5 +29,5 @@ fun box() : String {
     val p4 = P4(240, y)
     if (p4.x + p4.y != 239) return "FAIL #7"
 
-    "OK"
+    return "OK"
 }

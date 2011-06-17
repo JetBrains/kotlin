@@ -16,7 +16,7 @@ fun foo() : Int {
       <warning>?.</warning>equals(1) => 1
       else => 1
     }
-    when (<warning>x</warning>?:null) {
+    return when (<warning>x</warning>?:null) {
       <error>.</error>equals(1) => 1
       ?.equals(1).equals(2) => 1
     }

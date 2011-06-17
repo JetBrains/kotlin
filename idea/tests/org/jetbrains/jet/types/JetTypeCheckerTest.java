@@ -493,14 +493,14 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
     private void assertType(String expression, JetType expectedType) {
         Project project = getProject();
         JetExpression jetExpression = JetChangeUtil.createExpression(project, expression);
-        JetType type = semanticServices.getTypeInferrer(JetTestUtils.DUMMY, JetFlowInformationProvider.NONE).getType(classDefinitions.BASIC_SCOPE, jetExpression, false);
+        JetType type = semanticServices.getTypeInferrer(JetTestUtils.DUMMY, JetFlowInformationProvider.NONE).getType(classDefinitions.BASIC_SCOPE, jetExpression, false, null);
         assertTrue(type + " != " + expectedType, type.equals(expectedType));
     }
 
     private void assertErrorType(String expression) {
         Project project = getProject();
         JetExpression jetExpression = JetChangeUtil.createExpression(project, expression);
-        JetType type = semanticServices.getTypeInferrer(JetTestUtils.DUMMY, JetFlowInformationProvider.NONE).safeGetType(classDefinitions.BASIC_SCOPE, jetExpression, false);
+        JetType type = semanticServices.getTypeInferrer(JetTestUtils.DUMMY, JetFlowInformationProvider.NONE).safeGetType(classDefinitions.BASIC_SCOPE, jetExpression, false, null);
         assertTrue("Error type expected but " + type + " returned", ErrorUtils.isErrorType(type));
     }
 
@@ -523,7 +523,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
     private void assertType(JetScope scope, String expression, String expectedTypeStr) {
         Project project = getProject();
         JetExpression jetExpression = JetChangeUtil.createExpression(project, expression);
-        JetType type = semanticServices.getTypeInferrer(JetTestUtils.DUMMY, JetFlowInformationProvider.NONE).getType(scope, jetExpression, false);
+        JetType type = semanticServices.getTypeInferrer(JetTestUtils.DUMMY, JetFlowInformationProvider.NONE).getType(scope, jetExpression, false, null);
         JetType expectedType = expectedTypeStr == null ? null : makeType(expectedTypeStr);
         assertEquals(expectedType, type);
     }

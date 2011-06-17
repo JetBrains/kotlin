@@ -5,5 +5,5 @@ fun concat(l: List<String>): String? {
   for(s in l) {
     sb.append(s)
   }
-  sb.toString()
+  return sb.toString()
 }

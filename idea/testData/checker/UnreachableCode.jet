@@ -58,7 +58,7 @@ fun t4break(a : Boolean) : Int {
     break
   }
   while (<error>a</error>)
-  1
+  return 1
 }
 
 fun t5() : Int {
@@ -67,7 +67,7 @@ fun t5() : Int {
     <error>2</error>
   }
   while (<error>1 > 2</error>)
-  <error>1</error>
+  <error>return 1</error>
 }
 
 fun t6() : Int {
@@ -75,7 +75,7 @@ fun t6() : Int {
     return 1
     <error>2</error>
   }
-  1
+  return 1
 }
 
 fun t6break() : Int {
@@ -83,7 +83,7 @@ fun t6break() : Int {
     break
     <error>2</error>
   }
-  1
+  return 1
 }
 
 fun t7(b : Int) : Int {
@@ -91,7 +91,7 @@ fun t7(b : Int) : Int {
     return 1
     <error>2</error>
   }
-  1
+  return 1
 }
 
 fun t7break(b : Int) : Int {
@@ -99,7 +99,7 @@ fun t7break(b : Int) : Int {
     return 1
     <error>2</error>
   }
-  1
+  return 1
 }
 
 fun t7() : Int {
@@ -110,7 +110,7 @@ fun t7() : Int {
   catch (e : Any) {
     2
   }
-  1 // this is OK, like in Java
+  return 1 // this is OK, like in Java
 }
 
 fun t8() : Int {
@@ -122,24 +122,24 @@ fun t8() : Int {
     return 1
     <error>2</error>
   }
-  <error>1</error>
+  <error>return 1</error>
 }
 
 fun blockAndAndMismatch() : Boolean {
   <error>(return true) || (return false)</error>
-  <error>true</error>
+  <error>return true</error>
 }
 
 fun tf() : Int {
   try {<error>return 1</error>} finally{return 1}
-  <error>1</error>
+  <error>return 1</error>
 }
 
 fun failtest(a : Int) : Int {
   <error>if (fail() || true) {
 
   }</error>
-  <error>1</error>
+  <error>return 1</error>
 }
 
 fun foo(a : Nothing) : Unit {

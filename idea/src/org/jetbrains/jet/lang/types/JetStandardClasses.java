@@ -274,6 +274,11 @@ public class JetStandardClasses {
                type.getConstructor() == NOTHING_CLASS.getTypeConstructor();
     }
 
+    public static boolean isUnit(@NotNull JetType type) {
+        return !(type instanceof NamespaceType) &&
+               type.getConstructor() == UNIT_TYPE.getConstructor();
+    }
+
     public static JetType getTupleType(List<Annotation> annotations, List<JetType> arguments) {
         if (annotations.isEmpty() && arguments.isEmpty()) {
             return getUnitType();

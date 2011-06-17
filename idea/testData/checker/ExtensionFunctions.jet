@@ -8,7 +8,7 @@ fun <T, E> T.foo(x : E, y : A) : T   {
 
   this<warning>?.</warning>minus<T>(this)
 
-  this
+  return this
 }
 
 class A

@@ -29,7 +29,7 @@ namespace closures {
         val y = this@A : A
         val z = this : B
         val Int.xx = this : Int
-        fun Char.xx() {
+        fun Char.xx() : Any {
           this : Char
           val a = {Double.() => this : Double + this@xx : Char}
           val b = @a{Double.() => this@a : Double + this@xx : Char}

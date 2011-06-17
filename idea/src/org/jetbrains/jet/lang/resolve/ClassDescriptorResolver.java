@@ -197,7 +197,7 @@ public class ClassDescriptorResolver {
                     @Override
                     protected JetType compute() {
                         JetFlowInformationProvider flowInformationProvider = computeFlowData(function, bodyExpression);
-                        return semanticServices.getTypeInferrer(trace, flowInformationProvider).getFunctionReturnType(scope, function, functionDescriptor);
+                        return semanticServices.getTypeInferrer(trace, flowInformationProvider).inferFunctionReturnType(scope, function, functionDescriptor);
                     }
                 });
             }
@@ -525,7 +525,7 @@ public class ClassDescriptorResolver {
                 LazyValue<JetType> lazyValue = new LazyValue<JetType>() {
                     @Override
                     protected JetType compute() {
-                        return semanticServices.getTypeInferrer(trace, JetFlowInformationProvider.THROW_EXCEPTION).safeGetType(scope, initializer, false);
+                        return semanticServices.getTypeInferrer(trace, JetFlowInformationProvider.THROW_EXCEPTION).safeGetType(scope, initializer, false, null); // TODO
                     }
                 };
                 if (allowDeferred) {
@@ -733,7 +733,7 @@ public class ClassDescriptorResolver {
         }
     }
 
-    public JetFlowInformationProvider computeFlowData(@NotNull JetElement declaration, @NotNull JetExpression bodyExpression) {
+    public JetFlowInformationProvider computeFlowData(@NotNull JetElement declaration, @NotNull final JetExpression bodyExpression) {
         final JetPseudocodeTrace pseudocodeTrace = flowDataTraceFactory.createTrace(declaration);
         final Map<JetElement, Pseudocode> pseudocodeMap = new HashMap<JetElement, Pseudocode>();
         final Map<JetElement, Instruction> representativeInstructions = new HashMap<JetElement, Instruction>();
@@ -777,6 +777,45 @@ public class ClassDescriptorResolver {
 
                 SubroutineExitInstruction exitInstruction = pseudocode.getExitInstruction();
                 processPreviousInstructions(exitInstruction, new HashSet<Instruction>(), returnedExpressions, elementsReturningUnit);
+            }
+
+            @Override
+            public void collectReturnExpressions(@NotNull JetElement subroutine, @NotNull final Collection<JetExpression> returnedExpressions) {
+                Pseudocode pseudocode = pseudocodeMap.get(subroutine);
+                assert pseudocode != null;
+
+                SubroutineExitInstruction exitInstruction = pseudocode.getExitInstruction();
+                for (Instruction previousInstruction : exitInstruction.getPreviousInstructions()) {
+                    previousInstruction.accept(new InstructionVisitor() {
+                        @Override
+                        public void visitReturnValue(ReturnValueInstruction instruction) {
+                            returnedExpressions.add((JetExpression) instruction.getElement());
+                        }
+
+                        @Override
+                        public void visitReturnNoValue(ReturnNoValueInstruction instruction) {
+                            returnedExpressions.add((JetExpression) instruction.getElement());
+                        }
+
+
+
+                        @Override
+                        public void visitJump(AbstractJumpInstruction instruction) {
+                            // Nothing
+                        }
+
+                        @Override
+                        public void visitInstruction(Instruction instruction) {
+                            if (instruction instanceof JetElementInstruction) {
+                                JetElementInstruction elementInstruction = (JetElementInstruction) instruction;
+                                returnedExpressions.add((JetExpression) elementInstruction.getElement());
+                            }
+                            else {
+                                throw new IllegalStateException(instruction + " precedes the exit point");
+                            }
+                        }
+                    });
+                }
             }
 
             @Override

@@ -1,8 +1,6 @@
 package org.jetbrains.jet.lang.resolve;
 
-import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -33,7 +31,6 @@ public class TopDownAnalyzer {
     private final Map<JetDeclaration, ConstructorDescriptor> constructors = Maps.newLinkedHashMap();
     private final Map<JetProperty, PropertyDescriptor> properties = new LinkedHashMap<JetProperty, PropertyDescriptor>();
     private final Map<JetDeclaration, JetScope> declaringScopes = Maps.newHashMap();
-    private final Multimap<DeclarationDescriptor, PropertyDescriptor> declaringScopesToProperties = ArrayListMultimap.create();
     private final Set<PropertyDescriptor> primaryConstructorParameterProperties = Sets.newHashSet();
 
     private final JetSemanticServices semanticServices;
@@ -572,7 +569,7 @@ public class TopDownAnalyzer {
                     JetExpression delegateExpression = specifier.getDelegateExpression();
                     if (delegateExpression != null) {
                         JetScope scope = scopeForConstructor == null ? descriptor.getScopeForMemberResolution() : scopeForConstructor;
-                        JetType type = typeInferrer.getType(scope, delegateExpression, false);
+                        JetType type = typeInferrer.getType(scope, delegateExpression, false, null);
                         JetType supertype = trace.getBindingContext().resolveTypeReference(specifier.getTypeReference());
                         if (type != null && !semanticServices.getTypeChecker().isSubtypeOf(type, supertype)) { // TODO : Convertible?
                             trace.getErrorHandler().typeMismatch(delegateExpression, supertype, type);
@@ -644,7 +641,7 @@ public class TopDownAnalyzer {
             final JetScope scopeForConstructor = getInnerScopeForConstructor(primaryConstructor, classDescriptor.getScopeForMemberResolution(), true);
             JetTypeInferrer typeInferrer = semanticServices.getTypeInferrer(traceForConstructors, JetFlowInformationProvider.NONE); // TODO : flow
             for (JetClassInitializer anonymousInitializer : anonymousInitializers) {
-                typeInferrer.getType(scopeForConstructor, anonymousInitializer.getBody(), true);
+                typeInferrer.getType(scopeForConstructor, anonymousInitializer.getBody(), true, null);
             }
         }
         else {
@@ -730,7 +727,7 @@ public class TopDownAnalyzer {
             JetFlowInformationProvider flowInformationProvider = classDescriptorResolver.computeFlowData(declaration, bodyExpression);
             JetTypeInferrer typeInferrer = semanticServices.getTypeInferrer(traceForConstructors, flowInformationProvider);
 
-            typeInferrer.getType(functionInnerScope, bodyExpression, true);
+            typeInferrer.getType(functionInnerScope, bodyExpression, true, null);
         }
     }
 
@@ -860,7 +857,7 @@ public class TopDownAnalyzer {
     private void resolvePropertyInitializer(JetProperty property, PropertyDescriptor propertyDescriptor, JetExpression initializer, JetScope scope) {
         JetFlowInformationProvider flowInformationProvider = classDescriptorResolver.computeFlowData(property, initializer); // TODO : flow JET-15
         JetTypeInferrer typeInferrer = semanticServices.getTypeInferrer(traceForConstructors, flowInformationProvider);
-        JetType type = typeInferrer.getType(getPropertyDeclarationInnerScope(scope, propertyDescriptor), initializer, false);
+        JetType type = typeInferrer.getType(getPropertyDeclarationInnerScope(scope, propertyDescriptor), initializer, false, null);
 
         JetType expectedType;
         PropertySetterDescriptor setter = propertyDescriptor.getSetter();
@@ -905,20 +902,6 @@ public class TopDownAnalyzer {
             JetTypeInferrer typeInferrer = semanticServices.getTypeInferrer(trace, flowInformationProvider);
 
             typeInferrer.checkFunctionReturnType(declaringScope, function, functionDescriptor);
-
-            List<JetElement> unreachableElements = new ArrayList<JetElement>();
-            flowInformationProvider.collectUnreachableExpressions(function.asElement(), unreachableElements);
-
-            // This is needed in order to highlight only '1 < 2' and not '1', '<' and '2' as well
-            Set<JetElement> rootElements = JetPsiUtil.findRootExpressions(unreachableElements);
-
-            // TODO : (return 1) || (return 2) -- only || and right of it is unreachable
-            // TODO : try {return 1} finally {return 2}. Currently 'return 1' is reported as unreachable,
-            //        though it'd better be reported more specifically
-
-            for (JetElement element : rootElements) {
-                trace.getErrorHandler().genericError(element.getNode(), "Unreachable code");
-            }
         }
 
         assert functionDescriptor.getUnsubstitutedReturnType() != null;

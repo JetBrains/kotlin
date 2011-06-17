@@ -18,6 +18,11 @@ public interface JetFlowInformationProvider {
         }
 
         @Override
+        public void collectReturnExpressions(@NotNull JetElement subroutine, @NotNull Collection<JetExpression> returnedExpressions) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
         public void collectUnreachableExpressions(@NotNull JetElement subroutine, @NotNull Collection<JetElement> unreachableElements) {
             throw new UnsupportedOperationException();
         }
@@ -41,6 +46,11 @@ public interface JetFlowInformationProvider {
         }
 
         @Override
+        public void collectReturnExpressions(@NotNull JetElement subroutine, @NotNull Collection<JetExpression> returnedExpressions) {
+
+        }
+
+        @Override
         public void collectUnreachableExpressions(@NotNull JetElement subroutine, @NotNull Collection<JetElement> unreachableElements) {
 
         }
@@ -57,10 +67,18 @@ public interface JetFlowInformationProvider {
 
     };
 
+    /**
+     * Collects expressions returned from the given subroutine and 'return;' expressions
+     */
     void collectReturnedInformation(
             @NotNull JetElement subroutine,
             @NotNull Collection<JetExpression> returnedExpressions,
             @NotNull Collection<JetElement> elementsReturningUnit);
+
+    /**
+     * Collects all 'return ...' expressions that return from the given subroutine and all the expressions that precede the exit point
+     */
+    void collectReturnExpressions(@NotNull JetElement subroutine, @NotNull Collection<JetExpression> returnedExpressions);
 
     void collectUnreachableExpressions(
             @NotNull JetElement subroutine,

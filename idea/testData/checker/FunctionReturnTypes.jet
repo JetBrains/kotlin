@@ -5,6 +5,19 @@ fun unitEmpty() : Unit {}
 fun unitEmptyReturn() : Unit {return}
 fun unitIntReturn() : Unit {return <error>1</error>}
 fun unitUnitReturn() : Unit {return ()}
+fun test1() : Any = {<error>return</error>}
+fun test2() : Any = @a {return@a 1}
+fun test3() : Any { <error>return</error> }
+
+fun foo(expr: StringBuilder): Int {
+  val c = 'a'
+  when(c) {
+    '\0' => throw Exception("zero")
+    else => throw Exception("nonzero" + c)
+  }
+}
+
+
 fun unitShort() : Unit = ()
 fun unitShortConv() : Unit = 1
 fun unitShortNull() : Unit = null
@@ -13,7 +26,8 @@ fun intEmpty() : Int <error>{}</error>
 fun intShortInfer() = 1
 fun intShort() : Int = 1
 //fun intBlockInfer()  {1}
-fun intBlock() : Int {1}
+fun intBlock() : Int {return 1}
+fun intBlock() : Int {<error>1</error>}
 
 fun blockReturnUnitMismatch() : Int {<error>return</error>}
 fun blockReturnValueTypeMismatch() : Int {return <error>3.4</error>}
@@ -40,7 +54,7 @@ fun blockAndAndMismatch() : Int {
   <error>(return <error>true</error>) || (return <error>false</error>)</error>
 }
 fun blockReturnValueTypeMatch() : Int {
-  return if (1 > 2) <error>1.0</error> else <error>2.0</error>
+  return <error>if (1 > 2) 1.0 else 2.0</error>
 }
 fun blockReturnValueTypeMatch() : Int {
   return <error>if (1 > 2) 1</error>
@@ -79,7 +93,7 @@ fun blockReturnValueTypeMatch() : Int {
     <error>1.0</error></error>
 }
 fun blockReturnValueTypeMatch() : Int {
-  <error>if (1 > 2)
+  return <error>if (1 > 2)
     1</error>
 }
 fun blockReturnValueTypeMatch() : Int {
@@ -88,6 +102,6 @@ fun blockReturnValueTypeMatch() : Int {
 }
 fun blockReturnValueTypeMatch() : Int {
   if (1 > 2)
-    1
-  else <error>1.0</error>
+    return 1
+  else return <error>1.0</error>
 }

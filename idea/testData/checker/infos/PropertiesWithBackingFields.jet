@@ -14,9 +14,9 @@ class Test() {
     val c3 : Int
         <info>get</info>() { return 1 }
     val c4 : Int
-        <info>get</info>() { 1 }
+        <info>get</info>() = 1
     val <info>c5</info> : Int
-        <info>get</info>() { $c5 + 1 }
+        <info>get</info>() = $c5 + 1
 
     <info>abstract</info> var y : Int
     <info>abstract</info> var y1 : Int <info>get</info>

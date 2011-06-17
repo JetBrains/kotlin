@@ -3,5 +3,5 @@ fun concat(l: Array<String>): String? {
   for(s in l) {
     sb.append(s)
   }
-  sb.toString()
+  return sb.toString()
 }
