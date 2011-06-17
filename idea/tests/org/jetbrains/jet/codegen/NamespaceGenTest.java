@@ -414,4 +414,8 @@ public class NamespaceGenTest extends CodegenTestCase {
         final Method main = generateFunction();
         main.invoke(null);  // must not fail
     }
+
+    public void testIncrementProperty() throws Exception {
+        blackBoxFile("incrementProperty.jet");
+    }
 }

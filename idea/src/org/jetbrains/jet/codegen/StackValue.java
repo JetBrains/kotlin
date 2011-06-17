@@ -427,5 +427,17 @@ public abstract class StackValue {
                 v.visitMethodInsn(isStatic ? Opcodes.INVOKESTATIC : isInterface ? Opcodes.INVOKEINTERFACE : Opcodes.INVOKEVIRTUAL, owner, setter.getName(), setter.getDescriptor());
             }
         }
+
+        @Override
+        public void dupReceiver(InstructionAdapter v, int below) {
+            if (!isStatic) {
+                if (below == 1) {
+                    v.dupX1();
+                }
+                else {
+                    v.dup();
+                }
+            }
+        }
     }
 }
