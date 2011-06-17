@@ -68,7 +68,7 @@ public abstract class ClassBodyCodegen {
             try {
                 functionCodegen.gen((JetFunction) declaration, kind);
             } catch (RuntimeException e) {
-                throw new RuntimeException("Error generating method " + myClass.getName() + "." + declaration.getName(), e);
+                throw new RuntimeException("Error generating method " + myClass.getName() + "." + declaration.getName() + " in " + kind, e);
             }
         }
     }
