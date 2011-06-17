@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.resolve;
 
+import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.ErrorHandler;
@@ -13,6 +14,7 @@ import java.util.Collection;
  */
 public class WriteThroughScope extends WritableScopeWithImports {
     private final WritableScope writableWorker;
+    private Collection<DeclarationDescriptor> allDescriptors;
 
     public WriteThroughScope(@NotNull JetScope outerScope, @NotNull WritableScope scope, @NotNull ErrorHandler errorHandler) {
         super(outerScope, errorHandler);
@@ -149,6 +151,11 @@ public class WriteThroughScope extends WritableScopeWithImports {
 
     @Override
     public Collection<DeclarationDescriptor> getAllDescriptors() {
-        return writableWorker.getAllDescriptors();
+        if (allDescriptors == null) {
+            allDescriptors = Lists.newArrayList();
+            allDescriptors.addAll(writableWorker.getAllDescriptors());
+            allDescriptors.addAll(getWorkerScope().getAllDescriptors());
+        }
+        return allDescriptors;
     }
 }
