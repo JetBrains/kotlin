@@ -235,8 +235,11 @@ public abstract class StackValue {
 
         @Override
         public void put(Type type, InstructionAdapter v) {
+            if (type == Type.VOID_TYPE) {
+                return;
+            }
             if (type != Type.BOOLEAN_TYPE) {
-                throw new UnsupportedOperationException("don't know how to put a compare as a non-boolean type");
+                throw new UnsupportedOperationException("don't know how to put a compare as a non-boolean type " + type);
             }
             putAsBoolean(v);
         }

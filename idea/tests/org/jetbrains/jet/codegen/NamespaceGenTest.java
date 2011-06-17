@@ -408,4 +408,10 @@ public class NamespaceGenTest extends CodegenTestCase {
     public void testCheckCast() throws Exception {
         blackBoxFile("checkCast.jet");
     }
+
+    public void testPutBooleanAsVoid() throws Exception {
+        loadText("class C(val x: Int) { { x > 0 } } fun box() { val c = C(0) } ");
+        final Method main = generateFunction();
+        main.invoke(null);  // must not fail
+    }
 }
