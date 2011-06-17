@@ -73,9 +73,12 @@ public class JetArrayAccessExpression extends JetReferenceExpression {
 
             list.add(lBracketRange);
 
-            textRange = indices.getNode().findChildByType(JetTokens.RBRACKET).getTextRange();
-            TextRange rBracketRange = textRange.shiftRight(-getTextOffset());
-            list.add(rBracketRange);
+            ASTNode rBracket = indices.getNode().findChildByType(JetTokens.RBRACKET);
+            if (rBracket != null) {
+                textRange = rBracket.getTextRange();
+                TextRange rBracketRange = textRange.shiftRight(-getTextOffset());
+                list.add(rBracketRange);
+            }
 
             return list;
         }
