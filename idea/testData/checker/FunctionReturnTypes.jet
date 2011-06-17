@@ -111,3 +111,12 @@ fun blockReturnValueTypeMatch() : Int {
 }
 
 val a = <error>return 1</error>
+
+class A() {
+  this(a : Int) : this() {
+    if (a == 1)
+      return
+    return <error>1</error>
+  }
+
+}

@@ -308,9 +308,44 @@ public class JetTypeInferrer {
 
     public void checkFunctionReturnType(@NotNull JetScope outerScope, @NotNull JetDeclarationWithBody function, @NotNull FunctionDescriptor functionDescriptor) {
         final JetType expectedReturnType = functionDescriptor.getUnsubstitutedReturnType();
+        JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(outerScope, functionDescriptor, trace);
+        checkFunctionReturnType(functionInnerScope, function, functionDescriptor, expectedReturnType);
+//        Map<JetElement, JetType> typeMap = collectReturnedExpressionsWithTypes(outerScope, function, functionDescriptor, expectedReturnType);
+//        if (typeMap.isEmpty()) {
+//            return; // The function returns Nothing
+//        }
+//        for (Map.Entry<JetElement, JetType> entry : typeMap.entrySet()) {
+//            JetType actualType = entry.getValue();
+//            JetElement element = entry.getKey();
+//            JetTypeChecker typeChecker = semanticServices.getTypeChecker();
+//            if (!typeChecker.isSubtypeOf(actualType, expectedReturnType)) {
+//                if (typeChecker.isConvertibleBySpecialConversion(actualType, expectedReturnType)) {
+//                    if (expectedReturnType.getConstructor().equals(JetStandardClasses.getUnitType().getConstructor())
+//                        && element.getParent() instanceof JetReturnExpression) {
+//                        trace.getErrorHandler().genericError(element.getNode(), "This function must return a value of type Unit");
+//                    }
+//                }
+//                else {
+//                    if (element == function) {
+//                        JetExpression bodyExpression = function.getBodyExpression();
+//                        assert bodyExpression != null;
+//                        trace.getErrorHandler().genericError(bodyExpression.getNode(), "This function must return a value of type " + expectedReturnType);
+//                    }
+//                    else if (element instanceof JetExpression) {
+//                        JetExpression expression = (JetExpression) element;
+//                        trace.getErrorHandler().typeMismatch(expression, expectedReturnType, actualType);
+//                    }
+//                    else {
+//                        trace.getErrorHandler().genericError(element.getNode(), "This function must return a value of type " + expectedReturnType);
+//                    }
+//                }
+//            }
+//        }
+    }
+
+    public void checkFunctionReturnType(JetScope functionInnerScope, JetDeclarationWithBody function, FunctionDescriptor functionDescriptor, @Nullable final JetType expectedReturnType) {
         JetExpression bodyExpression = function.getBodyExpression();
         assert bodyExpression != null;
-        JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(outerScope, functionDescriptor, trace);
         new TypeInferrerVisitor(functionInnerScope, function.hasBlockBody(), DataFlowInfo.getEmpty(), null, expectedReturnType).getType(bodyExpression);
 
         List<JetElement> unreachableElements = Lists.newArrayList();
@@ -356,37 +391,6 @@ public class JetTypeInferrer {
                 }
             });
         }
-//        Map<JetElement, JetType> typeMap = collectReturnedExpressionsWithTypes(outerScope, function, functionDescriptor, expectedReturnType);
-//        if (typeMap.isEmpty()) {
-//            return; // The function returns Nothing
-//        }
-//        for (Map.Entry<JetElement, JetType> entry : typeMap.entrySet()) {
-//            JetType actualType = entry.getValue();
-//            JetElement element = entry.getKey();
-//            JetTypeChecker typeChecker = semanticServices.getTypeChecker();
-//            if (!typeChecker.isSubtypeOf(actualType, expectedReturnType)) {
-//                if (typeChecker.isConvertibleBySpecialConversion(actualType, expectedReturnType)) {
-//                    if (expectedReturnType.getConstructor().equals(JetStandardClasses.getUnitType().getConstructor())
-//                        && element.getParent() instanceof JetReturnExpression) {
-//                        trace.getErrorHandler().genericError(element.getNode(), "This function must return a value of type Unit");
-//                    }
-//                }
-//                else {
-//                    if (element == function) {
-//                        JetExpression bodyExpression = function.getBodyExpression();
-//                        assert bodyExpression != null;
-//                        trace.getErrorHandler().genericError(bodyExpression.getNode(), "This function must return a value of type " + expectedReturnType);
-//                    }
-//                    else if (element instanceof JetExpression) {
-//                        JetExpression expression = (JetExpression) element;
-//                        trace.getErrorHandler().typeMismatch(expression, expectedReturnType, actualType);
-//                    }
-//                    else {
-//                        trace.getErrorHandler().genericError(element.getNode(), "This function must return a value of type " + expectedReturnType);
-//                    }
-//                }
-//            }
-//        }
     }
 
     @NotNull
