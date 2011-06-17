@@ -1,5 +1,7 @@
 package org.jetbrains.jet.codegen;
 
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -220,7 +222,16 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                                                     ConstructorFrameMap frameMap) {
         ClassDescriptor classDecl = constructorDescriptor.getContainingDeclaration();
         boolean isDelegating = kind == OwnerKind.DELEGATING_IMPLEMENTATION;
-        Type type = isDelegating ? JetTypeMapper.jetDelegatingImplementationType(classDecl) : JetTypeMapper.jetImplementationType(classDecl);
+        PsiElement declaration = bindingContext.getDeclarationPsiElement(classDecl);
+        Type type;
+        if (declaration instanceof PsiClass) {
+            type = JetTypeMapper.psiClassType((PsiClass) declaration);
+        }
+        else {
+            type = isDelegating
+                    ? JetTypeMapper.jetDelegatingImplementationType(classDecl)
+                    : JetTypeMapper.jetImplementationType(classDecl);
+        }
 
         if (!isJavaSuperclass) {
             if (kind == OwnerKind.DELEGATING_IMPLEMENTATION) {

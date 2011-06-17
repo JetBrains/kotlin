@@ -99,4 +99,8 @@ public class ClassGenTest extends CodegenTestCase {
     public void testSecondaryConstructors() throws Exception {
         blackBoxFile("classes/secondaryConstructors.jet");
     }
+
+    public void testExceptionConstructor() throws Exception {
+        blackBoxFile("classes/exceptionConstructor.jet");
+    }
 }

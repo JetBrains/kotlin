@@ -729,7 +729,12 @@ public class ExpressionCodegen extends JetVisitor {
                         ensureReceiverOnStack(expression, null);
                         if (expression.getParent() instanceof JetQualifiedExpression) {
                             final JetExpression receiver = ((JetQualifiedExpression) expression.getParent()).getReceiverExpression();
-                            owner = expressionType(receiver).getInternalName();
+                            JetType expressionType = bindingContext.getExpressionType(receiver);
+                            DeclarationDescriptor declarationDescriptor = expressionType.getConstructor().getDeclarationDescriptor();
+                            PsiElement ownerDeclaration = bindingContext.getDeclarationPsiElement(declarationDescriptor);
+                            if (ownerDeclaration instanceof PsiClass) {
+                                owner = typeMapper.mapType(expressionType).getInternalName();
+                            }
                         }
                     }
                     pushMethodArguments(expression, methodDescriptor);
