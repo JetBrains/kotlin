@@ -51,7 +51,10 @@ public class JetNamespace extends JetNamedDeclaration {
     public String getFQName() {
         JetNamespace parent = PsiTreeUtil.getParentOfType(this, JetNamespace.class);
         if (parent != null) {
-            return parent.getFQName() + "." + getName();
+            String parentFQName = parent.getFQName();
+            if (parentFQName.length() > 0) {
+                return parentFQName + "." + getName();
+            }
         }
         return getName(); // TODO: Must include module root namespace
     }
