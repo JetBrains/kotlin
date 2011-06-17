@@ -9,6 +9,10 @@ fun test1() : Any = {<error>return</error>}
 fun test2() : Any = @a {return@a 1}
 fun test3() : Any { <error>return</error> }
 
+fun bbb() {
+  return <error>1</error>
+}
+
 fun foo(expr: StringBuilder): Int {
   val c = 'a'
   when(c) {
@@ -105,3 +109,5 @@ fun blockReturnValueTypeMatch() : Int {
     return 1
   else return <error>1.0</error>
 }
+
+val a = <error>return 1</error>

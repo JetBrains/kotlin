@@ -92,8 +92,8 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
 
     public void testJumps() throws Exception {
         assertType("throw e", JetStandardClasses.getNothingType());
-        assertType("return", JetStandardClasses.getNothingType());
-        assertType("return 1", JetStandardClasses.getNothingType());
+//        assertType("return", JetStandardClasses.getNothingType());
+//        assertType("return 1", JetStandardClasses.getNothingType());
         assertType("continue", JetStandardClasses.getNothingType());
         assertType("continue \"foo\"", JetStandardClasses.getNothingType());
         assertType("break", JetStandardClasses.getNothingType());
@@ -105,7 +105,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertType("if (true) 1 else 1", "Int");
         assertType("if (true) 1 else return", "Int");
         assertType("if (true) return else 1", "Int");
-        assertType("if (true) return else return", "Nothing");
+        assertType("if (true) throw Exception() else throw Exception()", "Nothing");
 
         assertType("if (true) 1 else null", "Int?");
         assertType("if (true) null else null", "Nothing?");

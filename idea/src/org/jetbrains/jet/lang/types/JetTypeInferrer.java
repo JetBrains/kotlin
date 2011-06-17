@@ -123,7 +123,7 @@ public class JetTypeInferrer {
 
     @Nullable
     public JetType getType(@NotNull final JetScope scope, @NotNull JetExpression expression, boolean preferBlock, @Nullable JetType expectedType) {
-        return new TypeInferrerVisitor(scope, preferBlock, DataFlowInfo.getEmpty(), expectedType, null).getType(expression);
+        return new TypeInferrerVisitor(scope, preferBlock, DataFlowInfo.getEmpty(), expectedType, FORBIDDEN).getType(expression);
     }
 
     public JetType getTypeWithNamespaces(@NotNull final JetScope scope, @NotNull JetExpression expression, boolean preferBlock) {
