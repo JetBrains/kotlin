@@ -1,0 +1,8 @@
+class C(val n: Int, val s: String) {
+  this(n: Int): this(n, "foo") { }
+}
+
+fun box(): String {
+  val c = C(10)
+  return if (c.s == "foo") "OK" else "fail"
+}

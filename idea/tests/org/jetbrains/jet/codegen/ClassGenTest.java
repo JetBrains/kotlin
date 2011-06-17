@@ -95,4 +95,8 @@ public class ClassGenTest extends CodegenTestCase {
     public void testOuterThis() throws Exception {
         blackBoxFile("classes/outerThis.jet");
     }
+
+    public void testSecondaryConstructors() throws Exception {
+        blackBoxFile("classes/secondaryConstructors.jet");
+    }
 }

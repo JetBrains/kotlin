@@ -54,19 +54,23 @@ public abstract class ClassBodyCodegen {
         final PropertyCodegen propertyCodegen = new PropertyCodegen(v, stdlib, bindingContext, functionCodegen);
 
         for (JetDeclaration declaration : myClass.getDeclarations()) {
-            if (declaration instanceof JetProperty) {
-                propertyCodegen.gen((JetProperty) declaration, kind);
-            }
-            else if (declaration instanceof JetFunction) {
-                try {
-                    functionCodegen.gen((JetFunction) declaration, kind);
-                } catch (RuntimeException e) {
-                    throw new RuntimeException("Error generating method "+ myClass.getName() + "." + declaration.getName(), e);
-                }
-            }
+            generateDeclaration(propertyCodegen, declaration, functionCodegen);
         }
 
         generatePrimaryConstructorProperties(propertyCodegen);
+    }
+
+    protected void generateDeclaration(PropertyCodegen propertyCodegen, JetDeclaration declaration, FunctionCodegen functionCodegen) {
+        if (declaration instanceof JetProperty) {
+            propertyCodegen.gen((JetProperty) declaration, kind);
+        }
+        else if (declaration instanceof JetFunction) {
+            try {
+                functionCodegen.gen((JetFunction) declaration, kind);
+            } catch (RuntimeException e) {
+                throw new RuntimeException("Error generating method " + myClass.getName() + "." + declaration.getName(), e);
+            }
+        }
     }
 
     private void generatePrimaryConstructorProperties(PropertyCodegen propertyCodegen) {
