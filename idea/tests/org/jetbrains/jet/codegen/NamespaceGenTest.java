@@ -404,4 +404,8 @@ public class NamespaceGenTest extends CodegenTestCase {
     public void testNamespaceQualifiedMethod() throws Exception {
         blackBoxFile("namespaceQualifiedMethod.jet");
     }
+
+    public void testCheckCast() throws Exception {
+        blackBoxFile("checkCast.jet");
+    }
 }

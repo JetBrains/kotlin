@@ -608,7 +608,9 @@ public class ExpressionCodegen extends JetVisitor {
                 else {
                     boolean isStatic = container instanceof NamespaceDescriptorImpl;
                     final boolean directToField = expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER;
-                    final StackValue iValue = intermediateValueForProperty(propertyDescriptor, directToField);
+                    JetExpression receiver = getReceiverForSelector(expression);
+                    final boolean forceInterface = receiver != null && !(receiver instanceof JetThisExpression);
+                    final StackValue iValue = intermediateValueForProperty(propertyDescriptor, directToField, forceInterface);
                     if (!isStatic) {
                         ensureReceiverOnStack(expression, container instanceof ClassDescriptor ? (ClassDescriptor) container : null);
                     }
@@ -621,14 +623,14 @@ public class ExpressionCodegen extends JetVisitor {
         }
     }
 
-    public StackValue intermediateValueForProperty(PropertyDescriptor propertyDescriptor, final boolean directToField) {
+    public StackValue intermediateValueForProperty(PropertyDescriptor propertyDescriptor, final boolean forceField, boolean forceInterface) {
         DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
         boolean isStatic = containingDeclaration instanceof NamespaceDescriptorImpl;
         final JetType outType = propertyDescriptor.getOutType();
-        boolean isInsideClass = containingDeclaration == contextType;
+        boolean isInsideClass = !forceInterface && containingDeclaration == contextType;
         Method getter;
         Method setter;
-        if (directToField) {
+        if (forceField) {
             getter = null;
             setter = null;
         }
@@ -771,13 +773,21 @@ public class ExpressionCodegen extends JetVisitor {
         }
     }
 
-    private void ensureReceiverOnStack(JetElement expression, @Nullable ClassDescriptor calleeContainingClass) {
+    private JetExpression getReceiverForSelector(JetElement expression) {
         if (expression.getParent() instanceof JetDotQualifiedExpression && !isReceiver(expression)) {
             final JetDotQualifiedExpression parent = (JetDotQualifiedExpression) expression.getParent();
-            if (!resolvesToClassOrPackage(parent.getReceiverExpression())) {
+            return parent.getReceiverExpression();
+        }
+        return null;
+    }
+
+    private void ensureReceiverOnStack(JetElement expression, @Nullable ClassDescriptor calleeContainingClass) {
+        JetExpression receiver = getReceiverForSelector(expression);
+        if (receiver != null) {
+            if (!resolvesToClassOrPackage(receiver)) {
                 // we have a receiver on stack
                 if (myStack.isEmpty()) {
-                    throw new IllegalStateException("expected receiver on stack but it's not there: " + parent.getReceiverExpression().getText());
+                    throw new IllegalStateException("expected receiver on stack but it's not there: " + receiver.getText());
                 }
                 myStack.pop().put(JetTypeMapper.TYPE_OBJECT, v);
             }
@@ -1551,6 +1561,7 @@ public class ExpressionCodegen extends JetVisitor {
                 throwNewException(CLASS_TYPE_CAST_EXCEPTION);
             }
             v.mark(isInstance);
+            v.checkcast(type);
             myStack.push(StackValue.onStack(type));
         }
     }

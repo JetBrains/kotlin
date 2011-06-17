@@ -298,7 +298,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     if (initializer != null) {
                         iv.load(0, JetTypeMapper.TYPE_OBJECT);
                         codegen.genToJVMStack(initializer);
-                        codegen.intermediateValueForProperty(propertyDescriptor, false).store(iv);
+                        codegen.intermediateValueForProperty(propertyDescriptor, false, false).store(iv);
                     }
 
                 }
