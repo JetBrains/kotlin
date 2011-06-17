@@ -818,20 +818,35 @@ public class JetParsing extends AbstractJetParsing {
             parseTypeRef();
         }
 
-        if (at(EQ)) {
-            advance(); // EQ
-            myExpressionParsing.parseExpression();
-            if (!local) {
-                consumeIf(SEMICOLON);
-            } else {
+        if (local) {
+            if (at(EQ)) {
+                advance(); // EQ
+                myExpressionParsing.parseExpression();
                 // "val a = 1; b" must not be an infix call of b on "val ...;"
             }
         }
-        if (!local) {
+        else {
+            if (at(EQ)) {
+                advance(); // EQ
+                myExpressionParsing.parseExpression();
+                consumeIf(SEMICOLON);
+            }
+
             if (parsePropertyGetterOrSetter()) {
                 parsePropertyGetterOrSetter();
             }
-            consumeIf(SEMICOLON);
+            if  (!atSet(EOL_OR_SEMICOLON, RBRACE)) {
+                int i = -1;
+                while (-i < myBuilder.getCurrentOffset() && WHITE_SPACE_OR_COMMENT_BIT_SET.contains(myBuilder.rawLookup(i))) {
+                    i--;
+                }
+                if (myBuilder.rawLookup(i) != SEMICOLON) {
+                    errorUntil("Property getter or setter expected", TokenSet.create(EOL_OR_SEMICOLON));
+                }
+            }
+            else {
+                consumeIf(SEMICOLON);
+            }
         }
 
 
@@ -862,8 +877,15 @@ public class JetParsing extends AbstractJetParsing {
         advance(); // GET_KEYWORD or SET_KEYWORD
 
         if (!at(LPAR)) {
-            getterOrSetter.done(PROPERTY_ACCESSOR);
-            return true;
+            // Account for Jet-114 (val a : int get {...})
+            TokenSet ACCESSOR_FIRST_OR_PROPERTY_END = TokenSet.orSet(MODIFIER_KEYWORDS, TokenSet.create(LBRACKET, GET_KEYWORD, SET_KEYWORD, EOL_OR_SEMICOLON, RBRACE));
+            if (!atSet(ACCESSOR_FIRST_OR_PROPERTY_END)) {
+                errorUntil("Accessor body expected", TokenSet.orSet(ACCESSOR_FIRST_OR_PROPERTY_END, TokenSet.create(LBRACE, LPAR, EQ)));
+            }
+            else {
+                getterOrSetter.done(PROPERTY_ACCESSOR);
+                return true;
+            }
         }
 
         myBuilder.disableNewlines();

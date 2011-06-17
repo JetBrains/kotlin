@@ -19,6 +19,11 @@
          <keyboard-shortcut keymap="$default" first-keystroke="control shift Q"/>
          <add-to-group group-id="CodeMenu" anchor="last"/>
      </action>
+     <action id="ToggleJetErrorReporting" class="org.jetbrains.jet.plugin.actions.ToggleErrorReportingAction"
+             text="Toggle Error Reporting">
+         <keyboard-shortcut keymap="$default" first-keystroke="control alt shift E"/>
+         <add-to-group group-id="CodeMenu" anchor="last"/>
+     </action>
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">

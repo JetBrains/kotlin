@@ -28,6 +28,16 @@ import java.util.Set;
  */
 public class JetPsiChecker implements Annotator {
 
+    private static volatile boolean errorReportingEnabled = true;
+
+    public static void setErrorReportingEnabled(boolean value) {
+        errorReportingEnabled = value;
+    }
+
+    public static boolean isErrorReportingEnabled() {
+        return errorReportingEnabled;
+    }
+
     @Override
     public void annotate(@NotNull PsiElement element, @NotNull final AnnotationHolder holder) {
         if (element instanceof JetFile) {
@@ -85,7 +95,9 @@ public class JetPsiChecker implements Annotator {
                     }
                 };
 
-                AnalyzingUtils.applyHandler(errorHandler, bindingContext);
+                if (errorReportingEnabled) {
+                    AnalyzingUtils.applyHandler(errorHandler, bindingContext);
+                }
 
                 highlightBackingFields(holder, file, bindingContext);
 
