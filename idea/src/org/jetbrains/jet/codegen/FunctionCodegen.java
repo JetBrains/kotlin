@@ -58,8 +58,8 @@ public class FunctionCodegen {
             return;
         }
 
-        DeclarationDescriptor contextDescriptor = owner instanceof JetClass
-                ? bindingContext.getClassDescriptor((JetClass) owner)
+        DeclarationDescriptor contextDescriptor = owner instanceof JetClassOrObject
+                ? bindingContext.getClassDescriptor((JetClassOrObject) owner)
                 : bindingContext.getNamespaceDescriptor((JetNamespace) owner);
 
         final MethodVisitor mv = v.visitMethod(flags, jvmSignature.getName(), jvmSignature.getDescriptor(), null, null);
