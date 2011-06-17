@@ -47,7 +47,7 @@ public class JetArrayAccessExpression extends JetReferenceExpression {
         return PsiTreeUtil.getChildrenOfTypeAsList(container, JetExpression.class);
     }
 
-    private JetContainerNode getIndicesNode() {
+    public JetContainerNode getIndicesNode() {
         return (JetContainerNode) findChildByType(JetNodeTypes.INDICES);
     }
 
