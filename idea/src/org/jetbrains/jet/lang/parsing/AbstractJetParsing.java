@@ -1,6 +1,5 @@
 package org.jetbrains.jet.lang.parsing;
 
-import com.intellij.codeInspection.dataFlow.instructions.ReturnFromSubInstruction;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
@@ -38,6 +37,15 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
 
     public AbstractJetParsing(SemanticWhitespaceAwarePsiBuilder builder) {
         this.myBuilder = builder;
+    }
+
+    protected IElementType getLastToken() {
+        int i = 1;
+        int currentOffset = myBuilder.getCurrentOffset();
+        while (i <= currentOffset && WHITE_SPACE_OR_COMMENT_BIT_SET.contains(myBuilder.rawLookup(-i))) {
+            i++;
+        }
+        return myBuilder.rawLookup(-i);
     }
 
     protected boolean expect(JetToken expectation, String message) {

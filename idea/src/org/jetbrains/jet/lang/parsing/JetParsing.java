@@ -836,11 +836,7 @@ public class JetParsing extends AbstractJetParsing {
                 parsePropertyGetterOrSetter();
             }
             if  (!atSet(EOL_OR_SEMICOLON, RBRACE)) {
-                int i = -1;
-                while (-i < myBuilder.getCurrentOffset() && WHITE_SPACE_OR_COMMENT_BIT_SET.contains(myBuilder.rawLookup(i))) {
-                    i--;
-                }
-                if (myBuilder.rawLookup(i) != SEMICOLON) {
+                if (getLastToken() != SEMICOLON) {
                     errorUntil("Property getter or setter expected", TokenSet.create(EOL_OR_SEMICOLON));
                 }
             }
