@@ -197,7 +197,7 @@ public class ClassDescriptorResolver {
                     @Override
                     protected JetType compute() {
                         JetFlowInformationProvider flowInformationProvider = computeFlowData(function, bodyExpression);
-                        return semanticServices.getTypeInferrer(trace, flowInformationProvider).inferFunctionReturnType(scope, function, functionDescriptor);
+                        return semanticServices.getTypeInferrerServices(trace, flowInformationProvider).inferFunctionReturnType(scope, function, functionDescriptor);
                     }
                 });
             }
@@ -525,7 +525,7 @@ public class ClassDescriptorResolver {
                 LazyValue<JetType> lazyValue = new LazyValue<JetType>() {
                     @Override
                     protected JetType compute() {
-                        return semanticServices.getTypeInferrer(trace, JetFlowInformationProvider.THROW_EXCEPTION).safeGetType(scope, initializer, false, JetTypeInferrer.NO_EXPECTED_TYPE);
+                        return semanticServices.getTypeInferrerServices(trace, JetFlowInformationProvider.THROW_EXCEPTION).safeGetType(scope, initializer, false, JetTypeInferrer.NO_EXPECTED_TYPE);
                     }
                 };
                 if (allowDeferred) {

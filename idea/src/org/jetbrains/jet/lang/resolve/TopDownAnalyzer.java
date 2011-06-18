@@ -280,7 +280,7 @@ public class TopDownAnalyzer {
             if (importDirective.isAllUnder()) {
                 JetExpression importedReference = importDirective.getImportedReference();
                 if (importedReference != null) {
-                    JetType type = semanticServices.getTypeInferrer(trace, JetFlowInformationProvider.THROW_EXCEPTION).getTypeWithNamespaces(namespaceScope, importedReference, false);
+                    JetType type = semanticServices.getTypeInferrerServices(trace, JetFlowInformationProvider.THROW_EXCEPTION).getTypeWithNamespaces(namespaceScope, importedReference, false);
                     if (type != null) {
                         namespaceScope.importScope(type.getMemberScope());
                     }
@@ -293,7 +293,7 @@ public class TopDownAnalyzer {
                 JetExpression importedReference = importDirective.getImportedReference();
                 if (importedReference instanceof JetDotQualifiedExpression) {
                     JetDotQualifiedExpression reference = (JetDotQualifiedExpression) importedReference;
-                    JetType type = semanticServices.getTypeInferrer(trace, JetFlowInformationProvider.THROW_EXCEPTION).getTypeWithNamespaces(namespaceScope, reference.getReceiverExpression(), false);
+                    JetType type = semanticServices.getTypeInferrerServices(trace, JetFlowInformationProvider.THROW_EXCEPTION).getTypeWithNamespaces(namespaceScope, reference.getReceiverExpression(), false);
                     JetExpression selectorExpression = reference.getSelectorExpression();
                     if (selectorExpression != null) {
                         referenceExpression = (JetSimpleNameExpression) selectorExpression;
@@ -563,7 +563,7 @@ public class TopDownAnalyzer {
         final JetScope scopeForConstructor = primaryConstructor == null
                 ? null
                 : getInnerScopeForConstructor(primaryConstructor, descriptor.getScopeForMemberResolution(), true);
-        final JetTypeInferrer typeInferrer = semanticServices.getTypeInferrer(traceForConstructors, JetFlowInformationProvider.NONE); // TODO : flow
+        final JetTypeInferrer.Services typeInferrer = semanticServices.getTypeInferrerServices(traceForConstructors, JetFlowInformationProvider.NONE); // TODO : flow
 
         for (JetDelegationSpecifier delegationSpecifier : jetClass.getDelegationSpecifiers()) {
             delegationSpecifier.accept(new JetVisitor() {
@@ -642,7 +642,7 @@ public class TopDownAnalyzer {
             ConstructorDescriptor primaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
             assert primaryConstructor != null;
             final JetScope scopeForConstructor = getInnerScopeForConstructor(primaryConstructor, classDescriptor.getScopeForMemberResolution(), true);
-            JetTypeInferrer typeInferrer = semanticServices.getTypeInferrer(traceForConstructors, JetFlowInformationProvider.NONE); // TODO : flow
+            JetTypeInferrer.Services typeInferrer = semanticServices.getTypeInferrerServices(traceForConstructors, JetFlowInformationProvider.NONE); // TODO : flow
             for (JetClassInitializer anonymousInitializer : anonymousInitializers) {
                 typeInferrer.getType(scopeForConstructor, anonymousInitializer.getBody(), true, JetTypeInferrer.NO_EXPECTED_TYPE);
             }
@@ -668,7 +668,7 @@ public class TopDownAnalyzer {
     private void resolveSecondaryConstructorBody(JetConstructor declaration, final ConstructorDescriptor descriptor, final JetScope declaringScope) {
         final JetScope functionInnerScope = getInnerScopeForConstructor(descriptor, declaringScope, false);
 
-        final JetTypeInferrer typeInferrerForInitializers = semanticServices.getTypeInferrer(traceForConstructors, JetFlowInformationProvider.NONE);
+        final JetTypeInferrer.Services typeInferrerForInitializers = semanticServices.getTypeInferrerServices(traceForConstructors, JetFlowInformationProvider.NONE);
 
         JetClass containingClass = PsiTreeUtil.getParentOfType(declaration, JetClass.class);
         assert containingClass != null : "This must be guaranteed by the parser";
@@ -728,7 +728,7 @@ public class TopDownAnalyzer {
         if (bodyExpression != null) {
             classDescriptorResolver.computeFlowData(declaration, bodyExpression);
             JetFlowInformationProvider flowInformationProvider = classDescriptorResolver.computeFlowData(declaration, bodyExpression);
-            JetTypeInferrer typeInferrer = semanticServices.getTypeInferrer(traceForConstructors, flowInformationProvider);
+            JetTypeInferrer.Services typeInferrer = semanticServices.getTypeInferrerServices(traceForConstructors, flowInformationProvider);
 
             typeInferrer.checkFunctionReturnType(functionInnerScope, declaration, descriptor, JetStandardClasses.getUnitType());
         }
@@ -859,7 +859,7 @@ public class TopDownAnalyzer {
 
     private void resolvePropertyInitializer(JetProperty property, PropertyDescriptor propertyDescriptor, JetExpression initializer, JetScope scope) {
         JetFlowInformationProvider flowInformationProvider = classDescriptorResolver.computeFlowData(property, initializer); // TODO : flow JET-15
-        JetTypeInferrer typeInferrer = semanticServices.getTypeInferrer(traceForConstructors, flowInformationProvider);
+        JetTypeInferrer.Services typeInferrer = semanticServices.getTypeInferrerServices(traceForConstructors, flowInformationProvider);
         JetType type = typeInferrer.getType(getPropertyDeclarationInnerScope(scope, propertyDescriptor), initializer, false, JetTypeInferrer.NO_EXPECTED_TYPE);
 
         JetType expectedType;
@@ -902,7 +902,7 @@ public class TopDownAnalyzer {
 
         if (bodyExpression != null) {
             JetFlowInformationProvider flowInformationProvider = classDescriptorResolver.computeFlowData(function.asElement(), bodyExpression);
-            JetTypeInferrer typeInferrer = semanticServices.getTypeInferrer(trace, flowInformationProvider);
+            JetTypeInferrer.Services typeInferrer = semanticServices.getTypeInferrerServices(trace, flowInformationProvider);
 
             typeInferrer.checkFunctionReturnType(declaringScope, function, functionDescriptor);
         }
