@@ -177,7 +177,7 @@ public class TypeUtils {
 
     @NotNull
     public static JetType makeUnsubstitutedType(ClassDescriptor classDescriptor, JetScope unsubstitutedMemberScope) {
-        List<TypeProjection> arguments = getDefaultArguments(classDescriptor.getTypeConstructor().getParameters());
+        List<TypeProjection> arguments = getDefaultTypeProjections(classDescriptor.getTypeConstructor().getParameters());
         return new JetTypeImpl(
                 Collections.<Annotation>emptyList(),
                 classDescriptor.getTypeConstructor(),
@@ -188,10 +188,19 @@ public class TypeUtils {
     }
 
     @NotNull
-    public static List<TypeProjection> getDefaultArguments(List<TypeParameterDescriptor> parameters) {
+    public static List<TypeProjection> getDefaultTypeProjections(List<TypeParameterDescriptor> parameters) {
         List<TypeProjection> result = new ArrayList<TypeProjection>();
         for (TypeParameterDescriptor parameterDescriptor : parameters) {
             result.add(new TypeProjection(parameterDescriptor.getDefaultType()));
+        }
+        return result;
+    }
+
+    @NotNull
+    public static List<JetType> getDefaultTypes(List<TypeParameterDescriptor> parameters) {
+        List<JetType> result = Lists.newArrayList();
+        for (TypeParameterDescriptor parameterDescriptor : parameters) {
+            result.add(parameterDescriptor.getDefaultType());
         }
         return result;
     }

@@ -96,7 +96,7 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
 
     public void importClassifierAlias(@NotNull String importedClassifierName, @NotNull ClassifierDescriptor classifierDescriptor) {
         if (currentIndividualImportScope == null) {
-            WritableScopeImpl writableScope = new WritableScopeImpl(JetScope.EMPTY, getContainingDeclaration(), ErrorHandler.DO_NOTHING);
+            WritableScopeImpl writableScope = new WritableScopeImpl(JetScope.EMPTY, getContainingDeclaration(), ErrorHandler.DO_NOTHING).setDebugName("Individual import scope");
             importScope(writableScope);
             currentIndividualImportScope = writableScope;
         }
@@ -105,7 +105,7 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
 
     @Override
     public String toString() {
-        return debugName + " for " + getContainingDeclaration();
+        return getClass().getSimpleName() + "@" + Integer.toHexString(System.identityHashCode(this)) + " " + debugName + " for " + getContainingDeclaration();
     }
 
 }

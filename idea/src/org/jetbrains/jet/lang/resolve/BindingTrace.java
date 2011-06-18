@@ -33,8 +33,6 @@ public interface BindingTrace {
 
     void removeStatementRecord(@NotNull JetElement statement);
 
-    void removeReferenceResolution(@NotNull JetReferenceExpression referenceExpression);
-
     void requireBackingField(@NotNull PropertyDescriptor propertyDescriptor);
 
     void recordAutoCast(@NotNull JetExpression expression, @NotNull JetType type);

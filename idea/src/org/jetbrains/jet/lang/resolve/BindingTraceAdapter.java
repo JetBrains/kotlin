@@ -52,10 +52,6 @@ public class BindingTraceAdapter implements BindingTrace {
         originalTrace.recordBlock(expression);
     }
 
-    public void removeReferenceResolution(@NotNull JetReferenceExpression referenceExpression) {
-        originalTrace.removeReferenceResolution(referenceExpression);
-    }
-
     @Override
     public void recordStatement(@NotNull JetElement statement) {
         originalTrace.recordStatement(statement);

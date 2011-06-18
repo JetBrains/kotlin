@@ -326,4 +326,10 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     public boolean hasDeclaredItems() {
         return variableClassOrNamespaceDescriptors != null  && !variableClassOrNamespaceDescriptors.isEmpty();
     }
+
+    @Override
+    public WritableScopeImpl setDebugName(@NotNull String debugName) {
+        super.setDebugName(debugName);
+        return this;
+    }
 }

@@ -62,10 +62,6 @@ public class JetTestUtils {
         }
 
         @Override
-        public void removeReferenceResolution(@NotNull JetReferenceExpression referenceExpression) {
-        }
-
-        @Override
         public void requireBackingField(@NotNull PropertyDescriptor propertyDescriptor) {
         }
 

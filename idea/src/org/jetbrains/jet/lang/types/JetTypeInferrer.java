@@ -55,47 +55,73 @@ public class JetTypeInferrer {
             throw new UnsupportedOperationException(); // TODO
         }
     };
+    public static final JetType NO_EXPECTED_TYPE = new JetType() {
+        @NotNull
+        @Override
+        public TypeConstructor getConstructor() {
+            throw new UnsupportedOperationException(); // TODO
+        }
 
-    private static final Map<IElementType, String> unaryOperationNames = ImmutableMap.<IElementType, String>builder()
+        @NotNull
+        @Override
+        public List<TypeProjection> getArguments() {
+            throw new UnsupportedOperationException(); // TODO
+        }
+
+        @Override
+        public boolean isNullable() {
+            throw new UnsupportedOperationException(); // TODO
+        }
+
+        @NotNull
+        @Override
+        public JetScope getMemberScope() {
+            throw new UnsupportedOperationException(); // TODO
+        }
+
+        @Override
+        public List<Annotation> getAnnotations() {
+            throw new UnsupportedOperationException(); // TODO
+        }
+    };
+
+    private static final ImmutableMap<IElementType, String> unaryOperationNames = ImmutableMap.<IElementType, String>builder()
             .put(JetTokens.PLUSPLUS, "inc")
             .put(JetTokens.MINUSMINUS, "dec")
             .put(JetTokens.PLUS, "plus")
             .put(JetTokens.MINUS, "minus")
             .put(JetTokens.EXCL, "not")
             .build();
-    private static final Map<IElementType, String> binaryOperationNames = new HashMap<IElementType, String>();
+    private static final ImmutableMap<IElementType, String> binaryOperationNames = ImmutableMap.<IElementType, String>builder()
+            .put(JetTokens.MUL, "times")
+            .put(JetTokens.PLUS, "plus")
+            .put(JetTokens.MINUS, "minus")
+            .put(JetTokens.DIV, "div")
+            .put(JetTokens.PERC, "mod")
+            .put(JetTokens.ARROW, "arrow")
+            .put(JetTokens.RANGE, "rangeTo")
+            .build();
 
-    static {
-        binaryOperationNames.put(JetTokens.MUL, "times");
-        binaryOperationNames.put(JetTokens.PLUS, "plus");
-        binaryOperationNames.put(JetTokens.MINUS, "minus");
-        binaryOperationNames.put(JetTokens.DIV, "div");
-        binaryOperationNames.put(JetTokens.PERC, "mod");
-        binaryOperationNames.put(JetTokens.ARROW, "arrow");
-        binaryOperationNames.put(JetTokens.RANGE, "rangeTo");
-    }
-    private static final Set<IElementType> comparisonOperations = new HashSet<IElementType>(Arrays.asList(JetTokens.LT, JetTokens.GT, JetTokens.LTEQ, JetTokens.GTEQ));
-    private static final Set<IElementType> equalsOperations = new HashSet<IElementType>(Arrays.asList(JetTokens.EQEQ, JetTokens.EXCLEQ));
+    private static final Set<IElementType> comparisonOperations = Sets.<IElementType>newHashSet(JetTokens.LT, JetTokens.GT, JetTokens.LTEQ, JetTokens.GTEQ);
+    private static final Set<IElementType> equalsOperations = Sets.<IElementType>newHashSet(JetTokens.EQEQ, JetTokens.EXCLEQ);
 
-    private static final Set<IElementType> inOperations = new HashSet<IElementType>(Arrays.asList(JetTokens.IN_KEYWORD, JetTokens.NOT_IN));
-    public static final Map<IElementType, String> assignmentOperationNames = new HashMap<IElementType, String>();
+    private static final Set<IElementType> inOperations = Sets.<IElementType>newHashSet(JetTokens.IN_KEYWORD, JetTokens.NOT_IN);
+    public static final ImmutableMap<IElementType, String> assignmentOperationNames = ImmutableMap.<IElementType, String>builder()
+            .put(JetTokens.MULTEQ, "timesAssign")
+            .put(JetTokens.DIVEQ, "divAssign")
+            .put(JetTokens.PERCEQ, "modAssign")
+            .put(JetTokens.PLUSEQ, "plusAssign")
+            .put(JetTokens.MINUSEQ, "minusAssign")
+            .build();
 
-    static {
-        assignmentOperationNames.put(JetTokens.MULTEQ, "timesAssign");
-        assignmentOperationNames.put(JetTokens.DIVEQ, "divAssign");
-        assignmentOperationNames.put(JetTokens.PERCEQ, "modAssign");
-        assignmentOperationNames.put(JetTokens.PLUSEQ, "plusAssign");
-        assignmentOperationNames.put(JetTokens.MINUSEQ, "minusAssign");
-    }
-    private static final Map<IElementType, IElementType> assignmentOperationCounterparts = new HashMap<IElementType, IElementType>();
+    private static final ImmutableMap<IElementType, IElementType> assignmentOperationCounterparts = ImmutableMap.<IElementType, IElementType>builder()
+            .put(JetTokens.MULTEQ, JetTokens.MUL)
+            .put(JetTokens.DIVEQ, JetTokens.DIV)
+            .put(JetTokens.PERCEQ, JetTokens.PERC)
+            .put(JetTokens.PLUSEQ, JetTokens.PLUS)
+            .put(JetTokens.MINUSEQ, JetTokens.MINUS)
+            .build();
 
-    static {
-        assignmentOperationCounterparts.put(JetTokens.MULTEQ, JetTokens.MUL);
-        assignmentOperationCounterparts.put(JetTokens.DIVEQ, JetTokens.DIV);
-        assignmentOperationCounterparts.put(JetTokens.PERCEQ, JetTokens.PERC);
-        assignmentOperationCounterparts.put(JetTokens.PLUSEQ, JetTokens.PLUS);
-        assignmentOperationCounterparts.put(JetTokens.MINUSEQ, JetTokens.MINUS);
-    }
     private final BindingTrace trace;
     private final JetSemanticServices semanticServices;
     private final TypeResolver typeResolver;
@@ -113,7 +139,7 @@ public class JetTypeInferrer {
     }
 
     @NotNull
-    public JetType safeGetType(@NotNull final JetScope scope, @NotNull JetExpression expression, boolean preferBlock, @Nullable JetType expectedType) {
+    public JetType safeGetType(@NotNull final JetScope scope, @NotNull JetExpression expression, boolean preferBlock, @NotNull JetType expectedType) {
         JetType type = getType(scope, expression, preferBlock, expectedType);
         if (type != null) {
             return type;
@@ -122,12 +148,12 @@ public class JetTypeInferrer {
     }
 
     @Nullable
-    public JetType getType(@NotNull final JetScope scope, @NotNull JetExpression expression, boolean preferBlock, @Nullable JetType expectedType) {
+    public JetType getType(@NotNull final JetScope scope, @NotNull JetExpression expression, boolean preferBlock, @NotNull JetType expectedType) {
         return new TypeInferrerVisitor(scope, preferBlock, DataFlowInfo.getEmpty(), expectedType, FORBIDDEN).getType(expression);
     }
 
     public JetType getTypeWithNamespaces(@NotNull final JetScope scope, @NotNull JetExpression expression, boolean preferBlock) {
-        return new TypeInferrerVisitorWithNamespaces(scope, preferBlock, DataFlowInfo.getEmpty(), null, null).getType(expression);
+        return new TypeInferrerVisitorWithNamespaces(scope, preferBlock, DataFlowInfo.getEmpty(), NO_EXPECTED_TYPE, null).getType(expression);
     }
 
     @Nullable
@@ -346,7 +372,7 @@ public class JetTypeInferrer {
     public void checkFunctionReturnType(JetScope functionInnerScope, JetDeclarationWithBody function, FunctionDescriptor functionDescriptor, @Nullable final JetType expectedReturnType) {
         JetExpression bodyExpression = function.getBodyExpression();
         assert bodyExpression != null;
-        new TypeInferrerVisitor(functionInnerScope, function.hasBlockBody(), DataFlowInfo.getEmpty(), null, expectedReturnType).getType(bodyExpression);
+        new TypeInferrerVisitor(functionInnerScope, function.hasBlockBody(), DataFlowInfo.getEmpty(), NO_EXPECTED_TYPE, expectedReturnType).getType(bodyExpression);
 
         List<JetElement> unreachableElements = Lists.newArrayList();
         flowInformationProvider.collectUnreachableExpressions(function.asElement(), unreachableElements);
@@ -409,7 +435,7 @@ public class JetTypeInferrer {
         JetExpression bodyExpression = function.getBodyExpression();
         assert bodyExpression != null;
         JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(outerScope, functionDescriptor, trace);
-        new TypeInferrerVisitor(functionInnerScope, function.hasBlockBody(), DataFlowInfo.getEmpty(), null, FORBIDDEN).getType(bodyExpression);
+        new TypeInferrerVisitor(functionInnerScope, function.hasBlockBody(), DataFlowInfo.getEmpty(), NO_EXPECTED_TYPE, FORBIDDEN).getType(bodyExpression);
         Collection<JetExpression> returnedExpressions = new ArrayList<JetExpression>();
         Collection<JetElement> elementsReturningUnit = new ArrayList<JetElement>();
         flowInformationProvider.collectReturnedInformation(function.asElement(), returnedExpressions, elementsReturningUnit);
@@ -434,7 +460,7 @@ public class JetTypeInferrer {
         }
 
         DeclarationDescriptor containingDescriptor = outerScope.getContainingDeclaration();
-        WritableScope scope = new WritableScopeImpl(outerScope, containingDescriptor, trace.getErrorHandler());
+        WritableScope scope = new WritableScopeImpl(outerScope, containingDescriptor, trace.getErrorHandler()).setDebugName("getBlockReturnedType");
         return getBlockReturnedTypeWithWritableScope(scope, block, dataFlowInfo, extectedReturnType);
     }
 
@@ -443,7 +469,7 @@ public class JetTypeInferrer {
             return JetStandardClasses.getUnitType();
         }
 
-        TypeInferrerVisitorWithWritableScope blockLevelVisitor = new TypeInferrerVisitorWithWritableScope(scope, true, dataFlowInfo, null, extectedReturnType);
+        TypeInferrerVisitorWithWritableScope blockLevelVisitor = new TypeInferrerVisitorWithWritableScope(scope, true, dataFlowInfo, NO_EXPECTED_TYPE, extectedReturnType);
 
         JetType result = null;
         for (JetElement statement : block) {
@@ -459,7 +485,7 @@ public class JetTypeInferrer {
 //                newScope = scope;
 //            }
             if (newDataFlowInfo != dataFlowInfo) {// || newScope != scope) {
-                blockLevelVisitor = new TypeInferrerVisitorWithWritableScope(scope, true, newDataFlowInfo, null, extectedReturnType);
+                blockLevelVisitor = new TypeInferrerVisitorWithWritableScope(scope, true, newDataFlowInfo, NO_EXPECTED_TYPE, extectedReturnType);
             }
             else {
                 blockLevelVisitor.resetResult(); // TODO : maybe it's better to recreate the visitors with the same scope?
@@ -530,7 +556,7 @@ public class JetTypeInferrer {
 
             List<JetType> valueArgumentTypes = new ArrayList<JetType>();
             for (JetExpression valueArgument : positionedValueArguments) {
-                valueArgumentTypes.add(safeGetType(scope, valueArgument, false, null)); // TODO
+                valueArgumentTypes.add(safeGetType(scope, valueArgument, false, NO_EXPECTED_TYPE)); // TODO
             }
 
             OverloadResolutionResult resolutionResult = overloadDomain.getFunctionDescriptorForPositionedArguments(typeArguments, valueArgumentTypes);
@@ -564,7 +590,7 @@ public class JetTypeInferrer {
     }
 
     @Nullable
-    public JetType checkConstructorCall(JetScope scope, @NotNull JetTypeReference typeReference, @NotNull JetCall call) {
+    public JetType checkTypeInitializerCall(JetScope scope, @NotNull JetTypeReference typeReference, @NotNull JetCall call) {
         JetTypeElement typeElement = typeReference.getTypeElement();
         if (typeElement instanceof JetUserType) {
             JetUserType userType = (JetUserType) typeElement;
@@ -677,6 +703,9 @@ public class JetTypeInferrer {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private class TypeInferrerVisitor extends JetVisitor {
+
+//        protected final BindingTrace trace;
+
         protected final JetScope scope;
         private final boolean preferBlock;
         protected final DataFlowInfo dataFlowInfo;
@@ -684,17 +713,16 @@ public class JetTypeInferrer {
         protected JetType result;
         protected DataFlowInfo resultDataFlowInfo;
 
-        protected final JetType extectedType;
-        protected final JetType extectedReturnType;
+        protected final JetType expectedType;
+        protected final JetType expectedReturnType;
 
-//        protected WritableScope resultScope;
 
-        private TypeInferrerVisitor(@NotNull JetScope scope, boolean preferBlock, @NotNull DataFlowInfo dataFlowInfo, @Nullable JetType expectedType, @Nullable JetType expectedReturnType) {
+        private TypeInferrerVisitor(@NotNull JetScope scope, boolean preferBlock, @NotNull DataFlowInfo dataFlowInfo, @NotNull JetType expectedType, @Nullable JetType expectedReturnType) {
             this.scope = scope;
             this.preferBlock = preferBlock;
             this.dataFlowInfo = dataFlowInfo;
-            this.extectedType = expectedType;
-            this.extectedReturnType = expectedReturnType;
+            this.expectedType = expectedType;
+            this.expectedReturnType = expectedReturnType;
         }
 
         @Nullable
@@ -702,29 +730,19 @@ public class JetTypeInferrer {
             return resultDataFlowInfo;
         }
 
-//        public WritableScope getResultScope() {
-//            if (resultScope instanceof WritableScopeImpl) {
-//                WritableScopeImpl writableScope = (WritableScopeImpl) resultScope;
-//                if (!writableScope.hasDeclaredItems()) {
-//                    return null;
-//                }
-//            }
-//            return resultScope;
-//        }
-//
         @Nullable
         public JetType getType(@NotNull JetScope scope, @NotNull JetExpression expression, boolean preferBlock) {
-            return getType(scope, expression, preferBlock, dataFlowInfo);
+            return getTypeWithNewDataFlowInfo(scope, expression, preferBlock, dataFlowInfo);
         }
 
         @Nullable
-        public JetType getType(@NotNull final JetScope scope, @NotNull JetExpression expression, final boolean preferBlock, @NotNull DataFlowInfo dataFlowInfo) {
+        public JetType getTypeWithNewDataFlowInfo(@NotNull final JetScope scope, @NotNull JetExpression expression, final boolean preferBlock, @NotNull DataFlowInfo dataFlowInfo) {
             TypeInferrerVisitor visitor;
             if (this.scope == scope && this.preferBlock == preferBlock && result == null && dataFlowInfo == this.dataFlowInfo) {
                 visitor = this;
             }
             else {
-                visitor = createNew(scope, preferBlock, dataFlowInfo, extectedType, extectedReturnType);
+                visitor = createNew(scope, preferBlock, dataFlowInfo, expectedType, expectedReturnType);
             }
             JetType type = visitor.getType(expression);
             visitor.result = null;
@@ -732,14 +750,13 @@ public class JetTypeInferrer {
         }
 
         @NotNull
-        public TypeInferrerVisitor createNew(@NotNull JetScope scope, boolean preferBlock, @NotNull DataFlowInfo dataFlowInfo, @Nullable JetType expectedType, @Nullable JetType expectedReturnType) {
+        public TypeInferrerVisitor createNew(@NotNull JetScope scope, boolean preferBlock, @NotNull DataFlowInfo dataFlowInfo, @NotNull JetType expectedType, @Nullable JetType expectedReturnType) {
             return new TypeInferrerVisitor(scope, preferBlock, dataFlowInfo, expectedType, expectedReturnType);
         }
 
         @Nullable
         public final JetType getType(@NotNull JetExpression expression) {
             assert result == null;
-            trace.recordResolutionScope(expression, scope);
             if (trace.isProcessed(expression)) {
                 return trace.getBindingContext().getExpressionType(expression);
             }
@@ -765,6 +782,9 @@ public class JetTypeInferrer {
                 result = null;
             }
 
+            if (!trace.isProcessed(expression)) {
+                trace.recordResolutionScope(expression, scope);
+            }
             trace.markAsProcessed(expression);
             return result;
         }
@@ -890,7 +910,7 @@ public class JetTypeInferrer {
         public void visitFunctionLiteralExpression(JetFunctionLiteralExpression expression) {
             if (preferBlock && !expression.hasParameterSpecification()) {
                 trace.recordBlock(expression);
-                result = getBlockReturnedType(scope, expression.getBody(), dataFlowInfo, extectedReturnType);
+                result = getBlockReturnedType(scope, expression.getBody(), dataFlowInfo, expectedReturnType);
                 return;
             }
 
@@ -934,12 +954,12 @@ public class JetTypeInferrer {
             if (returnTypeRef != null) {
                 returnType = typeResolver.resolveType(scope, returnTypeRef);
             } else {
-                WritableScope writableScope = new WritableScopeImpl(scope, functionDescriptor, trace.getErrorHandler());
+                WritableScope writableScope = new WritableScopeImpl(scope, functionDescriptor, trace.getErrorHandler()).setDebugName("Inner scope of a function literal");
                 for (VariableDescriptor variableDescriptor : valueParameterDescriptors) {
                     writableScope.addVariableDescriptor(variableDescriptor);
                 }
                 writableScope.setThisType(receiverType);
-                returnType = getBlockReturnedType(writableScope, expression.getBody(), dataFlowInfo, extectedReturnType);
+                returnType = getBlockReturnedType(writableScope, expression.getBody(), dataFlowInfo, expectedReturnType);
             }
             JetType safeReturnType = returnType == null ? ErrorUtils.createErrorType("<return type>") : returnType;
             functionDescriptor.setReturnType(safeReturnType);
@@ -1016,7 +1036,7 @@ public class JetTypeInferrer {
 
         @Override
         public void visitReturnExpression(JetReturnExpression expression) {
-            if (extectedReturnType == FORBIDDEN) {
+            if (expectedReturnType == FORBIDDEN) {
                 trace.getErrorHandler().genericError(expression.getNode(), "'return' is not allowed here");
                 return;
             }
@@ -1027,14 +1047,14 @@ public class JetTypeInferrer {
                 returnedType = getType(scope, returnedExpression, false);
             }
             else {
-                if (extectedReturnType != null && !JetStandardClasses.isUnit(extectedReturnType)) {
-                    trace.getErrorHandler().genericError(expression.getNode(), "This function must return a value of type " + extectedReturnType);
+                if (expectedReturnType != null && !JetStandardClasses.isUnit(expectedReturnType)) {
+                    trace.getErrorHandler().genericError(expression.getNode(), "This function must return a value of type " + expectedReturnType);
                 }
             }
 
-            if (extectedReturnType != null && returnedType != null) {
-                if (!semanticServices.getTypeChecker().isSubtypeOf(returnedType, extectedReturnType)) {
-                    trace.getErrorHandler().typeMismatch(returnedExpression == null ? expression : returnedExpression, extectedReturnType, returnedType);
+            if (expectedReturnType != null && returnedType != null) {
+                if (!semanticServices.getTypeChecker().isSubtypeOf(returnedType, expectedReturnType)) {
+                    trace.getErrorHandler().typeMismatch(returnedExpression == null ? expression : returnedExpression, expectedReturnType, returnedType);
                 }
             }
 
@@ -1053,7 +1073,7 @@ public class JetTypeInferrer {
 
         @Override
         public void visitTypeofExpression(JetTypeofExpression expression) {
-            JetType type = safeGetType(scope, expression.getBaseExpression(), false, null); // TODO
+            JetType type = safeGetType(scope, expression.getBaseExpression(), false, NO_EXPECTED_TYPE); // TODO
             result = semanticServices.getStandardLibrary().getTypeInfoType(type);
         }
 
@@ -1109,7 +1129,7 @@ public class JetTypeInferrer {
             List<JetExpression> entries = expression.getEntries();
             List<JetType> types = new ArrayList<JetType>();
             for (JetExpression entry : entries) {
-                types.add(safeGetType(scope, entry, false, null)); // TODO
+                types.add(safeGetType(scope, entry, false, NO_EXPECTED_TYPE)); // TODO
             }
             // TODO : labels
             result = JetStandardClasses.getTupleType(types);
@@ -1217,7 +1237,7 @@ public class JetTypeInferrer {
 
         @Override
         public void visitBlockExpression(JetBlockExpression expression) {
-            result = getBlockReturnedType(scope, expression.getStatements(), dataFlowInfo, extectedReturnType);
+            result = getBlockReturnedType(scope, expression.getStatements(), dataFlowInfo, expectedReturnType);
         }
 
         @Override
@@ -1225,7 +1245,7 @@ public class JetTypeInferrer {
             // TODO :change scope according to the bound value in the when header
             final JetExpression subjectExpression = expression.getSubjectExpression();
 
-            final JetType subjectType = subjectExpression != null ? safeGetType(scope, subjectExpression, false, null) : ErrorUtils.createErrorType("Unknown type");
+            final JetType subjectType = subjectExpression != null ? safeGetType(scope, subjectExpression, false, NO_EXPECTED_TYPE) : ErrorUtils.createErrorType("Unknown type");
             final VariableDescriptor variableDescriptor = subjectExpression != null ? getVariableDescriptorFromSimpleName(subjectExpression) : null;
 
             // TODO : exhaustive patterns
@@ -1233,7 +1253,7 @@ public class JetTypeInferrer {
             Set<JetType> expressionTypes = Sets.newHashSet();
             for (JetWhenEntry whenEntry : expression.getEntries()) {
                 JetWhenCondition condition = whenEntry.getCondition();
-                WritableScope scopeToExtend = newWritableScopeImpl();
+                WritableScope scopeToExtend = newWritableScopeImpl().setDebugName("Scope extended in when entry");
                 DataFlowInfo newDataFlowInfo = dataFlowInfo;
                 if (condition != null) {
                     newDataFlowInfo = checkWhenCondition(subjectExpression, subjectType, condition, scopeToExtend, variableDescriptor);
@@ -1241,7 +1261,7 @@ public class JetTypeInferrer {
                 JetWhenExpression subWhen = whenEntry.getSubWhen();
                 JetExpression bodyExpression = subWhen == null ? whenEntry.getExpression() : subWhen;
                 if (bodyExpression != null) {
-                    JetType type = getType(scopeToExtend, bodyExpression, true, newDataFlowInfo);
+                    JetType type = getTypeWithNewDataFlowInfo(scopeToExtend, bodyExpression, true, newDataFlowInfo);
                     if (type != null) {
                         expressionTypes.add(type);
                     }
@@ -1419,7 +1439,7 @@ public class JetTypeInferrer {
                 if (catchParameter != null) {
                     VariableDescriptor variableDescriptor = classDescriptorResolver.resolveLocalVariableDescriptor(scope.getContainingDeclaration(), scope, catchParameter);
                     if (catchBody != null) {
-                        WritableScope catchScope = newWritableScopeImpl();
+                        WritableScope catchScope = newWritableScopeImpl().setDebugName("Catch scope");
                         catchScope.addVariableDescriptor(variableDescriptor);
                         JetType type = getType(catchScope, catchBody, true);
                         if (type != null) {
@@ -1455,13 +1475,13 @@ public class JetTypeInferrer {
             JetExpression elseBranch = expression.getElse();
             JetExpression thenBranch = expression.getThen();
 
-            WritableScopeImpl thenScope = newWritableScopeImpl();
+            WritableScopeImpl thenScope = newWritableScopeImpl().setDebugName("Then scope");
             DataFlowInfo thenInfo = extractDataFlowInfoFromCondition(condition, true, thenScope);
             DataFlowInfo elseInfo = extractDataFlowInfoFromCondition(condition, false, null);
 
             if (elseBranch == null) {
                 if (thenBranch != null) {
-                    JetType type = getType(thenScope, thenBranch, true, thenInfo);
+                    JetType type = getTypeWithNewDataFlowInfo(thenScope, thenBranch, true, thenInfo);
                     if (type != null && JetStandardClasses.isNothing(type)) {
                         resultDataFlowInfo = elseInfo;
 //                        resultScope = elseScope;
@@ -1470,7 +1490,7 @@ public class JetTypeInferrer {
                 }
             }
             else if (thenBranch == null) {
-                JetType type = getType(scope, elseBranch, true, elseInfo);
+                JetType type = getTypeWithNewDataFlowInfo(scope, elseBranch, true, elseInfo);
                 if (type != null && JetStandardClasses.isNothing(type)) {
                     resultDataFlowInfo = thenInfo;
 //                    resultScope = thenScope;
@@ -1478,8 +1498,8 @@ public class JetTypeInferrer {
                 result = JetStandardClasses.getUnitType();
             }
             else {
-                JetType thenType = getType(thenScope, thenBranch, true, thenInfo);
-                JetType elseType = getType(scope, elseBranch, true, elseInfo);
+                JetType thenType = getTypeWithNewDataFlowInfo(thenScope, thenBranch, true, thenInfo);
+                JetType elseType = getTypeWithNewDataFlowInfo(scope, elseBranch, true, elseInfo);
 
                 if (thenType == null) {
                     result = elseType;
@@ -1647,9 +1667,9 @@ public class JetTypeInferrer {
             checkCondition(scope, condition);
             JetExpression body = expression.getBody();
             if (body != null) {
-                WritableScopeImpl scopeToExtend = newWritableScopeImpl();
+                WritableScopeImpl scopeToExtend = newWritableScopeImpl().setDebugName("Scope extended in while's condition");
                 DataFlowInfo conditionInfo = condition == null ? dataFlowInfo : extractDataFlowInfoFromCondition(condition, true, scopeToExtend);
-                getType(scopeToExtend, body, true, conditionInfo);
+                getTypeWithNewDataFlowInfo(scopeToExtend, body, true, conditionInfo);
             }
             if (!flowInformationProvider.isBreakable(expression)) {
 //                resultScope = newWritableScopeImpl();
@@ -1665,18 +1685,18 @@ public class JetTypeInferrer {
             if (body instanceof JetFunctionLiteralExpression) {
                 JetFunctionLiteralExpression function = (JetFunctionLiteralExpression) body;
                 if (!function.hasParameterSpecification()) {
-                    WritableScope writableScope = newWritableScopeImpl();
+                    WritableScope writableScope = newWritableScopeImpl().setDebugName("do..while body scope");
                     conditionScope = writableScope;
-                    getBlockReturnedTypeWithWritableScope(writableScope, function.getBody(), dataFlowInfo, extectedReturnType);
+                    getBlockReturnedTypeWithWritableScope(writableScope, function.getBody(), dataFlowInfo, expectedReturnType);
                     trace.recordBlock(function);
                 } else {
                     getType(scope, body, true);
                 }
             }
             else if (body != null) {
-                WritableScope writableScope = newWritableScopeImpl();
+                WritableScope writableScope = newWritableScopeImpl().setDebugName("do..while body scope");
                 conditionScope = writableScope;
-                getBlockReturnedTypeWithWritableScope(writableScope, Collections.singletonList(body), dataFlowInfo, extectedReturnType);
+                getBlockReturnedTypeWithWritableScope(writableScope, Collections.singletonList(body), dataFlowInfo, expectedReturnType);
             }
             JetExpression condition = expression.getCondition();
             checkCondition(conditionScope, condition);
@@ -1708,7 +1728,7 @@ public class JetTypeInferrer {
                 expectedParameterType = checkIterableConvention(loopRangeType, loopRange.getNode());
             }
 
-            WritableScope loopScope = newWritableScopeImpl();
+            WritableScope loopScope = newWritableScopeImpl().setDebugName("Scope with for-loop index");
 
             if (loopParameter != null) {
                 JetTypeReference typeReference = loopParameter.getTypeReference();
@@ -1811,8 +1831,82 @@ public class JetTypeInferrer {
 //            // TODO : type argument inference
 //            JetTypeReference typeReference = expression.getTypeReference();
 //            if (typeReference != null) {
-//                result = checkConstructorCall(scope, typeReference, expression);
+//                result = checkTypeInitializerCall(scope, typeReference, expression);
 //            }
+//        }
+
+//        private void resolveCallWithExplicitName(@NotNull JetScope scope, JetExpression receiver, String functionName, List<JetType> resolvedTypeArguments, List<ValueArgumentPsi> valueArguments) {
+//
+//            boolean someNamed = false;
+//            boolean allNamed = true;
+//            for (ValueArgumentPsi valueArgument : valueArguments) {
+//                if (valueArgument.isNamed()) {
+//                    trace.getErrorHandler().genericError(valueArgument.asElement().getNode(), "Named arguments are not supported");
+//                    someNamed = true;
+//                }
+//                else {
+//                    allNamed = false;
+//                }
+//            }
+//            if (someNamed) {
+//                return; // TODO
+//            }
+//            if (someNamed && !allNamed) {
+//                // TODO function literals outside parentheses
+//            }
+//
+//            ErrorHandlerWithRegions errorHandler = trace.getErrorHandler();
+//
+//            // 1. resolve 'receiver' in 'scope' with expected type 'NO_EXPECTED_TYPE'
+//            errorHandler.openRegion();
+//            JetType receiverType = JetTypeInferrer.this.getType(scope, receiver, false, NO_EXPECTED_TYPE);
+//            // for each applicable function in 'receiverType'
+//            Set<FunctionDescriptor> allFunctions = receiverType.getMemberScope().getFunctionGroup(functionName).getFunctionDescriptors();
+//            Map<FunctionDescriptor, List<JetType>> applicableFunctions = Maps.newHashMap();
+//            int typeArgCount = resolvedTypeArguments.size();
+//            int valueArgCount = valueArguments.size();
+//            for (FunctionDescriptor functionDescriptor : allFunctions) {
+//                if (typeArgCount == 0 || functionDescriptor.getTypeParameters().size() == typeArgCount) {
+//                    if (FunctionDescriptorUtil.getMinimumArity(functionDescriptor) <= valueArgCount &&
+//                            valueArgCount <= FunctionDescriptorUtil.getMaximumArity(functionDescriptor)) {
+//                        //   get expected types for value parameters
+//                        if (typeArgCount > 0) {
+//                            FunctionDescriptor substitutedFunctionDescriptor = FunctionDescriptorUtil.substituteFunctionDescriptor(resolvedTypeArguments, functionDescriptor);
+//                        }
+//                        else {
+//                            FunctionDescriptor substitutedFunctionDescriptor = FunctionDescriptorUtil.substituteFunctionDescriptor(TypeUtils.getDefaultTypes(functionDescriptor.getTypeParameters()), functionDescriptor);
+//                            List<JetType> valueArgumentTypes = getArgumentTypes(substitutedFunctionDescriptor, valueArguments);
+//                            if (valueArgumentTypes == null) {
+//                                Map<TypeConstructor, TypeProjection> noExpectedTypes = Maps.newHashMap();
+//                                for (TypeParameterDescriptor typeParameterDescriptor : functionDescriptor.getTypeParameters()) {
+//                                    noExpectedTypes.put(typeParameterDescriptor.getTypeConstructor(), new TypeProjection(NO_EXPECTED_TYPE));
+//                                }
+//                                substitutedFunctionDescriptor = functionDescriptor.substitute(TypeSubstitutor.create(noExpectedTypes));
+//                                valueArgumentTypes = getArgumentTypes(substitutedFunctionDescriptor, valueArguments);
+//                            }
+//                            if (valueArgumentTypes != null) {
+//                                List<JetType> typeArguments = solveConstraintSystem(functionDescriptor, valueArgumentTypes, expectedReturnType);
+//                                if (typeArguments != null) {
+//                                    applicableFunctions.put(functionDescriptor, typeArguments);
+//                                }
+//                            }
+//                        }
+//                        //   type-check the parameters
+//                        // if something was found (one or many options
+//                        errorHandler.closeAndCommitCurrentRegion();
+//                        // otherwise
+//                        errorHandler.closeAndReturnCurrentRegion();
+//
+//                    }
+//                }
+//            }
+//            //   get expected types for value parameters
+//            //   type-check the parameters
+//            // if something was found (one or many options
+//            errorHandler.closeAndCommitCurrentRegion();
+//            // otherwise
+//            errorHandler.closeAndReturnCurrentRegion();
+//
 //        }
 
         @Override
@@ -1825,7 +1919,7 @@ public class JetTypeInferrer {
             // TODO : functions as values
             JetExpression selectorExpression = expression.getSelectorExpression();
             JetExpression receiverExpression = expression.getReceiverExpression();
-            JetType receiverType = new TypeInferrerVisitorWithNamespaces(scope, false, dataFlowInfo, null, null).getType(receiverExpression);
+            JetType receiverType = new TypeInferrerVisitorWithNamespaces(scope, false, dataFlowInfo, NO_EXPECTED_TYPE, null).getType(receiverExpression);
             if (receiverType != null) {
                 ErrorHandlerWithRegions errorHandler = trace.getErrorHandler();
                 errorHandler.openRegion();
@@ -1989,7 +2083,7 @@ public class JetTypeInferrer {
             JetType knownType = getType(scope, expression.getLeftHandSide(), false);
             JetPattern pattern = expression.getPattern();
             if (pattern != null && knownType != null) {
-                WritableScopeImpl scopeToExtend = newWritableScopeImpl();
+                WritableScopeImpl scopeToExtend = newWritableScopeImpl().setDebugName("Scope extended in 'is'");
                 DataFlowInfo newDataFlowInfo = checkPatternType(pattern, knownType, scopeToExtend, getVariableDescriptorFromSimpleName(expression.getLeftHandSide()));
                 patternsToDataFlowInfo.put(pattern, newDataFlowInfo);
                 patternsToBoundVariableLists.put(pattern, scopeToExtend.getDeclaredVariables());
@@ -2114,10 +2208,10 @@ public class JetTypeInferrer {
             }
             else if (operationType == JetTokens.ANDAND || operationType == JetTokens.OROR) {
                 JetType leftType = getType(scope, left, false);
-                WritableScopeImpl leftScope = newWritableScopeImpl();
+                WritableScopeImpl leftScope = newWritableScopeImpl().setDebugName("Left scope of && or ||");
                 DataFlowInfo flowInfoLeft = extractDataFlowInfoFromCondition(left, operationType == JetTokens.ANDAND, leftScope);  // TODO: This gets computed twice: here and in extractDataFlowInfoFromCondition() for the whole condition
-                WritableScopeImpl rightScope = operationType == JetTokens.ANDAND ? leftScope : newWritableScopeImpl();
-                JetType rightType = right == null ? null : getType(rightScope, right, false, flowInfoLeft);
+                WritableScopeImpl rightScope = operationType == JetTokens.ANDAND ? leftScope : newWritableScopeImpl().setDebugName("Right scope of && or ||");
+                JetType rightType = right == null ? null : getTypeWithNewDataFlowInfo(rightScope, right, false, flowInfoLeft);
                 if (leftType != null && !isBoolean(leftType)) {
                     trace.getErrorHandler().typeMismatch(left, semanticServices.getStandardLibrary().getBooleanType(), leftType);
                 }
@@ -2202,7 +2296,7 @@ public class JetTypeInferrer {
         @Nullable
         protected List<JetType> getTypes(JetScope scope, List<JetExpression> indexExpressions) {
             List<JetType> argumentTypes = new ArrayList<JetType>();
-            TypeInferrerVisitor typeInferrerVisitor = new TypeInferrerVisitor(scope, false, dataFlowInfo, null, null);
+            TypeInferrerVisitor typeInferrerVisitor = new TypeInferrerVisitor(scope, false, dataFlowInfo, NO_EXPECTED_TYPE, null);
             for (JetExpression indexExpression : indexExpressions) {
                 JetType type = typeInferrerVisitor.getType(indexExpression);
                 if (type == null) {
@@ -2293,7 +2387,7 @@ public class JetTypeInferrer {
     }
 
     private class TypeInferrerVisitorWithNamespaces extends TypeInferrerVisitor {
-        private TypeInferrerVisitorWithNamespaces(@NotNull JetScope scope, boolean preferBlock, @NotNull DataFlowInfo dataFlowInfo, @Nullable JetType expectedType, @Nullable JetType expectedReturnType) {
+        private TypeInferrerVisitorWithNamespaces(@NotNull JetScope scope, boolean preferBlock, @NotNull DataFlowInfo dataFlowInfo, @NotNull JetType expectedType, @Nullable JetType expectedReturnType) {
             super(scope, preferBlock, dataFlowInfo, expectedType, expectedReturnType);
         }
 
@@ -2304,7 +2398,7 @@ public class JetTypeInferrer {
 
         @NotNull
         @Override
-        public TypeInferrerVisitor createNew(@NotNull JetScope scope, boolean preferBlock, @NotNull DataFlowInfo dataFlowInfo, @Nullable JetType expectedType, @Nullable JetType expectedReturnType) {
+        public TypeInferrerVisitor createNew(@NotNull JetScope scope, boolean preferBlock, @NotNull DataFlowInfo dataFlowInfo, @NotNull JetType expectedType, @Nullable JetType expectedReturnType) {
             return new TypeInferrerVisitorWithNamespaces(scope, preferBlock, dataFlowInfo, expectedType, expectedReturnType);
         }
 
@@ -2324,7 +2418,7 @@ public class JetTypeInferrer {
     private class TypeInferrerVisitorWithWritableScope extends TypeInferrerVisitor {
         private final WritableScope scope;
 
-        public TypeInferrerVisitorWithWritableScope(@NotNull WritableScope scope, boolean preferBlock, DataFlowInfo dataFlowInfo, @Nullable JetType expectedType, @Nullable JetType expectedReturnType) {
+        public TypeInferrerVisitorWithWritableScope(@NotNull WritableScope scope, boolean preferBlock, DataFlowInfo dataFlowInfo, @NotNull JetType expectedType, @Nullable JetType expectedReturnType) {
             super(scope, preferBlock, dataFlowInfo, expectedType, expectedReturnType);
             this.scope = scope;
         }
@@ -2459,8 +2553,8 @@ public class JetTypeInferrer {
 
         @NotNull
         @Override
-        public TypeInferrerVisitor createNew(@NotNull JetScope scope, boolean preferBlock, @NotNull DataFlowInfo dataFlowInfo, @Nullable JetType expectedType, @Nullable JetType expectedReturnType) {
-            WritableScopeImpl writableScope = newWritableScopeImpl(scope);
+        public TypeInferrerVisitor createNew(@NotNull JetScope scope, boolean preferBlock, @NotNull DataFlowInfo dataFlowInfo, @NotNull JetType expectedType, @Nullable JetType expectedReturnType) {
+            WritableScopeImpl writableScope = newWritableScopeImpl(scope).setDebugName("Block scope");
             return new TypeInferrerVisitorWithWritableScope(writableScope, preferBlock, dataFlowInfo, expectedType, expectedReturnType);
         }
     }

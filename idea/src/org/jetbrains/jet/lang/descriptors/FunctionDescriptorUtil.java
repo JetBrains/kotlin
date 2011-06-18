@@ -98,7 +98,7 @@ public class FunctionDescriptorUtil {
 
     @NotNull
     public static JetScope getFunctionInnerScope(@NotNull JetScope outerScope, @NotNull FunctionDescriptor descriptor, @NotNull BindingTrace trace) {
-        WritableScope parameterScope = new WritableScopeImpl(outerScope, descriptor, trace.getErrorHandler());
+        WritableScope parameterScope = new WritableScopeImpl(outerScope, descriptor, trace.getErrorHandler()).setDebugName("Function inner scope");
         JetType receiverType = descriptor.getReceiverType();
         if (receiverType != null) {
             parameterScope.setThisType(receiverType);

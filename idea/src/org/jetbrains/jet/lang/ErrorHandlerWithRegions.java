@@ -66,6 +66,10 @@ public class ErrorHandlerWithRegions extends ErrorHandler {
         return new DiagnosticsRegion(currentWorker);
     }
 
+    public void close() {
+        assert workers.isEmpty() : "Open regions remain: " + workers;
+    }
+
     private void setWorker() {
         worker = workers.isEmpty() ? parent : workers.peek();
     }

@@ -44,11 +44,13 @@ public final class JetTypeImpl extends AnnotatedImpl implements JetType {
                 classDescriptor.getMemberScope(Collections.<TypeProjection>emptyList()));
     }
 
+    @NotNull
     @Override
     public TypeConstructor getConstructor() {
         return constructor;
     }
 
+    @NotNull
     @Override
     public List<TypeProjection> getArguments() {
         return arguments;

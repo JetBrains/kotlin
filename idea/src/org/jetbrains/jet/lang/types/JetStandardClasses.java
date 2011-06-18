@@ -185,7 +185,7 @@ public class JetStandardClasses {
     /*package*/ static final JetScope STANDARD_CLASSES;
 
     static {
-        WritableScope writableScope = new WritableScopeImpl(JetScope.EMPTY, STANDARD_CLASSES_NAMESPACE, ErrorHandler.DO_NOTHING);
+        WritableScope writableScope = new WritableScopeImpl(JetScope.EMPTY, STANDARD_CLASSES_NAMESPACE, ErrorHandler.DO_NOTHING).setDebugName("JetStandardClasses.STANDARD_CLASSES");
         STANDARD_CLASSES = writableScope;
         writableScope.addClassifierAlias("Unit", getTuple(0));
 

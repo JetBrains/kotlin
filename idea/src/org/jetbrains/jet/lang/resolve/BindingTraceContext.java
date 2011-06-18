@@ -28,17 +28,56 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
     private final Map<PsiElement, ConstructorDescriptor> constructorDeclarationsToDescriptors = new HashMap<PsiElement, ConstructorDescriptor>();
     private final Map<PsiElement, NamespaceDescriptor> namespaceDeclarationsToDescriptors = Maps.newHashMap();
     private final Map<PsiElement, PropertyDescriptor> primaryConstructorParameterDeclarationsToPropertyDescriptors = Maps.newHashMap();
+    private final Map<JetExpression, JetType> autoCasts = Maps.newHashMap();
+    private final Map<JetExpression, JetScope> resolutionScopes = Maps.newHashMap();
+
     private final Set<JetFunctionLiteralExpression> blocks = new HashSet<JetFunctionLiteralExpression>();
     private final Set<JetElement> statements = new HashSet<JetElement>();
     private final Set<PropertyDescriptor> backingFieldRequired = new HashSet<PropertyDescriptor>();
     private final Set<JetExpression> processed = Sets.newHashSet();
-    private final Map<JetExpression, JetType> autoCasts = Maps.newHashMap();
 
     private final List<JetDiagnostic> diagnostics = Lists.newArrayList();
-    private final ErrorHandlerWithRegions errorHandler = new ErrorHandlerWithRegions(new CollectingErrorHandler(diagnostics));
-    private Map<JetExpression, JetScope> resolutionScopes = Maps.newHashMap();
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    private final ErrorHandlerWithRegions errorHandler = new ErrorHandlerWithRegions(new CollectingErrorHandler(diagnostics));
+
+    public BindingTraceContext() {
+    }
+
+    public void destructiveMerge(BindingTraceContext other) {
+        safePutAll(expressionTypes, other.expressionTypes);
+        resolutionResults.putAll(other.resolutionResults);
+        safePutAll(labelResolutionResults, other.labelResolutionResults);
+        safePutAll(types, other.types);
+        safePutAll(descriptorToDeclarations, other.descriptorToDeclarations);
+        safePutAll(declarationsToDescriptors, other.declarationsToDescriptors);
+        safePutAll(constructorDeclarationsToDescriptors, other.constructorDeclarationsToDescriptors);
+        safePutAll(namespaceDeclarationsToDescriptors, other.namespaceDeclarationsToDescriptors);
+        safePutAll(primaryConstructorParameterDeclarationsToPropertyDescriptors, other.primaryConstructorParameterDeclarationsToPropertyDescriptors);
+        safePutAll(autoCasts, other.autoCasts);
+        safePutAll(resolutionScopes, other.resolutionScopes);
+
+        blocks.addAll(other.blocks);
+        statements.addAll(other.statements);
+        backingFieldRequired.addAll(other.backingFieldRequired);
+        processed.addAll(other.processed);
+
+        diagnostics.addAll(other.diagnostics);
+    }
+
+    private <K, V> void safePutAll(Map<K, V> my, Map<K, V> other) {
+        assert keySetIntersection(my, other).isEmpty() : keySetIntersection(my, other);
+
+        my.putAll(other);
+    }
+
+    private <K, V> HashSet<K> keySetIntersection(Map<K, V> my, Map<K, V> other) {
+        HashSet<K> keySet = Sets.newHashSet(my.keySet());
+        keySet.retainAll(other.keySet());
+        return keySet;
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @NotNull
     public ErrorHandlerWithRegions getErrorHandler() {
@@ -58,11 +97,6 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
     @Override
     public void recordLabelResolution(@NotNull JetReferenceExpression expression, @NotNull PsiElement element) {
         safePut(labelResolutionResults, expression, element);
-    }
-
-    @Override
-    public void removeReferenceResolution(@NotNull JetReferenceExpression referenceExpression) {
-        resolutionResults.remove(referenceExpression);
     }
 
     @Override
@@ -101,8 +135,7 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
 
     private <K, V> void safePut(Map<K, V> map, K key, V value) {
         V oldValue = map.put(key, value);
-        // TODO:
-        assert oldValue == null || oldValue == value : key + ": " + oldValue + " and " + value;
+        assert oldValue == null || oldValue == value : (key instanceof PsiElement ? key.toString() + " \"" + ((PsiElement) key).getText() + "\"" : key.toString()) + " -> " + oldValue + " and " + value;
     }
 
     @Override
@@ -127,7 +160,7 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
 
     @Override
     public void recordResolutionScope(@NotNull JetExpression expression, @NotNull JetScope scope) {
-        resolutionScopes.put(expression, scope);
+        safePut(resolutionScopes, expression, scope);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -8,7 +9,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 /**
  * @author max
  */
-public class JetArgument extends JetElement {
+public class JetArgument extends JetElement implements ValueArgumentPsi {
     public JetArgument(@NotNull ASTNode node) {
         super(node);
     }
@@ -20,6 +21,11 @@ public class JetArgument extends JetElement {
     @Nullable @IfNotParsed
     public JetExpression getArgumentExpression() {
         return findChildByClass(JetExpression.class);
+    }
+
+    @Override
+    public PsiElement asElement() {
+        return this;
     }
 
     @Nullable

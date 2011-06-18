@@ -164,7 +164,7 @@ public class ClassDescriptorResolver {
                 AnnotationResolver.INSTANCE.resolveAnnotations(function.getModifierList()),
                 JetPsiUtil.safeName(function.getName())
         );
-        WritableScope innerScope = new WritableScopeImpl(scope, functionDescriptor, trace.getErrorHandler());
+        WritableScope innerScope = new WritableScopeImpl(scope, functionDescriptor, trace.getErrorHandler()).setDebugName("Function descriptor header scope");
         innerScope.addLabeledDeclaration(functionDescriptor);
 
         List<TypeParameterDescriptor> typeParameterDescriptors = resolveTypeParameters(functionDescriptor, innerScope, function.getTypeParameters());
@@ -474,7 +474,7 @@ public class ClassDescriptorResolver {
             typeParameterDescriptors = Collections.emptyList();
         }
         else {
-            WritableScope writableScope = new WritableScopeImpl(scope, containingDeclaration, trace.getErrorHandler());
+            WritableScope writableScope = new WritableScopeImpl(scope, containingDeclaration, trace.getErrorHandler()).setDebugName("Scope with type parameters of a property");
             typeParameterDescriptors = resolveTypeParameters(containingDeclaration, writableScope, typeParameters);
             resolveGenericBounds(property, writableScope, typeParameterDescriptors);
             scopeWithTypeParameters = writableScope;
@@ -525,7 +525,7 @@ public class ClassDescriptorResolver {
                 LazyValue<JetType> lazyValue = new LazyValue<JetType>() {
                     @Override
                     protected JetType compute() {
-                        return semanticServices.getTypeInferrer(trace, JetFlowInformationProvider.THROW_EXCEPTION).safeGetType(scope, initializer, false, null); // TODO
+                        return semanticServices.getTypeInferrer(trace, JetFlowInformationProvider.THROW_EXCEPTION).safeGetType(scope, initializer, false, JetTypeInferrer.NO_EXPECTED_TYPE);
                     }
                 };
                 if (allowDeferred) {
@@ -646,7 +646,7 @@ public class ClassDescriptorResolver {
                 typeParameters,
                 resolveValueParameters(
                         constructorDescriptor,
-                        new WritableScopeImpl(scope, classDescriptor, trace.getErrorHandler()),
+                        new WritableScopeImpl(scope, classDescriptor, trace.getErrorHandler()).setDebugName("Scope with value parameters of a constructor"),
                         valueParameters));
     }
 
