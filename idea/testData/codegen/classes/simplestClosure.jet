@@ -1,0 +1,7 @@
+fun box() : String {
+    return if (invoker({49}) == 49) "OK" else "fail"
+}
+
+fun invoker(gen : {() : Int}) : Int {
+    return gen()
+}
