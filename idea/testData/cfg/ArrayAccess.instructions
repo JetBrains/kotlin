@@ -36,3 +36,15 @@ l1:
 error:
     <ERROR>
 =====================
+== a ==
+val a = Array<Int>
+---------------------
+l0:
+    <START>
+    r(Array)
+    r(Array<Int>)
+l1:
+    <END>
+error:
+    <ERROR>
+=====================

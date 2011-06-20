@@ -36,6 +36,9 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     @Nullable
     private JetType thisType;
 
+    private boolean variablesAsFunctionsAdded;
+    private List<VariableDescriptor> variableDescriptors;
+
     public WritableScopeImpl(@NotNull JetScope scope, @NotNull DeclarationDescriptor owner, @NotNull ErrorHandler errorHandler) {
         super(scope, errorHandler);
         this.ownerDeclarationDescriptor = owner;
@@ -122,6 +125,14 @@ public class WritableScopeImpl extends WritableScopeWithImports {
         return variableClassOrNamespaceDescriptors;
     }
 
+    @NotNull
+    private List<VariableDescriptor> getVariableDescriptors() {
+        if (variableDescriptors == null) {
+            variableDescriptors = Lists.newArrayList();
+        }
+        return variableDescriptors;
+    }
+
     @Override
     public void addVariableDescriptor(@NotNull VariableDescriptor variableDescriptor) {
         Map<String, DeclarationDescriptor> variableClassOrNamespaceDescriptors = getVariableClassOrNamespaceDescriptors();
@@ -132,6 +143,8 @@ public class WritableScopeImpl extends WritableScopeWithImports {
         // TODO : Should this always happen?
         variableClassOrNamespaceDescriptors.put(variableDescriptor.getName(), variableDescriptor);
         allDescriptors.add(variableDescriptor);
+
+        getVariableDescriptors().add(variableDescriptor);
     }
 
     @Override
@@ -174,6 +187,8 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     @Override
     @NotNull
     public FunctionGroup getFunctionGroup(@NotNull String name) {
+        addVariablesAsFunctions();
+
         FunctionGroup functionGroup = getFunctionGroups().get(name);
         FunctionGroup constructors = null;
         ClassifierDescriptor classifier = getClassifier(name);
@@ -210,6 +225,17 @@ public class WritableScopeImpl extends WritableScopeWithImports {
 //        }
 //        return functionGroup;
         return super.getFunctionGroup(name);
+    }
+
+    private void addVariablesAsFunctions() {
+        if (variablesAsFunctionsAdded) return;
+        variablesAsFunctionsAdded = true;
+        for (VariableDescriptor variableDescriptor : getVariableDescriptors()) {
+            JetType outType = variableDescriptor.getOutType();
+            if (outType != null && JetStandardClasses.isFunctionType(outType)) {
+                addFunctionDescriptor(VariableAsFunctionDescriptor.create(variableDescriptor));
+            }
+        }
     }
 
     @Override

@@ -1,5 +1,7 @@
 package org.jetbrains.jet.lang.types;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.ErrorHandler;
@@ -133,6 +135,9 @@ public class JetStandardClasses {
     private static final ClassDescriptor[] FUNCTION = new ClassDescriptor[FUNCTION_COUNT];
     private static final ClassDescriptor[] RECEIVER_FUNCTION = new ClassDescriptor[FUNCTION_COUNT];
 
+    private static final Set<TypeConstructor> FUNCTION_TYPE_CONSTRUCTORS = Sets.newHashSet();
+    private static final Set<TypeConstructor> RECEIVER_FUNCTION_TYPE_CONSTRUCTORS = Sets.newHashSet();
+
     static {
         for (int i = 0; i < FUNCTION_COUNT; i++) {
             ClassDescriptorImpl function = new ClassDescriptorImpl(
@@ -143,6 +148,7 @@ public class JetStandardClasses {
                     false,
                     createTypeParameters(i, function),
                     Collections.singleton(getAnyType()), STUB, FunctionGroup.EMPTY, null);
+            FUNCTION_TYPE_CONSTRUCTORS.add(FUNCTION[i].getTypeConstructor());
 
             ClassDescriptorImpl receiverFunction = new ClassDescriptorImpl(
                     STANDARD_CLASSES_NAMESPACE,
@@ -157,6 +163,7 @@ public class JetStandardClasses {
                     false,
                     parameters,
                     Collections.singleton(getAnyType()), STUB, FunctionGroup.EMPTY, null);
+            RECEIVER_FUNCTION_TYPE_CONSTRUCTORS.add(RECEIVER_FUNCTION[i].getTypeConstructor());
         }
     }
 
@@ -338,4 +345,40 @@ public class JetStandardClasses {
     private static TypeProjection defaultProjection(JetType returnType) {
         return new TypeProjection(Variance.INVARIANT, returnType);
     }
+
+    public static boolean isFunctionType(@NotNull JetType type) {
+        return FUNCTION_TYPE_CONSTRUCTORS.contains(type.getConstructor()) || RECEIVER_FUNCTION_TYPE_CONSTRUCTORS.contains(type.getConstructor());
+    }
+
+    @Nullable
+    public static JetType getReceiverType(@NotNull JetType type) {
+        assert isFunctionType(type) : type;
+        if (RECEIVER_FUNCTION_TYPE_CONSTRUCTORS.contains(type.getConstructor())) {
+            return type.getArguments().get(0).getType();
+        }
+        return null;
+    }
+
+    @NotNull
+    public static List<ValueParameterDescriptor> getValueParameters(@NotNull FunctionDescriptor functionDescriptor, @NotNull JetType type) {
+        assert isFunctionType(type);
+        List<TypeProjection> arguments = type.getArguments();
+        int first = RECEIVER_FUNCTION_TYPE_CONSTRUCTORS.contains(type.getConstructor()) ? 1 : 0;
+        int last = arguments.size() - 2;
+        List<ValueParameterDescriptor> valueParameters = Lists.newArrayList();
+        for (int i = first; i <= last; i++) {
+            JetType parameterType =  arguments.get(i).getType();
+            ValueParameterDescriptorImpl valueParameterDescriptor = new ValueParameterDescriptorImpl(functionDescriptor, i, Collections.<Annotation>emptyList(), "p" + i, null, parameterType, false, false);
+            valueParameters.add(valueParameterDescriptor);
+        }
+        return valueParameters;
+    }
+
+    @NotNull
+    public static JetType getReturnType(@NotNull JetType type) {
+        assert isFunctionType(type);
+        List<TypeProjection> arguments = type.getArguments();
+        return arguments.get(arguments.size() - 1).getType();
+    }
+
 }

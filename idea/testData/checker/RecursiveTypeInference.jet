@@ -1,7 +1,7 @@
 namespace a {
-    val foo = <error>bar()</error>
+    val foo = bar()
 
-    fun bar() = foo
+    fun bar() = <error>foo</error>
 }
 
 namespace b {

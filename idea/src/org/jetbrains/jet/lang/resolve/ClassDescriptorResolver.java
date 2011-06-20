@@ -511,7 +511,7 @@ public class ClassDescriptorResolver {
     }
 
     @NotNull
-    private JetType getVariableType(@NotNull final JetScope scope, @NotNull JetProperty property, boolean allowDeferred) {
+    private JetType getVariableType(@NotNull final JetScope scope, @NotNull final JetProperty property, boolean allowDeferred) {
         // TODO : receiver?
         JetTypeReference propertyTypeRef = property.getPropertyTypeRef();
 
@@ -525,7 +525,8 @@ public class ClassDescriptorResolver {
                 LazyValue<JetType> lazyValue = new LazyValue<JetType>() {
                     @Override
                     protected JetType compute() {
-                        return semanticServices.getTypeInferrerServices(trace, JetFlowInformationProvider.THROW_EXCEPTION).safeGetType(scope, initializer, false, JetTypeInferrer.NO_EXPECTED_TYPE);
+                        JetFlowInformationProvider flowInformationProvider = computeFlowData(property, initializer);
+                        return semanticServices.getTypeInferrerServices(trace, flowInformationProvider).safeGetType(scope, initializer, false, JetTypeInferrer.NO_EXPECTED_TYPE);
                     }
                 };
                 if (allowDeferred) {

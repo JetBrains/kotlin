@@ -8,10 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -186,6 +183,10 @@ public class ExpectedResolveData {
 
 
                 DeclarationDescriptor actualDescriptor = bindingContext.resolveReferenceExpression(reference);
+                if (actualDescriptor instanceof VariableAsFunctionDescriptor) {
+                    VariableAsFunctionDescriptor descriptor = (VariableAsFunctionDescriptor) actualDescriptor;
+                    actualDescriptor = descriptor.getVariableDescriptor();
+                }
 
                 assertEquals(
                         "Reference `" + name + "`" + renderReferenceInContext(reference) + " is resolved into " + actualName + ".",

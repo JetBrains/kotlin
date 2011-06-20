@@ -106,7 +106,7 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
 
     @Override
     public void recordDeclarationResolution(@NotNull PsiElement declaration, @NotNull DeclarationDescriptor descriptor) {
-        safePut(descriptorToDeclarations, descriptor.getOriginal(), declaration);
+        safePut(descriptorToDeclarations, getOriginal(descriptor), declaration);
         descriptor.accept(new DeclarationDescriptorVisitor<Void, PsiElement>() {
                     @Override
                     public Void visitConstructorDescriptor(ConstructorDescriptor constructorDescriptor, PsiElement declaration) {
@@ -121,7 +121,7 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
                     }
 
                     public Void visitDeclarationDescriptor(DeclarationDescriptor descriptor, PsiElement declaration) {
-                        safePut(declarationsToDescriptors, declaration, descriptor.getOriginal());
+                        safePut(declarationsToDescriptors, declaration, getOriginal(descriptor));
                         return null;
                     }
                 }, declaration);
@@ -129,8 +129,8 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
 
     @Override
     public void recordValueParameterAsPropertyResolution(@NotNull JetParameter declaration, @NotNull PropertyDescriptor descriptor) {
-        safePut(primaryConstructorParameterDeclarationsToPropertyDescriptors, declaration, (PropertyDescriptor) descriptor.getOriginal());
-        safePut(descriptorToDeclarations, descriptor.getOriginal(), declaration);
+        safePut(primaryConstructorParameterDeclarationsToPropertyDescriptors, declaration, (PropertyDescriptor) getOriginal(descriptor));
+        safePut(descriptorToDeclarations, getOriginal(descriptor), declaration);
     }
 
     private <K, V> void safePut(Map<K, V> map, K key, V value) {
@@ -246,12 +246,20 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
         if (declarationDescriptor == null) {
             return labelResolutionResults.get(referenceExpression);
         }
-        return descriptorToDeclarations.get(declarationDescriptor.getOriginal());
+        return descriptorToDeclarations.get(getOriginal(declarationDescriptor));
+    }
+
+    private DeclarationDescriptor getOriginal(DeclarationDescriptor declarationDescriptor) {
+        if (declarationDescriptor instanceof VariableAsFunctionDescriptor) {
+            VariableAsFunctionDescriptor descriptor = (VariableAsFunctionDescriptor) declarationDescriptor;
+            return descriptor.getVariableDescriptor().getOriginal();
+        }
+        return declarationDescriptor.getOriginal();
     }
 
     @Override
     public PsiElement getDeclarationPsiElement(@NotNull DeclarationDescriptor descriptor) {
-        return descriptorToDeclarations.get(descriptor.getOriginal());
+        return descriptorToDeclarations.get(getOriginal(descriptor));
     }
 
     @Override

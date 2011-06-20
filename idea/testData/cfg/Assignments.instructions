@@ -55,3 +55,56 @@ l1:
 error:
     <ERROR>
 =====================
+== x ==
+var x = 1
+---------------------
+l0:
+    <START>
+    r(1)
+l1:
+    <END>
+error:
+    <ERROR>
+=====================
+== y ==
+val y = true && false
+---------------------
+l0:
+    <START>
+    r(true)
+    jf(l2)
+    r(false)
+l2:
+    r(true && false)
+l1:
+    <END>
+error:
+    <ERROR>
+=====================
+== z ==
+val z = false && true
+---------------------
+l0:
+    <START>
+    r(false)
+    jf(l2)
+    r(true)
+l2:
+    r(false && true)
+l1:
+    <END>
+error:
+    <ERROR>
+=====================
+== t ==
+val t = Test()
+---------------------
+l0:
+    <START>
+    r(Test)
+    r(Test())
+l1:
+    <END>
+error:
+    <ERROR>
+=====================
