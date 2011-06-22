@@ -116,8 +116,7 @@ public class ClosureCodegen {
         final List<ValueParameterDescriptor> params = funDescriptor.getUnsubstitutedValueParameters();
         int count = 1;
         for (ValueParameterDescriptor param : params) {
-            iv.load(count, JetTypeMapper.TYPE_OBJECT);
-            iv.checkcast(typeMapper.mapType(param.getOutType()));
+            StackValue.local(count, JetTypeMapper.TYPE_OBJECT).put(typeMapper.mapType(param.getOutType()), iv);
             count++;
         }
 

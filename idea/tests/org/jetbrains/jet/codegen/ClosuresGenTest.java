@@ -11,4 +11,12 @@ public class ClosuresGenTest extends CodegenTestCase {
     public void testSimplestClosureAndBoxing() throws Exception {
         blackBoxFile("classes/simplestClosureAndBoxing.jet");
     }
+
+    public void testClosureWithParameter() throws Exception {
+        blackBoxFile("classes/closureWithParameter.jet");
+    }
+
+    public void testClosureWithParameterAndBoxing() throws Exception {
+        blackBoxFile("classes/closureWithParameterAndBoxing.jet");
+    }
 }
