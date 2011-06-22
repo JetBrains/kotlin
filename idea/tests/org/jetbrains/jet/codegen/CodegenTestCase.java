@@ -71,9 +71,9 @@ public abstract class CodegenTestCase extends LightCodeInsightFixtureTestCase {
         } catch (NoClassDefFoundError e) {
             System.out.println(generateToText());
             throw e;
-        } catch (Exception e) {
+        } catch (Throwable e) {
             System.out.println(generateToText());
-            throw e;
+            throw new RuntimeException(e);
         }
         assertEquals("OK", actual);
     }

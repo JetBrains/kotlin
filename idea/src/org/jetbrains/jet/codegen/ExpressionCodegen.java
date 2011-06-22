@@ -12,10 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.types.JetStandardClasses;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeProjection;
-import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 import org.objectweb.asm.Label;
@@ -64,6 +61,7 @@ public class ExpressionCodegen extends JetVisitor {
     private final InstructionAdapter v;
     private final FrameMap myMap;
     private final JetTypeMapper typeMapper;
+    private final Codegens factory;
     private final Type returnType;
     private final DeclarationDescriptor contextType;
     private final OwnerKind contextKind;
@@ -78,12 +76,14 @@ public class ExpressionCodegen extends JetVisitor {
                              Type returnType,
                              DeclarationDescriptor contextType,
                              OwnerKind contextKind,
-                             @Nullable StackValue thisExpression) {
+                             @Nullable StackValue thisExpression,
+                             Codegens factory) {
         this.myMap = myMap;
         this.typeMapper = typeMapper;
         this.returnType = returnType;
         this.contextType = contextType;
         this.contextKind = contextKind;
+        this.factory = factory;
         this.v = new InstructionAdapter(v);
         this.bindingContext = bindingContext;
         this.thisExpression = thisExpression;
@@ -481,7 +481,10 @@ public class ExpressionCodegen extends JetVisitor {
             generateBlock(expression.getBody());
         }
         else {
-            throw new UnsupportedOperationException("don't know how to generate non-block function literals");
+            final GeneratedClosureDescriptor closure = new ClosureCodegen(bindingContext, typeMapper, factory).gen(expression);
+            v.anew(Type.getObjectType(closure.getClassname()));
+            v.dup();
+            v.invokespecial(closure.getClassname(), "<init>", closure.getConstructor().getDescriptor());
         }
     }
 
@@ -543,7 +546,12 @@ public class ExpressionCodegen extends JetVisitor {
 
     @Override
     public void visitSimpleNameExpression(JetSimpleNameExpression expression) {
-        final DeclarationDescriptor descriptor = bindingContext.resolveReferenceExpression(expression);
+        DeclarationDescriptor descriptor = bindingContext.resolveReferenceExpression(expression);
+
+        if (descriptor instanceof VariableAsFunctionDescriptor) {
+            descriptor = ((VariableAsFunctionDescriptor) descriptor).getVariableDescriptor();
+        }
+
         final DeclarationDescriptor container = descriptor.getContainingDeclaration();
         if (descriptor instanceof VariableDescriptor) {
             if (isClass(container, "Number")) {
@@ -702,13 +710,14 @@ public class ExpressionCodegen extends JetVisitor {
 
 
                 PsiElement declarationPsiElement = bindingContext.getDeclarationPsiElement(funDescriptor);
+                final FunctionDescriptor fd = (FunctionDescriptor) funDescriptor;
                 if (declarationPsiElement == null && isClass(functionParent, "String")) {
                     final Project project = expression.getProject();
                     PsiClass jlString = JavaPsiFacade.getInstance(project).findClass("java.lang.String",
                             ProjectScope.getAllScope(project));
                     // TODO better overload mapping
                     final PsiMethod[] methods = jlString.findMethodsByName(funDescriptor.getName(), false);
-                    final int arity = ((FunctionDescriptor) funDescriptor).getUnsubstitutedValueParameters().size();
+                    final int arity = fd.getUnsubstitutedValueParameters().size();
                     for (PsiMethod method : methods) {
                         if (method.getParameterList().getParametersCount() == arity) {
                             declarationPsiElement = method;
@@ -744,7 +753,7 @@ public class ExpressionCodegen extends JetVisitor {
                             methodDescriptor.getName(),
                             methodDescriptor.getDescriptor());
                 }
-                else {
+                else if(declarationPsiElement instanceof JetFunction) {
                     final JetFunction jetFunction = (JetFunction) declarationPsiElement;
                     methodDescriptor = typeMapper.mapSignature(jetFunction);
                     if (functionParent instanceof NamespaceDescriptorImpl) {
@@ -765,8 +774,25 @@ public class ExpressionCodegen extends JetVisitor {
                         throw new UnsupportedOperationException("don't know how to generate call to " + declarationPsiElement);
                     }
                 }
+                else {
+                    gen(callee, Type.getObjectType(ClosureCodegen.getInternalClassName(fd)));
+
+                    boolean isExtensionFunction = fd.getReceiverType() != null;
+                    int paramCount = fd.getUnsubstitutedValueParameters().size();
+                    if (isExtensionFunction) {
+                        ensureReceiverOnStack(expression, null);
+                        paramCount++;
+                    }
+
+                    methodDescriptor = ClosureCodegen.erasedInvokeSignature(fd);
+                    pushMethodArguments(expression, methodDescriptor);
+                    v.invokevirtual(ClosureCodegen.getInternalClassName(fd), "invoke", methodDescriptor.getDescriptor());
+                }
+
                 if (methodDescriptor.getReturnType() != Type.VOID_TYPE) {
-                    myStack.push(StackValue.onStack(methodDescriptor.getReturnType()));
+                    final Type retType = typeMapper.mapType(fd.getUnsubstitutedReturnType());
+                    StackValue.onStack(methodDescriptor.getReturnType()).put(retType, v);
+                    myStack.push(StackValue.onStack(retType));
                 }
             }
             else {

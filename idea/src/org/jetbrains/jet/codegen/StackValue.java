@@ -131,13 +131,18 @@ public abstract class StackValue {
     }
 
     protected void coerce(Type type, InstructionAdapter v) {
-        if (type.getSort() == Type.OBJECT) {
+        if (type.equals(this.type)) return;
+
+        if (type.getSort() == Type.OBJECT && this.type.getSort() == Type.OBJECT) {
+            v.checkcast(type);
+        }
+        else if (type.getSort() == Type.OBJECT) {
             box(this.type, type, v);
         }
         else if (this.type.getSort() == Type.OBJECT && type.getSort() <= Type.DOUBLE) {
             unbox(type, v);
         }
-        else if (type != this.type) {
+        else {
             v.cast(this.type, type);
         }
     }

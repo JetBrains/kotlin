@@ -45,7 +45,7 @@ public class NamespaceCodegen {
         AnalyzingUtils.applyHandler(ErrorHandler.THROW_EXCEPTION, bindingContext);
 
         final JetStandardLibrary standardLibrary = JetStandardLibrary.getJetStandardLibrary(project);
-        final FunctionCodegen functionCodegen = new FunctionCodegen(namespace, v, standardLibrary, bindingContext);
+        final FunctionCodegen functionCodegen = new FunctionCodegen(namespace, v, standardLibrary, bindingContext, codegens);
         final PropertyCodegen propertyCodegen = new PropertyCodegen(v, standardLibrary, bindingContext, functionCodegen);
         final ClassCodegen classCodegen = codegens.forClass(bindingContext);
 
@@ -81,7 +81,7 @@ public class NamespaceCodegen {
 
         FrameMap frameMap = new FrameMap();
         JetTypeMapper typeMapper = new JetTypeMapper(JetStandardLibrary.getJetStandardLibrary(namespace.getProject()), bindingContext);
-        ExpressionCodegen codegen = new ExpressionCodegen(mv, bindingContext, frameMap, typeMapper, Type.VOID_TYPE, null, OwnerKind.NAMESPACE, null);
+        ExpressionCodegen codegen = new ExpressionCodegen(mv, bindingContext, frameMap, typeMapper, Type.VOID_TYPE, null, OwnerKind.NAMESPACE, null, codegens);
 
         for (JetDeclaration declaration : namespace.getDeclarations()) {
             if (declaration instanceof JetProperty) {

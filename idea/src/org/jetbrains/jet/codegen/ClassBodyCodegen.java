@@ -19,14 +19,16 @@ public abstract class ClassBodyCodegen {
     protected final BindingContext bindingContext;
     protected final JetStandardLibrary stdlib;
     protected final JetTypeMapper typeMapper;
+    protected final Codegens factory;
     protected final JetClassOrObject myClass;
     protected final OwnerKind kind;
     protected final ClassDescriptor descriptor;
     protected final ClassVisitor v;
 
-    public ClassBodyCodegen(BindingContext bindingContext, JetStandardLibrary stdlib, JetClassOrObject aClass, OwnerKind kind, ClassVisitor v) {
+    public ClassBodyCodegen(BindingContext bindingContext, JetStandardLibrary stdlib, JetClassOrObject aClass, OwnerKind kind, ClassVisitor v, Codegens factory) {
         this.bindingContext = bindingContext;
         this.stdlib = stdlib;
+        this.factory = factory;
         this.typeMapper = new JetTypeMapper(stdlib, bindingContext);
         descriptor = bindingContext.getClassDescriptor(aClass);
         myClass = aClass;
@@ -50,7 +52,7 @@ public abstract class ClassBodyCodegen {
     }
 
     private void generateClassBody() {
-        final FunctionCodegen functionCodegen = new FunctionCodegen((JetDeclaration) myClass, v, stdlib, bindingContext);
+        final FunctionCodegen functionCodegen = new FunctionCodegen((JetDeclaration) myClass, v, stdlib, bindingContext, factory);
         final PropertyCodegen propertyCodegen = new PropertyCodegen(v, stdlib, bindingContext, functionCodegen);
 
         for (JetDeclaration declaration : myClass.getDeclarations()) {

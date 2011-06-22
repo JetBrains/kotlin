@@ -1,0 +1,164 @@
+/*
+ * @author max
+ */
+package org.jetbrains.jet.codegen;
+
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
+import com.intellij.psi.util.PsiTreeUtil;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.types.JetStandardLibrary;
+import org.jetbrains.jet.lang.types.JetType;
+import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
+import org.objectweb.asm.commons.InstructionAdapter;
+import org.objectweb.asm.commons.Method;
+import org.objectweb.asm.signature.SignatureWriter;
+
+import java.util.Arrays;
+import java.util.List;
+
+public class ClosureCodegen {
+    private final BindingContext bindingContext;
+    private final JetTypeMapper typeMapper;
+    private final Codegens factory;
+
+    public ClosureCodegen(BindingContext bindingContext, JetTypeMapper typeMapper, Codegens factory) {
+        this.bindingContext = bindingContext;
+        this.typeMapper = typeMapper;
+        this.factory = factory;
+    }
+
+    public static Method erasedInvokeSignature(FunctionDescriptor fd) {
+        boolean isExtensionFunction = fd.getReceiverType() != null;
+        int paramCount = fd.getUnsubstitutedValueParameters().size();
+        if (isExtensionFunction) {
+            paramCount++;
+        }
+
+        Type[] args = new Type[paramCount];
+        Arrays.fill(args, JetTypeMapper.TYPE_OBJECT);
+        return new Method("invoke", JetTypeMapper.TYPE_OBJECT, args);
+    }
+
+    public Method invokeSignature(FunctionDescriptor fd) {
+        return typeMapper.mapSignature("invoke", fd);
+    }
+
+    public GeneratedClosureDescriptor gen(JetFunctionLiteralExpression fun) {
+        JetNamedDeclaration container = PsiTreeUtil.getParentOfType(fun, JetNamespace.class, JetClass.class, JetObjectDeclaration.class);
+
+        final Pair<String, ClassVisitor> nameAndVisitor;
+        if (container instanceof JetNamespace) {
+            nameAndVisitor = factory.forClosureIn((JetNamespace) container);
+        }
+        else {
+            nameAndVisitor = factory.forClosureIn(bindingContext.getClassDescriptor((JetClassOrObject) container));
+        }
+
+
+        final FunctionDescriptor funDescriptor = (FunctionDescriptor) bindingContext.getDeclarationDescriptor(fun);
+
+        final ClassVisitor cv = nameAndVisitor.getSecond();
+        final String name = nameAndVisitor.getFirst();
+
+        SignatureWriter signatureWriter = new SignatureWriter();
+
+        final List<ValueParameterDescriptor> parameters = funDescriptor.getUnsubstitutedValueParameters();
+        final String funClass = getInternalClassName(funDescriptor);
+        signatureWriter.visitClassType(funClass);
+        for (ValueParameterDescriptor parameter : parameters) {
+            appendType(signatureWriter, parameter.getOutType(), '=');
+        }
+
+        appendType(signatureWriter, funDescriptor.getUnsubstitutedReturnType(), '=');
+        signatureWriter.visitEnd();
+
+        cv.visit(Opcodes.V1_6,
+                Opcodes.ACC_PUBLIC,
+                name,
+                null,
+                funClass,
+                new String[0]
+                );
+
+        final Method constructor = generateConstructor(cv, funClass);
+
+        generateBridge(name, funDescriptor, cv);
+        generateBody(name, funDescriptor, cv, container.getProject(), fun.getBody());
+
+        cv.visitEnd();
+
+        return new GeneratedClosureDescriptor(name, constructor);
+    }
+
+    private void generateBody(String className, FunctionDescriptor funDescriptor, ClassVisitor cv, Project project, List<JetElement> body) {
+        FunctionCodegen fc = new FunctionCodegen(null, cv, JetStandardLibrary.getJetStandardLibrary(project), bindingContext, factory);
+        fc.generatedMethod(body, OwnerKind.IMPLEMENTATION, invokeSignature(funDescriptor), null, funDescriptor.getUnsubstitutedValueParameters(), null);
+    }
+
+    private void generateBridge(String className, FunctionDescriptor funDescriptor, ClassVisitor cv) {
+        final Method bridge = erasedInvokeSignature(funDescriptor);
+
+        final MethodVisitor mv = cv.visitMethod(Opcodes.ACC_PUBLIC, "invoke", bridge.getDescriptor(), typeMapper.genericSignature(funDescriptor), new String[0]);
+        mv.visitCode();
+
+        InstructionAdapter iv = new InstructionAdapter(mv);
+
+        iv.load(0, Type.getObjectType(className));
+
+        final List<ValueParameterDescriptor> params = funDescriptor.getUnsubstitutedValueParameters();
+        int count = 1;
+        for (ValueParameterDescriptor param : params) {
+            iv.load(count, JetTypeMapper.TYPE_OBJECT);
+            iv.checkcast(typeMapper.mapType(param.getOutType()));
+            count++;
+        }
+
+        iv.invokespecial(className, "invoke", invokeSignature(funDescriptor).getDescriptor());
+        iv.areturn(JetTypeMapper.TYPE_OBJECT);
+
+        mv.visitMaxs(0, 0);
+        mv.visitEnd();
+    }
+
+    private Method generateConstructor(ClassVisitor cv, String funClass) {
+        final Method constructor = new Method("<init>", Type.VOID_TYPE, new Type[0]); // TODO:
+        final MethodVisitor mv = cv.visitMethod(Opcodes.ACC_PUBLIC, "<init>", constructor.getDescriptor(), null, new String[0]);
+        mv.visitCode();
+        InstructionAdapter iv = new InstructionAdapter(mv);
+
+        iv.load(0, Type.getObjectType(funClass));
+        iv.invokespecial(funClass, "<init>", "()V");
+
+        iv.visitInsn(Opcodes.RETURN);
+
+
+        mv.visitMaxs(0, 0);
+        mv.visitEnd();
+        return constructor;
+    }
+
+    public static String getInternalClassName(FunctionDescriptor descriptor) {
+        final int paramCount = descriptor.getUnsubstitutedValueParameters().size();
+        if (descriptor.getReceiverType() != null) {
+            return "jet/ExtensionFunction" + paramCount;
+        }
+        else {
+            return "jet/Function" + paramCount;
+        }
+    }
+
+    private void appendType(SignatureWriter signatureWriter, JetType type, char variance) {
+        signatureWriter.visitTypeArgument(variance);
+
+        final Type rawRetType = typeMapper.boxType(typeMapper.mapType(type));
+        signatureWriter.visitClassType(rawRetType.getInternalName());
+        signatureWriter.visitEnd();
+    }
+}

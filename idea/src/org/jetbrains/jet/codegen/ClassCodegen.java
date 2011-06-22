@@ -45,7 +45,7 @@ public class ClassCodegen {
 
     private void generateInterface(JetClassOrObject aClass) {
         final ClassVisitor visitor = factory.forClassInterface(bindingContext.getClassDescriptor(aClass));
-        new InterfaceBodyCodegen(bindingContext, JetStandardLibrary.getJetStandardLibrary(project), aClass, visitor).generate();
+        new InterfaceBodyCodegen(bindingContext, JetStandardLibrary.getJetStandardLibrary(project), aClass, visitor, factory).generate();
     }
 
     private void generateImplementation(JetClassOrObject aClass, OwnerKind kind) {
@@ -53,7 +53,7 @@ public class ClassCodegen {
         ClassVisitor v = kind == OwnerKind.IMPLEMENTATION
                 ? factory.forClassImplementation(descriptor)
                 : factory.forClassDelegatingImplementation(descriptor);
-        new ImplementationBodyCodegen(bindingContext, JetStandardLibrary.getJetStandardLibrary(project), aClass, kind, v).generate();
+        new ImplementationBodyCodegen(bindingContext, JetStandardLibrary.getJetStandardLibrary(project), aClass, kind, v, factory).generate();
     }
 
 

@@ -14,6 +14,7 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
 import org.objectweb.asm.commons.Method;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -24,11 +25,13 @@ public class FunctionCodegen {
     private final ClassVisitor v;
     private final BindingContext bindingContext;
     private final JetTypeMapper typeMapper;
+    private final Codegens factory;
 
-    public FunctionCodegen(JetDeclaration owner, ClassVisitor v, JetStandardLibrary standardLibrary, BindingContext bindingContext) {
+    public FunctionCodegen(JetDeclaration owner, ClassVisitor v, JetStandardLibrary standardLibrary, BindingContext bindingContext, Codegens factory) {
         this.owner = owner;
         this.v = v;
         this.bindingContext = bindingContext;
+        this.factory = factory;
         typeMapper = new JetTypeMapper(standardLibrary, bindingContext);
     }
 
@@ -45,22 +48,32 @@ public class FunctionCodegen {
                                Method jvmSignature,
                                @Nullable JetType receiverType,
                                List<ValueParameterDescriptor> paramDescrs) {
+        final DeclarationDescriptor contextDesc = owner instanceof JetClassOrObject
+                ? bindingContext.getClassDescriptor((JetClassOrObject) owner)
+                : bindingContext.getNamespaceDescriptor((JetNamespace) owner);
+        final JetExpression bodyExpression = f.getBodyExpression();
+        final List<JetElement> bodyExpressions = bodyExpression != null ? Collections.<JetElement>singletonList(bodyExpression) : null;
+        generatedMethod(bodyExpressions, kind, jvmSignature, receiverType, paramDescrs, contextDesc);
+    }
+
+    public void generatedMethod(List<JetElement> bodyExpressions,
+                                OwnerKind kind,
+                                Method jvmSignature,
+                                JetType receiverType,
+                                List<ValueParameterDescriptor> paramDescrs,
+                                DeclarationDescriptor contextDesc)
+    {
         int flags = Opcodes.ACC_PUBLIC; // TODO.
 
         boolean isStatic = kind == OwnerKind.NAMESPACE;
         if (isStatic) flags |= Opcodes.ACC_STATIC;
 
-        final JetExpression bodyExpression = f.getBodyExpression();
-        boolean isAbstract = kind == OwnerKind.INTERFACE || bodyExpression == null;
+        boolean isAbstract = kind == OwnerKind.INTERFACE || bodyExpressions == null;
         if (isAbstract) flags |= Opcodes.ACC_ABSTRACT;
 
         if (isAbstract && (kind == OwnerKind.IMPLEMENTATION || kind == OwnerKind.DELEGATING_IMPLEMENTATION)) {
             return;
         }
-
-        DeclarationDescriptor contextDescriptor = owner instanceof JetClassOrObject
-                ? bindingContext.getClassDescriptor((JetClassOrObject) owner)
-                : bindingContext.getNamespaceDescriptor((JetNamespace) owner);
 
         final MethodVisitor mv = v.visitMethod(flags, jvmSignature.getName(), jvmSignature.getDescriptor(), null, null);
         if (kind != OwnerKind.INTERFACE) {
@@ -79,7 +92,7 @@ public class FunctionCodegen {
 
             StackValue thisExpression = receiverType == null ? null : StackValue.local(0, typeMapper.mapType(receiverType));
             ExpressionCodegen codegen = new ExpressionCodegen(mv, bindingContext, frameMap, typeMapper,
-                    jvmSignature.getReturnType(), contextDescriptor, kind, thisExpression);
+                    jvmSignature.getReturnType(), contextDesc, kind, thisExpression, factory);
             if (kind instanceof OwnerKind.DelegateKind) {
                 OwnerKind.DelegateKind dk = (OwnerKind.DelegateKind) kind;
                 InstructionAdapter iv = new InstructionAdapter(mv);
@@ -93,15 +106,19 @@ public class FunctionCodegen {
                 iv.areturn(jvmSignature.getReturnType());
             }
             else if (!isAbstract) {
-                bodyExpression.accept(codegen);
-                generateReturn(mv, bodyExpression, codegen, jvmSignature);
+                JetElement last = null;
+                for (JetElement expression : bodyExpressions) {
+                    expression.accept(codegen);
+                    last = expression;
+                }
+                generateReturn(mv, last, codegen, jvmSignature);
             }
             mv.visitMaxs(0, 0);
             mv.visitEnd();
         }
     }
 
-    private void generateReturn(MethodVisitor mv, JetExpression bodyExpression, ExpressionCodegen codegen, Method jvmSignature) {
+    private void generateReturn(MethodVisitor mv, JetElement bodyExpression, ExpressionCodegen codegen, Method jvmSignature) {
         if (!endsWithReturn(bodyExpression)) {
             if (jvmSignature.getReturnType() == Type.VOID_TYPE) {
                 mv.visitInsn(Opcodes.RETURN);
@@ -112,11 +129,12 @@ public class FunctionCodegen {
         }
     }
 
-    private static boolean endsWithReturn(JetExpression bodyExpression) {
+    private static boolean endsWithReturn(JetElement bodyExpression) {
         if (bodyExpression instanceof JetBlockExpression) {
             final List<JetElement> statements = ((JetBlockExpression) bodyExpression).getStatements();
             return statements.size() > 0 && statements.get(statements.size()-1) instanceof JetReturnExpression;
         }
-        return false;
+
+        return bodyExpression instanceof JetReturnExpression;
     }
 }

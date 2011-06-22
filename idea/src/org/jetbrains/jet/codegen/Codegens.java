@@ -1,6 +1,7 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.JetNamespace;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -20,6 +21,7 @@ public class Codegens {
     private final boolean isText;
     private final Map<String, NamespaceCodegen> ns2codegen = new HashMap<String, NamespaceCodegen>();
     private final Map<String, ClassVisitor> generators = new LinkedHashMap<String, ClassVisitor>();
+    private final Map<String, Integer> closuresCount = new HashMap<String, Integer>();
     private boolean isDone = false;
 
     public Codegens(Project project, boolean text) {
@@ -54,6 +56,24 @@ public class Codegens {
 
     public ClassVisitor forClassDelegatingImplementation(ClassDescriptor aClass) {
         return newVisitor(JetTypeMapper.jvmNameForDelegatingImplementation(aClass)  + ".class");
+    }
+
+    public Pair<String, ClassVisitor> forClosureIn(ClassDescriptor aClass) {
+        return forClosureIn(JetTypeMapper.jvmNameForInterface(aClass));
+    }
+
+    public Pair<String, ClassVisitor> forClosureIn(JetNamespace namespace) {
+        return forClosureIn(NamespaceCodegen.getJVMClassName(namespace.getFQName()));
+    }
+
+    private Pair<String, ClassVisitor> forClosureIn(String baseName) {
+        Integer count = closuresCount.get(baseName);
+        if (count == null) count = 0;
+
+        closuresCount.put(baseName, count + 1);
+
+        final String className = baseName + "$" + (count + 1);
+        return new Pair<String, ClassVisitor>(className, newVisitor(className + ".class"));
     }
 
     public NamespaceCodegen forNamespace(JetNamespace namespace) {

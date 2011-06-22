@@ -19,8 +19,8 @@ import java.util.Set;
  * @author yole
  */
 public class InterfaceBodyCodegen extends ClassBodyCodegen {
-    public InterfaceBodyCodegen(BindingContext bindingContext, JetStandardLibrary stdlib, JetClassOrObject aClass, ClassVisitor v) {
-        super(bindingContext, stdlib, aClass, OwnerKind.INTERFACE, v);
+    public InterfaceBodyCodegen(BindingContext bindingContext, JetStandardLibrary stdlib, JetClassOrObject aClass, ClassVisitor v, Codegens factory) {
+        super(bindingContext, stdlib, aClass, OwnerKind.INTERFACE, v, factory);
     }
 
     protected void generateDeclaration() {

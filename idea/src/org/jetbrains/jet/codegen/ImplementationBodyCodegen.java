@@ -22,8 +22,8 @@ import java.util.*;
  */
 public class ImplementationBodyCodegen extends ClassBodyCodegen {
     public ImplementationBodyCodegen(BindingContext bindingContext, JetStandardLibrary stdlib, JetClassOrObject aClass,
-                                     OwnerKind kind, ClassVisitor v) {
-        super(bindingContext, stdlib, aClass, kind, v);
+                                     OwnerKind kind, ClassVisitor v, Codegens factory) {
+        super(bindingContext, stdlib, aClass, kind, v, factory);
     }
 
     @Override
@@ -109,7 +109,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         final InstructionAdapter iv = new InstructionAdapter(mv);
         ExpressionCodegen codegen = new ExpressionCodegen(mv, bindingContext, frameMap, typeMapper, Type.VOID_TYPE,
-                descriptor, kind, StackValue.local(0, typeMapper.jvmType(descriptor, kind)));
+                descriptor, kind, StackValue.local(0, typeMapper.jvmType(descriptor, kind)), factory);
 
         String classname = typeMapper.jvmName(descriptor, kind);
         final Type classType = Type.getType("L" + classname + ";");
@@ -289,7 +289,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         final InstructionAdapter iv = new InstructionAdapter(mv);
         ExpressionCodegen codegen = new ExpressionCodegen(mv, bindingContext, frameMap, typeMapper, Type.VOID_TYPE,
-                descriptor, kind, StackValue.local(0, typeMapper.jvmType(descriptor, kind)));
+                descriptor, kind, StackValue.local(0, typeMapper.jvmType(descriptor, kind)), factory);
 
         for (JetDelegationSpecifier initializer : constructor.getInitializers()) {
             if (initializer instanceof JetDelegatorToThisCall) {
@@ -355,7 +355,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     protected void generateDelegates(JetClassOrObject inClass, JetClass toClass, OwnerKind kind, Set<FunctionDescriptor> overriden) {
-        final FunctionCodegen functionCodegen = new FunctionCodegen(toClass, v, stdlib, bindingContext);
+        final FunctionCodegen functionCodegen = new FunctionCodegen(toClass, v, stdlib, bindingContext, factory);
         final PropertyCodegen propertyCodegen = new PropertyCodegen(v, stdlib, bindingContext, functionCodegen);
 
         for (JetDeclaration declaration : toClass.getDeclarations()) {

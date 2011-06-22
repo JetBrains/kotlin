@@ -219,6 +219,38 @@ public class JetTypeMapper {
         throw new UnsupportedOperationException("Unknown type " + jetType);
     }
 
+    public Type boxType(Type asmType) {
+        switch (asmType.getSort()) {
+            case Type.VOID:
+                return Type.getObjectType("java/lang/Void");
+            case Type.BYTE:
+                return Type.getObjectType("java/lang/Byte");
+            case Type.BOOLEAN:
+                return Type.getObjectType("java/lang/Boolean");
+            case Type.SHORT:
+                return Type.getObjectType("java/lang.Short");
+            case Type.CHAR:
+                return Type.getObjectType("java/lang/Character");
+            case Type.INT:
+                return Type.getObjectType("java/lang/Integer");
+            case Type.FLOAT:
+                return Type.getObjectType("java/lang/Float");
+            case Type.LONG:
+                return Type.getObjectType("java/lang/Long");
+            case Type.DOUBLE:
+                return Type.getObjectType("java/lang/Double");
+        }
+
+        return asmType;
+    }
+
+
+    private static Type getBoxedType(final Type type) {
+        switch (type.getSort()) {
+        }
+        return type;
+    }
+
     public Method mapSignature(JetFunction f) {
         final JetTypeReference receiverTypeRef = f.getReceiverTypeRef();
         final JetType receiverType = receiverTypeRef == null ? null : bindingContext.resolveTypeReference(receiverTypeRef);
@@ -241,6 +273,50 @@ public class JetTypeMapper {
             returnType = mapType(bindingContext.resolveTypeReference(returnTypeRef));
         }
         return new Method(f.getName(), returnType, parameterTypes.toArray(new Type[parameterTypes.size()]));
+    }
+
+    public Method mapSignature(String name, FunctionDescriptor f) {
+        final JetType receiverType = f.getReceiverType();
+        final List<ValueParameterDescriptor> parameters = f.getUnsubstitutedValueParameters();
+        List<Type> parameterTypes = new ArrayList<Type>();
+        if (receiverType != null) {
+            parameterTypes.add(mapType(receiverType));
+        }
+        for (ValueParameterDescriptor parameter : parameters) {
+            parameterTypes.add(mapType(parameter.getOutType()));
+        }
+        Type returnType = mapType(f.getUnsubstitutedReturnType());
+        return new Method(name, returnType, parameterTypes.toArray(new Type[parameterTypes.size()]));
+    }
+
+    public String genericSignature(FunctionDescriptor f) {
+        StringBuffer answer = new StringBuffer();
+        final List<TypeParameterDescriptor> typeParameters = f.getTypeParameters();
+        if (!typeParameters.isEmpty()) {
+            answer.append('<');
+            for (TypeParameterDescriptor p : typeParameters) {
+                appendTypeParameterSignature(answer, p);
+            }
+            answer.append('>');
+        }
+
+        answer.append('(');
+        for (ValueParameterDescriptor p : f.getUnsubstitutedValueParameters()) {
+            appendType(answer, p.getOutType());
+        }
+        answer.append(')');
+
+        appendType(answer, f.getUnsubstitutedReturnType());
+
+        return answer.toString();
+    }
+
+    private void appendType(StringBuffer answer, JetType type) {
+        answer.append(mapType(type).getDescriptor()); // TODO: type parameter references!
+    }
+
+    private void appendTypeParameterSignature(StringBuffer answer, TypeParameterDescriptor p) {
+        answer.append(p.getName()); // TODO: BOUND!
     }
 
     public Method mapGetterSignature(PropertyDescriptor descriptor) {
