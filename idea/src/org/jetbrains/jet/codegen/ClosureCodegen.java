@@ -104,6 +104,7 @@ public class ClosureCodegen {
 
     private void generateBridge(String className, FunctionDescriptor funDescriptor, ClassVisitor cv) {
         final Method bridge = erasedInvokeSignature(funDescriptor);
+        final Method delegate = invokeSignature(funDescriptor);
 
         final MethodVisitor mv = cv.visitMethod(Opcodes.ACC_PUBLIC, "invoke", bridge.getDescriptor(), typeMapper.genericSignature(funDescriptor), new String[0]);
         mv.visitCode();
@@ -120,7 +121,9 @@ public class ClosureCodegen {
             count++;
         }
 
-        iv.invokespecial(className, "invoke", invokeSignature(funDescriptor).getDescriptor());
+        iv.invokespecial(className, "invoke", delegate.getDescriptor());
+        StackValue.onStack(delegate.getReturnType()).put(JetTypeMapper.TYPE_OBJECT, iv);
+
         iv.areturn(JetTypeMapper.TYPE_OBJECT);
 
         mv.visitMaxs(0, 0);

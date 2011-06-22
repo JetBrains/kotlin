@@ -140,6 +140,9 @@ public abstract class StackValue {
             box(this.type, type, v);
         }
         else if (this.type.getSort() == Type.OBJECT && type.getSort() <= Type.DOUBLE) {
+            if (this.type.equals(JetTypeMapper.TYPE_OBJECT)) {
+                v.checkcast(Type.getObjectType("java/lang/Number"));
+            }
             unbox(type, v);
         }
         else {
