@@ -130,11 +130,22 @@ public abstract class StackValue {
         }
     }
 
-    protected void coerce(Type type, InstructionAdapter v) {
+    public void upcast(Type type, InstructionAdapter v) {
         if (type.equals(this.type)) return;
 
         if (type.getSort() == Type.OBJECT && this.type.getSort() == Type.OBJECT) {
             v.checkcast(type);
+        }
+        else {
+            coerce(type, v);
+        }
+    }
+
+    protected void coerce(Type type, InstructionAdapter v) {
+        if (type.equals(this.type)) return;
+
+        if (type.getSort() == Type.OBJECT && this.type.getSort() == Type.OBJECT) {
+        //    v.checkcast(type);
         }
         else if (type.getSort() == Type.OBJECT) {
             box(this.type, type, v);

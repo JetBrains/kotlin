@@ -795,7 +795,7 @@ public class ExpressionCodegen extends JetVisitor {
 
                 if (methodDescriptor.getReturnType() != Type.VOID_TYPE) {
                     final Type retType = typeMapper.mapType(fd.getUnsubstitutedReturnType());
-                    StackValue.onStack(methodDescriptor.getReturnType()).put(retType, v);
+                    StackValue.onStack(methodDescriptor.getReturnType()).upcast(retType, v);
                     myStack.push(StackValue.onStack(retType));
                 }
             }
