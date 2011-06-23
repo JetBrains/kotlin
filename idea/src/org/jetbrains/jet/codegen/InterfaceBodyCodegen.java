@@ -5,8 +5,6 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetDelegationSpecifier;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.JetType;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Opcodes;
@@ -19,8 +17,8 @@ import java.util.Set;
  * @author yole
  */
 public class InterfaceBodyCodegen extends ClassBodyCodegen {
-    public InterfaceBodyCodegen(BindingContext bindingContext, JetStandardLibrary stdlib, JetClassOrObject aClass, ClassVisitor v, Codegens factory) {
-        super(bindingContext, stdlib, aClass, OwnerKind.INTERFACE, v, factory);
+    public InterfaceBodyCodegen(JetClassOrObject aClass, ClassVisitor v, GenerationState state) {
+        super(aClass, OwnerKind.INTERFACE, v, state);
     }
 
     protected void generateDeclaration() {
@@ -41,9 +39,9 @@ public class InterfaceBodyCodegen extends ClassBodyCodegen {
         String superClassName = null;
         Set<String> superInterfaces = new LinkedHashSet<String>();
         for (JetDelegationSpecifier specifier : delegationSpecifiers) {
-            JetType superType = bindingContext.resolveTypeReference(specifier.getTypeReference());
+            JetType superType = state.getBindingContext().resolveTypeReference(specifier.getTypeReference());
             ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
-            PsiElement superPsi = bindingContext.getDeclarationPsiElement(superClassDescriptor);
+            PsiElement superPsi = state.getBindingContext().getDeclarationPsiElement(superClassDescriptor);
 
             if (superPsi instanceof PsiClass) {
                 PsiClass psiClass = (PsiClass) superPsi;

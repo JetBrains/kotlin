@@ -6,11 +6,11 @@ import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetLightProjectDescriptor;
-import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespace;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.parsing.JetParsingTest;
+import org.jetbrains.jet.plugin.JetFileType;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -79,7 +79,7 @@ public abstract class CodegenTestCase extends LightCodeInsightFixtureTestCase {
     }
 
     protected String blackBox() throws Exception {
-        Codegens codegens = generateClassesInFile();
+        ClassFileFactory codegens = generateClassesInFile();
         CodegensClassLoader loader = new CodegensClassLoader(codegens);
 
         JetFile jetFile = (JetFile) myFixture.getFile();
@@ -91,30 +91,29 @@ public abstract class CodegenTestCase extends LightCodeInsightFixtureTestCase {
     }
 
     protected String generateToText() {
-        Codegens state = new Codegens(getProject(), true);
+        GenerationState state = new GenerationState(getProject(), true);
         JetFile jetFile = (JetFile) myFixture.getFile();
         AnalyzingUtils.checkForSyntacticErrors(jetFile);
-        JetNamespace namespace = jetFile.getRootNamespace();
-        NamespaceCodegen codegen = state.forNamespace(namespace);
-        codegen.generate(namespace);
+        state.compile(jetFile);
 
         StringBuilder answer = new StringBuilder();
 
-        List<String> files = state.files();
+        final ClassFileFactory factory = state.getFactory();
+        List<String> files = factory.files();
         for (String file : files) {
             answer.append("@").append(file).append('\n');
-            answer.append(state.asText(file));
+            answer.append(factory.asText(file));
         }
 
         return answer.toString();
     }
 
     protected Class generateNamespaceClass() {
-        Codegens state = generateClassesInFile();
+        ClassFileFactory state = generateClassesInFile();
         return loadRootNamespaceClass(state);
     }
 
-    protected Class loadRootNamespaceClass(Codegens state) {
+    protected Class loadRootNamespaceClass(ClassFileFactory state) {
         JetFile jetFile = (JetFile) myFixture.getFile();
         final JetNamespace namespace = jetFile.getRootNamespace();
         String fqName = NamespaceCodegen.getJVMClassName(namespace.getFQName()).replace("/", ".");
@@ -122,7 +121,7 @@ public abstract class CodegenTestCase extends LightCodeInsightFixtureTestCase {
         return classMap.get(fqName);
     }
 
-    protected Class loadClass(String fqName, Codegens state) {
+    protected Class loadClass(String fqName, ClassFileFactory state) {
         List<String> files = state.files();
         for (String file : files) {
             if (file.equals(fqName.replace('.', '/') + ".class")) {
@@ -135,7 +134,7 @@ public abstract class CodegenTestCase extends LightCodeInsightFixtureTestCase {
         return null;
     }
 
-    protected Map<String, Class> loadAllClasses(Codegens state) {
+    protected Map<String, Class> loadAllClasses(ClassFileFactory state) {
         Map<String, Class> result = new HashMap<String, Class>();
         for (String fileName : state.files()) {
             String className = StringUtil.trimEnd(fileName, ".class").replace('/', '.');
@@ -146,16 +145,14 @@ public abstract class CodegenTestCase extends LightCodeInsightFixtureTestCase {
         return result;
     }
 
-    protected Codegens generateClassesInFile() {
+    protected ClassFileFactory generateClassesInFile() {
         try {
-            Codegens state = new Codegens(getProject(), false);
+            GenerationState state = new GenerationState(getProject(), false);
             JetFile jetFile = (JetFile) myFixture.getFile();
             AnalyzingUtils.checkForSyntacticErrors(jetFile);
-            final JetNamespace namespace = jetFile.getRootNamespace();
+            state.compile(jetFile);
 
-            NamespaceCodegen codegen = state.forNamespace(namespace);
-            codegen.generate(namespace);
-            return state;
+            return state.getFactory();
         } catch (RuntimeException e) {
             System.out.println(generateToText());
             throw e;
@@ -196,7 +193,7 @@ public abstract class CodegenTestCase extends LightCodeInsightFixtureTestCase {
         assertTrue(Math.abs(returnValue - currentTime) <= 1L);
     }
 
-    protected Class loadImplementationClass(Codegens codegens, final String name) {
+    protected Class loadImplementationClass(ClassFileFactory codegens, final String name) {
         loadClass(name, codegens);
         return loadClass(name + "$$Impl", codegens);
     }
@@ -217,9 +214,9 @@ public abstract class CodegenTestCase extends LightCodeInsightFixtureTestCase {
     }
 
     private static class CodegensClassLoader extends ClassLoader {
-        private final Codegens state;
+        private final ClassFileFactory state;
 
-        public CodegensClassLoader(Codegens state) {
+        public CodegensClassLoader(ClassFileFactory state) {
             super(CodegenTestCase.class.getClassLoader());
             this.state = state;
         }

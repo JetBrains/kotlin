@@ -72,7 +72,7 @@ public class ClassGenTest extends CodegenTestCase {
     public void testAbstractMethod() throws Exception {
         loadText("class Foo { abstract fun x(): String; fun y(): Int = 0 }");
 
-        final Codegens codegens = generateClassesInFile();
+        final ClassFileFactory codegens = generateClassesInFile();
         final Class aClass = loadClass("Foo", codegens);
         assertNotNull(aClass.getMethod("x"));
         final Class implClass = loadClass("Foo$$Impl", codegens);

@@ -123,7 +123,7 @@ public class PropertyGenTest extends CodegenTestCase {
 
     public void testAbstractVal() throws Exception {
         loadText("class Foo { public abstract val x: String }");
-        final Codegens codegens = generateClassesInFile();
+        final ClassFileFactory codegens = generateClassesInFile();
         final Class aClass = loadClass("Foo", codegens);
         assertNotNull(aClass.getMethod("getX"));
     }

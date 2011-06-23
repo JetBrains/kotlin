@@ -7,7 +7,6 @@ import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -21,16 +20,18 @@ import java.util.Collections;
  * @author max
  */
 public class PropertyCodegen {
+    private final GenerationState state;
     private final BindingContext context;
     private final FunctionCodegen functionCodegen;
     private final ClassVisitor v;
     private final JetTypeMapper mapper;
 
-    public PropertyCodegen(ClassVisitor v, JetStandardLibrary standardLibrary, BindingContext context, FunctionCodegen functionCodegen) {
+    public PropertyCodegen(ClassVisitor v, FunctionCodegen functionCodegen, GenerationState state) {
         this.v = v;
-        this.context = context;
         this.functionCodegen = functionCodegen;
-        this.mapper = new JetTypeMapper(standardLibrary, context);
+        this.state = state;
+        mapper = state.getTypeMapper();
+        context = state.getBindingContext();
     }
 
     public void gen(JetProperty p, OwnerKind kind) {
