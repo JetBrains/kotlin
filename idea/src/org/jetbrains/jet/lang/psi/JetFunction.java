@@ -12,31 +12,14 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * @author max
+ * @author abreslav
  */
-public class JetFunction extends JetTypeParameterListOwner implements JetDeclarationWithBody {
+abstract public class JetFunction extends JetTypeParameterListOwner implements JetDeclarationWithBody {
     public JetFunction(@NotNull ASTNode node) {
         super(node);
     }
 
-    @Override
-    public void accept(@NotNull JetVisitor visitor) {
-        visitor.visitFunction(this);
-    }
-
-    public boolean hasTypeParameterListBeforeFunctionName() {
-        JetTypeParameterList typeParameterList = getTypeParameterList();
-        if (typeParameterList == null) {
-            return false;
-        }
-        PsiElement nameIdentifier = getNameIdentifier();
-        if (nameIdentifier == null) {
-            return false;
-        }
-        return nameIdentifier.getTextOffset() > typeParameterList.getTextOffset();
-    }
-
-    @Nullable @IfNotParsed
+    @Nullable
     public JetParameterList getValueParameterList() {
         return (JetParameterList) findChildByType(JetNodeTypes.VALUE_PARAMETER_LIST);
     }
@@ -84,11 +67,6 @@ public class JetFunction extends JetTypeParameterListOwner implements JetDeclara
         }
 
         return null;
-    }
-
-    @Override
-    public boolean hasBlockBody() {
-        return findChildByType(JetTokens.EQ) == null;
     }
 
     @NotNull

@@ -8,7 +8,7 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptorUtil;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetChangeUtil;
-import org.jetbrains.jet.lang.psi.JetFunction;
+import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.ClassDescriptorResolver;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.parsing.JetParsingTest;
@@ -144,7 +144,7 @@ public class JetOverridingTest extends LightDaemonAnalyzerTestCase {
     }
 
     private FunctionDescriptor makeFunction(String funDecl) {
-        JetFunction function = JetChangeUtil.createFunction(getProject(), funDecl);
+        JetNamedFunction function = JetChangeUtil.createFunction(getProject(), funDecl);
         return classDescriptorResolver.resolveFunctionDescriptor(root, library.getLibraryScope(), function);
     }
 }

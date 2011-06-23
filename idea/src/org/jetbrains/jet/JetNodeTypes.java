@@ -13,7 +13,7 @@ public interface JetNodeTypes {
     JetNodeType NAMESPACE  = new JetNodeType("NAMESPACE", JetNamespace.class);
     JetNodeType CLASS      = new JetNodeType("CLASS", JetClass.class);
     JetNodeType PROPERTY   = new JetNodeType("PROPERTY", JetProperty.class);
-    JetNodeType FUN        = new JetNodeType("FUN", JetFunction.class);
+    JetNodeType FUN        = new JetNodeType("FUN", JetNamedFunction.class);
     JetNodeType EXTENSION  = new JetNodeType("EXTENSION", JetExtension.class);
     JetNodeType TYPEDEF    = new JetNodeType("TYPEDEF", JetTypedef.class);
     JetNodeType OBJECT_DECLARATION = new JetNodeType("OBJECT_DECLARATION", JetObjectDeclaration.class);
@@ -93,7 +93,8 @@ public interface JetNodeTypes {
     JetNodeType LOOP_RANGE                = new JetNodeType("LOOP_RANGE", JetContainerNode.class);
     JetNodeType BODY                      = new JetNodeType("BODY", JetContainerNode.class);
     JetNodeType BLOCK                     = new JetNodeType("BLOCK", JetBlockExpression.class);
-    JetNodeType FUNCTION_LITERAL          = new JetNodeType("FUNCTION_LITERAL", JetFunctionLiteralExpression.class);
+    JetNodeType FUNCTION_LITERAL_EXPRESSION = new JetNodeType("FUNCTION_LITERAL_EXPRESSION", JetFunctionLiteralExpression.class);
+    JetNodeType FUNCTION_LITERAL          = new JetNodeType("FUNCTION_LITERAL", JetFunctionLiteral.class);
     JetNodeType ANNOTATED_EXPRESSION      = new JetNodeType("ANNOTATED_EXPRESSION", JetAnnotatedExpression.class);
 
     JetNodeType REFERENCE_EXPRESSION      = new JetNodeType("REFERENCE_EXPRESSION", JetSimpleNameExpression.class);

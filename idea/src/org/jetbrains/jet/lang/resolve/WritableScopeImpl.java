@@ -154,6 +154,14 @@ public class WritableScopeImpl extends WritableScopeWithImports {
         if (descriptor instanceof VariableDescriptor) {
             return (VariableDescriptor) descriptor;
         }
+
+        if (thisType != null) {
+            VariableDescriptor variable = getThisType().getMemberScope().getVariable(name);
+            if (variable != null) {
+                return variable;
+            }
+        }
+
         VariableDescriptor variableDescriptor = getWorkerScope().getVariable(name);
         if (variableDescriptor != null) {
             return variableDescriptor;
@@ -212,6 +220,13 @@ public class WritableScopeImpl extends WritableScopeWithImports {
 
         if (constructors != null && !constructors.isEmpty()) {
             return constructors;
+        }
+
+        if (thisType != null) {
+            functionGroup = getThisType().getMemberScope().getFunctionGroup(name);
+            if (!functionGroup.isEmpty()) {
+                return functionGroup;
+            }
         }
 
         // TODO : this logic is questionable

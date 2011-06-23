@@ -478,7 +478,7 @@ public class ExpressionCodegen extends JetVisitor {
     @Override
     public void visitFunctionLiteralExpression(JetFunctionLiteralExpression expression) {
         if (bindingContext.isBlock(expression)) {
-            generateBlock(expression.getBody());
+            generateBlock(expression.getFunctionLiteral().getBodyExpression().getStatements());
         }
         else {
             final GeneratedClosureDescriptor closure = new ClosureCodegen(bindingContext, typeMapper, factory).gen(expression);
@@ -757,8 +757,8 @@ public class ExpressionCodegen extends JetVisitor {
                             methodDescriptor.getName(),
                             methodDescriptor.getDescriptor());
                 }
-                else if(declarationPsiElement instanceof JetFunction) {
-                    final JetFunction jetFunction = (JetFunction) declarationPsiElement;
+                else if(declarationPsiElement instanceof JetNamedFunction) {
+                    final JetNamedFunction jetFunction = (JetNamedFunction) declarationPsiElement;
                     methodDescriptor = typeMapper.mapSignature(jetFunction);
                     if (functionParent instanceof NamespaceDescriptorImpl) {
                         if (jetFunction.getReceiverTypeRef() != null) {

@@ -104,47 +104,11 @@ JetFile: With.jet
                   PsiElement(IDENTIFIER)('out')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
-          FUNCTION_LITERAL
-            PsiElement(LBRACE)('{')
-            PsiWhiteSpace('\n    ')
-            BODY
-              CALL_EXPRESSION
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('println')
-                VALUE_ARGUMENT_LIST
-                  PsiElement(LPAR)('(')
-                  VALUE_ARGUMENT
-                    STRING_CONSTANT
-                      PsiElement(STRING_LITERAL)('"foo"')
-                  PsiElement(RPAR)(')')
-              PsiElement(SEMICOLON)(';')
-              PsiWhiteSpace('\n    ')
-              CALL_EXPRESSION
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('print')
-                VALUE_ARGUMENT_LIST
-                  PsiElement(LPAR)('(')
-                  VALUE_ARGUMENT
-                    STRING_CONSTANT
-                      PsiElement(STRING_LITERAL)('"bar"')
-                  PsiElement(RPAR)(')')
-              PsiElement(SEMICOLON)(';')
-            PsiWhiteSpace('\n  ')
-            PsiElement(RBRACE)('}')
-        PsiWhiteSpace('\n\n  ')
-        DOT_QUALIFIED_EXPRESSION
-          DOT_QUALIFIED_EXPRESSION
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('System')
-            PsiElement(DOT)('.')
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('out')
-          PsiElement(DOT)('.')
-          CALL_EXPRESSION
+          FUNCTION_LITERAL_EXPRESSION
             FUNCTION_LITERAL
               PsiElement(LBRACE)('{')
               PsiWhiteSpace('\n    ')
-              BODY
+              BLOCK
                 CALL_EXPRESSION
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('println')
@@ -168,6 +132,44 @@ JetFile: With.jet
                 PsiElement(SEMICOLON)(';')
               PsiWhiteSpace('\n  ')
               PsiElement(RBRACE)('}')
+        PsiWhiteSpace('\n\n  ')
+        DOT_QUALIFIED_EXPRESSION
+          DOT_QUALIFIED_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('System')
+            PsiElement(DOT)('.')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('out')
+          PsiElement(DOT)('.')
+          CALL_EXPRESSION
+            FUNCTION_LITERAL_EXPRESSION
+              FUNCTION_LITERAL
+                PsiElement(LBRACE)('{')
+                PsiWhiteSpace('\n    ')
+                BLOCK
+                  CALL_EXPRESSION
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('println')
+                    VALUE_ARGUMENT_LIST
+                      PsiElement(LPAR)('(')
+                      VALUE_ARGUMENT
+                        STRING_CONSTANT
+                          PsiElement(STRING_LITERAL)('"foo"')
+                      PsiElement(RPAR)(')')
+                  PsiElement(SEMICOLON)(';')
+                  PsiWhiteSpace('\n    ')
+                  CALL_EXPRESSION
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('print')
+                    VALUE_ARGUMENT_LIST
+                      PsiElement(LPAR)('(')
+                      VALUE_ARGUMENT
+                        STRING_CONSTANT
+                          PsiElement(STRING_LITERAL)('"bar"')
+                      PsiElement(RPAR)(')')
+                  PsiElement(SEMICOLON)(';')
+                PsiWhiteSpace('\n  ')
+                PsiElement(RBRACE)('}')
             VALUE_ARGUMENT_LIST
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')

@@ -40,7 +40,7 @@ public class JetCallExpression extends JetExpression implements JetCall {
     @Override
     @NotNull
     public List<JetExpression> getFunctionLiteralArguments() {
-        return findChildrenByType(JetNodeTypes.FUNCTION_LITERAL);
+        return findChildrenByType(JetNodeTypes.FUNCTION_LITERAL_EXPRESSION);
     }
 
     @NotNull

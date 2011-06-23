@@ -111,7 +111,7 @@ public class JetTestUtils {
                 }
 
                 @Override
-                public FunctionDescriptor getFunctionDescriptor(JetFunction declaration) {
+                public FunctionDescriptor getFunctionDescriptor(JetNamedFunction declaration) {
                     throw new UnsupportedOperationException(); // TODO
                 }
 

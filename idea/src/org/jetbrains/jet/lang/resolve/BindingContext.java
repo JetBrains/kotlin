@@ -20,7 +20,7 @@ public interface BindingContext {
     NamespaceDescriptor getNamespaceDescriptor(JetNamespace declaration);
     ClassDescriptor getClassDescriptor(JetClassOrObject declaration);
     TypeParameterDescriptor getTypeParameterDescriptor(JetTypeParameter declaration);
-    FunctionDescriptor getFunctionDescriptor(JetFunction declaration);
+    FunctionDescriptor getFunctionDescriptor(JetNamedFunction declaration);
     ConstructorDescriptor getConstructorDescriptor(JetElement declaration);
 
     VariableDescriptor getVariableDescriptor(JetProperty declaration);

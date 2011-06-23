@@ -47,8 +47,8 @@ public class JetRunConfigurationProducer extends RuntimeConfigurationProducer im
 
     private boolean hasMain(List<JetDeclaration> declarations) {
         for (JetDeclaration declaration : declarations) {
-            if (declaration instanceof JetFunction) {
-                JetFunction function = (JetFunction) declaration;
+            if (declaration instanceof JetNamedFunction) {
+                JetNamedFunction function = (JetNamedFunction) declaration;
                 if ("main".equals(function.getName())) {
                     List<JetParameter> parameters = function.getValueParameters();
                     if (parameters.size() == 1) {

@@ -993,6 +993,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
     private void parseFunctionLiteral() {
         assert _at(LBRACE);
 
+        PsiBuilder.Marker literalExpression = mark();
+
         PsiBuilder.Marker literal = mark();
 
         myBuilder.enableNewlines();
@@ -1066,12 +1068,13 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         PsiBuilder.Marker body = mark();
         parseStatements();
-        body.done(BODY);
+        body.done(BLOCK);
 
         expect(RBRACE, "Expecting '}'");
         myBuilder.restoreNewlinesState();
 
         literal.done(FUNCTION_LITERAL);
+        literalExpression.done(FUNCTION_LITERAL_EXPRESSION);
     }
 
     /*

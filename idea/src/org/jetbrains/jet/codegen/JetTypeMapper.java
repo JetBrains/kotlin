@@ -251,7 +251,7 @@ public class JetTypeMapper {
         return type;
     }
 
-    public Method mapSignature(JetFunction f) {
+    public Method mapSignature(JetNamedFunction f) {
         final JetTypeReference receiverTypeRef = f.getReceiverTypeRef();
         final JetType receiverType = receiverTypeRef == null ? null : bindingContext.resolveTypeReference(receiverTypeRef);
         final List<JetParameter> parameters = f.getValueParameters();

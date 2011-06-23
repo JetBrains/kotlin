@@ -34,7 +34,7 @@ package org.jetbrains.jet.lang.psi;
 //    @Override
 //    @NotNull
 //    public List<JetExpression> getFunctionLiteralArguments() {
-//        return findChildrenByType(JetNodeTypes.FUNCTION_LITERAL);
+//        return findChildrenByType(JetNodeTypes.FUNCTION_LITERAL_EXPRESSION);
 //    }
 //
 //    @NotNull

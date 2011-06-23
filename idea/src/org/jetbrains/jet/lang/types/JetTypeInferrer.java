@@ -947,13 +947,14 @@ public class JetTypeInferrer {
 
         @Override
         public void visitFunctionLiteralExpression(JetFunctionLiteralExpression expression) {
-            if (context.preferBlock && !expression.hasParameterSpecification()) {
+            JetFunctionLiteral functionLiteral = expression.getFunctionLiteral();
+            if (context.preferBlock && !functionLiteral.hasParameterSpecification()) {
                 context.trace.recordBlock(expression);
-                result = getBlockReturnedType(context.scope, expression.getBody(), context.dataFlowInfo, context.expectedReturnType);
+                result = getBlockReturnedType(context.scope, functionLiteral.getBodyExpression().getStatements(), context.dataFlowInfo, context.expectedReturnType);
                 return;
             }
 
-            JetTypeReference receiverTypeRef = expression.getReceiverTypeRef();
+            JetTypeReference receiverTypeRef = functionLiteral.getReceiverTypeRef();
             final JetType receiverType;
             if (receiverTypeRef != null) {
                 receiverType = context.typeResolver.resolveType(context.scope, receiverTypeRef);
@@ -966,7 +967,7 @@ public class JetTypeInferrer {
 
             List<JetType> parameterTypes = new ArrayList<JetType>();
             List<ValueParameterDescriptor> valueParameterDescriptors = Lists.newArrayList();
-            List<JetParameter> parameters = expression.getParameters();
+            List<JetParameter> parameters = functionLiteral.getValueParameters();
             for (int i = 0, parametersSize = parameters.size(); i < parametersSize; i++) {
                 JetParameter parameter = parameters.get(i);
                 JetTypeReference typeReference = parameter.getTypeReference();
@@ -988,17 +989,16 @@ public class JetTypeInferrer {
             functionDescriptor.initialize(effectiveReceiverType, Collections.<TypeParameterDescriptor>emptyList(), valueParameterDescriptors, null);
             context.trace.recordDeclarationResolution(expression, functionDescriptor);
 
-            JetTypeReference returnTypeRef = expression.getReturnTypeRef();
+            JetTypeReference returnTypeRef = functionLiteral.getReturnTypeRef();
             JetType returnType;
             if (returnTypeRef != null) {
                 returnType = context.typeResolver.resolveType(context.scope, returnTypeRef);
-            } else {
-                WritableScope writableScope = new WritableScopeImpl(context.scope, functionDescriptor, context.trace.getErrorHandler()).setDebugName("Inner scope of a function literal");
-                for (VariableDescriptor variableDescriptor : valueParameterDescriptors) {
-                    writableScope.addVariableDescriptor(variableDescriptor);
-                }
-                writableScope.setThisType(receiverType);
-                returnType = getBlockReturnedType(writableScope, expression.getBody(), context.dataFlowInfo, context.expectedReturnType);
+                JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(context.scope, functionDescriptor, context.trace);
+                services.checkFunctionReturnType(functionInnerScope, expression, functionDescriptor, returnType);
+            }
+            else {
+                JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(context.scope, functionDescriptor, context.trace);
+                returnType = getBlockReturnedType(functionInnerScope, functionLiteral.getBodyExpression().getStatements(), context.dataFlowInfo, context.expectedReturnType);
             }
             JetType safeReturnType = returnType == null ? ErrorUtils.createErrorType("<return type>") : returnType;
             functionDescriptor.setReturnType(safeReturnType);
@@ -1723,10 +1723,10 @@ public class JetTypeInferrer {
             JetScope conditionScope = context.scope;
             if (body instanceof JetFunctionLiteralExpression) {
                 JetFunctionLiteralExpression function = (JetFunctionLiteralExpression) body;
-                if (!function.hasParameterSpecification()) {
+                if (!function.getFunctionLiteral().hasParameterSpecification()) {
                     WritableScope writableScope = newWritableScopeImpl().setDebugName("do..while body scope");
                     conditionScope = writableScope;
-                    services.getBlockReturnedTypeWithWritableScope(writableScope, function.getBody(), context.dataFlowInfo, context.expectedReturnType);
+                    services.getBlockReturnedTypeWithWritableScope(writableScope, function.getFunctionLiteral().getBodyExpression().getStatements(), context.dataFlowInfo, context.expectedReturnType);
                     context.trace.recordBlock(function);
                 } else {
                     getType(context.scope, body, true);
@@ -2514,7 +2514,7 @@ public class JetTypeInferrer {
         }
 
         @Override
-        public void visitFunction(JetFunction function) {
+        public void visitNamedFunction(JetNamedFunction function) {
             scope.addFunctionDescriptor(context.classDescriptorResolver.resolveFunctionDescriptor(scope.getContainingDeclaration(), scope, function));
         }
 

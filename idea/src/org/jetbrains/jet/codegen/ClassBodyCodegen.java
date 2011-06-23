@@ -66,9 +66,9 @@ public abstract class ClassBodyCodegen {
         if (declaration instanceof JetProperty) {
             propertyCodegen.gen((JetProperty) declaration, kind);
         }
-        else if (declaration instanceof JetFunction) {
+        else if (declaration instanceof JetNamedFunction) {
             try {
-                functionCodegen.gen((JetFunction) declaration, kind);
+                functionCodegen.gen((JetNamedFunction) declaration, kind);
             } catch (RuntimeException e) {
                 throw new RuntimeException("Error generating method " + myClass.getName() + "." + declaration.getName() + " in " + kind, e);
             }

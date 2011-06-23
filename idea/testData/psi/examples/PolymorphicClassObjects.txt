@@ -326,78 +326,80 @@ JetFile: PolymorphicClassObjects.jet
           PsiWhiteSpace(' ')
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
-          FUNCTION_LITERAL
-            PsiElement(LBRACE)('{')
-            PsiWhiteSpace('\n    ')
-            BODY
-              PROPERTY
-                PsiElement(val)('val')
-                PsiWhiteSpace(' ')
-                PsiElement(IDENTIFIER)('builder')
-                PsiWhiteSpace(' ')
-                PsiElement(EQ)('=')
-                PsiWhiteSpace(' ')
+          FUNCTION_LITERAL_EXPRESSION
+            FUNCTION_LITERAL
+              PsiElement(LBRACE)('{')
+              PsiWhiteSpace('\n    ')
+              BLOCK
+                PROPERTY
+                  PsiElement(val)('val')
+                  PsiWhiteSpace(' ')
+                  PsiElement(IDENTIFIER)('builder')
+                  PsiWhiteSpace(' ')
+                  PsiElement(EQ)('=')
+                  PsiWhiteSpace(' ')
+                  DOT_QUALIFIED_EXPRESSION
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('T')
+                    PsiElement(DOT)('.')
+                    CALL_EXPRESSION
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('newBuilder')
+                      VALUE_ARGUMENT_LIST
+                        PsiElement(LPAR)('(')
+                        PsiElement(RPAR)(')')
+                PsiWhiteSpace('\n    ')
+                FOR
+                  PsiElement(for)('for')
+                  PsiWhiteSpace(' ')
+                  PsiElement(LPAR)('(')
+                  LOOP_PARAMETER
+                    PsiElement(IDENTIFIER)('e')
+                  PsiWhiteSpace(' ')
+                  PsiElement(in)('in')
+                  PsiWhiteSpace(' ')
+                  LOOP_RANGE
+                    THIS_EXPRESSION
+                      REFERENCE_EXPRESSION
+                        PsiElement(this)('this')
+                  PsiElement(RPAR)(')')
+                  PsiWhiteSpace(' ')
+                  BODY
+                    FUNCTION_LITERAL_EXPRESSION
+                      FUNCTION_LITERAL
+                        PsiElement(LBRACE)('{')
+                        PsiWhiteSpace('\n      ')
+                        BLOCK
+                          BINARY_EXPRESSION
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('builder')
+                            PsiWhiteSpace(' ')
+                            OPERATION_REFERENCE
+                              PsiElement(PLUSEQ)('+=')
+                            PsiWhiteSpace(' ')
+                            CALL_EXPRESSION
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('f')
+                              VALUE_ARGUMENT_LIST
+                                PsiElement(LPAR)('(')
+                                VALUE_ARGUMENT
+                                  REFERENCE_EXPRESSION
+                                    PsiElement(IDENTIFIER)('e')
+                                PsiElement(RPAR)(')')
+                        PsiWhiteSpace('\n    ')
+                        PsiElement(RBRACE)('}')
+                PsiWhiteSpace('\n    ')
                 DOT_QUALIFIED_EXPRESSION
                   REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('T')
+                    PsiElement(IDENTIFIER)('builder')
                   PsiElement(DOT)('.')
                   CALL_EXPRESSION
                     REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('newBuilder')
+                      PsiElement(IDENTIFIER)('result')
                     VALUE_ARGUMENT_LIST
                       PsiElement(LPAR)('(')
                       PsiElement(RPAR)(')')
-              PsiWhiteSpace('\n    ')
-              FOR
-                PsiElement(for)('for')
-                PsiWhiteSpace(' ')
-                PsiElement(LPAR)('(')
-                LOOP_PARAMETER
-                  PsiElement(IDENTIFIER)('e')
-                PsiWhiteSpace(' ')
-                PsiElement(in)('in')
-                PsiWhiteSpace(' ')
-                LOOP_RANGE
-                  THIS_EXPRESSION
-                    REFERENCE_EXPRESSION
-                      PsiElement(this)('this')
-                PsiElement(RPAR)(')')
-                PsiWhiteSpace(' ')
-                BODY
-                  FUNCTION_LITERAL
-                    PsiElement(LBRACE)('{')
-                    PsiWhiteSpace('\n      ')
-                    BODY
-                      BINARY_EXPRESSION
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('builder')
-                        PsiWhiteSpace(' ')
-                        OPERATION_REFERENCE
-                          PsiElement(PLUSEQ)('+=')
-                        PsiWhiteSpace(' ')
-                        CALL_EXPRESSION
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('f')
-                          VALUE_ARGUMENT_LIST
-                            PsiElement(LPAR)('(')
-                            VALUE_ARGUMENT
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('e')
-                            PsiElement(RPAR)(')')
-                    PsiWhiteSpace('\n    ')
-                    PsiElement(RBRACE)('}')
-              PsiWhiteSpace('\n    ')
-              DOT_QUALIFIED_EXPRESSION
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('builder')
-                PsiElement(DOT)('.')
-                CALL_EXPRESSION
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('result')
-                  VALUE_ARGUMENT_LIST
-                    PsiElement(LPAR)('(')
-                    PsiElement(RPAR)(')')
-            PsiWhiteSpace('\n  ')
-            PsiElement(RBRACE)('}')
+              PsiWhiteSpace('\n  ')
+              PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n')
         PsiElement(RBRACE)('}')

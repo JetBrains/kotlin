@@ -61,39 +61,42 @@ JetFile: FunctionCalls.jet
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('f')
           PsiWhiteSpace(' ')
-          FUNCTION_LITERAL
-            PsiElement(LBRACE)('{')
-            BODY
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('s')
-            PsiElement(RBRACE)('}')
+          FUNCTION_LITERAL_EXPRESSION
+            FUNCTION_LITERAL
+              PsiElement(LBRACE)('{')
+              BLOCK
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('s')
+              PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n  ')
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('f')
         PsiWhiteSpace('\n  ')
-        FUNCTION_LITERAL
-          PsiElement(LBRACE)('{')
-          BODY
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('s')
-          PsiElement(RBRACE)('}')
-        PsiWhiteSpace('\n  ')
-        CALL_EXPRESSION
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('f')
-          PsiWhiteSpace(' ')
+        FUNCTION_LITERAL_EXPRESSION
           FUNCTION_LITERAL
             PsiElement(LBRACE)('{')
-            PsiWhiteSpace('\n    ')
-            BODY
+            BLOCK
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('s')
-            PsiWhiteSpace('\n  ')
             PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n  ')
         CALL_EXPRESSION
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('f')
+          PsiWhiteSpace(' ')
+          FUNCTION_LITERAL_EXPRESSION
+            FUNCTION_LITERAL
+              PsiElement(LBRACE)('{')
+              PsiWhiteSpace('\n    ')
+              BLOCK
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('s')
+              PsiWhiteSpace('\n  ')
+              PsiElement(RBRACE)('}')
+        PsiWhiteSpace('\n  ')
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('f')
           VALUE_ARGUMENT_LIST
             PsiElement(LPAR)('(')
             VALUE_ARGUMENT
@@ -101,14 +104,15 @@ JetFile: FunctionCalls.jet
                 PsiElement(IDENTIFIER)('a')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
-          FUNCTION_LITERAL
-            PsiElement(LBRACE)('{')
-            PsiWhiteSpace('\n    ')
-            BODY
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('s')
-            PsiWhiteSpace('\n  ')
-            PsiElement(RBRACE)('}')
+          FUNCTION_LITERAL_EXPRESSION
+            FUNCTION_LITERAL
+              PsiElement(LBRACE)('{')
+              PsiWhiteSpace('\n    ')
+              BLOCK
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('s')
+              PsiWhiteSpace('\n  ')
+              PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n  ')
         CALL_EXPRESSION
           REFERENCE_EXPRESSION
@@ -120,37 +124,11 @@ JetFile: FunctionCalls.jet
                 PsiElement(IDENTIFIER)('a')
             PsiElement(RPAR)(')')
         PsiWhiteSpace('\n  ')
-        FUNCTION_LITERAL
-          PsiElement(LBRACE)('{')
-          PsiWhiteSpace('\n    ')
-          BODY
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('s')
-          PsiWhiteSpace('\n  ')
-          PsiElement(RBRACE)('}')
-        PsiWhiteSpace('\n  ')
-        CALL_EXPRESSION
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('f')
-          TYPE_ARGUMENT_LIST
-            PsiElement(LT)('<')
-            TYPE_PROJECTION
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('a')
-            PsiElement(GT)('>')
-          VALUE_ARGUMENT_LIST
-            PsiElement(LPAR)('(')
-            VALUE_ARGUMENT
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('a')
-            PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
+        FUNCTION_LITERAL_EXPRESSION
           FUNCTION_LITERAL
             PsiElement(LBRACE)('{')
             PsiWhiteSpace('\n    ')
-            BODY
+            BLOCK
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('s')
             PsiWhiteSpace('\n  ')
@@ -173,15 +151,44 @@ JetFile: FunctionCalls.jet
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('a')
             PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          FUNCTION_LITERAL_EXPRESSION
+            FUNCTION_LITERAL
+              PsiElement(LBRACE)('{')
+              PsiWhiteSpace('\n    ')
+              BLOCK
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('s')
+              PsiWhiteSpace('\n  ')
+              PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n  ')
-        FUNCTION_LITERAL
-          PsiElement(LBRACE)('{')
-          PsiWhiteSpace('\n    ')
-          BODY
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('s')
-          PsiWhiteSpace('\n  ')
-          PsiElement(RBRACE)('}')
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('f')
+          TYPE_ARGUMENT_LIST
+            PsiElement(LT)('<')
+            TYPE_PROJECTION
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
+            PsiElement(GT)('>')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            VALUE_ARGUMENT
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('a')
+            PsiElement(RPAR)(')')
+        PsiWhiteSpace('\n  ')
+        FUNCTION_LITERAL_EXPRESSION
+          FUNCTION_LITERAL
+            PsiElement(LBRACE)('{')
+            PsiWhiteSpace('\n    ')
+            BLOCK
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('s')
+            PsiWhiteSpace('\n  ')
+            PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n  ')
         CALL_EXPRESSION
           REFERENCE_EXPRESSION

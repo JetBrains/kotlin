@@ -90,7 +90,7 @@ public class ClosureCodegen {
         final Method constructor = generateConstructor(cv, funClass);
 
         generateBridge(name, funDescriptor, cv);
-        generateBody(name, funDescriptor, cv, container.getProject(), fun.getBody());
+        generateBody(name, funDescriptor, cv, container.getProject(), fun.getFunctionLiteral().getBodyExpression().getStatements());
 
         cv.visitEnd();
 

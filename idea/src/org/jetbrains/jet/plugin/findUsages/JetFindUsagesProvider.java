@@ -30,7 +30,7 @@ public class JetFindUsagesProvider implements FindUsagesProvider {
     @NotNull
     @Override
     public String getType(@NotNull PsiElement psiElement) {
-        if (psiElement instanceof JetFunction) {
+        if (psiElement instanceof JetNamedFunction) {
             return "function";
         }
         if (psiElement instanceof JetClass) {

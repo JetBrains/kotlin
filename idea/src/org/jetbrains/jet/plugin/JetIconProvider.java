@@ -22,7 +22,7 @@ public class JetIconProvider extends IconProvider {
         if (psiElement instanceof JetNamespace) {
             return (flags & Iconable.ICON_FLAG_OPEN) != 0 ? Icons.PACKAGE_OPEN_ICON : Icons.PACKAGE_ICON;
         }
-        if (psiElement instanceof JetFunction) {
+        if (psiElement instanceof JetNamedFunction) {
             return PsiTreeUtil.getParentOfType(psiElement, JetNamedDeclaration.class) instanceof JetClass
                     ? Icons.METHOD_ICON
                     : Icons.FUNCTION_ICON;

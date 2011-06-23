@@ -153,8 +153,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         HashSet<FunctionDescriptor> overridden = new HashSet<FunctionDescriptor>();
         for (JetDeclaration declaration : myClass.getDeclarations()) {
-            if (declaration instanceof JetFunction) {
-                overridden.addAll(bindingContext.getFunctionDescriptor((JetFunction) declaration).getOverriddenFunctions());
+            if (declaration instanceof JetNamedFunction) {
+                overridden.addAll(bindingContext.getFunctionDescriptor((JetNamedFunction) declaration).getOverriddenFunctions());
             }
         }
 
@@ -362,9 +362,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             if (declaration instanceof JetProperty) {
                 propertyCodegen.gen((JetProperty) declaration, kind);
             }
-            else if (declaration instanceof JetFunction) {
-                if (!overriden.contains(bindingContext.getFunctionDescriptor((JetFunction) declaration))) {
-                    functionCodegen.gen((JetFunction) declaration, kind);
+            else if (declaration instanceof JetNamedFunction) {
+                if (!overriden.contains(bindingContext.getFunctionDescriptor((JetNamedFunction) declaration))) {
+                    functionCodegen.gen((JetNamedFunction) declaration, kind);
                 }
             }
         }

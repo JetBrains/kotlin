@@ -79,7 +79,7 @@ public class ClassDescriptorResolver {
                 }
 
                 @Override
-                public void visitFunction(JetFunction function) {
+                public void visitNamedFunction(JetNamedFunction function) {
                     if (function.getReturnTypeRef() != null) {
                         memberDeclarations.addFunctionDescriptor(resolveFunctionDescriptor(classDescriptor, parameterScope, function));
                     } else {
@@ -158,7 +158,7 @@ public class ClassDescriptorResolver {
     }
 
     @NotNull
-    public FunctionDescriptorImpl resolveFunctionDescriptor(DeclarationDescriptor containingDescriptor, final JetScope scope, final JetFunction function) {
+    public FunctionDescriptorImpl resolveFunctionDescriptor(DeclarationDescriptor containingDescriptor, final JetScope scope, final JetNamedFunction function) {
         final FunctionDescriptorImpl functionDescriptor = new FunctionDescriptorImpl(
                 containingDescriptor,
                 AnnotationResolver.INSTANCE.resolveAnnotations(function.getModifierList()),

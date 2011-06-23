@@ -62,18 +62,18 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
             }
         }
 
-        if (element instanceof JetFunction) {
-            JetFunction jetFunction = (JetFunction) element;
+        if (element instanceof JetNamedFunction) {
+            JetNamedFunction jetFunction = (JetNamedFunction) element;
 
             final FunctionDescriptor functionDescriptor = bindingContext.getFunctionDescriptor(jetFunction);
             if (functionDescriptor == null) return null;
             final Set<? extends FunctionDescriptor> overriddenFunctions = functionDescriptor.getOverriddenFunctions();
             Icon icon = isMember(functionDescriptor) ? (overriddenFunctions.isEmpty() ? Icons.METHOD_ICON : OVERRIDING_FUNCTION) : Icons.FUNCTION_ICON;
-            return new LineMarkerInfo<JetFunction>(
+            return new LineMarkerInfo<JetNamedFunction>(
                     jetFunction, jetFunction.getTextOffset(), icon, Pass.UPDATE_ALL,
-                    new Function<JetFunction, String>() {
+                    new Function<JetNamedFunction, String>() {
                         @Override
-                        public String fun(JetFunction jetFunction) {
+                        public String fun(JetNamedFunction jetFunction) {
                             StringBuilder builder = new StringBuilder();
                             builder.append(DescriptorRenderer.HTML.render(functionDescriptor));
                             int overrideCount = overriddenFunctions.size();
@@ -91,9 +91,9 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
                             return builder.toString();
                         }
                     },
-                    new GutterIconNavigationHandler<JetFunction>() {
+                    new GutterIconNavigationHandler<JetNamedFunction>() {
                         @Override
-                        public void navigate(MouseEvent event, JetFunction elt) {
+                        public void navigate(MouseEvent event, JetNamedFunction elt) {
                             if (overriddenFunctions.isEmpty()) return;
                             final List<PsiElement> list = Lists.newArrayList();
                             for (FunctionDescriptor overriddenFunction : overriddenFunctions) {
@@ -116,8 +116,8 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
                                 final JBPopup popup = NavigationUtil.getPsiElementPopup(PsiUtilBase.toPsiElementArray(list), new DefaultPsiElementCellRenderer() {
                                             @Override
                                             public String getElementText(PsiElement element) {
-                                                if (element instanceof JetFunction) {
-                                                    JetFunction function = (JetFunction) element;
+                                                if (element instanceof JetNamedFunction) {
+                                                    JetNamedFunction function = (JetNamedFunction) element;
                                                     return DescriptorRenderer.HTML.render(bindingContext.getFunctionDescriptor(function));
                                                 }
                                                 return super.getElementText(element);

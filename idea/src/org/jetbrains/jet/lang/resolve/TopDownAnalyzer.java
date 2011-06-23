@@ -28,7 +28,7 @@ public class TopDownAnalyzer {
     private final Map<JetNamespace, WritableScope> namespaceScopes = Maps.newHashMap();
     private final Map<JetNamespace, NamespaceDescriptorImpl> namespaceDescriptors = Maps.newHashMap();
 
-    private final Map<JetFunction, FunctionDescriptorImpl> functions = Maps.newLinkedHashMap();
+    private final Map<JetNamedFunction, FunctionDescriptorImpl> functions = Maps.newLinkedHashMap();
     private final Map<JetDeclaration, ConstructorDescriptor> constructors = Maps.newLinkedHashMap();
     private final Map<JetProperty, PropertyDescriptor> properties = new LinkedHashMap<JetProperty, PropertyDescriptor>();
     private final Map<JetDeclaration, JetScope> declaringScopes = Maps.newHashMap();
@@ -417,7 +417,7 @@ public class TopDownAnalyzer {
         for (JetDeclaration declaration : declarations) {
             declaration.accept(new JetVisitor() {
                 @Override
-                public void visitFunction(JetFunction function) {
+                public void visitNamedFunction(JetNamedFunction function) {
                     FunctionDescriptorImpl functionDescriptor = classDescriptorResolver.resolveFunctionDescriptor(namespaceLike, scope, function);
                     namespaceLike.addFunctionDescriptor(functionDescriptor);
                     functions.put(function, functionDescriptor);
@@ -880,14 +880,14 @@ public class TopDownAnalyzer {
     }
 
     private void resolveFunctionBodies() {
-        for (Map.Entry<JetFunction, FunctionDescriptorImpl> entry : functions.entrySet()) {
+        for (Map.Entry<JetNamedFunction, FunctionDescriptorImpl> entry : functions.entrySet()) {
             JetDeclaration declaration = entry.getKey();
             FunctionDescriptor descriptor = entry.getValue();
 
             JetScope declaringScope = declaringScopes.get(declaration);
             assert declaringScope != null;
 
-            resolveFunctionBody(traceForMembers, (JetFunction) declaration, (FunctionDescriptorImpl) descriptor, declaringScope);
+            resolveFunctionBody(traceForMembers, (JetNamedFunction) declaration, (FunctionDescriptorImpl) descriptor, declaringScope);
 
             assert descriptor.getUnsubstitutedReturnType() != null;
         }

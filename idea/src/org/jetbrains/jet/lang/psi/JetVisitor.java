@@ -34,7 +34,7 @@ public class JetVisitor extends PsiElementVisitor {
         visitNamedDeclaration(extension);
     }
 
-    public void visitFunction(JetFunction function) {
+    public void visitNamedFunction(JetNamedFunction function) {
         visitNamedDeclaration(function);
     }
 

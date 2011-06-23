@@ -55,7 +55,7 @@ public class JetChangeUtil {
         return createProperty(project, name, null).getNameIdentifier();
     }
 
-    public static JetFunction createFunction(Project project, String funDecl) {
-        return createDeclaration(project, funDecl, JetFunction.class);
+    public static JetNamedFunction createFunction(Project project, String funDecl) {
+        return createDeclaration(project, funDecl, JetNamedFunction.class);
     }
 }

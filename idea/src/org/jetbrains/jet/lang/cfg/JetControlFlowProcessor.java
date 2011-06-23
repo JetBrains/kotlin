@@ -492,7 +492,7 @@ public class JetControlFlowProcessor {
         }
 
         @Override
-        public void visitFunction(JetFunction function) {
+        public void visitNamedFunction(JetNamedFunction function) {
             JetExpression bodyExpression = function.getBodyExpression();
             if (bodyExpression != null) {
                 generate(function, bodyExpression);
@@ -501,13 +501,14 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitFunctionLiteralExpression(JetFunctionLiteralExpression expression) {
-            if (preferBlock && !expression.hasParameterSpecification()) {
-                for (JetElement statement : expression.getBody()) {
+            JetFunctionLiteral functionLiteral = expression.getFunctionLiteral();
+            if (preferBlock && !functionLiteral.hasParameterSpecification()) {
+                for (JetElement statement : functionLiteral.getBodyExpression().getStatements()) {
                     value(statement, true, false);
                 }
             }
             else {
-                generateSubroutineControlFlow(expression, expression.getBody(), true);
+                generateSubroutineControlFlow(expression, functionLiteral.getBodyExpression().getStatements(), true);
             }
         }
 
@@ -766,7 +767,7 @@ public class JetControlFlowProcessor {
 
     private final CFPVisitor FOR_LOCAL_CLASSES = new CFPVisitor(false, false) {
         @Override
-        public void visitFunction(JetFunction function) {
+        public void visitNamedFunction(JetNamedFunction function) {
             // Nothing
         }
     };

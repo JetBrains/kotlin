@@ -20,58 +20,61 @@ JetFile: LINQ.jet
               OPERATION_REFERENCE
                 PsiElement(IDENTIFIER)('filter')
               PsiWhiteSpace(' ')
+              FUNCTION_LITERAL_EXPRESSION
+                FUNCTION_LITERAL
+                  PsiElement(LBRACE)('{')
+                  BLOCK
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('it')
+                      PsiElement(DOT)('.')
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('x')
+                  PsiElement(RBRACE)('}')
+            PsiWhiteSpace(' ')
+            OPERATION_REFERENCE
+              PsiElement(IDENTIFIER)('map')
+            PsiWhiteSpace(' ')
+            FUNCTION_LITERAL_EXPRESSION
               FUNCTION_LITERAL
                 PsiElement(LBRACE)('{')
-                BODY
+                BLOCK
                   DOT_QUALIFIED_EXPRESSION
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('it')
                     PsiElement(DOT)('.')
                     REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('x')
+                      PsiElement(IDENTIFIER)('foo')
                 PsiElement(RBRACE)('}')
-            PsiWhiteSpace(' ')
-            OPERATION_REFERENCE
-              PsiElement(IDENTIFIER)('map')
-            PsiWhiteSpace(' ')
-            FUNCTION_LITERAL
-              PsiElement(LBRACE)('{')
-              BODY
-                DOT_QUALIFIED_EXPRESSION
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('it')
-                  PsiElement(DOT)('.')
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('foo')
-              PsiElement(RBRACE)('}')
           PsiWhiteSpace(' ')
           OPERATION_REFERENCE
             PsiElement(IDENTIFIER)('aggregate')
           PsiWhiteSpace(' ')
-          FUNCTION_LITERAL
-            PsiElement(LBRACE)('{')
-            VALUE_PARAMETER_LIST
-              PsiElement(LPAR)('(')
-              VALUE_PARAMETER
-                PsiElement(IDENTIFIER)('a')
-              PsiElement(COMMA)(',')
-              PsiWhiteSpace(' ')
-              VALUE_PARAMETER
-                PsiElement(IDENTIFIER)('b')
-              PsiElement(RPAR)(')')
-            PsiWhiteSpace(' ')
-            PsiElement(DOUBLE_ARROW)('=>')
-            PsiWhiteSpace(' ')
-            BODY
-              BINARY_EXPRESSION
-                REFERENCE_EXPRESSION
+          FUNCTION_LITERAL_EXPRESSION
+            FUNCTION_LITERAL
+              PsiElement(LBRACE)('{')
+              VALUE_PARAMETER_LIST
+                PsiElement(LPAR)('(')
+                VALUE_PARAMETER
                   PsiElement(IDENTIFIER)('a')
+                PsiElement(COMMA)(',')
                 PsiWhiteSpace(' ')
-                OPERATION_REFERENCE
-                  PsiElement(PLUS)('+')
-                PsiWhiteSpace(' ')
-                REFERENCE_EXPRESSION
+                VALUE_PARAMETER
                   PsiElement(IDENTIFIER)('b')
-            PsiElement(RBRACE)('}')
+                PsiElement(RPAR)(')')
+              PsiWhiteSpace(' ')
+              PsiElement(DOUBLE_ARROW)('=>')
+              PsiWhiteSpace(' ')
+              BLOCK
+                BINARY_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
+                  PsiWhiteSpace(' ')
+                  OPERATION_REFERENCE
+                    PsiElement(PLUS)('+')
+                  PsiWhiteSpace(' ')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('b')
+              PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n')
         PsiElement(RBRACE)('}')

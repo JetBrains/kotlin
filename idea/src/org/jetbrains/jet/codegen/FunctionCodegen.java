@@ -35,7 +35,7 @@ public class FunctionCodegen {
         typeMapper = new JetTypeMapper(standardLibrary, bindingContext);
     }
 
-    public void gen(JetFunction f, OwnerKind kind) {
+    public void gen(JetNamedFunction f, OwnerKind kind) {
         final JetTypeReference receiverTypeRef = f.getReceiverTypeRef();
         final JetType receiverType = receiverTypeRef == null ? null : bindingContext.resolveTypeReference(receiverTypeRef);
         Method method = typeMapper.mapSignature(f);

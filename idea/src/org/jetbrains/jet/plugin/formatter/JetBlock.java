@@ -29,7 +29,7 @@ public class JetBlock implements ASTBlock {
     private static final TokenSet CODE_BLOCKS = TokenSet.create(
             JetNodeTypes.BLOCK,
             JetNodeTypes.CLASS_BODY,
-            JetNodeTypes.FUNCTION_LITERAL);
+            JetNodeTypes.FUNCTION_LITERAL_EXPRESSION);
 
     private static final TokenSet STATEMENT_PARTS = TokenSet.create(
             JetNodeTypes.THEN,

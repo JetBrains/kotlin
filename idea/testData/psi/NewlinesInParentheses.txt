@@ -91,19 +91,20 @@ JetFile: NewlinesInParentheses.jet
           PsiWhiteSpace(' ')
           PARENTHESIZED
             PsiElement(LPAR)('(')
-            FUNCTION_LITERAL
-              PsiElement(LBRACE)('{')
-              BODY
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('a')
-                PsiWhiteSpace('\n  ')
-                PREFIX_EXPRESSION
-                  OPERATION_REFERENCE
-                    PsiElement(PLUS)('+')
-                  PsiWhiteSpace(' ')
+            FUNCTION_LITERAL_EXPRESSION
+              FUNCTION_LITERAL
+                PsiElement(LBRACE)('{')
+                BLOCK
                   REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('b')
-              PsiElement(RBRACE)('}')
+                    PsiElement(IDENTIFIER)('a')
+                  PsiWhiteSpace('\n  ')
+                  PREFIX_EXPRESSION
+                    OPERATION_REFERENCE
+                      PsiElement(PLUS)('+')
+                    PsiWhiteSpace(' ')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('b')
+                PsiElement(RBRACE)('}')
             PsiElement(RPAR)(')')
         PsiWhiteSpace('\n  ')
         PROPERTY
@@ -116,19 +117,20 @@ JetFile: NewlinesInParentheses.jet
           PARENTHESIZED
             PsiElement(LPAR)('(')
             BINARY_EXPRESSION
-              FUNCTION_LITERAL
-                PsiElement(LBRACE)('{')
-                BODY
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('a')
-                  PsiWhiteSpace('\n  ')
-                  PREFIX_EXPRESSION
-                    OPERATION_REFERENCE
-                      PsiElement(PLUS)('+')
-                    PsiWhiteSpace(' ')
+              FUNCTION_LITERAL_EXPRESSION
+                FUNCTION_LITERAL
+                  PsiElement(LBRACE)('{')
+                  BLOCK
                     REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('b')
-                PsiElement(RBRACE)('}')
+                      PsiElement(IDENTIFIER)('a')
+                    PsiWhiteSpace('\n  ')
+                    PREFIX_EXPRESSION
+                      OPERATION_REFERENCE
+                        PsiElement(PLUS)('+')
+                      PsiWhiteSpace(' ')
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('b')
+                  PsiElement(RBRACE)('}')
               PsiWhiteSpace('\n  ')
               OPERATION_REFERENCE
                 PsiElement(PLUS)('+')
@@ -172,19 +174,20 @@ JetFile: NewlinesInParentheses.jet
               PsiElement(IDENTIFIER)('b')
             INDICES
               PsiElement(LBRACKET)('[')
-              FUNCTION_LITERAL
-                PsiElement(LBRACE)('{')
-                BODY
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('c')
-                  PsiWhiteSpace('\n    ')
-                  PREFIX_EXPRESSION
-                    OPERATION_REFERENCE
-                      PsiElement(PLUS)('+')
-                    PsiWhiteSpace(' ')
+              FUNCTION_LITERAL_EXPRESSION
+                FUNCTION_LITERAL
+                  PsiElement(LBRACE)('{')
+                  BLOCK
                     REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('d')
-                PsiElement(RBRACE)('}')
+                      PsiElement(IDENTIFIER)('c')
+                    PsiWhiteSpace('\n    ')
+                    PREFIX_EXPRESSION
+                      OPERATION_REFERENCE
+                        PsiElement(PLUS)('+')
+                      PsiWhiteSpace(' ')
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('d')
+                  PsiElement(RBRACE)('}')
               PsiElement(RBRACKET)(']')
         PsiWhiteSpace('\n  ')
         PROPERTY
@@ -200,19 +203,20 @@ JetFile: NewlinesInParentheses.jet
             INDICES
               PsiElement(LBRACKET)('[')
               BINARY_EXPRESSION
-                FUNCTION_LITERAL
-                  PsiElement(LBRACE)('{')
-                  BODY
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('c')
-                    PsiWhiteSpace('\n    ')
-                    PREFIX_EXPRESSION
-                      OPERATION_REFERENCE
-                        PsiElement(PLUS)('+')
-                      PsiWhiteSpace(' ')
+                FUNCTION_LITERAL_EXPRESSION
+                  FUNCTION_LITERAL
+                    PsiElement(LBRACE)('{')
+                    BLOCK
                       REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('d')
-                  PsiElement(RBRACE)('}')
+                        PsiElement(IDENTIFIER)('c')
+                      PsiWhiteSpace('\n    ')
+                      PREFIX_EXPRESSION
+                        OPERATION_REFERENCE
+                          PsiElement(PLUS)('+')
+                        PsiWhiteSpace(' ')
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('d')
+                    PsiElement(RBRACE)('}')
                 PsiWhiteSpace('\n    ')
                 OPERATION_REFERENCE
                   PsiElement(PLUS)('+')

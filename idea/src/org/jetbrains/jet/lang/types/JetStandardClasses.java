@@ -380,5 +380,14 @@ public class JetStandardClasses {
         List<TypeProjection> arguments = type.getArguments();
         return arguments.get(arguments.size() - 1).getType();
     }
+}
 
+class A {
+
+    class B {
+        @Override
+        public boolean equals(Object obj) {
+            return A.super.equals(obj); // TODO
+        }
+    }
 }

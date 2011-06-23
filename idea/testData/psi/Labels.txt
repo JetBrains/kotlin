@@ -278,33 +278,34 @@ JetFile: Labels.jet
             PREFIX_EXPRESSION
               OPERATION_REFERENCE
                 PsiElement(LABEL_IDENTIFIER)('@f')
-              FUNCTION_LITERAL
-                PsiElement(LBRACE)('{')
-                PsiWhiteSpace('\n      ')
-                BODY
-                  IF
-                    PsiElement(if)('if')
-                    PsiWhiteSpace(' ')
-                    PsiElement(LPAR)('(')
-                    CONDITION
-                      INTEGER_CONSTANT
-                        PsiElement(INTEGER_LITERAL)('1')
-                    PsiElement(RPAR)(')')
-                    PsiWhiteSpace(' ')
-                    THEN
-                      RETURN
-                        PsiElement(return)('return')
+              FUNCTION_LITERAL_EXPRESSION
+                FUNCTION_LITERAL
+                  PsiElement(LBRACE)('{')
                   PsiWhiteSpace('\n      ')
-                  RETURN
-                    PsiElement(return)('return')
-                    LABEL_QUALIFIER
-                      LABEL_REFERENCE
-                        PsiElement(LABEL_IDENTIFIER)('@f')
-                    PsiWhiteSpace(' ')
-                    BOOLEAN_CONSTANT
-                      PsiElement(true)('true')
-                PsiWhiteSpace('\n  ')
-                PsiElement(RBRACE)('}')
+                  BLOCK
+                    IF
+                      PsiElement(if)('if')
+                      PsiWhiteSpace(' ')
+                      PsiElement(LPAR)('(')
+                      CONDITION
+                        INTEGER_CONSTANT
+                          PsiElement(INTEGER_LITERAL)('1')
+                      PsiElement(RPAR)(')')
+                      PsiWhiteSpace(' ')
+                      THEN
+                        RETURN
+                          PsiElement(return)('return')
+                    PsiWhiteSpace('\n      ')
+                    RETURN
+                      PsiElement(return)('return')
+                      LABEL_QUALIFIER
+                        LABEL_REFERENCE
+                          PsiElement(LABEL_IDENTIFIER)('@f')
+                      PsiWhiteSpace(' ')
+                      BOOLEAN_CONSTANT
+                        PsiElement(true)('true')
+                  PsiWhiteSpace('\n  ')
+                  PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n\n  ')
         DOT_QUALIFIED_EXPRESSION
           REFERENCE_EXPRESSION
@@ -317,33 +318,34 @@ JetFile: Labels.jet
             PREFIX_EXPRESSION
               OPERATION_REFERENCE
                 PsiElement(AT)('@')
-              FUNCTION_LITERAL
-                PsiElement(LBRACE)('{')
-                PsiWhiteSpace('\n      ')
-                BODY
-                  IF
-                    PsiElement(if)('if')
-                    PsiWhiteSpace(' ')
-                    PsiElement(LPAR)('(')
-                    CONDITION
-                      INTEGER_CONSTANT
-                        PsiElement(INTEGER_LITERAL)('1')
-                    PsiElement(RPAR)(')')
-                    PsiWhiteSpace(' ')
-                    THEN
-                      RETURN
-                        PsiElement(return)('return')
+              FUNCTION_LITERAL_EXPRESSION
+                FUNCTION_LITERAL
+                  PsiElement(LBRACE)('{')
                   PsiWhiteSpace('\n      ')
-                  RETURN
-                    PsiElement(return)('return')
-                    LABEL_QUALIFIER
-                      LABEL_REFERENCE
-                        PsiElement(AT)('@')
-                    PsiWhiteSpace(' ')
-                    BOOLEAN_CONSTANT
-                      PsiElement(true)('true')
-                PsiWhiteSpace('\n  ')
-                PsiElement(RBRACE)('}')
+                  BLOCK
+                    IF
+                      PsiElement(if)('if')
+                      PsiWhiteSpace(' ')
+                      PsiElement(LPAR)('(')
+                      CONDITION
+                        INTEGER_CONSTANT
+                          PsiElement(INTEGER_LITERAL)('1')
+                      PsiElement(RPAR)(')')
+                      PsiWhiteSpace(' ')
+                      THEN
+                        RETURN
+                          PsiElement(return)('return')
+                    PsiWhiteSpace('\n      ')
+                    RETURN
+                      PsiElement(return)('return')
+                      LABEL_QUALIFIER
+                        LABEL_REFERENCE
+                          PsiElement(AT)('@')
+                      PsiWhiteSpace(' ')
+                      BOOLEAN_CONSTANT
+                        PsiElement(true)('true')
+                  PsiWhiteSpace('\n  ')
+                  PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n\n  ')
         DOT_QUALIFIED_EXPRESSION
           REFERENCE_EXPRESSION
@@ -356,33 +358,34 @@ JetFile: Labels.jet
             PREFIX_EXPRESSION
               OPERATION_REFERENCE
                 PsiElement(ATAT)('@@')
-              FUNCTION_LITERAL
-                PsiElement(LBRACE)('{')
-                PsiWhiteSpace('\n      ')
-                BODY
-                  IF
-                    PsiElement(if)('if')
-                    PsiWhiteSpace(' ')
-                    PsiElement(LPAR)('(')
-                    CONDITION
-                      INTEGER_CONSTANT
-                        PsiElement(INTEGER_LITERAL)('1')
-                    PsiElement(RPAR)(')')
-                    PsiWhiteSpace(' ')
-                    THEN
-                      RETURN
-                        PsiElement(return)('return')
+              FUNCTION_LITERAL_EXPRESSION
+                FUNCTION_LITERAL
+                  PsiElement(LBRACE)('{')
                   PsiWhiteSpace('\n      ')
-                  RETURN
-                    PsiElement(return)('return')
-                    LABEL_QUALIFIER
-                      LABEL_REFERENCE
-                        PsiElement(ATAT)('@@')
-                    PsiWhiteSpace(' ')
-                    BOOLEAN_CONSTANT
-                      PsiElement(true)('true')
-                PsiWhiteSpace('\n  ')
-                PsiElement(RBRACE)('}')
+                  BLOCK
+                    IF
+                      PsiElement(if)('if')
+                      PsiWhiteSpace(' ')
+                      PsiElement(LPAR)('(')
+                      CONDITION
+                        INTEGER_CONSTANT
+                          PsiElement(INTEGER_LITERAL)('1')
+                      PsiElement(RPAR)(')')
+                      PsiWhiteSpace(' ')
+                      THEN
+                        RETURN
+                          PsiElement(return)('return')
+                    PsiWhiteSpace('\n      ')
+                    RETURN
+                      PsiElement(return)('return')
+                      LABEL_QUALIFIER
+                        LABEL_REFERENCE
+                          PsiElement(ATAT)('@@')
+                      PsiWhiteSpace(' ')
+                      BOOLEAN_CONSTANT
+                        PsiElement(true)('true')
+                  PsiWhiteSpace('\n  ')
+                  PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n\n  ')
         THIS_EXPRESSION
           REFERENCE_EXPRESSION

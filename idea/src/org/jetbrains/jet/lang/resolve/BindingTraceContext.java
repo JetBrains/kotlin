@@ -195,7 +195,7 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
     }
 
     @Override
-    public FunctionDescriptor getFunctionDescriptor(JetFunction declaration) {
+    public FunctionDescriptor getFunctionDescriptor(JetNamedFunction declaration) {
         return (FunctionDescriptor) declarationsToDescriptors.get(declaration);
     }
 
@@ -264,7 +264,7 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
 
     @Override
     public boolean isBlock(JetFunctionLiteralExpression expression) {
-        return !expression.hasParameterSpecification() && blocks.contains(expression);
+        return !expression.getFunctionLiteral().hasParameterSpecification() && blocks.contains(expression);
     }
 
     @Override

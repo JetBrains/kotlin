@@ -288,45 +288,46 @@ JetFile: BitArith.jet
           PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           BODY
-            FUNCTION_LITERAL
-              PsiElement(LBRACE)('{')
-              PsiWhiteSpace('\n    ')
-              BODY
-                BINARY_EXPRESSION
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('result')
-                  PsiWhiteSpace(' ')
-                  OPERATION_REFERENCE
-                    PsiElement(PLUSEQ)('+=')
-                  PsiWhiteSpace(' ')
-                  BINARY_EXPRESSION
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('x')
-                    PsiWhiteSpace(' ')
-                    OPERATION_REFERENCE
-                      PsiElement(IDENTIFIER)('and')
-                    PsiWhiteSpace(' ')
-                    INTEGER_CONSTANT
-                      PsiElement(INTEGER_LITERAL)('1')
+            FUNCTION_LITERAL_EXPRESSION
+              FUNCTION_LITERAL
+                PsiElement(LBRACE)('{')
                 PsiWhiteSpace('\n    ')
-                BINARY_EXPRESSION
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('x')
-                  PsiWhiteSpace(' ')
-                  OPERATION_REFERENCE
-                    PsiElement(EQ)('=')
-                  PsiWhiteSpace(' ')
+                BLOCK
+                  BINARY_EXPRESSION
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('result')
+                    PsiWhiteSpace(' ')
+                    OPERATION_REFERENCE
+                      PsiElement(PLUSEQ)('+=')
+                    PsiWhiteSpace(' ')
+                    BINARY_EXPRESSION
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('x')
+                      PsiWhiteSpace(' ')
+                      OPERATION_REFERENCE
+                        PsiElement(IDENTIFIER)('and')
+                      PsiWhiteSpace(' ')
+                      INTEGER_CONSTANT
+                        PsiElement(INTEGER_LITERAL)('1')
+                  PsiWhiteSpace('\n    ')
                   BINARY_EXPRESSION
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('x')
                     PsiWhiteSpace(' ')
                     OPERATION_REFERENCE
-                      PsiElement(IDENTIFIER)('ushr')
+                      PsiElement(EQ)('=')
                     PsiWhiteSpace(' ')
-                    INTEGER_CONSTANT
-                      PsiElement(INTEGER_LITERAL)('1')
-              PsiWhiteSpace('\n  ')
-              PsiElement(RBRACE)('}')
+                    BINARY_EXPRESSION
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('x')
+                      PsiWhiteSpace(' ')
+                      OPERATION_REFERENCE
+                        PsiElement(IDENTIFIER)('ushr')
+                      PsiWhiteSpace(' ')
+                      INTEGER_CONSTANT
+                        PsiElement(INTEGER_LITERAL)('1')
+                PsiWhiteSpace('\n  ')
+                PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n  ')
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('result')
