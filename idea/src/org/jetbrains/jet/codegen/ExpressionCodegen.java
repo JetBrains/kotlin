@@ -851,7 +851,7 @@ public class ExpressionCodegen extends JetVisitor {
                 // TODO handle more levels of class nestng
             }
             else {
-                return StackValue.local(0, JetTypeMapper.TYPE_OBJECT);
+                return thisExpression != null ? thisExpression : StackValue.local(0, JetTypeMapper.TYPE_OBJECT);
             }
         }
     }

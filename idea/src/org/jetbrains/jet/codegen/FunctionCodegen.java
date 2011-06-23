@@ -74,8 +74,15 @@ public class FunctionCodegen {
             mv.visitCode();
             FrameMap frameMap = new FrameMap();
 
-            if (kind != OwnerKind.NAMESPACE || receiverType != null) {
+            int thisIdx = -1;
+            if (kind != OwnerKind.NAMESPACE) {
                 frameMap.enterTemp();  // 0 slot for this
+                thisIdx++;
+            }
+
+            if (receiverType != null) {
+                thisIdx++;
+                frameMap.enterTemp();  // Next slot for fake this
             }
 
             Type[] argTypes = jvmSignature.getArgumentTypes();
@@ -84,7 +91,7 @@ public class FunctionCodegen {
                 frameMap.enter(parameter, argTypes[i].getSize());
             }
 
-            StackValue thisExpression = receiverType == null ? null : StackValue.local(0, state.getTypeMapper().mapType(receiverType));
+            StackValue thisExpression = receiverType == null ? null : StackValue.local(thisIdx, state.getTypeMapper().mapType(receiverType));
             ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, jvmSignature.getReturnType(), contextDesc, kind, thisExpression, state);
             if (kind instanceof OwnerKind.DelegateKind) {
                 OwnerKind.DelegateKind dk = (OwnerKind.DelegateKind) kind;

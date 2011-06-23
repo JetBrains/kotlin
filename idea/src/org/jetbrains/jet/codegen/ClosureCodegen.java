@@ -93,7 +93,7 @@ public class ClosureCodegen {
 
     private void generateBody(String className, FunctionDescriptor funDescriptor, ClassVisitor cv, Project project, List<JetElement> body) {
         FunctionCodegen fc = new FunctionCodegen(null, cv, state);
-        fc.generatedMethod(body, OwnerKind.IMPLEMENTATION, invokeSignature(funDescriptor), null, funDescriptor.getUnsubstitutedValueParameters(), null);
+        fc.generatedMethod(body, OwnerKind.IMPLEMENTATION, invokeSignature(funDescriptor), funDescriptor.getReceiverType(), funDescriptor.getUnsubstitutedValueParameters(), null);
     }
 
     private void generateBridge(String className, FunctionDescriptor funDescriptor, ClassVisitor cv) {
@@ -107,8 +107,15 @@ public class ClosureCodegen {
 
         iv.load(0, Type.getObjectType(className));
 
-        final List<ValueParameterDescriptor> params = funDescriptor.getUnsubstitutedValueParameters();
+        final JetType receiverType = funDescriptor.getReceiverType();
         int count = 1;
+        if (receiverType != null) {
+            StackValue.local(count, JetTypeMapper.TYPE_OBJECT).put(JetTypeMapper.TYPE_OBJECT, iv);
+            StackValue.onStack(JetTypeMapper.TYPE_OBJECT).upcast(state.getTypeMapper().mapType(receiverType), iv);
+            count++;
+        }
+
+        final List<ValueParameterDescriptor> params = funDescriptor.getUnsubstitutedValueParameters();
         for (ValueParameterDescriptor param : params) {
             StackValue.local(count, JetTypeMapper.TYPE_OBJECT).put(JetTypeMapper.TYPE_OBJECT, iv);
             StackValue.onStack(JetTypeMapper.TYPE_OBJECT).upcast(state.getTypeMapper().mapType(param.getOutType()), iv);
