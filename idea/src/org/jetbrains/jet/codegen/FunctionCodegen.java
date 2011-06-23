@@ -4,8 +4,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.JetType;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -23,23 +21,19 @@ import java.util.List;
 public class FunctionCodegen {
     private final JetDeclaration owner;
     private final ClassVisitor v;
-    private final BindingContext bindingContext;
-    private final JetTypeMapper typeMapper;
-    private final Codegens factory;
+    private final GenerationState state;
 
-    public FunctionCodegen(JetDeclaration owner, ClassVisitor v, JetStandardLibrary standardLibrary, BindingContext bindingContext, Codegens factory) {
+    public FunctionCodegen(JetDeclaration owner, ClassVisitor v, GenerationState state) {
         this.owner = owner;
         this.v = v;
-        this.bindingContext = bindingContext;
-        this.factory = factory;
-        typeMapper = new JetTypeMapper(standardLibrary, bindingContext);
+        this.state = state;
     }
 
     public void gen(JetFunction f, OwnerKind kind) {
         final JetTypeReference receiverTypeRef = f.getReceiverTypeRef();
-        final JetType receiverType = receiverTypeRef == null ? null : bindingContext.resolveTypeReference(receiverTypeRef);
-        Method method = typeMapper.mapSignature(f);
-        List<ValueParameterDescriptor> paramDescrs = bindingContext.getFunctionDescriptor(f).getUnsubstitutedValueParameters();
+        final JetType receiverType = receiverTypeRef == null ? null : state.getBindingContext().resolveTypeReference(receiverTypeRef);
+        Method method = state.getTypeMapper().mapSignature(f);
+        List<ValueParameterDescriptor> paramDescrs = state.getBindingContext().getFunctionDescriptor(f).getUnsubstitutedValueParameters();
         generateMethod(f, kind, method, receiverType, paramDescrs);
     }
 
@@ -49,8 +43,8 @@ public class FunctionCodegen {
                                @Nullable JetType receiverType,
                                List<ValueParameterDescriptor> paramDescrs) {
         final DeclarationDescriptor contextDesc = owner instanceof JetClassOrObject
-                ? bindingContext.getClassDescriptor((JetClassOrObject) owner)
-                : bindingContext.getNamespaceDescriptor((JetNamespace) owner);
+                ? state.getBindingContext().getClassDescriptor((JetClassOrObject) owner)
+                : state.getBindingContext().getNamespaceDescriptor((JetNamespace) owner);
         final JetExpression bodyExpression = f.getBodyExpression();
         final List<JetElement> bodyExpressions = bodyExpression != null ? Collections.<JetElement>singletonList(bodyExpression) : null;
         generatedMethod(bodyExpressions, kind, jvmSignature, receiverType, paramDescrs, contextDesc);
@@ -90,9 +84,8 @@ public class FunctionCodegen {
                 frameMap.enter(parameter, argTypes[i].getSize());
             }
 
-            StackValue thisExpression = receiverType == null ? null : StackValue.local(0, typeMapper.mapType(receiverType));
-            ExpressionCodegen codegen = new ExpressionCodegen(mv, bindingContext, frameMap, typeMapper,
-                    jvmSignature.getReturnType(), contextDesc, kind, thisExpression, factory);
+            StackValue thisExpression = receiverType == null ? null : StackValue.local(0, state.getTypeMapper().mapType(receiverType));
+            ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, jvmSignature.getReturnType(), contextDesc, kind, thisExpression, state);
             if (kind instanceof OwnerKind.DelegateKind) {
                 OwnerKind.DelegateKind dk = (OwnerKind.DelegateKind) kind;
                 InstructionAdapter iv = new InstructionAdapter(mv);

@@ -12,7 +12,10 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.JetStandardClasses;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeProjection;
+import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 import org.objectweb.asm.Label;
@@ -61,7 +64,7 @@ public class ExpressionCodegen extends JetVisitor {
     private final InstructionAdapter v;
     private final FrameMap myMap;
     private final JetTypeMapper typeMapper;
-    private final Codegens factory;
+    private final GenerationState state;
     private final Type returnType;
     private final DeclarationDescriptor contextType;
     private final OwnerKind contextKind;
@@ -70,22 +73,20 @@ public class ExpressionCodegen extends JetVisitor {
     private final Map<ClassDescriptor, StackValue> outerThisExpressions = new HashMap<ClassDescriptor, StackValue>();
 
     public ExpressionCodegen(MethodVisitor v,
-                             BindingContext bindingContext,
                              FrameMap myMap,
-                             JetTypeMapper typeMapper,
                              Type returnType,
                              DeclarationDescriptor contextType,
                              OwnerKind contextKind,
                              @Nullable StackValue thisExpression,
-                             Codegens factory) {
+                             GenerationState state) {
         this.myMap = myMap;
-        this.typeMapper = typeMapper;
+        this.typeMapper = state.getTypeMapper();
         this.returnType = returnType;
         this.contextType = contextType;
         this.contextKind = contextKind;
-        this.factory = factory;
+        this.state = state;
         this.v = new InstructionAdapter(v);
-        this.bindingContext = bindingContext;
+        this.bindingContext = state.getBindingContext();
         this.thisExpression = thisExpression;
     }
 
@@ -481,7 +482,7 @@ public class ExpressionCodegen extends JetVisitor {
             generateBlock(expression.getBody());
         }
         else {
-            final GeneratedClosureDescriptor closure = new ClosureCodegen(bindingContext, typeMapper, factory).gen(expression);
+            final GeneratedClosureDescriptor closure = new ClosureCodegen(state).gen(expression);
             v.anew(Type.getObjectType(closure.getClassname()));
             v.dup();
             v.invokespecial(closure.getClassname(), "<init>", closure.getConstructor().getDescriptor());

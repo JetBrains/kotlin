@@ -2,9 +2,7 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.JetNamespace;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.util.TraceClassVisitor;
@@ -16,20 +14,22 @@ import java.util.*;
 /**
  * @author max
  */
-public class Codegens {
+public class ClassFileFactory {
     private final Project project;
     private final boolean isText;
     private final Map<String, NamespaceCodegen> ns2codegen = new HashMap<String, NamespaceCodegen>();
     private final Map<String, ClassVisitor> generators = new LinkedHashMap<String, ClassVisitor>();
     private final Map<String, Integer> closuresCount = new HashMap<String, Integer>();
     private boolean isDone = false;
+    public final GenerationState state;
 
-    public Codegens(Project project, boolean text) {
+    public ClassFileFactory(Project project, boolean text, GenerationState state) {
         this.project = project;
         isText = text;
+        this.state = state;
     }
 
-    public ClassVisitor newVisitor(String filePath) {
+    ClassVisitor newVisitor(String filePath) {
         ClassVisitor visitor;
         if (isText) {
             visitor = new TraceClassVisitor(new PrintWriter(new StringWriter()));
@@ -42,31 +42,7 @@ public class Codegens {
         return visitor;
     }
 
-    public ClassVisitor forClassInterface(ClassDescriptor aClass) {
-        return newVisitor(JetTypeMapper.jvmNameForInterface(aClass) + ".class");
-    }
-
-    public ClassCodegen forClass(BindingContext bindingContext) {
-        return new ClassCodegen(project, this, bindingContext);
-    }
-
-    public ClassVisitor forClassImplementation(ClassDescriptor aClass) {
-        return newVisitor(JetTypeMapper.jvmNameForImplementation(aClass) + ".class");
-    }
-
-    public ClassVisitor forClassDelegatingImplementation(ClassDescriptor aClass) {
-        return newVisitor(JetTypeMapper.jvmNameForDelegatingImplementation(aClass)  + ".class");
-    }
-
-    public Pair<String, ClassVisitor> forClosureIn(ClassDescriptor aClass) {
-        return forClosureIn(JetTypeMapper.jvmNameForInterface(aClass));
-    }
-
-    public Pair<String, ClassVisitor> forClosureIn(JetNamespace namespace) {
-        return forClosureIn(NamespaceCodegen.getJVMClassName(namespace.getFQName()));
-    }
-
-    private Pair<String, ClassVisitor> forClosureIn(String baseName) {
+    Pair<String, ClassVisitor> forClosureIn(String baseName) {
         Integer count = closuresCount.get(baseName);
         if (count == null) count = 0;
 
@@ -76,12 +52,12 @@ public class Codegens {
         return new Pair<String, ClassVisitor>(className, newVisitor(className + ".class"));
     }
 
-    public NamespaceCodegen forNamespace(JetNamespace namespace) {
+    NamespaceCodegen forNamespace(JetNamespace namespace) {
         assert !isDone : "Already done!";
         String fqName = namespace.getFQName();
         NamespaceCodegen codegen = ns2codegen.get(fqName);
         if (codegen == null) {
-            codegen = new NamespaceCodegen(project, newVisitor(NamespaceCodegen.getJVMClassName(fqName) + ".class"), fqName, this);
+            codegen = new NamespaceCodegen(project, newVisitor(NamespaceCodegen.getJVMClassName(fqName) + ".class"), fqName, state);
             ns2codegen.put(fqName, codegen);
         }
 

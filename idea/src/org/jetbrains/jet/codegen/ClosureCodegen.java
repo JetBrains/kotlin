@@ -9,8 +9,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.JetType;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -24,14 +22,10 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ClosureCodegen {
-    private final BindingContext bindingContext;
-    private final JetTypeMapper typeMapper;
-    private final Codegens factory;
+    private final GenerationState state;
 
-    public ClosureCodegen(BindingContext bindingContext, JetTypeMapper typeMapper, Codegens factory) {
-        this.bindingContext = bindingContext;
-        this.typeMapper = typeMapper;
-        this.factory = factory;
+    public ClosureCodegen(GenerationState state) {
+        this.state = state;
     }
 
     public static Method erasedInvokeSignature(FunctionDescriptor fd) {
@@ -47,7 +41,7 @@ public class ClosureCodegen {
     }
 
     public Method invokeSignature(FunctionDescriptor fd) {
-        return typeMapper.mapSignature("invoke", fd);
+        return state.getTypeMapper().mapSignature("invoke", fd);
     }
 
     public GeneratedClosureDescriptor gen(JetFunctionLiteralExpression fun) {
@@ -55,14 +49,14 @@ public class ClosureCodegen {
 
         final Pair<String, ClassVisitor> nameAndVisitor;
         if (container instanceof JetNamespace) {
-            nameAndVisitor = factory.forClosureIn((JetNamespace) container);
+            nameAndVisitor = state.forClosureIn((JetNamespace) container);
         }
         else {
-            nameAndVisitor = factory.forClosureIn(bindingContext.getClassDescriptor((JetClassOrObject) container));
+            nameAndVisitor = state.forClosureIn(state.getBindingContext().getClassDescriptor((JetClassOrObject) container));
         }
 
 
-        final FunctionDescriptor funDescriptor = (FunctionDescriptor) bindingContext.getDeclarationDescriptor(fun);
+        final FunctionDescriptor funDescriptor = (FunctionDescriptor) state.getBindingContext().getDeclarationDescriptor(fun);
 
         final ClassVisitor cv = nameAndVisitor.getSecond();
         final String name = nameAndVisitor.getFirst();
@@ -98,7 +92,7 @@ public class ClosureCodegen {
     }
 
     private void generateBody(String className, FunctionDescriptor funDescriptor, ClassVisitor cv, Project project, List<JetElement> body) {
-        FunctionCodegen fc = new FunctionCodegen(null, cv, JetStandardLibrary.getJetStandardLibrary(project), bindingContext, factory);
+        FunctionCodegen fc = new FunctionCodegen(null, cv, state);
         fc.generatedMethod(body, OwnerKind.IMPLEMENTATION, invokeSignature(funDescriptor), null, funDescriptor.getUnsubstitutedValueParameters(), null);
     }
 
@@ -106,7 +100,7 @@ public class ClosureCodegen {
         final Method bridge = erasedInvokeSignature(funDescriptor);
         final Method delegate = invokeSignature(funDescriptor);
 
-        final MethodVisitor mv = cv.visitMethod(Opcodes.ACC_PUBLIC, "invoke", bridge.getDescriptor(), typeMapper.genericSignature(funDescriptor), new String[0]);
+        final MethodVisitor mv = cv.visitMethod(Opcodes.ACC_PUBLIC, "invoke", bridge.getDescriptor(), state.getTypeMapper().genericSignature(funDescriptor), new String[0]);
         mv.visitCode();
 
         InstructionAdapter iv = new InstructionAdapter(mv);
@@ -117,7 +111,7 @@ public class ClosureCodegen {
         int count = 1;
         for (ValueParameterDescriptor param : params) {
             StackValue.local(count, JetTypeMapper.TYPE_OBJECT).put(JetTypeMapper.TYPE_OBJECT, iv);
-            StackValue.onStack(JetTypeMapper.TYPE_OBJECT).upcast(typeMapper.mapType(param.getOutType()), iv);
+            StackValue.onStack(JetTypeMapper.TYPE_OBJECT).upcast(state.getTypeMapper().mapType(param.getOutType()), iv);
             count++;
         }
 
@@ -160,6 +154,7 @@ public class ClosureCodegen {
     private void appendType(SignatureWriter signatureWriter, JetType type, char variance) {
         signatureWriter.visitTypeArgument(variance);
 
+        final JetTypeMapper typeMapper = state.getTypeMapper();
         final Type rawRetType = typeMapper.boxType(typeMapper.mapType(type));
         signatureWriter.visitClassType(rawRetType.getInternalName());
         signatureWriter.visitEnd();

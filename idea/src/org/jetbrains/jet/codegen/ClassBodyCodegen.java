@@ -3,8 +3,6 @@ package org.jetbrains.jet.codegen;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Opcodes;
 
@@ -16,21 +14,16 @@ import java.util.List;
  * @author yole
  */
 public abstract class ClassBodyCodegen {
-    protected final BindingContext bindingContext;
-    protected final JetStandardLibrary stdlib;
-    protected final JetTypeMapper typeMapper;
-    protected final Codegens factory;
+    protected final GenerationState state;
+
     protected final JetClassOrObject myClass;
     protected final OwnerKind kind;
     protected final ClassDescriptor descriptor;
     protected final ClassVisitor v;
 
-    public ClassBodyCodegen(BindingContext bindingContext, JetStandardLibrary stdlib, JetClassOrObject aClass, OwnerKind kind, ClassVisitor v, Codegens factory) {
-        this.bindingContext = bindingContext;
-        this.stdlib = stdlib;
-        this.factory = factory;
-        this.typeMapper = new JetTypeMapper(stdlib, bindingContext);
-        descriptor = bindingContext.getClassDescriptor(aClass);
+    public ClassBodyCodegen(JetClassOrObject aClass, OwnerKind kind, ClassVisitor v, GenerationState state) {
+        this.state = state;
+        descriptor = state.getBindingContext().getClassDescriptor(aClass);
         myClass = aClass;
         this.kind = kind;
         this.v = v;
@@ -52,8 +45,8 @@ public abstract class ClassBodyCodegen {
     }
 
     private void generateClassBody() {
-        final FunctionCodegen functionCodegen = new FunctionCodegen((JetDeclaration) myClass, v, stdlib, bindingContext, factory);
-        final PropertyCodegen propertyCodegen = new PropertyCodegen(v, stdlib, bindingContext, functionCodegen);
+        final FunctionCodegen functionCodegen = new FunctionCodegen((JetDeclaration) myClass, v, state);
+        final PropertyCodegen propertyCodegen = new PropertyCodegen(v, functionCodegen, state);
 
         for (JetDeclaration declaration : myClass.getDeclarations()) {
             generateDeclaration(propertyCodegen, declaration, functionCodegen);
@@ -78,15 +71,15 @@ public abstract class ClassBodyCodegen {
     private void generatePrimaryConstructorProperties(PropertyCodegen propertyCodegen) {
         for (JetParameter p : getPrimaryConstructorParameters()) {
             if (p.getValOrVarNode() != null) {
-                PropertyDescriptor propertyDescriptor = bindingContext.getPropertyDescriptor(p);
+                PropertyDescriptor propertyDescriptor = state.getBindingContext().getPropertyDescriptor(p);
                 if (propertyDescriptor != null) {
                     propertyCodegen.generateDefaultGetter(propertyDescriptor, Opcodes.ACC_PUBLIC, kind);
                     if (propertyDescriptor.isVar()) {
                         propertyCodegen.generateDefaultSetter(propertyDescriptor, Opcodes.ACC_PUBLIC, kind);
                     }
 
-                    if (!(kind instanceof OwnerKind.DelegateKind) && kind != OwnerKind.INTERFACE && bindingContext.hasBackingField(propertyDescriptor)) {
-                        v.visitField(Opcodes.ACC_PRIVATE, p.getName(), typeMapper.mapType(propertyDescriptor.getOutType()).getDescriptor(), null, null);
+                    if (!(kind instanceof OwnerKind.DelegateKind) && kind != OwnerKind.INTERFACE && state.getBindingContext().hasBackingField(propertyDescriptor)) {
+                        v.visitField(Opcodes.ACC_PRIVATE, p.getName(), state.getTypeMapper().mapType(propertyDescriptor.getOutType()).getDescriptor(), null, null);
                     }
                 }
             }
@@ -99,5 +92,4 @@ public abstract class ClassBodyCodegen {
         }
         return Collections.emptyList();
     }
-
 }

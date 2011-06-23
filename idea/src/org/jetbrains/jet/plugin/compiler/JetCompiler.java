@@ -12,11 +12,10 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.Chunk;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.codegen.Codegens;
-import org.jetbrains.jet.codegen.NamespaceCodegen;
-import org.jetbrains.jet.plugin.JetFileType;
+import org.jetbrains.jet.codegen.ClassFileFactory;
+import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetNamespace;
+import org.jetbrains.jet.plugin.JetFileType;
 
 import java.io.File;
 import java.io.IOException;
@@ -65,7 +64,7 @@ public class JetCompiler implements TranslatingCompiler {
     }
 
     private static class ModuleCompileState {
-        private final Codegens codegens;
+        private final GenerationState state;
         private final CompileContext compileContext;
         private final Module module;
         private final OutputSink outputSink;
@@ -74,7 +73,7 @@ public class JetCompiler implements TranslatingCompiler {
             this.compileContext = compileContext;
             this.module = module;
             this.outputSink = outputSink;
-            codegens = new Codegens(compileContext.getProject(), false);
+            state = new GenerationState(compileContext.getProject(), false);
         }
 
         public void compile(final VirtualFile virtualFile) {
@@ -83,9 +82,7 @@ public class JetCompiler implements TranslatingCompiler {
                 public void run() {
                     PsiFile psiFile = PsiManager.getInstance(module.getProject()).findFile(virtualFile);
                     if (psiFile instanceof JetFile) {
-                        final JetNamespace namespace = ((JetFile) psiFile).getRootNamespace();
-                        NamespaceCodegen codegen = codegens.forNamespace(namespace);
-                        codegen.generate(namespace);
+                        state.compile((JetFile) psiFile);
                     }
                 }
             });
@@ -93,11 +90,12 @@ public class JetCompiler implements TranslatingCompiler {
 
         public void done() {
             VirtualFile outputDir = compileContext.getModuleOutputDirectory(module);
-            List<String> files = codegens.files();
+            final ClassFileFactory factory = state.getFactory();
+            List<String> files = factory.files();
             for (String file : files) {
                 File target = new File(outputDir.getPath(), file);
                 try {
-                    FileUtil.writeToFile(target, codegens.asBytes(file));
+                    FileUtil.writeToFile(target, factory.asBytes(file));
                 } catch (IOException e) {
                     compileContext.addMessage(CompilerMessageCategory.ERROR, e.getMessage(), null, 0, 0);
                 }
