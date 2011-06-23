@@ -153,7 +153,7 @@ public class JetStandardClasses {
             ClassDescriptorImpl receiverFunction = new ClassDescriptorImpl(
                     STANDARD_CLASSES_NAMESPACE,
                     Collections.<Annotation>emptyList(),
-                    "ReceiverFunction" + i);
+                    "ExtensionFunction" + i);
             List<TypeParameterDescriptor> parameters = createTypeParameters(i, receiverFunction);
             parameters.add(0, TypeParameterDescriptor.createWithDefaultBound(
                     receiverFunction,

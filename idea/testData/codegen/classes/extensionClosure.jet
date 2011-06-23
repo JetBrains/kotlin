@@ -1,0 +1,11 @@
+fun box() : String {
+    val answer = apply("OK", { String.() : Int =>
+        length()
+    })
+
+    return if (answer == 2) "OK" else "FAIL"
+}
+
+fun apply(arg:String, f : {String.() : Int}) : Int {
+    return arg.f()
+}

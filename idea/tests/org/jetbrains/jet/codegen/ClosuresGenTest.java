@@ -19,4 +19,8 @@ public class ClosuresGenTest extends CodegenTestCase {
     public void testClosureWithParameterAndBoxing() throws Exception {
         blackBoxFile("classes/closureWithParameterAndBoxing.jet");
     }
+
+    public void testExtensionClosure() throws Exception {
+        blackBoxFile("classes/extensionClosure.jet");
+    }
 }

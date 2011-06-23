@@ -693,6 +693,10 @@ public class ExpressionCodegen extends JetVisitor {
 
         if (callee instanceof JetSimpleNameExpression) {
             DeclarationDescriptor funDescriptor = bindingContext.resolveReferenceExpression((JetSimpleNameExpression) callee);
+            if (funDescriptor == null) {
+                throw new CompilationException("Cannot resolve: " + callee.getText());
+            }
+
             if (funDescriptor instanceof ConstructorDescriptor) {
                 generateConstructorCall(expression, (JetSimpleNameExpression) callee);
             }
