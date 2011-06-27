@@ -36,7 +36,6 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     @Nullable
     private JetType thisType;
 
-    private boolean variablesAsFunctionsAdded;
     private List<VariableDescriptor> variableDescriptors;
 
     public WritableScopeImpl(@NotNull JetScope scope, @NotNull DeclarationDescriptor owner, @NotNull ErrorHandler errorHandler) {
@@ -243,9 +242,9 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     }
 
     private void addVariablesAsFunctions() {
-        if (variablesAsFunctionsAdded) return;
-        variablesAsFunctionsAdded = true;
-        for (VariableDescriptor variableDescriptor : getVariableDescriptors()) {
+        List<VariableDescriptor> variableDescriptors = getVariableDescriptors();
+        this.variableDescriptors = null;
+        for (VariableDescriptor variableDescriptor : variableDescriptors) {
             JetType outType = variableDescriptor.getOutType();
             if (outType != null && JetStandardClasses.isFunctionType(outType)) {
                 addFunctionDescriptor(VariableAsFunctionDescriptor.create(variableDescriptor));

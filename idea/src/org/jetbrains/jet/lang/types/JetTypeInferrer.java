@@ -2482,7 +2482,6 @@ public class JetTypeInferrer {
 
         @Override
         public void visitProperty(JetProperty property) {
-
             JetTypeReference receiverTypeRef = property.getReceiverTypeRef();
             if (receiverTypeRef != null) {
                 context.trace.getErrorHandler().genericError(receiverTypeRef.getNode(), "Local receiver-properties are not allowed");
