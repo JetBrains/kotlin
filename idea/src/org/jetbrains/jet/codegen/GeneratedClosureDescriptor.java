@@ -5,9 +5,13 @@ package org.jetbrains.jet.codegen;
 
 import org.objectweb.asm.commons.Method;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class GeneratedClosureDescriptor {
     private final String classname;
     private Method constructor;
+    private List<StackValue> args = new ArrayList<StackValue>();
 
     public GeneratedClosureDescriptor(String classname, Method constructor) {
         this.classname = classname;
@@ -20,5 +24,13 @@ public class GeneratedClosureDescriptor {
 
     public Method getConstructor() {
         return constructor;
+    }
+
+    public void addArg(StackValue local) {
+        args.add(local);
+    }
+
+    public List<StackValue> getArgs() {
+        return args;
     }
 }

@@ -9,7 +9,9 @@ import com.intellij.util.containers.Stack;
 import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression;
 import org.jetbrains.jet.lang.psi.JetNamespace;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -21,12 +23,12 @@ public class GenerationState {
     private final Project project;
 
     private JetTypeMapper typeMapper;
-    private final Stack<BindingContext> bindingContexts;
+    private final Stack<BindingContext> bindingContexts = new Stack<BindingContext>();
+    private final Stack<ClosureCodegen> closureContexts = new Stack<ClosureCodegen>();
     private final JetStandardLibrary standardLibrary;
 
     public GenerationState(Project project, boolean text) {
         this.project = project;
-        this.bindingContexts = new Stack<BindingContext>();
         this.standardLibrary = JetStandardLibrary.getJetStandardLibrary(project);
         this.factory = new ClassFileFactory(project, text, this);
     }
@@ -93,5 +95,22 @@ public class GenerationState {
             bindingContexts.pop();
             typeMapper = null;
         }
+    }
+
+    public GeneratedClosureDescriptor generateClosure(JetFunctionLiteralExpression literal, ExpressionCodegen context) {
+        final ClosureCodegen codegen = new ClosureCodegen(this, context);
+        closureContexts.push(codegen);
+        try {
+            return codegen.gen(literal);
+        }
+        finally {
+            final ClosureCodegen pooped = closureContexts.pop();
+            assert pooped == codegen;
+        }
+    }
+
+    public StackValue lookupInContext(DeclarationDescriptor d) {
+        final ClosureCodegen top = closureContexts.peek();
+        return top != null ? top.lookupInContext(d) : null;
     }
 }

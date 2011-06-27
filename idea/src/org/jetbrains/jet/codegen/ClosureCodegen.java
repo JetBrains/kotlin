@@ -3,11 +3,12 @@
  */
 package org.jetbrains.jet.codegen;
 
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.util.PsiTreeUtil;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.JetType;
 import org.objectweb.asm.ClassVisitor;
@@ -19,13 +20,21 @@ import org.objectweb.asm.commons.Method;
 import org.objectweb.asm.signature.SignatureWriter;
 
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ClosureCodegen {
     private final GenerationState state;
+    private final ExpressionCodegen context;
+    private ClassVisitor cv = null;
+    private String name = null;
 
-    public ClosureCodegen(GenerationState state) {
+    private Map<DeclarationDescriptor, EnclosedValueDescriptor> closure = new LinkedHashMap<DeclarationDescriptor, EnclosedValueDescriptor>();
+
+    public ClosureCodegen(GenerationState state, ExpressionCodegen context) {
         this.state = state;
+        this.context = context;
     }
 
     public static Method erasedInvokeSignature(FunctionDescriptor fd) {
@@ -44,6 +53,31 @@ public class ClosureCodegen {
         return state.getTypeMapper().mapSignature("invoke", fd);
     }
 
+    public StackValue lookupInContext(DeclarationDescriptor d) {
+        if (d instanceof VariableDescriptor) {
+            VariableDescriptor vd = (VariableDescriptor) d;
+
+            EnclosedValueDescriptor answer = closure.get(vd);
+            if (answer != null) return answer.getInnerValue();
+
+            final int idx = context.lookupLocal(vd);
+            if (idx < 0) return null;
+
+            final Type type = state.getTypeMapper().mapType(vd.getOutType());
+
+            StackValue outerValue = StackValue.local(idx, type);
+            final String fieldName = "$" + (closure.size() + 1);
+            StackValue innerValue = StackValue.field(type, name, fieldName, false);
+            cv.visitField(Opcodes.ACC_PUBLIC, fieldName, type.getDescriptor(), null, null);
+            answer = new EnclosedValueDescriptor(d, innerValue, outerValue);
+            closure.put(d, answer);
+
+            return innerValue;
+        }
+
+        return null;
+    }
+
     public GeneratedClosureDescriptor gen(JetFunctionLiteralExpression fun) {
         JetNamedDeclaration container = PsiTreeUtil.getParentOfType(fun, JetNamespace.class, JetClass.class, JetObjectDeclaration.class);
 
@@ -58,8 +92,8 @@ public class ClosureCodegen {
 
         final FunctionDescriptor funDescriptor = (FunctionDescriptor) state.getBindingContext().getDeclarationDescriptor(fun);
 
-        final ClassVisitor cv = nameAndVisitor.getSecond();
-        final String name = nameAndVisitor.getFirst();
+        cv = nameAndVisitor.getSecond();
+        name = nameAndVisitor.getFirst();
 
         SignatureWriter signatureWriter = new SignatureWriter();
 
@@ -79,19 +113,25 @@ public class ClosureCodegen {
                 null,
                 funClass,
                 new String[0]
-                );
+        );
 
-        final Method constructor = generateConstructor(cv, funClass);
 
         generateBridge(name, funDescriptor, cv);
-        generateBody(name, funDescriptor, cv, container.getProject(), fun.getFunctionLiteral().getBodyExpression().getStatements());
+        generateBody(funDescriptor, cv, fun.getFunctionLiteral().getBodyExpression().getStatements());
+
+        final Method constructor = generateConstructor(funClass);
 
         cv.visitEnd();
 
-        return new GeneratedClosureDescriptor(name, constructor);
+        final GeneratedClosureDescriptor answer = new GeneratedClosureDescriptor(name, constructor);
+        for (DeclarationDescriptor descriptor : closure.keySet()) {
+            final EnclosedValueDescriptor valueDescriptor = closure.get(descriptor);
+            answer.addArg(valueDescriptor.getOuterValue());
+        }
+        return answer;
     }
 
-    private void generateBody(String className, FunctionDescriptor funDescriptor, ClassVisitor cv, Project project, List<JetElement> body) {
+    private void generateBody(FunctionDescriptor funDescriptor, ClassVisitor cv, List<JetElement> body) {
         FunctionCodegen fc = new FunctionCodegen(null, cv, state);
         fc.generatedMethod(body, OwnerKind.IMPLEMENTATION, invokeSignature(funDescriptor), funDescriptor.getReceiverType(), funDescriptor.getUnsubstitutedValueParameters(), null);
     }
@@ -131,8 +171,14 @@ public class ClosureCodegen {
         mv.visitEnd();
     }
 
-    private Method generateConstructor(ClassVisitor cv, String funClass) {
-        final Method constructor = new Method("<init>", Type.VOID_TYPE, new Type[0]); // TODO:
+    private Method generateConstructor(String funClass) {
+        Type[] argTypes = new Type[closure.size()];
+        int i = 0;
+        for (DeclarationDescriptor descriptor : closure.keySet()) {
+            argTypes[i++] = state.getTypeMapper().mapType(((VariableDescriptor) descriptor).getOutType());
+        }
+
+        final Method constructor = new Method("<init>", Type.VOID_TYPE, argTypes);
         final MethodVisitor mv = cv.visitMethod(Opcodes.ACC_PUBLIC, "<init>", constructor.getDescriptor(), null, new String[0]);
         mv.visitCode();
         InstructionAdapter iv = new InstructionAdapter(mv);
@@ -140,8 +186,14 @@ public class ClosureCodegen {
         iv.load(0, Type.getObjectType(funClass));
         iv.invokespecial(funClass, "<init>", "()V");
 
-        iv.visitInsn(Opcodes.RETURN);
+        for (int j = 0; j < argTypes.length; j++) {
+            Type type = argTypes[j];
+            StackValue.local(0, JetTypeMapper.TYPE_OBJECT).put(JetTypeMapper.TYPE_OBJECT, iv);
+            StackValue.local(j + 1, type).put(type, iv);
+            StackValue.field(type, name, "$" + (j + 1), false).store(iv);
+        }
 
+        iv.visitInsn(Opcodes.RETURN);
 
         mv.visitMaxs(0, 0);
         mv.visitEnd();
