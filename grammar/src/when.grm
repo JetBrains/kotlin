@@ -1,3 +1,7 @@
+/**
+h3. Pattern matching
+*/
+
 when
   : "when" "(" (modifiers "val" SimpleName "=")? expression ")" "{"
         whenEntry*
@@ -35,7 +39,7 @@ pattern
 decomposerPattern
   : type
 // TODO : typeParameters will be consumed by the expression
-  : elvisExpression typeParameters? '@' tuplePattern
+  : elvisExpression typeParameters? "@" tuplePattern
   ;
 
 constantPattern

@@ -1,8 +1,15 @@
-[start] jetlFile
+/**
+h1. Syntax
+*/
+
+
+[start]
+jetFile
   : preamble toplevelObject*
   ;
 
-[start] script
+[start]
+script
   : preamble expression*
   ;
 

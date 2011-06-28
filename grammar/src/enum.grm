@@ -1,7 +1,11 @@
+/**
+h3. Enum classes
+*/
+
 enumClassBody
   : "{" enumEntry* "}"
   ;
 
 enumEntry
-  : modifiers SimpleName typeParameters? primaryConstructorParameters? (":" initializer{","})? classBody?
+  : modifiers SimpleName typeParameters? valueParameters? (":" initializer{","})? classBody?
   ;

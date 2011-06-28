@@ -1,3 +1,7 @@
+/**
+h3. Class members
+*/
+
 /*
 class Example(a : Foo, i : Int) : Bar(i), Some {
   // constrtuctors:
@@ -37,9 +41,13 @@ memberDeclaration
   : function
   : property
   : class
-  : extension
+  : extension                                                    §
   : typedef
   : anonymousInitializer
+  ;
+
+anonymousInitializer
+  : block
   ;
 
 classObject
@@ -47,10 +55,10 @@ classObject
   ;
 
 constructor
-  : modifiers "this" functionParameters (":" initializer{","}) block?
+  : modifiers "this" valueParameters (":" initializer{","}) block?
   ;
 
-functionParameters
+valueParameters
   : "(" functionParameter{","}? ")" // default values
   ;
 
@@ -71,7 +79,7 @@ function
   : modifiers "fun" typeParameters?
       (type "." | attributes/*for receiver type*/)?
       SimpleName
-      typeParameters? functionParameters (":" type)?
+      typeParameters? valueParameters (":" type)?
       functionBody?
   ;
 

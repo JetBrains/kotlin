@@ -1,3 +1,7 @@
+/**
+h2. Classes
+*/
+
 /*
 
 internal class Example<X, T : Comparable<X>>(protected val x : Foo<X, T>, y : Some)

@@ -1,0 +1,21 @@
+/**
+h1. Notation
+
+This section informally explains the grammar notation used below.
+
+h2. Symbols and naming
+
+_Terminal symbol_ names start with an uppercase letter, e.g. *SimpleName*
+_Nonterminal symbol_ names start with lowercase letter, e.g. *jetFile*
+Each _production_ starts with a colon (*:*)
+_Symbol definitions_ may have many productions and are terminated by a semicolon (*;*)
+Symbol definitions may be prepended with _attributes_, e.g. {{start}} attribute denotes a start symbol
+
+h2. EBNF expressions
+
+Operator {color:blue}*|*{color} denotes _alternative_
+Operator {color:blue}*\**{color} denotes _iteration_ (zero or more)
+Operator {color:blue}*+*{color} denotes _iteration_ (one or one)
+Operator {color:blue}*?*{color} denotes _option_ (zero or one)
+alpha{color:blue}*{*{color}beta{color:blue}*}*{color} denotes a nonempty _beta_-separated list of _alpha_s
+*/

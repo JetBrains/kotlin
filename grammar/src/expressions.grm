@@ -1,3 +1,7 @@
+/**
+h2. Expressions
+*/
+
 /*
 Decreasing precedence:
   memberAccessOperation
@@ -108,7 +112,7 @@ literalConstant
   : StringWithTemplates
   : NoEscapeString
   : IntegerLiteral
-  : LongLiteral
+  : HexadecimalLiteral
   : CharacterLiteral
   : FloatLiteral
   : "null"
@@ -148,7 +152,7 @@ typeOperation
   : "as" : "as?" : ":"
   ;
 
-isOPeration
+isOperation
   : "is" : "!is"
   ;
 
@@ -210,17 +214,14 @@ jump
 // yield ?
   ;
 
-stringLiteral
-  : StringWithTemplates
-  : NoEscapeString
-  ;
-
-tupleLiteral // Ambiguity when after a SimpleName (infix call). In this case (e) is treated as an expression in parentheses
-             // to put a tuple, write write ((e))
+// Ambiguity when after a SimpleName (infix call). In this case (e) is treated as an expression in parentheses
+// to put a tuple, write write ((e))
+tupleLiteral
   : "(" ((SimpleName "=")? expression){","} ")"
   ;
 
-functionLiteral  // one can use "it" as a parameter name
+// one can use "it" as a parameter name
+functionLiteral
   : "{" statements "}"
   : "{" (type ".")? modifiers SimpleName "=>" statements "}"
   : "{" (type ".")? "(" (modifiers SimpleName (":" type)?){","} ")" (":" type)? "=>" statements "}"

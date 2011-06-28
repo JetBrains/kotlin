@@ -1,0 +1,43 @@
+<project name="GrammarLexer" default="lexer">
+    <property name="home" value="${basedir}"/>
+    <property file="${home}/../idea/idea.properties"/>
+
+    <property name="flex.base" value="${idea.home}/tools/lexer/jflex-1.4"/>
+    <property name="out.dir" value="${basedir}/tmpout"/>
+
+    <macrodef name="flex">
+      <attribute name="flexfile"/>
+      <attribute name="destdir"/>
+      <attribute name="skeleton" default="${idea.home}/tools/lexer/idea-flex.skeleton"/>
+      <sequential>
+        <delete dir="${out.dir}"/>
+        <mkdir dir="${out.dir}"/>
+        <java classname="JFlex.Main"
+              jvmargs="-Xmx512M"
+              fork="true"
+              failonerror="true">
+          <arg value="-sliceandcharat"/>
+          <arg value="-skel"/>
+          <arg value="@{skeleton}"/>
+          <arg value="-d"/>
+          <arg value="${out.dir}"/>
+          <arg value="@{flexfile}"/>
+          <classpath>
+            <pathelement location="${flex.base}/lib/JFlex.jar"/>
+          </classpath>
+        </java>
+        <move todir="@{destdir}">
+          <fileset dir="${out.dir}">
+            <include name="*.java"/>
+          </fileset>
+        </move>
+        <delete dir="${out.dir}"/>
+      </sequential>
+    </macrodef>
+
+    <target name="lexer">
+        <echo message="${flex.base}"/>
+        <flex flexfile="${home}/src/org/jetbrains/jet/grammar/Grammar.flex"
+              destdir="${home}//src/org/jetbrains/jet/grammar/"/>
+    </target>
+</project>

@@ -1,3 +1,7 @@
+/**
+h3. Control structures
+*/
+
 if
   : "if" "(" expression ")" expression SEMI? ("else" expression)?
   ;
@@ -21,7 +25,7 @@ loop
   ;
 
 for
-  : "for" "(" attributes valOrVar? SimpleName (":" type)? "in" expression ")" expression
+  : "for" "(" attributes ("val" | "var")? SimpleName (":" type)? "in" expression ")" expression
   ;
 
 while

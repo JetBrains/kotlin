@@ -1,15 +1,42 @@
-SimpleName : /*java identifier*/;
-FieldName : "$" SimpleName;
-LabelName : "@" SimpleName;
-[helper] Digit : ["0".."9"];
-IntegerLiteral : Digit+ "L"?
-[helper] HexDigit : Digit | ["A"-"F", "a"-"f"];
-HexadecimalLiteral : "0x" HexDigit+;
+/**
+h1. Lexical structure
+*/
 
-CharacterLiteral : /*character as in Java*/;
+SimpleName
+  : <java identifier>;
+FieldName
+  : "$" SimpleName;
+LabelName
+  : "@" SimpleName;
 
-StringWithTemplates : /*single-quoted string, $ can be escaped*/;
-NoEscapeString : /* """-quoted string */;
+[helper]
+Digit
+  : ["0".."9"];
+
+IntegerLiteral
+  : Digit+ "L"?
+
+FloatLiteral
+  : <java double literal>;
+
+[helper]
+HexDigit
+  : Digit | ["A"-"F", "a"-"f"];
+
+HexadecimalLiteral
+  : "0x" HexDigit+;
+
+CharacterLiteral
+  : <character as in Java>;
+
+StringWithTemplates
+  : <single-quoted string, $ can be escaped>;
+
+NoEscapeString
+  : <"""-quoted string>;
+
+SEMI
+  : <semicolon or newline>;
 
 /* Symbols:
 

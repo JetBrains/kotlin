@@ -1,3 +1,7 @@
+/**
+h2. Types
+*/
+
 /*
 
 Foo<Bar<X>, T, Object> // user type

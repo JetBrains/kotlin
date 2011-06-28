@@ -1,3 +1,7 @@
+/**
+h2. Annotations
+*/
+
 attributes
   : attributeAnnotation*
   ;
