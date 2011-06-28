@@ -49,7 +49,7 @@ expression
   ;
 
 arrowTupleExpression
-  : assignmentOperator ("->" assignmentOperator)*
+  : disjunction ("->" disjunction)*
   ;
 
 disjunction
@@ -65,13 +65,12 @@ equalityComparison
   ;
 
 comparison
-  : namedInfixOrTypeExpression (comparisonOperation namedInfixOrTypeExpression)*
+  : namedInfix (comparisonOperation namedInfix)*
   ;
 
-namedInfixOrTypeExpression
+namedInfix
   : elvisExpression (inOperation elvisExpression)*
   : elvisExpression (isOperation isRHS)?
-  : elvisExpression (typeOperation type)?
   ;
 
 elvisExpression
@@ -91,7 +90,11 @@ additiveExpression
   ;
 
 multiplicativeExpression
-  : prefixUnaryExpression (multiplicativeOperation prefixUnaryExpression)*
+  : typeRHS (multiplicativeOperation typeRHS)*
+  ;
+
+typeRHS
+  : prefixUnaryExpression typeOperation prefixUnaryExpression
   ;
 
 prefixUnaryExpression
@@ -189,11 +192,6 @@ equalityOperation
 assignmentOperator
   : "="
   : "+=" : "-=" : "*=" : "/=" : "%="
-  ;
-
-unOpExpression
-  : expression postfixUnaryOperation
-  : prefixUnaryOperation expression
   ;
 
 prefixUnaryOperation
