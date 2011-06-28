@@ -1,5 +1,27 @@
 /**
 h2. Expressions
+
+h3. Precedence
+
+||*Precedence*||Title||Symbols||
+|Highest|Postfix|{{\+\+}}, {{\-\-}}, {{#}}, {{.}}, {{?.}}, {{?}}|
+| |Prefix|{{-}}, {{\+}}, {{\+\+}}, {{\-\-}}, {{!}}, [{{@label}}|#LabelName], {{@}}, {{@@}} |
+| |Type RHS|{{:}}, {{as}}, {{as?}} |
+| |Multiplicative|{{*}}, {{/}}, {{%}} |
+| |Additive|{{\+}}, {{-}} |
+| |Range|{{..}} |
+| |Infix function|[{{SimpleName}}|#SimpleName] |
+| |Elvis|{{?:}} |
+| |Named checks|{{in}}, {{\!in}}, {{is}}, {{\!is}} |
+| |Comparison|{{<}}, {{>}}, {{<=}}, {{>=}} |
+| |Equality|{{==}}, {{\!==}}, {{===}}, {{\!===}} |
+| |Conjunction|{{&&}}|
+| |Disjunction|{{\|\|}}|
+| |Arrow|{{\->}}|
+|Lowest|Assignment|{{=}}, {{+=}}, {{-=}}, {{*=}}, {{/=}}, {{%=}}|
+
+h3. Rules
+
 */
 
 /*

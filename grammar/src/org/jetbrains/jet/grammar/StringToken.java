@@ -10,6 +10,12 @@ public class StringToken extends Token {
 
     @Override
     public String toString() {
-        return "{color:green}*{{" + getText().toString().replaceAll("\\{", "\\\\{").replaceAll("\\[", "\\\\[").replaceAll("!", "\\\\!") + "}}*{color}";
+        return "{color:green}*{{" +
+               getText().toString()
+                       .replaceAll("\\{", "\\\\{")
+                       .replaceAll("\\[", "\\\\[")
+                       .replaceAll("!", "\\\\!")
+                       .replaceAll("\\*", "\\\\*")
+               + "}}*{color}";
     }
 }

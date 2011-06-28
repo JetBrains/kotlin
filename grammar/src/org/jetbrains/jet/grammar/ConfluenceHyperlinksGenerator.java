@@ -25,7 +25,6 @@ public class ConfluenceHyperlinksGenerator {
 
         List<String> fileNamesInOrder = Arrays.asList(
                 "notation",
-                "lexical",
                 "toplevel",
                 "class",
                 "class_members",
@@ -35,8 +34,9 @@ public class ConfluenceHyperlinksGenerator {
                 "attributes",
                 "control",
                 "expressions",
-                "when"
-        );
+                "when",
+                "lexical"
+            );
 
         StringBuilder allRules = new StringBuilder();
         Set<File> used = new HashSet<File>();
@@ -110,7 +110,7 @@ public class ConfluenceHyperlinksGenerator {
             if (token instanceof Declaration) {
                 Declaration declaration = (Declaration) token;
                 if (!usedSymbols.contains(declaration.getName())) {
-                    result.append("(!) *Unused!* ");
+//                    result.append("(!) *Unused!* ");
                     System.out.println("Unused: " + token);
                 }
             }
