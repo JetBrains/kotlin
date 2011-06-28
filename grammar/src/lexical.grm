@@ -2,13 +2,6 @@
 h1. Lexical structure
 */
 
-SimpleName
-  : <java identifier>;
-FieldName
-  : "$" SimpleName;
-LabelName
-  : "@" SimpleName;
-
 [helper]
 Digit
   : ["0".."9"];
@@ -29,14 +22,46 @@ HexadecimalLiteral
 CharacterLiteral
   : <character as in Java>;
 
+/**
+bq. See [Basic types]
+*/
+
 StringWithTemplates
   : <single-quoted string, $ can be escaped>;
 
 NoEscapeString
   : <"""-quoted string>;
 
+/**
+bq. See [String templates]
+*/
+
 SEMI
   : <semicolon or newline>;
+
+
+SimpleName
+  : <java identifier>
+  : "`" <java identifier> "`"
+  ;
+
+/**
+bq. See [Java interoperability]
+*/
+
+FieldName
+  : "$" SimpleName;
+
+/**
+bq. See [Properties And Fields]
+*/
+
+LabelName
+  : "@" SimpleName;
+
+/**
+bq. See [Nonlocal returns and jumps]
+*/
 
 /* Symbols:
 

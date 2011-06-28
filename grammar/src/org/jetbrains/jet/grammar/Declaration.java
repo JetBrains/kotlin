@@ -13,7 +13,7 @@ public class Declaration extends Token {
 
     @Override
     public String toString() {
-        return "{anchor:" + name + "}*" + name + "*";
+        return "*" + name + "*";
     }
 
     public String getName() {

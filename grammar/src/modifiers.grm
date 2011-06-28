@@ -13,7 +13,6 @@ modifier
   : memberModifier
   : parameterKind
   : attributes
-  // sealed by default
   ;
 
 classModifier

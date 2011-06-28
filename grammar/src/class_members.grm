@@ -41,7 +41,7 @@ memberDeclaration
   : function
   : property
   : class
-  : extension                                                    §
+  : extension
   : typedef
   : anonymousInitializer
   ;

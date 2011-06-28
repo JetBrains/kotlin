@@ -1,5 +1,11 @@
 package org.jetbrains.jet.grammar;
 
+import com.google.common.base.Supplier;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
+
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
@@ -88,7 +94,14 @@ public class ConfluenceHyperlinksGenerator {
 
         Set<String> declaredSymbols = new HashSet<String>();
         Set<String> usedSymbols = new HashSet<String>();
+        Multimap<String, String> usages = Multimaps.newListMultimap(Maps.<String, Collection<String>>newHashMap(), new Supplier<List<String>>() {
+            @Override
+            public List<String> get() {
+                return Lists.newArrayList();
+            }
+        });
         List<Token> tokens = new ArrayList<Token>();
+        Declaration lastDeclaration = null;
 
         while (true) {
             Token advance = grammarLexer.advance();
@@ -97,10 +110,13 @@ public class ConfluenceHyperlinksGenerator {
             }
             if (advance instanceof Declaration) {
                 Declaration declaration = (Declaration) advance;
+                lastDeclaration = declaration;
                 declaredSymbols.add(declaration.getName());
             }
             else if (advance instanceof Identifier) {
                 Identifier identifier = (Identifier) advance;
+                assert lastDeclaration != null;
+                usages.put(identifier.getName(), lastDeclaration.getName());
                 usedSymbols.add(identifier.getName());
             }
             tokens.add(advance);
@@ -109,10 +125,25 @@ public class ConfluenceHyperlinksGenerator {
         for (Token token : tokens) {
             if (token instanceof Declaration) {
                 Declaration declaration = (Declaration) token;
+                result.append("{anchor:").append(declaration.getName()).append("}");
                 if (!usedSymbols.contains(declaration.getName())) {
 //                    result.append("(!) *Unused!* ");
                     System.out.println("Unused: " + token);
                 }
+                Collection<String> myUsages = usages.get(declaration.getName());
+                if (!myUsages.isEmpty()) {
+                    result.append("\\[{color:grey}Used by ");
+                    for (Iterator<String> iterator = myUsages.iterator(); iterator.hasNext(); ) {
+                        String usage = iterator.next();
+                        result.append("[#").append(usage).append("]");
+                        if (iterator.hasNext()) {
+                            result.append(", ");
+                        }
+                    }
+                    result.append("{color}\\]\n");
+                }
+                result.append(token);
+                continue;
             }
             else if (token instanceof Identifier) {
                 Identifier identifier = (Identifier) token;
