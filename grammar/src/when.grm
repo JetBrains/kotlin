@@ -1,7 +1,7 @@
 /**
 h4. Pattern matching
 
-*Relevant pages:* [Pattern matching]
+bq. See [Pattern matching]
 */
 
 when
@@ -28,7 +28,7 @@ whenCondition
   ;
 
 pattern
-  : attributes pattern
+  : annotations pattern
   : type // '[a] T' is a type-pattern 'T' with an attribute '[a]', not a type-pattern '[a] T'
          // this makes sense because is-check may be different for a type with attributes
   : tuplePattern

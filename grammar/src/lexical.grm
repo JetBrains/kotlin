@@ -7,14 +7,14 @@ Digit
   : ["0".."9"];
 
 IntegerLiteral
-  : Digit+ "L"?
+  : Digit+?
 
 FloatLiteral
   : <java double literal>;
 
 [helper]
 HexDigit
-  : Digit | ["A"-"F", "a"-"f"];
+  : Digit | ["A".."F", "a".."f"];
 
 HexadecimalLiteral
   : "0x" HexDigit+;

@@ -1,6 +1,8 @@
 /**
 h2. Expressions
 
+bq. See [Expressions]
+
 h3. Precedence
 
 ||*Precedence*||Title||Symbols||
@@ -198,7 +200,7 @@ prefixUnaryOperation
   : "-" : "+"
   : "++" : "--"
   : "!"  // No ~
-  : attributes // mandatory
+  : annotations // mandatory
   : label
   ;
 

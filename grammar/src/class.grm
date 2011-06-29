@@ -1,7 +1,7 @@
 /**
 h2. Classes
 
-*Relevant pages:* [Classes and Inheritance]
+bq. See [Classes and Inheritance]
 */
 
 /*
@@ -20,15 +20,10 @@ class
   : modifiers "class" SimpleName
       typeParameters?
       ("wraps" valueParameters? | modifiers valueParameters?)?
-      (":" attributes delegationSpecifier{","})?
+      (":" annotations delegationSpecifier{","})?
       (classBody? | enumClassBody)
   ;
 
-
-typeParameters
-  : "<" typeParameter{","} ">"
-    ("where" typeConstraint{","})?
-  ;
 
 classBody
   : ("{" memberDeclaration "}")?
@@ -43,11 +38,23 @@ explicitDelegation
   : userType "by" expression // internal this expression no foo {bar} is allowed
   ;
 
+typeParameters
+  : "<" typeParameter{","} ">"
+    ("where" typeConstraint{","})?
+  ;
+
 typeParameter
   : modifiers SimpleName (":" userType)?
   ;
 
+/**
+bq. See [Generic classes|Generics#Generic classes]
+*/
+
 typeConstraint
-  : attributes SimpleName ":" type
-  : attributes "class" "object" SimpleName ":" type
+  : annotations SimpleName ":" type
+  : annotations "class" "object" SimpleName ":" type
   ;
+/**
+bq. See [Generic constraints|Generics#Generic constraints]
+*/

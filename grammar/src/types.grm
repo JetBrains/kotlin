@@ -1,5 +1,7 @@
 /**
 h2. Types
+
+bq. See [Types]
 */
 
 /*
@@ -14,7 +16,7 @@ Foo<Bar<X>, T, Object> // user type
 */
 
 type
-  : attributes typeDescriptor
+  : annotations typeDescriptor
 
 // IF YOU CHANGE THIS, please, update TYPE_FIRST in JetParsing
 typeDescriptor

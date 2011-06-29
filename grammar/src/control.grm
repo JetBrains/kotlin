@@ -1,5 +1,7 @@
 /**
 h3. Control structures
+
+bq. See [Control structures]
 */
 
 if
@@ -11,7 +13,7 @@ try
   ;
 
 catchBlock
-  : "catch" "(" attributes SimpleName ":" userType ")" block
+  : "catch" "(" annotations SimpleName ":" userType ")" block
   ;
 
 finallyBlock
@@ -25,7 +27,7 @@ loop
   ;
 
 for
-  : "for" "(" attributes ("val" | "var")? SimpleName (":" type)? "in" expression ")" expression
+  : "for" "(" annotations ("val" | "var")? SimpleName (":" type)? "in" expression ")" expression
   ;
 
 while

@@ -53,7 +53,11 @@ anonymousInitializer
 classObject
   : modifiers "class" object
   ;
+/**
+bq. See [Class objects|Classes and Inheritance#Class objects]
+*/
 
+[undocumented]
 constructor
   : modifiers "this" valueParameters (":" initializer{","}) block?
   ;
@@ -67,8 +71,8 @@ functionParameter
   ;
 
 initializer
-  : attributes "this" valueArguments
-  : attributes constructorInvocation // type parameters may (must?) be omitted
+  : annotations "this" valueArguments
+  : annotations constructorInvocation // type parameters may (must?) be omitted
   ;
 
 block
@@ -77,7 +81,7 @@ block
 
 function
   : modifiers "fun" typeParameters?
-      (type "." | attributes/*for receiver type*/)?
+      (type "." | annotations/*for receiver type*/)?
       SimpleName
       typeParameters? valueParameters (":" type)?
       functionBody?
@@ -90,11 +94,14 @@ functionBody
 
 property
   : modifiers ("val" | "var")
-      typeParameters? (type "." | attributes)?
+      typeParameters? (type "." | annotations)?
       SimpleName (":" type)?
       ("=" expression SEMI?)?
       (getter? setter? | setter? getter?) SEMI?
   ;
+/**
+bq. See [Properties and Fields]
+*/
 
 getter
   : modifiers "get"
@@ -111,4 +118,7 @@ parameter
   ;
 
 object
-  : "object" SimpleName ":" ":" delegationSpecifier{","}? classBody? // Class body can be optional: this is a declaration
+  : "object" SimpleName ":" delegationSpecifier{","}? classBody? // Class body can be optional: this is a declaration
+/**
+bq. See [Object expressions and Declarations]
+*/

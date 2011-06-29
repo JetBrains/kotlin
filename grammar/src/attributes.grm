@@ -2,14 +2,14 @@
 h2. Annotations
 */
 
-attributes
-  : attributeAnnotation*
+annotations
+  : annotation*
   ;
 
-attributeAnnotation
-  : "[" attribute{","} "]"
+annotation
+  : "[" annotationEntry{","} "]"
   ;
 
-attribute
+annotationEntry
   : SimpleName{"."} (valueArguments | "=" expression)?
   ;

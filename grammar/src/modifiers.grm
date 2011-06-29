@@ -12,7 +12,7 @@ modifier
   : varianceAnnotation
   : memberModifier
   : parameterKind
-  : attributes
+  : annotations
   ;
 
 classModifier

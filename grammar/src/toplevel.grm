@@ -27,14 +27,18 @@ import
   : "import" ("namespace" ".")? SimpleName{"."} ("." "*" | "as" SimpleName)? SEMI?
   ;
 
+/**
+bq. See [Imports|Namespaces#Imports]
+*/
+
 toplevelObject
   : namespace
   : class
   : object
-  : extension
   : function
   : property
   : typedef
+  : extension
   ;
 
 namespace
@@ -44,10 +48,16 @@ namespace
     "}"
   ;
 
+/**
+bq. See [Namespaces]
+*/
+
+[undocumented]
 typedef
   : modifiers "type" SimpleName typeParameters? "=" type
   ;
 
+[undocumented]
 extension
   : modifiers "extension" SimpleName? typeParameters? "for" type classBody? // properties cannot be lazy, cannot have backing fields
   ;
