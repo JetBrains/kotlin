@@ -3,59 +3,124 @@ namespace ColossalCave;
 import java.util.*
 import java.io.*
 
+/*
+fun <T> ArrayList<T>.findAll(predicate: {(T) : Boolean}): ArrayList<T> {
+  val result = ArrayList<T>()
+  for(val t in this) {
+    if (predicate(t)) result.add(t)
+  }
+  return result
+}
+*/
+
+fun print(s: String) { System.out?.println(s) }
+
 namespace World {
-  class Room(val name: String) {
-    public val west: Room? get() = null
-    public val east: Room? get() = null
+  class Thing(val name: String) {
+    val ldesc: String get() = "This is a nondescript thing"
   }
 
-  public val items = ArrayList<Item>()
+  class Room(val name: String): Thing(name) {
+    val west: Room? get() = null
+    val east: Room? get() = null
+    val north: Room? get() = null
+    val south: Room? get() = null
+    var seen: Boolean = false
+  }
 
-  class Item(val name: String, var room: Room) {
+  public val items: ArrayList<Item> = ArrayList<Item>()
+
+  class Item(val name: String, var room: Room?): Thing(name) {
+    val isFixed: Boolean get() = false
+    val isListed: Boolean get() = true
+
     {
       items.add(this)
     }
   }
 
+  class FixedItem(val name: String, var room: Room?): Item(name, room) {
+    val isFixed: Boolean get() = true
+    val isListed: Boolean get() = false
+  }
+
   fun describeRoom(room: Room) {
-    System.out?.println(room.name)
-    for(val anItem: Any? in items) {
-      val item = anItem as Item
-      if (item.room === room) {
-        System.out?.println("You see " + item.name)
+    print(room.name)
+    if (!room.seen) {
+      print(room.ldesc)
+      room.seen = true
+    }
+    for(val item in items) {
+      if (item.room === room && item.isListed) {
+        print("You see " + item.name)
       }
     }
   }
 
   object AtEndOfRoad: Room("At End of Road") {
-    public val west: Room? get() = AtHillInRoad
-    public val east: Room? get() = InsideBuilding
+    val ldesc: String = "You are standing at the end of the road before a small brick building." +
+      " Around you is a forest. A small stream flows out of the building and down a gully."
+
+    val west: Room? get() = AtHillInRoad
+    val east: Room? get() = InsideBuilding
+    val south: Room? get() = InAValley
   }
 
   object AtHillInRoad: Room("At Hill in Road") {
-    public val east: Room? get() = AtEndOfRoad
+    val ldesc: String = "You have walked up a hill, still in the forest. The road slopes back down " +
+      "the other side of the hill. There is a building in the distance."
+
+    val east: Room? get() = AtEndOfRoad
+  }
+
+  val Hill = object: FixedItem("Hill", AtHillInRoad) {
+    val ldesc: String = "It's just a typical hill."
   }
 
   object InsideBuilding: Room("Inside Building") {
-    public val west: Room? get() = AtEndOfRoad
+    val ldesc: String = "You are inside a building, a well house for a large spring."
+
+    val west: Room? get() = AtEndOfRoad
+  }
+
+  object InAValley: Room("In A Valley") {
+    val ldesc: String = "You are in a valley in the forest beside a stream tumbling along a rocky bed."
+    val north: Room get() = AtEndOfRoad
+    val south: Room get() = AtSlitInStreambed
+  }
+
+  object AtSlitInStreambed: Room("At Slit In Streambed") {
+    val ldesc: String = "At your feet all the water of the stream splashs into a 2-inch slit in the rock." +
+      " Downstream the streambed is bare rock."
+    val north: Room get() = InAValley
+    val south: Room get() = OutsideGrate
+  }
+
+  object OutsideGrate: Room("Outside Grate") {
+    val ldesc: String = "You are in a 20-foot depression floored with bare dirt. Set into the dirt " +
+      "is a strong steel grate mounted in concrete. A dry streambed leads into the depression."
+    val north: Room get() = AtSlitInStreambed
   }
 
   val brassLantern = object: Item("Brass Lantern", InsideBuilding) {
+  }
+
+  val setOfKeys = object: Item("A Set of Keys", InsideBuilding) {
   }
 
   fun startRoom() = AtEndOfRoad
 }
 
 class Player(var room: World.Room) {
-
+  val inventory: ArrayList<World.Item> = ArrayList<World.Item>()
 }
 
 class Command {
   abstract fun execute(p: Player): Unit
 }
 
-class QuitCommand() : Command {
-  fun execute(p: Player): Unit {
+object QuitCommand : Command {
+  fun execute(p: Player) {
     System.exit(0)
   }
 }
@@ -71,28 +136,96 @@ class MoveCommand: Command {
   }
 }
 
-class WestCommand(): MoveCommand {
-  fun execute(p: Player): Unit {
+object NorthCommand: MoveCommand {
+  fun execute(p: Player) {
+    moveTo(p, p.room.north)
+  }
+}
+
+object SouthCommand: MoveCommand {
+  fun execute(p: Player) {
+    moveTo(p, p.room.south)
+  }
+}
+
+object WestCommand: MoveCommand {
+  fun execute(p: Player) {
     moveTo(p, p.room.west)
   }
 }
 
-class EastCommand(): MoveCommand {
-  fun execute(p: Player): Unit {
+object EastCommand: MoveCommand {
+  fun execute(p: Player) {
     moveTo(p, p.room.east)
   }
 }
 
+class CommandOnObject(val target: String): Command {
+  fun execute(p: Player) {
+    for(val item in World.items) {
+      if (item.name.equalsIgnoreCase(target) && item.room == p.room) {
+        executeOn(p, item)
+        return
+      }
+    }
+    System.out?.println("I don't see any " + target + " here.")
+  }
+
+  fun executeOn(p: Player, item: World.Item)
+}
+
+class TakeCommand(val target: String): CommandOnObject(target) {
+  fun executeOn(p: Player, item: World.Item) {
+    if (item.isFixed) {
+      print("You can't have " + item.name)
+      return
+    }
+    item.room = null
+    p.inventory.add(item)
+    System.out?.println("Taken")
+  }
+}
+
+class ExamineCommand(val target: String): CommandOnObject(target) {
+  fun executeOn(p: Player, item: World.Item) {
+    print(item.ldesc)
+  }
+}
+
+object InventoryCommand: Command {
+  fun execute(p: Player) {
+    if (p.inventory.size() == 0)
+      print("You are empty-handed.")
+    else {
+      print("You are carrying:")
+      for(val item in p.inventory) {
+        print(item.name)
+      }
+    }
+  }
+}
+
 fun parse(cmd: String): Command? {
-  if (cmd == "quit") return QuitCommand()
-  if (cmd == "west") return WestCommand()
-  if (cmd == "east") return EastCommand()
+  if (cmd == "quit") return QuitCommand
+  if (cmd == "north") return NorthCommand
+  if (cmd == "south") return SouthCommand
+  if (cmd == "west") return WestCommand
+  if (cmd == "east") return EastCommand
+  if (cmd == "inventory") return InventoryCommand
+  if (cmd.startsWith("take")) {
+    val target = cmd.substring(4).trim()
+    return TakeCommand(target)
+  }
+  if (cmd.startsWith("examine")) {
+    val target = cmd.substring(7).trim()
+    return ExamineCommand(target)
+  }
   return null
 }
 
 fun main(args: Array<String>) {
   val p = Player(World.startRoom())
-  System.out?.println(p.room.name)
+  World.describeRoom(p.room)
   val reader = BufferedReader(InputStreamReader(System.`in`))
   while(true) {
     System.out?.print("> ")
