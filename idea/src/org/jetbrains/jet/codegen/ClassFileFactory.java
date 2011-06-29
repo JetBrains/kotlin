@@ -1,7 +1,6 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Pair;
 import org.jetbrains.jet.lang.psi.JetNamespace;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
@@ -19,7 +18,6 @@ public class ClassFileFactory {
     private final boolean isText;
     private final Map<String, NamespaceCodegen> ns2codegen = new HashMap<String, NamespaceCodegen>();
     private final Map<String, ClassVisitor> generators = new LinkedHashMap<String, ClassVisitor>();
-    private final Map<String, Integer> closuresCount = new HashMap<String, Integer>();
     private boolean isDone = false;
     public final GenerationState state;
 
@@ -42,14 +40,8 @@ public class ClassFileFactory {
         return visitor;
     }
 
-    Pair<String, ClassVisitor> forClosureIn(String baseName) {
-        Integer count = closuresCount.get(baseName);
-        if (count == null) count = 0;
-
-        closuresCount.put(baseName, count + 1);
-
-        final String className = baseName + "$" + (count + 1);
-        return new Pair<String, ClassVisitor>(className, newVisitor(className + ".class"));
+    ClassVisitor forAnonymousSubclass(String className) {
+        return newVisitor(className + ".class");
     }
 
     NamespaceCodegen forNamespace(JetNamespace namespace) {

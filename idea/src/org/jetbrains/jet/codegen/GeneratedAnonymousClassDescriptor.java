@@ -8,12 +8,12 @@ import org.objectweb.asm.commons.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GeneratedClosureDescriptor {
+public class GeneratedAnonymousClassDescriptor {
     private final String classname;
     private Method constructor;
     private List<StackValue> args = new ArrayList<StackValue>();
 
-    public GeneratedClosureDescriptor(String classname, Method constructor) {
+    public GeneratedAnonymousClassDescriptor(String classname, Method constructor) {
         this.classname = classname;
         this.constructor = constructor;
     }

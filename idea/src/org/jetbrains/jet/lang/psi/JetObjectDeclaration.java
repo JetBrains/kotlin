@@ -82,4 +82,8 @@ public class JetObjectDeclaration extends JetNamedDeclaration implements JetClas
     public void accept(JetVisitor visitor) {
         visitor.visitObjectDeclaration(this);
     }
+
+    public boolean isObjectLiteral() {
+        return getNameAsDeclaration() == null;
+    }
 }

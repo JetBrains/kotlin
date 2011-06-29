@@ -1,10 +1,7 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.lang.psi.JetClassOrObject;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
+import org.jetbrains.jet.lang.psi.*;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
@@ -20,6 +17,8 @@ public class ClassCodegen {
     }
 
     public void generate(JetClassOrObject aClass) {
+        prepareAnonymousClasses(aClass);
+
         if (aClass instanceof JetObjectDeclaration) {
             generateImplementation(aClass, OwnerKind.IMPLEMENTATION);
         }
@@ -34,6 +33,21 @@ public class ClassCodegen {
                 generate((JetClass) declaration);
             }
         }
+    }
+
+    private void prepareAnonymousClasses(JetClassOrObject aClass) {
+        aClass.acceptChildren(new JetVisitor() {
+            @Override
+            public void visitJetElement(JetElement element) {
+                super.visitJetElement(element);
+                element.acceptChildren(this);
+            }
+
+            @Override
+            public void visitObjectLiteralExpression(JetObjectLiteralExpression expression) {
+                state.getTypeMapper().classNameForAnonymousClass(expression.getObjectDeclaration());
+            }
+        });
     }
 
     private void generateInterface(JetClassOrObject aClass) {

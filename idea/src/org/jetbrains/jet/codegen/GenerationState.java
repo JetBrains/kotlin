@@ -10,13 +10,12 @@ import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression;
-import org.jetbrains.jet.lang.psi.JetNamespace;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.commons.Method;
 
 public class GenerationState {
     private final ClassFileFactory factory;
@@ -69,12 +68,10 @@ public class GenerationState {
         return factory.newVisitor(JetTypeMapper.jvmNameForDelegatingImplementation(aClass) + ".class");
     }
 
-    public Pair<String, ClassVisitor> forClosureIn(ClassDescriptor aClass) {
-        return factory.forClosureIn(JetTypeMapper.jvmNameForInterface(aClass));
-    }
-
-    public Pair<String, ClassVisitor> forClosureIn(JetNamespace namespace) {
-        return factory.forClosureIn(NamespaceCodegen.getJVMClassName(namespace.getFQName()));
+    public Pair<String, ClassVisitor> forAnonymousSubclass(JetExpression expression) {
+        String className = typeMapper.classNameForAnonymousClass(expression);
+        ClassVisitor visitor = factory.forAnonymousSubclass(className);
+        return Pair.create(className, visitor);
     }
 
     public NamespaceCodegen forNamespace(JetNamespace namespace) {
@@ -97,16 +94,22 @@ public class GenerationState {
         }
     }
 
-    public GeneratedClosureDescriptor generateClosure(JetFunctionLiteralExpression literal, ExpressionCodegen context) {
+    public GeneratedAnonymousClassDescriptor generateClosure(JetFunctionLiteralExpression literal, ExpressionCodegen context) {
         final ClosureCodegen codegen = new ClosureCodegen(this, context);
         closureContexts.push(codegen);
         try {
             return codegen.gen(literal);
         }
         finally {
-            final ClosureCodegen pooped = closureContexts.pop();
-            assert pooped == codegen;
+            final ClosureCodegen popped = closureContexts.pop();
+            assert popped == codegen;
         }
+    }
+
+    public GeneratedAnonymousClassDescriptor generateObjectLiteral(JetObjectLiteralExpression literal, ExpressionCodegen context) {
+        Pair<String, ClassVisitor> nameAndVisitor = forAnonymousSubclass(literal.getObjectDeclaration());
+        new ImplementationBodyCodegen(literal.getObjectDeclaration(), OwnerKind.IMPLEMENTATION, nameAndVisitor.getSecond(), this).generate();
+        return new GeneratedAnonymousClassDescriptor(nameAndVisitor.first, new Method("<init>", "()V"));
     }
 
     public StackValue lookupInContext(DeclarationDescriptor d) {

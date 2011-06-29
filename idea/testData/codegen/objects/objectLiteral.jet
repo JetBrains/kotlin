@@ -1,0 +1,10 @@
+class C() {
+  val child = object {
+    fun toString(): String = "child"
+  }
+}
+
+fun box(): String {
+  val c = C()
+  return if (c.child.toString() == "child") "OK" else "fail"
+}

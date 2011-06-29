@@ -42,7 +42,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private String jvmName() {
-        return JetTypeMapper.jetJvmName(descriptor, kind);
+        return state.getTypeMapper().jvmName(descriptor, kind);
     }
 
     protected String getSuperClass() {
@@ -65,7 +65,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         int typeinfoStatic = descriptor.getTypeConstructor().getParameters().size() > 0 ? 0 : Opcodes.ACC_STATIC;
         v.visitField(Opcodes.ACC_PRIVATE | typeinfoStatic, "$typeInfo", "Ljet/typeinfo/TypeInfo;", null, null);
 
-        if (myClass instanceof JetObjectDeclaration) {
+        if (isNonLiteralObject()) {
             Type type = JetTypeMapper.jetImplementationType(descriptor);
             v.visitField(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC, "$instance", type.getDescriptor(), null, null);
         }
@@ -381,7 +381,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private void generateStaticInitializer() {
         boolean needTypeInfo = descriptor.getTypeConstructor().getParameters().size() == 0;
-        boolean needInstance = myClass instanceof JetObjectDeclaration;
+        boolean needInstance = isNonLiteralObject();
         if (!needTypeInfo && !needInstance) {
             // we will have a dynamic type info field
             return;
@@ -393,8 +393,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         InstructionAdapter v = new InstructionAdapter(mv);
 
         if (needTypeInfo) {
-            ClassCodegen.newTypeInfo(v, state.getTypeMapper().jvmType(descriptor, OwnerKind.INTERFACE));
-            v.putstatic(JetTypeMapper.jvmNameForImplementation(descriptor), "$typeInfo", "Ljet/typeinfo/TypeInfo;");
+            JetTypeMapper typeMapper = state.getTypeMapper();
+            ClassCodegen.newTypeInfo(v, typeMapper.jvmType(descriptor, OwnerKind.INTERFACE));
+            v.putstatic(typeMapper.jvmName(descriptor, kind), "$typeInfo", "Ljet/typeinfo/TypeInfo;");
         }
         if (needInstance) {
             String name = jvmName();
@@ -410,6 +411,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         mv.visitEnd();
     }
 
+    private boolean isNonLiteralObject() {
+        return myClass instanceof JetObjectDeclaration && !((JetObjectDeclaration) myClass).isObjectLiteral();
+    }
+
     private void generateGetTypeInfo() {
         final MethodVisitor mv = v.visitMethod(Opcodes.ACC_PUBLIC,
                 "getTypeInfo",
@@ -418,7 +423,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 null);
         mv.visitCode();
         InstructionAdapter v = new InstructionAdapter(mv);
-        ExpressionCodegen.loadTypeInfo(descriptor, v);
+        ExpressionCodegen.loadTypeInfo(state.getTypeMapper(), descriptor, v);
         v.areturn(JetTypeMapper.TYPE_TYPEINFO);
         mv.visitMaxs(0, 0);
         mv.visitEnd();

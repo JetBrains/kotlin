@@ -4,7 +4,6 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.util.Pair;
-import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
@@ -78,17 +77,8 @@ public class ClosureCodegen {
         return null;
     }
 
-    public GeneratedClosureDescriptor gen(JetFunctionLiteralExpression fun) {
-        JetNamedDeclaration container = PsiTreeUtil.getParentOfType(fun, JetNamespace.class, JetClass.class, JetObjectDeclaration.class);
-
-        final Pair<String, ClassVisitor> nameAndVisitor;
-        if (container instanceof JetNamespace) {
-            nameAndVisitor = state.forClosureIn((JetNamespace) container);
-        }
-        else {
-            nameAndVisitor = state.forClosureIn(state.getBindingContext().getClassDescriptor((JetClassOrObject) container));
-        }
-
+    public GeneratedAnonymousClassDescriptor gen(JetFunctionLiteralExpression fun) {
+        final Pair<String, ClassVisitor> nameAndVisitor = state.forAnonymousSubclass(fun);
 
         final FunctionDescriptor funDescriptor = (FunctionDescriptor) state.getBindingContext().getDeclarationDescriptor(fun);
 
@@ -123,7 +113,7 @@ public class ClosureCodegen {
 
         cv.visitEnd();
 
-        final GeneratedClosureDescriptor answer = new GeneratedClosureDescriptor(name, constructor);
+        final GeneratedAnonymousClassDescriptor answer = new GeneratedAnonymousClassDescriptor(name, constructor);
         for (DeclarationDescriptor descriptor : closure.keySet()) {
             final EnclosedValueDescriptor valueDescriptor = closure.get(descriptor);
             answer.addArg(valueDescriptor.getOuterValue());

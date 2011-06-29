@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.psi;
 
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -8,7 +9,7 @@ import java.util.List;
 /**
  * @author max
  */
-public interface JetClassOrObject {
+public interface JetClassOrObject extends PsiElement {
     List<JetDeclaration> getDeclarations();
 
     @Nullable

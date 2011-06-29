@@ -2,6 +2,7 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import jet.typeinfo.TypeInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -15,7 +16,9 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.Method;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author yole
@@ -26,6 +29,8 @@ public class JetTypeMapper {
 
     private final JetStandardLibrary standardLibrary;
     private final BindingContext bindingContext;
+    private final Map<JetExpression, String> classNamesForAnonymousClasses = new HashMap<JetExpression, String>();
+    private final Map<String, Integer> anonymousSubclassesCount = new HashMap<String, Integer>();
 
     public JetTypeMapper(JetStandardLibrary standardLibrary, BindingContext bindingContext) {
         this.standardLibrary = standardLibrary;
@@ -49,10 +54,25 @@ public class JetTypeMapper {
         if (declaration instanceof PsiClass) {
             return jvmName((PsiClass) declaration);
         }
+        if (declaration instanceof JetObjectDeclaration && ((JetObjectDeclaration) declaration).isObjectLiteral()) {
+            String className = classNamesForAnonymousClasses.get(declaration);
+            if (className == null) {
+                throw new UnsupportedOperationException("Unexpected forward reference to anonymous class " + declaration);
+            }
+            return className;
+        }
         return jetJvmName(jetClass, kind);
     }
 
-    public static String jetJvmName(ClassDescriptor jetClass, OwnerKind kind) {
+    public boolean isInterface(ClassDescriptor jetClass, OwnerKind kind) {
+        PsiElement declaration = bindingContext.getDeclarationPsiElement(jetClass);
+        if (declaration instanceof JetObjectDeclaration && ((JetObjectDeclaration) declaration).isObjectLiteral()) {
+            return false;
+        }
+        return kind == OwnerKind.INTERFACE;
+    }
+
+    private static String jetJvmName(ClassDescriptor jetClass, OwnerKind kind) {
         if (jetClass.isObject()) {
             return jvmNameForImplementation(jetClass);
         }
@@ -209,11 +229,7 @@ public class JetTypeMapper {
         }
 
         if (descriptor instanceof ClassDescriptor) {
-            final PsiElement declaration = bindingContext.getDeclarationPsiElement(descriptor);
-            if (declaration instanceof PsiClass) {
-                return psiClassType((PsiClass) declaration);
-            }
-            return Type.getObjectType(jetJvmName((ClassDescriptor) descriptor, kind));
+            return Type.getObjectType(jvmName((ClassDescriptor) descriptor, kind));
         }
 
         throw new UnsupportedOperationException("Unknown type " + jetType);
@@ -369,5 +385,32 @@ public class JetTypeMapper {
             flags |= defaultFlags;
         }
         return flags;
+    }
+
+    String classNameForAnonymousClass(JetExpression expression) {
+        String name = classNamesForAnonymousClasses.get(expression);
+        if (name != null) {
+            return name;
+        }
+
+        JetNamedDeclaration container = PsiTreeUtil.getParentOfType(expression, JetNamespace.class, JetClass.class, JetObjectDeclaration.class);
+
+        String baseName;
+        if (container instanceof JetNamespace) {
+            baseName = NamespaceCodegen.getJVMClassName(((JetNamespace) container).getFQName());
+        }
+        else {
+            ClassDescriptor aClass = bindingContext.getClassDescriptor((JetClassOrObject) container);
+            baseName = JetTypeMapper.jvmNameForInterface(aClass);
+        }
+
+        Integer count = anonymousSubclassesCount.get(baseName);
+        if (count == null) count = 0;
+
+        anonymousSubclassesCount.put(baseName, count + 1);
+
+        final String className = baseName + "$" + (count + 1);
+        classNamesForAnonymousClasses.put(expression, className);
+        return className;
     }
 }

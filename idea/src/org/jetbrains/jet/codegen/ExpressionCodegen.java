@@ -94,8 +94,8 @@ public class ExpressionCodegen extends JetVisitor {
         outerThisExpressions.put(outer, expression);
     }
 
-    static void loadTypeInfo(ClassDescriptor descriptor, InstructionAdapter v) {
-        String owner = JetTypeMapper.jvmNameForImplementation(descriptor);
+    static void loadTypeInfo(JetTypeMapper typeMapper, ClassDescriptor descriptor, InstructionAdapter v) {
+        String owner = typeMapper.jvmName(descriptor, OwnerKind.IMPLEMENTATION);
         if (descriptor.getTypeConstructor().getParameters().size() > 0) {
             v.load(0, JetTypeMapper.TYPE_OBJECT);
             v.getfield(owner, "$typeInfo", "Ljet/typeinfo/TypeInfo;");
@@ -482,7 +482,7 @@ public class ExpressionCodegen extends JetVisitor {
             generateBlock(expression.getFunctionLiteral().getBodyExpression().getStatements());
         }
         else {
-            final GeneratedClosureDescriptor closure = state.generateClosure(expression, this);
+            final GeneratedAnonymousClassDescriptor closure = state.generateClosure(expression, this);
 
             v.anew(Type.getObjectType(closure.getClassname()));
             v.dup();
@@ -496,6 +496,14 @@ public class ExpressionCodegen extends JetVisitor {
 
             v.invokespecial(closure.getClassname(), "<init>", cons.getDescriptor());
         }
+    }
+
+    @Override
+    public void visitObjectLiteralExpression(JetObjectLiteralExpression expression) {
+        GeneratedAnonymousClassDescriptor descriptor = state.generateObjectLiteral(expression, this);
+        v.anew(Type.getObjectType(descriptor.getClassname()));
+        v.dup();
+        v.invokespecial(descriptor.getClassname(), "<init>", descriptor.getConstructor().getDescriptor());
     }
 
     private void generateBlock(List<JetElement> statements) {
@@ -778,7 +786,7 @@ public class ExpressionCodegen extends JetVisitor {
                             methodDescriptor.getName(),
                             methodDescriptor.getDescriptor());
                 }
-                else if(declarationPsiElement instanceof JetNamedFunction) {
+                else if (declarationPsiElement instanceof JetNamedFunction) {
                     final JetNamedFunction jetFunction = (JetNamedFunction) declarationPsiElement;
                     methodDescriptor = typeMapper.mapSignature(jetFunction);
                     if (functionParent instanceof NamespaceDescriptorImpl) {
@@ -790,10 +798,14 @@ public class ExpressionCodegen extends JetVisitor {
                         v.invokestatic(owner, methodDescriptor.getName(), methodDescriptor.getDescriptor());
                     }
                     else if (functionParent instanceof ClassDescriptor) {
-                        ensureReceiverOnStack(expression, (ClassDescriptor) functionParent);
+                        ClassDescriptor containingClass = (ClassDescriptor) functionParent;
+                        ensureReceiverOnStack(expression, containingClass);
                         pushMethodArguments(expression, methodDescriptor);
-                        final String owner = JetTypeMapper.jvmNameForInterface((ClassDescriptor) functionParent);
-                        v.invokeinterface(owner, methodDescriptor.getName(), methodDescriptor.getDescriptor());
+                        final String owner = typeMapper.jvmName(containingClass, OwnerKind.INTERFACE);
+                        int opcode = typeMapper.isInterface(containingClass, OwnerKind.INTERFACE)
+                                ? Opcodes.INVOKEINTERFACE
+                                : Opcodes.INVOKEVIRTUAL;
+                        v.visitMethodInsn(opcode,owner, methodDescriptor.getName(), methodDescriptor.getDescriptor());
                     }
                     else {
                         throw new UnsupportedOperationException("don't know how to generate call to " + declarationPsiElement);
@@ -1682,7 +1694,7 @@ public class ExpressionCodegen extends JetVisitor {
         if (declarationDescriptor instanceof TypeParameterDescriptor) {
             DeclarationDescriptor containingDeclaration = declarationDescriptor.getContainingDeclaration();
             if (containingDeclaration == contextType && contextType instanceof ClassDescriptor) {
-                loadTypeInfo((ClassDescriptor) contextType, v);
+                loadTypeInfo(typeMapper, (ClassDescriptor) contextType, v);
                 v.iconst(((TypeParameterDescriptor) declarationDescriptor).getIndex());
                 v.invokevirtual("jet/typeinfo/TypeInfo", "getTypeParameter", "(I)Ljet/typeinfo/TypeInfo;");
                 return;
