@@ -3,7 +3,6 @@ package org.jetbrains.jet.codegen;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -34,10 +33,11 @@ public class NamespaceCodegen {
     }
 
     public void generate(JetNamespace namespace) {
-        final JetStandardLibrary standardLibrary = JetStandardLibrary.getJetStandardLibrary(project);
         final FunctionCodegen functionCodegen = new FunctionCodegen(namespace, v, state);
         final PropertyCodegen propertyCodegen = new PropertyCodegen(v, functionCodegen, state);
         final ClassCodegen classCodegen = state.forClass();
+
+        state.prepareAnonymousClasses(namespace);
 
         if (hasNonConstantPropertyInitializers(namespace)) {
             generateStaticInitializers(namespace);

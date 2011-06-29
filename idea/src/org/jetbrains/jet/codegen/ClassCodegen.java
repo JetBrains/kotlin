@@ -17,7 +17,7 @@ public class ClassCodegen {
     }
 
     public void generate(JetClassOrObject aClass) {
-        prepareAnonymousClasses(aClass);
+        state.prepareAnonymousClasses((JetElement) aClass);
 
         if (aClass instanceof JetObjectDeclaration) {
             generateImplementation(aClass, OwnerKind.IMPLEMENTATION);
@@ -33,21 +33,6 @@ public class ClassCodegen {
                 generate((JetClass) declaration);
             }
         }
-    }
-
-    private void prepareAnonymousClasses(JetClassOrObject aClass) {
-        aClass.acceptChildren(new JetVisitor() {
-            @Override
-            public void visitJetElement(JetElement element) {
-                super.visitJetElement(element);
-                element.acceptChildren(this);
-            }
-
-            @Override
-            public void visitObjectLiteralExpression(JetObjectLiteralExpression expression) {
-                state.getTypeMapper().classNameForAnonymousClass(expression.getObjectDeclaration());
-            }
-        });
     }
 
     private void generateInterface(JetClassOrObject aClass) {

@@ -116,4 +116,19 @@ public class GenerationState {
         final ClosureCodegen top = closureContexts.peek();
         return top != null ? top.lookupInContext(d) : null;
     }
+
+    void prepareAnonymousClasses(JetElement aClass) {
+        aClass.acceptChildren(new JetVisitor() {
+            @Override
+            public void visitJetElement(JetElement element) {
+                super.visitJetElement(element);
+                element.acceptChildren(this);
+            }
+
+            @Override
+            public void visitObjectLiteralExpression(JetObjectLiteralExpression expression) {
+                getTypeMapper().classNameForAnonymousClass(expression.getObjectDeclaration());
+            }
+        });
+    }
 }
