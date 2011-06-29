@@ -26,7 +26,7 @@ public class ErrorHandler {
 
         @Override
         public void typeMismatch(@NotNull JetExpression expression, @NotNull JetType expectedType, @NotNull JetType actualType) {
-            throw new IllegalStateException("Type mismatch: inferred type is " + actualType + " but " + expectedType + " was expected");
+            throw new IllegalStateException("Type mismatch at " + expression.getTextRange().getStartOffset() + ": inferred type is " + actualType + " but " + expectedType + " was expected");
         }
 
         @Override
