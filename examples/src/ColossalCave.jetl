@@ -3,12 +3,10 @@ namespace ColossalCave;
 import java.util.*
 import java.io.*
 
-class World() {
+namespace World {
   class Room(val name: String) {
     public val west: Room? get() = null
     public val east: Room? get() = null
-
-    public val world: World get() = this@World
   }
 
   public val items = ArrayList<Item>()
@@ -29,29 +27,23 @@ class World() {
     }
   }
 
-  public val atEndOfRoad = AtEndOfRoad()
-  public val atHillInRoad = AtHillInRoad()
-  public val insideBuilding = InsideBuilding()
-
-  public val brassLantern = BrassLantern()
-
-  class AtEndOfRoad(): Room("At End of Road") {
-    public val west: Room? get() = atHillInRoad
-    public val east: Room? get() = insideBuilding
+  object AtEndOfRoad: Room("At End of Road") {
+    public val west: Room? get() = AtHillInRoad
+    public val east: Room? get() = InsideBuilding
   }
 
-  class AtHillInRoad(): Room("At Hill in Road") {
-    public val east: Room? get() = atEndOfRoad
+  object AtHillInRoad: Room("At Hill in Road") {
+    public val east: Room? get() = AtEndOfRoad
   }
 
-  class InsideBuilding(): Room("Inside Building") {
-    public val west: Room? get() = atHillInRoad
+  object InsideBuilding: Room("Inside Building") {
+    public val west: Room? get() = AtEndOfRoad
   }
 
-  class BrassLantern(): Item("Brass Lantern", insideBuilding) {
+  val brassLantern = object: Item("Brass Lantern", InsideBuilding) {
   }
 
-  fun startRoom() = atEndOfRoad
+  fun startRoom() = AtEndOfRoad
 }
 
 class Player(var room: World.Room) {
@@ -75,7 +67,7 @@ class MoveCommand: Command {
       return
     }
     p.room = room as World.Room
-    room.world.describeRoom(p.room)
+    World.describeRoom(p.room)
   }
 }
 
@@ -99,8 +91,7 @@ fun parse(cmd: String): Command? {
 }
 
 fun main(args: Array<String>) {
-  val w = World()
-  val p = Player(w.startRoom())
+  val p = Player(World.startRoom())
   System.out?.println(p.room.name)
   val reader = BufferedReader(InputStreamReader(System.`in`))
   while(true) {
