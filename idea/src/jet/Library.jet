@@ -52,9 +52,16 @@ class String() : Comparable<String> {
 
   fun plus(other : Any?) : String
   fun equals(other : Any?) : Boolean
+  fun equalsIgnoreCase(other: String?) : Boolean
 
   fun substring(start: Int): String
   fun substring(start: Int, end: Int): String
+
+  fun startsWith(prefix: String, toffset: Int): Boolean
+  fun startsWith(prefix: String): Boolean
+  fun endsWith(suffix: String): Boolean
+
+  fun trim(): String
 }
 
 class Range<in T : Comparable<T>> {
