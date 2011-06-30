@@ -5,6 +5,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lexer.JetTokens;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -32,8 +33,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (!(myClass instanceof JetObjectDeclaration)) {
             interfaces.add(JetTypeMapper.jvmNameForInterface(descriptor));
         }
+
+        boolean isAbstract = myClass instanceof JetClass && ((JetClass) myClass).hasModifier(JetTokens.ABSTRACT_KEYWORD);
+
         v.visit(Opcodes.V1_6,
-                Opcodes.ACC_PUBLIC,
+                Opcodes.ACC_PUBLIC | (isAbstract ? Opcodes.ACC_ABSTRACT : 0),
                 jvmName(),
                 null,
                 superClass,

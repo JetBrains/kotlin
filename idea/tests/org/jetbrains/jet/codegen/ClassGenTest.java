@@ -1,6 +1,7 @@
 package org.jetbrains.jet.codegen;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.List;
 
 /**
@@ -106,5 +107,12 @@ public class ClassGenTest extends CodegenTestCase {
 
     public void testSimpleBox() throws Exception {
         blackBoxFile("classes/simpleBox.jet");
+    }
+
+    public void testAbstractClass() throws Exception {
+        loadText("abstract class SimpleClass() { }");
+
+        final Class aClass = loadAllClasses(generateClassesInFile()).get("SimpleClass$$Impl");
+        assertTrue((aClass.getModifiers() & Modifier.ABSTRACT) != 0);
     }
 }
