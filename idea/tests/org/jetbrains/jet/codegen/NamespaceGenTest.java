@@ -418,4 +418,12 @@ public class NamespaceGenTest extends CodegenTestCase {
     public void testIncrementProperty() throws Exception {
         blackBoxFile("incrementProperty.jet");
     }
+
+    public void testJavaInterfaceMethod() throws Exception {
+        loadText("import java.util.*; fun foo(l: List<String>) { l.add(\"foo\") }");
+        final Method main = generateFunction();
+        final ArrayList<String> list = new ArrayList<String>();
+        main.invoke(null, list);
+        assertEquals("foo", list.get(0));
+    }
 }
