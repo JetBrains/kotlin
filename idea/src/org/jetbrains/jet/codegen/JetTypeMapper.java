@@ -271,7 +271,7 @@ public class JetTypeMapper {
         return type;
     }
 
-    public Method mapSignature(JetNamedFunction f) {
+    private Method mapSignature(JetNamedFunction f, List<Type> valueParameterTypes) {
         final JetTypeReference receiverTypeRef = f.getReceiverTypeRef();
         final JetType receiverType = receiverTypeRef == null ? null : bindingContext.resolveTypeReference(receiverTypeRef);
         final List<JetParameter> parameters = f.getValueParameters();
@@ -280,7 +280,9 @@ public class JetTypeMapper {
             parameterTypes.add(mapType(receiverType));
         }
         for (JetParameter parameter : parameters) {
-            parameterTypes.add(mapType(bindingContext.resolveTypeReference(parameter.getTypeReference())));
+            final Type type = mapType(bindingContext.resolveTypeReference(parameter.getTypeReference()));
+            valueParameterTypes.add(type);
+            parameterTypes.add(type);
         }
         for (JetTypeParameter p: f.getTypeParameters()) {
             parameterTypes.add(TYPE_TYPEINFO);
@@ -301,7 +303,8 @@ public class JetTypeMapper {
     public CallableMethod mapToCallableMethod(JetNamedFunction f) {
         final FunctionDescriptor functionDescriptor = bindingContext.getFunctionDescriptor(f);
         final DeclarationDescriptor functionParent = functionDescriptor.getContainingDeclaration();
-        Method descriptor = mapSignature(f);
+        final List<Type> valueParameterTypes = new ArrayList<Type>();
+        Method descriptor = mapSignature(f, valueParameterTypes);
         String owner;
         int invokeOpcode;
         if (functionParent instanceof NamespaceDescriptor) {
@@ -319,7 +322,7 @@ public class JetTypeMapper {
             throw new UnsupportedOperationException("unknown function parent");
         }
 
-        return new CallableMethod(owner, descriptor, invokeOpcode);
+        return new CallableMethod(owner, descriptor, invokeOpcode, valueParameterTypes);
     }
 
     public Method mapSignature(String name, FunctionDescriptor f) {

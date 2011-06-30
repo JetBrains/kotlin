@@ -795,7 +795,7 @@ public class ExpressionCodegen extends JetVisitor {
                         ensureReceiverOnStack(expression, (ClassDescriptor) functionParent);
                     }
 
-                    pushMethodArguments(expression, callableMethod.getDescriptor());
+                    pushMethodArguments(expression, callableMethod.getValueParameterTypes());
                     pushTypeArguments(expression);
                     callableMethod.invoke(v);
                     methodDescriptor = callableMethod.getDescriptor();
@@ -921,6 +921,14 @@ public class ExpressionCodegen extends JetVisitor {
         for (int i = 0, argsSize = args.size(); i < argsSize; i++) {
             JetArgument arg = args.get(i);
             gen(arg.getArgumentExpression(), argTypes[i]);
+        }
+    }
+
+    private void pushMethodArguments(JetCall expression, List<Type> valueParameterTypes) {
+        List<JetArgument> args = expression.getValueArguments();
+        for (int i = 0, argsSize = args.size(); i < argsSize; i++) {
+            JetArgument arg = args.get(i);
+            gen(arg.getArgumentExpression(), valueParameterTypes.get(i));
         }
     }
 
