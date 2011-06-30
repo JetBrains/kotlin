@@ -123,7 +123,8 @@ public class ClosureCodegen {
 
     private void generateBody(FunctionDescriptor funDescriptor, ClassVisitor cv, List<JetElement> body) {
         FunctionCodegen fc = new FunctionCodegen(null, cv, state);
-        fc.generatedMethod(body, OwnerKind.IMPLEMENTATION, invokeSignature(funDescriptor), funDescriptor.getReceiverType(), funDescriptor.getValueParameters(), null);
+        fc.generatedMethod(body, OwnerKind.IMPLEMENTATION, invokeSignature(funDescriptor), funDescriptor.getReceiverType(),
+                funDescriptor.getValueParameters(), funDescriptor.getTypeParameters(), null);
     }
 
     private void generateBridge(String className, FunctionDescriptor funDescriptor, ClassVisitor cv) {

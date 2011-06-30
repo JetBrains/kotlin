@@ -96,6 +96,10 @@ public class TypeInfoTest extends CodegenTestCase {
         blackBoxFile("typeInfo/nullability.jet");
     }
 
+    public void testGenericFunction() throws Exception {
+        blackBoxFile("typeInfo/genericFunction.jet");
+    }
+
     private Runnable newRunnable() {
         return new Runnable() {
             @Override

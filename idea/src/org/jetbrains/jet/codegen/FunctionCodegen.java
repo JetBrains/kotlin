@@ -2,6 +2,8 @@ package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.JetType;
@@ -17,6 +19,7 @@ import java.util.List;
 
 /**
  * @author max
+ * @author yole
  */
 public class FunctionCodegen {
     private final JetDeclaration owner;
@@ -33,21 +36,23 @@ public class FunctionCodegen {
         final JetTypeReference receiverTypeRef = f.getReceiverTypeRef();
         final JetType receiverType = receiverTypeRef == null ? null : state.getBindingContext().resolveTypeReference(receiverTypeRef);
         Method method = state.getTypeMapper().mapSignature(f);
-        List<ValueParameterDescriptor> paramDescrs = state.getBindingContext().getFunctionDescriptor(f).getValueParameters();
-        generateMethod(f, kind, method, receiverType, paramDescrs);
+        final FunctionDescriptor functionDescriptor = state.getBindingContext().getFunctionDescriptor(f);
+        generateMethod(f, kind, method, receiverType, functionDescriptor.getValueParameters(),
+                functionDescriptor.getTypeParameters());
     }
 
     public void generateMethod(JetDeclarationWithBody f,
                                OwnerKind kind,
                                Method jvmSignature,
                                @Nullable JetType receiverType,
-                               List<ValueParameterDescriptor> paramDescrs) {
+                               List<ValueParameterDescriptor> paramDescrs,
+                               List<TypeParameterDescriptor> typeParameters) {
         final DeclarationDescriptor contextDesc = owner instanceof JetClassOrObject
                 ? state.getBindingContext().getClassDescriptor((JetClassOrObject) owner)
                 : state.getBindingContext().getNamespaceDescriptor((JetNamespace) owner);
         final JetExpression bodyExpression = f.getBodyExpression();
         final List<JetElement> bodyExpressions = bodyExpression != null ? Collections.<JetElement>singletonList(bodyExpression) : null;
-        generatedMethod(bodyExpressions, kind, jvmSignature, receiverType, paramDescrs, contextDesc);
+        generatedMethod(bodyExpressions, kind, jvmSignature, receiverType, paramDescrs, typeParameters, contextDesc);
     }
 
     public void generatedMethod(List<JetElement> bodyExpressions,
@@ -55,6 +60,7 @@ public class FunctionCodegen {
                                 Method jvmSignature,
                                 JetType receiverType,
                                 List<ValueParameterDescriptor> paramDescrs,
+                                List<TypeParameterDescriptor> typeParameters,
                                 DeclarationDescriptor contextDesc)
     {
         int flags = Opcodes.ACC_PUBLIC; // TODO.
@@ -85,14 +91,22 @@ public class FunctionCodegen {
                 frameMap.enterTemp();  // Next slot for fake this
             }
 
+            StackValue thisExpression = receiverType == null ? null : StackValue.local(thisIdx, state.getTypeMapper().mapType(receiverType));
+            ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, jvmSignature.getReturnType(), contextDesc, kind, thisExpression, state);
+
+            int firstArg = thisIdx+1;
             Type[] argTypes = jvmSignature.getArgumentTypes();
             for (int i = 0; i < paramDescrs.size(); i++) {
                 ValueParameterDescriptor parameter = paramDescrs.get(i);
                 frameMap.enter(parameter, argTypes[i].getSize());
             }
+            for (int i = 0; i < typeParameters.size(); i++) {
+                final TypeParameterDescriptor typeParameterDescriptor = typeParameters.get(i);
+                codegen.addTypeParameter(typeParameterDescriptor,
+                        StackValue.local(firstArg + paramDescrs.size() + i, JetTypeMapper.TYPE_TYPEINFO));
+                frameMap.enterTemp();
+            }
 
-            StackValue thisExpression = receiverType == null ? null : StackValue.local(thisIdx, state.getTypeMapper().mapType(receiverType));
-            ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, jvmSignature.getReturnType(), contextDesc, kind, thisExpression, state);
             if (kind instanceof OwnerKind.DelegateKind) {
                 OwnerKind.DelegateKind dk = (OwnerKind.DelegateKind) kind;
                 InstructionAdapter iv = new InstructionAdapter(mv);

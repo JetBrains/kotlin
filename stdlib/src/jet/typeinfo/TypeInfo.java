@@ -6,6 +6,7 @@ import java.util.Arrays;
 
 /**
  * @author abreslav
+ * @author yole
  */
 public class TypeInfo<T> implements JetObject {
     private TypeInfo<?> typeInfo;

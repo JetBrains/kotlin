@@ -282,6 +282,9 @@ public class JetTypeMapper {
         for (JetParameter parameter : parameters) {
             parameterTypes.add(mapType(bindingContext.resolveTypeReference(parameter.getTypeReference())));
         }
+        for (JetTypeParameter p: f.getTypeParameters()) {
+            parameterTypes.add(TYPE_TYPEINFO);
+        }
         final JetTypeReference returnTypeRef = f.getReturnTypeRef();
         Type returnType;
         if (returnTypeRef == null) {

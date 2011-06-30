@@ -1,10 +1,7 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.util.text.StringUtil;
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
-import org.jetbrains.jet.lang.descriptors.PropertySetterDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -97,7 +94,9 @@ public class PropertyCodegen {
         if (getter != null) {
             if (getter.getBodyExpression() != null) {
                 functionCodegen.generateMethod(getter, kind, mapper.mapGetterSignature(propertyDescriptor),
-                        null, Collections.<ValueParameterDescriptor>emptyList());
+                        null,
+                        Collections.<ValueParameterDescriptor>emptyList(),
+                        Collections.<TypeParameterDescriptor>emptyList());
             }
             else if (!getter.hasModifier(JetTokens.PRIVATE_KEYWORD)) {
                 generateDefaultGetter(p, getter, kind);
@@ -119,7 +118,9 @@ public class PropertyCodegen {
                 final PropertySetterDescriptor setterDescriptor = propertyDescriptor.getSetter();
                 assert setterDescriptor != null;
                 functionCodegen.generateMethod(setter, kind, mapper.mapSetterSignature(propertyDescriptor),
-                        null, setterDescriptor.getValueParameters());
+                        null,
+                        setterDescriptor.getValueParameters(),
+                        Collections.<TypeParameterDescriptor>emptyList());
             }
             else if (!p.hasModifier(JetTokens.PRIVATE_KEYWORD)) {
                 generateDefaultSetter(p, setter, kind);

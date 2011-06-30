@@ -29,6 +29,7 @@ import java.util.*;
 
 /**
  * @author max
+ * @author yole
  */
 public class ExpressionCodegen extends JetVisitor {
     private static final String CLASS_OBJECT = "java/lang/Object";
@@ -83,6 +84,7 @@ public class ExpressionCodegen extends JetVisitor {
     private final BindingContext bindingContext;
     private final StackValue thisExpression;
     private final Map<ClassDescriptor, StackValue> outerThisExpressions = new HashMap<ClassDescriptor, StackValue>();
+    private final Map<TypeParameterDescriptor, StackValue> typeParameterExpressions = new HashMap<TypeParameterDescriptor, StackValue>();
 
     public ExpressionCodegen(MethodVisitor v,
                              FrameMap myMap,
@@ -104,6 +106,10 @@ public class ExpressionCodegen extends JetVisitor {
 
     public void addOuterThis(ClassDescriptor outer, StackValue expression) {
         outerThisExpressions.put(outer, expression);
+    }
+
+    public void addTypeParameter(TypeParameterDescriptor typeParameter, StackValue expression) {
+        typeParameterExpressions.put(typeParameter, expression);
     }
 
     static void loadTypeInfo(JetTypeMapper typeMapper, ClassDescriptor descriptor, InstructionAdapter v) {
@@ -785,6 +791,7 @@ public class ExpressionCodegen extends JetVisitor {
                             ensureReceiverOnStack(expression, null);
                         }
                         pushMethodArguments(expression, methodDescriptor);
+                        pushTypeArguments(expression);
                         final String owner = NamespaceCodegen.getJVMClassName(DescriptorRenderer.getFQName(functionParent));
                         v.invokestatic(owner, methodDescriptor.getName(), methodDescriptor.getDescriptor());
                     }
@@ -792,6 +799,7 @@ public class ExpressionCodegen extends JetVisitor {
                         ClassDescriptor containingClass = (ClassDescriptor) functionParent;
                         ensureReceiverOnStack(expression, containingClass);
                         pushMethodArguments(expression, methodDescriptor);
+                        pushTypeArguments(expression);
                         final String owner = typeMapper.jvmName(containingClass, OwnerKind.INTERFACE);
                         int opcode = typeMapper.isInterface(containingClass, OwnerKind.INTERFACE)
                                 ? Opcodes.INVOKEINTERFACE
@@ -1456,12 +1464,7 @@ public class ExpressionCodegen extends JetVisitor {
 
                 Method method = typeMapper.mapConstructorSignature((ConstructorDescriptor) constructorDescriptor, OwnerKind.IMPLEMENTATION);
                 pushMethodArguments(expression, method);
-
-                for (JetTypeProjection jetTypeArgument : expression.getTypeArguments()) {
-                    JetType typeArgument = bindingContext.resolveTypeReference(jetTypeArgument.getTypeReference());
-                    // TODO is the makeNullable() call correct here?
-                    ClassCodegen.newTypeInfo(v, typeArgument.isNullable(), typeMapper.mapType(TypeUtils.makeNullable(typeArgument)));
-                }
+                pushTypeArguments(expression);
 
                 v.invokespecial(JetTypeMapper.jvmNameForImplementation(classDecl), "<init>", method.getDescriptor());
             }
@@ -1470,6 +1473,14 @@ public class ExpressionCodegen extends JetVisitor {
             throw new UnsupportedOperationException("don't know how to generate this new expression");
         }
         myStack.push(StackValue.onStack(type));
+    }
+
+    private void pushTypeArguments(JetCall expression) {
+        for (JetTypeProjection jetTypeArgument : expression.getTypeArguments()) {
+            JetType typeArgument = bindingContext.resolveTypeReference(jetTypeArgument.getTypeReference());
+            // TODO is the makeNullable() call correct here?
+            ClassCodegen.newTypeInfo(v, typeArgument.isNullable(), typeMapper.mapType(TypeUtils.makeNullable(typeArgument)));
+        }
     }
 
     private void pushOuterClassArguments(ClassDescriptor classDecl) {
@@ -1709,7 +1720,7 @@ public class ExpressionCodegen extends JetVisitor {
     private void generateTypeInfo(JetType jetType) {
         DeclarationDescriptor declarationDescriptor = jetType.getConstructor().getDeclarationDescriptor();
         if (declarationDescriptor instanceof TypeParameterDescriptor) {
-            loadTypeParameterTypeInfo(declarationDescriptor);
+            loadTypeParameterTypeInfo((TypeParameterDescriptor) declarationDescriptor);
             return;
         }
 
@@ -1742,11 +1753,16 @@ public class ExpressionCodegen extends JetVisitor {
         }
     }
 
-    private void loadTypeParameterTypeInfo(DeclarationDescriptor declarationDescriptor) {
-        DeclarationDescriptor containingDeclaration = declarationDescriptor.getContainingDeclaration();
+    private void loadTypeParameterTypeInfo(TypeParameterDescriptor typeParameterDescriptor) {
+        final StackValue value = typeParameterExpressions.get(typeParameterDescriptor);
+        if (value != null) {
+            value.put(JetTypeMapper.TYPE_TYPEINFO, v);
+            return;
+        }
+        DeclarationDescriptor containingDeclaration = typeParameterDescriptor.getContainingDeclaration();
         if (containingDeclaration == contextType && contextType instanceof ClassDescriptor) {
             loadTypeInfo(typeMapper, (ClassDescriptor) contextType, v);
-            v.iconst(((TypeParameterDescriptor) declarationDescriptor).getIndex());
+            v.iconst(typeParameterDescriptor.getIndex());
             v.invokevirtual("jet/typeinfo/TypeInfo", "getTypeParameter", "(I)Ljet/typeinfo/TypeInfo;");
             return;
         }
