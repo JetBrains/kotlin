@@ -92,7 +92,7 @@ public class NamespaceGenTest extends CodegenTestCase {
         assertEquals(2, main.invoke(null));
     }
 
-    public void _testBoxedInt() throws Exception {
+    public void testBoxedInt() throws Exception {
         loadText("fun foo(a: Int?): Int = if (a != null) a else 239");
         final Method main = generateFunction();
         assertEquals(610, main.invoke(null, 610));
