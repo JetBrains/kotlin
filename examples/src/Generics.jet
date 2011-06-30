@@ -1,0 +1,39 @@
+namespace generics;
+
+import java.util.*
+
+class Box<T>(t: T) {
+    var value = t
+}
+
+fun isIntBox(box: Box<out Any?>): Boolean {
+    return box is Box<Int>;
+}
+
+abstract class Source<out T> {
+  fun nextT() : T
+}
+
+fun demo(strs : Source<String>) {
+  val objects : Source<Any> = strs // This is OK, since T is an out-parameter
+  // ...
+}
+
+fun singletonList<T>(item: T): List<T> {
+    val result = ArrayList<T>()
+    result.add(item)
+    return result
+}
+
+//fun <T> T.basicToString(): String {
+//    return typeinfo(this) + "@" + System.identityHashCode(this)
+//}
+
+fun main(args: Array<String>) {
+    val box: Box<Int> = Box<Int>(1)
+    System.out?.println(box.value)
+    System.out?.println(if (isIntBox(box)) "int" else "not int");
+
+    val singleString: List<String> = singletonList<String>("foo")
+    System.out?.println(singleString.get(0))
+}

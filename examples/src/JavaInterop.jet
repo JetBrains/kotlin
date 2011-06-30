@@ -1,0 +1,9 @@
+namespace JavaInterop
+
+import java.util.*
+
+fun main(args: Array<String>) {
+    val list = ArrayList<String>()
+    list.add("foo")
+    System.out?.println(list[0])
+}
