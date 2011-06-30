@@ -18,10 +18,12 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Member
     private final boolean isVar;
     private final JetType receiverType;
     private final List<TypeParameterDescriptor> typeParemeters = Lists.newArrayListWithCapacity(0);
+    private final PropertyDescriptor original;
     private PropertyGetterDescriptor getter;
     private PropertySetterDescriptor setter;
 
-    public PropertyDescriptor(
+    private PropertyDescriptor(
+            @Nullable PropertyDescriptor original,
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull List<Annotation> annotations,
             @NotNull MemberModifiers memberModifiers,
@@ -36,6 +38,19 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Member
         this.isVar = isVar;
         this.memberModifiers = memberModifiers;
         this.receiverType = receiverType;
+        this.original = original == null ? this : original;
+    }
+
+    public PropertyDescriptor(
+            @NotNull DeclarationDescriptor containingDeclaration,
+            @NotNull List<Annotation> annotations,
+            @NotNull MemberModifiers memberModifiers,
+            boolean isVar,
+            @Nullable JetType receiverType,
+            @NotNull String name,
+            @Nullable JetType inType,
+            @NotNull JetType outType) {
+        this(null, containingDeclaration, annotations, memberModifiers, isVar, receiverType, name, inType, outType);
     }
 
     private PropertyDescriptor(
@@ -44,6 +59,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Member
             @Nullable JetType inType,
             @NotNull JetType outType) {
         this(
+                original,
                 original.getContainingDeclaration(),
                 original.getAnnotations(), // TODO : substitute?
                 original.getModifiers(),
@@ -113,5 +129,11 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Member
     @Override
     public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
         return visitor.visitPropertyDescriptor(this, data);
+    }
+
+    @NotNull
+    @Override
+    public PropertyDescriptor getOriginal() {
+        return original;
     }
 }
