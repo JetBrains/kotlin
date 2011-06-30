@@ -16,6 +16,6 @@ fun box(): String {
   list.add("Moscow")
   list.add("Munich")
 
-  val m: ArrayList<String> = list.findAll({(name: String) => name.startsWith("M")})
+  val m: ArrayList<String> = list.findAll<String>({(name: String) => name.startsWith("M")})
   return if (m.size() == 2) "OK" else "fail"
 }

@@ -24,7 +24,7 @@ public class ExtensionFunctionsTest extends CodegenTestCase {
         assertThrows(foo, Exception.class, null, new StringBuilder());
     }
 
-    public void _testGeneric() throws Exception {
+    public void testGeneric() throws Exception {
         blackBoxFile("extensionFunctions/generic.jet");
     }
 }

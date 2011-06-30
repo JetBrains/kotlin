@@ -152,7 +152,12 @@ public abstract class StackValue {
         }
         else if (this.type.getSort() == Type.OBJECT && type.getSort() <= Type.DOUBLE) {
             if (this.type.equals(JetTypeMapper.TYPE_OBJECT)) {
-                v.checkcast(Type.getObjectType("java/lang/Number"));
+                if (type.getSort() == Type.BOOLEAN) {
+                    v.checkcast(Type.getObjectType("java/lang/Boolean"));
+                }
+                else {
+                    v.checkcast(Type.getObjectType("java/lang/Number"));
+                }
             }
             unbox(type, v);
         }

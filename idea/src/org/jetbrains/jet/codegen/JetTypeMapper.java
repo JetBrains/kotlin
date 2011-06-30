@@ -232,6 +232,10 @@ public class JetTypeMapper {
             return Type.getObjectType(jvmName((ClassDescriptor) descriptor, kind));
         }
 
+        if (descriptor instanceof TypeParameterDescriptor) {
+            return mapType(((TypeParameterDescriptor) descriptor).getBoundsAsType(), kind);
+        }
+
         throw new UnsupportedOperationException("Unknown type " + jetType);
     }
 
