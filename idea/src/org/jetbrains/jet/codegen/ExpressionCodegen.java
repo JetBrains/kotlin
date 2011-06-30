@@ -604,7 +604,7 @@ public class ExpressionCodegen extends JetVisitor {
         if (declaration instanceof PsiField) {
             PsiField psiField = (PsiField) declaration;
             final String owner = JetTypeMapper.jvmName(psiField.getContainingClass());
-            final Type fieldType = psiTypeToAsm(psiField.getType());
+            final Type fieldType = JetTypeMapper.psiTypeToAsm(psiField.getType());
             final boolean isStatic = psiField.hasModifierProperty(PsiModifier.STATIC);
             if (!isStatic) {
                 ensureReceiverOnStack(expression, null);
@@ -833,7 +833,7 @@ public class ExpressionCodegen extends JetVisitor {
     private Method generateJavaMethodCall(JetCallExpression expression, PsiMethod psiMethod) {
         final PsiClass containingClass = psiMethod.getContainingClass();
         String owner = JetTypeMapper.jvmName(containingClass);
-        Method methodDescriptor = getMethodDescriptor(psiMethod);
+        Method methodDescriptor = JetTypeMapper.getMethodDescriptor(psiMethod);
         final boolean isStatic = psiMethod.hasModifierProperty(PsiModifier.STATIC);
 
         if (!isStatic) {
@@ -932,16 +932,6 @@ public class ExpressionCodegen extends JetVisitor {
         }
     }
 
-    private static Method getMethodDescriptor(PsiMethod method) {
-        Type returnType = method.isConstructor() ? Type.VOID_TYPE : psiTypeToAsm(method.getReturnType());
-        PsiParameter[] parameters = method.getParameterList().getParameters();
-        Type[] parameterTypes = new Type[parameters.length];
-        for (int i = 0; i < parameters.length; i++) {
-            parameterTypes[i] = psiTypeToAsm(parameters [i].getType());
-        }
-        return new Method(method.getName(), Type.getMethodDescriptor(returnType, parameterTypes));
-    }
-
     private Type expressionType(JetExpression expr) {
         return typeMapper.mapType(bindingContext.getExpressionType(expr));
     }
@@ -949,53 +939,6 @@ public class ExpressionCodegen extends JetVisitor {
     private int indexOfLocal(JetReferenceExpression lhs) {
         final DeclarationDescriptor declarationDescriptor = bindingContext.resolveReferenceExpression(lhs);
         return lookupLocal(declarationDescriptor);
-    }
-
-    private static Type psiTypeToAsm(PsiType type) {
-        if (type instanceof PsiPrimitiveType) {
-            if (type == PsiType.VOID) {
-                return Type.VOID_TYPE;
-            }
-            if (type == PsiType.INT) {
-                return Type.INT_TYPE;
-            }
-            if (type == PsiType.LONG) {
-                return Type.LONG_TYPE;
-            }
-            if (type == PsiType.BOOLEAN) {
-                return Type.BOOLEAN_TYPE;
-            }
-            if (type == PsiType.BYTE) {
-                return Type.BYTE_TYPE;
-            }
-            if (type == PsiType.SHORT) {
-                return Type.SHORT_TYPE;
-            }
-            if (type == PsiType.CHAR) {
-                return Type.CHAR_TYPE;
-            }
-            if (type == PsiType.FLOAT) {
-                return Type.FLOAT_TYPE;
-            }
-            if (type == PsiType.DOUBLE) {
-                return Type.DOUBLE_TYPE;
-            }
-        }
-        if (type instanceof PsiClassType) {
-            PsiClass psiClass = ((PsiClassType) type).resolve();
-            if (psiClass instanceof PsiTypeParameter) {
-                final PsiClassType[] extendsListTypes = psiClass.getExtendsListTypes();
-                if (extendsListTypes.length > 0) {
-                    throw new UnsupportedOperationException("should return common supertype");
-                }
-                return OBJECT_TYPE;
-            }
-            if (psiClass == null) {
-                throw new UnsupportedOperationException("unresolved PsiClassType: " + type);
-            }
-            return JetTypeMapper.psiClassType(psiClass);
-        }
-        throw new UnsupportedOperationException("don't know how to map type " + type + " to ASM");
     }
 
     @Override
@@ -1492,9 +1435,9 @@ public class ExpressionCodegen extends JetVisitor {
         Type type = JetTypeMapper.psiClassType(javaClass);
         v.anew(type);
         v.dup();
-        final Method jvmConstructor = getMethodDescriptor(constructor);
-        pushMethodArguments(expression, jvmConstructor);
-        v.invokespecial(JetTypeMapper.jvmName(javaClass), "<init>", jvmConstructor.getDescriptor());
+        final CallableMethod callableMethod = typeMapper.mapToCallableMethod(constructor);
+        pushMethodArguments(expression, callableMethod.getValueParameterTypes());
+        callableMethod.invoke(v);
         return type;
     }
 

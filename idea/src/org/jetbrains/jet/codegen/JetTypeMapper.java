@@ -1,7 +1,6 @@
 package org.jetbrains.jet.codegen;
 
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
+import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import jet.typeinfo.TypeInfo;
 import org.jetbrains.annotations.NotNull;
@@ -15,10 +14,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.Method;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author yole
@@ -47,6 +43,78 @@ public class JetTypeMapper {
 
     static boolean isIntPrimitive(Type type) {
         return type == Type.INT_TYPE || type == Type.SHORT_TYPE || type == Type.BYTE_TYPE || type == Type.CHAR_TYPE;
+    }
+
+    static Type psiTypeToAsm(PsiType type) {
+        if (type instanceof PsiPrimitiveType) {
+            if (type == PsiType.VOID) {
+                return Type.VOID_TYPE;
+            }
+            if (type == PsiType.INT) {
+                return Type.INT_TYPE;
+            }
+            if (type == PsiType.LONG) {
+                return Type.LONG_TYPE;
+            }
+            if (type == PsiType.BOOLEAN) {
+                return Type.BOOLEAN_TYPE;
+            }
+            if (type == PsiType.BYTE) {
+                return Type.BYTE_TYPE;
+            }
+            if (type == PsiType.SHORT) {
+                return Type.SHORT_TYPE;
+            }
+            if (type == PsiType.CHAR) {
+                return Type.CHAR_TYPE;
+            }
+            if (type == PsiType.FLOAT) {
+                return Type.FLOAT_TYPE;
+            }
+            if (type == PsiType.DOUBLE) {
+                return Type.DOUBLE_TYPE;
+            }
+        }
+        if (type instanceof PsiClassType) {
+            PsiClass psiClass = ((PsiClassType) type).resolve();
+            if (psiClass instanceof PsiTypeParameter) {
+                final PsiClassType[] extendsListTypes = psiClass.getExtendsListTypes();
+                if (extendsListTypes.length > 0) {
+                    throw new UnsupportedOperationException("should return common supertype");
+                }
+                return TYPE_OBJECT;
+            }
+            if (psiClass == null) {
+                throw new UnsupportedOperationException("unresolved PsiClassType: " + type);
+            }
+            return psiClassType(psiClass);
+        }
+        throw new UnsupportedOperationException("don't know how to map type " + type + " to ASM");
+    }
+
+    static Method getMethodDescriptor(PsiMethod method) {
+        Type returnType = method.isConstructor() ? Type.VOID_TYPE : psiTypeToAsm(method.getReturnType());
+        PsiParameter[] parameters = method.getParameterList().getParameters();
+        Type[] parameterTypes = new Type[parameters.length];
+        for (int i = 0; i < parameters.length; i++) {
+            parameterTypes[i] = psiTypeToAsm(parameters[i].getType());
+        }
+        return new Method(method.isConstructor() ? "<init>" : method.getName(), Type.getMethodDescriptor(returnType, parameterTypes));
+    }
+
+    static CallableMethod mapToCallableMethod(PsiMethod method) {
+        String owner = jvmName(method.getContainingClass());
+        Method signature = getMethodDescriptor(method);
+        List<Type> valueParameterTypes = new ArrayList<Type>();
+        Collections.addAll(valueParameterTypes, signature.getArgumentTypes());
+        int opcode;
+        if (method.isConstructor()) {
+            opcode = Opcodes.INVOKESPECIAL;
+        }
+        else {
+            throw new UnsupportedOperationException("TODO");
+        }
+        return new CallableMethod(owner, signature, opcode, valueParameterTypes);
     }
 
     public String jvmName(ClassDescriptor jetClass, OwnerKind kind) {
