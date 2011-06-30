@@ -103,4 +103,8 @@ public class ClassGenTest extends CodegenTestCase {
     public void testExceptionConstructor() throws Exception {
         blackBoxFile("classes/exceptionConstructor.jet");
     }
+
+    public void testSimpleBox() throws Exception {
+        blackBoxFile("classes/simpleBox.jet");
+    }
 }

@@ -661,7 +661,7 @@ public class TopDownAnalyzer {
 
             resolveSecondaryConstructorBody((JetConstructor) declaration, descriptor, ((MutableClassDescriptor) descriptor.getContainingDeclaration()).getScopeForMemberResolution());
 
-            assert descriptor.getUnsubstitutedReturnType() != null;
+            assert descriptor.getReturnType() != null;
         }
     }
 
@@ -743,7 +743,7 @@ public class TopDownAnalyzer {
 
         constructorScope.setThisType(descriptor.getContainingDeclaration().getDefaultType());
 
-        for (ValueParameterDescriptor valueParameterDescriptor : descriptor.getUnsubstitutedValueParameters()) {
+        for (ValueParameterDescriptor valueParameterDescriptor : descriptor.getValueParameters()) {
             JetParameter parameter = (JetParameter) trace.getBindingContext().getDeclarationPsiElement(valueParameterDescriptor);
             if (parameter.getValOrVarNode() == null || !primary) {
                 constructorScope.addVariableDescriptor(valueParameterDescriptor);
@@ -865,7 +865,7 @@ public class TopDownAnalyzer {
         JetType expectedType;
         PropertySetterDescriptor setter = propertyDescriptor.getSetter();
         if (setter != null) {
-            expectedType = setter.getUnsubstitutedReturnType();
+            expectedType = setter.getReturnType();
         }
         else {
             expectedType = propertyDescriptor.getInType();
@@ -889,7 +889,7 @@ public class TopDownAnalyzer {
 
             resolveFunctionBody(traceForMembers, (JetNamedFunction) declaration, (FunctionDescriptorImpl) descriptor, declaringScope);
 
-            assert descriptor.getUnsubstitutedReturnType() != null;
+            assert descriptor.getReturnType() != null;
         }
     }
 
@@ -907,7 +907,7 @@ public class TopDownAnalyzer {
             typeInferrer.checkFunctionReturnType(declaringScope, function, functionDescriptor);
         }
 
-        assert functionDescriptor.getUnsubstitutedReturnType() != null;
+        assert functionDescriptor.getReturnType() != null;
     }
 
 

@@ -608,7 +608,7 @@ public class ExpressionCodegen extends JetVisitor {
                     if (PsiTreeUtil.getParentOfType(expression, JetDelegationSpecifier.class)  != null) {
                         JetClass aClass = PsiTreeUtil.getParentOfType(expression, JetClass.class);
                         ConstructorDescriptor constructorDescriptor = bindingContext.getConstructorDescriptor(aClass);
-                        List<ValueParameterDescriptor> parameters = constructorDescriptor.getUnsubstitutedValueParameters();
+                        List<ValueParameterDescriptor> parameters = constructorDescriptor.getValueParameters();
                         for (ValueParameterDescriptor parameter : parameters) {
                             if (parameter.getName().equals(descriptor.getName())) {
                                 final JetType outType = ((VariableDescriptor) descriptor).getOutType();
@@ -663,6 +663,7 @@ public class ExpressionCodegen extends JetVisitor {
     public StackValue intermediateValueForProperty(PropertyDescriptor propertyDescriptor, final boolean forceField, boolean forceInterface) {
         DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
         boolean isStatic = containingDeclaration instanceof NamespaceDescriptorImpl;
+        propertyDescriptor = propertyDescriptor.getOriginal();
         final JetType outType = propertyDescriptor.getOutType();
         boolean isInsideClass = !forceInterface && containingDeclaration == contextType;
         Method getter;
@@ -750,7 +751,7 @@ public class ExpressionCodegen extends JetVisitor {
                             ProjectScope.getAllScope(project));
                     // TODO better overload mapping
                     final PsiMethod[] methods = jlString.findMethodsByName(funDescriptor.getName(), false);
-                    final int arity = fd.getUnsubstitutedValueParameters().size();
+                    final int arity = fd.getValueParameters().size();
                     for (PsiMethod method : methods) {
                         if (method.getParameterList().getParametersCount() == arity) {
                             declarationPsiElement = method;
@@ -815,7 +816,7 @@ public class ExpressionCodegen extends JetVisitor {
                     gen(callee, Type.getObjectType(ClosureCodegen.getInternalClassName(fd)));
 
                     boolean isExtensionFunction = fd.getReceiverType() != null;
-                    int paramCount = fd.getUnsubstitutedValueParameters().size();
+                    int paramCount = fd.getValueParameters().size();
                     if (isExtensionFunction) {
                         ensureReceiverOnStack(expression, null);
                         paramCount++;
@@ -827,7 +828,7 @@ public class ExpressionCodegen extends JetVisitor {
                 }
 
                 if (methodDescriptor.getReturnType() != Type.VOID_TYPE) {
-                    final Type retType = typeMapper.mapType(fd.getUnsubstitutedReturnType());
+                    final Type retType = typeMapper.mapType(fd.getReturnType());
                     StackValue.onStack(methodDescriptor.getReturnType()).upcast(retType, v);
                     myStack.push(StackValue.onStack(retType));
                 }
@@ -1206,7 +1207,7 @@ public class ExpressionCodegen extends JetVisitor {
     }
 
     private void generateBinaryOp(JetBinaryExpression expression, FunctionDescriptor op, int opcode) {
-        JetType returnType = op.getUnsubstitutedReturnType();
+        JetType returnType = op.getReturnType();
         final Type asmType = typeMapper.mapType(returnType);
         if (asmType == Type.INT_TYPE || asmType == Type.LONG_TYPE ||
             asmType == Type.FLOAT_TYPE || asmType == Type.DOUBLE_TYPE) {

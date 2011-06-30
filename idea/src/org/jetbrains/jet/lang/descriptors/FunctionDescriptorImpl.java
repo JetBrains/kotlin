@@ -79,13 +79,13 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
 
     @Override
     @NotNull
-    public List<ValueParameterDescriptor> getUnsubstitutedValueParameters() {
+    public List<ValueParameterDescriptor> getValueParameters() {
         return unsubstitutedValueParameters;
     }
 
     @Override
     @NotNull
-    public JetType getUnsubstitutedReturnType() {
+    public JetType getReturnType() {
         return unsubstitutedReturnType;
     }
 

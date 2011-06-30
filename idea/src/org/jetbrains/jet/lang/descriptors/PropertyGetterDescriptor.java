@@ -38,13 +38,13 @@ public class PropertyGetterDescriptor extends PropertyAccessorDescriptor {
 
     @NotNull
     @Override
-    public List<ValueParameterDescriptor> getUnsubstitutedValueParameters() {
+    public List<ValueParameterDescriptor> getValueParameters() {
         return Collections.emptyList();
     }
 
     @NotNull
     @Override
-    public JetType getUnsubstitutedReturnType() {
+    public JetType getReturnType() {
         return returnType;
     }
 

@@ -20,7 +20,7 @@ public class FunctionDescriptorUtil {
     /** @return Minimal number of arguments to be passed */
     public static int getMinimumArity(@NotNull FunctionDescriptor functionDescriptor) {
         int result = 0;
-        for (ValueParameterDescriptor valueParameter : functionDescriptor.getUnsubstitutedValueParameters()) {
+        for (ValueParameterDescriptor valueParameter : functionDescriptor.getValueParameters()) {
             if (valueParameter.hasDefaultValue()) {
                 break;
             }
@@ -33,7 +33,7 @@ public class FunctionDescriptorUtil {
      * @return Maximum number of arguments that can be passed. -1 if unbound (vararg)
      */
     public static int getMaximumArity(@NotNull FunctionDescriptor functionDescriptor) {
-        List<ValueParameterDescriptor> unsubstitutedValueParameters = functionDescriptor.getUnsubstitutedValueParameters();
+        List<ValueParameterDescriptor> unsubstitutedValueParameters = functionDescriptor.getValueParameters();
         if (unsubstitutedValueParameters.isEmpty()) {
             return 0;
         }
@@ -65,7 +65,7 @@ public class FunctionDescriptorUtil {
     @Nullable
     public static List<ValueParameterDescriptor> getSubstitutedValueParameters(FunctionDescriptor substitutedDescriptor, @NotNull FunctionDescriptor functionDescriptor, TypeSubstitutor substitutor) {
         List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>();
-        List<ValueParameterDescriptor> unsubstitutedValueParameters = functionDescriptor.getUnsubstitutedValueParameters();
+        List<ValueParameterDescriptor> unsubstitutedValueParameters = functionDescriptor.getValueParameters();
         for (int i = 0, unsubstitutedValueParametersSize = unsubstitutedValueParameters.size(); i < unsubstitutedValueParametersSize; i++) {
             ValueParameterDescriptor unsubstitutedValueParameter = unsubstitutedValueParameters.get(i);
             // TODO : Lazy?
@@ -87,7 +87,7 @@ public class FunctionDescriptorUtil {
 
     @Nullable
     public static JetType getSubstitutedReturnType(@NotNull FunctionDescriptor functionDescriptor, TypeSubstitutor substitutor) {
-        return substitutor.substitute(functionDescriptor.getUnsubstitutedReturnType(), Variance.OUT_VARIANCE);
+        return substitutor.substitute(functionDescriptor.getReturnType(), Variance.OUT_VARIANCE);
     }
 
     @Nullable
@@ -106,7 +106,7 @@ public class FunctionDescriptorUtil {
         for (TypeParameterDescriptor typeParameter : descriptor.getTypeParameters()) {
             parameterScope.addTypeParameterDescriptor(typeParameter);
         }
-        for (ValueParameterDescriptor valueParameterDescriptor : descriptor.getUnsubstitutedValueParameters()) {
+        for (ValueParameterDescriptor valueParameterDescriptor : descriptor.getValueParameters()) {
             parameterScope.addVariableDescriptor(valueParameterDescriptor);
         }
         parameterScope.addLabeledDeclaration(descriptor);
@@ -183,7 +183,7 @@ public class FunctionDescriptorUtil {
             return OverrideCompatibilityInfo.typeParameterNumberMismatch();
         }
 
-        if (superFunction.getUnsubstitutedValueParameters().size() != subFunction.getUnsubstitutedValueParameters().size()) {
+        if (superFunction.getValueParameters().size() != subFunction.getValueParameters().size()) {
             return OverrideCompatibilityInfo.valueParameterNumberMismatch();
         }
 
@@ -211,8 +211,8 @@ public class FunctionDescriptorUtil {
             }
         }
 
-        List<ValueParameterDescriptor> superValueParameters = superFunction.getUnsubstitutedValueParameters();
-        List<ValueParameterDescriptor> subValueParameters = subFunction.getUnsubstitutedValueParameters();
+        List<ValueParameterDescriptor> superValueParameters = superFunction.getValueParameters();
+        List<ValueParameterDescriptor> subValueParameters = subFunction.getValueParameters();
         for (int i = 0, unsubstitutedValueParametersSize = superValueParameters.size(); i < unsubstitutedValueParametersSize; i++) {
             ValueParameterDescriptor superValueParameter = superValueParameters.get(i);
             ValueParameterDescriptor subValueParameter = subValueParameters.get(i);
@@ -225,10 +225,10 @@ public class FunctionDescriptorUtil {
         // TODO : Default values, varargs etc
 
         TypeSubstitutor typeSubstitutor = TypeSubstitutor.create(substitutionContext);
-        JetType substitutedSuperReturnType = typeSubstitutor.substitute(superFunction.getUnsubstitutedReturnType(), Variance.OUT_VARIANCE);
+        JetType substitutedSuperReturnType = typeSubstitutor.substitute(superFunction.getReturnType(), Variance.OUT_VARIANCE);
         assert substitutedSuperReturnType != null;
-        if (!typeChecker.isSubtypeOf(subFunction.getUnsubstitutedReturnType(), substitutedSuperReturnType)) {
-            return OverrideCompatibilityInfo.returnTypeMismatch(substitutedSuperReturnType, subFunction.getUnsubstitutedReturnType());
+        if (!typeChecker.isSubtypeOf(subFunction.getReturnType(), substitutedSuperReturnType)) {
+            return OverrideCompatibilityInfo.returnTypeMismatch(substitutedSuperReturnType, subFunction.getReturnType());
         }
 
         return OverrideCompatibilityInfo.success();

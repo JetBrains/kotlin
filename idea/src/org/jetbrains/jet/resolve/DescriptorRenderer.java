@@ -202,14 +202,14 @@ public class DescriptorRenderer {
 
             renderName(descriptor, builder);
             builder.append("(");
-            for (Iterator<ValueParameterDescriptor> iterator = descriptor.getUnsubstitutedValueParameters().iterator(); iterator.hasNext(); ) {
+            for (Iterator<ValueParameterDescriptor> iterator = descriptor.getValueParameters().iterator(); iterator.hasNext(); ) {
                 ValueParameterDescriptor parameterDescriptor = iterator.next();
                 parameterDescriptor.accept(subVisitor, builder);
                 if (iterator.hasNext()) {
                     builder.append(", ");
                 }
             }
-            builder.append(") : ").append(escape(renderType(descriptor.getUnsubstitutedReturnType())));
+            builder.append(") : ").append(escape(renderType(descriptor.getReturnType())));
             return super.visitFunctionDescriptor(descriptor, builder);
         }
 

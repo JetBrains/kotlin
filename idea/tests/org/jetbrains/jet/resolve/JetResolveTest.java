@@ -104,7 +104,7 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
         List<JetType> parameterTypeList = Arrays.asList(parameterType);
         OverloadResolutionResult functions = functionGroup.getPossiblyApplicableFunctions(Collections.<JetType>emptyList(), parameterTypeList);
         for (FunctionDescriptor function : functions.getFunctionDescriptors()) {
-            List<ValueParameterDescriptor> unsubstitutedValueParameters = function.getUnsubstitutedValueParameters();
+            List<ValueParameterDescriptor> unsubstitutedValueParameters = function.getValueParameters();
             for (int i = 0, unsubstitutedValueParametersSize = unsubstitutedValueParameters.size(); i < unsubstitutedValueParametersSize; i++) {
                 ValueParameterDescriptor unsubstitutedValueParameter = unsubstitutedValueParameters.get(i);
                 if (unsubstitutedValueParameter.getOutType().equals(parameterType[i])) {

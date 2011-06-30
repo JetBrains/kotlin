@@ -119,7 +119,7 @@ public class PropertyCodegen {
                 final PropertySetterDescriptor setterDescriptor = propertyDescriptor.getSetter();
                 assert setterDescriptor != null;
                 functionCodegen.generateMethod(setter, kind, mapper.mapSetterSignature(propertyDescriptor),
-                        null, setterDescriptor.getUnsubstitutedValueParameters());
+                        null, setterDescriptor.getValueParameters());
             }
             else if (!p.hasModifier(JetTokens.PRIVATE_KEYWORD)) {
                 generateDefaultSetter(p, setter, kind);

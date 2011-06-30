@@ -38,7 +38,7 @@ public class ClosureCodegen {
 
     public static Method erasedInvokeSignature(FunctionDescriptor fd) {
         boolean isExtensionFunction = fd.getReceiverType() != null;
-        int paramCount = fd.getUnsubstitutedValueParameters().size();
+        int paramCount = fd.getValueParameters().size();
         if (isExtensionFunction) {
             paramCount++;
         }
@@ -87,14 +87,14 @@ public class ClosureCodegen {
 
         SignatureWriter signatureWriter = new SignatureWriter();
 
-        final List<ValueParameterDescriptor> parameters = funDescriptor.getUnsubstitutedValueParameters();
+        final List<ValueParameterDescriptor> parameters = funDescriptor.getValueParameters();
         final String funClass = getInternalClassName(funDescriptor);
         signatureWriter.visitClassType(funClass);
         for (ValueParameterDescriptor parameter : parameters) {
             appendType(signatureWriter, parameter.getOutType(), '=');
         }
 
-        appendType(signatureWriter, funDescriptor.getUnsubstitutedReturnType(), '=');
+        appendType(signatureWriter, funDescriptor.getReturnType(), '=');
         signatureWriter.visitEnd();
 
         cv.visit(Opcodes.V1_6,
@@ -123,7 +123,7 @@ public class ClosureCodegen {
 
     private void generateBody(FunctionDescriptor funDescriptor, ClassVisitor cv, List<JetElement> body) {
         FunctionCodegen fc = new FunctionCodegen(null, cv, state);
-        fc.generatedMethod(body, OwnerKind.IMPLEMENTATION, invokeSignature(funDescriptor), funDescriptor.getReceiverType(), funDescriptor.getUnsubstitutedValueParameters(), null);
+        fc.generatedMethod(body, OwnerKind.IMPLEMENTATION, invokeSignature(funDescriptor), funDescriptor.getReceiverType(), funDescriptor.getValueParameters(), null);
     }
 
     private void generateBridge(String className, FunctionDescriptor funDescriptor, ClassVisitor cv) {
@@ -145,7 +145,7 @@ public class ClosureCodegen {
             count++;
         }
 
-        final List<ValueParameterDescriptor> params = funDescriptor.getUnsubstitutedValueParameters();
+        final List<ValueParameterDescriptor> params = funDescriptor.getValueParameters();
         for (ValueParameterDescriptor param : params) {
             StackValue.local(count, JetTypeMapper.TYPE_OBJECT).put(JetTypeMapper.TYPE_OBJECT, iv);
             StackValue.onStack(JetTypeMapper.TYPE_OBJECT).upcast(state.getTypeMapper().mapType(param.getOutType()), iv);
@@ -191,7 +191,7 @@ public class ClosureCodegen {
     }
 
     public static String getInternalClassName(FunctionDescriptor descriptor) {
-        final int paramCount = descriptor.getUnsubstitutedValueParameters().size();
+        final int paramCount = descriptor.getValueParameters().size();
         if (descriptor.getReceiverType() != null) {
             return "jet/ExtensionFunction" + paramCount;
         }

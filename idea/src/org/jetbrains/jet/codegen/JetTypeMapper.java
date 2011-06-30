@@ -286,7 +286,7 @@ public class JetTypeMapper {
         Type returnType;
         if (returnTypeRef == null) {
             final FunctionDescriptor functionDescriptor = bindingContext.getFunctionDescriptor(f);
-            final JetType type = functionDescriptor.getUnsubstitutedReturnType();
+            final JetType type = functionDescriptor.getReturnType();
             returnType = mapType(type);
         }
         else {
@@ -297,7 +297,7 @@ public class JetTypeMapper {
 
     public Method mapSignature(String name, FunctionDescriptor f) {
         final JetType receiverType = f.getReceiverType();
-        final List<ValueParameterDescriptor> parameters = f.getUnsubstitutedValueParameters();
+        final List<ValueParameterDescriptor> parameters = f.getValueParameters();
         List<Type> parameterTypes = new ArrayList<Type>();
         if (receiverType != null) {
             parameterTypes.add(mapType(receiverType));
@@ -305,7 +305,7 @@ public class JetTypeMapper {
         for (ValueParameterDescriptor parameter : parameters) {
             parameterTypes.add(mapType(parameter.getOutType()));
         }
-        Type returnType = mapType(f.getUnsubstitutedReturnType());
+        Type returnType = mapType(f.getReturnType());
         return new Method(name, returnType, parameterTypes.toArray(new Type[parameterTypes.size()]));
     }
 
@@ -321,12 +321,12 @@ public class JetTypeMapper {
         }
 
         answer.append('(');
-        for (ValueParameterDescriptor p : f.getUnsubstitutedValueParameters()) {
+        for (ValueParameterDescriptor p : f.getValueParameters()) {
             appendType(answer, p.getOutType());
         }
         answer.append(')');
 
-        appendType(answer, f.getUnsubstitutedReturnType());
+        appendType(answer, f.getReturnType());
 
         return answer.toString();
     }
@@ -355,7 +355,7 @@ public class JetTypeMapper {
 
     public Method mapConstructorSignature(ConstructorDescriptor descriptor, OwnerKind kind) {
         boolean delegate = kind == OwnerKind.DELEGATING_IMPLEMENTATION;
-        List<ValueParameterDescriptor> parameters = descriptor.getUnsubstitutedValueParameters();
+        List<ValueParameterDescriptor> parameters = descriptor.getOriginal().getValueParameters();
         List<Type> parameterTypes = new ArrayList<Type>();
         ClassDescriptor classDescriptor = descriptor.getContainingDeclaration();
         final DeclarationDescriptor outerDescriptor = classDescriptor.getContainingDeclaration();

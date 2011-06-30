@@ -342,7 +342,7 @@ public class JetTypeInferrer {
         }
 
         public void checkFunctionReturnType(@NotNull JetScope outerScope, @NotNull JetDeclarationWithBody function, @NotNull FunctionDescriptor functionDescriptor) {
-            final JetType expectedReturnType = functionDescriptor.getUnsubstitutedReturnType();
+            final JetType expectedReturnType = functionDescriptor.getReturnType();
             JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(outerScope, functionDescriptor, trace);
             checkFunctionReturnType(functionInnerScope, function, functionDescriptor, expectedReturnType);
     //        Map<JetElement, JetType> typeMap = collectReturnedExpressionsWithTypes(outerScope, function, functionDescriptor, expectedReturnType);
@@ -563,7 +563,7 @@ public class JetTypeInferrer {
                     final FunctionDescriptor functionDescriptor = resolutionResult.getFunctionDescriptor();
 
                     checkGenericBoundsInAFunctionCall(call.getTypeArguments(), typeArguments, functionDescriptor);
-                    return functionDescriptor.getUnsubstitutedReturnType();
+                    return functionDescriptor.getReturnType();
                 }
             }
             return null;
@@ -1802,7 +1802,7 @@ public class JetTypeInferrer {
         private JetType checkIterableConvention(@NotNull JetType type, @NotNull ASTNode reportErrorsOn) {
             OverloadResolutionResult iteratorResolutionResult = services.resolveNoParametersFunction(type, context.scope, "iterator");
             if (iteratorResolutionResult.isSuccess()) {
-                JetType iteratorType = iteratorResolutionResult.getFunctionDescriptor().getUnsubstitutedReturnType();
+                JetType iteratorType = iteratorResolutionResult.getFunctionDescriptor().getReturnType();
                 boolean hasNextFunctionSupported = checkHasNextFunctionSupport(reportErrorsOn, iteratorType);
                 boolean hasNextPropertySupported = checkHasNextPropertySupport(reportErrorsOn, iteratorType);
                 if (hasNextFunctionSupported && hasNextPropertySupported && !ErrorUtils.isErrorType(iteratorType)) {
@@ -1819,7 +1819,7 @@ public class JetTypeInferrer {
                 } else if (nextResolutionResult.isNothing()) {
                     context.trace.getErrorHandler().genericError(reportErrorsOn, "Loop range must have an 'iterator().next()' method");
                 } else {
-                    return nextResolutionResult.getFunctionDescriptor().getUnsubstitutedReturnType();
+                    return nextResolutionResult.getFunctionDescriptor().getReturnType();
                 }
             }
             else {
@@ -1839,7 +1839,7 @@ public class JetTypeInferrer {
             } else if (hasNextResolutionResult.isNothing()) {
                 return false;
             } else {
-                JetType hasNextReturnType = hasNextResolutionResult.getFunctionDescriptor().getUnsubstitutedReturnType();
+                JetType hasNextReturnType = hasNextResolutionResult.getFunctionDescriptor().getReturnType();
                 if (!isBoolean(hasNextReturnType)) {
                     context.trace.getErrorHandler().genericError(reportErrorsOn, "The 'iterator().hasNext()' method of the loop range must return Boolean, but returns " + hasNextReturnType);
                 }
@@ -2152,7 +2152,7 @@ public class JetTypeInferrer {
                 if (receiverType != null) {
                     FunctionDescriptor functionDescriptor = services.lookupFunction(context.scope, expression.getOperationSign(), name, receiverType, Collections.<JetType>emptyList(), true);
                     if (functionDescriptor != null) {
-                        JetType returnType = functionDescriptor.getUnsubstitutedReturnType();
+                        JetType returnType = functionDescriptor.getReturnType();
                         if (operationType == JetTokens.PLUSPLUS || operationType == JetTokens.MINUSMINUS) {
                             if (semanticServices.getTypeChecker().isSubtypeOf(returnType, JetStandardClasses.getUnitType())) {
                                  result = JetStandardClasses.getUnitType();
@@ -2219,7 +2219,7 @@ public class JetTypeInferrer {
                                     context.scope, operationSign, "equals",
                                     leftType, Collections.singletonList(JetStandardClasses.getNullableAnyType()), false);
                             if (equals != null) {
-                                if (ensureBooleanResult(operationSign, name, equals.getUnsubstitutedReturnType())) {
+                                if (ensureBooleanResult(operationSign, name, equals.getReturnType())) {
                                     ensureNonemptyIntersectionOfOperandTypes(expression);
                                 }
                             }
@@ -2359,7 +2359,7 @@ public class JetTypeInferrer {
                 FunctionDescriptor functionDescriptor = services.lookupFunction(context.scope, expression, "get", receiverType, argumentTypes, true);
                 if (functionDescriptor != null) {
 //                    checkNullSafety(receiverType, expression.getIndexExpressions().get(0).getNode(), functionDescriptor);
-                    result = functionDescriptor.getUnsubstitutedReturnType();
+                    result = functionDescriptor.getReturnType();
                 }
             }
         }
@@ -2403,7 +2403,7 @@ public class JetTypeInferrer {
                             " Use '?.'-qualified call instead");
                 }
 
-                return functionDescriptor.getUnsubstitutedReturnType();
+                return functionDescriptor.getReturnType();
             }
             return null;
         }
@@ -2587,7 +2587,7 @@ public class JetTypeInferrer {
             services.lookupFunction(scope, arrayAccessExpression, "set", receiverType, argumentTypes, true);
             FunctionDescriptor functionDescriptor = services.lookupFunction(scope, operationSign, "set", receiverType, argumentTypes, true);
             if (functionDescriptor != null) {
-                result = functionDescriptor.getUnsubstitutedReturnType();
+                result = functionDescriptor.getReturnType();
             }
         }
 

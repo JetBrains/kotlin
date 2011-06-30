@@ -126,9 +126,9 @@ public class JetSimpleNameExpression extends JetReferenceExpression {
             boolean tailTextGrayed = false;
             if (descriptor instanceof FunctionDescriptor) {
                 FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
-                JetType returnType = functionDescriptor.getUnsubstitutedReturnType();
+                JetType returnType = functionDescriptor.getReturnType();
                 typeText = DescriptorRenderer.TEXT.renderType(returnType);
-                tailText = "(" + StringUtil.join(functionDescriptor.getUnsubstitutedValueParameters(), new Function<ValueParameterDescriptor, String>() {
+                tailText = "(" + StringUtil.join(functionDescriptor.getValueParameters(), new Function<ValueParameterDescriptor, String>() {
                     @Override
                     public String fun(ValueParameterDescriptor valueParameterDescriptor) {
                         return valueParameterDescriptor.getName() + ":" +

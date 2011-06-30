@@ -33,7 +33,7 @@ public class FunctionCodegen {
         final JetTypeReference receiverTypeRef = f.getReceiverTypeRef();
         final JetType receiverType = receiverTypeRef == null ? null : state.getBindingContext().resolveTypeReference(receiverTypeRef);
         Method method = state.getTypeMapper().mapSignature(f);
-        List<ValueParameterDescriptor> paramDescrs = state.getBindingContext().getFunctionDescriptor(f).getUnsubstitutedValueParameters();
+        List<ValueParameterDescriptor> paramDescrs = state.getBindingContext().getFunctionDescriptor(f).getValueParameters();
         generateMethod(f, kind, method, receiverType, paramDescrs);
     }
 

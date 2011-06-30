@@ -47,13 +47,13 @@ public class PropertySetterDescriptor extends PropertyAccessorDescriptor {
 
     @NotNull
     @Override
-    public List<ValueParameterDescriptor> getUnsubstitutedValueParameters() {
+    public List<ValueParameterDescriptor> getValueParameters() {
         return Collections.<ValueParameterDescriptor>singletonList(parameter);
     }
 
     @NotNull
     @Override
-    public JetType getUnsubstitutedReturnType() {
+    public JetType getReturnType() {
         return JetStandardClasses.getUnitType();
     }
 

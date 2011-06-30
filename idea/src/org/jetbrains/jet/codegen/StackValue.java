@@ -440,6 +440,7 @@ public abstract class StackValue {
             else {
                 v.visitMethodInsn(isStatic ? Opcodes.INVOKESTATIC : isInterface ? Opcodes.INVOKEINTERFACE : Opcodes.INVOKEVIRTUAL, owner, getter.getName(), getter.getDescriptor());
             }
+            coerce(type, v);
         }
 
         @Override

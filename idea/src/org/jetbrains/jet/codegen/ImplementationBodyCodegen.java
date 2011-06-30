@@ -99,7 +99,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         Type[] argTypes = method.getArgumentTypes();
         List<ValueParameterDescriptor> paramDescrs = constructorDescriptor != null
-                ? constructorDescriptor.getUnsubstitutedValueParameters()
+                ? constructorDescriptor.getValueParameters()
                 : Collections.<ValueParameterDescriptor>emptyList();
 
         ConstructorFrameMap frameMap = new ConstructorFrameMap(state.getTypeMapper(), constructorDescriptor, kind);
@@ -252,7 +252,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         Method method = state.getTypeMapper().mapConstructorSignature(constructorDescriptor, kind);
-        List<ValueParameterDescriptor> valueParameters = constructorDescriptor.getUnsubstitutedValueParameters();
+        List<ValueParameterDescriptor> valueParameters = constructorDescriptor.getValueParameters();
         List<JetArgument> args = constructorCall.getValueArguments();
         for (int i = 0, argsSize = args.size(); i < argsSize; i++) {
             JetArgument arg = args.get(i);

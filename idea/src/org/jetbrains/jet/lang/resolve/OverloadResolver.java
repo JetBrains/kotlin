@@ -75,7 +75,7 @@ public class OverloadResolver {
                         continue;
                     }
 
-                    List<ValueParameterDescriptor> parameters = descriptor.getUnsubstitutedValueParameters();
+                    List<ValueParameterDescriptor> parameters = descriptor.getValueParameters();
                     if (parameters.size() >= positionedValueArgumentTypes.size()) {
                         // possibly, some default values
                         // possibly, nothing passed to a vararg
@@ -153,8 +153,8 @@ public class OverloadResolver {
     }
 
     private boolean moreSpecific(FunctionDescriptor f, FunctionDescriptor g) {
-        List<ValueParameterDescriptor> fParams = f.getUnsubstitutedValueParameters();
-        List<ValueParameterDescriptor> gParams = g.getUnsubstitutedValueParameters();
+        List<ValueParameterDescriptor> fParams = f.getValueParameters();
+        List<ValueParameterDescriptor> gParams = g.getValueParameters();
 
         int fSize = fParams.size();
         if (fSize != gParams.size()) return false;

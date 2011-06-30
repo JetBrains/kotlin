@@ -52,7 +52,7 @@ public class ConstructorFrameMap extends FrameMap {
         }
 
         List<ValueParameterDescriptor> paramDescrs = descriptor != null
-                ? descriptor.getUnsubstitutedValueParameters()
+                ? descriptor.getValueParameters()
                 : Collections.<ValueParameterDescriptor>emptyList();
         for (int i = 0; i < paramDescrs.size(); i++) {
             ValueParameterDescriptor parameter = paramDescrs.get(i);

@@ -21,7 +21,7 @@ public interface ConstructorDescriptor extends FunctionDescriptor {
      */
     @NotNull
     @Override
-    JetType getUnsubstitutedReturnType();
+    JetType getReturnType();
 
     @NotNull
     @Override

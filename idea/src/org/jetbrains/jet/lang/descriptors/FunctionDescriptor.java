@@ -23,10 +23,10 @@ public interface FunctionDescriptor extends DeclarationDescriptor {
     List<TypeParameterDescriptor> getTypeParameters();
 
     @NotNull
-    List<ValueParameterDescriptor> getUnsubstitutedValueParameters();
+    List<ValueParameterDescriptor> getValueParameters();
 
     @NotNull
-    JetType getUnsubstitutedReturnType();
+    JetType getReturnType();
 
     @NotNull
     FunctionDescriptor getOriginal();
