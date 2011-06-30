@@ -1688,10 +1688,7 @@ public class ExpressionCodegen extends JetVisitor {
 
     private void generateInstanceOf(Runnable expressionGen, JetType jetType, boolean leaveExpressionOnStack) {
         DeclarationDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
-        if (!(descriptor instanceof ClassDescriptor)) {
-            throw new UnsupportedOperationException("don't know how to handle non-class types");
-        }
-        if (jetType.getArguments().size() > 0) {
+        if (jetType.getArguments().size() > 0 || !(descriptor instanceof ClassDescriptor)) {
             generateTypeInfo(jetType);
             expressionGen.run();
             if (leaveExpressionOnStack) {
@@ -1712,14 +1709,8 @@ public class ExpressionCodegen extends JetVisitor {
     private void generateTypeInfo(JetType jetType) {
         DeclarationDescriptor declarationDescriptor = jetType.getConstructor().getDeclarationDescriptor();
         if (declarationDescriptor instanceof TypeParameterDescriptor) {
-            DeclarationDescriptor containingDeclaration = declarationDescriptor.getContainingDeclaration();
-            if (containingDeclaration == contextType && contextType instanceof ClassDescriptor) {
-                loadTypeInfo(typeMapper, (ClassDescriptor) contextType, v);
-                v.iconst(((TypeParameterDescriptor) declarationDescriptor).getIndex());
-                v.invokevirtual("jet/typeinfo/TypeInfo", "getTypeParameter", "(I)Ljet/typeinfo/TypeInfo;");
-                return;
-            }
-            throw new UnsupportedOperationException("don't know what this type parameter resolves to");
+            loadTypeParameterTypeInfo(declarationDescriptor);
+            return;
         }
 
         final Type jvmType = typeMapper.mapType(jetType, OwnerKind.INTERFACE);
@@ -1749,6 +1740,17 @@ public class ExpressionCodegen extends JetVisitor {
         else {
             v.invokespecial("jet/typeinfo/TypeInfo", "<init>", "(Ljava/lang/Class;Z)V");
         }
+    }
+
+    private void loadTypeParameterTypeInfo(DeclarationDescriptor declarationDescriptor) {
+        DeclarationDescriptor containingDeclaration = declarationDescriptor.getContainingDeclaration();
+        if (containingDeclaration == contextType && contextType instanceof ClassDescriptor) {
+            loadTypeInfo(typeMapper, (ClassDescriptor) contextType, v);
+            v.iconst(((TypeParameterDescriptor) declarationDescriptor).getIndex());
+            v.invokevirtual("jet/typeinfo/TypeInfo", "getTypeParameter", "(I)Ljet/typeinfo/TypeInfo;");
+            return;
+        }
+        throw new UnsupportedOperationException("don't know what this type parameter resolves to");
     }
 
     @Override
