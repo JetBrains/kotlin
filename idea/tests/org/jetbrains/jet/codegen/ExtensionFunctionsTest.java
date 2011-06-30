@@ -23,4 +23,8 @@ public class ExtensionFunctionsTest extends CodegenTestCase {
         Method foo = generateFunction("foo");
         assertThrows(foo, Exception.class, null, new StringBuilder());
     }
+
+    public void _testGeneric() throws Exception {
+        blackBoxFile("extensionFunctions/generic.jet");
+    }
 }
