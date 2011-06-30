@@ -49,10 +49,11 @@ public class ClassCodegen {
     }
 
 
-    public static void newTypeInfo(InstructionAdapter v, Type asmType) {
+    public static void newTypeInfo(InstructionAdapter v, boolean isNullable, Type asmType) {
         v.anew(JetTypeMapper.TYPE_TYPEINFO);
         v.dup();
         v.aconst(asmType);
-        v.invokespecial("jet/typeinfo/TypeInfo", "<init>", "(Ljava/lang/Class;)V");
+        v.aconst(isNullable);
+        v.invokespecial("jet/typeinfo/TypeInfo", "<init>", "(Ljava/lang/Class;Z)V");
     }
 }

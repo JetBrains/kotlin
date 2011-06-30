@@ -1453,7 +1453,7 @@ public class ExpressionCodegen extends JetVisitor {
                 for (JetTypeProjection jetTypeArgument : expression.getTypeArguments()) {
                     JetType typeArgument = bindingContext.resolveTypeReference(jetTypeArgument.getTypeReference());
                     // TODO is the makeNullable() call correct here?
-                    ClassCodegen.newTypeInfo(v, typeMapper.mapType(TypeUtils.makeNullable(typeArgument)));
+                    ClassCodegen.newTypeInfo(v, typeArgument.isNullable(), typeMapper.mapType(TypeUtils.makeNullable(typeArgument)));
                 }
 
                 v.invokespecial(JetTypeMapper.jvmNameForImplementation(classDecl), "<init>", method.getDescriptor());
@@ -1724,6 +1724,7 @@ public class ExpressionCodegen extends JetVisitor {
         v.anew(JetTypeMapper.TYPE_TYPEINFO);
         v.dup();
         v.aconst(jvmType);
+        v.aconst(jetType.isNullable());
         List<TypeProjection> arguments = jetType.getArguments();
         if (arguments.size() > 0) {
             v.iconst(arguments.size());
@@ -1736,10 +1737,10 @@ public class ExpressionCodegen extends JetVisitor {
                 generateTypeInfo(argument.getType());
                 v.astore(JetTypeMapper.TYPE_OBJECT);
             }
-            v.invokespecial("jet/typeinfo/TypeInfo", "<init>", "(Ljava/lang/Class;[Ljet/typeinfo/TypeInfo;)V");
+            v.invokespecial("jet/typeinfo/TypeInfo", "<init>", "(Ljava/lang/Class;Z[Ljet/typeinfo/TypeInfo;)V");
         }
         else {
-            v.invokespecial("jet/typeinfo/TypeInfo", "<init>", "(Ljava/lang/Class;)V");
+            v.invokespecial("jet/typeinfo/TypeInfo", "<init>", "(Ljava/lang/Class;Z)V");
         }
     }
 

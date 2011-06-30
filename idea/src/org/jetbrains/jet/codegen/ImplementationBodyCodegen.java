@@ -318,6 +318,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         iv.dup();
 
         iv.aconst(state.getTypeMapper().jvmType(descriptor, OwnerKind.INTERFACE));
+        iv.aconst(false);
         iv.iconst(typeParamCount);
         iv.newarray(JetTypeMapper.TYPE_TYPEINFO);
 
@@ -327,7 +328,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             iv.load(firstTypeParameter + i, JetTypeMapper.TYPE_OBJECT);
             iv.astore(JetTypeMapper.TYPE_OBJECT);
         }
-        iv.invokespecial("jet/typeinfo/TypeInfo", "<init>", "(Ljava/lang/Class;[Ljet/typeinfo/TypeInfo;)V");
+        iv.invokespecial("jet/typeinfo/TypeInfo", "<init>", "(Ljava/lang/Class;Z[Ljet/typeinfo/TypeInfo;)V");
         iv.putfield(state.getTypeMapper().jvmName(descriptor, OwnerKind.IMPLEMENTATION), "$typeInfo", "Ljet/typeinfo/TypeInfo;");
     }
 
@@ -394,7 +395,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         if (needTypeInfo) {
             JetTypeMapper typeMapper = state.getTypeMapper();
-            ClassCodegen.newTypeInfo(v, typeMapper.jvmType(descriptor, OwnerKind.INTERFACE));
+            ClassCodegen.newTypeInfo(v, false, typeMapper.jvmType(descriptor, OwnerKind.INTERFACE));
             v.putstatic(typeMapper.jvmName(descriptor, kind), "$typeInfo", "Ljet/typeinfo/TypeInfo;");
         }
         if (needInstance) {
