@@ -17,7 +17,6 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.resolve.DescriptorRenderer;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -785,30 +784,21 @@ public class ExpressionCodegen extends JetVisitor {
                 }
                 else if (declarationPsiElement instanceof JetNamedFunction) {
                     final JetNamedFunction jetFunction = (JetNamedFunction) declarationPsiElement;
-                    methodDescriptor = typeMapper.mapSignature(jetFunction);
+                    CallableMethod callableMethod = typeMapper.mapToCallableMethod(jetFunction);
+
                     if (functionParent instanceof NamespaceDescriptorImpl) {
                         if (jetFunction.getReceiverTypeRef() != null) {
                             ensureReceiverOnStack(expression, null);
                         }
-                        pushMethodArguments(expression, methodDescriptor);
-                        pushTypeArguments(expression);
-                        final String owner = NamespaceCodegen.getJVMClassName(DescriptorRenderer.getFQName(functionParent));
-                        v.invokestatic(owner, methodDescriptor.getName(), methodDescriptor.getDescriptor());
                     }
                     else if (functionParent instanceof ClassDescriptor) {
-                        ClassDescriptor containingClass = (ClassDescriptor) functionParent;
-                        ensureReceiverOnStack(expression, containingClass);
-                        pushMethodArguments(expression, methodDescriptor);
-                        pushTypeArguments(expression);
-                        final String owner = typeMapper.jvmName(containingClass, OwnerKind.INTERFACE);
-                        int opcode = typeMapper.isInterface(containingClass, OwnerKind.INTERFACE)
-                                ? Opcodes.INVOKEINTERFACE
-                                : Opcodes.INVOKEVIRTUAL;
-                        v.visitMethodInsn(opcode,owner, methodDescriptor.getName(), methodDescriptor.getDescriptor());
+                        ensureReceiverOnStack(expression, (ClassDescriptor) functionParent);
                     }
-                    else {
-                        throw new UnsupportedOperationException("don't know how to generate call to " + declarationPsiElement);
-                    }
+
+                    pushMethodArguments(expression, callableMethod.getDescriptor());
+                    pushTypeArguments(expression);
+                    invokeCallableMethod(callableMethod);
+                    methodDescriptor = callableMethod.getDescriptor();
                 }
                 else {
                     gen(callee, Type.getObjectType(ClosureCodegen.getInternalClassName(fd)));
@@ -838,6 +828,11 @@ public class ExpressionCodegen extends JetVisitor {
         else {
             throw new UnsupportedOperationException("Don't know how to generate a call");
         }
+    }
+
+    private void invokeCallableMethod(CallableMethod callableMethod) {
+        v.visitMethodInsn(callableMethod.getInvokeOpcode(), callableMethod.getOwner(),
+                callableMethod.getDescriptor().getName(), callableMethod.getDescriptor().getDescriptor());
     }
 
     private Method generateJavaMethodCall(JetCallExpression expression, PsiMethod psiMethod) {

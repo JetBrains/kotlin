@@ -298,6 +298,30 @@ public class JetTypeMapper {
         return new Method(f.getName(), returnType, parameterTypes.toArray(new Type[parameterTypes.size()]));
     }
 
+    public CallableMethod mapToCallableMethod(JetNamedFunction f) {
+        final FunctionDescriptor functionDescriptor = bindingContext.getFunctionDescriptor(f);
+        final DeclarationDescriptor functionParent = functionDescriptor.getContainingDeclaration();
+        Method descriptor = mapSignature(f);
+        String owner;
+        int invokeOpcode;
+        if (functionParent instanceof NamespaceDescriptor) {
+            owner = NamespaceCodegen.getJVMClassName(DescriptorRenderer.getFQName(functionParent));
+            invokeOpcode = Opcodes.INVOKESTATIC;
+        }
+        else if (functionParent instanceof ClassDescriptor) {
+            ClassDescriptor containingClass = (ClassDescriptor) functionParent;
+            owner = jvmName(containingClass, OwnerKind.INTERFACE);
+            invokeOpcode = isInterface(containingClass, OwnerKind.INTERFACE)
+                    ? Opcodes.INVOKEINTERFACE
+                    : Opcodes.INVOKEVIRTUAL;
+        }
+        else {
+            throw new UnsupportedOperationException("unknown function parent");
+        }
+
+        return new CallableMethod(owner, descriptor, invokeOpcode);
+    }
+
     public Method mapSignature(String name, FunctionDescriptor f) {
         final JetType receiverType = f.getReceiverType();
         final List<ValueParameterDescriptor> parameters = f.getValueParameters();
