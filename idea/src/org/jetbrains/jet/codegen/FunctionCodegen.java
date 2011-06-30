@@ -35,7 +35,7 @@ public class FunctionCodegen {
     public void gen(JetNamedFunction f, OwnerKind kind) {
         final JetTypeReference receiverTypeRef = f.getReceiverTypeRef();
         final JetType receiverType = receiverTypeRef == null ? null : state.getBindingContext().resolveTypeReference(receiverTypeRef);
-        Method method = state.getTypeMapper().mapToCallableMethod(f).getDescriptor();
+        Method method = state.getTypeMapper().mapToCallableMethod(f).getSignature();
         final FunctionDescriptor functionDescriptor = state.getBindingContext().getFunctionDescriptor(f);
         generateMethod(f, kind, method, receiverType, functionDescriptor.getValueParameters(),
                 functionDescriptor.getTypeParameters());

@@ -91,11 +91,14 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (constructorDescriptor == null && !(myClass instanceof JetObjectDeclaration)) return;
 
         Method method;
+        CallableMethod callableMethod;
         if (myClass instanceof JetObjectDeclaration) {
             method = new Method("<init>", Type.VOID_TYPE, new Type[0]);
+            callableMethod = new CallableMethod("", method, Opcodes.INVOKESPECIAL, Collections.<Type>emptyList());
         }
         else {
-            method = state.getTypeMapper().mapConstructorSignature(constructorDescriptor, kind);
+            callableMethod = state.getTypeMapper().mapToCallableMethod(constructorDescriptor, kind);
+            method = callableMethod.getSignature();
         }
         int flags = Opcodes.ACC_PUBLIC; // TODO
         final MethodVisitor mv = v.visitMethod(flags, "<init>", method.getDescriptor(), null, null);
@@ -106,7 +109,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 ? constructorDescriptor.getValueParameters()
                 : Collections.<ValueParameterDescriptor>emptyList();
 
-        ConstructorFrameMap frameMap = new ConstructorFrameMap(state.getTypeMapper(), constructorDescriptor, kind);
+        ConstructorFrameMap frameMap = new ConstructorFrameMap(callableMethod, constructorDescriptor, kind);
 
         final InstructionAdapter iv = new InstructionAdapter(mv);
         ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE,
@@ -255,15 +258,14 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             iv.load(frameMap.getOuterThisIndex(), state.getTypeMapper().jvmType((ClassDescriptor) descriptor.getContainingDeclaration(), OwnerKind.IMPLEMENTATION));
         }
 
-        Method method = state.getTypeMapper().mapConstructorSignature(constructorDescriptor, kind);
-        List<ValueParameterDescriptor> valueParameters = constructorDescriptor.getValueParameters();
+        CallableMethod method = state.getTypeMapper().mapToCallableMethod(constructorDescriptor, kind);
         List<JetArgument> args = constructorCall.getValueArguments();
         for (int i = 0, argsSize = args.size(); i < argsSize; i++) {
             JetArgument arg = args.get(i);
-            codegen.gen(arg.getArgumentExpression(), state.getTypeMapper().mapType(valueParameters.get(i).getOutType()));
+            codegen.gen(arg.getArgumentExpression(), method.getValueParameterTypes().get(i));
         }
 
-        iv.invokespecial(type.getInternalName(), "<init>", method.getDescriptor());
+        method.invoke(iv);
     }
 
     @Override
@@ -281,12 +283,12 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (constructorDescriptor == null) {
             throw new UnsupportedOperationException("failed to get descriptor for secondary constructor");
         }
-        Method method = state.getTypeMapper().mapConstructorSignature(constructorDescriptor, kind);
+        CallableMethod method = state.getTypeMapper().mapToCallableMethod(constructorDescriptor, kind);
         int flags = Opcodes.ACC_PUBLIC; // TODO
-        final MethodVisitor mv = v.visitMethod(flags, "<init>", method.getDescriptor(), null, null);
+        final MethodVisitor mv = v.visitMethod(flags, "<init>", method.getSignature().getDescriptor(), null, null);
         mv.visitCode();
 
-        ConstructorFrameMap frameMap = new ConstructorFrameMap(state.getTypeMapper(), constructorDescriptor, kind);
+        ConstructorFrameMap frameMap = new ConstructorFrameMap(method, constructorDescriptor, kind);
 
         final InstructionAdapter iv = new InstructionAdapter(mv);
         ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE,

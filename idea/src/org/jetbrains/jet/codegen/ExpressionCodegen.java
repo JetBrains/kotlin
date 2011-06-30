@@ -798,7 +798,7 @@ public class ExpressionCodegen extends JetVisitor {
                     pushMethodArguments(expression, callableMethod.getValueParameterTypes());
                     pushTypeArguments(expression);
                     callableMethod.invoke(v);
-                    methodDescriptor = callableMethod.getDescriptor();
+                    methodDescriptor = callableMethod.getSignature();
                 }
                 else {
                     gen(callee, Type.getObjectType(ClosureCodegen.getInternalClassName(fd)));
@@ -1460,11 +1460,11 @@ public class ExpressionCodegen extends JetVisitor {
                 // TODO typechecker must verify that we're the outer class of the instance being created
                 pushOuterClassArguments(classDecl);
 
-                Method method = typeMapper.mapConstructorSignature((ConstructorDescriptor) constructorDescriptor, OwnerKind.IMPLEMENTATION);
-                pushMethodArguments(expression, method);
+                CallableMethod method = typeMapper.mapToCallableMethod((ConstructorDescriptor) constructorDescriptor, OwnerKind.IMPLEMENTATION);
+                pushMethodArguments(expression, method.getValueParameterTypes());
                 pushTypeArguments(expression);
 
-                v.invokespecial(JetTypeMapper.jvmNameForImplementation(classDecl), "<init>", method.getDescriptor());
+                method.invoke(v);
             }
         }
         else {

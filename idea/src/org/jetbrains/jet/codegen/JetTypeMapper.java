@@ -383,7 +383,7 @@ public class JetTypeMapper {
         return new Method(PropertyCodegen.setterName(descriptor.getName()), Type.VOID_TYPE, new Type[] { paramType });
     }
 
-    public Method mapConstructorSignature(ConstructorDescriptor descriptor, OwnerKind kind) {
+    private Method mapConstructorSignature(ConstructorDescriptor descriptor, OwnerKind kind, List<Type> valueParameterTypes) {
         boolean delegate = kind == OwnerKind.DELEGATING_IMPLEMENTATION;
         List<ValueParameterDescriptor> parameters = descriptor.getOriginal().getValueParameters();
         List<Type> parameterTypes = new ArrayList<Type>();
@@ -396,7 +396,9 @@ public class JetTypeMapper {
             parameterTypes.add(jetInterfaceType(classDescriptor));
         }
         for (ValueParameterDescriptor parameter : parameters) {
-            parameterTypes.add(mapType(parameter.getOutType()));
+            final Type type = mapType(parameter.getOutType());
+            parameterTypes.add(type);
+            valueParameterTypes.add(type);
         }
 
         List<TypeParameterDescriptor> typeParameters = classDescriptor.getTypeConstructor().getParameters();
@@ -405,6 +407,13 @@ public class JetTypeMapper {
         }
 
         return new Method("<init>", Type.VOID_TYPE, parameterTypes.toArray(new Type[parameterTypes.size()]));
+    }
+
+    public CallableMethod mapToCallableMethod(ConstructorDescriptor descriptor, OwnerKind kind) {
+        List<Type> valueParameterTypes = new ArrayList<Type>();
+        final Method method = mapConstructorSignature(descriptor, kind, valueParameterTypes);
+        String owner = jvmName(descriptor.getContainingDeclaration(), kind);
+        return new CallableMethod(owner, method, Opcodes.INVOKESPECIAL, valueParameterTypes);
     }
 
     static int getAccessModifiers(JetDeclaration p, int defaultFlags) {

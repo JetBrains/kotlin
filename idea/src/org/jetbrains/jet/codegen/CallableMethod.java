@@ -11,13 +11,13 @@ import java.util.List;
  */
 public class CallableMethod {
     private final String owner;
-    private final Method descriptor;
+    private final Method signature;
     private final int invokeOpcode;
     private final List<Type> valueParameterTypes;
 
-    public CallableMethod(String owner, Method descriptor, int invokeOpcode, List<Type> valueParameterTypes) {
+    public CallableMethod(String owner, Method signature, int invokeOpcode, List<Type> valueParameterTypes) {
         this.owner = owner;
-        this.descriptor = descriptor;
+        this.signature = signature;
         this.invokeOpcode = invokeOpcode;
         this.valueParameterTypes = valueParameterTypes;
     }
@@ -26,8 +26,8 @@ public class CallableMethod {
         return owner;
     }
 
-    public Method getDescriptor() {
-        return descriptor;
+    public Method getSignature() {
+        return signature;
     }
 
     public int getInvokeOpcode() {
@@ -39,6 +39,6 @@ public class CallableMethod {
     }
 
     void invoke(InstructionAdapter v) {
-        v.visitMethodInsn(getInvokeOpcode(), getOwner(), getDescriptor().getName(), getDescriptor().getDescriptor());
+        v.visitMethodInsn(getInvokeOpcode(), getOwner(), getSignature().getName(), getSignature().getDescriptor());
     }
 }
