@@ -79,4 +79,13 @@ public class TypeInfo<T> implements JetObject {
         result = 31 * result + (typeParameters != null ? Arrays.hashCode(typeParameters) : 0);
         return result;
     }
+
+    public static final TypeInfo<Byte> BYTE_TYPE_INFO = new TypeInfo<Byte>(Byte.class);
+    public static final TypeInfo<Short> SHORT_TYPE_INFO = new TypeInfo<Short>(Short.class);
+    public static final TypeInfo<Integer> INT_TYPE_INFO = new TypeInfo<Integer>(Integer.class);
+    public static final TypeInfo<Long> LONG_TYPE_INFO = new TypeInfo<Long>(Long.class);
+    public static final TypeInfo<Character> CHAR_TYPE_INFO = new TypeInfo<Character>(Character.class);
+    public static final TypeInfo<Boolean> BOOL_TYPE_INFO = new TypeInfo<Boolean>(Boolean.class);
+    public static final TypeInfo<Float> FLOAT_TYPE_INFO = new TypeInfo<Float>(Float.class);
+    public static final TypeInfo<Double> DOUBLE_TYPE_INFO = new TypeInfo<Double>(Double.class);
 }

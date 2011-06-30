@@ -84,6 +84,10 @@ public class TypeInfoTest extends CodegenTestCase {
         generateFunction();  // assert no exception
     }
 
+    public void testPrimitiveTypeInfo() throws Exception {
+        blackBoxFile("typeInfo/primitiveTypeInfo.jet");
+    }
+
     private Runnable newRunnable() {
         return new Runnable() {
             @Override

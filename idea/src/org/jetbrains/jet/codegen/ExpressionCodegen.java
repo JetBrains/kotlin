@@ -61,6 +61,18 @@ public class ExpressionCodegen extends JetVisitor {
     private final Stack<Label> myBreakTargets = new Stack<Label>();
     private final Stack<StackValue> myStack = new Stack<StackValue>();
 
+    private static final String[] PRIMITIVE_TYPE_INFO_FIELDS = {
+            null,
+            "BOOL_TYPE_INFO",
+            "CHAR_TYPE_INFO",
+            "BYTE_TYPE_INFO",
+            "SHORT_TYPE_INFO",
+            "INT_TYPE_INFO",
+            "FLOAT_TYPE_INFO",
+            "LONG_TYPE_INFO",
+            "DOUBLE_TYPE_INFO"
+    };
+
     private final InstructionAdapter v;
     private final FrameMap myMap;
     private final JetTypeMapper typeMapper;
@@ -1703,9 +1715,15 @@ public class ExpressionCodegen extends JetVisitor {
             throw new UnsupportedOperationException("don't know what this type parameter resolves to");
         }
 
+        final Type jvmType = typeMapper.mapType(jetType, OwnerKind.INTERFACE);
+        if (jvmType.getSort() <= Type.DOUBLE) {
+            v.getstatic("jet/typeinfo/TypeInfo", PRIMITIVE_TYPE_INFO_FIELDS[jvmType.getSort()], "Ljet/typeinfo/TypeInfo;");
+            return;
+        }
+
         v.anew(JetTypeMapper.TYPE_TYPEINFO);
         v.dup();
-        v.aconst(typeMapper.jvmType((ClassDescriptor) declarationDescriptor, OwnerKind.INTERFACE));
+        v.aconst(jvmType);
         List<TypeProjection> arguments = jetType.getArguments();
         if (arguments.size() > 0) {
             v.iconst(arguments.size());

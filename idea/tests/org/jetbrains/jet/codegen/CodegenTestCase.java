@@ -75,6 +75,9 @@ public abstract class CodegenTestCase extends LightCodeInsightFixtureTestCase {
             System.out.println(generateToText());
             throw new RuntimeException(e);
         }
+        if (!"OK".equals(actual)) {
+            System.out.println(generateToText());
+        }
         assertEquals("OK", actual);
     }
 
