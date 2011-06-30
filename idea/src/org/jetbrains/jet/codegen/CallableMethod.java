@@ -1,5 +1,6 @@
 package org.jetbrains.jet.codegen;
 
+import org.objectweb.asm.commons.InstructionAdapter;
 import org.objectweb.asm.commons.Method;
 
 /**
@@ -26,5 +27,9 @@ public class CallableMethod {
 
     public int getInvokeOpcode() {
         return invokeOpcode;
+    }
+
+    void invoke(InstructionAdapter v) {
+        v.visitMethodInsn(getInvokeOpcode(), getOwner(), getDescriptor().getName(), getDescriptor().getDescriptor());
     }
 }

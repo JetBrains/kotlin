@@ -797,7 +797,7 @@ public class ExpressionCodegen extends JetVisitor {
 
                     pushMethodArguments(expression, callableMethod.getDescriptor());
                     pushTypeArguments(expression);
-                    invokeCallableMethod(callableMethod);
+                    callableMethod.invoke(v);
                     methodDescriptor = callableMethod.getDescriptor();
                 }
                 else {
@@ -828,11 +828,6 @@ public class ExpressionCodegen extends JetVisitor {
         else {
             throw new UnsupportedOperationException("Don't know how to generate a call");
         }
-    }
-
-    private void invokeCallableMethod(CallableMethod callableMethod) {
-        v.visitMethodInsn(callableMethod.getInvokeOpcode(), callableMethod.getOwner(),
-                callableMethod.getDescriptor().getName(), callableMethod.getDescriptor().getDescriptor());
     }
 
     private Method generateJavaMethodCall(JetCallExpression expression, PsiMethod psiMethod) {
