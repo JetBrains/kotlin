@@ -70,7 +70,7 @@ public class NamespaceCodegen {
         mv.visitCode();
 
         FrameMap frameMap = new FrameMap();
-        ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, null, OwnerKind.NAMESPACE, null, state);
+        ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, ClassContext.STATIC, state);
 
         for (JetDeclaration declaration : namespace.getDeclarations()) {
             if (declaration instanceof JetProperty) {

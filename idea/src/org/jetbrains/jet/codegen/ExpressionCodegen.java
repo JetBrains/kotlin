@@ -78,29 +78,23 @@ public class ExpressionCodegen extends JetVisitor {
     private final JetTypeMapper typeMapper;
     private final GenerationState state;
     private final Type returnType;
-    private final DeclarationDescriptor contextType;
-    private final OwnerKind contextKind;
     private final BindingContext bindingContext;
-    private final StackValue thisExpression;
     private final Map<ClassDescriptor, StackValue> outerThisExpressions = new HashMap<ClassDescriptor, StackValue>();
     private final Map<TypeParameterDescriptor, StackValue> typeParameterExpressions = new HashMap<TypeParameterDescriptor, StackValue>();
+    private final ClassContext context;
 
     public ExpressionCodegen(MethodVisitor v,
                              FrameMap myMap,
                              Type returnType,
-                             DeclarationDescriptor contextType,
-                             OwnerKind contextKind,
-                             @Nullable StackValue thisExpression,
+                             ClassContext context,
                              GenerationState state) {
         this.myMap = myMap;
         this.typeMapper = state.getTypeMapper();
         this.returnType = returnType;
-        this.contextType = contextType;
-        this.contextKind = contextKind;
         this.state = state;
         this.v = new InstructionAdapter(v);
         this.bindingContext = state.getBindingContext();
-        this.thisExpression = thisExpression;
+        this.context = context;
     }
 
     public void addOuterThis(ClassDescriptor outer, StackValue expression) {
@@ -318,6 +312,18 @@ public class ExpressionCodegen extends JetVisitor {
         myMap.leaveTemp();
         myBreakTargets.pop();
         myContinueTargets.pop();
+    }
+
+    private DeclarationDescriptor contextType() {
+        return context.getContextType();
+    }
+
+    private OwnerKind contextKind() {
+        return context.getContextKind();
+    }
+
+    private StackValue thisExpression() {
+        return context.getThisExpression();
     }
 
     private abstract class ForLoopGenerator {
@@ -682,7 +688,7 @@ public class ExpressionCodegen extends JetVisitor {
         boolean isStatic = containingDeclaration instanceof NamespaceDescriptorImpl;
         propertyDescriptor = propertyDescriptor.getOriginal();
         final JetType outType = propertyDescriptor.getOutType();
-        boolean isInsideClass = !forceInterface && containingDeclaration == contextType;
+        boolean isInsideClass = !forceInterface && containingDeclaration == contextType();
         Method getter;
         Method setter;
         if (forceField) {
@@ -697,7 +703,7 @@ public class ExpressionCodegen extends JetVisitor {
         String owner;
         boolean isInterface;
         if (isInsideClass || isStatic) {
-            owner = typeMapper.getOwner(propertyDescriptor, contextKind);
+            owner = typeMapper.getOwner(propertyDescriptor, contextKind());
             isInterface = false;
         }
         else {
@@ -891,17 +897,17 @@ public class ExpressionCodegen extends JetVisitor {
         }
         else {
             // TODO hope it works; really need more checks here :)
-            if (calleeContainingClass != null && contextType instanceof ClassDescriptor &&
-                calleeContainingClass == contextType.getContainingDeclaration()) {
+            if (calleeContainingClass != null && contextType() instanceof ClassDescriptor &&
+                calleeContainingClass == contextType().getContainingDeclaration()) {
                 v.load(0, JetTypeMapper.TYPE_OBJECT);
                 return StackValue.field(typeMapper.jvmType(calleeContainingClass, OwnerKind.IMPLEMENTATION),
-                        typeMapper.jvmName((ClassDescriptor) contextType, OwnerKind.IMPLEMENTATION),
+                        typeMapper.jvmName((ClassDescriptor) contextType(), OwnerKind.IMPLEMENTATION),
                         "this$0",
                         false);
                 // TODO handle more levels of class nestng
             }
             else {
-                return thisExpression != null ? thisExpression : StackValue.local(0, JetTypeMapper.TYPE_OBJECT);
+                return thisExpression() != null ? thisExpression() : StackValue.local(0, JetTypeMapper.TYPE_OBJECT);
             }
         }
     }
@@ -1499,18 +1505,18 @@ public class ExpressionCodegen extends JetVisitor {
     }
 
     private void generateThis() {
-        if (thisExpression != null) {
-            myStack.push(thisExpression);
+        if (thisExpression() != null) {
+            myStack.push(thisExpression());
             return;
         }
-        if (contextKind != OwnerKind.NAMESPACE) {
-            ClassDescriptor contextClass = (ClassDescriptor) contextType;
-            final Type thisType = typeMapper.jvmType(contextClass, contextKind);
-            if (contextKind == OwnerKind.IMPLEMENTATION) {
+        if (contextKind() != OwnerKind.NAMESPACE) {
+            ClassDescriptor contextClass = (ClassDescriptor) contextType();
+            final Type thisType = typeMapper.jvmType(contextClass, contextKind());
+            if (contextKind() == OwnerKind.IMPLEMENTATION) {
                 myStack.push(StackValue.local(0, thisType));
                 return;
             }
-            else if (contextKind == OwnerKind.DELEGATING_IMPLEMENTATION) {
+            else if (contextKind() == OwnerKind.DELEGATING_IMPLEMENTATION) {
                 v.load(0, thisType);
                 myStack.push(StackValue.field(JetTypeMapper.jetInterfaceType(contextClass),
                         thisType.getInternalName(),
@@ -1701,8 +1707,8 @@ public class ExpressionCodegen extends JetVisitor {
             return;
         }
         DeclarationDescriptor containingDeclaration = typeParameterDescriptor.getContainingDeclaration();
-        if (containingDeclaration == contextType && contextType instanceof ClassDescriptor) {
-            loadTypeInfo(typeMapper, (ClassDescriptor) contextType, v);
+        if (containingDeclaration == contextType() && contextType() instanceof ClassDescriptor) {
+            loadTypeInfo(typeMapper, (ClassDescriptor) contextType(), v);
             v.iconst(typeParameterDescriptor.getIndex());
             v.invokevirtual("jet/typeinfo/TypeInfo", "getTypeParameter", "(I)Ljet/typeinfo/TypeInfo;");
             return;

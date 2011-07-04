@@ -112,8 +112,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         ConstructorFrameMap frameMap = new ConstructorFrameMap(callableMethod, constructorDescriptor, kind);
 
         final InstructionAdapter iv = new InstructionAdapter(mv);
-        ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE,
-                descriptor, kind, StackValue.local(0, state.getTypeMapper().jvmType(descriptor, kind)), state);
+        ClassContext context = new ClassContext(descriptor, kind, StackValue.local(0, state.getTypeMapper().jvmType(descriptor, kind)));
+        ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, context, state);
 
         String classname = state.getTypeMapper().jvmName(descriptor, kind);
         final Type classType = Type.getType("L" + classname + ";");
@@ -291,8 +291,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         ConstructorFrameMap frameMap = new ConstructorFrameMap(method, constructorDescriptor, kind);
 
         final InstructionAdapter iv = new InstructionAdapter(mv);
-        ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE,
-                descriptor, kind, StackValue.local(0, state.getTypeMapper().jvmType(descriptor, kind)), state);
+        ClassContext context = new ClassContext(descriptor, kind, StackValue.local(0, state.getTypeMapper().jvmType(descriptor, kind)));
+        ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, context, state);
 
         for (JetDelegationSpecifier initializer : constructor.getInitializers()) {
             if (initializer instanceof JetDelegatorToThisCall) {

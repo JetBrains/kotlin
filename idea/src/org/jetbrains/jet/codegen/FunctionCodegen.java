@@ -92,7 +92,8 @@ public class FunctionCodegen {
             }
 
             StackValue thisExpression = receiverType == null ? null : StackValue.local(thisIdx, state.getTypeMapper().mapType(receiverType));
-            ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, jvmSignature.getReturnType(), contextDesc, kind, thisExpression, state);
+            ClassContext context = new ClassContext(contextDesc, kind, thisExpression);
+            ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, jvmSignature.getReturnType(), context, state);
 
             int firstArg = thisIdx+1;
             Type[] argTypes = jvmSignature.getArgumentTypes();
