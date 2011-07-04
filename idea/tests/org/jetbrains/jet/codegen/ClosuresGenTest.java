@@ -27,4 +27,12 @@ public class ClosuresGenTest extends CodegenTestCase {
     public void testEnclosingLocalVariable() throws Exception {
         blackBoxFile("classes/enclosingLocalVariable.jet");
     }
+
+    public void testDoubleEnclosedLocalVariable() throws Exception {
+        blackBoxFile("classes/doubleEnclosedLocalVariable.jet");
+    }
+
+    public void testEnclosingThis() throws Exception {
+        blackBoxFile("classes/enclosingThis.jet");
+    }
 }
