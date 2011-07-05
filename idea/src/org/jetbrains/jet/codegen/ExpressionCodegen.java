@@ -311,12 +311,7 @@ public class ExpressionCodegen extends JetVisitor {
     }
 
     private DeclarationDescriptor contextType() {
-        DeclarationDescriptor descriptor = context.getContextType();
-        while (descriptor != null) {
-            if (descriptor instanceof ClassDescriptor || descriptor instanceof NamespaceDescriptor) return descriptor;
-            descriptor = descriptor.getContainingDeclaration();
-        }
-        return descriptor;
+        return context.getContextClass();
     }
 
     private OwnerKind contextKind() {
@@ -923,7 +918,7 @@ public class ExpressionCodegen extends JetVisitor {
             ClassContext parentContext = cur.getParentContext();
             if (parentContext == null) break;
 
-            final DeclarationDescriptor curContextType = cur.getContextType();
+            final DeclarationDescriptor curContextType = cur.getContextDescriptor();
             if (curContextType instanceof ClassDescriptor) {
                 if (isSubclass((ClassDescriptor) curContextType, calleeContainingClass)) break;
 

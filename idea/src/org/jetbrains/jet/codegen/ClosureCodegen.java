@@ -36,7 +36,7 @@ public class ClosureCodegen {
     public ClosureCodegen(GenerationState state, ExpressionCodegen exprContext, ClassContext context) {
         this.state = state;
         this.exprContext = exprContext;
-        this.context = context.intoClosure();
+        this.context = context;
     }
 
     public static Method erasedInvokeSignature(FunctionDescriptor fd) {
@@ -125,7 +125,7 @@ public class ClosureCodegen {
     }
 
     private void generateBody(FunctionDescriptor funDescriptor, ClassVisitor cv, JetFunctionLiteral body) {
-        FunctionCodegen fc = new FunctionCodegen(context, cv, state);
+        FunctionCodegen fc = new FunctionCodegen(context.intoClosure(name), cv, state);
         fc.generateMethod(body, invokeSignature(funDescriptor), funDescriptor);
     }
 

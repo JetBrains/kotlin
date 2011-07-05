@@ -14,15 +14,17 @@ public class ClassContext {
     public static final ClassContext STATIC = new ClassContext(null, OwnerKind.NAMESPACE, null, null);
     private final DeclarationDescriptor contextType;
     private final OwnerKind contextKind;
+    private final StackValue thisExpression;
     private final ClassContext parentContext;
 
     public ClassContext(DeclarationDescriptor contextType, OwnerKind contextKind, StackValue thisExpression, ClassContext parentContext) {
         this.contextType = contextType;
         this.contextKind = contextKind;
+        this.thisExpression = thisExpression;
         this.parentContext = parentContext;
     }
 
-    public DeclarationDescriptor getContextType() {
+    public DeclarationDescriptor getContextDescriptor() {
         return contextType;
     }
 
@@ -31,20 +33,8 @@ public class ClassContext {
     }
 
     public StackValue getThisExpression() {
-        int thisIdx = -1;
-        if (getContextKind() != OwnerKind.NAMESPACE) {
-            thisIdx++;
-        }
-
-        if (hasReceiver()) {
-            thisIdx++;
-        }
-
-        if (thisIdx == -1) {
-            throw new RuntimeException("Has no this!" + contextType);
-        }
-
-        return StackValue.local(thisIdx, JetTypeMapper.TYPE_OBJECT);
+        if (thisExpression != null) return thisExpression;
+        return parentContext != null ? parentContext.getThisExpression() : null;
     }
 
     public ClassContext intoNamespace(NamespaceDescriptor descriptor) {
@@ -61,15 +51,30 @@ public class ClassContext {
         else {
             thisValue = StackValue.local(0, JetTypeMapper.TYPE_OBJECT);
         }
+
         return new ClassContext(descriptor, kind, thisValue, this);
     }
 
     public ClassContext intoFunction(FunctionDescriptor descriptor) {
-        return new ClassContext(descriptor, getContextKind(), StackValue.local(0, JetTypeMapper.TYPE_OBJECT), this);
+        int thisIdx = -1;
+        if (getContextKind() != OwnerKind.NAMESPACE) {
+            thisIdx++;
+        }
+
+        final boolean hasReceiver = descriptor.getReceiverType() != null;
+        if (hasReceiver) {
+            thisIdx++;
+        }
+
+        return new ClassContext(descriptor, getContextKind(), hasReceiver ? StackValue.local(thisIdx, JetTypeMapper.TYPE_OBJECT) : null, this);
     }
 
-    public ClassContext intoClosure() {
-        return new ClassContext(null, OwnerKind.IMPLEMENTATION, StackValue.local(0, JetTypeMapper.TYPE_OBJECT), this); // TODO!
+    public ClassContext intoClosure(String internalClassName) {
+        final DeclarationDescriptor contextDescriptor = getContextClass();
+        StackValue outerClass = contextDescriptor instanceof ClassDescriptor
+                                ? StackValue.instanceField(JetTypeMapper.jetImplementationType((ClassDescriptor) contextDescriptor), internalClassName, "this$0")
+                                : StackValue.local(0, JetTypeMapper.TYPE_OBJECT);
+        return new ClassContext(null, OwnerKind.IMPLEMENTATION, outerClass, this);
     }
 
     public FrameMap prepareFrame() {
@@ -100,13 +105,18 @@ public class ClassContext {
 
     public Type jvmType(JetTypeMapper mapper) {
         if (contextType instanceof ClassDescriptor) {
-            if (contextKind == OwnerKind.INTERFACE) {
-                System.out.println("OOps?!");
-            }
             return mapper.jvmType((ClassDescriptor) contextType, contextKind);
         }
         else {
             return JetTypeMapper.TYPE_OBJECT; // TODO?
         }
+    }
+
+    public DeclarationDescriptor getContextClass() {
+        DeclarationDescriptor descriptor = getContextDescriptor();
+        if (descriptor == null || descriptor instanceof ClassDescriptor || descriptor instanceof NamespaceDescriptor) return descriptor;
+
+        final ClassContext parent = getParentContext();
+        return parent != null ? parent.getContextClass() : null;
     }
 }
