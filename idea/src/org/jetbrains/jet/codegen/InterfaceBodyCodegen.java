@@ -17,8 +17,9 @@ import java.util.Set;
  * @author yole
  */
 public class InterfaceBodyCodegen extends ClassBodyCodegen {
-    public InterfaceBodyCodegen(JetClassOrObject aClass, ClassVisitor v, GenerationState state) {
-        super(aClass, OwnerKind.INTERFACE, v, state);
+    public InterfaceBodyCodegen(JetClassOrObject aClass, ClassContext context, ClassVisitor v, GenerationState state) {
+        super(aClass, context, v, state);
+        assert context.getContextKind() == OwnerKind.INTERFACE;
     }
 
     protected void generateDeclaration() {

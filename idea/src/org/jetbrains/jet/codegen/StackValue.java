@@ -71,6 +71,10 @@ public abstract class StackValue {
         return new Field(type, owner, name, isStatic);
     }
 
+    public static StackValue instanceField(Type type, String owner, String name) {
+        return new InstanceField(type, owner, name);
+    }
+
     public static StackValue property(String name, String owner, Type type, boolean isStatic, boolean isInterface, Method getter, Method setter) {
         return new Property(name, owner, getter, setter, isStatic, isInterface, type);
     }
@@ -379,6 +383,7 @@ public abstract class StackValue {
         }
     }
 
+
     private static class Field extends StackValue {
         private final String owner;
         private final String name;
@@ -411,6 +416,33 @@ public abstract class StackValue {
         @Override
         public void store(InstructionAdapter v) {
             v.visitFieldInsn(isStatic ? Opcodes.PUTSTATIC : Opcodes.PUTFIELD, owner, name, this.type.getDescriptor());
+        }
+    }
+
+    private static class InstanceField extends StackValue {
+        private final String owner;
+        private final String name;
+
+        public InstanceField(Type type, String owner, String name) {
+            super(type);
+            this.owner = owner;
+            this.name = name;
+        }
+
+        @Override
+        public void put(Type type, InstructionAdapter v) {
+            v.load(0, JetTypeMapper.TYPE_OBJECT);
+            v.getfield(owner, name, this.type.getDescriptor());
+        }
+
+        @Override
+        public void dupReceiver(InstructionAdapter v, int below) {
+        }
+
+        @Override
+        public void store(InstructionAdapter v) {
+            v.load(0, JetTypeMapper.TYPE_OBJECT);
+            v.putfield(owner, name, this.type.getDescriptor());
         }
     }
 

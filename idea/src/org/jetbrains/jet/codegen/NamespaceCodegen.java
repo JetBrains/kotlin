@@ -33,8 +33,10 @@ public class NamespaceCodegen {
     }
 
     public void generate(JetNamespace namespace) {
-        final FunctionCodegen functionCodegen = new FunctionCodegen(namespace, v, state);
-        final PropertyCodegen propertyCodegen = new PropertyCodegen(v, functionCodegen, state);
+        final ClassContext context = ClassContext.STATIC.intoNamespace(state.getBindingContext().getNamespaceDescriptor(namespace));
+
+        final FunctionCodegen functionCodegen = new FunctionCodegen(context, v, state);
+        final PropertyCodegen propertyCodegen = new PropertyCodegen(context, v, functionCodegen, state);
         final ClassCodegen classCodegen = state.forClass();
 
         state.prepareAnonymousClasses(namespace);
@@ -45,17 +47,17 @@ public class NamespaceCodegen {
 
         for (JetDeclaration declaration : namespace.getDeclarations()) {
             if (declaration instanceof JetProperty) {
-                propertyCodegen.gen((JetProperty) declaration, OwnerKind.NAMESPACE);
+                propertyCodegen.gen((JetProperty) declaration);
             }
             else if (declaration instanceof JetNamedFunction) {
                 try {
-                    functionCodegen.gen((JetNamedFunction) declaration, OwnerKind.NAMESPACE);
+                    functionCodegen.gen((JetNamedFunction) declaration);
                 } catch (Exception e) {
                     throw new RuntimeException("Failed to generate function " + declaration.getName(), e);
                 }
             }
             else if (declaration instanceof JetClassOrObject) {
-                classCodegen.generate((JetClassOrObject) declaration);
+                classCodegen.generate(context, (JetClassOrObject) declaration);
             }
             else if (declaration instanceof JetNamespace) {
                 JetNamespace childNamespace = (JetNamespace) declaration;

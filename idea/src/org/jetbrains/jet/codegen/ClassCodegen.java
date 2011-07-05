@@ -16,36 +16,39 @@ public class ClassCodegen {
         this.state = state;
     }
 
-    public void generate(JetClassOrObject aClass) {
+    public void generate(ClassContext parentContext, JetClassOrObject aClass) {
         state.prepareAnonymousClasses((JetElement) aClass);
 
         if (aClass instanceof JetObjectDeclaration) {
-            generateImplementation(aClass, OwnerKind.IMPLEMENTATION);
+            generateImplementation(parentContext, aClass, OwnerKind.IMPLEMENTATION);
         }
         else {
-            generateInterface(aClass);
-            generateImplementation(aClass, OwnerKind.IMPLEMENTATION);
-            generateImplementation(aClass, OwnerKind.DELEGATING_IMPLEMENTATION);
+            generateInterface(parentContext, aClass);
+            generateImplementation(parentContext, aClass, OwnerKind.IMPLEMENTATION);
+            generateImplementation(parentContext, aClass, OwnerKind.DELEGATING_IMPLEMENTATION);
         }
 
+        ClassDescriptor descriptor =  state.getBindingContext().getClassDescriptor(aClass);
+        final ClassContext contextForInners = parentContext.intoClass(descriptor, OwnerKind.IMPLEMENTATION);
         for (JetDeclaration declaration : aClass.getDeclarations()) {
             if (declaration instanceof JetClass) {
-                generate((JetClass) declaration);
+                generate(contextForInners, (JetClass) declaration);
             }
         }
     }
 
-    private void generateInterface(JetClassOrObject aClass) {
-        final ClassVisitor visitor = state.forClassInterface(state.getBindingContext().getClassDescriptor(aClass));
-        new InterfaceBodyCodegen(aClass, visitor, state).generate();
+    private void generateInterface(ClassContext parentContext, JetClassOrObject aClass) {
+        ClassDescriptor descriptor =  state.getBindingContext().getClassDescriptor(aClass);
+        final ClassVisitor visitor = state.forClassInterface(descriptor);
+        new InterfaceBodyCodegen(aClass, parentContext.intoClass(descriptor, OwnerKind.INTERFACE), visitor, state).generate();
     }
 
-    private void generateImplementation(JetClassOrObject aClass, OwnerKind kind) {
+    private void generateImplementation(ClassContext parentContext, JetClassOrObject aClass, OwnerKind kind) {
         ClassDescriptor descriptor =  state.getBindingContext().getClassDescriptor(aClass);
         ClassVisitor v = kind == OwnerKind.IMPLEMENTATION
                 ? state.forClassImplementation(descriptor)
                 : state.forClassDelegatingImplementation(descriptor);
-        new ImplementationBodyCodegen(aClass, kind, v, state).generate();
+        new ImplementationBodyCodegen(aClass, parentContext.intoClass(descriptor, kind), v, state).generate();
     }
 
 

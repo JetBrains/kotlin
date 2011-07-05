@@ -8,7 +8,8 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetFunctionLiteral;
+import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression;
 import org.jetbrains.jet.lang.types.JetType;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -25,15 +26,17 @@ import java.util.Map;
 
 public class ClosureCodegen {
     private final GenerationState state;
-    private final ExpressionCodegen context;
+    private final ExpressionCodegen exprContext;
+    private final ClassContext context;
     private ClassVisitor cv = null;
     private String name = null;
 
     private Map<DeclarationDescriptor, EnclosedValueDescriptor> closure = new LinkedHashMap<DeclarationDescriptor, EnclosedValueDescriptor>();
 
-    public ClosureCodegen(GenerationState state, ExpressionCodegen context) {
+    public ClosureCodegen(GenerationState state, ExpressionCodegen exprContext, ClassContext context) {
         this.state = state;
-        this.context = context;
+        this.exprContext = exprContext;
+        this.context = context.intoClosure();
     }
 
     public static Method erasedInvokeSignature(FunctionDescriptor fd) {
@@ -59,7 +62,7 @@ public class ClosureCodegen {
             EnclosedValueDescriptor answer = closure.get(vd);
             if (answer != null) return answer.getInnerValue();
 
-            final int idx = context.lookupLocal(vd);
+            final int idx = exprContext.lookupLocal(vd);
             if (idx < 0) return null;
 
             final Type type = state.getTypeMapper().mapType(vd.getOutType());
@@ -107,7 +110,7 @@ public class ClosureCodegen {
 
 
         generateBridge(name, funDescriptor, cv);
-        generateBody(funDescriptor, cv, fun.getFunctionLiteral().getBodyExpression().getStatements());
+        generateBody(funDescriptor, cv, fun.getFunctionLiteral());
 
         final Method constructor = generateConstructor(funClass);
 
@@ -121,10 +124,9 @@ public class ClosureCodegen {
         return answer;
     }
 
-    private void generateBody(FunctionDescriptor funDescriptor, ClassVisitor cv, List<JetElement> body) {
-        FunctionCodegen fc = new FunctionCodegen(null, cv, state);
-        fc.generatedMethod(body, OwnerKind.IMPLEMENTATION, invokeSignature(funDescriptor), funDescriptor.getReceiverType(),
-                funDescriptor.getValueParameters(), funDescriptor.getTypeParameters(), null);
+    private void generateBody(FunctionDescriptor funDescriptor, ClassVisitor cv, JetFunctionLiteral body) {
+        FunctionCodegen fc = new FunctionCodegen(context, cv, state);
+        fc.generateMethod(body, invokeSignature(funDescriptor), funDescriptor);
     }
 
     private void generateBridge(String className, FunctionDescriptor funDescriptor, ClassVisitor cv) {

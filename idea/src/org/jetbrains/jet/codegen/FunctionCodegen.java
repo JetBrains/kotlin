@@ -1,12 +1,9 @@
 package org.jetbrains.jet.codegen;
 
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.types.JetType;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -22,48 +19,39 @@ import java.util.List;
  * @author yole
  */
 public class FunctionCodegen {
-    private final JetDeclaration owner;
+    private final ClassContext owner;
     private final ClassVisitor v;
     private final GenerationState state;
 
-    public FunctionCodegen(JetDeclaration owner, ClassVisitor v, GenerationState state) {
+    public FunctionCodegen(ClassContext owner, ClassVisitor v, GenerationState state) {
         this.owner = owner;
         this.v = v;
         this.state = state;
     }
 
-    public void gen(JetNamedFunction f, OwnerKind kind) {
-        final JetTypeReference receiverTypeRef = f.getReceiverTypeRef();
-        final JetType receiverType = receiverTypeRef == null ? null : state.getBindingContext().resolveTypeReference(receiverTypeRef);
+    public void gen(JetNamedFunction f) {
         Method method = state.getTypeMapper().mapToCallableMethod(f).getSignature();
         final FunctionDescriptor functionDescriptor = state.getBindingContext().getFunctionDescriptor(f);
-        generateMethod(f, kind, method, receiverType, functionDescriptor.getValueParameters(),
-                functionDescriptor.getTypeParameters());
+        generateMethod(f, method, functionDescriptor);
     }
 
-    public void generateMethod(JetDeclarationWithBody f,
-                               OwnerKind kind,
-                               Method jvmSignature,
-                               @Nullable JetType receiverType,
-                               List<ValueParameterDescriptor> paramDescrs,
-                               List<TypeParameterDescriptor> typeParameters) {
-        final DeclarationDescriptor contextDesc = owner instanceof JetClassOrObject
-                ? state.getBindingContext().getClassDescriptor((JetClassOrObject) owner)
-                : state.getBindingContext().getNamespaceDescriptor((JetNamespace) owner);
+    public void generateMethod(JetDeclarationWithBody f, Method jvmMethod, FunctionDescriptor functionDescriptor) {
+        ClassContext funContext = owner.intoFunction(functionDescriptor);
+
         final JetExpression bodyExpression = f.getBodyExpression();
         final List<JetElement> bodyExpressions = bodyExpression != null ? Collections.<JetElement>singletonList(bodyExpression) : null;
-        generatedMethod(bodyExpressions, kind, jvmSignature, receiverType, paramDescrs, typeParameters, contextDesc);
+        generatedMethod(bodyExpressions, jvmMethod, funContext, functionDescriptor.getValueParameters(), functionDescriptor.getTypeParameters());
     }
 
-    public void generatedMethod(List<JetElement> bodyExpressions,
-                                OwnerKind kind,
-                                Method jvmSignature,
-                                JetType receiverType,
-                                List<ValueParameterDescriptor> paramDescrs,
-                                List<TypeParameterDescriptor> typeParameters,
-                                DeclarationDescriptor contextDesc)
+    private void generatedMethod(List<JetElement> bodyExpressions,
+                                 Method jvmSignature,
+                                 ClassContext context,
+                                 List<ValueParameterDescriptor> paramDescrs,
+                                 List<TypeParameterDescriptor> typeParameters)
     {
         int flags = Opcodes.ACC_PUBLIC; // TODO.
+
+        OwnerKind kind = context.getContextKind();
 
         boolean isStatic = kind == OwnerKind.NAMESPACE;
         if (isStatic) flags |= Opcodes.ACC_STATIC;
@@ -78,34 +66,19 @@ public class FunctionCodegen {
         final MethodVisitor mv = v.visitMethod(flags, jvmSignature.getName(), jvmSignature.getDescriptor(), null, null);
         if (kind != OwnerKind.INTERFACE) {
             mv.visitCode();
-            FrameMap frameMap = new FrameMap();
+            FrameMap frameMap = context.prepareFrame();
 
-            int thisIdx = -1;
-            if (kind != OwnerKind.NAMESPACE) {
-                frameMap.enterTemp();  // 0 slot for this
-                thisIdx++;
-            }
-
-            if (receiverType != null) {
-                thisIdx++;
-                frameMap.enterTemp();  // Next slot for fake this
-            }
-
-            StackValue thisExpression = receiverType == null ? null : StackValue.local(thisIdx, state.getTypeMapper().mapType(receiverType));
-            ClassContext context = new ClassContext(contextDesc, kind, thisExpression);
             ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, jvmSignature.getReturnType(), context, state);
 
-            int firstArg = thisIdx+1;
             Type[] argTypes = jvmSignature.getArgumentTypes();
             for (int i = 0; i < paramDescrs.size(); i++) {
                 ValueParameterDescriptor parameter = paramDescrs.get(i);
                 frameMap.enter(parameter, argTypes[i].getSize());
             }
-            for (int i = 0; i < typeParameters.size(); i++) {
-                final TypeParameterDescriptor typeParameterDescriptor = typeParameters.get(i);
-                codegen.addTypeParameter(typeParameterDescriptor,
-                        StackValue.local(firstArg + paramDescrs.size() + i, JetTypeMapper.TYPE_TYPEINFO));
-                frameMap.enterTemp();
+
+            for (final TypeParameterDescriptor typeParameterDescriptor : typeParameters) {
+                int slot = frameMap.enterTemp();
+                codegen.addTypeParameter(typeParameterDescriptor, StackValue.local(slot, JetTypeMapper.TYPE_TYPEINFO));
             }
 
             if (kind instanceof OwnerKind.DelegateKind) {

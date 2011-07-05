@@ -20,8 +20,8 @@ import java.util.*;
  * @author yole
  */
 public class ImplementationBodyCodegen extends ClassBodyCodegen {
-    public ImplementationBodyCodegen(JetClassOrObject aClass, OwnerKind kind, ClassVisitor v, GenerationState state) {
-        super(aClass, kind, v, state);
+    public ImplementationBodyCodegen(JetClassOrObject aClass, ClassContext context, ClassVisitor v, GenerationState state) {
+        super(aClass, context, v, state);
     }
 
     @Override
@@ -112,7 +112,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         ConstructorFrameMap frameMap = new ConstructorFrameMap(callableMethod, constructorDescriptor, kind);
 
         final InstructionAdapter iv = new InstructionAdapter(mv);
-        ClassContext context = new ClassContext(descriptor, kind, StackValue.local(0, state.getTypeMapper().jvmType(descriptor, kind)));
         ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, context, state);
 
         String classname = state.getTypeMapper().jvmName(descriptor, kind);
@@ -138,7 +137,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (outerDescriptor instanceof ClassDescriptor) {
             final ClassDescriptor outerClassDescriptor = (ClassDescriptor) outerDescriptor;
             final Type type = JetTypeMapper.jetImplementationType(outerClassDescriptor);
-            codegen.addOuterThis(outerClassDescriptor, StackValue.local(frameMap.getOuterThisIndex(), type));
             String interfaceDesc = type.getDescriptor();
             final String fieldName = "this$0";
             v.visitField(Opcodes.ACC_PRIVATE | Opcodes.ACC_FINAL, fieldName, interfaceDesc, null, null);
@@ -189,9 +187,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 iv.putfield(classname, delegateField, fieldDesc);
 
                 JetClass superClass = (JetClass) state.getBindingContext().getDeclarationPsiElement(superClassDescriptor);
-                generateDelegates(myClass, superClass,
+                final ClassContext delegateContext = context.intoClass(superClassDescriptor,
                         new OwnerKind.DelegateKind(StackValue.field(fieldType, classname, delegateField, false),
-                                JetTypeMapper.jvmNameForInterface(superClassDescriptor)), overridden);
+                        JetTypeMapper.jvmNameForInterface(superClassDescriptor)));
+                generateDelegates(superClass, delegateContext, overridden);
             }
 
             n++;
@@ -291,7 +290,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         ConstructorFrameMap frameMap = new ConstructorFrameMap(method, constructorDescriptor, kind);
 
         final InstructionAdapter iv = new InstructionAdapter(mv);
-        ClassContext context = new ClassContext(descriptor, kind, StackValue.local(0, state.getTypeMapper().jvmType(descriptor, kind)));
         ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, context, state);
 
         for (JetDelegationSpecifier initializer : constructor.getInitializers()) {
@@ -358,17 +356,17 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
     }
 
-    protected void generateDelegates(JetClassOrObject inClass, JetClass toClass, OwnerKind kind, Set<FunctionDescriptor> overriden) {
-        final FunctionCodegen functionCodegen = new FunctionCodegen(toClass, v, state);
-        final PropertyCodegen propertyCodegen = new PropertyCodegen(v, functionCodegen, state);
+    protected void generateDelegates(JetClass toClass, ClassContext delegateContext, Set<FunctionDescriptor> overriden) {
+        final FunctionCodegen functionCodegen = new FunctionCodegen(delegateContext, v, state);
+        final PropertyCodegen propertyCodegen = new PropertyCodegen(delegateContext, v, functionCodegen, state);
 
         for (JetDeclaration declaration : toClass.getDeclarations()) {
             if (declaration instanceof JetProperty) {
-                propertyCodegen.gen((JetProperty) declaration, kind);
+                propertyCodegen.gen((JetProperty) declaration);
             }
             else if (declaration instanceof JetFunction) {
                 if (!overriden.contains(state.getBindingContext().getFunctionDescriptor((JetNamedFunction) declaration))) {
-                    functionCodegen.gen((JetNamedFunction) declaration, kind);
+                    functionCodegen.gen((JetNamedFunction) declaration);
                 }
             }
         }
@@ -377,9 +375,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             if (p.getValOrVarNode() != null) {
                 PropertyDescriptor propertyDescriptor = state.getBindingContext().getPropertyDescriptor(p);
                 if (propertyDescriptor != null) {
-                    propertyCodegen.generateDefaultGetter(propertyDescriptor, Opcodes.ACC_PUBLIC, kind);
+                    propertyCodegen.generateDefaultGetter(propertyDescriptor, Opcodes.ACC_PUBLIC);
                     if (propertyDescriptor.isVar()) {
-                        propertyCodegen.generateDefaultSetter(propertyDescriptor, Opcodes.ACC_PUBLIC, kind);
+                        propertyCodegen.generateDefaultSetter(propertyDescriptor, Opcodes.ACC_PUBLIC);
                     }
                 }
             }

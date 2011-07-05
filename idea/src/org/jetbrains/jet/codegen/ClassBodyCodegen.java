@@ -20,12 +20,14 @@ public abstract class ClassBodyCodegen {
     protected final OwnerKind kind;
     protected final ClassDescriptor descriptor;
     protected final ClassVisitor v;
+    protected final ClassContext context;
 
-    public ClassBodyCodegen(JetClassOrObject aClass, OwnerKind kind, ClassVisitor v, GenerationState state) {
+    public ClassBodyCodegen(JetClassOrObject aClass, ClassContext context, ClassVisitor v, GenerationState state) {
         this.state = state;
         descriptor = state.getBindingContext().getClassDescriptor(aClass);
         myClass = aClass;
-        this.kind = kind;
+        this.context = context;
+        this.kind = context.getContextKind();
         this.v = v;
     }
 
@@ -45,8 +47,8 @@ public abstract class ClassBodyCodegen {
     }
 
     private void generateClassBody() {
-        final FunctionCodegen functionCodegen = new FunctionCodegen((JetDeclaration) myClass, v, state);
-        final PropertyCodegen propertyCodegen = new PropertyCodegen(v, functionCodegen, state);
+        final FunctionCodegen functionCodegen = new FunctionCodegen(context, v, state);
+        final PropertyCodegen propertyCodegen = new PropertyCodegen(context, v, functionCodegen, state);
 
         for (JetDeclaration declaration : myClass.getDeclarations()) {
             generateDeclaration(propertyCodegen, declaration, functionCodegen);
@@ -57,25 +59,26 @@ public abstract class ClassBodyCodegen {
 
     protected void generateDeclaration(PropertyCodegen propertyCodegen, JetDeclaration declaration, FunctionCodegen functionCodegen) {
         if (declaration instanceof JetProperty) {
-            propertyCodegen.gen((JetProperty) declaration, kind);
+            propertyCodegen.gen((JetProperty) declaration);
         }
         else if (declaration instanceof JetNamedFunction) {
             try {
-                functionCodegen.gen((JetNamedFunction) declaration, kind);
+                functionCodegen.gen((JetNamedFunction) declaration);
             } catch (RuntimeException e) {
-                throw new RuntimeException("Error generating method " + myClass.getName() + "." + declaration.getName() + " in " + kind, e);
+                throw new RuntimeException("Error generating method " + myClass.getName() + "." + declaration.getName() + " in " + context, e);
             }
         }
     }
 
     private void generatePrimaryConstructorProperties(PropertyCodegen propertyCodegen) {
+        OwnerKind kind = context.getContextKind();
         for (JetParameter p : getPrimaryConstructorParameters()) {
             if (p.getValOrVarNode() != null) {
                 PropertyDescriptor propertyDescriptor = state.getBindingContext().getPropertyDescriptor(p);
                 if (propertyDescriptor != null) {
-                    propertyCodegen.generateDefaultGetter(propertyDescriptor, Opcodes.ACC_PUBLIC, kind);
+                    propertyCodegen.generateDefaultGetter(propertyDescriptor, Opcodes.ACC_PUBLIC);
                     if (propertyDescriptor.isVar()) {
-                        propertyCodegen.generateDefaultSetter(propertyDescriptor, Opcodes.ACC_PUBLIC, kind);
+                        propertyCodegen.generateDefaultSetter(propertyDescriptor, Opcodes.ACC_PUBLIC);
                     }
 
                     if (!(kind instanceof OwnerKind.DelegateKind) && kind != OwnerKind.INTERFACE && state.getBindingContext().hasBackingField(propertyDescriptor)) {

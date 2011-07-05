@@ -94,8 +94,8 @@ public class GenerationState {
         }
     }
 
-    public GeneratedAnonymousClassDescriptor generateClosure(JetFunctionLiteralExpression literal, ExpressionCodegen context) {
-        final ClosureCodegen codegen = new ClosureCodegen(this, context);
+    public GeneratedAnonymousClassDescriptor generateClosure(JetFunctionLiteralExpression literal, ExpressionCodegen context, ClassContext classContext) {
+        final ClosureCodegen codegen = new ClosureCodegen(this, context, classContext);
         closureContexts.push(codegen);
         try {
             return codegen.gen(literal);
@@ -106,9 +106,12 @@ public class GenerationState {
         }
     }
 
-    public GeneratedAnonymousClassDescriptor generateObjectLiteral(JetObjectLiteralExpression literal, ExpressionCodegen context) {
+    public GeneratedAnonymousClassDescriptor generateObjectLiteral(JetObjectLiteralExpression literal, ExpressionCodegen context, ClassContext classContext) {
         Pair<String, ClassVisitor> nameAndVisitor = forAnonymousSubclass(literal.getObjectDeclaration());
-        new ImplementationBodyCodegen(literal.getObjectDeclaration(), OwnerKind.IMPLEMENTATION, nameAndVisitor.getSecond(), this).generate();
+
+        final ClassContext objectContext = classContext.intoClass(getBindingContext().getClassDescriptor(literal.getObjectDeclaration()), OwnerKind.IMPLEMENTATION);
+
+        new ImplementationBodyCodegen(literal.getObjectDeclaration(), objectContext, nameAndVisitor.getSecond(), this).generate();
         return new GeneratedAnonymousClassDescriptor(nameAndVisitor.first, new Method("<init>", "()V"));
     }
 

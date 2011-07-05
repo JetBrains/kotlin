@@ -5,6 +5,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.search.ProjectScope;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
+import gnu.trove.THashSet;
 import jet.IntRange;
 import jet.JetObject;
 import jet.Range;
@@ -79,7 +80,6 @@ public class ExpressionCodegen extends JetVisitor {
     private final GenerationState state;
     private final Type returnType;
     private final BindingContext bindingContext;
-    private final Map<ClassDescriptor, StackValue> outerThisExpressions = new HashMap<ClassDescriptor, StackValue>();
     private final Map<TypeParameterDescriptor, StackValue> typeParameterExpressions = new HashMap<TypeParameterDescriptor, StackValue>();
     private final ClassContext context;
 
@@ -95,10 +95,6 @@ public class ExpressionCodegen extends JetVisitor {
         this.v = new InstructionAdapter(v);
         this.bindingContext = state.getBindingContext();
         this.context = context;
-    }
-
-    public void addOuterThis(ClassDescriptor outer, StackValue expression) {
-        outerThisExpressions.put(outer, expression);
     }
 
     public void addTypeParameter(TypeParameterDescriptor typeParameter, StackValue expression) {
@@ -315,7 +311,12 @@ public class ExpressionCodegen extends JetVisitor {
     }
 
     private DeclarationDescriptor contextType() {
-        return context.getContextType();
+        DeclarationDescriptor descriptor = context.getContextType();
+        while (descriptor != null) {
+            if (descriptor instanceof ClassDescriptor || descriptor instanceof NamespaceDescriptor) return descriptor;
+            descriptor = descriptor.getContainingDeclaration();
+        }
+        return descriptor;
     }
 
     private OwnerKind contextKind() {
@@ -505,7 +506,7 @@ public class ExpressionCodegen extends JetVisitor {
             generateBlock(expression.getFunctionLiteral().getBodyExpression().getStatements());
         }
         else {
-            final GeneratedAnonymousClassDescriptor closure = state.generateClosure(expression, this);
+            final GeneratedAnonymousClassDescriptor closure = state.generateClosure(expression, this, context);
 
             v.anew(Type.getObjectType(closure.getClassname()));
             v.dup();
@@ -523,7 +524,7 @@ public class ExpressionCodegen extends JetVisitor {
 
     @Override
     public void visitObjectLiteralExpression(JetObjectLiteralExpression expression) {
-        GeneratedAnonymousClassDescriptor descriptor = state.generateObjectLiteral(expression, this);
+        GeneratedAnonymousClassDescriptor descriptor = state.generateObjectLiteral(expression, this, context);
         v.anew(Type.getObjectType(descriptor.getClassname()));
         v.dup();
         v.invokespecial(descriptor.getClassname(), "<init>", descriptor.getConstructor().getDescriptor());
@@ -885,30 +886,69 @@ public class ExpressionCodegen extends JetVisitor {
             }
         }
         else if (!(expression.getParent() instanceof JetSafeQualifiedExpression)) {
-            final StackValue value = generateThisOrOuter(calleeContainingClass);
-            value.put(value.type, v);
+            generateThisOrOuter(calleeContainingClass);
         }
     }
 
-    public StackValue generateThisOrOuter(ClassDescriptor calleeContainingClass) {
-        final StackValue value = outerThisExpressions.get(calleeContainingClass);
-        if (value != null) {
-            return value;
+    private static boolean isSubclass(ClassDescriptor subClass, ClassDescriptor superClass) {
+        Set<JetType> allSuperTypes = new THashSet<JetType>();
+
+        addSuperTypes(subClass.getDefaultType(), allSuperTypes);
+
+        final DeclarationDescriptor superOriginal = superClass.getOriginal();
+
+        for (JetType superType : allSuperTypes) {
+            final DeclarationDescriptor descriptor = superType.getConstructor().getDeclarationDescriptor();
+            if (descriptor != null && superOriginal == descriptor.getOriginal()) {
+                return true;
+            }
         }
-        else {
-            // TODO hope it works; really need more checks here :)
-            if (calleeContainingClass != null && contextType() instanceof ClassDescriptor &&
-                calleeContainingClass == contextType().getContainingDeclaration()) {
-                v.load(0, JetTypeMapper.TYPE_OBJECT);
-                return StackValue.field(typeMapper.jvmType(calleeContainingClass, OwnerKind.IMPLEMENTATION),
-                        typeMapper.jvmName((ClassDescriptor) contextType(), OwnerKind.IMPLEMENTATION),
-                        "this$0",
-                        false);
-                // TODO handle more levels of class nestng
+
+        return false;
+    }
+
+    private static void addSuperTypes(JetType type, Set<JetType> set) {
+        set.add(type);
+
+        for (JetType jetType : type.getConstructor().getSupertypes()) {
+            addSuperTypes(jetType, set);
+        }
+    }
+
+    public void generateThisOrOuter(ClassDescriptor calleeContainingClass) {
+        boolean thisDone = false;
+
+        ClassContext cur = context;
+        while (true) {
+            ClassContext parentContext = cur.getParentContext();
+            if (parentContext == null) break;
+
+            final DeclarationDescriptor curContextType = cur.getContextType();
+            if (curContextType instanceof ClassDescriptor) {
+                if (isSubclass((ClassDescriptor) curContextType, calleeContainingClass)) break;
+
+                final StackValue outer;
+                if (!thisDone && myMap instanceof ConstructorFrameMap) {
+                    outer = StackValue.local(((ConstructorFrameMap) myMap).getOuterThisIndex(), JetTypeMapper.TYPE_OBJECT);
+                }
+                else {
+                    thisToStack();
+                    outer = StackValue.field(parentContext.jvmType(typeMapper),
+                                             cur.jvmType(typeMapper).getInternalName(),
+                                             "this$0",
+                                             false);
+                }
+
+                thisDone = true;
+                outer.put(outer.type, v);
+
             }
-            else {
-                return thisExpression() != null ? thisExpression() : StackValue.local(0, JetTypeMapper.TYPE_OBJECT);
-            }
+
+            cur = parentContext;
+        }
+
+        if (!thisDone) {
+            thisToStack();
         }
     }
 
@@ -1492,7 +1532,8 @@ public class ExpressionCodegen extends JetVisitor {
     public void visitThisExpression(JetThisExpression expression) {
         final DeclarationDescriptor descriptor = bindingContext.resolveReferenceExpression(expression.getThisReference());
         if (descriptor instanceof ClassDescriptor) {
-            myStack.push(generateThisOrOuter((ClassDescriptor) descriptor));
+            generateThisOrOuter((ClassDescriptor) descriptor);
+            myStack.push(StackValue.onStack(JetTypeMapper.TYPE_OBJECT));
         }
         else {
             generateThis();
@@ -1505,27 +1546,7 @@ public class ExpressionCodegen extends JetVisitor {
     }
 
     private void generateThis() {
-        if (thisExpression() != null) {
-            myStack.push(thisExpression());
-            return;
-        }
-        if (contextKind() != OwnerKind.NAMESPACE) {
-            ClassDescriptor contextClass = (ClassDescriptor) contextType();
-            final Type thisType = typeMapper.jvmType(contextClass, contextKind());
-            if (contextKind() == OwnerKind.IMPLEMENTATION) {
-                myStack.push(StackValue.local(0, thisType));
-                return;
-            }
-            else if (contextKind() == OwnerKind.DELEGATING_IMPLEMENTATION) {
-                v.load(0, thisType);
-                myStack.push(StackValue.field(JetTypeMapper.jetInterfaceType(contextClass),
-                        thisType.getInternalName(),
-                        "$this",
-                        false));
-                return;
-            }
-        }
-        throw new UnsupportedOperationException("'this' expression is not defined in the context");
+        myStack.push(thisExpression());
     }
 
     @Override
