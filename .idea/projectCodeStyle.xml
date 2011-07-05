@@ -7,6 +7,9 @@
         <option name="ELSE_ON_NEW_LINE" value="true" />
         <option name="ALIGN_MULTILINE_PARAMETERS_IN_CALLS" value="true" />
         <option name="ALIGN_MULTILINE_BINARY_OPERATION" value="true" />
+        <option name="ALIGN_MULTILINE_TERNARY_OPERATION" value="true" />
+        <option name="TERNARY_OPERATION_WRAP" value="5" />
+        <option name="TERNARY_OPERATION_SIGNS_ON_NEXT_LINE" value="true" />
         <option name="IF_BRACE_FORCE" value="1" />
         <ADDITIONAL_INDENT_OPTIONS fileType="css">
           <option name="INDENT_SIZE" value="4" />
