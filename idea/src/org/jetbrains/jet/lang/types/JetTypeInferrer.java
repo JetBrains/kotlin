@@ -1570,7 +1570,7 @@ public class JetTypeInferrer {
             condition.accept(new JetVisitor() {
                 @Override
                 public void visitIsExpression(JetIsExpression expression) {
-                    if (conditionValue) {
+                    if (conditionValue && !expression.isNegated() || !conditionValue && expression.isNegated()) {
                         JetPattern pattern = expression.getPattern();
                         result[0] = patternsToDataFlowInfo.get(pattern);
                         if (scopeToExtend != null) {

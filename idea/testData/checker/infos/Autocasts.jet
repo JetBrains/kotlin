@@ -147,3 +147,9 @@ fun f15(a : A?) {
   <info descr="Automatically cast to B">a</info>.bar()
   <error>c</error>.bar()
 }
+
+fun getStringLength(obj : Any) : Char? {
+  if (obj !is String)
+    return null
+  return <info>obj</info>.get(0) // no cast to String is needed
+}
