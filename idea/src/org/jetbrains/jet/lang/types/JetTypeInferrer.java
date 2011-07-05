@@ -539,7 +539,7 @@ public class JetTypeInferrer {
 
             if (someNamed) {
                 // TODO : check that all are named
-                throw new UnsupportedOperationException(); // TODO
+                trace.getErrorHandler().genericError(call.asElement().getNode(), "Named arguments are not supported"); // TODO
 
     //                    result = overloadDomain.getFunctionDescriptorForNamedArguments(typeArguments, valueArguments, functionLiteralArgument);
             } else {
@@ -1093,7 +1093,10 @@ public class JetTypeInferrer {
 
             if (context.expectedReturnType != null && returnedType != null) {
                 if (!semanticServices.getTypeChecker().isSubtypeOf(returnedType, context.expectedReturnType)) {
-                    context.trace.getErrorHandler().typeMismatch(returnedExpression == null ? expression : returnedExpression, context.expectedReturnType, returnedType);
+                    JetType enrichedType = enrichOutType(returnedExpression, returnedType);
+                    if (!semanticServices.getTypeChecker().isSubtypeOf(enrichedType, context.expectedReturnType)) {
+                        context.trace.getErrorHandler().typeMismatch(returnedExpression == null ? expression : returnedExpression, context.expectedReturnType, returnedType);
+                    }
                 }
             }
 
@@ -2015,12 +2018,13 @@ public class JetTypeInferrer {
             }
         }
 
-        private JetType enrichOutType(JetExpression receiverExpression, JetType receiverType) {
-            VariableDescriptor variableDescriptor = getVariableDescriptorFromSimpleName(receiverExpression);
+        private JetType enrichOutType(JetExpression expression, JetType initialType) {
+            if (expression == null) return initialType;
+            VariableDescriptor variableDescriptor = getVariableDescriptorFromSimpleName(expression);
             if (variableDescriptor != null) {
                 return context.dataFlowInfo.getOutType(variableDescriptor);
             }
-            return receiverType;
+            return initialType;
         }
 
         @Nullable
