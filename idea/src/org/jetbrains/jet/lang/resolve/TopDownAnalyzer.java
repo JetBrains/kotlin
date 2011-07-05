@@ -275,12 +275,14 @@ public class TopDownAnalyzer {
         List<JetImportDirective> importDirectives = namespace.getImportDirectives();
         for (JetImportDirective importDirective : importDirectives) {
             if (importDirective.isAbsoluteInRootNamespace()) {
-                throw new UnsupportedOperationException();
+                trace.getErrorHandler().genericError(namespace.getNode(), "Unsupported by TDA"); // TODO
+                continue;
             }
             if (importDirective.isAllUnder()) {
                 JetExpression importedReference = importDirective.getImportedReference();
                 if (importedReference != null) {
-                    JetType type = semanticServices.getTypeInferrerServices(trace, JetFlowInformationProvider.THROW_EXCEPTION).getTypeWithNamespaces(namespaceScope, importedReference, false);
+                    JetTypeInferrer.Services typeInferrerServices = semanticServices.getTypeInferrerServices(trace, JetFlowInformationProvider.THROW_EXCEPTION);
+                    JetType type = typeInferrerServices.getTypeWithNamespaces(namespaceScope, importedReference, false);
                     if (type != null) {
                         namespaceScope.importScope(type.getMemberScope());
                     }
