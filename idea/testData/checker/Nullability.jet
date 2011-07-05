@@ -272,3 +272,9 @@ fun f8(b : String?, a : String) {
     b.get(0)
   }
 }
+
+fun f9(a : Int?) : Int {
+  if (a != null)
+    return a
+  return 1
+}
