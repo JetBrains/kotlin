@@ -245,6 +245,10 @@ public class ClosureCodegen {
     public static CallableMethod asCallableMethod(FunctionDescriptor fd) {
         Method descriptor = erasedInvokeSignature(fd);
         String owner = getInternalClassName(fd);
-        return new CallableMethod(owner, descriptor, Opcodes.INVOKEVIRTUAL, Arrays.asList(descriptor.getArgumentTypes()));
+        final CallableMethod result = new CallableMethod(owner, descriptor, Opcodes.INVOKEVIRTUAL, Arrays.asList(descriptor.getArgumentTypes()));
+        if (fd.getReceiverType() != null) {
+            result.setNeedsReceiver(null);
+        }
+        return result;
     }
 }

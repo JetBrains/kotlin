@@ -109,19 +109,27 @@ public class JetTypeMapper {
         List<Type> valueParameterTypes = new ArrayList<Type>();
         Collections.addAll(valueParameterTypes, signature.getArgumentTypes());
         int opcode;
+        boolean needsReceiver = false;
         if (method.isConstructor()) {
             opcode = Opcodes.INVOKESPECIAL;
         }
         else if (method.hasModifierProperty(PsiModifier.STATIC)) {
             opcode = Opcodes.INVOKESTATIC;
         }
-        else if (containingClass.isInterface()) {
-            opcode = Opcodes.INVOKEINTERFACE;
-        }
         else {
-            opcode = Opcodes.INVOKEVIRTUAL;
+            needsReceiver = true;
+            if (containingClass.isInterface()) {
+                opcode = Opcodes.INVOKEINTERFACE;
+            }
+            else {
+                opcode = Opcodes.INVOKEVIRTUAL;
+            }
         }
-        return new CallableMethod(owner, signature, opcode, valueParameterTypes);
+        final CallableMethod result = new CallableMethod(owner, signature, opcode, valueParameterTypes);
+        if (needsReceiver) {
+            result.setNeedsReceiver(null);
+        }
+        return result;
     }
 
     public String jvmName(ClassDescriptor jetClass, OwnerKind kind) {
@@ -382,9 +390,12 @@ public class JetTypeMapper {
         Method descriptor = mapSignature(f, valueParameterTypes);
         String owner;
         int invokeOpcode;
+        boolean needsReceiver;
+        ClassDescriptor receiverClass = null;
         if (functionParent instanceof NamespaceDescriptor) {
             owner = NamespaceCodegen.getJVMClassName(DescriptorRenderer.getFQName(functionParent));
             invokeOpcode = Opcodes.INVOKESTATIC;
+            needsReceiver = f.getReceiverTypeRef() != null;
         }
         else if (functionParent instanceof ClassDescriptor) {
             ClassDescriptor containingClass = (ClassDescriptor) functionParent;
@@ -392,6 +403,8 @@ public class JetTypeMapper {
             invokeOpcode = isInterface(containingClass, OwnerKind.INTERFACE)
                     ? Opcodes.INVOKEINTERFACE
                     : Opcodes.INVOKEVIRTUAL;
+            needsReceiver = true;
+            receiverClass = containingClass;
         }
         else {
             throw new UnsupportedOperationException("unknown function parent");
@@ -399,6 +412,9 @@ public class JetTypeMapper {
 
         final CallableMethod result = new CallableMethod(owner, descriptor, invokeOpcode, valueParameterTypes);
         result.setAcceptsTypeArguments(true);
+        if (needsReceiver) {
+            result.setNeedsReceiver(receiverClass);
+        }
         return result;
     }
 

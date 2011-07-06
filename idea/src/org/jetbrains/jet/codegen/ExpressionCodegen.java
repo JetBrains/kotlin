@@ -768,31 +768,15 @@ public class ExpressionCodegen extends JetVisitor {
                 final PsiMethod psiMethod = (PsiMethod) declarationPsiElement;
                 callableMethod = JetTypeMapper.mapToCallableMethod(psiMethod);
                 if (!psiMethod.hasModifierProperty(PsiModifier.STATIC)) {
-                    ensureReceiverOnStack(expression, null);
                     setOwnerFromCall(callableMethod, expression);
                 }
             }
             else if (declarationPsiElement instanceof JetNamedFunction) {
                 final JetNamedFunction jetFunction = (JetNamedFunction) declarationPsiElement;
                 callableMethod = typeMapper.mapToCallableMethod(jetFunction);
-
-                if (functionParent instanceof NamespaceDescriptorImpl) {
-                    if (jetFunction.getReceiverTypeRef() != null) {
-                        ensureReceiverOnStack(expression, null);
-                    }
-                }
-                else if (functionParent instanceof ClassDescriptor) {
-                    ensureReceiverOnStack(expression, (ClassDescriptor) functionParent);
-                }
             }
             else {
                 gen(callee, Type.getObjectType(ClosureCodegen.getInternalClassName(fd)));
-
-                boolean isExtensionFunction = fd.getReceiverType() != null;
-                if (isExtensionFunction) {
-                    ensureReceiverOnStack(expression, null);
-                }
-
                 callableMethod = ClosureCodegen.asCallableMethod(fd);
             }
 
@@ -843,6 +827,9 @@ public class ExpressionCodegen extends JetVisitor {
     }
 
     private void invokeMethodWithArguments(CallableMethod callableMethod, JetCallExpression expression) {
+        if (callableMethod.needsReceiverOnStack()) {
+            ensureReceiverOnStack(expression, callableMethod.getReceiverClass());
+        }
         pushMethodArguments(expression, callableMethod.getValueParameterTypes());
         if (callableMethod.acceptsTypeArguments()) {
             pushTypeArguments(expression);
