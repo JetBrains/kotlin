@@ -453,5 +453,57 @@ JetFile: FunctionLiterals.jet
               INTEGER_CONSTANT
                 PsiElement(INTEGER_LITERAL)('1')
             PsiElement(RBRACE)('}')
+        PsiWhiteSpace('\n    ')
+        FUNCTION_LITERAL_EXPRESSION
+          FUNCTION_LITERAL
+            PsiElement(LBRACE)('{')
+            VALUE_PARAMETER_LIST
+              VALUE_PARAMETER
+                MODIFIER_LIST
+                  ATTRIBUTE_ANNOTATION
+                    PsiElement(LBRACKET)('[')
+                    ATTRIBUTE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('a')
+                    PsiElement(RBRACKET)(']')
+                PsiWhiteSpace(' ')
+                PsiElement(IDENTIFIER)('x')
+              PsiElement(COMMA)(',')
+              PsiWhiteSpace(' ')
+              VALUE_PARAMETER
+                MODIFIER_LIST
+                  ATTRIBUTE_ANNOTATION
+                    PsiElement(LBRACKET)('[')
+                    ATTRIBUTE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('b')
+                    PsiElement(RBRACKET)(']')
+                PsiWhiteSpace(' ')
+                PsiElement(IDENTIFIER)('y')
+              PsiElement(COMMA)(',')
+              PsiWhiteSpace(' ')
+              VALUE_PARAMETER
+                MODIFIER_LIST
+                  ATTRIBUTE_ANNOTATION
+                    PsiElement(LBRACKET)('[')
+                    ATTRIBUTE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('c')
+                    PsiElement(RBRACKET)(']')
+                PsiWhiteSpace(' ')
+                PsiElement(IDENTIFIER)('z')
+            PsiWhiteSpace(' ')
+            PsiElement(DOUBLE_ARROW)('=>')
+            PsiWhiteSpace(' ')
+            BLOCK
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('1')
+            PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n')
         PsiElement(RBRACE)('}')
