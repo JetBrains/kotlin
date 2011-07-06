@@ -1,25 +1,21 @@
 fun foo()
 fun [a] foo()
 fun [a] T.foo()
-fun {[a] T<T>.(A<B>) : ()}.foo()
 fun [a] T.foo(a : foo) : bar
-fun [a()] T.foo<T : {(a) : b}>(a : foo) : bar
+fun [a()] T.foo<T : fun (a) : b>(a : foo) : bar
 
 fun foo();
 fun [a] foo();
 fun [a] T.foo();
-fun {[a] T<T>.(A<B>) : ()}.foo();
 fun [a] T.foo(a : foo) : bar;
-fun [a()] T.foo<T : {(a) : b}>(a : foo) : bar;
+fun [a()] T.foo<T : fun (a) : b>(a : foo) : bar;
 
 fun foo() {}
 fun [a] foo() {}
 fun [a] T.foo() {}
-fun {[a] T<T>.(A<B>) : ()}.foo() {}
 fun [a] T.foo(a : foo) : bar {}
-fun [a()] T.foo<T : {(a) : b}>(a : foo) : bar {}
+fun [a()] T.foo<T : fun (a) : b>(a : foo) : bar {}
 
-fun [a] {[a] T<T>.(A<B>) : ()}.foo() {}
-fun [a()] T.foo<T : [a] {(a) : b}>(a : foo) : bar {}
+fun [a()] T.foo<T : [a] fun (a) : b>(a : foo) : bar {}
 
 fun A?.foo() : bar?

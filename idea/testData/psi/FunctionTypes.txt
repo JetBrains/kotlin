@@ -11,7 +11,8 @@ JetFile: FunctionTypes.jet
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
         FUNCTION_TYPE
-          PsiElement(LBRACE)('{')
+          PsiElement(fun)('fun')
+          PsiWhiteSpace(' ')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -37,7 +38,6 @@ JetFile: FunctionTypes.jet
             USER_TYPE
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('b')
-          PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n')
     TYPEDEF
       PsiElement(type)('type')
@@ -50,7 +50,8 @@ JetFile: FunctionTypes.jet
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
         FUNCTION_TYPE
-          PsiElement(LBRACE)('{')
+          PsiElement(fun)('fun')
+          PsiWhiteSpace(' ')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -66,7 +67,6 @@ JetFile: FunctionTypes.jet
             USER_TYPE
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('b')
-          PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n')
     TYPEDEF
       PsiElement(type)('type')
@@ -79,7 +79,8 @@ JetFile: FunctionTypes.jet
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
         FUNCTION_TYPE
-          PsiElement(LBRACE)('{')
+          PsiElement(fun)('fun')
+          PsiWhiteSpace(' ')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -99,7 +100,6 @@ JetFile: FunctionTypes.jet
             USER_TYPE
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('b')
-          PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n')
     TYPEDEF
       PsiElement(type)('type')
@@ -112,7 +112,8 @@ JetFile: FunctionTypes.jet
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
         FUNCTION_TYPE
-          PsiElement(LBRACE)('{')
+          PsiElement(fun)('fun')
+          PsiWhiteSpace(' ')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -123,7 +124,6 @@ JetFile: FunctionTypes.jet
             TUPLE_TYPE
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')
-          PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n\n')
     TYPEDEF
       PsiElement(type)('type')
@@ -136,7 +136,8 @@ JetFile: FunctionTypes.jet
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
         FUNCTION_TYPE
-          PsiElement(LBRACE)('{')
+          PsiElement(fun)('fun')
+          PsiWhiteSpace(' ')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -165,7 +166,6 @@ JetFile: FunctionTypes.jet
             USER_TYPE
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('b')
-          PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n')
     TYPEDEF
       PsiElement(type)('type')
@@ -178,7 +178,8 @@ JetFile: FunctionTypes.jet
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
         FUNCTION_TYPE
-          PsiElement(LBRACE)('{')
+          PsiElement(fun)('fun')
+          PsiWhiteSpace(' ')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -198,7 +199,6 @@ JetFile: FunctionTypes.jet
             USER_TYPE
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('b')
-          PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n')
     TYPEDEF
       PsiElement(type)('type')
@@ -211,7 +211,8 @@ JetFile: FunctionTypes.jet
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
         FUNCTION_TYPE
-          PsiElement(LBRACE)('{')
+          PsiElement(fun)('fun')
+          PsiWhiteSpace(' ')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -222,7 +223,6 @@ JetFile: FunctionTypes.jet
             USER_TYPE
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('b')
-          PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n')
     TYPEDEF
       PsiElement(type)('type')
@@ -235,7 +235,8 @@ JetFile: FunctionTypes.jet
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
         FUNCTION_TYPE
-          PsiElement(LBRACE)('{')
+          PsiElement(fun)('fun')
+          PsiWhiteSpace(' ')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -246,7 +247,6 @@ JetFile: FunctionTypes.jet
             TUPLE_TYPE
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')
-          PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n\n')
     TYPEDEF
       PsiElement(type)('type')
@@ -259,7 +259,8 @@ JetFile: FunctionTypes.jet
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
         FUNCTION_TYPE
-          PsiElement(LBRACE)('{')
+          PsiElement(fun)('fun')
+          PsiWhiteSpace(' ')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -306,7 +307,6 @@ JetFile: FunctionTypes.jet
             USER_TYPE
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('b')
-          PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n')
     TYPEDEF
       PsiElement(type)('type')
@@ -319,7 +319,8 @@ JetFile: FunctionTypes.jet
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
         FUNCTION_TYPE
-          PsiElement(LBRACE)('{')
+          PsiElement(fun)('fun')
+          PsiWhiteSpace(' ')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -346,7 +347,6 @@ JetFile: FunctionTypes.jet
             USER_TYPE
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('b')
-          PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n')
     TYPEDEF
       PsiElement(type)('type')
@@ -359,7 +359,8 @@ JetFile: FunctionTypes.jet
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
         FUNCTION_TYPE
-          PsiElement(LBRACE)('{')
+          PsiElement(fun)('fun')
+          PsiWhiteSpace(' ')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -376,7 +377,8 @@ JetFile: FunctionTypes.jet
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
                 FUNCTION_TYPE
-                  PsiElement(LBRACE)('{')
+                  PsiElement(fun)('fun')
+                  PsiWhiteSpace(' ')
                   VALUE_PARAMETER_LIST
                     PsiElement(LPAR)('(')
                     VALUE_PARAMETER
@@ -392,7 +394,6 @@ JetFile: FunctionTypes.jet
                     USER_TYPE
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('b')
-                  PsiElement(RBRACE)('}')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           PsiElement(COLON)(':')
@@ -401,7 +402,6 @@ JetFile: FunctionTypes.jet
             USER_TYPE
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('b')
-          PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n')
     TYPEDEF
       PsiElement(type)('type')
@@ -414,7 +414,8 @@ JetFile: FunctionTypes.jet
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
         FUNCTION_TYPE
-          PsiElement(LBRACE)('{')
+          PsiElement(fun)('fun')
+          PsiWhiteSpace(' ')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -431,7 +432,8 @@ JetFile: FunctionTypes.jet
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
                 FUNCTION_TYPE
-                  PsiElement(LBRACE)('{')
+                  PsiElement(fun)('fun')
+                  PsiWhiteSpace(' ')
                   VALUE_PARAMETER_LIST
                     PsiElement(LPAR)('(')
                     VALUE_PARAMETER
@@ -447,14 +449,14 @@ JetFile: FunctionTypes.jet
                     USER_TYPE
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('b')
-                  PsiElement(RBRACE)('}')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
             FUNCTION_TYPE
-              PsiElement(LBRACE)('{')
+              PsiElement(fun)('fun')
+              PsiWhiteSpace(' ')
               VALUE_PARAMETER_LIST
                 PsiElement(LPAR)('(')
                 PsiElement(RPAR)(')')
@@ -465,8 +467,6 @@ JetFile: FunctionTypes.jet
                 TUPLE_TYPE
                   PsiElement(LPAR)('(')
                   PsiElement(RPAR)(')')
-              PsiElement(RBRACE)('}')
-          PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n\n')
     TYPEDEF
       PsiElement(type)('type')
@@ -479,7 +479,8 @@ JetFile: FunctionTypes.jet
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
         FUNCTION_TYPE
-          PsiElement(LBRACE)('{')
+          PsiElement(fun)('fun')
+          PsiWhiteSpace(' ')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -502,7 +503,8 @@ JetFile: FunctionTypes.jet
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
                 FUNCTION_TYPE
-                  PsiElement(LBRACE)('{')
+                  PsiElement(fun)('fun')
+                  PsiWhiteSpace(' ')
                   VALUE_PARAMETER_LIST
                     PsiElement(LPAR)('(')
                     VALUE_PARAMETER
@@ -521,14 +523,14 @@ JetFile: FunctionTypes.jet
                     USER_TYPE
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('b')
-                  PsiElement(RBRACE)('}')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
             FUNCTION_TYPE
-              PsiElement(LBRACE)('{')
+              PsiElement(fun)('fun')
+              PsiWhiteSpace(' ')
               VALUE_PARAMETER_LIST
                 PsiElement(LPAR)('(')
                 PsiElement(RPAR)(')')
@@ -539,8 +541,6 @@ JetFile: FunctionTypes.jet
                 TUPLE_TYPE
                   PsiElement(LPAR)('(')
                   PsiElement(RPAR)(')')
-              PsiElement(RBRACE)('}')
-          PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n\n')
     TYPEDEF
       PsiElement(type)('type')
@@ -553,7 +553,8 @@ JetFile: FunctionTypes.jet
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
         FUNCTION_TYPE
-          PsiElement(LBRACE)('{')
+          PsiElement(fun)('fun')
+          PsiWhiteSpace(' ')
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION
@@ -569,7 +570,6 @@ JetFile: FunctionTypes.jet
             TUPLE_TYPE
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')
-          PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n')
     TYPEDEF
       PsiElement(type)('type')
@@ -582,7 +582,8 @@ JetFile: FunctionTypes.jet
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
         FUNCTION_TYPE
-          PsiElement(LBRACE)('{')
+          PsiElement(fun)('fun')
+          PsiWhiteSpace(' ')
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
@@ -602,7 +603,6 @@ JetFile: FunctionTypes.jet
             TUPLE_TYPE
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')
-          PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n')
     TYPEDEF
       PsiElement(type)('type')
@@ -615,7 +615,8 @@ JetFile: FunctionTypes.jet
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
         FUNCTION_TYPE
-          PsiElement(LBRACE)('{')
+          PsiElement(fun)('fun')
+          PsiWhiteSpace(' ')
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
@@ -658,266 +659,6 @@ JetFile: FunctionTypes.jet
             TUPLE_TYPE
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')
-          PsiElement(RBRACE)('}')
-    PsiWhiteSpace('\n')
-    TYPEDEF
-      PsiElement(type)('type')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('f')
-      PsiWhiteSpace(' ')
-      TYPE_PARAMETER_LIST
-        <empty list>
-      PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
-      TYPE_REFERENCE
-        FUNCTION_TYPE
-          PsiElement(LBRACE)('{')
-          TYPE_REFERENCE
-            FUNCTION_TYPE
-              PsiElement(LBRACE)('{')
-              TYPE_REFERENCE
-                TUPLE_TYPE
-                  PsiElement(LPAR)('(')
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('S')
-                  PsiElement(RPAR)(')')
-              PsiElement(DOT)('.')
-              VALUE_PARAMETER_LIST
-                PsiElement(LPAR)('(')
-                PsiElement(RPAR)(')')
-              PsiWhiteSpace(' ')
-              PsiElement(COLON)(':')
-              PsiWhiteSpace(' ')
-              TYPE_REFERENCE
-                TUPLE_TYPE
-                  PsiElement(LPAR)('(')
-                  PsiElement(RPAR)(')')
-              PsiElement(RBRACE)('}')
-          PsiElement(DOT)('.')
-          VALUE_PARAMETER_LIST
-            PsiElement(LPAR)('(')
-            PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            TUPLE_TYPE
-              PsiElement(LPAR)('(')
-              PsiElement(RPAR)(')')
-          PsiElement(RBRACE)('}')
-    PsiWhiteSpace('\n')
-    TYPEDEF
-      PsiElement(type)('type')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('f')
-      PsiWhiteSpace(' ')
-      TYPE_PARAMETER_LIST
-        <empty list>
-      PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
-      TYPE_REFERENCE
-        FUNCTION_TYPE
-          PsiElement(LBRACE)('{')
-          TYPE_REFERENCE
-            FUNCTION_TYPE
-              PsiElement(LBRACE)('{')
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('T')
-              PsiElement(DOT)('.')
-              VALUE_PARAMETER_LIST
-                PsiElement(LPAR)('(')
-                PsiElement(RPAR)(')')
-              PsiWhiteSpace(' ')
-              PsiElement(COLON)(':')
-              PsiWhiteSpace(' ')
-              TYPE_REFERENCE
-                TUPLE_TYPE
-                  PsiElement(LPAR)('(')
-                  PsiElement(RPAR)(')')
-              PsiElement(RBRACE)('}')
-          PsiElement(DOT)('.')
-          VALUE_PARAMETER_LIST
-            PsiElement(LPAR)('(')
-            PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            TUPLE_TYPE
-              PsiElement(LPAR)('(')
-              PsiElement(RPAR)(')')
-          PsiElement(RBRACE)('}')
-    PsiWhiteSpace('\n')
-    TYPEDEF
-      PsiElement(type)('type')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('f')
-      PsiWhiteSpace(' ')
-      TYPE_PARAMETER_LIST
-        <empty list>
-      PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
-      TYPE_REFERENCE
-        FUNCTION_TYPE
-          PsiElement(LBRACE)('{')
-          TYPE_REFERENCE
-            FUNCTION_TYPE
-              PsiElement(LBRACE)('{')
-              TYPE_REFERENCE
-                USER_TYPE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('T')
-                  PsiElement(DOT)('.')
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('T')
-              PsiElement(DOT)('.')
-              VALUE_PARAMETER_LIST
-                PsiElement(LPAR)('(')
-                PsiElement(RPAR)(')')
-              PsiWhiteSpace(' ')
-              PsiElement(COLON)(':')
-              PsiWhiteSpace(' ')
-              TYPE_REFERENCE
-                TUPLE_TYPE
-                  PsiElement(LPAR)('(')
-                  PsiElement(RPAR)(')')
-              PsiElement(RBRACE)('}')
-          PsiElement(DOT)('.')
-          VALUE_PARAMETER_LIST
-            PsiElement(LPAR)('(')
-            PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            TUPLE_TYPE
-              PsiElement(LPAR)('(')
-              PsiElement(RPAR)(')')
-          PsiElement(RBRACE)('}')
-    PsiWhiteSpace('\n')
-    TYPEDEF
-      PsiElement(type)('type')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('f')
-      PsiWhiteSpace(' ')
-      TYPE_PARAMETER_LIST
-        <empty list>
-      PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
-      TYPE_REFERENCE
-        FUNCTION_TYPE
-          PsiElement(LBRACE)('{')
-          TYPE_REFERENCE
-            FUNCTION_TYPE
-              PsiElement(LBRACE)('{')
-              TYPE_REFERENCE
-                USER_TYPE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('T')
-                    TYPE_ARGUMENT_LIST
-                      PsiElement(LT)('<')
-                      TYPE_PROJECTION
-                        TYPE_REFERENCE
-                          USER_TYPE
-                            REFERENCE_EXPRESSION
-                              PsiElement(IDENTIFIER)('A')
-                      PsiElement(COMMA)(',')
-                      PsiWhiteSpace(' ')
-                      TYPE_PROJECTION
-                        TYPE_REFERENCE
-                          USER_TYPE
-                            REFERENCE_EXPRESSION
-                              PsiElement(IDENTIFIER)('B')
-                      PsiElement(GT)('>')
-                  PsiElement(DOT)('.')
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('T')
-                  TYPE_ARGUMENT_LIST
-                    PsiElement(LT)('<')
-                    TYPE_PROJECTION
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('x')
-                    PsiElement(GT)('>')
-              PsiElement(DOT)('.')
-              VALUE_PARAMETER_LIST
-                PsiElement(LPAR)('(')
-                PsiElement(RPAR)(')')
-              PsiWhiteSpace(' ')
-              PsiElement(COLON)(':')
-              PsiWhiteSpace(' ')
-              TYPE_REFERENCE
-                TUPLE_TYPE
-                  PsiElement(LPAR)('(')
-                  PsiElement(RPAR)(')')
-              PsiElement(RBRACE)('}')
-          PsiElement(DOT)('.')
-          VALUE_PARAMETER_LIST
-            PsiElement(LPAR)('(')
-            PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            TUPLE_TYPE
-              PsiElement(LPAR)('(')
-              PsiElement(RPAR)(')')
-          PsiElement(RBRACE)('}')
-    PsiWhiteSpace('\n')
-    TYPEDEF
-      PsiElement(type)('type')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('f')
-      PsiWhiteSpace(' ')
-      TYPE_PARAMETER_LIST
-        <empty list>
-      PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
-      TYPE_REFERENCE
-        FUNCTION_TYPE
-          PsiElement(LBRACE)('{')
-          TYPE_REFERENCE
-            FUNCTION_TYPE
-              PsiElement(LBRACE)('{')
-              TYPE_REFERENCE
-                TUPLE_TYPE
-                  PsiElement(LPAR)('(')
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('S')
-                  PsiElement(RPAR)(')')
-              PsiElement(DOT)('.')
-              VALUE_PARAMETER_LIST
-                PsiElement(LPAR)('(')
-                PsiElement(RPAR)(')')
-              PsiWhiteSpace(' ')
-              PsiElement(COLON)(':')
-              PsiWhiteSpace(' ')
-              TYPE_REFERENCE
-                TUPLE_TYPE
-                  PsiElement(LPAR)('(')
-                  PsiElement(RPAR)(')')
-              PsiElement(RBRACE)('}')
-          PsiElement(DOT)('.')
-          VALUE_PARAMETER_LIST
-            PsiElement(LPAR)('(')
-            PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            TUPLE_TYPE
-              PsiElement(LPAR)('(')
-              PsiElement(RPAR)(')')
-          PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n\n')
     TYPEDEF
       PsiElement(type)('type')
@@ -939,7 +680,8 @@ JetFile: FunctionTypes.jet
           PsiElement(RBRACKET)(']')
         PsiWhiteSpace(' ')
         FUNCTION_TYPE
-          PsiElement(LBRACE)('{')
+          PsiElement(fun)('fun')
+          PsiWhiteSpace(' ')
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION
@@ -955,7 +697,6 @@ JetFile: FunctionTypes.jet
             TUPLE_TYPE
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')
-          PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n')
     TYPEDEF
       PsiElement(type)('type')
@@ -977,7 +718,8 @@ JetFile: FunctionTypes.jet
           PsiElement(RBRACKET)(']')
         PsiWhiteSpace(' ')
         FUNCTION_TYPE
-          PsiElement(LBRACE)('{')
+          PsiElement(fun)('fun')
+          PsiWhiteSpace(' ')
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
@@ -997,7 +739,6 @@ JetFile: FunctionTypes.jet
             TUPLE_TYPE
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')
-          PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n')
     TYPEDEF
       PsiElement(type)('type')
@@ -1019,7 +760,8 @@ JetFile: FunctionTypes.jet
           PsiElement(RBRACKET)(']')
         PsiWhiteSpace(' ')
         FUNCTION_TYPE
-          PsiElement(LBRACE)('{')
+          PsiElement(fun)('fun')
+          PsiWhiteSpace(' ')
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
@@ -1062,353 +804,3 @@ JetFile: FunctionTypes.jet
             TUPLE_TYPE
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')
-          PsiElement(RBRACE)('}')
-    PsiWhiteSpace('\n')
-    TYPEDEF
-      PsiElement(type)('type')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('f')
-      PsiWhiteSpace(' ')
-      TYPE_PARAMETER_LIST
-        <empty list>
-      PsiElement(EQ)('=')
-      PsiWhiteSpace('  ')
-      TYPE_REFERENCE
-        ATTRIBUTE_ANNOTATION
-          PsiElement(LBRACKET)('[')
-          ATTRIBUTE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('a')
-          PsiElement(RBRACKET)(']')
-        PsiWhiteSpace(' ')
-        FUNCTION_TYPE
-          PsiElement(LBRACE)('{')
-          TYPE_REFERENCE
-            ATTRIBUTE_ANNOTATION
-              PsiElement(LBRACKET)('[')
-              ATTRIBUTE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('a')
-              PsiElement(RBRACKET)(']')
-            PsiWhiteSpace(' ')
-            FUNCTION_TYPE
-              PsiElement(LBRACE)('{')
-              TYPE_REFERENCE
-                TUPLE_TYPE
-                  PsiElement(LPAR)('(')
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('S')
-                  PsiElement(RPAR)(')')
-              PsiElement(DOT)('.')
-              VALUE_PARAMETER_LIST
-                PsiElement(LPAR)('(')
-                PsiElement(RPAR)(')')
-              PsiWhiteSpace(' ')
-              PsiElement(COLON)(':')
-              PsiWhiteSpace(' ')
-              TYPE_REFERENCE
-                TUPLE_TYPE
-                  PsiElement(LPAR)('(')
-                  PsiElement(RPAR)(')')
-              PsiElement(RBRACE)('}')
-          PsiElement(DOT)('.')
-          VALUE_PARAMETER_LIST
-            PsiElement(LPAR)('(')
-            PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            TUPLE_TYPE
-              PsiElement(LPAR)('(')
-              PsiElement(RPAR)(')')
-          PsiElement(RBRACE)('}')
-    PsiWhiteSpace('\n')
-    TYPEDEF
-      PsiElement(type)('type')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('f')
-      PsiWhiteSpace(' ')
-      TYPE_PARAMETER_LIST
-        <empty list>
-      PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
-      TYPE_REFERENCE
-        ATTRIBUTE_ANNOTATION
-          PsiElement(LBRACKET)('[')
-          ATTRIBUTE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('a')
-          PsiElement(RBRACKET)(']')
-        PsiWhiteSpace(' ')
-        FUNCTION_TYPE
-          PsiElement(LBRACE)('{')
-          TYPE_REFERENCE
-            ATTRIBUTE_ANNOTATION
-              PsiElement(LBRACKET)('[')
-              ATTRIBUTE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('a')
-              PsiElement(RBRACKET)(']')
-            PsiWhiteSpace(' ')
-            FUNCTION_TYPE
-              PsiElement(LBRACE)('{')
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('T')
-              PsiElement(DOT)('.')
-              VALUE_PARAMETER_LIST
-                PsiElement(LPAR)('(')
-                PsiElement(RPAR)(')')
-              PsiWhiteSpace(' ')
-              PsiElement(COLON)(':')
-              PsiWhiteSpace(' ')
-              TYPE_REFERENCE
-                TUPLE_TYPE
-                  PsiElement(LPAR)('(')
-                  PsiElement(RPAR)(')')
-              PsiElement(RBRACE)('}')
-          PsiElement(DOT)('.')
-          VALUE_PARAMETER_LIST
-            PsiElement(LPAR)('(')
-            PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            TUPLE_TYPE
-              PsiElement(LPAR)('(')
-              PsiElement(RPAR)(')')
-          PsiElement(RBRACE)('}')
-    PsiWhiteSpace('\n')
-    TYPEDEF
-      PsiElement(type)('type')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('f')
-      PsiWhiteSpace(' ')
-      TYPE_PARAMETER_LIST
-        <empty list>
-      PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
-      TYPE_REFERENCE
-        ATTRIBUTE_ANNOTATION
-          PsiElement(LBRACKET)('[')
-          ATTRIBUTE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('a')
-          PsiElement(RBRACKET)(']')
-        PsiWhiteSpace(' ')
-        FUNCTION_TYPE
-          PsiElement(LBRACE)('{')
-          TYPE_REFERENCE
-            ATTRIBUTE_ANNOTATION
-              PsiElement(LBRACKET)('[')
-              ATTRIBUTE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('a')
-              PsiElement(RBRACKET)(']')
-            PsiWhiteSpace(' ')
-            FUNCTION_TYPE
-              PsiElement(LBRACE)('{')
-              TYPE_REFERENCE
-                USER_TYPE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('T')
-                  PsiElement(DOT)('.')
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('T')
-              PsiElement(DOT)('.')
-              VALUE_PARAMETER_LIST
-                PsiElement(LPAR)('(')
-                PsiElement(RPAR)(')')
-              PsiWhiteSpace(' ')
-              PsiElement(COLON)(':')
-              PsiWhiteSpace(' ')
-              TYPE_REFERENCE
-                TUPLE_TYPE
-                  PsiElement(LPAR)('(')
-                  PsiElement(RPAR)(')')
-              PsiElement(RBRACE)('}')
-          PsiElement(DOT)('.')
-          VALUE_PARAMETER_LIST
-            PsiElement(LPAR)('(')
-            PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            TUPLE_TYPE
-              PsiElement(LPAR)('(')
-              PsiElement(RPAR)(')')
-          PsiElement(RBRACE)('}')
-    PsiWhiteSpace('\n')
-    TYPEDEF
-      PsiElement(type)('type')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('f')
-      PsiWhiteSpace(' ')
-      TYPE_PARAMETER_LIST
-        <empty list>
-      PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
-      TYPE_REFERENCE
-        ATTRIBUTE_ANNOTATION
-          PsiElement(LBRACKET)('[')
-          ATTRIBUTE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('a')
-          PsiElement(RBRACKET)(']')
-        PsiWhiteSpace(' ')
-        FUNCTION_TYPE
-          PsiElement(LBRACE)('{')
-          TYPE_REFERENCE
-            ATTRIBUTE_ANNOTATION
-              PsiElement(LBRACKET)('[')
-              ATTRIBUTE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('a')
-              PsiElement(RBRACKET)(']')
-            PsiWhiteSpace(' ')
-            FUNCTION_TYPE
-              PsiElement(LBRACE)('{')
-              TYPE_REFERENCE
-                USER_TYPE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('T')
-                    TYPE_ARGUMENT_LIST
-                      PsiElement(LT)('<')
-                      TYPE_PROJECTION
-                        TYPE_REFERENCE
-                          USER_TYPE
-                            REFERENCE_EXPRESSION
-                              PsiElement(IDENTIFIER)('A')
-                      PsiElement(COMMA)(',')
-                      PsiWhiteSpace(' ')
-                      TYPE_PROJECTION
-                        TYPE_REFERENCE
-                          USER_TYPE
-                            REFERENCE_EXPRESSION
-                              PsiElement(IDENTIFIER)('B')
-                      PsiElement(GT)('>')
-                  PsiElement(DOT)('.')
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('T')
-                  TYPE_ARGUMENT_LIST
-                    PsiElement(LT)('<')
-                    TYPE_PROJECTION
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('x')
-                    PsiElement(GT)('>')
-              PsiElement(DOT)('.')
-              VALUE_PARAMETER_LIST
-                PsiElement(LPAR)('(')
-                PsiElement(RPAR)(')')
-              PsiWhiteSpace(' ')
-              PsiElement(COLON)(':')
-              PsiWhiteSpace(' ')
-              TYPE_REFERENCE
-                TUPLE_TYPE
-                  PsiElement(LPAR)('(')
-                  PsiElement(RPAR)(')')
-              PsiElement(RBRACE)('}')
-          PsiElement(DOT)('.')
-          VALUE_PARAMETER_LIST
-            PsiElement(LPAR)('(')
-            PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            TUPLE_TYPE
-              PsiElement(LPAR)('(')
-              PsiElement(RPAR)(')')
-          PsiElement(RBRACE)('}')
-    PsiWhiteSpace('\n')
-    TYPEDEF
-      PsiElement(type)('type')
-      PsiWhiteSpace(' ')
-      PsiElement(IDENTIFIER)('f')
-      PsiWhiteSpace(' ')
-      TYPE_PARAMETER_LIST
-        <empty list>
-      PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
-      TYPE_REFERENCE
-        ATTRIBUTE_ANNOTATION
-          PsiElement(LBRACKET)('[')
-          ATTRIBUTE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('a')
-          PsiElement(RBRACKET)(']')
-        PsiWhiteSpace(' ')
-        FUNCTION_TYPE
-          PsiElement(LBRACE)('{')
-          TYPE_REFERENCE
-            ATTRIBUTE_ANNOTATION
-              PsiElement(LBRACKET)('[')
-              ATTRIBUTE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('a')
-              PsiElement(RBRACKET)(']')
-            PsiWhiteSpace(' ')
-            FUNCTION_TYPE
-              PsiElement(LBRACE)('{')
-              TYPE_REFERENCE
-                TUPLE_TYPE
-                  PsiElement(LPAR)('(')
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('S')
-                  PsiElement(RPAR)(')')
-              PsiElement(DOT)('.')
-              VALUE_PARAMETER_LIST
-                PsiElement(LPAR)('(')
-                PsiElement(RPAR)(')')
-              PsiWhiteSpace(' ')
-              PsiElement(COLON)(':')
-              PsiWhiteSpace(' ')
-              TYPE_REFERENCE
-                TUPLE_TYPE
-                  PsiElement(LPAR)('(')
-                  PsiElement(RPAR)(')')
-              PsiElement(RBRACE)('}')
-          PsiElement(DOT)('.')
-          VALUE_PARAMETER_LIST
-            PsiElement(LPAR)('(')
-            PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            TUPLE_TYPE
-              PsiElement(LPAR)('(')
-              PsiElement(RPAR)(')')
-          PsiElement(RBRACE)('}')

@@ -8,7 +8,7 @@ namespace jet121 {
     return if (answer == 2) "OK" else "FAIL"
   }
 
-  fun apply(arg:String, f : {String.() : Int}) : Int {
+  fun apply(arg:String, f : fun String.() : Int) : Int {
       return arg.f()
   }
 }

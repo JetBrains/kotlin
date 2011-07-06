@@ -318,25 +318,25 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
     }
 
     public void testFunctionLiterals() throws Exception {
-        assertType("{() => }", "{() : Unit}");
-        assertType("{() : Int => }", "{() : Int}");
-        assertType("{() => 1}", "{() : Int}");
+        assertType("{() => }", "fun () : Unit");
+        assertType("{() : Int => }", "fun () : Int");
+        assertType("{() => 1}", "fun () : Int");
 
-        assertType("{(a : Int) => 1}", "{(a : Int) : Int}");
-        assertType("{(a : Int, b : String) => 1}", "{(a : Int, b : String) : Int}");
+        assertType("{(a : Int) => 1}", "fun (a : Int) : Int");
+        assertType("{(a : Int, b : String) => 1}", "fun (a : Int, b : String) : Int");
 
-        assertType("{(a : Int) => 1}", "{(Int) : Int}");
-        assertType("{(a : Int, b : String) => 1}", "{(Int, String) : Int}");
+        assertType("{(a : Int) => 1}", "fun (Int) : Int");
+        assertType("{(a : Int, b : String) => 1}", "fun (Int, String) : Int");
 
-        assertType("{Any.() => 1}", "{Any.() : Int}");
+        assertType("{Any.() => 1}", "fun Any.() : Int");
 
-        assertType("{Any.(a : Int) => 1}", "{Any.(a : Int) : Int}");
-        assertType("{Any.(a : Int, b : String) => 1}", "{Any.(a : Int, b : String) : Int}");
+        assertType("{Any.(a : Int) => 1}", "fun Any.(a : Int) : Int");
+        assertType("{Any.(a : Int, b : String) => 1}", "fun Any.(a : Int, b : String) : Int");
 
-        assertType("{Any.(a : Int) => 1}", "{Any.(Int) : Int}");
-        assertType("{Any.(a : Int, b : String) => 1}", "{Any.(Int, String) : Int}");
+        assertType("{Any.(a : Int) => 1}", "fun Any.(Int) : Int");
+        assertType("{Any.(a : Int, b : String) => 1}", "fun Any.(Int, String) : Int");
 
-        assertType("{Any.(a : Int, b : String) => b}", "{Any.(Int, String) : String}");
+        assertType("{Any.(a : Int, b : String) => b}", "fun Any.(Int, String) : String");
     }
 
     public void testBlocks() throws Exception {

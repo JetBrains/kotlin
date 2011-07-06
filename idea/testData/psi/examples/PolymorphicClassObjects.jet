@@ -21,7 +21,7 @@ extension Map<E, T>
     T : Iterable<E>,
     class object T : Buildable<E, T>  for T {
 
-  fun map<R>(f : {(E) : R}) : T<R> = {
+  fun map<R>(f : fun (E) : R) : T<R> = {
     val builder = T.newBuilder()
     for (e in this) {
       builder += f(e)

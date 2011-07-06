@@ -70,7 +70,8 @@ JetFile: Extensions_ERR.jet
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
         FUNCTION_TYPE
-          PsiElement(LBRACE)('{')
+          PsiElement(fun)('fun')
+          PsiWhiteSpace(' ')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -81,7 +82,6 @@ JetFile: Extensions_ERR.jet
             TUPLE_TYPE
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')
-          PsiElement(RBRACE)('}')
       PsiWhiteSpace(' ')
       CLASS_BODY
         PsiElement(LBRACE)('{')

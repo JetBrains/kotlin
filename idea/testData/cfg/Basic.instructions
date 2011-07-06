@@ -100,7 +100,7 @@ error:
     <ERROR>
 =====================
 == flfun ==
-fun flfun(f : {() : Any}) : Unit {}
+fun flfun(f : fun () : Any) : Unit {}
 ---------------------
 l0:
     <START>

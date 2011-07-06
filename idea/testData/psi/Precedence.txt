@@ -789,7 +789,8 @@ JetFile: Precedence.jet
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
             FUNCTION_TYPE
-              PsiElement(LBRACE)('{')
+              PsiElement(fun)('fun')
+              PsiWhiteSpace(' ')
               VALUE_PARAMETER_LIST
                 PsiElement(LPAR)('(')
                 PsiElement(RPAR)(')')
@@ -800,7 +801,6 @@ JetFile: Precedence.jet
                 USER_TYPE
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('T')
-              PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n  ')
         BINARY_WITH_TYPE
           REFERENCE_EXPRESSION
@@ -869,7 +869,8 @@ JetFile: Precedence.jet
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
             FUNCTION_TYPE
-              PsiElement(LBRACE)('{')
+              PsiElement(fun)('fun')
+              PsiWhiteSpace(' ')
               VALUE_PARAMETER_LIST
                 PsiElement(LPAR)('(')
                 PsiElement(RPAR)(')')
@@ -880,7 +881,6 @@ JetFile: Precedence.jet
                 USER_TYPE
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('T')
-              PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n\n  ')
         BINARY_EXPRESSION
           BINARY_WITH_TYPE
@@ -1004,7 +1004,8 @@ JetFile: Precedence.jet
             PsiWhiteSpace(' ')
             TYPE_REFERENCE
               FUNCTION_TYPE
-                PsiElement(LBRACE)('{')
+                PsiElement(fun)('fun')
+                PsiWhiteSpace(' ')
                 VALUE_PARAMETER_LIST
                   PsiElement(LPAR)('(')
                   PsiElement(RPAR)(')')
@@ -1015,7 +1016,6 @@ JetFile: Precedence.jet
                   USER_TYPE
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('T')
-                PsiElement(RBRACE)('}')
           PsiWhiteSpace(' ')
           OPERATION_REFERENCE
             PsiElement(MUL)('*')
@@ -1105,7 +1105,8 @@ JetFile: Precedence.jet
             PsiWhiteSpace(' ')
             TYPE_REFERENCE
               FUNCTION_TYPE
-                PsiElement(LBRACE)('{')
+                PsiElement(fun)('fun')
+                PsiWhiteSpace(' ')
                 VALUE_PARAMETER_LIST
                   PsiElement(LPAR)('(')
                   PsiElement(RPAR)(')')
@@ -1116,7 +1117,6 @@ JetFile: Precedence.jet
                   USER_TYPE
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('T')
-                PsiElement(RBRACE)('}')
           PsiWhiteSpace(' ')
           OPERATION_REFERENCE
             PsiElement(MUL)('*')

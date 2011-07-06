@@ -6,7 +6,7 @@ fun foo() {
 
     out val foo = 5
     [a] var foo = 4
-    type f = {T.() : ()}
+    type f = fun T.() : ()
 
     virtual extension foo for bar {
 

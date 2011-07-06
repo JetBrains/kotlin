@@ -17,7 +17,8 @@ JetFile: Comparison.jet
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
         FUNCTION_TYPE
-          PsiElement(LBRACE)('{')
+          PsiElement(fun)('fun')
+          PsiWhiteSpace(' ')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -40,7 +41,6 @@ JetFile: Comparison.jet
             USER_TYPE
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('Int')
-          PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n\n')
     FUN
       PsiElement(fun)('fun')
@@ -256,7 +256,8 @@ JetFile: Comparison.jet
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
         FUNCTION_TYPE
-          PsiElement(LBRACE)('{')
+          PsiElement(fun)('fun')
+          PsiWhiteSpace(' ')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
@@ -279,7 +280,6 @@ JetFile: Comparison.jet
             USER_TYPE
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('ComparisonResult')
-          PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n\n')
     FUN
       PsiElement(fun)('fun')

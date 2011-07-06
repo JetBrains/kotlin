@@ -37,7 +37,7 @@ public class JetParsing extends AbstractJetParsing {
     private static final TokenSet TYPE_PARAMETER_GT_RECOVERY_SET = TokenSet.create(WHERE_KEYWORD, WRAPS_KEYWORD, LPAR, COLON, LBRACE, GT);
     private static final TokenSet PARAMETER_NAME_RECOVERY_SET = TokenSet.create(COLON, EQ, COMMA, RPAR);
     private static final TokenSet NAMESPACE_NAME_RECOVERY_SET = TokenSet.create(DOT, EOL_OR_SEMICOLON);
-    /*package*/ static final TokenSet TYPE_REF_FIRST = TokenSet.create(LBRACKET, IDENTIFIER, LBRACE, LPAR, CAPITALIZED_THIS_KEYWORD);
+    /*package*/ static final TokenSet TYPE_REF_FIRST = TokenSet.create(LBRACKET, IDENTIFIER, FUN_KEYWORD, LPAR, CAPITALIZED_THIS_KEYWORD);
     private static final TokenSet RECEIVER_TYPE_TERMINATORS = TokenSet.create(DOT, SAFE_ACCESS);
 
     public static JetParsing createForTopLevel(SemanticWhitespaceAwarePsiBuilder builder) {
@@ -780,13 +780,6 @@ public class JetParsing extends AbstractJetParsing {
 
         // TODO: extract constant
         int lastDot = matchTokenStreamPredicate(new FirstBefore(
-//                new AbstractTokenStreamPredicate() {
-//                    @Override
-//                    public boolean matching(boolean topLevel) {
-//                        return topLevel
-//                                && at(DOT);
-//                    }
-//                },
                 new AtSet(DOT, SAFE_ACCESS),
                 new AbstractTokenStreamPredicate() {
                     @Override
@@ -801,17 +794,6 @@ public class JetParsing extends AbstractJetParsing {
                 }));
 
         parseReceiverType("property", propertyNameFollow, lastDot);
-
-//        if (lastDot == -1) {
-//            parseAttributeList();
-//            expect(IDENTIFIER, "Expecting property name or receiver type", propertyNameFollow);
-//        }
-//        else {
-//            createTruncatedBuilder(lastDot).parseTypeRef();
-//
-//            expect(DOT, "Expecting '.' before a property name", propertyNameFollow);
-//            expect(IDENTIFIER, "Expecting property name", propertyNameFollow);
-//        }
 
         if (at(COLON)) {
             advance(); // COLON
@@ -938,10 +920,10 @@ public class JetParsing extends AbstractJetParsing {
             return FUN;
         }
 
-        boolean typeParameterListOccured = false;
+        boolean typeParameterListOccurred = false;
         if (at(LT)) {
             parseTypeParameterList(TokenSet.create(LBRACKET, LBRACE, LPAR));
-            typeParameterListOccured = true;
+            typeParameterListOccurred = true;
         }
 
         int lastDot = findLastBefore(RECEIVER_TYPE_TERMINATORS, TokenSet.create(LPAR), true);
@@ -952,7 +934,7 @@ public class JetParsing extends AbstractJetParsing {
         if (at(LT)) {
             PsiBuilder.Marker error = mark();
             parseTypeParameterList(TokenSet.orSet(TokenSet.create(LPAR), valueParametersFollow));
-            if (typeParameterListOccured) {
+            if (typeParameterListOccurred) {
                 error.error("Only one type parameter list is allowed for a function"); // TODO : discuss
             }
             else {
@@ -1269,7 +1251,7 @@ public class JetParsing extends AbstractJetParsing {
         if (at(IDENTIFIER) || at(NAMESPACE_KEYWORD)) {
             parseUserType();
         }
-        else if (at(LBRACE)) {
+        else if (at(FUN_KEYWORD)) {
             parseFunctionType();
         }
         else if (at(LPAR)) {
@@ -1432,18 +1414,17 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * functionType
-     *   : "{" (type ".")? functionTypeContents "}"
+     *   : "fun" (type ".")? functionTypeContents
      *   ;
      */
     private void parseFunctionType() {
-        assert _at(LBRACE);
+        assert _at(FUN_KEYWORD);
 
         PsiBuilder.Marker functionType = mark();
 
-        myBuilder.disableNewlines();
-        advance(); // LBRACE
+        advance(); // FUN_KEYWORD
 
-        int lastLPar = findLastBefore(TokenSet.create(LPAR), TokenSet.create(RBRACE, COLON), false);
+        int lastLPar = findLastBefore(TokenSet.create(LPAR), TokenSet.create(COLON), false);
         if (lastLPar >= 0 && lastLPar > myBuilder.getCurrentOffset()) {
             // TODO : -1 is a hack?
             createTruncatedBuilder(lastLPar - 1).parseTypeRef();
@@ -1451,9 +1432,6 @@ public class JetParsing extends AbstractJetParsing {
         }
 
         parseFunctionTypeContents();
-
-        expect(RBRACE, "Expecting '}");
-        myBuilder.restoreNewlinesState();
 
         functionType.done(FUNCTION_TYPE);
     }

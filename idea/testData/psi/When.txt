@@ -804,7 +804,8 @@ JetFile: When.jet
               TYPE_PATTERN
                 TYPE_REFERENCE
                   FUNCTION_TYPE
-                    PsiElement(LBRACE)('{')
+                    PsiElement(fun)('fun')
+                    PsiWhiteSpace(' ')
                     VALUE_PARAMETER_LIST
                       PsiElement(LPAR)('(')
                       VALUE_PARAMETER
@@ -820,7 +821,6 @@ JetFile: When.jet
                       USER_TYPE
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('Bar')
-                    PsiElement(RBRACE)('}')
             PsiWhiteSpace(' ')
             PsiElement(DOUBLE_ARROW)('=>')
             PsiWhiteSpace(' ')
