@@ -1619,23 +1619,27 @@ public class ExpressionCodegen extends JetVisitor {
     @Override
     public void visitIsExpression(final JetIsExpression expression) {
         final StackValue match = StackValue.expression(OBJECT_TYPE, expression.getLeftHandSide(), this);
-        StackValue result = generatePatternMatch(expression.getPattern(), expression.isNegated(), match);
+        StackValue result = generatePatternMatch(expression.getPattern(), expression.isNegated(), match, null);
         myStack.push(result);
     }
 
-    private StackValue generatePatternMatch(JetPattern pattern, boolean negated, StackValue expressionToMatch) {
+    // on entering the function, expressionToMatch is already placed on stack, and we should consume it
+    private StackValue generatePatternMatch(JetPattern pattern, boolean negated, StackValue expressionToMatch,
+                                            @Nullable Label nextEntry) {
         if (pattern instanceof JetTypePattern) {
             JetTypeReference typeReference = ((JetTypePattern) pattern).getTypeReference();
             JetType jetType = bindingContext.resolveTypeReference(typeReference);
+            expressionToMatch.dupReceiver(v, 0);
             generateInstanceOf(expressionToMatch, jetType, false);
             StackValue value = StackValue.onStack(Type.BOOLEAN_TYPE);
             return negated ? StackValue.not(value) : value;
         }
         else if (pattern instanceof JetTuplePattern) {
-            return generateTuplePatternMatch((JetTuplePattern) pattern, negated, expressionToMatch);
+            return generateTuplePatternMatch((JetTuplePattern) pattern, negated, expressionToMatch, nextEntry);
         }
         else if (pattern instanceof JetExpressionPattern) {
             final Type subjectType = expressionToMatch.type;
+            expressionToMatch.dupReceiver(v, 0);
             expressionToMatch.put(subjectType, v);
             JetExpression condExpression = ((JetExpressionPattern) pattern).getExpression();
             gen(condExpression, OBJECT_TYPE);
@@ -1645,15 +1649,29 @@ public class ExpressionCodegen extends JetVisitor {
         else if (pattern instanceof JetWildcardPattern) {
             return StackValue.constant(!negated, Type.BOOLEAN_TYPE);
         }
+        else if (pattern instanceof JetBindingPattern) {
+            final JetProperty var = ((JetBindingPattern) pattern).getVariableDeclaration();
+            final VariableDescriptor variableDescriptor = bindingContext.getVariableDescriptor(var);
+            final Type varType = typeMapper.mapType(variableDescriptor.getOutType());
+            myMap.enter(variableDescriptor, varType.getSize());
+            expressionToMatch.dupReceiver(v, 0);
+            expressionToMatch.put(varType, v);
+            final int varIndex = myMap.getIndex(variableDescriptor);
+            v.store(varIndex, varType);
+            return generateWhenCondition(varType, varIndex, ((JetBindingPattern) pattern).getCondition(), null);
+        }
         else {
             throw new UnsupportedOperationException("Unsupported pattern type: " + pattern);
         }
     }
 
-    private StackValue generateTuplePatternMatch(JetTuplePattern pattern, boolean negated, StackValue expressionToMatch) {
+    private StackValue generateTuplePatternMatch(JetTuplePattern pattern, boolean negated, StackValue expressionToMatch,
+                                                 @Nullable Label nextEntry) {
         final List<JetTuplePatternEntry> entries = pattern.getEntries();
+
         Label lblFail = new Label();
         Label lblDone = new Label();
+        expressionToMatch.dupReceiver(v, 0);
         expressionToMatch.put(OBJECT_TYPE, v);
         v.dup();
         final String tupleClassName = "jet/Tuple" + entries.size();
@@ -1669,18 +1687,26 @@ public class ExpressionCodegen extends JetVisitor {
         v.mark(lblCheck);
         for (int i = 0; i < entries.size(); i++) {
             final boolean isLast = i == entries.size() - 1;
-            if (!isLast) {
-                v.dup();
-            }
             final StackValue tupleField = StackValue.field(OBJECT_TYPE, tupleClassName, "_" + (i + 1), false);
-            final StackValue stackValue = generatePatternMatch(entries.get(i).getPattern(), false, tupleField);
-            stackValue.condJump(isLast ? lblFail : lblPopAndFail, true, v);
+            final StackValue stackValue = generatePatternMatch(entries.get(i).getPattern(), false, tupleField, nextEntry);
+            stackValue.condJump(lblPopAndFail, true, v);
         }
 
-        v.aconst(!negated);
+        v.pop();  // delete extra copy of expressionToMatch
+        if (negated && nextEntry != null) {
+            v.goTo(nextEntry);
+        }
+        else {
+            v.aconst(!negated);
+        }
         v.goTo(lblDone);
         v.mark(lblFail);
-        v.aconst(negated);
+        if (!negated && nextEntry != null) {
+            v.goTo(nextEntry);
+        }
+        else {
+            v.aconst(negated);
+        }
         v.mark(lblDone);
         return StackValue.onStack(Type.BOOLEAN_TYPE);
     }
@@ -1773,58 +1799,20 @@ public class ExpressionCodegen extends JetVisitor {
                 v.mark(nextEntry);
             }
             nextEntry = new Label();
+            FrameMap.Mark mark = myMap.mark();
             if (!whenEntry.isElse()) {
-                JetWhenCondition[] conditions = whenEntry.getConditions();
-                assert conditions.length == 1 : "Support many conditions"; // TODO
-                JetWhenCondition condition = conditions[0];
-                StackValue conditionValue;
-                if (condition instanceof JetWhenConditionWithExpression) {
-                    v.load(subjectLocal, subjectType);
-                    JetExpression condExpression = ((JetWhenConditionWithExpression) condition).getExpression();
-                    Type condType = expressionType(condExpression);
-                    gen(condExpression, condType);
-                    generateEqualsForExpressionsOnStack(JetTokens.EQEQ, subjectType, condType);
-                    conditionValue = myStack.pop();
+                final JetWhenCondition[] conditions = whenEntry.getConditions();
+                if (conditions.length != 1) {
+                    throw new UnsupportedOperationException("TODO support multiple conditions in when entry");
                 }
-                else if (condition instanceof JetWhenConditionInRange) {
-                    JetExpression range = ((JetWhenConditionInRange) condition).getRangeExpression();
-                    gen(range, RANGE_TYPE);
-                    new StackValue.Local(subjectLocal, subjectType).put(INTEGER_TYPE, v);
-                    v.invokeinterface(CLASS_RANGE, "contains", "(Ljava/lang/Comparable;)Z");
-                    conditionValue = new StackValue.OnStack(Type.BOOLEAN_TYPE);
-                }
-                else if (condition instanceof JetWhenConditionIsPattern) {
-                    JetWhenConditionIsPattern patternCondition = (JetWhenConditionIsPattern) condition;
-                    JetPattern pattern = patternCondition.getPattern();
-                    conditionValue = generatePatternMatch(pattern, patternCondition.isNegated(),
-                                                          StackValue.local(subjectLocal, subjectType));
-                }
-                else if (condition instanceof JetWhenConditionCall) {
-                    final JetExpression call = ((JetWhenConditionCall) condition).getCallSuffixExpression();
-                    if (call instanceof JetCallExpression) {
-                        v.load(subjectLocal, subjectType);
-                        final DeclarationDescriptor declarationDescriptor = resolveCalleeDescriptor((JetCallExpression) call);
-                        final PsiElement declaration = resolveCalleeToDeclaration(declarationDescriptor);
-                        final CallableMethod callableMethod = typeMapper.mapToCallableMethod((PsiNamedElement) declaration);
-                        if (callableMethod.getSignature().getReturnType() != Type.BOOLEAN_TYPE) {
-                            throw new UnsupportedOperationException("calls in pattern matching must return boolean");
-                        }
-                        invokeMethodWithArguments(callableMethod, (JetCallExpression) call, true);
-                        conditionValue = StackValue.onStack(Type.BOOLEAN_TYPE);
-                    }
-                    else {
-                        throw new UnsupportedOperationException("unsupported kind of call suffix");
-                    }
-                }
-                else {
-                    throw new UnsupportedOperationException("unsupported kind of when condition");
-                }
+                StackValue conditionValue = generateWhenCondition(subjectType, subjectLocal, conditions[0], nextEntry);
                 conditionValue.condJump(nextEntry, true, v);
             }
             else {
                 hasElse = true;
             }
             genToJVMStack(whenEntry.getExpression());
+            mark.dropTo();
             v.goTo(end);
         }
         if (!hasElse && nextEntry != null) {
@@ -1838,6 +1826,53 @@ public class ExpressionCodegen extends JetVisitor {
         }
 
         myMap.leaveTemp(subjectType.getSize());
+    }
+
+    private StackValue generateWhenCondition(Type subjectType, int subjectLocal, JetWhenCondition condition,
+                                             @Nullable Label nextEntry) {
+        StackValue conditionValue;
+        if (condition instanceof JetWhenConditionWithExpression) {
+            v.load(subjectLocal, subjectType);
+            JetExpression condExpression = ((JetWhenConditionWithExpression) condition).getExpression();
+            Type condType = expressionType(condExpression);
+            gen(condExpression, condType);
+            generateEqualsForExpressionsOnStack(JetTokens.EQEQ, subjectType, condType);
+            conditionValue = myStack.pop();
+        }
+        else if (condition instanceof JetWhenConditionInRange) {
+            JetExpression range = ((JetWhenConditionInRange) condition).getRangeExpression();
+            gen(range, RANGE_TYPE);
+            new StackValue.Local(subjectLocal, subjectType).put(INTEGER_TYPE, v);
+            v.invokeinterface(CLASS_RANGE, "contains", "(Ljava/lang/Comparable;)Z");
+            conditionValue = new StackValue.OnStack(Type.BOOLEAN_TYPE);
+        }
+        else if (condition instanceof JetWhenConditionIsPattern) {
+            JetWhenConditionIsPattern patternCondition = (JetWhenConditionIsPattern) condition;
+            JetPattern pattern = patternCondition.getPattern();
+            conditionValue = generatePatternMatch(pattern, patternCondition.isNegated(),
+                                                  StackValue.local(subjectLocal, subjectType), nextEntry);
+        }
+        else if (condition instanceof JetWhenConditionCall) {
+            final JetExpression call = ((JetWhenConditionCall) condition).getCallSuffixExpression();
+            if (call instanceof JetCallExpression) {
+                v.load(subjectLocal, subjectType);
+                final DeclarationDescriptor declarationDescriptor = resolveCalleeDescriptor((JetCallExpression) call);
+                final PsiElement declaration = resolveCalleeToDeclaration(declarationDescriptor);
+                final CallableMethod callableMethod = typeMapper.mapToCallableMethod((PsiNamedElement) declaration);
+                if (callableMethod.getSignature().getReturnType() != Type.BOOLEAN_TYPE) {
+                    throw new UnsupportedOperationException("calls in pattern matching must return boolean");
+                }
+                invokeMethodWithArguments(callableMethod, (JetCallExpression) call, true);
+                conditionValue = StackValue.onStack(Type.BOOLEAN_TYPE);
+            }
+            else {
+                throw new UnsupportedOperationException("unsupported kind of call suffix");
+            }
+        }
+        else {
+            throw new UnsupportedOperationException("unsupported kind of when condition");
+        }
+        return conditionValue;
     }
 
     @Override

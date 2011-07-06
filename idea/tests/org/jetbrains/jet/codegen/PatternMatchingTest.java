@@ -64,7 +64,7 @@ public class PatternMatchingTest extends CodegenTestCase {
     }
 
     public void testTuplePattern() throws Exception {
-        loadText("fun foo(x: Tuple2<Any, Any>) = when(x) { is (1,2) => \"one,two\"; else => \"something\" }");
+        loadText("fun foo(x: (Any, Any)) = when(x) { is (1,2) => \"one,two\"; else => \"something\" }");
         Method foo = generateFunction();
         assertEquals("one,two", foo.invoke(null, new Tuple2<Integer, Integer>(1, 2)));
         assertEquals("something", foo.invoke(null, new Tuple2<String, String>("not", "tuple")));
@@ -75,5 +75,12 @@ public class PatternMatchingTest extends CodegenTestCase {
         Method foo = generateFunction();
         assertEquals("JetBrains", foo.invoke(null, "Java"));
         assertEquals("something", foo.invoke(null, "C#"));
+    }
+
+    public void testNames() throws Exception {
+        loadText("fun foo(x: (Any, Any)) = when(x) { is (val a is String, *) => a; else => \"something\" }");
+        Method foo = generateFunction();
+        assertEquals("JetBrains", foo.invoke(null, new Tuple2<String, String>("JetBrains", "s.r.o.")));
+        assertEquals("something", foo.invoke(null, new Tuple2<Integer, Integer>(1, 2)));
     }
 }
