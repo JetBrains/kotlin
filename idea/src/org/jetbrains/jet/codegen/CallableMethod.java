@@ -18,6 +18,7 @@ public class CallableMethod {
     private final List<Type> valueParameterTypes;
     private boolean acceptsTypeArguments = false;
     private boolean needsReceiverOnStack = false;
+    private boolean ownerFromCall = false;
     private ClassDescriptor receiverClass = null;
 
     public CallableMethod(String owner, Method signature, int invokeOpcode, List<Type> valueParameterTypes) {
@@ -62,6 +63,14 @@ public class CallableMethod {
 
     public boolean needsReceiverOnStack() {
         return needsReceiverOnStack;
+    }
+
+    public boolean isOwnerFromCall() {
+        return ownerFromCall;
+    }
+
+    public void setOwnerFromCall(boolean ownerFromCall) {
+        this.ownerFromCall = ownerFromCall;
     }
 
     public ClassDescriptor getReceiverClass() {

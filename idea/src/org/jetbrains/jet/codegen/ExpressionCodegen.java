@@ -764,16 +764,8 @@ public class ExpressionCodegen extends JetVisitor {
             PsiElement declarationPsiElement = resolveCalleeToDeclaration(funDescriptor);
 
             CallableMethod callableMethod;
-            if (declarationPsiElement instanceof PsiMethod) {
-                final PsiMethod psiMethod = (PsiMethod) declarationPsiElement;
-                callableMethod = JetTypeMapper.mapToCallableMethod(psiMethod);
-                if (!psiMethod.hasModifierProperty(PsiModifier.STATIC)) {
-                    setOwnerFromCall(callableMethod, expression);
-                }
-            }
-            else if (declarationPsiElement instanceof JetNamedFunction) {
-                final JetNamedFunction jetFunction = (JetNamedFunction) declarationPsiElement;
-                callableMethod = typeMapper.mapToCallableMethod(jetFunction);
+            if (declarationPsiElement instanceof PsiMethod || declarationPsiElement instanceof JetNamedFunction) {
+                callableMethod = typeMapper.mapToCallableMethod((PsiNamedElement) declarationPsiElement);
             }
             else {
                 gen(callee, Type.getObjectType(ClosureCodegen.getInternalClassName(fd)));
@@ -827,6 +819,9 @@ public class ExpressionCodegen extends JetVisitor {
     }
 
     private void invokeMethodWithArguments(CallableMethod callableMethod, JetCallExpression expression) {
+        if (callableMethod.isOwnerFromCall()) {
+            setOwnerFromCall(callableMethod, expression);
+        }
         if (callableMethod.needsReceiverOnStack()) {
             ensureReceiverOnStack(expression, callableMethod.getReceiverClass());
         }

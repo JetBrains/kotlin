@@ -110,6 +110,7 @@ public class JetTypeMapper {
         Collections.addAll(valueParameterTypes, signature.getArgumentTypes());
         int opcode;
         boolean needsReceiver = false;
+        boolean ownerFromCall = false;
         if (method.isConstructor()) {
             opcode = Opcodes.INVOKESPECIAL;
         }
@@ -124,11 +125,13 @@ public class JetTypeMapper {
             else {
                 opcode = Opcodes.INVOKEVIRTUAL;
             }
+            ownerFromCall = true;
         }
         final CallableMethod result = new CallableMethod(owner, signature, opcode, valueParameterTypes);
         if (needsReceiver) {
             result.setNeedsReceiver(null);
         }
+        result.setOwnerFromCall(ownerFromCall);
         return result;
     }
 
@@ -383,7 +386,14 @@ public class JetTypeMapper {
         return new Method(f.getName(), returnType, parameterTypes.toArray(new Type[parameterTypes.size()]));
     }
 
-    public CallableMethod mapToCallableMethod(JetNamedFunction f) {
+    public CallableMethod mapToCallableMethod(PsiNamedElement declaration) {
+        if (declaration instanceof PsiMethod) {
+            return mapToCallableMethod((PsiMethod) declaration);
+        }
+        if (!(declaration instanceof JetNamedFunction)) {
+            throw new UnsupportedOperationException("unknown declaration type");
+        }
+        JetNamedFunction f = (JetNamedFunction) declaration;
         final FunctionDescriptor functionDescriptor = bindingContext.getFunctionDescriptor(f);
         final DeclarationDescriptor functionParent = functionDescriptor.getContainingDeclaration();
         final List<Type> valueParameterTypes = new ArrayList<Type>();
