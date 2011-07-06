@@ -435,5 +435,23 @@ JetFile: FunctionLiterals.jet
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('a')
             PsiElement(RBRACE)('}')
+        PsiWhiteSpace('\n\n    ')
+        FUNCTION_LITERAL_EXPRESSION
+          FUNCTION_LITERAL
+            PsiElement(LBRACE)('{')
+            VALUE_PARAMETER_LIST
+              VALUE_PARAMETER
+                PsiElement(IDENTIFIER)('x')
+              PsiElement(COMMA)(',')
+              PsiWhiteSpace(' ')
+              VALUE_PARAMETER
+                PsiElement(IDENTIFIER)('y')
+            PsiWhiteSpace(' ')
+            PsiElement(DOUBLE_ARROW)('=>')
+            PsiWhiteSpace(' ')
+            BLOCK
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('1')
+            PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n')
         PsiElement(RBRACE)('}')

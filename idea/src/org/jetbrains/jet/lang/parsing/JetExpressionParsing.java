@@ -987,7 +987,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     /*
      * functionLiteral  // one can use "it" as a parameter name
      *   : "{" expressions "}"
-     *   : "{" (type ".")? modifiers SimpleName "=>" expressions "}"
+     *   : "{" (modifiers SimpleName){","} "=>" statements "}"
      *   : "{" (type ".")? "(" (modifiers SimpleName (":" type)?){","} ")" (":" type)? "=>" expressions "}"
      *   ;
      */
@@ -1038,27 +1038,37 @@ public class JetExpressionParsing extends AbstractJetParsing {
                     advance(); // COLON
                     if (at(DOUBLE_ARROW)) {
                         error("Expecting a type");
-                    } else {
+                    }
+                    else {
                         myJetParsing.parseTypeRef();
                     }
                 }
-            } else if (!dontExpectParameters) {
+            }
+            else if (!dontExpectParameters) {
                 PsiBuilder.Marker parameterList = mark();
-                PsiBuilder.Marker parameter = mark();
-                int parameterNamePos = matchTokenStreamPredicate(new LastBefore(new At(IDENTIFIER), new AtOffset(doubleArrowPos)));
 
-                createTruncatedBuilder(parameterNamePos).parseModifierList(MODIFIER_LIST);
+                while (!eof()) {
+                    PsiBuilder.Marker parameter = mark();
+                    int parameterNamePos = matchTokenStreamPredicate(new LastBefore(new At(IDENTIFIER), new AtOffset(doubleArrowPos)));
 
-                expect(IDENTIFIER, "Expecting parameter name", TokenSet.create(DOUBLE_ARROW));
+                    createTruncatedBuilder(parameterNamePos).parseModifierList(MODIFIER_LIST);
 
-                parameter.done(VALUE_PARAMETER);
+                    expect(IDENTIFIER, "Expecting parameter name", TokenSet.create(DOUBLE_ARROW));
 
-                if (at(COLON)) {
-                    errorUntilOffset("To specify a type of a parameter or a return type, use the full notation: {(parameter : Type) : ReturnType => ...}", doubleArrowPos);
-                } else if (at(COMMA)) {
-                    errorUntilOffset("To specify many parameters, use the full notation: {(p1, p2, ...) => ...}", doubleArrowPos);
-                } else if (!at(DOUBLE_ARROW)) {
-                    errorUntilOffset("Expecting '=>'", doubleArrowPos);
+                    parameter.done(VALUE_PARAMETER);
+
+                    if (at(COLON)) {
+                        errorUntilOffset("To specify a type of a parameter or a return type, use the full notation: {(parameter : Type) : ReturnType => ...}", doubleArrowPos);
+                    }
+                    else if (at(DOUBLE_ARROW)) {
+                        break;
+                    }
+                    else if (!at(COMMA)) {
+                        errorUntilOffset("Expecting '=>' or ','", doubleArrowPos);
+                    }
+                    else {
+                        advance(); // COMMA
+                    }
                 }
 
                 parameterList.done(VALUE_PARAMETER_LIST);

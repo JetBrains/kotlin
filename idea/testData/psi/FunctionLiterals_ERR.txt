@@ -25,24 +25,6 @@ JetFile: FunctionLiterals_ERR.jet
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('a')
             PsiElement(RBRACE)('}')
-        PsiWhiteSpace('\n    ')
-        FUNCTION_LITERAL_EXPRESSION
-          FUNCTION_LITERAL
-            PsiElement(LBRACE)('{')
-            VALUE_PARAMETER_LIST
-              VALUE_PARAMETER
-                PsiElement(IDENTIFIER)('a')
-              PsiErrorElement:To specify many parameters, use the full notation: {(p1, p2, ...) => ...}
-                PsiElement(COMMA)(',')
-                PsiWhiteSpace(' ')
-                PsiElement(IDENTIFIER)('b')
-            PsiWhiteSpace(' ')
-            PsiElement(DOUBLE_ARROW)('=>')
-            PsiWhiteSpace(' ')
-            BLOCK
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('a')
-            PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n\n    ')
         FUNCTION_LITERAL_EXPRESSION
           FUNCTION_LITERAL
@@ -297,7 +279,10 @@ JetFile: FunctionLiterals_ERR.jet
                 PsiElement(COLON)(':')
                 PsiWhiteSpace(' ')
                 PsiElement(IDENTIFIER)('b')
-            PsiWhiteSpace(' ')
+              PsiWhiteSpace(' ')
+              VALUE_PARAMETER
+                PsiErrorElement:Expecting parameter name
+                  <empty list>
             PsiElement(DOUBLE_ARROW)('=>')
             PsiWhiteSpace(' ')
             BLOCK
