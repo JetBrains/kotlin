@@ -397,7 +397,9 @@ public class JetTypeMapper {
             throw new UnsupportedOperationException("unknown function parent");
         }
 
-        return new CallableMethod(owner, descriptor, invokeOpcode, valueParameterTypes);
+        final CallableMethod result = new CallableMethod(owner, descriptor, invokeOpcode, valueParameterTypes);
+        result.setAcceptsTypeArguments(true);
+        return result;
     }
 
     public Method mapSignature(String name, FunctionDescriptor f) {
@@ -488,7 +490,9 @@ public class JetTypeMapper {
         List<Type> valueParameterTypes = new ArrayList<Type>();
         final Method method = mapConstructorSignature(descriptor, kind, valueParameterTypes);
         String owner = jvmName(descriptor.getContainingDeclaration(), kind);
-        return new CallableMethod(owner, method, Opcodes.INVOKESPECIAL, valueParameterTypes);
+        final CallableMethod result = new CallableMethod(owner, method, Opcodes.INVOKESPECIAL, valueParameterTypes);
+        result.setAcceptsTypeArguments(true);
+        return result;
     }
 
     static int getAccessModifiers(JetDeclaration p, int defaultFlags) {

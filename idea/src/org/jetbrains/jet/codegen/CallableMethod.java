@@ -14,6 +14,7 @@ public class CallableMethod {
     private final Method signature;
     private final int invokeOpcode;
     private final List<Type> valueParameterTypes;
+    private boolean acceptsTypeArguments = false;
 
     public CallableMethod(String owner, Method signature, int invokeOpcode, List<Type> valueParameterTypes) {
         this.owner = owner;
@@ -40,6 +41,14 @@ public class CallableMethod {
 
     public List<Type> getValueParameterTypes() {
         return valueParameterTypes;
+    }
+
+    public boolean acceptsTypeArguments() {
+        return acceptsTypeArguments;
+    }
+
+    public void setAcceptsTypeArguments(boolean acceptsTypeArguments) {
+        this.acceptsTypeArguments = acceptsTypeArguments;
     }
 
     void invoke(InstructionAdapter v) {

@@ -781,22 +781,18 @@ public class ExpressionCodegen extends JetVisitor {
                     throw new UnsupportedOperationException("couldn't find declaration for " + funDescriptor);
                 }
 
-
-                Method methodDescriptor;
+                CallableMethod callableMethod;
                 if (declarationPsiElement instanceof PsiMethod) {
                     final PsiMethod psiMethod = (PsiMethod) declarationPsiElement;
-                    CallableMethod callableMethod = JetTypeMapper.mapToCallableMethod(psiMethod);
+                    callableMethod = JetTypeMapper.mapToCallableMethod(psiMethod);
                     if (!psiMethod.hasModifierProperty(PsiModifier.STATIC)) {
                         ensureReceiverOnStack(expression, null);
                         setOwnerFromCall(callableMethod, expression);
                     }
-                    pushMethodArguments(expression,  callableMethod.getValueParameterTypes());
-                    callableMethod.invoke(v);
-                    methodDescriptor = callableMethod.getSignature();
                 }
                 else if (declarationPsiElement instanceof JetNamedFunction) {
                     final JetNamedFunction jetFunction = (JetNamedFunction) declarationPsiElement;
-                    CallableMethod callableMethod = typeMapper.mapToCallableMethod(jetFunction);
+                    callableMethod = typeMapper.mapToCallableMethod(jetFunction);
 
                     if (functionParent instanceof NamespaceDescriptorImpl) {
                         if (jetFunction.getReceiverTypeRef() != null) {
@@ -806,11 +802,6 @@ public class ExpressionCodegen extends JetVisitor {
                     else if (functionParent instanceof ClassDescriptor) {
                         ensureReceiverOnStack(expression, (ClassDescriptor) functionParent);
                     }
-
-                    pushMethodArguments(expression, callableMethod.getValueParameterTypes());
-                    pushTypeArguments(expression);
-                    callableMethod.invoke(v);
-                    methodDescriptor = callableMethod.getSignature();
                 }
                 else {
                     gen(callee, Type.getObjectType(ClosureCodegen.getInternalClassName(fd)));
@@ -820,15 +811,14 @@ public class ExpressionCodegen extends JetVisitor {
                         ensureReceiverOnStack(expression, null);
                     }
 
-                    CallableMethod callableMethod = ClosureCodegen.asCallableMethod(fd);
-                    pushMethodArguments(expression, callableMethod.getValueParameterTypes());
-                    callableMethod.invoke(v);
-                    methodDescriptor = callableMethod.getSignature();
+                    callableMethod = ClosureCodegen.asCallableMethod(fd);
                 }
 
-                if (methodDescriptor.getReturnType() != Type.VOID_TYPE) {
+                invokeMethodWithArguments(callableMethod, expression);
+                final Type callReturnType = callableMethod.getSignature().getReturnType();
+                if (callReturnType != Type.VOID_TYPE) {
                     final Type retType = typeMapper.mapType(fd.getReturnType());
-                    StackValue.onStack(methodDescriptor.getReturnType()).upcast(retType, v);
+                    StackValue.onStack(callReturnType).upcast(retType, v);
                     myStack.push(StackValue.onStack(retType));
                 }
             }
@@ -839,6 +829,14 @@ public class ExpressionCodegen extends JetVisitor {
         else {
             throw new UnsupportedOperationException("Don't know how to generate a call");
         }
+    }
+
+    private void invokeMethodWithArguments(CallableMethod callableMethod, JetCallExpression expression) {
+        pushMethodArguments(expression, callableMethod.getValueParameterTypes());
+        if (callableMethod.acceptsTypeArguments()) {
+            pushTypeArguments(expression);
+        }
+        callableMethod.invoke(v);
     }
 
     private void setOwnerFromCall(CallableMethod callableMethod, JetCallExpression expression) {
@@ -946,15 +944,6 @@ public class ExpressionCodegen extends JetVisitor {
             return expression == receiverExpression;
         }
         return false;
-    }
-
-    private void pushMethodArguments(JetCall expression, Method method) {
-        final Type[] argTypes = method.getArgumentTypes();
-        List<JetArgument> args = expression.getValueArguments();
-        for (int i = 0, argsSize = args.size(); i < argsSize; i++) {
-            JetArgument arg = args.get(i);
-            gen(arg.getArgumentExpression(), argTypes[i]);
-        }
     }
 
     private void pushMethodArguments(JetCall expression, List<Type> valueParameterTypes) {
@@ -1437,10 +1426,7 @@ public class ExpressionCodegen extends JetVisitor {
                 pushOuterClassArguments(classDecl);
 
                 CallableMethod method = typeMapper.mapToCallableMethod((ConstructorDescriptor) constructorDescriptor, OwnerKind.IMPLEMENTATION);
-                pushMethodArguments(expression, method.getValueParameterTypes());
-                pushTypeArguments(expression);
-
-                method.invoke(v);
+                invokeMethodWithArguments(method, expression);
             }
         }
         else {
@@ -1468,9 +1454,8 @@ public class ExpressionCodegen extends JetVisitor {
         Type type = JetTypeMapper.psiClassType(javaClass);
         v.anew(type);
         v.dup();
-        final CallableMethod callableMethod = typeMapper.mapToCallableMethod(constructor);
-        pushMethodArguments(expression, callableMethod.getValueParameterTypes());
-        callableMethod.invoke(v);
+        final CallableMethod callableMethod = JetTypeMapper.mapToCallableMethod(constructor);
+        invokeMethodWithArguments(callableMethod, expression);
         return type;
     }
 
