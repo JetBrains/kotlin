@@ -819,10 +819,14 @@ public class ExpressionCodegen extends JetVisitor {
     }
 
     private void invokeMethodWithArguments(CallableMethod callableMethod, JetCallExpression expression) {
+        invokeMethodWithArguments(callableMethod, expression, false);
+    }
+
+    private void invokeMethodWithArguments(CallableMethod callableMethod, JetCallExpression expression, final boolean haveReceiver) {
         if (callableMethod.isOwnerFromCall()) {
             setOwnerFromCall(callableMethod, expression);
         }
-        if (callableMethod.needsReceiverOnStack()) {
+        if (callableMethod.needsReceiverOnStack() && !haveReceiver) {
             ensureReceiverOnStack(expression, callableMethod.getReceiverClass());
         }
         pushMethodArguments(expression, callableMethod.getValueParameterTypes());
@@ -1792,6 +1796,23 @@ public class ExpressionCodegen extends JetVisitor {
                     JetPattern pattern = patternCondition.getPattern();
                     conditionValue = generatePatternMatch(pattern, patternCondition.isNegated(),
                                                           StackValue.local(subjectLocal, subjectType));
+                }
+                else if (condition instanceof JetWhenConditionCall) {
+                    final JetExpression call = ((JetWhenConditionCall) condition).getCallSuffixExpression();
+                    if (call instanceof JetCallExpression) {
+                        v.load(subjectLocal, subjectType);
+                        final DeclarationDescriptor declarationDescriptor = resolveCalleeDescriptor((JetCallExpression) call);
+                        final PsiElement declaration = resolveCalleeToDeclaration(declarationDescriptor);
+                        final CallableMethod callableMethod = typeMapper.mapToCallableMethod((PsiNamedElement) declaration);
+                        if (callableMethod.getSignature().getReturnType() != Type.BOOLEAN_TYPE) {
+                            throw new UnsupportedOperationException("calls in pattern matching must return boolean");
+                        }
+                        invokeMethodWithArguments(callableMethod, (JetCallExpression) call, true);
+                        conditionValue = StackValue.onStack(Type.BOOLEAN_TYPE);
+                    }
+                    else {
+                        throw new UnsupportedOperationException("unsupported kind of call suffix");
+                    }
                 }
                 else {
                     throw new UnsupportedOperationException("unsupported kind of when condition");

@@ -69,4 +69,11 @@ public class PatternMatchingTest extends CodegenTestCase {
         assertEquals("one,two", foo.invoke(null, new Tuple2<Integer, Integer>(1, 2)));
         assertEquals("something", foo.invoke(null, new Tuple2<String, String>("not", "tuple")));
     }
+
+    public void testCall() throws Exception {
+        loadText("fun foo(s: String) = when(s) { .startsWith(\"J\") => \"JetBrains\"; else => \"something\" }");
+        Method foo = generateFunction();
+        assertEquals("JetBrains", foo.invoke(null, "Java"));
+        assertEquals("something", foo.invoke(null, "C#"));
+    }
 }
