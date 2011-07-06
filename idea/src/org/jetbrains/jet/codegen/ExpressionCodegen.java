@@ -1788,6 +1788,29 @@ public class ExpressionCodegen extends JetVisitor {
         myMap.leaveTemp(subjectType.getSize());
     }
 
+    @Override
+    public void visitTupleExpression(JetTupleExpression expression) {
+        final List<JetExpression> entries = expression.getEntries();
+        if (entries.size() > 22) {
+            throw new UnsupportedOperationException("tuple too large");
+        }
+        final String className = "jet/Tuple" + entries.size();
+        Type tupleType = Type.getObjectType(className);
+        StringBuilder signature = new StringBuilder("(");
+        for (JetExpression entry : entries) {
+            signature.append("Ljava/lang/Object;");
+        }
+        signature.append(")V");
+
+        v.anew(tupleType);
+        v.dup();
+        for (JetExpression entry : entries) {
+            gen(entry, OBJECT_TYPE);
+        }
+        v.invokespecial(className, "<init>", signature.toString());
+        myStack.push(StackValue.onStack(tupleType));
+    }
+
     private void throwNewException(final String className) {
         v.anew(Type.getObjectType(className));
         v.dup();

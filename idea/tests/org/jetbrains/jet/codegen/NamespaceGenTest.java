@@ -1,6 +1,7 @@
 package org.jetbrains.jet.codegen;
 
 import jet.IntRange;
+import jet.Tuple2;
 import org.jetbrains.jet.parsing.JetParsingTest;
 
 import java.awt.*;
@@ -434,5 +435,13 @@ public class NamespaceGenTest extends CodegenTestCase {
         list.add("Language");
         main.invoke(null, list);
         assertEquals("JetLanguage", list.get(0));
+    }
+
+    public void testTupleLiteral() throws Exception {
+        loadText("fun foo() = (1, \"foo\")");
+        final Method main = generateFunction();
+        Tuple2 tuple2 = (Tuple2) main.invoke(null);
+        assertEquals(1, tuple2._1);
+        assertEquals("foo", tuple2._2);
     }
 }
