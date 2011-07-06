@@ -1,10 +1,12 @@
 package org.jetbrains.jet.lang.descriptors;
 
+import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.JetScope;
 import org.jetbrains.jet.lang.resolve.SubstitutingScope;
 import org.jetbrains.jet.lang.types.*;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -13,6 +15,7 @@ import java.util.List;
 public class LazySubstitutingClassDescriptor implements ClassDescriptor {
 
     private final ClassDescriptor original;
+    private TypeConstructor typeConstructor;
     private final TypeSubstitutor substitutor;
 
     public LazySubstitutingClassDescriptor(ClassDescriptor descriptor, TypeSubstitutor substitutor) {
@@ -23,10 +26,32 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
     @NotNull
     @Override
     public TypeConstructor getTypeConstructor() {
+        TypeConstructor originalTypeConstructor = original.getTypeConstructor();
         if (substitutor.isEmpty()) {
-            return original.getTypeConstructor();
+            return originalTypeConstructor;
         }
-        throw new UnsupportedOperationException(); // TODO
+
+        if (typeConstructor == null) {
+            List<TypeParameterDescriptor> parameters = Lists.newArrayList();
+            for (TypeParameterDescriptor parameterDescriptor : originalTypeConstructor.getParameters()) {
+                parameters.add(parameterDescriptor.substitute(substitutor));
+            }
+            Collection<JetType> supertypes = Lists.newArrayList();
+            for (JetType supertype : originalTypeConstructor.getSupertypes()) {
+                supertypes.add(substitutor.substitute(supertype, Variance.INVARIANT));
+            }
+
+            typeConstructor = new TypeConstructorImpl(
+                    this,
+                    originalTypeConstructor.getAnnotations(),
+                    originalTypeConstructor.isSealed(),
+                    originalTypeConstructor.toString(),
+                    parameters,
+                    supertypes
+            );
+        }
+
+        return typeConstructor;
     }
 
     @NotNull
