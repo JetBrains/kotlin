@@ -1792,31 +1792,37 @@ public class ExpressionCodegen extends JetVisitor {
         v.store(subjectLocal, subjectType);
 
         Label end = new Label();
-        Label nextEntry = null;
+        Label nextCondition = null;
         boolean hasElse = false;
         for (JetWhenEntry whenEntry : expression.getEntries()) {
-            if (nextEntry != null) {
-                v.mark(nextEntry);
+            if (nextCondition != null) {
+                v.mark(nextCondition);
             }
-            nextEntry = new Label();
+            nextCondition = new Label();
             FrameMap.Mark mark = myMap.mark();
+            Label thisEntry = new Label();
             if (!whenEntry.isElse()) {
                 final JetWhenCondition[] conditions = whenEntry.getConditions();
-                if (conditions.length != 1) {
-                    throw new UnsupportedOperationException("TODO support multiple conditions in when entry");
+                for (int i = 0; i < conditions.length; i++) {
+                    StackValue conditionValue = generateWhenCondition(subjectType, subjectLocal, conditions[i], nextCondition);
+                    conditionValue.condJump(nextCondition, true, v);
+                    if (i < conditions.length - 1) {
+                        v.goTo(thisEntry);
+                        v.mark(nextCondition);
+                        nextCondition = new Label();
+                    }
                 }
-                StackValue conditionValue = generateWhenCondition(subjectType, subjectLocal, conditions[0], nextEntry);
-                conditionValue.condJump(nextEntry, true, v);
             }
             else {
                 hasElse = true;
             }
+            v.visitLabel(thisEntry);
             genToJVMStack(whenEntry.getExpression());
             mark.dropTo();
             v.goTo(end);
         }
-        if (!hasElse && nextEntry != null) {
-            v.mark(nextEntry);
+        if (!hasElse && nextCondition != null) {
+            v.mark(nextCondition);
             throwNewException(CLASS_NO_PATTERN_MATCHED_EXCEPTION);
         }
         v.mark(end);
@@ -1834,7 +1840,7 @@ public class ExpressionCodegen extends JetVisitor {
         if (condition instanceof JetWhenConditionWithExpression) {
             v.load(subjectLocal, subjectType);
             JetExpression condExpression = ((JetWhenConditionWithExpression) condition).getExpression();
-            Type condType = expressionType(condExpression);
+            Type condType = isNumberPrimitive(subjectType) ? expressionType(condExpression) : OBJECT_TYPE;
             gen(condExpression, condType);
             generateEqualsForExpressionsOnStack(JetTokens.EQEQ, subjectType, condType);
             conditionValue = myStack.pop();

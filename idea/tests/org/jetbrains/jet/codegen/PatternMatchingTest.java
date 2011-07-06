@@ -83,4 +83,12 @@ public class PatternMatchingTest extends CodegenTestCase {
         assertEquals("JetBrains", foo.invoke(null, new Tuple2<String, String>("JetBrains", "s.r.o.")));
         assertEquals("something", foo.invoke(null, new Tuple2<Integer, Integer>(1, 2)));
     }
+
+    public void testMultipleConditions() throws Exception {
+        loadText("fun foo(x: Any) = when(x) { is 0, 1 => \"bit\"; else => \"something\" }");
+        Method foo = generateFunction();
+        assertEquals("bit", foo.invoke(null, 0));
+        assertEquals("bit", foo.invoke(null, 1));
+        assertEquals("something", foo.invoke(null, 2));
+    }
 }
