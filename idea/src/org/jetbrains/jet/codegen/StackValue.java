@@ -1,6 +1,7 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.psi.tree.IElementType;
+import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
@@ -81,6 +82,10 @@ public abstract class StackValue {
 
     public static StackValue property(String name, String owner, Type type, boolean isStatic, boolean isInterface, Method getter, Method setter) {
         return new Property(name, owner, getter, setter, isStatic, isInterface, type);
+    }
+
+    public static StackValue expression(Type type, JetExpression expression, ExpressionCodegen generator) {
+        return new Expression(type, expression, generator);
     }
 
     private static void box(final Type type, final Type toType, InstructionAdapter v) {
@@ -536,6 +541,22 @@ public abstract class StackValue {
                     v.dup();
                 }
             }
+        }
+    }
+
+    private static class Expression extends StackValue {
+        private final JetExpression expression;
+        private final ExpressionCodegen generator;
+
+        public Expression(Type type, JetExpression expression, ExpressionCodegen generator) {
+            super(type);
+            this.expression = expression;
+            this.generator = generator;
+        }
+
+        @Override
+        public void put(Type type, InstructionAdapter v) {
+            generator.gen(expression, type);
         }
     }
 }

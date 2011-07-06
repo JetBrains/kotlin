@@ -1597,12 +1597,7 @@ public class ExpressionCodegen extends JetVisitor {
                 throw new UnsupportedOperationException("don't know how to handle non-class types in as/as?");
             }
             Type type = typeMapper.mapType(jetType, OwnerKind.INTERFACE);
-            generateInstanceOf(new Runnable() {
-                        @Override
-                        public void run() {
-                            gen(expression.getLeft(), OBJECT_TYPE);
-                        }
-                    }, jetType, true);
+            generateInstanceOf(StackValue.expression(OBJECT_TYPE, expression.getLeft(), this), jetType, true);
             Label isInstance = new Label();
             v.ifne(isInstance);
             v.pop();
@@ -1626,19 +1621,15 @@ public class ExpressionCodegen extends JetVisitor {
 
     @Override
     public void visitIsExpression(final JetIsExpression expression) {
-        generatePatternMatch(expression.getPattern(), expression.isNegated(), new Runnable() {
-            @Override
-            public void run() {
-                gen(expression.getLeftHandSide(), OBJECT_TYPE);
-            }
-        });
+        generatePatternMatch(expression.getPattern(), expression.isNegated(),
+                             StackValue.expression(OBJECT_TYPE, expression.getLeftHandSide(), this));
     }
 
-    private void generatePatternMatch(JetPattern pattern, boolean negated, Runnable expressionGen) {
+    private void generatePatternMatch(JetPattern pattern, boolean negated, StackValue expressionToMatch) {
         if (pattern instanceof JetTypePattern) {
             JetTypeReference typeReference = ((JetTypePattern) pattern).getTypeReference();
             JetType jetType = bindingContext.resolveTypeReference(typeReference);
-            generateInstanceOf(expressionGen, jetType, false);
+            generateInstanceOf(expressionToMatch, jetType, false);
             StackValue value = StackValue.onStack(Type.BOOLEAN_TYPE);
             myStack.push(negated ? StackValue.not(value) : value);
         }
@@ -1650,18 +1641,18 @@ public class ExpressionCodegen extends JetVisitor {
         }
     }
 
-    private void generateInstanceOf(Runnable expressionGen, JetType jetType, boolean leaveExpressionOnStack) {
+    private void generateInstanceOf(StackValue expressionToGen, JetType jetType, boolean leaveExpressionOnStack) {
         DeclarationDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
         if (jetType.getArguments().size() > 0 || !(descriptor instanceof ClassDescriptor)) {
             generateTypeInfo(jetType);
-            expressionGen.run();
+            expressionToGen.put(OBJECT_TYPE, v);
             if (leaveExpressionOnStack) {
                 v.dupX1();
             }
             v.invokevirtual("jet/typeinfo/TypeInfo", "isInstance", "(Ljava/lang/Object;)Z");
         }
         else {
-            expressionGen.run();
+            expressionToGen.put(OBJECT_TYPE, v);
             if (leaveExpressionOnStack) {
                 v.dup();
             }
@@ -1757,12 +1748,7 @@ public class ExpressionCodegen extends JetVisitor {
                 else if (condition instanceof JetWhenConditionIsPattern) {
                     JetWhenConditionIsPattern patternCondition = (JetWhenConditionIsPattern) condition;
                     JetPattern pattern = patternCondition.getPattern();
-                    generatePatternMatch(pattern, patternCondition.isNegated(), new Runnable() {
-                        @Override
-                        public void run() {
-                            new StackValue.Local(subjectLocal, subjectType).put(OBJECT_TYPE, v);
-                        }
-                    });
+                    generatePatternMatch(pattern, patternCondition.isNegated(), StackValue.local(subjectLocal, subjectType));
                 }
                 else {
                     throw new UnsupportedOperationException("unsupported kind of when condition");
