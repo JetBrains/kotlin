@@ -1,0 +1,12 @@
+namespace NullSafety
+
+fun <T : Any> T?.npe() : T =
+  if (this == null)
+    throw NullPointerException()
+  else
+    this
+
+fun main(args: Array<String>) {
+    val s: String? = null
+    s.npe<String>().length()
+}
