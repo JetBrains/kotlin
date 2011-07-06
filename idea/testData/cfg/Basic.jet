@@ -20,4 +20,4 @@ fun foo(a : Boolean, b : Int) : Unit {}
 
 fun genfun<T>() : Unit {}
 
-fun flfun(f : {() : Any}) : Unit {}
+fun flfun(f : fun () : Any) : Unit {}

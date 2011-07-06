@@ -39,7 +39,8 @@ JetFile: With.jet
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
             FUNCTION_TYPE
-              PsiElement(LBRACE)('{')
+              PsiElement(fun)('fun')
+              PsiWhiteSpace(' ')
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION
@@ -55,7 +56,6 @@ JetFile: With.jet
                 USER_TYPE
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('Unit')
-              PsiElement(RBRACE)('}')
         PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
       PsiElement(EQ)('=')

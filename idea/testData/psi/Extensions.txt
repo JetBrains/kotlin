@@ -73,7 +73,8 @@ JetFile: Extensions.jet
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
         FUNCTION_TYPE
-          PsiElement(LBRACE)('{')
+          PsiElement(fun)('fun')
+          PsiWhiteSpace(' ')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -84,7 +85,6 @@ JetFile: Extensions.jet
             TUPLE_TYPE
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')
-          PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n\n')
     EXTENSION
       PsiElement(extension)('extension')
@@ -163,7 +163,8 @@ JetFile: Extensions.jet
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
         FUNCTION_TYPE
-          PsiElement(LBRACE)('{')
+          PsiElement(fun)('fun')
+          PsiWhiteSpace(' ')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -174,7 +175,6 @@ JetFile: Extensions.jet
             TUPLE_TYPE
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')
-          PsiElement(RBRACE)('}')
       PsiElement(SEMICOLON)(';')
     PsiWhiteSpace('\n\n')
     EXTENSION
@@ -266,7 +266,8 @@ JetFile: Extensions.jet
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
         FUNCTION_TYPE
-          PsiElement(LBRACE)('{')
+          PsiElement(fun)('fun')
+          PsiWhiteSpace(' ')
           VALUE_PARAMETER_LIST
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
@@ -277,7 +278,6 @@ JetFile: Extensions.jet
             TUPLE_TYPE
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')
-          PsiElement(RBRACE)('}')
       PsiWhiteSpace(' ')
       CLASS_BODY
         PsiElement(LBRACE)('{')

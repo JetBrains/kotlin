@@ -470,7 +470,8 @@ JetFile: Graph.jet
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
                 FUNCTION_TYPE
-                  PsiElement(LBRACE)('{')
+                  PsiElement(fun)('fun')
+                  PsiWhiteSpace(' ')
                   VALUE_PARAMETER_LIST
                     PsiElement(LPAR)('(')
                     VALUE_PARAMETER
@@ -486,7 +487,6 @@ JetFile: Graph.jet
                     USER_TYPE
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('Unit')
-                  PsiElement(RBRACE)('}')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           BLOCK
@@ -613,7 +613,8 @@ JetFile: Graph.jet
                   PsiWhiteSpace(' ')
                   TYPE_REFERENCE
                     FUNCTION_TYPE
-                      PsiElement(LBRACE)('{')
+                      PsiElement(fun)('fun')
+                      PsiWhiteSpace(' ')
                       VALUE_PARAMETER_LIST
                         PsiElement(LPAR)('(')
                         VALUE_PARAMETER
@@ -629,7 +630,6 @@ JetFile: Graph.jet
                         USER_TYPE
                           REFERENCE_EXPRESSION
                             PsiElement(IDENTIFIER)('Unit')
-                      PsiElement(RBRACE)('}')
                 PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')
               BLOCK
@@ -785,7 +785,8 @@ JetFile: Graph.jet
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
                 FUNCTION_TYPE
-                  PsiElement(LBRACE)('{')
+                  PsiElement(fun)('fun')
+                  PsiWhiteSpace(' ')
                   VALUE_PARAMETER_LIST
                     PsiElement(LPAR)('(')
                     VALUE_PARAMETER
@@ -801,7 +802,6 @@ JetFile: Graph.jet
                     USER_TYPE
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('Unit')
-                  PsiElement(RBRACE)('}')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           BLOCK

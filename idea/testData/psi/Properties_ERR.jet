@@ -9,15 +9,6 @@ val foo.bar
    public () {}
    () = foo
 
-val {foo.bar.() : ()}.foo = foo
-   set) {}
-   dfget() {}
-
-val {foo.bar.() : ()}.foo = foo
-   get(foo) {}
-   set() {}
-   set() {}
-
 val f.d.- = f
 
 val foo

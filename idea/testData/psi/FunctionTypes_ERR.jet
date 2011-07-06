@@ -1,2 +1,1 @@
-type f = {([a] a)  b}
-type f = {(a, ) : b}
+type f = fun (a, ) : b

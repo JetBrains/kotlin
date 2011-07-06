@@ -107,7 +107,8 @@ JetFile: LocalDeclarations.jet
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
             FUNCTION_TYPE
-              PsiElement(LBRACE)('{')
+              PsiElement(fun)('fun')
+              PsiWhiteSpace(' ')
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION
@@ -123,7 +124,6 @@ JetFile: LocalDeclarations.jet
                 TUPLE_TYPE
                   PsiElement(LPAR)('(')
                   PsiElement(RPAR)(')')
-              PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n\n    ')
         EXTENSION
           MODIFIER_LIST

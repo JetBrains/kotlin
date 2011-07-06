@@ -371,8 +371,8 @@ JetFile: Builder.jet
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
                 FUNCTION_TYPE
-                  PsiElement(LBRACE)('{')
-                  PsiWhiteSpace(' ')
+                  PsiElement(fun)('fun')
+                  PsiWhiteSpace('  ')
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION
@@ -388,7 +388,6 @@ JetFile: Builder.jet
                     USER_TYPE
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('Library')
-                  PsiElement(RBRACE)('}')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           BLOCK

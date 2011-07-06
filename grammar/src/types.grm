@@ -47,7 +47,7 @@ optionalProjection
   ;
 
 functionType
-  : "{" (type ".")? functionTypeContents "}"
+  : "fun" (type ".")? functionTypeContents
   ;
 
 functionTypeContents

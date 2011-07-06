@@ -76,48 +76,6 @@ JetFile: TypeParametersBeforeName.jet
       VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
         PsiElement(RPAR)(')')
-    PsiWhiteSpace('\n')
-    FUN
-      PsiElement(fun)('fun')
-      PsiWhiteSpace(' ')
-      TYPE_PARAMETER_LIST
-        PsiElement(LT)('<')
-        TYPE_PARAMETER
-          PsiElement(IDENTIFIER)('A')
-        PsiElement(COMMA)(',')
-        PsiWhiteSpace(' ')
-        TYPE_PARAMETER
-          PsiElement(IDENTIFIER)('B')
-        PsiElement(GT)('>')
-      PsiWhiteSpace(' ')
-      TYPE_REFERENCE
-        ATTRIBUTE_ANNOTATION
-          PsiElement(LBRACKET)('[')
-          ATTRIBUTE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('a')
-          PsiElement(RBRACKET)(']')
-        PsiWhiteSpace(' ')
-        FUNCTION_TYPE
-          PsiElement(LBRACE)('{')
-          VALUE_PARAMETER_LIST
-            PsiElement(LPAR)('(')
-            PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('Unit')
-          PsiElement(RBRACE)('}')
-      PsiElement(DOT)('.')
-      PsiElement(IDENTIFIER)('foo')
-      VALUE_PARAMETER_LIST
-        PsiElement(LPAR)('(')
-        PsiElement(RPAR)(')')
     PsiWhiteSpace('\n\n')
     PROPERTY
       PsiElement(val)('val')

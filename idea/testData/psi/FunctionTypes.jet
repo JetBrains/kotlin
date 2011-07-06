@@ -1,34 +1,24 @@
-type f = {([a] a) : b}
-type f = {(a) : b}
-type f = {() : [x] b}
-type f = {() : ()}
+type f = fun ([a] a) : b
+type f = fun (a) : b
+type f = fun () : [x] b
+type f = fun () : ()
 
-type f = {(a : [a] a) : b}
-type f = {(a : a) : b}
-type f = {() : b}
-type f = {() : ()}
+type f = fun (a : [a] a) : b
+type f = fun (a : a) : b
+type f = fun () : b
+type f = fun () : ()
 
-type f = {(a : [a] a, foo, x : bar) : b}
-type f = {(foo, a : a) : b}
-type f = {(foo, a : {(a) : b}) : b}
-type f = {(foo, a : {(a) : b}) : {() : ()}}
+type f = fun (a : [a] a, foo, x : bar) : b
+type f = fun (foo, a : a) : b
+type f = fun (foo, a : fun (a) : b) : b
+type f = fun (foo, a : fun (a) : b) : fun () : ()
 
-type f = {(ref foo, ref a : {(ref a) : b}) : {() : ()}}
+type f = fun (ref foo, ref a : fun (ref a) : b) : fun () : ()
 
-type f = {T.() : ()}
-type f = {T.T.() : ()}
-type f = {T<A, B>.T<x>.() : ()}
-type f = {{(S).() : ()}.() : ()}
-type f = {{T.() : ()}.() : ()}
-type f = {{T.T.() : ()}.() : ()}
-type f = {{T<A, B>.T<x>.() : ()}.() : ()}
-type f = {{(S).() : ()}.() : ()}
+type f = fun T.() : ()
+type f = fun T.T.() : ()
+type f = fun T<A, B>.T<x>.() : ()
 
-type f = [a] {T.() : ()}
-type f = [a] {T.T.() : ()}
-type f = [a] {T<A, B>.T<x>.() : ()}
-type f =  [a] {[a] {(S).() : ()}.() : ()}
-type f = [a] {[a] {T.() : ()}.() : ()}
-type f = [a] {[a] {T.T.() : ()}.() : ()}
-type f = [a] {[a] {T<A, B>.T<x>.() : ()}.() : ()}
-type f = [a] {[a] {(S).() : ()}.() : ()}
+type f = [a] fun T.() : ()
+type f = [a] fun T.T.() : ()
+type f = [a] fun T<A, B>.T<x>.() : ()

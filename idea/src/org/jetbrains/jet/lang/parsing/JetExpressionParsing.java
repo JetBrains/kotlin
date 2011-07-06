@@ -791,7 +791,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         myJetParsing.parseAttributeList();
 
-        if (at(NAMESPACE_KEYWORD) || at(IDENTIFIER) || at(LBRACE) || at(THIS_KEYWORD)) {
+        if (at(NAMESPACE_KEYWORD) || at(IDENTIFIER) || at(FUN_KEYWORD) || at(THIS_KEYWORD)) {
             PsiBuilder.Marker rollbackMarker = mark();
             parseBinaryExpression(Precedence.ELVIS);
             if (at(AT)) {
@@ -801,7 +801,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 parseTuplePattern(DECOMPOSER_ARGUMENT);
                 list.done(DECOMPOSER_ARGUMENT_LIST);
                 pattern.done(DECOMPOSER_PATTERN);
-            } else {
+            }
+            else {
                 int expressionEndOffset = myBuilder.getCurrentOffset();
                 rollbackMarker.rollbackTo();
                 rollbackMarker = mark();

@@ -52,7 +52,7 @@ fun foo() {
     in 1..2 => dsf
     !in 2 => sd
     !is t => d
-    is {(foo) : Bar} => fgpp
+    is fun (foo) : Bar => fgpp
     is (1, val a is Foo, *, Foo, bar) => d
     is (Foo, val a in 1..2, *, val _ !is Foo, val bar is foo.bar<a> @ (a)) => d
     is (Int, Int) => 2

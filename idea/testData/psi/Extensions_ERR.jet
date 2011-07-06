@@ -2,4 +2,4 @@ extension for
 extension foo bar
 extension <foo for bar
 extension foo<A> for
-extension foo<A> for {() : ()} {}
+extension foo<A> for fun () : () {}
