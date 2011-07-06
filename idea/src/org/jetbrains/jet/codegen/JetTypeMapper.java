@@ -103,7 +103,8 @@ public class JetTypeMapper {
     }
 
     static CallableMethod mapToCallableMethod(PsiMethod method) {
-        String owner = jvmName(method.getContainingClass());
+        final PsiClass containingClass = method.getContainingClass();
+        String owner = jvmName(containingClass);
         Method signature = getMethodDescriptor(method);
         List<Type> valueParameterTypes = new ArrayList<Type>();
         Collections.addAll(valueParameterTypes, signature.getArgumentTypes());
@@ -111,8 +112,14 @@ public class JetTypeMapper {
         if (method.isConstructor()) {
             opcode = Opcodes.INVOKESPECIAL;
         }
+        else if (method.hasModifierProperty(PsiModifier.STATIC)) {
+            opcode = Opcodes.INVOKESTATIC;
+        }
+        else if (containingClass.isInterface()) {
+            opcode = Opcodes.INVOKEINTERFACE;
+        }
         else {
-            throw new UnsupportedOperationException("TODO");
+            opcode = Opcodes.INVOKEVIRTUAL;
         }
         return new CallableMethod(owner, signature, opcode, valueParameterTypes);
     }

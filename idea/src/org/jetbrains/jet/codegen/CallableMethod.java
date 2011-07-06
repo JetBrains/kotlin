@@ -10,7 +10,7 @@ import java.util.List;
  * @author yole
  */
 public class CallableMethod {
-    private final String owner;
+    private String owner;
     private final Method signature;
     private final int invokeOpcode;
     private final List<Type> valueParameterTypes;
@@ -24,6 +24,10 @@ public class CallableMethod {
 
     public String getOwner() {
         return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 
     public Method getSignature() {

@@ -782,7 +782,15 @@ public class ExpressionCodegen extends JetVisitor {
                 }
                 Method methodDescriptor;
                 if (declarationPsiElement instanceof PsiMethod) {
-                    methodDescriptor = generateJavaMethodCall(expression, (PsiMethod) declarationPsiElement);
+                    final PsiMethod psiMethod = (PsiMethod) declarationPsiElement;
+                    CallableMethod callableMethod = JetTypeMapper.mapToCallableMethod(psiMethod);
+                    if (!psiMethod.hasModifierProperty(PsiModifier.STATIC)) {
+                        ensureReceiverOnStack(expression, null);
+                        setOwnerFromCall(callableMethod, expression);
+                    }
+                    pushMethodArguments(expression,  callableMethod.getValueParameterTypes());
+                    callableMethod.invoke(v);
+                    methodDescriptor = callableMethod.getSignature();
                 }
                 else if (declarationPsiElement instanceof JetNamedFunction) {
                     final JetNamedFunction jetFunction = (JetNamedFunction) declarationPsiElement;
@@ -832,33 +840,16 @@ public class ExpressionCodegen extends JetVisitor {
         }
     }
 
-    private Method generateJavaMethodCall(JetCallExpression expression, PsiMethod psiMethod) {
-        final PsiClass containingClass = psiMethod.getContainingClass();
-        String owner = JetTypeMapper.jvmName(containingClass);
-        Method methodDescriptor = JetTypeMapper.getMethodDescriptor(psiMethod);
-        final boolean isStatic = psiMethod.hasModifierProperty(PsiModifier.STATIC);
-
-        if (!isStatic) {
-            ensureReceiverOnStack(expression, null);
-            if (expression.getParent() instanceof JetQualifiedExpression) {
-                final JetExpression receiver = ((JetQualifiedExpression) expression.getParent()).getReceiverExpression();
-                JetType expressionType = bindingContext.getExpressionType(receiver);
-                DeclarationDescriptor declarationDescriptor = expressionType.getConstructor().getDeclarationDescriptor();
-                PsiElement ownerDeclaration = bindingContext.getDeclarationPsiElement(declarationDescriptor);
-                if (ownerDeclaration instanceof PsiClass) {
-                    owner = typeMapper.mapType(expressionType).getInternalName();
-                }
+    private void setOwnerFromCall(CallableMethod callableMethod, JetCallExpression expression) {
+        if (expression.getParent() instanceof JetQualifiedExpression) {
+            final JetExpression receiver = ((JetQualifiedExpression) expression.getParent()).getReceiverExpression();
+            JetType expressionType = bindingContext.getExpressionType(receiver);
+            DeclarationDescriptor declarationDescriptor = expressionType.getConstructor().getDeclarationDescriptor();
+            PsiElement ownerDeclaration = bindingContext.getDeclarationPsiElement(declarationDescriptor);
+            if (ownerDeclaration instanceof PsiClass) {
+                callableMethod.setOwner(typeMapper.mapType(expressionType).getInternalName());
             }
         }
-        pushMethodArguments(expression, methodDescriptor);
-
-        v.visitMethodInsn(isStatic
-                ? Opcodes.INVOKESTATIC
-                : (containingClass.isInterface() ? Opcodes.INVOKEINTERFACE : Opcodes.INVOKEVIRTUAL),
-                owner,
-                methodDescriptor.getName(),
-                methodDescriptor.getDescriptor());
-        return methodDescriptor;
     }
 
     private JetExpression getReceiverForSelector(JetElement expression) {
