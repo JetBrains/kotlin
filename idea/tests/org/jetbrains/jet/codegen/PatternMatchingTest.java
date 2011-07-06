@@ -77,6 +77,10 @@ public class PatternMatchingTest extends CodegenTestCase {
         assertEquals("something", foo.invoke(null, "C#"));
     }
 
+    public void testCallProperty() throws Exception {
+        blackBoxFile("patternMatching/callProperty.jet");
+    }
+
     public void testNames() throws Exception {
         loadText("fun foo(x: (Any, Any)) = when(x) { is (val a is String, *) => a; else => \"something\" }");
         Method foo = generateFunction();

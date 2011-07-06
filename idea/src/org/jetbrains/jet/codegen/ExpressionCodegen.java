@@ -1871,6 +1871,16 @@ public class ExpressionCodegen extends JetVisitor {
                 invokeMethodWithArguments(callableMethod, (JetCallExpression) call, true);
                 conditionValue = StackValue.onStack(Type.BOOLEAN_TYPE);
             }
+            else if (call instanceof JetSimpleNameExpression) {
+                final DeclarationDescriptor descriptor = bindingContext.resolveReferenceExpression((JetSimpleNameExpression) call);
+                if (descriptor instanceof PropertyDescriptor) {
+                    v.load(subjectLocal, subjectType);
+                    conditionValue = intermediateValueForProperty((PropertyDescriptor) descriptor, false, false);
+                }
+                else {
+                    throw new UnsupportedOperationException("unknown simple name resolve result: " + descriptor);
+                }
+            }
             else {
                 throw new UnsupportedOperationException("unsupported kind of call suffix");
             }
