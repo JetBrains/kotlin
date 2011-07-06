@@ -4,10 +4,7 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.util.Pair;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetFunctionLiteral;
 import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression;
 import org.jetbrains.jet.lang.types.JetType;
@@ -110,13 +107,17 @@ public class ClosureCodegen {
 
 
         generateBridge(name, funDescriptor, cv);
-        generateBody(funDescriptor, cv, fun.getFunctionLiteral());
+        final boolean captureThis = generateBody(funDescriptor, cv, fun.getFunctionLiteral());
 
-        final Method constructor = generateConstructor(funClass);
+        final Method constructor = generateConstructor(funClass, captureThis);
+
+        if (captureThis) {
+            cv.visitField(Opcodes.ACC_PRIVATE, "this$0", enclosingClassType().getDescriptor(), null, null);
+        }
 
         cv.visitEnd();
 
-        final GeneratedAnonymousClassDescriptor answer = new GeneratedAnonymousClassDescriptor(name, constructor);
+        final GeneratedAnonymousClassDescriptor answer = new GeneratedAnonymousClassDescriptor(name, constructor, captureThis);
         for (DeclarationDescriptor descriptor : closure.keySet()) {
             final EnclosedValueDescriptor valueDescriptor = closure.get(descriptor);
             answer.addArg(valueDescriptor.getOuterValue());
@@ -124,9 +125,15 @@ public class ClosureCodegen {
         return answer;
     }
 
-    private void generateBody(FunctionDescriptor funDescriptor, ClassVisitor cv, JetFunctionLiteral body) {
-        FunctionCodegen fc = new FunctionCodegen(context.intoClosure(name), cv, state);
+    private Type enclosingClassType() {
+        return Type.getObjectType(state.getTypeMapper().jvmName((ClassDescriptor) context.getContextClass(), OwnerKind.INTERFACE));
+    }
+
+    private boolean generateBody(FunctionDescriptor funDescriptor, ClassVisitor cv, JetFunctionLiteral body) {
+        final ClassContext closureContext = context.intoClosure(name);
+        FunctionCodegen fc = new FunctionCodegen(closureContext, cv, state);
         fc.generateMethod(body, invokeSignature(funDescriptor), funDescriptor);
+        return closureContext.isThisWasUsed();
     }
 
     private void generateBridge(String className, FunctionDescriptor funDescriptor, ClassVisitor cv) {
@@ -164,9 +171,22 @@ public class ClosureCodegen {
         mv.visitEnd();
     }
 
-    private Method generateConstructor(String funClass) {
-        Type[] argTypes = new Type[closure.size()];
+    private Method generateConstructor(String funClass, boolean captureThis) {
+        int argCount = closure.size();
+
+        if (captureThis) {
+            argCount++;
+        }
+
+        Type[] argTypes = new Type[argCount];
+
+
         int i = 0;
+        if (captureThis) {
+            i = 1;
+            argTypes[0] = enclosingClassType();
+        }
+
         for (DeclarationDescriptor descriptor : closure.keySet()) {
             argTypes[i++] = state.getTypeMapper().mapType(((VariableDescriptor) descriptor).getOutType());
         }
@@ -179,11 +199,21 @@ public class ClosureCodegen {
         iv.load(0, Type.getObjectType(funClass));
         iv.invokespecial(funClass, "<init>", "()V");
 
-        for (int j = 0; j < argTypes.length; j++) {
-            Type type = argTypes[j];
+        i = 1;
+        for (Type type : argTypes) {
             StackValue.local(0, JetTypeMapper.TYPE_OBJECT).put(JetTypeMapper.TYPE_OBJECT, iv);
-            StackValue.local(j + 1, type).put(type, iv);
-            StackValue.field(type, name, "$" + (j + 1), false).store(iv);
+            StackValue.local(i, type).put(type, iv);
+            final String fieldName;
+            if (captureThis && i == 1) {
+                fieldName = "this$0";
+                captureThis = false;
+            }
+            else {
+                fieldName = "$" + (i);
+                i++;
+            }
+
+            StackValue.field(type, name, fieldName, false).store(iv);
         }
 
         iv.visitInsn(Opcodes.RETURN);

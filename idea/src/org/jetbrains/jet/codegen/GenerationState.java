@@ -112,7 +112,7 @@ public class GenerationState {
         final ClassContext objectContext = classContext.intoClass(getBindingContext().getClassDescriptor(literal.getObjectDeclaration()), OwnerKind.IMPLEMENTATION);
 
         new ImplementationBodyCodegen(literal.getObjectDeclaration(), objectContext, nameAndVisitor.getSecond(), this).generate();
-        return new GeneratedAnonymousClassDescriptor(nameAndVisitor.first, new Method("<init>", "()V"));
+        return new GeneratedAnonymousClassDescriptor(nameAndVisitor.first, new Method("<init>", "()V"), false);
     }
 
     public StackValue lookupInContext(DeclarationDescriptor d) {

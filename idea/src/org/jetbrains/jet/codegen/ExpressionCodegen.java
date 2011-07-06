@@ -508,6 +508,10 @@ public class ExpressionCodegen extends JetVisitor {
 
             final Method cons = closure.getConstructor();
 
+            if (closure.isCaptureThis()) {
+                thisToStack();
+            }
+
             for (int i = 0; i < closure.getArgs().size(); i++) {
                 StackValue arg = closure.getArgs().get(i);
                 arg.put(cons.getArgumentTypes()[i], v);

@@ -11,11 +11,13 @@ import java.util.List;
 public class GeneratedAnonymousClassDescriptor {
     private final String classname;
     private Method constructor;
+    private final boolean captureThis;
     private List<StackValue> args = new ArrayList<StackValue>();
 
-    public GeneratedAnonymousClassDescriptor(String classname, Method constructor) {
+    public GeneratedAnonymousClassDescriptor(String classname, Method constructor, boolean captureThis) {
         this.classname = classname;
         this.constructor = constructor;
+        this.captureThis = captureThis;
     }
 
     public String getClassname() {
@@ -32,5 +34,9 @@ public class GeneratedAnonymousClassDescriptor {
 
     public List<StackValue> getArgs() {
         return args;
+    }
+
+    public boolean isCaptureThis() {
+        return captureThis;
     }
 }

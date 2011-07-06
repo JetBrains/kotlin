@@ -16,6 +16,7 @@ public class ClassContext {
     private final OwnerKind contextKind;
     private final StackValue thisExpression;
     private final ClassContext parentContext;
+    private boolean thisWasUsed = false;
 
     public ClassContext(DeclarationDescriptor contextType, OwnerKind contextKind, StackValue thisExpression, ClassContext parentContext) {
         this.contextType = contextType;
@@ -33,6 +34,7 @@ public class ClassContext {
     }
 
     public StackValue getThisExpression() {
+        thisWasUsed = true;
         if (thisExpression != null) return thisExpression;
         return parentContext != null ? parentContext.getThisExpression() : null;
     }
@@ -72,7 +74,7 @@ public class ClassContext {
     public ClassContext intoClosure(String internalClassName) {
         final DeclarationDescriptor contextDescriptor = getContextClass();
         StackValue outerClass = contextDescriptor instanceof ClassDescriptor
-                                ? StackValue.instanceField(JetTypeMapper.jetImplementationType((ClassDescriptor) contextDescriptor), internalClassName, "this$0")
+                                ? StackValue.instanceField(JetTypeMapper.jetInterfaceType((ClassDescriptor) contextDescriptor), internalClassName, "this$0")
                                 : StackValue.local(0, JetTypeMapper.TYPE_OBJECT);
         return new ClassContext(null, OwnerKind.IMPLEMENTATION, outerClass, this);
     }
@@ -108,7 +110,7 @@ public class ClassContext {
             return mapper.jvmType((ClassDescriptor) contextType, contextKind);
         }
         else {
-            return JetTypeMapper.TYPE_OBJECT; // TODO?
+            return parentContext != null ? parentContext.jvmType(mapper) : JetTypeMapper.TYPE_OBJECT;
         }
     }
 
@@ -118,5 +120,9 @@ public class ClassContext {
 
         final ClassContext parent = getParentContext();
         return parent != null ? parent.getContextClass() : null;
+    }
+
+    public boolean isThisWasUsed() {
+        return thisWasUsed;
     }
 }
