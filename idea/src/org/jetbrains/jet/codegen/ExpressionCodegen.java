@@ -1774,7 +1774,9 @@ public class ExpressionCodegen extends JetVisitor {
             }
             nextEntry = new Label();
             if (!whenEntry.isElse()) {
-                JetWhenCondition condition = whenEntry.getCondition();
+                JetWhenCondition[] conditions = whenEntry.getConditions();
+                assert conditions.length == 1 : "Support many conditions"; // TODO
+                JetWhenCondition condition = conditions[0];
                 StackValue conditionValue;
                 if (condition instanceof JetWhenConditionWithExpression) {
                     v.load(subjectLocal, subjectType);

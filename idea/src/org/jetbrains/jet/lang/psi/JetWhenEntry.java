@@ -38,8 +38,8 @@ public class JetWhenEntry extends JetElement {
         visitor.visitWhenEntry(this);
     }
 
-    @Nullable
-    public JetWhenCondition getCondition() {
-        return findChildByClass(JetWhenCondition.class);
+    @NotNull
+    public JetWhenCondition[] getConditions() {
+        return findChildrenByClass(JetWhenCondition.class);
     }
 }

@@ -640,8 +640,11 @@ public class JetControlFlowProcessor {
                     }
                 }
 
-                JetWhenCondition condition = whenEntry.getCondition();
-                if (condition != null) {
+                Label bodyLabel = builder.createUnboundLabel();
+
+                JetWhenCondition[] conditions = whenEntry.getConditions();
+                for (int i = 0; i < conditions.length; i++) {
+                    JetWhenCondition condition = conditions[i];
                     condition.accept(new JetVisitor() {
                         private final JetVisitor conditionVisitor = this;
 
@@ -714,10 +717,14 @@ public class JetControlFlowProcessor {
                             throw new UnsupportedOperationException("[JetControlFlowProcessor] " + element.toString());
                         }
                     });
+                    if (i + 1 < conditions.length) {
+                        builder.nondeterministicJump(bodyLabel);
+                    }
                 }
 
                 builder.nondeterministicJump(nextLabel);
 
+                builder.bindLabel(bodyLabel);
                 value(whenEntry.getExpression(), true, inCondition);
                 builder.jump(doneLabel);
                 builder.bindLabel(nextLabel);

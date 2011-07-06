@@ -764,7 +764,7 @@ public class JetTypeInferrer {
             return getTypeWithNewContext(expression, new TypeInferenceContext(context.trace, scope, preferBlock, context.dataFlowInfo, context.expectedType, context.expectedReturnType));
         }
 
-        private JetType getTypeWithNewDataFlowInfo(JetScope scope, JetExpression expression, boolean preferBlock, DataFlowInfo newDataFlowInfo) {
+        private JetType getTypeWithNewDataFlowInfo(JetScope scope, JetExpression expression, boolean preferBlock, @NotNull DataFlowInfo newDataFlowInfo) {
             return getTypeWithNewContext(expression, new TypeInferenceContext(context.trace, scope, preferBlock, newDataFlowInfo, context.expectedType, context.expectedReturnType));
         }
 
@@ -1294,11 +1294,35 @@ public class JetTypeInferrer {
 
             Set<JetType> expressionTypes = Sets.newHashSet();
             for (JetWhenEntry whenEntry : expression.getEntries()) {
-                JetWhenCondition condition = whenEntry.getCondition();
-                WritableScope scopeToExtend = newWritableScopeImpl().setDebugName("Scope extended in when entry");
-                DataFlowInfo newDataFlowInfo = context.dataFlowInfo;
-                if (condition != null) {
-                    newDataFlowInfo = checkWhenCondition(subjectExpression, subjectType, condition, scopeToExtend, variableDescriptor);
+                JetWhenCondition[] conditions = whenEntry.getConditions();
+                DataFlowInfo newDataFlowInfo;
+                WritableScope scopeToExtend;
+                if (conditions.length == 1) {
+                    scopeToExtend = newWritableScopeImpl().setDebugName("Scope extended in when entry");
+                    newDataFlowInfo = context.dataFlowInfo;
+                    JetWhenCondition condition = conditions[0];
+                    if (condition != null) {
+                        newDataFlowInfo = checkWhenCondition(subjectExpression, subjectType, condition, scopeToExtend, variableDescriptor);
+                    }
+                }
+                else {
+                    scopeToExtend = newWritableScopeImpl(); // We don't write to this scope
+                    newDataFlowInfo = null;
+                    for (JetWhenCondition condition : conditions) {
+                        DataFlowInfo dataFlowInfo = checkWhenCondition(subjectExpression, subjectType, condition, newWritableScopeImpl(), variableDescriptor);
+                        if (newDataFlowInfo == null) {
+                            newDataFlowInfo = dataFlowInfo;
+                        }
+                        else {
+                            newDataFlowInfo = newDataFlowInfo.or(dataFlowInfo);
+                        }
+                    }
+                    if (newDataFlowInfo == null) {
+                        newDataFlowInfo = context.dataFlowInfo;
+                    }
+                    else {
+                        newDataFlowInfo = newDataFlowInfo.and(context.dataFlowInfo);
+                    }
                 }
                 JetWhenExpression subWhen = whenEntry.getSubWhen();
                 JetExpression bodyExpression = subWhen == null ? whenEntry.getExpression() : subWhen;
