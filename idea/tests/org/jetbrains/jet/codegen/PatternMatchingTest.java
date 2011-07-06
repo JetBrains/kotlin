@@ -1,6 +1,7 @@
 package org.jetbrains.jet.codegen;
 
 import jet.NoPatternMatchedException;
+import jet.Tuple2;
 
 import java.lang.reflect.Method;
 
@@ -60,5 +61,12 @@ public class PatternMatchingTest extends CodegenTestCase {
         loadText("fun foo(x: String) = when(x) { is * => \"x\" }");
         Method foo = generateFunction();
         assertEquals("x", foo.invoke(null, ""));
+    }
+
+    public void testTuplePattern() throws Exception {
+        loadText("fun foo(x: Tuple2<Any, Any>) = when(x) { is (1,2) => \"one,two\"; else => \"something\" }");
+        Method foo = generateFunction();
+        assertEquals("one,two", foo.invoke(null, new Tuple2<Integer, Integer>(1, 2)));
+        assertEquals("something", foo.invoke(null, new Tuple2<String, String>("not", "tuple")));
     }
 }

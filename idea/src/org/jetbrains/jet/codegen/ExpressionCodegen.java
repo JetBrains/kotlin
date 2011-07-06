@@ -1634,12 +1634,58 @@ public class ExpressionCodegen extends JetVisitor {
             StackValue value = StackValue.onStack(Type.BOOLEAN_TYPE);
             return negated ? StackValue.not(value) : value;
         }
+        else if (pattern instanceof JetTuplePattern) {
+            return generateTuplePatternMatch((JetTuplePattern) pattern, negated, expressionToMatch);
+        }
+        else if (pattern instanceof JetExpressionPattern) {
+            final Type subjectType = expressionToMatch.type;
+            expressionToMatch.put(subjectType, v);
+            JetExpression condExpression = ((JetExpressionPattern) pattern).getExpression();
+            gen(condExpression, OBJECT_TYPE);
+            generateEqualsForExpressionsOnStack(JetTokens.EQEQ, subjectType, OBJECT_TYPE);
+            return myStack.pop();
+        }
         else if (pattern instanceof JetWildcardPattern) {
             return StackValue.constant(!negated, Type.BOOLEAN_TYPE);
         }
         else {
             throw new UnsupportedOperationException("Unsupported pattern type: " + pattern);
         }
+    }
+
+    private StackValue generateTuplePatternMatch(JetTuplePattern pattern, boolean negated, StackValue expressionToMatch) {
+        final List<JetTuplePatternEntry> entries = pattern.getEntries();
+        Label lblFail = new Label();
+        Label lblDone = new Label();
+        expressionToMatch.put(OBJECT_TYPE, v);
+        v.dup();
+        final String tupleClassName = "jet/Tuple" + entries.size();
+        Type tupleType = Type.getObjectType(tupleClassName);
+        v.instanceOf(tupleType);
+        Label lblCheck = new Label();
+        v.ifne(lblCheck);
+        Label lblPopAndFail = new Label();
+        v.mark(lblPopAndFail);
+        v.pop();
+        v.goTo(lblFail);
+
+        v.mark(lblCheck);
+        for (int i = 0; i < entries.size(); i++) {
+            final boolean isLast = i == entries.size() - 1;
+            if (!isLast) {
+                v.dup();
+            }
+            final StackValue tupleField = StackValue.field(OBJECT_TYPE, tupleClassName, "_" + (i + 1), false);
+            final StackValue stackValue = generatePatternMatch(entries.get(i).getPattern(), false, tupleField);
+            stackValue.condJump(isLast ? lblFail : lblPopAndFail, true, v);
+        }
+
+        v.aconst(!negated);
+        v.goTo(lblDone);
+        v.mark(lblFail);
+        v.aconst(negated);
+        v.mark(lblDone);
+        return StackValue.onStack(Type.BOOLEAN_TYPE);
     }
 
     private void generateInstanceOf(StackValue expressionToGen, JetType jetType, boolean leaveExpressionOnStack) {
