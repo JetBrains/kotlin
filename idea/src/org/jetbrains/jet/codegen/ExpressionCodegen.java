@@ -780,6 +780,8 @@ public class ExpressionCodegen extends JetVisitor {
                 if (declarationPsiElement == null) {
                     throw new UnsupportedOperationException("couldn't find declaration for " + funDescriptor);
                 }
+
+
                 Method methodDescriptor;
                 if (declarationPsiElement instanceof PsiMethod) {
                     final PsiMethod psiMethod = (PsiMethod) declarationPsiElement;
@@ -814,15 +816,14 @@ public class ExpressionCodegen extends JetVisitor {
                     gen(callee, Type.getObjectType(ClosureCodegen.getInternalClassName(fd)));
 
                     boolean isExtensionFunction = fd.getReceiverType() != null;
-                    int paramCount = fd.getValueParameters().size();
                     if (isExtensionFunction) {
                         ensureReceiverOnStack(expression, null);
-                        paramCount++;
                     }
 
-                    methodDescriptor = ClosureCodegen.erasedInvokeSignature(fd);
-                    pushMethodArguments(expression, methodDescriptor);
-                    v.invokevirtual(ClosureCodegen.getInternalClassName(fd), "invoke", methodDescriptor.getDescriptor());
+                    CallableMethod callableMethod = ClosureCodegen.asCallableMethod(fd);
+                    pushMethodArguments(expression, callableMethod.getValueParameterTypes());
+                    callableMethod.invoke(v);
+                    methodDescriptor = callableMethod.getSignature();
                 }
 
                 if (methodDescriptor.getReturnType() != Type.VOID_TYPE) {

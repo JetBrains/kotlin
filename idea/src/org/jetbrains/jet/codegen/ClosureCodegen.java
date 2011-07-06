@@ -211,4 +211,10 @@ public class ClosureCodegen {
         signatureWriter.visitClassType(rawRetType.getInternalName());
         signatureWriter.visitEnd();
     }
+
+    public static CallableMethod asCallableMethod(FunctionDescriptor fd) {
+        Method descriptor = erasedInvokeSignature(fd);
+        String owner = getInternalClassName(fd);
+        return new CallableMethod(owner, descriptor, Opcodes.INVOKEVIRTUAL, Arrays.asList(descriptor.getArgumentTypes()));
+    }
 }
