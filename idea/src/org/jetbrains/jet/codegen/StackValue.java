@@ -67,6 +67,10 @@ public abstract class StackValue {
         return new ArrayElement(type);
     }
 
+    public static StackValue collectionElement(Type type, CallableMethod getter, CallableMethod setter) {
+        return new CollectionElement(type, getter, setter);
+    }
+
     public static StackValue field(Type type, String owner, String name, boolean isStatic) {
         return new Field(type, owner, name, isStatic);
     }
@@ -379,6 +383,43 @@ public abstract class StackValue {
             }
             else {
                 v.dup2();   // array and index
+            }
+        }
+    }
+
+    private static class CollectionElement extends StackValue {
+        private final CallableMethod getter;
+        private final CallableMethod setter;
+
+        public CollectionElement(Type type, CallableMethod getter, CallableMethod setter) {
+            super(type);
+            this.getter = getter;
+            this.setter = setter;
+        }
+
+        @Override
+        public void put(Type type, InstructionAdapter v) {
+            if (getter == null) {
+                throw new UnsupportedOperationException("no getter specified");
+            }
+            getter.invoke(v);
+        }
+
+        @Override
+        public void store(InstructionAdapter v) {
+            if (setter == null) {
+                throw new UnsupportedOperationException("no setter specified");
+            }
+            setter.invoke(v);
+        }
+
+        @Override
+        public void dupReceiver(InstructionAdapter v, int below) {
+            if (below == 1) {
+                v.dup2X1();
+            }
+            else {
+                v.dup2();   // collection and index
             }
         }
     }

@@ -1472,14 +1472,27 @@ public class ExpressionCodegen extends JetVisitor {
     public void visitArrayAccessExpression(JetArrayAccessExpression expression) {
         final JetExpression array = expression.getArrayExpression();
         final Type arrayType = expressionType(array);
+        gen(array, arrayType);
+        generateArrayIndex(expression);
         if (arrayType.getSort() == Type.ARRAY) {
-            gen(array, arrayType);
-            generateArrayIndex(expression);
             final Type elementType = arrayType.getElementType();
             myStack.push(StackValue.arrayElement(elementType));
         }
         else {
-            throw new UnsupportedOperationException("array access to non-Java arrays is not supported");
+            final PsiElement declaration = bindingContext.resolveToDeclarationPsiElement(expression);
+            final CallableMethod accessor;
+            if (declaration instanceof PsiMethod) {
+                accessor = JetTypeMapper.mapToCallableMethod((PsiMethod) declaration);
+            }
+            else if (declaration instanceof JetNamedFunction) {
+                accessor = typeMapper.mapToCallableMethod((JetNamedFunction) declaration);
+            }
+            else {
+                throw new UnsupportedOperationException("unknown accessor type");
+            }
+            boolean isGetter = accessor.getSignature().getName().equals("get");
+            myStack.push(StackValue.collectionElement(JetTypeMapper.TYPE_OBJECT, isGetter ? accessor : null,
+                                                      isGetter ? null : accessor));
         }
     }
 

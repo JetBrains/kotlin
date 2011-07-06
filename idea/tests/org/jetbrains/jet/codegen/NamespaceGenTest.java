@@ -426,4 +426,13 @@ public class NamespaceGenTest extends CodegenTestCase {
         main.invoke(null, list);
         assertEquals("foo", list.get(0));
     }
+
+    public void testArrayAccessForArrayList() throws Exception {
+        loadText("import java.util.*; fun foo(l: ArrayList<String>) { l[0] = \"Jet\" + l[0]; }");
+        final Method main = generateFunction();
+        final ArrayList<String> list = new ArrayList<String>();
+        list.add("Language");
+        main.invoke(null, list);
+        assertEquals("JetLanguage", list.get(0));
+    }
 }
