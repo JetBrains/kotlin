@@ -10,14 +10,13 @@ fun foo() {
 
 fun foo() {
   when (e) {
-
+                          
   }
   when (e) {
     is a => foo
   }
   when (e) {
     is Tree @ (a, b) => foo
-    is Tree @ (a, b) if (a > 5) => foo
     is null => foo
     is 1 => foo
     is A.b => foo
@@ -58,7 +57,6 @@ fun foo() {
     is (Int, Int) => 2
     is val a : Foo => 2
     else => foo
-    else continue
   }
 }
 
@@ -72,4 +70,3 @@ fun foo() {
     is a.a @ (val b, b) if (b == a + 3) => c
   }
 }
-

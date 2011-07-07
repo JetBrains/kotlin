@@ -635,8 +635,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
     /*
      * whenEntry
      *   // TODO : consider empty after =>
-     *   : whenConditionIf{","} (when  | "=>" element SEMI)
-     *   : "else" ("continue" | "=>" element SEMI)
+     *   : whenCondition{","} "=>" element SEMI
+     *   : "else" "=>" element SEMI
      *   ;
      */
     private void parseWhenEntry() {
@@ -645,8 +645,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
         if (at(ELSE_KEYWORD)) {
             advance(); // ELSE_KEYWORD
 
-            if (!at(CONTINUE_KEYWORD) && !at(DOUBLE_ARROW)) {
-                errorUntil("Expecting 'continue' or '=> element'", TokenSet.create(CONTINUE_KEYWORD, DOUBLE_ARROW,
+            if (!at(DOUBLE_ARROW)) {
+                errorUntil("Expecting '=>'", TokenSet.create(DOUBLE_ARROW,
                         RBRACE, EOL_OR_SEMICOLON));
             }
 
@@ -658,10 +658,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 } else {
                     parseExpression();
                 }
-            } else if (at(CONTINUE_KEYWORD)) {
-                advance(); // CONTINUE_KEYWORD
             } else if (!atSet(WHEN_CONDITION_RECOVERY_SET)) {
-                 errorAndAdvance("Expecting 'continue' or '=> element'");
+                 errorAndAdvance("Expecting '=>'");
             }
         } else {
             parseWhenEntryNotElse();
@@ -672,48 +670,22 @@ public class JetExpressionParsing extends AbstractJetParsing {
     }
 
     /*
-     * : whenConditionIf{","} (when  | "=>" element SEMI)
+     * : whenCondition{","} "=>" element SEMI
      */
     private void parseWhenEntryNotElse() {
         while (true) {
             while (at(COMMA)) errorAndAdvance("Expecting a when-condition");
-            parseWhenConditionIf();
+            parseWhenCondition();
             if (!at(COMMA)) break;
             advance(); // COMMA
         }
-        if (at(WHEN_KEYWORD)) {
-            parseWhen();
+        expect(DOUBLE_ARROW, "Expecting '=>' or 'when'", WHEN_CONDITION_RECOVERY_SET);
+        if (atSet(WHEN_CONDITION_RECOVERY_SET)) {
+            error("Expecting an element");
         } else {
-            expect(DOUBLE_ARROW, "Expecting '=>' or 'when'", WHEN_CONDITION_RECOVERY_SET);
-            if (atSet(WHEN_CONDITION_RECOVERY_SET)) {
-                error("Expecting an element");
-            } else {
-                parseExpression();
-            }
-            // SEMI is consumed in parseWhenEntry
-        }
-    }
-
-    /*
-     * whenConditionIf
-     *   : pattern ("if" "(" element ")")?
-     *   ;
-     */
-    private void parseWhenConditionIf() {
-        parseWhenCondition();
-
-        if (at(IF_KEYWORD)) {
-            advance(); // IF_KEYWORD
-
-            // TODO : allow omitting these parentheses
-            myBuilder.disableNewlines();
-            expect(LPAR, "Expecting '('");
-
             parseExpression();
-
-            expect(RPAR, "Expecting ')'");
-            myBuilder.restoreNewlinesState();
         }
+        // SEMI is consumed in parseWhenEntry
     }
 
     /*

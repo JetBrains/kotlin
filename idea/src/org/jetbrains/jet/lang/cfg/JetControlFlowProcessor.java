@@ -630,9 +630,6 @@ public class JetControlFlowProcessor {
             Label nextLabel = builder.createUnboundLabel();
             for (Iterator<JetWhenEntry> iterator = expression.getEntries().iterator(); iterator.hasNext(); ) {
                 JetWhenEntry whenEntry = iterator.next();
-                if (whenEntry.getSubWhen() != null) throw new UnsupportedOperationException(); // TODO
-
-                if (whenEntry.isElseContinue()) throw new UnsupportedOperationException(); // TODO
 
                 if (whenEntry.isElse()) {
                     if (iterator.hasNext()) {

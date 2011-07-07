@@ -12,12 +12,8 @@ when
 
 whenEntry
   // TODO : consider empty after =>
-  : whenConditionIf{","} (when  | "=>" expression SEMI)
-  : "else" ("continue" | "=>" expression SEMI)
-  ;
-
-whenConditionIf
-  : whenCondition ("if" "(" expression ")")?
+  : whenCondition{","} "=>" expression SEMI
+  : "else" "=>" expression SEMI
   ;
 
 whenCondition

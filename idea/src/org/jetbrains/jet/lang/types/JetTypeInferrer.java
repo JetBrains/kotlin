@@ -1324,8 +1324,7 @@ public class JetTypeInferrer {
                         newDataFlowInfo = newDataFlowInfo.and(context.dataFlowInfo);
                     }
                 }
-                JetWhenExpression subWhen = whenEntry.getSubWhen();
-                JetExpression bodyExpression = subWhen == null ? whenEntry.getExpression() : subWhen;
+                JetExpression bodyExpression = whenEntry.getExpression();
                 if (bodyExpression != null) {
                     JetType type = getTypeWithNewDataFlowInfo(scopeToExtend, bodyExpression, true, newDataFlowInfo);
                     if (type != null) {
@@ -1436,8 +1435,11 @@ public class JetTypeInferrer {
 
                 @Override
                 public void visitExpressionPattern(JetExpressionPattern pattern) {
-                    JetType type = getType(scopeToExtend, pattern.getExpression(), false);
-                    checkTypeCompatibility(type, subjectType, pattern);
+                    JetExpression expression = pattern.getExpression();
+                    if (expression != null) {
+                        JetType type = getType(scopeToExtend, expression, false);
+                        checkTypeCompatibility(type, subjectType, pattern);
+                    }
                 }
 
                 @Override

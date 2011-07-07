@@ -91,7 +91,7 @@ JetFile: When_ERR.jet
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
             PsiElement(else)('else')
-            PsiErrorElement:Expecting 'continue' or '=> element'
+            PsiErrorElement:Expecting '=>'
               <empty list>
           PsiWhiteSpace('\n  ')
           PsiElement(RBRACE)('}')
@@ -172,7 +172,7 @@ JetFile: When_ERR.jet
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
             PsiElement(else)('else')
-            PsiErrorElement:Expecting 'continue' or '=> element'
+            PsiErrorElement:Expecting '=>'
               <empty list>
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY

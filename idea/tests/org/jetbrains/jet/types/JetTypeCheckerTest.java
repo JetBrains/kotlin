@@ -121,8 +121,6 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertType("when (1) { is 1 => 2; is 1 => '2'} ", "Any");
         assertType("when (1) { is 1 => 2; is 1 => '2'; is 1 => null} ", "Any?");
         assertType("when (1) { is 1 => 2; is 1 => '2'; else => null} ", "Any?");
-        assertType("when (1) { is 1 => 2; is 1 => '2'; else continue} ", "Any");
-        assertType("when (1) { is 1 => 2; is 1 => '2'; is 1 when(e) {is 1 => null}} ", "Any?");
         assertType("when (1) { is 1 => 2; is 1 => '2'; is 1 => when(e) {is 1 => null}} ", "Any?");
     }
 
