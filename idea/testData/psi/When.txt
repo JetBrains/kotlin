@@ -1146,35 +1146,39 @@ JetFile: When.jet
               PsiElement(IDENTIFIER)('c')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION_EXPRESSION
-              INTEGER_CONSTANT
-                PsiElement(INTEGER_LITERAL)('1')
+            WHEN_CONDITION_IS_PATTERN
+              EXPRESSION_PATTERN
+                INTEGER_CONSTANT
+                  PsiElement(INTEGER_LITERAL)('1')
             PsiElement(COMMA)(',')
             PsiWhiteSpace(' ')
-            WHEN_CONDITION_EXPRESSION
-              CALL_EXPRESSION
+            WHEN_CONDITION_IS_PATTERN
+              EXPRESSION_PATTERN
+                CALL_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('foo')
+                  VALUE_ARGUMENT_LIST
+                    PsiElement(LPAR)('(')
+                    PsiElement(RPAR)(')')
+            PsiElement(COMMA)(',')
+            PsiWhiteSpace(' ')
+            WHEN_CONDITION_IS_PATTERN
+              EXPRESSION_PATTERN
                 REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('foo')
-                VALUE_ARGUMENT_LIST
-                  PsiElement(LPAR)('(')
-                  PsiElement(RPAR)(')')
+                  PsiElement(IDENTIFIER)('bar')
             PsiElement(COMMA)(',')
             PsiWhiteSpace(' ')
-            WHEN_CONDITION_EXPRESSION
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('bar')
-            PsiElement(COMMA)(',')
-            PsiWhiteSpace(' ')
-            WHEN_CONDITION_EXPRESSION
-              BINARY_EXPRESSION
-                INTEGER_CONSTANT
-                  PsiElement(INTEGER_LITERAL)('2')
-                PsiWhiteSpace(' ')
-                OPERATION_REFERENCE
-                  PsiElement(PLUS)('+')
-                PsiWhiteSpace(' ')
-                INTEGER_CONSTANT
-                  PsiElement(INTEGER_LITERAL)('3')
+            WHEN_CONDITION_IS_PATTERN
+              EXPRESSION_PATTERN
+                BINARY_EXPRESSION
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('2')
+                  PsiWhiteSpace(' ')
+                  OPERATION_REFERENCE
+                    PsiElement(PLUS)('+')
+                  PsiWhiteSpace(' ')
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('3')
             PsiElement(COMMA)(',')
             PsiWhiteSpace('\n    ')
             WHEN_CONDITION_IS_PATTERN

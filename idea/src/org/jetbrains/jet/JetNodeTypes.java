@@ -136,7 +136,6 @@ public interface JetNodeTypes {
     JetNodeType WHEN_CONDITION_IN_RANGE   = new JetNodeType("WHEN_CONDITION_IN_RANGE", JetWhenConditionInRange.class);
     JetNodeType WHEN_CONDITION_IS_PATTERN = new JetNodeType("WHEN_CONDITION_IS_PATTERN", JetWhenConditionIsPattern.class);
     JetNodeType WHEN_CONDITION_CALL       = new JetNodeType("WHEN_CONDITION_CALL", JetWhenConditionCall.class);
-    JetNodeType WHEN_CONDITION_EXPRESSION = new JetNodeType("WHEN_CONDITION_EXPRESSION", JetWhenConditionWithExpression.class);
 
     JetNodeType NAMESPACE_NAME = new JetNodeType("NAMESPACE_NAME", JetContainerNode.class);
 }

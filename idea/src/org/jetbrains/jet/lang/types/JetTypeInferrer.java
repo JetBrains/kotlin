@@ -1345,18 +1345,6 @@ public class JetTypeInferrer {
         private DataFlowInfo checkWhenCondition(@Nullable final JetExpression subjectExpression, final JetType subjectType, JetWhenCondition condition, final WritableScope scopeToExtend, final VariableDescriptor... subjectVariables) {
             final DataFlowInfo[] newDataFlowInfo = new DataFlowInfo[]{context.dataFlowInfo};
             condition.accept(new JetVisitor() {
-                @Override
-                public void visitWhenConditionWithExpression(JetWhenConditionWithExpression condition) {
-                    JetExpression conditionExpression = condition.getExpression();
-                    if (conditionExpression != null) {
-                        JetType type = getType(context.scope, conditionExpression, false);
-                        if (type != null && subjectType != null) {
-                            if (TypeUtils.intersect(semanticServices.getTypeChecker(), Sets.newHashSet(subjectType, type)) == null) {
-                                context.trace.getErrorHandler().genericError(conditionExpression.getNode(), "This condition can never hold");
-                            }
-                        }
-                    }
-                }
 
                 @Override
                 public void visitWhenConditionCall(JetWhenConditionCall condition) {

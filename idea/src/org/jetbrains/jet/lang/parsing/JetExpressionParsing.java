@@ -758,18 +758,16 @@ public class JetExpressionParsing extends AbstractJetParsing {
             else {
                 mark.drop();
             }
-//            myJetParsing.parseTypeArgumentList();
-//            if (at(LPAR)) {
-//                parseValueArgumentList();
-//            }
             condition.done(WHEN_CONDITION_CALL);
         } else {
+            PsiBuilder.Marker expressionPattern = mark();
             if (atSet(WHEN_CONDITION_RECOVERY_SET_WITH_DOUBLE_ARROW)) {
                 error("Expecting an element, is-condition or in-condition");
             } else {
                 parseExpression();
             }
-            condition.done(WHEN_CONDITION_EXPRESSION);
+            expressionPattern.done(EXPRESSION_PATTERN);
+            condition.done(WHEN_CONDITION_IS_PATTERN);
         }
         myBuilder.restoreNewlinesState();
     }

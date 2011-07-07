@@ -649,11 +649,6 @@ public class JetControlFlowProcessor {
                         private final JetVisitor conditionVisitor = this;
 
                         @Override
-                        public void visitWhenConditionWithExpression(JetWhenConditionWithExpression condition) {
-                            value(condition.getExpression(), false, inCondition); // TODO : inCondition?
-                        }
-
-                        @Override
                         public void visitWhenConditionCall(JetWhenConditionCall condition) {
                             value(condition.getCallSuffixExpression(), false, inCondition); // TODO : inCondition?
                         }

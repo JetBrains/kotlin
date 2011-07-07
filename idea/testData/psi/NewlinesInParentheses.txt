@@ -310,14 +310,15 @@ JetFile: NewlinesInParentheses.jet
               PsiElement(IDENTIFIER)('a')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION_EXPRESSION
-              CALL_EXPRESSION
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('f')
-                PsiWhiteSpace('\n    ')
-                VALUE_ARGUMENT_LIST
-                  PsiElement(LPAR)('(')
-                  PsiElement(RPAR)(')')
+            WHEN_CONDITION_IS_PATTERN
+              EXPRESSION_PATTERN
+                CALL_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('f')
+                  PsiWhiteSpace('\n    ')
+                  VALUE_ARGUMENT_LIST
+                    PsiElement(LPAR)('(')
+                    PsiElement(RPAR)(')')
             PsiWhiteSpace(' ')
             PsiElement(DOUBLE_ARROW)('=>')
             PsiWhiteSpace(' ')

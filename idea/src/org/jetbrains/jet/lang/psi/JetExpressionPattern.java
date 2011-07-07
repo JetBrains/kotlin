@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author abreslav
@@ -11,7 +12,7 @@ public class JetExpressionPattern extends JetPattern {
         super(node);
     }
 
-    @NotNull
+    @Nullable @IfNotParsed
     public JetExpression getExpression() {
         return findChildByClass(JetExpression.class);
     }

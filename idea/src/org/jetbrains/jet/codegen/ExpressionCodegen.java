@@ -1837,15 +1837,16 @@ public class ExpressionCodegen extends JetVisitor {
     private StackValue generateWhenCondition(Type subjectType, int subjectLocal, JetWhenCondition condition,
                                              @Nullable Label nextEntry) {
         StackValue conditionValue;
-        if (condition instanceof JetWhenConditionWithExpression) {
-            v.load(subjectLocal, subjectType);
-            JetExpression condExpression = ((JetWhenConditionWithExpression) condition).getExpression();
-            Type condType = isNumberPrimitive(subjectType) ? expressionType(condExpression) : OBJECT_TYPE;
-            gen(condExpression, condType);
-            generateEqualsForExpressionsOnStack(JetTokens.EQEQ, subjectType, condType);
-            conditionValue = myStack.pop();
-        }
-        else if (condition instanceof JetWhenConditionInRange) {
+//        if (condition instanceof JetWhenConditionWithExpression) {
+//            v.load(subjectLocal, subjectType);
+//            JetExpression condExpression = ((JetWhenConditionWithExpression) condition).getExpression();
+//            Type condType = isNumberPrimitive(subjectType) ? expressionType(condExpression) : OBJECT_TYPE;
+//            gen(condExpression, condType);
+//            generateEqualsForExpressionsOnStack(JetTokens.EQEQ, subjectType, condType);
+//            conditionValue = myStack.pop();
+//        }
+//        else
+        if (condition instanceof JetWhenConditionInRange) {
             JetExpression range = ((JetWhenConditionInRange) condition).getRangeExpression();
             gen(range, RANGE_TYPE);
             new StackValue.Local(subjectLocal, subjectType).put(INTEGER_TYPE, v);

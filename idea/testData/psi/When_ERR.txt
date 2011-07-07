@@ -80,9 +80,10 @@ JetFile: When_ERR.jet
               PsiElement(IDENTIFIER)('foo')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION_EXPRESSION
-              PsiErrorElement:Expecting an element, is-condition or in-condition
-                <empty list>
+            WHEN_CONDITION_IS_PATTERN
+              EXPRESSION_PATTERN
+                PsiErrorElement:Expecting an element, is-condition or in-condition
+                  <empty list>
             PsiElement(DOUBLE_ARROW)('=>')
             PsiWhiteSpace(' ')
             REFERENCE_EXPRESSION
@@ -161,9 +162,10 @@ JetFile: When_ERR.jet
           PsiElement(SEMICOLON)(';')
           PsiWhiteSpace('\n    ')
           WHEN_ENTRY
-            WHEN_CONDITION_EXPRESSION
-              PsiErrorElement:Expecting an element, is-condition or in-condition
-                <empty list>
+            WHEN_CONDITION_IS_PATTERN
+              EXPRESSION_PATTERN
+                PsiErrorElement:Expecting an element, is-condition or in-condition
+                  <empty list>
             PsiElement(DOUBLE_ARROW)('=>')
             PsiErrorElement:Expecting an element
               <empty list>
