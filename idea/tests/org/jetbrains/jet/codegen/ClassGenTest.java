@@ -115,4 +115,8 @@ public class ClassGenTest extends CodegenTestCase {
         final Class aClass = loadAllClasses(generateClassesInFile()).get("SimpleClass$$Impl");
         assertTrue((aClass.getModifiers() & Modifier.ABSTRACT) != 0);
     }
+
+    public void testClassObject() throws Exception {
+        blackBoxFile("classes/classObject.jet");
+    }
 }

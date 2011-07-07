@@ -628,7 +628,7 @@ public class ExpressionCodegen extends JetVisitor {
 
                 //TODO: hack, will not need if resolve goes to right descriptor itself
                 if (declaration instanceof JetParameter) {
-                    if (PsiTreeUtil.getParentOfType(expression, JetDelegationSpecifier.class)  != null) {
+                    if (PsiTreeUtil.getParentOfType(expression, JetDelegationSpecifier.class) != null) {
                         JetClass aClass = PsiTreeUtil.getParentOfType(expression, JetClass.class);
                         ConstructorDescriptor constructorDescriptor = bindingContext.getConstructorDescriptor(aClass);
                         List<ValueParameterDescriptor> parameters = constructorDescriptor.getValueParameters();
@@ -666,6 +666,17 @@ public class ExpressionCodegen extends JetVisitor {
                     }
                     myStack.push(iValue);
                 }
+            }
+            else if (descriptor instanceof ClassDescriptor) {
+                final JetClassObject classObject = ((JetClass) declaration).getClassObject();
+                if (classObject == null) {
+                    throw new UnsupportedOperationException("trying to reference a class which doesn't have a class object");
+                }
+                final String type = typeMapper.jvmName(classObject);
+                myStack.push(StackValue.field(Type.getObjectType(type),
+                                              typeMapper.jvmName((ClassDescriptor) descriptor, OwnerKind.IMPLEMENTATION),
+                                              "$classobj",
+                                              true));
             }
             else {
                 // receiver

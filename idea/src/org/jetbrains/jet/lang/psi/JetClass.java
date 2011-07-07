@@ -85,6 +85,13 @@ public class JetClass extends JetTypeParameterListOwner implements JetClassOrObj
         return (JetObjectDeclarationName) findChildByType(JetNodeTypes.OBJECT_DECLARATION_NAME);
     }
 
+    @Nullable
+    public JetClassObject getClassObject() {
+        JetClassBody body = (JetClassBody) findChildByType(JetNodeTypes.CLASS_BODY);
+        if (body == null) return null;
+        return body.getClassObject();
+    }
+
     public List<JetProperty> getProperties() {
         JetClassBody body = (JetClassBody) findChildByType(JetNodeTypes.CLASS_BODY);
         if (body == null) return Collections.emptyList();

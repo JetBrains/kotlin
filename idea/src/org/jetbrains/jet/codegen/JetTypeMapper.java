@@ -141,6 +141,12 @@ public class JetTypeMapper {
             return jvmName((PsiClass) declaration);
         }
         if (declaration instanceof JetObjectDeclaration && ((JetObjectDeclaration) declaration).isObjectLiteral()) {
+            final PsiElement parent = declaration.getParent();
+            if (parent instanceof JetClassObject) {
+                JetClass containingClass = PsiTreeUtil.getParentOfType(parent, JetClass.class);
+                final ClassDescriptor containingClassDescriptor = bindingContext.getClassDescriptor(containingClass);
+                return jvmName(containingClassDescriptor, OwnerKind.INTERFACE) + "$$ClassObj";
+            }
             String className = classNamesForAnonymousClasses.get(declaration);
             if (className == null) {
                 throw new UnsupportedOperationException("Unexpected forward reference to anonymous class " + declaration);
@@ -148,6 +154,11 @@ public class JetTypeMapper {
             return className;
         }
         return jetJvmName(jetClass, kind);
+    }
+
+    public String jvmName(JetClassObject classObject) {
+        final ClassDescriptor descriptor = bindingContext.getClassDescriptor(classObject.getObjectDeclaration());
+        return jvmName(descriptor,  OwnerKind.IMPLEMENTATION);
     }
 
     public boolean isInterface(ClassDescriptor jetClass, OwnerKind kind) {

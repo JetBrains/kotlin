@@ -2,6 +2,7 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.JetType;
@@ -73,6 +74,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             Type type = JetTypeMapper.jetImplementationType(descriptor);
             v.visitField(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC, "$instance", type.getDescriptor(), null, null);
         }
+        final JetClassObject classObject = getClassObject();
+        if (classObject != null) {
+            Type type = Type.getObjectType(state.getTypeMapper().jvmName(classObject));
+            v.visitField(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC, "$classobj", type.getDescriptor(), null, null);
+        }
 
         generateStaticInitializer();
 
@@ -133,7 +139,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             iv.invokespecial(superClass, "<init>", /* TODO super constructor descriptor */"()V");
         }
 
-        final DeclarationDescriptor outerDescriptor = descriptor.getContainingDeclaration();
+        final DeclarationDescriptor outerDescriptor = getOuterClassDescriptor();
         if (outerDescriptor instanceof ClassDescriptor) {
             final ClassDescriptor outerClassDescriptor = (ClassDescriptor) outerDescriptor;
             final Type type = JetTypeMapper.jetImplementationType(outerClassDescriptor);
@@ -220,6 +226,15 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         mv.visitEnd();
     }
 
+    @Nullable
+    private ClassDescriptor getOuterClassDescriptor() {
+        if (myClass.getParent() instanceof JetClassObject) {
+            return null;
+        }
+        final DeclarationDescriptor outerDescriptor = descriptor.getContainingDeclaration();
+        return outerDescriptor instanceof ClassDescriptor ? (ClassDescriptor) outerDescriptor : null;
+    }
+
     private void generateDelegatorToConstructorCall(InstructionAdapter iv, ExpressionCodegen codegen, JetCall constructorCall,
                                                     ConstructorDescriptor constructorDescriptor, boolean isJavaSuperclass,
                                                     ConstructorFrameMap frameMap) {
@@ -271,6 +286,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     protected void generateDeclaration(PropertyCodegen propertyCodegen, JetDeclaration declaration, FunctionCodegen functionCodegen) {
         if (declaration instanceof JetConstructor) {
             generateSecondaryConstructor((JetConstructor) declaration);
+        }
+        else if (declaration instanceof JetClassObject) {
+            generateClassObject((JetClassObject) declaration);
         }
         else {
             super.generateDeclaration(propertyCodegen, declaration, functionCodegen);
@@ -387,8 +405,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private void generateStaticInitializer() {
         boolean needTypeInfo = descriptor.getTypeConstructor().getParameters().size() == 0;
         boolean needInstance = isNonLiteralObject();
-        if (!needTypeInfo && !needInstance) {
-            // we will have a dynamic type info field
+        JetClassObject classObject = getClassObject();
+        if (!needTypeInfo && !needInstance && classObject == null) {
             return;
         }
         final MethodVisitor mv = v.visitMethod(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC,
@@ -409,6 +427,15 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             v.invokespecial(name, "<init>", "()V");
             v.putstatic(name, "$instance", JetTypeMapper.jetImplementationType(descriptor).getDescriptor());
         }
+        if (classObject != null) {
+            String name = state.getTypeMapper().jvmName(classObject);
+            final Type classObjectType = Type.getObjectType(name);
+            v.anew(classObjectType);
+            v.dup();
+            v.invokespecial(name, "<init>", "()V");
+            v.putstatic(state.getTypeMapper().jvmName(descriptor, OwnerKind.IMPLEMENTATION), "$classobj",
+                        classObjectType.getDescriptor());
+        }
 
         mv.visitInsn(Opcodes.RETURN);
         mv.visitMaxs(0, 0);
@@ -416,8 +443,14 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         mv.visitEnd();
     }
 
+    @Nullable
+    private JetClassObject getClassObject() {
+        return myClass instanceof JetClass ? ((JetClass) myClass).getClassObject() : null;
+    }
+
     private boolean isNonLiteralObject() {
-        return myClass instanceof JetObjectDeclaration && !((JetObjectDeclaration) myClass).isObjectLiteral();
+        return myClass instanceof JetObjectDeclaration && !((JetObjectDeclaration) myClass).isObjectLiteral() &&
+                !(myClass.getParent() instanceof JetClassObject);
     }
 
     private void generateGetTypeInfo() {
@@ -432,5 +465,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         v.areturn(JetTypeMapper.TYPE_TYPEINFO);
         mv.visitMaxs(0, 0);
         mv.visitEnd();
+    }
+
+    private void generateClassObject(JetClassObject declaration) {
+        state.forClass().generate(context, declaration.getObjectDeclaration());
     }
 }

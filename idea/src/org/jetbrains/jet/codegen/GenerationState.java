@@ -59,7 +59,7 @@ public class GenerationState {
     }
 
     public ClassVisitor forClassImplementation(ClassDescriptor aClass) {
-        return factory.newVisitor(JetTypeMapper.jvmNameForImplementation(aClass) + ".class");
+        return factory.newVisitor(typeMapper.jvmName(aClass, OwnerKind.IMPLEMENTATION) + ".class");
     }
 
     public ClassVisitor forClassDelegatingImplementation(ClassDescriptor aClass) {

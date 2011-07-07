@@ -3,6 +3,7 @@ package org.jetbrains.jet.lang.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 
 import java.util.List;
@@ -36,5 +37,10 @@ public class JetClassBody extends JetElement {
     @NotNull
     public List<JetProperty> getProperties() {
         return findChildrenByType(JetNodeTypes.PROPERTY);
+    }
+
+    @Nullable
+    public JetClassObject getClassObject() {
+        return (JetClassObject) findChildByType(JetNodeTypes.CLASS_OBJECT);
     }
 }
