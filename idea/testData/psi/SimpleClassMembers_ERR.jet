@@ -1,6 +1,6 @@
 class foo {
 
-    extension foo for X { } -
+    class foo {} -
 
     class Bar {
     sdfsd

@@ -8,7 +8,4 @@ fun foo() {
     [a] var foo = 4
     type f = fun T.() : ()
 
-    virtual extension foo for bar {
-
-    }
 }

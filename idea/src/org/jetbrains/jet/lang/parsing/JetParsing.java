@@ -29,9 +29,9 @@ public class JetParsing extends AbstractJetParsing {
     }
 
     private static final TokenSet TOPLEVEL_OBJECT_FIRST = TokenSet.create(TYPE_KEYWORD, CLASS_KEYWORD,
-                EXTENSION_KEYWORD, FUN_KEYWORD, VAL_KEYWORD, NAMESPACE_KEYWORD);
+                FUN_KEYWORD, VAL_KEYWORD, NAMESPACE_KEYWORD);
     private static final TokenSet ENUM_MEMBER_FIRST = TokenSet.create(TYPE_KEYWORD, CLASS_KEYWORD,
-                EXTENSION_KEYWORD, FUN_KEYWORD, VAL_KEYWORD, IDENTIFIER);
+                FUN_KEYWORD, VAL_KEYWORD, IDENTIFIER);
 
     private static final TokenSet CLASS_NAME_RECOVERY_SET = TokenSet.orSet(TokenSet.create(LT, WRAPS_KEYWORD, LPAR, COLON, LBRACE), TOPLEVEL_OBJECT_FIRST);
     private static final TokenSet TYPE_PARAMETER_GT_RECOVERY_SET = TokenSet.create(WHERE_KEYWORD, WRAPS_KEYWORD, LPAR, COLON, LBRACE, GT);
@@ -230,9 +230,6 @@ public class JetParsing extends AbstractJetParsing {
         else if (keywordToken == CLASS_KEYWORD) {
             declType = parseClass(detector.isDetected());
         }
-        else if (keywordToken == EXTENSION_KEYWORD) {
-            declType = parseExtension();
-        }
         else if (keywordToken == FUN_KEYWORD) {
             declType = parseFunction();
         }
@@ -243,7 +240,7 @@ public class JetParsing extends AbstractJetParsing {
             declType = parseTypeDef();
         }
         else if (keywordToken == OBJECT_KEYWORD) {
-            parseObject(true);
+            parseObject(true, true);
             declType = OBJECT_DECLARATION;
         }
 
@@ -573,9 +570,6 @@ public class JetParsing extends AbstractJetParsing {
                 declType = parseClass(isEnum);
             }
         }
-        else if (keywordToken == EXTENSION_KEYWORD) {
-            declType = parseExtension();
-        }
         else if (keywordToken == FUN_KEYWORD) {
             declType = parseFunction();
         }
@@ -589,7 +583,7 @@ public class JetParsing extends AbstractJetParsing {
             declType = parseConstructor();
         }
         else if (keywordToken == OBJECT_KEYWORD) {
-            parseObject(true);
+            parseObject(true, true);
             declType = OBJECT_DECLARATION;
         } else if (keywordToken == LBRACE) {
             parseBlock();
@@ -600,15 +594,15 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * object
-     *   : "object" SimpleName? ":" delegationSpecifier{","}? classBody // Cannot make class body optional: foo(object F, a)
+     *   : "object" SimpleName? ":" delegationSpecifier{","}? classBody?
      *   ;
      */
-    public void parseObject(boolean declaration) {
+    public void parseObject(boolean named, boolean optionalBody) {
         assert _at(OBJECT_KEYWORD);
 
         advance(); // OBJECT_KEYWORD
 
-        if (declaration) {
+        if (named) {
             PsiBuilder.Marker propertyDeclaration = mark();
             expect(IDENTIFIER, "Expecting object name", TokenSet.create(LBRACE));
             propertyDeclaration.done(OBJECT_DECLARATION_NAME);
@@ -619,7 +613,7 @@ public class JetParsing extends AbstractJetParsing {
             }
         }
 
-        if (declaration) { // Body is optional
+        if (optionalBody) {
             if (at(COLON)) {
                 advance(); // COLON
                 parseDelegationSpecifierList();
@@ -723,7 +717,7 @@ public class JetParsing extends AbstractJetParsing {
         advance(); // CLASS_KEYWORD
 
         final PsiBuilder.Marker objectDeclaration = mark();
-        parseObject(false);
+        parseObject(false, true);
         objectDeclaration.done(OBJECT_DECLARATION);
 
         return CLASS_OBJECT;
@@ -1029,34 +1023,6 @@ public class JetParsing extends AbstractJetParsing {
         myBuilder.restoreNewlinesState();
 
         block.done(BLOCK);
-    }
-
-    /*
-     * extension
-     *   : modifiers "extension" SimpleName? typeParameters? "for" type classBody? // properties cannot be lazy, cannot have backing fields
-     *   ;
-     */
-    public JetNodeType parseExtension() {
-        assert _at(EXTENSION_KEYWORD);
-
-        advance(); // EXTENSION_KEYWORD
-
-        consumeIf(IDENTIFIER);
-
-        parseTypeParameterList(TokenSet.create(FOR_KEYWORD, LBRACE));
-
-        expect(FOR_KEYWORD, "Expecting 'for' to specify the type that is being extended", TYPE_REF_FIRST);
-
-        parseTypeRef();
-
-        if (at(LBRACE)) {
-            parseClassBody();
-        }
-        else {
-            consumeIf(SEMICOLON);
-        }
-
-        return EXTENSION;
     }
 
     /*

@@ -2535,11 +2535,6 @@ public class JetTypeInferrer {
         }
 
         @Override
-        public void visitExtension(JetExtension extension) {
-            super.visitExtension(extension); // TODO
-        }
-
-        @Override
         public void visitTypedef(JetTypedef typedef) {
             super.visitTypedef(typedef); // TODO
         }

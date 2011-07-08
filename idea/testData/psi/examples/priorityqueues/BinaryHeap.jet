@@ -64,34 +64,29 @@ class BinaryHeap<T> : IPriorityQueue<T> {
     }
   }
 
-  private extension HeapIndex for Int {
-    val parent : Int
-      get() = (this - 1) / 2
+  val Int.parent : Int
+    get() = (this - 1) / 2
 
 
-    val left : Int
-      get() = this * 2 + 1
+  val Int.left : Int
+    get() = this * 2 + 1
 
 
-    val right : Int
-      get() = this * 2 + 2
+  val Int.right : Int
+    get() = this * 2 + 2
 
 
-    val value : T = foo.bar()
-      get() = data[this]
-      set(it) {
-        $value = it
-      }
+  val Int.value : T = foo.bar()
+    get() = data[this]
+    set(it) {
+      $value = it
+    }
 
 
-    val exists : Boolean
-      get() = (this < data.size) && (this >= 0)
+  val Int.exists : Boolean
+    get() = (this < data.size) && (this >= 0)
 
-  }
-
-  private extension for T {
-    [operator] fun compareTo(other : T) : Int = compare(this, other)
-  }
+  fun <T> T.compareTo(other : T) : Int = compare(this, other)
 
 }
 

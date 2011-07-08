@@ -1,7 +1,7 @@
 fun foo() {
     class foo
     fun foo()
-    extension foo for boo
+    class foo
 
     type x = t
     var r

@@ -124,27 +124,5 @@ JetFile: LocalDeclarations.jet
                 TUPLE_TYPE
                   PsiElement(LPAR)('(')
                   PsiElement(RPAR)(')')
-        PsiWhiteSpace('\n\n    ')
-        EXTENSION
-          MODIFIER_LIST
-            PsiElement(virtual)('virtual')
-          PsiWhiteSpace(' ')
-          PsiElement(extension)('extension')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('foo')
-          PsiWhiteSpace(' ')
-          TYPE_PARAMETER_LIST
-            <empty list>
-          PsiElement(for)('for')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('bar')
-          PsiWhiteSpace(' ')
-          CLASS_BODY
-            PsiElement(LBRACE)('{')
-            PsiWhiteSpace('\n\n    ')
-            PsiElement(RBRACE)('}')
-        PsiWhiteSpace('\n')
+        PsiWhiteSpace('\n\n')
         PsiElement(RBRACE)('}')

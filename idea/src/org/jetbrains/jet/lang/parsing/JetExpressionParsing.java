@@ -21,7 +21,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     private static final TokenSet TYPE_ARGUMENT_LIST_STOPPERS = TokenSet.create(
             INTEGER_LITERAL, LONG_LITERAL, FLOAT_LITERAL, CHARACTER_LITERAL, STRING_LITERAL, RAW_STRING_LITERAL,
             NAMESPACE_KEYWORD, AS_KEYWORD, TYPE_KEYWORD, CLASS_KEYWORD, THIS_KEYWORD, VAL_KEYWORD, VAR_KEYWORD,
-            FUN_KEYWORD, EXTENSION_KEYWORD, FOR_KEYWORD, NULL_KEYWORD,
+            FUN_KEYWORD, FOR_KEYWORD, NULL_KEYWORD,
             TRUE_KEYWORD, FALSE_KEYWORD, IS_KEYWORD, THROW_KEYWORD, RETURN_KEYWORD, BREAK_KEYWORD,
             CONTINUE_KEYWORD, OBJECT_KEYWORD, IF_KEYWORD, TRY_KEYWORD, ELSE_KEYWORD, WHILE_KEYWORD, DO_KEYWORD,
             WHEN_KEYWORD, RBRACKET, RBRACE, RPAR, PLUSPLUS, MINUSMINUS, MUL, PLUS, MINUS, EXCL, DIV, PERC, LTEQ,
@@ -79,7 +79,6 @@ public class JetExpressionParsing extends AbstractJetParsing {
             LBRACKET, // attribute
             FUN_KEYWORD,
             VAL_KEYWORD, VAR_KEYWORD,
-            EXTENSION_KEYWORD,
             CLASS_KEYWORD,
             TYPE_KEYWORD
         ),
@@ -523,7 +522,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
         else if (at(DO_KEYWORD)) {
             parseDoWhile();
         }
-        else if (atSet(CLASS_KEYWORD, EXTENSION_KEYWORD, FUN_KEYWORD, VAL_KEYWORD,
+        else if (atSet(CLASS_KEYWORD, FUN_KEYWORD, VAL_KEYWORD,
                 VAR_KEYWORD, TYPE_KEYWORD)) {
             parseLocalDeclaration();
         }
@@ -1143,9 +1142,6 @@ public class JetExpressionParsing extends AbstractJetParsing {
          if (keywordToken == CLASS_KEYWORD) {
              declType = myJetParsing.parseClass(isEnum);
          }
-         else if (keywordToken == EXTENSION_KEYWORD) {
-             declType = myJetParsing.parseExtension();
-         }
          else if (keywordToken == FUN_KEYWORD) {
              declType = myJetParsing.parseFunction();
          }
@@ -1156,7 +1152,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
              declType = myJetParsing.parseTypeDef();
          }
          else if (keywordToken == OBJECT_KEYWORD) {
-             myJetParsing.parseObject(true);
+             myJetParsing.parseObject(true, true);
              declType = OBJECT_DECLARATION;
          }
          return declType;
@@ -1558,7 +1554,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     public void parseObjectLiteral() {
         PsiBuilder.Marker literal = mark();
         PsiBuilder.Marker declaration = mark();
-        myJetParsing.parseObject(false);
+        myJetParsing.parseObject(false, false); // Body is not optional because of foo(object : A, B)
         declaration.done(OBJECT_DECLARATION);
         literal.done(OBJECT_LITERAL);
     }

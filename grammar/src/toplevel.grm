@@ -38,7 +38,6 @@ toplevelObject
   : function
   : property
   : typedef
-  : extension
   ;
 
 namespace
@@ -55,9 +54,4 @@ bq. See [Namespaces]
 [undocumented]
 typedef
   : modifiers "type" SimpleName typeParameters? "=" type
-  ;
-
-[undocumented]
-extension
-  : modifiers "extension" SimpleName? typeParameters? "for" type classBody? // properties cannot be lazy, cannot have backing fields
   ;

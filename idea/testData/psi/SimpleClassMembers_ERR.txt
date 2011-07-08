@@ -10,23 +10,15 @@ JetFile: SimpleClassMembers_ERR.jet
       CLASS_BODY
         PsiElement(LBRACE)('{')
         PsiWhiteSpace('\n\n    ')
-        EXTENSION
-          PsiElement(extension)('extension')
+        CLASS
+          PsiElement(class)('class')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('foo')
           PsiWhiteSpace(' ')
           TYPE_PARAMETER_LIST
             <empty list>
-          PsiElement(for)('for')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('X')
-          PsiWhiteSpace(' ')
           CLASS_BODY
             PsiElement(LBRACE)('{')
-            PsiWhiteSpace(' ')
             PsiElement(RBRACE)('}')
         PsiWhiteSpace(' ')
         PsiErrorElement:Expecting member declaration

@@ -16,16 +16,12 @@ class List<T> {
 
 }
 
-extension Map<E, T>
-  where
-    T : Iterable<E>,
-    class object T : Buildable<E, T>  for T {
-
-  fun map<R>(f : fun (E) : R) : T<R> = {
-    val builder = T.newBuilder()
-    for (e in this) {
-      builder += f(e)
-    }
-    builder.result()
+fun <E, T, R> where
+  T : Iterable<E>,
+  class object T : Buildable<E, T> Map<E, T>.map(f : fun (E) : R) : T<R> = {
+  val builder = T.newBuilder()
+  for (e in this) {
+    builder += f(e)
   }
+  builder.result()
 }

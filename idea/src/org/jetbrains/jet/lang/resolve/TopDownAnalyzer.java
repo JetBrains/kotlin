@@ -248,11 +248,6 @@ public class TopDownAnalyzer {
                 }
 
                 @Override
-                public void visitExtension(JetExtension extension) {
-                    trace.getErrorHandler().genericError(extension.getNode(), "Unsupported [TopDownAnalyzer]");
-                }
-
-                @Override
                 public void visitClassObject(JetClassObject classObject) {
                     JetObjectDeclaration objectDeclaration = classObject.getObjectDeclaration();
                     if (objectDeclaration != null) {

@@ -26,20 +26,13 @@ JetFile: EOLsOnRollback.jet
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
         PsiWhiteSpace('\n    ')
-        EXTENSION
-          PsiElement(extension)('extension')
+        CLASS
+          PsiElement(class)('class')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('foo')
-          PsiWhiteSpace(' ')
+          PsiWhiteSpace('\n\n    ')
           TYPE_PARAMETER_LIST
             <empty list>
-          PsiElement(for)('for')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('boo')
-        PsiWhiteSpace('\n\n    ')
         TYPEDEF
           PsiElement(type)('type')
           PsiWhiteSpace(' ')

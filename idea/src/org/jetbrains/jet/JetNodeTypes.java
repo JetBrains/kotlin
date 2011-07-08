@@ -14,7 +14,6 @@ public interface JetNodeTypes {
     JetNodeType CLASS      = new JetNodeType("CLASS", JetClass.class);
     JetNodeType PROPERTY   = new JetNodeType("PROPERTY", JetProperty.class);
     JetNodeType FUN        = new JetNodeType("FUN", JetNamedFunction.class);
-    JetNodeType EXTENSION  = new JetNodeType("EXTENSION", JetExtension.class);
     JetNodeType TYPEDEF    = new JetNodeType("TYPEDEF", JetTypedef.class);
     JetNodeType OBJECT_DECLARATION = new JetNodeType("OBJECT_DECLARATION", JetObjectDeclaration.class);
     JetNodeType OBJECT_DECLARATION_NAME = new JetNodeType("OBJECT_DECLARATION_NAME", JetObjectDeclarationName.class);

@@ -92,7 +92,6 @@ RAW_STRING_LITERAL = {THREE_QUO} {QUO_STRING_CHAR}* {THREE_QUO}?
 <YYINITIAL> {RAW_STRING_LITERAL} { return JetTokens.RAW_STRING_LITERAL; }
 
 <YYINITIAL> "namespace"  { return JetTokens.NAMESPACE_KEYWORD ;}
-<YYINITIAL> "extension"  { return JetTokens.EXTENSION_KEYWORD ;}
 <YYINITIAL> "continue"   { return JetTokens.CONTINUE_KEYWORD ;}
 <YYINITIAL> "return"     { return JetTokens.RETURN_KEYWORD ;}
 <YYINITIAL> "object"     { return JetTokens.OBJECT_KEYWORD ;}
