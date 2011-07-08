@@ -677,6 +677,11 @@ public class ExpressionCodegen extends JetVisitor {
                                               "$classobj",
                                               true));
             }
+            else if (descriptor instanceof TypeParameterDescriptor) {
+                loadTypeParameterTypeInfo((TypeParameterDescriptor) descriptor);
+                v.invokevirtual("jet/typeinfo/TypeInfo", "getClassObject", "()Ljava/lang/Object;");
+                myStack.push(StackValue.onStack(OBJECT_TYPE));
+            }
             else {
                 // receiver
                 StackValue.local(0, JetTypeMapper.TYPE_OBJECT).put(JetTypeMapper.TYPE_OBJECT, v);
