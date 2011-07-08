@@ -104,6 +104,16 @@ public class TypeInfoTest extends CodegenTestCase {
         blackBoxFile("typeInfo/forwardTypeParameter.jet");
     }
 
+    public void testClassObjectInTypeInfo() throws Exception {
+        loadFile();
+        Method foo = generateFunction();
+        JetObject jetObject = (JetObject) foo.invoke(null);
+        TypeInfo<?> typeInfo = jetObject.getTypeInfo();
+        final Object object = typeInfo.getClassObject();
+        final Method classObjFoo = object.getClass().getMethod("foo");
+        assertNotNull(classObjFoo);
+    }
+
     private Runnable newRunnable() {
         return new Runnable() {
             @Override

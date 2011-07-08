@@ -2,6 +2,7 @@ package jet.typeinfo;
 
 import jet.JetObject;
 
+import java.lang.reflect.Field;
 import java.util.Arrays;
 
 /**
@@ -24,6 +25,17 @@ public class TypeInfo<T> implements JetObject {
         this.theClass = theClass;
         this.nullable = nullable;
         this.typeParameters = typeParameters;
+    }
+
+    public Object getClassObject() {
+        try {
+            final Class implClass = theClass.getClassLoader().loadClass(theClass.getCanonicalName() + "$$Impl");
+            final Field classobj = implClass.getField("$classobj");
+            return classobj.get(null);
+        }
+        catch(Exception e) {
+            return null;
+        }
     }
 
     public boolean isInstance(Object obj) {
