@@ -444,4 +444,11 @@ public class NamespaceGenTest extends CodegenTestCase {
         assertEquals(1, tuple2._1);
         assertEquals("foo", tuple2._2);
     }
+
+    public void testPredicateOperator() throws Exception {
+        loadText("fun foo(s: String) = s?startsWith(\"J\")");
+        final Method main = generateFunction();
+        assertEquals("JetBrains", main.invoke(null, "JetBrains"));
+        assertNull(main.invoke(null, "IntelliJ"));
+    }
 }

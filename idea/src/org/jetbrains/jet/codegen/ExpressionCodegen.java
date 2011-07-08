@@ -878,7 +878,8 @@ public class ExpressionCodegen extends JetVisitor {
                 myStack.pop().put(JetTypeMapper.TYPE_OBJECT, v);
             }
         }
-        else if (!(expression.getParent() instanceof JetSafeQualifiedExpression)) {
+        else if (!(expression.getParent() instanceof JetSafeQualifiedExpression) &&
+                 !(expression.getParent() instanceof JetPredicateExpression)) {
             generateThisOrOuter(calleeContainingClass);
         }
     }
@@ -1007,6 +1008,23 @@ public class ExpressionCodegen extends JetVisitor {
             v.pop();
         }
         v.mark(end);
+    }
+
+    @Override
+    public void visitPredicateExpression(JetPredicateExpression expression) {
+        genToJVMStack(expression.getReceiverExpression());
+        Label ifFalse = new Label();
+        Label end = new Label();
+        v.dup();
+        gen(expression.getSelectorExpression());
+        StackValue result = myStack.pop();
+        result.condJump(ifFalse, true, v);
+        v.goTo(end);
+        v.mark(ifFalse);
+        v.pop();
+        v.aconst(null);
+        v.mark(end);
+        myStack.push(StackValue.onStack(typeMapper.mapType(bindingContext.getExpressionType(expression))));
     }
 
     @Override
