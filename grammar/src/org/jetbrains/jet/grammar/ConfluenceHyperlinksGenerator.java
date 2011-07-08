@@ -1,10 +1,10 @@
 package org.jetbrains.jet.grammar;
 
 import com.google.common.base.Supplier;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
+import com.google.common.collect.Sets;
 
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -94,10 +94,10 @@ public class ConfluenceHyperlinksGenerator {
 
         Set<String> declaredSymbols = new HashSet<String>();
         Set<String> usedSymbols = new HashSet<String>();
-        Multimap<String, String> usages = Multimaps.newListMultimap(Maps.<String, Collection<String>>newHashMap(), new Supplier<List<String>>() {
+        Multimap<String, String> usages = Multimaps.newSetMultimap(Maps.<String, Collection<String>>newHashMap(), new Supplier<Set<String>>() {
             @Override
-            public List<String> get() {
-                return Lists.newArrayList();
+            public Set<String> get() {
+                return Sets.newHashSet();
             }
         });
         List<Token> tokens = new ArrayList<Token>();

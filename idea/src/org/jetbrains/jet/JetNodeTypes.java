@@ -74,7 +74,6 @@ public interface JetNodeTypes {
     JetNodeType TUPLE                     = new JetNodeType("TUPLE", JetTupleExpression.class);
     JetNodeType PARENTHESIZED             = new JetNodeType("PARENTHESIZED", JetParenthesizedExpression.class);
     JetNodeType TYPEOF                    = new JetNodeType("TYPEOF", JetTypeofExpression.class);
-//    JetNodeType NEW                       = new JetNodeType("NEW", JetNewExpression.class);
     JetNodeType RETURN                    = new JetNodeType("RETURN", JetReturnExpression.class);
     JetNodeType THROW                     = new JetNodeType("THROW", JetThrowExpression.class);
     JetNodeType CONTINUE                  = new JetNodeType("CONTINUE", JetContinueExpression.class);
@@ -128,7 +127,7 @@ public interface JetNodeTypes {
     JetNodeType TUPLE_PATTERN_ENTRY       = new JetNodeType("TUPLE_PATTERN_ENTRY", JetTuplePatternEntry.class);
     JetNodeType DECOMPOSER_PATTERN        = new JetNodeType("DECOMPOSER_PATTERN", JetDecomposerPattern.class);
     JetNodeType DECOMPOSER_ARGUMENT_LIST  = new JetNodeType("DECOMPOSER_ARGUMENT_LIST", JetTuplePattern.class);
-    JetNodeType DECOMPOSER_ARGUMENT       = TUPLE_PATTERN_ENTRY;//new JetNodeType("DECOMPOSER_ARGUMENT", JetTuplePatternEntry.class);
+    JetNodeType DECOMPOSER_ARGUMENT       = TUPLE_PATTERN_ENTRY;
 
     JetNodeType WHEN                      = new JetNodeType("WHEN", JetWhenExpression.class);
     JetNodeType WHEN_ENTRY                = new JetNodeType("WHEN_ENTRY", JetWhenEntry.class);

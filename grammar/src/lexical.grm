@@ -33,7 +33,7 @@ NoEscapeString
   : <"""-quoted string>;
 
 /**
-bq. See [String templates]
+bq. See [String templates|Strings#Templates]
 */
 
 SEMI
