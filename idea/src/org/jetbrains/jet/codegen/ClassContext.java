@@ -9,20 +9,23 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.objectweb.asm.Type;
+import org.objectweb.asm.commons.InstructionAdapter;
 
 public class ClassContext {
-    public static final ClassContext STATIC = new ClassContext(null, OwnerKind.NAMESPACE, null, null);
+    public static final ClassContext STATIC = new ClassContext(null, OwnerKind.NAMESPACE, null, null, null);
     private final DeclarationDescriptor contextType;
     private final OwnerKind contextKind;
     private final StackValue thisExpression;
     private final ClassContext parentContext;
+    private final ClosureCodegen closure;
     private boolean thisWasUsed = false;
 
-    public ClassContext(DeclarationDescriptor contextType, OwnerKind contextKind, StackValue thisExpression, ClassContext parentContext) {
+    public ClassContext(DeclarationDescriptor contextType, OwnerKind contextKind, StackValue thisExpression, ClassContext parentContext, ClosureCodegen closureCodegen) {
         this.contextType = contextType;
         this.contextKind = contextKind;
         this.thisExpression = thisExpression;
         this.parentContext = parentContext;
+        closure = closureCodegen;
     }
 
     public DeclarationDescriptor getContextDescriptor() {
@@ -34,13 +37,15 @@ public class ClassContext {
     }
 
     public StackValue getThisExpression() {
+        if (parentContext == null) return null;
+
         thisWasUsed = true;
         if (thisExpression != null) return thisExpression;
-        return parentContext != null ? parentContext.getThisExpression() : null;
+        return parentContext.getThisExpression();
     }
 
     public ClassContext intoNamespace(NamespaceDescriptor descriptor) {
-        return new ClassContext(descriptor, OwnerKind.NAMESPACE, null, this);
+        return new ClassContext(descriptor, OwnerKind.NAMESPACE, null, this, null);
     }
 
     public ClassContext intoClass(ClassDescriptor descriptor, OwnerKind kind) {
@@ -54,7 +59,7 @@ public class ClassContext {
             thisValue = StackValue.local(0, JetTypeMapper.TYPE_OBJECT);
         }
 
-        return new ClassContext(descriptor, kind, thisValue, this);
+        return new ClassContext(descriptor, kind, thisValue, this, null);
     }
 
     public ClassContext intoFunction(FunctionDescriptor descriptor) {
@@ -68,15 +73,15 @@ public class ClassContext {
             thisIdx++;
         }
 
-        return new ClassContext(descriptor, getContextKind(), hasReceiver ? StackValue.local(thisIdx, JetTypeMapper.TYPE_OBJECT) : null, this);
+        return new ClassContext(descriptor, getContextKind(), hasReceiver ? StackValue.local(thisIdx, JetTypeMapper.TYPE_OBJECT) : null, this, null);
     }
 
-    public ClassContext intoClosure(String internalClassName) {
-        final DeclarationDescriptor contextDescriptor = getContextClass();
-        StackValue outerClass = contextDescriptor instanceof ClassDescriptor
-                                ? StackValue.instanceField(JetTypeMapper.jetInterfaceType((ClassDescriptor) contextDescriptor), internalClassName, "this$0")
+    public ClassContext intoClosure(String internalClassName, ClosureCodegen closureCodegen) {
+        final Type type = enclosingClassType(closureCodegen.state.getTypeMapper());
+        StackValue outerClass = type != null
+                                ? StackValue.instanceField(type, internalClassName, "this$0")
                                 : StackValue.local(0, JetTypeMapper.TYPE_OBJECT);
-        return new ClassContext(null, OwnerKind.IMPLEMENTATION, outerClass, this);
+        return new ClassContext(null, OwnerKind.IMPLEMENTATION, outerClass, this, closureCodegen);
     }
 
     public FrameMap prepareFrame() {
@@ -109,6 +114,9 @@ public class ClassContext {
         if (contextType instanceof ClassDescriptor) {
             return mapper.jvmType((ClassDescriptor) contextType, contextKind);
         }
+        else if (closure != null) {
+            return Type.getObjectType(closure.name);
+        }
         else {
             return parentContext != null ? parentContext.jvmType(mapper) : JetTypeMapper.TYPE_OBJECT;
         }
@@ -124,5 +132,36 @@ public class ClassContext {
 
     public boolean isThisWasUsed() {
         return thisWasUsed;
+    }
+
+    public StackValue lookupInContext(DeclarationDescriptor d, InstructionAdapter v) {
+        final ClosureCodegen top = closure;
+        if (top != null) {
+            final StackValue answer = top.lookupInContext(d);
+            if (answer != null) return answer;
+
+            final StackValue thisContext = getThisExpression();
+            thisContext.put(thisContext.type, v);
+        }
+
+        return parentContext != null ? parentContext.lookupInContext(d, v) : null;
+    }
+
+    public Type enclosingClassType(JetTypeMapper mapper) {
+        DeclarationDescriptor descriptor = getContextDescriptor();
+        if (descriptor instanceof ClassDescriptor) {
+            return Type.getObjectType(mapper.jvmName((ClassDescriptor) descriptor, OwnerKind.INTERFACE));
+        }
+
+        if (descriptor instanceof NamespaceDescriptor) {
+            return null;
+        }
+
+        if (closure != null) {
+            return Type.getObjectType(closure.name);
+        }
+
+        final ClassContext parent = getParentContext();
+        return parent != null ? parent.enclosingClassType(mapper) : null;
     }
 }

@@ -9,7 +9,6 @@ import com.intellij.util.containers.Stack;
 import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -23,7 +22,6 @@ public class GenerationState {
 
     private JetTypeMapper typeMapper;
     private final Stack<BindingContext> bindingContexts = new Stack<BindingContext>();
-    private final Stack<ClosureCodegen> closureContexts = new Stack<ClosureCodegen>();
     private final JetStandardLibrary standardLibrary;
 
     public GenerationState(Project project, boolean text) {
@@ -94,18 +92,6 @@ public class GenerationState {
         }
     }
 
-    public GeneratedAnonymousClassDescriptor generateClosure(JetFunctionLiteralExpression literal, ExpressionCodegen context, ClassContext classContext) {
-        final ClosureCodegen codegen = new ClosureCodegen(this, context, classContext);
-        closureContexts.push(codegen);
-        try {
-            return codegen.gen(literal);
-        }
-        finally {
-            final ClosureCodegen popped = closureContexts.pop();
-            assert popped == codegen;
-        }
-    }
-
     public GeneratedAnonymousClassDescriptor generateObjectLiteral(JetObjectLiteralExpression literal, ExpressionCodegen context, ClassContext classContext) {
         Pair<String, ClassVisitor> nameAndVisitor = forAnonymousSubclass(literal.getObjectDeclaration());
 
@@ -113,11 +99,6 @@ public class GenerationState {
 
         new ImplementationBodyCodegen(literal.getObjectDeclaration(), objectContext, nameAndVisitor.getSecond(), this).generate();
         return new GeneratedAnonymousClassDescriptor(nameAndVisitor.first, new Method("<init>", "()V"), false);
-    }
-
-    public StackValue lookupInContext(DeclarationDescriptor d) {
-        final ClosureCodegen top = closureContexts.peek();
-        return top != null ? top.lookupInContext(d) : null;
     }
 
     void prepareAnonymousClasses(JetElement aClass) {

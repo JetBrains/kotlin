@@ -4,7 +4,10 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.util.Pair;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.JetFunctionLiteral;
 import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression;
 import org.jetbrains.jet.lang.types.JetType;
@@ -22,11 +25,11 @@ import java.util.List;
 import java.util.Map;
 
 public class ClosureCodegen {
-    private final GenerationState state;
+    public final GenerationState state;
     private final ExpressionCodegen exprContext;
     private final ClassContext context;
     private ClassVisitor cv = null;
-    private String name = null;
+    public String name = null;
 
     private Map<DeclarationDescriptor, EnclosedValueDescriptor> closure = new LinkedHashMap<DeclarationDescriptor, EnclosedValueDescriptor>();
 
@@ -107,12 +110,14 @@ public class ClosureCodegen {
 
 
         generateBridge(name, funDescriptor, cv);
-        final boolean captureThis = generateBody(funDescriptor, cv, fun.getFunctionLiteral());
+        boolean captureThis = generateBody(funDescriptor, cv, fun.getFunctionLiteral());
+        final Type enclosingType = context.enclosingClassType(state.getTypeMapper());
+        if (enclosingType == null) captureThis = false;
 
         final Method constructor = generateConstructor(funClass, captureThis);
 
         if (captureThis) {
-            cv.visitField(Opcodes.ACC_PRIVATE, "this$0", enclosingClassType().getDescriptor(), null, null);
+            cv.visitField(Opcodes.ACC_PRIVATE, "this$0", enclosingType.getDescriptor(), null, null);
         }
 
         cv.visitEnd();
@@ -125,12 +130,8 @@ public class ClosureCodegen {
         return answer;
     }
 
-    private Type enclosingClassType() {
-        return Type.getObjectType(state.getTypeMapper().jvmName((ClassDescriptor) context.getContextClass(), OwnerKind.INTERFACE));
-    }
-
     private boolean generateBody(FunctionDescriptor funDescriptor, ClassVisitor cv, JetFunctionLiteral body) {
-        final ClassContext closureContext = context.intoClosure(name);
+        final ClassContext closureContext = context.intoClosure(name, this);
         FunctionCodegen fc = new FunctionCodegen(closureContext, cv, state);
         fc.generateMethod(body, invokeSignature(funDescriptor), funDescriptor);
         return closureContext.isThisWasUsed();
@@ -184,7 +185,7 @@ public class ClosureCodegen {
         int i = 0;
         if (captureThis) {
             i = 1;
-            argTypes[0] = enclosingClassType();
+            argTypes[0] = context.enclosingClassType(state.getTypeMapper());
         }
 
         for (DeclarationDescriptor descriptor : closure.keySet()) {

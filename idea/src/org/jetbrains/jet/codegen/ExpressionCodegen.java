@@ -501,7 +501,7 @@ public class ExpressionCodegen extends JetVisitor {
             generateBlock(expression.getFunctionLiteral().getBodyExpression().getStatements());
         }
         else {
-            final GeneratedAnonymousClassDescriptor closure = state.generateClosure(expression, this, context);
+            final GeneratedAnonymousClassDescriptor closure = new ClosureCodegen(state, this, context).gen(expression);
 
             v.anew(Type.getObjectType(closure.getClassname()));
             v.dup();
@@ -668,12 +668,13 @@ public class ExpressionCodegen extends JetVisitor {
                 }
             }
             else {
-                final StackValue value = state.lookupInContext(descriptor);
+                // receiver
+                StackValue.local(0, JetTypeMapper.TYPE_OBJECT).put(JetTypeMapper.TYPE_OBJECT, v);
+
+                final StackValue value = context.lookupInContext(descriptor, v);
                 if (value == null) {
                     throw new UnsupportedOperationException("don't know how to generate reference " + descriptor);
                 }
-                // receiver
-                StackValue.local(0, JetTypeMapper.TYPE_OBJECT).put(JetTypeMapper.TYPE_OBJECT, v);
                 myStack.push(value);
             }
         }
