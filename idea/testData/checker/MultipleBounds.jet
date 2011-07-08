@@ -14,14 +14,14 @@ class D() {
   class object : A(), B () {}
 }
 
-class Test1<T : A>
+class Test1<T : A>()
   where
     T : B,
     <error>B</error> : T, // error
     class object T : A,
     class object T : B,
     class object <error>B</error> : T
-  () {
+  {
 
   fun test(t : T) {
     T.foo()
@@ -46,14 +46,14 @@ class Buzz<T> where T : <warning>Bar<<error>Int</error>></warning>, T : <error>n
 class X<T : <warning>Foo</warning>>
 class Y<<error>T</error> : <warning>Foo</warning>> where T : <warning>Bar<Foo></warning>
 
-fun <T : A>
+fun <T : A> test2(t : T)
   where
     T : B,
     <error>B</error> : T,
     class object <error>B</error> : T,
     class object T : B,
     class object T : A
-  test2(t : T) {
+{
   T.foo()
   T.bar()
   t.foo()

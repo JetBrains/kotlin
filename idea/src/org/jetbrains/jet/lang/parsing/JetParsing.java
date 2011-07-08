@@ -384,6 +384,7 @@ public class JetParsing extends AbstractJetParsing {
      *          ("wraps" "(" primaryConstructorParameter{","} ")") |
      *          (modifiers "(" primaryConstructorParameter{","} ")"))?
      *       (":" attributes delegationSpecifier{","})?
+     *       typeConstraints
      *       (classBody? | enumClassBody)
      *   ;
      */
@@ -392,7 +393,7 @@ public class JetParsing extends AbstractJetParsing {
         advance(); // CLASS_KEYWORD
 
         expect(IDENTIFIER, "Class name expected", CLASS_NAME_RECOVERY_SET);
-        parseTypeParameterList(TYPE_PARAMETER_GT_RECOVERY_SET);
+        boolean typeParametersDeclared = parseTypeParameterList(TYPE_PARAMETER_GT_RECOVERY_SET);
 
         if (at(WRAPS_KEYWORD)) {
             advance(); // WRAPS_KEYWORD
@@ -413,6 +414,8 @@ public class JetParsing extends AbstractJetParsing {
             advance(); // COLON
             parseDelegationSpecifierList();
         }
+
+        parseTypeConstraintsGuarded(typeParametersDeclared);
 
         if (at(LBRACE)) {
             if (enumClass) {
@@ -473,7 +476,7 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * enumEntry
-     *   : modifiers SimpleName typeParameters? primaryConstructorParameters? (":" initializer{","})? classBody?
+     *   : modifiers SimpleName typeParameters? primaryConstructorParameters? (":" initializer{","})? typeConstraints classBody?
      *   ;
      */
     private void parseEnumEntry() {
@@ -483,7 +486,7 @@ public class JetParsing extends AbstractJetParsing {
         advance(); // IDENTIFIER
         nameAsDeclaration.done(OBJECT_DECLARATION_NAME);
 
-        parseTypeParameterList(TokenSet.create(COLON, LPAR, SEMICOLON, LBRACE));
+        boolean typeParametersDeclared = parseTypeParameterList(TokenSet.create(COLON, LPAR, SEMICOLON, LBRACE));
 
         if (at(LPAR)) {
             parseValueParameterList(false, TokenSet.create(COLON, SEMICOLON, LBRACE));
@@ -494,6 +497,8 @@ public class JetParsing extends AbstractJetParsing {
 
             parseInitializerList();
         }
+
+        parseTypeConstraintsGuarded(typeParametersDeclared);
 
         if (at(LBRACE)) {
             parseClassBody();
@@ -725,7 +730,7 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * typedef
-     *   : modifiers "type" SimpleName typeParameters? "=" type
+     *   : modifiers "type" SimpleName (typeParameters typeConstraints)? "=" type
      *   ;
      */
     public JetNodeType parseTypeDef() {
@@ -735,7 +740,9 @@ public class JetParsing extends AbstractJetParsing {
 
         expect(IDENTIFIER, "Type name expected", TokenSet.orSet(TokenSet.create(LT, EQ, SEMICOLON), TOPLEVEL_OBJECT_FIRST));
 
-        parseTypeParameterList(TYPE_PARAMETER_GT_RECOVERY_SET);
+        if (parseTypeParameterList(TYPE_PARAMETER_GT_RECOVERY_SET)) {
+            parseTypeConstraints();
+        }
 
         expect(EQ, "Expecting '='", TokenSet.orSet(TOPLEVEL_OBJECT_FIRST, TokenSet.create(SEMICOLON)));
 
@@ -751,6 +758,7 @@ public class JetParsing extends AbstractJetParsing {
      *   : modifiers ("val" | "var")
      *       typeParameters? (type "." | attributes)?
      *       SimpleName (":" type)?
+     *       typeConstraints
      *       ("=" element SEMI?)?
      *       (getter? setter? | setter? getter?) SEMI?
      *   ;
@@ -766,9 +774,7 @@ public class JetParsing extends AbstractJetParsing {
             errorAndAdvance("Expecting 'val' or 'var'");
         }
 
-        if (at(LT)) {
-            parseTypeParameterList(TokenSet.create(IDENTIFIER, EQ, COLON, SEMICOLON));
-        }
+        boolean typeParametersDeclared = at(LT) ? parseTypeParameterList(TokenSet.create(IDENTIFIER, EQ, COLON, SEMICOLON)) : false;
 
         TokenSet propertyNameFollow = TokenSet.create(COLON, EQ, LBRACE, SEMICOLON);
 
@@ -793,6 +799,8 @@ public class JetParsing extends AbstractJetParsing {
             advance(); // COLON
             parseTypeRef();
         }
+
+        parseTypeConstraintsGuarded(typeParametersDeclared);
 
         if (local) {
             if (at(EQ)) {
@@ -900,6 +908,7 @@ public class JetParsing extends AbstractJetParsing {
      *       (type "." | attributes)?
      *       SimpleName
      *       typeParameters? functionParameters (":" type)?
+     *       typeConstraints
      *       functionBody?
      *   ;
      */
@@ -934,6 +943,7 @@ public class JetParsing extends AbstractJetParsing {
             else {
                 error.drop();
             }
+            typeParameterListOccurred = true;
         }
 
         parseValueParameterList(false, valueParametersFollow);
@@ -943,6 +953,8 @@ public class JetParsing extends AbstractJetParsing {
 
             parseTypeRef();
         }
+
+        parseTypeConstraintsGuarded(typeParameterListOccurred);
 
         if (at(SEMICOLON)) {
             advance(); // SEMICOLON
@@ -1088,11 +1100,11 @@ public class JetParsing extends AbstractJetParsing {
     /*
      * typeParameters
      *   : ("<" typeParameter{","} ">"
-     *      ("where" typeConstraint{","})?)?
      *   ;
      */
-    private void parseTypeParameterList(TokenSet recoverySet) {
+    private boolean parseTypeParameterList(TokenSet recoverySet) {
         PsiBuilder.Marker list = mark();
+        boolean result = false;
         if (at(LT)) {
 
             myBuilder.disableNewlines();
@@ -1108,12 +1120,34 @@ public class JetParsing extends AbstractJetParsing {
 
             expect(GT, "Missing '>'", recoverySet);
             myBuilder.restoreNewlinesState();
-
-            if (at(WHERE_KEYWORD)) {
-                parseTypeConstraintList();
-            }
+            result = true;
         }
         list.done(TYPE_PARAMETER_LIST);
+        return result;
+    }
+
+    /*
+     * typeConstraints
+     *   : ("where" typeConstraint{","})?
+     *   ;
+     */
+    private void parseTypeConstraintsGuarded(boolean typeParameterListOccurred) {
+        PsiBuilder.Marker error = mark();
+        boolean constraints = parseTypeConstraints();
+        if (constraints && !typeParameterListOccurred) {
+            error.error("Type constraints are not allowed when no type parameters declared");
+        }
+        else {
+            error.drop();
+        }
+    }
+
+    private boolean parseTypeConstraints() {
+        if (at(WHERE_KEYWORD)) {
+            parseTypeConstraintList();
+            return true;
+        }
+        return false;
     }
 
     /*

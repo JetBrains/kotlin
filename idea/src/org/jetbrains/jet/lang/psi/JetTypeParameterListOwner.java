@@ -21,13 +21,14 @@ public class JetTypeParameterListOwner extends JetNamedDeclaration {
         return (JetTypeParameterList) findChildByType(JetNodeTypes.TYPE_PARAMETER_LIST);
     }
 
+    @Nullable
+    public JetTypeConstraintList getTypeConstraintList() {
+        return (JetTypeConstraintList) findChildByType(JetNodeTypes.TYPE_CONSTRAINT_LIST);
+    }
+
     @NotNull
     public List<JetTypeConstraint> getTypeConstaints() {
-        JetTypeParameterList typeParameterList = getTypeParameterList();
-        if (typeParameterList == null) {
-            return Collections.emptyList();
-        }
-        JetTypeConstraintList typeConstraintList = typeParameterList.getTypeConstraintList();
+        JetTypeConstraintList typeConstraintList = getTypeConstraintList();
         if (typeConstraintList == null) {
             return Collections.emptyList();
         }

@@ -211,59 +211,6 @@ JetFile: PolymorphicClassObjects.jet
         TYPE_PARAMETER
           PsiElement(IDENTIFIER)('R')
         PsiElement(GT)('>')
-        PsiWhiteSpace(' ')
-        PsiElement(where)('where')
-        PsiWhiteSpace('\n  ')
-        TYPE_CONSTRAINT_LIST
-          TYPE_CONSTRAINT
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('T')
-            PsiWhiteSpace(' ')
-            PsiElement(COLON)(':')
-            PsiWhiteSpace(' ')
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('Iterable')
-                TYPE_ARGUMENT_LIST
-                  PsiElement(LT)('<')
-                  TYPE_PROJECTION
-                    TYPE_REFERENCE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('E')
-                  PsiElement(GT)('>')
-          PsiElement(COMMA)(',')
-          PsiWhiteSpace('\n  ')
-          TYPE_CONSTRAINT
-            PsiElement(class)('class')
-            PsiWhiteSpace(' ')
-            PsiElement(object)('object')
-            PsiWhiteSpace(' ')
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('T')
-            PsiWhiteSpace(' ')
-            PsiElement(COLON)(':')
-            PsiWhiteSpace(' ')
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('Buildable')
-                TYPE_ARGUMENT_LIST
-                  PsiElement(LT)('<')
-                  TYPE_PROJECTION
-                    TYPE_REFERENCE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('E')
-                  PsiElement(COMMA)(',')
-                  PsiWhiteSpace(' ')
-                  TYPE_PROJECTION
-                    TYPE_REFERENCE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('T')
-                  PsiElement(GT)('>')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
         USER_TYPE
@@ -329,6 +276,59 @@ JetFile: PolymorphicClassObjects.jet
                     PsiElement(IDENTIFIER)('R')
             PsiElement(GT)('>')
       PsiWhiteSpace(' ')
+      PsiElement(where)('where')
+      PsiWhiteSpace('\n  ')
+      TYPE_CONSTRAINT_LIST
+        TYPE_CONSTRAINT
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('T')
+          PsiWhiteSpace(' ')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Iterable')
+              TYPE_ARGUMENT_LIST
+                PsiElement(LT)('<')
+                TYPE_PROJECTION
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('E')
+                PsiElement(GT)('>')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n  ')
+        TYPE_CONSTRAINT
+          PsiElement(class)('class')
+          PsiWhiteSpace(' ')
+          PsiElement(object)('object')
+          PsiWhiteSpace(' ')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('T')
+          PsiWhiteSpace(' ')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Buildable')
+              TYPE_ARGUMENT_LIST
+                PsiElement(LT)('<')
+                TYPE_PROJECTION
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('E')
+                PsiElement(COMMA)(',')
+                PsiWhiteSpace(' ')
+                TYPE_PROJECTION
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('T')
+                PsiElement(GT)('>')
+      PsiWhiteSpace('  ')
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
       FUNCTION_LITERAL_EXPRESSION

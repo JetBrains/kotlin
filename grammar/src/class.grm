@@ -21,6 +21,7 @@ class
       typeParameters?
       ("wraps" valueParameters? | modifiers valueParameters?)?
       (":" annotations delegationSpecifier{","})?
+      typeConstraints
       (classBody? | enumClassBody)
   ;
 
@@ -40,7 +41,6 @@ explicitDelegation
 
 typeParameters
   : "<" typeParameter{","} ">"
-    ("where" typeConstraint{","})?
   ;
 
 typeParameter
@@ -50,6 +50,10 @@ typeParameter
 /**
 bq. See [Generic classes|Generics#Generic classes]
 */
+
+typeConstraints
+  : ("where" typeConstraint{","})?
+  ;
 
 typeConstraint
   : annotations SimpleName ":" type

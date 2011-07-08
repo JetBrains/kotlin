@@ -16,9 +16,9 @@ class List<T> {
 
 }
 
-fun <E, T, R> where
+fun <E, T, R> Map<E, T>.map(f : fun (E) : R) : T<R> where
   T : Iterable<E>,
-  class object T : Buildable<E, T> Map<E, T>.map(f : fun (E) : R) : T<R> = {
+  class object T : Buildable<E, T>  = {
   val builder = T.newBuilder()
   for (e in this) {
     builder += f(e)

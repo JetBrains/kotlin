@@ -83,6 +83,7 @@ function
       (type "." | annotations/*for receiver type*/)?
       SimpleName
       typeParameters? valueParameters (":" type)?
+      typeConstraints
       functionBody?
   ;
 
@@ -95,6 +96,7 @@ property
   : modifiers ("val" | "var")
       typeParameters? (type "." | annotations)?
       SimpleName (":" type)?
+      typeConstraints
       ("=" expression SEMI?)?
       (getter? setter? | setter? getter?) SEMI?
   ;

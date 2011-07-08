@@ -36,8 +36,8 @@ pattern
 
 decomposerPattern
   : type
-// TODO : typeParameters will be consumed by the expression
-  : elvisExpression typeParameters? "@" tuplePattern
+// TODO : typeArguments will be consumed by the expression
+  : elvisExpression typeArguments? "@" tuplePattern
   ;
 
 constantPattern

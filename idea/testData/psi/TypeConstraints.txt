@@ -9,36 +9,36 @@ JetFile: TypeConstraints.jet
         TYPE_PARAMETER
           PsiElement(IDENTIFIER)('T')
         PsiElement(GT)('>')
-        PsiWhiteSpace(' ')
-        PsiElement(where)('where')
-        PsiWhiteSpace(' ')
-        TYPE_CONSTRAINT_LIST
-          TYPE_CONSTRAINT
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('T')
-            PsiWhiteSpace(' ')
-            PsiElement(COLON)(':')
-            PsiWhiteSpace(' ')
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('T')
-          PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      PsiElement(where)('where')
+      PsiWhiteSpace(' ')
+      TYPE_CONSTRAINT_LIST
+        TYPE_CONSTRAINT
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('T')
           PsiWhiteSpace(' ')
-          TYPE_CONSTRAINT
-            PsiElement(class)('class')
-            PsiWhiteSpace(' ')
-            PsiElement(object)('object')
-            PsiWhiteSpace(' ')
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('T')
-            PsiWhiteSpace(' ')
-            PsiElement(COLON)(':')
-            PsiWhiteSpace(' ')
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('T')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('T')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        TYPE_CONSTRAINT
+          PsiElement(class)('class')
+          PsiWhiteSpace(' ')
+          PsiElement(object)('object')
+          PsiWhiteSpace(' ')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('T')
+          PsiWhiteSpace(' ')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('T')
       PsiWhiteSpace(' ')
       CLASS_BODY
         PsiElement(LBRACE)('{')
