@@ -4,18 +4,20 @@ import com.google.common.collect.Sets;
 import com.intellij.codeInsight.daemon.LightDaemonAnalyzerTestCase;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.projectRoots.Sdk;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.JetTestCaseBase;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetChangeUtil;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.resolve.ClassDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.JetScope;
-import org.jetbrains.jet.lang.resolve.JetScopeAdapter;
-import org.jetbrains.jet.lang.resolve.TypeResolver;
+import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.java.JavaPackageScope;
+import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.parsing.JetParsingTest;
 
@@ -31,6 +33,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
     private JetSemanticServices semanticServices;
     private ClassDefinitions classDefinitions;
     private ClassDescriptorResolver classDescriptorResolver;
+    private JetScope scopeWithImports;
 
     @Override
     public void setUp() throws Exception {
@@ -38,7 +41,8 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         library          = JetStandardLibrary.getJetStandardLibrary(getProject());
         semanticServices = JetSemanticServices.createSemanticServices(library);
         classDefinitions = new ClassDefinitions();
-        classDescriptorResolver = semanticServices.getClassDescriptorResolver(JetTestUtils.DUMMY);
+        classDescriptorResolver = semanticServices.getClassDescriptorResolver(JetTestUtils.DUMMY_TRACE);
+        scopeWithImports = addImports(classDefinitions.BASIC_SCOPE);
     }
 
     @Override
@@ -91,13 +95,9 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
     }
 
     public void testJumps() throws Exception {
-        assertType("throw e", JetStandardClasses.getNothingType());
-//        assertType("return", JetStandardClasses.getNothingType());
-//        assertType("return 1", JetStandardClasses.getNothingType());
+        assertType("throw java.lang.Exception()", JetStandardClasses.getNothingType());
         assertType("continue", JetStandardClasses.getNothingType());
-        assertType("continue \"foo\"", JetStandardClasses.getNothingType());
         assertType("break", JetStandardClasses.getNothingType());
-        assertType("break \"foo\"", JetStandardClasses.getNothingType());
     }
 
     public void testIf() throws Exception {
@@ -121,16 +121,16 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertType("when (1) { is 1 => 2; is 1 => '2'} ", "Any");
         assertType("when (1) { is 1 => 2; is 1 => '2'; is 1 => null} ", "Any?");
         assertType("when (1) { is 1 => 2; is 1 => '2'; else => null} ", "Any?");
-        assertType("when (1) { is 1 => 2; is 1 => '2'; is 1 => when(e) {is 1 => null}} ", "Any?");
+        assertType("when (1) { is 1 => 2; is 1 => '2'; is 1 => when(2) {is 1 => null}} ", "Any?");
     }
 
     public void testTry() throws Exception {
         assertType("try {1} finally{2}", "Int");
-        assertType("try {1} catch (e : e) {'a'} finally{2}", "Int");
-        assertType("try {1} catch (e : e) {'a'} finally{'2'}", "Any");
-        assertType("try {1} catch (e : e) {'a'}", "Any");
-        assertType("try {1} catch (e : e) {'a'} catch (e : e) {null}", "Any?");
-        assertType("try {} catch (e : e) {}", "Unit");
+        assertType("try {1} catch (e : Exception) {'a'} finally{2}", "Int");
+        assertType("try {1} catch (e : Exception) {'a'} finally{'2'}", "Any");
+        assertType("try {1} catch (e : Exception) {'a'}", "Any");
+        assertType("try {1} catch (e : Exception) {'a'} catch (e : Exception) {null}", "Any?");
+        assertType("try {} catch (e : Exception) {}", "Unit");
     }
 
     public void testCommonSupertypes() throws Exception {
@@ -279,7 +279,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertSubtype("MDerived_T<Int>", "Base_T<in Int>");
         assertSubtype("ArrayList<Int>", "List<in Int>");
 
-        assertSubtype("Integer", "java.lang.Comparable<Integer>?");
+//        assertSubtype("java.lang.Integer", "java.lang.Comparable<java.lang.Integer>?");
     }
 
     public void testNullable() throws Exception {
@@ -360,17 +360,14 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
     public void testOverloads() throws Exception {
         assertType("Functions<String>().f()", "Unit");
         assertType("Functions<String>().f(1)", "Int");
-        assertType("Functions<String>().f(1.0)", (String) null);
         assertType("Functions<Double>().f((1, 1))", "Double");
         assertType("Functions<Double>().f(1.0)", "Any");
         assertType("Functions<Byte>().f<String>(\"\")", "Byte");
-        assertType("Functions<Byte>().f<String>(1)", (String) null);
 
         assertType("f()", "Unit");
         assertType("f(1)", "Int");
         assertType("f(1.flt, 1)", "Float");
         assertType("f<String>(1.flt)", "String");
-        assertType("f(1.0)", (String) null);
     }
 
     public void testPlus() throws Exception {
@@ -442,10 +439,10 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private void assertSupertypes(String typeStr, String... supertypeStrs) {
-        Set<JetType> allSupertypes = TypeUtils.getAllSupertypes(makeType(classDefinitions.BASIC_SCOPE, typeStr));
+        Set<JetType> allSupertypes = TypeUtils.getAllSupertypes(makeType(scopeWithImports, typeStr));
         Set<JetType> expected = Sets.newHashSet();
         for (String supertypeStr : supertypeStrs) {
-            JetType supertype = makeType(classDefinitions.BASIC_SCOPE, supertypeStr);
+            JetType supertype = makeType(scopeWithImports, supertypeStr);
             expected.add(supertype);
         }
         assertEquals(expected, allSupertypes);
@@ -491,14 +488,14 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
     private void assertType(String expression, JetType expectedType) {
         Project project = getProject();
         JetExpression jetExpression = JetChangeUtil.createExpression(project, expression);
-        JetType type = semanticServices.getTypeInferrerServices(JetTestUtils.DUMMY, JetFlowInformationProvider.NONE).getType(classDefinitions.BASIC_SCOPE, jetExpression, false, JetTypeInferrer.NO_EXPECTED_TYPE);
+        JetType type = semanticServices.getTypeInferrerServices(JetTestUtils.DUMMY_TRACE, JetFlowInformationProvider.NONE).getType(scopeWithImports, jetExpression, false, JetTypeInferrer.NO_EXPECTED_TYPE);
         assertTrue(type + " != " + expectedType, type.equals(expectedType));
     }
 
     private void assertErrorType(String expression) {
         Project project = getProject();
         JetExpression jetExpression = JetChangeUtil.createExpression(project, expression);
-        JetType type = semanticServices.getTypeInferrerServices(JetTestUtils.DUMMY, JetFlowInformationProvider.NONE).safeGetType(classDefinitions.BASIC_SCOPE, jetExpression, false, JetTypeInferrer.NO_EXPECTED_TYPE);
+        JetType type = semanticServices.getTypeInferrerServices(JetTestUtils.DUMMY_TRACE, JetFlowInformationProvider.NONE).safeGetType(scopeWithImports, jetExpression, false, JetTypeInferrer.NO_EXPECTED_TYPE);
         assertTrue("Error type expected but " + type + " returned", ErrorUtils.isErrorType(type));
     }
 
@@ -515,23 +512,37 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
     }
 
     private void assertType(String expression, String expectedTypeStr) {
-        assertType(classDefinitions.BASIC_SCOPE, expression, expectedTypeStr);
+        assertType(scopeWithImports, expression, expectedTypeStr);
     }
 
     private void assertType(JetScope scope, String expression, String expectedTypeStr) {
         Project project = getProject();
         JetExpression jetExpression = JetChangeUtil.createExpression(project, expression);
-        JetType type = semanticServices.getTypeInferrerServices(JetTestUtils.DUMMY, JetFlowInformationProvider.NONE).getType(scope, jetExpression, false, JetTypeInferrer.NO_EXPECTED_TYPE);
+        JetType type = semanticServices.getTypeInferrerServices(JetTestUtils.DUMMY_TRACE, JetFlowInformationProvider.NONE).getType(addImports(scope), jetExpression, false, JetTypeInferrer.NO_EXPECTED_TYPE);
         JetType expectedType = expectedTypeStr == null ? null : makeType(expectedTypeStr);
         assertEquals(expectedType, type);
     }
 
+    private WritableScopeImpl addImports(JetScope scope) {
+        WritableScopeImpl writableScope = new WritableScopeImpl(scope, scope.getContainingDeclaration(), ErrorHandler.DO_NOTHING);
+        writableScope.importScope(library.getLibraryScope());
+        JavaSemanticServices javaSemanticServices = new JavaSemanticServices(getProject(), semanticServices, JetTestUtils.DUMMY_TRACE);
+        writableScope.importScope(new JavaPackageScope("", null, javaSemanticServices));
+        writableScope.importScope(new JavaPackageScope("java.lang", null, javaSemanticServices));
+        return writableScope;
+    }
+
     private JetType makeType(String typeStr) {
-        return makeType(classDefinitions.BASIC_SCOPE, typeStr);
+        return makeType(scopeWithImports, typeStr);
     }
 
     private JetType makeType(JetScope scope, String typeStr) {
-        return new TypeResolver(semanticServices, JetTestUtils.DUMMY, true).resolveType(scope, JetChangeUtil.createType(getProject(), typeStr));
+        return new TypeResolver(semanticServices, JetTestUtils.DUMMY_TRACE, true).resolveType(scope, JetChangeUtil.createType(getProject(), typeStr));
+    }
+
+    @Override
+    protected Sdk getProjectJDK() {
+        return JetTestCaseBase.jdkFromIdeaHome();
     }
 
     private class ClassDefinitions {

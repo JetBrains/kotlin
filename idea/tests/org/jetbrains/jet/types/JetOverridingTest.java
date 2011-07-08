@@ -30,7 +30,7 @@ public class JetOverridingTest extends LightDaemonAnalyzerTestCase {
         super.setUp();
         library          = JetStandardLibrary.getJetStandardLibrary(getProject());
         semanticServices = JetSemanticServices.createSemanticServices(library);
-        classDescriptorResolver = semanticServices.getClassDescriptorResolver(JetTestUtils.DUMMY);
+        classDescriptorResolver = semanticServices.getClassDescriptorResolver(JetTestUtils.DUMMY_TRACE);
     }
 
     @Override

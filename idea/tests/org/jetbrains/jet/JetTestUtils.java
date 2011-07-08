@@ -18,7 +18,7 @@ import java.util.Collection;
  * @author abreslav
  */
 public class JetTestUtils {
-    public static final BindingTrace DUMMY = new BindingTrace() {
+    public static final BindingTrace DUMMY_TRACE = new BindingTrace() {
 
         @Override
         public void recordExpressionType(@NotNull JetExpression expression, @NotNull JetType type) {
@@ -73,7 +73,12 @@ public class JetTestUtils {
         @NotNull
         @Override
         public ErrorHandlerWithRegions getErrorHandler() {
-            return new ErrorHandlerWithRegions(ErrorHandler.DO_NOTHING);
+            return new ErrorHandlerWithRegions(new ErrorHandler() {
+                @Override
+                public void unresolvedReference(@NotNull JetReferenceExpression referenceExpression) {
+                    throw new IllegalStateException("Unresolved: " + referenceExpression.getText());
+                }
+            });
         }
 
         @Override

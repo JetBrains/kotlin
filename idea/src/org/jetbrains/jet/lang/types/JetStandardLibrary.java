@@ -5,20 +5,18 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiFileFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.ErrorHandler;
-import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.Annotation;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.plugin.JetFileType;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author abreslav
@@ -26,16 +24,21 @@ import java.util.Map;
 public class JetStandardLibrary {
 
     // TODO : consider releasing this memory
-    private static final Map<Project, JetStandardLibrary> standardLibraryCache = new HashMap<Project, JetStandardLibrary>();
+    private static JetStandardLibrary cachedLibrary = null;
+//    private static final Map<Project, JetStandardLibrary> standardLibraryCache = new HashMap<Project, JetStandardLibrary>();
 
     // TODO : double checked locking
     synchronized public static JetStandardLibrary getJetStandardLibrary(@NotNull Project project) {
-        JetStandardLibrary standardLibrary = standardLibraryCache.get(project);
-        if (standardLibrary == null) {
-            standardLibrary = new JetStandardLibrary(project);
-            standardLibraryCache.put(project, standardLibrary);
+        if (cachedLibrary == null) {
+            cachedLibrary = new JetStandardLibrary(project);
         }
-        return standardLibrary;
+        return cachedLibrary;
+//        JetStandardLibrary standardLibrary = standardLibraryCache.get(project);
+//        if (standardLibrary == null) {
+//            standardLibrary = new JetStandardLibrary(project);
+//            standardLibraryCache.put(project, standardLibrary);
+//        }
+//        return standardLibrary;
     }
 
     private final JetScope libraryScope;
