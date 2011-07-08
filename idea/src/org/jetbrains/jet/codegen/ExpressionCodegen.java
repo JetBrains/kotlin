@@ -16,7 +16,6 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
-import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -1447,8 +1446,7 @@ public class ExpressionCodegen extends JetVisitor {
     private void pushTypeArguments(JetCall expression) {
         for (JetTypeProjection jetTypeArgument : expression.getTypeArguments()) {
             JetType typeArgument = bindingContext.resolveTypeReference(jetTypeArgument.getTypeReference());
-            // TODO is the makeNullable() call correct here?
-            ClassCodegen.newTypeInfo(v, typeArgument.isNullable(), typeMapper.mapType(TypeUtils.makeNullable(typeArgument)));
+            generateTypeInfo(typeArgument);
         }
     }
 

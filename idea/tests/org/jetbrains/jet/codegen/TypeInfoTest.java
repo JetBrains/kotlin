@@ -100,6 +100,10 @@ public class TypeInfoTest extends CodegenTestCase {
         blackBoxFile("typeInfo/genericFunction.jet");
     }
 
+    public void testForwardTypeParameter() throws Exception {
+        blackBoxFile("typeInfo/forwardTypeParameter.jet");
+    }
+
     private Runnable newRunnable() {
         return new Runnable() {
             @Override
