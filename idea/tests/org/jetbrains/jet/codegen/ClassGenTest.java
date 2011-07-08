@@ -119,4 +119,8 @@ public class ClassGenTest extends CodegenTestCase {
     public void testClassObject() throws Exception {
         blackBoxFile("classes/classObject.jet");
     }
+
+    public void testClassObjectMethod() throws Exception {
+        blackBoxFile("classes/classObjectMethod.jet");
+    }
 }

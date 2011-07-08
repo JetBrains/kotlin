@@ -1,0 +1,13 @@
+abstract open class Default {
+  fun defaultValue(): Int
+}
+
+class MyInt() {
+  class object : Default {
+    override fun defaultValue(): Int = 610
+  }
+}
+
+fun toDefault<T: Any> where class object T: Default(t: T) = T.defaultValue()
+
+fun box(): String = if (toDefault<MyInt>(MyInt()) == 610) "OK" else "fail"
