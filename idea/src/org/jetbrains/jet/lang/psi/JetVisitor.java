@@ -166,10 +166,6 @@ public class JetVisitor extends PsiElementVisitor {
         visitExpression(expression);
     }
 
-    public void visitTypeofExpression(JetTypeofExpression expression) {
-        visitExpression(expression);
-    }
-
     public void visitBinaryExpression(JetBinaryExpression expression) {
         visitExpression(expression);
     }

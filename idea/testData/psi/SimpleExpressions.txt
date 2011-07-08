@@ -346,26 +346,6 @@ JetFile: SimpleExpressions.jet
           PsiWhiteSpace(' ')
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
-          TYPEOF
-            PsiElement(typeof)('typeof')
-            PsiElement(LPAR)('(')
-            INTEGER_CONSTANT
-              PsiElement(INTEGER_LITERAL)('10')
-            PsiElement(RPAR)(')')
-        PsiElement(COMMA)(',')
-        PsiWhiteSpace('\n    ')
-        VALUE_PARAMETER
-          PsiElement(IDENTIFIER)('a')
-          PsiWhiteSpace(' ')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('foo')
-          PsiWhiteSpace(' ')
-          PsiElement(EQ)('=')
-          PsiWhiteSpace(' ')
           CALL_EXPRESSION
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Foo')

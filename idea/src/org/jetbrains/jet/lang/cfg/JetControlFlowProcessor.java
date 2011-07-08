@@ -604,12 +604,6 @@ public class JetControlFlowProcessor {
         }
 
         @Override
-        public void visitTypeofExpression(JetTypeofExpression expression) {
-            value(expression.getBaseExpression(), false, false);
-            builder.read(expression);
-        }
-
-        @Override
         public void visitIsExpression(JetIsExpression expression) {
             value(expression.getLeftHandSide(), false, inCondition);
             // TODO : builder.read(expression.getPattern());

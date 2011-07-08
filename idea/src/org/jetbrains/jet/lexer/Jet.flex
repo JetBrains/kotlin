@@ -95,7 +95,6 @@ RAW_STRING_LITERAL = {THREE_QUO} {QUO_STRING_CHAR}* {THREE_QUO}?
 <YYINITIAL> "extension"  { return JetTokens.EXTENSION_KEYWORD ;}
 <YYINITIAL> "continue"   { return JetTokens.CONTINUE_KEYWORD ;}
 <YYINITIAL> "return"     { return JetTokens.RETURN_KEYWORD ;}
-<YYINITIAL> "typeof"     { return JetTokens.TYPEOF_KEYWORD ;}
 <YYINITIAL> "object"     { return JetTokens.OBJECT_KEYWORD ;}
 <YYINITIAL> "while"      { return JetTokens.WHILE_KEYWORD ;}
 <YYINITIAL> "break"      { return JetTokens.BREAK_KEYWORD ;}

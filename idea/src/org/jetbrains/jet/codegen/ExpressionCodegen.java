@@ -1644,12 +1644,6 @@ public class ExpressionCodegen extends JetVisitor {
     }
 
     @Override
-    public void visitTypeofExpression(JetTypeofExpression expression) {
-        gen(expression.getBaseExpression(), JET_OBJECT_TYPE);
-        v.invokeinterface("jet/JetObject", "getTypeInfo", "()Ljet/typeinfo/TypeInfo;");
-    }
-
-    @Override
     public void visitIsExpression(final JetIsExpression expression) {
         final StackValue match = StackValue.expression(OBJECT_TYPE, expression.getLeftHandSide(), this);
         StackValue result = generatePatternMatch(expression.getPattern(), expression.isNegated(), match, null);

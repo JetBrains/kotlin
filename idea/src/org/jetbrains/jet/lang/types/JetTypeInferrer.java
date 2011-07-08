@@ -1114,12 +1114,6 @@ public class JetTypeInferrer {
         }
 
         @Override
-        public void visitTypeofExpression(JetTypeofExpression expression) {
-            JetType type = services.safeGetType(context.scope, expression.getBaseExpression(), false, NO_EXPECTED_TYPE); // TODO
-            result = semanticServices.getStandardLibrary().getTypeInfoType(type);
-        }
-
-        @Override
         public void visitBinaryWithTypeRHSExpression(JetBinaryExpressionWithTypeRHS expression) {
             IElementType operationType = expression.getOperationSign().getReferencedNameElementType();
             JetType actualType = getType(context.scope, expression.getLeft(), false);

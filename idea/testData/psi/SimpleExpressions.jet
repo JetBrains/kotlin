@@ -18,7 +18,6 @@ fun a(
     a : foo = this<sdf>,
     a : foo = (10),
     a : foo = (10, "A", 0xf),
-    a : foo = typeof(10),
     a : foo = Foo(bar),
     a : foo = Foo<A>(bar),
     a : foo = Foo(),

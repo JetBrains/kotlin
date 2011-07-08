@@ -3,5 +3,5 @@ class Point() {
 
 fun foo() : typeinfo.TypeInfo<Point> {
   val p = Point();
-  return typeof(p);
+  return typeinfo.typeinfo<Point>(p);
 }

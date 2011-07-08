@@ -5,6 +5,9 @@ namespace typeinfo {
       fun isSubtypeOf(other : TypeInfo<*>) : Boolean
       fun isInstance(obj : Any?) : Boolean
     }
+
+    fun typeinfo<T>() : TypeInfo<T>
+    fun typeinfo<T>(expression : T) : TypeInfo<out T>
 }
 
 namespace io {

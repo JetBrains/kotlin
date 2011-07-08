@@ -73,7 +73,6 @@ public interface JetNodeTypes {
 
     JetNodeType TUPLE                     = new JetNodeType("TUPLE", JetTupleExpression.class);
     JetNodeType PARENTHESIZED             = new JetNodeType("PARENTHESIZED", JetParenthesizedExpression.class);
-    JetNodeType TYPEOF                    = new JetNodeType("TYPEOF", JetTypeofExpression.class);
     JetNodeType RETURN                    = new JetNodeType("RETURN", JetReturnExpression.class);
     JetNodeType THROW                     = new JetNodeType("THROW", JetThrowExpression.class);
     JetNodeType CONTINUE                  = new JetNodeType("CONTINUE", JetContinueExpression.class);
