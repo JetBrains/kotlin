@@ -2,10 +2,10 @@ package org.jetbrains.jet.lang.descriptors;
 
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetTupleType;
 import org.jetbrains.jet.lang.resolve.JetScope;
 import org.jetbrains.jet.lang.resolve.LazyScopeAdapter;
 import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.util.Collections;
 import java.util.List;
@@ -84,7 +84,7 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
 
     @Override
     public String toString() {
-        return getContainingDeclaration() + "::" + typeConstructor.toString();
+        return DescriptorRenderer.TEXT_FOR_DEBUG.render(this);
     }
 
     @NotNull
