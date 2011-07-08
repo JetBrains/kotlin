@@ -34,6 +34,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (!(myClass instanceof JetObjectDeclaration)) {
             interfaces.add(JetTypeMapper.jvmNameForInterface(descriptor));
         }
+        else {
+            interfaces.addAll(InterfaceBodyCodegen.getSuperInterfaces(myClass, state.getBindingContext()));
+        }
 
         boolean isAbstract = myClass instanceof JetClass && ((JetClass) myClass).hasModifier(JetTokens.ABSTRACT_KEYWORD);
 
@@ -59,6 +62,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (first instanceof JetDelegatorToSuperClass || first instanceof JetDelegatorToSuperCall) {
             JetType superType = state.getBindingContext().resolveTypeReference(first.getTypeReference());
             ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
+            final PsiElement declaration = state.getBindingContext().getDeclarationPsiElement(superClassDescriptor);
+            if (declaration instanceof PsiClass && ((PsiClass) declaration).isInterface()) {
+                return "java/lang/Object";
+            }
             return state.getTypeMapper().jvmName(superClassDescriptor, kind);
         }
 

@@ -123,4 +123,11 @@ public class ClassGenTest extends CodegenTestCase {
     public void testClassObjectMethod() throws Exception {
         blackBoxFile("classes/classObjectMethod.jet");
     }
+
+    public void testClassObjectInterface() throws Exception {
+        loadFile("classes/classObjectInterface.jet");
+        final Method method = generateFunction();
+        Object result = method.invoke(null);
+        assertInstanceOf(result, Runnable.class);
+    }
 }

@@ -5,6 +5,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetDelegationSpecifier;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Opcodes;
@@ -23,7 +24,7 @@ public class InterfaceBodyCodegen extends ClassBodyCodegen {
     }
 
     protected void generateDeclaration() {
-        Set<String> superInterfaces = getSuperInterfaces();
+        Set<String> superInterfaces = getSuperInterfaces(myClass, state.getBindingContext());
 
         String fqName = JetTypeMapper.jvmNameForInterface(descriptor);
         v.visit(Opcodes.V1_6,
@@ -35,20 +36,20 @@ public class InterfaceBodyCodegen extends ClassBodyCodegen {
         );
     }
 
-    private Set<String> getSuperInterfaces() {
-        List<JetDelegationSpecifier> delegationSpecifiers = myClass.getDelegationSpecifiers();
+    static Set<String> getSuperInterfaces(JetClassOrObject aClass, final BindingContext bindingContext) {
+        List<JetDelegationSpecifier> delegationSpecifiers = aClass.getDelegationSpecifiers();
         String superClassName = null;
         Set<String> superInterfaces = new LinkedHashSet<String>();
         for (JetDelegationSpecifier specifier : delegationSpecifiers) {
-            JetType superType = state.getBindingContext().resolveTypeReference(specifier.getTypeReference());
+            JetType superType = bindingContext.resolveTypeReference(specifier.getTypeReference());
             ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
-            PsiElement superPsi = state.getBindingContext().getDeclarationPsiElement(superClassDescriptor);
+            PsiElement superPsi = bindingContext.getDeclarationPsiElement(superClassDescriptor);
 
             if (superPsi instanceof PsiClass) {
                 PsiClass psiClass = (PsiClass) superPsi;
                 String fqn = psiClass.getQualifiedName();
                 if (psiClass.isInterface()) {
-                    superInterfaces.add(fqn);
+                    superInterfaces.add(fqn.replace('.', '/'));
                 }
                 else {
                     if (superClassName == null) {
