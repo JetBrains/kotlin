@@ -36,11 +36,11 @@ public class ConfluenceHyperlinksGenerator {
                 "class_members",
                 "enum",
                 "types",
-                "modifiers",
-                "attributes",
                 "control",
                 "expressions",
                 "when",
+                "modifiers",
+                "attributes",
                 "lexical"
             );
 
