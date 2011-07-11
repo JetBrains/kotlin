@@ -21,8 +21,8 @@ alpha{color:blue}*{*{color}beta{color:blue}*}*{color} denotes a nonempty _beta_-
 
 h1. Semicolons
 
-[Up] provides "semicolon inference": syntactically, subsentences (e.g., statements, declarations etc) are separated by
+[Kotlin] provides "semicolon inference": syntactically, subsentences (e.g., statements, declarations etc) are separated by
 the pseudo-token [SEMI|#SEMI], which stands for "semicolon or newline". In most cases, there's no need for semicolons in
-[Up] code.
+[Kotlin] code.
 
 */
