@@ -1,6 +1,7 @@
 /* It's an automatically generated code. Do not modify it. */
 package org.jetbrains.jet.lexer;
 
+import java.util.*;
 import com.intellij.lexer.*;
 import com.intellij.psi.*;
 import com.intellij.psi.tree.IElementType;
@@ -12,17 +13,49 @@ import org.jetbrains.jet.lexer.JetTokens;
 %unicode
 %class _JetLexer
 %implements FlexLexer
+
+%{
+    private static final class State {
+        final int lBraceCount;
+        final int state;
+
+        public State(int state, int lBraceCount) {
+            this.state = state;
+            this.lBraceCount = lBraceCount;
+        }
+    }
+
+    private final Stack<State> states = new Stack<State>();
+    private int lBraceCount;
+
+    private void pushState(int state) {
+        states.push(new State(yystate(), lBraceCount));
+        lBraceCount = 0;
+        yybegin(state);
+    }
+
+    private void popState() {
+        State state = states.pop();
+        lBraceCount = state.lBraceCount;
+        yybegin(state.state);
+    }
+%}
+
 %function advance
 %type IElementType
 %eof{  return;
 %eof}
+
+%xstate STRING
+%state LONG_TEMPLATE
 
 DIGIT=[0-9]
 HEX_DIGIT=[0-9A-Fa-f]
 WHITE_SPACE_CHAR=[\ \n\t\f]
 
 // TODO: prohibit '$' in identifiers?
-PLAIN_IDENTIFIER=[:jletter:] [:jletterdigit:]*
+LETTER = [:letter:]|_
+PLAIN_IDENTIFIER={LETTER} ([:digit:]|{LETTER})*
 // TODO: this one MUST allow everything accepted by the runtime
 // TODO: Replace backticks by one backslash in the begining
 ESCAPED_IDENTIFIER = `{PLAIN_IDENTIFIER}`
@@ -68,109 +101,140 @@ ONE_TWO_QUO = (\"[^\"]) | (\"\"[^\"])
 QUO_STRING_CHAR = [^\"] | {ONE_TWO_QUO}
 RAW_STRING_LITERAL = {THREE_QUO} {QUO_STRING_CHAR}* {THREE_QUO}?
 
+REGULAR_STRING_PART=[^\\\"\n\$]+
+SHORT_TEMPLATE_ENTRY=\${IDENTIFIER}
+LONELY_DOLLAR=\$
+LONG_TEMPLATE_ENTRY_START=\$\{
+LONG_TEMPLATE_ENTRY_END=\}
+
 %%
 
-<YYINITIAL> {BLOCK_COMMENT} { return JetTokens.BLOCK_COMMENT; }
-<YYINITIAL> {DOC_COMMENT} { return JetTokens.DOC_COMMENT; }
+// String templates
 
-<YYINITIAL> ({WHITE_SPACE_CHAR})+ { return JetTokens.WHITE_SPACE; }
+\"                                     { pushState(STRING); return JetTokens.OPEN_QUOTE; }
 
-<YYINITIAL> {EOL_COMMENT} { return JetTokens.EOL_COMMENT; }
+<STRING> \"                            { popState(); return JetTokens.CLOSING_QUOTE; }
+<STRING> \n                            { popState(); yypushback(1); return JetTokens.DANGLING_NEWLINE; }
+<STRING> {REGULAR_STRING_PART}         { return JetTokens.REGULAR_STRING_PART; }
+<STRING> {ESCAPE_SEQUENCE}             { return JetTokens.ESCAPE_SEQUENCE; }
+<STRING> {SHORT_TEMPLATE_ENTRY}        { return JetTokens.SHORT_TEMPLATE_ENTRY; }
+<STRING> {LONELY_DOLLAR}               { return JetTokens.REGULAR_STRING_PART; }
+<STRING> {LONG_TEMPLATE_ENTRY_START}   { pushState(LONG_TEMPLATE); return JetTokens.LONG_TEMPLATE_ENTRY_START; }
 
-<YYINITIAL> {INTEGER_LITERAL}\.\. { yypushback(2); return JetTokens.INTEGER_LITERAL; }
-<YYINITIAL> {INTEGER_LITERAL} { return JetTokens.INTEGER_LITERAL; }
-//<YYINITIAL> {LONG_LITERAL} { return JetTokens.LONG_LITERAL; }
+<LONG_TEMPLATE> "{"                    { lBraceCount++; return JetTokens.LBRACE; }
+<LONG_TEMPLATE> "}"                    {
+                                           if (lBraceCount == 0) {
+                                             popState();
+                                             return JetTokens.LONG_TEMPLATE_ENTRY_END;
+                                           }
+                                           lBraceCount--;
+                                           return JetTokens.RBRACE;
+                                       }
 
-//<YYINITIAL> {FLOAT_LITERAL}      { return JetTokens.FLOAT_LITERAL; }
-//<YYINITIAL> {HEX_FLOAT_LITERAL}  { return JetTokens.FLOAT_LITERAL; }
-<YYINITIAL> {DOUBLE_LITERAL}     { return JetTokens.FLOAT_LITERAL; }
-<YYINITIAL> {HEX_DOUBLE_LITERAL} { return JetTokens.FLOAT_LITERAL; }
+// Mere mortals
 
-<YYINITIAL> {CHARACTER_LITERAL} { return JetTokens.CHARACTER_LITERAL; }
-<YYINITIAL> {STRING_LITERAL} { return JetTokens.STRING_LITERAL; }
+{BLOCK_COMMENT} { return JetTokens.BLOCK_COMMENT; }
+{DOC_COMMENT} { return JetTokens.DOC_COMMENT; }
+
+({WHITE_SPACE_CHAR})+ { return JetTokens.WHITE_SPACE; }
+
+{EOL_COMMENT} { return JetTokens.EOL_COMMENT; }
+
+{INTEGER_LITERAL}\.\. { yypushback(2); return JetTokens.INTEGER_LITERAL; }
+{INTEGER_LITERAL} { return JetTokens.INTEGER_LITERAL; }
+//{LONG_LITERAL} { return JetTokens.LONG_LITERAL; }
+
+//{FLOAT_LITERAL}      { return JetTokens.FLOAT_LITERAL; }
+//{HEX_FLOAT_LITERAL}  { return JetTokens.FLOAT_LITERAL; }
+{DOUBLE_LITERAL}     { return JetTokens.FLOAT_LITERAL; }
+{HEX_DOUBLE_LITERAL} { return JetTokens.FLOAT_LITERAL; }
+
+{CHARACTER_LITERAL} { return JetTokens.CHARACTER_LITERAL; }
+//{STRING_LITERAL} { return JetTokens.STRING_LITERAL; }
+
 // TODO: Decide what to do with """ ... """"
-<YYINITIAL> {RAW_STRING_LITERAL} { return JetTokens.RAW_STRING_LITERAL; }
+{RAW_STRING_LITERAL} { return JetTokens.RAW_STRING_LITERAL; }
 
-<YYINITIAL> "namespace"  { return JetTokens.NAMESPACE_KEYWORD ;}
-<YYINITIAL> "continue"   { return JetTokens.CONTINUE_KEYWORD ;}
-<YYINITIAL> "return"     { return JetTokens.RETURN_KEYWORD ;}
-<YYINITIAL> "object"     { return JetTokens.OBJECT_KEYWORD ;}
-<YYINITIAL> "while"      { return JetTokens.WHILE_KEYWORD ;}
-<YYINITIAL> "break"      { return JetTokens.BREAK_KEYWORD ;}
-<YYINITIAL> "class"      { return JetTokens.CLASS_KEYWORD ;}
-<YYINITIAL> "throw"      { return JetTokens.THROW_KEYWORD ;}
-<YYINITIAL> "false"      { return JetTokens.FALSE_KEYWORD ;}
-<YYINITIAL> "when"       { return JetTokens.WHEN_KEYWORD ;}
-<YYINITIAL> "true"       { return JetTokens.TRUE_KEYWORD ;}
-<YYINITIAL> "type"       { return JetTokens.TYPE_KEYWORD ;}
-<YYINITIAL> "this"       { return JetTokens.THIS_KEYWORD ;}
-<YYINITIAL> "null"       { return JetTokens.NULL_KEYWORD ;}
-<YYINITIAL> "else"       { return JetTokens.ELSE_KEYWORD ;}
-<YYINITIAL> "This"       { return JetTokens.CAPITALIZED_THIS_KEYWORD ;}
-<YYINITIAL> "try"        { return JetTokens.TRY_KEYWORD ;}
-<YYINITIAL> "val"        { return JetTokens.VAL_KEYWORD ;}
-<YYINITIAL> "var"        { return JetTokens.VAR_KEYWORD ;}
-<YYINITIAL> "fun"        { return JetTokens.FUN_KEYWORD ;}
-<YYINITIAL> "for"        { return JetTokens.FOR_KEYWORD ;}
-//<YYINITIAL> "new"        { return JetTokens.NEW_KEYWORD ;}
-<YYINITIAL> "is"         { return JetTokens.IS_KEYWORD ;}
-<YYINITIAL> "in"         { return JetTokens.IN_KEYWORD ;}
-<YYINITIAL> "if"         { return JetTokens.IF_KEYWORD ;}
-<YYINITIAL> "do"         { return JetTokens.DO_KEYWORD ;}
-<YYINITIAL> "as"         { return JetTokens.AS_KEYWORD ;}
+"namespace"  { return JetTokens.NAMESPACE_KEYWORD ;}
+"continue"   { return JetTokens.CONTINUE_KEYWORD ;}
+"return"     { return JetTokens.RETURN_KEYWORD ;}
+"object"     { return JetTokens.OBJECT_KEYWORD ;}
+"while"      { return JetTokens.WHILE_KEYWORD ;}
+"break"      { return JetTokens.BREAK_KEYWORD ;}
+"class"      { return JetTokens.CLASS_KEYWORD ;}
+"throw"      { return JetTokens.THROW_KEYWORD ;}
+"false"      { return JetTokens.FALSE_KEYWORD ;}
+"when"       { return JetTokens.WHEN_KEYWORD ;}
+"true"       { return JetTokens.TRUE_KEYWORD ;}
+"type"       { return JetTokens.TYPE_KEYWORD ;}
+"this"       { return JetTokens.THIS_KEYWORD ;}
+"null"       { return JetTokens.NULL_KEYWORD ;}
+"else"       { return JetTokens.ELSE_KEYWORD ;}
+"This"       { return JetTokens.CAPITALIZED_THIS_KEYWORD ;}
+"try"        { return JetTokens.TRY_KEYWORD ;}
+"val"        { return JetTokens.VAL_KEYWORD ;}
+"var"        { return JetTokens.VAR_KEYWORD ;}
+"fun"        { return JetTokens.FUN_KEYWORD ;}
+"for"        { return JetTokens.FOR_KEYWORD ;}
+//"new"        { return JetTokens.NEW_KEYWORD ;}
+"is"         { return JetTokens.IS_KEYWORD ;}
+"in"         { return JetTokens.IN_KEYWORD ;}
+"if"         { return JetTokens.IF_KEYWORD ;}
+"do"         { return JetTokens.DO_KEYWORD ;}
+"as"         { return JetTokens.AS_KEYWORD ;}
 
-<YYINITIAL> {FIELD_IDENTIFIER} { return JetTokens.FIELD_IDENTIFIER; }
-<YYINITIAL> {IDENTIFIER} { return JetTokens.IDENTIFIER; }
-<YYINITIAL> {LABEL_IDENTIFIER}   { return JetTokens.LABEL_IDENTIFIER; }
+{FIELD_IDENTIFIER} { return JetTokens.FIELD_IDENTIFIER; }
+{IDENTIFIER} { return JetTokens.IDENTIFIER; }
+{LABEL_IDENTIFIER}   { return JetTokens.LABEL_IDENTIFIER; }
 
-<YYINITIAL> "==="        { return JetTokens.EQEQEQ    ; }
-<YYINITIAL> "!=="        { return JetTokens.EXCLEQEQEQ; }
-<YYINITIAL> "!in"        { return JetTokens.NOT_IN; }
-<YYINITIAL> "!is"        { return JetTokens.NOT_IS; }
-<YYINITIAL> "as?"        { return JetTokens.AS_SAFE; }
-<YYINITIAL> "++"         { return JetTokens.PLUSPLUS  ; }
-<YYINITIAL> "--"         { return JetTokens.MINUSMINUS; }
-<YYINITIAL> "<="         { return JetTokens.LTEQ      ; }
-<YYINITIAL> ">="         { return JetTokens.GTEQ      ; }
-<YYINITIAL> "=="         { return JetTokens.EQEQ      ; }
-<YYINITIAL> "!="         { return JetTokens.EXCLEQ    ; }
-<YYINITIAL> "&&"         { return JetTokens.ANDAND    ; }
-<YYINITIAL> "||"         { return JetTokens.OROR      ; }
-<YYINITIAL> "?."         { return JetTokens.SAFE_ACCESS;}
-<YYINITIAL> "?:"         { return JetTokens.ELVIS     ; }
-//<YYINITIAL> ".*"         { return JetTokens.MAP       ; }
-//<YYINITIAL> ".?"         { return JetTokens.FILTER    ; }
-<YYINITIAL> "*="         { return JetTokens.MULTEQ    ; }
-<YYINITIAL> "/="         { return JetTokens.DIVEQ     ; }
-<YYINITIAL> "%="         { return JetTokens.PERCEQ    ; }
-<YYINITIAL> "+="         { return JetTokens.PLUSEQ    ; }
-<YYINITIAL> "-="         { return JetTokens.MINUSEQ   ; }
-<YYINITIAL> "->"         { return JetTokens.ARROW     ; }
-<YYINITIAL> "=>"         { return JetTokens.DOUBLE_ARROW; }
-<YYINITIAL> ".."         { return JetTokens.RANGE     ; }
-<YYINITIAL> "@@"         { return JetTokens.ATAT      ; }
-<YYINITIAL> "["          { return JetTokens.LBRACKET  ; }
-<YYINITIAL> "]"          { return JetTokens.RBRACKET  ; }
-<YYINITIAL> "{"          { return JetTokens.LBRACE    ; }
-<YYINITIAL> "}"          { return JetTokens.RBRACE    ; }
-<YYINITIAL> "("          { return JetTokens.LPAR      ; }
-<YYINITIAL> ")"          { return JetTokens.RPAR      ; }
-<YYINITIAL> "."          { return JetTokens.DOT       ; }
-<YYINITIAL> "*"          { return JetTokens.MUL       ; }
-<YYINITIAL> "+"          { return JetTokens.PLUS      ; }
-<YYINITIAL> "-"          { return JetTokens.MINUS     ; }
-<YYINITIAL> "!"          { return JetTokens.EXCL      ; }
-<YYINITIAL> "/"          { return JetTokens.DIV       ; }
-<YYINITIAL> "%"          { return JetTokens.PERC      ; }
-<YYINITIAL> "<"          { return JetTokens.LT        ; }
-<YYINITIAL> ">"          { return JetTokens.GT        ; }
-<YYINITIAL> "?"          { return JetTokens.QUEST     ; }
-<YYINITIAL> ":"          { return JetTokens.COLON     ; }
-<YYINITIAL> ";"          { return JetTokens.SEMICOLON ; }
-<YYINITIAL> "="          { return JetTokens.EQ        ; }
-<YYINITIAL> ","          { return JetTokens.COMMA     ; }
-<YYINITIAL> "#"          { return JetTokens.HASH      ; }
-<YYINITIAL> "@"          { return JetTokens.AT        ; }
+"==="        { return JetTokens.EQEQEQ    ; }
+"!=="        { return JetTokens.EXCLEQEQEQ; }
+"!in"        { return JetTokens.NOT_IN; }
+"!is"        { return JetTokens.NOT_IS; }
+"as?"        { return JetTokens.AS_SAFE; }
+"++"         { return JetTokens.PLUSPLUS  ; }
+"--"         { return JetTokens.MINUSMINUS; }
+"<="         { return JetTokens.LTEQ      ; }
+">="         { return JetTokens.GTEQ      ; }
+"=="         { return JetTokens.EQEQ      ; }
+"!="         { return JetTokens.EXCLEQ    ; }
+"&&"         { return JetTokens.ANDAND    ; }
+"||"         { return JetTokens.OROR      ; }
+"?."         { return JetTokens.SAFE_ACCESS;}
+"?:"         { return JetTokens.ELVIS     ; }
+//".*"         { return JetTokens.MAP       ; }
+//".?"         { return JetTokens.FILTER    ; }
+"*="         { return JetTokens.MULTEQ    ; }
+"/="         { return JetTokens.DIVEQ     ; }
+"%="         { return JetTokens.PERCEQ    ; }
+"+="         { return JetTokens.PLUSEQ    ; }
+"-="         { return JetTokens.MINUSEQ   ; }
+"->"         { return JetTokens.ARROW     ; }
+"=>"         { return JetTokens.DOUBLE_ARROW; }
+".."         { return JetTokens.RANGE     ; }
+"@@"         { return JetTokens.ATAT      ; }
+"["          { return JetTokens.LBRACKET  ; }
+"]"          { return JetTokens.RBRACKET  ; }
+"{"          { return JetTokens.LBRACE    ; }
+"}"          { return JetTokens.RBRACE    ; }
+"("          { return JetTokens.LPAR      ; }
+")"          { return JetTokens.RPAR      ; }
+"."          { return JetTokens.DOT       ; }
+"*"          { return JetTokens.MUL       ; }
+"+"          { return JetTokens.PLUS      ; }
+"-"          { return JetTokens.MINUS     ; }
+"!"          { return JetTokens.EXCL      ; }
+"/"          { return JetTokens.DIV       ; }
+"%"          { return JetTokens.PERC      ; }
+"<"          { return JetTokens.LT        ; }
+">"          { return JetTokens.GT        ; }
+"?"          { return JetTokens.QUEST     ; }
+":"          { return JetTokens.COLON     ; }
+";"          { return JetTokens.SEMICOLON ; }
+"="          { return JetTokens.EQ        ; }
+","          { return JetTokens.COMMA     ; }
+"#"          { return JetTokens.HASH      ; }
+"@"          { return JetTokens.AT        ; }
 
-<YYINITIAL> . { return TokenType.BAD_CHARACTER; }
+. { return TokenType.BAD_CHARACTER; }
 

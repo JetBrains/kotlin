@@ -1,0 +1,22 @@
+fun demo() {
+  val abc = 1
+  val a = ""
+  val asd = 1
+  val bar = 5
+  fun map(f : fun () : Any?) : Int  = 1
+  fun buzz(f : fun () : Any?) : Int  = 1
+  val sdf = 1
+  val foo = 3;
+    "$abc"
+    "$abc\"
+    "$"
+    "$.$.asdf$\t"
+    "asd\$"
+    "asd$a"
+    "asd$a$asd$"
+    "fosdfasdo${1 + bar + 100}}sdsdfgdsfsdf"
+    "foo${bar + map {foo}}sdfsdf"
+    "foo${bar + map { "foo" }}sdfsdf"
+    "foo${bar + map {
+      "foo$sdf${ buzz{}}" }}sdfsdf"
+}

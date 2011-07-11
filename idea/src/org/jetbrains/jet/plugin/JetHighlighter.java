@@ -61,10 +61,20 @@ public class JetHighlighter extends SyntaxHighlighterBase {
                                                  SyntaxHighlighterColors.STRING.getDefaultAttributes()
                                                 );
 
-    private static final TextAttributesKey JET_COMMENT = TextAttributesKey.createTextAttributesKey(
-                                                       "JET.COMMENT",
-                                                       SyntaxHighlighterColors.LINE_COMMENT.getDefaultAttributes()
-                                                     );
+    public static final TextAttributesKey JET_STRING_ESCAPE = TextAttributesKey.createTextAttributesKey(
+                                                 "JET.STRING.ESCAPE",
+                                                 SyntaxHighlighterColors.VALID_STRING_ESCAPE.getDefaultAttributes()
+                                                );
+
+    private static final TextAttributesKey JET_COMMENT;
+    static {
+        TextAttributes attributes = SyntaxHighlighterColors.LINE_COMMENT.getDefaultAttributes().clone();
+        attributes.setFontType(Font.PLAIN);
+        JET_COMMENT = TextAttributesKey.createTextAttributesKey(
+                "JET.COMMENT",
+                attributes
+        );
+    }
 
     private static final TextAttributesKey JET_BAD_CHARACTER = TextAttributesKey.createTextAttributesKey(
                                                     "JET.BADCHARACTER",
@@ -72,6 +82,7 @@ public class JetHighlighter extends SyntaxHighlighterBase {
                                                   );
 
     public static final TextAttributesKey JET_AUTO_CAST_EXPRESSION;
+
     static {
         TextAttributes clone = SyntaxHighlighterColors.STRING.getDefaultAttributes().clone();
         clone.setFontType(Font.PLAIN);
@@ -105,6 +116,14 @@ public class JetHighlighter extends SyntaxHighlighterBase {
         keys1.put(JetTokens.FLOAT_LITERAL, JET_NUMBER);
 
         keys1.put(JetTokens.STRING_LITERAL, JET_STRING);
+        keys1.put(JetTokens.OPEN_QUOTE, JET_STRING);
+        keys1.put(JetTokens.CLOSING_QUOTE, JET_STRING);
+        keys1.put(JetTokens.REGULAR_STRING_PART, JET_STRING);
+        keys1.put(JetTokens.LONG_TEMPLATE_ENTRY_END, JET_STRING_ESCAPE);
+        keys1.put(JetTokens.LONG_TEMPLATE_ENTRY_START, JET_STRING_ESCAPE);
+
+        keys1.put(JetTokens.ESCAPE_SEQUENCE, JET_STRING_ESCAPE);
+
         keys1.put(JetTokens.CHARACTER_LITERAL, JET_STRING);
         keys1.put(JetTokens.RAW_STRING_LITERAL, JET_STRING);
 

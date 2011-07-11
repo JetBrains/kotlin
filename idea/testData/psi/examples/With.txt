@@ -115,8 +115,11 @@ JetFile: With.jet
                   VALUE_ARGUMENT_LIST
                     PsiElement(LPAR)('(')
                     VALUE_ARGUMENT
-                      STRING_CONSTANT
-                        PsiElement(STRING_LITERAL)('"foo"')
+                      STRING_TEMPLATE
+                        PsiElement(OPEN_QUOTE)('"')
+                        LITERAL_STRING_TEMPLATE_ENTRY
+                          PsiElement(REGULAR_STRING_PART)('foo')
+                        PsiElement(CLOSING_QUOTE)('"')
                     PsiElement(RPAR)(')')
                 PsiElement(SEMICOLON)(';')
                 PsiWhiteSpace('\n    ')
@@ -126,8 +129,11 @@ JetFile: With.jet
                   VALUE_ARGUMENT_LIST
                     PsiElement(LPAR)('(')
                     VALUE_ARGUMENT
-                      STRING_CONSTANT
-                        PsiElement(STRING_LITERAL)('"bar"')
+                      STRING_TEMPLATE
+                        PsiElement(OPEN_QUOTE)('"')
+                        LITERAL_STRING_TEMPLATE_ENTRY
+                          PsiElement(REGULAR_STRING_PART)('bar')
+                        PsiElement(CLOSING_QUOTE)('"')
                     PsiElement(RPAR)(')')
                 PsiElement(SEMICOLON)(';')
               PsiWhiteSpace('\n  ')
@@ -153,8 +159,11 @@ JetFile: With.jet
                     VALUE_ARGUMENT_LIST
                       PsiElement(LPAR)('(')
                       VALUE_ARGUMENT
-                        STRING_CONSTANT
-                          PsiElement(STRING_LITERAL)('"foo"')
+                        STRING_TEMPLATE
+                          PsiElement(OPEN_QUOTE)('"')
+                          LITERAL_STRING_TEMPLATE_ENTRY
+                            PsiElement(REGULAR_STRING_PART)('foo')
+                          PsiElement(CLOSING_QUOTE)('"')
                       PsiElement(RPAR)(')')
                   PsiElement(SEMICOLON)(';')
                   PsiWhiteSpace('\n    ')
@@ -164,8 +173,11 @@ JetFile: With.jet
                     VALUE_ARGUMENT_LIST
                       PsiElement(LPAR)('(')
                       VALUE_ARGUMENT
-                        STRING_CONSTANT
-                          PsiElement(STRING_LITERAL)('"bar"')
+                        STRING_TEMPLATE
+                          PsiElement(OPEN_QUOTE)('"')
+                          LITERAL_STRING_TEMPLATE_ENTRY
+                            PsiElement(REGULAR_STRING_PART)('bar')
+                          PsiElement(CLOSING_QUOTE)('"')
                       PsiElement(RPAR)(')')
                   PsiElement(SEMICOLON)(';')
                 PsiWhiteSpace('\n  ')

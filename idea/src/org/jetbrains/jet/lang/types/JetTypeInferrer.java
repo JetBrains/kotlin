@@ -7,6 +7,7 @@ import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
@@ -865,7 +866,7 @@ public class JetTypeInferrer {
                 }
             }
             else {
-                assert  expression.getReferencedNameElementType() == JetTokens.IDENTIFIER;
+                assert TokenSet.create(JetTokens.IDENTIFIER, JetTokens.SHORT_TEMPLATE_ENTRY).contains(expression.getReferencedNameElementType());
                 if (referencedName != null) {
                     VariableDescriptor variable = context.scope.getVariable(referencedName);
                     if (variable != null) {
@@ -2429,6 +2430,41 @@ public class JetTypeInferrer {
         public void visitRootNamespaceExpression(JetRootNamespaceExpression expression) {
             context.trace.getErrorHandler().genericError(expression.getNode(), "'namespace' is not an expression");
             result = null;
+        }
+
+
+        @Override
+        public void visitStringTemplateExpression(JetStringTemplateExpression expression) {
+            for (JetStringTemplateEntry entry : expression.getEntries()) {
+                entry.accept(new JetVisitor() {
+
+                    @Override
+                    public void visitStringTemplateEntryWithExpression(JetStringTemplateEntryWithExpression entry) {
+                        JetExpression entryExpression = entry.getExpression();
+                        if (entryExpression != null) {
+                            getType(context.scope, entryExpression, true);
+                        }
+                    }
+
+                    @Override
+                    public void visitLiteralStringTemplateEntry(JetLiteralStringTemplateEntry entry) {
+                        // Nothing
+                    }
+
+                    @Override
+                    public void visitEscapeStringTemplateEntry(JetEscapeStringTemplateEntry entry) {
+                        // TODO : Check escape
+                        String text = entry.getText();
+                        assert text.length() == 2;
+                        char escaped = text.charAt(1);
+                        Character[] legal = {'n', 'r', 't', 'b', 'f', '$', '\"', '$', '\\'};
+                        if (!Sets.newHashSet(legal).contains(escaped)) {
+                            context.trace.getErrorHandler().genericError(entry.getNode(), "Illegal escape sequence");
+                        }
+                    }
+                });
+            }
+            result = semanticServices.getStandardLibrary().getStringType();
         }
 
         @Override

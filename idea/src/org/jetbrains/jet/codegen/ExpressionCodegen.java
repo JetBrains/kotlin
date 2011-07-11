@@ -489,6 +489,25 @@ public class ExpressionCodegen extends JetVisitor {
     }
 
     @Override
+    public void visitStringTemplateExpression(JetStringTemplateExpression expression) {
+        final StringBuilder builder = new StringBuilder();
+        for (JetStringTemplateEntry entry : expression.getEntries()) {
+            entry.accept(new JetVisitor() {
+                @Override
+                public void visitStringTemplateEntry(JetStringTemplateEntry entry) {
+                    throw new UnsupportedOperationException("Unsupported string template entry: " + entry); // TODO
+                }
+
+                @Override
+                public void visitLiteralStringTemplateEntry(JetLiteralStringTemplateEntry entry) {
+                    builder.append(entry.getText());
+                }
+            });
+        }
+        myStack.push(StackValue.constant(builder.toString(), expressionType(expression)));
+    }
+
+    @Override
     public void visitBlockExpression(JetBlockExpression expression) {
         List<JetElement> statements = expression.getStatements();
         generateBlock(statements);

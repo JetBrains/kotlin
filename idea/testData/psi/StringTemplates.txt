@@ -1,0 +1,368 @@
+JetFile: StringTemplates.jet
+  NAMESPACE
+    FUN
+      PsiElement(fun)('fun')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('demo')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      BLOCK
+        PsiElement(LBRACE)('{')
+        PsiWhiteSpace('\n  ')
+        PROPERTY
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('abc')
+          PsiWhiteSpace(' ')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('1')
+        PsiWhiteSpace('\n  ')
+        PROPERTY
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('a')
+          PsiWhiteSpace(' ')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          STRING_TEMPLATE
+            PsiElement(OPEN_QUOTE)('"')
+            PsiElement(CLOSING_QUOTE)('"')
+        PsiWhiteSpace('\n  ')
+        PROPERTY
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('asd')
+          PsiWhiteSpace(' ')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('1')
+        PsiWhiteSpace('\n  ')
+        PROPERTY
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('bar')
+          PsiWhiteSpace(' ')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('5')
+        PsiWhiteSpace('\n  ')
+        FUN
+          PsiElement(fun)('fun')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('map')
+          VALUE_PARAMETER_LIST
+            PsiElement(LPAR)('(')
+            VALUE_PARAMETER
+              PsiElement(IDENTIFIER)('f')
+              PsiWhiteSpace(' ')
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                FUNCTION_TYPE
+                  PsiElement(fun)('fun')
+                  PsiWhiteSpace(' ')
+                  VALUE_PARAMETER_LIST
+                    PsiElement(LPAR)('(')
+                    PsiElement(RPAR)(')')
+                  PsiWhiteSpace(' ')
+                  PsiElement(COLON)(':')
+                  PsiWhiteSpace(' ')
+                  TYPE_REFERENCE
+                    NULLABLE_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('Any')
+                      PsiElement(QUEST)('?')
+            PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
+          PsiWhiteSpace('  ')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('1')
+        PsiWhiteSpace('\n  ')
+        FUN
+          PsiElement(fun)('fun')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('buzz')
+          VALUE_PARAMETER_LIST
+            PsiElement(LPAR)('(')
+            VALUE_PARAMETER
+              PsiElement(IDENTIFIER)('f')
+              PsiWhiteSpace(' ')
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                FUNCTION_TYPE
+                  PsiElement(fun)('fun')
+                  PsiWhiteSpace(' ')
+                  VALUE_PARAMETER_LIST
+                    PsiElement(LPAR)('(')
+                    PsiElement(RPAR)(')')
+                  PsiWhiteSpace(' ')
+                  PsiElement(COLON)(':')
+                  PsiWhiteSpace(' ')
+                  TYPE_REFERENCE
+                    NULLABLE_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('Any')
+                      PsiElement(QUEST)('?')
+            PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
+          PsiWhiteSpace('  ')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('1')
+        PsiWhiteSpace('\n  ')
+        PROPERTY
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('sdf')
+          PsiWhiteSpace(' ')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('1')
+        PsiWhiteSpace('\n  ')
+        PROPERTY
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('foo')
+          PsiWhiteSpace(' ')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('3')
+        PsiElement(SEMICOLON)(';')
+        PsiWhiteSpace('\n    ')
+        STRING_TEMPLATE
+          PsiElement(OPEN_QUOTE)('"')
+          SHORT_STRING_TEMPLATE_ENTRY
+            REFERENCE_EXPRESSION
+              PsiElement(SHORT_TEMPLATE_ENTRY)('$abc')
+          PsiElement(CLOSING_QUOTE)('"')
+        PsiWhiteSpace('\n    ')
+        STRING_TEMPLATE
+          PsiElement(OPEN_QUOTE)('"')
+          SHORT_STRING_TEMPLATE_ENTRY
+            REFERENCE_EXPRESSION
+              PsiElement(SHORT_TEMPLATE_ENTRY)('$abc')
+          ESCAPE_STRING_TEMPLATE_ENTRY
+            PsiElement(ESCAPE_SEQUENCE)('\"')
+          PsiErrorElement:Expecting '"'
+            <empty list>
+        PsiWhiteSpace('\n    ')
+        STRING_TEMPLATE
+          PsiElement(OPEN_QUOTE)('"')
+          LITERAL_STRING_TEMPLATE_ENTRY
+            PsiElement(REGULAR_STRING_PART)('$')
+          PsiElement(CLOSING_QUOTE)('"')
+        PsiWhiteSpace('\n    ')
+        STRING_TEMPLATE
+          PsiElement(OPEN_QUOTE)('"')
+          LITERAL_STRING_TEMPLATE_ENTRY
+            PsiElement(REGULAR_STRING_PART)('$')
+          LITERAL_STRING_TEMPLATE_ENTRY
+            PsiElement(REGULAR_STRING_PART)('.')
+          LITERAL_STRING_TEMPLATE_ENTRY
+            PsiElement(REGULAR_STRING_PART)('$')
+          LITERAL_STRING_TEMPLATE_ENTRY
+            PsiElement(REGULAR_STRING_PART)('.asdf')
+          LITERAL_STRING_TEMPLATE_ENTRY
+            PsiElement(REGULAR_STRING_PART)('$')
+          ESCAPE_STRING_TEMPLATE_ENTRY
+            PsiElement(ESCAPE_SEQUENCE)('\t')
+          PsiElement(CLOSING_QUOTE)('"')
+        PsiWhiteSpace('\n    ')
+        STRING_TEMPLATE
+          PsiElement(OPEN_QUOTE)('"')
+          LITERAL_STRING_TEMPLATE_ENTRY
+            PsiElement(REGULAR_STRING_PART)('asd')
+          ESCAPE_STRING_TEMPLATE_ENTRY
+            PsiElement(ESCAPE_SEQUENCE)('\$')
+          PsiElement(CLOSING_QUOTE)('"')
+        PsiWhiteSpace('\n    ')
+        STRING_TEMPLATE
+          PsiElement(OPEN_QUOTE)('"')
+          LITERAL_STRING_TEMPLATE_ENTRY
+            PsiElement(REGULAR_STRING_PART)('asd')
+          SHORT_STRING_TEMPLATE_ENTRY
+            REFERENCE_EXPRESSION
+              PsiElement(SHORT_TEMPLATE_ENTRY)('$a')
+          PsiElement(CLOSING_QUOTE)('"')
+        PsiWhiteSpace('\n    ')
+        STRING_TEMPLATE
+          PsiElement(OPEN_QUOTE)('"')
+          LITERAL_STRING_TEMPLATE_ENTRY
+            PsiElement(REGULAR_STRING_PART)('asd')
+          SHORT_STRING_TEMPLATE_ENTRY
+            REFERENCE_EXPRESSION
+              PsiElement(SHORT_TEMPLATE_ENTRY)('$a')
+          SHORT_STRING_TEMPLATE_ENTRY
+            REFERENCE_EXPRESSION
+              PsiElement(SHORT_TEMPLATE_ENTRY)('$asd')
+          LITERAL_STRING_TEMPLATE_ENTRY
+            PsiElement(REGULAR_STRING_PART)('$')
+          PsiElement(CLOSING_QUOTE)('"')
+        PsiWhiteSpace('\n    ')
+        STRING_TEMPLATE
+          PsiElement(OPEN_QUOTE)('"')
+          LITERAL_STRING_TEMPLATE_ENTRY
+            PsiElement(REGULAR_STRING_PART)('fosdfasdo')
+          LONG_STRING_TEMPLATE_ENTRY
+            PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+            BINARY_EXPRESSION
+              BINARY_EXPRESSION
+                INTEGER_CONSTANT
+                  PsiElement(INTEGER_LITERAL)('1')
+                PsiWhiteSpace(' ')
+                OPERATION_REFERENCE
+                  PsiElement(PLUS)('+')
+                PsiWhiteSpace(' ')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('bar')
+              PsiWhiteSpace(' ')
+              OPERATION_REFERENCE
+                PsiElement(PLUS)('+')
+              PsiWhiteSpace(' ')
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('100')
+            PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+          LITERAL_STRING_TEMPLATE_ENTRY
+            PsiElement(REGULAR_STRING_PART)('}sdsdfgdsfsdf')
+          PsiElement(CLOSING_QUOTE)('"')
+        PsiWhiteSpace('\n    ')
+        STRING_TEMPLATE
+          PsiElement(OPEN_QUOTE)('"')
+          LITERAL_STRING_TEMPLATE_ENTRY
+            PsiElement(REGULAR_STRING_PART)('foo')
+          LONG_STRING_TEMPLATE_ENTRY
+            PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+            BINARY_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('bar')
+              PsiWhiteSpace(' ')
+              OPERATION_REFERENCE
+                PsiElement(PLUS)('+')
+              PsiWhiteSpace(' ')
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('map')
+                PsiWhiteSpace(' ')
+                FUNCTION_LITERAL_EXPRESSION
+                  FUNCTION_LITERAL
+                    PsiElement(LBRACE)('{')
+                    BLOCK
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('foo')
+                    PsiElement(RBRACE)('}')
+            PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+          LITERAL_STRING_TEMPLATE_ENTRY
+            PsiElement(REGULAR_STRING_PART)('sdfsdf')
+          PsiElement(CLOSING_QUOTE)('"')
+        PsiWhiteSpace('\n    ')
+        STRING_TEMPLATE
+          PsiElement(OPEN_QUOTE)('"')
+          LITERAL_STRING_TEMPLATE_ENTRY
+            PsiElement(REGULAR_STRING_PART)('foo')
+          LONG_STRING_TEMPLATE_ENTRY
+            PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+            BINARY_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('bar')
+              PsiWhiteSpace(' ')
+              OPERATION_REFERENCE
+                PsiElement(PLUS)('+')
+              PsiWhiteSpace(' ')
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('map')
+                PsiWhiteSpace(' ')
+                FUNCTION_LITERAL_EXPRESSION
+                  FUNCTION_LITERAL
+                    PsiElement(LBRACE)('{')
+                    PsiWhiteSpace(' ')
+                    BLOCK
+                      STRING_TEMPLATE
+                        PsiElement(OPEN_QUOTE)('"')
+                        LITERAL_STRING_TEMPLATE_ENTRY
+                          PsiElement(REGULAR_STRING_PART)('foo')
+                        PsiElement(CLOSING_QUOTE)('"')
+                    PsiWhiteSpace(' ')
+                    PsiElement(RBRACE)('}')
+            PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+          LITERAL_STRING_TEMPLATE_ENTRY
+            PsiElement(REGULAR_STRING_PART)('sdfsdf')
+          PsiElement(CLOSING_QUOTE)('"')
+        PsiWhiteSpace('\n    ')
+        STRING_TEMPLATE
+          PsiElement(OPEN_QUOTE)('"')
+          LITERAL_STRING_TEMPLATE_ENTRY
+            PsiElement(REGULAR_STRING_PART)('foo')
+          LONG_STRING_TEMPLATE_ENTRY
+            PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+            BINARY_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('bar')
+              PsiWhiteSpace(' ')
+              OPERATION_REFERENCE
+                PsiElement(PLUS)('+')
+              PsiWhiteSpace(' ')
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('map')
+                PsiWhiteSpace(' ')
+                FUNCTION_LITERAL_EXPRESSION
+                  FUNCTION_LITERAL
+                    PsiElement(LBRACE)('{')
+                    PsiWhiteSpace('\n      ')
+                    BLOCK
+                      STRING_TEMPLATE
+                        PsiElement(OPEN_QUOTE)('"')
+                        LITERAL_STRING_TEMPLATE_ENTRY
+                          PsiElement(REGULAR_STRING_PART)('foo')
+                        SHORT_STRING_TEMPLATE_ENTRY
+                          REFERENCE_EXPRESSION
+                            PsiElement(SHORT_TEMPLATE_ENTRY)('$sdf')
+                        LONG_STRING_TEMPLATE_ENTRY
+                          PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+                          PsiWhiteSpace(' ')
+                          CALL_EXPRESSION
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('buzz')
+                            FUNCTION_LITERAL_EXPRESSION
+                              FUNCTION_LITERAL
+                                PsiElement(LBRACE)('{')
+                                BLOCK
+                                  <empty list>
+                                PsiElement(RBRACE)('}')
+                          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+                        PsiElement(CLOSING_QUOTE)('"')
+                    PsiWhiteSpace(' ')
+                    PsiElement(RBRACE)('}')
+            PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+          LITERAL_STRING_TEMPLATE_ENTRY
+            PsiElement(REGULAR_STRING_PART)('sdfsdf')
+          PsiElement(CLOSING_QUOTE)('"')
+        PsiWhiteSpace('\n')
+        PsiElement(RBRACE)('}')

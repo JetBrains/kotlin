@@ -29,7 +29,7 @@ import java.util.List;
  * @author max
  */
 public class JetSimpleNameExpression extends JetReferenceExpression {
-    public static final TokenSet REFERENCE_TOKENS = TokenSet.orSet(JetTokens.LABELS, TokenSet.create(JetTokens.IDENTIFIER, JetTokens.FIELD_IDENTIFIER, JetTokens.THIS_KEYWORD));
+    public static final TokenSet REFERENCE_TOKENS = TokenSet.orSet(JetTokens.LABELS, TokenSet.create(JetTokens.IDENTIFIER, JetTokens.FIELD_IDENTIFIER, JetTokens.THIS_KEYWORD, JetTokens.SHORT_TEMPLATE_ENTRY));
 
     public JetSimpleNameExpression(@NotNull ASTNode node) {
         super(node);
@@ -41,7 +41,10 @@ public class JetSimpleNameExpression extends JetReferenceExpression {
         if (referencedNameElement == null) {
             return null;
         }
-        final String text = referencedNameElement.getNode().getText();
+        String text = referencedNameElement.getNode().getText();
+        if (referencedNameElement.getNode().getElementType() == JetTokens.SHORT_TEMPLATE_ENTRY) {
+            text = text.substring(1); // Strip the '$'
+        }
         if (text.startsWith("`") && text.endsWith("`") && text.length() >= 2) {
             return text.substring(1, text.length()-1);
         }

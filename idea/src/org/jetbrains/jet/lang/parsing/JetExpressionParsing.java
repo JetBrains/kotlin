@@ -69,7 +69,9 @@ public class JetExpressionParsing extends AbstractJetParsing {
             IDENTIFIER, // SimpleName
             FIELD_IDENTIFIER, // Field reference
 
-            NAMESPACE_KEYWORD // for absolute qualified names
+            NAMESPACE_KEYWORD, // for absolute qualified names
+
+            OPEN_QUOTE // STRINGS
     );
 
     private static final TokenSet STATEMENT_FIRST = TokenSet.orSet(
@@ -535,9 +537,87 @@ public class JetExpressionParsing extends AbstractJetParsing {
         else if (at(LBRACE)) {
             parseFunctionLiteral();
         }
+        else if (at(OPEN_QUOTE)) {
+            parseStringTemplate();
+        }
         else if (!parseLiteralConstant()) {
             // TODO: better recovery if FIRST(element) did not match
             errorWithRecovery("Expecting an element", EXPRESSION_FOLLOW);
+        }
+    }
+
+    /*
+     * stringTemplate
+     *   : OPEN_QUOTE stringTemplateElement* CLOSING_QUOTE
+     *   ;
+     */
+    private void parseStringTemplate() {
+        assert _at(OPEN_QUOTE);
+
+        PsiBuilder.Marker template = mark();
+
+        advance(); // OPEN_QUOTE
+
+        while (!eof()) {
+            if (at(CLOSING_QUOTE) || at(DANGLING_NEWLINE)) {
+                break;
+            }
+            parseStringTemplateElement();
+        }
+
+        if (at(DANGLING_NEWLINE)) {
+            errorAndAdvance("Expecting '\"'");
+        }
+        else {
+            expect(CLOSING_QUOTE, "Expecting '\"'");
+        }
+        template.done(STRING_TEMPLATE);
+    }
+
+    /*
+     * stringTemplateElement
+     *   : RegularStringPart
+     *   : ShortTemplateEntry
+     *   : EscapeSequence
+     *   : longTemplate
+     *   ;
+     *
+     * longTemplate
+     *   : "${" expression "}"
+     *   ;
+     */
+    private void parseStringTemplateElement() {
+        if (at(REGULAR_STRING_PART)) {
+            PsiBuilder.Marker mark = mark();
+            advance(); // REGULAR_STRING_PART
+            mark.done(LITERAL_STRING_TEMPLATE_ENTRY);
+        }
+        else if (at(ESCAPE_SEQUENCE)) {
+            PsiBuilder.Marker mark = mark();
+            advance(); // ESCAPE_SEQUENCE
+            mark.done(ESCAPE_STRING_TEMPLATE_ENTRY);
+        }
+        else if (at(SHORT_TEMPLATE_ENTRY)) {
+            PsiBuilder.Marker entry = mark();
+
+            PsiBuilder.Marker reference = mark();
+            advance(); // SHORT_TEMPLATE_ENTRY
+            reference.done(REFERENCE_EXPRESSION);
+
+            entry.done(SHORT_STRING_TEMPLATE_ENTRY);
+        }
+        else if (at(LONG_TEMPLATE_ENTRY_START)) {
+            PsiBuilder.Marker longTemplateEntry = mark();
+
+            advance(); // LONG_TEMPLATE_ENTRY_START
+
+            parseExpression();
+
+            expect(LONG_TEMPLATE_ENTRY_END, "Expecting '}'", TokenSet.create(CLOSING_QUOTE, DANGLING_NEWLINE, REGULAR_STRING_PART, ESCAPE_SEQUENCE, SHORT_TEMPLATE_ENTRY));
+            longTemplateEntry.done(LONG_STRING_TEMPLATE_ENTRY);
+        }
+        else {
+            errorAndAdvance("Unexpected token in a string template");
         }
     }
 
@@ -788,6 +868,9 @@ public class JetExpressionParsing extends AbstractJetParsing {
         } else if (at(VAL_KEYWORD)) {
             parseBindingPattern();
             pattern.done(BINDING_PATTERN);
+        } else if (at(OPEN_QUOTE)) {
+            parseStringTemplate();
+            pattern.done(EXPRESSION_PATTERN);
         } else if (parseLiteralConstant()) {
             pattern.done(EXPRESSION_PATTERN);
         } else {

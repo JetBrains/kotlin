@@ -67,6 +67,6 @@ fun foo() {
     is a @ (a, b) => c
     1, foo(), bar, 2 + 3,
     is a @ (a, b) => c
-    is a.a @ (val b, b) if (b == a + 3) => c
+    is a.a @ (val b, b) => c
   }
 }

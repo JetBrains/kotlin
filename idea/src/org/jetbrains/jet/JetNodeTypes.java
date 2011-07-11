@@ -70,6 +70,12 @@ public interface JetNodeTypes {
     JetNodeType INTEGER_CONSTANT   = new JetNodeType("INTEGER_CONSTANT", JetConstantExpression.class);
     JetNodeType LONG_CONSTANT      = new JetNodeType("LONG_CONSTANT", JetConstantExpression.class);
 
+    JetNodeType STRING_TEMPLATE    = new JetNodeType("STRING_TEMPLATE", JetStringTemplateExpression.class);
+    JetNodeType LONG_STRING_TEMPLATE_ENTRY = new JetNodeType("LONG_STRING_TEMPLATE_ENTRY", JetBlockStringTemplateEntry.class);
+    JetNodeType SHORT_STRING_TEMPLATE_ENTRY = new JetNodeType("SHORT_STRING_TEMPLATE_ENTRY", JetSimpleNameStringTemplateEntry.class);
+    JetNodeType LITERAL_STRING_TEMPLATE_ENTRY = new JetNodeType("LITERAL_STRING_TEMPLATE_ENTRY", JetLiteralStringTemplateEntry.class);
+    JetNodeType ESCAPE_STRING_TEMPLATE_ENTRY = new JetNodeType("ESCAPE_STRING_TEMPLATE_ENTRY", JetEscapeStringTemplateEntry.class);
+
     JetNodeType TUPLE                     = new JetNodeType("TUPLE", JetTupleExpression.class);
     JetNodeType PARENTHESIZED             = new JetNodeType("PARENTHESIZED", JetParenthesizedExpression.class);
     JetNodeType RETURN                    = new JetNodeType("RETURN", JetReturnExpression.class);

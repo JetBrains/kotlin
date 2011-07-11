@@ -84,8 +84,11 @@ JetFile: SimpleExpressions.jet
           PsiWhiteSpace(' ')
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
-          STRING_CONSTANT
-            PsiElement(STRING_LITERAL)('"dsf"')
+          STRING_TEMPLATE
+            PsiElement(OPEN_QUOTE)('"')
+            LITERAL_STRING_TEMPLATE_ENTRY
+              PsiElement(REGULAR_STRING_PART)('dsf')
+            PsiElement(CLOSING_QUOTE)('"')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n    ')
         VALUE_PARAMETER
@@ -325,8 +328,11 @@ JetFile: SimpleExpressions.jet
               PsiElement(INTEGER_LITERAL)('10')
             PsiElement(COMMA)(',')
             PsiWhiteSpace(' ')
-            STRING_CONSTANT
-              PsiElement(STRING_LITERAL)('"A"')
+            STRING_TEMPLATE
+              PsiElement(OPEN_QUOTE)('"')
+              LITERAL_STRING_TEMPLATE_ENTRY
+                PsiElement(REGULAR_STRING_PART)('A')
+              PsiElement(CLOSING_QUOTE)('"')
             PsiElement(COMMA)(',')
             PsiWhiteSpace(' ')
             INTEGER_CONSTANT

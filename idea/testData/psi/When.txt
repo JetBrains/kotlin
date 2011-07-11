@@ -243,8 +243,11 @@ JetFile: When.jet
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               EXPRESSION_PATTERN
-                STRING_CONSTANT
-                  PsiElement(STRING_LITERAL)('"sadfsa"')
+                STRING_TEMPLATE
+                  PsiElement(OPEN_QUOTE)('"')
+                  LITERAL_STRING_TEMPLATE_ENTRY
+                    PsiElement(REGULAR_STRING_PART)('sadfsa')
+                  PsiElement(CLOSING_QUOTE)('"')
             PsiWhiteSpace(' ')
             PsiElement(DOUBLE_ARROW)('=>')
             PsiWhiteSpace(' ')
@@ -1193,34 +1196,6 @@ JetFile: When.jet
                             PsiElement(IDENTIFIER)('b')
                   PsiElement(RPAR)(')')
             PsiWhiteSpace(' ')
-            PsiErrorElement:Expecting '=>' or 'when'
-              PsiElement(if)('if')
-            PsiWhiteSpace(' ')
-            PARENTHESIZED
-              PsiElement(LPAR)('(')
-              BINARY_EXPRESSION
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('b')
-                PsiWhiteSpace(' ')
-                OPERATION_REFERENCE
-                  PsiElement(EQEQ)('==')
-                PsiWhiteSpace(' ')
-                BINARY_EXPRESSION
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('a')
-                  PsiWhiteSpace(' ')
-                  OPERATION_REFERENCE
-                    PsiElement(PLUS)('+')
-                  PsiWhiteSpace(' ')
-                  INTEGER_CONSTANT
-                    PsiElement(INTEGER_LITERAL)('3')
-              PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          WHEN_ENTRY
-            WHEN_CONDITION_IS_PATTERN
-              EXPRESSION_PATTERN
-                PsiErrorElement:Expecting an element, is-condition or in-condition
-                  <empty list>
             PsiElement(DOUBLE_ARROW)('=>')
             PsiWhiteSpace(' ')
             REFERENCE_EXPRESSION

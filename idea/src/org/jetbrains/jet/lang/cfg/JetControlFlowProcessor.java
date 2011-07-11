@@ -748,6 +748,17 @@ public class JetControlFlowProcessor {
         }
 
         @Override
+        public void visitStringTemplateExpression(JetStringTemplateExpression expression) {
+            for (JetStringTemplateEntry entry : expression.getEntries()) {
+                if (entry instanceof JetStringTemplateEntryWithExpression) {
+                    JetStringTemplateEntryWithExpression entryWithExpression = (JetStringTemplateEntryWithExpression) entry;
+                    value(entryWithExpression.getExpression(), true, false);
+                }
+            }
+            builder.read(expression);
+        }
+
+        @Override
         public void visitTypeProjection(JetTypeProjection typeProjection) {
             // TODO : Support Type Arguments. Class object may be initialized at this point");
         }

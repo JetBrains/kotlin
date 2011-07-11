@@ -2480,8 +2480,11 @@ JetFile: BinaryTree.jet
                             VALUE_ARGUMENT_LIST
                               PsiElement(LPAR)('(')
                               VALUE_ARGUMENT
-                                STRING_CONSTANT
-                                  PsiElement(STRING_LITERAL)('"Nothing to remove"')
+                                STRING_TEMPLATE
+                                  PsiElement(OPEN_QUOTE)('"')
+                                  LITERAL_STRING_TEMPLATE_ENTRY
+                                    PsiElement(REGULAR_STRING_PART)('Nothing to remove')
+                                  PsiElement(CLOSING_QUOTE)('"')
                               PsiElement(RPAR)(')')
                     PsiWhiteSpace('\n      ')
                     CALL_EXPRESSION

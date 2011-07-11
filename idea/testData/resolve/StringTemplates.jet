@@ -1,0 +1,21 @@
+fun demo() {
+  ~abc~val abc = 1
+  ~a~val a = ""
+  ~asd~val asd = 1
+  ~bar~val bar = 5
+  ~map~fun map(f : fun () : Any?) : Int  = 1
+  ~buzz~fun buzz(f : fun () : Any?) : Int  = 1
+  ~sdf~val sdf = 1
+  ~foo~val foo = 3;
+    "`abc`$abc"
+    "$"
+    "$.$.asdf$\t"
+    "asd\$"
+    "asd`a`$a"
+    "asd`a`$a`asd`$asd$"
+    "fosdfasdo${1 + `bar`bar + 100}}sdsdfgdsfsdf"
+    "foo${`bar`bar + `map`map {`foo`foo}}sdfsdf"
+    "foo${`bar`bar + `map`map { "foo" }}sdfsdf"
+    "foo${`bar`bar + `map`map {
+      "foo`sdf`$sdf${ `buzz`buzz{}}" }}sdfsdf"
+}

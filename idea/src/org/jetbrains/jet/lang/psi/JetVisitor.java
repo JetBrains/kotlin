@@ -326,6 +326,10 @@ public class JetVisitor extends PsiElementVisitor {
         visitExpression(expression);
     }
 
+    public void visitStringTemplateExpression(JetStringTemplateExpression expression) {
+        visitExpression(expression);
+    }
+
     public void visitNamedDeclaration(JetNamedDeclaration declaration) {
         visitDeclaration(declaration);
     }
@@ -388,5 +392,29 @@ public class JetVisitor extends PsiElementVisitor {
 
     public void visitBindingPattern(JetBindingPattern pattern) {
         visitPattern(pattern);
+    }
+
+    public void visitStringTemplateEntry(JetStringTemplateEntry entry) {
+        visitJetElement(entry);
+    }
+
+    public void visitStringTemplateEntryWithExpression(JetStringTemplateEntryWithExpression entry) {
+        visitStringTemplateEntry(entry);
+    }
+
+    public void visitBlockStringTemplateEntry(JetBlockStringTemplateEntry entry) {
+        visitStringTemplateEntryWithExpression(entry);
+    }
+
+    public void visitSimpleNameStringTemplateEntry(JetSimpleNameStringTemplateEntry entry) {
+        visitStringTemplateEntryWithExpression(entry);
+    }
+
+    public void visitLiteralStringTemplateEntry(JetLiteralStringTemplateEntry entry) {
+        visitStringTemplateEntry(entry);
+    }
+
+    public void visitEscapeStringTemplateEntry(JetEscapeStringTemplateEntry entry) {
+        visitStringTemplateEntry(entry);
     }
 }

@@ -21,6 +21,16 @@ public interface JetTokens {
     JetToken FLOAT_LITERAL      = new JetToken("FLOAT_CONSTANT");
     JetToken CHARACTER_LITERAL  = new JetToken("CHARACTER_LITERAL");
     JetToken STRING_LITERAL     = new JetToken("STRING_LITERAL");
+
+    JetToken CLOSING_QUOTE = new JetToken("CLOSING_QUOTE");
+    JetToken OPEN_QUOTE = new JetToken("OPEN_QUOTE");
+    JetToken REGULAR_STRING_PART = new JetToken("REGULAR_STRING_PART");
+    JetToken SHORT_TEMPLATE_ENTRY = new JetToken("SHORT_TEMPLATE_ENTRY");
+    JetToken ESCAPE_SEQUENCE = new JetToken("ESCAPE_SEQUENCE");
+    JetToken LONG_TEMPLATE_ENTRY_START = new JetToken("LONG_TEMPLATE_ENTRY_START");
+    JetToken LONG_TEMPLATE_ENTRY_END = new JetToken("LONG_TEMPLATE_ENTRY_END");
+    JetToken DANGLING_NEWLINE = new JetToken("DANGLING_NEWLINE");
+
     JetToken RAW_STRING_LITERAL = new JetToken("RAW_STRING_LITERAL");
 
     JetKeywordToken NAMESPACE_KEYWORD        = JetKeywordToken.keyword("namespace");

@@ -59,8 +59,14 @@ JetFile: Builder.jet
                           VALUE_ARGUMENT_LIST
                             PsiElement(LPAR)('(')
                             VALUE_ARGUMENT
-                              STRING_CONSTANT
-                                PsiElement(STRING_LITERAL)('"$libs/groovy-..."')
+                              STRING_TEMPLATE
+                                PsiElement(OPEN_QUOTE)('"')
+                                SHORT_STRING_TEMPLATE_ENTRY
+                                  REFERENCE_EXPRESSION
+                                    PsiElement(SHORT_TEMPLATE_ENTRY)('$libs')
+                                LITERAL_STRING_TEMPLATE_ENTRY
+                                  PsiElement(REGULAR_STRING_PART)('/groovy-...')
+                                PsiElement(CLOSING_QUOTE)('"')
                             PsiElement(RPAR)(')')
                       PsiWhiteSpace('\n  ')
                       PsiElement(RBRACE)('}')
@@ -99,8 +105,14 @@ JetFile: Builder.jet
                               VALUE_ARGUMENT_LIST
                                 PsiElement(LPAR)('(')
                                 VALUE_ARGUMENT
-                                  STRING_CONSTANT
-                                    PsiElement(STRING_LITERAL)('"$gantHome/lib"')
+                                  STRING_TEMPLATE
+                                    PsiElement(OPEN_QUOTE)('"')
+                                    SHORT_STRING_TEMPLATE_ENTRY
+                                      REFERENCE_EXPRESSION
+                                        PsiElement(SHORT_TEMPLATE_ENTRY)('$gantHome')
+                                    LITERAL_STRING_TEMPLATE_ENTRY
+                                      PsiElement(REGULAR_STRING_PART)('/lib')
+                                    PsiElement(CLOSING_QUOTE)('"')
                                 PsiElement(RPAR)(')')
                             PsiElement(DOT)('.')
                             REFERENCE_EXPRESSION
@@ -162,8 +174,11 @@ JetFile: Builder.jet
                           OPERATION_REFERENCE
                             PsiElement(EQ)('=')
                           PsiWhiteSpace(' ')
-                          STRING_CONSTANT
-                            PsiElement(STRING_LITERAL)('"1.5"')
+                          STRING_TEMPLATE
+                            PsiElement(OPEN_QUOTE)('"')
+                            LITERAL_STRING_TEMPLATE_ENTRY
+                              PsiElement(REGULAR_STRING_PART)('1.5')
+                            PsiElement(CLOSING_QUOTE)('"')
                         PsiWhiteSpace('\n    ')
                         CALL_EXPRESSION
                           REFERENCE_EXPRESSION
@@ -191,8 +206,14 @@ JetFile: Builder.jet
                           VALUE_ARGUMENT_LIST
                             PsiElement(LPAR)('(')
                             VALUE_ARGUMENT
-                              STRING_CONSTANT
-                                PsiElement(STRING_LITERAL)('"$projectHome/antLayout/src"')
+                              STRING_TEMPLATE
+                                PsiElement(OPEN_QUOTE)('"')
+                                SHORT_STRING_TEMPLATE_ENTRY
+                                  REFERENCE_EXPRESSION
+                                    PsiElement(SHORT_TEMPLATE_ENTRY)('$projectHome')
+                                LITERAL_STRING_TEMPLATE_ENTRY
+                                  PsiElement(REGULAR_STRING_PART)('/antLayout/src')
+                                PsiElement(CLOSING_QUOTE)('"')
                             PsiElement(RPAR)(')')
                       PsiWhiteSpace('\n  ')
                       PsiElement(RBRACE)('}')
