@@ -829,11 +829,18 @@ public class ExpressionCodegen extends JetVisitor {
         if (args.size() == 1) {
             gen(args.get(0).getArgumentExpression(), JET_OBJECT_TYPE);
             v.invokeinterface("jet/JetObject", "getTypeInfo", "()Ljet/typeinfo/TypeInfo;");
-            myStack.push(StackValue.onStack(JetTypeMapper.TYPE_TYPEINFO));
+        }
+        else if (args.size() == 0) {
+            final List<JetTypeProjection> typeArguments = expression.getTypeArguments();
+            if (typeArguments.size() != 1) {
+                throw new UnsupportedOperationException("one type argument expected");
+            }
+            pushTypeArgument(typeArguments.get(0));
         }
         else {
-            throw new UnsupportedOperationException("only one-arg form of typeinfo() is now supported");
+            throw new UnsupportedOperationException("no such form of typeinfo()");
         }
+        myStack.push(StackValue.onStack(JetTypeMapper.TYPE_TYPEINFO));
     }
 
     private PsiElement resolveCalleeToDeclaration(DeclarationDescriptor funDescriptor) {
@@ -1503,9 +1510,13 @@ public class ExpressionCodegen extends JetVisitor {
 
     private void pushTypeArguments(JetCall expression) {
         for (JetTypeProjection jetTypeArgument : expression.getTypeArguments()) {
-            JetType typeArgument = bindingContext.resolveTypeReference(jetTypeArgument.getTypeReference());
-            generateTypeInfo(typeArgument);
+            pushTypeArgument(jetTypeArgument);
         }
+    }
+
+    private void pushTypeArgument(JetTypeProjection jetTypeArgument) {
+        JetType typeArgument = bindingContext.resolveTypeReference(jetTypeArgument.getTypeReference());
+        generateTypeInfo(typeArgument);
     }
 
     private void pushOuterClassArguments(ClassDescriptor classDecl) {

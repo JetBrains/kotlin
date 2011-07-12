@@ -23,11 +23,18 @@ public class TypeInfoTest extends CodegenTestCase {
         assertNotNull(typeInfo);
     }
 
-    public void testTypeOfOperator() throws Exception {
+    public void testOneArgTypeinfo() throws Exception {
         loadFile();
         Method foo = generateFunction();
         TypeInfo typeInfo = (TypeInfo) foo.invoke(null);
         assertNotNull(typeInfo);
+    }
+
+    public void testNoArgTypeinfo() throws Exception {
+        loadText("fun foo() = typeinfo.typeinfo<Int>()");
+        Method foo = generateFunction();
+        TypeInfo typeInfo = (TypeInfo) foo.invoke(null);
+        assertSame(TypeInfo.INT_TYPE_INFO, typeInfo);
     }
 
     public void testAsSafeOperator() throws Exception {
