@@ -74,20 +74,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     @Override
     protected void generateSyntheticParts() {
-        int typeinfoStatic = descriptor.getTypeConstructor().getParameters().size() > 0 ? 0 : Opcodes.ACC_STATIC;
-        v.visitField(Opcodes.ACC_PRIVATE | typeinfoStatic, "$typeInfo", "Ljet/typeinfo/TypeInfo;", null, null);
-
-        if (isNonLiteralObject()) {
-            Type type = JetTypeMapper.jetImplementationType(descriptor);
-            v.visitField(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC, "$instance", type.getDescriptor(), null, null);
-        }
-        final JetClassObject classObject = getClassObject();
-        if (classObject != null) {
-            Type type = Type.getObjectType(state.getTypeMapper().jvmName(classObject));
-            v.visitField(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC, "$classobj", type.getDescriptor(), null, null);
-        }
-
-        generateStaticInitializer();
+        generateFieldForTypeInfo();
+        generateFieldForObjectInstance();
+        generateFieldForClassObject();
 
         try {
             generatePrimaryConstructor();
@@ -97,6 +86,62 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         generateGetTypeInfo();
+    }
+
+    private void generateFieldForTypeInfo() {
+        final boolean typeInfoIsStatic = descriptor.getTypeConstructor().getParameters().size() == 0;
+        v.visitField(Opcodes.ACC_PRIVATE | (typeInfoIsStatic ? Opcodes.ACC_STATIC : 0), "$typeInfo",
+                     "Ljet/typeinfo/TypeInfo;", null, null);
+        if (typeInfoIsStatic) {
+            staticInitializerChunks.add(new CodeChunk() {
+                @Override
+                public void generate(InstructionAdapter v) {
+                    JetTypeMapper typeMapper = state.getTypeMapper();
+                    ClassCodegen.newTypeInfo(v, false, typeMapper.jvmType(descriptor, OwnerKind.INTERFACE));
+                    v.putstatic(typeMapper.jvmName(descriptor, kind), "$typeInfo", "Ljet/typeinfo/TypeInfo;");
+                }
+            });
+        }
+    }
+
+    private void generateFieldForObjectInstance() {
+        if (isNonLiteralObject()) {
+            Type type = JetTypeMapper.jetImplementationType(descriptor);
+            v.visitField(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC, "$instance", type.getDescriptor(), null, null);
+
+            staticInitializerChunks.add(new CodeChunk() {
+                @Override
+                public void generate(InstructionAdapter v) {
+                    String name = jvmName();
+                    v.anew(Type.getObjectType(name));
+                    v.dup();
+                    v.invokespecial(name, "<init>", "()V");
+                    v.putstatic(name, "$instance", JetTypeMapper.jetImplementationType(descriptor).getDescriptor());
+                }
+            });
+
+        }
+    }
+
+    private void generateFieldForClassObject() {
+        final JetClassObject classObject = getClassObject();
+        if (classObject != null) {
+            Type type = Type.getObjectType(state.getTypeMapper().jvmName(classObject));
+            v.visitField(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC, "$classobj", type.getDescriptor(), null, null);
+
+            staticInitializerChunks.add(new CodeChunk() {
+                @Override
+                public void generate(InstructionAdapter v) {
+                    String name = state.getTypeMapper().jvmName(classObject);
+                    final Type classObjectType = Type.getObjectType(name);
+                    v.anew(classObjectType);
+                    v.dup();
+                    v.invokespecial(name, "<init>", "()V");
+                    v.putstatic(state.getTypeMapper().jvmName(descriptor, OwnerKind.IMPLEMENTATION), "$classobj",
+                                classObjectType.getDescriptor());
+                }
+            });
+        }
     }
 
     protected void generatePrimaryConstructor() {
@@ -407,47 +452,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 }
             }
         }
-    }
-
-    private void generateStaticInitializer() {
-        boolean needTypeInfo = descriptor.getTypeConstructor().getParameters().size() == 0;
-        boolean needInstance = isNonLiteralObject();
-        JetClassObject classObject = getClassObject();
-        if (!needTypeInfo && !needInstance && classObject == null) {
-            return;
-        }
-        final MethodVisitor mv = v.visitMethod(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC,
-                "<clinit>", "()V", null, null);
-        mv.visitCode();
-
-        InstructionAdapter v = new InstructionAdapter(mv);
-
-        if (needTypeInfo) {
-            JetTypeMapper typeMapper = state.getTypeMapper();
-            ClassCodegen.newTypeInfo(v, false, typeMapper.jvmType(descriptor, OwnerKind.INTERFACE));
-            v.putstatic(typeMapper.jvmName(descriptor, kind), "$typeInfo", "Ljet/typeinfo/TypeInfo;");
-        }
-        if (needInstance) {
-            String name = jvmName();
-            v.anew(Type.getObjectType(name));
-            v.dup();
-            v.invokespecial(name, "<init>", "()V");
-            v.putstatic(name, "$instance", JetTypeMapper.jetImplementationType(descriptor).getDescriptor());
-        }
-        if (classObject != null) {
-            String name = state.getTypeMapper().jvmName(classObject);
-            final Type classObjectType = Type.getObjectType(name);
-            v.anew(classObjectType);
-            v.dup();
-            v.invokespecial(name, "<init>", "()V");
-            v.putstatic(state.getTypeMapper().jvmName(descriptor, OwnerKind.IMPLEMENTATION), "$classobj",
-                        classObjectType.getDescriptor());
-        }
-
-        mv.visitInsn(Opcodes.RETURN);
-        mv.visitMaxs(0, 0);
-
-        mv.visitEnd();
     }
 
     @Nullable
