@@ -794,6 +794,10 @@ public class ExpressionCodegen extends JetVisitor {
                     return;
                 }
             }
+            if (state.getStandardLibrary().getTypeInfoFunctionGroup().getFunctionDescriptors().contains(funDescriptor.getOriginal())) {
+                generateTypeInfoCall(expression);
+                return;
+            }
 
             final FunctionDescriptor fd = (FunctionDescriptor) funDescriptor;
             PsiElement declarationPsiElement = resolveCalleeToDeclaration(funDescriptor);
@@ -817,6 +821,18 @@ public class ExpressionCodegen extends JetVisitor {
         }
         else {
             throw new UnsupportedOperationException("unknown type of callee descriptor: " + funDescriptor);
+        }
+    }
+
+    private void generateTypeInfoCall(JetCallExpression expression) {
+        final List<JetArgument> args = expression.getValueArguments();
+        if (args.size() == 1) {
+            gen(args.get(0).getArgumentExpression(), JET_OBJECT_TYPE);
+            v.invokeinterface("jet/JetObject", "getTypeInfo", "()Ljet/typeinfo/TypeInfo;");
+            myStack.push(StackValue.onStack(JetTypeMapper.TYPE_TYPEINFO));
+        }
+        else {
+            throw new UnsupportedOperationException("only one-arg form of typeinfo() is now supported");
         }
     }
 

@@ -6,8 +6,7 @@ import com.intellij.psi.PsiFileFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.JetSemanticServices;
-import org.jetbrains.jet.lang.descriptors.Annotation;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.plugin.JetFileType;
@@ -25,7 +24,7 @@ public class JetStandardLibrary {
 
     // TODO : consider releasing this memory
     private static JetStandardLibrary cachedLibrary = null;
-//    private static final Map<Project, JetStandardLibrary> standardLibraryCache = new HashMap<Project, JetStandardLibrary>();
+    //    private static final Map<Project, JetStandardLibrary> standardLibraryCache = new HashMap<Project, JetStandardLibrary>();
 
     // TODO : double checked locking
     synchronized public static JetStandardLibrary getJetStandardLibrary(@NotNull Project project) {
@@ -67,6 +66,9 @@ public class JetStandardLibrary {
     private final JetType stringType;
     private final JetType nullableStringType;
 
+    private final NamespaceDescriptor typeInfoNamespace;
+    private final FunctionGroup typeInfoFunction;
+
     private JetStandardLibrary(@NotNull Project project) {
         // TODO : review
         InputStream stream = JetStandardClasses.class.getClassLoader().getResourceAsStream("jet/Library.jet");
@@ -96,7 +98,9 @@ public class JetStandardLibrary {
             this.stringClass = (ClassDescriptor) libraryScope.getClassifier("String");
             this.arrayClass = (ClassDescriptor) libraryScope.getClassifier("Array");
             this.iterableClass = (ClassDescriptor) libraryScope.getClassifier("Iterable");
-            this.typeInfoClass = (ClassDescriptor) libraryScope.getNamespace("typeinfo").getMemberScope().getClassifier("TypeInfo");
+            typeInfoNamespace = libraryScope.getNamespace("typeinfo");
+            this.typeInfoClass = (ClassDescriptor) typeInfoNamespace.getMemberScope().getClassifier("TypeInfo");
+            typeInfoFunction = typeInfoNamespace.getMemberScope().getFunctionGroup("typeinfo");
 
             this.byteType = new JetTypeImpl(getByte());
             this.charType = new JetTypeImpl(getChar());
@@ -172,8 +176,16 @@ public class JetStandardLibrary {
         return iterableClass;
     }
 
+    public NamespaceDescriptor getTypeInfoNamespace() {
+        return typeInfoNamespace;
+    }
+
     public ClassDescriptor getTypeInfo() {
         return typeInfoClass;
+    }
+
+    public FunctionGroup getTypeInfoFunctionGroup() {
+        return typeInfoFunction;
     }
 
     @NotNull
