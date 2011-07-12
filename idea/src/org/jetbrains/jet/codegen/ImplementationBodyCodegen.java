@@ -330,13 +330,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         CallableMethod method = state.getTypeMapper().mapToCallableMethod(constructorDescriptor, kind);
-        List<JetArgument> args = constructorCall.getValueArguments();
-        for (int i = 0, argsSize = args.size(); i < argsSize; i++) {
-            JetArgument arg = args.get(i);
-            codegen.gen(arg.getArgumentExpression(), method.getValueParameterTypes().get(i));
-        }
-
-        method.invoke(iv);
+        codegen.invokeMethodWithArguments(method, constructorCall);
     }
 
     @Override

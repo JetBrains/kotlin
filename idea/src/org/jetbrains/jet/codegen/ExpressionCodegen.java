@@ -896,11 +896,11 @@ public class ExpressionCodegen extends JetVisitor {
         return funDescriptor;
     }
 
-    private void invokeMethodWithArguments(CallableMethod callableMethod, JetCallExpression expression) {
+    public void invokeMethodWithArguments(CallableMethod callableMethod, JetCall expression) {
         invokeMethodWithArguments(callableMethod, expression, false);
     }
 
-    private void invokeMethodWithArguments(CallableMethod callableMethod, JetCallExpression expression, final boolean haveReceiver) {
+    private void invokeMethodWithArguments(CallableMethod callableMethod, JetCall expression, final boolean haveReceiver) {
         if (callableMethod.isOwnerFromCall()) {
             setOwnerFromCall(callableMethod, expression);
         }
@@ -914,7 +914,7 @@ public class ExpressionCodegen extends JetVisitor {
         callableMethod.invoke(v);
     }
 
-    private void setOwnerFromCall(CallableMethod callableMethod, JetCallExpression expression) {
+    private void setOwnerFromCall(CallableMethod callableMethod, JetCall expression) {
         if (expression.getParent() instanceof JetQualifiedExpression) {
             final JetExpression receiver = ((JetQualifiedExpression) expression.getParent()).getReceiverExpression();
             JetType expressionType = bindingContext.getExpressionType(receiver);
@@ -926,7 +926,7 @@ public class ExpressionCodegen extends JetVisitor {
         }
     }
 
-    private JetExpression getReceiverForSelector(JetElement expression) {
+    private static JetExpression getReceiverForSelector(PsiElement expression) {
         if (expression.getParent() instanceof JetDotQualifiedExpression && !isReceiver(expression)) {
             final JetDotQualifiedExpression parent = (JetDotQualifiedExpression) expression.getParent();
             return parent.getReceiverExpression();
@@ -934,7 +934,7 @@ public class ExpressionCodegen extends JetVisitor {
         return null;
     }
 
-    private void ensureReceiverOnStack(JetElement expression, @Nullable ClassDescriptor calleeContainingClass) {
+    private void ensureReceiverOnStack(PsiElement expression, @Nullable ClassDescriptor calleeContainingClass) {
         JetExpression receiver = getReceiverForSelector(expression);
         if (receiver != null) {
             if (!resolvesToClassOrPackage(receiver)) {
@@ -1013,7 +1013,7 @@ public class ExpressionCodegen extends JetVisitor {
         }
     }
 
-    private static boolean isReceiver(JetElement expression) {
+    private static boolean isReceiver(PsiElement expression) {
         final PsiElement parent = expression.getParent();
         if (parent instanceof JetQualifiedExpression) {
             final JetExpression receiverExpression = ((JetQualifiedExpression) parent).getReceiverExpression();
