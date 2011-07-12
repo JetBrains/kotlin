@@ -80,6 +80,9 @@ public class PropertyGenTest extends CodegenTestCase {
         final Method method = generateFunction("append");
         method.invoke(null, "IntelliJ ");
         String value = (String) method.invoke(null, "IDEA");
+        if (!value.equals("IntelliJ IDEA")) {
+            System.out.println(generateToText());
+        }
         assertEquals("IntelliJ IDEA", value);
     }
 

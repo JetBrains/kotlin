@@ -1,6 +1,5 @@
 package org.jetbrains.jet.codegen;
 
-import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.objectweb.asm.ClassVisitor;
@@ -13,12 +12,10 @@ import org.objectweb.asm.commons.InstructionAdapter;
  * @author max
  */
 public class NamespaceCodegen {
-    private final Project project;
     private final ClassVisitor v;
     private final GenerationState state;
 
-    public NamespaceCodegen(Project project, ClassVisitor v, String fqName, GenerationState state) {
-        this.project = project;
+    public NamespaceCodegen(ClassVisitor v, String fqName, GenerationState state) {
         this.v = v;
         this.state = state;
 
@@ -80,7 +77,7 @@ public class NamespaceCodegen {
                 if (initializer != null && !(initializer instanceof JetConstantExpression)) {
                     final PropertyDescriptor descriptor = (PropertyDescriptor) state.getBindingContext().getVariableDescriptor((JetProperty) declaration);
                     codegen.genToJVMStack(initializer);
-                    codegen.intermediateValueForProperty(descriptor, false, false).store(new InstructionAdapter(mv));
+                    codegen.intermediateValueForProperty(descriptor, true, false).store(new InstructionAdapter(mv));
                 }
             }
         }
