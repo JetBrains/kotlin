@@ -62,7 +62,7 @@ public interface JetTokens {
     JetKeywordToken CAPITALIZED_THIS_KEYWORD = JetKeywordToken.keyword("This");
 
 
-    JetToken AS_SAFE = new JetToken("as?");
+    JetToken AS_SAFE = JetKeywordToken.keyword("AS_SAFE");//new JetToken("as?");
 
     JetToken IDENTIFIER = new JetToken("IDENTIFIER");
     JetToken LABEL_IDENTIFIER = new JetToken("LABEL_IDENTIFIER");
@@ -150,7 +150,7 @@ public interface JetTokens {
             TRUE_KEYWORD, FALSE_KEYWORD, IS_KEYWORD,
             IN_KEYWORD, THROW_KEYWORD, RETURN_KEYWORD, BREAK_KEYWORD, CONTINUE_KEYWORD, OBJECT_KEYWORD, IF_KEYWORD,
             ELSE_KEYWORD, WHILE_KEYWORD, DO_KEYWORD, TRY_KEYWORD, WHEN_KEYWORD,
-            NOT_IN, NOT_IS, CAPITALIZED_THIS_KEYWORD
+            NOT_IN, NOT_IS, CAPITALIZED_THIS_KEYWORD, AS_SAFE
     );
 
     TokenSet SOFT_KEYWORDS = TokenSet.create(WRAPS_KEYWORD, IMPORT_KEYWORD, WHERE_KEYWORD, BY_KEYWORD, GET_KEYWORD,

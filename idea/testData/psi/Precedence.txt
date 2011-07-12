@@ -807,7 +807,7 @@ JetFile: Precedence.jet
             PsiElement(IDENTIFIER)('t')
           PsiWhiteSpace(' ')
           OPERATION_REFERENCE
-            PsiElement(as?)('as?')
+            PsiElement(AS_SAFE)('as?')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
             NULLABLE_TYPE
@@ -829,7 +829,7 @@ JetFile: Precedence.jet
             PsiElement(IDENTIFIER)('t')
           PsiWhiteSpace(' ')
           OPERATION_REFERENCE
-            PsiElement(as?)('as?')
+            PsiElement(AS_SAFE)('as?')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
             USER_TYPE
@@ -865,7 +865,7 @@ JetFile: Precedence.jet
             PsiElement(IDENTIFIER)('t')
           PsiWhiteSpace(' ')
           OPERATION_REFERENCE
-            PsiElement(as?)('as?')
+            PsiElement(AS_SAFE)('as?')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
             FUNCTION_TYPE
@@ -1029,7 +1029,7 @@ JetFile: Precedence.jet
               PsiElement(IDENTIFIER)('t')
             PsiWhiteSpace(' ')
             OPERATION_REFERENCE
-              PsiElement(as?)('as?')
+              PsiElement(AS_SAFE)('as?')
             PsiWhiteSpace(' ')
             TYPE_REFERENCE
               NULLABLE_TYPE
@@ -1058,7 +1058,7 @@ JetFile: Precedence.jet
               PsiElement(IDENTIFIER)('t')
             PsiWhiteSpace(' ')
             OPERATION_REFERENCE
-              PsiElement(as?)('as?')
+              PsiElement(AS_SAFE)('as?')
             PsiWhiteSpace(' ')
             TYPE_REFERENCE
               USER_TYPE
@@ -1101,7 +1101,7 @@ JetFile: Precedence.jet
               PsiElement(IDENTIFIER)('t')
             PsiWhiteSpace(' ')
             OPERATION_REFERENCE
-              PsiElement(as?)('as?')
+              PsiElement(AS_SAFE)('as?')
             PsiWhiteSpace(' ')
             TYPE_REFERENCE
               FUNCTION_TYPE

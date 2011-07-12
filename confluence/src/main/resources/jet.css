@@ -6,3 +6,34 @@
   font-weight: bold;
   color: #369;
 }
+
+.jet.softkeyword {
+  color: #369;
+}
+
+.jet.comment {
+  color : green;
+}
+
+.jet.number {
+  color : blue;
+}
+.jet.string {
+  color : #000099;
+  font-weight: bold;
+}
+.jet.escape {
+  font-weight: bold;
+  color : black;
+}
+.jet.label {
+  color : blue;
+}
+.jet.field {
+  color : blue;
+  font-weight: bold;
+}
+.jet.bad {
+  background-color : #FF9999;
+  color:black;
+}
