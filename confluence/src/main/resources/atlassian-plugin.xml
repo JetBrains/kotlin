@@ -1,0 +1,15 @@
+<atlassian-plugin key="${project.groupId}.${project.artifactId}" name="${project.name}" plugins-version="2">
+    <plugin-info>
+        <description>${project.description}</description>
+        <version>${project.version}</version>
+        <vendor name="${project.organization.name}" url="${project.organization.url}" />
+    </plugin-info>
+
+    <macro name="jet" class="org.jetbrains.jet.lexer.JetMacro" key="jet">
+      <description>Highlighting for Jet language</description>
+    </macro>
+
+    <web-resource key="resources">
+            <resource type="download" name="jet.css" location="jet.css"/>
+    </web-resource>
+</atlassian-plugin>

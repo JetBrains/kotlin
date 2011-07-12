@@ -1,0 +1,8 @@
+.jet {
+  white-space: pre;
+}
+
+.jet.keyword {
+  font-weight: bold;
+  color: #369;
+}
