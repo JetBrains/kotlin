@@ -20,7 +20,7 @@ public interface JetTokens {
     JetToken LONG_LITERAL       = new JetToken("LONG_LITERAL");
     JetToken FLOAT_LITERAL      = new JetToken("FLOAT_CONSTANT");
     JetToken CHARACTER_LITERAL  = new JetToken("CHARACTER_LITERAL");
-    JetToken STRING_LITERAL     = new JetToken("STRING_LITERAL");
+//    JetToken STRING_LITERAL     = new JetToken("STRING_LITERAL");
 
     JetToken CLOSING_QUOTE = new JetToken("CLOSING_QUOTE");
     JetToken OPEN_QUOTE = new JetToken("OPEN_QUOTE");
@@ -167,7 +167,7 @@ public interface JetTokens {
     TokenSet WHITESPACES = TokenSet.create(TokenType.WHITE_SPACE);
     TokenSet COMMENTS = TokenSet.create(EOL_COMMENT, BLOCK_COMMENT, DOC_COMMENT);
 
-    TokenSet STRINGS = TokenSet.create(CHARACTER_LITERAL, STRING_LITERAL, RAW_STRING_LITERAL);
+    TokenSet STRINGS = TokenSet.create(CHARACTER_LITERAL, REGULAR_STRING_PART, RAW_STRING_LITERAL);
     TokenSet OPERATIONS = TokenSet.create(AS_KEYWORD, AS_SAFE, IS_KEYWORD, IN_KEYWORD, DOT, PLUSPLUS, MINUSMINUS, MUL, PLUS,
             MINUS, EXCL, DIV, PERC, LT, GT, LTEQ, GTEQ, EQEQEQ, ARROW, EXCLEQEQEQ, EQEQ, EXCLEQ, ANDAND, OROR,
             SAFE_ACCESS, ELVIS,

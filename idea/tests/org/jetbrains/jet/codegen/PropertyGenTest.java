@@ -80,7 +80,7 @@ public class PropertyGenTest extends CodegenTestCase {
         final Method method = generateFunction("append");
         method.invoke(null, "IntelliJ ");
         String value = (String) method.invoke(null, "IDEA");
-        assertEquals(value, "IntelliJ IDEA");
+        assertEquals("IntelliJ IDEA", value);
     }
 
     public void testFieldSetterPlusEq() throws Exception {
@@ -88,7 +88,7 @@ public class PropertyGenTest extends CodegenTestCase {
         final Method method = generateFunction("append");
         method.invoke(null, "IntelliJ ");
         String value = (String) method.invoke(null, "IDEA");
-        assertEquals(value, "IntelliJ IDEA");
+        assertEquals("IntelliJ IDEA", value);
     }
 
     public void testAccessorsWithoutBody() throws Exception {

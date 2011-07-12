@@ -115,7 +115,6 @@ public class JetHighlighter extends SyntaxHighlighterBase {
         keys1.put(JetTokens.LONG_LITERAL, JET_NUMBER);
         keys1.put(JetTokens.FLOAT_LITERAL, JET_NUMBER);
 
-        keys1.put(JetTokens.STRING_LITERAL, JET_STRING);
         keys1.put(JetTokens.OPEN_QUOTE, JET_STRING);
         keys1.put(JetTokens.CLOSING_QUOTE, JET_STRING);
         keys1.put(JetTokens.REGULAR_STRING_PART, JET_STRING);

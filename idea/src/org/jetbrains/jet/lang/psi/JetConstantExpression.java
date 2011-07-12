@@ -67,7 +67,6 @@ public class JetConstantExpression extends JetExpression {
             return nodeText.charAt(1);
         }
         else if (elementType == JetNodeTypes.STRING_CONSTANT) {
-            if (nodeText.length() == 1) return "";
             int tail = nodeText.length();
             if (nodeText.endsWith("\"")) tail--;
             return nodeText.substring(1, tail);

@@ -19,7 +19,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     private static final TokenSet WHEN_CONDITION_RECOVERY_SET_WITH_DOUBLE_ARROW = TokenSet.create(RBRACE, IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS, ELSE_KEYWORD, DOUBLE_ARROW, DOT);
 
     private static final TokenSet TYPE_ARGUMENT_LIST_STOPPERS = TokenSet.create(
-            INTEGER_LITERAL, LONG_LITERAL, FLOAT_LITERAL, CHARACTER_LITERAL, STRING_LITERAL, RAW_STRING_LITERAL,
+            INTEGER_LITERAL, LONG_LITERAL, FLOAT_LITERAL, CHARACTER_LITERAL, OPEN_QUOTE, RAW_STRING_LITERAL,
             NAMESPACE_KEYWORD, AS_KEYWORD, TYPE_KEYWORD, CLASS_KEYWORD, THIS_KEYWORD, VAL_KEYWORD, VAR_KEYWORD,
             FUN_KEYWORD, FOR_KEYWORD, NULL_KEYWORD,
             TRUE_KEYWORD, FALSE_KEYWORD, IS_KEYWORD, THROW_KEYWORD, RETURN_KEYWORD, BREAK_KEYWORD,
@@ -40,7 +40,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
             // literal constant
             TRUE_KEYWORD, FALSE_KEYWORD,
-            STRING_LITERAL, RAW_STRING_LITERAL,
+            OPEN_QUOTE, RAW_STRING_LITERAL,
             INTEGER_LITERAL, LONG_LITERAL, CHARACTER_LITERAL, FLOAT_LITERAL,
             NULL_KEYWORD,
 
@@ -69,9 +69,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             IDENTIFIER, // SimpleName
             FIELD_IDENTIFIER, // Field reference
 
-            NAMESPACE_KEYWORD, // for absolute qualified names
-
-            OPEN_QUOTE // STRINGS
+            NAMESPACE_KEYWORD // for absolute qualified names
     );
 
     private static final TokenSet STATEMENT_FIRST = TokenSet.orSet(
@@ -638,7 +636,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
         if (at(TRUE_KEYWORD) || at(FALSE_KEYWORD)) {
             parseOneTokenExpression(BOOLEAN_CONSTANT);
         }
-        else if (at(STRING_LITERAL) || at(RAW_STRING_LITERAL)) {
+        else if (at(RAW_STRING_LITERAL)) {
             parseOneTokenExpression(STRING_CONSTANT);
         }
         else if (at(INTEGER_LITERAL)) {
