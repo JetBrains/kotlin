@@ -4,8 +4,11 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.commons.InstructionAdapter;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -22,6 +25,8 @@ public abstract class ClassBodyCodegen {
     protected final ClassVisitor v;
     protected final ClassContext context;
 
+    protected final List<CodeChunk> staticInitializerChunks = new ArrayList<CodeChunk>();
+
     public ClassBodyCodegen(JetClassOrObject aClass, ClassContext context, ClassVisitor v, GenerationState state) {
         this.state = state;
         descriptor = state.getBindingContext().getClassDescriptor(aClass);
@@ -37,6 +42,8 @@ public abstract class ClassBodyCodegen {
         generateSyntheticParts();
 
         generateClassBody();
+
+        generateStaticInitializer();
 
         v.visitEnd();
     }
@@ -94,5 +101,24 @@ public abstract class ClassBodyCodegen {
             return ((JetClass) myClass).getPrimaryConstructorParameters();
         }
         return Collections.emptyList();
+    }
+
+    private void generateStaticInitializer() {
+        if (staticInitializerChunks.size() > 0) {
+            final MethodVisitor mv = v.visitMethod(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC,
+                    "<clinit>", "()V", null, null);
+            mv.visitCode();
+
+            InstructionAdapter v = new InstructionAdapter(mv);
+
+            for (CodeChunk chunk : staticInitializerChunks) {
+                chunk.generate(v);
+            }
+
+            mv.visitInsn(Opcodes.RETURN);
+            mv.visitMaxs(0, 0);
+
+            mv.visitEnd();
+        }
     }
 }

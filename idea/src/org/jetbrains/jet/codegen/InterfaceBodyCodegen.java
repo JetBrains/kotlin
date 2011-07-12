@@ -3,13 +3,16 @@ package org.jetbrains.jet.codegen;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.psi.JetClassOrObject;
-import org.jetbrains.jet.lang.psi.JetDelegationSpecifier;
+import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
+import org.objectweb.asm.commons.InstructionAdapter;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,6 +21,8 @@ import java.util.Set;
  * @author yole
  */
 public class InterfaceBodyCodegen extends ClassBodyCodegen {
+    private final List<JetEnumEntry> myEnumConstants = new ArrayList<JetEnumEntry>();
+
     public InterfaceBodyCodegen(JetClassOrObject aClass, ClassContext context, ClassVisitor v, GenerationState state) {
         super(aClass, context, v, state);
         assert context.getContextKind() == OwnerKind.INTERFACE;
@@ -72,5 +77,60 @@ public class InterfaceBodyCodegen extends ClassBodyCodegen {
             }
         }
         return superInterfaces;
+    }
+
+    @Override
+    protected void generateDeclaration(PropertyCodegen propertyCodegen, JetDeclaration declaration, FunctionCodegen functionCodegen) {
+        if (declaration instanceof JetEnumEntry && !((JetEnumEntry) declaration).hasPrimaryConstructor()) {
+            String name = declaration.getName();
+            final String desc = "L" + state.getTypeMapper().jvmName(descriptor, OwnerKind.INTERFACE) + ";";
+            v.visitField(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC | Opcodes.ACC_FINAL, name, desc, null, null);
+            if (myEnumConstants.isEmpty()) {
+                staticInitializerChunks.add(new CodeChunk() {
+                    @Override
+                    public void generate(InstructionAdapter v) {
+                        initializeEnumConstants(v);
+                    }
+                });
+            }
+            myEnumConstants.add((JetEnumEntry) declaration);
+        }
+        else {
+            super.generateDeclaration(propertyCodegen, declaration, functionCodegen);
+        }
+    }
+
+    private void initializeEnumConstants(InstructionAdapter v) {
+        ExpressionCodegen codegen = new ExpressionCodegen(v, new FrameMap(), Type.VOID_TYPE, context, state);
+        for (JetEnumEntry enumConstant : myEnumConstants) {
+            // TODO type and constructor parameters
+            String intfClass = state.getTypeMapper().jvmName(descriptor, OwnerKind.INTERFACE);
+            String implClass = state.getTypeMapper().jvmName(descriptor, OwnerKind.IMPLEMENTATION);
+
+            final List<JetDelegationSpecifier> delegationSpecifiers = enumConstant.getDelegationSpecifiers();
+            if (delegationSpecifiers.size() > 1) {
+                throw new UnsupportedOperationException("multiple delegation specifiers for enum constant not supported");
+            }
+
+            v.anew(Type.getObjectType(implClass));
+            v.dup();
+
+            if (delegationSpecifiers.size() == 1) {
+                final JetDelegationSpecifier specifier = delegationSpecifiers.get(0);
+                if (specifier instanceof JetDelegatorToSuperCall) {
+                    final JetDelegatorToSuperCall superCall = (JetDelegatorToSuperCall) specifier;
+                    ConstructorDescriptor constructorDescriptor = state.getBindingContext().resolveSuperConstructor(superCall);
+                    CallableMethod method = state.getTypeMapper().mapToCallableMethod(constructorDescriptor, OwnerKind.IMPLEMENTATION);
+                    codegen.invokeMethodWithArguments(method, superCall);
+                }
+                else {
+                    throw new UnsupportedOperationException("unsupported type of enum constant initializer: " + specifier);
+                }
+            }
+            else {
+                v.invokespecial(implClass, "<init>", "()V");
+            }
+            v.putstatic(intfClass, enumConstant.getName(), "L" + intfClass + ";");
+        }
     }
 }
