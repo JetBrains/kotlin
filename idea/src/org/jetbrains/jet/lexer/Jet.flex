@@ -46,8 +46,8 @@ import org.jetbrains.jet.lexer.JetTokens;
 %eof{  return;
 %eof}
 
-%xstate STRING
-%state LONG_TEMPLATE
+%xstate STRING SHORT_TEMPLATE_ENTRY
+%state LONG_TEMPLATE_ENTRY
 
 DIGIT=[0-9]
 HEX_DIGIT=[0-9A-Fa-f]
@@ -117,12 +117,18 @@ LONG_TEMPLATE_ENTRY_END=\}
 <STRING> \n                            { popState(); yypushback(1); return JetTokens.DANGLING_NEWLINE; }
 <STRING> {REGULAR_STRING_PART}         { return JetTokens.REGULAR_STRING_PART; }
 <STRING> {ESCAPE_SEQUENCE}             { return JetTokens.ESCAPE_SEQUENCE; }
-<STRING> {SHORT_TEMPLATE_ENTRY}        { return JetTokens.SHORT_TEMPLATE_ENTRY; }
-<STRING> {LONELY_DOLLAR}               { return JetTokens.REGULAR_STRING_PART; }
-<STRING> {LONG_TEMPLATE_ENTRY_START}   { pushState(LONG_TEMPLATE); return JetTokens.LONG_TEMPLATE_ENTRY_START; }
+<STRING> {SHORT_TEMPLATE_ENTRY}        {
+                                            pushState(SHORT_TEMPLATE_ENTRY);
+                                            yypushback(yylength() - 1);
+                                            return JetTokens.SHORT_TEMPLATE_ENTRY_START;
+                                       }
+<SHORT_TEMPLATE_ENTRY> {IDENTIFIER}    { popState(); return JetTokens.IDENTIFIER; }
 
-<LONG_TEMPLATE> "{"                    { lBraceCount++; return JetTokens.LBRACE; }
-<LONG_TEMPLATE> "}"                    {
+<STRING> {LONELY_DOLLAR}               { return JetTokens.REGULAR_STRING_PART; }
+<STRING> {LONG_TEMPLATE_ENTRY_START}   { pushState(LONG_TEMPLATE_ENTRY); return JetTokens.LONG_TEMPLATE_ENTRY_START; }
+
+<LONG_TEMPLATE_ENTRY> "{"              { lBraceCount++; return JetTokens.LBRACE; }
+<LONG_TEMPLATE_ENTRY> "}"              {
                                            if (lBraceCount == 0) {
                                              popState();
                                              return JetTokens.LONG_TEMPLATE_ENTRY_END;

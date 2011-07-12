@@ -121,6 +121,7 @@ public class JetHighlighter extends SyntaxHighlighterBase {
         keys1.put(JetTokens.REGULAR_STRING_PART, JET_STRING);
         keys1.put(JetTokens.LONG_TEMPLATE_ENTRY_END, JET_STRING_ESCAPE);
         keys1.put(JetTokens.LONG_TEMPLATE_ENTRY_START, JET_STRING_ESCAPE);
+        keys1.put(JetTokens.SHORT_TEMPLATE_ENTRY_START, JET_STRING_ESCAPE);
 
         keys1.put(JetTokens.ESCAPE_SEQUENCE, JET_STRING_ESCAPE);
 

@@ -12,7 +12,7 @@ fun demo() {
     "$.$.asdf$\t"
     "asd\$"
     "asd$a<error>\x</error>"
-    "asd$a$asd$ <error>$xxx</error>"
+    "asd$a$asd$ $<error>xxx</error>"
     "fosdfasdo${1 + bar + 100}}sdsdfgdsfsdf"
     "foo${bar + map {foo}}sdfsdf"
     "foo${bar + map { "foo" }}sdfsdf"

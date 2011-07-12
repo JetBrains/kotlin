@@ -62,8 +62,9 @@ JetFile: Builder.jet
                               STRING_TEMPLATE
                                 PsiElement(OPEN_QUOTE)('"')
                                 SHORT_STRING_TEMPLATE_ENTRY
+                                  PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
                                   REFERENCE_EXPRESSION
-                                    PsiElement(SHORT_TEMPLATE_ENTRY)('$libs')
+                                    PsiElement(IDENTIFIER)('libs')
                                 LITERAL_STRING_TEMPLATE_ENTRY
                                   PsiElement(REGULAR_STRING_PART)('/groovy-...')
                                 PsiElement(CLOSING_QUOTE)('"')
@@ -108,8 +109,9 @@ JetFile: Builder.jet
                                   STRING_TEMPLATE
                                     PsiElement(OPEN_QUOTE)('"')
                                     SHORT_STRING_TEMPLATE_ENTRY
+                                      PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
                                       REFERENCE_EXPRESSION
-                                        PsiElement(SHORT_TEMPLATE_ENTRY)('$gantHome')
+                                        PsiElement(IDENTIFIER)('gantHome')
                                     LITERAL_STRING_TEMPLATE_ENTRY
                                       PsiElement(REGULAR_STRING_PART)('/lib')
                                     PsiElement(CLOSING_QUOTE)('"')
@@ -209,8 +211,9 @@ JetFile: Builder.jet
                               STRING_TEMPLATE
                                 PsiElement(OPEN_QUOTE)('"')
                                 SHORT_STRING_TEMPLATE_ENTRY
+                                  PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
                                   REFERENCE_EXPRESSION
-                                    PsiElement(SHORT_TEMPLATE_ENTRY)('$projectHome')
+                                    PsiElement(IDENTIFIER)('projectHome')
                                 LITERAL_STRING_TEMPLATE_ENTRY
                                   PsiElement(REGULAR_STRING_PART)('/antLayout/src')
                                 PsiElement(CLOSING_QUOTE)('"')

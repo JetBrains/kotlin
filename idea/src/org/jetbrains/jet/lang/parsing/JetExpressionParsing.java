@@ -577,7 +577,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     /*
      * stringTemplateElement
      *   : RegularStringPart
-     *   : ShortTemplateEntry
+     *   : ShortTemplateEntrySTART SimpleName
      *   : EscapeSequence
      *   : longTemplate
      *   ;
@@ -597,11 +597,12 @@ public class JetExpressionParsing extends AbstractJetParsing {
             advance(); // ESCAPE_SEQUENCE
             mark.done(ESCAPE_STRING_TEMPLATE_ENTRY);
         }
-        else if (at(SHORT_TEMPLATE_ENTRY)) {
+        else if (at(SHORT_TEMPLATE_ENTRY_START)) {
             PsiBuilder.Marker entry = mark();
+            advance(); // SHORT_TEMPLATE_ENTRY_START
 
             PsiBuilder.Marker reference = mark();
-            advance(); // SHORT_TEMPLATE_ENTRY
+            expect(IDENTIFIER, "Expecting a name");
             reference.done(REFERENCE_EXPRESSION);
 
             entry.done(SHORT_STRING_TEMPLATE_ENTRY);
@@ -613,7 +614,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
             parseExpression();
 
-            expect(LONG_TEMPLATE_ENTRY_END, "Expecting '}'", TokenSet.create(CLOSING_QUOTE, DANGLING_NEWLINE, REGULAR_STRING_PART, ESCAPE_SEQUENCE, SHORT_TEMPLATE_ENTRY));
+            expect(LONG_TEMPLATE_ENTRY_END, "Expecting '}'", TokenSet.create(CLOSING_QUOTE, DANGLING_NEWLINE, REGULAR_STRING_PART, ESCAPE_SEQUENCE, SHORT_TEMPLATE_ENTRY_START));
             longTemplateEntry.done(LONG_STRING_TEMPLATE_ENTRY);
         }
         else {

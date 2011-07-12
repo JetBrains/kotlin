@@ -7,15 +7,15 @@ fun demo() {
   ~buzz~fun buzz(f : fun () : Any?) : Int  = 1
   ~sdf~val sdf = 1
   ~foo~val foo = 3;
-    "`abc`$abc"
+    "$`abc`abc"
     "$"
     "$.$.asdf$\t"
     "asd\$"
-    "asd`a`$a"
-    "asd`a`$a`asd`$asd$"
+    "asd$`a`a"
+    "asd$`a`a$`asd`asd$"
     "fosdfasdo${1 + `bar`bar + 100}}sdsdfgdsfsdf"
     "foo${`bar`bar + `map`map {`foo`foo}}sdfsdf"
     "foo${`bar`bar + `map`map { "foo" }}sdfsdf"
     "foo${`bar`bar + `map`map {
-      "foo`sdf`$sdf${ `buzz`buzz{}}" }}sdfsdf"
+      "foo$`sdf`sdf${ `buzz`buzz{}}" }}sdfsdf"
 }

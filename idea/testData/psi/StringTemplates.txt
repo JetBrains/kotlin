@@ -158,15 +158,17 @@ JetFile: StringTemplates.jet
         STRING_TEMPLATE
           PsiElement(OPEN_QUOTE)('"')
           SHORT_STRING_TEMPLATE_ENTRY
+            PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
             REFERENCE_EXPRESSION
-              PsiElement(SHORT_TEMPLATE_ENTRY)('$abc')
+              PsiElement(IDENTIFIER)('abc')
           PsiElement(CLOSING_QUOTE)('"')
         PsiWhiteSpace('\n    ')
         STRING_TEMPLATE
           PsiElement(OPEN_QUOTE)('"')
           SHORT_STRING_TEMPLATE_ENTRY
+            PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
             REFERENCE_EXPRESSION
-              PsiElement(SHORT_TEMPLATE_ENTRY)('$abc')
+              PsiElement(IDENTIFIER)('abc')
           ESCAPE_STRING_TEMPLATE_ENTRY
             PsiElement(ESCAPE_SEQUENCE)('\"')
           PsiErrorElement:Expecting '"'
@@ -207,8 +209,9 @@ JetFile: StringTemplates.jet
           LITERAL_STRING_TEMPLATE_ENTRY
             PsiElement(REGULAR_STRING_PART)('asd')
           SHORT_STRING_TEMPLATE_ENTRY
+            PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
             REFERENCE_EXPRESSION
-              PsiElement(SHORT_TEMPLATE_ENTRY)('$a')
+              PsiElement(IDENTIFIER)('a')
           PsiElement(CLOSING_QUOTE)('"')
         PsiWhiteSpace('\n    ')
         STRING_TEMPLATE
@@ -216,11 +219,13 @@ JetFile: StringTemplates.jet
           LITERAL_STRING_TEMPLATE_ENTRY
             PsiElement(REGULAR_STRING_PART)('asd')
           SHORT_STRING_TEMPLATE_ENTRY
+            PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
             REFERENCE_EXPRESSION
-              PsiElement(SHORT_TEMPLATE_ENTRY)('$a')
+              PsiElement(IDENTIFIER)('a')
           SHORT_STRING_TEMPLATE_ENTRY
+            PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
             REFERENCE_EXPRESSION
-              PsiElement(SHORT_TEMPLATE_ENTRY)('$asd')
+              PsiElement(IDENTIFIER)('asd')
           LITERAL_STRING_TEMPLATE_ENTRY
             PsiElement(REGULAR_STRING_PART)('$')
           PsiElement(CLOSING_QUOTE)('"')
@@ -342,8 +347,9 @@ JetFile: StringTemplates.jet
                         LITERAL_STRING_TEMPLATE_ENTRY
                           PsiElement(REGULAR_STRING_PART)('foo')
                         SHORT_STRING_TEMPLATE_ENTRY
+                          PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
                           REFERENCE_EXPRESSION
-                            PsiElement(SHORT_TEMPLATE_ENTRY)('$sdf')
+                            PsiElement(IDENTIFIER)('sdf')
                         LONG_STRING_TEMPLATE_ENTRY
                           PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
                           PsiWhiteSpace(' ')

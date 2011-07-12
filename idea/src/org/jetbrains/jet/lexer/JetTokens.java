@@ -25,8 +25,8 @@ public interface JetTokens {
     JetToken CLOSING_QUOTE = new JetToken("CLOSING_QUOTE");
     JetToken OPEN_QUOTE = new JetToken("OPEN_QUOTE");
     JetToken REGULAR_STRING_PART = new JetToken("REGULAR_STRING_PART");
-    JetToken SHORT_TEMPLATE_ENTRY = new JetToken("SHORT_TEMPLATE_ENTRY");
     JetToken ESCAPE_SEQUENCE = new JetToken("ESCAPE_SEQUENCE");
+    JetToken SHORT_TEMPLATE_ENTRY_START = new JetToken("SHORT_TEMPLATE_ENTRY_START");
     JetToken LONG_TEMPLATE_ENTRY_START = new JetToken("LONG_TEMPLATE_ENTRY_START");
     JetToken LONG_TEMPLATE_ENTRY_END = new JetToken("LONG_TEMPLATE_ENTRY_END");
     JetToken DANGLING_NEWLINE = new JetToken("DANGLING_NEWLINE");
