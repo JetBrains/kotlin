@@ -66,7 +66,14 @@ public class PatternMatchingTest extends CodegenTestCase {
     public void testTuplePattern() throws Exception {
         loadText("fun foo(x: (Any, Any)) = when(x) { is (1,2) => \"one,two\"; else => \"something\" }");
         Method foo = generateFunction();
-        assertEquals("one,two", foo.invoke(null, new Tuple2<Integer, Integer>(1, 2)));
+        final Object result;
+        try {
+            result = foo.invoke(null, new Tuple2<Integer, Integer>(1, 2));
+        } catch (Exception e) {
+            System.out.println(generateToText());
+            throw e;
+        }
+        assertEquals("one,two", result);
         assertEquals("something", foo.invoke(null, new Tuple2<String, String>("not", "tuple")));
     }
 

@@ -52,6 +52,7 @@ public class ExpressionCodegen extends JetVisitor {
     private static final Type INTEGER_TYPE = Type.getType(Integer.class);
     private static final Type ITERATOR_TYPE = Type.getType(Iterator.class);
     private static final Type THROWABLE_TYPE = Type.getType(Throwable.class);
+    private static final Type STRING_TYPE = Type.getObjectType(CLASS_STRING);
 
     private static final Type RANGE_TYPE = Type.getType(Range.class);
     private static final Type INT_RANGE_TYPE = Type.getType(IntRange.class);
@@ -490,21 +491,40 @@ public class ExpressionCodegen extends JetVisitor {
 
     @Override
     public void visitStringTemplateExpression(JetStringTemplateExpression expression) {
-        final StringBuilder builder = new StringBuilder();
+        StringBuilder constantValue = new StringBuilder("");
         for (JetStringTemplateEntry entry : expression.getEntries()) {
-            entry.accept(new JetVisitor() {
-                @Override
-                public void visitStringTemplateEntry(JetStringTemplateEntry entry) {
-                    throw new UnsupportedOperationException("Unsupported string template entry: " + entry); // TODO
-                }
-
-                @Override
-                public void visitLiteralStringTemplateEntry(JetLiteralStringTemplateEntry entry) {
-                    builder.append(entry.getText());
-                }
-            });
+            if (entry instanceof JetLiteralStringTemplateEntry) {
+                constantValue.append(entry.getText());
+            }
+            else if (entry instanceof JetEscapeStringTemplateEntry) {
+                constantValue.append(((JetEscapeStringTemplateEntry) entry).getUnescapedValue());
+            }
+            else {
+                constantValue = null;
+                break;
+            }
         }
-        myStack.push(StackValue.constant(builder.toString(), expressionType(expression)));
+        if (constantValue != null) {
+            final Type type = expressionType(expression);
+            myStack.push(StackValue.constant(constantValue.toString(), type));
+        }
+        else {
+            generateStringBuilderConstructor();
+            for (JetStringTemplateEntry entry : expression.getEntries()) {
+                if (entry instanceof JetStringTemplateEntryWithExpression) {
+                    invokeAppend(entry.getExpression());
+                }
+                else {
+                    String text = entry instanceof JetEscapeStringTemplateEntry
+                            ? ((JetEscapeStringTemplateEntry) entry).getUnescapedValue()
+                            : entry.getText();
+                    v.aconst(text);
+                    invokeAppendMethod(STRING_TYPE);
+                }
+            }
+            v.invokevirtual(CLASS_STRING_BUILDER, "toString", "()Ljava/lang/String;");
+            myStack.push(StackValue.onStack(expressionType(expression)));
+        }
     }
 
     @Override

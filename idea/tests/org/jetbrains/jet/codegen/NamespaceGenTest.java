@@ -451,4 +451,16 @@ public class NamespaceGenTest extends CodegenTestCase {
         assertEquals("JetBrains", main.invoke(null, "JetBrains"));
         assertNull(main.invoke(null, "IntelliJ"));
     }
+
+    public void testEscapeSequence() throws Exception {
+        loadText("fun foo() = \"a\\nb\\$\"");
+        final Method main = generateFunction();
+        assertEquals("a\nb$", main.invoke(null));
+    }
+
+    public void testStringTemplate() throws Exception {
+        loadText("fun foo(a: String) = \"IntelliJ $a Rulezzz\"");
+        final Method main = generateFunction();
+        assertEquals("IntelliJ IDEA Rulezzz", main.invoke(null, "IDEA"));
+    }
 }

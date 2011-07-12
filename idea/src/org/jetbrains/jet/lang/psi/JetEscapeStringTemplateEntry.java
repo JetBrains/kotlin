@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -14,5 +15,9 @@ public class JetEscapeStringTemplateEntry extends JetStringTemplateEntry {
     @Override
     public void accept(@NotNull JetVisitor visitor) {
         visitor.visitEscapeStringTemplateEntry(this);
+    }
+
+    public String getUnescapedValue() {
+        return StringUtil.unescapeStringCharacters(getText());
     }
 }
