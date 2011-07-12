@@ -150,7 +150,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         Method method;
         CallableMethod callableMethod;
-        if (myClass instanceof JetObjectDeclaration || isEnum(myClass)) {
+        if (constructorDescriptor == null) {
             method = new Method("<init>", Type.VOID_TYPE, new Type[0]);
             callableMethod = new CallableMethod("", method, Opcodes.INVOKESPECIAL, Collections.<Type>emptyList());
         }

@@ -3,10 +3,8 @@ package org.jetbrains.jet.codegen;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.psi.JetClassOrObject;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lang.psi.JetDelegationSpecifier;
-import org.jetbrains.jet.lang.psi.JetEnumEntry;
+import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
 import org.objectweb.asm.ClassVisitor;
@@ -103,13 +101,35 @@ public class InterfaceBodyCodegen extends ClassBodyCodegen {
     }
 
     private void initializeEnumConstants(InstructionAdapter v) {
+        ExpressionCodegen codegen = new ExpressionCodegen(v, new FrameMap(), Type.VOID_TYPE, context, state);
         for (JetEnumEntry enumConstant : myEnumConstants) {
             // TODO type and constructor parameters
             String intfClass = state.getTypeMapper().jvmName(descriptor, OwnerKind.INTERFACE);
             String implClass = state.getTypeMapper().jvmName(descriptor, OwnerKind.IMPLEMENTATION);
+
+            final List<JetDelegationSpecifier> delegationSpecifiers = enumConstant.getDelegationSpecifiers();
+            if (delegationSpecifiers.size() > 1) {
+                throw new UnsupportedOperationException("multiple delegation specifiers for enum constant not supported");
+            }
+
             v.anew(Type.getObjectType(implClass));
             v.dup();
-            v.invokespecial(implClass, "<init>", "()V");
+
+            if (delegationSpecifiers.size() == 1) {
+                final JetDelegationSpecifier specifier = delegationSpecifiers.get(0);
+                if (specifier instanceof JetDelegatorToSuperCall) {
+                    final JetDelegatorToSuperCall superCall = (JetDelegatorToSuperCall) specifier;
+                    ConstructorDescriptor constructorDescriptor = state.getBindingContext().resolveSuperConstructor(superCall);
+                    CallableMethod method = state.getTypeMapper().mapToCallableMethod(constructorDescriptor, OwnerKind.IMPLEMENTATION);
+                    codegen.invokeMethodWithArguments(method, superCall);
+                }
+                else {
+                    throw new UnsupportedOperationException("unsupported type of enum constant initializer: " + specifier);
+                }
+            }
+            else {
+                v.invokespecial(implClass, "<init>", "()V");
+            }
             v.putstatic(intfClass, enumConstant.getName(), "L" + intfClass + ";");
         }
     }

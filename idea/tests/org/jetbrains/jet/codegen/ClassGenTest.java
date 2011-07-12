@@ -134,10 +134,18 @@ public class ClassGenTest extends CodegenTestCase {
 
     public void testEnumClass() throws Exception {
         loadText("enum class Direction { NORTH; SOUTH; EAST; WEST }");
-        System.out.println(generateToText());
         final Class direction = loadAllClasses(generateClassesInFile()).get("Direction");
         final Field north = direction.getField("NORTH");
         assertEquals(direction, north.getType());
         assertInstanceOf(north.get(null), direction);
+    }
+
+    public void testEnumConstantConstructors() throws Exception {
+        loadText("enum class Color(val rgb: Int) { RED: Color(0xFF0000); GREEN: Color(0x00FF00); }");
+        final Class colorClass = loadAllClasses(generateClassesInFile()).get("Color");
+        final Field redField = colorClass.getField("RED");
+        final Object redValue = redField.get(null);
+        final Method rgbMethod = colorClass.getMethod("getRgb");
+        assertEquals(0xFF0000, rgbMethod.invoke(redValue));
     }
 }
