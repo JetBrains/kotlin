@@ -1,4 +1,4 @@
-<atlassian-plugin key="${project.groupId}.${project.artifactId}" name="${project.name}" plugins-version="2">
+<atlassian-plugin key="${project.groupId}.${project.artifactId}" name="jet" plugins-version="2">
     <plugin-info>
         <description>${project.description}</description>
         <version>${project.version}</version>
@@ -11,5 +11,6 @@
 
     <web-resource key="resources">
             <resource type="download" name="jet.css" location="jet.css"/>
+            <resource type="download" name="underline.gif" location="underline.gif"/>
     </web-resource>
 </atlassian-plugin>

@@ -20,7 +20,6 @@
 }
 .jet.string {
   color : #000099;
-  font-weight: bold;
 }
 .jet.escape {
   font-weight: bold;
@@ -36,4 +35,16 @@
 .jet.bad {
   background-color : #FF9999;
   color:black;
+}
+.jet.error {
+  background: url(underline.gif) bottom repeat-x;
+  display:inline;
+}
+.jet.warning {
+  background-color : #f5eabb;
+  display:inline;
+}
+.jet.unresolved {
+  color : red;
+  display:inline;
 }

@@ -10,10 +10,10 @@ import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
 import org.apache.velocity.VelocityContext;
 
-import java.io.IOException;
 import java.io.StringReader;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author abreslav
@@ -31,7 +31,72 @@ public class JetMacro extends BaseMacro {
 
     @Override
     public String execute(Map map, String code, RenderContext renderContext) throws MacroException {
+
+        class ExtraTag {
+            final String name;
+            final String message;
+            final int start;
+            int end;
+
+            ExtraTag(String name, String message, int start) {
+                this.name = name;
+                this.message = message;
+                this.start = start;
+            }
+        }
+
+        String[] knownExtraTagNames = {"error", "warning", "unresolved"};
+
+        Map<String, Pattern> openTags = new HashMap<String, Pattern>();
+        Map<String, Pattern> closeTags = new HashMap<String, Pattern>();
+        for (String name : knownExtraTagNames) {
+            Pattern open = Pattern.compile("<" + name + "\\s*(desc=\\\"([^\n\"]*?)\\\")?>", Pattern.MULTILINE);
+            openTags.put(name, open);
+            closeTags.put(name, Pattern.compile("</" + name + ">"));
+        }
+
+        Stack<ExtraTag> tagStack = new Stack<ExtraTag>();
+        List<ExtraTag> tags = new ArrayList<ExtraTag>();
+
         code = code.trim();
+        StringBuilder normalizedNewlines = new StringBuilder();
+        charLoop:
+        for (int i = 0; i < code.length(); i++) {
+            char c = code.charAt(i);
+            if (c == '\r') continue;
+            for (String tagName : knownExtraTagNames) {
+                Pattern open = openTags.get(tagName);
+                CharSequence remainingInput = code.subSequence(i, code.length());
+                Matcher openMatcher = open.matcher(remainingInput);
+                if (openMatcher.find() && openMatcher.start() == 0) {
+                    tagStack.push(new ExtraTag(tagName, openMatcher.group(2), normalizedNewlines.length()));
+                    i += openMatcher.end() - 1;
+                    continue charLoop;
+                }
+
+                Pattern close = closeTags.get(tagName);
+                Matcher closeMatcher = close.matcher(remainingInput);
+                if (closeMatcher.find() && closeMatcher.start() == 0) {
+                    if (tagStack.isEmpty()) {
+                        return "<div style=\"jet error\">Error: unmatched closing tag: " + closeMatcher.group() + "</div>";
+                    }
+                    else {
+                        ExtraTag tag = tagStack.pop();
+                        if (!tagName.equals(tag.name)) {
+                            return "<div style=\"jet error\">Error: unmatched closing tag: " + closeMatcher.group() + "</div>";
+                        }
+
+                        tag.end = normalizedNewlines.length();
+                        tags.add(tag);
+                        i += closeMatcher.end() - 1;
+                        continue charLoop;
+                    }
+                }
+
+            }
+            normalizedNewlines.append(c);
+        }
+
         VelocityContext context = new VelocityContext(MacroUtils.defaultVelocityContext());
         String renderedTemplate = VelocityUtils.getRenderedTemplate("template.velocity", context);
 
@@ -43,7 +108,7 @@ public class JetMacro extends BaseMacro {
         );
 
         _JetLexer jetLexer = new _JetLexer(new StringReader(""));
-        jetLexer.reset(code, 0, code.length(), _JetLexer.YYINITIAL);
+        jetLexer.reset(normalizedNewlines, 0, normalizedNewlines.length(), _JetLexer.YYINITIAL);
 
         Map<IElementType, String> styleMap = new HashMap<IElementType, String>();
         styleMap.put(JetTokens.BLOCK_COMMENT, "comment");
@@ -67,8 +132,23 @@ public class JetMacro extends BaseMacro {
         styleMap.put(JetTokens.RAW_STRING_LITERAL, "string");
         styleMap.put(TokenType.BAD_CHARACTER, "bad");
 
+        Iterator<ExtraTag> iterator = tags.iterator();
+        ExtraTag tag = iterator.hasNext() ? iterator.next() : null;
         while (true) {
             try {
+                if (tag != null) {
+                    if (tag.start == jetLexer.getTokenEnd()) {
+                        result.append("<div class=\"jet ").append(tag.name).append("\"");
+                        if (tag.message != null) {
+                            result.append(" title=\"").append(tag.message).append("\"");
+                        }
+                        result.append(">");
+                    }
+                    else if (tag.end == jetLexer.getTokenEnd()) {
+                        result.append("</div>");
+                        tag = iterator.hasNext() ? iterator.next() : null;
+                    }
+                }
                 IElementType token = jetLexer.advance();
                 if (token == null) break;
                 CharSequence yytext = jetLexer.yytext();
@@ -90,7 +170,7 @@ public class JetMacro extends BaseMacro {
                 }
                 result.append("<code class=\"jet ").append(style).append("\">").append(yytext).append("</code>");
 
-            } catch (IOException e) {
+            } catch (Throwable e) {
                 result.append("ERROR IN HIGHLIGHTER: ").append(e.getClass().getSimpleName()).append(" : ").append(e.getMessage());
             }
         }
