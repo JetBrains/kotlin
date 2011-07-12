@@ -25,13 +25,15 @@ public class ClassCodegen {
         else {
             generateInterface(parentContext, aClass);
             generateImplementation(parentContext, aClass, OwnerKind.IMPLEMENTATION);
-            generateImplementation(parentContext, aClass, OwnerKind.DELEGATING_IMPLEMENTATION);
+            if (!ImplementationBodyCodegen.isEnum(aClass)) {
+                generateImplementation(parentContext, aClass, OwnerKind.DELEGATING_IMPLEMENTATION);
+            }
         }
 
         ClassDescriptor descriptor =  state.getBindingContext().getClassDescriptor(aClass);
         final ClassContext contextForInners = parentContext.intoClass(descriptor, OwnerKind.IMPLEMENTATION);
         for (JetDeclaration declaration : aClass.getDeclarations()) {
-            if (declaration instanceof JetClass) {
+            if (declaration instanceof JetClass && !(declaration instanceof JetEnumEntry)) {
                 generate(contextForInners, (JetClass) declaration);
             }
         }

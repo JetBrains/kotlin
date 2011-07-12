@@ -146,11 +146,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     protected void generatePrimaryConstructor() {
         ConstructorDescriptor constructorDescriptor = state.getBindingContext().getConstructorDescriptor((JetElement) myClass);
-        if (constructorDescriptor == null && !(myClass instanceof JetObjectDeclaration)) return;
+        if (constructorDescriptor == null && !(myClass instanceof JetObjectDeclaration) && !isEnum(myClass)) return;
 
         Method method;
         CallableMethod callableMethod;
-        if (myClass instanceof JetObjectDeclaration) {
+        if (myClass instanceof JetObjectDeclaration || isEnum(myClass)) {
             method = new Method("<init>", Type.VOID_TYPE, new Type[0]);
             callableMethod = new CallableMethod("", method, Opcodes.INVOKESPECIAL, Collections.<Type>emptyList());
         }
@@ -276,6 +276,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         mv.visitInsn(Opcodes.RETURN);
         mv.visitMaxs(0, 0);
         mv.visitEnd();
+    }
+
+    static boolean isEnum(JetClassOrObject myClass) {
+        final JetModifierList modifierList = myClass.getModifierList();
+        return modifierList != null && modifierList.hasModifier(JetTokens.ENUM_KEYWORD);
     }
 
     @Nullable

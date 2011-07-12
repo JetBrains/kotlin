@@ -1,5 +1,6 @@
 package org.jetbrains.jet.codegen;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.List;
@@ -129,5 +130,14 @@ public class ClassGenTest extends CodegenTestCase {
         final Method method = generateFunction();
         Object result = method.invoke(null);
         assertInstanceOf(result, Runnable.class);
+    }
+
+    public void testEnumClass() throws Exception {
+        loadText("enum class Direction { NORTH; SOUTH; EAST; WEST }");
+        System.out.println(generateToText());
+        final Class direction = loadAllClasses(generateClassesInFile()).get("Direction");
+        final Field north = direction.getField("NORTH");
+        assertEquals(direction, north.getType());
+        assertInstanceOf(north.get(null), direction);
     }
 }
