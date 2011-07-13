@@ -57,6 +57,8 @@ public class IntrinsicMethods {
         declareBinaryOp("or", Opcodes.IOR);
         declareBinaryOp("xor", Opcodes.IXOR);
 
+        declareIntrinsicFunction("Boolean", "not", 0, new Not());
+
         declareIntrinsicFunction("String", "plus", 1, new Concat());
     }
 
@@ -82,7 +84,7 @@ public class IntrinsicMethods {
     private void declareOverload(FunctionGroup group, int arity, IntrinsicMethod implementation) {
         for (FunctionDescriptor descriptor : group.getFunctionDescriptors()) {
             if (descriptor.getValueParameters().size() == arity) {
-                myMethods.put(descriptor, implementation);
+                myMethods.put(descriptor.getOriginal(), implementation);
             }
         }
     }

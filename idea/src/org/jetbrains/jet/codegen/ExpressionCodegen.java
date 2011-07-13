@@ -137,7 +137,7 @@ public class ExpressionCodegen extends JetVisitor {
         gen(expr, expressionType(expr));
     }
 
-    private StackValue generateIntermediateValue(final JetExpression baseExpression) {
+    public StackValue generateIntermediateValue(final JetExpression baseExpression) {
         int oldStackSize = myStack.size();
         gen(baseExpression);
         if (myStack.size() != oldStackSize+1) {
@@ -1317,14 +1317,7 @@ public class ExpressionCodegen extends JetVisitor {
         DeclarationDescriptor op = bindingContext.resolveReferenceExpression(expression.getOperationSign());
         if (op instanceof FunctionDescriptor) {
             final Type asmType = expressionType(expression);
-            DeclarationDescriptor cls = op.getContainingDeclaration();
-            if (isNumberPrimitive(cls)) {
-                if (generateUnaryOp(op, asmType, expression)) return;
-            }
-            else if (isClass(cls, "Boolean") && op.getName().equals("not")) {
-                generateNot(expression);
-                return;
-            }
+            if (generateUnaryOp(op, asmType, expression)) return;
         }
         throw new UnsupportedOperationException("Don't know how to generate this prefix expression");
     }
@@ -1359,16 +1352,11 @@ public class ExpressionCodegen extends JetVisitor {
             myStack.push(intrinsic.generate(this, v, asmType, unaryExpression, Collections.singletonList(operand)));
             return true;
         }
-        else if (op.getName().equals("inc") || op.getName().equals("dec")) {
+        else if (isNumberPrimitive(asmType) && (op.getName().equals("inc") || op.getName().equals("dec"))) {
             myStack.push(generateIncrement(op, asmType, operand));
             return true;
         }
         return false;
-    }
-
-    private void generateNot(JetPrefixExpression expression) {
-        final StackValue stackValue = generateIntermediateValue(expression.getBaseExpression());
-        myStack.push(StackValue.not(stackValue));
     }
 
     private StackValue generateIncrement(DeclarationDescriptor op, Type asmType, JetExpression operand) {
