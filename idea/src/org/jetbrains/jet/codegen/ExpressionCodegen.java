@@ -11,6 +11,8 @@ import jet.IntRange;
 import jet.JetObject;
 import jet.Range;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethod;
+import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -83,6 +85,7 @@ public class ExpressionCodegen extends JetVisitor {
     private final BindingContext bindingContext;
     private final Map<TypeParameterDescriptor, StackValue> typeParameterExpressions = new HashMap<TypeParameterDescriptor, StackValue>();
     private final ClassContext context;
+    private final IntrinsicMethods intrinsics;
 
     public ExpressionCodegen(MethodVisitor v,
                              FrameMap myMap,
@@ -96,6 +99,7 @@ public class ExpressionCodegen extends JetVisitor {
         this.v = new InstructionAdapter(v);
         this.bindingContext = state.getBindingContext();
         this.context = context;
+        this.intrinsics = state.getIntrinsics();
     }
 
     public void addTypeParameter(TypeParameterDescriptor typeParameter, StackValue expression) {
@@ -126,7 +130,7 @@ public class ExpressionCodegen extends JetVisitor {
         }
     }
 
-    private void putTopOfStack(Type type) {
+    public void putTopOfStack(Type type) {
         StackValue value = myStack.pop();
         value.put(type, v);
     }
@@ -642,18 +646,15 @@ public class ExpressionCodegen extends JetVisitor {
             descriptor = ((VariableAsFunctionDescriptor) descriptor).getVariableDescriptor();
         }
 
-        final DeclarationDescriptor container = descriptor.getContainingDeclaration();
-        if (descriptor instanceof VariableDescriptor) {
-            if (isClass(container, "Number")) {
-                Type castType = getCastType(expression.getReferencedName());
-                if (castType != null) {
-                    final StackValue value = myStack.pop();
-                    value.put(castType, v);
-                    myStack.push(StackValue.onStack(castType));
-                    return;
-                }
-            }
+        final IntrinsicMethod intrinsic = intrinsics.getIntrinsic(descriptor);
+        if (intrinsic != null) {
+            final Type expectedType = expressionType(expression);
+            myStack.push(intrinsic.generate(this, v, expectedType, expression, Collections.<JetExpression>emptyList()));
+            return;
         }
+
+        final DeclarationDescriptor container = descriptor.getContainingDeclaration();
+
         PsiElement declaration = bindingContext.getDeclarationPsiElement(descriptor);
         if (declaration instanceof PsiField) {
             PsiField psiField = (PsiField) declaration;
@@ -690,12 +691,7 @@ public class ExpressionCodegen extends JetVisitor {
                     }
                 }
 
-                if (isClass(container, "Array") && propertyDescriptor.getName().equals("size")) {
-                    ensureReceiverOnStack(expression, null);
-                    v.arraylength();
-                    myStack.push(StackValue.onStack(Type.INT_TYPE));
-                }
-                else if (declaration instanceof JetObjectDeclarationName) {
+                if (declaration instanceof JetObjectDeclarationName) {
                     JetObjectDeclaration objectDeclaration = PsiTreeUtil.getParentOfType(declaration, JetObjectDeclaration.class);
                     ClassDescriptor classDescriptor = bindingContext.getClassDescriptor(objectDeclaration);
                     myStack.push(StackValue.field(typeMapper.jvmType(classDescriptor, OwnerKind.IMPLEMENTATION),
@@ -777,32 +773,6 @@ public class ExpressionCodegen extends JetVisitor {
         }
 
         return StackValue.property(propertyDescriptor.getName(), owner, typeMapper.mapType(outType), isStatic, isInterface, getter, setter);
-    }
-
-    @Nullable
-    private static Type getCastType(String castMethodName) {
-        if ("dbl".equals(castMethodName)) {
-            return Type.DOUBLE_TYPE;
-        }
-        if ("flt".equals(castMethodName)) {
-            return Type.FLOAT_TYPE;
-        }
-        if ("lng".equals(castMethodName)) {
-            return Type.LONG_TYPE;
-        }
-        if ("int".equals(castMethodName)) {
-            return Type.INT_TYPE;
-        }
-        if ("chr".equals(castMethodName)) {
-            return Type.CHAR_TYPE;
-        }
-        if ("sht".equals(castMethodName)) {
-            return Type.SHORT_TYPE;
-        }
-        if ("byt".equals(castMethodName)) {
-            return Type.BYTE_TYPE;
-        }
-        return null;
     }
 
     @Override
@@ -944,7 +914,7 @@ public class ExpressionCodegen extends JetVisitor {
         return null;
     }
 
-    private void ensureReceiverOnStack(PsiElement expression, @Nullable ClassDescriptor calleeContainingClass) {
+    public void ensureReceiverOnStack(PsiElement expression, @Nullable ClassDescriptor calleeContainingClass) {
         JetExpression receiver = getReceiverForSelector(expression);
         if (receiver != null) {
             if (!resolvesToClassOrPackage(receiver)) {
@@ -1402,7 +1372,7 @@ public class ExpressionCodegen extends JetVisitor {
             final Type asmType = expressionType(expression);
             DeclarationDescriptor cls = op.getContainingDeclaration();
             if (isNumberPrimitive(cls)) {
-                if (generateUnaryOp(op, asmType, expression.getBaseExpression())) return;
+                if (generateUnaryOp(op, asmType, expression)) return;
             }
             else if (isClass(cls, "Boolean") && op.getName().equals("not")) {
                 generateNot(expression);
@@ -1435,11 +1405,11 @@ public class ExpressionCodegen extends JetVisitor {
         throw new UnsupportedOperationException("Don't know how to generate this prefix expression");
     }
 
-    private boolean generateUnaryOp(DeclarationDescriptor op, Type asmType, final JetExpression operand) {
-        if (op.getName().equals("minus")) {
-            gen(operand, asmType);
-            v.neg(asmType);
-            myStack.push(StackValue.onStack(asmType));
+    private boolean generateUnaryOp(DeclarationDescriptor op, Type asmType, final JetUnaryExpression unaryExpression) {
+        final IntrinsicMethod intrinsic = intrinsics.getIntrinsic(op);
+        final JetExpression operand = unaryExpression.getBaseExpression();
+        if (intrinsic != null) {
+            myStack.push(intrinsic.generate(this, v, asmType, unaryExpression, Collections.singletonList(operand)));
             return true;
         }
         else if (op.getName().equals("inc") || op.getName().equals("dec")) {

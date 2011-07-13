@@ -6,6 +6,7 @@ package org.jetbrains.jet.codegen;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.containers.Stack;
+import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -23,11 +24,13 @@ public class GenerationState {
     private JetTypeMapper typeMapper;
     private final Stack<BindingContext> bindingContexts = new Stack<BindingContext>();
     private final JetStandardLibrary standardLibrary;
+    private final IntrinsicMethods intrinsics;
 
     public GenerationState(Project project, boolean text) {
         this.project = project;
         this.standardLibrary = JetStandardLibrary.getJetStandardLibrary(project);
         this.factory = new ClassFileFactory(project, text, this);
+        this.intrinsics = new IntrinsicMethods(standardLibrary);
     }
 
     public ClassFileFactory getFactory() {
@@ -48,6 +51,10 @@ public class GenerationState {
 
     public JetStandardLibrary getStandardLibrary() {
         return standardLibrary;
+    }
+
+    public IntrinsicMethods getIntrinsics() {
+        return intrinsics;
     }
 
     public ClassVisitor forClassInterface(ClassDescriptor aClass) {
