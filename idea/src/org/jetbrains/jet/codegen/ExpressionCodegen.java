@@ -1079,13 +1079,14 @@ public class ExpressionCodegen extends JetVisitor {
         else {
             DeclarationDescriptor op = bindingContext.resolveReferenceExpression(expression.getOperationReference());
             if (op instanceof FunctionDescriptor) {
-                DeclarationDescriptor cls = op.getContainingDeclaration();
-                if (isNumberPrimitive(cls)) {
-                    int opcode = opcodeForMethod(op.getName());
-                    generateBinaryOp(expression, (FunctionDescriptor) op, opcode);
+                final IntrinsicMethod intrinsic = intrinsics.getIntrinsic(op);
+                if (intrinsic != null) {
+                    myStack.push(intrinsic.generate(this, v, expressionType(expression), expression,
+                                                    Arrays.asList(expression.getLeft(), expression.getRight())));
                     return;
                 }
-                else if (isClass(cls, "String") && op.getName().equals("plus")) {
+                DeclarationDescriptor cls = op.getContainingDeclaration();
+                if (isClass(cls, "String") && op.getName().equals("plus")) {
                     generateConcatenation(expression);
                     return;
                 }
@@ -1238,21 +1239,6 @@ public class ExpressionCodegen extends JetVisitor {
         if (name.equals("or")) return Opcodes.IOR;
         if (name.equals("xor")) return Opcodes.IXOR;
         throw new UnsupportedOperationException("Don't know how to generate binary op method " + name);
-    }
-
-    private void generateBinaryOp(JetBinaryExpression expression, FunctionDescriptor op, int opcode) {
-        JetType returnType = op.getReturnType();
-        final Type asmType = typeMapper.mapType(returnType);
-        if (asmType == Type.INT_TYPE || asmType == Type.LONG_TYPE ||
-            asmType == Type.FLOAT_TYPE || asmType == Type.DOUBLE_TYPE) {
-            gen(expression.getLeft(), asmType);
-            gen(expression.getRight(), asmType);
-            v.visitInsn(asmType.getOpcode(opcode));
-            myStack.push(StackValue.onStack(asmType));
-        }
-        else {
-            throw new UnsupportedOperationException("Don't know how to generate binary op with return type " + returnType);
-        }
     }
 
     private void generateCompareOp(JetExpression left, JetExpression right, IElementType opToken, Type operandType) {

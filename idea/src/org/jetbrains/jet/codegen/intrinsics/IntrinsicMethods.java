@@ -6,8 +6,12 @@ import org.jetbrains.jet.lang.resolve.JetScope;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.TypeProjection;
+import org.objectweb.asm.Opcodes;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author yole
@@ -20,6 +24,8 @@ public class IntrinsicMethods {
     private static final IntrinsicMethod TYPEINFO = new TypeInfo();
     private static final IntrinsicMethod VALUE_TYPEINFO = new ValueTypeInfo();
 
+    private static final List<String> PRIMITIVE_NUMBER_TYPES = ImmutableList.of("Boolean", "Byte", "Char", "Short", "Int", "Float", "Long", "Double");
+
     private final JetStandardLibrary myStdLib;
     private final Map<DeclarationDescriptor, IntrinsicMethod> myMethods = new HashMap<DeclarationDescriptor, IntrinsicMethod>();
 
@@ -31,8 +37,7 @@ public class IntrinsicMethods {
         }
         declareIntrinsicProperty("Array", "size", ARRAY_SIZE);
 
-        List<String> primitiveNumberTypes = ImmutableList.of("Boolean", "Byte", "Char", "Short", "Int", "Float", "Long", "Double");
-        for (String primitiveNumberType : primitiveNumberTypes) {
+        for (String primitiveNumberType : PRIMITIVE_NUMBER_TYPES) {
             declareIntrinsicFunction(primitiveNumberType, "minus", 0, UNARY_MINUS);
             declareIntrinsicFunction(primitiveNumberType, "inv", 0, INV);
         }
@@ -40,6 +45,25 @@ public class IntrinsicMethods {
         final FunctionGroup typeInfoFunctionGroup = stdlib.getTypeInfoFunctionGroup();
         declareOverload(typeInfoFunctionGroup, 0, TYPEINFO);
         declareOverload(typeInfoFunctionGroup, 1, VALUE_TYPEINFO);
+
+        declareBinaryOp("plus", Opcodes.IADD);
+        declareBinaryOp("minus", Opcodes.ISUB);
+        declareBinaryOp("times", Opcodes.IMUL);
+        declareBinaryOp("div", Opcodes.IDIV);
+        declareBinaryOp("mod", Opcodes.IREM);
+        declareBinaryOp("shl", Opcodes.ISHL);
+        declareBinaryOp("shr", Opcodes.ISHR);
+        declareBinaryOp("ushr", Opcodes.IUSHR);
+        declareBinaryOp("and", Opcodes.IAND);
+        declareBinaryOp("or", Opcodes.IOR);
+        declareBinaryOp("xor", Opcodes.IXOR);
+    }
+
+    private void declareBinaryOp(String methodName, int opcode) {
+        BinaryOp op = new BinaryOp(opcode);
+        for (String type : PRIMITIVE_NUMBER_TYPES) {
+            declareIntrinsicFunction(type, methodName, 1, op);
+        }
     }
 
     private void declareIntrinsicProperty(String className, String methodName, IntrinsicMethod implementation) {
