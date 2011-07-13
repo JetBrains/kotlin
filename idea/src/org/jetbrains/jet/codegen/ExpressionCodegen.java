@@ -784,16 +784,17 @@ public class ExpressionCodegen extends JetVisitor {
             generateConstructorCall(expression, (JetSimpleNameExpression) callee);
         }
         else if (funDescriptor instanceof FunctionDescriptor) {
-            final DeclarationDescriptor functionParent = funDescriptor.getContainingDeclaration();
-            if (isNumberPrimitive(functionParent)) {
-                if (funDescriptor.getName().equals("inv")) {
-                    final StackValue value = myStack.pop();  // HACK we rely on the dot reference handler to put it on the stack
-                    final Type asmType = expressionType(expression);
-                    value.put(asmType, v);
-                    generateInv(asmType);
-                    return;
+            final IntrinsicMethod intrinsic = intrinsics.getIntrinsic(funDescriptor);
+            if (intrinsic != null) {
+                List<JetExpression> args = new ArrayList<JetExpression>();
+                for (JetArgument argument : expression.getValueArguments()) {
+                    args.add(argument.getArgumentExpression());
                 }
+                myStack.push(intrinsic.generate(this, v, expressionType(expression), expression, args));
+                return;
             }
+
+            final DeclarationDescriptor functionParent = funDescriptor.getContainingDeclaration();
             if (state.getStandardLibrary().getTypeInfoFunctionGroup().getFunctionDescriptors().contains(funDescriptor.getOriginal())) {
                 generateTypeInfoCall(expression);
                 return;
@@ -1451,12 +1452,6 @@ public class ExpressionCodegen extends JetVisitor {
         v.add(asmType);
         value.store(v);
         return value;
-    }
-
-    private void generateInv(Type asmType) {
-        v.aconst(-1);
-        v.xor(asmType);
-        myStack.push(StackValue.onStack(asmType));
     }
 
     @Override
