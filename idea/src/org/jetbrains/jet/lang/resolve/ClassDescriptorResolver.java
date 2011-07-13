@@ -5,6 +5,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.JetSemanticServices;
@@ -143,15 +144,25 @@ public class ClassDescriptorResolver {
 
     public void resolveSupertypes(@NotNull JetClassOrObject jetClass, @NotNull MutableClassDescriptor descriptor) {
         List<JetDelegationSpecifier> delegationSpecifiers = jetClass.getDelegationSpecifiers();
-//        TODO : assuming that the hierarchy is acyclic
+        JetType defaultSupertype = JetStandardClasses.getAnyType();
+        // TODO : beautify
+        if (jetClass instanceof JetEnumEntry) {
+            JetClassOrObject parent = PsiTreeUtil.getParentOfType(jetClass, JetClassOrObject.class);
+            ClassDescriptor parentDescriptor = trace.getBindingContext().getClassDescriptor(parent);
+            if (parentDescriptor.getTypeConstructor().getParameters().isEmpty()) {
+                defaultSupertype = parentDescriptor.getDefaultType();
+            }
+            else if (delegationSpecifiers.isEmpty()) {
+                trace.getErrorHandler().genericError(((JetEnumEntry) jetClass).getNameIdentifier().getNode(), "generic arguments of the base type must be specified");
+            }
+        }
         Collection<? extends JetType> superclasses = delegationSpecifiers.isEmpty()
-                ? Collections.singleton(JetStandardClasses.getAnyType())
+                ? Collections.singleton(defaultSupertype)
                 : resolveDelegationSpecifiers(
                     descriptor.getScopeForSupertypeResolution(),
                     delegationSpecifiers,
                     typeResolverNotCheckingBounds);
 
-        // TODO : remove the importing
         for (JetType superclass : superclasses) {
             descriptor.addSupertype(superclass);
         }
