@@ -2,6 +2,7 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
+import jet.JetObject;
 import jet.typeinfo.TypeInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -20,8 +21,9 @@ import java.util.*;
  * @author yole
  */
 public class JetTypeMapper {
-    static final Type TYPE_OBJECT = Type.getObjectType("java/lang/Object");
-    static final Type TYPE_TYPEINFO = Type.getType(TypeInfo.class);
+    public static final Type TYPE_OBJECT = Type.getObjectType("java/lang/Object");
+    public static final Type TYPE_TYPEINFO = Type.getType(TypeInfo.class);
+    public static final Type TYPE_JET_OBJECT = Type.getType(JetObject.class);
 
     private final JetStandardLibrary standardLibrary;
     private final BindingContext bindingContext;

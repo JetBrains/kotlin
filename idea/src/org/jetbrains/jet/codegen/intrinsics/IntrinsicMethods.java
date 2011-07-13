@@ -17,6 +17,8 @@ public class IntrinsicMethods {
     private static final IntrinsicMethod NUMBER_CAST = new NumberCast();
     private static final IntrinsicMethod ARRAY_SIZE = new ArraySize();
     private static final IntrinsicMethod INV = new Inv();
+    private static final IntrinsicMethod TYPEINFO = new TypeInfo();
+    private static final IntrinsicMethod VALUE_TYPEINFO = new ValueTypeInfo();
 
     private final JetStandardLibrary myStdLib;
     private final Map<DeclarationDescriptor, IntrinsicMethod> myMethods = new HashMap<DeclarationDescriptor, IntrinsicMethod>();
@@ -34,6 +36,10 @@ public class IntrinsicMethods {
             declareIntrinsicFunction(primitiveNumberType, "minus", 0, UNARY_MINUS);
             declareIntrinsicFunction(primitiveNumberType, "inv", 0, INV);
         }
+
+        final FunctionGroup typeInfoFunctionGroup = stdlib.getTypeInfoFunctionGroup();
+        declareOverload(typeInfoFunctionGroup, 0, TYPEINFO);
+        declareOverload(typeInfoFunctionGroup, 1, VALUE_TYPEINFO);
     }
 
     private void declareIntrinsicProperty(String className, String methodName, IntrinsicMethod implementation) {
@@ -44,8 +50,12 @@ public class IntrinsicMethods {
 
     private void declareIntrinsicFunction(String className, String functionName, int arity, IntrinsicMethod implementation) {
         JetScope memberScope = getClassMemberScope(className);
-        final FunctionGroup minus = memberScope.getFunctionGroup(functionName);
-        for (FunctionDescriptor descriptor : minus.getFunctionDescriptors()) {
+        final FunctionGroup group = memberScope.getFunctionGroup(functionName);
+        declareOverload(group, arity, implementation);
+    }
+
+    private void declareOverload(FunctionGroup group, int arity, IntrinsicMethod implementation) {
+        for (FunctionDescriptor descriptor : group.getFunctionDescriptors()) {
             if (descriptor.getValueParameters().size() == arity) {
                 myMethods.put(descriptor, implementation);
             }

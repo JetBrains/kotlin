@@ -8,7 +8,6 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import gnu.trove.THashSet;
 import jet.IntRange;
-import jet.JetObject;
 import jet.Range;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethod;
@@ -59,7 +58,6 @@ public class ExpressionCodegen extends JetVisitor {
 
     private static final Type RANGE_TYPE = Type.getType(Range.class);
     private static final Type INT_RANGE_TYPE = Type.getType(IntRange.class);
-    private static final Type JET_OBJECT_TYPE = Type.getType(JetObject.class);
 
     private final Stack<Label> myContinueTargets = new Stack<Label>();
     private final Stack<Label> myBreakTargets = new Stack<Label>();
@@ -794,12 +792,6 @@ public class ExpressionCodegen extends JetVisitor {
                 return;
             }
 
-            final DeclarationDescriptor functionParent = funDescriptor.getContainingDeclaration();
-            if (state.getStandardLibrary().getTypeInfoFunctionGroup().getFunctionDescriptors().contains(funDescriptor.getOriginal())) {
-                generateTypeInfoCall(expression);
-                return;
-            }
-
             final FunctionDescriptor fd = (FunctionDescriptor) funDescriptor;
             PsiElement declarationPsiElement = resolveCalleeToDeclaration(funDescriptor);
 
@@ -823,25 +815,6 @@ public class ExpressionCodegen extends JetVisitor {
         else {
             throw new UnsupportedOperationException("unknown type of callee descriptor: " + funDescriptor);
         }
-    }
-
-    private void generateTypeInfoCall(JetCallExpression expression) {
-        final List<JetArgument> args = expression.getValueArguments();
-        if (args.size() == 1) {
-            gen(args.get(0).getArgumentExpression(), JET_OBJECT_TYPE);
-            v.invokeinterface("jet/JetObject", "getTypeInfo", "()Ljet/typeinfo/TypeInfo;");
-        }
-        else if (args.size() == 0) {
-            final List<JetTypeProjection> typeArguments = expression.getTypeArguments();
-            if (typeArguments.size() != 1) {
-                throw new UnsupportedOperationException("one type argument expected");
-            }
-            pushTypeArgument(typeArguments.get(0));
-        }
-        else {
-            throw new UnsupportedOperationException("no such form of typeinfo()");
-        }
-        myStack.push(StackValue.onStack(JetTypeMapper.TYPE_TYPEINFO));
     }
 
     private PsiElement resolveCalleeToDeclaration(DeclarationDescriptor funDescriptor) {
@@ -1506,7 +1479,7 @@ public class ExpressionCodegen extends JetVisitor {
         }
     }
 
-    private void pushTypeArgument(JetTypeProjection jetTypeArgument) {
+    public void pushTypeArgument(JetTypeProjection jetTypeArgument) {
         JetType typeArgument = bindingContext.resolveTypeReference(jetTypeArgument.getTypeReference());
         generateTypeInfo(typeArgument);
     }
