@@ -9,8 +9,8 @@ import java.util.List;
 /**
  * @author max
  */
-public class JetAttributeAnnotation extends JetElement {
-    public JetAttributeAnnotation(@NotNull ASTNode node) {
+public class JetAnnotation extends JetElement {
+    public JetAnnotation(@NotNull ASTNode node) {
         super(node);
     }
 
@@ -19,7 +19,7 @@ public class JetAttributeAnnotation extends JetElement {
         visitor.visitAttributeAnnotation(this);
     }
 
-    public List<JetAttribute> getAttributes() {
-        return findChildrenByType(JetNodeTypes.ATTRIBUTE);
+    public List<JetAnnotationEntry> getEntries() {
+        return findChildrenByType(JetNodeTypes.ANNOTATION_ENTRY);
     }
 }

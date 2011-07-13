@@ -241,9 +241,9 @@ JetFile: BinaryTree.jet
           MODIFIER_LIST
             PsiElement(private)('private')
             PsiWhiteSpace(' ')
-            ATTRIBUTE_ANNOTATION
+            ANNOTATION
               PsiElement(LBRACKET)('[')
-              ATTRIBUTE
+              ANNOTATION_ENTRY
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION

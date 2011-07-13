@@ -558,9 +558,9 @@ JetFile: BitArith.jet
         PsiWhiteSpace('\n  ')
         FUN
           MODIFIER_LIST
-            ATTRIBUTE_ANNOTATION
+            ANNOTATION
               PsiElement(LBRACKET)('[')
-              ATTRIBUTE
+              ANNOTATION_ENTRY
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION
@@ -590,9 +590,9 @@ JetFile: BitArith.jet
         PsiWhiteSpace('\n  ')
         FUN
           MODIFIER_LIST
-            ATTRIBUTE_ANNOTATION
+            ANNOTATION
               PsiElement(LBRACKET)('[')
-              ATTRIBUTE
+              ANNOTATION_ENTRY
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION

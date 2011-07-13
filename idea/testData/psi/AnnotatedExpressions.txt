@@ -12,9 +12,9 @@ JetFile: AnnotatedExpressions.jet
         PsiElement(LBRACE)('{')
         PsiWhiteSpace('\n    ')
         ANNOTATED_EXPRESSION
-          ATTRIBUTE_ANNOTATION
+          ANNOTATION
             PsiElement(LBRACKET)('[')
-            ATTRIBUTE
+            ANNOTATION_ENTRY
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION
@@ -28,9 +28,9 @@ JetFile: AnnotatedExpressions.jet
           PsiElement(INTEGER_LITERAL)('1')
         PsiWhiteSpace('\n    ')
         ANNOTATED_EXPRESSION
-          ATTRIBUTE_ANNOTATION
+          ANNOTATION
             PsiElement(LBRACKET)('[')
-            ATTRIBUTE
+            ANNOTATION_ENTRY
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION

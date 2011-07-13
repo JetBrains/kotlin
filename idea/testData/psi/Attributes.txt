@@ -35,9 +35,9 @@ JetFile: Attributes.jet
         PsiWhiteSpace('\n')
         PsiElement(internal)('internal')
         PsiWhiteSpace('\n')
-        ATTRIBUTE_ANNOTATION
+        ANNOTATION
           PsiElement(LBRACKET)('[')
-          ATTRIBUTE
+          ANNOTATION_ENTRY
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION
@@ -68,14 +68,14 @@ JetFile: Attributes.jet
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('b')
               PsiElement(RPAR)(')')
-          PsiElement(COMMA)(',')
-          ATTRIBUTE
+          PsiWhiteSpace(' ')
+          ANNOTATION_ENTRY
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('ina')
-          PsiElement(COMMA)(',')
-          ATTRIBUTE
+          PsiWhiteSpace(' ')
+          ANNOTATION_ENTRY
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -125,9 +125,9 @@ JetFile: Attributes.jet
                   PsiElement(IDENTIFIER)('foo')
           PsiElement(RBRACKET)(']')
         PsiWhiteSpace('\n')
-        ATTRIBUTE_ANNOTATION
+        ANNOTATION
           PsiElement(LBRACKET)('[')
-          ATTRIBUTE
+          ANNOTATION_ENTRY
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION
@@ -136,9 +136,9 @@ JetFile: Attributes.jet
         PsiWhiteSpace('\n')
         PsiElement(in)('in')
         PsiWhiteSpace('\n')
-        ATTRIBUTE_ANNOTATION
+        ANNOTATION
           PsiElement(LBRACKET)('[')
-          ATTRIBUTE
+          ANNOTATION_ENTRY
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION
@@ -160,50 +160,55 @@ JetFile: Attributes.jet
             PsiWhiteSpace('\n')
             PsiElement(virtual)('virtual')
             PsiWhiteSpace('\n')
-            ATTRIBUTE_ANNOTATION
+            ANNOTATION
               PsiElement(LBRACKET)('[')
-              ATTRIBUTE
+              ANNOTATION_ENTRY
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('sdfsdf')
-                PsiElement(EQ)('=')
-                BINARY_EXPRESSION
-                  INTEGER_CONSTANT
-                    PsiElement(INTEGER_LITERAL)('1')
-                  OPERATION_REFERENCE
-                    PsiElement(PLUS)('+')
-                  INTEGER_CONSTANT
-                    PsiElement(INTEGER_LITERAL)('1')
-              PsiElement(COMMA)(',')
+                VALUE_ARGUMENT_LIST
+                  PsiElement(LPAR)('(')
+                  VALUE_ARGUMENT
+                    BINARY_EXPRESSION
+                      INTEGER_CONSTANT
+                        PsiElement(INTEGER_LITERAL)('1')
+                      OPERATION_REFERENCE
+                        PsiElement(PLUS)('+')
+                      INTEGER_CONSTANT
+                        PsiElement(INTEGER_LITERAL)('1')
+                  PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')
-              ATTRIBUTE
+              ANNOTATION_ENTRY
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('a')
               PsiElement(RBRACKET)(']')
             PsiWhiteSpace('\n')
-            ATTRIBUTE_ANNOTATION
+            ANNOTATION
               PsiElement(LBRACKET)('[')
-              ATTRIBUTE
+              ANNOTATION_ENTRY
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('sdfsdf')
-                PsiElement(EQ)('=')
-                BINARY_EXPRESSION
-                  INTEGER_CONSTANT
-                    PsiElement(INTEGER_LITERAL)('1')
-                  OPERATION_REFERENCE
-                    PsiElement(PLUS)('+')
-                  INTEGER_CONSTANT
-                    PsiElement(INTEGER_LITERAL)('1')
+                VALUE_ARGUMENT_LIST
+                  PsiElement(LPAR)('(')
+                  VALUE_ARGUMENT
+                    BINARY_EXPRESSION
+                      INTEGER_CONSTANT
+                        PsiElement(INTEGER_LITERAL)('1')
+                      OPERATION_REFERENCE
+                        PsiElement(PLUS)('+')
+                      INTEGER_CONSTANT
+                        PsiElement(INTEGER_LITERAL)('1')
+                  PsiElement(RPAR)(')')
               PsiElement(RBRACKET)(']')
             PsiWhiteSpace('\n')
-            ATTRIBUTE_ANNOTATION
+            ANNOTATION
               PsiElement(LBRACKET)('[')
-              ATTRIBUTE
+              ANNOTATION_ENTRY
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION
@@ -211,21 +216,23 @@ JetFile: Attributes.jet
                 VALUE_ARGUMENT_LIST
                   PsiElement(LPAR)('(')
                   PsiElement(RPAR)(')')
-              PsiElement(COMMA)(',')
               PsiWhiteSpace(' ')
-              ATTRIBUTE
+              ANNOTATION_ENTRY
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('sdfsdf')
-                PsiElement(EQ)('=')
-                BINARY_EXPRESSION
-                  INTEGER_CONSTANT
-                    PsiElement(INTEGER_LITERAL)('1')
-                  OPERATION_REFERENCE
-                    PsiElement(PLUS)('+')
-                  INTEGER_CONSTANT
-                    PsiElement(INTEGER_LITERAL)('1')
+                VALUE_ARGUMENT_LIST
+                  PsiElement(LPAR)('(')
+                  VALUE_ARGUMENT
+                    BINARY_EXPRESSION
+                      INTEGER_CONSTANT
+                        PsiElement(INTEGER_LITERAL)('1')
+                      OPERATION_REFERENCE
+                        PsiElement(PLUS)('+')
+                      INTEGER_CONSTANT
+                        PsiElement(INTEGER_LITERAL)('1')
+                  PsiElement(RPAR)(')')
               PsiElement(RBRACKET)(']')
             PsiWhiteSpace('\n')
             PsiElement(enum)('enum')
@@ -240,23 +247,21 @@ JetFile: Attributes.jet
             PsiWhiteSpace('\n')
             PsiElement(abstract)('abstract')
             PsiWhiteSpace('\n')
-            ATTRIBUTE_ANNOTATION
+            ANNOTATION
               PsiElement(LBRACKET)('[')
-              ATTRIBUTE
+              ANNOTATION_ENTRY
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('sdfsd')
-              PsiElement(COMMA)(',')
               PsiWhiteSpace(' ')
-              ATTRIBUTE
+              ANNOTATION_ENTRY
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('sdfsd')
-              PsiElement(COMMA)(',')
               PsiWhiteSpace(' ')
-              ATTRIBUTE
+              ANNOTATION_ENTRY
                 TYPE_REFERENCE
                   USER_TYPE
                     USER_TYPE

@@ -37,8 +37,9 @@ public interface JetNodeTypes {
     JetNodeType NAMESPACE_BODY                      = new JetNodeType("NAMESPACE_BODY", JetNamespaceBody.class);
     JetNodeType MODIFIER_LIST                       = new JetNodeType("MODIFIER_LIST", JetModifierList.class);
     JetNodeType PRIMARY_CONSTRUCTOR_MODIFIER_LIST   = new JetNodeType("PRIMARY_CONSTRUCTOR_MODIFIER_LIST", JetModifierList.class);
-    JetNodeType ATTRIBUTE_ANNOTATION                = new JetNodeType("ATTRIBUTE_ANNOTATION", JetAttributeAnnotation.class);
-    JetNodeType ATTRIBUTE                           = new JetNodeType("ATTRIBUTE", JetAttribute.class);
+    JetNodeType ANNOTATION = new JetNodeType("ANNOTATION", JetAnnotation.class);
+    JetNodeType ANNOTATION_ENTRY = new JetNodeType("ANNOTATION_ENTRY", JetAnnotationEntry.class);
+
     JetNodeType TYPE_ARGUMENT_LIST                  = new JetNodeType("TYPE_ARGUMENT_LIST", JetTypeArgumentList.class);
     JetNodeType VALUE_ARGUMENT_LIST                 = new JetNodeType("VALUE_ARGUMENT_LIST", JetArgumentList.class);
     JetNodeType VALUE_ARGUMENT                      = new JetNodeType("VALUE_ARGUMENT", JetArgument.class);

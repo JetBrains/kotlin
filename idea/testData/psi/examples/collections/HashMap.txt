@@ -334,9 +334,9 @@ JetFile: HashMap.jet
     PsiWhiteSpace('\n\n')
     FUN
       MODIFIER_LIST
-        ATTRIBUTE_ANNOTATION
+        ANNOTATION
           PsiElement(LBRACKET)('[')
-          ATTRIBUTE
+          ANNOTATION_ENTRY
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION
@@ -767,9 +767,9 @@ JetFile: HashMap.jet
           MODIFIER_LIST
             PsiElement(private)('private')
             PsiWhiteSpace(' ')
-            ATTRIBUTE_ANNOTATION
+            ANNOTATION
               PsiElement(LBRACKET)('[')
-              ATTRIBUTE
+              ANNOTATION_ENTRY
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION
@@ -813,9 +813,9 @@ JetFile: HashMap.jet
           MODIFIER_LIST
             PsiElement(private)('private')
             PsiWhiteSpace(' ')
-            ATTRIBUTE_ANNOTATION
+            ANNOTATION
               PsiElement(LBRACKET)('[')
-              ATTRIBUTE
+              ANNOTATION_ENTRY
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION

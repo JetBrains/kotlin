@@ -26,9 +26,9 @@ JetFile: Properties.jet
     PROPERTY
       PsiElement(val)('val')
       PsiWhiteSpace(' ')
-      ATTRIBUTE_ANNOTATION
+      ANNOTATION
         PsiElement(LBRACKET)('[')
-        ATTRIBUTE
+        ANNOTATION_ENTRY
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION
@@ -62,9 +62,9 @@ JetFile: Properties.jet
     PROPERTY
       PsiElement(val)('val')
       PsiWhiteSpace(' ')
-      ATTRIBUTE_ANNOTATION
+      ANNOTATION
         PsiElement(LBRACKET)('[')
-        ATTRIBUTE
+        ANNOTATION_ENTRY
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION

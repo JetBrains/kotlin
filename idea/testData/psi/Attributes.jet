@@ -12,7 +12,7 @@ private
 protected
 public
 internal
-[foo<A, B>(a, b),ina,foo.bar.goo.doo<f>.foo<bar, goo>.foo]
+[foo<A, B>(a, b) ina foo.bar.goo.doo<f>.foo<bar, goo>.foo]
 [df]
 in
 [sdfsdf]
@@ -20,16 +20,16 @@ out
 ref
  class Bar<abstract
 virtual
-[sdfsdf=1+1, a]
-[sdfsdf=1+1]
-[a(), sdfsdf=1+1]
+[sdfsdf(1+1) a]
+[sdfsdf(1+1)]
+[a() sdfsdf(1+1)]
 enum
 open
 attribute
 override
 virtual
 abstract
-[sdfsd, sdfsd, a.b.f.c]
+[sdfsd sdfsd a.b.f.c]
 private
 protected
 public

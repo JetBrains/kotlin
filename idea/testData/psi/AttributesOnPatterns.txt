@@ -26,9 +26,9 @@ JetFile: AttributesOnPatterns.jet
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               BINDING_PATTERN
-                ATTRIBUTE_ANNOTATION
+                ANNOTATION
                   PsiElement(LBRACKET)('[')
-                  ATTRIBUTE
+                  ANNOTATION_ENTRY
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION
@@ -50,9 +50,9 @@ JetFile: AttributesOnPatterns.jet
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               BINDING_PATTERN
-                ATTRIBUTE_ANNOTATION
+                ANNOTATION
                   PsiElement(LBRACKET)('[')
-                  ATTRIBUTE
+                  ANNOTATION_ENTRY
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION
@@ -83,9 +83,9 @@ JetFile: AttributesOnPatterns.jet
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               WILDCARD_PATTERN
-                ATTRIBUTE_ANNOTATION
+                ANNOTATION
                   PsiElement(LBRACKET)('[')
-                  ATTRIBUTE
+                  ANNOTATION_ENTRY
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION
@@ -104,9 +104,9 @@ JetFile: AttributesOnPatterns.jet
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               EXPRESSION_PATTERN
-                ATTRIBUTE_ANNOTATION
+                ANNOTATION
                   PsiElement(LBRACKET)('[')
-                  ATTRIBUTE
+                  ANNOTATION_ENTRY
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION
@@ -126,9 +126,9 @@ JetFile: AttributesOnPatterns.jet
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               TYPE_PATTERN
-                ATTRIBUTE_ANNOTATION
+                ANNOTATION
                   PsiElement(LBRACKET)('[')
-                  ATTRIBUTE
+                  ANNOTATION_ENTRY
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION
@@ -150,9 +150,9 @@ JetFile: AttributesOnPatterns.jet
               PsiElement(is)('is')
               PsiWhiteSpace(' ')
               DECOMPOSER_PATTERN
-                ATTRIBUTE_ANNOTATION
+                ANNOTATION
                   PsiElement(LBRACKET)('[')
-                  ATTRIBUTE
+                  ANNOTATION_ENTRY
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION

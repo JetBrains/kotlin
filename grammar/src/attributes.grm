@@ -7,9 +7,10 @@ annotations
   ;
 
 annotation
-  : "[" annotationEntry{","} "]"
+  : "[" annotationEntry+ "]"
+  : annotationEntry
   ;
 
 annotationEntry
-  : SimpleName{"."} (valueArguments | "=" expression)?
+  : SimpleName{"."} typeArguments? valueArguments?
   ;

@@ -287,10 +287,13 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
      *
      * Returns -1 if no occurrence is found
      *
-     * TODO: Migrate to predicates
      */
     protected int findLastBefore(TokenSet lookFor, TokenSet stopAt, boolean dontStopRightAfterOccurrence) {
         return matchTokenStreamPredicate(new LastBefore(new AtSet(lookFor), new AtSet(stopAt), dontStopRightAfterOccurrence));
+    }
+
+    protected int findLastBefore(IElementType lookFor, TokenSet stopAt, boolean dontStopRightAfterOccurrence) {
+        return matchTokenStreamPredicate(new LastBefore(new At(lookFor), new AtSet(stopAt), dontStopRightAfterOccurrence));
     }
 
     protected boolean eol() {

@@ -116,7 +116,7 @@ public class JetParsing extends AbstractJetParsing {
          *   ;
          */
         PsiBuilder.Marker firstEntry = mark();
-        parseModifierList(MODIFIER_LIST);
+        parseModifierList(MODIFIER_LIST, true);
 
         if (at(NAMESPACE_KEYWORD)) {
             advance(); // NAMESPACE_KEYWORD
@@ -220,7 +220,7 @@ public class JetParsing extends AbstractJetParsing {
         PsiBuilder.Marker decl = mark();
 
         TokenDetector detector = new TokenDetector(ENUM_KEYWORD);
-        parseModifierList(MODIFIER_LIST, detector);
+        parseModifierList(MODIFIER_LIST, detector, true);
 
         IElementType keywordToken = tt();
         JetNodeType declType = null;
@@ -256,8 +256,8 @@ public class JetParsing extends AbstractJetParsing {
     /*
      * (modifier | attribute)*
      */
-    public boolean parseModifierList(JetNodeType nodeType) {
-        return parseModifierList(nodeType, null);
+    public boolean parseModifierList(JetNodeType nodeType, boolean allowShortAnnotations) {
+        return parseModifierList(nodeType, null, allowShortAnnotations);
     }
 
     /**
@@ -265,15 +265,16 @@ public class JetParsing extends AbstractJetParsing {
      *
      * Feeds modifiers (not attributes) into the passed consumer, if it is not null
      */
-    public boolean parseModifierList(JetNodeType nodeType, Consumer<IElementType> tokenConsumer) {
+    public boolean parseModifierList(JetNodeType nodeType, Consumer<IElementType> tokenConsumer, boolean allowShortAnnotations) {
         PsiBuilder.Marker list = mark();
         boolean empty = true;
         while (!eof()) {
-            if (at(LBRACKET)) {
-                parseAttributeAnnotation();
-            } else if (atSet(MODIFIER_KEYWORDS)) {
+            if (atSet(MODIFIER_KEYWORDS)) {
                 if (tokenConsumer != null) tokenConsumer.consume(tt());
                 advance(); // MODIFIER
+            }
+            else if (at(LBRACKET) || (allowShortAnnotations && at(IDENTIFIER))) {
+                parseAnnotation(allowShortAnnotations);
             }
             else {
                 break;
@@ -289,54 +290,77 @@ public class JetParsing extends AbstractJetParsing {
     }
 
     /*
-     * attributeAnnotation
-     *   : "[" attribute{","} "]"
+     * annotations
+     *   : annotation*
      *   ;
      */
-    private void parseAttributeAnnotation() {
-        assert _at(LBRACKET);
-        PsiBuilder.Marker annotation = mark();
-
-        myBuilder.disableNewlines();
-        advance(); // LBRACKET
-
-        while (true) {
-            if (at(IDENTIFIER)) {
-                parseAttribute();
-                if (!at(COMMA)) break;
-                advance(); // COMMA
-            }
-            else {
-                error("Expecting a comma-separated list of attributes");
-                break;
-            }
-        }
-
-        expect(RBRACKET, "Expecting ']' to close an attribute annotation");
-        myBuilder.restoreNewlinesState();
-
-        annotation.done(ATTRIBUTE_ANNOTATION);
+    public void parseAnnotations(boolean allowShortAnnotations) {
+        while (parseAnnotation(allowShortAnnotations));
     }
 
     /*
-     * attribute
-     *   // : SimpleName{"."} (valueArguments | "=" element)?
-     *   [for recovery: userType valueArguments?]
+     * annotation
+     *   : "[" annotationEntry+ "]"
+     *   : annotationEntry
      *   ;
      */
-    private void parseAttribute() {
+    private boolean parseAnnotation(boolean allowShortAnnotations) {
+        if (at(LBRACKET)) {
+            PsiBuilder.Marker annotation = mark();
+
+            myBuilder.disableNewlines();
+            advance(); // LBRACKET
+
+            if (!at(IDENTIFIER)) {
+                error("Expecting a list of attributes");
+            }
+            else {
+                parseAnnotationEntry();
+                while (at(COMMA)) {
+                    errorAndAdvance("No commas needed to separate attributes");
+                }
+
+                while (at(IDENTIFIER)) {
+                    parseAnnotationEntry();
+                    while (at(COMMA)) {
+                        errorAndAdvance("No commas needed to separate attributes");
+                    }
+                }
+            }
+
+            expect(RBRACKET, "Expecting ']' to close an attribute annotation");
+            myBuilder.restoreNewlinesState();
+
+            annotation.done(ANNOTATION);
+            return true;
+        }
+        else if (allowShortAnnotations && at(IDENTIFIER)) {
+            parseAnnotationEntry();
+            return true;
+        }
+        return false;
+    }
+
+    /*
+     * annotationEntry
+     *   : SimpleName{"."} typeArguments? valueArguments?
+     *   ;
+     */
+    private void parseAnnotationEntry() {
+        assert _at(IDENTIFIER);
+
         PsiBuilder.Marker attribute = mark();
 
         PsiBuilder.Marker typeReference = mark();
         parseUserType();
         typeReference.done(TYPE_REFERENCE);
+
+        parseTypeArgumentList(-1);
+
         if (at(LPAR)) {
             myExpressionParsing.parseValueArgumentList();
-        } else if (at(EQ)) {
-            advance(); // EQ
-            myExpressionParsing.parseExpression();
         }
-        attribute.done(ATTRIBUTE);
+        attribute.done(ANNOTATION_ENTRY);
     }
 
     /*
@@ -400,7 +424,7 @@ public class JetParsing extends AbstractJetParsing {
             parseValueParameterList(false, TokenSet.create(COLON, LBRACE));
         }
         else {
-            if (parseModifierList(PRIMARY_CONSTRUCTOR_MODIFIER_LIST)) {
+            if (parseModifierList(PRIMARY_CONSTRUCTOR_MODIFIER_LIST, false)) {
                 parseValueParameterList(false, TokenSet.create(COLON, LBRACE));
             }
             else {
@@ -448,7 +472,7 @@ public class JetParsing extends AbstractJetParsing {
             TokenSet constructorNameFollow = TokenSet.create(SEMICOLON, COLON, LPAR, LT, LBRACE);
             int lastId = findLastBefore(ENUM_MEMBER_FIRST, constructorNameFollow, false);
             TokenDetector enumDetector = new TokenDetector(ENUM_KEYWORD);
-            createTruncatedBuilder(lastId).parseModifierList(MODIFIER_LIST, enumDetector);
+            createTruncatedBuilder(lastId).parseModifierList(MODIFIER_LIST, enumDetector, false);
 
             IElementType type;
             if (at(IDENTIFIER)) {
@@ -551,7 +575,7 @@ public class JetParsing extends AbstractJetParsing {
         PsiBuilder.Marker decl = mark();
 
         TokenDetector enumDetector = new TokenDetector(ENUM_KEYWORD);
-        parseModifierList(MODIFIER_LIST, enumDetector);
+        parseModifierList(MODIFIER_LIST, enumDetector, true);
 
         JetNodeType declType = parseMemberDeclarationRest(enumDetector.isDetected());
 
@@ -689,7 +713,7 @@ public class JetParsing extends AbstractJetParsing {
      */
     private void parseInitializer() {
         PsiBuilder.Marker initializer = mark();
-        parseAttributeList();
+        parseAnnotations(false);
 
         IElementType type;
         if (at(THIS_KEYWORD)) {
@@ -846,7 +870,7 @@ public class JetParsing extends AbstractJetParsing {
     private boolean parsePropertyGetterOrSetter() {
         PsiBuilder.Marker getterOrSetter = mark();
 
-        parseModifierList(MODIFIER_LIST);
+        parseModifierList(MODIFIER_LIST, false);
 
         if (!at(GET_KEYWORD) && !at(SET_KEYWORD)) {
             getterOrSetter.rollbackTo();
@@ -873,8 +897,7 @@ public class JetParsing extends AbstractJetParsing {
         if (setter) {
             PsiBuilder.Marker parameterList = mark();
             PsiBuilder.Marker setterParameter = mark();
-            int lastId = findLastBefore(TokenSet.create(IDENTIFIER), TokenSet.create(RPAR, COMMA, COLON), false);
-            createTruncatedBuilder(lastId).parseModifierList(MODIFIER_LIST);
+            parseModifierListWithShortAnnotations(MODIFIER_LIST, TokenSet.create(IDENTIFIER), TokenSet.create(RPAR, COMMA, COLON));
             expect(IDENTIFIER, "Expecting parameter name", TokenSet.create(RPAR, COLON, LBRACE, EQ));
 
             if (at(COLON)) {
@@ -973,7 +996,7 @@ public class JetParsing extends AbstractJetParsing {
     private void parseReceiverType(String title, TokenSet nameFollow, int lastDot) {
 
         if (lastDot == -1) { // There's no explicit receiver type specified
-            parseAttributeList();
+            parseAnnotations(false);
             expect(IDENTIFIER, "Expecting " + title + " name or receiver type", nameFollow);
         } else {
             PsiBuilder.Marker typeRefMarker = mark();
@@ -1070,7 +1093,7 @@ public class JetParsing extends AbstractJetParsing {
      */
     private void parseDelegationSpecifier() {
         PsiBuilder.Marker delegator = mark();
-        parseAttributeList();
+        parseAnnotations(false);
         parseTypeRef();
 
         if (at(BY_KEYWORD)) {
@@ -1085,16 +1108,6 @@ public class JetParsing extends AbstractJetParsing {
         else {
             delegator.done(DELEGATOR_SUPER_CLASS);
         }
-    }
-
-
-    /*
-     * attributes
-     *   : attributeAnnotation*
-     *   ;
-     */
-    public void parseAttributeList() {
-        while (at(LBRACKET)) parseAttributeAnnotation();
     }
 
     /*
@@ -1179,7 +1192,7 @@ public class JetParsing extends AbstractJetParsing {
     private void parseTypeConstraint() {
         PsiBuilder.Marker constraint = mark();
 
-        parseAttributeList();
+        parseAnnotations(false);
 
         if (at(CLASS_KEYWORD)) {
             advance(); // CLASS_KEYWORD
@@ -1212,8 +1225,7 @@ public class JetParsing extends AbstractJetParsing {
 
         PsiBuilder.Marker mark = mark();
 
-        int lastId = findLastBefore(TokenSet.create(IDENTIFIER), TokenSet.create(COMMA, GT, COLON), false);
-        createTruncatedBuilder(lastId).parseModifierList(MODIFIER_LIST);
+        parseModifierListWithShortAnnotations(MODIFIER_LIST, TokenSet.create(IDENTIFIER), TokenSet.create(COMMA, GT, COLON));
 
         expect(IDENTIFIER, "Type parameter name expected", TokenSet.EMPTY);
 
@@ -1246,7 +1258,7 @@ public class JetParsing extends AbstractJetParsing {
     }
 
     private PsiBuilder.Marker parseTypeRefContents(PsiBuilder.Marker typeRefMarker) {
-        parseAttributeList();
+        parseAnnotations(false);
 
         if (at(IDENTIFIER) || at(NAMESPACE_KEYWORD)) {
             parseUserType();
@@ -1338,8 +1350,9 @@ public class JetParsing extends AbstractJetParsing {
         while (true) {
             PsiBuilder.Marker projection = mark();
 
-            int lastId = findLastBefore(TokenSet.create(IDENTIFIER), TokenSet.create(COMMA, COLON, GT), false);
-            createTruncatedBuilder(lastId).parseModifierList(MODIFIER_LIST);
+            TokenSet lookFor = TokenSet.create(IDENTIFIER);
+            TokenSet stopAt = TokenSet.create(COMMA, COLON, GT);
+            parseModifierListWithShortAnnotations(MODIFIER_LIST, lookFor, stopAt);
 
             if (at(MUL)) {
                 advance(); // MUL
@@ -1364,6 +1377,11 @@ public class JetParsing extends AbstractJetParsing {
 
         list.done(TYPE_ARGUMENT_LIST);
         return list;
+    }
+
+    private void parseModifierListWithShortAnnotations(JetNodeType modifierList, TokenSet lookFor, TokenSet stopAt) {
+        int lastId = findLastBefore(lookFor, stopAt, false);
+        createTruncatedBuilder(lastId).parseModifierList(modifierList, false);
     }
 
     /*
@@ -1480,7 +1498,7 @@ public class JetParsing extends AbstractJetParsing {
                 if (isFunctionTypeContents) {
                     if (!tryParseValueParameter()) {
                         PsiBuilder.Marker valueParameter = mark();
-                        parseModifierList(MODIFIER_LIST); // lazy, out, ref
+                        parseModifierList(MODIFIER_LIST, false); // lazy, out, ref
                         parseTypeRef();
                         valueParameter.done(VALUE_PARAMETER);
                     }
@@ -1513,8 +1531,7 @@ public class JetParsing extends AbstractJetParsing {
     private boolean parseValueParameter(boolean rollbackOnFailure) {
         PsiBuilder.Marker parameter = mark();
 
-        int lastId = findLastBefore(TokenSet.create(IDENTIFIER), TokenSet.create(COMMA, RPAR, COLON), false);
-        createTruncatedBuilder(lastId).parseModifierList(MODIFIER_LIST);
+        parseModifierListWithShortAnnotations(MODIFIER_LIST, TokenSet.create(IDENTIFIER), TokenSet.create(COMMA, RPAR, COLON));
 
         if (at(VAR_KEYWORD) || at(VAL_KEYWORD)) {
             advance(); // VAR_KEYWORD | VAL_KEYWORD

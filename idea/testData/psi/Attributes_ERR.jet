@@ -13,11 +13,11 @@ private
 protected
 public
 internal
-[foo<A, B>(a, b), ina,foo.bar.goo.doo<f>.foo<bar, goo>.foo]
+[foo<A, B>(a, b), ina foo.bar.goo.doo<f>.foo<bar, goo>.foo]
 [df]
 in
-[sdfsdf,]
-[s,fd d]
+[sdfsdf ]
+[s fd d, ]
 out
 ref
  class Bar<abstract
@@ -28,7 +28,7 @@ attribute
 override
 virtual
 abstract
-[sdfsd, sdfsd, a.b.f.c]
+[sdfsd sdfsd a.b.f.c]
 private
 protected
 public

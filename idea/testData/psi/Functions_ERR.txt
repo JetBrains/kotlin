@@ -12,9 +12,9 @@ JetFile: Functions_ERR.jet
     FUN
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
-      ATTRIBUTE_ANNOTATION
+      ANNOTATION
         PsiElement(LBRACKET)('[')
-        ATTRIBUTE
+        ANNOTATION_ENTRY
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION
@@ -37,9 +37,9 @@ JetFile: Functions_ERR.jet
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        ATTRIBUTE_ANNOTATION
+        ANNOTATION
           PsiElement(LBRACKET)('[')
-          ATTRIBUTE
+          ANNOTATION_ENTRY
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION
@@ -74,9 +74,9 @@ JetFile: Functions_ERR.jet
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        ATTRIBUTE_ANNOTATION
+        ANNOTATION
           PsiElement(LBRACKET)('[')
-          ATTRIBUTE
+          ANNOTATION_ENTRY
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION
@@ -120,9 +120,9 @@ JetFile: Functions_ERR.jet
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        ATTRIBUTE_ANNOTATION
+        ANNOTATION
           PsiElement(LBRACKET)('[')
-          ATTRIBUTE
+          ANNOTATION_ENTRY
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION
@@ -173,9 +173,9 @@ JetFile: Functions_ERR.jet
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        ATTRIBUTE_ANNOTATION
+        ANNOTATION
           PsiElement(LBRACKET)('[')
-          ATTRIBUTE
+          ANNOTATION_ENTRY
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION
@@ -229,9 +229,9 @@ JetFile: Functions_ERR.jet
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        ATTRIBUTE_ANNOTATION
+        ANNOTATION
           PsiElement(LBRACKET)('[')
-          ATTRIBUTE
+          ANNOTATION_ENTRY
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION

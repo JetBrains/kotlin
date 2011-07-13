@@ -11,9 +11,9 @@ JetFile: Functions.jet
     FUN
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
-      ATTRIBUTE_ANNOTATION
+      ANNOTATION
         PsiElement(LBRACKET)('[')
-        ATTRIBUTE
+        ANNOTATION_ENTRY
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION
@@ -29,9 +29,9 @@ JetFile: Functions.jet
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        ATTRIBUTE_ANNOTATION
+        ANNOTATION
           PsiElement(LBRACKET)('[')
-          ATTRIBUTE
+          ANNOTATION_ENTRY
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION
@@ -51,9 +51,9 @@ JetFile: Functions.jet
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        ATTRIBUTE_ANNOTATION
+        ANNOTATION
           PsiElement(LBRACKET)('[')
-          ATTRIBUTE
+          ANNOTATION_ENTRY
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION
@@ -89,9 +89,9 @@ JetFile: Functions.jet
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        ATTRIBUTE_ANNOTATION
+        ANNOTATION
           PsiElement(LBRACKET)('[')
-          ATTRIBUTE
+          ANNOTATION_ENTRY
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION
@@ -165,9 +165,9 @@ JetFile: Functions.jet
     FUN
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
-      ATTRIBUTE_ANNOTATION
+      ANNOTATION
         PsiElement(LBRACKET)('[')
-        ATTRIBUTE
+        ANNOTATION_ENTRY
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION
@@ -184,9 +184,9 @@ JetFile: Functions.jet
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        ATTRIBUTE_ANNOTATION
+        ANNOTATION
           PsiElement(LBRACKET)('[')
-          ATTRIBUTE
+          ANNOTATION_ENTRY
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION
@@ -207,9 +207,9 @@ JetFile: Functions.jet
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        ATTRIBUTE_ANNOTATION
+        ANNOTATION
           PsiElement(LBRACKET)('[')
-          ATTRIBUTE
+          ANNOTATION_ENTRY
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION
@@ -246,9 +246,9 @@ JetFile: Functions.jet
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        ATTRIBUTE_ANNOTATION
+        ANNOTATION
           PsiElement(LBRACKET)('[')
-          ATTRIBUTE
+          ANNOTATION_ENTRY
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION
@@ -326,9 +326,9 @@ JetFile: Functions.jet
     FUN
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
-      ATTRIBUTE_ANNOTATION
+      ANNOTATION
         PsiElement(LBRACKET)('[')
-        ATTRIBUTE
+        ANNOTATION_ENTRY
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION
@@ -348,9 +348,9 @@ JetFile: Functions.jet
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        ATTRIBUTE_ANNOTATION
+        ANNOTATION
           PsiElement(LBRACKET)('[')
-          ATTRIBUTE
+          ANNOTATION_ENTRY
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION
@@ -374,9 +374,9 @@ JetFile: Functions.jet
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        ATTRIBUTE_ANNOTATION
+        ANNOTATION
           PsiElement(LBRACKET)('[')
-          ATTRIBUTE
+          ANNOTATION_ENTRY
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION
@@ -416,9 +416,9 @@ JetFile: Functions.jet
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        ATTRIBUTE_ANNOTATION
+        ANNOTATION
           PsiElement(LBRACKET)('[')
-          ATTRIBUTE
+          ANNOTATION_ENTRY
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION
@@ -488,9 +488,9 @@ JetFile: Functions.jet
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        ATTRIBUTE_ANNOTATION
+        ANNOTATION
           PsiElement(LBRACKET)('[')
-          ATTRIBUTE
+          ANNOTATION_ENTRY
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION
@@ -513,9 +513,9 @@ JetFile: Functions.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            ATTRIBUTE_ANNOTATION
+            ANNOTATION
               PsiElement(LBRACKET)('[')
-              ATTRIBUTE
+              ANNOTATION_ENTRY
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION

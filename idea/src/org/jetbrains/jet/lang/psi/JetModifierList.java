@@ -24,17 +24,17 @@ public class JetModifierList extends JetElement {
     }
 
     @NotNull
-    public List<JetAttributeAnnotation> getAttributeAnnotations() {
-        return findChildrenByType(JetNodeTypes.ATTRIBUTE_ANNOTATION);
+    public List<JetAnnotation> getAttributeAnnotations() {
+        return findChildrenByType(JetNodeTypes.ANNOTATION);
     }
 
-    public List<JetAttribute> getAttributes() {
-        List<JetAttribute> answer = null;
-        for (JetAttributeAnnotation annotation : getAttributeAnnotations()) {
-            if (answer == null) answer = new ArrayList<JetAttribute>();
-            answer.addAll(annotation.getAttributes());
+    public List<JetAnnotationEntry> getAttributes() {
+        List<JetAnnotationEntry> answer = null;
+        for (JetAnnotation annotation : getAttributeAnnotations()) {
+            if (answer == null) answer = new ArrayList<JetAnnotationEntry>();
+            answer.addAll(annotation.getEntries());
         }
-        return answer != null ? answer : Collections.<JetAttribute>emptyList();
+        return answer != null ? answer : Collections.<JetAnnotationEntry>emptyList();
     }
 
     public boolean hasModifier(JetToken token) {

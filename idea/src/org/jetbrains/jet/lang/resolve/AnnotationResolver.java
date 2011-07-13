@@ -3,7 +3,7 @@ package org.jetbrains.jet.lang.resolve;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.Annotation;
-import org.jetbrains.jet.lang.psi.JetAttribute;
+import org.jetbrains.jet.lang.psi.JetAnnotationEntry;
 import org.jetbrains.jet.lang.psi.JetModifierList;
 
 import java.util.Collections;
@@ -18,9 +18,9 @@ public class AnnotationResolver {
     private AnnotationResolver() {}
 
     @NotNull
-    public List<Annotation> resolveAnnotations(@NotNull List<JetAttribute> attributeElements) {
+    public List<Annotation> resolveAnnotations(@NotNull List<JetAnnotationEntry> annotationEntryElements) {
         return Collections.emptyList(); // TODO
-//        if (attributeElements.isEmpty()) {
+//        if (annotationEntryElements.isEmpty()) {
 //        }
 //        throw new UnsupportedOperationException(); // TODO
     }

@@ -17,9 +17,9 @@ JetFile: FunctionTypes.jet
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
               MODIFIER_LIST
-                ATTRIBUTE_ANNOTATION
+                ANNOTATION
                   PsiElement(LBRACKET)('[')
-                  ATTRIBUTE
+                  ANNOTATION_ENTRY
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION
@@ -88,9 +88,9 @@ JetFile: FunctionTypes.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            ATTRIBUTE_ANNOTATION
+            ANNOTATION
               PsiElement(LBRACKET)('[')
-              ATTRIBUTE
+              ANNOTATION_ENTRY
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION
@@ -146,9 +146,9 @@ JetFile: FunctionTypes.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                ATTRIBUTE_ANNOTATION
+                ANNOTATION
                   PsiElement(LBRACKET)('[')
-                  ATTRIBUTE
+                  ANNOTATION_ENTRY
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION
@@ -269,9 +269,9 @@ JetFile: FunctionTypes.jet
               PsiElement(COLON)(':')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                ATTRIBUTE_ANNOTATION
+                ANNOTATION
                   PsiElement(LBRACKET)('[')
-                  ATTRIBUTE
+                  ANNOTATION_ENTRY
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION
@@ -670,9 +670,9 @@ JetFile: FunctionTypes.jet
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        ATTRIBUTE_ANNOTATION
+        ANNOTATION
           PsiElement(LBRACKET)('[')
-          ATTRIBUTE
+          ANNOTATION_ENTRY
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION
@@ -708,9 +708,9 @@ JetFile: FunctionTypes.jet
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        ATTRIBUTE_ANNOTATION
+        ANNOTATION
           PsiElement(LBRACKET)('[')
-          ATTRIBUTE
+          ANNOTATION_ENTRY
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION
@@ -750,9 +750,9 @@ JetFile: FunctionTypes.jet
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        ATTRIBUTE_ANNOTATION
+        ANNOTATION
           PsiElement(LBRACKET)('[')
-          ATTRIBUTE
+          ANNOTATION_ENTRY
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION

@@ -11,6 +11,7 @@ import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.ui.Colors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lexer.JetLexer;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -28,10 +29,15 @@ public class JetHighlighter extends SyntaxHighlighterBase {
                                                   SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()
                                                  );
 
-    public static final TextAttributesKey JET_SOFT_KEYWORD = TextAttributesKey.createTextAttributesKey(
+    public static final TextAttributesKey JET_SOFT_KEYWORD;
+    static {
+        TextAttributes attributes = SyntaxHighlighterColors.KEYWORD.getDefaultAttributes().clone();
+        attributes.setForegroundColor(Colors.DARK_RED);
+        JET_SOFT_KEYWORD = TextAttributesKey.createTextAttributesKey(
                                                   "JET.SOFT.KEYWORD",
-                                                  SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()
+                                                  attributes
                                                  );
+    }
 
     public static final TextAttributesKey JET_FIELD_IDENTIFIER = TextAttributesKey.createTextAttributesKey(
                                                   "JET.FIELD.IDENTIFIER",

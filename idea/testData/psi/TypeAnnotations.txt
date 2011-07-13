@@ -14,18 +14,18 @@ JetFile: TypeAnnotations.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            ATTRIBUTE_ANNOTATION
+            ANNOTATION
               PsiElement(LBRACKET)('[')
-              ATTRIBUTE
+              ANNOTATION_ENTRY
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('a')
               PsiElement(RBRACKET)(']')
             PsiWhiteSpace(' ')
-            ATTRIBUTE_ANNOTATION
+            ANNOTATION
               PsiElement(LBRACKET)('[')
-              ATTRIBUTE
+              ANNOTATION_ENTRY
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION
@@ -47,18 +47,18 @@ JetFile: TypeAnnotations.jet
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
-        ATTRIBUTE_ANNOTATION
+        ANNOTATION
           PsiElement(LBRACKET)('[')
-          ATTRIBUTE
+          ANNOTATION_ENTRY
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('b')
           PsiElement(RBRACKET)(']')
         PsiWhiteSpace(' ')
-        ATTRIBUTE_ANNOTATION
+        ANNOTATION
           PsiElement(LBRACKET)('[')
-          ATTRIBUTE
+          ANNOTATION_ENTRY
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION
@@ -72,9 +72,9 @@ JetFile: TypeAnnotations.jet
             PsiElement(LT)('<')
             TYPE_PROJECTION
               MODIFIER_LIST
-                ATTRIBUTE_ANNOTATION
+                ANNOTATION
                   PsiElement(LBRACKET)('[')
-                  ATTRIBUTE
+                  ANNOTATION_ENTRY
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION

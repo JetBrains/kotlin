@@ -21,7 +21,7 @@ public class ErrorHandler {
 
         @Override
         public void genericError(@NotNull ASTNode node, @NotNull String errorMessage) {
-            throw new IllegalStateException(errorMessage);
+            throw new IllegalStateException(errorMessage + " at " + node.getText());
         }
 
         @Override

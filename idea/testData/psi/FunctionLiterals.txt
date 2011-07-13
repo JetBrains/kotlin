@@ -460,9 +460,9 @@ JetFile: FunctionLiterals.jet
             VALUE_PARAMETER_LIST
               VALUE_PARAMETER
                 MODIFIER_LIST
-                  ATTRIBUTE_ANNOTATION
+                  ANNOTATION
                     PsiElement(LBRACKET)('[')
-                    ATTRIBUTE
+                    ANNOTATION_ENTRY
                       TYPE_REFERENCE
                         USER_TYPE
                           REFERENCE_EXPRESSION
@@ -474,9 +474,9 @@ JetFile: FunctionLiterals.jet
               PsiWhiteSpace(' ')
               VALUE_PARAMETER
                 MODIFIER_LIST
-                  ATTRIBUTE_ANNOTATION
+                  ANNOTATION
                     PsiElement(LBRACKET)('[')
-                    ATTRIBUTE
+                    ANNOTATION_ENTRY
                       TYPE_REFERENCE
                         USER_TYPE
                           REFERENCE_EXPRESSION
@@ -488,9 +488,9 @@ JetFile: FunctionLiterals.jet
               PsiWhiteSpace(' ')
               VALUE_PARAMETER
                 MODIFIER_LIST
-                  ATTRIBUTE_ANNOTATION
+                  ANNOTATION
                     PsiElement(LBRACKET)('[')
-                    ATTRIBUTE
+                    ANNOTATION_ENTRY
                       TYPE_REFERENCE
                         USER_TYPE
                           REFERENCE_EXPRESSION

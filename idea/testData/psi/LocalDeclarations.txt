@@ -19,9 +19,9 @@ JetFile: LocalDeclarations.jet
         PsiWhiteSpace('\n    ')
         CLASS
           MODIFIER_LIST
-            ATTRIBUTE_ANNOTATION
+            ANNOTATION
               PsiElement(LBRACKET)('[')
-              ATTRIBUTE
+              ANNOTATION_ENTRY
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION
@@ -44,9 +44,9 @@ JetFile: LocalDeclarations.jet
           MODIFIER_LIST
             PsiElement(abstract)('abstract')
             PsiWhiteSpace(' ')
-            ATTRIBUTE_ANNOTATION
+            ANNOTATION
               PsiElement(LBRACKET)('[')
-              ATTRIBUTE
+              ANNOTATION_ENTRY
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION
@@ -78,9 +78,9 @@ JetFile: LocalDeclarations.jet
         PsiWhiteSpace('\n    ')
         PROPERTY
           MODIFIER_LIST
-            ATTRIBUTE_ANNOTATION
+            ANNOTATION
               PsiElement(LBRACKET)('[')
-              ATTRIBUTE
+              ANNOTATION_ENTRY
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION

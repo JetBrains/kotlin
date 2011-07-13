@@ -88,9 +88,9 @@ JetFile: TupleTypes_ERR.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            ATTRIBUTE_ANNOTATION
+            ANNOTATION
               PsiElement(LBRACKET)('[')
-              ATTRIBUTE
+              ANNOTATION_ENTRY
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION
@@ -108,9 +108,9 @@ JetFile: TupleTypes_ERR.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            ATTRIBUTE_ANNOTATION
+            ANNOTATION
               PsiElement(LBRACKET)('[')
-              ATTRIBUTE
+              ANNOTATION_ENTRY
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION
@@ -119,19 +119,21 @@ JetFile: TupleTypes_ERR.jet
             TUPLE_TYPE
               PsiElement(LPAR)('(')
               TYPE_REFERENCE
-                ATTRIBUTE_ANNOTATION
+                ANNOTATION
                   PsiElement(LBRACKET)('[')
-                  ATTRIBUTE
+                  ANNOTATION_ENTRY
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('x')
+                  PsiWhiteSpace(' ')
+                  ANNOTATION_ENTRY
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('X')
                   PsiErrorElement:Expecting ']' to close an attribute annotation
                     <empty list>
-                PsiWhiteSpace(' ')
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('X')
               PsiElement(RPAR)(')')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n    ')
@@ -141,9 +143,9 @@ JetFile: TupleTypes_ERR.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            ATTRIBUTE_ANNOTATION
+            ANNOTATION
               PsiElement(LBRACKET)('[')
-              ATTRIBUTE
+              ANNOTATION_ENTRY
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION
@@ -153,9 +155,9 @@ JetFile: TupleTypes_ERR.jet
             TUPLE_TYPE
               PsiElement(LPAR)('(')
               TYPE_REFERENCE
-                ATTRIBUTE_ANNOTATION
+                ANNOTATION
                   PsiElement(LBRACKET)('[')
-                  ATTRIBUTE
+                  ANNOTATION_ENTRY
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION
@@ -168,9 +170,9 @@ JetFile: TupleTypes_ERR.jet
               PsiElement(COMMA)(',')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
-                ATTRIBUTE_ANNOTATION
+                ANNOTATION
                   PsiElement(LBRACKET)('[')
-                  ATTRIBUTE
+                  ANNOTATION_ENTRY
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION
@@ -188,9 +190,9 @@ JetFile: TupleTypes_ERR.jet
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
-            ATTRIBUTE_ANNOTATION
+            ANNOTATION
               PsiElement(LBRACKET)('[')
-              ATTRIBUTE
+              ANNOTATION_ENTRY
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION
@@ -205,9 +207,9 @@ JetFile: TupleTypes_ERR.jet
                 PsiElement(COLON)(':')
                 PsiWhiteSpace(' ')
                 TYPE_REFERENCE
-                  ATTRIBUTE_ANNOTATION
+                  ANNOTATION
                     PsiElement(LBRACKET)('[')
-                    ATTRIBUTE
+                    ANNOTATION_ENTRY
                       TYPE_REFERENCE
                         USER_TYPE
                           REFERENCE_EXPRESSION
@@ -225,9 +227,9 @@ JetFile: TupleTypes_ERR.jet
                 PsiElement(COLON)(':')
                 PsiWhiteSpace(' ')
                 TYPE_REFERENCE
-                  ATTRIBUTE_ANNOTATION
+                  ANNOTATION
                     PsiElement(LBRACKET)('[')
-                    ATTRIBUTE
+                    ANNOTATION_ENTRY
                       TYPE_REFERENCE
                         USER_TYPE
                           REFERENCE_EXPRESSION
