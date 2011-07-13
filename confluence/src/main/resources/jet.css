@@ -13,6 +13,7 @@
 
 .jet.comment {
   color : green;
+
 }
 
 .jet.number {
@@ -48,3 +49,21 @@
   color : red;
   display:inline;
 }
+
+.jet.herror {
+  background-color: #FFAAAA;
+}
+.jet.hwarning {
+  background-color: #FFAAAA;
+  display:inline;
+}
+
+.jet.ref:link    { color: black; }
+.jet.ref:visited { color: black; }
+.jet.ref:hover   { color:blue; text-decoration:underline; }
+.jet.ref:active  { color:blue; text-decoration:underline; }
+
+.jet.anchor:link    { }
+.jet.anchor:visited { }
+.jet.anchor:hover   { color:blue; text-decoration:underline; }
+.jet.anchor:active  { color:blue; text-decoration:underline; }
