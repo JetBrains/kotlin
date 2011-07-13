@@ -163,9 +163,7 @@ public class ExpressionCodegen extends JetVisitor {
     public void visitIfExpression(JetIfExpression expression) {
         JetType expressionType = bindingContext.getExpressionType(expression);
         Type asmType = typeMapper.mapType(expressionType);
-        int oldStackDepth = myStack.size();
-        gen(expression.getCondition());
-        assert myStack.size() == oldStackDepth+1;
+        StackValue condition = generateIntermediateValue(expression.getCondition());
 
         JetExpression thenExpression = expression.getThen();
         JetExpression elseExpression = expression.getElse();
@@ -175,18 +173,18 @@ public class ExpressionCodegen extends JetVisitor {
         }
 
         if (thenExpression == null) {
-            generateSingleBranchIf(elseExpression, false);
+            generateSingleBranchIf(condition, elseExpression, false);
             return;
         }
 
         if (elseExpression == null) {
-            generateSingleBranchIf(thenExpression, true);
+            generateSingleBranchIf(condition, thenExpression, true);
             return;
         }
 
 
         Label elseLabel = new Label();
-        myStack.pop().condJump(elseLabel, true, v);   // == 0, i.e. false
+        condition.condJump(elseLabel, true, v);   // == 0, i.e. false
 
         gen(thenExpression, asmType);
 
@@ -211,8 +209,8 @@ public class ExpressionCodegen extends JetVisitor {
         Label end = new Label();
         myBreakTargets.push(end);
 
-        gen(expression.getCondition());
-        myStack.pop().condJump(end, true, v);
+        final StackValue conditionValue = generateIntermediateValue(expression.getCondition());
+        conditionValue.condJump(end, true, v);
 
         gen(expression.getBody(), Type.VOID_TYPE);
         v.goTo(condition);
@@ -233,8 +231,8 @@ public class ExpressionCodegen extends JetVisitor {
 
         gen(expression.getBody(), Type.VOID_TYPE);
 
-        gen(expression.getCondition());
-        myStack.pop().condJump(condition, false, v);
+        final StackValue conditionValue = generateIntermediateValue(expression.getCondition());
+        conditionValue.condJump(condition, false, v);
 
         v.mark(end);
 
@@ -475,10 +473,10 @@ public class ExpressionCodegen extends JetVisitor {
         v.goTo(label);
     }
 
-    private void generateSingleBranchIf(JetExpression expression, boolean inverse) {
+    private void generateSingleBranchIf(StackValue condition, JetExpression expression, boolean inverse) {
         Label endLabel = new Label();
 
-        myStack.pop().condJump(endLabel, inverse, v);
+        condition.condJump(endLabel, inverse, v);
 
         gen(expression, Type.VOID_TYPE);
 
@@ -1095,8 +1093,7 @@ public class ExpressionCodegen extends JetVisitor {
         Label ifFalse = new Label();
         Label end = new Label();
         v.dup();
-        gen(expression.getSelectorExpression());
-        StackValue result = myStack.pop();
+        StackValue result = generateIntermediateValue(expression.getSelectorExpression());
         result.condJump(ifFalse, true, v);
         v.goTo(end);
         v.mark(ifFalse);
@@ -1184,24 +1181,24 @@ public class ExpressionCodegen extends JetVisitor {
         final Type rightType = expressionType(right);
         gen(left, leftType);
         gen(right, rightType);
-        generateEqualsForExpressionsOnStack(opToken, leftType, rightType);
+        myStack.push(generateEqualsForExpressionsOnStack(opToken, leftType, rightType));
     }
 
-    private void generateEqualsForExpressionsOnStack(IElementType opToken, Type leftType, Type rightType) {
+    private StackValue generateEqualsForExpressionsOnStack(IElementType opToken, Type leftType, Type rightType) {
         if (isNumberPrimitive(leftType) && leftType == rightType) {
-            compareExpressionsOnStack(opToken, leftType);
+            return compareExpressionsOnStack(opToken, leftType);
         }
         else {
             if (opToken == JetTokens.EQEQEQ || opToken == JetTokens.EXCLEQEQEQ) {
-                myStack.push(StackValue.cmp(opToken, leftType));
+                return StackValue.cmp(opToken, leftType);
             }
             else {
-                generateNullSafeEquals(opToken);
+                return generateNullSafeEquals(opToken);
             }
         }
     }
 
-    private void generateNullSafeEquals(IElementType opToken) {
+    private StackValue generateNullSafeEquals(IElementType opToken) {
         v.dup2();   // left right left right
         Label rightNull = new Label();
         v.ifnull(rightNull);
@@ -1225,11 +1222,9 @@ public class ExpressionCodegen extends JetVisitor {
 
         final StackValue onStack = StackValue.onStack(Type.BOOLEAN_TYPE);
         if (opToken == JetTokens.EXCLEQ) {
-            myStack.push(StackValue.not(onStack));
+            return StackValue.not(onStack);
         }
-        else {
-            myStack.push(onStack);
-        }
+        return onStack;
     }
 
     private void generateElvis(JetBinaryExpression expression) {
@@ -1319,16 +1314,16 @@ public class ExpressionCodegen extends JetVisitor {
     private void generateCompareOp(JetExpression left, JetExpression right, IElementType opToken, Type operandType) {
         gen(left, operandType);
         gen(right, operandType);
-        compareExpressionsOnStack(opToken, operandType);
+        myStack.push(compareExpressionsOnStack(opToken, operandType));
     }
 
-    private void compareExpressionsOnStack(IElementType opToken, Type operandType) {
+    private StackValue compareExpressionsOnStack(IElementType opToken, Type operandType) {
         if (operandType.getSort() == Type.OBJECT) {
             v.invokeinterface(CLASS_COMPARABLE, "compareTo", "(Ljava/lang/Object;)I");
             v.aconst(0);
             operandType = Type.INT_TYPE;
         }
-        myStack.push(StackValue.cmp(opToken, operandType));
+        return StackValue.cmp(opToken, operandType);
     }
 
     private void generateAssignmentExpression(JetBinaryExpression expression) {
@@ -1749,8 +1744,7 @@ public class ExpressionCodegen extends JetVisitor {
             JetExpression condExpression = ((JetExpressionPattern) pattern).getExpression();
             Type condType = isNumberPrimitive(subjectType) ? expressionType(condExpression) : OBJECT_TYPE;
             gen(condExpression, condType);
-            generateEqualsForExpressionsOnStack(JetTokens.EQEQ, subjectType, condType);
-            return myStack.pop();
+            return generateEqualsForExpressionsOnStack(JetTokens.EQEQ, subjectType, condType);
         }
         else if (pattern instanceof JetWildcardPattern) {
             return StackValue.constant(!negated, Type.BOOLEAN_TYPE);
