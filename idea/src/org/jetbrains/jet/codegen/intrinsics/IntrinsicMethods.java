@@ -19,7 +19,6 @@ import java.util.Map;
 public class IntrinsicMethods {
     private static final IntrinsicMethod UNARY_MINUS = new UnaryMinus();
     private static final IntrinsicMethod NUMBER_CAST = new NumberCast();
-    private static final IntrinsicMethod ARRAY_SIZE = new ArraySize();
     private static final IntrinsicMethod INV = new Inv();
     private static final IntrinsicMethod TYPEINFO = new TypeInfo();
     private static final IntrinsicMethod VALUE_TYPEINFO = new ValueTypeInfo();
@@ -35,7 +34,7 @@ public class IntrinsicMethods {
         for (String method : primitiveCastMethods) {
             declareIntrinsicProperty("Number", method, NUMBER_CAST);
         }
-        declareIntrinsicProperty("Array", "size", ARRAY_SIZE);
+        declareIntrinsicProperty("Array", "size", new ArraySize());
 
         for (String primitiveNumberType : PRIMITIVE_NUMBER_TYPES) {
             declareIntrinsicFunction(primitiveNumberType, "minus", 0, UNARY_MINUS);
@@ -57,6 +56,8 @@ public class IntrinsicMethods {
         declareBinaryOp("and", Opcodes.IAND);
         declareBinaryOp("or", Opcodes.IOR);
         declareBinaryOp("xor", Opcodes.IXOR);
+
+        declareIntrinsicFunction("String", "plus", 1, new Concat());
     }
 
     private void declareBinaryOp(String methodName, int opcode) {

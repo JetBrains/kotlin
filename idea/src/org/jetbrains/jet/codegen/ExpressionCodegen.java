@@ -35,7 +35,7 @@ import java.util.*;
 public class ExpressionCodegen extends JetVisitor {
     private static final String CLASS_OBJECT = "java/lang/Object";
     private static final String CLASS_STRING = "java/lang/String";
-    private static final String CLASS_STRING_BUILDER = "java/lang/StringBuilder";
+    public static final String CLASS_STRING_BUILDER = "java/lang/StringBuilder";
     private static final String CLASS_COMPARABLE = "java/lang/Comparable";
     private static final String CLASS_ITERABLE = "java/lang/Iterable";
     private static final String CLASS_ITERATOR = "java/util/Iterator";
@@ -1085,11 +1085,6 @@ public class ExpressionCodegen extends JetVisitor {
                                                     Arrays.asList(expression.getLeft(), expression.getRight())));
                     return;
                 }
-                DeclarationDescriptor cls = op.getContainingDeclaration();
-                if (isClass(cls, "String") && op.getName().equals("plus")) {
-                    generateConcatenation(expression);
-                    return;
-                }
             }
             throw new UnsupportedOperationException("Don't know how to generate binary op " + expression);
         }
@@ -1289,15 +1284,7 @@ public class ExpressionCodegen extends JetVisitor {
         }
     }
 
-    private void generateConcatenation(JetBinaryExpression expression) {
-        generateStringBuilderConstructor();
-        invokeAppend(expression.getLeft());
-        invokeAppend(expression.getRight());
-        v.invokevirtual(CLASS_STRING_BUILDER, "toString", "()Ljava/lang/String;");
-        myStack.push(StackValue.onStack(Type.getObjectType(CLASS_STRING)));
-    }
-
-    private void generateStringBuilderConstructor() {
+    public void generateStringBuilderConstructor() {
         Type type = Type.getObjectType(CLASS_STRING_BUILDER);
         v.anew(type);
         v.dup();
@@ -1305,7 +1292,7 @@ public class ExpressionCodegen extends JetVisitor {
         v.invokespecial(CLASS_STRING_BUILDER, method.getName(), method.getDescriptor());
     }
 
-    private void invokeAppend(final JetExpression expr) {
+    public void invokeAppend(final JetExpression expr) {
         if (expr instanceof JetBinaryExpression) {
             final JetBinaryExpression binaryExpression = (JetBinaryExpression) expr;
             if (binaryExpression.getOperationToken() == JetTokens.PLUS) {
