@@ -1,5 +1,6 @@
 package org.jetbrains.jet.codegen;
 
+import com.intellij.psi.PsiFile;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.objectweb.asm.ClassVisitor;
@@ -15,7 +16,7 @@ public class NamespaceCodegen {
     private final ClassVisitor v;
     private final GenerationState state;
 
-    public NamespaceCodegen(ClassVisitor v, String fqName, GenerationState state) {
+    public NamespaceCodegen(ClassVisitor v, String fqName, GenerationState state, PsiFile sourceFile) {
         this.v = v;
         this.state = state;
 
@@ -27,6 +28,8 @@ public class NamespaceCodegen {
                 "java/lang/Object",
                 new String[0]
         );
+        // TODO figure something out for a namespace that spans multiple files
+        v.visitSource(sourceFile.getName(), null);
     }
 
     public void generate(JetNamespace namespace) {
@@ -36,7 +39,7 @@ public class NamespaceCodegen {
         final PropertyCodegen propertyCodegen = new PropertyCodegen(context, v, functionCodegen, state);
         final ClassCodegen classCodegen = state.forClass();
 
-        state.prepareAnonymousClasses(namespace);
+        GenerationState.prepareAnonymousClasses(namespace, state.getTypeMapper());
 
         if (hasNonConstantPropertyInitializers(namespace)) {
             generateStaticInitializers(namespace);

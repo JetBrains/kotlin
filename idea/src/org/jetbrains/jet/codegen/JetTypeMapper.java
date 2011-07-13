@@ -211,7 +211,7 @@ public class JetTypeMapper {
         return Type.getType("L" + jvmNameForDelegatingImplementation(classDescriptor) + ";");
     }
 
-    static String jvmName(JetNamespace namespace) {
+    public static String jvmName(JetNamespace namespace) {
         return NamespaceCodegen.getJVMClassName(namespace.getFQName());
     }
 
@@ -571,5 +571,16 @@ public class JetTypeMapper {
         final String className = baseName + "$" + (count + 1);
         classNamesForAnonymousClasses.put(expression, className);
         return className;
+    }
+
+    public Collection<String> allJvmNames(JetClassOrObject jetClass) {
+        Set<String> result = new HashSet<String>();
+        final ClassDescriptor classDescriptor = bindingContext.getClassDescriptor(jetClass);
+        if (classDescriptor != null) {
+            result.add(jvmName(classDescriptor, OwnerKind.INTERFACE));
+            result.add(jvmName(classDescriptor, OwnerKind.IMPLEMENTATION));
+            result.add(jvmName(classDescriptor, OwnerKind.DELEGATING_IMPLEMENTATION));
+        }
+        return result;
     }
 }

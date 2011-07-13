@@ -47,6 +47,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 superClass,
                 interfaces.toArray(new String[interfaces.size()])
         );
+        v.visitSource(myClass.getContainingFile().getName(), null);
     }
 
     private String jvmName() {

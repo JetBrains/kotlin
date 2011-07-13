@@ -1,5 +1,6 @@
 package org.jetbrains.jet.codegen;
 
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.search.ProjectScope;
@@ -581,6 +582,7 @@ public class ExpressionCodegen extends JetVisitor {
 
         for (int i = 0, statementsSize = statements.size(); i < statementsSize; i++) {
             JetElement statement = statements.get(i);
+            markLineNumber(statement);
             if (i == statements.size() - 1) {
                 gen(statement);
             }
@@ -601,6 +603,16 @@ public class ExpressionCodegen extends JetVisitor {
                 int index = myMap.leave(variableDescriptor);
                 v.visitLocalVariable(var.getName(), outType.getDescriptor(), null, blockStart, blockEnd, index);
             }
+        }
+    }
+
+    private void markLineNumber(JetElement statement) {
+        final Document document = statement.getContainingFile().getViewProvider().getDocument();
+        if (document != null) {
+            int lineNumber = document.getLineNumber(statement.getTextRange().getStartOffset());
+            Label label = new Label();
+            v.visitLabel(label);
+            v.visitLineNumber(lineNumber, label);
         }
     }
 

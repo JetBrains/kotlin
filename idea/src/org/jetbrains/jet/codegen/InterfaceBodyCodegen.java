@@ -39,6 +39,7 @@ public class InterfaceBodyCodegen extends ClassBodyCodegen {
                 "java/lang/Object",
                 superInterfaces.toArray(new String[superInterfaces.size()])
         );
+        v.visitSource(myClass.getContainingFile().getName(), null);
     }
 
     static Set<String> getSuperInterfaces(JetClassOrObject aClass, final BindingContext bindingContext) {

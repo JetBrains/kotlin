@@ -34,4 +34,9 @@ public class JetFileType extends LanguageFileType {
     public Icon getIcon() {
         return Icons.PROJECT_ICON;
     }
+
+    @Override
+    public boolean isJVMDebuggingSupported() {
+        return true;
+    }
 }

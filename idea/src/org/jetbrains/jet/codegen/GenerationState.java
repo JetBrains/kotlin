@@ -77,7 +77,7 @@ public class GenerationState {
     }
 
     public void compile(JetFile psiFile) {
-        final JetNamespace namespace = ((JetFile) psiFile).getRootNamespace();
+        final JetNamespace namespace = psiFile.getRootNamespace();
         NamespaceCodegen codegen = forNamespace(namespace);
         final BindingContext bindingContext = AnalyzingUtils.analyzeNamespace(namespace, JetControlFlowDataTraceFactory.EMPTY);
         bindingContexts.push(bindingContext);
@@ -101,7 +101,7 @@ public class GenerationState {
         return new GeneratedAnonymousClassDescriptor(nameAndVisitor.first, new Method("<init>", "()V"), false);
     }
 
-    void prepareAnonymousClasses(JetElement aClass) {
+    public static void prepareAnonymousClasses(JetElement aClass, final JetTypeMapper typeMapper) {
         aClass.acceptChildren(new JetVisitor() {
             @Override
             public void visitJetElement(JetElement element) {
@@ -111,7 +111,7 @@ public class GenerationState {
 
             @Override
             public void visitObjectLiteralExpression(JetObjectLiteralExpression expression) {
-                getTypeMapper().classNameForAnonymousClass(expression.getObjectDeclaration());
+                typeMapper.classNameForAnonymousClass(expression.getObjectDeclaration());
             }
         });
     }

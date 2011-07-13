@@ -17,7 +17,7 @@ public class ClassCodegen {
     }
 
     public void generate(ClassContext parentContext, JetClassOrObject aClass) {
-        state.prepareAnonymousClasses((JetElement) aClass);
+        GenerationState.prepareAnonymousClasses((JetElement) aClass, state.getTypeMapper());
 
         if (aClass instanceof JetObjectDeclaration) {
             generateImplementation(parentContext, aClass, OwnerKind.IMPLEMENTATION);

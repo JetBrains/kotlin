@@ -1,0 +1,152 @@
+package org.jetbrains.jet.plugin.debugger;
+
+import com.intellij.debugger.NoDataException;
+import com.intellij.debugger.PositionManager;
+import com.intellij.debugger.SourcePosition;
+import com.intellij.debugger.engine.DebugProcess;
+import com.intellij.debugger.requests.ClassPrepareRequestor;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.sun.jdi.AbsentInformationException;
+import com.sun.jdi.Location;
+import com.sun.jdi.ReferenceType;
+import com.sun.jdi.request.ClassPrepareRequest;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.codegen.GenerationState;
+import org.jetbrains.jet.codegen.JetTypeMapper;
+import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.types.JetStandardLibrary;
+
+import java.util.*;
+
+/**
+ * @author yole
+ */
+public class JetPositionManager implements PositionManager {
+    private final DebugProcess myDebugProcess;
+    private WeakHashMap<PsiFile, JetTypeMapper> myTypeMappers = new WeakHashMap<PsiFile, JetTypeMapper>();
+
+    public JetPositionManager(DebugProcess debugProcess) {
+        myDebugProcess = debugProcess;
+    }
+
+    @Override
+    @Nullable
+    public SourcePosition getSourcePosition(@Nullable Location location) throws NoDataException {
+        PsiFile psiFile = getPsiFileByLocation(location);
+        throw new NoDataException();
+    }
+
+    private PsiFile getPsiFileByLocation(Location location) {
+        final ReferenceType referenceType = location.declaringType();
+        if (referenceType == null) {
+            return null;
+        }
+
+        // TODO
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public List<ReferenceType> getAllClasses(SourcePosition sourcePosition) throws NoDataException {
+        if (!(sourcePosition.getFile() instanceof JetFile)) {
+            throw new NoDataException();
+        }
+        final Collection<String> names = classNamesForPosition(sourcePosition);
+        List<ReferenceType> result = new ArrayList<ReferenceType>();
+        for (String name : names) {
+            result.addAll(myDebugProcess.getVirtualMachineProxy().classesByName(name));
+        }
+        return result;
+    }
+
+    private Collection<String> classNamesForPosition(SourcePosition sourcePosition) {
+        final JetFile file = (JetFile) sourcePosition.getFile();
+        JetTypeMapper typeMapper = prepareTypeMapper(file);
+        final Collection<String> names = new ArrayList<String>();
+        JetClassOrObject jetClass = PsiTreeUtil.getParentOfType(sourcePosition.getElementAt(), JetClassOrObject.class);
+        if (jetClass != null) {
+            names.addAll(typeMapper.allJvmNames(jetClass));
+        }
+        else {
+            JetNamespace namespace = PsiTreeUtil.getParentOfType(sourcePosition.getElementAt(), JetNamespace.class);
+            if (namespace != null) {
+                names.add(JetTypeMapper.jvmName(namespace));
+            }
+            else {
+                names.add(JetTypeMapper.jvmName(file.getRootNamespace()));
+            }
+        }
+        return names;
+    }
+
+    private JetTypeMapper prepareTypeMapper(JetFile file) {
+        final JetTypeMapper mapper = myTypeMappers.get(file);
+        if (mapper != null) {
+            return mapper;
+        }
+        final BindingContext bindingContext = AnalyzingUtils.analyzeFileWithCache(file);
+        final JetStandardLibrary standardLibrary = JetStandardLibrary.getJetStandardLibrary(myDebugProcess.getProject());
+        final JetTypeMapper typeMapper = new JetTypeMapper(standardLibrary, bindingContext);
+        file.acceptChildren(new JetVisitor() {
+            @Override
+            public void visitJetElement(JetElement element) {
+                element.acceptChildren(this);
+            }
+
+            @Override
+            public void visitClass(JetClass klass) {
+                GenerationState.prepareAnonymousClasses(klass, typeMapper);
+            }
+        });
+        myTypeMappers.put(file, typeMapper);
+        return typeMapper;
+    }
+
+    @NotNull
+    @Override
+    public List<Location> locationsOfLine(ReferenceType type, SourcePosition position) throws NoDataException {
+        if (!(position.getFile() instanceof JetFile)) {
+            throw new NoDataException();
+        }
+        try {
+          int line = position.getLine() + 1;
+          List<Location> locations = myDebugProcess.getVirtualMachineProxy().versionHigher("1.4")
+                                     ? type.locationsOfLine(DebugProcess.JAVA_STRATUM, null, line)
+                                     : type.locationsOfLine(line);
+          if (locations == null || locations.isEmpty()) throw new NoDataException();
+          return locations;
+        }
+        catch (AbsentInformationException e) {
+          throw new NoDataException();
+        }
+    }
+
+    @Override
+    public ClassPrepareRequest createPrepareRequest(ClassPrepareRequestor classPrepareRequestor,
+                                                    SourcePosition sourcePosition) throws NoDataException {
+        if (!(sourcePosition.getFile() instanceof JetFile)) {
+            throw new NoDataException();
+        }
+        final Collection<String> classNames = classNamesForPosition(sourcePosition);
+        if (classNames.isEmpty()) {
+            return null;
+        }
+        final Iterator<String> iterator = classNames.iterator();
+        boolean wildcard = false;
+        String namePattern = iterator.next();
+        while (iterator.hasNext()) {
+            namePattern = StringUtil.commonPrefix(namePattern, iterator.next());
+            wildcard = true;
+        }
+        if (wildcard) {
+            namePattern += "*";
+        }
+        return myDebugProcess.getRequestsManager().createClassPrepareRequest(classPrepareRequestor, namePattern.replace('/', '.'));
+    }
+}

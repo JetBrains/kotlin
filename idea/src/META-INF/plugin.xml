@@ -45,5 +45,6 @@
       <iconProvider implementation="org.jetbrains.jet.plugin.JetIconProvider"/>
       <fileTypeIndentOptionsProvider implementation="org.jetbrains.jet.plugin.formatter.JetIndentOptionsProvider"/>
       <elementDescriptionProvider implementation="org.jetbrains.jet.plugin.findUsages.JetElementDescriptionProvider"/>
+      <debugger.positionManagerFactory implementation="org.jetbrains.jet.plugin.debugger.JetPositionManagerFactory"/>
   </extensions>
 </idea-plugin>

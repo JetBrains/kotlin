@@ -107,6 +107,7 @@ public class ClosureCodegen {
                 funClass,
                 new String[0]
         );
+        cv.visitSource(fun.getContainingFile().getName(), null);
 
 
         generateBridge(name, funDescriptor, cv);

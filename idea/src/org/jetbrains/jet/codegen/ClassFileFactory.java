@@ -49,7 +49,8 @@ public class ClassFileFactory {
         String fqName = namespace.getFQName();
         NamespaceCodegen codegen = ns2codegen.get(fqName);
         if (codegen == null) {
-            codegen = new NamespaceCodegen(newVisitor(NamespaceCodegen.getJVMClassName(fqName) + ".class"), fqName, state);
+            final ClassVisitor classVisitor = newVisitor(NamespaceCodegen.getJVMClassName(fqName) + ".class");
+            codegen = new NamespaceCodegen(classVisitor, fqName, state, namespace.getContainingFile());
             ns2codegen.put(fqName, codegen);
         }
 
