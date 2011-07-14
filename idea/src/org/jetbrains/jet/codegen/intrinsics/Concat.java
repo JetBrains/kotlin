@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class Concat implements IntrinsicMethod {
     @Override
-    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments) {
+    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, boolean haveReceiver) {
         codegen.generateStringBuilderConstructor();
         codegen.invokeAppend(arguments.get(0));
         codegen.invokeAppend(arguments.get(1));

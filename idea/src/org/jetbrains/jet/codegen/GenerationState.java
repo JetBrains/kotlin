@@ -30,7 +30,7 @@ public class GenerationState {
         this.project = project;
         this.standardLibrary = JetStandardLibrary.getJetStandardLibrary(project);
         this.factory = new ClassFileFactory(project, text, this);
-        this.intrinsics = new IntrinsicMethods(standardLibrary);
+        this.intrinsics = new IntrinsicMethods(project, standardLibrary);
     }
 
     public ClassFileFactory getFactory() {

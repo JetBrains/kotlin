@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class Inv implements IntrinsicMethod {
     @Override
-    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments) {
+    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, boolean haveReceiver) {
         codegen.putTopOfStack(expectedType);
         v.aconst(-1);
         v.xor(expectedType);

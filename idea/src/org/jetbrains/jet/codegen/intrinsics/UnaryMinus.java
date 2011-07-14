@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class UnaryMinus implements IntrinsicMethod {
     @Override
-    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments) {
+    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, boolean haveReceiver) {
         codegen.gen(arguments.get(0), expectedType);
         v.neg(expectedType);
         return StackValue.onStack(expectedType);

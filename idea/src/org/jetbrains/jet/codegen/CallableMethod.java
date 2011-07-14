@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * @author yole
  */
-public class CallableMethod {
+public class CallableMethod implements Callable {
     private String owner;
     private final Method signature;
     private final int invokeOpcode;

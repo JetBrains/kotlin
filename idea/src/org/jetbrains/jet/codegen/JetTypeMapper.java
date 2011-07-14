@@ -404,7 +404,7 @@ public class JetTypeMapper {
             return mapToCallableMethod((PsiMethod) declaration);
         }
         if (!(declaration instanceof JetNamedFunction)) {
-            throw new UnsupportedOperationException("unknown declaration type");
+            throw new UnsupportedOperationException("unknown declaration type " + declaration);
         }
         JetNamedFunction f = (JetNamedFunction) declaration;
         final FunctionDescriptor functionDescriptor = bindingContext.getFunctionDescriptor(f);

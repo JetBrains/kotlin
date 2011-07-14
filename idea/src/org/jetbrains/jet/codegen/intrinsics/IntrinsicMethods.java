@@ -1,6 +1,11 @@
 package org.jetbrains.jet.codegen.intrinsics;
 
 import com.google.common.collect.ImmutableList;
+import com.intellij.openapi.project.Project;
+import com.intellij.psi.JavaPsiFacade;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.search.ProjectScope;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.JetScope;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
@@ -8,10 +13,7 @@ import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.TypeProjection;
 import org.objectweb.asm.Opcodes;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author yole
@@ -25,10 +27,12 @@ public class IntrinsicMethods {
 
     private static final List<String> PRIMITIVE_NUMBER_TYPES = ImmutableList.of("Boolean", "Byte", "Char", "Short", "Int", "Float", "Long", "Double");
 
+    private final Project myProject;
     private final JetStandardLibrary myStdLib;
     private final Map<DeclarationDescriptor, IntrinsicMethod> myMethods = new HashMap<DeclarationDescriptor, IntrinsicMethod>();
 
-    public IntrinsicMethods(JetStandardLibrary stdlib) {
+    public IntrinsicMethods(Project project, JetStandardLibrary stdlib) {
+        myProject = project;
         myStdLib = stdlib;
         List<String> primitiveCastMethods = ImmutableList.of("dbl", "flt", "lng", "int", "chr", "sht", "byt");
         for (String method : primitiveCastMethods) {
@@ -60,6 +64,26 @@ public class IntrinsicMethods {
         declareIntrinsicFunction("Boolean", "not", 0, new Not());
 
         declareIntrinsicFunction("String", "plus", 1, new Concat());
+
+        declareIntrinsicStringMethods();
+    }
+
+    private void declareIntrinsicStringMethods() {
+        final ClassDescriptor stringClass = myStdLib.getString();
+        final Collection<DeclarationDescriptor> stringMembers = stringClass.getMemberScope(Collections.<TypeProjection>emptyList()).getAllDescriptors();
+        final PsiClass stringPsiClass = JavaPsiFacade.getInstance(myProject).findClass("java.lang.String",
+                                                                                       ProjectScope.getLibrariesScope(myProject));
+        for (DeclarationDescriptor stringMember : stringMembers) {
+            if (stringMember instanceof FunctionDescriptor) {
+                final FunctionDescriptor stringMethod = (FunctionDescriptor) stringMember;
+                final PsiMethod[] methods = stringPsiClass.findMethodsByName(stringMember.getName(), false);
+                for (PsiMethod method : methods) {
+                    if (method.getParameterList().getParametersCount() == stringMethod.getValueParameters().size()) {
+                        myMethods.put(stringMethod, new PsiMethodCall(method));
+                    }
+                }
+            }
+        }
     }
 
     private void declareBinaryOp(String methodName, int opcode) {

@@ -102,6 +102,10 @@ public class ExpressionCodegen extends JetVisitor {
         this.intrinsics = state.getIntrinsics();
     }
 
+    public JetTypeMapper getTypeMapper() {
+        return state.getTypeMapper();
+    }
+
     public void addTypeParameter(TypeParameterDescriptor typeParameter, StackValue expression) {
         typeParameterExpressions.put(typeParameter, expression);
     }
@@ -618,7 +622,7 @@ public class ExpressionCodegen extends JetVisitor {
 
             Label label = new Label();
             v.visitLabel(label);
-            v.visitLineNumber(lineNumber+1, label);  // 1-based
+            v.visitLineNumber(lineNumber + 1, label);  // 1-based
         }
     }
 
@@ -653,7 +657,7 @@ public class ExpressionCodegen extends JetVisitor {
         final IntrinsicMethod intrinsic = intrinsics.getIntrinsic(descriptor);
         if (intrinsic != null) {
             final Type expectedType = expressionType(expression);
-            myStack.push(intrinsic.generate(this, v, expectedType, expression, Collections.<JetExpression>emptyList()));
+            myStack.push(intrinsic.generate(this, v, expectedType, expression, Collections.<JetExpression>emptyList(), false));
             return;
         }
 
@@ -788,33 +792,10 @@ public class ExpressionCodegen extends JetVisitor {
             generateConstructorCall(expression, (JetSimpleNameExpression) callee);
         }
         else if (funDescriptor instanceof FunctionDescriptor) {
-            final IntrinsicMethod intrinsic = intrinsics.getIntrinsic(funDescriptor);
-            if (intrinsic != null) {
-                List<JetExpression> args = new ArrayList<JetExpression>();
-                for (JetArgument argument : expression.getValueArguments()) {
-                    args.add(argument.getArgumentExpression());
-                }
-                myStack.push(intrinsic.generate(this, v, expressionType(expression), expression, args));
-                return;
-            }
-
             final FunctionDescriptor fd = (FunctionDescriptor) funDescriptor;
-            PsiElement declarationPsiElement = resolveCalleeToDeclaration(funDescriptor);
-
-            CallableMethod callableMethod;
-            if (declarationPsiElement instanceof PsiMethod || declarationPsiElement instanceof JetNamedFunction) {
-                callableMethod = typeMapper.mapToCallableMethod((PsiNamedElement) declarationPsiElement);
-            }
-            else {
-                callableMethod = ClosureCodegen.asCallableMethod(fd);
-            }
-
-            invokeMethodWithArguments(callableMethod, expression);
-            final Type callReturnType = callableMethod.getSignature().getReturnType();
-            if (callReturnType != Type.VOID_TYPE) {
-                final Type retType = typeMapper.mapType(fd.getReturnType());
-                StackValue.onStack(callReturnType).upcast(retType, v);
-                myStack.push(StackValue.onStack(retType));
+            final StackValue stackValue = invokeFunction(expression, fd, false);
+            if (stackValue != null) {
+                myStack.push(stackValue);
             }
         }
         else {
@@ -822,25 +803,50 @@ public class ExpressionCodegen extends JetVisitor {
         }
     }
 
-    private PsiElement resolveCalleeToDeclaration(DeclarationDescriptor funDescriptor) {
-        PsiElement declarationPsiElement = bindingContext.getDeclarationPsiElement(funDescriptor);
-        if (declarationPsiElement == null && isClass(funDescriptor.getContainingDeclaration(), "String")) {
-            final Project project = state.getProject();
-            PsiClass jlString = JavaPsiFacade.getInstance(project).findClass("java.lang.String",
-                    ProjectScope.getAllScope(project));
-            // TODO better overload mapping
-            final PsiMethod[] methods = jlString.findMethodsByName(funDescriptor.getName(), false);
-            final int arity = ((FunctionDescriptor) funDescriptor).getValueParameters().size();
-            for (PsiMethod method : methods) {
-                if (method.getParameterList().getParametersCount() == arity) {
-                    declarationPsiElement = method;
-                }
+    private StackValue invokeFunction(JetCallExpression expression, FunctionDescriptor fd, boolean haveReceiver) {
+        Callable callableMethod = resolveToCallable(fd);
+        return invokeCallable(fd, callableMethod, expression, haveReceiver);
+    }
+
+    @Nullable
+    private StackValue invokeCallable(FunctionDescriptor fd, Callable callable, JetCallExpression expression, boolean haveReceiver) {
+        if (callable instanceof CallableMethod) {
+            final CallableMethod callableMethod = (CallableMethod) callable;
+            invokeMethodWithArguments(callableMethod, expression, haveReceiver);
+
+            final Type callReturnType = callableMethod.getSignature().getReturnType();
+            if (callReturnType != Type.VOID_TYPE) {
+                final Type retType = typeMapper.mapType(fd.getReturnType());
+                StackValue.onStack(callReturnType).upcast(retType, v);
+                return StackValue.onStack(retType);
             }
+            return null;
         }
-        if (declarationPsiElement == null) {
-            throw new UnsupportedOperationException("couldn't find declaration for " + funDescriptor);
+        else {
+            IntrinsicMethod intrinsic = (IntrinsicMethod) callable;
+            List<JetExpression> args = new ArrayList<JetExpression>();
+            for (JetArgument argument : expression.getValueArguments()) {
+                args.add(argument.getArgumentExpression());
+            }
+            return intrinsic.generate(this, v, expressionType(expression), expression, args, haveReceiver);
         }
-        return declarationPsiElement;
+    }
+
+    private Callable resolveToCallable(FunctionDescriptor fd) {
+        final IntrinsicMethod intrinsic = intrinsics.getIntrinsic(fd);
+        if (intrinsic != null) {
+            return intrinsic;
+        }
+        PsiElement declarationPsiElement = bindingContext.getDeclarationPsiElement(fd);
+
+        CallableMethod callableMethod;
+        if (declarationPsiElement instanceof PsiMethod || declarationPsiElement instanceof JetNamedFunction) {
+            callableMethod = typeMapper.mapToCallableMethod((PsiNamedElement) declarationPsiElement);
+        }
+        else {
+            callableMethod = ClosureCodegen.asCallableMethod(fd);
+        }
+        return callableMethod;
     }
 
     private DeclarationDescriptor resolveCalleeDescriptor(JetCallExpression call) {
@@ -859,7 +865,7 @@ public class ExpressionCodegen extends JetVisitor {
         invokeMethodWithArguments(callableMethod, expression, false);
     }
 
-    private void invokeMethodWithArguments(CallableMethod callableMethod, JetCall expression, final boolean haveReceiver) {
+    public void invokeMethodWithArguments(CallableMethod callableMethod, JetCall expression, final boolean haveReceiver) {
         final Type calleeType = callableMethod.getGenerateCalleeType();
         if (calleeType != null && expression instanceof JetCallExpression) {
             gen(((JetCallExpression) expression).getCalleeExpression(), calleeType);
@@ -1091,7 +1097,7 @@ public class ExpressionCodegen extends JetVisitor {
                 final IntrinsicMethod intrinsic = intrinsics.getIntrinsic(op);
                 if (intrinsic != null) {
                     myStack.push(intrinsic.generate(this, v, expressionType(expression), expression,
-                                                    Arrays.asList(expression.getLeft(), expression.getRight())));
+                                                    Arrays.asList(expression.getLeft(), expression.getRight()), false));
                     return;
                 }
             }
@@ -1358,7 +1364,7 @@ public class ExpressionCodegen extends JetVisitor {
         final IntrinsicMethod intrinsic = intrinsics.getIntrinsic(op);
         final JetExpression operand = unaryExpression.getBaseExpression();
         if (intrinsic != null) {
-            myStack.push(intrinsic.generate(this, v, asmType, unaryExpression, Collections.singletonList(operand)));
+            myStack.push(intrinsic.generate(this, v, asmType, unaryExpression, Collections.singletonList(operand), false));
             return true;
         }
         else if (isNumberPrimitive(asmType) && (op.getName().equals("inc") || op.getName().equals("dec"))) {
@@ -1863,13 +1869,10 @@ public class ExpressionCodegen extends JetVisitor {
             if (call instanceof JetCallExpression) {
                 v.load(subjectLocal, subjectType);
                 final DeclarationDescriptor declarationDescriptor = resolveCalleeDescriptor((JetCallExpression) call);
-                final PsiElement declaration = resolveCalleeToDeclaration(declarationDescriptor);
-                final CallableMethod callableMethod = typeMapper.mapToCallableMethod((PsiNamedElement) declaration);
-                if (callableMethod.getSignature().getReturnType() != Type.BOOLEAN_TYPE) {
-                    throw new UnsupportedOperationException("calls in pattern matching must return boolean");
+                if (!(declarationDescriptor instanceof FunctionDescriptor)) {
+                    throw new UnsupportedOperationException("expected function descriptor in when condition with call, found " + declarationDescriptor);
                 }
-                invokeMethodWithArguments(callableMethod, (JetCallExpression) call, true);
-                conditionValue = StackValue.onStack(Type.BOOLEAN_TYPE);
+                conditionValue = invokeFunction((JetCallExpression) call, (FunctionDescriptor) declarationDescriptor, true);
             }
             else if (call instanceof JetSimpleNameExpression) {
                 final DeclarationDescriptor descriptor = bindingContext.resolveReferenceExpression((JetSimpleNameExpression) call);
