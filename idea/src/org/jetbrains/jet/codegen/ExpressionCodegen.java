@@ -1228,21 +1228,6 @@ public class ExpressionCodegen extends JetVisitor {
         return JetTypeMapper.isIntPrimitive(type) || type == Type.FLOAT_TYPE || type == Type.DOUBLE_TYPE || type == Type.LONG_TYPE;
     }
 
-    private static int opcodeForMethod(final String name) {
-        if (name.equals("plus")) return Opcodes.IADD;
-        if (name.equals("minus")) return Opcodes.ISUB;
-        if (name.equals("times")) return Opcodes.IMUL;
-        if (name.equals("div")) return Opcodes.IDIV;
-        if (name.equals("mod")) return Opcodes.IREM;
-        if (name.equals("shl")) return Opcodes.ISHL;
-        if (name.equals("shr")) return Opcodes.ISHR;
-        if (name.equals("ushr")) return Opcodes.IUSHR;
-        if (name.equals("and")) return Opcodes.IAND;
-        if (name.equals("or")) return Opcodes.IOR;
-        if (name.equals("xor")) return Opcodes.IXOR;
-        throw new UnsupportedOperationException("Don't know how to generate binary op method " + name);
-    }
-
     private void generateCompareOp(JetExpression left, JetExpression right, IElementType opToken, Type operandType) {
         gen(left, operandType);
         gen(right, operandType);
@@ -1270,19 +1255,16 @@ public class ExpressionCodegen extends JetVisitor {
         final JetExpression lhs = expression.getLeft();
         Type lhsType = expressionType(lhs);
         if (bindingContext.isVariableReassignment(expression)) {
-            if (isNumberPrimitive(lhsType)) {
+            if (callable instanceof IntrinsicMethod) {
                 StackValue value = generateIntermediateValue(lhs);              // receiver
                 value.dupReceiver(v, 0);                                        // receiver receiver
                 value.put(lhsType, v);                                          // receiver lhs
-                genToJVMStack(expression.getRight());                           // receiver lhs rhs
-                v.visitInsn(lhsType.getOpcode(opcodeForMethod(op.getName())));  // receiver result
+                final IntrinsicMethod intrinsic = (IntrinsicMethod) callable;
+                intrinsic.generate(this, v, lhsType, expression, Arrays.asList(lhs, expression.getRight()), true);
                 value.store(v);
             }
-            else if (callable instanceof CallableMethod) {
-                callAugAssignMethod(expression, (CallableMethod) callable, lhsType, true);
-            }
             else {
-                throw new UnsupportedOperationException("Augmented assignment for non-primitive types not yet implemented");
+                callAugAssignMethod(expression, (CallableMethod) callable, lhsType, true);
             }
         }
         else {

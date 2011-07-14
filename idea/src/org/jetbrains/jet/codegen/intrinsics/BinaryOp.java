@@ -21,7 +21,9 @@ public class BinaryOp implements IntrinsicMethod {
 
     @Override
     public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, boolean haveReceiver) {
-        codegen.gen(arguments.get(0), expectedType);
+        if (!haveReceiver) {
+            codegen.gen(arguments.get(0), expectedType);
+        }
         codegen.gen(arguments.get(1), expectedType);
         v.visitInsn(expectedType.getOpcode(opcode));
         return StackValue.onStack(expectedType);
