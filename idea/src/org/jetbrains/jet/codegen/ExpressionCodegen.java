@@ -1278,6 +1278,9 @@ public class ExpressionCodegen extends JetVisitor {
                 v.visitInsn(lhsType.getOpcode(opcodeForMethod(op.getName())));  // receiver result
                 value.store(v);
             }
+            else if (callable instanceof CallableMethod) {
+                callAugAssignMethod(expression, (CallableMethod) callable, lhsType, true);
+            }
             else {
                 throw new UnsupportedOperationException("Augmented assignment for non-primitive types not yet implemented");
             }
@@ -1288,20 +1291,22 @@ public class ExpressionCodegen extends JetVisitor {
                 intrinsic.generate(this, v, Type.VOID_TYPE, expression, Arrays.asList(lhs, expression.getRight()), false);
             }
             else {
-                CallableMethod method = (CallableMethod) callable;
-                FunctionDescriptor fd = (FunctionDescriptor) op;
-                StackValue value = generateIntermediateValue(lhs);
-                final boolean keepReturnValue = !fd.getReturnType().equals(JetStandardClasses.getUnitType());
-                if (keepReturnValue) {
-                    value.dupReceiver(v, 0);
-                }
-                value.put(lhsType, v);
-                genToJVMStack(expression.getRight());
-                method.invoke(v);
-                if (keepReturnValue) {
-                    value.store(v);
-                }
+                final boolean keepReturnValue = !((FunctionDescriptor) op).getReturnType().equals(JetStandardClasses.getUnitType());
+                callAugAssignMethod(expression, (CallableMethod) callable, lhsType, keepReturnValue);
             }
+        }
+    }
+
+    private void callAugAssignMethod(JetBinaryExpression expression, CallableMethod callable, Type lhsType, final boolean keepReturnValue) {
+        StackValue value = generateIntermediateValue(expression.getLeft());
+        if (keepReturnValue) {
+            value.dupReceiver(v, 0);
+        }
+        value.put(lhsType, v);
+        genToJVMStack(expression.getRight());
+        callable.invoke(v);
+        if (keepReturnValue) {
+            value.store(v);
         }
     }
 
