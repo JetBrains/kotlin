@@ -1323,7 +1323,8 @@ public class ExpressionCodegen extends JetVisitor {
         DeclarationDescriptor op = bindingContext.resolveReferenceExpression(expression.getOperationSign());
         if (op instanceof FunctionDescriptor) {
             final Type asmType = expressionType(expression);
-            if (generateUnaryOp(op, asmType, expression)) return;
+            generateUnaryOp(op, asmType, expression);
+            return;
         }
         throw new UnsupportedOperationException("Don't know how to generate this prefix expression");
     }
@@ -1351,18 +1352,28 @@ public class ExpressionCodegen extends JetVisitor {
         throw new UnsupportedOperationException("Don't know how to generate this prefix expression");
     }
 
-    private boolean generateUnaryOp(DeclarationDescriptor op, Type asmType, final JetUnaryExpression unaryExpression) {
-        final IntrinsicMethod intrinsic = intrinsics.getIntrinsic(op);
+    private void generateUnaryOp(DeclarationDescriptor op, Type asmType, final JetUnaryExpression unaryExpression) {
         final JetExpression operand = unaryExpression.getBaseExpression();
-        if (intrinsic != null) {
-            myStack.push(intrinsic.generate(this, v, asmType, unaryExpression, Collections.singletonList(operand), false));
-            return true;
-        }
-        else if (isNumberPrimitive(asmType) && (op.getName().equals("inc") || op.getName().equals("dec"))) {
+        if (isNumberPrimitive(asmType) && (op.getName().equals("inc") || op.getName().equals("dec"))) {
             myStack.push(generateIncrement(op, asmType, operand));
-            return true;
+            return;
         }
-        return false;
+
+        final Callable callable = resolveToCallable((FunctionDescriptor) op);
+        if (callable instanceof IntrinsicMethod) {
+            IntrinsicMethod intrinsic = (IntrinsicMethod) callable;
+            myStack.push(intrinsic.generate(this, v, expressionType(unaryExpression), unaryExpression,
+                                            Arrays.asList(unaryExpression.getBaseExpression()), false));
+        }
+        else {
+            CallableMethod callableMethod = (CallableMethod) callable;
+            genToJVMStack(unaryExpression.getBaseExpression());
+            callableMethod.invoke(v);
+            final StackValue value = returnValueAsStackValue((FunctionDescriptor) op, callableMethod.getSignature().getReturnType());
+            if (value != null) {
+                myStack.push(value);
+            }
+        }
     }
 
     private StackValue generateIncrement(DeclarationDescriptor op, Type asmType, JetExpression operand) {
