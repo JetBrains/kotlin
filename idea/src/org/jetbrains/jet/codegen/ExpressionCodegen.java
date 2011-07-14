@@ -1506,13 +1506,9 @@ public class ExpressionCodegen extends JetVisitor {
 
     private void generateArrayIndex(JetArrayAccessExpression expression) {
         final List<JetExpression> indices = expression.getIndexExpressions();
-        if (indices.size() != 1) {
-            throw new UnsupportedOperationException("array access with more than one index is not supported");
+        for (JetExpression index : indices) {
+            gen(index, Type.INT_TYPE);
         }
-        if (!expressionType(indices.get(0)).equals(Type.INT_TYPE)) {
-            throw new UnsupportedOperationException("array access with non-integer is not supported");
-        }
-        gen(indices.get(0), Type.INT_TYPE);
     }
 
     @Override
