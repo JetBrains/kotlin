@@ -815,12 +815,7 @@ public class ExpressionCodegen extends JetVisitor {
             invokeMethodWithArguments(callableMethod, expression, haveReceiver);
 
             final Type callReturnType = callableMethod.getSignature().getReturnType();
-            if (callReturnType != Type.VOID_TYPE) {
-                final Type retType = typeMapper.mapType(fd.getReturnType());
-                StackValue.onStack(callReturnType).upcast(retType, v);
-                return StackValue.onStack(retType);
-            }
-            return null;
+            return returnValueAsStackValue(fd, callReturnType);
         }
         else {
             IntrinsicMethod intrinsic = (IntrinsicMethod) callable;
@@ -830,6 +825,15 @@ public class ExpressionCodegen extends JetVisitor {
             }
             return intrinsic.generate(this, v, expressionType(expression), expression, args, haveReceiver);
         }
+    }
+
+    private StackValue returnValueAsStackValue(FunctionDescriptor fd, Type callReturnType) {
+        if (callReturnType != Type.VOID_TYPE) {
+            final Type retType = typeMapper.mapType(fd.getReturnType());
+            StackValue.onStack(callReturnType).upcast(retType, v);
+            return StackValue.onStack(retType);
+        }
+        return null;
     }
 
     private Callable resolveToCallable(FunctionDescriptor fd) {
@@ -1094,14 +1098,23 @@ public class ExpressionCodegen extends JetVisitor {
         else {
             DeclarationDescriptor op = bindingContext.resolveReferenceExpression(expression.getOperationReference());
             if (op instanceof FunctionDescriptor) {
-                final IntrinsicMethod intrinsic = intrinsics.getIntrinsic(op);
-                if (intrinsic != null) {
+                final Callable callable = resolveToCallable((FunctionDescriptor) op);
+                if (callable instanceof IntrinsicMethod) {
+                    IntrinsicMethod intrinsic = (IntrinsicMethod) callable;
                     myStack.push(intrinsic.generate(this, v, expressionType(expression), expression,
                                                     Arrays.asList(expression.getLeft(), expression.getRight()), false));
-                    return;
+                }
+                else {
+                    CallableMethod callableMethod = (CallableMethod) callable;
+                    genToJVMStack(expression.getLeft());
+                    genToJVMStack(expression.getRight());
+                    callableMethod.invoke(v);
+                    final StackValue value = returnValueAsStackValue((FunctionDescriptor) op, callableMethod.getSignature().getReturnType());
+                    if (value != null) {
+                        myStack.push(value);
+                    }
                 }
             }
-            throw new UnsupportedOperationException("Don't know how to generate binary op " + expression);
         }
     }
 

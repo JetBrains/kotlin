@@ -132,6 +132,10 @@ public class ClassGenTest extends CodegenTestCase {
         assertInstanceOf(result, Runnable.class);
     }
 
+    public void testOverloadBinaryOperator() throws Exception {
+        blackBoxFile("classes/overloadBinaryOperator.jet");
+    }
+
     public void testEnumClass() throws Exception {
         loadText("enum class Direction { NORTH; SOUTH; EAST; WEST }");
         final Class direction = loadAllClasses(generateClassesInFile()).get("Direction");
