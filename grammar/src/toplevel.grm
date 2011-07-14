@@ -6,7 +6,7 @@ h1. Syntax
 
 
 [start]
-jetFile
+kotlinFile
   : preamble toplevelObject*
   ;
 
