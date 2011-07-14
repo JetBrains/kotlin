@@ -63,6 +63,8 @@ public class ExpressionCodegen extends JetVisitor {
     private final Stack<Label> myBreakTargets = new Stack<Label>();
     private final Stack<StackValue> myStack = new Stack<StackValue>();
 
+    private int myLastLineNumber = -1;
+
     private static final String[] PRIMITIVE_TYPE_INFO_FIELDS = {
             null,
             "BOOL_TYPE_INFO",
@@ -116,7 +118,7 @@ public class ExpressionCodegen extends JetVisitor {
     }
 
     private void gen(JetElement expr) {
-        if (expr == null) throw new CompilationException();
+        markLineNumber(expr);
         expr.accept(this);
     }
 
@@ -582,7 +584,6 @@ public class ExpressionCodegen extends JetVisitor {
 
         for (int i = 0, statementsSize = statements.size(); i < statementsSize; i++) {
             JetElement statement = statements.get(i);
-            markLineNumber(statement);
             if (i == statements.size() - 1) {
                 gen(statement);
             }
@@ -609,10 +610,15 @@ public class ExpressionCodegen extends JetVisitor {
     private void markLineNumber(JetElement statement) {
         final Document document = statement.getContainingFile().getViewProvider().getDocument();
         if (document != null) {
-            int lineNumber = document.getLineNumber(statement.getTextRange().getStartOffset());
+            int lineNumber = document.getLineNumber(statement.getTextRange().getStartOffset());  // 0-based
+            if (lineNumber == myLastLineNumber) {
+                return;
+            }
+            myLastLineNumber = lineNumber;
+
             Label label = new Label();
             v.visitLabel(label);
-            v.visitLineNumber(lineNumber, label);
+            v.visitLineNumber(lineNumber+1, label);  // 1-based
         }
     }
 

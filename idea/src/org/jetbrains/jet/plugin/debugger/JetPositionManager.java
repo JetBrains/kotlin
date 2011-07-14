@@ -5,8 +5,11 @@ import com.intellij.debugger.PositionManager;
 import com.intellij.debugger.SourcePosition;
 import com.intellij.debugger.engine.DebugProcess;
 import com.intellij.debugger.requests.ClassPrepareRequestor;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.search.FilenameIndex;
+import com.intellij.psi.search.ProjectScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.Location;
@@ -37,11 +40,41 @@ public class JetPositionManager implements PositionManager {
     @Override
     @Nullable
     public SourcePosition getSourcePosition(@Nullable Location location) throws NoDataException {
+        if (location == null) {
+            throw new NoDataException();
+        }
         PsiFile psiFile = getPsiFileByLocation(location);
+
+        int lineNumber;
+        try {
+            lineNumber = location.lineNumber() - 1;
+        } catch (InternalError e) {
+            lineNumber = -1;
+        }
+
+        if (lineNumber >= 0) {
+            return SourcePosition.createFromLine(psiFile, lineNumber);
+        }
+
         throw new NoDataException();
     }
 
-    private PsiFile getPsiFileByLocation(Location location) {
+    private PsiFile getPsiFileByLocation(Location location) throws NoDataException {
+        try {
+            final String sourceName = location.sourceName();
+            final Project project = myDebugProcess.getProject();
+            final PsiFile[] files = FilenameIndex.getFilesByName(project, sourceName, ProjectScope.getAllScope(project));
+            if (files.length == 1 && files[0] instanceof JetFile) {
+                return files[0];
+            }
+
+        } catch (AbsentInformationException e) {
+            throw new NoDataException();
+        }
+
+
+        /* TODO
+
         final ReferenceType referenceType = location.declaringType();
         if (referenceType == null) {
             return null;
@@ -49,6 +82,8 @@ public class JetPositionManager implements PositionManager {
 
         // TODO
         return null;
+        */
+        throw new NoDataException();
     }
 
     @NotNull
