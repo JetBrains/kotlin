@@ -66,6 +66,7 @@ public class IntrinsicMethods {
         declareIntrinsicFunction("Boolean", "not", 0, new Not());
 
         declareIntrinsicFunction("String", "plus", 1, new Concat());
+        declareIntrinsicFunction("String", "plusAssign", 1, new PlusConcat());
 
         declareIntrinsicStringMethods();
     }

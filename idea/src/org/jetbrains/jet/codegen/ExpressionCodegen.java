@@ -799,19 +799,19 @@ public class ExpressionCodegen extends JetVisitor {
         }
     }
 
-    private StackValue invokeFunction(JetCallExpression expression, FunctionDescriptor fd, boolean haveReceiver) {
+    private StackValue invokeFunction(JetCallExpression expression, DeclarationDescriptor fd, boolean haveReceiver) {
         Callable callableMethod = resolveToCallable(fd);
         return invokeCallable(fd, callableMethod, expression, haveReceiver);
     }
 
     @Nullable
-    private StackValue invokeCallable(FunctionDescriptor fd, Callable callable, JetCallExpression expression, boolean haveReceiver) {
+    private StackValue invokeCallable(DeclarationDescriptor fd, Callable callable, JetCallExpression expression, boolean haveReceiver) {
         if (callable instanceof CallableMethod) {
             final CallableMethod callableMethod = (CallableMethod) callable;
             invokeMethodWithArguments(callableMethod, expression, haveReceiver);
 
             final Type callReturnType = callableMethod.getSignature().getReturnType();
-            return returnValueAsStackValue(fd, callReturnType);
+            return returnValueAsStackValue((FunctionDescriptor) fd, callReturnType);
         }
         else {
             IntrinsicMethod intrinsic = (IntrinsicMethod) callable;
@@ -832,7 +832,7 @@ public class ExpressionCodegen extends JetVisitor {
         return null;
     }
 
-    private Callable resolveToCallable(FunctionDescriptor fd) {
+    private Callable resolveToCallable(DeclarationDescriptor fd) {
         final IntrinsicMethod intrinsic = intrinsics.getIntrinsic(fd);
         if (intrinsic != null) {
             return intrinsic;
@@ -843,8 +843,11 @@ public class ExpressionCodegen extends JetVisitor {
         if (declarationPsiElement instanceof PsiMethod || declarationPsiElement instanceof JetNamedFunction) {
             callableMethod = typeMapper.mapToCallableMethod((PsiNamedElement) declarationPsiElement);
         }
+        else if (fd instanceof FunctionDescriptor) {
+            callableMethod = ClosureCodegen.asCallableMethod((FunctionDescriptor) fd);
+        }
         else {
-            callableMethod = ClosureCodegen.asCallableMethod(fd);
+            throw new UnsupportedOperationException("can't resolve declaration to callable: " + fd);
         }
         return callableMethod;
     }
@@ -1090,22 +1093,20 @@ public class ExpressionCodegen extends JetVisitor {
         }
         else {
             DeclarationDescriptor op = bindingContext.resolveReferenceExpression(expression.getOperationReference());
-            if (op instanceof FunctionDescriptor) {
-                final Callable callable = resolveToCallable((FunctionDescriptor) op);
-                if (callable instanceof IntrinsicMethod) {
-                    IntrinsicMethod intrinsic = (IntrinsicMethod) callable;
-                    myStack.push(intrinsic.generate(this, v, expressionType(expression), expression,
-                                                    Arrays.asList(expression.getLeft(), expression.getRight()), false));
-                }
-                else {
-                    CallableMethod callableMethod = (CallableMethod) callable;
-                    genToJVMStack(expression.getLeft());
-                    genToJVMStack(expression.getRight());
-                    callableMethod.invoke(v);
-                    final StackValue value = returnValueAsStackValue((FunctionDescriptor) op, callableMethod.getSignature().getReturnType());
-                    if (value != null) {
-                        myStack.push(value);
-                    }
+            final Callable callable = resolveToCallable(op);
+            if (callable instanceof IntrinsicMethod) {
+                IntrinsicMethod intrinsic = (IntrinsicMethod) callable;
+                myStack.push(intrinsic.generate(this, v, expressionType(expression), expression,
+                                                Arrays.asList(expression.getLeft(), expression.getRight()), false));
+            }
+            else {
+                CallableMethod callableMethod = (CallableMethod) callable;
+                genToJVMStack(expression.getLeft());
+                genToJVMStack(expression.getRight());
+                callableMethod.invoke(v);
+                final StackValue value = returnValueAsStackValue((FunctionDescriptor) op, callableMethod.getSignature().getReturnType());
+                if (value != null) {
+                    myStack.push(value);
                 }
             }
         }
@@ -1265,28 +1266,31 @@ public class ExpressionCodegen extends JetVisitor {
 
     private void generateAugmentedAssignment(JetBinaryExpression expression) {
         DeclarationDescriptor op = bindingContext.resolveReferenceExpression(expression.getOperationReference());
+        final Callable callable = resolveToCallable(op);
         final JetExpression lhs = expression.getLeft();
         Type lhsType = expressionType(lhs);
-        if (isNumberPrimitive(lhsType)) {
-            StackValue value = generateIntermediateValue(lhs);              // receiver
-            value.dupReceiver(v, 0);                                        // receiver receiver
-            value.put(lhsType, v);                                          // receiver lhs
-            genToJVMStack(expression.getRight());                           // receiver lhs rhs
-            v.visitInsn(lhsType.getOpcode(opcodeForMethod(op.getName())));  // receiver result
-            value.store(v);
-        }
-        else if ("java.lang.String".equals(lhsType.getClassName()) && op.getName().equals("plus")) {
-            generateStringBuilderConstructor();                          // StringBuilder
-            StackValue value = generateIntermediateValue(lhs);           // StringBuilder receiver
-            value.dupReceiver(v, 1);                                     // receiver StringBuilder receiver
-            value.put(lhsType, v);                                       // receiver StringBuilder value
-            invokeAppendMethod(lhsType);                                 // receiver StringBuilder
-            invokeAppend(expression.getRight());                         // receiver StringBuilder
-            v.invokevirtual(CLASS_STRING_BUILDER, "toString", "()Ljava/lang/String;");
-            value.store(v);
+        if (bindingContext.isVariableReassignment(expression)) {
+            if (isNumberPrimitive(lhsType)) {
+                StackValue value = generateIntermediateValue(lhs);              // receiver
+                value.dupReceiver(v, 0);                                        // receiver receiver
+                value.put(lhsType, v);                                          // receiver lhs
+                genToJVMStack(expression.getRight());                           // receiver lhs rhs
+                v.visitInsn(lhsType.getOpcode(opcodeForMethod(op.getName())));  // receiver result
+                value.store(v);
+            }
+            else {
+                throw new UnsupportedOperationException("Augmented assignment for non-primitive types not yet implemented");
+            }
         }
         else {
-            throw new UnsupportedOperationException("Augmented assignment for non-primitive types not yet implemented");
+            if (callable instanceof IntrinsicMethod) {
+                final IntrinsicMethod intrinsic = (IntrinsicMethod) callable;
+                intrinsic.generate(this, v, Type.VOID_TYPE, expression, Arrays.asList(lhs, expression.getRight()), false);
+            }
+            else {
+                throw new UnsupportedOperationException("TODO");
+            }
+
         }
     }
 
@@ -1312,7 +1316,7 @@ public class ExpressionCodegen extends JetVisitor {
         invokeAppendMethod(exprType);
     }
 
-    private void invokeAppendMethod(Type exprType) {
+    public void invokeAppendMethod(Type exprType) {
         Method appendDescriptor = new Method("append", Type.getObjectType(CLASS_STRING_BUILDER),
                 new Type[] { exprType.getSort() == Type.OBJECT ? JetTypeMapper.TYPE_OBJECT : exprType});
         v.invokevirtual(CLASS_STRING_BUILDER, "append", appendDescriptor.getDescriptor());
@@ -1359,7 +1363,7 @@ public class ExpressionCodegen extends JetVisitor {
             return;
         }
 
-        final Callable callable = resolveToCallable((FunctionDescriptor) op);
+        final Callable callable = resolveToCallable(op);
         if (callable instanceof IntrinsicMethod) {
             IntrinsicMethod intrinsic = (IntrinsicMethod) callable;
             myStack.push(intrinsic.generate(this, v, expressionType(unaryExpression), unaryExpression,

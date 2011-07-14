@@ -78,6 +78,8 @@ class String() : Comparable<String> {
   val length : Int
 
   fun plus(other : Any?) : String
+  fun plusAssign(other: Any?): String
+
   fun equals(other : Any?) : Boolean
   fun equalsIgnoreCase(other: String?) : Boolean
 
