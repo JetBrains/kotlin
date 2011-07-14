@@ -251,6 +251,7 @@ public class ClosureCodegen {
         if (fd.getReceiverType() != null) {
             result.setNeedsReceiver(null);
         }
+        result.requestGenerateCallee(Type.getObjectType(getInternalClassName(fd)));
         return result;
     }
 }

@@ -806,7 +806,6 @@ public class ExpressionCodegen extends JetVisitor {
                 callableMethod = typeMapper.mapToCallableMethod((PsiNamedElement) declarationPsiElement);
             }
             else {
-                gen(callee, Type.getObjectType(ClosureCodegen.getInternalClassName(fd)));
                 callableMethod = ClosureCodegen.asCallableMethod(fd);
             }
 
@@ -861,6 +860,10 @@ public class ExpressionCodegen extends JetVisitor {
     }
 
     private void invokeMethodWithArguments(CallableMethod callableMethod, JetCall expression, final boolean haveReceiver) {
+        final Type calleeType = callableMethod.getGenerateCalleeType();
+        if (calleeType != null && expression instanceof JetCallExpression) {
+            gen(((JetCallExpression) expression).getCalleeExpression(), calleeType);
+        }
         if (callableMethod.isOwnerFromCall()) {
             setOwnerFromCall(callableMethod, expression);
         }

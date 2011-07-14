@@ -20,6 +20,7 @@ public class CallableMethod {
     private boolean needsReceiverOnStack = false;
     private boolean ownerFromCall = false;
     private ClassDescriptor receiverClass = null;
+    private Type generateCalleeType = null;
 
     public CallableMethod(String owner, Method signature, int invokeOpcode, List<Type> valueParameterTypes) {
         this.owner = owner;
@@ -79,5 +80,13 @@ public class CallableMethod {
 
     void invoke(InstructionAdapter v) {
         v.visitMethodInsn(getInvokeOpcode(), getOwner(), getSignature().getName(), getSignature().getDescriptor());
+    }
+
+    public void requestGenerateCallee(Type objectType) {
+        generateCalleeType = objectType;
+    }
+
+    public Type getGenerateCalleeType() {
+        return generateCalleeType;
     }
 }
