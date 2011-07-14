@@ -2587,7 +2587,10 @@ public class JetTypeInferrer {
 
             if (assignmentOperationType == null) {
                 String counterpartName = binaryOperationNames.get(assignmentOperationCounterparts.get(operationType));
-                getTypeForBinaryCall(expression, counterpartName, scope, true);
+                JetType typeForBinaryCall = getTypeForBinaryCall(expression, counterpartName, scope, true);
+                if (typeForBinaryCall != null) {
+                    context.trace.recordVariableReassignment(expression);
+                }
             }
             result = null; // not an expression
         }

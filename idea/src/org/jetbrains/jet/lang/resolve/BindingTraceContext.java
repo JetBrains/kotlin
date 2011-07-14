@@ -31,6 +31,8 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
     private final Map<JetExpression, JetType> autoCasts = Maps.newHashMap();
     private final Map<JetExpression, JetScope> resolutionScopes = Maps.newHashMap();
 
+    private final Set<JetBinaryExpression> variableReassignments = Sets.newHashSet();
+
     private final Set<JetFunctionLiteralExpression> blocks = new HashSet<JetFunctionLiteralExpression>();
     private final Set<JetElement> statements = new HashSet<JetElement>();
     private final Set<PropertyDescriptor> backingFieldRequired = new HashSet<PropertyDescriptor>();
@@ -60,6 +62,8 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
         statements.addAll(other.statements);
         backingFieldRequired.addAll(other.backingFieldRequired);
         processed.addAll(other.processed);
+
+        variableReassignments.addAll(other.variableReassignments);
 
         diagnostics.addAll(other.diagnostics);
     }
@@ -156,6 +160,11 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
     @Override
     public void recordStatement(@NotNull JetElement statement) {
         statements.add(statement);
+    }
+
+    @Override
+    public void recordVariableReassignment(@NotNull JetBinaryExpression expression) {
+        variableReassignments.add(expression);
     }
 
     @Override
@@ -296,6 +305,11 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
             return true;
         }
         return backingFieldRequired.contains(propertyDescriptor);
+    }
+
+    @Override
+    public boolean isVariableReassignment(JetBinaryExpression expression) {
+        return variableReassignments.contains(expression);
     }
 
     public ConstructorDescriptor resolveSuperConstructor(JetDelegatorToSuperCall superCall) {

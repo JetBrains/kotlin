@@ -58,6 +58,11 @@ public class BindingTraceAdapter implements BindingTrace {
     }
 
     @Override
+    public void recordVariableReassignment(@NotNull JetBinaryExpression expression) {
+        originalTrace.recordVariableReassignment(expression);
+    }
+
+    @Override
     public void requireBackingField(@NotNull PropertyDescriptor propertyDescriptor) {
         originalTrace.requireBackingField(propertyDescriptor);
     }

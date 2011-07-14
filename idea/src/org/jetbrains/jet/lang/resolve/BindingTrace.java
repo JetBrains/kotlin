@@ -29,6 +29,8 @@ public interface BindingTrace {
 
     void recordStatement(@NotNull JetElement statement);
 
+    void recordVariableReassignment(@NotNull JetBinaryExpression expression);
+
     void recordResolutionScope(@NotNull JetExpression expression, @NotNull JetScope scope);
 
     void removeStatementRecord(@NotNull JetElement statement);

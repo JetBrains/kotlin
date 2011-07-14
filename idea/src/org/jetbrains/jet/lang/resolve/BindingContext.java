@@ -41,6 +41,8 @@ public interface BindingContext {
     boolean isStatement(JetExpression expression);
     boolean hasBackingField(PropertyDescriptor propertyDescriptor);
 
+    boolean isVariableReassignment(JetBinaryExpression expression);
+
     ConstructorDescriptor resolveSuperConstructor(JetDelegatorToSuperCall superCall);
 
     @Nullable

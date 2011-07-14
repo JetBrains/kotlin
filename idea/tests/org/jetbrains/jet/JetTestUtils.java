@@ -54,6 +54,11 @@ public class JetTestUtils {
         }
 
         @Override
+        public void recordVariableReassignment(@NotNull JetBinaryExpression expression) {
+
+        }
+
+        @Override
         public void recordResolutionScope(@NotNull JetExpression expression, @NotNull JetScope scope) {
         }
 
@@ -182,6 +187,11 @@ public class JetTestUtils {
 
                 @Override
                 public boolean hasBackingField(PropertyDescriptor propertyDescriptor) {
+                    throw new UnsupportedOperationException(); // TODO
+                }
+
+                @Override
+                public boolean isVariableReassignment(JetBinaryExpression expression) {
                     throw new UnsupportedOperationException(); // TODO
                 }
 
