@@ -55,7 +55,9 @@ public class TypeUtils {
 
             if (!canHaveSubtypes(typeChecker, type)) {
                 for (JetType other : types) {
-                    if (!type.equals(other) && !typeChecker.isSubtypeOf(type, other)) {
+                    // It makes sense to check for subtyping of other <: type, despite that
+                    // type is not supposed to be open, for there're enums
+                    if (!type.equals(other) && !typeChecker.isSubtypeOf(type, other) && !typeChecker.isSubtypeOf(other, type)) {
                         return null;
                     }
                 }

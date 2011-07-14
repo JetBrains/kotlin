@@ -130,10 +130,14 @@ JetFile: Properties_ERR.jet
     PsiErrorElement:Expecting namespace or top level declaration
       PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
-    PsiErrorElement:Expecting namespace or top level declaration
-      PsiElement(IDENTIFIER)('foo')
-    PsiWhiteSpace('\n\n')
     PROPERTY
+      MODIFIER_LIST
+        ANNOTATION_ENTRY
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('foo')
+      PsiWhiteSpace('\n\n')
       PsiElement(val)('val')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE

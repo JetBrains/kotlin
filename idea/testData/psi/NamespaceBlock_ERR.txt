@@ -19,38 +19,52 @@ JetFile: NamespaceBlock_ERR.jet
       PsiWhiteSpace('\n')
       PsiElement(IDENTIFIER)('import')
     PsiWhiteSpace(' ')
-    PsiErrorElement:Expecting namespace or top level declaration
-      PsiElement(IDENTIFIER)('foo')
-    PsiErrorElement:Expecting namespace or top level declaration
-      PsiElement(DOT)('.')
-    PsiWhiteSpace('\n')
-    IMPORT_DIRECTIVE
-      PsiElement(import)('import')
-      PsiWhiteSpace(' ')
-      DOT_QUALIFIED_EXPRESSION
-        DOT_QUALIFIED_EXPRESSION
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('foo')
-          PsiElement(DOT)('.')
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('bar')
-        PsiElement(DOT)('.')
-        PsiWhiteSpace('\n')
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('import')
-    PsiWhiteSpace(' ')
-    PsiErrorElement:Expecting namespace or top level declaration
-      PsiElement(IDENTIFIER)('foo')
-    PsiErrorElement:Expecting namespace or top level declaration
-      PsiElement(DOT)('.')
-    PsiWhiteSpace(' ')
-    PsiErrorElement:Expecting namespace or top level declaration
-      PsiElement(as)('as')
-    PsiWhiteSpace(' ')
-    PsiErrorElement:Expecting namespace or top level declaration
-      PsiElement(IDENTIFIER)('bar')
-    PsiWhiteSpace('\n\n')
     NAMESPACE
+      MODIFIER_LIST
+        ANNOTATION_ENTRY
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('foo')
+              PsiElement(DOT)('.')
+              PsiWhiteSpace('\n')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('import')
+        PsiWhiteSpace(' ')
+        ANNOTATION_ENTRY
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('foo')
+                PsiElement(DOT)('.')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('bar')
+              PsiElement(DOT)('.')
+              PsiWhiteSpace('\n')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('import')
+        PsiWhiteSpace(' ')
+        ANNOTATION_ENTRY
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('foo')
+              PsiElement(DOT)('.')
+              PsiWhiteSpace(' ')
+              REFERENCE_EXPRESSION
+                PsiErrorElement:Type name expected
+                  PsiElement(as)('as')
+        PsiWhiteSpace(' ')
+        ANNOTATION_ENTRY
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('bar')
+      PsiWhiteSpace('\n\n')
       PsiElement(namespace)('namespace')
       PsiWhiteSpace(' ')
       NAMESPACE_NAME
@@ -79,27 +93,13 @@ JetFile: NamespaceBlock_ERR.jet
         IMPORT_DIRECTIVE
           PsiElement(import)('import')
           PsiWhiteSpace(' ')
-          DOT_QUALIFIED_EXPRESSION
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('foo')
-            PsiElement(DOT)('.')
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('bar')
-          PsiElement(DOT)('.')
-          PsiElement(MUL)('*')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('foo')
           PsiWhiteSpace(' ')
-          PsiErrorElement:Cannot rename a all imported items to one identifier
-            PsiElement(as)('as')
-            PsiWhiteSpace('\n\n    ')
-            PsiElement(IDENTIFIER)('import')
-        PsiWhiteSpace(' ')
-        PsiErrorElement:Expecting namespace or top level declaration
-          PsiElement(IDENTIFIER)('foo')
-        PsiWhiteSpace(' ')
-        PsiErrorElement:Expecting namespace or top level declaration
           PsiElement(as)('as')
-        PsiWhiteSpace(' ')
-        PsiErrorElement:Expecting namespace or top level declaration
+          PsiErrorElement:Expecting identifier
+            <empty list>
+          PsiWhiteSpace(' ')
           PsiElement(SEMICOLON)(';')
         PsiWhiteSpace('\n    ')
         IMPORT_DIRECTIVE
@@ -252,10 +252,14 @@ JetFile: NamespaceBlock_ERR.jet
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n\n')
-    PsiErrorElement:Expecting namespace or top level declaration
-      PsiElement(IDENTIFIER)('dsfgd')
-    PsiWhiteSpace('\n\n')
     CLASS
+      MODIFIER_LIST
+        ANNOTATION_ENTRY
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('dsfgd')
+      PsiWhiteSpace('\n\n')
       PsiElement(class)('class')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('Bar')

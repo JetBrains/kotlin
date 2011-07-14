@@ -7,8 +7,6 @@ import foo. as bar
 
 namespace foof {
     import foo.bar.* as bar
-    import foo.bar.* as
-
     import foo as ;
     import foo. ;
     import foo.bar. ;
