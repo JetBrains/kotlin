@@ -1288,9 +1288,20 @@ public class ExpressionCodegen extends JetVisitor {
                 intrinsic.generate(this, v, Type.VOID_TYPE, expression, Arrays.asList(lhs, expression.getRight()), false);
             }
             else {
-                throw new UnsupportedOperationException("TODO");
+                CallableMethod method = (CallableMethod) callable;
+                FunctionDescriptor fd = (FunctionDescriptor) op;
+                StackValue value = generateIntermediateValue(lhs);
+                final boolean keepReturnValue = !fd.getReturnType().equals(JetStandardClasses.getUnitType());
+                if (keepReturnValue) {
+                    value.dupReceiver(v, 0);
+                }
+                value.put(lhsType, v);
+                genToJVMStack(expression.getRight());
+                method.invoke(v);
+                if (keepReturnValue) {
+                    value.store(v);
+                }
             }
-
         }
     }
 

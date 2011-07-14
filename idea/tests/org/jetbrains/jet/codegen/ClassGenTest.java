@@ -140,6 +140,14 @@ public class ClassGenTest extends CodegenTestCase {
         blackBoxFile("classes/overloadUnaryOperator.jet");
     }
 
+    public void testOverloadPlusAssign() throws Exception {
+        blackBoxFile("classes/overloadPlusAssign.jet");
+    }
+
+    public void testOverloadPlusAssignReturn() throws Exception {
+        blackBoxFile("classes/overloadPlusAssignReturn.jet");
+    }
+
     public void testEnumClass() throws Exception {
         loadText("enum class Direction { NORTH; SOUTH; EAST; WEST }");
         final Class direction = loadAllClasses(generateClassesInFile()).get("Direction");
