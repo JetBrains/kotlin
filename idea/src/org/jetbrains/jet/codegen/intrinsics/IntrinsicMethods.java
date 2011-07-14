@@ -24,6 +24,7 @@ public class IntrinsicMethods {
     private static final IntrinsicMethod INV = new Inv();
     private static final IntrinsicMethod TYPEINFO = new TypeInfo();
     private static final IntrinsicMethod VALUE_TYPEINFO = new ValueTypeInfo();
+    private static final IntrinsicMethod RANGE_TO = new RangeTo();
 
     private static final List<String> PRIMITIVE_NUMBER_TYPES = ImmutableList.of("Boolean", "Byte", "Char", "Short", "Int", "Float", "Long", "Double");
 
@@ -40,9 +41,10 @@ public class IntrinsicMethods {
         }
         declareIntrinsicProperty("Array", "size", new ArraySize());
 
-        for (String primitiveNumberType : PRIMITIVE_NUMBER_TYPES) {
-            declareIntrinsicFunction(primitiveNumberType, "minus", 0, UNARY_MINUS);
-            declareIntrinsicFunction(primitiveNumberType, "inv", 0, INV);
+        for (String type : PRIMITIVE_NUMBER_TYPES) {
+            declareIntrinsicFunction(type, "minus", 0, UNARY_MINUS);
+            declareIntrinsicFunction(type, "inv", 0, INV);
+            declareIntrinsicFunction(type, "rangeTo", 1, RANGE_TO);
         }
 
         final FunctionGroup typeInfoFunctionGroup = stdlib.getTypeInfoFunctionGroup();

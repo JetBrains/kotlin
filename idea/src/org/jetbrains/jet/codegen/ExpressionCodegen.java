@@ -7,7 +7,6 @@ import com.intellij.psi.search.ProjectScope;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import gnu.trove.THashSet;
-import jet.IntRange;
 import jet.Range;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethod;
@@ -41,14 +40,12 @@ public class ExpressionCodegen extends JetVisitor {
     private static final String CLASS_ITERATOR = "java/util/Iterator";
 
     private static final String CLASS_RANGE = "jet/Range";
-    private static final String CLASS_INT_RANGE = "jet/IntRange";
     private static final String CLASS_NO_PATTERN_MATCHED_EXCEPTION = "jet/NoPatternMatchedException";
     private static final String CLASS_TYPE_CAST_EXCEPTION = "jet/TypeCastException";
 
     private static final String ITERABLE_ITERATOR_DESCRIPTOR = "()Ljava/util/Iterator;";
     private static final String ITERATOR_HASNEXT_DESCRIPTOR = "()Z";
     private static final String ITERATOR_NEXT_DESCRIPTOR = "()Ljava/lang/Object;";
-    private static final String INT_RANGE_CONSTRUCTOR_DESCRIPTOR = "(II)V";
 
     private static final Type OBJECT_TYPE = Type.getType(Object.class);
     private static final Type INTEGER_TYPE = Type.getType(Integer.class);
@@ -57,7 +54,6 @@ public class ExpressionCodegen extends JetVisitor {
     private static final Type STRING_TYPE = Type.getObjectType(CLASS_STRING);
 
     private static final Type RANGE_TYPE = Type.getType(Range.class);
-    private static final Type INT_RANGE_TYPE = Type.getType(IntRange.class);
 
     private final Stack<Label> myContinueTargets = new Stack<Label>();
     private final Stack<Label> myBreakTargets = new Stack<Label>();
@@ -1003,7 +999,7 @@ public class ExpressionCodegen extends JetVisitor {
         }
     }
 
-    private Type expressionType(JetExpression expr) {
+    public Type expressionType(JetExpression expr) {
         return typeMapper.mapType(bindingContext.getExpressionType(expr));
     }
 
@@ -1091,9 +1087,6 @@ public class ExpressionCodegen extends JetVisitor {
         }
         else if (opToken == JetTokens.ELVIS) {
             generateElvis(expression);
-        }
-        else if (opToken == JetTokens.RANGE) {
-            generateRange(expression);
         }
         else {
             DeclarationDescriptor op = bindingContext.resolveReferenceExpression(expression.getOperationReference());
@@ -1210,21 +1203,6 @@ public class ExpressionCodegen extends JetVisitor {
         gen(expression.getRight(), exprType);
         v.mark(end);
         myStack.push(StackValue.onStack(exprType));
-    }
-
-    private void generateRange(JetBinaryExpression expression) {
-        final Type leftType = expressionType(expression.getLeft());
-        if (JetTypeMapper.isIntPrimitive(leftType)) {
-            v.anew(INT_RANGE_TYPE);
-            v.dup();
-            gen(expression.getLeft(), Type.INT_TYPE);
-            gen(expression.getRight(), Type.INT_TYPE);
-            v.invokespecial(CLASS_INT_RANGE, "<init>", INT_RANGE_CONSTRUCTOR_DESCRIPTOR);
-            myStack.push(StackValue.onStack(INT_RANGE_TYPE));
-        }
-        else {
-            throw new UnsupportedOperationException("ranges are only supported for int objects");
-        }
     }
 
     private static boolean isNumberPrimitive(DeclarationDescriptor descriptor) {

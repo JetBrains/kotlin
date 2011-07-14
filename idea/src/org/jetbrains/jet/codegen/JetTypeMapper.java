@@ -43,7 +43,7 @@ public class JetTypeMapper {
         return qName.replace(".", "/");
     }
 
-    static boolean isIntPrimitive(Type type) {
+    public static boolean isIntPrimitive(Type type) {
         return type == Type.INT_TYPE || type == Type.SHORT_TYPE || type == Type.BYTE_TYPE || type == Type.CHAR_TYPE;
     }
 
