@@ -120,6 +120,32 @@ public class JetMacro extends BaseMacro {
                     builder.append("</a>");
                 }
             },
+            new TagType("style") {
+                @Override
+                public void appendOpenTag(StringBuilder builder, TagData tagData) {
+                    builder.append("<div style=\"");
+                    builder.append(tagData.message);
+                    builder.append("\">");
+                }
+
+                @Override
+                public void appendCloseTag(StringBuilder builder, TagData tagData) {
+                    builder.append("</div>");
+                }
+            },
+            new TagType("class") {
+                @Override
+                public void appendOpenTag(StringBuilder builder, TagData tagData) {
+                    builder.append("<div class=\"");
+                    builder.append(tagData.message);
+                    builder.append("\">");
+                }
+
+                @Override
+                public void appendCloseTag(StringBuilder builder, TagData tagData) {
+                    builder.append("</div>");
+                }
+            },
     };
     private static final Map<TagType, Pattern> openTags = new HashMap<TagType, Pattern>();
     private static final Map<TagType, Pattern> nextTokenTags = new HashMap<TagType, Pattern>();
