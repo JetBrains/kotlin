@@ -37,7 +37,7 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
             @NotNull List<Annotation> annotations,
             @NotNull String name) {
         super(original.getContainingDeclaration(), annotations, name);
-        this.original = original;
+        this.original = original.getOriginal();
     }
 
     public FunctionDescriptorImpl initialize(
