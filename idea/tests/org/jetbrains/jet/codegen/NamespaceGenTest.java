@@ -463,4 +463,22 @@ public class NamespaceGenTest extends CodegenTestCase {
         final Method main = generateFunction();
         assertEquals("IntelliJ IDEA Rulezzz", main.invoke(null, "IDEA"));
     }
+
+    public void testExplicitCallOfBinaryOpIntrinsic() throws Exception {
+        loadText("fun foo(a: Int) = a.plus(1)");
+        final Method main = generateFunction();
+        assertEquals(2, ((Integer) main.invoke(null, 1)).intValue());
+    }
+
+    public void testExplicitCallOfUnaryMinusIntrinsic() throws Exception {
+        loadText("fun foo(a: Int) = a.minus()");
+        final Method main = generateFunction();
+        assertEquals(-1, ((Integer) main.invoke(null, 1)).intValue());
+    }
+
+    public void testExplicitCallOfBooleanNotIntrinsic() throws Exception {
+        loadText("fun foo(a: Boolean) = a.not()");
+        final Method main = generateFunction();
+        assertEquals(false, ((Boolean) main.invoke(null, true)).booleanValue());
+    }
 }

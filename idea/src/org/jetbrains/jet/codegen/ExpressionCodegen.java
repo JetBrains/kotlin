@@ -666,7 +666,7 @@ public class ExpressionCodegen extends JetVisitor {
             final Type fieldType = JetTypeMapper.psiTypeToAsm(psiField.getType());
             final boolean isStatic = psiField.hasModifierProperty(PsiModifier.STATIC);
             if (!isStatic) {
-                ensureReceiverOnStack(expression, null);
+                ensureReceiverOnStack(expression, null, JetTypeMapper.TYPE_OBJECT);
             }
             myStack.push(StackValue.field(fieldType, owner, psiField.getName(), isStatic));
         }
@@ -710,7 +710,7 @@ public class ExpressionCodegen extends JetVisitor {
                     final boolean forceInterface = receiver != null && !(receiver instanceof JetThisExpression);
                     final StackValue iValue = intermediateValueForProperty(propertyDescriptor, directToField, forceInterface);
                     if (!isStatic) {
-                        ensureReceiverOnStack(expression, container instanceof ClassDescriptor ? (ClassDescriptor) container : null);
+                        ensureReceiverOnStack(expression, container instanceof ClassDescriptor ? (ClassDescriptor) container : null, JetTypeMapper.TYPE_OBJECT);
                     }
                     myStack.push(iValue);
                 }
@@ -877,7 +877,7 @@ public class ExpressionCodegen extends JetVisitor {
             setOwnerFromCall(callableMethod, expression);
         }
         if (callableMethod.needsReceiverOnStack() && !haveReceiver) {
-            ensureReceiverOnStack(expression, callableMethod.getReceiverClass());
+            ensureReceiverOnStack(expression, callableMethod.getReceiverClass(), JetTypeMapper.TYPE_OBJECT);
         }
         pushMethodArguments(expression, callableMethod.getValueParameterTypes());
         if (callableMethod.acceptsTypeArguments()) {
@@ -906,7 +906,16 @@ public class ExpressionCodegen extends JetVisitor {
         return null;
     }
 
-    public void ensureReceiverOnStack(PsiElement expression, @Nullable ClassDescriptor calleeContainingClass) {
+    public void ensureReceiverOnStack(PsiElement expression, @Nullable ClassDescriptor calleeContainingClass,
+                                      final Type expectedReceiverType) {
+        final StackValue receiver = getReceiverAsStackValue(expression, calleeContainingClass, expectedReceiverType);
+        if (receiver != null) {
+            receiver.put(receiver.type, v);
+        }
+    }
+
+    @Nullable
+    public StackValue getReceiverAsStackValue(PsiElement expression, @Nullable ClassDescriptor calleeContainingClass, Type expectedReceiverType) {
         JetExpression receiver = getReceiverForSelector(expression);
         if (receiver != null) {
             if (!resolvesToClassOrPackage(receiver)) {
@@ -914,13 +923,14 @@ public class ExpressionCodegen extends JetVisitor {
                 if (myStack.isEmpty()) {
                     throw new IllegalStateException("expected receiver on stack but it's not there: " + receiver.getText());
                 }
-                myStack.pop().put(JetTypeMapper.TYPE_OBJECT, v);
+                return myStack.pop();
             }
         }
         else if (!(expression.getParent() instanceof JetSafeQualifiedExpression) &&
                  !(expression.getParent() instanceof JetPredicateExpression)) {
-            generateThisOrOuter(calleeContainingClass);
+            return generateThisOrOuter(calleeContainingClass);
         }
+        return null;
     }
 
     private static boolean isSubclass(ClassDescriptor subClass, ClassDescriptor superClass) {
@@ -948,8 +958,9 @@ public class ExpressionCodegen extends JetVisitor {
         }
     }
 
-    public void generateThisOrOuter(ClassDescriptor calleeContainingClass) {
+    public StackValue generateThisOrOuter(ClassDescriptor calleeContainingClass) {
         boolean thisDone = false;
+        StackValue result = null;
 
         ClassContext cur = context;
         while (true) {
@@ -973,16 +984,16 @@ public class ExpressionCodegen extends JetVisitor {
                 }
 
                 thisDone = true;
-                outer.put(outer.type, v);
-
+                result = outer;
             }
 
             cur = parentContext;
         }
 
         if (!thisDone) {
-            thisToStack();
+            return thisExpression();
         }
+        return result;
     }
 
     private static boolean isReceiver(PsiElement expression) {
@@ -1513,8 +1524,7 @@ public class ExpressionCodegen extends JetVisitor {
     public void visitThisExpression(JetThisExpression expression) {
         final DeclarationDescriptor descriptor = bindingContext.resolveReferenceExpression(expression.getThisReference());
         if (descriptor instanceof ClassDescriptor) {
-            generateThisOrOuter((ClassDescriptor) descriptor);
-            myStack.push(StackValue.onStack(JetTypeMapper.TYPE_OBJECT));
+            myStack.push(generateThisOrOuter((ClassDescriptor) descriptor));
         }
         else {
             generateThis();

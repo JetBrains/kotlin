@@ -15,7 +15,13 @@ import java.util.List;
 public class Not implements IntrinsicMethod {
     @Override
     public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, boolean haveReceiver) {
-        final StackValue stackValue = codegen.generateIntermediateValue(arguments.get(0));
+        final StackValue stackValue;
+        if (arguments.size() == 1) {
+            stackValue = codegen.generateIntermediateValue(arguments.get(0));
+        }
+        else {
+            stackValue = codegen.getReceiverAsStackValue(element, null, expectedType);
+        }
         return StackValue.not(stackValue);
     }
 }
