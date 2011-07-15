@@ -58,7 +58,7 @@ public class BindingTraceAdapter implements BindingTrace {
     }
 
     @Override
-    public void recordVariableReassignment(@NotNull JetBinaryExpression expression) {
+    public void recordVariableReassignment(@NotNull JetExpression expression) {
         originalTrace.recordVariableReassignment(expression);
     }
 

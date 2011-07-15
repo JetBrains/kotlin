@@ -2167,11 +2167,14 @@ public class JetTypeInferrer {
                         JetType returnType = functionDescriptor.getReturnType();
                         if (operationType == JetTokens.PLUSPLUS || operationType == JetTokens.MINUSMINUS) {
                             if (semanticServices.getTypeChecker().isSubtypeOf(returnType, JetStandardClasses.getUnitType())) {
-                                 result = JetStandardClasses.getUnitType();
+                                result = JetStandardClasses.getUnitType();
                             }
                             else {
                                 if (!semanticServices.getTypeChecker().isSubtypeOf(returnType, receiverType)) {
                                     context.trace.getErrorHandler().genericError(operationSign.getNode(), name + " must return " + receiverType + " but returns " + returnType);
+                                }
+                                else {
+                                    context.trace.recordVariableReassignment(expression);
                                 }
                                 // TODO : Maybe returnType?
                                 result = receiverType;

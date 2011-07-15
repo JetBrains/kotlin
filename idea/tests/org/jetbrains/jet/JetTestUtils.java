@@ -54,7 +54,7 @@ public class JetTestUtils {
         }
 
         @Override
-        public void recordVariableReassignment(@NotNull JetBinaryExpression expression) {
+        public void recordVariableReassignment(@NotNull JetExpression expression) {
 
         }
 
@@ -191,7 +191,7 @@ public class JetTestUtils {
                 }
 
                 @Override
-                public boolean isVariableReassignment(JetBinaryExpression expression) {
+                public boolean isVariableReassignment(JetExpression expression) {
                     throw new UnsupportedOperationException(); // TODO
                 }
 

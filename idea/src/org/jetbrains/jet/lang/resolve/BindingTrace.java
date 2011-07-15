@@ -29,7 +29,7 @@ public interface BindingTrace {
 
     void recordStatement(@NotNull JetElement statement);
 
-    void recordVariableReassignment(@NotNull JetBinaryExpression expression);
+    void recordVariableReassignment(@NotNull JetExpression expression);
 
     void recordResolutionScope(@NotNull JetExpression expression, @NotNull JetScope scope);
 

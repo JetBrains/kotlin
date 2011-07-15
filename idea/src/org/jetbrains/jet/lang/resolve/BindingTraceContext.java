@@ -31,7 +31,7 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
     private final Map<JetExpression, JetType> autoCasts = Maps.newHashMap();
     private final Map<JetExpression, JetScope> resolutionScopes = Maps.newHashMap();
 
-    private final Set<JetBinaryExpression> variableReassignments = Sets.newHashSet();
+    private final Set<JetExpression> variableReassignments = Sets.newHashSet();
 
     private final Set<JetFunctionLiteralExpression> blocks = new HashSet<JetFunctionLiteralExpression>();
     private final Set<JetElement> statements = new HashSet<JetElement>();
@@ -163,7 +163,7 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
     }
 
     @Override
-    public void recordVariableReassignment(@NotNull JetBinaryExpression expression) {
+    public void recordVariableReassignment(@NotNull JetExpression expression) {
         variableReassignments.add(expression);
     }
 
@@ -308,7 +308,7 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
     }
 
     @Override
-    public boolean isVariableReassignment(JetBinaryExpression expression) {
+    public boolean isVariableReassignment(JetExpression expression) {
         return variableReassignments.contains(expression);
     }
 
