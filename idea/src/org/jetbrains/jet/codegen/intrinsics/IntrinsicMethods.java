@@ -25,6 +25,8 @@ public class IntrinsicMethods {
     private static final IntrinsicMethod TYPEINFO = new TypeInfo();
     private static final IntrinsicMethod VALUE_TYPEINFO = new ValueTypeInfo();
     private static final IntrinsicMethod RANGE_TO = new RangeTo();
+    private static final IntrinsicMethod INC = new Increment(1);
+    private static final IntrinsicMethod DEC = new Increment(-1);
 
     private static final List<String> PRIMITIVE_NUMBER_TYPES = ImmutableList.of("Boolean", "Byte", "Char", "Short", "Int", "Float", "Long", "Double");
 
@@ -45,6 +47,8 @@ public class IntrinsicMethods {
             declareIntrinsicFunction(type, "minus", 0, UNARY_MINUS);
             declareIntrinsicFunction(type, "inv", 0, INV);
             declareIntrinsicFunction(type, "rangeTo", 1, RANGE_TO);
+            declareIntrinsicFunction(type, "inc", 0, INC);
+            declareIntrinsicFunction(type, "dec", 0, DEC);
         }
 
         final FunctionGroup typeInfoFunctionGroup = stdlib.getTypeInfoFunctionGroup();
