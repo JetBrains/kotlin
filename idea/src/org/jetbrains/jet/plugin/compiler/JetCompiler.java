@@ -6,6 +6,7 @@ import com.intellij.openapi.compiler.CompileScope;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.compiler.TranslatingCompiler;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
@@ -69,11 +70,16 @@ public class JetCompiler implements TranslatingCompiler {
         private final Module module;
         private final OutputSink outputSink;
 
-        public ModuleCompileState(CompileContext compileContext, Module module, OutputSink outputSink) {
+        public ModuleCompileState(final CompileContext compileContext, Module module, OutputSink outputSink) {
             this.compileContext = compileContext;
             this.module = module;
             this.outputSink = outputSink;
-            state = new GenerationState(compileContext.getProject(), false);
+            state = ApplicationManager.getApplication().runReadAction(new Computable<GenerationState>() {
+                @Override
+                public GenerationState compute() {
+                    return new GenerationState(compileContext.getProject(), false);
+                }
+            });
         }
 
         public void compile(final VirtualFile virtualFile) {
