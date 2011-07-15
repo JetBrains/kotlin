@@ -165,7 +165,7 @@ public class JetTypeMapper {
 
     public boolean isInterface(ClassDescriptor jetClass, OwnerKind kind) {
         PsiElement declaration = bindingContext.getDeclarationPsiElement(jetClass);
-        if (declaration instanceof JetObjectDeclaration && ((JetObjectDeclaration) declaration).isObjectLiteral()) {
+        if (declaration instanceof JetObjectDeclaration) {
             return false;
         }
         return kind == OwnerKind.INTERFACE;
