@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/examples.iml" filepath="$PROJECT_DIR$/examples.iml" />
       <module fileurl="file://$PROJECT_DIR$/../grammar/grammar.iml" filepath="$PROJECT_DIR$/../grammar/grammar.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../stdlib/stdlib.iml" filepath="$PROJECT_DIR$/../stdlib/stdlib.iml" />
     </modules>
   </component>
 </project>
