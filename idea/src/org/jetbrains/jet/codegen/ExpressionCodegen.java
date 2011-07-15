@@ -1268,14 +1268,8 @@ public class ExpressionCodegen extends JetVisitor {
             }
         }
         else {
-            if (callable instanceof IntrinsicMethod) {
-                final IntrinsicMethod intrinsic = (IntrinsicMethod) callable;
-                intrinsic.generate(this, v, Type.VOID_TYPE, expression, Arrays.asList(lhs, expression.getRight()), false);
-            }
-            else {
-                final boolean keepReturnValue = !((FunctionDescriptor) op).getReturnType().equals(JetStandardClasses.getUnitType());
-                callAugAssignMethod(expression, (CallableMethod) callable, lhsType, keepReturnValue);
-            }
+            final boolean keepReturnValue = !((FunctionDescriptor) op).getReturnType().equals(JetStandardClasses.getUnitType());
+            callAugAssignMethod(expression, (CallableMethod) callable, lhsType, keepReturnValue);
         }
     }
 
