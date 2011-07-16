@@ -541,7 +541,6 @@ public class JetTypeInferrer {
                 // TODO : check that all are named
                 trace.getErrorHandler().genericError(call.asElement().getNode(), "Named arguments are not supported"); // TODO
 
-    //                    result = overloadDomain.getFunctionDescriptorForNamedArguments(typeArguments, valueArguments, functionLiteralArgument);
             } else {
                 List<JetExpression> positionedValueArguments = new ArrayList<JetExpression>();
                 for (JetArgument argument : valueArguments) {
