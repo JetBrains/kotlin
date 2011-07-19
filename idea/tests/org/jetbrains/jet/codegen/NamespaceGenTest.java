@@ -481,4 +481,12 @@ public class NamespaceGenTest extends CodegenTestCase {
         final Method main = generateFunction();
         assertEquals(false, ((Boolean) main.invoke(null, true)).booleanValue());
     }
+
+    public void testAppendArrayToString() throws Exception {
+        loadText("fun foo(a: String, b: Array<String>) = a + b");
+        final Method main = generateFunction();
+        final String[] args = new String[] { "foo", "bar" };
+        //noinspection ImplicitArrayToString
+        assertEquals("s" + args.toString(), main.invoke(null, "s", args));
+    }
 }

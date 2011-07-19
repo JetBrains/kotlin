@@ -1316,7 +1316,7 @@ public class ExpressionCodegen extends JetVisitor {
         }
         Type exprType = expressionType(expr);
         gen(expr, exprType);
-        invokeAppendMethod(exprType);
+        invokeAppendMethod(exprType.getSort() == Type.ARRAY ? JetTypeMapper.TYPE_OBJECT : exprType);
     }
 
     public void invokeAppendMethod(Type exprType) {
