@@ -14,7 +14,7 @@ public class JetRunConfigurationType extends ConfigurationTypeBase {
     }
 
     public JetRunConfigurationType() {
-        super("JetRunConfigurationType", "Jet", "Jet", JetFileType.INSTANCE.getIcon());
+        super("JetRunConfigurationType", "Kotlin", "Kotlin", JetFileType.INSTANCE.getIcon());
         addFactory(new JetRunConfigurationFactory(this));
     }
 

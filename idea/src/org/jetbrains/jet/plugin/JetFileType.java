@@ -24,12 +24,12 @@ public class JetFileType extends LanguageFileType {
 
     @NotNull
     public String getDescription() {
-        return "Jet Language";
+        return "Kotlin";
     }
 
     @NotNull
     public String getDefaultExtension() {
-        return "jet";
+        return "kt";
     }
 
     public Icon getIcon() {
