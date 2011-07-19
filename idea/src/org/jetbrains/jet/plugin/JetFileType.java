@@ -4,13 +4,14 @@
 package org.jetbrains.jet.plugin;
 
 import com.intellij.openapi.fileTypes.LanguageFileType;
-import com.intellij.util.Icons;
+import com.intellij.openapi.util.IconLoader;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
 public class JetFileType extends LanguageFileType {
     public static final JetFileType INSTANCE = new JetFileType();
+    private final Icon myIcon = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/kotlin16x16.png");
 
     private JetFileType() {
         super(JetLanguage.INSTANCE);
@@ -32,7 +33,7 @@ public class JetFileType extends LanguageFileType {
     }
 
     public Icon getIcon() {
-        return Icons.PROJECT_ICON;
+        return myIcon;
     }
 
     @Override
