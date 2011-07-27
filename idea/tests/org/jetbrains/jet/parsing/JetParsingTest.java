@@ -14,8 +14,10 @@ import junit.framework.TestSuite;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestCaseBase;
+import org.jetbrains.jet.lang.parsing.JetParserDefinition;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetVisitor;
+import org.jetbrains.jet.plugin.JetLanguage;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,13 +32,13 @@ public class JetParsingTest extends ParsingTestCase {
     private final String name;
 
     public JetParsingTest(String dataPath, String name) {
-        super(dataPath, "jet");
+        super(dataPath, "jet", new JetParserDefinition());
         this.name = name;
     }
 
     @Override
     protected String getTestDataPath() {
-        return getTestDataDir();
+        return getTestDataDir() + "/psi";
     }
 
     public static String getTestDataDir() {
