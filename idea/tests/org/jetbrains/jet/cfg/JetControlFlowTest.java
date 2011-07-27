@@ -4,6 +4,7 @@
 package org.jetbrains.jet.cfg;
 
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.jetbrains.annotations.NotNull;
@@ -118,7 +119,7 @@ public class JetControlFlowTest extends JetTestCaseBase {
             FileUtil.writeToFile(expectedInstructionsFile, instructionDump.toString());
             fail("No expected instructions for " + name + " generated result is written into " + expectedInstructionsFileName);
         }
-        String expectedInstructions = FileUtil.loadFile(expectedInstructionsFile);
+        String expectedInstructions = StringUtil.convertLineSeparators(FileUtil.loadFile(expectedInstructionsFile));
 
         assertEquals(expectedInstructions, instructionDump.toString());
 
