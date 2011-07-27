@@ -17,7 +17,6 @@ import org.jetbrains.jet.JetTestCaseBase;
 import org.jetbrains.jet.lang.parsing.JetParserDefinition;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetVisitor;
-import org.jetbrains.jet.plugin.JetLanguage;
 
 import java.io.File;
 import java.io.IOException;
@@ -80,7 +79,7 @@ public class JetParsingTest extends ParsingTestCase {
                 for (Annotation annotation : method.getDeclaredAnnotations()) {
                     if (annotation instanceof JetElement.IfNotParsed) {
                         assertNotNull(
-                                "Imcomplete operation in parsed OK test, method " + method.getName() +
+                                "Incomplete operation in parsed OK test, method " + method.getName() +
                                 " in " + declaringClass.getSimpleName() + " returns null. Element text: \n" + elem.getText(),
                                 PsiTreeUtil.findChildOfType(elem, PsiErrorElement.class));
                     }

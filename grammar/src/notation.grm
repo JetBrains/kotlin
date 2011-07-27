@@ -15,7 +15,7 @@ h2. EBNF expressions
 
 Operator {color:blue}*|*{color} denotes _alternative_
 Operator {color:blue}*\**{color} denotes _iteration_ (zero or more)
-Operator {color:blue}*+*{color} denotes _iteration_ (one or one)
+Operator {color:blue}*+*{color} denotes _iteration_ (one or more)
 Operator {color:blue}*?*{color} denotes _option_ (zero or one)
 alpha{color:blue}*{*{color}beta{color:blue}*}*{color} denotes a nonempty _beta_-separated list of _alpha_'s
 
