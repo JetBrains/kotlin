@@ -154,11 +154,11 @@ public class JetMacro extends BaseMacro {
     static {
         for (TagType type : knownExtraTagTypes) {
             String tagName = type.tagName;
-            openTags.put(type, Pattern.compile("<" + tagName + "\\s*(desc=\\\"([^\n\"]*?)\\\")?>", Pattern.MULTILINE));
+            openTags.put(type, Pattern.compile("<" + tagName + "\\s*((desc)?=\\\"([^\n\"]*?)\\\")?>", Pattern.MULTILINE));
             closeTags.put(type, Pattern.compile("</" + tagName + ">"));
 
-            nextTokenTags.put(type, Pattern.compile("<" + tagName + "\\s*(desc=\\\"([^\n\"]*?)\\\")?:>", Pattern.MULTILINE));
-            closedTags.put(type, Pattern.compile("<" + tagName + "\\s*(desc=\\\"([^\n\"]*?)\\\")?/>", Pattern.MULTILINE));
+            nextTokenTags.put(type, Pattern.compile("<" + tagName + "\\s*((desc)?=\\\"([^\n\"]*?)\\\")?:>", Pattern.MULTILINE));
+            closedTags.put(type, Pattern.compile("<" + tagName + "\\s*((desc)?=\\\"([^\n\"]*?)\\\")?/>", Pattern.MULTILINE));
         }
     }
 
@@ -323,7 +323,7 @@ public class JetMacro extends BaseMacro {
                 Pattern open = openTags.get(type);
                 Matcher openMatcher = matchFrom(code, i, open);
                 if (openMatcher != null) {
-                    tagStack.push(new TagData(type, openMatcher.group(2), position, false));
+                    tagStack.push(new TagData(type, openMatcher.group(3), position, false));
                     i += openMatcher.end() - 1;
                     continue charLoop;
                 }
@@ -350,7 +350,7 @@ public class JetMacro extends BaseMacro {
                 Pattern closed = closedTags.get(type);
                 Matcher closedMatcher = matchFrom(code, i, closed);
                 if (closedMatcher != null) {
-                    TagData tag = new TagData(type, closedMatcher.group(2), position, false);
+                    TagData tag = new TagData(type, closedMatcher.group(3), position, false);
                     tag.end = position;
                     tags.add(tag);
                     i += closedMatcher.end() - 1;
@@ -360,7 +360,7 @@ public class JetMacro extends BaseMacro {
                 Pattern next = nextTokenTags.get(type);
                 Matcher nextMatcher = matchFrom(code, i, next);
                 if (nextMatcher != null) {
-                    TagData tag = new TagData(type, nextMatcher.group(2), position, true);
+                    TagData tag = new TagData(type, nextMatcher.group(3), position, true);
                     tags.add(tag);
                     tag.end = code.length();
                     i += nextMatcher.end() - 1;
