@@ -15,7 +15,7 @@
     </organization>
 
     <name>confluence</name>
-    <description>Confluence support for Jet language.</description>
+    <description>Confluence support for Kotlin language.</description>
     <packaging>atlassian-plugin</packaging>
 
     <dependencies>

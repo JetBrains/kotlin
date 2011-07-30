@@ -1,4 +1,4 @@
-<atlassian-plugin key="${project.groupId}.${project.artifactId}" name="jet" plugins-version="2">
+<atlassian-plugin key="${project.groupId}.${project.artifactId}" name="Kotlin" plugins-version="2">
     <plugin-info>
         <description>${project.description}</description>
         <version>${project.version}</version>
@@ -6,15 +6,18 @@
     </plugin-info>
 
     <macro name="jet" class="org.jetbrains.jet.lexer.JetMacro" key="jet">
-      <description>Highlighting for Jet language</description>
+      <description>Highlighting for Kotlin language</description>
+    </macro>
+    <macro name="kotlin" class="org.jetbrains.jet.lexer.JetMacro" key="kotlin">
+      <description>Highlighting for Kotlin language</description>
     </macro>
 <!--
     <macro name="jet-html" class="org.jetbrains.jet.lexer.JetHTMLMacro" key="jet-html">
-      <description>Highlighting for Jet language</description>
+      <description>Plain HTML</description>
     </macro>
 -->
     <web-resource key="resources">
-            <resource type="download" name="jet.css" location="jet.css"/>
+            <resource type="download" name="kotlin.css" location="kotlin.css"/>
             <resource type="download" name="underline.gif" location="underline.gif"/>
     </web-resource>
 </atlassian-plugin>
