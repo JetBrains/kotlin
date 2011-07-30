@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: net.java.dev.stax-utils:stax-utils:20040917">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/net/java/dev/stax-utils/stax-utils/20040917/stax-utils-20040917.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/net/java/dev/stax-utils/stax-utils/20040917/stax-utils-20040917-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/net/java/dev/stax-utils/stax-utils/20040917/stax-utils-20040917-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

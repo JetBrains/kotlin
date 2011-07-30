@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.atlassian.xwork:atlassian-xwork-10:1.12">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/atlassian/xwork/atlassian-xwork-10/1.12/atlassian-xwork-10-1.12.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/atlassian/xwork/atlassian-xwork-10/1.12/atlassian-xwork-10-1.12-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/atlassian/xwork/atlassian-xwork-10/1.12/atlassian-xwork-10-1.12-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

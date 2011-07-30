@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.atlassian.confluence:confluence-upgrade:3.5.2">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/atlassian/confluence/confluence-upgrade/3.5.2/confluence-upgrade-3.5.2.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/atlassian/confluence/confluence-upgrade/3.5.2/confluence-upgrade-3.5.2-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/atlassian/confluence/confluence-upgrade/3.5.2/confluence-upgrade-3.5.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

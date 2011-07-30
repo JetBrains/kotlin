@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: mockobjects:mockobjects-alt-jdk1.3-j2ee1.3:0.09">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/mockobjects/mockobjects-alt-jdk1.3-j2ee1.3/0.09/mockobjects-alt-jdk1.3-j2ee1.3-0.09.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/mockobjects/mockobjects-alt-jdk1.3-j2ee1.3/0.09/mockobjects-alt-jdk1.3-j2ee1.3-0.09-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/mockobjects/mockobjects-alt-jdk1.3-j2ee1.3/0.09/mockobjects-alt-jdk1.3-j2ee1.3-0.09-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

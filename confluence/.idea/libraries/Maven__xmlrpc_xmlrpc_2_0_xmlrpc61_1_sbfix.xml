@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: xmlrpc:xmlrpc:2.0+xmlrpc61.1+sbfix">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/xmlrpc/xmlrpc/2.0+xmlrpc61.1+sbfix/xmlrpc-2.0+xmlrpc61.1+sbfix.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/xmlrpc/xmlrpc/2.0+xmlrpc61.1+sbfix/xmlrpc-2.0+xmlrpc61.1+sbfix-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/xmlrpc/xmlrpc/2.0+xmlrpc61.1+sbfix/xmlrpc-2.0+xmlrpc61.1+sbfix-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

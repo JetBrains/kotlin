@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.atlassian.sal:sal-spi:2.4.1">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/atlassian/sal/sal-spi/2.4.1/sal-spi-2.4.1.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/atlassian/sal/sal-spi/2.4.1/sal-spi-2.4.1-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/atlassian/sal/sal-spi/2.4.1/sal-spi-2.4.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

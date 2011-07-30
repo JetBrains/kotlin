@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.atlassian.mail:atlassian-mail:1.16">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/atlassian/mail/atlassian-mail/1.16/atlassian-mail-1.16.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/atlassian/mail/atlassian-mail/1.16/atlassian-mail-1.16-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/atlassian/mail/atlassian-mail/1.16/atlassian-mail-1.16-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

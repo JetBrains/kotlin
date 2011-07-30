@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: axis:axis-jaxrpc:1.2.1-noqname">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/axis/axis-jaxrpc/1.2.1-noqname/axis-jaxrpc-1.2.1-noqname.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/axis/axis-jaxrpc/1.2.1-noqname/axis-jaxrpc-1.2.1-noqname-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/axis/axis-jaxrpc/1.2.1-noqname/axis-jaxrpc-1.2.1-noqname-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

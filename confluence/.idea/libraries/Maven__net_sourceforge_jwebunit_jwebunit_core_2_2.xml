@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: net.sourceforge.jwebunit:jwebunit-core:2.2">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/net/sourceforge/jwebunit/jwebunit-core/2.2/jwebunit-core-2.2.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/net/sourceforge/jwebunit/jwebunit-core/2.2/jwebunit-core-2.2-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/net/sourceforge/jwebunit/jwebunit-core/2.2/jwebunit-core-2.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

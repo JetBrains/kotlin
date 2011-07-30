@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.atlassian.profiling:atlassian-profiling:1.8.1">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/atlassian/profiling/atlassian-profiling/1.8.1/atlassian-profiling-1.8.1.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/atlassian/profiling/atlassian-profiling/1.8.1/atlassian-profiling-1.8.1-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/atlassian/profiling/atlassian-profiling/1.8.1/atlassian-profiling-1.8.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

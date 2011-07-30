@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.codehaus.xfire:xfire-aegis:1.2.6">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/xfire/xfire-aegis/1.2.6/xfire-aegis-1.2.6.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/xfire/xfire-aegis/1.2.6/xfire-aegis-1.2.6-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/xfire/xfire-aegis/1.2.6/xfire-aegis-1.2.6-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

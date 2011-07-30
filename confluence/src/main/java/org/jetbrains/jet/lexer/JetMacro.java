@@ -164,9 +164,9 @@ public class JetMacro extends BaseMacro {
 
     private static final Map<IElementType, String> styleMap = new HashMap<IElementType, String>();
     static {
-        styleMap.put(JetTokens.BLOCK_COMMENT, "comment");
-        styleMap.put(JetTokens.DOC_COMMENT, "comment");
-        styleMap.put(JetTokens.EOL_COMMENT, "comment");
+        styleMap.put(JetTokens.BLOCK_COMMENT, "jet-comment");
+        styleMap.put(JetTokens.DOC_COMMENT, "jet-comment");
+        styleMap.put(JetTokens.EOL_COMMENT, "jet-comment");
         styleMap.put(JetTokens.WHITE_SPACE, "whitespace");
         styleMap.put(JetTokens.INTEGER_LITERAL, "number");
         styleMap.put(JetTokens.FLOAT_LITERAL, "number");
@@ -267,7 +267,8 @@ public class JetMacro extends BaseMacro {
 
                 IElementType token = jetLexer.advance();
                 if (token == null) break;
-                CharSequence yytext = jetLexer.yytext();
+//                CharSequence yytext = jetLexer.yytext();
+                String yytext = jetLexer.yytext().toString().replaceAll("\n", "\r\n");
                 String style = null;
                 if (token instanceof JetKeywordToken) {
                     style = "keyword";

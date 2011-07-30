@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.atlassian.bonnie:atlassian-bonnie:4.0-beta3">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/atlassian/bonnie/atlassian-bonnie/4.0-beta3/atlassian-bonnie-4.0-beta3.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/atlassian/bonnie/atlassian-bonnie/4.0-beta3/atlassian-bonnie-4.0-beta3-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/atlassian/bonnie/atlassian-bonnie/4.0-beta3/atlassian-bonnie-4.0-beta3-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

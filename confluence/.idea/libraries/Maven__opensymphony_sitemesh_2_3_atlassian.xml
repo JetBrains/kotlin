@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: opensymphony:sitemesh:2.3-atlassian">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/opensymphony/sitemesh/2.3-atlassian/sitemesh-2.3-atlassian.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/opensymphony/sitemesh/2.3-atlassian/sitemesh-2.3-atlassian-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/opensymphony/sitemesh/2.3-atlassian/sitemesh-2.3-atlassian-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.hsqldb:hsqldb:2.0.1-rc3-20110120">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/hsqldb/hsqldb/2.0.1-rc3-20110120/hsqldb-2.0.1-rc3-20110120.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/hsqldb/hsqldb/2.0.1-rc3-20110120/hsqldb-2.0.1-rc3-20110120-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/hsqldb/hsqldb/2.0.1-rc3-20110120/hsqldb-2.0.1-rc3-20110120-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

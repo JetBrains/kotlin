@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.atlassian.core:atlassian-core:4.5.8">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/atlassian/core/atlassian-core/4.5.8/atlassian-core-4.5.8.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/atlassian/core/atlassian-core/4.5.8/atlassian-core-4.5.8-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/atlassian/core/atlassian-core/4.5.8/atlassian-core-4.5.8-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
