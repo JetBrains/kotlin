@@ -2,6 +2,8 @@ package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotatedImpl;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.util.List;
@@ -14,7 +16,7 @@ public abstract class DeclarationDescriptorImpl extends AnnotatedImpl implements
     private final String name;
     private final DeclarationDescriptor containingDeclaration;
 
-    public DeclarationDescriptorImpl(@Nullable DeclarationDescriptor containingDeclaration, List<Annotation> annotations, String name) {
+    public DeclarationDescriptorImpl(@Nullable DeclarationDescriptor containingDeclaration, List<AnnotationDescriptor> annotations, String name) {
         super(annotations);
         this.name = name;
         this.containingDeclaration = containingDeclaration;

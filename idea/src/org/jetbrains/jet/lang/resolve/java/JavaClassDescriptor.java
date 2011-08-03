@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.JetScope;
 import org.jetbrains.jet.lang.resolve.SubstitutingScope;
 import org.jetbrains.jet.lang.types.*;
@@ -36,7 +37,7 @@ public class JavaClassDescriptor extends MutableDeclarationDescriptor implements
         classObjectType = new JetTypeImpl(
                 new TypeConstructorImpl(
                         JavaDescriptorResolver.JAVA_CLASS_OBJECT,
-                        Collections.<Annotation>emptyList(),
+                        Collections.<AnnotationDescriptor>emptyList(),
                         true,
                         "Class object emulation for " + getName(),
                         Collections.<TypeParameterDescriptor>emptyList(),

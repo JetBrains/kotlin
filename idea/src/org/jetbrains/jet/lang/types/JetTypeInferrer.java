@@ -14,10 +14,15 @@ import org.jetbrains.jet.lang.ErrorHandlerWithRegions;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstantResolver;
+import org.jetbrains.jet.lang.resolve.constants.ErrorValue;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
+import org.jetbrains.jet.lang.resolve.constants.StringValue;
 
 import java.util.*;
 
@@ -51,7 +56,7 @@ public class JetTypeInferrer {
         }
 
         @Override
-        public List<Annotation> getAnnotations() {
+        public List<AnnotationDescriptor> getAnnotations() {
             throw new UnsupportedOperationException(); // TODO
         }
     };
@@ -80,7 +85,7 @@ public class JetTypeInferrer {
         }
 
         @Override
-        public List<Annotation> getAnnotations() {
+        public List<AnnotationDescriptor> getAnnotations() {
             throw new UnsupportedOperationException(); // TODO
         }
     };
@@ -140,11 +145,15 @@ public class JetTypeInferrer {
         private final BindingTrace trace;
         private final ClassDescriptorResolver classDescriptorResolver;
         private final TypeResolver typeResolver;
+        private final CompileTimeConstantResolver compileTimeConstantResolver;
+        private final AnnotationResolver annotationResolver;
 
         private Services(BindingTrace trace) {
             this.trace = trace;
+            this.annotationResolver = new AnnotationResolver(semanticServices, trace);
             this.typeResolver = new TypeResolver(semanticServices, trace, true);
             this.classDescriptorResolver = semanticServices.getClassDescriptorResolver(trace);
+            this.compileTimeConstantResolver = new CompileTimeConstantResolver(semanticServices, trace);
         }
 
         @NotNull
@@ -522,10 +531,10 @@ public class JetTypeInferrer {
         }
 
         private JetType resolveCallWithTypeArguments(JetScope scope, OverloadDomain overloadDomain, JetCall call, List<JetType> typeArguments) {
-            final List<JetArgument> valueArguments = call.getValueArguments();
+            final List<JetValueArgument> valueArguments = call.getValueArguments();
 
             boolean someNamed = false;
-            for (JetArgument argument : valueArguments) {
+            for (JetValueArgument argument : valueArguments) {
                 if (argument.isNamed()) {
                     someNamed = true;
                     break;
@@ -543,7 +552,7 @@ public class JetTypeInferrer {
 
             } else {
                 List<JetExpression> positionedValueArguments = new ArrayList<JetExpression>();
-                for (JetArgument argument : valueArguments) {
+                for (JetValueArgument argument : valueArguments) {
                     JetExpression argumentExpression = argument.getArgumentExpression();
                     if (argumentExpression != null) {
                         positionedValueArguments.add(argumentExpression);
@@ -680,7 +689,7 @@ public class JetTypeInferrer {
                 assert declarationDescriptor != null;
                 trace.recordReferenceResolution(referenceExpression, declarationDescriptor);
                 // TODO : more helpful message
-                JetArgumentList argumentList = call.getValueArgumentList();
+                JetValueArgumentList argumentList = call.getValueArgumentList();
                 final String errorMessage = "Cannot find a constructor overload for class " + classDescriptor.getName() + " with these arguments";
                 if (argumentList != null) {
                     trace.getErrorHandler().genericError(argumentList.getNode(), errorMessage);
@@ -962,7 +971,7 @@ public class JetTypeInferrer {
             }
 
             FunctionDescriptorImpl functionDescriptor = new FunctionDescriptorImpl(
-                    context.scope.getContainingDeclaration(), Collections.<Annotation>emptyList(), "<anonymous>");
+                    context.scope.getContainingDeclaration(), Collections.<AnnotationDescriptor>emptyList(), "<anonymous>");
 
             List<JetType> parameterTypes = new ArrayList<JetType>();
             List<ValueParameterDescriptor> valueParameterDescriptors = Lists.newArrayList();
@@ -1003,7 +1012,7 @@ public class JetTypeInferrer {
             functionDescriptor.setReturnType(safeReturnType);
 
 
-            result = JetStandardClasses.getFunctionType(Collections.<Annotation>emptyList(), effectiveReceiverType, parameterTypes, safeReturnType);
+            result = JetStandardClasses.getFunctionType(Collections.<AnnotationDescriptor>emptyList(), effectiveReceiverType, parameterTypes, safeReturnType);
         }
 
         @Override
@@ -1016,49 +1025,41 @@ public class JetTypeInferrer {
 
         @Override
         public void visitConstantExpression(JetConstantExpression expression) {
-            IElementType elementType = expression.getNode().getElementType();
+            ASTNode node = expression.getNode();
+            IElementType elementType = node.getElementType();
+            String text = node.getText();
             JetStandardLibrary standardLibrary = semanticServices.getStandardLibrary();
+            CompileTimeConstantResolver compileTimeConstantResolver = services.compileTimeConstantResolver;
+
+            CompileTimeConstant<?> value;
             if (elementType == JetNodeTypes.INTEGER_CONSTANT) {
-                Object value = expression.getValue();
-                if (value == null) {
-                    context.trace.getErrorHandler().genericError(expression.getNode(), "Number is of range for Long");
-                }
-                else if (value instanceof Long) {
-                    result = standardLibrary.getLongType();
-                }
-                else {
-                    result = standardLibrary.getIntType();
-                }
-                // TODO : other ranges
-            }
-            else if (elementType == JetNodeTypes.LONG_CONSTANT) {
-                result = standardLibrary.getLongType();
+                value = compileTimeConstantResolver.getIntegerValue(text, context.expectedType);
             }
             else if (elementType == JetNodeTypes.FLOAT_CONSTANT) {
-                String text = expression.getText();
-                assert text.length() > 0;
-                char lastChar = text.charAt(text.length() - 1);
-                if (lastChar == 'f' || lastChar == 'F') {
-                    result = standardLibrary.getFloatType();
-                }
-                else {
-                    result = standardLibrary.getDoubleType();
-                }
+                value = compileTimeConstantResolver.getFloatValue(text, context.expectedType);
             }
             else if (elementType == JetNodeTypes.BOOLEAN_CONSTANT) {
-                result = standardLibrary.getBooleanType();
+                value = compileTimeConstantResolver.getBooleanValue(text, context.expectedType);
             }
             else if (elementType == JetNodeTypes.CHARACTER_CONSTANT) {
-                result = standardLibrary.getCharType();
+                value = compileTimeConstantResolver.getCharValue(text, context.expectedType);
             }
-            else if (elementType == JetNodeTypes.STRING_CONSTANT) {
-                result = standardLibrary.getStringType();
+            else if (elementType == JetNodeTypes.RAW_STRING_CONSTANT) {
+                value = compileTimeConstantResolver.getRawStringValue(text, context.expectedType);
             }
             else if (elementType == JetNodeTypes.NULL) {
-                result = JetStandardClasses.getNullableNothingType();
+                value = compileTimeConstantResolver.getNullValue(context.expectedType);
             }
             else {
                 throw new IllegalArgumentException("Unsupported constant: " + expression);
+            }
+            if (value instanceof ErrorValue) {
+                ErrorValue errorValue = (ErrorValue) value;
+                context.trace.getErrorHandler().genericError(node, errorValue.getMessage());
+            }
+            else {
+                context.trace.recordCompileTimeValue(expression, value);
+                result = value.getType(standardLibrary);
             }
         }
 
@@ -2436,6 +2437,8 @@ public class JetTypeInferrer {
 
         @Override
         public void visitStringTemplateExpression(JetStringTemplateExpression expression) {
+            final StringBuilder builder = new StringBuilder();
+            final CompileTimeConstant<?>[] value = new CompileTimeConstant<?>[1];
             for (JetStringTemplateEntry entry : expression.getEntries()) {
                 entry.accept(new JetVisitor() {
 
@@ -2445,25 +2448,34 @@ public class JetTypeInferrer {
                         if (entryExpression != null) {
                             getType(context.scope, entryExpression, true);
                         }
+                        value[0] = CompileTimeConstantResolver.OUT_OF_RANGE;
                     }
 
                     @Override
                     public void visitLiteralStringTemplateEntry(JetLiteralStringTemplateEntry entry) {
-                        // Nothing
+                        builder.append(entry.getText());
                     }
 
                     @Override
                     public void visitEscapeStringTemplateEntry(JetEscapeStringTemplateEntry entry) {
                         // TODO : Check escape
                         String text = entry.getText();
-                        assert text.length() == 2;
+                        assert text.length() == 2 && text.charAt(0) == '\\';
                         char escaped = text.charAt(1);
-                        Character[] legal = {'n', 'r', 't', 'b', 'f', '$', '\"', '$', '\\'};
-                        if (!Sets.newHashSet(legal).contains(escaped)) {
+
+                        Character character = CompileTimeConstantResolver.translateEscape(escaped);
+                        if (character == null) {
                             context.trace.getErrorHandler().genericError(entry.getNode(), "Illegal escape sequence");
+                            value[0] = CompileTimeConstantResolver.OUT_OF_RANGE;
+                        }
+                        else {
+                            builder.append(character);
                         }
                     }
                 });
+            }
+            if (value[0] != CompileTimeConstantResolver.OUT_OF_RANGE) {
+                context.trace.recordCompileTimeValue(expression, new StringValue(builder.toString()));
             }
             result = semanticServices.getStandardLibrary().getStringType();
         }

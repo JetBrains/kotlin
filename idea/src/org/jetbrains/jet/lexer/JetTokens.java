@@ -17,10 +17,8 @@ public interface JetTokens {
     IElementType WHITE_SPACE = TokenType.WHITE_SPACE;
 
     JetToken INTEGER_LITERAL    = new JetToken("INTEGER_LITERAL");
-    JetToken LONG_LITERAL       = new JetToken("LONG_LITERAL");
     JetToken FLOAT_LITERAL      = new JetToken("FLOAT_CONSTANT");
     JetToken CHARACTER_LITERAL  = new JetToken("CHARACTER_LITERAL");
-//    JetToken STRING_LITERAL     = new JetToken("STRING_LITERAL");
 
     JetToken CLOSING_QUOTE = new JetToken("CLOSING_QUOTE");
     JetToken OPEN_QUOTE = new JetToken("OPEN_QUOTE");

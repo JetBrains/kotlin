@@ -16,7 +16,7 @@ public class JetAnnotation extends JetElement {
 
     @Override
     public void accept(JetVisitor visitor) {
-        visitor.visitAttributeAnnotation(this);
+        visitor.visitAnnotation(this);
     }
 
     public List<JetAnnotationEntry> getEntries() {

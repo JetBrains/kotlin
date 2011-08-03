@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.descriptors;
 
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.JetScope;
 import org.jetbrains.jet.lang.resolve.SubstitutingScope;
 import org.jetbrains.jet.lang.types.*;
@@ -87,7 +88,7 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
     }
 
     @Override
-    public List<Annotation> getAnnotations() {
+    public List<AnnotationDescriptor> getAnnotations() {
         throw new UnsupportedOperationException(); // TODO
     }
 

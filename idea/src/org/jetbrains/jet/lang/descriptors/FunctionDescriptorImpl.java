@@ -3,6 +3,7 @@ package org.jetbrains.jet.lang.descriptors;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 import org.jetbrains.jet.lang.types.Variance;
@@ -26,7 +27,7 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
 
     public FunctionDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull List<Annotation> annotations,
+            @NotNull List<AnnotationDescriptor> annotations,
             @NotNull String name) {
         super(containingDeclaration, annotations, name);
         this.original = this;
@@ -34,10 +35,10 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
 
     public FunctionDescriptorImpl(
             @NotNull FunctionDescriptor original,
-            @NotNull List<Annotation> annotations,
+            @NotNull List<AnnotationDescriptor> annotations,
             @NotNull String name) {
         super(original.getContainingDeclaration(), annotations, name);
-        this.original = original.getOriginal();
+        this.original = original;
     }
 
     public FunctionDescriptorImpl initialize(
@@ -92,7 +93,7 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
     @NotNull
     @Override
     public FunctionDescriptor getOriginal() {
-        return original;
+        return original == this ? this : original.getOriginal();
     }
 
     @Override

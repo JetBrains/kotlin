@@ -3,6 +3,7 @@ package org.jetbrains.jet.lang.descriptors;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Collections;
@@ -16,7 +17,7 @@ public class PropertyGetterDescriptor extends PropertyAccessorDescriptor {
     private final Set<PropertyGetterDescriptor> overriddenGetters = Sets.newHashSet();
     private JetType returnType;
 
-    public PropertyGetterDescriptor(@NotNull MemberModifiers modifiers, @NotNull PropertyDescriptor correspondingProperty, @NotNull List<Annotation> annotations, @Nullable JetType returnType, boolean hasBody) {
+    public PropertyGetterDescriptor(@NotNull MemberModifiers modifiers, @NotNull PropertyDescriptor correspondingProperty, @NotNull List<AnnotationDescriptor> annotations, @Nullable JetType returnType, boolean hasBody) {
         super(modifiers, correspondingProperty, annotations, "get-" + correspondingProperty.getName(), hasBody);
         this.returnType = returnType == null ? correspondingProperty.getOutType() : returnType;
     }

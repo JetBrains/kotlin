@@ -81,7 +81,7 @@ public class JavaClassMembersScope implements JetScope {
                 if (method.hasModifierProperty(PsiModifier.STATIC) != staticMembers) {
                     continue;
                 }
-                FunctionDescriptor functionDescriptor = semanticServices.getDescriptorResolver().resolveMethodToFunctionDescriptor(psiClass, substitutorForGenericSupertypes, method);
+                FunctionDescriptor functionDescriptor = semanticServices.getDescriptorResolver().resolveMethodToFunctionDescriptor(containingDeclaration, psiClass, substitutorForGenericSupertypes, method);
                 if (functionDescriptor != null) {
                     allDescriptors.add(functionDescriptor);
                 }
@@ -132,6 +132,7 @@ public class JavaClassMembersScope implements JetScope {
         FunctionGroup functionGroup = functionGroups.get(name);
         if (functionGroup == null) {
             functionGroup = semanticServices.getDescriptorResolver().resolveFunctionGroup(
+                    containingDeclaration,
                     psiClass,
                     staticMembers ? null : (ClassDescriptor) containingDeclaration,
                     name,

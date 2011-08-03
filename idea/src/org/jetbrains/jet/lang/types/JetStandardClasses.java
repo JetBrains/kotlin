@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.JetScope;
 import org.jetbrains.jet.lang.resolve.JetScopeImpl;
 import org.jetbrains.jet.lang.resolve.WritableScope;
@@ -25,11 +26,11 @@ public class JetStandardClasses {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /*package*/ static NamespaceDescriptorImpl STANDARD_CLASSES_NAMESPACE = new NamespaceDescriptorImpl(null, Collections.<Annotation>emptyList(), "jet");
+    /*package*/ static NamespaceDescriptorImpl STANDARD_CLASSES_NAMESPACE = new NamespaceDescriptorImpl(null, Collections.<AnnotationDescriptor>emptyList(), "jet");
 
     private static final ClassDescriptor NOTHING_CLASS = new ClassDescriptorImpl(
             STANDARD_CLASSES_NAMESPACE,
-            Collections.<Annotation>emptyList(),
+            Collections.<AnnotationDescriptor>emptyList(),
             "Nothing"
     ).initialize(
             true,
@@ -57,7 +58,7 @@ public class JetStandardClasses {
 
     private static final JetType NOTHING_TYPE = new JetTypeImpl(getNothing());
     private static final JetType NULLABLE_NOTHING_TYPE = new JetTypeImpl(
-            Collections.<Annotation>emptyList(),
+            Collections.<AnnotationDescriptor>emptyList(),
             getNothing().getTypeConstructor(),
             true,
             Collections.<TypeProjection>emptyList(),
@@ -67,7 +68,7 @@ public class JetStandardClasses {
 
     private static final ClassDescriptor ANY = new ClassDescriptorImpl(
             STANDARD_CLASSES_NAMESPACE,
-            Collections.<Annotation>emptyList(),
+            Collections.<AnnotationDescriptor>emptyList(),
             "Any").initialize(
             false,
             Collections.<TypeParameterDescriptor>emptyList(),
@@ -110,12 +111,12 @@ public class JetStandardClasses {
             List<TypeParameterDescriptor> parameters = new ArrayList<TypeParameterDescriptor>();
             ClassDescriptorImpl classDescriptor = new ClassDescriptorImpl(
                     STANDARD_CLASSES_NAMESPACE,
-                    Collections.<Annotation>emptyList(),
+                    Collections.<AnnotationDescriptor>emptyList(),
                     "Tuple" + i);
             for (int j = 0; j < i; j++) {
                 parameters.add(TypeParameterDescriptor.createWithDefaultBound(
                         classDescriptor,
-                        Collections.<Annotation>emptyList(),
+                        Collections.<AnnotationDescriptor>emptyList(),
                         Variance.OUT_VARIANCE, "T" + j, j));
             }
             TUPLE[i] = classDescriptor.initialize(
@@ -142,7 +143,7 @@ public class JetStandardClasses {
         for (int i = 0; i < FUNCTION_COUNT; i++) {
             ClassDescriptorImpl function = new ClassDescriptorImpl(
                     STANDARD_CLASSES_NAMESPACE,
-                    Collections.<Annotation>emptyList(),
+                    Collections.<AnnotationDescriptor>emptyList(),
                     "Function" + i);
             FUNCTION[i] = function.initialize(
                     false,
@@ -152,12 +153,12 @@ public class JetStandardClasses {
 
             ClassDescriptorImpl receiverFunction = new ClassDescriptorImpl(
                     STANDARD_CLASSES_NAMESPACE,
-                    Collections.<Annotation>emptyList(),
+                    Collections.<AnnotationDescriptor>emptyList(),
                     "ExtensionFunction" + i);
             List<TypeParameterDescriptor> parameters = createTypeParameters(i, receiverFunction);
             parameters.add(0, TypeParameterDescriptor.createWithDefaultBound(
                     receiverFunction,
-                    Collections.<Annotation>emptyList(),
+                    Collections.<AnnotationDescriptor>emptyList(),
                     Variance.IN_VARIANCE, "T", 0));
             RECEIVER_FUNCTION[i] = receiverFunction.initialize(
                     false,
@@ -172,12 +173,12 @@ public class JetStandardClasses {
         for (int j = 0; j < parameterCount; j++) {
             parameters.add(TypeParameterDescriptor.createWithDefaultBound(
                     function,
-                    Collections.<Annotation>emptyList(),
+                    Collections.<AnnotationDescriptor>emptyList(),
                     Variance.IN_VARIANCE, "P" + j, j + 1));
         }
         parameters.add(TypeParameterDescriptor.createWithDefaultBound(
                 function,
-                Collections.<Annotation>emptyList(),
+                Collections.<AnnotationDescriptor>emptyList(),
                 Variance.OUT_VARIANCE, "R", parameterCount + 1));
         return parameters;
     }
@@ -286,7 +287,7 @@ public class JetStandardClasses {
                type.getConstructor() == UNIT_TYPE.getConstructor();
     }
 
-    public static JetType getTupleType(List<Annotation> annotations, List<JetType> arguments) {
+    public static JetType getTupleType(List<AnnotationDescriptor> annotations, List<JetType> arguments) {
         if (annotations.isEmpty() && arguments.isEmpty()) {
             return getUnitType();
         }
@@ -294,21 +295,21 @@ public class JetStandardClasses {
     }
 
     public static JetType getTupleType(List<JetType> arguments) {
-        return getTupleType(Collections.<Annotation>emptyList(), arguments);
+        return getTupleType(Collections.<AnnotationDescriptor>emptyList(), arguments);
     }
 
     public static JetType getTupleType(JetType... arguments) {
-        return getTupleType(Collections.<Annotation>emptyList(), Arrays.asList(arguments));
+        return getTupleType(Collections.<AnnotationDescriptor>emptyList(), Arrays.asList(arguments));
     }
 
-    public static JetType getLabeledTupleType(List<Annotation> annotations, List<ValueParameterDescriptor> arguments) {
+    public static JetType getLabeledTupleType(List<AnnotationDescriptor> annotations, List<ValueParameterDescriptor> arguments) {
         // TODO
         return getTupleType(annotations, toTypes(arguments));
     }
 
     public static JetType getLabeledTupleType(List<ValueParameterDescriptor> arguments) {
         // TODO
-        return getLabeledTupleType(Collections.<Annotation>emptyList(), arguments);
+        return getLabeledTupleType(Collections.<AnnotationDescriptor>emptyList(), arguments);
     }
 
     private static List<TypeProjection> toProjections(List<JetType> arguments) {
@@ -328,7 +329,7 @@ public class JetStandardClasses {
     }
 
     // TODO : labeled version?
-    public static JetType getFunctionType(List<Annotation> annotations, @Nullable JetType receiverType, @NotNull List<JetType> parameterTypes, @NotNull JetType returnType) {
+    public static JetType getFunctionType(List<AnnotationDescriptor> annotations, @Nullable JetType receiverType, @NotNull List<JetType> parameterTypes, @NotNull JetType returnType) {
         List<TypeProjection> arguments = new ArrayList<TypeProjection>();
         if (receiverType != null) {
             arguments.add(defaultProjection(receiverType));
@@ -368,7 +369,7 @@ public class JetStandardClasses {
         List<ValueParameterDescriptor> valueParameters = Lists.newArrayList();
         for (int i = first; i <= last; i++) {
             JetType parameterType =  arguments.get(i).getType();
-            ValueParameterDescriptorImpl valueParameterDescriptor = new ValueParameterDescriptorImpl(functionDescriptor, i, Collections.<Annotation>emptyList(), "p" + i, null, parameterType, false, false);
+            ValueParameterDescriptorImpl valueParameterDescriptor = new ValueParameterDescriptorImpl(functionDescriptor, i, Collections.<AnnotationDescriptor>emptyList(), "p" + i, null, parameterType, false, false);
             valueParameters.add(valueParameterDescriptor);
         }
         return valueParameters;

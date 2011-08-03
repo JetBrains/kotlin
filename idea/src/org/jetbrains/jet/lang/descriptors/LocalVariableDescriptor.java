@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
@@ -13,7 +14,7 @@ import java.util.List;
 public class LocalVariableDescriptor extends VariableDescriptorImpl {
     public LocalVariableDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull List<Annotation> annotations,
+            @NotNull List<AnnotationDescriptor> annotations,
             @NotNull String name,
             @Nullable JetType type,
             boolean mutable) {

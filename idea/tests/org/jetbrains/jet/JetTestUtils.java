@@ -6,10 +6,12 @@ import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.ErrorHandlerWithRegions;
 import org.jetbrains.jet.lang.JetDiagnostic;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.JetScope;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Collection;
@@ -43,6 +45,16 @@ public class JetTestUtils {
 
         @Override
         public void recordTypeResolution(@NotNull JetTypeReference typeReference, @NotNull JetType type) {
+        }
+
+        @Override
+        public void recordAnnotationResolution(@NotNull JetAnnotationEntry annotationEntry, @NotNull AnnotationDescriptor annotationDescriptor) {
+
+        }
+
+        @Override
+        public void recordCompileTimeValue(@NotNull JetExpression expression, @NotNull CompileTimeConstant<?> value) {
+
         }
 
         @Override
@@ -127,6 +139,16 @@ public class JetTestUtils {
 
                 @Override
                 public ConstructorDescriptor getConstructorDescriptor(JetElement declaration) {
+                    throw new UnsupportedOperationException(); // TODO
+                }
+
+                @Override
+                public AnnotationDescriptor getAnnotationDescriptor(JetAnnotationEntry annotationEntry) {
+                    throw new UnsupportedOperationException(); // TODO
+                }
+
+                @Override
+                public CompileTimeConstant<?> getCompileTimeValue(JetExpression expression) {
                     throw new UnsupportedOperationException(); // TODO
                 }
 

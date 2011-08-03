@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.descriptors;
 
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.JetScope;
 import org.jetbrains.jet.lang.resolve.LazyScopeAdapter;
 import org.jetbrains.jet.lang.types.*;
@@ -17,7 +18,7 @@ import java.util.Set;
 public class TypeParameterDescriptor extends DeclarationDescriptorImpl implements ClassifierDescriptor {
     public static TypeParameterDescriptor createWithDefaultBound(
             @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull List<Annotation> annotations,
+            @NotNull List<AnnotationDescriptor> annotations,
             @NotNull Variance variance,
             @NotNull String name,
             int index) {
@@ -28,7 +29,7 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
 
     public static TypeParameterDescriptor createForFurtherModification(
             @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull List<Annotation> annotations,
+            @NotNull List<AnnotationDescriptor> annotations,
             @NotNull Variance variance,
             @NotNull String name,
             int index) {
@@ -46,7 +47,7 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
 
     private TypeParameterDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull List<Annotation> annotations,
+            @NotNull List<AnnotationDescriptor> annotations,
             @NotNull Variance variance,
             @NotNull String name,
             int index) {
@@ -116,7 +117,7 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
     public JetType getDefaultType() {
         if (defaultType == null) {
             defaultType = new JetTypeImpl(
-                            Collections.<Annotation>emptyList(),
+                            Collections.<AnnotationDescriptor>emptyList(),
                             getTypeConstructor(),
                             TypeUtils.hasNullableBound(this),
                             Collections.<TypeProjection>emptyList(),

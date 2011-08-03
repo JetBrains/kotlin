@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.plugin.JetFileType;
@@ -192,7 +193,7 @@ public class JetStandardLibrary {
     public JetType getTypeInfoType(@NotNull JetType type) {
         TypeProjection typeProjection = new TypeProjection(type);
         List<TypeProjection> arguments = Collections.singletonList(typeProjection);
-        return new JetTypeImpl(Collections.<Annotation>emptyList(), getTypeInfo().getTypeConstructor(), false, arguments, getTypeInfo().getMemberScope(arguments));
+        return new JetTypeImpl(Collections.<AnnotationDescriptor>emptyList(), getTypeInfo().getTypeConstructor(), false, arguments, getTypeInfo().getMemberScope(arguments));
     }
 
     @NotNull
@@ -250,7 +251,7 @@ public class JetStandardLibrary {
     public JetType getArrayType(@NotNull Variance variance, @NotNull JetType argument) {
         List<TypeProjection> types = Collections.singletonList(new TypeProjection(variance, argument));
         return new JetTypeImpl(
-                Collections.<Annotation>emptyList(),
+                Collections.<AnnotationDescriptor>emptyList(),
                 getArray().getTypeConstructor(),
                 false,
                 types,
@@ -262,7 +263,7 @@ public class JetStandardLibrary {
     public JetType getIterableType(@NotNull JetType argument) {
         List<TypeProjection> types = Collections.singletonList(new TypeProjection(Variance.INVARIANT, argument));
         return new JetTypeImpl(
-                Collections.<Annotation>emptyList(),
+                Collections.<AnnotationDescriptor>emptyList(),
                 getIterable().getTypeConstructor(),
                 false,
                 types,

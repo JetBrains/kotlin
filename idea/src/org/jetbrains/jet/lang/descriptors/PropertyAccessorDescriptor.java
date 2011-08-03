@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
 import java.util.Collections;
@@ -17,7 +18,7 @@ public abstract class PropertyAccessorDescriptor extends DeclarationDescriptorIm
     protected PropertyAccessorDescriptor(
             @NotNull MemberModifiers modifiers,
             @NotNull PropertyDescriptor correspondingProperty,
-            @NotNull List<Annotation> annotations,
+            @NotNull List<AnnotationDescriptor> annotations,
             @NotNull String name,
             boolean hasBody) {
         super(correspondingProperty.getContainingDeclaration(), annotations, name);

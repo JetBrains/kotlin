@@ -3,6 +3,7 @@ package org.jetbrains.jet.lang.descriptors;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 import org.jetbrains.jet.lang.types.Variance;
@@ -25,7 +26,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Member
     private PropertyDescriptor(
             @Nullable PropertyDescriptor original,
             @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull List<Annotation> annotations,
+            @NotNull List<AnnotationDescriptor> annotations,
             @NotNull MemberModifiers memberModifiers,
             boolean isVar,
             @Nullable JetType receiverType,
@@ -43,7 +44,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Member
 
     public PropertyDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull List<Annotation> annotations,
+            @NotNull List<AnnotationDescriptor> annotations,
             @NotNull MemberModifiers memberModifiers,
             boolean isVar,
             @Nullable JetType receiverType,

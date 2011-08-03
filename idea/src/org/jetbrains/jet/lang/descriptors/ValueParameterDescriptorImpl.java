@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
@@ -19,7 +20,7 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
     public ValueParameterDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
             int index,
-            @NotNull List<Annotation> annotations,
+            @NotNull List<AnnotationDescriptor> annotations,
             @NotNull String name,
             @Nullable JetType inType,
             @NotNull JetType outType,
@@ -35,7 +36,7 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
     public ValueParameterDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
             int index,
-            @NotNull List<Annotation> annotations,
+            @NotNull List<AnnotationDescriptor> annotations,
             @NotNull String name,
             boolean isVar,
             boolean hasDefaultValue,

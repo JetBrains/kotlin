@@ -14,6 +14,7 @@ import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.cfg.LoopInfo;
 import org.jetbrains.jet.lang.cfg.pseudocode.*;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -32,6 +33,7 @@ public class ClassDescriptorResolver {
     private final TypeResolver typeResolverNotCheckingBounds;
     private final BindingTrace trace;
     private final JetControlFlowDataTraceFactory flowDataTraceFactory;
+    private final AnnotationResolver annotationResolver;
 
     public ClassDescriptorResolver(JetSemanticServices semanticServices, BindingTrace trace, JetControlFlowDataTraceFactory flowDataTraceFactory) {
         this.semanticServices = semanticServices;
@@ -39,13 +41,14 @@ public class ClassDescriptorResolver {
         this.typeResolverNotCheckingBounds = new TypeResolver(semanticServices, trace, false);
         this.trace = trace;
         this.flowDataTraceFactory = flowDataTraceFactory;
+        this.annotationResolver = new AnnotationResolver(semanticServices, trace);
     }
 
     @Nullable
     public ClassDescriptor resolveClassDescriptor(@NotNull JetScope scope, @NotNull JetClass classElement) {
         final ClassDescriptorImpl classDescriptor = new ClassDescriptorImpl(
                 scope.getContainingDeclaration(),
-                AnnotationResolver.INSTANCE.resolveAnnotations(classElement.getModifierList()),
+                annotationResolver.resolveAnnotations(scope, classElement.getModifierList()),
                 JetPsiUtil.safeName(classElement.getName()));
 
         trace.recordDeclarationResolution(classElement, classDescriptor);
@@ -126,7 +129,7 @@ public class ClassDescriptorResolver {
         for (JetTypeParameter typeParameter : classElement.getTypeParameters()) {
             TypeParameterDescriptor typeParameterDescriptor = TypeParameterDescriptor.createForFurtherModification(
                     descriptor,
-                    AnnotationResolver.INSTANCE.resolveAnnotations(typeParameter.getModifierList()),
+                    annotationResolver.createAnnotationStubs(typeParameter.getModifierList()),
                     typeParameter.getVariance(),
                     JetPsiUtil.safeName(typeParameter.getName()),
                     index
@@ -172,7 +175,7 @@ public class ClassDescriptorResolver {
     public FunctionDescriptorImpl resolveFunctionDescriptor(DeclarationDescriptor containingDescriptor, final JetScope scope, final JetNamedFunction function) {
         final FunctionDescriptorImpl functionDescriptor = new FunctionDescriptorImpl(
                 containingDescriptor,
-                AnnotationResolver.INSTANCE.resolveAnnotations(function.getModifierList()),
+                annotationResolver.resolveAnnotations(scope, function.getModifierList()),
                 JetPsiUtil.safeName(function.getName())
         );
         WritableScope innerScope = new WritableScopeImpl(scope, functionDescriptor, trace.getErrorHandler()).setDebugName("Function descriptor header scope");
@@ -260,7 +263,7 @@ public class ClassDescriptorResolver {
         MutableValueParameterDescriptor valueParameterDescriptor = new ValueParameterDescriptorImpl(
             declarationDescriptor,
             index,
-            AnnotationResolver.INSTANCE.resolveAnnotations(valueParameter.getModifierList()),
+            annotationResolver.createAnnotationStubs(valueParameter.getModifierList()),
             JetPsiUtil.safeName(valueParameter.getName()),
             valueParameter.isMutable() ? type : null,
             type,
@@ -289,7 +292,7 @@ public class ClassDescriptorResolver {
 //                : typeResolver.resolveType(extensibleScope, extendsBound);
         TypeParameterDescriptor typeParameterDescriptor = TypeParameterDescriptor.createForFurtherModification(
                 containingDescriptor,
-                AnnotationResolver.INSTANCE.resolveAnnotations(typeParameter.getModifierList()),
+                annotationResolver.createAnnotationStubs(typeParameter.getModifierList()),
                 typeParameter.getVariance(),
                 JetPsiUtil.safeName(typeParameter.getName()),
                 index
@@ -423,7 +426,7 @@ public class ClassDescriptorResolver {
     public VariableDescriptor resolveLocalVariableDescriptor(@NotNull DeclarationDescriptor containingDeclaration, @NotNull JetParameter parameter, @NotNull JetType type) {
         VariableDescriptor variableDescriptor = new LocalVariableDescriptor(
                 containingDeclaration,
-                AnnotationResolver.INSTANCE.resolveAnnotations(parameter.getModifierList()),
+                annotationResolver.createAnnotationStubs(parameter.getModifierList()),
                 JetPsiUtil.safeName(parameter.getName()),
                 type,
                 parameter.isMutable());
@@ -442,7 +445,7 @@ public class ClassDescriptorResolver {
     public VariableDescriptor resolveLocalVariableDescriptorWithType(DeclarationDescriptor containingDeclaration, JetProperty property, JetType type) {
         VariableDescriptorImpl variableDescriptor = new LocalVariableDescriptor(
                 containingDeclaration,
-                AnnotationResolver.INSTANCE.resolveAnnotations(property.getModifierList()),
+                annotationResolver.createAnnotationStubs(property.getModifierList()),
                 JetPsiUtil.safeName(property.getName()),
                 type,
                 property.isVar());
@@ -454,7 +457,7 @@ public class ClassDescriptorResolver {
         JetModifierList modifierList = objectDeclaration.getModifierList();
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                 containingDeclaration,
-                AnnotationResolver.INSTANCE.resolveAnnotations(modifierList),
+                annotationResolver.createAnnotationStubs(modifierList),
                 resolveModifiers(modifierList, DEFAULT_MODIFIERS), // TODO : default modifiers differ in different contexts
                 false,
                 null,
@@ -504,7 +507,7 @@ public class ClassDescriptorResolver {
 
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                 containingDeclaration,
-                AnnotationResolver.INSTANCE.resolveAnnotations(modifierList),
+                annotationResolver.resolveAnnotations(scope, modifierList),
                 resolveModifiers(modifierList, DEFAULT_MODIFIERS), // TODO : default modifiers differ in different contexts
                 isVar,
                 receiverType,
@@ -571,7 +574,7 @@ public class ClassDescriptorResolver {
         }
         PropertySetterDescriptor setterDescriptor = null;
         if (setter != null) {
-            List<Annotation> annotations = AnnotationResolver.INSTANCE.resolveAnnotations(setter.getModifierList());
+            List<AnnotationDescriptor> annotations = annotationResolver.resolveAnnotations(scope, setter.getModifierList());
             JetParameter parameter = setter.getParameter();
 
             setterDescriptor = new PropertySetterDescriptor(
@@ -619,7 +622,7 @@ public class ClassDescriptorResolver {
         PropertyGetterDescriptor getterDescriptor = null;
         JetPropertyAccessor getter = property.getGetter();
         if (getter != null) {
-            List<Annotation> annotations = AnnotationResolver.INSTANCE.resolveAnnotations(getter.getModifierList());
+            List<AnnotationDescriptor> annotations = annotationResolver.resolveAnnotations(scope, getter.getModifierList());
 
             JetType returnType = null;
             JetTypeReference returnTypeReference = getter.getReturnTypeReference();
@@ -650,7 +653,7 @@ public class ClassDescriptorResolver {
             List<TypeParameterDescriptor> typeParameters, @NotNull List<JetParameter> valueParameters) {
         ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(
                 classDescriptor,
-                AnnotationResolver.INSTANCE.resolveAnnotations(modifierList),
+                annotationResolver.resolveAnnotations(scope, modifierList),
                 isPrimary
         );
         trace.recordDeclarationResolution(declarationToTrace, constructorDescriptor);
@@ -693,7 +696,7 @@ public class ClassDescriptorResolver {
 
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                 classDescriptor,
-                AnnotationResolver.INSTANCE.resolveAnnotations(modifierList),
+                annotationResolver.resolveAnnotations(scope, modifierList),
                 resolveModifiers(modifierList, DEFAULT_MODIFIERS),
                 isMutable,
                 null,

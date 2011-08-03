@@ -10,7 +10,9 @@ import org.jetbrains.jet.lang.CollectingErrorHandler;
 import org.jetbrains.jet.lang.ErrorHandlerWithRegions;
 import org.jetbrains.jet.lang.JetDiagnostic;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.*;
@@ -41,6 +43,8 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
     private final List<JetDiagnostic> diagnostics = Lists.newArrayList();
 
     private final ErrorHandlerWithRegions errorHandler = new ErrorHandlerWithRegions(new CollectingErrorHandler(diagnostics));
+    private Map<JetAnnotationEntry, AnnotationDescriptor> annotationDescriptos = Maps.newHashMap();
+    private Map<JetExpression, CompileTimeConstant<?>> compileTimeValues = Maps.newHashMap();
 
     public BindingTraceContext() {
     }
@@ -106,6 +110,16 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
     @Override
     public void recordTypeResolution(@NotNull JetTypeReference typeReference, @NotNull JetType type) {
         safePut(types, typeReference, type);
+    }
+
+    @Override
+    public void recordAnnotationResolution(@NotNull JetAnnotationEntry annotationEntry, @NotNull AnnotationDescriptor annotationDescriptor) {
+        safePut(annotationDescriptos, annotationEntry, annotationDescriptor);
+    }
+
+    @Override
+    public void recordCompileTimeValue(@NotNull JetExpression expression, @NotNull CompileTimeConstant<?> value) {
+        safePut(compileTimeValues, expression, value);
     }
 
     @Override
@@ -232,6 +246,16 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
     @Override
     public ConstructorDescriptor getConstructorDescriptor(@NotNull JetElement declaration) {
         return constructorDeclarationsToDescriptors.get(declaration);
+    }
+
+    @Override
+    public AnnotationDescriptor getAnnotationDescriptor(JetAnnotationEntry annotationEntry) {
+        return annotationDescriptos.get(annotationEntry);
+    }
+
+    @Override
+    public CompileTimeConstant<?> getCompileTimeValue(JetExpression expression) {
+        return compileTimeValues.get(expression);
     }
 
     @Override

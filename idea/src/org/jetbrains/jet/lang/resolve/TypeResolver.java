@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.*;
 
@@ -19,11 +20,13 @@ public class TypeResolver {
     private final JetSemanticServices semanticServices;
     private final BindingTrace trace;
     private final boolean checkBounds;
+    private final AnnotationResolver annotationResolver;
 
     public TypeResolver(JetSemanticServices semanticServices, BindingTrace trace, boolean checkBounds) {
         this.semanticServices = semanticServices;
         this.trace = trace;
         this.checkBounds = checkBounds;
+        this.annotationResolver = new AnnotationResolver(semanticServices, trace);
     }
 
     @NotNull
@@ -31,7 +34,7 @@ public class TypeResolver {
         JetType cachedType = trace.getBindingContext().resolveTypeReference(typeReference);
         if (cachedType != null) return cachedType;
 
-        final List<Annotation> annotations = AnnotationResolver.INSTANCE.resolveAnnotations(typeReference.getAttributes());
+        final List<AnnotationDescriptor> annotations = annotationResolver.createAnnotationStubs(typeReference.getAnnotations());
 
         JetTypeElement typeElement = typeReference.getTypeElement();
         JetType type = resolveTypeElement(scope, annotations, typeElement, false);
@@ -40,7 +43,7 @@ public class TypeResolver {
     }
 
     @NotNull
-    private JetType resolveTypeElement(final JetScope scope, final List<Annotation> annotations, JetTypeElement typeElement, final boolean nullable) {
+    private JetType resolveTypeElement(final JetScope scope, final List<AnnotationDescriptor> annotations, JetTypeElement typeElement, final boolean nullable) {
         final JetType[] result = new JetType[1];
         if (typeElement != null) {
             typeElement.accept(new JetVisitor() {

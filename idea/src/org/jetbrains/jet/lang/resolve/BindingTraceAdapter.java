@@ -5,7 +5,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.ErrorHandlerWithRegions;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.types.JetType;
 
 /**
@@ -46,6 +48,16 @@ public class BindingTraceAdapter implements BindingTrace {
 
     public void recordTypeResolution(@NotNull JetTypeReference typeReference, @NotNull JetType type) {
         originalTrace.recordTypeResolution(typeReference, type);
+    }
+
+    @Override
+    public void recordAnnotationResolution(@NotNull JetAnnotationEntry annotationEntry, @NotNull AnnotationDescriptor annotationDescriptor) {
+        originalTrace.recordAnnotationResolution(annotationEntry, annotationDescriptor);
+    }
+
+    @Override
+    public void recordCompileTimeValue(@NotNull JetExpression expression, @NotNull CompileTimeConstant<?> value) {
+        originalTrace.recordCompileTimeValue(expression, value);
     }
 
     public void recordBlock(JetFunctionLiteralExpression expression) {

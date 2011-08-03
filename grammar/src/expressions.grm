@@ -96,7 +96,7 @@ multiplicativeExpression
   ;
 
 typeRHS
-  : prefixUnaryExpression typeOperation prefixUnaryExpression
+  : prefixUnaryExpression (typeOperation prefixUnaryExpression)*
   ;
 
 prefixUnaryExpression
@@ -204,7 +204,7 @@ postfixUnaryOperation
   : "++" : "--"
   : callSuffix
   : arrayAccess
-  : memberAccessOperation postfixUnaryOperation // TODO: Review
+  : memberAccessOperation postfixUnaryExpression // TODO: Review
   ;
 
 callSuffix

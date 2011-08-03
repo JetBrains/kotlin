@@ -11,10 +11,10 @@ import java.util.List;
  */
 public interface JetCall extends PsiElement {
     @Nullable
-    JetArgumentList getValueArgumentList();
+    JetValueArgumentList getValueArgumentList();
 
     @NotNull
-    List<JetArgument> getValueArguments();
+    List<JetValueArgument> getValueArguments();
 
     @NotNull
     List<JetExpression> getFunctionLiteralArguments();

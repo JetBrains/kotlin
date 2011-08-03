@@ -5,6 +5,7 @@ import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertySetterDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -71,7 +72,9 @@ public class PropertyCodegen {
             final JetExpression initializer = p.getInitializer();
             if (initializer != null) {
                 if (initializer instanceof JetConstantExpression) {
-                    value = ((JetConstantExpression) initializer).getValue();
+                    CompileTimeConstant<?> compileTimeValue = state.getBindingContext().getCompileTimeValue(initializer);
+                    assert compileTimeValue != null;
+                    value = compileTimeValue.getValue();
                 }
             }
             final int modifiers;

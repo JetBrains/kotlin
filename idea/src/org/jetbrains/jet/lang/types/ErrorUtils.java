@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.JetScope;
 import org.jetbrains.jet.lang.resolve.OverloadResolutionResult;
 
@@ -97,14 +98,14 @@ public class ErrorUtils {
         }
     };
 
-    private static final ClassDescriptorImpl ERROR_CLASS = new ClassDescriptorImpl(ERROR_MODULE, Collections.<Annotation>emptyList(), "<ERROR CLASS>") {
+    private static final ClassDescriptorImpl ERROR_CLASS = new ClassDescriptorImpl(ERROR_MODULE, Collections.<AnnotationDescriptor>emptyList(), "<ERROR CLASS>") {
         @NotNull
         @Override
         public FunctionGroup getConstructors() {
             return ERROR_FUNCTION_GROUP;
         }
     };
-    private static final ConstructorDescriptor ERROR_CONSTRUCTOR = new ConstructorDescriptorImpl(ERROR_CLASS, Collections.<Annotation>emptyList(), true);
+    private static final ConstructorDescriptor ERROR_CONSTRUCTOR = new ConstructorDescriptorImpl(ERROR_CLASS, Collections.<AnnotationDescriptor>emptyList(), true);
     static {
         ERROR_CLASS.initialize(
             true, Collections.<TypeParameterDescriptor>emptyList(), Collections.<JetType>emptyList(), getErrorScope(), ERROR_FUNCTION_GROUP, ERROR_CONSTRUCTOR);
@@ -117,7 +118,7 @@ public class ErrorUtils {
     private static final JetType ERROR_PROPERTY_TYPE = createErrorType("<ERROR PROPERTY TYPE>");
     private static final VariableDescriptor ERROR_PROPERTY = new PropertyDescriptor(
             ERROR_CLASS,
-            Collections.<Annotation>emptyList(),
+            Collections.<AnnotationDescriptor>emptyList(),
             new MemberModifiers(false, false, false),
             true,
             null,
@@ -125,7 +126,7 @@ public class ErrorUtils {
             ERROR_PROPERTY_TYPE, ERROR_PROPERTY_TYPE);
 
     private static FunctionDescriptor createErrorFunction(List<TypeParameterDescriptor> typeParameters, List<JetType> positionedValueArgumentTypes) {
-        FunctionDescriptorImpl functionDescriptor = new FunctionDescriptorImpl(ERROR_CLASS, Collections.<Annotation>emptyList(), "<ERROR FUNCTION>");
+        FunctionDescriptorImpl functionDescriptor = new FunctionDescriptorImpl(ERROR_CLASS, Collections.<AnnotationDescriptor>emptyList(), "<ERROR FUNCTION>");
         return functionDescriptor.initialize(
                 null,
                 typeParameters,
@@ -135,7 +136,7 @@ public class ErrorUtils {
     }
 
     public static FunctionDescriptor createErrorFunction(int typeParameterCount, List<JetType> positionedValueParameterTypes) {
-        return new FunctionDescriptorImpl(ERROR_CLASS, Collections.<Annotation>emptyList(), "<ERROR FUNCTION>").initialize(
+        return new FunctionDescriptorImpl(ERROR_CLASS, Collections.<AnnotationDescriptor>emptyList(), "<ERROR FUNCTION>").initialize(
                 null,
                 Collections.<TypeParameterDescriptor>emptyList(), // TODO
                 Collections.<ValueParameterDescriptor>emptyList(), // TODO
@@ -150,7 +151,7 @@ public class ErrorUtils {
             result.add(new ValueParameterDescriptorImpl(
                     functionDescriptor,
                     i,
-                    Collections.<Annotation>emptyList(),
+                    Collections.<AnnotationDescriptor>emptyList(),
                     "<ERROR PARAMETER>",
                     ERROR_PARAMETER_TYPE,
                     ERROR_PARAMETER_TYPE,
@@ -166,7 +167,7 @@ public class ErrorUtils {
     }
 
     private static JetType createErrorType(String debugMessage, JetScope memberScope) {
-        return new ErrorTypeImpl(new TypeConstructorImpl(ERROR_CLASS, Collections.<Annotation>emptyList(), false, "[ERROR : " + debugMessage + "]", Collections.<TypeParameterDescriptor>emptyList(), Collections.singleton(JetStandardClasses.getAnyType())), memberScope);
+        return new ErrorTypeImpl(new TypeConstructorImpl(ERROR_CLASS, Collections.<AnnotationDescriptor>emptyList(), false, "[ERROR : " + debugMessage + "]", Collections.<TypeParameterDescriptor>emptyList(), Collections.singleton(JetStandardClasses.getAnyType())), memberScope);
     }
 
     public static JetType createWrongVarianceErrorType(TypeProjection value) {
@@ -182,9 +183,10 @@ public class ErrorUtils {
     }
 
     public static boolean isErrorType(@NotNull JetType type) {
-        return  (type instanceof DeferredType && ((DeferredType) type).getActualType() == null) ||
-                type instanceof ErrorTypeImpl ||
-               isError(type.getConstructor());
+        return type != JetTypeInferrer.NO_EXPECTED_TYPE &&(
+               (type instanceof DeferredType && ((DeferredType) type).getActualType() == null) ||
+               type instanceof ErrorTypeImpl ||
+               isError(type.getConstructor()));
     }
 
     private static class ErrorTypeImpl implements JetType {
@@ -221,7 +223,7 @@ public class ErrorUtils {
         }
 
         @Override
-        public List<Annotation> getAnnotations() {
+        public List<AnnotationDescriptor> getAnnotations() {
             return Collections.emptyList();
         }
 

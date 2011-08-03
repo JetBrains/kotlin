@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
 import java.util.List;
@@ -46,7 +47,7 @@ public interface NamespaceLike extends DeclarationDescriptor {
         }
 
         @Override
-        public List<Annotation> getAnnotations() {
+        public List<AnnotationDescriptor> getAnnotations() {
             return descriptor.getAnnotations();
         }
 

@@ -62,11 +62,11 @@ public class JetVisitor extends PsiElementVisitor {
         visitJetElement(list);
     }
 
-    public void visitAttributeAnnotation(JetAnnotation annotation) {
+    public void visitAnnotation(JetAnnotation annotation) {
         visitJetElement(annotation);
     }
 
-    public void visitAttribute(JetAnnotationEntry annotationEntry) {
+    public void visitAnnotationEntry(JetAnnotationEntry annotationEntry) {
         visitJetElement(annotationEntry);
     }
 
@@ -118,11 +118,11 @@ public class JetVisitor extends PsiElementVisitor {
         visitJetElement(typeReference);
     }
 
-    public void visitArgumentList(JetArgumentList list) {
+    public void visitValueArgumentList(JetValueArgumentList list) {
         visitJetElement(list);
     }
 
-    public void visitArgument(JetArgument argument) {
+    public void visitArgument(JetValueArgument argument) {
         visitJetElement(argument);
     }
 

@@ -22,14 +22,14 @@ public class JetDelegatorToSuperCall extends JetDelegationSpecifier implements J
     }
 
     @Nullable
-    public JetArgumentList getValueArgumentList() {
-        return (JetArgumentList) findChildByType(JetNodeTypes.VALUE_ARGUMENT_LIST);
+    public JetValueArgumentList getValueArgumentList() {
+        return (JetValueArgumentList) findChildByType(JetNodeTypes.VALUE_ARGUMENT_LIST);
     }
 
     @NotNull
-    public List<JetArgument> getValueArguments() {
-        JetArgumentList list = getValueArgumentList();
-        return list != null ? list.getArguments() : Collections.<JetArgument>emptyList();
+    public List<JetValueArgument> getValueArguments() {
+        JetValueArgumentList list = getValueArgumentList();
+        return list != null ? list.getArguments() : Collections.<JetValueArgument>emptyList();
     }
 
     @NotNull
