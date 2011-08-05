@@ -79,7 +79,7 @@ public class DescriptorRenderer {
     }
 
     public String renderType(JetType type) {
-        return "" + type;
+        return escape(type.toString());
     }
 
     protected String escape(String s) {
