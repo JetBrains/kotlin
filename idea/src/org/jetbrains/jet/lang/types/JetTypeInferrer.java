@@ -381,7 +381,15 @@ public class JetTypeInferrer {
         public void checkFunctionReturnType(JetScope functionInnerScope, JetDeclarationWithBody function, FunctionDescriptor functionDescriptor, @Nullable final JetType expectedReturnType) {
             JetExpression bodyExpression = function.getBodyExpression();
             assert bodyExpression != null;
-            new TypeInferrerVisitor(new TypeInferenceContext(trace, functionInnerScope, function.hasBlockBody(), DataFlowInfo.getEmpty(), NO_EXPECTED_TYPE, expectedReturnType)).getType(bodyExpression);
+            JetType returnedType = new TypeInferrerVisitor(new TypeInferenceContext(trace, functionInnerScope, function.hasBlockBody(), DataFlowInfo.getEmpty(), NO_EXPECTED_TYPE, expectedReturnType)).getType(bodyExpression);
+
+            final boolean blockBody = function.hasBlockBody();
+            if (!blockBody && expectedReturnType != null && returnedType != null) {
+                if (!semanticServices.getTypeChecker().isSubtypeOf(returnedType, expectedReturnType)) {
+                    trace.getErrorHandler().typeMismatch(bodyExpression, expectedReturnType, returnedType);
+                }
+            }
+
 
             List<JetElement> unreachableElements = Lists.newArrayList();
             flowInformationProvider.collectUnreachableExpressions(function.asElement(), unreachableElements);
@@ -397,7 +405,6 @@ public class JetTypeInferrer {
                 trace.getErrorHandler().genericError(element.getNode(), "Unreachable code");
             }
 
-            final boolean blockBody = function.hasBlockBody();
             List<JetExpression> returnedExpressions = Lists.newArrayList();
             flowInformationProvider.collectReturnExpressions(function.asElement(), returnedExpressions);
 

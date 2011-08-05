@@ -1,8 +1,8 @@
 namespace jet121 {
   fun box() : String {
     val answer = apply("OK") { String.() : Int =>
-      length
       get(0)
+      length
     }
 
     return if (answer == 2) "OK" else "FAIL"

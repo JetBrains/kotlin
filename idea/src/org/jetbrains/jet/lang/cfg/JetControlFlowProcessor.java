@@ -502,13 +502,20 @@ public class JetControlFlowProcessor {
         @Override
         public void visitFunctionLiteralExpression(JetFunctionLiteralExpression expression) {
             JetFunctionLiteral functionLiteral = expression.getFunctionLiteral();
-            if (preferBlock && !functionLiteral.hasParameterSpecification()) {
-                for (JetElement statement : functionLiteral.getBodyExpression().getStatements()) {
-                    value(statement, true, false);
+            JetBlockExpression bodyExpression = expression.getFunctionLiteral().getBodyExpression();
+            if (bodyExpression != null) {
+                List<JetElement> statements = bodyExpression.getStatements();
+                if (preferBlock && !functionLiteral.hasParameterSpecification()) {
+                    for (JetElement statement : statements) {
+                        value(statement, true, false);
+                    }
+                    if (statements.isEmpty()) {
+                        builder.readUnit(expression);
+                    }
                 }
-            }
-            else {
-                generateSubroutineControlFlow(expression, functionLiteral.getBodyExpression().getStatements(), true);
+                else {
+                    generateSubroutineControlFlow(expression, statements, true);
+                }
             }
         }
 

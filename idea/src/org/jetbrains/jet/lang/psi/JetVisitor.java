@@ -11,7 +11,7 @@ public class JetVisitor extends PsiElementVisitor {
     }
 
     public void visitDeclaration(JetDeclaration dcl) {
-        visitJetElement(dcl);
+        visitExpression(dcl);
     }
 
     public void visitNamespace(JetNamespace namespace) {
