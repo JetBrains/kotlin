@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
 import java.util.Collections;
@@ -10,7 +11,7 @@ import java.util.Collections;
  */
 public class ModuleDescriptor extends DeclarationDescriptorImpl {
     public ModuleDescriptor(String name) {
-        super(null, Collections.<Annotation>emptyList(), name);
+        super(null, Collections.<AnnotationDescriptor>emptyList(), name);
     }
 
     @NotNull

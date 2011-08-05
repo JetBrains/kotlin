@@ -530,7 +530,7 @@ public class JetControlFlowProcessor {
         }
 
         private void visitCall(JetCall call) {
-            for (JetArgument argument : call.getValueArguments()) {
+            for (JetValueArgument argument : call.getValueArguments()) {
                 JetExpression argumentExpression = argument.getArgumentExpression();
                 if (argumentExpression != null) {
                     value(argumentExpression, false, false);

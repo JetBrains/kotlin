@@ -2,8 +2,8 @@ package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.AnnotatedImpl;
-import org.jetbrains.jet.lang.descriptors.Annotation;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotatedImpl;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 
@@ -25,7 +25,7 @@ public class TypeConstructorImpl extends AnnotatedImpl implements TypeConstructo
 
     public TypeConstructorImpl(
             @Nullable DeclarationDescriptor declarationDescriptor,
-            @NotNull List<Annotation> annotations,
+            @NotNull List<AnnotationDescriptor> annotations,
             boolean sealed,
             @NotNull String debugName,
             @NotNull List<TypeParameterDescriptor> parameters,

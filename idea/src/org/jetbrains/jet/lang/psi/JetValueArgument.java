@@ -9,8 +9,8 @@ import org.jetbrains.jet.lexer.JetTokens;
 /**
  * @author max
  */
-public class JetArgument extends JetElement implements ValueArgumentPsi {
-    public JetArgument(@NotNull ASTNode node) {
+public class JetValueArgument extends JetElement implements ValueArgumentPsi {
+    public JetValueArgument(@NotNull ASTNode node) {
         super(node);
     }
 

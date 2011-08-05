@@ -5,7 +5,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.JetDiagnostic;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Collection;
@@ -22,6 +24,10 @@ public interface BindingContext {
     TypeParameterDescriptor getTypeParameterDescriptor(JetTypeParameter declaration);
     FunctionDescriptor getFunctionDescriptor(JetNamedFunction declaration);
     ConstructorDescriptor getConstructorDescriptor(JetElement declaration);
+    AnnotationDescriptor getAnnotationDescriptor(JetAnnotationEntry annotationEntry);
+
+    @Nullable
+    CompileTimeConstant<?> getCompileTimeValue(JetExpression expression);
 
     VariableDescriptor getVariableDescriptor(JetProperty declaration);
     VariableDescriptor getVariableDescriptor(JetParameter declaration);

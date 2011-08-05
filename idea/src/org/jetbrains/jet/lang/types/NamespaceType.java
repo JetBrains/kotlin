@@ -1,7 +1,7 @@
 package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.Annotation;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.JetScope;
 
 import java.util.List;
@@ -52,7 +52,7 @@ public class NamespaceType implements JetType {
     }
 
     @Override
-    public List<Annotation> getAnnotations() {
+    public List<AnnotationDescriptor> getAnnotations() {
         throwException();
         return null;
     }

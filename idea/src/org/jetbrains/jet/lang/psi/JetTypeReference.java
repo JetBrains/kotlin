@@ -31,7 +31,7 @@ public class JetTypeReference extends JetElement {
         return findChildByClass(JetTypeElement.class);
     }
 
-    public List<JetAnnotationEntry> getAttributes() {
+    public List<JetAnnotationEntry> getAnnotations() {
         List<JetAnnotationEntry> answer = null;
         for (JetAnnotation annotation : getAttributeAnnotations()) {
             if (answer == null) answer = new ArrayList<JetAnnotationEntry>();

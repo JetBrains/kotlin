@@ -8,6 +8,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.types.*;
 
 import java.util.*;
@@ -17,7 +18,7 @@ import java.util.*;
  */
 public class JavaDescriptorResolver {
 
-    /*package*/ static final DeclarationDescriptor JAVA_ROOT = new DeclarationDescriptorImpl(null, Collections.<Annotation>emptyList(), "<java_root>") {
+    /*package*/ static final DeclarationDescriptor JAVA_ROOT = new DeclarationDescriptorImpl(null, Collections.<AnnotationDescriptor>emptyList(), "<java_root>") {
         @NotNull
         @Override
         public DeclarationDescriptor substitute(TypeSubstitutor substitutor) {
@@ -30,7 +31,7 @@ public class JavaDescriptorResolver {
         }
     };
 
-    /*package*/ static final DeclarationDescriptor JAVA_CLASS_OBJECT = new DeclarationDescriptorImpl(null, Collections.<Annotation>emptyList(), "<java_class_object_emulation>") {
+    /*package*/ static final DeclarationDescriptor JAVA_CLASS_OBJECT = new DeclarationDescriptorImpl(null, Collections.<AnnotationDescriptor>emptyList(), "<java_class_object_emulation>") {
         @NotNull
         @Override
         public DeclarationDescriptor substitute(TypeSubstitutor substitutor) {
@@ -96,7 +97,7 @@ public class JavaDescriptorResolver {
         List<TypeParameterDescriptor> typeParameters = resolveTypeParameters(classDescriptor, psiClass.getTypeParameters());
         classDescriptor.setTypeConstructor(new TypeConstructorImpl(
                 classDescriptor,
-                Collections.<Annotation>emptyList(), // TODO
+                Collections.<AnnotationDescriptor>emptyList(), // TODO
                 // TODO
                 psiClass.hasModifierProperty(PsiModifier.FINAL),
                 name,
@@ -116,7 +117,7 @@ public class JavaDescriptorResolver {
             if (!psiClass.hasModifierProperty(PsiModifier.ABSTRACT) && !psiClass.isInterface()) {
                 ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(
                         classDescriptor,
-                        Collections.<Annotation>emptyList(),
+                        Collections.<AnnotationDescriptor>emptyList(),
                         false);
                 constructorDescriptor.initialize(typeParameters, Collections.<ValueParameterDescriptor>emptyList());
                 constructorDescriptor.setReturnType(classDescriptor.getDefaultType());
@@ -128,7 +129,7 @@ public class JavaDescriptorResolver {
             for (PsiMethod constructor : psiConstructors) {
                 ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(
                         classDescriptor,
-                        Collections.<Annotation>emptyList(), // TODO
+                        Collections.<AnnotationDescriptor>emptyList(), // TODO
                         false);
                 constructorDescriptor.initialize(typeParameters, resolveParameterDescriptors(constructorDescriptor, constructor.getParameterList().getParameters()));
                 constructorDescriptor.setReturnType(classDescriptor.getDefaultType());
@@ -154,7 +155,7 @@ public class JavaDescriptorResolver {
     private TypeParameterDescriptor createJavaTypeParameterDescriptor(@NotNull DeclarationDescriptor owner, @NotNull PsiTypeParameter typeParameter) {
         TypeParameterDescriptor typeParameterDescriptor = TypeParameterDescriptor.createForFurtherModification(
                 owner,
-                Collections.<Annotation>emptyList(), // TODO
+                Collections.<AnnotationDescriptor>emptyList(), // TODO
                 Variance.INVARIANT,
                 typeParameter.getName(),
                 typeParameter.getIndex()
@@ -225,7 +226,7 @@ public class JavaDescriptorResolver {
     private NamespaceDescriptor createJavaNamespaceDescriptor(PsiPackage psiPackage) {
         JavaNamespaceDescriptor namespaceDescriptor = new JavaNamespaceDescriptor(
                 JAVA_ROOT,
-                Collections.<Annotation>emptyList(), // TODO
+                Collections.<AnnotationDescriptor>emptyList(), // TODO
                 psiPackage.getName()
         );
         namespaceDescriptor.setMemberScope(new JavaPackageScope(psiPackage.getQualifiedName(), namespaceDescriptor, semanticServices));
@@ -236,7 +237,7 @@ public class JavaDescriptorResolver {
     private NamespaceDescriptor createJavaNamespaceDescriptor(@NotNull final PsiClass psiClass) {
         JavaNamespaceDescriptor namespaceDescriptor = new JavaNamespaceDescriptor(
                 JAVA_ROOT,
-                Collections.<Annotation>emptyList(), // TODO
+                Collections.<AnnotationDescriptor>emptyList(), // TODO
                 psiClass.getName()
         );
         namespaceDescriptor.setMemberScope(new JavaClassMembersScope(namespaceDescriptor, psiClass, semanticServices, true));
@@ -252,7 +253,7 @@ public class JavaDescriptorResolver {
             result.add(new ValueParameterDescriptorImpl(
                     containingDeclaration,
                     i,
-                    Collections.<Annotation>emptyList(), // TODO
+                    Collections.<AnnotationDescriptor>emptyList(), // TODO
                     name == null ? "p" + i : name,
                     null, // TODO : review
                     semanticServices.getTypeTransformer().transformToType(parameter.getType()),
@@ -272,7 +273,7 @@ public class JavaDescriptorResolver {
         boolean isFinal = field.hasModifierProperty(PsiModifier.FINAL);
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                 containingDeclaration,
-                Collections.<Annotation>emptyList(),
+                Collections.<AnnotationDescriptor>emptyList(),
                 new MemberModifiers(false, false, false),
                 !isFinal,
                 null,
@@ -285,7 +286,7 @@ public class JavaDescriptorResolver {
     }
 
     @NotNull
-    public FunctionGroup resolveFunctionGroup(@NotNull PsiClass psiClass, @Nullable ClassDescriptor classDescriptor, @NotNull String methodName, boolean staticMembers) {
+    public FunctionGroup resolveFunctionGroup(@NotNull DeclarationDescriptor owner, @NotNull PsiClass psiClass, @Nullable ClassDescriptor classDescriptor, @NotNull String methodName, boolean staticMembers) {
         WritableFunctionGroup writableFunctionGroup = new WritableFunctionGroup(methodName);
         final Collection<HierarchicalMethodSignature> signatures = psiClass.getVisibleSignatures();
         TypeSubstitutor typeSubstitutor = createSubstitutorForGenericSupertypes(classDescriptor);
@@ -298,7 +299,7 @@ public class JavaDescriptorResolver {
                  continue;
             }
 
-            FunctionDescriptor substitutedFunctionDescriptor = resolveMethodToFunctionDescriptor(psiClass, typeSubstitutor, method);
+            FunctionDescriptor substitutedFunctionDescriptor = resolveMethodToFunctionDescriptor(owner, psiClass, typeSubstitutor, method);
             if (substitutedFunctionDescriptor != null) {
                 writableFunctionGroup.addFunction(substitutedFunctionDescriptor);
             }
@@ -318,7 +319,7 @@ public class JavaDescriptorResolver {
     }
 
     @Nullable
-    public FunctionDescriptor resolveMethodToFunctionDescriptor(PsiClass psiClass, TypeSubstitutor typeSubstitutorForGenericSuperclasses, PsiMethod method) {
+    public FunctionDescriptor resolveMethodToFunctionDescriptor(DeclarationDescriptor owner, PsiClass psiClass, TypeSubstitutor typeSubstitutorForGenericSuperclasses, PsiMethod method) {
         PsiType returnType = method.getReturnType();
         if (returnType == null) {
             return null;
@@ -332,8 +333,8 @@ public class JavaDescriptorResolver {
         }
         PsiParameter[] parameters = method.getParameterList().getParameters();
         FunctionDescriptorImpl functionDescriptorImpl = new FunctionDescriptorImpl(
-                JavaDescriptorResolver.JAVA_ROOT,
-                Collections.<Annotation>emptyList(), // TODO
+                owner,
+                Collections.<AnnotationDescriptor>emptyList(), // TODO
                 method.getName()
         );
         methodDescriptorCache.put(method, functionDescriptorImpl);

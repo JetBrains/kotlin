@@ -2,7 +2,7 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.AbstractNamespaceDescriptorImpl;
-import org.jetbrains.jet.lang.descriptors.Annotation;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.resolve.JetScope;
 
@@ -14,7 +14,7 @@ import java.util.List;
 public class JavaNamespaceDescriptor extends AbstractNamespaceDescriptorImpl {
     private JetScope memberScope;
 
-    public JavaNamespaceDescriptor(DeclarationDescriptor containingDeclaration, List<Annotation> annotations, String name) {
+    public JavaNamespaceDescriptor(DeclarationDescriptor containingDeclaration, List<AnnotationDescriptor> annotations, String name) {
         super(containingDeclaration, annotations, name);
     }
 

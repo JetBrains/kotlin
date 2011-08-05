@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.List;
@@ -15,7 +16,7 @@ public abstract class VariableDescriptorImpl extends DeclarationDescriptorImpl i
 
     public VariableDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull List<Annotation> annotations,
+            @NotNull List<AnnotationDescriptor> annotations,
             @NotNull String name,
             @Nullable JetType inType,
             @Nullable JetType outType) {

@@ -3,8 +3,8 @@ package org.jetbrains.jet.lang.types;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.AnnotatedImpl;
-import org.jetbrains.jet.lang.descriptors.Annotation;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotatedImpl;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.resolve.JetScope;
 
@@ -24,7 +24,7 @@ public final class JetTypeImpl extends AnnotatedImpl implements JetType {
     private final boolean nullable;
     private JetScope memberScope;
 
-    public JetTypeImpl(List<Annotation> annotations, TypeConstructor constructor, boolean nullable, List<TypeProjection> arguments, JetScope memberScope) {
+    public JetTypeImpl(List<AnnotationDescriptor> annotations, TypeConstructor constructor, boolean nullable, List<TypeProjection> arguments, JetScope memberScope) {
         super(annotations);
         this.constructor = constructor;
         this.nullable = nullable;
@@ -33,11 +33,11 @@ public final class JetTypeImpl extends AnnotatedImpl implements JetType {
     }
 
     public JetTypeImpl(TypeConstructor constructor, JetScope memberScope) {
-        this(Collections.<Annotation>emptyList(), constructor, false, Collections.<TypeProjection>emptyList(), memberScope);
+        this(Collections.<AnnotationDescriptor>emptyList(), constructor, false, Collections.<TypeProjection>emptyList(), memberScope);
     }
 
     public JetTypeImpl(@NotNull ClassDescriptor classDescriptor) {
-        this(Collections.<Annotation>emptyList(),
+        this(Collections.<AnnotationDescriptor>emptyList(),
                 classDescriptor.getTypeConstructor(),
                 false,
                 Collections.<TypeProjection>emptyList(),

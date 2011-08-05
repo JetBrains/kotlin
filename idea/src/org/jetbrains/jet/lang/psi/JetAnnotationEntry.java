@@ -11,14 +11,14 @@ import java.util.List;
 /**
  * @author max
  */
-public class JetAnnotationEntry extends JetElement {
+public class JetAnnotationEntry extends JetElement implements JetCall {
     public JetAnnotationEntry(@NotNull ASTNode node) {
         super(node);
     }
 
     @Override
     public void accept(JetVisitor visitor) {
-        visitor.visitAttribute(this);
+        visitor.visitAnnotationEntry(this);
     }
 
     @Nullable @IfNotParsed
@@ -26,15 +26,41 @@ public class JetAnnotationEntry extends JetElement {
         return (JetTypeReference) findChildByType(JetNodeTypes.TYPE_REFERENCE);
     }
 
-    @Nullable
-    public JetArgumentList getArgumentList() {
-        return (JetArgumentList) findChildByType(JetNodeTypes.VALUE_ARGUMENT_LIST);
+    @Override
+    public JetValueArgumentList getValueArgumentList() {
+        return (JetValueArgumentList) findChildByType(JetNodeTypes.VALUE_ARGUMENT_LIST);
     }
 
     @NotNull
-    public List<JetArgument> getArguments() {
-        JetArgumentList list = getArgumentList();
-        return list != null ? list.getArguments() : Collections.<JetArgument>emptyList();
+    @Override
+    public List<JetValueArgument> getValueArguments() {
+        JetValueArgumentList list = getValueArgumentList();
+        return list != null ? list.getArguments() : Collections.<JetValueArgument>emptyList();
     }
 
+    @NotNull
+    @Override
+    public List<JetExpression> getFunctionLiteralArguments() {
+        return Collections.emptyList();
+    }
+
+    @NotNull
+    @Override
+    public List<JetTypeProjection> getTypeArguments() {
+        JetTypeReference typeReference = getTypeReference();
+        if (typeReference != null) {
+            JetTypeElement typeElement = typeReference.getTypeElement();
+            if (typeElement instanceof JetUserType) {
+                JetUserType userType = (JetUserType) typeElement;
+                return userType.getTypeArguments();
+            }
+        }
+        return Collections.emptyList();
+    }
+
+    @NotNull
+    @Override
+    public JetElement asElement() {
+        return this;
+    }
 }

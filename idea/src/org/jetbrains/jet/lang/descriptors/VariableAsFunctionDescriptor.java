@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 
@@ -22,8 +23,8 @@ public class VariableAsFunctionDescriptor extends FunctionDescriptorImpl {
     private final VariableDescriptor variableDescriptor;
 
     private VariableAsFunctionDescriptor(VariableDescriptor variableDescriptor) {
-        super(variableDescriptor.getContainingDeclaration(), Collections.<Annotation>emptyList(), variableDescriptor.getName());
-//        super(variableDescriptor.getContainingDeclaration(), Collections.<Annotation>emptyList(), variableDescriptor.getName());
+        super(variableDescriptor.getContainingDeclaration(), Collections.<AnnotationDescriptor>emptyList(), variableDescriptor.getName());
+//        super(variableDescriptor.getContainingDeclaration(), Collections.<AnnotationDescriptor>emptyList(), variableDescriptor.getName());
         this.variableDescriptor = variableDescriptor;
     }
 

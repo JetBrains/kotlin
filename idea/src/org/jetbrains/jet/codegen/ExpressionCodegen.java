@@ -14,6 +14,7 @@ import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
@@ -489,7 +490,9 @@ public class ExpressionCodegen extends JetVisitor {
 
     @Override
     public void visitConstantExpression(JetConstantExpression expression) {
-        myStack.push(StackValue.constant(expression.getValue(), expressionType(expression)));
+        CompileTimeConstant<?> compileTimeValue = bindingContext.getCompileTimeValue(expression);
+        assert compileTimeValue != null;
+        myStack.push(StackValue.constant(compileTimeValue.getValue(), expressionType(expression)));
     }
 
     @Override
@@ -816,7 +819,7 @@ public class ExpressionCodegen extends JetVisitor {
         else {
             IntrinsicMethod intrinsic = (IntrinsicMethod) callable;
             List<JetExpression> args = new ArrayList<JetExpression>();
-            for (JetArgument argument : expression.getValueArguments()) {
+            for (JetValueArgument argument : expression.getValueArguments()) {
                 args.add(argument.getArgumentExpression());
             }
             return intrinsic.generate(this, v, expressionType(expression), expression, args, haveReceiver);
@@ -1006,9 +1009,9 @@ public class ExpressionCodegen extends JetVisitor {
     }
 
     private void pushMethodArguments(JetCall expression, List<Type> valueParameterTypes) {
-        List<JetArgument> args = expression.getValueArguments();
+        List<JetValueArgument> args = expression.getValueArguments();
         for (int i = 0, argsSize = args.size(); i < argsSize; i++) {
-            JetArgument arg = args.get(i);
+            JetValueArgument arg = args.get(i);
             gen(arg.getArgumentExpression(), valueParameterTypes.get(i));
         }
     }
@@ -1471,7 +1474,7 @@ public class ExpressionCodegen extends JetVisitor {
     }
 
     private void generateNewArray(JetCallExpression expression, Type type) {
-        List<JetArgument> args = expression.getValueArguments();
+        List<JetValueArgument> args = expression.getValueArguments();
         if (args.size() != 1) {
             throw new CompilationException("array constructor requires one value argument");
         }

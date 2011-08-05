@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.types.NamespaceType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
@@ -12,7 +13,7 @@ import java.util.List;
 public abstract class AbstractNamespaceDescriptorImpl extends DeclarationDescriptorImpl implements NamespaceDescriptor {
     private NamespaceType namespaceType;
 
-    public AbstractNamespaceDescriptorImpl(DeclarationDescriptor containingDeclaration, List<Annotation> annotations, String name) {
+    public AbstractNamespaceDescriptorImpl(DeclarationDescriptor containingDeclaration, List<AnnotationDescriptor> annotations, String name) {
         super(containingDeclaration, annotations, name);
     }
 

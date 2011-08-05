@@ -9,17 +9,17 @@ import java.util.List;
 /**
  * @author max
  */
-public class JetArgumentList extends JetElement {
-    public JetArgumentList(@NotNull ASTNode node) {
+public class JetValueArgumentList extends JetElement {
+    public JetValueArgumentList(@NotNull ASTNode node) {
         super(node);
     }
 
     @Override
     public void accept(JetVisitor visitor) {
-        visitor.visitArgumentList(this);
+        visitor.visitValueArgumentList(this);
     }
 
-    public List<JetArgument> getArguments() {
+    public List<JetValueArgument> getArguments() {
         return findChildrenByType(JetNodeTypes.VALUE_ARGUMENT);
     }
 }

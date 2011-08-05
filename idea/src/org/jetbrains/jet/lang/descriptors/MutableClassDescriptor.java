@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
@@ -156,7 +157,7 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
         assert typeConstructor == null : typeConstructor;
         this.typeConstructor = new TypeConstructorImpl(
                 this,
-                Collections.<Annotation>emptyList(), // TODO : pass annotations from the class?
+                Collections.<AnnotationDescriptor>emptyList(), // TODO : pass annotations from the class?
                 !open,
                 getName(),
                 typeParameters,

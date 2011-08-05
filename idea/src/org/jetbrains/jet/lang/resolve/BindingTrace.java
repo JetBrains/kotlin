@@ -5,7 +5,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.ErrorHandlerWithRegions;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.types.JetType;
 
 /**
@@ -24,6 +26,10 @@ public interface BindingTrace {
     void recordValueParameterAsPropertyResolution(@NotNull JetParameter declaration, @NotNull PropertyDescriptor descriptor);
 
     void recordTypeResolution(@NotNull JetTypeReference typeReference, @NotNull JetType type);
+
+    void recordAnnotationResolution(@NotNull JetAnnotationEntry annotationEntry, @NotNull AnnotationDescriptor annotationDescriptor);
+
+    void recordCompileTimeValue(@NotNull JetExpression expression, @NotNull CompileTimeConstant<?> value);
 
     void recordBlock(JetFunctionLiteralExpression expression);
 

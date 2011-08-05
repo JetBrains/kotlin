@@ -41,8 +41,8 @@ public interface JetNodeTypes {
     JetNodeType ANNOTATION_ENTRY = new JetNodeType("ANNOTATION_ENTRY", JetAnnotationEntry.class);
 
     JetNodeType TYPE_ARGUMENT_LIST                  = new JetNodeType("TYPE_ARGUMENT_LIST", JetTypeArgumentList.class);
-    JetNodeType VALUE_ARGUMENT_LIST                 = new JetNodeType("VALUE_ARGUMENT_LIST", JetArgumentList.class);
-    JetNodeType VALUE_ARGUMENT                      = new JetNodeType("VALUE_ARGUMENT", JetArgument.class);
+    JetNodeType VALUE_ARGUMENT_LIST                 = new JetNodeType("VALUE_ARGUMENT_LIST", JetValueArgumentList.class);
+    JetNodeType VALUE_ARGUMENT                      = new JetNodeType("VALUE_ARGUMENT", JetValueArgument.class);
     JetNodeType TYPE_REFERENCE                      = new JetNodeType("TYPE_REFERENCE", JetTypeReference.class);
     JetNodeType LABELED_TUPLE_ENTRY                 = new JetNodeType("LABELED_TUPLE_ENTRY");
     JetNodeType LABELED_TUPLE_TYPE_ENTRY            = new JetNodeType("LABELED_TUPLE_TYPE_ENTRY");
@@ -67,9 +67,8 @@ public interface JetNodeTypes {
     JetNodeType BOOLEAN_CONSTANT   = new JetNodeType("BOOLEAN_CONSTANT", JetConstantExpression.class);
     JetNodeType FLOAT_CONSTANT     = new JetNodeType("FLOAT_CONSTANT", JetConstantExpression.class);
     JetNodeType CHARACTER_CONSTANT = new JetNodeType("CHARACTER_CONSTANT", JetConstantExpression.class);
-    JetNodeType STRING_CONSTANT    = new JetNodeType("STRING_CONSTANT", JetConstantExpression.class);
+    JetNodeType RAW_STRING_CONSTANT = new JetNodeType("STRING_CONSTANT", JetConstantExpression.class);
     JetNodeType INTEGER_CONSTANT   = new JetNodeType("INTEGER_CONSTANT", JetConstantExpression.class);
-    JetNodeType LONG_CONSTANT      = new JetNodeType("LONG_CONSTANT", JetConstantExpression.class);
 
     JetNodeType STRING_TEMPLATE    = new JetNodeType("STRING_TEMPLATE", JetStringTemplateExpression.class);
     JetNodeType LONG_STRING_TEMPLATE_ENTRY = new JetNodeType("LONG_STRING_TEMPLATE_ENTRY", JetBlockStringTemplateEntry.class);

@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
@@ -149,7 +150,7 @@ public class TopDownAnalyzer {
                     if (namespaceDescriptor == null) {
                         namespaceDescriptor = new NamespaceDescriptorImpl(
                                 owner.getOriginal(),
-                                Collections.<Annotation>emptyList(), // TODO
+                                Collections.<AnnotationDescriptor>emptyList(), // TODO
                                 name
                         );
                         namespaceDescriptor.initialize(new WritableScopeImpl(JetScope.EMPTY, namespaceDescriptor, trace.getErrorHandler()).setDebugName("Namespace member scope"));
@@ -226,7 +227,7 @@ public class TopDownAnalyzer {
                 }
 
                 private void createPrimaryConstructor(MutableClassDescriptor mutableClassDescriptor) {
-                    ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(mutableClassDescriptor, Collections.<Annotation>emptyList(), true);
+                    ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(mutableClassDescriptor, Collections.<AnnotationDescriptor>emptyList(), true);
                     constructorDescriptor.initialize(Collections.<TypeParameterDescriptor>emptyList(), Collections.<ValueParameterDescriptor>emptyList());
                     // TODO : make the constructor private?
                     mutableClassDescriptor.setPrimaryConstructor(constructorDescriptor);
@@ -482,6 +483,7 @@ public class TopDownAnalyzer {
 
     private void resolveBehaviorDeclarationBodies() {
         resolveDelegationSpecifierLists();
+        resolveClassAnnotations();
 
         resolveAnonymousInitializers();
         resolvePropertyDeclarationBodies();
@@ -585,7 +587,7 @@ public class TopDownAnalyzer {
                             typeInferrer.checkTypeInitializerCall(scopeForConstructor, typeReference, call);
                         }
                         else {
-                            JetArgumentList valueArgumentList = call.getValueArgumentList();
+                            JetValueArgumentList valueArgumentList = call.getValueArgumentList();
                             assert valueArgumentList != null;
                             trace.getErrorHandler().genericError(valueArgumentList.getNode(),
                                     "Class " + JetPsiUtil.safeName(jetClass.getName()) + " must have a constructor in order to be able to initialize supertypes");
@@ -622,6 +624,10 @@ public class TopDownAnalyzer {
                 }
             });
         }
+    }
+
+    private void resolveClassAnnotations() {
+
     }
 
     private void resolveAnonymousInitializers() {

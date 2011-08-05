@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Collections;
@@ -15,12 +16,12 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
 
     private final boolean isPrimary;
 
-    public ConstructorDescriptorImpl(@NotNull ClassDescriptor containingDeclaration, @NotNull List<Annotation> annotations, boolean isPrimary) {
+    public ConstructorDescriptorImpl(@NotNull ClassDescriptor containingDeclaration, @NotNull List<AnnotationDescriptor> annotations, boolean isPrimary) {
         super(containingDeclaration, annotations, "<init>");
         this.isPrimary = isPrimary;
     }
 
-    public ConstructorDescriptorImpl(@NotNull ConstructorDescriptor original, @NotNull List<Annotation> annotations, boolean isPrimary) {
+    public ConstructorDescriptorImpl(@NotNull ConstructorDescriptor original, @NotNull List<AnnotationDescriptor> annotations, boolean isPrimary) {
         super(original, annotations, "<init>");
         this.isPrimary = isPrimary;
     }
@@ -74,7 +75,7 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
     protected FunctionDescriptorImpl createSubstitutedCopy() {
         return new ConstructorDescriptorImpl(
                 this,
-                Collections.<Annotation>emptyList(), // TODO
+                Collections.<AnnotationDescriptor>emptyList(), // TODO
                 isPrimary);
     }
 }

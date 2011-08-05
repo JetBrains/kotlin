@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.descriptors;
 
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 
@@ -17,7 +18,7 @@ public class PropertySetterDescriptor extends PropertyAccessorDescriptor {
     private MutableValueParameterDescriptor parameter;
     private final Set<PropertySetterDescriptor> overriddenSetters = Sets.newHashSet();
 
-    public PropertySetterDescriptor(@NotNull MemberModifiers modifiers, @NotNull PropertyDescriptor correspondingProperty, @NotNull List<Annotation> annotations, boolean hasBody) {
+    public PropertySetterDescriptor(@NotNull MemberModifiers modifiers, @NotNull PropertyDescriptor correspondingProperty, @NotNull List<AnnotationDescriptor> annotations, boolean hasBody) {
         super(modifiers, correspondingProperty, annotations, "set-" + correspondingProperty.getName(), hasBody);
     }
 

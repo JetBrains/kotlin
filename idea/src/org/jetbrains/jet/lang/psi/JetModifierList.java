@@ -24,13 +24,13 @@ public class JetModifierList extends JetElement {
     }
 
     @NotNull
-    public List<JetAnnotation> getAttributeAnnotations() {
+    public List<JetAnnotation> getAnnotations() {
         return findChildrenByType(JetNodeTypes.ANNOTATION);
     }
 
-    public List<JetAnnotationEntry> getAttributes() {
+    public List<JetAnnotationEntry> getAnnotationEntries() {
         List<JetAnnotationEntry> answer = null;
-        for (JetAnnotation annotation : getAttributeAnnotations()) {
+        for (JetAnnotation annotation : getAnnotations()) {
             if (answer == null) answer = new ArrayList<JetAnnotationEntry>();
             answer.addAll(annotation.getEntries());
         }

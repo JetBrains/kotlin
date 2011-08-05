@@ -5,7 +5,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.Annotation;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.ChainedScope;
@@ -72,7 +72,7 @@ public class TypeUtils {
             }
         }
 
-        List<Annotation> noAnnotations = Collections.<Annotation>emptyList();
+        List<AnnotationDescriptor> noAnnotations = Collections.<AnnotationDescriptor>emptyList();
         TypeConstructor constructor = new TypeConstructorImpl(
                 null,
                 noAnnotations,
@@ -181,7 +181,7 @@ public class TypeUtils {
     public static JetType makeUnsubstitutedType(ClassDescriptor classDescriptor, JetScope unsubstitutedMemberScope) {
         List<TypeProjection> arguments = getDefaultTypeProjections(classDescriptor.getTypeConstructor().getParameters());
         return new JetTypeImpl(
-                Collections.<Annotation>emptyList(),
+                Collections.<AnnotationDescriptor>emptyList(),
                 classDescriptor.getTypeConstructor(),
                 false,
                 arguments,

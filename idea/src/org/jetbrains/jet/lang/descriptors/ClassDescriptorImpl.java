@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.JetScope;
 import org.jetbrains.jet.lang.resolve.SubstitutingScope;
 import org.jetbrains.jet.lang.types.*;
@@ -22,7 +23,7 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
 
     public ClassDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull List<Annotation> annotations,
+            @NotNull List<AnnotationDescriptor> annotations,
             @NotNull String name) {
         super(containingDeclaration, annotations, name);
     }

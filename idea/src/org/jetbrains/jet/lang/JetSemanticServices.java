@@ -28,7 +28,6 @@ public class JetSemanticServices {
     private final OverloadResolver overloadResolver;
     private final JetControlFlowDataTraceFactory flowDataTraceFactory;
 
-
     private JetSemanticServices(JetStandardLibrary standardLibrary, JetControlFlowDataTraceFactory flowDataTraceFactory) {
         this.standardLibrary = standardLibrary;
         this.typeChecker = new JetTypeChecker(standardLibrary);

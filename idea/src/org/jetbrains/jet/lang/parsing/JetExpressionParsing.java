@@ -19,7 +19,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     private static final TokenSet WHEN_CONDITION_RECOVERY_SET_WITH_DOUBLE_ARROW = TokenSet.create(RBRACE, IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS, ELSE_KEYWORD, DOUBLE_ARROW, DOT);
 
     private static final TokenSet TYPE_ARGUMENT_LIST_STOPPERS = TokenSet.create(
-            INTEGER_LITERAL, LONG_LITERAL, FLOAT_LITERAL, CHARACTER_LITERAL, OPEN_QUOTE, RAW_STRING_LITERAL,
+            INTEGER_LITERAL, FLOAT_LITERAL, CHARACTER_LITERAL, OPEN_QUOTE, RAW_STRING_LITERAL,
             NAMESPACE_KEYWORD, AS_KEYWORD, TYPE_KEYWORD, CLASS_KEYWORD, THIS_KEYWORD, VAL_KEYWORD, VAR_KEYWORD,
             FUN_KEYWORD, FOR_KEYWORD, NULL_KEYWORD,
             TRUE_KEYWORD, FALSE_KEYWORD, IS_KEYWORD, THROW_KEYWORD, RETURN_KEYWORD, BREAK_KEYWORD,
@@ -41,7 +41,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             // literal constant
             TRUE_KEYWORD, FALSE_KEYWORD,
             OPEN_QUOTE, RAW_STRING_LITERAL,
-            INTEGER_LITERAL, LONG_LITERAL, CHARACTER_LITERAL, FLOAT_LITERAL,
+            INTEGER_LITERAL, CHARACTER_LITERAL, FLOAT_LITERAL,
             NULL_KEYWORD,
 
             LBRACE, // functionLiteral
@@ -317,7 +317,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      *   : typeArguments? valueArguments (getEntryPoint? functionLiteral)
      *   : typeArguments (getEntryPoint? functionLiteral)
      *   : arrayAccess
-     *   : memberAccessOperation postfixUnaryOperation // TODO: Review
+     *   : memberAccessOperation postfixUnaryExpression // TODO: Review
      *   ;
      */
     private void parsePostfixExpression() {
@@ -637,13 +637,10 @@ public class JetExpressionParsing extends AbstractJetParsing {
             parseOneTokenExpression(BOOLEAN_CONSTANT);
         }
         else if (at(RAW_STRING_LITERAL)) {
-            parseOneTokenExpression(STRING_CONSTANT);
+            parseOneTokenExpression(RAW_STRING_CONSTANT);
         }
         else if (at(INTEGER_LITERAL)) {
             parseOneTokenExpression(INTEGER_CONSTANT);
-        }
-        else if (at(LONG_LITERAL)) {
-            parseOneTokenExpression(LONG_CONSTANT);
         }
         else if (at(CHARACTER_LITERAL)) {
             parseOneTokenExpression(CHARACTER_CONSTANT);

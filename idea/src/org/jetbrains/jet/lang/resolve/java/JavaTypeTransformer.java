@@ -3,7 +3,7 @@ package org.jetbrains.jet.lang.resolve.java;
 import com.google.common.collect.Lists;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.Annotation;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.types.*;
@@ -96,7 +96,7 @@ public class JavaTypeTransformer {
                         }
                     }
                     return new JetTypeImpl(
-                            Collections.<Annotation>emptyList(),
+                            Collections.<AnnotationDescriptor>emptyList(),
                             descriptor.getTypeConstructor(),
                             true,
                             arguments,

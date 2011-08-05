@@ -7,7 +7,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 /**
  * @author max
  */
-public class JetNamedArgumentImpl extends JetArgument {
+public class JetNamedArgumentImpl extends JetValueArgument {
     public JetNamedArgumentImpl(@NotNull ASTNode node) {
         super(node);
     }

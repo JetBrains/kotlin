@@ -2,7 +2,7 @@ package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.Annotation;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 
 import java.util.*;
@@ -138,7 +138,7 @@ public class JetTypeChecker {
         }
 
         // TODO : attributes?
-        return new JetTypeImpl(Collections.<Annotation>emptyList(), constructor, nullable, newProjections, JetStandardClasses.STUB); // TODO : scope
+        return new JetTypeImpl(Collections.<AnnotationDescriptor>emptyList(), constructor, nullable, newProjections, JetStandardClasses.STUB); // TODO : scope
     }
 
     @NotNull
