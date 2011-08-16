@@ -27,6 +27,11 @@ public class JetWhenEntry extends JetElement {
         visitor.visitWhenEntry(this);
     }
 
+    @Override
+    public <R, D> R visit(@NotNull JetExtendedVisitor<R, D> visitor, D data) {
+        return visitor.visitWhenEntry(this, data);
+    }
+
     @NotNull
     public JetWhenCondition[] getConditions() {
         return findChildrenByClass(JetWhenCondition.class);

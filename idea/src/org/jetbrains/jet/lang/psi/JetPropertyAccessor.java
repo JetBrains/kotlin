@@ -17,8 +17,13 @@ public class JetPropertyAccessor extends JetDeclaration implements JetDeclaratio
     }
 
     @Override
-    public void accept(JetVisitor visitor) {
+    public void accept(@NotNull JetVisitor visitor) {
         visitor.visitPropertyAccessor(this);
+    }
+
+    @Override
+    public <R, D> R visit(@NotNull JetExtendedVisitor<R, D> visitor, D data) {
+        return visitor.visitPropertyAccessor(this, data);
     }
 
     public boolean isSetter() {
@@ -47,6 +52,11 @@ public class JetPropertyAccessor extends JetDeclaration implements JetDeclaratio
     @Override
     public boolean hasBlockBody() {
         return findChildByType(JetTokens.EQ) == null;
+    }
+
+    @Override
+    public boolean hasDeclaredReturnType() {
+        return false;
     }
 
     @NotNull

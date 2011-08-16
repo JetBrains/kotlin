@@ -18,8 +18,13 @@ public class JetTypeReference extends JetElement {
     }
 
     @Override
-    public void accept(JetVisitor visitor) {
+    public void accept(@NotNull JetVisitor visitor) {
         visitor.visitTypeReference(this);
+    }
+
+    @Override
+    public <R, D> R visit(@NotNull JetExtendedVisitor<R, D> visitor, D data) {
+        return visitor.visitTypeReference(this, data);
     }
 
     public List<JetAnnotation> getAttributeAnnotations() {

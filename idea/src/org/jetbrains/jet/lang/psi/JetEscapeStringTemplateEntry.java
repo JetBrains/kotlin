@@ -17,6 +17,11 @@ public class JetEscapeStringTemplateEntry extends JetStringTemplateEntry {
         visitor.visitEscapeStringTemplateEntry(this);
     }
 
+    @Override
+    public <R, D> R visit(@NotNull JetExtendedVisitor<R, D> visitor, D data) {
+        return visitor.visitEscapeStringTemplateEntry(this, data);
+    }
+
     public String getUnescapedValue() {
         return StringUtil.unescapeStringCharacters(getText());
     }

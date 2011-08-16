@@ -18,8 +18,13 @@ public class JetDelegatorToThisCall extends JetDelegationSpecifier implements Je
     }
 
     @Override
-    public void accept(JetVisitor visitor) {
+    public void accept(@NotNull JetVisitor visitor) {
         visitor.visitDelegationToThisCall(this);
+    }
+
+    @Override
+    public <R, D> R visit(@NotNull JetExtendedVisitor<R, D> visitor, D data) {
+        return visitor.visitDelegationToThisCall(this, data);
     }
 
     @Nullable

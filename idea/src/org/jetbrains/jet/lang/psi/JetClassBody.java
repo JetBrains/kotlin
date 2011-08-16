@@ -29,6 +29,11 @@ public class JetClassBody extends JetElement {
         visitor.visitClassBody(this);
     }
 
+    @Override
+    public <R, D> R visit(@NotNull JetExtendedVisitor<R, D> visitor, D data) {
+        return visitor.visitClassBody(this, data);
+    }
+
     @NotNull
     public List<JetClassInitializer> getAnonymousInitializers() {
         return findChildrenByType(JetNodeTypes.ANONYMOUS_INITIALIZER);

@@ -20,8 +20,13 @@ public class JetNullableType extends JetTypeElement {
     }
 
     @Override
-    public void accept(JetVisitor visitor) {
+    public void accept(@NotNull JetVisitor visitor) {
         visitor.visitNullableType(this);
+    }
+
+    @Override
+    public <R, D> R visit(@NotNull JetExtendedVisitor<R, D> visitor, D data) {
+        return visitor.visitNullableType(this, data);
     }
 
     @NotNull

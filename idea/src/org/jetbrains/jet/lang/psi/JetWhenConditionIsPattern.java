@@ -26,4 +26,9 @@ public class JetWhenConditionIsPattern extends JetWhenCondition {
     public void accept(@NotNull JetVisitor visitor) {
         visitor.visitWhenConditionIsPattern(this);
     }
+
+    @Override
+    public <R, D> R visit(@NotNull JetExtendedVisitor<R, D> visitor, D data) {
+        return visitor.visitWhenConditionIsPattern(this, data);
+    }
 }

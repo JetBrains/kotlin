@@ -26,4 +26,9 @@ public class JetDecomposerPattern extends JetPattern {
     public void accept(@NotNull JetVisitor visitor) {
         visitor.visitDecomposerPattern(this);
     }
+
+    @Override
+    public <R, D> R visit(@NotNull JetExtendedVisitor<R, D> visitor, D data) {
+        return visitor.visitDecomposerPattern(this, data);
+    }
 }

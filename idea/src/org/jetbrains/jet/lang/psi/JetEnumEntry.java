@@ -50,4 +50,9 @@ public class JetEnumEntry extends JetClass {
     public void accept(@NotNull JetVisitor visitor) {
         visitor.visitEnumEntry(this);
     }
+
+    @Override
+    public <R, D> R visit(@NotNull JetExtendedVisitor<R, D> visitor, D data) {
+        return visitor.visitEnumEntry(this, data);
+    }
 }

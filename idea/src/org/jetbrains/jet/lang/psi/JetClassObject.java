@@ -18,6 +18,11 @@ public class JetClassObject extends JetDeclaration {
         visitor.visitClassObject(this);
     }
 
+    @Override
+    public <R, D> R visit(@NotNull JetExtendedVisitor<R, D> visitor, D data) {
+        return visitor.visitClassObject(this, data);
+    }
+
     @Nullable @IfNotParsed
     public JetObjectDeclaration getObjectDeclaration() {
         return (JetObjectDeclaration) findChildByType(JetNodeTypes.OBJECT_DECLARATION);

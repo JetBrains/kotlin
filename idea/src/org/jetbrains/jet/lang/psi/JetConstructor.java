@@ -22,6 +22,11 @@ public class JetConstructor extends JetDeclaration implements JetDeclarationWith
         visitor.visitConstructor(this);
     }
 
+    @Override
+    public <R, D> R visit(@NotNull JetExtendedVisitor<R, D> visitor, D data) {
+        return visitor.visitConstructor(this, data);
+    }
+
     @Nullable @IfNotParsed
     public JetParameterList getParameterList() {
         return (JetParameterList) findChildByType(JetNodeTypes.VALUE_PARAMETER_LIST);
@@ -52,6 +57,11 @@ public class JetConstructor extends JetDeclaration implements JetDeclarationWith
     @Override
     public boolean hasBlockBody() {
         return findChildByType(JetTokens.EQ) == null;
+    }
+
+    @Override
+    public boolean hasDeclaredReturnType() {
+        return true;
     }
 
     @NotNull

@@ -61,7 +61,7 @@ fun blockAndAndMismatch() : Int {
   <error>(return <error>true</error>) || (return <error>false</error>)</error>
 }
 fun blockReturnValueTypeMatch() : Int {
-  return <error>if (1 > 2) 1.0 else 2.0</error>
+  return if (1 > 2) <error>1.0</error> else <error>2.0</error>
 }
 fun blockReturnValueTypeMatch() : Int {
   return <error>if (1 > 2) 1</error>
@@ -139,3 +139,26 @@ class A() {
   }
 
 }
+fun illegalConstantBody(): Int = <error>"s"</error>
+fun illegalConstantBlock(): String {
+    return <error>1</error>
+}
+fun illegalIfBody(): Int =
+    if (1 < 2) <error>'a'</error> else { <error>1.0</error> }
+fun illegalIfBlock(): Boolean {
+    if (1 < 2)
+        return false
+    else { return <error>1</error> }
+}
+fun illegalReturnIf(): Char {
+    return if (1 < 2) 'a' else { <error>1</error> }
+}
+
+fun returnNothing(): Nothing {
+    throw 1
+}
+fun f(): Int {
+    if (1 < 2) { return 1 } else returnNothing()
+}
+
+fun f(): Int = if (1 < 2) 1 else returnNothing()

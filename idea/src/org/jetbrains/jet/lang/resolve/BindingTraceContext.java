@@ -119,7 +119,7 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
 
     @Override
     public void recordCompileTimeValue(@NotNull JetExpression expression, @NotNull CompileTimeConstant<?> value) {
-        safePut(compileTimeValues, expression, value);
+        safePut(compileTimeValues, expression, value, true);
     }
 
     @Override
@@ -152,8 +152,13 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
     }
 
     private <K, V> void safePut(Map<K, V> map, K key, V value) {
+        safePut(map, key, value, false);
+    }
+
+    private <K, V> void safePut(Map<K, V> map, K key, V value, boolean canBeEquals) {
         V oldValue = map.put(key, value);
-        assert oldValue == null || oldValue == value : (key instanceof PsiElement ? key.toString() + " \"" + ((PsiElement) key).getText() + "\"" : key.toString()) + " -> " + oldValue + " and " + value;
+        assert oldValue == null || oldValue == value || (!canBeEquals || oldValue.equals(value)) :
+                (key instanceof PsiElement ? key.toString() + " \"" + ((PsiElement) key).getText() + "\"" : key.toString()) + " -> " + oldValue + " and " + value;
     }
 
     @Override

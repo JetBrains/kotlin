@@ -32,6 +32,11 @@ public class JetTypeProjection extends JetDeclaration {
         visitor.visitTypeProjection(this);
     }
 
+    @Override
+    public <R, D> R visit(@NotNull JetExtendedVisitor<R, D> visitor, D data) {
+        return visitor.visitTypeProjection(this, data);
+    }
+
     @Nullable
     public JetTypeReference getTypeReference() {
         return (JetTypeReference) findChildByType(JetNodeTypes.TYPE_REFERENCE);

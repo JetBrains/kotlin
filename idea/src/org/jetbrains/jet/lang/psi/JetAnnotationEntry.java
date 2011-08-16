@@ -17,9 +17,15 @@ public class JetAnnotationEntry extends JetElement implements JetCall {
     }
 
     @Override
-    public void accept(JetVisitor visitor) {
+    public void accept(@NotNull JetVisitor visitor) {
         visitor.visitAnnotationEntry(this);
     }
+
+    @Override
+    public <R, D> R visit(@NotNull JetExtendedVisitor<R, D> visitor, D data) {
+        return visitor.visitAnnotationEntry(this, data);
+    }
+
 
     @Nullable @IfNotParsed
     public JetTypeReference getTypeReference() {

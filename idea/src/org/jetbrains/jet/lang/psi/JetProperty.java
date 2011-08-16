@@ -24,6 +24,11 @@ public class JetProperty extends JetTypeParameterListOwner {
         visitor.visitProperty(this);
     }
 
+    @Override
+    public <R, D> R visit(@NotNull JetExtendedVisitor<R, D> visitor, D data) {
+        return visitor.visitProperty(this, data);
+    }
+
     public boolean isVar() {
         return getNode().findChildByType(JetTokens.VAR_KEYWORD) != null;
     }

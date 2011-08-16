@@ -18,6 +18,11 @@ public class JetNamedFunction extends JetFunction {
         visitor.visitNamedFunction(this);
     }
 
+    @Override
+    public <R, D> R visit(@NotNull JetExtendedVisitor<R, D> visitor, D data) {
+        return visitor.visitNamedFunction(this, data);
+    }
+
     public boolean hasTypeParameterListBeforeFunctionName() {
         JetTypeParameterList typeParameterList = getTypeParameterList();
         if (typeParameterList == null) {

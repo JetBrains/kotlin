@@ -23,6 +23,11 @@ public class JetModifierList extends JetElement {
         visitor.visitModifierList(this);
     }
 
+    @Override
+    public <R, D> R visit(@NotNull JetExtendedVisitor<R, D> visitor, D data) {
+        return visitor.visitModifierList(this, data);
+    }
+
     @NotNull
     public List<JetAnnotation> getAnnotations() {
         return findChildrenByType(JetNodeTypes.ANNOTATION);

@@ -67,7 +67,21 @@ public class DataFlowInfo {
 
     @NotNull
     public List<JetType> getPossibleTypes(VariableDescriptor variableDescriptor) {
-        return typeInfo.get(variableDescriptor);
+        List<JetType> types = typeInfo.get(variableDescriptor);
+        NullabilityFlags nullabilityFlags = nullabilityInfo.get(variableDescriptor);
+        if (nullabilityFlags == null || nullabilityFlags.canBeNull()) {
+            return types;
+        }
+        List<JetType> enrichedTypes = Lists.newArrayListWithCapacity(types.size());
+        for (JetType type: types) {
+            if (type.isNullable()) {
+                enrichedTypes.add(TypeUtils.makeNotNullable(type));
+            }
+            else {
+                enrichedTypes.add(type);
+            }
+        }
+        return enrichedTypes;
     }
 
     public DataFlowInfo equalsToNull(@NotNull VariableDescriptor variableDescriptor, boolean notNull) {
@@ -76,7 +90,9 @@ public class DataFlowInfo {
 
     private ImmutableMap<VariableDescriptor, NullabilityFlags> getEqualsToNullMap(VariableDescriptor variableDescriptor, boolean notNull) {
         Map<VariableDescriptor, NullabilityFlags> builder = Maps.newHashMap(nullabilityInfo);
-        builder.put(variableDescriptor, new NullabilityFlags(!notNull, notNull));
+        NullabilityFlags nullabilityFlags = nullabilityInfo.get(variableDescriptor);
+        boolean varNotNull = notNull || (nullabilityFlags != null && !nullabilityFlags.canBeNull);
+        builder.put(variableDescriptor, new NullabilityFlags(!varNotNull, varNotNull));
         return ImmutableMap.copyOf(builder);
     }
 
@@ -85,7 +101,9 @@ public class DataFlowInfo {
         Map<VariableDescriptor, NullabilityFlags> builder = Maps.newHashMap(nullabilityInfo);
         for (VariableDescriptor variableDescriptor : variableDescriptors) {
             if (variableDescriptor != null) {
-                builder.put(variableDescriptor, new NullabilityFlags(!notNull, notNull));
+                NullabilityFlags nullabilityFlags = nullabilityInfo.get(variableDescriptor);
+                boolean varNotNull = notNull || (nullabilityFlags != null && !nullabilityFlags.canBeNull);
+                builder.put(variableDescriptor, new NullabilityFlags(!varNotNull, varNotNull));
             }
         }
         return ImmutableMap.copyOf(builder);

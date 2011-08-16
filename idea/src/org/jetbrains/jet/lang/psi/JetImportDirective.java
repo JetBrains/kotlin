@@ -19,6 +19,11 @@ public class JetImportDirective extends JetElement {
         visitor.visitImportDirective(this);
     }
 
+    @Override
+    public <R, D> R visit(@NotNull JetExtendedVisitor<R, D> visitor, D data) {
+        return visitor.visitImportDirective(this, data);
+    }
+
     public boolean isAbsoluteInRootNamespace() {
         return findChildByType(JetTokens.NAMESPACE_KEYWORD) != null;
     }

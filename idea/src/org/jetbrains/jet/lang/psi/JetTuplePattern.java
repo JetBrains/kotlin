@@ -19,6 +19,11 @@ public class JetTuplePattern extends JetPattern {
         visitor.visitTuplePattern(this);
     }
 
+    @Override
+    public <R, D> R visit(@NotNull JetExtendedVisitor<R, D> visitor, D data) {
+        return visitor.visitTuplePattern(this, data);
+    }
+
     @NotNull
     public List<JetTuplePatternEntry> getEntries() {
         return findChildrenByType(JetNodeTypes.TUPLE_PATTERN_ENTRY);

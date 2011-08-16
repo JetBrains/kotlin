@@ -27,6 +27,11 @@ public class JetUserType extends JetTypeElement {
         visitor.visitUserType(this);
     }
 
+    @Override
+    public <R, D> R visit(@NotNull JetExtendedVisitor<R, D> visitor, D data) {
+        return visitor.visitUserType(this, data);
+    }
+
     public JetTypeArgumentList getTypeArgumentList() {
         return (JetTypeArgumentList) findChildByType(JetNodeTypes.TYPE_ARGUMENT_LIST);
     }

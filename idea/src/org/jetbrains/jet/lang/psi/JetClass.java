@@ -38,6 +38,11 @@ public class JetClass extends JetTypeParameterListOwner implements JetClassOrObj
         visitor.visitClass(this);
     }
 
+    @Override
+    public <R, D> R visit(@NotNull JetExtendedVisitor<R, D> visitor, D data) {
+        return visitor.visitClass(this, data);
+    }
+
     @Nullable
     public JetParameterList getPrimaryConstructorParameterList() {
         return (JetParameterList) findChildByType(JetNodeTypes.VALUE_PARAMETER_LIST);

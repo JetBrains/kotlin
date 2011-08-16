@@ -17,6 +17,8 @@ public interface JetDeclarationWithBody {
 
     boolean hasBlockBody();
 
+    boolean hasDeclaredReturnType();
+
     @NotNull
     JetElement asElement();
 }

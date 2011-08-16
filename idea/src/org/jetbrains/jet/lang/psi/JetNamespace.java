@@ -23,6 +23,11 @@ public class JetNamespace extends JetNamedDeclaration {
         visitor.visitNamespace(this);
     }
 
+    @Override
+    public <R, D> R visit(@NotNull JetExtendedVisitor<R, D> visitor, D data) {
+        return visitor.visitNamespace(this, data);
+    }
+
     public List<JetDeclaration> getDeclarations() {
         PsiElement body = findChildByType(JetNodeTypes.NAMESPACE_BODY);
         return PsiTreeUtil.getChildrenOfTypeAsList(body != null ? body : this, JetDeclaration.class);

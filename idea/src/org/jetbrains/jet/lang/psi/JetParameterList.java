@@ -15,8 +15,13 @@ public class JetParameterList extends JetElement {
     }
 
     @Override
-    public void accept(JetVisitor visitor) {
+    public void accept(@NotNull JetVisitor visitor) {
         visitor.visitParameterList(this);
+    }
+
+    @Override
+    public <R, D> R visit(@NotNull JetExtendedVisitor<R, D> visitor, D data) {
+        return visitor.visitParameterList(this, data);
     }
 
     public List<JetParameter> getParameters() {

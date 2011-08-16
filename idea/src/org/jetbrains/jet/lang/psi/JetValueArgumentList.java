@@ -15,8 +15,13 @@ public class JetValueArgumentList extends JetElement {
     }
 
     @Override
-    public void accept(JetVisitor visitor) {
+    public void accept(@NotNull JetVisitor visitor) {
         visitor.visitValueArgumentList(this);
+    }
+
+    @Override
+    public <R, D> R visit(@NotNull JetExtendedVisitor<R, D> visitor, D data) {
+        return visitor.visitValueArgumentList(this, data);
     }
 
     public List<JetValueArgument> getArguments() {

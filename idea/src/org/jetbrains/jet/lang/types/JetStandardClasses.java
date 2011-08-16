@@ -104,6 +104,8 @@ public class JetStandardClasses {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     public static final int TUPLE_COUNT = 22;
+    
+    private static final Set<TypeConstructor> TUPLE_CONSTRUCTORS = Sets.newHashSet();
 
     private static final ClassDescriptor[] TUPLE = new ClassDescriptor[TUPLE_COUNT];
     static {
@@ -126,6 +128,7 @@ public class JetStandardClasses {
                     STUB,
                     STUB_FG,
                     null); // TODO : constructor
+            TUPLE_CONSTRUCTORS.add(TUPLE[i].getTypeConstructor());
         }
     }
 
@@ -300,6 +303,10 @@ public class JetStandardClasses {
 
     public static JetType getTupleType(JetType... arguments) {
         return getTupleType(Collections.<AnnotationDescriptor>emptyList(), Arrays.asList(arguments));
+    }
+    
+    public static boolean isTupleType(@NotNull JetType type) {
+        return TUPLE_CONSTRUCTORS.contains(type.getConstructor());
     }
 
     public static JetType getLabeledTupleType(List<AnnotationDescriptor> annotations, List<ValueParameterDescriptor> arguments) {

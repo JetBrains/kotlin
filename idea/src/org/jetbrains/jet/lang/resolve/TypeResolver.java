@@ -93,7 +93,7 @@ public class TypeResolver {
                                     String errorMessage = (expectedArgumentCount == 0 ? "No" : expectedArgumentCount) + " type arguments expected";
                                     if (actualArgumentCount == 0) {
                                         trace.getErrorHandler().genericError(type.getNode(), errorMessage);
-                                    } else if (expectedArgumentCount == 0) {
+                                    } else {
                                         trace.getErrorHandler().genericError(type.getTypeArgumentList().getNode(), errorMessage);
                                     }
                                 } else {

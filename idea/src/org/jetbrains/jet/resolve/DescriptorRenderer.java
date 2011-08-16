@@ -26,14 +26,11 @@ public class DescriptorRenderer {
     }
 
     public static final DescriptorRenderer TEXT = new DescriptorRenderer();
+    //TODO remove TEXT_FOR_DEBUG
     public static final DescriptorRenderer TEXT_FOR_DEBUG = new DescriptorRenderer() {
         @Override
         public String renderType(JetType type) {
-            if (type instanceof DeferredType) {
-                DeferredType deferredType = (DeferredType) type;
-                if (!deferredType.isComputed()) return "<Deferred>";
-            }
-            return "" + type;
+            return String.valueOf(type);
         }
     };
     public static final DescriptorRenderer HTML = new DescriptorRenderer() {

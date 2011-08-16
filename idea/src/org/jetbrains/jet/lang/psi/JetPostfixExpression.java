@@ -19,8 +19,12 @@ public class JetPostfixExpression extends JetUnaryExpression {
     }
 
     @Override
-    public void accept(JetVisitor visitor) {
+    public void accept(@NotNull JetVisitor visitor) {
         visitor.visitPostfixExpression(this);
     }
 
+    @Override
+    public <R, D> R visit(@NotNull JetExtendedVisitor<R, D> visitor, D data) {
+        return visitor.visitPostfixExpression(this, data);
+    }
 }

@@ -15,4 +15,9 @@ public class JetLiteralStringTemplateEntry extends JetStringTemplateEntry {
     public void accept(@NotNull JetVisitor visitor) {
         visitor.visitLiteralStringTemplateEntry(this);
     }
+
+    @Override
+    public <R, D> R visit(@NotNull JetExtendedVisitor<R, D> visitor, D data) {
+        return visitor.visitLiteralStringTemplateEntry(this, data);
+    }
 }

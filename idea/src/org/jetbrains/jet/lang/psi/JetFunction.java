@@ -36,6 +36,11 @@ abstract public class JetFunction extends JetTypeParameterListOwner implements J
         return findChildByClass(JetExpression.class);
     }
 
+    @Override
+    public boolean hasDeclaredReturnType() {
+        return getReturnTypeRef() != null;
+    }
+
     @Nullable
     public JetTypeReference getReceiverTypeRef() {
         PsiElement child = getFirstChild();

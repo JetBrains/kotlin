@@ -13,8 +13,13 @@ public class JetFunctionLiteralExpression extends JetExpression implements JetDe
     }
 
     @Override
-    public void accept(JetVisitor visitor) {
+    public void accept(@NotNull JetVisitor visitor) {
         visitor.visitFunctionLiteralExpression(this);
+    }
+
+    @Override
+    public <R, D> R visit(@NotNull JetExtendedVisitor<R, D> visitor, D data) {
+        return visitor.visitFunctionLiteralExpression(this, data);
     }
 
     @NotNull
@@ -87,6 +92,11 @@ public class JetFunctionLiteralExpression extends JetExpression implements JetDe
     @Override
     public boolean hasBlockBody() {
         return getFunctionLiteral().hasBlockBody();
+    }
+
+    @Override
+    public boolean hasDeclaredReturnType() {
+        return getFunctionLiteral().getReturnTypeRef() != null;
     }
 
     @NotNull

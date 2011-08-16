@@ -12,8 +12,12 @@ public class JetContinueExpression extends JetLabelQualifiedExpression {
     }
 
     @Override
-    public void accept(JetVisitor visitor) {
+    public void accept(@NotNull JetVisitor visitor) {
         visitor.visitContinueExpression(this);
     }
 
+    @Override
+    public <R, D> R visit(@NotNull JetExtendedVisitor<R, D> visitor, D data) {
+        return visitor.visitContinueExpression(this, data);
+    }
 }

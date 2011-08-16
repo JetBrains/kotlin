@@ -45,4 +45,21 @@ public class IntValue implements CompileTimeConstant<Integer> {
     public String toString() {
         return value + ".int";
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        IntValue intValue = (IntValue) o;
+
+        if (value != intValue.value) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return value;
+    }
 }

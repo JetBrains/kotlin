@@ -18,6 +18,11 @@ public class JetTypedef extends JetTypeParameterListOwner {
         visitor.visitTypedef(this);
     }
 
+    @Override
+    public <R, D> R visit(@NotNull JetExtendedVisitor<R, D> visitor, D data) {
+        return visitor.visitTypedef(this, data);
+    }
+
     @Nullable @IfNotParsed
     public JetTypeReference getTypeReference() {
         return (JetTypeReference) findChildByType(JetNodeTypes.TYPE_REFERENCE);

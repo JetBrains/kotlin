@@ -15,8 +15,13 @@ public class JetTupleExpression extends JetExpression {
     }
 
     @Override
-    public void accept(JetVisitor visitor) {
+    public void accept(@NotNull JetVisitor visitor) {
         visitor.visitTupleExpression(this);
+    }
+
+    @Override
+    public <R, D> R visit(@NotNull JetExtendedVisitor<R, D> visitor, D data) {
+        return visitor.visitTupleExpression(this, data);
     }
 
     public List<JetExpression> getEntries() {

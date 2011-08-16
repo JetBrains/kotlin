@@ -16,6 +16,11 @@ public class JetClassInitializer extends JetDeclaration {
         visitor.visitAnonymousInitializer(this);
     }
 
+    @Override
+    public <R, D> R visit(@NotNull JetExtendedVisitor<R, D> visitor, D data) {
+        return visitor.visitAnonymousInitializer(this, data);
+    }
+
     @NotNull
     public JetExpression getBody() {
         JetExpression body = findChildByClass(JetExpression.class);
