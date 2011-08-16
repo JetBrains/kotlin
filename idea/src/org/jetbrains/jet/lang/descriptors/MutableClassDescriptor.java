@@ -257,6 +257,6 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
 
     @Override
     public String toString() {
-        return DescriptorRenderer.TEXT_FOR_DEBUG.render(this) + "[" + getClass().getCanonicalName() + "@" + System.identityHashCode(this) + "]";
+        return DescriptorRenderer.TEXT.render(this) + "[" + getClass().getCanonicalName() + "@" + System.identityHashCode(this) + "]";
     }
 }

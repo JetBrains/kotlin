@@ -1024,10 +1024,9 @@ public class JetTypeInferrer {
                             return context.services.checkEnrichedType(result, expression, context);
                         }
                         else {
-                            //TODO
-                            LookupResult result = furtherNameLookup(expression, referencedName, context);
-                            if (result.found) {
-                                return context.services.checkEnrichedType(result.type, expression, context);
+                            JetType[] result = new JetType[1];
+                            if (furtherNameLookup(expression, referencedName, result, context)) {
+                                return context.services.checkEnrichedType(result[0], expression, context);
                             }
                             
                         }
@@ -1042,23 +1041,13 @@ public class JetTypeInferrer {
             return false;
         }
         
-        protected class LookupResult {
-            private final JetType type;
-            private final boolean found;
-
-            LookupResult(JetType type, boolean found) {
-                this.type = type;
-                this.found = found;
-            }
-        }
-
-        protected LookupResult furtherNameLookup(@NotNull JetSimpleNameExpression expression, @NotNull String referencedName, TypeInferenceContext context) {
+        protected boolean furtherNameLookup(@NotNull JetSimpleNameExpression expression, @NotNull String referencedName, @NotNull JetType[] result, TypeInferenceContext context) {
             NamespaceType namespaceType = lookupNamespaceType(expression, referencedName, context);
             if (namespaceType != null) {
                 context.trace.getErrorHandler().genericError(expression.getNode(), "Expression expected, but a namespace name found");
-                return new LookupResult(null, true);
+                return true;
             }
-            return new LookupResult(null, false);
+            return false;
         }
 
         @Nullable
@@ -1098,12 +1087,11 @@ public class JetTypeInferrer {
         }
 
         @Override
-        public JetType visitFunctionLiteralExpression(JetFunctionLiteralExpression expression, TypeInferenceContext contextWithExpectedType) {
-            TypeInferenceContext context = contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE);            
+        public JetType visitFunctionLiteralExpression(JetFunctionLiteralExpression expression, TypeInferenceContext context) {
             JetFunctionLiteral functionLiteral = expression.getFunctionLiteral();
             if (context.preferBlock && !functionLiteral.hasParameterSpecification()) {
                 context.trace.recordBlock(expression);
-                return context.services.checkType(getBlockReturnedType(context.scope, functionLiteral.getBodyExpression(), contextWithExpectedType), expression, contextWithExpectedType);
+                return context.services.checkType(getBlockReturnedType(context.scope, functionLiteral.getBodyExpression(), context), expression, context);
             }
 
             JetTypeReference receiverTypeRef = functionLiteral.getReceiverTypeRef();
@@ -1149,8 +1137,8 @@ public class JetTypeInferrer {
                 context.services.checkFunctionReturnType(functionInnerScope, expression, returnType, context.dataFlowInfo);
             }
             else {
-                if (contextWithExpectedType.expectedType != NO_EXPECTED_TYPE && JetStandardClasses.isFunctionType(contextWithExpectedType.expectedType)) {
-                    returnType = JetStandardClasses.getReturnType(contextWithExpectedType.expectedType);
+                if (context.expectedType != NO_EXPECTED_TYPE && JetStandardClasses.isFunctionType(context.expectedType)) {
+                    returnType = JetStandardClasses.getReturnType(context.expectedType);
                 }
                 returnType = getBlockReturnedType(functionInnerScope, functionLiteral.getBodyExpression(), context.replaceExpectedType(returnType));
             }
@@ -1158,7 +1146,7 @@ public class JetTypeInferrer {
             functionDescriptor.setReturnType(safeReturnType);
 
 
-            return context.services.checkType(JetStandardClasses.getFunctionType(Collections.<AnnotationDescriptor>emptyList(), effectiveReceiverType, parameterTypes, safeReturnType), expression, contextWithExpectedType);
+            return context.services.checkType(JetStandardClasses.getFunctionType(Collections.<AnnotationDescriptor>emptyList(), effectiveReceiverType, parameterTypes, safeReturnType), expression, context);
         }
 
         @Override
@@ -1248,10 +1236,9 @@ public class JetTypeInferrer {
         }
 
         @Override
-        public JetType visitBinaryWithTypeRHSExpression(JetBinaryExpressionWithTypeRHS expression, TypeInferenceContext contextWithExpectedType) {
-            TypeInferenceContext context = contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE);
+        public JetType visitBinaryWithTypeRHSExpression(JetBinaryExpressionWithTypeRHS expression, TypeInferenceContext context) {
             IElementType operationType = expression.getOperationSign().getReferencedNameElementType();
-            JetType actualType = getType(context.scope, expression.getLeft(), false, context);
+            JetType actualType = getType(context.scope, expression.getLeft(), false, context.replaceExpectedType(NO_EXPECTED_TYPE));
             JetTypeReference right = expression.getRight();
             JetType result = null; 
             if (right != null) {
@@ -1274,7 +1261,7 @@ public class JetTypeInferrer {
                     context.trace.getErrorHandler().genericError(expression.getOperationSign().getNode(), "Unsupported binary operation");
                 }
             }
-            return context.services.checkType(result, expression, contextWithExpectedType);
+            return context.services.checkType(result, expression, context);
         }
 
         private void checkForCastImpossibility(JetBinaryExpressionWithTypeRHS expression, JetType actualType, JetType targetType, TypeInferenceContext context) {
@@ -1625,8 +1612,7 @@ public class JetTypeInferrer {
         }
 
         @Override
-        public JetType visitTryExpression(JetTryExpression expression, TypeInferenceContext contextWithExpectedType) {
-            TypeInferenceContext context = contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE);
+        public JetType visitTryExpression(JetTryExpression expression, TypeInferenceContext context) {
             JetExpression tryBlock = expression.getTryBlock();
             List<JetCatchClause> catchClauses = expression.getCatchClauses();
             JetFinallySection finallyBlock = expression.getFinallyBlock();
@@ -1639,7 +1625,7 @@ public class JetTypeInferrer {
                     if (catchBody != null) {
                         WritableScope catchScope = newWritableScopeImpl(context.scope, context.trace).setDebugName("Catch scope");
                         catchScope.addVariableDescriptor(variableDescriptor);
-                        JetType type = getType(catchScope, catchBody, true, contextWithExpectedType);
+                        JetType type = getType(catchScope, catchBody, true, context);
                         if (type != null) {
                             types.add(type);
                         }
@@ -1648,12 +1634,12 @@ public class JetTypeInferrer {
             }
             if (finallyBlock != null) {
                 types.clear(); // Do not need the list for the check, but need the code above to typecheck catch bodies
-                JetType type = getType(context.scope, finallyBlock.getFinalExpression(), true, contextWithExpectedType);
+                JetType type = getType(context.scope, finallyBlock.getFinalExpression(), true, context);
                 if (type != null) {
                     types.add(type);
                 }
             }
-            JetType type = getType(context.scope, tryBlock, true, contextWithExpectedType);
+            JetType type = getType(context.scope, tryBlock, true, context);
             if (type != null) {
                 types.add(type);
             }
@@ -2133,6 +2119,12 @@ public class JetTypeInferrer {
             ErrorHandlerWithRegions errorHandler = context.trace.getErrorHandler();
             errorHandler.openRegion();
             JetType selectorReturnType = getSelectorReturnType(receiverType, selectorExpression, context);
+            
+//            if (expression instanceof JetSafeQualifiedExpression) {
+//                if (!selectorReturnType.isNullable()) {
+//                    TypeUtils.makeNullable(selectorReturnType);
+//                }
+//            }
 
             if (selectorReturnType != null) {
                 errorHandler.closeAndCommitCurrentRegion();
@@ -2183,7 +2175,7 @@ public class JetTypeInferrer {
                     context.services.checkNullSafety(receiverType, expression.getOperationTokenNode(), getCalleeFunctionDescriptor(selectorExpression, context));
                 }
             }
-            return context.services.checkType(result, expression, context);
+            return context.services.checkType(result, expression, contextWithExpectedType);
         }
 
 
@@ -2233,8 +2225,7 @@ public class JetTypeInferrer {
             return result[0];
         }
 
-        private JetType getCallExpressionType(@Nullable JetType receiverType, @NotNull JetCallExpression callExpression, TypeInferenceContext contextWithExpectedType) {
-            TypeInferenceContext context = contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE);
+        private JetType getCallExpressionType(@Nullable JetType receiverType, @NotNull JetCallExpression callExpression, TypeInferenceContext context) {
             JetExpression calleeExpression = callExpression.getCalleeExpression();
             if (calleeExpression == null) {
                 return null;
@@ -2278,14 +2269,13 @@ public class JetTypeInferrer {
         }
 
         @Override
-        public JetType visitUnaryExpression(JetUnaryExpression expression, TypeInferenceContext contextWithExpectedType) {
-            TypeInferenceContext context = contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE);
+        public JetType visitUnaryExpression(JetUnaryExpression expression, TypeInferenceContext context) {
             JetExpression baseExpression = expression.getBaseExpression();
             if (baseExpression == null) return null;
             JetSimpleNameExpression operationSign = expression.getOperationSign();
             if (JetTokens.LABELS.contains(operationSign.getReferencedNameElementType())) {
                 // TODO : Some processing for the label?
-                return context.services.checkType(getType(baseExpression, context.replaceExpectedReturnType(contextWithExpectedType.expectedType)), expression, contextWithExpectedType);
+                return context.services.checkType(getType(baseExpression, context.replaceExpectedReturnType(context.expectedType)), expression, context);
             }
             IElementType operationType = operationSign.getReferencedNameElementType();
             String name = unaryOperationNames.get(operationType);
@@ -2293,7 +2283,7 @@ public class JetTypeInferrer {
                 context.trace.getErrorHandler().genericError(operationSign.getNode(), "Unknown unary operation");
                 return null;
             }
-            JetType receiverType = getType(context.scope, baseExpression, false, context);
+            JetType receiverType = getType(context.scope, baseExpression, false, context.replaceExpectedType(NO_EXPECTED_TYPE));
             if (receiverType == null) return null;
             FunctionDescriptor functionDescriptor = context.services.lookupFunction(context.scope, expression.getOperationSign(), name, receiverType, Collections.<JetType>emptyList(), true);
             if (functionDescriptor == null) return null;
@@ -2317,7 +2307,7 @@ public class JetTypeInferrer {
             else {
                 result = returnType;
             }
-            return context.services.checkType(result, expression, contextWithExpectedType);
+            return context.services.checkType(result, expression, context);
         }
 
         @Override
@@ -2642,9 +2632,9 @@ public class JetTypeInferrer {
         }
 
         @Override
-        protected LookupResult furtherNameLookup(@NotNull JetSimpleNameExpression expression, @NotNull String referencedName, TypeInferenceContext context) {
-            JetType result = lookupNamespaceType(expression, referencedName, context);
-            return new LookupResult(result, result != null);
+        protected boolean furtherNameLookup(@NotNull JetSimpleNameExpression expression, @NotNull String referencedName, @NotNull JetType[] result, TypeInferenceContext context) {
+            result[0] = lookupNamespaceType(expression, referencedName, context);
+            return result[0] != null;
         }
 
     }

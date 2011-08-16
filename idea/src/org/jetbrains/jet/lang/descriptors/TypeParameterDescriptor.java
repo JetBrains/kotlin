@@ -85,7 +85,7 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
 
     @Override
     public String toString() {
-        return DescriptorRenderer.TEXT_FOR_DEBUG.render(this);
+        return DescriptorRenderer.TEXT.render(this);
     }
 
     @NotNull
