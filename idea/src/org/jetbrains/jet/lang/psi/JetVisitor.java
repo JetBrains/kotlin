@@ -5,7 +5,7 @@ import com.intellij.psi.PsiElementVisitor;
 /**
  * @author svtk
  */
-public class JetExtendedVisitor<R, D> extends PsiElementVisitor {
+public class JetVisitor<R, D> extends PsiElementVisitor {
     public R visitJetElement(JetElement element, D data) {
         visitElement(element);
         return null;

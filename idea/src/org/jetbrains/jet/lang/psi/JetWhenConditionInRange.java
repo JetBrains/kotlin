@@ -40,7 +40,7 @@ public class JetWhenConditionInRange extends JetWhenCondition {
     }
 
     @Override
-    public <R, D> R visit(@NotNull JetExtendedVisitor<R, D> visitor, D data) {
+    public <R, D> R visit(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitWhenConditionInRange(this, data);
     }
 

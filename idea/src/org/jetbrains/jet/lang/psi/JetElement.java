@@ -52,7 +52,7 @@ public class JetElement extends ASTWrapperPsiElement {
         visitor.visitJetElement(this);
     }
     
-    public <R, D> R visit(@NotNull JetExtendedVisitor<R, D> visitor, D data) {
+    public <R, D> R visit(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitJetElement(this, data);
     }
 }

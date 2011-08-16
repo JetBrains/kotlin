@@ -22,7 +22,7 @@ public class JetCallExpression extends JetExpression implements JetCall {
     }
 
     @Override
-    public <R, D> R visit(@NotNull JetExtendedVisitor<R, D> visitor, D data) {
+    public <R, D> R visit(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitCallExpression(this, data);
     }
 

@@ -19,7 +19,7 @@ public class JetPrefixExpression extends JetUnaryExpression {
     }
 
     @Override
-    public <R, D> R visit(@NotNull JetExtendedVisitor<R, D> visitor, D data) {
+    public <R, D> R visit(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitPrefixExpression(this, data);
     }
 

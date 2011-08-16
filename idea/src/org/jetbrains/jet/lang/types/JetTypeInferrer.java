@@ -896,7 +896,7 @@ public class JetTypeInferrer {
         }
     }
 
-    private class TypeInferrerVisitor extends JetExtendedVisitor<JetType, TypeInferenceContext> {
+    private class TypeInferrerVisitor extends JetVisitor<JetType, TypeInferenceContext> {
 
         protected DataFlowInfo resultDataFlowInfo;
 
