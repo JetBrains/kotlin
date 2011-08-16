@@ -40,15 +40,15 @@ public class JetElement extends ASTWrapperPsiElement {
 
     @Override
     public final void accept(@NotNull PsiElementVisitor visitor) {
-        if (visitor instanceof JetVisitor) {
-            accept((JetVisitor) visitor);
+        if (visitor instanceof JetVisitorVoid) {
+            accept((JetVisitorVoid) visitor);
         }
         else {
             visitor.visitElement(this);
         }
     }
 
-    public void accept(@NotNull JetVisitor visitor) {
+    public void accept(@NotNull JetVisitorVoid visitor) {
         visitor.visitJetElement(this);
     }
     

@@ -71,7 +71,7 @@ public class ClassDescriptorResolver {
 
         List<JetDeclaration> declarations = classElement.getDeclarations();
         for (JetDeclaration declaration : declarations) {
-            declaration.accept(new JetVisitor() {
+            declaration.accept(new JetVisitorVoid() {
                 @Override
                 public void visitProperty(JetProperty property) {
                     if (property.getPropertyTypeRef() != null) {

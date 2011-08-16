@@ -40,7 +40,7 @@ public class JetFunctionType extends JetTypeElement {
     }
 
     @Override
-    public void accept(@NotNull JetVisitor visitor) {
+    public void accept(@NotNull JetVisitorVoid visitor) {
         visitor.visitFunctionType(this);
     }
 

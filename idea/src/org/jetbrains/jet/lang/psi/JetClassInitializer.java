@@ -12,7 +12,7 @@ public class JetClassInitializer extends JetDeclaration {
     }
 
     @Override
-    public void accept(@NotNull JetVisitor visitor) {
+    public void accept(@NotNull JetVisitorVoid visitor) {
         visitor.visitAnonymousInitializer(this);
     }
 

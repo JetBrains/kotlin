@@ -128,7 +128,7 @@ public class JetPositionManager implements PositionManager {
         final BindingContext bindingContext = AnalyzingUtils.analyzeFileWithCache(file);
         final JetStandardLibrary standardLibrary = JetStandardLibrary.getJetStandardLibrary(myDebugProcess.getProject());
         final JetTypeMapper typeMapper = new JetTypeMapper(standardLibrary, bindingContext);
-        file.acceptChildren(new JetVisitor() {
+        file.acceptChildren(new JetVisitorVoid() {
             @Override
             public void visitJetElement(JetElement element) {
                 element.acceptChildren(this);

@@ -34,7 +34,7 @@ public class JetClass extends JetTypeParameterListOwner implements JetClassOrObj
     }
 
     @Override
-    public void accept(@NotNull JetVisitor visitor) {
+    public void accept(@NotNull JetVisitorVoid visitor) {
         visitor.visitClass(this);
     }
 

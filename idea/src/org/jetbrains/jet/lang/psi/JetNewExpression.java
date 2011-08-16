@@ -9,7 +9,7 @@ package org.jetbrains.jet.lang.psi;
 //    }
 //
 //    @Override
-//    public void accept(JetVisitor visitor) {
+//    public void accept(JetVisitorVoid visitor) {
 //        visitor.visitNewExpression(this);
 //    }
 //

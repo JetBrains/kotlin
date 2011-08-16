@@ -46,7 +46,7 @@ public class TypeResolver {
     private JetType resolveTypeElement(final JetScope scope, final List<AnnotationDescriptor> annotations, JetTypeElement typeElement, final boolean nullable) {
         final JetType[] result = new JetType[1];
         if (typeElement != null) {
-            typeElement.accept(new JetVisitor() {
+            typeElement.accept(new JetVisitorVoid() {
                 @Override
                 public void visitUserType(JetUserType type) {
                     JetSimpleNameExpression referenceExpression = type.getReferenceExpression();

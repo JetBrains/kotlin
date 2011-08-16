@@ -14,7 +14,7 @@ public class JetNamedFunction extends JetFunction {
     }
 
     @Override
-    public void accept(@NotNull JetVisitor visitor) {
+    public void accept(@NotNull JetVisitorVoid visitor) {
         visitor.visitNamedFunction(this);
     }
 

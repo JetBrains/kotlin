@@ -17,7 +17,7 @@ public class JetPropertyAccessor extends JetDeclaration implements JetDeclaratio
     }
 
     @Override
-    public void accept(@NotNull JetVisitor visitor) {
+    public void accept(@NotNull JetVisitorVoid visitor) {
         visitor.visitPropertyAccessor(this);
     }
 

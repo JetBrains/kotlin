@@ -29,7 +29,7 @@ public class JetPsiUtil {
     public static Set<JetElement> findRootExpressions(@NotNull Collection<JetElement> unreachableElements) {
         Set<JetElement> rootElements = new HashSet<JetElement>();
         final Set<JetElement> shadowedElements = new HashSet<JetElement>();
-        JetVisitor shadowAllChildren = new JetVisitor() {
+        JetVisitorVoid shadowAllChildren = new JetVisitorVoid() {
             @Override
             public void visitJetElement(JetElement element) {
                 if (shadowedElements.add(element)) {

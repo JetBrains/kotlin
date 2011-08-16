@@ -2,7 +2,6 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetNodeTypes;
 
 /**
  * @author abreslav
@@ -14,7 +13,7 @@ public class JetSimpleNameStringTemplateEntry extends JetStringTemplateEntryWith
     }
 
     @Override
-    public void accept(@NotNull JetVisitor visitor) {
+    public void accept(@NotNull JetVisitorVoid visitor) {
         visitor.visitSimpleNameStringTemplateEntry(this);
     }
 

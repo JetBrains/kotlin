@@ -13,7 +13,7 @@ public class JetDelegatorByExpressionSpecifier extends JetDelegationSpecifier {
     }
 
     @Override
-    public void accept(@NotNull JetVisitor visitor) {
+    public void accept(@NotNull JetVisitorVoid visitor) {
         visitor.visitDelegationByExpressionSpecifier(this);
     }
 

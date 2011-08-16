@@ -13,7 +13,7 @@ public class JetFunctionLiteralExpression extends JetExpression implements JetDe
     }
 
     @Override
-    public void accept(@NotNull JetVisitor visitor) {
+    public void accept(@NotNull JetVisitorVoid visitor) {
         visitor.visitFunctionLiteralExpression(this);
     }
 

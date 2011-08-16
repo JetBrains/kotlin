@@ -213,7 +213,7 @@ public class JetTypeInferrer {
         ) {
             final OverloadDomain[] result = new OverloadDomain[1];
             final JetSimpleNameExpression[] reference = new JetSimpleNameExpression[1];
-            calleeExpression.accept(new JetVisitor() {
+            calleeExpression.accept(new JetVisitorVoid() {
 
                 @Override
                 public void visitHashQualifiedExpression(JetHashQualifiedExpression expression) {
@@ -445,7 +445,7 @@ public class JetTypeInferrer {
             }
 
             for (JetExpression returnedExpression : returnedExpressions) {
-                returnedExpression.accept(new JetVisitor() {
+                returnedExpression.accept(new JetVisitorVoid() {
                     @Override
                     public void visitReturnExpression(JetReturnExpression expression) {
                         if (!blockBody) {
@@ -1484,7 +1484,7 @@ public class JetTypeInferrer {
 
         private DataFlowInfo checkWhenCondition(@Nullable final JetExpression subjectExpression, final JetType subjectType, JetWhenCondition condition, final WritableScope scopeToExtend, final TypeInferenceContext context, final VariableDescriptor... subjectVariables) {
             final DataFlowInfo[] newDataFlowInfo = new DataFlowInfo[]{context.dataFlowInfo};
-            condition.accept(new JetVisitor() {
+            condition.accept(new JetVisitorVoid() {
 
                 @Override
                 public void visitWhenConditionCall(JetWhenConditionCall condition) {
@@ -1524,7 +1524,7 @@ public class JetTypeInferrer {
 
         private DataFlowInfo checkPatternType(@NotNull JetPattern pattern, @NotNull final JetType subjectType, @NotNull final WritableScope scopeToExtend, final TypeInferenceContext context, @NotNull final VariableDescriptor... subjectVariables) {
             final DataFlowInfo[] result = new DataFlowInfo[] {context.dataFlowInfo};
-            pattern.accept(new JetVisitor() {
+            pattern.accept(new JetVisitorVoid() {
                 @Override
                 public void visitTypePattern(JetTypePattern typePattern) {
                     JetTypeReference typeReference = typePattern.getTypeReference();
@@ -1729,7 +1729,7 @@ public class JetTypeInferrer {
         private DataFlowInfo extractDataFlowInfoFromCondition(@Nullable JetExpression condition, final boolean conditionValue, @Nullable final WritableScope scopeToExtend, final TypeInferenceContext context) {
             if (condition == null) return context.dataFlowInfo;
             final DataFlowInfo[] result = new DataFlowInfo[] {context.dataFlowInfo};
-            condition.accept(new JetVisitor() {
+            condition.accept(new JetVisitorVoid() {
                 @Override
                 public void visitIsExpression(JetIsExpression expression) {
                     if (conditionValue && !expression.isNegated() || !conditionValue && expression.isNegated()) {
@@ -2190,7 +2190,7 @@ public class JetTypeInferrer {
         @NotNull
         private FunctionDescriptor getCalleeFunctionDescriptor(@NotNull JetExpression selectorExpression, final TypeInferenceContext context) {
             final FunctionDescriptor[] result = new FunctionDescriptor[1];
-            selectorExpression.accept(new JetVisitor() {
+            selectorExpression.accept(new JetVisitorVoid() {
                 @Override
                 public void visitCallExpression(JetCallExpression callExpression) {
                     JetExpression calleeExpression = callExpression.getCalleeExpression();
@@ -2583,7 +2583,7 @@ public class JetTypeInferrer {
             final StringBuilder builder = new StringBuilder();
             final CompileTimeConstant<?>[] value = new CompileTimeConstant<?>[1];
             for (JetStringTemplateEntry entry : expression.getEntries()) {
-                entry.accept(new JetVisitor() {
+                entry.accept(new JetVisitorVoid() {
 
                     @Override
                     public void visitStringTemplateEntryWithExpression(JetStringTemplateEntryWithExpression entry) {

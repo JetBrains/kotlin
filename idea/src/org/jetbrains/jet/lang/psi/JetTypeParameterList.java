@@ -19,7 +19,7 @@ public class JetTypeParameterList extends JetElement {
     }
 
     @Override
-    public void accept(@NotNull JetVisitor visitor) {
+    public void accept(@NotNull JetVisitorVoid visitor) {
         visitor.visitTypeParameterList(this);
     }
 

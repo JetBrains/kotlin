@@ -13,7 +13,7 @@ public class JetReturnExpression extends JetLabelQualifiedExpression {
     }
 
     @Override
-    public void accept(@NotNull JetVisitor visitor) {
+    public void accept(@NotNull JetVisitorVoid visitor) {
         visitor.visitReturnExpression(this);
     }
 

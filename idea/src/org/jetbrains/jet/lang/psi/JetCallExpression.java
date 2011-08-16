@@ -17,7 +17,7 @@ public class JetCallExpression extends JetExpression implements JetCall {
     }
 
     @Override
-    public void accept(@NotNull JetVisitor visitor) {
+    public void accept(@NotNull JetVisitorVoid visitor) {
         visitor.visitCallExpression(this);
     }
 

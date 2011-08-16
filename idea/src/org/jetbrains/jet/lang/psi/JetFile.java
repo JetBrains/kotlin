@@ -34,8 +34,8 @@ public class JetFile extends PsiFileBase {
 
     @Override
     public void accept(@NotNull PsiElementVisitor visitor) {
-        if (visitor instanceof JetVisitor) {
-            ((JetVisitor) visitor).visitJetFile(this);
+        if (visitor instanceof JetVisitorVoid) {
+            ((JetVisitorVoid) visitor).visitJetFile(this);
         }
         else {
             visitor.visitFile(this);

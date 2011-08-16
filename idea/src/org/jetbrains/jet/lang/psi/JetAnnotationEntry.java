@@ -17,7 +17,7 @@ public class JetAnnotationEntry extends JetElement implements JetCall {
     }
 
     @Override
-    public void accept(@NotNull JetVisitor visitor) {
+    public void accept(@NotNull JetVisitorVoid visitor) {
         visitor.visitAnnotationEntry(this);
     }
 

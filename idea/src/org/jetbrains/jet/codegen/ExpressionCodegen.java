@@ -32,7 +32,7 @@ import java.util.*;
  * @author max
  * @author yole
  */
-public class ExpressionCodegen extends JetVisitor {
+public class ExpressionCodegen extends JetVisitorVoid {
     private static final String CLASS_OBJECT = "java/lang/Object";
     private static final String CLASS_STRING = "java/lang/String";
     public static final String CLASS_STRING_BUILDER = "java/lang/StringBuilder";

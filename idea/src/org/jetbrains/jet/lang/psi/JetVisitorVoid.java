@@ -5,7 +5,7 @@ import com.intellij.psi.PsiElementVisitor;
 /**
  * @author max
  */
-public class JetVisitor extends PsiElementVisitor {
+public class JetVisitorVoid extends PsiElementVisitor {
     public void visitJetElement(JetElement element) {
         visitElement(element);
     }

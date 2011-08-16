@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestCaseBase;
 import org.jetbrains.jet.lang.parsing.JetParserDefinition;
 import org.jetbrains.jet.lang.psi.JetElement;
-import org.jetbrains.jet.lang.psi.JetVisitor;
+import org.jetbrains.jet.lang.psi.JetVisitorVoid;
 
 import java.io.File;
 import java.io.IOException;
@@ -51,7 +51,7 @@ public class JetParsingTest extends ParsingTestCase {
 
     @Override
     protected void checkResult(@NonNls String targetDataName, PsiFile file) throws IOException {
-        file.acceptChildren(new JetVisitor() {
+        file.acceptChildren(new JetVisitorVoid() {
             @Override
             public void visitJetElement(JetElement element) {
                 element.acceptChildren(this);

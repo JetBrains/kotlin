@@ -20,7 +20,7 @@ public class JetProperty extends JetTypeParameterListOwner {
     }
 
     @Override
-    public void accept(@NotNull JetVisitor visitor) {
+    public void accept(@NotNull JetVisitorVoid visitor) {
         visitor.visitProperty(this);
     }
 

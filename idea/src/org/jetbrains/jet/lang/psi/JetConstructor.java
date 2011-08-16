@@ -18,7 +18,7 @@ public class JetConstructor extends JetDeclaration implements JetDeclarationWith
     }
 
     @Override
-    public void accept(@NotNull JetVisitor visitor) {
+    public void accept(@NotNull JetVisitorVoid visitor) {
         visitor.visitConstructor(this);
     }
 

@@ -157,7 +157,7 @@ public class JetSimpleNameExpression extends JetReferenceExpression {
     }
 
     @Override
-    public void accept(@NotNull JetVisitor visitor) {
+    public void accept(@NotNull JetVisitorVoid visitor) {
         visitor.visitSimpleNameExpression(this);
     }
 

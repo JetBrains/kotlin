@@ -79,7 +79,7 @@ public class JetObjectDeclaration extends JetNamedDeclaration implements JetClas
     }
 
     @Override
-    public void accept(@NotNull JetVisitor visitor) {
+    public void accept(@NotNull JetVisitorVoid visitor) {
         visitor.visitObjectDeclaration(this);
     }
 

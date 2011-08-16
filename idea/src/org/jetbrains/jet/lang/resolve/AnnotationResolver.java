@@ -48,7 +48,7 @@ public class AnnotationResolver {
 
     public CompileTimeConstant<?> resolveAnnotationArgument(@NotNull JetExpression expression, @NotNull JetType expectedType) {
         final CompileTimeConstant<?>[] result = new CompileTimeConstant<?>[1];
-//        expression.accept(new JetVisitor() {
+//        expression.accept(new JetVisitorVoid() {
 //            @Override
 //            public void visitConstantExpression(JetConstantExpression expression) {
 //                JetType type = typeInferrer.getType(JetScope.EMPTY, expression, false, expectedType);

@@ -14,7 +14,7 @@ public class JetTypedef extends JetTypeParameterListOwner {
     }
 
     @Override
-    public void accept(@NotNull JetVisitor visitor) {
+    public void accept(@NotNull JetVisitorVoid visitor) {
         visitor.visitTypedef(this);
     }
 

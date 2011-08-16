@@ -138,7 +138,7 @@ public class TopDownAnalyzer {
             @NotNull final NamespaceLike owner,
             @NotNull Collection<JetDeclaration> declarations) {
         for (JetDeclaration declaration : declarations) {
-            declaration.accept(new JetVisitor() {
+            declaration.accept(new JetVisitorVoid() {
                 @Override
                 public void visitNamespace(JetNamespace namespace) {
 
@@ -413,7 +413,7 @@ public class TopDownAnalyzer {
 
     private void resolveFunctionAndPropertyHeaders(@NotNull List<JetDeclaration> declarations, final @NotNull JetScope scope, final @NotNull NamespaceLike namespaceLike) {
         for (JetDeclaration declaration : declarations) {
-            declaration.accept(new JetVisitor() {
+            declaration.accept(new JetVisitorVoid() {
                 @Override
                 public void visitNamedFunction(JetNamedFunction function) {
                     FunctionDescriptorImpl functionDescriptor = classDescriptorResolver.resolveFunctionDescriptor(namespaceLike, scope, function);
@@ -565,7 +565,7 @@ public class TopDownAnalyzer {
         final JetTypeInferrer.Services typeInferrer = semanticServices.getTypeInferrerServices(traceForConstructors, JetFlowInformationProvider.NONE); // TODO : flow
 
         for (JetDelegationSpecifier delegationSpecifier : jetClass.getDelegationSpecifiers()) {
-            delegationSpecifier.accept(new JetVisitor() {
+            delegationSpecifier.accept(new JetVisitorVoid() {
                 @Override
                 public void visitDelegationByExpressionSpecifier(JetDelegatorByExpressionSpecifier specifier) {
                     JetExpression delegateExpression = specifier.getDelegateExpression();
@@ -684,7 +684,7 @@ public class TopDownAnalyzer {
                 trace.getErrorHandler().genericError(declaration.getNameNode(), "Secondary constructors must have an initializer list");
             }
             else {
-                initializers.get(0).accept(new JetVisitor() {
+                initializers.get(0).accept(new JetVisitorVoid() {
                     @Override
                     public void visitDelegationToSuperCallSpecifier(JetDelegatorToSuperCall call) {
                         JetTypeReference typeReference = call.getTypeReference();

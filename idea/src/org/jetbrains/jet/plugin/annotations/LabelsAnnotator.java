@@ -7,17 +7,17 @@ import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.psi.JetVisitorVoid;
 import org.jetbrains.jet.plugin.JetHighlighter;
 import org.jetbrains.jet.lang.psi.JetLabelQualifiedExpression;
 import org.jetbrains.jet.lang.psi.JetPrefixExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
-import org.jetbrains.jet.lang.psi.JetVisitor;
 import org.jetbrains.jet.lexer.JetTokens;
 
 public class LabelsAnnotator implements Annotator {
     public void annotate(@NotNull PsiElement element, @NotNull final AnnotationHolder holder) {
 //        if (ApplicationManager.getApplication().isUnitTestMode()) return;
-        element.accept(new JetVisitor() {
+        element.accept(new JetVisitorVoid() {
             @Override
             public void visitPrefixExpression(JetPrefixExpression expression) {
                 JetSimpleNameExpression operationSign = expression.getOperationSign();

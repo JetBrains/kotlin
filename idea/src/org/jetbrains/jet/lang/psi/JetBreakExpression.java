@@ -12,7 +12,7 @@ public class JetBreakExpression extends JetLabelQualifiedExpression {
     }
 
     @Override
-    public void accept(@NotNull JetVisitor visitor) {
+    public void accept(@NotNull JetVisitorVoid visitor) {
         visitor.visitBreakExpression(this);
     }
 

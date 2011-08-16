@@ -14,7 +14,7 @@ public class JetForExpression extends JetLoopExpression {
     }
 
     @Override
-    public void accept(@NotNull JetVisitor visitor) {
+    public void accept(@NotNull JetVisitorVoid visitor) {
         visitor.visitForExpression(this);
     }
 

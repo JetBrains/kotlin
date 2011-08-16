@@ -109,7 +109,7 @@ public class GenerationState {
     }
 
     public static void prepareAnonymousClasses(JetElement aClass, final JetTypeMapper typeMapper) {
-        aClass.acceptChildren(new JetVisitor() {
+        aClass.acceptChildren(new JetVisitorVoid() {
             @Override
             public void visitJetElement(JetElement element) {
                 super.visitJetElement(element);

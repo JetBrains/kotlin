@@ -7,7 +7,7 @@ import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.psi.JetEscapeStringTemplateEntry;
 import org.jetbrains.jet.lang.psi.JetLiteralStringTemplateEntry;
 import org.jetbrains.jet.lang.psi.JetStringTemplateEntry;
-import org.jetbrains.jet.lang.psi.JetVisitor;
+import org.jetbrains.jet.lang.psi.JetVisitorVoid;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.types.*;
 
@@ -223,7 +223,7 @@ public class CompileTimeConstantResolver {
         final StringBuilder builder = new StringBuilder();
         final CompileTimeConstant<?>[] result = new CompileTimeConstant<?>[1];
         for (JetStringTemplateEntry entry : entries) {
-            entry.accept(new JetVisitor() {
+            entry.accept(new JetVisitorVoid() {
                 @Override
                 public void visitStringTemplateEntry(JetStringTemplateEntry entry) {
                     result[0] =  new ErrorValue("String templates are not allowed in compile-time constants");

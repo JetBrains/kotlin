@@ -103,7 +103,7 @@ public class JetPsiChecker implements Annotator {
 
                 highlightBackingFields(holder, file, bindingContext);
 
-                file.acceptChildren(new JetVisitor() {
+                file.acceptChildren(new JetVisitorVoid() {
                     @Override
                     public void visitExpression(JetExpression expression) {
                         JetType autoCast = bindingContext.getAutoCastType(expression);
@@ -132,7 +132,7 @@ public class JetPsiChecker implements Annotator {
 
 
     private void highlightBackingFields(final AnnotationHolder holder, JetFile file, final BindingContext bindingContext) {
-        file.acceptChildren(new JetVisitor() {
+        file.acceptChildren(new JetVisitorVoid() {
             @Override
             public void visitProperty(JetProperty property) {
                 VariableDescriptor propertyDescriptor = bindingContext.getVariableDescriptor(property);

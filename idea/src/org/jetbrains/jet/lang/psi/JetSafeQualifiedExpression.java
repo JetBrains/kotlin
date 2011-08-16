@@ -12,7 +12,7 @@ public class JetSafeQualifiedExpression extends JetQualifiedExpression {
     }
 
     @Override
-    public void accept(@NotNull JetVisitor visitor) {
+    public void accept(@NotNull JetVisitorVoid visitor) {
         visitor.visitSafeQualifiedExpression(this);
     }
 

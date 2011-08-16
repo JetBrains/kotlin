@@ -89,7 +89,7 @@ public class JetControlFlowProcessor {
         return result;
     }
 
-    private class CFPVisitor extends JetVisitor {
+    private class CFPVisitor extends JetVisitorVoid {
         private final boolean preferBlock;
         private final boolean inCondition;
 
@@ -643,8 +643,8 @@ public class JetControlFlowProcessor {
                 JetWhenCondition[] conditions = whenEntry.getConditions();
                 for (int i = 0; i < conditions.length; i++) {
                     JetWhenCondition condition = conditions[i];
-                    condition.accept(new JetVisitor() {
-                        private final JetVisitor conditionVisitor = this;
+                    condition.accept(new JetVisitorVoid() {
+                        private final JetVisitorVoid conditionVisitor = this;
 
                         @Override
                         public void visitWhenConditionCall(JetWhenConditionCall condition) {
@@ -662,7 +662,7 @@ public class JetControlFlowProcessor {
                         public void visitWhenConditionIsPattern(JetWhenConditionIsPattern condition) {
                             JetPattern pattern = condition.getPattern();
                             if (pattern != null) {
-                                pattern.accept(new JetVisitor() {
+                                pattern.accept(new JetVisitorVoid() {
                                     @Override
                                     public void visitTypePattern(JetTypePattern typePattern) {
                                         // TODO

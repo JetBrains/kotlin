@@ -14,7 +14,7 @@ public class JetValueArgument extends JetElement implements ValueArgumentPsi {
         super(node);
     }
 
-    public void accept(@NotNull JetVisitor visitor) {
+    public void accept(@NotNull JetVisitorVoid visitor) {
         visitor.visitArgument(this);
     }
 
