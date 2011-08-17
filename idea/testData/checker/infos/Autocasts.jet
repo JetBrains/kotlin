@@ -153,3 +153,66 @@ fun getStringLength(obj : Any) : Char? {
     return null
   return <info>obj</info>.get(0) // no cast to String is needed
 }
+
+fun toInt(i: Int?): Int = if (i != null) <info descr="Automatically cast to Int">i</info> else 0
+fun illegalWhenBody(a: Any): Int = when(a) {
+    is Int => <info descr="Automatically cast to Int">a</info>
+    is String => <error>a</error>
+}
+fun illegalWhenBlock(a: Any): Int {
+    when(a) {
+        is Int => return <info descr="Automatically cast to Int">a</info>
+        is String => return <error>a</error>
+    }
+}
+fun declarations(a: Any?) {
+    if (a is String) {
+       val p4: (Int, String) = (2, <info descr="Automatically cast to String">a</info>)
+    }
+    if (a is String?) {
+        if (a != null) {
+            val s: String = <info descr="Automatically cast to String">a</info>
+        }
+    }
+    if (a != null) {
+        if (a is String?) {
+            val s: String = <info descr="Automatically cast to String">a</info>
+        }
+    }
+}
+fun vars(a: Any?) {
+    var b: Int = 0
+    if (a is Int) {
+        b = <info descr="Automatically cast to Int">a</info>
+    }
+}
+fun tuples(a: Any?) {
+    if (a != null) {
+        val s: (Any, String) = (<info descr="Automatically cast to Any">a</info>, <error>a</error>)
+    }
+    if (a is String) {
+        val s: (Any, String) = (<info descr="Automatically cast to Any">a</info>, <info descr="Automatically cast to String">a</info>)
+    }
+    fun illegalTupleReturnType(): (Any, String) = (<error>a</error>, <error>a</error>)
+    if (a is String) {
+        fun legalTupleReturnType(): (Any, String) = (<info descr="Automatically cast to Any">a</info>, <info descr="Automatically cast to String">a</info>)
+    }
+    val illegalFunctionLiteral: Function0<Int> = <error>{ <error>a</error> }</error>
+    val illegalReturnValueInFunctionLiteral: Function0<Int> = { (): Int => <error>a</error> }
+
+    if (a is Int) {
+        val legalFunctionLiteral: Function0<Int> = { <info descr="Automatically cast to Int">a</info> }
+        val alsoLegalFunctionLiteral: Function0<Int> = { (): Int => <info descr="Automatically cast to Int">a</info> }
+    }
+}
+fun returnFunctionLiteralBlock(a: Any?): Function0<Int> {
+    if (a is Int) return { <info descr="Automatically cast to Int">a</info> }
+    else return { 1 }
+}
+fun returnFunctionLiteral(a: Any?): Function0<Int> =
+    if (a is Int) { (): Int => <info descr="Automatically cast to Int">a</info> }
+    else { () => 1 }
+
+fun illegalTupleReturnType(a: Any): (Any, String) = (a, <error>a</error>)
+
+fun declarationInsidePattern(x: (Any, Any)): String = when(x) { is (val a is String, *) => <info descr="Automatically cast to String">a</info>; else => "something" }

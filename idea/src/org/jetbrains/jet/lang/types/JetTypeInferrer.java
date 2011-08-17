@@ -757,29 +757,6 @@ public class JetTypeInferrer {
             return expressionType;
         }
 
-//        @Nullable
-//        private JetType enrichType(@NotNull JetExpression expression, @Nullable JetType initialType, @NotNull TypeInferenceContext context) {
-//            if (initialType == null || context.expectedType == null || context.expectedType == NO_EXPECTED_TYPE) {
-//                return initialType;
-//            }
-//            VariableDescriptor variableDescriptor = getVariableDescriptorFromSimpleName(expression, context);
-//            if (variableDescriptor == null) return initialType;
-//            JetType enrichedType = null;
-//            List<JetType> possibleTypes = Lists.newArrayList(context.dataFlowInfo.getPossibleTypes(variableDescriptor));
-//            Collections.reverse(possibleTypes);
-//            for (JetType possibleType: possibleTypes) {
-//                if (semanticServices.getTypeChecker().isSubtypeOf(possibleType, context.expectedType)) {
-//                    enrichedType = possibleType;
-//                    break;
-//                }
-//            }
-//            if (enrichedType == null) {
-//                enrichedType = context.dataFlowInfo.getOutType(variableDescriptor);
-//            }
-//            if (enrichedType == null) return initialType;
-//            return enrichedType;
-//        }
-
         @Nullable
         private JetType checkEnrichedType(@Nullable JetType expressionType, @NotNull JetExpression expression, @NotNull TypeInferenceContext context) {
             if (expressionType == null || context.expectedType == null || context.expectedType == NO_EXPECTED_TYPE ||
@@ -808,7 +785,7 @@ public class JetTypeInferrer {
             if (!semanticServices.getTypeChecker().isSubtypeOf(enrichedType, context.expectedType)) {
                 context.trace.getErrorHandler().typeMismatch(expression, context.expectedType, expressionType);
             } else {
-                context.trace.recordAutoCast(expression, enrichedType);
+                context.trace.recordAutoCast(expression, context.expectedType);
             }
             return enrichedType;
         }
@@ -885,12 +862,14 @@ public class JetTypeInferrer {
             return new TypeInferenceContext(trace, scope, services, preferBlock, newDataFlowInfo, expectedType, expectedReturnType);
         }
         
-        public TypeInferenceContext replaceExpectedType(@NotNull JetType newExpectedType) {
+        public TypeInferenceContext replaceExpectedType(@Nullable JetType newExpectedType) {
+            if (newExpectedType == null) return replaceExpectedType(NO_EXPECTED_TYPE);
             if (expectedType == newExpectedType) return this;
             return new TypeInferenceContext(trace, scope, services, preferBlock, dataFlowInfo, newExpectedType, expectedReturnType);
         }
         
-        public TypeInferenceContext replaceExpectedReturnType(@NotNull JetType newExpectedReturnType) {
+        public TypeInferenceContext replaceExpectedReturnType(@Nullable JetType newExpectedReturnType) {
+            if (newExpectedReturnType == null) return replaceExpectedReturnType(NO_EXPECTED_TYPE);
             if (expectedReturnType == newExpectedReturnType) return this;
             return new TypeInferenceContext(trace, scope, services, preferBlock, dataFlowInfo, expectedType, newExpectedReturnType);
         }
@@ -2119,13 +2098,13 @@ public class JetTypeInferrer {
             ErrorHandlerWithRegions errorHandler = context.trace.getErrorHandler();
             errorHandler.openRegion();
             JetType selectorReturnType = getSelectorReturnType(receiverType, selectorExpression, context);
-            
-//            if (expression instanceof JetSafeQualifiedExpression) {
-//                if (!selectorReturnType.isNullable()) {
-//                    TypeUtils.makeNullable(selectorReturnType);
-//                }
-//            }
 
+            //TODO move further
+            if (expression.getOperationSign() == JetTokens.SAFE_ACCESS) {
+                if (selectorReturnType != null && !selectorReturnType.isNullable() && !JetStandardClasses.isUnit(selectorReturnType)) {
+                    selectorReturnType = TypeUtils.makeNullable(selectorReturnType);
+                }
+            }
             if (selectorReturnType != null) {
                 errorHandler.closeAndCommitCurrentRegion();
             }
@@ -2401,13 +2380,14 @@ public class JetTypeInferrer {
             }
             else if (operationType == JetTokens.ELVIS) {
                 JetType leftType = getType(context.scope, left, false, context);
-                JetType rightType = right == null ? null : getType(context.scope, right, false, context);
+                JetType rightType = right == null ? null : getType(context.scope, right, false, contextWithExpectedType);
                 if (leftType != null) {
                     if (!leftType.isNullable()) {
                         context.trace.getErrorHandler().genericWarning(left.getNode(), "Elvis operator (?:) is always returns the left operand of non-nullable type " + leftType);
                     }
                     if (rightType != null) {
-                        result = TypeUtils.makeNullableAsSpecified(semanticServices.getTypeChecker().commonSupertype(leftType, rightType), rightType.isNullable());
+                        context.services.checkType(TypeUtils.makeNullableAsSpecified(leftType, rightType.isNullable()), left, contextWithExpectedType);
+                        return TypeUtils.makeNullableAsSpecified(semanticServices.getTypeChecker().commonSupertype(leftType, rightType), rightType.isNullable());
                     }
                 }
             }
@@ -2745,14 +2725,14 @@ public class JetTypeInferrer {
                 JetArrayAccessExpression arrayAccessExpression = (JetArrayAccessExpression) deparenthesized;
                 return resolveArrayAccessToLValue(arrayAccessExpression, right, expression.getOperationReference(), context);
             }
-            JetType leftType = getType(scope, left, false, context);
+            JetType leftType = getType(scope, left, false, context.replaceExpectedType(NO_EXPECTED_TYPE));
             if (right != null) {
-                JetType rightType = getType(scope, right, false, context);
-                if (rightType != null &&
-                    leftType != null &&
-                    !semanticServices.getTypeChecker().isConvertibleTo(rightType, leftType)) {
-                    context.trace.getErrorHandler().typeMismatch(right, leftType, rightType);
-                }
+                JetType rightType = getType(scope, right, false, context.replaceExpectedType(leftType));
+//                if (rightType != null &&
+//                    leftType != null &&
+//                    !semanticServices.getTypeChecker().isConvertibleTo(rightType, leftType)) {
+//                    context.trace.getErrorHandler().typeMismatch(right, leftType, rightType);
+//                }
             }
             return null;
         }

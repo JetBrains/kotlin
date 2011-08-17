@@ -1,0 +1,11 @@
+namespace qualified_expressions
+
+fun test(s: String?) {
+   val a: Int = <error>s?.length</error>
+   val b: Int? = s?.length
+   val c: Int = s?.length ?: -11
+   val d: Int = s?.length ?: <error>"empty"</error>
+   val e: String = <error>s?.length</error> ?: "empty"
+   val f: Int = s?.length ?: b ?: 1
+   val g: Int? = e? startsWith("s")?.length
+}
