@@ -50,11 +50,6 @@ public class JetSemanticServices {
         return new JetTypeInferrer(flowInformationProvider, this).getServices(trace);
     }
 
-//    @NotNull
-//    public ErrorHandler getErrorHandler() {
-//        return errorHandler;
-//    }
-//
     @NotNull
     public JetTypeChecker getTypeChecker() {
         return typeChecker;

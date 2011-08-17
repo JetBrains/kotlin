@@ -20,7 +20,7 @@ import java.util.*;
 /**
  * @author abreslav
  */
-public class BindingTraceContext implements BindingContext, BindingTrace {
+public class BindingTraceContext implements BindingTrace {
     private final Map<JetExpression, JetType> expressionTypes = new HashMap<JetExpression, JetType>();
     private final Map<JetReferenceExpression, DeclarationDescriptor> resolutionResults = new HashMap<JetReferenceExpression, DeclarationDescriptor>();
     private final Map<JetReferenceExpression, PsiElement> labelResolutionResults = new HashMap<JetReferenceExpression, PsiElement>();
@@ -45,6 +45,169 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
     private final ErrorHandlerWithRegions errorHandler = new ErrorHandlerWithRegions(new CollectingErrorHandler(diagnostics));
     private Map<JetAnnotationEntry, AnnotationDescriptor> annotationDescriptos = Maps.newHashMap();
     private Map<JetExpression, CompileTimeConstant<?>> compileTimeValues = Maps.newHashMap();
+
+    private final BindingContext bindingContext = new BindingContext() {
+        @Override
+        public DeclarationDescriptor getDeclarationDescriptor(PsiElement declaration) {
+            if (declaration instanceof JetNamespace) {
+                JetNamespace namespace = (JetNamespace) declaration;
+                return getNamespaceDescriptor(namespace);
+            }
+            return declarationsToDescriptors.get(declaration);
+        }
+
+        public NamespaceDescriptor getNamespaceDescriptor(JetNamespace declaration) {
+            return namespaceDeclarationsToDescriptors.get(declaration);
+        }
+
+        @Override
+        public ClassDescriptor getClassDescriptor(JetClassOrObject declaration) {
+            return (ClassDescriptor) declarationsToDescriptors.get((JetDeclaration) declaration);
+        }
+
+        @Override
+        public TypeParameterDescriptor getTypeParameterDescriptor(JetTypeParameter declaration) {
+            return (TypeParameterDescriptor) declarationsToDescriptors.get(declaration);
+        }
+
+        @Override
+        public FunctionDescriptor getFunctionDescriptor(JetNamedFunction declaration) {
+            return (FunctionDescriptor) declarationsToDescriptors.get(declaration);
+        }
+
+        @Override
+        public VariableDescriptor getVariableDescriptor(JetProperty declaration) {
+            return (VariableDescriptor) declarationsToDescriptors.get(declaration);
+        }
+
+        @Override
+        public VariableDescriptor getVariableDescriptor(JetParameter declaration) {
+            return (VariableDescriptor) declarationsToDescriptors.get(declaration);
+        }
+
+        @Override
+        public PropertyDescriptor getPropertyDescriptor(JetParameter primaryConstructorParameter) {
+            return primaryConstructorParameterDeclarationsToPropertyDescriptors.get(primaryConstructorParameter);
+        }
+
+        @Override
+        public PropertyDescriptor getPropertyDescriptor(JetObjectDeclarationName objectDeclarationName) {
+            return (PropertyDescriptor) declarationsToDescriptors.get(objectDeclarationName);
+        }
+
+        @Nullable
+        @Override
+        public ConstructorDescriptor getConstructorDescriptor(@NotNull JetElement declaration) {
+            return constructorDeclarationsToDescriptors.get(declaration);
+        }
+
+        @Override
+        public AnnotationDescriptor getAnnotationDescriptor(JetAnnotationEntry annotationEntry) {
+            return annotationDescriptos.get(annotationEntry);
+        }
+
+        @Override
+        public CompileTimeConstant<?> getCompileTimeValue(JetExpression expression) {
+            return compileTimeValues.get(expression);
+        }
+
+        @Override
+        public JetType resolveTypeReference(JetTypeReference typeReference) {
+            return types.get(typeReference);
+        }
+
+        @Override
+        public JetType getExpressionType(JetExpression expression) {
+            return expressionTypes.get(expression);
+        }
+
+        @Override
+        public DeclarationDescriptor resolveReferenceExpression(JetReferenceExpression referenceExpression) {
+            return resolutionResults.get(referenceExpression);
+        }
+
+        @Override
+        public PsiElement resolveToDeclarationPsiElement(JetReferenceExpression referenceExpression) {
+            DeclarationDescriptor declarationDescriptor = resolveReferenceExpression(referenceExpression);
+            if (declarationDescriptor == null) {
+                return labelResolutionResults.get(referenceExpression);
+            }
+            return descriptorToDeclarations.get(getOriginal(declarationDescriptor));
+        }
+
+        @Override
+        public PsiElement getDeclarationPsiElement(@NotNull DeclarationDescriptor descriptor) {
+            return descriptorToDeclarations.get(getOriginal(descriptor));
+        }
+
+        @Override
+        public boolean isBlock(JetFunctionLiteralExpression expression) {
+            return !expression.getFunctionLiteral().hasParameterSpecification() && blocks.contains(expression);
+        }
+
+        @Override
+        public boolean isStatement(@NotNull JetExpression expression) {
+            return statements.contains(expression);
+        }
+
+        @Override
+        public boolean hasBackingField(@NotNull PropertyDescriptor propertyDescriptor) {
+            PsiElement declarationPsiElement = getDeclarationPsiElement(propertyDescriptor);
+            if (declarationPsiElement instanceof JetParameter) {
+                JetParameter jetParameter = (JetParameter) declarationPsiElement;
+                return jetParameter.getValOrVarNode() != null ||
+                       backingFieldRequired.contains(propertyDescriptor);
+            }
+            if (propertyDescriptor.getModifiers().isAbstract()) return false;
+            PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
+            PropertySetterDescriptor setter = propertyDescriptor.getSetter();
+            if (getter == null) {
+                return true;
+            }
+            else if (propertyDescriptor.isVar() && setter == null) {
+                return true;
+            }
+            else if (setter != null && !setter.hasBody() && !setter.getModifiers().isAbstract()) {
+                return true;
+            }
+            else if (!getter.hasBody() && !getter.getModifiers().isAbstract()) {
+                return true;
+            }
+            return backingFieldRequired.contains(propertyDescriptor);
+        }
+
+        @Override
+        public boolean isVariableReassignment(JetExpression expression) {
+            return variableReassignments.contains(expression);
+        }
+
+        public ConstructorDescriptor resolveSuperConstructor(JetDelegatorToSuperCall superCall) {
+            JetTypeReference typeReference = superCall.getTypeReference();
+            if (typeReference == null) return null;
+
+            JetTypeElement typeElement = typeReference.getTypeElement();
+            if (!(typeElement instanceof JetUserType)) return null;
+
+            DeclarationDescriptor descriptor = resolveReferenceExpression(((JetUserType) typeElement).getReferenceExpression());
+            return descriptor instanceof ConstructorDescriptor ? (ConstructorDescriptor) descriptor : null;
+        }
+
+        @Override
+        public JetType getAutoCastType(@NotNull JetExpression expression) {
+            return autoCasts.get(expression);
+        }
+
+        @Override
+        public JetScope getResolutionScope(@NotNull JetExpression expression) {
+            return resolutionScopes.get(expression);
+        }
+
+        @Override
+        public Collection<JetDiagnostic> getDiagnostics() {
+            return diagnostics;
+        }
+
+    };
 
     public BindingTraceContext() {
     }
@@ -72,6 +235,11 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
         diagnostics.addAll(other.diagnostics);
     }
 
+    @Override
+    public BindingContext getBindingContext() {
+        return bindingContext;
+    }
+
     private <K, V> void safePutAll(Map<K, V> my, Map<K, V> other) {
         assert keySetIntersection(my, other).isEmpty() : keySetIntersection(my, other);
 
@@ -83,7 +251,6 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
         keySet.retainAll(other.keySet());
         return keySet;
     }
-
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -196,175 +363,12 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
         statements.remove(statement);
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-    @Override
-    public DeclarationDescriptor getDeclarationDescriptor(PsiElement declaration) {
-        if (declaration instanceof JetNamespace) {
-            JetNamespace namespace = (JetNamespace) declaration;
-            return getNamespaceDescriptor(namespace);
-        }
-        return declarationsToDescriptors.get(declaration);
-    }
-
-    public NamespaceDescriptor getNamespaceDescriptor(JetNamespace declaration) {
-        return namespaceDeclarationsToDescriptors.get(declaration);
-    }
-
-    @Override
-    public ClassDescriptor getClassDescriptor(JetClassOrObject declaration) {
-        return (ClassDescriptor) declarationsToDescriptors.get((JetDeclaration) declaration);
-    }
-
-    @Override
-    public TypeParameterDescriptor getTypeParameterDescriptor(JetTypeParameter declaration) {
-        return (TypeParameterDescriptor) declarationsToDescriptors.get(declaration);
-    }
-
-    @Override
-    public FunctionDescriptor getFunctionDescriptor(JetNamedFunction declaration) {
-        return (FunctionDescriptor) declarationsToDescriptors.get(declaration);
-    }
-
-    @Override
-    public VariableDescriptor getVariableDescriptor(JetProperty declaration) {
-        return (VariableDescriptor) declarationsToDescriptors.get(declaration);
-    }
-
-    @Override
-    public VariableDescriptor getVariableDescriptor(JetParameter declaration) {
-        return (VariableDescriptor) declarationsToDescriptors.get(declaration);
-    }
-
-    @Override
-    public PropertyDescriptor getPropertyDescriptor(JetParameter primaryConstructorParameter) {
-        return primaryConstructorParameterDeclarationsToPropertyDescriptors.get(primaryConstructorParameter);
-    }
-
-    @Override
-    public PropertyDescriptor getPropertyDescriptor(JetObjectDeclarationName objectDeclarationName) {
-        return (PropertyDescriptor) declarationsToDescriptors.get(objectDeclarationName);
-    }
-
-    @Nullable
-    @Override
-    public ConstructorDescriptor getConstructorDescriptor(@NotNull JetElement declaration) {
-        return constructorDeclarationsToDescriptors.get(declaration);
-    }
-
-    @Override
-    public AnnotationDescriptor getAnnotationDescriptor(JetAnnotationEntry annotationEntry) {
-        return annotationDescriptos.get(annotationEntry);
-    }
-
-    @Override
-    public CompileTimeConstant<?> getCompileTimeValue(JetExpression expression) {
-        return compileTimeValues.get(expression);
-    }
-
-    @Override
-    public JetType resolveTypeReference(JetTypeReference typeReference) {
-        return types.get(typeReference);
-    }
-
-    @Override
-    public JetType getExpressionType(JetExpression expression) {
-        return expressionTypes.get(expression);
-    }
-
-    @Override
-    public DeclarationDescriptor resolveReferenceExpression(JetReferenceExpression referenceExpression) {
-        return resolutionResults.get(referenceExpression);
-    }
-
-    @Override
-    public PsiElement resolveToDeclarationPsiElement(JetReferenceExpression referenceExpression) {
-        DeclarationDescriptor declarationDescriptor = resolveReferenceExpression(referenceExpression);
-        if (declarationDescriptor == null) {
-            return labelResolutionResults.get(referenceExpression);
-        }
-        return descriptorToDeclarations.get(getOriginal(declarationDescriptor));
-    }
-
     private DeclarationDescriptor getOriginal(DeclarationDescriptor declarationDescriptor) {
         if (declarationDescriptor instanceof VariableAsFunctionDescriptor) {
             VariableAsFunctionDescriptor descriptor = (VariableAsFunctionDescriptor) declarationDescriptor;
             return descriptor.getVariableDescriptor().getOriginal();
         }
         return declarationDescriptor.getOriginal();
-    }
-
-    @Override
-    public PsiElement getDeclarationPsiElement(@NotNull DeclarationDescriptor descriptor) {
-        return descriptorToDeclarations.get(getOriginal(descriptor));
-    }
-
-    @Override
-    public boolean isBlock(JetFunctionLiteralExpression expression) {
-        return !expression.getFunctionLiteral().hasParameterSpecification() && blocks.contains(expression);
-    }
-
-    @Override
-    public boolean isStatement(@NotNull JetExpression expression) {
-        return statements.contains(expression);
-    }
-
-    @Override
-    public boolean hasBackingField(@NotNull PropertyDescriptor propertyDescriptor) {
-        PsiElement declarationPsiElement = getDeclarationPsiElement(propertyDescriptor);
-        if (declarationPsiElement instanceof JetParameter) {
-            JetParameter jetParameter = (JetParameter) declarationPsiElement;
-            return jetParameter.getValOrVarNode() != null ||
-                   backingFieldRequired.contains(propertyDescriptor);
-        }
-        if (propertyDescriptor.getModifiers().isAbstract()) return false;
-        PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
-        PropertySetterDescriptor setter = propertyDescriptor.getSetter();
-        if (getter == null) {
-            return true;
-        }
-        else if (propertyDescriptor.isVar() && setter == null) {
-            return true;
-        }
-        else if (setter != null && !setter.hasBody() && !setter.getModifiers().isAbstract()) {
-            return true;
-        }
-        else if (!getter.hasBody() && !getter.getModifiers().isAbstract()) {
-            return true;
-        }
-        return backingFieldRequired.contains(propertyDescriptor);
-    }
-
-    @Override
-    public boolean isVariableReassignment(JetExpression expression) {
-        return variableReassignments.contains(expression);
-    }
-
-    public ConstructorDescriptor resolveSuperConstructor(JetDelegatorToSuperCall superCall) {
-        JetTypeReference typeReference = superCall.getTypeReference();
-        if (typeReference == null) return null;
-
-        JetTypeElement typeElement = typeReference.getTypeElement();
-        if (!(typeElement instanceof JetUserType)) return null;
-
-        DeclarationDescriptor descriptor = resolveReferenceExpression(((JetUserType) typeElement).getReferenceExpression());
-        return descriptor instanceof ConstructorDescriptor ? (ConstructorDescriptor) descriptor : null;
-    }
-
-    @Override
-    public JetType getAutoCastType(@NotNull JetExpression expression) {
-        return autoCasts.get(expression);
-    }
-
-    @Override
-    public JetScope getResolutionScope(@NotNull JetExpression expression) {
-        return resolutionScopes.get(expression);
-    }
-
-    @Override
-    public Collection<JetDiagnostic> getDiagnostics() {
-        return diagnostics;
     }
 
     @Override
@@ -377,8 +381,4 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
         return processed.contains(expression);
     }
 
-    @Override
-    public BindingContext getBindingContext() {
-        return this;
-    }
 }

@@ -235,7 +235,7 @@ jump
 // Ambiguity when after a SimpleName (infix call). In this case (e) is treated as an expression in parentheses
 // to put a tuple, write write ((e))
 tupleLiteral
-  : "(" ((SimpleName "=")? expression){","} ")"
+  : "(" (((SimpleName "=")? expression){","})? ")"
   ;
 
 // one can use "it" as a parameter name

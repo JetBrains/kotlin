@@ -31,7 +31,7 @@ public class TopDownAnalyzer {
 
     private final Map<JetNamedFunction, FunctionDescriptorImpl> functions = Maps.newLinkedHashMap();
     private final Map<JetDeclaration, ConstructorDescriptor> constructors = Maps.newLinkedHashMap();
-    private final Map<JetProperty, PropertyDescriptor> properties = new LinkedHashMap<JetProperty, PropertyDescriptor>();
+    private final Map<JetProperty, PropertyDescriptor> properties = Maps.newLinkedHashMap();
     private final Map<JetDeclaration, JetScope> declaringScopes = Maps.newHashMap();
     private final Set<PropertyDescriptor> primaryConstructorParameterProperties = Sets.newHashSet();
 

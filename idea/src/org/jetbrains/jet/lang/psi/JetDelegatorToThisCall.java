@@ -27,6 +27,11 @@ public class JetDelegatorToThisCall extends JetDelegationSpecifier implements Je
         return visitor.visitDelegationToThisCall(this, data);
     }
 
+    @Override
+    public JetExpression getCalleeExpression() {
+        return getThisReference();
+    }
+
     @Nullable
     public JetValueArgumentList getValueArgumentList() {
         return (JetValueArgumentList) findChildByType(JetNodeTypes.VALUE_ARGUMENT_LIST);

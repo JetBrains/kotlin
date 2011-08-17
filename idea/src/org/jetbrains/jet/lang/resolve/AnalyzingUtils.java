@@ -52,7 +52,7 @@ public class AnalyzingUtils {
                             e.printStackTrace();
                             BindingTraceContext bindingTraceContext = new BindingTraceContext();
                             bindingTraceContext.getErrorHandler().genericError(file.getNode(), e.getClass().getSimpleName() + ": " + e.getMessage());
-                            return new Result<BindingContext>(bindingTraceContext, PsiModificationTracker.MODIFICATION_COUNT);
+                            return new Result<BindingContext>(bindingTraceContext.getBindingContext(), PsiModificationTracker.MODIFICATION_COUNT);
                         }
                     }
                 }
@@ -112,7 +112,7 @@ public class AnalyzingUtils {
                 throw new IllegalStateException("Must be guaranteed not to happen by the parser");
             }
         }, Collections.<JetDeclaration>singletonList(namespace));
-        return bindingTraceContext;
+        return bindingTraceContext.getBindingContext();
     }
 
     public static void applyHandler(@NotNull ErrorHandler errorHandler, @NotNull BindingContext bindingContext) {

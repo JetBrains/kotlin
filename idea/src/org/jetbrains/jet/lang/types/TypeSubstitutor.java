@@ -15,6 +15,30 @@ import java.util.Map;
  */
 public class TypeSubstitutor {
 
+    public interface TypeSubstitution {
+        @Nullable
+        TypeProjection get(TypeConstructor key);
+        boolean isEmpty();
+    }
+
+    public static class MapToTypeSubstitutionAdapter implements TypeSubstitution {
+        private final @NotNull Map<TypeConstructor, TypeProjection> substitutionContext;
+
+        public MapToTypeSubstitutionAdapter(@NotNull Map<TypeConstructor, TypeProjection> substitutionContext) {
+            this.substitutionContext = substitutionContext;
+        }
+
+        @Override
+        public TypeProjection get(TypeConstructor key) {
+            return substitutionContext.get(key);
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return substitutionContext.isEmpty();
+        }
+    }
+
     public static final TypeSubstitutor EMPTY = create(Collections.<TypeConstructor, TypeProjection>emptyMap());
 
     public static final class SubstitutionException extends Exception {
@@ -23,8 +47,12 @@ public class TypeSubstitutor {
         }
     }
 
+    public static TypeSubstitutor create(@NotNull TypeSubstitution substitution) {
+        return new TypeSubstitutor(substitution);
+    }
+
     public static TypeSubstitutor create(@NotNull Map<TypeConstructor, TypeProjection> substitutionContext) {
-        return new TypeSubstitutor(substitutionContext);
+        return create(new MapToTypeSubstitutionAdapter(substitutionContext));
     }
 
     public static TypeSubstitutor create(@NotNull JetType context) {
@@ -33,9 +61,9 @@ public class TypeSubstitutor {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private final @NotNull Map<TypeConstructor, TypeProjection> substitutionContext;
+    private final @NotNull TypeSubstitution substitutionContext;
 
-    private TypeSubstitutor(@NotNull Map<TypeConstructor, TypeProjection> substitutionContext) {
+    private TypeSubstitutor(@NotNull TypeSubstitution substitutionContext) {
         this.substitutionContext = substitutionContext;
     }
 
@@ -109,7 +137,7 @@ public class TypeSubstitutor {
 
     @NotNull
     private TypeProjection substituteInProjection(
-            @NotNull Map<TypeConstructor, TypeProjection> substitutionContext,
+            @NotNull TypeSubstitution substitutionContext,
             @NotNull TypeProjection passedProjection,
             @NotNull TypeParameterDescriptor correspondingTypeParameter,
             @NotNull Variance contextCallSiteVariance) throws SubstitutionException {
@@ -179,10 +207,6 @@ public class TypeSubstitutor {
 //            }
 //
         return new TypeProjection(effectiveProjectionKindValue,  specializeType(effectiveTypeValue, effectiveContextVariance));
-    }
-
-    /*package*/ void addSubstitution(@NotNull TypeConstructor typeConstructor, @NotNull TypeProjection typeProjection) {
-        substitutionContext.put(typeConstructor, typeProjection);
     }
 
     private static Variance asymmetricOr(Variance a, Variance b) {

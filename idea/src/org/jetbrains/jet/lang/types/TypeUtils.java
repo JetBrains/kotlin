@@ -50,6 +50,9 @@ public class TypeUtils {
 
         StringBuilder debugName = new StringBuilder();
         boolean nullable = false;
+        Set<JetType> resultingTypes = Sets.newHashSet();
+
+        outer:
         for (Iterator<JetType> iterator = types.iterator(); iterator.hasNext();) {
             JetType type = iterator.next();
 
@@ -63,9 +66,17 @@ public class TypeUtils {
                 }
                 return type;
             }
+            else {
+                for (JetType other : types) {
+                    if (!type.equals(other) && typeChecker.isSubtypeOf(other, type)) {
+                        continue outer;
+                    }
+                }
+            }
 
             nullable |= type.isNullable();
 
+            resultingTypes.add(type);
             debugName.append(type.toString());
             if (iterator.hasNext()) {
                 debugName.append(" & ");
@@ -79,11 +90,11 @@ public class TypeUtils {
                 false,
                 debugName.toString(),
                 Collections.<TypeParameterDescriptor>emptyList(),
-                types);
+                resultingTypes);
 
-        JetScope[] scopes = new JetScope[types.size()];
+        JetScope[] scopes = new JetScope[resultingTypes.size()];
         int i = 0;
-        for (JetType type : types) {
+        for (JetType type : resultingTypes) {
             scopes[i] = type.getMemberScope();
             i++;
         }
@@ -217,12 +228,15 @@ public class TypeUtils {
      */
     @NotNull
     public static TypeSubstitutor buildDeepSubstitutor(@NotNull JetType type) {
-        TypeSubstitutor typeSubstitutor = TypeSubstitutor.create(Maps.<TypeConstructor, TypeProjection>newHashMap());
-        fillInDeepSubstitutor(type, typeSubstitutor);
+        HashMap<TypeConstructor, TypeProjection> substitution = Maps.<TypeConstructor, TypeProjection>newHashMap();
+        TypeSubstitutor typeSubstitutor = TypeSubstitutor.create(substitution);
+        // we use the mutability of the map here
+        fillInDeepSubstitutor(type, typeSubstitutor, substitution);
         return typeSubstitutor;
     }
 
-    private static void fillInDeepSubstitutor(JetType context, TypeSubstitutor substitutor) {
+    // we use the mutability of the substitution map here
+    private static void fillInDeepSubstitutor(JetType context, TypeSubstitutor substitutor, Map<TypeConstructor, TypeProjection> substitution) {
         List<TypeParameterDescriptor> parameters = context.getConstructor().getParameters();
         List<TypeProjection> arguments = context.getArguments();
         for (int i = 0; i < arguments.size(); i++) {
@@ -232,10 +246,10 @@ public class TypeUtils {
             JetType substitute = substitutor.substitute(argument.getType(), Variance.INVARIANT);
             assert substitute != null;
             TypeProjection substitutedTypeProjection = new TypeProjection(argument.getProjectionKind(), substitute);
-            substitutor.addSubstitution(typeParameterDescriptor.getTypeConstructor(), substitutedTypeProjection);
+            substitution.put(typeParameterDescriptor.getTypeConstructor(), substitutedTypeProjection);
         }
         for (JetType supertype : context.getConstructor().getSupertypes()) {
-            fillInDeepSubstitutor(supertype, substitutor);
+            fillInDeepSubstitutor(supertype, substitutor, substitution);
         }
     }
 

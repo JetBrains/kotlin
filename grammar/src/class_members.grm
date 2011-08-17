@@ -119,7 +119,7 @@ parameter
   ;
 
 object
-  : "object" SimpleName ":" delegationSpecifier{","}? classBody? // Class body can be optional: this is a declaration
+  : "object" SimpleName (":" delegationSpecifier{","})? classBody? // Class body can be optional: this is a declaration
 /**
 bq. See [Object expressions and Declarations]
 */

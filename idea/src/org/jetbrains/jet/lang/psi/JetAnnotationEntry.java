@@ -33,6 +33,12 @@ public class JetAnnotationEntry extends JetElement implements JetCall {
     }
 
     @Override
+    public JetExpression getCalleeExpression() {
+        // Make callee an expression instead of a type reference
+        throw new UnsupportedOperationException(); // TODO
+    }
+
+    @Override
     public JetValueArgumentList getValueArgumentList() {
         return (JetValueArgumentList) findChildByType(JetNodeTypes.VALUE_ARGUMENT_LIST);
     }

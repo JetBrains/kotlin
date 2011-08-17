@@ -26,6 +26,7 @@ public class JetCallExpression extends JetExpression implements JetCall {
         return visitor.visitCallExpression(this, data);
     }
 
+    @Override
     @Nullable
     public JetExpression getCalleeExpression() {
         return findChildByClass(JetExpression.class);

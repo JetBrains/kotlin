@@ -26,6 +26,13 @@ public class JetDelegatorToSuperCall extends JetDelegationSpecifier implements J
         return visitor.visitDelegationToSuperCallSpecifier(this, data);
     }
 
+    @NotNull
+    @Override
+    public JetExpression getCalleeExpression() {
+        // Change the AST so the the callee is an expression
+        throw new UnsupportedOperationException(); // TODO
+    }
+
     @Nullable
     public JetValueArgumentList getValueArgumentList() {
         return (JetValueArgumentList) findChildByType(JetNodeTypes.VALUE_ARGUMENT_LIST);

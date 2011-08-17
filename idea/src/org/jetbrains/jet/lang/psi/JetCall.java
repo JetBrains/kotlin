@@ -11,6 +11,9 @@ import java.util.List;
  */
 public interface JetCall extends PsiElement {
     @Nullable
+    JetExpression getCalleeExpression();
+
+    @Nullable
     JetValueArgumentList getValueArgumentList();
 
     @NotNull

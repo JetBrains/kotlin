@@ -20,6 +20,7 @@ import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstantResolver;
 import org.jetbrains.jet.lang.resolve.constants.ErrorValue;
+import org.jetbrains.jet.lang.types.inference.ConstraintSystem;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
@@ -531,6 +532,71 @@ public class JetTypeInferrer {
                 blockLevelVisitor.resetResult(); // TODO : maybe it's better to recreate the visitors with the same scope?
             }
             return result;
+        }
+
+        @Nullable
+        private JetType resolveCall(
+            @NotNull JetScope scope,
+            @NotNull JetCall call,
+            @NotNull JetType expectedType
+        ) {
+            if (call.getTypeArguments().isEmpty()) {
+                JetExpression calleeExpression = call.getCalleeExpression();
+                Collection<FunctionDescriptor> candidates;
+                if (calleeExpression instanceof JetSimpleNameExpression) {
+                    JetSimpleNameExpression expression = (JetSimpleNameExpression) calleeExpression;
+                    candidates = scope.getFunctionGroup(expression.getReferencedName()).getFunctionDescriptors();
+                }
+                else {
+                    throw new UnsupportedOperationException("Type argument inference not implemented");
+                }
+
+                assert candidates.size() == 1;
+
+                FunctionDescriptor candidate = candidates.iterator().next();
+
+                assert candidate.getTypeParameters().size() == call.getTypeArguments().size();
+
+                ConstraintSystem constraintSystem = new ConstraintSystem();
+                for (TypeParameterDescriptor typeParameterDescriptor : candidate.getTypeParameters()) {
+                    constraintSystem.registerTypeVariable(typeParameterDescriptor, Variance.INVARIANT); // TODO
+                }
+
+                Iterator<ValueParameterDescriptor> parameters = candidate.getValueParameters().iterator();
+                for (JetValueArgument valueArgument : call.getValueArguments()) {
+                    assert !valueArgument.isNamed();
+                    ValueParameterDescriptor valueParameterDescriptor = parameters.next();
+                    JetExpression expression = valueArgument.getArgumentExpression();
+                    JetType type = getType(scope, expression, false, NO_EXPECTED_TYPE);
+                    constraintSystem.addSubtypingConstraint(type, valueParameterDescriptor.getOutType());
+                }
+
+                if (expectedType != NO_EXPECTED_TYPE) {
+                    System.out.println("expectedType = " + expectedType);
+                    constraintSystem.addSubtypingConstraint(candidate.getReturnType(), expectedType);
+                }
+
+                ConstraintSystem.Solution solution = constraintSystem.solve();
+                if (!solution.isSuccessful()) {
+                    trace.getErrorHandler().genericError(calleeExpression.getNode(), "Type inference failed");
+//                    for (Inconsistency inconsistency : solution.getInconsistencies()) {
+//                        System.out.println("inconsistency = " + inconsistency);
+//                    }
+                    return null;
+                }
+                else {
+                    for (TypeParameterDescriptor typeParameterDescriptor : candidate.getTypeParameters()) {
+                        JetType value = solution.getValue(typeParameterDescriptor);
+                        System.out.println("typeParameterDescriptor = " + typeParameterDescriptor);
+                        System.out.println("value = " + value);
+                    }
+                    return solution.getSubstitutor().substitute(candidate.getReturnType(), Variance.INVARIANT); // TODO
+                }
+//                return null;
+            }
+            else {
+                throw new UnsupportedOperationException("Explicit type arguments not implemented");
+            }
         }
 
         @Nullable
@@ -2230,6 +2296,7 @@ public class JetTypeInferrer {
 
         @Override
         public JetType visitCallExpression(JetCallExpression expression, TypeInferenceContext context) {
+//            return context.services.checkType(context.services.resolveCall(context.scope, expression, context.expectedType), expression, context);
             return context.services.checkType(getCallExpressionType(null, expression, context), expression, context);
         }
 

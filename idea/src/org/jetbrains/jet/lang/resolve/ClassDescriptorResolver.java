@@ -140,7 +140,7 @@ public class ClassDescriptorResolver {
         }
         descriptor.setTypeParameterDescriptors(typeParameters);
 
-        descriptor.setOpen(classElement.hasModifier(JetTokens.OPEN_KEYWORD));
+        descriptor.setOpen(classElement.hasModifier(JetTokens.OPEN_KEYWORD) || classElement.hasModifier(JetTokens.ABSTRACT_KEYWORD));
 
         trace.recordDeclarationResolution(classElement, descriptor);
     }

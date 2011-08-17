@@ -100,7 +100,7 @@ class IntRange<T : Comparable<T>> : Range<T>, Iterable<T> {
 
 }
 
-class Number : Hashable {
+abstract class Number : Hashable {
   abstract val dbl : Double
   abstract val flt : Float
   abstract val lng : Long
