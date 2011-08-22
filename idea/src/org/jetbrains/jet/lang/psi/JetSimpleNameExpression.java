@@ -91,7 +91,7 @@ public class JetSimpleNameExpression extends JetReferenceExpression {
                     JetExpression receiverExpression = qualifiedExpression.getReceiverExpression();
                     JetFile file = (JetFile) getContainingFile();
                     BindingContext bindingContext = AnalyzingUtils.analyzeFileWithCache(file);
-                    final JetType expressionType = bindingContext.getExpressionType(receiverExpression);
+                    final JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, receiverExpression);
                     if (expressionType != null) {
                         return collectLookupElements(bindingContext, expressionType.getMemberScope());
                     }
@@ -99,7 +99,7 @@ public class JetSimpleNameExpression extends JetReferenceExpression {
                 else {
                     JetFile file = (JetFile) getContainingFile();
                     BindingContext bindingContext = AnalyzingUtils.analyzeFileWithCache(file);
-                    JetScope resolutionScope = bindingContext.getResolutionScope(JetSimpleNameExpression.this);
+                    JetScope resolutionScope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, JetSimpleNameExpression.this);
                     if (resolutionScope != null) {
                         return collectLookupElements(bindingContext, resolutionScope);
                     }
@@ -119,7 +119,7 @@ public class JetSimpleNameExpression extends JetReferenceExpression {
     private Object[] collectLookupElements(BindingContext bindingContext, JetScope scope) {
         List<LookupElement> result = Lists.newArrayList();
         for (final DeclarationDescriptor descriptor : scope.getAllDescriptors()) {
-            PsiElement declaration = bindingContext.getDeclarationPsiElement(descriptor.getOriginal());
+            PsiElement declaration = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor.getOriginal());
             LookupElementBuilder element = LookupElementBuilder.create(descriptor.getName());
             String typeText = "";
             String tailText = "";

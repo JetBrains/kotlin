@@ -5,6 +5,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.objectweb.asm.ClassVisitor;
@@ -61,9 +62,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         JetDelegationSpecifier first = delegationSpecifiers.get(0);
         if (first instanceof JetDelegatorToSuperClass || first instanceof JetDelegatorToSuperCall) {
-            JetType superType = state.getBindingContext().resolveTypeReference(first.getTypeReference());
+            JetType superType = state.getBindingContext().get(BindingContext.TYPE, first.getTypeReference());
             ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
-            final PsiElement declaration = state.getBindingContext().getDeclarationPsiElement(superClassDescriptor);
+            final PsiElement declaration = state.getBindingContext().get(BindingContext.DESCRIPTOR_TO_DECLARATION, superClassDescriptor);
             if (declaration instanceof PsiClass && ((PsiClass) declaration).isInterface()) {
                 return "java/lang/Object";
             }
@@ -146,7 +147,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     protected void generatePrimaryConstructor() {
-        ConstructorDescriptor constructorDescriptor = state.getBindingContext().getConstructorDescriptor((JetElement) myClass);
+        ConstructorDescriptor constructorDescriptor = state.getBindingContext().get(BindingContext.CONSTRUCTOR, (JetElement) myClass);
         if (constructorDescriptor == null && !(myClass instanceof JetObjectDeclaration) && !isEnum(myClass)) return;
 
         Method method;
@@ -182,7 +183,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             // TODO correct calculation of super class
             String superClass = "java/lang/Object";
             if (!specifiers.isEmpty()) {
-                final JetType superType = state.getBindingContext().resolveTypeReference(specifiers.get(0).getTypeReference());
+                final JetType superType = state.getBindingContext().get(BindingContext.TYPE, specifiers.get(0).getTypeReference());
                 ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
                 if (superClassDescriptor.hasConstructors()) {
                     superClass = getSuperClass();
@@ -215,7 +216,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         HashSet<FunctionDescriptor> overridden = new HashSet<FunctionDescriptor>();
         for (JetDeclaration declaration : myClass.getDeclarations()) {
             if (declaration instanceof JetFunction) {
-                overridden.addAll(state.getBindingContext().getFunctionDescriptor((JetNamedFunction) declaration).getOverriddenFunctions());
+                overridden.addAll(state.getBindingContext().get(BindingContext.FUNCTION, (JetNamedFunction) declaration).getOverriddenFunctions());
             }
         }
 
@@ -229,7 +230,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
 
             if (specifier instanceof JetDelegatorToSuperCall) {
-                ConstructorDescriptor constructorDescriptor1 = state.getBindingContext().resolveSuperConstructor((JetDelegatorToSuperCall) specifier);
+                ConstructorDescriptor constructorDescriptor1 = (ConstructorDescriptor) state.getBindingContext().get(BindingContext.REFERENCE_TARGET, ((JetDelegatorToSuperCall) specifier).getCalleeExpression().getConstructorReferenceExpression());
                 generateDelegatorToConstructorCall(iv, codegen, (JetDelegatorToSuperCall) specifier, constructorDescriptor1, n == 0, frameMap);
             }
             else if (specifier instanceof JetDelegatorByExpressionSpecifier) {
@@ -237,7 +238,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
 
             if (delegateOnStack) {
-                JetType superType = state.getBindingContext().resolveTypeReference(specifier.getTypeReference());
+                JetType superType = state.getBindingContext().get(BindingContext.TYPE, specifier.getTypeReference());
                 ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
                 String delegateField = "$delegate_" + n;
                 Type fieldType = JetTypeMapper.jetInterfaceType(superClassDescriptor);
@@ -245,7 +246,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 v.visitField(Opcodes.ACC_PRIVATE, delegateField, fieldDesc, /*TODO*/null, null);
                 iv.putfield(classname, delegateField, fieldDesc);
 
-                JetClass superClass = (JetClass) state.getBindingContext().getDeclarationPsiElement(superClassDescriptor);
+                JetClass superClass = (JetClass) state.getBindingContext().get(BindingContext.DESCRIPTOR_TO_DECLARATION, superClassDescriptor);
                 final ClassContext delegateContext = context.intoClass(superClassDescriptor,
                         new OwnerKind.DelegateKind(StackValue.field(fieldType, classname, delegateField, false),
                         JetTypeMapper.jvmNameForInterface(superClassDescriptor)));
@@ -298,7 +299,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                                                     ConstructorFrameMap frameMap) {
         ClassDescriptor classDecl = constructorDescriptor.getContainingDeclaration();
         boolean isDelegating = kind == OwnerKind.DELEGATING_IMPLEMENTATION;
-        PsiElement declaration = state.getBindingContext().getDeclarationPsiElement(classDecl);
+        PsiElement declaration = state.getBindingContext().get(BindingContext.DESCRIPTOR_TO_DECLARATION, classDecl);
         Type type;
         if (declaration instanceof PsiClass) {
             type = JetTypeMapper.psiClassType((PsiClass) declaration);
@@ -348,7 +349,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void generateSecondaryConstructor(JetConstructor constructor) {
-        ConstructorDescriptor constructorDescriptor = state.getBindingContext().getConstructorDescriptor(constructor);
+        ConstructorDescriptor constructorDescriptor = state.getBindingContext().get(BindingContext.CONSTRUCTOR, constructor);
         if (constructorDescriptor == null) {
             throw new UnsupportedOperationException("failed to get descriptor for secondary constructor");
         }
@@ -365,7 +366,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         for (JetDelegationSpecifier initializer : constructor.getInitializers()) {
             if (initializer instanceof JetDelegatorToThisCall) {
                 JetDelegatorToThisCall thisCall = (JetDelegatorToThisCall) initializer;
-                DeclarationDescriptor thisDescriptor = state.getBindingContext().resolveReferenceExpression(thisCall.getThisReference());
+                DeclarationDescriptor thisDescriptor = state.getBindingContext().get(BindingContext.REFERENCE_TARGET, thisCall.getThisReference());
                 if (!(thisDescriptor instanceof ConstructorDescriptor)) {
                     throw new UnsupportedOperationException("expected 'this' delegator to resolve to constructor");
                 }
@@ -409,8 +410,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     protected void generateInitializers(ExpressionCodegen codegen, InstructionAdapter iv) {
         for (JetDeclaration declaration : myClass.getDeclarations()) {
             if (declaration instanceof JetProperty) {
-                final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) state.getBindingContext().getVariableDescriptor((JetProperty) declaration);
-                if (state.getBindingContext().hasBackingField(propertyDescriptor)) {
+                final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) state.getBindingContext().get(BindingContext.VARIABLE, (JetProperty) declaration);
+                if ((boolean) state.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor)) {
                     final JetExpression initializer = ((JetProperty) declaration).getInitializer();
                     if (initializer != null) {
                         iv.load(0, JetTypeMapper.TYPE_OBJECT);
@@ -435,7 +436,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 propertyCodegen.gen((JetProperty) declaration);
             }
             else if (declaration instanceof JetFunction) {
-                if (!overriden.contains(state.getBindingContext().getFunctionDescriptor((JetNamedFunction) declaration))) {
+                if (!overriden.contains(state.getBindingContext().get(BindingContext.FUNCTION, (JetNamedFunction) declaration))) {
                     functionCodegen.gen((JetNamedFunction) declaration);
                 }
             }
@@ -443,7 +444,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         for (JetParameter p : toClass.getPrimaryConstructorParameters()) {
             if (p.getValOrVarNode() != null) {
-                PropertyDescriptor propertyDescriptor = state.getBindingContext().getPropertyDescriptor(p);
+                PropertyDescriptor propertyDescriptor = state.getBindingContext().get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, p);
                 if (propertyDescriptor != null) {
                     propertyCodegen.generateDefaultGetter(propertyDescriptor, Opcodes.ACC_PUBLIC);
                     if (propertyDescriptor.isVar()) {

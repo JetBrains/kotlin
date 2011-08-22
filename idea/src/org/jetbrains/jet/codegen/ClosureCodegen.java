@@ -10,6 +10,7 @@ import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.JetFunctionLiteral;
 import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -83,7 +84,7 @@ public class ClosureCodegen {
     public GeneratedAnonymousClassDescriptor gen(JetFunctionLiteralExpression fun) {
         final Pair<String, ClassVisitor> nameAndVisitor = state.forAnonymousSubclass(fun);
 
-        final FunctionDescriptor funDescriptor = (FunctionDescriptor) state.getBindingContext().getDeclarationDescriptor(fun);
+        final FunctionDescriptor funDescriptor = (FunctionDescriptor) state.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, fun);
 
         cv = nameAndVisitor.getSecond();
         name = nameAndVisitor.getFirst();

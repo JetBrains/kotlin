@@ -3,6 +3,7 @@ package org.jetbrains.jet.codegen;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -33,7 +34,7 @@ public class NamespaceCodegen {
     }
 
     public void generate(JetNamespace namespace) {
-        final ClassContext context = ClassContext.STATIC.intoNamespace(state.getBindingContext().getNamespaceDescriptor(namespace));
+        final ClassContext context = ClassContext.STATIC.intoNamespace(state.getBindingContext().get(BindingContext.NAMESPACE, namespace));
 
         final FunctionCodegen functionCodegen = new FunctionCodegen(context, v, state);
         final PropertyCodegen propertyCodegen = new PropertyCodegen(context, v, functionCodegen, state);
@@ -78,7 +79,7 @@ public class NamespaceCodegen {
             if (declaration instanceof JetProperty) {
                 final JetExpression initializer = ((JetProperty) declaration).getInitializer();
                 if (initializer != null && !(initializer instanceof JetConstantExpression)) {
-                    final PropertyDescriptor descriptor = (PropertyDescriptor) state.getBindingContext().getVariableDescriptor((JetProperty) declaration);
+                    final PropertyDescriptor descriptor = (PropertyDescriptor) state.getBindingContext().get(BindingContext.VARIABLE, (JetProperty) declaration);
                     codegen.genToJVMStack(initializer);
                     codegen.intermediateValueForProperty(descriptor, true, false).store(new InstructionAdapter(mv));
                 }

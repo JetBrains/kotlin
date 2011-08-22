@@ -4,6 +4,7 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -31,7 +32,7 @@ public class FunctionCodegen {
 
     public void gen(JetNamedFunction f) {
         Method method = state.getTypeMapper().mapToCallableMethod(f).getSignature();
-        final FunctionDescriptor functionDescriptor = state.getBindingContext().getFunctionDescriptor(f);
+        final FunctionDescriptor functionDescriptor = state.getBindingContext().get(BindingContext.FUNCTION, f);
         generateMethod(f, method, functionDescriptor);
     }
 

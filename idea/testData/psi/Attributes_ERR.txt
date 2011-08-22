@@ -44,25 +44,26 @@ JetFile: Attributes_ERR.jet
         ANNOTATION
           PsiElement(LBRACKET)('[')
           ANNOTATION_ENTRY
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('foo')
-                TYPE_ARGUMENT_LIST
-                  PsiElement(LT)('<')
-                  TYPE_PROJECTION
-                    TYPE_REFERENCE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('A')
-                  PsiElement(COMMA)(',')
-                  PsiWhiteSpace(' ')
-                  TYPE_PROJECTION
-                    TYPE_REFERENCE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('B')
-                  PsiElement(GT)('>')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('foo')
+                  TYPE_ARGUMENT_LIST
+                    PsiElement(LT)('<')
+                    TYPE_PROJECTION
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('A')
+                    PsiElement(COMMA)(',')
+                    PsiWhiteSpace(' ')
+                    TYPE_PROJECTION
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('B')
+                    PsiElement(GT)('>')
             VALUE_ARGUMENT_LIST
               PsiElement(LPAR)('(')
               VALUE_ARGUMENT
@@ -78,68 +79,71 @@ JetFile: Attributes_ERR.jet
             PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
           ANNOTATION_ENTRY
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('ina')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('ina')
           PsiWhiteSpace(' ')
           ANNOTATION_ENTRY
-            TYPE_REFERENCE
-              USER_TYPE
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
                 USER_TYPE
                   USER_TYPE
                     USER_TYPE
                       USER_TYPE
                         USER_TYPE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('foo')
+                          PsiElement(DOT)('.')
                           REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('foo')
+                            PsiElement(IDENTIFIER)('bar')
                         PsiElement(DOT)('.')
                         REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('bar')
+                          PsiElement(IDENTIFIER)('goo')
                       PsiElement(DOT)('.')
                       REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('goo')
+                        PsiElement(IDENTIFIER)('doo')
+                      TYPE_ARGUMENT_LIST
+                        PsiElement(LT)('<')
+                        TYPE_PROJECTION
+                          TYPE_REFERENCE
+                            USER_TYPE
+                              REFERENCE_EXPRESSION
+                                PsiElement(IDENTIFIER)('f')
+                        PsiElement(GT)('>')
                     PsiElement(DOT)('.')
                     REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('doo')
+                      PsiElement(IDENTIFIER)('foo')
                     TYPE_ARGUMENT_LIST
                       PsiElement(LT)('<')
                       TYPE_PROJECTION
                         TYPE_REFERENCE
                           USER_TYPE
                             REFERENCE_EXPRESSION
-                              PsiElement(IDENTIFIER)('f')
+                              PsiElement(IDENTIFIER)('bar')
+                      PsiElement(COMMA)(',')
+                      PsiWhiteSpace(' ')
+                      TYPE_PROJECTION
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('goo')
                       PsiElement(GT)('>')
                   PsiElement(DOT)('.')
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('foo')
-                  TYPE_ARGUMENT_LIST
-                    PsiElement(LT)('<')
-                    TYPE_PROJECTION
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('bar')
-                    PsiElement(COMMA)(',')
-                    PsiWhiteSpace(' ')
-                    TYPE_PROJECTION
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('goo')
-                    PsiElement(GT)('>')
-                PsiElement(DOT)('.')
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('foo')
           PsiElement(RBRACKET)(']')
         PsiWhiteSpace('\n')
         ANNOTATION
           PsiElement(LBRACKET)('[')
           ANNOTATION_ENTRY
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('df')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('df')
           PsiElement(RBRACKET)(']')
         PsiWhiteSpace('\n')
         PsiElement(in)('in')
@@ -147,32 +151,36 @@ JetFile: Attributes_ERR.jet
         ANNOTATION
           PsiElement(LBRACKET)('[')
           ANNOTATION_ENTRY
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('sdfsdf')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('sdfsdf')
           PsiWhiteSpace(' ')
           PsiElement(RBRACKET)(']')
         PsiWhiteSpace('\n')
         ANNOTATION
           PsiElement(LBRACKET)('[')
           ANNOTATION_ENTRY
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('s')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('s')
           PsiWhiteSpace(' ')
           ANNOTATION_ENTRY
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('fd')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('fd')
           PsiWhiteSpace(' ')
           ANNOTATION_ENTRY
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('d')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('d')
           PsiErrorElement:No commas needed to separate attributes
             PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
@@ -208,34 +216,37 @@ JetFile: Attributes_ERR.jet
             ANNOTATION
               PsiElement(LBRACKET)('[')
               ANNOTATION_ENTRY
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('sdfsd')
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('sdfsd')
               PsiWhiteSpace(' ')
               ANNOTATION_ENTRY
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('sdfsd')
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('sdfsd')
               PsiWhiteSpace(' ')
               ANNOTATION_ENTRY
-                TYPE_REFERENCE
-                  USER_TYPE
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
                     USER_TYPE
                       USER_TYPE
                         USER_TYPE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('a')
+                          PsiElement(DOT)('.')
                           REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('a')
+                            PsiElement(IDENTIFIER)('b')
                         PsiElement(DOT)('.')
                         REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('b')
+                          PsiElement(IDENTIFIER)('f')
                       PsiElement(DOT)('.')
                       REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('f')
-                    PsiElement(DOT)('.')
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('c')
+                        PsiElement(IDENTIFIER)('c')
               PsiElement(RBRACKET)(']')
             PsiWhiteSpace('\n')
             PsiElement(private)('private')

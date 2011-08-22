@@ -3,6 +3,7 @@ package org.jetbrains.jet.codegen;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -29,7 +30,7 @@ public abstract class ClassBodyCodegen {
 
     public ClassBodyCodegen(JetClassOrObject aClass, ClassContext context, ClassVisitor v, GenerationState state) {
         this.state = state;
-        descriptor = state.getBindingContext().getClassDescriptor(aClass);
+        descriptor = state.getBindingContext().get(BindingContext.CLASS, aClass);
         myClass = aClass;
         this.context = context;
         this.kind = context.getContextKind();
@@ -81,14 +82,14 @@ public abstract class ClassBodyCodegen {
         OwnerKind kind = context.getContextKind();
         for (JetParameter p : getPrimaryConstructorParameters()) {
             if (p.getValOrVarNode() != null) {
-                PropertyDescriptor propertyDescriptor = state.getBindingContext().getPropertyDescriptor(p);
+                PropertyDescriptor propertyDescriptor = state.getBindingContext().get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, p);
                 if (propertyDescriptor != null) {
                     propertyCodegen.generateDefaultGetter(propertyDescriptor, Opcodes.ACC_PUBLIC);
                     if (propertyDescriptor.isVar()) {
                         propertyCodegen.generateDefaultSetter(propertyDescriptor, Opcodes.ACC_PUBLIC);
                     }
 
-                    if (!(kind instanceof OwnerKind.DelegateKind) && kind != OwnerKind.INTERFACE && state.getBindingContext().hasBackingField(propertyDescriptor)) {
+                    if (!(kind instanceof OwnerKind.DelegateKind) && kind != OwnerKind.INTERFACE && state.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor)) {
                         v.visitField(Opcodes.ACC_PRIVATE, p.getName(), state.getTypeMapper().mapType(propertyDescriptor.getOutType()).getDescriptor(), null, null);
                     }
                 }

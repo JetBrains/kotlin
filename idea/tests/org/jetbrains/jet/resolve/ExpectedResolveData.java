@@ -12,9 +12,15 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.types.JetStandardLibrary;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeConstructor;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -78,7 +84,7 @@ public class ExpectedResolveData {
             text = document.getText();
         }
 
-        System.out.println("text = " + text);
+        System.out.println(text);
     }
 
     public void checkResult(JetFile file) {
@@ -117,7 +123,7 @@ public class ExpectedResolveData {
                 assertTrue(
                         "Must have been unresolved: " +
                         renderReferenceInContext(referenceExpression) +
-                        " but was resolved to " + DescriptorRenderer.TEXT.render(bindingContext.resolveReferenceExpression(referenceExpression)),
+                        " but was resolved to " + DescriptorRenderer.TEXT.render(bindingContext.get(BindingContext.REFERENCE_TARGET, referenceExpression)),
                         unresolvedReferences.contains(referenceExpression));
                 continue;
             }
@@ -125,8 +131,8 @@ public class ExpectedResolveData {
                 assertTrue(
                        "Must have been resolved to null: " +
                         renderReferenceInContext(referenceExpression) +
-                        " but was resolved to " + DescriptorRenderer.TEXT.render(bindingContext.resolveReferenceExpression(referenceExpression)),
-                        bindingContext.getExpressionType(referenceExpression) == null
+                        " but was resolved to " + DescriptorRenderer.TEXT.render(bindingContext.get(BindingContext.REFERENCE_TARGET, referenceExpression)),
+                        bindingContext.get(BindingContext.EXPRESSION_TYPE, referenceExpression) == null
                 );
                 continue;
             }
@@ -144,12 +150,12 @@ public class ExpectedResolveData {
                 DeclarationDescriptor expectedDescriptor = nameToDescriptor.get(name);
                 JetTypeReference typeReference = getAncestorOfType(JetTypeReference.class, element);
                 if (expectedDescriptor != null) {
-                    DeclarationDescriptor actual = bindingContext.resolveReferenceExpression(reference);
+                    DeclarationDescriptor actual = bindingContext.get(BindingContext.REFERENCE_TARGET, reference);
                     assertSame("Expected: " + name,  expectedDescriptor.getOriginal(), actual == null ? null : actual.getOriginal());
                     continue;
                 }
 
-                JetType actualType = bindingContext.resolveTypeReference(typeReference);
+                JetType actualType = bindingContext.get(BindingContext.TYPE, typeReference);
                 assertNotNull("Type " + name + " not resolved for reference " + name, actualType);
                 ClassifierDescriptor expectedClass = lib.getLibraryScope().getClassifier(name.substring(5));
                 assertNotNull("Expected class not found: " + name);
@@ -158,7 +164,7 @@ public class ExpectedResolveData {
             }
             assert expected != null : "No declaration for " + name;
 
-            PsiElement actual = bindingContext.resolveToDeclarationPsiElement(reference);
+            PsiElement actual = BindingContextUtils.resolveToDeclarationPsiElement(bindingContext, reference);
 
             String actualName = null;
             if (actual != null) {
@@ -172,17 +178,17 @@ public class ExpectedResolveData {
             if (expected instanceof JetParameter || actual instanceof JetParameter) {
                 DeclarationDescriptor expectedDescriptor;
                 if (name.startsWith("$")) {
-                    expectedDescriptor = bindingContext.getPropertyDescriptor((JetParameter) expected);
+                    expectedDescriptor = bindingContext.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, (JetParameter) expected);
                 }
                 else {
-                    expectedDescriptor = bindingContext.getDeclarationDescriptor(expected);
+                    expectedDescriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, expected);
                     if (expectedDescriptor == null) {
-                        expectedDescriptor = bindingContext.getConstructorDescriptor((JetElement) expected);
+                        expectedDescriptor = bindingContext.get(BindingContext.CONSTRUCTOR, (JetElement) expected);
                     }
                 }
 
 
-                DeclarationDescriptor actualDescriptor = bindingContext.resolveReferenceExpression(reference);
+                DeclarationDescriptor actualDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, reference);
                 if (actualDescriptor instanceof VariableAsFunctionDescriptor) {
                     VariableAsFunctionDescriptor descriptor = (VariableAsFunctionDescriptor) actualDescriptor;
                     actualDescriptor = descriptor.getVariableDescriptor();
@@ -206,7 +212,7 @@ public class ExpectedResolveData {
             PsiElement element = file.findElementAt(position);
             JetExpression expression = getAncestorOfType(JetExpression.class, element);
 
-            JetType expressionType = bindingContext.getExpressionType(expression);
+            JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression);
             TypeConstructor expectedTypeConstructor;
             if (typeName.startsWith("std::")) {
                 ClassifierDescriptor expectedClass = lib.getLibraryScope().getClassifier(typeName.substring(5));
@@ -221,11 +227,11 @@ public class ExpectedResolveData {
                 JetDeclaration declaration = getAncestorOfType(JetDeclaration.class, declElement);
                 assertNotNull(declaration);
                 if (declaration instanceof JetClass) {
-                    ClassDescriptor classDescriptor = bindingContext.getClassDescriptor((JetClass) declaration);
+                    ClassDescriptor classDescriptor = bindingContext.get(BindingContext.CLASS, (JetClass) declaration);
                     expectedTypeConstructor = classDescriptor.getTypeConstructor();
                 }
                 else if (declaration instanceof JetTypeParameter) {
-                    TypeParameterDescriptor typeParameterDescriptor = bindingContext.getTypeParameterDescriptor((JetTypeParameter) declaration);
+                    TypeParameterDescriptor typeParameterDescriptor = bindingContext.get(BindingContext.TYPE_PARAMETER, (JetTypeParameter) declaration);
                     expectedTypeConstructor = typeParameterDescriptor.getTypeConstructor();
                 }
                 else {

@@ -22,48 +22,52 @@ JetFile: NamespaceBlock_ERR.jet
     NAMESPACE
       MODIFIER_LIST
         ANNOTATION_ENTRY
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('foo')
-              PsiElement(DOT)('.')
-              PsiWhiteSpace('\n')
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('import')
-        PsiWhiteSpace(' ')
-        ANNOTATION_ENTRY
-          TYPE_REFERENCE
-            USER_TYPE
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('foo')
                 PsiElement(DOT)('.')
+                PsiWhiteSpace('\n')
                 REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('bar')
-              PsiElement(DOT)('.')
-              PsiWhiteSpace('\n')
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('import')
+                  PsiElement(IDENTIFIER)('import')
         PsiWhiteSpace(' ')
         ANNOTATION_ENTRY
-          TYPE_REFERENCE
-            USER_TYPE
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('foo')
+                  PsiElement(DOT)('.')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('bar')
+                PsiElement(DOT)('.')
+                PsiWhiteSpace('\n')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('import')
+        PsiWhiteSpace(' ')
+        ANNOTATION_ENTRY
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('foo')
+                PsiElement(DOT)('.')
+                PsiWhiteSpace(' ')
+                REFERENCE_EXPRESSION
+                  PsiErrorElement:Type name expected
+                    PsiElement(as)('as')
+        PsiWhiteSpace(' ')
+        ANNOTATION_ENTRY
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('foo')
-              PsiElement(DOT)('.')
-              PsiWhiteSpace(' ')
-              REFERENCE_EXPRESSION
-                PsiErrorElement:Type name expected
-                  PsiElement(as)('as')
-        PsiWhiteSpace(' ')
-        ANNOTATION_ENTRY
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('bar')
+                  PsiElement(IDENTIFIER)('bar')
       PsiWhiteSpace('\n\n')
       PsiElement(namespace)('namespace')
       PsiWhiteSpace(' ')
@@ -255,10 +259,11 @@ JetFile: NamespaceBlock_ERR.jet
     CLASS
       MODIFIER_LIST
         ANNOTATION_ENTRY
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('dsfgd')
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('dsfgd')
       PsiWhiteSpace('\n\n')
       PsiElement(class)('class')
       PsiWhiteSpace(' ')

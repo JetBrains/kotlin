@@ -16,10 +16,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilBase;
 import com.intellij.ui.awt.RelativePoint;
-import com.intellij.util.Function;
-import com.intellij.util.Icons;
-import com.intellij.util.PsiIconUtil;
-import com.intellij.util.PsiNavigateUtil;
+import com.intellij.util.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
@@ -49,14 +46,14 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
 
         if (element instanceof JetClass) {
             JetClass jetClass = (JetClass) element;
-            ClassDescriptor classDescriptor = bindingContext.getClassDescriptor(jetClass);
+            ClassDescriptor classDescriptor = bindingContext.get(BindingContext.CLASS, jetClass);
             String text = classDescriptor == null ? "<i>Unresolved</i>" : DescriptorRenderer.HTML.render(classDescriptor);
             return createLineMarkerInfo(jetClass, text);
         }
 
         if (element instanceof JetProperty) {
             JetProperty jetProperty = (JetProperty) element;
-            final VariableDescriptor variableDescriptor = bindingContext.getVariableDescriptor(jetProperty);
+            final VariableDescriptor variableDescriptor = bindingContext.get(BindingContext.VARIABLE, jetProperty);
             if (variableDescriptor instanceof PropertyDescriptor) {
                 return createLineMarkerInfo(element, DescriptorRenderer.HTML.render(variableDescriptor));
             }
@@ -65,10 +62,10 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
         if (element instanceof JetNamedFunction) {
             JetNamedFunction jetFunction = (JetNamedFunction) element;
 
-            final FunctionDescriptor functionDescriptor = bindingContext.getFunctionDescriptor(jetFunction);
+            final FunctionDescriptor functionDescriptor = bindingContext.get(BindingContext.FUNCTION, jetFunction);
             if (functionDescriptor == null) return null;
             final Set<? extends FunctionDescriptor> overriddenFunctions = functionDescriptor.getOverriddenFunctions();
-            Icon icon = isMember(functionDescriptor) ? (overriddenFunctions.isEmpty() ? Icons.METHOD_ICON : OVERRIDING_FUNCTION) : Icons.FUNCTION_ICON;
+            Icon icon = isMember(functionDescriptor) ? (overriddenFunctions.isEmpty() ? PlatformIcons.METHOD_ICON : OVERRIDING_FUNCTION) : PlatformIcons.FUNCTION_ICON;
             return new LineMarkerInfo<JetNamedFunction>(
                     jetFunction, jetFunction.getTextOffset(), icon, Pass.UPDATE_ALL,
                     new Function<JetNamedFunction, String>() {
@@ -97,7 +94,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
                             if (overriddenFunctions.isEmpty()) return;
                             final List<PsiElement> list = Lists.newArrayList();
                             for (FunctionDescriptor overriddenFunction : overriddenFunctions) {
-                                PsiElement declarationPsiElement = bindingContext.getDeclarationPsiElement(overriddenFunction);
+                                PsiElement declarationPsiElement = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, overriddenFunction);
                                 list.add(declarationPsiElement);
                             }
                             if (list.isEmpty()) {
@@ -118,7 +115,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
                                             public String getElementText(PsiElement element) {
                                                 if (element instanceof JetNamedFunction) {
                                                     JetNamedFunction function = (JetNamedFunction) element;
-                                                    return DescriptorRenderer.HTML.render(bindingContext.getFunctionDescriptor(function));
+                                                    return DescriptorRenderer.HTML.render(bindingContext.get(BindingContext.FUNCTION, function));
                                                 }
                                                 return super.getElementText(element);
                                             }
@@ -134,18 +131,18 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
 
         if (element instanceof JetNamespace) {
             return createLineMarkerInfo((JetNamespace) element,
-                    DescriptorRenderer.HTML.render(bindingContext.getNamespaceDescriptor((JetNamespace) element)));
+                    DescriptorRenderer.HTML.render(bindingContext.get(BindingContext.NAMESPACE, element)));
         }
 
         if (element instanceof JetObjectDeclaration && !(element.getParent() instanceof JetExpression)) {
             JetObjectDeclaration jetObjectDeclaration = (JetObjectDeclaration) element;
 
             return new LineMarkerInfo<JetObjectDeclaration>(
-                    jetObjectDeclaration, jetObjectDeclaration.getTextOffset(), Icons.ANONYMOUS_CLASS_ICON, Pass.UPDATE_ALL,
+                    jetObjectDeclaration, jetObjectDeclaration.getTextOffset(), PlatformIcons.ANONYMOUS_CLASS_ICON, Pass.UPDATE_ALL,
                     new Function<JetObjectDeclaration, String>() {
                         @Override
                         public String fun(JetObjectDeclaration jetObjectDeclaration) {
-                            ClassDescriptor classDescriptor = bindingContext.getClassDescriptor(jetObjectDeclaration);
+                            ClassDescriptor classDescriptor = bindingContext.get(BindingContext.CLASS, jetObjectDeclaration);
                             if (classDescriptor != null) {
                                 return DescriptorRenderer.HTML.renderAsObject(classDescriptor);
                             }

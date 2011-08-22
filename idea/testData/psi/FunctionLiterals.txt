@@ -463,10 +463,11 @@ JetFile: FunctionLiterals.jet
                   ANNOTATION
                     PsiElement(LBRACKET)('[')
                     ANNOTATION_ENTRY
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('a')
+                      CONSTRUCTOR_CALLEE
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('a')
                     PsiElement(RBRACKET)(']')
                 PsiWhiteSpace(' ')
                 PsiElement(IDENTIFIER)('x')
@@ -477,10 +478,11 @@ JetFile: FunctionLiterals.jet
                   ANNOTATION
                     PsiElement(LBRACKET)('[')
                     ANNOTATION_ENTRY
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('b')
+                      CONSTRUCTOR_CALLEE
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('b')
                     PsiElement(RBRACKET)(']')
                 PsiWhiteSpace(' ')
                 PsiElement(IDENTIFIER)('y')
@@ -491,10 +493,11 @@ JetFile: FunctionLiterals.jet
                   ANNOTATION
                     PsiElement(LBRACKET)('[')
                     ANNOTATION_ENTRY
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('c')
+                      CONSTRUCTOR_CALLEE
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('c')
                     PsiElement(RBRACKET)(']')
                 PsiWhiteSpace(' ')
                 PsiElement(IDENTIFIER)('z')

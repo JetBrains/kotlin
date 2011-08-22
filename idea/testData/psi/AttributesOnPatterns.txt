@@ -29,10 +29,11 @@ JetFile: AttributesOnPatterns.jet
                 ANNOTATION
                   PsiElement(LBRACKET)('[')
                   ANNOTATION_ENTRY
-                    TYPE_REFERENCE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('a')
+                    CONSTRUCTOR_CALLEE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('a')
                   PsiElement(RBRACKET)(']')
                 PsiWhiteSpace(' ')
                 PROPERTY
@@ -53,10 +54,11 @@ JetFile: AttributesOnPatterns.jet
                 ANNOTATION
                   PsiElement(LBRACKET)('[')
                   ANNOTATION_ENTRY
-                    TYPE_REFERENCE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('a')
+                    CONSTRUCTOR_CALLEE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('a')
                   PsiElement(RBRACKET)(']')
                 PsiWhiteSpace(' ')
                 PROPERTY
@@ -86,10 +88,11 @@ JetFile: AttributesOnPatterns.jet
                 ANNOTATION
                   PsiElement(LBRACKET)('[')
                   ANNOTATION_ENTRY
-                    TYPE_REFERENCE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('a')
+                    CONSTRUCTOR_CALLEE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('a')
                   PsiElement(RBRACKET)(']')
                 PsiWhiteSpace(' ')
                 PsiElement(MUL)('*')
@@ -107,10 +110,11 @@ JetFile: AttributesOnPatterns.jet
                 ANNOTATION
                   PsiElement(LBRACKET)('[')
                   ANNOTATION_ENTRY
-                    TYPE_REFERENCE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('a')
+                    CONSTRUCTOR_CALLEE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('a')
                   PsiElement(RBRACKET)(']')
                 PsiWhiteSpace(' ')
                 INTEGER_CONSTANT
@@ -129,10 +133,11 @@ JetFile: AttributesOnPatterns.jet
                 ANNOTATION
                   PsiElement(LBRACKET)('[')
                   ANNOTATION_ENTRY
-                    TYPE_REFERENCE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('a')
+                    CONSTRUCTOR_CALLEE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('a')
                   PsiElement(RBRACKET)(']')
                 PsiWhiteSpace(' ')
                 TYPE_REFERENCE
@@ -153,10 +158,11 @@ JetFile: AttributesOnPatterns.jet
                 ANNOTATION
                   PsiElement(LBRACKET)('[')
                   ANNOTATION_ENTRY
-                    TYPE_REFERENCE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('a')
+                    CONSTRUCTOR_CALLEE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('a')
                   PsiElement(RBRACKET)(']')
                 PsiWhiteSpace(' ')
                 REFERENCE_EXPRESSION

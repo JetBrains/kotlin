@@ -16,10 +16,11 @@ JetFile: Builder.jet
             PsiWhiteSpace(' ')
             DELEGATION_SPECIFIER_LIST
               DELEGATOR_SUPER_CALL
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('AntBuilder')
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('AntBuilder')
                 VALUE_ARGUMENT_LIST
                   PsiElement(LPAR)('(')
                   PsiElement(RPAR)(')')
@@ -32,10 +33,11 @@ JetFile: Builder.jet
                   ANNOTATION
                     PsiElement(LBRACKET)('[')
                     ANNOTATION_ENTRY
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('lazy')
+                      CONSTRUCTOR_CALLEE
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('lazy')
                     PsiElement(RBRACKET)(']')
                 PsiWhiteSpace(' ')
                 PsiElement(val)('val')
@@ -77,10 +79,11 @@ JetFile: Builder.jet
                   ANNOTATION
                     PsiElement(LBRACKET)('[')
                     ANNOTATION_ENTRY
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('lazy')
+                      CONSTRUCTOR_CALLEE
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('lazy')
                     PsiElement(RBRACKET)(']')
                 PsiWhiteSpace(' ')
                 PsiElement(val)('val')
@@ -148,10 +151,11 @@ JetFile: Builder.jet
                   ANNOTATION
                     PsiElement(LBRACKET)('[')
                     ANNOTATION_ENTRY
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('lazy')
+                      CONSTRUCTOR_CALLEE
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('lazy')
                     PsiElement(RBRACKET)(']')
                 PsiWhiteSpace(' ')
                 PsiElement(val)('val')

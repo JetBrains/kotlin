@@ -51,100 +51,109 @@ JetFile: Imports_ERR.jet
     PsiWhiteSpace(' ')
     MODIFIER_LIST
       ANNOTATION_ENTRY
-        TYPE_REFERENCE
-          USER_TYPE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('foo')
-            PsiElement(DOT)('.')
-            PsiWhiteSpace('\n')
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('import')
-      PsiWhiteSpace(' ')
-      ANNOTATION_ENTRY
-        TYPE_REFERENCE
-          USER_TYPE
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('foo')
               PsiElement(DOT)('.')
+              PsiWhiteSpace('\n')
               REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('bar')
-            PsiElement(DOT)('.')
-            PsiWhiteSpace('\n')
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('import')
+                PsiElement(IDENTIFIER)('import')
       PsiWhiteSpace(' ')
       ANNOTATION_ENTRY
-        TYPE_REFERENCE
-          USER_TYPE
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('foo')
+                PsiElement(DOT)('.')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('bar')
+              PsiElement(DOT)('.')
+              PsiWhiteSpace('\n')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('import')
+      PsiWhiteSpace(' ')
+      ANNOTATION_ENTRY
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('foo')
+              PsiElement(DOT)('.')
+              PsiWhiteSpace(' ')
+              REFERENCE_EXPRESSION
+                PsiErrorElement:Type name expected
+                  PsiElement(as)('as')
+      PsiWhiteSpace(' ')
+      ANNOTATION_ENTRY
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('foo')
-            PsiElement(DOT)('.')
-            PsiWhiteSpace(' ')
-            REFERENCE_EXPRESSION
-              PsiErrorElement:Type name expected
-                PsiElement(as)('as')
-      PsiWhiteSpace(' ')
-      ANNOTATION_ENTRY
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('bar')
+                PsiElement(IDENTIFIER)('bar')
       PsiWhiteSpace('\n')
       ANNOTATION_ENTRY
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('import')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('import')
       PsiWhiteSpace(' ')
       ANNOTATION_ENTRY
-        TYPE_REFERENCE
-          USER_TYPE
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('foo')
+                PsiElement(DOT)('.')
                 REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('foo')
+                  PsiElement(IDENTIFIER)('bar')
               PsiElement(DOT)('.')
               REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('bar')
-            PsiElement(DOT)('.')
-            REFERENCE_EXPRESSION
-              PsiErrorElement:Type name expected
-                PsiElement(MUL)('*')
+                PsiErrorElement:Type name expected
+                  PsiElement(MUL)('*')
     PsiWhiteSpace(' ')
     PsiErrorElement:Expecting namespace or top level declaration
       PsiElement(as)('as')
     PsiWhiteSpace(' ')
     MODIFIER_LIST
       ANNOTATION_ENTRY
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('bar')
-      PsiWhiteSpace('\n')
-      ANNOTATION_ENTRY
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('import')
-      PsiWhiteSpace(' ')
-      ANNOTATION_ENTRY
-        TYPE_REFERENCE
-          USER_TYPE
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
             USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('foo')
-              PsiElement(DOT)('.')
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('bar')
-            PsiElement(DOT)('.')
-            REFERENCE_EXPRESSION
-              PsiErrorElement:Type name expected
-                PsiElement(MUL)('*')
+      PsiWhiteSpace('\n')
+      ANNOTATION_ENTRY
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('import')
+      PsiWhiteSpace(' ')
+      ANNOTATION_ENTRY
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('foo')
+                PsiElement(DOT)('.')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('bar')
+              PsiElement(DOT)('.')
+              REFERENCE_EXPRESSION
+                PsiErrorElement:Type name expected
+                  PsiElement(MUL)('*')
     PsiWhiteSpace(' ')
     PsiErrorElement:Expecting namespace or top level declaration
       PsiElement(as)('as')

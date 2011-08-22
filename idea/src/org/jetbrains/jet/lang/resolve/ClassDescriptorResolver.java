@@ -51,7 +51,7 @@ public class ClassDescriptorResolver {
                 annotationResolver.resolveAnnotations(scope, classElement.getModifierList()),
                 JetPsiUtil.safeName(classElement.getName()));
 
-        trace.recordDeclarationResolution(classElement, classDescriptor);
+        trace.record(BindingContext.CLASS, classElement, classDescriptor);
 
         final WritableScope parameterScope = new WritableScopeImpl(scope, classDescriptor, trace.getErrorHandler());
 
@@ -134,7 +134,7 @@ public class ClassDescriptorResolver {
                     JetPsiUtil.safeName(typeParameter.getName()),
                     index
             );
-            trace.recordDeclarationResolution(typeParameter, typeParameterDescriptor);
+            trace.record(BindingContext.TYPE_PARAMETER, typeParameter, typeParameterDescriptor);
             typeParameters.add(typeParameterDescriptor);
             index++;
         }
@@ -142,7 +142,7 @@ public class ClassDescriptorResolver {
 
         descriptor.setOpen(classElement.hasModifier(JetTokens.OPEN_KEYWORD) || classElement.hasModifier(JetTokens.ABSTRACT_KEYWORD));
 
-        trace.recordDeclarationResolution(classElement, descriptor);
+        trace.record(BindingContext.CLASS, classElement, descriptor);
     }
 
     public void resolveSupertypes(@NotNull JetClassOrObject jetClass, @NotNull MutableClassDescriptor descriptor) {
@@ -151,7 +151,7 @@ public class ClassDescriptorResolver {
         // TODO : beautify
         if (jetClass instanceof JetEnumEntry) {
             JetClassOrObject parent = PsiTreeUtil.getParentOfType(jetClass, JetClassOrObject.class);
-            ClassDescriptor parentDescriptor = trace.getBindingContext().getClassDescriptor(parent);
+            ClassDescriptor parentDescriptor = trace.getBindingContext().get(BindingContext.CLASS, parent);
             if (parentDescriptor.getTypeConstructor().getParameters().isEmpty()) {
                 defaultSupertype = parentDescriptor.getDefaultType();
             }
@@ -227,7 +227,7 @@ public class ClassDescriptorResolver {
                 valueParameterDescriptors,
                 returnType);
 
-        trace.recordDeclarationResolution(function, functionDescriptor);
+        trace.record(BindingContext.FUNCTION, function, functionDescriptor);
         return functionDescriptor;
     }
 
@@ -272,7 +272,7 @@ public class ClassDescriptorResolver {
     );
         // TODO : Default values???
 
-        trace.recordDeclarationResolution(valueParameter, valueParameterDescriptor);
+        trace.record(BindingContext.VALUE_PARAMETER, valueParameter, valueParameterDescriptor);
         return valueParameterDescriptor;
     }
 
@@ -299,7 +299,7 @@ public class ClassDescriptorResolver {
         );
 //        typeParameterDescriptor.addUpperBound(bound);
         extensibleScope.addTypeParameterDescriptor(typeParameterDescriptor);
-        trace.recordDeclarationResolution(typeParameter, typeParameterDescriptor);
+        trace.record(BindingContext.TYPE_PARAMETER, typeParameter, typeParameterDescriptor);
         return typeParameterDescriptor;
     }
 
@@ -330,14 +330,14 @@ public class ClassDescriptorResolver {
                 ClassifierDescriptor classifier = scope.getClassifier(referencedName);
                 if (classifier != null) {
                     trace.getErrorHandler().genericError(subjectTypeParameterName.getNode(), referencedName + " does not refer to a type parameter of " + declaration.getName());
-                    trace.recordReferenceResolution(subjectTypeParameterName, classifier);
+                    trace.record(BindingContext.REFERENCE_TARGET, subjectTypeParameterName, classifier);
                 }
                 else {
                     trace.getErrorHandler().unresolvedReference(subjectTypeParameterName);
                 }
             }
             else {
-                trace.recordReferenceResolution(subjectTypeParameterName, typeParameterDescriptor);
+                trace.record(BindingContext.REFERENCE_TARGET, subjectTypeParameterName, typeParameterDescriptor);
                 JetTypeReference boundTypeReference = constraint.getBoundTypeReference();
                 if (boundTypeReference != null) {
                     JetType bound = resolveAndCheckUpperBoundType(boundTypeReference, scope, constraint.isClassObjectContraint());
@@ -430,7 +430,7 @@ public class ClassDescriptorResolver {
                 JetPsiUtil.safeName(parameter.getName()),
                 type,
                 parameter.isMutable());
-        trace.recordDeclarationResolution(parameter, variableDescriptor);
+        trace.record(BindingContext.VALUE_PARAMETER, parameter, variableDescriptor);
         return variableDescriptor;
     }
 
@@ -449,7 +449,7 @@ public class ClassDescriptorResolver {
                 JetPsiUtil.safeName(property.getName()),
                 type,
                 property.isVar());
-        trace.recordDeclarationResolution(property, variableDescriptor);
+        trace.record(BindingContext.VARIABLE, property, variableDescriptor);
         return variableDescriptor;
     }
 
@@ -472,7 +472,7 @@ public class ClassDescriptorResolver {
 
         JetObjectDeclarationName nameAsDeclaration = objectDeclaration.getNameAsDeclaration();
         if (nameAsDeclaration != null) {
-            trace.recordDeclarationResolution(nameAsDeclaration, propertyDescriptor);
+            trace.record(BindingContext.OBJECT_DECLARATION, nameAsDeclaration, propertyDescriptor);
         }
         return propertyDescriptor;
     }
@@ -520,7 +520,7 @@ public class ClassDescriptorResolver {
                 resolvePropertyGetterDescriptor(scopeWithTypeParameters, property, propertyDescriptor),
                 resolvePropertySetterDescriptor(scopeWithTypeParameters, property, propertyDescriptor));
 
-        trace.recordDeclarationResolution(property, propertyDescriptor);
+        trace.record(BindingContext.VARIABLE, property, propertyDescriptor);
         return propertyDescriptor;
     }
 
@@ -612,7 +612,7 @@ public class ClassDescriptorResolver {
                 MutableValueParameterDescriptor valueParameterDescriptor = resolveValueParameterDescriptor(setterDescriptor, parameter, 0, type);
                 setterDescriptor.initialize(valueParameterDescriptor);
             }
-            trace.recordDeclarationResolution(setter, setterDescriptor);
+            trace.record(BindingContext.PROPERTY_ACCESSOR, setter, setterDescriptor);
         }
         return setterDescriptor;
     }
@@ -633,7 +633,7 @@ public class ClassDescriptorResolver {
             getterDescriptor = new PropertyGetterDescriptor(
                     resolveModifiers(getter.getModifierList(), DEFAULT_MODIFIERS), // TODO : default modifiers differ in different contexts
                     propertyDescriptor, annotations, returnType, getter.getBodyExpression() != null);
-            trace.recordDeclarationResolution(getter, getterDescriptor);
+            trace.record(BindingContext.PROPERTY_ACCESSOR, getter, getterDescriptor);
         }
         return getterDescriptor;
     }
@@ -656,7 +656,7 @@ public class ClassDescriptorResolver {
                 annotationResolver.resolveAnnotations(scope, modifierList),
                 isPrimary
         );
-        trace.recordDeclarationResolution(declarationToTrace, constructorDescriptor);
+        trace.record(BindingContext.CONSTRUCTOR, declarationToTrace, constructorDescriptor);
         return constructorDescriptor.initialize(
                 typeParameters,
                 resolveValueParameters(
@@ -704,7 +704,7 @@ public class ClassDescriptorResolver {
                 isMutable ? type : null,
                 type);
         propertyDescriptor.initialize(Collections.<TypeParameterDescriptor>emptyList(), null, null);
-        trace.recordValueParameterAsPropertyResolution(parameter, propertyDescriptor);
+        trace.record(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter, propertyDescriptor);
         return propertyDescriptor;
     }
 
@@ -971,5 +971,4 @@ public class ClassDescriptorResolver {
             previousInstruction.accept(visitor);
         }
     }
-
 }

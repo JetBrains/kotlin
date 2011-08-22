@@ -102,7 +102,7 @@ public class GenerationState {
     public GeneratedAnonymousClassDescriptor generateObjectLiteral(JetObjectLiteralExpression literal, ExpressionCodegen context, ClassContext classContext) {
         Pair<String, ClassVisitor> nameAndVisitor = forAnonymousSubclass(literal.getObjectDeclaration());
 
-        final ClassContext objectContext = classContext.intoClass(getBindingContext().getClassDescriptor(literal.getObjectDeclaration()), OwnerKind.IMPLEMENTATION);
+        final ClassContext objectContext = classContext.intoClass(getBindingContext().get(BindingContext.CLASS, literal.getObjectDeclaration()), OwnerKind.IMPLEMENTATION);
 
         new ImplementationBodyCodegen(literal.getObjectDeclaration(), objectContext, nameAndVisitor.getSecond(), this).generate();
         return new GeneratedAnonymousClassDescriptor(nameAndVisitor.first, new Method("<init>", "()V"), false);
@@ -122,4 +122,5 @@ public class GenerationState {
             }
         });
     }
+
 }

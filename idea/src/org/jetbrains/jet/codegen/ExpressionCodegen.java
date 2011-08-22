@@ -14,6 +14,7 @@ import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
@@ -166,7 +167,7 @@ public class ExpressionCodegen extends JetVisitorVoid {
 
     @Override
     public void visitIfExpression(JetIfExpression expression) {
-        JetType expressionType = bindingContext.getExpressionType(expression);
+        JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression);
         Type asmType = typeMapper.mapType(expressionType);
         StackValue condition = generateIntermediateValue(expression.getCondition());
 
@@ -248,14 +249,14 @@ public class ExpressionCodegen extends JetVisitorVoid {
     @Override
     public void visitForExpression(JetForExpression expression) {
         final JetExpression loopRange = expression.getLoopRange();
-        final JetType expressionType = bindingContext.getExpressionType(loopRange);
+        final JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, loopRange);
         Type loopRangeType = typeMapper.mapType(expressionType);
         if (loopRangeType.getSort() == Type.ARRAY) {
             new ForInArrayLoopGenerator(expression, loopRangeType).invoke();
         }
         else {
             final DeclarationDescriptor descriptor = expressionType.getConstructor().getDeclarationDescriptor();
-            final PsiElement declaration = bindingContext.getDeclarationPsiElement(descriptor);
+            final PsiElement declaration = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
             if (declaration instanceof PsiClass) {
                 final Project project = declaration.getProject();
                 final PsiClass iterable = JavaPsiFacade.getInstance(project).findClass("java.lang.Iterable", ProjectScope.getAllScope(project));
@@ -274,7 +275,7 @@ public class ExpressionCodegen extends JetVisitorVoid {
 
     private void generateForInIterable(JetForExpression expression, Type loopRangeType) {
         final JetParameter loopParameter = expression.getLoopParameter();
-        final VariableDescriptor parameterDescriptor = bindingContext.getVariableDescriptor(loopParameter);
+        final VariableDescriptor parameterDescriptor = bindingContext.get(BindingContext.VALUE_PARAMETER, loopParameter);
         JetType paramType = parameterDescriptor.getOutType();
         Type asmParamType = typeMapper.mapType(paramType);
 
@@ -335,7 +336,7 @@ public class ExpressionCodegen extends JetVisitorVoid {
             this.expression = expression;
             this.loopRangeType = loopRangeType;
             final JetParameter loopParameter = expression.getLoopParameter();
-            this.parameterDescriptor = bindingContext.getVariableDescriptor(loopParameter);
+            this.parameterDescriptor = bindingContext.get(BindingContext.VALUE_PARAMETER, loopParameter);
         }
 
         public void invoke() {
@@ -490,7 +491,7 @@ public class ExpressionCodegen extends JetVisitorVoid {
 
     @Override
     public void visitConstantExpression(JetConstantExpression expression) {
-        CompileTimeConstant<?> compileTimeValue = bindingContext.getCompileTimeValue(expression);
+        CompileTimeConstant<?> compileTimeValue = bindingContext.get(BindingContext.COMPILE_TIME_VALUE, expression);
         assert compileTimeValue != null;
         myStack.push(StackValue.constant(compileTimeValue.getValue(), expressionType(expression)));
     }
@@ -541,7 +542,7 @@ public class ExpressionCodegen extends JetVisitorVoid {
 
     @Override
     public void visitFunctionLiteralExpression(JetFunctionLiteralExpression expression) {
-        if (bindingContext.isBlock(expression)) {
+        if ((boolean) bindingContext.get(BindingContext.BLOCK, expression)) {
             generateBlock(expression.getFunctionLiteral().getBodyExpression().getStatements());
         }
         else {
@@ -579,7 +580,7 @@ public class ExpressionCodegen extends JetVisitorVoid {
 
         for (JetElement statement : statements) {
             if (statement instanceof JetProperty) {
-                final VariableDescriptor variableDescriptor = bindingContext.getVariableDescriptor((JetProperty) statement);
+                final VariableDescriptor variableDescriptor = bindingContext.get(BindingContext.VARIABLE, (JetProperty) statement);
                 final Type type = typeMapper.mapType(variableDescriptor.getOutType());
                 myMap.enter(variableDescriptor, type.getSize());
             }
@@ -601,7 +602,7 @@ public class ExpressionCodegen extends JetVisitorVoid {
         for (JetElement statement : statements) {
             if (statement instanceof JetProperty) {
                 JetProperty var = (JetProperty) statement;
-                VariableDescriptor variableDescriptor = bindingContext.getVariableDescriptor(var);
+                VariableDescriptor variableDescriptor = bindingContext.get(BindingContext.VARIABLE, var);
                 Type outType = typeMapper.mapType(variableDescriptor.getOutType());
 
                 int index = myMap.leave(variableDescriptor);
@@ -646,7 +647,7 @@ public class ExpressionCodegen extends JetVisitorVoid {
 
     @Override
     public void visitSimpleNameExpression(JetSimpleNameExpression expression) {
-        DeclarationDescriptor descriptor = bindingContext.resolveReferenceExpression(expression);
+        DeclarationDescriptor descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, expression);
         if (descriptor instanceof NamespaceDescriptor) return; // No code to generate
 
         if (descriptor instanceof VariableAsFunctionDescriptor) {
@@ -662,7 +663,7 @@ public class ExpressionCodegen extends JetVisitorVoid {
 
         final DeclarationDescriptor container = descriptor.getContainingDeclaration();
 
-        PsiElement declaration = bindingContext.getDeclarationPsiElement(descriptor);
+        PsiElement declaration = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
         if (declaration instanceof PsiField) {
             PsiField psiField = (PsiField) declaration;
             final String owner = JetTypeMapper.jvmName(psiField.getContainingClass());
@@ -686,7 +687,7 @@ public class ExpressionCodegen extends JetVisitorVoid {
                 if (declaration instanceof JetParameter) {
                     if (PsiTreeUtil.getParentOfType(expression, JetDelegationSpecifier.class) != null) {
                         JetClass aClass = PsiTreeUtil.getParentOfType(expression, JetClass.class);
-                        ConstructorDescriptor constructorDescriptor = bindingContext.getConstructorDescriptor(aClass);
+                        ConstructorDescriptor constructorDescriptor = bindingContext.get(BindingContext.CONSTRUCTOR, aClass);
                         List<ValueParameterDescriptor> parameters = constructorDescriptor.getValueParameters();
                         for (ValueParameterDescriptor parameter : parameters) {
                             if (parameter.getName().equals(descriptor.getName())) {
@@ -700,7 +701,7 @@ public class ExpressionCodegen extends JetVisitorVoid {
 
                 if (declaration instanceof JetObjectDeclarationName) {
                     JetObjectDeclaration objectDeclaration = PsiTreeUtil.getParentOfType(declaration, JetObjectDeclaration.class);
-                    ClassDescriptor classDescriptor = bindingContext.getClassDescriptor(objectDeclaration);
+                    ClassDescriptor classDescriptor = bindingContext.get(BindingContext.CLASS, objectDeclaration);
                     myStack.push(StackValue.field(typeMapper.jvmType(classDescriptor, OwnerKind.IMPLEMENTATION),
                             typeMapper.jvmName(classDescriptor, OwnerKind.IMPLEMENTATION),
                             "$instance",
@@ -840,7 +841,7 @@ public class ExpressionCodegen extends JetVisitorVoid {
         if (intrinsic != null) {
             return intrinsic;
         }
-        PsiElement declarationPsiElement = bindingContext.getDeclarationPsiElement(fd);
+        PsiElement declarationPsiElement = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, fd);
 
         CallableMethod callableMethod;
         if (declarationPsiElement instanceof PsiMethod || declarationPsiElement instanceof JetNamedFunction) {
@@ -860,7 +861,7 @@ public class ExpressionCodegen extends JetVisitorVoid {
         if (!(callee instanceof JetSimpleNameExpression)) {
             throw new UnsupportedOperationException("Don't know how to generate a call to " + callee);
         }
-        DeclarationDescriptor funDescriptor = bindingContext.resolveReferenceExpression((JetSimpleNameExpression) callee);
+        DeclarationDescriptor funDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, (JetSimpleNameExpression) callee);
         if (funDescriptor == null) {
             throw new CompilationException("Cannot resolve: " + callee.getText());
         }
@@ -892,9 +893,9 @@ public class ExpressionCodegen extends JetVisitorVoid {
     private void setOwnerFromCall(CallableMethod callableMethod, JetCall expression) {
         if (expression.getParent() instanceof JetQualifiedExpression) {
             final JetExpression receiver = ((JetQualifiedExpression) expression.getParent()).getReceiverExpression();
-            JetType expressionType = bindingContext.getExpressionType(receiver);
+            JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, receiver);
             DeclarationDescriptor declarationDescriptor = expressionType.getConstructor().getDeclarationDescriptor();
-            PsiElement ownerDeclaration = bindingContext.getDeclarationPsiElement(declarationDescriptor);
+            PsiElement ownerDeclaration = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, declarationDescriptor);
             if (ownerDeclaration instanceof PsiClass) {
                 callableMethod.setOwner(typeMapper.mapType(expressionType).getInternalName());
             }
@@ -1017,11 +1018,11 @@ public class ExpressionCodegen extends JetVisitorVoid {
     }
 
     public Type expressionType(JetExpression expr) {
-        return typeMapper.mapType(bindingContext.getExpressionType(expr));
+        return typeMapper.mapType(bindingContext.get(BindingContext.EXPRESSION_TYPE, expr));
     }
 
     public int indexOfLocal(JetReferenceExpression lhs) {
-        final DeclarationDescriptor declarationDescriptor = bindingContext.resolveReferenceExpression(lhs);
+        final DeclarationDescriptor declarationDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, lhs);
         return lookupLocal(declarationDescriptor);
     }
 
@@ -1036,8 +1037,8 @@ public class ExpressionCodegen extends JetVisitorVoid {
 
     private boolean resolvesToClassOrPackage(JetExpression receiver) {
         if (receiver instanceof JetReferenceExpression) {
-            DeclarationDescriptor declaration = bindingContext.resolveReferenceExpression((JetReferenceExpression) receiver);
-            PsiElement declarationElement = bindingContext.getDeclarationPsiElement(declaration);
+            DeclarationDescriptor declaration = bindingContext.get(BindingContext.REFERENCE_TARGET, (JetReferenceExpression) receiver);
+            PsiElement declarationElement = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, declaration);
             if (declarationElement instanceof PsiClass) {
                 return true;
             }
@@ -1056,7 +1057,7 @@ public class ExpressionCodegen extends JetVisitorVoid {
         v.goTo(end);
         v.mark(ifnull);
         // null is already on stack here after the dup
-        JetType expressionType = bindingContext.getExpressionType(expression);
+        JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression);
         if (expressionType.equals(JetStandardClasses.getUnitType())) {
             v.pop();
         }
@@ -1076,7 +1077,7 @@ public class ExpressionCodegen extends JetVisitorVoid {
         v.pop();
         v.aconst(null);
         v.mark(end);
-        myStack.push(StackValue.onStack(typeMapper.mapType(bindingContext.getExpressionType(expression))));
+        myStack.push(StackValue.onStack(typeMapper.mapType(bindingContext.get(BindingContext.EXPRESSION_TYPE, expression))));
     }
 
     @Override
@@ -1106,7 +1107,7 @@ public class ExpressionCodegen extends JetVisitorVoid {
             generateElvis(expression);
         }
         else {
-            DeclarationDescriptor op = bindingContext.resolveReferenceExpression(expression.getOperationReference());
+            DeclarationDescriptor op = bindingContext.get(BindingContext.REFERENCE_TARGET, expression.getOperationReference());
             final Callable callable = resolveToCallable(op);
             if (callable instanceof IntrinsicMethod) {
                 IntrinsicMethod intrinsic = (IntrinsicMethod) callable;
@@ -1264,11 +1265,11 @@ public class ExpressionCodegen extends JetVisitorVoid {
     }
 
     private void generateAugmentedAssignment(JetBinaryExpression expression) {
-        DeclarationDescriptor op = bindingContext.resolveReferenceExpression(expression.getOperationReference());
+        DeclarationDescriptor op = bindingContext.get(BindingContext.REFERENCE_TARGET, expression.getOperationReference());
         final Callable callable = resolveToCallable(op);
         final JetExpression lhs = expression.getLeft();
         Type lhsType = expressionType(lhs);
-        if (bindingContext.isVariableReassignment(expression)) {
+        if ((boolean) bindingContext.get(BindingContext.VARIABLE_REASSIGNMENT, expression)) {
             if (callable instanceof IntrinsicMethod) {
                 StackValue value = generateIntermediateValue(lhs);              // receiver
                 value.dupReceiver(v, 0);                                        // receiver receiver
@@ -1330,7 +1331,7 @@ public class ExpressionCodegen extends JetVisitorVoid {
 
     @Override
     public void visitPrefixExpression(JetPrefixExpression expression) {
-        DeclarationDescriptor op = bindingContext.resolveReferenceExpression(expression.getOperationSign());
+        DeclarationDescriptor op = bindingContext.get(BindingContext.REFERENCE_TARGET, expression.getOperationSign());
         final Callable callable = resolveToCallable(op);
         if (callable instanceof IntrinsicMethod) {
             IntrinsicMethod intrinsic = (IntrinsicMethod) callable;
@@ -1350,12 +1351,12 @@ public class ExpressionCodegen extends JetVisitorVoid {
 
     @Override
     public void visitPostfixExpression(JetPostfixExpression expression) {
-        DeclarationDescriptor op = bindingContext.resolveReferenceExpression(expression.getOperationSign());
+        DeclarationDescriptor op = bindingContext.get(BindingContext.REFERENCE_TARGET, expression.getOperationSign());
         if (op instanceof FunctionDescriptor) {
             final Type asmType = expressionType(expression);
             DeclarationDescriptor cls = op.getContainingDeclaration();
             if (isNumberPrimitive(cls) && (op.getName().equals("inc") || op.getName().equals("dec"))) {
-                if (bindingContext.isStatement(expression)) {
+                if ((boolean) bindingContext.get(BindingContext.STATEMENT, expression)) {
                     generateIncrement(op, asmType, expression.getBaseExpression());
                 }
                 else {
@@ -1402,7 +1403,7 @@ public class ExpressionCodegen extends JetVisitorVoid {
 
     @Override
     public void visitProperty(JetProperty property) {
-        VariableDescriptor variableDescriptor = bindingContext.getVariableDescriptor(property);
+        VariableDescriptor variableDescriptor = bindingContext.get(BindingContext.VARIABLE, property);
         int index = lookupLocal(variableDescriptor);
 
         assert index >= 0;
@@ -1416,14 +1417,14 @@ public class ExpressionCodegen extends JetVisitorVoid {
     }
 
     private void generateConstructorCall(JetCallExpression expression, JetSimpleNameExpression constructorReference) {
-        DeclarationDescriptor constructorDescriptor = bindingContext.resolveReferenceExpression(constructorReference);
-        final PsiElement declaration = bindingContext.getDeclarationPsiElement(constructorDescriptor);
+        DeclarationDescriptor constructorDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, constructorReference);
+        final PsiElement declaration = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, constructorDescriptor);
         Type type;
         if (declaration instanceof PsiMethod) {
             type = generateJavaConstructorCall(expression, (PsiMethod) declaration);
         }
         else if (constructorDescriptor instanceof ConstructorDescriptor) {
-            type = typeMapper.mapType(bindingContext.getExpressionType(expression), OwnerKind.IMPLEMENTATION);
+            type = typeMapper.mapType(bindingContext.get(BindingContext.EXPRESSION_TYPE, expression), OwnerKind.IMPLEMENTATION);
             if (type.getSort() == Type.ARRAY) {
                 generateNewArray(expression, type);
             }
@@ -1453,7 +1454,7 @@ public class ExpressionCodegen extends JetVisitorVoid {
     }
 
     public void pushTypeArgument(JetTypeProjection jetTypeArgument) {
-        JetType typeArgument = bindingContext.resolveTypeReference(jetTypeArgument.getTypeReference());
+        JetType typeArgument = bindingContext.get(BindingContext.TYPE, jetTypeArgument.getTypeReference());
         generateTypeInfo(typeArgument);
     }
 
@@ -1493,7 +1494,7 @@ public class ExpressionCodegen extends JetVisitorVoid {
             myStack.push(StackValue.arrayElement(elementType));
         }
         else {
-            final PsiElement declaration = bindingContext.resolveToDeclarationPsiElement(expression);
+            final PsiElement declaration = BindingContextUtils.resolveToDeclarationPsiElement(bindingContext, expression);
             final CallableMethod accessor;
             if (declaration instanceof PsiMethod) {
                 accessor = JetTypeMapper.mapToCallableMethod((PsiMethod) declaration);
@@ -1525,7 +1526,7 @@ public class ExpressionCodegen extends JetVisitorVoid {
 
     @Override
     public void visitThisExpression(JetThisExpression expression) {
-        final DeclarationDescriptor descriptor = bindingContext.resolveReferenceExpression(expression.getThisReference());
+        final DeclarationDescriptor descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, expression.getThisReference());
         if (descriptor instanceof ClassDescriptor) {
             myStack.push(generateThisOrOuter((ClassDescriptor) descriptor));
         }
@@ -1560,7 +1561,7 @@ public class ExpressionCodegen extends JetVisitorVoid {
             Label clauseStart = new Label();
             v.mark(clauseStart);
 
-            VariableDescriptor descriptor = bindingContext.getVariableDescriptor(clause.getCatchParameter());
+            VariableDescriptor descriptor = bindingContext.get(BindingContext.VALUE_PARAMETER, clause.getCatchParameter());
             Type descriptorType = typeMapper.mapType(descriptor.getOutType());
             myMap.enter(descriptor, 1);
             int index = lookupLocal(descriptor);
@@ -1600,7 +1601,7 @@ public class ExpressionCodegen extends JetVisitorVoid {
         }
         else {
             JetTypeReference typeReference = expression.getRight();
-            JetType jetType = bindingContext.resolveTypeReference(typeReference);
+            JetType jetType = bindingContext.get(BindingContext.TYPE, typeReference);
             DeclarationDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
             if (!(descriptor instanceof ClassDescriptor)) {
                 throw new UnsupportedOperationException("don't know how to handle non-class types in as/as?");
@@ -1634,7 +1635,7 @@ public class ExpressionCodegen extends JetVisitorVoid {
                                             @Nullable Label nextEntry) {
         if (pattern instanceof JetTypePattern) {
             JetTypeReference typeReference = ((JetTypePattern) pattern).getTypeReference();
-            JetType jetType = bindingContext.resolveTypeReference(typeReference);
+            JetType jetType = bindingContext.get(BindingContext.TYPE, typeReference);
             expressionToMatch.dupReceiver(v, 0);
             generateInstanceOf(expressionToMatch, jetType, false);
             StackValue value = StackValue.onStack(Type.BOOLEAN_TYPE);
@@ -1657,7 +1658,7 @@ public class ExpressionCodegen extends JetVisitorVoid {
         }
         else if (pattern instanceof JetBindingPattern) {
             final JetProperty var = ((JetBindingPattern) pattern).getVariableDeclaration();
-            final VariableDescriptor variableDescriptor = bindingContext.getVariableDescriptor(var);
+            final VariableDescriptor variableDescriptor = bindingContext.get(BindingContext.VARIABLE, var);
             final Type varType = typeMapper.mapType(variableDescriptor.getOutType());
             myMap.enter(variableDescriptor, varType.getSize());
             expressionToMatch.dupReceiver(v, 0);
@@ -1867,7 +1868,7 @@ public class ExpressionCodegen extends JetVisitorVoid {
                 conditionValue = invokeFunction((JetCallExpression) call, (FunctionDescriptor) declarationDescriptor, true);
             }
             else if (call instanceof JetSimpleNameExpression) {
-                final DeclarationDescriptor descriptor = bindingContext.resolveReferenceExpression((JetSimpleNameExpression) call);
+                final DeclarationDescriptor descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, (JetSimpleNameExpression) call);
                 if (descriptor instanceof PropertyDescriptor) {
                     v.load(subjectLocal, subjectType);
                     conditionValue = intermediateValueForProperty((PropertyDescriptor) descriptor, false, false);

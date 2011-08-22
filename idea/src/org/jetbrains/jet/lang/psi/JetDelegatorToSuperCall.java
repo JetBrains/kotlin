@@ -28,9 +28,8 @@ public class JetDelegatorToSuperCall extends JetDelegationSpecifier implements J
 
     @NotNull
     @Override
-    public JetExpression getCalleeExpression() {
-        // Change the AST so the the callee is an expression
-        throw new UnsupportedOperationException(); // TODO
+    public JetConstructorCalleeExpression getCalleeExpression() {
+        return (JetConstructorCalleeExpression) findChildByType(JetNodeTypes.CONSTRUCTOR_CALLEE);
     }
 
     @Nullable
@@ -48,6 +47,11 @@ public class JetDelegatorToSuperCall extends JetDelegationSpecifier implements J
     @Override
     public List<JetExpression> getFunctionLiteralArguments() {
         return Collections.emptyList();
+    }
+
+    @Override
+    public JetTypeReference getTypeReference() {
+        return getCalleeExpression().getTypeReference();
     }
 
     @NotNull

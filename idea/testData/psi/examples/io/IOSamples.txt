@@ -102,10 +102,11 @@ JetFile: IOSamples.jet
       PsiWhiteSpace(' ')
       DELEGATION_SPECIFIER_LIST
         DELEGATOR_SUPER_CALL
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('ICloseable')
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('ICloseable')
           VALUE_ARGUMENT_LIST
             PsiElement(LPAR)('(')
             VALUE_ARGUMENT
@@ -292,10 +293,11 @@ JetFile: IOSamples.jet
           PsiWhiteSpace(' ')
           INITIALIZER_LIST
             DELEGATOR_SUPER_CALL
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('JavaCloseableWrapper')
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('JavaCloseableWrapper')
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
@@ -563,10 +565,11 @@ JetFile: IOSamples.jet
           PsiWhiteSpace(' ')
           INITIALIZER_LIST
             DELEGATOR_SUPER_CALL
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('JavaCloseableWrapper')
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('JavaCloseableWrapper')
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT

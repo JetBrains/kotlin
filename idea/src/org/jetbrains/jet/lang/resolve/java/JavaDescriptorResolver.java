@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.*;
 
 import java.util.*;
@@ -122,7 +123,7 @@ public class JavaDescriptorResolver {
                 constructorDescriptor.initialize(typeParameters, Collections.<ValueParameterDescriptor>emptyList());
                 constructorDescriptor.setReturnType(classDescriptor.getDefaultType());
                 classDescriptor.addConstructor(constructorDescriptor);
-                semanticServices.getTrace().recordDeclarationResolution(psiClass, constructorDescriptor);
+                semanticServices.getTrace().record(BindingContext.CONSTRUCTOR, psiClass, constructorDescriptor);
             }
         }
         else {
@@ -134,11 +135,11 @@ public class JavaDescriptorResolver {
                 constructorDescriptor.initialize(typeParameters, resolveParameterDescriptors(constructorDescriptor, constructor.getParameterList().getParameters()));
                 constructorDescriptor.setReturnType(classDescriptor.getDefaultType());
                 classDescriptor.addConstructor(constructorDescriptor);
-                semanticServices.getTrace().recordDeclarationResolution(constructor, constructorDescriptor);
+                semanticServices.getTrace().record(BindingContext.CONSTRUCTOR, constructor, constructorDescriptor);
             }
         }
 
-        semanticServices.getTrace().recordDeclarationResolution(psiClass, classDescriptor);
+        semanticServices.getTrace().record(BindingContext.CLASS, psiClass, classDescriptor);
 
         return classDescriptor;
     }
@@ -230,7 +231,7 @@ public class JavaDescriptorResolver {
                 psiPackage.getName()
         );
         namespaceDescriptor.setMemberScope(new JavaPackageScope(psiPackage.getQualifiedName(), namespaceDescriptor, semanticServices));
-        semanticServices.getTrace().recordDeclarationResolution(psiPackage, namespaceDescriptor);
+        semanticServices.getTrace().record(BindingContext.NAMESPACE, psiPackage, namespaceDescriptor);
         return namespaceDescriptor;
     }
 
@@ -241,7 +242,7 @@ public class JavaDescriptorResolver {
                 psiClass.getName()
         );
         namespaceDescriptor.setMemberScope(new JavaClassMembersScope(namespaceDescriptor, psiClass, semanticServices, true));
-        semanticServices.getTrace().recordDeclarationResolution(psiClass, namespaceDescriptor);
+        semanticServices.getTrace().record(BindingContext.NAMESPACE, psiClass, namespaceDescriptor);
         return namespaceDescriptor;
     }
 
@@ -280,7 +281,7 @@ public class JavaDescriptorResolver {
                 field.getName(),
                 isFinal ? null : type,
                 type);
-        semanticServices.getTrace().recordDeclarationResolution(field, propertyDescriptor);
+        semanticServices.getTrace().record(BindingContext.VARIABLE, field, propertyDescriptor);
         fieldDescriptorCache.put(field, propertyDescriptor);
         return propertyDescriptor;
     }
@@ -344,7 +345,7 @@ public class JavaDescriptorResolver {
                 semanticServices.getDescriptorResolver().resolveParameterDescriptors(functionDescriptorImpl, parameters),
                 semanticServices.getTypeTransformer().transformToType(returnType)
         );
-        semanticServices.getTrace().recordDeclarationResolution(method, functionDescriptorImpl);
+        semanticServices.getTrace().record(BindingContext.FUNCTION, method, functionDescriptorImpl);
         FunctionDescriptor substitutedFunctionDescriptor = functionDescriptorImpl;
         if (method.getContainingClass() != psiClass) {
             substitutedFunctionDescriptor = functionDescriptorImpl.substitute(typeSubstitutorForGenericSuperclasses);
