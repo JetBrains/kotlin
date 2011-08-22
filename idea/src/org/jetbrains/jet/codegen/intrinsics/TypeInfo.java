@@ -17,7 +17,7 @@ import java.util.List;
  */
 public class TypeInfo implements IntrinsicMethod {
     @Override
-    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, boolean haveReceiver) {
+    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver) {
         final List<JetTypeProjection> typeArguments = ((JetCallExpression) element).getTypeArguments();
         if (typeArguments.size() != 1) {
             throw new UnsupportedOperationException("one type argument expected");

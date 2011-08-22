@@ -48,8 +48,7 @@ public abstract class StackValue {
     }
 
     public static StackValue onStack(Type type) {
-        assert type != Type.VOID_TYPE;
-        return new OnStack(type);
+        return type == Type.VOID_TYPE ? none() : new OnStack(type);
     }
 
     public static StackValue constant(Object value, Type type) {
@@ -188,6 +187,21 @@ public abstract class StackValue {
         v.mark(ifTrue);
         v.iconst(1);
         v.mark(end);
+    }
+
+    public static StackValue none() {
+        return None.INSTANCE;
+    }
+    
+    private static class None extends StackValue {
+        public static None INSTANCE = new None();
+        private None() {
+            super(Type.VOID_TYPE);
+        }
+
+        @Override
+        public void put(Type type, InstructionAdapter v) {
+        }
     }
 
     public static class Local extends StackValue {

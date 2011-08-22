@@ -21,7 +21,7 @@ public class RangeTo implements IntrinsicMethod {
     private static final String CLASS_INT_RANGE = "jet/IntRange";
 
     @Override
-    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, boolean haveReceiver) {
+    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver) {
         JetBinaryExpression expression = (JetBinaryExpression) element;
         final Type leftType = codegen.expressionType(expression.getLeft());
         if (JetTypeMapper.isIntPrimitive(leftType)) {

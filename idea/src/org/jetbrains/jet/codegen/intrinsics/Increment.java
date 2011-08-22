@@ -22,7 +22,7 @@ public class Increment implements IntrinsicMethod {
     }
 
     @Override
-    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, boolean haveReceiver) {
+    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver) {
         final JetExpression operand = arguments.get(0);
         if (operand instanceof JetReferenceExpression) {
             final int index = codegen.indexOfLocal((JetReferenceExpression) operand);
@@ -31,7 +31,7 @@ public class Increment implements IntrinsicMethod {
                 return StackValue.local(index, expectedType);
             }
         }
-        StackValue value = codegen.generateIntermediateValue(operand);
+        StackValue value = codegen.genQualified(receiver, operand);
         value.dupReceiver(v, 0);
         value.put(expectedType, v);
         if (expectedType == Type.LONG_TYPE) {

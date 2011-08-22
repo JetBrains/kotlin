@@ -3,7 +3,9 @@ package org.jetbrains.jet.codegen;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
+import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -12,7 +14,6 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
 import org.objectweb.asm.commons.Method;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -40,11 +41,10 @@ public class FunctionCodegen {
         ClassContext funContext = owner.intoFunction(functionDescriptor);
 
         final JetExpression bodyExpression = f.getBodyExpression();
-        final List<JetElement> bodyExpressions = bodyExpression != null ? Collections.<JetElement>singletonList(bodyExpression) : null;
-        generatedMethod(bodyExpressions, jvmMethod, funContext, functionDescriptor.getValueParameters(), functionDescriptor.getTypeParameters());
+        generatedMethod(bodyExpression, jvmMethod, funContext, functionDescriptor.getValueParameters(), functionDescriptor.getTypeParameters());
     }
 
-    private void generatedMethod(List<JetElement> bodyExpressions,
+    private void generatedMethod(JetExpression bodyExpressions,
                                  Method jvmSignature,
                                  ClassContext context,
                                  List<ValueParameterDescriptor> paramDescrs,
@@ -95,35 +95,11 @@ public class FunctionCodegen {
                 iv.areturn(jvmSignature.getReturnType());
             }
             else if (!isAbstract) {
-                JetElement last = null;
-                for (JetElement expression : bodyExpressions) {
-                    expression.accept(codegen);
-                    last = expression;
-                }
-                generateReturn(mv, last, codegen, jvmSignature);
+                codegen.returnExpression(bodyExpressions);
             }
             mv.visitMaxs(0, 0);
             mv.visitEnd();
         }
     }
 
-    private void generateReturn(MethodVisitor mv, JetElement bodyExpression, ExpressionCodegen codegen, Method jvmSignature) {
-        if (!endsWithReturn(bodyExpression)) {
-            if (jvmSignature.getReturnType() == Type.VOID_TYPE) {
-                mv.visitInsn(Opcodes.RETURN);
-            }
-            else {
-                codegen.returnTopOfStack();
-            }
-        }
-    }
-
-    private static boolean endsWithReturn(JetElement bodyExpression) {
-        if (bodyExpression instanceof JetBlockExpression) {
-            final List<JetElement> statements = ((JetBlockExpression) bodyExpression).getStatements();
-            return statements.size() > 0 && statements.get(statements.size()-1) instanceof JetReturnExpression;
-        }
-
-        return bodyExpression instanceof JetReturnExpression;
-    }
 }

@@ -2,7 +2,6 @@ package org.jetbrains.jet.codegen.intrinsics;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
-import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.objectweb.asm.Type;
@@ -21,16 +20,16 @@ public class BinaryOp implements IntrinsicMethod {
     }
 
     @Override
-    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, boolean haveReceiver) {
+    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver) {
         if (arguments.size() == 1) {
             // intrinsic is called as an ordinary function
-            codegen.ensureReceiverOnStack(element, null, expectedType);
+            if (receiver != null) {
+                receiver.put(expectedType, v);
+            }
             codegen.gen(arguments.get(0), expectedType);
         }
         else {
-            if (!haveReceiver) {
-                codegen.gen(arguments.get(0), expectedType);
-            }
+            codegen.gen(arguments.get(0), expectedType);
             codegen.gen(arguments.get(1), expectedType);
         }
         v.visitInsn(expectedType.getOpcode(opcode));
