@@ -163,7 +163,7 @@ public class DataFlowInfo {
             builder.put(variableDescriptor, thisFlags.or(otherFlags));
         }
 
-        ListMultimap<VariableDescriptor, JetType> newTypeInfo = copyTypeInfo();
+        ListMultimap<VariableDescriptor, JetType> newTypeInfo = Multimaps.newListMultimap(Maps.<VariableDescriptor, Collection<JetType>>newHashMap(), ARRAY_LIST_SUPPLIER);
 
         Set<VariableDescriptor> keys = newTypeInfo.keySet();
         keys.retainAll(other.typeInfo.keySet());

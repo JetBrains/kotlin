@@ -216,3 +216,19 @@ fun returnFunctionLiteral(a: Any?): Function0<Int> =
 fun illegalTupleReturnType(a: Any): (Any, String) = (a, <error>a</error>)
 
 fun declarationInsidePattern(x: (Any, Any)): String = when(x) { is (val a is String, *) => <info descr="Automatically cast to String">a</info>; else => "something" }
+
+fun mergeAutocasts(a: Any?) {
+  if (a is String || a is Int) {
+    a.<error>compareTo</error>("")
+    a.toString()
+  }
+  if (a is Int || a is String) {
+    a.<error>compareTo</error>("")
+  }
+  when (a) {
+    is String, is Any => a.<error>compareTo</error>("")
+  }
+  if (a is String && a is Any) {
+    val i: Int = <info descr="Automatically cast to String">a</info>.length
+  }
+}
