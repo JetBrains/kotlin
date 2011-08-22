@@ -1,15 +1,15 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lexer.JetTokens;
 
 /**
  * @author max
  */
-public class JetValueArgument extends JetElement implements ValueArgumentPsi {
+public class JetValueArgument extends JetElement {
     public JetValueArgument(@NotNull ASTNode node) {
         super(node);
     }
@@ -28,18 +28,9 @@ public class JetValueArgument extends JetElement implements ValueArgumentPsi {
         return findChildByClass(JetExpression.class);
     }
 
-    @Override
-    public PsiElement asElement() {
-        return this;
-    }
-
     @Nullable
-    public String getArgumentName() {
-        ASTNode firstChildNode = getNode().getFirstChildNode();
-        if (firstChildNode == null) {
-            return null;
-        }
-        return firstChildNode.getElementType() == JetTokens.IDENTIFIER ? firstChildNode.getText() : null;
+    public JetValueArgumentName getArgumentName() {
+        return (JetValueArgumentName) findChildByType(JetNodeTypes.VALUE_ARGUMENT_NAME);
     }
 
     public boolean isNamed() {

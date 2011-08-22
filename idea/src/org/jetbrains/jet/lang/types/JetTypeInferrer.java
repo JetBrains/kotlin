@@ -27,6 +27,7 @@ import org.jetbrains.jet.util.WritableSlice;
 
 import java.util.*;
 
+import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
 import static org.jetbrains.jet.lang.resolve.BindingContext.STATEMENT;
 
 /**
@@ -542,62 +543,240 @@ public class JetTypeInferrer {
             @NotNull JetCall call,
             @NotNull JetType expectedType
         ) {
-            if (call.getTypeArguments().isEmpty()) {
-                JetExpression calleeExpression = call.getCalleeExpression();
-                Collection<FunctionDescriptor> candidates;
-                if (calleeExpression instanceof JetSimpleNameExpression) {
-                    JetSimpleNameExpression expression = (JetSimpleNameExpression) calleeExpression;
-                    candidates = scope.getFunctionGroup(expression.getReferencedName()).getFunctionDescriptors();
+            JetExpression calleeExpression = call.getCalleeExpression();
+            Collection<FunctionDescriptor> candidates;
+            JetReferenceExpression functionReference;
+            if (calleeExpression instanceof JetSimpleNameExpression) {
+                JetSimpleNameExpression expression = (JetSimpleNameExpression) calleeExpression;
+                functionReference = expression;
+                candidates = scope.getFunctionGroup(expression.getReferencedName()).getFunctionDescriptors();
+            }
+            else if (calleeExpression instanceof JetConstructorCalleeExpression) {
+                JetConstructorCalleeExpression expression = (JetConstructorCalleeExpression) calleeExpression;
+                functionReference = expression.getConstructorReferenceExpression();
+                JetType constructedType = typeResolver.resolveType(scope, expression.getTypeReference());
+                DeclarationDescriptor declarationDescriptor = constructedType.getConstructor().getDeclarationDescriptor();
+                if (declarationDescriptor instanceof ClassDescriptor) {
+                    ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
+                    candidates = classDescriptor.getConstructors().getFunctionDescriptors();
                 }
                 else {
-                    throw new UnsupportedOperationException("Type argument inference not implemented");
-                }
-
-                assert candidates.size() == 1;
-
-                FunctionDescriptor candidate = candidates.iterator().next();
-
-                assert candidate.getTypeParameters().size() == call.getTypeArguments().size();
-
-                ConstraintSystem constraintSystem = new ConstraintSystem();
-                for (TypeParameterDescriptor typeParameterDescriptor : candidate.getTypeParameters()) {
-                    constraintSystem.registerTypeVariable(typeParameterDescriptor, Variance.INVARIANT); // TODO
-                }
-
-                Iterator<ValueParameterDescriptor> parameters = candidate.getValueParameters().iterator();
-                for (JetValueArgument valueArgument : call.getValueArguments()) {
-                    assert !valueArgument.isNamed();
-                    ValueParameterDescriptor valueParameterDescriptor = parameters.next();
-                    JetExpression expression = valueArgument.getArgumentExpression();
-                    JetType type = getType(scope, expression, false, NO_EXPECTED_TYPE);
-                    constraintSystem.addSubtypingConstraint(type, valueParameterDescriptor.getOutType());
-                }
-
-                if (expectedType != NO_EXPECTED_TYPE) {
-                    System.out.println("expectedType = " + expectedType);
-                    constraintSystem.addSubtypingConstraint(candidate.getReturnType(), expectedType);
-                }
-
-                ConstraintSystem.Solution solution = constraintSystem.solve();
-                if (!solution.isSuccessful()) {
-                    trace.getErrorHandler().genericError(calleeExpression.getNode(), "Type inference failed");
-//                    for (Inconsistency inconsistency : solution.getInconsistencies()) {
-//                        System.out.println("inconsistency = " + inconsistency);
-//                    }
+                    trace.getErrorHandler().genericError(calleeExpression.getNode(), "Not a class");
                     return null;
                 }
-                else {
-                    for (TypeParameterDescriptor typeParameterDescriptor : candidate.getTypeParameters()) {
-                        JetType value = solution.getValue(typeParameterDescriptor);
-                        System.out.println("typeParameterDescriptor = " + typeParameterDescriptor);
-                        System.out.println("value = " + value);
-                    }
-                    return solution.getSubstitutor().substitute(candidate.getReturnType(), Variance.INVARIANT); // TODO
-                }
-//                return null;
             }
             else {
-                throw new UnsupportedOperationException("Explicit type arguments not implemented");
+                throw new UnsupportedOperationException("Type argument inference not implemented");
+            }
+
+            Map<FunctionDescriptor, FunctionDescriptor> successfulCandidates = Maps.newHashMap();
+            Set<FunctionDescriptor> failedCandidates = Sets.newHashSet();
+            Map<FunctionDescriptor, ConstraintSystem.Solution> solutions = Maps.newHashMap();
+            Map<FunctionDescriptor, TemporaryBindingTrace> traces = Maps.newHashMap();
+
+            for (FunctionDescriptor candidate : candidates) {
+                TemporaryBindingTrace temporaryTrace = new TemporaryBindingTrace(trace.getBindingContext());
+                traces.put(candidate, temporaryTrace);
+                Services temporaryServices = getServices(temporaryTrace);
+
+                temporaryTrace.record(BindingContext.REFERENCE_TARGET, functionReference, candidate);
+
+                // Argument to parameter matching
+                Map<JetValueArgument, ValueParameterDescriptor> argumentsToParameters = Maps.newHashMap();
+                Set<ValueParameterDescriptor> usedParameters = Sets.newHashSet();
+
+                List<ValueParameterDescriptor> valueParameters = candidate.getValueParameters();
+                Map<String, ValueParameterDescriptor> parameterByName = Maps.newHashMap();
+                for (ValueParameterDescriptor valueParameter : valueParameters) {
+                    parameterByName.put(valueParameter.getName(), valueParameter);
+                }
+
+                List<JetValueArgument> valueArguments = call.getValueArguments();
+                boolean someNamed = false;
+                boolean somePositioned = false;
+                boolean error = false;
+                for (int i = 0; i < valueArguments.size(); i++) {
+                    JetValueArgument valueArgument = valueArguments.get(i);
+                    if (valueArgument.isNamed()) {
+                        someNamed = true;
+                        if (somePositioned) {
+                            temporaryTrace.getErrorHandler().genericError(valueArgument.getArgumentName().getNode(), "Mixing named and positioned arguments in not allowed");
+                            error = true;
+                        }
+                        else {
+                            ValueParameterDescriptor valueParameterDescriptor = parameterByName.get(valueArgument.getArgumentName().getName());
+                            usedParameters.add(valueParameterDescriptor);
+                            if (valueParameterDescriptor == null) {
+                                temporaryTrace.getErrorHandler().genericError(valueArgument.getArgumentName().getNode(), "Cannot find a parameter with this name");
+                                error = true;
+                            }
+                            else {
+                                trace.record(REFERENCE_TARGET, valueArgument.getArgumentName().getReferenceExpression(), valueParameterDescriptor);
+                                argumentsToParameters.put(valueArgument, valueParameterDescriptor);
+                            }
+                        }
+                    }
+                    else {
+                        somePositioned = true;
+                        if (someNamed) {
+                            temporaryTrace.getErrorHandler().genericError(valueArgument.getNode(), "Mixing named and positioned arguments in not allowed");
+                            error = true;
+                        }
+                        else {
+                            if (i < valueParameters.size()) {
+                                ValueParameterDescriptor valueParameterDescriptor = valueParameters.get(i);
+                                usedParameters.add(valueParameterDescriptor);
+                                argumentsToParameters.put(valueArgument, valueParameterDescriptor);
+                            }
+                            else {
+                                ValueParameterDescriptor valueParameterDescriptor = valueParameters.get(valueParameters.size() - 1);
+                                if (valueParameterDescriptor.isVararg()) {
+                                    argumentsToParameters.put(valueArgument, valueParameterDescriptor);
+                                    usedParameters.add(valueParameterDescriptor);
+                                }
+                                else {
+                                    trace.getErrorHandler().genericError(valueArgument.getNode(), "Too many arguments");
+                                }
+                            }
+                        }
+                    }
+                }
+
+                for (ValueParameterDescriptor valueParameter : valueParameters) {
+                    if (!usedParameters.contains(valueParameter)) {
+                        if (!valueParameter.hasDefaultValue()) {
+                            trace.getErrorHandler().genericError(call.getValueArgumentList().getNode(), "No value passed for parameter " + valueParameter.getName());
+                            error = true;
+                        }
+                    }
+                }
+
+                if (error) continue;
+
+                if (call.getTypeArguments().isEmpty()) {
+                    // Type argument inference
+
+                    ConstraintSystem constraintSystem = new ConstraintSystem();
+                    for (TypeParameterDescriptor typeParameterDescriptor : candidate.getTypeParameters()) {
+                        constraintSystem.registerTypeVariable(typeParameterDescriptor, Variance.INVARIANT); // TODO
+                    }
+
+                    for (Map.Entry<JetValueArgument, ValueParameterDescriptor> entry : argumentsToParameters.entrySet()) {
+                        JetValueArgument valueArgument = entry.getKey();
+                        ValueParameterDescriptor valueParameterDescriptor = entry.getValue();
+
+                        JetExpression expression = valueArgument.getArgumentExpression();
+                        // TODO : more attempts, with different expected types
+                        JetType type = temporaryServices.getType(scope, expression, false, NO_EXPECTED_TYPE);
+                        constraintSystem.addSubtypingConstraint(type, valueParameterDescriptor.getOutType());
+                    }
+
+                    if (expectedType != NO_EXPECTED_TYPE) {
+                        constraintSystem.addSubtypingConstraint(candidate.getReturnType(), expectedType);
+                    }
+
+                    ConstraintSystem.Solution solution = constraintSystem.solve();
+                    solutions.put(candidate, solution);
+                    if (solution.isSuccessful()) {
+                        successfulCandidates.put(candidate, candidate.substitute(solution.getSubstitutor()));
+                    }
+                    else {
+                        temporaryTrace.getErrorHandler().genericError(calleeExpression.getNode(), "Type inference failed");
+                        failedCandidates.add(candidate);
+                    }
+                }
+                else {
+                    final List<JetTypeProjection> jetTypeArguments = call.getTypeArguments();
+
+                    for (JetTypeProjection typeArgument : jetTypeArguments) {
+                        if (typeArgument.getProjectionKind() != JetProjectionKind.NONE) {
+                            trace.getErrorHandler().genericError(typeArgument.getNode(), "Projections are not allowed on type parameters for methods"); // TODO : better positioning
+                        }
+                    }
+
+                    List<JetType> typeArguments = new ArrayList<JetType>();
+                    for (JetTypeProjection projection : jetTypeArguments) {
+                        // TODO : check that there's no projection
+                        JetTypeReference typeReference = projection.getTypeReference();
+                        if (typeReference != null) {
+                            typeArguments.add(new TypeResolver(semanticServices, temporaryTrace, true).resolveType(scope, typeReference));
+                        }
+                    }
+
+                    int typeArgCount = typeArguments.size();
+                    if (candidate.getTypeParameters().size() == typeArgCount) {
+                        FunctionDescriptor substitutedFunctionDescriptor = FunctionDescriptorUtil.substituteFunctionDescriptor(typeArguments, candidate);
+                        
+                        assert substitutedFunctionDescriptor != null;
+                        Map<ValueParameterDescriptor, ValueParameterDescriptor> parameterMap = Maps.newHashMap();
+                        for (ValueParameterDescriptor valueParameterDescriptor : substitutedFunctionDescriptor.getValueParameters()) {
+                            parameterMap.put(valueParameterDescriptor.getOriginal(), valueParameterDescriptor);
+                        }
+
+                        boolean localError = false;
+                        for (Map.Entry<JetValueArgument, ValueParameterDescriptor> entry : argumentsToParameters.entrySet()) {
+                            JetValueArgument valueArgument = entry.getKey();
+                            ValueParameterDescriptor valueParameterDescriptor = entry.getValue();
+
+                            ValueParameterDescriptor substitutedParameter = parameterMap.get(valueParameterDescriptor.getOriginal());
+
+                            JetType parameterType = substitutedParameter.getOutType();
+                            JetType type = temporaryServices.getType(scope, valueArgument.getArgumentExpression(), false, parameterType);
+                            if (type == null) {
+                                localError = true;
+                            }
+                        }
+                        if (localError) {
+                            failedCandidates.add(candidate);
+                        }
+                        else {
+                            successfulCandidates.put(candidate, substitutedFunctionDescriptor);
+                        }
+
+                    }
+                    else {
+                        failedCandidates.add(candidate); 
+                    }
+                }
+            }
+
+            if (successfulCandidates.size() > 0) {
+                if (successfulCandidates.size() == 1) {
+                    Map.Entry<FunctionDescriptor, FunctionDescriptor> entry = successfulCandidates.entrySet().iterator().next();
+                    FunctionDescriptor functionDescriptor = entry.getKey();
+                    FunctionDescriptor result = entry.getValue();
+
+                    TemporaryBindingTrace temporaryTrace = traces.get(functionDescriptor);
+                    temporaryTrace.addAllMyDataTo(trace);
+                    return result.getReturnType();
+                }
+                else {
+                    // TODO : Choose more specific
+
+                    StringBuilder stringBuilder = new StringBuilder();
+                    for (FunctionDescriptor functionDescriptor : successfulCandidates.keySet()) {
+                        stringBuilder.append(DescriptorRenderer.HTML.render(functionDescriptor)).append("<br/>");
+                    }
+
+                    trace.getErrorHandler().genericError(calleeExpression.getNode(), "Overload resolution ambiguity: <br/>" + stringBuilder);
+                    return null;
+                }
+            }
+            else {
+                if (failedCandidates.size() == 1) {
+                    FunctionDescriptor functionDescriptor = failedCandidates.iterator().next();
+                    TemporaryBindingTrace temporaryTrace = traces.get(functionDescriptor);
+                    temporaryTrace.addAllMyDataTo(trace);
+                }
+                else {
+                    StringBuilder stringBuilder = new StringBuilder();
+                    for (FunctionDescriptor functionDescriptor : failedCandidates) {
+                        stringBuilder.append(DescriptorRenderer.HTML.render(functionDescriptor)).append("<br/>");
+                    }
+
+                    trace.getErrorHandler().genericError(calleeExpression.getNode(), "None of the following functions can be called with the arguments supplied: <br/>" + stringBuilder);
+                }
+                return null;
             }
         }
 

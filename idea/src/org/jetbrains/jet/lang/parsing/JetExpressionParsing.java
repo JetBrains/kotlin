@@ -1625,7 +1625,11 @@ public class JetExpressionParsing extends AbstractJetParsing {
     private void parseValueArgument() {
         PsiBuilder.Marker argument = mark();
         if (at(IDENTIFIER) && lookahead(1) == EQ) {
+            PsiBuilder.Marker argName = mark();
+            PsiBuilder.Marker reference = mark();
             advance(); // IDENTIFIER
+            reference.done(REFERENCE_EXPRESSION);
+            argName.done(VALUE_ARGUMENT_NAME);
             advance(); // EQ
         }
         if (at(OUT_KEYWORD) || at(REF_KEYWORD)) advance(); // REF or OUT

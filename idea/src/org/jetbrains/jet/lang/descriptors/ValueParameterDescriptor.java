@@ -20,4 +20,7 @@ public interface ValueParameterDescriptor extends VariableDescriptor {
     @Override
     @NotNull
     JetType getOutType();
+
+    @Override
+    ValueParameterDescriptor getOriginal();
 }

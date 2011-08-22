@@ -44,6 +44,7 @@ public interface JetNodeTypes {
     JetNodeType TYPE_ARGUMENT_LIST                  = new JetNodeType("TYPE_ARGUMENT_LIST", JetTypeArgumentList.class);
     JetNodeType VALUE_ARGUMENT_LIST                 = new JetNodeType("VALUE_ARGUMENT_LIST", JetValueArgumentList.class);
     JetNodeType VALUE_ARGUMENT                      = new JetNodeType("VALUE_ARGUMENT", JetValueArgument.class);
+    JetNodeType VALUE_ARGUMENT_NAME = new JetNodeType("VALUE_ARGUMENT_LIST", JetValueArgumentName.class);
     JetNodeType TYPE_REFERENCE                      = new JetNodeType("TYPE_REFERENCE", JetTypeReference.class);
     JetNodeType LABELED_TUPLE_ENTRY                 = new JetNodeType("LABELED_TUPLE_ENTRY");
     JetNodeType LABELED_TUPLE_TYPE_ENTRY            = new JetNodeType("LABELED_TUPLE_TYPE_ENTRY");
