@@ -14,8 +14,8 @@ import java.util.List;
  */
 public class NumberCast implements IntrinsicMethod {
     @Override
-    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, boolean haveReceiver) {
-        codegen.putTopOfStack(expectedType);
+    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver) {
+        receiver.put(expectedType, v);
         return StackValue.onStack(expectedType);
     }
 }

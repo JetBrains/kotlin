@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class ValueTypeInfo implements IntrinsicMethod {
     @Override
-    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, boolean haveReceiver) {
+    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver) {
         codegen.gen(arguments.get(0), JetTypeMapper.TYPE_JET_OBJECT);
         v.invokeinterface("jet/JetObject", "getTypeInfo", "()Ljet/typeinfo/TypeInfo;");
         return StackValue.onStack(JetTypeMapper.TYPE_TYPEINFO);

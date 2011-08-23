@@ -15,8 +15,8 @@ import java.util.List;
  */
 public class ArraySize implements IntrinsicMethod {
     @Override
-    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, boolean haveReceiver) {
-        codegen.ensureReceiverOnStack(element, null, JetTypeMapper.TYPE_OBJECT);
+    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver) {
+        receiver.put(JetTypeMapper.TYPE_OBJECT, v);
         v.arraylength();
         return StackValue.onStack(Type.INT_TYPE);
     }

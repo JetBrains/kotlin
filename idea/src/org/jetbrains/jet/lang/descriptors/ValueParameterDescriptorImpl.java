@@ -94,4 +94,9 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
     public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
         return visitor.visitValueParameterDescriptor(this, data);
     }
+    
+    @Override
+    public boolean isVar() {
+        return isVar;
+    }
 }

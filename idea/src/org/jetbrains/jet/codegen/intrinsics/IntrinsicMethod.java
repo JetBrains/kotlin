@@ -14,5 +14,5 @@ import java.util.List;
  * @author yole
  */
 public interface IntrinsicMethod extends Callable {
-    StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, boolean haveReceiver);
+    StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver);
 }

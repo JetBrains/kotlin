@@ -12,6 +12,7 @@ import java.util.List;
  * @author abreslav
  */
 public class LocalVariableDescriptor extends VariableDescriptorImpl {
+    private boolean isVar;
     public LocalVariableDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull List<AnnotationDescriptor> annotations,
@@ -19,6 +20,7 @@ public class LocalVariableDescriptor extends VariableDescriptorImpl {
             @Nullable JetType type,
             boolean mutable) {
         super(containingDeclaration, annotations, name, mutable ? type : null, type);
+        isVar = mutable;
     }
 
     @NotNull
@@ -30,5 +32,10 @@ public class LocalVariableDescriptor extends VariableDescriptorImpl {
     @Override
     public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
         return visitor.visitLocalVariableDescriptor(this, data);
+    }
+
+    @Override
+    public boolean isVar() {
+        return isVar;
     }
 }
