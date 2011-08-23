@@ -853,9 +853,17 @@ public class JetTypeInferrer {
             if (!semanticServices.getTypeChecker().isSubtypeOf(enrichedType, context.expectedType)) {
                 context.trace.getErrorHandler().typeMismatch(expression, context.expectedType, expressionType);
             } else {
-                context.trace.record(BindingContext.AUTOCAST, expression, context.expectedType);
+                checkAutoCast(expression, context.expectedType, variableDescriptor, context.trace);
             }
             return enrichedType;
+        }
+        
+        private void checkAutoCast(JetExpression expression, JetType type, VariableDescriptor variableDescriptor, BindingTrace trace) {
+            if (variableDescriptor.isVar()) {
+                trace.getErrorHandler().genericError(expression.getNode(), "Automatic cast to " + type + " is impossible, because variable " + variableDescriptor.getName() + " is mutable");
+            } else {
+                trace.record(BindingContext.AUTOCAST, expression, type);
+            }
         }
 
         @NotNull
@@ -2202,7 +2210,7 @@ public class JetTypeInferrer {
                     for (JetType possibleType : possibleTypes) {
                         selectorReturnType = getSelectorReturnType(possibleType, selectorExpression, autocastResolutionContext);
                         if (selectorReturnType != null) {
-                            autocastResolutionTrace.record(BindingContext.AUTOCAST, receiverExpression, possibleType);
+                            context.services.checkAutoCast(receiverExpression, possibleType, variableDescriptor, autocastResolutionTrace);
                             autocastResolutionTrace.addAllMyDataTo(context.trace);
                             somethingFound = true;
                             break;
