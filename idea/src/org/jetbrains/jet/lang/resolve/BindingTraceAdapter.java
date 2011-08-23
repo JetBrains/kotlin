@@ -1,104 +1,32 @@
 package org.jetbrains.jet.lang.resolve;
 
-import com.intellij.psi.PsiElement;
+import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.ErrorHandlerWithRegions;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
-import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.ErrorHandler;
+import org.jetbrains.jet.util.ReadOnlySlice;
+import org.jetbrains.jet.util.WritableSlice;
+
+import java.util.Map;
 
 /**
  * @author abreslav
  */
 public class BindingTraceAdapter implements BindingTrace {
-    private final BindingTrace originalTrace;
-
-    @Override
-    public void recordAutoCast(@NotNull JetExpression expression, @NotNull JetType type, @NotNull VariableDescriptor variableDescriptor) {
-        originalTrace.recordAutoCast(expression, type, variableDescriptor);
+    public interface RecordHandler<K, V> {
+        void handleRecord(WritableSlice<K, V> slice, K key, V value);
     }
+
+    private final BindingTrace originalTrace;
+    private Map<WritableSlice, RecordHandler> handlers = Maps.newHashMap();
 
     public BindingTraceAdapter(BindingTrace originalTrace) {
         this.originalTrace = originalTrace;
     }
 
-    public void recordExpressionType(@NotNull JetExpression expression, @NotNull JetType type) {
-        originalTrace.recordExpressionType(expression, type);
-    }
-
-    public void recordReferenceResolution(@NotNull JetReferenceExpression expression, @NotNull DeclarationDescriptor descriptor) {
-        originalTrace.recordReferenceResolution(expression, descriptor);
-    }
-
-    public void recordLabelResolution(@NotNull JetReferenceExpression expression, @NotNull PsiElement element) {
-        originalTrace.recordLabelResolution(expression, element);
-    }
-
-    public void recordDeclarationResolution(@NotNull PsiElement declaration, @NotNull DeclarationDescriptor descriptor) {
-        originalTrace.recordDeclarationResolution(declaration, descriptor);
-    }
-
     @Override
-    public void recordValueParameterAsPropertyResolution(@NotNull JetParameter declaration, @NotNull PropertyDescriptor descriptor) {
-        originalTrace.recordValueParameterAsPropertyResolution(declaration, descriptor);
-    }
-
-    public void recordTypeResolution(@NotNull JetTypeReference typeReference, @NotNull JetType type) {
-        originalTrace.recordTypeResolution(typeReference, type);
-    }
-
-    @Override
-    public void recordAnnotationResolution(@NotNull JetAnnotationEntry annotationEntry, @NotNull AnnotationDescriptor annotationDescriptor) {
-        originalTrace.recordAnnotationResolution(annotationEntry, annotationDescriptor);
-    }
-
-    @Override
-    public void recordCompileTimeValue(@NotNull JetExpression expression, @NotNull CompileTimeConstant<?> value) {
-        originalTrace.recordCompileTimeValue(expression, value);
-    }
-
-    public void recordBlock(JetFunctionLiteralExpression expression) {
-        originalTrace.recordBlock(expression);
-    }
-
-    @Override
-    public void recordStatement(@NotNull JetElement statement) {
-        originalTrace.recordStatement(statement);
-    }
-
-    @Override
-    public void recordVariableReassignment(@NotNull JetExpression expression) {
-        originalTrace.recordVariableReassignment(expression);
-    }
-
-    @Override
-    public void requireBackingField(@NotNull PropertyDescriptor propertyDescriptor) {
-        originalTrace.requireBackingField(propertyDescriptor);
-    }
-
     @NotNull
-    @Override
-    public ErrorHandlerWithRegions getErrorHandler() {
+    public ErrorHandler getErrorHandler() {
         return originalTrace.getErrorHandler();
-    }
-
-    @Override
-    public void removeStatementRecord(@NotNull JetElement statement) {
-        originalTrace.removeStatementRecord(statement);
-    }
-
-    @Override
-    public void markAsProcessed(@NotNull JetExpression expression) {
-        originalTrace.markAsProcessed(expression);
-    }
-
-    @Override
-    public boolean isProcessed(@NotNull JetExpression expression) {
-        return originalTrace.isProcessed(expression);
     }
 
     @Override
@@ -107,7 +35,27 @@ public class BindingTraceAdapter implements BindingTrace {
     }
 
     @Override
-    public void recordResolutionScope(@NotNull JetExpression expression, @NotNull JetScope scope) {
-        originalTrace.recordResolutionScope(expression, scope);
+    public <K, V> void record(WritableSlice<K, V> slice, K key, V value) {
+        originalTrace.record(slice, key, value);
+        RecordHandler recordHandler = handlers.get(slice);
+        if (recordHandler != null) {
+            recordHandler.handleRecord(slice, key, value);
+        }
     }
+
+    @Override
+    public <K> void record(WritableSlice<K, Boolean> slice, K key) {
+        record(slice, key, true);
+    }
+
+    @Override
+    public <K, V> V get(ReadOnlySlice<K, V> slice, K key) {
+        return originalTrace.get(slice, key);
+    }
+    
+    public <K, V> BindingTraceAdapter addHandler(@NotNull WritableSlice<K, V> slice, @NotNull RecordHandler<K, V> handler) {
+        handlers.put(slice, handler);
+        return this;
+    }
+    
 }

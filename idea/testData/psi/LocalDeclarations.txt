@@ -22,10 +22,11 @@ JetFile: LocalDeclarations.jet
             ANNOTATION
               PsiElement(LBRACKET)('[')
               ANNOTATION_ENTRY
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('a')
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('a')
               PsiElement(RBRACKET)(']')
             PsiWhiteSpace(' ')
             PsiElement(abstract)('abstract')
@@ -47,10 +48,11 @@ JetFile: LocalDeclarations.jet
             ANNOTATION
               PsiElement(LBRACKET)('[')
               ANNOTATION_ENTRY
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('a')
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('a')
               PsiElement(RBRACKET)(']')
           PsiWhiteSpace(' ')
           PsiElement(class)('class')
@@ -81,10 +83,11 @@ JetFile: LocalDeclarations.jet
             ANNOTATION
               PsiElement(LBRACKET)('[')
               ANNOTATION_ENTRY
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('a')
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('a')
               PsiElement(RBRACKET)(']')
           PsiWhiteSpace(' ')
           PsiElement(var)('var')

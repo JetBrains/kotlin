@@ -351,9 +351,11 @@ public class JetParsing extends AbstractJetParsing {
 
         PsiBuilder.Marker attribute = mark();
 
+        PsiBuilder.Marker reference = mark();
         PsiBuilder.Marker typeReference = mark();
         parseUserType();
         typeReference.done(TYPE_REFERENCE);
+        reference.done(CONSTRUCTOR_CALLEE);
 
         parseTypeArgumentList(-1);
 
@@ -723,7 +725,9 @@ public class JetParsing extends AbstractJetParsing {
             type = THIS_CALL;
         }
         else if (atSet(TYPE_REF_FIRST)) {
+            PsiBuilder.Marker reference = mark();
             parseTypeRef();
+            reference.done(CONSTRUCTOR_CALLEE);
             type = DELEGATOR_SUPER_CALL;
         } else {
             errorWithRecovery("Expecting constructor call (this(...)) or supertype initializer", TokenSet.create(LBRACE, COMMA));
@@ -1094,18 +1098,23 @@ public class JetParsing extends AbstractJetParsing {
     private void parseDelegationSpecifier() {
         PsiBuilder.Marker delegator = mark();
         parseAnnotations(false);
+
+        PsiBuilder.Marker reference = mark();
         parseTypeRef();
 
         if (at(BY_KEYWORD)) {
+            reference.drop();
             advance(); // BY_KEYWORD
             createForByClause(myBuilder).myExpressionParsing.parseExpression();
             delegator.done(DELEGATOR_BY);
         }
         else if (at(LPAR)) {
+            reference.done(CONSTRUCTOR_CALLEE);
             myExpressionParsing.parseValueArgumentList();
             delegator.done(DELEGATOR_SUPER_CALL);
         }
         else {
+            reference.drop();
             delegator.done(DELEGATOR_SUPER_CLASS);
         }
     }

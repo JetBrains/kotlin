@@ -31,14 +31,14 @@ public class TypeResolver {
 
     @NotNull
     public JetType resolveType(@NotNull final JetScope scope, @NotNull final JetTypeReference typeReference) {
-        JetType cachedType = trace.getBindingContext().resolveTypeReference(typeReference);
+        JetType cachedType = trace.getBindingContext().get(BindingContext.TYPE, typeReference);
         if (cachedType != null) return cachedType;
 
         final List<AnnotationDescriptor> annotations = annotationResolver.createAnnotationStubs(typeReference.getAnnotations());
 
         JetTypeElement typeElement = typeReference.getTypeElement();
         JetType type = resolveTypeElement(scope, annotations, typeElement, false);
-        trace.recordTypeResolution(typeReference, type);
+        trace.record(BindingContext.TYPE, typeReference, type);
         return type;
     }
 
@@ -60,7 +60,7 @@ public class TypeResolver {
                         if (classifierDescriptor instanceof TypeParameterDescriptor) {
                             TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) classifierDescriptor;
 
-                            trace.recordReferenceResolution(referenceExpression, typeParameterDescriptor);
+                            trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, typeParameterDescriptor);
 
                             result[0] = new JetTypeImpl(
                                     annotations,
@@ -72,8 +72,8 @@ public class TypeResolver {
                         }
                         else if (classifierDescriptor instanceof ClassDescriptor) {
                             ClassDescriptor classDescriptor = (ClassDescriptor) classifierDescriptor;
-                            
-                            trace.recordReferenceResolution(referenceExpression, classifierDescriptor);
+
+                            trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, classifierDescriptor);
                             TypeConstructor typeConstructor = classifierDescriptor.getTypeConstructor();
                             List<TypeProjection> arguments = resolveTypeProjections(scope, typeConstructor, type.getTypeArguments());
                             List<TypeParameterDescriptor> parameters = typeConstructor.getParameters();
@@ -289,7 +289,7 @@ public class TypeResolver {
 
         NamespaceDescriptor namespace = scope.getNamespace(userType.getReferencedName());
         if (namespace != null) {
-            trace.recordReferenceResolution(userType.getReferenceExpression(), namespace);
+            trace.record(BindingContext.REFERENCE_TARGET, userType.getReferenceExpression(), namespace);
         }
         return namespace;
     }

@@ -5,6 +5,7 @@ import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertySetterDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.objectweb.asm.ClassVisitor;
@@ -30,7 +31,7 @@ public class PropertyCodegen {
     }
 
     public void gen(JetProperty p) {
-        final VariableDescriptor descriptor = state.getBindingContext().getVariableDescriptor(p);
+        final VariableDescriptor descriptor = state.getBindingContext().get(BindingContext.VARIABLE, p);
         if (!(descriptor instanceof PropertyDescriptor)) {
             throw new UnsupportedOperationException("expect a property to have a property descriptor");
         }
@@ -67,12 +68,12 @@ public class PropertyCodegen {
     }
 
     private void generateBackingField(JetProperty p, PropertyDescriptor propertyDescriptor) {
-        if (state.getBindingContext().hasBackingField(propertyDescriptor)) {
+        if ((boolean) state.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor)) {
             Object value = null;
             final JetExpression initializer = p.getInitializer();
             if (initializer != null) {
                 if (initializer instanceof JetConstantExpression) {
-                    CompileTimeConstant<?> compileTimeValue = state.getBindingContext().getCompileTimeValue(initializer);
+                    CompileTimeConstant<?> compileTimeValue = state.getBindingContext().get(BindingContext.COMPILE_TIME_VALUE, initializer);
                     assert compileTimeValue != null;
                     value = compileTimeValue.getValue();
                 }
@@ -126,7 +127,7 @@ public class PropertyCodegen {
     }
 
     private void generateDefaultGetter(JetProperty p, JetDeclaration declaration) {
-        final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) state.getBindingContext().getVariableDescriptor(p);
+        final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) state.getBindingContext().get(BindingContext.VARIABLE, p);
         int flags = JetTypeMapper.getAccessModifiers(declaration, Opcodes.ACC_PUBLIC);
         generateDefaultGetter(propertyDescriptor, flags);
     }
@@ -166,7 +167,7 @@ public class PropertyCodegen {
     }
 
     private void generateDefaultSetter(JetProperty p, JetDeclaration declaration) {
-        final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) state.getBindingContext().getVariableDescriptor(p);
+        final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) state.getBindingContext().get(BindingContext.VARIABLE, p);
         int flags = JetTypeMapper.getAccessModifiers(declaration, Opcodes.ACC_PUBLIC);
         generateDefaultSetter(propertyDescriptor, flags);
     }

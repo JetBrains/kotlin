@@ -38,6 +38,18 @@ public enum Variance {
         throw new IllegalStateException();
     }
 
+    public Variance opposite() {
+        switch (this) {
+            case INVARIANT:
+                return INVARIANT;
+            case IN_VARIANCE:
+                return OUT_VARIANCE;
+            case OUT_VARIANCE:
+                return IN_VARIANCE;
+        }
+        throw new IllegalStateException("Impossible variance: " + this);
+    }
+
     @Override
     public String toString() {
         return label;

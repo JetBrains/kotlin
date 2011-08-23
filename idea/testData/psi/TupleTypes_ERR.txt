@@ -91,10 +91,11 @@ JetFile: TupleTypes_ERR.jet
             ANNOTATION
               PsiElement(LBRACKET)('[')
               ANNOTATION_ENTRY
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('x')
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('x')
               PsiElement(RBRACKET)(']')
             PsiWhiteSpace(' ')
             TUPLE_TYPE
@@ -111,10 +112,11 @@ JetFile: TupleTypes_ERR.jet
             ANNOTATION
               PsiElement(LBRACKET)('[')
               ANNOTATION_ENTRY
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('x')
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('x')
               PsiElement(RBRACKET)(']')
             TUPLE_TYPE
               PsiElement(LPAR)('(')
@@ -122,16 +124,18 @@ JetFile: TupleTypes_ERR.jet
                 ANNOTATION
                   PsiElement(LBRACKET)('[')
                   ANNOTATION_ENTRY
-                    TYPE_REFERENCE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('x')
+                    CONSTRUCTOR_CALLEE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('x')
                   PsiWhiteSpace(' ')
                   ANNOTATION_ENTRY
-                    TYPE_REFERENCE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('X')
+                    CONSTRUCTOR_CALLEE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('X')
                   PsiErrorElement:Expecting ']' to close an attribute annotation
                     <empty list>
               PsiElement(RPAR)(')')
@@ -146,10 +150,11 @@ JetFile: TupleTypes_ERR.jet
             ANNOTATION
               PsiElement(LBRACKET)('[')
               ANNOTATION_ENTRY
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('x')
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('x')
               PsiElement(RBRACKET)(']')
             PsiWhiteSpace(' ')
             TUPLE_TYPE
@@ -158,10 +163,11 @@ JetFile: TupleTypes_ERR.jet
                 ANNOTATION
                   PsiElement(LBRACKET)('[')
                   ANNOTATION_ENTRY
-                    TYPE_REFERENCE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('x')
+                    CONSTRUCTOR_CALLEE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('x')
                   PsiElement(RBRACKET)(']')
                 PsiWhiteSpace(' ')
                 USER_TYPE
@@ -173,10 +179,11 @@ JetFile: TupleTypes_ERR.jet
                 ANNOTATION
                   PsiElement(LBRACKET)('[')
                   ANNOTATION_ENTRY
-                    TYPE_REFERENCE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('x')
+                    CONSTRUCTOR_CALLEE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('x')
                   PsiElement(RBRACKET)(']')
                 USER_TYPE
                   REFERENCE_EXPRESSION
@@ -193,10 +200,11 @@ JetFile: TupleTypes_ERR.jet
             ANNOTATION
               PsiElement(LBRACKET)('[')
               ANNOTATION_ENTRY
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('x')
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('x')
               PsiElement(RBRACKET)(']')
             PsiWhiteSpace(' ')
             TUPLE_TYPE
@@ -210,10 +218,11 @@ JetFile: TupleTypes_ERR.jet
                   ANNOTATION
                     PsiElement(LBRACKET)('[')
                     ANNOTATION_ENTRY
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('x')
+                      CONSTRUCTOR_CALLEE
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('x')
                     PsiElement(RBRACKET)(']')
                   PsiWhiteSpace(' ')
                   USER_TYPE
@@ -230,10 +239,11 @@ JetFile: TupleTypes_ERR.jet
                   ANNOTATION
                     PsiElement(LBRACKET)('[')
                     ANNOTATION_ENTRY
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('x')
+                      CONSTRUCTOR_CALLEE
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('x')
                     PsiElement(RBRACKET)(']')
                   PsiWhiteSpace(' ')
                   USER_TYPE

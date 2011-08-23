@@ -45,7 +45,7 @@ constantPattern
   ;
 
 tuplePattern
-  : "(" ((SimpleName "=")? pattern{","})? ")"
+  : "(" (((SimpleName "=")? pattern){","})? ")"
   ;
 
 bindingPattern

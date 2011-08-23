@@ -45,16 +45,18 @@ JetFile: Properties_ERR.jet
       ANNOTATION
         PsiElement(LBRACKET)('[')
         ANNOTATION_ENTRY
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('a')
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
         PsiWhiteSpace(' ')
         ANNOTATION_ENTRY
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('foo')
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('foo')
         PsiErrorElement:Expecting ']' to close an attribute annotation
           <empty list>
       PsiWhiteSpace(' ')
@@ -81,10 +83,11 @@ JetFile: Properties_ERR.jet
       ANNOTATION
         PsiElement(LBRACKET)('[')
         ANNOTATION_ENTRY
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('a')
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
         PsiElement(RBRACKET)(']')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('foo')
@@ -133,10 +136,11 @@ JetFile: Properties_ERR.jet
     PROPERTY
       MODIFIER_LIST
         ANNOTATION_ENTRY
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('foo')
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('foo')
       PsiWhiteSpace('\n\n')
       PsiElement(val)('val')
       PsiWhiteSpace(' ')

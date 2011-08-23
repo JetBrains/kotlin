@@ -47,9 +47,9 @@ public class InterfaceBodyCodegen extends ClassBodyCodegen {
         String superClassName = null;
         Set<String> superInterfaces = new LinkedHashSet<String>();
         for (JetDelegationSpecifier specifier : delegationSpecifiers) {
-            JetType superType = bindingContext.resolveTypeReference(specifier.getTypeReference());
+            JetType superType = bindingContext.get(BindingContext.TYPE, specifier.getTypeReference());
             ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
-            PsiElement superPsi = bindingContext.getDeclarationPsiElement(superClassDescriptor);
+            PsiElement superPsi = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, superClassDescriptor);
 
             if (superPsi instanceof PsiClass) {
                 PsiClass psiClass = (PsiClass) superPsi;
@@ -120,7 +120,7 @@ public class InterfaceBodyCodegen extends ClassBodyCodegen {
                 final JetDelegationSpecifier specifier = delegationSpecifiers.get(0);
                 if (specifier instanceof JetDelegatorToSuperCall) {
                     final JetDelegatorToSuperCall superCall = (JetDelegatorToSuperCall) specifier;
-                    ConstructorDescriptor constructorDescriptor = state.getBindingContext().resolveSuperConstructor(superCall);
+                    ConstructorDescriptor constructorDescriptor = (ConstructorDescriptor) state.getBindingContext().get(BindingContext.REFERENCE_TARGET, superCall.getCalleeExpression().getConstructorReferenceExpression());
                     CallableMethod method = state.getTypeMapper().mapToCallableMethod(constructorDescriptor, OwnerKind.IMPLEMENTATION);
                     codegen.invokeMethodWithArguments(method, superCall);
                 }

@@ -36,7 +36,7 @@ public class ShowExpressionTypeAction extends AnAction {
         else {
             int offset = editor.getCaretModel().getOffset();
             expression = PsiTreeUtil.getParentOfType(psiFile.findElementAt(offset), JetExpression.class);
-            while (expression != null && bindingContext.getExpressionType(expression) == null) {
+            while (expression != null && bindingContext.get(BindingContext.EXPRESSION_TYPE, expression) == null) {
                 expression = PsiTreeUtil.getParentOfType(expression, JetExpression.class);
             }
             if (expression != null) {
@@ -45,7 +45,7 @@ public class ShowExpressionTypeAction extends AnAction {
             }
         }
         if (expression != null) {
-            JetType type = bindingContext.getExpressionType(expression);
+            JetType type = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression);
             if (type != null) {
                 HintManager.getInstance().showInformationHint(editor, type.toString());
             }

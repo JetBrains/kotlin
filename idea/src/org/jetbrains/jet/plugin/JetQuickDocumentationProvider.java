@@ -8,6 +8,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 /**
@@ -26,13 +27,13 @@ public class JetQuickDocumentationProvider extends AbstractDocumentationProvider
         }
         if (ref != null) {
             BindingContext bindingContext = AnalyzingUtils.analyzeFileWithCache((JetFile) element.getContainingFile());
-            DeclarationDescriptor declarationDescriptor = bindingContext.resolveReferenceExpression(ref);
+            DeclarationDescriptor declarationDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, ref);
             if (declarationDescriptor != null) {
                 return render(declarationDescriptor);
             }
-            PsiElement psiElement = bindingContext.resolveToDeclarationPsiElement(ref);
+            PsiElement psiElement = BindingContextUtils.resolveToDeclarationPsiElement(bindingContext, ref);
             if (psiElement != null) {
-                declarationDescriptor = bindingContext.getDeclarationDescriptor(psiElement);
+                declarationDescriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, psiElement);
                 if (declarationDescriptor != null) {
                     return render(declarationDescriptor);
                 }

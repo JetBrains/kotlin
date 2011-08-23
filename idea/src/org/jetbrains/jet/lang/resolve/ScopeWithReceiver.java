@@ -37,7 +37,7 @@ public class ScopeWithReceiver extends JetScopeImpl {
 //                                return false;
 //                            }
 //                            // TODO : in case of inferred type arguments, substitute the receiver type first
-//                            return typeChecker.isSubtypeOf(receiverType, functionReceiverType);
+//                            return typeChecker.startForPairOfTypes(receiverType, functionReceiverType);
 //                        }
 //                    });
         }

@@ -14,16 +14,18 @@ import java.util.List;
  */
 public class Concat implements IntrinsicMethod {
     @Override
-    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, boolean haveReceiver) {
+    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver) {
         codegen.generateStringBuilderConstructor();
-        if (haveReceiver) {
-            v.swap();
-            codegen.invokeAppendMethod(codegen.expressionType(arguments.get(0)));
-        }
-        else {
+        if (receiver == null) {                                    // LHS.plus(RHS)
+            v.swap();                                                              // StringBuilder LHS
+            codegen.invokeAppendMethod(codegen.expressionType(arguments.get(0)));  // StringBuilder(LHS)
             codegen.invokeAppend(arguments.get(0));
         }
-        codegen.invokeAppend(arguments.get(1));
+        else {                                                     // LHS + RHS
+            codegen.invokeAppend(arguments.get(0));                                // StringBuilder(LHS)
+            codegen.invokeAppend(arguments.get(1));
+        }
+        
         v.invokevirtual(ExpressionCodegen.CLASS_STRING_BUILDER, "toString", "()Ljava/lang/String;");
         return StackValue.onStack(Type.getObjectType("java/lang/String"));
     }

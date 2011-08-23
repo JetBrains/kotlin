@@ -37,7 +37,7 @@ public class ClassContext {
     }
 
     public StackValue getThisExpression() {
-        if (parentContext == null) return null;
+        if (parentContext == null) return StackValue.none();
 
         thisWasUsed = true;
         if (thisExpression != null) return thisExpression;

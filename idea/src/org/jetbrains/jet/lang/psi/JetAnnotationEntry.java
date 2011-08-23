@@ -29,7 +29,16 @@ public class JetAnnotationEntry extends JetElement implements JetCall {
 
     @Nullable @IfNotParsed
     public JetTypeReference getTypeReference() {
-        return (JetTypeReference) findChildByType(JetNodeTypes.TYPE_REFERENCE);
+        JetConstructorCalleeExpression calleeExpression = getCalleeExpression();
+        if (calleeExpression == null) {
+            return null;
+        }
+        return calleeExpression.getTypeReference();
+    }
+
+    @Override
+    public JetConstructorCalleeExpression getCalleeExpression() {
+        return (JetConstructorCalleeExpression) findChildByType(JetNodeTypes.CONSTRUCTOR_CALLEE);
     }
 
     @Override

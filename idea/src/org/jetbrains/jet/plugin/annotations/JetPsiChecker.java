@@ -75,7 +75,7 @@ public class JetPsiChecker implements Annotator {
 
                     private void markRedeclaration(DeclarationDescriptor redeclaration) {
                         if (!redeclarations.add(redeclaration)) return;
-                        PsiElement declarationPsiElement = bindingContext.getDeclarationPsiElement(redeclaration);
+                        PsiElement declarationPsiElement = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, redeclaration);
                         if (declarationPsiElement instanceof JetNamedDeclaration) {
                             PsiElement nameIdentifier = ((JetNamedDeclaration) declarationPsiElement).getNameIdentifier();
                             assert nameIdentifier != null : declarationPsiElement.getText() + " has nameIdentifier 'null'";
@@ -106,7 +106,7 @@ public class JetPsiChecker implements Annotator {
                 file.acceptChildren(new JetVisitorVoid() {
                     @Override
                     public void visitExpression(JetExpression expression) {
-                        JetType autoCast = bindingContext.getAutoCastType(expression);
+                        JetType autoCast = bindingContext.get(BindingContext.AUTOCAST, expression);
                         if (autoCast != null) {
                             holder.createInfoAnnotation(expression, "Automatically cast to " + autoCast).setTextAttributes(JetHighlighter.JET_AUTO_CAST_EXPRESSION);
                         }
@@ -135,9 +135,9 @@ public class JetPsiChecker implements Annotator {
         file.acceptChildren(new JetVisitorVoid() {
             @Override
             public void visitProperty(JetProperty property) {
-                VariableDescriptor propertyDescriptor = bindingContext.getVariableDescriptor(property);
+                VariableDescriptor propertyDescriptor = bindingContext.get(BindingContext.VARIABLE, property);
                 if (propertyDescriptor instanceof PropertyDescriptor) {
-                    if (bindingContext.hasBackingField((PropertyDescriptor) propertyDescriptor)) {
+                    if ((boolean) bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, (PropertyDescriptor) propertyDescriptor)) {
                         putBackingfieldAnnotation(holder, property);
                     }
                 }
@@ -145,8 +145,8 @@ public class JetPsiChecker implements Annotator {
 
             @Override
             public void visitParameter(JetParameter parameter) {
-                PropertyDescriptor propertyDescriptor = bindingContext.getPropertyDescriptor(parameter);
-                if (propertyDescriptor != null && bindingContext.hasBackingField(propertyDescriptor)) {
+                PropertyDescriptor propertyDescriptor = bindingContext.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter);
+                if (propertyDescriptor != null && bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor)) {
                     putBackingfieldAnnotation(holder, parameter);
                 }
             }

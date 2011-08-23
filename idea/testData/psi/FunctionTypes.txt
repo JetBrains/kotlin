@@ -20,10 +20,11 @@ JetFile: FunctionTypes.jet
                 ANNOTATION
                   PsiElement(LBRACKET)('[')
                   ANNOTATION_ENTRY
-                    TYPE_REFERENCE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('a')
+                    CONSTRUCTOR_CALLEE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('a')
                   PsiElement(RBRACKET)(']')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
@@ -91,10 +92,11 @@ JetFile: FunctionTypes.jet
             ANNOTATION
               PsiElement(LBRACKET)('[')
               ANNOTATION_ENTRY
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('x')
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('x')
               PsiElement(RBRACKET)(']')
             PsiWhiteSpace(' ')
             USER_TYPE
@@ -149,10 +151,11 @@ JetFile: FunctionTypes.jet
                 ANNOTATION
                   PsiElement(LBRACKET)('[')
                   ANNOTATION_ENTRY
-                    TYPE_REFERENCE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('a')
+                    CONSTRUCTOR_CALLEE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('a')
                   PsiElement(RBRACKET)(']')
                 PsiWhiteSpace(' ')
                 USER_TYPE
@@ -272,10 +275,11 @@ JetFile: FunctionTypes.jet
                 ANNOTATION
                   PsiElement(LBRACKET)('[')
                   ANNOTATION_ENTRY
-                    TYPE_REFERENCE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('a')
+                    CONSTRUCTOR_CALLEE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('a')
                   PsiElement(RBRACKET)(']')
                 PsiWhiteSpace(' ')
                 USER_TYPE
@@ -673,10 +677,11 @@ JetFile: FunctionTypes.jet
         ANNOTATION
           PsiElement(LBRACKET)('[')
           ANNOTATION_ENTRY
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('a')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
           PsiElement(RBRACKET)(']')
         PsiWhiteSpace(' ')
         FUNCTION_TYPE
@@ -711,10 +716,11 @@ JetFile: FunctionTypes.jet
         ANNOTATION
           PsiElement(LBRACKET)('[')
           ANNOTATION_ENTRY
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('a')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
           PsiElement(RBRACKET)(']')
         PsiWhiteSpace(' ')
         FUNCTION_TYPE
@@ -753,10 +759,11 @@ JetFile: FunctionTypes.jet
         ANNOTATION
           PsiElement(LBRACKET)('[')
           ANNOTATION_ENTRY
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('a')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
           PsiElement(RBRACKET)(']')
         PsiWhiteSpace(' ')
         FUNCTION_TYPE

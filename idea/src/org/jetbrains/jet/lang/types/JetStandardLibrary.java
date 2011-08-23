@@ -28,7 +28,8 @@ public class JetStandardLibrary {
     //    private static final Map<Project, JetStandardLibrary> standardLibraryCache = new HashMap<Project, JetStandardLibrary>();
 
     // TODO : double checked locking
-    synchronized public static JetStandardLibrary getJetStandardLibrary(@NotNull Project project) {
+    synchronized
+    public static JetStandardLibrary getJetStandardLibrary(@NotNull Project project) {
         if (cachedLibrary == null) {
             cachedLibrary = new JetStandardLibrary(project);
         }
@@ -55,8 +56,8 @@ public class JetStandardLibrary {
     private final ClassDescriptor arrayClass;
     private final ClassDescriptor iterableClass;
     private final ClassDescriptor typeInfoClass;
-    private final JetType byteType;
 
+    private final JetType byteType;
     private final JetType charType;
     private final JetType shortType;
     private final JetType intType;
@@ -86,7 +87,7 @@ public class JetStandardLibrary {
 //            bootstrappingTDA.process(writableScope, JetStandardClasses.STANDARD_CLASSES_NAMESPACE, file.getRootNamespace().getDeclarations());
             bootstrappingTDA.processStandardLibraryNamespace(writableScope, JetStandardClasses.STANDARD_CLASSES_NAMESPACE, file.getRootNamespace());
             this.libraryScope = JetStandardClasses.STANDARD_CLASSES_NAMESPACE.getMemberScope();
-            AnalyzingUtils.applyHandler(ErrorHandler.THROW_EXCEPTION, bindingTraceContext);
+            AnalyzingUtils.applyHandler(ErrorHandler.THROW_EXCEPTION, bindingTraceContext.getBindingContext());
 
             this.byteClass = (ClassDescriptor) libraryScope.getClassifier("Byte");
             this.charClass = (ClassDescriptor) libraryScope.getClassifier("Char");

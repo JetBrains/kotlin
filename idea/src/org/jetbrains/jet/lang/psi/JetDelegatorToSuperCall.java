@@ -26,6 +26,12 @@ public class JetDelegatorToSuperCall extends JetDelegationSpecifier implements J
         return visitor.visitDelegationToSuperCallSpecifier(this, data);
     }
 
+    @NotNull
+    @Override
+    public JetConstructorCalleeExpression getCalleeExpression() {
+        return (JetConstructorCalleeExpression) findChildByType(JetNodeTypes.CONSTRUCTOR_CALLEE);
+    }
+
     @Nullable
     public JetValueArgumentList getValueArgumentList() {
         return (JetValueArgumentList) findChildByType(JetNodeTypes.VALUE_ARGUMENT_LIST);
@@ -41,6 +47,11 @@ public class JetDelegatorToSuperCall extends JetDelegationSpecifier implements J
     @Override
     public List<JetExpression> getFunctionLiteralArguments() {
         return Collections.emptyList();
+    }
+
+    @Override
+    public JetTypeReference getTypeReference() {
+        return getCalleeExpression().getTypeReference();
     }
 
     @NotNull

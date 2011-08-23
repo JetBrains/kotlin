@@ -16,6 +16,7 @@ import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeInferrer;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.util.WritableSlice;
 
 import java.util.*;
 
@@ -31,7 +32,7 @@ public class TopDownAnalyzer {
 
     private final Map<JetNamedFunction, FunctionDescriptorImpl> functions = Maps.newLinkedHashMap();
     private final Map<JetDeclaration, ConstructorDescriptor> constructors = Maps.newLinkedHashMap();
-    private final Map<JetProperty, PropertyDescriptor> properties = new LinkedHashMap<JetProperty, PropertyDescriptor>();
+    private final Map<JetProperty, PropertyDescriptor> properties = Maps.newLinkedHashMap();
     private final Map<JetDeclaration, JetScope> declaringScopes = Maps.newHashMap();
     private final Set<PropertyDescriptor> primaryConstructorParameterProperties = Sets.newHashSet();
 
@@ -47,34 +48,32 @@ public class TopDownAnalyzer {
         this.trace = bindingTrace;
 
         // This allows access to backing fields
-        this.traceForConstructors = new BindingTraceAdapter(bindingTrace) {
+        this.traceForConstructors = new BindingTraceAdapter(bindingTrace).addHandler(BindingContext.REFERENCE_TARGET, new BindingTraceAdapter.RecordHandler<JetReferenceExpression, DeclarationDescriptor>() {
             @Override
-            public void recordReferenceResolution(@NotNull JetReferenceExpression expression, @NotNull DeclarationDescriptor descriptor) {
-                super.recordReferenceResolution(expression, descriptor);
+            public void handleRecord(WritableSlice<JetReferenceExpression, DeclarationDescriptor> slice, JetReferenceExpression expression, DeclarationDescriptor descriptor) {
                 if (expression instanceof JetSimpleNameExpression) {
                     JetSimpleNameExpression simpleNameExpression = (JetSimpleNameExpression) expression;
                     if (simpleNameExpression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER) {
-                        if (!trace.getBindingContext().hasBackingField((PropertyDescriptor) descriptor)) {
+                        if (!trace.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, (PropertyDescriptor) descriptor)) {
                             TopDownAnalyzer.this.trace.getErrorHandler().genericError(expression.getNode(), "This property does not have a backing field");
                         }
                     }
                 }
             }
-        };
+        });
 
         // This tracks access to properties in order to register primary constructor parameters that yield real fields (JET-9)
-        this.traceForMembers = new BindingTraceAdapter(bindingTrace) {
+        this.traceForMembers = new BindingTraceAdapter(bindingTrace).addHandler(BindingContext.REFERENCE_TARGET, new BindingTraceAdapter.RecordHandler<JetReferenceExpression, DeclarationDescriptor>() {
             @Override
-            public void recordReferenceResolution(@NotNull JetReferenceExpression expression, @NotNull DeclarationDescriptor descriptor) {
-                super.recordReferenceResolution(expression, descriptor);
+            public void handleRecord(WritableSlice<JetReferenceExpression, DeclarationDescriptor> slice, JetReferenceExpression expression, DeclarationDescriptor descriptor) {
                 if (descriptor instanceof PropertyDescriptor) {
                     PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
                     if (primaryConstructorParameterProperties.contains(propertyDescriptor)) {
-                        requireBackingField(propertyDescriptor);
+                        traceForMembers.record(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor);
                     }
                 }
             }
-        };
+        });
     }
 
     @Deprecated // For JetStandardLibraryOnly
@@ -129,8 +128,6 @@ public class TopDownAnalyzer {
         resolveFunctionAndPropertyHeaders(); // Constructor headers are resolved as well
 
         resolveBehaviorDeclarationBodies();
-
-        trace.getErrorHandler().close();
     }
 
     private void collectNamespacesAndClassifiers(
@@ -155,7 +152,7 @@ public class TopDownAnalyzer {
                         );
                         namespaceDescriptor.initialize(new WritableScopeImpl(JetScope.EMPTY, namespaceDescriptor, trace.getErrorHandler()).setDebugName("Namespace member scope"));
                         owner.addNamespace(namespaceDescriptor);
-                        trace.recordDeclarationResolution(namespace, namespaceDescriptor);
+                        trace.record(BindingContext.NAMESPACE, namespace, namespaceDescriptor);
                     }
                     namespaceDescriptors.put(namespace, namespaceDescriptor);
 
@@ -222,7 +219,7 @@ public class TopDownAnalyzer {
                     };
                     visitClassOrObject(declaration, (Map) objects, owner, outerScope, mutableClassDescriptor);
                     createPrimaryConstructor(mutableClassDescriptor);
-                    trace.recordDeclarationResolution((PsiElement) declaration, mutableClassDescriptor);
+                    trace.record(BindingContext.CLASS, declaration, mutableClassDescriptor);
                     return mutableClassDescriptor;
                 }
 
@@ -312,7 +309,7 @@ public class TopDownAnalyzer {
                 }
 
                 if (classifierDescriptor != null) {
-                    trace.recordReferenceResolution(referenceExpression, classifierDescriptor);
+                    trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, classifierDescriptor);
 
                     String aliasName = importDirective.getAliasName();
                     String importedClassifierName = aliasName != null ? aliasName : classifierDescriptor.getName();
@@ -356,7 +353,7 @@ public class TopDownAnalyzer {
             for (JetDelegationSpecifier delegationSpecifier : jetClass.getDelegationSpecifiers()) {
                 JetTypeReference typeReference = delegationSpecifier.getTypeReference();
                 if (typeReference != null) {
-                    JetType type = trace.getBindingContext().resolveTypeReference(typeReference);
+                    JetType type = trace.getBindingContext().get(BindingContext.TYPE, typeReference);
                     classDescriptorResolver.checkBounds(typeReference, type);
                 }
             }
@@ -364,7 +361,7 @@ public class TopDownAnalyzer {
             for (JetTypeParameter jetTypeParameter : jetClass.getTypeParameters()) {
                 JetTypeReference extendsBound = jetTypeParameter.getExtendsBound();
                 if (extendsBound != null) {
-                    JetType type = trace.getBindingContext().resolveTypeReference(extendsBound);
+                    JetType type = trace.getBindingContext().get(BindingContext.TYPE, extendsBound);
                     if (type != null) {
                         classDescriptorResolver.checkBounds(extendsBound, type);
                     }
@@ -374,7 +371,7 @@ public class TopDownAnalyzer {
             for (JetTypeConstraint constraint : jetClass.getTypeConstaints()) {
                 JetTypeReference extendsBound = constraint.getBoundTypeReference();
                 if (extendsBound != null) {
-                    JetType type = trace.getBindingContext().resolveTypeReference(extendsBound);
+                    JetType type = trace.getBindingContext().get(BindingContext.TYPE, extendsBound);
                     if (type != null) {
                         classDescriptorResolver.checkBounds(extendsBound, type);
                     }
@@ -534,7 +531,7 @@ public class TopDownAnalyzer {
             JetClass jetClass = entry.getKey();
             if (classDescriptor.getUnsubstitutedPrimaryConstructor() == null) {
                 for (PropertyDescriptor propertyDescriptor : classDescriptor.getProperties()) {
-                    if (trace.getBindingContext().hasBackingField(propertyDescriptor)) {
+                    if ((boolean) trace.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor)) {
                         PsiElement nameIdentifier = jetClass.getNameIdentifier();
                         if (nameIdentifier != null) {
                             trace.getErrorHandler().genericError(nameIdentifier.getNode(),
@@ -572,7 +569,7 @@ public class TopDownAnalyzer {
                     if (delegateExpression != null) {
                         JetScope scope = scopeForConstructor == null ? descriptor.getScopeForMemberResolution() : scopeForConstructor;
                         JetType type = typeInferrer.getType(scope, delegateExpression, false, JetTypeInferrer.NO_EXPECTED_TYPE);
-                        JetType supertype = trace.getBindingContext().resolveTypeReference(specifier.getTypeReference());
+                        JetType supertype = trace.getBindingContext().get(BindingContext.TYPE, specifier.getTypeReference());
                         if (type != null && !semanticServices.getTypeChecker().isSubtypeOf(type, supertype)) { // TODO : Convertible?
                             trace.getErrorHandler().typeMismatch(delegateExpression, supertype, type);
                         }
@@ -597,7 +594,7 @@ public class TopDownAnalyzer {
 
                 @Override
                 public void visitDelegationToSuperClassSpecifier(JetDelegatorToSuperClass specifier) {
-                    JetType supertype = trace.getBindingContext().resolveTypeReference(specifier.getTypeReference());
+                    JetType supertype = trace.getBindingContext().get(BindingContext.TYPE, specifier.getTypeReference());
                     if (supertype != null) {
                         DeclarationDescriptor declarationDescriptor = supertype.getConstructor().getDeclarationDescriptor();
                         if (declarationDescriptor instanceof ClassDescriptor) {
@@ -747,7 +744,7 @@ public class TopDownAnalyzer {
         constructorScope.setThisType(descriptor.getContainingDeclaration().getDefaultType());
 
         for (ValueParameterDescriptor valueParameterDescriptor : descriptor.getValueParameters()) {
-            JetParameter parameter = (JetParameter) trace.getBindingContext().getDeclarationPsiElement(valueParameterDescriptor);
+            JetParameter parameter = (JetParameter) trace.getBindingContext().get(BindingContext.DESCRIPTOR_TO_DECLARATION, valueParameterDescriptor);
             if (parameter.getValOrVarNode() == null || !primary) {
                 constructorScope.addVariableDescriptor(valueParameterDescriptor);
             }
@@ -837,27 +834,26 @@ public class TopDownAnalyzer {
         }
 
         JetExpression initializer = property.getInitializer();
-        if (!property.isVar() && initializer != null && !trace.getBindingContext().hasBackingField(propertyDescriptor)) {
+        if (!property.isVar() && initializer != null && !trace.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor)) {
             trace.getErrorHandler().genericError(initializer.getNode(), "Initializer is not allowed here because this property has no setter and no backing field either");
         }
     }
 
     private BindingTraceAdapter createFieldTrackingTrace(final PropertyDescriptor propertyDescriptor) {
-        return new BindingTraceAdapter(traceForMembers) {
+        return new BindingTraceAdapter(traceForMembers).addHandler(BindingContext.REFERENCE_TARGET, new BindingTraceAdapter.RecordHandler<JetReferenceExpression, DeclarationDescriptor>() {
             @Override
-            public void recordReferenceResolution(@NotNull JetReferenceExpression expression, @NotNull DeclarationDescriptor descriptor) {
-                super.recordReferenceResolution(expression, descriptor);
+            public void handleRecord(WritableSlice<JetReferenceExpression, DeclarationDescriptor> slice, JetReferenceExpression expression, DeclarationDescriptor descriptor) {
                 if (expression instanceof JetSimpleNameExpression) {
                     JetSimpleNameExpression simpleNameExpression = (JetSimpleNameExpression) expression;
                     if (simpleNameExpression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER) {
                         // This check may be considered redundant as long as $x is only accessible from accessors to $x
                         if (descriptor == propertyDescriptor) { // TODO : original?
-                            requireBackingField(propertyDescriptor);
+                            traceForMembers.record(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor); // TODO: this trace?
                         }
                     }
                 }
             }
-        };
+        });
     }
 
     private void resolvePropertyInitializer(JetProperty property, PropertyDescriptor propertyDescriptor, JetExpression initializer, JetScope scope) {
