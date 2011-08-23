@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.ErrorHandlerWithRegions;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
@@ -43,7 +44,7 @@ public interface BindingTrace {
 
     void requireBackingField(@NotNull PropertyDescriptor propertyDescriptor);
 
-    void recordAutoCast(@NotNull JetExpression expression, @NotNull JetType type);
+    void recordAutoCast(@NotNull JetExpression expression, @NotNull JetType type, @NotNull VariableDescriptor variableDescriptor);
 
     @NotNull
     ErrorHandlerWithRegions getErrorHandler();

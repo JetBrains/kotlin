@@ -763,29 +763,31 @@ public class JetTypeInferrer {
                 semanticServices.getTypeChecker().isSubtypeOf(expressionType, context.expectedType)) {
                 return expressionType;
             }
-            VariableDescriptor variableDescriptor = getVariableDescriptorFromSimpleName(expression, context);
-            if (variableDescriptor == null) return expressionType;
-
             JetType enrichedType = null;
-            List<JetType> possibleTypes = Lists.newArrayList(context.dataFlowInfo.getPossibleTypes(variableDescriptor));
-            Collections.reverse(possibleTypes);
-            for (JetType possibleType: possibleTypes) {
-                if (semanticServices.getTypeChecker().isSubtypeOf(possibleType, context.expectedType)) {
-                    enrichedType = possibleType;
-                    break;
+
+            VariableDescriptor variableDescriptor = getVariableDescriptorFromSimpleName(expression, context);
+            if (variableDescriptor != null) {
+
+                List<JetType> possibleTypes = Lists.newArrayList(context.dataFlowInfo.getPossibleTypes(variableDescriptor));
+                Collections.reverse(possibleTypes);
+                for (JetType possibleType : possibleTypes) {
+                    if (semanticServices.getTypeChecker().isSubtypeOf(possibleType, context.expectedType)) {
+                        enrichedType = possibleType;
+                        break;
+                    }
                 }
-            }
-            if (enrichedType == null) {
-                enrichedType = context.dataFlowInfo.getOutType(variableDescriptor);
+                if (enrichedType == null) {
+                    enrichedType = context.dataFlowInfo.getOutType(variableDescriptor);
+                }
             }
             if (enrichedType == null) {
                 enrichedType = expressionType;
             }
 
-            if (!semanticServices.getTypeChecker().isSubtypeOf(enrichedType, context.expectedType)) {
+            if (variableDescriptor == null || !semanticServices.getTypeChecker().isSubtypeOf(enrichedType, context.expectedType)) {
                 context.trace.getErrorHandler().typeMismatch(expression, context.expectedType, expressionType);
             } else {
-                context.trace.recordAutoCast(expression, context.expectedType);
+                context.trace.recordAutoCast(expression, context.expectedType, variableDescriptor);
             }
             return enrichedType;
         }
@@ -2120,7 +2122,7 @@ public class JetTypeInferrer {
                         selectorReturnType = getSelectorReturnType(possibleType, selectorExpression, context);
                         if (selectorReturnType != null) {
                             regionToCommit = errorHandler.closeAndReturnCurrentRegion();
-                            context.trace.recordAutoCast(receiverExpression, possibleType);
+                            context.trace.recordAutoCast(receiverExpression, possibleType, variableDescriptor);
                             break;
                         }
                         else {

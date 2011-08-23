@@ -83,7 +83,7 @@ public class JetTestUtils {
         }
 
         @Override
-        public void recordAutoCast(@NotNull JetExpression expression, @NotNull JetType type) {
+        public void recordAutoCast(@NotNull JetExpression expression, @NotNull JetType type, @NotNull VariableDescriptor variableDescriptor) {
 
         }
 

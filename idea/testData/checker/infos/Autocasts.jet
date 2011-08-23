@@ -229,6 +229,25 @@ fun mergeAutocasts(a: Any?) {
     is String, is Any => a.<error>compareTo</error>("")
   }
   if (a is String && a is Any) {
-    val i: Int = <info descr="Automatically cast to String">a</info>.length
+    val i: Int = <info descr="Automatically cast to String">a</info>.compareTo("")
   }
+}
+
+//mutability
+fun f(): String {
+    var a: Any = 11
+    if (a is String) {
+        val i: String = <error>a</error>
+        <error>a</error>.compareTo("f")
+        val f: Function0<String> = { <error>a</error> }
+        return <error>a</error>
+    }
+    return ""
+}
+
+fun foo(var a: Any): Int {
+    if (a is Int) {
+        return <error>a</error>
+    }
+    return 1
 }

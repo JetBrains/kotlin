@@ -29,4 +29,6 @@ public interface VariableDescriptor extends DeclarationDescriptor {
     @NotNull
     @Override
     VariableDescriptor substitute(TypeSubstitutor substitutor);
+
+    boolean isVar();
 }

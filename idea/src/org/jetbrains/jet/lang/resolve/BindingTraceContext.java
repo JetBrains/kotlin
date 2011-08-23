@@ -167,8 +167,13 @@ public class BindingTraceContext implements BindingContext, BindingTrace {
     }
 
     @Override
-    public void recordAutoCast(@NotNull JetExpression expression, @NotNull JetType type) {
-        safePut(autoCasts, expression, type);
+    public void recordAutoCast(@NotNull JetExpression expression, @NotNull JetType type, @NotNull VariableDescriptor variableDescriptor) {
+        if (variableDescriptor.isVar()) {
+            getErrorHandler().genericError(expression.getNode(), "Automatic cast to " + type + " is impossible, because variable " + variableDescriptor.getName() + " is mutable");
+        }
+        else {
+            safePut(autoCasts, expression, type);
+        }
     }
 
     @Override
