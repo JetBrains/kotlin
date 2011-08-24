@@ -25,13 +25,11 @@ public class JetSemanticServices {
 
     private final JetStandardLibrary standardLibrary;
     private final JetTypeChecker typeChecker;
-    private final OverloadResolver overloadResolver;
     private final JetControlFlowDataTraceFactory flowDataTraceFactory;
 
     private JetSemanticServices(JetStandardLibrary standardLibrary, JetControlFlowDataTraceFactory flowDataTraceFactory) {
         this.standardLibrary = standardLibrary;
         this.typeChecker = new JetTypeChecker(standardLibrary);
-        this.overloadResolver = new OverloadResolver(typeChecker);
         this.flowDataTraceFactory = flowDataTraceFactory;
     }
 
@@ -54,10 +52,4 @@ public class JetSemanticServices {
     public JetTypeChecker getTypeChecker() {
         return typeChecker;
     }
-
-    @NotNull
-    public OverloadResolver getOverloadResolver() {
-        return overloadResolver;
-    }
-
 }

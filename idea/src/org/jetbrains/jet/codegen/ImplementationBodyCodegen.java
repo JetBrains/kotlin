@@ -294,7 +294,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         return outerDescriptor instanceof ClassDescriptor ? (ClassDescriptor) outerDescriptor : null;
     }
 
-    private void generateDelegatorToConstructorCall(InstructionAdapter iv, ExpressionCodegen codegen, JetCall constructorCall,
+    private void generateDelegatorToConstructorCall(InstructionAdapter iv, ExpressionCodegen codegen, JetCallElement constructorCall,
                                                     ConstructorDescriptor constructorDescriptor, boolean isJavaSuperclass,
                                                     ConstructorFrameMap frameMap) {
         ClassDescriptor classDecl = constructorDescriptor.getContainingDeclaration();

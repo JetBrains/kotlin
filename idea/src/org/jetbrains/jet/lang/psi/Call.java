@@ -1,6 +1,5 @@
 package org.jetbrains.jet.lang.psi;
 
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -9,7 +8,7 @@ import java.util.List;
 /**
  * @author abreslav
  */
-public interface JetCall extends PsiElement {
+public interface Call {
     @Nullable
     JetExpression getCalleeExpression();
 
@@ -17,7 +16,7 @@ public interface JetCall extends PsiElement {
     JetValueArgumentList getValueArgumentList();
 
     @NotNull
-    List<JetValueArgument> getValueArguments();
+    List<? extends ValueArgument> getValueArguments();
 
     @NotNull
     List<JetExpression> getFunctionLiteralArguments();
@@ -25,6 +24,6 @@ public interface JetCall extends PsiElement {
     @NotNull
     List<JetTypeProjection> getTypeArguments();
 
-    @NotNull
-    JetElement asElement();
+    @Nullable
+    JetTypeArgumentList getTypeArgumentList();
 }

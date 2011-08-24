@@ -16,6 +16,7 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
     private final boolean isVararg;
     private final boolean isVar;
     private final int index;
+    private final ValueParameterDescriptor original;
 
     public ValueParameterDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
@@ -27,6 +28,7 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
             boolean hasDefaultValue,
             boolean isVararg) {
         super(containingDeclaration, annotations, name, inType, outType);
+        this.original = this;
         this.index = index;
         this.hasDefaultValue = hasDefaultValue;
         this.isVararg = isVararg;
@@ -35,17 +37,17 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
 
     public ValueParameterDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
-            int index,
+            @NotNull ValueParameterDescriptor original,
             @NotNull List<AnnotationDescriptor> annotations,
-            @NotNull String name,
-            boolean isVar,
-            boolean hasDefaultValue,
-            boolean isVararg) {
-        super(containingDeclaration, annotations, name, null, null);
-        this.index = index;
-        this.hasDefaultValue = hasDefaultValue;
-        this.isVararg = isVararg;
-        this.isVar = isVar;
+            @Nullable JetType inType,
+            @NotNull JetType outType
+            ) {
+        super(containingDeclaration, annotations, original.getName(), inType, outType);
+        this.original = original;
+        this.index = original.getIndex();
+        this.hasDefaultValue = original.hasDefaultValue();
+        this.isVararg = original.isVararg();
+        this.isVar = inType != null;
     }
 
     @Override
@@ -61,12 +63,6 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
     @Override
     public int getIndex() {
         return index;
-//        final JetDeclaration element = getPsiElement();
-//        final PsiElement parent = element.getParent();
-//        if (parent instanceof JetParameterList) {
-//            return ((JetParameterList) parent).getParameters().indexOf(element);
-//        }
-//        throw new IllegalStateException("couldn't find index for parameter");
     }
 
     @Override
@@ -86,7 +82,13 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
 
     @NotNull
     @Override
-    public VariableDescriptor substitute(TypeSubstitutor substitutor) {
+    public ValueParameterDescriptor getOriginal() {
+        return original == this ? this : original.getOriginal();
+    }
+
+    @NotNull
+    @Override
+    public ValueParameterDescriptor substitute(TypeSubstitutor substitutor) {
         throw new UnsupportedOperationException(); // TODO
     }
 

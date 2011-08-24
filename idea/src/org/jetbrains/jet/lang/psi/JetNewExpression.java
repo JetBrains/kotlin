@@ -3,7 +3,7 @@ package org.jetbrains.jet.lang.psi;
 /**
  * @author max
  */
-//public class JetNewExpression extends JetExpression implements JetCall {
+//public class JetNewExpression extends JetExpression implements JetCallElement {
 //    public JetNewExpression(@NotNull ASTNode node) {
 //        super(node);
 //    }

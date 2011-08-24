@@ -73,13 +73,10 @@ public class FunctionDescriptorUtil {
             if (substitutedType == null) return null;
             result.add(new ValueParameterDescriptorImpl(
                     substitutedDescriptor,
-                    i,
+                    unsubstitutedValueParameter,
                     unsubstitutedValueParameter.getAnnotations(),
-                    unsubstitutedValueParameter.getName(),
                     unsubstitutedValueParameter.getInType() == null ? null : substitutedType,
-                    substitutedType,
-                    unsubstitutedValueParameter.hasDefaultValue(),
-                    unsubstitutedValueParameter.isVararg()
+                    substitutedType
             ));
         }
         return result;

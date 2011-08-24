@@ -11,14 +11,13 @@ import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.types.ErrorUtils;
-import org.jetbrains.jet.lang.types.JetStandardClasses;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.JetTypeInferrer;
+import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.util.WritableSlice;
 
 import java.util.*;
+
+import static org.jetbrains.jet.lang.types.JetTypeInferrer.NO_EXPECTED_TYPE;
 
 /**
  * @author abreslav
@@ -568,7 +567,7 @@ public class TopDownAnalyzer {
                     JetExpression delegateExpression = specifier.getDelegateExpression();
                     if (delegateExpression != null) {
                         JetScope scope = scopeForConstructor == null ? descriptor.getScopeForMemberResolution() : scopeForConstructor;
-                        JetType type = typeInferrer.getType(scope, delegateExpression, false, JetTypeInferrer.NO_EXPECTED_TYPE);
+                        JetType type = typeInferrer.getType(scope, delegateExpression, false, NO_EXPECTED_TYPE);
                         JetType supertype = trace.getBindingContext().get(BindingContext.TYPE, specifier.getTypeReference());
                         if (type != null && !semanticServices.getTypeChecker().isSubtypeOf(type, supertype)) { // TODO : Convertible?
                             trace.getErrorHandler().typeMismatch(delegateExpression, supertype, type);
@@ -581,7 +580,7 @@ public class TopDownAnalyzer {
                     JetTypeReference typeReference = call.getTypeReference();
                     if (typeReference != null) {
                         if (descriptor.getUnsubstitutedPrimaryConstructor() != null) {
-                            typeInferrer.checkTypeInitializerCall(scopeForConstructor, typeReference, call);
+                            typeInferrer.getCallResolver().resolveCall(scopeForConstructor, call, NO_EXPECTED_TYPE);
                         }
                         else {
                             JetValueArgumentList valueArgumentList = call.getValueArgumentList();
@@ -644,7 +643,7 @@ public class TopDownAnalyzer {
             final JetScope scopeForConstructor = getInnerScopeForConstructor(primaryConstructor, classDescriptor.getScopeForMemberResolution(), true);
             JetTypeInferrer.Services typeInferrer = semanticServices.getTypeInferrerServices(traceForConstructors, JetFlowInformationProvider.NONE); // TODO : flow
             for (JetClassInitializer anonymousInitializer : anonymousInitializers) {
-                typeInferrer.getType(scopeForConstructor, anonymousInitializer.getBody(), true, JetTypeInferrer.NO_EXPECTED_TYPE);
+                typeInferrer.getType(scopeForConstructor, anonymousInitializer.getBody(), true, NO_EXPECTED_TYPE);
             }
         }
         else {
@@ -686,7 +685,7 @@ public class TopDownAnalyzer {
                     public void visitDelegationToSuperCallSpecifier(JetDelegatorToSuperCall call) {
                         JetTypeReference typeReference = call.getTypeReference();
                         if (typeReference != null) {
-                            typeInferrerForInitializers.checkTypeInitializerCall(functionInnerScope, typeReference, call);
+                            typeInferrerForInitializers.getCallResolver().resolveCall(functionInnerScope, call, NO_EXPECTED_TYPE);
                         }
                     }
 
@@ -694,13 +693,14 @@ public class TopDownAnalyzer {
                     public void visitDelegationToThisCall(JetDelegatorToThisCall call) {
                         // TODO : check that there's no recursion in this() calls
                         // TODO : check: if a this() call is present, no other initializers are allowed
-                        ClassDescriptor classDescriptor = descriptor.getContainingDeclaration();
-                        typeInferrerForInitializers.checkClassConstructorCall(
-                                functionInnerScope,
-                                call.getThisReference(),
-                                classDescriptor,
-                                classDescriptor.getDefaultType(),
-                                call);
+//                        ClassDescriptor classDescriptor = descriptor.getContainingDeclaration();
+//                        typeInferrerForInitializers.checkClassConstructorCall(
+//                                functionInnerScope,
+//                                call.getThisReference(),
+//                                classDescriptor,
+//                                classDescriptor.getDefaultType(),
+//                                call);
+                        trace.getErrorHandler().genericError(call.getNode(), "this-calls are not supported");
                     }
 
                     @Override
@@ -859,7 +859,7 @@ public class TopDownAnalyzer {
     private void resolvePropertyInitializer(JetProperty property, PropertyDescriptor propertyDescriptor, JetExpression initializer, JetScope scope) {
         JetFlowInformationProvider flowInformationProvider = classDescriptorResolver.computeFlowData(property, initializer); // TODO : flow JET-15
         JetTypeInferrer.Services typeInferrer = semanticServices.getTypeInferrerServices(traceForConstructors, flowInformationProvider);
-        JetType type = typeInferrer.getType(getPropertyDeclarationInnerScope(scope, propertyDescriptor), initializer, false, JetTypeInferrer.NO_EXPECTED_TYPE);
+        JetType type = typeInferrer.getType(getPropertyDeclarationInnerScope(scope, propertyDescriptor), initializer, false, NO_EXPECTED_TYPE);
 
         JetType expectedType;
         PropertySetterDescriptor setter = propertyDescriptor.getSetter();

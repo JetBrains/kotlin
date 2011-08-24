@@ -54,5 +54,4 @@ public class JetBinaryExpression extends JetExpression {
     public IElementType getOperationToken() {
         return getOperationReference().getReferencedNameElementType();
     }
-
 }

@@ -194,12 +194,12 @@ public class ConstraintSystem {
     private UnknownType getTypeVariable(TypeParameterDescriptor typeParameterDescriptor) {
         UnknownType unknownType = unknownTypes.get(typeParameterDescriptor);
         if (unknownType == null) {
-            throw new IllegalArgumentException("This type parameter is not an unknown in this constraint system");
+            throw new IllegalArgumentException("This type parameter is not an unknown in this constraint system: " + typeParameterDescriptor);
         }
         return unknownType;
     }
 
-    public void addSubtypingConstraint(JetType lower, JetType upper) {
+    public void addSubtypingConstraint(@NotNull JetType lower, @NotNull JetType upper) {
         TypeValue typeValueForLower = getTypeValueFor(lower);
         TypeValue typeValueForUpper = getTypeValueFor(upper);
         addSubtypingConstraintOnTypeValues(typeValueForLower, typeValueForUpper);

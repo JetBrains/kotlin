@@ -94,7 +94,9 @@ public class SubstitutingScope implements JetScope {
         if (allDescriptors == null) {
             allDescriptors = Sets.newHashSet();
             for (DeclarationDescriptor descriptor : workerScope.getAllDescriptors()) {
-                allDescriptors.add(descriptor.substitute(substitutor));
+                DeclarationDescriptor substitute = descriptor.substitute(substitutor);
+                assert substitute != null;
+                allDescriptors.add(substitute);
             }
         }
         return allDescriptors;

@@ -64,9 +64,17 @@ public class LazySubstitutingFunctionGroup implements FunctionGroup {
     @Override
     public Set<FunctionDescriptor> getFunctionDescriptors() {
         if (functionDescriptors == null) {
-            functionDescriptors = Sets.newHashSet();
-            for (FunctionDescriptor descriptor : functionGroup.getFunctionDescriptors()) {
-                functionDescriptors.add(descriptor.substitute(substitutor));
+            if (substitutor.isEmpty()) {
+                functionDescriptors = functionGroup.getFunctionDescriptors();
+            }
+            else {
+                functionDescriptors = Sets.newHashSet();
+                for (FunctionDescriptor descriptor : functionGroup.getFunctionDescriptors()) {
+                    FunctionDescriptor substitute = descriptor.substitute(substitutor);
+                    if (substitute != null) {
+                        functionDescriptors.add(substitute);
+                    }
+                }
             }
         }
         return functionDescriptors;

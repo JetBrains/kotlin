@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * @author max
  */
-public class JetDelegatorToThisCall extends JetDelegationSpecifier implements JetCall {
+public class JetDelegatorToThisCall extends JetDelegationSpecifier implements JetCallElement {
 
     public JetDelegatorToThisCall(@NotNull ASTNode node) {
         super(node);
@@ -38,7 +38,7 @@ public class JetDelegatorToThisCall extends JetDelegationSpecifier implements Je
     }
 
     @NotNull
-    public List<JetValueArgument> getValueArguments() {
+    public List<? extends ValueArgument> getValueArguments() {
         JetValueArgumentList list = getValueArgumentList();
         return list != null ? list.getArguments() : Collections.<JetValueArgument>emptyList();
     }
@@ -51,14 +51,13 @@ public class JetDelegatorToThisCall extends JetDelegationSpecifier implements Je
 
     @NotNull
     @Override
-    public JetElement asElement() {
-        return this;
-    }
-
-    @NotNull
-    @Override
     public List<JetTypeProjection> getTypeArguments() {
         return Collections.emptyList();
+    }
+
+    @Override
+    public JetTypeArgumentList getTypeArgumentList() {
+        return null;
     }
 
     public JetReferenceExpression getThisReference() {

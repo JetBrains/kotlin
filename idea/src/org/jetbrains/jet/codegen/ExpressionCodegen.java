@@ -828,7 +828,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         else {
             IntrinsicMethod intrinsic = (IntrinsicMethod) callable;
             List<JetExpression> args = new ArrayList<JetExpression>();
-            for (JetValueArgument argument : expression.getValueArguments()) {
+            for (ValueArgument argument : expression.getValueArguments()) {
                 args.add(argument.getArgumentExpression());
             }
             return intrinsic.generate(this, v, expressionType(expression), expression, args, receiver);
@@ -876,11 +876,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         return funDescriptor;
     }
 
-    public void invokeMethodWithArguments(CallableMethod callableMethod, JetCall expression) {
+    public void invokeMethodWithArguments(CallableMethod callableMethod, JetCallElement expression) {
         invokeMethodWithArguments(callableMethod, expression, StackValue.none());
     }
 
-    public void invokeMethodWithArguments(CallableMethod callableMethod, JetCall expression, StackValue receiver) {
+    public void invokeMethodWithArguments(CallableMethod callableMethod, JetCallElement expression, StackValue receiver) {
         final Type calleeType = callableMethod.getGenerateCalleeType();
         if (calleeType != null && expression instanceof JetCallExpression) {
             gen(expression.getCalleeExpression(), calleeType);
@@ -901,7 +901,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         callableMethod.invoke(v);
     }
 
-    private void setOwnerFromCall(CallableMethod callableMethod, JetCall expression) {
+    private void setOwnerFromCall(CallableMethod callableMethod, JetCallElement expression) {
         if (expression.getParent() instanceof JetQualifiedExpression) {
             final JetExpression receiver = ((JetQualifiedExpression) expression.getParent()).getReceiverExpression();
             JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, receiver);
@@ -993,10 +993,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         return false;
     }
 
-    private void pushMethodArguments(JetCall expression, List<Type> valueParameterTypes) {
-        List<JetValueArgument> args = expression.getValueArguments();
+    private void pushMethodArguments(JetCallElement expression, List<Type> valueParameterTypes) {
+        List<? extends ValueArgument> args = expression.getValueArguments();
         for (int i = 0, argsSize = args.size(); i < argsSize; i++) {
-            JetValueArgument arg = args.get(i);
+            ValueArgument arg = args.get(i);
             gen(arg.getArgumentExpression(), valueParameterTypes.get(i));
         }
     }
@@ -1430,7 +1430,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         return StackValue.onStack(type);
     }
 
-    private void pushTypeArguments(JetCall expression) {
+    private void pushTypeArguments(JetCallElement expression) {
         for (JetTypeProjection jetTypeArgument : expression.getTypeArguments()) {
             pushTypeArgument(jetTypeArgument);
         }
@@ -1458,7 +1458,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     }
 
     private void generateNewArray(JetCallExpression expression, Type type) {
-        List<JetValueArgument> args = expression.getValueArguments();
+        List<? extends ValueArgument> args = expression.getValueArguments();
         if (args.size() != 1) {
             throw new CompilationException("array constructor requires one value argument");
         }

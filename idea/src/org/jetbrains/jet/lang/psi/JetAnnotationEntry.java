@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * @author max
  */
-public class JetAnnotationEntry extends JetElement implements JetCall {
+public class JetAnnotationEntry extends JetElement implements JetCallElement {
     public JetAnnotationEntry(@NotNull ASTNode node) {
         super(node);
     }
@@ -48,7 +48,7 @@ public class JetAnnotationEntry extends JetElement implements JetCall {
 
     @NotNull
     @Override
-    public List<JetValueArgument> getValueArguments() {
+    public List<? extends ValueArgument> getValueArguments() {
         JetValueArgumentList list = getValueArgumentList();
         return list != null ? list.getArguments() : Collections.<JetValueArgument>emptyList();
     }
@@ -62,20 +62,25 @@ public class JetAnnotationEntry extends JetElement implements JetCall {
     @NotNull
     @Override
     public List<JetTypeProjection> getTypeArguments() {
-        JetTypeReference typeReference = getTypeReference();
-        if (typeReference != null) {
-            JetTypeElement typeElement = typeReference.getTypeElement();
-            if (typeElement instanceof JetUserType) {
-                JetUserType userType = (JetUserType) typeElement;
-                return userType.getTypeArguments();
-            }
+        JetTypeArgumentList typeArgumentList = getTypeArgumentList();
+        if (typeArgumentList == null) {
+            return Collections.emptyList();
         }
-        return Collections.emptyList();
+        return typeArgumentList.getArguments();
     }
 
-    @NotNull
     @Override
-    public JetElement asElement() {
-        return this;
+    public JetTypeArgumentList getTypeArgumentList() {
+        JetTypeReference typeReference = getTypeReference();
+        if (typeReference == null) {
+            return null;
+        }
+        JetTypeElement typeElement = typeReference.getTypeElement();
+        if (typeElement instanceof JetUserType) {
+            JetUserType userType = (JetUserType) typeElement;
+            return userType.getTypeArgumentList();
+        }
+        return null;
     }
+
 }
