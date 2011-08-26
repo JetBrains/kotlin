@@ -1478,6 +1478,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
         else {
             final PsiElement declaration = BindingContextUtils.resolveToDeclarationPsiElement(bindingContext, expression);
+            assert declaration != null : "No declaration found for " + expression.getText();
             final CallableMethod accessor;
             if (declaration instanceof PsiMethod) {
                 accessor = JetTypeMapper.mapToCallableMethod((PsiMethod) declaration);
@@ -1486,7 +1487,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 accessor = typeMapper.mapToCallableMethod((JetNamedFunction) declaration);
             }
             else {
-                throw new UnsupportedOperationException("unknown accessor type");
+                throw new UnsupportedOperationException("unknown accessor type: " + declaration);
             }
             boolean isGetter = accessor.getSignature().getName().equals("get");
             return StackValue.collectionElement(JetTypeMapper.TYPE_OBJECT, isGetter ? accessor : null,

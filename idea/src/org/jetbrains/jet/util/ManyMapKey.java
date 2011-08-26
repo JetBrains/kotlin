@@ -42,4 +42,9 @@ public final class ManyMapKey<K, V> {
         result = 31 * result + (key != null ? key.hashCode() : 0);
         return result;
     }
+
+    @Override
+    public String toString() {
+        return slice + " -> " + key;
+    }
 }

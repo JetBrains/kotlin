@@ -10,6 +10,8 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lang.CompositeErrorHandler;
+import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -228,7 +230,7 @@ public class JetTypeInferrer {
                 expectedReturnType = NO_EXPECTED_TYPE;
             }
             JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(outerScope, functionDescriptor, trace);
-            checkFunctionReturnType(functionInnerScope, function, expectedReturnType, dataFlowInfo);
+            checkFunctionReturnType(functionInnerScope, function, expectedReturnType, dataFlowInfo, CoercionStrategy.NO_COERCION);
     //        Map<JetElement, JetType> typeMap = collectReturnedExpressionsWithTypes(outerScope, function, functionDescriptor, expectedReturnType);
     //        if (typeMap.isEmpty()) {
     //            return; // The function returns Nothing
@@ -263,10 +265,10 @@ public class JetTypeInferrer {
         }
 
         public void checkFunctionReturnType(JetScope functionInnerScope, JetDeclarationWithBody function, @NotNull final JetType expectedReturnType) {
-            checkFunctionReturnType(functionInnerScope, function, expectedReturnType, DataFlowInfo.getEmpty());
+            checkFunctionReturnType(functionInnerScope, function, expectedReturnType, DataFlowInfo.getEmpty(), CoercionStrategy.NO_COERCION);
         }
 
-        private void checkFunctionReturnType(JetScope functionInnerScope, JetDeclarationWithBody function, @NotNull final JetType expectedReturnType, @NotNull DataFlowInfo dataFlowInfo) {
+        private void checkFunctionReturnType(JetScope functionInnerScope, JetDeclarationWithBody function, @NotNull final JetType expectedReturnType, @NotNull DataFlowInfo dataFlowInfo, CoercionStrategy coercionForLastExpression) {
             JetExpression bodyExpression = function.getBodyExpression();
             assert bodyExpression != null;
             
@@ -276,7 +278,13 @@ public class JetTypeInferrer {
                     ? new TypeInferenceContext(trace, functionInnerScope, function.hasBlockBody(), dataFlowInfo, NO_EXPECTED_TYPE, expectedReturnType)
                     : new TypeInferenceContext(trace, functionInnerScope, function.hasBlockBody(), dataFlowInfo, expectedReturnType, FORBIDDEN);
 
-            typeInferrerVisitor.getType(bodyExpression, context);
+            if (function instanceof JetFunctionLiteralExpression) {
+                JetFunctionLiteralExpression functionLiteralExpression = (JetFunctionLiteralExpression) function;
+                getBlockReturnedType(functionInnerScope, functionLiteralExpression.getBodyExpression(), CoercionStrategy.COERCION_TO_UNIT, context);
+            }
+            else {
+                typeInferrerVisitor.getType(bodyExpression, context);
+            }
 
             List<JetElement> unreachableElements = Lists.newArrayList();
             flowInformationProvider.collectUnreachableExpressions(function.asElement(), unreachableElements);
@@ -326,6 +334,18 @@ public class JetTypeInferrer {
             }
         }
 
+        @Nullable
+        private JetType getBlockReturnedType(@NotNull JetScope outerScope, @NotNull JetBlockExpression expression, @NotNull CoercionStrategy coercionStrategyForLastExpression, TypeInferenceContext context) {
+            List<JetElement> block = expression.getStatements();
+            if (block.isEmpty()) {
+                return checkType(JetStandardClasses.getUnitType(), expression, context);
+            }
+
+            DeclarationDescriptor containingDescriptor = outerScope.getContainingDeclaration();
+            WritableScope scope = new WritableScopeImpl(outerScope, containingDescriptor, context.trace.getErrorHandler()).setDebugName("getBlockReturnedType");
+            return getBlockReturnedTypeWithWritableScope(scope, block, coercionStrategyForLastExpression, context);
+        }
+
         @NotNull
         public JetType inferFunctionReturnType(@NotNull JetScope outerScope, JetDeclarationWithBody function, FunctionDescriptor functionDescriptor) {
             Map<JetElement, JetType> typeMap = collectReturnedExpressionsWithTypes(trace, outerScope, function, functionDescriptor);
@@ -361,7 +381,7 @@ public class JetTypeInferrer {
             return typeMap;
         }
 
-        private JetType getBlockReturnedTypeWithWritableScope(@NotNull WritableScope scope, @NotNull List<? extends JetElement> block, TypeInferenceContext context) {
+        private JetType getBlockReturnedTypeWithWritableScope(@NotNull WritableScope scope, @NotNull List<? extends JetElement> block, @NotNull CoercionStrategy coercionStrategyForLastExpression, TypeInferenceContext context) {
             if (block.isEmpty()) {
                 return JetStandardClasses.getUnitType();
             }
@@ -371,15 +391,42 @@ public class JetTypeInferrer {
 
             JetType result = null;
             for (Iterator<? extends JetElement> iterator = block.iterator(); iterator.hasNext(); ) {
-                JetElement statement = iterator.next();
+                final JetElement statement = iterator.next();
                 trace.record(STATEMENT, statement);
-                JetExpression statementExpression = (JetExpression) statement;
+                final JetExpression statementExpression = (JetExpression) statement;
                 //TODO constructor assert context.expectedType != FORBIDDEN : ""
                 if (!iterator.hasNext() && context.expectedType != NO_EXPECTED_TYPE) {
-                    newContext = new TypeInferenceContext(trace, scope, true, newContext.dataFlowInfo, context.expectedType, context.expectedReturnType);
+                    if (coercionStrategyForLastExpression == CoercionStrategy.COERCION_TO_UNIT && JetStandardClasses.isUnit(context.expectedType)) {
+                        // This implements coercion to Unit
+                        TemporaryBindingTrace temporaryTraceExpectingUnit = TemporaryBindingTrace.create(trace);
+                        final boolean[] mismatch = new boolean[1];
+                        BindingTraceAdapter errorInterceptingTrace = makeTraceInterceptingTypeMismatch(temporaryTraceExpectingUnit, statementExpression, mismatch);
+                        newContext = new TypeInferenceContext(errorInterceptingTrace, scope, true, newContext.dataFlowInfo, context.expectedType, context.expectedReturnType);
+                        result = blockLevelVisitor.getType(statementExpression, newContext);
+                        if (mismatch[0]) {
+                            TemporaryBindingTrace temporaryTraceNoExpectedType = TemporaryBindingTrace.create(trace);
+                            mismatch[0] = false;
+                            BindingTraceAdapter interceptingTrace = makeTraceInterceptingTypeMismatch(temporaryTraceNoExpectedType, statementExpression, mismatch);
+                            newContext = new TypeInferenceContext(interceptingTrace, scope, true, newContext.dataFlowInfo, NO_EXPECTED_TYPE, context.expectedReturnType);
+                            result = blockLevelVisitor.getType(statementExpression, newContext);
+                            if (mismatch[0]) {
+                                temporaryTraceExpectingUnit.commit();
+                            }
+                            else {
+                                temporaryTraceNoExpectedType.commit();
+                            }
+                        }
+
+                    }
+                    else {
+                        newContext = new TypeInferenceContext(trace, scope, true, newContext.dataFlowInfo, context.expectedType, context.expectedReturnType);
+                        result = blockLevelVisitor.getType(statementExpression, newContext);
+                    }
+                }
+                else {
+                    result = blockLevelVisitor.getType(statementExpression, newContext);
                 }
 
-                result = blockLevelVisitor.getType(statementExpression, newContext);
                 DataFlowInfo newDataFlowInfo = blockLevelVisitor.getResultingDataFlowInfo();
                 if (newDataFlowInfo == null) {
                     newDataFlowInfo = context.dataFlowInfo;
@@ -390,6 +437,23 @@ public class JetTypeInferrer {
                 blockLevelVisitor.resetResult(); // TODO : maybe it's better to recreate the visitors with the same scope?
             }
             return result;
+        }
+
+        private BindingTraceAdapter makeTraceInterceptingTypeMismatch(final BindingTrace trace, JetExpression expression, final boolean[] mismatchFound) {
+            return new BindingTraceAdapter(trace) {
+                                    @NotNull
+                                    @Override
+                                    public ErrorHandler getErrorHandler() {
+                                        return new CompositeErrorHandler(super.getErrorHandler(), new ErrorHandler() {
+                                            @Override
+                                            public void typeMismatch(@NotNull JetExpression expression, @NotNull JetType expectedType, @NotNull JetType actualType) {
+                                                if (expression == expression) {
+                                                    mismatchFound[0] = true;
+                                                }
+                                            }
+                                        });
+                                    }
+                                };
         }
 
         //TODO
@@ -482,17 +546,22 @@ public class JetTypeInferrer {
             }
             return variableDescriptor;
         }
-
     }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    private enum CoercionStrategy {
+        NO_COERCION,
+        COERCION_TO_UNIT
+    }
+
     private class TypeInferenceContext {
         public final BindingTrace trace;
+
         public final TypeResolver typeResolver;
         public final ClassDescriptorResolver classDescriptorResolver;
-
         public final JetScope scope;
+
         public final Services services;
         public final boolean preferBlock;
         public final DataFlowInfo dataFlowInfo;
@@ -516,7 +585,6 @@ public class JetTypeInferrer {
             this.dataFlowInfo = dataFlowInfo;
             this.expectedType = expectedType;
             this.expectedReturnType = expectedReturnType;
-            
         }
 
         public TypeInferenceContext replaceDataFlowInfo(DataFlowInfo newDataFlowInfo) {
@@ -610,18 +678,6 @@ public class JetTypeInferrer {
                 context.trace.getErrorHandler().genericError(rootExpression.getNode(),
                         "This code is unreachable, because '" + expression.getText() + "' never terminates normally");
             }
-        }
-
-        @Nullable
-        private JetType getBlockReturnedType(@NotNull JetScope outerScope, @NotNull JetBlockExpression expression, TypeInferenceContext context) {
-            List<JetElement> block = expression.getStatements();
-            if (block.isEmpty()) {
-                return context.services.checkType(JetStandardClasses.getUnitType(), expression, context);
-            }
-
-            DeclarationDescriptor containingDescriptor = outerScope.getContainingDeclaration();
-            WritableScope scope = new WritableScopeImpl(outerScope, containingDescriptor, context.trace.getErrorHandler()).setDebugName("getBlockReturnedType");
-            return context.services.getBlockReturnedTypeWithWritableScope(scope, block, context);
         }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -742,7 +798,7 @@ public class JetTypeInferrer {
             JetFunctionLiteral functionLiteral = expression.getFunctionLiteral();
             if (context.preferBlock && !functionLiteral.hasParameterSpecification()) {
                 context.trace.record(BindingContext.BLOCK, expression);
-                return context.services.checkType(getBlockReturnedType(context.scope, functionLiteral.getBodyExpression(), context), expression, context);
+                return context.services.checkType(context.services.getBlockReturnedType(context.scope, functionLiteral.getBodyExpression(), CoercionStrategy.NO_COERCION, context), expression, context);
             }
 
             JetTypeReference receiverTypeRef = functionLiteral.getReceiverTypeRef();
@@ -809,18 +865,22 @@ public class JetTypeInferrer {
             JetTypeReference returnTypeRef = functionLiteral.getReturnTypeRef();
             if (returnTypeRef != null) {
                 returnType = context.typeResolver.resolveType(context.scope, returnTypeRef);
-                context.services.checkFunctionReturnType(functionInnerScope, expression, returnType, context.dataFlowInfo);
+                context.services.checkFunctionReturnType(functionInnerScope, expression, returnType, context.dataFlowInfo, CoercionStrategy.COERCION_TO_UNIT);
             }
             else {
                 if (functionTypeExpected) {
                     returnType = JetStandardClasses.getReturnType(expectedType);
                 }
-                returnType = getBlockReturnedType(functionInnerScope, functionLiteral.getBodyExpression(), context.replaceExpectedType(returnType));
+                returnType = context.services.getBlockReturnedType(functionInnerScope, functionLiteral.getBodyExpression(), CoercionStrategy.COERCION_TO_UNIT, context.replaceExpectedType(returnType));
             }
             JetType safeReturnType = returnType == null ? ErrorUtils.createErrorType("<return type>") : returnType;
             functionDescriptor.setReturnType(safeReturnType);
 
             if (functionTypeExpected) {
+                JetType expectedReturnType = JetStandardClasses.getReturnType(expectedType);
+                if (JetStandardClasses.isUnit(expectedReturnType)) {
+                    return context.services.checkType(JetStandardClasses.getFunctionType(Collections.<AnnotationDescriptor>emptyList(), effectiveReceiverType, parameterTypes, expectedReturnType), expression, context);
+                }
 
             }
             return context.services.checkType(JetStandardClasses.getFunctionType(Collections.<AnnotationDescriptor>emptyList(), effectiveReceiverType, parameterTypes, safeReturnType), expression, context);
@@ -1082,7 +1142,7 @@ public class JetTypeInferrer {
 
         @Override
         public JetType visitBlockExpression(JetBlockExpression expression, TypeInferenceContext context) {
-            return context.services.checkType(getBlockReturnedType(context.scope, expression, context), expression, context);
+            return context.services.checkType(context.services.getBlockReturnedType(context.scope, expression, CoercionStrategy.NO_COERCION, context), expression, context);
         }
 
         @Override
@@ -1561,7 +1621,7 @@ public class JetTypeInferrer {
                 if (!function.getFunctionLiteral().hasParameterSpecification()) {
                     WritableScope writableScope = newWritableScopeImpl(context.scope, context.trace).setDebugName("do..while body scope");
                     conditionScope = writableScope;
-                    context.services.getBlockReturnedTypeWithWritableScope(writableScope, function.getFunctionLiteral().getBodyExpression().getStatements(), context);
+                    context.services.getBlockReturnedTypeWithWritableScope(writableScope, function.getFunctionLiteral().getBodyExpression().getStatements(), CoercionStrategy.NO_COERCION, context);
                     context.trace.record(BindingContext.BLOCK, function);
                 } else {
                     getType(context.scope, body, true, context);
@@ -1570,7 +1630,7 @@ public class JetTypeInferrer {
             else if (body != null) {
                 WritableScope writableScope = newWritableScopeImpl(context.scope, context.trace).setDebugName("do..while body scope");
                 conditionScope = writableScope;
-                context.services.getBlockReturnedTypeWithWritableScope(writableScope, Collections.singletonList(body), context);
+                context.services.getBlockReturnedTypeWithWritableScope(writableScope, Collections.singletonList(body), CoercionStrategy.NO_COERCION, context);
             }
             JetExpression condition = expression.getCondition();
             checkCondition(conditionScope, condition, context);
@@ -2368,14 +2428,15 @@ public class JetTypeInferrer {
 //            context.services.callResolver.resolveCallWithGivenName(
 //                    scope,
 //                    call,
-//                    operationSign,
+//                    arrayAccessExpression,
 //                    "set", arrayAccessExpression.getArrayExpression(), NO_EXPECTED_TYPE);
             FunctionDescriptor functionDescriptor = context.services.callResolver.resolveCallWithGivenName(
                                 scope,
                                 call,
-                                operationSign,
+                                arrayAccessExpression,
                                 "set", receiverType, NO_EXPECTED_TYPE);
             if (functionDescriptor == null) return null;
+            context.trace.record(REFERENCE_TARGET, operationSign, functionDescriptor);
             return context.services.checkType(functionDescriptor.getReturnType(), arrayAccessExpression, context);
         }
 
