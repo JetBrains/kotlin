@@ -352,8 +352,8 @@ public class CallResolver {
                     error = true;
                 }
                 else {
-                    ValueParameterDescriptor valueParameterDescriptor = parameterByName.get(valueArgument.getArgumentName().getName());
-                    if (usedParameters.add(valueParameterDescriptor)) {
+                    ValueParameterDescriptor valueParameterDescriptor = parameterByName.get(valueArgument.getArgumentName().getReferenceExpression().getReferencedName());
+                    if (!usedParameters.add(valueParameterDescriptor)) {
                         temporaryTrace.getErrorHandler().genericError(nameNode, "An argument is already passed for this parameter");
                     }
                     if (valueParameterDescriptor == null) {
@@ -467,7 +467,10 @@ public class CallResolver {
             Map<ValueArgument, ValueParameterDescriptor> argumentsToParameters = Maps.newHashMap();
             boolean error = mapValueArgumentsToParameters(task, tracing, candidate, temporaryTrace, argumentsToParameters);
 
-            if (error) continue;
+            if (error) {
+                failedCandidates.add(candidate);
+                continue;
+            }
 
             if (task.getTypeArguments().isEmpty()) {
                 if (candidate.getTypeParameters().isEmpty()) {
