@@ -298,7 +298,7 @@ JetFile: FunctionLiterals_ERR.jet
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('T')
             PsiElement(DOT)('.')
-            PsiErrorElement:To specify a receiverType type, use the full notation: {ReceiverType.(parameters) [: ReturnType] => ...}
+            PsiErrorElement:To specify a receiver type, use the full notation: {ReceiverType.(parameters) [: ReturnType] => ...}
               PsiElement(IDENTIFIER)('a')
               PsiWhiteSpace(' ')
               PsiElement(COLON)(':')
