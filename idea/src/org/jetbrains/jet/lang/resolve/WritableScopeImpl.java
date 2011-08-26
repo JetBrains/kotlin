@@ -196,49 +196,28 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     public FunctionGroup getFunctionGroup(@NotNull String name) {
         addVariablesAsFunctions();
 
+        WritableFunctionGroup result = new WritableFunctionGroup(name);
+        
         FunctionGroup functionGroup = getFunctionGroups().get(name);
-        FunctionGroup constructors = null;
-        ClassifierDescriptor classifier = getClassifier(name);
-        if (classifier instanceof ClassDescriptor) {
-            ClassDescriptor classDescriptor = (ClassDescriptor) classifier;
-            constructors = classDescriptor.getConstructors();
+        if (functionGroup != null) {
+            result.addAllFunctions(functionGroup);
         }
-        if (functionGroup != null && !functionGroup.isEmpty()) {
-            if (constructors != null) {
-                WritableFunctionGroup result = new WritableFunctionGroup(name);
-                for (FunctionDescriptor functionDescriptor : functionGroup.getFunctionDescriptors()) {
-                    result.addFunction(functionDescriptor);
-                }
-                for (FunctionDescriptor functionDescriptor : constructors.getFunctionDescriptors()) {
-                    result.addFunction(functionDescriptor);
-                }
-                return result;
-            }
-            return functionGroup;
-        }
-
-        if (constructors != null && !constructors.isEmpty()) {
-            return constructors;
-        }
+        
+//        ClassifierDescriptor classifier = getClassifier(name);
+//        if (classifier instanceof ClassDescriptor) {
+//            ClassDescriptor classDescriptor = (ClassDescriptor) classifier;
+//            result.addAllFunctions(classDescriptor.getConstructors());
+//        }
 
         if (thisType != null) {
-            functionGroup = getThisType().getMemberScope().getFunctionGroup(name);
-            if (!functionGroup.isEmpty()) {
-                return functionGroup;
-            }
+            result.addAllFunctions(getThisType().getMemberScope().getFunctionGroup(name));
         }
 
-        // TODO : this logic is questionable
-        functionGroup = getWorkerScope().getFunctionGroup(name);
-        if (!functionGroup.isEmpty()) return functionGroup;
-//        for (JetScope imported : getImports()) {
-//            FunctionGroup importedDescriptor = imported.getFunctionGroup(name);
-//            if (!importedDescriptor.isEmpty()) {
-//                return importedDescriptor;
-//            }
-//        }
-//        return functionGroup;
-        return super.getFunctionGroup(name);
+        result.addAllFunctions(getWorkerScope().getFunctionGroup(name));
+
+        result.addAllFunctions(super.getFunctionGroup(name));
+
+        return result;
     }
 
     private void addVariablesAsFunctions() {

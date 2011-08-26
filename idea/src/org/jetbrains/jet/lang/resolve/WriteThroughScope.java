@@ -48,13 +48,15 @@ public class WriteThroughScope extends WritableScopeWithImports {
     @Override
     @NotNull
     public FunctionGroup getFunctionGroup(@NotNull String name) {
-        FunctionGroup functionGroup = writableWorker.getFunctionGroup(name);
-        if (!functionGroup.isEmpty()) return functionGroup; // TODO : Overloads from different places
+        WritableFunctionGroup result = new WritableFunctionGroup(name);
 
-        functionGroup = getWorkerScope().getFunctionGroup(name);
-        if (!functionGroup.isEmpty()) return functionGroup; // TODO : Overloads from different places
+        result.addAllFunctions(writableWorker.getFunctionGroup(name));
 
-        return super.getFunctionGroup(name); // Imports
+        result.addAllFunctions(getWorkerScope().getFunctionGroup(name));
+
+        result.addAllFunctions(super.getFunctionGroup(name)); // Imports
+
+        return result;
     }
 
     @Override

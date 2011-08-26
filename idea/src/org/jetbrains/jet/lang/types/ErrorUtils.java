@@ -4,7 +4,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.JetScope;
-import org.jetbrains.jet.lang.resolve.OverloadResolutionResult;
 
 import java.util.*;
 
@@ -77,13 +76,6 @@ public class ErrorUtils {
         @Override
         public String getName() {
             return "<ERROR FUNCTION>";
-        }
-
-        @NotNull
-        @Override
-        public OverloadResolutionResult getPossiblyApplicableFunctions(@NotNull List<JetType> typeArguments, @NotNull List<JetType> positionedValueArgumentTypes) {
-            List<TypeParameterDescriptor> typeParameters = Collections.<TypeParameterDescriptor>emptyList();
-            return OverloadResolutionResult.success(createErrorFunction(typeParameters, positionedValueArgumentTypes));
         }
 
         @Override

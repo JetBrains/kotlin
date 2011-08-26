@@ -478,6 +478,8 @@ public class TopDownAnalyzer {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private void resolveBehaviorDeclarationBodies() {
+        bindOverrides();
+
         resolveDelegationSpecifierLists();
         resolveClassAnnotations();
 
@@ -488,8 +490,6 @@ public class TopDownAnalyzer {
         resolveFunctionBodies();
 
         checkIfPrimaryConstructorIsNecessary();
-
-        bindOverrides();
     }
 
     private void bindOverrides() {
@@ -580,7 +580,7 @@ public class TopDownAnalyzer {
                     JetTypeReference typeReference = call.getTypeReference();
                     if (typeReference != null) {
                         if (descriptor.getUnsubstitutedPrimaryConstructor() != null) {
-                            typeInferrer.getCallResolver().resolveCall(scopeForConstructor, call, NO_EXPECTED_TYPE);
+                            typeInferrer.getCallResolver().resolveCall(scopeForConstructor, null, call, NO_EXPECTED_TYPE);
                         }
                         else {
                             JetValueArgumentList valueArgumentList = call.getValueArgumentList();
@@ -685,7 +685,7 @@ public class TopDownAnalyzer {
                     public void visitDelegationToSuperCallSpecifier(JetDelegatorToSuperCall call) {
                         JetTypeReference typeReference = call.getTypeReference();
                         if (typeReference != null) {
-                            typeInferrerForInitializers.getCallResolver().resolveCall(functionInnerScope, call, NO_EXPECTED_TYPE);
+                            typeInferrerForInitializers.getCallResolver().resolveCall(functionInnerScope, null, call, NO_EXPECTED_TYPE);
                         }
                     }
 

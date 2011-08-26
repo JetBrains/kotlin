@@ -11,7 +11,10 @@ import com.intellij.psi.search.GlobalSearchScope;
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestCaseBase;
+import org.jetbrains.jet.lang.JetSemanticServices;
+import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.OverloadResolutionResult;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.parsing.JetParsingTest;
@@ -100,9 +103,10 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
 
     @NotNull
     private FunctionDescriptor standardFunction(ClassDescriptor classDescriptor, List<TypeProjection> typeArguments, String name, JetType... parameterType) {
-        FunctionGroup functionGroup = classDescriptor.getMemberScope(typeArguments).getFunctionGroup(name);
         List<JetType> parameterTypeList = Arrays.asList(parameterType);
-        OverloadResolutionResult functions = functionGroup.getPossiblyApplicableFunctions(Collections.<JetType>emptyList(), parameterTypeList);
+        JetTypeInferrer.Services typeInferrerServices = JetSemanticServices.createSemanticServices(getProject()).getTypeInferrerServices(new BindingTraceContext(), JetFlowInformationProvider.NONE);
+
+        OverloadResolutionResult functions = typeInferrerServices.getCallResolver().resolveExactSignature(classDescriptor.getMemberScope(typeArguments), null, name, parameterTypeList);
         for (FunctionDescriptor function : functions.getFunctionDescriptors()) {
             List<ValueParameterDescriptor> unsubstitutedValueParameters = function.getValueParameters();
             for (int i = 0, unsubstitutedValueParametersSize = unsubstitutedValueParameters.size(); i < unsubstitutedValueParametersSize; i++) {

@@ -3,10 +3,7 @@ package org.jetbrains.jet.lang.resolve;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.ErrorHandler;
-import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionGroup;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,13 +60,17 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
     @NotNull
     @Override
     public FunctionGroup getFunctionGroup(@NotNull String name) {
+        if (getImports().isEmpty()) {
+            return FunctionGroup.EMPTY;
+        }
+        WritableFunctionGroup result = new WritableFunctionGroup(name);
         for (JetScope imported : getImports()) {
-            FunctionGroup importedDescriptor = imported.getFunctionGroup(name);
-            if (!importedDescriptor.isEmpty()) {
-                return importedDescriptor;
+            FunctionGroup importedFunctions = imported.getFunctionGroup(name);
+            if (!importedFunctions.isEmpty()) {
+                result.addAllFunctions(importedFunctions);
             }
         }
-        return FunctionGroup.EMPTY;
+        return result;
     }
 
     @Override

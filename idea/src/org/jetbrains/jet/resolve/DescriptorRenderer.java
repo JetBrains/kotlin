@@ -183,8 +183,7 @@ public class DescriptorRenderer {
         @Override
         public Void visitFunctionDescriptor(FunctionDescriptor descriptor, StringBuilder builder) {
             builder.append(renderKeyword("fun")).append(" ");
-            List<TypeParameterDescriptor> typeParameters = descriptor.getTypeParameters();
-            renderTypeParameters(typeParameters, builder);
+            renderTypeParameters(descriptor.getTypeParameters(), builder);
 
             JetType receiverType = descriptor.getReceiverType();
             if (receiverType != null) {
@@ -192,6 +191,12 @@ public class DescriptorRenderer {
             }
 
             renderName(descriptor, builder);
+            renderValueParameters(descriptor, builder);
+            builder.append(" : ").append(escape(renderType(descriptor.getReturnType())));
+            return super.visitFunctionDescriptor(descriptor, builder);
+        }
+
+        private void renderValueParameters(FunctionDescriptor descriptor, StringBuilder builder) {
             builder.append("(");
             for (Iterator<ValueParameterDescriptor> iterator = descriptor.getValueParameters().iterator(); iterator.hasNext(); ) {
                 ValueParameterDescriptor parameterDescriptor = iterator.next();
@@ -200,8 +205,19 @@ public class DescriptorRenderer {
                     builder.append(", ");
                 }
             }
-            builder.append(") : ").append(escape(renderType(descriptor.getReturnType())));
-            return super.visitFunctionDescriptor(descriptor, builder);
+            builder.append(")");
+        }
+
+        @Override
+        public Void visitConstructorDescriptor(ConstructorDescriptor constructorDescriptor, StringBuilder builder) {
+            builder.append(renderKeyword("ctor")).append(" ");
+
+            ClassDescriptor classDescriptor = constructorDescriptor.getContainingDeclaration();
+            builder.append(classDescriptor.getName());
+
+            renderTypeParameters(classDescriptor.getTypeConstructor().getParameters(), builder);
+            renderValueParameters(constructorDescriptor, builder);
+            return null;
         }
 
         private void renderTypeParameters(List<TypeParameterDescriptor> typeParameters, StringBuilder builder) {

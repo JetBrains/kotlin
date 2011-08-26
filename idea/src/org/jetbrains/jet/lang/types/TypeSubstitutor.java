@@ -6,7 +6,6 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.SubstitutingScope;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -16,6 +15,18 @@ import java.util.Map;
 public class TypeSubstitutor {
 
     public interface TypeSubstitution {
+        TypeSubstitution EMPTY = new TypeSubstitution() {
+            @Override
+            public TypeProjection get(TypeConstructor key) {
+                return null;
+            }
+
+            @Override
+            public boolean isEmpty() {
+                return true;
+            }
+        };
+        
         @Nullable
         TypeProjection get(TypeConstructor key);
         boolean isEmpty();
@@ -39,7 +50,7 @@ public class TypeSubstitutor {
         }
     }
 
-    public static final TypeSubstitutor EMPTY = create(Collections.<TypeConstructor, TypeProjection>emptyMap());
+    public static final TypeSubstitutor EMPTY = create(TypeSubstitution.EMPTY);
 
     public static final class SubstitutionException extends Exception {
         public SubstitutionException(String message) {
@@ -61,14 +72,23 @@ public class TypeSubstitutor {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private final @NotNull TypeSubstitution substitutionContext;
+    private final @NotNull TypeSubstitution substitution;
 
-    private TypeSubstitutor(@NotNull TypeSubstitution substitutionContext) {
-        this.substitutionContext = substitutionContext;
+    protected TypeSubstitutor(@NotNull TypeSubstitution substitution) {
+        this.substitution = substitution;
+    }
+
+    public boolean inRange(@NotNull TypeConstructor typeConstructor) {
+        return substitution.get(typeConstructor) != null;
     }
 
     public boolean isEmpty() {
-        return substitutionContext.isEmpty();
+        return substitution.isEmpty();
+    }
+
+    @NotNull
+    public TypeSubstitution getSubstitution() {
+        return substitution;
     }
 
     @NotNull
@@ -100,7 +120,7 @@ public class TypeSubstitutor {
     @NotNull
     private JetType unsafeSubstitute(@NotNull JetType type, @NotNull Variance howThisTypeIsUsed) throws SubstitutionException {
         TypeConstructor constructor = type.getConstructor();
-        TypeProjection value = substitutionContext.get(constructor);
+        TypeProjection value = substitution.get(constructor);
         if (value != null) {
             assert constructor.getDeclarationDescriptor() instanceof TypeParameterDescriptor;
 
@@ -122,7 +142,7 @@ public class TypeSubstitutor {
             TypeProjection argument = arguments.get(i);
             TypeParameterDescriptor parameterDescriptor = subjectType.getConstructor().getParameters().get(i);
             newArguments.add(substituteInProjection(
-                    substitutionContext,
+                    substitution,
                     argument,
                     parameterDescriptor,
                     callSiteVariance));

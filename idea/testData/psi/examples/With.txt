@@ -23,7 +23,7 @@ JetFile: With.jet
       VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
         VALUE_PARAMETER
-          PsiElement(IDENTIFIER)('receiver')
+          PsiElement(IDENTIFIER)('receiverType')
           PsiWhiteSpace(' ')
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
@@ -63,7 +63,7 @@ JetFile: With.jet
       PsiWhiteSpace(' ')
       DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('receiver')
+          PsiElement(IDENTIFIER)('receiverType')
         PsiElement(DOT)('.')
         CALL_EXPRESSION
           REFERENCE_EXPRESSION

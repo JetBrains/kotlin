@@ -2,11 +2,8 @@ package org.jetbrains.jet.lang.descriptors;
 
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.OverloadResolutionResult;
-import org.jetbrains.jet.lang.types.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -15,6 +12,7 @@ import java.util.Set;
 public class WritableFunctionGroup implements FunctionGroup {
     private final String name;
     private Set<FunctionDescriptor> functionDescriptors;
+    private Set<FunctionDescriptor> unmodifiableFunctionDescriptors;
 
     public WritableFunctionGroup(String name) {
         this.name = name;
@@ -34,51 +32,32 @@ public class WritableFunctionGroup implements FunctionGroup {
     }
 
     public void addFunction(@NotNull FunctionDescriptor functionDescriptor) {
-        getFunctionDescriptors().add(functionDescriptor);
+        getWritableFunctionDescriptors().add(functionDescriptor);
     }
 
+    @Override
     @NotNull
     public Set<FunctionDescriptor> getFunctionDescriptors() {
+        if (unmodifiableFunctionDescriptors == null) {
+            unmodifiableFunctionDescriptors = Collections.unmodifiableSet(getWritableFunctionDescriptors());
+        }
+        return unmodifiableFunctionDescriptors;
+    }
+
+    private Set<FunctionDescriptor> getWritableFunctionDescriptors() {
         if (functionDescriptors == null) {
             functionDescriptors = Sets.newLinkedHashSet();
         }
         return functionDescriptors;
     }
 
-    @NotNull
-    @Override
-    public OverloadResolutionResult getPossiblyApplicableFunctions(@NotNull List<JetType> typeArguments, @NotNull List<JetType> positionedValueArgumentTypes) {
-        Set<FunctionDescriptor> functionDescriptors = getFunctionDescriptors();
-        if (functionDescriptors.isEmpty()) return OverloadResolutionResult.nameNotFound();
-
-        int typeArgCount = typeArguments.size();
-        int valueArgCount = positionedValueArgumentTypes.size();
-        List<FunctionDescriptor> result = new ArrayList<FunctionDescriptor>();
-        for (FunctionDescriptor functionDescriptor : functionDescriptors) {
-            // TODO : type argument inference breaks this logic
-            if (functionDescriptor.getTypeParameters().size() == typeArgCount) {
-                if (FunctionDescriptorUtil.getMinimumArity(functionDescriptor) <= valueArgCount &&
-                        valueArgCount <= FunctionDescriptorUtil.getMaximumArity(functionDescriptor)) {
-                    FunctionDescriptor substitutedFunctionDescriptor = FunctionDescriptorUtil.substituteFunctionDescriptor(typeArguments, functionDescriptor);
-                    assert substitutedFunctionDescriptor != null;
-                    result.add(substitutedFunctionDescriptor);
-                }
-            }
-        }
-        if (result.isEmpty()) {
-            assert !functionDescriptors.isEmpty();
-            if (functionDescriptors.size() == 1) {
-                return OverloadResolutionResult.singleFunctionArgumentMismatch(functionDescriptors.iterator().next());
-            }
-        }
-        if (result.size() == 1) {
-            return OverloadResolutionResult.success(result.get(0));
-        }
-        return OverloadResolutionResult.ambiguity(result);
-    }
-
     @Override
     public boolean isEmpty() {
         return functionDescriptors == null || functionDescriptors.isEmpty();
+    }
+
+    public void addAllFunctions(@NotNull FunctionGroup functionGroup) {
+        if (functionGroup.isEmpty()) return;
+        getWritableFunctionDescriptors().addAll(functionGroup.getFunctionDescriptors());
     }
 }

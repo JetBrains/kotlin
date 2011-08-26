@@ -55,11 +55,16 @@ public class ChainedScope implements JetScope {
     @NotNull
     @Override
     public FunctionGroup getFunctionGroup(@NotNull String name) {
-        for (JetScope jetScope : scopeChain) {
-            FunctionGroup functionGroup = jetScope.getFunctionGroup(name);
-            if (!functionGroup.isEmpty()) return functionGroup;
+        if (scopeChain.length == 0) {
+            return FunctionGroup.EMPTY;
         }
-        return FunctionGroup.EMPTY;
+
+        WritableFunctionGroup result = new WritableFunctionGroup(name);
+        for (JetScope jetScope : scopeChain) {
+            result.addAllFunctions(jetScope.getFunctionGroup(name));
+        }
+
+        return result;
     }
 
     @NotNull

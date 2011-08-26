@@ -14,7 +14,6 @@ import java.util.Collection;
 public class SubstitutingScope implements JetScope {
 
     private final JetScope workerScope;
-//    private final Map<TypeConstructor, TypeProjection> substitutionContext;
     private final TypeSubstitutor substitutor;
     private Collection<DeclarationDescriptor> allDescriptors;
 
@@ -60,7 +59,7 @@ public class SubstitutingScope implements JetScope {
     @Override
     public FunctionGroup getFunctionGroup(@NotNull String name) {
         FunctionGroup functionGroup = workerScope.getFunctionGroup(name);
-        if (substitutor.isEmpty()) {
+        if (substitutor.isEmpty() || functionGroup.isEmpty()) {
             return functionGroup;
         }
         return new LazySubstitutingFunctionGroup(substitutor, functionGroup);

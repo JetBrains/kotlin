@@ -16,27 +16,40 @@ import java.util.List;
 public class LazySubstitutingClassDescriptor implements ClassDescriptor {
 
     private final ClassDescriptor original;
+    private final TypeSubstitutor originalSubstitutor;
+    private TypeSubstitutor newSubstitutor;
+    private List<TypeParameterDescriptor> typeParameters;
     private TypeConstructor typeConstructor;
-    private final TypeSubstitutor substitutor;
 
     public LazySubstitutingClassDescriptor(ClassDescriptor descriptor, TypeSubstitutor substitutor) {
         this.original = descriptor;
-        this.substitutor = substitutor;
+        this.originalSubstitutor = substitutor;
     }
 
+    private TypeSubstitutor getSubstitutor() {
+        if (newSubstitutor == null) {
+            if (originalSubstitutor.isEmpty()) {
+                newSubstitutor = originalSubstitutor;
+            }
+            else {
+                typeParameters = Lists.newArrayList();
+                newSubstitutor = DescriptorSubstitutor.substituteTypeParameters(original.getTypeConstructor().getParameters(), originalSubstitutor, this, typeParameters);
+            }
+        }
+        return newSubstitutor;
+    }
+    
     @NotNull
     @Override
     public TypeConstructor getTypeConstructor() {
         TypeConstructor originalTypeConstructor = original.getTypeConstructor();
-        if (substitutor.isEmpty()) {
+        if (originalSubstitutor.isEmpty()) {
             return originalTypeConstructor;
         }
 
         if (typeConstructor == null) {
-            List<TypeParameterDescriptor> parameters = Lists.newArrayList();
-            for (TypeParameterDescriptor parameterDescriptor : originalTypeConstructor.getParameters()) {
-                parameters.add(parameterDescriptor.substitute(substitutor));
-            }
+            TypeSubstitutor substitutor = getSubstitutor();
+
             Collection<JetType> supertypes = Lists.newArrayList();
             for (JetType supertype : originalTypeConstructor.getSupertypes()) {
                 supertypes.add(substitutor.substitute(supertype, Variance.INVARIANT));
@@ -47,7 +60,7 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
                     originalTypeConstructor.getAnnotations(),
                     originalTypeConstructor.isSealed(),
                     originalTypeConstructor.toString(),
-                    parameters,
+                    typeParameters,
                     supertypes
             );
         }
@@ -59,10 +72,10 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
     @Override
     public JetScope getMemberScope(List<TypeProjection> typeArguments) {
         JetScope memberScope = original.getMemberScope(typeArguments);
-        if (substitutor.isEmpty()) {
+        if (originalSubstitutor.isEmpty()) {
             return memberScope;
         }
-        return new SubstitutingScope(memberScope, substitutor); // TODO : compose substitutors
+        return new SubstitutingScope(memberScope, getSubstitutor());
     }
 
     @NotNull

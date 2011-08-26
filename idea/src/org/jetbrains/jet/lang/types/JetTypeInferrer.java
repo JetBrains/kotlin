@@ -21,10 +21,12 @@ import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstantResolver;
 import org.jetbrains.jet.lang.resolve.constants.ErrorValue;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.resolve.DescriptorRenderer;
 import org.jetbrains.jet.util.WritableSlice;
 
 import java.util.*;
 
+import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
 import static org.jetbrains.jet.lang.resolve.BindingContext.STATEMENT;
 
 /**
@@ -60,6 +62,11 @@ public class JetTypeInferrer {
         public List<AnnotationDescriptor> getAnnotations() {
             throw new UnsupportedOperationException(); // TODO
         }
+
+        @Override
+        public String toString() {
+            return "FORBIDDEN";
+        }
     };
     public static final JetType NO_EXPECTED_TYPE = new JetType() {
         @NotNull
@@ -88,6 +95,11 @@ public class JetTypeInferrer {
         @Override
         public List<AnnotationDescriptor> getAnnotations() {
             throw new UnsupportedOperationException(); // TODO
+        }
+
+        @Override
+        public String toString() {
+            return "NO_EXPECTED_TYPE";
         }
     };
 
@@ -180,84 +192,6 @@ public class JetTypeInferrer {
             return typeInferrerVisitorWithNamespaces.getType(expression, new TypeInferenceContext(trace, scope, preferBlock, DataFlowInfo.getEmpty(), NO_EXPECTED_TYPE, NO_EXPECTED_TYPE));
         }
 
-        @NotNull
-        private OverloadResolutionResult resolveNoParametersFunction(@NotNull JetType receiverType, @NotNull JetScope scope, @NotNull String name) {
-//            OverloadDomain overloadDomain = semanticServices.getOverloadResolver().getOverloadDomain(receiverType, scope, name);
-            // No generics. Guaranteed
-//            return overloadDomain.getFunctionDescriptorForPositionedArguments(Collections.<JetType>emptyList(), Collections.<JetType>emptyList());
-            return callResolver.resolveExactSignature(scope, receiverType, name, Collections.<JetType>emptyList());
-        }
-
-//        private OverloadDomain getOverloadDomain(
-//                @Nullable final JetType receiverType,
-//                @NotNull final JetScope scope,
-//                @NotNull JetExpression calleeExpression,
-//                @Nullable PsiElement argumentList
-//        ) {
-//            final OverloadDomain[] result = new OverloadDomain[1];
-//            final JetSimpleNameExpression[] reference = new JetSimpleNameExpression[1];
-//            calleeExpression.accept(new JetVisitorVoid() {
-//
-//                @Override
-//                public void visitHashQualifiedExpression(JetHashQualifiedExpression expression) {
-//                    // a#b -- create a domain for all overloads of b in a
-//                    throw new UnsupportedOperationException(); // TODO
-//                }
-//
-//                @Override
-//                public void visitPredicateExpression(JetPredicateExpression expression) {
-//                    // overload lookup for checking, but the type is receiver's type + nullable
-//                    throw new UnsupportedOperationException(); // TODO
-//                }
-//
-//                @Override
-//                public void visitQualifiedExpression(JetQualifiedExpression expression) {
-//                    trace.getErrorHandler().genericError(expression.getNode(), "Unsupported [JetTypeInferrer]");
-//
-//                    // . or ?.
-//    //                JetType receiverType = getType(scope, expression.getReceiverExpression(), false);
-//    //                checkNullSafety(receiverType, expression.getOperationTokenNode());
-//    //
-//    //                JetExpression selectorExpression = expression.getSelectorExpression();
-//    //                if (selectorExpression instanceof JetSimpleNameExpression) {
-//    //                    JetSimpleNameExpression referenceExpression = (JetSimpleNameExpression) selectorExpression;
-//    //                    String referencedName = referenceExpression.getReferencedName();
-//    //
-//    //                    if (receiverType != null && referencedName != null) {
-//    //                        // No generics. Guaranteed
-//    //                        result[0] = semanticServices.getOverloadResolver().getOverloadDomain(receiverType, scope, referencedName);
-//    //                        reference[0] = referenceExpression;
-//    //                    }
-//    //                } else {
-//    //                    throw new UnsupportedOperationException(); // TODO
-//    //                }
-//                }
-//
-//                @Override
-//                public void visitSimpleNameExpression(JetSimpleNameExpression expression) {
-//                    // a -- create a hierarchical lookup domain for this.a
-//                    String referencedName = expression.getReferencedName();
-//                    if (referencedName != null) {
-//                        // No generics. Guaranteed
-//                        result[0] = semanticServices.getOverloadResolver().getOverloadDomain(receiverType, scope, referencedName);
-//                        reference[0] = expression;
-//                    }
-//                }
-//
-//                @Override
-//                public void visitExpression(JetExpression expression) {
-//                    // <e> create a dummy domain for the type of e
-//                    throw new UnsupportedOperationException(expression.getText()); // TODO
-//                }
-//
-//                @Override
-//                public void visitJetElement(JetElement element) {
-//                    trace.getErrorHandler().genericError(element.getNode(), "Unsupported in call element"); // TODO : Message
-//                }
-//            });
-//            return wrapForTracing(result[0], reference[0], argumentList, true);
-//        }
-
         public CallResolver getCallResolver() {
             return callResolver;
         }
@@ -283,68 +217,6 @@ public class JetTypeInferrer {
                 }
             }
         }
-
-//        private OverloadDomain wrapForTracing(
-//                @NotNull final OverloadDomain overloadDomain,
-//                @NotNull final JetReferenceExpression referenceExpression,
-//                @Nullable final PsiElement argumentList,
-//                final boolean reportErrors) {
-//            return new OverloadDomain() {
-//                @NotNull
-//                @Override
-//                public OverloadResolutionResult getFunctionDescriptorForNamedArguments(@NotNull List<JetType> typeArguments, @NotNull Map<String, JetType> valueArgumentTypes, @Nullable JetType functionLiteralArgumentType) {
-//                    OverloadResolutionResult resolutionResult = overloadDomain.getFunctionDescriptorForNamedArguments(typeArguments, valueArgumentTypes, functionLiteralArgumentType);
-//                    report(resolutionResult);
-//                    return resolutionResult;
-//                }
-//
-//                @NotNull
-//                @Override
-//                public OverloadResolutionResult getFunctionDescriptorForPositionedArguments(@NotNull List<JetType> typeArguments, @NotNull List<JetType> positionedValueArgumentTypes) {
-//                    OverloadResolutionResult resolutionResult = overloadDomain.getFunctionDescriptorForPositionedArguments(typeArguments, positionedValueArgumentTypes);
-//                    report(resolutionResult);
-//                    return resolutionResult;
-//                }
-//
-//                private void report(OverloadResolutionResult resolutionResult) {
-//                    if (resolutionResult.isSuccess() || resolutionResult.singleFunction()) {
-//                        trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, resolutionResult.getFunctionDescriptor());
-//                    }
-//                    if (reportErrors) {
-//                        switch (resolutionResult.getResultCode()) {
-//                            case NAME_NOT_FOUND:
-//                                trace.getErrorHandler().unresolvedReference(referenceExpression);
-//                                break;
-//                            case SINGLE_FUNCTION_ARGUMENT_MISMATCH:
-//                                if (argumentList != null) {
-//                                    // TODO : More helpful message. NOTE: there's a separate handling for this for constructors
-//                                    trace.getErrorHandler().genericError(argumentList.getNode(), "Arguments do not match " + DescriptorRenderer.TEXT.render(resolutionResult.getFunctionDescriptor()));
-//                                }
-//                                else {
-//                                    trace.getErrorHandler().unresolvedReference(referenceExpression);
-//                                }
-//                                break;
-//                            case AMBIGUITY:
-//                                if (argumentList != null) {
-//                                    // TODO : More helpful message. NOTE: there's a separate handling for this for constructors
-//                                    trace.getErrorHandler().genericError(argumentList.getNode(), "Overload ambiguity [TODO : more helpful message]");
-//                                }
-//                                else {
-//                                    trace.getErrorHandler().unresolvedReference(referenceExpression);
-//                                }
-//                                break;
-//                            default:
-//                                // Not a success
-//                        }
-//                    }
-//                }
-//
-//                @Override
-//                public boolean isEmpty() {
-//                    return overloadDomain.isEmpty();
-//                }
-//            };
-//        }
 
         public void checkFunctionReturnType(@NotNull JetScope outerScope, @NotNull JetDeclarationWithBody function, @NotNull FunctionDescriptor functionDescriptor) {
             checkFunctionReturnType(outerScope, function, functionDescriptor, DataFlowInfo.getEmpty());
@@ -520,195 +392,6 @@ public class JetTypeInferrer {
             return result;
         }
 
-
-
-
-//        @Nullable
-//        private JetType resolveCall1(
-//                @NotNull JetScope scope,
-//                @NotNull OverloadDomain overloadDomain,
-//                @NotNull JetCallElement call) {
-//            // 1) ends with a name -> (scope, name) to look up
-//            // 2) ends with something else -> just check types
-//
-//            final List<JetTypeProjection> jetTypeArguments = call.getTypeArguments();
-//
-//            for (JetTypeProjection typeArgument : jetTypeArguments) {
-//                if (typeArgument.getProjectionKind() != JetProjectionKind.NONE) {
-//                    trace.getErrorHandler().genericError(typeArgument.getNode(), "Projections are not allowed on type parameters for methods"); // TODO : better positioning
-//                }
-//            }
-//
-//            List<JetType> typeArguments = new ArrayList<JetType>();
-//            for (JetTypeProjection projection : jetTypeArguments) {
-//                // TODO : check that there's no projection
-//                JetTypeReference typeReference = projection.getTypeReference();
-//                if (typeReference != null) {
-//                    typeArguments.add(new TypeResolver(semanticServices, trace, true).resolveType(scope, typeReference));
-//                }
-//            }
-//
-//            return resolveCallWithTypeArguments(scope, overloadDomain, call, typeArguments);
-//        }
-
-//        private JetType resolveCallWithTypeArguments(JetScope scope, OverloadDomain overloadDomain, JetCallElement call, List<JetType> typeArguments) {
-//            final List<JetValueArgument> valueArguments = call.getValueArguments();
-//
-//            boolean someNamed = false;
-//            for (JetValueArgument argument : valueArguments) {
-//                if (argument.isNamed()) {
-//                    someNamed = true;
-//                    break;
-//                }
-//            }
-//
-//            final List<JetExpression> functionLiteralArguments = call.getFunctionLiteralArguments();
-//
-//            // TODO : must be a check
-//            assert functionLiteralArguments.size() <= 1;
-//
-//            if (someNamed) {
-//                // TODO : check that all are named
-//                trace.getErrorHandler().genericError(call.getNode(), "Named arguments are not supported"); // TODO
-//
-//            } else {
-//                List<JetExpression> positionedValueArguments = new ArrayList<JetExpression>();
-//                for (JetValueArgument argument : valueArguments) {
-//                    JetExpression argumentExpression = argument.getArgumentExpression();
-//                    if (argumentExpression != null) {
-//                        positionedValueArguments.add(argumentExpression);
-//                    }
-//                }
-//
-//                positionedValueArguments.addAll(functionLiteralArguments);
-//
-//                List<JetType> valueArgumentTypes = new ArrayList<JetType>();
-//                for (JetExpression valueArgument : positionedValueArguments) {
-//                    valueArgumentTypes.add(safeGetType(scope, valueArgument, false, NO_EXPECTED_TYPE)); // TODO
-//                }
-//
-//                OverloadResolutionResult resolutionResult = overloadDomain.getFunctionDescriptorForPositionedArguments(typeArguments, valueArgumentTypes);
-//                if (resolutionResult.isSuccess()) {
-//                    final FunctionDescriptor functionDescriptor = resolutionResult.getFunctionDescriptor();
-//
-//                    callResolver.checkGenericBoundsInAFunctionCall(call.getTypeArguments(), typeArguments, functionDescriptor);
-//                    return functionDescriptor.getReturnType();
-//                }
-//            }
-//            return null;
-//        }
-
-
-//        @Nullable
-//        public JetType checkTypeInitializerCall(JetScope scope, @NotNull JetTypeReference typeReference, @NotNull JetCallElement call) {
-//            JetTypeElement typeElement = typeReference.getTypeElement();
-//            if (typeElement instanceof JetUserType) {
-//                JetUserType userType = (JetUserType) typeElement;
-//                // TODO : to infer constructor parameters, one will need to
-//                //  1) resolve a _class_ from the typeReference
-//                //  2) rely on the overload domain of constructors of this class to infer type arguments
-//                // For now we assume that the type arguments are provided, and thus the typeReference can be
-//                // resolved into a valid type
-//                JetType receiverType = typeResolver.resolveType(scope, typeReference);
-//                DeclarationDescriptor declarationDescriptor = receiverType.getConstructor().getDeclarationDescriptor();
-//                if (declarationDescriptor instanceof ClassDescriptor) {
-//                    ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
-//
-//                    for (JetTypeProjection typeProjection : userType.getTypeArguments()) {
-//                        switch (typeProjection.getProjectionKind()) {
-//                            case IN:
-//                            case OUT:
-//                            case STAR:
-//                                // TODO : Bug in the editor
-//                                trace.getErrorHandler().genericError(typeProjection.getProjectionNode(), "Projections are not allowed in constructor type arguments");
-//                                break;
-//                            case NONE:
-//                                break;
-//                        }
-//                    }
-//
-//                    JetSimpleNameExpression referenceExpression = userType.getReferenceExpression();
-//                    if (referenceExpression != null) {
-//                        return checkClassConstructorCall(scope, referenceExpression, classDescriptor, receiverType, call);
-//                    }
-//                }
-//                else {
-//                    trace.getErrorHandler().genericError(((JetElement) call).getNode(), "Calling a constructor is only supported for ordinary classes"); // TODO : review the message
-//                }
-//                return null;
-//            }
-//            else {
-//                if (typeElement != null) {
-//                    trace.getErrorHandler().genericError(typeElement.getNode(), "Calling a constructor is only supported for ordinary classes"); // TODO : Better message
-//                }
-//            }
-//            return null;
-//        }
-
-//        @Nullable
-//        public JetType checkClassConstructorCall(
-//                @NotNull JetScope scope,
-//                @NotNull JetReferenceExpression referenceExpression,
-//                @NotNull ClassDescriptor classDescriptor,
-//                @NotNull JetType receiverType,
-//                @NotNull JetCallElement call) {
-//            // When one writes 'new Array<in T>(...)' this does not make much sense, and an instance
-//            // of 'Array<T>' must be created anyway.
-//            // Thus, we should either prohibit projections in type arguments in such contexts,
-//            // or treat them as an automatic upcast to the desired type, i.e. for the user not
-//            // to be forced to write
-//            //   val a : Array<in T> = new Array<T>(...)
-//            // NOTE: Array may be a bad example here, some classes may have substantial functionality
-//            //       not involving their type parameters
-//            //
-//            // The code below upcasts the type automatically
-//
-//
-//            FunctionGroup constructors = classDescriptor.getConstructors();
-////            OverloadDomain constructorsOverloadDomain = semanticServices.getOverloadResolver().getOverloadDomain(null, constructors);
-//
-//            JetType constructorReturnedType;
-//            if (call instanceof JetDelegatorToThisCall) {
-//                List<TypeProjection> typeArguments = receiverType.getArguments();
-//
-//                List<JetType> projectionsStripped = Lists.newArrayList();
-//                for (TypeProjection typeArgument : typeArguments) {
-//                    projectionsStripped.add(typeArgument.getType());
-//                }
-//
-//                constructorReturnedType = resolveCallWithTypeArguments(
-//                        scope,
-//                        wrapForTracing(constructorsOverloadDomain, referenceExpression, call.getValueArgumentList(), false),
-//                        call, projectionsStripped);
-//            }
-//            else {
-//                constructorReturnedType = callResolver.resolveCall(
-//                        scope, call, NO_EXPECTED_TYPE);
-////                        wrapForTracing(constructorsOverloadDomain, referenceExpression, call.getValueArgumentList(), false),
-////                        call);
-//            }
-//            if (constructorReturnedType == null && !ErrorUtils.isErrorType(receiverType)) {
-//                DeclarationDescriptor declarationDescriptor = receiverType.getConstructor().getDeclarationDescriptor();
-//                assert declarationDescriptor != null;
-//                trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, declarationDescriptor);
-//                // TODO : more helpful message
-//                JetValueArgumentList argumentList = call.getValueArgumentList();
-//                final String errorMessage = "Cannot find a constructor overload for class " + classDescriptor.getName() + " with these arguments";
-//                if (argumentList != null) {
-//                    trace.getErrorHandler().genericError(argumentList.getNode(), errorMessage);
-//                }
-//                else {
-//                    trace.getErrorHandler().genericError(call.getNode(), errorMessage);
-//                }
-//                constructorReturnedType = receiverType;
-//            }
-//            // If no upcast needed:
-//            return constructorReturnedType;
-//
-//            // Automatic upcast:
-//    //                            result = receiverType;
-//        }
-
         //TODO
         private JetType enrichOutType(JetExpression expression, JetType initialType, @NotNull TypeInferenceContext context) {
             if (expression == null) return initialType;
@@ -736,32 +419,31 @@ public class JetTypeInferrer {
                 return expressionType;
             }
             VariableDescriptor variableDescriptor = getVariableDescriptorFromSimpleName(expression, context);
-            if (variableDescriptor == null) return expressionType;
-
-            JetType enrichedType = null;
-            List<JetType> possibleTypes = Lists.newArrayList(context.dataFlowInfo.getPossibleTypes(variableDescriptor));
-            Collections.reverse(possibleTypes);
-            for (JetType possibleType: possibleTypes) {
-                if (semanticServices.getTypeChecker().isSubtypeOf(possibleType, context.expectedType)) {
-                    enrichedType = possibleType;
-                    break;
+            boolean appropriateTypeFound = false;
+            if (variableDescriptor != null) {
+                List<JetType> possibleTypes = Lists.newArrayList(context.dataFlowInfo.getPossibleTypes(variableDescriptor));
+                Collections.reverse(possibleTypes);
+                for (JetType possibleType : possibleTypes) {
+                    if (semanticServices.getTypeChecker().isSubtypeOf(possibleType, context.expectedType)) {
+                        appropriateTypeFound = true;
+                        break;
+                    }
+                }
+                if (!appropriateTypeFound) {
+                    JetType notnullType = context.dataFlowInfo.getOutType(variableDescriptor);
+                    if (notnullType != null && semanticServices.getTypeChecker().isSubtypeOf(notnullType, context.expectedType)) {
+                        appropriateTypeFound = true;
+                    }
                 }
             }
-            if (enrichedType == null) {
-                enrichedType = context.dataFlowInfo.getOutType(variableDescriptor);
-            }
-            if (enrichedType == null) {
-                enrichedType = expressionType;
-            }
-
-            if (!semanticServices.getTypeChecker().isSubtypeOf(enrichedType, context.expectedType)) {
+            if (!appropriateTypeFound) {
                 context.trace.getErrorHandler().typeMismatch(expression, context.expectedType, expressionType);
-            } else {
-                checkAutoCast(expression, context.expectedType, variableDescriptor, context.trace);
+                return expressionType;
             }
-            return enrichedType;
+            checkAutoCast(expression, context.expectedType, variableDescriptor, context.trace);
+            return context.expectedType;
         }
-        
+
         private void checkAutoCast(JetExpression expression, JetType type, VariableDescriptor variableDescriptor, BindingTrace trace) {
             if (variableDescriptor.isVar()) {
                 trace.getErrorHandler().genericError(expression.getNode(), "Automatic cast to " + type + " is impossible, because variable " + variableDescriptor.getName() + " is mutable");
@@ -793,7 +475,7 @@ public class JetTypeInferrer {
             VariableDescriptor variableDescriptor = null;
             if (receiverExpression instanceof JetSimpleNameExpression) {
                 JetSimpleNameExpression nameExpression = (JetSimpleNameExpression) receiverExpression;
-                DeclarationDescriptor declarationDescriptor = context.trace.getBindingContext().get(BindingContext.REFERENCE_TARGET, nameExpression);
+                DeclarationDescriptor declarationDescriptor = context.trace.getBindingContext().get(REFERENCE_TARGET, nameExpression);
                 if (declarationDescriptor instanceof VariableDescriptor) {
                     variableDescriptor = (VariableDescriptor) declarationDescriptor;
                 }
@@ -956,7 +638,7 @@ public class JetTypeInferrer {
                     context.trace.getErrorHandler().unresolvedReference(expression);
                 }
                 else {
-                    context.trace.record(BindingContext.REFERENCE_TARGET, expression, property);
+                    context.trace.record(REFERENCE_TARGET, expression, property);
                     return context.services.checkEnrichedType(property.getOutType(), expression, context);
                 }
             }
@@ -965,7 +647,7 @@ public class JetTypeInferrer {
                 if (referencedName != null) {
                     VariableDescriptor variable = context.scope.getVariable(referencedName);
                     if (variable != null) {
-                        context.trace.record(BindingContext.REFERENCE_TARGET, expression, variable);
+                        context.trace.record(REFERENCE_TARGET, expression, variable);
                         JetType result = variable.getOutType();
                         if (result == null) {
                             context.trace.getErrorHandler().genericError(expression.getNode(), "This variable is not readable in this context");
@@ -983,7 +665,7 @@ public class JetTypeInferrer {
                             else {
                                 context.trace.getErrorHandler().genericError(expression.getNode(), "Classifier " + classifier.getName() +  " does not have a class object");
                             }
-                            context.trace.record(BindingContext.REFERENCE_TARGET, expression, classifier);
+                            context.trace.record(REFERENCE_TARGET, expression, classifier);
                             return context.services.checkEnrichedType(result, expression, context);
                         }
                         else {
@@ -1019,7 +701,7 @@ public class JetTypeInferrer {
             if (namespace == null) {
                 return null;
             }
-            context.trace.record(BindingContext.REFERENCE_TARGET, expression, namespace);
+            context.trace.record(REFERENCE_TARGET, expression, namespace);
             return namespace.getNamespaceType();
         }
 
@@ -1077,6 +759,14 @@ public class JetTypeInferrer {
             List<JetType> parameterTypes = new ArrayList<JetType>();
             List<ValueParameterDescriptor> valueParameterDescriptors = Lists.newArrayList();
             List<JetParameter> parameters = functionLiteral.getValueParameters();
+            JetType expectedType = context.expectedType;
+            
+            List<ValueParameterDescriptor> valueParameters = null;
+            boolean functionTypeExpected = expectedType != NO_EXPECTED_TYPE && JetStandardClasses.isFunctionType(expectedType);
+            if (functionTypeExpected) {
+                valueParameters = JetStandardClasses.getValueParameters(functionDescriptor, expectedType);
+            }
+
             for (int i = 0, parametersSize = parameters.size(); i < parametersSize; i++) {
                 JetParameter parameter = parameters.get(i);
                 JetTypeReference typeReference = parameter.getTypeReference();
@@ -1086,15 +776,31 @@ public class JetTypeInferrer {
                     type = context.typeResolver.resolveType(context.scope, typeReference);
                 }
                 else {
-                    context.trace.getErrorHandler().genericError(parameter.getNode(), "Type inference for parameters is not implemented yet");
-                    type = ErrorUtils.createErrorType("Not inferred");
+                    if (valueParameters != null) {
+                        type = valueParameters.get(i).getOutType();
+                    }
+                    else {
+                        context.trace.getErrorHandler().genericError(parameter.getNode(), "Cannot infer a type for this parameter. To specify it explicitly use the {(p : Type) => ...} notation");
+                        type = ErrorUtils.createErrorType("Cannot be inferred");
+                    }
                 }
                 ValueParameterDescriptor valueParameterDescriptor = context.classDescriptorResolver.resolveValueParameterDescriptor(functionDescriptor, parameter, i, type);
                 parameterTypes.add(valueParameterDescriptor.getOutType());
                 valueParameterDescriptors.add(valueParameterDescriptor);
             }
 
-            JetType effectiveReceiverType = receiverTypeRef == null ? null : receiverType;
+            JetType effectiveReceiverType;
+            if (receiverTypeRef == null) {
+                if (functionTypeExpected) {
+                    effectiveReceiverType = JetStandardClasses.getReceiverType(expectedType);
+                }
+                else {
+                    effectiveReceiverType = null;
+                }
+            }
+            else {
+                effectiveReceiverType = receiverType;
+            }
             functionDescriptor.initialize(effectiveReceiverType, Collections.<TypeParameterDescriptor>emptyList(), valueParameterDescriptors, null);
             context.trace.record(BindingContext.FUNCTION, expression, functionDescriptor);
 
@@ -1106,15 +812,17 @@ public class JetTypeInferrer {
                 context.services.checkFunctionReturnType(functionInnerScope, expression, returnType, context.dataFlowInfo);
             }
             else {
-                if (context.expectedType != NO_EXPECTED_TYPE && JetStandardClasses.isFunctionType(context.expectedType)) {
-                    returnType = JetStandardClasses.getReturnType(context.expectedType);
+                if (functionTypeExpected) {
+                    returnType = JetStandardClasses.getReturnType(expectedType);
                 }
                 returnType = getBlockReturnedType(functionInnerScope, functionLiteral.getBodyExpression(), context.replaceExpectedType(returnType));
             }
             JetType safeReturnType = returnType == null ? ErrorUtils.createErrorType("<return type>") : returnType;
             functionDescriptor.setReturnType(safeReturnType);
 
+            if (functionTypeExpected) {
 
+            }
             return context.services.checkType(JetStandardClasses.getFunctionType(Collections.<AnnotationDescriptor>emptyList(), effectiveReceiverType, parameterTypes, safeReturnType), expression, context);
         }
 
@@ -1293,8 +1001,8 @@ public class JetTypeInferrer {
                     else {
                         throw new UnsupportedOperationException(); // TODO
                     }
-                    context.trace.record(BindingContext.REFERENCE_TARGET, targetLabel, declarationDescriptor);
-                    context.trace.record(BindingContext.REFERENCE_TARGET, expression.getThisReference(), declarationDescriptor);
+                    context.trace.record(REFERENCE_TARGET, targetLabel, declarationDescriptor);
+                    context.trace.record(REFERENCE_TARGET, expression.getThisReference(), declarationDescriptor);
                 }
                 else if (size == 0) {
                     // This uses the info written by the control flow processor
@@ -1307,8 +1015,8 @@ public class JetTypeInferrer {
                                 thisType = JetStandardClasses.getNothingType();
                             }
                             else {
-                                context.trace.record(BindingContext.REFERENCE_TARGET, targetLabel, declarationDescriptor);
-                                context.trace.record(BindingContext.REFERENCE_TARGET, expression.getThisReference(), declarationDescriptor);
+                                context.trace.record(REFERENCE_TARGET, targetLabel, declarationDescriptor);
+                                context.trace.record(REFERENCE_TARGET, expression.getThisReference(), declarationDescriptor);
                             }
                         }
                         else {
@@ -1328,7 +1036,7 @@ public class JetTypeInferrer {
 
                 DeclarationDescriptor declarationDescriptorForUnqualifiedThis = context.scope.getDeclarationDescriptorForUnqualifiedThis();
                 if (declarationDescriptorForUnqualifiedThis != null) {
-                    context.trace.record(BindingContext.REFERENCE_TARGET, expression.getThisReference(), declarationDescriptorForUnqualifiedThis);
+                    context.trace.record(REFERENCE_TARGET, expression.getThisReference(), declarationDescriptorForUnqualifiedThis);
                 }
             }
 
@@ -1445,9 +1153,10 @@ public class JetTypeInferrer {
                 @Override
                 public void visitWhenConditionCall(JetWhenConditionCall condition) {
                     JetExpression callSuffixExpression = condition.getCallSuffixExpression();
-                    JetScope compositeScope = new ScopeWithReceiver(context.scope, subjectType, semanticServices.getTypeChecker());
+//                    JetScope compositeScope = new ScopeWithReceiver(context.scope, subjectType, semanticServices.getTypeChecker());
                     if (callSuffixExpression != null) {
-                        JetType selectorReturnType = getType(compositeScope, callSuffixExpression, false, context);
+//                        JetType selectorReturnType = getType(compositeScope, callSuffixExpression, false, context);
+                        JetType selectorReturnType = getSelectorReturnType(subjectType, callSuffixExpression, context);//getType(compositeScope, callSuffixExpression, false, context);
                         ensureBooleanResultWithCustomSubject(callSuffixExpression, selectorReturnType, "This expression", context);
                         context.services.checkNullSafety(subjectType, condition.getOperationTokenNode(), getCalleeFunctionDescriptor(callSuffixExpression, context));
                     }
@@ -1923,7 +1632,7 @@ public class JetTypeInferrer {
 
         @Nullable
         private JetType checkIterableConvention(@NotNull JetType type, @NotNull ASTNode reportErrorsOn, TypeInferenceContext context) {
-            OverloadResolutionResult iteratorResolutionResult = context.services.resolveNoParametersFunction(type, context.scope, "iterator");
+            OverloadResolutionResult iteratorResolutionResult = context.services.callResolver.resolveExactSignature(context.scope, type, "iterator", Collections.<JetType>emptyList());
             if (iteratorResolutionResult.isSuccess()) {
                 JetType iteratorType = iteratorResolutionResult.getFunctionDescriptor().getReturnType();
                 boolean hasNextFunctionSupported = checkHasNextFunctionSupport(reportErrorsOn, iteratorType, context);
@@ -1936,7 +1645,7 @@ public class JetTypeInferrer {
                     context.trace.getErrorHandler().genericError(reportErrorsOn, "Loop range must have an 'iterator().hasNext()' function or an 'iterator().hasNext' property");
                 }
 
-                OverloadResolutionResult nextResolutionResult = context.services.resolveNoParametersFunction(iteratorType, context.scope, "next");
+                OverloadResolutionResult nextResolutionResult = context.services.callResolver.resolveExactSignature(context.scope, iteratorType, "next", Collections.<JetType>emptyList());
                 if (nextResolutionResult.isAmbiguity()) {
                     context.trace.getErrorHandler().genericError(reportErrorsOn, "Method 'iterator().next()' is ambiguous for this expression");
                 } else if (nextResolutionResult.isNothing()) {
@@ -1956,7 +1665,7 @@ public class JetTypeInferrer {
         }
 
         private boolean checkHasNextFunctionSupport(@NotNull ASTNode reportErrorsOn, @NotNull JetType iteratorType, TypeInferenceContext context) {
-            OverloadResolutionResult hasNextResolutionResult = context.services.resolveNoParametersFunction(iteratorType, context.scope, "hasNext");
+            OverloadResolutionResult hasNextResolutionResult = context.services.callResolver.resolveExactSignature(context.scope, iteratorType, "hasNext", Collections.<JetType>emptyList());
             if (hasNextResolutionResult.isAmbiguity()) {
                 context.trace.getErrorHandler().genericError(reportErrorsOn, "Method 'iterator().hasNext()' is ambiguous for this expression");
             } else if (hasNextResolutionResult.isNothing()) {
@@ -1988,89 +1697,6 @@ public class JetTypeInferrer {
             return true;
         }
 
-//        @Override
-//        public void visitNewExpression(JetNewExpression expression) {
-//            // TODO : type argument inference
-//            JetTypeReference typeReference = expression.getTypeReference();
-//            if (typeReference != null) {
-//                result = checkTypeInitializerCall(scope, typeReference, expression);
-//            }
-//        }
-
-//        private void resolveCallWithExplicitName(@NotNull JetScope scope, JetExpression receiver, String functionName, List<JetType> resolvedTypeArguments, List<ValueArgumentPsi> valueArguments) {
-//
-//            boolean someNamed = false;
-//            boolean allNamed = true;
-//            for (ValueArgumentPsi valueArgument : valueArguments) {
-//                if (valueArgument.isNamed()) {
-//                    context.trace.getErrorHandler().genericError(valueArgument.asElement().getNode(), "Named arguments are not supported");
-//                    someNamed = true;
-//                }
-//                else {
-//                    allNamed = false;
-//                }
-//            }
-//            if (someNamed) {
-//                return; // TODO
-//            }
-//            if (someNamed && !allNamed) {
-//                // TODO function literals outside parentheses
-//            }
-//
-//            ErrorHandlerWithRegions errorHandler = context.trace.getErrorHandler();
-//
-//            // 1. resolve 'receiver' in 'scope' with expected type 'NO_EXPECTED_TYPE'
-//            errorHandler.openRegion();
-//            JetType receiverType = JetTypeInferrer.this.getType(scope, receiver, false, NO_EXPECTED_TYPE);
-//            // for each applicable function in 'receiverType'
-//            Set<FunctionDescriptor> allFunctions = receiverType.getMemberScope().getFunctionGroup(functionName).getFunctionDescriptors();
-//            Map<FunctionDescriptor, List<JetType>> applicableFunctions = Maps.newHashMap();
-//            int typeArgCount = resolvedTypeArguments.size();
-//            int valueArgCount = valueArguments.size();
-//            for (FunctionDescriptor functionDescriptor : allFunctions) {
-//                if (typeArgCount == 0 || functionDescriptor.getTypeParameters().size() == typeArgCount) {
-//                    if (FunctionDescriptorUtil.getMinimumArity(functionDescriptor) <= valueArgCount &&
-//                            valueArgCount <= FunctionDescriptorUtil.getMaximumArity(functionDescriptor)) {
-//                        //   get expected types for value parameters
-//                        if (typeArgCount > 0) {
-//                            FunctionDescriptor substitutedFunctionDescriptor = FunctionDescriptorUtil.substituteFunctionDescriptor(resolvedTypeArguments, functionDescriptor);
-//                        }
-//                        else {
-//                            FunctionDescriptor substitutedFunctionDescriptor = FunctionDescriptorUtil.substituteFunctionDescriptor(TypeUtils.getDefaultTypes(functionDescriptor.getTypeParameters()), functionDescriptor);
-//                            List<JetType> valueArgumentTypes = getArgumentTypes(substitutedFunctionDescriptor, valueArguments);
-//                            if (valueArgumentTypes == null) {
-//                                Map<TypeConstructor, TypeProjection> noExpectedTypes = Maps.newHashMap();
-//                                for (TypeParameterDescriptor typeParameterDescriptor : functionDescriptor.getTypeParameters()) {
-//                                    noExpectedTypes.put(typeParameterDescriptor.getTypeConstructor(), new TypeProjection(NO_EXPECTED_TYPE));
-//                                }
-//                                substitutedFunctionDescriptor = functionDescriptor.substitute(TypeSubstitutor.create(noExpectedTypes));
-//                                valueArgumentTypes = getArgumentTypes(substitutedFunctionDescriptor, valueArguments);
-//                            }
-//                            if (valueArgumentTypes != null) {
-//                                List<JetType> typeArguments = solveConstraintSystem(functionDescriptor, valueArgumentTypes, expectedReturnType);
-//                                if (typeArguments != null) {
-//                                    applicableFunctions.put(functionDescriptor, typeArguments);
-//                                }
-//                            }
-//                        }
-//                        //   type-check the parameters
-//                        // if something was found (one or many options
-//                        errorHandler.closeAndCommitCurrentRegion();
-//                        // otherwise
-//                        errorHandler.closeAndReturnCurrentRegion();
-//
-//                    }
-//                }
-//            }
-//            //   get expected types for value parameters
-//            //   type-check the parameters
-//            // if something was found (one or many options
-//            errorHandler.closeAndCommitCurrentRegion();
-//            // otherwise
-//            errorHandler.closeAndReturnCurrentRegion();
-//
-//        }
-
         @Override
         public JetType visitHashQualifiedExpression(JetHashQualifiedExpression expression, TypeInferenceContext context) {
             context.trace.getErrorHandler().genericError(expression.getOperationTokenNode(), "Unsupported");
@@ -2087,10 +1713,8 @@ public class JetTypeInferrer {
             if (receiverType == null) return null;
 
             // Clean resolution: no autocasts
-            TemporaryBindingTrace cleanResolutionTrace = new TemporaryBindingTrace(context.trace.getBindingContext());
+            TemporaryBindingTrace cleanResolutionTrace = TemporaryBindingTrace.create(context.trace);
             TypeInferenceContext cleanResolutionContext = context.replaceBindingTrace(cleanResolutionTrace);
-//            ErrorHandler errorHandler = context.trace.getErrorHandler();
-//            errorHandler.openRegion();
             JetType selectorReturnType = getSelectorReturnType(receiverType, selectorExpression, cleanResolutionContext);
 
             //TODO move further
@@ -2109,24 +1733,24 @@ public class JetTypeInferrer {
                     List<JetType> possibleTypes = Lists.newArrayList(context.dataFlowInfo.getPossibleTypes(variableDescriptor));
                     Collections.reverse(possibleTypes);
 
-                    TemporaryBindingTrace autocastResolutionTrace = new TemporaryBindingTrace(context.trace.getBindingContext());
+                    TemporaryBindingTrace autocastResolutionTrace = TemporaryBindingTrace.create(context.trace);
                     TypeInferenceContext autocastResolutionContext = context.replaceBindingTrace(autocastResolutionTrace);
                     for (JetType possibleType : possibleTypes) {
                         selectorReturnType = getSelectorReturnType(possibleType, selectorExpression, autocastResolutionContext);
                         if (selectorReturnType != null) {
                             context.services.checkAutoCast(receiverExpression, possibleType, variableDescriptor, autocastResolutionTrace);
-                            autocastResolutionTrace.addAllMyDataTo(context.trace);
+                            autocastResolutionTrace.commit();
                             somethingFound = true;
                             break;
                         }
                         else {
-                            autocastResolutionTrace = new TemporaryBindingTrace(context.trace.getBindingContext());
+                            autocastResolutionTrace = TemporaryBindingTrace.create(context.trace);
                             autocastResolutionContext = context.replaceBindingTrace(autocastResolutionTrace);
                         }
                     }
                 }
                 if (!somethingFound) {
-                    cleanResolutionTrace.addAllMyDataTo(context.trace);
+                    cleanResolutionTrace.commit();
                 }
             }
 
@@ -2170,7 +1794,7 @@ public class JetTypeInferrer {
 
                 @Override
                 public void visitReferenceExpression(JetReferenceExpression referenceExpression) {
-                    DeclarationDescriptor declarationDescriptor = context.trace.getBindingContext().get(BindingContext.REFERENCE_TARGET, referenceExpression);
+                    DeclarationDescriptor declarationDescriptor = context.trace.getBindingContext().get(REFERENCE_TARGET, referenceExpression);
                     if (declarationDescriptor instanceof FunctionDescriptor) {
                         result[0] = (FunctionDescriptor) declarationDescriptor;
                     }
@@ -2202,24 +1826,15 @@ public class JetTypeInferrer {
             return result[0];
         }
 
-        private JetType getCallExpressionType(@Nullable JetType receiverType, @NotNull JetCallExpression callExpression, TypeInferenceContext context) {
-//            JetExpression calleeExpression = callExpression.getCalleeExpression();
-//            if (calleeExpression == null) {
-//                return null;
-//            }
-//            OverloadDomain overloadDomain = context.services.getOverloadDomain(receiverType, context.scope, calleeExpression, callExpression.getValueArgumentList());
-            JetScope scope = receiverType == null ? context.scope : new ScopeWithReceiver(context.scope, receiverType, JetTypeChecker.INSTANCE);
-            return context.services.callResolver.resolveCall(scope, callExpression, context.expectedType);
-//            return context.services.resolveCall(context.scope, overloadDomain, callExpression);
-        }
-
-        private JetType getSelectorReturnType(JetType receiverType, JetExpression selectorExpression, TypeInferenceContext context) {
+        @Nullable
+        private JetType getSelectorReturnType(@Nullable JetType receiverType, @NotNull JetExpression selectorExpression, @NotNull TypeInferenceContext context) {
             if (selectorExpression instanceof JetCallExpression) {
-                return getCallExpressionType(receiverType, (JetCallExpression) selectorExpression, context);
+                return context.services.callResolver.resolveCall(context.scope, receiverType, (JetCallExpression) selectorExpression, context.expectedType);
             }
             else if (selectorExpression instanceof JetSimpleNameExpression) {
-                JetScope compositeScope = new ScopeWithReceiver(context.scope, receiverType, semanticServices.getTypeChecker());
-                return getType(compositeScope, selectorExpression, false, context);
+//                JetScope compositeScope = new ScopeWithReceiver(context.scope, receiverType, semanticServices.getTypeChecker());
+                JetScope scope = receiverType != null ? receiverType.getMemberScope() : context.scope;
+                return getType(scope, selectorExpression, false, context);
             }
             else if (selectorExpression != null) {
                 // TODO : not a simple name -> resolve in scope, expect property type or a function type
@@ -2230,8 +1845,8 @@ public class JetTypeInferrer {
 
         @Override
         public JetType visitCallExpression(JetCallExpression expression, TypeInferenceContext context) {
-//            return context.services.checkType(context.services.resolveCall(context.scope, expression, context.expectedType), expression, context);
-            return context.services.checkType(getCallExpressionType(null, expression, context), expression, context);
+            JetType expressionType = context.services.callResolver.resolveCall(context.scope, null, expression, context.expectedType);
+            return context.services.checkType(expressionType, expression, context);
         }
 
         @Override
@@ -2271,7 +1886,7 @@ public class JetTypeInferrer {
                     CallMaker.makeCall(expression),
                     expression.getOperationSign(),
                     name,
-                    baseExpression,
+                    receiverType,
                     context.expectedType);
 
             if (functionDescriptor == null) return null;
@@ -2346,21 +1961,24 @@ public class JetTypeInferrer {
                             OverloadResolutionResult resolutionResult = context.services.callResolver.resolveExactSignature(
                                     context.scope, leftType, "equals",
                                     Collections.singletonList(JetStandardClasses.getNullableAnyType()));
-                            FunctionDescriptor equals;
                             if (resolutionResult.isSuccess()) {
-                                equals = resolutionResult.getFunctionDescriptor();
-                            }
-                            else {
-                                // TODO : Report ambiguous equals
-                                equals = null;
-                            }
-                            if (equals != null) {
+                                FunctionDescriptor equals = resolutionResult.getFunctionDescriptor();
+                                context.trace.record(REFERENCE_TARGET, operationSign, equals);
                                 if (ensureBooleanResult(operationSign, name, equals.getReturnType(), context)) {
                                     ensureNonemptyIntersectionOfOperandTypes(expression, context);
                                 }
                             }
                             else {
-                                context.trace.getErrorHandler().genericError(operationSign.getNode(), "No method 'equals(Any?) : Boolean' available");
+                                if (resolutionResult.isAmbiguity()) {
+                                    StringBuilder stringBuilder = new StringBuilder();
+                                    for (FunctionDescriptor functionDescriptor : resolutionResult.getFunctionDescriptors()) {
+                                        stringBuilder.append(DescriptorRenderer.TEXT.render(functionDescriptor)).append(" ");
+                                    }
+                                    context.trace.getErrorHandler().genericError(operationSign.getNode(), "Ambiguous function: " + stringBuilder);
+                                }
+                                else {
+                                    context.trace.getErrorHandler().genericError(operationSign.getNode(), "No method 'equals(Any?) : Boolean' available");
+                                }
                             }
                         }
                     }
@@ -2416,11 +2034,12 @@ public class JetTypeInferrer {
 
         private void checkInExpression(JetSimpleNameExpression operationSign, JetExpression left, JetExpression right, TypeInferenceContext context) {
             String name = "contains";
+            JetType receiverType = context.services.safeGetType(context.scope, right, false, NO_EXPECTED_TYPE);
             FunctionDescriptor functionDescriptor = context.services.callResolver.resolveCallWithGivenName(
                     context.scope,
                     CallMaker.makeCall(operationSign, Collections.singletonList(left)),
                     operationSign,
-                    name, right, context.expectedType);
+                    name, receiverType, context.expectedType);
             JetType containsType = functionDescriptor != null ? functionDescriptor.getReturnType() : null;
             ensureBooleanResult(operationSign, name, containsType, context);
         }
@@ -2496,9 +2115,6 @@ public class JetTypeInferrer {
             TypeInferenceContext context = contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE);
             JetExpression arrayExpression = expression.getArrayExpression();
             JetType receiverType = getType(context.scope, arrayExpression, false, context);
-//            List<JetValueArgument> indexArguments = expression.getIndexArguments();
-//            List<JetType> argumentTypes = getTypes(context.scope, indexArguments, context);
-//            if (argumentTypes == null) return null;
 
             if (receiverType != null) {
                 FunctionDescriptor functionDescriptor = context.services.callResolver.resolveCallWithGivenName(
@@ -2506,10 +2122,9 @@ public class JetTypeInferrer {
                         CallMaker.makeCall(expression, expression.getIndexExpressions()),
                         expression, 
                         "get",
-                        arrayExpression,
+                        receiverType,
                         context.expectedType);
                 if (functionDescriptor != null) {
-//                    checkNullSafety(receiverType, expression.getIndexArguments().get(0).getNode(), functionDescriptor);
                     return context.services.checkType(functionDescriptor.getReturnType(), expression, contextWithExpectedType);
                 }
             }
@@ -2518,17 +2133,13 @@ public class JetTypeInferrer {
 
         @Nullable
         protected JetType getTypeForBinaryCall(JetScope scope, String name, TypeInferenceContext context, JetBinaryExpression binaryExpression) {
-            //            JetType leftType = getType(scope, left, false, context);
-//            JetType rightType = getType(scope, right, false, context);
-//            if (leftType == null || rightType == null) {
-//                return null;
-//            }
+            JetType leftType = getType(scope, binaryExpression.getLeft(), false, context);
             FunctionDescriptor functionDescriptor = context.services.callResolver.resolveCallWithGivenName(
                     scope,
                     CallMaker.makeCall(binaryExpression),
                     binaryExpression.getOperationReference(),
                     name,
-                    binaryExpression.getLeft(),
+                    leftType,
                     context.expectedType);
             if (functionDescriptor != null) {
 //                if (leftType.isNullable()) {
@@ -2636,12 +2247,6 @@ public class JetTypeInferrer {
         public TypeInferrerVisitorWithWritableScope(@NotNull WritableScope scope) {
             this.scope = scope;
         }
-        
-//        public TypeInferrerVisitorWithWritableScope(@NotNull BindingTrace trace, @NotNull JetScope scope) {
-//            super(trace);
-//            this.scope = newWritableScopeImpl(scope, trace).setDebugName("Block scope");
-//        }
-
 
         @Override
         public JetType visitObjectDeclaration(JetObjectDeclaration declaration, TypeInferenceContext context) {
@@ -2715,7 +2320,9 @@ public class JetTypeInferrer {
         protected JetType visitAssignmentOperation(JetBinaryExpression expression, TypeInferenceContext context) {
             IElementType operationType = expression.getOperationReference().getReferencedNameElementType();
             String name = assignmentOperationNames.get(operationType);
-            JetType assignmentOperationType = getTypeForBinaryCall(scope, name, context, expression);
+
+            TemporaryBindingTrace temporaryBindingTrace = TemporaryBindingTrace.create(context.trace);
+            JetType assignmentOperationType = getTypeForBinaryCall(scope, name, context.replaceBindingTrace(temporaryBindingTrace), expression);
 
             if (assignmentOperationType == null) {
                 String counterpartName = binaryOperationNames.get(assignmentOperationCounterparts.get(operationType));
@@ -2724,6 +2331,9 @@ public class JetTypeInferrer {
                 if (typeForBinaryCall != null) {
                     context.trace.record(BindingContext.VARIABLE_REASSIGNMENT, expression);
                 }
+            }
+            else {
+                temporaryBindingTrace.commit();
             }
             return null;
         }
@@ -2750,15 +2360,8 @@ public class JetTypeInferrer {
         }
 
         private JetType resolveArrayAccessToLValue(JetArrayAccessExpression arrayAccessExpression, JetExpression rightHandSide, JetSimpleNameExpression operationSign, TypeInferenceContext context) {
-//            TypeInferenceContext context = contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE);
-//            List<JetType> argumentTypes = getTypes(scope, arrayAccessExpression.getIndexExpressions(), context);
-//            if (argumentTypes == null) return null;
-//            JetType rhsType = getType(scope, rightHandSide, false, context);
-//            if (rhsType == null) return null;
-//            argumentTypes.add(rhsType);
-//
-//            JetType receiverType = getType(scope, arrayAccessExpression.getArrayExpression(), false, context);
-//            if (receiverType == null) return null;
+            JetType receiverType = getType(scope, arrayAccessExpression.getArrayExpression(), false, context);
+            if (receiverType == null) return null;
 //
             Call call = CallMaker.makeCall(arrayAccessExpression, rightHandSide);
 //            // TODO : nasty hack: effort is duplicated
@@ -2771,7 +2374,7 @@ public class JetTypeInferrer {
                                 scope,
                                 call,
                                 operationSign,
-                                "set", arrayAccessExpression.getArrayExpression(), NO_EXPECTED_TYPE);
+                                "set", receiverType, NO_EXPECTED_TYPE);
             if (functionDescriptor == null) return null;
             return context.services.checkType(functionDescriptor.getReturnType(), arrayAccessExpression, context);
         }

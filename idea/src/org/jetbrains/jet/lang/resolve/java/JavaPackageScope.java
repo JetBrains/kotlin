@@ -32,11 +32,11 @@ public class JavaPackageScope extends JetScopeImpl {
     @NotNull
     @Override
     public FunctionGroup getFunctionGroup(@NotNull String name) {
-        ClassifierDescriptor classifier = getClassifier(name);
-        if (classifier instanceof ClassDescriptor) {
-            ClassDescriptor classDescriptor = (ClassDescriptor) classifier;
-            return classDescriptor.getConstructors();
-        }
+//        ClassifierDescriptor classifier = getClassifier(name);
+//        if (classifier instanceof ClassDescriptor) {
+//            ClassDescriptor classDescriptor = (ClassDescriptor) classifier;
+//            return classDescriptor.getConstructors();
+//        }
         return FunctionGroup.EMPTY;
     }
 

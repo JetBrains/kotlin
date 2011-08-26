@@ -93,9 +93,9 @@ public class CallMaker {
     }
 
     public static Call makeCall(final JetExpression calleeExpression, final List<JetExpression> argumentExpressions) {
-        List<ExpressionValueArgument> arguments = Lists.newArrayList();
+        List<ValueArgument> arguments = Lists.newArrayList();
         for (JetExpression argumentExpression : argumentExpressions) {
-            arguments.add(new ExpressionValueArgument(argumentExpression));
+            arguments.add(makeValueArgument(argumentExpression));
         }
         return makeCallWithArguments(calleeExpression, arguments);
     }
@@ -114,4 +114,7 @@ public class CallMaker {
         return makeCall(arrayAccessExpression, arguments);
     }
 
+    public static ValueArgument makeValueArgument(JetExpression expression) {
+        return new ExpressionValueArgument(expression);
+    }
 }

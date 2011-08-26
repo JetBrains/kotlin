@@ -67,7 +67,7 @@ public class ClassDescriptorResolver {
                 : resolveDelegationSpecifiers(parameterScope, delegationSpecifiers, typeResolver);
         boolean open = classElement.hasModifier(JetTokens.OPEN_KEYWORD);
 
-        final WritableScope memberDeclarations = new WritableScopeImpl(parameterScope, classDescriptor, trace.getErrorHandler());
+        final WritableScope memberDeclarations = new WritableScopeImpl(JetScope.EMPTY, classDescriptor, trace.getErrorHandler());
 
         List<JetDeclaration> declarations = classElement.getDeclarations();
         for (JetDeclaration declaration : declarations) {

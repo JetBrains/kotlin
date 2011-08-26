@@ -1,14 +1,15 @@
 package org.jetbrains.jet.lang.descriptors;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.types.DescriptorSubstitutor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 import org.jetbrains.jet.lang.types.Variance;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -22,7 +23,7 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
     private JetType unsubstitutedReturnType;
     private JetType receiverType;
 
-    private final Set<FunctionDescriptor> overriddenFunctions = Sets.newHashSet();
+    private final Set<FunctionDescriptor> overriddenFunctions = Sets.newLinkedHashSet();
     private final FunctionDescriptor original;
 
     public FunctionDescriptorImpl(
@@ -97,12 +98,14 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
     }
 
     @Override
-    public final FunctionDescriptor substitute(TypeSubstitutor substitutor) {
-        if (substitutor.isEmpty()) {
+    public final FunctionDescriptor substitute(TypeSubstitutor originalSubstitutor) {
+        if (originalSubstitutor.isEmpty()) {
             return this;
         }
-        FunctionDescriptorImpl substitutedDescriptor;
-        substitutedDescriptor = createSubstitutedCopy();
+        FunctionDescriptorImpl substitutedDescriptor = createSubstitutedCopy();
+
+        List<TypeParameterDescriptor> substitutedTypeParameters = Lists.newArrayList();
+        TypeSubstitutor substitutor = DescriptorSubstitutor.substituteTypeParameters(getTypeParameters(), originalSubstitutor, substitutedDescriptor, substitutedTypeParameters);
 
         JetType receiverType = getReceiverType();
         JetType substitutedReceiverType = null;
@@ -125,7 +128,7 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
 
         substitutedDescriptor.initialize(
                 substitutedReceiverType,
-                Collections.<TypeParameterDescriptor>emptyList(), // TODO : questionable
+                substitutedTypeParameters,
                 substitutedValueParameters,
                 substitutedReturnType
         );

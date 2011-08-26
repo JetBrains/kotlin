@@ -606,14 +606,15 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
             @NotNull
             @Override
             public FunctionGroup getFunctionGroup(@NotNull String name) {
-                ClassifierDescriptor classifier = getClassifier(name);
-                if (classifier instanceof ClassDescriptor) {
-                    ClassDescriptor classDescriptor = (ClassDescriptor) classifier;
-                    return classDescriptor.getConstructors();
-                }
                 WritableFunctionGroup writableFunctionGroup = new WritableFunctionGroup(name);
+//                ClassifierDescriptor classifier = getClassifier(name);
+//                if (classifier instanceof ClassDescriptor) {
+//                    ClassDescriptor classDescriptor = (ClassDescriptor) classifier;
+//                    writableFunctionGroup.addAllFunctions(classDescriptor.getConstructors());
+//                }
+                ModuleDescriptor module = new ModuleDescriptor("TypeCheckerTest");
                 for (String funDecl : FUNCTION_DECLARATIONS) {
-                    FunctionDescriptor functionDescriptor = classDescriptorResolver.resolveFunctionDescriptor(JetStandardClasses.getAny(), this, JetChangeUtil.createFunction(getProject(), funDecl));
+                    FunctionDescriptor functionDescriptor = classDescriptorResolver.resolveFunctionDescriptor(module, this, JetChangeUtil.createFunction(getProject(), funDecl));
                     if (name.equals(functionDescriptor.getName())) {
                         writableFunctionGroup.addFunction(functionDescriptor);
                     }

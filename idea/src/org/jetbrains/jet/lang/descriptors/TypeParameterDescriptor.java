@@ -103,8 +103,9 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
 
     @NotNull
     @Override
+    @Deprecated // Use the static method TypeParameterDescriptor.substitute()
     public TypeParameterDescriptor substitute(TypeSubstitutor substitutor) {
-        throw new UnsupportedOperationException(); // TODO
+        throw new UnsupportedOperationException();
     }
 
     @Override

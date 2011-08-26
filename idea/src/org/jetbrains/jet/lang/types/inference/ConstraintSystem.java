@@ -102,7 +102,7 @@ public class ConstraintSystem {
                                 }
                             }
 
-                            System.out.println("minimal solution from lowerbounds for " + this + " is " + commonSupertype);
+                            println("minimal solution from lowerbounds for " + this + " is " + commonSupertype);
                             value = new KnownType(commonSupertype);
                         }
                         else {
@@ -121,7 +121,7 @@ public class ConstraintSystem {
 
             return value;
         }
-        
+
         private Set<JetType> getTypes(Set<TypeValue> lowerBounds) {
             Set<JetType> types = Sets.newHashSet();
             for (TypeValue lowerBound : lowerBounds) {
@@ -206,7 +206,7 @@ public class ConstraintSystem {
     }
 
     private void addSubtypingConstraintOnTypeValues(TypeValue typeValueForLower, TypeValue typeValueForUpper) {
-        System.out.println(typeValueForLower + " :< " + typeValueForUpper);
+        println(typeValueForLower + " :< " + typeValueForUpper);
         typeValueForLower.getUpperBounds().add(typeValueForUpper);
         typeValueForUpper.getLowerBounds().add(typeValueForLower);
     }
@@ -271,14 +271,14 @@ public class ConstraintSystem {
                 JetType boundingType = solution.getSubstitutor().substitute(upperBound.getValue().getType(), Variance.INVARIANT);
                 if (!typeChecker.isSubtypeOf(type, boundingType)) { // TODO
                     solution.registerError();
-                    System.out.println("Constraint violation: " + type + " :< " + boundingType);
+                    println("Constraint violation: " + type + " :< " + boundingType);
                 }
             }
             for (TypeValue lowerBound : typeValue.getLowerBounds()) {
                 JetType boundingType = solution.getSubstitutor().substitute(lowerBound.getValue().getType(), Variance.INVARIANT);
                 if (!typeChecker.isSubtypeOf(boundingType, type)) {
                     solution.registerError();
-                    System.out.println("Constraint violation: " + boundingType + " :< " + type);
+                    println("Constraint violation: " + boundingType + " :< " + type);
                 }
             }
         }
@@ -309,7 +309,7 @@ public class ConstraintSystem {
                 DeclarationDescriptor declarationDescriptor = key.getDeclarationDescriptor();
                 if (declarationDescriptor instanceof TypeParameterDescriptor) {
                     TypeParameterDescriptor descriptor = (TypeParameterDescriptor) declarationDescriptor;
-                    System.out.println(descriptor + " |-> " + getValue(descriptor));
+                    println(descriptor + " |-> " + getValue(descriptor));
                     return new TypeProjection(getValue(descriptor));
                 }
                 return null;
@@ -368,12 +368,6 @@ public class ConstraintSystem {
                 addSubtypingConstraintOnTypeValues(subtypeValue, supertypeValue);
             }
             return StatusAction.PROCEED;
-
-//            // both types are known
-//            if (typeChecker.isSubtypeOf(subtype, supertype)) {
-//                return StatusAction.PROCEED;
-//            }
-//            return fail();
         }
 
         private boolean someUnknown(TypeValue subtypeValue, TypeValue supertypeValue) {
@@ -410,6 +404,10 @@ public class ConstraintSystem {
         protected Boolean result() {
             return !error;
         }
+    }
+
+    private static void println(String message) {
+//        System.out.println(message);
     }
 
 }
