@@ -115,12 +115,9 @@ JetFile: RootNamespace.jet
                 PsiWhiteSpace(' ')
                 PsiElement(DOUBLE_ARROW)('=>')
                 PsiWhiteSpace(' ')
-                FUNCTION_LITERAL_EXPRESSION
-                  FUNCTION_LITERAL
-                    PsiElement(LBRACE)('{')
-                    BLOCK
-                      <empty list>
-                    PsiElement(RBRACE)('}')
+                BLOCK
+                  PsiElement(LBRACE)('{')
+                  PsiElement(RBRACE)('}')
               PsiWhiteSpace('\n    ')
               PsiElement(RBRACE)('}')
             PsiWhiteSpace('\n  ')

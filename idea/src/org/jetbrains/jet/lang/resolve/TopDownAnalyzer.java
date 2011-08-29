@@ -274,7 +274,7 @@ public class TopDownAnalyzer {
                 JetExpression importedReference = importDirective.getImportedReference();
                 if (importedReference != null) {
                     JetTypeInferrer.Services typeInferrerServices = semanticServices.getTypeInferrerServices(trace, JetFlowInformationProvider.THROW_EXCEPTION);
-                    JetType type = typeInferrerServices.getTypeWithNamespaces(namespaceScope, importedReference, false);
+                    JetType type = typeInferrerServices.getTypeWithNamespaces(namespaceScope, importedReference);
                     if (type != null) {
                         namespaceScope.importScope(type.getMemberScope());
                     }
@@ -287,7 +287,7 @@ public class TopDownAnalyzer {
                 JetExpression importedReference = importDirective.getImportedReference();
                 if (importedReference instanceof JetDotQualifiedExpression) {
                     JetDotQualifiedExpression reference = (JetDotQualifiedExpression) importedReference;
-                    JetType type = semanticServices.getTypeInferrerServices(trace, JetFlowInformationProvider.THROW_EXCEPTION).getTypeWithNamespaces(namespaceScope, reference.getReceiverExpression(), false);
+                    JetType type = semanticServices.getTypeInferrerServices(trace, JetFlowInformationProvider.THROW_EXCEPTION).getTypeWithNamespaces(namespaceScope, reference.getReceiverExpression());
                     JetExpression selectorExpression = reference.getSelectorExpression();
                     if (selectorExpression != null) {
                         referenceExpression = (JetSimpleNameExpression) selectorExpression;
@@ -567,7 +567,7 @@ public class TopDownAnalyzer {
                     JetExpression delegateExpression = specifier.getDelegateExpression();
                     if (delegateExpression != null) {
                         JetScope scope = scopeForConstructor == null ? descriptor.getScopeForMemberResolution() : scopeForConstructor;
-                        JetType type = typeInferrer.getType(scope, delegateExpression, false, NO_EXPECTED_TYPE);
+                        JetType type = typeInferrer.getType(scope, delegateExpression, NO_EXPECTED_TYPE);
                         JetType supertype = trace.getBindingContext().get(BindingContext.TYPE, specifier.getTypeReference());
                         if (type != null && !semanticServices.getTypeChecker().isSubtypeOf(type, supertype)) { // TODO : Convertible?
                             trace.getErrorHandler().typeMismatch(delegateExpression, supertype, type);
@@ -643,7 +643,7 @@ public class TopDownAnalyzer {
             final JetScope scopeForConstructor = getInnerScopeForConstructor(primaryConstructor, classDescriptor.getScopeForMemberResolution(), true);
             JetTypeInferrer.Services typeInferrer = semanticServices.getTypeInferrerServices(traceForConstructors, JetFlowInformationProvider.NONE); // TODO : flow
             for (JetClassInitializer anonymousInitializer : anonymousInitializers) {
-                typeInferrer.getType(scopeForConstructor, anonymousInitializer.getBody(), true, NO_EXPECTED_TYPE);
+                typeInferrer.getType(scopeForConstructor, anonymousInitializer.getBody(), NO_EXPECTED_TYPE);
             }
         }
         else {
@@ -859,7 +859,7 @@ public class TopDownAnalyzer {
     private void resolvePropertyInitializer(JetProperty property, PropertyDescriptor propertyDescriptor, JetExpression initializer, JetScope scope) {
         JetFlowInformationProvider flowInformationProvider = classDescriptorResolver.computeFlowData(property, initializer); // TODO : flow JET-15
         JetTypeInferrer.Services typeInferrer = semanticServices.getTypeInferrerServices(traceForConstructors, flowInformationProvider);
-        JetType type = typeInferrer.getType(getPropertyDeclarationInnerScope(scope, propertyDescriptor), initializer, false, NO_EXPECTED_TYPE);
+        JetType type = typeInferrer.getType(getPropertyDeclarationInnerScope(scope, propertyDescriptor), initializer, NO_EXPECTED_TYPE);
 
         JetType expectedType;
         PropertySetterDescriptor setter = propertyDescriptor.getSetter();

@@ -723,7 +723,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 if (atSet(WHEN_CONDITION_RECOVERY_SET)) {
                     error("Expecting an element");
                 } else {
-                    parseExpression();
+                    parseExpressionPreferringBlocks();
                 }
             } else if (!atSet(WHEN_CONDITION_RECOVERY_SET)) {
                  errorAndAdvance("Expecting '=>'");
@@ -750,7 +750,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
         if (atSet(WHEN_CONDITION_RECOVERY_SET)) {
             error("Expecting an element");
         } else {
-            parseExpression();
+            parseExpressionPreferringBlocks();
         }
         // SEMI is consumed in parseWhenEntry
     }
@@ -1032,6 +1032,10 @@ public class JetExpressionParsing extends AbstractJetParsing {
      *   ;
      */
     private void parseFunctionLiteral() {
+        parseFunctionLiteral(false);
+    }
+
+    private void parseFunctionLiteral(boolean preferBlock) {
         assert _at(LBRACE);
 
         PsiBuilder.Marker literalExpression = mark();
@@ -1048,7 +1052,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
             }
         });
 
-        if (doubleArrowPos >= 0) {
+        boolean doubleArrowPresent = doubleArrowPos >= 0;
+        if (doubleArrowPresent) {
             boolean dontExpectParameters = false;
 
             int lastDot = matchTokenStreamPredicate(new LastBefore(new At(DOT), new AtOffset(doubleArrowPos)));
@@ -1116,7 +1121,17 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
             expectNoAdvance(DOUBLE_ARROW, "Expecting '=>'");
         }
+        else {
+            if (preferBlock) {
+                literal.drop();
+                parseStatements();
+                expect(RBRACE, "Expecting '}'");
+                literalExpression.done(BLOCK);
+                myBuilder.restoreNewlinesState();
 
+                return;
+            }
+        }
         PsiBuilder.Marker body = mark();
         parseStatements();
         body.done(BLOCK);
@@ -1322,13 +1337,34 @@ public class JetExpressionParsing extends AbstractJetParsing {
         loop.done(FOR);
     }
 
+    /**
+     * If it has no =>, it's a block, otherwise a function literal
+     */
+    private void parseExpressionPreferringBlocks() {
+        if (at(LBRACE)) {
+            parseFunctionLiteral(true);
+        }
+        else if (atSet(LABELS) && lookahead(1) == LBRACE ) {
+            PsiBuilder.Marker mark = mark();
+
+            parseOperationReference();
+
+            parseFunctionLiteral(true);
+
+            mark.done(PREFIX_EXPRESSION);
+        }
+        else {
+            parseExpression();
+        }
+    }
+
     /*
      * element
      */
     private void parseControlStructureBody() {
         PsiBuilder.Marker body = mark();
         if (!at(SEMICOLON)) {
-            parseExpression();
+            parseExpressionPreferringBlocks();
         }
         body.done(BODY);
     }
@@ -1400,7 +1436,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         PsiBuilder.Marker thenBranch = mark();
         if (!at(ELSE_KEYWORD) && !at(SEMICOLON)) {
-            parseExpression();
+            parseExpressionPreferringBlocks();
         }
         if (at(SEMICOLON) && lookahead(1) == ELSE_KEYWORD) {
             advance(); // SEMICOLON
@@ -1412,7 +1448,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
             PsiBuilder.Marker elseBranch = mark();
             if (!at(SEMICOLON)) {
-                parseExpression();
+                parseExpressionPreferringBlocks();
             }
             elseBranch.done(ELSE);
         }

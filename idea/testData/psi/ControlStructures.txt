@@ -535,12 +535,9 @@ JetFile: ControlStructures.jet
           PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           BODY
-            FUNCTION_LITERAL_EXPRESSION
-              FUNCTION_LITERAL
-                PsiElement(LBRACE)('{')
-                BLOCK
-                  <empty list>
-                PsiElement(RBRACE)('}')
+            BLOCK
+              PsiElement(LBRACE)('{')
+              PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n\n  ')
         WHILE
           PsiElement(while)('while')
@@ -552,24 +549,18 @@ JetFile: ControlStructures.jet
           PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           BODY
-            FUNCTION_LITERAL_EXPRESSION
-              FUNCTION_LITERAL
-                PsiElement(LBRACE)('{')
-                BLOCK
-                  <empty list>
-                PsiElement(RBRACE)('}')
+            BLOCK
+              PsiElement(LBRACE)('{')
+              PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n\n  ')
         DO_WHILE
           PsiElement(do)('do')
           PsiWhiteSpace(' ')
           BODY
-            FUNCTION_LITERAL_EXPRESSION
-              FUNCTION_LITERAL
-                PsiElement(LBRACE)('{')
-                PsiWhiteSpace('\n\n  ')
-                BLOCK
-                  <empty list>
-                PsiElement(RBRACE)('}')
+            BLOCK
+              PsiElement(LBRACE)('{')
+              PsiWhiteSpace('\n\n  ')
+              PsiElement(RBRACE)('}')
           PsiWhiteSpace(' ')
           PsiElement(while)('while')
           PsiWhiteSpace(' ')
@@ -625,12 +616,9 @@ JetFile: ControlStructures.jet
           PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           BODY
-            FUNCTION_LITERAL_EXPRESSION
-              FUNCTION_LITERAL
-                PsiElement(LBRACE)('{')
-                BLOCK
-                  <empty list>
-                PsiElement(RBRACE)('}')
+            BLOCK
+              PsiElement(LBRACE)('{')
+              PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n\n    ')
         FOR
           PsiElement(for)('for')
@@ -647,15 +635,13 @@ JetFile: ControlStructures.jet
           PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           BODY
-            FUNCTION_LITERAL_EXPRESSION
-              FUNCTION_LITERAL
-                PsiElement(LBRACE)('{')
-                PsiWhiteSpace('\n      ')
-                BLOCK
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('b')
-                PsiWhiteSpace('\n    ')
-                PsiElement(RBRACE)('}')
+            BLOCK
+              PsiElement(LBRACE)('{')
+              PsiWhiteSpace('\n      ')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('b')
+              PsiWhiteSpace('\n    ')
+              PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n\n    ')
         FOR
           PsiElement(for)('for')
@@ -714,15 +700,13 @@ JetFile: ControlStructures.jet
           PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           BODY
-            FUNCTION_LITERAL_EXPRESSION
-              FUNCTION_LITERAL
-                PsiElement(LBRACE)('{')
-                PsiWhiteSpace('\n      ')
-                BLOCK
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('b')
-                PsiWhiteSpace('\n    ')
-                PsiElement(RBRACE)('}')
+            BLOCK
+              PsiElement(LBRACE)('{')
+              PsiWhiteSpace('\n      ')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('b')
+              PsiWhiteSpace('\n    ')
+              PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n\n    ')
         WHILE
           PsiElement(while)('while')
@@ -756,12 +740,9 @@ JetFile: ControlStructures.jet
           PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           BODY
-            FUNCTION_LITERAL_EXPRESSION
-              FUNCTION_LITERAL
-                PsiElement(LBRACE)('{')
-                BLOCK
-                  <empty list>
-                PsiElement(RBRACE)('}')
+            BLOCK
+              PsiElement(LBRACE)('{')
+              PsiElement(RBRACE)('}')
         PsiWhiteSpace('\n\n    ')
         IF
           PsiElement(if)('if')
@@ -980,24 +961,22 @@ JetFile: ControlStructures.jet
           PsiElement(do)('do')
           PsiWhiteSpace(' ')
           BODY
-            FUNCTION_LITERAL_EXPRESSION
-              FUNCTION_LITERAL
-                PsiElement(LBRACE)('{')
-                BLOCK
-                  PsiElement(SEMICOLON)(';')
-                  PsiElement(SEMICOLON)(';')
-                  PsiElement(SEMICOLON)(';')
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('foo')
-                  PsiElement(SEMICOLON)(';')
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('bar')
-                  PsiElement(SEMICOLON)(';')
-                  PsiElement(SEMICOLON)(';')
-                  PsiElement(SEMICOLON)(';')
-                  PsiElement(SEMICOLON)(';')
-                PsiWhiteSpace(' ')
-                PsiElement(RBRACE)('}')
+            BLOCK
+              PsiElement(LBRACE)('{')
+              PsiElement(SEMICOLON)(';')
+              PsiElement(SEMICOLON)(';')
+              PsiElement(SEMICOLON)(';')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('foo')
+              PsiElement(SEMICOLON)(';')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('bar')
+              PsiElement(SEMICOLON)(';')
+              PsiElement(SEMICOLON)(';')
+              PsiElement(SEMICOLON)(';')
+              PsiElement(SEMICOLON)(';')
+              PsiWhiteSpace(' ')
+              PsiElement(RBRACE)('}')
           PsiWhiteSpace(' ')
           PsiElement(while)('while')
           PsiWhiteSpace(' ')

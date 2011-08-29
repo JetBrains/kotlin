@@ -358,37 +358,35 @@ JetFile: IOSamples.jet
               PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')
               THEN
-                FUNCTION_LITERAL_EXPRESSION
-                  FUNCTION_LITERAL
-                    PsiElement(LBRACE)('{')
-                    PsiWhiteSpace('\n      ')
-                    BLOCK
-                      BINARY_EXPRESSION
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('nextUsed')
-                        PsiWhiteSpace(' ')
-                        OPERATION_REFERENCE
-                          PsiElement(EQ)('=')
-                        PsiWhiteSpace(' ')
-                        BOOLEAN_CONSTANT
-                          PsiElement(true)('true')
-                      PsiWhiteSpace('\n      ')
-                      RETURN
-                        PsiElement(return)('return')
-                        PsiWhiteSpace(' ')
-                        BINARY_WITH_TYPE
+                BLOCK
+                  PsiElement(LBRACE)('{')
+                  PsiWhiteSpace('\n      ')
+                  BINARY_EXPRESSION
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('nextUsed')
+                    PsiWhiteSpace(' ')
+                    OPERATION_REFERENCE
+                      PsiElement(EQ)('=')
+                    PsiWhiteSpace(' ')
+                    BOOLEAN_CONSTANT
+                      PsiElement(true)('true')
+                  PsiWhiteSpace('\n      ')
+                  RETURN
+                    PsiElement(return)('return')
+                    PsiWhiteSpace(' ')
+                    BINARY_WITH_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('next')
+                      PsiWhiteSpace(' ')
+                      OPERATION_REFERENCE
+                        PsiElement(as)('as')
+                      PsiWhiteSpace(' ')
+                      TYPE_REFERENCE
+                        USER_TYPE
                           REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('next')
-                          PsiWhiteSpace(' ')
-                          OPERATION_REFERENCE
-                            PsiElement(as)('as')
-                          PsiWhiteSpace(' ')
-                          TYPE_REFERENCE
-                            USER_TYPE
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('Byte')
-                    PsiWhiteSpace('\n    ')
-                    PsiElement(RBRACE)('}')
+                            PsiElement(IDENTIFIER)('Byte')
+                  PsiWhiteSpace('\n    ')
+                  PsiElement(RBRACE)('}')
             PsiWhiteSpace('\n    ')
             RETURN
               PsiElement(return)('return')
@@ -440,42 +438,40 @@ JetFile: IOSamples.jet
                 PsiElement(RPAR)(')')
                 PsiWhiteSpace(' ')
                 THEN
-                  FUNCTION_LITERAL_EXPRESSION
-                    FUNCTION_LITERAL
-                      PsiElement(LBRACE)('{')
-                      PsiWhiteSpace('\n        ')
-                      BLOCK
-                        BINARY_EXPRESSION
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('nextUsed')
-                          PsiWhiteSpace(' ')
-                          OPERATION_REFERENCE
-                            PsiElement(EQ)('=')
-                          PsiWhiteSpace(' ')
-                          BOOLEAN_CONSTANT
-                            PsiElement(false)('false')
-                        PsiWhiteSpace('\n        ')
-                        BINARY_EXPRESSION
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('next')
-                          PsiWhiteSpace(' ')
-                          OPERATION_REFERENCE
-                            PsiElement(EQ)('=')
-                          PsiWhiteSpace(' ')
-                          DOT_QUALIFIED_EXPRESSION
-                            REFERENCE_EXPRESSION
-                              PsiElement(IDENTIFIER)('stream')
-                            PsiElement(DOT)('.')
-                            CALL_EXPRESSION
-                              REFERENCE_EXPRESSION
-                                PsiElement(IDENTIFIER)('read')
-                              VALUE_ARGUMENT_LIST
-                                PsiElement(LPAR)('(')
-                                PsiElement(RPAR)(')')
+                  BLOCK
+                    PsiElement(LBRACE)('{')
+                    PsiWhiteSpace('\n        ')
+                    BINARY_EXPRESSION
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('nextUsed')
                       PsiWhiteSpace(' ')
-                      PsiComment(EOL_COMMENT)('// throws IOException')
-                      PsiWhiteSpace('\n      ')
-                      PsiElement(RBRACE)('}')
+                      OPERATION_REFERENCE
+                        PsiElement(EQ)('=')
+                      PsiWhiteSpace(' ')
+                      BOOLEAN_CONSTANT
+                        PsiElement(false)('false')
+                    PsiWhiteSpace('\n        ')
+                    BINARY_EXPRESSION
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('next')
+                      PsiWhiteSpace(' ')
+                      OPERATION_REFERENCE
+                        PsiElement(EQ)('=')
+                      PsiWhiteSpace(' ')
+                      DOT_QUALIFIED_EXPRESSION
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('stream')
+                        PsiElement(DOT)('.')
+                        CALL_EXPRESSION
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('read')
+                          VALUE_ARGUMENT_LIST
+                            PsiElement(LPAR)('(')
+                            PsiElement(RPAR)(')')
+                    PsiWhiteSpace(' ')
+                    PsiComment(EOL_COMMENT)('// throws IOException')
+                    PsiWhiteSpace('\n      ')
+                    PsiElement(RBRACE)('}')
               PsiWhiteSpace('\n      ')
               RETURN
                 PsiElement(return)('return')

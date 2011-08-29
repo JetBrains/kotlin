@@ -540,7 +540,7 @@ public class ClassDescriptorResolver {
                     @Override
                     protected JetType compute() {
                         JetFlowInformationProvider flowInformationProvider = computeFlowData(property, initializer);
-                        return semanticServices.getTypeInferrerServices(trace, flowInformationProvider).safeGetType(scope, initializer, false, JetTypeInferrer.NO_EXPECTED_TYPE);
+                        return semanticServices.getTypeInferrerServices(trace, flowInformationProvider).safeGetType(scope, initializer, JetTypeInferrer.NO_EXPECTED_TYPE);
                     }
                 };
                 if (allowDeferred) {

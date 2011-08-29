@@ -504,7 +504,7 @@ public class CallResolver {
 
                         JetExpression expression = valueArgument.getArgumentExpression();
                         // TODO : more attempts, with different expected types
-                        JetType type = temporaryServices.getType(scope, expression, false, NO_EXPECTED_TYPE);
+                        JetType type = temporaryServices.getType(scope, expression, NO_EXPECTED_TYPE);
                         if (type != null) {
                             constraintSystem.addSubtypingConstraint(type, valueParameterDescriptor.getOutType());
                         }
@@ -599,12 +599,12 @@ public class CallResolver {
             for (ValueArgument valueArgument : task.getValueArguments()) {
                 JetExpression argumentExpression = valueArgument.getArgumentExpression();
                 if (argumentExpression != null) {
-                    typeInferrer.getServices(trace).getType(scope, argumentExpression, false, NO_EXPECTED_TYPE);
+                    typeInferrer.getServices(trace).getType(scope, argumentExpression, NO_EXPECTED_TYPE);
                 }
             }
 
             for (JetExpression expression : task.getFunctionLiteralArguments()) {
-                typeInferrer.getServices(trace).getType(scope, expression, false, NO_EXPECTED_TYPE);
+                typeInferrer.getServices(trace).getType(scope, expression, NO_EXPECTED_TYPE);
             }
 
             for (JetTypeProjection typeProjection : task.getTypeArguments()) {
@@ -718,7 +718,7 @@ public class CallResolver {
             JetType parameterType = substitutedParameter.getOutType();
             JetExpression argumentExpression = valueArgument.getArgumentExpression();
             if (argumentExpression != null) {
-                JetType type = temporaryServices.getType(scope, argumentExpression, false, parameterType);
+                JetType type = temporaryServices.getType(scope, argumentExpression, parameterType);
                 if (type == null) {
                     dirty.setValue(true);
                 }
