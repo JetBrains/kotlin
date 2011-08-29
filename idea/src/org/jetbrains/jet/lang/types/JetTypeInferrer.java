@@ -924,11 +924,36 @@ public class JetTypeInferrer {
             if (value instanceof ErrorValue) {
                 ErrorValue errorValue = (ErrorValue) value;
                 context.trace.getErrorHandler().genericError(node, errorValue.getMessage());
-                return null;
+                return getDefaultType(elementType);
             }
             else {
                 context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, value);
                 return context.services.checkType(value.getType(standardLibrary), expression, context);
+            }
+        }
+
+        @NotNull
+        private JetType getDefaultType(IElementType constantType) {
+            if (constantType == JetNodeTypes.INTEGER_CONSTANT) {
+                return semanticServices.getStandardLibrary().getIntType();
+            }
+            else if (constantType == JetNodeTypes.FLOAT_CONSTANT) {
+                return semanticServices.getStandardLibrary().getDoubleType();
+            }
+            else if (constantType == JetNodeTypes.BOOLEAN_CONSTANT) {
+                return semanticServices.getStandardLibrary().getBooleanType();
+            }
+            else if (constantType == JetNodeTypes.CHARACTER_CONSTANT) {
+                return semanticServices.getStandardLibrary().getCharType();
+            }
+            else if (constantType == JetNodeTypes.RAW_STRING_CONSTANT) {
+                return semanticServices.getStandardLibrary().getStringType();
+            }
+            else if (constantType == JetNodeTypes.NULL) {
+                return JetStandardClasses.getNullableNothingType();
+            }
+            else {
+                throw new IllegalArgumentException("Unsupported constant type: " + constantType);
             }
         }
 
@@ -1216,7 +1241,7 @@ public class JetTypeInferrer {
 //                    JetScope compositeScope = new ScopeWithReceiver(context.scope, subjectType, semanticServices.getTypeChecker());
                     if (callSuffixExpression != null) {
 //                        JetType selectorReturnType = getType(compositeScope, callSuffixExpression, false, context);
-                        JetType selectorReturnType = getSelectorReturnType(subjectType, callSuffixExpression, context);//getType(compositeScope, callSuffixExpression, false, context);
+                        JetType selectorReturnType = getType(subjectType.getMemberScope(), callSuffixExpression, false, context);//getType(compositeScope, callSuffixExpression, false, context);
                         ensureBooleanResultWithCustomSubject(callSuffixExpression, selectorReturnType, "This expression", context);
                         context.services.checkNullSafety(subjectType, condition.getOperationTokenNode(), getCalleeFunctionDescriptor(callSuffixExpression, context));
                     }
@@ -1771,6 +1796,7 @@ public class JetTypeInferrer {
             JetExpression receiverExpression = expression.getReceiverExpression();
             JetType receiverType = context.services.typeInferrerVisitorWithNamespaces.getType(receiverExpression, new TypeInferenceContext(context.trace, context.scope, false, context.dataFlowInfo, NO_EXPECTED_TYPE, NO_EXPECTED_TYPE));
             if (receiverType == null) return null;
+            if (selectorExpression == null) return null;
 
             // Clean resolution: no autocasts
             TemporaryBindingTrace cleanResolutionTrace = TemporaryBindingTrace.create(context.trace);

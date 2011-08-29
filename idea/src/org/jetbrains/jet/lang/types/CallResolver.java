@@ -656,12 +656,17 @@ public class CallResolver {
                 return result;
             }
             else {
-                FunctionDescriptor maximallySpecific = findMaximallySpecific(successfulCandidates, traces, false);
+                Map<FunctionDescriptor, FunctionDescriptor> cleanCandidates = Maps.newLinkedHashMap(successfulCandidates);
+                cleanCandidates.keySet().removeAll(dirtyCandidates);
+                if (cleanCandidates.isEmpty()) {
+                    cleanCandidates = successfulCandidates;
+                }
+                FunctionDescriptor maximallySpecific = findMaximallySpecific(cleanCandidates, traces, false);
                 if (maximallySpecific != null) {
                     return maximallySpecific;
                 }
 
-                FunctionDescriptor maximallySpecificGenericsDiscriminated = findMaximallySpecific(successfulCandidates, traces, true);
+                FunctionDescriptor maximallySpecificGenericsDiscriminated = findMaximallySpecific(cleanCandidates, traces, true);
                 if (maximallySpecificGenericsDiscriminated != null) {
                     return maximallySpecificGenericsDiscriminated;
                 }
