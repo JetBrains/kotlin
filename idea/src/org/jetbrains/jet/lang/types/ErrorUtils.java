@@ -181,6 +181,10 @@ public class ErrorUtils {
                isError(type.getConstructor()));
     }
 
+    public static boolean isError(@NotNull FunctionDescriptor candidate) {
+        return candidate.getContainingDeclaration() == getErrorClass();
+    }
+
     private static class ErrorTypeImpl implements JetType {
 
         private final TypeConstructor constructor;

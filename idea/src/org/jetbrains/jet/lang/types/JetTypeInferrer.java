@@ -651,7 +651,7 @@ public class JetTypeInferrer {
                 }
             }
             catch (ReenteringLazyValueComputationException e) {
-                context.trace.getErrorHandler().genericError(expression.getNode(), "Type inference has run into a recursive problem"); // TODO : message
+                context.trace.getErrorHandler().genericError(expression.getNode(), "Type checking has run into a recursive problem"); // TODO : message
                 result = null;
             }
 

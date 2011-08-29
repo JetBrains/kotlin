@@ -3,6 +3,7 @@ package org.jetbrains.jet.lang.types;
 import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 
 import java.util.Collections;
@@ -16,9 +17,15 @@ public class CallMaker {
     private static class ExpressionValueArgument implements ValueArgument {
 
         private final JetExpression expression;
+        private final PsiElement reportErrorsOn;
 
-        private ExpressionValueArgument(JetExpression expression) {
+        private ExpressionValueArgument(@NotNull JetExpression expression) {
+            this(expression, expression);
+        }
+
+        private ExpressionValueArgument(@Nullable JetExpression expression, @NotNull PsiElement reportErrorsOn) {
             this.expression = expression;
+            this.reportErrorsOn = expression == null ? reportErrorsOn : expression;
         }
 
         @Override
@@ -49,7 +56,7 @@ public class CallMaker {
         @NotNull
         @Override
         public PsiElement asElement() {
-            return expression;
+            return reportErrorsOn;
         }
     }
 
@@ -95,7 +102,7 @@ public class CallMaker {
     public static Call makeCall(final JetExpression calleeExpression, final List<JetExpression> argumentExpressions) {
         List<ValueArgument> arguments = Lists.newArrayList();
         for (JetExpression argumentExpression : argumentExpressions) {
-            arguments.add(makeValueArgument(argumentExpression));
+            arguments.add(makeValueArgument(argumentExpression, calleeExpression));
         }
         return makeCallWithArguments(calleeExpression, arguments);
     }
@@ -114,7 +121,11 @@ public class CallMaker {
         return makeCall(arrayAccessExpression, arguments);
     }
 
-    public static ValueArgument makeValueArgument(JetExpression expression) {
-        return new ExpressionValueArgument(expression);
+    public static ValueArgument makeValueArgument(@NotNull JetExpression expression) {
+        return makeValueArgument(expression, expression);
+    }
+
+    public static ValueArgument makeValueArgument(@Nullable JetExpression expression, @NotNull PsiElement reportErrorsOn) {
+        return new ExpressionValueArgument(expression, reportErrorsOn);
     }
 }

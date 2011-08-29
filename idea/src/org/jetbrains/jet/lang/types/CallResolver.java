@@ -234,7 +234,7 @@ public class CallResolver {
 
     private void addConstrtuctors(JetScope scope, String name, Collection<FunctionDescriptor> functions) {
         ClassifierDescriptor classifier = scope.getClassifier(name);
-        if (classifier instanceof ClassDescriptor) {
+        if (classifier instanceof ClassDescriptor && !ErrorUtils.isError(classifier.getTypeConstructor())) {
             ClassDescriptor classDescriptor = (ClassDescriptor) classifier;
             functions.addAll(classDescriptor.getConstructors().getFunctionDescriptors());
         }
@@ -454,6 +454,7 @@ public class CallResolver {
     private FunctionDescriptor performResolution(@NotNull BindingTrace trace, @NotNull JetScope scope, @NotNull JetType expectedType, @NotNull ResolutionTask task, @NotNull TracingStrategy tracing) {
         Map<FunctionDescriptor, FunctionDescriptor> successfulCandidates = Maps.newLinkedHashMap();
         Set<FunctionDescriptor> failedCandidates = Sets.newLinkedHashSet();
+        Set<FunctionDescriptor> dirtyCandidates = Sets.newLinkedHashSet();
         Map<FunctionDescriptor, ConstraintSystem.Solution> solutions = Maps.newHashMap();
         Map<FunctionDescriptor, TemporaryBindingTrace> traces = Maps.newHashMap();
 
@@ -463,6 +464,13 @@ public class CallResolver {
             JetTypeInferrer.Services temporaryServices = typeInferrer.getServices(temporaryTrace);
 
             tracing.bindFunctionReference(temporaryTrace, candidate);
+            
+            if (ErrorUtils.isError(candidate)) {
+                successfulCandidates.put(candidate, candidate);
+                continue;
+            }
+
+            Flag dirty = new Flag(false);
 
             Map<ValueArgument, ValueParameterDescriptor> argumentsToParameters = Maps.newHashMap();
             boolean error = mapValueArgumentsToParameters(task, tracing, candidate, temporaryTrace, argumentsToParameters);
@@ -474,7 +482,7 @@ public class CallResolver {
 
             if (task.getTypeArguments().isEmpty()) {
                 if (candidate.getTypeParameters().isEmpty()) {
-                    if (checkValueArgumentTypes(scope, temporaryServices, argumentsToParameters, Functions.<ValueParameterDescriptor>identity())
+                    if (checkValueArgumentTypes(scope, temporaryServices, argumentsToParameters, dirty, Functions.<ValueParameterDescriptor>identity())
                             && checkReceiver(task, tracing, candidate, temporaryTrace)) {
                         successfulCandidates.put(candidate, candidate);
                     }
@@ -499,6 +507,9 @@ public class CallResolver {
                         JetType type = temporaryServices.getType(scope, expression, false, NO_EXPECTED_TYPE);
                         if (type != null) {
                             constraintSystem.addSubtypingConstraint(type, valueParameterDescriptor.getOutType());
+                        }
+                        else {
+                            dirty.setValue(true);
                         }
                     }
 
@@ -564,7 +575,7 @@ public class CallResolver {
                             return parameterMap.get(input.getOriginal());
                         }
                     };
-                    if (checkValueArgumentTypes(scope, temporaryServices, argumentsToParameters, mapFunction)
+                    if (checkValueArgumentTypes(scope, temporaryServices, argumentsToParameters, dirty, mapFunction)
                             && checkReceiver(task, tracing, substitutedFunctionDescriptor, temporaryTrace)) {
                         successfulCandidates.put(candidate, substitutedFunctionDescriptor);
                     }
@@ -577,9 +588,30 @@ public class CallResolver {
                     tracing.reportWrongTypeArguments(temporaryTrace, "Number of type arguments does not match " + DescriptorRenderer.TEXT.render(candidate));
                 }
             }
+            
+            if (dirty.getValue()) {
+                dirtyCandidates.add(candidate);
+            }
         }
 
-        return computeResultAndReportErrors(trace, tracing, successfulCandidates, failedCandidates, traces);
+        FunctionDescriptor functionDescriptor = computeResultAndReportErrors(trace, tracing, successfulCandidates, failedCandidates, dirtyCandidates, traces);
+        if (functionDescriptor == null) {
+            for (ValueArgument valueArgument : task.getValueArguments()) {
+                JetExpression argumentExpression = valueArgument.getArgumentExpression();
+                if (argumentExpression != null) {
+                    typeInferrer.getServices(trace).getType(scope, argumentExpression, false, NO_EXPECTED_TYPE);
+                }
+            }
+
+            for (JetExpression expression : task.getFunctionLiteralArguments()) {
+                typeInferrer.getServices(trace).getType(scope, expression, false, NO_EXPECTED_TYPE);
+            }
+
+            for (JetTypeProjection typeProjection : task.getTypeArguments()) {
+                new TypeResolver(semanticServices, trace, true).resolveType(scope, typeProjection.getTypeReference());
+            }
+        }
+        return functionDescriptor;
     }
 
     private boolean checkReceiver(ResolutionTask task, TracingStrategy tracing, FunctionDescriptor candidate, TemporaryBindingTrace temporaryTrace) {
@@ -611,7 +643,8 @@ public class CallResolver {
         return true;
     }
 
-    private FunctionDescriptor computeResultAndReportErrors(BindingTrace trace, TracingStrategy tracing, Map<FunctionDescriptor, FunctionDescriptor> successfulCandidates, Set<FunctionDescriptor> failedCandidates, Map<FunctionDescriptor, TemporaryBindingTrace> traces) {
+    @Nullable
+    private FunctionDescriptor computeResultAndReportErrors(BindingTrace trace, TracingStrategy tracing, Map<FunctionDescriptor, FunctionDescriptor> successfulCandidates, Set<FunctionDescriptor> failedCandidates, Set<FunctionDescriptor> dirtyCandidates, Map<FunctionDescriptor, TemporaryBindingTrace> traces) {
         if (successfulCandidates.size() > 0) {
             if (successfulCandidates.size() == 1) {
                 Map.Entry<FunctionDescriptor, FunctionDescriptor> entry = successfulCandidates.entrySet().iterator().next();
@@ -633,12 +666,14 @@ public class CallResolver {
                     return maximallySpecificGenericsDiscriminated;
                 }
 
-                StringBuilder stringBuilder = new StringBuilder();
-                for (FunctionDescriptor functionDescriptor : successfulCandidates.keySet()) {
-                    stringBuilder.append(DescriptorRenderer.TEXT.render(functionDescriptor)).append(" ");
-                }
+                if (dirtyCandidates.isEmpty()) {
+                    StringBuilder stringBuilder = new StringBuilder();
+                    for (FunctionDescriptor functionDescriptor : successfulCandidates.keySet()) {
+                        stringBuilder.append(DescriptorRenderer.TEXT.render(functionDescriptor)).append(" ");
+                    }
 
-                tracing.reportOverallResolutionError(trace, "Overload resolution ambiguity: " + stringBuilder);
+                    tracing.reportOverallResolutionError(trace, "Overload resolution ambiguity: " + stringBuilder);
+                }
             }
         }
         else if (!failedCandidates.isEmpty()) {
@@ -646,6 +681,7 @@ public class CallResolver {
                 FunctionDescriptor functionDescriptor = failedCandidates.iterator().next();
                 TemporaryBindingTrace temporaryTrace = traces.get(functionDescriptor);
                 temporaryTrace.commit();
+                return failedCandidates.iterator().next();
             }
             else {
                 StringBuilder stringBuilder = new StringBuilder();
@@ -659,10 +695,13 @@ public class CallResolver {
         else {
             tracing.reportUnresolvedFunctionReference(trace);
         }
+
+
+
         return null;
     }
 
-    private boolean checkValueArgumentTypes(JetScope scope, JetTypeInferrer.Services temporaryServices, Map<ValueArgument, ValueParameterDescriptor> argumentsToParameters, Function<ValueParameterDescriptor, ValueParameterDescriptor> parameterMap) {
+    private boolean checkValueArgumentTypes(JetScope scope, JetTypeInferrer.Services temporaryServices, Map<ValueArgument, ValueParameterDescriptor> argumentsToParameters, Flag dirty, Function<ValueParameterDescriptor, ValueParameterDescriptor> parameterMap) {
         for (Map.Entry<ValueArgument, ValueParameterDescriptor> entry : argumentsToParameters.entrySet()) {
             ValueArgument valueArgument = entry.getKey();
             ValueParameterDescriptor valueParameterDescriptor = entry.getValue();
@@ -672,9 +711,15 @@ public class CallResolver {
             assert substitutedParameter != null;
 
             JetType parameterType = substitutedParameter.getOutType();
-            JetType type = temporaryServices.getType(scope, valueArgument.getArgumentExpression(), false, parameterType);
-            if (type == null || !semanticServices.getTypeChecker().isSubtypeOf(type, parameterType)) {
-                return false;
+            JetExpression argumentExpression = valueArgument.getArgumentExpression();
+            if (argumentExpression != null) {
+                JetType type = temporaryServices.getType(scope, argumentExpression, false, parameterType);
+                if (type == null) {
+                    dirty.setValue(true);
+                }
+                else if (!semanticServices.getTypeChecker().isSubtypeOf(type, parameterType)) {
+                    return false;
+                }
             }
         }
         return true;
@@ -769,7 +814,7 @@ public class CallResolver {
     }
 
     private boolean overrides(@NotNull FunctionDescriptor f, @NotNull FunctionDescriptor g) {
-        Set<? extends FunctionDescriptor> overriddenFunctions = f.getOverriddenFunctions();
+        Set<? extends FunctionDescriptor> overriddenFunctions = f.getOriginal().getOverriddenFunctions();
         FunctionDescriptor originalG = g.getOriginal();
         for (FunctionDescriptor overriddenFunction : overriddenFunctions) {
             if (originalG.equals(overriddenFunction.getOriginal())) return true;
@@ -919,4 +964,20 @@ public class CallResolver {
         return true;
     }
 
+
+    private static class Flag {
+        private boolean flag;
+
+        public Flag(boolean  flag) {
+            this.flag = flag;
+        }
+
+        public boolean getValue() {
+            return flag;
+        }
+
+        public void setValue(boolean flag) {
+            this.flag = flag;
+        }
+    }
 }
