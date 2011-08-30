@@ -64,7 +64,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
 
             final FunctionDescriptor functionDescriptor = bindingContext.get(BindingContext.FUNCTION, jetFunction);
             if (functionDescriptor == null) return null;
-            final Set<? extends FunctionDescriptor> overriddenFunctions = functionDescriptor.getOverriddenFunctions();
+            final Set<? extends FunctionDescriptor> overriddenFunctions = functionDescriptor.getOverriddenDescriptors();
             Icon icon = isMember(functionDescriptor) ? (overriddenFunctions.isEmpty() ? PlatformIcons.METHOD_ICON : OVERRIDING_FUNCTION) : PlatformIcons.FUNCTION_ICON;
             return new LineMarkerInfo<JetNamedFunction>(
                     jetFunction, jetFunction.getTextOffset(), icon, Pass.UPDATE_ALL,

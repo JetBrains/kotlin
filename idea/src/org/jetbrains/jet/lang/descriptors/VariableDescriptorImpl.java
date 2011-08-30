@@ -5,7 +5,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author abreslav
@@ -43,5 +45,40 @@ public abstract class VariableDescriptorImpl extends DeclarationDescriptorImpl i
 
     protected void setOutType(JetType outType) {
         this.outType = outType;
+    }
+
+    @Override
+    @NotNull
+    public VariableDescriptor getOriginal() {
+        return (VariableDescriptor) super.getOriginal();
+    }
+
+    @NotNull
+    @Override
+    public List<ValueParameterDescriptor> getValueParameters() {
+        return Collections.emptyList();
+    }
+
+    @NotNull
+    @Override
+    public Set<? extends CallableDescriptor> getOverriddenDescriptors() {
+        return Collections.emptySet();
+    }
+
+    @NotNull
+    @Override
+    public List<TypeParameterDescriptor> getTypeParameters() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public JetType getReceiverType() {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public JetType getReturnType() {
+        return getOutType();
     }
 }

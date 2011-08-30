@@ -334,6 +334,10 @@ public class JetTypeChecker {
         return new TypeCheckingProcedure().run(subtype, supertype);
     }
 
+    public boolean equalTypes(@NotNull JetType a, @NotNull JetType b) {
+        return isSubtypeOf(a, b) && isSubtypeOf(b, a);
+    }
+
     private static class OldProcedure {
         public static boolean isSubtypeOf(@NotNull JetType subtype, @NotNull JetType supertype) {
             if (ErrorUtils.isErrorType(subtype) || ErrorUtils.isErrorType(supertype)) {
@@ -593,7 +597,5 @@ public class JetTypeChecker {
         protected Boolean result() {
             return result;
         }
-
-
     }
 }

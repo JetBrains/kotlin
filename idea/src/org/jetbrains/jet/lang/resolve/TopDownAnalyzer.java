@@ -580,7 +580,7 @@ public class TopDownAnalyzer {
                     JetTypeReference typeReference = call.getTypeReference();
                     if (typeReference != null) {
                         if (descriptor.getUnsubstitutedPrimaryConstructor() != null) {
-                            typeInferrer.getCallResolver().resolveCall(scopeForConstructor, null, call, NO_EXPECTED_TYPE);
+                            typeInferrer.getCallResolver().resolveCall(trace, scopeForConstructor, null, call, NO_EXPECTED_TYPE);
                         }
                         else {
                             JetValueArgumentList valueArgumentList = call.getValueArgumentList();
@@ -685,7 +685,7 @@ public class TopDownAnalyzer {
                     public void visitDelegationToSuperCallSpecifier(JetDelegatorToSuperCall call) {
                         JetTypeReference typeReference = call.getTypeReference();
                         if (typeReference != null) {
-                            typeInferrerForInitializers.getCallResolver().resolveCall(functionInnerScope, null, call, NO_EXPECTED_TYPE);
+                            typeInferrerForInitializers.getCallResolver().resolveCall(trace, functionInnerScope, null, call, NO_EXPECTED_TYPE);
                         }
                     }
 
@@ -693,14 +693,16 @@ public class TopDownAnalyzer {
                     public void visitDelegationToThisCall(JetDelegatorToThisCall call) {
                         // TODO : check that there's no recursion in this() calls
                         // TODO : check: if a this() call is present, no other initializers are allowed
-//                        ClassDescriptor classDescriptor = descriptor.getContainingDeclaration();
-//                        typeInferrerForInitializers.checkClassConstructorCall(
-//                                functionInnerScope,
+                        ClassDescriptor classDescriptor = descriptor.getContainingDeclaration();
+
+                        typeInferrerForInitializers.getCallResolver().resolveCall(trace,
+                                functionInnerScope,
+                                null, call, NO_EXPECTED_TYPE);
 //                                call.getThisReference(),
 //                                classDescriptor,
 //                                classDescriptor.getDefaultType(),
 //                                call);
-                        trace.getErrorHandler().genericError(call.getNode(), "this-calls are not supported");
+//                        trace.getErrorHandler().genericError(call.getNode(), "this-calls are not supported");
                     }
 
                     @Override
@@ -805,7 +807,7 @@ public class TopDownAnalyzer {
 
     private JetScope getPropertyDeclarationInnerScope(@NotNull JetScope outerScope, @NotNull PropertyDescriptor propertyDescriptor) {
         WritableScopeImpl result = new WritableScopeImpl(outerScope, propertyDescriptor, trace.getErrorHandler()).setDebugName("Property declaration inner scope");
-        for (TypeParameterDescriptor typeParameterDescriptor : propertyDescriptor.getTypeParemeters()) {
+        for (TypeParameterDescriptor typeParameterDescriptor : propertyDescriptor.getTypeParameters()) {
             result.addTypeParameterDescriptor(typeParameterDescriptor);
         }
         JetType receiverType = propertyDescriptor.getReceiverType();

@@ -62,7 +62,7 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
 
     @NotNull
     @Override
-    public Set<? extends FunctionDescriptor> getOverriddenFunctions() {
+    public Set<? extends FunctionDescriptor> getOverriddenDescriptors() {
         return Collections.emptySet();
     }
 

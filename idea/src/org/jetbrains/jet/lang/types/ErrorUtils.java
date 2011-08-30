@@ -181,7 +181,7 @@ public class ErrorUtils {
                isError(type.getConstructor()));
     }
 
-    public static boolean isError(@NotNull FunctionDescriptor candidate) {
+    public static boolean isError(@NotNull DeclarationDescriptor candidate) {
         return candidate.getContainingDeclaration() == getErrorClass();
     }
 

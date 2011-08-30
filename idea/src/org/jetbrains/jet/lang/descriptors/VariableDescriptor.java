@@ -8,7 +8,7 @@ import org.jetbrains.jet.lang.types.TypeSubstitutor;
 /**
  * @author abreslav
  */
-public interface VariableDescriptor extends DeclarationDescriptor {
+public interface VariableDescriptor extends CallableDescriptor {
     /**
      * @return <code>null</code> for write-only variables (i.e. properties), variable value type otherwise
      */

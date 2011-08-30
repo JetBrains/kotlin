@@ -17,8 +17,8 @@ public class CallMaker {
     private static class ExpressionValueArgument implements ValueArgument {
 
         private final JetExpression expression;
-        private final PsiElement reportErrorsOn;
 
+        private final PsiElement reportErrorsOn;
         private ExpressionValueArgument(@NotNull JetExpression expression) {
             this(expression, expression);
         }
@@ -58,14 +58,14 @@ public class CallMaker {
         public PsiElement asElement() {
             return reportErrorsOn;
         }
-    }
 
+    }
     private static abstract class CallStub implements Call {
+
         @Override
         public JetValueArgumentList getValueArgumentList() {
             return null;
         }
-
         @NotNull
         @Override
         public List<JetExpression> getFunctionLiteralArguments() {
@@ -82,8 +82,8 @@ public class CallMaker {
         public JetTypeArgumentList getTypeArgumentList() {
             return null;
         }
-    }
 
+    }
     public static Call makeCallWithArguments(final JetExpression calleeExpression, final List<? extends ValueArgument> valueArguments) {
         return new CallStub() {
             @Override
@@ -127,5 +127,9 @@ public class CallMaker {
 
     public static ValueArgument makeValueArgument(@Nullable JetExpression expression, @NotNull PsiElement reportErrorsOn) {
         return new ExpressionValueArgument(expression, reportErrorsOn);
+    }
+
+    public static Call makePropertyCall(@NotNull JetSimpleNameExpression nameExpression) {
+        return makeCall(nameExpression, Collections.<JetExpression>emptyList());
     }
 }

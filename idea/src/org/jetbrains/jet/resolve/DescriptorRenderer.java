@@ -171,7 +171,7 @@ public class DescriptorRenderer {
         @Override
         public Void visitPropertyDescriptor(PropertyDescriptor descriptor, StringBuilder builder) {
             String typeString = renderPropertyPrefixAndComputeTypeString(
-                    builder, descriptor.getTypeParemeters(),
+                    builder, descriptor.getTypeParameters(),
                     descriptor.getReceiverType(),
                     descriptor.getOutType(),
                     descriptor.getInType());

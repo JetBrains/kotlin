@@ -65,7 +65,7 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
 
     @NotNull
     @Override
-    public Set<? extends FunctionDescriptor> getOverriddenFunctions() {
+    public Set<? extends FunctionDescriptor> getOverriddenDescriptors() {
         return overriddenFunctions;
     }
 

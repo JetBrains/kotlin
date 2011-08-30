@@ -33,7 +33,7 @@ public class PropertySetterDescriptor extends PropertyAccessorDescriptor {
 
     @NotNull
     @Override
-    public Set<? extends FunctionDescriptor> getOverriddenFunctions() {
+    public Set<? extends FunctionDescriptor> getOverriddenDescriptors() {
         return overriddenSetters;
     }
 

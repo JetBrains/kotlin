@@ -216,7 +216,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         HashSet<FunctionDescriptor> overridden = new HashSet<FunctionDescriptor>();
         for (JetDeclaration declaration : myClass.getDeclarations()) {
             if (declaration instanceof JetFunction) {
-                overridden.addAll(state.getBindingContext().get(BindingContext.FUNCTION, (JetNamedFunction) declaration).getOverriddenFunctions());
+                overridden.addAll(state.getBindingContext().get(BindingContext.FUNCTION, (JetNamedFunction) declaration).getOverriddenDescriptors());
             }
         }
 

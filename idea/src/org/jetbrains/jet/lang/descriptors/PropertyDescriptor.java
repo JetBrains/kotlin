@@ -78,13 +78,20 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Member
     }
 
     @NotNull
-    public List<TypeParameterDescriptor> getTypeParemeters() {
+    @Override
+    public List<TypeParameterDescriptor> getTypeParameters() {
         return typeParemeters;
     }
 
     @Nullable
     public JetType getReceiverType() {
         return receiverType;
+    }
+
+    @NotNull
+    @Override
+    public JetType getReturnType() {
+        return getOutType();
     }
 
 
@@ -110,7 +117,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Member
 
     @NotNull
     @Override
-    public VariableDescriptor substitute(TypeSubstitutor substitutor) {
+    public PropertyDescriptor substitute(TypeSubstitutor substitutor) {
         JetType originalInType = getInType();
         JetType inType = originalInType == null ? null : substitutor.substitute(originalInType, Variance.IN_VARIANCE);
         JetType originalOutType = getOutType();
