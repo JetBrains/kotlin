@@ -1,8 +1,10 @@
 package org.jetbrains.jet.lang.resolve;
 
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
+import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiErrorElement;
@@ -135,7 +137,13 @@ public class AnalyzingUtils {
 
             @Override
             public void visitErrorElement(PsiErrorElement element) {
-                throw new IllegalArgumentException(element.getErrorDescription() + " at offset " + element.getTextRange().getStartOffset());
+                Document document = PsiDocumentManager.getInstance(element.getProject()).getDocument(element.getContainingFile());
+                int offset = element.getTextRange().getStartOffset();
+                int lineNumber = document.getLineNumber(offset);
+                int lineStartOffset = document.getLineStartOffset(lineNumber);
+                int column = offset - lineStartOffset;
+
+                throw new IllegalArgumentException(element.getErrorDescription() + "; looking at " + element.getNode().getElementType() + " '" + element.getText() + "' at line " + lineNumber + ":" + column);
             }
         });
     }
