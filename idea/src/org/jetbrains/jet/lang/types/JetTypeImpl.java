@@ -17,7 +17,7 @@ import java.util.List;
  */
 public final class JetTypeImpl extends AnnotatedImpl implements JetType {
 
-    private static final HashBiMap<TypeConstructor,TypeConstructor> EMPTY_AXIOMS = HashBiMap.<TypeConstructor, TypeConstructor>create();
+    public static final HashBiMap<TypeConstructor,TypeConstructor> EMPTY_AXIOMS = HashBiMap.<TypeConstructor, TypeConstructor>create();
 
     private final TypeConstructor constructor;
     private final List<TypeProjection> arguments;

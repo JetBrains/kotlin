@@ -1,0 +1,15 @@
+import java.lang.Integer
+
+class C {
+ fun f(): Any = "C f"
+}
+
+class D() : C {
+    fun f(): String = "D f"
+}
+
+fun box(): String{
+    val d : C = D()
+    if(d.f() != "D f") return "fail f"
+    return "OK"
+}
