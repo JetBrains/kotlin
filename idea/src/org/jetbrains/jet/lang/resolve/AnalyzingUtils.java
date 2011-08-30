@@ -139,7 +139,7 @@ public class AnalyzingUtils {
             public void visitErrorElement(PsiErrorElement element) {
                 Document document = PsiDocumentManager.getInstance(element.getProject()).getDocument(element.getContainingFile());
                 int offset = element.getTextRange().getStartOffset();
-                int lineNumber = document.getLineNumber(offset);
+                int lineNumber = document.getLineNumber(offset)+1;
                 int lineStartOffset = document.getLineStartOffset(lineNumber);
                 int column = offset - lineStartOffset;
 
