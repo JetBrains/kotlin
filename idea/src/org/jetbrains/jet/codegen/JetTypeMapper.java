@@ -47,6 +47,19 @@ public class JetTypeMapper {
         return type == Type.INT_TYPE || type == Type.SHORT_TYPE || type == Type.BYTE_TYPE || type == Type.CHAR_TYPE;
     }
 
+    public static boolean isPrimitive(Type type) {
+        return type == Type.INT_TYPE
+                || type == Type.SHORT_TYPE
+                || type == Type.BYTE_TYPE
+                || type == Type.CHAR_TYPE
+                || type == Type.SHORT_TYPE
+                || type == Type.FLOAT_TYPE
+                || type == Type.DOUBLE_TYPE
+                || type == Type.LONG_TYPE
+                || type == Type.BOOLEAN_TYPE
+                || type == Type.VOID_TYPE;
+    }
+
     static Type psiTypeToAsm(PsiType type) {
         if (type instanceof PsiPrimitiveType) {
             if (type == PsiType.VOID) {
