@@ -19,6 +19,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
+import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResult;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstantResolver;
 import org.jetbrains.jet.lang.resolve.constants.ErrorValue;
@@ -1777,9 +1778,9 @@ public class JetTypeInferrer {
 
         @Nullable
         private JetType checkIterableConvention(@NotNull JetType type, @NotNull ASTNode reportErrorsOn, TypeInferenceContext context) {
-            OverloadResolutionResult iteratorResolutionResult = context.services.callResolver.resolveExactSignature(context.scope, type, "iterator", Collections.<JetType>emptyList());
+            OverloadResolutionResult<FunctionDescriptor> iteratorResolutionResult = context.services.callResolver.resolveExactSignature(context.scope, type, "iterator", Collections.<JetType>emptyList());
             if (iteratorResolutionResult.isSuccess()) {
-                JetType iteratorType = iteratorResolutionResult.getFunctionDescriptor().getReturnType();
+                JetType iteratorType = iteratorResolutionResult.getDescriptor().getReturnType();
                 boolean hasNextFunctionSupported = checkHasNextFunctionSupport(reportErrorsOn, iteratorType, context);
                 boolean hasNextPropertySupported = checkHasNextPropertySupport(reportErrorsOn, iteratorType, context);
                 if (hasNextFunctionSupported && hasNextPropertySupported && !ErrorUtils.isErrorType(iteratorType)) {
@@ -1790,13 +1791,13 @@ public class JetTypeInferrer {
                     context.trace.getErrorHandler().genericError(reportErrorsOn, "Loop range must have an 'iterator().hasNext()' function or an 'iterator().hasNext' property");
                 }
 
-                OverloadResolutionResult nextResolutionResult = context.services.callResolver.resolveExactSignature(context.scope, iteratorType, "next", Collections.<JetType>emptyList());
+                OverloadResolutionResult<FunctionDescriptor> nextResolutionResult = context.services.callResolver.resolveExactSignature(context.scope, iteratorType, "next", Collections.<JetType>emptyList());
                 if (nextResolutionResult.isAmbiguity()) {
                     context.trace.getErrorHandler().genericError(reportErrorsOn, "Method 'iterator().next()' is ambiguous for this expression");
                 } else if (nextResolutionResult.isNothing()) {
                     context.trace.getErrorHandler().genericError(reportErrorsOn, "Loop range must have an 'iterator().next()' method");
                 } else {
-                    return nextResolutionResult.getFunctionDescriptor().getReturnType();
+                    return nextResolutionResult.getDescriptor().getReturnType();
                 }
             }
             else {
@@ -1810,13 +1811,13 @@ public class JetTypeInferrer {
         }
 
         private boolean checkHasNextFunctionSupport(@NotNull ASTNode reportErrorsOn, @NotNull JetType iteratorType, TypeInferenceContext context) {
-            OverloadResolutionResult hasNextResolutionResult = context.services.callResolver.resolveExactSignature(context.scope, iteratorType, "hasNext", Collections.<JetType>emptyList());
+            OverloadResolutionResult<FunctionDescriptor> hasNextResolutionResult = context.services.callResolver.resolveExactSignature(context.scope, iteratorType, "hasNext", Collections.<JetType>emptyList());
             if (hasNextResolutionResult.isAmbiguity()) {
                 context.trace.getErrorHandler().genericError(reportErrorsOn, "Method 'iterator().hasNext()' is ambiguous for this expression");
             } else if (hasNextResolutionResult.isNothing()) {
                 return false;
             } else {
-                JetType hasNextReturnType = hasNextResolutionResult.getFunctionDescriptor().getReturnType();
+                JetType hasNextReturnType = hasNextResolutionResult.getDescriptor().getReturnType();
                 if (!isBoolean(hasNextReturnType)) {
                     context.trace.getErrorHandler().genericError(reportErrorsOn, "The 'iterator().hasNext()' method of the loop range must return Boolean, but returns " + hasNextReturnType);
                 }
@@ -2126,11 +2127,11 @@ public class JetTypeInferrer {
                     if (leftType != null) {
                         JetType rightType = getType(right, context.replaceScope(context.scope));
                         if (rightType != null) {
-                            OverloadResolutionResult resolutionResult = context.services.callResolver.resolveExactSignature(
+                            OverloadResolutionResult<FunctionDescriptor> resolutionResult = context.services.callResolver.resolveExactSignature(
                                     context.scope, leftType, "equals",
                                     Collections.singletonList(JetStandardClasses.getNullableAnyType()));
                             if (resolutionResult.isSuccess()) {
-                                FunctionDescriptor equals = resolutionResult.getFunctionDescriptor();
+                                FunctionDescriptor equals = resolutionResult.getDescriptor();
                                 context.trace.record(REFERENCE_TARGET, operationSign, equals);
                                 if (ensureBooleanResult(operationSign, name, equals.getReturnType(), context)) {
                                     ensureNonemptyIntersectionOfOperandTypes(expression, context);
@@ -2139,7 +2140,7 @@ public class JetTypeInferrer {
                             else {
                                 if (resolutionResult.isAmbiguity()) {
                                     StringBuilder stringBuilder = new StringBuilder();
-                                    for (FunctionDescriptor functionDescriptor : resolutionResult.getFunctionDescriptors()) {
+                                    for (FunctionDescriptor functionDescriptor : resolutionResult.getDescriptors()) {
                                         stringBuilder.append(DescriptorRenderer.TEXT.render(functionDescriptor)).append(" ");
                                     }
                                     context.trace.getErrorHandler().genericError(operationSign.getNode(), "Ambiguous function: " + stringBuilder);

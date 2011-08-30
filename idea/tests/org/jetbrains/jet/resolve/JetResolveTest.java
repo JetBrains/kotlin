@@ -15,7 +15,7 @@ import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
-import org.jetbrains.jet.lang.resolve.OverloadResolutionResult;
+import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResult;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.parsing.JetParsingTest;
 
@@ -106,8 +106,8 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
         List<JetType> parameterTypeList = Arrays.asList(parameterType);
         JetTypeInferrer.Services typeInferrerServices = JetSemanticServices.createSemanticServices(getProject()).getTypeInferrerServices(new BindingTraceContext(), JetFlowInformationProvider.NONE);
 
-        OverloadResolutionResult functions = typeInferrerServices.getCallResolver().resolveExactSignature(classDescriptor.getMemberScope(typeArguments), null, name, parameterTypeList);
-        for (FunctionDescriptor function : functions.getFunctionDescriptors()) {
+        OverloadResolutionResult<FunctionDescriptor> functions = typeInferrerServices.getCallResolver().resolveExactSignature(classDescriptor.getMemberScope(typeArguments), null, name, parameterTypeList);
+        for (FunctionDescriptor function : functions.getDescriptors()) {
             List<ValueParameterDescriptor> unsubstitutedValueParameters = function.getValueParameters();
             for (int i = 0, unsubstitutedValueParametersSize = unsubstitutedValueParameters.size(); i < unsubstitutedValueParametersSize; i++) {
                 ValueParameterDescriptor unsubstitutedValueParameter = unsubstitutedValueParameters.get(i);
