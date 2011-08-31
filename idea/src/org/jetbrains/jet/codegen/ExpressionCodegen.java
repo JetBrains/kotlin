@@ -731,15 +731,21 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 }
             }
             else if (descriptor instanceof ClassDescriptor) {
-                final JetClassObject classObject = ((JetClass) declaration).getClassObject();
-                if (classObject == null) {
-                    throw new UnsupportedOperationException("trying to reference a class which doesn't have a class object");
+                if(declaration instanceof JetClass) {
+                    final JetClassObject classObject = ((JetClass) declaration).getClassObject();
+                    if (classObject == null) {
+                        throw new UnsupportedOperationException("trying to reference a class which doesn't have a class object");
+                    }
+                    final String type = typeMapper.jvmName(classObject);
+                    return StackValue.field(Type.getObjectType(type),
+                                                  typeMapper.jvmName((ClassDescriptor) descriptor, OwnerKind.IMPLEMENTATION),
+                                                  "$classobj",
+                                                  true);
                 }
-                final String type = typeMapper.jvmName(classObject);
-                return StackValue.field(Type.getObjectType(type),
-                                              typeMapper.jvmName((ClassDescriptor) descriptor, OwnerKind.IMPLEMENTATION),
-                                              "$classobj",
-                                              true);
+                else {
+                    // todo ?
+                    return StackValue.none();
+                }
             }
             else if (descriptor instanceof TypeParameterDescriptor) {
                 loadTypeParameterTypeInfo((TypeParameterDescriptor) descriptor);
