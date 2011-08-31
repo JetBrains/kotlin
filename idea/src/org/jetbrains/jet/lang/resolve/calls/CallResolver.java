@@ -215,10 +215,10 @@ public class CallResolver {
         };
         for (ResolutionTask<Descriptor> task : prioritizedTasks) {
             TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(trace);
-            Descriptor descriptor = performResolution(temporaryTrace, scope, expectedType, task, tracing);
-            if (descriptor != null) {
+            OverloadResolutionResult<Descriptor> result = performResolution(temporaryTrace, scope, expectedType, task, tracing);
+            if (result.isSuccess()) {
                 temporaryTrace.commit();
-                return descriptor;
+                return result.getDescriptor();
             }
             if (traceForFirstNonemptyCandidateSet == null && !task.getCandidates().isEmpty()) {
                 traceForFirstNonemptyCandidateSet = temporaryTrace;
@@ -235,8 +235,8 @@ public class CallResolver {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    @Nullable
-    private <Descriptor extends CallableDescriptor> Descriptor performResolution(@NotNull BindingTrace trace, @NotNull JetScope scope, @NotNull JetType expectedType, @NotNull ResolutionTask<Descriptor> task, @NotNull TracingStrategy tracing) {
+    @NotNull
+    private <Descriptor extends CallableDescriptor> OverloadResolutionResult<Descriptor> performResolution(@NotNull BindingTrace trace, @NotNull JetScope scope, @NotNull JetType expectedType, @NotNull ResolutionTask<Descriptor> task, @NotNull TracingStrategy tracing) {
         Map<Descriptor, Descriptor> successfulCandidates = Maps.newLinkedHashMap();
         Set<Descriptor> failedCandidates = Sets.newLinkedHashSet();
         Set<Descriptor> dirtyCandidates = Sets.newLinkedHashSet();
@@ -369,8 +369,8 @@ public class CallResolver {
             }
         }
 
-        Descriptor resultingDescriptor = computeResultAndReportErrors(trace, tracing, successfulCandidates, failedCandidates, dirtyCandidates, traces);
-        if (resultingDescriptor == null) {
+        OverloadResolutionResult<Descriptor> result = computeResultAndReportErrors(trace, tracing, successfulCandidates, failedCandidates, dirtyCandidates, traces);
+        if (!result.singleDescriptor()) {
             for (ValueArgument valueArgument : task.getValueArguments()) {
                 JetExpression argumentExpression = valueArgument.getArgumentExpression();
                 if (argumentExpression != null) {
@@ -386,7 +386,7 @@ public class CallResolver {
                 new TypeResolver(semanticServices, trace, true).resolveType(scope, typeProjection.getTypeReference());
             }
         }
-        return resultingDescriptor;
+        return result;
     }
 
     private <Descriptor extends CallableDescriptor> Function<ValueParameterDescriptor, ValueParameterDescriptor> createMapFunction(Descriptor substitutedFunctionDescriptor) {
@@ -433,8 +433,8 @@ public class CallResolver {
         return true;
     }
 
-    @Nullable
-    private <Descriptor extends CallableDescriptor> Descriptor computeResultAndReportErrors(BindingTrace trace, TracingStrategy tracing, Map<Descriptor, Descriptor> successfulCandidates, Set<Descriptor> failedCandidates, Set<Descriptor> dirtyCandidates, Map<Descriptor, TemporaryBindingTrace> traces) {
+    @NotNull
+    private <Descriptor extends CallableDescriptor> OverloadResolutionResult<Descriptor> computeResultAndReportErrors(BindingTrace trace, TracingStrategy tracing, Map<Descriptor, Descriptor> successfulCandidates, Set<Descriptor> failedCandidates, Set<Descriptor> dirtyCandidates, Map<Descriptor, TemporaryBindingTrace> traces) {
         if (successfulCandidates.size() > 0) {
             if (successfulCandidates.size() == 1) {
                 Map.Entry<Descriptor, Descriptor> entry = successfulCandidates.entrySet().iterator().next();
@@ -443,7 +443,7 @@ public class CallResolver {
 
                 TemporaryBindingTrace temporaryTrace = traces.get(functionDescriptor);
                 temporaryTrace.commit();
-                return result;
+                return OverloadResolutionResult.success(result);
             }
             else {
                 Map<Descriptor, Descriptor> cleanCandidates = Maps.newLinkedHashMap(successfulCandidates);
@@ -453,12 +453,12 @@ public class CallResolver {
                 }
                 Descriptor maximallySpecific = overloadingConflictResolver.findMaximallySpecific(cleanCandidates, traces, false);
                 if (maximallySpecific != null) {
-                    return maximallySpecific;
+                    return OverloadResolutionResult.success(maximallySpecific);
                 }
 
                 Descriptor maximallySpecificGenericsDiscriminated = overloadingConflictResolver.findMaximallySpecific(cleanCandidates, traces, true);
                 if (maximallySpecificGenericsDiscriminated != null) {
-                    return maximallySpecificGenericsDiscriminated;
+                    return OverloadResolutionResult.success(maximallySpecificGenericsDiscriminated);
                 }
 
                 if (dirtyCandidates.isEmpty()) {
@@ -469,6 +469,7 @@ public class CallResolver {
 
                     tracing.reportOverallResolutionError(trace, "Overload resolution ambiguity: " + stringBuilder);
                 }
+                return OverloadResolutionResult.ambiguity(successfulCandidates.keySet());
             }
         }
         else if (!failedCandidates.isEmpty()) {
@@ -476,7 +477,7 @@ public class CallResolver {
                 Descriptor functionDescriptor = failedCandidates.iterator().next();
                 TemporaryBindingTrace temporaryTrace = traces.get(functionDescriptor);
                 temporaryTrace.commit();
-                return failedCandidates.iterator().next();
+                return OverloadResolutionResult.singleFailedCandidate(failedCandidates.iterator().next());
             }
             else {
                 StringBuilder stringBuilder = new StringBuilder();
@@ -485,15 +486,13 @@ public class CallResolver {
                 }
 
                 tracing.reportOverallResolutionError(trace, "None of the following functions can be called with the arguments supplied: " + stringBuilder);
+                return OverloadResolutionResult.manyFailedCandidates(failedCandidates);
             }
         }
         else {
             tracing.reportUnresolvedReference(trace);
+            return OverloadResolutionResult.nameNotFound();
         }
-
-
-
-        return null;
     }
 
     private boolean checkValueArgumentTypes(JetScope scope, JetTypeInferrer.Services temporaryServices, Map<ValueArgument, ValueParameterDescriptor> argumentsToParameters, Flag dirty, Function<ValueParameterDescriptor, ValueParameterDescriptor> parameterMap) {
