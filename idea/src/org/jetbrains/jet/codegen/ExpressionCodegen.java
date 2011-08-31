@@ -263,7 +263,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         final JetParameter loopParameter = expression.getLoopParameter();
         final VariableDescriptor parameterDescriptor = bindingContext.get(BindingContext.VALUE_PARAMETER, loopParameter);
         JetType paramType = parameterDescriptor.getOutType();
-        Type asmParamType = typeMapper.mapType(paramType);
+        Type asmParamType = typeMapper.boxType(typeMapper.mapType(paramType));
 
         int iteratorVar = myMap.enterTemp();
         gen(expression.getLoopRange(), loopRangeType);
