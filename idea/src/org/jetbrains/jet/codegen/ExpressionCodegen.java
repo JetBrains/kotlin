@@ -1613,7 +1613,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             if (!(descriptor instanceof ClassDescriptor)) {
                 throw new UnsupportedOperationException("don't know how to handle non-class types in as/as?");
             }
-            Type type = typeMapper.mapType(jetType, OwnerKind.INTERFACE);
+            Type type = typeMapper.boxType(typeMapper.mapType(jetType, OwnerKind.INTERFACE));
             generateInstanceOf(StackValue.expression(OBJECT_TYPE, expression.getLeft(), this), jetType, true);
             Label isInstance = new Label();
             v.ifne(isInstance);
@@ -1739,7 +1739,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             if (leaveExpressionOnStack) {
                 v.dup();
             }
-            Type type = typeMapper.mapType(jetType, OwnerKind.INTERFACE);
+            Type type = typeMapper.boxType(typeMapper.mapType(jetType, OwnerKind.INTERFACE));
             v.instanceOf(type);
         }
     }
