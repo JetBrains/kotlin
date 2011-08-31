@@ -74,7 +74,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             "DOUBLE_TYPE_INFO"
     };
 
-    private final InstructionAdapter v;
+    private final InstructionAdapterEx v;
     private final FrameMap myMap;
     private final JetTypeMapper typeMapper;
     private final GenerationState state;
@@ -93,7 +93,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         this.typeMapper = state.getTypeMapper();
         this.returnType = returnType;
         this.state = state;
-        this.v = new InstructionAdapter(v);
+        this.v = new InstructionAdapterEx(v);
         this.bindingContext = state.getBindingContext();
         this.context = context;
         this.intrinsics = state.getIntrinsics();
@@ -1039,16 +1039,24 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         Label end = new Label();
         v.dup();
         v.ifnull(ifnull);
-        gen(expression.getSelectorExpression());
+        JetType receiverType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression.getReceiverExpression());
+        StackValue propValue = genQualified(StackValue.onStack(typeMapper.mapType(receiverType)), expression.getSelectorExpression());
+        Type type = propValue.type;
+        propValue.put(type, v);
+        if(JetTypeMapper.isPrimitive(type) && !type.equals(Type.VOID_TYPE)) {
+            v.valueOf(type);
+            type = typeMapper.boxType(type);
+        }
         v.goTo(end);
+
         v.mark(ifnull);
-        // null is already on stack here after the dup
-        JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression);
-        if (expressionType.equals(JetStandardClasses.getUnitType())) {
-            v.pop();
+        v.pop();
+        if(!propValue.type.equals(Type.VOID_TYPE)) {
+            v.aconst(null);
         }
         v.mark(end);
-        return StackValue.onStack(typeMapper.mapType(expressionType));
+
+        return StackValue.onStack(type);
     }
 
     @Override
@@ -1138,10 +1146,20 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     }
 
     private StackValue generateEquals(JetExpression left, JetExpression right, IElementType opToken) {
-        final Type leftType = expressionType(left);
-        final Type rightType = expressionType(right);
-        gen(left, leftType);
-        gen(right, rightType);
+        Type leftType = expressionType(left);
+        Type rightType = expressionType(right);
+        if(JetTypeMapper.isPrimitive(leftType) != JetTypeMapper.isPrimitive(rightType)) {
+            gen(left, leftType);
+            v.valueOf(leftType);
+            leftType = typeMapper.boxType(leftType);
+            gen(right, rightType);
+            v.valueOf(rightType);
+            rightType = typeMapper.boxType(rightType);
+        }
+        else {
+            gen(left, leftType);
+            gen(right, rightType);
+        }
         return generateEqualsForExpressionsOnStack(opToken, leftType, rightType);
     }
 
