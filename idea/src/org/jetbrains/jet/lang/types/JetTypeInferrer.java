@@ -7,6 +7,7 @@ import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
@@ -952,6 +953,11 @@ public class JetTypeInferrer {
             if (newTrace == trace) return this;
             return new TypeInferenceContext(newTrace, scope, preferBlock, dataFlowInfo, expectedType, expectedReturnType);
         }
+
+        public TypeInferenceContext replaceExpectedTypeAndTrace(@NotNull JetType newExpectedType, @NotNull BindingTrace newTrace) {
+            if (newExpectedType == expectedType && newTrace == trace) return this;
+            return new TypeInferenceContext(newTrace, scope, preferBlock, dataFlowInfo, newExpectedType, expectedReturnType);
+        }
     }
 
     private class TypeInferrerVisitor extends JetVisitor<JetType, TypeInferenceContext> {
@@ -1301,35 +1307,74 @@ public class JetTypeInferrer {
 
         @Override
         public JetType visitBinaryWithTypeRHSExpression(JetBinaryExpressionWithTypeRHS expression, TypeInferenceContext context) {
-            IElementType operationType = expression.getOperationSign().getReferencedNameElementType();
-            JetType actualType = getType(context.scope, expression.getLeft(), false, context.replaceExpectedType(NO_EXPECTED_TYPE));
             JetTypeReference right = expression.getRight();
-            JetType result = null; 
+            JetType result = null;
             if (right != null) {
                 JetType targetType = context.typeResolver.resolveType(context.scope, right);
-                if (operationType == JetTokens.COLON) {
-                    if (actualType != null && !semanticServices.getTypeChecker().isSubtypeOf(actualType, targetType)) {
-                        context.trace.getErrorHandler().typeMismatch(expression.getLeft(), targetType, actualType);
+
+                if (isTypeFlexible(expression.getLeft())) {
+                    TemporaryBindingTrace temporaryTraceWithExpectedType = new TemporaryBindingTrace(context.trace.getBindingContext());
+                    boolean success = checkBinaryWithTypeRHS(expression, context, targetType, targetType, temporaryTraceWithExpectedType);
+                    if (success) {
+                        temporaryTraceWithExpectedType.addAllMyDataTo(context.trace);
                     }
-                    result = targetType;
-                }
-                else if (operationType == JetTokens.AS_KEYWORD) {
-                    checkForCastImpossibility(expression, actualType, targetType, context);
-                    result = targetType;
-                }
-                else if (operationType == JetTokens.AS_SAFE) {
-                    checkForCastImpossibility(expression, actualType, targetType, context);
-                    result = TypeUtils.makeNullable(targetType);
+                    else {
+                        TemporaryBindingTrace temporaryTraceWithoutExpectedType = new TemporaryBindingTrace(context.trace.getBindingContext());
+                        checkBinaryWithTypeRHS(expression, context, targetType, NO_EXPECTED_TYPE, temporaryTraceWithoutExpectedType);
+                        temporaryTraceWithoutExpectedType.addAllMyDataTo(context.trace);
+                    }
                 }
                 else {
-                    context.trace.getErrorHandler().genericError(expression.getOperationSign().getNode(), "Unsupported binary operation");
+                    TemporaryBindingTrace temporaryTraceWithoutExpectedType = new TemporaryBindingTrace(context.trace.getBindingContext());
+                    checkBinaryWithTypeRHS(expression, context, targetType, NO_EXPECTED_TYPE, temporaryTraceWithoutExpectedType);
+                    temporaryTraceWithoutExpectedType.addAllMyDataTo(context.trace);
                 }
+
+                IElementType operationType = expression.getOperationSign().getReferencedNameElementType();
+                result = operationType == JetTokens.AS_SAFE ? TypeUtils.makeNullable(targetType) : targetType;
+            }
+            else {
+                getType(context.scope, expression.getLeft(), false, context.replaceExpectedType(NO_EXPECTED_TYPE));
             }
             return context.services.checkType(result, expression, context);
         }
 
+        private boolean isTypeFlexible(@Nullable JetExpression expression) {
+            if (expression == null) return false;
+
+            return TokenSet.create(
+                    JetNodeTypes.INTEGER_CONSTANT,
+                    JetNodeTypes.FLOAT_CONSTANT
+            ).contains(expression.getNode().getElementType());
+        }
+
+        private boolean checkBinaryWithTypeRHS(JetBinaryExpressionWithTypeRHS expression, TypeInferenceContext context, @NotNull JetType targetType, @NotNull JetType expectedType, TemporaryBindingTrace temporaryTrace) {
+            TypeInferenceContext newContext = context.replaceExpectedTypeAndTrace(expectedType, temporaryTrace);
+
+            JetType actualType = getType(context.scope, expression.getLeft(), false, newContext);
+            if (actualType == null) return false;
+            
+            JetSimpleNameExpression operationSign = expression.getOperationSign();
+            IElementType operationType = operationSign.getReferencedNameElementType();
+            if (operationType == JetTokens.COLON) {
+                if (targetType != NO_EXPECTED_TYPE && !semanticServices.getTypeChecker().isSubtypeOf(actualType, targetType)) {
+                    context.trace.getErrorHandler().typeMismatch(expression.getLeft(), targetType, actualType);
+                    return false;
+                }
+                return true;
+            }
+            else if (operationType == JetTokens.AS_KEYWORD || operationType == JetTokens.AS_SAFE) {
+                checkForCastImpossibility(expression, actualType, targetType, context);
+                return true;
+            }
+            else {
+                context.trace.getErrorHandler().genericError(operationSign.getNode(), "Unsupported binary operation");
+                return false;
+            }
+        }
+
         private void checkForCastImpossibility(JetBinaryExpressionWithTypeRHS expression, JetType actualType, JetType targetType, TypeInferenceContext context) {
-            if (actualType == null) return;
+            if (actualType == null || targetType == NO_EXPECTED_TYPE) return;
 
             JetTypeChecker typeChecker = semanticServices.getTypeChecker();
             if (!typeChecker.isSubtypeOf(targetType, actualType)) {
