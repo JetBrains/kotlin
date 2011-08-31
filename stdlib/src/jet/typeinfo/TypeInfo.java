@@ -49,7 +49,7 @@ public class TypeInfo<T> implements JetObject {
         if (!theClass.isAssignableFrom(other.theClass)) {
             return false;
         }
-        if (nullable && !other.nullable) {
+        if (!nullable && other.nullable) {
             return false;
         }
         if (typeParameters != null) {

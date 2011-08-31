@@ -1,0 +1,20 @@
+class A() {}
+class B<T>() {}
+
+fun box() : String {
+    val a = A()
+    System.out?.println(a is A)   //true
+    System.out?.println(a is A?)  //true
+
+    val b = B<String>()
+    System.out?.println(b is B<String>)   //true
+    System.out?.println(b is B<String>?)  //false !!!
+
+    val v = b as B<String>   //ok
+    val u = b as B<String>?  //TypeCastException
+
+    val w : B<String>? = b as B<String>   //ok
+    val x = w as B<String>?  //TypeCastException
+
+    return "OK"
+}

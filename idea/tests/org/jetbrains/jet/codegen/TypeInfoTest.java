@@ -128,5 +128,10 @@ public class TypeInfoTest extends CodegenTestCase {
             }
         };
     }
+
+    public void testKt259() throws Exception {
+        blackBoxFile("regressions/kt259.jet");
+    }
+
 }
 
