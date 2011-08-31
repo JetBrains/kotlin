@@ -1262,7 +1262,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
     private StackValue generateAssignmentExpression(JetBinaryExpression expression) {
         StackValue stackValue = gen(expression.getLeft());
-        genToJVMStack(expression.getRight());
+        gen(expression.getRight(), stackValue.type);
         stackValue.store(v);
         return StackValue.none();
     }
@@ -1507,8 +1507,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 throw new UnsupportedOperationException("unknown accessor type");
             }
             boolean isGetter = accessor.getSignature().getName().equals("get");
-            return StackValue.collectionElement(JetTypeMapper.TYPE_OBJECT, isGetter ? accessor : null,
-                                                isGetter ? null : accessor);
+            return StackValue.collectionElement(
+                    isGetter ? accessor.getSignature().getReturnType() : accessor.getSignature().getArgumentTypes()[1],
+                    isGetter ? accessor : null,
+                    isGetter ? null : accessor);
         }
     }
 
