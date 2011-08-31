@@ -564,18 +564,7 @@ public class JetTypeInferrer {
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType expectedType,
             @NotNull JetType expectedReturnType) {
-        return newContextForCallResolution(trace, scope, scope, dataFlowInfo, expectedType, expectedReturnType);
-    }
-
-    @NotNull
-    private TypeInferenceContext newContextForCallResolution(
-            @NotNull BindingTrace trace,
-            @NotNull JetScope scope,
-            @NotNull JetScope scopeForTopLevelCall,
-            @NotNull DataFlowInfo dataFlowInfo,
-            @NotNull JetType expectedType,
-            @NotNull JetType expectedReturnType) {
-        return new TypeInferenceContext(trace, scope, scopeForTopLevelCall, dataFlowInfo, expectedType, expectedReturnType);
+        return new TypeInferenceContext(trace, scope, dataFlowInfo, expectedType, expectedReturnType);
     }
 
     private class TypeInferenceContext {
@@ -585,7 +574,6 @@ public class JetTypeInferrer {
         public final TypeResolver typeResolver;
         public final ClassDescriptorResolver classDescriptorResolver;
         public final JetScope scope;
-        public final JetScope scopeForTopLevelCall;
 
         public final Services services;
         public final DataFlowInfo dataFlowInfo;
@@ -597,7 +585,6 @@ public class JetTypeInferrer {
         private TypeInferenceContext(
                 @NotNull BindingTrace trace,
                 @NotNull JetScope scope,
-                @NotNull JetScope scopeForTopLevelCall,
                 @NotNull DataFlowInfo dataFlowInfo,
                 @NotNull JetType expectedType,
                 @NotNull JetType expectedReturnType) {
@@ -605,7 +592,6 @@ public class JetTypeInferrer {
             this.typeResolver = new TypeResolver(semanticServices, trace, true);
             this.classDescriptorResolver = semanticServices.getClassDescriptorResolver(trace);
             this.scope = scope;
-            this.scopeForTopLevelCall = scopeForTopLevelCall;
             this.services = getServices(trace);
             this.dataFlowInfo = dataFlowInfo;
             this.expectedType = expectedType;
@@ -613,36 +599,36 @@ public class JetTypeInferrer {
         }
 
         public TypeInferenceContext replaceDataFlowInfo(DataFlowInfo newDataFlowInfo) {
-            return newContextForCallResolution(trace, scope, scopeForTopLevelCall, newDataFlowInfo, expectedType, expectedReturnType);
+            return newContext(trace, scope, newDataFlowInfo, expectedType, expectedReturnType);
         }
         
         public TypeInferenceContext replaceExpectedType(@Nullable JetType newExpectedType) {
             if (newExpectedType == null) return replaceExpectedType(NO_EXPECTED_TYPE);
             if (expectedType == newExpectedType) return this;
-            return newContextForCallResolution(trace, scope, scopeForTopLevelCall, dataFlowInfo, newExpectedType, expectedReturnType);
+            return newContext(trace, scope, dataFlowInfo, newExpectedType, expectedReturnType);
         }
         
         public TypeInferenceContext replaceExpectedReturnType(@Nullable JetType newExpectedReturnType) {
             if (newExpectedReturnType == null) return replaceExpectedReturnType(NO_EXPECTED_TYPE);
             if (expectedReturnType == newExpectedReturnType) return this;
-            return newContextForCallResolution(trace, scope, scopeForTopLevelCall, dataFlowInfo, expectedType, newExpectedReturnType);
+            return newContext(trace, scope, dataFlowInfo, expectedType, newExpectedReturnType);
         }
 
         public TypeInferenceContext replaceBindingTrace(@NotNull BindingTrace newTrace) {
             if (newTrace == trace) return this;
-            return newContextForCallResolution(newTrace, scope, scopeForTopLevelCall, dataFlowInfo, expectedType, expectedReturnType);
+            return newContext(newTrace, scope, dataFlowInfo, expectedType, expectedReturnType);
         }
 
         @NotNull
         public TypeInferenceContext replaceScope(@NotNull JetScope newScope) {
             if (newScope == scope) return this;
-            return newContextForCallResolution(trace, newScope, scopeForTopLevelCall, dataFlowInfo, expectedType, expectedReturnType);
+            return newContext(trace, newScope, dataFlowInfo, expectedType, expectedReturnType);
         }
 
         @NotNull
         public TypeInferenceContext replaceExpectedTypes(@NotNull JetType newExpectedType, @NotNull JetType newExpectedReturnType) {
             if (expectedType == newExpectedType && expectedReturnType == newExpectedReturnType) return this;
-            return newContextForCallResolution(trace, scope, scopeForTopLevelCall, dataFlowInfo, newExpectedType, newExpectedReturnType);
+            return newContext(trace, scope, dataFlowInfo, newExpectedType, newExpectedReturnType);
         }
     }
 
@@ -683,7 +669,7 @@ public class JetTypeInferrer {
                 result = null;
             }
 
-            if (!(boolean) context.trace.get(BindingContext.PROCESSED, expression)) {
+            if (!context.trace.get(BindingContext.PROCESSED, expression)) {
                 context.trace.record(BindingContext.RESOLUTION_SCOPE, expression, context.scope);
             }
             context.trace.record(BindingContext.PROCESSED, expression);
@@ -691,7 +677,7 @@ public class JetTypeInferrer {
         }
 
         private JetType getTypeWithNewScopeAndDataFlowInfo(@NotNull JetScope scope, @NotNull JetExpression expression, @NotNull DataFlowInfo newDataFlowInfo, @NotNull TypeInferenceContext context) {
-            return getType(expression, newContextForCallResolution(context.trace, scope, context.scopeForTopLevelCall, newDataFlowInfo, context.expectedType, context.expectedReturnType));
+            return getType(expression, newContext(context.trace, scope, newDataFlowInfo, context.expectedType, context.expectedReturnType));
         }
 
 

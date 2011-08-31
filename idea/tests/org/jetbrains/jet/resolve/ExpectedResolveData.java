@@ -13,6 +13,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
@@ -132,7 +133,16 @@ public class ExpectedResolveData {
                        "Must have been resolved to null: " +
                         renderReferenceInContext(referenceExpression) +
                         " but was resolved to " + DescriptorRenderer.TEXT.render(bindingContext.get(BindingContext.REFERENCE_TARGET, referenceExpression)),
-                        bindingContext.get(BindingContext.EXPRESSION_TYPE, referenceExpression) == null
+                        bindingContext.get(BindingContext.REFERENCE_TARGET, referenceExpression) == null
+                );
+                continue;
+            }
+            else if ("!error".equals(name)) {
+                assertTrue(
+                       "Must have been resolved to error: " +
+                        renderReferenceInContext(referenceExpression) +
+                        " but was resolved to " + DescriptorRenderer.TEXT.render(bindingContext.get(BindingContext.REFERENCE_TARGET, referenceExpression)),
+                       ErrorUtils.isError(bindingContext.get(BindingContext.REFERENCE_TARGET, referenceExpression))
                 );
                 continue;
             }

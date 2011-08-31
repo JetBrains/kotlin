@@ -99,7 +99,7 @@ public class CallResolver {
             functionReference = expression;
 
             String name = expression.getReferencedName();
-            if (name == null) return null;
+            if (name == null) return checkArgumentTypesAndFail(trace, scope, call);
 
             prioritizedTasks = FUNCTION_TASK_PRIORITIZER.computePrioritizedTasks(scope, receiverType, call, name);
         }
@@ -111,7 +111,7 @@ public class CallResolver {
             JetConstructorCalleeExpression expression = (JetConstructorCalleeExpression) calleeExpression;
             functionReference = expression.getConstructorReferenceExpression();
             if (functionReference == null) {
-                return null; // No type there
+                return checkArgumentTypesAndFail(trace, scope, call); // No type there
             }
             JetTypeReference typeReference = expression.getTypeReference();
             assert typeReference != null;
@@ -122,13 +122,13 @@ public class CallResolver {
                 Set<FunctionDescriptor> constructors = classDescriptor.getConstructors().getFunctionDescriptors();
                 if (constructors.isEmpty()) {
                     trace.getErrorHandler().genericError(call.getValueArgumentList().getNode(), "This class does not have a constructor");
-                    return null;
+                    return checkArgumentTypesAndFail(trace, scope, call);
                 }
                 prioritizedTasks.add(new ResolutionTask<FunctionDescriptor>(constructors, null, call));
             }
             else {
                 trace.getErrorHandler().genericError(calleeExpression.getNode(), "Not a class");
-                return null;
+                return checkArgumentTypesAndFail(trace, scope, call);
             }
         } else if (calleeExpression instanceof JetThisReferenceExpression) {
             functionReference = (JetThisReferenceExpression) calleeExpression;
@@ -140,7 +140,7 @@ public class CallResolver {
             Set<FunctionDescriptor> constructors = classDescriptor.getConstructors().getFunctionDescriptors();
             if (constructors.isEmpty()) {
                 trace.getErrorHandler().genericError(call.getValueArgumentList().getNode(), "This class does not have a constructor");
-                return null;
+                return checkArgumentTypesAndFail(trace, scope, call);
             }
             prioritizedTasks = Collections.singletonList(new ResolutionTask<FunctionDescriptor>(constructors, null, call));
         }
@@ -151,17 +151,22 @@ public class CallResolver {
         return resolveCallToDescriptor(trace, scope, call, call.getNode(), expectedType, prioritizedTasks, functionReference);
     }
 
+    private FunctionDescriptor checkArgumentTypesAndFail(BindingTrace trace, JetScope scope, JetCallElement call) {
+        checkTypesWithNoCallee(trace, scope, call.getTypeArguments(), call.getValueArguments(), call.getFunctionLiteralArguments());
+        return null;
+    }
 
 
-    private <Descriptor extends CallableDescriptor> Descriptor resolveCallToDescriptor(
+    private <D extends CallableDescriptor> D resolveCallToDescriptor(
             @NotNull BindingTrace trace,
             @NotNull JetScope scope,
             @NotNull final Call call,
             @NotNull final ASTNode callNode,
             @NotNull JetType expectedType,
-            @NotNull final List<ResolutionTask<Descriptor>> prioritizedTasks, // high to low priority
+            @NotNull final List<ResolutionTask<D>> prioritizedTasks, // high to low priority
             @NotNull final JetReferenceExpression reference) {
         TemporaryBindingTrace traceForFirstNonemptyCandidateSet = null;
+        OverloadResolutionResult<D> resultForFirstNonemptyCandidateSet = null;
         TracingStrategy tracing = new TracingStrategy() {
             @Override
             public void bindReference(@NotNull BindingTrace trace, @NotNull CallableDescriptor descriptor) {
@@ -213,22 +218,28 @@ public class CallResolver {
             }
 
         };
-        for (ResolutionTask<Descriptor> task : prioritizedTasks) {
+        for (ResolutionTask<D> task : prioritizedTasks) {
             TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(trace);
-            OverloadResolutionResult<Descriptor> result = performResolution(temporaryTrace, scope, expectedType, task, tracing);
+            OverloadResolutionResult<D> result = performResolution(temporaryTrace, scope, expectedType, task, tracing);
             if (result.isSuccess()) {
                 temporaryTrace.commit();
                 return result.getDescriptor();
             }
             if (traceForFirstNonemptyCandidateSet == null && !task.getCandidates().isEmpty()) {
                 traceForFirstNonemptyCandidateSet = temporaryTrace;
+                resultForFirstNonemptyCandidateSet = result;
             }
         }
         if (traceForFirstNonemptyCandidateSet != null) {
             traceForFirstNonemptyCandidateSet.commit();
+            assert resultForFirstNonemptyCandidateSet != null;
+            if (resultForFirstNonemptyCandidateSet.singleDescriptor()) {
+                return resultForFirstNonemptyCandidateSet.getDescriptor();
+            }
         }
         else {
             trace.getErrorHandler().unresolvedReference(reference);
+            checkTypesWithNoCallee(trace, scope, call.getTypeArguments(), call.getValueArguments(), call.getFunctionLiteralArguments());
         }
         return null;
     }
@@ -236,14 +247,14 @@ public class CallResolver {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @NotNull
-    private <Descriptor extends CallableDescriptor> OverloadResolutionResult<Descriptor> performResolution(@NotNull BindingTrace trace, @NotNull JetScope scope, @NotNull JetType expectedType, @NotNull ResolutionTask<Descriptor> task, @NotNull TracingStrategy tracing) {
-        Map<Descriptor, Descriptor> successfulCandidates = Maps.newLinkedHashMap();
-        Set<Descriptor> failedCandidates = Sets.newLinkedHashSet();
-        Set<Descriptor> dirtyCandidates = Sets.newLinkedHashSet();
-        Map<Descriptor, ConstraintSystem.Solution> solutions = Maps.newHashMap();
-        Map<Descriptor, TemporaryBindingTrace> traces = Maps.newHashMap();
+    private <D extends CallableDescriptor> OverloadResolutionResult<D> performResolution(@NotNull BindingTrace trace, @NotNull JetScope scope, @NotNull JetType expectedType, @NotNull ResolutionTask<D> task, @NotNull TracingStrategy tracing) {
+        Map<D, D> successfulCandidates = Maps.newLinkedHashMap();
+        Set<D> failedCandidates = Sets.newLinkedHashSet();
+        Set<D> dirtyCandidates = Sets.newLinkedHashSet();
+        Map<D, ConstraintSystem.Solution> solutions = Maps.newHashMap();
+        Map<D, TemporaryBindingTrace> traces = Maps.newHashMap();
 
-        for (Descriptor candidate : task.getCandidates()) {
+        for (D candidate : task.getCandidates()) {
             TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(trace);
             traces.put(candidate, temporaryTrace);
             JetTypeInferrer.Services temporaryServices = typeInferrer.getServices(temporaryTrace);
@@ -313,7 +324,7 @@ public class CallResolver {
                     ConstraintSystem.Solution solution = constraintSystem.solve();
                     solutions.put(candidate, solution);
                     if (solution.isSuccessful()) {
-                        Descriptor substitute = (Descriptor) candidate.substitute(solution.getSubstitutor());
+                        D substitute = (D) candidate.substitute(solution.getSubstitutor());
                         assert substitute != null;
                         successfulCandidates.put(candidate, substitute);
                     }
@@ -347,7 +358,7 @@ public class CallResolver {
                     checkGenericBoundsInAFunctionCall(jetTypeArguments, typeArguments, candidate);
 
                     Map<TypeConstructor, TypeProjection> substitutionContext = FunctionDescriptorUtil.createSubstitutionContext((FunctionDescriptor) candidate, typeArguments);
-                    Descriptor substitutedFunctionDescriptor = (Descriptor) candidate.substitute(TypeSubstitutor.create(substitutionContext));
+                    D substitutedFunctionDescriptor = (D) candidate.substitute(TypeSubstitutor.create(substitutionContext));
 
                     Function<ValueParameterDescriptor, ValueParameterDescriptor> mapFunction = createMapFunction(substitutedFunctionDescriptor);
                     if (checkValueArgumentTypes(scope, temporaryServices, argumentsToParameters, dirty, mapFunction)
@@ -369,24 +380,28 @@ public class CallResolver {
             }
         }
 
-        OverloadResolutionResult<Descriptor> result = computeResultAndReportErrors(trace, tracing, successfulCandidates, failedCandidates, dirtyCandidates, traces);
+        OverloadResolutionResult<D> result = computeResultAndReportErrors(trace, tracing, successfulCandidates, failedCandidates, dirtyCandidates, traces);
         if (!result.singleDescriptor()) {
-            for (ValueArgument valueArgument : task.getValueArguments()) {
-                JetExpression argumentExpression = valueArgument.getArgumentExpression();
-                if (argumentExpression != null) {
-                    typeInferrer.getServices(trace).getType(scope, argumentExpression, NO_EXPECTED_TYPE);
-                }
-            }
-
-            for (JetExpression expression : task.getFunctionLiteralArguments()) {
-                typeInferrer.getServices(trace).getType(scope, expression, NO_EXPECTED_TYPE);
-            }
-
-            for (JetTypeProjection typeProjection : task.getTypeArguments()) {
-                new TypeResolver(semanticServices, trace, true).resolveType(scope, typeProjection.getTypeReference());
-            }
+            checkTypesWithNoCallee(trace, scope, task.getTypeArguments(), task.getValueArguments(), task.getFunctionLiteralArguments());
         }
         return result;
+    }
+
+    private void checkTypesWithNoCallee(BindingTrace trace, JetScope scope, List<JetTypeProjection> typeArguments, List<? extends ValueArgument> valueArguments, List<JetExpression> functionLiteralArguments) {
+        for (ValueArgument valueArgument : valueArguments) {
+            JetExpression argumentExpression = valueArgument.getArgumentExpression();
+            if (argumentExpression != null) {
+                typeInferrer.getServices(trace).getType(scope, argumentExpression, NO_EXPECTED_TYPE);
+            }
+        }
+
+        for (JetExpression expression : functionLiteralArguments) {
+            typeInferrer.getServices(trace).getType(scope, expression, NO_EXPECTED_TYPE);
+        }
+
+        for (JetTypeProjection typeProjection : typeArguments) {
+            new TypeResolver(semanticServices, trace, true).resolveType(scope, typeProjection.getTypeReference());
+        }
     }
 
     private <Descriptor extends CallableDescriptor> Function<ValueParameterDescriptor, ValueParameterDescriptor> createMapFunction(Descriptor substitutedFunctionDescriptor) {
