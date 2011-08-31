@@ -72,6 +72,7 @@ public class IntrinsicMethods {
         declareIntrinsicFunction("String", "plus", 1, new Concat());
 
         declareIntrinsicStringMethods();
+        declareIntrinsicProperty("String", "length", new StringLength());
     }
 
     private void declareIntrinsicStringMethods() {
