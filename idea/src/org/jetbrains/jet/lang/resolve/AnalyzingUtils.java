@@ -137,13 +137,7 @@ public class AnalyzingUtils {
 
             @Override
             public void visitErrorElement(PsiErrorElement element) {
-                Document document = PsiDocumentManager.getInstance(element.getProject()).getDocument(element.getContainingFile());
-                int offset = element.getTextRange().getStartOffset();
-                int lineNumber = document.getLineNumber(offset)+1;
-                int lineStartOffset = document.getLineStartOffset(lineNumber);
-                int column = offset - lineStartOffset;
-
-                throw new IllegalArgumentException(element.getErrorDescription() + "; looking at " + element.getNode().getElementType() + " '" + element.getText() + "' at line " + lineNumber + ":" + column);
+                throw new IllegalArgumentException(element.getErrorDescription() + "; looking at " + element.getNode().getElementType() + " '" + element.getText() + ErrorHandler.atLocation(element));
             }
         });
     }
