@@ -832,32 +832,31 @@ public class JetTypeInferrer {
                 return expressionType;
             }
             VariableDescriptor variableDescriptor = getVariableDescriptorFromSimpleName(expression, context);
-            if (variableDescriptor == null) return expressionType;
-
-            JetType enrichedType = null;
-            List<JetType> possibleTypes = Lists.newArrayList(context.dataFlowInfo.getPossibleTypes(variableDescriptor));
-            Collections.reverse(possibleTypes);
-            for (JetType possibleType: possibleTypes) {
-                if (semanticServices.getTypeChecker().isSubtypeOf(possibleType, context.expectedType)) {
-                    enrichedType = possibleType;
-                    break;
+            boolean appropriateTypeFound = false;
+            if (variableDescriptor != null) {
+                List<JetType> possibleTypes = Lists.newArrayList(context.dataFlowInfo.getPossibleTypes(variableDescriptor));
+                Collections.reverse(possibleTypes);
+                for (JetType possibleType : possibleTypes) {
+                    if (semanticServices.getTypeChecker().isSubtypeOf(possibleType, context.expectedType)) {
+                        appropriateTypeFound = true;
+                        break;
+                    }
+                }
+                if (!appropriateTypeFound) {
+                    JetType notnullType = context.dataFlowInfo.getOutType(variableDescriptor);
+                    if (notnullType != null && semanticServices.getTypeChecker().isSubtypeOf(notnullType, context.expectedType)) {
+                        appropriateTypeFound = true;
+                    }
                 }
             }
-            if (enrichedType == null) {
-                enrichedType = context.dataFlowInfo.getOutType(variableDescriptor);
-            }
-            if (enrichedType == null) {
-                enrichedType = expressionType;
-            }
-
-            if (!semanticServices.getTypeChecker().isSubtypeOf(enrichedType, context.expectedType)) {
+            if (!appropriateTypeFound) {
                 context.trace.getErrorHandler().typeMismatch(expression, context.expectedType, expressionType);
-            } else {
-                checkAutoCast(expression, context.expectedType, variableDescriptor, context.trace);
+                return expressionType;
             }
-            return enrichedType;
+            checkAutoCast(expression, context.expectedType, variableDescriptor, context.trace);
+            return context.expectedType;
         }
-        
+
         private void checkAutoCast(JetExpression expression, JetType type, VariableDescriptor variableDescriptor, BindingTrace trace) {
             if (variableDescriptor.isVar()) {
                 trace.getErrorHandler().genericError(expression.getNode(), "Automatic cast to " + type + " is impossible, because variable " + variableDescriptor.getName() + " is mutable");
@@ -1470,7 +1469,7 @@ public class JetTypeInferrer {
 
         @Override
         public JetType visitBlockExpression(JetBlockExpression expression, TypeInferenceContext context) {
-            return context.services.checkType(getBlockReturnedType(context.scope, expression, context), expression, context);
+            return getBlockReturnedType(context.scope, expression, context);
         }
 
         @Override

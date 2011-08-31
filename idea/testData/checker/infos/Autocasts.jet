@@ -231,6 +231,8 @@ fun mergeAutocasts(a: Any?) {
   if (a is String && a is Any) {
     val i: Int = <info descr="Automatically cast to String">a</info>.compareTo("")
   }
+  if (a is String && <info descr="Automatically cast to String">a</info>.compareTo("") == 0) {}
+  if (a is String || a.<error>compareTo</error>("") == 0) {}
 }
 
 //mutability
