@@ -418,6 +418,9 @@ public class JetTypeInferrer {
                                 temporaryTraceNoExpectedType.commit();
                             }
                         }
+                        else {
+                            temporaryTraceExpectingUnit.commit();
+                        }
 
                     }
                     else {
