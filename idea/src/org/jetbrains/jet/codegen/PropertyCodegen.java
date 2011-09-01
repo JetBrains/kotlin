@@ -68,7 +68,7 @@ public class PropertyCodegen {
     }
 
     private void generateBackingField(JetProperty p, PropertyDescriptor propertyDescriptor) {
-        if ((boolean) state.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor)) {
+        if (state.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor)) {
             Object value = null;
             final JetExpression initializer = p.getInitializer();
             if (initializer != null) {

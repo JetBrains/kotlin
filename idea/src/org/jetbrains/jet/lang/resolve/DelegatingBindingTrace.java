@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.CollectingErrorHandler;
 import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.JetDiagnostic;
-import org.jetbrains.jet.util.*;
+import org.jetbrains.jet.util.slicedmap.*;
 
 import java.util.Collection;
 import java.util.List;
@@ -16,7 +16,7 @@ import java.util.Map;
  */
 public class DelegatingBindingTrace implements BindingTrace {
     private final BindingContext parentContext;
-    private final MutableManyMap map = ManyMapImpl.create();
+    private final MutableSlicedMap map = SlicedMapImpl.create();
     private final List<JetDiagnostic> diagnostics = Lists.newArrayList();
     private final ErrorHandler errorHandler = new CollectingErrorHandler(diagnostics);
 
@@ -66,12 +66,12 @@ public class DelegatingBindingTrace implements BindingTrace {
     }
 
     public void addAllMyDataTo(BindingTrace trace) {
-        for (Map.Entry<ManyMapKey<?, ?>, ?> entry : map) {
-            ManyMapKey manyMapKey = entry.getKey();
+        for (Map.Entry<SlicedMapKey<?, ?>, ?> entry : map) {
+            SlicedMapKey slicedMapKey = entry.getKey();
             Object value = entry.getValue();
 
             //noinspection unchecked
-            trace.record(manyMapKey.getSlice(), manyMapKey.getKey(), value);
+            trace.record(slicedMapKey.getSlice(), slicedMapKey.getKey(), value);
         }
         
         AnalyzingUtils.applyHandler(trace.getErrorHandler(), diagnostics);

@@ -1,10 +1,10 @@
 package org.jetbrains.jet.lang.types;
 
-import com.google.common.base.Supplier;
 import com.google.common.collect.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.util.CommonSuppliers;
 
 import java.util.*;
 
@@ -31,13 +31,7 @@ public class DataFlowInfo {
         }
     };
 
-    public static final Supplier<List<JetType>> ARRAY_LIST_SUPPLIER = new Supplier<List<JetType>>() {
-        @Override
-        public List<JetType> get() {
-            return Lists.newArrayList();
-        }
-    };
-    private static DataFlowInfo EMPTY = new DataFlowInfo(ImmutableMap.<VariableDescriptor, NullabilityFlags>of(), Multimaps.newListMultimap(Collections.<VariableDescriptor, Collection<JetType>>emptyMap(), ARRAY_LIST_SUPPLIER));
+    private static DataFlowInfo EMPTY = new DataFlowInfo(ImmutableMap.<VariableDescriptor, NullabilityFlags>of(), Multimaps.newListMultimap(Collections.<VariableDescriptor, Collection<JetType>>emptyMap(), CommonSuppliers.<JetType>getArrayListSupplier()));
 
     public static DataFlowInfo getEmpty() {
         return EMPTY;
@@ -147,7 +141,7 @@ public class DataFlowInfo {
     }
 
     private ListMultimap<VariableDescriptor, JetType> copyTypeInfo() {
-        ListMultimap<VariableDescriptor, JetType> newTypeInfo = Multimaps.newListMultimap(Maps.<VariableDescriptor, Collection<JetType>>newHashMap(), ARRAY_LIST_SUPPLIER);
+        ListMultimap<VariableDescriptor, JetType> newTypeInfo = Multimaps.newListMultimap(Maps.<VariableDescriptor, Collection<JetType>>newHashMap(), CommonSuppliers.<JetType>getArrayListSupplier());
         newTypeInfo.putAll(typeInfo);
         return newTypeInfo;
     }
@@ -163,7 +157,7 @@ public class DataFlowInfo {
             builder.put(variableDescriptor, thisFlags.or(otherFlags));
         }
 
-        ListMultimap<VariableDescriptor, JetType> newTypeInfo = Multimaps.newListMultimap(Maps.<VariableDescriptor, Collection<JetType>>newHashMap(), ARRAY_LIST_SUPPLIER);
+        ListMultimap<VariableDescriptor, JetType> newTypeInfo = Multimaps.newListMultimap(Maps.<VariableDescriptor, Collection<JetType>>newHashMap(), CommonSuppliers.<JetType>getArrayListSupplier());
 
         Set<VariableDescriptor> keys = newTypeInfo.keySet();
         keys.retainAll(other.typeInfo.keySet());

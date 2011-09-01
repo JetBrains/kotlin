@@ -137,7 +137,7 @@ public class JetPsiChecker implements Annotator {
             public void visitProperty(JetProperty property) {
                 VariableDescriptor propertyDescriptor = bindingContext.get(BindingContext.VARIABLE, property);
                 if (propertyDescriptor instanceof PropertyDescriptor) {
-                    if ((boolean) bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, (PropertyDescriptor) propertyDescriptor)) {
+                    if (bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, (PropertyDescriptor) propertyDescriptor)) {
                         putBackingfieldAnnotation(holder, property);
                     }
                 }

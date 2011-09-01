@@ -1,4 +1,4 @@
-package org.jetbrains.jet.util;
+package org.jetbrains.jet.util.slicedmap;
 
 import com.google.common.collect.Maps;
 

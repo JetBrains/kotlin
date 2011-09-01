@@ -5,10 +5,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.CollectingErrorHandler;
 import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.JetDiagnostic;
-import org.jetbrains.jet.util.ManyMapImpl;
-import org.jetbrains.jet.util.MutableManyMap;
-import org.jetbrains.jet.util.ReadOnlySlice;
-import org.jetbrains.jet.util.WritableSlice;
+import org.jetbrains.jet.util.slicedmap.MutableSlicedMap;
+import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
+import org.jetbrains.jet.util.slicedmap.SlicedMapImpl;
+import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import java.util.Collection;
 import java.util.List;
@@ -19,7 +19,8 @@ import java.util.List;
 public class BindingTraceContext implements BindingTrace {
     private final List<JetDiagnostic> diagnostics = Lists.newArrayList();
     private final ErrorHandler errorHandler = new CollectingErrorHandler(diagnostics);
-    private final MutableManyMap map = ManyMapImpl.create();
+
+    private final MutableSlicedMap map = SlicedMapImpl.create();
 
     private final BindingContext bindingContext = new BindingContext() {
         @Override

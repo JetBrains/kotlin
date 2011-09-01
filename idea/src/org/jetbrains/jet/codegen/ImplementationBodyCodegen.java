@@ -411,7 +411,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         for (JetDeclaration declaration : myClass.getDeclarations()) {
             if (declaration instanceof JetProperty) {
                 final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) state.getBindingContext().get(BindingContext.VARIABLE, (JetProperty) declaration);
-                if ((boolean) state.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor)) {
+                if (state.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor)) {
                     final JetExpression initializer = ((JetProperty) declaration).getInitializer();
                     if (initializer != null) {
                         iv.load(0, JetTypeMapper.TYPE_OBJECT);

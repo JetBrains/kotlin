@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.resolve.constants.ErrorValue;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
-import org.jetbrains.jet.util.WritableSlice;
+import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import java.util.*;
 

@@ -2,8 +2,8 @@ package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.ErrorHandler;
-import org.jetbrains.jet.util.ReadOnlySlice;
-import org.jetbrains.jet.util.WritableSlice;
+import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
+import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 /**
  * @author abreslav

@@ -13,7 +13,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.util.WritableSlice;
+import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import java.util.*;
 
@@ -449,7 +449,7 @@ public class TopDownAnalyzer {
         if (!klass.hasPrimaryConstructor()) return;
 
         // TODO : not all the parameters are real properties
-        JetScope memberScope = classDescriptor.getScopeForMemberResolution(); // TODO : this is REALLY questionable
+        JetScope memberScope = classDescriptor.getScopeForSupertypeResolution(); // TODO : this is REALLY questionable
         ConstructorDescriptor constructorDescriptor = classDescriptorResolver.resolvePrimaryConstructorDescriptor(memberScope, classDescriptor, klass);
         for (JetParameter parameter : klass.getPrimaryConstructorParameters()) {
             PropertyDescriptor propertyDescriptor = classDescriptorResolver.resolvePrimaryConstructorParameterToAProperty(
@@ -530,7 +530,7 @@ public class TopDownAnalyzer {
             JetClass jetClass = entry.getKey();
             if (classDescriptor.getUnsubstitutedPrimaryConstructor() == null) {
                 for (PropertyDescriptor propertyDescriptor : classDescriptor.getProperties()) {
-                    if ((boolean) trace.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor)) {
+                    if (trace.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor)) {
                         PsiElement nameIdentifier = jetClass.getNameIdentifier();
                         if (nameIdentifier != null) {
                             trace.getErrorHandler().genericError(nameIdentifier.getNode(),

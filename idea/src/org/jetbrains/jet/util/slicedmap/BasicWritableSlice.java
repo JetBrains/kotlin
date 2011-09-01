@@ -1,4 +1,4 @@
-package org.jetbrains.jet.util;
+package org.jetbrains.jet.util.slicedmap;
 
 /**
 * @author abreslav
@@ -14,8 +14,8 @@ public class BasicWritableSlice<K, V> implements WritableSlice<K,V> {
     }
 
     @Override
-    public ManyMapKey<K, V> makeKey(K key) {
-        return new ManyMapKey<K, V>(this, key);
+    public SlicedMapKey<K, V> makeKey(K key) {
+        return new SlicedMapKey<K, V>(this, key);
     }
 
     // True to put, false to skip
@@ -27,12 +27,12 @@ public class BasicWritableSlice<K, V> implements WritableSlice<K,V> {
     }
 
     @Override
-    public void afterPut(MutableManyMap manyMap, K key, V value) {
+    public void afterPut(MutableSlicedMap map, K key, V value) {
         // Do nothing
     }
 
     @Override
-    public V computeValue(ManyMap map, K key, V value, boolean valueNotFound) {
+    public V computeValue(SlicedMap map, K key, V value, boolean valueNotFound) {
         if (valueNotFound) assert value == null;
         return value;
     }

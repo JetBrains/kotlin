@@ -6,8 +6,8 @@ import org.jetbrains.jet.lang.JetDiagnostic;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.util.ReadOnlySlice;
-import org.jetbrains.jet.util.WritableSlice;
+import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
+import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import java.util.Collection;
 

@@ -1,16 +1,16 @@
-package org.jetbrains.jet.util;
+package org.jetbrains.jet.util.slicedmap;
 
 import org.jetbrains.annotations.NotNull;
 
 /**
 * @author abreslav
 */
-public final class ManyMapKey<K, V> {
+public final class SlicedMapKey<K, V> {
 
     private final WritableSlice<K, V> slice;
     private final K key;
 
-    public ManyMapKey(@NotNull WritableSlice<K, V> slice, K key) {
+    public SlicedMapKey(@NotNull WritableSlice<K, V> slice, K key) {
         this.slice = slice;
         this.key = key;
     }
@@ -28,7 +28,7 @@ public final class ManyMapKey<K, V> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ManyMapKey that = (ManyMapKey) o;
+        SlicedMapKey that = (SlicedMapKey) o;
 
         if (key != null ? !key.equals(that.key) : that.key != null) return false;
         if (!slice.equals(that.slice)) return false;

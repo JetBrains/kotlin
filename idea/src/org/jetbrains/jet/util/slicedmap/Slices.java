@@ -1,4 +1,4 @@
-package org.jetbrains.jet.util;
+package org.jetbrains.jet.util.slicedmap;
 
 import java.util.Arrays;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * @author abreslav
  */
-public class ManyMapSlices {
+public class Slices {
 
     public static final RewritePolicy ONLY_REWRITE_TO_EQUAL = new RewritePolicy() {
         @Override
@@ -88,7 +88,7 @@ public class ManyMapSlices {
             if (defaultValue != null) {
                 return new SliceWithOpposite<K, V>(debugName, rewritePolicy, opposite, keyNormalizer) {
                     @Override
-                    public V computeValue(ManyMap map, K key, V value, boolean valueNotFound) {
+                    public V computeValue(SlicedMap map, K key, V value, boolean valueNotFound) {
                         if (valueNotFound) return defaultValue;
                         return super.computeValue(map, key, value, valueNotFound);
                     }
@@ -97,7 +97,7 @@ public class ManyMapSlices {
             if (furtherLookupSlices != null) {
                 return new SliceWithOpposite<K, V>(debugName, rewritePolicy, opposite, keyNormalizer) {
                     @Override
-                    public V computeValue(ManyMap map, K key, V value, boolean valueNotFound) {
+                    public V computeValue(SlicedMap map, K key, V value, boolean valueNotFound) {
                         if (valueNotFound) {
                             for (ReadOnlySlice<K, V> slice : furtherLookupSlices) {
                                 if (map.containsKey(slice, key)) {
@@ -143,13 +143,13 @@ public class ManyMapSlices {
         }
 
         @Override
-        public void afterPut(MutableManyMap manyMap, K key, V value) {
+        public void afterPut(MutableSlicedMap map, K key, V value) {
             if (opposite != null) {
-                manyMap.put(opposite, value, key);
+                map.put(opposite, value, key);
             }
         }
         @Override
-        public ManyMapKey<K, V> makeKey(K key) {
+        public SlicedMapKey<K, V> makeKey(K key) {
             if (keyNormalizer == null) {
                 return super.makeKey(key);
             }
@@ -165,7 +165,7 @@ public class ManyMapSlices {
             super(debugName, rewritePolicy);
         }
         @Override
-        public Boolean computeValue(ManyMap map, K key, Boolean value, boolean valueNotFound) {
+        public Boolean computeValue(SlicedMap map, K key, Boolean value, boolean valueNotFound) {
             if (valueNotFound) return false;
             return super.computeValue(map, key, value, valueNotFound);
         }

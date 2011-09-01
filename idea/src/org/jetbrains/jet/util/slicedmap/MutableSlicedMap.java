@@ -1,9 +1,9 @@
-package org.jetbrains.jet.util;
+package org.jetbrains.jet.util.slicedmap;
 
 /**
  * @author abreslav
  */
-public interface MutableManyMap extends ManyMap {
+public interface MutableSlicedMap extends SlicedMap {
 
     <K, V> void put(WritableSlice<K, V> slice, K key, V value);
 
