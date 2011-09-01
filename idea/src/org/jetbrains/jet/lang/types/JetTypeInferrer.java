@@ -1842,8 +1842,8 @@ public class JetTypeInferrer {
             JetExpression selectorExpression = expression.getSelectorExpression();
             JetExpression receiverExpression = expression.getReceiverExpression();
             JetType receiverType = context.services.typeInferrerVisitorWithNamespaces.getType(receiverExpression, context.replaceExpectedTypes(NO_EXPECTED_TYPE, NO_EXPECTED_TYPE));
-            if (receiverType == null) return null;
             if (selectorExpression == null) return null;
+            if (receiverType == null) receiverType = ErrorUtils.createErrorType("Type for " + expression.getText());
 
             // Clean resolution: no autocasts
             TemporaryBindingTrace cleanResolutionTrace = TemporaryBindingTrace.create(context.trace);

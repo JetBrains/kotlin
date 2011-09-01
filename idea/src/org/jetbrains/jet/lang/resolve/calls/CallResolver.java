@@ -145,7 +145,7 @@ public class CallResolver {
             prioritizedTasks = Collections.singletonList(new ResolutionTask<FunctionDescriptor>(constructors, null, call));
         }
         else {
-            throw new UnsupportedOperationException("Type argument inference not implemented for " + call);
+            throw new UnsupportedOperationException("Type argument inference not implemented for " + call.getText());
         }
 
         return resolveCallToDescriptor(trace, scope, call, call.getNode(), expectedType, prioritizedTasks, functionReference);
@@ -263,6 +263,7 @@ public class CallResolver {
             
             if (ErrorUtils.isError(candidate)) {
                 successfulCandidates.put(candidate, candidate);
+                checkTypesWithNoCallee(temporaryTrace, scope, task.getTypeArguments(), task.getValueArguments(), task.getFunctionLiteralArguments());
                 continue;
             }
 
