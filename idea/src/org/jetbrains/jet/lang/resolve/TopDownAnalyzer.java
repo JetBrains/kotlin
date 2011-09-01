@@ -449,7 +449,7 @@ public class TopDownAnalyzer {
         if (!klass.hasPrimaryConstructor()) return;
 
         // TODO : not all the parameters are real properties
-        JetScope memberScope = classDescriptor.getScopeForSupertypeResolution(); // TODO : this is REALLY questionable
+        JetScope memberScope = classDescriptor.getScopeForSupertypeResolution();
         ConstructorDescriptor constructorDescriptor = classDescriptorResolver.resolvePrimaryConstructorDescriptor(memberScope, classDescriptor, klass);
         for (JetParameter parameter : klass.getPrimaryConstructorParameters()) {
             PropertyDescriptor propertyDescriptor = classDescriptorResolver.resolvePrimaryConstructorParameterToAProperty(
