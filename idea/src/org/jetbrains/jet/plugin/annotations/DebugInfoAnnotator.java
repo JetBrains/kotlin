@@ -6,13 +6,13 @@ import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.JetDiagnostic;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.psi.JetElement;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetReferenceExpression;
-import org.jetbrains.jet.lang.psi.JetVisitorVoid;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.JetHighlighter;
@@ -20,6 +20,7 @@ import org.jetbrains.jet.plugin.JetHighlighter;
 import java.util.Set;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
+import static org.jetbrains.jet.lexer.JetTokens.*;
 
 /**
  * @author abreslav
@@ -27,6 +28,7 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
 public class DebugInfoAnnotator implements Annotator {
 
     private static volatile boolean debugInfoEnabled = !ApplicationManager.getApplication().isUnitTestMode();
+    public static final TokenSet EXCLUDED = TokenSet.create(COLON, AS_KEYWORD, AS_SAFE);
 
     public static void setDebugInfoEnabled(boolean value) {
         debugInfoEnabled = value;
@@ -59,6 +61,13 @@ public class DebugInfoAnnotator implements Annotator {
 
                     @Override
                     public void visitReferenceExpression(JetReferenceExpression expression) {
+                        if (expression instanceof JetSimpleNameExpression) {
+                            JetSimpleNameExpression nameExpression = (JetSimpleNameExpression) expression;
+                            IElementType elementType = expression.getNode().getElementType();
+                            if (elementType == JetNodeTypes.OPERATION_REFERENCE && EXCLUDED.contains(nameExpression.getReferencedNameElementType())) {
+                                return;
+                            }
+                        }
                         DeclarationDescriptor declarationDescriptor = bindingContext.get(REFERENCE_TARGET, expression);
                         boolean resolved = declarationDescriptor != null;
                         boolean unresolved = unresolvedReferences.contains(expression);
