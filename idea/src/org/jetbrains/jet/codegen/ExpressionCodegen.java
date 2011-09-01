@@ -1740,7 +1740,22 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 v.dup();
             }
             Type type = typeMapper.boxType(typeMapper.mapType(jetType, OwnerKind.INTERFACE));
-            v.instanceOf(type);
+            if(jetType.isNullable()) {
+                Label nope = new Label();
+                Label end = new Label();
+
+                v.dup();
+                v.ifnull(nope);
+                v.instanceOf(type);
+                v.goTo(end);
+                v.mark(nope);
+                v.pop();
+                v.aconst(1);
+                v.mark(end);
+            }
+            else {
+                v.instanceOf(type);
+            }
         }
     }
 
