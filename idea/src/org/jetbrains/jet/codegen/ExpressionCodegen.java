@@ -725,7 +725,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                         if (receiver == StackValue.none()) {
                             receiver = generateThisOrOuter((ClassDescriptor) propertyDescriptor.getContainingDeclaration());
                         }
-                        receiver.put(JetTypeMapper.TYPE_OBJECT, v);
+                        JetType receiverType = bindingContext.get(BindingContext.EXPRESSION_TYPE, r);
+                        receiver.put(receiverType != null ? typeMapper.mapType(receiverType) : JetTypeMapper.TYPE_OBJECT, v);
                     }
                     return iValue;
                 }
@@ -772,7 +773,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     public StackValue intermediateValueForProperty(PropertyDescriptor propertyDescriptor, final boolean forceField, boolean forceInterface) {
         DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
         boolean isStatic = containingDeclaration instanceof NamespaceDescriptorImpl;
-        propertyDescriptor = propertyDescriptor.getOriginal();
+        while(propertyDescriptor != propertyDescriptor.getOriginal())
+            propertyDescriptor = propertyDescriptor.getOriginal();
         final JetType outType = propertyDescriptor.getOutType();
         boolean isInsideClass = !forceInterface && containingDeclaration == contextType();
         Method getter;
@@ -797,7 +799,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             isInterface = !(containingDeclaration instanceof ClassDescriptor && ((ClassDescriptor) containingDeclaration).isObject());
         }
 
-        return StackValue.property(propertyDescriptor.getName(), owner, typeMapper.mapType(outType), isStatic, isInterface, getter, setter);
+        return StackValue.property(propertyDescriptor.getName(), owner, typeMapper.mapType(propertyDescriptor.getOutType()), isStatic, isInterface, getter, setter);
     }
 
     @Override
