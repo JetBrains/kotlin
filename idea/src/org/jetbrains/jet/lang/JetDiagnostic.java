@@ -1,7 +1,7 @@
 package org.jetbrains.jet.lang;
 
 import com.intellij.lang.ASTNode;
-import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
@@ -16,13 +16,18 @@ public abstract class JetDiagnostic {
 
         private final JetReferenceExpression referenceExpression;
 
-        public UnresolvedReferenceError(@NonNls JetReferenceExpression referenceExpression) {
+        public UnresolvedReferenceError(@NotNull JetReferenceExpression referenceExpression) {
             this.referenceExpression = referenceExpression;
         }
 
         @Override
-        public void acceptHandler(@NonNls ErrorHandler handler) {
+        public void acceptHandler(@NotNull ErrorHandler handler) {
             handler.unresolvedReference(referenceExpression);
+        }
+
+        @NotNull
+        public JetReferenceExpression getReferenceExpression() {
+            return referenceExpression;
         }
     }
 
@@ -31,13 +36,13 @@ public abstract class JetDiagnostic {
         private final ASTNode node;
         private final String message;
 
-        public GenericError(@NonNls ASTNode node, @NonNls String message) {
+        public GenericError(@NotNull ASTNode node, @NotNull String message) {
             this.node = node;
             this.message = message;
         }
 
         @Override
-        public void acceptHandler(@NonNls ErrorHandler handler) {
+        public void acceptHandler(@NotNull ErrorHandler handler) {
             handler.genericError(node, message);
         }
     }
@@ -48,14 +53,14 @@ public abstract class JetDiagnostic {
         private final JetType expectedType;
         private final JetType actualType;
 
-        public TypeMismatchError(@NonNls JetExpression expression, @NonNls JetType expectedType, @NonNls JetType actualType) {
+        public TypeMismatchError(@NotNull JetExpression expression, @NotNull JetType expectedType, @NotNull JetType actualType) {
             this.expression = expression;
             this.expectedType = expectedType;
             this.actualType = actualType;
         }
 
         @Override
-        public void acceptHandler(@NonNls ErrorHandler handler) {
+        public void acceptHandler(@NotNull ErrorHandler handler) {
             handler.typeMismatch(expression, expectedType, actualType);
         }
     }
@@ -65,13 +70,13 @@ public abstract class JetDiagnostic {
         private final DeclarationDescriptor existingDescriptor;
         private final DeclarationDescriptor redeclaredDescriptor;
 
-        public RedeclarationError(@NonNls DeclarationDescriptor existingDescriptor, @NonNls DeclarationDescriptor redeclaredDescriptor) {
+        public RedeclarationError(@NotNull DeclarationDescriptor existingDescriptor, @NotNull DeclarationDescriptor redeclaredDescriptor) {
             this.existingDescriptor = existingDescriptor;
             this.redeclaredDescriptor = redeclaredDescriptor;
         }
 
         @Override
-        public void acceptHandler(@NonNls ErrorHandler handler) {
+        public void acceptHandler(@NotNull ErrorHandler handler) {
             handler.redeclaration(existingDescriptor, redeclaredDescriptor);
         }
     }
@@ -81,13 +86,13 @@ public abstract class JetDiagnostic {
         private final ASTNode node;
         private final String message;
 
-        public GenericWarning(@NonNls ASTNode node, @NonNls String message) {
+        public GenericWarning(@NotNull ASTNode node, @NotNull String message) {
             this.message = message;
             this.node = node;
         }
 
         @Override
-        public void acceptHandler(@NonNls ErrorHandler handler) {
+        public void acceptHandler(@NotNull ErrorHandler handler) {
             handler.genericWarning(node, message);
         }
     }
@@ -102,5 +107,5 @@ public abstract class JetDiagnostic {
 //        return stackTrace;
 //    }
 
-    public abstract void acceptHandler(@NonNls ErrorHandler handler);
+    public abstract void acceptHandler(@NotNull ErrorHandler handler);
 }

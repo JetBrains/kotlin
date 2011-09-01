@@ -38,6 +38,7 @@
       <annotator language="jet" implementationClass="org.jetbrains.jet.plugin.annotations.SoftKeywordsAnnotator"/>
       <annotator language="jet" implementationClass="org.jetbrains.jet.plugin.annotations.LabelsAnnotator"/>
       <annotator language="jet" implementationClass="org.jetbrains.jet.plugin.annotations.JetPsiChecker"/>
+      <annotator language="jet" implementationClass="org.jetbrains.jet.plugin.annotations.DebugInfoAnnotator"/>
       <documentationProvider implementation="org.jetbrains.jet.plugin.JetQuickDocumentationProvider"/>
       <configurationType implementation="org.jetbrains.jet.plugin.run.JetRunConfigurationType"/>
       <configurationProducer implementation="org.jetbrains.jet.plugin.run.JetRunConfigurationProducer"/>

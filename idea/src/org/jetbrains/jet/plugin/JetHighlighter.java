@@ -7,6 +7,7 @@ import com.intellij.lexer.Lexer;
 import com.intellij.openapi.editor.HighlighterColors;
 import com.intellij.openapi.editor.SyntaxHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
+import com.intellij.openapi.editor.markup.EffectType;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
 import com.intellij.psi.TokenType;
@@ -94,6 +95,15 @@ public class JetHighlighter extends SyntaxHighlighterBase {
         clone.setFontType(Font.PLAIN);
 // TODO: proper attributes
         JET_AUTO_CAST_EXPRESSION = TextAttributesKey.createTextAttributesKey("JET.AUTO.CAST.EXPRESSION", clone);
+    }
+
+    public static final TextAttributesKey JET_DEBUG_INFO;
+
+    static {
+        TextAttributes textAttributes = new TextAttributes();
+        textAttributes.setEffectType(EffectType.ROUNDED_BOX);
+        textAttributes.setEffectColor(Color.BLACK);
+        JET_DEBUG_INFO = TextAttributesKey.createTextAttributesKey("JET.DEBUG.INFO", textAttributes);
     }
 
     @NotNull
