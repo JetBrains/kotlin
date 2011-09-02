@@ -422,6 +422,7 @@ public abstract class StackValue {
                 throw new UnsupportedOperationException("no getter specified");
             }
             getter.invoke(v);
+            coerce(type, v);
         }
 
         @Override

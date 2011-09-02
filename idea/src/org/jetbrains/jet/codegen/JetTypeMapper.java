@@ -24,6 +24,7 @@ public class JetTypeMapper {
     public static final Type TYPE_OBJECT = Type.getObjectType("java/lang/Object");
     public static final Type TYPE_TYPEINFO = Type.getType(TypeInfo.class);
     public static final Type TYPE_JET_OBJECT = Type.getType(JetObject.class);
+    public static final Type TYPE_CLASS = Type.getType(Class.class);
 
     private final JetStandardLibrary standardLibrary;
     private final BindingContext bindingContext;
@@ -47,7 +48,25 @@ public class JetTypeMapper {
         return type == Type.INT_TYPE || type == Type.SHORT_TYPE || type == Type.BYTE_TYPE || type == Type.CHAR_TYPE;
     }
 
+    public static boolean isPrimitive(Type type) {
+        return type == Type.INT_TYPE
+                || type == Type.SHORT_TYPE
+                || type == Type.BYTE_TYPE
+                || type == Type.CHAR_TYPE
+                || type == Type.SHORT_TYPE
+                || type == Type.FLOAT_TYPE
+                || type == Type.DOUBLE_TYPE
+                || type == Type.LONG_TYPE
+                || type == Type.BOOLEAN_TYPE
+                || type == Type.VOID_TYPE;
+    }
+
     static Type psiTypeToAsm(PsiType type) {
+        if(type instanceof PsiArrayType) {
+            PsiArrayType psiArrayType = (PsiArrayType) type;
+            return Type.getType("[" + psiTypeToAsm(psiArrayType.getComponentType()).getDescriptor());
+        }
+
         if (type instanceof PsiPrimitiveType) {
             if (type == PsiType.VOID) {
                 return Type.VOID_TYPE;

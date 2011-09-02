@@ -1,6 +1,9 @@
 package org.jetbrains.jet.lang;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.editor.Document;
+import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
@@ -16,7 +19,7 @@ public class ErrorHandler {
         @Override
         public void unresolvedReference(@NotNull JetReferenceExpression referenceExpression) {
             throw new IllegalStateException("Unresolved reference: " + referenceExpression.getText() +
-                                            " at offset "  + referenceExpression.getTextRange().getStartOffset());
+                                            atLocation(referenceExpression));
         }
 
         @Override
@@ -26,7 +29,7 @@ public class ErrorHandler {
 
         @Override
         public void typeMismatch(@NotNull JetExpression expression, @NotNull JetType expectedType, @NotNull JetType actualType) {
-            throw new IllegalStateException("Type mismatch at " + expression.getTextRange().getStartOffset() + ": inferred type is " + actualType + " but " + expectedType + " was expected");
+            throw new IllegalStateException("Type mismatch " + atLocation(expression) + ": inferred type is " + actualType + " but " + expectedType + " was expected");
         }
 
         @Override
@@ -48,5 +51,15 @@ public class ErrorHandler {
     }
 
     public void genericWarning(@NotNull ASTNode node, @NotNull String message) {
+    }
+    
+    public static String atLocation(PsiElement element) {
+        Document document = PsiDocumentManager.getInstance(element.getProject()).getDocument(element.getContainingFile());
+        int offset = element.getTextRange().getStartOffset();
+        int lineNumber = document.getLineNumber(offset);
+        int lineStartOffset = document.getLineStartOffset(lineNumber);
+        int column = offset - lineStartOffset;
+
+        return "' at line " + (lineNumber+1) + ":" + column;
     }
 }

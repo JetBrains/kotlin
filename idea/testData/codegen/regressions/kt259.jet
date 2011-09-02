@@ -1,0 +1,66 @@
+class A() {}
+class B<T>() {
+    fun isT (a : Any?) : Boolean {
+        return a is T
+    }
+}
+
+fun t1() : Boolean {
+    val a = A()
+    if(a !is A)   return false
+    if(a !is A?)   return false
+    if(null !is A?)   return false
+    return true
+}
+
+fun t2 () : Boolean {
+    val b = B<String>()
+    if(b !is B<String>)   return false
+    if(b !is B<String>?)  return false
+    if(null !is B<String>?)  return false
+
+    val v = b as B<String>   //ok
+    val u = b as B<String>?  //TypeCastException
+
+    val w : B<String>? = b as B<String>   //ok
+    val x = w as B<String>?  //TypeCastException
+    return true
+}
+
+fun t3 () : Boolean {
+    val b = B<String>()
+    if(!b.isT("aaa")) return false
+
+    if(b.isT(10))     return false
+    if(b.isT(null))   return false
+
+    val d = B<String?>()
+    if(!d.isT("aaa")) return false
+    if(d.isT(10))     return false
+    if(!d.isT(null))  return false
+
+    val c = B<Int>()
+    if(c.isT("aaa")) return false
+    if(!c.isT(10))   return false
+    if(c.isT(null)) return false
+
+    val e = B<Int?>()
+    if(e.isT("aaa")) return false
+    if(!e.isT(10))   return false
+    if(!e.isT(null)) return false
+
+    return true
+}
+
+fun box() : String {
+    if(!t1()) {
+        return "t1 failed"
+    }
+    if(!t2()) {
+        return "t2 failed"
+    }
+    if(!t3()) {
+        return "t3 failed"
+    }
+    return "OK"
+}

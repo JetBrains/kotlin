@@ -1,5 +1,6 @@
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
@@ -7,6 +8,7 @@ import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.types.JetTypeImpl;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -15,6 +17,7 @@ import org.objectweb.asm.commons.InstructionAdapter;
 import org.objectweb.asm.commons.Method;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author max
@@ -41,15 +44,41 @@ public class FunctionCodegen {
         ClassContext funContext = owner.intoFunction(functionDescriptor);
 
         final JetExpression bodyExpression = f.getBodyExpression();
-        generatedMethod(bodyExpression, jvmMethod, funContext, functionDescriptor.getValueParameters(), functionDescriptor.getTypeParameters());
+        generatedMethod(bodyExpression, jvmMethod, funContext, functionDescriptor);
+    }
+
+    private void generateBridgeMethod(Method function, Method overriden)
+    {
+        int flags = Opcodes.ACC_PUBLIC; // TODO.
+
+        final MethodVisitor mv = v.visitMethod(flags, function.getName(), overriden.getDescriptor(), null, null);
+            mv.visitCode();
+
+        Type[] argTypes = function.getArgumentTypes();
+        InstructionAdapterEx iv = new InstructionAdapterEx(mv);
+        iv.load(0, JetTypeMapper.TYPE_OBJECT);
+        for (int i = 0, reg = 1; i < argTypes.length; i++) {
+            Type argType = argTypes[i];
+            iv.load(reg, argType);
+            reg += argType.getSize();
+        }
+
+        iv.invokevirtual(state.getTypeMapper().jvmName((ClassDescriptor) owner.getContextDescriptor(), OwnerKind.IMPLEMENTATION), function.getName(), function.getDescriptor());
+        if(JetTypeMapper.isPrimitive(function.getReturnType()) && !JetTypeMapper.isPrimitive(overriden.getReturnType()))
+            iv.valueOf(function.getReturnType());
+        iv.areturn(overriden.getReturnType());
+        mv.visitMaxs(0, 0);
+        mv.visitEnd();
     }
 
     private void generatedMethod(JetExpression bodyExpressions,
                                  Method jvmSignature,
                                  ClassContext context,
-                                 List<ValueParameterDescriptor> paramDescrs,
-                                 List<TypeParameterDescriptor> typeParameters)
+                                 FunctionDescriptor functionDescriptor)
     {
+        List<ValueParameterDescriptor> paramDescrs = functionDescriptor.getValueParameters();
+        List<TypeParameterDescriptor> typeParameters = functionDescriptor.getTypeParameters();
+
         int flags = Opcodes.ACC_PUBLIC; // TODO.
 
         OwnerKind kind = context.getContextKind();
@@ -99,6 +128,16 @@ public class FunctionCodegen {
             }
             mv.visitMaxs(0, 0);
             mv.visitEnd();
+
+            Set<? extends FunctionDescriptor> overriddenFunctions = functionDescriptor.getOverriddenFunctions();
+            if(overriddenFunctions.size() > 0) {
+                for (FunctionDescriptor overriddenFunction : overriddenFunctions) {
+                    // TODO should we check params here as well?
+                    if(!JetTypeImpl.equalTypes(overriddenFunction.getReturnType(), functionDescriptor.getReturnType(), JetTypeImpl.EMPTY_AXIOMS)) {
+                        generateBridgeMethod(jvmSignature, state.getTypeMapper().mapSignature(overriddenFunction.getName(), overriddenFunction));
+                    }
+                }
+            }
         }
     }
 

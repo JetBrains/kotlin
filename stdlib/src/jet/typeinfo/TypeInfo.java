@@ -40,25 +40,28 @@ public class TypeInfo<T> implements JetObject {
 
     public boolean isInstance(Object obj) {
         if (obj instanceof JetObject) {
-            return isSubtypeOf(((JetObject) obj).getTypeInfo());
+            return ((JetObject) obj).getTypeInfo().isSubtypeOf(this);
         }
-        throw new UnsupportedOperationException(); // TODO
+        if(obj == null)
+            return nullable;
+
+        return theClass.isAssignableFrom(obj.getClass());  // TODO
     }
 
-    public boolean isSubtypeOf(TypeInfo<?> other) {
-        if (!theClass.isAssignableFrom(other.theClass)) {
+    public boolean isSubtypeOf(TypeInfo<?> superType) {
+        if (!superType.theClass.isAssignableFrom(theClass)) {
             return false;
         }
-        if (nullable && !other.nullable) {
+        if (nullable && !superType.nullable) {
             return false;
         }
         if (typeParameters != null) {
-            if (other.typeParameters == null || other.typeParameters.length != typeParameters.length) {
+            if (superType.typeParameters == null || superType.typeParameters.length != typeParameters.length) {
                 throw new IllegalArgumentException("inconsistent type infos for the same class");
             }
             for (int i = 0; i < typeParameters.length; i++) {
                 // TODO handle variance here
-                if (!typeParameters [i].equals(other.typeParameters [i])) {
+                if (!typeParameters [i].equals(superType.typeParameters [i])) {
                     return false;
                 }
             }
@@ -95,9 +98,22 @@ public class TypeInfo<T> implements JetObject {
 
     @Override
     public int hashCode() {
-        int result = theClass.hashCode();
-        result = 31 * result + (typeParameters != null ? Arrays.hashCode(typeParameters) : 0);
-        return result;
+        return 31 * theClass.hashCode() + (typeParameters != null ? Arrays.hashCode(typeParameters) : 0);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder().append(theClass.getName());
+        if(typeParameters != null && typeParameters.length != 0) {
+            sb.append("<");
+            for(int i = 0; i != typeParameters.length-1; ++i) {
+                sb.append(typeParameters[i].toString()).append(",");
+            }
+            sb.append(typeParameters[typeParameters.length - 1].toString()).append(">");
+        }
+        if(nullable)
+            sb.append("?");
+        return sb.toString();
     }
 
     public static final TypeInfo<Byte> BYTE_TYPE_INFO = new TypeInfo<Byte>(Byte.class, false);

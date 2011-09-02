@@ -74,7 +74,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             "DOUBLE_TYPE_INFO"
     };
 
-    private final InstructionAdapter v;
+    private final InstructionAdapterEx v;
     private final FrameMap myMap;
     private final JetTypeMapper typeMapper;
     private final GenerationState state;
@@ -93,7 +93,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         this.typeMapper = state.getTypeMapper();
         this.returnType = returnType;
         this.state = state;
-        this.v = new InstructionAdapter(v);
+        this.v = new InstructionAdapterEx(v);
         this.bindingContext = state.getBindingContext();
         this.context = context;
         this.intrinsics = state.getIntrinsics();
@@ -263,7 +263,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         final JetParameter loopParameter = expression.getLoopParameter();
         final VariableDescriptor parameterDescriptor = bindingContext.get(BindingContext.VALUE_PARAMETER, loopParameter);
         JetType paramType = parameterDescriptor.getOutType();
-        Type asmParamType = typeMapper.mapType(paramType);
+        Type asmParamType = typeMapper.boxType(typeMapper.mapType(paramType));
 
         int iteratorVar = myMap.enterTemp();
         gen(expression.getLoopRange(), loopRangeType);
@@ -725,21 +725,28 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                         if (receiver == StackValue.none()) {
                             receiver = generateThisOrOuter((ClassDescriptor) propertyDescriptor.getContainingDeclaration());
                         }
-                        receiver.put(JetTypeMapper.TYPE_OBJECT, v);
+                        JetType receiverType = bindingContext.get(BindingContext.EXPRESSION_TYPE, r);
+                        receiver.put(receiverType != null ? typeMapper.mapType(receiverType) : JetTypeMapper.TYPE_OBJECT, v);
                     }
                     return iValue;
                 }
             }
             else if (descriptor instanceof ClassDescriptor) {
-                final JetClassObject classObject = ((JetClass) declaration).getClassObject();
-                if (classObject == null) {
-                    throw new UnsupportedOperationException("trying to reference a class which doesn't have a class object");
+                if(declaration instanceof JetClass) {
+                    final JetClassObject classObject = ((JetClass) declaration).getClassObject();
+                    if (classObject == null) {
+                        throw new UnsupportedOperationException("trying to reference a class which doesn't have a class object");
+                    }
+                    final String type = typeMapper.jvmName(classObject);
+                    return StackValue.field(Type.getObjectType(type),
+                                                  typeMapper.jvmName((ClassDescriptor) descriptor, OwnerKind.IMPLEMENTATION),
+                                                  "$classobj",
+                                                  true);
                 }
-                final String type = typeMapper.jvmName(classObject);
-                return StackValue.field(Type.getObjectType(type),
-                                              typeMapper.jvmName((ClassDescriptor) descriptor, OwnerKind.IMPLEMENTATION),
-                                              "$classobj",
-                                              true);
+                else {
+                    // todo ?
+                    return StackValue.none();
+                }
             }
             else if (descriptor instanceof TypeParameterDescriptor) {
                 loadTypeParameterTypeInfo((TypeParameterDescriptor) descriptor);
@@ -766,7 +773,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     public StackValue intermediateValueForProperty(PropertyDescriptor propertyDescriptor, final boolean forceField, boolean forceInterface) {
         DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
         boolean isStatic = containingDeclaration instanceof NamespaceDescriptorImpl;
-        propertyDescriptor = propertyDescriptor.getOriginal();
+        while(propertyDescriptor != propertyDescriptor.getOriginal())
+            propertyDescriptor = propertyDescriptor.getOriginal();
         final JetType outType = propertyDescriptor.getOutType();
         boolean isInsideClass = !forceInterface && containingDeclaration == contextType();
         Method getter;
@@ -791,7 +799,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             isInterface = !(containingDeclaration instanceof ClassDescriptor && ((ClassDescriptor) containingDeclaration).isObject());
         }
 
-        return StackValue.property(propertyDescriptor.getName(), owner, typeMapper.mapType(outType), isStatic, isInterface, getter, setter);
+        return StackValue.property(propertyDescriptor.getName(), owner, typeMapper.mapType(propertyDescriptor.getOutType()), isStatic, isInterface, getter, setter);
     }
 
     @Override
@@ -1039,16 +1047,24 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         Label end = new Label();
         v.dup();
         v.ifnull(ifnull);
-        gen(expression.getSelectorExpression());
+        JetType receiverType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression.getReceiverExpression());
+        StackValue propValue = genQualified(StackValue.onStack(typeMapper.mapType(receiverType)), expression.getSelectorExpression());
+        Type type = propValue.type;
+        propValue.put(type, v);
+        if(JetTypeMapper.isPrimitive(type) && !type.equals(Type.VOID_TYPE)) {
+            v.valueOf(type);
+            type = typeMapper.boxType(type);
+        }
         v.goTo(end);
+
         v.mark(ifnull);
-        // null is already on stack here after the dup
-        JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression);
-        if (expressionType.equals(JetStandardClasses.getUnitType())) {
-            v.pop();
+        v.pop();
+        if(!propValue.type.equals(Type.VOID_TYPE)) {
+            v.aconst(null);
         }
         v.mark(end);
-        return StackValue.onStack(typeMapper.mapType(expressionType));
+
+        return StackValue.onStack(type);
     }
 
     @Override
@@ -1138,10 +1154,20 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     }
 
     private StackValue generateEquals(JetExpression left, JetExpression right, IElementType opToken) {
-        final Type leftType = expressionType(left);
-        final Type rightType = expressionType(right);
-        gen(left, leftType);
-        gen(right, rightType);
+        Type leftType = expressionType(left);
+        Type rightType = expressionType(right);
+        if(JetTypeMapper.isPrimitive(leftType) != JetTypeMapper.isPrimitive(rightType)) {
+            gen(left, leftType);
+            v.valueOf(leftType);
+            leftType = typeMapper.boxType(leftType);
+            gen(right, rightType);
+            v.valueOf(rightType);
+            rightType = typeMapper.boxType(rightType);
+        }
+        else {
+            gen(left, leftType);
+            gen(right, rightType);
+        }
         return generateEqualsForExpressionsOnStack(opToken, leftType, rightType);
     }
 
@@ -1244,7 +1270,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
     private StackValue generateAssignmentExpression(JetBinaryExpression expression) {
         StackValue stackValue = gen(expression.getLeft());
-        genToJVMStack(expression.getRight());
+        gen(expression.getRight(), stackValue.type);
         stackValue.store(v);
         return StackValue.none();
     }
@@ -1490,8 +1516,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 throw new UnsupportedOperationException("unknown accessor type: " + declaration);
             }
             boolean isGetter = accessor.getSignature().getName().equals("get");
-            return StackValue.collectionElement(JetTypeMapper.TYPE_OBJECT, isGetter ? accessor : null,
-                                                isGetter ? null : accessor);
+            return StackValue.collectionElement(
+                    isGetter ? accessor.getSignature().getReturnType() : accessor.getSignature().getArgumentTypes()[1],
+                    isGetter ? accessor : null,
+                    isGetter ? null : accessor);
         }
     }
 
@@ -1588,7 +1616,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             if (!(descriptor instanceof ClassDescriptor)) {
                 throw new UnsupportedOperationException("don't know how to handle non-class types in as/as?");
             }
-            Type type = typeMapper.mapType(jetType, OwnerKind.INTERFACE);
+            Type type = typeMapper.boxType(typeMapper.mapType(jetType, OwnerKind.INTERFACE));
             generateInstanceOf(StackValue.expression(OBJECT_TYPE, expression.getLeft(), this), jetType, true);
             Label isInstance = new Label();
             v.ifne(isInstance);
@@ -1714,8 +1742,23 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             if (leaveExpressionOnStack) {
                 v.dup();
             }
-            Type type = typeMapper.mapType(jetType, OwnerKind.INTERFACE);
-            v.instanceOf(type);
+            Type type = typeMapper.boxType(typeMapper.mapType(jetType, OwnerKind.INTERFACE));
+            if(jetType.isNullable()) {
+                Label nope = new Label();
+                Label end = new Label();
+
+                v.dup();
+                v.ifnull(nope);
+                v.instanceOf(type);
+                v.goTo(end);
+                v.mark(nope);
+                v.pop();
+                v.aconst(1);
+                v.mark(end);
+            }
+            else {
+                v.instanceOf(type);
+            }
         }
     }
 

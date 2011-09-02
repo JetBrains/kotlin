@@ -130,4 +130,8 @@ public class PropertyGenTest extends CodegenTestCase {
         final Class aClass = loadClass("Foo", codegens);
         assertNotNull(aClass.getMethod("getX"));
     }
+
+    public void testKt257 () throws Exception {
+        blackBoxFile("regressions/kt257.jet");
+    }
 }
