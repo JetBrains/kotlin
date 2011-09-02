@@ -264,7 +264,10 @@ public class ExpectedResolveData {
             statement = (JetExpression) parent;
         }
         JetDeclaration declaration = PsiTreeUtil.getParentOfType(referenceExpression, JetDeclaration.class);
-        return referenceExpression.getText() +
+
+
+
+        return referenceExpression.getText() + " at " + ErrorHandler.atLocation(referenceExpression) +
                                     " in " + statement.getText() + (declaration == null ? "" : " in " + declaration.getText());
     }
 

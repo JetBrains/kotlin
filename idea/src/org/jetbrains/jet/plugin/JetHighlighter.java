@@ -106,6 +106,15 @@ public class JetHighlighter extends SyntaxHighlighterBase {
         JET_DEBUG_INFO = TextAttributesKey.createTextAttributesKey("JET.DEBUG.INFO", textAttributes);
     }
 
+    public static final TextAttributesKey JET_RESOLVED_TO_ERROR;
+
+    static {
+        TextAttributes textAttributes = new TextAttributes();
+        textAttributes.setEffectType(EffectType.ROUNDED_BOX);
+        textAttributes.setEffectColor(Color.RED);
+        JET_RESOLVED_TO_ERROR = TextAttributesKey.createTextAttributesKey("JET.RESOLVED.TO.ERROR", textAttributes);
+    }
+
     @NotNull
     public Lexer getHighlightingLexer() {
         return new JetLexer();

@@ -37,6 +37,16 @@ public class ErrorHandler {
             throw new IllegalStateException("Redeclaration: " + existingDescriptor.getName());
         }
     };
+    public static String atLocation(PsiElement element) {
+        Document document = PsiDocumentManager.getInstance(element.getProject()).getDocument(element.getContainingFile());
+        int offset = element.getTextRange().getStartOffset();
+        int lineNumber = document.getLineNumber(offset);
+        int lineStartOffset = document.getLineStartOffset(lineNumber);
+        int column = offset - lineStartOffset;
+
+        return "' at line " + (lineNumber+1) + ":" + column;
+    }
+
 
     public void unresolvedReference(@NotNull JetReferenceExpression referenceExpression) {
     }
@@ -52,14 +62,5 @@ public class ErrorHandler {
 
     public void genericWarning(@NotNull ASTNode node, @NotNull String message) {
     }
-    
-    public static String atLocation(PsiElement element) {
-        Document document = PsiDocumentManager.getInstance(element.getProject()).getDocument(element.getContainingFile());
-        int offset = element.getTextRange().getStartOffset();
-        int lineNumber = document.getLineNumber(offset);
-        int lineStartOffset = document.getLineStartOffset(lineNumber);
-        int column = offset - lineStartOffset;
 
-        return "' at line " + (lineNumber+1) + ":" + column;
-    }
 }

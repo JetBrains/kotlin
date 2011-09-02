@@ -1060,18 +1060,18 @@ public class JetTypeInferrer {
                     TemporaryBindingTrace temporaryTraceWithExpectedType = TemporaryBindingTrace.create(context.trace);
                     boolean success = checkBinaryWithTypeRHS(expression, context, targetType, targetType, temporaryTraceWithExpectedType);
                     if (success) {
-                        temporaryTraceWithExpectedType.addAllMyDataTo(context.trace);
+                        temporaryTraceWithExpectedType.commit();
                     }
                     else {
                         TemporaryBindingTrace temporaryTraceWithoutExpectedType = TemporaryBindingTrace.create(context.trace);
                         checkBinaryWithTypeRHS(expression, context, targetType, NO_EXPECTED_TYPE, temporaryTraceWithoutExpectedType);
-                        temporaryTraceWithoutExpectedType.addAllMyDataTo(context.trace);
+                        temporaryTraceWithoutExpectedType.commit();
                     }
                 }
                 else {
                     TemporaryBindingTrace temporaryTraceWithoutExpectedType = TemporaryBindingTrace.create(context.trace);
                     checkBinaryWithTypeRHS(expression, context, targetType, NO_EXPECTED_TYPE, temporaryTraceWithoutExpectedType);
-                    temporaryTraceWithoutExpectedType.addAllMyDataTo(context.trace);
+                    temporaryTraceWithoutExpectedType.commit();
                 }
 
                 IElementType operationType = expression.getOperationSign().getReferencedNameElementType();
