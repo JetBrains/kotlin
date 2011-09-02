@@ -29,9 +29,7 @@ import org.jetbrains.jet.util.WritableSlice;
 
 import java.util.*;
 
-import static org.jetbrains.jet.lang.resolve.BindingContext.LOOP_RANGE_HAS_NEXT;
-import static org.jetbrains.jet.lang.resolve.BindingContext.LOOP_RANGE_ITERATOR;
-import static org.jetbrains.jet.lang.resolve.BindingContext.STATEMENT;
+import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 
 /**
  * @author abreslav
@@ -2095,7 +2093,9 @@ public class JetTypeInferrer {
                 } else if (nextResolutionResult.isNothing()) {
                     context.trace.getErrorHandler().genericError(reportErrorsOn, "Loop range must have an 'iterator().next()' method");
                 } else {
-                    return nextResolutionResult.getFunctionDescriptor().getReturnType();
+                    FunctionDescriptor nextFunction = nextResolutionResult.getFunctionDescriptor();
+                    context.trace.record(LOOP_RANGE_NEXT, loopRange, nextFunction);
+                    return nextFunction.getReturnType();
                 }
             }
             else {
