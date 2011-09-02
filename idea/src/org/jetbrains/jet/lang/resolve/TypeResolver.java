@@ -279,15 +279,17 @@ public class TypeResolver {
         }
 
         JetUserType qualifier = userType.getQualifier();
+        NamespaceDescriptor namespace;
         if (qualifier != null) {
             NamespaceDescriptor domain = resolveNamespace(scope, qualifier);
             if (domain == null) {
                 return null;
             }
-            return domain.getMemberScope().getNamespace(userType.getReferencedName());
+            namespace = domain.getMemberScope().getNamespace(userType.getReferencedName());
         }
-
-        NamespaceDescriptor namespace = scope.getNamespace(userType.getReferencedName());
+        else {
+            namespace = scope.getNamespace(userType.getReferencedName());
+        }
         if (namespace != null) {
             trace.record(BindingContext.REFERENCE_TARGET, userType.getReferenceExpression(), namespace);
         }
