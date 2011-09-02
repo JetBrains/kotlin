@@ -4,6 +4,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 
+import java.util.Collection;
+
 /**
 * @author abreslav
 */
@@ -19,4 +21,6 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
     void reportUnresolvedReference(@NotNull BindingTrace trace);
 
     void reportErrorOnReference(BindingTrace trace, String message);
+
+    <D extends CallableDescriptor> void recordAmbiguity(BindingTrace trace, Collection<D> candidates);
 }

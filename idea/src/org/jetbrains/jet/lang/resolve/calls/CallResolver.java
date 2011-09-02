@@ -18,6 +18,7 @@ import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.util.*;
 
+import static org.jetbrains.jet.lang.resolve.BindingContext.AMBIGUOUS_REFERENCE_TARGET;
 import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
 import static org.jetbrains.jet.lang.types.JetTypeInferrer.NO_EXPECTED_TYPE;
 
@@ -215,6 +216,11 @@ public class CallResolver {
             @Override
             public void reportErrorOnReference(BindingTrace trace, String message) {
                 trace.getErrorHandler().genericError(reference.getNode(), message);
+            }
+
+            @Override
+            public <D extends CallableDescriptor> void recordAmbiguity(BindingTrace trace, Collection<D> candidates) {
+                trace.record(AMBIGUOUS_REFERENCE_TARGET, reference, candidates);
             }
 
         };
@@ -485,6 +491,9 @@ public class CallResolver {
 
                     tracing.reportOverallResolutionError(trace, "Overload resolution ambiguity: " + stringBuilder);
                 }
+                
+                tracing.recordAmbiguity(trace, successfulCandidates.keySet());
+                
                 return OverloadResolutionResult.ambiguity(successfulCandidates.keySet());
             }
         }
@@ -502,6 +511,7 @@ public class CallResolver {
                 }
 
                 tracing.reportOverallResolutionError(trace, "None of the following functions can be called with the arguments supplied: " + stringBuilder);
+                tracing.recordAmbiguity(trace, failedCandidates);
                 return OverloadResolutionResult.manyFailedCandidates(failedCandidates);
             }
         }

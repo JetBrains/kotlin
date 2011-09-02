@@ -19,7 +19,10 @@ public interface BindingContext {
     WritableSlice<JetExpression, CompileTimeConstant<?>> COMPILE_TIME_VALUE = Slices.createSimpleSlice("COMPILE_TIME_VALUE");
     WritableSlice<JetTypeReference, JetType> TYPE = Slices.createSimpleSlice("TYPE");
     WritableSlice<JetExpression, JetType> EXPRESSION_TYPE = new BasicWritableSlice<JetExpression, JetType>("EXPRESSION_TYPE", RewritePolicy.DO_NOTHING);
+
     WritableSlice<JetReferenceExpression, DeclarationDescriptor> REFERENCE_TARGET = new BasicWritableSlice<JetReferenceExpression, DeclarationDescriptor>("REFERENCE_TARGET", RewritePolicy.DO_NOTHING);
+    WritableSlice<JetReferenceExpression, Collection<? extends DeclarationDescriptor>> AMBIGUOUS_REFERENCE_TARGET = new BasicWritableSlice<JetReferenceExpression, Collection<? extends DeclarationDescriptor>>("AMBIGUOUS_REFERENCE_TARGET", RewritePolicy.DO_NOTHING);
+
     WritableSlice<JetExpression, JetType> AUTOCAST = Slices.createSimpleSlice("AUTOCAST");
     WritableSlice<JetExpression, JetScope> RESOLUTION_SCOPE = Slices.createSimpleSlice("RESOLUTION_SCOPE");
 
