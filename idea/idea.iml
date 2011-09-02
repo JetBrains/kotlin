@@ -14,7 +14,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
     </content>
-    <orderEntry type="jdk" jdkName="IDEA IC-108.1043" jdkType="IDEA JDK" />
+    <orderEntry type="jdk" jdkName="IDEA 10.x" jdkType="IDEA JDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="stdlib" />
     <orderEntry type="module-library">
