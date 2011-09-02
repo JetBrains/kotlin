@@ -130,8 +130,11 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
         }
 
         if (element instanceof JetNamespace) {
-            return createLineMarkerInfo((JetNamespace) element,
-                    DescriptorRenderer.HTML.render(bindingContext.get(BindingContext.NAMESPACE, element)));
+            JetNamespace namespace = (JetNamespace) element;
+            if (namespace.getNameIdentifier() != null) {
+                return createLineMarkerInfo(namespace,
+                        DescriptorRenderer.HTML.render(bindingContext.get(BindingContext.NAMESPACE, element)));
+            }
         }
 
         if (element instanceof JetObjectDeclaration && !(element.getParent() instanceof JetExpression)) {
