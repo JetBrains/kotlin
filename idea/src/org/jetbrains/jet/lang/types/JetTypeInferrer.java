@@ -29,6 +29,8 @@ import org.jetbrains.jet.util.WritableSlice;
 
 import java.util.*;
 
+import static org.jetbrains.jet.lang.resolve.BindingContext.LOOP_RANGE_HAS_NEXT;
+import static org.jetbrains.jet.lang.resolve.BindingContext.LOOP_RANGE_ITERATOR;
 import static org.jetbrains.jet.lang.resolve.BindingContext.STATEMENT;
 
 /**
@@ -2028,7 +2030,7 @@ public class JetTypeInferrer {
             }
             JetType expectedParameterType = null;
             if (loopRangeType != null) {
-                expectedParameterType = checkIterableConvention(loopRangeType, loopRange.getNode(), context);
+                expectedParameterType = checkIterableConvention(loopRangeType, loopRange, context);
             }
 
             WritableScope loopScope = newWritableScopeImpl(context.scope, context.trace).setDebugName("Scope with for-loop index");
@@ -2063,18 +2065,28 @@ public class JetTypeInferrer {
         }
 
         @Nullable
-        private JetType checkIterableConvention(@NotNull JetType type, @NotNull ASTNode reportErrorsOn, TypeInferenceContext context) {
+        private JetType checkIterableConvention(@NotNull JetType type, @NotNull JetExpression loopRange, TypeInferenceContext context) {
+            ASTNode reportErrorsOn = loopRange.getNode();
             OverloadResolutionResult iteratorResolutionResult = context.services.resolveNoParametersFunction(type, context.scope, "iterator");
             if (iteratorResolutionResult.isSuccess()) {
-                JetType iteratorType = iteratorResolutionResult.getFunctionDescriptor().getReturnType();
-                boolean hasNextFunctionSupported = checkHasNextFunctionSupport(reportErrorsOn, iteratorType, context);
-                boolean hasNextPropertySupported = checkHasNextPropertySupport(reportErrorsOn, iteratorType, context);
+                FunctionDescriptor iteratorFunction = iteratorResolutionResult.getFunctionDescriptor();
+                
+                context.trace.record(LOOP_RANGE_ITERATOR, loopRange, iteratorFunction);
+                
+                JetType iteratorType = iteratorFunction.getReturnType();
+                FunctionDescriptor hasNextFunction = checkHasNextFunctionSupport(loopRange, iteratorType, context);
+                boolean hasNextFunctionSupported = hasNextFunction != null;
+                VariableDescriptor hasNextProperty = checkHasNextPropertySupport(loopRange, iteratorType, context);
+                boolean hasNextPropertySupported = hasNextProperty != null;
                 if (hasNextFunctionSupported && hasNextPropertySupported && !ErrorUtils.isErrorType(iteratorType)) {
                     // TODO : overload resolution rules impose priorities here???
                     context.trace.getErrorHandler().genericError(reportErrorsOn, "An ambiguity between 'iterator().hasNext()' function and 'iterator().hasNext()' property");
                 }
                 else if (!hasNextFunctionSupported && !hasNextPropertySupported) {
                     context.trace.getErrorHandler().genericError(reportErrorsOn, "Loop range must have an 'iterator().hasNext()' function or an 'iterator().hasNext' property");
+                }
+                else {
+                    context.trace.record(LOOP_RANGE_HAS_NEXT, loopRange, hasNextFunctionSupported ? hasNextFunction : hasNextProperty);
                 }
 
                 OverloadResolutionResult nextResolutionResult = context.services.resolveNoParametersFunction(iteratorType, context.scope, "next");
@@ -2096,121 +2108,41 @@ public class JetTypeInferrer {
             return null;
         }
 
-        private boolean checkHasNextFunctionSupport(@NotNull ASTNode reportErrorsOn, @NotNull JetType iteratorType, TypeInferenceContext context) {
+        @Nullable
+        private FunctionDescriptor checkHasNextFunctionSupport(@NotNull JetExpression loopRange, @NotNull JetType iteratorType, TypeInferenceContext context) {
             OverloadResolutionResult hasNextResolutionResult = context.services.resolveNoParametersFunction(iteratorType, context.scope, "hasNext");
             if (hasNextResolutionResult.isAmbiguity()) {
-                context.trace.getErrorHandler().genericError(reportErrorsOn, "Method 'iterator().hasNext()' is ambiguous for this expression");
+                context.trace.getErrorHandler().genericError(loopRange.getNode(), "Method 'iterator().hasNext()' is ambiguous for this expression");
             } else if (hasNextResolutionResult.isNothing()) {
-                return false;
+                return null;
             } else {
+                assert hasNextResolutionResult.isSuccess();
                 JetType hasNextReturnType = hasNextResolutionResult.getFunctionDescriptor().getReturnType();
                 if (!isBoolean(hasNextReturnType)) {
-                    context.trace.getErrorHandler().genericError(reportErrorsOn, "The 'iterator().hasNext()' method of the loop range must return Boolean, but returns " + hasNextReturnType);
+                    context.trace.getErrorHandler().genericError(loopRange.getNode(), "The 'iterator().hasNext()' method of the loop range must return Boolean, but returns " + hasNextReturnType);
                 }
             }
-            return true;
+            return hasNextResolutionResult.getFunctionDescriptor();
         }
 
-        private boolean checkHasNextPropertySupport(@NotNull ASTNode reportErrorsOn, @NotNull JetType iteratorType, TypeInferenceContext context) {
+        @Nullable
+        private VariableDescriptor checkHasNextPropertySupport(@NotNull JetExpression loopRange, @NotNull JetType iteratorType, TypeInferenceContext context) {
             VariableDescriptor hasNextProperty = iteratorType.getMemberScope().getVariable("hasNext");
             // TODO :extension properties
             if (hasNextProperty == null) {
-                return false;
+                return null;
             } else {
                 JetType hasNextReturnType = hasNextProperty.getOutType();
                 if (hasNextReturnType == null) {
                     // TODO : accessibility
-                    context.trace.getErrorHandler().genericError(reportErrorsOn, "The 'iterator().hasNext' property of the loop range must be readable");
+                    context.trace.getErrorHandler().genericError(loopRange.getNode(), "The 'iterator().hasNext' property of the loop range must be readable");
                 }
                 else if (!isBoolean(hasNextReturnType)) {
-                    context.trace.getErrorHandler().genericError(reportErrorsOn, "The 'iterator().hasNext' property of the loop range must return Boolean, but returns " + hasNextReturnType);
+                    context.trace.getErrorHandler().genericError(loopRange.getNode(), "The 'iterator().hasNext' property of the loop range must return Boolean, but returns " + hasNextReturnType);
                 }
             }
-            return true;
+            return hasNextProperty;
         }
-
-//        @Override
-//        public void visitNewExpression(JetNewExpression expression) {
-//            // TODO : type argument inference
-//            JetTypeReference typeReference = expression.getTypeReference();
-//            if (typeReference != null) {
-//                result = checkTypeInitializerCall(scope, typeReference, expression);
-//            }
-//        }
-
-//        private void resolveCallWithExplicitName(@NotNull JetScope scope, JetExpression receiver, String functionName, List<JetType> resolvedTypeArguments, List<ValueArgumentPsi> valueArguments) {
-//
-//            boolean someNamed = false;
-//            boolean allNamed = true;
-//            for (ValueArgumentPsi valueArgument : valueArguments) {
-//                if (valueArgument.isNamed()) {
-//                    context.trace.getErrorHandler().genericError(valueArgument.asElement().getNode(), "Named arguments are not supported");
-//                    someNamed = true;
-//                }
-//                else {
-//                    allNamed = false;
-//                }
-//            }
-//            if (someNamed) {
-//                return; // TODO
-//            }
-//            if (someNamed && !allNamed) {
-//                // TODO function literals outside parentheses
-//            }
-//
-//            ErrorHandlerWithRegions errorHandler = context.trace.getErrorHandler();
-//
-//            // 1. resolve 'receiver' in 'scope' with expected type 'NO_EXPECTED_TYPE'
-//            errorHandler.openRegion();
-//            JetType receiverType = JetTypeInferrer.this.getType(scope, receiver, false, NO_EXPECTED_TYPE);
-//            // for each applicable function in 'receiverType'
-//            Set<FunctionDescriptor> allFunctions = receiverType.getMemberScope().getFunctionGroup(functionName).getFunctionDescriptors();
-//            Map<FunctionDescriptor, List<JetType>> applicableFunctions = Maps.newHashMap();
-//            int typeArgCount = resolvedTypeArguments.size();
-//            int valueArgCount = valueArguments.size();
-//            for (FunctionDescriptor functionDescriptor : allFunctions) {
-//                if (typeArgCount == 0 || functionDescriptor.getTypeParameters().size() == typeArgCount) {
-//                    if (FunctionDescriptorUtil.getMinimumArity(functionDescriptor) <= valueArgCount &&
-//                            valueArgCount <= FunctionDescriptorUtil.getMaximumArity(functionDescriptor)) {
-//                        //   get expected types for value parameters
-//                        if (typeArgCount > 0) {
-//                            FunctionDescriptor substitutedFunctionDescriptor = FunctionDescriptorUtil.substituteFunctionDescriptor(resolvedTypeArguments, functionDescriptor);
-//                        }
-//                        else {
-//                            FunctionDescriptor substitutedFunctionDescriptor = FunctionDescriptorUtil.substituteFunctionDescriptor(TypeUtils.getDefaultTypes(functionDescriptor.getTypeParameters()), functionDescriptor);
-//                            List<JetType> valueArgumentTypes = getArgumentTypes(substitutedFunctionDescriptor, valueArguments);
-//                            if (valueArgumentTypes == null) {
-//                                Map<TypeConstructor, TypeProjection> noExpectedTypes = Maps.newHashMap();
-//                                for (TypeParameterDescriptor typeParameterDescriptor : functionDescriptor.getTypeParameters()) {
-//                                    noExpectedTypes.put(typeParameterDescriptor.getTypeConstructor(), new TypeProjection(NO_EXPECTED_TYPE));
-//                                }
-//                                substitutedFunctionDescriptor = functionDescriptor.substitute(TypeSubstitutor.create(noExpectedTypes));
-//                                valueArgumentTypes = getArgumentTypes(substitutedFunctionDescriptor, valueArguments);
-//                            }
-//                            if (valueArgumentTypes != null) {
-//                                List<JetType> typeArguments = solveConstraintSystem(functionDescriptor, valueArgumentTypes, expectedReturnType);
-//                                if (typeArguments != null) {
-//                                    applicableFunctions.put(functionDescriptor, typeArguments);
-//                                }
-//                            }
-//                        }
-//                        //   type-check the parameters
-//                        // if something was found (one or many options
-//                        errorHandler.closeAndCommitCurrentRegion();
-//                        // otherwise
-//                        errorHandler.closeAndReturnCurrentRegion();
-//
-//                    }
-//                }
-//            }
-//            //   get expected types for value parameters
-//            //   type-check the parameters
-//            // if something was found (one or many options
-//            errorHandler.closeAndCommitCurrentRegion();
-//            // otherwise
-//            errorHandler.closeAndReturnCurrentRegion();
-//
-//        }
 
         @Override
         public JetType visitHashQualifiedExpression(JetHashQualifiedExpression expression, TypeInferenceContext context) {

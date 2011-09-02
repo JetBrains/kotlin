@@ -20,6 +20,8 @@ public interface BindingContext {
     WritableSlice<JetTypeReference, JetType> TYPE = ManyMapSlices.createSimpleSlice("TYPE");
     WritableSlice<JetExpression, JetType> EXPRESSION_TYPE = new BasicWritableSlice<JetExpression, JetType>("EXPRESSION_TYPE", RewritePolicy.DO_NOTHING);
     WritableSlice<JetReferenceExpression, DeclarationDescriptor> REFERENCE_TARGET = new BasicWritableSlice<JetReferenceExpression, DeclarationDescriptor>("REFERENCE_TARGET", RewritePolicy.DO_NOTHING);
+    WritableSlice<JetExpression, FunctionDescriptor> LOOP_RANGE_ITERATOR = ManyMapSlices.createSimpleSlice("LOOP_RANGE_ITERATOR");
+    WritableSlice<JetExpression, DeclarationDescriptor> LOOP_RANGE_HAS_NEXT = ManyMapSlices.createSimpleSlice("LOOP_RANGE_HAS_NEXT");
     WritableSlice<JetExpression, JetType> AUTOCAST = ManyMapSlices.createSimpleSlice("AUTOCAST");
     WritableSlice<JetExpression, JetScope> RESOLUTION_SCOPE = ManyMapSlices.createSimpleSlice("RESOLUTION_SCOPE");
 
