@@ -129,7 +129,7 @@ public class FunctionCodegen {
             mv.visitMaxs(0, 0);
             mv.visitEnd();
 
-            Set<? extends FunctionDescriptor> overriddenFunctions = functionDescriptor.getOverriddenFunctions();
+            Set<? extends FunctionDescriptor> overriddenFunctions = functionDescriptor.getOverriddenDescriptors();
             if(overriddenFunctions.size() > 0) {
                 for (FunctionDescriptor overriddenFunction : overriddenFunctions) {
                     // TODO should we check params here as well?

@@ -1057,19 +1057,19 @@ public class JetTypeInferrer {
                 JetType targetType = context.typeResolver.resolveType(context.scope, right);
 
                 if (isTypeFlexible(expression.getLeft())) {
-                    TemporaryBindingTrace temporaryTraceWithExpectedType = new TemporaryBindingTrace(context.trace.getBindingContext());
+                    TemporaryBindingTrace temporaryTraceWithExpectedType = TemporaryBindingTrace.create(context.trace);
                     boolean success = checkBinaryWithTypeRHS(expression, context, targetType, targetType, temporaryTraceWithExpectedType);
                     if (success) {
                         temporaryTraceWithExpectedType.addAllMyDataTo(context.trace);
                     }
                     else {
-                        TemporaryBindingTrace temporaryTraceWithoutExpectedType = new TemporaryBindingTrace(context.trace.getBindingContext());
+                        TemporaryBindingTrace temporaryTraceWithoutExpectedType = TemporaryBindingTrace.create(context.trace);
                         checkBinaryWithTypeRHS(expression, context, targetType, NO_EXPECTED_TYPE, temporaryTraceWithoutExpectedType);
                         temporaryTraceWithoutExpectedType.addAllMyDataTo(context.trace);
                     }
                 }
                 else {
-                    TemporaryBindingTrace temporaryTraceWithoutExpectedType = new TemporaryBindingTrace(context.trace.getBindingContext());
+                    TemporaryBindingTrace temporaryTraceWithoutExpectedType = TemporaryBindingTrace.create(context.trace);
                     checkBinaryWithTypeRHS(expression, context, targetType, NO_EXPECTED_TYPE, temporaryTraceWithoutExpectedType);
                     temporaryTraceWithoutExpectedType.addAllMyDataTo(context.trace);
                 }
@@ -1078,7 +1078,7 @@ public class JetTypeInferrer {
                 result = operationType == JetTokens.AS_SAFE ? TypeUtils.makeNullable(targetType) : targetType;
             }
             else {
-                getType(context.scope, expression.getLeft(), false, context.replaceExpectedType(NO_EXPECTED_TYPE));
+                getType(expression.getLeft(), context.replaceExpectedType(NO_EXPECTED_TYPE));
             }
             return context.services.checkType(result, expression, context);
         }
@@ -1095,7 +1095,7 @@ public class JetTypeInferrer {
         private boolean checkBinaryWithTypeRHS(JetBinaryExpressionWithTypeRHS expression, TypeInferenceContext context, @NotNull JetType targetType, @NotNull JetType expectedType, TemporaryBindingTrace temporaryTrace) {
             TypeInferenceContext newContext = context.replaceExpectedTypeAndTrace(expectedType, temporaryTrace);
 
-            JetType actualType = getType(context.scope, expression.getLeft(), false, newContext);
+            JetType actualType = getType(expression.getLeft(), newContext);
             if (actualType == null) return false;
             
             JetSimpleNameExpression operationSign = expression.getOperationSign();
@@ -1812,9 +1812,9 @@ public class JetTypeInferrer {
         @Nullable
         private JetType checkIterableConvention(@NotNull JetType type, @NotNull JetExpression loopRange, TypeInferenceContext context) {
             ASTNode reportErrorsOn = loopRange.getNode();
-            OverloadResolutionResult iteratorResolutionResult = context.services.resolveNoParametersFunction(type, context.scope, "iterator");
+            OverloadResolutionResult<FunctionDescriptor> iteratorResolutionResult = context.services.callResolver.resolveExactSignature(context.scope, type, "iterator", Collections.<JetType>emptyList());
             if (iteratorResolutionResult.isSuccess()) {
-                FunctionDescriptor iteratorFunction = iteratorResolutionResult.getFunctionDescriptor();
+                FunctionDescriptor iteratorFunction = iteratorResolutionResult.getDescriptor();
                 
                 context.trace.record(LOOP_RANGE_ITERATOR, loopRange, iteratorFunction);
                 
@@ -1840,7 +1840,7 @@ public class JetTypeInferrer {
                 } else if (nextResolutionResult.isNothing()) {
                     context.trace.getErrorHandler().genericError(reportErrorsOn, "Loop range must have an 'iterator().next()' method");
                 } else {
-                    FunctionDescriptor nextFunction = nextResolutionResult.getFunctionDescriptor();
+                    FunctionDescriptor nextFunction = nextResolutionResult.getDescriptor();
                     context.trace.record(LOOP_RANGE_NEXT, loopRange, nextFunction);
                     return nextFunction.getReturnType();
                 }
@@ -1857,19 +1857,19 @@ public class JetTypeInferrer {
 
         @Nullable
         private FunctionDescriptor checkHasNextFunctionSupport(@NotNull JetExpression loopRange, @NotNull JetType iteratorType, TypeInferenceContext context) {
-            OverloadResolutionResult hasNextResolutionResult = context.services.resolveNoParametersFunction(iteratorType, context.scope, "hasNext");
+            OverloadResolutionResult<FunctionDescriptor> hasNextResolutionResult = context.services.callResolver.resolveExactSignature(context.scope, iteratorType, "hasNext", Collections.<JetType>emptyList());
             if (hasNextResolutionResult.isAmbiguity()) {
                 context.trace.getErrorHandler().genericError(loopRange.getNode(), "Method 'iterator().hasNext()' is ambiguous for this expression");
             } else if (hasNextResolutionResult.isNothing()) {
                 return null;
             } else {
                 assert hasNextResolutionResult.isSuccess();
-                JetType hasNextReturnType = hasNextResolutionResult.getFunctionDescriptor().getReturnType();
+                JetType hasNextReturnType = hasNextResolutionResult.getDescriptor().getReturnType();
                 if (!isBoolean(hasNextReturnType)) {
                     context.trace.getErrorHandler().genericError(loopRange.getNode(), "The 'iterator().hasNext()' method of the loop range must return Boolean, but returns " + hasNextReturnType);
                 }
             }
-            return hasNextResolutionResult.getFunctionDescriptor();
+            return hasNextResolutionResult.getDescriptor();
         }
 
         @Nullable

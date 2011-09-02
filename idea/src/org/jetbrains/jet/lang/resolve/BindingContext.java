@@ -23,6 +23,10 @@ public interface BindingContext {
     WritableSlice<JetReferenceExpression, DeclarationDescriptor> REFERENCE_TARGET = new BasicWritableSlice<JetReferenceExpression, DeclarationDescriptor>("REFERENCE_TARGET", RewritePolicy.DO_NOTHING);
     WritableSlice<JetReferenceExpression, Collection<? extends DeclarationDescriptor>> AMBIGUOUS_REFERENCE_TARGET = new BasicWritableSlice<JetReferenceExpression, Collection<? extends DeclarationDescriptor>>("AMBIGUOUS_REFERENCE_TARGET", RewritePolicy.DO_NOTHING);
 
+    WritableSlice<JetExpression, FunctionDescriptor> LOOP_RANGE_ITERATOR = Slices.createSimpleSlice("LOOP_RANGE_ITERATOR");
+    WritableSlice<JetExpression, DeclarationDescriptor> LOOP_RANGE_HAS_NEXT = Slices.createSimpleSlice("LOOP_RANGE_HAS_NEXT");
+    WritableSlice<JetExpression, FunctionDescriptor> LOOP_RANGE_NEXT = Slices.createSimpleSlice("LOOP_RANGE_NEXT");
+
     WritableSlice<JetExpression, JetType> AUTOCAST = Slices.createSimpleSlice("AUTOCAST");
     WritableSlice<JetExpression, JetScope> RESOLUTION_SCOPE = Slices.createSimpleSlice("RESOLUTION_SCOPE");
 
