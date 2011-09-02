@@ -784,8 +784,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             setter = null;
         }
         else {
-            getter = isInsideClass && propertyDescriptor.getGetter() == null ? null : typeMapper.mapGetterSignature(propertyDescriptor);
-            setter = isInsideClass && propertyDescriptor.getSetter() == null ? null : typeMapper.mapSetterSignature(propertyDescriptor);
+            getter = isInsideClass && (propertyDescriptor.getGetter() == null || propertyDescriptor.getGetter().isDefault())
+                     ? null : typeMapper.mapGetterSignature(propertyDescriptor);
+            setter = isInsideClass && (propertyDescriptor.getSetter() == null || propertyDescriptor.getSetter().isDefault())
+                     ? null : typeMapper.mapSetterSignature(propertyDescriptor);
         }
 
         String owner;

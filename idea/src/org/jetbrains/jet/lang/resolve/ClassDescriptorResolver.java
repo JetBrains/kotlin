@@ -568,18 +568,20 @@ public class ClassDescriptorResolver {
     @Nullable
     private PropertySetterDescriptor resolvePropertySetterDescriptor(@NotNull JetScope scope, @NotNull JetProperty property, @NotNull PropertyDescriptor propertyDescriptor) {
         JetPropertyAccessor setter = property.getSetter();
-        if (setter != null && !property.isVar()) {
-            trace.getErrorHandler().genericError(setter.asElement().getNode(), "A 'val'-property cannot have a setter");
+        if (! property.isVar()) {
+            if (setter != null) {
+                trace.getErrorHandler().genericError(setter.asElement().getNode(), "A 'val'-property cannot have a setter");
+            }
             return null;
         }
-        PropertySetterDescriptor setterDescriptor = null;
+        PropertySetterDescriptor setterDescriptor;
         if (setter != null) {
             List<AnnotationDescriptor> annotations = annotationResolver.resolveAnnotations(scope, setter.getModifierList());
             JetParameter parameter = setter.getParameter();
 
             setterDescriptor = new PropertySetterDescriptor(
                     resolveModifiers(setter.getModifierList(), DEFAULT_MODIFIERS), // TODO : default modifiers differ in different contexts
-                    propertyDescriptor, annotations, setter.getBodyExpression() != null);
+                    propertyDescriptor, annotations, setter.getBodyExpression() != null, false);
             if (parameter != null) {
                 if (parameter.isRef()) {
                     trace.getErrorHandler().genericError(parameter.getRefNode(), "Setter parameters can not be 'ref'");
@@ -614,12 +616,17 @@ public class ClassDescriptorResolver {
             }
             trace.record(BindingContext.PROPERTY_ACCESSOR, setter, setterDescriptor);
         }
+        else {
+            setterDescriptor = new PropertySetterDescriptor(
+                    propertyDescriptor.getModifiers(),
+                    propertyDescriptor, Collections.<AnnotationDescriptor>emptyList(), false, true);
+        }
         return setterDescriptor;
     }
 
     @Nullable
     private PropertyGetterDescriptor resolvePropertyGetterDescriptor(@NotNull JetScope scope, @NotNull JetProperty property, @NotNull PropertyDescriptor propertyDescriptor) {
-        PropertyGetterDescriptor getterDescriptor = null;
+        PropertyGetterDescriptor getterDescriptor;
         JetPropertyAccessor getter = property.getGetter();
         if (getter != null) {
             List<AnnotationDescriptor> annotations = annotationResolver.resolveAnnotations(scope, getter.getModifierList());
@@ -632,8 +639,13 @@ public class ClassDescriptorResolver {
 
             getterDescriptor = new PropertyGetterDescriptor(
                     resolveModifiers(getter.getModifierList(), DEFAULT_MODIFIERS), // TODO : default modifiers differ in different contexts
-                    propertyDescriptor, annotations, returnType, getter.getBodyExpression() != null);
+                    propertyDescriptor, annotations, returnType, getter.getBodyExpression() != null, false);
             trace.record(BindingContext.PROPERTY_ACCESSOR, getter, getterDescriptor);
+        }
+        else {
+            getterDescriptor = new PropertyGetterDescriptor(
+                    propertyDescriptor.getModifiers(),
+                    propertyDescriptor, Collections.<AnnotationDescriptor>emptyList(), propertyDescriptor.getOutType(), false, true);
         }
         return getterDescriptor;
     }
