@@ -863,19 +863,12 @@ public class TopDownAnalyzer {
         JetTypeInferrer.Services typeInferrer = semanticServices.getTypeInferrerServices(traceForConstructors, flowInformationProvider);
         JetType type = typeInferrer.getType(getPropertyDeclarationInnerScope(scope, propertyDescriptor), initializer, NO_EXPECTED_TYPE);
 
-        JetType expectedType;
-        PropertySetterDescriptor setter = propertyDescriptor.getSetter();
-        if (setter != null) {
-            expectedType = setter.getReturnType();
-        }
-        else {
-            expectedType = propertyDescriptor.getInType();
-            if (expectedType == null) {
-                expectedType = propertyDescriptor.getOutType();
-            }
+        JetType expectedType = propertyDescriptor.getInType();
+        if (expectedType == null) {
+            expectedType = propertyDescriptor.getOutType();
         }
         if (type != null && expectedType != null
-            && !semanticServices.getTypeChecker().isConvertibleTo(type, expectedType)) {
+            && !semanticServices.getTypeChecker().isSubtypeOf(type, expectedType)) {
             trace.getErrorHandler().typeMismatch(initializer, expectedType, type);
         }
     }
@@ -888,7 +881,7 @@ public class TopDownAnalyzer {
             JetScope declaringScope = declaringScopes.get(declaration);
             assert declaringScope != null;
 
-            resolveFunctionBody(traceForMembers, (JetNamedFunction) declaration, (FunctionDescriptorImpl) descriptor, declaringScope);
+            resolveFunctionBody(traceForMembers, (JetNamedFunction) declaration, descriptor, declaringScope);
 
             assert descriptor.getReturnType() != null;
         }
