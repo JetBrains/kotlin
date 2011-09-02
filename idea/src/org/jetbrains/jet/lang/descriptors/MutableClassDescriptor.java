@@ -120,7 +120,9 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     }
 
     public void addSupertype(@NotNull JetType supertype) {
-        scopeForMemberLookup.importScope(supertype.getMemberScope());
+        if (!ErrorUtils.isErrorType(supertype)) {
+            scopeForMemberLookup.importScope(supertype.getMemberScope());
+        }
         supertypes.add(supertype);
     }
 
