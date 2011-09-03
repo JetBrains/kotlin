@@ -1,9 +1,7 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
-import com.intellij.psi.search.ProjectScope;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import gnu.trove.THashSet;
@@ -34,6 +32,7 @@ import java.util.*;
 /**
  * @author max
  * @author yole
+ * @author alex.tkachman
  */
 public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     private static final String CLASS_OBJECT = "java/lang/Object";
@@ -308,6 +307,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         v.mark(end);
 
         int paramIndex = myMap.leave(parameterDescriptor);
+        //noinspection ConstantConditions
         v.visitLocalVariable(loopParameter.getName(), asmParamType.getDescriptor(), null, begin, end, paramIndex);
         myMap.leaveTemp();
         myBreakTargets.pop();
@@ -363,6 +363,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
             cleanupTemp();
             final int paramIndex = myMap.leave(parameterDescriptor);
+            //noinspection ConstantConditions
             v.visitLocalVariable(expression.getLoopParameter().getName(), asmParamType.getDescriptor(), null, condition, end, paramIndex);
             myBreakTargets.pop();
             myContinueTargets.pop();
@@ -822,8 +823,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             setter = null;
         }
         else {
+            //noinspection ConstantConditions
             getter = isInsideClass && (propertyDescriptor.getGetter() == null || propertyDescriptor.getGetter().isDefault())
                      ? null : typeMapper.mapGetterSignature(propertyDescriptor);
+            //noinspection ConstantConditions
             setter = isInsideClass && (propertyDescriptor.getSetter() == null || propertyDescriptor.getSetter().isDefault())
                      ? null : typeMapper.mapSetterSignature(propertyDescriptor);
         }
@@ -1434,12 +1437,15 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         value.dupReceiver(v, 0);
         value.put(asmType, v);
         if (asmType == Type.LONG_TYPE) {
+            //noinspection UnnecessaryBoxing
             v.aconst(Long.valueOf(increment));
         }
         else if (asmType == Type.FLOAT_TYPE) {
+            //noinspection UnnecessaryBoxing
             v.aconst(Float.valueOf(increment));
         }
         else if (asmType == Type.DOUBLE_TYPE) {
+            //noinspection UnnecessaryBoxing
             v.aconst(Double.valueOf(increment));
         }
         else {
@@ -1741,7 +1747,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
         v.mark(lblCheck);
         for (int i = 0; i < entries.size(); i++) {
-            final boolean isLast = i == entries.size() - 1;
             final StackValue tupleField = StackValue.field(OBJECT_TYPE, tupleClassName, "_" + (i + 1), false);
             final StackValue stackValue = generatePatternMatch(entries.get(i).getPattern(), false, tupleField, nextEntry);
             stackValue.condJump(lblPopAndFail, true, v);
@@ -1956,7 +1961,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         final String className = "jet/Tuple" + entries.size();
         Type tupleType = Type.getObjectType(className);
         StringBuilder signature = new StringBuilder("(");
-        for (JetExpression entry : entries) {
+        for (int i = 0; i != entries.size(); ++i) {
             signature.append("Ljava/lang/Object;");
         }
         signature.append(")V");
