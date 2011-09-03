@@ -1,19 +1,26 @@
 fun box() : String {
+    val c6 = MyCollection4()
+    for (el in c6) {
+        System.out?.println(el)
+    }
+
     val c5 = MyCollection3()
-    for (el in c5) {}
+    for (el in c5) {
+        System.out?.println(el)
+    }
 
     val c1: java.lang.Iterable<Int> = MyCollection1()
     for (el in c1) {}
 
     val c2 = MyCollection1()
     for (el in c2) {}
-/*
+
     val c3: Iterable<Int> = MyCollection2()
     for (el in c3) {}
 
     val c4 = MyCollection2()
     for (el in c4) {}
-*/
+
     return "OK"
 }
 
@@ -39,7 +46,20 @@ class MyCollection3() {
     fun iterator() = MyIterator()
 
     class MyIterator() {
-        fun next() = 0
-        fun hasNext() = false
+        var k : Int = 5
+
+        fun next() : Int? = k--
+        fun hasNext() = k > 0
+    }
+}
+
+class MyCollection4() {
+    fun iterator() = MyIterator()
+
+    class MyIterator() {
+        var k : Int = 5
+
+        fun next() : Int = k--
+        fun hasNext() = k > 0
     }
 }
