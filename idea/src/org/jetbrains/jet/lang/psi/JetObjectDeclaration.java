@@ -22,7 +22,7 @@ public class JetObjectDeclaration extends JetNamedDeclaration implements JetClas
     @Override
     public String getName() {
         JetObjectDeclarationName nameAsDeclaration = getNameAsDeclaration();
-        return nameAsDeclaration == null ? "<Anonymous>" : nameAsDeclaration.getName();
+        return nameAsDeclaration == null ? "ClassObj" : nameAsDeclaration.getName();
     }
 
     @Override

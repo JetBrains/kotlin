@@ -851,7 +851,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         DeclarationDescriptor funDescriptor = resolveCalleeDescriptor(expression);
 
         if (funDescriptor instanceof ConstructorDescriptor) {
-            return generateConstructorCall(expression, (JetSimpleNameExpression) callee);
+            return generateConstructorCall(expression, (JetSimpleNameExpression) callee, receiver);
         }
         else if (funDescriptor instanceof FunctionDescriptor) {
             final FunctionDescriptor fd = (FunctionDescriptor) funDescriptor;
@@ -1471,7 +1471,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         return StackValue.none();
     }
 
-    private StackValue generateConstructorCall(JetCallExpression expression, JetSimpleNameExpression constructorReference) {
+    private StackValue generateConstructorCall(JetCallExpression expression, JetSimpleNameExpression constructorReference, StackValue receiver) {
         DeclarationDescriptor constructorDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, constructorReference);
         final PsiElement declaration = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, constructorDescriptor);
         Type type;
@@ -1486,11 +1486,26 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             else {
                 ClassDescriptor classDecl = (ClassDescriptor) constructorDescriptor.getContainingDeclaration();
 
+                receiver.put(receiver.type, v);
                 v.anew(type);
-                v.dup();
 
                 // TODO typechecker must verify that we're the outer class of the instance being created
-                pushOuterClassArguments(classDecl);
+                if (classDecl.getContainingDeclaration() instanceof ClassDescriptor) {
+                    if(!receiver.type.equals(Type.VOID_TYPE)) {
+                        // class object is in receiver
+                        v.dupX1();
+                        v.swap();
+                    }
+                    else {
+                        // this$0 need to be put on stack
+                        v.dup();
+                        v.load(0, JetTypeMapper.jetImplementationType(classDecl));
+                    }
+                }
+                else {
+                    // regular case
+                    v.dup();
+                }
 
                 CallableMethod method = typeMapper.mapToCallableMethod((ConstructorDescriptor) constructorDescriptor, OwnerKind.IMPLEMENTATION);
                 invokeMethodWithArguments(method, expression);
@@ -1511,12 +1526,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     public void pushTypeArgument(JetTypeProjection jetTypeArgument) {
         JetType typeArgument = bindingContext.get(BindingContext.TYPE, jetTypeArgument.getTypeReference());
         generateTypeInfo(typeArgument);
-    }
-
-    private void pushOuterClassArguments(ClassDescriptor classDecl) {
-        if (classDecl.getContainingDeclaration() instanceof ClassDescriptor) {
-            v.load(0, JetTypeMapper.jetImplementationType(classDecl));
-        }
     }
 
     private Type generateJavaConstructorCall(JetCallExpression expression, PsiMethod constructor) {

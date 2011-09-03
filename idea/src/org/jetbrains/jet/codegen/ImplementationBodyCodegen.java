@@ -147,7 +147,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     protected void generatePrimaryConstructor() {
-        ConstructorDescriptor constructorDescriptor = state.getBindingContext().get(BindingContext.CONSTRUCTOR, (JetElement) myClass);
+        ConstructorDescriptor constructorDescriptor = state.getBindingContext().get(BindingContext.CONSTRUCTOR, myClass);
         if (constructorDescriptor == null && !(myClass instanceof JetObjectDeclaration) && !isEnum(myClass)) return;
 
         Method method;
@@ -193,10 +193,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             iv.invokespecial(superClass, "<init>", /* TODO super constructor descriptor */"()V");
         }
 
-        final DeclarationDescriptor outerDescriptor = getOuterClassDescriptor();
-        if (outerDescriptor instanceof ClassDescriptor) {
-            final ClassDescriptor outerClassDescriptor = (ClassDescriptor) outerDescriptor;
-            final Type type = JetTypeMapper.jetImplementationType(outerClassDescriptor);
+        final ClassDescriptor outerDescriptor = getOuterClassDescriptor();
+        if (outerDescriptor != null && !outerDescriptor.isObject()) {
+            final Type type = JetTypeMapper.jetImplementationType(outerDescriptor);
             String interfaceDesc = type.getDescriptor();
             final String fieldName = "this$0";
             v.visitField(Opcodes.ACC_PRIVATE | Opcodes.ACC_FINAL, fieldName, interfaceDesc, null, null);
@@ -216,7 +215,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         HashSet<FunctionDescriptor> overridden = new HashSet<FunctionDescriptor>();
         for (JetDeclaration declaration : myClass.getDeclarations()) {
             if (declaration instanceof JetFunction) {
-                overridden.addAll(state.getBindingContext().get(BindingContext.FUNCTION, (JetNamedFunction) declaration).getOverriddenFunctions());
+                overridden.addAll(state.getBindingContext().get(BindingContext.FUNCTION, declaration).getOverriddenFunctions());
             }
         }
 
@@ -410,8 +409,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     protected void generateInitializers(ExpressionCodegen codegen, InstructionAdapter iv) {
         for (JetDeclaration declaration : myClass.getDeclarations()) {
             if (declaration instanceof JetProperty) {
-                final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) state.getBindingContext().get(BindingContext.VARIABLE, (JetProperty) declaration);
-                if ((boolean) state.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor)) {
+                final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) state.getBindingContext().get(BindingContext.VARIABLE, declaration);
+                if (state.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor)) {
                     final JetExpression initializer = ((JetProperty) declaration).getInitializer();
                     if (initializer != null) {
                         iv.load(0, JetTypeMapper.TYPE_OBJECT);
@@ -436,7 +435,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 propertyCodegen.gen((JetProperty) declaration);
             }
             else if (declaration instanceof JetFunction) {
-                if (!overriden.contains(state.getBindingContext().get(BindingContext.FUNCTION, (JetNamedFunction) declaration))) {
+                if (!overriden.contains(state.getBindingContext().get(BindingContext.FUNCTION, declaration))) {
                     functionCodegen.gen((JetNamedFunction) declaration);
                 }
             }
