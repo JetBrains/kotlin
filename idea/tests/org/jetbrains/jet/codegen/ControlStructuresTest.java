@@ -140,4 +140,8 @@ public class ControlStructuresTest extends CodegenTestCase {
         assertTrue(caught);
         assertEquals("foobar", sb.toString());
     }
+
+    public void testForUserType() throws Exception {
+        blackBoxFile("controlStructures/forUserType.jet");
+    }
 }

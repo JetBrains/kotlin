@@ -1,0 +1,45 @@
+fun box() : String {
+    val c5 = MyCollection3()
+    for (el in c5) {}
+
+    val c1: java.lang.Iterable<Int> = MyCollection1()
+    for (el in c1) {}
+
+    val c2 = MyCollection1()
+    for (el in c2) {}
+/*
+    val c3: Iterable<Int> = MyCollection2()
+    for (el in c3) {}
+
+    val c4 = MyCollection2()
+    for (el in c4) {}
+*/
+    return "OK"
+}
+
+class MyCollection1(): java.lang.Iterable<Int> {
+    fun iterator(): java.util.Iterator<Int> = MyIterator()
+
+    class MyIterator(): java.util.Iterator<Int> {
+        fun next() = 0
+        fun hasNext() = false
+    }
+}
+
+class MyCollection2(): Iterable<Int> {
+    fun iterator(): Iterator<Int> = MyIterator()
+
+    class MyIterator(): Iterator<Int> {
+        fun next() = 0
+        fun hasNext() = false
+    }
+}
+
+class MyCollection3() {
+    fun iterator() = MyIterator()
+
+    class MyIterator() {
+        fun next() = 0
+        fun hasNext() = false
+    }
+}

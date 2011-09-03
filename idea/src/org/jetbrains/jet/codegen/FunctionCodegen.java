@@ -133,7 +133,7 @@ public class FunctionCodegen {
             if(overriddenFunctions.size() > 0) {
                 for (FunctionDescriptor overriddenFunction : overriddenFunctions) {
                     // TODO should we check params here as well?
-                    if(!JetTypeImpl.equalTypes(overriddenFunction.getReturnType(), functionDescriptor.getReturnType(), JetTypeImpl.EMPTY_AXIOMS)) {
+                    if(!JetTypeImpl.equalTypeClasses(overriddenFunction.getReturnType(), functionDescriptor.getReturnType())) {
                         generateBridgeMethod(jvmSignature, state.getTypeMapper().mapSignature(overriddenFunction.getName(), overriddenFunction));
                     }
                 }

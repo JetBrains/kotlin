@@ -11,11 +11,13 @@ import jet.Range;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethod;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
+import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.java.JavaClassDescriptor;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
@@ -38,20 +40,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     private static final String CLASS_STRING = "java/lang/String";
     public static final String CLASS_STRING_BUILDER = "java/lang/StringBuilder";
     private static final String CLASS_COMPARABLE = "java/lang/Comparable";
-    private static final String CLASS_ITERABLE = "java/lang/Iterable";
-    private static final String CLASS_ITERATOR = "java/util/Iterator";
 
     private static final String CLASS_RANGE = "jet/Range";
     private static final String CLASS_NO_PATTERN_MATCHED_EXCEPTION = "jet/NoPatternMatchedException";
     private static final String CLASS_TYPE_CAST_EXCEPTION = "jet/TypeCastException";
 
-    private static final String ITERABLE_ITERATOR_DESCRIPTOR = "()Ljava/util/Iterator;";
-    private static final String ITERATOR_HASNEXT_DESCRIPTOR = "()Z";
-    private static final String ITERATOR_NEXT_DESCRIPTOR = "()Ljava/lang/Object;";
-
     private static final Type OBJECT_TYPE = Type.getType(Object.class);
     private static final Type INTEGER_TYPE = Type.getType(Integer.class);
-    private static final Type ITERATOR_TYPE = Type.getType(Iterator.class);
     private static final Type THROWABLE_TYPE = Type.getType(Throwable.class);
     private static final Type STRING_TYPE = Type.getObjectType(CLASS_STRING);
 
@@ -242,33 +237,43 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
         else {
             final DeclarationDescriptor descriptor = expressionType.getConstructor().getDeclarationDescriptor();
-            final PsiElement declaration = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
-            if (declaration instanceof PsiClass) {
-                final Project project = declaration.getProject();
-                final PsiClass iterable = JavaPsiFacade.getInstance(project).findClass("java.lang.Iterable", ProjectScope.getAllScope(project));
-                if (((PsiClass) declaration).isInheritor(iterable, true)) {
-                    generateForInIterable(expression, loopRangeType);
-                    return StackValue.none();
-                }
-            }
             if (isClass(descriptor, "IntRange")) {       // TODO IntRange subclasses
                 new ForInRangeLoopGenerator(expression, loopRangeType).invoke();
                 return StackValue.none();
             }
-            throw new UnsupportedOperationException("for/in loop currently only supported for arrays and Iterable instances");
+
+            generateForInIterable(expression, loopRangeType);
+            return StackValue.none();
         }
     }
 
     private void generateForInIterable(JetForExpression expression, Type loopRangeType) {
+        final JetExpression loopRange = expression.getLoopRange();
+
+        FunctionDescriptor iteratorDescriptor = bindingContext.get(BindingContext.LOOP_RANGE_ITERATOR, loopRange);
+        FunctionDescriptor nextDescriptor = bindingContext.get(BindingContext.LOOP_RANGE_NEXT, loopRange);
+        DeclarationDescriptor hasNextDescriptor = bindingContext.get(BindingContext.LOOP_RANGE_HAS_NEXT, loopRange);
+
+        if(iteratorDescriptor == null)
+            throw new IllegalStateException("No iterator() method " + ErrorHandler.atLocation(loopRange));
+        if(nextDescriptor == null)
+            throw new IllegalStateException("No next() method " + ErrorHandler.atLocation(loopRange));
+        if(hasNextDescriptor == null)
+            throw new IllegalStateException("No iterator() method " + ErrorHandler.atLocation(loopRange));
+
         final JetParameter loopParameter = expression.getLoopParameter();
         final VariableDescriptor parameterDescriptor = bindingContext.get(BindingContext.VALUE_PARAMETER, loopParameter);
+
+        JetType iteratorType = parameterDescriptor.getOutType();
+        Type asmIterType = typeMapper.boxType(typeMapper.mapType(iteratorType));
+
         JetType paramType = parameterDescriptor.getOutType();
         Type asmParamType = typeMapper.boxType(typeMapper.mapType(paramType));
 
         int iteratorVar = myMap.enterTemp();
         gen(expression.getLoopRange(), loopRangeType);
-        v.invokeinterface(CLASS_ITERABLE, "iterator", ITERABLE_ITERATOR_DESCRIPTOR);
-        v.store(iteratorVar, ITERATOR_TYPE);
+        invokeFunctionNoParams(iteratorDescriptor, asmIterType, v);
+        v.store(iteratorVar, asmIterType);
 
         Label begin = new Label();
         Label end = new Label();
@@ -276,13 +281,21 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         myBreakTargets.push(end);
 
         v.mark(begin);
-        v.load(iteratorVar, ITERATOR_TYPE);
-        v.invokeinterface(CLASS_ITERATOR, "hasNext", ITERATOR_HASNEXT_DESCRIPTOR);
+        v.load(iteratorVar, asmIterType);
+        FunctionDescriptor hND;
+        if(hasNextDescriptor instanceof FunctionDescriptor) {
+            hND = (FunctionDescriptor) hasNextDescriptor;
+        }
+        else {
+            hND = ((PropertyDescriptor) hasNextDescriptor).getGetter();
+        }
+        invokeFunctionNoParams(hND, Type.BOOLEAN_TYPE, v);
         v.ifeq(end);
 
         myMap.enter(parameterDescriptor, asmParamType.getSize());
-        v.load(iteratorVar, ITERATOR_TYPE);
-        v.invokeinterface(CLASS_ITERATOR, "next", ITERATOR_NEXT_DESCRIPTOR);
+        v.load(iteratorVar, asmIterType);
+        invokeFunctionNoParams(nextDescriptor, asmParamType, v);
+
         // TODO checkcast should be generated via StackValue
         if (asmParamType.getSort() == Type.OBJECT && !"java.lang.Object".equals(asmParamType.getClassName())) {
             v.checkcast(asmParamType);
@@ -770,11 +783,36 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         return myMap.getIndex(descriptor);
     }
 
+    public void invokeFunctionNoParams(FunctionDescriptor functionDescriptor, Type type, InstructionAdapterEx v) {
+        DeclarationDescriptor containingDeclaration = functionDescriptor.getContainingDeclaration();
+        boolean isStatic = containingDeclaration instanceof NamespaceDescriptorImpl;
+        functionDescriptor = functionDescriptor.getOriginal();
+        String owner;
+
+        boolean isInterface;
+        boolean isInsideClass = containingDeclaration == contextType();
+        if (isInsideClass || isStatic) {
+            owner = typeMapper.getOwner(functionDescriptor, contextKind());
+            isInterface = false;
+        }
+        else {
+            owner = typeMapper.getOwner(functionDescriptor, OwnerKind.INTERFACE);
+            if(containingDeclaration instanceof JavaClassDescriptor) {
+                PsiClass psiElement = (PsiClass) bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, containingDeclaration);
+                isInterface = psiElement.isInterface();
+            }
+            else    
+                isInterface = !(containingDeclaration instanceof ClassDescriptor && ((ClassDescriptor) containingDeclaration).isObject());
+        }
+
+        v.visitMethodInsn(isStatic ? Opcodes.INVOKESTATIC : isInterface ? Opcodes.INVOKEINTERFACE : Opcodes.INVOKEVIRTUAL, owner, functionDescriptor.getName(), typeMapper.mapSignature(functionDescriptor.getName(),functionDescriptor).getDescriptor());
+        StackValue.onStack(typeMapper.mapType(functionDescriptor.getReturnType())).coerce(type, v);
+    }
+    
     public StackValue intermediateValueForProperty(PropertyDescriptor propertyDescriptor, final boolean forceField, boolean forceInterface) {
         DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
         boolean isStatic = containingDeclaration instanceof NamespaceDescriptorImpl;
-        while(propertyDescriptor != propertyDescriptor.getOriginal())
-            propertyDescriptor = propertyDescriptor.getOriginal();
+        propertyDescriptor = propertyDescriptor.getOriginal();
         final JetType outType = propertyDescriptor.getOutType();
         boolean isInsideClass = !forceInterface && containingDeclaration == contextType();
         Method getter;
@@ -1779,7 +1817,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         v.anew(JetTypeMapper.TYPE_TYPEINFO);
         v.dup();
         v.aconst(jvmType);
-        v.aconst(jetType.isNullable());
+        v.iconst(jetType.isNullable()?1:0);
         List<TypeProjection> arguments = jetType.getArguments();
         if (arguments.size() > 0) {
             v.iconst(arguments.size());
