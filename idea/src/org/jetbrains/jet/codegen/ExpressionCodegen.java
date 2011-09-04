@@ -1202,6 +1202,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     private StackValue generateEquals(JetExpression left, JetExpression right, IElementType opToken) {
         Type leftType = expressionType(left);
         Type rightType = expressionType(right);
+        if(leftType == JetTypeMapper.TYPE_NOTHING) {
+            return genCmpWithNull(right, rightType, opToken);
+        }
+
+        if(rightType == JetTypeMapper.TYPE_NOTHING) {
+            return genCmpWithNull(left, leftType, opToken);
+        }
+
         if(JetTypeMapper.isPrimitive(leftType) != JetTypeMapper.isPrimitive(rightType)) {
             gen(left, leftType);
             v.valueOf(leftType);
@@ -1215,6 +1223,28 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             gen(right, rightType);
         }
         return generateEqualsForExpressionsOnStack(opToken, leftType, rightType);
+    }
+
+    private StackValue genCmpWithNull(JetExpression exp, Type expType, IElementType opToken) {
+        gen(exp, typeMapper.boxType(expType));
+        Label fail = new Label(), end = new Label();
+        if(JetTokens.EQEQ == opToken || JetTokens.EQEQEQ == opToken) {
+            v.ifnonnull(fail);
+            v.iconst(1);
+            v.goTo(end);
+            v.mark(fail);
+            v.iconst(0);
+            v.mark(end);
+        }
+        else {
+            v.ifnull(fail);
+            v.iconst(1);
+            v.goTo(end);
+            v.mark(fail);
+            v.iconst(0);
+            v.mark(end);
+        }
+        return StackValue.onStack(Type.BOOLEAN_TYPE);
     }
 
     private StackValue generateEqualsForExpressionsOnStack(IElementType opToken, Type leftType, Type rightType) {

@@ -148,4 +148,14 @@ public class ControlStructuresTest extends CodegenTestCase {
     public void testKt237() throws Exception {
         blackBoxFile("regressions/kt237.jet");
     }
+
+    public void testCompareToNull() throws Exception {
+        loadText("fun foo(a: String?, b: String?): Boolean = a == null && b !== null");
+        String text = generateToText();
+        assertTrue(!text.contains("java/lang/Object.equals"));
+        System.out.println(text);
+        final Method main = generateFunction();
+        assertEquals(true, main.invoke(null, null, "lala"));
+        assertEquals(false, main.invoke(null, null, null));
+    }
 }

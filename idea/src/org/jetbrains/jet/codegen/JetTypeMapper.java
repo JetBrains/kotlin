@@ -25,6 +25,7 @@ public class JetTypeMapper {
     public static final Type TYPE_TYPEINFO = Type.getType(TypeInfo.class);
     public static final Type TYPE_JET_OBJECT = Type.getType(JetObject.class);
     public static final Type TYPE_CLASS = Type.getType(Class.class);
+    public static final Type TYPE_NOTHING = Type.getObjectType("jet/Nothing");
 
     private final JetStandardLibrary standardLibrary;
     private final BindingContext bindingContext;
@@ -289,6 +290,9 @@ public class JetTypeMapper {
     }
 
     public Type mapType(@NotNull final JetType jetType, OwnerKind kind) {
+        if (jetType.equals(JetStandardClasses.getNothingType()) || jetType.equals(JetStandardClasses.getNullableNothingType())) {
+            return TYPE_NOTHING;
+        }
         if (jetType.equals(standardLibrary.getIntType())) {
             return Type.INT_TYPE;
         }

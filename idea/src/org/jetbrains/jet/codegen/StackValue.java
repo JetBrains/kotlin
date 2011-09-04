@@ -282,7 +282,7 @@ public abstract class StackValue {
         @Override
         public void condJump(Label label, boolean jumpIfFalse, InstructionAdapter v) {
             if (value instanceof Boolean) {
-                boolean boolValue = ((Boolean) value).booleanValue();
+                boolean boolValue = (Boolean) value;
                 if (boolValue ^ jumpIfFalse) {
                     v.goTo(label);
                 }
