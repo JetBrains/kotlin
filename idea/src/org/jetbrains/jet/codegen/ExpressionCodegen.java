@@ -1200,8 +1200,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     }
 
     private StackValue generateEquals(JetExpression left, JetExpression right, IElementType opToken) {
-        Type leftType = expressionType(left);
-        Type rightType = expressionType(right);
+        JetType leftJetType = bindingContext.get(BindingContext.EXPRESSION_TYPE, left);
+        Type leftType = typeMapper.mapType(leftJetType);
+        JetType rightJetType = bindingContext.get(BindingContext.EXPRESSION_TYPE, right);
+        Type rightType = typeMapper.mapType(rightJetType);
         if(leftType == JetTypeMapper.TYPE_NOTHING) {
             return genCmpWithNull(right, rightType, opToken);
         }
@@ -1222,32 +1224,39 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             gen(left, leftType);
             gen(right, rightType);
         }
-        return generateEqualsForExpressionsOnStack(opToken, leftType, rightType);
+
+        if(JetTypeMapper.isPrimitive(leftType)) // both are primitive
+            return generateEqualsForExpressionsOnStack(opToken, leftType, rightType, false, false);
+        
+        return generateEqualsForExpressionsOnStack(opToken, leftType, rightType, leftJetType.isNullable(), rightJetType.isNullable());
     }
 
-    private StackValue genCmpWithNull(JetExpression exp, Type expType, IElementType opToken) {
-        gen(exp, typeMapper.boxType(expType));
-        Label fail = new Label(), end = new Label();
-        if(JetTokens.EQEQ == opToken || JetTokens.EQEQEQ == opToken) {
-            v.ifnonnull(fail);
+    private StackValue genEqualsOnStack(IElementType opToken) {
+        v.invokevirtual("java/lang/Object", "equals", "(Ljava/lang/Object;)Z");
+        if(opToken == JetTokens.EXCLEQ || opToken == JetTokens.EXCLEQEQEQ) {
             v.iconst(1);
-            v.goTo(end);
-            v.mark(fail);
-            v.iconst(0);
-            v.mark(end);
-        }
-        else {
-            v.ifnull(fail);
-            v.iconst(1);
-            v.goTo(end);
-            v.mark(fail);
-            v.iconst(0);
-            v.mark(end);
+            v.xor(Type.INT_TYPE);
         }
         return StackValue.onStack(Type.BOOLEAN_TYPE);
     }
 
-    private StackValue generateEqualsForExpressionsOnStack(IElementType opToken, Type leftType, Type rightType) {
+    private StackValue genCmpWithNull(JetExpression exp, Type expType, IElementType opToken) {
+        v.iconst(1);
+        gen(exp, typeMapper.boxType(expType));
+        Label ok = new Label();
+        if(JetTokens.EQEQ == opToken || JetTokens.EQEQEQ == opToken) {
+            v.ifnull(ok);
+        }
+        else {
+            v.ifnonnull(ok);
+        }
+        v.pop();
+        v.iconst(0);
+        v.mark(ok);
+        return StackValue.onStack(Type.BOOLEAN_TYPE);
+    }
+
+    private StackValue generateEqualsForExpressionsOnStack(IElementType opToken, Type leftType, Type rightType, boolean leftNullable, boolean rightNullable) {
         if (isNumberPrimitive(leftType) && leftType == rightType) {
             return compareExpressionsOnStack(opToken, leftType);
         }
@@ -1256,38 +1265,67 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 return StackValue.cmp(opToken, leftType);
             }
             else {
-                return generateNullSafeEquals(opToken);
+                return generateNullSafeEquals(opToken, leftNullable, rightNullable);
             }
         }
     }
 
-    private StackValue generateNullSafeEquals(IElementType opToken) {
-        v.dup2();   // left right left right
-        Label rightNull = new Label();
-        v.ifnull(rightNull);
-        Label leftNull = new Label();
-        v.ifnull(leftNull);
-        v.invokevirtual(CLASS_OBJECT, "equals", "(Ljava/lang/Object;)Z");
-        Label end = new Label();
-        v.goTo(end);
-        v.mark(rightNull);
-        // left right left
-        Label bothNull = new Label();
-        v.ifnull(bothNull);
-        v.mark(leftNull);
-        v.pop2();
-        v.iconst(0);
-        v.goTo(end);
-        v.mark(bothNull);
-        v.pop2();
-        v.iconst(1);
-        v.mark(end);
-
-        final StackValue onStack = StackValue.onStack(Type.BOOLEAN_TYPE);
-        if (opToken == JetTokens.EXCLEQ) {
-            return StackValue.not(onStack);
+    private StackValue generateNullSafeEquals(IElementType opToken, boolean leftNullable, boolean rightNullable) {
+        if(!leftNullable) {
+            v.invokevirtual(CLASS_OBJECT, "equals", "(Ljava/lang/Object;)Z");
+            if (opToken == JetTokens.EXCLEQ) {
+                v.iconst(1);
+                v.xor(Type.INT_TYPE);
+            }
         }
-        return onStack;
+        else {
+            if(rightNullable) {
+                v.dup2();   // left right left right
+                Label rightNull = new Label();
+                v.ifnull(rightNull);
+                Label leftNull = new Label();
+                v.ifnull(leftNull);
+                v.invokevirtual(CLASS_OBJECT, "equals", "(Ljava/lang/Object;)Z");
+                if (opToken == JetTokens.EXCLEQ || opToken == JetTokens.EXCLEQEQEQ) {
+                    v.iconst(1);
+                    v.xor(Type.INT_TYPE);
+                }
+                Label end = new Label();
+                v.goTo(end);
+                v.mark(rightNull);
+                // left right left
+                Label bothNull = new Label();
+                v.ifnull(bothNull);
+                v.mark(leftNull);
+                v.pop2();
+                v.iconst(opToken == JetTokens.EXCLEQ || opToken == JetTokens.EXCLEQEQEQ ? 1 : 0);
+                v.goTo(end);
+                v.mark(bothNull);
+                v.pop2();
+                v.iconst(opToken == JetTokens.EXCLEQ || opToken == JetTokens.EXCLEQEQEQ ? 0 : 1);
+                v.mark(end);
+            }
+            else {
+                v.dup2();   // left right left right
+                v.pop();
+                Label leftNull = new Label();
+                v.ifnull(leftNull);
+                v.invokevirtual(CLASS_OBJECT, "equals", "(Ljava/lang/Object;)Z");
+                if (opToken == JetTokens.EXCLEQ || opToken == JetTokens.EXCLEQEQEQ) {
+                    v.iconst(1);
+                    v.xor(Type.INT_TYPE);
+                }
+                Label end = new Label();
+                v.goTo(end);
+                // left right
+                v.mark(leftNull);
+                v.pop2();
+                v.iconst(opToken == JetTokens.EXCLEQ ? 1 : 0);
+                v.mark(end);
+            }
+        }
+
+        return StackValue.onStack(Type.BOOLEAN_TYPE);
     }
 
     private StackValue generateElvis(JetBinaryExpression expression) {
@@ -1747,7 +1785,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             JetExpression condExpression = ((JetExpressionPattern) pattern).getExpression();
             Type condType = isNumberPrimitive(subjectType) ? expressionType(condExpression) : OBJECT_TYPE;
             gen(condExpression, condType);
-            return generateEqualsForExpressionsOnStack(JetTokens.EQEQ, subjectType, condType);
+            return generateEqualsForExpressionsOnStack(JetTokens.EQEQ, subjectType, condType, false, false);
         }
         else if (pattern instanceof JetWildcardPattern) {
             return StackValue.constant(!negated, Type.BOOLEAN_TYPE);

@@ -150,12 +150,31 @@ public class ControlStructuresTest extends CodegenTestCase {
     }
 
     public void testCompareToNull() throws Exception {
-        loadText("fun foo(a: String?, b: String?): Boolean = a == null && b !== null");
+        loadText("fun foo(a: String?, b: String?): Boolean = a == null && b !== null && null == a && null !== b");
         String text = generateToText();
         assertTrue(!text.contains("java/lang/Object.equals"));
         System.out.println(text);
         final Method main = generateFunction();
         assertEquals(true, main.invoke(null, null, "lala"));
         assertEquals(false, main.invoke(null, null, null));
+    }
+
+    public void testCompareToNonnullableEq() throws Exception {
+        loadText("fun foo(a: String?, b: String): Boolean = a == b || b == a");
+        String text = generateToText();
+        System.out.println(text);
+        final Method main = generateFunction();
+        assertEquals(false, main.invoke(null, null, "lala"));
+        assertEquals(true, main.invoke(null, "papa", "papa"));
+    }
+
+    public void testCompareToNonnullableNotEq() throws Exception {
+        loadText("fun foo(a: String?, b: String): Boolean = a != b");
+        String text = generateToText();
+        System.out.println(text);
+        assertTrue(text.contains("IXOR"));
+        final Method main = generateFunction();
+        assertEquals(true, main.invoke(null, null, "lala"));
+        assertEquals(false, main.invoke(null, "papa", "papa"));
     }
 }

@@ -209,6 +209,7 @@ public class NamespaceGenTest extends CodegenTestCase {
     public void testJavaEqualsNull() throws Exception {
         loadText("fun foo(s1: String?, s2: String?) = s1 == s2");
         final Method main = generateFunction();
+        System.out.println(generateToText());
         assertEquals(Boolean.TRUE, main.invoke(null, null, null));
         assertEquals(Boolean.FALSE, main.invoke(null, "jet", null));
         assertEquals(Boolean.FALSE, main.invoke(null, null, "jet"));
@@ -217,6 +218,7 @@ public class NamespaceGenTest extends CodegenTestCase {
     public void testEqualsNullLiteral() throws Exception {
         loadText("fun foo(s: String?) = s == null");
         final Method main = generateFunction();
+        System.out.println(generateToText());
         assertEquals(Boolean.TRUE, main.invoke(null, new Object[] { null }));
         assertEquals(Boolean.FALSE, main.invoke(null, "jet"));
     }

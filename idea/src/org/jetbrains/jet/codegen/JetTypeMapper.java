@@ -274,22 +274,22 @@ public class JetTypeMapper {
         return owner;
     }
 
-    public Type mapReturnType(@NotNull final JetType jetType, OwnerKind kind) {
+    @NotNull public Type mapReturnType(@NotNull final JetType jetType, OwnerKind kind) {
         if (jetType.equals(JetStandardClasses.getUnitType()) || jetType.equals(JetStandardClasses.getNothingType())) {
             return Type.VOID_TYPE;
         }
         return mapType(jetType, kind);
     }
 
-    public Type mapReturnType(final JetType jetType) {
+    @NotNull public Type mapReturnType(final JetType jetType) {
         return mapReturnType(jetType, OwnerKind.INTERFACE);
     }
 
-    public Type mapType(final JetType jetType) {
+    @NotNull public Type mapType(final JetType jetType) {
         return mapType(jetType, OwnerKind.INTERFACE);
     }
 
-    public Type mapType(@NotNull final JetType jetType, OwnerKind kind) {
+    @NotNull public Type mapType(@NotNull final JetType jetType, OwnerKind kind) {
         if (jetType.equals(JetStandardClasses.getNothingType()) || jetType.equals(JetStandardClasses.getNullableNothingType())) {
             return TYPE_NOTHING;
         }
