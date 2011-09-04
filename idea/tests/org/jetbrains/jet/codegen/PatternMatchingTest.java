@@ -80,8 +80,14 @@ public class PatternMatchingTest extends CodegenTestCase {
     public void testCall() throws Exception {
         loadText("fun foo(s: String) = when(s) { .startsWith(\"J\") => \"JetBrains\"; else => \"something\" }");
         Method foo = generateFunction();
-        assertEquals("JetBrains", foo.invoke(null, "Java"));
-        assertEquals("something", foo.invoke(null, "C#"));
+        try {
+            assertEquals("JetBrains", foo.invoke(null, "Java"));
+            assertEquals("something", foo.invoke(null, "C#"));
+        }
+        catch (Throwable t) {
+            System.out.println(generateToText());
+            t.printStackTrace();
+        }
     }
 
     public void testCallProperty() throws Exception {

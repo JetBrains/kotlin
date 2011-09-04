@@ -448,8 +448,14 @@ public class NamespaceGenTest extends CodegenTestCase {
     public void testPredicateOperator() throws Exception {
         loadText("fun foo(s: String) = s?startsWith(\"J\")");
         final Method main = generateFunction();
+        try {
         assertEquals("JetBrains", main.invoke(null, "JetBrains"));
         assertNull(main.invoke(null, "IntelliJ"));
+        }
+        catch (Throwable t) {
+            System.out.println(generateToText());
+            t.printStackTrace();
+        }
     }
 
     public void testEscapeSequence() throws Exception {

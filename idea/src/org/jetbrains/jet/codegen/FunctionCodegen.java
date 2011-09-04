@@ -66,6 +66,8 @@ public class FunctionCodegen {
         iv.invokevirtual(state.getTypeMapper().jvmName((ClassDescriptor) owner.getContextDescriptor(), OwnerKind.IMPLEMENTATION), function.getName(), function.getDescriptor());
         if(JetTypeMapper.isPrimitive(function.getReturnType()) && !JetTypeMapper.isPrimitive(overriden.getReturnType()))
             iv.valueOf(function.getReturnType());
+        if(function.getReturnType() == Type.VOID_TYPE)
+            iv.aconst(null);
         iv.areturn(overriden.getReturnType());
         mv.visitMaxs(0, 0);
         mv.visitEnd();

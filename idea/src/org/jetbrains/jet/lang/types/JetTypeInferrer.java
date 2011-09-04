@@ -336,7 +336,7 @@ public class JetTypeInferrer {
                             case SINGLE_FUNCTION_ARGUMENT_MISMATCH:
                                 if (argumentList != null) {
                                     // TODO : More helpful message. NOTE: there's a separate handling for this for constructors
-                                    trace.getErrorHandler().genericError(argumentList.getNode(), "Arguments do not match " + DescriptorRenderer.TEXT.render(resolutionResult.getFunctionDescriptor()));
+                                    trace.getErrorHandler().genericError(argumentList.getNode(), "Arguments do not match " + DescriptorRenderer.TEXT.render(resolutionResult.getFunctionDescriptor()) + " " + ErrorHandler.atLocation(referenceExpression));
                                 }
                                 else {
                                     trace.getErrorHandler().unresolvedReference(referenceExpression);
@@ -1188,7 +1188,7 @@ public class JetTypeInferrer {
                     type = context.typeResolver.resolveType(context.scope, typeReference);
                 }
                 else {
-                    context.trace.getErrorHandler().genericError(parameter.getNode(), "Type inference for parameters is not implemented yet");
+                    context.trace.getErrorHandler().genericError(parameter.getNode(), "Type inference for parameters is not implemented yet " + ErrorHandler.atLocation(parameter.getNavigationElement()));
                     type = ErrorUtils.createErrorType("Not inferred");
                 }
                 ValueParameterDescriptor valueParameterDescriptor = context.classDescriptorResolver.resolveValueParameterDescriptor(functionDescriptor, parameter, i, type);

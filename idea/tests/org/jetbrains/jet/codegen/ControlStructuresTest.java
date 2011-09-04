@@ -144,4 +144,8 @@ public class ControlStructuresTest extends CodegenTestCase {
     public void testForUserType() throws Exception {
         blackBoxFile("controlStructures/forUserType.jet");
     }
+
+    public void testKt237() throws Exception {
+        blackBoxFile("regressions/kt237.jet");
+    }
 }

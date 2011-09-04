@@ -1112,11 +1112,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
     @Override
     public StackValue visitPredicateExpression(JetPredicateExpression expression, StackValue receiver) {
-        genToJVMStack(expression.getReceiverExpression());
+        JetExpression expr = expression.getReceiverExpression();
+        StackValue value = gen(expr);
+        Type receiverType = expressionType(expr);
+        value.put(receiverType, v);
         Label ifFalse = new Label();
         Label end = new Label();
         v.dup();
-        StackValue result = gen(expression.getSelectorExpression());
+        StackValue result = genQualified(StackValue.onStack(receiverType), expression.getSelectorExpression());
         result.condJump(ifFalse, true, v);
         v.goTo(end);
         v.mark(ifFalse);
@@ -1939,7 +1942,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 if (!(declarationDescriptor instanceof FunctionDescriptor)) {
                     throw new UnsupportedOperationException("expected function descriptor in when condition with call, found " + declarationDescriptor);
                 }
-                conditionValue = invokeFunction((JetCallExpression) call, declarationDescriptor, StackValue.none());
+                conditionValue = invokeFunction((JetCallExpression) call, declarationDescriptor, StackValue.onStack(subjectType));
             }
             else if (call instanceof JetSimpleNameExpression) {
                 final DeclarationDescriptor descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, (JetSimpleNameExpression) call);
