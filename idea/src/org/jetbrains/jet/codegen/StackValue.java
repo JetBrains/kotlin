@@ -164,7 +164,7 @@ public abstract class StackValue {
         }
         else if (type.getSort() != Type.VOID && this.type.getSort() == Type.VOID) {
             if(type.getSort() == Type.OBJECT)
-                v.aconst(null);
+                v.visitFieldInsn(Opcodes.GETSTATIC, "jet/Tuple0", "INSTANCE", "Ljet/Tuple0;");
             else if(type == Type.LONG_TYPE)
                 v.lconst(0);
             else if(type == Type.FLOAT_TYPE)

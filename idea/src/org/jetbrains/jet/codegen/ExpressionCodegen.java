@@ -1970,6 +1970,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         if (entries.size() > 22) {
             throw new UnsupportedOperationException("tuple too large");
         }
+        if(entries.size() == 0) {
+            v.visitFieldInsn(Opcodes.GETSTATIC, "jet/Tuple0", "INSTANCE", "Ljet/Tuple0;");
+            return StackValue.onStack(Type.getObjectType("jet/Tuple0"));
+        }
+
         final String className = "jet/Tuple" + entries.size();
         Type tupleType = Type.getObjectType(className);
         StringBuilder signature = new StringBuilder("(");
