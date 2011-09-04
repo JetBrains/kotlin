@@ -392,7 +392,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         iv.dup();
 
         iv.aconst(state.getTypeMapper().jvmType(descriptor, OwnerKind.INTERFACE));
-        iv.aconst(false);
+        iv.iconst(0);
         iv.iconst(typeParamCount);
         iv.newarray(JetTypeMapper.TYPE_TYPEINFO);
 

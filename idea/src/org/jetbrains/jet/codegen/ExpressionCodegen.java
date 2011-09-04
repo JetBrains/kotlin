@@ -395,7 +395,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             v.arraylength();
             v.store(myLengthVar, Type.INT_TYPE);
             myIndexVar = myMap.enterTemp();
-            v.aconst(0);
+            v.iconst(0);
             v.store(myIndexVar, Type.INT_TYPE);
         }
 
@@ -1178,7 +1178,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         Label end = new Label();
         v.goTo(end);
         v.mark(ifFalse);
-        v.aconst(false);
+        v.iconst(0);
         v.mark(end);
         return StackValue.onStack(Type.BOOLEAN_TYPE);
     }
@@ -1191,7 +1191,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         Label end = new Label();
         v.goTo(end);
         v.mark(ifTrue);
-        v.aconst(true);
+        v.iconst(1);
         v.mark(end);
         return StackValue.onStack(Type.BOOLEAN_TYPE);
     }
@@ -1243,11 +1243,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         v.ifnull(bothNull);
         v.mark(leftNull);
         v.pop2();
-        v.aconst(Boolean.FALSE);
+        v.iconst(0);
         v.goTo(end);
         v.mark(bothNull);
         v.pop2();
-        v.aconst(Boolean.TRUE);
+        v.iconst(1);
         v.mark(end);
 
         final StackValue onStack = StackValue.onStack(Type.BOOLEAN_TYPE);
@@ -1305,7 +1305,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     private StackValue compareExpressionsOnStack(IElementType opToken, Type operandType) {
         if (operandType.getSort() == Type.OBJECT) {
             v.invokeinterface(CLASS_COMPARABLE, "compareTo", "(Ljava/lang/Object;)I");
-            v.aconst(0);
+            v.iconst(0);
             operandType = Type.INT_TYPE;
         }
         return StackValue.cmp(opToken, operandType);
@@ -1438,18 +1438,18 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         value.put(asmType, v);
         if (asmType == Type.LONG_TYPE) {
             //noinspection UnnecessaryBoxing
-            v.aconst(Long.valueOf(increment));
+            v.lconst(increment);
         }
         else if (asmType == Type.FLOAT_TYPE) {
             //noinspection UnnecessaryBoxing
-            v.aconst(Float.valueOf(increment));
+            v.fconst(increment);
         }
         else if (asmType == Type.DOUBLE_TYPE) {
             //noinspection UnnecessaryBoxing
-            v.aconst(Double.valueOf(increment));
+            v.dconst(increment);
         }
         else {
-            v.aconst(increment);
+            v.iconst(increment);
         }
         v.add(asmType);
         value.store(v);
@@ -1766,7 +1766,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             v.goTo(nextEntry);
         }
         else {
-            v.aconst(!negated);
+            v.iconst(!negated?1:0);
         }
         v.goTo(lblDone);
         v.mark(lblFail);
@@ -1774,7 +1774,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             v.goTo(nextEntry);
         }
         else {
-            v.aconst(negated);
+            v.iconst(negated?1:0);
         }
         v.mark(lblDone);
         return StackValue.onStack(Type.BOOLEAN_TYPE);
@@ -1806,7 +1806,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 v.goTo(end);
                 v.mark(nope);
                 v.pop();
-                v.aconst(1);
+                v.iconst(1);
                 v.mark(end);
             }
             else {

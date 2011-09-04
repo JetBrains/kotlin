@@ -59,7 +59,7 @@ public class ClassCodegen {
         v.anew(JetTypeMapper.TYPE_TYPEINFO);
         v.dup();
         v.aconst(asmType);
-        v.aconst(isNullable);
+        v.iconst(isNullable?1:0);
         v.invokespecial("jet/typeinfo/TypeInfo", "<init>", "(Ljava/lang/Class;Z)V");
     }
 }
