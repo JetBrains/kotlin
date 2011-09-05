@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.resolve.calls;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.JetSemanticServices;
@@ -111,12 +112,21 @@ import java.util.Set;
     }
 
     private <Descriptor extends CallableDescriptor> boolean overrides(@NotNull Descriptor f, @NotNull Descriptor g) {
-        Set<? extends CallableDescriptor> overriddenDescriptors = f.getOriginal().getOverriddenDescriptors();
+        Set<CallableDescriptor> overriddenDescriptors = Sets.newHashSet();
+        getAllOverriddenDescriptors(f.getOriginal(), overriddenDescriptors);
         CallableDescriptor originalG = g.getOriginal();
         for (CallableDescriptor overriddenFunction : overriddenDescriptors) {
             if (originalG.equals(overriddenFunction.getOriginal())) return true;
         }
         return false;
+    }
+
+    private void getAllOverriddenDescriptors(@NotNull CallableDescriptor current, @NotNull Set<CallableDescriptor> overriddenDescriptors) {
+        if (overriddenDescriptors.contains(current)) return;
+        for (CallableDescriptor descriptor : current.getOriginal().getOverriddenDescriptors()) {
+            getAllOverriddenDescriptors(descriptor, overriddenDescriptors);
+            overriddenDescriptors.add(descriptor);
+        }
     }
 
 }

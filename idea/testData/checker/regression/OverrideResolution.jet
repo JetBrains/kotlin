@@ -1,0 +1,16 @@
+fun box() {
+    val a : C
+    a.foo()
+}
+
+open class A {
+    fun foo()
+}
+
+open class B : A {
+    fun foo()
+}
+
+open class C : B {
+    fun foo()
+}
