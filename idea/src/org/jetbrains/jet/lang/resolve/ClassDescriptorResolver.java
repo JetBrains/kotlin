@@ -568,13 +568,7 @@ public class ClassDescriptorResolver {
     @Nullable
     private PropertySetterDescriptor resolvePropertySetterDescriptor(@NotNull JetScope scope, @NotNull JetProperty property, @NotNull PropertyDescriptor propertyDescriptor) {
         JetPropertyAccessor setter = property.getSetter();
-        if (! property.isVar()) {
-            if (setter != null) {
-                trace.getErrorHandler().genericError(setter.asElement().getNode(), "A 'val'-property cannot have a setter");
-            }
-            return null;
-        }
-        PropertySetterDescriptor setterDescriptor;
+        PropertySetterDescriptor setterDescriptor = null;
         if (setter != null) {
             List<AnnotationDescriptor> annotations = annotationResolver.resolveAnnotations(scope, setter.getModifierList());
             JetParameter parameter = setter.getParameter();
@@ -616,10 +610,16 @@ public class ClassDescriptorResolver {
             }
             trace.record(BindingContext.PROPERTY_ACCESSOR, setter, setterDescriptor);
         }
-        else {
+        else if (property.isVar()) {
             setterDescriptor = new PropertySetterDescriptor(
                     propertyDescriptor.getModifiers(),
                     propertyDescriptor, Collections.<AnnotationDescriptor>emptyList(), false, true);
+        }
+
+        if (! property.isVar()) {
+            if (setter != null) {
+                trace.getErrorHandler().genericError(setter.asElement().getNode(), "A 'val'-property cannot have a setter");
+            }
         }
         return setterDescriptor;
     }

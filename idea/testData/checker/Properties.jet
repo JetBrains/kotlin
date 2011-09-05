@@ -7,7 +7,7 @@
 
  val xx : Int = <error>1 + x</error>
    get() : Int = 1
-   <error>set(ref value : Long) {$x = value}</error>
+   <error>set(value : Long) {}</error>
 
   val p : Int = <error>1</error>
     get() = 1
