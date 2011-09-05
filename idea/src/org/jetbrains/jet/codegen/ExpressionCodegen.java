@@ -40,16 +40,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     public static final String CLASS_STRING_BUILDER = "java/lang/StringBuilder";
     private static final String CLASS_COMPARABLE = "java/lang/Comparable";
 
-    private static final String CLASS_RANGE = "jet/Range";
     private static final String CLASS_NO_PATTERN_MATCHED_EXCEPTION = "jet/NoPatternMatchedException";
     private static final String CLASS_TYPE_CAST_EXCEPTION = "jet/TypeCastException";
 
     private static final Type OBJECT_TYPE = Type.getType(Object.class);
-    private static final Type INTEGER_TYPE = Type.getType(Integer.class);
     private static final Type THROWABLE_TYPE = Type.getType(Throwable.class);
     private static final Type STRING_TYPE = Type.getObjectType(CLASS_STRING);
-
-    private static final Type RANGE_TYPE = Type.getType(Range.class);
 
     private final Stack<Label> myContinueTargets = new Stack<Label>();
     private final Stack<Label> myBreakTargets = new Stack<Label>();
