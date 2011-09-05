@@ -5,7 +5,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
@@ -21,9 +21,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResult;
-import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
-import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstantResolver;
-import org.jetbrains.jet.lang.resolve.constants.ErrorValue;
+import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
@@ -1859,7 +1857,7 @@ public class JetTypeInferrer {
             else {
                 String errorMessage = "For-loop range must have an iterator() method";
                 if (iteratorResolutionResult.isAmbiguity()) {
-                    errorMessage = "Method 'iterator()' is ambiguous for this expression";
+                    errorMessage = "Method 'iterator()' is ambiguous for this expression: " + iteratorResolutionResult.getDescriptors();
                 }
                 context.trace.getErrorHandler().genericError(reportErrorsOn, errorMessage);
             }

@@ -8,8 +8,8 @@ class A() {
     var xlnn : Long? = null
 
     var xb = 0.byt
-    var xbn : Long? = 0.byt
-    var xbnn : Long? = null
+    var xbn : Byte? = 0.byt
+    var xbnn : Byte? = null
 
     var xf = 0.flt
     var xfn : Float? = 0.flt
