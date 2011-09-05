@@ -1857,7 +1857,11 @@ public class JetTypeInferrer {
             else {
                 String errorMessage = "For-loop range must have an iterator() method";
                 if (iteratorResolutionResult.isAmbiguity()) {
-                    errorMessage = "Method 'iterator()' is ambiguous for this expression: " + iteratorResolutionResult.getDescriptors();
+                    StringBuffer stringBuffer = new StringBuffer("Method 'iterator()' is ambiguous for this expression: ");
+                    for (FunctionDescriptor functionDescriptor : iteratorResolutionResult.getDescriptors()) {
+                        stringBuffer.append(DescriptorRenderer.TEXT.render(functionDescriptor)).append(" ");
+                    }
+                    errorMessage = "Method 'iterator()' is ambiguous for this expression: " + stringBuffer;
                 }
                 context.trace.getErrorHandler().genericError(reportErrorsOn, errorMessage);
             }

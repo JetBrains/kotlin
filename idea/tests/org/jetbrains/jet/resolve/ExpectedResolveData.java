@@ -26,6 +26,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static junit.framework.Assert.*;
+import static org.jetbrains.jet.lang.resolve.BindingContext.AMBIGUOUS_REFERENCE_TARGET;
+import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
 
 /**
  * @author abreslav
@@ -124,16 +126,24 @@ public class ExpectedResolveData {
                 assertTrue(
                         "Must have been unresolved: " +
                         renderReferenceInContext(referenceExpression) +
-                        " but was resolved to " + DescriptorRenderer.TEXT.render(bindingContext.get(BindingContext.REFERENCE_TARGET, referenceExpression)),
+                        " but was resolved to " + DescriptorRenderer.TEXT.render(bindingContext.get(REFERENCE_TARGET, referenceExpression)),
                         unresolvedReferences.contains(referenceExpression));
+                continue;
+            }
+            if ("!!".equals(name)) {
+                assertTrue(
+                        "Must have been resolved to multiple descriptors: " +
+                        renderReferenceInContext(referenceExpression) +
+                        " but was resolved to " + DescriptorRenderer.TEXT.render(bindingContext.get(REFERENCE_TARGET, referenceExpression)),
+                        bindingContext.get(AMBIGUOUS_REFERENCE_TARGET, referenceExpression) != null);
                 continue;
             }
             else if ("!null".equals(name)) {
                 assertTrue(
                        "Must have been resolved to null: " +
                         renderReferenceInContext(referenceExpression) +
-                        " but was resolved to " + DescriptorRenderer.TEXT.render(bindingContext.get(BindingContext.REFERENCE_TARGET, referenceExpression)),
-                        bindingContext.get(BindingContext.REFERENCE_TARGET, referenceExpression) == null
+                        " but was resolved to " + DescriptorRenderer.TEXT.render(bindingContext.get(REFERENCE_TARGET, referenceExpression)),
+                        bindingContext.get(REFERENCE_TARGET, referenceExpression) == null
                 );
                 continue;
             }
@@ -141,8 +151,8 @@ public class ExpectedResolveData {
                 assertTrue(
                        "Must have been resolved to error: " +
                         renderReferenceInContext(referenceExpression) +
-                        " but was resolved to " + DescriptorRenderer.TEXT.render(bindingContext.get(BindingContext.REFERENCE_TARGET, referenceExpression)),
-                       ErrorUtils.isError(bindingContext.get(BindingContext.REFERENCE_TARGET, referenceExpression))
+                        " but was resolved to " + DescriptorRenderer.TEXT.render(bindingContext.get(REFERENCE_TARGET, referenceExpression)),
+                       ErrorUtils.isError(bindingContext.get(REFERENCE_TARGET, referenceExpression))
                 );
                 continue;
             }
@@ -160,7 +170,7 @@ public class ExpectedResolveData {
                 DeclarationDescriptor expectedDescriptor = nameToDescriptor.get(name);
                 JetTypeReference typeReference = getAncestorOfType(JetTypeReference.class, element);
                 if (expectedDescriptor != null) {
-                    DeclarationDescriptor actual = bindingContext.get(BindingContext.REFERENCE_TARGET, reference);
+                    DeclarationDescriptor actual = bindingContext.get(REFERENCE_TARGET, reference);
                     assertSame("Expected: " + name,  expectedDescriptor.getOriginal(), actual == null ? null : actual.getOriginal());
                     continue;
                 }
@@ -198,7 +208,7 @@ public class ExpectedResolveData {
                 }
 
 
-                DeclarationDescriptor actualDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, reference);
+                DeclarationDescriptor actualDescriptor = bindingContext.get(REFERENCE_TARGET, reference);
                 if (actualDescriptor instanceof VariableAsFunctionDescriptor) {
                     VariableAsFunctionDescriptor descriptor = (VariableAsFunctionDescriptor) actualDescriptor;
                     actualDescriptor = descriptor.getVariableDescriptor();

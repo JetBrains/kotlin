@@ -12,6 +12,7 @@ import org.jetbrains.jet.lang.psi.JetLabelQualifiedExpression;
 import org.jetbrains.jet.lang.psi.ValueArgument;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.types.CallMaker;
+import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.util.List;
 import java.util.Map;
@@ -88,12 +89,12 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
                             usedParameters.add(valueParameterDescriptor);
                         }
                         else {
-                            temporaryTrace.getErrorHandler().genericError(valueArgument.asElement().getNode(), "Too many arguments");
+                            temporaryTrace.getErrorHandler().genericError(valueArgument.asElement().getNode(), getTooManyArgumentsMessage(candidate));
                             error = true;
                         }
                     }
                     else {
-                        temporaryTrace.getErrorHandler().genericError(valueArgument.asElement().getNode(), "Too many arguments");
+                        temporaryTrace.getErrorHandler().genericError(valueArgument.asElement().getNode(), getTooManyArgumentsMessage(candidate));
                         error = true;
                     }
                 }
@@ -105,7 +106,7 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
             JetExpression possiblyLabeledFunctionLiteral = functionLiteralArguments.get(0);
 
             if (valueParameters.isEmpty()) {
-                temporaryTrace.getErrorHandler().genericError(possiblyLabeledFunctionLiteral.getNode(), "Too many arguments");
+                temporaryTrace.getErrorHandler().genericError(possiblyLabeledFunctionLiteral.getNode(), getTooManyArgumentsMessage(candidate));
                 error = true;
             } else {
                 JetFunctionLiteralExpression functionLiteral;
@@ -124,7 +125,7 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
                 }
                 else {
                     if (!usedParameters.add(parameterDescriptor)) {
-                        temporaryTrace.getErrorHandler().genericError(possiblyLabeledFunctionLiteral.getNode(), "Too many arguments");
+                        temporaryTrace.getErrorHandler().genericError(possiblyLabeledFunctionLiteral.getNode(), getTooManyArgumentsMessage(candidate));
                         error = true;
                     }
                     else {
@@ -150,5 +151,9 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
             }
         }
         return error;
+    }
+
+    private static <Descriptor extends CallableDescriptor> String getTooManyArgumentsMessage(Descriptor candidate) {
+        return "Too many arguments for " + DescriptorRenderer.TEXT.render(candidate);
     }
 }
