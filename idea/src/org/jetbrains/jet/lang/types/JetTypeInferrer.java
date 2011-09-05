@@ -11,7 +11,6 @@ import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
-import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -19,6 +18,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.constants.*;
+import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.types.inference.ConstraintSystem;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
@@ -344,7 +344,7 @@ public class JetTypeInferrer {
                             case SINGLE_FUNCTION_ARGUMENT_MISMATCH:
                                 if (argumentList != null) {
                                     // TODO : More helpful message. NOTE: there's a separate handling for this for constructors
-                                    trace.getErrorHandler().genericError(argumentList.getNode(), "Arguments do not match " + DescriptorRenderer.TEXT.render(resolutionResult.getFunctionDescriptor()) + " " + ErrorHandler.atLocation(referenceExpression));
+                                    trace.getErrorHandler().genericError(argumentList.getNode(), "Arguments do not match " + DescriptorRenderer.TEXT.render(resolutionResult.getFunctionDescriptor()));
                                 }
                                 else {
                                     trace.getErrorHandler().unresolvedReference(referenceExpression);
@@ -1196,7 +1196,7 @@ public class JetTypeInferrer {
                     type = context.typeResolver.resolveType(context.scope, typeReference);
                 }
                 else {
-                    context.trace.getErrorHandler().genericError(parameter.getNode(), "Type inference for parameters is not implemented yet " + ErrorHandler.atLocation(parameter.getNavigationElement()));
+                    context.trace.getErrorHandler().genericError(parameter.getNode(), "Type inference for parameters is not implemented yet ");
                     type = ErrorUtils.createErrorType("Not inferred");
                 }
                 ValueParameterDescriptor valueParameterDescriptor = context.classDescriptorResolver.resolveValueParameterDescriptor(functionDescriptor, parameter, i, type);
@@ -1717,7 +1717,7 @@ public class JetTypeInferrer {
                         return;
                     }
                     if (TypeUtils.intersect(semanticServices.getTypeChecker(), Sets.newHashSet(type, subjectType)) == null) {
-                        context.trace.getErrorHandler().genericError(reportErrorOn.getNode(), "Incompatible types: " + type + " and " + subjectType + " " + ErrorHandler.atLocation(reportErrorOn));
+                        context.trace.getErrorHandler().genericError(reportErrorOn.getNode(), "Incompatible types: " + type + " and " + subjectType);
                     }
                 }
 
@@ -2167,33 +2167,8 @@ public class JetTypeInferrer {
 
             JetType receiverType = context.services.typeInferrerVisitorWithNamespaces.getType(receiverExpression, new TypeInferenceContext(context.trace, context.scope, false, context.dataFlowInfo, NO_EXPECTED_TYPE, NO_EXPECTED_TYPE));
 
-            if(selectorExpression instanceof JetSimpleNameExpression) {
-                CompileTimeConstant<?> compileTimeConstant = context.trace.getBindingContext().get(BindingContext.COMPILE_TIME_VALUE, receiverExpression);
-                CompileTimeConstant<?> expressionCompileTimeConstant = context.trace.getBindingContext().get(BindingContext.COMPILE_TIME_VALUE, expression);
-                if(expressionCompileTimeConstant == null && compileTimeConstant != null && compileTimeConstant.getValue() instanceof Number) {
-                    Number value = (Number) compileTimeConstant.getValue();
-                    String referencedName = ((JetSimpleNameExpression) selectorExpression).getReferencedName();
-                    if(numberConversions.contains(referencedName)) {
-                        if("dbl".equals(referencedName)) {
-                            context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, new DoubleValue(value.doubleValue()));
-                        }
-                        else if("flt".equals(referencedName)) {
-                            context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, new FloatValue(value.floatValue()));
-                        }
-                        else if("lng".equals(referencedName)) {
-                            context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, new LongValue(value.longValue()));
-                        }
-                        else if("sht".equals(referencedName)) {
-                            context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, new ShortValue(value.shortValue()));
-                        }
-                        else if("byt".equals(referencedName)) {
-                            context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, new ByteValue(value.byteValue()));
-                        }
-                        else if("byt".equals(referencedName)) {
-                            context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, new IntValue(value.intValue()));
-                        }
-                    }
-                }
+            if (selectorExpression instanceof JetSimpleNameExpression) {
+                propagateConstantValues(expression, context, (JetSimpleNameExpression) selectorExpression);
             }
 
             if (receiverType == null) return null;
@@ -2265,6 +2240,36 @@ public class JetTypeInferrer {
                 }
             }
             return context.services.checkType(result, expression, contextWithExpectedType);
+        }
+
+        private void propagateConstantValues(JetQualifiedExpression expression, TypeInferenceContext context, JetSimpleNameExpression selectorExpression) {
+            JetExpression receiverExpression = expression.getReceiverExpression();
+            CompileTimeConstant<?> receiverValue = context.trace.getBindingContext().get(BindingContext.COMPILE_TIME_VALUE, receiverExpression);
+            CompileTimeConstant<?> wholeExpressionValue = context.trace.getBindingContext().get(BindingContext.COMPILE_TIME_VALUE, expression);
+            if (wholeExpressionValue == null && receiverValue != null && !(receiverValue instanceof ErrorValue) && receiverValue.getValue() instanceof Number) {
+                Number value = (Number) receiverValue.getValue();
+                String referencedName = selectorExpression.getReferencedName();
+                if (numberConversions.contains(referencedName)) {
+                    if ("dbl".equals(referencedName)) {
+                        context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, new DoubleValue(value.doubleValue()));
+                    }
+                    else if ("flt".equals(referencedName)) {
+                        context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, new FloatValue(value.floatValue()));
+                    }
+                    else if ("lng".equals(referencedName)) {
+                        context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, new LongValue(value.longValue()));
+                    }
+                    else if ("sht".equals(referencedName)) {
+                        context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, new ShortValue(value.shortValue()));
+                    }
+                    else if ("byt".equals(referencedName)) {
+                        context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, new ByteValue(value.byteValue()));
+                    }
+                    else if ("int".equals(referencedName)) {
+                        context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, new IntValue(value.intValue()));
+                    }
+                }
+            }
         }
 
 
