@@ -37,6 +37,17 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.*;
  * @author abreslav
  */
 public class JetTypeInferrer {
+    
+    private static final Set<String> numberConversions = new HashSet();
+
+    static {
+        numberConversions.add("dbl");
+        numberConversions.add("flt");
+        numberConversions.add("lng");
+        numberConversions.add("sht");
+        numberConversions.add("byt");
+        numberConversions.add("int");
+    }
 
     private static final JetType FORBIDDEN = new JetType() {
         @NotNull
@@ -1456,7 +1467,7 @@ public class JetTypeInferrer {
                         return;
                     }
                     if (TypeUtils.intersect(semanticServices.getTypeChecker(), Sets.newHashSet(type, subjectType)) == null) {
-                        context.trace.getErrorHandler().genericError(reportErrorOn.getNode(), "Incompatible types: " + type + " and " + subjectType + " " + ErrorHandler.atLocation(reportErrorOn));
+                        context.trace.getErrorHandler().genericError(reportErrorOn.getNode(), "Incompatible types: " + type + " and " + subjectType);
                     }
                 }
 
@@ -1825,7 +1836,7 @@ public class JetTypeInferrer {
                 boolean hasNextPropertySupported = hasNextProperty != null;
                 if (hasNextFunctionSupported && hasNextPropertySupported && !ErrorUtils.isErrorType(iteratorType)) {
                     // TODO : overload resolution rules impose priorities here???
-                    context.trace.getErrorHandler().genericError(reportErrorsOn, "An ambiguity between 'iterator().hasNext()' function and 'iterator().hasNext()' property");
+                    context.trace.getErrorHandler().genericError(reportErrorsOn, "An ambiguity between 'iterator().hasNext()' function and 'iterator().hasNext' property");
                 }
                 else if (!hasNextFunctionSupported && !hasNextPropertySupported) {
                     context.trace.getErrorHandler().genericError(reportErrorsOn, "Loop range must have an 'iterator().hasNext()' function or an 'iterator().hasNext' property");
@@ -1907,6 +1918,10 @@ public class JetTypeInferrer {
             if (selectorExpression == null) return null;
             if (receiverType == null) receiverType = ErrorUtils.createErrorType("Type for " + expression.getText());
 
+            if (selectorExpression instanceof JetSimpleNameExpression) {
+                propagateConstantValues(expression, context, (JetSimpleNameExpression) selectorExpression);
+            }
+
             // Clean resolution: no autocasts
             TemporaryBindingTrace cleanResolutionTrace = TemporaryBindingTrace.create(context.trace);
             TypeInferenceContext cleanResolutionContext = context.replaceBindingTrace(cleanResolutionTrace);
@@ -1972,6 +1987,36 @@ public class JetTypeInferrer {
                 }
             }
             return context.services.checkType(result, expression, contextWithExpectedType);
+        }
+
+        private void propagateConstantValues(JetQualifiedExpression expression, TypeInferenceContext context, JetSimpleNameExpression selectorExpression) {
+            JetExpression receiverExpression = expression.getReceiverExpression();
+            CompileTimeConstant<?> receiverValue = context.trace.getBindingContext().get(BindingContext.COMPILE_TIME_VALUE, receiverExpression);
+            CompileTimeConstant<?> wholeExpressionValue = context.trace.getBindingContext().get(BindingContext.COMPILE_TIME_VALUE, expression);
+            if (wholeExpressionValue == null && receiverValue != null && !(receiverValue instanceof ErrorValue) && receiverValue.getValue() instanceof Number) {
+                Number value = (Number) receiverValue.getValue();
+                String referencedName = selectorExpression.getReferencedName();
+                if (numberConversions.contains(referencedName)) {
+                    if ("dbl".equals(referencedName)) {
+                        context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, new DoubleValue(value.doubleValue()));
+                    }
+                    else if ("flt".equals(referencedName)) {
+                        context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, new FloatValue(value.floatValue()));
+                    }
+                    else if ("lng".equals(referencedName)) {
+                        context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, new LongValue(value.longValue()));
+                    }
+                    else if ("sht".equals(referencedName)) {
+                        context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, new ShortValue(value.shortValue()));
+                    }
+                    else if ("byt".equals(referencedName)) {
+                        context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, new ByteValue(value.byteValue()));
+                    }
+                    else if ("int".equals(referencedName)) {
+                        context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, new IntValue(value.intValue()));
+                    }
+                }
+            }
         }
 
 

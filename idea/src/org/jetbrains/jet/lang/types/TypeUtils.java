@@ -5,6 +5,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
@@ -310,5 +311,13 @@ public class TypeUtils {
             }
         }
         return false;
+    }
+
+    public static boolean equalClasses(@NotNull JetType type1, @NotNull JetType type2) {
+        DeclarationDescriptor declarationDescriptor1 = type1.getConstructor().getDeclarationDescriptor();
+        if (declarationDescriptor1 == null) return false; // No class, classes are not equal
+        DeclarationDescriptor declarationDescriptor2 = type2.getConstructor().getDeclarationDescriptor();
+        if (declarationDescriptor2 == null) return false; // Class of type1 is not null
+        return declarationDescriptor1.getOriginal().equals(declarationDescriptor2.getOriginal());
     }
 }

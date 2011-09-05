@@ -134,4 +134,10 @@ public class PropertyGenTest extends CodegenTestCase {
     public void testKt257 () throws Exception {
         blackBoxFile("regressions/kt257.jet");
     }
+
+    public void testKt160() throws Exception {
+        loadText("public val s = java.lang.Double.toString(1.0)");
+        final Method method = generateFunction("getS");
+        assertEquals(method.invoke(null), "1.0");
+    }
 }

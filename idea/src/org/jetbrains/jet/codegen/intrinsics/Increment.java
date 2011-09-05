@@ -35,13 +35,13 @@ public class Increment implements IntrinsicMethod {
         value.dupReceiver(v, 0);
         value.put(expectedType, v);
         if (expectedType == Type.LONG_TYPE) {
-            v.aconst(Long.valueOf(myDelta));
+            v.lconst(myDelta);
         }
         else if (expectedType == Type.FLOAT_TYPE) {
-            v.aconst(Float.valueOf(myDelta));
+            v.fconst(myDelta);
         }
         else if (expectedType == Type.DOUBLE_TYPE) {
-            v.aconst(Double.valueOf(myDelta));
+            v.dconst(myDelta);
         }
         else {
             v.aconst(myDelta);

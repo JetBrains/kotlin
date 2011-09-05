@@ -39,6 +39,11 @@ fun t3 () : Boolean {
     if(d.isT(10))     return false
     if(!d.isT(null))  return false
 
+    val f = B<java.lang.String?>()
+    if(!f.isT("aaa")) return false
+    if(f.isT(10))     return false
+    if(!f.isT(null))  return false
+
     val c = B<Int>()
     if(c.isT("aaa")) return false
     if(!c.isT(10))   return false

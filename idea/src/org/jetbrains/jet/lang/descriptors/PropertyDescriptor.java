@@ -39,7 +39,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Member
         this.isVar = isVar;
         this.memberModifiers = memberModifiers;
         this.receiverType = receiverType;
-        this.original = original == null ? this : original;
+        this.original = original == null ? this : original.getOriginal();
     }
 
     public PropertyDescriptor(

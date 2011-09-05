@@ -1,0 +1,35 @@
+namespace x
+
+class Outer(val name: String) {
+    class Inner() {
+        val me = name
+
+        class object {
+           fun bar() = "bar"
+        }
+    }
+
+    class object {
+        class StaticInner() {
+            class object {
+                fun f() = "oo"
+            }
+        }
+    }
+}
+
+fun box (): String {
+    val inner  = Outer("mama").Inner() //verify error
+    if(inner.me != "mama")
+        return "fail"
+
+    val outer = Outer ("papa")
+    val inner2 = outer.Inner ()
+    if(inner2.me != "papa")
+        return "fail"
+
+    if(Outer.StaticInner.f() != "oo" )
+        return "fail"
+
+    return "OK"
+}

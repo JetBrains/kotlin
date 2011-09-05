@@ -168,4 +168,13 @@ public class ClassGenTest extends CodegenTestCase {
         final Method rgbMethod = colorClass.getMethod("getRgb");
         assertEquals(0xFF0000, rgbMethod.invoke(redValue));
     }
+
+    public void testKt249() throws Exception {
+        blackBoxFile("regressions/kt249.jet");
+    }
+
+    public void testKt48 () throws Exception {
+        blackBoxFile("regressions/kt48.jet");
+        System.out.println(generateToText());
+    }
 }

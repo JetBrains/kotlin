@@ -18,8 +18,8 @@ public class PropertySetterDescriptor extends PropertyAccessorDescriptor {
     private MutableValueParameterDescriptor parameter;
     private final Set<PropertySetterDescriptor> overriddenSetters = Sets.newHashSet();
 
-    public PropertySetterDescriptor(@NotNull MemberModifiers modifiers, @NotNull PropertyDescriptor correspondingProperty, @NotNull List<AnnotationDescriptor> annotations, boolean hasBody) {
-        super(modifiers, correspondingProperty, annotations, "set-" + correspondingProperty.getName(), hasBody);
+    public PropertySetterDescriptor(@NotNull MemberModifiers modifiers, @NotNull PropertyDescriptor correspondingProperty, @NotNull List<AnnotationDescriptor> annotations, boolean hasBody, boolean isDefault) {
+        super(modifiers, correspondingProperty, annotations, "set-" + correspondingProperty.getName(), hasBody, isDefault);
     }
 
     public void initialize(@NotNull MutableValueParameterDescriptor parameter) {

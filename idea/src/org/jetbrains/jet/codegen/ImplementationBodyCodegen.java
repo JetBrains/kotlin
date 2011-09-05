@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.objectweb.asm.ClassVisitor;
@@ -147,7 +148,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     protected void generatePrimaryConstructor() {
-        ConstructorDescriptor constructorDescriptor = state.getBindingContext().get(BindingContext.CONSTRUCTOR, (JetElement) myClass);
+        ConstructorDescriptor constructorDescriptor = state.getBindingContext().get(BindingContext.CONSTRUCTOR, myClass);
         if (constructorDescriptor == null && !(myClass instanceof JetObjectDeclaration) && !isEnum(myClass)) return;
 
         Method method;
@@ -193,10 +194,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             iv.invokespecial(superClass, "<init>", /* TODO super constructor descriptor */"()V");
         }
 
-        final DeclarationDescriptor outerDescriptor = getOuterClassDescriptor();
-        if (outerDescriptor instanceof ClassDescriptor) {
-            final ClassDescriptor outerClassDescriptor = (ClassDescriptor) outerDescriptor;
-            final Type type = JetTypeMapper.jetImplementationType(outerClassDescriptor);
+        final ClassDescriptor outerDescriptor = getOuterClassDescriptor();
+        if (outerDescriptor != null && !outerDescriptor.isObject()) {
+            final Type type = JetTypeMapper.jetImplementationType(outerDescriptor);
             String interfaceDesc = type.getDescriptor();
             final String fieldName = "this$0";
             v.visitField(Opcodes.ACC_PRIVATE | Opcodes.ACC_FINAL, fieldName, interfaceDesc, null, null);
@@ -393,7 +393,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         iv.dup();
 
         iv.aconst(state.getTypeMapper().jvmType(descriptor, OwnerKind.INTERFACE));
-        iv.aconst(false);
+        iv.iconst(0);
         iv.iconst(typeParamCount);
         iv.newarray(JetTypeMapper.TYPE_TYPEINFO);
 
@@ -410,12 +410,45 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     protected void generateInitializers(ExpressionCodegen codegen, InstructionAdapter iv) {
         for (JetDeclaration declaration : myClass.getDeclarations()) {
             if (declaration instanceof JetProperty) {
-                final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) state.getBindingContext().get(BindingContext.VARIABLE, (JetProperty) declaration);
+                final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) state.getBindingContext().get(BindingContext.VARIABLE, declaration);
                 if (state.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor)) {
                     final JetExpression initializer = ((JetProperty) declaration).getInitializer();
                     if (initializer != null) {
+                        CompileTimeConstant<?> compileTimeValue = state.getBindingContext().get(BindingContext.COMPILE_TIME_VALUE, initializer);
+                        if(compileTimeValue != null) {
+                            assert compileTimeValue != null;
+                            Object value = compileTimeValue.getValue();
+                            Type type = state.getTypeMapper().mapType(propertyDescriptor.getOutType());
+                            if(JetTypeMapper.isPrimitive(type)) {
+                                if( !propertyDescriptor.getOutType().isNullable() && value instanceof Number) {
+                                    if(type == Type.INT_TYPE && ((Number)value).intValue() == 0)
+                                        continue;
+                                    if(type == Type.BYTE_TYPE && ((Number)value).byteValue() == 0)
+                                        continue;
+                                    if(type == Type.LONG_TYPE && ((Number)value).longValue() == 0L)
+                                        continue;
+                                    if(type == Type.SHORT_TYPE && ((Number)value).shortValue() == 0)
+                                        continue;
+                                    if(type == Type.DOUBLE_TYPE && ((Number)value).doubleValue() == 0d)
+                                        continue;
+                                    if(type == Type.FLOAT_TYPE && ((Number)value).byteValue() == 0f)
+                                        continue;
+                                }
+                                if(type == Type.BOOLEAN_TYPE && value instanceof Boolean && !((Boolean)value))
+                                    continue;
+                                if(type == Type.CHAR_TYPE && value instanceof Character && ((Character)value) == 0)
+                                    continue;
+                            }
+                            else {
+                                if(value == null)
+                                    continue;
+                            }
+                        }
                         iv.load(0, JetTypeMapper.TYPE_OBJECT);
-                        codegen.genToJVMStack(initializer);
+                        Type type = codegen.expressionType(initializer);
+                        if(propertyDescriptor.getOutType().isNullable())
+                            type = state.getTypeMapper().boxType(type);
+                        codegen.gen(initializer, type);
                         codegen.intermediateValueForProperty(propertyDescriptor, false, false).store(iv);
                     }
 
@@ -436,7 +469,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 propertyCodegen.gen((JetProperty) declaration);
             }
             else if (declaration instanceof JetFunction) {
-                if (!overriden.contains(state.getBindingContext().get(BindingContext.FUNCTION, (JetNamedFunction) declaration))) {
+                if (!overriden.contains(state.getBindingContext().get(BindingContext.FUNCTION, declaration))) {
                     functionCodegen.gen((JetNamedFunction) declaration);
                 }
             }

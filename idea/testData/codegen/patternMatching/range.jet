@@ -1,4 +1,11 @@
-fun isDigit(a: Int) = when(a) {
-  in 0..9 => "digit"
-  else => "something"
+fun isDigit(a: Int) : String {
+    val aa = java.util.ArrayList<Int> ()
+    aa.add(239)
+
+    return when(a) {
+      in aa => "array list"
+      in 0..9 => "digit"
+     !in 0..100 => "not small"
+      else => "something"
+    }
 }

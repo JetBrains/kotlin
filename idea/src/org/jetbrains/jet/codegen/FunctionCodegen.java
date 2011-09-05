@@ -8,7 +8,7 @@ import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.types.JetTypeImpl;
+import org.jetbrains.jet.lang.types.TypeUtils;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -66,6 +66,8 @@ public class FunctionCodegen {
         iv.invokevirtual(state.getTypeMapper().jvmName((ClassDescriptor) owner.getContextDescriptor(), OwnerKind.IMPLEMENTATION), function.getName(), function.getDescriptor());
         if(JetTypeMapper.isPrimitive(function.getReturnType()) && !JetTypeMapper.isPrimitive(overriden.getReturnType()))
             iv.valueOf(function.getReturnType());
+        if(function.getReturnType() == Type.VOID_TYPE)
+            iv.aconst(null);
         iv.areturn(overriden.getReturnType());
         mv.visitMaxs(0, 0);
         mv.visitEnd();
@@ -133,8 +135,8 @@ public class FunctionCodegen {
             if(overriddenFunctions.size() > 0) {
                 for (FunctionDescriptor overriddenFunction : overriddenFunctions) {
                     // TODO should we check params here as well?
-                    if(!JetTypeImpl.equalTypes(overriddenFunction.getReturnType(), functionDescriptor.getReturnType(), JetTypeImpl.EMPTY_AXIOMS)) {
-                        generateBridgeMethod(jvmSignature, state.getTypeMapper().mapSignature(overriddenFunction.getName(), overriddenFunction));
+                    if(!TypeUtils.equalClasses(overriddenFunction.getOriginal().getReturnType(), functionDescriptor.getReturnType())) {
+                        generateBridgeMethod(jvmSignature, state.getTypeMapper().mapSignature(overriddenFunction.getName(), overriddenFunction.getOriginal()));
                     }
                 }
             }

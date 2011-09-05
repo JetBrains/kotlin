@@ -42,7 +42,7 @@ fun Any?.toString() : String// = this === other
 
 class Iterator<out T> {
   fun next() : T
-  abstract val hasNext : Boolean
+  abstract fun hasNext() : Boolean
 }
 
 class Iterable<out T> {

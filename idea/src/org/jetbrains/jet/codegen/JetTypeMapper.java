@@ -25,6 +25,7 @@ public class JetTypeMapper {
     public static final Type TYPE_TYPEINFO = Type.getType(TypeInfo.class);
     public static final Type TYPE_JET_OBJECT = Type.getType(JetObject.class);
     public static final Type TYPE_CLASS = Type.getType(Class.class);
+    public static final Type TYPE_NOTHING = Type.getObjectType("jet/Nothing");
 
     private final JetStandardLibrary standardLibrary;
     private final BindingContext bindingContext;
@@ -273,13 +274,24 @@ public class JetTypeMapper {
         return owner;
     }
 
-    public Type mapType(final JetType jetType) {
+    @NotNull public Type mapReturnType(@NotNull final JetType jetType, OwnerKind kind) {
+        if (jetType.equals(JetStandardClasses.getUnitType()) || jetType.equals(JetStandardClasses.getNothingType())) {
+            return Type.VOID_TYPE;
+        }
+        return mapType(jetType, kind);
+    }
+
+    @NotNull public Type mapReturnType(final JetType jetType) {
+        return mapReturnType(jetType, OwnerKind.INTERFACE);
+    }
+
+    @NotNull public Type mapType(final JetType jetType) {
         return mapType(jetType, OwnerKind.INTERFACE);
     }
 
-    public Type mapType(@NotNull final JetType jetType, OwnerKind kind) {
-        if (jetType.equals(JetStandardClasses.getUnitType()) || jetType.equals(JetStandardClasses.getNothingType())) {
-            return Type.VOID_TYPE;
+    @NotNull public Type mapType(@NotNull final JetType jetType, OwnerKind kind) {
+        if (jetType.equals(JetStandardClasses.getNothingType()) || jetType.equals(JetStandardClasses.getNullableNothingType())) {
+            return TYPE_NOTHING;
         }
         if (jetType.equals(standardLibrary.getIntType())) {
             return Type.INT_TYPE;
@@ -410,10 +422,10 @@ public class JetTypeMapper {
         if (returnTypeRef == null) {
             final FunctionDescriptor functionDescriptor = bindingContext.get(BindingContext.FUNCTION, f);
             final JetType type = functionDescriptor.getReturnType();
-            returnType = mapType(type);
+            returnType = mapReturnType(type);
         }
         else {
-            returnType = mapType(bindingContext.get(BindingContext.TYPE, returnTypeRef));
+            returnType = mapReturnType(bindingContext.get(BindingContext.TYPE, returnTypeRef));
         }
         return new Method(f.getName(), returnType, parameterTypes.toArray(new Type[parameterTypes.size()]));
     }
@@ -470,7 +482,7 @@ public class JetTypeMapper {
         for (ValueParameterDescriptor parameter : parameters) {
             parameterTypes.add(mapType(parameter.getOutType()));
         }
-        Type returnType = mapType(f.getReturnType());
+        Type returnType = mapReturnType(f.getReturnType());
         return new Method(name, returnType, parameterTypes.toArray(new Type[parameterTypes.size()]));
     }
 

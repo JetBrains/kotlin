@@ -156,8 +156,26 @@ public abstract class StackValue {
     protected void coerce(Type type, InstructionAdapter v) {
         if (type.equals(this.type)) return;
 
-        if (type.getSort() == Type.OBJECT && this.type.getSort() == Type.OBJECT) {
-        //    v.checkcast(type);
+        if (type.getSort() == Type.VOID && this.type.getSort() != Type.VOID) {
+            if(this.type.getSize() == 1)
+                v.pop();
+            else
+                v.pop2();
+        }
+        else if (type.getSort() != Type.VOID && this.type.getSort() == Type.VOID) {
+            if(type.getSort() == Type.OBJECT)
+                v.visitFieldInsn(Opcodes.GETSTATIC, "jet/Tuple0", "INSTANCE", "Ljet/Tuple0;");
+            else if(type == Type.LONG_TYPE)
+                v.lconst(0);
+            else if(type == Type.FLOAT_TYPE)
+                v.fconst(0);
+            else if(type == Type.DOUBLE_TYPE)
+                v.dconst(0);
+            else
+                v.iconst(0);
+        }
+        else if (type.getSort() == Type.OBJECT && this.type.getSort() == Type.OBJECT) {
+            //    v.checkcast(type);
         }
         else if (type.getSort() == Type.OBJECT) {
             box(this.type, type, v);
@@ -201,6 +219,7 @@ public abstract class StackValue {
 
         @Override
         public void put(Type type, InstructionAdapter v) {
+            coerce(type, v);
         }
     }
 
@@ -256,14 +275,26 @@ public abstract class StackValue {
 
         @Override
         public void put(Type type, InstructionAdapter v) {
-            v.aconst(value);
+            if(value instanceof Integer)
+                v.iconst((Integer) value);
+            else
+            if(value instanceof Long)
+                v.lconst((Long) value);
+            else
+            if(value instanceof Float)
+                v.fconst((Float) value);
+            else
+            if(value instanceof Double)
+                v.dconst((Double) value);
+            else
+                v.aconst(value);
             coerce(type, v);
         }
 
         @Override
         public void condJump(Label label, boolean jumpIfFalse, InstructionAdapter v) {
             if (value instanceof Boolean) {
-                boolean boolValue = ((Boolean) value).booleanValue();
+                boolean boolValue = (Boolean) value;
                 if (boolValue ^ jumpIfFalse) {
                     v.goTo(label);
                 }

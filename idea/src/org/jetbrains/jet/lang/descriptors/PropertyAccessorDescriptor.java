@@ -13,6 +13,7 @@ import java.util.List;
 public abstract class PropertyAccessorDescriptor extends DeclarationDescriptorImpl implements FunctionDescriptor, MemberDescriptor {
 
     private final boolean hasBody;
+    private final boolean isDefault;
     private final MemberModifiers modifiers;
 
     protected PropertyAccessorDescriptor(
@@ -20,14 +21,20 @@ public abstract class PropertyAccessorDescriptor extends DeclarationDescriptorIm
             @NotNull PropertyDescriptor correspondingProperty,
             @NotNull List<AnnotationDescriptor> annotations,
             @NotNull String name,
-            boolean hasBody) {
+            boolean hasBody,
+            boolean isDefault) {
         super(correspondingProperty.getContainingDeclaration(), annotations, name);
         this.modifiers = modifiers;
         this.hasBody = hasBody;
+        this.isDefault = isDefault;
     }
 
     public boolean hasBody() {
         return hasBody;
+    }
+
+    public boolean isDefault() {
+        return isDefault;
     }
 
     @NotNull
