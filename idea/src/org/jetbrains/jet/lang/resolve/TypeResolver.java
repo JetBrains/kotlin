@@ -56,64 +56,68 @@ public class TypeResolver {
                     }
 
                     ClassifierDescriptor classifierDescriptor = resolveClass(scope, type);
-                    if (classifierDescriptor != null) {
-                        if (classifierDescriptor instanceof TypeParameterDescriptor) {
-                            TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) classifierDescriptor;
+                    if (classifierDescriptor == null) {
+                        resolveTypeProjections(scope, ErrorUtils.createErrorType("No type").getConstructor(), type.getTypeArguments());
+                        return;
+                    }
+                    if (classifierDescriptor instanceof TypeParameterDescriptor) {
+                        TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) classifierDescriptor;
 
-                            trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, typeParameterDescriptor);
+                        trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, typeParameterDescriptor);
 
+                        result[0] = new JetTypeImpl(
+                                annotations,
+                                typeParameterDescriptor.getTypeConstructor(),
+                                nullable || TypeUtils.hasNullableBound(typeParameterDescriptor),
+                                Collections.<TypeProjection>emptyList(),
+                                getScopeForTypeParameter(typeParameterDescriptor)
+                        );
+
+                        resolveTypeProjections(scope, ErrorUtils.createErrorType("No type").getConstructor(), type.getTypeArguments());
+                    }
+                    else if (classifierDescriptor instanceof ClassDescriptor) {
+                        ClassDescriptor classDescriptor = (ClassDescriptor) classifierDescriptor;
+
+                        trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, classifierDescriptor);
+                        TypeConstructor typeConstructor = classifierDescriptor.getTypeConstructor();
+                        List<TypeProjection> arguments = resolveTypeProjections(scope, typeConstructor, type.getTypeArguments());
+                        List<TypeParameterDescriptor> parameters = typeConstructor.getParameters();
+                        int expectedArgumentCount = parameters.size();
+                        int actualArgumentCount = arguments.size();
+                        if (ErrorUtils.isError(typeConstructor)) {
                             result[0] = new JetTypeImpl(
                                     annotations,
-                                    typeParameterDescriptor.getTypeConstructor(),
-                                    nullable || TypeUtils.hasNullableBound(typeParameterDescriptor),
-                                    Collections.<TypeProjection>emptyList(),
-                                    getScopeForTypeParameter(typeParameterDescriptor)
+                                    typeConstructor,
+                                    nullable,
+                                    arguments, // TODO : review
+                                    classDescriptor.getMemberScope(Collections.<TypeProjection>emptyList())
                             );
                         }
-                        else if (classifierDescriptor instanceof ClassDescriptor) {
-                            ClassDescriptor classDescriptor = (ClassDescriptor) classifierDescriptor;
-
-                            trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, classifierDescriptor);
-                            TypeConstructor typeConstructor = classifierDescriptor.getTypeConstructor();
-                            List<TypeProjection> arguments = resolveTypeProjections(scope, typeConstructor, type.getTypeArguments());
-                            List<TypeParameterDescriptor> parameters = typeConstructor.getParameters();
-                            int expectedArgumentCount = parameters.size();
-                            int actualArgumentCount = arguments.size();
-                            if (ErrorUtils.isError(typeConstructor)) {
+                        else {
+                            if (actualArgumentCount != expectedArgumentCount) {
+                                String errorMessage = (expectedArgumentCount == 0 ? "No" : expectedArgumentCount) + " type arguments expected";
+                                if (actualArgumentCount == 0) {
+                                    trace.getErrorHandler().genericError(type.getNode(), errorMessage);
+                                } else {
+                                    trace.getErrorHandler().genericError(type.getTypeArgumentList().getNode(), errorMessage);
+                                }
+                            } else {
                                 result[0] = new JetTypeImpl(
                                         annotations,
                                         typeConstructor,
                                         nullable,
-                                        arguments, // TODO : review
-                                        classDescriptor.getMemberScope(Collections.<TypeProjection>emptyList())
+                                        arguments,
+                                        classDescriptor.getMemberScope(arguments)
                                 );
-                            }
-                            else {
-                                if (actualArgumentCount != expectedArgumentCount) {
-                                    String errorMessage = (expectedArgumentCount == 0 ? "No" : expectedArgumentCount) + " type arguments expected";
-                                    if (actualArgumentCount == 0) {
-                                        trace.getErrorHandler().genericError(type.getNode(), errorMessage);
-                                    } else {
-                                        trace.getErrorHandler().genericError(type.getTypeArgumentList().getNode(), errorMessage);
-                                    }
-                                } else {
-                                    result[0] = new JetTypeImpl(
-                                            annotations,
-                                            typeConstructor,
-                                            nullable,
-                                            arguments,
-                                            classDescriptor.getMemberScope(arguments)
-                                    );
-                                    if (checkBounds) {
-                                        TypeSubstitutor substitutor = TypeSubstitutor.create(result[0]);
-                                        for (int i = 0, parametersSize = parameters.size(); i < parametersSize; i++) {
-                                            TypeParameterDescriptor parameter = parameters.get(i);
-                                            JetType argument = arguments.get(i).getType();
-                                            JetTypeReference typeReference = type.getTypeArguments().get(i).getTypeReference();
+                                if (checkBounds) {
+                                    TypeSubstitutor substitutor = TypeSubstitutor.create(result[0]);
+                                    for (int i = 0, parametersSize = parameters.size(); i < parametersSize; i++) {
+                                        TypeParameterDescriptor parameter = parameters.get(i);
+                                        JetType argument = arguments.get(i).getType();
+                                        JetTypeReference typeReference = type.getTypeArguments().get(i).getTypeReference();
 
-                                            if (typeReference != null) {
-                                                semanticServices.getClassDescriptorResolver(trace).checkBounds(typeReference, argument, parameter, substitutor);
-                                            }
+                                        if (typeReference != null) {
+                                            semanticServices.getClassDescriptorResolver(trace).checkBounds(typeReference, argument, parameter, substitutor);
                                         }
                                     }
                                 }

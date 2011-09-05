@@ -8,6 +8,10 @@ namespace a {
 
 }
 
+class Foo<T>() {
+    val x : T<Int>
+}
+
 namespace a {
     import java.util.*
 

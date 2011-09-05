@@ -325,6 +325,8 @@ public class ClassDescriptorResolver {
                 continue;
             }
             TypeParameterDescriptor typeParameterDescriptor = parameterByName.get(referencedName);
+            JetTypeReference boundTypeReference = constraint.getBoundTypeReference();
+            JetType bound = boundTypeReference != null ? resolveAndCheckUpperBoundType(boundTypeReference, scope, constraint.isClassObjectContraint()) : null;
             if (typeParameterDescriptor == null) {
                 // To tell the user that we look only for locally defined type parameters
                 ClassifierDescriptor classifier = scope.getClassifier(referencedName);
@@ -338,9 +340,7 @@ public class ClassDescriptorResolver {
             }
             else {
                 trace.record(BindingContext.REFERENCE_TARGET, subjectTypeParameterName, typeParameterDescriptor);
-                JetTypeReference boundTypeReference = constraint.getBoundTypeReference();
-                if (boundTypeReference != null) {
-                    JetType bound = resolveAndCheckUpperBoundType(boundTypeReference, scope, constraint.isClassObjectContraint());
+                if (bound != null) {
                     if (constraint.isClassObjectContraint()) {
                         typeParameterDescriptor.addClassObjectBound(bound);
                     }
