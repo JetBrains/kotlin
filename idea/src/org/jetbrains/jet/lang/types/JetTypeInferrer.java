@@ -2219,31 +2219,29 @@ public class JetTypeInferrer {
                 String name = "equals";
                 if (right != null) {
                     JetType leftType = getType(left, context.replaceScope(context.scope));
-                    if (leftType != null) {
-                        JetType rightType = getType(right, context.replaceScope(context.scope));
-                        if (rightType != null) {
-                            OverloadResolutionResult<FunctionDescriptor> resolutionResult = context.services.callResolver.resolveExactSignature(
-                                    context.scope, leftType, "equals",
-                                    Collections.singletonList(JetStandardClasses.getNullableAnyType()));
-                            if (resolutionResult.isSuccess()) {
-                                FunctionDescriptor equals = resolutionResult.getDescriptor();
-                                context.trace.record(REFERENCE_TARGET, operationSign, equals);
-                                if (ensureBooleanResult(operationSign, name, equals.getReturnType(), context)) {
-                                    ensureNonemptyIntersectionOfOperandTypes(expression, context);
-                                }
+                    if (leftType == null) {
+                        leftType = ErrorUtils.createErrorType("No type for " + left.getText());
+                    }
+                    OverloadResolutionResult<FunctionDescriptor> resolutionResult = context.services.callResolver.resolveExactSignature(
+                            context.scope, leftType, "equals",
+                            Collections.singletonList(JetStandardClasses.getNullableAnyType()));
+                    if (resolutionResult.isSuccess()) {
+                        FunctionDescriptor equals = resolutionResult.getDescriptor();
+                        context.trace.record(REFERENCE_TARGET, operationSign, equals);
+                        if (ensureBooleanResult(operationSign, name, equals.getReturnType(), context)) {
+                            ensureNonemptyIntersectionOfOperandTypes(expression, context);
+                        }
+                    }
+                    else {
+                        if (resolutionResult.isAmbiguity()) {
+                            StringBuilder stringBuilder = new StringBuilder();
+                            for (FunctionDescriptor functionDescriptor : resolutionResult.getDescriptors()) {
+                                stringBuilder.append(DescriptorRenderer.TEXT.render(functionDescriptor)).append(" ");
                             }
-                            else {
-                                if (resolutionResult.isAmbiguity()) {
-                                    StringBuilder stringBuilder = new StringBuilder();
-                                    for (FunctionDescriptor functionDescriptor : resolutionResult.getDescriptors()) {
-                                        stringBuilder.append(DescriptorRenderer.TEXT.render(functionDescriptor)).append(" ");
-                                    }
-                                    context.trace.getErrorHandler().genericError(operationSign.getNode(), "Ambiguous function: " + stringBuilder);
-                                }
-                                else {
-                                    context.trace.getErrorHandler().genericError(operationSign.getNode(), "No method 'equals(Any?) : Boolean' available");
-                                }
-                            }
+                            context.trace.getErrorHandler().genericError(operationSign.getNode(), "Ambiguous function: " + stringBuilder);
+                        }
+                        else {
+                            context.trace.getErrorHandler().genericError(operationSign.getNode(), "No method 'equals(Any?) : Boolean' available");
                         }
                     }
                 }
