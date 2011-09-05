@@ -47,6 +47,12 @@ public class PatternMatchingTest extends CodegenTestCase {
         assertEquals("something", foo.invoke(null, 19));
     }
 
+    public void testIs() throws Exception {
+        loadFile();
+        blackBox();
+        System.out.println(generateToText());
+    }
+
     public void testRange() throws Exception {
         loadFile();
         System.out.println(generateToText());

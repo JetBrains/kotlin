@@ -4,6 +4,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import jet.JetObject;
 import jet.typeinfo.TypeInfo;
+import jet.typeinfo.TypeInfoProjection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
@@ -23,6 +24,7 @@ import java.util.*;
 public class JetTypeMapper {
     public static final Type TYPE_OBJECT = Type.getObjectType("java/lang/Object");
     public static final Type TYPE_TYPEINFO = Type.getType(TypeInfo.class);
+    public static final Type TYPE_TYPEINFOPROJECTION = Type.getType(TypeInfoProjection.class);
     public static final Type TYPE_JET_OBJECT = Type.getType(JetObject.class);
     public static final Type TYPE_CLASS = Type.getType(Class.class);
     public static final Type TYPE_NOTHING = Type.getObjectType("jet/Nothing");
