@@ -275,7 +275,19 @@ public abstract class StackValue {
 
         @Override
         public void put(Type type, InstructionAdapter v) {
-            v.aconst(value);
+            if(value instanceof Integer)
+                v.iconst((Integer) value);
+            else
+            if(value instanceof Long)
+                v.lconst((Long) value);
+            else
+            if(value instanceof Float)
+                v.fconst((Float) value);
+            else
+            if(value instanceof Double)
+                v.dconst((Double) value);
+            else
+                v.aconst(value);
             coerce(type, v);
         }
 

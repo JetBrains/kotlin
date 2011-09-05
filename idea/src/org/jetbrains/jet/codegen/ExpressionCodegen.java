@@ -809,7 +809,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         v.visitMethodInsn(isStatic ? Opcodes.INVOKESTATIC : isInterface ? Opcodes.INVOKEINTERFACE : Opcodes.INVOKEVIRTUAL, owner, functionDescriptor.getName(), typeMapper.mapSignature(functionDescriptor.getName(),functionDescriptor).getDescriptor());
         StackValue.onStack(typeMapper.mapType(functionDescriptor.getReturnType())).coerce(type, v);
     }
-    
+
     public StackValue intermediateValueForProperty(PropertyDescriptor propertyDescriptor, final boolean forceField, boolean forceInterface) {
         DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
         boolean isStatic = containingDeclaration instanceof NamespaceDescriptorImpl;
@@ -1990,11 +1990,42 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                                              @Nullable Label nextEntry) {
         StackValue conditionValue;
         if (condition instanceof JetWhenConditionInRange) {
-            JetExpression range = ((JetWhenConditionInRange) condition).getRangeExpression();
-            gen(range, RANGE_TYPE);
-            new StackValue.Local(subjectLocal, subjectType).put(INTEGER_TYPE, v);
-            v.invokeinterface(CLASS_RANGE, "contains", "(Ljava/lang/Comparable;)Z");
-            conditionValue = new StackValue.OnStack(Type.BOOLEAN_TYPE);
+            JetWhenConditionInRange conditionInRange = (JetWhenConditionInRange) condition;
+            JetExpression rangeExpression = conditionInRange.getRangeExpression();
+            if(isIntRangeExpr(rangeExpression)) {
+                v.iconst(1);
+                //noinspection ConstantConditions
+                new StackValue.Local(subjectLocal, subjectType).put(Type.INT_TYPE, v);
+                JetBinaryExpression binaryExpression = (JetBinaryExpression) rangeExpression;
+                gen(binaryExpression.getLeft(), Type.INT_TYPE);
+                Label lok = new Label();
+                v.ificmpge(lok);
+                v.pop();
+                v.iconst(0);
+                v.mark(lok);
+
+                v.iconst(1);
+                new StackValue.Local(subjectLocal, subjectType).put(Type.INT_TYPE, v);
+                gen(binaryExpression.getRight(), Type.INT_TYPE);
+                Label rok = new Label();
+                v.ificmple(rok);
+                v.pop();
+                v.iconst(0);
+                v.mark(rok);
+
+                v.and(Type.INT_TYPE);
+                if(conditionInRange.getOperationReference().getReferencedNameElementType() == JetTokens.NOT_IN) {
+                    v.iconst(1);
+                    v.xor(Type.INT_TYPE);
+                }
+            }
+            else {
+                FunctionDescriptor op = (FunctionDescriptor) bindingContext.get(BindingContext.REFERENCE_TARGET, conditionInRange.getOperationReference());
+                genToJVMStack(rangeExpression);
+                new StackValue.Local(subjectLocal, subjectType).put(JetTypeMapper.TYPE_OBJECT, v);
+                invokeFunctionNoParams(op, Type.BOOLEAN_TYPE, v);
+            }
+            return StackValue.onStack(Type.BOOLEAN_TYPE);
         }
         else if (condition instanceof JetWhenConditionIsPattern) {
             JetWhenConditionIsPattern patternCondition = (JetWhenConditionIsPattern) condition;
@@ -2030,6 +2061,20 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             throw new UnsupportedOperationException("unsupported kind of when condition");
         }
         return conditionValue;
+    }
+
+    private boolean isIntRangeExpr(JetExpression rangeExpression) {
+        if(rangeExpression instanceof JetBinaryExpression) {
+            JetBinaryExpression binaryExpression = (JetBinaryExpression) rangeExpression;
+            if (binaryExpression.getOperationReference().getReferencedNameElementType() == JetTokens.RANGE) {
+                JetType jetType = bindingContext.get(BindingContext.EXPRESSION_TYPE, rangeExpression);
+                final DeclarationDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
+                if (isClass(descriptor, "IntRange")) {       // TODO IntRange subclasses
+                    return true;
+                }
+            }
+        }
+        return false ;
     }
 
     @Override
