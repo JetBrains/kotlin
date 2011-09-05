@@ -1155,6 +1155,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         else if (opToken == JetTokens.ELVIS) {
             return generateElvis(expression);
         }
+        else if(opToken == JetTokens.IN_KEYWORD || opToken == JetTokens.NOT_IN) {
+            return generateIn (expression);
+        }
         else {
             DeclarationDescriptor op = bindingContext.get(BindingContext.REFERENCE_TARGET, expression.getOperationReference());
             final Callable callable = resolveToCallable(op);
@@ -1170,6 +1173,64 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 callableMethod.invoke(v);
                 return  returnValueAsStackValue((FunctionDescriptor) op, callableMethod.getSignature().getReturnType());
             }
+        }
+    }
+
+    private StackValue generateIn(JetBinaryExpression expression) {
+        JetExpression expr = expression.getLeft();
+        StackValue leftValue = gen(expr);
+        if(isIntRangeExpr(expression.getRight())) {
+            JetBinaryExpression rangeExpression = (JetBinaryExpression) expression.getRight();
+            boolean inverted = expression.getOperationReference().getReferencedNameElementType() == JetTokens.NOT_IN;
+            getInIntTest(leftValue, rangeExpression, inverted);
+        }
+        else {
+            leftValue.put(JetTypeMapper.TYPE_OBJECT, v);
+            genToJVMStack(expression.getRight());
+            v.swap();
+            FunctionDescriptor op = (FunctionDescriptor) bindingContext.get(BindingContext.REFERENCE_TARGET, expression.getOperationReference());
+            invokeFunctionNoParams(op, Type.BOOLEAN_TYPE, v);
+        }
+        return StackValue.onStack(Type.BOOLEAN_TYPE);
+    }
+
+    private void getInIntTest(StackValue leftValue, JetBinaryExpression rangeExpression, boolean inverted) {
+        v.iconst(1);
+        // 1
+        leftValue.put(Type.INT_TYPE, v);
+        // 1 l
+        v.dup2();
+        // 1 l 1 l
+
+        //noinspection ConstantConditions
+        gen(rangeExpression.getLeft(), Type.INT_TYPE);
+        // 1 l 1 l r
+        Label lok = new Label();
+        v.ificmpge(lok);
+        // 1 l 1
+        v.pop();
+        v.iconst(0);
+        v.mark(lok);
+        // 1 l c
+        v.dupX2();
+        // c 1 l c
+        v.pop();
+        // c 1 l
+
+        gen(rangeExpression.getRight(), Type.INT_TYPE);
+        // c 1 l r
+        Label rok = new Label();
+        v.ificmple(rok);
+        // c 1
+        v.pop();
+        v.iconst(0);
+        v.mark(rok);
+        // c c
+
+        v.and(Type.INT_TYPE);
+        if(inverted) {
+            v.iconst(1);
+            v.xor(Type.INT_TYPE);
         }
     }
 
@@ -1986,38 +2047,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         return StackValue.onStack(expressionType(expression));
     }
 
-    private StackValue generateWhenCondition(Type subjectType, int subjectLocal, JetWhenCondition condition,
-                                             @Nullable Label nextEntry) {
+    private StackValue generateWhenCondition(Type subjectType, int subjectLocal, JetWhenCondition condition, @Nullable Label nextEntry) {
         StackValue conditionValue;
         if (condition instanceof JetWhenConditionInRange) {
             JetWhenConditionInRange conditionInRange = (JetWhenConditionInRange) condition;
             JetExpression rangeExpression = conditionInRange.getRangeExpression();
             if(isIntRangeExpr(rangeExpression)) {
-                v.iconst(1);
-                //noinspection ConstantConditions
-                new StackValue.Local(subjectLocal, subjectType).put(Type.INT_TYPE, v);
-                JetBinaryExpression binaryExpression = (JetBinaryExpression) rangeExpression;
-                gen(binaryExpression.getLeft(), Type.INT_TYPE);
-                Label lok = new Label();
-                v.ificmpge(lok);
-                v.pop();
-                v.iconst(0);
-                v.mark(lok);
-
-                v.iconst(1);
-                new StackValue.Local(subjectLocal, subjectType).put(Type.INT_TYPE, v);
-                gen(binaryExpression.getRight(), Type.INT_TYPE);
-                Label rok = new Label();
-                v.ificmple(rok);
-                v.pop();
-                v.iconst(0);
-                v.mark(rok);
-
-                v.and(Type.INT_TYPE);
-                if(conditionInRange.getOperationReference().getReferencedNameElementType() == JetTokens.NOT_IN) {
-                    v.iconst(1);
-                    v.xor(Type.INT_TYPE);
-                }
+                getInIntTest(new StackValue.Local(subjectLocal, subjectType), (JetBinaryExpression) rangeExpression, conditionInRange.getOperationReference().getReferencedNameElementType() == JetTokens.NOT_IN);
             }
             else {
                 FunctionDescriptor op = (FunctionDescriptor) bindingContext.get(BindingContext.REFERENCE_TARGET, conditionInRange.getOperationReference());

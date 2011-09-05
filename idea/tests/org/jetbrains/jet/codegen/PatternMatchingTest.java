@@ -35,6 +35,18 @@ public class PatternMatchingTest extends CodegenTestCase {
         assertEquals("something", foo.invoke(null, new Object()));
     }
 
+    public void testInrange() throws Exception {
+        loadFile();
+        System.out.println(generateToText());
+        Method foo = generateFunction();
+        assertEquals("array list", foo.invoke(null, 239));
+        assertEquals("digit", foo.invoke(null, 0));
+        assertEquals("digit", foo.invoke(null, 9));
+        assertEquals("digit", foo.invoke(null, 5));
+        assertEquals("not small", foo.invoke(null, 190));
+        assertEquals("something", foo.invoke(null, 19));
+    }
+
     public void testRange() throws Exception {
         loadFile();
         System.out.println(generateToText());
