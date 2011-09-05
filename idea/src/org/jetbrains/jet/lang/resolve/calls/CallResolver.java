@@ -565,7 +565,16 @@ public class CallResolver {
     @NotNull
     public OverloadResolutionResult<FunctionDescriptor> resolveExactSignature(@NotNull JetScope scope, @Nullable JetType receiverType, @NotNull String name, @NotNull List<JetType> parameterTypes) {
         List<FunctionDescriptor> result = findCandidatesByExactSignature(scope, receiverType, name, parameterTypes);
-        return listToOverloadResolutionResult(result);
+
+        BindingTraceContext trace = new BindingTraceContext();
+        TemporaryBindingTrace temporaryBindingTrace = TemporaryBindingTrace.create(trace);
+        Map<FunctionDescriptor, TemporaryBindingTrace> traces = Maps.newHashMap();
+        Map<FunctionDescriptor, FunctionDescriptor> candidates = Maps.newLinkedHashMap();
+        for (FunctionDescriptor functionDescriptor : result) {
+            candidates.put(functionDescriptor, functionDescriptor);
+            traces.put(functionDescriptor, temporaryBindingTrace);
+        }
+        return computeResultAndReportErrors(trace, TracingStrategy.EMPTY, candidates, Collections.<FunctionDescriptor>emptySet(), Collections.<FunctionDescriptor>emptySet(), traces);
     }
 
     private List<FunctionDescriptor> findCandidatesByExactSignature(JetScope scope, JetType receiverType, String name, List<JetType> parameterTypes) {
