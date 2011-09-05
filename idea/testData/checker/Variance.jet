@@ -1,4 +1,4 @@
-package variance
+namespace variance
 
 abstract class Consumer<in T> {}
 
@@ -32,9 +32,9 @@ fun <T> copy3(from : Array<out T>, to : Array<in T>) {}
 fun copy4(from : Array<out Number>, to : Array<in Int>) {}
 
 fun f(ints: Array<Int>, any: Array<Any>, numbers: Array<Number>) {
-    copy1<error>(ints, any)</error>
+    copy1(<error>ints</error>, any)
     copy2(ints, any) //ok
-    copy2<error>(ints, numbers)</error>
+    copy2(ints, <error>numbers</error>)
     copy3<Int>(ints, numbers)
     copy4(ints, numbers) //ok
 }

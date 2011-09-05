@@ -658,6 +658,15 @@ public class JetTypeInferrer {
             return resultDataFlowInfo;
         }
 
+        @NotNull
+        public final JetType safeGetType(@NotNull JetExpression expression, TypeInferenceContext context) {
+            JetType type = getType(expression, context);
+            if (type != null) {
+                return type;
+            }
+            return ErrorUtils.createErrorType("Type for " + expression.getText());
+        }
+
         @Nullable
         public final JetType getType(@NotNull JetExpression expression, TypeInferenceContext context) {
             if (context.trace.get(BindingContext.PROCESSED, expression)) {
@@ -2115,9 +2124,9 @@ public class JetTypeInferrer {
         @Override
         public JetType visitIsExpression(JetIsExpression expression, TypeInferenceContext contextWithExpectedType) {
             TypeInferenceContext context = contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE);
-            JetType knownType = getType(expression.getLeftHandSide(), context.replaceScope(context.scope));
+            JetType knownType = safeGetType(expression.getLeftHandSide(), context.replaceScope(context.scope));
             JetPattern pattern = expression.getPattern();
-            if (pattern != null && knownType != null) {
+            if (pattern != null) {
                 WritableScopeImpl scopeToExtend = newWritableScopeImpl(context.scope, context.trace).setDebugName("Scope extended in 'is'");
                 DataFlowInfo newDataFlowInfo = checkPatternType(pattern, knownType, scopeToExtend, context, context.services.getVariableDescriptorFromSimpleName(expression.getLeftHandSide(), context));
                 patternsToDataFlowInfo.put(pattern, newDataFlowInfo);
@@ -2218,10 +2227,7 @@ public class JetTypeInferrer {
             else if (equalsOperations.contains(operationType)) {
                 String name = "equals";
                 if (right != null) {
-                    JetType leftType = getType(left, context.replaceScope(context.scope));
-                    if (leftType == null) {
-                        leftType = ErrorUtils.createErrorType("No type for " + left.getText());
-                    }
+                    JetType leftType = safeGetType(left, context.replaceScope(context.scope));
                     OverloadResolutionResult<FunctionDescriptor> resolutionResult = context.services.callResolver.resolveExactSignature(
                             context.scope, leftType, "equals",
                             Collections.singletonList(JetStandardClasses.getNullableAnyType()));

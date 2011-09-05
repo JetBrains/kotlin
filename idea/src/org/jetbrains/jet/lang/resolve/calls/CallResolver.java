@@ -520,6 +520,7 @@ public class CallResolver {
     }
 
     private boolean checkValueArgumentTypes(JetScope scope, JetTypeInferrer.Services temporaryServices, Map<ValueArgument, ValueParameterDescriptor> argumentsToParameters, Flag dirty, Function<ValueParameterDescriptor, ValueParameterDescriptor> parameterMap) {
+        boolean result = true;
         for (Map.Entry<ValueArgument, ValueParameterDescriptor> entry : argumentsToParameters.entrySet()) {
             ValueArgument valueArgument = entry.getKey();
             ValueParameterDescriptor valueParameterDescriptor = entry.getValue();
@@ -536,11 +537,11 @@ public class CallResolver {
                     dirty.setValue(true);
                 }
                 else if (!semanticServices.getTypeChecker().isSubtypeOf(type, parameterType)) {
-                    return false;
+                    result = false;
                 }
             }
         }
-        return true;
+        return result;
     }
 
     public void checkGenericBoundsInAFunctionCall(List<JetTypeProjection> jetTypeArguments, List<JetType> typeArguments, CallableDescriptor functionDescriptor) {
