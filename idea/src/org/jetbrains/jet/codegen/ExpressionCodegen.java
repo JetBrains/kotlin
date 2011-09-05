@@ -5,7 +5,6 @@ import com.intellij.psi.*;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import gnu.trove.THashSet;
-import jet.Range;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethod;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
@@ -542,6 +541,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     @Override
     public StackValue visitFunctionLiteralExpression(JetFunctionLiteralExpression expression, StackValue receiver) {
         if (bindingContext.get(BindingContext.BLOCK, expression)) {
+            //noinspection ConstantConditions
             return generateBlock(expression.getFunctionLiteral().getBodyExpression().getStatements());
         }
         else {
@@ -810,7 +810,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
         boolean isStatic = containingDeclaration instanceof NamespaceDescriptorImpl;
         propertyDescriptor = propertyDescriptor.getOriginal();
-        final JetType outType = propertyDescriptor.getOutType();
         boolean isInsideClass = !forceInterface && containingDeclaration == contextType();
         Method getter;
         Method setter;
@@ -1288,15 +1287,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         return generateEqualsForExpressionsOnStack(opToken, leftType, rightType, leftJetType.isNullable(), rightJetType.isNullable());
     }
 
-    private StackValue genEqualsOnStack(IElementType opToken) {
-        v.invokevirtual("java/lang/Object", "equals", "(Ljava/lang/Object;)Z");
-        if(opToken == JetTokens.EXCLEQ || opToken == JetTokens.EXCLEQEQEQ) {
-            v.iconst(1);
-            v.xor(Type.INT_TYPE);
-        }
-        return StackValue.onStack(Type.BOOLEAN_TYPE);
-    }
-
     private StackValue genCmpWithNull(JetExpression exp, Type expType, IElementType opToken) {
         v.iconst(1);
         gen(exp, typeMapper.boxType(expType));
@@ -1457,6 +1447,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 value.dupReceiver(v, 0);                                        // receiver receiver
                 value.put(lhsType, v);                                          // receiver lhs
                 final IntrinsicMethod intrinsic = (IntrinsicMethod) callable;
+                //noinspection NullableProblems
                 intrinsic.generate(this, v, lhsType, expression, Arrays.asList(expression.getRight()), null);
                 value.store(v);
             }
@@ -1618,6 +1609,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 v.anew(type);
 
                 // TODO typechecker must verify that we're the outer class of the instance being created
+                //noinspection ConstantConditions
                 if (classDecl.getContainingDeclaration() instanceof ClassDescriptor) {
                     if(!receiver.type.equals(Type.VOID_TYPE)) {
                         // class object is in receiver
