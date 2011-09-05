@@ -18,10 +18,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
-import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
-import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstantResolver;
-import org.jetbrains.jet.lang.resolve.constants.ErrorValue;
-import org.jetbrains.jet.lang.resolve.constants.StringValue;
+import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.types.inference.ConstraintSystem;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
@@ -35,6 +32,17 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.*;
  * @author abreslav
  */
 public class JetTypeInferrer {
+    
+    private static final Set<String> numberConversions = new HashSet();
+
+    static {
+        numberConversions.add("dbl");
+        numberConversions.add("flt");
+        numberConversions.add("lng");
+        numberConversions.add("sht");
+        numberConversions.add("byt");
+        numberConversions.add("int");
+    }
 
     private static final JetType FORBIDDEN = new JetType() {
         @NotNull
@@ -2156,7 +2164,38 @@ public class JetTypeInferrer {
             // TODO : functions as values
             JetExpression selectorExpression = expression.getSelectorExpression();
             JetExpression receiverExpression = expression.getReceiverExpression();
+
             JetType receiverType = context.services.typeInferrerVisitorWithNamespaces.getType(receiverExpression, new TypeInferenceContext(context.trace, context.scope, false, context.dataFlowInfo, NO_EXPECTED_TYPE, NO_EXPECTED_TYPE));
+
+            if(selectorExpression instanceof JetSimpleNameExpression) {
+                CompileTimeConstant<?> compileTimeConstant = context.trace.getBindingContext().get(BindingContext.COMPILE_TIME_VALUE, receiverExpression);
+                CompileTimeConstant<?> expressionCompileTimeConstant = context.trace.getBindingContext().get(BindingContext.COMPILE_TIME_VALUE, expression);
+                if(expressionCompileTimeConstant == null && compileTimeConstant != null && compileTimeConstant.getValue() instanceof Number) {
+                    Number value = (Number) compileTimeConstant.getValue();
+                    String referencedName = ((JetSimpleNameExpression) selectorExpression).getReferencedName();
+                    if(numberConversions.contains(referencedName)) {
+                        if("dbl".equals(referencedName)) {
+                            context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, new DoubleValue(value.doubleValue()));
+                        }
+                        else if("flt".equals(referencedName)) {
+                            context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, new FloatValue(value.floatValue()));
+                        }
+                        else if("lng".equals(referencedName)) {
+                            context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, new LongValue(value.longValue()));
+                        }
+                        else if("sht".equals(referencedName)) {
+                            context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, new ShortValue(value.shortValue()));
+                        }
+                        else if("byt".equals(referencedName)) {
+                            context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, new ByteValue(value.byteValue()));
+                        }
+                        else if("byt".equals(referencedName)) {
+                            context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, new IntValue(value.intValue()));
+                        }
+                    }
+                }
+            }
+
             if (receiverType == null) return null;
 
             // Clean resolution: no autocasts

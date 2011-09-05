@@ -19,6 +19,8 @@ public interface AnnotationArgumentVisitor<R, D> {
 
     R visitDoubleValue(DoubleValue value, D data);
 
+    R visitFloatValue(FloatValue value, D data);
+
     R visitBooleanValue(BooleanValue value, D data);
 
     R visitCharValue(CharValue value, D data);
