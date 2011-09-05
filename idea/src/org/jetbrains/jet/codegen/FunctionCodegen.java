@@ -8,7 +8,7 @@ import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.types.JetTypeImpl;
+import org.jetbrains.jet.lang.types.TypeUtils;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -135,7 +135,7 @@ public class FunctionCodegen {
             if(overriddenFunctions.size() > 0) {
                 for (FunctionDescriptor overriddenFunction : overriddenFunctions) {
                     // TODO should we check params here as well?
-                    if(!JetTypeImpl.equalTypeClasses(overriddenFunction.getOriginal().getReturnType(), functionDescriptor.getReturnType())) {
+                    if(!TypeUtils.equalClasses(overriddenFunction.getOriginal().getReturnType(), functionDescriptor.getReturnType())) {
                         generateBridgeMethod(jvmSignature, state.getTypeMapper().mapSignature(overriddenFunction.getName(), overriddenFunction.getOriginal()));
                     }
                 }

@@ -3,10 +3,9 @@ package org.jetbrains.jet.lang.types;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotatedImpl;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.resolve.JetScope;
 
 import java.util.Collections;
@@ -112,11 +111,6 @@ public final class JetTypeImpl extends AnnotatedImpl implements JetType {
         result = 31 * result + (arguments != null ? arguments.hashCode() : 0);
         result = 31 * result + (nullable ? 1 : 0);
         return result;
-    }
-
-
-    public static boolean equalTypeClasses(@NotNull JetType type1, @NotNull JetType type2) {
-        return type1.getConstructor().getDeclarationDescriptor().getOriginal().equals(type2.getConstructor().getDeclarationDescriptor().getOriginal());
     }
 
     public static boolean equalTypes(@NotNull JetType type1, @NotNull JetType type2, @NotNull BiMap<TypeConstructor, TypeConstructor> equalityAxioms) {
