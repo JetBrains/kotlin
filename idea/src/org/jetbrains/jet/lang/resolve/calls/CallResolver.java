@@ -27,7 +27,6 @@ import static org.jetbrains.jet.lang.types.JetTypeInferrer.NO_EXPECTED_TYPE;
  */
 public class CallResolver {
 
-//    private final BindingTrace trace;
     private final TypeResolver typeResolver;
     private final JetTypeInferrer typeInferrer;
     private final JetSemanticServices semanticServices;
@@ -35,7 +34,6 @@ public class CallResolver {
     private final OverloadingConflictResolver overloadingConflictResolver;
 
     public CallResolver(JetSemanticServices semanticServices, BindingTrace trace, JetTypeInferrer typeInferrer) {
-//        this.trace = trace;
         this.typeInferrer = typeInferrer;
         this.typeResolver = new TypeResolver(semanticServices, trace, true);
         this.classDescriptorResolver = semanticServices.getClassDescriptorResolver(trace);
@@ -659,7 +657,9 @@ public class CallResolver {
                     iterator.remove();
                 }
             }
-            addConstrtuctors(scope, name, functions);
+            addConstructors(scope, name, functions);
+
+            addVariableAsFunction(scope, name, functions, false);
             return functions;
         }
 
@@ -667,7 +667,8 @@ public class CallResolver {
         @Override
         protected Collection<FunctionDescriptor> getMembersByName(@NotNull JetType receiverType, String name) {
             Set<FunctionDescriptor> members = Sets.newHashSet(receiverType.getMemberScope().getFunctionGroup(name).getFunctionDescriptors());
-            addConstrtuctors(receiverType.getMemberScope(), name, members);
+            addConstructors(receiverType.getMemberScope(), name, members);
+            addVariableAsFunction(receiverType.getMemberScope(), name, members, false);
             return members;
         }
 
@@ -681,6 +682,7 @@ public class CallResolver {
                     iterator.remove();
                 }
             }
+            addVariableAsFunction(scope, name, extensionFunctions, true);
             return extensionFunctions;
         }
 
@@ -690,7 +692,7 @@ public class CallResolver {
             return new ResolutionTask<FunctionDescriptor>(candidates, receiverType, call);
         }
 
-        private void addConstrtuctors(JetScope scope, String name, Collection<FunctionDescriptor> functions) {
+        private void addConstructors(JetScope scope, String name, Collection<FunctionDescriptor> functions) {
             ClassifierDescriptor classifier = scope.getClassifier(name);
             if (classifier instanceof ClassDescriptor && !ErrorUtils.isError(classifier.getTypeConstructor())) {
                 ClassDescriptor classDescriptor = (ClassDescriptor) classifier;
@@ -698,7 +700,20 @@ public class CallResolver {
             }
         }
 
+        private void addVariableAsFunction(JetScope scope, String name, Set<FunctionDescriptor> functions, boolean receiverNeeded) {
+            VariableDescriptor variable = scope.getVariable(name);
+            if (variable != null && variable.getReceiverType() == null) {
+                JetType outType = variable.getOutType();
+                if (outType != null && JetStandardClasses.isFunctionType(outType)) {
+                    VariableAsFunctionDescriptor functionDescriptor = VariableAsFunctionDescriptor.create(variable);
+                    if ((functionDescriptor.getReceiverType() != null) == receiverNeeded) {
+                        functions.add(functionDescriptor);
+                    }
+                }
+            }
+        }
     };
+
 
     private static TaskPrioritizer<VariableDescriptor> PROPERTY_TASK_PRIORITIZER = new TaskPrioritizer<VariableDescriptor>() {
 

@@ -194,8 +194,6 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     @Override
     @NotNull
     public FunctionGroup getFunctionGroup(@NotNull String name) {
-        addVariablesAsFunctions();
-
         WritableFunctionGroup result = new WritableFunctionGroup(name);
         
         FunctionGroup functionGroup = getFunctionGroups().get(name);
@@ -203,12 +201,6 @@ public class WritableScopeImpl extends WritableScopeWithImports {
             result.addAllFunctions(functionGroup);
         }
         
-//        ClassifierDescriptor classifier = getClassifier(name);
-//        if (classifier instanceof ClassDescriptor) {
-//            ClassDescriptor classDescriptor = (ClassDescriptor) classifier;
-//            result.addAllFunctions(classDescriptor.getConstructors());
-//        }
-
         if (thisType != null) {
             result.addAllFunctions(getThisType().getMemberScope().getFunctionGroup(name));
         }
@@ -218,17 +210,6 @@ public class WritableScopeImpl extends WritableScopeWithImports {
         result.addAllFunctions(super.getFunctionGroup(name));
 
         return result;
-    }
-
-    private void addVariablesAsFunctions() {
-        List<VariableDescriptor> variableDescriptors = getVariableDescriptors();
-        this.variableDescriptors = null;
-        for (VariableDescriptor variableDescriptor : variableDescriptors) {
-            JetType outType = variableDescriptor.getOutType();
-            if (outType != null && JetStandardClasses.isFunctionType(outType)) {
-                addFunctionDescriptor(VariableAsFunctionDescriptor.create(variableDescriptor));
-            }
-        }
     }
 
     @Override
