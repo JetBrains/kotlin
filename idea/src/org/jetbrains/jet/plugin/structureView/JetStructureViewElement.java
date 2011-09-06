@@ -3,7 +3,6 @@ package org.jetbrains.jet.plugin.structureView;
 import com.intellij.ide.structureView.StructureViewTreeElement;
 import com.intellij.ide.util.treeView.smartTree.TreeElement;
 import com.intellij.navigation.ItemPresentation;
-import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.NavigatablePsiElement;
@@ -70,10 +69,10 @@ public class JetStructureViewElement implements StructureViewTreeElement {
                         : null;
             }
 
-            @Override
-            public TextAttributesKey getTextAttributesKey() {
-                return null;  //To change body of implemented methods use File | Settings | File Templates.
-            }
+//            @Override
+//            public TextAttributesKey getTextAttributesKey() {
+//                return null;  //To change body of implemented methods use File | Settings | File Templates.
+//            }
         };
     }
 

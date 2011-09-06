@@ -81,20 +81,20 @@ public abstract class TypeInfo<T> implements JetObject {
     }
 
     public final boolean isInstance(Object obj) {
+        if (obj == null) return nullable;
+
         if (obj instanceof JetObject) {
             return ((JetObject) obj).getTypeInfo().isSubtypeOf(this);
         }
-        if (obj == null)
-            return nullable;
 
         return theClass.isAssignableFrom(obj.getClass());  // TODO
     }
 
     public final boolean isSubtypeOf(TypeInfo<?> superType) {
-        if (!superType.theClass.isAssignableFrom(theClass)) {
+        if (nullable && !superType.nullable) {
             return false;
         }
-        if (nullable && !superType.nullable) {
+        if (!superType.theClass.isAssignableFrom(theClass)) {
             return false;
         }
         if (projections != null) {
