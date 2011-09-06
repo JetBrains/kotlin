@@ -1,7 +1,6 @@
 package jet.typeinfo;
 
 import jet.JetObject;
-import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -44,7 +43,7 @@ public abstract class TypeInfo<T> implements JetObject {
 
     public static <T> TypeInfoProjection inProjection(TypeInfo<T> typeInfo) {
         return new TypeInfoProjection.TypeInfoProjectionImpl(typeInfo) {
-            @NotNull
+//            @NotNull
             @Override
             public TypeInfoVariance getVariance() {
                 return TypeInfoVariance.IN_VARIANCE;
@@ -54,7 +53,7 @@ public abstract class TypeInfo<T> implements JetObject {
 
     public static <T> TypeInfoProjection outProjection(TypeInfo<T> typeInfo) {
         return new TypeInfoProjection.TypeInfoProjectionImpl(typeInfo) {
-            @NotNull
+//            @NotNull
             @Override
             public TypeInfoVariance getVariance() {
                 return TypeInfoVariance.OUT_VARIANCE;
@@ -171,13 +170,13 @@ public abstract class TypeInfo<T> implements JetObject {
             super(klazz, nullable, projections);
         }
 
-        @NotNull
+//        @NotNull
         @Override
         public TypeInfoVariance getVariance() {
             return TypeInfoVariance.INVARIANT;
         }
 
-        @NotNull
+//        @NotNull
         @Override
         public TypeInfo getType() {
             return this;
