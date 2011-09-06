@@ -241,7 +241,7 @@ public class JetTypeInferrer {
                 expectedReturnType = NO_EXPECTED_TYPE;
             }
             JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(outerScope, functionDescriptor, trace);
-            checkFunctionReturnType(functionInnerScope, function, expectedReturnType, dataFlowInfo, CoercionStrategy.NO_COERCION);
+            checkFunctionReturnType(functionInnerScope, function, expectedReturnType, dataFlowInfo);
     //        Map<JetElement, JetType> typeMap = collectReturnedExpressionsWithTypes(outerScope, function, functionDescriptor, expectedReturnType);
     //        if (typeMap.isEmpty()) {
     //            return; // The function returns Nothing
@@ -276,10 +276,10 @@ public class JetTypeInferrer {
         }
 
         public void checkFunctionReturnType(JetScope functionInnerScope, JetDeclarationWithBody function, @NotNull final JetType expectedReturnType) {
-            checkFunctionReturnType(functionInnerScope, function, expectedReturnType, DataFlowInfo.getEmpty(), CoercionStrategy.NO_COERCION);
+            checkFunctionReturnType(functionInnerScope, function, expectedReturnType, DataFlowInfo.getEmpty());
         }
 
-        private void checkFunctionReturnType(JetScope functionInnerScope, JetDeclarationWithBody function, @NotNull final JetType expectedReturnType, @NotNull DataFlowInfo dataFlowInfo, CoercionStrategy coercionForLastExpression) {
+        private void checkFunctionReturnType(JetScope functionInnerScope, JetDeclarationWithBody function, @NotNull final JetType expectedReturnType, @NotNull DataFlowInfo dataFlowInfo) {
             JetExpression bodyExpression = function.getBodyExpression();
             assert bodyExpression != null;
             
@@ -935,7 +935,7 @@ public class JetTypeInferrer {
             JetTypeReference returnTypeRef = functionLiteral.getReturnTypeRef();
             if (returnTypeRef != null) {
                 returnType = context.typeResolver.resolveType(context.scope, returnTypeRef);
-                context.services.checkFunctionReturnType(functionInnerScope, expression, returnType, context.dataFlowInfo, CoercionStrategy.COERCION_TO_UNIT);
+                context.services.checkFunctionReturnType(functionInnerScope, expression, returnType, context.dataFlowInfo);
             }
             else {
                 if (functionTypeExpected) {
