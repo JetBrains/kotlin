@@ -47,4 +47,6 @@ public interface ClassDescriptor extends ClassifierDescriptor {
     boolean isAbstract();
 
     boolean isOpen();
+
+    boolean isTrait();
 }

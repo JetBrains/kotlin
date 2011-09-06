@@ -147,6 +147,7 @@ public class ClassDescriptorResolver {
 
         descriptor.setOpen(classElement.hasModifier(JetTokens.OPEN_KEYWORD) || classElement.hasModifier(JetTokens.ABSTRACT_KEYWORD));
         descriptor.setAbstract(classElement.hasModifier(JetTokens.ABSTRACT_KEYWORD));
+        descriptor.setTrait(classElement.hasModifier(JetTokens.TRAIT_KEYWORD));
 
         trace.record(BindingContext.CLASS, classElement, descriptor);
     }

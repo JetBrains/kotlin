@@ -125,4 +125,9 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
     public boolean isOpen() {
         return false;
     }
+
+    @Override
+    public boolean isTrait() {
+        return false;
+    }
 }

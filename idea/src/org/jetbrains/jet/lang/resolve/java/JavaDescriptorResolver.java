@@ -106,6 +106,11 @@ public class JavaDescriptorResolver {
                 supertypes
 
         ));
+        classDescriptor.setModifiers(
+                psiClass.hasModifierProperty(PsiModifier.ABSTRACT),
+                !psiClass.hasModifierProperty(PsiModifier.FINAL),
+                psiClass.isInterface()
+        );
         classDescriptorCache.put(psiClass.getQualifiedName(), classDescriptor);
         classDescriptor.setUnsubstitutedMemberScope(new JavaClassMembersScope(classDescriptor, psiClass, semanticServices, false));
         classDescriptor.setClassObjectMemberScope(new JavaClassMembersScope(classDescriptor, psiClass, semanticServices, true));

@@ -150,6 +150,11 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
     }
 
     @Override
+    public boolean isTrait() {
+        return original.isTrait();
+    }
+
+    @Override
     public boolean isClassObjectAValue() {
         return original.isClassObjectAValue();
     }

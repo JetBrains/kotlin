@@ -24,6 +24,7 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
 
     private boolean open;
     private boolean isAbstract;
+    private boolean trait;
     private TypeConstructor typeConstructor;
     private final WritableScope scopeForMemberResolution;
     private final WritableScope scopeForMemberLookup;
@@ -149,6 +150,15 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
 
     public void setAbstract(boolean isAbstract) {
         this.isAbstract = isAbstract;
+    }
+
+    @Override
+    public boolean isTrait() {
+        return trait;
+    }
+
+    public void setTrait(boolean trait) {
+        this.trait = trait;
     }
 
     public boolean isOpen() {
