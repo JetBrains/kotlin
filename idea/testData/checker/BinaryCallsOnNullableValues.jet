@@ -32,7 +32,7 @@ fun f(): Unit {
   x !== 1
 
   x<error>..</error>2
-  x <error>in</error> 1..2
+  <error>x</error> in 1..2
 
   val y : Boolean? = true
   false || <error>y</error>

@@ -2398,14 +2398,17 @@ public class JetTypeInferrer {
                     leftType,
                     context.expectedType);
             if (functionDescriptor != null) {
-//                if (leftType.isNullable()) {
-//                    // TODO : better error message for '1 + nullableVar' case
-//                    context.trace.getErrorHandler().genericError(operationSign.getNode(),
-//                            "Infix call corresponds to a dot-qualified call '" +
-//                            left.getText() + "." + name + "(" + right.getText() + ")'" +
-//                            " which is not allowed on a nullable receiver '" + right.getText() + "'." +
-//                            " Use '?.'-qualified call instead");
-//                }
+                if (leftType != null && leftType.isNullable()) {
+                    // TODO : better error message for '1 + nullableVar' case
+                    JetExpression right = binaryExpression.getRight();
+                    String rightText = right == null ? "" : right.getText();
+                    String leftText = binaryExpression.getLeft().getText();
+                    context.trace.getErrorHandler().genericError(binaryExpression.getOperationReference().getNode(),
+                                                                 "Infix call corresponds to a dot-qualified call '" +
+                                                                 leftText + "." + name + "(" + rightText + ")'" +
+                                                                 " which is not allowed on a nullable receiver '" + leftText + "'." +
+                                                                 " Use '?.'-qualified call instead");
+                }
 
                 return functionDescriptor.getReturnType();
             }
