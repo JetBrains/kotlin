@@ -16,7 +16,7 @@ class A
 fun A.plus(a : Any) {
 
   1.foo()
-  true.foo<error>()</error>
+  true.<error>foo()</error>
 
   1
 }
@@ -57,8 +57,8 @@ namespace null_safety {
 
             command<error>.</error>foo
 
-            command<error>.</error>equals(null)
-            command?.equals(null)
+            command.equals(null)
+            command<warning>?.</warning>equals(null)
             command.equals1(null)
             command<warning>?.</warning>equals1(null)
 

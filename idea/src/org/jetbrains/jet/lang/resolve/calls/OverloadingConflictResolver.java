@@ -59,6 +59,12 @@ import java.util.Set;
         if (overrides(f, g)) return true;
         if (overrides(g, f)) return false;
 
+        JetType receiverTypeOfF = f.getReceiverType();
+        JetType receiverTypeOfG = g.getReceiverType();
+        if (receiverTypeOfF != null && receiverTypeOfG != null) {
+            if (!typeMoreSpecific(receiverTypeOfF, receiverTypeOfG)) return false;
+        }
+
         List<ValueParameterDescriptor> fParams = f.getValueParameters();
         List<ValueParameterDescriptor> gParams = g.getValueParameters();
 
@@ -68,9 +74,7 @@ import java.util.Set;
             JetType fParamType = fParams.get(i).getOutType();
             JetType gParamType = gParams.get(i).getOutType();
 
-            if (!semanticServices.getTypeChecker().isSubtypeOf(fParamType, gParamType)
-                    && !numericTypeMoreSpecific(fParamType, gParamType)
-                    ) {
+            if (!typeMoreSpecific(fParamType, gParamType)) {
                 return false;
             }
         }
@@ -90,6 +94,11 @@ import java.util.Set;
 
     private boolean isGeneric(CallableDescriptor f) {
         return !f.getOriginal().getTypeParameters().isEmpty();
+    }
+
+    private boolean typeMoreSpecific(@NotNull JetType specific, @NotNull JetType general) {
+        return semanticServices.getTypeChecker().isSubtypeOf(specific, general) ||
+                            numericTypeMoreSpecific(specific, general);
     }
 
     private boolean numericTypeMoreSpecific(@NotNull JetType specific, @NotNull JetType general) {

@@ -1,0 +1,9 @@
+fun Any.equals(other : Any?) : Boolean
+
+fun main(args: Array<String>) {
+
+    val command : Any = 1
+
+    command<warning>?.<?warning>equals(null)
+    command.equals(null)
+}
