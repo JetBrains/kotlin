@@ -27,16 +27,12 @@ import static org.jetbrains.jet.lang.types.JetTypeInferrer.NO_EXPECTED_TYPE;
  */
 public class CallResolver {
 
-    private final TypeResolver typeResolver;
     private final JetTypeInferrer typeInferrer;
     private final JetSemanticServices semanticServices;
-    private final ClassDescriptorResolver classDescriptorResolver;
     private final OverloadingConflictResolver overloadingConflictResolver;
 
-    public CallResolver(JetSemanticServices semanticServices, BindingTrace trace, JetTypeInferrer typeInferrer) {
+    public CallResolver(JetSemanticServices semanticServices, JetTypeInferrer typeInferrer) {
         this.typeInferrer = typeInferrer;
-        this.typeResolver = new TypeResolver(semanticServices, trace, true);
-        this.classDescriptorResolver = semanticServices.getClassDescriptorResolver(trace);
         this.semanticServices = semanticServices;
         this.overloadingConflictResolver = new OverloadingConflictResolver(semanticServices);
     }
@@ -114,7 +110,7 @@ public class CallResolver {
             }
             JetTypeReference typeReference = expression.getTypeReference();
             assert typeReference != null;
-            JetType constructedType = typeResolver.resolveType(scope, typeReference);
+            JetType constructedType = new TypeResolver(semanticServices, trace, true).resolveType(scope, typeReference);
             DeclarationDescriptor declarationDescriptor = constructedType.getConstructor().getDeclarationDescriptor();
             if (declarationDescriptor instanceof ClassDescriptor) {
                 ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
@@ -360,7 +356,7 @@ public class CallResolver {
                         }
                     }
 
-                    checkGenericBoundsInAFunctionCall(jetTypeArguments, typeArguments, candidate);
+                    checkGenericBoundsInAFunctionCall(jetTypeArguments, typeArguments, candidate, temporaryTrace);
 
                     Map<TypeConstructor, TypeProjection> substitutionContext = FunctionDescriptorUtil.createSubstitutionContext((FunctionDescriptor) candidate, typeArguments);
                     D substitutedFunctionDescriptor = (D) candidate.substitute(TypeSubstitutor.create(substitutionContext));
@@ -544,7 +540,7 @@ public class CallResolver {
         return result;
     }
 
-    public void checkGenericBoundsInAFunctionCall(List<JetTypeProjection> jetTypeArguments, List<JetType> typeArguments, CallableDescriptor functionDescriptor) {
+    public void checkGenericBoundsInAFunctionCall(List<JetTypeProjection> jetTypeArguments, List<JetType> typeArguments, CallableDescriptor functionDescriptor, BindingTrace trace) {
         Map<TypeConstructor, TypeProjection> context = Maps.newHashMap();
 
         List<TypeParameterDescriptor> typeParameters = functionDescriptor.getOriginal().getTypeParameters();
@@ -559,7 +555,7 @@ public class CallResolver {
             JetType typeArgument = typeArguments.get(i);
             JetTypeReference typeReference = jetTypeArguments.get(i).getTypeReference();
             assert typeReference != null;
-            classDescriptorResolver.checkBounds(typeReference, typeArgument, typeParameterDescriptor, substitutor);
+            semanticServices.getClassDescriptorResolver(trace).checkBounds(typeReference, typeArgument, typeParameterDescriptor, substitutor);
         }
     }
 

@@ -22,6 +22,7 @@ public class AnnotationResolver {
     private final BindingTrace trace;
 
     public AnnotationResolver(JetSemanticServices semanticServices, BindingTrace trace) {
+
         this.trace = trace;
     }
 
