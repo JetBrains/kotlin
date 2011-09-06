@@ -4,15 +4,20 @@ import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.JetSemanticServices;
+import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetAnnotationEntry;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetModifierList;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.JetTypeInferrer;
 
 import java.util.Collections;
 import java.util.List;
+
+import static org.jetbrains.jet.lang.types.JetTypeInferrer.NO_EXPECTED_TYPE;
 
 /**
  * @author abreslav
@@ -20,9 +25,10 @@ import java.util.List;
 public class AnnotationResolver {
 
     private final BindingTrace trace;
+    private final JetTypeInferrer typeInferrer;
 
     public AnnotationResolver(JetSemanticServices semanticServices, BindingTrace trace) {
-
+        this.typeInferrer = new JetTypeInferrer(JetFlowInformationProvider.THROW_EXCEPTION, semanticServices);
         this.trace = trace;
     }
 
@@ -30,13 +36,17 @@ public class AnnotationResolver {
     public List<AnnotationDescriptor> resolveAnnotations(@NotNull JetScope scope, @NotNull List<JetAnnotationEntry> annotationEntryElements) {
         if (annotationEntryElements.isEmpty()) return Collections.emptyList();
         List<AnnotationDescriptor> result = Lists.newArrayList();
-//        for (JetAnnotationEntry entryElement : annotationEntryElements) {
-//            JetType jetType = typeInferrer.checkTypeInitializerCall(scope, entryElement.getTypeReference(), entryElement);
-//            AnnotationDescriptor descriptor = new AnnotationDescriptor();
-//            descriptor.setAnnotationType(jetType);
-//            result.add(descriptor);
-//        }
+        for (JetAnnotationEntry entryElement : annotationEntryElements) {
+            AnnotationDescriptor descriptor = new AnnotationDescriptor();
+            resolveAnnotationStub(scope, entryElement, descriptor);
+            result.add(descriptor);
+        }
         return result;
+    }
+
+    public void resolveAnnotationStub(@NotNull JetScope scope, @NotNull JetAnnotationEntry entryElement, @NotNull AnnotationDescriptor descriptor) {
+        JetType jetType = typeInferrer.getCallResolver().resolveCall(trace, scope, null, entryElement, NO_EXPECTED_TYPE);
+        descriptor.setAnnotationType(jetType == null ? ErrorUtils.createErrorType("Unresolved annotation type") : jetType);
     }
 
     @NotNull

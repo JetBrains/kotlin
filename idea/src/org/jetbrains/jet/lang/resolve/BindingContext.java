@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.resolve;
 
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.JetDiagnostic;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -112,5 +113,6 @@ public interface BindingContext {
 
     Collection<JetDiagnostic> getDiagnostics();
 
+    @Nullable
     <K, V> V get(ReadOnlySlice<K, V> slice, K key);
 }

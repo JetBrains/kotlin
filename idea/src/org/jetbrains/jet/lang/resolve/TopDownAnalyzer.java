@@ -17,6 +17,7 @@ import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import java.util.*;
 
+import static org.jetbrains.jet.lang.resolve.BindingContext.ANNOTATION;
 import static org.jetbrains.jet.lang.types.JetTypeInferrer.NO_EXPECTED_TYPE;
 
 /**
@@ -40,6 +41,7 @@ public class TopDownAnalyzer {
     private final BindingTrace trace;
     private final BindingTraceAdapter traceForConstructors;
     private final BindingTraceAdapter traceForMembers;
+    private final AnnotationResolver annotationResolver;
 
     public TopDownAnalyzer(JetSemanticServices semanticServices, @NotNull BindingTrace bindingTrace) {
         this.semanticServices = semanticServices;
@@ -73,6 +75,8 @@ public class TopDownAnalyzer {
                 }
             }
         });
+
+        this.annotationResolver = new AnnotationResolver(semanticServices, trace);
     }
 
     public void processObject(@NotNull JetScope outerScope, @NotNull DeclarationDescriptor containingDeclaration, @NotNull JetObjectDeclaration object) {
@@ -117,7 +121,11 @@ public class TopDownAnalyzer {
         resolveTypesInClassHeaders(); // Generic bounds and types in supertype lists (no expressions or constructor resolution)
         checkGenericBoundsInClassHeaders(); // For the types resolved so far
 
-        resolveFunctionAndPropertyHeaders(); // Constructor headers are resolved as well
+        resolveConstructorHeaders();
+
+        resolveAnnotationStubsOnClassesAndConstructors();
+
+        resolveFunctionAndPropertyHeaders();
 
         resolveBehaviorDeclarationBodies();
     }
@@ -372,6 +380,35 @@ public class TopDownAnalyzer {
         }
     }
 
+    private void resolveConstructorHeaders() {
+        for (Map.Entry<JetClass, MutableClassDescriptor> entry : classes.entrySet()) {
+            JetClass jetClass = entry.getKey();
+            MutableClassDescriptor classDescriptor = entry.getValue();
+
+            processPrimaryConstructor(classDescriptor, jetClass);
+            for (JetConstructor jetConstructor : jetClass.getSecondaryConstructors()) {
+                processSecondaryConstructor(classDescriptor, jetConstructor);
+            }
+        }
+
+    }
+
+    private void resolveAnnotationStubsOnClassesAndConstructors() {
+        for (Map.Entry<JetClass, MutableClassDescriptor> entry : classes.entrySet()) {
+            JetClass jetClass = entry.getKey();
+            MutableClassDescriptor mutableClassDescriptor = entry.getValue();
+
+            JetModifierList modifierList = jetClass.getModifierList();
+            if (modifierList != null) {
+                List<JetAnnotationEntry> annotationEntries = modifierList.getAnnotationEntries();
+                for (JetAnnotationEntry annotationEntry : annotationEntries) {
+                    AnnotationDescriptor annotationDescriptor = trace.get(ANNOTATION, annotationEntry);
+                    annotationResolver.resolveAnnotationStub(mutableClassDescriptor.getScopeForSupertypeResolution(), annotationEntry, annotationDescriptor);
+                }
+            }
+        }
+    }
+
     private void resolveFunctionAndPropertyHeaders() {
         for (Map.Entry<JetNamespace, WritableScope> entry : namespaceScopes.entrySet()) {
             JetNamespace namespace = entry.getKey();
@@ -385,10 +422,10 @@ public class TopDownAnalyzer {
             MutableClassDescriptor classDescriptor = entry.getValue();
 
             resolveFunctionAndPropertyHeaders(jetClass.getDeclarations(), classDescriptor.getScopeForMemberResolution(), classDescriptor);
-            processPrimaryConstructor(classDescriptor, jetClass);
-            for (JetConstructor jetConstructor : jetClass.getSecondaryConstructors()) {
-                processSecondaryConstructor(classDescriptor, jetConstructor);
-            }
+//            processPrimaryConstructor(classDescriptor, jetClass);
+//            for (JetConstructor jetConstructor : jetClass.getSecondaryConstructors()) {
+//                processSecondaryConstructor(classDescriptor, jetConstructor);
+//            }
         }
         for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : objects.entrySet()) {
             JetObjectDeclaration object = entry.getKey();

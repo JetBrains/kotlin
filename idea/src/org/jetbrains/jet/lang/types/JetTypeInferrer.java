@@ -170,6 +170,10 @@ public class JetTypeInferrer {
         return new Services(trace);
     }
 
+    public CallResolver getCallResolver() {
+        return callResolver;
+    }
+
     public class Services {
         private final BindingTrace trace;
         private final CompileTimeConstantResolver compileTimeConstantResolver;

@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.psi;
 
+import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,7 +35,8 @@ public class JetModifierList extends JetElement {
     }
 
     public List<JetAnnotationEntry> getAnnotationEntries() {
-        List<JetAnnotationEntry> answer = null;
+        List<JetAnnotationEntry> entries = findChildrenByType(JetNodeTypes.ANNOTATION_ENTRY);
+        List<JetAnnotationEntry> answer = entries.isEmpty() ? null : Lists.newArrayList(entries);
         for (JetAnnotation annotation : getAnnotations()) {
             if (answer == null) answer = new ArrayList<JetAnnotationEntry>();
             answer.addAll(annotation.getEntries());

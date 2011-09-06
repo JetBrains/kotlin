@@ -176,7 +176,6 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
                 supertypes);
         scopeForMemberResolution.setThisType(getDefaultType());
         for (FunctionDescriptor functionDescriptor : constructors.getFunctionDescriptors()) {
-//            functionDescriptor.getTypeParameters().addAll(typeParameters);
             ((ConstructorDescriptorImpl) functionDescriptor).setReturnType(getDefaultType());
         }
     }

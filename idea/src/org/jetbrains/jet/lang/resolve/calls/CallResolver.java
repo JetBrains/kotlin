@@ -98,49 +98,54 @@ public class CallResolver {
 
             prioritizedTasks = FUNCTION_TASK_PRIORITIZER.computePrioritizedTasks(scope, receiverType, call, name);
         }
-        else if (calleeExpression instanceof JetConstructorCalleeExpression) {
-            assert receiverType == null;
+        else {
+            JetValueArgumentList valueArgumentList = call.getValueArgumentList();
+            ASTNode reportAbsenceOn = valueArgumentList == null ? call.getNode() : valueArgumentList.getNode();
+            if (calleeExpression instanceof JetConstructorCalleeExpression) {
+                assert receiverType == null;
 
-            prioritizedTasks = Lists.newArrayList();
+                prioritizedTasks = Lists.newArrayList();
 
-            JetConstructorCalleeExpression expression = (JetConstructorCalleeExpression) calleeExpression;
-            functionReference = expression.getConstructorReferenceExpression();
-            if (functionReference == null) {
-                return checkArgumentTypesAndFail(trace, scope, call); // No type there
-            }
-            JetTypeReference typeReference = expression.getTypeReference();
-            assert typeReference != null;
-            JetType constructedType = new TypeResolver(semanticServices, trace, true).resolveType(scope, typeReference);
-            DeclarationDescriptor declarationDescriptor = constructedType.getConstructor().getDeclarationDescriptor();
-            if (declarationDescriptor instanceof ClassDescriptor) {
-                ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
-                Set<FunctionDescriptor> constructors = classDescriptor.getConstructors().getFunctionDescriptors();
-                if (constructors.isEmpty()) {
-                    trace.getErrorHandler().genericError(call.getValueArgumentList().getNode(), "This class does not have a constructor");
+                JetConstructorCalleeExpression expression = (JetConstructorCalleeExpression) calleeExpression;
+                functionReference = expression.getConstructorReferenceExpression();
+                if (functionReference == null) {
+                    return checkArgumentTypesAndFail(trace, scope, call); // No type there
+                }
+                JetTypeReference typeReference = expression.getTypeReference();
+                assert typeReference != null;
+                JetType constructedType = new TypeResolver(semanticServices, trace, true).resolveType(scope, typeReference);
+                DeclarationDescriptor declarationDescriptor = constructedType.getConstructor().getDeclarationDescriptor();
+                if (declarationDescriptor instanceof ClassDescriptor) {
+                    ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
+                    Set<FunctionDescriptor> constructors = classDescriptor.getConstructors().getFunctionDescriptors();
+                    if (constructors.isEmpty()) {
+                        trace.getErrorHandler().genericError(reportAbsenceOn, "This class does not have a constructor");
+                        return checkArgumentTypesAndFail(trace, scope, call);
+                    }
+                    prioritizedTasks.add(new ResolutionTask<FunctionDescriptor>(constructors, null, call));
+                }
+                else {
+                    trace.getErrorHandler().genericError(calleeExpression.getNode(), "Not a class");
                     return checkArgumentTypesAndFail(trace, scope, call);
                 }
-                prioritizedTasks.add(new ResolutionTask<FunctionDescriptor>(constructors, null, call));
+            }
+            else if (calleeExpression instanceof JetThisReferenceExpression) {
+                functionReference = (JetThisReferenceExpression) calleeExpression;
+                DeclarationDescriptor containingDeclaration = scope.getContainingDeclaration();
+                assert containingDeclaration instanceof ClassDescriptor;
+                ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
+
+
+                Set<FunctionDescriptor> constructors = classDescriptor.getConstructors().getFunctionDescriptors();
+                if (constructors.isEmpty()) {
+                    trace.getErrorHandler().genericError(reportAbsenceOn, "This class does not have a constructor");
+                    return checkArgumentTypesAndFail(trace, scope, call);
+                }
+                prioritizedTasks = Collections.singletonList(new ResolutionTask<FunctionDescriptor>(constructors, null, call));
             }
             else {
-                trace.getErrorHandler().genericError(calleeExpression.getNode(), "Not a class");
-                return checkArgumentTypesAndFail(trace, scope, call);
+                throw new UnsupportedOperationException("Type argument inference not implemented for " + call.getText());
             }
-        } else if (calleeExpression instanceof JetThisReferenceExpression) {
-            functionReference = (JetThisReferenceExpression) calleeExpression;
-            DeclarationDescriptor containingDeclaration = scope.getContainingDeclaration();
-            assert containingDeclaration instanceof ClassDescriptor;
-            ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
-
-
-            Set<FunctionDescriptor> constructors = classDescriptor.getConstructors().getFunctionDescriptors();
-            if (constructors.isEmpty()) {
-                trace.getErrorHandler().genericError(call.getValueArgumentList().getNode(), "This class does not have a constructor");
-                return checkArgumentTypesAndFail(trace, scope, call);
-            }
-            prioritizedTasks = Collections.singletonList(new ResolutionTask<FunctionDescriptor>(constructors, null, call));
-        }
-        else {
-            throw new UnsupportedOperationException("Type argument inference not implemented for " + call.getText());
         }
 
         return resolveCallToDescriptor(trace, scope, call, call.getNode(), expectedType, prioritizedTasks, functionReference);
