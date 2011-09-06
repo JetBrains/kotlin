@@ -16,7 +16,7 @@ import java.util.List;
 /**
 * @author abreslav
 */
-/*package*/ abstract class TaskPrioritizer<Descriptor extends CallableDescriptor> {
+/*package*/ abstract class TaskPrioritizer<D extends CallableDescriptor> {
 
     public static <T extends DeclarationDescriptor> void splitLexicallyLocalDescriptors(
             Collection<? extends T> allDescriptors, DeclarationDescriptor containerOfTheCurrentLocality, List<? super T> local, List<? super T> nonlocal) {
@@ -59,27 +59,29 @@ import java.util.List;
         return false;
     }
 
-    public List<ResolutionTask<Descriptor>> computePrioritizedTasks(JetScope scope, JetType receiverType, Call call, String name) {
-        List<ResolutionTask<Descriptor>> result = Lists.newArrayList();
+    public List<ResolutionTask<D>> computePrioritizedTasks(JetScope scope, JetType receiverType, Call call, String name) {
+        List<ResolutionTask<D>> result = Lists.newArrayList();
         if (receiverType != null) {
-            Collection<Descriptor> extensionFunctions = getExtensionsByName(scope, name);
+            Collection<D> extensionFunctions = getExtensionsByName(scope, name);
 
-            List<Descriptor> nonlocals = Lists.newArrayList();
-            List<Descriptor> locals = Lists.newArrayList();
-            splitLexicallyLocalDescriptors(extensionFunctions, scope.getContainingDeclaration(), locals, nonlocals);
+            List<D> nonlocals = Lists.newArrayList();
+            List<D> locals = Lists.newArrayList();
+            //noinspection unchecked,RedundantTypeArguments
+            TaskPrioritizer.<D>splitLexicallyLocalDescriptors(extensionFunctions, scope.getContainingDeclaration(), locals, nonlocals);
 
-            Collection<Descriptor> members = getMembersByName(receiverType, name);
+            Collection<D> members = getMembersByName(receiverType, name);
 
             addTask(result, receiverType, call, locals);
             addTask(result, null, call, members);
             addTask(result, receiverType, call, nonlocals);
         }
         else {
-            Collection<Descriptor> functions = getNonExtensionsByName(scope, name);
+            Collection<D> functions = getNonExtensionsByName(scope, name);
 
-            List<Descriptor> nonlocals = Lists.newArrayList();
-            List<Descriptor> locals = Lists.newArrayList();
-            splitLexicallyLocalDescriptors(functions, scope.getContainingDeclaration(), locals, nonlocals);
+            List<D> nonlocals = Lists.newArrayList();
+            List<D> locals = Lists.newArrayList();
+            //noinspection unchecked,RedundantTypeArguments
+            TaskPrioritizer.<D>splitLexicallyLocalDescriptors(functions, scope.getContainingDeclaration(), locals, nonlocals);
 
             addTask(result, receiverType, call, locals);
 
@@ -89,20 +91,20 @@ import java.util.List;
     }
 
     @NotNull
-    protected abstract Collection<Descriptor> getNonExtensionsByName(JetScope scope, String name);
+    protected abstract Collection<D> getNonExtensionsByName(JetScope scope, String name);
 
     @NotNull
-    protected abstract Collection<Descriptor> getMembersByName(@NotNull JetType receiverType, String name);
+    protected abstract Collection<D> getMembersByName(@NotNull JetType receiverType, String name);
 
     @NotNull
-    protected abstract Collection<Descriptor> getExtensionsByName(JetScope scope, String name);
+    protected abstract Collection<D> getExtensionsByName(JetScope scope, String name);
 
-    private void addTask(@NotNull List<ResolutionTask<Descriptor>> result, @Nullable JetType receiverType, @NotNull Call call, @NotNull Collection<Descriptor> candidates) {
+    private void addTask(@NotNull List<ResolutionTask<D>> result, @Nullable JetType receiverType, @NotNull Call call, @NotNull Collection<D> candidates) {
         if (candidates.isEmpty()) return;
         result.add(createTask(receiverType, call, candidates));
     }
 
     @NotNull
-    protected abstract ResolutionTask<Descriptor> createTask(JetType receiverType, Call call, Collection<Descriptor> candidates);
+    protected abstract ResolutionTask<D> createTask(JetType receiverType, Call call, Collection<D> candidates);
 
 }
