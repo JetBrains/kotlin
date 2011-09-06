@@ -36,6 +36,13 @@ public class ClassContext {
         return contextType;
     }
 
+    public String getNamespaceClassName() {
+        if(parentContext != STATIC)
+            return parentContext.getNamespaceClassName();
+
+        return NamespaceCodegen.getJVMClassName(contextType.getName());
+    }
+
     public OwnerKind getContextKind() {
         return contextKind;
     }
@@ -171,7 +178,7 @@ public class ClassContext {
     
     public int getTypeInfoConstantIndex(JetType type) {
         if(parentContext != STATIC)
-            parentContext.getTypeInfoConstantIndex(type);
+            return parentContext.getTypeInfoConstantIndex(type);
         
         if(typeInfoConstants == null)
             typeInfoConstants = new HashMap<JetType, Integer>();

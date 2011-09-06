@@ -96,7 +96,7 @@ public final class JetTypeImpl extends AnnotatedImpl implements JetType {
         JetTypeImpl type = (JetTypeImpl) o;
 
         // TODO
-        return equalTypes(this, type, EMPTY_AXIOMS);
+        return nullable == type.nullable && equalTypes(this, type, EMPTY_AXIOMS);
 //        if (nullable != type.nullable) return false;
 //        if (arguments != null ? !arguments.equals(type.arguments) : type.arguments != null) return false;
 //        if (constructor != null ? !constructor.equals(type.constructor) : type.constructor != null) return false;

@@ -1947,8 +1947,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             return;
         }
 
-        final Type jvmType = typeMapper.mapType(jetType, OwnerKind.INTERFACE);
-
         if(jetType.getArguments().size() == 0 && !(declarationDescriptor instanceof JavaClassDescriptor)) {
             // TODO: we need some better checks here
             v.getstatic(typeMapper.mapType(jetType, OwnerKind.IMPLEMENTATION).getInternalName(), "$typeInfo", "Ljet/typeinfo/TypeInfo;");
@@ -1957,8 +1955,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         
         boolean hasUnsubstituted = TypeUtils.hasUnsubstitutedTypeParameters(jetType);
         if(!hasUnsubstituted) {
-            context.getTypeInfoConstantIndex(jetType);
+            int typeInfoConstantIndex = context.getTypeInfoConstantIndex(jetType);
+            v.invokestatic(context.getNamespaceClassName(), "$getCachedTypeInfo$" + typeInfoConstantIndex, "()Ljet/typeinfo/TypeInfo;");
+            return;
         }
+
+        final Type jvmType = typeMapper.mapType(jetType, OwnerKind.INTERFACE);
 
         v.aconst(jvmType);
         v.iconst(jetType.isNullable()?1:0);
