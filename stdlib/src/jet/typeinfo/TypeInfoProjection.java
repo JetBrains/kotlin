@@ -1,26 +1,21 @@
 package jet.typeinfo;
 
-import org.jetbrains.annotations.NotNull;
-
 /**
  * @author alex.tkachman
  */
 public interface TypeInfoProjection {
-    @NotNull
     TypeInfoVariance getVariance();
 
-    @NotNull
     TypeInfo getType();
 
     abstract class TypeInfoProjectionImpl implements TypeInfoProjection {
-        @NotNull private final TypeInfo type;
+        private final TypeInfo type;
 
-        TypeInfoProjectionImpl(@NotNull TypeInfo typeInfo) {
+        TypeInfoProjectionImpl(TypeInfo typeInfo) {
             this.type = typeInfo;
         }
 
         @Override
-        @NotNull
         public final TypeInfo getType() {
             return type;
         }
