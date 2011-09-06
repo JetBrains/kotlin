@@ -1,5 +1,5 @@
 abstract open class Default {
-  fun defaultValue(): Int
+  abstract fun defaultValue(): Int
 }
 
 class MyInt() {

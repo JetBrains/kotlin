@@ -13,7 +13,7 @@
     get() = 1
 
 class Test() {
-    var a : Int
+    var a : Int = 111
     var b : Int get() = <error>$a</error>; set(x) {a = x; <error>$a</error> = x}
 
    this(i : Int) : this() {

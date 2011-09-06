@@ -11,7 +11,7 @@ import java.util.Set;
 /**
  * @author abreslav
  */
-public interface FunctionDescriptor extends DeclarationDescriptor {
+public interface FunctionDescriptor extends DeclarationDescriptor, MemberDescriptor {
     @Override
     @NotNull
     DeclarationDescriptor getContainingDeclaration();

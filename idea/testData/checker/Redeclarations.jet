@@ -1,6 +1,6 @@
 namespace redeclarations {
   object <error>A</error> {
-    val x : Int
+    val x : Int = 0
 
     val A = 1
   }

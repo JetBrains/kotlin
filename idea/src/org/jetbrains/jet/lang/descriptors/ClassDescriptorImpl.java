@@ -115,4 +115,14 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
     public boolean hasConstructors() {
         return !constructors.isEmpty();
     }
+
+    @Override
+    public boolean isAbstract() {
+        return false;
+    }
+
+    @Override
+    public boolean isOpen() {
+        return false;
+    }
 }

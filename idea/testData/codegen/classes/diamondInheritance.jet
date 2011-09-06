@@ -1,5 +1,5 @@
 class Base() {
-    public var v : Int
+    public var v : Int = 0
 }
 
 class Left() : Base() {}

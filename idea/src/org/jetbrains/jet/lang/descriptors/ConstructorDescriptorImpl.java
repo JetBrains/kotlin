@@ -66,6 +66,11 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
         return null;
     }
 
+    @Nullable
+    public MemberModifiers getModifiers() {
+        return null;
+    }
+
     @Override
     public void addOverriddenFunction(@NotNull FunctionDescriptor overriddenFunction) {
         throw new UnsupportedOperationException("Constructors cannot override anything");

@@ -27,8 +27,9 @@ public class TopDownAnalyzer {
 
     private final Map<JetClass, MutableClassDescriptor> classes = Maps.newLinkedHashMap();
     private final Map<JetObjectDeclaration, MutableClassDescriptor> objects = Maps.newLinkedHashMap();
-    private final Map<JetNamespace, WritableScope> namespaceScopes = Maps.newHashMap();
-    private final Map<JetNamespace, NamespaceDescriptorImpl> namespaceDescriptors = Maps.newHashMap();
+
+    protected final Map<JetNamespace, WritableScope> namespaceScopes = Maps.newHashMap();
+    protected final Map<JetNamespace, NamespaceDescriptorImpl> namespaceDescriptors = Maps.newHashMap();
 
     private final Map<JetNamedFunction, FunctionDescriptorImpl> functions = Maps.newLinkedHashMap();
     private final Map<JetDeclaration, ConstructorDescriptor> constructors = Maps.newLinkedHashMap();
@@ -76,46 +77,39 @@ public class TopDownAnalyzer {
         });
     }
 
-    @Deprecated // For JetStandardLibraryOnly
-    public void processStandardLibraryNamespace(@NotNull WritableScope outerScope, @NotNull NamespaceDescriptorImpl standardLibraryNamespace, @NotNull JetNamespace namespace) {
-        namespaceScopes.put(namespace, standardLibraryNamespace.getMemberScope());
-        namespaceDescriptors.put(namespace, standardLibraryNamespace);
-        process(outerScope, standardLibraryNamespace, namespace.getDeclarations());
-    }
-
     public void processObject(@NotNull JetScope outerScope, @NotNull DeclarationDescriptor containingDeclaration, @NotNull JetObjectDeclaration object) {
         process(outerScope, new NamespaceLike.Adapter(containingDeclaration) {
 
-                    @Override
-                    public NamespaceDescriptorImpl getNamespace(String name) {
-                        throw new UnsupportedOperationException();
-                    }
+            @Override
+            public NamespaceDescriptorImpl getNamespace(String name) {
+                throw new UnsupportedOperationException();
+            }
 
-                    @Override
-                    public void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
-                        throw new UnsupportedOperationException();
-                    }
+            @Override
+            public void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
+                throw new UnsupportedOperationException();
+            }
 
-                    @Override
-                    public void addClassifierDescriptor(@NotNull MutableClassDescriptor classDescriptor) {
+            @Override
+            public void addClassifierDescriptor(@NotNull MutableClassDescriptor classDescriptor) {
 
-                    }
+            }
 
-                    @Override
-                    public void addFunctionDescriptor(@NotNull FunctionDescriptor functionDescriptor) {
-                        throw new UnsupportedOperationException();
-                    }
+            @Override
+            public void addFunctionDescriptor(@NotNull FunctionDescriptor functionDescriptor) {
+                throw new UnsupportedOperationException();
+            }
 
-                    @Override
-                    public void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor) {
+            @Override
+            public void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor) {
 
-                    }
+            }
 
-                    @Override
-                    public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor) {
-                        return ClassObjectStatus.NOT_ALLOWED;
-                    }
-                }, Collections.<JetDeclaration>singletonList(object));
+            @Override
+            public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor) {
+                return ClassObjectStatus.NOT_ALLOWED;
+            }
+        }, Collections.<JetDeclaration>singletonList(object));
     }
 
     public void process(@NotNull JetScope outerScope, NamespaceLike owner, @NotNull List<JetDeclaration> declarations) {
@@ -414,6 +408,7 @@ public class TopDownAnalyzer {
                 @Override
                 public void visitNamedFunction(JetNamedFunction function) {
                     FunctionDescriptorImpl functionDescriptor = classDescriptorResolver.resolveFunctionDescriptor(namespaceLike, scope, function);
+                    checkFunctionCorrectness(function, functionDescriptor, namespaceLike);
                     namespaceLike.addFunctionDescriptor(functionDescriptor);
                     functions.put(function, functionDescriptor);
                     declaringScopes.put(function, scope);
@@ -505,12 +500,29 @@ public class TopDownAnalyzer {
     private void bindOverridesInAClass(MutableClassDescriptor classDescriptor) {
 
         for (FunctionDescriptor declaredFunction : classDescriptor.getFunctions()) {
+//            JetFunction function = (JetFunction) trace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, declaredFunction);
+//            boolean isOverride = declaredFunction.getModifiers().isOverride();
             for (JetType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
                 FunctionDescriptor overridden = findFunctionOverridableBy(declaredFunction, supertype);
                 if (overridden != null) {
+//                    if (isOverride && overridden.getModifiers()!= null && !overridden.getModifiers().isOverridable()) {
+//                        trace.getErrorHandler().genericError(function.getModifierList().getModifierNode(JetTokens.OVERRIDE_KEYWORD),
+//                                                             "Method " + overridden.getName() + " in " + overridden.getContainingDeclaration().getName() + " is final and can not be overridden");
+//                        isOverride = false;
+//                    }
                     ((FunctionDescriptorImpl) declaredFunction).addOverriddenFunction(overridden);
                 }
             }
+//            if (declaredFunction.getModifiers().isOverride() && declaredFunction.getOverriddenFunctions().size() == 0) {
+//                trace.getErrorHandler().genericError(function.getModifierList().getModifierNode(JetTokens.OVERRIDE_KEYWORD),
+//                                                     "Method " + declaredFunction.getName() + " overrides nothing");
+//            }
+//            if (!declaredFunction.getModifiers().isOverride() && declaredFunction.getOverriddenFunctions().size() > 0) {
+//                FunctionDescriptor overriddenMethod = declaredFunction.getOverriddenFunctions().iterator().next();
+//                trace.getErrorHandler().genericError(function.getNameIdentifier().getNode(),
+//                                                     "Method " + declaredFunction.getName() + " overrides method " + overriddenMethod.getName() + " in class " +
+//                                                     overriddenMethod.getContainingDeclaration().getName() + " and needs 'override' modifier");
+//            }
         }
     }
 
@@ -567,7 +579,9 @@ public class TopDownAnalyzer {
                 public void visitDelegationByExpressionSpecifier(JetDelegatorByExpressionSpecifier specifier) {
                     JetExpression delegateExpression = specifier.getDelegateExpression();
                     if (delegateExpression != null) {
-                        JetScope scope = scopeForConstructor == null ? descriptor.getScopeForMemberResolution() : scopeForConstructor;
+                        JetScope scope = scopeForConstructor == null
+                                         ? descriptor.getScopeForMemberResolution()
+                                         : scopeForConstructor;
                         JetType type = typeInferrer.getType(scope, delegateExpression, false, JetTypeInferrer.NO_EXPECTED_TYPE);
                         JetType supertype = trace.getBindingContext().get(BindingContext.TYPE, specifier.getTypeReference());
                         if (type != null && !semanticServices.getTypeChecker().isSubtypeOf(type, supertype)) { // TODO : Convertible?
@@ -587,7 +601,7 @@ public class TopDownAnalyzer {
                             JetValueArgumentList valueArgumentList = call.getValueArgumentList();
                             assert valueArgumentList != null;
                             trace.getErrorHandler().genericError(valueArgumentList.getNode(),
-                                    "Class " + JetPsiUtil.safeName(jetClass.getName()) + " must have a constructor in order to be able to initialize supertypes");
+                                                                 "Class " + JetPsiUtil.safeName(jetClass.getName()) + " must have a constructor in order to be able to initialize supertypes");
                         }
                     }
                 }
@@ -642,7 +656,7 @@ public class TopDownAnalyzer {
             ConstructorDescriptor primaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
             assert primaryConstructor != null;
             final JetScope scopeForConstructor = getInnerScopeForConstructor(primaryConstructor, classDescriptor.getScopeForMemberResolution(), true);
-            JetTypeInferrer.Services typeInferrer = semanticServices.getTypeInferrerServices(traceForConstructors, JetFlowInformationProvider.NONE); // TODO : flow
+            JetTypeInferrer.Services typeInferrer = semanticServices.getTypeInferrerServices(createFieldAssignTrackingTrace(), JetFlowInformationProvider.NONE); // TODO : flow
             for (JetClassInitializer anonymousInitializer : anonymousInitializers) {
                 typeInferrer.getType(scopeForConstructor, anonymousInitializer.getBody(), true, JetTypeInferrer.NO_EXPECTED_TYPE);
             }
@@ -782,6 +796,7 @@ public class TopDownAnalyzer {
                 }
 
                 resolvePropertyAccessors(property, propertyDescriptor, declaringScope);
+                checkPropertyCorrectness(property, propertyDescriptor, classDescriptor);
                 processed.add(property);
             }
         }
@@ -800,6 +815,7 @@ public class TopDownAnalyzer {
             }
 
             resolvePropertyAccessors(property, propertyDescriptor, declaringScope);
+            checkPropertyCorrectness(property, propertyDescriptor, null);
         }
     }
 
@@ -833,9 +849,69 @@ public class TopDownAnalyzer {
             resolveFunctionBody(fieldAccessTrackingTrace, setter, setterDescriptor, accessorScope);
         }
 
+//        JetExpression initializer = property.getInitializer();
+//        if (!property.isVar() && initializer != null && !trace.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor)) {
+//            trace.getErrorHandler().genericError(initializer.getNode(), "Initializer is not allowed here because this property has no setter and no backing field either");
+//        }
+    }
+
+    protected void checkPropertyCorrectness(JetProperty property, PropertyDescriptor propertyDescriptor, @Nullable ClassDescriptor classDescriptor) {
         JetExpression initializer = property.getInitializer();
-        if (!property.isVar() && initializer != null && !trace.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor)) {
-            trace.getErrorHandler().genericError(initializer.getNode(), "Initializer is not allowed here because this property has no setter and no backing field either");
+        JetPropertyAccessor getter = property.getGetter();
+        JetPropertyAccessor setter = property.getSetter();
+        if (propertyDescriptor.getModifiers().isAbstract()) {
+            if (classDescriptor == null) {
+                trace.getErrorHandler().genericError(property.getModifierList().getModifierNode(JetTokens.ABSTRACT_KEYWORD),
+                                                     "Global property can not be abstract");
+                return;
+            }
+            if (! classDescriptor.isAbstract()) {
+                trace.getErrorHandler().genericError(property.getModifierList().getModifierNode(JetTokens.ABSTRACT_KEYWORD),
+                                                     "Abstract property " + property.getName() + " in non-abstract class " + classDescriptor.getName());
+                return;
+            }
+            if (initializer != null) {
+                trace.getErrorHandler().genericError(initializer.getNode(), "Property with initializer can not be abstract");
+            }
+            if (getter != null && getter.getBodyExpression() != null) {
+                trace.getErrorHandler().genericError(getter.getNode(), "Property with getter implementation can not be abstract");
+            }
+            if (setter != null && setter.getBodyExpression() != null) {
+                trace.getErrorHandler().genericError(setter.getNode(), "Property with setter implementation can not be abstract");
+            }
+            return;
+        }
+        boolean backingFieldRequired = trace.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor);
+        if (initializer != null && ! backingFieldRequired) {
+            trace.getErrorHandler().genericError(initializer.getNode(), "Initializer is not allowed here because this property has no backing field");
+        }
+        if (initializer == null && backingFieldRequired && ! trace.getBindingContext().get(BindingContext.IS_INITIALIZED, propertyDescriptor)) {
+            if (classDescriptor == null || (getter != null && getter.getBodyExpression() != null) || (setter != null && setter.getBodyExpression() != null)) {
+                trace.getErrorHandler().genericError(property.getNameIdentifier().getNode(), "Property must be initialized");
+            } else {
+                trace.getErrorHandler().genericError(property.getNameIdentifier().getNode(), "Property must be initialized or be abstract");
+            }
+        }
+    }
+
+    protected void checkFunctionCorrectness(JetNamedFunction function, FunctionDescriptor functionDescriptor, DeclarationDescriptor containingDescriptor) {
+        if (containingDescriptor instanceof ClassDescriptor) {
+            ClassDescriptor classDescriptor = (ClassDescriptor) containingDescriptor;
+            if (functionDescriptor.getModifiers().isAbstract() && !classDescriptor.isAbstract()) {
+                trace.getErrorHandler().genericError(function.getModifierList().getModifierNode(JetTokens.ABSTRACT_KEYWORD),
+                                                     "Abstract method " + function.getName() + " in non-abstract class " + classDescriptor.getName());
+            }
+            if (function.getBodyExpression() == null && !functionDescriptor.getModifiers().isAbstract()) {
+                trace.getErrorHandler().genericError(function.getNameIdentifier().getNode(), "Method without body must be abstract");
+            }
+            return;
+        }
+        if (functionDescriptor.getModifiers().isAbstract()) {
+            trace.getErrorHandler().genericError(function.getModifierList().getModifierNode(JetTokens.ABSTRACT_KEYWORD),
+                                                 "Global function " + function.getName() + " can not be abstract");
+        }
+        if (function.getBodyExpression() == null && !functionDescriptor.getModifiers().isAbstract()) {
+            trace.getErrorHandler().genericError(function.getNameIdentifier().getNode(), "Global function must have body");
         }
     }
 
@@ -849,6 +925,22 @@ public class TopDownAnalyzer {
                         // This check may be considered redundant as long as $x is only accessible from accessors to $x
                         if (descriptor == propertyDescriptor) { // TODO : original?
                             traceForMembers.record(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor); // TODO: this trace?
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    private BindingTraceAdapter createFieldAssignTrackingTrace() {
+        return new BindingTraceAdapter(traceForConstructors).addHandler(BindingContext.VARIABLE_ASSIGNMENT, new BindingTraceAdapter.RecordHandler<JetExpression, DeclarationDescriptor>() {
+            @Override
+            public void handleRecord(WritableSlice<JetExpression, DeclarationDescriptor> jetExpressionBooleanWritableSlice, JetExpression expression, DeclarationDescriptor descriptor) {
+                if (expression instanceof JetSimpleNameExpression) {
+                    JetSimpleNameExpression variable = (JetSimpleNameExpression) expression;
+                    if (variable.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER) {
+                        if (descriptor instanceof PropertyDescriptor) {
+                            traceForMembers.record(BindingContext.IS_INITIALIZED, (PropertyDescriptor) descriptor);
                         }
                     }
                 }

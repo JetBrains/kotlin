@@ -1,4 +1,4 @@
-fun foo1() : fun (Int) : Int
+fun foo1() : fun (Int) : Int = { (x: Int) => x }
 
 fun foo() {
   val h : fun (Int) : Int = foo1();

@@ -3,7 +3,7 @@ class Base() {
     public val read : Int
       get() = 239
 
-    public var readwrite : Int
+    public var readwrite : Int = 0
       get() = $readwrite + 1
       set(n : Int) {
         $readwrite = n
