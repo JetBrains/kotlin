@@ -3,7 +3,7 @@ import java.util.*
 namespace html {
 
   abstract class Factory<T> {
-    fun create() : T
+    abstract fun create() : T
   }
 
   abstract class Element

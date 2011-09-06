@@ -3,10 +3,10 @@
 
 namespace x
 
-val b : Foo
+val b : Foo = Foo()
 val a1 = b.compareTo(2)
 
 class Foo() {
-  fun compareTo(other : Byte)   : Int
-  fun compareTo(other : Char)   : Int
+  fun compareTo(other : Byte)   : Int = 0
+  fun compareTo(other : Char)   : Int = 0
 }

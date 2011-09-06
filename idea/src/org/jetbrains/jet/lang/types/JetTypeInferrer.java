@@ -2615,6 +2615,17 @@ public class JetTypeInferrer {
 //                    context.trace.getErrorHandler().typeMismatch(right, leftType, rightType);
 //                }
             }
+            if (left instanceof JetSimpleNameExpression) {
+                JetSimpleNameExpression variable = (JetSimpleNameExpression) left;
+                String referencedName = variable.getReferencedName();
+                if (variable.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER
+                    && referencedName != null) {
+                    PropertyDescriptor property = context.scope.getPropertyByFieldReference(referencedName);
+                    if (property != null) {
+                        context.trace.record(BindingContext.VARIABLE_ASSIGNMENT, variable, property);
+                    }
+                }
+            }
             return null;
         }
 

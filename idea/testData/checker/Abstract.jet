@@ -1,0 +1,50 @@
+namespace abstract
+
+class A1() {
+    fun <error>foo</error>(): Int
+    <error>abstract</error> fun f(): Int
+}
+
+abstract class A2() {
+    abstract fun f(): Int
+}
+
+class A3() {
+    val <error>i</error>: Int
+    val <error>j</error>: Int?
+    var <error>k</error>: String
+    var <error>l</error>: Int?
+}
+
+class <error>A4</error> {
+    val <error>i</error>: Int?
+}
+
+class <error>A5</error> {
+    var <error>i</error>: Int?
+}
+
+class A6 {
+    <error>abstract</error> val i: Int
+}
+
+abstract class A7 {
+    abstract val i: Int //ok
+}
+
+class A8() {
+    val i = 11
+}
+
+class A9() {
+    <error>abstract</error> val i = 23
+}
+
+abstract class <error>A10</error> {
+    val <error>i</error>: Int
+}
+
+<error>abstract</error> val i: Int
+<error>abstract</error> fun foo(): fun(Int): Int
+val <error>j</error>: Int
+fun <error>foo1</error>(): fun(Int): Int

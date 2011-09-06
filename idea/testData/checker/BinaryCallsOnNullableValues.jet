@@ -1,13 +1,13 @@
-class A() {
-  fun equals(a : Any?) : Boolean
+abstract class A() {
+  abstract fun equals(a : Any?) : Boolean
 }
 
-class B() {
-  fun equals(a : Any?) : Boolean?
+abstract class B() {
+  abstract fun equals(a : Any?) : Boolean?
 }
 
-class C() {
-  fun equals(a : Any?) : Int
+abstract class C() {
+  abstract fun equals(a : Any?) : Int
 }
 
 fun f(): Unit {

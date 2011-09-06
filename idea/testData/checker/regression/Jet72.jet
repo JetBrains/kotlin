@@ -2,8 +2,8 @@
 
 import java.util.ArrayList
 
-class Item(val room: Object) {
-   val name : String
+abstract class Item(val room: Object) {
+   abstract val name : String
 }
 
 val items: ArrayList<Item> = ArrayList<Item>

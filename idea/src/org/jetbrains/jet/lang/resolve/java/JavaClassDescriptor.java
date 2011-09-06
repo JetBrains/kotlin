@@ -116,6 +116,16 @@ public class JavaClassDescriptor extends MutableDeclarationDescriptor implements
     }
 
     @Override
+    public boolean isAbstract() {
+        return false;
+    }
+
+    @Override
+    public boolean isOpen() {
+        return false;
+    }
+
+    @Override
     public boolean isClassObjectAValue() {
         return false;
     }

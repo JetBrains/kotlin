@@ -43,4 +43,8 @@ public interface ClassDescriptor extends ClassifierDescriptor {
     JetType getClassObjectType();
 
     boolean isObject();
+
+    boolean isAbstract();
+
+    boolean isOpen();
 }

@@ -23,6 +23,7 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     private Collection<JetType> supertypes = Lists.newArrayList();
 
     private boolean open;
+    private boolean isAbstract;
     private TypeConstructor typeConstructor;
     private final WritableScope scopeForMemberResolution;
     private final WritableScope scopeForMemberLookup;
@@ -139,6 +140,15 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     public void setName(@NotNull String name) {
         super.setName(name);
         scopeForMemberResolution.addLabeledDeclaration(this);
+    }
+
+    @Override
+    public boolean isAbstract() {
+        return isAbstract;
+    }
+
+    public void setAbstract(boolean isAbstract) {
+        this.isAbstract = isAbstract;
     }
 
     public boolean isOpen() {

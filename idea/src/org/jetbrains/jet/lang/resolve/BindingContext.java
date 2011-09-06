@@ -31,6 +31,7 @@ public interface BindingContext {
     WritableSlice<JetExpression, JetScope> RESOLUTION_SCOPE = Slices.createSimpleSlice("RESOLUTION_SCOPE");
 
     WritableSlice<JetExpression, Boolean> VARIABLE_REASSIGNMENT = Slices.createSimpleSetSlice("VARIABLE_REASSIGNMENT");
+    WritableSlice<JetExpression, DeclarationDescriptor> VARIABLE_ASSIGNMENT = Slices.createSimpleSlice("VARIABLE_ASSIGNMENT");    
     WritableSlice<JetExpression, Boolean> PROCESSED = Slices.createSimpleSetSlice("PROCESSED");
     WritableSlice<JetElement, Boolean> STATEMENT = Slices.createRemovableSetSlice("STATEMENT");
 
@@ -63,6 +64,7 @@ public interface BindingContext {
             return backingFieldRequired;
         }
     };
+    WritableSlice<PropertyDescriptor, Boolean> IS_INITIALIZED = Slices.createSimpleSetSlice("IS_INITIALIZED");
 
     WritableSlice<JetFunctionLiteralExpression, Boolean> BLOCK = new Slices.SetSlice<JetFunctionLiteralExpression>("BLOCK", RewritePolicy.DO_NOTHING) {
         @Override

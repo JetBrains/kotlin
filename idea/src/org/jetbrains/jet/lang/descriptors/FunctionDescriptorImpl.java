@@ -23,6 +23,7 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
     private JetType unsubstitutedReturnType;
     private JetType receiverType;
 
+    private MemberModifiers modifiers;
     private final Set<FunctionDescriptor> overriddenFunctions = Sets.newLinkedHashSet();
     private final FunctionDescriptor original;
 
@@ -67,6 +68,16 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
     @Override
     public Set<? extends FunctionDescriptor> getOverriddenDescriptors() {
         return overriddenFunctions;
+    }
+
+    public void setModifiers(MemberModifiers modifiers) {
+        this.modifiers = modifiers;
+    }
+
+    @Nullable
+    @Override
+    public MemberModifiers getModifiers() {
+        return modifiers;
     }
 
     public void addOverriddenFunction(@NotNull FunctionDescriptor overriddenFunction) {

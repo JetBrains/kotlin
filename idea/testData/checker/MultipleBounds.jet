@@ -1,11 +1,11 @@
 namespace Jet87
 
 open class A() {
-  fun foo() : Int
+  fun foo() : Int = 1
 }
 
 open class B() {
-  fun bar() : Double;
+  fun bar() : Double = 1.0;
 }
 
 class C() : A(), B()
@@ -69,4 +69,4 @@ class Test<<error>T</error>>
     class object T : <error>Foo</error>,
     class object T : A {}
 
-val <T, B : T> x : Int
+val <T, B : T> x : Int = 0

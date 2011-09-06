@@ -8,8 +8,8 @@ namespace a {
 
 }
 
-class Foo<T>() {
-    val x : T<Int>
+abstract class Foo<T>() {
+    abstract val x : T<Int>
 }
 
 namespace a {
@@ -26,22 +26,29 @@ val y1 = a.b
 
 /////////////////////////////////////////////////////////////////////////
 
-fun done<O>(result : O) : Iteratee<Any?, O>
+fun done<O>(result : O) : Iteratee<Any?, O> = StrangeIterateeImpl<Any?, O>(result)
 
-class Iteratee<in I, out O> {
+abstract class Iteratee<in I, out O> {
   abstract fun process(item : I) : Iteratee<I, O>
   abstract val isDone : Boolean
   abstract val result : O
   abstract fun done() : O
 }
 
-class Sum() : Iteratee<Int, Int> {
+class StrangeIterateeImpl<in I, out O>(val obj: O) : Iteratee<I, O> {
+    override fun process(item: I): Iteratee<I, O> = StrangeIterateeImpl<I, O>(obj)
+    override val isDone = true
+    override val result = obj
+    override val done = obj
+}
+
+abstract class Sum() : Iteratee<Int, Int> {
   override fun process(item : Int) : Iteratee<Int, Int> {
     return foobar.done<Int>(item);
   }
-  override val isDone : Boolean
-  override val result : Int
-  override fun done() : Int
+  abstract override val isDone : Boolean
+  abstract override val result : Int
+  abstract override fun done() : Int
 }
 
 class Collection<E> : Iterable<E> {

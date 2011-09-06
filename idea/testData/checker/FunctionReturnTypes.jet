@@ -1,4 +1,4 @@
-fun none()
+fun none() {}
 
 fun unitEmptyInfer() {}
 fun unitEmpty() : Unit {}

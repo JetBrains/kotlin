@@ -65,6 +65,11 @@ public class ClassDescriptorResolver {
         Collection<JetType> supertypes = delegationSpecifiers.isEmpty()
                 ? Collections.singleton(JetStandardClasses.getAnyType())
                 : resolveDelegationSpecifiers(parameterScope, delegationSpecifiers, typeResolver);
+//        for (JetType supertype: supertypes) {
+//            if (supertype.getConstructor().isSealed()) {
+//                trace.getErrorHandler().genericError(classElement.getNameAsDeclaration().getNode(), "Class " + classElement.getName() + " can not extend final type " + supertype);
+//            }
+//        }
         boolean open = classElement.hasModifier(JetTokens.OPEN_KEYWORD);
 
         final WritableScope memberDeclarations = new WritableScopeImpl(JetScope.EMPTY, classDescriptor, trace.getErrorHandler());
@@ -141,6 +146,7 @@ public class ClassDescriptorResolver {
         descriptor.setTypeParameterDescriptors(typeParameters);
 
         descriptor.setOpen(classElement.hasModifier(JetTokens.OPEN_KEYWORD) || classElement.hasModifier(JetTokens.ABSTRACT_KEYWORD));
+        descriptor.setAbstract(classElement.hasModifier(JetTokens.ABSTRACT_KEYWORD));
 
         trace.record(BindingContext.CLASS, classElement, descriptor);
     }
@@ -220,6 +226,7 @@ public class ClassDescriptorResolver {
                 returnType = ErrorUtils.createErrorType("No type, no body");
             }
         }
+        functionDescriptor.setModifiers(resolveModifiers(function.getModifierList(), DEFAULT_MODIFIERS));
 
         functionDescriptor.initialize(
                 receiverType,
