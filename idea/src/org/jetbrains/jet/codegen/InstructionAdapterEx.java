@@ -7,26 +7,6 @@ import org.objectweb.asm.commons.InstructionAdapter;
 import org.objectweb.asm.commons.Method;
 
 public class InstructionAdapterEx extends InstructionAdapter {
-    private static final Type BYTE_TYPE = Type.getObjectType("java/lang/Byte");
-
-    private static final Type BOOLEAN_TYPE = Type.getObjectType("java/lang/Boolean");
-
-    private static final Type SHORT_TYPE = Type.getObjectType("java/lang/Short");
-
-    private static final Type CHARACTER_TYPE = Type.getObjectType("java/lang/Character");
-
-    private static final Type INTEGER_TYPE = Type.getObjectType("java/lang/Integer");
-
-    private static final Type FLOAT_TYPE = Type.getObjectType("java/lang/Float");
-
-    private static final Type LONG_TYPE = Type.getObjectType("java/lang/Long");
-
-    private static final Type DOUBLE_TYPE = Type.getObjectType("java/lang/Double");
-
-    private static final Type NUMBER_TYPE = Type.getObjectType("java/lang/Number");
-
-    private static final Type OBJECT_TYPE = Type.getObjectType("java/lang/Object");
-
     private static final Method BOOLEAN_VALUE = Method.getMethod("boolean booleanValue()");
 
     private static final Method CHAR_VALUE = Method.getMethod("char charValue()");
@@ -46,21 +26,21 @@ public class InstructionAdapterEx extends InstructionAdapter {
     private static Type getBoxedType(final Type type) {
         switch (type.getSort()) {
             case Type.BYTE:
-                return BYTE_TYPE;
+                return JetTypeMapper.JL_BYTE_TYPE;
             case Type.BOOLEAN:
-                return BOOLEAN_TYPE;
+                return JetTypeMapper.JL_BOOLEAN_TYPE;
             case Type.SHORT:
-                return SHORT_TYPE;
+                return JetTypeMapper.JL_SHORT_TYPE;
             case Type.CHAR:
-                return CHARACTER_TYPE;
+                return JetTypeMapper.JL_CHAR_TYPE;
             case Type.INT:
-                return INTEGER_TYPE;
+                return JetTypeMapper.JL_INTEGER_TYPE;
             case Type.FLOAT:
-                return FLOAT_TYPE;
+                return JetTypeMapper.JL_FLOAT_TYPE;
             case Type.LONG:
-                return LONG_TYPE;
+                return JetTypeMapper.JL_LONG_TYPE;
             case Type.DOUBLE:
-                return DOUBLE_TYPE;
+                return JetTypeMapper.JL_DOUBLE_TYPE;
         }
         return type;
     }
@@ -78,17 +58,17 @@ public class InstructionAdapterEx extends InstructionAdapter {
     }
 
     public void unbox(final Type type) {
-        Type t = NUMBER_TYPE;
+        Type t = JetTypeMapper.JL_NUMBER_TYPE;
         Method sig = null;
         switch (type.getSort()) {
             case Type.VOID:
                 return;
             case Type.CHAR:
-                t = CHARACTER_TYPE;
+                t = JetTypeMapper.JL_CHAR_TYPE;
                 sig = CHAR_VALUE;
                 break;
             case Type.BOOLEAN:
-                t = BOOLEAN_TYPE;
+                t = JetTypeMapper.JL_BOOLEAN_TYPE;
                 sig = BOOLEAN_VALUE;
                 break;
             case Type.DOUBLE:

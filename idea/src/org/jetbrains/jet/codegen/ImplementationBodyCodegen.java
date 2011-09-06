@@ -94,7 +94,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private void generateFieldForTypeInfo() {
         final boolean typeInfoIsStatic = descriptor.getTypeConstructor().getParameters().size() == 0;
-        v.visitField(Opcodes.ACC_PRIVATE | (typeInfoIsStatic ? Opcodes.ACC_STATIC : 0), "$typeInfo",
+        v.visitField(Opcodes.ACC_PUBLIC | Opcodes.ACC_FINAL | (typeInfoIsStatic ? Opcodes.ACC_STATIC : 0), "$typeInfo",
                      "Ljet/typeinfo/TypeInfo;", null, null);
         if (typeInfoIsStatic) {
             staticInitializerChunks.add(new CodeChunk() {

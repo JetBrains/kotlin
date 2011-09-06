@@ -28,6 +28,16 @@ public class JetTypeMapper {
     public static final Type TYPE_JET_OBJECT = Type.getType(JetObject.class);
     public static final Type TYPE_CLASS = Type.getType(Class.class);
     public static final Type TYPE_NOTHING = Type.getObjectType("jet/Nothing");
+    public static final Type JL_INTEGER_TYPE = Type.getObjectType("java/lang/Integer");
+    public static final Type JL_LONG_TYPE = Type.getObjectType("java/lang/Long");
+    public static final Type JL_SHORT_TYPE = Type.getObjectType("java/lang/Short");
+    public static final Type JL_BYTE_TYPE = Type.getObjectType("java/lang/Byte");
+    public static final Type JL_CHAR_TYPE = Type.getObjectType("java/lang/Character");
+    public static final Type JL_FLOAT_TYPE = Type.getObjectType("java/lang/Float");
+    public static final Type JL_DOUBLE_TYPE = Type.getObjectType("java/lang/Double");
+    public static final Type JL_BOOLEAN_TYPE = Type.getObjectType("java/lang/Boolean");
+    public static final Type JL_NUMBER_TYPE = Type.getObjectType("java/lang/Number");
+    public static final Type JL_STRING_BUILDER = Type.getObjectType(ExpressionCodegen.CLASS_STRING_BUILDER);
 
     private final JetStandardLibrary standardLibrary;
     private final BindingContext bindingContext;
@@ -298,50 +308,50 @@ public class JetTypeMapper {
         if (jetType.equals(standardLibrary.getIntType())) {
             return Type.INT_TYPE;
         }
-        if (jetType.equals(TypeUtils.makeNullable(standardLibrary.getIntType()))) {
-            return Type.getObjectType("java/lang/Integer");
+        if (jetType.equals(standardLibrary.getNullableIntType())) {
+            return JL_INTEGER_TYPE;
         }
         if (jetType.equals(standardLibrary.getLongType())) {
             return Type.LONG_TYPE;
         }
-        if (jetType.equals(TypeUtils.makeNullable(standardLibrary.getLongType()))) {
-            return Type.getObjectType("java/lang/Long");
+        if (jetType.equals(standardLibrary.getNullableLongType())) {
+            return JL_LONG_TYPE;
         }
         if (jetType.equals(standardLibrary.getShortType())) {
             return Type.SHORT_TYPE;
         }
-        if (jetType.equals(TypeUtils.makeNullable(standardLibrary.getShortType()))) {
-            return Type.getObjectType("java/lang/Short");
+        if (jetType.equals(standardLibrary.getNullableShortType())) {
+            return JL_SHORT_TYPE;
         }
         if (jetType.equals(standardLibrary.getByteType())) {
             return Type.BYTE_TYPE;
         }
-        if (jetType.equals(TypeUtils.makeNullable(standardLibrary.getByteType()))) {
-            return Type.getObjectType("java/lang/Byte");
+        if (jetType.equals(standardLibrary.getNullableByteType())) {
+            return JL_BYTE_TYPE;
         }
         if (jetType.equals(standardLibrary.getCharType())) {
             return Type.CHAR_TYPE;
         }
-        if (jetType.equals(TypeUtils.makeNullable(standardLibrary.getCharType()))) {
-            return Type.getObjectType("java/lang/Char");
+        if (jetType.equals(standardLibrary.getNullableCharType())) {
+            return JL_CHAR_TYPE;
         }
         if (jetType.equals(standardLibrary.getFloatType())) {
             return Type.FLOAT_TYPE;
         }
-        if (jetType.equals(TypeUtils.makeNullable(standardLibrary.getFloatType()))) {
-            return Type.getObjectType("java/lang/Float");
+        if (jetType.equals(standardLibrary.getNullableFloatType())) {
+            return JL_FLOAT_TYPE;
         }
         if (jetType.equals(standardLibrary.getDoubleType())) {
             return Type.DOUBLE_TYPE;
         }
-        if (jetType.equals(TypeUtils.makeNullable(standardLibrary.getDoubleType()))) {
-            return Type.getObjectType("java/lang/Double");
+        if (jetType.equals(standardLibrary.getNullableDoubleType())) {
+            return JL_DOUBLE_TYPE;
         }
         if (jetType.equals(standardLibrary.getBooleanType())) {
             return Type.BOOLEAN_TYPE;
         }
-        if (jetType.equals(TypeUtils.makeNullable(standardLibrary.getBooleanType()))) {
-            return Type.getObjectType("java/lang/Boolean");
+        if (jetType.equals(standardLibrary.getNullableBooleanType())) {
+            return JL_BOOLEAN_TYPE;
         }
         if (jetType.equals(standardLibrary.getStringType()) || jetType.equals(standardLibrary.getNullableStringType())) {
             return Type.getType(String.class);
@@ -374,23 +384,23 @@ public class JetTypeMapper {
     public Type boxType(Type asmType) {
         switch (asmType.getSort()) {
             case Type.VOID:
-                return Type.getObjectType("java/lang/Void");
+                return Type.VOID_TYPE;
             case Type.BYTE:
-                return Type.getObjectType("java/lang/Byte");
+                return JL_BYTE_TYPE;
             case Type.BOOLEAN:
-                return Type.getObjectType("java/lang/Boolean");
+                return JL_BOOLEAN_TYPE;
             case Type.SHORT:
-                return Type.getObjectType("java/lang.Short");
+                return JL_SHORT_TYPE;
             case Type.CHAR:
-                return Type.getObjectType("java/lang/Character");
+                return JL_CHAR_TYPE;
             case Type.INT:
-                return Type.getObjectType("java/lang/Integer");
+                return JL_INTEGER_TYPE;
             case Type.FLOAT:
-                return Type.getObjectType("java/lang/Float");
+                return JL_FLOAT_TYPE;
             case Type.LONG:
-                return Type.getObjectType("java/lang/Long");
+                return JL_LONG_TYPE;
             case Type.DOUBLE:
-                return Type.getObjectType("java/lang/Double");
+                return JL_DOUBLE_TYPE;
         }
 
         return asmType;
@@ -617,5 +627,69 @@ public class JetTypeMapper {
             result.add(jvmName(classDescriptor, OwnerKind.DELEGATING_IMPLEMENTATION));
         }
         return result;
+    }
+
+    public String isKnownTypeInfo(JetType jetType) {
+        if (jetType.equals(standardLibrary.getIntType())) {
+            return "INT_TYPE_INFO";
+        }
+        if (jetType.equals(standardLibrary.getNullableIntType())) {
+            return "NULLABLE_INT_TYPE_INFO";
+        }
+        if (jetType.equals(standardLibrary.getLongType())) {
+            return "LONG_TYPE_INFO";
+        }
+        if (jetType.equals(standardLibrary.getNullableLongType())) {
+            return "NULLABLE_LONG_TYPE_INFO";
+        }
+        if (jetType.equals(standardLibrary.getShortType())) {
+            return "SHORT_TYPE_INFO";
+        }
+        if (jetType.equals(standardLibrary.getNullableShortType())) {
+            return "NULLABLE_SHORT_TYPE_INFO";
+        }
+        if (jetType.equals(standardLibrary.getByteType())) {
+            return "BYTE_TYPE_INFO";
+        }
+        if (jetType.equals(standardLibrary.getNullableByteType())) {
+            return "NULLABLE_BYTE_TYPE_INFO";
+        }
+        if (jetType.equals(standardLibrary.getCharType())) {
+            return "CHAR_TYPE_INFO";
+        }
+        if (jetType.equals(standardLibrary.getNullableCharType())) {
+            return "NULLABLE_CHAR_TYPE_INFO";
+        }
+        if (jetType.equals(standardLibrary.getFloatType())) {
+            return "FLOAT_TYPE_INFO";
+        }
+        if (jetType.equals(standardLibrary.getNullableFloatType())) {
+            return "NULLABLE_FLOAT_TYPE_INFO";
+        }
+        if (jetType.equals(standardLibrary.getDoubleType())) {
+            return "DOUBLE_TYPE_INFO";
+        }
+        if (jetType.equals(standardLibrary.getNullableDoubleType())) {
+            return "NULLABLE_DOUBLE_TYPE_INFO";
+        }
+        if (jetType.equals(standardLibrary.getBooleanType())) {
+            return "BOOLEAN_TYPE_INFO";
+        }
+        if (jetType.equals(standardLibrary.getNullableBooleanType())) {
+            return "NULLABLE_BOOLEAN_TYPE_INFO";
+        }
+        if (jetType.equals(standardLibrary.getStringType())) {
+            return "STRING_TYPE_INFO";
+        }
+        if (jetType.equals(standardLibrary.getNullableStringType())) {
+            return "NULLABLE_STRING_TYPE_INFO";
+        }
+        if (jetType.equals(standardLibrary.getTuple0Type())) {
+            return "TUPLE0_TYPE_INFO";
+        }
+        if (jetType.equals(standardLibrary.getNullableTuple0Type())) {
+            return "NULLABLE_TUPLE0_TYPE_INFO";
+        }
+        return null;
     }
 }

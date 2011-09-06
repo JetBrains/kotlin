@@ -320,4 +320,17 @@ public class TypeUtils {
         if (declarationDescriptor2 == null) return false; // Class of type1 is not null
         return declarationDescriptor1.getOriginal().equals(declarationDescriptor2.getOriginal());
     }
+
+    public static boolean hasUnsubstitutedTypeParameters(JetType type) {
+        if(type.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor)
+            return true;
+
+        for(TypeProjection proj : type.getArguments()) {
+            if(hasUnsubstitutedTypeParameters(proj.getType())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

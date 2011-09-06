@@ -4,11 +4,17 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.types.JetType;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
 /**
  * @author max
@@ -42,10 +48,6 @@ public class NamespaceCodegen {
 
         GenerationState.prepareAnonymousClasses(namespace, state.getTypeMapper());
 
-        if (hasNonConstantPropertyInitializers(namespace)) {
-            generateStaticInitializers(namespace);
-        }
-
         for (JetDeclaration declaration : namespace.getDeclarations()) {
             if (declaration instanceof JetProperty) {
                 propertyCodegen.gen((JetProperty) declaration);
@@ -65,9 +67,18 @@ public class NamespaceCodegen {
                 state.forNamespace(childNamespace).generate(childNamespace);
             }
         }
+
+//        System.out.println("-----------");
+//        for(Map.Entry<JetType,Integer> e : (context.typeInfoConstants != null ? context.typeInfoConstants : Collections.<JetType,Integer>emptyMap()).entrySet()) {
+//            System.out.println(e.getKey() + " -> " + e.getValue());
+//        }
+
+        if (hasNonConstantPropertyInitializers(namespace)) {
+            generateStaticInitializers(namespace, context);
+        }
     }
 
-    private void generateStaticInitializers(JetNamespace namespace) {
+    private void generateStaticInitializers(JetNamespace namespace, ClassContext context) {
         MethodVisitor mv = v.visitMethod(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC,
                 "<clinit>", "()V", null, null);
         mv.visitCode();

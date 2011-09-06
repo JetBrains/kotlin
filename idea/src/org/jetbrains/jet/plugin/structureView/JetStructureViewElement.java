@@ -70,6 +70,11 @@ public class JetStructureViewElement implements StructureViewTreeElement {
                         : null;
             }
 
+            @Override
+            public TextAttributesKey getTextAttributesKey() {
+                return null;
+            }
+
         };
     }
 
