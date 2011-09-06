@@ -8,6 +8,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -389,21 +390,20 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     protected void generateTypeInfoInitializer(int firstTypeParameter, int typeParamCount, InstructionAdapter iv) {
         iv.load(0, JetTypeMapper.TYPE_OBJECT);
-        iv.anew(JetTypeMapper.TYPE_TYPEINFO);
-        iv.dup();
 
         iv.aconst(state.getTypeMapper().jvmType(descriptor, OwnerKind.INTERFACE));
         iv.iconst(0);
         iv.iconst(typeParamCount);
-        iv.newarray(JetTypeMapper.TYPE_TYPEINFO);
+        iv.newarray(JetTypeMapper.TYPE_TYPEINFOPROJECTION);
 
         for (int i = 0; i < typeParamCount; i++) {
             iv.dup();
             iv.iconst(i);
             iv.load(firstTypeParameter + i, JetTypeMapper.TYPE_OBJECT);
+            ExpressionCodegen.genTypeInfoToProjection(iv, Variance.INVARIANT);
             iv.astore(JetTypeMapper.TYPE_OBJECT);
         }
-        iv.invokespecial("jet/typeinfo/TypeInfo", "<init>", "(Ljava/lang/Class;Z[Ljet/typeinfo/TypeInfo;)V");
+        iv.invokestatic("jet/typeinfo/TypeInfo", "getTypeInfo", "(Ljava/lang/Class;Z[Ljet/typeinfo/TypeInfoProjection;)Ljet/typeinfo/TypeInfo;");
         iv.putfield(state.getTypeMapper().jvmName(descriptor, OwnerKind.IMPLEMENTATION), "$typeInfo", "Ljet/typeinfo/TypeInfo;");
     }
 

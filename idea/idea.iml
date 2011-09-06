@@ -21,7 +21,6 @@
       <library name="asm-util-3.3.1.jar">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../lib/asm-util-3.3.1.jar!/" />
-          <root url="jar://$USER_HOME$/IdeaProjects/untitled/lib/asm-util-3.3.1.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

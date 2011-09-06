@@ -18,6 +18,7 @@ import org.jetbrains.jet.lang.resolve.java.JavaClassDescriptor;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
+import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -1949,27 +1950,37 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             return;
         }
 
-        v.anew(JetTypeMapper.TYPE_TYPEINFO);
-        v.dup();
         v.aconst(jvmType);
         v.iconst(jetType.isNullable()?1:0);
         List<TypeProjection> arguments = jetType.getArguments();
         if (arguments.size() > 0) {
             v.iconst(arguments.size());
-            v.newarray(JetTypeMapper.TYPE_TYPEINFO);
+            v.newarray(JetTypeMapper.TYPE_TYPEINFOPROJECTION);
 
             for (int i = 0, argumentsSize = arguments.size(); i < argumentsSize; i++) {
                 TypeProjection argument = arguments.get(i);
                 v.dup();
                 v.iconst(i);
                 generateTypeInfo(argument.getType());
+                genTypeInfoToProjection(v, argument.getProjectionKind());
                 v.astore(JetTypeMapper.TYPE_OBJECT);
             }
-            v.invokespecial("jet/typeinfo/TypeInfo", "<init>", "(Ljava/lang/Class;Z[Ljet/typeinfo/TypeInfo;)V");
+            v.invokestatic("jet/typeinfo/TypeInfo", "getTypeInfo", "(Ljava/lang/Class;Z[Ljet/typeinfo/TypeInfoProjection;)Ljet/typeinfo/TypeInfo;");
         }
         else {
-            v.invokespecial("jet/typeinfo/TypeInfo", "<init>", "(Ljava/lang/Class;Z)V");
+            v.invokestatic("jet/typeinfo/TypeInfo", "getTypeInfo", "(Ljava/lang/Class;Z)Ljet/typeinfo/TypeInfo;");
         }
+    }
+
+    public static void genTypeInfoToProjection(InstructionAdapter v, Variance variance) {
+        if(variance == Variance.INVARIANT)
+            v.invokestatic("jet/typeinfo/TypeInfo", "invariantProjection", "(Ljet/typeinfo/TypeInfo;)Ljet/typeinfo/TypeInfoProjection;");
+        else if(variance == Variance.IN_VARIANCE)
+            v.invokestatic("jet/typeinfo/TypeInfo", "inProjection", "(Ljet/typeinfo/TypeInfo;)Ljet/typeinfo/TypeInfoProjection;");
+        else if(variance == Variance.OUT_VARIANCE)
+            v.invokestatic("jet/typeinfo/TypeInfo", "outProjection", "(Ljet/typeinfo/TypeInfo;)Ljet/typeinfo/TypeInfoProjection;");
+        else
+            throw new UnsupportedOperationException(variance.toString());
     }
 
     private void loadTypeParameterTypeInfo(TypeParameterDescriptor typeParameterDescriptor) {
@@ -1982,7 +1993,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         if (containingDeclaration == contextType() && contextType() instanceof ClassDescriptor) {
             loadTypeInfo(typeMapper, (ClassDescriptor) contextType(), v);
             v.iconst(typeParameterDescriptor.getIndex());
-            v.invokevirtual("jet/typeinfo/TypeInfo", "getTypeParameter", "(I)Ljet/typeinfo/TypeInfo;");
+            v.invokevirtual("jet/typeinfo/TypeInfo", "getArgumentType", "(I)Ljet/typeinfo/TypeInfo;");
             return;
         }
         throw new UnsupportedOperationException("don't know what this type parameter resolves to");
