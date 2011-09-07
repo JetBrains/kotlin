@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
@@ -119,7 +120,7 @@ public class TopDownAnalyzer {
 
         createTypeConstructors(); // create type constructors for classes and generic parameters
         resolveTypesInClassHeaders(); // Generic bounds and types in supertype lists (no expressions or constructor resolution)
-        checkGenericBoundsInClassHeaders(); // For the types resolved so far
+        checkTypesInClassHeaders(); // Generic bounds and supertype lists
 
         resolveConstructorHeaders();
 
@@ -346,7 +347,7 @@ public class TopDownAnalyzer {
         }
     }
 
-    private void checkGenericBoundsInClassHeaders() {
+    private void checkTypesInClassHeaders() {
         for (Map.Entry<JetClass, MutableClassDescriptor> entry : classes.entrySet()) {
             JetClass jetClass = entry.getKey();
 
@@ -354,7 +355,9 @@ public class TopDownAnalyzer {
                 JetTypeReference typeReference = delegationSpecifier.getTypeReference();
                 if (typeReference != null) {
                     JetType type = trace.getBindingContext().get(BindingContext.TYPE, typeReference);
-                    classDescriptorResolver.checkBounds(typeReference, type);
+                    if (type != null) {
+                        classDescriptorResolver.checkBounds(typeReference, type);
+                    }
                 }
             }
 
@@ -479,6 +482,10 @@ public class TopDownAnalyzer {
     private void processPrimaryConstructor(MutableClassDescriptor classDescriptor, JetClass klass) {
         if (!klass.hasPrimaryConstructor()) return;
 
+        if (classDescriptor.isTrait()) {
+            trace.getErrorHandler().genericError(klass.getPrimaryConstructorParameterList().getNode(), "A trait may not have a constructor");
+        }
+
         // TODO : not all the parameters are real properties
         JetScope memberScope = classDescriptor.getScopeForSupertypeResolution();
         ConstructorDescriptor constructorDescriptor = classDescriptorResolver.resolvePrimaryConstructorDescriptor(memberScope, classDescriptor, klass);
@@ -497,6 +504,9 @@ public class TopDownAnalyzer {
     }
 
     private void processSecondaryConstructor(MutableClassDescriptor classDescriptor, JetConstructor constructor) {
+        if (classDescriptor.isTrait()) {
+            trace.getErrorHandler().genericError(constructor.getNameNode(), "A trait may not have a constructor");
+        }
         ConstructorDescriptor constructorDescriptor = classDescriptorResolver.resolveSecondaryConstructorDescriptor(
                 classDescriptor.getScopeForMemberResolution(),
                 classDescriptor,
@@ -591,65 +601,99 @@ public class TopDownAnalyzer {
                 : getInnerScopeForConstructor(primaryConstructor, descriptor.getScopeForMemberResolution(), true);
         final JetTypeInferrer.Services typeInferrer = semanticServices.getTypeInferrerServices(traceForConstructors, JetFlowInformationProvider.NONE); // TODO : flow
 
-        for (JetDelegationSpecifier delegationSpecifier : jetClass.getDelegationSpecifiers()) {
-            delegationSpecifier.accept(new JetVisitorVoid() {
-                @Override
-                public void visitDelegationByExpressionSpecifier(JetDelegatorByExpressionSpecifier specifier) {
-                    JetExpression delegateExpression = specifier.getDelegateExpression();
-                    if (delegateExpression != null) {
-                        JetScope scope = scopeForConstructor == null ? descriptor.getScopeForMemberResolution() : scopeForConstructor;
-                        JetType type = typeInferrer.getType(scope, delegateExpression, NO_EXPECTED_TYPE);
-                        JetType supertype = trace.getBindingContext().get(BindingContext.TYPE, specifier.getTypeReference());
-                        if (type != null && !semanticServices.getTypeChecker().isSubtypeOf(type, supertype)) { // TODO : Convertible?
-                            trace.getErrorHandler().typeMismatch(delegateExpression, supertype, type);
-                        }
-                    }
+        JetVisitorVoid visitor = new JetVisitorVoid() {
+            private boolean superclassAppeared = false;
+            
+            @Override
+            public void visitDelegationByExpressionSpecifier(JetDelegatorByExpressionSpecifier specifier) {
+                if (descriptor.isTrait()) {
+                    trace.getErrorHandler().genericError(specifier.getNode(), "Traits can not use delegation");
                 }
-
-                @Override
-                public void visitDelegationToSuperCallSpecifier(JetDelegatorToSuperCall call) {
-                    JetTypeReference typeReference = call.getTypeReference();
-                    if (typeReference != null) {
-                        if (descriptor.getUnsubstitutedPrimaryConstructor() != null) {
-                            typeInferrer.getCallResolver().resolveCall(trace, scopeForConstructor, null, call, NO_EXPECTED_TYPE);
-                        }
-                        else {
-                            JetValueArgumentList valueArgumentList = call.getValueArgumentList();
-                            assert valueArgumentList != null;
-                            trace.getErrorHandler().genericError(valueArgumentList.getNode(),
-                                    "Class " + JetPsiUtil.safeName(jetClass.getName()) + " must have a constructor in order to be able to initialize supertypes");
-                        }
-                    }
-                }
-
-                @Override
-                public void visitDelegationToSuperClassSpecifier(JetDelegatorToSuperClass specifier) {
+                JetExpression delegateExpression = specifier.getDelegateExpression();
+                if (delegateExpression != null) {
+                    JetScope scope = scopeForConstructor == null
+                                     ? descriptor.getScopeForMemberResolution()
+                                     : scopeForConstructor;
+                    JetType type = typeInferrer.getType(scope, delegateExpression, NO_EXPECTED_TYPE);
                     JetType supertype = trace.getBindingContext().get(BindingContext.TYPE, specifier.getTypeReference());
-                    if (supertype != null) {
-                        DeclarationDescriptor declarationDescriptor = supertype.getConstructor().getDeclarationDescriptor();
-                        if (declarationDescriptor instanceof ClassDescriptor) {
-                            ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
-                            if (classDescriptor.hasConstructors() && !ErrorUtils.isError(classDescriptor.getTypeConstructor())) {
+                    if (type != null && supertype != null && !semanticServices.getTypeChecker().isSubtypeOf(type, supertype)) {
+                        trace.getErrorHandler().typeMismatch(delegateExpression, supertype, type);
+                    }
+                }
+            }
+
+            @Override
+            public void visitDelegationToSuperCallSpecifier(JetDelegatorToSuperCall call) {
+                if (descriptor.isTrait()) {
+                    JetValueArgumentList valueArgumentList = call.getValueArgumentList();
+                    ASTNode node = valueArgumentList == null ? call.getNode() : valueArgumentList.getNode();
+                    trace.getErrorHandler().genericError(node, "Traits can not initialize supertypes");
+                }
+                JetTypeReference typeReference = call.getTypeReference();
+                if (typeReference != null) {
+                    if (descriptor.getUnsubstitutedPrimaryConstructor() != null) {
+                        JetType type = typeInferrer.getCallResolver().resolveCall(trace, scopeForConstructor, null, call, NO_EXPECTED_TYPE);
+                        if (type != null) {
+                            DeclarationDescriptor declarationDescriptor = type.getConstructor().getDeclarationDescriptor();
+                            if (declarationDescriptor instanceof ClassDescriptor) {
+                                ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
+                                if (classDescriptor.isTrait()) {
+                                    trace.getErrorHandler().genericError(call.getValueArgumentList().getNode(), "A trait may not have a constructor");
+                                }
+                            }
+                        }
+                    }
+                    else {
+                        JetValueArgumentList valueArgumentList = call.getValueArgumentList();
+                        assert valueArgumentList != null;
+                        trace.getErrorHandler().genericError(valueArgumentList.getNode(),
+                                                             "Class " + JetPsiUtil.safeName(jetClass.getName()) + " must have a constructor in order to be able to initialize supertypes");
+                    }
+                }
+            }
+
+            @Override
+            public void visitDelegationToSuperClassSpecifier(JetDelegatorToSuperClass specifier) {
+                JetType supertype = trace.getBindingContext().get(BindingContext.TYPE, specifier.getTypeReference());
+                if (supertype != null) {
+                    DeclarationDescriptor declarationDescriptor = supertype.getConstructor().getDeclarationDescriptor();
+                    if (declarationDescriptor instanceof ClassDescriptor) {
+                        ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
+                        if (!descriptor.isTrait()) {
+                            if (classDescriptor.hasConstructors() && !ErrorUtils.isError(classDescriptor.getTypeConstructor()) && !classDescriptor.isTrait()) {
                                 trace.getErrorHandler().genericError(specifier.getNode(), "This type has a constructor, and thus must be initialized here");
                             }
                         }
                         else {
-                            trace.getErrorHandler().genericError(specifier.getNode(), "Only classes may serve as supertypes");
+                            if (!classDescriptor.isTrait()) {
+                                if (superclassAppeared) {
+                                    trace.getErrorHandler().genericError(specifier.getNode(), "A trait may extend only one class");
+                                }
+                                else {
+                                    superclassAppeared = true;
+                                }
+                            }
                         }
-
                     }
-                }
+                    else {
+                        trace.getErrorHandler().genericError(specifier.getNode(), "Only classes may serve as supertypes");
+                    }
 
-                @Override
-                public void visitDelegationToThisCall(JetDelegatorToThisCall thisCall) {
-                    throw new IllegalStateException("This-calls should be prohibited by the parser");
                 }
+            }
 
-                @Override
-                public void visitJetElement(JetElement element) {
-                    throw new UnsupportedOperationException(element.getText() + " : " + element);
-                }
-            });
+            @Override
+            public void visitDelegationToThisCall(JetDelegatorToThisCall thisCall) {
+                throw new IllegalStateException("This-calls should be prohibited by the parser");
+            }
+
+            @Override
+            public void visitJetElement(JetElement element) {
+                throw new UnsupportedOperationException(element.getText() + " : " + element);
+            }
+        };
+        for (JetDelegationSpecifier delegationSpecifier : jetClass.getDelegationSpecifiers()) {
+            delegationSpecifier.accept(visitor);
         }
     }
 
@@ -815,7 +859,7 @@ public class TopDownAnalyzer {
                 }
 
                 resolvePropertyAccessors(property, propertyDescriptor, declaringScope);
-                checkPropertyCorrectness(property, propertyDescriptor, classDescriptor);
+                checkProperty(property, propertyDescriptor, classDescriptor);
                 processed.add(property);
             }
         }
@@ -834,7 +878,7 @@ public class TopDownAnalyzer {
             }
 
             resolvePropertyAccessors(property, propertyDescriptor, declaringScope);
-            checkPropertyCorrectness(property, propertyDescriptor, null);
+            checkProperty(property, propertyDescriptor, null);
         }
     }
 
@@ -874,17 +918,19 @@ public class TopDownAnalyzer {
 //        }
     }
 
-    protected void checkPropertyCorrectness(JetProperty property, PropertyDescriptor propertyDescriptor, @Nullable ClassDescriptor classDescriptor) {
+    protected void checkProperty(JetProperty property, PropertyDescriptor propertyDescriptor, @Nullable ClassDescriptor classDescriptor) {
         JetExpression initializer = property.getInitializer();
         JetPropertyAccessor getter = property.getGetter();
         JetPropertyAccessor setter = property.getSetter();
+        PsiElement nameIdentifier = property.getNameIdentifier();
+        ASTNode nameNode = nameIdentifier == null ? property.getNode() : nameIdentifier.getNode();
         if (propertyDescriptor.getModifiers().isAbstract()) {
             if (classDescriptor == null) {
                 trace.getErrorHandler().genericError(property.getModifierList().getModifierNode(JetTokens.ABSTRACT_KEYWORD),
                                                      "Global property can not be abstract");
                 return;
             }
-            if (! classDescriptor.isAbstract()) {
+            if (!classDescriptor.isAbstract()) {
                 trace.getErrorHandler().genericError(property.getModifierList().getModifierNode(JetTokens.ABSTRACT_KEYWORD),
                                                      "Abstract property " + property.getName() + " in non-abstract class " + classDescriptor.getName());
                 return;
@@ -901,14 +947,18 @@ public class TopDownAnalyzer {
             return;
         }
         boolean backingFieldRequired = trace.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor);
-        if (initializer != null && ! backingFieldRequired) {
-            trace.getErrorHandler().genericError(initializer.getNode(), "Initializer is not allowed here because this property has no backing field");
+        if (backingFieldRequired) {
+            if (initializer == null && !trace.getBindingContext().get(BindingContext.IS_INITIALIZED, propertyDescriptor)) {
+                if (classDescriptor == null || (getter != null && getter.getBodyExpression() != null) || (setter != null && setter.getBodyExpression() != null)) {
+                    trace.getErrorHandler().genericError(nameNode, "Property must be initialized");
+                } else if (!classDescriptor.isTrait()) {
+                    trace.getErrorHandler().genericError(nameNode, "Property must be initialized or be abstract");
+                }
+            }
         }
-        if (initializer == null && backingFieldRequired && ! trace.getBindingContext().get(BindingContext.IS_INITIALIZED, propertyDescriptor)) {
-            if (classDescriptor == null || (getter != null && getter.getBodyExpression() != null) || (setter != null && setter.getBodyExpression() != null)) {
-                trace.getErrorHandler().genericError(property.getNameIdentifier().getNode(), "Property must be initialized");
-            } else {
-                trace.getErrorHandler().genericError(property.getNameIdentifier().getNode(), "Property must be initialized or be abstract");
+        else {
+            if (initializer != null) {
+                trace.getErrorHandler().genericError(initializer.getNode(), "Initializer is not allowed here because this property has no backing field");
             }
         }
     }

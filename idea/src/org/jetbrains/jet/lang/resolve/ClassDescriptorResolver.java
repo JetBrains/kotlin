@@ -166,15 +166,15 @@ public class ClassDescriptorResolver {
                 trace.getErrorHandler().genericError(((JetEnumEntry) jetClass).getNameIdentifier().getNode(), "generic arguments of the base type must be specified");
             }
         }
-        Collection<? extends JetType> superclasses = delegationSpecifiers.isEmpty()
+        Collection<? extends JetType> supertypes = delegationSpecifiers.isEmpty()
                 ? Collections.singleton(defaultSupertype)
                 : resolveDelegationSpecifiers(
                     descriptor.getScopeForSupertypeResolution(),
                     delegationSpecifiers,
                     typeResolverNotCheckingBounds);
 
-        for (JetType superclass : superclasses) {
-            descriptor.addSupertype(superclass);
+        for (JetType supertype : supertypes) {
+            descriptor.addSupertype(supertype);
         }
     }
 

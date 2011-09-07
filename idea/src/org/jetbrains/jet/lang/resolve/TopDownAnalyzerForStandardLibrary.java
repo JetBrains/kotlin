@@ -23,7 +23,7 @@ public class TopDownAnalyzerForStandardLibrary extends TopDownAnalyzer {
     }
 
     @Override
-    protected void checkPropertyCorrectness(JetProperty property, PropertyDescriptor propertyDescriptor, ClassDescriptor classDescriptor) {}
+    protected void checkProperty(JetProperty property, PropertyDescriptor propertyDescriptor, ClassDescriptor classDescriptor) {}
 
 
     @Override

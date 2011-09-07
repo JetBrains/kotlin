@@ -37,14 +37,27 @@ public class BasicWritableSlice<K, V> implements WritableSlice<K,V> {
         return value;
     }
 
-
     @Override
     public RewritePolicy getRewritePolicy() {
         return rewritePolicy;
     }
 
+
     @Override
     public String toString() {
         return debugName;
     }
+
+    @Override
+    public ReadOnlySlice<K, V> makeRawValueVersion() {
+        return new DelegatingSlice<K, V>(this) {
+            @Override
+            public V computeValue(SlicedMap map, K key, V value, boolean valueNotFound) {
+                if (valueNotFound) assert value == null;
+                return value;
+            }
+        };
+    }
+
+
 }

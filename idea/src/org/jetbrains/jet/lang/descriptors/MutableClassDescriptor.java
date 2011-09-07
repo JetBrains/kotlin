@@ -145,7 +145,7 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
 
     @Override
     public boolean isAbstract() {
-        return isAbstract;
+        return isAbstract || trait;
     }
 
     public void setAbstract(boolean isAbstract) {
