@@ -15,10 +15,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.JavaClassDescriptor;
-import org.jetbrains.jet.lang.types.JetStandardClasses;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeProjection;
-import org.jetbrains.jet.lang.types.Variance;
+import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -1478,7 +1475,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     }
 
     public void generateStringBuilderConstructor() {
-        Type type = Type.getObjectType(CLASS_STRING_BUILDER);
+        Type type = JetTypeMapper.JL_STRING_BUILDER;
         v.anew(type);
         v.dup();
         Method method = new Method("<init>", Type.VOID_TYPE, new Type[0]);
@@ -1500,7 +1497,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     }
 
     public void invokeAppendMethod(Type exprType) {
-        Method appendDescriptor = new Method("append", Type.getObjectType(CLASS_STRING_BUILDER),
+        Method appendDescriptor = new Method("append", JetTypeMapper.JL_STRING_BUILDER,
                 new Type[] { exprType.getSort() == Type.OBJECT ? JetTypeMapper.TYPE_OBJECT : exprType});
         v.invokevirtual(CLASS_STRING_BUILDER, "append", appendDescriptor.getDescriptor());
     }
@@ -1938,17 +1935,32 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     }
 
     private void generateTypeInfo(JetType jetType) {
+        String knownTypeInfo = typeMapper.isKnownTypeInfo(jetType);
+        if(knownTypeInfo != null) {
+            v.getstatic("jet/typeinfo/TypeInfo", knownTypeInfo, "Ljet/typeinfo/TypeInfo;");
+            return;
+        }
+
         DeclarationDescriptor declarationDescriptor = jetType.getConstructor().getDeclarationDescriptor();
         if (declarationDescriptor instanceof TypeParameterDescriptor) {
             loadTypeParameterTypeInfo((TypeParameterDescriptor) declarationDescriptor);
             return;
         }
 
-        final Type jvmType = typeMapper.mapType(jetType, OwnerKind.INTERFACE);
-        if (jvmType.getSort() <= Type.DOUBLE) {
-            v.getstatic("jet/typeinfo/TypeInfo", PRIMITIVE_TYPE_INFO_FIELDS[jvmType.getSort()], "Ljet/typeinfo/TypeInfo;");
+        if(jetType.getArguments().size() == 0 && !(declarationDescriptor instanceof JavaClassDescriptor)) {
+            // TODO: we need some better checks here
+            v.getstatic(typeMapper.mapType(jetType, OwnerKind.IMPLEMENTATION).getInternalName(), "$typeInfo", "Ljet/typeinfo/TypeInfo;");
             return;
         }
+        
+        boolean hasUnsubstituted = TypeUtils.hasUnsubstitutedTypeParameters(jetType);
+        if(!hasUnsubstituted) {
+            int typeInfoConstantIndex = context.getTypeInfoConstantIndex(jetType);
+            v.invokestatic(context.getNamespaceClassName(), "$getCachedTypeInfo$" + typeInfoConstantIndex, "()Ljet/typeinfo/TypeInfo;");
+            return;
+        }
+
+        final Type jvmType = typeMapper.mapType(jetType, OwnerKind.INTERFACE);
 
         v.aconst(jvmType);
         v.iconst(jetType.isNullable()?1:0);
@@ -1974,7 +1986,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
     public static void genTypeInfoToProjection(InstructionAdapter v, Variance variance) {
         if(variance == Variance.INVARIANT)
-            v.invokestatic("jet/typeinfo/TypeInfo", "invariantProjection", "(Ljet/typeinfo/TypeInfo;)Ljet/typeinfo/TypeInfoProjection;");
+            v.checkcast(JetTypeMapper.TYPE_TYPEINFOPROJECTION);
         else if(variance == Variance.IN_VARIANCE)
             v.invokestatic("jet/typeinfo/TypeInfo", "inProjection", "(Ljet/typeinfo/TypeInfo;)Ljet/typeinfo/TypeInfoProjection;");
         else if(variance == Variance.OUT_VARIANCE)

@@ -11,6 +11,8 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
 
+import java.util.HashMap;
+
 public class ClassContext {
     public static final ClassContext STATIC = new ClassContext(null, OwnerKind.NAMESPACE, null, null, null);
     private final DeclarationDescriptor contextType;
@@ -19,6 +21,8 @@ public class ClassContext {
     private final ClassContext parentContext;
     private final ClosureCodegen closure;
     private boolean thisWasUsed = false;
+    
+    HashMap<JetType,Integer> typeInfoConstants;
 
     public ClassContext(DeclarationDescriptor contextType, OwnerKind contextKind, StackValue thisExpression, ClassContext parentContext, ClosureCodegen closureCodegen) {
         this.contextType = contextType;
@@ -30,6 +34,13 @@ public class ClassContext {
 
     public DeclarationDescriptor getContextDescriptor() {
         return contextType;
+    }
+
+    public String getNamespaceClassName() {
+        if(parentContext != STATIC)
+            return parentContext.getNamespaceClassName();
+
+        return NamespaceCodegen.getJVMClassName(contextType.getName());
     }
 
     public OwnerKind getContextKind() {
@@ -163,5 +174,20 @@ public class ClassContext {
 
         final ClassContext parent = getParentContext();
         return parent != null ? parent.enclosingClassType(mapper) : null;
+    }
+    
+    public int getTypeInfoConstantIndex(JetType type) {
+        if(parentContext != STATIC)
+            return parentContext.getTypeInfoConstantIndex(type);
+        
+        if(typeInfoConstants == null)
+            typeInfoConstants = new HashMap<JetType, Integer>();
+
+        Integer index = typeInfoConstants.get(type);
+        if(index == null) {
+            index = Integer.valueOf(typeInfoConstants.size());
+            typeInfoConstants.put(type, index);
+        }
+        return index;
     }
 }

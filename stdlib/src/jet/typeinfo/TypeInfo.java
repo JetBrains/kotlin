@@ -1,6 +1,7 @@
 package jet.typeinfo;
 
 import jet.JetObject;
+import jet.Tuple0;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -19,6 +20,19 @@ public abstract class TypeInfo<T> implements JetObject {
     public static final TypeInfo<Boolean> BOOL_TYPE_INFO = getTypeInfo(Boolean.class, false);
     public static final TypeInfo<Float> FLOAT_TYPE_INFO = getTypeInfo(Float.class, false);
     public static final TypeInfo<Double> DOUBLE_TYPE_INFO = getTypeInfo(Double.class, false);
+    public static final TypeInfo<String> STRING_TYPE_INFO = getTypeInfo(String.class, false);
+    public static final TypeInfo<Tuple0> TUPLE0_TYPE_INFO = getTypeInfo(Tuple0.class, false);
+
+    public static final TypeInfo<Byte> NULLABLE_BYTE_TYPE_INFO = getTypeInfo(Byte.class, true);
+    public static final TypeInfo<Short> NULLABLE_SHORT_TYPE_INFO = getTypeInfo(Short.class, true);
+    public static final TypeInfo<Integer> NULLABLE_INT_TYPE_INFO = getTypeInfo(Integer.class, true);
+    public static final TypeInfo<Long> NULLABLE_LONG_TYPE_INFO = getTypeInfo(Long.class, true);
+    public static final TypeInfo<Character> NULLABLE_CHAR_TYPE_INFO = getTypeInfo(Character.class, true);
+    public static final TypeInfo<Boolean> NULLABLE_BOOL_TYPE_INFO = getTypeInfo(Boolean.class, true);
+    public static final TypeInfo<Float> NULLABLE_FLOAT_TYPE_INFO = getTypeInfo(Float.class, true);
+    public static final TypeInfo<Double> NULLABLE_DOUBLE_TYPE_INFO = getTypeInfo(Double.class, true);
+    public static final TypeInfo<String> NULLABLE_STRING_TYPE_INFO = getTypeInfo(String.class, true);
+    public static final TypeInfo<Tuple0> NULLABLE_TUPLE0_TYPE_INFO = getTypeInfo(Tuple0.class, true);
 
     private TypeInfo<?> typeInfo;
     private final Class<T> theClass;

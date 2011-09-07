@@ -56,16 +56,32 @@ public class JetStandardLibrary {
     private final ClassDescriptor arrayClass;
     private final ClassDescriptor iterableClass;
     private final ClassDescriptor typeInfoClass;
+    private final ClassDescriptor tuple0Class;
 
     private final JetType byteType;
+    private final JetType nullableByteType;
     private final JetType charType;
+    private final JetType nullableCharType;
     private final JetType shortType;
+    private final JetType nullableShortType;
     private final JetType intType;
+    private final JetType nullableIntType;
     private final JetType longType;
+    private final JetType nullableLongType;
     private final JetType floatType;
+    private final JetType nullableFloatType;
     private final JetType doubleType;
+    private final JetType nullableDoubleType;
     private final JetType booleanType;
+    private final JetType nullableBooleanType;
     private final JetType stringType;
+    private final JetType nullableTuple0Type;
+
+    public JetType getTuple0Type() {
+        return tuple0Type;
+    }
+
+    private final JetType tuple0Type;
     private final JetType nullableStringType;
 
     private final NamespaceDescriptor typeInfoNamespace;
@@ -100,6 +116,7 @@ public class JetStandardLibrary {
             this.stringClass = (ClassDescriptor) libraryScope.getClassifier("String");
             this.arrayClass = (ClassDescriptor) libraryScope.getClassifier("Array");
             this.iterableClass = (ClassDescriptor) libraryScope.getClassifier("Iterable");
+            this.tuple0Class = (ClassDescriptor) libraryScope.getClassifier("Tuple0");
             typeInfoNamespace = libraryScope.getNamespace("typeinfo");
             this.typeInfoClass = (ClassDescriptor) typeInfoNamespace.getMemberScope().getClassifier("TypeInfo");
             typeInfoFunction = typeInfoNamespace.getMemberScope().getFunctionGroup("typeinfo");
@@ -113,7 +130,18 @@ public class JetStandardLibrary {
             this.doubleType = new JetTypeImpl(getDouble());
             this.booleanType = new JetTypeImpl(getBoolean());
             this.stringType = new JetTypeImpl(getString());
+            this.tuple0Type = new JetTypeImpl(getTuple0());
+
+            this.nullableByteType = TypeUtils.makeNullable(byteType);
+            this.nullableCharType = TypeUtils.makeNullable(charType);
+            this.nullableShortType = TypeUtils.makeNullable(shortType);
+            this.nullableIntType = TypeUtils.makeNullable(intType);
+            this.nullableLongType = TypeUtils.makeNullable(longType);
+            this.nullableFloatType = TypeUtils.makeNullable(floatType);
+            this.nullableDoubleType = TypeUtils.makeNullable(doubleType);
+            this.nullableBooleanType = TypeUtils.makeNullable(booleanType);
             this.nullableStringType = TypeUtils.makeNullable(stringType);
+            this.nullableTuple0Type = TypeUtils.makeNullable(tuple0Type);
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
@@ -176,6 +204,10 @@ public class JetStandardLibrary {
     @NotNull
     public ClassDescriptor getIterable() {
         return iterableClass;
+    }
+
+    public ClassDescriptor getTuple0() {
+        return tuple0Class;
     }
 
     public NamespaceDescriptor getTypeInfoNamespace() {
@@ -274,5 +306,41 @@ public class JetStandardLibrary {
 
     public JetType getNullableStringType() {
         return nullableStringType;
+    }
+
+    public JetType getNullableByteType() {
+        return nullableByteType;
+    }
+
+    public JetType getNullableCharType() {
+        return nullableCharType;
+    }
+
+    public JetType getNullableShortType() {
+        return nullableShortType;
+    }
+
+    public JetType getNullableIntType() {
+        return nullableIntType;
+    }
+
+    public JetType getNullableLongType() {
+        return nullableLongType;
+    }
+
+    public JetType getNullableFloatType() {
+        return nullableFloatType;
+    }
+
+    public JetType getNullableDoubleType() {
+        return nullableDoubleType;
+    }
+
+    public JetType getNullableBooleanType() {
+        return nullableBooleanType;
+    }
+
+    public JetType getNullableTuple0Type() {
+        return nullableTuple0Type;
     }
 }

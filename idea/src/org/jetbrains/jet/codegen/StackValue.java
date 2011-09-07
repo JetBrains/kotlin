@@ -183,10 +183,10 @@ public abstract class StackValue {
         else if (this.type.getSort() == Type.OBJECT && type.getSort() <= Type.DOUBLE) {
             if (this.type.equals(JetTypeMapper.TYPE_OBJECT)) {
                 if (type.getSort() == Type.BOOLEAN) {
-                    v.checkcast(Type.getObjectType("java/lang/Boolean"));
+                    v.checkcast(JetTypeMapper.JL_BOOLEAN_TYPE);
                 }
                 else {
-                    v.checkcast(Type.getObjectType("java/lang/Number"));
+                    v.checkcast(JetTypeMapper.JL_NUMBER_TYPE);
                 }
             }
             unbox(type, v);
