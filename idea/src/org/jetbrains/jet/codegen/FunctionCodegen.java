@@ -91,7 +91,7 @@ public class FunctionCodegen {
         boolean isAbstract = kind == OwnerKind.INTERFACE || bodyExpressions == null;
         if (isAbstract) flags |= Opcodes.ACC_ABSTRACT;
 
-        if (isAbstract && (kind == OwnerKind.IMPLEMENTATION || kind == OwnerKind.DELEGATING_IMPLEMENTATION)) {
+        if (isAbstract && (kind == OwnerKind.IMPLEMENTATION )) {
             return;
         }
 

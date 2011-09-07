@@ -14,7 +14,6 @@ import java.util.List;
  */
 public class ConstructorFrameMap extends FrameMap {
     private int myOuterThisIndex = -1;
-    private int myDelegateThisIndex = -1;
     private int myFirstTypeParameter = -1;
     private int myTypeParameterCount = 0;
 
@@ -26,9 +25,6 @@ public class ConstructorFrameMap extends FrameMap {
             if (classDescriptor.getContainingDeclaration() instanceof ClassDescriptor) {
                 myOuterThisIndex = enterTemp();   // outer class instance
             }
-        }
-        if (kind == OwnerKind.DELEGATING_IMPLEMENTATION) {
-            myDelegateThisIndex = enterTemp();   // $this
         }
 
         List<Type> explicitArgTypes = callableMethod.getValueParameterTypes();
@@ -57,10 +53,6 @@ public class ConstructorFrameMap extends FrameMap {
 
     public int getOuterThisIndex() {
         return myOuterThisIndex;
-    }
-
-    public int getDelegateThisIndex() {
-        return myDelegateThisIndex;
     }
 
     public int getFirstTypeParameter() {

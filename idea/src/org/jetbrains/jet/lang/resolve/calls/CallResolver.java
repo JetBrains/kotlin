@@ -504,9 +504,9 @@ public class CallResolver {
                 return OverloadResolutionResult.singleFailedCandidate(failedCandidates.iterator().next());
             }
             else {
-                StringBuilder stringBuilder = new StringBuilder();
+                StringBuilder stringBuilder = new StringBuilder("\n");
                 for (Descriptor functionDescriptor : failedCandidates) {
-                    stringBuilder.append(DescriptorRenderer.TEXT.render(functionDescriptor)).append(" ");
+                    stringBuilder.append(DescriptorRenderer.TEXT.render(functionDescriptor)).append("\n");
                 }
 
                 tracing.reportOverallResolutionError(trace, "None of the following functions can be called with the arguments supplied: " + stringBuilder);

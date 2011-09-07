@@ -20,13 +20,13 @@ import java.util.*;
 
 /**
  * @author yole
+ * @author alex.tkachman
  */
 public class JetTypeMapper {
     public static final Type TYPE_OBJECT = Type.getObjectType("java/lang/Object");
     public static final Type TYPE_TYPEINFO = Type.getType(TypeInfo.class);
     public static final Type TYPE_TYPEINFOPROJECTION = Type.getType(TypeInfoProjection.class);
     public static final Type TYPE_JET_OBJECT = Type.getType(JetObject.class);
-    public static final Type TYPE_CLASS = Type.getType(Class.class);
     public static final Type TYPE_NOTHING = Type.getObjectType("jet/Nothing");
     public static final Type JL_INTEGER_TYPE = Type.getObjectType("java/lang/Integer");
     public static final Type JL_LONG_TYPE = Type.getObjectType("java/lang/Long");
@@ -212,9 +212,6 @@ public class JetTypeMapper {
         }
         else if (kind == OwnerKind.IMPLEMENTATION) {
             return jvmNameForImplementation(jetClass);
-        }
-        else if (kind == OwnerKind.DELEGATING_IMPLEMENTATION) {
-            return jvmNameForDelegatingImplementation(jetClass);
         }
         else {
             assert false : "Unsuitable kind";
@@ -543,16 +540,12 @@ public class JetTypeMapper {
     }
 
     private Method mapConstructorSignature(ConstructorDescriptor descriptor, OwnerKind kind, List<Type> valueParameterTypes) {
-        boolean delegate = kind == OwnerKind.DELEGATING_IMPLEMENTATION;
         List<ValueParameterDescriptor> parameters = descriptor.getOriginal().getValueParameters();
         List<Type> parameterTypes = new ArrayList<Type>();
         ClassDescriptor classDescriptor = descriptor.getContainingDeclaration();
         final DeclarationDescriptor outerDescriptor = classDescriptor.getContainingDeclaration();
         if (outerDescriptor instanceof ClassDescriptor) {
             parameterTypes.add(jvmType((ClassDescriptor) outerDescriptor, OwnerKind.IMPLEMENTATION));
-        }
-        if (delegate) {
-            parameterTypes.add(jetInterfaceType(classDescriptor));
         }
         for (ValueParameterDescriptor parameter : parameters) {
             final Type type = mapType(parameter.getOutType());
@@ -624,7 +617,6 @@ public class JetTypeMapper {
         if (classDescriptor != null) {
             result.add(jvmName(classDescriptor, OwnerKind.INTERFACE));
             result.add(jvmName(classDescriptor, OwnerKind.IMPLEMENTATION));
-            result.add(jvmName(classDescriptor, OwnerKind.DELEGATING_IMPLEMENTATION));
         }
         return result;
     }
