@@ -406,7 +406,9 @@ public class TopDownAnalyzer {
                 List<JetAnnotationEntry> annotationEntries = modifierList.getAnnotationEntries();
                 for (JetAnnotationEntry annotationEntry : annotationEntries) {
                     AnnotationDescriptor annotationDescriptor = trace.get(ANNOTATION, annotationEntry);
-                    annotationResolver.resolveAnnotationStub(mutableClassDescriptor.getScopeForSupertypeResolution(), annotationEntry, annotationDescriptor);
+                    if (annotationDescriptor != null) {
+                        annotationResolver.resolveAnnotationStub(mutableClassDescriptor.getScopeForSupertypeResolution(), annotationEntry, annotationDescriptor);
+                    }
                 }
             }
         }
@@ -964,14 +966,15 @@ public class TopDownAnalyzer {
     }
 
     protected void checkFunctionCorrectness(JetNamedFunction function, FunctionDescriptor functionDescriptor, DeclarationDescriptor containingDescriptor) {
+        PsiElement nameIdentifier = function.getNameIdentifier();
         if (containingDescriptor instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) containingDescriptor;
             if (functionDescriptor.getModifiers().isAbstract() && !classDescriptor.isAbstract()) {
                 trace.getErrorHandler().genericError(function.getModifierList().getModifierNode(JetTokens.ABSTRACT_KEYWORD),
                                                      "Abstract method " + function.getName() + " in non-abstract class " + classDescriptor.getName());
             }
-            if (function.getBodyExpression() == null && !functionDescriptor.getModifiers().isAbstract()) {
-                trace.getErrorHandler().genericError(function.getNameIdentifier().getNode(), "Method without body must be abstract");
+            if (function.getBodyExpression() == null && !functionDescriptor.getModifiers().isAbstract() && nameIdentifier != null) {
+                trace.getErrorHandler().genericError(nameIdentifier.getNode(), "Method " + function.getName() + " without body must be abstract");
             }
             return;
         }
@@ -979,8 +982,8 @@ public class TopDownAnalyzer {
             trace.getErrorHandler().genericError(function.getModifierList().getModifierNode(JetTokens.ABSTRACT_KEYWORD),
                                                  "Global function " + function.getName() + " can not be abstract");
         }
-        if (function.getBodyExpression() == null && !functionDescriptor.getModifiers().isAbstract()) {
-            trace.getErrorHandler().genericError(function.getNameIdentifier().getNode(), "Global function must have body");
+        if (function.getBodyExpression() == null && !functionDescriptor.getModifiers().isAbstract() && nameIdentifier != null) {
+            trace.getErrorHandler().genericError(nameIdentifier.getNode(), "Global function " + function.getName() + " must have body");
         }
     }
 
