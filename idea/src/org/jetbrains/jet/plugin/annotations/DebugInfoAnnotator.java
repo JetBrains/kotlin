@@ -3,6 +3,7 @@ package org.jetbrains.jet.plugin.annotations;
 import com.google.common.collect.Sets;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
@@ -14,15 +15,14 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetHighlighter;
 
 import java.util.Collection;
 import java.util.Set;
 
-import static org.jetbrains.jet.lang.resolve.BindingContext.AMBIGUOUS_REFERENCE_TARGET;
-import static org.jetbrains.jet.lang.resolve.BindingContext.LABEL_TARGET;
-import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
+import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lexer.JetTokens.*;
 
 /**
@@ -30,8 +30,9 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
  */
 public class DebugInfoAnnotator implements Annotator {
 
-    private static volatile boolean debugInfoEnabled = true;//!ApplicationManager.getApplication().isUnitTestMode();
     public static final TokenSet EXCLUDED = TokenSet.create(COLON, AS_KEYWORD, AS_SAFE, IS_KEYWORD, NOT_IS, OROR, ANDAND, EQ, EQEQEQ, EXCLEQEQEQ, ELVIS);
+
+    private static volatile boolean debugInfoEnabled = true;
 
     public static void setDebugInfoEnabled(boolean value) {
         debugInfoEnabled = value;
@@ -98,14 +99,14 @@ public class DebugInfoAnnotator implements Annotator {
                         }
                         boolean resolved = target != null;
                         boolean unresolved = unresolvedReferences.contains(expression);
-//                        if (ErrorUtils.isError(declarationDescriptor)) {
-//                            holder.createErrorAnnotation()
-//                        }
+                        if (declarationDescriptor != null && !ApplicationManager.getApplication().isUnitTestMode() && ErrorUtils.isError(declarationDescriptor)) {
+                            holder.createErrorAnnotation(expression, "[DEBUG] Resolved to error element").setTextAttributes(JetHighlighter.JET_RESOLVED_TO_ERROR);
+                        }
                         if (resolved && unresolved) {
-                            holder.createErrorAnnotation(expression, "Reference marked as unresolved is actually resolved to " + target).setTextAttributes(JetHighlighter.JET_DEBUG_INFO);
+                            holder.createErrorAnnotation(expression, "[DEBUG] Reference marked as unresolved is actually resolved to " + target).setTextAttributes(JetHighlighter.JET_DEBUG_INFO);
                         }
                         else if (!resolved && !unresolved) {
-                            holder.createErrorAnnotation(expression, "Reference is not resolved to anything, but is not marked unresolved").setTextAttributes(JetHighlighter.JET_DEBUG_INFO);
+                            holder.createErrorAnnotation(expression, "[DEBUG] Reference is not resolved to anything, but is not marked unresolved").setTextAttributes(JetHighlighter.JET_DEBUG_INFO);
                         }
                     }
 
