@@ -802,7 +802,7 @@ public class ClassDescriptorResolver {
             }
         };
         JetControlFlowInstructionsGenerator instructionsGenerator = new JetControlFlowInstructionsGenerator(wrappedTrace);
-        new JetControlFlowProcessor(semanticServices, trace, instructionsGenerator).generate(declaration, bodyExpression);
+        new JetControlFlowProcessor(trace, instructionsGenerator).generate(declaration, bodyExpression);
         wrappedTrace.close();
         return new JetFlowInformationProvider() {
             @Override

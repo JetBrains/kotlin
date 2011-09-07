@@ -84,6 +84,7 @@ fun foo(a : Boolean, b : Int) : Unit {}
 ---------------------
 l0:
     <START>
+    read (Unit)
 l1:
     <END>
 error:
@@ -94,6 +95,7 @@ fun genfun<T>() : Unit {}
 ---------------------
 l0:
     <START>
+    read (Unit)
 l1:
     <END>
 error:
@@ -104,6 +106,7 @@ fun flfun(f : fun () : Any) : Unit {}
 ---------------------
 l0:
     <START>
+    read (Unit)
 l1:
     <END>
 error:

@@ -3,6 +3,7 @@ fun empty() {}
 ---------------------
 l0:
     <START>
+    read (Unit)
 l1:
     <END>
 error:
