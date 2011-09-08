@@ -1,6 +1,6 @@
 import java.lang.Integer
 
-class C {
+open class C {
  fun f(): Any = "C f"
 }
 

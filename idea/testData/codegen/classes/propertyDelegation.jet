@@ -1,4 +1,4 @@
-class Base() {
+open class Base() {
     public val plain = 239
     public val read : Int
       get() = 239
@@ -10,7 +10,7 @@ class Base() {
       }
 }
 
-class Abstract {}
+trait class Abstract {}
 
 class Derived1() : Base(), Abstract {}
 class Derived2() : Abstract, Base() {}

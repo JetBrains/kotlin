@@ -1,8 +1,8 @@
-class Base() {
+open class Base() {
     fun n(n : Int) : Int = n + 1
 }
 
-class Abstract {}
+trait class Abstract {}
 
 class Derived1() : Base(), Abstract {}
 class Derived2() : Abstract, Base() {}

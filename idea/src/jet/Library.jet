@@ -40,12 +40,12 @@ fun Any?.equals(other : Any?) : Boolean// = this === other
 // Returns "null" for null
 fun Any?.toString() : String// = this === other
 
-class Iterator<out T> {
+trait class Iterator<out T> {
   fun next() : T
   abstract fun hasNext() : Boolean
 }
 
-class Iterable<out T> {
+trait class Iterable<out T> {
   fun iterator() : Iterator<T>
 }
 
@@ -56,11 +56,11 @@ class Array<T>(val size : Int) {
   fun iterator() : Iterator<T>
 }
 
-virtual class Comparable<in T> {
+trait class Comparable<in T> {
   fun compareTo(other : T) : Int
 }
 
-virtual class Hashable {
+trait class Hashable {
   fun hashCode() : Int
   fun equals(other : Any?) : Boolean
 }
@@ -92,7 +92,7 @@ class String() : Comparable<String> {
   fun trim(): String
 }
 
-class Range<in T : Comparable<T>> {
+trait class Range<in T : Comparable<T>> {
   fun contains(item : T) : Boolean
 }
 

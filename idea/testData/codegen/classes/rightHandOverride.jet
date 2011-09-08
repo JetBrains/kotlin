@@ -1,9 +1,11 @@
-class Left() {}
-class Right() {
+// Changed when traits were introduced. May not make sense any more
+
+trait class Left {}
+open class Right() {
     virtual fun f() = 42
 }
 
-class D() : Left(), Right() {
+class D() : Left, Right() {
     override fun f() = 239
 }
 

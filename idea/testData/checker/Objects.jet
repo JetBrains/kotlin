@@ -1,5 +1,5 @@
 namespace toplevelObjectDeclarations {
-  class Foo(y : Int) {
+  open class Foo(y : Int) {
     virtual fun foo() : Int = 1
   }
 
@@ -63,7 +63,7 @@ namespace localObjects {
     val x : Int = 0
   }
 
-  class Foo {
+  open class Foo {
     fun foo() : Int = 1
   }
 

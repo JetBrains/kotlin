@@ -1,9 +1,9 @@
 
-class NoC
+open class NoC
 class NoC1 : NoC
 
 class WithC0() : NoC<error>()</error>
-class WithC1() : NoC
+open class WithC1() : NoC
 class NoC2 : <error>WithC1</error>
 class NoC3 : WithC1<error>()</error>
 class WithC2() : <error>WithC1</error>

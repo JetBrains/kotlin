@@ -1,4 +1,4 @@
-class Foo {
+open class Foo {
   fun xyzzy(): String = "xyzzy"
 }
 
