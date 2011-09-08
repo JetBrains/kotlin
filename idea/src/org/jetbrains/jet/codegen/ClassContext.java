@@ -61,14 +61,7 @@ public class ClassContext {
 
     public ClassContext intoClass(ClassDescriptor descriptor, OwnerKind kind) {
         final StackValue thisValue;
-        if (kind == OwnerKind.DELEGATING_IMPLEMENTATION) {
-            thisValue = StackValue.instanceField(JetTypeMapper.jetInterfaceType(descriptor),
-                    JetTypeMapper.jetDelegatingImplementationType(descriptor).getInternalName(),
-                    "$this");
-        }
-        else {
-            thisValue = StackValue.local(0, JetTypeMapper.TYPE_OBJECT);
-        }
+        thisValue = StackValue.local(0, JetTypeMapper.TYPE_OBJECT);
 
         return new ClassContext(descriptor, kind, thisValue, this, null);
     }
@@ -185,7 +178,7 @@ public class ClassContext {
 
         Integer index = typeInfoConstants.get(type);
         if(index == null) {
-            index = Integer.valueOf(typeInfoConstants.size());
+            index = typeInfoConstants.size();
             typeInfoConstants.put(type, index);
         }
         return index;

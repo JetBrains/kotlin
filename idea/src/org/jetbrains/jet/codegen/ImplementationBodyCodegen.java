@@ -206,14 +206,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             iv.putfield(classname, fieldName, interfaceDesc);
         }
 
-        if (kind == OwnerKind.DELEGATING_IMPLEMENTATION) {
-            String interfaceDesc = JetTypeMapper.jetInterfaceType(descriptor).getDescriptor();
-            v.visitField(Opcodes.ACC_PRIVATE | Opcodes.ACC_FINAL, "$this", interfaceDesc, /*TODO*/null, null);
-            iv.load(0, classType);
-            iv.load(frameMap.getDelegateThisIndex(), argTypes[0]);
-            iv.putfield(classname, "$this", interfaceDesc);
-        }
-
         HashSet<FunctionDescriptor> overridden = new HashSet<FunctionDescriptor>();
         for (JetDeclaration declaration : myClass.getDeclarations()) {
             if (declaration instanceof JetFunction) {
@@ -299,22 +291,13 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                                                     ConstructorDescriptor constructorDescriptor, boolean isJavaSuperclass,
                                                     ConstructorFrameMap frameMap) {
         ClassDescriptor classDecl = constructorDescriptor.getContainingDeclaration();
-        boolean isDelegating = kind == OwnerKind.DELEGATING_IMPLEMENTATION;
         PsiElement declaration = state.getBindingContext().get(BindingContext.DESCRIPTOR_TO_DECLARATION, classDecl);
         Type type;
         if (declaration instanceof PsiClass) {
             type = JetTypeMapper.psiClassType((PsiClass) declaration);
         }
         else {
-            type = isDelegating
-                    ? JetTypeMapper.jetDelegatingImplementationType(classDecl)
-                    : JetTypeMapper.jetImplementationType(classDecl);
-        }
-
-        if (!isJavaSuperclass) {
-            if (kind == OwnerKind.DELEGATING_IMPLEMENTATION) {
-                codegen.thisToStack();
-            }
+            type = JetTypeMapper.jetImplementationType(classDecl);
         }
 
         if (isJavaSuperclass) {
@@ -325,9 +308,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             iv.dup();
         }
 
-        if (kind == OwnerKind.DELEGATING_IMPLEMENTATION) {
-            iv.load(frameMap.getDelegateThisIndex(), state.getTypeMapper().jvmType(classDecl, OwnerKind.INTERFACE));
-        }
         if (classDecl.getContainingDeclaration() instanceof ClassDescriptor) {
             iv.load(frameMap.getOuterThisIndex(), state.getTypeMapper().jvmType((ClassDescriptor) descriptor.getContainingDeclaration(), OwnerKind.IMPLEMENTATION));
         }

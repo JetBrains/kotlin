@@ -26,9 +26,6 @@ public class ClassCodegen {
         else {
             generateInterface(parentContext, aClass);
             generateImplementation(parentContext, aClass, OwnerKind.IMPLEMENTATION);
-            if (!ImplementationBodyCodegen.isEnum(aClass)) {
-                generateImplementation(parentContext, aClass, OwnerKind.DELEGATING_IMPLEMENTATION);
-            }
         }
 
         ClassDescriptor descriptor = state.getBindingContext().get(BindingContext.CLASS, aClass);

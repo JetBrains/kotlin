@@ -36,7 +36,7 @@ public class PropertyCodegen {
             throw new UnsupportedOperationException("expect a property to have a property descriptor");
         }
         final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
-        if (kind == OwnerKind.NAMESPACE || kind == OwnerKind.IMPLEMENTATION || kind == OwnerKind.DELEGATING_IMPLEMENTATION) {
+        if (kind == OwnerKind.NAMESPACE || kind == OwnerKind.IMPLEMENTATION) {
             generateBackingField(p, propertyDescriptor);
             generateGetter(p, propertyDescriptor);
             generateSetter(p, propertyDescriptor);
