@@ -22,9 +22,7 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     private List<TypeParameterDescriptor> typeParameters = Lists.newArrayList();
     private Collection<JetType> supertypes = Lists.newArrayList();
 
-    private boolean open;
-    private boolean isAbstract;
-    private boolean trait;
+    private ClassModifiers classModifiers;
     private TypeConstructor typeConstructor;
     private final WritableScope scopeForMemberResolution;
     private final WritableScope scopeForMemberLookup;
@@ -143,32 +141,6 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
         scopeForMemberResolution.addLabeledDeclaration(this);
     }
 
-    @Override
-    public boolean isAbstract() {
-        return isAbstract || trait;
-    }
-
-    public void setAbstract(boolean isAbstract) {
-        this.isAbstract = isAbstract;
-    }
-
-    @Override
-    public boolean isTrait() {
-        return trait;
-    }
-
-    public void setTrait(boolean trait) {
-        this.trait = trait;
-    }
-
-    public boolean isOpen() {
-        return open;
-    }
-
-    public void setOpen(boolean open) {
-        this.open = open;
-    }
-
     @NotNull
     @Override
     public TypeConstructor getTypeConstructor() {
@@ -180,7 +152,7 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
         this.typeConstructor = new TypeConstructorImpl(
                 this,
                 Collections.<AnnotationDescriptor>emptyList(), // TODO : pass annotations from the class?
-                !open,
+                !classModifiers.isOpen(),
                 getName(),
                 typeParameters,
                 supertypes);
@@ -274,6 +246,16 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     @Override
     public boolean isObject() {
         return isObject;
+    }
+
+    public void setClassModifiers(ClassModifiers classModifiers) {
+        this.classModifiers = classModifiers;
+    }
+
+    @Override
+    @NotNull
+    public ClassModifiers getClassModifiers() {
+        return classModifiers;
     }
 
     @Override

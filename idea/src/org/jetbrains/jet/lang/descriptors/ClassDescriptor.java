@@ -44,9 +44,6 @@ public interface ClassDescriptor extends ClassifierDescriptor {
 
     boolean isObject();
 
-    boolean isAbstract();
-
-    boolean isOpen();
-
-    boolean isTrait();
+    @NotNull
+    ClassModifiers getClassModifiers();
 }

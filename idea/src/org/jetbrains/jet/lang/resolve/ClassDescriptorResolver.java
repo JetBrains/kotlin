@@ -26,7 +26,7 @@ import java.util.*;
  */
 public class ClassDescriptorResolver {
 
-    private static final MemberModifiers DEFAULT_MODIFIERS = new MemberModifiers(false, false, false);
+//    private static final MemberModifiers DEFAULT_MODIFIERS = new MemberModifiers(false, false, false);
 
     private final JetSemanticServices semanticServices;
     private final TypeResolver typeResolver;
@@ -144,10 +144,7 @@ public class ClassDescriptorResolver {
             index++;
         }
         descriptor.setTypeParameterDescriptors(typeParameters);
-
-        descriptor.setOpen(classElement.hasModifier(JetTokens.OPEN_KEYWORD) || classElement.hasModifier(JetTokens.ABSTRACT_KEYWORD));
-        descriptor.setAbstract(classElement.hasModifier(JetTokens.ABSTRACT_KEYWORD));
-        descriptor.setTrait(classElement.hasModifier(JetTokens.TRAIT_KEYWORD));
+        descriptor.setClassModifiers(ClassModifiers.resolveModifiers(classElement.getModifierList()));
 
         trace.record(BindingContext.CLASS, classElement, descriptor);
     }
@@ -227,13 +224,13 @@ public class ClassDescriptorResolver {
                 returnType = ErrorUtils.createErrorType("No type, no body");
             }
         }
-        functionDescriptor.setModifiers(resolveModifiers(function.getModifierList(), DEFAULT_MODIFIERS));
 
         functionDescriptor.initialize(
                 receiverType,
                 typeParameterDescriptors,
                 valueParameterDescriptors,
-                returnType);
+                returnType,
+                MemberModifiers.resolveModifiers(function.getModifierList()));
 
         trace.record(BindingContext.FUNCTION, function, functionDescriptor);
         return functionDescriptor;
@@ -466,7 +463,7 @@ public class ClassDescriptorResolver {
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                 containingDeclaration,
                 annotationResolver.createAnnotationStubs(modifierList),
-                resolveModifiers(modifierList, DEFAULT_MODIFIERS), // TODO : default modifiers differ in different contexts
+                MemberModifiers.resolveModifiers(modifierList), // TODO : default modifiers differ in different contexts
                 false,
                 null,
                 JetPsiUtil.safeName(objectDeclaration.getName()),
@@ -516,7 +513,7 @@ public class ClassDescriptorResolver {
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                 containingDeclaration,
                 annotationResolver.resolveAnnotations(scope, modifierList),
-                resolveModifiers(modifierList, DEFAULT_MODIFIERS), // TODO : default modifiers differ in different contexts
+                MemberModifiers.resolveModifiers(modifierList), // TODO : default modifiers differ in different contexts
                 isVar,
                 receiverType,
                 JetPsiUtil.safeName(property.getName()),
@@ -563,16 +560,6 @@ public class ClassDescriptorResolver {
         }
     }
 
-    @NotNull
-    private MemberModifiers resolveModifiers(@Nullable JetModifierList modifierList, @NotNull MemberModifiers defaultModifiers) {
-        if (modifierList == null) return defaultModifiers;
-        return new MemberModifiers(
-                modifierList.hasModifier(JetTokens.ABSTRACT_KEYWORD),
-                modifierList.hasModifier(JetTokens.VIRTUAL_KEYWORD),
-                modifierList.hasModifier(JetTokens.OVERRIDE_KEYWORD)
-        );
-    }
-
     @Nullable
     private PropertySetterDescriptor resolvePropertySetterDescriptor(@NotNull JetScope scope, @NotNull JetProperty property, @NotNull PropertyDescriptor propertyDescriptor) {
         JetPropertyAccessor setter = property.getSetter();
@@ -582,7 +569,7 @@ public class ClassDescriptorResolver {
             JetParameter parameter = setter.getParameter();
 
             setterDescriptor = new PropertySetterDescriptor(
-                    resolveModifiers(setter.getModifierList(), DEFAULT_MODIFIERS), // TODO : default modifiers differ in different contexts
+                    MemberModifiers.resolveModifiers(setter.getModifierList()), // TODO : default modifiers differ in different contexts
                     propertyDescriptor, annotations, setter.getBodyExpression() != null, false);
             if (parameter != null) {
                 if (parameter.isRef()) {
@@ -646,7 +633,7 @@ public class ClassDescriptorResolver {
             }
 
             getterDescriptor = new PropertyGetterDescriptor(
-                    resolveModifiers(getter.getModifierList(), DEFAULT_MODIFIERS), // TODO : default modifiers differ in different contexts
+                    MemberModifiers.resolveModifiers(getter.getModifierList()), // TODO : default modifiers differ in different contexts
                     propertyDescriptor, annotations, returnType, getter.getBodyExpression() != null, false);
             trace.record(BindingContext.PROPERTY_ACCESSOR, getter, getterDescriptor);
         }
@@ -677,12 +664,16 @@ public class ClassDescriptorResolver {
                 isPrimary
         );
         trace.record(BindingContext.CONSTRUCTOR, declarationToTrace, constructorDescriptor);
+        if (modifierList != null) {
+            modifierList.checkNotContains(trace, JetTokens.ABSTRACT_KEYWORD, JetTokens.VIRTUAL_KEYWORD, JetTokens.OVERRIDE_KEYWORD);
+        }
         return constructorDescriptor.initialize(
                 typeParameters,
                 resolveValueParameters(
                         constructorDescriptor,
                         new WritableScopeImpl(scope, classDescriptor, trace.getErrorHandler()).setDebugName("Scope with value parameters of a constructor"),
-                        valueParameters));
+                        valueParameters),
+                        MemberModifiers.DEFAULT_MODIFIERS);
     }
 
     @Nullable
@@ -717,7 +708,7 @@ public class ClassDescriptorResolver {
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                 classDescriptor,
                 annotationResolver.resolveAnnotations(scope, modifierList),
-                resolveModifiers(modifierList, DEFAULT_MODIFIERS),
+                MemberModifiers.resolveModifiers(modifierList),
                 isMutable,
                 null,
                 name == null ? "<no name>" : name,

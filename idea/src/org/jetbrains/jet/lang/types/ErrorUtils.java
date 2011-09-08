@@ -123,7 +123,8 @@ public class ErrorUtils {
                 null,
                 typeParameters,
                 getValueParameters(functionDescriptor, positionedValueArgumentTypes),
-                createErrorType("<ERROR FUNCTION RETURN>")
+                createErrorType("<ERROR FUNCTION RETURN>"),
+                MemberModifiers.DEFAULT_MODIFIERS
         );
     }
 
@@ -132,7 +133,8 @@ public class ErrorUtils {
                 null,
                 Collections.<TypeParameterDescriptor>emptyList(), // TODO
                 Collections.<ValueParameterDescriptor>emptyList(), // TODO
-                createErrorType("<ERROR FUNCTION RETURN TYPE>")
+                createErrorType("<ERROR FUNCTION RETURN TYPE>"),
+                MemberModifiers.DEFAULT_MODIFIERS
         );
     }
 

@@ -97,6 +97,22 @@ public class CallResolver {
             if (name == null) return checkArgumentTypesAndFail(trace, scope, call);
 
             prioritizedTasks = FUNCTION_TASK_PRIORITIZER.computePrioritizedTasks(scope, receiverType, call, name);
+            ResolutionTask.DescriptorCheckStrategy abstractConstructorCheck = new ResolutionTask.DescriptorCheckStrategy() {
+                @Override
+                public <D extends CallableDescriptor> boolean performAdvancedChecks(D descriptor, BindingTrace trace, TracingStrategy tracing) {
+                    if (descriptor instanceof ConstructorDescriptor) {
+                        ClassModifiers modifiers = ((ConstructorDescriptor) descriptor).getContainingDeclaration().getClassModifiers();
+                        if (modifiers.isAbstract()) {
+                            tracing.reportOverallResolutionError(trace, "Can not create an instance of an abstract class");
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+            };
+            for (ResolutionTask task : prioritizedTasks) {
+                task.setCheckingStrategy(abstractConstructorCheck);
+            }
         }
         else {
             JetValueArgumentList valueArgumentList = call.getValueArgumentList();
@@ -384,6 +400,7 @@ public class CallResolver {
             if (dirty.getValue()) {
                 dirtyCandidates.add(candidate);
             }
+            task.performAdvancedChecks(candidate, temporaryTrace, tracing);
         }
 
         OverloadResolutionResult<D> result = computeResultAndReportErrors(trace, tracing, successfulCandidates, failedCandidates, dirtyCandidates, traces);

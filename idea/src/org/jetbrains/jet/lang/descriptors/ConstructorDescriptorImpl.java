@@ -28,13 +28,13 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
 
     @Override
     @Deprecated
-    public FunctionDescriptorImpl initialize(@Nullable JetType receiverType, @NotNull List<TypeParameterDescriptor> typeParameters, @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters, @Nullable JetType unsubstitutedReturnType) {
+    public FunctionDescriptorImpl initialize(@Nullable JetType receiverType, @NotNull List<TypeParameterDescriptor> typeParameters, @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters, @Nullable JetType unsubstitutedReturnType, MemberModifiers modifiers) {
         assert receiverType == null;
-        return super.initialize(null, typeParameters, unsubstitutedValueParameters, unsubstitutedReturnType);
+        return super.initialize(null, typeParameters, unsubstitutedValueParameters, unsubstitutedReturnType, modifiers);
     }
 
-    public ConstructorDescriptorImpl initialize(@NotNull List<TypeParameterDescriptor> typeParameters, @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters) {
-        super.initialize(null, typeParameters, unsubstitutedValueParameters, null);
+    public ConstructorDescriptorImpl initialize(@NotNull List<TypeParameterDescriptor> typeParameters, @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters, MemberModifiers modifiers) {
+        super.initialize(null, typeParameters, unsubstitutedValueParameters, null, modifiers);
         return this;
     }
 
@@ -64,11 +64,6 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
     @Override
     public Set<? extends FunctionDescriptor> getOverriddenDescriptors() {
         return Collections.emptySet();
-    }
-
-    @Nullable
-    public MemberModifiers getModifiers() {
-        return null;
     }
 
     @Override

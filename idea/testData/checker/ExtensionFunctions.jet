@@ -40,9 +40,9 @@ fun Int.foo() = this
 namespace null_safety {
 
         fun parse(cmd: String): Command? { return null  }
-        abstract class Command() {
+        class Command() {
         //  fun equals(other : Any?) : Boolean
-          abstract val foo : Int
+          val foo : Int = 0
         }
 
         fun Any.equals(other : Any?) : Boolean = true

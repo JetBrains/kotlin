@@ -48,3 +48,21 @@ abstract class <error>A10</error> {
 <error>abstract</error> fun foo(): fun(Int): Int
 val <error>j</error>: Int
 fun <error>foo1</error>(): fun(Int): Int
+
+//creating an instance
+abstract class B1(
+    val i: Int,
+    val s: String
+) {
+}
+
+class B2() : B1(1, "r") {}
+
+abstract class B3(i: Int) {
+    this(): this(1)
+}
+
+fun foo(a: B3) {
+    val a = <error>B3()</error>
+    val b = <error>B1(2, "s")</error>
+}

@@ -140,18 +140,9 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
     }
 
     @Override
-    public boolean isAbstract() {
-        return original.isAbstract();
-    }
-
-    @Override
-    public boolean isOpen() {
-        return original.isOpen();
-    }
-
-    @Override
-    public boolean isTrait() {
-        return original.isTrait();
+    @NotNull
+    public ClassModifiers getClassModifiers() {
+        return original.getClassModifiers();
     }
 
     @Override

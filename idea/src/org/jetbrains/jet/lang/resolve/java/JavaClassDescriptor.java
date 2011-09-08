@@ -20,9 +20,10 @@ public class JavaClassDescriptor extends MutableDeclarationDescriptor implements
     private JavaClassMembersScope unsubstitutedMemberScope;
     private JetType classObjectType;
     private final WritableFunctionGroup constructors = new WritableFunctionGroup("<init>");
-    private boolean isAbstract;
-    private boolean isOpen;
-    private boolean isTrait;
+    private ClassModifiers modifiers;
+//    private boolean isAbstract;
+//    private boolean isOpen;
+//    private boolean isTrait;
 
     public JavaClassDescriptor(DeclarationDescriptor containingDeclaration) {
         super(containingDeclaration);
@@ -33,9 +34,10 @@ public class JavaClassDescriptor extends MutableDeclarationDescriptor implements
     }
 
     public void setModifiers(boolean isAbstract, boolean isOpen, boolean isTrait) {
-        this.isAbstract = isAbstract;
-        this.isOpen = isOpen;
-        this.isTrait = isTrait;
+        this.modifiers = new ClassModifiers(isAbstract, isOpen, isTrait);
+//        this.isAbstract = isAbstract;
+//        this.isOpen = isOpen;
+//        this.isTrait = isTrait;
     }
 
     public void setUnsubstitutedMemberScope(JavaClassMembersScope memberScope) {
@@ -129,19 +131,25 @@ public class JavaClassDescriptor extends MutableDeclarationDescriptor implements
         return false;
     }
 
+//    @Override
+//    public boolean isAbstract() {
+//        return isAbstract;
+//    }
+//
+//    @Override
+//    public boolean isOpen() {
+//        return isOpen;
+//    }
+//
+//    @Override
+//    public boolean isTrait() {
+//        return isTrait;
+//    }
+    
     @Override
-    public boolean isAbstract() {
-        return isAbstract;
-    }
-
-    @Override
-    public boolean isOpen() {
-        return isOpen;
-    }
-
-    @Override
-    public boolean isTrait() {
-        return isTrait;
+    @NotNull
+    public ClassModifiers getClassModifiers() {
+        return modifiers;
     }
 
     @Override

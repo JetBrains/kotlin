@@ -65,16 +65,16 @@ abstract class Range1() {
   abstract fun iterator() : Iterator<Int>
 }
 
-fun test() {
-  for (i in <error>NotRange1()</error>);
-  for (i in <error>NotRange2()</error>);
-  for (i in <error>NotRange3()</error>);
-  for (i in <error>NotRange4()</error>);
-  for (i in <error>NotRange5()</error>);
-  for (i in <error>NotRange6()</error>);
-  for (i in <error>NotRange7()</error>);
-  for (i in Range0());
-  for (i in Range1());
+fun test(notRange1: NotRange1, notRange2: NotRange2, notRange3: NotRange3, notRange4: NotRange4, notRange5: NotRange5, notRange6: NotRange6, notRange7: NotRange7, range0: Range0, range1: Range1) {
+  for (i in <error>notRange1</error>);
+  for (i in <error>notRange2</error>);
+  for (i in <error>notRange3</error>);
+  for (i in <error>notRange4</error>);
+  for (i in <error>notRange5</error>);
+  for (i in <error>notRange6</error>);
+  for (i in <error>notRange7</error>);
+  for (i in range0);
+  for (i in range1);
 
   for (i in (ArrayList<Int>() : List<Int>));
 }

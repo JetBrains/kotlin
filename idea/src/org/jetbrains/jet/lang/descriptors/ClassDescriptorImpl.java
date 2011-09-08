@@ -117,17 +117,8 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
     }
 
     @Override
-    public boolean isAbstract() {
-        return false;
-    }
-
-    @Override
-    public boolean isOpen() {
-        return false;
-    }
-
-    @Override
-    public boolean isTrait() {
-        return false;
+    @NotNull
+    public ClassModifiers getClassModifiers() {
+        return ClassModifiers.DEFAULT_MODIFIERS;
     }
 }

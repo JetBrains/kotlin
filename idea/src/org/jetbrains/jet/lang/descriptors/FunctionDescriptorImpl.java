@@ -47,11 +47,13 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
             @Nullable JetType receiverType,
             @NotNull List<TypeParameterDescriptor> typeParameters,
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
-            @Nullable JetType unsubstitutedReturnType) {
+            @Nullable JetType unsubstitutedReturnType,
+            @Nullable MemberModifiers modifiers) {
         this.receiverType = receiverType;
         this.typeParameters = typeParameters;
         this.unsubstitutedValueParameters = unsubstitutedValueParameters;
         this.unsubstitutedReturnType = unsubstitutedReturnType;
+        this.modifiers = modifiers;
         return this;
     }
 
@@ -70,11 +72,7 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
         return overriddenFunctions;
     }
 
-    public void setModifiers(MemberModifiers modifiers) {
-        this.modifiers = modifiers;
-    }
-
-    @Nullable
+    @NotNull
     @Override
     public MemberModifiers getModifiers() {
         return modifiers;
@@ -141,7 +139,8 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
                 substitutedReceiverType,
                 substitutedTypeParameters,
                 substitutedValueParameters,
-                substitutedReturnType
+                substitutedReturnType,
+                modifiers
         );
         return substitutedDescriptor;
     }

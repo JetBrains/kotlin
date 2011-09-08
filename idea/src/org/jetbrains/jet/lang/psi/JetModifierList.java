@@ -5,6 +5,8 @@ import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetToken;
 
 import java.util.ArrayList;
@@ -56,5 +58,15 @@ public class JetModifierList extends JetElement {
             node = node.getTreeNext();
         }
         return null;
+    }
+    
+    public boolean checkNotContains(BindingTrace trace, JetToken... tokens) {
+        for (JetToken token : tokens) {
+            if (hasModifier(token)) {
+                trace.getErrorHandler().genericError(getModifierNode(token), "Annotation " + ((JetKeywordToken) token).getValue() + " is not allowed here");
+                return false;
+            }
+        }
+        return true;
     }
 }
