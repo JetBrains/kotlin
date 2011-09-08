@@ -17,6 +17,12 @@ public interface ClassDescriptor extends ClassifierDescriptor {
     @NotNull
     JetScope getMemberScope(List<TypeProjection> typeArguments);
 
+    /**
+     * @return the superclass for a class descriptor, and the required class fro a trait descriptor
+     */
+    @NotNull
+    JetType getSuperclassType();
+
     @NotNull
     FunctionGroup getConstructors();
 

@@ -20,6 +20,7 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
     private JetScope memberDeclarations;
     private FunctionGroup constructors;
     private ConstructorDescriptor primaryConstructor;
+    private JetType superclassType;
 
     public ClassDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
@@ -29,17 +30,39 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
     }
 
     public final ClassDescriptorImpl initialize(boolean sealed,
+                                            @NotNull List<TypeParameterDescriptor> typeParameters,
+                                            @NotNull Collection<JetType> supertypes,
+                                            @NotNull JetScope memberDeclarations,
+                                            @NotNull FunctionGroup constructors,
+                                            @Nullable ConstructorDescriptor primaryConstructor) {
+        return initialize(sealed, typeParameters, supertypes, memberDeclarations, constructors, primaryConstructor, getClassType(supertypes));
+    }
+
+    public final ClassDescriptorImpl initialize(boolean sealed,
                                                 @NotNull List<TypeParameterDescriptor> typeParameters,
-                                                @NotNull Collection<JetType> superclasses,
+                                                @NotNull Collection<JetType> supertypes,
                                                 @NotNull JetScope memberDeclarations,
                                                 @NotNull FunctionGroup constructors,
-                                                @Nullable ConstructorDescriptor primaryConstructor) {
-        this.typeConstructor = new TypeConstructorImpl(this, getAnnotations(), sealed, getName(), typeParameters, superclasses);
+                                                @Nullable ConstructorDescriptor primaryConstructor,
+                                                @Nullable JetType superclassType) {
+        this.typeConstructor = new TypeConstructorImpl(this, getAnnotations(), sealed, getName(), typeParameters, supertypes);
         this.memberDeclarations = memberDeclarations;
         this.constructors = constructors;
         this.primaryConstructor = primaryConstructor;
+        this.superclassType = superclassType;
 //        assert !constructors.isEmpty() || primaryConstructor == null;
         return this;
+    }
+
+    @NotNull
+    private JetType getClassType(@NotNull Collection<JetType> types) {
+        for (JetType type : types) {
+            ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(type);
+            if (classDescriptor != null) {
+                return type;
+            }
+        }
+        return JetStandardClasses.getAnyType();
     }
 
     public void setPrimaryConstructor(@NotNull ConstructorDescriptor primaryConstructor) {
@@ -61,6 +84,12 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
         }
         Map<TypeConstructor, TypeProjection> substitutionContext = TypeUtils.buildSubstitutionContext(typeConstructor.getParameters(), typeArguments);
         return new SubstitutingScope(memberDeclarations, TypeSubstitutor.create(substitutionContext));
+    }
+
+    @NotNull
+    @Override
+    public JetType getSuperclassType() {
+        return superclassType;
     }
 
     @NotNull

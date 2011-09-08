@@ -117,6 +117,17 @@ public class JavaDescriptorResolver {
         classDescriptor.setClassObjectMemberScope(new JavaClassMembersScope(classDescriptor, psiClass, semanticServices, true));
         // UGLY HACK
         supertypes.addAll(getSupertypes(psiClass));
+        if (psiClass.isInterface()) {
+            classDescriptor.setSuperclassType(JetStandardClasses.getAnyType()); // TODO : Make it java.lang.Object
+        }
+        else {
+            PsiClassType[] extendsListTypes = psiClass.getExtendsListTypes();
+            assert extendsListTypes.length == 0 || extendsListTypes.length == 1;
+            JetType superclassType = extendsListTypes.length == 0
+                                            ? JetStandardClasses.getAnyType()
+                                            : semanticServices.getTypeTransformer().transformToType(extendsListTypes[0]);
+            classDescriptor.setSuperclassType(superclassType);
+        }
 
         PsiMethod[] psiConstructors = psiClass.getConstructors();
 
