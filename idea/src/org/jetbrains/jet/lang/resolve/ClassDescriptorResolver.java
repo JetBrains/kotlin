@@ -25,9 +25,6 @@ import java.util.*;
  * @author abreslav
  */
 public class ClassDescriptorResolver {
-
-//    private static final MemberModifiers DEFAULT_MODIFIERS = new MemberModifiers(false, false, false);
-
     private final JetSemanticServices semanticServices;
     private final TypeResolver typeResolver;
     private final TypeResolver typeResolverNotCheckingBounds;
@@ -144,7 +141,7 @@ public class ClassDescriptorResolver {
             index++;
         }
         descriptor.setTypeParameterDescriptors(typeParameters);
-        descriptor.setClassModifiers(ClassModifiers.resolveModifiers(classElement.getModifierList()));
+        descriptor.setClassModifiers(resolveClassModifiers(classElement.getModifierList()));
 
         trace.record(BindingContext.CLASS, classElement, descriptor);
     }
@@ -230,7 +227,7 @@ public class ClassDescriptorResolver {
                 typeParameterDescriptors,
                 valueParameterDescriptors,
                 returnType,
-                MemberModifiers.resolveModifiers(function.getModifierList()));
+                resolveMemberModifiers(function.getModifierList()));
 
         trace.record(BindingContext.FUNCTION, function, functionDescriptor);
         return functionDescriptor;
@@ -463,7 +460,7 @@ public class ClassDescriptorResolver {
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                 containingDeclaration,
                 annotationResolver.createAnnotationStubs(modifierList),
-                MemberModifiers.resolveModifiers(modifierList), // TODO : default modifiers differ in different contexts
+                resolveMemberModifiers(modifierList), // TODO : default modifiers differ in different contexts
                 false,
                 null,
                 JetPsiUtil.safeName(objectDeclaration.getName()),
@@ -513,7 +510,7 @@ public class ClassDescriptorResolver {
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                 containingDeclaration,
                 annotationResolver.resolveAnnotations(scope, modifierList),
-                MemberModifiers.resolveModifiers(modifierList), // TODO : default modifiers differ in different contexts
+                resolveMemberModifiers(modifierList), // TODO : default modifiers differ in different contexts
                 isVar,
                 receiverType,
                 JetPsiUtil.safeName(property.getName()),
@@ -559,6 +556,30 @@ public class ClassDescriptorResolver {
             return typeResolver.resolveType(scope, propertyTypeRef);
         }
     }
+    
+    private static ClassModifiers resolveClassModifiers(@Nullable JetModifierList modifierList) {
+        if (modifierList == null) return ClassModifiers.DEFAULT_MODIFIERS;
+        return new ClassModifiers(
+                modifierList.hasModifier(JetTokens.ABSTRACT_KEYWORD),
+                modifierList.hasModifier(JetTokens.OPEN_KEYWORD) || modifierList.hasModifier(JetTokens.ABSTRACT_KEYWORD),
+                modifierList.hasModifier(JetTokens.TRAIT_KEYWORD)
+        );
+    }
+    
+    @NotNull
+    private MemberModifiers resolveMemberModifiers(@Nullable JetModifierList modifierList, @NotNull MemberModifiers defaultModifiers) {
+        if (modifierList == null) return defaultModifiers;
+        return new MemberModifiers(
+                modifierList.hasModifier(JetTokens.ABSTRACT_KEYWORD),
+                modifierList.hasModifier(JetTokens.VIRTUAL_KEYWORD),
+                modifierList.hasModifier(JetTokens.OVERRIDE_KEYWORD)
+        );
+    }
+    
+    @NotNull
+    private MemberModifiers resolveMemberModifiers(@Nullable JetModifierList modifierList) {
+        return resolveMemberModifiers(modifierList, MemberModifiers.DEFAULT_MODIFIERS);
+    }
 
     @Nullable
     private PropertySetterDescriptor resolvePropertySetterDescriptor(@NotNull JetScope scope, @NotNull JetProperty property, @NotNull PropertyDescriptor propertyDescriptor) {
@@ -569,7 +590,7 @@ public class ClassDescriptorResolver {
             JetParameter parameter = setter.getParameter();
 
             setterDescriptor = new PropertySetterDescriptor(
-                    MemberModifiers.resolveModifiers(setter.getModifierList()), // TODO : default modifiers differ in different contexts
+                    resolveMemberModifiers(setter.getModifierList()), // TODO : default modifiers differ in different contexts
                     propertyDescriptor, annotations, setter.getBodyExpression() != null, false);
             if (parameter != null) {
                 if (parameter.isRef()) {
@@ -633,7 +654,7 @@ public class ClassDescriptorResolver {
             }
 
             getterDescriptor = new PropertyGetterDescriptor(
-                    MemberModifiers.resolveModifiers(getter.getModifierList()), // TODO : default modifiers differ in different contexts
+                    resolveMemberModifiers(getter.getModifierList()), // TODO : default modifiers differ in different contexts
                     propertyDescriptor, annotations, returnType, getter.getBodyExpression() != null, false);
             trace.record(BindingContext.PROPERTY_ACCESSOR, getter, getterDescriptor);
         }
@@ -708,7 +729,7 @@ public class ClassDescriptorResolver {
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                 classDescriptor,
                 annotationResolver.resolveAnnotations(scope, modifierList),
-                MemberModifiers.resolveModifiers(modifierList),
+                resolveMemberModifiers(modifierList),
                 isMutable,
                 null,
                 name == null ? "<no name>" : name,

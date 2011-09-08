@@ -451,7 +451,7 @@ public class TopDownAnalyzer {
                 @Override
                 public void visitNamedFunction(JetNamedFunction function) {
                     FunctionDescriptorImpl functionDescriptor = classDescriptorResolver.resolveFunctionDescriptor(namespaceLike, scope, function);
-                    checkFunctionCorrectness(function, functionDescriptor, namespaceLike);
+                    checkFunction(function, functionDescriptor, namespaceLike);
                     namespaceLike.addFunctionDescriptor(functionDescriptor);
                     functions.put(function, functionDescriptor);
                     declaringScopes.put(function, scope);
@@ -550,14 +550,31 @@ public class TopDownAnalyzer {
     private void bindOverridesInAClass(MutableClassDescriptor classDescriptor) {
 
         for (FunctionDescriptor declaredFunction : classDescriptor.getFunctions()) {
+//            JetFunction function = (JetFunction) trace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, declaredFunction);
+//            boolean isOverride = declaredFunction.getModifiers().isOverride();
             for (JetType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
                 FunctionDescriptor overridden = findFunctionOverridableBy(declaredFunction, supertype);
                 if (overridden != null) {
+//                    if (isOverride && !overridden.getModifiers().isOverridable()) {
+//                        trace.getErrorHandler().genericError(function.getModifierList().getModifierNode(JetTokens.OVERRIDE_KEYWORD),
+//                                                             "Method " + overridden.getName() + " in " + overridden.getContainingDeclaration().getName() + " is final and can not be overridden");
+//                        isOverride = false;
+//                    }
                     ((FunctionDescriptorImpl) declaredFunction).addOverriddenFunction(overridden);
                 }
             }
-        }
-    }
+//            if (declaredFunction.getModifiers().isOverride() && declaredFunction.getOverriddenDescriptors().size() == 0) {
+//                trace.getErrorHandler().genericError(function.getModifierList().getModifierNode(JetTokens.OVERRIDE_KEYWORD),
+//                                                     "Method " + declaredFunction.getName() + " overrides nothing");
+            }
+//            if (!declaredFunction.getModifiers().isOverride() && declaredFunction.getOverriddenDescriptors().size() > 0) {
+//                FunctionDescriptor overriddenMethod = declaredFunction.getOverriddenDescriptors().iterator().next();
+//                trace.getErrorHandler().genericError(function.getNameIdentifier().getNode(),
+//                                                     "Method " + declaredFunction.getName() + " overrides method " + overriddenMethod.getName() + " in class " +
+//                                                     overriddenMethod.getContainingDeclaration().getName() + " and needs 'override' modifier");
+            }
+//        }
+//    }
 
     @Nullable
     private FunctionDescriptor findFunctionOverridableBy(@NotNull FunctionDescriptor declaredFunction, @NotNull JetType supertype) {
@@ -916,11 +933,6 @@ public class TopDownAnalyzer {
         if (setter != null && setterDescriptor != null) {
             resolveFunctionBody(fieldAccessTrackingTrace, setter, setterDescriptor, accessorScope);
         }
-
-//        JetExpression initializer = property.getInitializer();
-//        if (!property.isVar() && initializer != null && !trace.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor)) {
-//            trace.getErrorHandler().genericError(initializer.getNode(), "Initializer is not allowed here because this property has no setter and no backing field either");
-//        }
     }
 
     protected void checkProperty(JetProperty property, PropertyDescriptor propertyDescriptor, @Nullable ClassDescriptor classDescriptor) {
@@ -968,7 +980,7 @@ public class TopDownAnalyzer {
         }
     }
 
-    protected void checkFunctionCorrectness(JetNamedFunction function, FunctionDescriptor functionDescriptor, DeclarationDescriptor containingDescriptor) {
+    protected void checkFunction(JetNamedFunction function, FunctionDescriptor functionDescriptor, DeclarationDescriptor containingDescriptor) {
         PsiElement nameIdentifier = function.getNameIdentifier();
         if (containingDescriptor instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) containingDescriptor;

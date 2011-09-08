@@ -27,5 +27,5 @@ public class TopDownAnalyzerForStandardLibrary extends TopDownAnalyzer {
 
 
     @Override
-    protected void checkFunctionCorrectness(JetNamedFunction function, FunctionDescriptor functionDescriptor, DeclarationDescriptor containingDescriptor) {}
+    protected void checkFunction(JetNamedFunction function, FunctionDescriptor functionDescriptor, DeclarationDescriptor containingDescriptor) {}
 }
