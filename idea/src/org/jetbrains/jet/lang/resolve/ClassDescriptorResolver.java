@@ -561,10 +561,12 @@ public class ClassDescriptorResolver {
         if (modifierList == null) return ClassModifiers.DEFAULT_MODIFIERS;
         boolean abstractModifier = modifierList.hasModifier(JetTokens.ABSTRACT_KEYWORD);
         boolean traitModifier = modifierList.hasModifier(JetTokens.TRAIT_KEYWORD);
+        boolean enumModifier = modifierList.hasModifier(JetTokens.ENUM_KEYWORD);
         return new ClassModifiers(
                 abstractModifier || traitModifier,
                 modifierList.hasModifier(JetTokens.OPEN_KEYWORD) || abstractModifier || traitModifier,
-                traitModifier
+                traitModifier,
+                enumModifier
         );
     }
     

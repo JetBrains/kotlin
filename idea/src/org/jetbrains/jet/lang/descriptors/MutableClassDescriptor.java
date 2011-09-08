@@ -254,7 +254,7 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
 
     @Override
     @NotNull
-    public ClassModifiers getClassModifiers() {
+    public ClassModifiers getModifiers() {
         return classModifiers;
     }
 

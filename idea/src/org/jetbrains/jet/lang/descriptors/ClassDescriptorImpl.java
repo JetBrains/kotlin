@@ -118,7 +118,7 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
 
     @Override
     @NotNull
-    public ClassModifiers getClassModifiers() {
+    public ClassModifiers getModifiers() {
         return ClassModifiers.DEFAULT_MODIFIERS;
     }
 }

@@ -45,5 +45,5 @@ public interface ClassDescriptor extends ClassifierDescriptor {
     boolean isObject();
 
     @NotNull
-    ClassModifiers getClassModifiers();
+    ClassModifiers getModifiers();
 }

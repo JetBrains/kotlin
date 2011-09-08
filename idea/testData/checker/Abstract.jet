@@ -1,5 +1,33 @@
 namespace abstract
 
+class MyClass() {
+    fun <error>f</error>()
+    fun g() {}
+    <error>abstract</error> fun h()
+    <error>abstract</error> fun j() {}
+}
+
+abstract class MyAbstractClass() {
+    fun <error>f</error>()
+    fun g() {}
+    abstract fun h()
+    <error>abstract</error> fun j() {}
+}
+
+trait class MyTrait {
+    fun f()
+    fun g() {}
+    <warning>abstract</warning> fun h()
+    <error>abstract</error> fun j() {}
+}
+
+enum class MyEnum {
+    fun <error>f</error>()
+    fun g() {}
+    abstract fun h()
+    <error>abstract</error> fun j() {}
+}
+
 class A1() {
     fun <error>foo</error>(): Int
     <error>abstract</error> fun f(): Int

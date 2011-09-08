@@ -21,9 +21,6 @@ public class JavaClassDescriptor extends MutableDeclarationDescriptor implements
     private JetType classObjectType;
     private final WritableFunctionGroup constructors = new WritableFunctionGroup("<init>");
     private ClassModifiers modifiers;
-//    private boolean isAbstract;
-//    private boolean isOpen;
-//    private boolean isTrait;
 
     public JavaClassDescriptor(DeclarationDescriptor containingDeclaration) {
         super(containingDeclaration);
@@ -33,11 +30,8 @@ public class JavaClassDescriptor extends MutableDeclarationDescriptor implements
         this.typeConstructor = typeConstructor;
     }
 
-    public void setModifiers(boolean isAbstract, boolean isOpen, boolean isTrait) {
-        this.modifiers = new ClassModifiers(isAbstract, isOpen, isTrait);
-//        this.isAbstract = isAbstract;
-//        this.isOpen = isOpen;
-//        this.isTrait = isTrait;
+    public void setModifiers(boolean isAbstract, boolean isOpen, boolean isTrait, boolean isEnum) {
+        this.modifiers = new ClassModifiers(isAbstract, isOpen, isTrait, isEnum);
     }
 
     public void setUnsubstitutedMemberScope(JavaClassMembersScope memberScope) {
@@ -131,24 +125,9 @@ public class JavaClassDescriptor extends MutableDeclarationDescriptor implements
         return false;
     }
 
-//    @Override
-//    public boolean isAbstract() {
-//        return isAbstract;
-//    }
-//
-//    @Override
-//    public boolean isOpen() {
-//        return isOpen;
-//    }
-//
-//    @Override
-//    public boolean isTrait() {
-//        return isTrait;
-//    }
-    
     @Override
     @NotNull
-    public ClassModifiers getClassModifiers() {
+    public ClassModifiers getModifiers() {
         return modifiers;
     }
 

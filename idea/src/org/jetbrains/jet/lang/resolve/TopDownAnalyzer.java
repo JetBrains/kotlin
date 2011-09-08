@@ -487,7 +487,7 @@ public class TopDownAnalyzer {
     private void processPrimaryConstructor(MutableClassDescriptor classDescriptor, JetClass klass) {
         if (!klass.hasPrimaryConstructor()) return;
 
-        if (classDescriptor.getClassModifiers().isTrait()) {
+        if (classDescriptor.getModifiers().isTrait()) {
             trace.getErrorHandler().genericError(klass.getPrimaryConstructorParameterList().getNode(), "A trait may not have a constructor");
         }
 
@@ -509,7 +509,7 @@ public class TopDownAnalyzer {
     }
 
     private void processSecondaryConstructor(MutableClassDescriptor classDescriptor, JetConstructor constructor) {
-        if (classDescriptor.getClassModifiers().isTrait()) {
+        if (classDescriptor.getModifiers().isTrait()) {
             trace.getErrorHandler().genericError(constructor.getNameNode(), "A trait may not have a constructor");
         }
         ConstructorDescriptor constructorDescriptor = classDescriptorResolver.resolveSecondaryConstructorDescriptor(
@@ -632,7 +632,7 @@ public class TopDownAnalyzer {
 
             @Override
             public void visitDelegationByExpressionSpecifier(JetDelegatorByExpressionSpecifier specifier) {
-                if (descriptor.getClassModifiers().isTrait()) {
+                if (descriptor.getModifiers().isTrait()) {
                     trace.getErrorHandler().genericError(specifier.getNode(), "Traits can not use delegation");
                 }
                 JetType supertype = trace.getBindingContext().get(BindingContext.TYPE, specifier.getTypeReference());
@@ -653,7 +653,7 @@ public class TopDownAnalyzer {
             public void visitDelegationToSuperCallSpecifier(JetDelegatorToSuperCall call) {
                 JetValueArgumentList valueArgumentList = call.getValueArgumentList();
                 ASTNode node = valueArgumentList == null ? call.getNode() : valueArgumentList.getNode();
-                if (descriptor.getClassModifiers().isTrait()) {
+                if (descriptor.getModifiers().isTrait()) {
                     trace.getErrorHandler().genericError(node, "Traits can not initialize supertypes");
                 }
                 JetTypeReference typeReference = call.getTypeReference();
@@ -664,7 +664,7 @@ public class TopDownAnalyzer {
                             recordSupertype(typeReference, supertype);
                             ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(supertype);
                             if (classDescriptor != null) {
-                                if (classDescriptor.getClassModifiers().isTrait()) {
+                                if (classDescriptor.getModifiers().isTrait()) {
                                     trace.getErrorHandler().genericError(node, "A trait may not have a constructor");
                                 }
                             }
@@ -673,7 +673,7 @@ public class TopDownAnalyzer {
                             recordSupertype(typeReference, trace.getBindingContext().get(BindingContext.TYPE, typeReference));
                         }
                     }
-                    else if (!descriptor.getClassModifiers().isTrait()) {
+                    else if (!descriptor.getModifiers().isTrait()) {
                         JetType supertype = trace.getBindingContext().get(BindingContext.TYPE, typeReference);
                         recordSupertype(typeReference, supertype);                        
 
@@ -692,8 +692,8 @@ public class TopDownAnalyzer {
                 if (supertype != null) {
                     ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(supertype);
                     if (classDescriptor != null) {
-                        if (!descriptor.getClassModifiers().isTrait()) {
-                            if (classDescriptor.hasConstructors() && !ErrorUtils.isError(classDescriptor.getTypeConstructor()) && !classDescriptor.getClassModifiers().isTrait()) {
+                        if (!descriptor.getModifiers().isTrait()) {
+                            if (classDescriptor.hasConstructors() && !ErrorUtils.isError(classDescriptor.getTypeConstructor()) && !classDescriptor.getModifiers().isTrait()) {
                                 trace.getErrorHandler().genericError(specifier.getNode(), "This type has a constructor, and thus must be initialized here");
                             }
                         }
@@ -735,7 +735,7 @@ public class TopDownAnalyzer {
 
             ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(supertype);
             if (classDescriptor != null) {
-                if (!classDescriptor.getClassModifiers().isTrait()) {
+                if (!classDescriptor.getModifiers().isTrait()) {
                     if (classAppeared) {
                         trace.getErrorHandler().genericError(typeReference.getNode(), "Only one class may appear in a supertype list");
                     }
@@ -987,7 +987,7 @@ public class TopDownAnalyzer {
                                                      "Global property can not be abstract");
                 return;
             }
-            if (!classDescriptor.getClassModifiers().isAbstract()) {
+            if (!classDescriptor.getModifiers().isAbstract()) {
                 trace.getErrorHandler().genericError(property.getModifierList().getModifierNode(JetTokens.ABSTRACT_KEYWORD),
                                                      "Abstract property " + property.getName() + " in non-abstract class " + classDescriptor.getName());
                 return;
@@ -1008,7 +1008,7 @@ public class TopDownAnalyzer {
             if (initializer == null && !trace.getBindingContext().get(BindingContext.IS_INITIALIZED, propertyDescriptor)) {
                 if (classDescriptor == null || (getter != null && getter.getBodyExpression() != null) || (setter != null && setter.getBodyExpression() != null)) {
                     trace.getErrorHandler().genericError(nameNode, "Property must be initialized");
-                } else if (!classDescriptor.getClassModifiers().isTrait()) {
+                } else if (!classDescriptor.getModifiers().isTrait()) {
                     trace.getErrorHandler().genericError(nameNode, "Property must be initialized or be abstract");
                 }
             }
@@ -1022,22 +1022,34 @@ public class TopDownAnalyzer {
 
     protected void checkFunction(JetNamedFunction function, FunctionDescriptor functionDescriptor, DeclarationDescriptor containingDescriptor) {
         PsiElement nameIdentifier = function.getNameIdentifier();
+        boolean isAbstract = functionDescriptor.getModifiers().isAbstract();
         if (containingDescriptor instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) containingDescriptor;
-            if (functionDescriptor.getModifiers().isAbstract() && !classDescriptor.getClassModifiers().isAbstract()) {
+            boolean inTrait = classDescriptor.getModifiers().isTrait();
+            boolean inEnum = classDescriptor.getModifiers().isEnum();
+            boolean inAbstractClass = classDescriptor.getModifiers().isAbstract();
+            if (isAbstract && !inAbstractClass && !inTrait && !inEnum) {
                 trace.getErrorHandler().genericError(function.getModifierList().getModifierNode(JetTokens.ABSTRACT_KEYWORD),
                                                      "Abstract method " + function.getName() + " in non-abstract class " + classDescriptor.getName());
             }
-            if (function.getBodyExpression() == null && !functionDescriptor.getModifiers().isAbstract() && nameIdentifier != null) {
+            if (isAbstract && inTrait) {
+                trace.getErrorHandler().genericWarning(function.getModifierList().getModifierNode(JetTokens.ABSTRACT_KEYWORD),
+                                                     "Abstract modifier is not necessary in traits");
+            }
+            if (function.getBodyExpression() != null && isAbstract) {
+                trace.getErrorHandler().genericError(function.getModifierList().getModifierNode(JetTokens.ABSTRACT_KEYWORD),
+                                                     "Method " + function.getName() + " with body can not be abstract");
+            }
+            if (function.getBodyExpression() == null && !isAbstract && !inTrait && nameIdentifier != null) {
                 trace.getErrorHandler().genericError(nameIdentifier.getNode(), "Method " + function.getName() + " without body must be abstract");
             }
             return;
         }
-        if (functionDescriptor.getModifiers().isAbstract()) {
+        if (isAbstract) {
             trace.getErrorHandler().genericError(function.getModifierList().getModifierNode(JetTokens.ABSTRACT_KEYWORD),
                                                  "Global function " + function.getName() + " can not be abstract");
         }
-        if (function.getBodyExpression() == null && !functionDescriptor.getModifiers().isAbstract() && nameIdentifier != null) {
+        if (function.getBodyExpression() == null && !isAbstract && nameIdentifier != null) {
             trace.getErrorHandler().genericError(nameIdentifier.getNode(), "Global function " + function.getName() + " must have body");
         }
     }

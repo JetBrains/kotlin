@@ -109,7 +109,8 @@ public class JavaDescriptorResolver {
         classDescriptor.setModifiers(
                 psiClass.hasModifierProperty(PsiModifier.ABSTRACT),
                 !psiClass.hasModifierProperty(PsiModifier.FINAL),
-                psiClass.isInterface()
+                psiClass.isInterface(),
+                psiClass.isEnum()
         );
         classDescriptorCache.put(psiClass.getQualifiedName(), classDescriptor);
         classDescriptor.setUnsubstitutedMemberScope(new JavaClassMembersScope(classDescriptor, psiClass, semanticServices, false));

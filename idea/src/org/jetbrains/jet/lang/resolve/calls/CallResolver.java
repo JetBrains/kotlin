@@ -101,7 +101,7 @@ public class CallResolver {
                 @Override
                 public <D extends CallableDescriptor> boolean performAdvancedChecks(D descriptor, BindingTrace trace, TracingStrategy tracing) {
                     if (descriptor instanceof ConstructorDescriptor) {
-                        ClassModifiers modifiers = ((ConstructorDescriptor) descriptor).getContainingDeclaration().getClassModifiers();
+                        ClassModifiers modifiers = ((ConstructorDescriptor) descriptor).getContainingDeclaration().getModifiers();
                         if (modifiers.isAbstract()) {
                             tracing.reportOverallResolutionError(trace, "Can not create an instance of an abstract class");
                             return false;
