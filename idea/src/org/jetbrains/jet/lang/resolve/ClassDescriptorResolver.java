@@ -559,10 +559,12 @@ public class ClassDescriptorResolver {
     
     private static ClassModifiers resolveClassModifiers(@Nullable JetModifierList modifierList) {
         if (modifierList == null) return ClassModifiers.DEFAULT_MODIFIERS;
+        boolean abstractModifier = modifierList.hasModifier(JetTokens.ABSTRACT_KEYWORD);
+        boolean traitModifier = modifierList.hasModifier(JetTokens.TRAIT_KEYWORD);
         return new ClassModifiers(
-                modifierList.hasModifier(JetTokens.ABSTRACT_KEYWORD),
-                modifierList.hasModifier(JetTokens.OPEN_KEYWORD) || modifierList.hasModifier(JetTokens.ABSTRACT_KEYWORD),
-                modifierList.hasModifier(JetTokens.TRAIT_KEYWORD)
+                abstractModifier || traitModifier,
+                modifierList.hasModifier(JetTokens.OPEN_KEYWORD) || abstractModifier || traitModifier,
+                traitModifier
         );
     }
     

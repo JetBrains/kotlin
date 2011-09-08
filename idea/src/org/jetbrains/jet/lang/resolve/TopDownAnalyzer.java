@@ -653,7 +653,7 @@ public class TopDownAnalyzer {
             public void visitDelegationToSuperCallSpecifier(JetDelegatorToSuperCall call) {
                 JetValueArgumentList valueArgumentList = call.getValueArgumentList();
                 ASTNode node = valueArgumentList == null ? call.getNode() : valueArgumentList.getNode();
-                if (descriptor.isTrait()) {
+                if (descriptor.getClassModifiers().isTrait()) {
                     trace.getErrorHandler().genericError(node, "Traits can not initialize supertypes");
                 }
                 JetTypeReference typeReference = call.getTypeReference();
@@ -664,7 +664,7 @@ public class TopDownAnalyzer {
                             recordSupertype(typeReference, supertype);
                             ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(supertype);
                             if (classDescriptor != null) {
-                                if (classDescriptor.isTrait()) {
+                                if (classDescriptor.getClassModifiers().isTrait()) {
                                     trace.getErrorHandler().genericError(node, "A trait may not have a constructor");
                                 }
                             }
@@ -673,7 +673,7 @@ public class TopDownAnalyzer {
                             recordSupertype(typeReference, trace.getBindingContext().get(BindingContext.TYPE, typeReference));
                         }
                     }
-                    else if (!descriptor.isTrait()) {
+                    else if (!descriptor.getClassModifiers().isTrait()) {
                         JetType supertype = trace.getBindingContext().get(BindingContext.TYPE, typeReference);
                         recordSupertype(typeReference, supertype);                        
 
@@ -692,8 +692,8 @@ public class TopDownAnalyzer {
                 if (supertype != null) {
                     ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(supertype);
                     if (classDescriptor != null) {
-                        if (!descriptor.isTrait()) {
-                            if (classDescriptor.hasConstructors() && !ErrorUtils.isError(classDescriptor.getTypeConstructor()) && !classDescriptor.isTrait()) {
+                        if (!descriptor.getClassModifiers().isTrait()) {
+                            if (classDescriptor.hasConstructors() && !ErrorUtils.isError(classDescriptor.getTypeConstructor()) && !classDescriptor.getClassModifiers().isTrait()) {
                                 trace.getErrorHandler().genericError(specifier.getNode(), "This type has a constructor, and thus must be initialized here");
                             }
                         }
@@ -735,7 +735,7 @@ public class TopDownAnalyzer {
 
             ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(supertype);
             if (classDescriptor != null) {
-                if (!classDescriptor.isTrait()) {
+                if (!classDescriptor.getClassModifiers().isTrait()) {
                     if (classAppeared) {
                         trace.getErrorHandler().genericError(typeReference.getNode(), "Only one class may appear in a supertype list");
                     }
