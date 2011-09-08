@@ -623,21 +623,26 @@ public class TopDownAnalyzer {
                 : getInnerScopeForConstructor(primaryConstructor, descriptor.getScopeForMemberResolution(), true);
         final JetTypeInferrer.Services typeInferrer = semanticServices.getTypeInferrerServices(traceForConstructors, JetFlowInformationProvider.NONE); // TODO : flow
 
+        final Map<JetTypeReference, JetType> supertypes = Maps.newLinkedHashMap();
         JetVisitorVoid visitor = new JetVisitorVoid() {
-            private boolean superclassAppeared = false;
-            
+            private void recordSupertype(JetTypeReference typeReference, JetType supertype) {
+                if (supertype == null) return;
+                supertypes.put(typeReference, supertype);
+            }
+
             @Override
             public void visitDelegationByExpressionSpecifier(JetDelegatorByExpressionSpecifier specifier) {
                 if (descriptor.getClassModifiers().isTrait()) {
                     trace.getErrorHandler().genericError(specifier.getNode(), "Traits can not use delegation");
                 }
+                JetType supertype = trace.getBindingContext().get(BindingContext.TYPE, specifier.getTypeReference());
+                recordSupertype(specifier.getTypeReference(), supertype);
                 JetExpression delegateExpression = specifier.getDelegateExpression();
                 if (delegateExpression != null) {
                     JetScope scope = scopeForConstructor == null
                                      ? descriptor.getScopeForMemberResolution()
                                      : scopeForConstructor;
                     JetType type = typeInferrer.getType(scope, delegateExpression, NO_EXPECTED_TYPE);
-                    JetType supertype = trace.getBindingContext().get(BindingContext.TYPE, specifier.getTypeReference());
                     if (type != null && supertype != null && !semanticServices.getTypeChecker().isSubtypeOf(type, supertype)) {
                         trace.getErrorHandler().typeMismatch(delegateExpression, supertype, type);
                     }
@@ -646,27 +651,32 @@ public class TopDownAnalyzer {
 
             @Override
             public void visitDelegationToSuperCallSpecifier(JetDelegatorToSuperCall call) {
-                if (descriptor.getClassModifiers().isTrait()) {
-                    JetValueArgumentList valueArgumentList = call.getValueArgumentList();
-                    ASTNode node = valueArgumentList == null ? call.getNode() : valueArgumentList.getNode();
+                JetValueArgumentList valueArgumentList = call.getValueArgumentList();
+                ASTNode node = valueArgumentList == null ? call.getNode() : valueArgumentList.getNode();
+                if (descriptor.isTrait()) {
                     trace.getErrorHandler().genericError(node, "Traits can not initialize supertypes");
                 }
                 JetTypeReference typeReference = call.getTypeReference();
                 if (typeReference != null) {
                     if (descriptor.getUnsubstitutedPrimaryConstructor() != null) {
-                        JetType type = typeInferrer.getCallResolver().resolveCall(trace, scopeForConstructor, null, call, NO_EXPECTED_TYPE);
-                        if (type != null) {
-                            DeclarationDescriptor declarationDescriptor = type.getConstructor().getDeclarationDescriptor();
-                            if (declarationDescriptor instanceof ClassDescriptor) {
-                                ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
-                                if (classDescriptor.getClassModifiers().isTrait()) {
-                                    trace.getErrorHandler().genericError(call.getValueArgumentList().getNode(), "A trait may not have a constructor");
+                        JetType supertype = typeInferrer.getCallResolver().resolveCall(trace, scopeForConstructor, null, call, NO_EXPECTED_TYPE);
+                        if (supertype != null) {
+                            recordSupertype(typeReference, supertype);
+                            ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(supertype);
+                            if (classDescriptor != null) {
+                                if (classDescriptor.isTrait()) {
+                                    trace.getErrorHandler().genericError(node, "A trait may not have a constructor");
                                 }
                             }
                         }
+                        else {
+                            recordSupertype(typeReference, trace.getBindingContext().get(BindingContext.TYPE, typeReference));
+                        }
                     }
-                    else {
-                        JetValueArgumentList valueArgumentList = call.getValueArgumentList();
+                    else if (!descriptor.isTrait()) {
+                        JetType supertype = trace.getBindingContext().get(BindingContext.TYPE, typeReference);
+                        recordSupertype(typeReference, supertype);                        
+
                         assert valueArgumentList != null;
                         trace.getErrorHandler().genericError(valueArgumentList.getNode(),
                                                              "Class " + JetPsiUtil.safeName(jetClass.getName()) + " must have a constructor in order to be able to initialize supertypes");
@@ -676,31 +686,18 @@ public class TopDownAnalyzer {
 
             @Override
             public void visitDelegationToSuperClassSpecifier(JetDelegatorToSuperClass specifier) {
-                JetType supertype = trace.getBindingContext().get(BindingContext.TYPE, specifier.getTypeReference());
+                JetTypeReference typeReference = specifier.getTypeReference();
+                JetType supertype = trace.getBindingContext().get(BindingContext.TYPE, typeReference);
+                recordSupertype(typeReference, supertype);
                 if (supertype != null) {
-                    DeclarationDescriptor declarationDescriptor = supertype.getConstructor().getDeclarationDescriptor();
-                    if (declarationDescriptor instanceof ClassDescriptor) {
-                        ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
-                        if (!descriptor.getClassModifiers().isTrait()) {
-                            if (classDescriptor.hasConstructors() && !ErrorUtils.isError(classDescriptor.getTypeConstructor()) && !classDescriptor.getClassModifiers().isTrait()) {
+                    ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(supertype);
+                    if (classDescriptor != null) {
+                        if (!descriptor.isTrait()) {
+                            if (classDescriptor.hasConstructors() && !ErrorUtils.isError(classDescriptor.getTypeConstructor()) && !classDescriptor.isTrait()) {
                                 trace.getErrorHandler().genericError(specifier.getNode(), "This type has a constructor, and thus must be initialized here");
                             }
                         }
-                        else {
-                            if (!classDescriptor.getClassModifiers().isTrait()) {
-                                if (superclassAppeared) {
-                                    trace.getErrorHandler().genericError(specifier.getNode(), "A trait may extend only one class");
-                                }
-                                else {
-                                    superclassAppeared = true;
-                                }
-                            }
-                        }
                     }
-                    else {
-                        trace.getErrorHandler().genericError(specifier.getNode(), "Only classes may serve as supertypes");
-                    }
-
                 }
             }
 
@@ -714,8 +711,51 @@ public class TopDownAnalyzer {
                 throw new UnsupportedOperationException(element.getText() + " : " + element);
             }
         };
+        
         for (JetDelegationSpecifier delegationSpecifier : jetClass.getDelegationSpecifiers()) {
             delegationSpecifier.accept(visitor);
+        }
+
+
+        Set<TypeConstructor> parentEnum = Collections.emptySet();
+        if (jetClass instanceof JetEnumEntry) {
+            parentEnum = Collections.singleton(((ClassDescriptor) descriptor.getContainingDeclaration().getContainingDeclaration()).getTypeConstructor());
+        }
+
+        checkSupertypeList(descriptor, supertypes, parentEnum);
+    }
+
+    // allowedFinalSupertypes typically contains a enum type of which supertypeOwner is an entry
+    private void checkSupertypeList(@NotNull MutableClassDescriptor supertypeOwner, @NotNull Map<JetTypeReference, JetType> supertypes, Set<TypeConstructor> allowedFinalSupertypes) {
+        Set<TypeConstructor> typeConstructors = Sets.newHashSet();
+        boolean classAppeared = false;
+        for (Map.Entry<JetTypeReference, JetType> entry : supertypes.entrySet()) {
+            JetTypeReference typeReference = entry.getKey();
+            JetType supertype = entry.getValue();
+
+            ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(supertype);
+            if (classDescriptor != null) {
+                if (!classDescriptor.isTrait()) {
+                    if (classAppeared) {
+                        trace.getErrorHandler().genericError(typeReference.getNode(), "Only one class may appear in a supertype list");
+                    }
+                    else {
+                        classAppeared = true;
+                    }
+                }
+            }
+            else {
+                trace.getErrorHandler().genericError(typeReference.getNode(), "Only classes and traits may serve as supertypes");
+            }
+
+            TypeConstructor constructor = supertype.getConstructor();
+            if (!typeConstructors.add(constructor)) {
+                trace.getErrorHandler().genericError(typeReference.getNode(), "A supertype appears twice");
+            }
+
+            if (constructor.isSealed() && !allowedFinalSupertypes.contains(constructor)) {
+                trace.getErrorHandler().genericError(typeReference.getNode(), "This type is final, so it cannot be inherited from");
+            }
         }
     }
 

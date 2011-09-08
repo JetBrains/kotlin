@@ -253,7 +253,6 @@ public class CallResolver {
         }
         if (traceForFirstNonemptyCandidateSet != null) {
             traceForFirstNonemptyCandidateSet.commit();
-            assert resultForFirstNonemptyCandidateSet != null;
             if (resultForFirstNonemptyCandidateSet.singleDescriptor()) {
                 return resultForFirstNonemptyCandidateSet.getDescriptor();
             }

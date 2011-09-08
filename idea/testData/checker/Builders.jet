@@ -49,7 +49,7 @@ namespace html {
 
   class Title() : TagWithText("title")
 
-  class BodyTag(name : String) : TagWithText(name) {
+  abstract class BodyTag(name : String) : TagWithText(name) {
   }
 
   class Body() : BodyTag("body") {

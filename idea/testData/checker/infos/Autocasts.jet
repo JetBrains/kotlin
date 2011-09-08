@@ -1,4 +1,4 @@
-class A() {
+<info>open</info> class A() {
   fun foo() {}
 }
 

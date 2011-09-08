@@ -1,5 +1,5 @@
 class Outer() {
-  class InnerBase() {
+  open class InnerBase() {
   }
 
   class InnerDerived(): InnerBase() {

@@ -321,6 +321,15 @@ public class TypeUtils {
         return declarationDescriptor1.getOriginal().equals(declarationDescriptor2.getOriginal());
     }
 
+    @Nullable
+    public static ClassDescriptor getClassDescriptor(@NotNull JetType type) {
+        DeclarationDescriptor declarationDescriptor = type.getConstructor().getDeclarationDescriptor();
+        if (declarationDescriptor instanceof ClassDescriptor) {
+            return (ClassDescriptor) declarationDescriptor;
+        }
+        return null;
+    }
+
     public static boolean hasUnsubstitutedTypeParameters(JetType type) {
         if(type.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor)
             return true;

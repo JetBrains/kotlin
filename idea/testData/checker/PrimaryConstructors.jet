@@ -2,7 +2,7 @@ class <error>X</error> {
   val <error>x</error> : Int
 }
 
-class Y() {
+open class Y() {
   val x : Int = 2
 }
 
