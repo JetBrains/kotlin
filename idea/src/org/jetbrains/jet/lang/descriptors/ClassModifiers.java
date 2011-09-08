@@ -1,6 +1,5 @@
 package org.jetbrains.jet.lang.descriptors;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetModifierList;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -31,8 +30,8 @@ public class ClassModifiers extends Modifiers {
     public static ClassModifiers resolveModifiers(@Nullable JetModifierList modifierList) {
         if (modifierList == null) return DEFAULT_MODIFIERS;
         return new ClassModifiers(
-                modifierList.hasModifier(JetTokens.ABSTRACT_KEYWORD),
-                modifierList.hasModifier(JetTokens.OPEN_KEYWORD) || modifierList.hasModifier(JetTokens.ABSTRACT_KEYWORD),
+                modifierList.hasModifier(JetTokens.ABSTRACT_KEYWORD) || modifierList.hasModifier(JetTokens.TRAIT_KEYWORD),
+                modifierList.hasModifier(JetTokens.OPEN_KEYWORD) || modifierList.hasModifier(JetTokens.ABSTRACT_KEYWORD) || modifierList.hasModifier(JetTokens.TRAIT_KEYWORD),
                 modifierList.hasModifier(JetTokens.TRAIT_KEYWORD)
         );
     }
