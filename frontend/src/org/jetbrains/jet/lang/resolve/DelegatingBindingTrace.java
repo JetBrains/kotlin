@@ -74,6 +74,6 @@ public class DelegatingBindingTrace implements BindingTrace {
             trace.record(slicedMapKey.getSlice(), slicedMapKey.getKey(), value);
         }
         
-        AnalyzingUtils.applyHandler(trace.getErrorHandler(), diagnostics);
+        ErrorHandler.applyHandler(trace.getErrorHandler(), diagnostics);
     }
 }

@@ -90,7 +90,7 @@ public class GenerationState {
         bindingContexts.push(bindingContext);
         typeMapper = new JetTypeMapper(standardLibrary, bindingContext);
         try {
-            AnalyzingUtils.applyHandler(ErrorHandler.THROW_EXCEPTION, bindingContext);
+            ErrorHandler.applyHandler(ErrorHandler.THROW_EXCEPTION, bindingContext);
             codegen.generate(namespace);
         }
         finally {

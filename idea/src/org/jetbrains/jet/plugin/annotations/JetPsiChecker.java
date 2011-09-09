@@ -99,7 +99,7 @@ public class JetPsiChecker implements Annotator {
                 };
 
                 if (errorReportingEnabled) {
-                    AnalyzingUtils.applyHandler(errorHandler, bindingContext);
+                    ErrorHandler.applyHandler(errorHandler, bindingContext);
                 }
 
                 highlightBackingFields(holder, file, bindingContext);

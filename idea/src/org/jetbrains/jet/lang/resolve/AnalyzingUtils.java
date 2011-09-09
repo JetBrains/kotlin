@@ -12,17 +12,15 @@ import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.ErrorHandler;
-import org.jetbrains.jet.lang.JetDiagnostic;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespace;
-import org.jetbrains.jet.lang.resolve.java.JavaPackageScope;
-import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
+//import org.jetbrains.jet.lang.resolve.java.JavaPackageScope;
+//import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 
-import java.util.Collection;
 import java.util.Collections;
 
 /**
@@ -67,13 +65,13 @@ public class AnalyzingUtils {
 
         BindingTraceContext bindingTraceContext = new BindingTraceContext();
         JetSemanticServices semanticServices = JetSemanticServices.createSemanticServices(project, flowDataTraceFactory);
-        JavaSemanticServices javaSemanticServices = new JavaSemanticServices(project, semanticServices, bindingTraceContext);
 
         JetScope libraryScope = semanticServices.getStandardLibrary().getLibraryScope();
         ModuleDescriptor owner = new ModuleDescriptor("<module>");
         final WritableScope scope = new WritableScopeImpl(libraryScope, owner, bindingTraceContext.getErrorHandler()).setDebugName("Root scope in analyzeNamespace");
 //        scope.importScope(javaSemanticServices.getDescriptorResolver().resolveNamespace("").getMemberScope());
 //        scope.importScope(javaSemanticServices.getDescriptorResolver().resolveNamespace("java.lang").getMemberScope());
+        JavaSemanticServices javaSemanticServices = new JavaSemanticServices(project, semanticServices, bindingTraceContext);
         scope.importScope(new JavaPackageScope("", null, javaSemanticServices));
         scope.importScope(new JavaPackageScope("java.lang", null, javaSemanticServices));
 
@@ -110,17 +108,6 @@ public class AnalyzingUtils {
             }
         }, Collections.<JetDeclaration>singletonList(namespace));
         return bindingTraceContext.getBindingContext();
-    }
-
-    public static void applyHandler(@NotNull ErrorHandler errorHandler, @NotNull BindingContext bindingContext) {
-        Collection<JetDiagnostic> diagnostics = bindingContext.getDiagnostics();
-        applyHandler(errorHandler, diagnostics);
-    }
-
-    public static void applyHandler(@NotNull ErrorHandler errorHandler, @NotNull Collection<JetDiagnostic> diagnostics) {
-        for (JetDiagnostic jetDiagnostic : diagnostics) {
-            jetDiagnostic.acceptHandler(errorHandler);
-        }
     }
 
     public static void checkForSyntacticErrors(@NotNull PsiElement root) {

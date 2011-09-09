@@ -16,16 +16,9 @@
     </content>
     <orderEntry type="jdk" jdkName="IDEA 10.x" jdkType="IDEA JDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="stdlib" />
-    <orderEntry type="module-library">
-      <library name="asm-util-3.3.1.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../lib/asm-util-3.3.1.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
+    <orderEntry type="module" module-name="backend" />
+    <orderEntry type="module" module-name="frontend" />
+    <orderEntry type="module" module-name="frontend.java" />
   </component>
 </module>
 

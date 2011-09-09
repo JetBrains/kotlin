@@ -96,12 +96,12 @@ public class ExpectedResolveData {
         JetStandardLibrary lib = semanticServices.getStandardLibrary();
 
         BindingContext bindingContext = AnalyzingUtils.analyzeNamespace(file.getRootNamespace(), JetControlFlowDataTraceFactory.EMPTY);
-        AnalyzingUtils.applyHandler(new ErrorHandler() {
-                    @Override
-                    public void unresolvedReference(@NotNull JetReferenceExpression referenceExpression) {
-                        unresolvedReferences.add(referenceExpression);
-                    }
-                }, bindingContext);
+        ErrorHandler.applyHandler(new ErrorHandler() {
+            @Override
+            public void unresolvedReference(@NotNull JetReferenceExpression referenceExpression) {
+                unresolvedReferences.add(referenceExpression);
+            }
+        }, bindingContext);
 
         Map<String, JetDeclaration> nameToDeclaration = new HashMap<String, JetDeclaration>();
 

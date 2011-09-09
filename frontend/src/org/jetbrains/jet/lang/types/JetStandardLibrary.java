@@ -102,7 +102,7 @@ public class JetStandardLibrary {
 //            bootstrappingTDA.process(writableScope, JetStandardClasses.STANDARD_CLASSES_NAMESPACE, file.getRootNamespace().getDeclarations());
             TopDownAnalyzer.processStandardLibraryNamespace(bootstrappingSemanticServices, bindingTraceContext, writableScope, JetStandardClasses.STANDARD_CLASSES_NAMESPACE, file.getRootNamespace());
             this.libraryScope = JetStandardClasses.STANDARD_CLASSES_NAMESPACE.getMemberScope();
-            AnalyzingUtils.applyHandler(ErrorHandler.THROW_EXCEPTION, bindingTraceContext.getBindingContext());
+            ErrorHandler.applyHandler(ErrorHandler.THROW_EXCEPTION, bindingTraceContext.getBindingContext());
 
             this.byteClass = (ClassDescriptor) libraryScope.getClassifier("Byte");
             this.charClass = (ClassDescriptor) libraryScope.getClassifier("Char");

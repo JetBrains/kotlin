@@ -8,7 +8,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
+
+import java.util.Collection;
 
 /**
  * @author abreslav
@@ -58,6 +61,17 @@ public class ErrorHandler {
         }
         else {
             return "' at offset " + offset + " (line unknown)";
+        }
+    }
+
+    public static void applyHandler(@NotNull ErrorHandler errorHandler, @NotNull BindingContext bindingContext) {
+        Collection<JetDiagnostic> diagnostics = bindingContext.getDiagnostics();
+        applyHandler(errorHandler, diagnostics);
+    }
+
+    public static void applyHandler(@NotNull ErrorHandler errorHandler, @NotNull Collection<JetDiagnostic> diagnostics) {
+        for (JetDiagnostic jetDiagnostic : diagnostics) {
+            jetDiagnostic.acceptHandler(errorHandler);
         }
     }
 
