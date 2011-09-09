@@ -40,16 +40,13 @@ public class TypeHierarchyResolver {
             declaration.accept(new JetVisitorVoid() {
                 @Override
                 public void visitNamespace(JetNamespace namespace) {
+                    String name = JetPsiUtil.safeName(namespace.getName());
 
-                    String name = namespace.getName();
-                    if (name == null) {
-                        name = "<no name provided>";
-                    }
                     NamespaceDescriptorImpl namespaceDescriptor = owner.getNamespace(name);
                     if (namespaceDescriptor == null) {
                         namespaceDescriptor = new NamespaceDescriptorImpl(
                                 owner.getOriginal(),
-                                Collections.<AnnotationDescriptor>emptyList(), // TODO
+                                Collections.<AnnotationDescriptor>emptyList(), // TODO: annotations
                                 name
                         );
                         namespaceDescriptor.initialize(new WritableScopeImpl(JetScope.EMPTY, namespaceDescriptor, context.getTrace().getErrorHandler()).setDebugName("Namespace member scope"));
