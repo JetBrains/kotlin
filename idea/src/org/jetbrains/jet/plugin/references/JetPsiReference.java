@@ -9,9 +9,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
-import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.plugin.AnalyzerFacade;
 
 import java.util.Collection;
 
@@ -75,7 +75,7 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
 
     protected PsiElement doResolve() {
         JetFile file = (JetFile) getElement().getContainingFile();
-        BindingContext bindingContext = AnalyzingUtils.analyzeFileWithCache(file);
+        BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache(file);
         PsiElement psiElement = BindingContextUtils.resolveToDeclarationPsiElement(bindingContext, myExpression);
         if (psiElement != null) {
             return psiElement;
@@ -87,7 +87,7 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
 
     protected ResolveResult[] doMultiResolve() {
         JetFile file = (JetFile) getElement().getContainingFile();
-        BindingContext bindingContext = AnalyzingUtils.analyzeFileWithCache(file);
+        BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache(file);
         Collection<? extends DeclarationDescriptor> declarationDescriptors = bindingContext.get(AMBIGUOUS_REFERENCE_TARGET, myExpression);
         assert declarationDescriptors != null;
         ResolveResult[] results = new ResolveResult[declarationDescriptors.size()];

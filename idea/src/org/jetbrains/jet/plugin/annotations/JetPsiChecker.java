@@ -11,14 +11,14 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.ErrorHandler;
-import org.jetbrains.jet.plugin.JetHighlighter;
-import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.plugin.AnalyzerFacade;
+import org.jetbrains.jet.plugin.JetHighlighter;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -43,7 +43,7 @@ public class JetPsiChecker implements Annotator {
         if (element instanceof JetFile) {
             JetFile file = (JetFile) element;
             try {
-                final BindingContext bindingContext = AnalyzingUtils.analyzeFileWithCache(file);
+                final BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache(file);
 
                 ErrorHandler errorHandler = new ErrorHandler() {
                     private final Set<DeclarationDescriptor> redeclarations = new HashSet<DeclarationDescriptor>();

@@ -13,6 +13,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.java.JavaDefaultImports;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.commons.Method;
@@ -86,7 +87,7 @@ public class GenerationState {
     public void compile(JetFile psiFile) {
         final JetNamespace namespace = psiFile.getRootNamespace();
         NamespaceCodegen codegen = forNamespace(namespace);
-        final BindingContext bindingContext = AnalyzingUtils.analyzeNamespace(namespace, JetControlFlowDataTraceFactory.EMPTY);
+        final BindingContext bindingContext = AnalyzingUtils.getInstance(JavaDefaultImports.JAVA_DEFAULT_IMPORTS).analyzeNamespace(namespace, JetControlFlowDataTraceFactory.EMPTY);
         bindingContexts.push(bindingContext);
         typeMapper = new JetTypeMapper(standardLibrary, bindingContext);
         try {

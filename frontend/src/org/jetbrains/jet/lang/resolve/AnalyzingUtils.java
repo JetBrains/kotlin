@@ -30,37 +30,31 @@ public class AnalyzingUtils {
     private final static Key<CachedValue<BindingContext>> BINDING_CONTEXT = Key.create("BINDING_CONTEXT");
     private static final Object lock = new Object();
 
-    public static BindingContext analyzeFileWithCache(@NotNull final JetFile file) {
-        // TODO : Synchronization?
-        CachedValue<BindingContext> bindingContextCachedValue = file.getUserData(BINDING_CONTEXT);
-        if (bindingContextCachedValue == null) {
-            bindingContextCachedValue = CachedValuesManager.getManager(file.getProject()).createCachedValue(new CachedValueProvider<BindingContext>() {
-                @Override
-                public Result<BindingContext> compute() {
-                    synchronized (lock) {
-                        try {
-                            JetNamespace rootNamespace = file.getRootNamespace();
-                            BindingContext bindingContext = analyzeNamespace(rootNamespace, JetControlFlowDataTraceFactory.EMPTY);
-                            return new Result<BindingContext>(bindingContext, PsiModificationTracker.MODIFICATION_COUNT);
-                        }
-                        catch (ProcessCanceledException e) {
-                            throw e;
-                        }
-                        catch (Throwable e) {
-                            e.printStackTrace();
-                            BindingTraceContext bindingTraceContext = new BindingTraceContext();
-                            bindingTraceContext.getErrorHandler().genericError(file.getNode(), e.getClass().getSimpleName() + ": " + e.getMessage());
-                            return new Result<BindingContext>(bindingTraceContext.getBindingContext(), PsiModificationTracker.MODIFICATION_COUNT);
-                        }
-                    }
-                }
-            }, false);
-            file.putUserData(BINDING_CONTEXT, bindingContextCachedValue);
-        }
-        return bindingContextCachedValue.getValue();
+    public static AnalyzingUtils getInstance(@NotNull ImportingStrategy importingStrategy) {
+        return new AnalyzingUtils(importingStrategy);
     }
 
-    public static BindingContext analyzeNamespace(@NotNull JetNamespace namespace, @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory) {
+    public static void checkForSyntacticErrors(@NotNull PsiElement root) {
+        root.acceptChildren(new PsiElementVisitor() {
+            @Override
+            public void visitElement(PsiElement element) {
+                element.acceptChildren(this);
+            }
+
+            @Override
+            public void visitErrorElement(PsiErrorElement element) {
+                throw new IllegalArgumentException(element.getErrorDescription() + "; looking at " + element.getNode().getElementType() + " '" + element.getText() + ErrorHandler.atLocation(element));
+            }
+        });
+    }
+
+    private final ImportingStrategy importingStrategy;
+
+    private AnalyzingUtils(ImportingStrategy importingStrategy) {
+        this.importingStrategy = importingStrategy;
+    }
+
+    public BindingContext analyzeNamespace(@NotNull JetNamespace namespace, @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory) {
         Project project = namespace.getProject();
 
         BindingTraceContext bindingTraceContext = new BindingTraceContext();
@@ -69,12 +63,7 @@ public class AnalyzingUtils {
         JetScope libraryScope = semanticServices.getStandardLibrary().getLibraryScope();
         ModuleDescriptor owner = new ModuleDescriptor("<module>");
         final WritableScope scope = new WritableScopeImpl(libraryScope, owner, bindingTraceContext.getErrorHandler()).setDebugName("Root scope in analyzeNamespace");
-//        scope.importScope(javaSemanticServices.getDescriptorResolver().resolveNamespace("").getMemberScope());
-//        scope.importScope(javaSemanticServices.getDescriptorResolver().resolveNamespace("java.lang").getMemberScope());
-        JavaSemanticServices javaSemanticServices = new JavaSemanticServices(project, semanticServices, bindingTraceContext);
-        scope.importScope(new JavaPackageScope("", null, javaSemanticServices));
-        scope.importScope(new JavaPackageScope("java.lang", null, javaSemanticServices));
-
+        importingStrategy.addImports(project, semanticServices, bindingTraceContext, scope);
         TopDownAnalyzer.process(semanticServices, bindingTraceContext, scope, new NamespaceLike.Adapter(owner) {
 
             @Override
@@ -110,17 +99,33 @@ public class AnalyzingUtils {
         return bindingTraceContext.getBindingContext();
     }
 
-    public static void checkForSyntacticErrors(@NotNull PsiElement root) {
-        root.acceptChildren(new PsiElementVisitor() {
-            @Override
-            public void visitElement(PsiElement element) {
-                element.acceptChildren(this);
-            }
-
-            @Override
-            public void visitErrorElement(PsiErrorElement element) {
-                throw new IllegalArgumentException(element.getErrorDescription() + "; looking at " + element.getNode().getElementType() + " '" + element.getText() + ErrorHandler.atLocation(element));
-            }
-        });
+    public BindingContext analyzeFileWithCache(@NotNull final JetFile file) {
+        // TODO : Synchronization?
+        CachedValue<BindingContext> bindingContextCachedValue = file.getUserData(BINDING_CONTEXT);
+        if (bindingContextCachedValue == null) {
+            bindingContextCachedValue = CachedValuesManager.getManager(file.getProject()).createCachedValue(new CachedValueProvider<BindingContext>() {
+                @Override
+                public Result<BindingContext> compute() {
+                    synchronized (lock) {
+                        try {
+                            JetNamespace rootNamespace = file.getRootNamespace();
+                            BindingContext bindingContext = analyzeNamespace(rootNamespace, JetControlFlowDataTraceFactory.EMPTY);
+                            return new Result<BindingContext>(bindingContext, PsiModificationTracker.MODIFICATION_COUNT);
+                        }
+                        catch (ProcessCanceledException e) {
+                            throw e;
+                        }
+                        catch (Throwable e) {
+                            e.printStackTrace();
+                            BindingTraceContext bindingTraceContext = new BindingTraceContext();
+                            bindingTraceContext.getErrorHandler().genericError(file.getNode(), e.getClass().getSimpleName() + ": " + e.getMessage());
+                            return new Result<BindingContext>(bindingTraceContext.getBindingContext(), PsiModificationTracker.MODIFICATION_COUNT);
+                        }
+                    }
+                }
+            }, false);
+            file.putUserData(BINDING_CONTEXT, bindingContextCachedValue);
+        }
+        return bindingContextCachedValue.getValue();
     }
 }

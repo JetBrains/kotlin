@@ -13,10 +13,10 @@ import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.JetDiagnostic;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.plugin.AnalyzerFacade;
 import org.jetbrains.jet.plugin.JetHighlighter;
 
 import java.util.Collection;
@@ -51,7 +51,7 @@ public class DebugInfoAnnotator implements Annotator {
         if (element instanceof JetFile) {
             JetFile file = (JetFile) element;
             try {
-                final BindingContext bindingContext = AnalyzingUtils.analyzeFileWithCache(file);
+                final BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache(file);
 
                 final Set<JetReferenceExpression> unresolvedReferences = Sets.newHashSet();
                 for (JetDiagnostic diagnostic : bindingContext.getDiagnostics()) {

@@ -12,10 +12,10 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.plugin.AnalyzerFacade;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.util.List;
@@ -49,7 +49,7 @@ class JetSimpleNameReference extends JetPsiReference {
             JetQualifiedExpression qualifiedExpression = (JetQualifiedExpression) parent;
             JetExpression receiverExpression = qualifiedExpression.getReceiverExpression();
             JetFile file = (JetFile) myExpression.getContainingFile();
-            BindingContext bindingContext = AnalyzingUtils.analyzeFileWithCache(file);
+            BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache(file);
             final JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, receiverExpression);
             if (expressionType != null) {
                 return collectLookupElements(bindingContext, expressionType.getMemberScope());
@@ -57,7 +57,7 @@ class JetSimpleNameReference extends JetPsiReference {
         }
         else {
             JetFile file = (JetFile) myExpression.getContainingFile();
-            BindingContext bindingContext = AnalyzingUtils.analyzeFileWithCache(file);
+            BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache(file);
             JetScope resolutionScope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, myExpression);
             if (resolutionScope != null) {
                 return collectLookupElements(bindingContext, resolutionScope);

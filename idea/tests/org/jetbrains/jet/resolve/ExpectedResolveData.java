@@ -10,13 +10,13 @@ import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
+import org.jetbrains.jet.plugin.AnalyzerFacade;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -95,7 +95,7 @@ public class ExpectedResolveData {
         JetSemanticServices semanticServices = JetSemanticServices.createSemanticServices(file.getProject());
         JetStandardLibrary lib = semanticServices.getStandardLibrary();
 
-        BindingContext bindingContext = AnalyzingUtils.analyzeNamespace(file.getRootNamespace(), JetControlFlowDataTraceFactory.EMPTY);
+        BindingContext bindingContext = AnalyzerFacade.analyzeNamespace(file.getRootNamespace(), JetControlFlowDataTraceFactory.EMPTY);
         ErrorHandler.applyHandler(new ErrorHandler() {
             @Override
             public void unresolvedReference(@NotNull JetReferenceExpression referenceExpression) {
