@@ -60,26 +60,22 @@ public class TopDownAnalyzer {
             @NotNull JetSemanticServices semanticServices,
             @NotNull BindingTrace trace,
             @NotNull JetScope outerScope, NamespaceLike owner, @NotNull List<JetDeclaration> declarations) {
-        TypeHierarchyResolver typeHierarchyResolver = new TypeHierarchyResolver(semanticServices, trace);
-        TopDownAnalysisContext context = typeHierarchyResolver.process(outerScope, owner, declarations);
-
-        DeclarationResolver declarationResolver = new DeclarationResolver(semanticServices, trace, context);
-        declarationResolver.process();
-
-        new BodyResolver(semanticServices, trace, context, declarationResolver).resolveBehaviorDeclarationBodies();
+        TopDownAnalysisContext context = new TopDownAnalysisContext(semanticServices, trace);
+        new TypeHierarchyResolver(context).process(outerScope, owner, declarations);
+        new DeclarationResolver(context).process();
+        new BodyResolver(context).resolveBehaviorDeclarationBodies();
     }
 
     public static void processStandardLibraryNamespace(
             @NotNull JetSemanticServices semanticServices,
             @NotNull BindingTrace trace,
             @NotNull WritableScope outerScope, @NotNull NamespaceDescriptorImpl standardLibraryNamespace, @NotNull JetNamespace namespace) {
-        TypeHierarchyResolver typeHierarchyResolver = new TypeHierarchyResolver(semanticServices, trace);
-        TopDownAnalysisContext context = typeHierarchyResolver.processStandardLibraryNamespace(outerScope, standardLibraryNamespace, namespace);
-
-        DeclarationResolver declarationResolver = new DeclarationResolver(semanticServices, trace, context);
-        declarationResolver.process();
-
-        BodyResolver bodyResolver = new BodyResolver(semanticServices, trace, context, declarationResolver) {
+        TopDownAnalysisContext context = new TopDownAnalysisContext(semanticServices, trace);
+        context.getNamespaceScopes().put(namespace, standardLibraryNamespace.getMemberScope());
+        context.getNamespaceDescriptors().put(namespace, standardLibraryNamespace);
+        new TypeHierarchyResolver(context).process(outerScope, standardLibraryNamespace, namespace.getDeclarations());
+        new DeclarationResolver(context).process();
+        BodyResolver bodyResolver = new BodyResolver(context) {
             @Override
             protected void checkProperty(JetProperty property, PropertyDescriptor propertyDescriptor, @Nullable ClassDescriptor classDescriptor) {
             }

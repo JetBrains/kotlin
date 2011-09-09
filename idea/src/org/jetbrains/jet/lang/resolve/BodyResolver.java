@@ -7,7 +7,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
@@ -26,30 +25,23 @@ import static org.jetbrains.jet.lang.types.JetTypeInferrer.NO_EXPECTED_TYPE;
 * @author abreslav
 */
 public class BodyResolver {
-    private final JetSemanticServices semanticServices;
-    private final ClassDescriptorResolver classDescriptorResolver;
-    private final BindingTrace trace;
-    private final BindingTraceAdapter traceForConstructors;
-    private final BindingTraceAdapter traceForMembers;
-    private final DeclarationResolver declarationResolver;
     private final TopDownAnalysisContext context;
 
-    public BodyResolver(JetSemanticServices semanticServices, @NotNull BindingTrace trace, TopDownAnalysisContext context, DeclarationResolver declarationResolver) {
-        this.semanticServices = semanticServices;
-        this.classDescriptorResolver = semanticServices.getClassDescriptorResolver(trace);
-        this.trace = trace;
-        this.declarationResolver = declarationResolver;
+    private final BindingTraceAdapter traceForConstructors;
+    private final BindingTraceAdapter traceForMembers;
+
+    public BodyResolver(TopDownAnalysisContext context) {
         this.context = context;
 
         // This allows access to backing fields
-        this.traceForConstructors = new BindingTraceAdapter(trace).addHandler(BindingContext.REFERENCE_TARGET, new BindingTraceAdapter.RecordHandler<JetReferenceExpression, DeclarationDescriptor>() {
+        this.traceForConstructors = new BindingTraceAdapter(context.getTrace()).addHandler(BindingContext.REFERENCE_TARGET, new BindingTraceAdapter.RecordHandler<JetReferenceExpression, DeclarationDescriptor>() {
             @Override
             public void handleRecord(WritableSlice<JetReferenceExpression, DeclarationDescriptor> slice, JetReferenceExpression expression, DeclarationDescriptor descriptor) {
                 if (expression instanceof JetSimpleNameExpression) {
                     JetSimpleNameExpression simpleNameExpression = (JetSimpleNameExpression) expression;
                     if (simpleNameExpression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER) {
-                        if (!BodyResolver.this.trace.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, (PropertyDescriptor) descriptor)) {
-                            BodyResolver.this.trace.getErrorHandler().genericError(expression.getNode(), "This property does not have a backing field");
+                        if (!BodyResolver.this.context.getTrace().getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, (PropertyDescriptor) descriptor)) {
+                            BodyResolver.this.context.getTrace().getErrorHandler().genericError(expression.getNode(), "This property does not have a backing field");
                         }
                     }
                 }
@@ -57,12 +49,12 @@ public class BodyResolver {
         });
 
         // This tracks access to properties in order to register primary constructor parameters that yield real fields (JET-9)
-        this.traceForMembers = new BindingTraceAdapter(trace).addHandler(BindingContext.REFERENCE_TARGET, new BindingTraceAdapter.RecordHandler<JetReferenceExpression, DeclarationDescriptor>() {
+        this.traceForMembers = new BindingTraceAdapter(context.getTrace()).addHandler(BindingContext.REFERENCE_TARGET, new BindingTraceAdapter.RecordHandler<JetReferenceExpression, DeclarationDescriptor>() {
             @Override
             public void handleRecord(WritableSlice<JetReferenceExpression, DeclarationDescriptor> slice, JetReferenceExpression expression, DeclarationDescriptor descriptor) {
                 if (descriptor instanceof PropertyDescriptor) {
                     PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
-                    if (BodyResolver.this.declarationResolver.getPrimaryConstructorParameterProperties().contains(propertyDescriptor)) {
+                    if (BodyResolver.this.context.getPrimaryConstructorParameterProperties().contains(propertyDescriptor)) {
                         traceForMembers.record(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor);
                     }
                 }
@@ -99,7 +91,7 @@ public class BodyResolver {
     protected void bindOverridesInAClass(MutableClassDescriptor classDescriptor) {
 
         for (FunctionDescriptor declaredFunction : classDescriptor.getFunctions()) {
-            JetFunction function = (JetFunction) trace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, declaredFunction);
+            JetFunction function = (JetFunction) context.getTrace().get(BindingContext.DESCRIPTOR_TO_DECLARATION, declaredFunction);
             assert function != null;
             JetModifierList modifierList = function.getModifierList();
             ASTNode overrideNode = modifierList != null ? modifierList.getModifierNode(JetTokens.OVERRIDE_KEYWORD) : null;
@@ -109,19 +101,19 @@ public class BodyResolver {
                 FunctionDescriptor overridden = findFunctionOverridableBy(declaredFunction, supertype);
                 if (overridden != null) {
                     if (hasOverrideModifier && !overridden.getModality().isOpen() && !foundError) {
-                        trace.getErrorHandler().genericError(overrideNode, "Method " + overridden.getName() + " in " + overridden.getContainingDeclaration().getName() + " is final and can not be overridden");
+                        context.getTrace().getErrorHandler().genericError(overrideNode, "Method " + overridden.getName() + " in " + overridden.getContainingDeclaration().getName() + " is final and can not be overridden");
                         foundError = true;
                     }
                     ((FunctionDescriptorImpl) declaredFunction).addOverriddenFunction(overridden);
                 }
             }
             if (hasOverrideModifier && declaredFunction.getOverriddenDescriptors().size() == 0) {
-                trace.getErrorHandler().genericError(overrideNode, "Method " + declaredFunction.getName() + " overrides nothing");
+                context.getTrace().getErrorHandler().genericError(overrideNode, "Method " + declaredFunction.getName() + " overrides nothing");
             }
             PsiElement nameIdentifier = function.getNameIdentifier();
             if (!hasOverrideModifier && declaredFunction.getOverriddenDescriptors().size() > 0 && nameIdentifier != null) {
                 FunctionDescriptor overriddenMethod = declaredFunction.getOverriddenDescriptors().iterator().next();
-                trace.getErrorHandler().genericError(nameIdentifier.getNode(),
+                context.getTrace().getErrorHandler().genericError(nameIdentifier.getNode(),
                                                      "Method " + declaredFunction.getName() + " overrides method " + overriddenMethod.getName() + " in class " +
                                                      overriddenMethod.getContainingDeclaration().getName() + " and needs 'override' modifier");
             }
@@ -132,7 +124,7 @@ public class BodyResolver {
     private FunctionDescriptor findFunctionOverridableBy(@NotNull FunctionDescriptor declaredFunction, @NotNull JetType supertype) {
         FunctionGroup functionGroup = supertype.getMemberScope().getFunctionGroup(declaredFunction.getName());
         for (FunctionDescriptor functionDescriptor : functionGroup.getFunctionDescriptors()) {
-            if (FunctionDescriptorUtil.isOverridableBy(semanticServices.getTypeChecker(), functionDescriptor, declaredFunction).isSuccess()) {
+            if (FunctionDescriptorUtil.isOverridableBy(context.getSemanticServices().getTypeChecker(), functionDescriptor, declaredFunction).isSuccess()) {
                 return functionDescriptor;
             }
         }
@@ -145,10 +137,10 @@ public class BodyResolver {
             JetClass jetClass = entry.getKey();
             if (classDescriptor.getUnsubstitutedPrimaryConstructor() == null) {
                 for (PropertyDescriptor propertyDescriptor : classDescriptor.getProperties()) {
-                    if (trace.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor)) {
+                    if (context.getTrace().getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor)) {
                         PsiElement nameIdentifier = jetClass.getNameIdentifier();
                         if (nameIdentifier != null) {
-                            trace.getErrorHandler().genericError(nameIdentifier.getNode(),
+                            context.getTrace().getErrorHandler().genericError(nameIdentifier.getNode(),
                                     "This class must have a primary constructor, because property " + propertyDescriptor.getName() + " has a backing field");
                         }
                         break;
@@ -173,7 +165,7 @@ public class BodyResolver {
         final JetScope scopeForConstructor = primaryConstructor == null
                 ? null
                 : getInnerScopeForConstructor(primaryConstructor, descriptor.getScopeForMemberResolution(), true);
-        final JetTypeInferrer.Services typeInferrer = semanticServices.getTypeInferrerServices(traceForConstructors, JetFlowInformationProvider.NONE); // TODO : flow
+        final JetTypeInferrer.Services typeInferrer = context.getSemanticServices().getTypeInferrerServices(traceForConstructors, JetFlowInformationProvider.NONE); // TODO : flow
 
         final Map<JetTypeReference, JetType> supertypes = Maps.newLinkedHashMap();
         JetVisitorVoid visitor = new JetVisitorVoid() {
@@ -185,9 +177,9 @@ public class BodyResolver {
             @Override
             public void visitDelegationByExpressionSpecifier(JetDelegatorByExpressionSpecifier specifier) {
                 if (descriptor.getKind() == ClassKind.TRAIT) {
-                    trace.getErrorHandler().genericError(specifier.getNode(), "Traits can not use delegation");
+                    context.getTrace().getErrorHandler().genericError(specifier.getNode(), "Traits can not use delegation");
                 }
-                JetType supertype = trace.getBindingContext().get(BindingContext.TYPE, specifier.getTypeReference());
+                JetType supertype = context.getTrace().getBindingContext().get(BindingContext.TYPE, specifier.getTypeReference());
                 recordSupertype(specifier.getTypeReference(), supertype);
                 JetExpression delegateExpression = specifier.getDelegateExpression();
                 if (delegateExpression != null) {
@@ -195,8 +187,8 @@ public class BodyResolver {
                                      ? descriptor.getScopeForMemberResolution()
                                      : scopeForConstructor;
                     JetType type = typeInferrer.getType(scope, delegateExpression, NO_EXPECTED_TYPE);
-                    if (type != null && supertype != null && !semanticServices.getTypeChecker().isSubtypeOf(type, supertype)) {
-                        trace.getErrorHandler().typeMismatch(delegateExpression, supertype, type);
+                    if (type != null && supertype != null && !context.getSemanticServices().getTypeChecker().isSubtypeOf(type, supertype)) {
+                        context.getTrace().getErrorHandler().typeMismatch(delegateExpression, supertype, type);
                     }
                 }
             }
@@ -206,31 +198,31 @@ public class BodyResolver {
                 JetValueArgumentList valueArgumentList = call.getValueArgumentList();
                 ASTNode node = valueArgumentList == null ? call.getNode() : valueArgumentList.getNode();
                 if (descriptor.getKind() == ClassKind.TRAIT) {
-                    trace.getErrorHandler().genericError(node, "Traits can not initialize supertypes");
+                    context.getTrace().getErrorHandler().genericError(node, "Traits can not initialize supertypes");
                 }
                 JetTypeReference typeReference = call.getTypeReference();
                 if (typeReference != null) {
                     if (descriptor.getUnsubstitutedPrimaryConstructor() != null) {
-                        JetType supertype = typeInferrer.getCallResolver().resolveCall(trace, scopeForConstructor, null, call, NO_EXPECTED_TYPE);
+                        JetType supertype = typeInferrer.getCallResolver().resolveCall(context.getTrace(), scopeForConstructor, null, call, NO_EXPECTED_TYPE);
                         if (supertype != null) {
                             recordSupertype(typeReference, supertype);
                             ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(supertype);
                             if (classDescriptor != null) {
                                 if (classDescriptor.getKind() == ClassKind.TRAIT) {
-                                    trace.getErrorHandler().genericError(node, "A trait may not have a constructor");
+                                    context.getTrace().getErrorHandler().genericError(node, "A trait may not have a constructor");
                                 }
                             }
                         }
                         else {
-                            recordSupertype(typeReference, trace.getBindingContext().get(BindingContext.TYPE, typeReference));
+                            recordSupertype(typeReference, context.getTrace().getBindingContext().get(BindingContext.TYPE, typeReference));
                         }
                     }
                     else if (descriptor.getKind() != ClassKind.TRAIT) {
-                        JetType supertype = trace.getBindingContext().get(BindingContext.TYPE, typeReference);
+                        JetType supertype = context.getTrace().getBindingContext().get(BindingContext.TYPE, typeReference);
                         recordSupertype(typeReference, supertype);
 
                         assert valueArgumentList != null;
-                        trace.getErrorHandler().genericError(valueArgumentList.getNode(),
+                        context.getTrace().getErrorHandler().genericError(valueArgumentList.getNode(),
                                                              "Class " + JetPsiUtil.safeName(jetClass.getName()) + " must have a constructor in order to be able to initialize supertypes");
                     }
                 }
@@ -239,14 +231,14 @@ public class BodyResolver {
             @Override
             public void visitDelegationToSuperClassSpecifier(JetDelegatorToSuperClass specifier) {
                 JetTypeReference typeReference = specifier.getTypeReference();
-                JetType supertype = trace.getBindingContext().get(BindingContext.TYPE, typeReference);
+                JetType supertype = context.getTrace().getBindingContext().get(BindingContext.TYPE, typeReference);
                 recordSupertype(typeReference, supertype);
                 if (supertype != null) {
                     ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(supertype);
                     if (classDescriptor != null) {
                         if (descriptor.getKind() != ClassKind.TRAIT) {
                             if (classDescriptor.hasConstructors() && !ErrorUtils.isError(classDescriptor.getTypeConstructor()) && classDescriptor.getKind() != ClassKind.TRAIT) {
-                                trace.getErrorHandler().genericError(specifier.getNode(), "This type has a constructor, and thus must be initialized here");
+                                context.getTrace().getErrorHandler().genericError(specifier.getNode(), "This type has a constructor, and thus must be initialized here");
                             }
                         }
                     }
@@ -289,7 +281,7 @@ public class BodyResolver {
             if (classDescriptor != null) {
                 if (classDescriptor.getKind() != ClassKind.TRAIT) {
                     if (classAppeared) {
-                        trace.getErrorHandler().genericError(typeReference.getNode(), "Only one class may appear in a supertype list");
+                        context.getTrace().getErrorHandler().genericError(typeReference.getNode(), "Only one class may appear in a supertype list");
                     }
                     else {
                         classAppeared = true;
@@ -297,16 +289,16 @@ public class BodyResolver {
                 }
             }
             else {
-                trace.getErrorHandler().genericError(typeReference.getNode(), "Only classes and traits may serve as supertypes");
+                context.getTrace().getErrorHandler().genericError(typeReference.getNode(), "Only classes and traits may serve as supertypes");
             }
 
             TypeConstructor constructor = supertype.getConstructor();
             if (!typeConstructors.add(constructor)) {
-                trace.getErrorHandler().genericError(typeReference.getNode(), "A supertype appears twice");
+                context.getTrace().getErrorHandler().genericError(typeReference.getNode(), "A supertype appears twice");
             }
 
             if (constructor.isSealed() && !allowedFinalSupertypes.contains(constructor)) {
-                trace.getErrorHandler().genericError(typeReference.getNode(), "This type is final, so it cannot be inherited from");
+                context.getTrace().getErrorHandler().genericError(typeReference.getNode(), "This type is final, so it cannot be inherited from");
             }
         }
     }
@@ -330,20 +322,20 @@ public class BodyResolver {
             ConstructorDescriptor primaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
             assert primaryConstructor != null;
             final JetScope scopeForConstructor = getInnerScopeForConstructor(primaryConstructor, classDescriptor.getScopeForMemberResolution(), true);
-            JetTypeInferrer.Services typeInferrer = semanticServices.getTypeInferrerServices(createFieldAssignTrackingTrace(), JetFlowInformationProvider.NONE); // TODO : flow
+            JetTypeInferrer.Services typeInferrer = context.getSemanticServices().getTypeInferrerServices(createFieldAssignTrackingTrace(), JetFlowInformationProvider.NONE); // TODO : flow
             for (JetClassInitializer anonymousInitializer : anonymousInitializers) {
                 typeInferrer.getType(scopeForConstructor, anonymousInitializer.getBody(), NO_EXPECTED_TYPE);
             }
         }
         else {
             for (JetClassInitializer anonymousInitializer : anonymousInitializers) {
-                trace.getErrorHandler().genericError(anonymousInitializer.getNode(), "Anonymous initializers are only allowed in the presence of a primary constructor");
+                context.getTrace().getErrorHandler().genericError(anonymousInitializer.getNode(), "Anonymous initializers are only allowed in the presence of a primary constructor");
             }
         }
     }
 
     private void resolveSecondaryConstructorBodies() {
-        for (Map.Entry<JetDeclaration, ConstructorDescriptor> entry : declarationResolver.getConstructors().entrySet()) {
+        for (Map.Entry<JetDeclaration, ConstructorDescriptor> entry : this.context.getConstructors().entrySet()) {
             JetDeclaration declaration = entry.getKey();
             ConstructorDescriptor descriptor = entry.getValue();
 
@@ -356,17 +348,17 @@ public class BodyResolver {
     private void resolveSecondaryConstructorBody(JetConstructor declaration, final ConstructorDescriptor descriptor, final JetScope declaringScope) {
         final JetScope functionInnerScope = getInnerScopeForConstructor(descriptor, declaringScope, false);
 
-        final JetTypeInferrer.Services typeInferrerForInitializers = semanticServices.getTypeInferrerServices(traceForConstructors, JetFlowInformationProvider.NONE);
+        final JetTypeInferrer.Services typeInferrerForInitializers = context.getSemanticServices().getTypeInferrerServices(traceForConstructors, JetFlowInformationProvider.NONE);
 
         JetClass containingClass = PsiTreeUtil.getParentOfType(declaration, JetClass.class);
         assert containingClass != null : "This must be guaranteed by the parser";
         if (!containingClass.hasPrimaryConstructor()) {
-            trace.getErrorHandler().genericError(declaration.getNameNode(), "A secondary constructor may appear only in a class that has a primary constructor");
+            context.getTrace().getErrorHandler().genericError(declaration.getNameNode(), "A secondary constructor may appear only in a class that has a primary constructor");
         }
         else {
             List<JetDelegationSpecifier> initializers = declaration.getInitializers();
             if (initializers.isEmpty()) {
-                trace.getErrorHandler().genericError(declaration.getNameNode(), "Secondary constructors must have an initializer list");
+                context.getTrace().getErrorHandler().genericError(declaration.getNameNode(), "Secondary constructors must have an initializer list");
             }
             else {
                 initializers.get(0).accept(new JetVisitorVoid() {
@@ -374,7 +366,7 @@ public class BodyResolver {
                     public void visitDelegationToSuperCallSpecifier(JetDelegatorToSuperCall call) {
                         JetTypeReference typeReference = call.getTypeReference();
                         if (typeReference != null) {
-                            typeInferrerForInitializers.getCallResolver().resolveCall(trace, functionInnerScope, null, call, NO_EXPECTED_TYPE);
+                            typeInferrerForInitializers.getCallResolver().resolveCall(context.getTrace(), functionInnerScope, null, call, NO_EXPECTED_TYPE);
                         }
                     }
 
@@ -384,24 +376,24 @@ public class BodyResolver {
                         // TODO : check: if a this() call is present, no other initializers are allowed
                         ClassDescriptor classDescriptor = descriptor.getContainingDeclaration();
 
-                        typeInferrerForInitializers.getCallResolver().resolveCall(trace,
+                        typeInferrerForInitializers.getCallResolver().resolveCall(context.getTrace(),
                                 functionInnerScope,
                                 null, call, NO_EXPECTED_TYPE);
 //                                call.getThisReference(),
 //                                classDescriptor,
 //                                classDescriptor.getDefaultType(),
 //                                call);
-//                        trace.getErrorHandler().genericError(call.getNode(), "this-calls are not supported");
+//                        context.getTrace().getErrorHandler().genericError(call.getNode(), "this-calls are not supported");
                     }
 
                     @Override
                     public void visitDelegationByExpressionSpecifier(JetDelegatorByExpressionSpecifier specifier) {
-                        trace.getErrorHandler().genericError(specifier.getNode(), "'by'-clause is only supported for primary constructors");
+                        context.getTrace().getErrorHandler().genericError(specifier.getNode(), "'by'-clause is only supported for primary constructors");
                     }
 
                     @Override
                     public void visitDelegationToSuperClassSpecifier(JetDelegatorToSuperClass specifier) {
-                        trace.getErrorHandler().genericError(specifier.getNode(), "Constructor parameters required");
+                        context.getTrace().getErrorHandler().genericError(specifier.getNode(), "Constructor parameters required");
                     }
 
                     @Override
@@ -411,15 +403,15 @@ public class BodyResolver {
                 });
                 for (int i = 1, initializersSize = initializers.size(); i < initializersSize; i++) {
                     JetDelegationSpecifier initializer = initializers.get(i);
-                    trace.getErrorHandler().genericError(initializer.getNode(), "Only one call to 'this(...)' is allowed");
+                    context.getTrace().getErrorHandler().genericError(initializer.getNode(), "Only one call to 'this(...)' is allowed");
                 }
             }
         }
         JetExpression bodyExpression = declaration.getBodyExpression();
         if (bodyExpression != null) {
-            classDescriptorResolver.computeFlowData(declaration, bodyExpression);
-            JetFlowInformationProvider flowInformationProvider = classDescriptorResolver.computeFlowData(declaration, bodyExpression);
-            JetTypeInferrer.Services typeInferrer = semanticServices.getTypeInferrerServices(traceForConstructors, flowInformationProvider);
+            context.getClassDescriptorResolver().computeFlowData(declaration, bodyExpression);
+            JetFlowInformationProvider flowInformationProvider = context.getClassDescriptorResolver().computeFlowData(declaration, bodyExpression);
+            JetTypeInferrer.Services typeInferrer = context.getSemanticServices().getTypeInferrerServices(traceForConstructors, flowInformationProvider);
 
             typeInferrer.checkFunctionReturnType(functionInnerScope, declaration, JetStandardClasses.getUnitType());
         }
@@ -427,7 +419,7 @@ public class BodyResolver {
 
     @NotNull
     private JetScope getInnerScopeForConstructor(@NotNull ConstructorDescriptor descriptor, @NotNull JetScope declaringScope, boolean primary) {
-        WritableScope constructorScope = new WritableScopeImpl(declaringScope, declaringScope.getContainingDeclaration(), trace.getErrorHandler()).setDebugName("Inner scope for constructor");
+        WritableScope constructorScope = new WritableScopeImpl(declaringScope, declaringScope.getContainingDeclaration(), context.getTrace().getErrorHandler()).setDebugName("Inner scope for constructor");
         for (PropertyDescriptor propertyDescriptor : ((MutableClassDescriptor) descriptor.getContainingDeclaration()).getProperties()) {
             constructorScope.addPropertyDescriptorByFieldName("$" + propertyDescriptor.getName(), propertyDescriptor);
         }
@@ -435,7 +427,7 @@ public class BodyResolver {
         constructorScope.setThisType(descriptor.getContainingDeclaration().getDefaultType());
 
         for (ValueParameterDescriptor valueParameterDescriptor : descriptor.getValueParameters()) {
-            JetParameter parameter = (JetParameter) trace.getBindingContext().get(BindingContext.DESCRIPTOR_TO_DECLARATION, valueParameterDescriptor);
+            JetParameter parameter = (JetParameter) context.getTrace().getBindingContext().get(BindingContext.DESCRIPTOR_TO_DECLARATION, valueParameterDescriptor);
             if (parameter.getValOrVarNode() == null || !primary) {
                 constructorScope.addVariableDescriptor(valueParameterDescriptor);
             }
@@ -455,16 +447,16 @@ public class BodyResolver {
             MutableClassDescriptor classDescriptor = entry.getValue();
 
             for (JetProperty property : jetClass.getProperties()) {
-                final PropertyDescriptor propertyDescriptor = declarationResolver.getProperties().get(property);
+                final PropertyDescriptor propertyDescriptor = this.context.getProperties().get(property);
                 assert propertyDescriptor != null;
 
-                JetScope declaringScope = declarationResolver.getDeclaringScopes().get(property);
+                JetScope declaringScope = this.context.getDeclaringScopes().get(property);
 
                 JetExpression initializer = property.getInitializer();
                 if (initializer != null) {
                     ConstructorDescriptor primaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
                     if (primaryConstructor == null) {
-                        trace.getErrorHandler().genericError(initializer.getNode(), "Property initializers are not allowed when no primary constructor is present");
+                        context.getTrace().getErrorHandler().genericError(initializer.getNode(), "Property initializers are not allowed when no primary constructor is present");
                     }
                     else {
                         JetScope scope = getInnerScopeForConstructor(primaryConstructor, classDescriptor.getScopeForMemberResolution(), true);
@@ -479,12 +471,12 @@ public class BodyResolver {
         }
 
         // Top-level properties & properties of objects
-        for (Map.Entry<JetProperty, PropertyDescriptor> entry : declarationResolver.getProperties().entrySet()) {
+        for (Map.Entry<JetProperty, PropertyDescriptor> entry : this.context.getProperties().entrySet()) {
             JetProperty property = entry.getKey();
             if (processed.contains(property)) continue;
 
             final PropertyDescriptor propertyDescriptor = entry.getValue();
-            JetScope declaringScope = declarationResolver.getDeclaringScopes().get(property);
+            JetScope declaringScope = this.context.getDeclaringScopes().get(property);
 
             JetExpression initializer = property.getInitializer();
             if (initializer != null) {
@@ -497,7 +489,7 @@ public class BodyResolver {
     }
 
     private JetScope getPropertyDeclarationInnerScope(@NotNull JetScope outerScope, @NotNull PropertyDescriptor propertyDescriptor) {
-        WritableScopeImpl result = new WritableScopeImpl(outerScope, propertyDescriptor, trace.getErrorHandler()).setDebugName("Property declaration inner scope");
+        WritableScopeImpl result = new WritableScopeImpl(outerScope, propertyDescriptor, context.getTrace().getErrorHandler()).setDebugName("Property declaration inner scope");
         for (TypeParameterDescriptor typeParameterDescriptor : propertyDescriptor.getTypeParameters()) {
             result.addTypeParameterDescriptor(typeParameterDescriptor);
         }
@@ -511,7 +503,7 @@ public class BodyResolver {
     private void resolvePropertyAccessors(JetProperty property, PropertyDescriptor propertyDescriptor, JetScope declaringScope) {
         BindingTraceAdapter fieldAccessTrackingTrace = createFieldTrackingTrace(propertyDescriptor);
 
-        WritableScope accessorScope = new WritableScopeImpl(getPropertyDeclarationInnerScope(declaringScope, propertyDescriptor), declaringScope.getContainingDeclaration(), trace.getErrorHandler()).setDebugName("Accessor scope");
+        WritableScope accessorScope = new WritableScopeImpl(getPropertyDeclarationInnerScope(declaringScope, propertyDescriptor), declaringScope.getContainingDeclaration(), context.getTrace().getErrorHandler()).setDebugName("Accessor scope");
         accessorScope.addPropertyDescriptorByFieldName("$" + propertyDescriptor.getName(), propertyDescriptor);
 
         JetPropertyAccessor getter = property.getGetter();
@@ -535,39 +527,39 @@ public class BodyResolver {
         ASTNode nameNode = nameIdentifier == null ? property.getNode() : nameIdentifier.getNode();
         if (propertyDescriptor.getModality() == Modality.ABSTRACT) {
             if (classDescriptor == null) {
-                trace.getErrorHandler().genericError(property.getModifierList().getModifierNode(JetTokens.ABSTRACT_KEYWORD),
+                context.getTrace().getErrorHandler().genericError(property.getModifierList().getModifierNode(JetTokens.ABSTRACT_KEYWORD),
                                                      "Global property can not be abstract");
                 return;
             }
             if (classDescriptor.getModality() != Modality.ABSTRACT) {
-                trace.getErrorHandler().genericError(property.getModifierList().getModifierNode(JetTokens.ABSTRACT_KEYWORD),
+                context.getTrace().getErrorHandler().genericError(property.getModifierList().getModifierNode(JetTokens.ABSTRACT_KEYWORD),
                                                      "Abstract property " + property.getName() + " in non-abstract class " + classDescriptor.getName());
                 return;
             }
             if (initializer != null) {
-                trace.getErrorHandler().genericError(initializer.getNode(), "Property with initializer can not be abstract");
+                context.getTrace().getErrorHandler().genericError(initializer.getNode(), "Property with initializer can not be abstract");
             }
             if (getter != null && getter.getBodyExpression() != null) {
-                trace.getErrorHandler().genericError(getter.getNode(), "Property with getter implementation can not be abstract");
+                context.getTrace().getErrorHandler().genericError(getter.getNode(), "Property with getter implementation can not be abstract");
             }
             if (setter != null && setter.getBodyExpression() != null) {
-                trace.getErrorHandler().genericError(setter.getNode(), "Property with setter implementation can not be abstract");
+                context.getTrace().getErrorHandler().genericError(setter.getNode(), "Property with setter implementation can not be abstract");
             }
             return;
         }
-        boolean backingFieldRequired = trace.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor);
+        boolean backingFieldRequired = context.getTrace().getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor);
         if (backingFieldRequired) {
-            if (initializer == null && !trace.getBindingContext().get(BindingContext.IS_INITIALIZED, propertyDescriptor)) {
+            if (initializer == null && !context.getTrace().getBindingContext().get(BindingContext.IS_INITIALIZED, propertyDescriptor)) {
                 if (classDescriptor == null || (getter != null && getter.getBodyExpression() != null) || (setter != null && setter.getBodyExpression() != null)) {
-                    trace.getErrorHandler().genericError(nameNode, "Property must be initialized");
+                    context.getTrace().getErrorHandler().genericError(nameNode, "Property must be initialized");
                 } else if (classDescriptor.getKind() != ClassKind.TRAIT) {
-                    trace.getErrorHandler().genericError(nameNode, "Property must be initialized or be abstract");
+                    context.getTrace().getErrorHandler().genericError(nameNode, "Property must be initialized or be abstract");
                 }
             }
         }
         else {
             if (initializer != null) {
-                trace.getErrorHandler().genericError(initializer.getNode(), "Initializer is not allowed here because this property has no backing field");
+                context.getTrace().getErrorHandler().genericError(initializer.getNode(), "Initializer is not allowed here because this property has no backing field");
             }
         }
     }
@@ -581,7 +573,7 @@ public class BodyResolver {
                     if (simpleNameExpression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER) {
                         // This check may be considered redundant as long as $x is only accessible from accessors to $x
                         if (descriptor == propertyDescriptor) { // TODO : original?
-                            traceForMembers.record(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor); // TODO: this trace?
+                            traceForMembers.record(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor); // TODO: this context.getTrace()?
                         }
                     }
                 }
@@ -606,8 +598,8 @@ public class BodyResolver {
     }
 
     private void resolvePropertyInitializer(JetProperty property, PropertyDescriptor propertyDescriptor, JetExpression initializer, JetScope scope) {
-        JetFlowInformationProvider flowInformationProvider = classDescriptorResolver.computeFlowData(property, initializer); // TODO : flow JET-15
-        JetTypeInferrer.Services typeInferrer = semanticServices.getTypeInferrerServices(traceForConstructors, flowInformationProvider);
+        JetFlowInformationProvider flowInformationProvider = context.getClassDescriptorResolver().computeFlowData(property, initializer); // TODO : flow JET-15
+        JetTypeInferrer.Services typeInferrer = context.getSemanticServices().getTypeInferrerServices(traceForConstructors, flowInformationProvider);
         JetType type = typeInferrer.getType(getPropertyDeclarationInnerScope(scope, propertyDescriptor), initializer, NO_EXPECTED_TYPE);
 
         JetType expectedType = propertyDescriptor.getInType();
@@ -615,17 +607,17 @@ public class BodyResolver {
             expectedType = propertyDescriptor.getOutType();
         }
         if (type != null && expectedType != null
-            && !semanticServices.getTypeChecker().isSubtypeOf(type, expectedType)) {
-            trace.getErrorHandler().typeMismatch(initializer, expectedType, type);
+            && !context.getSemanticServices().getTypeChecker().isSubtypeOf(type, expectedType)) {
+            context.getTrace().getErrorHandler().typeMismatch(initializer, expectedType, type);
         }
     }
 
     private void resolveFunctionBodies() {
-        for (Map.Entry<JetNamedFunction, FunctionDescriptorImpl> entry : declarationResolver.getFunctions().entrySet()) {
+        for (Map.Entry<JetNamedFunction, FunctionDescriptorImpl> entry : this.context.getFunctions().entrySet()) {
             JetDeclaration declaration = entry.getKey();
             FunctionDescriptor descriptor = entry.getValue();
 
-            JetScope declaringScope = declarationResolver.getDeclaringScopes().get(declaration);
+            JetScope declaringScope = this.context.getDeclaringScopes().get(declaration);
             assert declaringScope != null;
 
             resolveFunctionBody(traceForMembers, (JetNamedFunction) declaration, descriptor, declaringScope);
@@ -642,8 +634,8 @@ public class BodyResolver {
         JetExpression bodyExpression = function.getBodyExpression();
 
         if (bodyExpression != null) {
-            JetFlowInformationProvider flowInformationProvider = classDescriptorResolver.computeFlowData(function.asElement(), bodyExpression);
-            JetTypeInferrer.Services typeInferrer = semanticServices.getTypeInferrerServices(trace, flowInformationProvider);
+            JetFlowInformationProvider flowInformationProvider = context.getClassDescriptorResolver().computeFlowData(function.asElement(), bodyExpression);
+            JetTypeInferrer.Services typeInferrer = context.getSemanticServices().getTypeInferrerServices(trace, flowInformationProvider);
 
             typeInferrer.checkFunctionReturnType(declaringScope, function, functionDescriptor);
         }
@@ -678,24 +670,24 @@ public class BodyResolver {
             boolean inEnum = classDescriptor.getKind() == ClassKind.ENUM_CLASS;
             boolean inAbstractClass = classDescriptor.getModality() == Modality.ABSTRACT;
             if (hasAbstractModifier && !inAbstractClass && !inTrait && !inEnum) {
-                trace.getErrorHandler().genericError(abstractNode, "Abstract method " + function.getName() + " in non-abstract class " + classDescriptor.getName());
+                context.getTrace().getErrorHandler().genericError(abstractNode, "Abstract method " + function.getName() + " in non-abstract class " + classDescriptor.getName());
             }
             if (hasAbstractModifier && inTrait) {
-                trace.getErrorHandler().genericWarning(abstractNode, "Abstract modifier is not necessary in traits");
+                context.getTrace().getErrorHandler().genericWarning(abstractNode, "Abstract modifier is not necessary in traits");
             }
             if (function.getBodyExpression() != null && hasAbstractModifier) {
-                trace.getErrorHandler().genericError(abstractNode, "Method " + function.getName() + " with body can not be abstract");
+                context.getTrace().getErrorHandler().genericError(abstractNode, "Method " + function.getName() + " with body can not be abstract");
             }
             if (function.getBodyExpression() == null && !hasAbstractModifier && !inTrait && nameIdentifier != null) {
-                trace.getErrorHandler().genericError(nameIdentifier.getNode(), "Method " + function.getName() + " without body must be abstract");
+                context.getTrace().getErrorHandler().genericError(nameIdentifier.getNode(), "Method " + function.getName() + " without body must be abstract");
             }
             return;
         }
         if (hasAbstractModifier) {
-            trace.getErrorHandler().genericError(abstractNode, "Function " + function.getName() + " can not be abstract");
+            context.getTrace().getErrorHandler().genericError(abstractNode, "Function " + function.getName() + " can not be abstract");
         }
         if (function.getBodyExpression() == null && !hasAbstractModifier && nameIdentifier != null) {
-            trace.getErrorHandler().genericError(nameIdentifier.getNode(), "Function " + function.getName() + " must have body");
+            context.getTrace().getErrorHandler().genericError(nameIdentifier.getNode(), "Function " + function.getName() + " must have body");
         }
     }
 
