@@ -119,17 +119,15 @@ public interface JetTokens {
     JetToken COMMA       = new JetToken("COMMA");
 
     JetToken EOL_OR_SEMICOLON   = new JetToken("EOL_OR_SEMICOLON");
-    JetKeywordToken WRAPS_KEYWORD     = JetKeywordToken.softKeyword("wraps");
     JetKeywordToken IMPORT_KEYWORD    = JetKeywordToken.softKeyword("import");
     JetKeywordToken WHERE_KEYWORD     = JetKeywordToken.softKeyword("where");
     JetKeywordToken BY_KEYWORD        = JetKeywordToken.softKeyword("by");
     JetKeywordToken GET_KEYWORD       = JetKeywordToken.softKeyword("get");
     JetKeywordToken SET_KEYWORD       = JetKeywordToken.softKeyword("set");
     JetKeywordToken ABSTRACT_KEYWORD  = JetKeywordToken.softKeyword("abstract");
-    JetKeywordToken VIRTUAL_KEYWORD   = JetKeywordToken.softKeyword("virtual");
     JetKeywordToken ENUM_KEYWORD      = JetKeywordToken.softKeyword("enum");
     JetKeywordToken OPEN_KEYWORD      = JetKeywordToken.softKeyword("open");
-    JetKeywordToken ATTRIBUTE_KEYWORD = JetKeywordToken.softKeyword("attribute");
+    JetKeywordToken ANNOTATION_KEYWORD = JetKeywordToken.softKeyword("annotation");
     JetKeywordToken OVERRIDE_KEYWORD  = JetKeywordToken.softKeyword("override");
     JetKeywordToken PRIVATE_KEYWORD   = JetKeywordToken.softKeyword("private");
     JetKeywordToken PUBLIC_KEYWORD    = JetKeywordToken.softKeyword("public");
@@ -144,23 +142,23 @@ public interface JetTokens {
     // TODO: support this as an annotation on arguments. Then, they it probably can not be a soft keyword
     JetKeywordToken REF_KEYWORD       = JetKeywordToken.softKeyword("ref");
 
-    TokenSet KEYWORDS = TokenSet.create(NAMESPACE_KEYWORD, AS_KEYWORD, TYPE_KEYWORD, CLASS_KEYWORD,
+    TokenSet KEYWORDS = TokenSet.create(NAMESPACE_KEYWORD, AS_KEYWORD, TYPE_KEYWORD, CLASS_KEYWORD, TRAIT_KEYWORD,
             THIS_KEYWORD, VAL_KEYWORD, VAR_KEYWORD, FUN_KEYWORD, FOR_KEYWORD,
             NULL_KEYWORD,
             TRUE_KEYWORD, FALSE_KEYWORD, IS_KEYWORD,
             IN_KEYWORD, THROW_KEYWORD, RETURN_KEYWORD, BREAK_KEYWORD, CONTINUE_KEYWORD, OBJECT_KEYWORD, IF_KEYWORD,
             ELSE_KEYWORD, WHILE_KEYWORD, DO_KEYWORD, TRY_KEYWORD, WHEN_KEYWORD,
-            NOT_IN, NOT_IS, CAPITALIZED_THIS_KEYWORD, AS_SAFE, TRAIT_KEYWORD
+            NOT_IN, NOT_IS, CAPITALIZED_THIS_KEYWORD, AS_SAFE
     );
 
-    TokenSet SOFT_KEYWORDS = TokenSet.create(WRAPS_KEYWORD, IMPORT_KEYWORD, WHERE_KEYWORD, BY_KEYWORD, GET_KEYWORD,
-            SET_KEYWORD, ABSTRACT_KEYWORD, VIRTUAL_KEYWORD, ENUM_KEYWORD, OPEN_KEYWORD, ATTRIBUTE_KEYWORD,
+    TokenSet SOFT_KEYWORDS = TokenSet.create(IMPORT_KEYWORD, WHERE_KEYWORD, BY_KEYWORD, GET_KEYWORD,
+            SET_KEYWORD, ABSTRACT_KEYWORD, ENUM_KEYWORD, OPEN_KEYWORD, ANNOTATION_KEYWORD,
             OVERRIDE_KEYWORD, PRIVATE_KEYWORD, PUBLIC_KEYWORD, INTERNAL_KEYWORD, PROTECTED_KEYWORD,
             CATCH_KEYWORD, FINALLY_KEYWORD, REF_KEYWORD, OUT_KEYWORD, FINAL_KEYWORD
     );
 
-    TokenSet MODIFIER_KEYWORDS = TokenSet.create(ABSTRACT_KEYWORD, VIRTUAL_KEYWORD, ENUM_KEYWORD,
-            OPEN_KEYWORD, ATTRIBUTE_KEYWORD, OVERRIDE_KEYWORD, PRIVATE_KEYWORD, PUBLIC_KEYWORD, INTERNAL_KEYWORD,
+    TokenSet MODIFIER_KEYWORDS = TokenSet.create(ABSTRACT_KEYWORD, ENUM_KEYWORD,
+            OPEN_KEYWORD, ANNOTATION_KEYWORD, OVERRIDE_KEYWORD, PRIVATE_KEYWORD, PUBLIC_KEYWORD, INTERNAL_KEYWORD,
             PROTECTED_KEYWORD, REF_KEYWORD, OUT_KEYWORD, IN_KEYWORD, FINAL_KEYWORD
     );
     TokenSet WHITE_SPACE_OR_COMMENT_BIT_SET = TokenSet.create(WHITE_SPACE, BLOCK_COMMENT, EOL_COMMENT, DOC_COMMENT);

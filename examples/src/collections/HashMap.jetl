@@ -1,15 +1,15 @@
-virtual class IEquality {
+open class IEquality {
   fun equals(other : Any) : Boolean
     = (this as java.lang.Object).equals(other as java.lang.Object)
 }
 
-virtual class IHashable : IEquality {
+open class IHashable : IEquality {
   val hashCode : Integer
     get() = (this as java.lang.Object).hashCode()
 
 }
 
-virtual class IMap<K, V> {
+open class IMap<K, V> {
   fun get(key : K) : V
   fun set(key : K, value : V) : V
   fun remove(key : K) : V
@@ -21,7 +21,7 @@ class HashableWrapper wraps (val obj : Any) : IHashable
 
 [inline] fun Any.hashable() : HashableWrapper = new HashableWrapper(this)
 
-virtual class IHashingStrategy<K> {
+open class IHashingStrategy<K> {
   fun equals(a : K, b : K) : Boolean
   fun hashCode(a : K) : Integer
 }

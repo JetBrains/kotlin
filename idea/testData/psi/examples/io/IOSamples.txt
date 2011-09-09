@@ -2,7 +2,7 @@ JetFile: IOSamples.jet
   NAMESPACE
     CLASS
       MODIFIER_LIST
-        PsiElement(virtual)('virtual')
+        PsiElement(open)('open')
       PsiWhiteSpace(' ')
       PsiElement(class)('class')
       PsiWhiteSpace(' ')
@@ -47,7 +47,7 @@ JetFile: IOSamples.jet
     PsiWhiteSpace('\n\n')
     CLASS
       MODIFIER_LIST
-        PsiElement(virtual)('virtual')
+        PsiElement(open)('open')
       PsiWhiteSpace(' ')
       PsiElement(class)('class')
       PsiWhiteSpace(' ')

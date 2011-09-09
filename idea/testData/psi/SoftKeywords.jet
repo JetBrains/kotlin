@@ -4,12 +4,12 @@ import foo
 
 public protected private internal
 abstract
-virtual
+open
 enum
 open
-attribute
+annotation
 override
-virtual
+open
 abstract
 private
 protected
@@ -18,27 +18,27 @@ internal
 in
 out
 ref
- class Bar<abstract, abstract enum : T, out virtual,
+ class Bar<abstract, abstract enum : T, out open,
     public protected private internal abstract
-    virtual
+    open
     enum
     open
-    attribute
+    annotation
     override
-    virtual
+    open
     abstract
     private
     protected
     public
     internal open
- > wraps (a : B) : A by b {
+ > (a : B) : A by b {
     public protected private internal val abstract
-    val virtual
+    val open
     val enum
     val open
-    val attribute
+    val annotation
     val override
-    val virtual
+    val open
     val abstract
     val private
     val protected
@@ -61,12 +61,12 @@ ref
 
     public protected private internal
     fun abstract  () : abstract
-    fun virtual   () : virtual
+    fun open   () : open
     fun enum      () : enum
     fun open      () : open
-    fun attribute () : attribute
+    fun annotation () : annotation
     fun override  () : override
-    fun virtual   () : virtual
+    fun open   () : open
     fun abstract  () : abstract
     fun private   () : private
     fun protected () : protected
@@ -86,12 +86,12 @@ ref
 
     fun test(
         abstract  : t,
-        virtual   : t,
+        open   : t,
         enum      : t,
         open      : t,
-        attribute : t,
+        annotation : t,
         override  : t,
-        virtual   : t,
+        open   : t,
         abstract  : t,
         private   : t,
         protected : t,
@@ -109,12 +109,12 @@ ref
         protected : t,
         internal  : t,
     public protected private internal abstract
-    virtual
+    open
     enum
     open
-    attribute
+    annotation
     override
-    virtual
+    open
     abstract
     private
     protected
@@ -128,12 +128,12 @@ ref
 
 class F(val foo : bar,
         abstract  : t,
-        virtual   : t,
+        open   : t,
         enum      : t,
         open      : t,
-        attribute : t,
+        annotation : t,
         override  : t,
-        virtual   : t,
+        open   : t,
         abstract  : t,
         private   : t,
         protected : t,
@@ -151,12 +151,12 @@ class F(val foo : bar,
         protected : t,
         internal  : t,
     public protected private internal abstract
-    virtual
+    open
     enum
     open
-    attribute
+    annotation
     override
-    virtual
+    open
     abstract
     private
     protected

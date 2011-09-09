@@ -167,7 +167,7 @@ public class TopDownAnalyzer {
 
                 @Override
                 public void visitClass(JetClass klass) {
-                    MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(trace, owner, outerScope);
+                    MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(trace, owner, outerScope, getClassKind(klass));
 
                     if (klass.hasModifier(JetTokens.ENUM_KEYWORD)) {
                         MutableClassDescriptor classObjectDescriptor = new MutableClassDescriptor(trace, mutableClassDescriptor, outerScope, ClassKind.OBJECT);
@@ -201,7 +201,7 @@ public class TopDownAnalyzer {
                         classes.put(enumEntry, classDescriptor);
                     }
                     else {
-                        MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(trace, classObjectDescriptor, outerScope);
+                        MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(trace, classObjectDescriptor, outerScope, ClassKind.CLASS); // TODO : Special kind for enum entry classes?
                         visitClassOrObject(
                                 enumEntry,
                                 (Map) classes,
@@ -265,6 +265,14 @@ public class TopDownAnalyzer {
                 }
             });
         }
+    }
+
+    @NotNull
+    private ClassKind getClassKind(@NotNull JetClass jetClass) {
+        if (jetClass.isTrait()) return ClassKind.TRAIT;
+        if (jetClass.hasModifier(JetTokens.ANNOTATION_KEYWORD)) return ClassKind.ANNOTATION_CLASS;
+        if (jetClass.hasModifier(JetTokens.ENUM_KEYWORD)) return ClassKind.ENUM_CLASS;
+        return ClassKind.CLASS;
     }
 
     private void processImports(@NotNull JetNamespace namespace, @NotNull WriteThroughScope namespaceScope, @NotNull JetScope outerScope) {

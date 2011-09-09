@@ -164,6 +164,7 @@ LONG_TEMPLATE_ENTRY_END=\}
 "while"      { return JetTokens.WHILE_KEYWORD ;}
 "break"      { return JetTokens.BREAK_KEYWORD ;}
 "class"      { return JetTokens.CLASS_KEYWORD ;}
+"trait"      { return JetTokens.TRAIT_KEYWORD ;}
 "throw"      { return JetTokens.THROW_KEYWORD ;}
 "false"      { return JetTokens.FALSE_KEYWORD ;}
 "when"       { return JetTokens.WHEN_KEYWORD ;}

@@ -5,6 +5,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Collections;
 import java.util.List;
@@ -113,5 +114,9 @@ public class JetClass extends JetTypeParameterListOwner implements JetClassOrObj
             return ((JetClass) parent).getFQName() + "." + getName();
         }
         return getName();
+    }
+
+    public boolean isTrait() {
+        return findChildByType(JetTokens.TRAIT_KEYWORD) != null;
     }
 }

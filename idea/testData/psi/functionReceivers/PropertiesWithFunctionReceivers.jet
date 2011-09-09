@@ -12,11 +12,11 @@ val {foo.bar.() : ()}.foo = foo
 
 val {foo.bar.() : ()}.foo : bar = foo
    [a] public get() {}
-   virtual set(a : b) {}
+   open set(a : b) {}
 
 
 val {foo.bar.() : ()}.foo : bar = foo
-   virtual set(a : b) {}
+   open set(a : b) {}
 
 
 val {foo.bar.() : ()}.foo : bar = foo

@@ -1,8 +1,8 @@
-virtual class IAdder<in T> {
+open class IAdder<in T> {
   fun add(item : T) : Boolean
 }
 
-virtual class ICloseable {
+open class ICloseable {
   fun close()
 }
 

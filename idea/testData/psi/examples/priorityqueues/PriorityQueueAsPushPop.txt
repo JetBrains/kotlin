@@ -9,8 +9,6 @@ JetFile: PriorityQueueAsPushPop.jet
         TYPE_PARAMETER
           PsiElement(IDENTIFIER)('T')
         PsiElement(GT)('>')
-      PsiWhiteSpace(' ')
-      PsiElement(wraps)('wraps')
       VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
         VALUE_PARAMETER

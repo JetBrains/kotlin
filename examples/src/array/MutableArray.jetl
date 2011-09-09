@@ -2,11 +2,11 @@
   These declarations are "shallow" in the sense that they are not really compiled, only the type-checker uses them
 */
 
-virtual class ReadOnlyArray<out T> : ISized {
+open class ReadOnlyArray<out T> : ISized {
   [operator] fun get(index : Int) : T
 }
 
-virtual class WriteOnlyArray<in T> : ISized { // This is needed to keep IIterator's <T> covariant
+open class WriteOnlyArray<in T> : ISized { // This is needed to keep IIterator's <T> covariant
   [operator] fun set(index : Int, value : T)
 }
 

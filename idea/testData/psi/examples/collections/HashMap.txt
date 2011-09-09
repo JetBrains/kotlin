@@ -2,7 +2,7 @@ JetFile: HashMap.jet
   NAMESPACE
     CLASS
       MODIFIER_LIST
-        PsiElement(virtual)('virtual')
+        PsiElement(open)('open')
       PsiWhiteSpace(' ')
       PsiElement(class)('class')
       PsiWhiteSpace(' ')
@@ -95,7 +95,7 @@ JetFile: HashMap.jet
     PsiWhiteSpace('\n\n')
     CLASS
       MODIFIER_LIST
-        PsiElement(virtual)('virtual')
+        PsiElement(open)('open')
       PsiWhiteSpace(' ')
       PsiElement(class)('class')
       PsiWhiteSpace(' ')
@@ -170,7 +170,7 @@ JetFile: HashMap.jet
     PsiWhiteSpace('\n\n')
     CLASS
       MODIFIER_LIST
-        PsiElement(virtual)('virtual')
+        PsiElement(open)('open')
       PsiWhiteSpace(' ')
       PsiElement(class)('class')
       PsiWhiteSpace(' ')
@@ -301,11 +301,8 @@ JetFile: HashMap.jet
       PsiElement(class)('class')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('HashableWrapper')
-      PsiWhiteSpace(' ')
       TYPE_PARAMETER_LIST
         <empty list>
-      PsiElement(wraps)('wraps')
-      PsiWhiteSpace(' ')
       VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
         VALUE_PARAMETER
@@ -378,7 +375,7 @@ JetFile: HashMap.jet
     PsiWhiteSpace('\n\n')
     CLASS
       MODIFIER_LIST
-        PsiElement(virtual)('virtual')
+        PsiElement(open)('open')
       PsiWhiteSpace(' ')
       PsiElement(class)('class')
       PsiWhiteSpace(' ')

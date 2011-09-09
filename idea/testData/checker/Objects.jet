@@ -1,6 +1,6 @@
 namespace toplevelObjectDeclarations {
   open class Foo(y : Int) {
-    virtual fun foo() : Int = 1
+    open fun foo() : Int = 1
   }
 
   class T : <error>Foo</error> {}

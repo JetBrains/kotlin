@@ -34,9 +34,9 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     private final ClassKind kind;
     private JetType superclassType;
 
-    public MutableClassDescriptor(@NotNull BindingTrace trace, @NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope outerScope) {
-        this(trace, containingDeclaration, outerScope, ClassKind.CLASS);
-    }
+//    public MutableClassDescriptor(@NotNull BindingTrace trace, @NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope outerScope) {
+//        this(trace, containingDeclaration, outerScope, ClassKind.CLASS);
+//    }
 
     public MutableClassDescriptor(@NotNull BindingTrace trace, @NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope outerScope, ClassKind kind) {
         super(containingDeclaration);

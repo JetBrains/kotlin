@@ -17,25 +17,25 @@ open class C2 {}
 
 open class C3 {}
 
-trait class T1 {}
+trait T1 {}
 
-trait class T2<T> {}
+trait T2<T> {}
 
-trait class Test<error>()</error> {
+trait Test<error>()</error> {
     <error>this</error>(x : Int) {}
 }
 
-trait class Test1 : C2<error>()</error> {}
+trait Test1 : C2<error>()</error> {}
 
-trait class Test2 : C2 {}
+trait Test2 : C2 {}
 
-trait class Test3 : C2, <error>C3</error> {}
+trait Test3 : C2, <error>C3</error> {}
 
-trait class Test4 : T1 {}
+trait Test4 : T1 {}
 
-trait class Test5 : T1, <error>T1</error> {}
+trait Test5 : T1, <error>T1</error> {}
 
-trait class Test6 : <error>C1</error> {}
+trait Test6 : <error>C1</error> {}
 
 class CTest1() : OC1() {}
 

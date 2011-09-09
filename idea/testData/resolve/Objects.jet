@@ -1,6 +1,6 @@
 namespace toplevelObjectDeclarations {
   class Foo(y : Int) {
-    ~foo()~virtual fun foo() : Int = 1
+    ~foo()~open fun foo() : Int = 1
   }
 
   object ~A~A : Foo(0) {

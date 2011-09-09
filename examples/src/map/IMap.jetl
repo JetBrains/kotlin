@@ -1,4 +1,4 @@
-virtual class IMap<in K, out V> {
+open class IMap<in K, out V> {
   
 
 }

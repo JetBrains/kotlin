@@ -4,7 +4,7 @@ fun box() {
 }
 
 open class A {
-    virtual fun foo() {}
+    open fun foo() {}
 }
 
 open class B : A {

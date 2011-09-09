@@ -694,7 +694,7 @@ public class ClassDescriptorResolver {
         );
         trace.record(BindingContext.CONSTRUCTOR, declarationToTrace, constructorDescriptor);
         if (modifierList != null) {
-            modifierList.checkNotContains(trace, JetTokens.ABSTRACT_KEYWORD, JetTokens.VIRTUAL_KEYWORD, JetTokens.OVERRIDE_KEYWORD);
+            modifierList.checkNotContains(trace, JetTokens.ABSTRACT_KEYWORD, JetTokens.OPEN_KEYWORD, JetTokens.OVERRIDE_KEYWORD, JetTokens.FINAL_KEYWORD);
         }
         return constructorDescriptor.initialize(
                 typeParameters,

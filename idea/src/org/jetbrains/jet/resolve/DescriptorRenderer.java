@@ -251,7 +251,7 @@ public class DescriptorRenderer {
 
         @Override
         public Void visitClassDescriptor(ClassDescriptor descriptor, StringBuilder builder) {
-            String keyword = descriptor.getKind() == ClassKind.TRAIT ? "trait class" : "class";
+            String keyword = descriptor.getKind() == ClassKind.TRAIT ? "trait" : "class";
             renderClassDescriptor(descriptor, builder, keyword);
             return super.visitClassDescriptor(descriptor, builder);
         }

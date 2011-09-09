@@ -10,7 +10,7 @@ open class Base() {
       }
 }
 
-trait class Abstract {}
+trait Abstract {}
 
 class Derived1() : Base(), Abstract {}
 class Derived2() : Abstract, Base() {}

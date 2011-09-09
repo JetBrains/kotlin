@@ -1,12 +1,12 @@
 namespace foo.bar.goo
 
 abstract
-virtual
+open
 enum
 open
-attribute
+annotation
 override
-virtual
+open
 abstract
 private
 protected
@@ -16,12 +16,12 @@ in
 out
 ref
  class Bar<abstract
-        virtual
+        open
         enum
         open
-        attribute
+        annotation
         override
-        virtual
+        open
         abstract
         private
         protected
@@ -31,12 +31,12 @@ ref
         out
         ref T> {
     val abstract
-    val virtual
+    val open
     val enum
     val open
-    val attribute
+    val annotation
     val override
-    val virtual
+    val open
     val abstract
     val private
     val protected

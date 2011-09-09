@@ -5,7 +5,7 @@ open class Base() {
 }
 
 open class Left() : Base() {}
-trait class Right : Base {}
+trait Right : Base {}
 
 class D() : Left(), Right
 

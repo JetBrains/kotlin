@@ -20,7 +20,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
     private static final TokenSet TYPE_ARGUMENT_LIST_STOPPERS = TokenSet.create(
             INTEGER_LITERAL, FLOAT_LITERAL, CHARACTER_LITERAL, OPEN_QUOTE, RAW_STRING_LITERAL,
-            NAMESPACE_KEYWORD, AS_KEYWORD, TYPE_KEYWORD, CLASS_KEYWORD, THIS_KEYWORD, VAL_KEYWORD, VAR_KEYWORD,
+            NAMESPACE_KEYWORD, AS_KEYWORD, TYPE_KEYWORD, TRAIT_KEYWORD, CLASS_KEYWORD, THIS_KEYWORD, VAL_KEYWORD, VAR_KEYWORD,
             FUN_KEYWORD, FOR_KEYWORD, NULL_KEYWORD,
             TRUE_KEYWORD, FALSE_KEYWORD, IS_KEYWORD, THROW_KEYWORD, RETURN_KEYWORD, BREAK_KEYWORD,
             CONTINUE_KEYWORD, OBJECT_KEYWORD, IF_KEYWORD, TRY_KEYWORD, ELSE_KEYWORD, WHILE_KEYWORD, DO_KEYWORD,
@@ -79,6 +79,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             LBRACKET, // attribute
             FUN_KEYWORD,
             VAL_KEYWORD, VAR_KEYWORD,
+            TRAIT_KEYWORD,
             CLASS_KEYWORD,
             TYPE_KEYWORD
         ),
@@ -1236,7 +1237,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     private JetNodeType parseLocalDeclarationRest(boolean isEnum) {
          IElementType keywordToken = tt();
          JetNodeType declType = null;
-         if (keywordToken == CLASS_KEYWORD) {
+         if (keywordToken == CLASS_KEYWORD || keywordToken == TRAIT_KEYWORD) {
              declType = myJetParsing.parseClass(isEnum);
          }
          else if (keywordToken == FUN_KEYWORD) {

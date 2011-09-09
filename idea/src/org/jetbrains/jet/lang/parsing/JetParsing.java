@@ -28,13 +28,13 @@ public class JetParsing extends AbstractJetParsing {
         }
     }
 
-    private static final TokenSet TOPLEVEL_OBJECT_FIRST = TokenSet.create(TYPE_KEYWORD, CLASS_KEYWORD,
+    private static final TokenSet TOPLEVEL_OBJECT_FIRST = TokenSet.create(TYPE_KEYWORD, TRAIT_KEYWORD, CLASS_KEYWORD,
                 FUN_KEYWORD, VAL_KEYWORD, NAMESPACE_KEYWORD);
-    private static final TokenSet ENUM_MEMBER_FIRST = TokenSet.create(TYPE_KEYWORD, CLASS_KEYWORD,
+    private static final TokenSet ENUM_MEMBER_FIRST = TokenSet.create(TYPE_KEYWORD, TRAIT_KEYWORD, CLASS_KEYWORD,
                 FUN_KEYWORD, VAL_KEYWORD, IDENTIFIER);
 
-    private static final TokenSet CLASS_NAME_RECOVERY_SET = TokenSet.orSet(TokenSet.create(LT, WRAPS_KEYWORD, LPAR, COLON, LBRACE), TOPLEVEL_OBJECT_FIRST);
-    private static final TokenSet TYPE_PARAMETER_GT_RECOVERY_SET = TokenSet.create(WHERE_KEYWORD, WRAPS_KEYWORD, LPAR, COLON, LBRACE, GT);
+    private static final TokenSet CLASS_NAME_RECOVERY_SET = TokenSet.orSet(TokenSet.create(LT, LPAR, COLON, LBRACE), TOPLEVEL_OBJECT_FIRST);
+    private static final TokenSet TYPE_PARAMETER_GT_RECOVERY_SET = TokenSet.create(WHERE_KEYWORD, LPAR, COLON, LBRACE, GT);
     private static final TokenSet PARAMETER_NAME_RECOVERY_SET = TokenSet.create(COLON, EQ, COMMA, RPAR);
     private static final TokenSet NAMESPACE_NAME_RECOVERY_SET = TokenSet.create(DOT, EOL_OR_SEMICOLON);
     /*package*/ static final TokenSet TYPE_REF_FIRST = TokenSet.create(LBRACKET, IDENTIFIER, FUN_KEYWORD, LPAR, CAPITALIZED_THIS_KEYWORD);
@@ -227,7 +227,7 @@ public class JetParsing extends AbstractJetParsing {
         if (keywordToken == NAMESPACE_KEYWORD) {
             declType = parseNamespaceBlock();
         }
-        else if (keywordToken == CLASS_KEYWORD) {
+        else if (keywordToken == CLASS_KEYWORD || keywordToken == TRAIT_KEYWORD) {
             declType = parseClass(detector.isDetected());
         }
         else if (keywordToken == FUN_KEYWORD) {
@@ -404,35 +404,27 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * class
-     *   : modifiers "class" SimpleName
+     *   : modifiers ("class" | "trait") SimpleName
      *       typeParameters?
-     *       (
-     *          ("wraps" "(" primaryConstructorParameter{","} ")") |
-     *          (modifiers "(" primaryConstructorParameter{","} ")"))?
+     *         modifiers ("(" primaryConstructorParameter{","} ")")?
      *       (":" attributes delegationSpecifier{","})?
      *       typeConstraints
      *       (classBody? | enumClassBody)
      *   ;
      */
     public JetNodeType parseClass(boolean enumClass) {
-        assert _at(CLASS_KEYWORD);
-        advance(); // CLASS_KEYWORD
+        assert _atSet(CLASS_KEYWORD, TRAIT_KEYWORD);
+        advance(); // CLASS_KEYWORD or TRAIT_KEYWORD
 
         expect(IDENTIFIER, "Class name expected", CLASS_NAME_RECOVERY_SET);
         boolean typeParametersDeclared = parseTypeParameterList(TYPE_PARAMETER_GT_RECOVERY_SET);
 
-        if (at(WRAPS_KEYWORD)) {
-            advance(); // WRAPS_KEYWORD
+        if (parseModifierList(PRIMARY_CONSTRUCTOR_MODIFIER_LIST, false)) {
             parseValueParameterList(false, TokenSet.create(COLON, LBRACE));
         }
         else {
-            if (parseModifierList(PRIMARY_CONSTRUCTOR_MODIFIER_LIST, false)) {
+            if (at(LPAR)) {
                 parseValueParameterList(false, TokenSet.create(COLON, LBRACE));
-            }
-            else {
-                if (at(LPAR)) {
-                    parseValueParameterList(false, TokenSet.create(COLON, LBRACE));
-                }
             }
         }
 
@@ -601,8 +593,11 @@ public class JetParsing extends AbstractJetParsing {
                 declType = parseClass(isEnum);
             }
         }
+        else if (keywordToken == TRAIT_KEYWORD) {
+            declType = parseClass(isEnum);
+        }
         else if (keywordToken == FUN_KEYWORD) {
-            declType = parseFunction();
+                declType = parseFunction();
         }
         else if (keywordToken == VAL_KEYWORD || keywordToken == VAR_KEYWORD) {
             declType = parseProperty();
