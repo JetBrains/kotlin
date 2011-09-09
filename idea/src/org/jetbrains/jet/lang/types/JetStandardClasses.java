@@ -53,6 +53,7 @@ public class JetStandardClasses {
             },
             JetScope.EMPTY,
             FunctionGroup.EMPTY,
+            null,
             null
     );
 
@@ -75,6 +76,7 @@ public class JetStandardClasses {
             Collections.<JetType>emptySet(),
             JetScope.EMPTY,
             FunctionGroup.EMPTY,
+            null,
             null
     );
 

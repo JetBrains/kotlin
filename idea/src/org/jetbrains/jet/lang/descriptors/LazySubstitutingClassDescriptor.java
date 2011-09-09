@@ -20,6 +20,7 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
     private TypeSubstitutor newSubstitutor;
     private List<TypeParameterDescriptor> typeParameters;
     private TypeConstructor typeConstructor;
+    private JetType superclassType;
 
     public LazySubstitutingClassDescriptor(ClassDescriptor descriptor, TypeSubstitutor substitutor) {
         this.original = descriptor;
@@ -76,6 +77,15 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
             return memberScope;
         }
         return new SubstitutingScope(memberScope, getSubstitutor());
+    }
+
+    @NotNull
+    @Override
+    public JetType getSuperclassType() {
+        if (superclassType == null) {
+            superclassType = getSubstitutor().substitute(original.getSuperclassType(), Variance.INVARIANT);
+        }
+        return superclassType;
     }
 
     @NotNull

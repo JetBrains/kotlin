@@ -21,6 +21,8 @@ public class JavaClassDescriptor extends MutableDeclarationDescriptor implements
     private JetType classObjectType;
     private final WritableFunctionGroup constructors = new WritableFunctionGroup("<init>");
     private ClassModifiers modifiers;
+    private JetType superclassType;
+
 
     public JavaClassDescriptor(DeclarationDescriptor containingDeclaration) {
         super(containingDeclaration);
@@ -71,6 +73,16 @@ public class JavaClassDescriptor extends MutableDeclarationDescriptor implements
 
         TypeSubstitutor substitutor = createTypeSubstitutor(typeArguments);
         return new SubstitutingScope(unsubstitutedMemberScope, substitutor);
+    }
+
+    @NotNull
+    @Override
+    public JetType getSuperclassType() {
+        return superclassType;
+    }
+
+    public void setSuperclassType(@NotNull JetType superclassType) {
+        this.superclassType = superclassType;
     }
 
     @NotNull

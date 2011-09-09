@@ -24,7 +24,7 @@ public class ErrorHandler {
 
         @Override
         public void genericError(@NotNull ASTNode node, @NotNull String errorMessage) {
-            throw new IllegalStateException(errorMessage + " at " + node.getText());
+            throw new IllegalStateException(errorMessage + " at " + node.getText() + atLocation(node));
         }
 
         @Override
@@ -37,14 +37,28 @@ public class ErrorHandler {
             throw new IllegalStateException("Redeclaration: " + existingDescriptor.getName());
         }
     };
-    public static String atLocation(PsiElement element) {
+
+    public static String atLocation(@NotNull PsiElement element) {
+        return atLocation(element.getNode());
+    }
+    
+    public static String atLocation(@NotNull ASTNode node) {
+        while (node.getPsi() == null) {
+            node = node.getTreeParent();
+        }
+        PsiElement element = node.getPsi();
         Document document = PsiDocumentManager.getInstance(element.getProject()).getDocument(element.getContainingFile());
         int offset = element.getTextRange().getStartOffset();
-        int lineNumber = document.getLineNumber(offset);
-        int lineStartOffset = document.getLineStartOffset(lineNumber);
-        int column = offset - lineStartOffset;
+        if (document != null) {
+            int lineNumber = document.getLineNumber(offset);
+            int lineStartOffset = document.getLineStartOffset(lineNumber);
+            int column = offset - lineStartOffset;
 
-        return "' at line " + (lineNumber+1) + ":" + column;
+            return "' at line " + (lineNumber+1) + ":" + column;
+        }
+        else {
+            return "' at offset " + offset + " (line unknown)";
+        }
     }
 
 

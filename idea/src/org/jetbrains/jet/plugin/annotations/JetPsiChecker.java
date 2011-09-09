@@ -54,10 +54,12 @@ public class JetPsiChecker implements Annotator {
                         if (reference instanceof MultiRangeReference) {
                             MultiRangeReference mrr = (MultiRangeReference) reference;
                             for (TextRange range : mrr.getRanges()) {
+                                System.out.println("Unresolved1");
                                 holder.createErrorAnnotation(range.shiftRight(referenceExpression.getTextOffset()), "Unresolved").setHighlightType(ProblemHighlightType.LIKE_UNKNOWN_SYMBOL);
                             }
                         }
                         else {
+                            System.out.println("Unresolved2");
                             holder.createErrorAnnotation(referenceExpression, "Unresolved").setHighlightType(ProblemHighlightType.LIKE_UNKNOWN_SYMBOL);
                         }
                     }
@@ -98,6 +100,8 @@ public class JetPsiChecker implements Annotator {
                 };
 
                 if (errorReportingEnabled) {
+                    System.out.println("Checked: " + bindingContext.getDiagnostics().size());
+                    System.out.println(Thread.currentThread().getId());
                     AnalyzingUtils.applyHandler(errorHandler, bindingContext);
                 }
 

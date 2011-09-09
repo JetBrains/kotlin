@@ -32,6 +32,7 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     private JetType classObjectType;
     private JetType defaultType;
     private final boolean isObject;
+    private JetType superclassType;
 
     public MutableClassDescriptor(@NotNull BindingTrace trace, @NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope outerScope) {
         this(trace, containingDeclaration, outerScope, false);
@@ -247,6 +248,17 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     public boolean isObject() {
         return isObject;
     }
+
+    @NotNull
+    @Override
+    public JetType getSuperclassType() {
+        return superclassType;
+    }
+
+    public void setSuperclassType(@NotNull JetType superclassType) {
+        this.superclassType = superclassType;
+    }
+
 
     public void setClassModifiers(ClassModifiers classModifiers) {
         this.classModifiers = classModifiers;
