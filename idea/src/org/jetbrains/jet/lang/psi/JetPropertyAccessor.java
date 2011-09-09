@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
@@ -70,4 +71,11 @@ public class JetPropertyAccessor extends JetDeclaration implements JetDeclaratio
         return findChildByClass(JetTypeReference.class);
     }
 
+    public PsiElement getNamePlaceholder() {
+        PsiElement get = findChildByType(JetTokens.GET_KEYWORD);
+        if (get != null) {
+            return get;
+        }
+        return findChildByType(JetTokens.SET_KEYWORD);
+    }
 }
