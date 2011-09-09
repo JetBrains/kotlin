@@ -350,7 +350,7 @@ public class JavaDescriptorResolver {
                 resolveTypeParameters(functionDescriptorImpl, method.getTypeParameters()),
                 semanticServices.getDescriptorResolver().resolveParameterDescriptors(functionDescriptorImpl, parameters),
                 semanticServices.getTypeTransformer().transformToType(returnType),
-                MemberModifiers.DEFAULT_MODIFIERS //TODO
+                new MemberModifiers(method.hasModifierProperty(PsiModifier.ABSTRACT), !method.hasModifierProperty(PsiModifier.FINAL), false)
         );
         semanticServices.getTrace().record(BindingContext.FUNCTION, method, functionDescriptorImpl);
         FunctionDescriptor substitutedFunctionDescriptor = functionDescriptorImpl;

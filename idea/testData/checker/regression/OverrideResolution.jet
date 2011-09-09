@@ -4,13 +4,13 @@ fun box() {
 }
 
 open class A {
-    fun foo() {}
+    virtual fun foo() {}
 }
 
 open class B : A {
-    fun foo() {}
+    override fun foo() {}
 }
 
 open class C : B {
-    fun foo() {}
+    override fun foo() {}
 }

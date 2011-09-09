@@ -23,8 +23,4 @@ public class MemberModifiers extends Modifiers {
     public boolean isOverride() {
         return isOverride;
     }
-
-    public boolean isOverridable() {
-        return isAbstract() || isVirtual() || isOverride();
-    }
 }

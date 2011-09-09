@@ -221,13 +221,21 @@ public class ClassDescriptorResolver {
                 returnType = ErrorUtils.createErrorType("No type, no body");
             }
         }
+        MemberModifiers defaultModifiers;
+        if (containingDescriptor instanceof ClassDescriptor) {
+            boolean isDefinitelyAbstract = ((ClassDescriptor) containingDescriptor).getModifiers().isTrait() && function.getBodyExpression() == null;
+            defaultModifiers = new MemberModifiers(isDefinitelyAbstract, isDefinitelyAbstract, false);
+        } else {
+            defaultModifiers = MemberModifiers.DEFAULT_MODIFIERS;
+        }
+        MemberModifiers memberModifiers = resolveMemberModifiers(function.getModifierList(), defaultModifiers);
 
         functionDescriptor.initialize(
                 receiverType,
                 typeParameterDescriptors,
                 valueParameterDescriptors,
                 returnType,
-                resolveMemberModifiers(function.getModifierList()));
+                memberModifiers);
 
         trace.record(BindingContext.FUNCTION, function, functionDescriptor);
         return functionDescriptor;
@@ -562,9 +570,10 @@ public class ClassDescriptorResolver {
         boolean abstractModifier = modifierList.hasModifier(JetTokens.ABSTRACT_KEYWORD);
         boolean traitModifier = modifierList.hasModifier(JetTokens.TRAIT_KEYWORD);
         boolean enumModifier = modifierList.hasModifier(JetTokens.ENUM_KEYWORD);
+        boolean openModifier = modifierList.hasModifier(JetTokens.OPEN_KEYWORD);
         return new ClassModifiers(
                 abstractModifier || traitModifier,
-                modifierList.hasModifier(JetTokens.OPEN_KEYWORD) || abstractModifier || traitModifier,
+                openModifier || abstractModifier || traitModifier,
                 traitModifier,
                 enumModifier
         );
@@ -573,10 +582,13 @@ public class ClassDescriptorResolver {
     @NotNull
     private MemberModifiers resolveMemberModifiers(@Nullable JetModifierList modifierList, @NotNull MemberModifiers defaultModifiers) {
         if (modifierList == null) return defaultModifiers;
+        boolean abstractModifier = modifierList.hasModifier(JetTokens.ABSTRACT_KEYWORD);
+        boolean virtualModifier = modifierList.hasModifier(JetTokens.VIRTUAL_KEYWORD);
+        boolean overrideModifier = modifierList.hasModifier(JetTokens.OVERRIDE_KEYWORD);
         return new MemberModifiers(
-                modifierList.hasModifier(JetTokens.ABSTRACT_KEYWORD),
-                modifierList.hasModifier(JetTokens.VIRTUAL_KEYWORD),
-                modifierList.hasModifier(JetTokens.OVERRIDE_KEYWORD)
+                abstractModifier || defaultModifiers.isAbstract(),
+                virtualModifier || abstractModifier || overrideModifier || defaultModifiers.isVirtual(),
+                overrideModifier || defaultModifiers.isOverride()
         );
     }
     

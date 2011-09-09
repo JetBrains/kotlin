@@ -547,34 +547,37 @@ public class TopDownAnalyzer {
         }
     }
 
-    private void bindOverridesInAClass(MutableClassDescriptor classDescriptor) {
+    protected void bindOverridesInAClass(MutableClassDescriptor classDescriptor) {
 
         for (FunctionDescriptor declaredFunction : classDescriptor.getFunctions()) {
-//            JetFunction function = (JetFunction) trace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, declaredFunction);
-//            boolean isOverride = declaredFunction.getModifiers().isOverride();
+            JetFunction function = (JetFunction) trace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, declaredFunction);
+            assert function != null;
+            JetModifierList modifierList = function.getModifierList();
+            ASTNode overrideNode = modifierList != null ? modifierList.getModifierNode(JetTokens.OVERRIDE_KEYWORD) : null;
+            boolean hasOverrideModifier = overrideNode != null;
+            boolean foundError = false;
             for (JetType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
                 FunctionDescriptor overridden = findFunctionOverridableBy(declaredFunction, supertype);
                 if (overridden != null) {
-//                    if (isOverride && !overridden.getModifiers().isOverridable()) {
-//                        trace.getErrorHandler().genericError(function.getModifierList().getModifierNode(JetTokens.OVERRIDE_KEYWORD),
-//                                                             "Method " + overridden.getName() + " in " + overridden.getContainingDeclaration().getName() + " is final and can not be overridden");
-//                        isOverride = false;
-//                    }
+                    if (hasOverrideModifier && !overridden.getModifiers().isVirtual() && !foundError) {
+                        trace.getErrorHandler().genericError(overrideNode, "Method " + overridden.getName() + " in " + overridden.getContainingDeclaration().getName() + " is final and can not be overridden");
+                        foundError = true;
+                    }
                     ((FunctionDescriptorImpl) declaredFunction).addOverriddenFunction(overridden);
                 }
             }
-//            if (declaredFunction.getModifiers().isOverride() && declaredFunction.getOverriddenDescriptors().size() == 0) {
-//                trace.getErrorHandler().genericError(function.getModifierList().getModifierNode(JetTokens.OVERRIDE_KEYWORD),
-//                                                     "Method " + declaredFunction.getName() + " overrides nothing");
+            if (hasOverrideModifier && declaredFunction.getOverriddenDescriptors().size() == 0) {
+                trace.getErrorHandler().genericError(overrideNode, "Method " + declaredFunction.getName() + " overrides nothing");
             }
-//            if (!declaredFunction.getModifiers().isOverride() && declaredFunction.getOverriddenDescriptors().size() > 0) {
-//                FunctionDescriptor overriddenMethod = declaredFunction.getOverriddenDescriptors().iterator().next();
-//                trace.getErrorHandler().genericError(function.getNameIdentifier().getNode(),
-//                                                     "Method " + declaredFunction.getName() + " overrides method " + overriddenMethod.getName() + " in class " +
-//                                                     overriddenMethod.getContainingDeclaration().getName() + " and needs 'override' modifier");
+            PsiElement nameIdentifier = function.getNameIdentifier();
+            if (!hasOverrideModifier && declaredFunction.getOverriddenDescriptors().size() > 0 && nameIdentifier != null) {
+                FunctionDescriptor overriddenMethod = declaredFunction.getOverriddenDescriptors().iterator().next();
+                trace.getErrorHandler().genericError(nameIdentifier.getNode(),
+                                                     "Method " + declaredFunction.getName() + " overrides method " + overriddenMethod.getName() + " in class " +
+                                                     overriddenMethod.getContainingDeclaration().getName() + " and needs 'override' modifier");
             }
-//        }
-//    }
+        }
+    }
 
     @Nullable
     private FunctionDescriptor findFunctionOverridableBy(@NotNull FunctionDescriptor declaredFunction, @NotNull JetType supertype) {
@@ -1022,35 +1025,33 @@ public class TopDownAnalyzer {
 
     protected void checkFunction(JetNamedFunction function, FunctionDescriptor functionDescriptor, DeclarationDescriptor containingDescriptor) {
         PsiElement nameIdentifier = function.getNameIdentifier();
-        boolean isAbstract = functionDescriptor.getModifiers().isAbstract();
+        JetModifierList modifierList = function.getModifierList();
+        ASTNode abstractNode = modifierList != null ? modifierList.getModifierNode(JetTokens.ABSTRACT_KEYWORD) : null;
+        boolean hasAbstractModifier = abstractNode != null;
         if (containingDescriptor instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) containingDescriptor;
             boolean inTrait = classDescriptor.getModifiers().isTrait();
             boolean inEnum = classDescriptor.getModifiers().isEnum();
             boolean inAbstractClass = classDescriptor.getModifiers().isAbstract();
-            if (isAbstract && !inAbstractClass && !inTrait && !inEnum) {
-                trace.getErrorHandler().genericError(function.getModifierList().getModifierNode(JetTokens.ABSTRACT_KEYWORD),
-                                                     "Abstract method " + function.getName() + " in non-abstract class " + classDescriptor.getName());
+            if (hasAbstractModifier && !inAbstractClass && !inTrait && !inEnum) {
+                trace.getErrorHandler().genericError(abstractNode, "Abstract method " + function.getName() + " in non-abstract class " + classDescriptor.getName());
             }
-            if (isAbstract && inTrait) {
-                trace.getErrorHandler().genericWarning(function.getModifierList().getModifierNode(JetTokens.ABSTRACT_KEYWORD),
-                                                     "Abstract modifier is not necessary in traits");
+            if (hasAbstractModifier && inTrait) {
+                trace.getErrorHandler().genericWarning(abstractNode, "Abstract modifier is not necessary in traits");
             }
-            if (function.getBodyExpression() != null && isAbstract) {
-                trace.getErrorHandler().genericError(function.getModifierList().getModifierNode(JetTokens.ABSTRACT_KEYWORD),
-                                                     "Method " + function.getName() + " with body can not be abstract");
+            if (function.getBodyExpression() != null && hasAbstractModifier) {
+                trace.getErrorHandler().genericError(abstractNode, "Method " + function.getName() + " with body can not be abstract");
             }
-            if (function.getBodyExpression() == null && !isAbstract && !inTrait && nameIdentifier != null) {
+            if (function.getBodyExpression() == null && !hasAbstractModifier && !inTrait && nameIdentifier != null) {
                 trace.getErrorHandler().genericError(nameIdentifier.getNode(), "Method " + function.getName() + " without body must be abstract");
             }
             return;
         }
-        if (isAbstract) {
-            trace.getErrorHandler().genericError(function.getModifierList().getModifierNode(JetTokens.ABSTRACT_KEYWORD),
-                                                 "Global function " + function.getName() + " can not be abstract");
+        if (hasAbstractModifier) {
+            trace.getErrorHandler().genericError(abstractNode, "Function " + function.getName() + " can not be abstract");
         }
-        if (function.getBodyExpression() == null && !isAbstract && nameIdentifier != null) {
-            trace.getErrorHandler().genericError(nameIdentifier.getNode(), "Global function " + function.getName() + " must have body");
+        if (function.getBodyExpression() == null && !hasAbstractModifier && nameIdentifier != null) {
+            trace.getErrorHandler().genericError(nameIdentifier.getNode(), "Function " + function.getName() + " must have body");
         }
     }
 
