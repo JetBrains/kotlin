@@ -69,7 +69,8 @@ public class JetParsingTest extends ParsingTestCase {
     private void checkPsiGetters(JetElement elem) throws Throwable {
         Method[] methods = elem.getClass().getDeclaredMethods();
         for (Method method : methods) {
-            if (!method.getName().startsWith("get") && !method.getName().startsWith("find")) continue;
+            String methodName = method.getName();
+            if (!methodName.startsWith("get") && !methodName.startsWith("find") || methodName.equals("getReference") || methodName.equals("getReferences")) continue;
             if (method.getParameterTypes().length > 0) continue;
             Class<?> declaringClass = method.getDeclaringClass();
             if (!declaringClass.getName().startsWith("org.jetbrains.jet")) continue;
@@ -79,7 +80,7 @@ public class JetParsingTest extends ParsingTestCase {
                 for (Annotation annotation : method.getDeclaredAnnotations()) {
                     if (annotation instanceof JetElement.IfNotParsed) {
                         assertNotNull(
-                                "Incomplete operation in parsed OK test, method " + method.getName() +
+                                "Incomplete operation in parsed OK test, method " + methodName +
                                 " in " + declaringClass.getSimpleName() + " returns null. Element text: \n" + elem.getText(),
                                 PsiTreeUtil.findChildOfType(elem, PsiErrorElement.class));
                     }
