@@ -13,16 +13,16 @@ import java.util.List;
  * @author abreslav
  */
 public class TopDownAnalyzer {
-    private final JetSemanticServices semanticServices;
-    private final BindingTrace trace;
 
-    public TopDownAnalyzer(JetSemanticServices semanticServices, @NotNull BindingTrace bindingTrace) {
-        this.semanticServices = semanticServices;
-        this.trace = bindingTrace;
-    }
+    private TopDownAnalyzer() {}
 
-    public void processObject(@NotNull JetScope outerScope, @NotNull DeclarationDescriptor containingDeclaration, @NotNull JetObjectDeclaration object) {
-        process(outerScope, new NamespaceLike.Adapter(containingDeclaration) {
+    public static void processObject(
+            @NotNull JetSemanticServices semanticServices,
+            @NotNull BindingTrace trace,
+            @NotNull JetScope outerScope,
+            @NotNull DeclarationDescriptor containingDeclaration,
+            @NotNull JetObjectDeclaration object) {
+        process(semanticServices, trace, outerScope, new NamespaceLike.Adapter(containingDeclaration) {
 
                     @Override
                     public NamespaceDescriptorImpl getNamespace(String name) {
@@ -56,7 +56,10 @@ public class TopDownAnalyzer {
                 }, Collections.<JetDeclaration>singletonList(object));
     }
 
-    public void process(@NotNull JetScope outerScope, NamespaceLike owner, @NotNull List<JetDeclaration> declarations) {
+    public static void process(
+            @NotNull JetSemanticServices semanticServices,
+            @NotNull BindingTrace trace,
+            @NotNull JetScope outerScope, NamespaceLike owner, @NotNull List<JetDeclaration> declarations) {
         TypeHierarchyResolver typeHierarchyResolver = new TypeHierarchyResolver(semanticServices, trace);
         typeHierarchyResolver.process(outerScope, owner, declarations);
 
@@ -66,7 +69,10 @@ public class TopDownAnalyzer {
         new BodyResolver(semanticServices, trace, typeHierarchyResolver, declarationResolver).resolveBehaviorDeclarationBodies();
     }
 
-    public void processStandardLibraryNamespace(@NotNull WritableScope outerScope, @NotNull NamespaceDescriptorImpl standardLibraryNamespace, @NotNull JetNamespace namespace) {
+    public static void processStandardLibraryNamespace(
+            @NotNull JetSemanticServices semanticServices,
+            @NotNull BindingTrace trace,
+            @NotNull WritableScope outerScope, @NotNull NamespaceDescriptorImpl standardLibraryNamespace, @NotNull JetNamespace namespace) {
         TypeHierarchyResolver typeHierarchyResolver = new TypeHierarchyResolver(semanticServices, trace);
         typeHierarchyResolver.getNamespaceScopes().put(namespace, standardLibraryNamespace.getMemberScope());
         typeHierarchyResolver.getNamespaceDescriptors().put(namespace, standardLibraryNamespace);

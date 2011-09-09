@@ -867,8 +867,7 @@ public class JetTypeInferrer {
                 //noinspection unchecked
                 traceAdapter.addHandler(slice, handler);
             }
-            TopDownAnalyzer topDownAnalyzer = new TopDownAnalyzer(semanticServices, traceAdapter);
-            topDownAnalyzer.processObject(context.scope, context.scope.getContainingDeclaration(), expression.getObjectDeclaration());
+            TopDownAnalyzer.processObject(semanticServices, traceAdapter, context.scope, context.scope.getContainingDeclaration(), expression.getObjectDeclaration());
             return context.services.checkType(result[0], expression, context);
         }
 
@@ -2514,8 +2513,7 @@ public class JetTypeInferrer {
 
         @Override
         public JetType visitObjectDeclaration(JetObjectDeclaration declaration, TypeInferenceContext context) {
-            TopDownAnalyzer topDownAnalyzer = new TopDownAnalyzer(semanticServices, context.trace);
-            topDownAnalyzer.processObject(scope, scope.getContainingDeclaration(), declaration);
+            TopDownAnalyzer.processObject(semanticServices, context.trace, scope, scope.getContainingDeclaration(), declaration);
             ClassDescriptor classDescriptor = context.trace.getBindingContext().get(BindingContext.CLASS, declaration);
             if (classDescriptor != null) {
                 PropertyDescriptor propertyDescriptor = context.classDescriptorResolver.resolveObjectDeclarationAsPropertyDescriptor(scope.getContainingDeclaration(), declaration, classDescriptor);

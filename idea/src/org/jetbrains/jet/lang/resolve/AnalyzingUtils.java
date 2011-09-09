@@ -77,10 +77,7 @@ public class AnalyzingUtils {
         scope.importScope(new JavaPackageScope("", null, javaSemanticServices));
         scope.importScope(new JavaPackageScope("java.lang", null, javaSemanticServices));
 
-        TopDownAnalyzer topDownAnalyzer = new TopDownAnalyzer(semanticServices, bindingTraceContext);
-//        topDownAnalyzer.process(scope, Collections.<JetDeclaration>singletonList(namespace));
-//        if (false)
-        topDownAnalyzer.process(scope, new NamespaceLike.Adapter(owner) {
+        TopDownAnalyzer.process(semanticServices, bindingTraceContext, scope, new NamespaceLike.Adapter(owner) {
 
             @Override
             public NamespaceDescriptorImpl getNamespace(String name) {
