@@ -7,5 +7,5 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface MemberDescriptor {
     @NotNull
-    MemberModifiers getModifiers();
+    Modality getModality();
 }

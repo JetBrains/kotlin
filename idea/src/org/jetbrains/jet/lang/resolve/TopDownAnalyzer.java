@@ -170,9 +170,9 @@ public class TopDownAnalyzer {
                     MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(trace, owner, outerScope);
 
                     if (klass.hasModifier(JetTokens.ENUM_KEYWORD)) {
-                        MutableClassDescriptor classObjectDescriptor = new MutableClassDescriptor(trace, mutableClassDescriptor, outerScope, true);
+                        MutableClassDescriptor classObjectDescriptor = new MutableClassDescriptor(trace, mutableClassDescriptor, outerScope, ClassKind.OBJECT);
                         classObjectDescriptor.setName("class-object-for-" + klass.getName());
-                        classObjectDescriptor.setClassModifiers(ClassModifiers.DEFAULT_MODIFIERS);
+                        classObjectDescriptor.setModality(Modality.FINAL);
                         classObjectDescriptor.createTypeConstructor();
                         createPrimaryConstructor(classObjectDescriptor);
                         mutableClassDescriptor.setClassObjectDescriptor(classObjectDescriptor);
@@ -213,7 +213,7 @@ public class TopDownAnalyzer {
                 }
 
                 private MutableClassDescriptor createClassDescriptorForObject(@NotNull JetClassOrObject declaration, @NotNull NamespaceLike owner) {
-                    MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(trace, owner, outerScope, true) {
+                    MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(trace, owner, outerScope, ClassKind.OBJECT) {
                         @Override
                         public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor) {
                             return ClassObjectStatus.NOT_ALLOWED;
@@ -228,7 +228,7 @@ public class TopDownAnalyzer {
                 private void createPrimaryConstructor(MutableClassDescriptor mutableClassDescriptor) {
                     ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(mutableClassDescriptor, Collections.<AnnotationDescriptor>emptyList(), true);
                     constructorDescriptor.initialize(Collections.<TypeParameterDescriptor>emptyList(), Collections.<ValueParameterDescriptor>emptyList(),
-                                                     MemberModifiers.DEFAULT_MODIFIERS);
+                                                     Modality.FINAL);
                     // TODO : make the constructor private?
                     mutableClassDescriptor.setPrimaryConstructor(constructorDescriptor);
                 }
@@ -331,7 +331,7 @@ public class TopDownAnalyzer {
         }
         for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : objects.entrySet()) {
             MutableClassDescriptor descriptor = entry.getValue();
-            descriptor.setClassModifiers(ClassModifiers.DEFAULT_MODIFIERS);
+            descriptor.setModality(Modality.FINAL);
             descriptor.createTypeConstructor();
         }
     }
@@ -487,7 +487,7 @@ public class TopDownAnalyzer {
     private void processPrimaryConstructor(MutableClassDescriptor classDescriptor, JetClass klass) {
         if (!klass.hasPrimaryConstructor()) return;
 
-        if (classDescriptor.getModifiers().isTrait()) {
+        if (classDescriptor.getKind() == ClassKind.TRAIT) {
             trace.getErrorHandler().genericError(klass.getPrimaryConstructorParameterList().getNode(), "A trait may not have a constructor");
         }
 
@@ -509,7 +509,7 @@ public class TopDownAnalyzer {
     }
 
     private void processSecondaryConstructor(MutableClassDescriptor classDescriptor, JetConstructor constructor) {
-        if (classDescriptor.getModifiers().isTrait()) {
+        if (classDescriptor.getKind() == ClassKind.TRAIT) {
             trace.getErrorHandler().genericError(constructor.getNameNode(), "A trait may not have a constructor");
         }
         ConstructorDescriptor constructorDescriptor = classDescriptorResolver.resolveSecondaryConstructorDescriptor(
@@ -559,7 +559,7 @@ public class TopDownAnalyzer {
             for (JetType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
                 FunctionDescriptor overridden = findFunctionOverridableBy(declaredFunction, supertype);
                 if (overridden != null) {
-                    if (hasOverrideModifier && !overridden.getModifiers().isVirtual() && !foundError) {
+                    if (hasOverrideModifier && !overridden.getModality().isOpen() && !foundError) {
                         trace.getErrorHandler().genericError(overrideNode, "Method " + overridden.getName() + " in " + overridden.getContainingDeclaration().getName() + " is final and can not be overridden");
                         foundError = true;
                     }
@@ -635,7 +635,7 @@ public class TopDownAnalyzer {
 
             @Override
             public void visitDelegationByExpressionSpecifier(JetDelegatorByExpressionSpecifier specifier) {
-                if (descriptor.getModifiers().isTrait()) {
+                if (descriptor.getKind() == ClassKind.TRAIT) {
                     trace.getErrorHandler().genericError(specifier.getNode(), "Traits can not use delegation");
                 }
                 JetType supertype = trace.getBindingContext().get(BindingContext.TYPE, specifier.getTypeReference());
@@ -656,7 +656,7 @@ public class TopDownAnalyzer {
             public void visitDelegationToSuperCallSpecifier(JetDelegatorToSuperCall call) {
                 JetValueArgumentList valueArgumentList = call.getValueArgumentList();
                 ASTNode node = valueArgumentList == null ? call.getNode() : valueArgumentList.getNode();
-                if (descriptor.getModifiers().isTrait()) {
+                if (descriptor.getKind() == ClassKind.TRAIT) {
                     trace.getErrorHandler().genericError(node, "Traits can not initialize supertypes");
                 }
                 JetTypeReference typeReference = call.getTypeReference();
@@ -667,7 +667,7 @@ public class TopDownAnalyzer {
                             recordSupertype(typeReference, supertype);
                             ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(supertype);
                             if (classDescriptor != null) {
-                                if (classDescriptor.getModifiers().isTrait()) {
+                                if (classDescriptor.getKind() == ClassKind.TRAIT) {
                                     trace.getErrorHandler().genericError(node, "A trait may not have a constructor");
                                 }
                             }
@@ -676,7 +676,7 @@ public class TopDownAnalyzer {
                             recordSupertype(typeReference, trace.getBindingContext().get(BindingContext.TYPE, typeReference));
                         }
                     }
-                    else if (!descriptor.getModifiers().isTrait()) {
+                    else if (descriptor.getKind() != ClassKind.TRAIT) {
                         JetType supertype = trace.getBindingContext().get(BindingContext.TYPE, typeReference);
                         recordSupertype(typeReference, supertype);                        
 
@@ -695,8 +695,8 @@ public class TopDownAnalyzer {
                 if (supertype != null) {
                     ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(supertype);
                     if (classDescriptor != null) {
-                        if (!descriptor.getModifiers().isTrait()) {
-                            if (classDescriptor.hasConstructors() && !ErrorUtils.isError(classDescriptor.getTypeConstructor()) && !classDescriptor.getModifiers().isTrait()) {
+                        if (descriptor.getKind() != ClassKind.TRAIT) {
+                            if (classDescriptor.hasConstructors() && !ErrorUtils.isError(classDescriptor.getTypeConstructor()) && classDescriptor.getKind() != ClassKind.TRAIT) {
                                 trace.getErrorHandler().genericError(specifier.getNode(), "This type has a constructor, and thus must be initialized here");
                             }
                         }
@@ -738,7 +738,7 @@ public class TopDownAnalyzer {
 
             ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(supertype);
             if (classDescriptor != null) {
-                if (!classDescriptor.getModifiers().isTrait()) {
+                if (classDescriptor.getKind() != ClassKind.TRAIT) {
                     if (classAppeared) {
                         trace.getErrorHandler().genericError(typeReference.getNode(), "Only one class may appear in a supertype list");
                     }
@@ -984,13 +984,13 @@ public class TopDownAnalyzer {
         JetPropertyAccessor setter = property.getSetter();
         PsiElement nameIdentifier = property.getNameIdentifier();
         ASTNode nameNode = nameIdentifier == null ? property.getNode() : nameIdentifier.getNode();
-        if (propertyDescriptor.getModifiers().isAbstract()) {
+        if (propertyDescriptor.getModality() == Modality.ABSTRACT) {
             if (classDescriptor == null) {
                 trace.getErrorHandler().genericError(property.getModifierList().getModifierNode(JetTokens.ABSTRACT_KEYWORD),
                                                      "Global property can not be abstract");
                 return;
             }
-            if (!classDescriptor.getModifiers().isAbstract()) {
+            if (classDescriptor.getModality() != Modality.ABSTRACT) {
                 trace.getErrorHandler().genericError(property.getModifierList().getModifierNode(JetTokens.ABSTRACT_KEYWORD),
                                                      "Abstract property " + property.getName() + " in non-abstract class " + classDescriptor.getName());
                 return;
@@ -1011,7 +1011,7 @@ public class TopDownAnalyzer {
             if (initializer == null && !trace.getBindingContext().get(BindingContext.IS_INITIALIZED, propertyDescriptor)) {
                 if (classDescriptor == null || (getter != null && getter.getBodyExpression() != null) || (setter != null && setter.getBodyExpression() != null)) {
                     trace.getErrorHandler().genericError(nameNode, "Property must be initialized");
-                } else if (!classDescriptor.getModifiers().isTrait()) {
+                } else if (classDescriptor.getKind() != ClassKind.TRAIT) {
                     trace.getErrorHandler().genericError(nameNode, "Property must be initialized or be abstract");
                 }
             }
@@ -1030,9 +1030,9 @@ public class TopDownAnalyzer {
         boolean hasAbstractModifier = abstractNode != null;
         if (containingDescriptor instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) containingDescriptor;
-            boolean inTrait = classDescriptor.getModifiers().isTrait();
-            boolean inEnum = classDescriptor.getModifiers().isEnum();
-            boolean inAbstractClass = classDescriptor.getModifiers().isAbstract();
+            boolean inTrait = classDescriptor.getKind() == ClassKind.TRAIT;
+            boolean inEnum = classDescriptor.getKind() == ClassKind.ENUM_CLASS;
+            boolean inAbstractClass = classDescriptor.getModality() == Modality.ABSTRACT;
             if (hasAbstractModifier && !inAbstractClass && !inTrait && !inEnum) {
                 trace.getErrorHandler().genericError(abstractNode, "Abstract method " + function.getName() + " in non-abstract class " + classDescriptor.getName());
             }

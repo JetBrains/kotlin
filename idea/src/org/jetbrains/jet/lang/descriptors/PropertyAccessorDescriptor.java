@@ -14,17 +14,17 @@ public abstract class PropertyAccessorDescriptor extends DeclarationDescriptorIm
 
     private final boolean hasBody;
     private final boolean isDefault;
-    private final MemberModifiers modifiers;
+    private final Modality modality;
 
     protected PropertyAccessorDescriptor(
-            @NotNull MemberModifiers modifiers,
+            @NotNull Modality modality,
             @NotNull PropertyDescriptor correspondingProperty,
             @NotNull List<AnnotationDescriptor> annotations,
             @NotNull String name,
             boolean hasBody,
             boolean isDefault) {
         super(correspondingProperty.getContainingDeclaration(), annotations, name);
-        this.modifiers = modifiers;
+        this.modality = modality;
         this.hasBody = hasBody;
         this.isDefault = isDefault;
     }
@@ -57,7 +57,7 @@ public abstract class PropertyAccessorDescriptor extends DeclarationDescriptorIm
 
     @NotNull
     @Override
-    public MemberModifiers getModifiers() {
-        return modifiers;
+    public Modality getModality() {
+        return modality;
     }
 }

@@ -141,7 +141,8 @@ public class ClassDescriptorResolver {
             index++;
         }
         descriptor.setTypeParameterDescriptors(typeParameters);
-        descriptor.setClassModifiers(resolveClassModifiers(classElement.getModifierList()));
+        Modality defaultModality = descriptor.getKind() == ClassKind.TRAIT ? Modality.ABSTRACT : Modality.FINAL;
+        descriptor.setModality(resolveModalityFromModifiers(classElement.getModifierList(), defaultModality));
 
         trace.record(BindingContext.CLASS, classElement, descriptor);
     }
@@ -221,21 +222,21 @@ public class ClassDescriptorResolver {
                 returnType = ErrorUtils.createErrorType("No type, no body");
             }
         }
-        MemberModifiers defaultModifiers;
+        Modality defaultModality;
         if (containingDescriptor instanceof ClassDescriptor) {
-            boolean isDefinitelyAbstract = ((ClassDescriptor) containingDescriptor).getModifiers().isTrait() && function.getBodyExpression() == null;
-            defaultModifiers = new MemberModifiers(isDefinitelyAbstract, isDefinitelyAbstract, false);
+            boolean isDefinitelyAbstract = ((ClassDescriptor) containingDescriptor).getKind() == ClassKind.TRAIT && function.getBodyExpression() == null;
+            defaultModality = isDefinitelyAbstract ? Modality.ABSTRACT : Modality.FINAL;
         } else {
-            defaultModifiers = MemberModifiers.DEFAULT_MODIFIERS;
+            defaultModality = Modality.FINAL;
         }
-        MemberModifiers memberModifiers = resolveMemberModifiers(function.getModifierList(), defaultModifiers);
+        Modality modality = resolveModalityFromModifiers(function.getModifierList(), defaultModality);
 
         functionDescriptor.initialize(
                 receiverType,
                 typeParameterDescriptors,
                 valueParameterDescriptors,
                 returnType,
-                memberModifiers);
+                modality);
 
         trace.record(BindingContext.FUNCTION, function, functionDescriptor);
         return functionDescriptor;
@@ -468,7 +469,7 @@ public class ClassDescriptorResolver {
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                 containingDeclaration,
                 annotationResolver.createAnnotationStubs(modifierList),
-                resolveMemberModifiers(modifierList), // TODO : default modifiers differ in different contexts
+                resolveModalityFromModifiers(modifierList), // TODO : default modifiers differ in different contexts
                 false,
                 null,
                 JetPsiUtil.safeName(objectDeclaration.getName()),
@@ -518,7 +519,7 @@ public class ClassDescriptorResolver {
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                 containingDeclaration,
                 annotationResolver.resolveAnnotations(scope, modifierList),
-                resolveMemberModifiers(modifierList), // TODO : default modifiers differ in different contexts
+                resolveModalityFromModifiers(modifierList), // TODO : default modifiers differ in different contexts
                 isVar,
                 receiverType,
                 JetPsiUtil.safeName(property.getName()),
@@ -564,39 +565,30 @@ public class ClassDescriptorResolver {
             return typeResolver.resolveType(scope, propertyTypeRef);
         }
     }
-    
-    private static ClassModifiers resolveClassModifiers(@Nullable JetModifierList modifierList) {
-        if (modifierList == null) return ClassModifiers.DEFAULT_MODIFIERS;
-        boolean abstractModifier = modifierList.hasModifier(JetTokens.ABSTRACT_KEYWORD);
-        boolean traitModifier = modifierList.hasModifier(JetTokens.TRAIT_KEYWORD);
-        boolean enumModifier = modifierList.hasModifier(JetTokens.ENUM_KEYWORD);
-        boolean openModifier = modifierList.hasModifier(JetTokens.OPEN_KEYWORD);
-        return new ClassModifiers(
-                abstractModifier || traitModifier,
-                openModifier || abstractModifier || traitModifier,
-                traitModifier,
-                enumModifier
-        );
-    }
-    
+
     @NotNull
-    private MemberModifiers resolveMemberModifiers(@Nullable JetModifierList modifierList, @NotNull MemberModifiers defaultModifiers) {
-        if (modifierList == null) return defaultModifiers;
-        boolean abstractModifier = modifierList.hasModifier(JetTokens.ABSTRACT_KEYWORD);
-        boolean virtualModifier = modifierList.hasModifier(JetTokens.VIRTUAL_KEYWORD);
-        boolean overrideModifier = modifierList.hasModifier(JetTokens.OVERRIDE_KEYWORD);
-        return new MemberModifiers(
-                abstractModifier || defaultModifiers.isAbstract(),
-                virtualModifier || abstractModifier || overrideModifier || defaultModifiers.isVirtual(),
-                overrideModifier || defaultModifiers.isOverride()
-        );
-    }
-    
-    @NotNull
-    private MemberModifiers resolveMemberModifiers(@Nullable JetModifierList modifierList) {
-        return resolveMemberModifiers(modifierList, MemberModifiers.DEFAULT_MODIFIERS);
+    private Modality resolveModalityFromModifiers(@Nullable JetModifierList modifierList) {
+        return resolveModalityFromModifiers(modifierList, Modality.FINAL);
     }
 
+    @NotNull
+    private Modality resolveModalityFromModifiers(@Nullable JetModifierList modifierList, @NotNull Modality defaultModality) {
+        if (modifierList == null) return defaultModality;
+        if (modifierList.hasModifier(JetTokens.ABSTRACT_KEYWORD)) {
+            return Modality.ABSTRACT;
+        }
+        if (modifierList.hasModifier(JetTokens.OPEN_KEYWORD)) {
+            return Modality.OPEN;
+        }
+        if (modifierList.hasModifier(JetTokens.OVERRIDE_KEYWORD)) {
+            return Modality.OPEN;
+        }
+        if (modifierList.hasModifier(JetTokens.FINAL_KEYWORD)) {
+            return Modality.FINAL;
+        }
+        return defaultModality;
+    }
+    
     @Nullable
     private PropertySetterDescriptor resolvePropertySetterDescriptor(@NotNull JetScope scope, @NotNull JetProperty property, @NotNull PropertyDescriptor propertyDescriptor) {
         JetPropertyAccessor setter = property.getSetter();
@@ -606,7 +598,7 @@ public class ClassDescriptorResolver {
             JetParameter parameter = setter.getParameter();
 
             setterDescriptor = new PropertySetterDescriptor(
-                    resolveMemberModifiers(setter.getModifierList()), // TODO : default modifiers differ in different contexts
+                    resolveModalityFromModifiers(setter.getModifierList()), // TODO : default modifiers differ in different contexts
                     propertyDescriptor, annotations, setter.getBodyExpression() != null, false);
             if (parameter != null) {
                 if (parameter.isRef()) {
@@ -644,7 +636,7 @@ public class ClassDescriptorResolver {
         }
         else if (property.isVar()) {
             setterDescriptor = new PropertySetterDescriptor(
-                    propertyDescriptor.getModifiers(),
+                    propertyDescriptor.getModality(),
                     propertyDescriptor, Collections.<AnnotationDescriptor>emptyList(), false, true);
         }
 
@@ -670,13 +662,13 @@ public class ClassDescriptorResolver {
             }
 
             getterDescriptor = new PropertyGetterDescriptor(
-                    resolveMemberModifiers(getter.getModifierList()), // TODO : default modifiers differ in different contexts
+                    resolveModalityFromModifiers(getter.getModifierList()), // TODO : default modifiers differ in different contexts
                     propertyDescriptor, annotations, returnType, getter.getBodyExpression() != null, false);
             trace.record(BindingContext.PROPERTY_ACCESSOR, getter, getterDescriptor);
         }
         else {
             getterDescriptor = new PropertyGetterDescriptor(
-                    propertyDescriptor.getModifiers(),
+                    propertyDescriptor.getModality(),
                     propertyDescriptor, Collections.<AnnotationDescriptor>emptyList(), propertyDescriptor.getOutType(), false, true);
         }
         return getterDescriptor;
@@ -710,7 +702,7 @@ public class ClassDescriptorResolver {
                         constructorDescriptor,
                         new WritableScopeImpl(scope, classDescriptor, trace.getErrorHandler()).setDebugName("Scope with value parameters of a constructor"),
                         valueParameters),
-                        MemberModifiers.DEFAULT_MODIFIERS);
+                        Modality.FINAL);
     }
 
     @Nullable
@@ -745,7 +737,7 @@ public class ClassDescriptorResolver {
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                 classDescriptor,
                 annotationResolver.resolveAnnotations(scope, modifierList),
-                resolveMemberModifiers(modifierList),
+                resolveModalityFromModifiers(modifierList),
                 isMutable,
                 null,
                 name == null ? "<no name>" : name,

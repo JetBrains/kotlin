@@ -196,7 +196,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         final ClassDescriptor outerDescriptor = getOuterClassDescriptor();
-        if (outerDescriptor != null && !outerDescriptor.isObject()) {
+        if (outerDescriptor != null && outerDescriptor.getKind() != ClassKind.OBJECT) {
             final Type type = JetTypeMapper.jetImplementationType(outerDescriptor);
             String interfaceDesc = type.getDescriptor();
             final String fieldName = "this$0";

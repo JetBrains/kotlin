@@ -120,9 +120,10 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
         return null;
     }
 
+    @NotNull
     @Override
-    public boolean isObject() {
-        return false;
+    public ClassKind getKind() {
+        return ClassKind.CLASS;
     }
 
     @Override
@@ -147,7 +148,7 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
 
     @Override
     @NotNull
-    public ClassModifiers getModifiers() {
-        return ClassModifiers.DEFAULT_MODIFIERS;
+    public Modality getModality() {
+        return Modality.FINAL;
     }
 }

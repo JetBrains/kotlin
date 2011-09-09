@@ -23,7 +23,7 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
     private JetType unsubstitutedReturnType;
     private JetType receiverType;
 
-    private MemberModifiers modifiers;
+    private Modality modality;
     private final Set<FunctionDescriptor> overriddenFunctions = Sets.newLinkedHashSet();
     private final FunctionDescriptor original;
 
@@ -48,12 +48,12 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
             @NotNull List<TypeParameterDescriptor> typeParameters,
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
             @Nullable JetType unsubstitutedReturnType,
-            @Nullable MemberModifiers modifiers) {
+            @Nullable Modality modality) {
         this.receiverType = receiverType;
         this.typeParameters = typeParameters;
         this.unsubstitutedValueParameters = unsubstitutedValueParameters;
         this.unsubstitutedReturnType = unsubstitutedReturnType;
-        this.modifiers = modifiers;
+        this.modality = modality;
         return this;
     }
 
@@ -74,8 +74,8 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
 
     @NotNull
     @Override
-    public MemberModifiers getModifiers() {
-        return modifiers;
+    public Modality getModality() {
+        return modality;
     }
 
     public void addOverriddenFunction(@NotNull FunctionDescriptor overriddenFunction) {
@@ -140,7 +140,7 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
                 substitutedTypeParameters,
                 substitutedValueParameters,
                 substitutedReturnType,
-                modifiers
+                modality
         );
         return substitutedDescriptor;
     }

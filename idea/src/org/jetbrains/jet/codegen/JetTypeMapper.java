@@ -204,7 +204,7 @@ public class JetTypeMapper {
     }
 
     private static String jetJvmName(ClassDescriptor jetClass, OwnerKind kind) {
-        if (jetClass.isObject()) {
+        if (jetClass.getKind() == ClassKind.OBJECT) {
             return jvmNameForImplementation(jetClass);
         }
         if (kind == OwnerKind.INTERFACE) {
@@ -272,7 +272,7 @@ public class JetTypeMapper {
             if (kind instanceof OwnerKind.DelegateKind) {
                 kind = OwnerKind.INTERFACE;
             }
-            else if (classDescriptor.isObject()) {
+            else if (classDescriptor.getKind() == ClassKind.OBJECT) {
                 kind = OwnerKind.IMPLEMENTATION;
             }
             owner = jvmName(classDescriptor, kind);

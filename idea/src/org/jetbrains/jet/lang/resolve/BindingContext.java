@@ -47,7 +47,7 @@ public interface BindingContext {
                 return jetParameter.getValOrVarNode() != null ||
                        backingFieldRequired;
             }
-            if (propertyDescriptor.getModifiers().isAbstract()) return false;
+            if (propertyDescriptor.getModality() == Modality.ABSTRACT) return false;
             PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
             PropertySetterDescriptor setter = propertyDescriptor.getSetter();
             if (getter == null) {
@@ -56,10 +56,10 @@ public interface BindingContext {
             else if (propertyDescriptor.isVar() && setter == null) {
                 return true;
             }
-            else if (setter != null && !setter.hasBody() && !setter.getModifiers().isAbstract()) {
+            else if (setter != null && !setter.hasBody() && setter.getModality() != Modality.ABSTRACT) {
                 return true;
             }
-            else if (!getter.hasBody() && !getter.getModifiers().isAbstract()) {
+            else if (!getter.hasBody() && getter.getModality() != Modality.ABSTRACT) {
                 return true;
             }
             return backingFieldRequired;

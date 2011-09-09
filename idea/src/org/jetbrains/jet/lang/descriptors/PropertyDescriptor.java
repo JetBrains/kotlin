@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class PropertyDescriptor extends VariableDescriptorImpl implements MemberDescriptor {
 
-    private final MemberModifiers memberModifiers;
+    private final Modality modality;
     private final boolean isVar;
     private final JetType receiverType;
     private final List<TypeParameterDescriptor> typeParemeters = Lists.newArrayListWithCapacity(0);
@@ -27,7 +27,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Member
             @Nullable PropertyDescriptor original,
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull List<AnnotationDescriptor> annotations,
-            @NotNull MemberModifiers memberModifiers,
+            @NotNull Modality modality,
             boolean isVar,
             @Nullable JetType receiverType,
             @NotNull String name,
@@ -37,7 +37,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Member
         assert !isVar || inType != null;
 //        assert outType != null;
         this.isVar = isVar;
-        this.memberModifiers = memberModifiers;
+        this.modality = modality;
         this.receiverType = receiverType;
         this.original = original == null ? this : original.getOriginal();
     }
@@ -45,13 +45,13 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Member
     public PropertyDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull List<AnnotationDescriptor> annotations,
-            @NotNull MemberModifiers memberModifiers,
+            @NotNull Modality modality,
             boolean isVar,
             @Nullable JetType receiverType,
             @NotNull String name,
             @Nullable JetType inType,
             @NotNull JetType outType) {
-        this(null, containingDeclaration, annotations, memberModifiers, isVar, receiverType, name, inType, outType);
+        this(null, containingDeclaration, annotations, modality, isVar, receiverType, name, inType, outType);
     }
 
     private PropertyDescriptor(
@@ -63,7 +63,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Member
                 original,
                 original.getContainingDeclaration(),
                 original.getAnnotations(), // TODO : substitute?
-                original.getModifiers(),
+                original.getModality(),
                 original.isVar,
                 receiverType,
                 original.getName(),
@@ -101,8 +101,8 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Member
 
     @NotNull
     @Override
-    public MemberModifiers getModifiers() {
-        return memberModifiers;
+    public Modality getModality() {
+        return modality;
     }
 
     @Nullable

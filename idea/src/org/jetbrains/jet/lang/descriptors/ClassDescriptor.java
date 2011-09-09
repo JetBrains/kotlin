@@ -48,8 +48,9 @@ public interface ClassDescriptor extends ClassifierDescriptor {
     @Nullable
     JetType getClassObjectType();
 
-    boolean isObject();
+    @NotNull
+    ClassKind getKind();
 
     @NotNull
-    ClassModifiers getModifiers();
+    Modality getModality();
 }

@@ -20,20 +20,22 @@ public class JavaClassDescriptor extends MutableDeclarationDescriptor implements
     private JavaClassMembersScope unsubstitutedMemberScope;
     private JetType classObjectType;
     private final WritableFunctionGroup constructors = new WritableFunctionGroup("<init>");
-    private ClassModifiers modifiers;
+    private Modality modality;
     private JetType superclassType;
+    private final ClassKind kind;
 
 
-    public JavaClassDescriptor(DeclarationDescriptor containingDeclaration) {
+    public JavaClassDescriptor(DeclarationDescriptor containingDeclaration, @NotNull ClassKind kind) {
         super(containingDeclaration);
+        this.kind = kind;
     }
 
     public void setTypeConstructor(TypeConstructor typeConstructor) {
         this.typeConstructor = typeConstructor;
     }
 
-    public void setModifiers(boolean isAbstract, boolean isOpen, boolean isTrait, boolean isEnum) {
-        this.modifiers = new ClassModifiers(isAbstract, isOpen, isTrait, isEnum);
+    public void setModality(Modality modality) {
+        this.modality = modality;
     }
 
     public void setUnsubstitutedMemberScope(JavaClassMembersScope memberScope) {
@@ -132,15 +134,16 @@ public class JavaClassDescriptor extends MutableDeclarationDescriptor implements
         return false;
     }
 
+    @NotNull
     @Override
-    public boolean isObject() {
-        return false;
+    public ClassKind getKind() {
+        return kind;
     }
 
     @Override
     @NotNull
-    public ClassModifiers getModifiers() {
-        return modifiers;
+    public Modality getModality() {
+        return modality;
     }
 
     @Override

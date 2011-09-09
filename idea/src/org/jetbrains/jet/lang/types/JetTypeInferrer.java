@@ -932,7 +932,7 @@ public class JetTypeInferrer {
             else {
                 effectiveReceiverType = receiverType;
             }
-            functionDescriptor.initialize(effectiveReceiverType, Collections.<TypeParameterDescriptor>emptyList(), valueParameterDescriptors, null, MemberModifiers.DEFAULT_MODIFIERS);
+            functionDescriptor.initialize(effectiveReceiverType, Collections.<TypeParameterDescriptor>emptyList(), valueParameterDescriptors, null, Modality.FINAL);
             context.trace.record(BindingContext.FUNCTION, expression, functionDescriptor);
 
             JetType returnType = NO_EXPECTED_TYPE;

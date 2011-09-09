@@ -90,7 +90,7 @@ public class JavaDescriptorResolver {
 
         String name = psiClass.getName();
         JavaClassDescriptor classDescriptor = new JavaClassDescriptor(
-                JAVA_ROOT
+                JAVA_ROOT, psiClass.isInterface() ? ClassKind.TRAIT : ClassKind.CLASS
         );
         classDescriptor.setName(name);
 
@@ -106,11 +106,9 @@ public class JavaDescriptorResolver {
                 supertypes
 
         ));
-        classDescriptor.setModifiers(
-                psiClass.hasModifierProperty(PsiModifier.ABSTRACT),
-                !psiClass.hasModifierProperty(PsiModifier.FINAL),
-                psiClass.isInterface(),
-                psiClass.isEnum()
+        classDescriptor.setModality(Modality.convertFromFlags(
+                psiClass.hasModifierProperty(PsiModifier.ABSTRACT) || psiClass.isInterface(),
+                !psiClass.hasModifierProperty(PsiModifier.FINAL))
         );
         classDescriptorCache.put(psiClass.getQualifiedName(), classDescriptor);
         classDescriptor.setUnsubstitutedMemberScope(new JavaClassMembersScope(classDescriptor, psiClass, semanticServices, false));
@@ -137,7 +135,7 @@ public class JavaDescriptorResolver {
                         classDescriptor,
                         Collections.<AnnotationDescriptor>emptyList(),
                         false);
-                constructorDescriptor.initialize(typeParameters, Collections.<ValueParameterDescriptor>emptyList(), MemberModifiers.DEFAULT_MODIFIERS);
+                constructorDescriptor.initialize(typeParameters, Collections.<ValueParameterDescriptor>emptyList(), Modality.FINAL);
                 constructorDescriptor.setReturnType(classDescriptor.getDefaultType());
                 classDescriptor.addConstructor(constructorDescriptor);
                 semanticServices.getTrace().record(BindingContext.CONSTRUCTOR, psiClass, constructorDescriptor);
@@ -149,7 +147,7 @@ public class JavaDescriptorResolver {
                         classDescriptor,
                         Collections.<AnnotationDescriptor>emptyList(), // TODO
                         false);
-                constructorDescriptor.initialize(typeParameters, resolveParameterDescriptors(constructorDescriptor, constructor.getParameterList().getParameters()), MemberModifiers.DEFAULT_MODIFIERS);
+                constructorDescriptor.initialize(typeParameters, resolveParameterDescriptors(constructorDescriptor, constructor.getParameterList().getParameters()), Modality.FINAL);
                 constructorDescriptor.setReturnType(classDescriptor.getDefaultType());
                 classDescriptor.addConstructor(constructorDescriptor);
                 semanticServices.getTrace().record(BindingContext.CONSTRUCTOR, constructor, constructorDescriptor);
@@ -292,7 +290,7 @@ public class JavaDescriptorResolver {
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                 containingDeclaration,
                 Collections.<AnnotationDescriptor>emptyList(),
-                new MemberModifiers(false, false, false),
+                Modality.FINAL,
                 !isFinal,
                 null,
                 field.getName(),
@@ -361,7 +359,7 @@ public class JavaDescriptorResolver {
                 resolveTypeParameters(functionDescriptorImpl, method.getTypeParameters()),
                 semanticServices.getDescriptorResolver().resolveParameterDescriptors(functionDescriptorImpl, parameters),
                 semanticServices.getTypeTransformer().transformToType(returnType),
-                new MemberModifiers(method.hasModifierProperty(PsiModifier.ABSTRACT), !method.hasModifierProperty(PsiModifier.FINAL), false)
+                Modality.convertFromFlags(method.hasModifierProperty(PsiModifier.ABSTRACT), !method.hasModifierProperty(PsiModifier.FINAL))
         );
         semanticServices.getTrace().record(BindingContext.FUNCTION, method, functionDescriptorImpl);
         FunctionDescriptor substitutedFunctionDescriptor = functionDescriptorImpl;

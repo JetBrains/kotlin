@@ -144,15 +144,16 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
         return original.getClassObjectType();
     }
 
+    @NotNull
     @Override
-    public boolean isObject() {
-        return original.isObject();
+    public ClassKind getKind() {
+        return original.getKind();
     }
 
     @Override
     @NotNull
-    public ClassModifiers getModifiers() {
-        return original.getModifiers();
+    public Modality getModality() {
+        return original.getModality();
     }
 
     @Override

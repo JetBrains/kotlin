@@ -111,7 +111,7 @@ public class ErrorUtils {
     private static final VariableDescriptor ERROR_PROPERTY = new PropertyDescriptor(
             ERROR_CLASS,
             Collections.<AnnotationDescriptor>emptyList(),
-            new MemberModifiers(false, false, false),
+            Modality.OPEN,
             true,
             null,
             "<ERROR PROPERTY>",
@@ -124,7 +124,7 @@ public class ErrorUtils {
                 typeParameters,
                 getValueParameters(functionDescriptor, positionedValueArgumentTypes),
                 createErrorType("<ERROR FUNCTION RETURN>"),
-                MemberModifiers.DEFAULT_MODIFIERS
+                Modality.OPEN
         );
     }
 
@@ -134,7 +134,7 @@ public class ErrorUtils {
                 Collections.<TypeParameterDescriptor>emptyList(), // TODO
                 Collections.<ValueParameterDescriptor>emptyList(), // TODO
                 createErrorType("<ERROR FUNCTION RETURN TYPE>"),
-                MemberModifiers.DEFAULT_MODIFIERS
+                Modality.OPEN
         );
     }
 

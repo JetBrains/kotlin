@@ -22,7 +22,7 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     private List<TypeParameterDescriptor> typeParameters = Lists.newArrayList();
     private Collection<JetType> supertypes = Lists.newArrayList();
 
-    private ClassModifiers classModifiers;
+    private Modality modality;
     private TypeConstructor typeConstructor;
     private final WritableScope scopeForMemberResolution;
     private final WritableScope scopeForMemberLookup;
@@ -31,19 +31,19 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     private MutableClassDescriptor classObjectDescriptor;
     private JetType classObjectType;
     private JetType defaultType;
-    private final boolean isObject;
+    private final ClassKind kind;
     private JetType superclassType;
 
     public MutableClassDescriptor(@NotNull BindingTrace trace, @NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope outerScope) {
-        this(trace, containingDeclaration, outerScope, false);
+        this(trace, containingDeclaration, outerScope, ClassKind.CLASS);
     }
 
-    public MutableClassDescriptor(@NotNull BindingTrace trace, @NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope outerScope, boolean isObject) {
+    public MutableClassDescriptor(@NotNull BindingTrace trace, @NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope outerScope, ClassKind kind) {
         super(containingDeclaration);
         this.scopeForMemberLookup = new WritableScopeImpl(JetScope.EMPTY, this, trace.getErrorHandler()).setDebugName("MemberLookup");
         this.scopeForSupertypeResolution = new WritableScopeImpl(outerScope, this, trace.getErrorHandler()).setDebugName("SupertypeResolution");
         this.scopeForMemberResolution = new WritableScopeImpl(new ChainedScope(this, scopeForMemberLookup, scopeForSupertypeResolution), this, trace.getErrorHandler()).setDebugName("MemberResolution");
-        this.isObject = isObject;
+        this.kind = kind;
     }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -51,7 +51,7 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     @Override
     public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor) {
         if (this.classObjectDescriptor != null) return ClassObjectStatus.DUPLICATE;
-        assert classObjectDescriptor.isObject();
+        assert classObjectDescriptor.getKind() == ClassKind.OBJECT;
         this.classObjectDescriptor = classObjectDescriptor;
         return ClassObjectStatus.OK;
     }
@@ -153,7 +153,7 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
         this.typeConstructor = new TypeConstructorImpl(
                 this,
                 Collections.<AnnotationDescriptor>emptyList(), // TODO : pass annotations from the class?
-                !classModifiers.isOpen(),
+                !modality.isOpen(),
                 getName(),
                 typeParameters,
                 supertypes);
@@ -244,9 +244,10 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
         return !constructors.isEmpty();
     }
 
+    @NotNull
     @Override
-    public boolean isObject() {
-        return isObject;
+    public ClassKind getKind() {
+        return kind;
     }
 
     @NotNull
@@ -260,14 +261,14 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     }
 
 
-    public void setClassModifiers(ClassModifiers classModifiers) {
-        this.classModifiers = classModifiers;
+    public void setModality(Modality modality) {
+        this.modality = modality;
     }
 
     @Override
     @NotNull
-    public ClassModifiers getModifiers() {
-        return classModifiers;
+    public Modality getModality() {
+        return modality;
     }
 
     @Override

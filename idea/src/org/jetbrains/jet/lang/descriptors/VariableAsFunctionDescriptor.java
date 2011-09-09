@@ -16,7 +16,7 @@ public class VariableAsFunctionDescriptor extends FunctionDescriptorImpl {
         assert outType != null;
         assert JetStandardClasses.isFunctionType(outType);
         VariableAsFunctionDescriptor result = new VariableAsFunctionDescriptor(variableDescriptor);
-        result.initialize(JetStandardClasses.getReceiverType(outType), Collections.<TypeParameterDescriptor>emptyList(), JetStandardClasses.getValueParameters(result, outType), JetStandardClasses.getReturnType(outType), MemberModifiers.DEFAULT_MODIFIERS);
+        result.initialize(JetStandardClasses.getReceiverType(outType), Collections.<TypeParameterDescriptor>emptyList(), JetStandardClasses.getValueParameters(result, outType), JetStandardClasses.getReturnType(outType), Modality.FINAL);
         return result;
     }
 
