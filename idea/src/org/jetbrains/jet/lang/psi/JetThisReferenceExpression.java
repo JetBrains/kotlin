@@ -1,9 +1,9 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.PsiReferenceService;
+import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -14,19 +14,10 @@ public class JetThisReferenceExpression extends JetReferenceExpression {
         super(node);
     }
 
+    @NotNull
     @Override
-    public PsiReference getReference() {
-        return new JetPsiReference() {
-
-            @Override
-            public PsiElement getElement() {
-                return JetThisReferenceExpression.this;
-            }
-
-            @Override
-            public TextRange getRangeInElement() {
-                return new TextRange(0, getElement().getTextLength());
-            }
-        };
+    public PsiReference[] getReferences() {
+        return ReferenceProvidersRegistry.getReferencesFromProviders(this, PsiReferenceService.Hints.NO_HINTS);
     }
+
 }
