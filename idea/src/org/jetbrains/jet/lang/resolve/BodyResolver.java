@@ -32,14 +32,14 @@ public class BodyResolver {
     private final BindingTraceAdapter traceForConstructors;
     private final BindingTraceAdapter traceForMembers;
     private final DeclarationResolver declarationResolver;
-    private final TypeHierarchyResolver typeHierarchyResolver;
+    private final TopDownAnalysisContext context;
 
-    public BodyResolver(JetSemanticServices semanticServices, @NotNull BindingTrace trace, TypeHierarchyResolver typeHierarchyResolver, DeclarationResolver declarationResolver) {
+    public BodyResolver(JetSemanticServices semanticServices, @NotNull BindingTrace trace, TopDownAnalysisContext context, DeclarationResolver declarationResolver) {
         this.semanticServices = semanticServices;
         this.classDescriptorResolver = semanticServices.getClassDescriptorResolver(trace);
         this.trace = trace;
         this.declarationResolver = declarationResolver;
-        this.typeHierarchyResolver = typeHierarchyResolver;
+        this.context = context;
 
         // This allows access to backing fields
         this.traceForConstructors = new BindingTraceAdapter(trace).addHandler(BindingContext.REFERENCE_TARGET, new BindingTraceAdapter.RecordHandler<JetReferenceExpression, DeclarationDescriptor>() {
@@ -88,10 +88,10 @@ public class BodyResolver {
     }
 
     private void bindOverrides() {
-        for (Map.Entry<JetClass, MutableClassDescriptor> entry : typeHierarchyResolver.getClasses().entrySet()) {
+        for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
             bindOverridesInAClass(entry.getValue());
         }
-        for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : typeHierarchyResolver.getObjects().entrySet()) {
+        for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : context.getObjects().entrySet()) {
             bindOverridesInAClass(entry.getValue());
         }
     }
@@ -140,7 +140,7 @@ public class BodyResolver {
     }
 
     private void checkIfPrimaryConstructorIsNecessary() {
-        for (Map.Entry<JetClass, MutableClassDescriptor> entry : typeHierarchyResolver.getClasses().entrySet()) {
+        for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
             MutableClassDescriptor classDescriptor = entry.getValue();
             JetClass jetClass = entry.getKey();
             if (classDescriptor.getUnsubstitutedPrimaryConstructor() == null) {
@@ -160,10 +160,10 @@ public class BodyResolver {
 
     private void resolveDelegationSpecifierLists() {
         // TODO : Make sure the same thing is not initialized twice
-        for (Map.Entry<JetClass, MutableClassDescriptor> entry : typeHierarchyResolver.getClasses().entrySet()) {
+        for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
             resolveDelegationSpecifierList(entry.getKey(), entry.getValue());
         }
-        for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : typeHierarchyResolver.getObjects().entrySet()) {
+        for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : context.getObjects().entrySet()) {
             resolveDelegationSpecifierList(entry.getKey(), entry.getValue());
         }
     }
@@ -316,10 +316,10 @@ public class BodyResolver {
     }
 
     private void resolveAnonymousInitializers() {
-        for (Map.Entry<JetClass, MutableClassDescriptor> entry : typeHierarchyResolver.getClasses().entrySet()) {
+        for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
             resolveAnonymousInitializers(entry.getKey(), entry.getValue());
         }
-        for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : typeHierarchyResolver.getObjects().entrySet()) {
+        for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : context.getObjects().entrySet()) {
             resolveAnonymousInitializers(entry.getKey(), entry.getValue());
         }
     }
@@ -450,7 +450,7 @@ public class BodyResolver {
 
         // Member properties
         Set<JetProperty> processed = Sets.newHashSet();
-        for (Map.Entry<JetClass, MutableClassDescriptor> entry : typeHierarchyResolver.getClasses().entrySet()) {
+        for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
             JetClass jetClass = entry.getKey();
             MutableClassDescriptor classDescriptor = entry.getValue();
 

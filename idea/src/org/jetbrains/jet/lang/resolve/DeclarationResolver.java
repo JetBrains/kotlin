@@ -20,8 +20,8 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.ANNOTATION;
 public class DeclarationResolver {
     private final BindingTrace trace;
     private final AnnotationResolver annotationResolver;
-    private final TypeHierarchyResolver typeHierarchyResolver;
     private final ClassDescriptorResolver classDescriptorResolver;
+    private final TopDownAnalysisContext context;
 
     private final Map<JetNamedFunction, FunctionDescriptorImpl> functions = Maps.newLinkedHashMap();
     private final Map<JetDeclaration, ConstructorDescriptor> constructors = Maps.newLinkedHashMap();
@@ -29,9 +29,9 @@ public class DeclarationResolver {
     private final Set<PropertyDescriptor> primaryConstructorParameterProperties = Sets.newHashSet();
     private final Map<JetDeclaration, JetScope> declaringScopes = Maps.newHashMap();
 
-    public DeclarationResolver(JetSemanticServices semanticServices, BindingTrace trace, TypeHierarchyResolver typeHierarchyResolver) {
+    public DeclarationResolver(JetSemanticServices semanticServices, BindingTrace trace, TopDownAnalysisContext context) {
         this.trace = trace;
-        this.typeHierarchyResolver = typeHierarchyResolver;
+        this.context = context;
         this.annotationResolver = new AnnotationResolver(semanticServices, trace);
         this.classDescriptorResolver = semanticServices.getClassDescriptorResolver(trace);
     }
@@ -43,7 +43,7 @@ public class DeclarationResolver {
     }
 
     private void resolveConstructorHeaders() {
-        for (Map.Entry<JetClass, MutableClassDescriptor> entry : typeHierarchyResolver.getClasses().entrySet()) {
+        for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
             JetClass jetClass = entry.getKey();
             MutableClassDescriptor classDescriptor = entry.getValue();
 
@@ -55,7 +55,7 @@ public class DeclarationResolver {
     }
 
     private void resolveAnnotationStubsOnClassesAndConstructors() {
-        for (Map.Entry<JetClass, MutableClassDescriptor> entry : typeHierarchyResolver.getClasses().entrySet()) {
+        for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
             JetClass jetClass = entry.getKey();
             MutableClassDescriptor mutableClassDescriptor = entry.getValue();
 
@@ -73,14 +73,14 @@ public class DeclarationResolver {
     }
 
     private void resolveFunctionAndPropertyHeaders() {
-        for (Map.Entry<JetNamespace, WritableScope> entry : typeHierarchyResolver.getNamespaceScopes().entrySet()) {
+        for (Map.Entry<JetNamespace, WritableScope> entry : context.getNamespaceScopes().entrySet()) {
             JetNamespace namespace = entry.getKey();
             WritableScope namespaceScope = entry.getValue();
-            NamespaceLike namespaceDescriptor = typeHierarchyResolver.getNamespaceDescriptors().get(namespace);
+            NamespaceLike namespaceDescriptor = context.getNamespaceDescriptors().get(namespace);
 
             resolveFunctionAndPropertyHeaders(namespace.getDeclarations(), namespaceScope, namespaceDescriptor);
         }
-        for (Map.Entry<JetClass, MutableClassDescriptor> entry : typeHierarchyResolver.getClasses().entrySet()) {
+        for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
             JetClass jetClass = entry.getKey();
             MutableClassDescriptor classDescriptor = entry.getValue();
 
@@ -90,7 +90,7 @@ public class DeclarationResolver {
 //                processSecondaryConstructor(classDescriptor, jetConstructor);
 //            }
         }
-        for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : typeHierarchyResolver.getObjects().entrySet()) {
+        for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : context.getObjects().entrySet()) {
             JetObjectDeclaration object = entry.getKey();
             MutableClassDescriptor classDescriptor = entry.getValue();
 
@@ -121,14 +121,14 @@ public class DeclarationResolver {
 
                 @Override
                 public void visitObjectDeclaration(JetObjectDeclaration declaration) {
-                    PropertyDescriptor propertyDescriptor = classDescriptorResolver.resolveObjectDeclarationAsPropertyDescriptor(namespaceLike, declaration, typeHierarchyResolver.getObjects().get(declaration));
+                    PropertyDescriptor propertyDescriptor = classDescriptorResolver.resolveObjectDeclarationAsPropertyDescriptor(namespaceLike, declaration, context.getObjects().get(declaration));
                     namespaceLike.addPropertyDescriptor(propertyDescriptor);
                 }
 
                 @Override
                 public void visitEnumEntry(JetEnumEntry enumEntry) {
                     if (enumEntry.getPrimaryConstructorParameterList() == null) {
-                        PropertyDescriptor propertyDescriptor = classDescriptorResolver.resolveObjectDeclarationAsPropertyDescriptor(namespaceLike, enumEntry, typeHierarchyResolver.getClasses().get(enumEntry));
+                        PropertyDescriptor propertyDescriptor = classDescriptorResolver.resolveObjectDeclarationAsPropertyDescriptor(namespaceLike, enumEntry, context.getClasses().get(enumEntry));
                         MutableClassDescriptor classObjectDescriptor = ((MutableClassDescriptor) namespaceLike).getClassObjectDescriptor();
                         assert classObjectDescriptor != null;
                         classObjectDescriptor.addPropertyDescriptor(propertyDescriptor);

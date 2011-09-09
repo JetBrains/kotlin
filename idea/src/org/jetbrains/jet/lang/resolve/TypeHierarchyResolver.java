@@ -1,6 +1,5 @@
 package org.jetbrains.jet.lang.resolve;
 
-import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
@@ -25,45 +24,38 @@ public class TypeHierarchyResolver {
     private final JetSemanticServices semanticServices;
     private final ClassDescriptorResolver classDescriptorResolver;
 
-    private final Map<JetClass, MutableClassDescriptor> classes = Maps.newLinkedHashMap();
-    private final Map<JetObjectDeclaration, MutableClassDescriptor> objects = Maps.newLinkedHashMap();
-    protected final Map<JetNamespace, WritableScope> namespaceScopes = Maps.newHashMap();
-    protected final Map<JetNamespace, NamespaceDescriptorImpl> namespaceDescriptors = Maps.newHashMap();
-
     public TypeHierarchyResolver(JetSemanticServices semanticServices, BindingTrace trace) {
         this.trace = trace;
         this.semanticServices = semanticServices;
         this.classDescriptorResolver = semanticServices.getClassDescriptorResolver(trace);
     }
 
-    public Map<JetClass, MutableClassDescriptor> getClasses() {
-        return classes;
+    public TopDownAnalysisContext process(@NotNull JetScope outerScope, NamespaceLike owner, @NotNull List<JetDeclaration> declarations) {
+        TopDownAnalysisContext context = new TopDownAnalysisContext();
+        return doProcess(outerScope, owner, declarations, context);
     }
 
-    public Map<JetObjectDeclaration, MutableClassDescriptor> getObjects() {
-        return objects;
+    public TopDownAnalysisContext processStandardLibraryNamespace(@NotNull JetScope outerScope, @NotNull NamespaceDescriptorImpl standardLibraryNamespace, @NotNull JetNamespace namespace) {
+        TopDownAnalysisContext context = new TopDownAnalysisContext();
+        context.getNamespaceScopes().put(namespace, standardLibraryNamespace.getMemberScope());
+        context.getNamespaceDescriptors().put(namespace, standardLibraryNamespace);
+        return doProcess(outerScope, standardLibraryNamespace, namespace.getDeclarations(), context);
     }
 
-    public Map<JetNamespace, WritableScope> getNamespaceScopes() {
-        return namespaceScopes;
-    }
+    private TopDownAnalysisContext doProcess(JetScope outerScope, NamespaceLike owner, List<JetDeclaration> declarations, TopDownAnalysisContext context) {
+        collectNamespacesAndClassifiers(outerScope, owner, declarations, context); // namespaceScopes, classes
 
-    public Map<JetNamespace, NamespaceDescriptorImpl> getNamespaceDescriptors() {
-        return namespaceDescriptors;
-    }
-
-    public void process(@NotNull JetScope outerScope, NamespaceLike owner, @NotNull List<JetDeclaration> declarations) {
-        collectNamespacesAndClassifiers(outerScope, owner, declarations); // namespaceScopes, classes
-
-        createTypeConstructors(); // create type constructors for classes and generic parameters
-        resolveTypesInClassHeaders(); // Generic bounds and types in supertype lists (no expressions or constructor resolution)
-        checkTypesInClassHeaders(); // Generic bounds and supertype lists
+        createTypeConstructors(context); // create type constructors for classes and generic parameters
+        resolveTypesInClassHeaders(context); // Generic bounds and types in supertype lists (no expressions or constructor resolution)
+        checkTypesInClassHeaders(context); // Generic bounds and supertype lists
+        return context;
     }
 
     private void collectNamespacesAndClassifiers(
             @NotNull final JetScope outerScope,
             @NotNull final NamespaceLike owner,
-            @NotNull Collection<JetDeclaration> declarations) {
+            @NotNull Collection<JetDeclaration> declarations,
+            @NotNull final TopDownAnalysisContext context) {
         for (JetDeclaration declaration : declarations) {
             declaration.accept(new JetVisitorVoid() {
                 @Override
@@ -84,14 +76,14 @@ public class TypeHierarchyResolver {
                         owner.addNamespace(namespaceDescriptor);
                         trace.record(BindingContext.NAMESPACE, namespace, namespaceDescriptor);
                     }
-                    namespaceDescriptors.put(namespace, namespaceDescriptor);
+                    context.getNamespaceDescriptors().put(namespace, namespaceDescriptor);
 
                     WriteThroughScope namespaceScope = new WriteThroughScope(outerScope, namespaceDescriptor.getMemberScope(), trace.getErrorHandler());
-                    namespaceScopes.put(namespace, namespaceScope);
+                    context.getNamespaceScopes().put(namespace, namespaceScope);
 
                     processImports(namespace, namespaceScope, outerScope);
 
-                    collectNamespacesAndClassifiers(namespaceScope, namespaceDescriptor, namespace.getDeclarations());
+                    collectNamespacesAndClassifiers(namespaceScope, namespaceDescriptor, namespace.getDeclarations(), context);
                 }
 
                 @Override
@@ -108,7 +100,7 @@ public class TypeHierarchyResolver {
                     }
                     visitClassOrObject(
                             klass,
-                            (Map) classes,
+                            (Map) context.getClasses(),
                             owner,
                             outerScope,
                             mutableClassDescriptor);
@@ -126,14 +118,14 @@ public class TypeHierarchyResolver {
                     assert classObjectDescriptor != null : enumEntry.getParent().getText();
                     if (enumEntry.getPrimaryConstructorParameterList() == null) {
                         MutableClassDescriptor classDescriptor = createClassDescriptorForObject(enumEntry, classObjectDescriptor);
-                        objects.remove(enumEntry);
-                        classes.put(enumEntry, classDescriptor);
+                        context.getObjects().remove(enumEntry);
+                        context.getClasses().put(enumEntry, classDescriptor);
                     }
                     else {
                         MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(trace, classObjectDescriptor, outerScope, ClassKind.CLASS); // TODO : Special kind for enum entry classes?
                         visitClassOrObject(
                                 enumEntry,
-                                (Map) classes,
+                                (Map) context.getClasses(),
                                 classObjectDescriptor,
                                 outerScope,
                                 mutableClassDescriptor);
@@ -148,7 +140,7 @@ public class TypeHierarchyResolver {
                             return ClassObjectStatus.NOT_ALLOWED;
                         }
                     };
-                    visitClassOrObject(declaration, (Map) objects, owner, outerScope, mutableClassDescriptor);
+                    visitClassOrObject(declaration, (Map) context.getObjects(), owner, outerScope, mutableClassDescriptor);
                     createPrimaryConstructor(mutableClassDescriptor);
                     trace.record(BindingContext.CLASS, declaration, mutableClassDescriptor);
                     return mutableClassDescriptor;
@@ -169,7 +161,7 @@ public class TypeHierarchyResolver {
 //                    declaringScopes.put((JetDeclaration) declaration, outerScope);
 
                     JetScope classScope = mutableClassDescriptor.getScopeForMemberResolution();
-                    collectNamespacesAndClassifiers(classScope, mutableClassDescriptor, declaration.getDeclarations());
+                    collectNamespacesAndClassifiers(classScope, mutableClassDescriptor, declaration.getDeclarations(), context);
                 }
 
                 @Override
@@ -259,36 +251,36 @@ public class TypeHierarchyResolver {
         }
     }
 
-    private void createTypeConstructors() {
-        for (Map.Entry<JetClass, MutableClassDescriptor> entry : classes.entrySet()) {
+    private void createTypeConstructors(TopDownAnalysisContext context) {
+        for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
             JetClass jetClass = entry.getKey();
             MutableClassDescriptor descriptor = entry.getValue();
             classDescriptorResolver.resolveMutableClassDescriptor(jetClass, descriptor);
             descriptor.createTypeConstructor();
         }
-        for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : objects.entrySet()) {
+        for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : context.getObjects().entrySet()) {
             MutableClassDescriptor descriptor = entry.getValue();
             descriptor.setModality(Modality.FINAL);
             descriptor.createTypeConstructor();
         }
     }
 
-    private void resolveTypesInClassHeaders() {
-        for (Map.Entry<JetClass, MutableClassDescriptor> entry : classes.entrySet()) {
+    private void resolveTypesInClassHeaders(TopDownAnalysisContext context) {
+        for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
             JetClass jetClass = entry.getKey();
             MutableClassDescriptor descriptor = entry.getValue();
             classDescriptorResolver.resolveGenericBounds(jetClass, descriptor.getScopeForSupertypeResolution(), descriptor.getTypeConstructor().getParameters());
             classDescriptorResolver.resolveSupertypes(jetClass, descriptor);
         }
-        for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : objects.entrySet()) {
+        for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : context.getObjects().entrySet()) {
             JetClassOrObject jetClass = entry.getKey();
             MutableClassDescriptor descriptor = entry.getValue();
             classDescriptorResolver.resolveSupertypes(jetClass, descriptor);
         }
     }
 
-    private void checkTypesInClassHeaders() {
-        for (Map.Entry<JetClass, MutableClassDescriptor> entry : classes.entrySet()) {
+    private void checkTypesInClassHeaders(TopDownAnalysisContext context) {
+        for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
             JetClass jetClass = entry.getKey();
 
             for (JetDelegationSpecifier delegationSpecifier : jetClass.getDelegationSpecifiers()) {
