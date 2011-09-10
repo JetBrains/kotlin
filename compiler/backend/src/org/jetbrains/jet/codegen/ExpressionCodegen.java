@@ -49,18 +49,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
     private int myLastLineNumber = -1;
 
-    private static final String[] PRIMITIVE_TYPE_INFO_FIELDS = {
-            null,
-            "BOOL_TYPE_INFO",
-            "CHAR_TYPE_INFO",
-            "BYTE_TYPE_INFO",
-            "SHORT_TYPE_INFO",
-            "INT_TYPE_INFO",
-            "FLOAT_TYPE_INFO",
-            "LONG_TYPE_INFO",
-            "DOUBLE_TYPE_INFO"
-    };
-
     private final InstructionAdapterEx v;
     private final FrameMap myMap;
     private final JetTypeMapper typeMapper;
@@ -1175,7 +1163,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         if(isIntRangeExpr(expression.getRight())) {
             JetBinaryExpression rangeExpression = (JetBinaryExpression) expression.getRight();
             boolean inverted = expression.getOperationReference().getReferencedNameElementType() == JetTokens.NOT_IN;
-            getInIntTest(leftValue, rangeExpression, inverted);
+            getInIntRange(leftValue, rangeExpression, inverted);
         }
         else {
             leftValue.put(JetTypeMapper.TYPE_OBJECT, v);
@@ -1187,7 +1175,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         return StackValue.onStack(Type.BOOLEAN_TYPE);
     }
 
-    private void getInIntTest(StackValue leftValue, JetBinaryExpression rangeExpression, boolean inverted) {
+    private void getInIntRange(StackValue leftValue, JetBinaryExpression rangeExpression, boolean inverted) {
         v.iconst(1);
         // 1
         leftValue.put(Type.INT_TYPE, v);
@@ -2065,7 +2053,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             JetWhenConditionInRange conditionInRange = (JetWhenConditionInRange) condition;
             JetExpression rangeExpression = conditionInRange.getRangeExpression();
             if(isIntRangeExpr(rangeExpression)) {
-                getInIntTest(new StackValue.Local(subjectLocal, subjectType), (JetBinaryExpression) rangeExpression, conditionInRange.getOperationReference().getReferencedNameElementType() == JetTokens.NOT_IN);
+                getInIntRange(new StackValue.Local(subjectLocal, subjectType), (JetBinaryExpression) rangeExpression, conditionInRange.getOperationReference().getReferencedNameElementType() == JetTokens.NOT_IN);
             }
             else {
                 FunctionDescriptor op = (FunctionDescriptor) bindingContext.get(BindingContext.REFERENCE_TARGET, conditionInRange.getOperationReference());
