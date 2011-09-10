@@ -3,7 +3,6 @@ package org.jetbrains.jet.codegen;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JavaClassDescriptor;
@@ -69,14 +68,14 @@ public class NamespaceCodegen {
             }
         }
 
-        if (hasNonConstantPropertyInitializers(namespace, context)) {
-            generateStaticInitializers(namespace, context);
+        if (hasNonConstantPropertyInitializers(namespace)) {
+            generateStaticInitializers(namespace);
         }
 
         generateTypeInfoFields(namespace, context);
     }
 
-    private void generateStaticInitializers(JetNamespace namespace, ClassContext context) {
+    private void generateStaticInitializers(JetNamespace namespace) {
         MethodVisitor mv = v.visitMethod(ACC_PUBLIC | ACC_STATIC,
                 "<clinit>", "()V", null, null);
         mv.visitCode();
@@ -88,7 +87,7 @@ public class NamespaceCodegen {
             if (declaration instanceof JetProperty) {
                 final JetExpression initializer = ((JetProperty) declaration).getInitializer();
                 if (initializer != null && !(initializer instanceof JetConstantExpression)) {
-                    final PropertyDescriptor descriptor = (PropertyDescriptor) state.getBindingContext().get(BindingContext.VARIABLE, (JetProperty) declaration);
+                    final PropertyDescriptor descriptor = (PropertyDescriptor) state.getBindingContext().get(BindingContext.VARIABLE, declaration);
                     codegen.genToJVMStack(initializer);
                     codegen.intermediateValueForProperty(descriptor, true, false).store(new InstructionAdapter(mv));
                 }
@@ -108,7 +107,7 @@ public class NamespaceCodegen {
                 v.visitField(ACC_PRIVATE|ACC_STATIC|ACC_SYNTHETIC, fieldName, "Ljet/typeinfo/TypeInfo;", null, null);
 
                 MethodVisitor mmv = v.visitMethod(ACC_PUBLIC|ACC_STATIC|ACC_SYNTHETIC, "$getCachedTypeInfo$" + e.getValue(), "()Ljet/typeinfo/TypeInfo;", null, null);
-                InstructionAdapterEx v = new InstructionAdapterEx(mmv);
+                InstructionAdapter v = new InstructionAdapter(mmv);
                 v.visitFieldInsn(GETSTATIC, jvmClassName, fieldName, "Ljet/typeinfo/TypeInfo;");
                 v.visitInsn(DUP);
                 Label end = new Label();
@@ -127,7 +126,7 @@ public class NamespaceCodegen {
         }
     }
 
-    private void generateTypeInfo(ClassContext context, InstructionAdapterEx v, JetType jetType, JetTypeMapper typeMapper, JetType root) {
+    private static void generateTypeInfo(ClassContext context, InstructionAdapter v, JetType jetType, JetTypeMapper typeMapper, JetType root) {
         String knownTypeInfo = typeMapper.isKnownTypeInfo(jetType);
         if(knownTypeInfo != null) {
             v.getstatic("jet/typeinfo/TypeInfo", knownTypeInfo, "Ljet/typeinfo/TypeInfo;");
@@ -172,7 +171,7 @@ public class NamespaceCodegen {
         }
     }
 
-    private static boolean hasNonConstantPropertyInitializers(JetNamespace namespace, ClassContext context) {
+    private static boolean hasNonConstantPropertyInitializers(JetNamespace namespace) {
         for (JetDeclaration declaration : namespace.getDeclarations()) {
             if (declaration instanceof JetProperty) {
                 final JetExpression initializer = ((JetProperty) declaration).getInitializer();

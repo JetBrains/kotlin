@@ -55,17 +55,18 @@ public class FunctionCodegen {
             mv.visitCode();
 
         Type[] argTypes = function.getArgumentTypes();
-        InstructionAdapterEx iv = new InstructionAdapterEx(mv);
+        InstructionAdapter iv = new InstructionAdapter(mv);
         iv.load(0, JetTypeMapper.TYPE_OBJECT);
         for (int i = 0, reg = 1; i < argTypes.length; i++) {
             Type argType = argTypes[i];
             iv.load(reg, argType);
+            //noinspection AssignmentToForLoopParameter
             reg += argType.getSize();
         }
 
         iv.invokevirtual(state.getTypeMapper().jvmName((ClassDescriptor) owner.getContextDescriptor(), OwnerKind.IMPLEMENTATION), function.getName(), function.getDescriptor());
         if(JetTypeMapper.isPrimitive(function.getReturnType()) && !JetTypeMapper.isPrimitive(overriden.getReturnType()))
-            iv.valueOf(function.getReturnType());
+            StackValue.valueOf(iv, function.getReturnType());
         if(function.getReturnType() == Type.VOID_TYPE)
             iv.aconst(null);
         iv.areturn(overriden.getReturnType());

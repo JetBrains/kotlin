@@ -173,6 +173,28 @@ public class JetTypeMapper {
         return result;
     }
 
+    public static Type getBoxedType(final Type type) {
+        switch (type.getSort()) {
+            case Type.BYTE:
+                return JL_BYTE_TYPE;
+            case Type.BOOLEAN:
+                return JL_BOOLEAN_TYPE;
+            case Type.SHORT:
+                return JL_SHORT_TYPE;
+            case Type.CHAR:
+                return JL_CHAR_TYPE;
+            case Type.INT:
+                return JL_INTEGER_TYPE;
+            case Type.FLOAT:
+                return JL_FLOAT_TYPE;
+            case Type.LONG:
+                return JL_LONG_TYPE;
+            case Type.DOUBLE:
+                return JL_DOUBLE_TYPE;
+        }
+        return type;
+    }
+
     public String jvmName(ClassDescriptor jetClass, OwnerKind kind) {
         PsiElement declaration = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, jetClass);
         if (declaration instanceof PsiClass) {

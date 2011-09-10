@@ -49,7 +49,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
     private int myLastLineNumber = -1;
 
-    private final InstructionAdapterEx v;
+    private final InstructionAdapter v;
     private final FrameMap myMap;
     private final JetTypeMapper typeMapper;
     private final GenerationState state;
@@ -68,7 +68,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         this.typeMapper = state.getTypeMapper();
         this.returnType = returnType;
         this.state = state;
-        this.v = new InstructionAdapterEx(v);
+        this.v = new InstructionAdapter(v);
         this.bindingContext = state.getBindingContext();
         this.context = context;
         this.intrinsics = state.getIntrinsics();
@@ -773,7 +773,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         return myMap.getIndex(descriptor);
     }
 
-    public void invokeFunctionNoParams(FunctionDescriptor functionDescriptor, Type type, InstructionAdapterEx v) {
+    public void invokeFunctionNoParams(FunctionDescriptor functionDescriptor, Type type, InstructionAdapter v) {
         DeclarationDescriptor containingDeclaration = functionDescriptor.getContainingDeclaration();
         boolean isStatic = containingDeclaration instanceof NamespaceDescriptorImpl;
         functionDescriptor = functionDescriptor.getOriginal();
@@ -1085,7 +1085,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         Type type = propValue.type;
         propValue.put(type, v);
         if(JetTypeMapper.isPrimitive(type) && !type.equals(Type.VOID_TYPE)) {
-            v.valueOf(type);
+            StackValue.valueOf(v, type);
             type = JetTypeMapper.boxType(type);
         }
         v.goTo(end);
@@ -1265,10 +1265,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
         if(JetTypeMapper.isPrimitive(leftType) != JetTypeMapper.isPrimitive(rightType)) {
             gen(left, leftType);
-            v.valueOf(leftType);
+            StackValue.valueOf(v, leftType);
             leftType = JetTypeMapper.boxType(leftType);
             gen(right, rightType);
-            v.valueOf(rightType);
+            StackValue.valueOf(v, rightType);
             rightType = JetTypeMapper.boxType(rightType);
         }
         else {
