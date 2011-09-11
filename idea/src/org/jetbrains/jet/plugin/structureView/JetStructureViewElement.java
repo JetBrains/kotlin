@@ -69,11 +69,6 @@ public class JetStructureViewElement implements StructureViewTreeElement {
                         ? PsiIconUtil.getProvidersIcon(myElement, open ? Iconable.ICON_FLAG_OPEN : Iconable.ICON_FLAG_CLOSED)
                         : null;
             }
-
-            @Override
-            public TextAttributesKey getTextAttributesKey() {
-                return null;  //To change body of implemented methods use File | Settings | File Templates.
-            }
         };
     }
 
