@@ -147,7 +147,7 @@ public class NamespaceCodegen {
             return;
         }
 
-        final Type jvmType = typeMapper.mapType(jetType, OwnerKind.INTERFACE);
+        final Type jvmType = typeMapper.mapType(jetType);
 
         v.aconst(jvmType);
         v.iconst(jetType.isNullable() ? 1 : 0);

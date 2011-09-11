@@ -186,8 +186,8 @@ public abstract class StackValue {
             else
                 v.iconst(0);
         }
-        else if (type.getSort() == Type.OBJECT && this.type.getSort() == Type.OBJECT) {
-            //    v.checkcast(type);
+        else if (type.getSort() == Type.OBJECT && this.type.equals(JetTypeMapper.TYPE_OBJECT)) {
+                v.checkcast(type);
         }
         else if (type.getSort() == Type.OBJECT) {
             box(this.type, type, v);

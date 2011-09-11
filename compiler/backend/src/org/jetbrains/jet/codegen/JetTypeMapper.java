@@ -205,7 +205,7 @@ public class JetTypeMapper {
             if (parent instanceof JetClassObject) {
                 JetClass containingClass = PsiTreeUtil.getParentOfType(parent, JetClass.class);
                 final ClassDescriptor containingClassDescriptor = bindingContext.get(BindingContext.CLASS, containingClass);
-                return jvmName(containingClassDescriptor, OwnerKind.INTERFACE) + "$$ClassObj";
+                return jvmName(containingClassDescriptor, OwnerKind.IMPLEMENTATION) + "$$ClassObj";
             }
             @SuppressWarnings("SuspiciousMethodCalls") String className = classNamesForAnonymousClasses.get(declaration);
             if (className == null) {
@@ -226,15 +226,12 @@ public class JetTypeMapper {
         if (declaration instanceof JetObjectDeclaration) {
             return false;
         }
-        return kind == OwnerKind.INTERFACE;
+        return jetClass instanceof JetClass ? ((JetClass)jetClass).isTrait() : false;
     }
 
     private static String jetJvmName(ClassDescriptor jetClass, OwnerKind kind) {
         if (jetClass.getKind() == ClassKind.OBJECT) {
             return jvmNameForImplementation(jetClass);
-        }
-        if (kind == OwnerKind.INTERFACE) {
-            return jvmNameForInterface(jetClass);
         }
         else if (kind == OwnerKind.IMPLEMENTATION) {
             return jvmNameForImplementation(jetClass);
@@ -277,7 +274,7 @@ public class JetTypeMapper {
     }
 
     public static String jvmNameForImplementation(ClassDescriptor descriptor) {
-        return jvmNameForInterface(descriptor) + "$$Impl";
+        return jvmNameForInterface(descriptor);
     }
 
     public static String jvmNameForDelegatingImplementation(ClassDescriptor descriptor) {
@@ -292,7 +289,7 @@ public class JetTypeMapper {
         else if (descriptor.getContainingDeclaration() instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) descriptor.getContainingDeclaration();
             if (kind instanceof OwnerKind.DelegateKind) {
-                kind = OwnerKind.INTERFACE;
+                kind = OwnerKind.IMPLEMENTATION;
             }
             else {
                 assert classDescriptor != null;
@@ -316,11 +313,11 @@ public class JetTypeMapper {
     }
 
     @NotNull public Type mapReturnType(final JetType jetType) {
-        return mapReturnType(jetType, OwnerKind.INTERFACE);
+        return mapReturnType(jetType, OwnerKind.IMPLEMENTATION);
     }
 
     @NotNull public Type mapType(final JetType jetType) {
-        return mapType(jetType, OwnerKind.INTERFACE);
+        return mapType(jetType, OwnerKind.IMPLEMENTATION);
     }
 
     @NotNull public Type mapType(@NotNull final JetType jetType, OwnerKind kind) {
@@ -483,7 +480,7 @@ public class JetTypeMapper {
         }
         else if (functionParent instanceof ClassDescriptor) {
             ClassDescriptor containingClass = (ClassDescriptor) functionParent;
-            owner = jvmName(containingClass, OwnerKind.INTERFACE);
+            owner = jvmName(containingClass, OwnerKind.IMPLEMENTATION);
             invokeOpcode = isInterface(containingClass, OwnerKind.INTERFACE)
                     ? Opcodes.INVOKEINTERFACE
                     : Opcodes.INVOKEVIRTUAL;
@@ -636,7 +633,6 @@ public class JetTypeMapper {
         Set<String> result = new HashSet<String>();
         final ClassDescriptor classDescriptor = bindingContext.get(BindingContext.CLASS, jetClass);
         if (classDescriptor != null) {
-            result.add(jvmName(classDescriptor, OwnerKind.INTERFACE));
             result.add(jvmName(classDescriptor, OwnerKind.IMPLEMENTATION));
         }
         return result;

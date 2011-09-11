@@ -20,13 +20,7 @@ public class ClassCodegen {
     public void generate(ClassContext parentContext, JetClassOrObject aClass) {
         GenerationState.prepareAnonymousClasses((JetElement) aClass, state.getTypeMapper());
 
-        if (aClass instanceof JetObjectDeclaration) {
-            generateImplementation(parentContext, aClass, OwnerKind.IMPLEMENTATION);
-        }
-        else {
-            generateInterface(parentContext, aClass);
-            generateImplementation(parentContext, aClass, OwnerKind.IMPLEMENTATION);
-        }
+        generateImplementation(parentContext, aClass, OwnerKind.IMPLEMENTATION);
 
         ClassDescriptor descriptor = state.getBindingContext().get(BindingContext.CLASS, aClass);
         final ClassContext contextForInners = parentContext.intoClass(descriptor, OwnerKind.IMPLEMENTATION);
@@ -37,17 +31,9 @@ public class ClassCodegen {
         }
     }
 
-    private void generateInterface(ClassContext parentContext, JetClassOrObject aClass) {
-        ClassDescriptor descriptor = state.getBindingContext().get(BindingContext.CLASS, aClass);
-        final ClassVisitor visitor = state.forClassInterface(descriptor);
-        new InterfaceBodyCodegen(aClass, parentContext.intoClass(descriptor, OwnerKind.INTERFACE), visitor, state).generate();
-    }
-
     private void generateImplementation(ClassContext parentContext, JetClassOrObject aClass, OwnerKind kind) {
         ClassDescriptor descriptor = state.getBindingContext().get(BindingContext.CLASS, aClass);
-        ClassVisitor v = kind == OwnerKind.IMPLEMENTATION
-                ? state.forClassImplementation(descriptor)
-                : state.forClassDelegatingImplementation(descriptor);
+        ClassVisitor v = state.forClassImplementation(descriptor);
         new ImplementationBodyCodegen(aClass, parentContext.intoClass(descriptor, kind), v, state).generate();
     }
 

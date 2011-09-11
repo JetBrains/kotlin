@@ -730,6 +730,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                         }
                         JetType receiverType = bindingContext.get(BindingContext.EXPRESSION_TYPE, r);
                         receiver.put(receiverType != null ? typeMapper.mapType(receiverType) : JetTypeMapper.TYPE_OBJECT, v);
+                        if(receiverType != null) {
+                            ClassDescriptor propReceiverDescriptor = (ClassDescriptor) propertyDescriptor.getContainingDeclaration();
+                            if(!TypeUtils.isInterface(propReceiverDescriptor, bindingContext) && TypeUtils.isInterface(receiverType.getConstructor().getDeclarationDescriptor(), bindingContext)) {
+                                // I hope it happens only in case of required super class for traits
+                                v.checkcast(typeMapper.mapType(propReceiverDescriptor.getDefaultType()));
+                            }
+                        }
                     }
                     return iValue;
                 }
@@ -752,8 +759,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 }
             }
             else if (descriptor instanceof TypeParameterDescriptor) {
-                loadTypeParameterTypeInfo((TypeParameterDescriptor) descriptor);
+                TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) descriptor;
+                loadTypeParameterTypeInfo(typeParameterDescriptor);
                 v.invokevirtual("jet/typeinfo/TypeInfo", "getClassObject", "()Ljava/lang/Object;");
+                v.checkcast(typeMapper.mapType(typeParameterDescriptor.getClassObjectType()));
+
                 return StackValue.onStack(OBJECT_TYPE);
             }
             else {
@@ -786,14 +796,20 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             isInterface = false;
         }
         else {
-            owner = typeMapper.getOwner(functionDescriptor, OwnerKind.INTERFACE);
+            owner = typeMapper.getOwner(functionDescriptor, OwnerKind.IMPLEMENTATION);
             if(containingDeclaration instanceof JavaClassDescriptor) {
                 PsiClass psiElement = (PsiClass) bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, containingDeclaration);
                 assert psiElement != null;
                 isInterface = psiElement.isInterface();
             }
-            else    
-                isInterface = !(containingDeclaration instanceof ClassDescriptor && ((ClassDescriptor) containingDeclaration).getKind() == ClassKind.OBJECT);
+            else {
+                if(containingDeclaration instanceof ClassDescriptor && ((ClassDescriptor) containingDeclaration).getKind() == ClassKind.OBJECT)
+                    isInterface = false;
+                else {
+                    JetClass jetClass = (JetClass) bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, containingDeclaration);
+                    isInterface = jetClass == null || jetClass.isTrait();
+                }
+            }
         }
 
         v.visitMethodInsn(isStatic ? Opcodes.INVOKESTATIC : isInterface ? Opcodes.INVOKEINTERFACE : Opcodes.INVOKEVIRTUAL, owner, functionDescriptor.getName(), typeMapper.mapSignature(functionDescriptor.getName(),functionDescriptor).getDescriptor());
@@ -827,8 +843,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             isInterface = false;
         }
         else {
-            owner = typeMapper.getOwner(propertyDescriptor, OwnerKind.INTERFACE);
-            isInterface = !(containingDeclaration instanceof ClassDescriptor && ((ClassDescriptor) containingDeclaration).getKind() == ClassKind.OBJECT);
+            owner = typeMapper.getOwner(propertyDescriptor, OwnerKind.IMPLEMENTATION);
+            if(containingDeclaration instanceof ClassDescriptor && ((ClassDescriptor) containingDeclaration).getKind() == ClassKind.OBJECT)
+                isInterface = false;
+            else {
+                JetClass jetClass = (JetClass) bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, containingDeclaration);
+                isInterface = jetClass == null || jetClass.isTrait();
+            }
         }
 
         return StackValue.property(propertyDescriptor.getName(), owner, typeMapper.mapType(propertyDescriptor.getOutType()), isStatic, isInterface, getter, setter);
@@ -971,7 +992,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
         for (JetType superType : allSuperTypes) {
             final DeclarationDescriptor descriptor = superType.getConstructor().getDeclarationDescriptor();
-            if (descriptor != null && superOriginal == descriptor.getOriginal()) {
+            if (descriptor != null && superOriginal.equals(descriptor.getOriginal())) {
                 return true;
             }
         }
@@ -1795,7 +1816,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             if (!(descriptor instanceof ClassDescriptor)) {
                 throw new UnsupportedOperationException("don't know how to handle non-class types in as/as?");
             }
-            Type type = JetTypeMapper.boxType(typeMapper.mapType(jetType, OwnerKind.INTERFACE));
+            Type type = JetTypeMapper.boxType(typeMapper.mapType(jetType));
             generateInstanceOf(StackValue.expression(OBJECT_TYPE, expression.getLeft(), this), jetType, true);
             Label isInstance = new Label();
             v.ifne(isInstance);
@@ -1921,7 +1942,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             if (leaveExpressionOnStack) {
                 v.dup();
             }
-            Type type = JetTypeMapper.boxType(typeMapper.mapType(jetType, OwnerKind.INTERFACE));
+            Type type = JetTypeMapper.boxType(typeMapper.mapType(jetType));
             if(jetType.isNullable()) {
                 Label nope = new Label();
                 Label end = new Label();
@@ -1967,7 +1988,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             return;
         }
 
-        final Type jvmType = typeMapper.mapType(jetType, OwnerKind.INTERFACE);
+        final Type jvmType = typeMapper.mapType(jetType);
 
         v.aconst(jvmType);
         v.iconst(jetType.isNullable()?1:0);

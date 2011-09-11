@@ -3,12 +3,16 @@ package org.jetbrains.jet.lang.types;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
+import org.jetbrains.jet.lang.psi.JetClass;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.ChainedScope;
 import org.jetbrains.jet.lang.resolve.JetScope;
 
@@ -340,6 +344,17 @@ public class TypeUtils {
             }
         }
 
+        return false;
+    }
+
+    public static boolean isInterface(DeclarationDescriptor descriptor, BindingContext bindingContext) {
+        PsiElement psiElement = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
+        if(psiElement instanceof JetClass) {
+            return ((JetClass)psiElement).isTrait();
+        }
+        if(psiElement instanceof PsiClass) {
+            return ((PsiClass)psiElement).isInterface();
+        }
         return false;
     }
 }

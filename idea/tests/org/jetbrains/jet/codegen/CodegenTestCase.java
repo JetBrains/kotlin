@@ -197,8 +197,7 @@ public abstract class CodegenTestCase extends LightCodeInsightFixtureTestCase {
     }
 
     protected Class loadImplementationClass(ClassFileFactory codegens, final String name) {
-        loadClass(name, codegens);
-        return loadClass(name + "$$Impl", codegens);
+        return loadClass(name, codegens);
     }
 
     private static class MyClassLoader extends ClassLoader {

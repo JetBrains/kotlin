@@ -89,15 +89,11 @@ public class FunctionCodegen {
         boolean isStatic = kind == OwnerKind.NAMESPACE;
         if (isStatic) flags |= Opcodes.ACC_STATIC;
 
-        boolean isAbstract = kind == OwnerKind.INTERFACE || bodyExpressions == null;
+        boolean isAbstract = bodyExpressions == null;
         if (isAbstract) flags |= Opcodes.ACC_ABSTRACT;
 
-        if (isAbstract && (kind == OwnerKind.IMPLEMENTATION )) {
-            return;
-        }
-
         final MethodVisitor mv = v.visitMethod(flags, jvmSignature.getName(), jvmSignature.getDescriptor(), null, null);
-        if (kind != OwnerKind.INTERFACE) {
+        if (!isAbstract) {
             mv.visitCode();
             FrameMap frameMap = context.prepareFrame();
 

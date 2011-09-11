@@ -1,6 +1,7 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertySetterDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
@@ -136,14 +137,16 @@ public class PropertyCodegen {
         if (kind == OwnerKind.NAMESPACE) {
             flags |= Opcodes.ACC_STATIC;
         }
-        else if (kind == OwnerKind.INTERFACE) {
+
+        PsiElement psiElement = state.getBindingContext().get(BindingContext.DESCRIPTOR_TO_DECLARATION, propertyDescriptor.getContainingDeclaration());
+        boolean isTrait = psiElement instanceof JetClass && ((JetClass) psiElement).isTrait();
+        if(isTrait && !(kind instanceof OwnerKind.DelegateKind))
             flags |= Opcodes.ACC_ABSTRACT;
-        }
 
         final String signature = state.getTypeMapper().mapGetterSignature(propertyDescriptor).getDescriptor();
         String getterName = getterName(propertyDescriptor.getName());
         MethodVisitor mv = v.visitMethod(flags, getterName, signature, null, null);
-        if (kind != OwnerKind.INTERFACE) {
+        if (!isTrait || kind instanceof OwnerKind.DelegateKind) {
             mv.visitCode();
             InstructionAdapter iv = new InstructionAdapter(mv);
             if (kind != OwnerKind.NAMESPACE) {
@@ -176,13 +179,15 @@ public class PropertyCodegen {
         if (kind == OwnerKind.NAMESPACE) {
             flags |= Opcodes.ACC_STATIC;
         }
-        else if (kind == OwnerKind.INTERFACE) {
+
+        PsiElement psiElement = state.getBindingContext().get(BindingContext.DESCRIPTOR_TO_DECLARATION, propertyDescriptor.getContainingDeclaration());
+        boolean isTrait = psiElement instanceof JetClass && ((JetClass) psiElement).isTrait();
+        if(isTrait && !(kind instanceof OwnerKind.DelegateKind))
             flags |= Opcodes.ACC_ABSTRACT;
-        }
 
         final String signature = state.getTypeMapper().mapSetterSignature(propertyDescriptor).getDescriptor();
         MethodVisitor mv = v.visitMethod(flags, setterName(propertyDescriptor.getName()), signature, null, null);
-        if (kind != OwnerKind.INTERFACE) {
+        if (!isTrait || kind instanceof OwnerKind.DelegateKind) {
             mv.visitCode();
             InstructionAdapter iv = new InstructionAdapter(mv);
             final Type type = state.getTypeMapper().mapType(propertyDescriptor.getOutType());

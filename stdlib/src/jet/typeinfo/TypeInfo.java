@@ -85,7 +85,7 @@ public abstract class TypeInfo<T> implements JetObject {
 
     public final Object getClassObject() {
         try {
-            final Class implClass = theClass.getClassLoader().loadClass(theClass.getCanonicalName() + "$$Impl");
+            final Class implClass = theClass.getClassLoader().loadClass(theClass.getCanonicalName());
             final Field classobj = implClass.getField("$classobj");
             return classobj.get(null);
         } catch (Exception e) {

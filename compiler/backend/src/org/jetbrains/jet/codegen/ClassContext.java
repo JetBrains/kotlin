@@ -154,7 +154,7 @@ public class ClassContext {
     public Type enclosingClassType(JetTypeMapper mapper) {
         DeclarationDescriptor descriptor = getContextDescriptor();
         if (descriptor instanceof ClassDescriptor) {
-            return Type.getObjectType(mapper.jvmName((ClassDescriptor) descriptor, OwnerKind.INTERFACE));
+            return Type.getObjectType(mapper.jvmName((ClassDescriptor) descriptor, OwnerKind.IMPLEMENTATION));
         }
 
         if (descriptor instanceof NamespaceDescriptor) {

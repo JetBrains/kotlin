@@ -89,6 +89,7 @@ public abstract class ClassBodyCodegen {
                         propertyCodegen.generateDefaultSetter(propertyDescriptor, Opcodes.ACC_PUBLIC);
                     }
 
+                    //noinspection ConstantConditions
                     if (!(kind instanceof OwnerKind.DelegateKind) && kind != OwnerKind.INTERFACE && state.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor)) {
                         v.visitField(Opcodes.ACC_PRIVATE, p.getName(), state.getTypeMapper().mapType(propertyDescriptor.getOutType()).getDescriptor(), null, null);
                     }
