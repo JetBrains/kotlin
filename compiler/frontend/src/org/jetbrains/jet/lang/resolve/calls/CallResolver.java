@@ -472,17 +472,9 @@ public class CallResolver {
 
     @NotNull
     private <Descriptor extends CallableDescriptor> OverloadResolutionResult<Descriptor> computeResultAndReportErrors(BindingTrace trace, TracingStrategy tracing, Map<Descriptor, Descriptor> successfulCandidates, Set<Descriptor> failedCandidates, Set<Descriptor> dirtyCandidates, Map<Descriptor, TemporaryBindingTrace> traces) {
+        // TODO : maybe it's better to filter overrides out first, and only then look for the maximally specific
         if (successfulCandidates.size() > 0) {
-            if (successfulCandidates.size() == 1) {
-                Map.Entry<Descriptor, Descriptor> entry = successfulCandidates.entrySet().iterator().next();
-                Descriptor functionDescriptor = entry.getKey();
-                Descriptor result = entry.getValue();
-
-                TemporaryBindingTrace temporaryTrace = traces.get(functionDescriptor);
-                temporaryTrace.commit();
-                return OverloadResolutionResult.success(result);
-            }
-            else {
+            if (successfulCandidates.size() != 1) {
                 Map<Descriptor, Descriptor> cleanCandidates = Maps.newLinkedHashMap(successfulCandidates);
                 cleanCandidates.keySet().removeAll(dirtyCandidates);
                 if (cleanCandidates.isEmpty()) {
@@ -498,42 +490,68 @@ public class CallResolver {
                     return OverloadResolutionResult.success(maximallySpecificGenericsDiscriminated);
                 }
 
+                Set<Descriptor> noOverrides = filterOverrides(successfulCandidates.keySet());
                 if (dirtyCandidates.isEmpty()) {
-                    StringBuilder stringBuilder = new StringBuilder();
-                    for (Descriptor functionDescriptor : successfulCandidates.keySet()) {
-                        stringBuilder.append(DescriptorRenderer.TEXT.render(functionDescriptor)).append(" ");
-                    }
-
-                    tracing.reportOverallResolutionError(trace, "Overload resolution ambiguity: " + stringBuilder);
+                    tracing.reportOverallResolutionError(trace, "Overload resolution ambiguity: "
+                                                                + makeErrorMessageForMultipleDescriptors(noOverrides));
                 }
-                
-                tracing.recordAmbiguity(trace, successfulCandidates.keySet());
-                
-                return OverloadResolutionResult.ambiguity(successfulCandidates.keySet());
+
+                tracing.recordAmbiguity(trace, noOverrides);
+
+                return OverloadResolutionResult.ambiguity(noOverrides);
+            }
+            else {
+                Map.Entry<Descriptor, Descriptor> entry = successfulCandidates.entrySet().iterator().next();
+                Descriptor functionDescriptor = entry.getKey();
+                Descriptor result = entry.getValue();
+
+                TemporaryBindingTrace temporaryTrace = traces.get(functionDescriptor);
+                temporaryTrace.commit();
+                return OverloadResolutionResult.success(result);
             }
         }
         else if (!failedCandidates.isEmpty()) {
-            if (failedCandidates.size() == 1) {
-                Descriptor functionDescriptor = failedCandidates.iterator().next();
-                TemporaryBindingTrace temporaryTrace = traces.get(functionDescriptor);
-                temporaryTrace.commit();
-                return OverloadResolutionResult.singleFailedCandidate(failedCandidates.iterator().next());
-            }
-            else {
-                StringBuilder stringBuilder = new StringBuilder("\n");
-                for (Descriptor functionDescriptor : failedCandidates) {
-                    stringBuilder.append(DescriptorRenderer.TEXT.render(functionDescriptor)).append("\n");
+            if (failedCandidates.size() != 1) {
+                Set<Descriptor> noOverrides = filterOverrides(failedCandidates);
+                if (noOverrides.size() != 1) {
+                    tracing.reportOverallResolutionError(trace, "None of the following functions can be called with the arguments supplied: "
+                                                                + makeErrorMessageForMultipleDescriptors(noOverrides));
+                    tracing.recordAmbiguity(trace, noOverrides);
+                    return OverloadResolutionResult.manyFailedCandidates(noOverrides);
                 }
-
-                tracing.reportOverallResolutionError(trace, "None of the following functions can be called with the arguments supplied: " + stringBuilder);
-                tracing.recordAmbiguity(trace, failedCandidates);
-                return OverloadResolutionResult.manyFailedCandidates(failedCandidates);
+                failedCandidates = noOverrides;
             }
+            Descriptor functionDescriptor = failedCandidates.iterator().next();
+            TemporaryBindingTrace temporaryTrace = traces.get(functionDescriptor);
+            temporaryTrace.commit();
+            return OverloadResolutionResult.singleFailedCandidate(failedCandidates.iterator().next());
         }
         else {
             tracing.reportUnresolvedReference(trace);
             return OverloadResolutionResult.nameNotFound();
         }
+    }
+
+    private <Descriptor extends CallableDescriptor> StringBuilder makeErrorMessageForMultipleDescriptors(Set<Descriptor> candidates) {
+        StringBuilder stringBuilder = new StringBuilder("\n");
+        for (Descriptor functionDescriptor : candidates) {
+            stringBuilder.append(DescriptorRenderer.TEXT.render(functionDescriptor)).append("\n");
+        }
+        return stringBuilder;
+    }
+
+    private <Descriptor extends CallableDescriptor> Set<Descriptor> filterOverrides(Set<Descriptor> candidateSet) {
+        Set<Descriptor> candidates = Sets.newLinkedHashSet();
+        outerLoop:
+        for (Descriptor me : candidateSet) {
+            for (Descriptor other : candidateSet) {
+                if (OverloadingConflictResolver.overrides(other, me)) {
+                    continue outerLoop;
+                }
+            }
+            candidates.add(me);
+        }
+        return candidates;
     }
 
     private boolean checkValueArgumentTypes(JetScope scope, JetTypeInferrer.Services temporaryServices, Map<ValueArgument, ValueParameterDescriptor> argumentsToParameters, Flag dirty, Function<ValueParameterDescriptor, ValueParameterDescriptor> parameterMap) {

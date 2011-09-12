@@ -291,7 +291,4 @@ public class TypeHierarchyResolver {
             }
         }
     }
-
-
-
 }
