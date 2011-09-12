@@ -16,7 +16,7 @@ import java.util.*;
  */
 public class WritableScopeImpl extends WritableScopeWithImports {
 
-    private final Collection<DeclarationDescriptor> allDescriptors = Sets.newHashSet();
+    private final Collection<DeclarationDescriptor> allDescriptors = Sets.newLinkedHashSet();
     private boolean allDescriptorsDone = false;
 
     @NotNull

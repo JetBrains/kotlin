@@ -1,81 +1,226 @@
 namespace abstract
 
 class MyClass() {
+    //properties
+    val <error>a</error>: Int
+    val a1: Int = 1
+    <error>abstract</error> val a2: Int
+    <error>abstract</error> val a3: Int = 1
+
+    var <error>b</error>: Int                private set
+    var b1: Int = 0;                         private set
+    <error>abstract</error> var b2: Int      private set
+    <error>abstract</error> var b3: Int = 0; private set
+
+    var <error>c</error>: Int                set(v: Int) { $c = v }
+    var c1: Int = 0;                         set(v: Int) { $c1 = v }
+    <error>abstract</error> var c2: Int      set(v: Int) { $c2 = v }
+    <error>abstract</error> var c3: Int = 0; set(v: Int) { $c3 = v }
+
+    val e: Int                               get() = a
+    val e1: Int = <error>0</error>;          get() = a
+    <error>abstract</error> val e2: Int      get() = a
+    <error>abstract</error> val e3: Int = 0; get() = a
+
+    //methods
     fun <error>f</error>()
     fun g() {}
     <error>abstract</error> fun h()
-    <error>abstract</error> fun j() {}
+    <error><error>abstract</error></error> fun j() {}
+
+    //property accessors
+    var i: Int                       <error>abstract</error> get  <error>abstract</error> set
+    var i1: Int = <error>0</error>;  <error>abstract</error> get  <error>abstract</error> set
+
+    var j: Int                       get() = i;    <error>abstract</error> set
+    var j1: Int = <error>0</error>;  get() = i;    <error>abstract</error> set
+
+    var <error>k</error>: Int        <error>abstract</error> set
+    var k1: Int = 0;                 <error>abstract</error> set
+
+    var l: Int                       <error>abstract</error> get  <error>abstract</error> set
+    var l1: Int = <error>0</error>;  <error>abstract</error> get  <error>abstract</error> set
+
+    var n: Int                       <error>abstract</error> get <error>abstract</error> set(v: Int) {}
 }
 
 abstract class MyAbstractClass() {
+    //properties
+    val <error>a</error>: Int
+    val a1: Int = 1
+    abstract val a2: Int
+    abstract val a3: Int = <error>1</error>
+
+    var <error>b</error>: Int                private set
+    var b1: Int = 0;                         private set
+    abstract var b2: Int      private set
+    abstract var b3: Int = <error>0</error>; private set
+
+    var <error>c</error>: Int                set(v: Int) { $c = v }
+    var c1: Int = 0;                         set(v: Int) { $c1 = v }
+    abstract var c2: Int                     <error>set(v: Int) { $c2 = v }</error>
+    abstract var c3: Int = <error>0</error>; <error>set(v: Int) { $c3 = v }</error>
+
+    val e: Int                               get() = a
+    val e1: Int = <error>0</error>;          get() = a
+    abstract val e2: Int                     <error>get() = a</error>
+    abstract val e3: Int = <error>0</error>; <error>get() = a</error>
+
+    //methods
     fun <error>f</error>()
     fun g() {}
     abstract fun h()
     <error>abstract</error> fun j() {}
+
+    //property accessors
+    var i: Int                       abstract get  abstract set
+    var i1: Int = <error>0</error>;  abstract get  abstract set
+
+    var j: Int                       get() = i;    abstract set
+    var j1: Int                      get() = i;    abstract set
+
+    var <error>k</error>: Int        abstract set
+    var k1: Int = 0;                 abstract set
+
+    var l: Int                       abstract get  abstract set
+    var l1: Int = <error>0</error>;  abstract get  abstract set
+
+    var n: Int                       abstract get <error>abstract</error> set(v: Int) {}
 }
 
 trait MyTrait {
+    //properties
+    val a: Int
+    val a1: Int = <error>1</error>
+    <warning>abstract</warning> val a2: Int
+    <warning>abstract</warning> val a3: Int = <error>1</error>
+
+    var b: Int                                                  private set
+    var b1: Int = <error>0</error>;                             private set
+    <warning>abstract</warning> var b2: Int                     private set
+    <warning>abstract</warning> var b3: Int = <error>0</error>; private set
+
+    var <error>c</error>: Int                                   set(v: Int) { $c = v }
+    var <error>c1</error>: Int = <error>0</error>;              set(v: Int) { $c1 = v }
+    <warning>abstract</warning> var c2: Int                     <error>set(v: Int) { $c2 = v }</error>
+    <warning>abstract</warning> var c3: Int = <error>0</error>; <error>set(v: Int) { $c3 = v }</error>
+
+    val e: Int                                                  get() = a
+    val e1: Int = <error>0</error>;                             get() = a
+    <warning>abstract</warning> val e2: Int                     <error>get() = a</error>
+    <warning>abstract</warning> val e3: Int = <error>0</error>; <error>get() = a</error>
+
+    //methods
     fun f()
     fun g() {}
     <warning>abstract</warning> fun h()
     <error>abstract</error> fun j() {}
+
+    //property accessors
+    var i: Int                       abstract get  abstract set
+    var i1: Int = <error>0</error>;  abstract get  abstract set
+
+    var j: Int                       get() = i;    abstract set
+    var j1: Int = <error>0</error>;  get() = i;    abstract set
+
+    var k: Int                       abstract set
+    var k1: Int = <error>0</error>;  abstract set
+
+    var l: Int                       abstract get  abstract set
+    var l1: Int = <error>0</error>;  abstract get  abstract set
+
+    var n: Int                       abstract get <error>abstract</error> set(v: Int) {}
 }
 
-enum class MyEnum {
+enum class MyEnum() {
+    //properties
+    val <error>a</error>: Int
+    val a1: Int = 1
+    abstract val a2: Int
+    abstract val a3: Int = <error>1</error>
+
+    var <error>b</error>: Int                private set
+    var b1: Int = 0;                         private set
+    abstract var b2: Int      private set
+    abstract var b3: Int = <error>0</error>; private set
+
+    var <error>c</error>: Int                set(v: Int) { $c = v }
+    var c1: Int = 0;                         set(v: Int) { $c1 = v }
+    abstract var c2: Int                     <error>set(v: Int) { $c2 = v }</error>
+    abstract var c3: Int = <error>0</error>; <error>set(v: Int) { $c3 = v }</error>
+
+    val e: Int                               get() = a
+    val e1: Int = <error>0</error>;          get() = a
+    abstract val e2: Int                     <error>get() = a</error>
+    abstract val e3: Int = <error>0</error>; <error>get() = a</error>
+
+    //methods
     fun <error>f</error>()
     fun g() {}
     abstract fun h()
     <error>abstract</error> fun j() {}
+
+    //property accessors
+    var i: Int                       abstract get  abstract set
+    var i1: Int = <error>0</error>;  abstract get  abstract set
+
+    var j: Int                       get() = i;    abstract set
+    var j1: Int = <error>0</error>;  get() = i;    abstract set
+
+    var <error>k</error>: Int        abstract set
+    var k1: Int = 0;                 abstract set
+
+    var l: Int                       abstract get  abstract set
+    var l1: Int = <error>0</error>;   abstract get  abstract set
+
+    var n: Int                       abstract get <error>abstract</error> set(v: Int) {}
 }
 
-class A1() {
-    fun <error>foo</error>(): Int
-    <error>abstract</error> fun f(): Int
-}
+abstract enum class MyAbstractEnum() {}
 
-abstract class A2() {
-    abstract fun f(): Int
-}
+namespace MyNamespace {
+    //properties
+    val <error>a</error>: Int
+    val a1: Int = 1
+    <error>abstract</error> val a2: Int
+    <error>abstract</error> val a3: Int = 1
 
-class A3() {
-    val <error>i</error>: Int
-    val <error>j</error>: Int?
-    var <error>k</error>: String
-    var <error>l</error>: Int?
-}
+    var <error>b</error>: Int                private set
+    var b1: Int = 0;                         private set
+    <error>abstract</error> var b2: Int      private set
+    <error>abstract</error> var b3: Int = 0; private set
 
-class <error>A4</error> {
-    val <error>i</error>: Int?
-}
+    var <error>c</error>: Int                set(v: Int) { $c = v }
+    var c1: Int = 0;                         set(v: Int) { $c1 = v }
+    <error>abstract</error> var c2: Int      set(v: Int) { $c2 = v }
+    <error>abstract</error> var c3: Int = 0; set(v: Int) { $c3 = v }
 
-class <error>A5</error> {
-    var <error>i</error>: Int?
-}
+    val e: Int                               get() = a
+    val e1: Int = <error>0</error>;          get() = a
+    <error>abstract</error> val e2: Int      get() = a
+    <error>abstract</error> val e3: Int = 0; get() = a
 
-class A6 {
-    <error>abstract</error> val i: Int
-}
+    //methods
+    fun <error>f</error>()
+    fun g() {}
+    <error>abstract</error> fun h()
+    <error>abstract</error> fun j() {}
 
-abstract class A7 {
-    abstract val i: Int //ok
-}
+    //property accessors
+    var i: Int                       <error>abstract</error> get  <error>abstract</error> set
+    var i1: Int = <error>0</error>;  <error>abstract</error> get  <error>abstract</error> set
 
-class A8() {
-    val i = 11
-}
+    var j: Int                       get() = i;    <error>abstract</error> set
+    var j1: Int = <error>0</error>;  get() = i;    <error>abstract</error> set
 
-class A9() {
-    <error>abstract</error> val i = 23
-}
+    var <error>k</error>: Int        <error>abstract</error> set
+    var k1: Int = 0;                 <error>abstract</error> set
 
-abstract class <error>A10</error> {
-    val <error>i</error>: Int
-}
+    var l: Int                       <error>abstract</error> get  <error>abstract</error> set
+    var l1: Int = <error>0</error>;  <error>abstract</error> get  <error>abstract</error> set
 
-<error>abstract</error> val i: Int
-<error>abstract</error> fun foo(): fun(Int): Int
-val <error>j</error>: Int
-fun <error>foo1</error>(): fun(Int): Int
+    var n: Int                       <error>abstract</error> get <error>abstract</error> set(v: Int) {}
+}
 
 //creating an instance
 abstract class B1(
