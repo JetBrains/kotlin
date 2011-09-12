@@ -26,6 +26,11 @@ public interface FunctionGroup extends Named {
         public Set<FunctionDescriptor> getFunctionDescriptors() {
             return Collections.emptySet();
         }
+
+        @Override
+        public String toString() {
+            return "EMPTY";
+        }
     };
 
 
