@@ -83,6 +83,10 @@ public class TopDownAnalyzer {
             @Override
             protected void checkFunction(JetDeclarationWithBody function, FunctionDescriptor functionDescriptor) {
             }
+
+            @Override
+            protected void checkOverridesInAClass(MutableClassDescriptor classDescriptor, JetClassOrObject klass) {
+            }
         };
         bodyResolver.resolveBehaviorDeclarationBodies();
     }

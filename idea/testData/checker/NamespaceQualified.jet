@@ -39,7 +39,7 @@ class StrangeIterateeImpl<in I, out O>(val obj: O) : Iteratee<I, O> {
     override fun process(item: I): Iteratee<I, O> = StrangeIterateeImpl<I, O>(obj)
     override val isDone = true
     override val result = obj
-    override val done = obj
+    override fun done() = obj
 }
 
 abstract class Sum() : Iteratee<Int, Int> {
@@ -51,7 +51,7 @@ abstract class Sum() : Iteratee<Int, Int> {
   abstract override fun done() : Int
 }
 
-class Collection<E> : Iterable<E> {
+abstract class Collection<E> : Iterable<E> {
   fun iterate<O>(iteratee : Iteratee<E, O>) : O {
       for (x in this) {
         val it = iteratee.process(x)
