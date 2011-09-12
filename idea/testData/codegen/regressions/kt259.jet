@@ -1,8 +1,14 @@
 class A() {}
-class B<T>() {
+open class B<T>() {
     fun isT (a : Any?) : Boolean {
         return a is T
     }
+}
+
+class C() : B<String>() {
+}
+
+class D<T>() : B<B<T>>() {
 }
 
 fun t1() : Boolean {
@@ -148,6 +154,18 @@ fun t24 () : Boolean {
     return true
 }
 
+fun t25 () : Boolean {
+    val c = C()
+    if(!c.isT("aaa")) return false
+    return true
+}
+
+fun t26 () : Boolean {
+    val d = D<String>()
+    if(!d.isT(B<String>())) return false
+    return true
+}
+
 fun box() : String {
     if(!t1()) {
         return "t1 failed"
@@ -220,6 +238,12 @@ fun box() : String {
      }
      if(!t24()) {
          return "t24 failed"
+     }
+     if(!t25()) {
+         return "t25 failed"
+     }
+     if(!t26()) {
+         return "t26 failed"
      }
      return "OK"
 }
