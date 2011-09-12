@@ -70,8 +70,8 @@ public class GenerationState {
         return factory.newVisitor(typeMapper.jvmName(aClass, OwnerKind.IMPLEMENTATION) + ".class");
     }
 
-    public ClassVisitor forClassDelegatingImplementation(ClassDescriptor aClass) {
-        return factory.newVisitor(JetTypeMapper.jvmNameForDelegatingImplementation(aClass) + ".class");
+    public ClassVisitor forTraitImplementation(ClassDescriptor aClass) {
+        return factory.newVisitor(typeMapper.jvmName(aClass, OwnerKind.TRAIT_IMPL) + ".class");
     }
 
     public Pair<String, ClassVisitor> forAnonymousSubclass(JetExpression expression) {

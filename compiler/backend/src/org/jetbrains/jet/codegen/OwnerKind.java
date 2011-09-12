@@ -11,8 +11,8 @@ public class OwnerKind {
     }
 
     public static final OwnerKind NAMESPACE = new OwnerKind("namespace");
-    public static final OwnerKind INTERFACE = new OwnerKind("interface");
     public static final OwnerKind IMPLEMENTATION = new OwnerKind("implementation");
+    public static final OwnerKind TRAIT_IMPL = new OwnerKind("trait implementation");
 
     public static class DelegateKind extends OwnerKind {
         private final StackValue delegate;

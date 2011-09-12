@@ -7,6 +7,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -215,7 +216,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             return;
 
         ConstructorDescriptor constructorDescriptor = state.getBindingContext().get(BindingContext.CONSTRUCTOR, myClass);
-//        if (constructorDescriptor == null && !(myClass instanceof JetObjectDeclaration) && !isEnum(myClass)) return;
 
         Method method;
         CallableMethod callableMethod;
@@ -302,6 +302,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         generateInitializers(codegen, iv);
 
+        generateTraitMethods(codegen);
+
         int curParam = 0;
         List<JetParameter> constructorParameters = getPrimaryConstructorParameters();
         for (JetParameter parameter : constructorParameters) {
@@ -320,9 +322,67 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         mv.visitEnd();
     }
 
-    static boolean isEnum(JetClassOrObject myClass) {
-        final JetModifierList modifierList = myClass.getModifierList();
-        return modifierList != null && modifierList.hasModifier(JetTokens.ENUM_KEYWORD);
+    private void generateTraitMethods(ExpressionCodegen codegen) {
+        if(!(myClass instanceof JetClass) || ((JetClass)myClass).isTrait() || ((JetClass)myClass).hasModifier(JetTokens.ABSTRACT_KEYWORD))
+            return;
+
+        HashSet<FunctionDescriptor> set = new HashSet<FunctionDescriptor>();
+        getAbstractMethods(descriptor.getDefaultType(), set);
+        for(FunctionDescriptor fun: set) {
+            int flags = Opcodes.ACC_PUBLIC; // TODO.
+
+            Method function = state.getTypeMapper().mapSignature(fun.getName(), fun);
+
+            final MethodVisitor mv = v.visitMethod(flags, function.getName(), function.getDescriptor(), null, null);
+            mv.visitCode();
+
+            codegen.generateThisOrOuter(descriptor);
+
+            Type[] argTypes = function.getArgumentTypes();
+            InstructionAdapter iv = new InstructionAdapter(mv);
+            iv.load(0, JetTypeMapper.TYPE_OBJECT);
+            for (int i = 0, reg = 1; i < argTypes.length; i++) {
+                Type argType = argTypes[i];
+                iv.load(reg, argType);
+                //noinspection AssignmentToForLoopParameter
+                reg += argType.getSize();
+            }
+
+            String fdescriptor = function.getDescriptor().replace("(","(L" + state.getTypeMapper().jvmName((ClassDescriptor) fun.getContainingDeclaration(),OwnerKind.IMPLEMENTATION) + ";");
+            iv.invokestatic(state.getTypeMapper().jvmName((ClassDescriptor) fun.getContainingDeclaration(), OwnerKind.TRAIT_IMPL), function.getName(), fdescriptor);
+            iv.areturn(function.getReturnType());
+            mv.visitMaxs(0, 0);
+            mv.visitEnd();
+        }
+    }
+    
+    private void getAbstractMethods(JetType type, Set<FunctionDescriptor> set) {
+        if(type.equals(JetStandardClasses.getAny())) {
+            return;
+        }
+
+        for(JetType superType : type.getConstructor().getSupertypes()) {
+            getAbstractMethods(superType, set);
+        }
+
+        PsiElement psiElement = state.getBindingContext().get(BindingContext.DESCRIPTOR_TO_DECLARATION, type.getConstructor().getDeclarationDescriptor());
+        if(psiElement instanceof JetClass) {
+            JetClass jetClass = (JetClass) psiElement;
+            for(JetDeclaration decl : jetClass.getDeclarations()) {
+                if(decl instanceof JetNamedFunction) {
+                    JetNamedFunction jetNamedFunction = (JetNamedFunction) decl;
+                    FunctionDescriptor funDescriptor = state.getBindingContext().get(BindingContext.FUNCTION, decl);
+                    set.removeAll(funDescriptor.getOverriddenDescriptors());
+                            
+                    if(jetNamedFunction.getBodyExpression() == null || jetClass.isTrait()) {
+                        set.add(funDescriptor);
+                    }
+                }
+            }
+        }
+        else if(psiElement instanceof PsiClass) {
+            PsiClass psiClass = (PsiClass) psiElement;
+        }
     }
 
     @Nullable

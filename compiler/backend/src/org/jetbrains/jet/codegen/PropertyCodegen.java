@@ -42,24 +42,6 @@ public class PropertyCodegen {
             generateGetter(p, propertyDescriptor);
             generateSetter(p, propertyDescriptor);
         }
-        else if (kind == OwnerKind.INTERFACE) {
-            final JetPropertyAccessor getter = p.getGetter();
-            if ((getter != null && !getter.hasModifier(JetTokens.PRIVATE_KEYWORD) ||
-                 (getter == null && isExternallyAccessible(p)))) {
-                v.visitMethod(Opcodes.ACC_ABSTRACT | Opcodes.ACC_PUBLIC,
-                        getterName(p.getName()),
-                        state.getTypeMapper().mapGetterSignature(propertyDescriptor).getDescriptor(),
-                        null, null);
-            }
-            final JetPropertyAccessor setter = p.getSetter();
-            if ((setter != null && !setter.hasModifier(JetTokens.PRIVATE_KEYWORD) ||
-                (setter == null && isExternallyAccessible(p) && p.isVar()))) {
-                v.visitMethod(Opcodes.ACC_ABSTRACT | Opcodes.ACC_PUBLIC,
-                        setterName(p.getName()),
-                        state.getTypeMapper().mapSetterSignature(propertyDescriptor).getDescriptor(),
-                        null, null);
-            }
-        }
         else if (kind instanceof OwnerKind.DelegateKind) {
             generateDefaultGetter(propertyDescriptor, Opcodes.ACC_PUBLIC);
             if (propertyDescriptor.isVar()) {

@@ -71,11 +71,15 @@ public abstract class ClassBodyCodegen {
         }
         else if (declaration instanceof JetNamedFunction) {
             try {
-                functionCodegen.gen((JetNamedFunction) declaration);
+                genNamedFunction((JetNamedFunction) declaration, functionCodegen);
             } catch (RuntimeException e) {
                 throw new RuntimeException("Error generating method " + myClass.getName() + "." + declaration.getName() + " in " + context, e);
             }
         }
+    }
+
+    protected void genNamedFunction(JetNamedFunction declaration, FunctionCodegen functionCodegen) {
+        functionCodegen.gen(declaration);
     }
 
     private void generatePrimaryConstructorProperties(PropertyCodegen propertyCodegen) {
@@ -90,7 +94,7 @@ public abstract class ClassBodyCodegen {
                     }
 
                     //noinspection ConstantConditions
-                    if (!(kind instanceof OwnerKind.DelegateKind) && kind != OwnerKind.INTERFACE && state.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor)) {
+                    if (!(kind instanceof OwnerKind.DelegateKind) && state.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor)) {
                         v.visitField(Opcodes.ACC_PRIVATE, p.getName(), state.getTypeMapper().mapType(propertyDescriptor.getOutType()).getDescriptor(), null, null);
                     }
                 }

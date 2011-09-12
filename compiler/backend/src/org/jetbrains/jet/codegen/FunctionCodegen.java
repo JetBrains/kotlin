@@ -35,7 +35,7 @@ public class FunctionCodegen {
     }
 
     public void gen(JetNamedFunction f) {
-        Method method = state.getTypeMapper().mapToCallableMethod(f).getSignature();
+        Method method = state.getTypeMapper().mapToCallableMethod(f, owner.getContextKind()).getSignature();
         final FunctionDescriptor functionDescriptor = state.getBindingContext().get(BindingContext.FUNCTION, f);
         generateMethod(f, method, functionDescriptor);
     }
@@ -86,10 +86,10 @@ public class FunctionCodegen {
 
         OwnerKind kind = context.getContextKind();
 
-        boolean isStatic = kind == OwnerKind.NAMESPACE;
+        boolean isStatic = kind == OwnerKind.NAMESPACE || kind == OwnerKind.TRAIT_IMPL;
         if (isStatic) flags |= Opcodes.ACC_STATIC;
 
-        boolean isAbstract = bodyExpressions == null;
+        boolean isAbstract = !isStatic && (bodyExpressions == null || TypeUtils.isInterface(functionDescriptor.getContainingDeclaration(), state.getBindingContext()));
         if (isAbstract) flags |= Opcodes.ACC_ABSTRACT;
 
         final MethodVisitor mv = v.visitMethod(flags, jvmSignature.getName(), jvmSignature.getDescriptor(), null, null);

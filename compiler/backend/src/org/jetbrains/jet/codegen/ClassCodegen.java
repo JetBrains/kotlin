@@ -9,6 +9,7 @@ import org.objectweb.asm.commons.InstructionAdapter;
 
 /**
  * @author max
+ * @author alex.tkachman
  */
 public class ClassCodegen {
     private final GenerationState state;
@@ -35,6 +36,11 @@ public class ClassCodegen {
         ClassDescriptor descriptor = state.getBindingContext().get(BindingContext.CLASS, aClass);
         ClassVisitor v = state.forClassImplementation(descriptor);
         new ImplementationBodyCodegen(aClass, parentContext.intoClass(descriptor, kind), v, state).generate();
+        
+        if(aClass instanceof JetClass && ((JetClass)aClass).isTrait()) {
+            v = state.forTraitImplementation(descriptor);
+            new TraitImplBodyCodegen(aClass, parentContext.intoClass(descriptor, OwnerKind.TRAIT_IMPL), v, state).generate();
+        }
     }
 
 

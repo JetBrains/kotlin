@@ -218,15 +218,15 @@ public class JetTypeMapper {
 
     public String jvmName(JetClassObject classObject) {
         final ClassDescriptor descriptor = bindingContext.get(BindingContext.CLASS, classObject.getObjectDeclaration());
-        return jvmName(descriptor,  OwnerKind.IMPLEMENTATION);
+        return jvmName(descriptor, OwnerKind.IMPLEMENTATION);
     }
 
-    public boolean isInterface(ClassDescriptor jetClass, OwnerKind kind) {
+    public boolean isInterface(ClassDescriptor jetClass) {
         PsiElement declaration = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, jetClass);
         if (declaration instanceof JetObjectDeclaration) {
             return false;
         }
-        return jetClass instanceof JetClass ? ((JetClass)jetClass).isTrait() : false;
+        return declaration instanceof JetClass && ((JetClass) declaration).isTrait();
     }
 
     private static String jetJvmName(ClassDescriptor jetClass, OwnerKind kind) {
@@ -235,6 +235,9 @@ public class JetTypeMapper {
         }
         else if (kind == OwnerKind.IMPLEMENTATION) {
             return jvmNameForImplementation(jetClass);
+        }
+        else if (kind == OwnerKind.TRAIT_IMPL) {
+            return jvmNameForTraitImpl(jetClass);
         }
         else {
             assert false : "Unsuitable kind";
@@ -277,8 +280,8 @@ public class JetTypeMapper {
         return jvmNameForInterface(descriptor);
     }
 
-    public static String jvmNameForDelegatingImplementation(ClassDescriptor descriptor) {
-        return jvmNameForInterface(descriptor) + "$$DImpl";
+    private static String jvmNameForTraitImpl(ClassDescriptor descriptor) {
+        return jvmNameForInterface(descriptor) + "$$TImpl";
     }
 
     public String getOwner(DeclarationDescriptor descriptor, OwnerKind kind) {
@@ -426,13 +429,20 @@ public class JetTypeMapper {
     }
 
 
-    private Method mapSignature(JetNamedFunction f, List<Type> valueParameterTypes) {
+    private Method mapSignature(JetNamedFunction f, List<Type> valueParameterTypes, OwnerKind kind) {
         final JetTypeReference receiverTypeRef = f.getReceiverTypeRef();
         final JetType receiverType = receiverTypeRef == null ? null : bindingContext.get(BindingContext.TYPE, receiverTypeRef);
         final List<JetParameter> parameters = f.getValueParameters();
         List<Type> parameterTypes = new ArrayList<Type>();
         if (receiverType != null) {
             parameterTypes.add(mapType(receiverType));
+        }
+        FunctionDescriptor functionDescriptor = bindingContext.get(BindingContext.FUNCTION, f);
+        if(kind == OwnerKind.TRAIT_IMPL) {
+            JetType jetType = ((ClassDescriptor)functionDescriptor.getContainingDeclaration()).getDefaultType();
+            final Type type = mapType(jetType);
+            valueParameterTypes.add(type);
+            parameterTypes.add(type);
         }
         for (JetParameter parameter : parameters) {
             final Type type = mapType(bindingContext.get(BindingContext.TYPE, parameter.getTypeReference()));
@@ -445,7 +455,6 @@ public class JetTypeMapper {
         final JetTypeReference returnTypeRef = f.getReturnTypeRef();
         Type returnType;
         if (returnTypeRef == null) {
-            final FunctionDescriptor functionDescriptor = bindingContext.get(BindingContext.FUNCTION, f);
             assert functionDescriptor != null;
             final JetType type = functionDescriptor.getReturnType();
             returnType = mapReturnType(type);
@@ -456,7 +465,7 @@ public class JetTypeMapper {
         return new Method(f.getName(), returnType, parameterTypes.toArray(new Type[parameterTypes.size()]));
     }
 
-    public CallableMethod mapToCallableMethod(PsiNamedElement declaration) {
+    public CallableMethod mapToCallableMethod(PsiNamedElement declaration, OwnerKind kind) {
         if (declaration instanceof PsiMethod) {
             return mapToCallableMethod((PsiMethod) declaration);
         }
@@ -468,7 +477,7 @@ public class JetTypeMapper {
         assert functionDescriptor != null;
         final DeclarationDescriptor functionParent = functionDescriptor.getContainingDeclaration();
         final List<Type> valueParameterTypes = new ArrayList<Type>();
-        Method descriptor = mapSignature(f, valueParameterTypes);
+        Method descriptor = mapSignature(f, valueParameterTypes, kind);
         String owner;
         int invokeOpcode;
         boolean needsReceiver;
@@ -481,7 +490,7 @@ public class JetTypeMapper {
         else if (functionParent instanceof ClassDescriptor) {
             ClassDescriptor containingClass = (ClassDescriptor) functionParent;
             owner = jvmName(containingClass, OwnerKind.IMPLEMENTATION);
-            invokeOpcode = isInterface(containingClass, OwnerKind.INTERFACE)
+            invokeOpcode = isInterface(containingClass)
                     ? Opcodes.INVOKEINTERFACE
                     : Opcodes.INVOKEVIRTUAL;
             needsReceiver = true;

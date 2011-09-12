@@ -914,7 +914,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
         CallableMethod callableMethod;
         if (declarationPsiElement instanceof PsiMethod || declarationPsiElement instanceof JetNamedFunction) {
-            callableMethod = typeMapper.mapToCallableMethod((PsiNamedElement) declarationPsiElement);
+            callableMethod = typeMapper.mapToCallableMethod((PsiNamedElement) declarationPsiElement, null);
         }
         else if (fd instanceof FunctionDescriptor) {
             callableMethod = ClosureCodegen.asCallableMethod((FunctionDescriptor) fd);
@@ -1708,7 +1708,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 accessor = JetTypeMapper.mapToCallableMethod((PsiMethod) declaration);
             }
             else if (declaration instanceof JetNamedFunction) {
-                accessor = typeMapper.mapToCallableMethod((JetNamedFunction) declaration);
+                accessor = typeMapper.mapToCallableMethod((JetNamedFunction) declaration, null);
             }
             else {
                 throw new UnsupportedOperationException("unknown accessor type: " + declaration);
