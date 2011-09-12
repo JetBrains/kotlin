@@ -177,4 +177,8 @@ public class ControlStructuresTest extends CodegenTestCase {
         assertEquals(true, main.invoke(null, null, "lala"));
         assertEquals(false, main.invoke(null, "papa", "papa"));
     }
+
+    public void testKt299() throws Exception {
+        blackBoxFile("regressions/kt299.jet");
+    }
 }

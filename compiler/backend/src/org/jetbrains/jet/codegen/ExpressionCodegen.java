@@ -1196,10 +1196,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             getInIntRange(leftValue, rangeExpression, inverted);
         }
         else {
-            leftValue.put(JetTypeMapper.TYPE_OBJECT, v);
+            FunctionDescriptor op = (FunctionDescriptor) bindingContext.get(BindingContext.REFERENCE_TARGET, expression.getOperationReference());
+            leftValue.put(typeMapper.mapType(op.getValueParameters().get(0).getOutType()), v);
             genToJVMStack(expression.getRight());
             v.swap();
-            FunctionDescriptor op = (FunctionDescriptor) bindingContext.get(BindingContext.REFERENCE_TARGET, expression.getOperationReference());
             invokeFunctionNoParams(op, Type.BOOLEAN_TYPE, v);
         }
         return StackValue.onStack(Type.BOOLEAN_TYPE);
