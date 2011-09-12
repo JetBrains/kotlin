@@ -89,7 +89,7 @@ public class FunctionCodegen {
         boolean isStatic = kind == OwnerKind.NAMESPACE || kind == OwnerKind.TRAIT_IMPL;
         if (isStatic) flags |= Opcodes.ACC_STATIC;
 
-        boolean isAbstract = !isStatic && (bodyExpressions == null || TypeUtils.isInterface(functionDescriptor.getContainingDeclaration(), state.getBindingContext()));
+        boolean isAbstract = !isStatic && (bodyExpressions == null || CodegenUtil.isInterface(functionDescriptor.getContainingDeclaration(), state.getBindingContext()));
         if (isAbstract) flags |= Opcodes.ACC_ABSTRACT;
 
         final MethodVisitor mv = v.visitMethod(flags, jvmSignature.getName(), jvmSignature.getDescriptor(), null, null);

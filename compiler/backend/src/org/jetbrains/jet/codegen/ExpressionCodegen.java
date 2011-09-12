@@ -732,7 +732,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                         receiver.put(receiverType != null ? typeMapper.mapType(receiverType) : JetTypeMapper.TYPE_OBJECT, v);
                         if(receiverType != null) {
                             ClassDescriptor propReceiverDescriptor = (ClassDescriptor) propertyDescriptor.getContainingDeclaration();
-                            if(!TypeUtils.isInterface(propReceiverDescriptor, bindingContext) && TypeUtils.isInterface(receiverType.getConstructor().getDeclarationDescriptor(), bindingContext)) {
+                            if(!CodegenUtil.isInterface(propReceiverDescriptor, bindingContext) && CodegenUtil.isInterface(receiverType.getConstructor().getDeclarationDescriptor(), bindingContext)) {
                                 // I hope it happens only in case of required super class for traits
                                 v.checkcast(typeMapper.mapType(propReceiverDescriptor.getDefaultType()));
                             }
