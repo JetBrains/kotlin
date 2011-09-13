@@ -57,7 +57,7 @@ public class JetPropertyAccessor extends JetDeclaration implements JetDeclaratio
 
     @Override
     public boolean hasDeclaredReturnType() {
-        return false;
+        return true;
     }
 
     @NotNull

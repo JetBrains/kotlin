@@ -544,8 +544,8 @@ public class ClassDescriptorResolver {
                     type = typeResolver.resolveType(scope, typeReference);
                     JetType inType = propertyDescriptor.getInType();
                     if (inType != null) {
-                        if (!semanticServices.getTypeChecker().isSubtypeOf(type, inType)) {
-                            trace.getErrorHandler().genericError(typeReference.getNode(), "Setter parameter type must be a subtype of the type of the property, i.e. " + inType);
+                        if (!semanticServices.getTypeChecker().equalTypes(type, inType)) {
+                            trace.getErrorHandler().genericError(typeReference.getNode(), "Setter parameter type must be equal to the type of the property, i.e. " + inType);
                         }
                     }
                     else {
@@ -579,10 +579,14 @@ public class ClassDescriptorResolver {
         if (getter != null) {
             List<AnnotationDescriptor> annotations = annotationResolver.resolveAnnotations(scope, getter.getModifierList());
 
-            JetType returnType = null;
+            JetType outType = propertyDescriptor.getOutType();
+            JetType returnType = outType;
             JetTypeReference returnTypeReference = getter.getReturnTypeReference();
             if (returnTypeReference != null) {
                 returnType = typeResolver.resolveType(scope, returnTypeReference);
+                if (outType != null && !semanticServices.getTypeChecker().equalTypes(returnType, outType)) {
+                    trace.getErrorHandler().genericError(returnTypeReference.getNode(), "Getter return type must be equal to the type of the property, i.e. " + propertyDescriptor.getReturnType());
+                }
             }
 
             getterDescriptor = new PropertyGetterDescriptor(
