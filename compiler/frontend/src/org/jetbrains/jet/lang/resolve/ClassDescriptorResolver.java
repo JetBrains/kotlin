@@ -107,6 +107,11 @@ public class ClassDescriptorResolver {
             if (typeReference != null) {
                 result.add(resolver.resolveType(extensibleScope, typeReference));
                 JetTypeElement typeElement = typeReference.getTypeElement();
+                while (typeElement instanceof JetNullableType) {
+                    JetNullableType nullableType = (JetNullableType) typeElement;
+                    trace.getErrorHandler().genericError(nullableType.getQuestionMarkNode(), "A supertype cannot be nullable");
+                    typeElement = nullableType.getInnerType();
+                }
                 if (typeElement instanceof JetUserType) {
                     JetUserType userType = (JetUserType) typeElement;
                     List<JetTypeProjection> typeArguments = userType.getTypeArguments();
