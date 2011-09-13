@@ -127,9 +127,15 @@ public class BodyResolver {
             return;
         }
         Set<FunctionDescriptor> allOverriddenFunctions = Sets.newHashSet();
-        for (FunctionDescriptor declaredFunction : classDescriptor.getFunctions()) {
-            for (FunctionDescriptor overriddenDescriptor : declaredFunction.getOverriddenDescriptors()) {
-                allOverriddenFunctions.add(overriddenDescriptor.getOriginal());
+        Collection<DeclarationDescriptor> allDescriptors = classDescriptor.getDefaultType().getMemberScope().getAllDescriptors();
+        for (DeclarationDescriptor descriptor : allDescriptors) {
+            if (descriptor instanceof FunctionDescriptor) {
+                FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
+                if (functionDescriptor.getModality() != Modality.ABSTRACT) {
+                    for (FunctionDescriptor overriddenDescriptor : functionDescriptor.getOverriddenDescriptors()) {
+                        allOverriddenFunctions.add(overriddenDescriptor.getOriginal());
+                    }
+                }
             }
         }
         boolean foundError = false;
@@ -137,19 +143,17 @@ public class BodyResolver {
         if (klass instanceof JetClass) {
             nameIdentifier = ((JetClass) klass).getNameIdentifier();
         }
-        else if (klass instanceof  JetObjectDeclaration) {
+        else if (klass instanceof JetObjectDeclaration) {
             nameIdentifier = ((JetObjectDeclaration) klass).getNameIdentifier();
         }
-        for (JetType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
-            Collection<DeclarationDescriptor> allDescriptors = supertype.getMemberScope().getAllDescriptors();
-             for (DeclarationDescriptor descriptor : allDescriptors) {
-                if (descriptor instanceof FunctionDescriptor) {
-                    FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
-                    if (functionDescriptor.getModality() == Modality.ABSTRACT && !allOverriddenFunctions.contains(functionDescriptor.getOriginal()) && !foundError && nameIdentifier != null) {
-                        DeclarationDescriptor declarationDescriptor = supertype.getConstructor().getDeclarationDescriptor();
-                        assert declarationDescriptor != null;
+        for (DeclarationDescriptor descriptor : allDescriptors) {
+            if (descriptor instanceof FunctionDescriptor) {
+                FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
+                if (functionDescriptor.getModality() == Modality.ABSTRACT && !allOverriddenFunctions.contains(functionDescriptor.getOriginal()) && !foundError && nameIdentifier != null) {
+                    DeclarationDescriptor declarationDescriptor = functionDescriptor.getContainingDeclaration();
+                    if (declarationDescriptor != classDescriptor) {
                         context.getTrace().getErrorHandler().genericError(nameIdentifier.getNode(), "Class '" + klass.getName() + "' must be declared abstract or implement abstract method '" +
-                                                                                       functionDescriptor.getName() + "' in " + declarationDescriptor.getName());
+                                                                                                    functionDescriptor.getName() + "' in " + declarationDescriptor.getName());
                         foundError = true;
                     }
                 }
@@ -180,7 +184,7 @@ public class BodyResolver {
         if (!hasOverrideModifier && declaredFunction.getOverriddenDescriptors().size() > 0 && nameIdentifier != null) {
             FunctionDescriptor overriddenMethod = declaredFunction.getOverriddenDescriptors().iterator().next();
             context.getTrace().getErrorHandler().genericError(nameIdentifier.getNode(),
-                                                 "Method " + declaredFunction.getName() + " overrides method " + overriddenMethod.getName() + " in class " +
+                                                 "Method '" + declaredFunction.getName() + "' overrides method '" + overriddenMethod.getName() + "' in class " +
                                                  overriddenMethod.getContainingDeclaration().getName() + " and needs 'override' modifier");
         }
     }

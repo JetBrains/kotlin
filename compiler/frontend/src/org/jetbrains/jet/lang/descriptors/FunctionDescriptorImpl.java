@@ -142,6 +142,9 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
                 substitutedReturnType,
                 modality
         );
+        for (FunctionDescriptor overriddenFunction : overriddenFunctions) {
+            substitutedDescriptor.addOverriddenFunction(overriddenFunction);
+        }
         return substitutedDescriptor;
     }
 
