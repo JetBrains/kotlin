@@ -2,13 +2,14 @@ package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotatedImpl;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotatedImpl;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -34,8 +35,8 @@ public class TypeConstructorImpl extends AnnotatedImpl implements TypeConstructo
         this.declarationDescriptor = declarationDescriptor;
         this.sealed = sealed;
         this.debugName = debugName;
-        this.parameters = new ArrayList<TypeParameterDescriptor>(parameters);
-        this.supertypes = supertypes;
+        this.parameters = Collections.unmodifiableList(new ArrayList<TypeParameterDescriptor>(parameters));
+        this.supertypes = Collections.unmodifiableCollection(supertypes);
     }
 
     @Override

@@ -66,28 +66,52 @@ public class ClassDescriptorResolver {
 
     public void resolveSupertypes(@NotNull JetClassOrObject jetClass, @NotNull MutableClassDescriptor descriptor) {
         List<JetDelegationSpecifier> delegationSpecifiers = jetClass.getDelegationSpecifiers();
-        JetType defaultSupertype = JetStandardClasses.getAnyType();
+        if (delegationSpecifiers.isEmpty()) {
+            descriptor.addSupertype(getDefaultSupertype(jetClass));
+        }
+        else {
+            Collection<JetType> supertypes = resolveDelegationSpecifiers(
+                    descriptor.getScopeForSupertypeResolution(),
+                    delegationSpecifiers,
+                    typeResolverNotCheckingBounds);
+            for (JetType supertype : supertypes) {
+                descriptor.addSupertype(supertype);
+            }
+        }
+
+    }
+
+    private JetType getDefaultSupertype(JetClassOrObject jetClass) {
         // TODO : beautify
         if (jetClass instanceof JetEnumEntry) {
             JetClassOrObject parent = PsiTreeUtil.getParentOfType(jetClass, JetClassOrObject.class);
             ClassDescriptor parentDescriptor = trace.getBindingContext().get(BindingContext.CLASS, parent);
             if (parentDescriptor.getTypeConstructor().getParameters().isEmpty()) {
-                defaultSupertype = parentDescriptor.getDefaultType();
+                return parentDescriptor.getDefaultType();
             }
-            else if (delegationSpecifiers.isEmpty()) {
+            else {
                 trace.getErrorHandler().genericError(((JetEnumEntry) jetClass).getNameIdentifier().getNode(), "generic arguments of the base type must be specified");
+                return ErrorUtils.createErrorType("Supertype not specified");
             }
         }
-        Collection<? extends JetType> supertypes = delegationSpecifiers.isEmpty()
-                ? Collections.singleton(defaultSupertype)
-                : resolveDelegationSpecifiers(
-                    descriptor.getScopeForSupertypeResolution(),
-                    delegationSpecifiers,
-                    typeResolverNotCheckingBounds);
+        return JetStandardClasses.getAnyType();
+    }
 
-        for (JetType supertype : supertypes) {
-            descriptor.addSupertype(supertype);
+    public Collection<JetType> resolveDelegationSpecifiers(JetScope extensibleScope, List<JetDelegationSpecifier> delegationSpecifiers, @NotNull TypeResolver resolver) {
+        if (delegationSpecifiers.isEmpty()) {
+            return Collections.emptyList();
         }
+        Collection<JetType> result = Lists.newArrayList();
+        for (JetDelegationSpecifier delegationSpecifier : delegationSpecifiers) {
+            JetTypeReference typeReference = delegationSpecifier.getTypeReference();
+            if (typeReference != null) {
+                result.add(resolver.resolveType(extensibleScope, typeReference));
+            }
+            else {
+                result.add(ErrorUtils.createErrorType("No type reference"));
+            }
+        }
+        return result;
     }
 
     @NotNull
@@ -313,23 +337,6 @@ public class ClassDescriptorResolver {
             }
         }
         return jetType;
-    }
-
-    public Collection<JetType> resolveDelegationSpecifiers(JetScope extensibleScope, List<JetDelegationSpecifier> delegationSpecifiers, @NotNull TypeResolver resolver) {
-        if (delegationSpecifiers.isEmpty()) {
-            return Collections.emptyList();
-        }
-        Collection<JetType> result = new ArrayList<JetType>();
-        for (JetDelegationSpecifier delegationSpecifier : delegationSpecifiers) {
-            JetTypeReference typeReference = delegationSpecifier.getTypeReference();
-            if (typeReference != null) {
-                result.add(resolver.resolveType(extensibleScope, typeReference));
-            }
-            else {
-                result.add(ErrorUtils.createErrorType("No type reference"));
-            }
-        }
-        return result;
     }
 
     @NotNull

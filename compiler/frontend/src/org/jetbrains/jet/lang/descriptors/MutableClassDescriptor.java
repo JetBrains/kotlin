@@ -125,9 +125,8 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
 
     public void addSupertype(@NotNull JetType supertype) {
         if (!ErrorUtils.isErrorType(supertype)) {
-            scopeForMemberLookup.importScope(supertype.getMemberScope());
+            supertypes.add(supertype);
         }
-        supertypes.add(supertype);
     }
 
     public void setTypeParameterDescriptors(List<TypeParameterDescriptor> typeParameters) {
@@ -163,6 +162,12 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
         scopeForMemberResolution.setThisType(getDefaultType());
         for (FunctionDescriptor functionDescriptor : constructors.getFunctionDescriptors()) {
             ((ConstructorDescriptorImpl) functionDescriptor).setReturnType(getDefaultType());
+        }
+    }
+
+    public void addSupertypesToScopeForMemberLookup() {
+        for (JetType supertype : supertypes) {
+            scopeForMemberLookup.importScope(supertype.getMemberScope());
         }
     }
 
@@ -277,5 +282,9 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     @Override
     public String toString() {
         return DescriptorRenderer.TEXT.render(this) + "[" + getClass().getCanonicalName() + "@" + System.identityHashCode(this) + "]";
+    }
+
+    public Collection<JetType> getSupertypes() {
+        return supertypes;
     }
 }

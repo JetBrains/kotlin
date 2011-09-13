@@ -1,5 +1,10 @@
 package org.jetbrains.jet.lang.resolve;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiNameIdentifierOwner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -9,10 +14,10 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeInferrer;
 import org.jetbrains.jet.lexer.JetTokens;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import static org.jetbrains.jet.lang.resolve.BindingContext.DESCRIPTOR_TO_DECLARATION;
+import static org.jetbrains.jet.lang.resolve.BindingContext.TYPE;
 
 /**
  * @author abreslav
@@ -27,8 +32,16 @@ public class TypeHierarchyResolver {
     public void process(@NotNull JetScope outerScope, NamespaceLike owner, @NotNull List<JetDeclaration> declarations) {
         collectNamespacesAndClassifiers(outerScope, owner, declarations); // namespaceScopes, classes
 
-        createTypeConstructors(); // create type constructors for classes and generic parameters
+        createTypeConstructors(); // create type constructors for classes and generic parameters, supertypes are not filled in
         resolveTypesInClassHeaders(); // Generic bounds and types in supertype lists (no expressions or constructor resolution)
+
+        // Detect and disconnect all loops in the hierarchy
+        detectAndDisconnectLoops();
+
+        // Add supertypes to resolution scopes of classes
+        addSupertypesToScopes();
+
+
         checkTypesInClassHeaders(); // Generic bounds and supertype lists
     }
 
@@ -256,6 +269,115 @@ public class TypeHierarchyResolver {
         }
     }
 
+    private void detectAndDisconnectLoops() {
+        // A topsort is needed only for better diagnostics:
+        //    edges that get removed to disconnect loops are more reasonable in this case
+        LinkedList<MutableClassDescriptor> topologicalOrder = Lists.newLinkedList();
+        Set<ClassDescriptor> visited = Sets.newHashSet();
+        for (MutableClassDescriptor mutableClassDescriptor : context.getClasses().values()) {
+            topologicallySort(mutableClassDescriptor, visited, topologicalOrder);
+        }
+
+        // Loop detection and disconnection
+        visited.clear();
+        Set<ClassDescriptor> beingProcessed = Sets.newHashSet();
+        List<ClassDescriptor> currentPath = Lists.newArrayList();
+        for (MutableClassDescriptor mutableClassDescriptor : topologicalOrder) {
+            traverseTypeHierarchy(mutableClassDescriptor, visited, beingProcessed, currentPath);
+        }
+    }
+
+    private static void topologicallySort(MutableClassDescriptor mutableClassDescriptor, Set<ClassDescriptor> visited, LinkedList<MutableClassDescriptor> topologicalOrder) {
+        if (!visited.add(mutableClassDescriptor)) {
+            return;
+        }
+        for (JetType supertype : mutableClassDescriptor.getSupertypes()) {
+            DeclarationDescriptor declarationDescriptor = supertype.getConstructor().getDeclarationDescriptor();
+            if (declarationDescriptor instanceof MutableClassDescriptor) {
+                MutableClassDescriptor classDescriptor = (MutableClassDescriptor) declarationDescriptor;
+                topologicallySort(classDescriptor, visited, topologicalOrder);
+            }
+        }
+        topologicalOrder.addFirst(mutableClassDescriptor);
+    }
+
+    private void traverseTypeHierarchy(MutableClassDescriptor currentClass, Set<ClassDescriptor> visited, Set<ClassDescriptor> beingProcessed, List<ClassDescriptor> currentPath) {
+        if (!visited.add(currentClass)) {
+            if (beingProcessed.contains(currentClass)) {
+                markCycleErrors(currentPath, currentClass);
+                assert !currentPath.isEmpty() : "Cycle cannot be found on an empty currentPath";
+                ClassDescriptor subclassOfCurrent = currentPath.get(currentPath.size() - 1);
+                assert subclassOfCurrent instanceof MutableClassDescriptor;
+                // Disconnect the loop
+                for (Iterator<JetType> iterator = ((MutableClassDescriptor) subclassOfCurrent).getSupertypes().iterator(); iterator.hasNext(); ) {
+                    JetType type = iterator.next();
+                    if (type.getConstructor() == currentClass.getTypeConstructor()) {
+                        iterator.remove();
+                        break;
+                    }
+                }
+            }
+            return;
+        }
+
+        beingProcessed.add(currentClass);
+        currentPath.add(currentClass);
+        for (JetType supertype : Lists.newArrayList(currentClass.getSupertypes())) {
+            DeclarationDescriptor declarationDescriptor = supertype.getConstructor().getDeclarationDescriptor();
+            if (declarationDescriptor instanceof MutableClassDescriptor) {
+                MutableClassDescriptor mutableClassDescriptor = (MutableClassDescriptor) declarationDescriptor;
+                traverseTypeHierarchy(mutableClassDescriptor, visited, beingProcessed, currentPath);
+            }
+        }
+        beingProcessed.remove(currentClass);
+        currentPath.remove(currentPath.size() - 1);
+    }
+
+    private void markCycleErrors(List<ClassDescriptor> currentPath, @NotNull ClassDescriptor current) {
+        int size = currentPath.size();
+        boolean found = false;
+        for (int i = 0; i < size; i++) {
+            ClassDescriptor classDescriptor = currentPath.get(i);
+            if (classDescriptor == current) found = true;
+            if (!found) continue;
+
+            ClassDescriptor superclass = (i < size - 1) ? currentPath.get(i + 1) : current;
+            PsiElement psiElement = context.getTrace().get(DESCRIPTOR_TO_DECLARATION, classDescriptor);
+
+            ASTNode node = null;
+            if (psiElement instanceof JetClassOrObject) {
+                JetClassOrObject classOrObject = (JetClassOrObject) psiElement;
+                for (JetDelegationSpecifier delegationSpecifier : classOrObject.getDelegationSpecifiers()) {
+                    JetTypeReference typeReference = delegationSpecifier.getTypeReference();
+                    if (typeReference == null) continue;
+                    JetType supertype = context.getTrace().get(TYPE, typeReference);
+                    if (supertype != null && supertype.getConstructor() == superclass.getTypeConstructor()) {
+                        node = typeReference.getNode();
+                    }
+                }
+            }
+            if (node == null && psiElement instanceof PsiNameIdentifierOwner) {
+                PsiNameIdentifierOwner namedElement = (PsiNameIdentifierOwner) psiElement;
+                PsiElement nameIdentifier = namedElement.getNameIdentifier();
+                if (nameIdentifier != null) {
+                    node = nameIdentifier.getNode();
+                }
+            }
+            if (node != null) {
+                context.getTrace().getErrorHandler().genericError(node, "There's a cycle in the inheritance hierarchy for this type");
+            }
+        }
+    }
+
+    private void addSupertypesToScopes() {
+        for (MutableClassDescriptor mutableClassDescriptor : context.getClasses().values()) {
+            mutableClassDescriptor.addSupertypesToScopeForMemberLookup();
+        }
+        for (MutableClassDescriptor mutableClassDescriptor : context.getObjects().values()) {
+            mutableClassDescriptor.addSupertypesToScopeForMemberLookup();
+        }
+    }
+
     private void checkTypesInClassHeaders() {
         for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
             JetClass jetClass = entry.getKey();
@@ -263,7 +385,7 @@ public class TypeHierarchyResolver {
             for (JetDelegationSpecifier delegationSpecifier : jetClass.getDelegationSpecifiers()) {
                 JetTypeReference typeReference = delegationSpecifier.getTypeReference();
                 if (typeReference != null) {
-                    JetType type = context.getTrace().getBindingContext().get(BindingContext.TYPE, typeReference);
+                    JetType type = context.getTrace().getBindingContext().get(TYPE, typeReference);
                     if (type != null) {
                         context.getClassDescriptorResolver().checkBounds(typeReference, type);
                     }
@@ -273,7 +395,7 @@ public class TypeHierarchyResolver {
             for (JetTypeParameter jetTypeParameter : jetClass.getTypeParameters()) {
                 JetTypeReference extendsBound = jetTypeParameter.getExtendsBound();
                 if (extendsBound != null) {
-                    JetType type = context.getTrace().getBindingContext().get(BindingContext.TYPE, extendsBound);
+                    JetType type = context.getTrace().getBindingContext().get(TYPE, extendsBound);
                     if (type != null) {
                         context.getClassDescriptorResolver().checkBounds(extendsBound, type);
                     }
@@ -283,7 +405,7 @@ public class TypeHierarchyResolver {
             for (JetTypeConstraint constraint : jetClass.getTypeConstaints()) {
                 JetTypeReference extendsBound = constraint.getBoundTypeReference();
                 if (extendsBound != null) {
-                    JetType type = context.getTrace().getBindingContext().get(BindingContext.TYPE, extendsBound);
+                    JetType type = context.getTrace().getBindingContext().get(TYPE, extendsBound);
                     if (type != null) {
                         context.getClassDescriptorResolver().checkBounds(extendsBound, type);
                     }
