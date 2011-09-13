@@ -2,8 +2,10 @@ package org.jetbrains.jet.util;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author abreslav
@@ -18,8 +20,20 @@ public class CommonSuppliers {
         }
     };
 
+    private static final Supplier<?> LINKED_HASH_SET_SUPPLIER = new Supplier() {
+        @Override
+        public Set get() {
+            return Sets.newLinkedHashSet();
+        }
+    };
+
     public static <T> Supplier<List<T>> getArrayListSupplier() {
         //noinspection unchecked
         return (Supplier<List<T>>) ARRAY_LIST_SUPPLIER;
+    }
+
+    public static <T> Supplier<Set<T>> getLinkedHashSetSupplier() {
+        //noinspection unchecked
+        return (Supplier<Set<T>>) LINKED_HASH_SET_SUPPLIER;
     }
 }

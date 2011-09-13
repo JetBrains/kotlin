@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.List;
 
@@ -11,6 +12,11 @@ import java.util.List;
 public class JetNullableType extends JetTypeElement {
     public JetNullableType(@NotNull ASTNode node) {
         super(node);
+    }
+    
+    @NotNull
+    public ASTNode getQuestionMarkNode() {
+        return getNode().findChildByType(JetTokens.QUEST);
     }
 
     @NotNull

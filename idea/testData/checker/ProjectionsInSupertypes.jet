@@ -3,4 +3,4 @@ trait B<T> {}
 trait C<T> {}
 trait D<T> {}
 
-trait Test : A<<error>in</error> Int>, B<<error>out</error> T>, C<<error>*</error>><error>?</error><error>?</error><error>?</error>, D<Int> {}
+trait Test : A<<error>in</error> Int>, B<<error>out</error> Int>, C<<error>*</error>><error>?</error><error>?</error><error>?</error>, D<Int> {}

@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
@@ -10,8 +11,7 @@ import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.JetTypeInferrer;
+import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.*;
@@ -24,6 +24,8 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.TYPE;
  */
 public class TypeHierarchyResolver {
     private final TopDownAnalysisContext context;
+    private LinkedList<MutableClassDescriptor> topologicalOrder;
+
 
     public TypeHierarchyResolver(TopDownAnalysisContext context) {
         this.context = context;
@@ -35,14 +37,20 @@ public class TypeHierarchyResolver {
         createTypeConstructors(); // create type constructors for classes and generic parameters, supertypes are not filled in
         resolveTypesInClassHeaders(); // Generic bounds and types in supertype lists (no expressions or constructor resolution)
 
+        topologicalOrder = topologicallySortClassesAndObjects();
+
         // Detect and disconnect all loops in the hierarchy
         detectAndDisconnectLoops();
+
+        // At this point, there are no loops in the type hierarchy
+
+        checkSupertypesForConsistency();
+//        computeSuperclasses();
 
         // Add supertypes to resolution scopes of classes
         addSupertypesToScopes();
 
-
-        checkTypesInClassHeaders(); // Generic bounds and supertype lists
+        checkTypesInClassHeaders(); // Check bounds in the types used in generic bounds and supertype lists
     }
 
     private void collectNamespacesAndClassifiers(
@@ -269,7 +277,7 @@ public class TypeHierarchyResolver {
         }
     }
 
-    private void detectAndDisconnectLoops() {
+    private LinkedList<MutableClassDescriptor> topologicallySortClassesAndObjects() {
         // A topsort is needed only for better diagnostics:
         //    edges that get removed to disconnect loops are more reasonable in this case
         LinkedList<MutableClassDescriptor> topologicalOrder = Lists.newLinkedList();
@@ -277,9 +285,15 @@ public class TypeHierarchyResolver {
         for (MutableClassDescriptor mutableClassDescriptor : context.getClasses().values()) {
             topologicallySort(mutableClassDescriptor, visited, topologicalOrder);
         }
+        for (MutableClassDescriptor mutableClassDescriptor : context.getObjects().values()) {
+            topologicallySort(mutableClassDescriptor, visited, topologicalOrder);
+        }
+        return topologicalOrder;
+    }
 
+    private void detectAndDisconnectLoops() {
         // Loop detection and disconnection
-        visited.clear();
+        Set<ClassDescriptor> visited = Sets.newHashSet();
         Set<ClassDescriptor> beingProcessed = Sets.newHashSet();
         List<ClassDescriptor> currentPath = Lists.newArrayList();
         for (MutableClassDescriptor mutableClassDescriptor : topologicalOrder) {
@@ -369,6 +383,81 @@ public class TypeHierarchyResolver {
         }
     }
 
+    private void checkSupertypesForConsistency() {
+        for (MutableClassDescriptor mutableClassDescriptor : topologicalOrder) {
+            Multimap<TypeConstructor, TypeProjection> multimap = TypeUtils.buildDeepSubstitutionMultimap(mutableClassDescriptor.getDefaultType());
+            for (Map.Entry<TypeConstructor, Collection<TypeProjection>> entry : multimap.asMap().entrySet()) {
+                Collection<TypeProjection> projections = entry.getValue();
+                if (projections.size() > 1) {
+                    TypeConstructor typeConstructor = entry.getKey();
+                    DeclarationDescriptor declarationDescriptor = typeConstructor.getDeclarationDescriptor();
+                    assert declarationDescriptor instanceof TypeParameterDescriptor : declarationDescriptor;
+                    TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) declarationDescriptor;
+
+                    // Immediate arguments of supertypes cannot be projected
+                    Set<JetType> conflictingTypes = Sets.newLinkedHashSet();
+                    for (TypeProjection projection : projections) {
+                        conflictingTypes.add(projection.getType());
+                    }
+                    switch (typeParameterDescriptor.getVariance()) {
+                        case INVARIANT:
+                            // Leave conflicting types as is
+                            break;
+                        case IN_VARIANCE:
+                            // Filter out those who have supertypes in this set (common supertype)
+                            Filter.REMOVE_IF_SUPERTYPE_IN_THE_SET.proceed(conflictingTypes);
+                            break;
+                        case OUT_VARIANCE:
+                            // Filter out those who have subtypes in this set (common subtype)
+                            Filter.REMOVE_IF_SUBTYPE_IN_THE_SET.proceed(conflictingTypes);
+                            break;
+                    }
+                    
+                    if (conflictingTypes.size() > 1) {
+                        DeclarationDescriptor containingDeclaration = typeParameterDescriptor.getContainingDeclaration();
+                        assert containingDeclaration instanceof ClassDescriptor : containingDeclaration;
+                        PsiElement psiElement = context.getTrace().get(DESCRIPTOR_TO_DECLARATION, mutableClassDescriptor);
+                        assert psiElement instanceof JetClassOrObject : psiElement;
+                        JetClassOrObject declaration = (JetClassOrObject) psiElement;
+                        JetDelegationSpecifierList delegationSpecifierList = declaration.getDelegationSpecifierList();
+                        assert delegationSpecifierList != null;
+                        context.getTrace().getErrorHandler().genericError(delegationSpecifierList.getNode(), "Type parameter " + typeParameterDescriptor.getName() + " of " + containingDeclaration.getName() + " has inconsistent values: " + conflictingTypes);
+                    }
+                }
+            }
+        }
+    }
+
+    private enum Filter {
+        REMOVE_IF_SUBTYPE_IN_THE_SET {
+            @Override
+            public boolean removeNeeded(JetType subject, JetType other) {
+                return JetTypeChecker.INSTANCE.isSubtypeOf(other, subject);
+            }
+        },
+        REMOVE_IF_SUPERTYPE_IN_THE_SET {
+            @Override
+            public boolean removeNeeded(JetType subject, JetType other) {
+                return JetTypeChecker.INSTANCE.isSubtypeOf(subject, other);
+            }
+        };
+        
+        private void proceed(Set<JetType> conflictingTypes) {
+            for (Iterator<JetType> iterator = conflictingTypes.iterator(); iterator.hasNext(); ) {
+                JetType type = iterator.next();
+                for (JetType otherType : conflictingTypes) {
+                    boolean subtypeOf = removeNeeded(type, otherType);
+                    if (type != otherType && subtypeOf) {
+                        iterator.remove();
+                        break;
+                    }
+                }
+            }
+        }
+
+        public abstract boolean removeNeeded(JetType subject, JetType other);
+    }
+    
     private void addSupertypesToScopes() {
         for (MutableClassDescriptor mutableClassDescriptor : context.getClasses().values()) {
             mutableClassDescriptor.addSupertypesToScopeForMemberLookup();

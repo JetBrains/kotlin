@@ -1,8 +1,6 @@
 package org.jetbrains.jet.lang.types;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import com.google.common.collect.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -11,6 +9,7 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.ChainedScope;
 import org.jetbrains.jet.lang.resolve.JetScope;
+import org.jetbrains.jet.util.CommonSuppliers;
 
 import java.util.*;
 
@@ -229,15 +228,25 @@ public class TypeUtils {
      */
     @NotNull
     public static TypeSubstitutor buildDeepSubstitutor(@NotNull JetType type) {
-        HashMap<TypeConstructor, TypeProjection> substitution = Maps.<TypeConstructor, TypeProjection>newHashMap();
+        Map<TypeConstructor, TypeProjection> substitution = Maps.newHashMap();
         TypeSubstitutor typeSubstitutor = TypeSubstitutor.create(substitution);
         // we use the mutability of the map here
-        fillInDeepSubstitutor(type, typeSubstitutor, substitution);
+        fillInDeepSubstitutor(type, typeSubstitutor, substitution, null);
         return typeSubstitutor;
     }
 
+    @NotNull
+    public static Multimap<TypeConstructor, TypeProjection> buildDeepSubstitutionMultimap(@NotNull JetType type) {
+        Multimap<TypeConstructor, TypeProjection> fullSubstitution = Multimaps.newSetMultimap(Maps.<TypeConstructor, Collection<TypeProjection>>newHashMap(), CommonSuppliers.<TypeProjection>getLinkedHashSetSupplier());
+        Map<TypeConstructor, TypeProjection> substitution = Maps.newHashMap();
+        TypeSubstitutor typeSubstitutor = TypeSubstitutor.create(substitution);
+        // we use the mutability of the map here
+        fillInDeepSubstitutor(type, typeSubstitutor, substitution, fullSubstitution);
+        return fullSubstitution;
+    }
+
     // we use the mutability of the substitution map here
-    private static void fillInDeepSubstitutor(JetType context, TypeSubstitutor substitutor, Map<TypeConstructor, TypeProjection> substitution) {
+    private static void fillInDeepSubstitutor(@NotNull JetType context, @NotNull TypeSubstitutor substitutor, @NotNull Map<TypeConstructor, TypeProjection> substitution, @Nullable Multimap<TypeConstructor, TypeProjection> fullSubstitution) {
         List<TypeParameterDescriptor> parameters = context.getConstructor().getParameters();
         List<TypeProjection> arguments = context.getArguments();
         for (int i = 0; i < arguments.size(); i++) {
@@ -248,9 +257,12 @@ public class TypeUtils {
             assert substitute != null;
             TypeProjection substitutedTypeProjection = new TypeProjection(argument.getProjectionKind(), substitute);
             substitution.put(typeParameterDescriptor.getTypeConstructor(), substitutedTypeProjection);
+            if (fullSubstitution != null) {
+                fullSubstitution.put(typeParameterDescriptor.getTypeConstructor(), substitutedTypeProjection);
+            }
         }
         for (JetType supertype : context.getConstructor().getSupertypes()) {
-            fillInDeepSubstitutor(supertype, substitutor, substitution);
+            fillInDeepSubstitutor(supertype, substitutor, substitution, fullSubstitution);
         }
     }
 
