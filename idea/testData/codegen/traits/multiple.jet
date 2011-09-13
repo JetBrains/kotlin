@@ -1,0 +1,15 @@
+trait AL {
+    fun get(index: Int) : Any? = null
+}
+
+trait ALE<T> : AL {
+    fun getOrNull(index: Int, value : T) = get(index) as? T ?: value
+}
+
+class SmartArrayList() : ALE<String> {
+}
+
+fun box() : String {
+  val c = SmartArrayList()
+  return if("239" == c.getOrNull(0, "239")) "OK" else "fail"
+}

@@ -42,7 +42,7 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
         super(containingDeclaration);
         this.scopeForMemberLookup = new WritableScopeImpl(JetScope.EMPTY, this, trace.getErrorHandler()).setDebugName("MemberLookup");
         this.scopeForSupertypeResolution = new WritableScopeImpl(outerScope, this, trace.getErrorHandler()).setDebugName("SupertypeResolution");
-        this.scopeForMemberResolution = new WritableScopeImpl(new ChainedScope(this, scopeForMemberLookup, scopeForSupertypeResolution), this, trace.getErrorHandler()).setDebugName("MemberResolution");
+        this.scopeForMemberResolution = new WritableScopeImpl(scopeForSupertypeResolution, this, trace.getErrorHandler()).setDebugName("MemberResolution");
         this.kind = kind;
     }
 
@@ -87,6 +87,7 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     public void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor) {
         properties.add(propertyDescriptor);
         scopeForMemberLookup.addVariableDescriptor(propertyDescriptor);
+        scopeForMemberResolution.addVariableDescriptor(propertyDescriptor);
     }
 
     @NotNull
@@ -98,6 +99,7 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     public void addFunctionDescriptor(@NotNull FunctionDescriptor functionDescriptor) {
         functions.add(functionDescriptor);
         scopeForMemberLookup.addFunctionDescriptor(functionDescriptor);
+        scopeForMemberResolution.addFunctionDescriptor(functionDescriptor);
     }
 
     @NotNull
@@ -118,6 +120,7 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     @Override
     public void addClassifierDescriptor(@NotNull MutableClassDescriptor classDescriptor) {
         scopeForMemberLookup.addClassifierDescriptor(classDescriptor);
+        scopeForMemberResolution.addClassifierDescriptor(classDescriptor);
     }
 
     public void addSupertype(@NotNull JetType supertype) {

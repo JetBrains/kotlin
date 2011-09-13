@@ -1,0 +1,9 @@
+// KT-300 Overload ambiguity while accessing range
+
+class MyRange() : Range<Int> {
+    ~in~override fun contains(item: Int) = true
+}
+
+fun foo(x: Int?, range: MyRange) {
+    x `in`in range // Int? found, but Int expected
+}

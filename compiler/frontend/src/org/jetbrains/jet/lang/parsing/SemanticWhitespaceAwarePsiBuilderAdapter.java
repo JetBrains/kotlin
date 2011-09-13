@@ -1,6 +1,6 @@
 package org.jetbrains.jet.lang.parsing;
 
-import com.intellij.lang.java.parser.JavaParserUtil.PsiBuilderAdapter;
+import com.intellij.lang.impl.PsiBuilderAdapter;
 
 /**
  * @author abreslav

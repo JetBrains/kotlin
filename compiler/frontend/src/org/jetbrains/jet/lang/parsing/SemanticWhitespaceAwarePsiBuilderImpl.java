@@ -2,7 +2,7 @@ package org.jetbrains.jet.lang.parsing;
 
 
 import com.intellij.lang.PsiBuilder;
-import com.intellij.lang.java.parser.JavaParserUtil.PsiBuilderAdapter;
+import com.intellij.lang.impl.PsiBuilderAdapter;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.jet.lexer.JetTokens;

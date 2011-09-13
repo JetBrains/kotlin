@@ -9,6 +9,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.objectweb.asm.ClassVisitor;
@@ -109,7 +110,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     protected void getSuperClass() {
         List<JetDelegationSpecifier> delegationSpecifiers = myClass.getDelegationSpecifiers();
 
-        if(myClass instanceof JetClass && ((JetClass)myClass).isTrait())
+        if(myClass instanceof JetClass && ((JetClass) myClass).isTrait())
             return;
 
         for (JetDelegationSpecifier specifier : delegationSpecifiers) {
@@ -150,6 +151,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         generateGetTypeInfo();
+        //genGetSuperTypesTypeInfo();
     }
 
     private void generateFieldForTypeInfo() {
@@ -239,6 +241,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         final InstructionAdapter iv = new InstructionAdapter(mv);
         ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, context, state);
+
+        for(int slot = 0; slot != frameMap.getTypeParameterCount(); ++slot) {
+            codegen.addTypeParameter(constructorDescriptor.getTypeParameters().get(slot), StackValue.local(frameMap.getFirstTypeParameter() + slot, JetTypeMapper.TYPE_TYPEINFO));
+        }
 
         String classname = state.getTypeMapper().jvmName(descriptor, kind);
         final Type classType = Type.getType("L" + classname + ";");
@@ -348,7 +354,15 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 reg += argType.getSize();
             }
 
-            String fdescriptor = function.getDescriptor().replace("(","(L" + state.getTypeMapper().jvmName((ClassDescriptor) fun.getContainingDeclaration(),OwnerKind.IMPLEMENTATION) + ";");
+            ClassDescriptor containingDeclaration = (ClassDescriptor) fun.getContainingDeclaration();
+            JetType jetType = TraitImplBodyCodegen.getSuperClass(containingDeclaration, state.getBindingContext());
+            Type type = state.getTypeMapper().mapType(jetType);
+            if(type.getInternalName().equals("java/lang/Object")) {
+                jetType = containingDeclaration.getDefaultType();
+                type = state.getTypeMapper().mapType(jetType);
+            }
+
+            String fdescriptor = function.getDescriptor().replace("(","(" +  type.getDescriptor());
             iv.invokestatic(state.getTypeMapper().jvmName((ClassDescriptor) fun.getContainingDeclaration(), OwnerKind.TRAIT_IMPL), function.getName(), fdescriptor);
             iv.areturn(function.getReturnType());
             mv.visitMaxs(0, 0);
@@ -530,7 +544,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             iv.dup();
             iv.iconst(i);
             iv.load(firstTypeParameter + i, JetTypeMapper.TYPE_OBJECT);
-            ExpressionCodegen.genTypeInfoToProjection(iv, Variance.INVARIANT);
+            iv.checkcast(JetTypeMapper.TYPE_TYPEINFOPROJECTION);
             iv.astore(JetTypeMapper.TYPE_OBJECT);
         }
         iv.invokestatic("jet/typeinfo/TypeInfo", "getTypeInfo", "(Ljava/lang/Class;Z[Ljet/typeinfo/TypeInfoProjection;)Ljet/typeinfo/TypeInfo;");
@@ -647,5 +661,51 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private void generateClassObject(JetClassObject declaration) {
         state.forClass().generate(context, declaration.getObjectDeclaration());
+    }
+
+    private void genGetSuperTypesTypeInfo() {
+        if(!(myClass instanceof JetClass) || ((JetClass)myClass).isTrait()) {
+            return;
+        }
+
+        String sig = getGetSuperTypesTypeInfoSignature(descriptor.getDefaultType());
+
+        final MethodVisitor mv = v.visitMethod(Opcodes.ACC_PUBLIC|Opcodes.ACC_STATIC,
+                "$$getSuperTypesTypeInfo",
+                sig,
+                null /* TODO */,
+                null);
+        mv.visitCode();
+        InstructionAdapter v = new InstructionAdapter(mv);
+
+        ExpressionCodegen codegen = new ExpressionCodegen(v, new FrameMap(), Type.VOID_TYPE, context, state);
+
+        v.load(0, JetTypeMapper.TYPE_OBJECT);
+
+        int k = 1;
+        for (TypeParameterDescriptor parameterDescriptor : descriptor.getTypeConstructor().getParameters()) {
+            codegen.addTypeParameter(parameterDescriptor, StackValue.local(k++, JetTypeMapper.TYPE_TYPEINFO));
+        }
+
+        for(JetType superType : descriptor.getTypeConstructor().getSupertypes()) {
+            for (TypeProjection typeProjection : superType.getArguments()) {
+                codegen.generateTypeInfo(typeProjection.getType());
+            }
+            v.invokestatic(state.getTypeMapper().mapType(superType).getInternalName(), "$$getSuperTypesTypeInfo", getGetSuperTypesTypeInfoSignature(superType));
+        }
+
+        v.areturn(Type.VOID_TYPE);
+        mv.visitMaxs(0, 0);
+        mv.visitEnd();
+    }
+
+    private static String getGetSuperTypesTypeInfoSignature(JetType type) {
+        List<TypeParameterDescriptor> typeParameters = type.getConstructor().getParameters();
+        StringBuilder sb = new StringBuilder("(Ljava/util/Set;");
+        for(TypeParameterDescriptor tp : typeParameters)
+            sb.append("Ljet/typeinfo/TypeInfo;");
+        sb.append(")V");
+
+        return sb.toString();
     }
 }

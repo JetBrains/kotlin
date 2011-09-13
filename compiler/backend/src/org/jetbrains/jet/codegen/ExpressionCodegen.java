@@ -1813,23 +1813,25 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             JetType jetType = bindingContext.get(BindingContext.TYPE, typeReference);
             assert jetType != null;
             DeclarationDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
-            if (!(descriptor instanceof ClassDescriptor)) {
-                throw new UnsupportedOperationException("don't know how to handle non-class types in as/as?");
-            }
-            Type type = JetTypeMapper.boxType(typeMapper.mapType(jetType));
-            generateInstanceOf(StackValue.expression(OBJECT_TYPE, expression.getLeft(), this), jetType, true);
-            Label isInstance = new Label();
-            v.ifne(isInstance);
-            v.pop();
-            if (opToken == JetTokens.AS_SAFE) {
-                v.aconst(null);
+            if (descriptor instanceof ClassDescriptor || descriptor instanceof TypeParameterDescriptor) {
+                Type type = JetTypeMapper.boxType(typeMapper.mapType(jetType));
+                generateInstanceOf(StackValue.expression(OBJECT_TYPE, expression.getLeft(), this), jetType, true);
+                Label isInstance = new Label();
+                v.ifne(isInstance);
+                v.pop();
+                if (opToken == JetTokens.AS_SAFE) {
+                    v.aconst(null);
+                }
+                else {
+                    throwNewException(CLASS_TYPE_CAST_EXCEPTION);
+                }
+                v.mark(isInstance);
+                v.checkcast(type);
+                return StackValue.onStack(type);
             }
             else {
-                throwNewException(CLASS_TYPE_CAST_EXCEPTION);
+                throw new UnsupportedOperationException("don't know how to handle non-class types in as/as?");
             }
-            v.mark(isInstance);
-            v.checkcast(type);
-            return StackValue.onStack(type);
         }
     }
 
@@ -1962,7 +1964,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
     }
 
-    private void generateTypeInfo(JetType jetType) {
+    void generateTypeInfo(JetType jetType) {
         String knownTypeInfo = typeMapper.isKnownTypeInfo(jetType);
         if(knownTypeInfo != null) {
             v.getstatic("jet/typeinfo/TypeInfo", knownTypeInfo, "Ljet/typeinfo/TypeInfo;");

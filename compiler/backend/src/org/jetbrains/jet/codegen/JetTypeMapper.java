@@ -439,8 +439,13 @@ public class JetTypeMapper {
         }
         FunctionDescriptor functionDescriptor = bindingContext.get(BindingContext.FUNCTION, f);
         if(kind == OwnerKind.TRAIT_IMPL) {
-            JetType jetType = ((ClassDescriptor)functionDescriptor.getContainingDeclaration()).getDefaultType();
-            final Type type = mapType(jetType);
+            ClassDescriptor containingDeclaration = (ClassDescriptor) functionDescriptor.getContainingDeclaration();
+            JetType jetType = TraitImplBodyCodegen.getSuperClass(containingDeclaration, bindingContext);
+            Type type = mapType(jetType);
+            if(type.getInternalName().equals("java/lang/Object")) {
+                jetType = containingDeclaration.getDefaultType();
+                type = mapType(jetType);
+            }
             valueParameterTypes.add(type);
             parameterTypes.add(type);
         }

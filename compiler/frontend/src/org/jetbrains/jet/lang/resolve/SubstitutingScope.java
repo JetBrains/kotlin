@@ -1,12 +1,15 @@
 package org.jetbrains.jet.lang.resolve;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * @author abreslav
@@ -15,7 +18,9 @@ public class SubstitutingScope implements JetScope {
 
     private final JetScope workerScope;
     private final TypeSubstitutor substitutor;
-    private Collection<DeclarationDescriptor> allDescriptors;
+
+    private Map<String, FunctionGroup> functionGroups = null;
+    private Collection<DeclarationDescriptor> allDescriptors = null;
 
     public SubstitutingScope(JetScope workerScope, @NotNull TypeSubstitutor substitutor) {
         this.workerScope = workerScope;
@@ -58,11 +63,27 @@ public class SubstitutingScope implements JetScope {
     @NotNull
     @Override
     public FunctionGroup getFunctionGroup(@NotNull String name) {
-        FunctionGroup functionGroup = workerScope.getFunctionGroup(name);
-        if (substitutor.isEmpty() || functionGroup.isEmpty()) {
-            return functionGroup;
+        if (substitutor.isEmpty()) {
+            return workerScope.getFunctionGroup(name);
         }
-        return new LazySubstitutingFunctionGroup(substitutor, functionGroup);
+        if (functionGroups == null) {
+            functionGroups = Maps.newHashMap();
+        }
+        FunctionGroup cachedGroup = functionGroups.get(name);
+        if (cachedGroup != null) {
+            return cachedGroup;
+        }
+
+        FunctionGroup functionGroup = workerScope.getFunctionGroup(name);
+        FunctionGroup result;
+        if (functionGroup.isEmpty()) {
+            result = FunctionGroup.EMPTY;
+        }
+        else {
+            result = new LazySubstitutingFunctionGroup(substitutor, functionGroup);
+        }
+        functionGroups.put(name, result);
+        return result;
     }
 
     @NotNull

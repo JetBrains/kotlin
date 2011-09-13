@@ -120,7 +120,7 @@ import java.util.Set;
         return false;
     }
 
-    private <Descriptor extends CallableDescriptor> boolean overrides(@NotNull Descriptor f, @NotNull Descriptor g) {
+    public static <Descriptor extends CallableDescriptor> boolean overrides(@NotNull Descriptor f, @NotNull Descriptor g) {
         Set<CallableDescriptor> overriddenDescriptors = Sets.newHashSet();
         getAllOverriddenDescriptors(f.getOriginal(), overriddenDescriptors);
         CallableDescriptor originalG = g.getOriginal();
@@ -130,7 +130,7 @@ import java.util.Set;
         return false;
     }
 
-    private void getAllOverriddenDescriptors(@NotNull CallableDescriptor current, @NotNull Set<CallableDescriptor> overriddenDescriptors) {
+    private static void getAllOverriddenDescriptors(@NotNull CallableDescriptor current, @NotNull Set<CallableDescriptor> overriddenDescriptors) {
         if (overriddenDescriptors.contains(current)) return;
         for (CallableDescriptor descriptor : current.getOriginal().getOverriddenDescriptors()) {
             getAllOverriddenDescriptors(descriptor, overriddenDescriptors);

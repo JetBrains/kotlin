@@ -41,89 +41,6 @@ public class ClassDescriptorResolver {
         this.annotationResolver = new AnnotationResolver(semanticServices, trace);
     }
 
-    @Nullable
-    public ClassDescriptor resolveClassDescriptor(@NotNull JetScope scope, @NotNull JetClass classElement) {
-        final ClassDescriptorImpl classDescriptor = new ClassDescriptorImpl(
-                scope.getContainingDeclaration(),
-                annotationResolver.resolveAnnotations(scope, classElement.getModifierList()),
-                JetPsiUtil.safeName(classElement.getName()));
-
-        trace.record(BindingContext.CLASS, classElement, classDescriptor);
-
-        final WritableScope parameterScope = new WritableScopeImpl(scope, classDescriptor, trace.getErrorHandler());
-
-        // This call has side-effects on the parameterScope (fills it in)
-        List<TypeParameterDescriptor> typeParameters
-                = resolveTypeParameters(classDescriptor, parameterScope, classElement.getTypeParameters());
-        resolveGenericBounds(classElement, parameterScope, typeParameters);
-
-        List<JetDelegationSpecifier> delegationSpecifiers = classElement.getDelegationSpecifiers();
-        // TODO : assuming that the hierarchy is acyclic
-        Collection<JetType> supertypes = delegationSpecifiers.isEmpty()
-                ? Collections.singleton(JetStandardClasses.getAnyType())
-                : resolveDelegationSpecifiers(parameterScope, delegationSpecifiers, typeResolver);
-//        for (JetType supertype: supertypes) {
-//            if (supertype.getConstructor().isSealed()) {
-//                trace.getErrorHandler().genericError(classElement.getNameAsDeclaration().getNode(), "Class " + classElement.getName() + " can not extend final type " + supertype);
-//            }
-//        }
-        boolean open = classElement.hasModifier(JetTokens.OPEN_KEYWORD);
-
-        final WritableScope memberDeclarations = new WritableScopeImpl(JetScope.EMPTY, classDescriptor, trace.getErrorHandler());
-
-        List<JetDeclaration> declarations = classElement.getDeclarations();
-        for (JetDeclaration declaration : declarations) {
-            declaration.accept(new JetVisitorVoid() {
-                @Override
-                public void visitProperty(JetProperty property) {
-                    if (property.getPropertyTypeRef() != null) {
-                        memberDeclarations.addVariableDescriptor(resolvePropertyDescriptor(classDescriptor, parameterScope, property));
-                    } else {
-                        // TODO : Caution: a cyclic dependency possible
-                        throw new UnsupportedOperationException();
-                    }
-                }
-
-                @Override
-                public void visitNamedFunction(JetNamedFunction function) {
-                    if (function.getReturnTypeRef() != null) {
-                        memberDeclarations.addFunctionDescriptor(resolveFunctionDescriptor(classDescriptor, parameterScope, function));
-                    } else {
-                        // TODO : Caution: a cyclic dependency possible
-                        throw new UnsupportedOperationException();
-                    }
-                }
-
-                @Override
-                public void visitJetElement(JetElement element) {
-                    throw new UnsupportedOperationException(element.toString());
-                }
-            });
-        }
-
-        WritableFunctionGroup constructors = new WritableFunctionGroup("<init>");
-        classDescriptor.initialize(
-                !open,
-                typeParameters,
-                supertypes,
-                memberDeclarations,
-                constructors,
-                null
-        );
-        for (JetConstructor constructor : classElement.getSecondaryConstructors()) {
-            ConstructorDescriptorImpl functionDescriptor = resolveSecondaryConstructorDescriptor(memberDeclarations, classDescriptor, constructor);
-            functionDescriptor.setReturnType(classDescriptor.getDefaultType());
-            constructors.addFunction(functionDescriptor);
-        }
-        ConstructorDescriptorImpl primaryConstructorDescriptor = resolvePrimaryConstructorDescriptor(scope, classDescriptor, classElement);
-        if (primaryConstructorDescriptor != null) {
-            primaryConstructorDescriptor.setReturnType(classDescriptor.getDefaultType());
-            constructors.addFunction(primaryConstructorDescriptor);
-            classDescriptor.setPrimaryConstructor(primaryConstructorDescriptor);
-        }
-        return classDescriptor;
-    }
-
     public void resolveMutableClassDescriptor(@NotNull JetClass classElement, @NotNull MutableClassDescriptor descriptor) {
         // TODO : Where-clause
         List<TypeParameterDescriptor> typeParameters = Lists.newArrayList();
@@ -398,7 +315,7 @@ public class ClassDescriptorResolver {
         return jetType;
     }
 
-    private Collection<JetType> resolveDelegationSpecifiers(JetScope extensibleScope, List<JetDelegationSpecifier> delegationSpecifiers, @NotNull TypeResolver resolver) {
+    public Collection<JetType> resolveDelegationSpecifiers(JetScope extensibleScope, List<JetDelegationSpecifier> delegationSpecifiers, @NotNull TypeResolver resolver) {
         if (delegationSpecifiers.isEmpty()) {
             return Collections.emptyList();
         }
