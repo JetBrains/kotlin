@@ -106,6 +106,16 @@ public class ClassDescriptorResolver {
             JetTypeReference typeReference = delegationSpecifier.getTypeReference();
             if (typeReference != null) {
                 result.add(resolver.resolveType(extensibleScope, typeReference));
+                JetTypeElement typeElement = typeReference.getTypeElement();
+                if (typeElement instanceof JetUserType) {
+                    JetUserType userType = (JetUserType) typeElement;
+                    List<JetTypeProjection> typeArguments = userType.getTypeArguments();
+                    for (JetTypeProjection typeArgument : typeArguments) {
+                        if (typeArgument.getProjectionKind() != JetProjectionKind.NONE) {
+                            trace.getErrorHandler().genericError(typeArgument.getProjectionNode(), "Projections are not allowed for immediate arguments of a supertype");
+                        }
+                    }
+                }
             }
             else {
                 result.add(ErrorUtils.createErrorType("No type reference"));
