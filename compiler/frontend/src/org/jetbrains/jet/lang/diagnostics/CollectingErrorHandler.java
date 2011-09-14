@@ -1,4 +1,4 @@
-package org.jetbrains.jet.lang;
+package org.jetbrains.jet.lang.diagnostics;
 
 import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;

@@ -11,12 +11,12 @@ import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
-import org.jetbrains.jet.lang.CompositeErrorHandler;
-import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.diagnostics.CompositeErrorHandler;
+import org.jetbrains.jet.lang.diagnostics.ErrorHandler;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
@@ -24,11 +24,11 @@ import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResult;
 import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.resolve.DescriptorRenderer;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import java.util.*;
 
+import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 
 /**
@@ -223,14 +223,19 @@ public class JetTypeInferrer {
 
                 IElementType operationSign = operationTokenNode.getElementType();
                 if (nullableReceiver && calleeForbidsNullableReceiver && operationSign == JetTokens.DOT) {
-                    trace.getErrorHandler().genericError(operationTokenNode, "Only safe calls (?.) are allowed on a nullable receiver of type " + receiverType);
+//                    trace.getErrorHandler().genericError(operationTokenNode, "Only safe calls (?.) are allowed on a nullable receiver of type " + receiverType);
+                    trace.report(UNSAFE_CALL.on(operationTokenNode, receiverType));
                 }
                 else if ((!nullableReceiver || !calleeForbidsNullableReceiver) && operationSign == JetTokens.SAFE_ACCESS) {
                     if (namespaceType) {
-                        trace.getErrorHandler().genericError(operationTokenNode, "Safe calls are not allowed on namespaces");
+//                        trace.getErrorHandler().genericError(operationTokenNode, "Safe calls are not allowed on namespaces");
+                        trace.report(SAFE_CALLS_ARE_NOT_ALLOWED_ON_NAMESPACES.on(operationTokenNode));
                     }
                     else {
-                        trace.getErrorHandler().genericWarning(operationTokenNode, "Unnecessary safe call on a non-null receiver of type  " + receiverType);
+//                        trace.getErrorHandler().genericWarning(operationTokenNode, "Unnecessary safe call on a non-null receiver of type  " + receiverType);
+
+                        trace.report(UNNECESSARY_SAFE_CALL.on(operationTokenNode, receiverType));
+
                     }
                 }
             }
@@ -270,7 +275,7 @@ public class JetTypeInferrer {
     //                    }
     //                    else if (element instanceof JetExpression) {
     //                        JetExpression expression = (JetExpression) element;
-    //                        context.trace.getErrorHandler().typeMismatch(expression, expectedReturnType, actualType);
+    //                        context.trace.report(TYPE_MISMATCH.on(expression, expectedReturnType, actualType));
     //                    }
     //                    else {
     //                        context.trace.getErrorHandler().genericError(element.getNode(), "This function must return a value of type " + expectedReturnType);
@@ -313,7 +318,8 @@ public class JetTypeInferrer {
             //        though it'd better be reported more specifically
 
             for (JetElement element : rootUnreachableElements) {
-                trace.getErrorHandler().genericError(element.getNode(), "Unreachable code");
+//                trace.getErrorHandler().genericError(element.getNode(), "Unreachable code");
+                trace.report(UNREACHABLE_CODE.on(element));
             }
 
             List<JetExpression> returnedExpressions = Lists.newArrayList();
@@ -324,7 +330,8 @@ public class JetTypeInferrer {
             returnedExpressions.remove(function); // This will be the only "expression" if the body is empty
 
             if (expectedReturnType != NO_EXPECTED_TYPE && !JetStandardClasses.isUnit(expectedReturnType) && returnedExpressions.isEmpty() && !nothingReturned) {
-                trace.getErrorHandler().genericError(bodyExpression.getNode(), "This function must return a value of type " + expectedReturnType);
+//                trace.getErrorHandler().genericError(bodyExpression.getNode(), "This function must return a value of type " + expectedReturnType);
+                trace.report(RETURN_TYPE_MISMATCH.on(bodyExpression, expectedReturnType));
             }
 
             for (JetExpression returnedExpression : returnedExpressions) {
@@ -332,7 +339,8 @@ public class JetTypeInferrer {
                     @Override
                     public void visitReturnExpression(JetReturnExpression expression) {
                         if (!blockBody) {
-                            trace.getErrorHandler().genericError(expression.getNode(), "Returns are not allowed for functions with expression body. Use block body in '{...}'");
+//                            trace.getErrorHandler().genericError(expression.getNode(), "Returns are not allowed for functions with expression body. Use block body in '{...}'");
+                            trace.report(RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY.on(expression));
                         }
                     }
 
@@ -342,7 +350,8 @@ public class JetTypeInferrer {
                             //TODO move to pseudocode
                             JetType type = typeInferrerVisitor.getType(expression, context.replaceExpectedType(NO_EXPECTED_TYPE));
                             if (type == null || !JetStandardClasses.isNothing(type)) {
-                                trace.getErrorHandler().genericError(expression.getNode(), "A 'return' expression required in a function with a block body ('{...}')");
+//                                trace.getErrorHandler().genericError(expression.getNode(), "A 'return' expression required in a function with a block body ('{...}')");
+                                trace.report(NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY.on(expression));
                             }
                         }
                     }
@@ -489,7 +498,7 @@ public class JetTypeInferrer {
         private JetType checkType(@Nullable JetType expressionType, @NotNull JetExpression expression, @NotNull TypeInferenceContext context) {
             if (expressionType != null && context.expectedType != null && context.expectedType != NO_EXPECTED_TYPE) {
                 if (!semanticServices.getTypeChecker().isSubtypeOf(expressionType, context.expectedType)) {
-                    context.trace.getErrorHandler().typeMismatch(expression, context.expectedType, expressionType);
+                    context.trace.report(TYPE_MISMATCH.on(expression, context.expectedType, expressionType));
                 }
             }
             return expressionType;
@@ -520,7 +529,8 @@ public class JetTypeInferrer {
                 }
             }
             if (!appropriateTypeFound) {
-                context.trace.getErrorHandler().typeMismatch(expression, context.expectedType, expressionType);
+//                context.trace.getErrorHandler().typeMismatch(expression, context.expectedType, expressionType);
+                context.trace.report(TYPE_MISMATCH.on(expression, context.expectedType, expressionType));
                 return expressionType;
             }
             checkAutoCast(expression, context.expectedType, variableDescriptor, context.trace);
@@ -529,7 +539,8 @@ public class JetTypeInferrer {
 
         private void checkAutoCast(JetExpression expression, JetType type, VariableDescriptor variableDescriptor, BindingTrace trace) {
             if (variableDescriptor.isVar()) {
-                trace.getErrorHandler().genericError(expression.getNode(), "Automatic cast to " + type + " is impossible, because variable " + variableDescriptor.getName() + " is mutable");
+//                trace.getErrorHandler().genericError(expression.getNode(), "Automatic cast to " + type + " is impossible, because variable " + variableDescriptor.getName() + " is mutable");
+                trace.report(AUTOCAST_IMPOSSIBLE.on(expression, type, variableDescriptor));
             } else {
                 trace.record(BindingContext.AUTOCAST, expression, type);
             }
@@ -696,7 +707,8 @@ public class JetTypeInferrer {
                 }
             }
             catch (ReenteringLazyValueComputationException e) {
-                context.trace.getErrorHandler().genericError(expression.getNode(), "Type checking has run into a recursive problem"); // TODO : message
+//                context.trace.getErrorHandler().genericError(expression.getNode(), "Type checking has run into a recursive problem"); // TODO : message
+                context.trace.report(TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM.on(expression));
                 result = null;
             }
 
@@ -725,8 +737,9 @@ public class JetTypeInferrer {
             flowInformationProvider.collectDominatedExpressions(expression, dominated);
             Set<JetElement> rootExpressions = JetPsiUtil.findRootExpressions(dominated);
             for (JetElement rootExpression : rootExpressions) {
-                context.trace.getErrorHandler().genericError(rootExpression.getNode(),
-                        "This code is unreachable, because '" + expression.getText() + "' never terminates normally");
+//                context.trace.getErrorHandler().genericError(rootExpression.getNode(),
+//                        "This code is unreachable, because '" + expression.getText() + "' never terminates normally");
+                context.trace.report(UNREACHABLE_BECAUSE_OF_NOTHING.on(rootExpression, expression.getText()));
             }
         }
 
@@ -741,7 +754,7 @@ public class JetTypeInferrer {
                     && referencedName != null) {
                 PropertyDescriptor property = context.scope.getPropertyByFieldReference(referencedName);
                 if (property == null) {
-                    context.trace.getErrorHandler().unresolvedReference(expression);
+                    context.trace.report(UNRESOLVED_REFERENCE.on(expression));
                 }
                 else {
                     context.trace.record(REFERENCE_TARGET, expression, property);
@@ -784,7 +797,7 @@ public class JetTypeInferrer {
 //
 //                        }
 //                    }
-//                    context.trace.getErrorHandler().unresolvedReference(expression);
+//                    context.trace.report(UNRESOLVED_REFERENCE.on(expression));
 //                }
             }
             return null;
@@ -799,7 +812,8 @@ public class JetTypeInferrer {
                     result = classObjectType;
                 }
                 else {
-                    context.trace.getErrorHandler().genericError(expression.getNode(), "Classifier " + classifier.getName() +  " does not have a class object");
+//                    context.trace.getErrorHandler().genericError(expression.getNode(), "Classifier " + classifier.getName() +  " does not have a class object");
+                    context.trace.report(NO_CLASS_OBJECT.on(expression, classifier));
                 }
                 context.trace.record(REFERENCE_TARGET, expression, classifier);
                 if (result == null) {
@@ -824,7 +838,8 @@ public class JetTypeInferrer {
         protected boolean furtherNameLookup(@NotNull JetSimpleNameExpression expression, @NotNull String referencedName, @NotNull JetType[] result, TypeInferenceContext context) {
             NamespaceType namespaceType = lookupNamespaceType(expression, referencedName, context);
             if (namespaceType != null) {
-                context.trace.getErrorHandler().genericError(expression.getNode(), "Expression expected, but a namespace name found");
+//                context.trace.getErrorHandler().genericError(expression.getNode(), "Expression expected, but a namespace name found");
+                context.trace.report(EXPRESSION_EXPECTED_NAMESPACE_FOUND.on(expression));
                 return true;
             }
             return false;
@@ -910,7 +925,8 @@ public class JetTypeInferrer {
                         type = valueParameters.get(i).getOutType();
                     }
                     else {
-                        context.trace.getErrorHandler().genericError(parameter.getNode(), "Cannot infer a type for this parameter. To specify it explicitly use the {(p : Type) => ...} notation");
+//                        context.trace.getErrorHandler().genericError(parameter.getNode(), "Cannot infer a type for this parameter. To specify it explicitly use the {(p : Type) => ...} notation");
+                        context.trace.report(CANNOT_INFER_PARAMETER_TYPE.on(parameter));
                         type = ErrorUtils.createErrorType("Cannot be inferred");
                     }
                 }
@@ -997,7 +1013,8 @@ public class JetTypeInferrer {
             }
             if (value instanceof ErrorValue) {
                 ErrorValue errorValue = (ErrorValue) value;
-                context.trace.getErrorHandler().genericError(node, errorValue.getMessage());
+//                context.trace.getErrorHandler().genericError(node, errorValue.getMessage());
+                context.trace.report(ERROR_COMPILE_TIME_VALUE.on(node, errorValue.getMessage()));
                 return getDefaultType(elementType);
             }
             else {
@@ -1044,7 +1061,8 @@ public class JetTypeInferrer {
         @Override
         public JetType visitReturnExpression(JetReturnExpression expression, TypeInferenceContext context) {
             if (context.expectedReturnType == FORBIDDEN) {
-                context.trace.getErrorHandler().genericError(expression.getNode(), "'return' is not allowed here");
+//                context.trace.getErrorHandler().genericError(expression.getNode(), "'return' is not allowed here");
+                context.trace.report(RETURN_NOT_ALLOWED.on(expression));
                 return null;
             }
             JetExpression returnedExpression = expression.getReturnedExpression();
@@ -1055,7 +1073,8 @@ public class JetTypeInferrer {
             }
             else {
                 if (context.expectedReturnType != NO_EXPECTED_TYPE && !JetStandardClasses.isUnit(context.expectedReturnType)) {
-                    context.trace.getErrorHandler().genericError(expression.getNode(), "This function must return a value of type " + context.expectedReturnType);
+//                    context.trace.getErrorHandler().genericError(expression.getNode(), "This function must return a value of type " + context.expectedReturnType);
+                    context.trace.report(RETURN_TYPE_MISMATCH.on(expression, context.expectedReturnType));
                 }
             }
             return context.services.checkType(JetStandardClasses.getNothingType(), expression, context);
@@ -1124,7 +1143,8 @@ public class JetTypeInferrer {
             IElementType operationType = operationSign.getReferencedNameElementType();
             if (operationType == JetTokens.COLON) {
                 if (targetType != NO_EXPECTED_TYPE && !semanticServices.getTypeChecker().isSubtypeOf(actualType, targetType)) {
-                    context.trace.getErrorHandler().typeMismatch(expression.getLeft(), targetType, actualType);
+//                    context.trace.getErrorHandler().typeMismatch(expression.getLeft(), targetType, actualType);
+                    context.trace.report(TYPE_MISMATCH.on(expression.getLeft(), targetType, actualType));
                     return false;
                 }
                 return true;
@@ -1134,7 +1154,8 @@ public class JetTypeInferrer {
                 return true;
             }
             else {
-                context.trace.getErrorHandler().genericError(operationSign.getNode(), "Unsupported binary operation");
+//                context.trace.getErrorHandler().genericError(operationSign.getNode(), "Unknown binary operation");\
+                context.trace.report(UNSUPPORTED.on(operationSign, "binary operation with type RHS"));
                 return false;
             }
         }
@@ -1145,16 +1166,19 @@ public class JetTypeInferrer {
             JetTypeChecker typeChecker = semanticServices.getTypeChecker();
             if (!typeChecker.isSubtypeOf(targetType, actualType)) {
                 if (typeChecker.isSubtypeOf(actualType, targetType)) {
-                    context.trace.getErrorHandler().genericWarning(expression.getOperationSign().getNode(), "No cast needed, use ':' instead");
+//                    context.trace.getErrorHandler().genericWarning(expression.getOperationSign().getNode(), "No cast needed, use ':' instead");
+                    context.trace.report(USELESS_CAST_STATIC_ASSERT_IS_FINE.on(expression.getOperationSign()));
                 }
                 else {
                     // See JET-58 Make 'as never succeeds' a warning, or even never check for Java (external) types
-                    context.trace.getErrorHandler().genericWarning(expression.getOperationSign().getNode(), "This cast can never succeed");
+//                    context.trace.getErrorHandler().genericWarning(expression.getOperationSign().getNode(), "This cast can never succeed");
+                    context.trace.report(CAST_NEVER_SUCCEEDS.on(expression.getOperationSign()));
                 }
             }
             else {
                 if (typeChecker.isSubtypeOf(actualType, targetType)) {
-                    context.trace.getErrorHandler().genericWarning(expression.getOperationSign().getNode(), "No cast needed");
+//                    context.trace.getErrorHandler().genericWarning(expression.getOperationSign().getNode(), "No cast needed");
+                    context.trace.report(USELESS_CAST.on(expression.getOperationSign()));
                 }
             }
         }
@@ -1218,15 +1242,16 @@ public class JetTypeInferrer {
                             }
                         }
                         else {
-                            context.trace.getErrorHandler().unresolvedReference(targetLabel);
+                            context.trace.report(UNRESOLVED_REFERENCE.on(targetLabel));
                         }
                     }
                     else {
-                        context.trace.getErrorHandler().unresolvedReference(targetLabel);
+                        context.trace.report(UNRESOLVED_REFERENCE.on(targetLabel));
                     }
                 }
                 else {
-                    context.trace.getErrorHandler().genericError(targetLabel.getNode(), "Ambiguous label");
+//                    context.trace.getErrorHandler().genericError(targetLabel.getNode(), "Ambiguous label");
+                    context.trace.report(AMBIGUOUS_LABEL.on(targetLabel));
                 }
             }
             else {
@@ -1240,7 +1265,8 @@ public class JetTypeInferrer {
 
             if (thisType != null) {
                 if (JetStandardClasses.isNothing(thisType)) {
-                    context.trace.getErrorHandler().genericError(expression.getNode(), "'this' is not defined in this context");
+//                    context.trace.getErrorHandler().genericError(expression.getNode(), "'this' is not defined in this context");
+                    context.trace.report(NO_THIS.on(expression));
                 }
                 else {
                     JetTypeReference superTypeQualifier = expression.getSuperTypeQualifier();
@@ -1263,7 +1289,8 @@ public class JetTypeInferrer {
                                     }
                                 }
                                 if (result == null) {
-                                    context.trace.getErrorHandler().genericError(superTypeElement.getNode(), "Not a superclass");
+//                                    context.trace.getErrorHandler().genericError(superTypeElement.getNode(), "Not a superclass");
+                                    context.trace.report(NOT_A_SUPERTYPE.on(superTypeElement));
                                 }
                             }
                         }
@@ -1339,7 +1366,8 @@ public class JetTypeInferrer {
                 return semanticServices.getTypeChecker().commonSupertype(expressionTypes);
             }
             else if (expression.getEntries().isEmpty()) {
-                context.trace.getErrorHandler().genericError(expression.getNode(), "Entries required for when-expression"); // TODO : Scope, and maybe this should not an error
+//                context.trace.getErrorHandler().genericError(expression.getNode(), "Entries required for when-expression");
+                context.trace.report(NO_WHEN_ENTRIES.on(expression));
             }
             return null;
         }
@@ -1379,7 +1407,8 @@ public class JetTypeInferrer {
 
                 @Override
                 public void visitJetElement(JetElement element) {
-                    context.trace.getErrorHandler().genericError(element.getNode(), "Unsupported [JetTypeInferrer] : " + element);
+//                    context.trace.getErrorHandler().genericError(element.getNode(), "Unsupported [JetTypeInferrer] : " + element);
+                    context.trace.report(UNSUPPORTED.on(element, getClass().getCanonicalName()));
                 }
             });
             return newDataFlowInfo[0];
@@ -1404,7 +1433,8 @@ public class JetTypeInferrer {
                     TypeConstructor typeConstructor = subjectType.getConstructor();
                     if (!JetStandardClasses.getTuple(entries.size()).getTypeConstructor().equals(typeConstructor)
                         || typeConstructor.getParameters().size() != entries.size()) {
-                        context.trace.getErrorHandler().genericError(pattern.getNode(), "Type mismatch: subject is of type " + subjectType + " but the pattern is of type Tuple" + entries.size()); // TODO : message
+//                        context.trace.getErrorHandler().genericError(pattern.getNode(), "Type mismatch: subject is of type " + subjectType + " but the pattern is of type Tuple" + entries.size());
+                        context.trace.report(TYPE_MISMATCH_IN_TUPLE_PATTERN.on(pattern, subjectType, entries.size()));
                     }
                     else {
                         for (int i = 0, entriesSize = entries.size(); i < entriesSize; i++) {
@@ -1414,7 +1444,8 @@ public class JetTypeInferrer {
                             // TODO : is a name always allowed, ie for tuple patterns, not decomposer arg lists?
                             ASTNode nameLabelNode = entry.getNameLabelNode();
                             if (nameLabelNode != null) {
-                                context.trace.getErrorHandler().genericError(nameLabelNode, "Unsupported [JetTypeInferrer]");
+//                                context.trace.getErrorHandler().genericError(nameLabelNode, "Unsupported [JetTypeInferrer]");
+                                context.trace.report(UNSUPPORTED.on(nameLabelNode, getClass().getCanonicalName()));
                             }
 
                             JetPattern entryPattern = entry.getPattern();
@@ -1458,7 +1489,8 @@ public class JetTypeInferrer {
                     scopeToExtend.addVariableDescriptor(variableDescriptor);
                     if (propertyTypeRef != null) {
                         if (!semanticServices.getTypeChecker().isSubtypeOf(subjectType, type)) {
-                            context.trace.getErrorHandler().genericError(propertyTypeRef.getNode(), type + " must be a supertype of " + subjectType + ". Use 'is' to match against " + type);
+//                            context.trace.getErrorHandler().genericError(propertyTypeRef.getNode(), type + " must be a supertype of " + subjectType + ". Use 'is' to match against " + type);
+                            context.trace.report(TYPE_MISMATCH_IN_BINDING_PATTERN.on(propertyTypeRef, type, subjectType));
                         }
                     }
 
@@ -1478,13 +1510,15 @@ public class JetTypeInferrer {
                         return;
                     }
                     if (TypeUtils.intersect(semanticServices.getTypeChecker(), Sets.newHashSet(type, subjectType)) == null) {
-                        context.trace.getErrorHandler().genericError(reportErrorOn.getNode(), "Incompatible types: " + type + " and " + subjectType);
+//                        context.trace.getErrorHandler().genericError(reportErrorOn.getNode(), "Incompatible types: " + type + " and " + subjectType);
+                        context.trace.report(INCOMPATIBLE_TYPES.on(reportErrorOn, type, subjectType));
                     }
                 }
 
                 @Override
                 public void visitJetElement(JetElement element) {
-                    context.trace.getErrorHandler().genericError(element.getNode(), "Unsupported [JetTypeInferrer]");
+//                    context.trace.getErrorHandler().genericError(element.getNode(), "Unsupported [JetTypeInferrer]");
+                    context.trace.report(UNSUPPORTED.on(element, getClass().getCanonicalName()));
                 }
             });
             return result[0];
@@ -1729,7 +1763,8 @@ public class JetTypeInferrer {
                 JetType conditionType = getType(condition, context.replaceScope(scope));
 
                 if (conditionType != null && !isBoolean(conditionType)) {
-                    context.trace.getErrorHandler().genericError(condition.getNode(), "Condition must be of type Boolean, but was of type " + conditionType);
+//                    context.trace.getErrorHandler().genericError(condition.getNode(), "Condition must be of type Boolean, but was of type " + conditionType);
+                    context.trace.report(TYPE_MISMATCH_IN_CONDITION.on(condition, conditionType));
                 }
             }
         }
@@ -1811,7 +1846,8 @@ public class JetTypeInferrer {
                     if (expectedParameterType != null &&
                             actualParameterType != null &&
                             !semanticServices.getTypeChecker().isSubtypeOf(expectedParameterType, actualParameterType)) {
-                        context.trace.getErrorHandler().genericError(typeReference.getNode(), "The loop iterates over values of type " + expectedParameterType + " but the parameter is declared to be " + actualParameterType);
+//                        context.trace.getErrorHandler().genericError(typeReference.getNode(), "The loop iterates over values of type " + expectedParameterType + " but the parameter is declared to be " + actualParameterType);
+                        context.trace.report(TYPE_MISMATCH_IN_FOR_LOOP.on(typeReference, expectedParameterType, actualParameterType));
                     }
                 }
                 else {
@@ -1847,10 +1883,12 @@ public class JetTypeInferrer {
                 boolean hasNextPropertySupported = hasNextProperty != null;
                 if (hasNextFunctionSupported && hasNextPropertySupported && !ErrorUtils.isErrorType(iteratorType)) {
                     // TODO : overload resolution rules impose priorities here???
-                    context.trace.getErrorHandler().genericError(reportErrorsOn, "An ambiguity between 'iterator().hasNext()' function and 'iterator().hasNext' property");
+//                    context.trace.getErrorHandler().genericError(reportErrorsOn, "An ambiguity between 'iterator().hasNext()' function and 'iterator().hasNext' property");
+                    context.trace.report(HAS_NEXT_PROPERTY_AND_FUNCTION_AMBIGUITY.on(reportErrorsOn));
                 }
                 else if (!hasNextFunctionSupported && !hasNextPropertySupported) {
-                    context.trace.getErrorHandler().genericError(reportErrorsOn, "Loop range must have an 'iterator().hasNext()' function or an 'iterator().hasNext' property");
+//                    context.trace.getErrorHandler().genericError(reportErrorsOn, "Loop range must have an 'iterator().hasNext()' function or an 'iterator().hasNext' property");
+                    context.trace.report(HAS_NEXT_MISSING.on(reportErrorsOn));
                 }
                 else {
                     context.trace.record(LOOP_RANGE_HAS_NEXT, loopRange, hasNextFunctionSupported ? hasNextFunction : hasNextProperty);
@@ -1858,9 +1896,11 @@ public class JetTypeInferrer {
 
                 OverloadResolutionResult<FunctionDescriptor> nextResolutionResult = callResolver.resolveExactSignature(context.scope, iteratorType, "next", Collections.<JetType>emptyList());
                 if (nextResolutionResult.isAmbiguity()) {
-                    context.trace.getErrorHandler().genericError(reportErrorsOn, "Method 'iterator().next()' is ambiguous for this expression");
+//                    context.trace.getErrorHandler().genericError(reportErrorsOn, "Method 'iterator().next()' is ambiguous for this expression");
+                    context.trace.report(NEXT_AMBIGUITY.on(reportErrorsOn));
                 } else if (nextResolutionResult.isNothing()) {
-                    context.trace.getErrorHandler().genericError(reportErrorsOn, "Loop range must have an 'iterator().next()' method");
+//                    context.trace.getErrorHandler().genericError(reportErrorsOn, "Loop range must have an 'iterator().next()' method");
+                    context.trace.report(NEXT_MISSING.on(reportErrorsOn));
                 } else {
                     FunctionDescriptor nextFunction = nextResolutionResult.getDescriptor();
                     context.trace.record(LOOP_RANGE_NEXT, loopRange, nextFunction);
@@ -1868,15 +1908,18 @@ public class JetTypeInferrer {
                 }
             }
             else {
-                String errorMessage = "For-loop range must have an iterator() method";
                 if (iteratorResolutionResult.isAmbiguity()) {
-                    StringBuffer stringBuffer = new StringBuffer("Method 'iterator()' is ambiguous for this expression: ");
-                    for (FunctionDescriptor functionDescriptor : iteratorResolutionResult.getDescriptors()) {
-                        stringBuffer.append(DescriptorRenderer.TEXT.render(functionDescriptor)).append(" ");
-                    }
-                    errorMessage = "Method 'iterator()' is ambiguous for this expression: " + stringBuffer;
+//                    StringBuffer stringBuffer = new StringBuffer("Method 'iterator()' is ambiguous for this expression: ");
+//                    for (FunctionDescriptor functionDescriptor : iteratorResolutionResult.getDescriptors()) {
+//                        stringBuffer.append(DescriptorRenderer.TEXT.render(functionDescriptor)).append(" ");
+//                    }
+//                    errorMessage = stringBuffer.toString();
+                    context.trace.report(ITERATOR_AMBIGUITY.on(reportErrorsOn, iteratorResolutionResult.getDescriptors()));
                 }
-                context.trace.getErrorHandler().genericError(reportErrorsOn, errorMessage);
+                else {
+//                    context.trace.getErrorHandler().genericError(reportErrorsOn, errorMessage);
+                    context.trace.report(ITERATOR_MISSING.on(reportErrorsOn));
+                }
             }
             return null;
         }
@@ -1885,14 +1928,16 @@ public class JetTypeInferrer {
         private FunctionDescriptor checkHasNextFunctionSupport(@NotNull JetExpression loopRange, @NotNull JetType iteratorType, TypeInferenceContext context) {
             OverloadResolutionResult<FunctionDescriptor> hasNextResolutionResult = callResolver.resolveExactSignature(context.scope, iteratorType, "hasNext", Collections.<JetType>emptyList());
             if (hasNextResolutionResult.isAmbiguity()) {
-                context.trace.getErrorHandler().genericError(loopRange.getNode(), "Method 'iterator().hasNext()' is ambiguous for this expression");
+//                context.trace.getErrorHandler().genericError(loopRange.getNode(), "Method 'iterator().hasNext()' is ambiguous for this expression");
+                context.trace.report(HAS_NEXT_FUNCTION_AMBIGUITY.on(loopRange));
             } else if (hasNextResolutionResult.isNothing()) {
                 return null;
             } else {
                 assert hasNextResolutionResult.isSuccess();
                 JetType hasNextReturnType = hasNextResolutionResult.getDescriptor().getReturnType();
                 if (!isBoolean(hasNextReturnType)) {
-                    context.trace.getErrorHandler().genericError(loopRange.getNode(), "The 'iterator().hasNext()' method of the loop range must return Boolean, but returns " + hasNextReturnType);
+//                    context.trace.getErrorHandler().genericError(loopRange.getNode(), "The 'iterator().hasNext()' method of the loop range must return Boolean, but returns " + hasNextReturnType);
+                    context.trace.report(HAS_NEXT_FUNCTION_TYPE_MISMATCH.on(loopRange, hasNextReturnType));
                 }
             }
             return hasNextResolutionResult.getDescriptor();
@@ -1908,10 +1953,12 @@ public class JetTypeInferrer {
                 JetType hasNextReturnType = hasNextProperty.getOutType();
                 if (hasNextReturnType == null) {
                     // TODO : accessibility
-                    context.trace.getErrorHandler().genericError(loopRange.getNode(), "The 'iterator().hasNext' property of the loop range must be readable");
+//                    context.trace.getErrorHandler().genericError(loopRange.getNode(), "The 'iterator().hasNext' property of the loop range must be readable");
+                    context.trace.report(HAS_NEXT_MUST_BE_READABLE.on(loopRange));
                 }
                 else if (!isBoolean(hasNextReturnType)) {
-                    context.trace.getErrorHandler().genericError(loopRange.getNode(), "The 'iterator().hasNext' property of the loop range must return Boolean, but returns " + hasNextReturnType);
+//                    context.trace.getErrorHandler().genericError(loopRange.getNode(), "The 'iterator().hasNext' property of the loop range must return Boolean, but returns " + hasNextReturnType);
+                    context.trace.report(HAS_NEXT_PROPERTY_TYPE_MISMATCH.on(loopRange, hasNextReturnType));
                 }
             }
             return hasNextProperty;
@@ -1919,7 +1966,8 @@ public class JetTypeInferrer {
 
         @Override
         public JetType visitHashQualifiedExpression(JetHashQualifiedExpression expression, TypeInferenceContext context) {
-            context.trace.getErrorHandler().genericError(expression.getOperationTokenNode(), "Unsupported");
+//            context.trace.getErrorHandler().genericError(expression.getOperationTokenNode(), "Unsupported");
+            context.trace.report(UNSUPPORTED.on(expression, getClass().getCanonicalName()));
             return null;
         }
 
@@ -1983,7 +2031,8 @@ public class JetTypeInferrer {
             if (expression.getOperationSign() == JetTokens.QUEST) {
                 if (selectorReturnType != null && !isBoolean(selectorReturnType) && selectorExpression != null) {
                     // TODO : more comprehensible error message
-                    context.trace.getErrorHandler().typeMismatch(selectorExpression, semanticServices.getStandardLibrary().getBooleanType(), selectorReturnType);
+//                    context.trace.getErrorHandler().typeMismatch(selectorExpression, semanticServices.getStandardLibrary().getBooleanType(), selectorReturnType);
+                    context.trace.report(TYPE_MISMATCH.on(selectorExpression, semanticServices.getStandardLibrary().getBooleanType(), selectorReturnType));
                 }
                 result = TypeUtils.makeNullable(receiverType);
             }
@@ -2072,7 +2121,8 @@ public class JetTypeInferrer {
 
                 @Override
                 public void visitJetElement(JetElement element) {
-                    context.trace.getErrorHandler().genericError(element.getNode(), "Unsupported [getCalleeFunctionDescriptor]: " + element);
+//                    context.trace.getErrorHandler().genericError(element.getNode(), "Unsupported [getCalleeFunctionDescriptor]: " + element);
+                    context.trace.report(UNSUPPORTED.on(element, "getCalleeFunctionDescriptor"));
                 }
             });
             if (result[0] == null) {
@@ -2098,7 +2148,7 @@ public class JetTypeInferrer {
                 TypeInferenceContext newContext = receiverType == null ? context : context.replaceScope(receiverType.getMemberScope());
                 JetType jetType = lookupNamespaceOrClassObject(nameExpression, nameExpression.getReferencedName(), newContext);
                 if (jetType == null) {
-                    context.trace.getErrorHandler().unresolvedReference(nameExpression);
+                    context.trace.report(UNRESOLVED_REFERENCE.on(nameExpression));
                 }
                 return context.services.checkEnrichedType(jetType, nameExpression, context);
 //                JetScope scope = receiverType != null ? receiverType.getMemberScope() : context.scope;
@@ -2114,7 +2164,8 @@ public class JetTypeInferrer {
             }
             else {
                 // TODO : not a simple name -> resolve in scope, expect property type or a function type
-                context.trace.getErrorHandler().genericError(selectorExpression.getNode(), "Unsupported selector element type: " + selectorExpression);
+//                context.trace.getErrorHandler().genericError(selectorExpression.getNode(), "Unsupported selector element type: " + selectorExpression);
+                context.trace.report(UNSUPPORTED.on(selectorExpression, "getSelectorReturnType"));
             }
             return null;
         }
@@ -2151,7 +2202,8 @@ public class JetTypeInferrer {
             IElementType operationType = operationSign.getReferencedNameElementType();
             String name = unaryOperationNames.get(operationType);
             if (name == null) {
-                context.trace.getErrorHandler().genericError(operationSign.getNode(), "Unknown unary operation");
+//                context.trace.getErrorHandler().genericError(operationSign.getNode(), "Unknown unary operation");
+                context.trace.report(UNSUPPORTED.on(operationSign, "visitUnaryExpression"));
                 return null;
             }
             JetType receiverType = getType(baseExpression, context.replaceExpectedType(NO_EXPECTED_TYPE).replaceScope(context.scope));
@@ -2175,7 +2227,8 @@ public class JetTypeInferrer {
                 }
                 else {
                     if (!semanticServices.getTypeChecker().isSubtypeOf(returnType, receiverType)) {
-                        context.trace.getErrorHandler().genericError(operationSign.getNode(), name + " must return " + receiverType + " but returns " + returnType);
+//                        context.trace.getErrorHandler().genericError(operationSign.getNode(), name + " must return " + receiverType + " but returns " + returnType);
+                        context.trace.report(RESULT_TYPE_MISMATCH.on(operationSign, name, receiverType, returnType));
                     }
                     else {
                         context.trace.record(BindingContext.VARIABLE_REASSIGNMENT, expression);
@@ -2224,7 +2277,8 @@ public class JetTypeInferrer {
                     if (constructor.equals(intTypeConstructor)) {
                         result = standardLibrary.getBooleanType();
                     } else {
-                        context.trace.getErrorHandler().genericError(operationSign.getNode(), "compareTo must return Int, but returns " + compareToReturnType);
+//                        context.trace.getErrorHandler().genericError(operationSign.getNode(), "compareTo() must return Int, but returns " + compareToReturnType);
+                        context.trace.report(COMPARE_TO_TYPE_MISMATCH.on(operationSign, compareToReturnType));
                     }
                 }
             }
@@ -2244,14 +2298,16 @@ public class JetTypeInferrer {
                     }
                     else {
                         if (resolutionResult.isAmbiguity()) {
-                            StringBuilder stringBuilder = new StringBuilder();
-                            for (FunctionDescriptor functionDescriptor : resolutionResult.getDescriptors()) {
-                                stringBuilder.append(DescriptorRenderer.TEXT.render(functionDescriptor)).append(" ");
-                            }
-                            context.trace.getErrorHandler().genericError(operationSign.getNode(), "Ambiguous function: " + stringBuilder);
+//                            StringBuilder stringBuilder = new StringBuilder();
+//                            for (FunctionDescriptor functionDescriptor : resolutionResult.getDescriptors()) {
+//                                stringBuilder.append(DescriptorRenderer.TEXT.render(functionDescriptor)).append(" ");
+//                            }
+//                            context.trace.getErrorHandler().genericError(operationSign.getNode(), "Ambiguous function: " + stringBuilder);
+                            context.trace.report(OVERLOAD_RESOLUTION_AMBIGUITY.on(operationSign, resolutionResult.getDescriptors()));
                         }
                         else {
-                            context.trace.getErrorHandler().genericError(operationSign.getNode(), "No method 'equals(Any?) : Boolean' available");
+//                            context.trace.getErrorHandler().genericError(operationSign.getNode(), "No method 'equals(Any?) : Boolean' available");
+                            context.trace.report(EQUALS_MISSING.on(operationSign));
                         }
                     }
                 }
@@ -2278,10 +2334,12 @@ public class JetTypeInferrer {
                 WritableScopeImpl rightScope = operationType == JetTokens.ANDAND ? leftScope : newWritableScopeImpl(context.scope, context.trace).setDebugName("Right scope of && or ||");
                 JetType rightType = right == null ? null : getType(right, context.replaceDataFlowInfo(flowInfoLeft).replaceScope(rightScope));
                 if (leftType != null && !isBoolean(leftType)) {
-                    context.trace.getErrorHandler().typeMismatch(left, semanticServices.getStandardLibrary().getBooleanType(), leftType);
+//                    context.trace.getErrorHandler().typeMismatch(left, semanticServices.getStandardLibrary().getBooleanType(), leftType);
+                    context.trace.report(TYPE_MISMATCH.on(left, semanticServices.getStandardLibrary().getBooleanType(), leftType));
                 }
                 if (rightType != null && !isBoolean(rightType)) {
-                    context.trace.getErrorHandler().typeMismatch(right, semanticServices.getStandardLibrary().getBooleanType(), rightType);
+//                    context.trace.getErrorHandler().typeMismatch(right, semanticServices.getStandardLibrary().getBooleanType(), rightType);
+                    context.trace.report(TYPE_MISMATCH.on(right, semanticServices.getStandardLibrary().getBooleanType(), rightType));
                 }
                 result = semanticServices.getStandardLibrary().getBooleanType();
             }
@@ -2290,7 +2348,8 @@ public class JetTypeInferrer {
                 JetType rightType = right == null ? null : getType(right, contextWithExpectedType.replaceScope(context.scope));
                 if (leftType != null) {
                     if (!leftType.isNullable()) {
-                        context.trace.getErrorHandler().genericWarning(left.getNode(), "Elvis operator (?:) is always returns the left operand of non-nullable type " + leftType);
+//                        context.trace.getErrorHandler().genericWarning(left.getNode(), "Elvis operator (?:) always returns the left operand of non-nullable type " + leftType);
+                        context.trace.report(USELESS_ELVIS.on(left, leftType));
                     }
                     if (rightType != null) {
                         context.services.checkType(TypeUtils.makeNullableAsSpecified(leftType, rightType.isNullable()), left, contextWithExpectedType);
@@ -2299,7 +2358,8 @@ public class JetTypeInferrer {
                 }
             }
             else {
-                context.trace.getErrorHandler().genericError(operationSign.getNode(), "Unknown operation");
+//                context.trace.getErrorHandler().genericError(operationSign.getNode(), "Unknown operation");
+                context.trace.report(UNSUPPORTED.on(operationSign, "Unknown operation"));
             }
             return context.services.checkType(result, expression, contextWithExpectedType);
         }
@@ -2330,7 +2390,8 @@ public class JetTypeInferrer {
                 if (rightType != null) {
                     JetType intersect = TypeUtils.intersect(semanticServices.getTypeChecker(), new HashSet<JetType>(Arrays.asList(leftType, rightType)));
                     if (intersect == null) {
-                        context.trace.getErrorHandler().genericError(expression.getNode(), "Operator " + operationSign.getReferencedName() + " cannot be applied to " + leftType + " and " + rightType);
+//                        context.trace.getErrorHandler().genericError(expression.getNode(), "Operator " + operationSign.getReferencedName() + " cannot be applied to " + leftType + " and " + rightType);
+                        context.trace.report(EQUALITY_NOT_APPLICABLE.on(expression, operationSign, leftType, rightType));
                     }
                 }
             }
@@ -2345,7 +2406,8 @@ public class JetTypeInferrer {
         }
 
         private JetType assignmentIsNotAnExpressionError(JetBinaryExpression expression, TypeInferenceContext context) {
-            context.trace.getErrorHandler().genericError(expression.getNode(), "Assignments are not expressions, and only expressions are allowed in this context");
+//            context.trace.getErrorHandler().genericError(expression.getNode(), "Assignments are not expressions, and only expressions are allowed in this context");
+            context.trace.report(ASSIGNMENT_IN_EXPRESSION_CONTEXT.on(expression));
             return null;
         }
 
@@ -2357,7 +2419,8 @@ public class JetTypeInferrer {
             if (resultType != null) {
                 // TODO : Relax?
                 if (!isBoolean(resultType)) {
-                    context.trace.getErrorHandler().genericError(operationSign.getNode(), subjectName + " must return Boolean but returns " + resultType);
+//                    context.trace.getErrorHandler().genericError(operationSign.getNode(), subjectName + " must return Boolean but returns " + resultType);
+                    context.trace.report(RESULT_TYPE_MISMATCH.on(operationSign, subjectName, semanticServices.getStandardLibrary().getBooleanType(), resultType));
                     return false;
                 }
             }
@@ -2407,12 +2470,14 @@ public class JetTypeInferrer {
                     JetExpression right = binaryExpression.getRight();
                     String rightText = right == null ? "" : right.getText();
                     String leftText = binaryExpression.getLeft().getText();
-                    context.trace.getErrorHandler().genericError(binaryExpression.getOperationReference().getNode(),
-                                                                 "Infix call corresponds to a dot-qualified call '" +
-                                                                 leftText + "." + name + "(" + rightText + ")'" +
-                                                                 " which is not allowed on a nullable receiver '" + leftText + "'." +
-                                                                 " Use '?.'-qualified call instead");
+//                    context.trace.getErrorHandler().genericError(binaryExpression.getOperationReference().getNode(),
+//                                                                 "Infix call corresponds to a dot-qualified call '" +
+//                                                                 leftText + "." + name + "(" + rightText + ")'" +
+//                                                                 " which is not allowed on a nullable receiver '" + leftText + "'." +
+//                                                                 " Use '?.'-qualified call instead");
+                    context.trace.report(UNSAFE_INFIX_CALL.on(binaryExpression.getOperationReference(), leftText, name, rightText));
                 }
+                
 
                 return functionDescriptor.getReturnType();
             }
@@ -2421,13 +2486,15 @@ public class JetTypeInferrer {
 
         @Override
         public JetType visitDeclaration(JetDeclaration dcl, TypeInferenceContext context) {
-            context.trace.getErrorHandler().genericError(dcl.getNode(), "Declarations are not allowed in this position");
+//            context.trace.getErrorHandler().genericError(dcl.getNode(), "Declarations are not allowed in this position");
+            context.trace.report(DECLARATION_IN_ILLEGAL_CONTEXT.on(dcl));
             return null;
         }
 
         @Override
         public JetType visitRootNamespaceExpression(JetRootNamespaceExpression expression, TypeInferenceContext context) {
-            context.trace.getErrorHandler().genericError(expression.getNode(), "'namespace' is not an expression");
+//            context.trace.getErrorHandler().genericError(expression.getNode(), "'namespace' is not an expression");
+            context.trace.report(NAMESPACE_IS_NOT_AN_EXPRESSION.on(expression));
             return null;
         }
 
@@ -2463,7 +2530,8 @@ public class JetTypeInferrer {
 
                         Character character = CompileTimeConstantResolver.translateEscape(escaped);
                         if (character == null) {
-                            context.trace.getErrorHandler().genericError(entry.getNode(), "Illegal escape sequence");
+//                            context.trace.getErrorHandler().genericError(entry.getNode(), "Illegal escape sequence");
+                            context.trace.report(ILLEGAL_ESCAPE_SEQUENCE.on(entry));
                             value[0] = CompileTimeConstantResolver.OUT_OF_RANGE;
                         }
                         else {
@@ -2480,7 +2548,8 @@ public class JetTypeInferrer {
 
         @Override
         public JetType visitJetElement(JetElement element, TypeInferenceContext context) {
-            context.trace.getErrorHandler().genericError(element.getNode(), "[JetTypeInferrer] Unsupported element: " + element + " " + element.getClass().getCanonicalName());
+//            context.trace.getErrorHandler().genericError(element.getNode(), "[JetTypeInferrer] Unsupported element: " + element + " " + element.getClass().getCanonicalName());
+            context.trace.report(UNSUPPORTED.on(element, getClass().getCanonicalName()));
             return null;
         }
     }
@@ -2526,17 +2595,20 @@ public class JetTypeInferrer {
         public JetType visitProperty(JetProperty property, TypeInferenceContext context) {
             JetTypeReference receiverTypeRef = property.getReceiverTypeRef();
             if (receiverTypeRef != null) {
-                context.trace.getErrorHandler().genericError(receiverTypeRef.getNode(), "Local receiver-properties are not allowed");
+//                context.trace.getErrorHandler().genericError(receiverTypeRef.getNode(), "Local receiver-properties are not allowed");
+                context.trace.report(LOCAL_EXTENSION_PROPERTY.on(receiverTypeRef));
             }
 
             JetPropertyAccessor getter = property.getGetter();
             if (getter != null) {
-                context.trace.getErrorHandler().genericError(getter.getNode(), "Local variables are not allowed to have getters");
+//                context.trace.getErrorHandler().genericError(getter.getNode(), "Local variables are not allowed to have getters");
+                context.trace.report(LOCAL_VARIABLE_WITH_GETTER.on(getter));
             }
 
             JetPropertyAccessor setter = property.getSetter();
             if (setter != null) {
-                context.trace.getErrorHandler().genericError(setter.getNode(), "Local variables are not allowed to have setters");
+//                context.trace.getErrorHandler().genericError(setter.getNode(), "Local variables are not allowed to have setters");
+                context.trace.report(LOCAL_VARIABLE_WITH_SETTER.on(setter));
             }
 
             VariableDescriptor propertyDescriptor = context.classDescriptorResolver.resolveLocalVariableDescriptor(scope.getContainingDeclaration(), scope, property);
@@ -2547,7 +2619,7 @@ public class JetTypeInferrer {
 //                if (outType != null &&
 //                    initializerType != null &&
 //                    !semanticServices.getTypeChecker().isConvertibleTo(initializerType, outType)) {
-//                    context.trace.getErrorHandler().typeMismatch(initializer, outType, initializerType);
+//                    context.trace.report(TYPE_MISMATCH.on(initializer, outType, initializerType));
 //                }
             }
 
@@ -2615,7 +2687,7 @@ public class JetTypeInferrer {
 //                if (rightType != null &&
 //                    leftType != null &&
 //                    !semanticServices.getTypeChecker().isConvertibleTo(rightType, leftType)) {
-//                    context.trace.getErrorHandler().typeMismatch(right, leftType, rightType);
+//                    context.trace.report(TYPE_MISMATCH.on(right, leftType, rightType));
 //                }
             }
             if (left instanceof JetSimpleNameExpression) {
@@ -2656,7 +2728,8 @@ public class JetTypeInferrer {
 
         @Override
         public JetType visitJetElement(JetElement element, TypeInferenceContext context) {
-            context.trace.getErrorHandler().genericError(element.getNode(), "Unsupported element in a block: " + element + " " + element.getClass().getCanonicalName());
+            context.trace.report(UNSUPPORTED.on(element, "in a block"));
+//            context.trace.getErrorHandler().genericError(element.getNode(), "Unsupported element in a block: " + element + " " + element.getClass().getCanonicalName());
             return null;
         }
     }

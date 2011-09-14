@@ -16,6 +16,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.*;
 
+import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.DESCRIPTOR_TO_DECLARATION;
 import static org.jetbrains.jet.lang.resolve.BindingContext.TYPE;
 
@@ -164,7 +165,8 @@ public class TypeHierarchyResolver {
 
                 @Override
                 public void visitTypedef(JetTypedef typedef) {
-                    context.getTrace().getErrorHandler().genericError(typedef.getNode(), "Unsupported [TopDownAnalyzer]");
+//                    context.getTrace().getErrorHandler().genericError(typedef.getNode(), "Unsupported [TopDownAnalyzer]");
+                    context.getTrace().report(UNSUPPORTED.on(typedef, "TypeHierarchyResolver"));
                 }
 
                 @Override
@@ -174,10 +176,12 @@ public class TypeHierarchyResolver {
                         NamespaceLike.ClassObjectStatus status = owner.setClassObjectDescriptor(createClassDescriptorForObject(objectDeclaration, owner));
                         switch (status) {
                             case DUPLICATE:
-                                context.getTrace().getErrorHandler().genericError(classObject.getNode(), "Only one class object is allowed per class");
+//                                context.getTrace().getErrorHandler().genericError(classObject.getNode(), "Only one class object is allowed per class");
+                                context.getTrace().report(MANY_CLASS_OBJECTS.on(classObject));
                                 break;
                             case NOT_ALLOWED:
-                                context.getTrace().getErrorHandler().genericError(classObject.getNode(), "A class object is not allowed here");
+//                                context.getTrace().getErrorHandler().genericError(classObject.getNode(), "A class object is not allowed here");
+                                context.getTrace().report(CLASS_OBJECT_NOT_ALLOWED.on(classObject));
                                 break;
                         }
                     }
@@ -198,7 +202,8 @@ public class TypeHierarchyResolver {
         List<JetImportDirective> importDirectives = namespace.getImportDirectives();
         for (JetImportDirective importDirective : importDirectives) {
             if (importDirective.isAbsoluteInRootNamespace()) {
-                context.getTrace().getErrorHandler().genericError(namespace.getNode(), "Unsupported by TDA"); // TODO
+//                context.getTrace().getErrorHandler().genericError(namespace.getNode(), "Unsupported by TDA"); // TODO
+                context.getTrace().report(UNSUPPORTED.on(namespace, "TypeHierarchyResolver")); // TODO
                 continue;
             }
             if (importDirective.isAllUnder()) {
@@ -378,7 +383,8 @@ public class TypeHierarchyResolver {
                 }
             }
             if (node != null) {
-                context.getTrace().getErrorHandler().genericError(node, "There's a cycle in the inheritance hierarchy for this type");
+//                context.getTrace().getErrorHandler().genericError(node, "There's a cycle in the inheritance hierarchy for this type");
+                context.getTrace().report(CYCLIC_INHERITANCE_HIERARCHY.on(node));
             }
         }
     }
@@ -421,7 +427,8 @@ public class TypeHierarchyResolver {
                         JetClassOrObject declaration = (JetClassOrObject) psiElement;
                         JetDelegationSpecifierList delegationSpecifierList = declaration.getDelegationSpecifierList();
                         assert delegationSpecifierList != null;
-                        context.getTrace().getErrorHandler().genericError(delegationSpecifierList.getNode(), "Type parameter " + typeParameterDescriptor.getName() + " of " + containingDeclaration.getName() + " has inconsistent values: " + conflictingTypes);
+//                        context.getTrace().getErrorHandler().genericError(delegationSpecifierList.getNode(), "Type parameter " + typeParameterDescriptor.getName() + " of " + containingDeclaration.getName() + " has inconsistent values: " + conflictingTypes);
+                        context.getTrace().report(INCONSISTENT_TYPE_PARAMETER_VALUES.on(delegationSpecifierList, typeParameterDescriptor, (ClassDescriptor) containingDeclaration, conflictingTypes));
                     }
                 }
             }

@@ -16,6 +16,7 @@ import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import java.util.*;
 
+import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.types.JetTypeInferrer.NO_EXPECTED_TYPE;
 
 /**
@@ -38,7 +39,8 @@ public class BodyResolver {
                     JetSimpleNameExpression simpleNameExpression = (JetSimpleNameExpression) expression;
                     if (simpleNameExpression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER) {
                         if (!BodyResolver.this.context.getTrace().getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, (PropertyDescriptor) descriptor)) {
-                            BodyResolver.this.context.getTrace().getErrorHandler().genericError(expression.getNode(), "This property does not have a backing field");
+//                            BodyResolver.this.context.getTrace().getErrorHandler().genericError(expression.getNode(), "This property does not have a backing field");
+                            BodyResolver.this.context.getTrace().report(NO_BACKING_FIELD.on(expression));
                         }
                     }
                 }
@@ -152,8 +154,9 @@ public class BodyResolver {
                 if (functionDescriptor.getModality() == Modality.ABSTRACT && !allOverriddenFunctions.contains(functionDescriptor.getOriginal()) && !foundError && nameIdentifier != null) {
                     DeclarationDescriptor declarationDescriptor = functionDescriptor.getContainingDeclaration();
                     if (declarationDescriptor != classDescriptor) {
-                        context.getTrace().getErrorHandler().genericError(nameIdentifier.getNode(), "Class '" + klass.getName() + "' must be declared abstract or implement abstract method '" +
-                                                                                                    functionDescriptor.getName() + "' in " + declarationDescriptor.getName());
+//                        context.getTrace().getErrorHandler().genericError(nameIdentifier.getNode(), "Class '" + klass.getName() + "' must be declared abstract or implement abstract method '" +
+//                                                                                                    functionDescriptor.getName() + "' declared in " + declarationDescriptor.getName());
+                        context.getTrace().report(ABSTRACT_METHOD_NOT_IMPLEMENTED.on(nameIdentifier, klass, functionDescriptor, declarationDescriptor));
                         foundError = true;
                     }
                 }
@@ -172,20 +175,23 @@ public class BodyResolver {
         for (FunctionDescriptor overridden : declaredFunction.getOverriddenDescriptors()) {
             if (overridden != null) {
                 if (hasOverrideModifier && !overridden.getModality().isOpen() && !foundError) {
-                    context.getTrace().getErrorHandler().genericError(overrideNode, "Method " + overridden.getName() + " in " + overridden.getContainingDeclaration().getName() + " is final and cannot be overridden");
+//                    context.getTrace().getErrorHandler().genericError(overrideNode, "Method " + overridden.getName() + " in " + overridden.getContainingDeclaration().getName() + " is final and cannot be overridden");
+                    context.getTrace().report(OVERRIDING_FINAL_FUNCTION.on(overrideNode, overridden, overridden.getContainingDeclaration()));
                     foundError = true;
                 }
             }
         }
         if (hasOverrideModifier && declaredFunction.getOverriddenDescriptors().size() == 0) {
-            context.getTrace().getErrorHandler().genericError(overrideNode, "Method " + declaredFunction.getName() + " overrides nothing");
+//            context.getTrace().getErrorHandler().genericError(overrideNode, "Method " + declaredFunction.getName() + " overrides nothing");
+            context.getTrace().report(NOTHING_TO_OVERRIDE.on(overrideNode, declaredFunction));
         }
         PsiElement nameIdentifier = function.getNameIdentifier();
         if (!hasOverrideModifier && declaredFunction.getOverriddenDescriptors().size() > 0 && nameIdentifier != null) {
-            FunctionDescriptor overriddenMethod = declaredFunction.getOverriddenDescriptors().iterator().next();
-            context.getTrace().getErrorHandler().genericError(nameIdentifier.getNode(),
-                                                 "Method '" + declaredFunction.getName() + "' overrides method '" + overriddenMethod.getName() + "' in class " +
-                                                 overriddenMethod.getContainingDeclaration().getName() + " and needs 'override' modifier");
+            FunctionDescriptor overriddenFunction = declaredFunction.getOverriddenDescriptors().iterator().next();
+//            context.getTrace().getErrorHandler().genericError(nameIdentifier.getNode(),
+//                                                 "Method '" + declaredFunction.getName() + "' overrides method '" + overriddenFunction.getName() + "' in class " +
+//                                                 overriddenFunction.getContainingDeclaration().getName() + " and needs 'override' modifier");
+            context.getTrace().report(VIRTUAL_METHOD_HIDDEN.on(nameIdentifier, declaredFunction, overriddenFunction, overriddenFunction.getContainingDeclaration()));
         }
     }
     
@@ -199,8 +205,9 @@ public class BodyResolver {
                     if (context.getTrace().getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor)) {
                         PsiElement nameIdentifier = jetClass.getNameIdentifier();
                         if (nameIdentifier != null) {
-                            context.getTrace().getErrorHandler().genericError(nameIdentifier.getNode(),
-                                    "This class must have a primary constructor, because property " + propertyDescriptor.getName() + " has a backing field");
+//                            context.getTrace().getErrorHandler().genericError(nameIdentifier.getNode(),
+//                                    "This class must have a primary constructor, because property " + propertyDescriptor.getName() + " has a backing field");
+                            context.getTrace().report(PRIMARY_CONSTRUCTOR_MISSING_STATEFUL_PROPERTY.on(nameIdentifier, propertyDescriptor));
                         }
                         break;
                     }
@@ -236,7 +243,8 @@ public class BodyResolver {
             @Override
             public void visitDelegationByExpressionSpecifier(JetDelegatorByExpressionSpecifier specifier) {
                 if (descriptor.getKind() == ClassKind.TRAIT) {
-                    context.getTrace().getErrorHandler().genericError(specifier.getNode(), "Traits cannot use delegation");
+//                    context.getTrace().getErrorHandler().genericError(specifier.getNode(), "Traits cannot use delegation");
+                    context.getTrace().report(DELEGATION_IN_TRAIT.on(specifier));
                 }
                 JetType supertype = context.getTrace().getBindingContext().get(BindingContext.TYPE, specifier.getTypeReference());
                 recordSupertype(specifier.getTypeReference(), supertype);
@@ -247,7 +255,7 @@ public class BodyResolver {
                                      : scopeForConstructor;
                     JetType type = typeInferrer.getType(scope, delegateExpression, NO_EXPECTED_TYPE);
                     if (type != null && supertype != null && !context.getSemanticServices().getTypeChecker().isSubtypeOf(type, supertype)) {
-                        context.getTrace().getErrorHandler().typeMismatch(delegateExpression, supertype, type);
+                        context.getTrace().report(TYPE_MISMATCH.on(delegateExpression, supertype, type));
                     }
                 }
             }
@@ -257,7 +265,8 @@ public class BodyResolver {
                 JetValueArgumentList valueArgumentList = call.getValueArgumentList();
                 ASTNode node = valueArgumentList == null ? call.getNode() : valueArgumentList.getNode();
                 if (descriptor.getKind() == ClassKind.TRAIT) {
-                    context.getTrace().getErrorHandler().genericError(node, "Traits cannot initialize supertypes");
+//                    context.getTrace().getErrorHandler().genericError(node, "Traits cannot initialize supertypes");
+                    context.getTrace().report(SUPERTYPE_INITIALIZED_IN_TRAIT.on(node));
                 }
                 JetTypeReference typeReference = call.getTypeReference();
                 if (typeReference != null) {
@@ -268,7 +277,8 @@ public class BodyResolver {
                             ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(supertype);
                             if (classDescriptor != null) {
                                 if (classDescriptor.getKind() == ClassKind.TRAIT) {
-                                    context.getTrace().getErrorHandler().genericError(node, "A trait may not have a constructor");
+//                                    context.getTrace().getErrorHandler().genericError(node, "A trait may not have a constructor");
+                                    context.getTrace().report(CONSTRUCTOR_IN_TRAIT.on(node));
                                 }
                             }
                         }
@@ -281,8 +291,9 @@ public class BodyResolver {
                         recordSupertype(typeReference, supertype);
 
                         assert valueArgumentList != null;
-                        context.getTrace().getErrorHandler().genericError(valueArgumentList.getNode(),
-                                                             "Class " + JetPsiUtil.safeName(jetClass.getName()) + " must have a constructor in order to be able to initialize supertypes");
+//                        context.getTrace().getErrorHandler().genericError(valueArgumentList.getNode(),
+//                                                             "Class " + JetPsiUtil.safeName(jetClass.getName()) + " must have a constructor in order to be able to initialize supertypes");
+                        context.getTrace().report(PRIMARY_CONSTRUCTOR_MISSING_SUPER_CONSTRUCTOR_CALL.on(valueArgumentList, jetClass));
                     }
                 }
             }
@@ -297,7 +308,8 @@ public class BodyResolver {
                     if (classDescriptor != null) {
                         if (descriptor.getKind() != ClassKind.TRAIT) {
                             if (classDescriptor.hasConstructors() && !ErrorUtils.isError(classDescriptor.getTypeConstructor()) && classDescriptor.getKind() != ClassKind.TRAIT) {
-                                context.getTrace().getErrorHandler().genericError(specifier.getNode(), "This type has a constructor, and thus must be initialized here");
+//                                context.getTrace().getErrorHandler().genericError(specifier.getNode(), "This type has a constructor, and thus must be initialized here");
+                                context.getTrace().report(SUPERTYPE_NOT_INITIALIZED.on(specifier));
                             }
                         }
                     }
@@ -340,7 +352,8 @@ public class BodyResolver {
             if (classDescriptor != null) {
                 if (classDescriptor.getKind() != ClassKind.TRAIT) {
                     if (classAppeared) {
-                        context.getTrace().getErrorHandler().genericError(typeReference.getNode(), "Only one class may appear in a supertype list");
+//                        context.getTrace().getErrorHandler().genericError(typeReference.getNode(), "Only one class may appear in a supertype list");
+                        context.getTrace().report(MANY_CLASSES_IN_SUPERTYPE_LIST.on(typeReference));
                     }
                     else {
                         classAppeared = true;
@@ -348,16 +361,19 @@ public class BodyResolver {
                 }
             }
             else {
-                context.getTrace().getErrorHandler().genericError(typeReference.getNode(), "Only classes and traits may serve as supertypes");
+//                context.getTrace().getErrorHandler().genericError(typeReference.getNode(), "Only classes and traits may serve as supertypes");
+                context.getTrace().report(SUPERTYPE_NOT_A_CLASS_OR_TRAIT.on(typeReference));
             }
 
             TypeConstructor constructor = supertype.getConstructor();
             if (!typeConstructors.add(constructor)) {
-                context.getTrace().getErrorHandler().genericError(typeReference.getNode(), "A supertype appears twice");
+//                context.getTrace().getErrorHandler().genericError(typeReference.getNode(), "A supertype appears twice");
+                context.getTrace().report(SUPERTYPE_APPEARS_TWICE.on(typeReference));
             }
 
             if (constructor.isSealed() && !allowedFinalSupertypes.contains(constructor)) {
-                context.getTrace().getErrorHandler().genericError(typeReference.getNode(), "This type is final, so it cannot be inherited from");
+//                context.getTrace().getErrorHandler().genericError(typeReference.getNode(), "This type is final, so it cannot be inherited from");
+                context.getTrace().report(FINAL_SUPERTYPE.on(typeReference));
             }
         }
     }
@@ -388,7 +404,8 @@ public class BodyResolver {
         }
         else {
             for (JetClassInitializer anonymousInitializer : anonymousInitializers) {
-                context.getTrace().getErrorHandler().genericError(anonymousInitializer.getNode(), "Anonymous initializers are only allowed in the presence of a primary constructor");
+//                context.getTrace().getErrorHandler().genericError(anonymousInitializer.getNode(), "Anonymous initializers are only allowed in the presence of a primary constructor");
+                context.getTrace().report(ANONYMOUS_INITIALIZER_WITHOUT_CONSTRUCTOR.on(anonymousInitializer));
             }
         }
     }
@@ -412,12 +429,14 @@ public class BodyResolver {
         JetClass containingClass = PsiTreeUtil.getParentOfType(declaration, JetClass.class);
         assert containingClass != null : "This must be guaranteed by the parser";
         if (!containingClass.hasPrimaryConstructor()) {
-            context.getTrace().getErrorHandler().genericError(declaration.getNameNode(), "A secondary constructor may appear only in a class that has a primary constructor");
+//            context.getTrace().getErrorHandler().genericError(declaration.getNameNode(), "A secondary constructor may appear only in a class that has a primary constructor");
+            context.getTrace().report(SECONDARY_CONSTRUCTOR_BUT_NO_PRIMARY.on(declaration));
         }
         else {
             List<JetDelegationSpecifier> initializers = declaration.getInitializers();
             if (initializers.isEmpty()) {
-                context.getTrace().getErrorHandler().genericError(declaration.getNameNode(), "Secondary constructors must have an initializer list");
+//                context.getTrace().getErrorHandler().genericError(declaration.getNameNode(), "Secondary constructors must have an initializer list");
+                context.getTrace().report(SECONDARY_CONSTRUCTOR_NO_INITIALIZER_LIST.on(declaration));
             }
             else {
                 initializers.get(0).accept(new JetVisitorVoid() {
@@ -447,12 +466,14 @@ public class BodyResolver {
 
                     @Override
                     public void visitDelegationByExpressionSpecifier(JetDelegatorByExpressionSpecifier specifier) {
-                        context.getTrace().getErrorHandler().genericError(specifier.getNode(), "'by'-clause is only supported for primary constructors");
+//                        context.getTrace().getErrorHandler().genericError(specifier.getNode(), "'by'-clause is only supported for primary constructors");
+                        context.getTrace().report(BY_IN_SECONDARY_CONSTRUCTOR.on(specifier));
                     }
 
                     @Override
                     public void visitDelegationToSuperClassSpecifier(JetDelegatorToSuperClass specifier) {
-                        context.getTrace().getErrorHandler().genericError(specifier.getNode(), "Constructor parameters required");
+//                        context.getTrace().getErrorHandler().genericError(specifier.getNode(), "Constructor parameters required");
+                        context.getTrace().report(INITIALIZER_WITH_NO_ARGUMENTS.on(specifier));
                     }
 
                     @Override
@@ -462,7 +483,8 @@ public class BodyResolver {
                 });
                 for (int i = 1, initializersSize = initializers.size(); i < initializersSize; i++) {
                     JetDelegationSpecifier initializer = initializers.get(i);
-                    context.getTrace().getErrorHandler().genericError(initializer.getNode(), "Only one call to 'this(...)' is allowed");
+//                    context.getTrace().getErrorHandler().genericError(initializer.getNode(), "Only one call to 'this(...)' is allowed");
+                    context.getTrace().report(MANY_CALLS_TO_THIS.on(initializer));
                 }
             }
         }
@@ -588,35 +610,43 @@ public class BodyResolver {
 
         if (abstractNode != null) { //has abstract modifier
             if (classDescriptor == null) {
-                context.getTrace().getErrorHandler().genericError(abstractNode, "This property cannot be abstract");
+//                context.getTrace().getErrorHandler().genericError(abstractNode, "A property may be abstract only when defined in a class or trait");
+                context.getTrace().report(ABSTRACT_PROPERTY_NOT_IN_CLASS.on(abstractNode));
                 return;
             }
             if (!(classDescriptor.getModality() == Modality.ABSTRACT) && classDescriptor.getKind() != ClassKind.ENUM_CLASS) {
-                context.getTrace().getErrorHandler().genericError(abstractNode, "Abstract property " + property.getName() + " in non-abstract class " + classDescriptor.getName());
+//                context.getTrace().getErrorHandler().genericError(abstractNode, "Abstract property " + property.getName() + " in non-abstract class " + classDescriptor.getName());
+                context.getTrace().report(ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS.on(abstractNode, property.getName(), classDescriptor));
                 return;
             }
             if (classDescriptor.getKind() == ClassKind.TRAIT) {
-                context.getTrace().getErrorHandler().genericWarning(abstractNode, "Abstract modifier is redundant in traits");
+//                context.getTrace().getErrorHandler().genericWarning(abstractNode, "Abstract modifier is redundant in traits");
+                context.getTrace().report(REDUNDANT_ABSTRACT.on(abstractNode));
             }
         }
 
         if (propertyDescriptor.getModality() == Modality.ABSTRACT) {
             JetExpression initializer = property.getInitializer();
             if (initializer != null) {
-                context.getTrace().getErrorHandler().genericError(initializer.getNode(), "Property with initializer cannot be abstract");
+//                context.getTrace().getErrorHandler().genericError(initializer.getNode(), "Property with initializer cannot be abstract");
+                context.getTrace().report(ABSTRACT_PROPERTY_WITH_INITIALIZER.on(initializer));
             }
             if (getter != null && getter.getBodyExpression() != null) {
-                context.getTrace().getErrorHandler().genericError(getter.getNode(), "Property with getter implementation cannot be abstract");
+//                context.getTrace().getErrorHandler().genericError(getter.getNode(), "Property with getter implementation cannot be abstract");
+                context.getTrace().report(ABSTRACT_PROPERTY_WITH_GETTER.on(getter));
             }
             if (setter != null && setter.getBodyExpression() != null) {
-                context.getTrace().getErrorHandler().genericError(setter.getNode(), "Property with setter implementation cannot be abstract");
+//                context.getTrace().getErrorHandler().genericError(setter.getNode(), "Property with setter implementation cannot be abstract");
+                context.getTrace().report(ABSTRACT_PROPERTY_WITH_SETTER.on(setter));
             }
         }
     }
 
     private void checkPropertyInitializer(JetProperty property, PropertyDescriptor propertyDescriptor, ClassDescriptor classDescriptor) {
-        boolean hasAccessorImplementation = (property.getGetter() != null && property.getGetter().getBodyExpression() != null) ||
-                                            (property.getSetter() != null && property.getSetter().getBodyExpression() != null);
+        JetPropertyAccessor getter = property.getGetter();
+        JetPropertyAccessor setter = property.getSetter();
+        boolean hasAccessorImplementation = (getter != null && getter.getBodyExpression() != null) ||
+                                            (setter != null && setter.getBodyExpression() != null);
         if (propertyDescriptor.getModality() == Modality.ABSTRACT) return;
 
         boolean inTrait = classDescriptor != null && classDescriptor.getKind() == ClassKind.TRAIT;
@@ -627,26 +657,32 @@ public class BodyResolver {
         ASTNode nameNode = nameIdentifier == null ? property.getNode() : nameIdentifier.getNode();
 
         if (inTrait && backingFieldRequired && hasAccessorImplementation) {
-            context.getTrace().getErrorHandler().genericError(nameNode, "Property in trait cannot have backing field");
+//            context.getTrace().getErrorHandler().genericError(nameNode, "Property in a trait cannot have a backing field");
+            context.getTrace().report(BACKING_FIELD_IN_TRAIT.on(nameNode));
         }
         if (initializer == null) {
             if (backingFieldRequired && !inTrait && !context.getTrace().getBindingContext().get(BindingContext.IS_INITIALIZED, propertyDescriptor)) {
                 if (classDescriptor == null || hasAccessorImplementation) {
-                    context.getTrace().getErrorHandler().genericError(nameNode, "Property must be initialized");
+//                    context.getTrace().getErrorHandler().genericError(nameNode, "Property must be initialized");
+                    context.getTrace().report(MUST_BE_INITIALIZED.on(nameNode));
                 } else {
-                    context.getTrace().getErrorHandler().genericError(nameNode, "Property must be initialized or be abstract");
+//                    context.getTrace().getErrorHandler().genericError(nameNode, "Property must be initialized or be abstract");
+                    context.getTrace().report(MUST_BE_INITIALIZED_OR_BE_ABSTRACT.on(nameNode));
                 }
             }
             return;
         }
         if (inTrait) {
-            context.getTrace().getErrorHandler().genericError(initializer.getNode(), "Property initializers are not allowed in trait");
+//            context.getTrace().getErrorHandler().genericError(initializer.getNode(), "Property initializers are not allowed in traits");
+            context.getTrace().report(PROPERTY_INITIALIZER_IN_TRAIT.on(initializer));
         }
         else if (!backingFieldRequired) {
-            context.getTrace().getErrorHandler().genericError(initializer.getNode(), "Initializer is not allowed here because this property has no backing field");
+//            context.getTrace().getErrorHandler().genericError(initializer.getNode(), "Initializer is not allowed here because this property has no backing field");
+            context.getTrace().report(PROPERTY_INITIALIZER_NO_BACKING_FIELD.on(initializer));
         }
         else if (classDescriptor != null && classDescriptor.getUnsubstitutedPrimaryConstructor() == null) {
-            context.getTrace().getErrorHandler().genericError(initializer.getNode(), "Property initializers are not allowed when no primary constructor is present");
+//            context.getTrace().getErrorHandler().genericError(initializer.getNode(), "Property initializers are not allowed when no primary constructor is present");
+            context.getTrace().report(PROPERTY_INITIALIZER_NO_PRIMARY_CONSTRUCTOR.on(initializer));
         }
     }
 
@@ -694,7 +730,7 @@ public class BodyResolver {
         }
         if (type != null && expectedType != null
             && !context.getSemanticServices().getTypeChecker().isSubtypeOf(type, expectedType)) {
-            context.getTrace().getErrorHandler().typeMismatch(initializer, expectedType, type);
+            context.getTrace().report(TYPE_MISMATCH.on(initializer, expectedType, type));
         }
     }
 
@@ -756,31 +792,38 @@ public class BodyResolver {
             boolean inTrait = classDescriptor.getKind() == ClassKind.TRAIT;
             boolean inEnum = classDescriptor.getKind() == ClassKind.ENUM_CLASS;
             boolean inAbstractClass = classDescriptor.getModality() == Modality.ABSTRACT;
-            String methodName = function.getName() != null ? function.getName() + " " : "";
+//            String methodName = function.getName() != null ? function.getName() + " " : "";
             if (hasAbstractModifier && !inAbstractClass && !inTrait && !inEnum) {
-                context.getTrace().getErrorHandler().genericError(abstractNode, "Abstract method " + methodName + "in non-abstract class " + classDescriptor.getName());
+//                context.getTrace().getErrorHandler().genericError(abstractNode, "Abstract method " + methodName + " in non-abstract class " + classDescriptor.getName());
+                context.getTrace().report(ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS.on(abstractNode, functionDescriptor.getName(), classDescriptor));
             }
             if (hasAbstractModifier && inTrait && !isPropertyAccessor) {
-                context.getTrace().getErrorHandler().genericWarning(abstractNode, "Abstract modifier is redundant in trait");
+//                context.getTrace().getErrorHandler().genericWarning(abstractNode, "Abstract modifier is redundant in trait");
+                context.getTrace().report(REDUNDANT_ABSTRACT.on(abstractNode));
             }
             if (function.getBodyExpression() != null && hasAbstractModifier) {
-                context.getTrace().getErrorHandler().genericError(abstractNode, "Method " + methodName + "with body cannot be abstract");
+//                context.getTrace().getErrorHandler().genericError(abstractNode, "Method " + methodName + "with body cannot be abstract");
+                context.getTrace().report(ABSTRACT_FUNCTION_WITH_BODY.on(abstractNode, functionDescriptor));
             }
             if (function.getBodyExpression() == null && !hasAbstractModifier && !inTrait && nameIdentifier != null && !isPropertyAccessor) {
-                context.getTrace().getErrorHandler().genericError(nameIdentifier.getNode(), "Method " + function.getName() + " without body must be abstract");
+//                context.getTrace().getErrorHandler().genericError(nameIdentifier.getNode(), "Method " + function.getName() + " without body must be abstract");
+                context.getTrace().report(NON_ABSTRACT_FUNCTION_WITH_NO_BODY.on(nameIdentifier, functionDescriptor));
             }
             return;
         }
         if (hasAbstractModifier) {
             if (!isPropertyAccessor) {
-                context.getTrace().getErrorHandler().genericError(abstractNode, "Function " + function.getName() + " cannot be abstract");
+//                context.getTrace().getErrorHandler().genericError(abstractNode, "Function " + function.getName() + " is not a member and cannot be abstract");
+                context.getTrace().report(NON_MEMBER_ABSTRACT_FUNCTION.on(abstractNode, functionDescriptor));
             }
             else {
-                context.getTrace().getErrorHandler().genericError(abstractNode, "This property accessor cannot be abstract");
+//                context.getTrace().getErrorHandler().genericError(abstractNode, "Property {0} is not a class or trait member and thus cannot have be abstract accessors");
+                context.getTrace().report(NON_MEMBER_ABSTRACT_ACCESSOR.on(abstractNode, (PropertyDescriptor) functionDescriptor.getContainingDeclaration()));
             }
         }
         if (function.getBodyExpression() == null && !hasAbstractModifier && nameIdentifier != null && !isPropertyAccessor) {
-            context.getTrace().getErrorHandler().genericError(nameIdentifier.getNode(), "Function " + function.getName() + " must have body");
+//            context.getTrace().getErrorHandler().genericError(nameIdentifier.getNode(), "Function " + function.getName() + " must have a body");
+            context.getTrace().report(NON_MEMBER_FUNCTION_NO_BODY.on(nameIdentifier, functionDescriptor));
         }
     }
 

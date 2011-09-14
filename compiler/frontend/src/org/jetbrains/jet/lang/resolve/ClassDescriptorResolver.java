@@ -15,11 +15,14 @@ import org.jetbrains.jet.lang.cfg.LoopInfo;
 import org.jetbrains.jet.lang.cfg.pseudocode.*;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.*;
+
+import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 
 /**
  * @author abreslav
@@ -90,7 +93,8 @@ public class ClassDescriptorResolver {
                 return parentDescriptor.getDefaultType();
             }
             else {
-                trace.getErrorHandler().genericError(((JetEnumEntry) jetClass).getNameIdentifier().getNode(), "generic arguments of the base type must be specified");
+//                trace.getErrorHandler().genericError(((JetEnumEntry) jetClass).getNameIdentifier().getNode(), "Generic arguments of the base type must be specified");
+                trace.report(NO_GENERICS_IN_SUPERTYPE_SPECIFIER.on(((JetEnumEntry) jetClass).getNameIdentifier()));
                 return ErrorUtils.createErrorType("Supertype not specified");
             }
         }
@@ -109,7 +113,8 @@ public class ClassDescriptorResolver {
                 JetTypeElement typeElement = typeReference.getTypeElement();
                 while (typeElement instanceof JetNullableType) {
                     JetNullableType nullableType = (JetNullableType) typeElement;
-                    trace.getErrorHandler().genericError(nullableType.getQuestionMarkNode(), "A supertype cannot be nullable");
+//                    trace.getErrorHandler().genericError(nullableType.getQuestionMarkNode(), "A supertype cannot be nullable");
+                    trace.report(NULLABLE_SUPERTYPE.on(nullableType.getQuestionMarkNode()));
                     typeElement = nullableType.getInnerType();
                 }
                 if (typeElement instanceof JetUserType) {
@@ -117,7 +122,8 @@ public class ClassDescriptorResolver {
                     List<JetTypeProjection> typeArguments = userType.getTypeArguments();
                     for (JetTypeProjection typeArgument : typeArguments) {
                         if (typeArgument.getProjectionKind() != JetProjectionKind.NONE) {
-                            trace.getErrorHandler().genericError(typeArgument.getProjectionNode(), "Projections are not allowed for immediate arguments of a supertype");
+//                            trace.getErrorHandler().genericError(typeArgument.getProjectionNode(), "Projections are not allowed for immediate arguments of a supertype");
+                            trace.report(PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE.on(typeArgument));
                         }
                     }
                 }
@@ -207,12 +213,14 @@ public class ClassDescriptorResolver {
 
             ASTNode valOrVarNode = valueParameter.getValOrVarNode();
             if (valueParameter.isRef() && valOrVarNode != null) {
-                trace.getErrorHandler().genericError(valOrVarNode, "'val' and 'var' are not allowed on ref-parameters");
+//                trace.getErrorHandler().genericError(valOrVarNode, "'val' and 'var' are not allowed on ref-parameters");
+                trace.report(REF_PARAMETER_WITH_VAL_OR_VAR.on(valOrVarNode));
             }
 
             JetType type;
             if (typeReference == null) {
-                trace.getErrorHandler().genericError(valueParameter.getNode(), "A type annotation is required on a value parameter");
+//                trace.getErrorHandler().genericError(valueParameter.getNode(), "A type annotation is required on a value parameter");
+                trace.report(VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION.on(valueParameter));
                 type = ErrorUtils.createErrorType("Type annotation was missing");
             } else {
                 type = typeResolver.resolveType(parameterScope, typeReference);
@@ -298,11 +306,12 @@ public class ClassDescriptorResolver {
                 // To tell the user that we look only for locally defined type parameters
                 ClassifierDescriptor classifier = scope.getClassifier(referencedName);
                 if (classifier != null) {
-                    trace.getErrorHandler().genericError(subjectTypeParameterName.getNode(), referencedName + " does not refer to a type parameter of " + declaration.getName());
+//                    trace.getErrorHandler().genericError(subjectTypeParameterName.getNode(), referencedName + " does not refer to a type parameter of " + declaration.getName());
+                    trace.report(NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER.on(subjectTypeParameterName, constraint, declaration));
                     trace.record(BindingContext.REFERENCE_TARGET, subjectTypeParameterName, classifier);
                 }
                 else {
-                    trace.getErrorHandler().unresolvedReference(subjectTypeParameterName);
+                    trace.report(UNRESOLVED_REFERENCE.on(subjectTypeParameterName));
                 }
             }
             else {
@@ -326,7 +335,8 @@ public class ClassDescriptorResolver {
             if (JetStandardClasses.isNothing(parameter.getBoundsAsType())) {
                 PsiElement nameIdentifier = typeParameters.get(parameter.getIndex()).getNameIdentifier();
                 if (nameIdentifier != null) {
-                    trace.getErrorHandler().genericError(nameIdentifier.getNode(), "Upper bounds of " + parameter.getName() + " have empty intersection");
+//                    trace.getErrorHandler().genericError(nameIdentifier.getNode(), "Upper bounds of " + parameter.getName() + " have empty intersection");
+                    trace.report(CONFLICTING_UPPER_BOUNDS.on(nameIdentifier, parameter));
                 }
             }
 
@@ -334,7 +344,8 @@ public class ClassDescriptorResolver {
             if (classObjectType != null && JetStandardClasses.isNothing(classObjectType)) {
                 PsiElement nameIdentifier = typeParameters.get(parameter.getIndex()).getNameIdentifier();
                 if (nameIdentifier != null) {
-                    trace.getErrorHandler().genericError(nameIdentifier.getNode(), "Class object upper bounds of " + parameter.getName() + " have empty intersection");
+//                    trace.getErrorHandler().genericError(nameIdentifier.getNode(), "Class object upper bounds of " + parameter.getName() + " have empty intersection");
+                    trace.report(CONFLICTING_CLASS_OBJECT_UPPER_BOUNDS.on(nameIdentifier, parameter));
                 }
             }
         }
@@ -343,12 +354,13 @@ public class ClassDescriptorResolver {
     private JetType resolveAndCheckUpperBoundType(@NotNull JetTypeReference upperBound, @NotNull JetScope scope, boolean classObjectConstaint) {
         JetType jetType = typeResolverNotCheckingBounds.resolveType(scope, upperBound);
         if (!TypeUtils.canHaveSubtypes(semanticServices.getTypeChecker(), jetType)) {
-            String message = jetType + " is a final type, and thus a class object cannot extend it";
             if (classObjectConstaint) {
-                trace.getErrorHandler().genericError(upperBound.getNode(), message);
+//                trace.getErrorHandler().genericError(upperBound.getNode(), jetType + " is a final type, and thus a class object cannot extend it");
+                trace.report(FINAL_CLASS_OBJECT_UPPER_BOUND.on(upperBound, jetType));
             }
             else {
-                trace.getErrorHandler().genericWarning(upperBound.getNode(), message);
+//                trace.getErrorHandler().genericWarning(upperBound.getNode(), jetType + " is a final type, and thus a value of the type parameter is predetermined");
+                trace.report(FINAL_UPPER_BOUND.on(upperBound, jetType));
             }
         }
         return jetType;
@@ -482,7 +494,8 @@ public class ClassDescriptorResolver {
         if (propertyTypeRef == null) {
             final JetExpression initializer = property.getInitializer();
             if (initializer == null) {
-                trace.getErrorHandler().genericError(property.getNode(), "This property must either have a type annotation or be initialized");
+//                trace.getErrorHandler().genericError(property.getNode(), "This property must either have a type annotation or be initialized");
+                trace.report(PROPERTY_WITH_NO_TYPE_NO_INITIALIZER.on(property));
                 return ErrorUtils.createErrorType("No type, no body");
             } else {
                 // TODO : a risk of a memory leak
@@ -541,13 +554,15 @@ public class ClassDescriptorResolver {
                     propertyDescriptor, annotations, setter.getBodyExpression() != null, false);
             if (parameter != null) {
                 if (parameter.isRef()) {
-                    trace.getErrorHandler().genericError(parameter.getRefNode(), "Setter parameters can not be 'ref'");
+//                    trace.getErrorHandler().genericError(parameter.getRefNode(), "Setter parameters can not be 'ref'");
+                    trace.report(Errors.REF_SETTER_PARAMETER.on(parameter.getRefNode()));
                 }
 
                 // This check is redundant: the parser does not allow a default value, but we'll keep it just in case
                 JetExpression defaultValue = parameter.getDefaultValue();
                 if (defaultValue != null) {
-                    trace.getErrorHandler().genericError(defaultValue.getNode(), "Setter parameters can not have default values");
+//                    trace.getErrorHandler().genericError(defaultValue.getNode(), "Setter parameters can not have default values");
+                    trace.report(SETTER_PARAMETER_WITH_DEFAULT_VALUE.on(defaultValue));
                 }
 
                 JetType type;
@@ -560,7 +575,8 @@ public class ClassDescriptorResolver {
                     JetType inType = propertyDescriptor.getInType();
                     if (inType != null) {
                         if (!semanticServices.getTypeChecker().equalTypes(type, inType)) {
-                            trace.getErrorHandler().genericError(typeReference.getNode(), "Setter parameter type must be equal to the type of the property, i.e. " + inType);
+//                            trace.getErrorHandler().genericError(typeReference.getNode(), "Setter parameter type must be equal to the type of the property, i.e. " + inType);
+                            trace.report(WRONG_SETTER_PARAMETER_TYPE.on(typeReference, inType));
                         }
                     }
                     else {
@@ -581,7 +597,8 @@ public class ClassDescriptorResolver {
 
         if (! property.isVar()) {
             if (setter != null) {
-                trace.getErrorHandler().genericError(setter.asElement().getNode(), "A 'val'-property cannot have a setter");
+//                trace.getErrorHandler().genericError(setter.asElement().getNode(), "A 'val'-property cannot have a setter");
+                trace.report(VAL_WITH_SETTER.on(setter));
             }
         }
         return setterDescriptor;
@@ -600,7 +617,8 @@ public class ClassDescriptorResolver {
             if (returnTypeReference != null) {
                 returnType = typeResolver.resolveType(scope, returnTypeReference);
                 if (outType != null && !semanticServices.getTypeChecker().equalTypes(returnType, outType)) {
-                    trace.getErrorHandler().genericError(returnTypeReference.getNode(), "Getter return type must be equal to the type of the property, i.e. " + propertyDescriptor.getReturnType());
+//                    trace.getErrorHandler().genericError(returnTypeReference.getNode(), "Getter return type must be equal to the type of the property, i.e. " + propertyDescriptor.getReturnType());
+                    trace.report(WRONG_GETTER_RETURN_TYPE.on(returnTypeReference, propertyDescriptor.getReturnType()));
                 }
             }
 
@@ -636,9 +654,6 @@ public class ClassDescriptorResolver {
                 isPrimary
         );
         trace.record(BindingContext.CONSTRUCTOR, declarationToTrace, constructorDescriptor);
-        if (modifierList != null) {
-            modifierList.checkNotContains(trace, JetTokens.ABSTRACT_KEYWORD, JetTokens.OPEN_KEYWORD, JetTokens.OVERRIDE_KEYWORD, JetTokens.FINAL_KEYWORD);
-        }
         return constructorDescriptor.initialize(
                 typeParameters,
                 resolveValueParameters(
@@ -673,7 +688,8 @@ public class ClassDescriptorResolver {
         if (modifierList != null) {
             ASTNode abstractNode = modifierList.getModifierNode(JetTokens.ABSTRACT_KEYWORD);
             if (abstractNode != null) {
-                trace.getErrorHandler().genericError(abstractNode, "This property cannot be declared abstract");
+//                trace.getErrorHandler().genericError(abstractNode, "This property cannot be declared abstract");
+                trace.report(ABSTRACT_PROPERTY_IN_PRIMARY_CONSTRUCTOR_PARAMETERS.on(abstractNode));
             }
         }
 
@@ -726,7 +742,8 @@ public class ClassDescriptorResolver {
         for (JetType bound : typeParameterDescriptor.getUpperBounds()) {
             JetType substitutedBound = substitutor.safeSubstitute(bound, Variance.INVARIANT);
             if (!semanticServices.getTypeChecker().isSubtypeOf(typeArgument, substitutedBound)) {
-                trace.getErrorHandler().genericError(argumentTypeReference.getNode(), "An upper bound " + substitutedBound + " is violated"); // TODO : Message
+//                trace.getErrorHandler().genericError(argumentTypeReference.getNode(), "An upper bound " + substitutedBound + " is violated");
+                trace.report(UPPER_BOUND_VIOLATED.on(argumentTypeReference, substitutedBound));
             }
         }
     }
@@ -921,7 +938,8 @@ public class ClassDescriptorResolver {
 
             @Override
             public void visitUnsupportedElementInstruction(UnsupportedElementInstruction instruction) {
-                trace.getErrorHandler().genericError(instruction.getElement().getNode(), "Unsupported by control-flow builder " + instruction.getElement());
+//                trace.getErrorHandler().genericError(instruction.getElement().getNode(), "Unsupported by control-flow builder " + instruction.getElement());
+                trace.report(UNSUPPORTED.on(instruction.getElement(), "Control-flow builder"));
             }
 
             @Override
@@ -943,7 +961,8 @@ public class ClassDescriptorResolver {
             public void visitInstruction(Instruction instruction) {
                 if (instruction instanceof JetElementInstructionImpl) {
                     JetElementInstructionImpl elementInstruction = (JetElementInstructionImpl) instruction;
-                    trace.getErrorHandler().genericError(elementInstruction.getElement().getNode(), "Unsupported by control-flow builder " + elementInstruction.getElement());
+//                    trace.getErrorHandler().genericError(elementInstruction.getElement().getNode(), "Unsupported by control-flow builder " + elementInstruction.getElement());
+                    trace.report(UNSUPPORTED.on(elementInstruction.getElement(), "Control-flow builder"));
                 }
                 else {
                     throw new UnsupportedOperationException(instruction.toString());

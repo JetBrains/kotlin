@@ -8,6 +8,7 @@ import org.jetbrains.jet.lang.psi.*;
 import java.util.List;
 import java.util.Map;
 
+import static org.jetbrains.jet.lang.diagnostics.Errors.CONSTRUCTOR_IN_TRAIT;
 import static org.jetbrains.jet.lang.resolve.BindingContext.ANNOTATION;
 
 /**
@@ -128,7 +129,8 @@ public class DeclarationResolver {
         if (!klass.hasPrimaryConstructor()) return;
 
         if (classDescriptor.getKind() == ClassKind.TRAIT) {
-            context.getTrace().getErrorHandler().genericError(klass.getPrimaryConstructorParameterList().getNode(), "A trait may not have a constructor");
+//            context.getTrace().getErrorHandler().genericError(klass.getPrimaryConstructorParameterList().getNode(), "A trait may not have a constructor");
+            context.getTrace().report(CONSTRUCTOR_IN_TRAIT.on(klass.getPrimaryConstructorParameterList()));
         }
 
         // TODO : not all the parameters are real properties
@@ -150,7 +152,8 @@ public class DeclarationResolver {
 
     private void processSecondaryConstructor(MutableClassDescriptor classDescriptor, JetConstructor constructor) {
         if (classDescriptor.getKind() == ClassKind.TRAIT) {
-            context.getTrace().getErrorHandler().genericError(constructor.getNameNode(), "A trait may not have a constructor");
+//            context.getTrace().getErrorHandler().genericError(constructor.getNameNode(), "A trait may not have a constructor");
+            context.getTrace().report(CONSTRUCTOR_IN_TRAIT.on(constructor.getNameNode()));
         }
         ConstructorDescriptor constructorDescriptor = context.getClassDescriptorResolver().resolveSecondaryConstructorDescriptor(
                 classDescriptor.getScopeForMemberResolution(),

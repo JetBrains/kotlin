@@ -11,17 +11,19 @@ import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.ErrorHandler;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.diagnostics.ErrorHandler;
+import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespace;
-//import org.jetbrains.jet.lang.resolve.java.JavaPackageScope;
-//import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 
 import java.util.Collections;
+
+//import org.jetbrains.jet.lang.resolve.java.JavaPackageScope;
+//import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 
 /**
  * @author abreslav
@@ -118,7 +120,8 @@ public class AnalyzingUtils {
                         catch (Throwable e) {
                             e.printStackTrace();
                             BindingTraceContext bindingTraceContext = new BindingTraceContext();
-                            bindingTraceContext.getErrorHandler().genericError(file.getNode(), e.getClass().getSimpleName() + ": " + e.getMessage());
+//                            bindingTraceContext.getErrorHandler().genericError(file.getNode(), e.getClass().getSimpleName() + ": " + e.getMessage());
+                            bindingTraceContext.report(Errors.EXCEPTION_WHILE_ANALYZING.on(file, e));
                             return new Result<BindingContext>(bindingTraceContext.getBindingContext(), PsiModificationTracker.MODIFICATION_COUNT);
                         }
                     }

@@ -1,4 +1,4 @@
-package org.jetbrains.jet.lang;
+package org.jetbrains.jet.lang.diagnostics;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.editor.Document;
@@ -65,16 +65,30 @@ public class ErrorHandler {
     }
 
     public static void applyHandler(@NotNull ErrorHandler errorHandler, @NotNull BindingContext bindingContext) {
-        Collection<JetDiagnostic> diagnostics = bindingContext.getDiagnostics();
-        applyHandler(errorHandler, diagnostics);
+        Collection<JetDiagnostic> diagnostics = bindingContext.getOld_Diagnostics();
+        old_applyHandler(errorHandler, diagnostics);
+        applyHandler(errorHandler, bindingContext.getDiagnostics());
     }
 
-    public static void applyHandler(@NotNull ErrorHandler errorHandler, @NotNull Collection<JetDiagnostic> diagnostics) {
+    public static void applyHandler(@NotNull ErrorHandler errorHandler, @NotNull Collection<Diagnostic> diagnostics) {
+        for (Diagnostic diagnostic : diagnostics) {
+            if (diagnostic instanceof Errors.UnresolvedReferenceDiagnosticFactory.UnresolvedReferenceDiagnostic) {
+                Errors.UnresolvedReferenceDiagnosticFactory.UnresolvedReferenceDiagnostic unresolvedReferenceDiagnostic = (Errors.UnresolvedReferenceDiagnosticFactory.UnresolvedReferenceDiagnostic) diagnostic;
+                errorHandler.unresolvedReference(unresolvedReferenceDiagnostic.getReference());
+            }
+//            else {
+//                if (diagnostic.getSeverity() == Severity.ERROR) {
+//
+//                }
+//            }
+        }
+    }
+
+    public static void old_applyHandler(@NotNull ErrorHandler errorHandler, @NotNull Collection<JetDiagnostic> diagnostics) {
         for (JetDiagnostic jetDiagnostic : diagnostics) {
             jetDiagnostic.acceptHandler(errorHandler);
         }
     }
-
 
     public void unresolvedReference(@NotNull JetReferenceExpression referenceExpression) {
     }

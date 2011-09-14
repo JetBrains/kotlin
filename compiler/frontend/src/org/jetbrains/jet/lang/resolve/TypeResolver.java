@@ -3,7 +3,10 @@ package org.jetbrains.jet.lang.resolve;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.JetSemanticServices;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.*;
@@ -11,6 +14,9 @@ import org.jetbrains.jet.lang.types.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static org.jetbrains.jet.lang.diagnostics.Errors.UNRESOLVED_REFERENCE;
+import static org.jetbrains.jet.lang.diagnostics.Errors.WRONG_NUMBER_OF_TYPE_ARGUMENTS;
 
 /**
  * @author abreslav
@@ -95,11 +101,13 @@ public class TypeResolver {
                         }
                         else {
                             if (actualArgumentCount != expectedArgumentCount) {
-                                String errorMessage = (expectedArgumentCount == 0 ? "No" : expectedArgumentCount) + " type arguments expected";
+//                                String errorMessage = (expectedArgumentCount == 0 ? "No" : expectedArgumentCount) + " type arguments expected";
                                 if (actualArgumentCount == 0) {
-                                    trace.getErrorHandler().genericError(type.getNode(), errorMessage);
+//                                    trace.getErrorHandler().genericError(type.getNode(), errorMessage);
+                                    trace.report(WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(type, expectedArgumentCount));
                                 } else {
-                                    trace.getErrorHandler().genericError(type.getTypeArgumentList().getNode(), errorMessage);
+//                                    trace.getErrorHandler().genericError(type.getTypeArgumentList().getNode(), errorMessage);
+                                    trace.report(WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(type, expectedArgumentCount));
                                 }
                             } else {
                                 result[0] = new JetTypeImpl(
@@ -227,7 +235,7 @@ public class TypeResolver {
         ClassifierDescriptor classifierDescriptor = resolveClassWithoutErrorReporting(scope, userType);
 
         if (classifierDescriptor == null) {
-            trace.getErrorHandler().unresolvedReference(userType.getReferenceExpression());
+            trace.report(UNRESOLVED_REFERENCE.on(userType.getReferenceExpression()));
         }
 
         return classifierDescriptor;
@@ -270,7 +278,7 @@ public class TypeResolver {
 
         NamespaceDescriptor namespaceDescriptor = resolveNamespace(scope, userType);
         if (namespaceDescriptor == null) {
-            trace.getErrorHandler().unresolvedReference(userType.getReferenceExpression());
+            trace.report(UNRESOLVED_REFERENCE.on(userType.getReferenceExpression()));
             return null;
         }
         return namespaceDescriptor.getMemberScope();

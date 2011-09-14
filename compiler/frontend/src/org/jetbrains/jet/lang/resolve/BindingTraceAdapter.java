@@ -2,7 +2,8 @@ package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.ErrorHandler;
+import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.diagnostics.ErrorHandler;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
@@ -13,14 +14,19 @@ import java.util.Map;
  */
 public class BindingTraceAdapter implements BindingTrace {
     public interface RecordHandler<K, V> {
+
         void handleRecord(WritableSlice<K, V> slice, K key, V value);
     }
-
     private final BindingTrace originalTrace;
-    private Map<WritableSlice, RecordHandler> handlers = Maps.newHashMap();
 
+    private Map<WritableSlice, RecordHandler> handlers = Maps.newHashMap();
     public BindingTraceAdapter(BindingTrace originalTrace) {
         this.originalTrace = originalTrace;
+    }
+
+    @Override
+    public void report(@NotNull Diagnostic diagnostic) {
+        originalTrace.report(diagnostic);
     }
 
     @Override

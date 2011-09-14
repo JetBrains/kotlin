@@ -3,7 +3,6 @@ package org.jetbrains.jet.lang.cfg;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
@@ -11,6 +10,8 @@ import org.jetbrains.jet.lang.types.JetTypeInferrer;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.*;
+
+import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 
 /**
 * @author abreslav
@@ -75,12 +76,13 @@ public class JetControlFlowProcessor {
         Stack<JetElement> stack = labeledElements.get(labelName);
         if (stack == null || stack.isEmpty()) {
             if (reportUnresolved) {
-                trace.getErrorHandler().unresolvedReference(labelExpression);
+                trace.report(UNRESOLVED_REFERENCE.on(labelExpression));
             }
             return null;
         }
         else if (stack.size() > 1) {
-            trace.getErrorHandler().genericWarning(labelExpression.getNode(), "There is more than one label with such a name in this scope");
+//            trace.getErrorHandler().genericWarning(labelExpression.getNode(), "There is more than one label with such a name in this scope");
+            trace.report(LABEL_NAME_CLASH.on(labelExpression));
         }
 
         JetElement result = stack.peek();
@@ -437,14 +439,16 @@ public class JetControlFlowProcessor {
                 assert targetLabel != null;
                 loop = resolveLabel(labelName, targetLabel, true);
                 if (!isLoop(loop)) {
-                    trace.getErrorHandler().genericError(expression.getNode(), "The label '" + targetLabel.getText() + "' does not denote a loop");
+//                    trace.getErrorHandler().genericError(expression.getNode(), "The label '" + targetLabel.getText() + "' does not denote a loop");
+                    trace.report(NOT_A_LOOP_LABEL.on(expression, targetLabel.getText()));
                     loop = null;
                 }
             }
             else {
                 loop = builder.getCurrentLoop();
                 if (loop == null) {
-                    trace.getErrorHandler().genericError(expression.getNode(), "'break' and 'continue' are only allowed inside a loop");
+//                    trace.getErrorHandler().genericError(expression.getNode(), "'break' and 'continue' are only allowed inside a loop");
+                    trace.report(BREAK_OR_CONTINUE_OUTSIDE_A_LOOP.on(expression));
                 }
             }
             return loop;
@@ -627,7 +631,8 @@ public class JetControlFlowProcessor {
 
                 if (whenEntry.isElse()) {
                     if (iterator.hasNext()) {
-                        trace.getErrorHandler().genericError(whenEntry.getNode(), "'else' entry must be the last one in a when-expression");
+//                        trace.getErrorHandler().genericError(whenEntry.getNode(), "'else' entry must be the last one in a when-expression");
+                        trace.report(ELSE_MISPLACED_IN_WHEN.on(whenEntry));
                     }
                 }
 

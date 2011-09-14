@@ -1,8 +1,9 @@
 package org.jetbrains.jet;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.ErrorHandler;
-import org.jetbrains.jet.lang.JetDiagnostic;
+import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.diagnostics.ErrorHandler;
+import org.jetbrains.jet.lang.diagnostics.JetDiagnostic;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
@@ -34,7 +35,12 @@ public class JetTestUtils {
             return new BindingContext() {
 
                 @Override
-                public Collection<JetDiagnostic> getDiagnostics() {
+                public Collection<JetDiagnostic> getOld_Diagnostics() {
+                    throw new UnsupportedOperationException(); // TODO
+                }
+
+                @Override
+                public Collection<Diagnostic> getDiagnostics() {
                     throw new UnsupportedOperationException(); // TODO
                 }
 
@@ -57,6 +63,11 @@ public class JetTestUtils {
         public <K, V> V get(ReadOnlySlice<K, V> slice, K key) {
             if (slice == BindingContext.PROCESSED) return (V) Boolean.FALSE;
             return null;
+        }
+
+        @Override
+        public void report(@NotNull Diagnostic diagnostic) {
+            throw new UnsupportedOperationException(); // TODO
         }
     };
 }

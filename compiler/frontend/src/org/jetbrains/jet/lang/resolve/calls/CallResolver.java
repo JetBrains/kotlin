@@ -18,6 +18,7 @@ import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.util.*;
 
+import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.AMBIGUOUS_REFERENCE_TARGET;
 import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
 import static org.jetbrains.jet.lang.types.JetTypeInferrer.NO_EXPECTED_TYPE;
@@ -103,7 +104,8 @@ public class CallResolver {
                     if (descriptor instanceof ConstructorDescriptor) {
                         Modality modality = ((ConstructorDescriptor) descriptor).getContainingDeclaration().getModality();
                         if (modality == Modality.ABSTRACT) {
-                            tracing.reportOverallResolutionError(trace, "Can not create an instance of an abstract class");
+//                            tracing.reportOverallResolutionError(trace, "Can not create an instance of an abstract class");
+                            tracing.instantiationOfAbstractClass(trace);
                             return false;
                         }
                     }
@@ -135,13 +137,15 @@ public class CallResolver {
                     ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
                     Set<FunctionDescriptor> constructors = classDescriptor.getConstructors().getFunctionDescriptors();
                     if (constructors.isEmpty()) {
-                        trace.getErrorHandler().genericError(reportAbsenceOn, "This class does not have a constructor");
+//                        trace.getErrorHandler().genericError(reportAbsenceOn, "This class does not have a constructor");
+                        trace.report(NO_CONSTRUCTOR.on(reportAbsenceOn));
                         return checkArgumentTypesAndFail(trace, scope, call);
                     }
                     prioritizedTasks.add(new ResolutionTask<FunctionDescriptor>(constructors, null, call));
                 }
                 else {
-                    trace.getErrorHandler().genericError(calleeExpression.getNode(), "Not a class");
+//                    trace.getErrorHandler().genericError(calleeExpression.getNode(), "Not a class");
+                    trace.report(NOT_A_CLASS.on(calleeExpression));
                     return checkArgumentTypesAndFail(trace, scope, call);
                 }
             }
@@ -154,7 +158,8 @@ public class CallResolver {
 
                 Set<FunctionDescriptor> constructors = classDescriptor.getConstructors().getFunctionDescriptors();
                 if (constructors.isEmpty()) {
-                    trace.getErrorHandler().genericError(reportAbsenceOn, "This class does not have a constructor");
+//                    trace.getErrorHandler().genericError(reportAbsenceOn, "This class does not have a constructor");
+                    trace.report(NO_CONSTRUCTOR.on(reportAbsenceOn));
                     return checkArgumentTypesAndFail(trace, scope, call);
                 }
                 prioritizedTasks = Collections.singletonList(new ResolutionTask<FunctionDescriptor>(constructors, null, call));
@@ -189,24 +194,53 @@ public class CallResolver {
                 trace.record(REFERENCE_TARGET, reference, descriptor);
             }
 
+//            public void reportOverallResolutionError(@NotNull BindingTrace trace, @NotNull String message) {
+//                trace.getErrorHandler().genericError(callNode, message);
+//            }
+//
+//            public void reportWrongTypeArguments(@NotNull BindingTrace trace, @NotNull String message) {
+//                JetTypeArgumentList typeArgumentList = call.getTypeArgumentList();
+//                if (typeArgumentList != null) {
+//                    trace.getErrorHandler().genericError(typeArgumentList.getNode(), message);
+//                }
+//                else {
+//                    reportOverallResolutionError(trace, message);
+//                }
+//            }
+//
+//            public void reportWrongValueArguments(@NotNull BindingTrace trace, @NotNull String message) {
+//                ASTNode node;
+//
+//                JetValueArgumentList valueArgumentList = call.getValueArgumentList();
+//                if (valueArgumentList != null) {
+//                    node = valueArgumentList.getNode();
+//                }
+//                else if (!call.getFunctionLiteralArguments().isEmpty()) {
+//                    node = call.getFunctionLiteralArguments().get(0).getNode();
+//                }
+//                else {
+//                    node = callNode;
+//                }
+//
+//                trace.getErrorHandler().genericError(node, message);
+//            }
+//
+//            public void reportErrorOnReference(BindingTrace trace, String message) {
+//                trace.getErrorHandler().genericError(reference.getNode(), message);
+//            }
+
             @Override
-            public void reportOverallResolutionError(@NotNull BindingTrace trace, @NotNull String message) {
-                trace.getErrorHandler().genericError(callNode, message);
+            public <D extends CallableDescriptor> void recordAmbiguity(BindingTrace trace, Collection<D> candidates) {
+                trace.record(AMBIGUOUS_REFERENCE_TARGET, reference, candidates);
             }
 
             @Override
-            public void reportWrongTypeArguments(@NotNull BindingTrace trace, @NotNull String message) {
-                JetTypeArgumentList typeArgumentList = call.getTypeArgumentList();
-                if (typeArgumentList != null) {
-                    trace.getErrorHandler().genericError(typeArgumentList.getNode(), message);
-                }
-                else {
-                    reportOverallResolutionError(trace, message);
-                }
+            public void unresolvedReference(@NotNull BindingTrace trace) {
+                trace.report(UNRESOLVED_REFERENCE.on(reference));
             }
 
             @Override
-            public void reportWrongValueArguments(@NotNull BindingTrace trace, @NotNull String message) {
+            public void noValueForParameter(@NotNull BindingTrace trace, @NotNull ValueParameterDescriptor valueParameter) {
                 ASTNode node;
 
                 JetValueArgumentList valueArgumentList = call.getValueArgumentList();
@@ -219,23 +253,50 @@ public class CallResolver {
                 else {
                     node = callNode;
                 }
-
-                trace.getErrorHandler().genericError(node, message);
+                trace.report(NO_VALUE_FOR_PARAMETER.on(node, valueParameter));
             }
 
             @Override
-            public void reportUnresolvedReference(@NotNull BindingTrace trace) {
-                trace.getErrorHandler().unresolvedReference(reference);
+            public void missingReceiver(@NotNull BindingTrace trace, @NotNull JetType candidateReceiverType) {
+                trace.report(MISSING_RECEIVER.on(reference, candidateReceiverType));
             }
 
             @Override
-            public void reportErrorOnReference(BindingTrace trace, String message) {
-                trace.getErrorHandler().genericError(reference.getNode(), message);
+            public void noReceiverAllowed(@NotNull BindingTrace trace) {
+                trace.report(NO_RECEIVER_ADMITTED.on(reference));
             }
 
             @Override
-            public <D extends CallableDescriptor> void recordAmbiguity(BindingTrace trace, Collection<D> candidates) {
-                trace.record(AMBIGUOUS_REFERENCE_TARGET, reference, candidates);
+            public void wrongNumberOfTypeArguments(@NotNull BindingTrace trace, int expectedTypeArgumentCount) {
+                JetTypeArgumentList typeArgumentList = call.getTypeArgumentList();
+                if (typeArgumentList != null) {
+//                    trace.getErrorHandler().genericError(typeArgumentList.getNode(), message);
+                    trace.report(WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(typeArgumentList, expectedTypeArgumentCount));
+                }
+                else {
+//                    reportOverallResolutionError(trace, message);
+                    trace.report(WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(reference, expectedTypeArgumentCount));
+                }
+            }
+
+            @Override
+            public void ambiguity(@NotNull BindingTrace trace, @NotNull Set<? extends CallableDescriptor> descriptors) {
+                trace.report(OVERLOAD_RESOLUTION_AMBIGUITY.on(callNode, descriptors));
+            }
+
+            @Override
+            public void noneApplicable(@NotNull BindingTrace trace, @NotNull Set<? extends CallableDescriptor> descriptors) {
+                trace.report(NONE_APPLICABLE.on(callNode, descriptors));
+            }
+
+            @Override
+            public void instantiationOfAbstractClass(@NotNull BindingTrace trace) {
+                trace.report(CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS.on(callNode));
+            }
+
+            @Override
+            public void typeInferenceFailed(@NotNull BindingTrace trace) {
+                trace.report(TYPE_INFERENCE_FAILED.on(callNode));
             }
 
         };
@@ -258,7 +319,7 @@ public class CallResolver {
             }
         }
         else {
-            trace.getErrorHandler().unresolvedReference(reference);
+            trace.report(UNRESOLVED_REFERENCE.on(reference));
             checkTypesWithNoCallee(trace, scope, call.getTypeArguments(), call.getValueArguments(), call.getFunctionLiteralArguments());
         }
         return null;
@@ -350,7 +411,7 @@ public class CallResolver {
                         successfulCandidates.put(candidate, substitute);
                     }
                     else {
-                        tracing.reportOverallResolutionError(temporaryTrace, "Type inference failed");
+                        tracing.typeInferenceFailed(temporaryTrace);
                         failedCandidates.add(candidate);
                     }
                 }
@@ -362,11 +423,13 @@ public class CallResolver {
 
                 for (JetTypeProjection typeArgument : jetTypeArguments) {
                     if (typeArgument.getProjectionKind() != JetProjectionKind.NONE) {
-                        temporaryTrace.getErrorHandler().genericError(typeArgument.getNode(), "Projections are not allowed on type parameters for methods"); // TODO : better positioning
+//                        temporaryTrace.getErrorHandler().genericError(typeArgument.getNode(), "Projections are not allowed on type parameters for methods"); // TODO : better positioning
+                        temporaryTrace.report(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT.on(typeArgument));
                     }
                 }
 
-                if (candidate.getTypeParameters().size() == jetTypeArguments.size()) {
+                int expectedTypeArgumentCount = candidate.getTypeParameters().size();
+                if (expectedTypeArgumentCount == jetTypeArguments.size()) {
                     List<JetType> typeArguments = new ArrayList<JetType>();
                     for (JetTypeProjection projection : jetTypeArguments) {
                         // TODO : check that there's no projection
@@ -392,7 +455,8 @@ public class CallResolver {
                 }
                 else {
                     failedCandidates.add(candidate);
-                    tracing.reportWrongTypeArguments(temporaryTrace, "Number of type arguments does not match " + DescriptorRenderer.TEXT.render(candidate));
+//                    tracing.reportWrongTypeArguments(temporaryTrace, "Number of type arguments does not match " + DescriptorRenderer.TEXT.render(candidate));
+                    tracing.wrongNumberOfTypeArguments(temporaryTrace, expectedTypeArgumentCount);
                 }
             }
             
@@ -448,7 +512,7 @@ public class CallResolver {
         if (receiverType != null
                 && candidateReceiverType != null
                 && !semanticServices.getTypeChecker().isSubtypeOf(receiverType, candidateReceiverType)) {
-            tracing.reportErrorOnReference(temporaryTrace, "This function requires a receiver of type " + candidateReceiverType);
+            tracing.missingReceiver(temporaryTrace, candidateReceiverType);
             return false;
         }
         return true;
@@ -459,12 +523,12 @@ public class CallResolver {
         JetType candidateReceiverType = candidate.getReceiverType();
         if (receiverType != null) {
             if (candidateReceiverType == null) {
-                tracing.reportErrorOnReference(temporaryTrace, "This function does not admit a receiver");
+                tracing.noReceiverAllowed(temporaryTrace);
                 return false;
             }
         }
         else if (candidateReceiverType != null) {
-            tracing.reportErrorOnReference(temporaryTrace, "Receiver is missing" + candidateReceiverType);
+            tracing.missingReceiver(temporaryTrace, candidateReceiverType);
             return false;
         }
         return true;
@@ -492,8 +556,9 @@ public class CallResolver {
 
                 Set<Descriptor> noOverrides = filterOverrides(successfulCandidates.keySet());
                 if (dirtyCandidates.isEmpty()) {
-                    tracing.reportOverallResolutionError(trace, "Overload resolution ambiguity: "
-                                                                + makeErrorMessageForMultipleDescriptors(noOverrides));
+//                    tracing.reportOverallResolutionError(trace, "Overload resolution ambiguity: "
+//                                                                + makeErrorMessageForMultipleDescriptors(noOverrides));
+                    tracing.ambiguity(trace, noOverrides);
                 }
 
                 tracing.recordAmbiguity(trace, noOverrides);
@@ -514,8 +579,9 @@ public class CallResolver {
             if (failedCandidates.size() != 1) {
                 Set<Descriptor> noOverrides = filterOverrides(failedCandidates);
                 if (noOverrides.size() != 1) {
-                    tracing.reportOverallResolutionError(trace, "None of the following functions can be called with the arguments supplied: "
-                                                                + makeErrorMessageForMultipleDescriptors(noOverrides));
+//                    tracing.reportOverallResolutionError(trace, "None of the following functions can be called with the arguments supplied: "
+//                                                                + makeErrorMessageForMultipleDescriptors(noOverrides));
+                    tracing.noneApplicable(trace, noOverrides);
                     tracing.recordAmbiguity(trace, noOverrides);
                     return OverloadResolutionResult.manyFailedCandidates(noOverrides);
                 }
@@ -527,7 +593,7 @@ public class CallResolver {
             return OverloadResolutionResult.singleFailedCandidate(failedCandidates.iterator().next());
         }
         else {
-            tracing.reportUnresolvedReference(trace);
+            tracing.unresolvedReference(trace);
             return OverloadResolutionResult.nameNotFound();
         }
     }

@@ -10,7 +10,7 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetNodeTypes;
-import org.jetbrains.jet.lang.JetDiagnostic;
+import org.jetbrains.jet.lang.diagnostics.JetDiagnostic;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -54,7 +54,7 @@ public class DebugInfoAnnotator implements Annotator {
                 final BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache(file);
 
                 final Set<JetReferenceExpression> unresolvedReferences = Sets.newHashSet();
-                for (JetDiagnostic diagnostic : bindingContext.getDiagnostics()) {
+                for (JetDiagnostic diagnostic : bindingContext.getOld_Diagnostics()) {
                     if (diagnostic instanceof JetDiagnostic.UnresolvedReferenceError) {
                         JetDiagnostic.UnresolvedReferenceError error = (JetDiagnostic.UnresolvedReferenceError) diagnostic;
                         unresolvedReferences.add(error.getReferenceExpression());                        
