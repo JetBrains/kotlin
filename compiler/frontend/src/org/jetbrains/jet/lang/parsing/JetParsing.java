@@ -801,6 +801,8 @@ public class JetParsing extends AbstractJetParsing {
 
         TokenSet propertyNameFollow = TokenSet.create(COLON, EQ, LBRACE, SEMICOLON);
 
+        myBuilder.disableJoiningComplexTokens();
+
         // TODO: extract constant
         int lastDot = matchTokenStreamPredicate(new FirstBefore(
                 new AtSet(DOT, SAFE_ACCESS),
@@ -810,13 +812,15 @@ public class JetParsing extends AbstractJetParsing {
                         if (topLevel && (at(EQ) || at(COLON))) return true;
                         if (topLevel && at(IDENTIFIER)) {
                             IElementType lookahead = lookahead(1);
-                            return lookahead != LT && lookahead != DOT && lookahead != SAFE_ACCESS;
+                            return lookahead != LT && lookahead != DOT && lookahead != SAFE_ACCESS && lookahead != QUEST;
                         }
                         return false;
                     }
                 }));
 
         parseReceiverType("property", propertyNameFollow, lastDot);
+
+        myBuilder.enableJoiningComplexTokens();
 
         if (at(COLON)) {
             advance(); // COLON
@@ -951,8 +955,10 @@ public class JetParsing extends AbstractJetParsing {
             typeParameterListOccurred = true;
         }
 
+        myBuilder.disableJoiningComplexTokens();
         int lastDot = findLastBefore(RECEIVER_TYPE_TERMINATORS, TokenSet.create(LPAR), true);
         parseReceiverType("function", TokenSet.create(LT, LPAR, COLON, EQ), lastDot);
+        myBuilder.enableJoiningComplexTokens();
 
         TokenSet valueParametersFollow = TokenSet.create(COLON, EQ, LBRACE, SEMICOLON, RPAR);
 
@@ -993,21 +999,11 @@ public class JetParsing extends AbstractJetParsing {
      *   (type "." | attributes)?
      */
     private void parseReceiverType(String title, TokenSet nameFollow, int lastDot) {
-
         if (lastDot == -1) { // There's no explicit receiver type specified
             parseAnnotations(false);
             expect(IDENTIFIER, "Expecting " + title + " name or receiver type", nameFollow);
         } else {
-            PsiBuilder.Marker typeRefMarker = mark();
-            PsiBuilder.Marker nullableType = mark();
-            typeRefMarker = createTruncatedBuilder(lastDot).parseTypeRefContents(typeRefMarker);
-            if (at(SAFE_ACCESS)) {
-                nullableType.done(NULLABLE_TYPE);
-            }
-            else {
-                nullableType.drop();
-            }
-            typeRefMarker.done(TYPE_REFERENCE);
+            createTruncatedBuilder(lastDot).parseTypeRef();
 
             if (atSet(RECEIVER_TYPE_TERMINATORS)) {
                 advance(); // expectation
@@ -1258,10 +1254,7 @@ public class JetParsing extends AbstractJetParsing {
      *   : typeDescriptor "?"
      */
     public void parseTypeRef() {
-        parseTypeRefContents(mark()).done(TYPE_REFERENCE);
-    }
-
-    private PsiBuilder.Marker parseTypeRefContents(PsiBuilder.Marker typeRefMarker) {
+        PsiBuilder.Marker typeRefMarker = mark();
         parseAnnotations(false);
 
         if (at(IDENTIFIER) || at(NAMESPACE_KEYWORD)) {
@@ -1290,7 +1283,7 @@ public class JetParsing extends AbstractJetParsing {
 
             typeRefMarker = precede;
         }
-        return typeRefMarker;
+        typeRefMarker.done(TYPE_REFERENCE);
     }
 
     /*

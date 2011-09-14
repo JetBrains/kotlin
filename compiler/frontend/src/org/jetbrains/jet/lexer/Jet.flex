@@ -203,8 +203,8 @@ LONG_TEMPLATE_ENTRY_END=\}
 "!="         { return JetTokens.EXCLEQ    ; }
 "&&"         { return JetTokens.ANDAND    ; }
 "||"         { return JetTokens.OROR      ; }
-"?."         { return JetTokens.SAFE_ACCESS;}
-"?:"         { return JetTokens.ELVIS     ; }
+//"?."         { return JetTokens.SAFE_ACCESS;}
+//"?:"         { return JetTokens.ELVIS     ; }
 //".*"         { return JetTokens.MAP       ; }
 //".?"         { return JetTokens.FILTER    ; }
 "*="         { return JetTokens.MULTEQ    ; }

@@ -19,3 +19,4 @@ fun [a()] T.foo<T : fun (a) : b>(a : foo) : bar {}
 fun [a()] T.foo<T : [a] fun (a) : b>(a : foo) : bar {}
 
 fun A?.foo() : bar?
+fun A? .foo() : bar?
