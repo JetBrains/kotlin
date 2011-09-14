@@ -9,6 +9,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
+import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -21,12 +22,12 @@ import static org.jetbrains.jet.lang.diagnostics.Severity.WARNING;
 public interface Errors {
 
     public class AbstractDiagnosticFactory implements DiagnosticFactory {
-        protected final String message;
+        protected final MessageFormat messageFormat;
         protected final Severity severity;
 
         public AbstractDiagnosticFactory(Severity severity, String message) {
             this.severity = severity;
-            this.message = message;
+            this.messageFormat = new MessageFormat(message);
         }
 
         @NotNull
@@ -36,14 +37,18 @@ public interface Errors {
         }
     }
 
-    public class SimpleDiagnosticFactory extends AbstractDiagnosticFactory {
+    public class SimpleDiagnosticFactory implements DiagnosticFactory {
 
         public static SimpleDiagnosticFactory create(Severity severity, String message) {
             return new SimpleDiagnosticFactory(severity, message);
         }
 
-        protected SimpleDiagnosticFactory(Severity severity, String message) {
-            super(severity, message);
+        protected final String message;
+        protected final Severity severity;
+
+        public SimpleDiagnosticFactory(Severity severity, String message) {
+            this.message = message;
+            this.severity = severity;
         }
 
         @NotNull
@@ -61,6 +66,11 @@ public interface Errors {
             return on(element.getTextRange());
         }
 
+        @NotNull
+        @Override
+        public TextRange getMarkerPosition(@NotNull Diagnostic diagnostic) {
+            return ((DiagnosticWithTextRange) diagnostic).getTextRange();
+        }
     }
 
     public class ParameterizedDiagnosticFactory1<T> extends AbstractDiagnosticFactory {
@@ -72,10 +82,14 @@ public interface Errors {
             super(severity, messageStub);
         }
 
-        protected String makeMessage(@NotNull T argument) {
-            return String.format(message, argument);
-        } 
-        
+        private String makeMessage(@NotNull T argument) {
+            return messageFormat.format(new Object[]{makeMessageFor(argument)});
+        }
+
+        protected String makeMessageFor(T argument) {
+            return argument.toString();
+        }
+
         @NotNull
         public Diagnostic on(@NotNull TextRange range, @NotNull T argument) {
             return new GenericDiagnostic(this, severity, makeMessage(argument), range);
@@ -102,7 +116,7 @@ public interface Errors {
         }
 
         protected String makeMessage(@NotNull A a, @NotNull B b) {
-            return String.format(message, makeMessageForA(a), makeMessageForB(b));
+            return messageFormat.format(new Object[] {makeMessageForA(a), makeMessageForB(b)});
         }
 
         protected String makeMessageForA(@NotNull A a) {
@@ -139,7 +153,7 @@ public interface Errors {
         }
 
         protected String makeMessage(@NotNull A a, @NotNull B b, @NotNull C c) {
-            return String.format(message, makeMessageForA(a), makeMessageForB(b), makeMessageForC(c));
+            return messageFormat.format(new Object[]{makeMessageForA(a), makeMessageForB(b), makeMessageForC(c)});
         }
 
         protected String makeMessageForA(@NotNull A a) {
@@ -183,20 +197,6 @@ public interface Errors {
             return ((UnresolvedReferenceDiagnostic) diagnostic).getTextRange();
         }
 
-        public class UnresolvedReferenceDiagnostic extends GenericDiagnostic {
-
-            private final JetReferenceExpression reference;
-
-            public UnresolvedReferenceDiagnostic(JetReferenceExpression referenceExpression) {
-                super(UnresolvedReferenceDiagnosticFactory.this, ERROR, "Unresolved reference", referenceExpression.getTextRange());
-                this.reference = referenceExpression;
-            }
-
-            @NotNull
-            public JetReferenceExpression getReference() {
-                return reference;
-            }
-        }
     }
 
     public class AmbiguousDescriptorDiagnosticFactory extends ParameterizedDiagnosticFactory1<Collection<? extends CallableDescriptor>> {
@@ -209,7 +209,7 @@ public interface Errors {
         }
 
         @Override
-        protected String makeMessage(@NotNull Collection<? extends CallableDescriptor> argument) {
+        protected String makeMessageFor(@NotNull Collection<? extends CallableDescriptor> argument) {
             StringBuilder stringBuilder = new StringBuilder("\n");
             for (CallableDescriptor descriptor : argument) {
                 stringBuilder.append(DescriptorRenderer.TEXT.render(descriptor)).append("\n");
@@ -254,7 +254,7 @@ public interface Errors {
     ParameterizedDiagnosticFactory1<FunctionDescriptor> ABSTRACT_FUNCTION_WITH_BODY = ParameterizedDiagnosticFactory1.create(ERROR, "A function {0} with body cannot be abstract");
     ParameterizedDiagnosticFactory1<FunctionDescriptor> NON_ABSTRACT_FUNCTION_WITH_NO_BODY = ParameterizedDiagnosticFactory1.create(ERROR, "Method {0} without a body must be abstract");
     ParameterizedDiagnosticFactory1<FunctionDescriptor> NON_MEMBER_ABSTRACT_FUNCTION = ParameterizedDiagnosticFactory1.create(ERROR, "Function {0} is not a class or trait member and cannot be abstract");
-    ParameterizedDiagnosticFactory1<PropertyDescriptor> NON_MEMBER_ABSTRACT_ACCESSOR = ParameterizedDiagnosticFactory1.create(ERROR, "Property {0} is not a class or trait member and thus cannot have be abstract accessors");
+    SimpleDiagnosticFactory NON_MEMBER_ABSTRACT_ACCESSOR = SimpleDiagnosticFactory.create(ERROR, "This property is not a class or trait member and thus cannot have abstract accessors"); // TODO : Better message
     ParameterizedDiagnosticFactory1<FunctionDescriptor> NON_MEMBER_FUNCTION_NO_BODY = ParameterizedDiagnosticFactory1.create(ERROR, "Function {0} must have a body");
 
     SimpleDiagnosticFactory PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT = SimpleDiagnosticFactory.create(ERROR, "Projections are not allowed on type arguments of functions and properties"); // TODO : better positioning
@@ -269,13 +269,13 @@ public interface Errors {
     ParameterizedDiagnosticFactory1<PropertyDescriptor> PRIMARY_CONSTRUCTOR_MISSING_STATEFUL_PROPERTY = ParameterizedDiagnosticFactory1.create(ERROR, "This class must have a primary constructor, because property {0} has a backing field");
     ParameterizedDiagnosticFactory1<JetClassOrObject> PRIMARY_CONSTRUCTOR_MISSING_SUPER_CONSTRUCTOR_CALL = new ParameterizedDiagnosticFactory1<JetClassOrObject>(ERROR, "Class {0} must have a constructor in order to be able to initialize supertypes") {
         @Override
-        protected String makeMessage(@NotNull JetClassOrObject argument) {
+        protected String makeMessageFor(@NotNull JetClassOrObject argument) {
             return JetPsiUtil.safeName(argument.getName());
         }
     };
     ParameterizedDiagnosticFactory1<Throwable> EXCEPTION_WHILE_ANALYZING = new ParameterizedDiagnosticFactory1<Throwable>(ERROR, "{0}") {
         @Override
-        protected String makeMessage(@NotNull Throwable e) {
+        protected String makeMessageFor(@NotNull Throwable e) {
             return e.getClass().getSimpleName() + ": " + e.getMessage();
         }
     };
@@ -312,7 +312,7 @@ public interface Errors {
     ParameterizedDiagnosticFactory1<JetType> WRONG_GETTER_RETURN_TYPE = ParameterizedDiagnosticFactory1.create(ERROR, "Getter return type must be equal to the type of the property, i.e. {0}");
     ParameterizedDiagnosticFactory1<ClassifierDescriptor> NO_CLASS_OBJECT = new ParameterizedDiagnosticFactory1<ClassifierDescriptor>(ERROR, "Classifier {0} does not have a class object") {
         @Override
-        protected String makeMessage(@NotNull ClassifierDescriptor argument) {
+        protected String makeMessageFor(@NotNull ClassifierDescriptor argument) {
             return argument.getName();
         }
     };
@@ -342,13 +342,13 @@ public interface Errors {
     ParameterizedDiagnosticFactory1<JetType> USELESS_ELVIS = ParameterizedDiagnosticFactory1.create(WARNING, "Elvis operator (?:) always returns the left operand of non-nullable type {0}");
     ParameterizedDiagnosticFactory1<TypeParameterDescriptor> CONFLICTING_UPPER_BOUNDS = new ParameterizedDiagnosticFactory1<TypeParameterDescriptor>(ERROR, "Upper bounds of {0} have empty intersection") {
         @Override
-        protected String makeMessage(@NotNull TypeParameterDescriptor argument) {
+        protected String makeMessageFor(@NotNull TypeParameterDescriptor argument) {
             return argument.getName();
         }
     };
     ParameterizedDiagnosticFactory1<TypeParameterDescriptor> CONFLICTING_CLASS_OBJECT_UPPER_BOUNDS = new ParameterizedDiagnosticFactory1<TypeParameterDescriptor>(ERROR, "Class object upper bounds of {0} have empty intersection") {
         @Override
-        protected String makeMessage(@NotNull TypeParameterDescriptor argument) {
+        protected String makeMessageFor(@NotNull TypeParameterDescriptor argument) {
             return argument.getName();
         }
     };
@@ -376,7 +376,7 @@ public interface Errors {
     ParameterizedDiagnosticFactory1<JetType> UNSAFE_CALL = ParameterizedDiagnosticFactory1.create(ERROR, "Only safe calls (?.) are allowed on a nullable receiver of type {0}");
     SimpleDiagnosticFactory AMBIGUOUS_LABEL = SimpleDiagnosticFactory.create(ERROR, "Ambiguous label");
     ParameterizedDiagnosticFactory1<String> UNSUPPORTED = ParameterizedDiagnosticFactory1.create(ERROR, "Unsupported [{0}]");
-    ParameterizedDiagnosticFactory1<JetType> UNNECESSARY_SAFE_CALL = ParameterizedDiagnosticFactory1.create(ERROR, "Unnecessary safe call on a non-null receiver of type {0}");
+    ParameterizedDiagnosticFactory1<JetType> UNNECESSARY_SAFE_CALL = ParameterizedDiagnosticFactory1.create(WARNING, "Unnecessary safe call on a non-null receiver of type {0}");
     ParameterizedDiagnosticFactory2<JetTypeConstraint, JetTypeParameterListOwner> NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER = new ParameterizedDiagnosticFactory2<JetTypeConstraint, JetTypeParameterListOwner>(ERROR, "{0} does not refer to a type parameter of {1}") {
         @Override
         protected String makeMessageForA(@NotNull JetTypeConstraint jetTypeConstraint) {
@@ -399,7 +399,7 @@ public interface Errors {
     ParameterizedDiagnosticFactory1<JetType> TYPE_MISMATCH_IN_CONDITION = ParameterizedDiagnosticFactory1.create(ERROR, "Condition must be of type Boolean, but was of type {0}");
     ParameterizedDiagnosticFactory2<JetType, Integer> TYPE_MISMATCH_IN_TUPLE_PATTERN = ParameterizedDiagnosticFactory2.create(ERROR, "Type mismatch: subject is of type {0} but the pattern is of type Tuple{1}"); // TODO: message
     ParameterizedDiagnosticFactory2<JetType, JetType> TYPE_MISMATCH_IN_BINDING_PATTERN = ParameterizedDiagnosticFactory2.create(ERROR, "{0} must be a supertype of {1}. Use 'is' to match against {0}");
-    ParameterizedDiagnosticFactory2<JetType, JetType> TYPE_MISMATCH = ParameterizedDiagnosticFactory2.create(ERROR, "Type mismatch: inferred type is {0} but {1} was expected");
+    ParameterizedDiagnosticFactory2<JetType, JetType> TYPE_MISMATCH = ParameterizedDiagnosticFactory2.create(ERROR, "Type mismatch: inferred type is {1} but {0} was expected");
     ParameterizedDiagnosticFactory2<JetType, JetType> INCOMPATIBLE_TYPES = ParameterizedDiagnosticFactory2.create(ERROR, "Incompatible types: {0} and {1}");
     
     ParameterizedDiagnosticFactory3<TypeParameterDescriptor, ClassDescriptor, Collection<JetType>> INCONSISTENT_TYPE_PARAMETER_VALUES = new ParameterizedDiagnosticFactory3<TypeParameterDescriptor, ClassDescriptor, Collection<JetType>>(ERROR, "Type parameter {0} of {1} has inconsistent values: {2}") {
@@ -474,8 +474,80 @@ public interface Errors {
     SimpleDiagnosticFactory TYPE_INFERENCE_FAILED = SimpleDiagnosticFactory.create(ERROR, "Type inference failed");
     ParameterizedDiagnosticFactory1<Integer> WRONG_NUMBER_OF_TYPE_ARGUMENTS = new ParameterizedDiagnosticFactory1<Integer>(ERROR, "{0} type arguments expected") {
         @Override
-        protected String makeMessage(@NotNull Integer argument) {
+        protected String makeMessageFor(@NotNull Integer argument) {
             return argument == 0 ? "No" : argument.toString();
         }
     };
+
+
+    class RedeclarationDiagnosticFactory implements DiagnosticFactory {
+
+        public static final RedeclarationDiagnosticFactory INSTANCE = new RedeclarationDiagnosticFactory();
+
+        private RedeclarationDiagnosticFactory() {}
+
+        public RedeclarationDiagnostic on(DeclarationDescriptor a, DeclarationDescriptor b) {
+            return new RedeclarationDiagnostic(a, b);
+        }
+
+        @NotNull
+        @Override
+        public TextRange getMarkerPosition(@NotNull Diagnostic diagnostic) {
+            throw new UnsupportedOperationException(); // TODO
+        }
+    }
+
+    class RedeclarationDiagnostic implements Diagnostic {
+
+        private final DeclarationDescriptor a;
+        private final DeclarationDescriptor b;
+
+        public RedeclarationDiagnostic(DeclarationDescriptor a, DeclarationDescriptor b) {
+            this.a = a;
+            this.b = b;
+        }
+
+        public DeclarationDescriptor getA() {
+            return a;
+        }
+
+        public DeclarationDescriptor getB() {
+            return b;
+        }
+
+        @NotNull
+        @Override
+        public DiagnosticFactory getFactory() {
+            return RedeclarationDiagnosticFactory.INSTANCE;
+        }
+
+        @NotNull
+        @Override
+        public String getMessage() {
+            return "Redeclaration";
+        }
+
+        @NotNull
+        @Override
+        public Severity getSeverity() {
+            return ERROR;
+        }
+    }
+
+    RedeclarationDiagnosticFactory REDECLARATION = RedeclarationDiagnosticFactory.INSTANCE;
+
+    public class UnresolvedReferenceDiagnostic extends GenericDiagnostic {
+
+        private final JetReferenceExpression reference;
+
+        public UnresolvedReferenceDiagnostic(JetReferenceExpression referenceExpression) {
+            super(UNRESOLVED_REFERENCE, ERROR, "Unresolved reference", referenceExpression.getTextRange());
+            this.reference = referenceExpression;
+        }
+
+        @NotNull
+        public JetReferenceExpression getReference() {
+            return reference;
+        }
+    }
 }

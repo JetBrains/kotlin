@@ -430,13 +430,13 @@ public class BodyResolver {
         assert containingClass != null : "This must be guaranteed by the parser";
         if (!containingClass.hasPrimaryConstructor()) {
 //            context.getTrace().getErrorHandler().genericError(declaration.getNameNode(), "A secondary constructor may appear only in a class that has a primary constructor");
-            context.getTrace().report(SECONDARY_CONSTRUCTOR_BUT_NO_PRIMARY.on(declaration));
+            context.getTrace().report(SECONDARY_CONSTRUCTOR_BUT_NO_PRIMARY.on(declaration.getNameNode()));
         }
         else {
             List<JetDelegationSpecifier> initializers = declaration.getInitializers();
             if (initializers.isEmpty()) {
 //                context.getTrace().getErrorHandler().genericError(declaration.getNameNode(), "Secondary constructors must have an initializer list");
-                context.getTrace().report(SECONDARY_CONSTRUCTOR_NO_INITIALIZER_LIST.on(declaration));
+                context.getTrace().report(SECONDARY_CONSTRUCTOR_NO_INITIALIZER_LIST.on(declaration.getNameNode()));
             }
             else {
                 initializers.get(0).accept(new JetVisitorVoid() {
@@ -500,7 +500,7 @@ public class BodyResolver {
 
     @NotNull
     private JetScope getInnerScopeForConstructor(@NotNull ConstructorDescriptor descriptor, @NotNull JetScope declaringScope, boolean primary) {
-        WritableScope constructorScope = new WritableScopeImpl(declaringScope, declaringScope.getContainingDeclaration(), context.getTrace().getErrorHandler()).setDebugName("Inner scope for constructor");
+        WritableScope constructorScope = new WritableScopeImpl(declaringScope, declaringScope.getContainingDeclaration(), context.getTrace()).setDebugName("Inner scope for constructor");
         for (PropertyDescriptor propertyDescriptor : ((MutableClassDescriptor) descriptor.getContainingDeclaration()).getProperties()) {
             constructorScope.addPropertyDescriptorByFieldName("$" + propertyDescriptor.getName(), propertyDescriptor);
         }
@@ -567,7 +567,7 @@ public class BodyResolver {
     }
 
     private JetScope getPropertyDeclarationInnerScope(@NotNull JetScope outerScope, @NotNull PropertyDescriptor propertyDescriptor) {
-        WritableScopeImpl result = new WritableScopeImpl(outerScope, propertyDescriptor, context.getTrace().getErrorHandler()).setDebugName("Property declaration inner scope");
+        WritableScopeImpl result = new WritableScopeImpl(outerScope, propertyDescriptor, context.getTrace()).setDebugName("Property declaration inner scope");
         for (TypeParameterDescriptor typeParameterDescriptor : propertyDescriptor.getTypeParameters()) {
             result.addTypeParameterDescriptor(typeParameterDescriptor);
         }
@@ -581,7 +581,7 @@ public class BodyResolver {
     private void resolvePropertyAccessors(JetProperty property, PropertyDescriptor propertyDescriptor, JetScope declaringScope) {
         BindingTraceAdapter fieldAccessTrackingTrace = createFieldTrackingTrace(propertyDescriptor);
 
-        WritableScope accessorScope = new WritableScopeImpl(getPropertyDeclarationInnerScope(declaringScope, propertyDescriptor), declaringScope.getContainingDeclaration(), context.getTrace().getErrorHandler()).setDebugName("Accessor scope");
+        WritableScope accessorScope = new WritableScopeImpl(getPropertyDeclarationInnerScope(declaringScope, propertyDescriptor), declaringScope.getContainingDeclaration(), context.getTrace()).setDebugName("Accessor scope");
         accessorScope.addPropertyDescriptorByFieldName("$" + propertyDescriptor.getName(), propertyDescriptor);
 
         JetPropertyAccessor getter = property.getGetter();
@@ -818,7 +818,7 @@ public class BodyResolver {
             }
             else {
 //                context.getTrace().getErrorHandler().genericError(abstractNode, "Property {0} is not a class or trait member and thus cannot have be abstract accessors");
-                context.getTrace().report(NON_MEMBER_ABSTRACT_ACCESSOR.on(abstractNode, (PropertyDescriptor) functionDescriptor.getContainingDeclaration()));
+                context.getTrace().report(NON_MEMBER_ABSTRACT_ACCESSOR.on(abstractNode));
             }
         }
         if (function.getBodyExpression() == null && !hasAbstractModifier && nameIdentifier != null && !isPropertyAccessor) {

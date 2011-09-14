@@ -72,15 +72,18 @@ public class ErrorHandler {
 
     public static void applyHandler(@NotNull ErrorHandler errorHandler, @NotNull Collection<Diagnostic> diagnostics) {
         for (Diagnostic diagnostic : diagnostics) {
-            if (diagnostic instanceof Errors.UnresolvedReferenceDiagnosticFactory.UnresolvedReferenceDiagnostic) {
-                Errors.UnresolvedReferenceDiagnosticFactory.UnresolvedReferenceDiagnostic unresolvedReferenceDiagnostic = (Errors.UnresolvedReferenceDiagnosticFactory.UnresolvedReferenceDiagnostic) diagnostic;
+            if (diagnostic instanceof Errors.UnresolvedReferenceDiagnostic) {
+                Errors.UnresolvedReferenceDiagnostic unresolvedReferenceDiagnostic = (Errors.UnresolvedReferenceDiagnostic) diagnostic;
                 errorHandler.unresolvedReference(unresolvedReferenceDiagnostic.getReference());
             }
-//            else {
-//                if (diagnostic.getSeverity() == Severity.ERROR) {
-//
-//                }
-//            }
+            else {
+                if (diagnostic.getSeverity() == Severity.ERROR) {
+
+                }
+                else if (diagnostic.getSeverity() == Severity.WARNING) {
+
+                }
+            }
         }
     }
 

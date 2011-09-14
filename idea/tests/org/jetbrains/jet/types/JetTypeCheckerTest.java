@@ -9,11 +9,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetTestCaseBase;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.lang.diagnostics.ErrorHandler;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.JavaPackageScope;
@@ -527,7 +527,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
     }
 
     private WritableScopeImpl addImports(JetScope scope) {
-        WritableScopeImpl writableScope = new WritableScopeImpl(scope, scope.getContainingDeclaration(), ErrorHandler.DO_NOTHING);
+        WritableScopeImpl writableScope = new WritableScopeImpl(scope, scope.getContainingDeclaration(), DiagnosticHolder.DO_NOTHING);
         writableScope.importScope(library.getLibraryScope());
         JavaSemanticServices javaSemanticServices = new JavaSemanticServices(getProject(), semanticServices, JetTestUtils.DUMMY_TRACE);
         writableScope.importScope(new JavaPackageScope("", null, javaSemanticServices));
@@ -637,7 +637,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
 
             trace.record(BindingContext.CLASS, classElement, classDescriptor);
 
-            final WritableScope parameterScope = new WritableScopeImpl(scope, classDescriptor, trace.getErrorHandler());
+            final WritableScope parameterScope = new WritableScopeImpl(scope, classDescriptor, trace);
 
             // This call has side-effects on the parameterScope (fills it in)
             List<TypeParameterDescriptor> typeParameters
@@ -656,7 +656,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
     //        }
             boolean open = classElement.hasModifier(JetTokens.OPEN_KEYWORD);
 
-            final WritableScope memberDeclarations = new WritableScopeImpl(JetScope.EMPTY, classDescriptor, trace.getErrorHandler());
+            final WritableScope memberDeclarations = new WritableScopeImpl(JetScope.EMPTY, classDescriptor, trace);
 
             List<JetDeclaration> declarations = classElement.getDeclarations();
             for (JetDeclaration declaration : declarations) {

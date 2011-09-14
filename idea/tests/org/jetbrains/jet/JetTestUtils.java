@@ -3,6 +3,7 @@ package org.jetbrains.jet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.ErrorHandler;
+import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.diagnostics.JetDiagnostic;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -67,7 +68,10 @@ public class JetTestUtils {
 
         @Override
         public void report(@NotNull Diagnostic diagnostic) {
-            throw new UnsupportedOperationException(); // TODO
+            if (diagnostic instanceof Errors.UnresolvedReferenceDiagnostic) {
+                Errors.UnresolvedReferenceDiagnostic unresolvedReferenceDiagnostic = (Errors.UnresolvedReferenceDiagnostic) diagnostic;
+                throw new IllegalStateException("Unresolved: " + unresolvedReferenceDiagnostic.getReference().getText());
+            }
         }
     };
 }

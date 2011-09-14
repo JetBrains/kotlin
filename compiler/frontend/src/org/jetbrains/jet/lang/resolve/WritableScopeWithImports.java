@@ -2,8 +2,8 @@ package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.diagnostics.ErrorHandler;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,11 +18,11 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
     @Nullable
     private List<JetScope> imports;
     private WritableScope currentIndividualImportScope;
-    protected final ErrorHandler errorHandler;
+    protected final DiagnosticHolder diagnosticHolder;
 
-    public WritableScopeWithImports(@NotNull JetScope scope, @NotNull ErrorHandler errorHandler) {
+    public WritableScopeWithImports(@NotNull JetScope scope, @NotNull DiagnosticHolder diagnosticHolder) {
         super(scope);
-        this.errorHandler = errorHandler;
+        this.diagnosticHolder = diagnosticHolder;
     }
 
     public WritableScopeWithImports setDebugName(@NotNull String debugName) {
@@ -97,7 +97,7 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
 
     public void importClassifierAlias(@NotNull String importedClassifierName, @NotNull ClassifierDescriptor classifierDescriptor) {
         if (currentIndividualImportScope == null) {
-            WritableScopeImpl writableScope = new WritableScopeImpl(JetScope.EMPTY, getContainingDeclaration(), ErrorHandler.DO_NOTHING).setDebugName("Individual import scope");
+            WritableScopeImpl writableScope = new WritableScopeImpl(JetScope.EMPTY, getContainingDeclaration(), DiagnosticHolder.DO_NOTHING).setDebugName("Individual import scope");
             importScope(writableScope);
             currentIndividualImportScope = writableScope;
         }

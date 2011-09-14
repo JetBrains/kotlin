@@ -16,6 +16,7 @@ import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.CompositeErrorHandler;
+import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.ErrorHandler;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
@@ -367,7 +368,7 @@ public class JetTypeInferrer {
             }
 
             DeclarationDescriptor containingDescriptor = outerScope.getContainingDeclaration();
-            WritableScope scope = new WritableScopeImpl(outerScope, containingDescriptor, context.trace.getErrorHandler()).setDebugName("getBlockReturnedType");
+            WritableScope scope = new WritableScopeImpl(outerScope, containingDescriptor, context.trace).setDebugName("getBlockReturnedType");
             return getBlockReturnedTypeWithWritableScope(scope, block, coercionStrategyForLastExpression, context);
         }
 
@@ -469,19 +470,26 @@ public class JetTypeInferrer {
 
         private BindingTraceAdapter makeTraceInterceptingTypeMismatch(final BindingTrace trace, final JetExpression expressionToWatch, final boolean[] mismatchFound) {
             return new BindingTraceAdapter(trace) {
-                                    @NotNull
-                                    @Override
-                                    public ErrorHandler getErrorHandler() {
-                                        return new CompositeErrorHandler(super.getErrorHandler(), new ErrorHandler() {
-                                            @Override
-                                            public void typeMismatch(@NotNull JetExpression expression, @NotNull JetType expectedType, @NotNull JetType actualType) {
-                                                if (expression == expressionToWatch) {
-                                                    mismatchFound[0] = true;
-                                                }
-                                            }
-                                        });
-                                    }
-                                };
+                @NotNull
+                @Override
+                public ErrorHandler getErrorHandler() {
+                    return new CompositeErrorHandler(super.getErrorHandler(), new ErrorHandler() {
+                        @Override
+                        public void typeMismatch(@NotNull JetExpression expression, @NotNull JetType expectedType, @NotNull JetType actualType) {
+                            if (expression == expressionToWatch) {
+                                mismatchFound[0] = true;
+                            }
+                        }
+                    });
+                }
+
+                @Override
+                public void report(@NotNull Diagnostic diagnostic) {
+                    if (diagnostic.getFactory() == TYPE_MISMATCH) {
+                        mismatchFound[0] = true;
+                    }
+                }
+            };
         }
 
         //TODO
@@ -1818,7 +1826,7 @@ public class JetTypeInferrer {
         }
 
         protected WritableScopeImpl newWritableScopeImpl(JetScope scope, BindingTrace trace) {
-            return new WritableScopeImpl(scope, scope.getContainingDeclaration(), trace.getErrorHandler());
+            return new WritableScopeImpl(scope, scope.getContainingDeclaration(), trace);
         }
 
         @Override

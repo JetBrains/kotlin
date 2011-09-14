@@ -107,7 +107,7 @@ public class TypeResolver {
                                     trace.report(WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(type, expectedArgumentCount));
                                 } else {
 //                                    trace.getErrorHandler().genericError(type.getTypeArgumentList().getNode(), errorMessage);
-                                    trace.report(WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(type, expectedArgumentCount));
+                                    trace.report(WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(type.getTypeArgumentList(), expectedArgumentCount));
                                 }
                             } else {
                                 result[0] = new JetTypeImpl(
