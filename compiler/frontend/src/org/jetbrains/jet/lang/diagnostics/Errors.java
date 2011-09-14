@@ -236,6 +236,7 @@ public interface Errors {
     SimpleDiagnosticFactory MANY_FUNCTION_LITERAL_ARGUMENTS = SimpleDiagnosticFactory.create(ERROR, "Only one function literal is allowed outside a parenthesized argument list");
 
     SimpleDiagnosticFactory PROPERTY_WITH_NO_TYPE_NO_INITIALIZER = SimpleDiagnosticFactory.create(ERROR, "This property must either have a type annotation or be initialized");
+    SimpleDiagnosticFactory FUNCTION_WITH_NO_TYPE_NO_BODY = SimpleDiagnosticFactory.create(ERROR, "This function must either declare a return type or have a body element");
 
     SimpleDiagnosticFactory ABSTRACT_PROPERTY_IN_PRIMARY_CONSTRUCTOR_PARAMETERS = SimpleDiagnosticFactory.create(ERROR, "This property cannot be declared abstract");
     SimpleDiagnosticFactory ABSTRACT_PROPERTY_NOT_IN_CLASS = SimpleDiagnosticFactory.create(ERROR, "A property may be abstract only when defined in a class or trait");

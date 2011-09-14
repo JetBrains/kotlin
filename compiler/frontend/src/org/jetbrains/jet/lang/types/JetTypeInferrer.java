@@ -15,9 +15,7 @@ import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.diagnostics.CompositeErrorHandler;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.diagnostics.ErrorHandler;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
@@ -470,18 +468,6 @@ public class JetTypeInferrer {
 
         private BindingTraceAdapter makeTraceInterceptingTypeMismatch(final BindingTrace trace, final JetExpression expressionToWatch, final boolean[] mismatchFound) {
             return new BindingTraceAdapter(trace) {
-                @NotNull
-                @Override
-                public ErrorHandler getErrorHandler() {
-                    return new CompositeErrorHandler(super.getErrorHandler(), new ErrorHandler() {
-                        @Override
-                        public void typeMismatch(@NotNull JetExpression expression, @NotNull JetType expectedType, @NotNull JetType actualType) {
-                            if (expression == expressionToWatch) {
-                                mismatchFound[0] = true;
-                            }
-                        }
-                    });
-                }
 
                 @Override
                 public void report(@NotNull Diagnostic diagnostic) {

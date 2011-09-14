@@ -14,8 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.diagnostics.ErrorHandler;
-import org.jetbrains.jet.lang.diagnostics.Errors;
+import org.jetbrains.jet.lang.diagnostics.*;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespace;
@@ -45,9 +44,15 @@ public class AnalyzingUtils {
 
             @Override
             public void visitErrorElement(PsiErrorElement element) {
-                throw new IllegalArgumentException(element.getErrorDescription() + "; looking at " + element.getNode().getElementType() + " '" + element.getText() + ErrorHandler.atLocation(element));
+                throw new IllegalArgumentException(element.getErrorDescription() + "; looking at " + element.getNode().getElementType() + " '" + element.getText() + ErrorHandlerUtils.atLocation(element));
             }
         });
+    }
+
+    public static void throwExceptionOnErrors(BindingContext bindingContext) {
+        for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
+            DiagnosticHolder.THROW_EXCEPTION.report(diagnostic);
+        }
     }
 
     private final ImportingStrategy importingStrategy;

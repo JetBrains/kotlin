@@ -180,7 +180,8 @@ public class ClassDescriptorResolver {
                 });
             }
             else {
-                trace.getErrorHandler().genericError(function.asElement().getNode(), "This function must either declare a return type or have a body element");
+//                trace.getErrorHandler().genericError(function.asElement().getNode(), "This function must either declare a return type or have a body element");
+                trace.report(FUNCTION_WITH_NO_TYPE_NO_BODY.on(function.asElement()));
                 returnType = ErrorUtils.createErrorType("No type, no body");
             }
         }

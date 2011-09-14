@@ -4,11 +4,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiFileFactory;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder;
-import org.jetbrains.jet.lang.diagnostics.ErrorHandler;
 import org.jetbrains.jet.lang.JetSemanticServices;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionGroup;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.plugin.JetFileType;
@@ -103,7 +104,8 @@ public class JetStandardLibrary {
 //            bootstrappingTDA.process(writableScope, JetStandardClasses.STANDARD_CLASSES_NAMESPACE, file.getRootNamespace().getDeclarations());
             TopDownAnalyzer.processStandardLibraryNamespace(bootstrappingSemanticServices, bindingTraceContext, writableScope, JetStandardClasses.STANDARD_CLASSES_NAMESPACE, file.getRootNamespace());
             this.libraryScope = JetStandardClasses.STANDARD_CLASSES_NAMESPACE.getMemberScope();
-            ErrorHandler.applyHandler(ErrorHandler.THROW_EXCEPTION, bindingTraceContext.getBindingContext());
+
+            AnalyzingUtils.throwExceptionOnErrors(bindingTraceContext.getBindingContext());
 
             this.byteClass = (ClassDescriptor) libraryScope.getClassifier("Byte");
             this.charClass = (ClassDescriptor) libraryScope.getClassifier("Char");

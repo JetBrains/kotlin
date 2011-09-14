@@ -2,10 +2,9 @@ package org.jetbrains.jet.lang.resolve;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.diagnostics.JetDiagnostic;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.types.JetType;
@@ -112,7 +111,6 @@ public interface BindingContext {
     WritableSlice<JetReferenceExpression, PsiElement> LABEL_TARGET = Slices.<JetReferenceExpression, PsiElement>sliceBuilder("LABEL_TARGET").build();
     WritableSlice<JetParameter, PropertyDescriptor> VALUE_PARAMETER_AS_PROPERTY = Slices.<JetParameter, PropertyDescriptor>sliceBuilder("VALUE_PARAMETER_AS_PROPERTY").build();
 
-    Collection<JetDiagnostic> getOld_Diagnostics();
     Collection<Diagnostic> getDiagnostics();
 
     @Nullable

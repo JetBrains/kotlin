@@ -7,7 +7,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
-import org.jetbrains.jet.lang.diagnostics.ErrorHandler;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -91,7 +90,8 @@ public class GenerationState {
         bindingContexts.push(bindingContext);
         typeMapper = new JetTypeMapper(standardLibrary, bindingContext);
         try {
-            ErrorHandler.applyHandler(ErrorHandler.THROW_EXCEPTION, bindingContext);
+            AnalyzingUtils.throwExceptionOnErrors(bindingContext);
+
             codegen.generate(namespace);
         }
         finally {

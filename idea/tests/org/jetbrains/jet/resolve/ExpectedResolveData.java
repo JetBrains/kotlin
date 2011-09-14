@@ -4,11 +4,12 @@ import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.diagnostics.ErrorHandler;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.diagnostics.ErrorHandlerUtils;
+import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
@@ -96,12 +97,12 @@ public class ExpectedResolveData {
         JetStandardLibrary lib = semanticServices.getStandardLibrary();
 
         BindingContext bindingContext = AnalyzerFacade.analyzeNamespace(file.getRootNamespace(), JetControlFlowDataTraceFactory.EMPTY);
-        ErrorHandler.applyHandler(new ErrorHandler() {
-            @Override
-            public void unresolvedReference(@NotNull JetReferenceExpression referenceExpression) {
-                unresolvedReferences.add(referenceExpression);
+        for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
+            if (diagnostic instanceof Errors.UnresolvedReferenceDiagnostic) {
+                Errors.UnresolvedReferenceDiagnostic unresolvedReferenceDiagnostic = (Errors.UnresolvedReferenceDiagnostic) diagnostic;
+                unresolvedReferences.add(unresolvedReferenceDiagnostic.getReference());
             }
-        }, bindingContext);
+        }
 
         Map<String, JetDeclaration> nameToDeclaration = new HashMap<String, JetDeclaration>();
 
@@ -277,7 +278,7 @@ public class ExpectedResolveData {
 
 
 
-        return referenceExpression.getText() + " at " + ErrorHandler.atLocation(referenceExpression) +
+        return referenceExpression.getText() + " at " + ErrorHandlerUtils.atLocation(referenceExpression) +
                                     " in " + statement.getText() + (declaration == null ? "" : " in " + declaration.getText());
     }
 

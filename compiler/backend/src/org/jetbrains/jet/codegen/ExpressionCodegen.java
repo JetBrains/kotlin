@@ -8,8 +8,8 @@ import gnu.trove.THashSet;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethod;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
-import org.jetbrains.jet.lang.diagnostics.ErrorHandler;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.diagnostics.ErrorHandlerUtils;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
@@ -237,11 +237,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         DeclarationDescriptor hasNextDescriptor = bindingContext.get(BindingContext.LOOP_RANGE_HAS_NEXT, loopRange);
 
         if(iteratorDescriptor == null)
-            throw new IllegalStateException("No iterator() method " + ErrorHandler.atLocation(loopRange));
+            throw new IllegalStateException("No iterator() method " + ErrorHandlerUtils.atLocation(loopRange));
         if(nextDescriptor == null)
-            throw new IllegalStateException("No next() method " + ErrorHandler.atLocation(loopRange));
+            throw new IllegalStateException("No next() method " + ErrorHandlerUtils.atLocation(loopRange));
         if(hasNextDescriptor == null)
-            throw new IllegalStateException("No iterator() method " + ErrorHandler.atLocation(loopRange));
+            throw new IllegalStateException("No iterator() method " + ErrorHandlerUtils.atLocation(loopRange));
 
         final JetParameter loopParameter = expression.getLoopParameter();
         final VariableDescriptor parameterDescriptor = bindingContext.get(BindingContext.VALUE_PARAMETER, loopParameter);
