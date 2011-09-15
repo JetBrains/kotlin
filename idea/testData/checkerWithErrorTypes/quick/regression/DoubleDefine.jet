@@ -1,0 +1,66 @@
+import <!UNRESOLVED_REFERENCE!>java<!>.*
+import <!UNRESOLVED_REFERENCE!>util<!>.*
+
+import <!UNRESOLVED_REFERENCE!>java<!>.io.*
+
+fun takeFirst(expr: StringBuilder): Char {
+  val c = expr.charAt(0)
+  expr.deleteCharAt(0)
+  return c
+}
+
+fun evaluateArg(expr: AbstractStringBuilder, numbers: ArrayList<Int>): Int {
+  if (expr.length() == 0) throw Exception("Syntax error: Character expected");
+  val c = <!OVERLOAD_RESOLUTION_AMBIGUITY!>takeFirst(expr)<!>
+  if (c <!COMPARE_TO_TYPE_MISMATCH!>>=<!> '0' && c <!COMPARE_TO_TYPE_MISMATCH!><=<!> '9') {
+    val n = c - '0'
+    if (!numbers.contains(n)) throw Exception("You used incorrect number: " + n)
+    numbers.remove(n)
+    return n
+  }
+  throw Exception("Syntax error: Unrecognized character " + c)
+}
+
+fun evaluateAdd(expr: StringBuilder, numbers: ArrayList<Int>): Int {
+  val lhs = <!OVERLOAD_RESOLUTION_AMBIGUITY!>evaluateArg(expr, numbers)<!>
+  if (expr.length() <!COMPARE_TO_TYPE_MISMATCH!>><!> 0) {
+
+  }
+  return lhs
+}
+
+fun evaluate(expr: StringBuilder, numbers: ArrayList<Int>): Int {
+  val lhs = <!OVERLOAD_RESOLUTION_AMBIGUITY!>evaluateAdd(expr, numbers)<!>
+  if (expr.length() <!COMPARE_TO_TYPE_MISMATCH!>><!> 0) {
+    val c = expr.charAt(0)
+    expr.deleteCharAt(0)
+  }
+  return lhs
+}
+
+fun main(args: Array<String>) {
+  System.out<!UNNECESSARY_SAFE_CALL!>?.<!>println("24 game")
+  val numbers = ArrayList<Int>(4)
+  val rnd = Random();
+  val prompt = StringBuilder()
+  for(val i in 0..3) {
+    val n = rnd.nextInt(9) + 1
+    numbers.add(n)
+    if (i > 0) prompt.append(" ");
+    prompt.append(n)
+  }
+  System.out<!UNNECESSARY_SAFE_CALL!>?.<!>println("Your numbers: " + prompt)
+  System.out<!UNNECESSARY_SAFE_CALL!>?.<!>println("Enter your expression:")
+  val reader = BufferedReader(InputStreamReader(System.`in`))
+  val expr = StringBuilder(reader.readLine())
+  try {
+    val result = <!OVERLOAD_RESOLUTION_AMBIGUITY!>evaluate(expr, numbers)<!>
+    if (result != 24)
+      System.out<!UNNECESSARY_SAFE_CALL!>?.<!>println("Sorry, that's " + result)
+    else
+      System.out<!UNNECESSARY_SAFE_CALL!>?.<!>println("You won!");
+  }
+  catch(e: Throwable) {
+    System.out<!UNNECESSARY_SAFE_CALL!>?.<!>println(e.getMessage())
+  }
+}

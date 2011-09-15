@@ -1,0 +1,4 @@
+import <!UNRESOLVED_REFERENCE!>java<!>.util.Collections
+import <!UNRESOLVED_REFERENCE!>java<!>.util.List
+
+val ab = <!UNRESOLVED_REFERENCE!>Collections<!>.emptyList<Int>() : <!UNRESOLVED_REFERENCE!>List<!><Int>?

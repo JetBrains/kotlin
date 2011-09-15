@@ -152,6 +152,8 @@ public class CheckerTestUtil {
             offsetCompensation += matchedText.length();
         }
 
+        assert opened.isEmpty() : "Stack is not empty";
+
         matcher.reset();
         return matcher.replaceAll("");
     }
@@ -186,6 +188,13 @@ public class CheckerTestUtil {
                 }
                 result.append(c);
             }
+            while (!opened.isEmpty() && text.length() == opened.peek().end) {
+                closeDiagnosticString(result);
+                opened.pop();
+            }
+
+            assert opened.isEmpty() : "Stack is not empty";
+
         }
         else {
             result.append(text);

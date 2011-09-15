@@ -1,0 +1,30 @@
+namespace unresolved
+
+fun testGenericArgumentsCount() {
+    val p1: Tuple2<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int><!> = (2, 2)
+    val p2: <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Tuple2<!> = (2, 2)
+}
+
+fun testUnresolved() {
+    if (<!UNRESOLVED_REFERENCE!>a<!> is String) {
+        val s = <!UNRESOLVED_REFERENCE!>a<!>
+    }
+    <!UNRESOLVED_REFERENCE!>foo<!>(<!UNRESOLVED_REFERENCE!>a<!>)
+    val s = "s"
+    <!UNRESOLVED_REFERENCE!>foo<!>(s)
+    foo1(<!UNRESOLVED_REFERENCE!>i<!>)
+    s.<!UNRESOLVED_REFERENCE!>foo<!>()
+
+    when(<!UNRESOLVED_REFERENCE!>a<!>) {
+        is Int => <!UNRESOLVED_REFERENCE!>a<!>
+        is String => <!UNRESOLVED_REFERENCE!>a<!>
+    }
+
+    //TODO
+    for (j in <!UNRESOLVED_REFERENCE!>collection<!>) {
+       val i: Int = j
+       j += 1
+    }
+}
+
+fun foo1(i: Int) {}

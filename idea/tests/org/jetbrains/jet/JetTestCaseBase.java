@@ -68,7 +68,11 @@ public abstract class JetTestCaseBase extends LightDaemonAnalyzerTestCase {
 
     @NotNull
     protected String getTestFilePath() {
-        return dataPath + name + ".jet";
+        return dataPath + File.separator + name + ".jet";
+    }
+    
+    protected String getDataPath() {
+        return dataPath;
     }
 
     public interface NamedTestFactory {

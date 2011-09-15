@@ -47,7 +47,7 @@ import java.io.IOException;
 /**
  * @author abreslav
  */
-public class JetLiteFixture extends PlatformLiteFixture {
+public abstract class JetLiteFixture extends PlatformLiteFixture {
     protected String myFileExt;
     @NonNls
     protected final String myFullDataPath;
@@ -127,7 +127,7 @@ public class JetLiteFixture extends PlatformLiteFixture {
         return doLoadFile(myFullDataPath, name);
     }
 
-    private static String doLoadFile(String myFullDataPath, String name) throws IOException {
+    protected static String doLoadFile(String myFullDataPath, String name) throws IOException {
         String fullName = myFullDataPath + File.separatorChar + name;
         String text = FileUtil.loadFile(new File(fullName), CharsetToolkit.UTF8).trim();
         text = StringUtil.convertLineSeparators(text);

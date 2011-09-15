@@ -1,0 +1,52 @@
+import java.*
+import util.*
+import <!UNRESOLVED_REFERENCE!>utils<!>.*
+
+import java.io.PrintStream
+import java.lang.Comparable as Com
+
+val l : List<in Int> = ArrayList<Int>()
+
+fun test(l : java.util.List<Int>) {
+  val x : java.<!UNRESOLVED_REFERENCE!>List<!>
+  val y : java.util.List<Int>
+  val b : java.lang.Object
+  val a : util.List<Int>
+  val z : java.<!UNRESOLVED_REFERENCE!>utils<!>.List<Int>
+
+  val f : java.io.File? = null
+
+  Collections.<!UNRESOLVED_REFERENCE!>emptyList<!>
+  Collections.emptyList<Int>
+  Collections.emptyList<Int>()
+  Collections.emptyList()
+
+  Collections.singleton<Int>(1) : Set<Int>?
+  Collections.singleton<Int>(<!ERROR_COMPILE_TIME_VALUE!>1.0<!>)
+
+  <!UNRESOLVED_REFERENCE!>List<!><Int>
+
+
+  val o = "sdf" <!CAST_NEVER_SUCCEEDS!>as<!> Object
+
+  try {
+    // ...
+  }
+  catch(e: Exception) {
+    System.out?.println(e.getMessage())
+  }
+
+  PrintStream("sdf")
+
+  val c : Com<Int>? = null
+
+  c : java.lang.Comparable<Int>?
+
+//  Collections.sort<Integer>(ArrayList<Integer>())
+  xxx.<!UNRESOLVED_REFERENCE!>Class<!>()
+}
+
+
+namespace xxx {
+  import java.lang.Class;
+}
