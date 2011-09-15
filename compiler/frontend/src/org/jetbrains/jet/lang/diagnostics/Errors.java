@@ -21,7 +21,7 @@ public interface Errors {
 
     UnresolvedReferenceDiagnosticFactory UNRESOLVED_REFERENCE = UnresolvedReferenceDiagnosticFactory.INSTANCE;
     RedeclarationDiagnosticFactory REDECLARATION = RedeclarationDiagnosticFactory.INSTANCE;
-    PsiElementOnlyDiagnosticFactory2<JetType, JetType> TYPE_MISMATCH = PsiElementOnlyDiagnosticFactory2.create(ERROR, "Type mismatch: inferred type is {1} but {0} was expected");
+    DiagnosticFactoryWithPsiElement2<JetType, JetType> TYPE_MISMATCH = DiagnosticFactoryWithPsiElement2.create(ERROR, "Type mismatch: inferred type is {1} but {0} was expected");
 
     SimpleDiagnosticFactory SAFE_CALLS_ARE_NOT_ALLOWED_ON_NAMESPACES = SimpleDiagnosticFactory.create(ERROR, "Safe calls are not allowed on namespaces");
     SimpleDiagnosticFactory TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM = SimpleDiagnosticFactory.create(ERROR, "Type checking has run into a recursive problem"); // TODO: message

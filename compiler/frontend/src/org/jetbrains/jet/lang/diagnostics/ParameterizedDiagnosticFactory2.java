@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 /**
 * @author abreslav
 */
-public class ParameterizedDiagnosticFactory2<A, B> extends PsiElementOnlyDiagnosticFactory2<A,B> {
+public class ParameterizedDiagnosticFactory2<A, B> extends DiagnosticFactoryWithPsiElement2<A,B> {
     public static <A, B> ParameterizedDiagnosticFactory2<A, B> create(Severity severity, String messageStub) {
         return new ParameterizedDiagnosticFactory2<A, B>(severity, messageStub);
     }

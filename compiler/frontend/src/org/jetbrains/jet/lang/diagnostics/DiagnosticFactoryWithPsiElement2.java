@@ -6,13 +6,13 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author abreslav
  */
-public class PsiElementOnlyDiagnosticFactory2<A, B> extends DiagnosticFactoryWithMessageFormat {
+public class DiagnosticFactoryWithPsiElement2<A, B> extends DiagnosticFactoryWithMessageFormat {
     
-    public static <A, B> PsiElementOnlyDiagnosticFactory2<A, B> create(Severity severity, String message) {
-        return new PsiElementOnlyDiagnosticFactory2<A, B>(severity, message);
+    public static <A, B> DiagnosticFactoryWithPsiElement2<A, B> create(Severity severity, String message) {
+        return new DiagnosticFactoryWithPsiElement2<A, B>(severity, message);
     }
     
-    public PsiElementOnlyDiagnosticFactory2(Severity severity, String message) {
+    public DiagnosticFactoryWithPsiElement2(Severity severity, String message) {
         super(severity, message);
     }
 
