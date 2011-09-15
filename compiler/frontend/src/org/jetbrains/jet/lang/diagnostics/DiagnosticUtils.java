@@ -4,7 +4,6 @@ import com.intellij.lang.ASTNode;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
@@ -42,8 +41,14 @@ public class DiagnosticUtils {
         return closestPsiElement.getContainingFile();
     }
 
+    @NotNull
     public static String atLocation(@NotNull PsiFile file, @NotNull TextRange textRange) {
-        Document document = PsiDocumentManager.getInstance(file.getProject()).getDocument(file);
+        Document document = file.getViewProvider().getDocument();//PsiDocumentManager.getInstance(file.getProject()).getDocument(file);
+        return atLocation(file, textRange, document);
+    }
+
+    @NotNull
+    public static String atLocation(PsiFile file, TextRange textRange, Document document) {
         int offset = textRange.getStartOffset();
         VirtualFile virtualFile = file.getVirtualFile();
         String pathSuffix = virtualFile == null ? "" : " in " + virtualFile.getPath();

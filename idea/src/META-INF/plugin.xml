@@ -19,6 +19,11 @@
          <keyboard-shortcut keymap="$default" first-keystroke="control shift Q"/>
          <add-to-group group-id="CodeMenu" anchor="last"/>
      </action>
+     <action id="CopyAsDiagnosticTest" class="org.jetbrains.jet.plugin.actions.CopyAsDiagnosticTestAction"
+             text="Copy Current File As Diagnostic Test">
+         <keyboard-shortcut keymap="$default" first-keystroke="control alt shift T"/>
+         <add-to-group group-id="CodeMenu" anchor="last"/>
+     </action>
      <action id="ToggleJetErrorReporting" class="org.jetbrains.jet.plugin.actions.ToggleErrorReportingAction"
              text="Toggle Error Reporting">
          <keyboard-shortcut keymap="$default" first-keystroke="control alt shift E"/>

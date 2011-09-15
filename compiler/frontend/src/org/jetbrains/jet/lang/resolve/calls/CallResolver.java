@@ -355,6 +355,7 @@ public class CallResolver {
 
             if (error) {
                 failedCandidates.add(candidate);
+                checkTypesWithNoCallee(temporaryTrace, scope, task.getTypeArguments(), task.getValueArguments(), task.getFunctionLiteralArguments());
                 continue;
             }
 

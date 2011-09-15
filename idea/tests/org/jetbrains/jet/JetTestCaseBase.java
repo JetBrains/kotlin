@@ -43,11 +43,11 @@ public abstract class JetTestCaseBase extends LightDaemonAnalyzerTestCase {
         return getTestDataPathBase();
     }
 
-    protected static String getTestDataPathBase() {
+    public static String getTestDataPathBase() {
         return getHomeDirectory() + "/idea/testData";
     }
 
-    private static String getHomeDirectory() {
+    public static String getHomeDirectory() {
        return new File(PathManager.getResourceRoot(JetTestCaseBase.class, "/org/jetbrains/jet/JetTestCaseBase.class")).getParentFile().getParentFile().getParent();
     }
 
