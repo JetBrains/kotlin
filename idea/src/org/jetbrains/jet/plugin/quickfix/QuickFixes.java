@@ -3,8 +3,6 @@ package org.jetbrains.jet.plugin.quickfix;
 import com.google.common.collect.Maps;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.psi.PsiElement;
-import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithPsiElement;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.diagnostics.PsiElementOnlyDiagnosticFactory;

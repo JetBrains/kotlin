@@ -769,22 +769,19 @@ public class BodyResolver {
     protected void checkFunction(JetDeclarationWithBody function, FunctionDescriptor functionDescriptor) {
         DeclarationDescriptor containingDescriptor = functionDescriptor.getContainingDeclaration();
         PsiElement nameIdentifier;
-        JetModifierList modifierList;
         boolean isPropertyAccessor = false;
         if (function instanceof JetNamedFunction) {
-            JetNamedFunction namedFunction = (JetNamedFunction) function;
-            nameIdentifier = namedFunction.getNameIdentifier();
-            modifierList = namedFunction.getModifierList();
+            nameIdentifier = ((JetNamedFunction) function).getNameIdentifier();
         }
         else if (function instanceof JetPropertyAccessor) {
             isPropertyAccessor = true;
-            JetPropertyAccessor propertyAccessor = (JetPropertyAccessor) function;
-            nameIdentifier = propertyAccessor.getNamePlaceholder();
-            modifierList = propertyAccessor.getModifierList();
+            nameIdentifier = ((JetPropertyAccessor) function).getNamePlaceholder();
         }
         else {
             throw new UnsupportedOperationException();
         }
+        JetModifierListOwner modifierListOwner = (JetModifierListOwner) function;
+        JetModifierList modifierList = modifierListOwner.getModifierList();
         ASTNode abstractNode = modifierList != null ? modifierList.getModifierNode(JetTokens.ABSTRACT_KEYWORD) : null;
         boolean hasAbstractModifier = abstractNode != null;
         if (containingDescriptor instanceof ClassDescriptor) {
@@ -799,7 +796,7 @@ public class BodyResolver {
             }
             if (hasAbstractModifier && inTrait && !isPropertyAccessor) {
 //                context.getTrace().getErrorHandler().genericWarning(abstractNode, "Abstract modifier is redundant in trait");
-                context.getTrace().report(REDUNDANT_ABSTRACT.on((JetDeclaration)function, abstractNode)); //TODO
+                context.getTrace().report(REDUNDANT_ABSTRACT.on(modifierListOwner, abstractNode));
             }
             if (function.getBodyExpression() != null && hasAbstractModifier) {
 //                context.getTrace().getErrorHandler().genericError(abstractNode, "Method " + methodName + "with body cannot be abstract");

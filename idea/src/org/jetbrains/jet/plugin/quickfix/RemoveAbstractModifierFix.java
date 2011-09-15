@@ -9,14 +9,15 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithPsiElement;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
+import org.jetbrains.jet.lang.psi.JetModifierListOwner;
 import org.jetbrains.jet.lexer.JetTokens;
 
 /**
 * @author svtk
 */
-public class RemoveAbstractModifierFix extends QuickFixes.IntentionActionForPsiElement<JetDeclaration> {
-    public RemoveAbstractModifierFix(JetDeclaration declaration) {
-        super(declaration);
+public class RemoveAbstractModifierFix extends QuickFixes.IntentionActionForPsiElement<JetModifierListOwner> {
+    public RemoveAbstractModifierFix(JetModifierListOwner element) {
+        super(element);
     }
 
     @NotNull
@@ -56,12 +57,12 @@ public class RemoveAbstractModifierFix extends QuickFixes.IntentionActionForPsiE
         return true;
     }
 
-    public static QuickFixes.IntentionActionFactory<JetDeclaration> factory =
-        new QuickFixes.IntentionActionFactory<JetDeclaration>() {
+    public static QuickFixes.IntentionActionFactory<JetModifierListOwner> factory =
+        new QuickFixes.IntentionActionFactory<JetModifierListOwner>() {
             @Override
-            public QuickFixes.IntentionActionForPsiElement<JetDeclaration> createAction(DiagnosticWithPsiElement diagnostic) {
-                assert diagnostic.getPsiElement() instanceof JetDeclaration;
-                return new RemoveAbstractModifierFix((JetDeclaration) diagnostic.getPsiElement());
+            public QuickFixes.IntentionActionForPsiElement<JetModifierListOwner> createAction(DiagnosticWithPsiElement diagnostic) {
+                assert diagnostic.getPsiElement() instanceof JetModifierListOwner;
+                return new RemoveAbstractModifierFix((JetModifierListOwner) diagnostic.getPsiElement());
             }
         };
 }
