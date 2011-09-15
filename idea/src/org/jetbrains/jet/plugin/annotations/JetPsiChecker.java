@@ -9,13 +9,10 @@ import com.intellij.psi.MultiRangeReference;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.diagnostics.*;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
-import org.jetbrains.jet.lang.diagnostics.Errors;
-import org.jetbrains.jet.lang.diagnostics.RedeclarationDiagnostic;
-import org.jetbrains.jet.lang.diagnostics.Severity;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
@@ -107,8 +104,8 @@ public class JetPsiChecker implements Annotator {
                     Set<DeclarationDescriptor> redeclarations = new HashSet<DeclarationDescriptor>();
                     for (Diagnostic diagnostic : diagnostics) {
                         if (diagnostic.getSeverity() == Severity.ERROR) {
-                            if (diagnostic instanceof Errors.UnresolvedReferenceDiagnostic) {
-                                Errors.UnresolvedReferenceDiagnostic unresolvedReferenceDiagnostic = (Errors.UnresolvedReferenceDiagnostic) diagnostic;
+                            if (diagnostic instanceof UnresolvedReferenceDiagnostic) {
+                                UnresolvedReferenceDiagnostic unresolvedReferenceDiagnostic = (UnresolvedReferenceDiagnostic) diagnostic;
                                 JetReferenceExpression referenceExpression = unresolvedReferenceDiagnostic.getPsiElement();
                                 PsiReference reference = referenceExpression.getReference();
                                 if (reference instanceof MultiRangeReference) {

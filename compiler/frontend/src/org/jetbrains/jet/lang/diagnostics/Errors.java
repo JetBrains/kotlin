@@ -282,11 +282,4 @@ public interface Errors {
 
     RedeclarationDiagnosticFactory REDECLARATION = RedeclarationDiagnosticFactory.INSTANCE;
 
-    public class UnresolvedReferenceDiagnostic extends DiagnosticWithPsiElement<JetReferenceExpression> {
-
-        public UnresolvedReferenceDiagnostic(JetReferenceExpression referenceExpression) {
-            super(UNRESOLVED_REFERENCE, ERROR, "Unresolved reference", referenceExpression);
-        }
-
-    }
 }

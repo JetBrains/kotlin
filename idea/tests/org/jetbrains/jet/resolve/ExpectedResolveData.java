@@ -9,7 +9,7 @@ import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.ErrorHandlerUtils;
-import org.jetbrains.jet.lang.diagnostics.Errors;
+import org.jetbrains.jet.lang.diagnostics.UnresolvedReferenceDiagnostic;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
@@ -98,8 +98,8 @@ public class ExpectedResolveData {
 
         BindingContext bindingContext = AnalyzerFacade.analyzeNamespace(file.getRootNamespace(), JetControlFlowDataTraceFactory.EMPTY);
         for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
-            if (diagnostic instanceof Errors.UnresolvedReferenceDiagnostic) {
-                Errors.UnresolvedReferenceDiagnostic unresolvedReferenceDiagnostic = (Errors.UnresolvedReferenceDiagnostic) diagnostic;
+            if (diagnostic instanceof UnresolvedReferenceDiagnostic) {
+                UnresolvedReferenceDiagnostic unresolvedReferenceDiagnostic = (UnresolvedReferenceDiagnostic) diagnostic;
                 unresolvedReferences.add(unresolvedReferenceDiagnostic.getPsiElement());
             }
         }

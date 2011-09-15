@@ -2,7 +2,7 @@ package org.jetbrains.jet;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.diagnostics.Errors;
+import org.jetbrains.jet.lang.diagnostics.UnresolvedReferenceDiagnostic;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
@@ -49,8 +49,8 @@ public class JetTestUtils {
 
         @Override
         public void report(@NotNull Diagnostic diagnostic) {
-            if (diagnostic instanceof Errors.UnresolvedReferenceDiagnostic) {
-                Errors.UnresolvedReferenceDiagnostic unresolvedReferenceDiagnostic = (Errors.UnresolvedReferenceDiagnostic) diagnostic;
+            if (diagnostic instanceof UnresolvedReferenceDiagnostic) {
+                UnresolvedReferenceDiagnostic unresolvedReferenceDiagnostic = (UnresolvedReferenceDiagnostic) diagnostic;
                 throw new IllegalStateException("Unresolved: " + unresolvedReferenceDiagnostic.getPsiElement().getText());
             }
         }

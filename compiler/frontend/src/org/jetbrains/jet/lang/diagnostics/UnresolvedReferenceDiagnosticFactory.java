@@ -12,14 +12,14 @@ public class UnresolvedReferenceDiagnosticFactory implements DiagnosticFactory {
 
     public UnresolvedReferenceDiagnosticFactory() {}
 
-    public Errors.UnresolvedReferenceDiagnostic on(@NotNull JetReferenceExpression reference) {
-        return new Errors.UnresolvedReferenceDiagnostic(reference);
+    public UnresolvedReferenceDiagnostic on(@NotNull JetReferenceExpression reference) {
+        return new UnresolvedReferenceDiagnostic(reference);
     }
 
     @NotNull
     @Override
     public TextRange getMarkerPosition(@NotNull Diagnostic diagnostic) {
-        return ((Errors.UnresolvedReferenceDiagnostic) diagnostic).getTextRange();
+        return ((UnresolvedReferenceDiagnostic) diagnostic).getTextRange();
     }
 
 }
