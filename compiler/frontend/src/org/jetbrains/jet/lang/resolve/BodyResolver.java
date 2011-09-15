@@ -616,7 +616,7 @@ public class BodyResolver {
             }
             if (!(classDescriptor.getModality() == Modality.ABSTRACT) && classDescriptor.getKind() != ClassKind.ENUM_CLASS) {
 //                context.getTrace().getErrorHandler().genericError(abstractNode, "Abstract property " + property.getName() + " in non-abstract class " + classDescriptor.getName());
-                context.getTrace().report(ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS.on(abstractNode, property.getName(), classDescriptor));
+                context.getTrace().report(ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS.on(property, abstractNode, property.getName(), classDescriptor));
                 return;
             }
             if (classDescriptor.getKind() == ClassKind.TRAIT) {
@@ -804,7 +804,7 @@ public class BodyResolver {
             }
             if (function.getBodyExpression() == null && !hasAbstractModifier && !inTrait && nameIdentifier != null && !isPropertyAccessor) {
 //                context.getTrace().getErrorHandler().genericError(nameIdentifier.getNode(), "Method " + function.getName() + " without body must be abstract");
-                context.getTrace().report(NON_ABSTRACT_FUNCTION_WITH_NO_BODY.on(nameIdentifier, functionDescriptor));
+                context.getTrace().report(NON_ABSTRACT_FUNCTION_WITH_NO_BODY.on(modifierListOwner, nameIdentifier, functionDescriptor));
             }
             return;
         }

@@ -9,17 +9,13 @@ import org.jetbrains.annotations.NotNull;
 /**
 * @author abreslav
 */
-public class SimpleDiagnosticFactory extends DiagnosticFactoryWithSeverity {
-
+public class SimpleDiagnosticFactory extends SimpleDiagnosticFactoryWithPsiElement<PsiElement> {
     public static SimpleDiagnosticFactory create(Severity severity, String message) {
         return new SimpleDiagnosticFactory(severity, message);
     }
 
-    protected final String message;
-
-    public SimpleDiagnosticFactory(Severity severity, String message) {
-        super(severity);
-        this.message = message;
+    protected SimpleDiagnosticFactory(Severity severity, String message) {
+        super(severity, message);
     }
 
     @NotNull
@@ -30,10 +26,5 @@ public class SimpleDiagnosticFactory extends DiagnosticFactoryWithSeverity {
     @NotNull
     public Diagnostic on(@NotNull ASTNode node) {
         return on(DiagnosticUtils.getContainingFile(node), node.getTextRange());
-    }
-
-    @NotNull
-    public Diagnostic on(@NotNull PsiElement element) {
-        return new DiagnosticWithPsiElement<PsiElement>(this, severity, message, element);
     }
 }

@@ -3,7 +3,6 @@ package org.jetbrains.jet.plugin.quickfix;
 import com.google.common.collect.Maps;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.psi.PsiElement;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticWithPsiElement;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.diagnostics.PsiElementOnlyDiagnosticFactory;
 
@@ -15,23 +14,11 @@ import java.util.Map;
 public class QuickFixes {
     private static Map<PsiElementOnlyDiagnosticFactory, IntentionActionFactory> actionMap = Maps.newHashMap();
 
-    public static IntentionActionFactory get(PsiElementOnlyDiagnosticFactory f) {
-        return actionMap.get(f);
+    public static IntentionActionFactory get(PsiElementOnlyDiagnosticFactory diagnosticFactory) {
+        return actionMap.get(diagnosticFactory);
     }
 
     private QuickFixes() {}
-
-    public static abstract class IntentionActionForPsiElement<T extends PsiElement> implements IntentionAction {
-        protected T psiElement;
-
-        public IntentionActionForPsiElement(T element) {
-            this.psiElement = element;
-        }
-    }
-
-    public interface IntentionActionFactory<T extends PsiElement> {
-        IntentionActionForPsiElement createAction(DiagnosticWithPsiElement diagnostic);
-    }
 
     private static <T extends PsiElement> void add(PsiElementOnlyDiagnosticFactory<T> diagnosticFactory, IntentionActionFactory<T> actionFactory) {
         actionMap.put(diagnosticFactory, actionFactory);
@@ -40,6 +27,8 @@ public class QuickFixes {
 
     static {
         add(Errors.REDUNDANT_ABSTRACT, RemoveAbstractModifierFix.factory);
+        add(Errors.ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS, RemoveAbstractModifierFix.factory);
+        add(Errors.NON_ABSTRACT_FUNCTION_WITH_NO_BODY, AddAbstractModifierFix.factory);
     }
 }
 

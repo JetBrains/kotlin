@@ -2,13 +2,14 @@ package org.jetbrains.jet.lang.diagnostics;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
 /**
 * @author abreslav
 */
-public class ParameterizedDiagnosticFactory2<A, B> extends DiagnosticFactoryWithPsiElement2<A,B> {
+public class ParameterizedDiagnosticFactory2<A, B> extends DiagnosticFactoryWithPsiElement2<PsiElement, A,B> {
     public static <A, B> ParameterizedDiagnosticFactory2<A, B> create(Severity severity, String messageStub) {
         return new ParameterizedDiagnosticFactory2<A, B>(severity, messageStub);
     }

@@ -5,6 +5,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.util.LocalTimeCounter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.plugin.JetFileType;
 
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
 /**
  * @author max
  */
-public class JetChangeUtil {
+public class JetPsiFactory {
     public static JetExpression createExpression(Project project, String text) {
         JetProperty property = createProperty(project, "val x = " + text);
         return property.getInitializer();
@@ -21,6 +22,16 @@ public class JetChangeUtil {
     public static JetTypeReference createType(Project project, String type) {
         JetProperty property = createProperty(project, "val x : " + type);
         return property.getPropertyTypeRef();
+    }
+
+    public static PsiElement[] createColon(Project project) {
+        JetProperty property = createProperty(project, "val x : Int");
+        return new PsiElement[] { property.findElementAt(5), property.findElementAt(6), property.findElementAt(7) };
+    }
+    
+    public static PsiElement createWhiteSpace(Project project) {
+        JetProperty property = createProperty(project, "val x");
+        return property.findElementAt(3);
     }
 
     public static JetClass createClass(Project project, String text) {
@@ -57,5 +68,11 @@ public class JetChangeUtil {
 
     public static JetNamedFunction createFunction(Project project, String funDecl) {
         return createDeclaration(project, funDecl, JetNamedFunction.class);
+    }
+
+    public static JetModifierList createModifier(Project project, JetKeywordToken modifier) {
+        String text = modifier.getValue() + " val x";
+        JetProperty property = createProperty(project, text);
+        return property.getModifierList();
     }
 }

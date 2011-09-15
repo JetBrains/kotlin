@@ -9,14 +9,15 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithPsiElement;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
+import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetModifierListOwner;
 import org.jetbrains.jet.lexer.JetTokens;
 
 /**
 * @author svtk
 */
-public class RemoveAbstractModifierFix extends QuickFixes.IntentionActionForPsiElement<JetModifierListOwner> {
-    public RemoveAbstractModifierFix(JetModifierListOwner element) {
+public class RemoveAbstractModifierFix extends IntentionActionForPsiElement<JetModifierListOwner> {
+    public RemoveAbstractModifierFix(@NotNull JetModifierListOwner element) {
         super(element);
     }
 
@@ -34,22 +35,21 @@ public class RemoveAbstractModifierFix extends QuickFixes.IntentionActionForPsiE
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-        return psiElement.isValid();
+        return element.isValid();
     }
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-        JetDeclaration declaration = removeAbstractModifier(psiElement);
-        psiElement.replace(declaration);
+        element.replace(removeAbstractModifier(element));
     }
 
-    public static JetDeclaration removeAbstractModifier(PsiElement element) {
-        assert element instanceof JetDeclaration;
-        JetDeclaration declaration = (JetDeclaration) (element.copy());
-        assert declaration.hasModifier(JetTokens.ABSTRACT_KEYWORD);
-        ASTNode abstractNode = declaration.getModifierList().getModifierNode(JetTokens.ABSTRACT_KEYWORD);
-        declaration.deleteChildInternal(abstractNode);
-        return declaration;
+    @NotNull
+    public static JetModifierListOwner removeAbstractModifier(PsiElement element) {
+        JetModifierListOwner newElement = (JetModifierListOwner) (element.copy());
+        assert newElement.hasModifier(JetTokens.ABSTRACT_KEYWORD);
+        ASTNode abstractNode = newElement.getModifierList().getModifierNode(JetTokens.ABSTRACT_KEYWORD);
+        ((JetElement)newElement).deleteChildInternal(abstractNode);
+        return newElement;
     }
 
     @Override
@@ -57,10 +57,10 @@ public class RemoveAbstractModifierFix extends QuickFixes.IntentionActionForPsiE
         return true;
     }
 
-    public static QuickFixes.IntentionActionFactory<JetModifierListOwner> factory =
-        new QuickFixes.IntentionActionFactory<JetModifierListOwner>() {
+    public static IntentionActionFactory<JetModifierListOwner> factory =
+        new IntentionActionFactory<JetModifierListOwner>() {
             @Override
-            public QuickFixes.IntentionActionForPsiElement<JetModifierListOwner> createAction(DiagnosticWithPsiElement diagnostic) {
+            public IntentionActionForPsiElement<JetModifierListOwner> createAction(DiagnosticWithPsiElement diagnostic) {
                 assert diagnostic.getPsiElement() instanceof JetModifierListOwner;
                 return new RemoveAbstractModifierFix((JetModifierListOwner) diagnostic.getPsiElement());
             }

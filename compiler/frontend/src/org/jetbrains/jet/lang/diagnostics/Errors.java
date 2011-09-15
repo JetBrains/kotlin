@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.diagnostics;
 
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
@@ -21,7 +22,7 @@ public interface Errors {
 
     UnresolvedReferenceDiagnosticFactory UNRESOLVED_REFERENCE = UnresolvedReferenceDiagnosticFactory.INSTANCE;
     RedeclarationDiagnosticFactory REDECLARATION = RedeclarationDiagnosticFactory.INSTANCE;
-    DiagnosticFactoryWithPsiElement2<JetType, JetType> TYPE_MISMATCH = DiagnosticFactoryWithPsiElement2.create(ERROR, "Type mismatch: inferred type is {1} but {0} was expected");
+    PsiElementOnlyDiagnosticFactory2<PsiElement, JetType, JetType> TYPE_MISMATCH = PsiElementOnlyDiagnosticFactory2.create(ERROR, "Type mismatch: inferred type is {1} but {0} was expected");
 
     SimpleDiagnosticFactory SAFE_CALLS_ARE_NOT_ALLOWED_ON_NAMESPACES = SimpleDiagnosticFactory.create(ERROR, "Safe calls are not allowed on namespaces");
     SimpleDiagnosticFactory TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM = SimpleDiagnosticFactory.create(ERROR, "Type checking has run into a recursive problem"); // TODO: message
@@ -54,10 +55,10 @@ public interface Errors {
     SimpleDiagnosticFactory PROPERTY_INITIALIZER_NO_BACKING_FIELD = SimpleDiagnosticFactory.create(ERROR, "Initializer is not allowed here because this property has no backing field");
     SimpleDiagnosticFactory PROPERTY_INITIALIZER_NO_PRIMARY_CONSTRUCTOR = SimpleDiagnosticFactory.create(ERROR, "Property initializers are not allowed when no primary constructor is present");
     SimplePsiElementOnlyDiagnosticFactory<JetModifierListOwner> REDUNDANT_ABSTRACT = SimplePsiElementOnlyDiagnosticFactory.create(WARNING, "Abstract modifier is redundant in traits");
-    ParameterizedDiagnosticFactory2<String, ClassDescriptor> ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS = ParameterizedDiagnosticFactory2.create(ERROR, "Abstract property {0} in non-abstract class {1}");
+    PsiElementOnlyDiagnosticFactory2<JetModifierListOwner, String, ClassDescriptor> ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS = PsiElementOnlyDiagnosticFactory2.create(ERROR, "Abstract property {0} in non-abstract class {1}");
     ParameterizedDiagnosticFactory2<String, ClassDescriptor> ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS = ParameterizedDiagnosticFactory2.create(ERROR, "Abstract function {0} in non-abstract class {1}");
     ParameterizedDiagnosticFactory1<FunctionDescriptor> ABSTRACT_FUNCTION_WITH_BODY = ParameterizedDiagnosticFactory1.create(ERROR, "A function {0} with body cannot be abstract");
-    ParameterizedDiagnosticFactory1<FunctionDescriptor> NON_ABSTRACT_FUNCTION_WITH_NO_BODY = ParameterizedDiagnosticFactory1.create(ERROR, "Method {0} without a body must be abstract");
+    PsiElementOnlyDiagnosticFactory1<JetModifierListOwner, FunctionDescriptor> NON_ABSTRACT_FUNCTION_WITH_NO_BODY = PsiElementOnlyDiagnosticFactory1.create(ERROR, "Method {0} without a body must be abstract");
     ParameterizedDiagnosticFactory1<FunctionDescriptor> NON_MEMBER_ABSTRACT_FUNCTION = ParameterizedDiagnosticFactory1.create(ERROR, "Function {0} is not a class or trait member and cannot be abstract");
     SimpleDiagnosticFactory NON_MEMBER_ABSTRACT_ACCESSOR = SimpleDiagnosticFactory.create(ERROR, "This property is not a class or trait member and thus cannot have abstract accessors"); // TODO : Better message
     ParameterizedDiagnosticFactory1<FunctionDescriptor> NON_MEMBER_FUNCTION_NO_BODY = ParameterizedDiagnosticFactory1.create(ERROR, "Function {0} must have a body");

@@ -490,14 +490,14 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
 
     private void assertType(String expression, JetType expectedType) {
         Project project = getProject();
-        JetExpression jetExpression = JetChangeUtil.createExpression(project, expression);
+        JetExpression jetExpression = JetPsiFactory.createExpression(project, expression);
         JetType type = semanticServices.getTypeInferrerServices(JetTestUtils.DUMMY_TRACE, JetFlowInformationProvider.NONE).getType(scopeWithImports, jetExpression, JetTypeInferrer.NO_EXPECTED_TYPE);
         assertTrue(type + " != " + expectedType, type.equals(expectedType));
     }
 
     private void assertErrorType(String expression) {
         Project project = getProject();
-        JetExpression jetExpression = JetChangeUtil.createExpression(project, expression);
+        JetExpression jetExpression = JetPsiFactory.createExpression(project, expression);
         JetType type = semanticServices.getTypeInferrerServices(JetTestUtils.DUMMY_TRACE, JetFlowInformationProvider.NONE).safeGetType(scopeWithImports, jetExpression, JetTypeInferrer.NO_EXPECTED_TYPE);
         assertTrue("Error type expected but " + type + " returned", ErrorUtils.isErrorType(type));
     }
@@ -520,7 +520,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
 
     private void assertType(JetScope scope, String expression, String expectedTypeStr) {
         Project project = getProject();
-        JetExpression jetExpression = JetChangeUtil.createExpression(project, expression);
+        JetExpression jetExpression = JetPsiFactory.createExpression(project, expression);
         JetType type = semanticServices.getTypeInferrerServices(JetTestUtils.DUMMY_TRACE, JetFlowInformationProvider.NONE).getType(addImports(scope), jetExpression, JetTypeInferrer.NO_EXPECTED_TYPE);
         JetType expectedType = expectedTypeStr == null ? null : makeType(expectedTypeStr);
         assertEquals(expectedType, type);
@@ -540,7 +540,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
     }
 
     private JetType makeType(JetScope scope, String typeStr) {
-        return new TypeResolver(semanticServices, JetTestUtils.DUMMY_TRACE, true).resolveType(scope, JetChangeUtil.createType(getProject(), typeStr));
+        return new TypeResolver(semanticServices, JetTestUtils.DUMMY_TRACE, true).resolveType(scope, JetPsiFactory.createType(getProject(), typeStr));
     }
 
     @Override
@@ -594,7 +594,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
             public ClassifierDescriptor getClassifier(@NotNull String name) {
                 if (CLASSES.isEmpty()) {
                     for (String classDeclaration : CLASS_DECLARATIONS) {
-                        JetClass classElement = JetChangeUtil.createClass(getProject(), classDeclaration);
+                        JetClass classElement = JetPsiFactory.createClass(getProject(), classDeclaration);
                         ClassDescriptor classDescriptor = resolveClassDescriptor(this, classElement);
                         CLASSES.put(classDescriptor.getName(), classDescriptor);
                     }
@@ -617,7 +617,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
 //                }
                 ModuleDescriptor module = new ModuleDescriptor("TypeCheckerTest");
                 for (String funDecl : FUNCTION_DECLARATIONS) {
-                    FunctionDescriptor functionDescriptor = classDescriptorResolver.resolveFunctionDescriptor(module, this, JetChangeUtil.createFunction(getProject(), funDecl));
+                    FunctionDescriptor functionDescriptor = classDescriptorResolver.resolveFunctionDescriptor(module, this, JetPsiFactory.createFunction(getProject(), funDecl));
                     if (name.equals(functionDescriptor.getName())) {
                         writableFunctionGroup.addFunction(functionDescriptor);
                     }

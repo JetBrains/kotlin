@@ -69,7 +69,7 @@ class JetSimpleNameReference extends JetPsiReference {
 
     @Override
     public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
-        PsiElement element = JetChangeUtil.createNameIdentifier(myExpression.getProject(), newElementName);
+        PsiElement element = JetPsiFactory.createNameIdentifier(myExpression.getProject(), newElementName);
         return myExpression.getReferencedNameElement().replace(element);
     }
 

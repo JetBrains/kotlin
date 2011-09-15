@@ -29,7 +29,7 @@ public abstract class JetNamedDeclaration extends JetDeclaration implements PsiN
 
     @Override
     public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
-        return getNameIdentifier().replace(JetChangeUtil.createNameIdentifier(getProject(), name));
+        return getNameIdentifier().replace(JetPsiFactory.createNameIdentifier(getProject(), name));
     }
 
     @Override
