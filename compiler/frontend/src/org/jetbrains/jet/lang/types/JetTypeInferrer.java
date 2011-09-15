@@ -16,6 +16,7 @@ import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticWithPsiElement;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
@@ -471,9 +472,10 @@ public class JetTypeInferrer {
 
                 @Override
                 public void report(@NotNull Diagnostic diagnostic) {
-                    if (diagnostic.getFactory() == TYPE_MISMATCH) {
+                    if (diagnostic.getFactory() == TYPE_MISMATCH && ((DiagnosticWithPsiElement) diagnostic).getPsiElement() == expressionToWatch) {
                         mismatchFound[0] = true;
                     }
+                    super.report(diagnostic);
                 }
             };
         }

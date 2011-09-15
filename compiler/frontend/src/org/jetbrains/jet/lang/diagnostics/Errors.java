@@ -18,6 +18,9 @@ import static org.jetbrains.jet.lang.diagnostics.Severity.WARNING;
 public interface Errors {
 
     UnresolvedReferenceDiagnosticFactory UNRESOLVED_REFERENCE = UnresolvedReferenceDiagnosticFactory.INSTANCE;
+    RedeclarationDiagnosticFactory REDECLARATION = RedeclarationDiagnosticFactory.INSTANCE;
+    PsiElementOnlyDiagnosticFactory2<JetType, JetType> TYPE_MISMATCH = PsiElementOnlyDiagnosticFactory2.create(ERROR, "Type mismatch: inferred type is {1} but {0} was expected");
+
     SimpleDiagnosticFactory SAFE_CALLS_ARE_NOT_ALLOWED_ON_NAMESPACES = SimpleDiagnosticFactory.create(ERROR, "Safe calls are not allowed on namespaces");
     SimpleDiagnosticFactory TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM = SimpleDiagnosticFactory.create(ERROR, "Type checking has run into a recursive problem"); // TODO: message
     SimpleDiagnosticFactory RETURN_NOT_ALLOWED = SimpleDiagnosticFactory.create(ERROR, "'return' is not allowed here");
@@ -199,7 +202,6 @@ public interface Errors {
     ParameterizedDiagnosticFactory1<JetType> TYPE_MISMATCH_IN_CONDITION = ParameterizedDiagnosticFactory1.create(ERROR, "Condition must be of type Boolean, but was of type {0}");
     ParameterizedDiagnosticFactory2<JetType, Integer> TYPE_MISMATCH_IN_TUPLE_PATTERN = ParameterizedDiagnosticFactory2.create(ERROR, "Type mismatch: subject is of type {0} but the pattern is of type Tuple{1}"); // TODO: message
     ParameterizedDiagnosticFactory2<JetType, JetType> TYPE_MISMATCH_IN_BINDING_PATTERN = ParameterizedDiagnosticFactory2.create(ERROR, "{0} must be a supertype of {1}. Use 'is' to match against {0}");
-    ParameterizedDiagnosticFactory2<JetType, JetType> TYPE_MISMATCH = ParameterizedDiagnosticFactory2.create(ERROR, "Type mismatch: inferred type is {1} but {0} was expected");
     ParameterizedDiagnosticFactory2<JetType, JetType> INCOMPATIBLE_TYPES = ParameterizedDiagnosticFactory2.create(ERROR, "Incompatible types: {0} and {1}");
     
     ParameterizedDiagnosticFactory3<TypeParameterDescriptor, ClassDescriptor, Collection<JetType>> INCONSISTENT_TYPE_PARAMETER_VALUES = new ParameterizedDiagnosticFactory3<TypeParameterDescriptor, ClassDescriptor, Collection<JetType>>(ERROR, "Type parameter {0} of {1} has inconsistent values: {2}") {
@@ -280,6 +282,5 @@ public interface Errors {
     };
 
 
-    RedeclarationDiagnosticFactory REDECLARATION = RedeclarationDiagnosticFactory.INSTANCE;
 
 }

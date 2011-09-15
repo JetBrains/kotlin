@@ -1,0 +1,9 @@
+fun foo(u : Unit) : Int = 1
+
+fun test() : Int {
+    foo(<error>1</error>)
+    val a : fun() : Unit = {
+        foo(<error>1</error>)
+    }
+    return 1
+}
