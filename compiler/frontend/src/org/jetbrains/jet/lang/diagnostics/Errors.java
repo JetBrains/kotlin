@@ -63,7 +63,7 @@ public interface Errors {
 
         @NotNull
         public Diagnostic on(@NotNull PsiElement element) {
-            return on(element.getTextRange());
+            return new DiagnosticWithPsiElement<PsiElement>(this, severity, message, element);
         }
 
         @NotNull
@@ -102,7 +102,7 @@ public interface Errors {
 
         @NotNull
         public Diagnostic on(@NotNull PsiElement element, @NotNull T argument) {
-            return on(element.getTextRange(), argument);
+            return new DiagnosticWithPsiElement<PsiElement>(this, severity, makeMessage(argument), element);
         }
     }
 
@@ -139,7 +139,7 @@ public interface Errors {
 
         @NotNull
         public Diagnostic on(@NotNull PsiElement element, @NotNull A a, @NotNull B b) {
-            return on(element.getTextRange(), a, b);
+            return new DiagnosticWithPsiElement<PsiElement>(this, severity, makeMessage(a, b), element);
         }
     }
     
@@ -180,7 +180,7 @@ public interface Errors {
 
         @NotNull
         public Diagnostic on(@NotNull PsiElement element, @NotNull A a, @NotNull B b, @NotNull C c) {
-            return on(element.getTextRange(), a, b, c);
+            return new DiagnosticWithPsiElement<PsiElement>(this, severity, makeMessage(a, b, c), element);
         }
     }
 
@@ -537,18 +537,11 @@ public interface Errors {
 
     RedeclarationDiagnosticFactory REDECLARATION = RedeclarationDiagnosticFactory.INSTANCE;
 
-    public class UnresolvedReferenceDiagnostic extends GenericDiagnostic {
-
-        private final JetReferenceExpression reference;
+    public class UnresolvedReferenceDiagnostic extends DiagnosticWithPsiElement<JetReferenceExpression> {
 
         public UnresolvedReferenceDiagnostic(JetReferenceExpression referenceExpression) {
-            super(UNRESOLVED_REFERENCE, ERROR, "Unresolved reference", referenceExpression.getTextRange());
-            this.reference = referenceExpression;
+            super(UNRESOLVED_REFERENCE, ERROR, "Unresolved reference", referenceExpression);
         }
 
-        @NotNull
-        public JetReferenceExpression getReference() {
-            return reference;
-        }
     }
 }

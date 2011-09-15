@@ -51,7 +51,7 @@ public class JetTestUtils {
         public void report(@NotNull Diagnostic diagnostic) {
             if (diagnostic instanceof Errors.UnresolvedReferenceDiagnostic) {
                 Errors.UnresolvedReferenceDiagnostic unresolvedReferenceDiagnostic = (Errors.UnresolvedReferenceDiagnostic) diagnostic;
-                throw new IllegalStateException("Unresolved: " + unresolvedReferenceDiagnostic.getReference().getText());
+                throw new IllegalStateException("Unresolved: " + unresolvedReferenceDiagnostic.getPsiElement().getText());
             }
         }
     };

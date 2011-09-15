@@ -100,7 +100,7 @@ public class ExpectedResolveData {
         for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
             if (diagnostic instanceof Errors.UnresolvedReferenceDiagnostic) {
                 Errors.UnresolvedReferenceDiagnostic unresolvedReferenceDiagnostic = (Errors.UnresolvedReferenceDiagnostic) diagnostic;
-                unresolvedReferences.add(unresolvedReferenceDiagnostic.getReference());
+                unresolvedReferences.add(unresolvedReferenceDiagnostic.getPsiElement());
             }
         }
 

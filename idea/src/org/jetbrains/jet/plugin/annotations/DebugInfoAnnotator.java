@@ -57,7 +57,7 @@ public class DebugInfoAnnotator implements Annotator {
                 final Set<JetReferenceExpression> unresolvedReferences = Sets.newHashSet();
                 for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
                     if (diagnostic instanceof Errors.UnresolvedReferenceDiagnostic) {
-                        unresolvedReferences.add(((Errors.UnresolvedReferenceDiagnostic) diagnostic).getReference());
+                        unresolvedReferences.add(((Errors.UnresolvedReferenceDiagnostic) diagnostic).getPsiElement());
                     }
                 }
 
