@@ -53,7 +53,7 @@ public interface Errors {
     SimpleDiagnosticFactory PROPERTY_INITIALIZER_IN_TRAIT = SimpleDiagnosticFactory.create(ERROR, "Property initializers are not allowed in traits");
     SimpleDiagnosticFactory PROPERTY_INITIALIZER_NO_BACKING_FIELD = SimpleDiagnosticFactory.create(ERROR, "Initializer is not allowed here because this property has no backing field");
     SimpleDiagnosticFactory PROPERTY_INITIALIZER_NO_PRIMARY_CONSTRUCTOR = SimpleDiagnosticFactory.create(ERROR, "Property initializers are not allowed when no primary constructor is present");
-    SimpleDiagnosticFactory REDUNDANT_ABSTRACT = SimpleDiagnosticFactory.create(WARNING, "Abstract modifier is redundant in traits");
+    SimplePsiElementOnlyDiagnosticFactory<JetDeclaration> REDUNDANT_ABSTRACT = SimplePsiElementOnlyDiagnosticFactory.create(WARNING, "Abstract modifier is redundant in traits");
     ParameterizedDiagnosticFactory2<String, ClassDescriptor> ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS = ParameterizedDiagnosticFactory2.create(ERROR, "Abstract property {0} in non-abstract class {1}");
     ParameterizedDiagnosticFactory2<String, ClassDescriptor> ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS = ParameterizedDiagnosticFactory2.create(ERROR, "Abstract function {0} in non-abstract class {1}");
     ParameterizedDiagnosticFactory1<FunctionDescriptor> ABSTRACT_FUNCTION_WITH_BODY = ParameterizedDiagnosticFactory1.create(ERROR, "A function {0} with body cannot be abstract");

@@ -1,6 +1,8 @@
 package org.jetbrains.jet.plugin.annotations;
 
+import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.ProblemHighlightType;
+import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.progress.ProcessCanceledException;
@@ -18,6 +20,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.AnalyzerFacade;
 import org.jetbrains.jet.plugin.JetHighlighter;
+import org.jetbrains.jet.plugin.quickfix.QuickFixes;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -49,6 +52,7 @@ public class JetPsiChecker implements Annotator {
                     Collection<Diagnostic> diagnostics = bindingContext.getDiagnostics();
                     Set<DeclarationDescriptor> redeclarations = new HashSet<DeclarationDescriptor>();
                     for (Diagnostic diagnostic : diagnostics) {
+                        Annotation annotation = null;
                         if (diagnostic.getSeverity() == Severity.ERROR) {
                             if (diagnostic instanceof UnresolvedReferenceDiagnostic) {
                                 UnresolvedReferenceDiagnostic unresolvedReferenceDiagnostic = (UnresolvedReferenceDiagnostic) diagnostic;
@@ -70,11 +74,25 @@ public class JetPsiChecker implements Annotator {
                                 markRedeclaration(redeclarations, redeclarationDiagnostic.getB(), bindingContext, holder);
                             }
                             else {
-                                holder.createErrorAnnotation(diagnostic.getFactory().getTextRange(diagnostic), diagnostic.getMessage());
+                                annotation = holder.createErrorAnnotation(diagnostic.getFactory().getTextRange(diagnostic), diagnostic.getMessage());
                             }
                         }
                         else if (diagnostic.getSeverity() == Severity.WARNING) {
-                            holder.createWarningAnnotation(diagnostic.getFactory().getTextRange(diagnostic), diagnostic.getMessage());
+                            annotation = holder.createWarningAnnotation(diagnostic.getFactory().getTextRange(diagnostic), diagnostic.getMessage());
+                        }
+                        if (annotation != null && diagnostic instanceof DiagnosticWithPsiElement) {
+                            DiagnosticWithPsiElement diagnosticWithPsiElement = (DiagnosticWithPsiElement) diagnostic;
+                            if (diagnostic.getFactory() instanceof PsiElementOnlyDiagnosticFactory) {
+                                PsiElementOnlyDiagnosticFactory factory = (PsiElementOnlyDiagnosticFactory) diagnostic.getFactory();
+                                QuickFixes.IntentionActionFactory intentionActionFactory = QuickFixes.get(factory);
+                                IntentionAction action = null;
+                                if (intentionActionFactory != null) {
+                                    action = intentionActionFactory.createAction(diagnosticWithPsiElement);
+                                }
+                                if (action != null) {
+                                    annotation.registerFix(action);
+                                }
+                            }
                         }
                     }
                 }

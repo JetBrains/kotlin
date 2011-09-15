@@ -621,7 +621,7 @@ public class BodyResolver {
             }
             if (classDescriptor.getKind() == ClassKind.TRAIT) {
 //                context.getTrace().getErrorHandler().genericWarning(abstractNode, "Abstract modifier is redundant in traits");
-                context.getTrace().report(REDUNDANT_ABSTRACT.on(abstractNode));
+                context.getTrace().report(REDUNDANT_ABSTRACT.on(property, abstractNode));
             }
         }
 
@@ -799,7 +799,7 @@ public class BodyResolver {
             }
             if (hasAbstractModifier && inTrait && !isPropertyAccessor) {
 //                context.getTrace().getErrorHandler().genericWarning(abstractNode, "Abstract modifier is redundant in trait");
-                context.getTrace().report(REDUNDANT_ABSTRACT.on(abstractNode));
+                context.getTrace().report(REDUNDANT_ABSTRACT.on((JetDeclaration)function, abstractNode)); //TODO
             }
             if (function.getBodyExpression() != null && hasAbstractModifier) {
 //                context.getTrace().getErrorHandler().genericError(abstractNode, "Method " + methodName + "with body cannot be abstract");
