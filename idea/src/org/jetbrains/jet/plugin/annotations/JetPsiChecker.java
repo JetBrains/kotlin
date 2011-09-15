@@ -14,6 +14,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Errors;
+import org.jetbrains.jet.lang.diagnostics.RedeclarationDiagnostic;
 import org.jetbrains.jet.lang.diagnostics.Severity;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -120,8 +121,8 @@ public class JetPsiChecker implements Annotator {
                                     holder.createErrorAnnotation(referenceExpression, "Unresolved").setHighlightType(ProblemHighlightType.LIKE_UNKNOWN_SYMBOL);
                                 }
                             }
-                            else if (diagnostic instanceof Errors.RedeclarationDiagnostic) {
-                                Errors.RedeclarationDiagnostic redeclarationDiagnostic = (Errors.RedeclarationDiagnostic) diagnostic;
+                            else if (diagnostic instanceof RedeclarationDiagnostic) {
+                                RedeclarationDiagnostic redeclarationDiagnostic = (RedeclarationDiagnostic) diagnostic;
                                 markRedeclaration(redeclarations, redeclarationDiagnostic.getA(), bindingContext, holder);
                                 markRedeclaration(redeclarations, redeclarationDiagnostic.getB(), bindingContext, holder);
                             }
