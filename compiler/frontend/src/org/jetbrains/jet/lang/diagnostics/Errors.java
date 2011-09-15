@@ -6,6 +6,8 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -282,5 +284,27 @@ public interface Errors {
     };
 
 
-
+    // This field is needed to make the Initializer class load (interfaces cannot have static initializers)
+    @SuppressWarnings("UnusedDeclaration")
+    Initializer __initializer = Initializer.INSTANCE;
+    class Initializer {
+        static {
+            for (Field field : Errors.class.getFields()) {
+                if ((field.getModifiers() & Modifier.STATIC) != 0) {
+                    try {
+                        Object value = field.get(null);
+                        if (value instanceof AbstractDiagnosticFactory) {
+                            AbstractDiagnosticFactory factory = (AbstractDiagnosticFactory) value;
+                            factory.setName(field.getName());
+                        }
+                    }
+                    catch (IllegalAccessException e) {
+                        throw new IllegalStateException(e);
+                    }
+                }
+            }
+        }
+        private static final Initializer INSTANCE = new Initializer();
+        private Initializer() {};
+    }
 }

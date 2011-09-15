@@ -13,4 +13,7 @@ public interface DiagnosticFactory {
 
     @NotNull
     PsiFile getPsiFile(@NotNull Diagnostic diagnostic);
+    
+    @NotNull
+    String getName();
 }

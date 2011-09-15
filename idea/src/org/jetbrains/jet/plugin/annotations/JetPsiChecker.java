@@ -45,61 +45,7 @@ public class JetPsiChecker implements Annotator {
             try {
                 final BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache(file);
 
-//                ErrorHandler errorHandler = new ErrorHandler() {
-//                    private final Set<DeclarationDescriptor> redeclarations = new HashSet<DeclarationDescriptor>();
-//
-//                    @Override
-//                    public void unresolvedReference(@NotNull JetReferenceExpression referenceExpression) {
-//                        PsiReference reference = referenceExpression.getReference();
-//                        if (reference instanceof MultiRangeReference) {
-//                            MultiRangeReference mrr = (MultiRangeReference) reference;
-//                            for (TextRange range : mrr.getRanges()) {
-//                                holder.createErrorAnnotation(range.shiftRight(referenceExpression.getTextOffset()), "Unresolved").setHighlightType(ProblemHighlightType.LIKE_UNKNOWN_SYMBOL);
-//                            }
-//                        }
-//                        else {
-//                            holder.createErrorAnnotation(referenceExpression, "Unresolved").setHighlightType(ProblemHighlightType.LIKE_UNKNOWN_SYMBOL);
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void typeMismatch(@NotNull JetExpression expression, @NotNull JetType expectedType, @NotNull JetType actualType) {
-//                        holder.createErrorAnnotation(expression, "Type mismatch: inferred type is " + actualType + " but " + expectedType + " was expected");
-//                    }
-//
-//                    @Override
-//                    public void redeclaration(@NotNull DeclarationDescriptor existingDescriptor, @NotNull DeclarationDescriptor redeclaredDescriptor) {
-//                        markRedeclaration(existingDescriptor);
-//                        markRedeclaration(redeclaredDescriptor);
-//                    }
-//
-//                    private void markRedeclaration(DeclarationDescriptor redeclaration) {
-//                        if (!redeclarations.add(redeclaration)) return;
-//                        PsiElement declarationPsiElement = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, redeclaration);
-//                        if (declarationPsiElement instanceof JetNamedDeclaration) {
-//                            PsiElement nameIdentifier = ((JetNamedDeclaration) declarationPsiElement).getNameIdentifier();
-//                            if (nameIdentifier != null) {
-//                                holder.createErrorAnnotation(nameIdentifier, "Redeclaration");
-//                            }
-//                        }
-//                        else if (declarationPsiElement != null) {
-//                            holder.createErrorAnnotation(declarationPsiElement, "Redeclaration");
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void genericError(@NotNull ASTNode node, @NotNull String errorMessage) {
-//                        holder.createErrorAnnotation(node, errorMessage);
-//                    }
-//
-//                    @Override
-//                    public void genericWarning(@NotNull ASTNode node, @NotNull String message) {
-//                        holder.createWarningAnnotation(node, message);
-//                    }
-//                };
-
                 if (errorReportingEnabled) {
-//                    ErrorHandler.applyHandler(errorHandler, bindingContext);
                     Collection<Diagnostic> diagnostics = bindingContext.getDiagnostics();
                     Set<DeclarationDescriptor> redeclarations = new HashSet<DeclarationDescriptor>();
                     for (Diagnostic diagnostic : diagnostics) {

@@ -29,4 +29,15 @@ public class RedeclarationDiagnosticFactory implements DiagnosticFactory {
     public PsiFile getPsiFile(@NotNull Diagnostic diagnostic) {
         throw new UnsupportedOperationException(); // TODO
     }
+
+    @NotNull
+    @Override
+    public String getName() {
+        return "REDECLARATION";
+    }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
 }
