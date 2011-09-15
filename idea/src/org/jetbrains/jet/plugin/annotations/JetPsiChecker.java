@@ -124,11 +124,11 @@ public class JetPsiChecker implements Annotator {
                                 markRedeclaration(redeclarations, redeclarationDiagnostic.getB(), bindingContext, holder);
                             }
                             else {
-                                holder.createErrorAnnotation(diagnostic.getFactory().getMarkerPosition(diagnostic), diagnostic.getMessage());
+                                holder.createErrorAnnotation(diagnostic.getFactory().getTextRange(diagnostic), diagnostic.getMessage());
                             }
                         }
                         else if (diagnostic.getSeverity() == Severity.WARNING) {
-                            holder.createWarningAnnotation(diagnostic.getFactory().getMarkerPosition(diagnostic), diagnostic.getMessage());
+                            holder.createWarningAnnotation(diagnostic.getFactory().getTextRange(diagnostic), diagnostic.getMessage());
                         }
                     }
                 }

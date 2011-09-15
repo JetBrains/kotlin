@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.diagnostics;
 
 import com.intellij.openapi.util.TextRange;
+import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -8,5 +9,8 @@ import org.jetbrains.annotations.NotNull;
 */
 public interface DiagnosticFactory {
     @NotNull
-    TextRange getMarkerPosition(@NotNull Diagnostic diagnostic);
+    TextRange getTextRange(@NotNull Diagnostic diagnostic);
+
+    @NotNull
+    PsiFile getPsiFile(@NotNull Diagnostic diagnostic);
 }

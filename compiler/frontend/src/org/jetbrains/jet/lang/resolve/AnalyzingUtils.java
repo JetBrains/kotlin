@@ -44,7 +44,7 @@ public class AnalyzingUtils {
 
             @Override
             public void visitErrorElement(PsiErrorElement element) {
-                throw new IllegalArgumentException(element.getErrorDescription() + "; looking at " + element.getNode().getElementType() + " '" + element.getText() + ErrorHandlerUtils.atLocation(element));
+                throw new IllegalArgumentException(element.getErrorDescription() + "; looking at " + element.getNode().getElementType() + " '" + element.getText() + DiagnosticUtils.atLocation(element));
             }
         });
     }

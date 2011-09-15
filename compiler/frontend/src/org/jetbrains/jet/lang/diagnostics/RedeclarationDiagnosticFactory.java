@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.diagnostics;
 
 import com.intellij.openapi.util.TextRange;
+import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 
@@ -19,7 +20,13 @@ public class RedeclarationDiagnosticFactory implements DiagnosticFactory {
 
     @NotNull
     @Override
-    public TextRange getMarkerPosition(@NotNull Diagnostic diagnostic) {
+    public TextRange getTextRange(@NotNull Diagnostic diagnostic) {
+        throw new UnsupportedOperationException(); // TODO
+    }
+
+    @NotNull
+    @Override
+    public PsiFile getPsiFile(@NotNull Diagnostic diagnostic) {
         throw new UnsupportedOperationException(); // TODO
     }
 }

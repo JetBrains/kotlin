@@ -1,6 +1,5 @@
 package org.jetbrains.jet.lang.diagnostics;
 
-import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,7 +10,7 @@ public class DiagnosticWithPsiElement<T extends PsiElement> extends GenericDiagn
     private final T psiElement;
 
     public DiagnosticWithPsiElement(DiagnosticFactory factory, Severity severity, String message, T psiElement) {
-        super(factory, severity, message, psiElement.getTextRange());
+        super(factory, severity, message, psiElement.getContainingFile(), psiElement.getTextRange());
         this.psiElement = psiElement;
     }
 

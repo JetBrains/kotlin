@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author abreslav
  */
-public class PsiElementOnlyDiagnosticFactory2<A, B> extends AbstractDiagnosticFactory {
+public class PsiElementOnlyDiagnosticFactory2<A, B> extends DiagnosticFactoryWithMessageFormat {
     
     public static <A, B> PsiElementOnlyDiagnosticFactory2<A, B> create(Severity severity, String message) {
         return new PsiElementOnlyDiagnosticFactory2<A, B>(severity, message);

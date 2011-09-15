@@ -8,7 +8,7 @@ import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.diagnostics.ErrorHandlerUtils;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.diagnostics.UnresolvedReferenceDiagnostic;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -278,7 +278,7 @@ public class ExpectedResolveData {
 
 
 
-        return referenceExpression.getText() + " at " + ErrorHandlerUtils.atLocation(referenceExpression) +
+        return referenceExpression.getText() + " at " + DiagnosticUtils.atLocation(referenceExpression) +
                                     " in " + statement.getText() + (declaration == null ? "" : " in " + declaration.getText());
     }
 
