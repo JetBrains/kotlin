@@ -1,20 +1,22 @@
 package org.jetbrains.jet.plugin.annotations;
 
+import com.google.common.collect.Sets;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.MultiRangeReference;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.diagnostics.*;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.diagnostics.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
@@ -23,7 +25,6 @@ import org.jetbrains.jet.plugin.JetHighlighter;
 import org.jetbrains.jet.plugin.quickfix.QuickFixes;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -50,7 +51,7 @@ public class JetPsiChecker implements Annotator {
 
                 if (errorReportingEnabled) {
                     Collection<Diagnostic> diagnostics = bindingContext.getDiagnostics();
-                    Set<DeclarationDescriptor> redeclarations = new HashSet<DeclarationDescriptor>();
+                    Set<DeclarationDescriptor> redeclarations = Sets.newHashSet();
                     for (Diagnostic diagnostic : diagnostics) {
                         Annotation annotation = null;
                         if (diagnostic.getSeverity() == Severity.ERROR) {
@@ -74,11 +75,11 @@ public class JetPsiChecker implements Annotator {
                                 markRedeclaration(redeclarations, redeclarationDiagnostic.getB(), bindingContext, holder);
                             }
                             else {
-                                annotation = holder.createErrorAnnotation(diagnostic.getFactory().getTextRange(diagnostic), diagnostic.getMessage());
+                                annotation = holder.createErrorAnnotation(diagnostic.getFactory().getTextRange(diagnostic), getMessage(diagnostic));
                             }
                         }
                         else if (diagnostic.getSeverity() == Severity.WARNING) {
-                            annotation = holder.createWarningAnnotation(diagnostic.getFactory().getTextRange(diagnostic), diagnostic.getMessage());
+                            annotation = holder.createWarningAnnotation(diagnostic.getFactory().getTextRange(diagnostic), getMessage(diagnostic));
                         }
                         if (annotation != null && diagnostic instanceof DiagnosticWithPsiElement) {
                             DiagnosticWithPsiElement diagnosticWithPsiElement = (DiagnosticWithPsiElement) diagnostic;
@@ -125,7 +126,14 @@ public class JetPsiChecker implements Annotator {
             }
         }
     }
-    
+
+    private String getMessage(Diagnostic diagnostic) {
+        if (ApplicationManager.getApplication().isInternal() || ApplicationManager.getApplication().isUnitTestMode()) {
+            return "[" + diagnostic.getFactory().getName() + "] " + diagnostic.getMessage();
+        }
+        return diagnostic.getMessage();
+    }
+
     private void markRedeclaration(Set<DeclarationDescriptor> redeclarations, DeclarationDescriptor redeclaration, BindingContext bindingContext, AnnotationHolder holder) {
         if (!redeclarations.add(redeclaration)) return;
         PsiElement declarationPsiElement = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, redeclaration);
