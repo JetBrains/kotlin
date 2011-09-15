@@ -108,7 +108,7 @@ public class JetPsiChecker implements Annotator {
                         if (diagnostic.getSeverity() == Severity.ERROR) {
                             if (diagnostic instanceof Errors.UnresolvedReferenceDiagnostic) {
                                 Errors.UnresolvedReferenceDiagnostic unresolvedReferenceDiagnostic = (Errors.UnresolvedReferenceDiagnostic) diagnostic;
-                                JetReferenceExpression referenceExpression = unresolvedReferenceDiagnostic.getReference();
+                                JetReferenceExpression referenceExpression = unresolvedReferenceDiagnostic.getPsiElement();
                                 PsiReference reference = referenceExpression.getReference();
                                 if (reference instanceof MultiRangeReference) {
                                     MultiRangeReference mrr = (MultiRangeReference) reference;
