@@ -176,9 +176,14 @@ public class CheckerTestUtil {
                     closeDiagnosticString(result);
                     opened.pop();
                 }
-                if (currentDescriptor != null && i == currentDescriptor.start) {
+                while (currentDescriptor != null && i == currentDescriptor.start) {
                     openDiagnosticsString(result, currentDescriptor);
-                    opened.push(currentDescriptor);
+                    if (currentDescriptor.getEnd() == i) {
+                        closeDiagnosticString(result);
+                    }
+                    else {
+                        opened.push(currentDescriptor);
+                    }
                     if (iterator.hasNext()) {
                         currentDescriptor = iterator.next();
                     }

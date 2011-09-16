@@ -2,7 +2,9 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lexer.JetTokens;
 
 /**
  * @author max
@@ -47,4 +49,5 @@ public class JetFunctionLiteralExpression extends JetExpression implements JetDe
     public JetElement asElement() {
         return this;
     }
+
 }

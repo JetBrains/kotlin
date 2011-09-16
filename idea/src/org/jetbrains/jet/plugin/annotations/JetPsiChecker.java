@@ -13,7 +13,9 @@ import com.intellij.psi.MultiRangeReference;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.diagnostics.*;
 import org.jetbrains.jet.lang.psi.*;
@@ -26,6 +28,10 @@ import org.jetbrains.jet.plugin.quickfix.QuickFixes;
 
 import java.util.Collection;
 import java.util.Set;
+
+import static org.jetbrains.jet.lang.resolve.BindingContext.AUTOCAST;
+import static org.jetbrains.jet.lang.resolve.BindingContext.AUTO_CREATED_IT;
+import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
 
 /**
  * @author abreslav
@@ -101,8 +107,20 @@ public class JetPsiChecker implements Annotator {
 
                 file.acceptChildren(new JetVisitorVoid() {
                     @Override
+                    public void visitSimpleNameExpression(JetSimpleNameExpression expression) {
+                        DeclarationDescriptor target = bindingContext.get(REFERENCE_TARGET, expression);
+                        if (target instanceof ValueParameterDescriptor) {
+                            ValueParameterDescriptor parameterDescriptor = (ValueParameterDescriptor) target;
+                            if (bindingContext.get(AUTO_CREATED_IT, parameterDescriptor)) {
+                                holder.createInfoAnnotation(expression, "Automatically declared based on the expected type").setTextAttributes(JetHighlighter.JET_AUTOCREATED_IT);
+                            }
+                        }
+                        super.visitSimpleNameExpression(expression);
+                    }
+
+                    @Override
                     public void visitExpression(JetExpression expression) {
-                        JetType autoCast = bindingContext.get(BindingContext.AUTOCAST, expression);
+                        JetType autoCast = bindingContext.get(AUTOCAST, expression);
                         if (autoCast != null) {
                             holder.createInfoAnnotation(expression, "Automatically cast to " + autoCast).setTextAttributes(JetHighlighter.JET_AUTO_CAST_EXPRESSION);
                         }
