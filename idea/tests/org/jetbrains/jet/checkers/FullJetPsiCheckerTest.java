@@ -15,8 +15,10 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.AnalyzerFacade;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * @author abreslav
@@ -72,36 +74,36 @@ public class FullJetPsiCheckerTest extends JetTestCaseBase {
         return StringUtil.convertLineSeparators(fileText);
     }
 
-//    private void convert(File src, File dest) throws IOException {
-//        File[] files = src.listFiles();
-//        for (File file : files) {
-//            try {
-//                if (file.isDirectory()) {
-//                    File destDir = new File(dest, file.getName());
-//                    destDir.mkdir();
-//                    convert(file, destDir);
-//                    continue;
-//                }
-//                if (!file.getName().endsWith(".jet")) continue;
-//                String text = loadFile(file.getAbsolutePath());
-//                Pattern pattern = Pattern.compile("</?(error|warning)>");
-//                String clearText = pattern.matcher(text).replaceAll("");
-//
-//                configureFromFileText(file.getName(), clearText);
-//
-//                BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache((JetFile) myFile);
-//                String expectedText = CheckerTestUtil.addDiagnosticMarkersToText(myFile, bindingContext).toString();
-//
-//                File destFile = new File(dest, file.getName());
-//                FileWriter fileWriter = new FileWriter(destFile);
-//                fileWriter.write(expectedText);
-//                fileWriter.close();
-//            }
-//            catch (RuntimeException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//    }
+    private void convert(File src, File dest) throws IOException {
+        File[] files = src.listFiles();
+        for (File file : files) {
+            try {
+                if (file.isDirectory()) {
+                    File destDir = new File(dest, file.getName());
+                    destDir.mkdir();
+                    convert(file, destDir);
+                    continue;
+                }
+                if (!file.getName().endsWith(".jet")) continue;
+                String text = loadFile(file.getAbsolutePath());
+                Pattern pattern = Pattern.compile("</?(error|warning|info( descr=\"[\\w ]+\")?)>");
+                String clearText = pattern.matcher(text).replaceAll("");
+
+                configureFromFileText(file.getName(), clearText);
+
+                BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache((JetFile) myFile);
+                String expectedText = CheckerTestUtil.addDiagnosticMarkersToText(myFile, bindingContext).toString();
+
+                File destFile = new File(dest, file.getName());
+                FileWriter fileWriter = new FileWriter(destFile);
+                fileWriter.write(expectedText);
+                fileWriter.close();
+            }
+            catch (RuntimeException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     public static Test suite() {
         return JetTestCaseBase.suiteForDirectory(JetTestCaseBase.getTestDataPathBase(), "/checkerWithErrorTypes/full/", true, new JetTestCaseBase.NamedTestFactory() {

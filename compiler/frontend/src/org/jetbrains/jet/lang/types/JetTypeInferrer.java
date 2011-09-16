@@ -974,7 +974,11 @@ public class JetTypeInferrer {
 
         @Override
         public JetType visitParenthesizedExpression(JetParenthesizedExpression expression, TypeInferenceContext context) {
-            return context.services.checkType(getType(expression.getExpression(), context.replaceScope(context.scope)), expression, context);
+            JetExpression innerExpression = expression.getExpression();
+            if (innerExpression == null) {
+                return null;
+            }
+            return context.services.checkType(getType(innerExpression, context.replaceScope(context.scope)), expression, context);
         }
 
         @Override

@@ -71,7 +71,7 @@ public class JetPsiChecker implements Annotator {
                             }
                             else if (diagnostic instanceof RedeclarationDiagnostic) {
                                 RedeclarationDiagnostic redeclarationDiagnostic = (RedeclarationDiagnostic) diagnostic;
-                                markRedeclaration(redeclarations, redeclarationDiagnostic.getPsiElement(), holder);
+                                annotation = markRedeclaration(redeclarations, redeclarationDiagnostic, holder);
                             }
                             else {
                                 annotation = holder.createErrorAnnotation(diagnostic.getFactory().getTextRange(diagnostic), getMessage(diagnostic));
@@ -133,18 +133,10 @@ public class JetPsiChecker implements Annotator {
         return diagnostic.getMessage();
     }
 
-    private void markRedeclaration(Set<PsiElement> redeclarations, @NotNull PsiElement redeclaration, AnnotationHolder holder) {
-        if (!redeclarations.add(redeclaration)) return;
-        if (redeclaration instanceof JetNamedDeclaration) {
-            PsiElement nameIdentifier = ((JetNamedDeclaration) redeclaration).getNameIdentifier();
-            if (nameIdentifier != null) {
-                holder.createErrorAnnotation(nameIdentifier, "Redeclaration");
-            }
-        }
-        else {
-            holder.createErrorAnnotation(redeclaration, "Redeclaration");
-        }
-    }   
+    private Annotation markRedeclaration(Set<PsiElement> redeclarations, RedeclarationDiagnostic diagnostic, AnnotationHolder holder) {
+        if (!redeclarations.add(diagnostic.getPsiElement())) return null;
+        return holder.createErrorAnnotation(diagnostic.getFactory().getTextRange(diagnostic), getMessage(diagnostic));
+    }
 
 
     private void highlightBackingFields(final AnnotationHolder holder, JetFile file, final BindingContext bindingContext) {

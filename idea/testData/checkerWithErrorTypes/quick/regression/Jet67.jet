@@ -1,4 +1,0 @@
-abstract class XXX {
-  val a : Int abstract get
-
-}

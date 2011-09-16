@@ -18,7 +18,7 @@ import java.util.List;
 public class CheckerTestUtilTest extends JetLiteFixture {
 
     public CheckerTestUtilTest() {
-        super("checkerTestUtil");
+        super("checkerWithErrorTypes/checkerTestUtil");
     }
 
     protected void doTest(TheTest theTest) throws Exception {

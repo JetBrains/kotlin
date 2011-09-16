@@ -1,9 +1,0 @@
-fun foo(u : Unit) : Int = 1
-
-fun test() : Int {
-    foo(<!TYPE_MISMATCH!>1<!>)
-    val a : fun() : Unit = {
-        foo(<!TYPE_MISMATCH!>1<!>)
-    }
-    return 1
-}

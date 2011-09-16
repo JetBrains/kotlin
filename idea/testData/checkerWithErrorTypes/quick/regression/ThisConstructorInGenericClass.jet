@@ -1,3 +1,0 @@
-class Z() {
-    this(x : Int) : this() {}
-}

@@ -1,0 +1,51 @@
+
+open class NoC
+class NoC1 : NoC
+
+class WithC0() : NoC<!NO_CONSTRUCTOR!>()<!>
+open class WithC1() : NoC
+class NoC2 : <!SUPERTYPE_NOT_INITIALIZED!>WithC1<!>
+class NoC3 : WithC1<!PRIMARY_CONSTRUCTOR_MISSING_SUPER_CONSTRUCTOR_CALL!>()<!>
+class WithC2() : <!SUPERTYPE_NOT_INITIALIZED!>WithC1<!>
+
+class NoPC {
+  <!SECONDARY_CONSTRUCTOR_BUT_NO_PRIMARY!>this<!>() {}
+}
+
+class WithPC0() {
+  this(a : Int) : this() {}
+}
+
+class WithPC1(a : Int) {
+  <!SECONDARY_CONSTRUCTOR_NO_INITIALIZER_LIST!>this<!>() {}
+
+  this(b : Long) : this("") {}
+
+  this(s : String) : this(1) {}
+
+  this(b : Char) : <!NONE_APPLICABLE!>this("", 2)<!> {}
+
+  this(b : Byte) : this(""), <!MANY_CALLS_TO_THIS!>this(1)<!> {}
+}
+
+
+class Foo() : <!SUPERTYPE_NOT_INITIALIZED, FINAL_SUPERTYPE!>WithPC0<!>, <!MANY_CLASSES_IN_SUPERTYPE_LIST!>this<!>() {
+
+}
+
+class WithCPI_Dup(<!REDECLARATION, REDECLARATION!>x<!> : Int) {
+  var <!REDECLARATION, REDECLARATION, MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>x<!> : Int
+}
+
+class WithCPI(x : Int) {
+  val a = 1
+  val b : Int = $a
+  val xy : Int = x
+}
+
+class <!PRIMARY_CONSTRUCTOR_MISSING_STATEFUL_PROPERTY!>NoCPI<!> {
+  val a = <!PROPERTY_INITIALIZER_NO_PRIMARY_CONSTRUCTOR!>1<!>
+  var ab = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>1<!>
+    get() = 1
+    set(v) {}
+}
