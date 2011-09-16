@@ -1,0 +1,2 @@
+val x = 1 : Int?:Any?
+val y = null ?: 1
