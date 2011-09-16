@@ -69,7 +69,7 @@ public class AnalyzingUtils {
 
         JetScope libraryScope = semanticServices.getStandardLibrary().getLibraryScope();
         ModuleDescriptor owner = new ModuleDescriptor("<module>");
-        final WritableScope scope = new WritableScopeImpl(libraryScope, owner, bindingTraceContext).setDebugName("Root scope in analyzeNamespace");
+        final WritableScope scope = new WritableScopeImpl(libraryScope, owner, new TraceBasedRedeclarationHandler(bindingTraceContext)).setDebugName("Root scope in analyzeNamespace");
         importingStrategy.addImports(project, semanticServices, bindingTraceContext, scope);
         TopDownAnalyzer.process(semanticServices, bindingTraceContext, scope, new NamespaceLike.Adapter(owner) {
 

@@ -6,11 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder;
-import org.jetbrains.jet.lang.resolve.JetScope;
-import org.jetbrains.jet.lang.resolve.JetScopeImpl;
-import org.jetbrains.jet.lang.resolve.WritableScope;
-import org.jetbrains.jet.lang.resolve.WritableScopeImpl;
+import org.jetbrains.jet.lang.resolve.*;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -198,7 +194,7 @@ public class JetStandardClasses {
     /*package*/ static final JetScope STANDARD_CLASSES;
 
     static {
-        WritableScope writableScope = new WritableScopeImpl(JetScope.EMPTY, STANDARD_CLASSES_NAMESPACE, DiagnosticHolder.DO_NOTHING).setDebugName("JetStandardClasses.STANDARD_CLASSES");
+        WritableScope writableScope = new WritableScopeImpl(JetScope.EMPTY, STANDARD_CLASSES_NAMESPACE, RedeclarationHandler.DO_NOTHING).setDebugName("JetStandardClasses.STANDARD_CLASSES");
         STANDARD_CLASSES = writableScope;
         writableScope.addClassifierAlias("Unit", getTuple(0));
 

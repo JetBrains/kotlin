@@ -142,7 +142,7 @@ public class ClassDescriptorResolver {
                 annotationResolver.resolveAnnotations(scope, function.getModifierList()),
                 JetPsiUtil.safeName(function.getName())
         );
-        WritableScope innerScope = new WritableScopeImpl(scope, functionDescriptor, trace).setDebugName("Function descriptor header scope");
+        WritableScope innerScope = new WritableScopeImpl(scope, functionDescriptor, new TraceBasedRedeclarationHandler(trace)).setDebugName("Function descriptor header scope");
         innerScope.addLabeledDeclaration(functionDescriptor);
 
         List<TypeParameterDescriptor> typeParameterDescriptors = resolveTypeParameters(functionDescriptor, innerScope, function.getTypeParameters());
@@ -451,7 +451,7 @@ public class ClassDescriptorResolver {
             typeParameterDescriptors = Collections.emptyList();
         }
         else {
-            WritableScope writableScope = new WritableScopeImpl(scope, containingDeclaration, trace).setDebugName("Scope with type parameters of a property");
+            WritableScope writableScope = new WritableScopeImpl(scope, containingDeclaration, new TraceBasedRedeclarationHandler(trace)).setDebugName("Scope with type parameters of a property");
             typeParameterDescriptors = resolveTypeParameters(containingDeclaration, writableScope, typeParameters);
             resolveGenericBounds(property, writableScope, typeParameterDescriptors);
             scopeWithTypeParameters = writableScope;
@@ -659,7 +659,7 @@ public class ClassDescriptorResolver {
                 typeParameters,
                 resolveValueParameters(
                         constructorDescriptor,
-                        new WritableScopeImpl(scope, classDescriptor, trace).setDebugName("Scope with value parameters of a constructor"),
+                        new WritableScopeImpl(scope, classDescriptor, new TraceBasedRedeclarationHandler(trace)).setDebugName("Scope with value parameters of a constructor"),
                         valueParameters),
                         Modality.FINAL);
     }

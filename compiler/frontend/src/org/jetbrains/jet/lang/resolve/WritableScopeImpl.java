@@ -6,12 +6,9 @@ import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.*;
-
-import static org.jetbrains.jet.lang.diagnostics.Errors.REDECLARATION;
 
 /**
  * @author abreslav
@@ -40,8 +37,8 @@ public class WritableScopeImpl extends WritableScopeWithImports {
 
     private List<VariableDescriptor> variableDescriptors;
 
-    public WritableScopeImpl(@NotNull JetScope scope, @NotNull DeclarationDescriptor owner, @NotNull DiagnosticHolder diagnosticHolder) {
-        super(scope, diagnosticHolder);
+    public WritableScopeImpl(@NotNull JetScope scope, @NotNull DeclarationDescriptor owner, @NotNull RedeclarationHandler redeclarationHandler) {
+        super(scope, redeclarationHandler);
         this.ownerDeclarationDescriptor = owner;
     }
 
@@ -139,7 +136,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
         Map<String, DeclarationDescriptor> variableClassOrNamespaceDescriptors = getVariableClassOrNamespaceDescriptors();
         DeclarationDescriptor existingDescriptor = variableClassOrNamespaceDescriptors.get(variableDescriptor.getName());
         if (existingDescriptor != null) {
-            diagnosticHolder.report(REDECLARATION.on(existingDescriptor, variableDescriptor));
+            redeclarationHandler.handleRedeclaration(existingDescriptor, variableDescriptor);
         }
         // TODO : Should this always happen?
         variableClassOrNamespaceDescriptors.put(variableDescriptor.getName(), variableDescriptor);
@@ -230,7 +227,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
         Map<String, DeclarationDescriptor> variableClassOrNamespaceDescriptors = getVariableClassOrNamespaceDescriptors();
         DeclarationDescriptor originalDescriptor = variableClassOrNamespaceDescriptors.get(name);
         if (originalDescriptor != null) {
-            diagnosticHolder.report(REDECLARATION.on(originalDescriptor, classifierDescriptor));
+            redeclarationHandler.handleRedeclaration(originalDescriptor, classifierDescriptor);
         }
         variableClassOrNamespaceDescriptors.put(name, classifierDescriptor);
         allDescriptors.add(classifierDescriptor);
@@ -262,7 +259,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
         Map<String, DeclarationDescriptor> variableClassOrNamespaceDescriptors = getVariableClassOrNamespaceDescriptors();
         DeclarationDescriptor oldValue = variableClassOrNamespaceDescriptors.put(namespaceDescriptor.getName(), namespaceDescriptor);
         if (oldValue != null) {
-            diagnosticHolder.report(REDECLARATION.on(oldValue, namespaceDescriptor));
+            redeclarationHandler.handleRedeclaration(oldValue, namespaceDescriptor);
         }
         allDescriptors.add(namespaceDescriptor);
     }

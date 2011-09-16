@@ -3,7 +3,6 @@ package org.jetbrains.jet.lang.resolve;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,11 +17,11 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
     @Nullable
     private List<JetScope> imports;
     private WritableScope currentIndividualImportScope;
-    protected final DiagnosticHolder diagnosticHolder;
+    protected final RedeclarationHandler redeclarationHandler;
 
-    public WritableScopeWithImports(@NotNull JetScope scope, @NotNull DiagnosticHolder diagnosticHolder) {
+    public WritableScopeWithImports(@NotNull JetScope scope, @NotNull RedeclarationHandler redeclarationHandler) {
         super(scope);
-        this.diagnosticHolder = diagnosticHolder;
+        this.redeclarationHandler = redeclarationHandler;
     }
 
     public WritableScopeWithImports setDebugName(@NotNull String debugName) {
@@ -97,7 +96,7 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
 
     public void importClassifierAlias(@NotNull String importedClassifierName, @NotNull ClassifierDescriptor classifierDescriptor) {
         if (currentIndividualImportScope == null) {
-            WritableScopeImpl writableScope = new WritableScopeImpl(JetScope.EMPTY, getContainingDeclaration(), DiagnosticHolder.DO_NOTHING).setDebugName("Individual import scope");
+            WritableScopeImpl writableScope = new WritableScopeImpl(JetScope.EMPTY, getContainingDeclaration(), RedeclarationHandler.DO_NOTHING).setDebugName("Individual import scope");
             importScope(writableScope);
             currentIndividualImportScope = writableScope;
         }

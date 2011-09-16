@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Collection;
@@ -16,8 +15,8 @@ public class WriteThroughScope extends WritableScopeWithImports {
     private final WritableScope writableWorker;
     private Collection<DeclarationDescriptor> allDescriptors;
 
-    public WriteThroughScope(@NotNull JetScope outerScope, @NotNull WritableScope scope, @NotNull DiagnosticHolder diagnosticHolder) {
-        super(outerScope, diagnosticHolder);
+    public WriteThroughScope(@NotNull JetScope outerScope, @NotNull WritableScope scope, @NotNull RedeclarationHandler redeclarationHandler) {
+        super(outerScope, redeclarationHandler);
         this.writableWorker = scope;
     }
 

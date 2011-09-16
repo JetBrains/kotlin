@@ -367,7 +367,7 @@ public class JetTypeInferrer {
             }
 
             DeclarationDescriptor containingDescriptor = outerScope.getContainingDeclaration();
-            WritableScope scope = new WritableScopeImpl(outerScope, containingDescriptor, context.trace).setDebugName("getBlockReturnedType");
+            WritableScope scope = new WritableScopeImpl(outerScope, containingDescriptor, new TraceBasedRedeclarationHandler(context.trace)).setDebugName("getBlockReturnedType");
             return getBlockReturnedTypeWithWritableScope(scope, block, coercionStrategyForLastExpression, context);
         }
 
@@ -1814,7 +1814,7 @@ public class JetTypeInferrer {
         }
 
         protected WritableScopeImpl newWritableScopeImpl(JetScope scope, BindingTrace trace) {
-            return new WritableScopeImpl(scope, scope.getContainingDeclaration(), trace);
+            return new WritableScopeImpl(scope, scope.getContainingDeclaration(), new TraceBasedRedeclarationHandler(trace));
         }
 
         @Override

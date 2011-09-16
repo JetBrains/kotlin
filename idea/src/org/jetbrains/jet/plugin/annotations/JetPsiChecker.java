@@ -13,7 +13,6 @@ import com.intellij.psi.MultiRangeReference;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.diagnostics.*;
@@ -52,7 +51,7 @@ public class JetPsiChecker implements Annotator {
 
                 if (errorReportingEnabled) {
                     Collection<Diagnostic> diagnostics = bindingContext.getDiagnostics();
-                    Set<DeclarationDescriptor> redeclarations = Sets.newHashSet();
+                    Set<PsiElement> redeclarations = Sets.newHashSet();
                     for (Diagnostic diagnostic : diagnostics) {
                         Annotation annotation = null;
                         if (diagnostic.getSeverity() == Severity.ERROR) {
@@ -72,8 +71,7 @@ public class JetPsiChecker implements Annotator {
                             }
                             else if (diagnostic instanceof RedeclarationDiagnostic) {
                                 RedeclarationDiagnostic redeclarationDiagnostic = (RedeclarationDiagnostic) diagnostic;
-                                markRedeclaration(redeclarations, redeclarationDiagnostic.getA(), bindingContext, holder);
-                                markRedeclaration(redeclarations, redeclarationDiagnostic.getB(), bindingContext, holder);
+                                markRedeclaration(redeclarations, redeclarationDiagnostic.getPsiElement(), holder);
                             }
                             else {
                                 annotation = holder.createErrorAnnotation(diagnostic.getFactory().getTextRange(diagnostic), getMessage(diagnostic));
@@ -82,7 +80,7 @@ public class JetPsiChecker implements Annotator {
                         else if (diagnostic.getSeverity() == Severity.WARNING) {
                             annotation = holder.createWarningAnnotation(diagnostic.getFactory().getTextRange(diagnostic), getMessage(diagnostic));
                         }
-                        if (annotation != null && diagnostic instanceof DiagnosticWithPsiElement) {
+                        if (annotation != null && diagnostic instanceof DiagnosticWithPsiElementImpl) {
                             DiagnosticWithPsiElement diagnosticWithPsiElement = (DiagnosticWithPsiElement) diagnostic;
                             if (diagnostic.getFactory() instanceof PsiElementOnlyDiagnosticFactory) {
                                 PsiElementOnlyDiagnosticFactory factory = (PsiElementOnlyDiagnosticFactory) diagnostic.getFactory();
@@ -135,17 +133,16 @@ public class JetPsiChecker implements Annotator {
         return diagnostic.getMessage();
     }
 
-    private void markRedeclaration(Set<DeclarationDescriptor> redeclarations, DeclarationDescriptor redeclaration, BindingContext bindingContext, AnnotationHolder holder) {
+    private void markRedeclaration(Set<PsiElement> redeclarations, @NotNull PsiElement redeclaration, AnnotationHolder holder) {
         if (!redeclarations.add(redeclaration)) return;
-        PsiElement declarationPsiElement = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, redeclaration);
-        if (declarationPsiElement instanceof JetNamedDeclaration) {
-            PsiElement nameIdentifier = ((JetNamedDeclaration) declarationPsiElement).getNameIdentifier();
+        if (redeclaration instanceof JetNamedDeclaration) {
+            PsiElement nameIdentifier = ((JetNamedDeclaration) redeclaration).getNameIdentifier();
             if (nameIdentifier != null) {
                 holder.createErrorAnnotation(nameIdentifier, "Redeclaration");
             }
         }
-        else if (declarationPsiElement != null) {
-            holder.createErrorAnnotation(declarationPsiElement, "Redeclaration");
+        else {
+            holder.createErrorAnnotation(redeclaration, "Redeclaration");
         }
     }   
 
