@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -45,6 +46,9 @@ import java.util.List;
      * local extension prevail over members (and members prevail over all non-local extensions)
      */
     public static boolean isLocal(DeclarationDescriptor containerOfTheCurrentLocality, DeclarationDescriptor candidate) {
+        if (candidate instanceof ValueParameterDescriptor) {
+            return true;
+        }
         DeclarationDescriptor parent = candidate.getContainingDeclaration();
         if (!(parent instanceof FunctionDescriptor)) {
             return false;

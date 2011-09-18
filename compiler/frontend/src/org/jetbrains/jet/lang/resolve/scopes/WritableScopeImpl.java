@@ -38,8 +38,6 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     @Nullable
     private ImplicitReceiverDescriptor implicitReceiver;
 
-    private List<VariableDescriptor> variableDescriptors;
-
     public WritableScopeImpl(@NotNull JetScope scope, @NotNull DeclarationDescriptor owner, @NotNull RedeclarationHandler redeclarationHandler) {
         super(scope, redeclarationHandler);
         this.ownerDeclarationDescriptor = owner;
@@ -127,14 +125,6 @@ public class WritableScopeImpl extends WritableScopeWithImports {
         return variableClassOrNamespaceDescriptors;
     }
 
-    @NotNull
-    private List<VariableDescriptor> getVariableDescriptors() {
-        if (variableDescriptors == null) {
-            variableDescriptors = Lists.newArrayList();
-        }
-        return variableDescriptors;
-    }
-
     @Override
     public void addVariableDescriptor(@NotNull VariableDescriptor variableDescriptor) {
         Map<String, DeclarationDescriptor> variableClassOrNamespaceDescriptors = getVariableClassOrNamespaceDescriptors();
@@ -145,8 +135,6 @@ public class WritableScopeImpl extends WritableScopeWithImports {
         // TODO : Should this always happen?
         variableClassOrNamespaceDescriptors.put(variableDescriptor.getName(), variableDescriptor);
         allDescriptors.add(variableDescriptor);
-
-        getVariableDescriptors().add(variableDescriptor);
     }
 
     @Override
