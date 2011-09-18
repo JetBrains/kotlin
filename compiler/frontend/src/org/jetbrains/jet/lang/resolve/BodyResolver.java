@@ -510,7 +510,7 @@ public class BodyResolver {
             constructorScope.addPropertyDescriptorByFieldName("$" + propertyDescriptor.getName(), propertyDescriptor);
         }
 
-        constructorScope.setImplicitReceiver(new ClassReceiver(descriptor.getContainingDeclaration()));
+//        constructorScope.setImplicitReceiver(new ClassReceiver(descriptor.getContainingDeclaration()));
 
         for (ValueParameterDescriptor valueParameterDescriptor : descriptor.getValueParameters()) {
             JetParameter parameter = (JetParameter) context.getTrace().getBindingContext().get(BindingContext.DESCRIPTOR_TO_DECLARATION, valueParameterDescriptor);
