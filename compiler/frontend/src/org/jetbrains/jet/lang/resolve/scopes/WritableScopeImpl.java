@@ -1,4 +1,4 @@
-package org.jetbrains.jet.lang.resolve;
+package org.jetbrains.jet.lang.resolve.scopes;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -6,7 +6,9 @@ import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ImplicitReceiverDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 import java.util.*;
 
@@ -32,8 +34,9 @@ public class WritableScopeImpl extends WritableScopeWithImports {
 
     @Nullable
     private Map<String, List<DeclarationDescriptor>> labelsToDescriptors;
+
     @Nullable
-    private JetType thisType;
+    private ImplicitReceiverDescriptor implicitReceiver;
 
     private List<VariableDescriptor> variableDescriptors;
 
@@ -67,6 +70,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
         super.importClassifierAlias(importedClassifierName, classifierDescriptor);
     }
 
+    @NotNull
     @Override
     public Collection<DeclarationDescriptor> getAllDescriptors() {
         if (!allDescriptorsDone) {
@@ -153,12 +157,12 @@ public class WritableScopeImpl extends WritableScopeWithImports {
             return (VariableDescriptor) descriptor;
         }
 
-        if (thisType != null) {
-            VariableDescriptor variable = getThisType().getMemberScope().getVariable(name);
-            if (variable != null) {
-                return variable;
-            }
-        }
+//        if (implicitReceiver != null) {
+//            VariableDescriptor variable = getImplicitReceiver().getMemberScope().getVariable(name);
+//            if (variable != null) {
+//                return variable;
+//            }
+//        }
 
         VariableDescriptor variableDescriptor = getWorkerScope().getVariable(name);
         if (variableDescriptor != null) {
@@ -200,9 +204,9 @@ public class WritableScopeImpl extends WritableScopeWithImports {
             result.addAllFunctions(functionGroup);
         }
         
-        if (thisType != null) {
-            result.addAllFunctions(getThisType().getMemberScope().getFunctionGroup(name));
-        }
+//        if (implicitReceiver != null) {
+//            result.addAllFunctions(getImplicitReceiver().getMemberScope().getFunctionGroup(name));
+//        }
 
         result.addAllFunctions(getWorkerScope().getFunctionGroup(name));
 
@@ -247,11 +251,11 @@ public class WritableScopeImpl extends WritableScopeWithImports {
 
     @NotNull
     @Override
-    public JetType getThisType() {
-        if (thisType == null) {
-            return super.getThisType();
+    public ReceiverDescriptor getImplicitReceiver() {
+        if (implicitReceiver == null) {
+            return super.getImplicitReceiver();
         }
-        return thisType;
+        return implicitReceiver;
     }
 
     @Override
@@ -283,11 +287,19 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     }
 
     @Override
-    public void setThisType(@NotNull JetType thisType) {
-        if (this.thisType != null) {
+    public void setImplicitReceiver(@NotNull ImplicitReceiverDescriptor implicitReceiver) {
+        if (this.implicitReceiver != null) {
             throw new UnsupportedOperationException("Receiver redeclared");
         }
-        this.thisType = thisType;
+        this.implicitReceiver = implicitReceiver;
+    }
+
+    @Override
+    public void getImplicitReceiversHierarchy(@NotNull List<ReceiverDescriptor> result) {
+        if (implicitReceiver != null && implicitReceiver != ReceiverDescriptor.NO_RECEIVER) {
+            result.add(implicitReceiver);
+        }
+        super.getImplicitReceiversHierarchy(result);
     }
 
     @SuppressWarnings({"NullableProblems"})

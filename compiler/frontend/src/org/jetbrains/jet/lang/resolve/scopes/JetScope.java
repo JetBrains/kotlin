@@ -1,11 +1,12 @@
-package org.jetbrains.jet.lang.resolve;
+package org.jetbrains.jet.lang.resolve.scopes;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @author abreslav
@@ -15,7 +16,7 @@ public interface JetScope {
         @NotNull
         @Override
         public DeclarationDescriptor getContainingDeclaration() {
-            throw new UnsupportedOperationException(); // TODO
+            throw new UnsupportedOperationException();
         }
 
         @Override
@@ -37,9 +38,6 @@ public interface JetScope {
     FunctionGroup getFunctionGroup(@NotNull String name);
 
     @NotNull
-    JetType getThisType();
-
-    @NotNull
     DeclarationDescriptor getContainingDeclaration();
 
     @NotNull
@@ -55,5 +53,18 @@ public interface JetScope {
     @Nullable
     DeclarationDescriptor getDeclarationDescriptorForUnqualifiedThis();
 
+    @NotNull
     Collection<DeclarationDescriptor> getAllDescriptors();
+
+    /**
+     * @return EFFECTIVE implicit receiver at this point (may be corresponding to an outer scope)
+     */
+    @NotNull
+    ReceiverDescriptor getImplicitReceiver();
+
+    /**
+     * Adds receivers to the list in order of locality, so that the closest (the most local) receiver goes first
+     * @param result
+     */
+    void getImplicitReceiversHierarchy(@NotNull List<ReceiverDescriptor> result);
 }

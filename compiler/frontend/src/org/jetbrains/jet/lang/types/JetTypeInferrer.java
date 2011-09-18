@@ -23,6 +23,9 @@ import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResult;
 import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
@@ -891,7 +894,7 @@ public class JetTypeInferrer {
             if (receiverTypeRef != null) {
                 receiverType = context.typeResolver.resolveType(context.scope, receiverTypeRef);
             } else {
-                receiverType = context.scope.getThisType();
+                receiverType = context.scope.getImplicitReceiver().getReceiverType();
             }
 
             FunctionDescriptorImpl functionDescriptor = new FunctionDescriptorImpl(
@@ -1265,7 +1268,7 @@ public class JetTypeInferrer {
                 }
             }
             else {
-                thisType = context.scope.getThisType();
+                thisType = context.scope.getImplicitReceiver().getReceiverType();
 
                 DeclarationDescriptor declarationDescriptorForUnqualifiedThis = context.scope.getDeclarationDescriptorForUnqualifiedThis();
                 if (declarationDescriptorForUnqualifiedThis != null) {

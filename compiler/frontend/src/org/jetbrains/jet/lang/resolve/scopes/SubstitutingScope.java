@@ -1,14 +1,15 @@
-package org.jetbrains.jet.lang.resolve;
+package org.jetbrains.jet.lang.resolve.scopes;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -56,7 +57,12 @@ public class SubstitutingScope implements JetScope {
 
     @NotNull
     @Override
-    public JetType getThisType() {
+    public ReceiverDescriptor getImplicitReceiver() {
+        throw new UnsupportedOperationException(); // TODO
+    }
+
+    @Override
+    public void getImplicitReceiversHierarchy(@NotNull List<ReceiverDescriptor> result) {
         throw new UnsupportedOperationException(); // TODO
     }
 
@@ -109,6 +115,7 @@ public class SubstitutingScope implements JetScope {
         return workerScope.getDeclarationDescriptorForUnqualifiedThis();
     }
 
+    @NotNull
     @Override
     public Collection<DeclarationDescriptor> getAllDescriptors() {
         if (allDescriptors == null) {

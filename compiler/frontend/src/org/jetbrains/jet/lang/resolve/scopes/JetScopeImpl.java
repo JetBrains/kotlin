@@ -1,11 +1,12 @@
-package org.jetbrains.jet.lang.resolve;
+package org.jetbrains.jet.lang.resolve.scopes;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 /**
 * @author abreslav
@@ -28,8 +29,8 @@ public abstract class JetScopeImpl implements JetScope {
 
     @NotNull
     @Override
-    public JetType getThisType() {
-        return JetStandardClasses.getNothingType();
+    public ReceiverDescriptor getImplicitReceiver() {
+        return ReceiverDescriptor.NO_RECEIVER;
     }
 
     @NotNull
@@ -54,8 +55,13 @@ public abstract class JetScopeImpl implements JetScope {
         return null;
     }
 
+    @NotNull
     @Override
     public Collection<DeclarationDescriptor> getAllDescriptors() {
         return Collections.emptyList();
+    }
+
+    @Override
+    public void getImplicitReceiversHierarchy(@NotNull List<ReceiverDescriptor> result) {
     }
 }

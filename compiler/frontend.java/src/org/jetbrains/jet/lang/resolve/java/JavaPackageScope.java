@@ -2,7 +2,7 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.JetScopeImpl;
+import org.jetbrains.jet.lang.resolve.scopes.JetScopeImpl;
 
 /**
  * @author abreslav

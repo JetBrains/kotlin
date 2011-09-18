@@ -10,6 +10,11 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionCallableReceiver;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
@@ -505,7 +510,7 @@ public class BodyResolver {
             constructorScope.addPropertyDescriptorByFieldName("$" + propertyDescriptor.getName(), propertyDescriptor);
         }
 
-        constructorScope.setThisType(descriptor.getContainingDeclaration().getDefaultType());
+        constructorScope.setImplicitReceiver(new ClassReceiver(descriptor.getContainingDeclaration()));
 
         for (ValueParameterDescriptor valueParameterDescriptor : descriptor.getValueParameters()) {
             JetParameter parameter = (JetParameter) context.getTrace().getBindingContext().get(BindingContext.DESCRIPTOR_TO_DECLARATION, valueParameterDescriptor);
@@ -573,7 +578,7 @@ public class BodyResolver {
         }
         JetType receiverType = propertyDescriptor.getReceiverType();
         if (receiverType != null) {
-            result.setThisType(receiverType);
+            result.setImplicitReceiver(new ExtensionCallableReceiver(propertyDescriptor));
         }
         return result;
     }

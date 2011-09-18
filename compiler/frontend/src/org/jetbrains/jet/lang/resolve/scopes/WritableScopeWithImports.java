@@ -1,4 +1,4 @@
-package org.jetbrains.jet.lang.resolve;
+package org.jetbrains.jet.lang.resolve.scopes;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -96,7 +96,7 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
 
     public void importClassifierAlias(@NotNull String importedClassifierName, @NotNull ClassifierDescriptor classifierDescriptor) {
         if (currentIndividualImportScope == null) {
-            WritableScopeImpl writableScope = new WritableScopeImpl(JetScope.EMPTY, getContainingDeclaration(), RedeclarationHandler.DO_NOTHING).setDebugName("Individual import scope");
+            WritableScopeImpl writableScope = new WritableScopeImpl(EMPTY, getContainingDeclaration(), RedeclarationHandler.DO_NOTHING).setDebugName("Individual import scope");
             importScope(writableScope);
             currentIndividualImportScope = writableScope;
         }

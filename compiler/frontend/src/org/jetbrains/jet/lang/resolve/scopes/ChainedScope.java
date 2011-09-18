@@ -1,12 +1,14 @@
-package org.jetbrains.jet.lang.resolve;
+package org.jetbrains.jet.lang.resolve.scopes;
 
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * @author abreslav
@@ -69,8 +71,15 @@ public class ChainedScope implements JetScope {
 
     @NotNull
     @Override
-    public JetType getThisType() {
+    public ReceiverDescriptor getImplicitReceiver() {
         throw new UnsupportedOperationException(); // TODO
+    }
+
+    @Override
+    public void getImplicitReceiversHierarchy(@NotNull List<ReceiverDescriptor> result) {
+        for (JetScope jetScope : scopeChain) {
+            jetScope.getImplicitReceiversHierarchy(result);
+        }
     }
 
     @NotNull
@@ -115,6 +124,7 @@ public class ChainedScope implements JetScope {
         return null;
     }
 
+    @NotNull
     @Override
     public Collection<DeclarationDescriptor> getAllDescriptors() {
         if (allDescriptors == null) {

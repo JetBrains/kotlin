@@ -1,9 +1,9 @@
-package org.jetbrains.jet.lang.resolve;
+package org.jetbrains.jet.lang.resolve.scopes;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ImplicitReceiverDescriptor;
 
 /**
  * @author abreslav
@@ -30,5 +30,5 @@ public interface WritableScope extends JetScope {
 
     void importScope(@NotNull JetScope imported);
 
-    void setThisType(@NotNull JetType thisType);
+    void setImplicitReceiver(@NotNull ImplicitReceiverDescriptor implicitReceiver);
 }

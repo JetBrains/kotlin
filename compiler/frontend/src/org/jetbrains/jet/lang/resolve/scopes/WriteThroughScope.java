@@ -1,10 +1,11 @@
-package org.jetbrains.jet.lang.resolve;
+package org.jetbrains.jet.lang.resolve.scopes;
 
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ImplicitReceiverDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 import java.util.Collection;
 
@@ -40,8 +41,8 @@ public class WriteThroughScope extends WritableScopeWithImports {
 
     @Override
     @NotNull
-    public JetType getThisType() {
-        return writableWorker.getThisType();
+    public ReceiverDescriptor getImplicitReceiver() {
+        return writableWorker.getImplicitReceiver();
     }
 
     @Override
@@ -146,10 +147,11 @@ public class WriteThroughScope extends WritableScopeWithImports {
     }
 
     @Override
-    public void setThisType(@NotNull JetType thisType) {
-        writableWorker.setThisType(thisType);
+    public void setImplicitReceiver(@NotNull ImplicitReceiverDescriptor implicitReceiver) {
+        writableWorker.setImplicitReceiver(implicitReceiver);
     }
 
+    @NotNull
     @Override
     public Collection<DeclarationDescriptor> getAllDescriptors() {
         if (allDescriptors == null) {

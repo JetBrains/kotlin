@@ -17,6 +17,9 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.JavaPackageScope;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
+import org.jetbrains.jet.lang.resolve.scopes.*;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ExplicitReceiver;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.parsing.JetParsingTest;
@@ -506,8 +509,8 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         JetScope scope = new JetScopeAdapter(classDefinitions.BASIC_SCOPE) {
             @NotNull
             @Override
-            public JetType getThisType() {
-                return thisType;
+            public ReceiverDescriptor getImplicitReceiver() {
+                return new ExplicitReceiver(thisType);
             }
         };
         assertType(scope, expression, expectedType);

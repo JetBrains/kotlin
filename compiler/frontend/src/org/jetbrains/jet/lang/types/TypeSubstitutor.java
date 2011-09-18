@@ -3,7 +3,7 @@ package org.jetbrains.jet.lang.types;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
-import org.jetbrains.jet.lang.resolve.SubstitutingScope;
+import org.jetbrains.jet.lang.resolve.scopes.SubstitutingScope;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -12,9 +12,9 @@ import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.inference.ConstraintSystem;
-import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.util.*;
 
@@ -491,7 +491,7 @@ public class CallResolver {
         }
     }
 
-    private <Descriptor extends CallableDescriptor> Function<ValueParameterDescriptor, ValueParameterDescriptor> createMapFunction(Descriptor substitutedFunctionDescriptor) {
+    private <D extends CallableDescriptor> Function<ValueParameterDescriptor, ValueParameterDescriptor> createMapFunction(D substitutedFunctionDescriptor) {
         assert substitutedFunctionDescriptor != null;
         final Map<ValueParameterDescriptor, ValueParameterDescriptor> parameterMap = Maps.newHashMap();
         for (ValueParameterDescriptor valueParameterDescriptor : substitutedFunctionDescriptor.getValueParameters()) {
@@ -506,7 +506,7 @@ public class CallResolver {
         };
     }
 
-    private <Descriptor extends CallableDescriptor> boolean checkReceiver(ResolutionTask<Descriptor> task, TracingStrategy tracing, Descriptor candidate, TemporaryBindingTrace temporaryTrace) {
+    private <D extends CallableDescriptor> boolean checkReceiver(ResolutionTask<D> task, TracingStrategy tracing, D candidate, TemporaryBindingTrace temporaryTrace) {
         if (!checkReceiverAbsence(task, tracing, candidate, temporaryTrace)) return false;
         JetType receiverType = task.getReceiverType();
         JetType candidateReceiverType = candidate.getReceiverType();
@@ -519,7 +519,7 @@ public class CallResolver {
         return true;
     }
 
-    private <Descriptor extends CallableDescriptor> boolean checkReceiverAbsence(ResolutionTask<Descriptor> task, TracingStrategy tracing, Descriptor candidate, TemporaryBindingTrace temporaryTrace) {
+    private <D extends CallableDescriptor> boolean checkReceiverAbsence(ResolutionTask<D> task, TracingStrategy tracing, D candidate, TemporaryBindingTrace temporaryTrace) {
         JetType receiverType = task.getReceiverType();
         JetType candidateReceiverType = candidate.getReceiverType();
         if (receiverType != null) {
@@ -536,26 +536,26 @@ public class CallResolver {
     }
 
     @NotNull
-    private <Descriptor extends CallableDescriptor> OverloadResolutionResult<Descriptor> computeResultAndReportErrors(BindingTrace trace, TracingStrategy tracing, Map<Descriptor, Descriptor> successfulCandidates, Set<Descriptor> failedCandidates, Set<Descriptor> dirtyCandidates, Map<Descriptor, TemporaryBindingTrace> traces) {
+    private <D extends CallableDescriptor> OverloadResolutionResult<D> computeResultAndReportErrors(BindingTrace trace, TracingStrategy tracing, Map<D, D> successfulCandidates, Set<D> failedCandidates, Set<D> dirtyCandidates, Map<D, TemporaryBindingTrace> traces) {
         // TODO : maybe it's better to filter overrides out first, and only then look for the maximally specific
         if (successfulCandidates.size() > 0) {
             if (successfulCandidates.size() != 1) {
-                Map<Descriptor, Descriptor> cleanCandidates = Maps.newLinkedHashMap(successfulCandidates);
+                Map<D, D> cleanCandidates = Maps.newLinkedHashMap(successfulCandidates);
                 cleanCandidates.keySet().removeAll(dirtyCandidates);
                 if (cleanCandidates.isEmpty()) {
                     cleanCandidates = successfulCandidates;
                 }
-                Descriptor maximallySpecific = overloadingConflictResolver.findMaximallySpecific(cleanCandidates, traces, false);
+                D maximallySpecific = overloadingConflictResolver.findMaximallySpecific(cleanCandidates, traces, false);
                 if (maximallySpecific != null) {
                     return OverloadResolutionResult.success(maximallySpecific);
                 }
 
-                Descriptor maximallySpecificGenericsDiscriminated = overloadingConflictResolver.findMaximallySpecific(cleanCandidates, traces, true);
+                D maximallySpecificGenericsDiscriminated = overloadingConflictResolver.findMaximallySpecific(cleanCandidates, traces, true);
                 if (maximallySpecificGenericsDiscriminated != null) {
                     return OverloadResolutionResult.success(maximallySpecificGenericsDiscriminated);
                 }
 
-                Set<Descriptor> noOverrides = filterOverrides(successfulCandidates.keySet());
+                Set<D> noOverrides = filterOverrides(successfulCandidates.keySet());
                 if (dirtyCandidates.isEmpty()) {
 //                    tracing.reportOverallResolutionError(trace, "Overload resolution ambiguity: "
 //                                                                + makeErrorMessageForMultipleDescriptors(noOverrides));
@@ -567,9 +567,9 @@ public class CallResolver {
                 return OverloadResolutionResult.ambiguity(noOverrides);
             }
             else {
-                Map.Entry<Descriptor, Descriptor> entry = successfulCandidates.entrySet().iterator().next();
-                Descriptor functionDescriptor = entry.getKey();
-                Descriptor result = entry.getValue();
+                Map.Entry<D, D> entry = successfulCandidates.entrySet().iterator().next();
+                D functionDescriptor = entry.getKey();
+                D result = entry.getValue();
 
                 TemporaryBindingTrace temporaryTrace = traces.get(functionDescriptor);
                 temporaryTrace.commit();
@@ -578,7 +578,7 @@ public class CallResolver {
         }
         else if (!failedCandidates.isEmpty()) {
             if (failedCandidates.size() != 1) {
-                Set<Descriptor> noOverrides = filterOverrides(failedCandidates);
+                Set<D> noOverrides = filterOverrides(failedCandidates);
                 if (noOverrides.size() != 1) {
 //                    tracing.reportOverallResolutionError(trace, "None of the following functions can be called with the arguments supplied: "
 //                                                                + makeErrorMessageForMultipleDescriptors(noOverrides));
@@ -588,7 +588,7 @@ public class CallResolver {
                 }
                 failedCandidates = noOverrides;
             }
-            Descriptor functionDescriptor = failedCandidates.iterator().next();
+            D functionDescriptor = failedCandidates.iterator().next();
             TemporaryBindingTrace temporaryTrace = traces.get(functionDescriptor);
             temporaryTrace.commit();
             return OverloadResolutionResult.singleFailedCandidate(failedCandidates.iterator().next());
@@ -599,19 +599,11 @@ public class CallResolver {
         }
     }
 
-    private <Descriptor extends CallableDescriptor> StringBuilder makeErrorMessageForMultipleDescriptors(Set<Descriptor> candidates) {
-        StringBuilder stringBuilder = new StringBuilder("\n");
-        for (Descriptor functionDescriptor : candidates) {
-            stringBuilder.append(DescriptorRenderer.TEXT.render(functionDescriptor)).append("\n");
-        }
-        return stringBuilder;
-    }
-
-    private <Descriptor extends CallableDescriptor> Set<Descriptor> filterOverrides(Set<Descriptor> candidateSet) {
-        Set<Descriptor> candidates = Sets.newLinkedHashSet();
+    private <D extends CallableDescriptor> Set<D> filterOverrides(Set<D> candidateSet) {
+        Set<D> candidates = Sets.newLinkedHashSet();
         outerLoop:
-        for (Descriptor me : candidateSet) {
-            for (Descriptor other : candidateSet) {
+        for (D me : candidateSet) {
+            for (D other : candidateSet) {
                 if (OverloadingConflictResolver.overrides(other, me)) {
                     continue outerLoop;
                 }
@@ -719,18 +711,6 @@ public class CallResolver {
         return found;
     }
 
-    private OverloadResolutionResult<FunctionDescriptor> listToOverloadResolutionResult(List<FunctionDescriptor> result) {
-        if (result.isEmpty()) {
-            return OverloadResolutionResult.nameNotFound();
-        }
-        else if (result.size() == 1) {
-            return OverloadResolutionResult.success(result.get(0));
-        }
-        else {
-            return OverloadResolutionResult.ambiguity(result);
-        }
-    }
-
     private boolean findExtensionFunctions(Collection<FunctionDescriptor> candidates, JetType receiverType, List<JetType> parameterTypes, List<FunctionDescriptor> result) {
         boolean found = false;
         for (FunctionDescriptor functionDescriptor : candidates) {
@@ -755,7 +735,6 @@ public class CallResolver {
         }
         return true;
     }
-
 
     private static TaskPrioritizer<FunctionDescriptor> FUNCTION_TASK_PRIORITIZER = new TaskPrioritizer<FunctionDescriptor>() {
 
@@ -825,7 +804,6 @@ public class CallResolver {
             }
         }
     };
-
 
     private static TaskPrioritizer<VariableDescriptor> PROPERTY_TASK_PRIORITIZER = new TaskPrioritizer<VariableDescriptor>() {
 

@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.resolve;
 
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.JetSemanticServices;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
 /**
 * @author abreslav
