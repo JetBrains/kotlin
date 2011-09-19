@@ -5,6 +5,8 @@ import com.google.common.collect.Sets;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
 import java.util.Map;
 import java.util.Set;

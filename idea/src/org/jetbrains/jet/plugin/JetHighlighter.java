@@ -97,6 +97,24 @@ public class JetHighlighter extends SyntaxHighlighterBase {
         JET_AUTO_CAST_EXPRESSION = TextAttributesKey.createTextAttributesKey("JET.AUTO.CAST.EXPRESSION", clone);
     }
 
+    public static final TextAttributesKey JET_AUTOCREATED_IT;
+
+    static {
+        TextAttributes attributes = new TextAttributes();
+        attributes.setFontType(Font.BOLD);
+// TODO: proper attributes
+        JET_AUTOCREATED_IT = TextAttributesKey.createTextAttributesKey("JET.AUTO.CREATED.IT", attributes);
+    }
+
+    public static final TextAttributesKey JET_FUNCTION_LITERAL_DELIMITER;
+
+    static {
+        TextAttributes attributes = new TextAttributes();
+        attributes.setFontType(Font.BOLD);
+// TODO: proper attributes
+        JET_FUNCTION_LITERAL_DELIMITER = TextAttributesKey.createTextAttributesKey("JET.AUTO.CREATED.IT", attributes);
+    }
+
     public static final TextAttributesKey JET_DEBUG_INFO;
 
     static {

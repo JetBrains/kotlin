@@ -6,6 +6,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.SubstitutingScope;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
@@ -40,9 +45,10 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
 
     public MutableClassDescriptor(@NotNull BindingTrace trace, @NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope outerScope, ClassKind kind) {
         super(containingDeclaration);
-        this.scopeForMemberLookup = new WritableScopeImpl(JetScope.EMPTY, this, trace).setDebugName("MemberLookup");
-        this.scopeForSupertypeResolution = new WritableScopeImpl(outerScope, this, trace).setDebugName("SupertypeResolution");
-        this.scopeForMemberResolution = new WritableScopeImpl(scopeForSupertypeResolution, this, trace).setDebugName("MemberResolution");
+        TraceBasedRedeclarationHandler redeclarationHandler = new TraceBasedRedeclarationHandler(trace);
+        this.scopeForMemberLookup = new WritableScopeImpl(JetScope.EMPTY, this, redeclarationHandler).setDebugName("MemberLookup");
+        this.scopeForSupertypeResolution = new WritableScopeImpl(outerScope, this, redeclarationHandler).setDebugName("SupertypeResolution");
+        this.scopeForMemberResolution = new WritableScopeImpl(scopeForSupertypeResolution, this, redeclarationHandler).setDebugName("MemberResolution");
         this.kind = kind;
     }
 
@@ -159,7 +165,7 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
                 getName(),
                 typeParameters,
                 supertypes);
-        scopeForMemberResolution.setThisType(getDefaultType());
+        scopeForMemberResolution.setImplicitReceiver(new ClassReceiver(this));
         for (FunctionDescriptor functionDescriptor : constructors.getFunctionDescriptors()) {
             ((ConstructorDescriptorImpl) functionDescriptor).setReturnType(getDefaultType());
         }

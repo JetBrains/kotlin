@@ -1,0 +1,16 @@
+namespace redeclarations {
+  object <!REDECLARATION, REDECLARATION!>A<!> {
+    val x : Int = 0
+
+    val A = 1
+  }
+
+  namespace <!REDECLARATION!>A<!> {
+    class A {}
+  }
+
+  class <!REDECLARATION, REDECLARATION!>A<!> {}
+
+  val <!REDECLARATION!>A<!> = 1
+
+}

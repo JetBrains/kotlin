@@ -18,6 +18,9 @@ import org.jetbrains.jet.lang.diagnostics.*;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespace;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 
 import java.util.Collections;
 
@@ -69,7 +72,7 @@ public class AnalyzingUtils {
 
         JetScope libraryScope = semanticServices.getStandardLibrary().getLibraryScope();
         ModuleDescriptor owner = new ModuleDescriptor("<module>");
-        final WritableScope scope = new WritableScopeImpl(libraryScope, owner, bindingTraceContext).setDebugName("Root scope in analyzeNamespace");
+        final WritableScope scope = new WritableScopeImpl(libraryScope, owner, new TraceBasedRedeclarationHandler(bindingTraceContext)).setDebugName("Root scope in analyzeNamespace");
         importingStrategy.addImports(project, semanticServices, bindingTraceContext, scope);
         TopDownAnalyzer.process(semanticServices, bindingTraceContext, scope, new NamespaceLike.Adapter(owner) {
 

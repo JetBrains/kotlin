@@ -4,7 +4,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.ImportingStrategy;
-import org.jetbrains.jet.lang.resolve.WritableScope;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
 /**
  * @author abreslav

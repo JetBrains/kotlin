@@ -18,7 +18,7 @@ public abstract class SimpleDiagnosticFactoryWithPsiElement<T extends PsiElement
 
         @NotNull
         public Diagnostic on(@NotNull T element, @NotNull ASTNode node) {
-            return new DiagnosticWithPsiElement<T>(this, severity, message, element, node.getTextRange());
+            return new DiagnosticWithPsiElementImpl<T>(this, severity, message, element, node.getTextRange());
         }
 
         @NotNull

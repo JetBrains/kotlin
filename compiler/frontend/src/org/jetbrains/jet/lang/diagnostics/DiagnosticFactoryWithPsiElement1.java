@@ -1,9 +1,7 @@
 package org.jetbrains.jet.lang.diagnostics;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -29,11 +27,11 @@ public abstract class DiagnosticFactoryWithPsiElement1<T extends PsiElement, A> 
 
     @NotNull
     public Diagnostic on(@NotNull T element, @NotNull ASTNode node, @NotNull A argument) {
-        return new DiagnosticWithPsiElement<T>(this, severity, makeMessage(argument), element, node.getTextRange());
+        return new DiagnosticWithPsiElementImpl<T>(this, severity, makeMessage(argument), element, node.getTextRange());
     }
 
     @NotNull
     public Diagnostic on(@NotNull T element, @NotNull PsiElement psiElement, @NotNull A argument) {
-        return new DiagnosticWithPsiElement<T>(this, severity, makeMessage(argument), element, psiElement.getTextRange());
+        return new DiagnosticWithPsiElementImpl<T>(this, severity, makeMessage(argument), element, psiElement.getTextRange());
     }
 }

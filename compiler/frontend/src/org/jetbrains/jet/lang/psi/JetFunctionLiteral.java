@@ -3,6 +3,7 @@ package org.jetbrains.jet.lang.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lexer.JetTokens;
 
 /**
@@ -35,5 +36,21 @@ public class JetFunctionLiteral extends JetFunction {
     @Override
     public JetBlockExpression getBodyExpression() {
         return (JetBlockExpression) super.getBodyExpression();
+    }
+
+    @NotNull
+    public ASTNode getOpenBraceNode() {
+        return getNode().findChildByType(JetTokens.LBRACE);
+    }
+
+    @Nullable
+    @IfNotParsed
+    public ASTNode getClosingBraceNode() {
+        return getNode().findChildByType(JetTokens.RBRACE);
+    }
+
+    @Nullable
+    public ASTNode getArrowNode() {
+        return getNode().findChildByType(JetTokens.DOUBLE_ARROW);
     }
 }

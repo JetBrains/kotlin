@@ -15,6 +15,7 @@ import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.diagnostics.*;
 import org.jetbrains.jet.lang.psi.*;
@@ -27,6 +28,10 @@ import org.jetbrains.jet.plugin.quickfix.QuickFixes;
 
 import java.util.Collection;
 import java.util.Set;
+
+import static org.jetbrains.jet.lang.resolve.BindingContext.AUTOCAST;
+import static org.jetbrains.jet.lang.resolve.BindingContext.AUTO_CREATED_IT;
+import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
 
 /**
  * @author abreslav
@@ -52,7 +57,7 @@ public class JetPsiChecker implements Annotator {
 
                 if (errorReportingEnabled) {
                     Collection<Diagnostic> diagnostics = bindingContext.getDiagnostics();
-                    Set<DeclarationDescriptor> redeclarations = Sets.newHashSet();
+                    Set<PsiElement> redeclarations = Sets.newHashSet();
                     for (Diagnostic diagnostic : diagnostics) {
                         Annotation annotation = null;
                         if (diagnostic.getSeverity() == Severity.ERROR) {
@@ -72,8 +77,7 @@ public class JetPsiChecker implements Annotator {
                             }
                             else if (diagnostic instanceof RedeclarationDiagnostic) {
                                 RedeclarationDiagnostic redeclarationDiagnostic = (RedeclarationDiagnostic) diagnostic;
-                                markRedeclaration(redeclarations, redeclarationDiagnostic.getA(), bindingContext, holder);
-                                markRedeclaration(redeclarations, redeclarationDiagnostic.getB(), bindingContext, holder);
+                                annotation = markRedeclaration(redeclarations, redeclarationDiagnostic, holder);
                             }
                             else {
                                 annotation = holder.createErrorAnnotation(diagnostic.getFactory().getTextRange(diagnostic), getMessage(diagnostic));
@@ -82,7 +86,7 @@ public class JetPsiChecker implements Annotator {
                         else if (diagnostic.getSeverity() == Severity.WARNING) {
                             annotation = holder.createWarningAnnotation(diagnostic.getFactory().getTextRange(diagnostic), getMessage(diagnostic));
                         }
-                        if (annotation != null && diagnostic instanceof DiagnosticWithPsiElement) {
+                        if (annotation != null && diagnostic instanceof DiagnosticWithPsiElementImpl) {
                             DiagnosticWithPsiElement diagnosticWithPsiElement = (DiagnosticWithPsiElement) diagnostic;
                             if (diagnostic.getFactory() instanceof PsiElementOnlyDiagnosticFactory) {
                                 PsiElementOnlyDiagnosticFactory factory = (PsiElementOnlyDiagnosticFactory) diagnostic.getFactory();
@@ -103,8 +107,20 @@ public class JetPsiChecker implements Annotator {
 
                 file.acceptChildren(new JetVisitorVoid() {
                     @Override
+                    public void visitSimpleNameExpression(JetSimpleNameExpression expression) {
+                        DeclarationDescriptor target = bindingContext.get(REFERENCE_TARGET, expression);
+                        if (target instanceof ValueParameterDescriptor) {
+                            ValueParameterDescriptor parameterDescriptor = (ValueParameterDescriptor) target;
+                            if (bindingContext.get(AUTO_CREATED_IT, parameterDescriptor)) {
+                                holder.createInfoAnnotation(expression, "Automatically declared based on the expected type").setTextAttributes(JetHighlighter.JET_AUTOCREATED_IT);
+                            }
+                        }
+                        super.visitSimpleNameExpression(expression);
+                    }
+
+                    @Override
                     public void visitExpression(JetExpression expression) {
-                        JetType autoCast = bindingContext.get(BindingContext.AUTOCAST, expression);
+                        JetType autoCast = bindingContext.get(AUTOCAST, expression);
                         if (autoCast != null) {
                             holder.createInfoAnnotation(expression, "Automatically cast to " + autoCast).setTextAttributes(JetHighlighter.JET_AUTO_CAST_EXPRESSION);
                         }
@@ -135,19 +151,10 @@ public class JetPsiChecker implements Annotator {
         return diagnostic.getMessage();
     }
 
-    private void markRedeclaration(Set<DeclarationDescriptor> redeclarations, DeclarationDescriptor redeclaration, BindingContext bindingContext, AnnotationHolder holder) {
-        if (!redeclarations.add(redeclaration)) return;
-        PsiElement declarationPsiElement = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, redeclaration);
-        if (declarationPsiElement instanceof JetNamedDeclaration) {
-            PsiElement nameIdentifier = ((JetNamedDeclaration) declarationPsiElement).getNameIdentifier();
-            if (nameIdentifier != null) {
-                holder.createErrorAnnotation(nameIdentifier, "Redeclaration");
-            }
-        }
-        else if (declarationPsiElement != null) {
-            holder.createErrorAnnotation(declarationPsiElement, "Redeclaration");
-        }
-    }   
+    private Annotation markRedeclaration(Set<PsiElement> redeclarations, RedeclarationDiagnostic diagnostic, AnnotationHolder holder) {
+        if (!redeclarations.add(diagnostic.getPsiElement())) return null;
+        return holder.createErrorAnnotation(diagnostic.getFactory().getTextRange(diagnostic), getMessage(diagnostic));
+    }
 
 
     private void highlightBackingFields(final AnnotationHolder holder, JetFile file, final BindingContext bindingContext) {

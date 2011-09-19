@@ -23,6 +23,9 @@ import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResult;
 import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
@@ -367,7 +370,7 @@ public class JetTypeInferrer {
             }
 
             DeclarationDescriptor containingDescriptor = outerScope.getContainingDeclaration();
-            WritableScope scope = new WritableScopeImpl(outerScope, containingDescriptor, context.trace).setDebugName("getBlockReturnedType");
+            WritableScope scope = new WritableScopeImpl(outerScope, containingDescriptor, new TraceBasedRedeclarationHandler(context.trace)).setDebugName("getBlockReturnedType");
             return getBlockReturnedTypeWithWritableScope(scope, block, coercionStrategyForLastExpression, context);
         }
 
@@ -891,7 +894,7 @@ public class JetTypeInferrer {
             if (receiverTypeRef != null) {
                 receiverType = context.typeResolver.resolveType(context.scope, receiverTypeRef);
             } else {
-                receiverType = context.scope.getThisType();
+                receiverType = context.scope.getImplicitReceiver().getReceiverType();
             }
 
             FunctionDescriptorImpl functionDescriptor = new FunctionDescriptorImpl(
@@ -899,36 +902,46 @@ public class JetTypeInferrer {
 
             List<JetType> parameterTypes = new ArrayList<JetType>();
             List<ValueParameterDescriptor> valueParameterDescriptors = Lists.newArrayList();
-            List<JetParameter> parameters = functionLiteral.getValueParameters();
+            List<JetParameter> declaredValueParameters = functionLiteral.getValueParameters();
             JetType expectedType = context.expectedType;
-            
-            List<ValueParameterDescriptor> valueParameters = null;
+
             boolean functionTypeExpected = expectedType != NO_EXPECTED_TYPE && JetStandardClasses.isFunctionType(expectedType);
-            if (functionTypeExpected) {
-                valueParameters = JetStandardClasses.getValueParameters(functionDescriptor, expectedType);
+            List<ValueParameterDescriptor> expectedValueParameters =  (functionTypeExpected)
+                                                              ? JetStandardClasses.getValueParameters(functionDescriptor, expectedType)
+                                                              : null;
+
+            if (functionTypeExpected && declaredValueParameters.isEmpty() && expectedValueParameters.size() == 1) {
+                ValueParameterDescriptor valueParameterDescriptor = expectedValueParameters.get(0);
+                ValueParameterDescriptor it = new ValueParameterDescriptorImpl(
+                        functionDescriptor, 0, Collections.<AnnotationDescriptor>emptyList(), "it", valueParameterDescriptor.getInType(), valueParameterDescriptor.getOutType(), valueParameterDescriptor.hasDefaultValue(), valueParameterDescriptor.isVararg()
+                );
+                valueParameterDescriptors.add(it);
+                parameterTypes.add(it.getOutType());
+                context.trace.record(AUTO_CREATED_IT, it);
             }
+            else {
+                for (int i = 0; i < declaredValueParameters.size(); i++) {
+                    JetParameter declaredParameter = declaredValueParameters.get(i);
+                    JetTypeReference typeReference = declaredParameter.getTypeReference();
 
-            for (int i = 0, parametersSize = parameters.size(); i < parametersSize; i++) {
-                JetParameter parameter = parameters.get(i);
-                JetTypeReference typeReference = parameter.getTypeReference();
-
-                JetType type;
-                if (typeReference != null) {
-                    type = context.typeResolver.resolveType(context.scope, typeReference);
-                }
-                else {
-                    if (valueParameters != null) {
-                        type = valueParameters.get(i).getOutType();
+                    JetType type;
+                    if (typeReference != null) {
+                        type = context.typeResolver.resolveType(context.scope, typeReference);
                     }
                     else {
-//                        context.trace.getErrorHandler().genericError(parameter.getNode(), "Cannot infer a type for this parameter. To specify it explicitly use the {(p : Type) => ...} notation");
-                        context.trace.report(CANNOT_INFER_PARAMETER_TYPE.on(parameter));
-                        type = ErrorUtils.createErrorType("Cannot be inferred");
+                        if (expectedValueParameters != null && i < expectedValueParameters.size()) {
+                            type = expectedValueParameters.get(i).getOutType();
+                        }
+                        else {
+    //                        context.trace.getErrorHandler().genericError(declaredParameter.getNode(), "Cannot infer a type for this declaredParameter. To specify it explicitly use the {(p : Type) => ...} notation");
+                            context.trace.report(CANNOT_INFER_PARAMETER_TYPE.on(declaredParameter));
+                            type = ErrorUtils.createErrorType("Cannot be inferred");
+                        }
                     }
+                    ValueParameterDescriptor valueParameterDescriptor = context.classDescriptorResolver.resolveValueParameterDescriptor(functionDescriptor, declaredParameter, i, type);
+                    parameterTypes.add(valueParameterDescriptor.getOutType());
+                    valueParameterDescriptors.add(valueParameterDescriptor);
                 }
-                ValueParameterDescriptor valueParameterDescriptor = context.classDescriptorResolver.resolveValueParameterDescriptor(functionDescriptor, parameter, i, type);
-                parameterTypes.add(valueParameterDescriptor.getOutType());
-                valueParameterDescriptors.add(valueParameterDescriptor);
             }
 
             JetType effectiveReceiverType;
@@ -974,7 +987,11 @@ public class JetTypeInferrer {
 
         @Override
         public JetType visitParenthesizedExpression(JetParenthesizedExpression expression, TypeInferenceContext context) {
-            return context.services.checkType(getType(expression.getExpression(), context.replaceScope(context.scope)), expression, context);
+            JetExpression innerExpression = expression.getExpression();
+            if (innerExpression == null) {
+                return null;
+            }
+            return context.services.checkType(getType(innerExpression, context.replaceScope(context.scope)), expression, context);
         }
 
         @Override
@@ -1251,7 +1268,7 @@ public class JetTypeInferrer {
                 }
             }
             else {
-                thisType = context.scope.getThisType();
+                thisType = context.scope.getImplicitReceiver().getReceiverType();
 
                 DeclarationDescriptor declarationDescriptorForUnqualifiedThis = context.scope.getDeclarationDescriptorForUnqualifiedThis();
                 if (declarationDescriptorForUnqualifiedThis != null) {
@@ -1814,7 +1831,7 @@ public class JetTypeInferrer {
         }
 
         protected WritableScopeImpl newWritableScopeImpl(JetScope scope, BindingTrace trace) {
-            return new WritableScopeImpl(scope, scope.getContainingDeclaration(), trace);
+            return new WritableScopeImpl(scope, scope.getContainingDeclaration(), new TraceBasedRedeclarationHandler(trace));
         }
 
         @Override

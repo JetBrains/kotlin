@@ -1,0 +1,48 @@
+JetFile: ElvisSplit.jet
+  NAMESPACE
+    PROPERTY
+      PsiElement(val)('val')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('x')
+      PsiWhiteSpace(' ')
+      PsiElement(EQ)('=')
+      PsiWhiteSpace(' ')
+      BINARY_WITH_TYPE
+        BINARY_WITH_TYPE
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('1')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            NULLABLE_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Int')
+              PsiElement(QUEST)('?')
+        OPERATION_REFERENCE
+          PsiElement(COLON)(':')
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Any')
+            PsiElement(QUEST)('?')
+    PsiWhiteSpace('\n')
+    PROPERTY
+      PsiElement(val)('val')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('y')
+      PsiWhiteSpace(' ')
+      PsiElement(EQ)('=')
+      PsiWhiteSpace(' ')
+      BINARY_EXPRESSION
+        NULL
+          PsiElement(null)('null')
+        PsiWhiteSpace(' ')
+        OPERATION_REFERENCE
+          PsiElement(ELVIS)('?:')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')

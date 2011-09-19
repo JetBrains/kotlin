@@ -106,7 +106,9 @@ public class JetExpressionParsing extends AbstractJetParsing {
         COLON_AS(COLON, AS_KEYWORD, AS_SAFE) {
             @Override
             public JetNodeType parseRightHandSide(IElementType operation, JetExpressionParsing parser) {
+                parser.myBuilder.disableJoiningComplexTokens();
                 parser.myJetParsing.parseTypeRef();
+                parser.myBuilder.enableJoiningComplexTokens();
                 return BINARY_WITH_TYPE;
             }
 

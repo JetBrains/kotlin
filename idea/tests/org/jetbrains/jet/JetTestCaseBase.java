@@ -43,11 +43,11 @@ public abstract class JetTestCaseBase extends LightDaemonAnalyzerTestCase {
         return getTestDataPathBase();
     }
 
-    protected static String getTestDataPathBase() {
+    public static String getTestDataPathBase() {
         return getHomeDirectory() + "/idea/testData";
     }
 
-    private static String getHomeDirectory() {
+    public static String getHomeDirectory() {
        return new File(PathManager.getResourceRoot(JetTestCaseBase.class, "/org/jetbrains/jet/JetTestCaseBase.class")).getParentFile().getParentFile().getParent();
     }
 
@@ -68,7 +68,11 @@ public abstract class JetTestCaseBase extends LightDaemonAnalyzerTestCase {
 
     @NotNull
     protected String getTestFilePath() {
-        return dataPath + name + ".jet";
+        return dataPath + File.separator + name + ".jet";
+    }
+    
+    protected String getDataPath() {
+        return dataPath;
     }
 
     public interface NamedTestFactory {

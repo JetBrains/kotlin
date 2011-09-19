@@ -13,11 +13,13 @@ import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.JavaPackageScope;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
+import org.jetbrains.jet.lang.resolve.scopes.*;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ExplicitReceiver;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.parsing.JetParsingTest;
@@ -507,8 +509,8 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         JetScope scope = new JetScopeAdapter(classDefinitions.BASIC_SCOPE) {
             @NotNull
             @Override
-            public JetType getThisType() {
-                return thisType;
+            public ReceiverDescriptor getImplicitReceiver() {
+                return new ExplicitReceiver(thisType);
             }
         };
         assertType(scope, expression, expectedType);
@@ -527,7 +529,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
     }
 
     private WritableScopeImpl addImports(JetScope scope) {
-        WritableScopeImpl writableScope = new WritableScopeImpl(scope, scope.getContainingDeclaration(), DiagnosticHolder.DO_NOTHING);
+        WritableScopeImpl writableScope = new WritableScopeImpl(scope, scope.getContainingDeclaration(), RedeclarationHandler.DO_NOTHING);
         writableScope.importScope(library.getLibraryScope());
         JavaSemanticServices javaSemanticServices = new JavaSemanticServices(getProject(), semanticServices, JetTestUtils.DUMMY_TRACE);
         writableScope.importScope(new JavaPackageScope("", null, javaSemanticServices));
@@ -637,7 +639,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
 
             trace.record(BindingContext.CLASS, classElement, classDescriptor);
 
-            final WritableScope parameterScope = new WritableScopeImpl(scope, classDescriptor, trace);
+            final WritableScope parameterScope = new WritableScopeImpl(scope, classDescriptor, new TraceBasedRedeclarationHandler(trace));
 
             // This call has side-effects on the parameterScope (fills it in)
             List<TypeParameterDescriptor> typeParameters
@@ -656,7 +658,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
     //        }
             boolean open = classElement.hasModifier(JetTokens.OPEN_KEYWORD);
 
-            final WritableScope memberDeclarations = new WritableScopeImpl(JetScope.EMPTY, classDescriptor, trace);
+            final WritableScope memberDeclarations = new WritableScopeImpl(JetScope.EMPTY, classDescriptor, new TraceBasedRedeclarationHandler(trace));
 
             List<JetDeclaration> declarations = classElement.getDeclarations();
             for (JetDeclaration declaration : declarations) {

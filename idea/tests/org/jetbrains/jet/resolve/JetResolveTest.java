@@ -143,42 +143,6 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
         doTest(path, true, false);
     }
 
-//    public void testBasic() throws Exception {
-//        doTest("/resolve/Basic.jet", true, true);
-//    }
-//
-//    public void testResolveToJava() throws Exception {
-//        doTest("/resolve/ResolveToJava.jet", true, true);
-//    }
-//
-//    public void testResolveOfInfixExpressions() throws Exception {
-//        doTest("/resolve/ResolveOfInfixExpressions.jet", true, true);
-//    }
-//
-//    public void testProjections() throws Exception {
-//        doTest("/resolve/Projections.jet", true, true);
-//    }
-//
-//    public void testPrimaryConstructors() throws Exception {
-//        doTest("/resolve/PrimaryConstructors.jet", true, true);
-//    }
-//
-//    public void testClassifiers() throws Exception {
-//        doTest("/resolve/Classifiers.jet", true, true);
-//    }
-//
-//    public void testConstructorsAndInitializers() throws Exception {
-//        doTest("/resolve/ConstructorsAndInitializers.jet", true, true);
-//    }
-//
-//    public void testNamespaces() throws Exception {
-//        doTest("/resolve/Namespaces.jet", true, true);
-//    }
-//
-//    public void testTryCatch() throws Exception {
-//        doTest("/resolve/TryCatch.jet", true, true);
-//    }
-
     public static Test suite() {
         return JetTestCaseBase.suiteForDirectory(getHomeDirectory() + "/idea/testData/", "/resolve/", true, new JetTestCaseBase.NamedTestFactory() {
             @NotNull

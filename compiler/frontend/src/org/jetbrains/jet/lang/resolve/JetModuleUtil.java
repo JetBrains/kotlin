@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.jet.lang.psi.JetElement;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.NamespaceType;
 
 /**

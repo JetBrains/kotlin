@@ -5,11 +5,12 @@ import com.google.common.collect.Sets;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.JetScope;
-import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -64,6 +65,7 @@ public class JavaClassMembersScope implements JetScope {
         return classifierDescriptor;
     }
 
+    @NotNull
     @Override
     public Collection<DeclarationDescriptor> getAllDescriptors() {
         if (allDescriptors == null) {
@@ -123,7 +125,7 @@ public class JavaClassMembersScope implements JetScope {
             return null;
         }
 
-        return semanticServices.getDescriptorResolver().resolveFieldToVariableDescriptor((ClassDescriptor) containingDeclaration, field);
+        return semanticServices.getDescriptorResolver().resolveFieldToVariableDescriptor(containingDeclaration, field);
     }
 
     @NotNull
@@ -149,7 +151,12 @@ public class JavaClassMembersScope implements JetScope {
 
     @NotNull
     @Override
-    public JetType getThisType() {
-        return null;
+    public ReceiverDescriptor getImplicitReceiver() {
+        throw new UnsupportedOperationException(); // Should never occur, we don't sit in a Java class...
+    }
+
+    @Override
+    public void getImplicitReceiversHierarchy(@NotNull List<ReceiverDescriptor> result) {
+        throw new UnsupportedOperationException(); // Should never occur, we don't sit in a Java class...
     }
 }

@@ -3,8 +3,8 @@ package org.jetbrains.jet.lang.descriptors;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.resolve.JetScope;
-import org.jetbrains.jet.lang.resolve.SubstitutingScope;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.SubstitutingScope;
 import org.jetbrains.jet.lang.types.*;
 
 import java.util.Collection;

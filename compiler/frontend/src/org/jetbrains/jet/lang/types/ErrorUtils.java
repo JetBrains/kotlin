@@ -3,7 +3,8 @@ package org.jetbrains.jet.lang.types;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.resolve.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
 import java.util.*;
 
@@ -32,8 +33,12 @@ public class ErrorUtils {
 
         @NotNull
         @Override
-        public JetType getThisType() {
-            return createErrorType("<ERROR TYPE>");
+        public ReceiverDescriptor getImplicitReceiver() {
+            return ReceiverDescriptor.NO_RECEIVER;
+        }
+
+        @Override
+        public void getImplicitReceiversHierarchy(@NotNull List<ReceiverDescriptor> result) {
         }
 
         @NotNull
@@ -64,6 +69,7 @@ public class ErrorUtils {
             return ERROR_CLASS; // TODO : review
         }
 
+        @NotNull
         @Override
         public Collection<DeclarationDescriptor> getAllDescriptors() {
             return Collections.emptyList();

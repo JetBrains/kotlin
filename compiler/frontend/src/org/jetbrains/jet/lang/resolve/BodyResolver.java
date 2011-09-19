@@ -10,6 +10,11 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionCallableReceiver;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
@@ -500,12 +505,12 @@ public class BodyResolver {
 
     @NotNull
     private JetScope getInnerScopeForConstructor(@NotNull ConstructorDescriptor descriptor, @NotNull JetScope declaringScope, boolean primary) {
-        WritableScope constructorScope = new WritableScopeImpl(declaringScope, declaringScope.getContainingDeclaration(), context.getTrace()).setDebugName("Inner scope for constructor");
+        WritableScope constructorScope = new WritableScopeImpl(declaringScope, declaringScope.getContainingDeclaration(), new TraceBasedRedeclarationHandler(context.getTrace())).setDebugName("Inner scope for constructor");
         for (PropertyDescriptor propertyDescriptor : ((MutableClassDescriptor) descriptor.getContainingDeclaration()).getProperties()) {
             constructorScope.addPropertyDescriptorByFieldName("$" + propertyDescriptor.getName(), propertyDescriptor);
         }
 
-        constructorScope.setThisType(descriptor.getContainingDeclaration().getDefaultType());
+//        constructorScope.setImplicitReceiver(new ClassReceiver(descriptor.getContainingDeclaration()));
 
         for (ValueParameterDescriptor valueParameterDescriptor : descriptor.getValueParameters()) {
             JetParameter parameter = (JetParameter) context.getTrace().getBindingContext().get(BindingContext.DESCRIPTOR_TO_DECLARATION, valueParameterDescriptor);
@@ -567,13 +572,13 @@ public class BodyResolver {
     }
 
     private JetScope getPropertyDeclarationInnerScope(@NotNull JetScope outerScope, @NotNull PropertyDescriptor propertyDescriptor) {
-        WritableScopeImpl result = new WritableScopeImpl(outerScope, propertyDescriptor, context.getTrace()).setDebugName("Property declaration inner scope");
+        WritableScopeImpl result = new WritableScopeImpl(outerScope, propertyDescriptor, new TraceBasedRedeclarationHandler(context.getTrace())).setDebugName("Property declaration inner scope");
         for (TypeParameterDescriptor typeParameterDescriptor : propertyDescriptor.getTypeParameters()) {
             result.addTypeParameterDescriptor(typeParameterDescriptor);
         }
         JetType receiverType = propertyDescriptor.getReceiverType();
         if (receiverType != null) {
-            result.setThisType(receiverType);
+            result.setImplicitReceiver(new ExtensionCallableReceiver(propertyDescriptor));
         }
         return result;
     }
@@ -581,7 +586,7 @@ public class BodyResolver {
     private void resolvePropertyAccessors(JetProperty property, PropertyDescriptor propertyDescriptor, JetScope declaringScope) {
         BindingTraceAdapter fieldAccessTrackingTrace = createFieldTrackingTrace(propertyDescriptor);
 
-        WritableScope accessorScope = new WritableScopeImpl(getPropertyDeclarationInnerScope(declaringScope, propertyDescriptor), declaringScope.getContainingDeclaration(), context.getTrace()).setDebugName("Accessor scope");
+        WritableScope accessorScope = new WritableScopeImpl(getPropertyDeclarationInnerScope(declaringScope, propertyDescriptor), declaringScope.getContainingDeclaration(), new TraceBasedRedeclarationHandler(context.getTrace())).setDebugName("Accessor scope");
         accessorScope.addPropertyDescriptorByFieldName("$" + propertyDescriptor.getName(), propertyDescriptor);
 
         JetPropertyAccessor getter = property.getGetter();

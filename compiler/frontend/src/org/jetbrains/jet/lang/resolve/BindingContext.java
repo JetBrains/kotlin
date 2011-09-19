@@ -7,6 +7,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.util.slicedmap.*;
 
@@ -32,7 +33,8 @@ public interface BindingContext {
     WritableSlice<JetExpression, JetScope> RESOLUTION_SCOPE = Slices.createSimpleSlice("RESOLUTION_SCOPE");
 
     WritableSlice<JetExpression, Boolean> VARIABLE_REASSIGNMENT = Slices.createSimpleSetSlice("VARIABLE_REASSIGNMENT");
-    WritableSlice<JetExpression, DeclarationDescriptor> VARIABLE_ASSIGNMENT = Slices.createSimpleSlice("VARIABLE_ASSIGNMENT");    
+    WritableSlice<ValueParameterDescriptor, Boolean> AUTO_CREATED_IT = Slices.createSimpleSetSlice("AUTO_CREATED_IT");
+    WritableSlice<JetExpression, DeclarationDescriptor> VARIABLE_ASSIGNMENT = Slices.createSimpleSlice("VARIABLE_ASSIGNMENT");
     WritableSlice<JetExpression, Boolean> PROCESSED = Slices.createSimpleSetSlice("PROCESSED");
     WritableSlice<JetElement, Boolean> STATEMENT = Slices.createRemovableSetSlice("STATEMENT");
 

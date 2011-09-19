@@ -11,6 +11,9 @@ import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
+import org.jetbrains.jet.lang.resolve.scopes.WriteThroughScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -71,13 +74,13 @@ public class TypeHierarchyResolver {
                                 Collections.<AnnotationDescriptor>emptyList(), // TODO: annotations
                                 name
                         );
-                        namespaceDescriptor.initialize(new WritableScopeImpl(JetScope.EMPTY, namespaceDescriptor, context.getTrace()).setDebugName("Namespace member scope"));
+                        namespaceDescriptor.initialize(new WritableScopeImpl(JetScope.EMPTY, namespaceDescriptor, new TraceBasedRedeclarationHandler(context.getTrace())).setDebugName("Namespace member scope"));
                         owner.addNamespace(namespaceDescriptor);
                         context.getTrace().record(BindingContext.NAMESPACE, namespace, namespaceDescriptor);
                     }
                     context.getNamespaceDescriptors().put(namespace, namespaceDescriptor);
 
-                    WriteThroughScope namespaceScope = new WriteThroughScope(outerScope, namespaceDescriptor.getMemberScope(), context.getTrace());
+                    WriteThroughScope namespaceScope = new WriteThroughScope(outerScope, namespaceDescriptor.getMemberScope(), new TraceBasedRedeclarationHandler(context.getTrace()));
                     context.getNamespaceScopes().put(namespace, namespaceScope);
 
                     processImports(namespace, namespaceScope, outerScope);
