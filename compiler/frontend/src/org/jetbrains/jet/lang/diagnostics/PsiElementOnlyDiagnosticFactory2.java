@@ -5,7 +5,7 @@ import com.intellij.psi.PsiElement;
 /**
  * @author svtk
  */
-public class PsiElementOnlyDiagnosticFactory2<T extends PsiElement, A, B> extends DiagnosticFactoryWithPsiElement2<T, A, B> implements PsiElementOnlyDiagnosticFactory {
+public class PsiElementOnlyDiagnosticFactory2<T extends PsiElement, A, B> extends DiagnosticFactoryWithPsiElement2<T, A, B> implements PsiElementOnlyDiagnosticFactory<T> {
     public static <T extends PsiElement, A, B> PsiElementOnlyDiagnosticFactory2<T, A, B> create(Severity severity, String messageStub) {
         return new PsiElementOnlyDiagnosticFactory2<T, A, B>(severity, messageStub);
     }

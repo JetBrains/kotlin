@@ -1,10 +1,12 @@
 package org.jetbrains.jet.plugin.quickfix;
 
 import com.google.common.collect.Maps;
-import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.diagnostics.PsiElementOnlyDiagnosticFactory;
+import org.jetbrains.jet.lang.psi.JetModifierListOwner;
+import org.jetbrains.jet.lexer.JetToken;
+import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Map;
 
@@ -26,9 +28,12 @@ public class QuickFixes {
 
 
     static {
-        add(Errors.REDUNDANT_ABSTRACT, RemoveAbstractModifierFix.factory);
-        add(Errors.ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS, RemoveAbstractModifierFix.factory);
-        add(Errors.NON_ABSTRACT_FUNCTION_WITH_NO_BODY, AddAbstractModifierFix.factory);
+        IntentionActionFactory<JetModifierListOwner> removeAbstractModifierFactory = RemoveModifierFix.createFactory(JetTokens.ABSTRACT_KEYWORD);
+        IntentionActionFactory<JetModifierListOwner> addAbstractModifierFactory = AddModifierFix.createFactory(JetTokens.ABSTRACT_KEYWORD, new JetToken[]{JetTokens.OPEN_KEYWORD});
+
+        add(Errors.REDUNDANT_ABSTRACT, removeAbstractModifierFactory);
+        add(Errors.ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS, removeAbstractModifierFactory);
+        add(Errors.NON_ABSTRACT_FUNCTION_WITH_NO_BODY, addAbstractModifierFactory);
     }
 }
 
