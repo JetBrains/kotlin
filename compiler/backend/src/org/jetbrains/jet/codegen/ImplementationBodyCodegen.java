@@ -10,12 +10,8 @@ import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
-import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
+import org.objectweb.asm.*;
 import org.objectweb.asm.commons.InstructionAdapter;
 import org.objectweb.asm.commons.Method;
 
@@ -101,6 +97,12 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 interfaces.toArray(new String[interfaces.size()])
         );
         v.visitSource(myClass.getContainingFile().getName(), null);
+
+        if(myClass instanceof JetClass) {
+            AnnotationVisitor annotationVisitor = v.visitAnnotation("Ljet/typeinfo/JetSignature;", true);
+            annotationVisitor.visit("value", SignatureUtil.classToSignature((JetClass)myClass, state.getBindingContext(), state.getTypeMapper()));
+            annotationVisitor.visitEnd();
+        }
     }
 
     private String jvmName() {
