@@ -1,0 +1,22 @@
+// KT-306 Ambiguity when different this's have same-looking functions
+
+fun test() {
+    {Foo.() =>
+        bar()
+        {Barr.() =>
+            this.bar()
+            bar()
+        }
+    }
+    {Barr.() =>
+        bar()
+    }
+}
+
+class Foo {
+    fun bar() {}
+}
+
+class Barr {
+    fun bar() {}
+}
