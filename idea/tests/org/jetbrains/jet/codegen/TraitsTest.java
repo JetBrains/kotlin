@@ -17,7 +17,7 @@ public class TraitsTest  extends CodegenTestCase {
     }
 
     public void testMultiple () throws Exception {
-//        blackBoxFile("traits/multiple.jet");
-//        System.out.println(generateToText());
+        blackBoxFile("traits/multiple.jet");
+        System.out.println(generateToText());
     }
 }

@@ -5,6 +5,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.objectweb.asm.ClassVisitor;
@@ -42,7 +43,7 @@ public class TraitImplBodyCodegen extends ClassBodyCodegen {
                 }
             }
         }
-        return null;
+        return JetStandardClasses.getAnyType();
     }
 
     @Override
@@ -59,10 +60,5 @@ public class TraitImplBodyCodegen extends ClassBodyCodegen {
 
     private String jvmName() {
         return state.getTypeMapper().jvmName(descriptor, OwnerKind.TRAIT_IMPL);
-    }
-
-    @Override
-    protected void genNamedFunction(JetNamedFunction declaration, FunctionCodegen functionCodegen) {
-        super.genNamedFunction(declaration, functionCodegen);    //To change body of overridden methods use File | Settings | File Templates.
     }
 }
