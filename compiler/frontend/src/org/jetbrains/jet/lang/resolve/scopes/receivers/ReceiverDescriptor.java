@@ -21,6 +21,11 @@ public interface ReceiverDescriptor {
         }
 
         @Override
+        public <R, D> R accept(@NotNull ReceiverDescriptorVisitor<R, D> visitor, D data) {
+            return visitor.visitNoReceiver(this, data);
+        }
+
+        @Override
         public String toString() {
             return "NO_RECEIVER";
         }
@@ -30,4 +35,6 @@ public interface ReceiverDescriptor {
     JetType getType();
 
     boolean exists();
+
+    <R, D> R accept(@NotNull ReceiverDescriptorVisitor<R, D> visitor, D data);
 }

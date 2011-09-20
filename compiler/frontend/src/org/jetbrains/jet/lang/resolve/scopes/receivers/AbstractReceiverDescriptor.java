@@ -6,7 +6,7 @@ import org.jetbrains.jet.lang.types.JetType;
 /**
  * @author abreslav
  */
-public class AbstractReceiverDescriptor implements ReceiverDescriptor {
+public abstract class AbstractReceiverDescriptor implements ReceiverDescriptor {
     protected final JetType receiverType;
 
     public AbstractReceiverDescriptor(@NotNull JetType receiverType) {

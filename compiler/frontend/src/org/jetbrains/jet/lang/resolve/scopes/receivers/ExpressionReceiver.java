@@ -20,4 +20,9 @@ public class ExpressionReceiver extends AbstractReceiverDescriptor implements Re
     public JetExpression getExpression() {
         return expression;
     }
+
+    @Override
+    public <R, D> R accept(@NotNull ReceiverDescriptorVisitor<R, D> visitor, D data) {
+        return visitor.visitExpressionReceiver(this, data);
+    }
 }
