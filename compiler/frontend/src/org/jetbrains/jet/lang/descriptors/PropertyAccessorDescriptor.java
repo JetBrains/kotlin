@@ -15,6 +15,7 @@ public abstract class PropertyAccessorDescriptor extends DeclarationDescriptorIm
     private final boolean hasBody;
     private final boolean isDefault;
     private final Modality modality;
+    private final PropertyDescriptor correspondingProperty;
 
     protected PropertyAccessorDescriptor(
             @NotNull Modality modality,
@@ -24,6 +25,7 @@ public abstract class PropertyAccessorDescriptor extends DeclarationDescriptorIm
             boolean hasBody,
             boolean isDefault) {
         super(correspondingProperty.getContainingDeclaration(), annotations, name);
+        this.correspondingProperty = correspondingProperty;
         this.modality = modality;
         this.hasBody = hasBody;
         this.isDefault = isDefault;
@@ -59,5 +61,10 @@ public abstract class PropertyAccessorDescriptor extends DeclarationDescriptorIm
     @Override
     public Modality getModality() {
         return modality;
+    }
+
+    @NotNull
+    public PropertyDescriptor getCorrespondingProperty() {
+        return correspondingProperty;
     }
 }

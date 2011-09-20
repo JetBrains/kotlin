@@ -8,9 +8,9 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetTypeProjection;
 import org.jetbrains.jet.lang.psi.ValueArgument;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -19,7 +19,7 @@ import java.util.List;
  */
 /*package*/ class ResolutionTask<Descriptor extends CallableDescriptor> {
     private final Collection<Descriptor> candidates;
-    private final JetType receiverType;
+    private final ReceiverDescriptor receiver;
     private final List<JetTypeProjection> typeArguments;
     private final List<? extends ValueArgument> valueArguments;
     private final List<JetExpression> functionLiteralArguments;
@@ -27,12 +27,12 @@ import java.util.List;
 
     public ResolutionTask(
             @NotNull Collection<Descriptor> candidates,
-            @Nullable JetType receiverType,
+            @NotNull ReceiverDescriptor receiver,
             @NotNull List<JetTypeProjection> typeArguments,
             @NotNull List<? extends ValueArgument> valueArguments,
             @NotNull List<JetExpression> functionLiteralArguments) {
         this.candidates = candidates;
-        this.receiverType = receiverType;
+        this.receiver = receiver;
         this.typeArguments = typeArguments;
         this.valueArguments = valueArguments;
         this.functionLiteralArguments = functionLiteralArguments;
@@ -40,10 +40,10 @@ import java.util.List;
 
     public ResolutionTask(
             @NotNull Collection<Descriptor> candidates,
-            @Nullable JetType receiverType,
+            @NotNull ReceiverDescriptor receiver,
             @NotNull Call call
     ) {
-        this(candidates, receiverType, call.getTypeArguments(), call.getValueArguments(), call.getFunctionLiteralArguments());
+        this(candidates, receiver, call.getTypeArguments(), call.getValueArguments(), call.getFunctionLiteralArguments());
     }
 
     @NotNull
@@ -51,9 +51,9 @@ import java.util.List;
         return candidates;
     }
 
-    @Nullable
-    public JetType getReceiverType() {
-        return receiverType;
+    @NotNull
+    public ReceiverDescriptor getReceiver() {
+        return receiver;
     }
 
     @NotNull

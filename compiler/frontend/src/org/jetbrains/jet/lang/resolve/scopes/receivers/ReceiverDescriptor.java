@@ -1,7 +1,6 @@
 package org.jetbrains.jet.lang.resolve.scopes.receivers;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 
 /**
@@ -12,8 +11,13 @@ public interface ReceiverDescriptor {
     ReceiverDescriptor NO_RECEIVER = new ReceiverDescriptor() {
         @NotNull
         @Override
-        public JetType getReceiverType() {
-            return JetStandardClasses.getNothingType();
+        public JetType getType() {
+            throw new UnsupportedOperationException("NO_RECEIVER.getType()");
+        }
+
+        @Override
+        public boolean exists() {
+            return false;
         }
 
         @Override
@@ -23,5 +27,7 @@ public interface ReceiverDescriptor {
     };
 
     @NotNull
-    JetType getReceiverType();
+    JetType getType();
+
+    boolean exists();
 }

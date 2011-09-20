@@ -11,6 +11,7 @@ import org.jetbrains.jet.lang.resolve.scopes.SubstitutingScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
@@ -38,6 +39,7 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     private JetType defaultType;
     private final ClassKind kind;
     private JetType superclassType;
+    private ClassReceiver implicitReceiver;
 
 //    public MutableClassDescriptor(@NotNull BindingTrace trace, @NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope outerScope) {
 //        this(trace, containingDeclaration, outerScope, ClassKind.CLASS);
@@ -292,5 +294,14 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
 
     public Collection<JetType> getSupertypes() {
         return supertypes;
+    }
+
+    @NotNull
+    @Override
+    public ReceiverDescriptor getImplicitReceiver() {
+        if (implicitReceiver == null) {
+            implicitReceiver = new ClassReceiver(this);
+        }
+        return implicitReceiver;
     }
 }

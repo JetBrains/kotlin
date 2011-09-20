@@ -7,7 +7,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ImplicitReceiverDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 import java.util.*;
@@ -36,7 +35,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     private Map<String, List<DeclarationDescriptor>> labelsToDescriptors;
 
     @Nullable
-    private ImplicitReceiverDescriptor implicitReceiver;
+    private ReceiverDescriptor implicitReceiver;
 
     public WritableScopeImpl(@NotNull JetScope scope, @NotNull DeclarationDescriptor owner, @NotNull RedeclarationHandler redeclarationHandler) {
         super(scope, redeclarationHandler);
@@ -275,7 +274,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     }
 
     @Override
-    public void setImplicitReceiver(@NotNull ImplicitReceiverDescriptor implicitReceiver) {
+    public void setImplicitReceiver(@NotNull ReceiverDescriptor implicitReceiver) {
         if (this.implicitReceiver != null) {
             throw new UnsupportedOperationException("Receiver redeclared");
         }
@@ -284,7 +283,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
 
     @Override
     public void getImplicitReceiversHierarchy(@NotNull List<ReceiverDescriptor> result) {
-        if (implicitReceiver != null && implicitReceiver != ReceiverDescriptor.NO_RECEIVER) {
+        if (implicitReceiver != null && implicitReceiver.exists()) {
             result.add(implicitReceiver);
         }
         super.getImplicitReceiversHierarchy(result);

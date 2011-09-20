@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.SubstitutingScope;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 
 import java.util.Collection;
@@ -91,6 +92,12 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
     @NotNull
     @Override
     public JetType getDefaultType() {
+        throw new UnsupportedOperationException(); // TODO
+    }
+
+    @NotNull
+    @Override
+    public ReceiverDescriptor getImplicitReceiver() {
         throw new UnsupportedOperationException(); // TODO
     }
 

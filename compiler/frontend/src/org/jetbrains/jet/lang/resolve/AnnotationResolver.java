@@ -11,6 +11,7 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetModifierList;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeInferrer;
@@ -46,7 +47,7 @@ public class AnnotationResolver {
     }
 
     public void resolveAnnotationStub(@NotNull JetScope scope, @NotNull JetAnnotationEntry entryElement, @NotNull AnnotationDescriptor descriptor) {
-        JetType jetType = typeInferrer.getCallResolver().resolveCall(trace, scope, null, entryElement, NO_EXPECTED_TYPE);
+        JetType jetType = typeInferrer.getCallResolver().resolveCall(trace, scope, ReceiverDescriptor.NO_RECEIVER, entryElement, NO_EXPECTED_TYPE);
         descriptor.setAnnotationType(jetType == null ? ErrorUtils.createErrorType("Unresolved annotation type") : jetType);
     }
 

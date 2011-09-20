@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
@@ -514,11 +515,11 @@ public class JetTypeMapper {
     }
 
     public Method mapSignature(String name, FunctionDescriptor f) {
-        final JetType receiverType = f.getReceiverType();
+        final ReceiverDescriptor receiver = f.getReceiver();
         final List<ValueParameterDescriptor> parameters = f.getValueParameters();
         List<Type> parameterTypes = new ArrayList<Type>();
-        if (receiverType != null) {
-            parameterTypes.add(mapType(receiverType));
+        if (receiver.exists()) {
+            parameterTypes.add(mapType(receiver.getType()));
         }
         for (ValueParameterDescriptor parameter : parameters) {
             parameterTypes.add(mapType(parameter.getOutType()));

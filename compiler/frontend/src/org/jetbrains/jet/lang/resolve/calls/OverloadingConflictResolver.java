@@ -9,6 +9,7 @@ import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.JetType;
 
@@ -59,10 +60,10 @@ import java.util.Set;
         if (overrides(f, g)) return true;
         if (overrides(g, f)) return false;
 
-        JetType receiverTypeOfF = f.getReceiverType();
-        JetType receiverTypeOfG = g.getReceiverType();
-        if (receiverTypeOfF != null && receiverTypeOfG != null) {
-            if (!typeMoreSpecific(receiverTypeOfF, receiverTypeOfG)) return false;
+        ReceiverDescriptor receiverOfF = f.getReceiver();
+        ReceiverDescriptor receiverOfG = g.getReceiver();
+        if (f.getReceiver().exists() && g.getReceiver().exists()) {
+            if (!typeMoreSpecific(receiverOfF.getType(), receiverOfG.getType())) return false;
         }
 
         List<ValueParameterDescriptor> fParams = f.getValueParameters();

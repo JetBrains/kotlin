@@ -13,8 +13,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionCallableReceiver;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
@@ -276,7 +275,7 @@ public class BodyResolver {
                 JetTypeReference typeReference = call.getTypeReference();
                 if (typeReference != null) {
                     if (descriptor.getUnsubstitutedPrimaryConstructor() != null) {
-                        JetType supertype = typeInferrer.getCallResolver().resolveCall(context.getTrace(), scopeForConstructor, null, call, NO_EXPECTED_TYPE);
+                        JetType supertype = typeInferrer.getCallResolver().resolveCall(context.getTrace(), scopeForConstructor, ReceiverDescriptor.NO_RECEIVER, call, NO_EXPECTED_TYPE);
                         if (supertype != null) {
                             recordSupertype(typeReference, supertype);
                             ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(supertype);
@@ -461,7 +460,7 @@ public class BodyResolver {
 
                         typeInferrerForInitializers.getCallResolver().resolveCall(context.getTrace(),
                                 functionInnerScope,
-                                null, call, NO_EXPECTED_TYPE);
+                                ReceiverDescriptor.NO_RECEIVER, call, NO_EXPECTED_TYPE);
 //                                call.getThisReference(),
 //                                classDescriptor,
 //                                classDescriptor.getDefaultType(),
@@ -576,9 +575,9 @@ public class BodyResolver {
         for (TypeParameterDescriptor typeParameterDescriptor : propertyDescriptor.getTypeParameters()) {
             result.addTypeParameterDescriptor(typeParameterDescriptor);
         }
-        JetType receiverType = propertyDescriptor.getReceiverType();
-        if (receiverType != null) {
-            result.setImplicitReceiver(new ExtensionCallableReceiver(propertyDescriptor));
+        ReceiverDescriptor receiver = propertyDescriptor.getReceiver();
+        if (receiver.exists()) {
+            result.setImplicitReceiver(receiver);
         }
         return result;
     }

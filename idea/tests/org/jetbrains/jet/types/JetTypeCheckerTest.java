@@ -18,7 +18,7 @@ import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.JavaPackageScope;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 import org.jetbrains.jet.lang.resolve.scopes.*;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ExplicitReceiver;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -504,13 +504,13 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
         assertTrue("Error type expected but " + type + " returned", ErrorUtils.isErrorType(type));
     }
 
-    private void assertType(String contextType, String expression, String expectedType) {
+    private void assertType(String contextType, final String expression, String expectedType) {
         final JetType thisType = makeType(contextType);
         JetScope scope = new JetScopeAdapter(classDefinitions.BASIC_SCOPE) {
             @NotNull
             @Override
             public ReceiverDescriptor getImplicitReceiver() {
-                return new ExplicitReceiver(thisType);
+                return new ExpressionReceiver(JetPsiFactory.createExpression(getProject(), expression), thisType);
             }
         };
         assertType(scope, expression, expectedType);

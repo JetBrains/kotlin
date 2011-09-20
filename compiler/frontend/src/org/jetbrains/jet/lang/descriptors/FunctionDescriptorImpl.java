@@ -5,6 +5,8 @@ import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.DescriptorSubstitutor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
@@ -12,6 +14,8 @@ import org.jetbrains.jet.lang.types.Variance;
 
 import java.util.List;
 import java.util.Set;
+
+import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor.NO_RECEIVER;
 
 /**
  * @author abreslav
@@ -21,7 +25,7 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
     private List<TypeParameterDescriptor> typeParameters;
     private List<ValueParameterDescriptor> unsubstitutedValueParameters;
     private JetType unsubstitutedReturnType;
-    private JetType receiverType;
+    private ReceiverDescriptor receiver;
 
     private Modality modality;
     private final Set<FunctionDescriptor> overriddenFunctions = Sets.newLinkedHashSet();
@@ -49,11 +53,11 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
             @Nullable JetType unsubstitutedReturnType,
             @Nullable Modality modality) {
-        this.receiverType = receiverType;
         this.typeParameters = typeParameters;
         this.unsubstitutedValueParameters = unsubstitutedValueParameters;
         this.unsubstitutedReturnType = unsubstitutedReturnType;
         this.modality = modality;
+        this.receiver = receiverType == null ? NO_RECEIVER : new ExtensionReceiver(this, receiverType);
         return this;
     }
 
@@ -61,9 +65,10 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
         this.unsubstitutedReturnType = unsubstitutedReturnType;
     }
 
+    @NotNull
     @Override
-    public JetType getReceiverType() {
-        return receiverType;
+    public ReceiverDescriptor getReceiver() {
+        return receiver;
     }
 
     @NotNull
@@ -116,10 +121,9 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
         List<TypeParameterDescriptor> substitutedTypeParameters = Lists.newArrayList();
         TypeSubstitutor substitutor = DescriptorSubstitutor.substituteTypeParameters(getTypeParameters(), originalSubstitutor, substitutedDescriptor, substitutedTypeParameters);
 
-        JetType receiverType = getReceiverType();
         JetType substitutedReceiverType = null;
-        if (receiverType != null) {
-            substitutedReceiverType = substitutor.substitute(receiverType, Variance.IN_VARIANCE);
+        if (receiver != NO_RECEIVER) {
+            substitutedReceiverType = substitutor.substitute(getReceiver().getType(), Variance.IN_VARIANCE);
             if (substitutedReceiverType == null) {
                 return null;
             }

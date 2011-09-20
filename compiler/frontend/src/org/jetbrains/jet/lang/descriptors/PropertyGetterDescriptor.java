@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Collections;
@@ -32,9 +33,10 @@ public class PropertyGetterDescriptor extends PropertyAccessorDescriptor {
         overriddenGetters.add(overriddenGetter);
     }
 
+    @NotNull
     @Override
-    public JetType getReceiverType() {
-        return null; // TODO
+    public ReceiverDescriptor getReceiver() {
+        return getCorrespondingProperty().getReceiver();
     }
 
     @NotNull
