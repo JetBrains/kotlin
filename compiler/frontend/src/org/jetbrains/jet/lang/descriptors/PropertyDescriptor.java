@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -11,6 +12,7 @@ import org.jetbrains.jet.lang.types.TypeSubstitutor;
 import org.jetbrains.jet.lang.types.Variance;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author abreslav
@@ -20,6 +22,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Member
     private final Modality modality;
     private final boolean isVar;
     private final ReceiverDescriptor receiver;
+    private final Set<PropertyDescriptor> overriddenProperties = Sets.newLinkedHashSet();
     private final List<TypeParameterDescriptor> typeParemeters = Lists.newArrayListWithCapacity(0);
     private final PropertyDescriptor original;
     private PropertyGetterDescriptor getter;
@@ -144,5 +147,15 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Member
     @Override
     public PropertyDescriptor getOriginal() {
         return original;
+    }
+
+    public void addOverriddenDescriptor(PropertyDescriptor overridden) {
+        overriddenProperties.add(overridden);
+    }
+
+    @NotNull
+    @Override
+    public Set<? extends CallableDescriptor> getOverriddenDescriptors() {
+        return overriddenProperties;
     }
 }

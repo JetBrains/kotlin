@@ -94,12 +94,20 @@ public class BodyResolver {
     }
 
     private void bindOverridesInAClass(MutableClassDescriptor classDescriptor) {
-
         for (FunctionDescriptor declaredFunction : classDescriptor.getFunctions()) {
             for (JetType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
                 FunctionDescriptor overridden = findFunctionOverridableBy(declaredFunction, supertype);
                 if (overridden != null) {
                     ((FunctionDescriptorImpl) declaredFunction).addOverriddenFunction(overridden);
+                }
+            }
+        }
+
+        for (PropertyDescriptor propertyDescriptor : classDescriptor.getProperties()) {
+            for (JetType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
+                PropertyDescriptor overridden = findPropertyOverridableBy(propertyDescriptor, supertype);
+                if (overridden != null) {
+                    propertyDescriptor.addOverriddenDescriptor(overridden);
                 }
             }
         }
@@ -116,6 +124,32 @@ public class BodyResolver {
         return null;
     }
     
+    @Nullable
+    private PropertyDescriptor findPropertyOverridableBy(@NotNull PropertyDescriptor declaredProperty, @NotNull JetType supertype) {
+        PropertyDescriptor property = (PropertyDescriptor) supertype.getMemberScope().getVariable(declaredProperty.getName());
+        if (property == null) {
+            return null;
+        }
+        if (isOverridableBy(property, declaredProperty)) {
+            return property;
+        }
+        return null;
+    }
+
+    private boolean isOverridableBy(@NotNull PropertyDescriptor property, @NotNull PropertyDescriptor overrideCandidate) {
+        boolean var = property.isVar();
+        if (var && !overrideCandidate.isVar()) return false;
+        JetType propertyType = property.getReturnType();
+        JetType overrideType = overrideCandidate.getReturnType();
+        JetTypeChecker typeChecker = context.getSemanticServices().getTypeChecker();
+        if (var) {
+            return typeChecker.equalTypes(propertyType, overrideType);
+        }
+        else {
+            return typeChecker.isSubtypeOf(overrideType, propertyType);
+        }
+    }
+
     private void checkOverrides() {
         for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
             checkOverridesInAClass(entry.getValue(), entry.getKey());
