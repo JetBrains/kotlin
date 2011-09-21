@@ -43,8 +43,8 @@ public class JetPsiFactory {
         return (JetFile) PsiFileFactory.getInstance(project).createFileFromText("dummy.jet", JetFileType.INSTANCE, text, LocalTimeCounter.currentTime(), true);
     }
 
-    public static JetProperty createProperty(Project project, String name, String type) {
-        String text = "val " + name + (type != null ? ":" + type : "");
+    public static JetProperty createProperty(Project project, String name, String type, boolean isVar) {
+        String text = (isVar ? "var " : "val ") + name + (type != null ? ":" + type : "");
         return createProperty(project, text);
     }
 
@@ -63,7 +63,7 @@ public class JetPsiFactory {
     }
 
     public static PsiElement createNameIdentifier(Project project, String name) {
-        return createProperty(project, name, null).getNameIdentifier();
+        return createProperty(project, name, null, false).getNameIdentifier();
     }
 
     public static JetNamedFunction createFunction(Project project, String funDecl) {
@@ -74,5 +74,10 @@ public class JetPsiFactory {
         String text = modifier.getValue() + " val x";
         JetProperty property = createProperty(project, text);
         return property.getModifierList();
+    }
+
+    public static JetExpression createEmptyBody(Project project) {
+        JetNamedFunction function = createFunction(project, "fun foo() {}");
+        return function.getBodyExpression();
     }
 }

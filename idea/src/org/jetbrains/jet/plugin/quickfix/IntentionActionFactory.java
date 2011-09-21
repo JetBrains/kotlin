@@ -8,6 +8,6 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticWithPsiElement;
 */
 public interface IntentionActionFactory<T extends PsiElement> {
 
-    IntentionActionForPsiElement createAction(DiagnosticWithPsiElement diagnostic);
+    IntentionActionForPsiElement<T> createAction(DiagnosticWithPsiElement diagnostic);
 
 }

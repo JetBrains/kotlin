@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * @author max
  */
-public class JetClass extends JetTypeParameterListOwner implements JetClassOrObject {
+public class JetClass extends JetTypeParameterListOwner implements JetClassOrObject, JetModifierListOwner {
     public JetClass(@NotNull ASTNode node) {
         super(node);
     }

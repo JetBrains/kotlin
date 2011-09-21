@@ -7,7 +7,9 @@ import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithPsiElement;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetModifierList;
+import org.jetbrains.jet.lang.psi.JetModifierListOwner;
+import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -17,27 +19,41 @@ import org.jetbrains.jet.lexer.JetTokens;
  */
 public class AddModifierFix extends ModifierFix {
     private final JetToken[] modifiersThanCanBeReplaced;
+    private final JetToken[] conflictedModifiers;
 
-    private AddModifierFix(@NotNull JetModifierListOwner element, JetKeywordToken modifier, JetToken[] modifiersThanCanBeReplaced) {
+    private AddModifierFix(@NotNull JetModifierListOwner element, JetKeywordToken modifier, JetToken[] modifiersThanCanBeReplaced, JetToken[] conflictedModifiers) {
         super(element, modifier);
         this.modifiersThanCanBeReplaced = modifiersThanCanBeReplaced;
+        this.conflictedModifiers = conflictedModifiers;
     }
-    
+
+    private static boolean checkConflictModifiers(JetModifierListOwner element, JetToken[] conflictedModifiers) {
+        for (JetToken conflictedModifier : conflictedModifiers) {
+            if (element.hasModifier(conflictedModifier)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @NotNull
     @Override
     public String getText() {
-        return "add." + modifier.getValue() + ".modifier.fix";
+        if (modifier == JetTokens.ABSTRACT_KEYWORD) {
+            return "Make " + getElementName() + " " + modifier.getValue();
+        }
+        return "Add '" + modifier.getValue() + "' modifier";
     }
 
     @NotNull
     @Override
     public String getFamilyName() {
-        return "add." + modifier.getValue() + ".modifier.family";
+        return "Add modifier";
     }
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-        return super.isAvailable(project, editor, file) && !element.hasModifier(JetTokens.FINAL_KEYWORD);
+        return element.isValid() && !checkConflictModifiers(element, conflictedModifiers);
     }
 
     @Override
@@ -81,17 +97,17 @@ public class AddModifierFix extends ModifierFix {
         return true;
     }
 
-    public static IntentionActionFactory<JetModifierListOwner> createFactory(final JetKeywordToken modifier, final JetToken[] modifiersThatCanBeReplaced) {
+    public static IntentionActionFactory<JetModifierListOwner> createFactory(final JetKeywordToken modifier, final JetToken[] modifiersThatCanBeReplaced, final JetToken[] conflictedModifiers) {
         return new IntentionActionFactory<JetModifierListOwner>() {
             @Override
             public IntentionActionForPsiElement<JetModifierListOwner> createAction(DiagnosticWithPsiElement diagnostic) {
                 assert diagnostic.getPsiElement() instanceof JetModifierListOwner;
-                return new AddModifierFix((JetModifierListOwner) diagnostic.getPsiElement(), modifier, modifiersThatCanBeReplaced);
+                return new AddModifierFix((JetModifierListOwner) diagnostic.getPsiElement(), modifier, modifiersThatCanBeReplaced, conflictedModifiers);
             }
         };
     }
     
     public static IntentionActionFactory<JetModifierListOwner> createFactory(final JetKeywordToken modifier) {
-        return createFactory(modifier, new JetToken[] {});
+        return createFactory(modifier, new JetToken[0], new JetToken[0]);
     }
 }

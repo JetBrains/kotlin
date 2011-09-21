@@ -13,7 +13,6 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionCallableReceiver;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -188,7 +187,7 @@ public class BodyResolver {
         }
         if (hasOverrideModifier && declaredFunction.getOverriddenDescriptors().size() == 0) {
 //            context.getTrace().getErrorHandler().genericError(overrideNode, "Method " + declaredFunction.getName() + " overrides nothing");
-            context.getTrace().report(NOTHING_TO_OVERRIDE.on(overrideNode, declaredFunction));
+            context.getTrace().report(NOTHING_TO_OVERRIDE.on(function, overrideNode, declaredFunction));
         }
         PsiElement nameIdentifier = function.getNameIdentifier();
         if (!hasOverrideModifier && declaredFunction.getOverriddenDescriptors().size() > 0 && nameIdentifier != null) {
@@ -196,7 +195,7 @@ public class BodyResolver {
 //            context.getTrace().getErrorHandler().genericError(nameIdentifier.getNode(),
 //                                                 "Method '" + declaredFunction.getName() + "' overrides method '" + overriddenFunction.getName() + "' in class " +
 //                                                 overriddenFunction.getContainingDeclaration().getName() + " and needs 'override' modifier");
-            context.getTrace().report(VIRTUAL_METHOD_HIDDEN.on(nameIdentifier, declaredFunction, overriddenFunction, overriddenFunction.getContainingDeclaration()));
+            context.getTrace().report(VIRTUAL_METHOD_HIDDEN.on(function, nameIdentifier, declaredFunction, overriddenFunction, overriddenFunction.getContainingDeclaration()));
         }
     }
     
@@ -616,12 +615,14 @@ public class BodyResolver {
         if (abstractNode != null) { //has abstract modifier
             if (classDescriptor == null) {
 //                context.getTrace().getErrorHandler().genericError(abstractNode, "A property may be abstract only when defined in a class or trait");
-                context.getTrace().report(ABSTRACT_PROPERTY_NOT_IN_CLASS.on(abstractNode));
+                context.getTrace().report(ABSTRACT_PROPERTY_NOT_IN_CLASS.on(property, abstractNode));
                 return;
             }
             if (!(classDescriptor.getModality() == Modality.ABSTRACT) && classDescriptor.getKind() != ClassKind.ENUM_CLASS) {
 //                context.getTrace().getErrorHandler().genericError(abstractNode, "Abstract property " + property.getName() + " in non-abstract class " + classDescriptor.getName());
-                context.getTrace().report(ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS.on(property, abstractNode, property.getName(), classDescriptor));
+                PsiElement classElement = context.getTrace().get(BindingContext.DESCRIPTOR_TO_DECLARATION, classDescriptor);
+                assert classElement instanceof JetClass;
+                context.getTrace().report(ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS.on(property, abstractNode, property.getName(), classDescriptor, (JetClass) classElement));
                 return;
             }
             if (classDescriptor.getKind() == ClassKind.TRAIT) {
@@ -631,18 +632,22 @@ public class BodyResolver {
         }
 
         if (propertyDescriptor.getModality() == Modality.ABSTRACT) {
+            JetType returnType = propertyDescriptor.getReturnType();
+            //TODO We need ensure here that jet type is computed or pass it's computed name to quick fix instead
+            returnType.equals(new Object());
+
             JetExpression initializer = property.getInitializer();
             if (initializer != null) {
 //                context.getTrace().getErrorHandler().genericError(initializer.getNode(), "Property with initializer cannot be abstract");
-                context.getTrace().report(ABSTRACT_PROPERTY_WITH_INITIALIZER.on(initializer));
+                context.getTrace().report(ABSTRACT_PROPERTY_WITH_INITIALIZER.on(property, initializer, returnType));
             }
             if (getter != null && getter.getBodyExpression() != null) {
 //                context.getTrace().getErrorHandler().genericError(getter.getNode(), "Property with getter implementation cannot be abstract");
-                context.getTrace().report(ABSTRACT_PROPERTY_WITH_GETTER.on(getter));
+                context.getTrace().report(ABSTRACT_PROPERTY_WITH_GETTER.on(property, getter, returnType));
             }
             if (setter != null && setter.getBodyExpression() != null) {
 //                context.getTrace().getErrorHandler().genericError(setter.getNode(), "Property with setter implementation cannot be abstract");
-                context.getTrace().report(ABSTRACT_PROPERTY_WITH_SETTER.on(setter));
+                context.getTrace().report(ABSTRACT_PROPERTY_WITH_SETTER.on(property, setter, returnType));
             }
         }
     }
@@ -672,7 +677,7 @@ public class BodyResolver {
                     context.getTrace().report(MUST_BE_INITIALIZED.on(nameNode));
                 } else {
 //                    context.getTrace().getErrorHandler().genericError(nameNode, "Property must be initialized or be abstract");
-                    context.getTrace().report(MUST_BE_INITIALIZED_OR_BE_ABSTRACT.on(nameNode));
+                    context.getTrace().report(MUST_BE_INITIALIZED_OR_BE_ABSTRACT.on(property, nameNode));
                 }
             }
             return;
@@ -785,8 +790,8 @@ public class BodyResolver {
         else {
             throw new UnsupportedOperationException();
         }
-        JetModifierListOwner modifierListOwner = (JetModifierListOwner) function;
-        JetModifierList modifierList = modifierListOwner.getModifierList();
+        JetFunctionOrPropertyAccessor functionOrPropertyAccessor = (JetFunctionOrPropertyAccessor) function;
+        JetModifierList modifierList = functionOrPropertyAccessor.getModifierList();
         ASTNode abstractNode = modifierList != null ? modifierList.getModifierNode(JetTokens.ABSTRACT_KEYWORD) : null;
         boolean hasAbstractModifier = abstractNode != null;
         if (containingDescriptor instanceof ClassDescriptor) {
@@ -794,38 +799,32 @@ public class BodyResolver {
             boolean inTrait = classDescriptor.getKind() == ClassKind.TRAIT;
             boolean inEnum = classDescriptor.getKind() == ClassKind.ENUM_CLASS;
             boolean inAbstractClass = classDescriptor.getModality() == Modality.ABSTRACT;
-//            String methodName = function.getName() != null ? function.getName() + " " : "";
             if (hasAbstractModifier && !inAbstractClass && !inTrait && !inEnum) {
-//                context.getTrace().getErrorHandler().genericError(abstractNode, "Abstract method " + methodName + " in non-abstract class " + classDescriptor.getName());
-                context.getTrace().report(ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS.on(abstractNode, functionDescriptor.getName(), classDescriptor));
+                PsiElement classElement = context.getTrace().get(BindingContext.DESCRIPTOR_TO_DECLARATION, classDescriptor);
+                assert classElement instanceof JetModifierListOwner;
+                context.getTrace().report(ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS.on(functionOrPropertyAccessor, abstractNode, functionDescriptor.getName(), classDescriptor, (JetModifierListOwner) classElement));
             }
             if (hasAbstractModifier && inTrait && !isPropertyAccessor) {
-//                context.getTrace().getErrorHandler().genericWarning(abstractNode, "Abstract modifier is redundant in trait");
-                context.getTrace().report(REDUNDANT_ABSTRACT.on(modifierListOwner, abstractNode));
+                context.getTrace().report(REDUNDANT_ABSTRACT.on(functionOrPropertyAccessor, abstractNode));
             }
-            if (function.getBodyExpression() != null && hasAbstractModifier) {
-//                context.getTrace().getErrorHandler().genericError(abstractNode, "Method " + methodName + "with body cannot be abstract");
-                context.getTrace().report(ABSTRACT_FUNCTION_WITH_BODY.on(abstractNode, functionDescriptor));
+            if (function.getBodyExpression() != null && hasAbstractModifier) { //TODO
+                context.getTrace().report(ABSTRACT_FUNCTION_WITH_BODY.on(functionOrPropertyAccessor, abstractNode, functionDescriptor));
             }
             if (function.getBodyExpression() == null && !hasAbstractModifier && !inTrait && nameIdentifier != null && !isPropertyAccessor) {
-//                context.getTrace().getErrorHandler().genericError(nameIdentifier.getNode(), "Method " + function.getName() + " without body must be abstract");
-                context.getTrace().report(NON_ABSTRACT_FUNCTION_WITH_NO_BODY.on(modifierListOwner, nameIdentifier, functionDescriptor));
+                context.getTrace().report(NON_ABSTRACT_FUNCTION_WITH_NO_BODY.on(functionOrPropertyAccessor, nameIdentifier, functionDescriptor));
             }
             return;
         }
         if (hasAbstractModifier) {
             if (!isPropertyAccessor) {
-//                context.getTrace().getErrorHandler().genericError(abstractNode, "Function " + function.getName() + " is not a member and cannot be abstract");
-                context.getTrace().report(NON_MEMBER_ABSTRACT_FUNCTION.on(abstractNode, functionDescriptor));
+                context.getTrace().report(NON_MEMBER_ABSTRACT_FUNCTION.on(functionOrPropertyAccessor, abstractNode, functionDescriptor));
             }
             else {
-//                context.getTrace().getErrorHandler().genericError(abstractNode, "Property {0} is not a class or trait member and thus cannot have be abstract accessors");
-                context.getTrace().report(NON_MEMBER_ABSTRACT_ACCESSOR.on(abstractNode));
+                context.getTrace().report(NON_MEMBER_ABSTRACT_ACCESSOR.on(functionOrPropertyAccessor, abstractNode));
             }
         }
         if (function.getBodyExpression() == null && !hasAbstractModifier && nameIdentifier != null && !isPropertyAccessor) {
-//            context.getTrace().getErrorHandler().genericError(nameIdentifier.getNode(), "Function " + function.getName() + " must have a body");
-            context.getTrace().report(NON_MEMBER_FUNCTION_NO_BODY.on(nameIdentifier, functionDescriptor));
+            context.getTrace().report(NON_MEMBER_FUNCTION_NO_BODY.on(functionOrPropertyAccessor, nameIdentifier, functionDescriptor));
         }
     }
 

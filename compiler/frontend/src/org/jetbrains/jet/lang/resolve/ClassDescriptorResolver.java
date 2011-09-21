@@ -580,7 +580,7 @@ public class ClassDescriptorResolver {
                     if (inType != null) {
                         if (!semanticServices.getTypeChecker().equalTypes(type, inType)) {
 //                            trace.getErrorHandler().genericError(typeReference.getNode(), "Setter parameter type must be equal to the type of the property, i.e. " + inType);
-                            trace.report(WRONG_SETTER_PARAMETER_TYPE.on(typeReference, inType));
+                            trace.report(WRONG_SETTER_PARAMETER_TYPE.on(setter, typeReference, inType));
                         }
                     }
                     else {
@@ -602,7 +602,7 @@ public class ClassDescriptorResolver {
         if (! property.isVar()) {
             if (setter != null) {
 //                trace.getErrorHandler().genericError(setter.asElement().getNode(), "A 'val'-property cannot have a setter");
-                trace.report(VAL_WITH_SETTER.on(setter));
+                trace.report(VAL_WITH_SETTER.on(property, setter));
             }
         }
         return setterDescriptor;
@@ -622,7 +622,7 @@ public class ClassDescriptorResolver {
                 returnType = typeResolver.resolveType(scope, returnTypeReference);
                 if (outType != null && !semanticServices.getTypeChecker().equalTypes(returnType, outType)) {
 //                    trace.getErrorHandler().genericError(returnTypeReference.getNode(), "Getter return type must be equal to the type of the property, i.e. " + propertyDescriptor.getReturnType());
-                    trace.report(WRONG_GETTER_RETURN_TYPE.on(returnTypeReference, propertyDescriptor.getReturnType()));
+                    trace.report(WRONG_GETTER_RETURN_TYPE.on(getter, returnTypeReference, propertyDescriptor.getReturnType()));
                 }
             }
 
@@ -693,7 +693,7 @@ public class ClassDescriptorResolver {
             ASTNode abstractNode = modifierList.getModifierNode(JetTokens.ABSTRACT_KEYWORD);
             if (abstractNode != null) {
 //                trace.getErrorHandler().genericError(abstractNode, "This property cannot be declared abstract");
-                trace.report(ABSTRACT_PROPERTY_IN_PRIMARY_CONSTRUCTOR_PARAMETERS.on(abstractNode));
+                trace.report(ABSTRACT_PROPERTY_IN_PRIMARY_CONSTRUCTOR_PARAMETERS.on(parameter, abstractNode));
             }
         }
 

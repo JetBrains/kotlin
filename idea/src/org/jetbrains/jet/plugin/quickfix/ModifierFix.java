@@ -1,8 +1,7 @@
 package org.jetbrains.jet.plugin.quickfix;
 
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiNameIdentifierOwner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetModifierListOwner;
 import org.jetbrains.jet.lexer.JetKeywordToken;
@@ -18,14 +17,14 @@ public abstract class ModifierFix extends IntentionActionForPsiElement<JetModifi
         this.modifier = modifier;
     }
 
-    @Override
-    public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-        return element.isValid();
+    @NotNull
+    protected String getElementName() {
+        if (element instanceof PsiNameIdentifierOwner) {
+            PsiElement nameIdentifier = ((PsiNameIdentifierOwner) element).getNameIdentifier();
+            if (nameIdentifier != null) {
+                return "'" + nameIdentifier.getText() + "'";
+            }
+        }
+        return "'" + element.getText() + "'";
     }
-
-    @Override
-    public boolean startInWriteAction() {
-        return true;
-    }
-
 }

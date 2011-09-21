@@ -217,7 +217,8 @@ public class JetTypeInferrer {
             return callResolver;
         }
 
-        private void checkNullSafety(@Nullable JetType receiverType, @NotNull ASTNode operationTokenNode, @Nullable FunctionDescriptor callee) {
+        //TODO JetElement -> JetWhenConditionCall || JetQualifiedExpression
+        private void checkNullSafety(@Nullable JetType receiverType, @NotNull ASTNode operationTokenNode, @Nullable FunctionDescriptor callee, @NotNull JetElement element) {
             if (receiverType != null && callee != null) {
                 boolean namespaceType = receiverType instanceof NamespaceType;
                 JetType calleeReceiverType = callee.getReceiverType();
@@ -237,7 +238,7 @@ public class JetTypeInferrer {
                     else {
 //                        trace.getErrorHandler().genericWarning(operationTokenNode, "Unnecessary safe call on a non-null receiver of type  " + receiverType);
 
-                        trace.report(UNNECESSARY_SAFE_CALL.on(operationTokenNode, receiverType));
+                        trace.report(UNNECESSARY_SAFE_CALL.on(element, operationTokenNode, receiverType));
 
                     }
                 }
@@ -1180,7 +1181,7 @@ public class JetTypeInferrer {
             if (!typeChecker.isSubtypeOf(targetType, actualType)) {
                 if (typeChecker.isSubtypeOf(actualType, targetType)) {
 //                    context.trace.getErrorHandler().genericWarning(expression.getOperationSign().getNode(), "No cast needed, use ':' instead");
-                    context.trace.report(USELESS_CAST_STATIC_ASSERT_IS_FINE.on(expression.getOperationSign()));
+                    context.trace.report(USELESS_CAST_STATIC_ASSERT_IS_FINE.on(expression, expression.getOperationSign()));
                 }
                 else {
                     // See JET-58 Make 'as never succeeds' a warning, or even never check for Java (external) types
@@ -1191,7 +1192,7 @@ public class JetTypeInferrer {
             else {
                 if (typeChecker.isSubtypeOf(actualType, targetType)) {
 //                    context.trace.getErrorHandler().genericWarning(expression.getOperationSign().getNode(), "No cast needed");
-                    context.trace.report(USELESS_CAST.on(expression.getOperationSign()));
+                    context.trace.report(USELESS_CAST.on(expression, expression.getOperationSign()));
                 }
             }
         }
@@ -1397,7 +1398,7 @@ public class JetTypeInferrer {
 //                        JetType selectorReturnType = getType(compositeScope, callSuffixExpression, false, context);
                         JetType selectorReturnType = getSelectorReturnType(subjectType, callSuffixExpression, context);//getType(compositeScope, callSuffixExpression, false, context);
                         ensureBooleanResultWithCustomSubject(callSuffixExpression, selectorReturnType, "This expression", context);
-                        context.services.checkNullSafety(subjectType, condition.getOperationTokenNode(), getCalleeFunctionDescriptor(callSuffixExpression, context));
+                        context.services.checkNullSafety(subjectType, condition.getOperationTokenNode(), getCalleeFunctionDescriptor(callSuffixExpression, context), condition);
                     }
                 }
 
@@ -2060,7 +2061,7 @@ public class JetTypeInferrer {
                 if (selectorExpression != null) {
                     receiverType = context.services.enrichOutType(receiverExpression, receiverType, context);
 
-                    context.services.checkNullSafety(receiverType, expression.getOperationTokenNode(), getCalleeFunctionDescriptor(selectorExpression, context));
+                    context.services.checkNullSafety(receiverType, expression.getOperationTokenNode(), getCalleeFunctionDescriptor(selectorExpression, context), expression);
                 }
             }
             return context.services.checkType(result, expression, contextWithExpectedType);
@@ -2362,7 +2363,7 @@ public class JetTypeInferrer {
                 if (leftType != null) {
                     if (!leftType.isNullable()) {
 //                        context.trace.getErrorHandler().genericWarning(left.getNode(), "Elvis operator (?:) always returns the left operand of non-nullable type " + leftType);
-                        context.trace.report(USELESS_ELVIS.on(left, leftType));
+                        context.trace.report(USELESS_ELVIS.on(expression, left, leftType));
                     }
                     if (rightType != null) {
                         context.services.checkType(TypeUtils.makeNullableAsSpecified(leftType, rightType.isNullable()), left, contextWithExpectedType);
