@@ -141,7 +141,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     @Override
     protected void generateSyntheticParts() {
-        generateFieldForTypeInfo();
         generateFieldForObjectInstance();
         generateFieldForClassObject();
 
@@ -154,25 +153,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         generateGetTypeInfo();
         //genGetSuperTypesTypeInfo();
-    }
-
-    private void generateFieldForTypeInfo() {
-        if(myClass instanceof JetClass && ((JetClass)myClass).isTrait())
-            return;
-
-        final boolean typeInfoIsStatic = descriptor.getTypeConstructor().getParameters().size() == 0;
-        v.visitField(Opcodes.ACC_PUBLIC | Opcodes.ACC_FINAL | (typeInfoIsStatic ? Opcodes.ACC_STATIC : 0), "$typeInfo",
-                     "Ljet/typeinfo/TypeInfo;", null, null);
-        if (typeInfoIsStatic) {
-            staticInitializerChunks.add(new CodeChunk() {
-                @Override
-                public void generate(InstructionAdapter v) {
-                    JetTypeMapper typeMapper = state.getTypeMapper();
-                    ClassCodegen.newTypeInfo(v, false, typeMapper.jvmType(descriptor, OwnerKind.IMPLEMENTATION));
-                    v.putstatic(typeMapper.jvmName(descriptor, kind), "$typeInfo", "Ljet/typeinfo/TypeInfo;");
-                }
-            });
-        }
     }
 
     private void generateFieldForObjectInstance() {
@@ -397,6 +377,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
         }
         else if(psiElement instanceof PsiClass) {
+            // todo
             PsiClass psiClass = (PsiClass) psiElement;
         }
     }
@@ -550,7 +531,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             iv.astore(JetTypeMapper.TYPE_OBJECT);
         }
         iv.invokestatic("jet/typeinfo/TypeInfo", "getTypeInfo", "(Ljava/lang/Class;Z[Ljet/typeinfo/TypeInfoProjection;)Ljet/typeinfo/TypeInfo;");
-        iv.putfield(state.getTypeMapper().jvmName(descriptor, OwnerKind.IMPLEMENTATION), "$typeInfo", "Ljet/typeinfo/TypeInfo;");
+        iv.invokevirtual(state.getTypeMapper().jvmName(descriptor, OwnerKind.IMPLEMENTATION), "$setTypeInfo", "(Ljet/typeinfo/TypeInfo;)V");
     }
 
     protected void generateInitializers(ExpressionCodegen codegen, InstructionAdapter iv) {
@@ -648,21 +629,79 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if(myClass instanceof JetClass && ((JetClass)myClass).isTrait())
             return;
 
-        final MethodVisitor mv = v.visitMethod(Opcodes.ACC_PUBLIC,
-                "getTypeInfo",
-                "()Ljet/typeinfo/TypeInfo;",
-                null /* TODO */,
-                null);
-        mv.visitCode();
-        InstructionAdapter v = new InstructionAdapter(mv);
-        ExpressionCodegen.loadTypeInfo(state.getTypeMapper(), descriptor, v);
-        v.areturn(JetTypeMapper.TYPE_TYPEINFO);
-        mv.visitMaxs(0, 0);
-        mv.visitEnd();
+        JetType defaultType = descriptor.getDefaultType();
+        if(isParametrizedClass(defaultType)) {
+            if(!hasDerivedTypeInfoField(defaultType, true)) {
+                v.visitField(Opcodes.ACC_PRIVATE, "$typeInfo", "Ljet/typeinfo/TypeInfo;", null, null);
+
+                MethodVisitor mv = v.visitMethod(Opcodes.ACC_PUBLIC, "getTypeInfo", "()Ljet/typeinfo/TypeInfo;", null, null);
+                mv.visitCode();
+                InstructionAdapter iv = new InstructionAdapter(mv);
+                String owner = state.getTypeMapper().jvmName(descriptor, OwnerKind.IMPLEMENTATION);
+                iv.load(0, JetTypeMapper.TYPE_OBJECT);
+                iv.getfield(owner, "$typeInfo", "Ljet/typeinfo/TypeInfo;");
+                iv.areturn(JetTypeMapper.TYPE_TYPEINFO);
+                mv.visitMaxs(0, 0);
+                mv.visitEnd();
+
+                mv = v.visitMethod(Opcodes.ACC_PROTECTED|Opcodes.ACC_FINAL, "$setTypeInfo", "(Ljet/typeinfo/TypeInfo;)V", null, null);
+                mv.visitCode();
+                iv = new InstructionAdapter(mv);
+                owner = state.getTypeMapper().jvmName(descriptor, OwnerKind.IMPLEMENTATION);
+                iv.load(0, JetTypeMapper.TYPE_OBJECT);
+                iv.load(1, JetTypeMapper.TYPE_OBJECT);
+                iv.putfield(owner, "$typeInfo", "Ljet/typeinfo/TypeInfo;");
+                mv.visitInsn(Opcodes.RETURN);
+                mv.visitMaxs(0, 0);
+                mv.visitEnd();
+            }
+            else {
+                if(descriptor.getTypeConstructor().getParameters().isEmpty()) {
+                    v.visitField(Opcodes.ACC_PUBLIC | Opcodes.ACC_FINAL | Opcodes.ACC_STATIC, "$typeInfo", "Ljet/typeinfo/TypeInfo;", null, null);
+                    staticInitializerChunks.add(new CodeChunk() {
+                        @Override
+                        public void generate(InstructionAdapter v) {
+                            JetTypeMapper typeMapper = state.getTypeMapper();
+                            ClassCodegen.newTypeInfo(v, false, typeMapper.jvmType(descriptor, OwnerKind.IMPLEMENTATION));
+                            v.putstatic(typeMapper.jvmName(descriptor, kind), "$typeInfo", "Ljet/typeinfo/TypeInfo;");
+                        }
+                    });
+
+                    final MethodVisitor mv = v.visitMethod(Opcodes.ACC_PUBLIC, "getTypeInfo", "()Ljet/typeinfo/TypeInfo;", null, null);
+                    mv.visitCode();
+                    InstructionAdapter v = new InstructionAdapter(mv);
+                    String owner = state.getTypeMapper().jvmName(descriptor, OwnerKind.IMPLEMENTATION);
+                    v.getstatic(owner, "$typeInfo", "Ljet/typeinfo/TypeInfo;");
+                    v.areturn(JetTypeMapper.TYPE_TYPEINFO);
+                    mv.visitMaxs(0, 0);
+                    mv.visitEnd();
+                }
+            }
+        }
+        else {
+            v.visitField(Opcodes.ACC_PUBLIC | Opcodes.ACC_FINAL | Opcodes.ACC_STATIC, "$typeInfo", "Ljet/typeinfo/TypeInfo;", null, null);
+            staticInitializerChunks.add(new CodeChunk() {
+                @Override
+                public void generate(InstructionAdapter v) {
+                    JetTypeMapper typeMapper = state.getTypeMapper();
+                    ClassCodegen.newTypeInfo(v, false, typeMapper.jvmType(descriptor, OwnerKind.IMPLEMENTATION));
+                    v.putstatic(typeMapper.jvmName(descriptor, kind), "$typeInfo", "Ljet/typeinfo/TypeInfo;");
+                }
+            });
+
+            final MethodVisitor mv = v.visitMethod(Opcodes.ACC_PUBLIC, "getTypeInfo", "()Ljet/typeinfo/TypeInfo;", null, null);
+            mv.visitCode();
+            InstructionAdapter v = new InstructionAdapter(mv);
+            String owner = state.getTypeMapper().jvmName(descriptor, OwnerKind.IMPLEMENTATION);
+            v.getstatic(owner, "$typeInfo", "Ljet/typeinfo/TypeInfo;");
+            v.areturn(JetTypeMapper.TYPE_TYPEINFO);
+            mv.visitMaxs(0, 0);
+            mv.visitEnd();
+        }
     }
 
     private void generateClassObject(JetClassObject declaration) {
-        state.forClass().generate(context, declaration.getObjectDeclaration());
+         state.forClass().generate(context, declaration.getObjectDeclaration());
     }
 
     private void genGetSuperTypesTypeInfo() {
@@ -709,5 +748,32 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         sb.append(")V");
 
         return sb.toString();
+    }
+
+    public static boolean isParametrizedClass(JetType type) {
+        if(type.getConstructor().getParameters().size() > 0)
+            return true;
+
+        for (JetType jetType : type.getConstructor().getSupertypes()) {
+            if(isParametrizedClass(jetType))
+                return true;
+        }
+
+        return false;
+    }
+
+    public boolean hasDerivedTypeInfoField(JetType type, boolean exceptOwn) {
+        if(!exceptOwn) {
+            if(!state.getTypeMapper().isInterface((ClassDescriptor) type.getConstructor().getDeclarationDescriptor()))
+                if(isParametrizedClass(type))
+                    return true;
+        }
+
+        for (JetType jetType : type.getConstructor().getSupertypes()) {
+            if(hasDerivedTypeInfoField(jetType, false))
+                return true;
+        }
+
+        return false;
     }
 }

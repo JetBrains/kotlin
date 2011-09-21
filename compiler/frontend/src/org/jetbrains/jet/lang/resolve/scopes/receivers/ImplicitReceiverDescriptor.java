@@ -9,19 +9,12 @@ import org.jetbrains.jet.lang.types.JetType;
  *
  * @author abreslav
  */
-public abstract class ImplicitReceiverDescriptor implements ReceiverDescriptor {
-    private final JetType receiverType;
+public abstract class ImplicitReceiverDescriptor extends AbstractReceiverDescriptor {
     private final DeclarationDescriptor declarationDescriptor;
 
-    protected ImplicitReceiverDescriptor(DeclarationDescriptor declarationDescriptor, JetType receiverType) {
-        this.receiverType = receiverType;
+    protected ImplicitReceiverDescriptor(@NotNull DeclarationDescriptor declarationDescriptor, @NotNull JetType receiverType) {
+        super(receiverType);
         this.declarationDescriptor = declarationDescriptor;
-    }
-
-    @Override
-    @NotNull
-    public JetType getReceiverType() {
-        return receiverType;
     }
 
     @NotNull

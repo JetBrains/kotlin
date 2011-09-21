@@ -13,7 +13,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionCallableReceiver;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
@@ -275,7 +275,7 @@ public class BodyResolver {
                 JetTypeReference typeReference = call.getTypeReference();
                 if (typeReference != null) {
                     if (descriptor.getUnsubstitutedPrimaryConstructor() != null) {
-                        JetType supertype = typeInferrer.getCallResolver().resolveCall(context.getTrace(), scopeForConstructor, null, call, NO_EXPECTED_TYPE);
+                        JetType supertype = typeInferrer.getCallResolver().resolveCall(context.getTrace(), scopeForConstructor, ReceiverDescriptor.NO_RECEIVER, call, NO_EXPECTED_TYPE);
                         if (supertype != null) {
                             recordSupertype(typeReference, supertype);
                             ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(supertype);
@@ -460,7 +460,7 @@ public class BodyResolver {
 
                         typeInferrerForInitializers.getCallResolver().resolveCall(context.getTrace(),
                                 functionInnerScope,
-                                null, call, NO_EXPECTED_TYPE);
+                                ReceiverDescriptor.NO_RECEIVER, call, NO_EXPECTED_TYPE);
 //                                call.getThisReference(),
 //                                classDescriptor,
 //                                classDescriptor.getDefaultType(),
@@ -575,9 +575,9 @@ public class BodyResolver {
         for (TypeParameterDescriptor typeParameterDescriptor : propertyDescriptor.getTypeParameters()) {
             result.addTypeParameterDescriptor(typeParameterDescriptor);
         }
-        JetType receiverType = propertyDescriptor.getReceiverType();
-        if (receiverType != null) {
-            result.setImplicitReceiver(new ExtensionCallableReceiver(propertyDescriptor));
+        ReceiverDescriptor receiver = propertyDescriptor.getReceiver();
+        if (receiver.exists()) {
+            result.setImplicitReceiver(receiver);
         }
         return result;
     }
@@ -799,15 +799,15 @@ public class BodyResolver {
             boolean inTrait = classDescriptor.getKind() == ClassKind.TRAIT;
             boolean inEnum = classDescriptor.getKind() == ClassKind.ENUM_CLASS;
             boolean inAbstractClass = classDescriptor.getModality() == Modality.ABSTRACT;
+            PsiElement classElement = context.getTrace().get(BindingContext.DESCRIPTOR_TO_DECLARATION, classDescriptor);
+            assert classElement instanceof JetModifierListOwner;
             if (hasAbstractModifier && !inAbstractClass && !inTrait && !inEnum) {
-                PsiElement classElement = context.getTrace().get(BindingContext.DESCRIPTOR_TO_DECLARATION, classDescriptor);
-                assert classElement instanceof JetModifierListOwner;
                 context.getTrace().report(ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS.on(functionOrPropertyAccessor, abstractNode, functionDescriptor.getName(), classDescriptor, (JetModifierListOwner) classElement));
             }
             if (hasAbstractModifier && inTrait && !isPropertyAccessor) {
                 context.getTrace().report(REDUNDANT_ABSTRACT.on(functionOrPropertyAccessor, abstractNode));
             }
-            if (function.getBodyExpression() != null && hasAbstractModifier) { //TODO
+            if (function.getBodyExpression() != null && hasAbstractModifier) {
                 context.getTrace().report(ABSTRACT_FUNCTION_WITH_BODY.on(functionOrPropertyAccessor, abstractNode, functionDescriptor));
             }
             if (function.getBodyExpression() == null && !hasAbstractModifier && !inTrait && nameIdentifier != null && !isPropertyAccessor) {

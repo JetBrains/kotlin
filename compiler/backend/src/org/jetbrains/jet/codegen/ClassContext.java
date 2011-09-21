@@ -7,6 +7,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
@@ -72,7 +73,7 @@ public class ClassContext {
             thisIdx++;
         }
 
-        final boolean hasReceiver = descriptor.getReceiverType() != null;
+        final boolean hasReceiver = descriptor.getReceiver().exists();
         if (hasReceiver) {
             thisIdx++;
         }
@@ -102,12 +103,12 @@ public class ClassContext {
         return frameMap;
     }
 
-    private JetType receiverType() {
-        return contextType instanceof FunctionDescriptor ? ((FunctionDescriptor) contextType).getReceiverType() : null;
+    private ReceiverDescriptor receiver() {
+        return contextType instanceof FunctionDescriptor ? ((FunctionDescriptor) contextType).getReceiver() : ReceiverDescriptor.NO_RECEIVER;
     }
 
     private boolean hasReceiver() {
-        return receiverType() != null;
+        return receiver().exists();
     }
 
     public ClassContext getParentContext() {

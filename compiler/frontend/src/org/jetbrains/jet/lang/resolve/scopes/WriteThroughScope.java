@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ImplicitReceiverDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 import java.util.Collection;
@@ -147,7 +146,7 @@ public class WriteThroughScope extends WritableScopeWithImports {
     }
 
     @Override
-    public void setImplicitReceiver(@NotNull ImplicitReceiverDescriptor implicitReceiver) {
+    public void setImplicitReceiver(@NotNull ReceiverDescriptor implicitReceiver) {
         writableWorker.setImplicitReceiver(implicitReceiver);
     }
 

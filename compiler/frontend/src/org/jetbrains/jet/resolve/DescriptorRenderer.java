@@ -3,7 +3,9 @@ package org.jetbrains.jet.resolve;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.types.JetStandardClasses;
+import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -128,7 +130,7 @@ public class DescriptorRenderer {
 
         @Override
         public Void visitVariableDescriptor(VariableDescriptor descriptor, StringBuilder builder) {
-            String typeString = renderPropertyPrefixAndComputeTypeString(builder, Collections.<TypeParameterDescriptor>emptyList(), null, descriptor.getOutType(), descriptor.getInType());
+            String typeString = renderPropertyPrefixAndComputeTypeString(builder, Collections.<TypeParameterDescriptor>emptyList(), ReceiverDescriptor.NO_RECEIVER, descriptor.getOutType(), descriptor.getInType());
             renderName(descriptor, builder);
             builder.append(" : ").append(escape(typeString));
             return super.visitVariableDescriptor(descriptor, builder);
@@ -137,7 +139,7 @@ public class DescriptorRenderer {
         private String renderPropertyPrefixAndComputeTypeString(
                 @NotNull StringBuilder builder,
                 @NotNull List<TypeParameterDescriptor> typeParameters,
-                @Nullable JetType receiverType,
+                @NotNull ReceiverDescriptor receiver,
                 @Nullable JetType outType,
                 @Nullable JetType inType) {
             String typeString = lt() + "no type>";
@@ -161,8 +163,8 @@ public class DescriptorRenderer {
 
             renderTypeParameters(typeParameters, builder);
 
-            if (receiverType != null) {
-                builder.append(escape(renderType(receiverType))).append(".");
+            if (receiver.exists()) {
+                builder.append(escape(renderType(receiver.getType()))).append(".");
             }
 
             return typeString;
@@ -172,7 +174,7 @@ public class DescriptorRenderer {
         public Void visitPropertyDescriptor(PropertyDescriptor descriptor, StringBuilder builder) {
             String typeString = renderPropertyPrefixAndComputeTypeString(
                     builder, descriptor.getTypeParameters(),
-                    descriptor.getReceiverType(),
+                    descriptor.getReceiver(),
                     descriptor.getOutType(),
                     descriptor.getInType());
             renderName(descriptor, builder);
@@ -185,9 +187,9 @@ public class DescriptorRenderer {
             builder.append(renderKeyword("fun")).append(" ");
             renderTypeParameters(descriptor.getTypeParameters(), builder);
 
-            JetType receiverType = descriptor.getReceiverType();
-            if (receiverType != null) {
-                builder.append(escape(renderType(receiverType))).append(".");
+            ReceiverDescriptor receiver = descriptor.getReceiver();
+            if (receiver.exists()) {
+                builder.append(escape(renderType(receiver.getType()))).append(".");
             }
 
             renderName(descriptor, builder);

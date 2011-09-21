@@ -5,11 +5,12 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.TraceBasedRedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionCallableReceiver;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 
 import java.util.*;
@@ -97,9 +98,9 @@ public class FunctionDescriptorUtil {
     @NotNull
     public static JetScope getFunctionInnerScope(@NotNull JetScope outerScope, @NotNull FunctionDescriptor descriptor, @NotNull BindingTrace trace) {
         WritableScope parameterScope = new WritableScopeImpl(outerScope, descriptor, new TraceBasedRedeclarationHandler(trace)).setDebugName("Function inner scope");
-        JetType receiverType = descriptor.getReceiverType();
-        if (receiverType != null) {
-            parameterScope.setImplicitReceiver(new ExtensionCallableReceiver(descriptor));
+        ReceiverDescriptor receiver = descriptor.getReceiver();
+        if (receiver.exists()) {
+            parameterScope.setImplicitReceiver(receiver);
         }
         for (TypeParameterDescriptor typeParameter : descriptor.getTypeParameters()) {
             parameterScope.addTypeParameterDescriptor(typeParameter);

@@ -3,6 +3,7 @@ package org.jetbrains.jet.lang.descriptors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
@@ -53,4 +54,7 @@ public interface ClassDescriptor extends ClassifierDescriptor {
 
     @NotNull
     Modality getModality();
+
+    @NotNull
+    ReceiverDescriptor getImplicitReceiver();
 }

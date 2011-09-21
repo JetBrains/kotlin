@@ -5,6 +5,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.SubstitutingScope;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 
 import java.util.Collection;
@@ -21,6 +23,7 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
     private FunctionGroup constructors;
     private ConstructorDescriptor primaryConstructor;
     private JetType superclassType;
+    private ReceiverDescriptor implicitReceiver;
 
     public ClassDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
@@ -150,5 +153,14 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
     @NotNull
     public Modality getModality() {
         return Modality.FINAL;
+    }
+
+    @NotNull
+    @Override
+    public ReceiverDescriptor getImplicitReceiver() {
+        if (implicitReceiver == null) {
+            implicitReceiver = new ClassReceiver(this);
+        }
+        return implicitReceiver;
     }
 }

@@ -89,7 +89,7 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
         JetFile file = (JetFile) getElement().getContainingFile();
         BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache(file);
         Collection<? extends DeclarationDescriptor> declarationDescriptors = bindingContext.get(AMBIGUOUS_REFERENCE_TARGET, myExpression);
-        if (declarationDescriptors != null) return ResolveResult.EMPTY_ARRAY;
+        if (declarationDescriptors == null) return ResolveResult.EMPTY_ARRAY;
         ResolveResult[] results = new ResolveResult[declarationDescriptors.size()];
         int i = 0;
         for (DeclarationDescriptor descriptor : declarationDescriptors) {

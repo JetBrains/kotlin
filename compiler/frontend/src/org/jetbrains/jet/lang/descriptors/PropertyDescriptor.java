@@ -4,6 +4,8 @@ import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 import org.jetbrains.jet.lang.types.Variance;
@@ -17,7 +19,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Member
 
     private final Modality modality;
     private final boolean isVar;
-    private final JetType receiverType;
+    private final ReceiverDescriptor receiver;
     private final List<TypeParameterDescriptor> typeParemeters = Lists.newArrayListWithCapacity(0);
     private final PropertyDescriptor original;
     private PropertyGetterDescriptor getter;
@@ -38,7 +40,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Member
 //        assert outType != null;
         this.isVar = isVar;
         this.modality = modality;
-        this.receiverType = receiverType;
+        this.receiver = receiverType == null ? ReceiverDescriptor.NO_RECEIVER : new ExtensionReceiver(this, receiverType);
         this.original = original == null ? this : original.getOriginal();
     }
 
@@ -83,9 +85,9 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Member
         return typeParemeters;
     }
 
-    @Nullable
-    public JetType getReceiverType() {
-        return receiverType;
+    @NotNull
+    public ReceiverDescriptor getReceiver() {
+        return receiver;
     }
 
     @NotNull
@@ -125,10 +127,9 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Member
         if (inType == null && outType == null) {
             return null; // TODO : tell the user that the property was projected out
         }
-        JetType receiverType = getReceiverType();
         return new PropertyDescriptor(
                 this,
-                receiverType == null ? null : substitutor.substitute(receiverType, Variance.IN_VARIANCE),
+                receiver.exists() ? substitutor.substitute(receiver.getType(), Variance.IN_VARIANCE) : null,
                 inType,
                 outType
         );

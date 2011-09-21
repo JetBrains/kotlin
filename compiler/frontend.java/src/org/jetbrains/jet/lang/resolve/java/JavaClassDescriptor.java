@@ -5,6 +5,8 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.SubstitutingScope;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 
 import java.util.Collections;
@@ -23,6 +25,7 @@ public class JavaClassDescriptor extends MutableDeclarationDescriptor implements
     private Modality modality;
     private JetType superclassType;
     private final ClassKind kind;
+    private ClassReceiver implicitReceiver;
 
 
     public JavaClassDescriptor(DeclarationDescriptor containingDeclaration, @NotNull ClassKind kind) {
@@ -154,5 +157,14 @@ public class JavaClassDescriptor extends MutableDeclarationDescriptor implements
     @Override
     public String toString() {
         return "java class " + typeConstructor;
+    }
+
+    @NotNull
+    @Override
+    public ReceiverDescriptor getImplicitReceiver() {
+        if (implicitReceiver == null) {
+            implicitReceiver = new ClassReceiver(this);
+        }
+        return implicitReceiver;
     }
 }

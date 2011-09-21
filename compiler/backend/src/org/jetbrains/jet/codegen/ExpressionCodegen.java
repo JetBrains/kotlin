@@ -82,17 +82,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         typeParameterExpressions.put(typeParameter, expression);
     }
 
-    static void loadTypeInfo(JetTypeMapper typeMapper, ClassDescriptor descriptor, InstructionAdapter v) {
-        String owner = typeMapper.jvmName(descriptor, OwnerKind.IMPLEMENTATION);
-        if (descriptor.getTypeConstructor().getParameters().size() > 0) {
-            v.load(0, JetTypeMapper.TYPE_OBJECT);
-            v.getfield(owner, "$typeInfo", "Ljet/typeinfo/TypeInfo;");
-        }
-        else {
-            v.getstatic(owner, "$typeInfo", "Ljet/typeinfo/TypeInfo;");
-        }
-    }
-
     public StackValue genQualified(StackValue receiver, JetElement selector) {
         markLineNumber(selector);
         return selector.visit(this, receiver);
@@ -2033,9 +2022,26 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
         DeclarationDescriptor containingDeclaration = typeParameterDescriptor.getContainingDeclaration();
         if (containingDeclaration == contextType() && contextType() instanceof ClassDescriptor) {
-            loadTypeInfo(typeMapper, (ClassDescriptor) contextType(), v);
+            ClassDescriptor descriptor = (ClassDescriptor) contextType();
+            JetType defaultType = descriptor.getDefaultType();
+            Type ownerType = typeMapper.mapType(defaultType);
+            ownerType = JetTypeMapper.boxType(ownerType);
+            if(!typeMapper.isInterface(descriptor)) {
+                if (descriptor.getTypeConstructor().getParameters().size() > 0) {
+                    v.load(0, JetTypeMapper.TYPE_OBJECT);
+                    v.getfield(ownerType.getInternalName(), "$typeInfo", "Ljet/typeinfo/TypeInfo;");
+                }
+                else {
+                    v.getstatic(ownerType.getInternalName(), "$typeInfo", "Ljet/typeinfo/TypeInfo;");
+                }
+            }
+            else {
+                v.load(0, JetTypeMapper.TYPE_OBJECT);
+                v.invokeinterface("jet/JetObject", "getTypeInfo", "()Ljet/typeinfo/TypeInfo;");
+            }
+            v.aconst(ownerType);
             v.iconst(typeParameterDescriptor.getIndex());
-            v.invokevirtual("jet/typeinfo/TypeInfo", "getArgumentType", "(I)Ljet/typeinfo/TypeInfo;");
+            v.invokevirtual("jet/typeinfo/TypeInfo", "getArgumentType", "(Ljava/lang/Class;I)Ljet/typeinfo/TypeInfo;");
             return;
         }
         throw new UnsupportedOperationException("don't know what this type parameter resolves to");

@@ -96,7 +96,7 @@ trait Range<in T : Comparable<T>> {
   fun contains(item : T) : Boolean
 }
 
-class IntRange<T : Comparable<T>> : Range<T>, Iterable<T> {
+class IntRange<T : Comparable<T>>(val start : Int, val end : Int) : Range<T>, Iterable<T> {
 
 }
 

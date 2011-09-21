@@ -8,6 +8,7 @@ import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.util.slicedmap.*;
 
@@ -17,6 +18,8 @@ import java.util.Collection;
  * @author abreslav
  */
 public interface BindingContext {
+    WritableSlice<JetElement, ReceiverDescriptor> RECEIVER = Slices.createSimpleSlice("RECEIVER");
+
     WritableSlice<JetAnnotationEntry, AnnotationDescriptor> ANNOTATION = Slices.createSimpleSlice("ANNOTATION");
     WritableSlice<JetExpression, CompileTimeConstant<?>> COMPILE_TIME_VALUE = Slices.createSimpleSlice("COMPILE_TIME_VALUE");
     WritableSlice<JetTypeReference, JetType> TYPE = Slices.createSimpleSlice("TYPE");

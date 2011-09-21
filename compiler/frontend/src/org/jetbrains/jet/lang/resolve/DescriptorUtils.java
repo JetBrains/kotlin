@@ -21,7 +21,7 @@ public class DescriptorUtils {
 
             @Override
             public Boolean visitFunctionDescriptor(FunctionDescriptor descriptor, Void data) {
-                return descriptor.getReceiverType() != null;
+                return descriptor.getReceiver().exists();
             }
 
             @Override
@@ -31,7 +31,7 @@ public class DescriptorUtils {
 
             @Override
             public Boolean visitPropertyDescriptor(PropertyDescriptor descriptor, Void data) {
-                return descriptor.getReceiverType() != null;
+                return descriptor.getReceiver().exists();
             }
         }, null);
     }

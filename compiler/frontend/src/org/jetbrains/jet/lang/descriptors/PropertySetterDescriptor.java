@@ -3,6 +3,7 @@ package org.jetbrains.jet.lang.descriptors;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 
@@ -41,9 +42,10 @@ public class PropertySetterDescriptor extends PropertyAccessorDescriptor {
         overriddenSetters.add(overriddenSetter);
     }
 
+    @NotNull
     @Override
-    public JetType getReceiverType() {
-        return null; // TODO
+    public ReceiverDescriptor getReceiver() {
+        return getCorrespondingProperty().getReceiver();
     }
 
     @NotNull

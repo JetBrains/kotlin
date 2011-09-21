@@ -1,5 +1,6 @@
 package jet.typeinfo;
 
+import com.sun.org.apache.bcel.internal.generic.MethodGen;
 import jet.JetObject;
 import jet.Tuple0;
 
@@ -38,25 +39,8 @@ public abstract class TypeInfo<T> implements JetObject {
     public static final TypeInfo<String> NULLABLE_STRING_TYPE_INFO = getTypeInfo(String.class, true);
     public static final TypeInfo<Tuple0> NULLABLE_TUPLE0_TYPE_INFO = getTypeInfo(Tuple0.class, true);
 
-    private TypeInfo<?> typeInfo;
-    private final Signature signature;
-    private final boolean nullable;
-    private final TypeInfoProjection[] projections;
-
-    private TypeInfo(Class<T> theClass, boolean nullable) {
-        this(theClass, nullable, EMPTY);
-    }
-
-    private TypeInfo(Class<T> theClass, boolean nullable, TypeInfoProjection[] projections) {
-        this.signature = Parser.parse(theClass);
-        this.nullable = nullable;
-        this.projections = projections;
-        if(signature.variables.size() != projections.length)
-            throw new IllegalStateException("Wrong signature " + theClass.getName());
-    }
-
     public static <T> TypeInfoProjection invariantProjection(final TypeInfo<T> typeInfo) {
-        return (TypeInfoImpl) typeInfo;
+        return (TypeInfoProjection) typeInfo;
     }
 
     public static <T> TypeInfoProjection inProjection(TypeInfo<T> typeInfo) {
@@ -87,103 +71,196 @@ public abstract class TypeInfo<T> implements JetObject {
         return new TypeInfoImpl<T>(klazz, nullable, projections);
     }
 
-    public final Object getClassObject() {
-        try {
-            final Class implClass = signature.klazz.getClassLoader().loadClass(signature.klazz.getCanonicalName());
-            final Field classobj = implClass.getField("$classobj");
-            return classobj.get(null);
-        } catch (Exception e) {
-            return null;
+    public abstract Object getClassObject();
+
+    public abstract boolean isInstance(Object obj);
+
+    public abstract int getProjectionCount();
+
+    public abstract TypeInfoProjection getProjection(int index);
+
+    public abstract TypeInfo getArgumentType(Class klass, int index);
+    
+    public abstract TypeInfo substitute(List<TypeInfo> myVars);
+
+    private static class TypeInfoVar<T> extends TypeInfo<T> {
+        final int varIndex;
+        final boolean nullable;
+
+        private TypeInfoVar(Integer varIndex) {
+            this.varIndex = varIndex;
+            nullable = false;
         }
-    }
 
-    public final boolean isInstance(Object obj) {
-        if (obj == null) return nullable;
-
-        if (obj instanceof JetObject) {
-            return ((JetObject) obj).getTypeInfo().isSubtypeOf(this);
+        public TypeInfoVar(boolean nullable, Integer varIndex) {
+            this.nullable = nullable;
+            this.varIndex = varIndex;
         }
 
-        return signature.klazz.isAssignableFrom(obj.getClass());  // TODO
-    }
-
-    public final boolean isSubtypeOf(TypeInfo<?> superType) {
-        if (nullable && !superType.nullable) {
-            return false;
+        @Override
+        public Object getClassObject() {
+            throw new UnsupportedOperationException("Abstract TypeInfo");
         }
-        if (!superType.signature.klazz.isAssignableFrom(signature.klazz)) {
-            return false;
+
+        @Override
+        public boolean isInstance(Object obj) {
+            throw new UnsupportedOperationException("Abstract TypeInfo");
         }
-        if (superType.projections == null || superType.projections.length != projections.length) {
-            throw new IllegalArgumentException("inconsistent type infos for the same class");
+
+        @Override
+        public int getProjectionCount() {
+            return 0;
         }
-        for (int i = 0; i < projections.length; i++) {
-            // TODO handle variance here
-            if (!projections[i].equals(superType.projections[i])) {
-                return false;
-            }
+
+        @Override
+        public TypeInfoProjection getProjection(int index) {
+            throw new UnsupportedOperationException("Abstract TypeInfo");
         }
-        return true;
-    }
 
-    public final TypeInfoProjection getProjection(int index) {
-        return projections[index];
-    }
-
-    public final TypeInfo getArgumentType(int index) {
-        return projections[index].getType();
-    }
-
-    @Override
-    public final TypeInfo<?> getTypeInfo() {
-        if (typeInfo == null) {
-            // TODO: Implementation must be lazy, otherwise the result would be of an infinite size
-            throw new UnsupportedOperationException(); // TODO
+        @Override
+        public TypeInfo getArgumentType(Class klass, int index) {
+            throw new UnsupportedOperationException("Abstract TypeInfo");
         }
-        return typeInfo;
-    }
 
-    @Override
-    public final boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        TypeInfo typeInfo = (TypeInfo) o;
-
-        if (!signature.klazz.equals(typeInfo.signature.klazz)) return false;
-        if (nullable != typeInfo.nullable) return false;
-        if (!Arrays.equals(projections, typeInfo.projections)) return false;
-
-        return true;
-    }
-
-    @Override
-    public final int hashCode() {
-        return 31 * signature.klazz.hashCode() + Arrays.hashCode(projections);
-    }
-
-    @Override
-    public final String toString() {
-        StringBuilder sb = new StringBuilder().append(signature.klazz.getName());
-        if (projections.length != 0) {
-            sb.append("<");
-            for (int i = 0; i != projections.length - 1; ++i) {
-                sb.append(projections[i].toString()).append(",");
-            }
-            sb.append(projections[projections.length - 1].toString()).append(">");
+        @Override
+        public TypeInfo substitute(List<TypeInfo> myVars) {
+            return myVars.get(varIndex);
         }
-        if (nullable)
-            sb.append("?");
-        return sb.toString();
+
+        @Override
+        protected TypeInfo substitute(TypeInfoProjection[] projections) {
+            return projections[varIndex].getType();
+        }
+
+        @Override
+        public TypeInfo<?> getTypeInfo() {
+            throw new UnsupportedOperationException("Abstract TypeInfo");
+        }
+
+        @Override
+        public String toString() {
+            return "T:" + varIndex;
+        }
     }
 
     private static class TypeInfoImpl<T> extends TypeInfo<T> implements TypeInfoProjection {
-        TypeInfoImpl(Class<T> klazz, boolean nullable) {
-            super(klazz, nullable);
+        private TypeInfo<?> typeInfo;
+        private final Signature signature;
+        private final boolean nullable;
+        private final TypeInfoProjection[] projections;
+
+        TypeInfoImpl(Class<T> theClass, boolean nullable) {
+            this(theClass, nullable, EMPTY);
         }
 
-        TypeInfoImpl(Class<T> klazz, boolean nullable, TypeInfoProjection[] projections) {
-            super(klazz, nullable, projections);
+        private TypeInfoImpl(Class<T> theClass, boolean nullable, TypeInfoProjection[] projections) {
+            this.signature = Parser.parse(theClass);
+            this.nullable = nullable;
+            this.projections = projections;
+            if(signature.variables.size() != projections.length)
+                throw new IllegalStateException("Wrong signature " + theClass.getName());
+        }
+
+        public final TypeInfoProjection getProjection(int index) {
+            return projections[index];
+        }
+
+        public final Object getClassObject() {
+            try {
+                final Class implClass = signature.klazz.getClassLoader().loadClass(signature.klazz.getCanonicalName());
+                final Field classobj = implClass.getField("$classobj");
+                return classobj.get(null);
+            } catch (Exception e) {
+                return null;
+            }
+        }
+
+        TypeInfo getSuperTypeInfo(Class klass) {
+            return signature.superSignatures.get(klass);
+        }
+
+        public final TypeInfo getArgumentType(Class klass, int index) {
+            if(klass == this.signature.klazz)
+                return projections[index].getType();
+            else {
+                return getSuperTypeInfo(klass).substitute(projections).getArgumentType(klass, index);
+            }
+        }
+
+        @Override
+        public TypeInfo substitute(final List<TypeInfo> myVars) {
+            if(projections.length == 0)
+                return new TypeInfoImpl(signature.klazz, nullable, EMPTY);
+            else {
+                TypeInfoProjection [] proj = new TypeInfoProjection[projections.length];
+                for(int i = 0; i != proj.length; ++i) {
+                    final int finalI = i;
+                    final TypeInfo substitute = projections[finalI].getType().substitute(myVars);
+                    proj[i] = new TypeInfoProjection(){
+
+                        @Override
+                        public TypeInfoVariance getVariance() {
+                            return projections[finalI].getVariance();
+                        }
+
+                        @Override
+                        public TypeInfo getType() {
+                            return substitute;
+                        }
+
+                        @Override
+                        public String toString() {
+                            return getVariance().toString() + " " + substitute;
+                        }
+                    };
+                }
+                return new TypeInfoImpl(signature.klazz, nullable, proj);
+            }
+        }
+
+        @Override
+        protected TypeInfo substitute(TypeInfoProjection[] prj) {
+            if(projections.length == 0)
+                return new TypeInfoImpl(signature.klazz, nullable, EMPTY);
+            else {
+                TypeInfoProjection [] proj = new TypeInfoProjection[projections.length];
+                for(int i = 0; i != proj.length; ++i) {
+                    final int finalI = i;
+                    final TypeInfo substitute = projections[finalI].getType().substitute(prj);
+                    proj[i] = new TypeInfoProjection(){
+
+                        @Override
+                        public TypeInfoVariance getVariance() {
+                            return projections[finalI].getVariance();
+                        }
+
+                        @Override
+                        public TypeInfo getType() {
+                            return substitute;
+                        }
+
+                        @Override
+                        public String toString() {
+                            return getVariance().toString() + " " + substitute;
+                        }
+                    };
+                }
+                return new TypeInfoImpl(signature.klazz, nullable, proj);
+            }
+        }
+
+        @Override
+        public final boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            TypeInfoImpl typeInfo = (TypeInfoImpl) o;
+
+            if (!signature.klazz.equals(typeInfo.signature.klazz)) return false;
+            if (nullable != typeInfo.nullable) return false;
+            if (!Arrays.equals(projections, typeInfo.projections)) return false;
+
+            return true;
         }
 
 //        @NotNull
@@ -197,78 +274,113 @@ public abstract class TypeInfo<T> implements JetObject {
         public TypeInfo getType() {
             return this;
         }
+
+        @Override
+        public final int hashCode() {
+            return 31 * signature.klazz.hashCode() + Arrays.hashCode(projections);
+        }
+
+        public final boolean isInstance(Object obj) {
+            if (obj == null) return nullable;
+
+            if (obj instanceof JetObject) {
+                return ((TypeInfoImpl)((JetObject) obj).getTypeInfo()).isSubtypeOf(this);
+            }
+
+            return signature.klazz.isAssignableFrom(obj.getClass());  // TODO
+        }
+
+        @Override
+        public int getProjectionCount() {
+            return projections.length;
+        }
+
+        @Override
+        public final String toString() {
+            StringBuilder sb = new StringBuilder().append(signature.klazz.getName());
+            if (projections.length != 0) {
+                sb.append("<");
+                for (int i = 0; i != projections.length - 1; ++i) {
+                    sb.append(projections[i].toString()).append(",");
+                }
+                sb.append(projections[projections.length - 1].toString()).append(">");
+            }
+            if (nullable)
+                sb.append("?");
+            return sb.toString();
+        }
+
+        @Override
+        public final TypeInfo<?> getTypeInfo() {
+            if (typeInfo == null) {
+                // TODO: Implementation must be lazy, otherwise the result would be of an infinite size
+                throw new UnsupportedOperationException(); // TODO
+            }
+            return typeInfo;
+        }
+
+        public final boolean isSubtypeOf(TypeInfoImpl<?> superType) {
+            if (nullable && !superType.nullable) {
+                return false;
+            }
+            if (!superType.signature.klazz.isAssignableFrom(signature.klazz)) {
+                return false;
+            }
+            if (superType.projections == null || superType.projections.length != projections.length) {
+                throw new IllegalArgumentException("inconsistent type infos for the same class");
+            }
+            for (int i = 0; i < projections.length; i++) {
+                // TODO handle variance here
+                if (!projections[i].getType().equals(superType.projections[i].getType())) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
     }
+
+    protected abstract TypeInfo substitute(TypeInfoProjection[] projections);
 
     public static class Signature {
         final Class klazz;
-        final List<Var> variables;
-        final List<Type> superTypes;
+        final List<TypeInfoProjection> variables;
+        final List<TypeInfo> superTypes;
         
-        final HashMap<Class,Signature> superSignatures = new HashMap<Class,Signature>();
+        final HashMap<Class,TypeInfo> superSignatures = new HashMap<Class,TypeInfo>();
 
-        public Signature(Class klazz, List<Var> variables, List<Type> superTypes) {
+        public Signature(Class klazz, List<TypeInfoProjection> variables, List<TypeInfo> superTypes) {
             this.klazz = klazz;
             this.superTypes = superTypes;
             this.variables = variables;
             
-            for(Type superType : superTypes) {
-                if(superType instanceof TypeReal) {
-                    TypeReal type = (TypeReal) superType;
-                    Signature parse = Parser.parse(type.klazz);
-                    superSignatures.put(type.klazz, parse);
-                    for(Map.Entry<Class,Signature> entry : parse.superSignatures.entrySet()) {
-                        superSignatures.put(entry.getKey(), entry.getValue());
+            List<TypeInfo> myVars = variables == null ? Collections.<TypeInfo>emptyList() : new LinkedList<TypeInfo>();
+            if(variables != null)
+                for(int i = 0; i != variables.size(); ++i)
+                    myVars.add(new TypeInfoVar(false, i));
+            
+            for(TypeInfo superType : superTypes) {
+                if(superType instanceof TypeInfoImpl) {
+                    TypeInfoImpl type = (TypeInfoImpl) superType;
+                    Signature superSignature = Parser.parse(type.signature.klazz);
+
+                    TypeInfo substituted = type.substitute(myVars);
+                    superSignatures.put(type.signature.klazz, substituted);
+
+                    List<TypeInfo> vars = Collections.emptyList();
+                    if(superType.getProjectionCount() != 0) {
+                        vars = new LinkedList<TypeInfo>();
+                        for(int i=0; i != superType.getProjectionCount(); ++i) {
+                            TypeInfo substitute = superType.getProjection(i).getType().substitute(myVars);
+                            vars.add(substitute);
+                        }
+                    }
+                    
+                    for(Map.Entry<Class,TypeInfo> entry : superSignature.superSignatures.entrySet()) {
+                        superSignatures.put(entry.getKey(), entry.getValue().substitute(vars));
                     }
                 }
             }
-        }
-    }
-
-    public static class Var {
-        final String name;
-        final TypeInfoVariance variance;
-
-        public Var(String name, TypeInfoVariance variance) {
-            this.name = name;
-            this.variance = variance;
-        }
-    }
-
-    public abstract static class Type{
-        final boolean nullable;
-
-        protected Type(boolean nullable) {
-            this.nullable = nullable;
-        }
-    }
-
-    public static class TypeVar extends Type {
-        final int varIndex;
-
-        public TypeVar(boolean nullable, int varIndex) {
-            super(nullable);
-            this.varIndex = varIndex;
-        }
-    }
-
-    public static class TypeProj {
-        public final TypeInfoVariance variance;
-        public final Type type;
-
-        public TypeProj(TypeInfoVariance variance, Type type) {
-            this.variance = variance;
-            this.type = type;
-        }
-    }
-
-    public static class TypeReal extends Type {
-        public final Class klazz;
-        public final List<TypeProj> params;
-
-        public TypeReal(Class klazz, boolean nullable, List<TypeProj> params) {
-            super(nullable);
-            this.params = params;
-            this.klazz = klazz;
         }
     }
 
@@ -323,49 +435,76 @@ public abstract class TypeInfo<T> implements JetObject {
 
             TypeVariable[] typeParameters = klass.getTypeParameters();
             Map<String,Integer> variables;
-            List<Var> vars;
+            List<TypeInfoProjection> vars;
             if(typeParameters == null || typeParameters.length == 0) {
                 variables = Collections.emptyMap();
                 vars = Collections.emptyList();
             }
             else {
                 variables = new HashMap<String, Integer>();
-                vars = new LinkedList<Var>();
+                vars = new LinkedList<TypeInfoProjection>();
                 for (int i = 0; i < typeParameters.length; i++) {
                     TypeVariable typeParameter = typeParameters[i];
                     variables.put(typeParameter.getName(), i);
-                    vars.add(new Var(typeParameter.getName(), TypeInfoVariance.INVARIANT));
+                    final TypeInfoVar typeInfoVar = new TypeInfoVar(false, i);
+                    vars.add(new TypeInfoProjection(){
+
+                        @Override
+                        public TypeInfoVariance getVariance() {
+                            return TypeInfoVariance.INVARIANT;
+                        }
+
+                        @Override
+                        public TypeInfo getType() {
+                            return typeInfoVar;
+                        }
+
+                        @Override
+                        public String toString() {
+                            return typeInfoVar.toString();
+                        }
+                    });
                 }
             }
 
-            List<Type> types = new LinkedList<Type>();
+            List<TypeInfo> types = new LinkedList<TypeInfo>();
             java.lang.reflect.Type genericSuperclass = klass.getGenericSuperclass();
             return new Signature(klass, vars, types);
         }
 
-        public List<Var> parseVars() {
-            List<Var> list = null;
+        public List<TypeInfoProjection> parseVars() {
+            List<TypeInfoProjection> list = null;
             while(cur != string.length && string[cur] == 'T') {
-                if(list == null)
-                    list = new LinkedList<Var>();
+                if(list == null) {
+                    list = new LinkedList<TypeInfoProjection>();
+                    variables = new HashMap<String, Integer>();
+                }
                 list.add(parseVar());
             }
-            List<Var> vars = list == null ? Collections.<Var>emptyList() : list;
-            if(vars.isEmpty())
-                variables = Collections.emptyMap();
-            else {
-                variables = new HashMap<String, Integer>();
-                for(int i=0; i != list.size(); ++i) {
-                    variables.put(list.get(i).name, i);
-                }
-            }
-            return vars;
+            return list == null ? Collections.<TypeInfoProjection>emptyList() : list;
         }
 
-        private Var parseVar() {
-            TypeInfoVariance variance = parseVariance();
+        private TypeInfoProjection parseVar() {
+            final TypeInfoVariance variance = parseVariance();
             String name = parseName();
-            return new Var(name, variance);
+            final TypeInfoVar typeInfoVar = new TypeInfoVar(variables.size());
+            variables.put(name, variables.size());
+            return new TypeInfoProjection(){
+                @Override
+                public TypeInfoVariance getVariance() {
+                    return variance;
+                }
+
+                @Override
+                public TypeInfo getType() {
+                    return typeInfoVar;
+                }
+
+                @Override
+                public String toString() {
+                    return typeInfoVar.toString();
+                }
+            };
         }
 
         private String parseName() {
@@ -392,18 +531,18 @@ public abstract class TypeInfo<T> implements JetObject {
             }
         }
 
-        public List<Type> parseTypes() {
-            List<Type> types = null;
+        public List<TypeInfo> parseTypes() {
+            List<TypeInfo> types = null;
             while(cur != string.length) {
                 if(types == null) {
-                    types = new LinkedList<Type>();
+                    types = new LinkedList<TypeInfo>();
                 }
                 types.add(parseType());
             }
-            return types == null ? Collections.<Type>emptyList() : types;
+            return types == null ? Collections.<TypeInfo>emptyList() : types;
         }
 
-        private Type parseType() {
+        private TypeInfo parseType() {
             switch (string[cur]) {
                 case 'L':
                     String name = parseName();
@@ -413,13 +552,13 @@ public abstract class TypeInfo<T> implements JetObject {
                     } catch (ClassNotFoundException e) {
                         throw new RuntimeException(e);
                     }
-                    List<TypeProj> proj = null;
+                    List<TypeInfoProjection> proj = null;
                     boolean nullable = false;
                     if(cur != string.length && string[cur] == '<') {
                         cur++;
                         while(string[cur] != '>') {
                             if(proj == null)
-                                proj = new LinkedList<TypeProj>();
+                                proj = new LinkedList<TypeInfoProjection>();
                             proj.add(parseProjection());
                         }
                         cur++;
@@ -428,7 +567,9 @@ public abstract class TypeInfo<T> implements JetObject {
                         cur++;
                         nullable = true;
                     }
-                    return new TypeReal(aClass, nullable, proj == null ? Collections.<TypeProj>emptyList() : proj);
+                    if(proj == null)
+                        proj = Collections.emptyList();
+                    return new TypeInfoImpl(aClass, nullable,proj.toArray(new TypeInfoProjection[proj.size()]));
 
                 case 'T':
                     return parseTypeVar();
@@ -438,7 +579,7 @@ public abstract class TypeInfo<T> implements JetObject {
             }
         }
 
-        private Type parseTypeVar() {
+        private TypeInfo parseTypeVar() {
             String name = parseName();
             boolean nullable = false;
             if(string[cur] == '?') {
@@ -446,13 +587,28 @@ public abstract class TypeInfo<T> implements JetObject {
                 cur++;
             }
 
-            return new TypeVar(nullable, variables.get(name));
+            return new TypeInfoVar(nullable, variables.get(name));
         }
 
-        private TypeProj parseProjection() {
-            TypeInfoVariance variance = parseVariance();
-            Type type = parseType();
-            return new TypeProj(variance, type);
+        private TypeInfoProjection parseProjection() {
+            final TypeInfoVariance variance = parseVariance();
+            final TypeInfo type = parseType();
+            return new TypeInfoProjection(){
+                @Override
+                public TypeInfoVariance getVariance() {
+                    return variance;
+                }
+
+                @Override
+                public TypeInfo getType() {
+                    return type;
+                }
+
+                @Override
+                public String toString() {
+                    return type.toString();
+                }
+            };
         }
     }
 }

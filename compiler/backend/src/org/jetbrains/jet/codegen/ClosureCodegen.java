@@ -11,6 +11,7 @@ import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.JetFunctionLiteral;
 import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -41,7 +42,7 @@ public class ClosureCodegen {
     }
 
     public static Method erasedInvokeSignature(FunctionDescriptor fd) {
-        boolean isExtensionFunction = fd.getReceiverType() != null;
+        boolean isExtensionFunction = fd.getReceiver().exists();
         int paramCount = fd.getValueParameters().size();
         if (isExtensionFunction) {
             paramCount++;
@@ -150,11 +151,11 @@ public class ClosureCodegen {
 
         iv.load(0, Type.getObjectType(className));
 
-        final JetType receiverType = funDescriptor.getReceiverType();
+        final ReceiverDescriptor receiver = funDescriptor.getReceiver();
         int count = 1;
-        if (receiverType != null) {
+        if (receiver.exists()) {
             StackValue.local(count, JetTypeMapper.TYPE_OBJECT).put(JetTypeMapper.TYPE_OBJECT, iv);
-            StackValue.onStack(JetTypeMapper.TYPE_OBJECT).upcast(state.getTypeMapper().mapType(receiverType), iv);
+            StackValue.onStack(JetTypeMapper.TYPE_OBJECT).upcast(state.getTypeMapper().mapType(receiver.getType()), iv);
             count++;
         }
 
@@ -228,7 +229,7 @@ public class ClosureCodegen {
 
     public static String getInternalClassName(FunctionDescriptor descriptor) {
         final int paramCount = descriptor.getValueParameters().size();
-        if (descriptor.getReceiverType() != null) {
+        if (descriptor.getReceiver().exists()) {
             return "jet/ExtensionFunction" + paramCount;
         }
         else {
@@ -249,7 +250,7 @@ public class ClosureCodegen {
         Method descriptor = erasedInvokeSignature(fd);
         String owner = getInternalClassName(fd);
         final CallableMethod result = new CallableMethod(owner, descriptor, Opcodes.INVOKEVIRTUAL, Arrays.asList(descriptor.getArgumentTypes()));
-        if (fd.getReceiverType() != null) {
+        if (fd.getReceiver().exists()) {
             result.setNeedsReceiver(null);
         }
         result.requestGenerateCallee(Type.getObjectType(getInternalClassName(fd)));

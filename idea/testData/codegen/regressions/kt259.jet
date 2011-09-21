@@ -167,6 +167,7 @@ fun t26 () : Boolean {
 }
 
 fun box() : String {
+/*
     if(!t1()) {
         return "t1 failed"
     }
@@ -242,6 +243,7 @@ fun box() : String {
      if(!t25()) {
          return "t25 failed"
      }
+     */
      if(!t26()) {
          return "t26 failed"
      }

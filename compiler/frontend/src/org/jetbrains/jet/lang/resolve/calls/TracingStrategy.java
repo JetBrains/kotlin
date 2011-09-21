@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 import java.util.Collection;
 import java.util.Set;
@@ -15,7 +15,7 @@ import java.util.Set;
 /*package*/ interface TracingStrategy {
     TracingStrategy EMPTY = new TracingStrategy() {
         @Override
-        public void bindReference(@NotNull BindingTrace trace, @NotNull CallableDescriptor descriptor) {}
+        public void bindReference(@NotNull BindingTrace trace, @NotNull ReceiverDescriptor receiver, @NotNull CallableDescriptor descriptor) {}
 
         @Override
         public void unresolvedReference(@NotNull BindingTrace trace) {}
@@ -24,7 +24,7 @@ import java.util.Set;
         public <D extends CallableDescriptor> void recordAmbiguity(BindingTrace trace, Collection<D> candidates) {}
 
         @Override
-        public void missingReceiver(@NotNull BindingTrace trace, @NotNull JetType candidateReceiverType) {}
+        public void missingReceiver(@NotNull BindingTrace trace, @NotNull ReceiverDescriptor expectedReceiver) {}
 
         @Override
         public void noReceiverAllowed(@NotNull BindingTrace trace) {}
@@ -48,13 +48,13 @@ import java.util.Set;
         public void typeInferenceFailed(@NotNull BindingTrace trace) {}
     };
 
-    void bindReference(@NotNull BindingTrace trace, @NotNull CallableDescriptor descriptor);
+    void bindReference(@NotNull BindingTrace trace, @NotNull ReceiverDescriptor receiver, @NotNull CallableDescriptor descriptor);
 
     void unresolvedReference(@NotNull BindingTrace trace);
 
     <D extends CallableDescriptor> void recordAmbiguity(BindingTrace trace, Collection<D> candidates);
 
-    void missingReceiver(@NotNull BindingTrace trace, @NotNull JetType candidateReceiverType);
+    void missingReceiver(@NotNull BindingTrace trace, @NotNull ReceiverDescriptor expectedReceiver);
 
     void noReceiverAllowed(@NotNull BindingTrace trace);
 
