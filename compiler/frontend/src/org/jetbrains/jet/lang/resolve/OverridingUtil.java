@@ -42,6 +42,8 @@ public class OverridingUtil {
                 if (overrides(other, me)) {
                     continue outerLoop;
                 }
+            }
+            for (D other : candidates) {
                 if (me.getOriginal() == other.getOriginal()
                         && isOverridableBy(JetTypeChecker.INSTANCE, other, me).isSuccess()
                         && isOverridableBy(JetTypeChecker.INSTANCE, me, other).isSuccess()) {
