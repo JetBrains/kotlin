@@ -28,7 +28,9 @@ public class OverridingUtil {
     public static <D extends CallableDescriptor> Set<D> filterOverrides(Set<D> candidateSet) {
         Set<D> candidates = Sets.newLinkedHashSet(candidateSet);
         for (D descriptor : candidateSet) {
-            candidates.removeAll(descriptor.getOverriddenDescriptors());
+            Set<CallableDescriptor> overriddenDescriptors = Sets.newHashSet();
+            getAllOverriddenDescriptors(descriptor.getOriginal(), overriddenDescriptors);
+            candidates.removeAll(overriddenDescriptors);
         }
         return candidates;
     }

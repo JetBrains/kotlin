@@ -190,9 +190,12 @@ public class ClassDescriptorResolver {
         }
         Modality defaultModality;
         if (containingDescriptor instanceof ClassDescriptor) {
-            boolean isDefinitelyAbstract = ((ClassDescriptor) containingDescriptor).getKind() == ClassKind.TRAIT && function.getBodyExpression() == null;
-            defaultModality = isDefinitelyAbstract ? Modality.ABSTRACT : Modality.FINAL;
-        } else {
+            boolean isTrait = ((ClassDescriptor) containingDescriptor).getKind() == ClassKind.TRAIT;
+            boolean isDefinitelyAbstract = isTrait && function.getBodyExpression() == null;
+            Modality basicModality = isTrait ? Modality.OPEN : Modality.FINAL;
+            defaultModality = isDefinitelyAbstract ? Modality.ABSTRACT : basicModality;
+        }
+        else {
             defaultModality = Modality.FINAL;
         }
         Modality modality = resolveModalityFromModifiers(function.getModifierList(), defaultModality);
