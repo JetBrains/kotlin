@@ -172,6 +172,7 @@ public class DescriptorRenderer {
 
         @Override
         public Void visitPropertyDescriptor(PropertyDescriptor descriptor, StringBuilder builder) {
+            renderModality(descriptor.getModality(), builder);
             String typeString = renderPropertyPrefixAndComputeTypeString(
                     builder, descriptor.getTypeParameters(),
                     descriptor.getReceiver(),
@@ -180,6 +181,21 @@ public class DescriptorRenderer {
             renderName(descriptor, builder);
             builder.append(" : ").append(escape(typeString));
             return null;
+        }
+
+        private void renderModality(Modality modality, StringBuilder builder) {
+            switch (modality) {
+                case FINAL:
+                    builder.append("final");
+                    break;
+                case OPEN:
+                    builder.append("open");
+                    break;
+                case ABSTRACT:
+                    builder.append("abstract");
+                    break;
+            }
+            builder.append(" ");
         }
 
         @Override
