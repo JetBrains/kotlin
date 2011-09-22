@@ -165,4 +165,24 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
         return visitor.visitFunctionDescriptor(this, data);
     }
 
+//    @Override
+//    public boolean equals(Object obj) {
+//        if (obj == null) return false;
+//        if (obj.getClass() != FunctionDescriptorImpl.class) return false;
+//        FunctionDescriptorImpl other = (FunctionDescriptorImpl) obj;
+//        if (!eq(this.getName(), other.getName())) return false;
+//        if (!eq(this.getContainingDeclaration(), other.getContainingDeclaration())) return false;
+//
+//    }
+//
+//    private static boolean eq(Object a, Object b) {
+//        if (a == null) return b == null;
+//        if (b == null) return false;
+//        return a.equals(b);
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//        return super.hashCode(); // TODO
+//    }
 }

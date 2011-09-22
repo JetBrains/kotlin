@@ -200,6 +200,7 @@ public class DescriptorRenderer {
 
         @Override
         public Void visitFunctionDescriptor(FunctionDescriptor descriptor, StringBuilder builder) {
+            renderModality(descriptor.getModality(), builder);
             builder.append(renderKeyword("fun")).append(" ");
             renderTypeParameters(descriptor.getTypeParameters(), builder);
 
@@ -275,6 +276,7 @@ public class DescriptorRenderer {
         }
 
         public void renderClassDescriptor(ClassDescriptor descriptor, StringBuilder builder, String keyword) {
+            renderModality(descriptor.getModality(), builder);
             builder.append(renderKeyword(keyword)).append(" ");
             renderName(descriptor, builder);
             renderTypeParameters(descriptor.getTypeConstructor().getParameters(), builder);

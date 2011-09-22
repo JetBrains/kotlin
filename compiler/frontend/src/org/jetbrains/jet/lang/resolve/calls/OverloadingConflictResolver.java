@@ -19,7 +19,7 @@ import java.util.Map;
 /**
  * @author abreslav
  */
-/*package*/ class OverloadingConflictResolver {
+public class OverloadingConflictResolver {
 
     private final JetSemanticServices semanticServices;
 

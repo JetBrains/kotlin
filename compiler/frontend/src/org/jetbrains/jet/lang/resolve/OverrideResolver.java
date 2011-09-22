@@ -8,7 +8,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.JetTypeChecker;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Collection;
@@ -66,7 +65,7 @@ public class OverrideResolver {
     private FunctionDescriptor findFunctionOverridableBy(@NotNull FunctionDescriptor declaredFunction, @NotNull JetType supertype) {
         FunctionGroup functionGroup = supertype.getMemberScope().getFunctionGroup(declaredFunction.getName());
         for (FunctionDescriptor functionDescriptor : functionGroup.getFunctionDescriptors()) {
-            if (FunctionDescriptorUtil.isOverridableBy(context.getSemanticServices().getTypeChecker(), functionDescriptor, declaredFunction).isSuccess()) {
+            if (OverridingUtil.isOverridableBy(context.getSemanticServices().getTypeChecker(), functionDescriptor, declaredFunction).isSuccess()) {
                 return functionDescriptor;
             }
         }
@@ -79,24 +78,10 @@ public class OverrideResolver {
         if (property == null) {
             return null;
         }
-        if (isOverridableBy(property, declaredProperty)) {
+        if (OverridingUtil.isOverridableBy(context.getSemanticServices().getTypeChecker(), property, declaredProperty).isSuccess()) {
             return property;
         }
         return null;
-    }
-
-    private boolean isOverridableBy(@NotNull PropertyDescriptor property, @NotNull PropertyDescriptor overrideCandidate) {
-        boolean var = property.isVar();
-        if (var && !overrideCandidate.isVar()) return false;
-        JetType propertyType = property.getReturnType();
-        JetType overrideType = overrideCandidate.getReturnType();
-        JetTypeChecker typeChecker = context.getSemanticServices().getTypeChecker();
-        if (var) {
-            return typeChecker.equalTypes(propertyType, overrideType);
-        }
-        else {
-            return typeChecker.isSubtypeOf(overrideType, propertyType);
-        }
     }
 
     private void checkOverrides() {
@@ -109,6 +94,30 @@ public class OverrideResolver {
     }
 
     protected void checkOverridesInAClass(MutableClassDescriptor classDescriptor, JetClassOrObject klass) {
+
+        Set<FunctionDescriptor> inheritedFunctions = Sets.newLinkedHashSet();
+        Set<PropertyDescriptor> inheritedProperties = Sets.newLinkedHashSet();
+        for (JetType supertype : classDescriptor.getSupertypes()) {
+            for (DeclarationDescriptor descriptor : supertype.getMemberScope().getAllDescriptors()) {
+                if (descriptor instanceof FunctionDescriptor) {
+                    FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
+                    inheritedFunctions.add(functionDescriptor);
+                }
+                else if (descriptor instanceof PropertyDescriptor) {
+                    PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
+                    inheritedProperties.add(propertyDescriptor);
+                }
+            }
+        }
+
+        OverridingUtil.filterOverrides(inheritedFunctions);
+        OverridingUtil.filterOverrides(inheritedProperties);
+
+//        System.out.println(classDescriptor);
+//        println(inheritedFunctions);
+//        println(inheritedProperties);
+
+
         for (FunctionDescriptor declaredFunction : classDescriptor.getFunctions()) {
             checkOverrideForFunction(declaredFunction);
         }
@@ -148,6 +157,12 @@ public class OverrideResolver {
                     }
                 }
             }
+        }
+    }
+
+    private void println(Set<? extends CallableDescriptor> inheritedProperties) {
+        for (CallableDescriptor inheritedProperty : inheritedProperties) {
+            System.out.println("  " + inheritedProperty);
         }
     }
 
