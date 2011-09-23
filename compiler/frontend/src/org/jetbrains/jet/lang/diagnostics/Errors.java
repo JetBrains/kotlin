@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.diagnostics;
 
+import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
@@ -7,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.lang.reflect.Field;
@@ -25,6 +27,27 @@ public interface Errors {
     UnresolvedReferenceDiagnosticFactory UNRESOLVED_REFERENCE = UnresolvedReferenceDiagnosticFactory.INSTANCE;
     RedeclarationDiagnosticFactory REDECLARATION = RedeclarationDiagnosticFactory.INSTANCE;
     PsiElementOnlyDiagnosticFactory2<PsiElement, JetType, JetType> TYPE_MISMATCH = PsiElementOnlyDiagnosticFactory2.create(ERROR, "Type mismatch: inferred type is {1} but {0} was expected");
+    ParameterizedDiagnosticFactory1<Collection<JetKeywordToken>> INCOMPATIBLE_MODIFIERS = new ParameterizedDiagnosticFactory1<Collection<JetKeywordToken>>(ERROR, "Incompatible modifiers: {0}") {
+        @Override
+        protected String makeMessageFor(Collection<JetKeywordToken> argument) {
+            StringBuilder sb = new StringBuilder();
+            for (Iterator<JetKeywordToken> iterator = argument.iterator(); iterator.hasNext(); ) {
+                JetKeywordToken modifier =  iterator.next();
+                sb.append(modifier.getValue());
+                if (iterator.hasNext()) {
+                    sb.append(" ");
+                }
+            }
+            return sb.toString();
+        }
+    };
+    PsiElementOnlyDiagnosticFactory2<JetModifierList, JetKeywordToken, JetKeywordToken> REDUNDANT_MODIFIER = new PsiElementOnlyDiagnosticFactory2<JetModifierList, JetKeywordToken, JetKeywordToken>(Severity.WARNING, "Modifier {0} is redundant because {1} is present") {
+        @NotNull
+        @Override
+        public Diagnostic on(@NotNull JetModifierList element, @NotNull ASTNode node, @NotNull JetKeywordToken redundantModifier, @NotNull JetKeywordToken presentModifier) {
+            return new DiagnosticWithAdditionalInfo<JetModifierList, JetKeywordToken>(this, severity, makeMessage(redundantModifier, presentModifier), element, node.getTextRange(), redundantModifier);
+        }
+    };
 
     SimpleDiagnosticFactory SAFE_CALLS_ARE_NOT_ALLOWED_ON_NAMESPACES = SimpleDiagnosticFactory.create(ERROR, "Safe calls are not allowed on namespaces");
     SimpleDiagnosticFactory TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM = SimpleDiagnosticFactory.create(ERROR, "Type checking has run into a recursive problem"); // TODO: message

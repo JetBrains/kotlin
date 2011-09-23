@@ -90,7 +90,7 @@ public class JetPsiChecker implements Annotator {
                             DiagnosticWithPsiElement diagnosticWithPsiElement = (DiagnosticWithPsiElement) diagnostic;
                             if (diagnostic.getFactory() instanceof PsiElementOnlyDiagnosticFactory) {
                                 PsiElementOnlyDiagnosticFactory factory = (PsiElementOnlyDiagnosticFactory) diagnostic.getFactory();
-                                Set<IntentionActionFactory> intentionActionFactories = QuickFixes.get(factory);
+                                Collection<IntentionActionFactory> intentionActionFactories = QuickFixes.get(factory);
                                 for (IntentionActionFactory intentionActionFactory : intentionActionFactories) {
                                     IntentionAction action = null;
                                     if (intentionActionFactory != null) {
