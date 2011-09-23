@@ -1,0 +1,44 @@
+trait ISized {
+    val size : Int
+}
+
+trait ReadOnlyArray<out T> : ISized, Iterable<T> {
+  fun get(index : Int) : T
+
+  override fun iterator () : Iterator<T> = object : Iterator<T> {
+    private var index = 0
+
+    override fun hasNext() : Boolean = index < size
+
+    val next : T
+        get() = get(index++)
+  }
+}
+
+trait WriteOnlyArray<in T> : ISized {
+  fun set(index : Int, value : T) : Unit
+
+  fun set(from: Int, count: Int, value: T) {
+    for(i in 0..(count-1)) {
+        set(i, value)
+    }
+  }
+}
+
+class MutableArray<T>(length: Int) : ReadOnlyArray<T>, WriteOnlyArray<T> {
+    private val array = Array<T>(length)
+
+    override fun get(index : Int) : T = array[index]
+    override fun set(index : Int, value : T) : Unit { array[index] = value }
+
+    override val size : Int
+        get() = array.size
+}
+
+fun box() : String {
+    var a = MutableArray<Int> (4)
+    a [0] = 10
+    a.set(1, 2, 13)
+    a [3] = 40
+    return "OK"
+}

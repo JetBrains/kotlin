@@ -31,7 +31,7 @@ public class TypeProjection {
     @Override
     public String toString() {
         if (projection == Variance.INVARIANT) {
-            return type + "";
+            return type.toString();
         }
         return projection + " " + type;
     }

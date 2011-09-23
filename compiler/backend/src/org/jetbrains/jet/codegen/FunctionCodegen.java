@@ -8,7 +8,6 @@ import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.types.TypeUtils;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -47,33 +46,6 @@ public class FunctionCodegen {
         generatedMethod(bodyExpression, jvmMethod, funContext, functionDescriptor);
     }
 
-    private void generateBridgeMethod(Method function, Method overriden)
-    {
-        int flags = Opcodes.ACC_PUBLIC; // TODO.
-
-        final MethodVisitor mv = v.visitMethod(flags, function.getName(), overriden.getDescriptor(), null, null);
-            mv.visitCode();
-
-        Type[] argTypes = function.getArgumentTypes();
-        InstructionAdapter iv = new InstructionAdapter(mv);
-        iv.load(0, JetTypeMapper.TYPE_OBJECT);
-        for (int i = 0, reg = 1; i < argTypes.length; i++) {
-            Type argType = argTypes[i];
-            iv.load(reg, argType);
-            //noinspection AssignmentToForLoopParameter
-            reg += argType.getSize();
-        }
-
-        iv.invokevirtual(state.getTypeMapper().jvmName((ClassDescriptor) owner.getContextDescriptor(), OwnerKind.IMPLEMENTATION), function.getName(), function.getDescriptor());
-        if(JetTypeMapper.isPrimitive(function.getReturnType()) && !JetTypeMapper.isPrimitive(overriden.getReturnType()))
-            StackValue.valueOf(iv, function.getReturnType());
-        if(function.getReturnType() == Type.VOID_TYPE)
-            iv.aconst(null);
-        iv.areturn(overriden.getReturnType());
-        mv.visitMaxs(0, 0);
-        mv.visitEnd();
-    }
-
     private void generatedMethod(JetExpression bodyExpressions,
                                  Method jvmSignature,
                                  ClassContext context,
@@ -86,10 +58,13 @@ public class FunctionCodegen {
 
         OwnerKind kind = context.getContextKind();
 
+        if(kind == OwnerKind.TRAIT_IMPL && bodyExpressions == null)
+            return;
+
         boolean isStatic = kind == OwnerKind.NAMESPACE || kind == OwnerKind.TRAIT_IMPL;
         if (isStatic) flags |= Opcodes.ACC_STATIC;
 
-        boolean isAbstract = !isStatic && (bodyExpressions == null || CodegenUtil.isInterface(functionDescriptor.getContainingDeclaration(), state.getBindingContext()));
+        boolean isAbstract = !isStatic && (bodyExpressions == null || CodegenUtil.isInterface(functionDescriptor.getContainingDeclaration()));
         if (isAbstract) flags |= Opcodes.ACC_ABSTRACT;
 
         final MethodVisitor mv = v.visitMethod(flags, jvmSignature.getName(), jvmSignature.getDescriptor(), null, null);
@@ -122,21 +97,58 @@ public class FunctionCodegen {
                 iv.invokeinterface(dk.getOwnerClass(), jvmSignature.getName(), jvmSignature.getDescriptor());
                 iv.areturn(jvmSignature.getReturnType());
             }
-            else if (!isAbstract) {
+            else {
                 codegen.returnExpression(bodyExpressions);
             }
             mv.visitMaxs(0, 0);
             mv.visitEnd();
 
-            Set<? extends FunctionDescriptor> overriddenFunctions = functionDescriptor.getOverriddenDescriptors();
-            if(overriddenFunctions.size() > 0) {
-                for (FunctionDescriptor overriddenFunction : overriddenFunctions) {
-                    // TODO should we check params here as well?
-                    if(!TypeUtils.equalClasses(overriddenFunction.getOriginal().getReturnType(), functionDescriptor.getReturnType())) {
-                        generateBridgeMethod(jvmSignature, state.getTypeMapper().mapSignature(overriddenFunction.getName(), overriddenFunction.getOriginal()));
-                    }
-                }
+            generateBridgeIfNeeded(owner, state, v, jvmSignature, functionDescriptor, kind);
+        }
+    }
+
+    static void generateBridgeIfNeeded(ClassContext owner, GenerationState state, ClassVisitor v, Method jvmSignature, FunctionDescriptor functionDescriptor, OwnerKind kind) {
+        Set<? extends FunctionDescriptor> overriddenFunctions = functionDescriptor.getOverriddenDescriptors();
+        if(kind != OwnerKind.TRAIT_IMPL) {
+            for (FunctionDescriptor overriddenFunction : overriddenFunctions) {
+                // TODO should we check params here as well?
+                checkOverride(owner, state, v, jvmSignature, functionDescriptor, overriddenFunction);
             }
+            checkOverride(owner, state, v, jvmSignature, functionDescriptor, functionDescriptor.getOriginal());
+        }
+    }
+
+    private static void checkOverride(ClassContext owner, GenerationState state, ClassVisitor v, Method jvmSignature, FunctionDescriptor functionDescriptor, FunctionDescriptor overriddenFunction) {
+        Type type1 = state.getTypeMapper().mapType(overriddenFunction.getOriginal().getReturnType());
+        Type type2 = state.getTypeMapper().mapType(functionDescriptor.getReturnType());
+        if(!type1.equals(type2)) {
+            Method overriden = state.getTypeMapper().mapSignature(overriddenFunction.getName(), overriddenFunction.getOriginal());
+            int flags = Opcodes.ACC_PUBLIC; // TODO.
+
+            final MethodVisitor mv = v.visitMethod(flags, jvmSignature.getName(), overriden.getDescriptor(), null, null);
+            mv.visitCode();
+
+            Type[] argTypes = jvmSignature.getArgumentTypes();
+            InstructionAdapter iv = new InstructionAdapter(mv);
+            iv.load(0, JetTypeMapper.TYPE_OBJECT);
+            for (int i = 0, reg = 1; i < argTypes.length; i++) {
+                Type argType = argTypes[i];
+                iv.load(reg, argType);
+                if(argType.getSort() == Type.OBJECT) {
+                    iv.checkcast(argType);
+                }
+                //noinspection AssignmentToForLoopParameter
+                reg += argType.getSize();
+            }
+
+            iv.invokevirtual(state.getTypeMapper().jvmName((ClassDescriptor) owner.getContextDescriptor(), OwnerKind.IMPLEMENTATION), jvmSignature.getName(), jvmSignature.getDescriptor());
+            if(JetTypeMapper.isPrimitive(jvmSignature.getReturnType()) && !JetTypeMapper.isPrimitive(overriden.getReturnType()))
+                StackValue.valueOf(iv, jvmSignature.getReturnType());
+            if(jvmSignature.getReturnType() == Type.VOID_TYPE)
+                iv.aconst(null);
+            iv.areturn(overriden.getReturnType());
+            mv.visitMaxs(0, 0);
+            mv.visitEnd();
         }
     }
 

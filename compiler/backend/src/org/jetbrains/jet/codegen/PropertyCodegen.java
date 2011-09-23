@@ -2,9 +2,7 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
-import org.jetbrains.jet.lang.descriptors.PropertySetterDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
@@ -52,6 +50,10 @@ public class PropertyCodegen {
 
     private void generateBackingField(JetProperty p, PropertyDescriptor propertyDescriptor) {
         if (state.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor)) {
+            DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
+            if(CodegenUtil.isInterface(containingDeclaration))
+                return;
+
             Object value = null;
             final JetExpression initializer = p.getInitializer();
             if (initializer != null) {
