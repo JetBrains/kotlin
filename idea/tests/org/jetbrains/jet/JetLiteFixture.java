@@ -81,7 +81,7 @@ public abstract class JetLiteFixture extends PlatformLiteFixture {
             public void verify(PicoContainer container) throws PicoIntrospectionException {
             }
         });
-        myProject = disposeOnTearDown(new MockProjectEx());
+        myProject = disposeOnTearDown(new MockProjectEx(getTestRootDisposable()));
         myPsiManager = new MockPsiManager(myProject);
         myFileFactory = new PsiFileFactoryImpl(myPsiManager);
         final MutablePicoContainer appContainer = getApplication().getPicoContainer();
