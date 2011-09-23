@@ -28,6 +28,7 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
     private ReceiverDescriptor receiver;
 
     private Modality modality;
+    private Visibility visibility;
     private final Set<FunctionDescriptor> overriddenFunctions = Sets.newLinkedHashSet();
     private final FunctionDescriptor original;
 
@@ -52,11 +53,13 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
             @NotNull List<TypeParameterDescriptor> typeParameters,
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
             @Nullable JetType unsubstitutedReturnType,
-            @Nullable Modality modality) {
+            @Nullable Modality modality,
+            @NotNull Visibility visibility) {
         this.typeParameters = typeParameters;
         this.unsubstitutedValueParameters = unsubstitutedValueParameters;
         this.unsubstitutedReturnType = unsubstitutedReturnType;
         this.modality = modality;
+        this.visibility = visibility;
         this.receiver = receiverType == null ? NO_RECEIVER : new ExtensionReceiver(this, receiverType);
         return this;
     }
@@ -81,6 +84,12 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
     @Override
     public Modality getModality() {
         return modality;
+    }
+
+    @NotNull
+    @Override
+    public Visibility getVisibility() {
+        return visibility;
     }
 
     public void addOverriddenFunction(@NotNull FunctionDescriptor overriddenFunction) {
@@ -144,7 +153,8 @@ public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements
                 substitutedTypeParameters,
                 substitutedValueParameters,
                 substitutedReturnType,
-                modality
+                modality,
+                visibility
         );
         for (FunctionDescriptor overriddenFunction : overriddenFunctions) {
             substitutedDescriptor.addOverriddenFunction(overriddenFunction);

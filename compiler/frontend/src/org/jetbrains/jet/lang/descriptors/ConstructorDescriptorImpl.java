@@ -28,13 +28,13 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
 
     @Override
     @Deprecated
-    public FunctionDescriptorImpl initialize(@Nullable JetType receiverType, @NotNull List<TypeParameterDescriptor> typeParameters, @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters, @Nullable JetType unsubstitutedReturnType, Modality modality) {
+    public FunctionDescriptorImpl initialize(@Nullable JetType receiverType, @NotNull List<TypeParameterDescriptor> typeParameters, @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters, @Nullable JetType unsubstitutedReturnType, Modality modality, Visibility visibility) {
         assert receiverType == null;
-        return super.initialize(null, typeParameters, unsubstitutedValueParameters, unsubstitutedReturnType, modality);
+        return super.initialize(null, typeParameters, unsubstitutedValueParameters, unsubstitutedReturnType, modality, visibility);
     }
 
-    public ConstructorDescriptorImpl initialize(@NotNull List<TypeParameterDescriptor> typeParameters, @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters, Modality modality) {
-        super.initialize(null, typeParameters, unsubstitutedValueParameters, null, modality);
+    public ConstructorDescriptorImpl initialize(@NotNull List<TypeParameterDescriptor> typeParameters, @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters, Modality modality, Visibility visibility) {
+        super.initialize(null, typeParameters, unsubstitutedValueParameters, null, modality, visibility);
         return this;
     }
 

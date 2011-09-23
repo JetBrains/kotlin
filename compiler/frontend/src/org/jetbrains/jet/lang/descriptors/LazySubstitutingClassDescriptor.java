@@ -163,6 +163,12 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
         return original.getModality();
     }
 
+    @NotNull
+    @Override
+    public Visibility getVisibility() {
+        return original.getVisibility();
+    }
+
     @Override
     public boolean isClassObjectAValue() {
         return original.isClassObjectAValue();

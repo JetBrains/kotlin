@@ -18,6 +18,7 @@ import java.util.List;
 public class PropertyDescriptor extends VariableDescriptorImpl implements MemberDescriptor {
 
     private final Modality modality;
+    private final Visibility visibility;
     private final boolean isVar;
     private final ReceiverDescriptor receiver;
     private final List<TypeParameterDescriptor> typeParemeters = Lists.newArrayListWithCapacity(0);
@@ -30,6 +31,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Member
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull List<AnnotationDescriptor> annotations,
             @NotNull Modality modality,
+            @NotNull Visibility visibility,
             boolean isVar,
             @Nullable JetType receiverType,
             @NotNull String name,
@@ -40,6 +42,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Member
 //        assert outType != null;
         this.isVar = isVar;
         this.modality = modality;
+        this.visibility = visibility;
         this.receiver = receiverType == null ? ReceiverDescriptor.NO_RECEIVER : new ExtensionReceiver(this, receiverType);
         this.original = original == null ? this : original.getOriginal();
     }
@@ -48,12 +51,13 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Member
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull List<AnnotationDescriptor> annotations,
             @NotNull Modality modality,
+            @NotNull Visibility visibility,
             boolean isVar,
             @Nullable JetType receiverType,
             @NotNull String name,
             @Nullable JetType inType,
             @NotNull JetType outType) {
-        this(null, containingDeclaration, annotations, modality, isVar, receiverType, name, inType, outType);
+        this(null, containingDeclaration, annotations, modality, visibility, isVar, receiverType, name, inType, outType);
     }
 
     private PropertyDescriptor(
@@ -66,6 +70,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Member
                 original.getContainingDeclaration(),
                 original.getAnnotations(), // TODO : substitute?
                 original.getModality(),
+                original.getVisibility(),
                 original.isVar,
                 receiverType,
                 original.getName(),
@@ -105,6 +110,12 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Member
     @Override
     public Modality getModality() {
         return modality;
+    }
+
+    @NotNull
+    @Override
+    public Visibility getVisibility() {
+        return visibility;
     }
 
     @Nullable

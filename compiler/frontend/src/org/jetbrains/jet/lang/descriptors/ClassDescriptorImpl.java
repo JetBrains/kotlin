@@ -157,6 +157,12 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
 
     @NotNull
     @Override
+    public Visibility getVisibility() {
+        return Visibility.PUBLIC;
+    }
+
+    @NotNull
+    @Override
     public ReceiverDescriptor getImplicitReceiver() {
         if (implicitReceiver == null) {
             implicitReceiver = new ClassReceiver(this);
