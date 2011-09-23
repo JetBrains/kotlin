@@ -172,6 +172,7 @@ public class DescriptorRenderer {
 
         @Override
         public Void visitPropertyDescriptor(PropertyDescriptor descriptor, StringBuilder builder) {
+            renderModality(descriptor.getModality(), builder);
             String typeString = renderPropertyPrefixAndComputeTypeString(
                     builder, descriptor.getTypeParameters(),
                     descriptor.getReceiver(),
@@ -182,8 +183,24 @@ public class DescriptorRenderer {
             return null;
         }
 
+        private void renderModality(Modality modality, StringBuilder builder) {
+            switch (modality) {
+                case FINAL:
+                    builder.append("final");
+                    break;
+                case OPEN:
+                    builder.append("open");
+                    break;
+                case ABSTRACT:
+                    builder.append("abstract");
+                    break;
+            }
+            builder.append(" ");
+        }
+
         @Override
         public Void visitFunctionDescriptor(FunctionDescriptor descriptor, StringBuilder builder) {
+            renderModality(descriptor.getModality(), builder);
             builder.append(renderKeyword("fun")).append(" ");
             renderTypeParameters(descriptor.getTypeParameters(), builder);
 
@@ -259,6 +276,7 @@ public class DescriptorRenderer {
         }
 
         public void renderClassDescriptor(ClassDescriptor descriptor, StringBuilder builder, String keyword) {
+            renderModality(descriptor.getModality(), builder);
             builder.append(renderKeyword(keyword)).append(" ");
             renderName(descriptor, builder);
             renderTypeParameters(descriptor.getTypeConstructor().getParameters(), builder);

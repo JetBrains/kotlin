@@ -1,13 +1,13 @@
 package org.jetbrains.jet.lang.resolve.calls;
 
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
@@ -15,12 +15,11 @@ import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author abreslav
  */
-/*package*/ class OverloadingConflictResolver {
+public class OverloadingConflictResolver {
 
     private final JetSemanticServices semanticServices;
 
@@ -57,8 +56,8 @@ import java.util.Set;
      * Int < Short < Byte
      */
     private <Descriptor extends CallableDescriptor> boolean moreSpecific(Descriptor f, Descriptor g, boolean discriminateGenericDescriptors) {
-        if (overrides(f, g)) return true;
-        if (overrides(g, f)) return false;
+        if (OverridingUtil.overrides(f, g)) return true;
+        if (OverridingUtil.overrides(g, f)) return false;
 
         ReceiverDescriptor receiverOfF = f.getReceiver();
         ReceiverDescriptor receiverOfG = g.getReceiver();
@@ -119,24 +118,6 @@ import java.util.Set;
         }
         if (semanticServices.getTypeChecker().equalTypes(specific, _short) && semanticServices.getTypeChecker().equalTypes(general, _byte)) return true;
         return false;
-    }
-
-    public static <Descriptor extends CallableDescriptor> boolean overrides(@NotNull Descriptor f, @NotNull Descriptor g) {
-        Set<CallableDescriptor> overriddenDescriptors = Sets.newHashSet();
-        getAllOverriddenDescriptors(f.getOriginal(), overriddenDescriptors);
-        CallableDescriptor originalG = g.getOriginal();
-        for (CallableDescriptor overriddenFunction : overriddenDescriptors) {
-            if (originalG.equals(overriddenFunction.getOriginal())) return true;
-        }
-        return false;
-    }
-
-    private static void getAllOverriddenDescriptors(@NotNull CallableDescriptor current, @NotNull Set<CallableDescriptor> overriddenDescriptors) {
-        if (overriddenDescriptors.contains(current)) return;
-        for (CallableDescriptor descriptor : current.getOriginal().getOverriddenDescriptors()) {
-            getAllOverriddenDescriptors(descriptor, overriddenDescriptors);
-            overriddenDescriptors.add(descriptor);
-        }
     }
 
 }

@@ -5,11 +5,11 @@ import com.intellij.openapi.application.PathManager;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptorUtil;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.ClassDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.parsing.JetParsingTest;
 
@@ -139,7 +139,7 @@ public class JetOverridingTest extends LightDaemonAnalyzerTestCase {
     private void assertOverridabilityRelation(String superFun, String subFun, boolean expectedIsError) {
         FunctionDescriptor a = makeFunction(superFun);
         FunctionDescriptor b = makeFunction(subFun);
-        FunctionDescriptorUtil.OverrideCompatibilityInfo overridableWith = FunctionDescriptorUtil.isOverridableBy(semanticServices.getTypeChecker(), a, b);
+        OverridingUtil.OverrideCompatibilityInfo overridableWith = OverridingUtil.isOverridableBy(semanticServices.getTypeChecker(), a, b);
         assertEquals(overridableWith.getMessage(), expectedIsError, !overridableWith.isSuccess());
     }
 

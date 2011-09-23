@@ -524,7 +524,7 @@ public class CallResolver {
                     return OverloadResolutionResult.success(maximallySpecificGenericsDiscriminated);
                 }
 
-                Set<D> noOverrides = filterOverrides(successfulCandidates.keySet());
+                Set<D> noOverrides = OverridingUtil.filterOverrides(successfulCandidates.keySet());
                 if (dirtyCandidates.isEmpty()) {
 //                    tracing.reportOverallResolutionError(trace, "Overload resolution ambiguity: "
 //                                                                + makeErrorMessageForMultipleDescriptors(noOverrides));
@@ -547,7 +547,7 @@ public class CallResolver {
         }
         else if (!failedCandidates.isEmpty()) {
             if (failedCandidates.size() != 1) {
-                Set<D> noOverrides = filterOverrides(failedCandidates);
+                Set<D> noOverrides = OverridingUtil.filterOverrides(failedCandidates);
                 if (noOverrides.size() != 1) {
 //                    tracing.reportOverallResolutionError(trace, "None of the following functions can be called with the arguments supplied: "
 //                                                                + makeErrorMessageForMultipleDescriptors(noOverrides));
@@ -566,20 +566,6 @@ public class CallResolver {
             tracing.unresolvedReference(trace);
             return OverloadResolutionResult.nameNotFound();
         }
-    }
-
-    private <D extends CallableDescriptor> Set<D> filterOverrides(Set<D> candidateSet) {
-        Set<D> candidates = Sets.newLinkedHashSet();
-        outerLoop:
-        for (D me : candidateSet) {
-            for (D other : candidateSet) {
-                if (OverloadingConflictResolver.overrides(other, me)) {
-                    continue outerLoop;
-                }
-            }
-            candidates.add(me);
-        }
-        return candidates;
     }
 
     private boolean checkValueArgumentTypes(JetScope scope, JetTypeInferrer.Services temporaryServices, Map<ValueArgument, ValueParameterDescriptor> argumentsToParameters, Flag dirty, Function<ValueParameterDescriptor, ValueParameterDescriptor> parameterMap) {

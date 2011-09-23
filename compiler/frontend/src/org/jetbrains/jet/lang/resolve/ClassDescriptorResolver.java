@@ -191,16 +191,10 @@ public class ClassDescriptorResolver {
                 returnType = ErrorUtils.createErrorType("No type, no body");
             }
         }
-        Modality defaultModality;
-        if (containingDescriptor instanceof ClassDescriptor) {
-            boolean isDefinitelyAbstract = ((ClassDescriptor) containingDescriptor).getKind() == ClassKind.TRAIT && function.getBodyExpression() == null;
-            defaultModality = isDefinitelyAbstract ? Modality.ABSTRACT : Modality.FINAL;
-        } else {
-            defaultModality = Modality.FINAL;
-        }
+        boolean hasBody = function.getBodyExpression() != null;
+        Modality defaultModality = getDefaultModality(containingDescriptor, hasBody);
         Modality modality = resolveModalityFromModifiers(trace, function.getModifierList(), defaultModality);
         Visibility visibility = resolveVisibilityFromModifiers(trace, function.getModifierList());
-
         functionDescriptor.initialize(
                 receiverType,
                 typeParameterDescriptors,
@@ -211,6 +205,20 @@ public class ClassDescriptorResolver {
 
         trace.record(BindingContext.FUNCTION, function, functionDescriptor);
         return functionDescriptor;
+    }
+
+    private Modality getDefaultModality(DeclarationDescriptor containingDescriptor, boolean isBodyPresent) {
+        Modality defaultModality;
+        if (containingDescriptor instanceof ClassDescriptor) {
+            boolean isTrait = ((ClassDescriptor) containingDescriptor).getKind() == ClassKind.TRAIT;
+            boolean isDefinitelyAbstract = isTrait && !isBodyPresent;
+            Modality basicModality = isTrait ? Modality.OPEN : Modality.FINAL;
+            defaultModality = isDefinitelyAbstract ? Modality.ABSTRACT : basicModality;
+        }
+        else {
+            defaultModality = Modality.FINAL;
+        }
+        return defaultModality;
     }
 
     @NotNull
@@ -451,7 +459,6 @@ public class ClassDescriptorResolver {
 
     @NotNull
     public PropertyDescriptor resolvePropertyDescriptor(@NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope scope, JetProperty property) {
-
         JetScope scopeWithTypeParameters;
         List<TypeParameterDescriptor> typeParameterDescriptors;
         List<JetTypeParameter> typeParameters = property.getTypeParameters();
@@ -477,10 +484,22 @@ public class ClassDescriptorResolver {
 
         JetType type = getVariableType(scopeWithTypeParameters, property, true);
 
+        boolean hasBody = property.getInitializer() != null;
+        if (!hasBody) {
+            JetPropertyAccessor getter = property.getGetter();
+            if (getter != null && getter.getBodyExpression() != null) {
+                hasBody = true;
+            }
+            JetPropertyAccessor setter = property.getSetter();
+            if (!hasBody && setter != null && setter.getBodyExpression() != null) {
+                hasBody = true;
+            }
+        }
+        Modality defaultModality = getDefaultModality(containingDeclaration, hasBody);
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                 containingDeclaration,
                 annotationResolver.resolveAnnotations(scope, modifierList),
-                resolveModalityFromModifiers(trace, property.getModifierList()), // TODO : default modifiers differ in different contexts
+                resolveModalityFromModifiers(trace, property.getModifierList(), defaultModality),
                 resolveVisibilityFromModifiers(trace, property.getModifierList()),
                 isVar,
                 receiverType,
