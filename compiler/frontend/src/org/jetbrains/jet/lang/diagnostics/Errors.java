@@ -27,7 +27,7 @@ public interface Errors {
     UnresolvedReferenceDiagnosticFactory UNRESOLVED_REFERENCE = UnresolvedReferenceDiagnosticFactory.INSTANCE;
     RedeclarationDiagnosticFactory REDECLARATION = RedeclarationDiagnosticFactory.INSTANCE;
     PsiElementOnlyDiagnosticFactory2<PsiElement, JetType, JetType> TYPE_MISMATCH = PsiElementOnlyDiagnosticFactory2.create(ERROR, "Type mismatch: inferred type is {1} but {0} was expected");
-    ParameterizedDiagnosticFactory1<Collection<JetKeywordToken>> INCOMPATIBLE_MODIFIERS = new ParameterizedDiagnosticFactory1<Collection<JetKeywordToken>>(ERROR, "Incompatible modifiers: {0}") {
+    ParameterizedDiagnosticFactory1<Collection<JetKeywordToken>> INCOMPATIBLE_MODIFIERS = new ParameterizedDiagnosticFactory1<Collection<JetKeywordToken>>(ERROR, "Incompatible modifiers: ''{0}''") {
         @Override
         protected String makeMessageFor(Collection<JetKeywordToken> argument) {
             StringBuilder sb = new StringBuilder();
@@ -121,10 +121,10 @@ public interface Errors {
             return e.getClass().getSimpleName() + ": " + e.getMessage();
         }
     };
-    PsiElementOnlyDiagnosticFactory3<JetFunction, FunctionDescriptor, FunctionDescriptor, DeclarationDescriptor> VIRTUAL_METHOD_HIDDEN = PsiElementOnlyDiagnosticFactory3.create(ERROR, "Function '{0}' hides '{1}' in class {2} and needs 'override' modifier");
+    PsiElementOnlyDiagnosticFactory3<JetFunction, FunctionDescriptor, FunctionDescriptor, DeclarationDescriptor> VIRTUAL_METHOD_HIDDEN = PsiElementOnlyDiagnosticFactory3.create(ERROR, "Function ''{0}'' hides ''{1}'' in class {2} and needs 'override' modifier");
 
     SimpleDiagnosticFactory UNREACHABLE_CODE = SimpleDiagnosticFactory.create(ERROR, "Unreachable code");
-    ParameterizedDiagnosticFactory1<String> UNREACHABLE_BECAUSE_OF_NOTHING = ParameterizedDiagnosticFactory1.create(ERROR, "This code is unreachable, because '{0}' never terminates normally");
+    ParameterizedDiagnosticFactory1<String> UNREACHABLE_BECAUSE_OF_NOTHING = ParameterizedDiagnosticFactory1.create(ERROR, "This code is unreachable, because ''{0}'' never terminates normally");
 
     SimpleDiagnosticFactory MANY_CLASS_OBJECTS = SimpleDiagnosticFactory.create(ERROR, "Only one class object is allowed per class");
     SimpleDiagnosticFactory CLASS_OBJECT_NOT_ALLOWED = SimpleDiagnosticFactory.create(ERROR, "A class object is not allowed here");
@@ -211,7 +211,7 @@ public interface Errors {
     SimpleDiagnosticFactory REF_PARAMETER_WITH_VAL_OR_VAR = SimpleDiagnosticFactory.create(ERROR, "'val' and 'var' are not allowed on ref-parameters");
     SimpleDiagnosticFactory VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION = SimpleDiagnosticFactory.create(ERROR, "A type annotation is required on a value parameter");
     SimpleDiagnosticFactory BREAK_OR_CONTINUE_OUTSIDE_A_LOOP = SimpleDiagnosticFactory.create(ERROR, "'break' and 'continue' are only allowed inside a loop");
-    ParameterizedDiagnosticFactory1<String> NOT_A_LOOP_LABEL = ParameterizedDiagnosticFactory1.create(ERROR, "The label '{0}' does not denote a loop");
+    ParameterizedDiagnosticFactory1<String> NOT_A_LOOP_LABEL = ParameterizedDiagnosticFactory1.create(ERROR, "The label ''{0}'' does not denote a loop");
 
     SimpleDiagnosticFactory ANONYMOUS_INITIALIZER_WITHOUT_CONSTRUCTOR = SimpleDiagnosticFactory.create(ERROR, "Anonymous initializers are only allowed in the presence of a primary constructor");
     SimpleDiagnosticFactory NULLABLE_SUPERTYPE = SimpleDiagnosticFactory.create(ERROR, "A supertype cannot be nullable");
@@ -285,7 +285,7 @@ public interface Errors {
             return descriptor.getName();
         }
     };
-    ParameterizedDiagnosticFactory3<JetClassOrObject, FunctionDescriptor, DeclarationDescriptor> ABSTRACT_METHOD_NOT_IMPLEMENTED = new ParameterizedDiagnosticFactory3<JetClassOrObject, FunctionDescriptor, DeclarationDescriptor>(ERROR, "Class '{0}' must be declared abstract or implement abstract method '{1}' declared in {2}") {
+    ParameterizedDiagnosticFactory3<JetClassOrObject, FunctionDescriptor, DeclarationDescriptor> ABSTRACT_METHOD_NOT_IMPLEMENTED = new ParameterizedDiagnosticFactory3<JetClassOrObject, FunctionDescriptor, DeclarationDescriptor>(ERROR, "Class ''{0}'' must be declared abstract or implement abstract method ''{1}'' declared in {2}") {
         @Override
         protected String makeMessageForA(@NotNull JetClassOrObject jetClassOrObject) {
             return jetClassOrObject.getName();
@@ -303,7 +303,7 @@ public interface Errors {
     };
 
     ParameterizedDiagnosticFactory3<String, JetType, JetType> RESULT_TYPE_MISMATCH = ParameterizedDiagnosticFactory3.create(ERROR, "{0} must return {1} but returns {2}");
-    ParameterizedDiagnosticFactory3<String, String, String> UNSAFE_INFIX_CALL = ParameterizedDiagnosticFactory3.create(ERROR, "Infix call corresponds to a dot-qualified call '{0}.{1}({2})' which is not allowed on a nullable receiver '{0}'. Use '?.'-qualified call instead");
+    ParameterizedDiagnosticFactory3<String, String, String> UNSAFE_INFIX_CALL = ParameterizedDiagnosticFactory3.create(ERROR, "Infix call corresponds to a dot-qualified call ''{0}.{1}({2})' which is not allowed on a nullable receiver ''{0}''. Use '?.'-qualified call instead");
 
     ParameterizedDiagnosticFactory1<Collection<? extends CallableDescriptor>> OVERLOAD_RESOLUTION_AMBIGUITY = new AmbiguousDescriptorDiagnosticFactory("Overload resolution ambiguity: {0}");
     ParameterizedDiagnosticFactory1<Collection<? extends CallableDescriptor>> NONE_APPLICABLE = new AmbiguousDescriptorDiagnosticFactory("None of the following functions can be called with the arguments supplied: {0}");
