@@ -55,6 +55,9 @@ public interface ClassDescriptor extends ClassifierDescriptor {
 
     @NotNull
     Modality getModality();
+    
+    @NotNull
+    Visibility getVisibility();
 
     @NotNull
     ReceiverDescriptor getImplicitReceiver();

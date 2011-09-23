@@ -20,6 +20,7 @@ import java.util.Set;
 public class PropertyDescriptor extends VariableDescriptorImpl implements CallableMemberDescriptor {
 
     private final Modality modality;
+    private final Visibility visibility;
     private final boolean isVar;
     private final ReceiverDescriptor receiver;
     private final Set<PropertyDescriptor> overriddenProperties = Sets.newLinkedHashSet();
@@ -33,6 +34,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull List<AnnotationDescriptor> annotations,
             @NotNull Modality modality,
+            @NotNull Visibility visibility,
             boolean isVar,
             @Nullable JetType receiverType,
             @NotNull String name,
@@ -43,6 +45,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
 //        assert outType != null;
         this.isVar = isVar;
         this.modality = modality;
+        this.visibility = visibility;
         this.receiver = receiverType == null ? ReceiverDescriptor.NO_RECEIVER : new ExtensionReceiver(this, receiverType);
         this.original = original == null ? this : original.getOriginal();
     }
@@ -51,12 +54,13 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull List<AnnotationDescriptor> annotations,
             @NotNull Modality modality,
+            @NotNull Visibility visibility,
             boolean isVar,
             @Nullable JetType receiverType,
             @NotNull String name,
             @Nullable JetType inType,
             @NotNull JetType outType) {
-        this(null, containingDeclaration, annotations, modality, isVar, receiverType, name, inType, outType);
+        this(null, containingDeclaration, annotations, modality, visibility, isVar, receiverType, name, inType, outType);
     }
 
     private PropertyDescriptor(
@@ -69,6 +73,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
                 original.getContainingDeclaration(),
                 original.getAnnotations(), // TODO : substitute?
                 original.getModality(),
+                original.getVisibility(),
                 original.isVar,
                 receiverType,
                 original.getName(),
@@ -108,6 +113,12 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
     @Override
     public Modality getModality() {
         return modality;
+    }
+
+    @NotNull
+    @Override
+    public Visibility getVisibility() {
+        return visibility;
     }
 
     @Nullable

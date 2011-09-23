@@ -1,6 +1,7 @@
 package org.jetbrains.jet.plugin.quickfix;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.diagnostics.PsiElementOnlyDiagnosticFactory;
@@ -11,15 +12,16 @@ import org.jetbrains.jet.lang.psi.JetPropertyAccessor;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
+import java.util.Collection;
 import java.util.Set;
 
 /**
 * @author svtk
 */
 public class QuickFixes {
-    private static HashMultimap<PsiElementOnlyDiagnosticFactory, IntentionActionFactory> actionMap = HashMultimap.create();
+    private static final Multimap<PsiElementOnlyDiagnosticFactory, IntentionActionFactory> actionMap = HashMultimap.create();
 
-    public static Set<IntentionActionFactory> get(PsiElementOnlyDiagnosticFactory diagnosticFactory) {
+    public static Collection<IntentionActionFactory> get(PsiElementOnlyDiagnosticFactory diagnosticFactory) {
         return actionMap.get(diagnosticFactory);
     }
 
@@ -83,6 +85,8 @@ public class QuickFixes {
         add(Errors.USELESS_ELVIS, RemoveRightPartOfBinaryExpressionFix.createRemoveElvisOperatorFactory());
         
         add(Errors.UNNECESSARY_SAFE_CALL, ReplaceSafeCallToDotCall.createFactory());
+        
+        add(Errors.REDUNDANT_MODIFIER, RemoveRedundantModifierFix.createFactory());
     }
 }
 

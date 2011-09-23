@@ -8,4 +8,7 @@ import org.jetbrains.annotations.NotNull;
 public interface MemberDescriptor {
     @NotNull
     Modality getModality();
+    
+    @NotNull
+    Visibility getVisibility();
 }

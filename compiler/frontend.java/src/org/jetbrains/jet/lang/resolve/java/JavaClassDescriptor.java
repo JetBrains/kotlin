@@ -25,6 +25,7 @@ public class JavaClassDescriptor extends MutableDeclarationDescriptor implements
     private JetType classObjectType;
     private final Set<FunctionDescriptor> constructors = Sets.newLinkedHashSet();
     private Modality modality;
+    private Visibility visibility;
     private JetType superclassType;
     private final ClassKind kind;
     private ClassReceiver implicitReceiver;
@@ -41,6 +42,10 @@ public class JavaClassDescriptor extends MutableDeclarationDescriptor implements
 
     public void setModality(Modality modality) {
         this.modality = modality;
+    }
+
+    public void setVisibility(Visibility visibility) {
+        this.visibility = visibility;
     }
 
     public void setUnsubstitutedMemberScope(JavaClassMembersScope memberScope) {
@@ -146,6 +151,12 @@ public class JavaClassDescriptor extends MutableDeclarationDescriptor implements
     @NotNull
     public Modality getModality() {
         return modality;
+    }
+
+    @NotNull
+    @Override
+    public Visibility getVisibility() {
+        return visibility;
     }
 
     @Override

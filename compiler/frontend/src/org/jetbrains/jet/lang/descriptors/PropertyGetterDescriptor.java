@@ -18,8 +18,8 @@ public class PropertyGetterDescriptor extends PropertyAccessorDescriptor {
     private final Set<PropertyGetterDescriptor> overriddenGetters = Sets.newHashSet();
     private JetType returnType;
 
-    public PropertyGetterDescriptor(@NotNull Modality modality, @NotNull PropertyDescriptor correspondingProperty, @NotNull List<AnnotationDescriptor> annotations, @Nullable JetType returnType, boolean hasBody, boolean isDefault) {
-        super(modality, correspondingProperty, annotations, "get-" + correspondingProperty.getName(), hasBody, isDefault);
+    public PropertyGetterDescriptor(@NotNull Modality modality, @NotNull Visibility visibility, @NotNull PropertyDescriptor correspondingProperty, @NotNull List<AnnotationDescriptor> annotations, @Nullable JetType returnType, boolean hasBody, boolean isDefault) {
+        super(modality, visibility, correspondingProperty, annotations, "get-" + correspondingProperty.getName(), hasBody, isDefault);
         this.returnType = returnType == null ? correspondingProperty.getOutType() : returnType;
     }
 

@@ -1,5 +1,6 @@
 package org.jetbrains.jet.plugin.quickfix;
 
+import com.intellij.extapi.psi.ASTDelegatePsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
@@ -47,32 +48,42 @@ public class RemoveModifierFix extends ModifierFix {
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-        element.replace(removeModifier(element, modifier));
+        JetModifierListOwner newElement = (JetModifierListOwner) element.copy();
+        element.replace(removeModifier(newElement, modifier));
     }
 
     @NotNull
     /*package*/ static <T extends JetModifierListOwner> T removeModifier(T element, JetToken modifier) {
-        T newElement = (T) (element.copy());
-        assert newElement.hasModifier(modifier);
-        JetModifierList modifierList = newElement.getModifierList();
-        ASTNode modifierNode = modifierList.getModifierNode(modifier);
-        PsiElement whiteSpace = modifierNode.getPsi().getNextSibling();
-        ((JetElement)newElement).deleteChildInternal(modifierNode);
-        if (modifierList.getChildren().length == 0) {
-            whiteSpace = modifierList.getNextSibling();
-            ((JetElement) newElement).deleteChildInternal(modifierList.getNode());
-            removeWhiteSpace(newElement, whiteSpace);
+        JetModifierList modifierList = element.getModifierList();
+        assert modifierList != null;
+        removeModifierFromList(modifierList, modifier);
+        if (modifierList.getFirstChild() == null) {
+            PsiElement whiteSpace = modifierList.getNextSibling();
+            assert element instanceof JetElement;
+            ((JetElement) element).deleteChildInternal(modifierList.getNode());
+            removeWhiteSpace((JetElement) element, whiteSpace);
         }
-        else {
-            removeWhiteSpace(newElement, whiteSpace);
-        }
-        return newElement;
+        return element;
     }
 
-    private static void removeWhiteSpace(PsiElement element, PsiElement subElement) {
-        if (subElement instanceof PsiWhiteSpace) {
-            ((JetElement) element).deleteChildInternal(subElement.getNode());
+    /*package*/ static JetModifierList removeModifierFromList(@NotNull JetModifierList modifierList, JetToken modifier) {
+        assert modifierList.hasModifier(modifier);
+        ASTNode modifierNode = modifierList.getModifierNode(modifier);
+        PsiElement whiteSpace = modifierNode.getPsi().getNextSibling();
+        boolean wsRemoved = removeWhiteSpace(modifierList, whiteSpace);
+        modifierList.deleteChildInternal(modifierNode);
+        if (!wsRemoved) {
+            removeWhiteSpace(modifierList, modifierList.getLastChild());
         }
+        return modifierList;
+    }
+
+    private static boolean removeWhiteSpace(ASTDelegatePsiElement element, PsiElement subElement) {
+        if (subElement instanceof PsiWhiteSpace) {
+            element.deleteChildInternal(subElement.getNode());
+            return true;
+        }
+        return false;
     }
 
     public static IntentionActionFactory<JetModifierListOwner> createFactory(final JetKeywordToken modifier) {

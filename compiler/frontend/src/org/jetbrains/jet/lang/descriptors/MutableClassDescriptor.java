@@ -29,6 +29,7 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     private Collection<JetType> supertypes = Lists.newArrayList();
 
     private Modality modality;
+    private Visibility visibility;
     private TypeConstructor typeConstructor;
     private final WritableScope scopeForMemberResolution;
     private final WritableScope scopeForMemberLookup;
@@ -273,10 +274,20 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
         this.modality = modality;
     }
 
+    public void setVisibility(Visibility visibility) {
+        this.visibility = visibility;
+    }
+
     @Override
     @NotNull
     public Modality getModality() {
         return modality;
+    }
+
+    @NotNull
+    @Override
+    public Visibility getVisibility() {
+        return visibility;
     }
 
     @Override

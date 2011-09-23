@@ -102,6 +102,7 @@ public class ErrorUtils {
             ERROR_CLASS,
             Collections.<AnnotationDescriptor>emptyList(),
             Modality.OPEN,
+            Visibility.INTERNAL,
             true,
             null,
             "<ERROR PROPERTY>",
@@ -114,7 +115,8 @@ public class ErrorUtils {
                 typeParameters,
                 getValueParameters(functionDescriptor, positionedValueArgumentTypes),
                 createErrorType("<ERROR FUNCTION RETURN>"),
-                Modality.OPEN
+                Modality.OPEN,
+                Visibility.INTERNAL
         );
     }
 
@@ -124,7 +126,8 @@ public class ErrorUtils {
                 Collections.<TypeParameterDescriptor>emptyList(), // TODO
                 Collections.<ValueParameterDescriptor>emptyList(), // TODO
                 createErrorType("<ERROR FUNCTION RETURN TYPE>"),
-                Modality.OPEN
+                Modality.OPEN,
+                Visibility.INTERNAL
         );
     }
 

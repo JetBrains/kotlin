@@ -96,6 +96,7 @@ public class TypeHierarchyResolver {
                         MutableClassDescriptor classObjectDescriptor = new MutableClassDescriptor(context.getTrace(), mutableClassDescriptor, outerScope, ClassKind.OBJECT);
                         classObjectDescriptor.setName("class-object-for-" + klass.getName());
                         classObjectDescriptor.setModality(Modality.FINAL);
+                        classObjectDescriptor.setVisibility(ClassDescriptorResolver.resolveVisibilityFromModifiers(context.getTrace(), klass.getModifierList()));
                         classObjectDescriptor.createTypeConstructor();
                         createPrimaryConstructor(classObjectDescriptor);
                         mutableClassDescriptor.setClassObjectDescriptor(classObjectDescriptor);
@@ -151,7 +152,7 @@ public class TypeHierarchyResolver {
                 private void createPrimaryConstructor(MutableClassDescriptor mutableClassDescriptor) {
                     ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(mutableClassDescriptor, Collections.<AnnotationDescriptor>emptyList(), true);
                     constructorDescriptor.initialize(Collections.<TypeParameterDescriptor>emptyList(), Collections.<ValueParameterDescriptor>emptyList(),
-                                                     Modality.FINAL);
+                                                     Modality.FINAL, Visibility.INTERNAL);//TODO check set mutableClassDescriptor.getVisibility()
                     // TODO : make the constructor private?
                     mutableClassDescriptor.setPrimaryConstructor(constructorDescriptor);
                 }
@@ -265,8 +266,10 @@ public class TypeHierarchyResolver {
             descriptor.createTypeConstructor();
         }
         for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : context.getObjects().entrySet()) {
+            JetObjectDeclaration objectDeclaration = entry.getKey();
             MutableClassDescriptor descriptor = entry.getValue();
             descriptor.setModality(Modality.FINAL);
+            descriptor.setVisibility(ClassDescriptorResolver.resolveVisibilityFromModifiers(context.getTrace(), objectDeclaration.getModifierList()));
             descriptor.createTypeConstructor();
         }
     }
