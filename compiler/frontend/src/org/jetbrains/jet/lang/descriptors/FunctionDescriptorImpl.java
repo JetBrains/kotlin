@@ -20,7 +20,7 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
 /**
  * @author abreslav
  */
-public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements FunctionDescriptor {
+public class FunctionDescriptorImpl extends DeclarationDescriptorImpl implements FunctionDescriptor, CallableMemberDescriptor {
 
     private List<TypeParameterDescriptor> typeParameters;
     private List<ValueParameterDescriptor> unsubstitutedValueParameters;

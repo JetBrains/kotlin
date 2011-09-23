@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -302,8 +303,8 @@ public class JavaDescriptorResolver {
     }
 
     @NotNull
-    public FunctionGroup resolveFunctionGroup(@NotNull DeclarationDescriptor owner, @NotNull PsiClass psiClass, @Nullable ClassDescriptor classDescriptor, @NotNull String methodName, boolean staticMembers) {
-        WritableFunctionGroup writableFunctionGroup = new WritableFunctionGroup(methodName);
+    public Set<FunctionDescriptor> resolveFunctionGroup(@NotNull DeclarationDescriptor owner, @NotNull PsiClass psiClass, @Nullable ClassDescriptor classDescriptor, @NotNull String methodName, boolean staticMembers) {
+        Set<FunctionDescriptor> writableFunctionGroup = Sets.newLinkedHashSet();
         final Collection<HierarchicalMethodSignature> signatures = psiClass.getVisibleSignatures();
         TypeSubstitutor typeSubstitutor = createSubstitutorForGenericSupertypes(classDescriptor);
         for (HierarchicalMethodSignature signature: signatures) {
@@ -317,7 +318,7 @@ public class JavaDescriptorResolver {
 
             FunctionDescriptor substitutedFunctionDescriptor = resolveMethodToFunctionDescriptor(owner, psiClass, typeSubstitutor, method);
             if (substitutedFunctionDescriptor != null) {
-                writableFunctionGroup.addFunction(substitutedFunctionDescriptor);
+                writableFunctionGroup.add(substitutedFunctionDescriptor);
             }
         }
         return writableFunctionGroup;

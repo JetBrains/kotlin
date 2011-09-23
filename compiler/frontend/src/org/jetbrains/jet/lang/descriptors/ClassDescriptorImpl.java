@@ -12,6 +12,7 @@ import org.jetbrains.jet.lang.types.*;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author abreslav
@@ -20,7 +21,7 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
     private TypeConstructor typeConstructor;
 
     private JetScope memberDeclarations;
-    private FunctionGroup constructors;
+    private Set<FunctionDescriptor> constructors;
     private ConstructorDescriptor primaryConstructor;
     private JetType superclassType;
     private ReceiverDescriptor implicitReceiver;
@@ -36,7 +37,7 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
                                             @NotNull List<TypeParameterDescriptor> typeParameters,
                                             @NotNull Collection<JetType> supertypes,
                                             @NotNull JetScope memberDeclarations,
-                                            @NotNull FunctionGroup constructors,
+                                            @NotNull Set<FunctionDescriptor> constructors,
                                             @Nullable ConstructorDescriptor primaryConstructor) {
         return initialize(sealed, typeParameters, supertypes, memberDeclarations, constructors, primaryConstructor, getClassType(supertypes));
     }
@@ -45,7 +46,7 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
                                                 @NotNull List<TypeParameterDescriptor> typeParameters,
                                                 @NotNull Collection<JetType> supertypes,
                                                 @NotNull JetScope memberDeclarations,
-                                                @NotNull FunctionGroup constructors,
+                                                @NotNull Set<FunctionDescriptor> constructors,
                                                 @Nullable ConstructorDescriptor primaryConstructor,
                                                 @Nullable JetType superclassType) {
         this.typeConstructor = new TypeConstructorImpl(this, getAnnotations(), sealed, getName(), typeParameters, supertypes);
@@ -53,7 +54,6 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
         this.constructors = constructors;
         this.primaryConstructor = primaryConstructor;
         this.superclassType = superclassType;
-//        assert !constructors.isEmpty() || primaryConstructor == null;
         return this;
     }
 
@@ -103,13 +103,8 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
 
     @NotNull
     @Override
-    public FunctionGroup getConstructors() {
-//        assert typeArguments.size() == getTypeConstructor().getParameters().size() : "Argument list length mismatch for " + getName();
-//        if (typeArguments.size() == 0) {
-//            return constructors;
-//        }
-//        Map<TypeConstructor, TypeProjection> substitutionContext = TypeUtils.buildSubstitutionContext(getTypeConstructor().getParameters(), typeArguments);
-        return constructors;// LazySubstitutingFunctionGroup(TypeSubstitutor.create(substitutionContext), constructors);
+    public Set<FunctionDescriptor> getConstructors() {
+        return constructors;
     }
 
     @NotNull

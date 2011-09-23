@@ -237,7 +237,7 @@ public class TypeUtils {
 
     @NotNull
     public static Multimap<TypeConstructor, TypeProjection> buildDeepSubstitutionMultimap(@NotNull JetType type) {
-        Multimap<TypeConstructor, TypeProjection> fullSubstitution = Multimaps.newSetMultimap(Maps.<TypeConstructor, Collection<TypeProjection>>newHashMap(), CommonSuppliers.<TypeProjection>getLinkedHashSetSupplier());
+        Multimap<TypeConstructor, TypeProjection> fullSubstitution = CommonSuppliers.newLinkedHashSetHashSetMultimap();
         Map<TypeConstructor, TypeProjection> substitution = Maps.newHashMap();
         TypeSubstitutor typeSubstitutor = TypeSubstitutor.create(substitution);
         // we use the mutability of the map here

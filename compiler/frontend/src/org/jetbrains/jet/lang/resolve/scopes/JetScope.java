@@ -7,6 +7,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author abreslav
@@ -35,7 +36,7 @@ public interface JetScope {
     VariableDescriptor getVariable(@NotNull String name);
 
     @NotNull
-    FunctionGroup getFunctionGroup(@NotNull String name);
+    Set<FunctionDescriptor> getFunctions(@NotNull String name);
 
     @NotNull
     DeclarationDescriptor getContainingDeclaration();

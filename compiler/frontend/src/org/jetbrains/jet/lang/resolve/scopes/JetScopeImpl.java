@@ -7,6 +7,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
 * @author abreslav
@@ -35,8 +36,8 @@ public abstract class JetScopeImpl implements JetScope {
 
     @NotNull
     @Override
-    public FunctionGroup getFunctionGroup(@NotNull String name) {
-        return FunctionGroup.EMPTY;
+    public Set<FunctionDescriptor> getFunctions(@NotNull String name) {
+        return Collections.emptySet();
     }
 
     @NotNull

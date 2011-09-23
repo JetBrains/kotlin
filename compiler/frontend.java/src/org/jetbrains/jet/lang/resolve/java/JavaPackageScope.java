@@ -4,6 +4,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeImpl;
 
+import java.util.Collections;
+import java.util.Set;
+
 /**
  * @author abreslav
  */
@@ -31,13 +34,8 @@ public class JavaPackageScope extends JetScopeImpl {
 
     @NotNull
     @Override
-    public FunctionGroup getFunctionGroup(@NotNull String name) {
-//        ClassifierDescriptor classifier = getClassifier(name);
-//        if (classifier instanceof ClassDescriptor) {
-//            ClassDescriptor classDescriptor = (ClassDescriptor) classifier;
-//            return classDescriptor.getConstructors();
-//        }
-        return FunctionGroup.EMPTY;
+    public Set<FunctionDescriptor> getFunctions(@NotNull String name) {
+        return Collections.emptySet();
     }
 
     @NotNull

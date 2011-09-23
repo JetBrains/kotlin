@@ -114,7 +114,6 @@ public class OverridingUtil {
             TypeParameterDescriptor superTypeParameter = superTypeParameters.get(i);
             TypeParameterDescriptor subTypeParameter = subTypeParameters.get(i);
 
-
             if (!JetTypeImpl.equalTypes(superTypeParameter.getBoundsAsType(), subTypeParameter.getBoundsAsType(), axioms)) {
                 return OverrideCompatibilityInfo.boundsMismatch(superTypeParameter, subTypeParameter);
             }
@@ -133,12 +132,13 @@ public class OverridingUtil {
 
         // TODO : Default values, varargs etc
 
-        TypeSubstitutor typeSubstitutor = TypeSubstitutor.create(substitutionContext);
-        JetType substitutedSuperReturnType = typeSubstitutor.substitute(superDescriptor.getReturnType(), Variance.OUT_VARIANCE);
-        assert substitutedSuperReturnType != null;
-        if (!typeChecker.isSubtypeOf(subDescriptor.getReturnType(), substitutedSuperReturnType)) {
-            return OverrideCompatibilityInfo.returnTypeMismatch(substitutedSuperReturnType, subDescriptor.getReturnType());
-        }
+        // This code compares return types, but they are not a part of the signature, so this code does not belong here
+//        TypeSubstitutor typeSubstitutor = TypeSubstitutor.create(substitutionContext);
+//        JetType substitutedSuperReturnType = typeSubstitutor.substitute(superDescriptor.getReturnType(), Variance.OUT_VARIANCE);
+//        assert substitutedSuperReturnType != null;
+//        if (!typeChecker.isSubtypeOf(subDescriptor.getReturnType(), substitutedSuperReturnType)) {
+//            return OverrideCompatibilityInfo.returnTypeMismatch(substitutedSuperReturnType, subDescriptor.getReturnType());
+//        }
 
         return OverrideCompatibilityInfo.success();
     }

@@ -17,7 +17,7 @@ import java.util.Set;
 /**
  * @author abreslav
  */
-public class PropertyDescriptor extends VariableDescriptorImpl implements MemberDescriptor {
+public class PropertyDescriptor extends VariableDescriptorImpl implements CallableMemberDescriptor {
 
     private final Modality modality;
     private final boolean isVar;

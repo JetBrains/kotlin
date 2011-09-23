@@ -9,6 +9,7 @@ import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author abreslav
@@ -25,7 +26,7 @@ public interface ClassDescriptor extends ClassifierDescriptor {
     JetType getSuperclassType();
 
     @NotNull
-    FunctionGroup getConstructors();
+    Set<FunctionDescriptor> getConstructors();
 
     @Nullable
     ConstructorDescriptor getUnsubstitutedPrimaryConstructor();

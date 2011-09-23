@@ -1,12 +1,14 @@
 package org.jetbrains.jet.lang.resolve.scopes;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 import java.util.Collection;
+import java.util.Set;
 
 /**
  * @author abreslav
@@ -46,14 +48,14 @@ public class WriteThroughScope extends WritableScopeWithImports {
 
     @Override
     @NotNull
-    public FunctionGroup getFunctionGroup(@NotNull String name) {
-        WritableFunctionGroup result = new WritableFunctionGroup(name);
+    public Set<FunctionDescriptor> getFunctions(@NotNull String name) {
+        Set<FunctionDescriptor> result = Sets.newLinkedHashSet();
 
-        result.addAllFunctions(writableWorker.getFunctionGroup(name));
+        result.addAll(writableWorker.getFunctions(name));
 
-        result.addAllFunctions(getWorkerScope().getFunctionGroup(name));
+        result.addAll(getWorkerScope().getFunctions(name));
 
-        result.addAllFunctions(super.getFunctionGroup(name)); // Imports
+        result.addAll(super.getFunctions(name)); // Imports
 
         return result;
     }
