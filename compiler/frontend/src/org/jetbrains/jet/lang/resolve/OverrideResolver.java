@@ -97,6 +97,7 @@ public class OverrideResolver {
     }
 
     protected void checkOverridesInAClass(MutableClassDescriptor classDescriptor, JetClassOrObject klass) {
+        // Everything from supertypes
         Set<CallableMemberDescriptor> inheritedFunctions = Sets.newLinkedHashSet();
         for (JetType supertype : classDescriptor.getSupertypes()) {
             for (DeclarationDescriptor descriptor : supertype.getMemberScope().getAllDescriptors()) {
@@ -107,8 +108,10 @@ public class OverrideResolver {
             }
         }
 
+        // Only those actually inherited
         Set<CallableMemberDescriptor> filteredMembers = OverridingUtil.filterOverrides(inheritedFunctions);
 
+        // Group members with "the same" signature
         Multimap<CallableMemberDescriptor, CallableMemberDescriptor> factoredMembers = CommonSuppliers.newLinkedHashSetHashSetMultimap();
         JetTypeChecker typeChecker = context.getSemanticServices().getTypeChecker();
         for (CallableMemberDescriptor one : filteredMembers) {
@@ -123,13 +126,10 @@ public class OverrideResolver {
             }
         }
 
+        // More than one implementation or no implementations at all
         Set<CallableMemberDescriptor> mustBeOverridden = Sets.newLinkedHashSet();
-
         for (CallableMemberDescriptor key : factoredMembers.keySet()) {
             Collection<CallableMemberDescriptor> mutuallyOverridable = factoredMembers.get(key);
-
-//            System.out.println(key);
-//            println(mutuallyOverridable);
 
             int implementationCount = 0;
             for (CallableMemberDescriptor member : mutuallyOverridable) {
@@ -142,22 +142,23 @@ public class OverrideResolver {
                 mustBeOverridden.addAll(mutuallyOverridable);
             }
         }
-        
+
+        // Members actually present (declared) in the class
         Set<CallableDescriptor> actuallyOverridden = Sets.newHashSet();
         for (FunctionDescriptor declaredFunction : classDescriptor.getFunctions()) {
             actuallyOverridden.addAll(declaredFunction.getOverriddenDescriptors());
         }
-
         for (PropertyDescriptor declaredProperty : classDescriptor.getProperties()) {
             actuallyOverridden.addAll(declaredProperty.getOverriddenDescriptors());
         }
 
+        // Those to be overridden that are actually not
         mustBeOverridden.removeAll(actuallyOverridden);
 
-        System.out.println(classDescriptor);
-        println(mustBeOverridden);
-        System.out.println("Actually overridden:");
-        println(actuallyOverridden);
+//        System.out.println(classDescriptor);
+//        println(mustBeOverridden);
+//        System.out.println("Actually overridden:");
+//        println(actuallyOverridden);
 
         for (FunctionDescriptor declaredFunction : classDescriptor.getFunctions()) {
             checkOverrideForFunction(declaredFunction);
@@ -208,34 +209,40 @@ public class OverrideResolver {
     }
 
 
-    private void checkOverrideForFunction(FunctionDescriptor declaredFunction) {
-        JetFunction function = (JetFunction) context.getTrace().get(BindingContext.DESCRIPTOR_TO_DECLARATION, declaredFunction);
-        assert function != null;
-        JetModifierList modifierList = function.getModifierList();
+    private void checkOverrideForFunction(CallableMemberDescriptor declared) {
+        JetNamedDeclaration member = (JetNamedDeclaration) context.getTrace().get(BindingContext.DESCRIPTOR_TO_DECLARATION, declared);
+        assert member != null;
+        JetModifierList modifierList = member.getModifierList();
         ASTNode overrideNode = modifierList != null ? modifierList.getModifierNode(JetTokens.OVERRIDE_KEYWORD) : null;
         boolean hasOverrideModifier = overrideNode != null;
-        boolean foundError = false;
+        boolean error = false;
 
-        for (FunctionDescriptor overridden : declaredFunction.getOverriddenDescriptors()) {
+        for (CallableMemberDescriptor overridden : declared.getOverriddenDescriptors()) {
             if (overridden != null) {
-                if (hasOverrideModifier && !overridden.getModality().isOpen() && !foundError) {
-//                    context.getTrace().getErrorHandler().genericError(overrideNode, "Method " + overridden.getName() + " in " + overridden.getContainingDeclaration().getName() + " is final and cannot be overridden");
-                    context.getTrace().report(OVERRIDING_FINAL_FUNCTION.on(overrideNode, overridden, overridden.getContainingDeclaration()));
-                    foundError = true;
+                if (hasOverrideModifier) {
+                    if (!overridden.getModality().isOpen() && !error) {
+    //                    context.getTrace().getErrorHandler().genericError(overrideNode, "Method " + overridden.getName() + " in " + overridden.getContainingDeclaration().getName() + " is final and cannot be overridden");
+                        context.getTrace().report(OVERRIDING_FINAL_MEMBER.on(overrideNode, overridden, overridden.getContainingDeclaration()));
+                        error = true;
+                    }
+                    
+                    if (!OverridingUtil.isReturnTypeOkForOverride(JetTypeChecker.INSTANCE, overridden, declared).isSuccess()) {
+
+                    }
                 }
             }
         }
-        if (hasOverrideModifier && declaredFunction.getOverriddenDescriptors().size() == 0) {
-//            context.getTrace().getErrorHandler().genericError(overrideNode, "Method " + declaredFunction.getName() + " overrides nothing");
-            context.getTrace().report(NOTHING_TO_OVERRIDE.on(function, overrideNode, declaredFunction));
+        if (hasOverrideModifier && declared.getOverriddenDescriptors().size() == 0) {
+//            context.getTrace().getErrorHandler().genericError(overrideNode, "Method " + declared.getName() + " overrides nothing");
+            context.getTrace().report(NOTHING_TO_OVERRIDE.on(member, overrideNode, declared));
         }
-        PsiElement nameIdentifier = function.getNameIdentifier();
-        if (!hasOverrideModifier && declaredFunction.getOverriddenDescriptors().size() > 0 && nameIdentifier != null) {
-            FunctionDescriptor overriddenFunction = declaredFunction.getOverriddenDescriptors().iterator().next();
+        PsiElement nameIdentifier = member.getNameIdentifier();
+        if (!hasOverrideModifier && declared.getOverriddenDescriptors().size() > 0 && nameIdentifier != null) {
+            CallableMemberDescriptor overridden = declared.getOverriddenDescriptors().iterator().next();
 //            context.getTrace().getErrorHandler().genericError(nameIdentifier.getNode(),
-//                                                 "Method '" + declaredFunction.getName() + "' overrides method '" + overriddenFunction.getName() + "' in class " +
-//                                                 overriddenFunction.getContainingDeclaration().getName() + " and needs 'override' modifier");
-            context.getTrace().report(VIRTUAL_METHOD_HIDDEN.on(function, nameIdentifier, declaredFunction, overriddenFunction, overriddenFunction.getContainingDeclaration()));
+//                                                 "Method '" + declared.getName() + "' overrides method '" + overridden.getName() + "' in class " +
+//                                                 overridden.getContainingDeclaration().getName() + " and needs 'override' modifier");
+            context.getTrace().report(VIRTUAL_MEMBER_HIDDEN.on(member, nameIdentifier, declared, overridden, overridden.getContainingDeclaration()));
         }
     }
 }

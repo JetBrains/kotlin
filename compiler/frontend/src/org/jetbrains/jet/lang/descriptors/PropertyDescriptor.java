@@ -166,7 +166,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
 
     @NotNull
     @Override
-    public Set<? extends CallableDescriptor> getOverriddenDescriptors() {
+    public Set<? extends PropertyDescriptor> getOverriddenDescriptors() {
         return overriddenProperties;
     }
 }

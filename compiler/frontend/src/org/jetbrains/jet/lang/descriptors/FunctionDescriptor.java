@@ -8,7 +8,7 @@ import java.util.Set;
 /**
  * @author abreslav
  */
-public interface FunctionDescriptor extends CallableDescriptor, MemberDescriptor {
+public interface FunctionDescriptor extends CallableMemberDescriptor {
     @Override
     @NotNull
     DeclarationDescriptor getContainingDeclaration();

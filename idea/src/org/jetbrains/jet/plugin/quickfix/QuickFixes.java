@@ -13,7 +13,6 @@ import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Collection;
-import java.util.Set;
 
 /**
 * @author svtk
@@ -71,7 +70,7 @@ public class QuickFixes {
         add(Errors.NON_MEMBER_FUNCTION_NO_BODY, addFunctionBodyFactory);
 
         add(Errors.NOTHING_TO_OVERRIDE, RemoveModifierFix.createFactory(JetTokens.OVERRIDE_KEYWORD));
-        add(Errors.VIRTUAL_METHOD_HIDDEN, AddModifierFix.createFactory(JetTokens.OVERRIDE_KEYWORD));
+        add(Errors.VIRTUAL_MEMBER_HIDDEN, AddModifierFix.createFactory(JetTokens.OVERRIDE_KEYWORD));
 
         add(Errors.VAL_WITH_SETTER, ChangeVariableMutabilityFix.createFactory());
 

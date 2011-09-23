@@ -27,12 +27,12 @@ namespace normal {
     }
 
     class <!ABSTRACT_METHOD_NOT_IMPLEMENTED!>MyIllegalClass4<!> : MyTrait, MyAbstractClass {
-        fun <!VIRTUAL_METHOD_HIDDEN!>foo<!>() {}
+        fun <!VIRTUAL_MEMBER_HIDDEN!>foo<!>() {}
         <!NOTHING_TO_OVERRIDE!>override<!> fun other() {}
     }
 
     class MyChildClass1 : MyClass {
-        fun <!VIRTUAL_METHOD_HIDDEN!>foo<!>() {}
+        fun <!VIRTUAL_MEMBER_HIDDEN!>foo<!>() {}
         override fun bar() {}
     }
 }
@@ -54,7 +54,7 @@ namespace generics {
     class MyChildClass : MyGenericClass<Int> {}
     class MyChildClass1<T> : MyGenericClass<T> {}
     class MyChildClass2<T> : MyGenericClass<T> {
-        fun <!VIRTUAL_METHOD_HIDDEN!>foo<!>(t: T) = t
+        fun <!VIRTUAL_MEMBER_HIDDEN!>foo<!>(t: T) = t
         override fun bar(t: T) = t
     }
 
