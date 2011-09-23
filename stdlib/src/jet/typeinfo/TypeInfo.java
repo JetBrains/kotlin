@@ -1,6 +1,5 @@
 package jet.typeinfo;
 
-import com.sun.org.apache.bcel.internal.generic.MethodGen;
 import jet.JetObject;
 import jet.Tuple0;
 
@@ -92,7 +91,7 @@ public abstract class TypeInfo<T> implements JetObject {
             nullable = false;
         }
 
-        public TypeInfoVar(boolean nullable, Integer varIndex) {
+        public TypeInfoVar(boolean nullable, int varIndex) {
             this.nullable = nullable;
             this.varIndex = varIndex;
         }
@@ -474,11 +473,12 @@ public abstract class TypeInfo<T> implements JetObject {
 
         public List<TypeInfoProjection> parseVars() {
             List<TypeInfoProjection> list = null;
-            while(cur != string.length && string[cur] == 'T') {
+            while(cur < string.length && string[cur] == 'T') {
                 if(list == null) {
                     list = new LinkedList<TypeInfoProjection>();
                     variables = new HashMap<String, Integer>();
                 }
+                cur++;
                 list.add(parseVar());
             }
             return list == null ? Collections.<TypeInfoProjection>emptyList() : list;
@@ -508,7 +508,7 @@ public abstract class TypeInfo<T> implements JetObject {
         }
 
         private String parseName() {
-            int c = ++cur; // skip 'T'
+            int c = cur;
             while (string[c] != ';') {
                 c++;
             }
@@ -522,7 +522,7 @@ public abstract class TypeInfo<T> implements JetObject {
                 cur += 3;
                 return TypeInfoVariance.IN_VARIANCE;
             }
-            else if (string[cur] == 'o' && string[cur+1] == 'u' && string[cur+2] == 't' && string[cur+2] == ' ') {
+            else if (string[cur] == 'o' && string[cur+1] == 'u' && string[cur+2] == 't' && string[cur+3] == ' ') {
                 cur += 4;
                 return TypeInfoVariance.OUT_VARIANCE;
             }
@@ -545,6 +545,7 @@ public abstract class TypeInfo<T> implements JetObject {
         private TypeInfo parseType() {
             switch (string[cur]) {
                 case 'L':
+                    cur++;
                     String name = parseName();
                     Class<?> aClass;
                     try {
@@ -572,6 +573,7 @@ public abstract class TypeInfo<T> implements JetObject {
                     return new TypeInfoImpl(aClass, nullable,proj.toArray(new TypeInfoProjection[proj.size()]));
 
                 case 'T':
+                    cur++;
                     return parseTypeVar();
 
                 default:
@@ -580,6 +582,7 @@ public abstract class TypeInfo<T> implements JetObject {
         }
 
         private TypeInfo parseTypeVar() {
+            TypeInfoVariance variance = parseVariance();
             String name = parseName();
             boolean nullable = false;
             if(string[cur] == '?') {

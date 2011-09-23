@@ -18,6 +18,9 @@ import java.util.Set;
  */
 public class OverridingUtil {
 
+    private OverridingUtil() {
+    }
+
     public static Set<CallableDescriptor> getEffectiveMembers(@NotNull ClassDescriptor classDescriptor) {
         Collection<DeclarationDescriptor> allDescriptors = classDescriptor.getDefaultType().getMemberScope().getAllDescriptors();
         Set<CallableDescriptor> allMembers = Sets.newLinkedHashSet();

@@ -20,4 +20,9 @@ public class TraitsTest  extends CodegenTestCase {
         blackBoxFile("traits/multiple.jet");
         System.out.println(generateToText());
     }
+
+    public void testStdlib () throws Exception {
+        blackBoxFile("traits/stdlib.jet");
+        System.out.println(generateToText());
+    }
 }

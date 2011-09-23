@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
@@ -314,74 +315,60 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if(!(myClass instanceof JetClass) || ((JetClass)myClass).isTrait() || ((JetClass)myClass).hasModifier(JetTokens.ABSTRACT_KEYWORD))
             return;
 
-        HashSet<FunctionDescriptor> set = new HashSet<FunctionDescriptor>();
-        getAbstractMethods(descriptor.getDefaultType(), set);
-        for(FunctionDescriptor fun: set) {
-            int flags = Opcodes.ACC_PUBLIC; // TODO.
+        for (CallableDescriptor callableDescriptor : OverridingUtil.getEffectiveMembers(descriptor)) {
+            if(callableDescriptor instanceof FunctionDescriptor) {
+                FunctionDescriptor fun = (FunctionDescriptor) callableDescriptor;
+                DeclarationDescriptor containingDeclaration = fun.getContainingDeclaration();
+                if(containingDeclaration instanceof ClassDescriptor) {
+                    ClassDescriptor declaration = (ClassDescriptor) containingDeclaration;
+                    PsiElement psiElement = state.getBindingContext().get(BindingContext.DESCRIPTOR_TO_DECLARATION, declaration);
+                    if(psiElement instanceof JetClass) {
+                        JetClass jetClass = (JetClass) psiElement;
+                        if(jetClass.isTrait()) {
+                            int flags = Opcodes.ACC_PUBLIC; // TODO.
 
-            Method function = state.getTypeMapper().mapSignature(fun.getName(), fun);
+                            Method function = state.getTypeMapper().mapSignature(fun.getName(), fun);
+                            Method functionOriginal = state.getTypeMapper().mapSignature(fun.getName(), fun.getOriginal());
 
-            final MethodVisitor mv = v.visitMethod(flags, function.getName(), function.getDescriptor(), null, null);
-            mv.visitCode();
+                            final MethodVisitor mv = v.visitMethod(flags, function.getName(), function.getDescriptor(), null, null);
+                            mv.visitCode();
 
-            codegen.generateThisOrOuter(descriptor);
+                            codegen.generateThisOrOuter(descriptor);
 
-            Type[] argTypes = function.getArgumentTypes();
-            InstructionAdapter iv = new InstructionAdapter(mv);
-            iv.load(0, JetTypeMapper.TYPE_OBJECT);
-            for (int i = 0, reg = 1; i < argTypes.length; i++) {
-                Type argType = argTypes[i];
-                iv.load(reg, argType);
-                //noinspection AssignmentToForLoopParameter
-                reg += argType.getSize();
-            }
+                            Type[] argTypes = function.getArgumentTypes();
+                            InstructionAdapter iv = new InstructionAdapter(mv);
+                            iv.load(0, JetTypeMapper.TYPE_OBJECT);
+                            for (int i = 0, reg = 1; i < argTypes.length; i++) {
+                                Type argType = argTypes[i];
+                                iv.load(reg, argType);
+                                //noinspection AssignmentToForLoopParameter
+                                reg += argType.getSize();
+                            }
 
-            ClassDescriptor containingDeclaration = (ClassDescriptor) fun.getContainingDeclaration();
-            JetType jetType = TraitImplBodyCodegen.getSuperClass(containingDeclaration, state.getBindingContext());
-            Type type = state.getTypeMapper().mapType(jetType);
-            if(type.getInternalName().equals("java/lang/Object")) {
-                jetType = containingDeclaration.getDefaultType();
-                type = state.getTypeMapper().mapType(jetType);
-            }
+                            JetType jetType = TraitImplBodyCodegen.getSuperClass(declaration, state.getBindingContext());
+                            Type type = state.getTypeMapper().mapType(jetType);
+                            if(type.getInternalName().equals("java/lang/Object")) {
+                                jetType = declaration.getDefaultType();
+                                type = state.getTypeMapper().mapType(jetType);
+                            }
 
-            String fdescriptor = function.getDescriptor().replace("(","(" +  type.getDescriptor());
-            iv.invokestatic(state.getTypeMapper().jvmName((ClassDescriptor) fun.getContainingDeclaration(), OwnerKind.TRAIT_IMPL), function.getName(), fdescriptor);
-            iv.areturn(function.getReturnType());
-            mv.visitMaxs(0, 0);
-            mv.visitEnd();
-        }
-    }
-    
-    private void getAbstractMethods(JetType type, Set<FunctionDescriptor> set) {
-        if(type.equals(JetStandardClasses.getAny())) {
-            return;
-        }
+                            String fdescriptor = functionOriginal.getDescriptor().replace("(","(" +  type.getDescriptor());
+                            iv.invokestatic(state.getTypeMapper().jvmName((ClassDescriptor) fun.getContainingDeclaration(), OwnerKind.TRAIT_IMPL), function.getName(), fdescriptor);
+                            if(function.getReturnType().getSort() == Type.OBJECT) {
+                                iv.checkcast(function.getReturnType());
+                            }
+                            iv.areturn(function.getReturnType());
+                            mv.visitMaxs(0, 0);
+                            mv.visitEnd();
 
-        for(JetType superType : type.getConstructor().getSupertypes()) {
-            getAbstractMethods(superType, set);
-        }
-
-        PsiElement psiElement = state.getBindingContext().get(BindingContext.DESCRIPTOR_TO_DECLARATION, type.getConstructor().getDeclarationDescriptor());
-        if(psiElement instanceof JetClass) {
-            JetClass jetClass = (JetClass) psiElement;
-            for(JetDeclaration decl : jetClass.getDeclarations()) {
-                if(decl instanceof JetNamedFunction) {
-                    JetNamedFunction jetNamedFunction = (JetNamedFunction) decl;
-                    FunctionDescriptor funDescriptor = state.getBindingContext().get(BindingContext.FUNCTION, decl);
-                    set.removeAll(funDescriptor.getOverriddenDescriptors());
-                            
-                    if(jetNamedFunction.getBodyExpression() == null || jetClass.isTrait()) {
-                        set.add(funDescriptor);
+                            FunctionCodegen.generateBridgeIfNeeded(context, state, v, function, fun, kind);
+                        }
                     }
                 }
             }
         }
-        else if(psiElement instanceof PsiClass) {
-            // todo
-            PsiClass psiClass = (PsiClass) psiElement;
-        }
     }
-
+    
     @Nullable
     private ClassDescriptor getOuterClassDescriptor() {
         if (myClass.getParent() instanceof JetClassObject) {
@@ -762,9 +749,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         return false;
     }
 
-    public boolean hasDerivedTypeInfoField(JetType type, boolean exceptOwn) {
+    public static boolean hasDerivedTypeInfoField(JetType type, boolean exceptOwn) {
         if(!exceptOwn) {
-            if(!state.getTypeMapper().isInterface((ClassDescriptor) type.getConstructor().getDeclarationDescriptor()))
+            if(!CodegenUtil.isInterface(type))
                 if(isParametrizedClass(type))
                     return true;
         }
