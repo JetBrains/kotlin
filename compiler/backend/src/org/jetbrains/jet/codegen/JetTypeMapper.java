@@ -569,7 +569,7 @@ public class JetTypeMapper {
         List<Type> parameterTypes = new ArrayList<Type>();
         ClassDescriptor classDescriptor = descriptor.getContainingDeclaration();
         final DeclarationDescriptor outerDescriptor = classDescriptor.getContainingDeclaration();
-        if (outerDescriptor instanceof ClassDescriptor) {
+        if (outerDescriptor instanceof ClassDescriptor && classDescriptor.getKind() != ClassKind.OBJECT) {
             parameterTypes.add(jvmType((ClassDescriptor) outerDescriptor, OwnerKind.IMPLEMENTATION));
         }
         for (ValueParameterDescriptor parameter : parameters) {
