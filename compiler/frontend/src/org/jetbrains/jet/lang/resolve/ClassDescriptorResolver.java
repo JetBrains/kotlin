@@ -437,7 +437,7 @@ public class ClassDescriptorResolver {
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                 containingDeclaration,
                 annotationResolver.createAnnotationStubs(modifierList),
-                resolveModalityFromModifiers(trace, objectDeclaration.getModifierList()), // TODO : default modifiers differ in different contexts
+                Modality.FINAL,
                 resolveVisibilityFromModifiers(trace, objectDeclaration.getModifierList()),
                 false,
                 null,
@@ -549,11 +549,6 @@ public class ClassDescriptorResolver {
     }
 
     @NotNull
-    /*package*/ static Modality resolveModalityFromModifiers(@NotNull BindingTrace trace, @Nullable JetModifierList modifierList) {
-        return resolveModalityFromModifiers(trace, modifierList, Modality.FINAL);
-    }
-
-    @NotNull
     /*package*/ static Modality resolveModalityFromModifiers(@NotNull BindingTrace trace, @Nullable JetModifierList modifierList, @NotNull Modality defaultModality) {
         if (modifierList == null) return defaultModality;
         checkCompatibility(trace, modifierList, Lists.newArrayList(JetTokens.ABSTRACT_KEYWORD, JetTokens.OPEN_KEYWORD, JetTokens.FINAL_KEYWORD),
@@ -565,7 +560,7 @@ public class ClassDescriptorResolver {
             if (hasAbstractModifier || hasOverrideModifier) {
                 trace.report(Errors.REDUNDANT_MODIFIER.on(modifierList, JetTokens.OPEN_KEYWORD, hasAbstractModifier ? JetTokens.ABSTRACT_KEYWORD : JetTokens.OVERRIDE_KEYWORD));
             }
-            if (hasAbstractModifier) {
+            if (hasAbstractModifier || defaultModality == Modality.ABSTRACT) {
                 return Modality.ABSTRACT;
             }
             return Modality.OPEN;
@@ -573,10 +568,11 @@ public class ClassDescriptorResolver {
         if (hasAbstractModifier) {
             return Modality.ABSTRACT;
         }
-        if (hasOverrideModifier) {
+        boolean hasFinalModifier = modifierList.hasModifier(JetTokens.FINAL_KEYWORD);
+        if (hasOverrideModifier && !hasFinalModifier && !(defaultModality == Modality.ABSTRACT)) {
             return Modality.OPEN;
         }
-        if (modifierList.hasModifier(JetTokens.FINAL_KEYWORD)) {
+        if (hasFinalModifier) {
             return Modality.FINAL;
         }
         return defaultModality;
@@ -634,7 +630,7 @@ public class ClassDescriptorResolver {
             JetParameter parameter = setter.getParameter();
 
             setterDescriptor = new PropertySetterDescriptor(
-                    resolveModalityFromModifiers(trace, setter.getModifierList()), // TODO : default modifiers differ in different contexts
+                    resolveModalityFromModifiers(trace, setter.getModifierList(), propertyDescriptor.getModality()),
                     resolveVisibilityFromModifiers(trace, setter.getModifierList(), propertyDescriptor.getVisibility()),
                     propertyDescriptor, annotations, setter.getBodyExpression() != null, false);
             if (parameter != null) {
@@ -709,7 +705,7 @@ public class ClassDescriptorResolver {
             }
 
             getterDescriptor = new PropertyGetterDescriptor(
-                    resolveModalityFromModifiers(trace, getter.getModifierList()), // TODO : default modifiers differ in different contexts
+                    resolveModalityFromModifiers(trace, getter.getModifierList(), propertyDescriptor.getModality()),
                     resolveVisibilityFromModifiers(trace, getter.getModifierList(), propertyDescriptor.getVisibility()),
                     propertyDescriptor, annotations, returnType, getter.getBodyExpression() != null, false);
             trace.record(BindingContext.PROPERTY_ACCESSOR, getter, getterDescriptor);
@@ -785,7 +781,7 @@ public class ClassDescriptorResolver {
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                 classDescriptor,
                 annotationResolver.resolveAnnotations(scope, modifierList),
-                resolveModalityFromModifiers(trace, parameter.getModifierList()),
+                resolveModalityFromModifiers(trace, parameter.getModifierList(), Modality.FINAL),
                 resolveVisibilityFromModifiers(trace, parameter.getModifierList()),
                 isMutable,
                 null,
