@@ -22,7 +22,7 @@ trait WriteOnlyArray<in T> : ISized {
   fun set(index : Int, value : T) : Unit
 
   fun set(from: Int, count: Int, value: T) {
-    for(i in 0..(count-1)) {
+    for(i in from..(from+count-1)) {
         set(i, value)
     }
   }
@@ -45,9 +45,8 @@ fun box() : String {
     a [3] = 40
     System.out?.println(a.iterator())
     System.out?.println(a.iterator().hasNext())
-//    if(a.iterator() !is Iterator<Int>) return "fail";
-//    for(el in a) {
-//        System.out?.println(el)
-//    }
+    for(el in a) {
+        System.out?.println(el)
+    }
     return "OK"
 }
