@@ -374,8 +374,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (myClass.getParent() instanceof JetClassObject) {
             return null;
         }
-        final DeclarationDescriptor outerDescriptor = descriptor.getContainingDeclaration();
-        return outerDescriptor instanceof ClassDescriptor ? (ClassDescriptor) outerDescriptor : null;
+
+        return CodegenUtil.getOuterClassDescriptor(descriptor);
     }
 
     private void generateDelegatorToConstructorCall(InstructionAdapter iv, ExpressionCodegen codegen, JetCallElement constructorCall,

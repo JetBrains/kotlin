@@ -2,17 +2,20 @@ trait ISized {
     val size : Int
 }
 
-trait ReadOnlyArray<out T> : ISized, Iterable<T> {
+trait ReadOnlyArray<out T> : ISized, java.lang.Iterable<T> {
   fun get(index : Int) : T
 
-  override fun iterator () : Iterator<T> = object : Iterator<T> {
+  class MyIterator() : java.util.Iterator<T> {
     private var index = 0
 
     override fun hasNext() : Boolean = index < size
 
-    val next : T
-        get() = get(index++)
+    override fun next() : T = get(index++)
+
+    override fun remove () : Unit {}
   }
+
+  override fun iterator() : java.util.Iterator<T> = MyIterator()
 }
 
 trait WriteOnlyArray<in T> : ISized {
@@ -40,5 +43,11 @@ fun box() : String {
     a [0] = 10
     a.set(1, 2, 13)
     a [3] = 40
+    System.out?.println(a.iterator())
+    System.out?.println(a.iterator().hasNext())
+//    if(a.iterator() !is Iterator<Int>) return "fail";
+//    for(el in a) {
+//        System.out?.println(el)
+//    }
     return "OK"
 }

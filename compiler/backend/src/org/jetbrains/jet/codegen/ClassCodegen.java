@@ -21,9 +21,10 @@ public class ClassCodegen {
     public void generate(ClassContext parentContext, JetClassOrObject aClass) {
         GenerationState.prepareAnonymousClasses((JetElement) aClass, state.getTypeMapper());
 
+        ClassDescriptor descriptor = state.getBindingContext().get(BindingContext.CLASS, aClass);
+
         generateImplementation(parentContext, aClass, OwnerKind.IMPLEMENTATION);
 
-        ClassDescriptor descriptor = state.getBindingContext().get(BindingContext.CLASS, aClass);
         final ClassContext contextForInners = parentContext.intoClass(descriptor, OwnerKind.IMPLEMENTATION);
         for (JetDeclaration declaration : aClass.getDeclarations()) {
             if (declaration instanceof JetClass && !(declaration instanceof JetEnumEntry)) {

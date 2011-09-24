@@ -113,6 +113,7 @@ public class TypeInfoTest extends CodegenTestCase {
 
     public void testClassObjectInTypeInfo() throws Exception {
         loadFile();
+        System.out.println(generateToText());
         Method foo = generateFunction();
         JetObject jetObject = (JetObject) foo.invoke(null);
         TypeInfo<?> typeInfo = jetObject.getTypeInfo();

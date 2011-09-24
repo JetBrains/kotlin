@@ -550,7 +550,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         Type type = Type.getObjectType(descriptor.getClassname());
         v.anew(type);
         v.dup();
-        v.invokespecial(descriptor.getClassname(), "<init>", descriptor.getConstructor().getDescriptor());
+        v.load(0, JetTypeMapper.TYPE_OBJECT);
+        String jvmDescriptor = descriptor.getConstructor().getDescriptor().replace("(","(" + typeMapper.jetImplementationType((ClassDescriptor) contextType()));
+        v.invokespecial(descriptor.getClassname(), "<init>", jvmDescriptor);
         return StackValue.onStack(type);
     }
 
@@ -905,6 +907,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         if (declarationPsiElement instanceof PsiMethod || declarationPsiElement instanceof JetNamedFunction) {
             callableMethod = typeMapper.mapToCallableMethod((PsiNamedElement) declarationPsiElement, null);
         }
+        else if (fd instanceof VariableAsFunctionDescriptor) {
+            callableMethod = ClosureCodegen.asCallableMethod((FunctionDescriptor) fd);
+        }
         else if (fd instanceof FunctionDescriptor) {
             callableMethod = ClosureCodegen.asCallableMethod((FunctionDescriptor) fd);
         }
@@ -940,7 +945,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
         if (callableMethod.needsReceiverOnStack()) {
             if (receiver == StackValue.none()) {
-                receiver = thisExpression(); 
+                ClassDescriptor receiverClass = callableMethod.getReceiverClass();
+                receiver = receiverClass == null ? thisExpression() : generateThisOrOuter(receiverClass);
             }
             receiver.put(JetTypeMapper.TYPE_OBJECT, v);
         }

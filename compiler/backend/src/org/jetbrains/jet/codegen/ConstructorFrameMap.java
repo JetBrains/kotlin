@@ -22,7 +22,7 @@ public class ConstructorFrameMap extends FrameMap {
         ClassDescriptor classDescriptor = null;
         if (descriptor != null) {
             classDescriptor = descriptor.getContainingDeclaration();
-            if (classDescriptor.getContainingDeclaration() instanceof ClassDescriptor) {
+            if (CodegenUtil.hasThis0(classDescriptor)) {
                 myOuterThisIndex = enterTemp();   // outer class instance
             }
         }
