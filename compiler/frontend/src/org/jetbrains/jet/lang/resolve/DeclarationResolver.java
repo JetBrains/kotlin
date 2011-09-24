@@ -131,7 +131,7 @@ public class DeclarationResolver {
         if (!klass.hasPrimaryConstructor()) return;
 
         if (classDescriptor.getKind() == ClassKind.TRAIT) {
-//            context.getTrace().getErrorHandler().genericError(klass.getPrimaryConstructorParameterList().getNode(), "A trait may not have a constructor");
+//           context.getTrace().getErrorHandler().genericError(klass.getPrimaryConstructorParameterList().getNode(), "A trait may not have a constructor");
             context.getTrace().report(CONSTRUCTOR_IN_TRAIT.on(klass.getPrimaryConstructorParameterList()));
         }
 

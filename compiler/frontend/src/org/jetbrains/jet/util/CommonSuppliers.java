@@ -1,9 +1,9 @@
 package org.jetbrains.jet.util;
 
 import com.google.common.base.Supplier;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
+import com.google.common.collect.*;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -35,5 +35,9 @@ public class CommonSuppliers {
     public static <T> Supplier<Set<T>> getLinkedHashSetSupplier() {
         //noinspection unchecked
         return (Supplier<Set<T>>) LINKED_HASH_SET_SUPPLIER;
+    }
+    
+    public static <K, V> SetMultimap<K, V> newLinkedHashSetHashSetMultimap() {
+        return Multimaps.newSetMultimap(Maps.<K, Collection<V>>newHashMap(), CommonSuppliers.<V>getLinkedHashSetSupplier());
     }
 }

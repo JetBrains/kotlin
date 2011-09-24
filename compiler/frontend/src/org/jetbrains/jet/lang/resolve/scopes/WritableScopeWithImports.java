@@ -1,11 +1,17 @@
 package org.jetbrains.jet.lang.resolve.scopes;
 
+import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author abreslav
@@ -58,16 +64,13 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
 
     @NotNull
     @Override
-    public FunctionGroup getFunctionGroup(@NotNull String name) {
+    public Set<FunctionDescriptor> getFunctions(@NotNull String name) {
         if (getImports().isEmpty()) {
-            return FunctionGroup.EMPTY;
+            return Collections.emptySet();
         }
-        WritableFunctionGroup result = new WritableFunctionGroup(name);
+        Set<FunctionDescriptor> result = Sets.newLinkedHashSet();
         for (JetScope imported : getImports()) {
-            FunctionGroup importedFunctions = imported.getFunctionGroup(name);
-            if (!importedFunctions.isEmpty()) {
-                result.addAllFunctions(importedFunctions);
-            }
+            result.addAll(imported.getFunctions(name));
         }
         return result;
     }

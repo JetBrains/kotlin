@@ -610,18 +610,13 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
 
             @NotNull
             @Override
-            public FunctionGroup getFunctionGroup(@NotNull String name) {
-                WritableFunctionGroup writableFunctionGroup = new WritableFunctionGroup(name);
-//                ClassifierDescriptor classifier = getClassifier(name);
-//                if (classifier instanceof ClassDescriptor) {
-//                    ClassDescriptor classDescriptor = (ClassDescriptor) classifier;
-//                    writableFunctionGroup.addAllFunctions(classDescriptor.getConstructors());
-//                }
+            public Set<FunctionDescriptor> getFunctions(@NotNull String name) {
+                Set<FunctionDescriptor> writableFunctionGroup = Sets.newLinkedHashSet();
                 ModuleDescriptor module = new ModuleDescriptor("TypeCheckerTest");
                 for (String funDecl : FUNCTION_DECLARATIONS) {
                     FunctionDescriptor functionDescriptor = classDescriptorResolver.resolveFunctionDescriptor(module, this, JetPsiFactory.createFunction(getProject(), funDecl));
                     if (name.equals(functionDescriptor.getName())) {
-                        writableFunctionGroup.addFunction(functionDescriptor);
+                        writableFunctionGroup.add(functionDescriptor);
                     }
                 }
                 return writableFunctionGroup;
@@ -690,7 +685,7 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
                 });
             }
 
-            WritableFunctionGroup constructors = new WritableFunctionGroup("<init>");
+            Set<FunctionDescriptor> constructors = Sets.newLinkedHashSet();
             classDescriptor.initialize(
                     !open,
                     typeParameters,
@@ -702,12 +697,12 @@ public class JetTypeCheckerTest extends LightDaemonAnalyzerTestCase {
             for (JetConstructor constructor : classElement.getSecondaryConstructors()) {
                 ConstructorDescriptorImpl functionDescriptor = classDescriptorResolver.resolveSecondaryConstructorDescriptor(memberDeclarations, classDescriptor, constructor);
                 functionDescriptor.setReturnType(classDescriptor.getDefaultType());
-                constructors.addFunction(functionDescriptor);
+                constructors.add(functionDescriptor);
             }
             ConstructorDescriptorImpl primaryConstructorDescriptor = classDescriptorResolver.resolvePrimaryConstructorDescriptor(scope, classDescriptor, classElement);
             if (primaryConstructorDescriptor != null) {
                 primaryConstructorDescriptor.setReturnType(classDescriptor.getDefaultType());
-                constructors.addFunction(primaryConstructorDescriptor);
+                constructors.add(primaryConstructorDescriptor);
                 classDescriptor.setPrimaryConstructor(primaryConstructorDescriptor);
             }
             return classDescriptor;

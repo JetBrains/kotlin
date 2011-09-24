@@ -10,6 +10,7 @@ import org.jetbrains.jet.lang.types.*;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author abreslav
@@ -103,7 +104,7 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
 
     @NotNull
     @Override
-    public FunctionGroup getConstructors() {
+    public Set<FunctionDescriptor> getConstructors() {
         throw new UnsupportedOperationException(); // TODO
     }
 

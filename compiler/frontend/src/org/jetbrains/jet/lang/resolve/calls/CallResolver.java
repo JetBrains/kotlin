@@ -138,7 +138,7 @@ public class CallResolver {
                 DeclarationDescriptor declarationDescriptor = constructedType.getConstructor().getDeclarationDescriptor();
                 if (declarationDescriptor instanceof ClassDescriptor) {
                     ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
-                    Set<FunctionDescriptor> constructors = classDescriptor.getConstructors().getFunctionDescriptors();
+                    Set<FunctionDescriptor> constructors = classDescriptor.getConstructors();
                     if (constructors.isEmpty()) {
 //                        trace.getErrorHandler().genericError(reportAbsenceOn, "This class does not have a constructor");
                         trace.report(NO_CONSTRUCTOR.on(reportAbsenceOn));
@@ -159,7 +159,7 @@ public class CallResolver {
                 ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
 
 
-                Set<FunctionDescriptor> constructors = classDescriptor.getConstructors().getFunctionDescriptors();
+                Set<FunctionDescriptor> constructors = classDescriptor.getConstructors();
                 if (constructors.isEmpty()) {
 //                    trace.getErrorHandler().genericError(reportAbsenceOn, "This class does not have a constructor");
                     trace.report(NO_CONSTRUCTOR.on(reportAbsenceOn));
@@ -630,7 +630,7 @@ public class CallResolver {
     private List<FunctionDescriptor> findCandidatesByExactSignature(JetScope scope, ReceiverDescriptor receiver, String name, List<JetType> parameterTypes) {
         List<FunctionDescriptor> result = Lists.newArrayList();
         if (receiver != NO_RECEIVER) {
-            Set<FunctionDescriptor> extensionFunctionDescriptors = scope.getFunctionGroup(name).getFunctionDescriptors();
+            Set<FunctionDescriptor> extensionFunctionDescriptors = scope.getFunctions(name);
             List<FunctionDescriptor> nonlocal = Lists.newArrayList();
             List<FunctionDescriptor> local = Lists.newArrayList();
             TaskPrioritizer.splitLexicallyLocalDescriptors(extensionFunctionDescriptors, scope.getContainingDeclaration(), local, nonlocal);
@@ -640,7 +640,7 @@ public class CallResolver {
                 return result;
             }
 
-            Set<FunctionDescriptor> functionDescriptors = receiver.getType().getMemberScope().getFunctionGroup(name).getFunctionDescriptors();
+            Set<FunctionDescriptor> functionDescriptors = receiver.getType().getMemberScope().getFunctions(name);
             if (lookupExactSignature(functionDescriptors, parameterTypes, result)) {
                 return result;
 
@@ -649,7 +649,7 @@ public class CallResolver {
             return result;
         }
         else {
-            lookupExactSignature(scope.getFunctionGroup(name).getFunctionDescriptors(), parameterTypes, result);
+            lookupExactSignature(scope.getFunctions(name), parameterTypes, result);
             return result;
         }
     }
@@ -696,7 +696,7 @@ public class CallResolver {
         @NotNull
         @Override
         protected Collection<FunctionDescriptor> getNonExtensionsByName(JetScope scope, String name) {
-            Set<FunctionDescriptor> functions = Sets.newLinkedHashSet(scope.getFunctionGroup(name).getFunctionDescriptors());
+            Set<FunctionDescriptor> functions = Sets.newLinkedHashSet(scope.getFunctions(name));
             for (Iterator<FunctionDescriptor> iterator = functions.iterator(); iterator.hasNext(); ) {
                 FunctionDescriptor functionDescriptor = iterator.next();
                 if (functionDescriptor.getReceiver() != NO_RECEIVER) {
@@ -713,7 +713,7 @@ public class CallResolver {
         @Override
         protected Collection<FunctionDescriptor> getMembersByName(@NotNull ReceiverDescriptor receiver, String name) {
             JetScope receiverScope = receiver.getType().getMemberScope();
-            Set<FunctionDescriptor> members = Sets.newHashSet(receiverScope.getFunctionGroup(name).getFunctionDescriptors());
+            Set<FunctionDescriptor> members = Sets.newHashSet(receiverScope.getFunctions(name));
             addConstructors(receiverScope, name, members);
             addVariableAsFunction(receiverScope, name, members, false);
             return members;
@@ -722,7 +722,7 @@ public class CallResolver {
         @NotNull
         @Override
         protected Collection<FunctionDescriptor> getExtensionsByName(JetScope scope, String name) {
-            Set<FunctionDescriptor> extensionFunctions = Sets.newHashSet(scope.getFunctionGroup(name).getFunctionDescriptors());
+            Set<FunctionDescriptor> extensionFunctions = Sets.newHashSet(scope.getFunctions(name));
             for (Iterator<FunctionDescriptor> iterator = extensionFunctions.iterator(); iterator.hasNext(); ) {
                 FunctionDescriptor descriptor = iterator.next();
                 if (descriptor.getReceiver() == NO_RECEIVER) {
@@ -743,7 +743,7 @@ public class CallResolver {
             ClassifierDescriptor classifier = scope.getClassifier(name);
             if (classifier instanceof ClassDescriptor && !ErrorUtils.isError(classifier.getTypeConstructor())) {
                 ClassDescriptor classDescriptor = (ClassDescriptor) classifier;
-                functions.addAll(classDescriptor.getConstructors().getFunctionDescriptors());
+                functions.addAll(classDescriptor.getConstructors());
             }
         }
 

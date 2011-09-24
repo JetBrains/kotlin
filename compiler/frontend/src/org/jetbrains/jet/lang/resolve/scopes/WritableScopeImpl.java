@@ -1,13 +1,12 @@
 package org.jetbrains.jet.lang.resolve.scopes;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import com.google.common.collect.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.util.CommonSuppliers;
 
 import java.util.*;
 
@@ -27,7 +26,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     private Map<String, PropertyDescriptor> propertyDescriptorsByFieldNames;
 
     @Nullable
-    private Map<String, WritableFunctionGroup> functionGroups;
+    private SetMultimap<String, FunctionDescriptor> functionGroups;
     @Nullable
     private Map<String, DeclarationDescriptor> variableClassOrNamespaceDescriptors;
 
@@ -144,13 +143,6 @@ public class WritableScopeImpl extends WritableScopeWithImports {
             return (VariableDescriptor) descriptor;
         }
 
-//        if (implicitReceiver != null) {
-//            VariableDescriptor variable = getImplicitReceiver().getMemberScope().getVariable(name);
-//            if (variable != null) {
-//                return variable;
-//            }
-//        }
-
         VariableDescriptor variableDescriptor = getWorkerScope().getVariable(name);
         if (variableDescriptor != null) {
             return variableDescriptor;
@@ -159,45 +151,27 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     }
 
     @NotNull
-    private Map<String, WritableFunctionGroup> getFunctionGroups() {
+    private SetMultimap<String, FunctionDescriptor> getFunctionGroups() {
         if (functionGroups == null) {
-            functionGroups = new HashMap<String, WritableFunctionGroup>();
+            functionGroups = CommonSuppliers.newLinkedHashSetHashSetMultimap();
         }
         return functionGroups;
     }
 
     @Override
     public void addFunctionDescriptor(@NotNull FunctionDescriptor functionDescriptor) {
-        String name = functionDescriptor.getName();
-        Map<String, WritableFunctionGroup> functionGroups = getFunctionGroups();
-
-        @Nullable
-        WritableFunctionGroup functionGroup = functionGroups.get(name);
-        if (functionGroup == null) {
-            functionGroup = new WritableFunctionGroup(name);
-            functionGroups.put(name, functionGroup);
-        }
-        functionGroup.addFunction(functionDescriptor);
+        getFunctionGroups().put(functionDescriptor.getName(), functionDescriptor);
         allDescriptors.add(functionDescriptor);
     }
 
     @Override
     @NotNull
-    public FunctionGroup getFunctionGroup(@NotNull String name) {
-        WritableFunctionGroup result = new WritableFunctionGroup(name);
-        
-        FunctionGroup functionGroup = getFunctionGroups().get(name);
-        if (functionGroup != null) {
-            result.addAllFunctions(functionGroup);
-        }
-        
-//        if (implicitReceiver != null) {
-//            result.addAllFunctions(getImplicitReceiver().getMemberScope().getFunctionGroup(name));
-//        }
+    public Set<FunctionDescriptor> getFunctions(@NotNull String name) {
+        Set<FunctionDescriptor> result = Sets.newLinkedHashSet(getFunctionGroups().get(name));
 
-        result.addAllFunctions(getWorkerScope().getFunctionGroup(name));
+        result.addAll(getWorkerScope().getFunctions(name));
 
-        result.addAllFunctions(super.getFunctionGroup(name));
+        result.addAll(super.getFunctions(name));
 
         return result;
     }

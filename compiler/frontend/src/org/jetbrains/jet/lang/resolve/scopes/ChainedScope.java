@@ -9,6 +9,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author abreslav
@@ -56,16 +57,15 @@ public class ChainedScope implements JetScope {
 
     @NotNull
     @Override
-    public FunctionGroup getFunctionGroup(@NotNull String name) {
+    public Set<FunctionDescriptor> getFunctions(@NotNull String name) {
         if (scopeChain.length == 0) {
-            return FunctionGroup.EMPTY;
+            return Collections.emptySet();
         }
 
-        WritableFunctionGroup result = new WritableFunctionGroup(name);
+        Set<FunctionDescriptor> result = Sets.newLinkedHashSet();
         for (JetScope jetScope : scopeChain) {
-            result.addAllFunctions(jetScope.getFunctionGroup(name));
+            result.addAll(jetScope.getFunctions(name));
         }
-
         return result;
     }
 

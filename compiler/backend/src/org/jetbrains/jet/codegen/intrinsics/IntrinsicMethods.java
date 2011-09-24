@@ -51,7 +51,7 @@ public class IntrinsicMethods {
             declareIntrinsicFunction(type, "dec", 0, DEC);
         }
 
-        final FunctionGroup typeInfoFunctionGroup = stdlib.getTypeInfoFunctionGroup();
+        final Set<FunctionDescriptor> typeInfoFunctionGroup = stdlib.getTypeInfoFunctions();
         declareOverload(typeInfoFunctionGroup, 0, TYPEINFO);
         declareOverload(typeInfoFunctionGroup, 1, VALUE_TYPEINFO);
 
@@ -108,12 +108,12 @@ public class IntrinsicMethods {
 
     private void declareIntrinsicFunction(String className, String functionName, int arity, IntrinsicMethod implementation) {
         JetScope memberScope = getClassMemberScope(className);
-        final FunctionGroup group = memberScope.getFunctionGroup(functionName);
+        final Set<FunctionDescriptor> group = memberScope.getFunctions(functionName);
         declareOverload(group, arity, implementation);
     }
 
-    private void declareOverload(FunctionGroup group, int arity, IntrinsicMethod implementation) {
-        for (FunctionDescriptor descriptor : group.getFunctionDescriptors()) {
+    private void declareOverload(Set<FunctionDescriptor> group, int arity, IntrinsicMethod implementation) {
+        for (FunctionDescriptor descriptor : group) {
             if (descriptor.getValueParameters().size() == arity) {
                 myMethods.put(descriptor.getOriginal(), implementation);
             }

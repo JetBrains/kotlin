@@ -7,6 +7,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author abreslav
@@ -28,8 +29,8 @@ public abstract class AbstractScopeAdapter implements JetScope {
 
     @NotNull
     @Override
-    public FunctionGroup getFunctionGroup(@NotNull String name) {
-        return getWorkerScope().getFunctionGroup(name);
+    public Set<FunctionDescriptor> getFunctions(@NotNull String name) {
+        return getWorkerScope().getFunctions(name);
     }
 
     @Override

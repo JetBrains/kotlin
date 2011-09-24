@@ -22,7 +22,7 @@ import java.util.*;
  */
 public class MutableClassDescriptor extends MutableDeclarationDescriptor implements ClassDescriptor, NamespaceLike {
     private ConstructorDescriptor primaryConstructor;
-    private final WritableFunctionGroup constructors = new WritableFunctionGroup("<init>");
+    private final Set<FunctionDescriptor> constructors = Sets.newLinkedHashSet();
     private final Set<FunctionDescriptor> functions = Sets.newHashSet();
     private final Set<PropertyDescriptor> properties = Sets.newHashSet();
     private List<TypeParameterDescriptor> typeParameters = Lists.newArrayList();
@@ -85,7 +85,7 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     public void addConstructor(@NotNull ConstructorDescriptor constructorDescriptor) {
         assert constructorDescriptor.getContainingDeclaration() == this;
 //        assert constructorDescriptor.getTypeParameters().size() == getTypeConstructor().getParameters().size();
-        constructors.addFunction(constructorDescriptor);
+        constructors.add(constructorDescriptor);
         if (defaultType != null) {
 //            constructorDescriptor.getTypeParameters().addAll(typeParameters);
             ((ConstructorDescriptorImpl) constructorDescriptor).setReturnType(getDefaultType());
@@ -169,7 +169,7 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
                 typeParameters,
                 supertypes);
         scopeForMemberResolution.setImplicitReceiver(new ClassReceiver(this));
-        for (FunctionDescriptor functionDescriptor : constructors.getFunctionDescriptors()) {
+        for (FunctionDescriptor functionDescriptor : constructors) {
             ((ConstructorDescriptorImpl) functionDescriptor).setReturnType(getDefaultType());
         }
     }
@@ -202,15 +202,7 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
 
     @NotNull
     @Override
-    public FunctionGroup getConstructors() {
-        // TODO : Duplicates ClassDescriptorImpl
-//        assert typeArguments.size() == getTypeConstructor().getParameters().size();
-
-//        if (typeArguments.size() == 0) {
-//            return constructors;
-//        }
-//        Map<TypeConstructor, TypeProjection> substitutionContext = TypeUtils.buildSubstitutionContext(getTypeConstructor().getParameters(), typeArguments);
-//        return new LazySubstitutingFunctionGroup(TypeSubstitutor.create(substitutionContext), constructors);
+    public Set<FunctionDescriptor> getConstructors() {
         return constructors;
     }
 

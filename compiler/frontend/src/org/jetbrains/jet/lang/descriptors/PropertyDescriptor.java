@@ -17,7 +17,7 @@ import java.util.Set;
 /**
  * @author abreslav
  */
-public class PropertyDescriptor extends VariableDescriptorImpl implements MemberDescriptor {
+public class PropertyDescriptor extends VariableDescriptorImpl implements CallableMemberDescriptor {
 
     private final Modality modality;
     private final Visibility visibility;
@@ -166,7 +166,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Member
 
     @NotNull
     @Override
-    public Set<? extends CallableDescriptor> getOverriddenDescriptors() {
+    public Set<? extends PropertyDescriptor> getOverriddenDescriptors() {
         return overriddenProperties;
     }
 }

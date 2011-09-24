@@ -43,7 +43,7 @@ public class ErrorUtils {
 
         @NotNull
         @Override
-        public FunctionGroup getFunctionGroup(@NotNull String name) {
+        public Set<FunctionDescriptor> getFunctions(@NotNull String name) {
             return ERROR_FUNCTION_GROUP;
         }
 
@@ -77,33 +77,17 @@ public class ErrorUtils {
 
     };
 
-    private static final FunctionGroup ERROR_FUNCTION_GROUP = new FunctionGroup() {
-        @NotNull
-        @Override
-        public String getName() {
-            return "<ERROR FUNCTION>";
-        }
-
-        @Override
-        public boolean isEmpty() {
-            return false;
-        }
-
-        @NotNull
-        @Override
-        public Set<FunctionDescriptor> getFunctionDescriptors() {
-            return Collections.singleton(createErrorFunction(0, Collections.<JetType>emptyList()));
-        }
-    };
-
     private static final ClassDescriptorImpl ERROR_CLASS = new ClassDescriptorImpl(ERROR_MODULE, Collections.<AnnotationDescriptor>emptyList(), "<ERROR CLASS>") {
         @NotNull
         @Override
-        public FunctionGroup getConstructors() {
+        public Set<FunctionDescriptor> getConstructors() {
             return ERROR_FUNCTION_GROUP;
         }
     };
+
+    private static final Set<FunctionDescriptor> ERROR_FUNCTION_GROUP = Collections.singleton(createErrorFunction(0, Collections.<JetType>emptyList()));
     private static final ConstructorDescriptor ERROR_CONSTRUCTOR = new ConstructorDescriptorImpl(ERROR_CLASS, Collections.<AnnotationDescriptor>emptyList(), true);
+
     static {
         ERROR_CLASS.initialize(
             true, Collections.<TypeParameterDescriptor>emptyList(), Collections.<JetType>emptyList(), getErrorScope(), ERROR_FUNCTION_GROUP, ERROR_CONSTRUCTOR);

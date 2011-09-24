@@ -6,7 +6,7 @@ import com.intellij.psi.PsiFileFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionGroup;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author abreslav
@@ -60,7 +61,6 @@ public class JetStandardLibrary {
     private final ClassDescriptor arrayClass;
     private final ClassDescriptor iterableClass;
     private final ClassDescriptor typeInfoClass;
-    private final ClassDescriptor tuple0Class;
 
     private final JetType byteType;
     private final JetType nullableByteType;
@@ -89,7 +89,7 @@ public class JetStandardLibrary {
     private final JetType nullableStringType;
 
     private final NamespaceDescriptor typeInfoNamespace;
-    private final FunctionGroup typeInfoFunction;
+    private final Set<FunctionDescriptor> typeInfoFunction;
 
     private JetStandardLibrary(@NotNull Project project) {
         // TODO : review
@@ -120,10 +120,9 @@ public class JetStandardLibrary {
             this.stringClass = (ClassDescriptor) libraryScope.getClassifier("String");
             this.arrayClass = (ClassDescriptor) libraryScope.getClassifier("Array");
             this.iterableClass = (ClassDescriptor) libraryScope.getClassifier("Iterable");
-            this.tuple0Class = (ClassDescriptor) libraryScope.getClassifier("Tuple0");
             typeInfoNamespace = libraryScope.getNamespace("typeinfo");
             this.typeInfoClass = (ClassDescriptor) typeInfoNamespace.getMemberScope().getClassifier("TypeInfo");
-            typeInfoFunction = typeInfoNamespace.getMemberScope().getFunctionGroup("typeinfo");
+            typeInfoFunction = typeInfoNamespace.getMemberScope().getFunctions("typeinfo");
 
             this.byteType = new JetTypeImpl(getByte());
             this.charType = new JetTypeImpl(getChar());
@@ -134,7 +133,7 @@ public class JetStandardLibrary {
             this.doubleType = new JetTypeImpl(getDouble());
             this.booleanType = new JetTypeImpl(getBoolean());
             this.stringType = new JetTypeImpl(getString());
-            this.tuple0Type = new JetTypeImpl(getTuple0());
+            this.tuple0Type = new JetTypeImpl(JetStandardClasses.getTuple(0));
 
             this.nullableByteType = TypeUtils.makeNullable(byteType);
             this.nullableCharType = TypeUtils.makeNullable(charType);
@@ -210,10 +209,6 @@ public class JetStandardLibrary {
         return iterableClass;
     }
 
-    public ClassDescriptor getTuple0() {
-        return tuple0Class;
-    }
-
     public NamespaceDescriptor getTypeInfoNamespace() {
         return typeInfoNamespace;
     }
@@ -222,7 +217,7 @@ public class JetStandardLibrary {
         return typeInfoClass;
     }
 
-    public FunctionGroup getTypeInfoFunctionGroup() {
+    public Set<FunctionDescriptor> getTypeInfoFunctions() {
         return typeInfoFunction;
     }
 

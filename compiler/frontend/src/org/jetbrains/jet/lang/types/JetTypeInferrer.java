@@ -875,30 +875,27 @@ public class JetTypeInferrer {
         @Override
         public JetType visitObjectLiteralExpression(final JetObjectLiteralExpression expression, final TypeInferenceContext context) {
             final JetType[] result = new JetType[1];
-            BindingTraceAdapter.RecordHandler<PsiElement, DeclarationDescriptor> handler = new BindingTraceAdapter.RecordHandler<PsiElement, DeclarationDescriptor>() {
+            BindingTraceAdapter.RecordHandler<PsiElement, ClassDescriptor> handler = new BindingTraceAdapter.RecordHandler<PsiElement, ClassDescriptor>() {
 
                 @Override
-                public void handleRecord(WritableSlice<PsiElement, DeclarationDescriptor> slice, PsiElement declaration, final DeclarationDescriptor descriptor) {
-                    if (declaration == expression.getObjectDeclaration()) {
+                public void handleRecord(WritableSlice<PsiElement, ClassDescriptor> slice, PsiElement declaration, final ClassDescriptor descriptor) {
+                    if (slice == CLASS && declaration == expression.getObjectDeclaration()) {
                         JetType defaultType = new DeferredType(new LazyValue<JetType>() {
                             @Override
                             protected JetType compute() {
-                                return ((ClassDescriptor) descriptor).getDefaultType();
+                                return descriptor.getDefaultType();
                             }
                         });
                         result[0] = defaultType;
-                        if (!context.trace.get(BindingContext.PROCESSED, expression)) {
-                            context.trace.record(BindingContext.EXPRESSION_TYPE, expression, defaultType);
-                            context.trace.record(BindingContext.PROCESSED, expression);
+                        if (!context.trace.get(PROCESSED, expression)) {
+                            context.trace.record(EXPRESSION_TYPE, expression, defaultType);
+                            context.trace.record(PROCESSED, expression);
                         }
                     }
                 }
             };
             BindingTraceAdapter traceAdapter = new BindingTraceAdapter(context.trace);
-            for (WritableSlice slice : BindingContext.DECLARATIONS_TO_DESCRIPTORS) {
-                //noinspection unchecked
-                traceAdapter.addHandler(slice, handler);
-            }
+            traceAdapter.addHandler(CLASS, handler);
             TopDownAnalyzer.processObject(semanticServices, traceAdapter, context.scope, context.scope.getContainingDeclaration(), expression.getObjectDeclaration());
             return context.services.checkType(result[0], expression, context);
         }

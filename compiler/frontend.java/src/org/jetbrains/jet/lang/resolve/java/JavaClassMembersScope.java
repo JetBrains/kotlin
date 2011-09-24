@@ -12,6 +12,7 @@ import org.jetbrains.jet.lang.types.TypeSubstitutor;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author abreslav
@@ -21,7 +22,7 @@ public class JavaClassMembersScope implements JetScope {
     private final JavaSemanticServices semanticServices;
     private final boolean staticMembers;
     private final DeclarationDescriptor containingDeclaration;
-    private final Map<String, FunctionGroup> functionGroups = Maps.newHashMap();
+    private final Map<String, Set<FunctionDescriptor>> functionGroups = Maps.newHashMap();
     private final Map<String, VariableDescriptor> variables = Maps.newHashMap();
     private final Map<String, ClassifierDescriptor> classifiers = Maps.newHashMap();
     private Collection<DeclarationDescriptor> allDescriptors;
@@ -130,8 +131,8 @@ public class JavaClassMembersScope implements JetScope {
 
     @NotNull
     @Override
-    public FunctionGroup getFunctionGroup(@NotNull String name) {
-        FunctionGroup functionGroup = functionGroups.get(name);
+    public Set<FunctionDescriptor> getFunctions(@NotNull String name) {
+        Set<FunctionDescriptor> functionGroup = functionGroups.get(name);
         if (functionGroup == null) {
             functionGroup = semanticServices.getDescriptorResolver().resolveFunctionGroup(
                     containingDeclaration,

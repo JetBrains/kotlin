@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.resolve.java;
 
+import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -12,6 +13,7 @@ import org.jetbrains.jet.lang.types.*;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author abreslav
@@ -21,7 +23,7 @@ public class JavaClassDescriptor extends MutableDeclarationDescriptor implements
     private TypeConstructor typeConstructor;
     private JavaClassMembersScope unsubstitutedMemberScope;
     private JetType classObjectType;
-    private final WritableFunctionGroup constructors = new WritableFunctionGroup("<init>");
+    private final Set<FunctionDescriptor> constructors = Sets.newLinkedHashSet();
     private Modality modality;
     private Visibility visibility;
     private JetType superclassType;
@@ -65,7 +67,7 @@ public class JavaClassDescriptor extends MutableDeclarationDescriptor implements
     }
 
     public void addConstructor(ConstructorDescriptor constructorDescriptor) {
-        this.constructors.addFunction(constructorDescriptor);
+        this.constructors.add(constructorDescriptor);
     }
 
     private TypeSubstitutor createTypeSubstitutor(List<TypeProjection> typeArguments) {
@@ -97,10 +99,7 @@ public class JavaClassDescriptor extends MutableDeclarationDescriptor implements
 
     @NotNull
     @Override
-    public FunctionGroup getConstructors() {
-//        assert typeArguments.size() == typeConstructor.getParameters().size();
-//        if (typeArguments.isEmpty()) return constructors;
-//        return new LazySubstitutingFunctionGroup(createTypeSubstitutor(typeArguments), constructors);
+    public Set<FunctionDescriptor> getConstructors() {
         return constructors;
     }
 

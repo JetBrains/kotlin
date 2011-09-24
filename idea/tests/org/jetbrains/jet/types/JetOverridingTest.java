@@ -70,7 +70,7 @@ public class JetOverridingTest extends LightDaemonAnalyzerTestCase {
                 "fun ab() : Int",
                 "fun a() : Int");
 
-        assertNotOverridable(
+        assertOverridable(
                 "fun a() : Int",
                 "fun a() : Any");
 
@@ -98,7 +98,7 @@ public class JetOverridingTest extends LightDaemonAnalyzerTestCase {
                 "fun a<T1, X : T1>(a : T1) : T1",
                 "fun a<T, Y : T>(a : Y) : T");
 
-        assertNotOverridable(
+        assertOverridable(
                 "fun a<T1, X : T1>(a : T1) : X",
                 "fun a<T, Y : T>(a : T) : T");
 

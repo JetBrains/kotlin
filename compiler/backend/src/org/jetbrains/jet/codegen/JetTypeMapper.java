@@ -222,14 +222,6 @@ public class JetTypeMapper {
         return jvmName(descriptor, OwnerKind.IMPLEMENTATION);
     }
 
-    public boolean isInterface(ClassDescriptor jetClass) {
-        PsiElement declaration = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, jetClass);
-        if (declaration instanceof JetObjectDeclaration) {
-            return false;
-        }
-        return declaration instanceof JetClass && ((JetClass) declaration).isTrait();
-    }
-
     private static String jetJvmName(ClassDescriptor jetClass, OwnerKind kind) {
         if (jetClass.getKind() == ClassKind.OBJECT) {
             return jvmNameForImplementation(jetClass);
@@ -496,7 +488,7 @@ public class JetTypeMapper {
         else if (functionParent instanceof ClassDescriptor) {
             ClassDescriptor containingClass = (ClassDescriptor) functionParent;
             owner = jvmName(containingClass, OwnerKind.IMPLEMENTATION);
-            invokeOpcode = isInterface(containingClass)
+            invokeOpcode = CodegenUtil.isInterface(containingClass)
                     ? Opcodes.INVOKEINTERFACE
                     : Opcodes.INVOKEVIRTUAL;
             needsReceiver = true;
@@ -577,7 +569,7 @@ public class JetTypeMapper {
         List<Type> parameterTypes = new ArrayList<Type>();
         ClassDescriptor classDescriptor = descriptor.getContainingDeclaration();
         final DeclarationDescriptor outerDescriptor = classDescriptor.getContainingDeclaration();
-        if (outerDescriptor instanceof ClassDescriptor) {
+        if (outerDescriptor instanceof ClassDescriptor && classDescriptor.getKind() != ClassKind.OBJECT) {
             parameterTypes.add(jvmType((ClassDescriptor) outerDescriptor, OwnerKind.IMPLEMENTATION));
         }
         for (ValueParameterDescriptor parameter : parameters) {

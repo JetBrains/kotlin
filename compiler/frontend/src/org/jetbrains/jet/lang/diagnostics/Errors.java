@@ -1,6 +1,5 @@
 package org.jetbrains.jet.lang.diagnostics;
 
-import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
@@ -107,7 +106,7 @@ public interface Errors {
     SimpleDiagnosticFactory BY_IN_SECONDARY_CONSTRUCTOR = SimpleDiagnosticFactory.create(ERROR, "'by'-clause is only supported for primary constructors");
     SimpleDiagnosticFactory INITIALIZER_WITH_NO_ARGUMENTS = SimpleDiagnosticFactory.create(ERROR, "Constructor arguments required");
     SimpleDiagnosticFactory MANY_CALLS_TO_THIS = SimpleDiagnosticFactory.create(ERROR, "Only one call to 'this(...)' is allowed");
-    PsiElementOnlyDiagnosticFactory1<JetFunction, FunctionDescriptor> NOTHING_TO_OVERRIDE = PsiElementOnlyDiagnosticFactory1.create(ERROR, "Function {0} overrides nothing");
+    PsiElementOnlyDiagnosticFactory1<JetModifierListOwner, CallableMemberDescriptor> NOTHING_TO_OVERRIDE = PsiElementOnlyDiagnosticFactory1.create(ERROR, "{0} overrides nothing");
     ParameterizedDiagnosticFactory1<PropertyDescriptor> PRIMARY_CONSTRUCTOR_MISSING_STATEFUL_PROPERTY = ParameterizedDiagnosticFactory1.create(ERROR, "This class must have a primary constructor, because property {0} has a backing field");
     ParameterizedDiagnosticFactory1<JetClassOrObject> PRIMARY_CONSTRUCTOR_MISSING_SUPER_CONSTRUCTOR_CALL = new ParameterizedDiagnosticFactory1<JetClassOrObject>(ERROR, "Class {0} must have a constructor in order to be able to initialize supertypes") {
         @Override
@@ -121,7 +120,7 @@ public interface Errors {
             return e.getClass().getSimpleName() + ": " + e.getMessage();
         }
     };
-    PsiElementOnlyDiagnosticFactory3<JetFunction, FunctionDescriptor, FunctionDescriptor, DeclarationDescriptor> VIRTUAL_METHOD_HIDDEN = PsiElementOnlyDiagnosticFactory3.create(ERROR, "Function ''{0}'' hides ''{1}'' in class {2} and needs 'override' modifier");
+    PsiElementOnlyDiagnosticFactory3<JetModifierListOwner, CallableMemberDescriptor, CallableMemberDescriptor, DeclarationDescriptor> VIRTUAL_MEMBER_HIDDEN = PsiElementOnlyDiagnosticFactory3.create(ERROR, "''{0}'' hides ''{1}'' in class {2} and needs 'override' modifier");
 
     SimpleDiagnosticFactory UNREACHABLE_CODE = SimpleDiagnosticFactory.create(ERROR, "Unreachable code");
     ParameterizedDiagnosticFactory1<String> UNREACHABLE_BECAUSE_OF_NOTHING = ParameterizedDiagnosticFactory1.create(ERROR, "This code is unreachable, because ''{0}'' never terminates normally");
@@ -274,9 +273,10 @@ public interface Errors {
             return nameExpression.getReferencedName();
         }
     };
-    ParameterizedDiagnosticFactory2<FunctionDescriptor, DeclarationDescriptor> OVERRIDING_FINAL_FUNCTION = new ParameterizedDiagnosticFactory2<FunctionDescriptor, DeclarationDescriptor>(ERROR, "Method {0} in {1} is final and cannot be overridden") {
+    ParameterizedDiagnosticFactory2<CallableMemberDescriptor, DeclarationDescriptor> OVERRIDING_FINAL_MEMBER = new ParameterizedDiagnosticFactory2<CallableMemberDescriptor, DeclarationDescriptor>(ERROR, "{0} in {1} is final and cannot be overridden") {
+
         @Override
-        protected String makeMessageForA(@NotNull FunctionDescriptor functionDescriptor) {
+        protected String makeMessageForA(@NotNull CallableMemberDescriptor functionDescriptor) {
             return functionDescriptor.getName();
         }
 

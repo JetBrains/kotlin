@@ -18,6 +18,9 @@ import java.util.Set;
  */
 public class OverridingUtil {
 
+    private OverridingUtil() {
+    }
+
     public static Set<CallableDescriptor> getEffectiveMembers(@NotNull ClassDescriptor classDescriptor) {
         Collection<DeclarationDescriptor> allDescriptors = classDescriptor.getDefaultType().getMemberScope().getAllDescriptors();
         Set<CallableDescriptor> allMembers = Sets.newLinkedHashSet();
@@ -99,21 +102,16 @@ public class OverridingUtil {
         List<TypeParameterDescriptor> superTypeParameters = superDescriptor.getTypeParameters();
         List<TypeParameterDescriptor> subTypeParameters = subDescriptor.getTypeParameters();
 
-        Map<TypeConstructor, TypeProjection> substitutionContext = Maps.newHashMap();
         BiMap<TypeConstructor, TypeConstructor> axioms = HashBiMap.create();
         for (int i = 0, typeParametersSize = superTypeParameters.size(); i < typeParametersSize; i++) {
             TypeParameterDescriptor superTypeParameter = superTypeParameters.get(i);
             TypeParameterDescriptor subTypeParameter = subTypeParameters.get(i);
-            substitutionContext.put(
-                    superTypeParameter.getTypeConstructor(),
-                    new TypeProjection(subTypeParameter.getDefaultType()));
             axioms.put(superTypeParameter.getTypeConstructor(), subTypeParameter.getTypeConstructor());
         }
 
         for (int i = 0, typeParametersSize = superTypeParameters.size(); i < typeParametersSize; i++) {
             TypeParameterDescriptor superTypeParameter = superTypeParameters.get(i);
             TypeParameterDescriptor subTypeParameter = subTypeParameters.get(i);
-
 
             if (!JetTypeImpl.equalTypes(superTypeParameter.getBoundsAsType(), subTypeParameter.getBoundsAsType(), axioms)) {
                 return OverrideCompatibilityInfo.boundsMismatch(superTypeParameter, subTypeParameter);
@@ -133,6 +131,23 @@ public class OverridingUtil {
 
         // TODO : Default values, varargs etc
 
+        return OverrideCompatibilityInfo.success();
+    }
+
+    @NotNull
+    public static OverrideCompatibilityInfo isReturnTypeOkForOverride(@NotNull JetTypeChecker typeChecker, @NotNull CallableDescriptor superDescriptor, @NotNull CallableDescriptor subDescriptor) {
+        List<TypeParameterDescriptor> superTypeParameters = superDescriptor.getTypeParameters();
+        List<TypeParameterDescriptor> subTypeParameters = subDescriptor.getTypeParameters();
+        Map<TypeConstructor, TypeProjection> substitutionContext = Maps.newHashMap();
+        for (int i = 0, typeParametersSize = superTypeParameters.size(); i < typeParametersSize; i++) {
+            TypeParameterDescriptor superTypeParameter = superTypeParameters.get(i);
+            TypeParameterDescriptor subTypeParameter = subTypeParameters.get(i);
+            substitutionContext.put(
+                    superTypeParameter.getTypeConstructor(),
+                    new TypeProjection(subTypeParameter.getDefaultType()));
+        }
+
+        // This code compares return types, but they are not a part of the signature, so this code does not belong here
         TypeSubstitutor typeSubstitutor = TypeSubstitutor.create(substitutionContext);
         JetType substitutedSuperReturnType = typeSubstitutor.substitute(superDescriptor.getReturnType(), Variance.OUT_VARIANCE);
         assert substitutedSuperReturnType != null;

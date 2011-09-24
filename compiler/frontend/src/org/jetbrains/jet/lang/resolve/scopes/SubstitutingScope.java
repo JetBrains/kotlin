@@ -8,9 +8,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author abreslav
@@ -20,7 +18,7 @@ public class SubstitutingScope implements JetScope {
     private final JetScope workerScope;
     private final TypeSubstitutor substitutor;
 
-    private Map<String, FunctionGroup> functionGroups = null;
+    private Map<DeclarationDescriptor, DeclarationDescriptor> substitutedDescriptors = null;
     private Collection<DeclarationDescriptor> allDescriptors = null;
 
     public SubstitutingScope(JetScope workerScope, @NotNull TypeSubstitutor substitutor) {
@@ -28,26 +26,54 @@ public class SubstitutingScope implements JetScope {
         this.substitutor = substitutor;
     }
 
-    @Override
-    public VariableDescriptor getVariable(@NotNull String name) {
-        VariableDescriptor variable = workerScope.getVariable(name);
-        if (variable == null || substitutor.isEmpty()) {
-            return variable;
+    @Nullable
+    private <D extends DeclarationDescriptor> D substitute(@Nullable D descriptor) {
+        if (descriptor == null) return null;
+        if (substitutor.isEmpty()) return descriptor;
+
+        if (substitutedDescriptors == null) {
+            substitutedDescriptors = Maps.newHashMap();
         }
 
-        return variable.substitute(substitutor);
+        DeclarationDescriptor substituted = substitutedDescriptors.get(descriptor);
+        if (substituted == null) {
+            substituted = descriptor.substitute(substitutor);
+            substitutedDescriptors.put(descriptor, substituted);
+        }
+        //noinspection unchecked
+        return (D) substituted;
+    }
+
+    @NotNull
+    private <D extends DeclarationDescriptor> Set<D> substitute(@NotNull Set<D> descriptors) {
+        if (substitutor.isEmpty()) return descriptors;
+        if (descriptors.isEmpty()) return descriptors;
+
+        Set<D> result = Sets.newHashSet();
+        for (D descriptor : descriptors) {
+            D substitute = substitute(descriptor);
+            if (substitute != null) {
+                result.add(substitute);
+            }
+        }
+
+        return result;
+    }
+
+    @Override
+    public VariableDescriptor getVariable(@NotNull String name) {
+        return substitute(workerScope.getVariable(name));
     }
 
     @Override
     public ClassifierDescriptor getClassifier(@NotNull String name) {
-        ClassifierDescriptor descriptor = workerScope.getClassifier(name);
-        if (descriptor == null) {
-            return null;
-        }
-        if (descriptor instanceof ClassDescriptor) {
-            return new LazySubstitutingClassDescriptor((ClassDescriptor) descriptor, substitutor);
-        }
-        throw new UnsupportedOperationException(); // TODO
+        return substitute(workerScope.getClassifier(name));
+    }
+
+    @NotNull
+    @Override
+    public Set<FunctionDescriptor> getFunctions(@NotNull String name) {
+        return substitute(workerScope.getFunctions(name));
     }
 
     @Override
@@ -64,32 +90,6 @@ public class SubstitutingScope implements JetScope {
     @Override
     public void getImplicitReceiversHierarchy(@NotNull List<ReceiverDescriptor> result) {
         throw new UnsupportedOperationException(); // TODO
-    }
-
-    @NotNull
-    @Override
-    public FunctionGroup getFunctionGroup(@NotNull String name) {
-        if (substitutor.isEmpty()) {
-            return workerScope.getFunctionGroup(name);
-        }
-        if (functionGroups == null) {
-            functionGroups = Maps.newHashMap();
-        }
-        FunctionGroup cachedGroup = functionGroups.get(name);
-        if (cachedGroup != null) {
-            return cachedGroup;
-        }
-
-        FunctionGroup functionGroup = workerScope.getFunctionGroup(name);
-        FunctionGroup result;
-        if (functionGroup.isEmpty()) {
-            result = FunctionGroup.EMPTY;
-        }
-        else {
-            result = new LazySubstitutingFunctionGroup(substitutor, functionGroup);
-        }
-        functionGroups.put(name, result);
-        return result;
     }
 
     @NotNull
@@ -121,7 +121,7 @@ public class SubstitutingScope implements JetScope {
         if (allDescriptors == null) {
             allDescriptors = Sets.newHashSet();
             for (DeclarationDescriptor descriptor : workerScope.getAllDescriptors()) {
-                DeclarationDescriptor substitute = descriptor.substitute(substitutor);
+                DeclarationDescriptor substitute = substitute(descriptor);
                 assert substitute != null;
                 allDescriptors.add(substitute);
             }

@@ -48,7 +48,7 @@ public class JetStandardClasses {
                 }
             },
             JetScope.EMPTY,
-            FunctionGroup.EMPTY,
+            Collections.<FunctionDescriptor>emptySet(),
             null,
             null
     );
@@ -71,7 +71,7 @@ public class JetStandardClasses {
             Collections.<TypeParameterDescriptor>emptyList(),
             Collections.<JetType>emptySet(),
             JetScope.EMPTY,
-            FunctionGroup.EMPTY,
+            Collections.<FunctionDescriptor>emptySet(),
             null,
             null
     );
@@ -97,7 +97,6 @@ public class JetStandardClasses {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     public static final JetScope STUB = JetScope.EMPTY;
-    public static final FunctionGroup STUB_FG = FunctionGroup.EMPTY;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -124,7 +123,7 @@ public class JetStandardClasses {
                     parameters,
                     Collections.singleton(getAnyType()),
                     STUB,
-                    STUB_FG,
+                    Collections.<FunctionDescriptor>emptySet(), // TODO
                     null); // TODO : constructor
             TUPLE_CONSTRUCTORS.add(TUPLE[i].getTypeConstructor());
         }
@@ -149,7 +148,7 @@ public class JetStandardClasses {
             FUNCTION[i] = function.initialize(
                     false,
                     createTypeParameters(i, function),
-                    Collections.singleton(getAnyType()), STUB, FunctionGroup.EMPTY, null);
+                    Collections.singleton(getAnyType()), STUB, Collections.<FunctionDescriptor>emptySet(), null);
             FUNCTION_TYPE_CONSTRUCTORS.add(FUNCTION[i].getTypeConstructor());
 
             ClassDescriptorImpl receiverFunction = new ClassDescriptorImpl(
@@ -164,7 +163,7 @@ public class JetStandardClasses {
             RECEIVER_FUNCTION[i] = receiverFunction.initialize(
                     false,
                     parameters,
-                    Collections.singleton(getAnyType()), STUB, FunctionGroup.EMPTY, null);
+                    Collections.singleton(getAnyType()), STUB, Collections.<FunctionDescriptor>emptySet(), null);
             RECEIVER_FUNCTION_TYPE_CONSTRUCTORS.add(RECEIVER_FUNCTION[i].getTypeConstructor());
         }
     }
