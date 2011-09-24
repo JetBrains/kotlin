@@ -7,6 +7,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -20,6 +21,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.jet.lang.resolve.BindingContext.CONSTRUCTOR;
 import static org.jetbrains.jet.lang.resolve.BindingContext.DESCRIPTOR_TO_DECLARATION;
 import static org.jetbrains.jet.lang.resolve.BindingContext.TYPE;
 
@@ -98,7 +100,7 @@ public class TypeHierarchyResolver {
                         classObjectDescriptor.setModality(Modality.FINAL);
                         classObjectDescriptor.setVisibility(ClassDescriptorResolver.resolveVisibilityFromModifiers(context.getTrace(), klass.getModifierList()));
                         classObjectDescriptor.createTypeConstructor();
-                        createPrimaryConstructor(classObjectDescriptor);
+                        createPrimaryConstructorForObject(null, classObjectDescriptor);
                         mutableClassDescriptor.setClassObjectDescriptor(classObjectDescriptor);
                     }
                     visitClassOrObject(
@@ -144,17 +146,20 @@ public class TypeHierarchyResolver {
                         }
                     };
                     visitClassOrObject(declaration, (Map) context.getObjects(), owner, outerScope, mutableClassDescriptor);
-                    createPrimaryConstructor(mutableClassDescriptor);
+                    createPrimaryConstructorForObject((JetDeclaration) declaration, mutableClassDescriptor);
                     context.getTrace().record(BindingContext.CLASS, declaration, mutableClassDescriptor);
                     return mutableClassDescriptor;
                 }
 
-                private void createPrimaryConstructor(MutableClassDescriptor mutableClassDescriptor) {
+                private void createPrimaryConstructorForObject(@Nullable JetDeclaration object, MutableClassDescriptor mutableClassDescriptor) {
                     ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(mutableClassDescriptor, Collections.<AnnotationDescriptor>emptyList(), true);
                     constructorDescriptor.initialize(Collections.<TypeParameterDescriptor>emptyList(), Collections.<ValueParameterDescriptor>emptyList(),
                                                      Modality.FINAL, Visibility.INTERNAL);//TODO check set mutableClassDescriptor.getVisibility()
                     // TODO : make the constructor private?
                     mutableClassDescriptor.setPrimaryConstructor(constructorDescriptor);
+                    if (object != null) {
+                        context.getTrace().record(CONSTRUCTOR, object, constructorDescriptor);
+                    }
                 }
 
                 private void visitClassOrObject(@NotNull JetClassOrObject declaration, Map<JetClassOrObject, MutableClassDescriptor> map, NamespaceLike owner, JetScope outerScope, MutableClassDescriptor mutableClassDescriptor) {
