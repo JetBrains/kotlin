@@ -393,7 +393,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     }
 
     private class ForInRangeLoopGenerator extends ForLoopGenerator {
-        private int myRangeVar;
         private int myEndVar;
 
         public ForInRangeLoopGenerator(JetForExpression expression, Type loopRangeType) {
@@ -402,17 +401,24 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
         @Override
         protected void generatePrologue() {
-            myRangeVar = myMap.enterTemp();
             myEndVar = myMap.enterTemp();
-            gen(expression.getLoopRange(), loopRangeType);
-            v.dup();
-            v.dup();
-            v.store(myRangeVar, loopRangeType);
+            if(isIntRangeExpr(expression.getLoopRange())) {
+                JetBinaryExpression rangeExpression = (JetBinaryExpression) expression.getLoopRange();
+                //noinspection ConstantConditions
+                gen(rangeExpression.getLeft(), Type.INT_TYPE);
+                v.store(lookupLocal(parameterDescriptor), Type.INT_TYPE);
+                gen(rangeExpression.getRight(), Type.INT_TYPE);
+                v.store(myEndVar, Type.INT_TYPE);
+            }
+            else {
+                gen(expression.getLoopRange(), loopRangeType);
+                v.dup();
 
-            v.invokevirtual("jet/IntRange", "getStartValue", "()I");
-            v.store(lookupLocal(parameterDescriptor), Type.INT_TYPE);
-            v.invokevirtual("jet/IntRange", "getEndValue", "()I");
-            v.store(myEndVar, Type.INT_TYPE);
+                v.invokevirtual("jet/IntRange", "getStartValue", "()I");
+                v.store(lookupLocal(parameterDescriptor), Type.INT_TYPE);
+                v.invokevirtual("jet/IntRange", "getEndValue", "()I");
+                v.store(myEndVar, Type.INT_TYPE);
+            }
         }
 
         @Override
@@ -429,7 +435,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
         @Override
         protected void cleanupTemp() {
-            myMap.leaveTemp(2);
+            myMap.leaveTemp(1);
         }
     }
 

@@ -2,17 +2,21 @@ trait ISized {
     val size : Int
 }
 
+trait javaUtilIterator<T> : java.util.Iterator<T> {
+    override fun remove() : Unit {
+        throw UnsupportedOperationException()
+    }
+}
+
 trait ReadOnlyArray<out T> : ISized, java.lang.Iterable<T> {
   fun get(index : Int) : T
 
-  class MyIterator() : java.util.Iterator<T> {
+  class MyIterator() : javaUtilIterator<T> {
     private var index = 0
 
     override fun hasNext() : Boolean = index < size
 
     override fun next() : T = get(index++)
-
-    override fun remove () : Unit {}
   }
 
   override fun iterator() : java.util.Iterator<T> = MyIterator()
@@ -22,7 +26,7 @@ trait WriteOnlyArray<in T> : ISized {
   fun set(index : Int, value : T) : Unit
 
   fun set(from: Int, count: Int, value: T) {
-    for(i in from..(from+count-1)) {
+    for(i in from..from+count-1) {
         set(i, value)
     }
   }
