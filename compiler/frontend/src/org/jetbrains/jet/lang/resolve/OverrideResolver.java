@@ -171,48 +171,48 @@ public class OverrideResolver {
             nameIdentifier = ((JetObjectDeclaration) klass).getNameIdentifier();
         }
 
-//        for (CallableMemberDescriptor memberDescriptor : manyImpl) {
-//            context.getTrace().report(MANY_IMPL_MEMBER_NOT_IMPLEMENTED.on(nameIdentifier, klass, memberDescriptor));
-//            break;
-//        }
+        for (CallableMemberDescriptor memberDescriptor : manyImpl) {
+            context.getTrace().report(MANY_IMPL_MEMBER_NOT_IMPLEMENTED.on(nameIdentifier, klass, memberDescriptor));
+            break;
+        }
 
 
         if (classDescriptor.getModality() == Modality.ABSTRACT) {
             return;
         }
 
-//        for (CallableMemberDescriptor memberDescriptor : abstractNoImpl) {
-//            context.getTrace().report(ABSTRACT_MEMBER_NOT_IMPLEMENTED.on(nameIdentifier, klass, memberDescriptor));
-//            break;
-//        }
+        for (CallableMemberDescriptor memberDescriptor : abstractNoImpl) {
+            context.getTrace().report(ABSTRACT_MEMBER_NOT_IMPLEMENTED.on(nameIdentifier, klass, memberDescriptor));
+            break;
+        }
 
-        Set<FunctionDescriptor> allOverriddenFunctions = Sets.newHashSet();
-        Collection<DeclarationDescriptor> allDescriptors = classDescriptor.getDefaultType().getMemberScope().getAllDescriptors();
-        for (DeclarationDescriptor descriptor : allDescriptors) {
-            if (descriptor instanceof FunctionDescriptor) {
-                FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
-                if (functionDescriptor.getModality() != Modality.ABSTRACT) {
-                    for (FunctionDescriptor overriddenDescriptor : functionDescriptor.getOverriddenDescriptors()) {
-                        allOverriddenFunctions.add(overriddenDescriptor.getOriginal());
-                    }
-                }
-            }
-        }
-        boolean foundError = false;
-        for (DeclarationDescriptor descriptor : allDescriptors) {
-            if (descriptor instanceof FunctionDescriptor) {
-                FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
-                if (functionDescriptor.getModality() == Modality.ABSTRACT && !allOverriddenFunctions.contains(functionDescriptor.getOriginal()) && !foundError && nameIdentifier != null) {
-                    DeclarationDescriptor declarationDescriptor = functionDescriptor.getContainingDeclaration();
-                    if (declarationDescriptor != classDescriptor) {
-//                        context.getTrace().getErrorHandler().genericError(nameIdentifier.getNode(), "Class '" + klass.getName() + "' must be declared abstract or implement abstract method '" +
-//                                                                                                    functionDescriptor.getName() + "' declared in " + declarationDescriptor.getName());
-                        context.getTrace().report(ABSTRACT_MEMBER_NOT_IMPLEMENTED.on(nameIdentifier, klass, functionDescriptor));
-                        foundError = true;
-                    }
-                }
-            }
-        }
+//        Set<FunctionDescriptor> allOverriddenFunctions = Sets.newHashSet();
+//        Collection<DeclarationDescriptor> allDescriptors = classDescriptor.getDefaultType().getMemberScope().getAllDescriptors();
+//        for (DeclarationDescriptor descriptor : allDescriptors) {
+//            if (descriptor instanceof FunctionDescriptor) {
+//                FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
+//                if (functionDescriptor.getModality() != Modality.ABSTRACT) {
+//                    for (FunctionDescriptor overriddenDescriptor : functionDescriptor.getOverriddenDescriptors()) {
+//                        allOverriddenFunctions.add(overriddenDescriptor.getOriginal());
+//                    }
+//                }
+//            }
+//        }
+//        boolean foundError = false;
+//        for (DeclarationDescriptor descriptor : allDescriptors) {
+//            if (descriptor instanceof FunctionDescriptor) {
+//                FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
+//                if (functionDescriptor.getModality() == Modality.ABSTRACT && !allOverriddenFunctions.contains(functionDescriptor.getOriginal()) && !foundError && nameIdentifier != null) {
+//                    DeclarationDescriptor declarationDescriptor = functionDescriptor.getContainingDeclaration();
+//                    if (declarationDescriptor != classDescriptor) {
+////                        context.getTrace().getErrorHandler().genericError(nameIdentifier.getNode(), "Class '" + klass.getName() + "' must be declared abstract or implement abstract method '" +
+////                                                                                                    functionDescriptor.getName() + "' declared in " + declarationDescriptor.getName());
+//                        context.getTrace().report(ABSTRACT_MEMBER_NOT_IMPLEMENTED.on(nameIdentifier, klass, functionDescriptor));
+//                        foundError = true;
+//                    }
+//                }
+//            }
+//        }
     }
 
     private void checkOverride(CallableMemberDescriptor declared) {
