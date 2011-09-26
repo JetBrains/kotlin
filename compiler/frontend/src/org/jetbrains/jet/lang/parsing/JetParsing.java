@@ -1483,7 +1483,7 @@ public class JetParsing extends AbstractJetParsing {
         myBuilder.disableNewlines();
         expect(LPAR, "Expecting '(", recoverySet);
 
-        if (!at(RPAR)) {
+        if (!at(RPAR) && !atSet(recoverySet)) {
             while (true) {
                 if (at(COMMA)) {
                     errorAndAdvance("Expecting a parameter declaration");

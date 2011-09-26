@@ -3,6 +3,7 @@ package org.jetbrains.jet.resolve;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.diagnostics.Renderer;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
@@ -15,7 +16,7 @@ import java.util.List;
 /**
  * @author abreslav
  */
-public class DescriptorRenderer {
+public class DescriptorRenderer implements Renderer {
 
     public static String getFQName(DeclarationDescriptor descriptor) {
         DeclarationDescriptor container = descriptor.getContainingDeclaration();
@@ -81,6 +82,13 @@ public class DescriptorRenderer {
 
     private String lt() {
         return escape("<");
+    }
+
+    @NotNull
+    @Override
+    public String render(@Nullable Object object) {
+        assert object instanceof DeclarationDescriptor;
+        return render((DeclarationDescriptor) object);
     }
 
     public String render(DeclarationDescriptor declarationDescriptor) {

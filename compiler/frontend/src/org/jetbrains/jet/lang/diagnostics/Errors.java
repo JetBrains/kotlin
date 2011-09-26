@@ -4,6 +4,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.JetType;
@@ -23,6 +24,24 @@ import static org.jetbrains.jet.lang.diagnostics.Severity.WARNING;
  */
 public interface Errors {
 
+    Renderer NAME = new Renderer() {
+        @NotNull
+        @Override
+        public String render(@Nullable Object object) {
+            if (object == null) return "null";
+            if (object instanceof Named) {
+                return ((Named) object).getName();
+            }
+            return object.toString();
+        }
+    };
+
+    ParameterizedDiagnosticFactory1<Throwable> EXCEPTION_WHILE_ANALYZING = new ParameterizedDiagnosticFactory1<Throwable>(ERROR, "{0}") {
+        @Override
+        protected String makeMessageFor(@NotNull Throwable e) {
+            return e.getClass().getSimpleName() + ": " + e.getMessage();
+        }
+    };
     UnresolvedReferenceDiagnosticFactory UNRESOLVED_REFERENCE = UnresolvedReferenceDiagnosticFactory.INSTANCE;
     RedeclarationDiagnosticFactory REDECLARATION = RedeclarationDiagnosticFactory.INSTANCE;
     PsiElementOnlyDiagnosticFactory2<PsiElement, JetType, JetType> TYPE_MISMATCH = PsiElementOnlyDiagnosticFactory2.create(ERROR, "Type mismatch: inferred type is {1} but {0} was expected");
@@ -40,6 +59,7 @@ public interface Errors {
             return sb.toString();
         }
     };
+
     PsiElementOnlyDiagnosticFactory2<JetModifierList, JetKeywordToken, JetKeywordToken> REDUNDANT_MODIFIER = new PsiElementOnlyDiagnosticFactory2<JetModifierList, JetKeywordToken, JetKeywordToken>(Severity.WARNING, "Modifier {0} is redundant because {1} is present") {
         @NotNull
         @Override
@@ -47,26 +67,25 @@ public interface Errors {
             return new DiagnosticWithAdditionalInfo<JetModifierList, JetKeywordToken>(this, severity, makeMessage(redundantModifier, presentModifier), element, node.getTextRange(), redundantModifier);
         }
     };
-
     SimpleDiagnosticFactory SAFE_CALLS_ARE_NOT_ALLOWED_ON_NAMESPACES = SimpleDiagnosticFactory.create(ERROR, "Safe calls are not allowed on namespaces");
     SimpleDiagnosticFactory TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM = SimpleDiagnosticFactory.create(ERROR, "Type checking has run into a recursive problem"); // TODO: message
     SimpleDiagnosticFactory RETURN_NOT_ALLOWED = SimpleDiagnosticFactory.create(ERROR, "'return' is not allowed here");
     SimpleDiagnosticFactory PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE = SimpleDiagnosticFactory.create(ERROR, "Projections are not allowed for immediate arguments of a supertype");
     SimpleDiagnosticFactory LABEL_NAME_CLASH = SimpleDiagnosticFactory.create(WARNING, "There is more than one label with such a name in this scope");
     SimpleDiagnosticFactory EXPRESSION_EXPECTED_NAMESPACE_FOUND = SimpleDiagnosticFactory.create(ERROR, "Expression expected, but a namespace name found");
+
     SimpleDiagnosticFactory CANNOT_INFER_PARAMETER_TYPE = SimpleDiagnosticFactory.create(ERROR, "Cannot infer a type for this parameter. To specify it explicitly use the {(p : Type) => ...} notation");
 
     SimpleDiagnosticFactory NO_BACKING_FIELD = SimpleDiagnosticFactory.create(ERROR, "This property does not have a backing field");
-
     SimpleDiagnosticFactory MIXING_NAMED_AND_POSITIONED_ARGUMENTS = SimpleDiagnosticFactory.create(ERROR, "Mixing named and positioned arguments in not allowed");
     SimpleDiagnosticFactory ARGUMENT_PASSED_TWICE = SimpleDiagnosticFactory.create(ERROR, "An argument is already passed for this parameter");
     SimpleDiagnosticFactory NAMED_PARAMETER_NOT_FOUND = SimpleDiagnosticFactory.create(ERROR, "Cannot find a parameter with this name");
     SimpleDiagnosticFactory VARARG_OUTSIDE_PARENTHESES = SimpleDiagnosticFactory.create(ERROR, "Passing value as a vararg is only allowed inside a parenthesized argument list");
+
     SimpleDiagnosticFactory MANY_FUNCTION_LITERAL_ARGUMENTS = SimpleDiagnosticFactory.create(ERROR, "Only one function literal is allowed outside a parenthesized argument list");
-
     SimpleDiagnosticFactory PROPERTY_WITH_NO_TYPE_NO_INITIALIZER = SimpleDiagnosticFactory.create(ERROR, "This property must either have a type annotation or be initialized");
-    SimpleDiagnosticFactory FUNCTION_WITH_NO_TYPE_NO_BODY = SimpleDiagnosticFactory.create(ERROR, "This function must either declare a return type or have a body element");
 
+    SimpleDiagnosticFactory FUNCTION_WITH_NO_TYPE_NO_BODY = SimpleDiagnosticFactory.create(ERROR, "This function must either declare a return type or have a body element");
     SimplePsiElementOnlyDiagnosticFactory<JetModifierListOwner> ABSTRACT_PROPERTY_IN_PRIMARY_CONSTRUCTOR_PARAMETERS = SimplePsiElementOnlyDiagnosticFactory.create(ERROR, "This property cannot be declared abstract");
     SimplePsiElementOnlyDiagnosticFactory<JetModifierListOwner> ABSTRACT_PROPERTY_NOT_IN_CLASS = SimplePsiElementOnlyDiagnosticFactory.create(ERROR, "A property may be abstract only when defined in a class or trait");
     //TODO pass String instead of JetType or ensure JetType's value is computed
@@ -96,17 +115,17 @@ public interface Errors {
     PsiElementOnlyDiagnosticFactory1<JetFunctionOrPropertyAccessor, FunctionDescriptor> NON_ABSTRACT_FUNCTION_WITH_NO_BODY = PsiElementOnlyDiagnosticFactory1.create(ERROR, "Method {0} without a body must be abstract");
     PsiElementOnlyDiagnosticFactory1<JetModifierListOwner, FunctionDescriptor> NON_MEMBER_ABSTRACT_FUNCTION = PsiElementOnlyDiagnosticFactory1.create(ERROR, "Function {0} is not a class or trait member and cannot be abstract");
     SimplePsiElementOnlyDiagnosticFactory<JetModifierListOwner> NON_MEMBER_ABSTRACT_ACCESSOR = SimplePsiElementOnlyDiagnosticFactory.create(ERROR, "This property is not a class or trait member and thus cannot have abstract accessors"); // TODO : Better message
+
     PsiElementOnlyDiagnosticFactory1<JetFunctionOrPropertyAccessor, FunctionDescriptor> NON_MEMBER_FUNCTION_NO_BODY = PsiElementOnlyDiagnosticFactory1.create(ERROR, "Function {0} must have a body");
 
     SimpleDiagnosticFactory PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT = SimpleDiagnosticFactory.create(ERROR, "Projections are not allowed on type arguments of functions and properties"); // TODO : better positioning
-
     SimpleDiagnosticFactory SUPERTYPE_NOT_INITIALIZED = SimpleDiagnosticFactory.create(ERROR, "This type has a constructor, and thus must be initialized here");
     SimpleDiagnosticFactory SECONDARY_CONSTRUCTOR_BUT_NO_PRIMARY = SimpleDiagnosticFactory.create(ERROR, "A secondary constructor may appear only in a class that has a primary constructor");
     SimpleDiagnosticFactory SECONDARY_CONSTRUCTOR_NO_INITIALIZER_LIST = SimpleDiagnosticFactory.create(ERROR, "Secondary constructors must have an initializer list");
     SimpleDiagnosticFactory BY_IN_SECONDARY_CONSTRUCTOR = SimpleDiagnosticFactory.create(ERROR, "'by'-clause is only supported for primary constructors");
     SimpleDiagnosticFactory INITIALIZER_WITH_NO_ARGUMENTS = SimpleDiagnosticFactory.create(ERROR, "Constructor arguments required");
     SimpleDiagnosticFactory MANY_CALLS_TO_THIS = SimpleDiagnosticFactory.create(ERROR, "Only one call to 'this(...)' is allowed");
-    PsiElementOnlyDiagnosticFactory1<JetModifierListOwner, CallableMemberDescriptor> NOTHING_TO_OVERRIDE = PsiElementOnlyDiagnosticFactory1.create(ERROR, "{0} overrides nothing");
+    PsiElementOnlyDiagnosticFactory1<JetModifierListOwner, CallableMemberDescriptor> NOTHING_TO_OVERRIDE = PsiElementOnlyDiagnosticFactory1.create(ERROR, "{0} overrides nothing", DescriptorRenderer.TEXT);
     ParameterizedDiagnosticFactory1<PropertyDescriptor> PRIMARY_CONSTRUCTOR_MISSING_STATEFUL_PROPERTY = ParameterizedDiagnosticFactory1.create(ERROR, "This class must have a primary constructor, because property {0} has a backing field");
     ParameterizedDiagnosticFactory1<JetClassOrObject> PRIMARY_CONSTRUCTOR_MISSING_SUPER_CONSTRUCTOR_CALL = new ParameterizedDiagnosticFactory1<JetClassOrObject>(ERROR, "Class {0} must have a constructor in order to be able to initialize supertypes") {
         @Override
@@ -114,13 +133,7 @@ public interface Errors {
             return JetPsiUtil.safeName(argument.getName());
         }
     };
-    ParameterizedDiagnosticFactory1<Throwable> EXCEPTION_WHILE_ANALYZING = new ParameterizedDiagnosticFactory1<Throwable>(ERROR, "{0}") {
-        @Override
-        protected String makeMessageFor(@NotNull Throwable e) {
-            return e.getClass().getSimpleName() + ": " + e.getMessage();
-        }
-    };
-    PsiElementOnlyDiagnosticFactory3<JetModifierListOwner, CallableMemberDescriptor, CallableMemberDescriptor, DeclarationDescriptor> VIRTUAL_MEMBER_HIDDEN = PsiElementOnlyDiagnosticFactory3.create(ERROR, "''{0}'' hides ''{1}'' in class {2} and needs 'override' modifier");
+    PsiElementOnlyDiagnosticFactory3<JetModifierListOwner, CallableMemberDescriptor, CallableMemberDescriptor, DeclarationDescriptor> VIRTUAL_MEMBER_HIDDEN = PsiElementOnlyDiagnosticFactory3.create(ERROR, "''{0}'' hides ''{1}'' in class {2} and needs 'override' modifier", DescriptorRenderer.TEXT);
 
     SimpleDiagnosticFactory UNREACHABLE_CODE = SimpleDiagnosticFactory.create(ERROR, "Unreachable code");
     ParameterizedDiagnosticFactory1<String> UNREACHABLE_BECAUSE_OF_NOTHING = ParameterizedDiagnosticFactory1.create(ERROR, "This code is unreachable, because ''{0}'' never terminates normally");
@@ -151,13 +164,7 @@ public interface Errors {
     SimpleDiagnosticFactory CAST_NEVER_SUCCEEDS = SimpleDiagnosticFactory.create(WARNING, "This cast can never succeed");
     DiagnosticWithAdditionalInfoFactory1<JetPropertyAccessor, JetType> WRONG_SETTER_PARAMETER_TYPE = DiagnosticWithAdditionalInfoFactory1.create(ERROR, "Setter parameter type must be equal to the type of the property, i.e. {0}");
     DiagnosticWithAdditionalInfoFactory1<JetPropertyAccessor, JetType> WRONG_GETTER_RETURN_TYPE = DiagnosticWithAdditionalInfoFactory1.create(ERROR, "Getter return type must be equal to the type of the property, i.e. {0}");
-    ParameterizedDiagnosticFactory1<ClassifierDescriptor> NO_CLASS_OBJECT = new ParameterizedDiagnosticFactory1<ClassifierDescriptor>(ERROR, "Classifier {0} does not have a class object") {
-        @Override
-        protected String makeMessageFor(@NotNull ClassifierDescriptor argument) {
-            return argument.getName();
-        }
-    };
-
+    ParameterizedDiagnosticFactory1<ClassifierDescriptor> NO_CLASS_OBJECT = ParameterizedDiagnosticFactory1.create(ERROR, "Classifier {0} does not have a class object", NAME);
     SimpleDiagnosticFactory NO_GENERICS_IN_SUPERTYPE_SPECIFIER = SimpleDiagnosticFactory.create(ERROR, "Generic arguments of the base type must be specified");
 
     SimpleDiagnosticFactory HAS_NEXT_PROPERTY_AND_FUNCTION_AMBIGUITY = SimpleDiagnosticFactory.create(ERROR, "An ambiguity between 'iterator().hasNext()' function and 'iterator().hasNext' property");
@@ -187,12 +194,7 @@ public interface Errors {
             return argument.getName();
         }
     };
-    ParameterizedDiagnosticFactory1<TypeParameterDescriptor> CONFLICTING_CLASS_OBJECT_UPPER_BOUNDS = new ParameterizedDiagnosticFactory1<TypeParameterDescriptor>(ERROR, "Class object upper bounds of {0} have empty intersection") {
-        @Override
-        protected String makeMessageFor(@NotNull TypeParameterDescriptor argument) {
-            return argument.getName();
-        }
-    };
+    ParameterizedDiagnosticFactory1<TypeParameterDescriptor> CONFLICTING_CLASS_OBJECT_UPPER_BOUNDS = ParameterizedDiagnosticFactory1.create(ERROR, "Class object upper bounds of {0} have empty intersection", NAME);
 
     ParameterizedDiagnosticFactory1<CallableDescriptor> TOO_MANY_ARGUMENTS = ParameterizedDiagnosticFactory1.create(ERROR, "Too many arguments for {0}");
     ParameterizedDiagnosticFactory1<String> ERROR_COMPILE_TIME_VALUE = ParameterizedDiagnosticFactory1.create(ERROR, "{0}");
@@ -229,12 +231,7 @@ public interface Errors {
             return constraintOwner.getName();
         }
     };
-    ParameterizedDiagnosticFactory2<JetType, VariableDescriptor> AUTOCAST_IMPOSSIBLE = new ParameterizedDiagnosticFactory2<JetType, VariableDescriptor>(ERROR, "Automatic cast to {0} is impossible, because variable {1} is mutable") {
-        @Override
-        protected String makeMessageForB(@NotNull VariableDescriptor variableDescriptor) {
-            return variableDescriptor.getName();
-        }
-    };
+    ParameterizedDiagnosticFactory2<JetType, VariableDescriptor> AUTOCAST_IMPOSSIBLE = ParameterizedDiagnosticFactory2.create(ERROR, "Automatic cast to {0} is impossible, because variable {1} is mutable", NAME);
 
     ParameterizedDiagnosticFactory2<JetType, JetType> TYPE_MISMATCH_IN_FOR_LOOP = ParameterizedDiagnosticFactory2.create(ERROR, "The loop iterates over values of type {0} but the parameter is declared to be {1}");
     ParameterizedDiagnosticFactory1<JetType> TYPE_MISMATCH_IN_CONDITION = ParameterizedDiagnosticFactory1.create(ERROR, "Condition must be of type Boolean, but was of type {0}");
@@ -273,32 +270,73 @@ public interface Errors {
             return nameExpression.getReferencedName();
         }
     };
-    ParameterizedDiagnosticFactory2<CallableMemberDescriptor, DeclarationDescriptor> OVERRIDING_FINAL_MEMBER = new ParameterizedDiagnosticFactory2<CallableMemberDescriptor, DeclarationDescriptor>(ERROR, "{0} in {1} is final and cannot be overridden") {
+    ParameterizedDiagnosticFactory2<CallableMemberDescriptor, DeclarationDescriptor> OVERRIDING_FINAL_MEMBER = ParameterizedDiagnosticFactory2.create(ERROR, "{0} in {1} is final and cannot be overridden", NAME);
 
+    ParameterizedDiagnosticFactory2<CallableMemberDescriptor, CallableMemberDescriptor> RETURN_TYPE_MISMATCH_ON_OVERRIDE = new ParameterizedDiagnosticFactory2<CallableMemberDescriptor, CallableMemberDescriptor>(ERROR, "Return type of {0} is not a subtype of the return type overridden member {1}") {
+        @NotNull
         @Override
-        protected String makeMessageForA(@NotNull CallableMemberDescriptor functionDescriptor) {
-            return functionDescriptor.getName();
+        public TextRange getTextRange(@NotNull Diagnostic diagnostic) {
+            PsiElement psiElement = ((DiagnosticWithPsiElement) diagnostic).getPsiElement();
+            JetTypeReference returnTypeRef = null;
+            ASTNode nameNode = null;
+            if (psiElement instanceof JetNamedFunction) {
+                JetFunction function = (JetNamedFunction) psiElement;
+                returnTypeRef = function.getReturnTypeRef();
+                nameNode = getNameNode(function);
+            }
+            else if (psiElement instanceof JetProperty) {
+                JetProperty property = (JetProperty) psiElement;
+                returnTypeRef = property.getPropertyTypeRef();
+                nameNode = getNameNode(property);
+            }
+            else if (psiElement instanceof JetPropertyAccessor) {
+                JetPropertyAccessor accessor = (JetPropertyAccessor) psiElement;
+                returnTypeRef = accessor.getReturnTypeReference();
+                nameNode = accessor.getNamePlaceholder().getNode();
+            }
+            if (returnTypeRef != null) return returnTypeRef.getTextRange();
+            if (nameNode != null) return nameNode.getTextRange();
+            return super.getTextRange(diagnostic);
+        }
+
+        private ASTNode getNameNode(JetNamedDeclaration function) {
+            PsiElement nameIdentifier = function.getNameIdentifier();
+            return nameIdentifier == null ? null : nameIdentifier.getNode();
         }
 
         @Override
-        protected String makeMessageForB(@NotNull DeclarationDescriptor descriptor) {
-            return descriptor.getName();
+        protected String makeMessageForA(@NotNull CallableMemberDescriptor callableMemberDescriptor) {
+            return DescriptorRenderer.TEXT.render(callableMemberDescriptor);
+        }
+
+        @Override
+        protected String makeMessageForB(@NotNull CallableMemberDescriptor callableMemberDescriptor) {
+            return DescriptorRenderer.TEXT.render(callableMemberDescriptor);
         }
     };
-    ParameterizedDiagnosticFactory3<JetClassOrObject, FunctionDescriptor, DeclarationDescriptor> ABSTRACT_METHOD_NOT_IMPLEMENTED = new ParameterizedDiagnosticFactory3<JetClassOrObject, FunctionDescriptor, DeclarationDescriptor>(ERROR, "Class ''{0}'' must be declared abstract or implement abstract method ''{1}'' declared in {2}") {
+
+
+    ParameterizedDiagnosticFactory2<JetClassOrObject, CallableMemberDescriptor> ABSTRACT_MEMBER_NOT_IMPLEMENTED = new ParameterizedDiagnosticFactory2<JetClassOrObject, CallableMemberDescriptor>(ERROR, "Class ''{0}'' must be declared abstract or implement abstract member {1}") {
         @Override
         protected String makeMessageForA(@NotNull JetClassOrObject jetClassOrObject) {
             return jetClassOrObject.getName();
         }
 
         @Override
-        protected String makeMessageForB(@NotNull FunctionDescriptor functionDescriptor) {
-            return DescriptorRenderer.TEXT.render(functionDescriptor);
+        protected String makeMessageForB(@NotNull CallableMemberDescriptor memberDescriptor) {
+            return DescriptorRenderer.TEXT.render(memberDescriptor);
+        }
+    };
+
+    ParameterizedDiagnosticFactory2<JetClassOrObject, CallableMemberDescriptor> MANY_IMPL_MEMBER_NOT_IMPLEMENTED = new ParameterizedDiagnosticFactory2<JetClassOrObject, CallableMemberDescriptor>(ERROR, "Class ''{0}'' must override {1} because it inherits many implementations of it") {
+        @Override
+        protected String makeMessageForA(@NotNull JetClassOrObject jetClassOrObject) {
+            return jetClassOrObject.getName();
         }
 
         @Override
-        protected String makeMessageForC(@NotNull DeclarationDescriptor descriptor) {
-            return descriptor.getName();
+        protected String makeMessageForB(@NotNull CallableMemberDescriptor memberDescriptor) {
+            return DescriptorRenderer.TEXT.render(memberDescriptor);
         }
     };
 
@@ -344,4 +382,5 @@ public interface Errors {
         private static final Initializer INSTANCE = new Initializer();
         private Initializer() {};
     }
+    
 }

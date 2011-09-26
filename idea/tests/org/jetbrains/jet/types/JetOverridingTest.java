@@ -139,7 +139,7 @@ public class JetOverridingTest extends LightDaemonAnalyzerTestCase {
     private void assertOverridabilityRelation(String superFun, String subFun, boolean expectedIsError) {
         FunctionDescriptor a = makeFunction(superFun);
         FunctionDescriptor b = makeFunction(subFun);
-        OverridingUtil.OverrideCompatibilityInfo overridableWith = OverridingUtil.isOverridableBy(semanticServices.getTypeChecker(), a, b);
+        OverridingUtil.OverrideCompatibilityInfo overridableWith = OverridingUtil.isOverridableBy(a, b);
         assertEquals(overridableWith.getMessage(), expectedIsError, !overridableWith.isSuccess());
     }
 

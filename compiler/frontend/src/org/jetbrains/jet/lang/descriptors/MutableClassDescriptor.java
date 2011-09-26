@@ -23,8 +23,9 @@ import java.util.*;
 public class MutableClassDescriptor extends MutableDeclarationDescriptor implements ClassDescriptor, NamespaceLike {
     private ConstructorDescriptor primaryConstructor;
     private final Set<FunctionDescriptor> constructors = Sets.newLinkedHashSet();
-    private final Set<FunctionDescriptor> functions = Sets.newHashSet();
+    private final Set<CallableMemberDescriptor> callableMembers = Sets.newHashSet();
     private final Set<PropertyDescriptor> properties = Sets.newHashSet();
+    private final Set<FunctionDescriptor> functions = Sets.newHashSet();
     private List<TypeParameterDescriptor> typeParameters = Lists.newArrayList();
     private Collection<JetType> supertypes = Lists.newArrayList();
 
@@ -95,18 +96,15 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     @Override
     public void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor) {
         properties.add(propertyDescriptor);
+        callableMembers.add(propertyDescriptor);
         scopeForMemberLookup.addVariableDescriptor(propertyDescriptor);
         scopeForMemberResolution.addVariableDescriptor(propertyDescriptor);
-    }
-
-    @NotNull
-    public Set<PropertyDescriptor> getProperties() {
-        return properties;
     }
 
     @Override
     public void addFunctionDescriptor(@NotNull FunctionDescriptor functionDescriptor) {
         functions.add(functionDescriptor);
+        callableMembers.add(functionDescriptor);
         scopeForMemberLookup.addFunctionDescriptor(functionDescriptor);
         scopeForMemberResolution.addFunctionDescriptor(functionDescriptor);
     }
@@ -114,6 +112,16 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
     @NotNull
     public Set<FunctionDescriptor> getFunctions() {
         return functions;
+    }
+
+    @NotNull
+    public Set<PropertyDescriptor> getProperties() {
+        return properties;
+    }
+
+    @NotNull
+    public Set<CallableMemberDescriptor> getCallableMembers() {
+        return callableMembers;
     }
 
     @Override

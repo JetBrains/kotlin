@@ -62,6 +62,10 @@ public class TypeSubstitutor {
         return new TypeSubstitutor(substitution);
     }
 
+    public static TypeSubstitutor create(@NotNull TypeSubstitution... substitutions) {
+        return create(new CompositeTypeSubstitution(substitutions));
+    }
+
     public static TypeSubstitutor create(@NotNull Map<TypeConstructor, TypeProjection> substitutionContext) {
         return create(new MapToTypeSubstitutionAdapter(substitutionContext));
     }

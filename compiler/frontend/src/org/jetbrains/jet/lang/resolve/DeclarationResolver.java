@@ -139,13 +139,15 @@ public class DeclarationResolver {
         JetScope memberScope = classDescriptor.getScopeForSupertypeResolution();
         ConstructorDescriptor constructorDescriptor = context.getClassDescriptorResolver().resolvePrimaryConstructorDescriptor(memberScope, classDescriptor, klass);
         for (JetParameter parameter : klass.getPrimaryConstructorParameters()) {
-            PropertyDescriptor propertyDescriptor = context.getClassDescriptorResolver().resolvePrimaryConstructorParameterToAProperty(
-                    classDescriptor,
-                    memberScope,
-                    parameter
-            );
-            classDescriptor.addPropertyDescriptor(propertyDescriptor);
-            context.getPrimaryConstructorParameterProperties().add(propertyDescriptor);
+            if (parameter.getValOrVarNode() != null) {
+                PropertyDescriptor propertyDescriptor = context.getClassDescriptorResolver().resolvePrimaryConstructorParameterToAProperty(
+                        classDescriptor,
+                        memberScope,
+                        parameter
+                );
+                classDescriptor.addPropertyDescriptor(propertyDescriptor);
+                context.getPrimaryConstructorParameterProperties().add(propertyDescriptor);
+            }
         }
         if (constructorDescriptor != null) {
             classDescriptor.setPrimaryConstructor(constructorDescriptor);

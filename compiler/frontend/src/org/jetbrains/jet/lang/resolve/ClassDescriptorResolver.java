@@ -525,7 +525,10 @@ public class ClassDescriptorResolver {
             final JetExpression initializer = property.getInitializer();
             if (initializer == null) {
 //                trace.getErrorHandler().genericError(property.getNode(), "This property must either have a type annotation or be initialized");
-                trace.report(PROPERTY_WITH_NO_TYPE_NO_INITIALIZER.on(property));
+                PsiElement nameIdentifier = property.getNameIdentifier();
+                if (nameIdentifier != null) {
+                    trace.report(PROPERTY_WITH_NO_TYPE_NO_INITIALIZER.on(nameIdentifier.getNode()));
+                }
                 return ErrorUtils.createErrorType("No type, no body");
             } else {
                 // TODO : a risk of a memory leak

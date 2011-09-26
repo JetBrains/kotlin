@@ -1,4 +1,3 @@
-
 open class NoC
 class NoC1 : NoC
 
@@ -33,8 +32,8 @@ class Foo() : <!SUPERTYPE_NOT_INITIALIZED, FINAL_SUPERTYPE!>WithPC0<!>, <!MANY_C
 
 }
 
-class WithCPI_Dup(<!REDECLARATION, REDECLARATION!>x<!> : Int) {
-  var <!REDECLARATION, REDECLARATION, MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>x<!> : Int
+class WithCPI_Dup(x : Int) {
+  var <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>x<!> : Int
 }
 
 class WithCPI(x : Int) {

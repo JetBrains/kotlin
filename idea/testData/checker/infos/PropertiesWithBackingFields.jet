@@ -44,7 +44,7 @@
 
 <info>open</info> class Super(i : Int)
 
-class TestPCParameters(w : Int, <info>x</info> : Int, val <info>y</info> : Int, var <info>z</info> : Int) : Super(w) {
+class TestPCParameters(w : Int, x : Int, val <info>y</info> : Int, var <info>z</info> : Int) : Super(w) {
 
   val <info>xx</info> = w
 
@@ -52,6 +52,6 @@ class TestPCParameters(w : Int, <info>x</info> : Int, val <info>y</info> : Int, 
     w + 1
   }
 
-  fun foo() = x
+  fun foo() = <error>x</error>
 
 }

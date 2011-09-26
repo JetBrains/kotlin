@@ -48,8 +48,8 @@ public class OverridingUtil {
             }
             for (D other : candidates) {
                 if (me.getOriginal() == other.getOriginal()
-                        && isOverridableBy(JetTypeChecker.INSTANCE, other, me).isSuccess()
-                        && isOverridableBy(JetTypeChecker.INSTANCE, me, other).isSuccess()) {
+                        && isOverridableBy(other, me).isSuccess()
+                        && isOverridableBy(me, other).isSuccess()) {
                     continue outerLoop;
                 }
             }
@@ -84,7 +84,7 @@ public class OverridingUtil {
     }
 
     @NotNull
-    public static OverrideCompatibilityInfo isOverridableBy(@NotNull JetTypeChecker typeChecker, @NotNull CallableDescriptor superDescriptor, @NotNull CallableDescriptor subDescriptor) {
+    public static OverrideCompatibilityInfo isOverridableBy(@NotNull CallableDescriptor superDescriptor, @NotNull CallableDescriptor subDescriptor) {
         if (!superDescriptor.getName().equals(subDescriptor.getName())) {
             return OverrideCompatibilityInfo.nameMismatch();
         }
@@ -135,7 +135,7 @@ public class OverridingUtil {
     }
 
     @NotNull
-    public static OverrideCompatibilityInfo isReturnTypeOkForOverride(@NotNull JetTypeChecker typeChecker, @NotNull CallableDescriptor superDescriptor, @NotNull CallableDescriptor subDescriptor) {
+    public static boolean isReturnTypeOkForOverride(@NotNull JetTypeChecker typeChecker, @NotNull CallableDescriptor superDescriptor, @NotNull CallableDescriptor subDescriptor) {
         List<TypeParameterDescriptor> superTypeParameters = superDescriptor.getTypeParameters();
         List<TypeParameterDescriptor> subTypeParameters = subDescriptor.getTypeParameters();
         Map<TypeConstructor, TypeProjection> substitutionContext = Maps.newHashMap();
@@ -152,10 +152,10 @@ public class OverridingUtil {
         JetType substitutedSuperReturnType = typeSubstitutor.substitute(superDescriptor.getReturnType(), Variance.OUT_VARIANCE);
         assert substitutedSuperReturnType != null;
         if (!typeChecker.isSubtypeOf(subDescriptor.getReturnType(), substitutedSuperReturnType)) {
-            return OverrideCompatibilityInfo.returnTypeMismatch(substitutedSuperReturnType, subDescriptor.getReturnType());
+            return false;
         }
 
-        return OverrideCompatibilityInfo.success();
+        return true;
     }
 
     public static class OverrideCompatibilityInfo {
@@ -194,7 +194,7 @@ public class OverridingUtil {
 
         @NotNull
         public static OverrideCompatibilityInfo returnTypeMismatch(JetType substitutedSuperReturnType, JetType unsubstitutedSubReturnType) {
-            return new OverrideCompatibilityInfo(false, "returnTypeMismatch: " + unsubstitutedSubReturnType + " >< " + substitutedSuperReturnType); // TODO
+            return new OverrideCompatibilityInfo(true, "returnTypeMismatch: " + unsubstitutedSubReturnType + " >< " + substitutedSuperReturnType); // TODO
         }
 
         @NotNull

@@ -52,6 +52,6 @@ class TestPCParameters(w : Int, x : Int, val y : Int, var z : Int) : Super(w) {
     w + 1
   }
 
-  fun foo() = x
+  fun foo() = <!UNRESOLVED_REFERENCE!>x<!>
 
 }

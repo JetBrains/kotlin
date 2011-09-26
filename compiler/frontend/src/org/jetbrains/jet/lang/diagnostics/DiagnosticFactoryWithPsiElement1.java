@@ -9,6 +9,11 @@ import org.jetbrains.annotations.NotNull;
  * @author svtk
  */
 public abstract class DiagnosticFactoryWithPsiElement1<T extends PsiElement, A> extends DiagnosticFactoryWithMessageFormat {
+
+    protected DiagnosticFactoryWithPsiElement1(Severity severity, String message, Renderer renderer) {
+        super(severity, message, renderer);
+    }
+
     protected DiagnosticFactoryWithPsiElement1(Severity severity, String message) {
         super(severity, message);
     }
@@ -18,7 +23,7 @@ public abstract class DiagnosticFactoryWithPsiElement1<T extends PsiElement, A> 
     }
 
     protected String makeMessageFor(A argument) {
-        return argument.toString();
+        return renderer.render(argument);
     }
 
     @NotNull

@@ -14,6 +14,14 @@ public class ParameterizedDiagnosticFactory3<A, B, C> extends DiagnosticFactoryW
         return new ParameterizedDiagnosticFactory3<A, B, C>(severity, messageStub);
     }
 
+    public static <A, B, C> ParameterizedDiagnosticFactory3<A, B, C> create(Severity severity, String messageStub, Renderer renderer) {
+        return new ParameterizedDiagnosticFactory3<A, B, C>(severity, messageStub, renderer);
+    }
+
+    public ParameterizedDiagnosticFactory3(Severity severity, String messageStub, Renderer renderer) {
+        super(severity, messageStub, renderer);
+    }
+
     protected ParameterizedDiagnosticFactory3(Severity severity, String messageStub) {
         super(severity, messageStub);
     }

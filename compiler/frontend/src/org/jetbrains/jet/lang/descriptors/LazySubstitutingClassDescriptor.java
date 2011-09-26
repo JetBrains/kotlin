@@ -144,7 +144,8 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
     @NotNull
     @Override
     public ClassDescriptor substitute(TypeSubstitutor substitutor) {
-        throw new UnsupportedOperationException(); // TODO
+        if (substitutor.isEmpty()) return this;
+        return new LazySubstitutingClassDescriptor(this, TypeSubstitutor.create(substitutor.getSubstitution(), getSubstitutor().getSubstitution()));
     }
 
     @Override

@@ -71,6 +71,7 @@ public class JetPropertyAccessor extends JetDeclaration implements JetFunctionOr
         return findChildByClass(JetTypeReference.class);
     }
 
+    @NotNull
     public PsiElement getNamePlaceholder() {
         PsiElement get = findChildByType(JetTokens.GET_KEYWORD);
         if (get != null) {

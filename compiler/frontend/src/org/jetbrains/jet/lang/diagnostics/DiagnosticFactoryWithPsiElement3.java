@@ -8,9 +8,13 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author svtk
  */
-public class DiagnosticFactoryWithPsiElement3<T extends PsiElement, A, B, C> extends DiagnosticFactoryWithMessageFormat {
-    protected DiagnosticFactoryWithPsiElement3(Severity severity, String messageStub) {
-        super(severity, messageStub);
+public abstract class DiagnosticFactoryWithPsiElement3<T extends PsiElement, A, B, C> extends DiagnosticFactoryWithMessageFormat {
+    protected DiagnosticFactoryWithPsiElement3(Severity severity, String messageStub, Renderer renderer) {
+        super(severity, messageStub, renderer);
+    }
+
+    protected DiagnosticFactoryWithPsiElement3(Severity severity, String message) {
+        super(severity, message);
     }
 
     protected String makeMessage(@NotNull A a, @NotNull B b, @NotNull C c) {
@@ -18,15 +22,15 @@ public class DiagnosticFactoryWithPsiElement3<T extends PsiElement, A, B, C> ext
     }
 
     protected String makeMessageForA(@NotNull A a) {
-        return a.toString();
+        return renderer.render(a);
     }
 
     protected String makeMessageForB(@NotNull B b) {
-        return b.toString();
+        return renderer.render(b);
     }
 
     protected String makeMessageForC(@NotNull C c) {
-        return c.toString();
+        return renderer.render(c);
     }
 
     @NotNull

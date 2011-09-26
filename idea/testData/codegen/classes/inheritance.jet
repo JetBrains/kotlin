@@ -5,7 +5,7 @@ trait Y {
     abstract val y : Int
 }
 
-class YImpl(val y : Int) : Y {}
+class YImpl(override val y : Int) : Y {}
 
 class Point(x : Int, yy : Int) : X(x) , Y {
     override val y : Int = yy
