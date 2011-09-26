@@ -85,6 +85,9 @@ public class JavaClassMembersScope implements JetScope {
             }
 
             for (PsiField field : psiClass.getAllFields()) {
+                if (field.hasModifierProperty(PsiModifier.STATIC) != staticMembers) {
+                    continue;
+                }
                 VariableDescriptor variableDescriptor = semanticServices.getDescriptorResolver().resolveFieldToVariableDescriptor(containingDeclaration, field);
                 allDescriptors.add(variableDescriptor);
             }
