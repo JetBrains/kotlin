@@ -21,11 +21,11 @@ import java.util.*;
  */
 public class JavaDescriptorResolver {
 
-    /*package*/ static final DeclarationDescriptor JAVA_ROOT = new DeclarationDescriptorImpl(null, Collections.<AnnotationDescriptor>emptyList(), "<java_root>") {
-        @NotNull
+    /*package*/ static final DeclarationDescriptor JAVA_METHOD_TYPE_PARAMETER_PARENT = new DeclarationDescriptorImpl(null, Collections.<AnnotationDescriptor>emptyList(), "<java_generic_method>") {
+
         @Override
         public DeclarationDescriptor substitute(TypeSubstitutor substitutor) {
-            throw new UnsupportedOperationException(); // TODO
+            throw new UnsupportedOperationException();
         }
 
         @Override
@@ -38,7 +38,7 @@ public class JavaDescriptorResolver {
         @NotNull
         @Override
         public DeclarationDescriptor substitute(TypeSubstitutor substitutor) {
-            throw new UnsupportedOperationException(); // TODO
+            throw new UnsupportedOperationException();
         }
 
         @Override
@@ -51,7 +51,7 @@ public class JavaDescriptorResolver {
     protected final Map<PsiTypeParameter, TypeParameterDescriptor> typeParameterDescriptorCache = Maps.newHashMap();
     protected final Map<PsiMethod, FunctionDescriptor> methodDescriptorCache = Maps.newHashMap();
     protected final Map<PsiField, VariableDescriptor> fieldDescriptorCache = Maps.newHashMap();
-    protected final Map<String, NamespaceDescriptor> namespaceDescriptorCache = new HashMap<String, NamespaceDescriptor>();
+    protected final Map<PsiPackage, NamespaceDescriptor> namespaceDescriptorCache = Maps.newHashMap();
     protected final JavaPsiFacade javaFacade;
     protected final GlobalSearchScope javaSearchScope;
     protected final JavaSemanticServices semanticServices;
@@ -92,7 +92,7 @@ public class JavaDescriptorResolver {
 
         String name = psiClass.getName();
         JavaClassDescriptor classDescriptor = new JavaClassDescriptor(
-                JAVA_ROOT, psiClass.isInterface() ? ClassKind.TRAIT : ClassKind.CLASS
+                resolveParentDescriptor(psiClass), psiClass.isInterface() ? ClassKind.TRAIT : ClassKind.CLASS
         );
         classDescriptor.setName(name);
 
@@ -163,6 +163,17 @@ public class JavaDescriptorResolver {
         return classDescriptor;
     }
 
+    private DeclarationDescriptor resolveParentDescriptor(PsiClass psiClass) {
+        PsiClass containingClass = psiClass.getContainingClass();
+        if (containingClass != null) {
+            return resolveClass(psiClass);
+        }
+        
+        PsiJavaFile containingFile = (PsiJavaFile) psiClass.getContainingFile();
+        String packageName = containingFile.getPackageName();
+        return resolveNamespace(packageName);
+    }
+
     private List<TypeParameterDescriptor> resolveTypeParameters(@NotNull DeclarationDescriptor containingDeclaration, @NotNull PsiTypeParameter[] typeParameters) {
         List<TypeParameterDescriptor> result = Lists.newArrayList();
         for (PsiTypeParameter typeParameter : typeParameters) {
@@ -223,7 +234,15 @@ public class JavaDescriptorResolver {
     }
 
     public NamespaceDescriptor resolveNamespace(String qualifiedName) {
-        NamespaceDescriptor namespaceDescriptor = namespaceDescriptorCache.get(qualifiedName);
+        PsiPackage psiPackage = javaFacade.findPackage(qualifiedName);
+        if (psiPackage == null) {
+            return null;
+        }
+        return resolveNamespace(psiPackage);
+    }
+
+    private NamespaceDescriptor resolveNamespace(@NotNull PsiPackage psiPackage) {
+        NamespaceDescriptor namespaceDescriptor = namespaceDescriptorCache.get(psiPackage);
         if (namespaceDescriptor == null) {
             // TODO : packages
 
@@ -232,31 +251,37 @@ public class JavaDescriptorResolver {
 //                namespaceDescriptor = createJavaNamespaceDescriptor(psiClass);
 //            }
 //            else {
-                PsiPackage psiPackage = javaFacade.findPackage(qualifiedName);
-                if (psiPackage == null) {
-                    return null;
-                }
                 namespaceDescriptor = createJavaNamespaceDescriptor(psiPackage);
 //            }
-            namespaceDescriptorCache.put(qualifiedName, namespaceDescriptor);
+            namespaceDescriptorCache.put(psiPackage, namespaceDescriptor);
         }
         return namespaceDescriptor;
     }
 
-    private NamespaceDescriptor createJavaNamespaceDescriptor(PsiPackage psiPackage) {
+    private NamespaceDescriptor createJavaNamespaceDescriptor(@NotNull PsiPackage psiPackage) {
+        String name = psiPackage.getName();
         JavaNamespaceDescriptor namespaceDescriptor = new JavaNamespaceDescriptor(
-                JAVA_ROOT,
+                resolveParentDescriptor(psiPackage),
                 Collections.<AnnotationDescriptor>emptyList(), // TODO
-                psiPackage.getName()
+                name == null ? "<java_root>" : name
         );
+
         namespaceDescriptor.setMemberScope(new JavaPackageScope(psiPackage.getQualifiedName(), namespaceDescriptor, semanticServices));
         semanticServices.getTrace().record(BindingContext.NAMESPACE, psiPackage, namespaceDescriptor);
         return namespaceDescriptor;
     }
 
+    private DeclarationDescriptor resolveParentDescriptor(@NotNull PsiPackage psiPackage) {
+        PsiPackage parentPackage = psiPackage.getParentPackage();
+        if (parentPackage == null) {
+            return null;
+        }
+        return resolveNamespace(parentPackage);
+    }
+
     private NamespaceDescriptor createJavaNamespaceDescriptor(@NotNull final PsiClass psiClass) {
         JavaNamespaceDescriptor namespaceDescriptor = new JavaNamespaceDescriptor(
-                JAVA_ROOT,
+                resolveParentDescriptor(psiClass),
                 Collections.<AnnotationDescriptor>emptyList(), // TODO
                 psiClass.getName()
         );
@@ -312,20 +337,31 @@ public class JavaDescriptorResolver {
         final Collection<HierarchicalMethodSignature> signatures = psiClass.getVisibleSignatures();
         TypeSubstitutor typeSubstitutor = createSubstitutorForGenericSupertypes(classDescriptor);
         for (HierarchicalMethodSignature signature: signatures) {
-            PsiMethod method = signature.getMethod();
-            if (method.hasModifierProperty(PsiModifier.STATIC) != staticMembers) {
-                continue;
-            }
-            if (!methodName.equals(method.getName())) {
+            if (!methodName.equals(signature.getName())) {
                  continue;
             }
 
-            FunctionDescriptor substitutedFunctionDescriptor = resolveMethodToFunctionDescriptor(owner, psiClass, typeSubstitutor, method);
+            FunctionDescriptor substitutedFunctionDescriptor = resolveHierarchicalSignatureToFunction(owner, psiClass, staticMembers, typeSubstitutor, signature);
             if (substitutedFunctionDescriptor != null) {
                 writableFunctionGroup.add(substitutedFunctionDescriptor);
             }
         }
         return writableFunctionGroup;
+    }
+
+    @Nullable
+    private FunctionDescriptor resolveHierarchicalSignatureToFunction(DeclarationDescriptor owner, PsiClass psiClass, boolean staticMembers, TypeSubstitutor typeSubstitutor, HierarchicalMethodSignature signature) {
+        PsiMethod method = signature.getMethod();
+        if (method.hasModifierProperty(PsiModifier.STATIC) != staticMembers) {
+                return null;
+        }
+        FunctionDescriptor functionDescriptor = resolveMethodToFunctionDescriptor(owner, psiClass, typeSubstitutor, method);
+//        if (functionDescriptor != null && !staticMembers) {
+//            for (HierarchicalMethodSignature superSignature : signature.getSuperSignatures()) {
+//                ((FunctionDescriptorImpl) functionDescriptor).addOverriddenFunction(resolveHierarchicalSignatureToFunction(owner, superSignature.getMethod().getContainingClass(), false, typeSubstitutor, superSignature));
+//            }
+//        }
+        return functionDescriptor;
     }
 
     public TypeSubstitutor createSubstitutorForGenericSupertypes(ClassDescriptor classDescriptor) {
@@ -382,4 +418,29 @@ public class JavaDescriptorResolver {
                                         (modifierListOwner.hasModifierProperty(PsiModifier.PROTECTED) ? Visibility.PROTECTED : Visibility.INTERNAL));
     }
 
+    public TypeParameterDescriptor resolveTypeParameter(PsiTypeParameter typeParameter) {
+        PsiTypeParameterListOwner owner = typeParameter.getOwner();
+        if (owner instanceof PsiClass) {
+            PsiClass psiClass = (PsiClass) owner;
+            return resolveTypeParameter(resolveClass(psiClass), typeParameter);
+        }
+        if (owner instanceof PsiMethod) {
+            PsiMethod psiMethod = (PsiMethod) owner;
+            PsiClass containingClass = psiMethod.getContainingClass();
+            DeclarationDescriptor ownerOwner;
+            TypeSubstitutor substitutorForGenericSupertypes;
+            if (psiMethod.hasModifierProperty(PsiModifier.STATIC)) {
+                substitutorForGenericSupertypes = TypeSubstitutor.EMPTY;
+                return resolveTypeParameter(JAVA_METHOD_TYPE_PARAMETER_PARENT, typeParameter);
+            }
+            else {
+                ClassDescriptor classDescriptor = resolveClass(containingClass);
+                ownerOwner = classDescriptor;
+                substitutorForGenericSupertypes = semanticServices.getDescriptorResolver().createSubstitutorForGenericSupertypes(classDescriptor);
+            }
+            FunctionDescriptor functionDescriptor = resolveMethodToFunctionDescriptor(ownerOwner, containingClass, substitutorForGenericSupertypes, psiMethod);
+            return resolveTypeParameter(functionDescriptor, typeParameter);
+        }
+        throw new IllegalStateException("Unknown parent type: " + owner);
+    }
 }

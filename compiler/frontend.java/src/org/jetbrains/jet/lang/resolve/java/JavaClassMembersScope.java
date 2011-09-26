@@ -71,13 +71,7 @@ public class JavaClassMembersScope implements JetScope {
     public Collection<DeclarationDescriptor> getAllDescriptors() {
         if (allDescriptors == null) {
             allDescriptors = Sets.newHashSet();
-            TypeSubstitutor substitutorForGenericSupertypes;
-            if (containingDeclaration instanceof ClassDescriptor) {
-                substitutorForGenericSupertypes = semanticServices.getDescriptorResolver().createSubstitutorForGenericSupertypes((ClassDescriptor) containingDeclaration);
-            }
-            else {
-                substitutorForGenericSupertypes = TypeSubstitutor.EMPTY;
-            }
+            TypeSubstitutor substitutorForGenericSupertypes = getTypeSubstitutorForSupertypes();
 
             for (HierarchicalMethodSignature signature : psiClass.getVisibleSignatures()) {
                 PsiMethod method = signature.getMethod();
@@ -96,6 +90,17 @@ public class JavaClassMembersScope implements JetScope {
             }
         }
         return allDescriptors;
+    }
+
+    private TypeSubstitutor getTypeSubstitutorForSupertypes() {
+        TypeSubstitutor substitutorForGenericSupertypes;
+        if (containingDeclaration instanceof ClassDescriptor) {
+            substitutorForGenericSupertypes = semanticServices.getDescriptorResolver().createSubstitutorForGenericSupertypes((ClassDescriptor) containingDeclaration);
+        }
+        else {
+            substitutorForGenericSupertypes = TypeSubstitutor.EMPTY;
+        }
+        return substitutorForGenericSupertypes;
     }
 
     private ClassifierDescriptor doGetClassifierDescriptor(String name) {
