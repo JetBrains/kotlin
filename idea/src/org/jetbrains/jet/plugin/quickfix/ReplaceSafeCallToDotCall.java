@@ -12,7 +12,7 @@ import org.jetbrains.jet.lang.psi.*;
 /**
  * @author svtk
  */
-public class ReplaceSafeCallToDotCall extends IntentionActionForPsiElement<JetElement> {
+public class ReplaceSafeCallToDotCall extends JetIntentionAction<JetElement> {
 
     public ReplaceSafeCallToDotCall(@NotNull JetElement element) {
         super(element);
@@ -36,6 +36,7 @@ public class ReplaceSafeCallToDotCall extends IntentionActionForPsiElement<JetEl
             JetSafeQualifiedExpression safeQualifiedExpression = (JetSafeQualifiedExpression) element;
             JetDotQualifiedExpression newElement = (JetDotQualifiedExpression) JetPsiFactory.createExpression(project, "x.foo");
 
+            //TODO check for null
             CodeEditUtil.replaceChild(newElement.getNode(), newElement.getSelectorExpression().getNode(), safeQualifiedExpression.getSelectorExpression().getNode());
             CodeEditUtil.replaceChild(newElement.getNode(), newElement.getReceiverExpression().getNode(), safeQualifiedExpression.getReceiverExpression().getNode());
 
@@ -50,10 +51,10 @@ public class ReplaceSafeCallToDotCall extends IntentionActionForPsiElement<JetEl
         }
     }
 
-    public static IntentionActionFactory<JetElement> createFactory() {
-        return new IntentionActionFactory<JetElement>() {
+    public static JetIntentionActionFactory<JetElement> createFactory() {
+        return new JetIntentionActionFactory<JetElement>() {
             @Override
-            public IntentionActionForPsiElement<JetElement> createAction(DiagnosticWithPsiElement diagnostic) {
+            public JetIntentionAction<JetElement> createAction(DiagnosticWithPsiElement diagnostic) {
                 assert diagnostic.getPsiElement() instanceof JetElement;
                 return new ReplaceSafeCallToDotCall((JetElement) diagnostic.getPsiElement());
             }

@@ -9,4 +9,6 @@ import org.jetbrains.annotations.NotNull;
 public interface DiagnosticWithPsiElement<T extends PsiElement> extends DiagnosticWithTextRange {
     @NotNull
     T getPsiElement();
+
+    <P> DiagnosticWithPsiElement<T> add(DiagnosticParameter<P> parameterType, P parameter);
 }

@@ -526,8 +526,6 @@ public class BodyResolver {
 
         if (propertyDescriptor.getModality() == Modality.ABSTRACT) {
             JetType returnType = propertyDescriptor.getReturnType();
-            //TODO We need ensure here that jet type is computed or pass it's computed name to quick fix instead
-            returnType.equals(new Object());
 
             JetExpression initializer = property.getInitializer();
             if (initializer != null) {
@@ -577,7 +575,7 @@ public class BodyResolver {
         }
         if (inTrait) {
 //            context.getTrace().getErrorHandler().genericError(initializer.getNode(), "Property initializers are not allowed in traits");
-            context.getTrace().report(PROPERTY_INITIALIZER_IN_TRAIT.on(initializer));
+            context.getTrace().report(PROPERTY_INITIALIZER_IN_TRAIT.on(property, initializer, propertyDescriptor.getReturnType()));
         }
         else if (!backingFieldRequired) {
 //            context.getTrace().getErrorHandler().genericError(initializer.getNode(), "Initializer is not allowed here because this property has no backing field");

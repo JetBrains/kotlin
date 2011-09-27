@@ -3,6 +3,7 @@ package org.jetbrains.jet.plugin.quickfix;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticParameters;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.diagnostics.PsiElementOnlyDiagnosticFactory;
 import org.jetbrains.jet.lang.psi.JetFunctionOrPropertyAccessor;
@@ -18,26 +19,26 @@ import java.util.Collection;
 * @author svtk
 */
 public class QuickFixes {
-    private static final Multimap<PsiElementOnlyDiagnosticFactory, IntentionActionFactory> actionMap = HashMultimap.create();
+    private static final Multimap<PsiElementOnlyDiagnosticFactory, JetIntentionActionFactory> actionMap = HashMultimap.create();
 
-    public static Collection<IntentionActionFactory> get(PsiElementOnlyDiagnosticFactory diagnosticFactory) {
+    public static Collection<JetIntentionActionFactory> get(PsiElementOnlyDiagnosticFactory diagnosticFactory) {
         return actionMap.get(diagnosticFactory);
     }
 
     private QuickFixes() {}
 
-    private static <T extends PsiElement> void add(PsiElementOnlyDiagnosticFactory<? extends T> diagnosticFactory, IntentionActionFactory<T> actionFactory) {
+    private static <T extends PsiElement> void add(PsiElementOnlyDiagnosticFactory<? extends T> diagnosticFactory, JetIntentionActionFactory<T> actionFactory) {
         actionMap.put(diagnosticFactory, actionFactory);
     }
 
     static {
-        IntentionActionFactory<JetModifierListOwner> removeAbstractModifierFactory = RemoveModifierFix.createFactory(JetTokens.ABSTRACT_KEYWORD);
-        IntentionActionFactory<JetModifierListOwner> addAbstractModifierFactory = AddModifierFix.createFactory(JetTokens.ABSTRACT_KEYWORD, new JetToken[]{JetTokens.OPEN_KEYWORD}, new JetToken[] {JetTokens.FINAL_KEYWORD});
+        JetIntentionActionFactory<JetModifierListOwner> removeAbstractModifierFactory = RemoveModifierFix.createFactory(JetTokens.ABSTRACT_KEYWORD);
+        JetIntentionActionFactory<JetModifierListOwner> addAbstractModifierFactory = AddModifierFix.createFactory(JetTokens.ABSTRACT_KEYWORD, new JetToken[]{JetTokens.OPEN_KEYWORD}, new JetToken[] {JetTokens.FINAL_KEYWORD});
 
         add(Errors.ABSTRACT_PROPERTY_IN_PRIMARY_CONSTRUCTOR_PARAMETERS, removeAbstractModifierFactory);
         add(Errors.ABSTRACT_PROPERTY_NOT_IN_CLASS, removeAbstractModifierFactory);
 
-        IntentionActionFactory<JetProperty> removePartsFromPropertyFactory = RemovePartsFromPropertyFix.createFactory();
+        JetIntentionActionFactory<JetProperty> removePartsFromPropertyFactory = RemovePartsFromPropertyFix.createFactory();
         add(Errors.ABSTRACT_PROPERTY_WITH_INITIALIZER, removeAbstractModifierFactory);
         add(Errors.ABSTRACT_PROPERTY_WITH_INITIALIZER, removePartsFromPropertyFactory);
 
@@ -47,21 +48,23 @@ public class QuickFixes {
         add(Errors.ABSTRACT_PROPERTY_WITH_SETTER, removeAbstractModifierFactory);
         add(Errors.ABSTRACT_PROPERTY_WITH_SETTER, removePartsFromPropertyFactory);
 
+        add(Errors.PROPERTY_INITIALIZER_IN_TRAIT, removePartsFromPropertyFactory);
+
         add(Errors.MUST_BE_INITIALIZED_OR_BE_ABSTRACT, addAbstractModifierFactory);
         add(Errors.REDUNDANT_ABSTRACT, removeAbstractModifierFactory);
 
-        IntentionActionFactory<JetModifierListOwner> addAbstractToClassFactory = QuickFixUtil.createFactoryRedirectingAdditionalInfoToAnotherFactory(addAbstractModifierFactory);
+        JetIntentionActionFactory<JetModifierListOwner> addAbstractToClassFactory = QuickFixUtil.createFactoryRedirectingAdditionalInfoToAnotherFactory(addAbstractModifierFactory, DiagnosticParameters.CLASS);
         add(Errors.ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS, removeAbstractModifierFactory);
         add(Errors.ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS, addAbstractToClassFactory);
 
-        IntentionActionFactory<JetFunctionOrPropertyAccessor> removeFunctionBodyFactory = RemoveFunctionBodyFix.createFactory();
+        JetIntentionActionFactory<JetFunctionOrPropertyAccessor> removeFunctionBodyFactory = RemoveFunctionBodyFix.createFactory();
         add(Errors.ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS, removeAbstractModifierFactory);
         add(Errors.ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS, addAbstractToClassFactory);
 
         add(Errors.ABSTRACT_FUNCTION_WITH_BODY, removeAbstractModifierFactory);
         add(Errors.ABSTRACT_FUNCTION_WITH_BODY, removeFunctionBodyFactory);
 
-        IntentionActionFactory<JetFunctionOrPropertyAccessor> addFunctionBodyFactory = AddFunctionBodyFix.createFactory();
+        JetIntentionActionFactory<JetFunctionOrPropertyAccessor> addFunctionBodyFactory = AddFunctionBodyFix.createFactory();
         add(Errors.NON_ABSTRACT_FUNCTION_WITH_NO_BODY, addAbstractModifierFactory);
         add(Errors.NON_ABSTRACT_FUNCTION_WITH_NO_BODY, addFunctionBodyFactory);
 
@@ -77,7 +80,7 @@ public class QuickFixes {
         add(Errors.USELESS_CAST_STATIC_ASSERT_IS_FINE, ReplaceOperationInBinaryExpressionFix.createChangeCastToStaticAssertFactory());
         add(Errors.USELESS_CAST, RemoveRightPartOfBinaryExpressionFix.createRemoveCastFactory());
 
-        IntentionActionFactory<JetPropertyAccessor> changeAccessorTypeFactory = ChangeAccessorTypeFix.createFactory();
+        JetIntentionActionFactory<JetPropertyAccessor> changeAccessorTypeFactory = ChangeAccessorTypeFix.createFactory();
         add(Errors.WRONG_SETTER_PARAMETER_TYPE, changeAccessorTypeFactory);
         add(Errors.WRONG_GETTER_RETURN_TYPE, changeAccessorTypeFactory);
         

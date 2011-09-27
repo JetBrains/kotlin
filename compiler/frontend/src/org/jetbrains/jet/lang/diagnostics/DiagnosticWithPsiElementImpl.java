@@ -24,4 +24,9 @@ public class DiagnosticWithPsiElementImpl<T extends PsiElement> extends GenericD
     public T getPsiElement() {
         return psiElement;
     }
+
+    @Override
+    public <P> DiagnosticWithPsiElement<T> add(DiagnosticParameter<P> parameterType, P parameter) {
+        return (new DiagnosticWithParameters<T>(this)).add(parameterType, parameter);
+    }
 }

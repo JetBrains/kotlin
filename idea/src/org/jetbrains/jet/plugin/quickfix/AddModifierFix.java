@@ -97,17 +97,17 @@ public class AddModifierFix extends ModifierFix {
         return true;
     }
 
-    public static IntentionActionFactory<JetModifierListOwner> createFactory(final JetKeywordToken modifier, final JetToken[] modifiersThatCanBeReplaced, final JetToken[] conflictedModifiers) {
-        return new IntentionActionFactory<JetModifierListOwner>() {
+    public static JetIntentionActionFactory<JetModifierListOwner> createFactory(final JetKeywordToken modifier, final JetToken[] modifiersThatCanBeReplaced, final JetToken[] conflictedModifiers) {
+        return new JetIntentionActionFactory<JetModifierListOwner>() {
             @Override
-            public IntentionActionForPsiElement<JetModifierListOwner> createAction(DiagnosticWithPsiElement diagnostic) {
+            public JetIntentionAction<JetModifierListOwner> createAction(DiagnosticWithPsiElement diagnostic) {
                 assert diagnostic.getPsiElement() instanceof JetModifierListOwner;
                 return new AddModifierFix((JetModifierListOwner) diagnostic.getPsiElement(), modifier, modifiersThatCanBeReplaced, conflictedModifiers);
             }
         };
     }
     
-    public static IntentionActionFactory<JetModifierListOwner> createFactory(final JetKeywordToken modifier) {
+    public static JetIntentionActionFactory<JetModifierListOwner> createFactory(final JetKeywordToken modifier) {
         return createFactory(modifier, new JetToken[0], new JetToken[0]);
     }
 }

@@ -349,59 +349,52 @@ public class JetDefaultModalityModifiersTest extends LightDaemonAnalyzerTestCase
         tc.testPropertyAccessorModalityInClass("class A : C { final override val a: Int = 0 }", Modality.FINAL);
         tc.testPropertyAccessorModalityInClass("class A : C { final override val a: Int = 0; get }", Modality.FINAL);
         tc.testPropertyAccessorModalityInClass("class A : C { final override val a: Int = 0; final get }", Modality.FINAL);
+        tc.testPropertyAccessorModalityInClass("class A : C { final override val a: Int = 0; override get() = 2 }", Modality.OPEN);
 
         tc.testPropertyAccessorModalityInClass("open class A : C { override val a: Int = 0 }", Modality.OPEN);
         tc.testPropertyAccessorModalityInClass("open class A : C { override val a: Int = 0; get }", Modality.OPEN);
         tc.testPropertyAccessorModalityInClass("open class A : C { override val a: Int = 0; open get }", Modality.OPEN);
         tc.testPropertyAccessorModalityInClass("open class A : C { override val a: Int = 0; final get }", Modality.FINAL);
+        tc.testPropertyAccessorModalityInClass("open class A : C { override val a: Int = 0; override get() = 2 }", Modality.OPEN);
+        tc.testPropertyAccessorModalityInClass("open class A : C { override val a: Int = 0; final override get() = 2 }", Modality.FINAL);
 
         tc.testPropertyAccessorModalityInClass("open class A : C { open override val a: Int = 0 }", Modality.OPEN);
         tc.testPropertyAccessorModalityInClass("open class A : C { open override val a: Int = 0; get }", Modality.OPEN);
         tc.testPropertyAccessorModalityInClass("open class A : C { open override val a: Int = 0; open get }", Modality.OPEN);
         tc.testPropertyAccessorModalityInClass("open class A : C { open override val a: Int = 0; final get }", Modality.FINAL);
+        tc.testPropertyAccessorModalityInClass("open class A : C { open override val a: Int = 0; override get() = 2 }", Modality.OPEN);
+        tc.testPropertyAccessorModalityInClass("open class A : C { open override val a: Int = 0; final override get() = 2 }", Modality.FINAL);
 
         tc.testPropertyAccessorModalityInClass("open class A : C { final override val a: Int = 0 }", Modality.FINAL);
         tc.testPropertyAccessorModalityInClass("open class A : C { final override val a: Int = 0; get }", Modality.FINAL);
         tc.testPropertyAccessorModalityInClass("open class A : C { final override val a: Int = 0; final get }", Modality.FINAL);
+        tc.testPropertyAccessorModalityInClass("open class A : C { final override val a: Int = 0; override get() = 2 }", Modality.OPEN);
+        tc.testPropertyAccessorModalityInClass("open class A : C { final override val a: Int = 0; final override get() = 2 }", Modality.FINAL);
+
+        tc.testPropertyAccessorModalityInClass("abstract class A : C { abstract override val a: Int }", Modality.ABSTRACT);
+        tc.testPropertyAccessorModalityInClass("abstract class A : C { abstract override val a: Int get }", Modality.ABSTRACT);
+        tc.testPropertyAccessorModalityInClass("abstract class A : C { abstract override val a: Int open get }", Modality.ABSTRACT);
+        tc.testPropertyAccessorModalityInClass("abstract class A : C { abstract override val a: Int abstract get }", Modality.ABSTRACT);
+        tc.testPropertyAccessorModalityInClass("abstract class A : C { override val a: Int override get() = 10 }", Modality.OPEN);
+        tc.testPropertyAccessorModalityInClass("abstract class A : C { override val a: Int open override get() = 10 }", Modality.OPEN);
+        tc.testPropertyAccessorModalityInClass("abstract class A : C { override val a: Int final override get() = 10 }", Modality.FINAL);
+
+        tc.testPropertyAccessorModalityInClass("abstract class A : C { open abstract override val a: Int }", Modality.ABSTRACT);
+        tc.testPropertyAccessorModalityInClass("abstract class A : C { open abstract override val a: Int get }", Modality.ABSTRACT);
+        tc.testPropertyAccessorModalityInClass("abstract class A : C { open abstract override val a: Int open get }", Modality.ABSTRACT);
+        tc.testPropertyAccessorModalityInClass("abstract class A : C { open abstract override val a: Int abstract get }", Modality.ABSTRACT);
+        tc.testPropertyAccessorModalityInClass("abstract class A : C { open override val a: Int override get() = 10 }", Modality.OPEN);
+        tc.testPropertyAccessorModalityInClass("abstract class A : C { open override val a: Int open override get() = 10 }", Modality.OPEN);
+        tc.testPropertyAccessorModalityInClass("abstract class A : C { open override val a: Int final override  get() = 10 }", Modality.FINAL);
 
         tc.testPropertyAccessorModalityInTrait("trait A : C { override val a: Int }", Modality.ABSTRACT);
-        tc.testPropertyAccessorModalityInTrait("trait A : C { override val a: Int = 0; get }", Modality.OPEN);
-
-        tc.testPropertyAccessorModalityInTrait("trait A : C { abstract override val a: Int }", Modality.ABSTRACT);
-        tc.testPropertyAccessorModalityInTrait("trait A : C { abstract override val a: Int get }", Modality.ABSTRACT);
-
-        tc.testPropertyAccessorModalityInClass("abstract class A { abstract override val a: Int }", Modality.ABSTRACT);
-        tc.testPropertyAccessorModalityInClass("abstract class A { abstract override val a: Int get }", Modality.ABSTRACT);
-        tc.testPropertyAccessorModalityInClass("abstract class A { abstract override val a: Int open get }", Modality.ABSTRACT);
-        tc.testPropertyAccessorModalityInClass("abstract class A { abstract override val a: Int abstract get }", Modality.ABSTRACT);
-        tc.testPropertyAccessorModalityInClass("abstract class A { override val a: Int get() = 10 }", Modality.OPEN);
-        tc.testPropertyAccessorModalityInClass("abstract class A { override val a: Int open get() = 10 }", Modality.OPEN);
-        tc.testPropertyAccessorModalityInClass("abstract class A { override val a: Int final get() = 10 }", Modality.FINAL);
-
-        tc.testPropertyAccessorModalityInClass("abstract class A { open abstract override val a: Int }", Modality.ABSTRACT);
-        tc.testPropertyAccessorModalityInClass("abstract class A { open abstract override val a: Int get }", Modality.ABSTRACT);
-        tc.testPropertyAccessorModalityInClass("abstract class A { open abstract override val a: Int open get }", Modality.ABSTRACT);
-        tc.testPropertyAccessorModalityInClass("abstract class A { open abstract override val a: Int abstract get }", Modality.ABSTRACT);
-        tc.testPropertyAccessorModalityInClass("abstract class A { open override val a: Int get() = 10 }", Modality.OPEN);
-        tc.testPropertyAccessorModalityInClass("abstract class A { open override val a: Int open get() = 10 }", Modality.OPEN);
-        tc.testPropertyAccessorModalityInClass("abstract class A { open override val a: Int final get() = 10 }", Modality.FINAL);
-
-        tc.testPropertyAccessorModalityInTrait("trait A { override val a: Int }", Modality.ABSTRACT);
-        tc.testPropertyAccessorModalityInTrait("trait A { override val a: Int get }", Modality.ABSTRACT);
-        tc.testPropertyAccessorModalityInTrait("trait A { override val a: Int get() = 1 }", Modality.OPEN);
-        tc.testPropertyAccessorModalityInTrait("trait A { override val a: Int abstract get }", Modality.ABSTRACT);
-        tc.testPropertyAccessorModalityInTrait("trait A { override val a: Int open get }", Modality.ABSTRACT);
-        tc.testPropertyAccessorModalityInTrait("trait A { override val a: Int open get() = 1 }", Modality.OPEN);
-        tc.testPropertyAccessorModalityInTrait("trait A { override val a: Int final get }", Modality.FINAL);
-        tc.testPropertyAccessorModalityInTrait("trait A { override val a: Int final get() = 1 }", Modality.FINAL);
-
-        tc.testPropertyAccessorModalityInTrait("abstract trait A { override val a: Int }", Modality.ABSTRACT);
-        tc.testPropertyAccessorModalityInTrait("abstract trait A { override val a: Int get }", Modality.ABSTRACT);
-        tc.testPropertyAccessorModalityInTrait("abstract trait A { override val a: Int get() = 1 }", Modality.OPEN);
-        tc.testPropertyAccessorModalityInTrait("abstract trait A { override val a: Int abstract get }", Modality.ABSTRACT);
-        tc.testPropertyAccessorModalityInTrait("abstract trait A { override val a: Int open get }", Modality.ABSTRACT);
-        tc.testPropertyAccessorModalityInTrait("abstract trait A { override val a: Int open get() = 1 }", Modality.OPEN);
-        tc.testPropertyAccessorModalityInTrait("abstract trait A { override val a: Int final get }", Modality.FINAL);
-        tc.testPropertyAccessorModalityInTrait("abstract trait A { override val a: Int final get() = 1 }", Modality.FINAL);
+        tc.testPropertyAccessorModalityInTrait("trait A : C { override val a: Int get }", Modality.ABSTRACT);
+        tc.testPropertyAccessorModalityInTrait("trait A : C { override val a: Int override get() = 1 }", Modality.OPEN);
+        tc.testPropertyAccessorModalityInTrait("trait A : C { override val a: Int abstract get }", Modality.ABSTRACT);
+        tc.testPropertyAccessorModalityInTrait("trait A : C { override val a: Int open get }", Modality.ABSTRACT);
+        tc.testPropertyAccessorModalityInTrait("trait A : C { override val a: Int open override get() = 1 }", Modality.OPEN);
+        tc.testPropertyAccessorModalityInTrait("trait A : C { override val a: Int override get() = 1 }", Modality.OPEN);
+        tc.testPropertyAccessorModalityInTrait("trait A : C { override val a: Int final get }", Modality.FINAL);
+        tc.testPropertyAccessorModalityInTrait("trait A : C { override val a: Int final override get() = 1 }", Modality.FINAL);
     }
 }

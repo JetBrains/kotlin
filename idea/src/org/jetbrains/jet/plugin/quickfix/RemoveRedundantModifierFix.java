@@ -2,10 +2,12 @@ package org.jetbrains.jet.plugin.quickfix;
 
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticWithAdditionalInfo;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticParameters;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithPsiElement;
 import org.jetbrains.jet.lang.psi.JetModifierList;
 import org.jetbrains.jet.lexer.JetKeywordToken;
@@ -13,7 +15,7 @@ import org.jetbrains.jet.lexer.JetKeywordToken;
 /**
  * @author svtk
  */
-public class RemoveRedundantModifierFix extends IntentionActionForPsiElement<JetModifierList> {
+public class RemoveRedundantModifierFix extends JetIntentionAction<JetModifierList> {
     private JetKeywordToken redundantModifier;
     public RemoveRedundantModifierFix(@NotNull JetModifierList element, @NotNull JetKeywordToken redundantModifier) {
         super(element);
@@ -38,15 +40,14 @@ public class RemoveRedundantModifierFix extends IntentionActionForPsiElement<Jet
         element.replace(RemoveModifierFix.removeModifierFromList(newElement, redundantModifier));
     }
 
-    public static IntentionActionFactory<JetModifierList> createFactory() {
-        return new IntentionActionFactory<JetModifierList>() {
+    public static JetIntentionActionFactory<JetModifierList> createFactory() {
+        return new JetIntentionActionFactory<JetModifierList>() {
             @Override
-            public IntentionActionForPsiElement<JetModifierList> createAction(DiagnosticWithPsiElement diagnostic) {
+            public JetIntentionAction<JetModifierList> createAction(DiagnosticWithPsiElement diagnostic) {
                 assert diagnostic.getPsiElement() instanceof JetModifierList;
-                assert diagnostic instanceof DiagnosticWithAdditionalInfo;
-                Object info = ((DiagnosticWithAdditionalInfo) diagnostic).getInfo();
-                assert info instanceof JetKeywordToken;
-                return new RemoveRedundantModifierFix((JetModifierList) diagnostic.getPsiElement(), (JetKeywordToken) info);
+                DiagnosticWithParameters<PsiElement> diagnosticWithParameters = assertAndCastToDiagnosticWithParameters(diagnostic, DiagnosticParameters.MODIFIER);
+                JetKeywordToken modifier = diagnosticWithParameters.getParameter(DiagnosticParameters.MODIFIER);
+                return new RemoveRedundantModifierFix((JetModifierList) diagnostic.getPsiElement(), modifier);
             }
         };
     }

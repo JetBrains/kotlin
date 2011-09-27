@@ -20,6 +20,8 @@ import java.util.*;
  * @author abreslav
  */
 public class JavaDescriptorResolver {
+    
+    public static String JAVA_ROOT = "<java_root>";
 
     /*package*/ static final DeclarationDescriptor JAVA_METHOD_TYPE_PARAMETER_PARENT = new DeclarationDescriptorImpl(null, Collections.<AnnotationDescriptor>emptyList(), "<java_generic_method>") {
 
@@ -263,7 +265,7 @@ public class JavaDescriptorResolver {
         JavaNamespaceDescriptor namespaceDescriptor = new JavaNamespaceDescriptor(
                 resolveParentDescriptor(psiPackage),
                 Collections.<AnnotationDescriptor>emptyList(), // TODO
-                name == null ? "<java_root>" : name
+                name == null ? JAVA_ROOT : name
         );
 
         namespaceDescriptor.setMemberScope(new JavaPackageScope(psiPackage.getQualifiedName(), namespaceDescriptor, semanticServices));

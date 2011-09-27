@@ -86,10 +86,10 @@ public class RemoveModifierFix extends ModifierFix {
         return false;
     }
 
-    public static IntentionActionFactory<JetModifierListOwner> createFactory(final JetKeywordToken modifier) {
-        return new IntentionActionFactory<JetModifierListOwner>() {
+    public static JetIntentionActionFactory<JetModifierListOwner> createFactory(final JetKeywordToken modifier) {
+        return new JetIntentionActionFactory<JetModifierListOwner>() {
             @Override
-            public IntentionActionForPsiElement<JetModifierListOwner> createAction(DiagnosticWithPsiElement diagnostic) {
+            public JetIntentionAction<JetModifierListOwner> createAction(DiagnosticWithPsiElement diagnostic) {
                 assert diagnostic.getPsiElement() instanceof JetModifierListOwner;
                 return new RemoveModifierFix((JetModifierListOwner) diagnostic.getPsiElement(), modifier);
             }

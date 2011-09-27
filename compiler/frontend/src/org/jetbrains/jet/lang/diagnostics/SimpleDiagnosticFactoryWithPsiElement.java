@@ -17,13 +17,13 @@ public abstract class SimpleDiagnosticFactoryWithPsiElement<T extends PsiElement
     }
 
     @NotNull
-    public Diagnostic on(@NotNull T element, @NotNull ASTNode node) {
-        return new DiagnosticWithPsiElementImpl<T>(this, severity, message, element, node.getTextRange());
+    public Diagnostic on(@NotNull T elementToBlame, @NotNull ASTNode nodeToMark) {
+        return new DiagnosticWithPsiElementImpl<T>(this, severity, message, elementToBlame, nodeToMark.getTextRange());
     }
 
     @NotNull
-    public Diagnostic on(@NotNull T element, @NotNull PsiElement psiElement) {
-        return new DiagnosticWithPsiElementImpl<T>(this, severity, message, element, psiElement.getTextRange());
+    public Diagnostic on(@NotNull T elementToBlame, @NotNull PsiElement elementToMark) {
+        return new DiagnosticWithPsiElementImpl<T>(this, severity, message, elementToBlame, elementToMark.getTextRange());
     }
 
     @NotNull
