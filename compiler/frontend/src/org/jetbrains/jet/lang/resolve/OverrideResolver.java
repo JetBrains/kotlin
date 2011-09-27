@@ -261,7 +261,7 @@ public class OverrideResolver {
 
                     if (checkPropertyKind(overridden, true) && checkPropertyKind(declared, false) && !kindMismatchError) {
                         context.getTrace().report(VAR_OVERRIDDEN_BY_VAL.on(member, ((JetProperty) member).getValOrVarNode(), (PropertyDescriptor) declared, (PropertyDescriptor) overridden));
-                        typeMismatchError = true;
+                        kindMismatchError = true;
                     }
                 }
             }
