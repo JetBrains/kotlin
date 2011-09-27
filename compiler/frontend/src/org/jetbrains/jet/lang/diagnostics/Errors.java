@@ -141,6 +141,7 @@ public interface Errors {
     SimpleDiagnosticFactory MANY_CLASS_OBJECTS = SimpleDiagnosticFactory.create(ERROR, "Only one class object is allowed per class");
     SimpleDiagnosticFactory CLASS_OBJECT_NOT_ALLOWED = SimpleDiagnosticFactory.create(ERROR, "A class object is not allowed here");
     SimpleDiagnosticFactory DELEGATION_IN_TRAIT = SimpleDiagnosticFactory.create(ERROR, "Traits cannot use delegation");
+    SimpleDiagnosticFactory DELEGATION_NOT_TO_TRAIT = SimpleDiagnosticFactory.create(ERROR, "Only traits can be delegated to");
     SimpleDiagnosticFactory NO_CONSTRUCTOR = SimpleDiagnosticFactory.create(ERROR, "This class does not have a constructor");
     SimpleDiagnosticFactory NOT_A_CLASS = SimpleDiagnosticFactory.create(ERROR, "Not a class");
     SimpleDiagnosticFactory ILLEGAL_ESCAPE_SEQUENCE = SimpleDiagnosticFactory.create(ERROR, "Illegal escape sequence");

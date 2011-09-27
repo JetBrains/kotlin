@@ -136,6 +136,15 @@ public class BodyResolver {
                 }
                 JetType supertype = context.getTrace().getBindingContext().get(BindingContext.TYPE, specifier.getTypeReference());
                 recordSupertype(specifier.getTypeReference(), supertype);
+                if (supertype != null) {
+                    DeclarationDescriptor declarationDescriptor = supertype.getConstructor().getDeclarationDescriptor();
+                    if (declarationDescriptor instanceof ClassDescriptor) {
+                        ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
+                        if (classDescriptor.getKind() != ClassKind.TRAIT) {
+                            context.getTrace().report(DELEGATION_NOT_TO_TRAIT.on(specifier.getTypeReference()));
+                        }
+                    }
+                }
                 JetExpression delegateExpression = specifier.getDelegateExpression();
                 if (delegateExpression != null) {
                     JetScope scope = scopeForConstructor == null
