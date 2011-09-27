@@ -11,4 +11,7 @@ public interface CallableMemberDescriptor extends CallableDescriptor, MemberDesc
     @NotNull
     @Override
     Set<? extends CallableMemberDescriptor> getOverriddenDescriptors();
+
+    @NotNull
+    CallableMemberDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract);
 }

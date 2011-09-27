@@ -23,4 +23,8 @@ public interface FunctionDescriptor extends CallableMemberDescriptor {
     @Override
     @NotNull
     Set<? extends FunctionDescriptor> getOverriddenDescriptors();
+
+    @NotNull
+    @Override
+    FunctionDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract);
 }

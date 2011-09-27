@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.descriptors;
 
+import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -96,9 +97,15 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
     public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
         return visitor.visitValueParameterDescriptor(this, data);
     }
-    
+
     @Override
     public boolean isVar() {
         return isVar;
+    }
+
+    @NotNull
+    @Override
+    public ValueParameterDescriptor copy(@NotNull DeclarationDescriptor newOwner) {
+        return new ValueParameterDescriptorImpl(newOwner, index, Lists.newArrayList(getAnnotations()), getName(), getInType(), getOutType(), hasDefaultValue, isVararg);
     }
 }

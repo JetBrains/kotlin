@@ -31,4 +31,10 @@ public class VariableAsFunctionDescriptor extends FunctionDescriptorImpl {
     public VariableDescriptor getVariableDescriptor() {
         return variableDescriptor;
     }
+
+    @NotNull
+    @Override
+    public VariableAsFunctionDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract) {
+        throw new UnsupportedOperationException("Should not be copied for overriding");
+    }
 }

@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.jet.lang.resolve.BindingContext.DELEGATED;
 
 /**
  * @author abreslav
@@ -104,28 +105,13 @@ public class OverrideResolver {
         // Check if everything that must be overridden, actually is
 
         // Everything from supertypes
-        Set<JetType> delegatedByExpression = Sets.newHashSet();
-        for (JetDelegationSpecifier delegationSpecifier : klass.getDelegationSpecifiers()) {
-            if (delegationSpecifier instanceof JetDelegatorByExpressionSpecifier) {
-                JetDelegatorByExpressionSpecifier specifier = (JetDelegatorByExpressionSpecifier) delegationSpecifier;
-                JetType type = context.getTrace().get(BindingContext.TYPE, specifier.getTypeReference());
-                if (type != null) {
-                    delegatedByExpression.add(type);
-                }
-            }
-        }
-        
         Map<CallableMemberDescriptor, CallableMemberDescriptor> implementedWithDelegationBy = Maps.newHashMap();
         Set<CallableMemberDescriptor> inheritedFunctions = Sets.newLinkedHashSet();
         for (JetType supertype : classDescriptor.getSupertypes()) {
-            boolean delegatedBy = delegatedByExpression.contains(supertype);
             for (DeclarationDescriptor descriptor : supertype.getMemberScope().getAllDescriptors()) {
                 if (descriptor instanceof CallableMemberDescriptor) {
                     CallableMemberDescriptor memberDescriptor = (CallableMemberDescriptor) descriptor;
                     inheritedFunctions.add(memberDescriptor);
-                    if (delegatedBy && memberDescriptor.getModality().isOpen()) {
-                        implementedWithDelegationBy.put(memberDescriptor, createOverridingDescriptor(classDescriptor, memberDescriptor));
-                    }
                 }
             }
         }
@@ -230,14 +216,13 @@ public class OverrideResolver {
 //        }
     }
 
-    @Nullable
-    private CallableMemberDescriptor createOverridingDescriptor(@NotNull MutableClassDescriptor subClass, @NotNull CallableMemberDescriptor superDescriptor) {
-        return null;
-    }
-
     private void checkOverride(CallableMemberDescriptor declared) {
         JetNamedDeclaration member = (JetNamedDeclaration) context.getTrace().get(BindingContext.DESCRIPTOR_TO_DECLARATION, declared);
-        assert member != null;
+        if (member == null) {
+            assert context.getTrace().get(DELEGATED, declared);
+            return;
+        }
+
         JetModifierList modifierList = member.getModifierList();
         ASTNode overrideNode = modifierList != null ? modifierList.getModifierNode(JetTokens.OVERRIDE_KEYWORD) : null;
         boolean hasOverrideModifier = overrideNode != null;
@@ -248,7 +233,7 @@ public class OverrideResolver {
         for (CallableMemberDescriptor overridden : declared.getOverriddenDescriptors()) {
             if (overridden != null) {
                 if (hasOverrideModifier) {
-                    if (!overridden.getModality().isOpen() && !finalOverriddenError) {
+                    if (!overridden.getModality().isOverridable() && !finalOverriddenError) {
     //                    context.getTrace().getErrorHandler().genericError(overrideNode, "Method " + overridden.getName() + " in " + overridden.getContainingDeclaration().getName() + " is final and cannot be overridden");
                         context.getTrace().report(OVERRIDING_FINAL_MEMBER.on(overrideNode, overridden, overridden.getContainingDeclaration()));
                         finalOverriddenError = true;
