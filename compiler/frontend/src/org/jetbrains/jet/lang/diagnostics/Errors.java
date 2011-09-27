@@ -316,6 +316,7 @@ public interface Errors {
         }
     };
 
+    ParameterizedDiagnosticFactory2<PropertyDescriptor, PropertyDescriptor> VAR_OVERRIDDEN_BY_VAL = new ParameterizedDiagnosticFactory2<PropertyDescriptor, PropertyDescriptor>(ERROR, "Var-property {0} cannot be overridden by val-property {1}", DescriptorRenderer.TEXT);
 
     ParameterizedDiagnosticFactory2<JetClassOrObject, CallableMemberDescriptor> ABSTRACT_MEMBER_NOT_IMPLEMENTED = new ParameterizedDiagnosticFactory2<JetClassOrObject, CallableMemberDescriptor>(ERROR, "Class ''{0}'' must be declared abstract or implement abstract member {1}") {
         @Override
