@@ -65,6 +65,7 @@ public class TopDownAnalyzer {
         TopDownAnalysisContext context = new TopDownAnalysisContext(semanticServices, trace);
         new TypeHierarchyResolver(context).process(outerScope, owner, declarations);
         new DeclarationResolver(context).process();
+        new DelegationResolver(context).process();
         new OverrideResolver(context).process();
         new BodyResolver(context).resolveBehaviorDeclarationBodies();
     }
@@ -78,6 +79,7 @@ public class TopDownAnalyzer {
         context.getNamespaceDescriptors().put(namespace, standardLibraryNamespace);
         new TypeHierarchyResolver(context).process(outerScope, standardLibraryNamespace, namespace.getDeclarations());
         new DeclarationResolver(context).process();
+        new DelegationResolver(context).process();
         OverrideResolver overrideResolver = new OverrideResolver(context) {
             @Override
             protected void checkOverridesInAClass(MutableClassDescriptor classDescriptor, JetClassOrObject klass) {

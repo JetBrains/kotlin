@@ -28,7 +28,7 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
 
     @Override
     @Deprecated
-    public FunctionDescriptorImpl initialize(@Nullable JetType receiverType, @NotNull List<TypeParameterDescriptor> typeParameters, @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters, @Nullable JetType unsubstitutedReturnType, Modality modality, Visibility visibility) {
+    public FunctionDescriptorImpl initialize(@Nullable JetType receiverType, @NotNull List<TypeParameterDescriptor> typeParameters, @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters, @Nullable JetType unsubstitutedReturnType, Modality modality, @NotNull Visibility visibility) {
         assert receiverType == null;
         return super.initialize(null, typeParameters, unsubstitutedValueParameters, unsubstitutedReturnType, modality, visibility);
     }
@@ -77,5 +77,11 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
                 this,
                 Collections.<AnnotationDescriptor>emptyList(), // TODO
                 isPrimary);
+    }
+
+    @NotNull
+    @Override
+    public ConstructorDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract) {
+        throw new UnsupportedOperationException("Constructors should not be copied for overriding");
     }
 }

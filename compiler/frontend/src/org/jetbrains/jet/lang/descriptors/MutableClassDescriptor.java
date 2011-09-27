@@ -172,7 +172,7 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
         this.typeConstructor = new TypeConstructorImpl(
                 this,
                 Collections.<AnnotationDescriptor>emptyList(), // TODO : pass annotations from the class?
-                !modality.isOpen(),
+                !modality.isOverridable(),
                 getName(),
                 typeParameters,
                 supertypes);

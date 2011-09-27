@@ -76,4 +76,10 @@ public abstract class PropertyAccessorDescriptor extends DeclarationDescriptorIm
     public PropertyDescriptor getCorrespondingProperty() {
         return correspondingProperty;
     }
+
+    @NotNull
+    @Override
+    public PropertyAccessorDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract) {
+        throw new UnsupportedOperationException("Accessors must be copied by the corresponding property");
+    }
 }

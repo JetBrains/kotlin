@@ -3,6 +3,7 @@ package org.jetbrains.jet.lang.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -10,6 +11,11 @@ import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.List;
+
+import static org.jetbrains.jet.JetNodeTypes.PROPERTY_ACCESSOR;
+import static org.jetbrains.jet.lexer.JetTokens.EQ;
+import static org.jetbrains.jet.lexer.JetTokens.VAL_KEYWORD;
+import static org.jetbrains.jet.lexer.JetTokens.VAR_KEYWORD;
 
 /**
  * @author max
@@ -69,7 +75,7 @@ public class JetProperty extends JetTypeParameterListOwner implements JetModifie
 
     @NotNull
     public List<JetPropertyAccessor> getAccessors() {
-        return findChildrenByType(JetNodeTypes.PROPERTY_ACCESSOR);
+        return findChildrenByType(PROPERTY_ACCESSOR);
     }
 
     @Nullable
@@ -92,7 +98,12 @@ public class JetProperty extends JetTypeParameterListOwner implements JetModifie
 
     @Nullable
     public JetExpression getInitializer() {
-        PsiElement eq = findChildByType(JetTokens.EQ);
+        PsiElement eq = findChildByType(EQ);
         return PsiTreeUtil.getNextSiblingOfType(eq, JetExpression.class);
+    }
+
+    @NotNull
+    public ASTNode getValOrVarNode() {
+        return getNode().findChildByType(TokenSet.create(VAL_KEYWORD, VAR_KEYWORD));
     }
 }

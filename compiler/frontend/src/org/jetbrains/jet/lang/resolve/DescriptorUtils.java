@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.resolve;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -88,5 +89,26 @@ public class DescriptorUtils {
                 return super.substitute(type, howThisTypeIsUsed);
             }
         });
+    }
+    
+    public static List<ValueParameterDescriptor> copyValueParameters(DeclarationDescriptor newOwner, List<ValueParameterDescriptor> parameters) {
+        List<ValueParameterDescriptor> result = Lists.newArrayList();
+        for (ValueParameterDescriptor parameter : parameters) {
+            result.add(parameter.copy(newOwner));
+        }
+        return result;
+    }
+
+    public static List<TypeParameterDescriptor> copyTypeParameters(DeclarationDescriptor newOwner, List<TypeParameterDescriptor> parameters) {
+        List<TypeParameterDescriptor> result = Lists.newArrayList();
+        for (TypeParameterDescriptor parameter : parameters) {
+            result.add(parameter.copy(newOwner));
+        }
+        return result;
+    }
+    
+    public static Modality convertModality(Modality modality, boolean makeNonAbstract) {
+        if (makeNonAbstract && modality == Modality.ABSTRACT) return Modality.OPEN;
+        return modality;
     }
 }

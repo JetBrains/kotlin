@@ -64,5 +64,4 @@ public class PropertySetterDescriptor extends PropertyAccessorDescriptor {
     public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
         return visitor.visitPropertySetterDescriptor(this, data);
     }
-
 }

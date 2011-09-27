@@ -140,6 +140,7 @@ public interface Errors {
     SimpleDiagnosticFactory MANY_CLASS_OBJECTS = SimpleDiagnosticFactory.create(ERROR, "Only one class object is allowed per class");
     SimpleDiagnosticFactory CLASS_OBJECT_NOT_ALLOWED = SimpleDiagnosticFactory.create(ERROR, "A class object is not allowed here");
     SimpleDiagnosticFactory DELEGATION_IN_TRAIT = SimpleDiagnosticFactory.create(ERROR, "Traits cannot use delegation");
+    SimpleDiagnosticFactory DELEGATION_NOT_TO_TRAIT = SimpleDiagnosticFactory.create(ERROR, "Only traits can be delegated to");
     SimpleDiagnosticFactory NO_CONSTRUCTOR = SimpleDiagnosticFactory.create(ERROR, "This class does not have a constructor");
     SimpleDiagnosticFactory NOT_A_CLASS = SimpleDiagnosticFactory.create(ERROR, "Not a class");
     SimpleDiagnosticFactory ILLEGAL_ESCAPE_SEQUENCE = SimpleDiagnosticFactory.create(ERROR, "Illegal escape sequence");
@@ -314,6 +315,7 @@ public interface Errors {
         }
     };
 
+    ParameterizedDiagnosticFactory2<PropertyDescriptor, PropertyDescriptor> VAR_OVERRIDDEN_BY_VAL = new ParameterizedDiagnosticFactory2<PropertyDescriptor, PropertyDescriptor>(ERROR, "Var-property {0} cannot be overridden by val-property {1}", DescriptorRenderer.TEXT);
 
     ParameterizedDiagnosticFactory2<JetClassOrObject, CallableMemberDescriptor> ABSTRACT_MEMBER_NOT_IMPLEMENTED = new ParameterizedDiagnosticFactory2<JetClassOrObject, CallableMemberDescriptor>(ERROR, "Class ''{0}'' must be declared abstract or implement abstract member {1}") {
         @Override

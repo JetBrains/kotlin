@@ -1,7 +1,6 @@
 package org.jetbrains.jet.lang.resolve;
 
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
+import com.google.common.collect.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
@@ -18,6 +17,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.jet.lang.resolve.BindingContext.DELEGATED;
 
 /**
  * @author abreslav
@@ -105,6 +105,7 @@ public class OverrideResolver {
         // Check if everything that must be overridden, actually is
 
         // Everything from supertypes
+        Map<CallableMemberDescriptor, CallableMemberDescriptor> implementedWithDelegationBy = Maps.newHashMap();
         Set<CallableMemberDescriptor> inheritedFunctions = Sets.newLinkedHashSet();
         for (JetType supertype : classDescriptor.getSupertypes()) {
             for (DeclarationDescriptor descriptor : supertype.getMemberScope().getAllDescriptors()) {
@@ -123,7 +124,7 @@ public class OverrideResolver {
         for (CallableMemberDescriptor one : filteredMembers) {
             if (factoredMembers.values().contains(one)) continue;
             for (CallableMemberDescriptor another : filteredMembers) {
-                if (one == another) continue;
+//                if (one == another) continue;
                 factoredMembers.put(one, one);
                 if (OverridingUtil.isOverridableBy(one, another).isSuccess()
                         || OverridingUtil.isOverridableBy(another, one).isSuccess()) {
@@ -154,7 +155,7 @@ public class OverrideResolver {
         }
 
         // Members actually present (declared) in the class
-        Set<CallableDescriptor> actuallyOverridden = Sets.newHashSet();
+        Set<CallableMemberDescriptor> actuallyOverridden = Sets.newHashSet(implementedWithDelegationBy.keySet());
         for (CallableMemberDescriptor member : classDescriptor.getCallableMembers()) {
             actuallyOverridden.addAll(member.getOverriddenDescriptors());
         }
@@ -171,63 +172,68 @@ public class OverrideResolver {
             nameIdentifier = ((JetObjectDeclaration) klass).getNameIdentifier();
         }
 
-//        for (CallableMemberDescriptor memberDescriptor : manyImpl) {
-//            context.getTrace().report(MANY_IMPL_MEMBER_NOT_IMPLEMENTED.on(nameIdentifier, klass, memberDescriptor));
-//            break;
-//        }
+        for (CallableMemberDescriptor memberDescriptor : manyImpl) {
+            context.getTrace().report(MANY_IMPL_MEMBER_NOT_IMPLEMENTED.on(nameIdentifier, klass, memberDescriptor));
+            break;
+        }
 
 
         if (classDescriptor.getModality() == Modality.ABSTRACT) {
             return;
         }
 
-//        for (CallableMemberDescriptor memberDescriptor : abstractNoImpl) {
-//            context.getTrace().report(ABSTRACT_MEMBER_NOT_IMPLEMENTED.on(nameIdentifier, klass, memberDescriptor));
-//            break;
-//        }
+        for (CallableMemberDescriptor memberDescriptor : abstractNoImpl) {
+            context.getTrace().report(ABSTRACT_MEMBER_NOT_IMPLEMENTED.on(nameIdentifier, klass, memberDescriptor));
+            break;
+        }
 
-        Set<FunctionDescriptor> allOverriddenFunctions = Sets.newHashSet();
-        Collection<DeclarationDescriptor> allDescriptors = classDescriptor.getDefaultType().getMemberScope().getAllDescriptors();
-        for (DeclarationDescriptor descriptor : allDescriptors) {
-            if (descriptor instanceof FunctionDescriptor) {
-                FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
-                if (functionDescriptor.getModality() != Modality.ABSTRACT) {
-                    for (FunctionDescriptor overriddenDescriptor : functionDescriptor.getOverriddenDescriptors()) {
-                        allOverriddenFunctions.add(overriddenDescriptor.getOriginal());
-                    }
-                }
-            }
-        }
-        boolean foundError = false;
-        for (DeclarationDescriptor descriptor : allDescriptors) {
-            if (descriptor instanceof FunctionDescriptor) {
-                FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
-                if (functionDescriptor.getModality() == Modality.ABSTRACT && !allOverriddenFunctions.contains(functionDescriptor.getOriginal()) && !foundError && nameIdentifier != null) {
-                    DeclarationDescriptor declarationDescriptor = functionDescriptor.getContainingDeclaration();
-                    if (declarationDescriptor != classDescriptor) {
-//                        context.getTrace().getErrorHandler().genericError(nameIdentifier.getNode(), "Class '" + klass.getName() + "' must be declared abstract or implement abstract method '" +
-//                                                                                                    functionDescriptor.getName() + "' declared in " + declarationDescriptor.getName());
-                        context.getTrace().report(ABSTRACT_MEMBER_NOT_IMPLEMENTED.on(nameIdentifier, klass, functionDescriptor));
-                        foundError = true;
-                    }
-                }
-            }
-        }
+//        Set<FunctionDescriptor> allOverriddenFunctions = Sets.newHashSet();
+//        Collection<DeclarationDescriptor> allDescriptors = classDescriptor.getDefaultType().getMemberScope().getAllDescriptors();
+//        for (DeclarationDescriptor descriptor : allDescriptors) {
+//            if (descriptor instanceof FunctionDescriptor) {
+//                FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
+//                if (functionDescriptor.getModality() != Modality.ABSTRACT) {
+//                    for (FunctionDescriptor overriddenDescriptor : functionDescriptor.getOverriddenDescriptors()) {
+//                        allOverriddenFunctions.add(overriddenDescriptor.getOriginal());
+//                    }
+//                }
+//            }
+//        }
+//        boolean foundError = false;
+//        for (DeclarationDescriptor descriptor : allDescriptors) {
+//            if (descriptor instanceof FunctionDescriptor) {
+//                FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
+//                if (functionDescriptor.getModality() == Modality.ABSTRACT && !allOverriddenFunctions.contains(functionDescriptor.getOriginal()) && !foundError && nameIdentifier != null) {
+//                    DeclarationDescriptor declarationDescriptor = functionDescriptor.getContainingDeclaration();
+//                    if (declarationDescriptor != classDescriptor) {
+////                        context.getTrace().getErrorHandler().genericError(nameIdentifier.getNode(), "Class '" + klass.getName() + "' must be declared abstract or implement abstract method '" +
+////                                                                                                    functionDescriptor.getName() + "' declared in " + declarationDescriptor.getName());
+//                        context.getTrace().report(ABSTRACT_MEMBER_NOT_IMPLEMENTED.on(nameIdentifier, klass, functionDescriptor));
+//                        foundError = true;
+//                    }
+//                }
+//            }
+//        }
     }
 
     private void checkOverride(CallableMemberDescriptor declared) {
         JetNamedDeclaration member = (JetNamedDeclaration) context.getTrace().get(BindingContext.DESCRIPTOR_TO_DECLARATION, declared);
-        assert member != null;
+        if (member == null) {
+            assert context.getTrace().get(DELEGATED, declared);
+            return;
+        }
+
         JetModifierList modifierList = member.getModifierList();
         ASTNode overrideNode = modifierList != null ? modifierList.getModifierNode(JetTokens.OVERRIDE_KEYWORD) : null;
         boolean hasOverrideModifier = overrideNode != null;
 
         boolean finalOverriddenError = false;
         boolean typeMismatchError = false;
+        boolean kindMismatchError = false;
         for (CallableMemberDescriptor overridden : declared.getOverriddenDescriptors()) {
             if (overridden != null) {
                 if (hasOverrideModifier) {
-                    if (!overridden.getModality().isOpen() && !finalOverriddenError) {
+                    if (!overridden.getModality().isOverridable() && !finalOverriddenError) {
     //                    context.getTrace().getErrorHandler().genericError(overrideNode, "Method " + overridden.getName() + " in " + overridden.getContainingDeclaration().getName() + " is final and cannot be overridden");
                         context.getTrace().report(OVERRIDING_FINAL_MEMBER.on(overrideNode, overridden, overridden.getContainingDeclaration()));
                         finalOverriddenError = true;
@@ -236,6 +242,11 @@ public class OverrideResolver {
                     if (!OverridingUtil.isReturnTypeOkForOverride(JetTypeChecker.INSTANCE, overridden, declared) && !typeMismatchError) {
                         context.getTrace().report(RETURN_TYPE_MISMATCH_ON_OVERRIDE.on(member, declared, overridden));
                         typeMismatchError = true;
+                    }
+
+                    if (checkPropertyKind(overridden, true) && checkPropertyKind(declared, false) && !kindMismatchError) {
+                        context.getTrace().report(VAR_OVERRIDDEN_BY_VAL.on(member, ((JetProperty) member).getValOrVarNode(), (PropertyDescriptor) declared, (PropertyDescriptor) overridden));
+                        kindMismatchError = true;
                     }
                 }
             }
@@ -252,5 +263,13 @@ public class OverrideResolver {
 //                                                 overridden.getContainingDeclaration().getName() + " and needs 'override' modifier");
             context.getTrace().report(VIRTUAL_MEMBER_HIDDEN.on(member, nameIdentifier, declared, overridden, overridden.getContainingDeclaration()));
         }
+    }
+
+    private boolean checkPropertyKind(CallableMemberDescriptor descriptor, boolean isVar) {
+        if (descriptor instanceof PropertyDescriptor) {
+            PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
+            return propertyDescriptor.isVar() == isVar;
+        }
+        return false;
     }
 }

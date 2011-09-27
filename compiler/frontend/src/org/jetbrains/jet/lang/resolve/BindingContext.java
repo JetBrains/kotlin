@@ -40,6 +40,7 @@ public interface BindingContext {
     WritableSlice<JetExpression, DeclarationDescriptor> VARIABLE_ASSIGNMENT = Slices.createSimpleSlice("VARIABLE_ASSIGNMENT");
     WritableSlice<JetExpression, Boolean> PROCESSED = Slices.createSimpleSetSlice("PROCESSED");
     WritableSlice<JetElement, Boolean> STATEMENT = Slices.createRemovableSetSlice("STATEMENT");
+    WritableSlice<CallableMemberDescriptor, Boolean> DELEGATED = Slices.createRemovableSetSlice("DELEGATED");
 
     WritableSlice<PropertyDescriptor, Boolean> BACKING_FIELD_REQUIRED = new Slices.SetSlice<PropertyDescriptor>("BACKING_FIELD_REQUIRED", RewritePolicy.DO_NOTHING) {
         @Override

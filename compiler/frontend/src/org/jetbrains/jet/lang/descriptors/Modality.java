@@ -8,14 +8,14 @@ public enum Modality {
     OPEN(true),
     ABSTRACT(true);
 
-    private final boolean open;
+    private final boolean overridable;
 
-    private Modality(boolean open) {
-        this.open = open;
+    private Modality(boolean overridable) {
+        this.overridable = overridable;
     }
 
-    public boolean isOpen() {
-        return open;
+    public boolean isOverridable() {
+        return overridable;
     }
     
     public static Modality convertFromFlags(boolean _abstract, boolean open) {

@@ -708,16 +708,16 @@ public class ClassDescriptorResolver {
             }
 
             getterDescriptor = new PropertyGetterDescriptor(
-                    resolveModalityFromModifiers(trace, getter.getModifierList(), propertyDescriptor.getModality()),
+                    propertyDescriptor, annotations, resolveModalityFromModifiers(trace, getter.getModifierList(), propertyDescriptor.getModality()),
                     resolveVisibilityFromModifiers(trace, getter.getModifierList(), propertyDescriptor.getVisibility()),
-                    propertyDescriptor, annotations, returnType, getter.getBodyExpression() != null, false);
+                    returnType, getter.getBodyExpression() != null, false);
             trace.record(BindingContext.PROPERTY_ACCESSOR, getter, getterDescriptor);
         }
         else {
             getterDescriptor = new PropertyGetterDescriptor(
-                    propertyDescriptor.getModality(),
+                    propertyDescriptor, Collections.<AnnotationDescriptor>emptyList(), propertyDescriptor.getModality(),
                     propertyDescriptor.getVisibility(),
-                    propertyDescriptor, Collections.<AnnotationDescriptor>emptyList(), propertyDescriptor.getOutType(), false, true);
+                    propertyDescriptor.getOutType(), false, true);
         }
         return getterDescriptor;
     }

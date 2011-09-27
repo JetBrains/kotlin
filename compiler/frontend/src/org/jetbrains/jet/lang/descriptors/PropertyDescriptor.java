@@ -5,6 +5,7 @@ import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
@@ -168,5 +169,27 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
     @Override
     public Set<? extends PropertyDescriptor> getOverriddenDescriptors() {
         return overriddenProperties;
+
+    }
+    @NotNull
+    @Override
+    public PropertyDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract) {
+        PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
+                newOwner,
+                Lists.newArrayList(getAnnotations()),
+                DescriptorUtils.convertModality(modality, makeNonAbstract), visibility, isVar,
+                receiver.exists() ? receiver.getType() : null, getName(), getInType(), getOutType());
+        PropertyGetterDescriptor newGetter = getter == null ? null : new PropertyGetterDescriptor(
+                propertyDescriptor, Lists.newArrayList(getter.getAnnotations()),
+                DescriptorUtils.convertModality(getter.getModality(), makeNonAbstract), getter.getVisibility(),
+                getter.getReturnType(),
+                getter.hasBody(), getter.isDefault());
+        PropertySetterDescriptor newSetter = setter == null ? null : new PropertySetterDescriptor(
+                        DescriptorUtils.convertModality(setter.getModality(), makeNonAbstract), setter.getVisibility(),
+                        propertyDescriptor,
+                        Lists.newArrayList(setter.getAnnotations()),
+                        setter.hasBody(), setter.isDefault());;
+        propertyDescriptor.initialize(DescriptorUtils.copyTypeParameters(propertyDescriptor, getTypeParameters()), newGetter, newSetter);
+        return propertyDescriptor;
     }
 }

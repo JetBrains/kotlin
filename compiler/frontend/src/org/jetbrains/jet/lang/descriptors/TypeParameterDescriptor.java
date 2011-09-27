@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.descriptors;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -156,5 +157,10 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
 
     public int getIndex() {
         return index;
+    }
+    
+    @NotNull
+    public TypeParameterDescriptor copy(@NotNull DeclarationDescriptor newOwner) {
+        return new TypeParameterDescriptor(newOwner, Lists.newArrayList(getAnnotations()), variance, getName(), index);
     }
 }

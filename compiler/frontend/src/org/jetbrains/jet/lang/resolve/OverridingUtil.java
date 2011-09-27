@@ -85,6 +85,12 @@ public class OverridingUtil {
 
     @NotNull
     public static OverrideCompatibilityInfo isOverridableBy(@NotNull CallableDescriptor superDescriptor, @NotNull CallableDescriptor subDescriptor) {
+        if (superDescriptor instanceof FunctionDescriptor) {
+            if (subDescriptor instanceof PropertyDescriptor) return OverrideCompatibilityInfo.memberKindMismatch();
+        }
+        if (superDescriptor instanceof PropertyDescriptor) {
+            if (subDescriptor instanceof FunctionDescriptor) return OverrideCompatibilityInfo.memberKindMismatch();
+        }
         if (!superDescriptor.getName().equals(subDescriptor.getName())) {
             return OverrideCompatibilityInfo.nameMismatch();
         }
@@ -190,6 +196,11 @@ public class OverridingUtil {
         @NotNull
         public static OverrideCompatibilityInfo valueParameterTypeMismatch(ValueParameterDescriptor superValueParameter, ValueParameterDescriptor subValueParameter) {
             return new OverrideCompatibilityInfo(false, "valueParameterTypeMismatch"); // TODO
+        }
+
+        @NotNull
+        public static OverrideCompatibilityInfo memberKindMismatch() {
+            return new OverrideCompatibilityInfo(false, "memberKindMismatch"); // TODO
         }
 
         @NotNull
