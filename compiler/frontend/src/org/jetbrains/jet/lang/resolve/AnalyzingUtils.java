@@ -23,6 +23,7 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 
 import java.util.Collections;
+import java.util.List;
 
 //import org.jetbrains.jet.lang.resolve.java.JavaPackageScope;
 //import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
@@ -66,7 +67,12 @@ public class AnalyzingUtils {
 
     public BindingContext analyzeNamespace(@NotNull JetNamespace namespace, @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory) {
         Project project = namespace.getProject();
+        List<JetDeclaration> declarations = Collections.<JetDeclaration>singletonList(namespace);
 
+        return analyzeNamespaces(project, declarations, flowDataTraceFactory);
+    }
+
+    public BindingContext analyzeNamespaces(@NotNull Project project, @NotNull List<? extends JetDeclaration> declarations, @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory) {
         BindingTraceContext bindingTraceContext = new BindingTraceContext();
         JetSemanticServices semanticServices = JetSemanticServices.createSemanticServices(project, flowDataTraceFactory);
 
@@ -105,7 +111,7 @@ public class AnalyzingUtils {
             public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor) {
                 throw new IllegalStateException("Must be guaranteed not to happen by the parser");
             }
-        }, Collections.<JetDeclaration>singletonList(namespace));
+        }, declarations);
         return bindingTraceContext.getBindingContext();
     }
 

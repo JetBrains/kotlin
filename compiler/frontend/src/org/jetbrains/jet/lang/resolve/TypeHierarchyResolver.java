@@ -37,7 +37,7 @@ public class TypeHierarchyResolver {
         this.context = context;
     }
 
-    public void process(@NotNull JetScope outerScope, NamespaceLike owner, @NotNull List<JetDeclaration> declarations) {
+    public void process(@NotNull JetScope outerScope, NamespaceLike owner, @NotNull List<? extends JetDeclaration> declarations) {
         collectNamespacesAndClassifiers(outerScope, owner, declarations); // namespaceScopes, classes
 
         createTypeConstructors(); // create type constructors for classes and generic parameters, supertypes are not filled in
@@ -62,7 +62,7 @@ public class TypeHierarchyResolver {
     private void collectNamespacesAndClassifiers(
             @NotNull final JetScope outerScope,
             @NotNull final NamespaceLike owner,
-            @NotNull Collection<JetDeclaration> declarations) {
+            @NotNull Collection<? extends JetDeclaration> declarations) {
         for (JetDeclaration declaration : declarations) {
             declaration.accept(new JetVisitorVoid() {
                 @Override

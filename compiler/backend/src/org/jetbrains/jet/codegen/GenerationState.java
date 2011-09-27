@@ -17,6 +17,9 @@ import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.commons.Method;
 
+import java.util.Collections;
+import java.util.List;
+
 public class GenerationState {
     private final ClassFileFactory factory;
     private final Project project;
@@ -85,14 +88,31 @@ public class GenerationState {
 
     public void compile(JetFile psiFile) {
         final JetNamespace namespace = psiFile.getRootNamespace();
-        NamespaceCodegen codegen = forNamespace(namespace);
         final BindingContext bindingContext = AnalyzingUtils.getInstance(JavaDefaultImports.JAVA_DEFAULT_IMPORTS).analyzeNamespace(namespace, JetControlFlowDataTraceFactory.EMPTY);
-        bindingContexts.push(bindingContext);
-        typeMapper = new JetTypeMapper(standardLibrary, bindingContext);
-        try {
-            AnalyzingUtils.throwExceptionOnErrors(bindingContext);
+        AnalyzingUtils.throwExceptionOnErrors(bindingContext);
+        compileCorrectNamespaces(bindingContext, Collections.singletonList(namespace));
+//        NamespaceCodegen codegen = forNamespace(namespace);
+//        bindingContexts.push(bindingContext);
+//        typeMapper = new JetTypeMapper(standardLibrary, bindingContext);
+//        try {
+//            AnalyzingUtils.throwExceptionOnErrors(bindingContext);
+//
+//            codegen.generate(namespace);
+//        }
+//        finally {
+//            bindingContexts.pop();
+//            typeMapper = null;
+//        }
+    }
 
-            codegen.generate(namespace);
+    public void compileCorrectNamespaces(BindingContext bindingContext, List<JetNamespace> namespaces) {
+        typeMapper = new JetTypeMapper(standardLibrary, bindingContext);
+        bindingContexts.push(bindingContext);
+        try {
+            for (JetNamespace namespace : namespaces) {
+                NamespaceCodegen codegen = forNamespace(namespace);
+                codegen.generate(namespace);
+            }
         }
         finally {
             bindingContexts.pop();

@@ -48,8 +48,12 @@ public class CallResolver {
             @NotNull ReceiverDescriptor receiver,
             @NotNull final JetSimpleNameExpression nameExpression,
             @NotNull JetType expectedType) {
+        String referencedName = nameExpression.getReferencedName();
+        if (referencedName == null) {
+            return null;
+        }
         Call call = CallMaker.makePropertyCall(nameExpression);
-        List<ResolutionTask<VariableDescriptor>> prioritizedTasks = PROPERTY_TASK_PRIORITIZER.computePrioritizedTasks(scope, receiver, call, nameExpression.getReferencedName());
+        List<ResolutionTask<VariableDescriptor>> prioritizedTasks = PROPERTY_TASK_PRIORITIZER.computePrioritizedTasks(scope, receiver, call, referencedName);
         return resolveCallToDescriptor(trace, scope, call, nameExpression.getNode(), expectedType, prioritizedTasks, nameExpression);
     }
 
