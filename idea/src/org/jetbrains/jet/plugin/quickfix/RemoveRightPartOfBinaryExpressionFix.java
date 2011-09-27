@@ -13,7 +13,7 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 /**
  * @author svtk
  */
-public abstract class RemoveRightPartOfBinaryExpressionFix<T extends JetExpression> extends IntentionActionForPsiElement<T> {
+public abstract class RemoveRightPartOfBinaryExpressionFix<T extends JetExpression> extends JetIntentionAction<T> {
     public RemoveRightPartOfBinaryExpressionFix(@NotNull T element) {
         super(element);
     }
@@ -36,10 +36,10 @@ public abstract class RemoveRightPartOfBinaryExpressionFix<T extends JetExpressi
         }
     }
 
-    public static IntentionActionFactory<JetBinaryExpressionWithTypeRHS> createRemoveCastFactory() {
-        return new IntentionActionFactory<JetBinaryExpressionWithTypeRHS>() {
+    public static JetIntentionActionFactory<JetBinaryExpressionWithTypeRHS> createRemoveCastFactory() {
+        return new JetIntentionActionFactory<JetBinaryExpressionWithTypeRHS>() {
             @Override
-            public IntentionActionForPsiElement<JetBinaryExpressionWithTypeRHS> createAction(DiagnosticWithPsiElement diagnostic) {
+            public JetIntentionAction<JetBinaryExpressionWithTypeRHS> createAction(DiagnosticWithPsiElement diagnostic) {
                 assert diagnostic.getPsiElement() instanceof JetBinaryExpressionWithTypeRHS;
                 return new RemoveRightPartOfBinaryExpressionFix<JetBinaryExpressionWithTypeRHS>((JetBinaryExpressionWithTypeRHS) diagnostic.getPsiElement()) {
                     @NotNull
@@ -52,10 +52,10 @@ public abstract class RemoveRightPartOfBinaryExpressionFix<T extends JetExpressi
         };
     }
 
-    public static IntentionActionFactory<JetBinaryExpression> createRemoveElvisOperatorFactory() {
-        return new IntentionActionFactory<JetBinaryExpression>() {
+    public static JetIntentionActionFactory<JetBinaryExpression> createRemoveElvisOperatorFactory() {
+        return new JetIntentionActionFactory<JetBinaryExpression>() {
             @Override
-            public IntentionActionForPsiElement<JetBinaryExpression> createAction(DiagnosticWithPsiElement diagnostic) {
+            public JetIntentionAction<JetBinaryExpression> createAction(DiagnosticWithPsiElement diagnostic) {
                 assert diagnostic.getPsiElement() instanceof JetBinaryExpression;
                 return new RemoveRightPartOfBinaryExpressionFix<JetBinaryExpression>((JetBinaryExpression) diagnostic.getPsiElement()) {
                     @NotNull

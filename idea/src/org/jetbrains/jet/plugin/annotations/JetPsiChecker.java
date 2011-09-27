@@ -23,7 +23,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.AnalyzerFacade;
 import org.jetbrains.jet.plugin.JetHighlighter;
-import org.jetbrains.jet.plugin.quickfix.IntentionActionFactory;
+import org.jetbrains.jet.plugin.quickfix.JetIntentionActionFactory;
 import org.jetbrains.jet.plugin.quickfix.QuickFixes;
 
 import java.util.Collection;
@@ -90,8 +90,8 @@ public class JetPsiChecker implements Annotator {
                             DiagnosticWithPsiElement diagnosticWithPsiElement = (DiagnosticWithPsiElement) diagnostic;
                             if (diagnostic.getFactory() instanceof PsiElementOnlyDiagnosticFactory) {
                                 PsiElementOnlyDiagnosticFactory factory = (PsiElementOnlyDiagnosticFactory) diagnostic.getFactory();
-                                Collection<IntentionActionFactory> intentionActionFactories = QuickFixes.get(factory);
-                                for (IntentionActionFactory intentionActionFactory : intentionActionFactories) {
+                                Collection<JetIntentionActionFactory> intentionActionFactories = QuickFixes.get(factory);
+                                for (JetIntentionActionFactory intentionActionFactory : intentionActionFactories) {
                                     IntentionAction action = null;
                                     if (intentionActionFactory != null) {
                                         action = intentionActionFactory.createAction(diagnosticWithPsiElement);

@@ -63,8 +63,8 @@ public interface Errors {
     PsiElementOnlyDiagnosticFactory2<JetModifierList, JetKeywordToken, JetKeywordToken> REDUNDANT_MODIFIER = new PsiElementOnlyDiagnosticFactory2<JetModifierList, JetKeywordToken, JetKeywordToken>(Severity.WARNING, "Modifier {0} is redundant because {1} is present") {
         @NotNull
         @Override
-        public Diagnostic on(@NotNull JetModifierList element, @NotNull ASTNode node, @NotNull JetKeywordToken redundantModifier, @NotNull JetKeywordToken presentModifier) {
-            return new DiagnosticWithAdditionalInfo<JetModifierList, JetKeywordToken>(this, severity, makeMessage(redundantModifier, presentModifier), element, node.getTextRange(), redundantModifier);
+        public DiagnosticWithPsiElement<JetModifierList> on(@NotNull JetModifierList elementToBlame, @NotNull ASTNode nodeToMark, @NotNull JetKeywordToken redundantModifier, @NotNull JetKeywordToken presentModifier) {
+            return super.on(elementToBlame, nodeToMark, redundantModifier, presentModifier).add(DiagnosticParameters.MODIFIER, redundantModifier);
         }
     };
     SimpleDiagnosticFactory SAFE_CALLS_ARE_NOT_ALLOWED_ON_NAMESPACES = SimpleDiagnosticFactory.create(ERROR, "Safe calls are not allowed on namespaces");
@@ -88,27 +88,26 @@ public interface Errors {
     SimpleDiagnosticFactory FUNCTION_WITH_NO_TYPE_NO_BODY = SimpleDiagnosticFactory.create(ERROR, "This function must either declare a return type or have a body element");
     SimplePsiElementOnlyDiagnosticFactory<JetModifierListOwner> ABSTRACT_PROPERTY_IN_PRIMARY_CONSTRUCTOR_PARAMETERS = SimplePsiElementOnlyDiagnosticFactory.create(ERROR, "This property cannot be declared abstract");
     SimplePsiElementOnlyDiagnosticFactory<JetModifierListOwner> ABSTRACT_PROPERTY_NOT_IN_CLASS = SimplePsiElementOnlyDiagnosticFactory.create(ERROR, "A property may be abstract only when defined in a class or trait");
-    //TODO pass String instead of JetType or ensure JetType's value is computed
-    DiagnosticWithAdditionalInfoFactory1<JetProperty, JetType> ABSTRACT_PROPERTY_WITH_INITIALIZER = DiagnosticWithAdditionalInfoFactory1.create(ERROR, "Property with initializer cannot be abstract");
-    DiagnosticWithAdditionalInfoFactory1<JetProperty, JetType> ABSTRACT_PROPERTY_WITH_GETTER = DiagnosticWithAdditionalInfoFactory1.create(ERROR, "Property with getter implementation cannot be abstract");
-    DiagnosticWithAdditionalInfoFactory1<JetProperty, JetType> ABSTRACT_PROPERTY_WITH_SETTER = DiagnosticWithAdditionalInfoFactory1.create(ERROR, "Property with setter implementation cannot be abstract");
+    DiagnosticWithParametersFactory<JetProperty, JetType> ABSTRACT_PROPERTY_WITH_INITIALIZER = DiagnosticWithParametersFactory.create(ERROR, "Property with initializer cannot be abstract", DiagnosticParameters.TYPE);
+    DiagnosticWithParametersFactory<JetProperty, JetType> ABSTRACT_PROPERTY_WITH_GETTER = DiagnosticWithParametersFactory.create(ERROR, "Property with getter implementation cannot be abstract", DiagnosticParameters.TYPE);
+    DiagnosticWithParametersFactory<JetProperty, JetType> ABSTRACT_PROPERTY_WITH_SETTER = DiagnosticWithParametersFactory.create(ERROR, "Property with setter implementation cannot be abstract", DiagnosticParameters.TYPE);
     SimpleDiagnosticFactory BACKING_FIELD_IN_TRAIT = SimpleDiagnosticFactory.create(ERROR, "Property in a trait cannot have a backing field");
     SimpleDiagnosticFactory MUST_BE_INITIALIZED = SimpleDiagnosticFactory.create(ERROR, "Property must be initialized");
     SimplePsiElementOnlyDiagnosticFactory<JetModifierListOwner> MUST_BE_INITIALIZED_OR_BE_ABSTRACT = SimplePsiElementOnlyDiagnosticFactory.create(ERROR, "Property must be initialized or be abstract");
-    SimpleDiagnosticFactory PROPERTY_INITIALIZER_IN_TRAIT = SimpleDiagnosticFactory.create(ERROR, "Property initializers are not allowed in traits");
+    DiagnosticWithParametersFactory<JetProperty, JetType> PROPERTY_INITIALIZER_IN_TRAIT = DiagnosticWithParametersFactory.create(ERROR, "Property initializers are not allowed in traits", DiagnosticParameters.TYPE);
     SimpleDiagnosticFactory PROPERTY_INITIALIZER_NO_BACKING_FIELD = SimpleDiagnosticFactory.create(ERROR, "Initializer is not allowed here because this property has no backing field");
     SimpleDiagnosticFactory PROPERTY_INITIALIZER_NO_PRIMARY_CONSTRUCTOR = SimpleDiagnosticFactory.create(ERROR, "Property initializers are not allowed when no primary constructor is present");
     SimplePsiElementOnlyDiagnosticFactory<JetModifierListOwner> REDUNDANT_ABSTRACT = SimplePsiElementOnlyDiagnosticFactory.create(WARNING, "Abstract modifier is redundant in traits");
-    PsiElementOnlyDiagnosticFactory3<JetModifierListOwner, String, ClassDescriptor, JetClass> ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS = new PsiElementOnlyDiagnosticFactory3<JetModifierListOwner, String, ClassDescriptor, JetClass>(ERROR, "Abstract property {0} in non-abstract class {1}") {
+    PsiElementOnlyDiagnosticFactory3<JetModifierListOwner, String, ClassDescriptor, JetModifierListOwner> ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS = new PsiElementOnlyDiagnosticFactory3<JetModifierListOwner, String, ClassDescriptor, JetModifierListOwner>(ERROR, "Abstract property {0} in non-abstract class {1}") {
         @NotNull
-        protected Diagnostic on(@NotNull JetModifierListOwner element, @NotNull TextRange textRange, @NotNull String s, @NotNull ClassDescriptor classDescriptor, @NotNull JetClass jetClass) {
-            return new DiagnosticWithAdditionalInfo<JetModifierListOwner, JetClass>(this, severity, makeMessage(s, classDescriptor, jetClass), element, textRange, jetClass);
+        protected DiagnosticWithPsiElement<JetModifierListOwner> on(@NotNull JetModifierListOwner elementToBlame, @NotNull TextRange textRangeToMark, @NotNull String s, @NotNull ClassDescriptor classDescriptor, @NotNull JetModifierListOwner aClass) {
+            return super.on(elementToBlame, textRangeToMark, s, classDescriptor, aClass).add(DiagnosticParameters.CLASS, aClass);
         }
     };
     PsiElementOnlyDiagnosticFactory3<JetFunctionOrPropertyAccessor, String, ClassDescriptor, JetModifierListOwner> ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS = new PsiElementOnlyDiagnosticFactory3<JetFunctionOrPropertyAccessor, String, ClassDescriptor, JetModifierListOwner>(ERROR, "Abstract function {0} in non-abstract class {1}") {
         @NotNull
-        public Diagnostic on(@NotNull JetFunctionOrPropertyAccessor element, @NotNull ASTNode node, @NotNull String s, @NotNull ClassDescriptor classDescriptor, @NotNull JetModifierListOwner jetClass) {
-            return new DiagnosticWithAdditionalInfo<JetFunctionOrPropertyAccessor, JetModifierListOwner>(this, severity, makeMessage(s, classDescriptor, jetClass), element, node.getTextRange(), jetClass);
+        public DiagnosticWithPsiElement<JetFunctionOrPropertyAccessor> on(@NotNull JetFunctionOrPropertyAccessor elementToBlame, @NotNull ASTNode nodeToMark, @NotNull String s, @NotNull ClassDescriptor classDescriptor, @NotNull JetModifierListOwner modifierListOwner) {
+            return super.on(elementToBlame, nodeToMark, s, classDescriptor, modifierListOwner).add(DiagnosticParameters.CLASS, modifierListOwner);
         }
     };
     PsiElementOnlyDiagnosticFactory1<JetFunctionOrPropertyAccessor, FunctionDescriptor> ABSTRACT_FUNCTION_WITH_BODY = PsiElementOnlyDiagnosticFactory1.create(ERROR, "A function {0} with body cannot be abstract");
@@ -162,8 +161,8 @@ public interface Errors {
     SimplePsiElementOnlyDiagnosticFactory<JetBinaryExpressionWithTypeRHS> USELESS_CAST_STATIC_ASSERT_IS_FINE = SimplePsiElementOnlyDiagnosticFactory.create(WARNING, "No cast needed, use ':' instead");
     SimplePsiElementOnlyDiagnosticFactory<JetBinaryExpressionWithTypeRHS> USELESS_CAST = SimplePsiElementOnlyDiagnosticFactory.create(WARNING, "No cast needed");
     SimpleDiagnosticFactory CAST_NEVER_SUCCEEDS = SimpleDiagnosticFactory.create(WARNING, "This cast can never succeed");
-    DiagnosticWithAdditionalInfoFactory1<JetPropertyAccessor, JetType> WRONG_SETTER_PARAMETER_TYPE = DiagnosticWithAdditionalInfoFactory1.create(ERROR, "Setter parameter type must be equal to the type of the property, i.e. {0}");
-    DiagnosticWithAdditionalInfoFactory1<JetPropertyAccessor, JetType> WRONG_GETTER_RETURN_TYPE = DiagnosticWithAdditionalInfoFactory1.create(ERROR, "Getter return type must be equal to the type of the property, i.e. {0}");
+    DiagnosticWithParametersFactory<JetPropertyAccessor, JetType> WRONG_SETTER_PARAMETER_TYPE = DiagnosticWithParametersFactory.create(ERROR, "Setter parameter type must be equal to the type of the property, i.e. {0}", DiagnosticParameters.TYPE);
+    DiagnosticWithParametersFactory<JetPropertyAccessor, JetType> WRONG_GETTER_RETURN_TYPE = DiagnosticWithParametersFactory.create(ERROR, "Getter return type must be equal to the type of the property, i.e. {0}", DiagnosticParameters.TYPE);
     ParameterizedDiagnosticFactory1<ClassifierDescriptor> NO_CLASS_OBJECT = ParameterizedDiagnosticFactory1.create(ERROR, "Classifier {0} does not have a class object", NAME);
     SimpleDiagnosticFactory NO_GENERICS_IN_SUPERTYPE_SPECIFIER = SimpleDiagnosticFactory.create(ERROR, "Generic arguments of the base type must be specified");
 

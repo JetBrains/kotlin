@@ -9,12 +9,11 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithPsiElement;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lexer.JetTokens;
 
 /**
  * @author svtk
  */
-public class RemoveFunctionBodyFix extends IntentionActionForPsiElement<JetFunctionOrPropertyAccessor> {
+public class RemoveFunctionBodyFix extends JetIntentionAction<JetFunctionOrPropertyAccessor> {
 
     public RemoveFunctionBodyFix(@NotNull JetFunctionOrPropertyAccessor element) {
         super(element);
@@ -52,10 +51,10 @@ public class RemoveFunctionBodyFix extends IntentionActionForPsiElement<JetFunct
         element.replace(newElement);
     }
 
-    public static IntentionActionFactory<JetFunctionOrPropertyAccessor> createFactory() {
-        return new IntentionActionFactory<JetFunctionOrPropertyAccessor>() {
+    public static JetIntentionActionFactory<JetFunctionOrPropertyAccessor> createFactory() {
+        return new JetIntentionActionFactory<JetFunctionOrPropertyAccessor>() {
             @Override
-            public IntentionActionForPsiElement<JetFunctionOrPropertyAccessor> createAction(DiagnosticWithPsiElement diagnostic) {
+            public JetIntentionAction<JetFunctionOrPropertyAccessor> createAction(DiagnosticWithPsiElement diagnostic) {
                 assert diagnostic.getPsiElement() instanceof JetFunctionOrPropertyAccessor;
                 return new RemoveFunctionBodyFix((JetFunctionOrPropertyAccessor) diagnostic.getPsiElement());
             }

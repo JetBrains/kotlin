@@ -14,7 +14,7 @@ import org.jetbrains.jet.lang.psi.JetPsiFactory;
 /**
  * @author svtk
  */
-public abstract class ReplaceOperationInBinaryExpressionFix<T extends JetExpression> extends IntentionActionForPsiElement<T> {
+public abstract class ReplaceOperationInBinaryExpressionFix<T extends JetExpression> extends JetIntentionAction<T> {
     private final String expressionWithNecessaryOperation;
     public ReplaceOperationInBinaryExpressionFix(@NotNull T element, String expressionWithNecessaryOperation) {
         super(element);
@@ -39,10 +39,10 @@ public abstract class ReplaceOperationInBinaryExpressionFix<T extends JetExpress
         }
     }
 
-    public static IntentionActionFactory<JetBinaryExpressionWithTypeRHS> createChangeCastToStaticAssertFactory() {
-        return new IntentionActionFactory<JetBinaryExpressionWithTypeRHS>() {
+    public static JetIntentionActionFactory<JetBinaryExpressionWithTypeRHS> createChangeCastToStaticAssertFactory() {
+        return new JetIntentionActionFactory<JetBinaryExpressionWithTypeRHS>() {
             @Override
-            public IntentionActionForPsiElement<JetBinaryExpressionWithTypeRHS> createAction(DiagnosticWithPsiElement diagnostic) {
+            public JetIntentionAction<JetBinaryExpressionWithTypeRHS> createAction(DiagnosticWithPsiElement diagnostic) {
                 assert diagnostic.getPsiElement() instanceof JetBinaryExpressionWithTypeRHS;
                 return new ReplaceOperationInBinaryExpressionFix<JetBinaryExpressionWithTypeRHS>((JetBinaryExpressionWithTypeRHS) diagnostic.getPsiElement(), "2 : Int") {
                     @NotNull

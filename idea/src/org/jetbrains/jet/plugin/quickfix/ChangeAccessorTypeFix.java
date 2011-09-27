@@ -2,11 +2,13 @@ package org.jetbrains.jet.plugin.quickfix;
 
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.codeStyle.CodeEditUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticWithAdditionalInfo;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticParameters;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithPsiElement;
 import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.psi.JetPropertyAccessor;
@@ -17,7 +19,7 @@ import org.jetbrains.jet.lang.types.JetType;
 /**
  * @author svtk
  */
-public class ChangeAccessorTypeFix extends IntentionActionForPsiElement<JetPropertyAccessor> {
+public class ChangeAccessorTypeFix extends JetIntentionAction<JetPropertyAccessor> {
     private final JetType type;
 
     public ChangeAccessorTypeFix(@NotNull JetPropertyAccessor element, JetType type) {
@@ -58,14 +60,14 @@ public class ChangeAccessorTypeFix extends IntentionActionForPsiElement<JetPrope
         }
     }
     
-    public static IntentionActionFactory<JetPropertyAccessor> createFactory() {
-        return new IntentionActionFactory<JetPropertyAccessor>() {
+    public static JetIntentionActionFactory<JetPropertyAccessor> createFactory() {
+        return new JetIntentionActionFactory<JetPropertyAccessor>() {
             @Override
-            public IntentionActionForPsiElement<JetPropertyAccessor> createAction(DiagnosticWithPsiElement diagnostic) {
-                assert diagnostic instanceof DiagnosticWithAdditionalInfo;
+            public JetIntentionAction<JetPropertyAccessor> createAction(DiagnosticWithPsiElement diagnostic) {
                 assert diagnostic.getPsiElement() instanceof JetPropertyAccessor;
-                assert ((DiagnosticWithAdditionalInfo) diagnostic).getInfo() instanceof JetType;
-                return new ChangeAccessorTypeFix((JetPropertyAccessor) diagnostic.getPsiElement(), (JetType) ((DiagnosticWithAdditionalInfo) diagnostic).getInfo());
+                DiagnosticWithParameters<PsiElement> diagnosticWithParameters = assertAndCastToDiagnosticWithParameters(diagnostic, DiagnosticParameters.TYPE);
+                JetType type = diagnosticWithParameters.getParameter(DiagnosticParameters.TYPE);
+                return new ChangeAccessorTypeFix((JetPropertyAccessor) diagnostic.getPsiElement(), type);
             }
         };
     }

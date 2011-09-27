@@ -15,7 +15,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 /**
  * @author svtk
  */
-public class ChangeVariableMutabilityFix extends IntentionActionForPsiElement<JetProperty> {
+public class ChangeVariableMutabilityFix extends JetIntentionAction<JetProperty> {
     public ChangeVariableMutabilityFix(@NotNull JetProperty element) {
         super(element);
     }
@@ -52,10 +52,10 @@ public class ChangeVariableMutabilityFix extends IntentionActionForPsiElement<Je
         element.replace(newElement);
     }
 
-    public static IntentionActionFactory<JetProperty> createFactory() {
-        return new IntentionActionFactory<JetProperty>() {
+    public static JetIntentionActionFactory<JetProperty> createFactory() {
+        return new JetIntentionActionFactory<JetProperty>() {
             @Override
-            public IntentionActionForPsiElement<JetProperty> createAction(DiagnosticWithPsiElement diagnostic) {
+            public JetIntentionAction<JetProperty> createAction(DiagnosticWithPsiElement diagnostic) {
                 assert diagnostic.getPsiElement() instanceof JetProperty;
                 return new ChangeVariableMutabilityFix((JetProperty) diagnostic.getPsiElement());
             }

@@ -28,11 +28,20 @@ public class JetPsiFactory {
         JetProperty property = createProperty(project, "val x : Int");
         return new PsiElement[] { property.findElementAt(5), property.findElementAt(6), property.findElementAt(7) };
     }
-    
+
     public static PsiElement createWhiteSpace(Project project) {
-        JetProperty property = createProperty(project, "val x");
+        return createWhiteSpace(project, " ");
+    }
+
+    public static PsiElement createWhiteSpace(Project project, String text) {
+        JetProperty property = createProperty(project, "val" + text + "x");
         return property.findElementAt(3);
     }
+
+//    public static PsiElement createEndOfLine(Project project) {
+//        JetNamedFunction function = createFunction(project, "fun f { \n }");
+//        return function.findElementAt(8);
+//    }
 
     public static JetClass createClass(Project project, String text) {
         return createDeclaration(project, text, JetClass.class);
@@ -79,5 +88,15 @@ public class JetPsiFactory {
     public static JetExpression createEmptyBody(Project project) {
         JetNamedFunction function = createFunction(project, "fun foo() {}");
         return function.getBodyExpression();
+    }
+
+    public static JetNamespace createNamespace(Project project, String text) {
+        JetFile file = createFile(project, text);
+        return file.getRootNamespace();
+    }
+
+    public static JetImportDirective createImportDirective(Project project, String classPath) {
+        JetNamespace namespace = createNamespace(project, "import " + classPath);
+        return namespace.getImportDirectives().iterator().next();
     }
 }

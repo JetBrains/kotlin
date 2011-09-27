@@ -74,6 +74,11 @@ public interface RedeclarationDiagnostic extends DiagnosticWithPsiElement<PsiEle
         public Severity getSeverity() {
             return ERROR;
         }
+
+        @Override
+        public <P> DiagnosticWithPsiElement<PsiElement> add(DiagnosticParameter<P> parameterType, P parameter) {
+            throw new UnsupportedOperationException();
+        }
     }
 
 }

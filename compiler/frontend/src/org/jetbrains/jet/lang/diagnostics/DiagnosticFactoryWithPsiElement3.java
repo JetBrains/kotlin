@@ -34,23 +34,23 @@ public abstract class DiagnosticFactoryWithPsiElement3<T extends PsiElement, A, 
     }
 
     @NotNull
-    public Diagnostic on(@NotNull T element, @NotNull A a, @NotNull B b, @NotNull C c) {
+    public DiagnosticWithPsiElement<T> on(@NotNull T element, @NotNull A a, @NotNull B b, @NotNull C c) {
         return on(element, element, a, b, c);
     }
     
     @NotNull
-    public Diagnostic on(@NotNull T element, @NotNull PsiElement psiElement, @NotNull A a, @NotNull B b, @NotNull C c) {
-        return on(element, psiElement.getTextRange(), a, b, c);
+    public DiagnosticWithPsiElement<T> on(@NotNull T elementToBlame, @NotNull PsiElement elementToMark, @NotNull A a, @NotNull B b, @NotNull C c) {
+        return on(elementToBlame, elementToMark.getTextRange(), a, b, c);
     }
 
     @NotNull
-    public Diagnostic on(@NotNull T element, @NotNull ASTNode node, @NotNull A a, @NotNull B b, @NotNull C c) {
-        return on(element, node.getTextRange(), a, b, c);
+    public DiagnosticWithPsiElement<T> on(@NotNull T elementToBlame, @NotNull ASTNode nodeToMark, @NotNull A a, @NotNull B b, @NotNull C c) {
+        return on(elementToBlame, nodeToMark.getTextRange(), a, b, c);
     }
 
     @NotNull
-    protected Diagnostic on(@NotNull T element, @NotNull TextRange textRange, @NotNull A a, @NotNull B b, @NotNull C c) {
-        return new DiagnosticWithPsiElementImpl<T>(this, severity, makeMessage(a, b, c), element, textRange);
+    protected DiagnosticWithPsiElement<T> on(@NotNull T elementToBlame, @NotNull TextRange textRangeToMark, @NotNull A a, @NotNull B b, @NotNull C c) {
+        return new DiagnosticWithPsiElementImpl<T>(this, severity, makeMessage(a, b, c), elementToBlame, textRangeToMark);
     }
     
 }

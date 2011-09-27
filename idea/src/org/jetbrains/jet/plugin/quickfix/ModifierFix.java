@@ -9,7 +9,7 @@ import org.jetbrains.jet.lexer.JetKeywordToken;
 /**
  * @author svtk
  */
-public abstract class ModifierFix extends IntentionActionForPsiElement<JetModifierListOwner> {
+public abstract class ModifierFix extends JetIntentionAction<JetModifierListOwner> {
     protected final JetKeywordToken modifier;
 
     protected ModifierFix(@NotNull JetModifierListOwner element, JetKeywordToken modifier) {

@@ -6,8 +6,8 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticWithPsiElement;
 /**
 * @author svtk
 */
-public interface IntentionActionFactory<T extends PsiElement> {
+public interface JetIntentionActionFactory<T extends PsiElement> {
 
-    IntentionActionForPsiElement<T> createAction(DiagnosticWithPsiElement diagnostic);
+    JetIntentionAction<T> createAction(DiagnosticWithPsiElement diagnostic);
 
 }

@@ -31,12 +31,16 @@ public abstract class DiagnosticFactoryWithPsiElement2<T extends PsiElement, A, 
     }
 
     @NotNull
-    public Diagnostic on(@NotNull T element, @NotNull A a, @NotNull B b) {
+    public DiagnosticWithPsiElement<T> on(@NotNull T element, @NotNull A a, @NotNull B b) {
         return on(element, element.getNode(), a, b);
     }
     
     @NotNull
-    public Diagnostic on(@NotNull T element, @NotNull ASTNode node, @NotNull A a, @NotNull B b) {
-        return new DiagnosticWithPsiElementImpl<T>(this, severity, makeMessage(a, b), element, node.getTextRange());
+    public DiagnosticWithPsiElement<T> on(@NotNull T elementToBlame, @NotNull ASTNode nodeToMark, @NotNull A a, @NotNull B b) {
+        return makeDiagnostic(new DiagnosticWithPsiElementImpl<T>(this, severity, makeMessage(a, b), elementToBlame, nodeToMark.getTextRange()));
+    }
+
+    public DiagnosticWithPsiElement<T> makeDiagnostic(DiagnosticWithPsiElement<T> diagnostic) {
+        return diagnostic;
     }
 }
