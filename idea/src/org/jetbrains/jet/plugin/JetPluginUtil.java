@@ -9,6 +9,7 @@ import org.jetbrains.jet.lang.resolve.java.JavaClassDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.DeferredType;
+import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.JetType;
 
@@ -61,7 +62,7 @@ public class JetPluginUtil {
         JetScope libraryScope = standardLibrary.getLibraryScope();
 
         DeclarationDescriptor declaration = type.getMemberScope().getContainingDeclaration();
-        if (declaration instanceof JavaClassDescriptor) {
+        if (declaration instanceof JavaClassDescriptor || ErrorUtils.isError(declaration)) {
             return false;
         }
         while (!(declaration instanceof NamespaceDescriptor)) {

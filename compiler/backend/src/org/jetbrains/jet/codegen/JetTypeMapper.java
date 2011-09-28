@@ -670,4 +670,20 @@ public class JetTypeMapper {
     public String isKnownTypeInfo(JetType jetType) {
         return knowTypes.get(jetType);
     }
+
+    public boolean isGenericsArray(JetType type) {
+        DeclarationDescriptor declarationDescriptor = type.getConstructor().getDeclarationDescriptor();
+        if(declarationDescriptor instanceof TypeParameterDescriptor)
+            return true;
+
+        if(standardLibrary.getArray().equals(declarationDescriptor))
+            return isGenericsArray(type.getArguments().get(0).getType());
+
+        return false;
+    }
+
+    public JetType getGenericsElementType(JetType arrayType) {
+        JetType type = arrayType.getArguments().get(0).getType();
+        return isGenericsArray(type) ? type : null;
+    }
 }

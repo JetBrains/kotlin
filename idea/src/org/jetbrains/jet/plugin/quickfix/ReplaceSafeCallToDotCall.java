@@ -36,7 +36,6 @@ public class ReplaceSafeCallToDotCall extends JetIntentionAction<JetElement> {
             JetSafeQualifiedExpression safeQualifiedExpression = (JetSafeQualifiedExpression) element;
             JetDotQualifiedExpression newElement = (JetDotQualifiedExpression) JetPsiFactory.createExpression(project, "x.foo");
 
-            //TODO check for null
             CodeEditUtil.replaceChild(newElement.getNode(), newElement.getSelectorExpression().getNode(), safeQualifiedExpression.getSelectorExpression().getNode());
             CodeEditUtil.replaceChild(newElement.getNode(), newElement.getReceiverExpression().getNode(), safeQualifiedExpression.getReceiverExpression().getNode());
 

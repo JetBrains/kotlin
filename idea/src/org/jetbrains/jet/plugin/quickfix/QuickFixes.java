@@ -6,10 +6,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticParameters;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.diagnostics.PsiElementOnlyDiagnosticFactory;
-import org.jetbrains.jet.lang.psi.JetFunctionOrPropertyAccessor;
-import org.jetbrains.jet.lang.psi.JetModifierListOwner;
-import org.jetbrains.jet.lang.psi.JetProperty;
-import org.jetbrains.jet.lang.psi.JetPropertyAccessor;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -53,7 +50,7 @@ public class QuickFixes {
         add(Errors.MUST_BE_INITIALIZED_OR_BE_ABSTRACT, addAbstractModifierFactory);
         add(Errors.REDUNDANT_ABSTRACT, removeAbstractModifierFactory);
 
-        JetIntentionActionFactory<JetModifierListOwner> addAbstractToClassFactory = QuickFixUtil.createFactoryRedirectingAdditionalInfoToAnotherFactory(addAbstractModifierFactory, DiagnosticParameters.CLASS);
+        JetIntentionActionFactory<PsiElement> addAbstractToClassFactory = QuickFixUtil.createFactoryRedirectingAdditionalInfoToAnotherFactory(addAbstractModifierFactory, DiagnosticParameters.CLASS);
         add(Errors.ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS, removeAbstractModifierFactory);
         add(Errors.ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS, addAbstractToClassFactory);
 
@@ -89,6 +86,12 @@ public class QuickFixes {
         add(Errors.UNNECESSARY_SAFE_CALL, ReplaceSafeCallToDotCall.createFactory());
         
         add(Errors.REDUNDANT_MODIFIER, RemoveRedundantModifierFix.createFactory());
+        
+        add(Errors.PROPERTY_INITIALIZER_NO_PRIMARY_CONSTRUCTOR, RemovePartsFromPropertyFix.createRemoveInitializerFactory());
+
+        JetIntentionActionFactory<JetClass> addPrimaryConstructorFactory = AddPrimaryConstructorFix.createFactory();
+        add(Errors.PROPERTY_INITIALIZER_NO_PRIMARY_CONSTRUCTOR, QuickFixUtil.createFactoryRedirectingAdditionalInfoToAnotherFactory(addPrimaryConstructorFactory, DiagnosticParameters.CLASS));
+        add(Errors.PRIMARY_CONSTRUCTOR_MISSING_STATEFUL_PROPERTY, addPrimaryConstructorFactory);
     }
 }
 

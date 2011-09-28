@@ -12,14 +12,14 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticWithPsiElementImpl;
 public class QuickFixUtil {
     private QuickFixUtil() {}
 
-    public static <T extends PsiElement> JetIntentionActionFactory<T> createFactoryRedirectingAdditionalInfoToAnotherFactory(final JetIntentionActionFactory<T> factory, final DiagnosticParameter<T> parameter) {
-        return new JetIntentionActionFactory<T>() {
+    public static <T extends PsiElement, P extends T> JetIntentionActionFactory<PsiElement> createFactoryRedirectingAdditionalInfoToAnotherFactory(final JetIntentionActionFactory<T> factory, final DiagnosticParameter<P> parameter) {
+        return new JetIntentionActionFactory<PsiElement>() {
             @Override
-            public JetIntentionAction<T> createAction(DiagnosticWithPsiElement diagnostic) {
+            public JetIntentionAction<PsiElement> createAction(DiagnosticWithPsiElement diagnostic) {
 
                 DiagnosticWithParameters<PsiElement> diagnosticWithParameters = JetIntentionAction.assertAndCastToDiagnosticWithParameters(diagnostic, parameter);
                 T element = diagnosticWithParameters.getParameter(parameter);
-                return factory.createAction(new DiagnosticWithPsiElementImpl<T>(diagnostic.getFactory(), diagnostic.getSeverity(), diagnostic.getMessage(), element));
+                return (JetIntentionAction<PsiElement>) factory.createAction(new DiagnosticWithPsiElementImpl<T>(diagnostic.getFactory(), diagnostic.getSeverity(), diagnostic.getMessage(), element));
             }
         };
     }

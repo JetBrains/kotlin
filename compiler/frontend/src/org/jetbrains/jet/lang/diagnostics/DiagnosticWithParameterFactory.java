@@ -7,14 +7,14 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author svtk
  */
-public class DiagnosticWithParametersFactory<T extends PsiElement, A> extends PsiElementOnlyDiagnosticFactory1<T, A> {
-    public static <T extends PsiElement, A> DiagnosticWithParametersFactory<T, A> create(Severity severity, String messageStub, DiagnosticParameter<A> diagnosticParameter) {
-        return new DiagnosticWithParametersFactory<T, A>(severity, messageStub, diagnosticParameter);
+public class DiagnosticWithParameterFactory<T extends PsiElement, A> extends PsiElementOnlyDiagnosticFactory1<T, A> {
+    public static <T extends PsiElement, A> DiagnosticWithParameterFactory<T, A> create(Severity severity, String messageStub, DiagnosticParameter<A> diagnosticParameter) {
+        return new DiagnosticWithParameterFactory<T, A>(severity, messageStub, diagnosticParameter);
     }
 
     private final DiagnosticParameter<A> diagnosticParameter;
 
-    protected DiagnosticWithParametersFactory(Severity severity, String message, DiagnosticParameter<A> diagnosticParameter) {
+    protected DiagnosticWithParameterFactory(Severity severity, String message, DiagnosticParameter<A> diagnosticParameter) {
         super(severity, message);
         this.diagnosticParameter = diagnosticParameter;
     }

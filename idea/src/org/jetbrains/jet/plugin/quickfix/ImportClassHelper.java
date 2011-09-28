@@ -3,6 +3,7 @@ package org.jetbrains.jet.plugin.quickfix;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetPluginUtil;
 
@@ -21,7 +22,7 @@ public class ImportClassHelper {
         JetNamespace namespace = (JetNamespace) parent;
         List<JetImportDirective> importDirectives = namespace.getImportDirectives();
 
-        if (JetPluginUtil.checkTypeIsStandard(type, element.getProject())) {
+        if (JetPluginUtil.checkTypeIsStandard(type, element.getProject()) || ErrorUtils.isError(type.getMemberScope().getContainingDeclaration())) {
             element.replace(newElement);
             return;
         }

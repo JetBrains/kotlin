@@ -48,7 +48,6 @@ public class ChangeAccessorTypeFix extends JetIntentionAction<JetPropertyAccesso
             JetTypeReference returnTypeReference = newElement.getReturnTypeReference();
             assert returnTypeReference != null;
             CodeEditUtil.replaceChild(newElement.getNode(), returnTypeReference.getNode(), newTypeReference.getNode());
-            element.replace(newElement);
         }
         else {
             JetParameter parameter = newElement.getParameter();
@@ -56,8 +55,8 @@ public class ChangeAccessorTypeFix extends JetIntentionAction<JetPropertyAccesso
             JetTypeReference typeReference = parameter.getTypeReference();
             assert typeReference != null;
             CodeEditUtil.replaceChild(parameter.getNode(), typeReference.getNode(), newTypeReference.getNode());
-            element.replace(newElement);
         }
+        ImportClassHelper.perform(type, element, newElement);
     }
     
     public static JetIntentionActionFactory<JetPropertyAccessor> createFactory() {
