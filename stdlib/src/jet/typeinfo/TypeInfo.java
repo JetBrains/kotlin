@@ -3,6 +3,7 @@ package jet.typeinfo;
 import jet.JetObject;
 import jet.Tuple0;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.TypeVariable;
 import java.util.*;
@@ -37,6 +38,10 @@ public abstract class TypeInfo<T> implements JetObject {
     public static final TypeInfo<Double> NULLABLE_DOUBLE_TYPE_INFO = getTypeInfo(Double.class, true);
     public static final TypeInfo<String> NULLABLE_STRING_TYPE_INFO = getTypeInfo(String.class, true);
     public static final TypeInfo<Tuple0> NULLABLE_TUPLE0_TYPE_INFO = getTypeInfo(Tuple0.class, true);
+    
+    public static Object [] newArray(int length, TypeInfo typeInfo) {
+        return (Object[]) Array.newInstance(((TypeInfoImpl) typeInfo).signature.klazz, length);
+    }
 
     public static <T> TypeInfoProjection invariantProjection(final TypeInfo<T> typeInfo) {
         return (TypeInfoProjection) typeInfo;

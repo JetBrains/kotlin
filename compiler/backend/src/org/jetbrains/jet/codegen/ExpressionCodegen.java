@@ -378,8 +378,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
             gen(expression.getLoopRange(), loopRangeType);  // array
             v.load(myIndexVar, Type.INT_TYPE);
-            v.aload(loopRangeType.getElementType());
-            StackValue.onStack(loopRangeType.getElementType()).put(asmParamType, v);
+            v.aload(CodegenUtil.arrayElementType(loopRangeType));
+            StackValue.onStack(CodegenUtil.arrayElementType(loopRangeType)).put(asmParamType, v);
             v.store(lookupLocal(parameterDescriptor), asmParamType);
         }
 
@@ -1683,12 +1683,23 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     }
 
     private void generateNewArray(JetCallExpression expression, Type type) {
+        JetType arrayType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression);
+
         List<? extends ValueArgument> args = expression.getValueArguments();
         if (args.size() != 1) {
             throw new CompilationException("array constructor requires one value argument");
         }
         gen(args.get(0).getArgumentExpression(), Type.INT_TYPE);
-        v.newarray(type.getElementType());
+
+        JetType elementType = typeMapper.getGenericsElementType(arrayType);
+        if(elementType != null) {
+            generateTypeInfo(elementType);
+            v.invokestatic("jet/typeinfo/TypeInfo", "newArray", "(ILjet/typeinfo/TypeInfo;)[Ljava/lang/Object;");
+            v.checkcast(type);
+        }
+        else {
+            v.newarray(CodegenUtil.arrayElementType(type));
+        }
     }
 
     @Override
@@ -1698,7 +1709,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         gen(array, arrayType);
         generateArrayIndex(expression);
         if (arrayType.getSort() == Type.ARRAY) {
-            final Type elementType = arrayType.getElementType();
+            final Type elementType = CodegenUtil.arrayElementType(arrayType);
             return StackValue.arrayElement(elementType);
         }
         else {

@@ -186,7 +186,7 @@ public abstract class StackValue {
             else
                 v.iconst(0);
         }
-        else if (type.getSort() == Type.OBJECT && this.type.equals(JetTypeMapper.TYPE_OBJECT)) {
+        else if (type.getSort() == Type.OBJECT && this.type.equals(JetTypeMapper.TYPE_OBJECT) || type.getSort() == Type.ARRAY) {
                 v.checkcast(type);
         }
         else if (type.getSort() == Type.OBJECT) {
@@ -431,6 +431,7 @@ public abstract class StackValue {
         @Override
         public void put(Type type, InstructionAdapter v) {
             v.aload(type);    // assumes array and index are on the stack
+            coerce(type, v);
         }
 
         @Override
