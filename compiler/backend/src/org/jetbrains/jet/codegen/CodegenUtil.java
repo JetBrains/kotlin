@@ -1,13 +1,12 @@
 package org.jetbrains.jet.codegen;
 
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeProjection;
+import org.objectweb.asm.Type;
 
 /**
  * @author abreslav
@@ -53,5 +52,9 @@ public class CodegenUtil {
             outerDescriptor = outerDescriptor.getContainingDeclaration();
         }
         return (ClassDescriptor) outerDescriptor;
+    }
+
+    public static Type arrayElementType(Type type) {
+        return Type.getType(type.getDescriptor().substring(1));
     }
 }

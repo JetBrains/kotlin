@@ -1,0 +1,25 @@
+namespace test
+
+class List<T>() {
+  val a : Array<T> = Array<T>(1)
+}
+
+fun box() : String {
+  val a = List<String>()
+  a.a[0] = "1"
+  println(a.a[0])
+
+  val b = List<Int?>()
+  b.a[0] = 10
+  println(b.a[0])
+
+  val c = List<Array<Int>>()
+  c.a[0] = Array<Int>(4)
+  println(c.a[0].size)
+
+  return "OK"
+}
+
+fun println(s : Any?) {
+  System.out?.println(s);
+}
