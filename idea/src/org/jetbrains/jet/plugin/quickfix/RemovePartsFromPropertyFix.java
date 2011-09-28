@@ -10,7 +10,6 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticParameters;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithPsiElement;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.types.DeferredType;
 import org.jetbrains.jet.lang.types.JetType;
 
 /**
@@ -22,12 +21,7 @@ public class RemovePartsFromPropertyFix extends JetIntentionAction<JetProperty> 
     
     private RemovePartsFromPropertyFix(@NotNull JetProperty element, JetType type) {
         super(element);
-        if (type instanceof DeferredType) {
-            this.type = ((DeferredType) type).getActualType();
-        }
-        else {
-            this.type = type;
-        }
+        this.type = type;
         partsToRemove = partsToRemove(element.getGetter() != null && element.getGetter().getBodyExpression() != null,
                                       element.getSetter() != null && element.getSetter().getBodyExpression() != null,
                                       element.getInitializer() != null);
