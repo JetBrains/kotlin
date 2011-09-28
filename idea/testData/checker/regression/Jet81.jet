@@ -14,9 +14,9 @@ val a = object {
   {
     b + 1
   }
-  val x = <error>b</error>
+  val x = b
   val y = 1
 }
 
-val b = a.x
+val b = <error>a</error>.x
 val c = a.y

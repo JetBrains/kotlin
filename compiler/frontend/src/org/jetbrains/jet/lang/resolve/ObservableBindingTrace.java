@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * @author abreslav
  */
-public class BindingTraceAdapter implements BindingTrace {
+public class ObservableBindingTrace implements BindingTrace {
     public interface RecordHandler<K, V> {
 
         void handleRecord(WritableSlice<K, V> slice, K key, V value);
@@ -19,7 +19,7 @@ public class BindingTraceAdapter implements BindingTrace {
     private final BindingTrace originalTrace;
 
     private Map<WritableSlice, RecordHandler> handlers = Maps.newHashMap();
-    public BindingTraceAdapter(BindingTrace originalTrace) {
+    public ObservableBindingTrace(BindingTrace originalTrace) {
         this.originalTrace = originalTrace;
     }
 
@@ -52,7 +52,7 @@ public class BindingTraceAdapter implements BindingTrace {
         return originalTrace.get(slice, key);
     }
     
-    public <K, V> BindingTraceAdapter addHandler(@NotNull WritableSlice<K, V> slice, @NotNull RecordHandler<K, V> handler) {
+    public <K, V> ObservableBindingTrace addHandler(@NotNull WritableSlice<K, V> slice, @NotNull RecordHandler<K, V> handler) {
         handlers.put(slice, handler);
         return this;
     }

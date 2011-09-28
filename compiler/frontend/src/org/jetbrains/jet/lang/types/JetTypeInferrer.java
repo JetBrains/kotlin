@@ -432,13 +432,13 @@ public class JetTypeInferrer {
                         // This implements coercion to Unit
                         TemporaryBindingTrace temporaryTraceExpectingUnit = TemporaryBindingTrace.create(trace);
                         final boolean[] mismatch = new boolean[1];
-                        BindingTraceAdapter errorInterceptingTrace = makeTraceInterceptingTypeMismatch(temporaryTraceExpectingUnit, statementExpression, mismatch);
+                        ObservableBindingTrace errorInterceptingTrace = makeTraceInterceptingTypeMismatch(temporaryTraceExpectingUnit, statementExpression, mismatch);
                         newContext = newContext(errorInterceptingTrace, scope, newContext.dataFlowInfo, context.expectedType, context.expectedReturnType);
                         result = blockLevelVisitor.getType(statementExpression, newContext);
                         if (mismatch[0]) {
                             TemporaryBindingTrace temporaryTraceNoExpectedType = TemporaryBindingTrace.create(trace);
                             mismatch[0] = false;
-                            BindingTraceAdapter interceptingTrace = makeTraceInterceptingTypeMismatch(temporaryTraceNoExpectedType, statementExpression, mismatch);
+                            ObservableBindingTrace interceptingTrace = makeTraceInterceptingTypeMismatch(temporaryTraceNoExpectedType, statementExpression, mismatch);
                             newContext = newContext(interceptingTrace, scope, newContext.dataFlowInfo, NO_EXPECTED_TYPE, context.expectedReturnType);
                             result = blockLevelVisitor.getType(statementExpression, newContext);
                             if (mismatch[0]) {
@@ -474,8 +474,8 @@ public class JetTypeInferrer {
             return result;
         }
 
-        private BindingTraceAdapter makeTraceInterceptingTypeMismatch(final BindingTrace trace, final JetExpression expressionToWatch, final boolean[] mismatchFound) {
-            return new BindingTraceAdapter(trace) {
+        private ObservableBindingTrace makeTraceInterceptingTypeMismatch(final BindingTrace trace, final JetExpression expressionToWatch, final boolean[] mismatchFound) {
+            return new ObservableBindingTrace(trace) {
 
                 @Override
                 public void report(@NotNull Diagnostic diagnostic) {
@@ -875,12 +875,12 @@ public class JetTypeInferrer {
         @Override
         public JetType visitObjectLiteralExpression(final JetObjectLiteralExpression expression, final TypeInferenceContext context) {
             final JetType[] result = new JetType[1];
-            BindingTraceAdapter.RecordHandler<PsiElement, ClassDescriptor> handler = new BindingTraceAdapter.RecordHandler<PsiElement, ClassDescriptor>() {
+            ObservableBindingTrace.RecordHandler<PsiElement, ClassDescriptor> handler = new ObservableBindingTrace.RecordHandler<PsiElement, ClassDescriptor>() {
 
                 @Override
                 public void handleRecord(WritableSlice<PsiElement, ClassDescriptor> slice, PsiElement declaration, final ClassDescriptor descriptor) {
                     if (slice == CLASS && declaration == expression.getObjectDeclaration()) {
-                        JetType defaultType = new DeferredType(new LazyValue<JetType>() {
+                        JetType defaultType = DeferredType.create(context.trace, new LazyValueWithDefault<JetType>(ErrorUtils.createErrorType("Recursive dependency")) {
                             @Override
                             protected JetType compute() {
                                 return descriptor.getDefaultType();
@@ -894,7 +894,7 @@ public class JetTypeInferrer {
                     }
                 }
             };
-            BindingTraceAdapter traceAdapter = new BindingTraceAdapter(context.trace);
+            ObservableBindingTrace traceAdapter = new ObservableBindingTrace(context.trace);
             traceAdapter.addHandler(CLASS, handler);
             TopDownAnalyzer.processObject(semanticServices, traceAdapter, context.scope, context.scope.getContainingDeclaration(), expression.getObjectDeclaration());
             return context.services.checkType(result[0], expression, context);

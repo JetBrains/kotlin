@@ -2,17 +2,28 @@ package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
 import java.util.List;
+
+import static org.jetbrains.jet.lang.resolve.BindingContext.DEFERRED_TYPE;
+import static org.jetbrains.jet.lang.resolve.BindingContext.DeferredTypeKey.DEFERRED_TYPE_KEY;
 
 /**
  * @author abreslav
  */
 public class DeferredType implements JetType {
+    
+    public static DeferredType create(BindingTrace trace, LazyValue<JetType> lazyValue) {
+        DeferredType deferredType = new DeferredType(lazyValue);
+        trace.record(DEFERRED_TYPE, DEFERRED_TYPE_KEY, deferredType);
+        return deferredType;
+    }
+    
     private final LazyValue<JetType> lazyValue;
 
-    public DeferredType(LazyValue<JetType> lazyValue) {
+    private DeferredType(LazyValue<JetType> lazyValue) {
         this.lazyValue = lazyValue;
     }
 
