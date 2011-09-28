@@ -95,7 +95,7 @@ public class BodyResolver {
                         if (nameIdentifier != null) {
 //                            context.getTrace().getErrorHandler().genericError(nameIdentifier.getNode(),
 //                                    "This class must have a primary constructor, because property " + propertyDescriptor.getName() + " has a backing field");
-                            context.getTrace().report(PRIMARY_CONSTRUCTOR_MISSING_STATEFUL_PROPERTY.on(nameIdentifier, propertyDescriptor));
+                            context.getTrace().report(PRIMARY_CONSTRUCTOR_MISSING_STATEFUL_PROPERTY.on(jetClass, nameIdentifier, propertyDescriptor));
                         }
                         break;
                     }
@@ -590,7 +590,10 @@ public class BodyResolver {
         }
         else if (classDescriptor != null && classDescriptor.getUnsubstitutedPrimaryConstructor() == null) {
 //            context.getTrace().getErrorHandler().genericError(initializer.getNode(), "Property initializers are not allowed when no primary constructor is present");
-            context.getTrace().report(PROPERTY_INITIALIZER_NO_PRIMARY_CONSTRUCTOR.on(initializer));
+            PsiElement classElement = context.getTrace().get(BindingContext.DESCRIPTOR_TO_DECLARATION, classDescriptor);
+            assert classElement instanceof JetClass;
+
+            context.getTrace().report(PROPERTY_INITIALIZER_NO_PRIMARY_CONSTRUCTOR.on(property, initializer, (JetClass) classElement));
         }
     }
 
@@ -697,10 +700,10 @@ public class BodyResolver {
             boolean inTrait = classDescriptor.getKind() == ClassKind.TRAIT;
             boolean inEnum = classDescriptor.getKind() == ClassKind.ENUM_CLASS;
             boolean inAbstractClass = classDescriptor.getModality() == Modality.ABSTRACT;
-            PsiElement classElement = context.getTrace().get(BindingContext.DESCRIPTOR_TO_DECLARATION, classDescriptor);
-            assert classElement instanceof JetModifierListOwner;
             if (hasAbstractModifier && !inAbstractClass && !inTrait && !inEnum) {
-                context.getTrace().report(ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS.on(functionOrPropertyAccessor, abstractNode, functionDescriptor.getName(), classDescriptor, (JetModifierListOwner) classElement));
+                PsiElement classElement = context.getTrace().get(BindingContext.DESCRIPTOR_TO_DECLARATION, classDescriptor);
+                assert classElement instanceof JetClass;
+                context.getTrace().report(ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS.on(functionOrPropertyAccessor, abstractNode, functionDescriptor.getName(), classDescriptor, (JetClass) classElement));
             }
             if (hasAbstractModifier && inTrait && !isPropertyAccessor) {
                 context.getTrace().report(REDUNDANT_ABSTRACT.on(functionOrPropertyAccessor, abstractNode));

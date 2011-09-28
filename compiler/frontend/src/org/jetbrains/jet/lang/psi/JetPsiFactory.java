@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.util.LocalTimeCounter;
@@ -24,9 +25,10 @@ public class JetPsiFactory {
         return property.getPropertyTypeRef();
     }
 
-    public static PsiElement[] createColon(Project project) {
+    //the pair contains the first and the last elements of a range
+    public static Pair<PsiElement, PsiElement> createColon(Project project) {
         JetProperty property = createProperty(project, "val x : Int");
-        return new PsiElement[] { property.findElementAt(5), property.findElementAt(6), property.findElementAt(7) };
+        return Pair.create(property.findElementAt(5), property.findElementAt(7));
     }
 
     public static PsiElement createWhiteSpace(Project project) {
@@ -37,11 +39,6 @@ public class JetPsiFactory {
         JetProperty property = createProperty(project, "val" + text + "x");
         return property.findElementAt(3);
     }
-
-//    public static PsiElement createEndOfLine(Project project) {
-//        JetNamedFunction function = createFunction(project, "fun f { \n }");
-//        return function.findElementAt(8);
-//    }
 
     public static JetClass createClass(Project project, String text) {
         return createDeclaration(project, text, JetClass.class);
@@ -98,5 +95,10 @@ public class JetPsiFactory {
     public static JetImportDirective createImportDirective(Project project, String classPath) {
         JetNamespace namespace = createNamespace(project, "import " + classPath);
         return namespace.getImportDirectives().iterator().next();
+    }
+    
+    public static PsiElement createPrimaryConstructor(Project project) {
+        JetClass aClass = createClass(project, "class A()");
+        return aClass.findElementAt(7).getParent();
     }
 }
