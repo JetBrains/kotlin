@@ -2,14 +2,10 @@ package org.jetbrains.jet.lang.resolve.calls;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression;
-import org.jetbrains.jet.lang.psi.JetLabelQualifiedExpression;
-import org.jetbrains.jet.lang.psi.ValueArgument;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.types.CallMaker;
 
@@ -49,27 +45,25 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
             ValueArgument valueArgument = valueArguments.get(i);
             if (valueArgument.isNamed()) {
                 someNamed = true;
-                ASTNode nameNode = valueArgument.getArgumentName().getNode();
-                if (somePositioned) {
-//                    temporaryTrace.getErrorHandler().genericError(nameNode, "Mixing named and positioned arguments in not allowed");
-                    temporaryTrace.report(MIXING_NAMED_AND_POSITIONED_ARGUMENTS.on(nameNode));
+                JetReferenceExpression nameReference = valueArgument.getArgumentName().getReferenceExpression();
+                ValueParameterDescriptor valueParameterDescriptor = parameterByName.get(valueArgument.getArgumentName().getReferenceExpression().getReferencedName());
+                if (valueParameterDescriptor == null) {
+//                        temporaryTrace.getErrorHandler().genericError(nameNode, "Cannot find a parameter with this name");
+                    temporaryTrace.report(NAMED_PARAMETER_NOT_FOUND.on(nameReference));
                     error = true;
                 }
                 else {
-                    ValueParameterDescriptor valueParameterDescriptor = parameterByName.get(valueArgument.getArgumentName().getReferenceExpression().getReferencedName());
                     if (!usedParameters.add(valueParameterDescriptor)) {
 //                        temporaryTrace.getErrorHandler().genericError(nameNode, "An argument is already passed for this parameter");
-                        temporaryTrace.report(ARGUMENT_PASSED_TWICE.on(nameNode));
+                        temporaryTrace.report(ARGUMENT_PASSED_TWICE.on(nameReference));
                     }
-                    if (valueParameterDescriptor == null) {
-//                        temporaryTrace.getErrorHandler().genericError(nameNode, "Cannot find a parameter with this name");
-                        temporaryTrace.report(NAMED_PARAMETER_NOT_FOUND.on(nameNode));
-                        error = true;
-                    }
-                    else {
-                        temporaryTrace.record(REFERENCE_TARGET, valueArgument.getArgumentName().getReferenceExpression(), valueParameterDescriptor);
-                        argumentsToParameters.put(valueArgument, valueParameterDescriptor);
-                    }
+                    temporaryTrace.record(REFERENCE_TARGET, nameReference, valueParameterDescriptor);
+                    argumentsToParameters.put(valueArgument, valueParameterDescriptor);
+                }
+                if (somePositioned) {
+//                    temporaryTrace.getErrorHandler().genericError(nameNode, "Mixing named and positioned arguments in not allowed");
+                    temporaryTrace.report(MIXING_NAMED_AND_POSITIONED_ARGUMENTS.on(nameReference));
+                    error = true;
                 }
             }
             else {

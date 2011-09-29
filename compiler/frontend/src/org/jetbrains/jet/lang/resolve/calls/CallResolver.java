@@ -214,19 +214,20 @@ public class CallResolver {
 
             @Override
             public void noValueForParameter(@NotNull BindingTrace trace, @NotNull ValueParameterDescriptor valueParameter) {
-                ASTNode node;
-
-                JetValueArgumentList valueArgumentList = call.getValueArgumentList();
-                if (valueArgumentList != null) {
-                    node = valueArgumentList.getNode();
-                }
-                else if (!call.getFunctionLiteralArguments().isEmpty()) {
-                    node = call.getFunctionLiteralArguments().get(0).getNode();
-                }
-                else {
-                    node = callNode;
-                }
-                trace.report(NO_VALUE_FOR_PARAMETER.on(node, valueParameter));
+//                ASTNode node;
+//
+//                JetValueArgumentList valueArgumentList = call.getValueArgumentList();
+//                if (valueArgumentList != null) {
+//                    node = valueArgumentList.getNode();
+//                }
+//                else if (!call.getFunctionLiteralArguments().isEmpty()) {
+//                    node = call.getFunctionLiteralArguments().get(0).getNode();
+//                }
+//                else {
+//                    node = callNode;
+//                }
+//                trace.report(NO_VALUE_FOR_PARAMETER.on(node, valueParameter));
+                trace.report(NO_VALUE_FOR_PARAMETER.on(reference, valueParameter));
             }
 
             @Override

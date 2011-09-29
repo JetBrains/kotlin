@@ -7,11 +7,15 @@ import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 * @author abreslav
 */
 public class UnresolvedReferenceDiagnosticFactory extends AbstractDiagnosticFactory {
-    public static final UnresolvedReferenceDiagnosticFactory INSTANCE = new UnresolvedReferenceDiagnosticFactory();
+//    public static final UnresolvedReferenceDiagnosticFactory INSTANCE = new UnresolvedReferenceDiagnosticFactory();
 
-    public UnresolvedReferenceDiagnosticFactory() {}
+    private final String message;
+    
+    public UnresolvedReferenceDiagnosticFactory(String message) {
+        this.message = message;
+    }
 
     public UnresolvedReferenceDiagnostic on(@NotNull JetReferenceExpression reference) {
-        return new UnresolvedReferenceDiagnostic(reference);
+        return new UnresolvedReferenceDiagnostic(reference, message);
     }
 }

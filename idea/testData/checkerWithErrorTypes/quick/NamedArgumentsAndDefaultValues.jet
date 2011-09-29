@@ -1,0 +1,20 @@
+fun foo(a : Int = 1, b : String = "abc") {
+}
+
+fun test() {
+    foo()
+    foo(2)
+    foo(<!TYPE_MISMATCH!>""<!>)
+    foo(b = "")
+    foo(1, "")
+    foo(a = 2)
+    foo(1, "", <!TOO_MANY_ARGUMENTS!>""<!>)
+
+    bar(z = "")
+    <!NO_VALUE_FOR_PARAMETER!>bar<!>()
+    <!NO_VALUE_FOR_PARAMETER!>bar<!>("")
+    bar(1, 1, "")
+    bar(1, 1, "")
+    bar(1, <!MIXING_NAMED_AND_POSITIONED_ARGUMENTS!>z<!> = "")
+    <!NO_VALUE_FOR_PARAMETER!>bar<!>(1, <!UNRESOLVED_REFERENCE, MIXING_NAMED_AND_POSITIONED_ARGUMENTS!>zz<!> = "", <!MIXING_NAMED_AND_POSITIONED_ARGUMENTS!><!UNRESOLVED_REFERENCE!>zz<!>.foo<!>)
+}

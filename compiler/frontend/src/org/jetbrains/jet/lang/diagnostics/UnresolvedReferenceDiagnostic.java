@@ -10,8 +10,8 @@ import static org.jetbrains.jet.lang.diagnostics.Severity.ERROR;
 */
 public class UnresolvedReferenceDiagnostic extends DiagnosticWithPsiElementImpl<JetReferenceExpression> {
 
-    public UnresolvedReferenceDiagnostic(JetReferenceExpression referenceExpression) {
-        super(Errors.UNRESOLVED_REFERENCE, ERROR, "Unresolved reference", referenceExpression);
+    public UnresolvedReferenceDiagnostic(JetReferenceExpression referenceExpression, String message) {
+        super(Errors.UNRESOLVED_REFERENCE, ERROR, message, referenceExpression);
     }
 
     @NotNull

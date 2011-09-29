@@ -42,7 +42,7 @@ public interface Errors {
             return e.getClass().getSimpleName() + ": " + e.getMessage();
         }
     };
-    UnresolvedReferenceDiagnosticFactory UNRESOLVED_REFERENCE = UnresolvedReferenceDiagnosticFactory.INSTANCE;
+    UnresolvedReferenceDiagnosticFactory UNRESOLVED_REFERENCE = new UnresolvedReferenceDiagnosticFactory("Unresolved reference");
     RedeclarationDiagnosticFactory REDECLARATION = RedeclarationDiagnosticFactory.INSTANCE;
     PsiElementOnlyDiagnosticFactory2<PsiElement, JetType, JetType> TYPE_MISMATCH = PsiElementOnlyDiagnosticFactory2.create(ERROR, "Type mismatch: inferred type is {1} but {0} was expected");
     ParameterizedDiagnosticFactory1<Collection<JetKeywordToken>> INCOMPATIBLE_MODIFIERS = new ParameterizedDiagnosticFactory1<Collection<JetKeywordToken>>(ERROR, "Incompatible modifiers: ''{0}''") {
@@ -82,7 +82,7 @@ public interface Errors {
     SimpleDiagnosticFactory NO_BACKING_FIELD = SimpleDiagnosticFactory.create(ERROR, "This property does not have a backing field");
     SimpleDiagnosticFactory MIXING_NAMED_AND_POSITIONED_ARGUMENTS = SimpleDiagnosticFactory.create(ERROR, "Mixing named and positioned arguments in not allowed");
     SimpleDiagnosticFactory ARGUMENT_PASSED_TWICE = SimpleDiagnosticFactory.create(ERROR, "An argument is already passed for this parameter");
-    SimpleDiagnosticFactory NAMED_PARAMETER_NOT_FOUND = SimpleDiagnosticFactory.create(ERROR, "Cannot find a parameter with this name");
+    UnresolvedReferenceDiagnosticFactory NAMED_PARAMETER_NOT_FOUND = new UnresolvedReferenceDiagnosticFactory("Cannot find a parameter with this name");//SimpleDiagnosticFactory.create(ERROR, "Cannot find a parameter with this name");
     SimpleDiagnosticFactory VARARG_OUTSIDE_PARENTHESES = SimpleDiagnosticFactory.create(ERROR, "Passing value as a vararg is only allowed inside a parenthesized argument list");
 
     SimpleDiagnosticFactory MANY_FUNCTION_LITERAL_ARGUMENTS = SimpleDiagnosticFactory.create(ERROR, "Only one function literal is allowed outside a parenthesized argument list");

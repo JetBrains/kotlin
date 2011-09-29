@@ -8,6 +8,7 @@ import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.MultiRangeReference;
 import com.intellij.psi.PsiElement;
@@ -29,9 +30,7 @@ import org.jetbrains.jet.plugin.quickfix.QuickFixes;
 import java.util.Collection;
 import java.util.Set;
 
-import static org.jetbrains.jet.lang.resolve.BindingContext.AUTOCAST;
-import static org.jetbrains.jet.lang.resolve.BindingContext.AUTO_CREATED_IT;
-import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
+import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 
 /**
  * @author abreslav
@@ -52,11 +51,12 @@ public class JetPsiChecker implements Annotator {
     public void annotate(@NotNull PsiElement element, @NotNull final AnnotationHolder holder) {
         if (element instanceof JetFile) {
             JetFile file = (JetFile) element;
+            Project project = element.getProject();
             try {
                 final BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache(file);
 
                 if (errorReportingEnabled) {
-                    Collection<Diagnostic> diagnostics = bindingContext.getDiagnostics();
+                    Collection<Diagnostic> diagnostics = Sets.newLinkedHashSet(bindingContext.getDiagnostics());
                     Set<PsiElement> redeclarations = Sets.newHashSet();
                     for (Diagnostic diagnostic : diagnostics) {
                         Annotation annotation = null;
@@ -68,11 +68,11 @@ public class JetPsiChecker implements Annotator {
                                 if (reference instanceof MultiRangeReference) {
                                     MultiRangeReference mrr = (MultiRangeReference) reference;
                                     for (TextRange range : mrr.getRanges()) {
-                                        holder.createErrorAnnotation(range.shiftRight(referenceExpression.getTextOffset()), "Unresolved").setHighlightType(ProblemHighlightType.LIKE_UNKNOWN_SYMBOL);
+                                        holder.createErrorAnnotation(range.shiftRight(referenceExpression.getTextOffset()), diagnostic.getMessage()).setHighlightType(ProblemHighlightType.LIKE_UNKNOWN_SYMBOL);
                                     }
                                 }
                                 else {
-                                    holder.createErrorAnnotation(referenceExpression, "Unresolved").setHighlightType(ProblemHighlightType.LIKE_UNKNOWN_SYMBOL);
+                                    holder.createErrorAnnotation(referenceExpression, diagnostic.getMessage()).setHighlightType(ProblemHighlightType.LIKE_UNKNOWN_SYMBOL);
                                 }
                             }
                             else if (diagnostic instanceof RedeclarationDiagnostic) {
