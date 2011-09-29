@@ -16,7 +16,7 @@ import java.util.Set;
  */
 /*package*/ class TopDownAnalysisContext {
 
-    private final BindingTrace trace;
+    private final ObservableBindingTrace trace;
     private final JetSemanticServices semanticServices;
     private final ClassDescriptorResolver classDescriptorResolver;
 
@@ -32,12 +32,12 @@ import java.util.Set;
     private final Map<JetDeclaration, JetScope> declaringScopes = Maps.newHashMap();
 
     public TopDownAnalysisContext(JetSemanticServices semanticServices, BindingTrace trace) {
-        this.trace = trace;
+        this.trace = new ObservableBindingTrace(trace);
         this.semanticServices = semanticServices;
         this.classDescriptorResolver = semanticServices.getClassDescriptorResolver(trace);
     }
 
-    public BindingTrace getTrace() {
+    public ObservableBindingTrace getTrace() {
         return trace;
     }
 

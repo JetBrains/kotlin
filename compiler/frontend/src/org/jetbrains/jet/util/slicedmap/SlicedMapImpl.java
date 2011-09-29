@@ -34,10 +34,11 @@ public class SlicedMapImpl implements MutableSlicedMap {
             return;
         }
         SlicedMapKey<K, V> slicedMapKey = slice.makeKey(key);
-        if (slice.getRewritePolicy().rewriteProcessingNeeded(key)) {
+        RewritePolicy rewritePolicy = slice.getRewritePolicy();
+        if (rewritePolicy.rewriteProcessingNeeded(key)) {
             if (map.containsKey(slicedMapKey)) {
                 //noinspection unchecked
-                if (!slice.getRewritePolicy().processRewrite(slice, key, (V) map.get(slicedMapKey), value)) {
+                if (!rewritePolicy.processRewrite(slice, key, (V) map.get(slicedMapKey), value)) {
                     return;
                 }
             }

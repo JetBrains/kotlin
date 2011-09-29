@@ -160,10 +160,10 @@ public class Slices {
 
     public static class SetSlice<K> extends BasicRemovableSlice<K, Boolean> {
 
-
         protected SetSlice(String debugName, RewritePolicy rewritePolicy) {
             super(debugName, rewritePolicy);
         }
+
         @Override
         public Boolean computeValue(SlicedMap map, K key, Boolean value, boolean valueNotFound) {
             if (valueNotFound) return false;

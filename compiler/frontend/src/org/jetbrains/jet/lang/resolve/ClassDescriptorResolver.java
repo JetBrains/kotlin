@@ -175,7 +175,7 @@ public class ClassDescriptorResolver {
         else {
             final JetExpression bodyExpression = function.getBodyExpression();
             if (bodyExpression != null) {
-                returnType = new DeferredType(new LazyValue<JetType>() {
+                returnType = DeferredType.create(trace, new LazyValueWithDefault<JetType>(ErrorUtils.createErrorType("Recursive dependency")) {
                     @Override
                     protected JetType compute() {
                         JetFlowInformationProvider flowInformationProvider = computeFlowData(function, bodyExpression);
@@ -530,7 +530,7 @@ public class ClassDescriptorResolver {
                 return ErrorUtils.createErrorType("No type, no body");
             } else {
                 // TODO : a risk of a memory leak
-                LazyValue<JetType> lazyValue = new LazyValue<JetType>() {
+                LazyValue<JetType> lazyValue = new LazyValueWithDefault<JetType>(ErrorUtils.createErrorType("Recursive dependency")) {
                     @Override
                     protected JetType compute() {
                         JetFlowInformationProvider flowInformationProvider = computeFlowData(property, initializer);
@@ -538,7 +538,7 @@ public class ClassDescriptorResolver {
                     }
                 };
                 if (allowDeferred) {
-                    return new DeferredType(lazyValue);
+                    return DeferredType.create(trace, lazyValue);
                 }
                 else {
                     return lazyValue.get();

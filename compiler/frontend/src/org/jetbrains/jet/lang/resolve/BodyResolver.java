@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.containers.Queue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -16,28 +17,28 @@ import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.jet.lang.resolve.BindingContext.DEFERRED_TYPE;
+import static org.jetbrains.jet.lang.resolve.BindingContext.DEFERRED_TYPES;
+import static org.jetbrains.jet.lang.resolve.BindingContext.DeferredTypeKey.DEFERRED_TYPE_KEY;
 import static org.jetbrains.jet.lang.types.JetTypeInferrer.NO_EXPECTED_TYPE;
 
 /**
- * @author abreslav
- */
+* @author abreslav
+*/
 public class BodyResolver {
     private final TopDownAnalysisContext context;
 
-    private final BindingTraceAdapter traceForConstructors;
-    private final BindingTraceAdapter traceForMembers;
+    private final ObservableBindingTrace traceForConstructors;
+    private final ObservableBindingTrace traceForMembers;
 
     public BodyResolver(TopDownAnalysisContext context) {
         this.context = context;
 
         // This allows access to backing fields
-        this.traceForConstructors = new BindingTraceAdapter(context.getTrace()).addHandler(BindingContext.REFERENCE_TARGET, new BindingTraceAdapter.RecordHandler<JetReferenceExpression, DeclarationDescriptor>() {
+        this.traceForConstructors = new ObservableBindingTrace(context.getTrace()).addHandler(BindingContext.REFERENCE_TARGET, new ObservableBindingTrace.RecordHandler<JetReferenceExpression, DeclarationDescriptor>() {
             @Override
             public void handleRecord(WritableSlice<JetReferenceExpression, DeclarationDescriptor> slice, JetReferenceExpression expression, DeclarationDescriptor descriptor) {
                 if (expression instanceof JetSimpleNameExpression) {
@@ -52,7 +53,7 @@ public class BodyResolver {
         });
 
         // This tracks access to properties in order to register primary constructor parameters that yield real fields (JET-9)
-        this.traceForMembers = new BindingTraceAdapter(context.getTrace()).addHandler(BindingContext.REFERENCE_TARGET, new BindingTraceAdapter.RecordHandler<JetReferenceExpression, DeclarationDescriptor>() {
+        this.traceForMembers = new ObservableBindingTrace(context.getTrace()).addHandler(BindingContext.REFERENCE_TARGET, new ObservableBindingTrace.RecordHandler<JetReferenceExpression, DeclarationDescriptor>() {
             @Override
             public void handleRecord(WritableSlice<JetReferenceExpression, DeclarationDescriptor> slice, JetReferenceExpression expression, DeclarationDescriptor descriptor) {
                 if (descriptor instanceof PropertyDescriptor) {
@@ -78,7 +79,34 @@ public class BodyResolver {
         resolveSecondaryConstructorBodies();
         resolveFunctionBodies();
 
-
+        computeDeferredTypes();        
+    }
+    
+    private void computeDeferredTypes() {
+        Collection<DeferredType> deferredTypes = context.getTrace().get(DEFERRED_TYPES, DEFERRED_TYPE_KEY);
+        if (deferredTypes != null) {
+            final Queue<DeferredType> queue = new Queue<DeferredType>(deferredTypes.size());
+            context.getTrace().addHandler(DEFERRED_TYPE, new ObservableBindingTrace.RecordHandler<BindingContext.DeferredTypeKey, DeferredType>() {
+                @Override
+                public void handleRecord(WritableSlice<BindingContext.DeferredTypeKey, DeferredType> deferredTypeKeyDeferredTypeWritableSlice, BindingContext.DeferredTypeKey key, DeferredType value) {
+                    queue.addLast(value);
+                }
+            });
+            for (DeferredType deferredType : deferredTypes) {
+                queue.addLast(deferredType);
+            }
+            while (!queue.isEmpty()) {
+                DeferredType deferredType = queue.pullFirst();
+                if (!deferredType.isComputed()) {
+                    try {
+                        deferredType.getActualType(); // to compute
+                    }
+                    catch (ReenteringLazyValueComputationException e) {
+                        // A problem should be reported while computing the type
+                    }
+                }
+            }
+        }
     }
 
 
@@ -95,8 +123,8 @@ public class BodyResolver {
     private void resolveDelegationSpecifierList(final JetClassOrObject jetClass, final MutableClassDescriptor descriptor) {
         final ConstructorDescriptor primaryConstructor = descriptor.getUnsubstitutedPrimaryConstructor();
         final JetScope scopeForConstructor = primaryConstructor == null
-                                             ? null
-                                             : getInnerScopeForConstructor(primaryConstructor, descriptor.getScopeForMemberResolution(), true);
+                ? null
+                : getInnerScopeForConstructor(primaryConstructor, descriptor.getScopeForMemberResolution(), true);
         final JetTypeInferrer.Services typeInferrer = context.getSemanticServices().getTypeInferrerServices(traceForConstructors, JetFlowInformationProvider.NONE); // TODO : flow
 
         final Map<JetTypeReference, JetType> supertypes = Maps.newLinkedHashMap();
@@ -317,8 +345,8 @@ public class BodyResolver {
                         ClassDescriptor classDescriptor = descriptor.getContainingDeclaration();
 
                         typeInferrerForInitializers.getCallResolver().resolveCall(context.getTrace(),
-                                                                                  functionInnerScope,
-                                                                                  ReceiverDescriptor.NO_RECEIVER, call, NO_EXPECTED_TYPE);
+                                functionInnerScope,
+                                ReceiverDescriptor.NO_RECEIVER, call, NO_EXPECTED_TYPE);
 //                                call.getThisReference(),
 //                                classDescriptor,
 //                                classDescriptor.getDefaultType(),
@@ -436,7 +464,7 @@ public class BodyResolver {
     }
 
     private void resolvePropertyAccessors(JetProperty property, PropertyDescriptor propertyDescriptor, JetScope declaringScope) {
-        BindingTraceAdapter fieldAccessTrackingTrace = createFieldTrackingTrace(propertyDescriptor);
+        ObservableBindingTrace fieldAccessTrackingTrace = createFieldTrackingTrace(propertyDescriptor);
 
         WritableScope accessorScope = new WritableScopeImpl(getPropertyDeclarationInnerScope(declaringScope, propertyDescriptor), declaringScope.getContainingDeclaration(), new TraceBasedRedeclarationHandler(context.getTrace())).setDebugName("Accessor scope");
         accessorScope.addPropertyDescriptorByFieldName("$" + propertyDescriptor.getName(), propertyDescriptor);
@@ -454,8 +482,8 @@ public class BodyResolver {
         }
     }
 
-    private BindingTraceAdapter createFieldTrackingTrace(final PropertyDescriptor propertyDescriptor) {
-        return new BindingTraceAdapter(traceForMembers).addHandler(BindingContext.REFERENCE_TARGET, new BindingTraceAdapter.RecordHandler<JetReferenceExpression, DeclarationDescriptor>() {
+    private ObservableBindingTrace createFieldTrackingTrace(final PropertyDescriptor propertyDescriptor) {
+        return new ObservableBindingTrace(traceForMembers).addHandler(BindingContext.REFERENCE_TARGET, new ObservableBindingTrace.RecordHandler<JetReferenceExpression, DeclarationDescriptor>() {
             @Override
             public void handleRecord(WritableSlice<JetReferenceExpression, DeclarationDescriptor> slice, JetReferenceExpression expression, DeclarationDescriptor descriptor) {
                 if (expression instanceof JetSimpleNameExpression) {
@@ -471,8 +499,8 @@ public class BodyResolver {
         });
     }
 
-    private BindingTraceAdapter createFieldAssignTrackingTrace() {
-        return new BindingTraceAdapter(traceForConstructors).addHandler(BindingContext.VARIABLE_ASSIGNMENT, new BindingTraceAdapter.RecordHandler<JetExpression, DeclarationDescriptor>() {
+    private ObservableBindingTrace createFieldAssignTrackingTrace() {
+        return new ObservableBindingTrace(traceForConstructors).addHandler(BindingContext.VARIABLE_ASSIGNMENT, new ObservableBindingTrace.RecordHandler<JetExpression, DeclarationDescriptor>() {
             @Override
             public void handleRecord(WritableSlice<JetExpression, DeclarationDescriptor> jetExpressionBooleanWritableSlice, JetExpression expression, DeclarationDescriptor descriptor) {
                 if (expression instanceof JetSimpleNameExpression) {

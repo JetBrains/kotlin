@@ -9,7 +9,9 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.types.DeferredType;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.util.CommonSuppliers;
 import org.jetbrains.jet.util.slicedmap.*;
 
 import java.util.Collection;
@@ -41,6 +43,10 @@ public interface BindingContext {
     WritableSlice<JetExpression, Boolean> PROCESSED = Slices.createSimpleSetSlice("PROCESSED");
     WritableSlice<JetElement, Boolean> STATEMENT = Slices.createRemovableSetSlice("STATEMENT");
     WritableSlice<CallableMemberDescriptor, Boolean> DELEGATED = Slices.createRemovableSetSlice("DELEGATED");
+    
+    enum DeferredTypeKey {DEFERRED_TYPE_KEY}
+    WritableSlice<DeferredTypeKey, Collection<DeferredType>> DEFERRED_TYPES = Slices.createSimpleSlice("DEFERRED_TYPES");
+    WritableSlice<DeferredTypeKey, DeferredType> DEFERRED_TYPE = new CollectionSliceWrapper<DeferredTypeKey, DeferredType>(DEFERRED_TYPES, CommonSuppliers.<DeferredType>getArrayListSupplier());
 
     WritableSlice<PropertyDescriptor, Boolean> BACKING_FIELD_REQUIRED = new Slices.SetSlice<PropertyDescriptor>("BACKING_FIELD_REQUIRED", RewritePolicy.DO_NOTHING) {
         @Override

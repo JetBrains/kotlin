@@ -17,6 +17,10 @@ public abstract class LazyValue<T> {
 
     protected abstract T compute();
 
+    protected T getValueOnErrorReentry() {
+        throw new ReenteringLazyValueComputationException();
+    }
+
     public boolean isComputed() {
         return state == State.ERROR || state == State.COMPUTED;
     }
@@ -34,7 +38,7 @@ public abstract class LazyValue<T> {
             case COMPUTED:
                 return value;
             case ERROR:
-                throw new ReenteringLazyValueComputationException();
+                return getValueOnErrorReentry();
         }
         throw new IllegalStateException("Unreachable");
     }

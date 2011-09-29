@@ -61,7 +61,7 @@ public class TopDownAnalyzer {
     public static void process(
             @NotNull JetSemanticServices semanticServices,
             @NotNull BindingTrace trace,
-            @NotNull JetScope outerScope, NamespaceLike owner, @NotNull List<JetDeclaration> declarations) {
+            @NotNull JetScope outerScope, NamespaceLike owner, @NotNull List<? extends JetDeclaration> declarations) {
         TopDownAnalysisContext context = new TopDownAnalysisContext(semanticServices, trace);
         new TypeHierarchyResolver(context).process(outerScope, owner, declarations);
         new DeclarationResolver(context).process();
