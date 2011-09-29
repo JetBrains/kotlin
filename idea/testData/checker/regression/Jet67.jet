@@ -1,4 +1,4 @@
 abstract class XXX {
-  val a : Int abstract get
+  abstract val a : Int abstract get
 
 }

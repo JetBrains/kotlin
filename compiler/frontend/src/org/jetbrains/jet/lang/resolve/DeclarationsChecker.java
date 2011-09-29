@@ -128,7 +128,7 @@ public class DeclarationsChecker {
             }
         }    
 
-    protected void checkProperty(JetProperty property, PropertyDescriptor propertyDescriptor) {
+    private void checkProperty(JetProperty property, PropertyDescriptor propertyDescriptor) {
         DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
         ClassDescriptor classDescriptor = (containingDeclaration instanceof ClassDescriptor)
                                           ? (ClassDescriptor) containingDeclaration
@@ -286,6 +286,10 @@ public class DeclarationsChecker {
             if (propertyDescriptor.getModality() == Modality.FINAL && accessor.hasModifier(JetTokens.OPEN_KEYWORD)) {
                 ASTNode openModifierNode = accessor.getModifierList().getModifierNode(JetTokens.OPEN_KEYWORD);
                 context.getTrace().report(NON_FINAL_ACCESSOR_OF_FINAL_PROPERTY.on(accessor, openModifierNode, property));
+            }
+            if (propertyDescriptor.getModality() != Modality.ABSTRACT && accessor.hasModifier(JetTokens.ABSTRACT_KEYWORD)) {
+                ASTNode abstractModifierNode = accessor.getModifierList().getModifierNode(JetTokens.ABSTRACT_KEYWORD);
+                context.getTrace().report(ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY.on(accessor, abstractModifierNode, property));
             }
         }
     }

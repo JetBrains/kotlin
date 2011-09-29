@@ -122,6 +122,7 @@ public interface Errors {
     
     DiagnosticWithParameterFactory<JetNamedDeclaration, JetClass> NON_FINAL_MEMBER_IN_FINAL_CLASS = DiagnosticWithParameterFactory.create(ERROR, "Non final member in a final class", DiagnosticParameters.CLASS);
     DiagnosticWithParameterFactory<JetPropertyAccessor, JetProperty> NON_FINAL_ACCESSOR_OF_FINAL_PROPERTY = DiagnosticWithParameterFactory.create(ERROR, "Non final accessor of a final property", DiagnosticParameters.PROPERTY);
+    DiagnosticWithParameterFactory<JetPropertyAccessor, JetProperty> ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY = DiagnosticWithParameterFactory.create(ERROR, "Abstract accessor of a non abstract property", DiagnosticParameters.PROPERTY);
 
     SimpleDiagnosticFactory PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT = SimpleDiagnosticFactory.create(ERROR, "Projections are not allowed on type arguments of functions and properties"); // TODO : better positioning
     SimpleDiagnosticFactory SUPERTYPE_NOT_INITIALIZED = SimpleDiagnosticFactory.create(ERROR, "This type has a constructor, and thus must be initialized here");

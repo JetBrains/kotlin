@@ -35,10 +35,10 @@ abstract class Test() {
     var <!MUST_BE_INITIALIZED!>v5<!> : Int get() = 1; set(x){$v5 = x}
     var <!MUST_BE_INITIALIZED!>v6<!> : Int get() = $v6 + 1; set(x){}
 
-  val v7 : Int abstract get
-  var v8 : Int abstract get abstract set
-  var <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>v9<!> : Int abstract set
-  var <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>v10<!> : Int abstract get
+  abstract val v7 : Int abstract get
+  abstract var v8 : Int abstract get abstract set
+  var <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>v9<!> : Int <!ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> set
+  var <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>v10<!> : Int <!ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> get
 
 }
 

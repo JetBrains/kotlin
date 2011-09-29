@@ -102,6 +102,9 @@ public class QuickFixes {
         add(Errors.NON_FINAL_MEMBER_IN_FINAL_CLASS, removeOpenModifierFactory);
         add(Errors.NON_FINAL_ACCESSOR_OF_FINAL_PROPERTY, QuickFixUtil.createFactoryRedirectingAdditionalInfoToAnotherFactory(addOpenModifierFactory, DiagnosticParameters.PROPERTY));
         add(Errors.NON_FINAL_ACCESSOR_OF_FINAL_PROPERTY, removeOpenModifierFactory);
+
+        add(Errors.ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY, QuickFixUtil.createFactoryRedirectingAdditionalInfoToAnotherFactory(addAbstractModifierFactory, DiagnosticParameters.PROPERTY));
+        add(Errors.ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY, removeAbstractModifierFactory);
     }
 }
 

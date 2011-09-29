@@ -27,21 +27,6 @@ class MyClass() {
     fun g() {}
     <error>abstract</error> fun h()
     <error><error>abstract</error></error> fun j() {}
-
-    //property accessors
-    var i: Int                       <error>abstract</error> get  <error>abstract</error> set
-    var i1: Int = <error>0</error>;  <error>abstract</error> get  <error>abstract</error> set
-
-    var j: Int                       get() = i;    <error>abstract</error> set
-    var j1: Int = <error>0</error>;  get() = i;    <error>abstract</error> set
-
-    var <error>k</error>: Int        <error>abstract</error> set
-    var k1: Int = 0;                 <error>abstract</error> set
-
-    var l: Int                       <error>abstract</error> get  <error>abstract</error> set
-    var l1: Int = <error>0</error>;  <error>abstract</error> get  <error>abstract</error> set
-
-    var n: Int                       <error>abstract</error> get <error>abstract</error> set(v: Int) {}
 }
 
 abstract class MyAbstractClass() {
@@ -71,21 +56,6 @@ abstract class MyAbstractClass() {
     fun g() {}
     abstract fun h()
     <error>abstract</error> fun j() {}
-
-    //property accessors
-    var i: Int                       abstract get  abstract set
-    var i1: Int = <error>0</error>;  abstract get  abstract set
-
-    var j: Int                       get() = i;    abstract set
-    var j1: Int                      get() = i;    abstract set
-
-    var <error>k</error>: Int        abstract set
-    var k1: Int = 0;                 abstract set
-
-    var l: Int                       abstract get  abstract set
-    var l1: Int = <error>0</error>;  abstract get  abstract set
-
-    var n: Int                       abstract get <error>abstract</error> set(v: Int) {}
 }
 
 trait MyTrait {
@@ -115,21 +85,6 @@ trait MyTrait {
     fun g() {}
     <warning>abstract</warning> fun h()
     <error>abstract</error> fun j() {}
-
-    //property accessors
-    var i: Int                       abstract get  abstract set
-    var i1: Int = <error>0</error>;  abstract get  abstract set
-
-    var j: Int                       get() = i;    abstract set
-    var j1: Int = <error>0</error>;  get() = i;    abstract set
-
-    var k: Int                       abstract set
-    var k1: Int = <error>0</error>;  abstract set
-
-    var l: Int                       abstract get  abstract set
-    var l1: Int = <error>0</error>;  abstract get  abstract set
-
-    var n: Int                       abstract get <error>abstract</error> set(v: Int) {}
 }
 
 enum class MyEnum() {
@@ -159,21 +114,6 @@ enum class MyEnum() {
     fun g() {}
     abstract fun h()
     <error>abstract</error> fun j() {}
-
-    //property accessors
-    var i: Int                       abstract get  abstract set
-    var i1: Int = <error>0</error>;  abstract get  abstract set
-
-    var j: Int                       get() = i;    abstract set
-    var j1: Int = <error>0</error>;  get() = i;    abstract set
-
-    var <error>k</error>: Int        abstract set
-    var k1: Int = 0;                 abstract set
-
-    var l: Int                       abstract get  abstract set
-    var l1: Int = <error>0</error>;   abstract get  abstract set
-
-    var n: Int                       abstract get <error>abstract</error> set(v: Int) {}
 }
 
 abstract enum class MyAbstractEnum() {}
@@ -205,21 +145,6 @@ namespace MyNamespace {
     fun g() {}
     <error>abstract</error> fun h()
     <error>abstract</error> fun j() {}
-
-    //property accessors
-    var i: Int                       <error>abstract</error> get  <error>abstract</error> set
-    var i1: Int = <error>0</error>;  <error>abstract</error> get  <error>abstract</error> set
-
-    var j: Int                       get() = i;    <error>abstract</error> set
-    var j1: Int = <error>0</error>;  get() = i;    <error>abstract</error> set
-
-    var <error>k</error>: Int        <error>abstract</error> set
-    var k1: Int = 0;                 <error>abstract</error> set
-
-    var l: Int                       <error>abstract</error> get  <error>abstract</error> set
-    var l1: Int = <error>0</error>;  <error>abstract</error> get  <error>abstract</error> set
-
-    var n: Int                       <error>abstract</error> get <error>abstract</error> set(v: Int) {}
 }
 
 //creating an instance

@@ -4,6 +4,10 @@ abstract class A() {
     <!INCOMPATIBLE_MODIFIERS!>abstract<!> <!INCOMPATIBLE_MODIFIERS!>final<!> fun f()
     abstract <!REDUNDANT_MODIFIER!>open<!> fun g()
     <!INCOMPATIBLE_MODIFIERS!>final<!> <!INCOMPATIBLE_MODIFIERS!>open<!> fun h() {}
+
+    open var <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>r<!>: String
+    get
+    <!ABSTRACT_ACCESSOR_OF_NON_ABSTRACT_PROPERTY!>abstract<!> protected set
 }
 
 <!TRAIT_CAN_NOT_BE_FINAL!>final<!> trait T {}
