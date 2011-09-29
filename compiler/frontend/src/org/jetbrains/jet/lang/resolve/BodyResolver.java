@@ -549,13 +549,26 @@ public class BodyResolver {
             @NotNull JetDeclarationWithBody function,
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull JetScope declaringScope) {
-        JetExpression bodyExpression = function.getBodyExpression();
 
+        JetExpression bodyExpression = function.getBodyExpression();
         if (bodyExpression != null) {
             JetFlowInformationProvider flowInformationProvider = context.getClassDescriptorResolver().computeFlowData(function.asElement(), bodyExpression);
             JetTypeInferrer.Services typeInferrer = context.getSemanticServices().getTypeInferrerServices(trace, flowInformationProvider);
 
             typeInferrer.checkFunctionReturnType(declaringScope, function, functionDescriptor);
+        }
+
+        JetTypeInferrer.Services typeInferrer = context.getSemanticServices().getTypeInferrerServices(trace, JetFlowInformationProvider.THROW_EXCEPTION);
+        List<JetParameter> valueParameters = function.getValueParameters();
+        for (int i = 0; i < valueParameters.size(); i++) {
+            ValueParameterDescriptor valueParameterDescriptor = functionDescriptor.getValueParameters().get(i);
+            if (valueParameterDescriptor.hasDefaultValue()) {
+                JetParameter jetParameter = valueParameters.get(i);
+                JetExpression defaultValue = jetParameter.getDefaultValue();
+                if (defaultValue != null) {
+                    typeInferrer.getType(declaringScope, defaultValue, valueParameterDescriptor.getOutType());
+                }
+            }
         }
 
         assert functionDescriptor.getReturnType() != null;

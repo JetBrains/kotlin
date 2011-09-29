@@ -1,7 +1,7 @@
 fun foo(a : Int = 1, b : String = "abc") {
 }
 
-fun bar(x : Int = "", y : Int = 1, z : String) {
+fun bar(x : Int = 1, y : Int = 1, z : String) {
 }
 
 fun test() {

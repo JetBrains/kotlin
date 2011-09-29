@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lexer.JetTokens;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -42,6 +43,16 @@ public class JetPropertyAccessor extends JetDeclaration implements JetFunctionOr
         List<JetParameter> parameters = parameterList.getParameters();
         if (parameters.isEmpty()) return null;
         return parameters.get(0);
+    }
+
+    @NotNull
+    @Override
+    public List<JetParameter> getValueParameters() {
+        JetParameter parameter = getParameter();
+        if (parameter == null) {
+            return Collections.emptyList();
+        }
+        return Collections.singletonList(parameter);
     }
 
     @Nullable

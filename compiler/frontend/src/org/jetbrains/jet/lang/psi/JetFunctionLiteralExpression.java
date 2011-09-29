@@ -2,9 +2,9 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
-import org.jetbrains.jet.lexer.JetTokens;
+
+import java.util.List;
 
 /**
  * @author max
@@ -27,6 +27,12 @@ public class JetFunctionLiteralExpression extends JetExpression implements JetDe
     @NotNull
     public JetFunctionLiteral getFunctionLiteral() {
         return (JetFunctionLiteral) findChildByType(JetNodeTypes.FUNCTION_LITERAL);
+    }
+
+    @NotNull
+    @Override
+    public List<JetParameter> getValueParameters() {
+        return getFunctionLiteral().getValueParameters();
     }
 
     @Override

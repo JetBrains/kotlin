@@ -32,8 +32,9 @@ public class JetConstructor extends JetDeclaration implements JetDeclarationWith
         return (JetParameterList) findChildByType(JetNodeTypes.VALUE_PARAMETER_LIST);
     }
 
+    @Override
     @NotNull
-    public List<JetParameter> getParameters() {
+    public List<JetParameter> getValueParameters() {
         JetParameterList list = getParameterList();
         return list != null ? list.getParameters() : Collections.<JetParameter>emptyList();
     }

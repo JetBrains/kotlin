@@ -85,7 +85,7 @@ public class MutableClassDescriptor extends MutableDeclarationDescriptor impleme
 
     public void addConstructor(@NotNull ConstructorDescriptor constructorDescriptor) {
         assert constructorDescriptor.getContainingDeclaration() == this;
-//        assert constructorDescriptor.getTypeParameters().size() == getTypeConstructor().getParameters().size();
+//        assert constructorDescriptor.getTypeParameters().size() == getTypeConstructor().getValueParameters().size();
         constructors.add(constructorDescriptor);
         if (defaultType != null) {
 //            constructorDescriptor.getTypeParameters().addAll(typeParameters);

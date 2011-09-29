@@ -17,8 +17,8 @@ public class CallMaker {
     private static class ExpressionValueArgument implements ValueArgument {
 
         private final JetExpression expression;
-
         private final PsiElement reportErrorsOn;
+
         private ExpressionValueArgument(@NotNull JetExpression expression) {
             this(expression, expression);
         }
