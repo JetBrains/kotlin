@@ -4,5 +4,5 @@ abstract class B() {
 }
 
 abstract class A() : B() {
-    <caret>abstract override open fun foo()
+    abstract override <caret>open fun foo()
 }

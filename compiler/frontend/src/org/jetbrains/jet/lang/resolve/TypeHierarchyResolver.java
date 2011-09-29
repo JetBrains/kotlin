@@ -98,7 +98,7 @@ public class TypeHierarchyResolver {
                         MutableClassDescriptor classObjectDescriptor = new MutableClassDescriptor(context.getTrace(), mutableClassDescriptor, outerScope, ClassKind.OBJECT);
                         classObjectDescriptor.setName("class-object-for-" + klass.getName());
                         classObjectDescriptor.setModality(Modality.FINAL);
-                        classObjectDescriptor.setVisibility(ClassDescriptorResolver.resolveVisibilityFromModifiers(context.getTrace(), klass.getModifierList()));
+                        classObjectDescriptor.setVisibility(ClassDescriptorResolver.resolveVisibilityFromModifiers(klass.getModifierList()));
                         classObjectDescriptor.createTypeConstructor();
                         createPrimaryConstructorForObject(null, classObjectDescriptor);
                         mutableClassDescriptor.setClassObjectDescriptor(classObjectDescriptor);
@@ -274,7 +274,7 @@ public class TypeHierarchyResolver {
             JetObjectDeclaration objectDeclaration = entry.getKey();
             MutableClassDescriptor descriptor = entry.getValue();
             descriptor.setModality(Modality.FINAL);
-            descriptor.setVisibility(ClassDescriptorResolver.resolveVisibilityFromModifiers(context.getTrace(), objectDeclaration.getModifierList()));
+            descriptor.setVisibility(ClassDescriptorResolver.resolveVisibilityFromModifiers(objectDeclaration.getModifierList()));
             descriptor.createTypeConstructor();
         }
     }

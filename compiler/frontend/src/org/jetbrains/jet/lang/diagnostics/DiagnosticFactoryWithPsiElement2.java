@@ -31,8 +31,8 @@ public abstract class DiagnosticFactoryWithPsiElement2<T extends PsiElement, A, 
     }
 
     @NotNull
-    public DiagnosticWithPsiElement<T> on(@NotNull T element, @NotNull A a, @NotNull B b) {
-        return on(element, element.getNode(), a, b);
+    public DiagnosticWithPsiElement<T> on(@NotNull T elementToMark, @NotNull A a, @NotNull B b) {
+        return on(elementToMark, elementToMark.getNode(), a, b);
     }
     
     @NotNull

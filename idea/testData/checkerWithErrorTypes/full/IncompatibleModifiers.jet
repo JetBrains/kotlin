@@ -1,0 +1,7 @@
+namespace a
+
+abstract class A() {
+    <!INCOMPATIBLE_MODIFIERS!>abstract<!> <!INCOMPATIBLE_MODIFIERS!>final<!> fun f()
+    abstract <!REDUNDANT_MODIFIER!>open<!> fun g()
+    <!INCOMPATIBLE_MODIFIERS!>final<!> <!INCOMPATIBLE_MODIFIERS!>open<!> fun h() {}
+}

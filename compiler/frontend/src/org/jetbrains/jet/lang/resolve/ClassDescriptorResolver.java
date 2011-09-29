@@ -21,8 +21,6 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.types.*;
-import org.jetbrains.jet.lexer.JetKeywordToken;
-import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.*;
@@ -67,8 +65,8 @@ public class ClassDescriptorResolver {
         }
         descriptor.setTypeParameterDescriptors(typeParameters);
         Modality defaultModality = descriptor.getKind() == ClassKind.TRAIT ? Modality.ABSTRACT : Modality.FINAL;
-        descriptor.setModality(resolveModalityFromModifiers(trace, classElement.getModifierList(), defaultModality));
-        descriptor.setVisibility(resolveVisibilityFromModifiers(trace, classElement.getModifierList()));
+        descriptor.setModality(resolveModalityFromModifiers(classElement.getModifierList(), defaultModality));
+        descriptor.setVisibility(resolveVisibilityFromModifiers(classElement.getModifierList()));
 
         trace.record(BindingContext.CLASS, classElement, descriptor);
     }
@@ -193,8 +191,8 @@ public class ClassDescriptorResolver {
         }
         boolean hasBody = function.getBodyExpression() != null;
         Modality defaultModality = getDefaultModality(containingDescriptor, hasBody);
-        Modality modality = resolveModalityFromModifiers(trace, function.getModifierList(), defaultModality);
-        Visibility visibility = resolveVisibilityFromModifiers(trace, function.getModifierList());
+        Modality modality = resolveModalityFromModifiers(function.getModifierList(), defaultModality);
+        Visibility visibility = resolveVisibilityFromModifiers(function.getModifierList());
         functionDescriptor.initialize(
                 receiverType,
                 typeParameterDescriptors,
@@ -438,7 +436,7 @@ public class ClassDescriptorResolver {
                 containingDeclaration,
                 annotationResolver.createAnnotationStubs(modifierList),
                 Modality.FINAL,
-                resolveVisibilityFromModifiers(trace, objectDeclaration.getModifierList()),
+                resolveVisibilityFromModifiers(objectDeclaration.getModifierList()),
                 false,
                 null,
                 JetPsiUtil.safeName(objectDeclaration.getName()),
@@ -499,8 +497,8 @@ public class ClassDescriptorResolver {
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                 containingDeclaration,
                 annotationResolver.resolveAnnotations(scope, modifierList),
-                resolveModalityFromModifiers(trace, property.getModifierList(), defaultModality),
-                resolveVisibilityFromModifiers(trace, property.getModifierList()),
+                resolveModalityFromModifiers(property.getModifierList(), defaultModality),
+                resolveVisibilityFromModifiers(property.getModifierList()),
                 isVar,
                 receiverType,
                 JetPsiUtil.safeName(property.getName()),
@@ -552,17 +550,12 @@ public class ClassDescriptorResolver {
     }
 
     @NotNull
-    /*package*/ static Modality resolveModalityFromModifiers(@NotNull BindingTrace trace, @Nullable JetModifierList modifierList, @NotNull Modality defaultModality) {
+    /*package*/ static Modality resolveModalityFromModifiers(@Nullable JetModifierList modifierList, @NotNull Modality defaultModality) {
         if (modifierList == null) return defaultModality;
-        checkCompatibility(trace, modifierList, Lists.newArrayList(JetTokens.ABSTRACT_KEYWORD, JetTokens.OPEN_KEYWORD, JetTokens.FINAL_KEYWORD),
-                           Lists.<JetToken>newArrayList(JetTokens.ABSTRACT_KEYWORD, JetTokens.OPEN_KEYWORD));
         boolean hasAbstractModifier = modifierList.hasModifier(JetTokens.ABSTRACT_KEYWORD);
         boolean hasOverrideModifier = modifierList.hasModifier(JetTokens.OVERRIDE_KEYWORD);
 
         if (modifierList.hasModifier(JetTokens.OPEN_KEYWORD)) {
-            if (hasAbstractModifier || hasOverrideModifier) {
-                trace.report(Errors.REDUNDANT_MODIFIER.on(modifierList, JetTokens.OPEN_KEYWORD, hasAbstractModifier ? JetTokens.ABSTRACT_KEYWORD : JetTokens.OVERRIDE_KEYWORD));
-            }
             if (hasAbstractModifier || defaultModality == Modality.ABSTRACT) {
                 return Modality.ABSTRACT;
             }
@@ -582,15 +575,13 @@ public class ClassDescriptorResolver {
     }
     
     @NotNull
-    /*package*/ static Visibility resolveVisibilityFromModifiers(@NotNull BindingTrace trace, @Nullable JetModifierList modifierList) {
-        return resolveVisibilityFromModifiers(trace, modifierList, Visibility.INTERNAL);
+    /*package*/ static Visibility resolveVisibilityFromModifiers(@Nullable JetModifierList modifierList) {
+        return resolveVisibilityFromModifiers(modifierList, Visibility.INTERNAL);
     }
 
     @NotNull
-    /*package*/ static Visibility resolveVisibilityFromModifiers(@NotNull BindingTrace trace, @Nullable JetModifierList modifierList, @NotNull Visibility defaultVisibility) {
+    /*package*/ static Visibility resolveVisibilityFromModifiers(@Nullable JetModifierList modifierList, @NotNull Visibility defaultVisibility) {
         if (modifierList == null) return defaultVisibility;
-        checkCompatibility(trace, modifierList, Lists.newArrayList(JetTokens.PRIVATE_KEYWORD, JetTokens.PROTECTED_KEYWORD, JetTokens.PUBLIC_KEYWORD, JetTokens.INTERNAL_KEYWORD),
-                                       Lists.<JetToken>newArrayList(JetTokens.PROTECTED_KEYWORD, JetTokens.INTERNAL_KEYWORD));
         if (modifierList.hasModifier(JetTokens.PRIVATE_KEYWORD)) return Visibility.PRIVATE;
         if (modifierList.hasModifier(JetTokens.PUBLIC_KEYWORD)) return Visibility.PUBLIC;
         if (modifierList.hasModifier(JetTokens.PROTECTED_KEYWORD)) {
@@ -601,29 +592,7 @@ public class ClassDescriptorResolver {
         }
         return defaultVisibility;
     }
-    
-    /*package*/ static boolean checkCompatibility(@NotNull BindingTrace trace, @Nullable JetModifierList modifierList, Collection<JetKeywordToken> availableModifiers, Collection<JetToken>... availableCombinations) {
-        if (modifierList == null) return true;
-        Collection<JetKeywordToken> presentModifiers = Sets.newLinkedHashSet();
-        for (JetKeywordToken modifier : availableModifiers) {
-            if (modifierList.hasModifier(modifier)) {
-                presentModifiers.add(modifier);
-            }
-        }
-        if (presentModifiers.size() == 1) {
-            return true;
-        }
-        for (Collection<JetToken> combination : availableCombinations) {
-            if (presentModifiers.containsAll(combination) && combination.containsAll(presentModifiers)) {
-                return true;
-            }
-        }
-        for (JetKeywordToken token : presentModifiers) {
-            trace.report(Errors.INCOMPATIBLE_MODIFIERS.on(modifierList.getModifierNode(token), presentModifiers));
-        }
-        return false;
-    }
-    
+
     @Nullable
     private PropertySetterDescriptor resolvePropertySetterDescriptor(@NotNull JetScope scope, @NotNull JetProperty property, @NotNull PropertyDescriptor propertyDescriptor) {
         JetPropertyAccessor setter = property.getSetter();
@@ -633,8 +602,8 @@ public class ClassDescriptorResolver {
             JetParameter parameter = setter.getParameter();
 
             setterDescriptor = new PropertySetterDescriptor(
-                    resolveModalityFromModifiers(trace, setter.getModifierList(), propertyDescriptor.getModality()),
-                    resolveVisibilityFromModifiers(trace, setter.getModifierList(), propertyDescriptor.getVisibility()),
+                    resolveModalityFromModifiers(setter.getModifierList(), propertyDescriptor.getModality()),
+                    resolveVisibilityFromModifiers(setter.getModifierList(), propertyDescriptor.getVisibility()),
                     propertyDescriptor, annotations, setter.getBodyExpression() != null, false);
             if (parameter != null) {
                 if (parameter.isRef()) {
@@ -708,8 +677,8 @@ public class ClassDescriptorResolver {
             }
 
             getterDescriptor = new PropertyGetterDescriptor(
-                    propertyDescriptor, annotations, resolveModalityFromModifiers(trace, getter.getModifierList(), propertyDescriptor.getModality()),
-                    resolveVisibilityFromModifiers(trace, getter.getModifierList(), propertyDescriptor.getVisibility()),
+                    propertyDescriptor, annotations, resolveModalityFromModifiers(getter.getModifierList(), propertyDescriptor.getModality()),
+                    resolveVisibilityFromModifiers(getter.getModifierList(), propertyDescriptor.getVisibility()),
                     returnType, getter.getBodyExpression() != null, false);
             trace.record(BindingContext.PROPERTY_ACCESSOR, getter, getterDescriptor);
         }
@@ -748,7 +717,7 @@ public class ClassDescriptorResolver {
                         new WritableScopeImpl(scope, classDescriptor, new TraceBasedRedeclarationHandler(trace)).setDebugName("Scope with value parameters of a constructor"),
                         valueParameters),
                         Modality.FINAL,
-                        resolveVisibilityFromModifiers(trace, modifierList));
+                        resolveVisibilityFromModifiers(modifierList));
     }
 
     @Nullable
@@ -784,8 +753,8 @@ public class ClassDescriptorResolver {
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                 classDescriptor,
                 annotationResolver.resolveAnnotations(scope, modifierList),
-                resolveModalityFromModifiers(trace, parameter.getModifierList(), Modality.FINAL),
-                resolveVisibilityFromModifiers(trace, parameter.getModifierList()),
+                resolveModalityFromModifiers(parameter.getModifierList(), Modality.FINAL),
+                resolveVisibilityFromModifiers(parameter.getModifierList()),
                 isMutable,
                 null,
                 name == null ? "<no name>" : name,

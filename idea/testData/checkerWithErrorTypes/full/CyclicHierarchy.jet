@@ -1,13 +1,13 @@
-open trait A {
+trait A {
     fun foo() {}
 }
-open trait B : A, <!CYCLIC_INHERITANCE_HIERARCHY!>E<!> {}
-open trait C : B {}
-open trait D : <!CYCLIC_INHERITANCE_HIERARCHY!>B<!> {}
-open trait E : <!CYCLIC_INHERITANCE_HIERARCHY!>F<!> {}
-open trait F : <!CYCLIC_INHERITANCE_HIERARCHY!>D<!>, C {}
-open trait G : F {}
-open trait H : F {}
+trait B : A, <!CYCLIC_INHERITANCE_HIERARCHY!>E<!> {}
+trait C : B {}
+trait D : <!CYCLIC_INHERITANCE_HIERARCHY!>B<!> {}
+trait E : <!CYCLIC_INHERITANCE_HIERARCHY!>F<!> {}
+trait F : <!CYCLIC_INHERITANCE_HIERARCHY!>D<!>, C {}
+trait G : F {}
+trait H : F {}
 
 val a : A? = null
 val b : B? = null

@@ -27,8 +27,8 @@ public abstract class DiagnosticFactoryWithPsiElement1<T extends PsiElement, A> 
     }
 
     @NotNull
-    public DiagnosticWithPsiElement<T> on(@NotNull T element, @NotNull A argument) {
-        return on(element, element.getTextRange(), argument);
+    public DiagnosticWithPsiElement<T> on(@NotNull T elementToMark, @NotNull A argument) {
+        return on(elementToMark, elementToMark.getTextRange(), argument);
     }
 
     @NotNull

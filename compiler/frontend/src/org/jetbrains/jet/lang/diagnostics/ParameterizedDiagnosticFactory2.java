@@ -27,13 +27,13 @@ public class ParameterizedDiagnosticFactory2<A, B> extends DiagnosticFactoryWith
     }
 
     @NotNull
-    public Diagnostic on(@NotNull PsiFile psiFile, @NotNull TextRange range, @NotNull A a, @NotNull B b) {
-        return new GenericDiagnostic(this, severity, makeMessage(a, b), psiFile, range);
+    public Diagnostic on(@NotNull PsiFile psiFile, @NotNull TextRange rangeToMark, @NotNull A a, @NotNull B b) {
+        return new GenericDiagnostic(this, severity, makeMessage(a, b), psiFile, rangeToMark);
     }
 
     @NotNull
-    public Diagnostic on(@NotNull ASTNode node, @NotNull A a, @NotNull B b) {
-        return on(DiagnosticUtils.getContainingFile(node), node.getTextRange(), a, b);
+    public Diagnostic on(@NotNull ASTNode nodeToMark, @NotNull A a, @NotNull B b) {
+        return on(DiagnosticUtils.getContainingFile(nodeToMark), nodeToMark.getTextRange(), a, b);
     }
 
 }

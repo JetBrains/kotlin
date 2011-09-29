@@ -34,8 +34,8 @@ public abstract class DiagnosticFactoryWithPsiElement3<T extends PsiElement, A, 
     }
 
     @NotNull
-    public DiagnosticWithPsiElement<T> on(@NotNull T element, @NotNull A a, @NotNull B b, @NotNull C c) {
-        return on(element, element, a, b, c);
+    public DiagnosticWithPsiElement<T> on(@NotNull T elementToMark, @NotNull A a, @NotNull B b, @NotNull C c) {
+        return on(elementToMark, elementToMark, a, b, c);
     }
     
     @NotNull

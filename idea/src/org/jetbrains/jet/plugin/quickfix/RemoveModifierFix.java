@@ -29,7 +29,7 @@ public class RemoveModifierFix extends ModifierFix {
     @NotNull
     @Override
     public String getText() {
-        if (modifier == JetTokens.ABSTRACT_KEYWORD) {
+        if (modifier == JetTokens.ABSTRACT_KEYWORD || modifier == JetTokens.OPEN_KEYWORD) {
             return "Make " + getElementName() + " not " + modifier.getValue();
         }
         return "Remove '" + modifier.getValue() + "' modifier";

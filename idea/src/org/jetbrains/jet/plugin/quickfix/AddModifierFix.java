@@ -19,27 +19,16 @@ import org.jetbrains.jet.lexer.JetTokens;
  */
 public class AddModifierFix extends ModifierFix {
     private final JetToken[] modifiersThanCanBeReplaced;
-    private final JetToken[] conflictedModifiers;
 
-    private AddModifierFix(@NotNull JetModifierListOwner element, JetKeywordToken modifier, JetToken[] modifiersThanCanBeReplaced, JetToken[] conflictedModifiers) {
+    private AddModifierFix(@NotNull JetModifierListOwner element, JetKeywordToken modifier, JetToken[] modifiersThanCanBeReplaced) {
         super(element, modifier);
         this.modifiersThanCanBeReplaced = modifiersThanCanBeReplaced;
-        this.conflictedModifiers = conflictedModifiers;
-    }
-
-    private static boolean checkConflictModifiers(JetModifierListOwner element, JetToken[] conflictedModifiers) {
-        for (JetToken conflictedModifier : conflictedModifiers) {
-            if (element.hasModifier(conflictedModifier)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     @NotNull
     @Override
     public String getText() {
-        if (modifier == JetTokens.ABSTRACT_KEYWORD) {
+        if (modifier == JetTokens.ABSTRACT_KEYWORD || modifier == JetTokens.OPEN_KEYWORD) {
             return "Make " + getElementName() + " " + modifier.getValue();
         }
         return "Add '" + modifier.getValue() + "' modifier";
@@ -53,7 +42,7 @@ public class AddModifierFix extends ModifierFix {
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-        return element.isValid() && !checkConflictModifiers(element, conflictedModifiers);
+        return element.isValid();
     }
 
     @Override
@@ -97,17 +86,17 @@ public class AddModifierFix extends ModifierFix {
         return true;
     }
 
-    public static JetIntentionActionFactory<JetModifierListOwner> createFactory(final JetKeywordToken modifier, final JetToken[] modifiersThatCanBeReplaced, final JetToken[] conflictedModifiers) {
+    public static JetIntentionActionFactory<JetModifierListOwner> createFactory(final JetKeywordToken modifier, final JetToken[] modifiersThatCanBeReplaced) {
         return new JetIntentionActionFactory<JetModifierListOwner>() {
             @Override
             public JetIntentionAction<JetModifierListOwner> createAction(DiagnosticWithPsiElement diagnostic) {
                 assert diagnostic.getPsiElement() instanceof JetModifierListOwner;
-                return new AddModifierFix((JetModifierListOwner) diagnostic.getPsiElement(), modifier, modifiersThatCanBeReplaced, conflictedModifiers);
+                return new AddModifierFix((JetModifierListOwner) diagnostic.getPsiElement(), modifier, modifiersThatCanBeReplaced);
             }
         };
     }
     
     public static JetIntentionActionFactory<JetModifierListOwner> createFactory(final JetKeywordToken modifier) {
-        return createFactory(modifier, new JetToken[0], new JetToken[0]);
+        return createFactory(modifier, new JetToken[0]);
     }
 }

@@ -68,6 +68,7 @@ public class TopDownAnalyzer {
         new DelegationResolver(context).process();
         new OverrideResolver(context).process();
         new BodyResolver(context).resolveBehaviorDeclarationBodies();
+        new DeclarationsChecker(context).process();
     }
 
     public static void processStandardLibraryNamespace(
@@ -86,16 +87,7 @@ public class TopDownAnalyzer {
             }
         };
         overrideResolver.process();
-        BodyResolver bodyResolver = new BodyResolver(context) {
-            @Override
-            protected void checkProperty(JetProperty property, PropertyDescriptor propertyDescriptor, @Nullable ClassDescriptor classDescriptor) {
-            }
-
-            @Override
-            protected void checkFunction(JetDeclarationWithBody function, FunctionDescriptor functionDescriptor) {
-            }
-        };
-        bodyResolver.resolveBehaviorDeclarationBodies();
+        new BodyResolver(context).resolveBehaviorDeclarationBodies();
     }
 
 }

@@ -59,6 +59,7 @@ public interface Errors {
             return sb.toString();
         }
     };
+    ParameterizedDiagnosticFactory1<JetKeywordToken> ILLEGAL_MODIFIER = ParameterizedDiagnosticFactory1.create(ERROR, "Illegal modifier ''{0}''");
 
     PsiElementOnlyDiagnosticFactory2<JetModifierList, JetKeywordToken, JetKeywordToken> REDUNDANT_MODIFIER = new PsiElementOnlyDiagnosticFactory2<JetModifierList, JetKeywordToken, JetKeywordToken>(Severity.WARNING, "Modifier {0} is redundant because {1} is present") {
         @NotNull
@@ -67,6 +68,8 @@ public interface Errors {
             return super.on(elementToBlame, nodeToMark, redundantModifier, presentModifier).add(DiagnosticParameters.MODIFIER, redundantModifier);
         }
     };
+    DiagnosticWithParameterFactory<JetModifierList, JetKeywordToken> REDUNDANT_MODIFIER_IN_TRAIT = DiagnosticWithParameterFactory.create(WARNING, "Modifier ''{0}'' is redundant in trait", DiagnosticParameters.MODIFIER);
+    SimplePsiElementOnlyDiagnosticFactory<JetClass> TRAIT_CAN_NOT_BE_FINAL = SimplePsiElementOnlyDiagnosticFactory.create(ERROR, "Trait can not be final");
     SimpleDiagnosticFactory SAFE_CALLS_ARE_NOT_ALLOWED_ON_NAMESPACES = SimpleDiagnosticFactory.create(ERROR, "Safe calls are not allowed on namespaces");
     SimpleDiagnosticFactory TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM = SimpleDiagnosticFactory.create(ERROR, "Type checking has run into a recursive problem"); // TODO: message
     SimpleDiagnosticFactory RETURN_NOT_ALLOWED = SimpleDiagnosticFactory.create(ERROR, "'return' is not allowed here");
@@ -116,6 +119,9 @@ public interface Errors {
     SimplePsiElementOnlyDiagnosticFactory<JetModifierListOwner> NON_MEMBER_ABSTRACT_ACCESSOR = SimplePsiElementOnlyDiagnosticFactory.create(ERROR, "This property is not a class or trait member and thus cannot have abstract accessors"); // TODO : Better message
 
     PsiElementOnlyDiagnosticFactory1<JetFunctionOrPropertyAccessor, FunctionDescriptor> NON_MEMBER_FUNCTION_NO_BODY = PsiElementOnlyDiagnosticFactory1.create(ERROR, "Function {0} must have a body");
+    
+    DiagnosticWithParameterFactory<JetNamedDeclaration, JetClass> NON_FINAL_MEMBER_IN_FINAL_CLASS = DiagnosticWithParameterFactory.create(ERROR, "Non final member in a final class", DiagnosticParameters.CLASS);
+    DiagnosticWithParameterFactory<JetPropertyAccessor, JetProperty> NON_FINAL_ACCESSOR_OF_FINAL_PROPERTY = DiagnosticWithParameterFactory.create(ERROR, "Non final accessor of a final property", DiagnosticParameters.PROPERTY);
 
     SimpleDiagnosticFactory PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT = SimpleDiagnosticFactory.create(ERROR, "Projections are not allowed on type arguments of functions and properties"); // TODO : better positioning
     SimpleDiagnosticFactory SUPERTYPE_NOT_INITIALIZED = SimpleDiagnosticFactory.create(ERROR, "This type has a constructor, and thus must be initialized here");
