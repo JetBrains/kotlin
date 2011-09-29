@@ -6,7 +6,7 @@ import org.jetbrains.jet.JetTestCaseBase;
 /**
  * @author svtk
  */
-public class AddPrimaryConstructorTest extends LightQuickFixTestCase {
+public class ChangeVariableMutabilityFixTest extends LightQuickFixTestCase {
 
     public void test() throws Exception {
         doAllTests();
@@ -14,7 +14,7 @@ public class AddPrimaryConstructorTest extends LightQuickFixTestCase {
 
     @Override
     protected String getBasePath() {
-        return "/quickfix/addPrimaryConstructor";
+        return "/quickfix/changeVariableMutability";
     }
 
     @Override

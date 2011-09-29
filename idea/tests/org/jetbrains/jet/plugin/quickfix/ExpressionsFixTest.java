@@ -6,7 +6,7 @@ import org.jetbrains.jet.JetTestCaseBase;
 /**
  * @author svtk
  */
-public class TypeAdditionTests extends LightQuickFixTestCase {
+public class ExpressionsFixTest extends LightQuickFixTestCase {
 
     public void test() throws Exception {
         doAllTests();
@@ -14,7 +14,7 @@ public class TypeAdditionTests extends LightQuickFixTestCase {
 
     @Override
     protected String getBasePath() {
-        return "/quickfix/typeAddition";
+        return "/quickfix/expressions";
     }
 
     @Override
@@ -22,4 +22,3 @@ public class TypeAdditionTests extends LightQuickFixTestCase {
         return JetTestCaseBase.getTestDataPathBase();
     }
 }
-
