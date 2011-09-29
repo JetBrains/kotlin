@@ -40,12 +40,23 @@ public class JetTypeMapper {
     public static final Type JL_NUMBER_TYPE = Type.getObjectType("java/lang/Number");
     public static final Type JL_STRING_BUILDER = Type.getObjectType("java/lang/StringBuilder");
 
+    public static final Type ARRAY_INT_TYPE = Type.getObjectType("jet/arrays/JetIntArray");
+    public static final Type ARRAY_LONG_TYPE = Type.getObjectType("jet/arrays/JetLongArray");
+    public static final Type ARRAY_SHORT_TYPE = Type.getObjectType("jet/arrays/JetShortArray");
+    public static final Type ARRAY_BYTE_TYPE = Type.getObjectType("jet/arrays/JetByteArray");
+    public static final Type ARRAY_CHAR_TYPE = Type.getObjectType("jet/arrays/JetCharArray");
+    public static final Type ARRAY_FLOAT_TYPE = Type.getObjectType("jet/arrays/JetFloatArray");
+    public static final Type ARRAY_DOUBLE_TYPE = Type.getObjectType("jet/arrays/JetDoubleArray");
+    public static final Type ARRAY_BOOL_TYPE = Type.getObjectType("jet/arrays/JetBoolArray");
+    public static final Type ARRAY_GENERIC_TYPE = Type.getObjectType("jet/arrays/JetGenericArray");
+
     private final JetStandardLibrary standardLibrary;
     private final BindingContext bindingContext;
     private final Map<JetExpression, String> classNamesForAnonymousClasses = new HashMap<JetExpression, String>();
     private final Map<String, Integer> anonymousSubclassesCount = new HashMap<String, Integer>();
 
     private final HashMap<JetType,String> knowTypes = new HashMap<JetType, String>();
+    private final HashMap<JetType,String> knowArrayTypes = new HashMap<JetType, String>();
 
     public JetTypeMapper(JetStandardLibrary standardLibrary, BindingContext bindingContext) {
         this.standardLibrary = standardLibrary;
@@ -377,9 +388,36 @@ public class JetTypeMapper {
             if (jetType.getArguments().size() != 1) {
                 throw new UnsupportedOperationException("arrays must have one type argument");
             }
-            TypeProjection memberType = jetType.getArguments().get(0);
-            Type elementType = mapType(memberType.getType());
-            return Type.getType("[" + elementType.getDescriptor());
+            JetType memberType = jetType.getArguments().get(0).getType();
+
+            if (memberType.equals(standardLibrary.getIntType())) {
+                return ARRAY_INT_TYPE;
+            }
+            if (memberType.equals(standardLibrary.getLongType())) {
+                return ARRAY_LONG_TYPE;
+            }
+            if (memberType.equals(standardLibrary.getShortType())) {
+                return ARRAY_SHORT_TYPE;
+            }
+            if (memberType.equals(standardLibrary.getByteType())) {
+                return ARRAY_BYTE_TYPE;
+            }
+            if (memberType.equals(standardLibrary.getCharType())) {
+                return ARRAY_CHAR_TYPE;
+            }
+            if (memberType.equals(standardLibrary.getFloatType())) {
+                return ARRAY_FLOAT_TYPE;
+            }
+            if (memberType.equals(standardLibrary.getDoubleType())) {
+                return ARRAY_DOUBLE_TYPE;
+            }
+            if (memberType.equals(standardLibrary.getBooleanType())) {
+                return ARRAY_BOOL_TYPE;
+            }
+            if(!isGenericsArray(jetType))
+                return ARRAY_GENERIC_TYPE;
+            else
+                return TYPE_OBJECT;
         }
         if (JetStandardClasses.getAny().equals(descriptor)) {
             return Type.getType(Object.class);
@@ -665,9 +703,21 @@ public class JetTypeMapper {
         knowTypes.put(standardLibrary.getNullableStringType(),"NULLABLE_STRING_TYPE_INFO");
         knowTypes.put(standardLibrary.getTuple0Type(),"TUPLE0_TYPE_INFO");
         knowTypes.put(standardLibrary.getNullableTuple0Type(),"NULLABLE_TUPLE0_TYPE_INFO");
+
+        knowArrayTypes.put(standardLibrary.getIntType(), "INT_ARRAY_TYPE_INFO");
+        knowArrayTypes.put(standardLibrary.getLongType(), "LONG_ARRAY_TYPE_INFO");
+        knowArrayTypes.put(standardLibrary.getShortType(),"SHORT_ARRAY_TYPE_INFO");
+        knowArrayTypes.put(standardLibrary.getByteType(),"BYTE_ARRAY_TYPE_INFO");
+        knowArrayTypes.put(standardLibrary.getCharType(),"CHAR_ARRAY_TYPE_INFO");
+        knowArrayTypes.put(standardLibrary.getFloatType(),"FLOAT_ARRAY_TYPE_INFO");
+        knowArrayTypes.put(standardLibrary.getDoubleType(),"DOUBLE_ARRAY_TYPE_INFO");
+        knowArrayTypes.put(standardLibrary.getBooleanType(),"BOOLEAN_ARRAY_TYPE_INFO");
     }
 
     public String isKnownTypeInfo(JetType jetType) {
+        if(standardLibrary.getArray().equals(jetType.getConstructor().getDeclarationDescriptor()))
+            return knowArrayTypes.get(jetType.getArguments().get(0).getType());
+
         return knowTypes.get(jetType);
     }
 

@@ -1,19 +1,15 @@
 package org.jetbrains.jet.codegen;
 
-import jet.typeinfo.TypeInfoVariance;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetDelegationSpecifier;
 import org.jetbrains.jet.lang.psi.JetTypeParameter;
 import org.jetbrains.jet.lang.psi.JetTypeReference;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.JavaClassDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.Variance;
-import org.objectweb.asm.Type;
 
 import java.util.List;
 
@@ -44,7 +40,11 @@ public class SignatureUtil {
             sb.append(type.getDescriptor());
         }
         else {
-            sb.append("T").append(descriptor.getName()).append(";");
+            sb.append("T");
+            sb.append(descriptor.getContainingDeclaration().getName());
+            sb.append(";");
+            sb.append(descriptor.getName());
+            sb.append(";");
         }
         if(!jetType.getArguments().isEmpty()) {
             sb.append("<");

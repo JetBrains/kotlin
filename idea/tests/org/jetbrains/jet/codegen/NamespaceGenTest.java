@@ -2,6 +2,9 @@ package org.jetbrains.jet.codegen;
 
 import jet.IntRange;
 import jet.Tuple2;
+import jet.arrays.JetGenericArray;
+import jet.arrays.JetIntArray;
+import jet.typeinfo.TypeInfo;
 import org.jetbrains.jet.parsing.JetParsingTest;
 
 import java.awt.*;
@@ -19,7 +22,7 @@ public class NamespaceGenTest extends CodegenTestCase {
         System.out.println(text);
 
         final Method main = generateFunction();
-        Object[] args = new Object[] { new String[0] };
+        Object[] args = new Object[] { new JetGenericArray(0, TypeInfo.STRING_TYPE_INFO) };
         main.invoke(null, args);
     }
 
@@ -343,14 +346,14 @@ public class NamespaceGenTest extends CodegenTestCase {
     public void testArrayRead() throws Exception {
         loadText("fun foo(c: Array<String>) = c[0]");
         final Method main = generateFunction();
-        assertEquals("main", main.invoke(null, new Object[] { new String[] { "main" } }));
+        assertEquals("main", main.invoke(null, new Object[] { new JetGenericArray(new String[] { "main" }, TypeInfo.STRING_TYPE_INFO) }));
     }
 
     public void testArrayWrite() throws Exception {
         loadText("fun foo(c: Array<String>) { c[0] = \"jet\"; }");
         final Method main = generateFunction();
         String[] array = new String[] { null };
-        main.invoke(null, new Object[] { array });
+        main.invoke(null, new Object[] { new JetGenericArray(array, TypeInfo.STRING_TYPE_INFO) });
         assertEquals("jet", array[0]);
     }
 
@@ -359,22 +362,23 @@ public class NamespaceGenTest extends CodegenTestCase {
         System.out.println(generateToText());
         final Method main = generateFunction();
         int[] data = new int[] { 5 };
-        main.invoke(null, new Object[] { data });
+        main.invoke(null, new Object[] { new JetIntArray(data) });
         assertEquals(10, data[0]);
     }
 
     public void testArrayNew() throws Exception {
         loadText("fun foo() = Array<Int>(4)");
+        System.out.println(generateToText());
         final Method main = generateFunction();
-        int[] result = (int[]) main.invoke(null);
-        assertEquals(4, result.length);
+        JetIntArray result = (JetIntArray) main.invoke(null);
+        assertEquals(4, result.array.length);
     }
 
     public void testArraySize() throws Exception {
         loadText("fun foo(a: Array<Int>) = a.size");
         System.out.println(generateToText());
         final Method main = generateFunction();
-        Object[] args = new Object[] { new int[4] };
+        Object[] args = new Object[] { new JetIntArray(new int[4]) };
         int result = (Integer) main.invoke(null, args);
         assertEquals(4, result);
 
@@ -495,6 +499,7 @@ public class NamespaceGenTest extends CodegenTestCase {
         final Method main = generateFunction();
         final String[] args = new String[] { "foo", "bar" };
         //noinspection ImplicitArrayToString
-        assertEquals("s" + args.toString(), main.invoke(null, "s", args));
+        JetGenericArray jetGenericArray = new JetGenericArray(args, TypeInfo.STRING_TYPE_INFO);
+        assertEquals("s" + jetGenericArray.toString(), main.invoke(null, "s", jetGenericArray));
     }
 }

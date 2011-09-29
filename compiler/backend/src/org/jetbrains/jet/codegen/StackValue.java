@@ -13,7 +13,7 @@ import org.objectweb.asm.commons.Method;
  * @author yole
  */
 public abstract class StackValue {
-    protected final Type type;
+    public final Type type;
 
     public StackValue(Type type) {
         this.type = type;
@@ -75,8 +75,8 @@ public abstract class StackValue {
         return new Invert(stackValue);
     }
 
-    public static StackValue arrayElement(Type type) {
-        return new ArrayElement(type);
+    public static StackValue arrayElement(Type type, boolean genericsArray) {
+        return new ArrayElement(type, genericsArray);
     }
 
     public static StackValue collectionElement(Type type, CallableMethod getter, CallableMethod setter) {
@@ -424,19 +424,32 @@ public abstract class StackValue {
     }
 
     private static class ArrayElement extends StackValue {
-        public ArrayElement(Type type) {
+        private boolean genericsArray;
+
+        public ArrayElement(Type type, boolean genericsArray) {
             super(type);
+            this.genericsArray = genericsArray;
         }
 
         @Override
         public void put(Type type, InstructionAdapter v) {
-            v.aload(type);    // assumes array and index are on the stack
+            if(genericsArray) {
+                v.invokevirtual("jet/arrays/JetArray", "get", "(I)Ljava/lang/Object;");
+            }
+            else {    
+                v.aload(this.type);    // assumes array and index are on the stack
+            }
             coerce(type, v);
         }
 
         @Override
         public void store(InstructionAdapter v) {
-            v.astore(type);   // assumes array and index are on the stack
+            if(genericsArray) {
+                v.invokevirtual("jet/arrays/JetArray", "set", "(ILjava/lang/Object;)V");
+            }
+            else {
+                v.astore(type);   // assumes array and index are on the stack
+            }
         }
 
         @Override

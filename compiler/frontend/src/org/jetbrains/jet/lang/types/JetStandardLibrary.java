@@ -63,22 +63,23 @@ public class JetStandardLibrary {
     private final ClassDescriptor typeInfoClass;
 
     private final JetType byteType;
-    private final JetType nullableByteType;
     private final JetType charType;
-    private final JetType nullableCharType;
     private final JetType shortType;
-    private final JetType nullableShortType;
     private final JetType intType;
-    private final JetType nullableIntType;
     private final JetType longType;
-    private final JetType nullableLongType;
     private final JetType floatType;
-    private final JetType nullableFloatType;
     private final JetType doubleType;
-    private final JetType nullableDoubleType;
     private final JetType booleanType;
-    private final JetType nullableBooleanType;
     private final JetType stringType;
+
+    private final JetType nullableByteType;
+    private final JetType nullableCharType;
+    private final JetType nullableShortType;
+    private final JetType nullableIntType;
+    private final JetType nullableLongType;
+    private final JetType nullableFloatType;
+    private final JetType nullableDoubleType;
+    private final JetType nullableBooleanType;
     private final JetType nullableTuple0Type;
 
     public JetType getTuple0Type() {

@@ -8,18 +8,22 @@ trait javaUtilIterator<T> : java.util.Iterator<T> {
     }
 }
 
+class MyIterator<T>(val array : ReadOnlyArray<T>) : javaUtilIterator<T> {
+    private var index = 0
+
+    override fun hasNext() : Boolean = index < array.size
+
+    override fun next() : T = array.get(index++)
+}
+
 trait ReadOnlyArray<out T> : ISized, java.lang.Iterable<T> {
   fun get(index : Int) : T
 
-  class MyIterator() : javaUtilIterator<T> {
-    private var index = 0
-
-    override fun hasNext() : Boolean = index < size
-
-    override fun next() : T = get(index++)
+  class Default {
+    fun check(v: Any) =  v is T
   }
 
-  override fun iterator() : java.util.Iterator<T> = MyIterator()
+  override fun iterator() : java.util.Iterator<T> = MyIterator<T>(this)
 }
 
 trait WriteOnlyArray<in T> : ISized {

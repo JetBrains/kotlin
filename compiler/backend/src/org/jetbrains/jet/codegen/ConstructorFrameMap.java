@@ -17,11 +17,9 @@ public class ConstructorFrameMap extends FrameMap {
     private int myFirstTypeParameter = -1;
     private int myTypeParameterCount = 0;
 
-    public ConstructorFrameMap(CallableMethod callableMethod, @Nullable ConstructorDescriptor descriptor, OwnerKind kind) {
+    public ConstructorFrameMap(CallableMethod callableMethod, @Nullable ConstructorDescriptor descriptor, ClassDescriptor classDescriptor, OwnerKind kind) {
         enterTemp(); // this
-        ClassDescriptor classDescriptor = null;
         if (descriptor != null) {
-            classDescriptor = descriptor.getContainingDeclaration();
             if (CodegenUtil.hasThis0(classDescriptor)) {
                 myOuterThisIndex = enterTemp();   // outer class instance
             }
@@ -36,7 +34,6 @@ public class ConstructorFrameMap extends FrameMap {
             ValueParameterDescriptor parameter = paramDescrs.get(i);
             enter(parameter, explicitArgTypes.get(i).getSize());
         }
-
 
         if (classDescriptor != null) {
             myTypeParameterCount = classDescriptor.getTypeConstructor().getParameters().size();

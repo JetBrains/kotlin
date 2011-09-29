@@ -45,9 +45,4 @@ public class ClassCodegen {
     }
 
 
-    public static void newTypeInfo(InstructionAdapter v, boolean isNullable, Type asmType) {
-        v.aconst(asmType);
-        v.iconst(isNullable?1:0);
-        v.invokestatic("jet/typeinfo/TypeInfo", "getTypeInfo", "(Ljava/lang/Class;Z)Ljet/typeinfo/TypeInfo;");
-    }
 }

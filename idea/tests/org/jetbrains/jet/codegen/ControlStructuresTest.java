@@ -1,5 +1,8 @@
 package org.jetbrains.jet.codegen;
 
+import jet.arrays.JetGenericArray;
+import jet.typeinfo.TypeInfo;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -89,7 +92,7 @@ public class ControlStructuresTest extends CodegenTestCase {
         System.out.println(generateToText());
         final Method main = generateFunction();
         String[] args = new String[] { "IntelliJ", " ", "IDEA" };
-        assertEquals("IntelliJ IDEA", main.invoke(null, new Object[] { args }));
+        assertEquals("IntelliJ IDEA", main.invoke(null, new Object[] { new JetGenericArray(args, TypeInfo.STRING_TYPE_INFO) }));
     }
 
     public void testForInRange() throws Exception {
@@ -143,6 +146,14 @@ public class ControlStructuresTest extends CodegenTestCase {
 
     public void testForUserType() throws Exception {
         blackBoxFile("controlStructures/forUserType.jet");
+    }
+
+    public void testForIntArray() throws Exception {
+        blackBoxFile("controlStructures/forIntArray.jet");
+    }
+
+    public void testForNullableIntArray() throws Exception {
+        blackBoxFile("controlStructures/forNullableIntArray.jet");
     }
 
     public void testKt237() throws Exception {

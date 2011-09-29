@@ -2,6 +2,7 @@ package jet.typeinfo;
 
 import jet.JetObject;
 import jet.Tuple0;
+import jet.arrays.*;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -25,6 +26,16 @@ public abstract class TypeInfo<T> implements JetObject {
     public static final TypeInfo<Boolean> BOOL_TYPE_INFO = getTypeInfo(Boolean.class, false);
     public static final TypeInfo<Float> FLOAT_TYPE_INFO = getTypeInfo(Float.class, false);
     public static final TypeInfo<Double> DOUBLE_TYPE_INFO = getTypeInfo(Double.class, false);
+
+    public static final TypeInfo<byte[]> BYTE_ARRAY_TYPE_INFO = getTypeInfo(byte[].class, false);
+    public static final TypeInfo<short[]> SHORT_ARRAY_TYPE_INFO = getTypeInfo(short[].class, false);
+    public static final TypeInfo<int[]> INT_ARRAY_TYPE_INFO = getTypeInfo(int[].class, false);
+    public static final TypeInfo<long[]> LONG_ARRAY_TYPE_INFO = getTypeInfo(long[].class, false);
+    public static final TypeInfo<char[]> CHAR_ARRAY_TYPE_INFO = getTypeInfo(char[].class, false);
+    public static final TypeInfo<boolean[]> BOOL_ARRAY_TYPE_INFO = getTypeInfo(boolean[].class, false);
+    public static final TypeInfo<float[]> FLOAT_ARRAY_TYPE_INFO = getTypeInfo(float[].class, false);
+    public static final TypeInfo<double[]> DOUBLE_ARRAY_TYPE_INFO = getTypeInfo(double[].class, false);
+
     public static final TypeInfo<String> STRING_TYPE_INFO = getTypeInfo(String.class, false);
     public static final TypeInfo<Tuple0> TUPLE0_TYPE_INFO = getTypeInfo(Tuple0.class, false);
 
@@ -40,7 +51,31 @@ public abstract class TypeInfo<T> implements JetObject {
     public static final TypeInfo<Tuple0> NULLABLE_TUPLE0_TYPE_INFO = getTypeInfo(Tuple0.class, true);
     
     public static Object [] newArray(int length, TypeInfo typeInfo) {
-        return (Object[]) Array.newInstance(((TypeInfoImpl) typeInfo).signature.klazz, length);
+        Signature signature = ((TypeInfoImpl) typeInfo).signature;
+        if(signature.klazz.isArray() && signature.klazz.getComponentType().isPrimitive()) {
+            Class componentType = signature.klazz.getComponentType();
+            if(componentType == byte.class)
+                return (Object[]) Array.newInstance(JetByteArray.class, length);
+            if(componentType == short.class)
+                return (Object[]) Array.newInstance(JetShortArray.class, length);
+            if(componentType == int.class)
+                return (Object[]) Array.newInstance(JetIntArray.class, length);
+            if(componentType == long.class)
+                return (Object[]) Array.newInstance(JetLongArray.class, length);
+            if(componentType == char.class)
+                return (Object[]) Array.newInstance(JetCharArray.class, length);
+            if(componentType == boolean.class)
+                return (Object[]) Array.newInstance(JetBoolArray.class, length);
+            if(componentType == float.class)
+                return (Object[]) Array.newInstance(JetFloatArray.class, length);
+            if(componentType == double.class)
+                return (Object[]) Array.newInstance(JetDoubleArray.class, length);
+            
+            throw new IllegalStateException();
+        }
+        else {
+            return (Object[]) Array.newInstance(signature.klazz, length);
+        }
     }
 
     public static <T> TypeInfoProjection invariantProjection(final TypeInfo<T> typeInfo) {
@@ -71,6 +106,14 @@ public abstract class TypeInfo<T> implements JetObject {
         return new TypeInfoImpl<T>(klazz, nullable);
     }
 
+    public static <T> TypeInfo<T> getTypeInfo(Class<T> klazz, boolean nullable, TypeInfo outerTypeInfo) {
+        return new TypeInfoImpl<T>(klazz, nullable, outerTypeInfo);
+    }
+
+    public static <T> TypeInfo<T> getTypeInfo(Class<T> klazz, boolean nullable, TypeInfo outerTypeInfo, TypeInfoProjection[] projections) {
+        return new TypeInfoImpl<T>(klazz, nullable, outerTypeInfo, projections);
+    }
+
     public static <T> TypeInfo<T> getTypeInfo(Class<T> klazz, boolean nullable, TypeInfoProjection[] projections) {
         return new TypeInfoImpl<T>(klazz, nullable, projections);
     }
@@ -81,22 +124,29 @@ public abstract class TypeInfo<T> implements JetObject {
 
     public abstract int getProjectionCount();
 
+    public abstract TypeInfo getOuterTypeInfo();
+
     public abstract TypeInfoProjection getProjection(int index);
 
     public abstract TypeInfo getArgumentType(Class klass, int index);
     
-    public abstract TypeInfo substitute(List<TypeInfo> myVars);
+    protected abstract TypeInfo substitute(List<TypeInfo> myVars);
+
+    protected abstract TypeInfo substitute(TypeInfo outer, TypeInfoProjection[] projections);
 
     private static class TypeInfoVar<T> extends TypeInfo<T> {
         final int varIndex;
+        final Signature signature;
         final boolean nullable;
 
-        private TypeInfoVar(Integer varIndex) {
+        private TypeInfoVar(Signature signature, Integer varIndex) {
+            this.signature = signature;
             this.varIndex = varIndex;
             nullable = false;
         }
 
-        public TypeInfoVar(boolean nullable, int varIndex) {
+        public TypeInfoVar(Signature signature, boolean nullable, int varIndex) {
+            this.signature = signature;
             this.nullable = nullable;
             this.varIndex = varIndex;
         }
@@ -117,6 +167,11 @@ public abstract class TypeInfo<T> implements JetObject {
         }
 
         @Override
+        public TypeInfo getOuterTypeInfo() {
+            return null;
+        }
+
+        @Override
         public TypeInfoProjection getProjection(int index) {
             throw new UnsupportedOperationException("Abstract TypeInfo");
         }
@@ -132,7 +187,7 @@ public abstract class TypeInfo<T> implements JetObject {
         }
 
         @Override
-        protected TypeInfo substitute(TypeInfoProjection[] projections) {
+        protected TypeInfo substitute(TypeInfo outer, TypeInfoProjection[] projections) {
             return projections[varIndex].getType();
         }
 
@@ -143,7 +198,7 @@ public abstract class TypeInfo<T> implements JetObject {
 
         @Override
         public String toString() {
-            return "T:" + varIndex;
+            return "T:" + signature.klazz.getName() + ":" + varIndex;
         }
     }
 
@@ -152,12 +207,22 @@ public abstract class TypeInfo<T> implements JetObject {
         private final Signature signature;
         private final boolean nullable;
         private final TypeInfoProjection[] projections;
+        private final TypeInfo outerTypeInfo;
 
-        TypeInfoImpl(Class<T> theClass, boolean nullable) {
-            this(theClass, nullable, EMPTY);
+        private TypeInfoImpl(Class<T> theClass, boolean nullable) {
+            this(theClass, nullable, null, EMPTY);
+        }
+
+        private TypeInfoImpl(Class<T> theClass, boolean nullable, TypeInfo outerTypeInfo) {
+            this(theClass, nullable, outerTypeInfo, EMPTY);
         }
 
         private TypeInfoImpl(Class<T> theClass, boolean nullable, TypeInfoProjection[] projections) {
+            this(theClass, nullable, null, projections);
+        }
+        
+        private TypeInfoImpl(Class<T> theClass, boolean nullable, TypeInfo outerTypeInfo, TypeInfoProjection[] projections) {
+            this.outerTypeInfo = outerTypeInfo;
             this.signature = Parser.parse(theClass);
             this.nullable = nullable;
             this.projections = projections;
@@ -187,14 +252,14 @@ public abstract class TypeInfo<T> implements JetObject {
             if(klass == this.signature.klazz)
                 return projections[index].getType();
             else {
-                return getSuperTypeInfo(klass).substitute(projections).getArgumentType(klass, index);
+                return getSuperTypeInfo(klass).substitute(outerTypeInfo, projections).getArgumentType(klass, index);
             }
         }
 
         @Override
         public TypeInfo substitute(final List<TypeInfo> myVars) {
             if(projections.length == 0)
-                return new TypeInfoImpl(signature.klazz, nullable, EMPTY);
+                return new TypeInfoImpl(this.signature.klazz, nullable, EMPTY);
             else {
                 TypeInfoProjection [] proj = new TypeInfoProjection[projections.length];
                 for(int i = 0; i != proj.length; ++i) {
@@ -218,19 +283,19 @@ public abstract class TypeInfo<T> implements JetObject {
                         }
                     };
                 }
-                return new TypeInfoImpl(signature.klazz, nullable, proj);
+                return new TypeInfoImpl(this.signature.klazz, nullable, proj);
             }
         }
 
         @Override
-        protected TypeInfo substitute(TypeInfoProjection[] prj) {
+        protected TypeInfo substitute(TypeInfo outer, TypeInfoProjection[] prj) {
             if(projections.length == 0)
                 return new TypeInfoImpl(signature.klazz, nullable, EMPTY);
             else {
                 TypeInfoProjection [] proj = new TypeInfoProjection[projections.length];
                 for(int i = 0; i != proj.length; ++i) {
                     final int finalI = i;
-                    final TypeInfo substitute = projections[finalI].getType().substitute(prj);
+                    final TypeInfo substitute = projections[finalI].getType().substitute(outer, prj);
                     proj[i] = new TypeInfoProjection(){
 
                         @Override
@@ -300,6 +365,11 @@ public abstract class TypeInfo<T> implements JetObject {
         }
 
         @Override
+        public TypeInfo getOuterTypeInfo() {
+            return outerTypeInfo;
+        }
+
+        @Override
         public final String toString() {
             StringBuilder sb = new StringBuilder().append(signature.klazz.getName());
             if (projections.length != 0) {
@@ -344,25 +414,27 @@ public abstract class TypeInfo<T> implements JetObject {
 
     }
 
-    protected abstract TypeInfo substitute(TypeInfoProjection[] projections);
-
     public static class Signature {
+        final Signature outer;
         final Class klazz;
-        final List<TypeInfoProjection> variables;
-        final List<TypeInfo> superTypes;
+
+        List<TypeInfoProjection> variables;
+        Map<String,Integer> varNames;
+        List<TypeInfo> superTypes;
         
         final HashMap<Class,TypeInfo> superSignatures = new HashMap<Class,TypeInfo>();
 
-        public Signature(Class klazz, List<TypeInfoProjection> variables, List<TypeInfo> superTypes) {
+        public Signature(Signature outer, Class klazz) {
+            this.outer = outer;
             this.klazz = klazz;
-            this.superTypes = superTypes;
-            this.variables = variables;
-            
+        }
+
+        protected void afterParse() {
             List<TypeInfo> myVars = variables == null ? Collections.<TypeInfo>emptyList() : new LinkedList<TypeInfo>();
             if(variables != null)
                 for(int i = 0; i != variables.size(); ++i)
-                    myVars.add(new TypeInfoVar(false, i));
-            
+                    myVars.add(new TypeInfoVar(this, false, i));
+
             for(TypeInfo superType : superTypes) {
                 if(superType instanceof TypeInfoImpl) {
                     TypeInfoImpl type = (TypeInfoImpl) superType;
@@ -379,7 +451,7 @@ public abstract class TypeInfo<T> implements JetObject {
                             vars.add(substitute);
                         }
                     }
-                    
+
                     for(Map.Entry<Class,TypeInfo> entry : superSignature.superSignatures.entrySet()) {
                         superSignatures.put(entry.getKey(), entry.getValue().substitute(vars));
                     }
@@ -395,8 +467,6 @@ public abstract class TypeInfo<T> implements JetObject {
         int cur;
         final char [] string;
 
-        Map<String,Integer> variables;
-
         final ClassLoader classLoader;
 
         Parser(String string, ClassLoader classLoader) {
@@ -405,6 +475,9 @@ public abstract class TypeInfo<T> implements JetObject {
         }
 
         public static Signature parse(Class klass) {
+            if(klass == null)
+                return null;
+
             lock.readLock().lock();
             Signature sig = map.get(klass);
             lock.readLock().unlock();
@@ -414,7 +487,6 @@ public abstract class TypeInfo<T> implements JetObject {
                 sig = map.get(klass);
                 if (sig == null) {
                     sig = internalParse(klass);
-                    map.put(klass, sig);
                 }
 
                 lock.writeLock().unlock();
@@ -428,7 +500,13 @@ public abstract class TypeInfo<T> implements JetObject {
                 String value = annotation.value();
                 if(value != null) {
                     Parser parser = new Parser(value, klass.getClassLoader());
-                    return new Signature(klass, parser.parseVars(), parser.parseTypes());
+                    Class enclosingClass = klass.getEnclosingClass();
+                    Signature signature = new Signature(parse(enclosingClass), klass);
+                    map.put(klass, signature);
+                    parser.parseVars(signature);
+                    parser.parseTypes(signature);
+                    signature.afterParse();
+                    return signature;
                 }
             }
             return getGenericSignature(klass);
@@ -437,21 +515,25 @@ public abstract class TypeInfo<T> implements JetObject {
         private static Signature getGenericSignature(Class klass) {
             // todo complete impl
 
+            java.lang.reflect.Type genericSuperclass = klass.getGenericSuperclass();
+            Signature signature = new Signature(parse(klass.getEnclosingClass()), klass);
+
             TypeVariable[] typeParameters = klass.getTypeParameters();
-            Map<String,Integer> variables;
-            List<TypeInfoProjection> vars;
             if(typeParameters == null || typeParameters.length == 0) {
-                variables = Collections.emptyMap();
-                vars = Collections.emptyList();
+                signature.varNames = Collections.emptyMap();
+                signature.variables = Collections.emptyList();
             }
             else {
-                variables = new HashMap<String, Integer>();
-                vars = new LinkedList<TypeInfoProjection>();
+                signature.varNames = new HashMap<String, Integer>();
+                signature.variables = new LinkedList<TypeInfoProjection>();
+            }
+
+            if (typeParameters != null && typeParameters.length != 0) {
                 for (int i = 0; i < typeParameters.length; i++) {
                     TypeVariable typeParameter = typeParameters[i];
-                    variables.put(typeParameter.getName(), i);
-                    final TypeInfoVar typeInfoVar = new TypeInfoVar(false, i);
-                    vars.add(new TypeInfoProjection(){
+                    signature.varNames.put(typeParameter.getName(), i);
+                    final TypeInfoVar typeInfoVar = new TypeInfoVar(signature, false, i);
+                    signature.variables.add(new TypeInfoProjection(){
 
                         @Override
                         public TypeInfoVariance getVariance() {
@@ -471,29 +553,27 @@ public abstract class TypeInfo<T> implements JetObject {
                 }
             }
 
-            List<TypeInfo> types = new LinkedList<TypeInfo>();
-            java.lang.reflect.Type genericSuperclass = klass.getGenericSuperclass();
-            return new Signature(klass, vars, types);
+            return signature;
         }
 
-        public List<TypeInfoProjection> parseVars() {
-            List<TypeInfoProjection> list = null;
+        public void parseVars(Signature signature) {
             while(cur < string.length && string[cur] == 'T') {
-                if(list == null) {
-                    list = new LinkedList<TypeInfoProjection>();
-                    variables = new HashMap<String, Integer>();
+                if(signature.variables == null) {
+                    signature.variables  = new LinkedList<TypeInfoProjection>();
+                    signature.varNames = new HashMap<String, Integer>();
                 }
                 cur++;
-                list.add(parseVar());
+                signature.variables.add(parseVar(signature));
             }
-            return list == null ? Collections.<TypeInfoProjection>emptyList() : list;
+            signature.variables = signature.variables == null ? Collections.<TypeInfoProjection>emptyList() : signature.variables;
+            signature.varNames  = signature.varNames == null ? Collections.<String,Integer>emptyMap() : signature.varNames;
         }
 
-        private TypeInfoProjection parseVar() {
+        private TypeInfoProjection parseVar(Signature signature) {
             final TypeInfoVariance variance = parseVariance();
             String name = parseName();
-            final TypeInfoVar typeInfoVar = new TypeInfoVar(variables.size());
-            variables.put(name, variables.size());
+            final TypeInfoVar typeInfoVar = new TypeInfoVar(signature, signature.variables.size());
+            signature.varNames.put(name, signature.variables.size());
             return new TypeInfoProjection(){
                 @Override
                 public TypeInfoVariance getVariance() {
@@ -536,18 +616,18 @@ public abstract class TypeInfo<T> implements JetObject {
             }
         }
 
-        public List<TypeInfo> parseTypes() {
+        public void parseTypes(Signature signature) {
             List<TypeInfo> types = null;
             while(cur != string.length) {
                 if(types == null) {
                     types = new LinkedList<TypeInfo>();
                 }
-                types.add(parseType());
+                types.add(parseType(signature));
             }
-            return types == null ? Collections.<TypeInfo>emptyList() : types;
+            signature.superTypes = types == null ? Collections.<TypeInfo>emptyList() : types;
         }
 
-        private TypeInfo parseType() {
+        private TypeInfo parseType(Signature signature) {
             switch (string[cur]) {
                 case 'L':
                     cur++;
@@ -565,7 +645,7 @@ public abstract class TypeInfo<T> implements JetObject {
                         while(string[cur] != '>') {
                             if(proj == null)
                                 proj = new LinkedList<TypeInfoProjection>();
-                            proj.add(parseProjection());
+                            proj.add(parseProjection(signature));
                         }
                         cur++;
                     }
@@ -579,15 +659,16 @@ public abstract class TypeInfo<T> implements JetObject {
 
                 case 'T':
                     cur++;
-                    return parseTypeVar();
+                    return parseTypeVar(signature);
 
                 default:
                     throw new IllegalStateException(new String(string));
             }
         }
 
-        private TypeInfo parseTypeVar() {
+        private TypeInfo parseTypeVar(Signature signature) {
             TypeInfoVariance variance = parseVariance();
+            String klazz = parseName();
             String name = parseName();
             boolean nullable = false;
             if(string[cur] == '?') {
@@ -595,12 +676,23 @@ public abstract class TypeInfo<T> implements JetObject {
                 cur++;
             }
 
-            return new TypeInfoVar(nullable, variables.get(name));
+            if(klazz.equals(signature.klazz.getName()))
+                return new TypeInfoVar(signature, nullable, signature.varNames.get(name));
+            else {
+                Signature sig = signature;
+                while(!klazz.equals(sig.klazz.getName())) {
+                    sig = sig.outer;
+                    if(sig == null)
+                        throw new IllegalStateException();
+                }
+                
+                return new TypeInfoVar(sig, nullable, sig.varNames.get(name));
+            }
         }
 
-        private TypeInfoProjection parseProjection() {
+        private TypeInfoProjection parseProjection(Signature signature) {
             final TypeInfoVariance variance = parseVariance();
-            final TypeInfo type = parseType();
+            final TypeInfo type = parseType(signature);
             return new TypeInfoProjection(){
                 @Override
                 public TypeInfoVariance getVariance() {
