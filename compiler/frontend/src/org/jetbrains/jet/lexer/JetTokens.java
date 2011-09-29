@@ -135,6 +135,7 @@ public interface JetTokens {
     JetKeywordToken PROTECTED_KEYWORD = JetKeywordToken.softKeyword("protected");
     JetKeywordToken CATCH_KEYWORD     = JetKeywordToken.softKeyword("catch");
     JetKeywordToken OUT_KEYWORD       = JetKeywordToken.softKeyword("out");
+    JetKeywordToken VARARG_KEYWORD       = JetKeywordToken.softKeyword("vararg");
 
     JetKeywordToken FINALLY_KEYWORD   = JetKeywordToken.softKeyword("finally");
     JetKeywordToken FINAL_KEYWORD   = JetKeywordToken.softKeyword("final");
@@ -154,12 +155,12 @@ public interface JetTokens {
     TokenSet SOFT_KEYWORDS = TokenSet.create(IMPORT_KEYWORD, WHERE_KEYWORD, BY_KEYWORD, GET_KEYWORD,
             SET_KEYWORD, ABSTRACT_KEYWORD, ENUM_KEYWORD, OPEN_KEYWORD, ANNOTATION_KEYWORD,
             OVERRIDE_KEYWORD, PRIVATE_KEYWORD, PUBLIC_KEYWORD, INTERNAL_KEYWORD, PROTECTED_KEYWORD,
-            CATCH_KEYWORD, FINALLY_KEYWORD, REF_KEYWORD, OUT_KEYWORD, FINAL_KEYWORD
+            CATCH_KEYWORD, FINALLY_KEYWORD, REF_KEYWORD, OUT_KEYWORD, FINAL_KEYWORD, VARARG_KEYWORD
     );
 
     TokenSet MODIFIER_KEYWORDS = TokenSet.create(ABSTRACT_KEYWORD, ENUM_KEYWORD,
             OPEN_KEYWORD, ANNOTATION_KEYWORD, OVERRIDE_KEYWORD, PRIVATE_KEYWORD, PUBLIC_KEYWORD, INTERNAL_KEYWORD,
-            PROTECTED_KEYWORD, REF_KEYWORD, OUT_KEYWORD, IN_KEYWORD, FINAL_KEYWORD
+            PROTECTED_KEYWORD, REF_KEYWORD, OUT_KEYWORD, IN_KEYWORD, FINAL_KEYWORD, VARARG_KEYWORD
     );
     TokenSet WHITE_SPACE_OR_COMMENT_BIT_SET = TokenSet.create(WHITE_SPACE, BLOCK_COMMENT, EOL_COMMENT, DOC_COMMENT);
     TokenSet WHITESPACES = TokenSet.create(TokenType.WHITE_SPACE);

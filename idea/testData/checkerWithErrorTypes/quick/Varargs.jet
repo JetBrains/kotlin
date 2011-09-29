@@ -1,0 +1,17 @@
+fun v(x : Int, y : String, vararg f : Long) {}
+fun v1(vararg f : fun (Int) : Unit) {}
+
+fun test() {
+    v(1, "")
+    v(1, "", 1)
+    v(1, "", 1, 1, 1)
+    v(1, "", 1, 1, 1)
+
+    v1()
+    v1({})
+    v1({}, {})
+    v1({}, <!ERROR_COMPILE_TIME_VALUE!>1<!>, {})
+    v1({}, {}, {it})
+    v1({}) <!VARARG_OUTSIDE_PARENTHESES!>{}<!>
+    v1 <!VARARG_OUTSIDE_PARENTHESES!>{}<!>
+}

@@ -148,7 +148,7 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
 
         for (ValueParameterDescriptor valueParameter : valueParameters) {
             if (!usedParameters.contains(valueParameter)) {
-                if (!valueParameter.hasDefaultValue()) {
+                if (!valueParameter.hasDefaultValue() && !valueParameter.isVararg()) {
 //                    tracing.reportWrongValueArguments(temporaryTrace, "No value passed for parameter " + valueParameter.getName());
                     tracing.noValueForParameter(temporaryTrace, valueParameter);
                     error = true;

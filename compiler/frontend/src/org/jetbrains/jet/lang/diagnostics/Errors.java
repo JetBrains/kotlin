@@ -353,7 +353,7 @@ public interface Errors {
 
     ParameterizedDiagnosticFactory1<Collection<? extends CallableDescriptor>> OVERLOAD_RESOLUTION_AMBIGUITY = new AmbiguousDescriptorDiagnosticFactory("Overload resolution ambiguity: {0}");
     ParameterizedDiagnosticFactory1<Collection<? extends CallableDescriptor>> NONE_APPLICABLE = new AmbiguousDescriptorDiagnosticFactory("None of the following functions can be called with the arguments supplied: {0}");
-    ParameterizedDiagnosticFactory1<ValueParameterDescriptor> NO_VALUE_FOR_PARAMETER = ParameterizedDiagnosticFactory1.create(ERROR, "No value passed for parameter {0}");
+    ParameterizedDiagnosticFactory1<ValueParameterDescriptor> NO_VALUE_FOR_PARAMETER = ParameterizedDiagnosticFactory1.create(ERROR, "No value passed for parameter {0}", DescriptorRenderer.TEXT);
     ParameterizedDiagnosticFactory1<JetType> MISSING_RECEIVER = ParameterizedDiagnosticFactory1.create(ERROR, "A receiver of type {0} is required");
     SimpleDiagnosticFactory NO_RECEIVER_ADMITTED = SimpleDiagnosticFactory.create(ERROR, "No receiver can be passed to this function or property");
 

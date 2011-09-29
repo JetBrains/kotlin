@@ -258,9 +258,8 @@ public class ClassDescriptorResolver {
             valueParameter.isMutable() ? type : null,
             type,
             valueParameter.getDefaultValue() != null,
-            false // TODO : varargs
-    );
-        // TODO : Default values???
+            valueParameter.hasModifier(JetTokens.VARARG_KEYWORD)
+        );
 
         trace.record(BindingContext.VALUE_PARAMETER, valueParameter, valueParameterDescriptor);
         return valueParameterDescriptor;

@@ -1,6 +1,9 @@
 fun foo(a : Int = 1, b : String = "abc") {
 }
 
+fun bar(x : Int = "", y : Int = 1, z : String) {
+}
+
 fun test() {
     foo()
     foo(2)

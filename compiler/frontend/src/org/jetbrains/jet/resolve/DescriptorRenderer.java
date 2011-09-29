@@ -133,6 +133,9 @@ public class DescriptorRenderer implements Renderer {
         @Override
         public Void visitValueParameterDescriptor(ValueParameterDescriptor descriptor, StringBuilder builder) {
             builder.append(renderKeyword("value-parameter")).append(" ");
+            if (descriptor.isVararg()) {
+                builder.append(renderKeyword("vararg")).append(" ");
+            }
             return super.visitValueParameterDescriptor(descriptor, builder);
         }
 
