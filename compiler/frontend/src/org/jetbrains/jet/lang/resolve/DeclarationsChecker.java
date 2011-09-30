@@ -156,7 +156,7 @@ public class DeclarationsChecker {
                 return;
             }
             if (classDescriptor.getKind() == ClassKind.TRAIT) {
-                context.getTrace().report(REDUNDANT_ABSTRACT.on(property, abstractNode));
+                context.getTrace().report(REDUNDANT_MODIFIER_IN_TRAIT.on(modifierList, abstractNode, JetTokens.ABSTRACT_KEYWORD));
             }
         }
 
@@ -254,7 +254,7 @@ public class DeclarationsChecker {
                 context.getTrace().report(ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS.on(functionOrPropertyAccessor, abstractNode, functionDescriptor.getName(), classDescriptor, (JetClass) classElement));
             }
             if (hasAbstractModifier && inTrait && !isPropertyAccessor) {
-                context.getTrace().report(REDUNDANT_ABSTRACT.on(functionOrPropertyAccessor, abstractNode));
+                context.getTrace().report(REDUNDANT_MODIFIER_IN_TRAIT.on(modifierList, abstractNode, JetTokens.ABSTRACT_KEYWORD));
             }
             if (function.getBodyExpression() != null && hasAbstractModifier) {
                 context.getTrace().report(ABSTRACT_FUNCTION_WITH_BODY.on(functionOrPropertyAccessor, abstractNode, functionDescriptor));
@@ -283,6 +283,7 @@ public class DeclarationsChecker {
                                                             ? propertyDescriptor.getGetter()
                                                             : propertyDescriptor.getSetter();
             checkFunction(accessor, accessorDescriptor);
+            checkModifiers(accessor.getModifierList());
             if (propertyDescriptor.getModality() == Modality.FINAL && accessor.hasModifier(JetTokens.OPEN_KEYWORD)) {
                 ASTNode openModifierNode = accessor.getModifierList().getModifierNode(JetTokens.OPEN_KEYWORD);
                 context.getTrace().report(NON_FINAL_ACCESSOR_OF_FINAL_PROPERTY.on(accessor, openModifierNode, property));

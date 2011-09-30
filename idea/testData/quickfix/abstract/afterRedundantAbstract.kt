@@ -1,4 +1,4 @@
-// "Make 'foo' not abstract" "true"
+// "Remove redundant 'abstract' modifier" "true"
 trait A {
     <caret>fun foo()
 }

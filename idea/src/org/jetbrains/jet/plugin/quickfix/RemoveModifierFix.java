@@ -42,11 +42,6 @@ public class RemoveModifierFix extends ModifierFix {
     }
 
     @Override
-    public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-        return element.isValid();
-    }
-
-    @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         JetModifierListOwner newElement = (JetModifierListOwner) element.copy();
         element.replace(removeModifier(newElement, modifier));

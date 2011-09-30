@@ -48,7 +48,6 @@ public class QuickFixes {
         add(Errors.PROPERTY_INITIALIZER_IN_TRAIT, removePartsFromPropertyFactory);
 
         add(Errors.MUST_BE_INITIALIZED_OR_BE_ABSTRACT, addAbstractModifierFactory);
-        add(Errors.REDUNDANT_ABSTRACT, removeAbstractModifierFactory);
 
         JetIntentionActionFactory<PsiElement> addAbstractToClassFactory = QuickFixUtil.createFactoryRedirectingAdditionalInfoToAnotherFactory(addAbstractModifierFactory, DiagnosticParameters.CLASS);
         add(Errors.ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS, removeAbstractModifierFactory);
@@ -70,7 +69,7 @@ public class QuickFixes {
         add(Errors.NON_MEMBER_FUNCTION_NO_BODY, addFunctionBodyFactory);
 
         add(Errors.NOTHING_TO_OVERRIDE, RemoveModifierFix.createFactory(JetTokens.OVERRIDE_KEYWORD));
-        add(Errors.VIRTUAL_MEMBER_HIDDEN, AddModifierFix.createFactory(JetTokens.OVERRIDE_KEYWORD));
+        add(Errors.VIRTUAL_MEMBER_HIDDEN, AddModifierFix.createFactory(JetTokens.OVERRIDE_KEYWORD, new JetToken[] {JetTokens.OPEN_KEYWORD}));
 
         add(Errors.VAL_WITH_SETTER, ChangeVariableMutabilityFix.createFactory());
 
@@ -80,16 +79,16 @@ public class QuickFixes {
         JetIntentionActionFactory<JetPropertyAccessor> changeAccessorTypeFactory = ChangeAccessorTypeFix.createFactory();
         add(Errors.WRONG_SETTER_PARAMETER_TYPE, changeAccessorTypeFactory);
         add(Errors.WRONG_GETTER_RETURN_TYPE, changeAccessorTypeFactory);
-        
+
         add(Errors.USELESS_ELVIS, RemoveRightPartOfBinaryExpressionFix.createRemoveElvisOperatorFactory());
-        
+
         add(Errors.UNNECESSARY_SAFE_CALL, ReplaceSafeCallToDotCall.createFactory());
 
         JetIntentionActionFactory<JetModifierList> removeRedundantModifierFactory = RemoveRedundantModifierFix.createFactory();
         add(Errors.REDUNDANT_MODIFIER, removeRedundantModifierFactory);
         add(Errors.REDUNDANT_MODIFIER_IN_TRAIT, removeRedundantModifierFactory);
         add(Errors.TRAIT_CAN_NOT_BE_FINAL, RemoveModifierFix.createFactory(JetTokens.FINAL_KEYWORD));
-        
+
         add(Errors.PROPERTY_INITIALIZER_NO_PRIMARY_CONSTRUCTOR, RemovePartsFromPropertyFix.createRemoveInitializerFactory());
 
         JetIntentionActionFactory<JetClass> addPrimaryConstructorFactory = AddPrimaryConstructorFix.createFactory();
