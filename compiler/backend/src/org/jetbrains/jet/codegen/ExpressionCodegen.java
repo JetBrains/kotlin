@@ -301,6 +301,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     private abstract class ForLoopGenerator {
         protected JetForExpression expression;
         protected Type loopRangeType;
+        protected JetType expressionType;
         protected VariableDescriptor parameterDescriptor;
 
         public ForLoopGenerator(JetForExpression expression, Type loopRangeType) {
@@ -308,6 +309,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             this.loopRangeType = loopRangeType;
             final JetParameter loopParameter = expression.getLoopParameter();
             this.parameterDescriptor = bindingContext.get(BindingContext.VALUE_PARAMETER, loopParameter);
+            expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression.getLoopRange());
         }
 
         public void invoke() {
@@ -364,7 +366,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         protected void generatePrologue() {
             myLengthVar = myMap.enterTemp();
             gen(expression.getLoopRange(), loopRangeType);
-            derefArray(bindingContext.get(BindingContext.EXPRESSION_TYPE, expression.getLoopRange()));
             v.arraylength();
             v.store(myLengthVar, Type.INT_TYPE);
             myIndexVar = myMap.enterTemp();
@@ -373,15 +374,16 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
 
         protected void generateCondition(Type asmParamType, Label end) {
+            Type arrayElParamType = state.getStandardLibrary().getArray().equals(expressionType.getConstructor().getDeclarationDescriptor()) ? JetTypeMapper.boxType(asmParamType): asmParamType;
+
             v.load(myIndexVar, Type.INT_TYPE);
             v.load(myLengthVar, Type.INT_TYPE);
             v.ificmpge(end);
 
             gen(expression.getLoopRange(), loopRangeType);  // array
-            derefArray(bindingContext.get(BindingContext.EXPRESSION_TYPE, expression.getLoopRange()));
             v.load(myIndexVar, Type.INT_TYPE);
-            v.aload(asmParamType);
-            StackValue.onStack(asmParamType).put(asmParamType, v);
+            v.aload(arrayElParamType);
+            StackValue.onStack(arrayElParamType).put(asmParamType, v);
             v.store(lookupLocal(parameterDescriptor), asmParamType);
         }
 
@@ -1626,10 +1628,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             //noinspection ConstantConditions
             JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression);
             type = typeMapper.mapType(expressionType, OwnerKind.IMPLEMENTATION);
-            if (state.getStandardLibrary().getArray().equals(expressionType.getConstructor().getDeclarationDescriptor())) {
+            if (type.getSort() == Type.ARRAY) {
                 generateNewArray(expression, expressionType);
-            }
-            else {
+            } else {
                 ClassDescriptor classDecl = (ClassDescriptor) constructorDescriptor.getContainingDeclaration();
 
                 receiver.put(receiver.type, v);
@@ -1692,42 +1693,19 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
         gen(args.get(0).getArgumentExpression(), Type.INT_TYPE);
 
-        JetType elementType = typeMapper.getGenericsElementType(arrayType);
-        if(elementType != null) {
-            generateTypeInfo(elementType);
-            v.invokestatic("jet/arrays/JetArray", "newArray", "(ILjet/typeinfo/TypeInfo;)Ljet/arrays/JetArray;");
-        }
-        else {
-            elementType = arrayType.getArguments().get(0).getType();
-            JetStandardLibrary standardLibrary = state.getStandardLibrary();
-            if (elementType.equals(standardLibrary.getIntType())) {
-                v.invokestatic("jet/arrays/JetArray", "newIntArray", "(I)Ljet/arrays/JetIntArray;");
-            }
-            else if (elementType.equals(standardLibrary.getLongType())) {
-                v.invokestatic("jet/arrays/JetArray", "newLongArray", "(I)Ljet/arrays/JetLongArray;");
-            }
-            else if (elementType.equals(standardLibrary.getShortType())) {
-                v.invokestatic("jet/arrays/JetArray", "newShortArray", "(I)Ljet/arrays/JetShortArray;");
-            }
-            else if (elementType.equals(standardLibrary.getByteType())) {
-                v.invokestatic("jet/arrays/JetArray", "newByteArray", "(I)Ljet/arrays/JetByteArray;");
-            }
-            else if (elementType.equals(standardLibrary.getCharType())) {
-                v.invokestatic("jet/arrays/JetArray", "newCharArray", "(I)Ljet/arrays/JetCharArray;");
-            }
-            else if (elementType.equals(standardLibrary.getFloatType())) {
-                v.invokestatic("jet/arrays/JetArray", "newFloatArray", "(I)Ljet/arrays/JetFloatArray;");
-            }
-            else if (elementType.equals(standardLibrary.getDoubleType())) {
-                v.invokestatic("jet/arrays/JetArray", "newDoubleArray", "(I)Ljet/arrays/JetDoubleArray;");
-            }
-            else if (elementType.equals(standardLibrary.getBooleanType())) {
-                v.invokestatic("jet/arrays/JetArray", "newBoolArray", "(I)Ljet/arrays/JetBoolArray;");
+        if(state.getStandardLibrary().getArray().equals(arrayType.getConstructor().getDeclarationDescriptor())) {
+            JetType elementType = typeMapper.getGenericsElementType(arrayType);
+            if(elementType != null) {
+                generateTypeInfo(elementType);
+                v.invokestatic("jet/typeinfo/TypeInfo", "newArray", "(ILjet/typeinfo/TypeInfo;)[Ljava/lang/Object;");
             }
             else {
-                generateTypeInfo(elementType);
-                v.invokestatic("jet/arrays/JetArray", "newGenericArray", "(ILjet/typeinfo/TypeInfo;)Ljet/arrays/JetGenericArray;");
+                v.newarray(JetTypeMapper.boxType(typeMapper.mapType(arrayType.getArguments().get(0).getType())));
             }
+        }
+        else {
+            Type type = typeMapper.mapType(arrayType, OwnerKind.IMPLEMENTATION);
+            v.newarray(type.getElementType());
         }
     }
 
@@ -1737,11 +1715,17 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         JetType type = bindingContext.get(BindingContext.EXPRESSION_TYPE, array);
         final Type arrayType = type == null ? Type.VOID_TYPE : typeMapper.mapType(type);
         gen(array, arrayType);
-        derefArray(type);
         generateArrayIndex(expression);
-        if (state.getStandardLibrary().getArray().equals(type.getConstructor().getDeclarationDescriptor())) {
-            JetType elementType = type.getArguments().get(0).getType();
-            return StackValue.arrayElement(typeMapper.mapType(elementType), typeMapper.isGenericsArray(type));
+        if (arrayType.getSort() == Type.ARRAY) {
+            if(state.getStandardLibrary().getArray().equals(type.getConstructor().getDeclarationDescriptor())) {
+                JetType elementType = type.getArguments().get(0).getType();
+                Type notBoxed = typeMapper.mapType(elementType);
+                Type boxed = JetTypeMapper.boxType(notBoxed);
+                return StackValue.arrayElement(notBoxed, true);
+            }
+            else {
+                return StackValue.arrayElement(arrayType.getElementType(), false);
+            }
         }
         else {
             final PsiElement declaration = BindingContextUtils.resolveToDeclarationPsiElement(bindingContext, expression);
@@ -1764,7 +1748,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
     }
 
-    public void derefArray(JetType type) {
+    public void _derefArray(JetType type) {
         if (state.getStandardLibrary().getArray().equals(type.getConstructor().getDeclarationDescriptor())) {
             JetType elementType = type.getArguments().get(0).getType();
             JetStandardLibrary standardLibrary = state.getStandardLibrary();

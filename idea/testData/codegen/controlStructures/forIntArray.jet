@@ -1,5 +1,5 @@
 fun box() : String {
-    val a : Array<Int> = Array<Int> (5)
+    val a = Array<Int> (5)
     var i = 0
     var sum = 0
     for(el in 0..4) {

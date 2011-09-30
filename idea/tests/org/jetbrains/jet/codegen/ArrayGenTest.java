@@ -1,10 +1,10 @@
 package org.jetbrains.jet.codegen;
 
-import jet.arrays.JetGenericArray;
-import jet.arrays.JetIntArray;
 import jet.typeinfo.TypeInfo;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 
 public class ArrayGenTest extends CodegenTestCase {
     public void testKt238 () throws Exception {
@@ -21,8 +21,7 @@ public class ArrayGenTest extends CodegenTestCase {
         Method foo = generateFunction();
         Object invoke = foo.invoke(null);
         System.out.println(invoke.getClass());
-        assertTrue(invoke instanceof JetGenericArray);
-        assertTrue(((JetGenericArray)invoke).getTypeInfo() == TypeInfo.INT_ARRAY_TYPE_INFO);
+        assertTrue(invoke instanceof Integer[][]);
     }
 
     public void testCreateMultiString () throws Exception {
@@ -30,7 +29,7 @@ public class ArrayGenTest extends CodegenTestCase {
         Method foo = generateFunction();
         Object invoke = foo.invoke(null);
         System.out.println(invoke.getClass());
-        assertTrue(invoke instanceof JetGenericArray);
+        assertTrue(invoke instanceof Object[]);
     }
 
     public void testCreateMultiGenerics () throws Exception {
@@ -39,7 +38,7 @@ public class ArrayGenTest extends CodegenTestCase {
         Method foo = generateFunction();
         Object invoke = foo.invoke(null);
         System.out.println(invoke.getClass());
-        assertTrue(invoke instanceof JetIntArray);
+        assertTrue(invoke instanceof Integer[]);
     }
 
     public void testIntGenerics () throws Exception {

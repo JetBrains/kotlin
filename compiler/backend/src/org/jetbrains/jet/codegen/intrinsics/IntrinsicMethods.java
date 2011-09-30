@@ -29,6 +29,7 @@ public class IntrinsicMethods {
     private static final IntrinsicMethod DEC = new Increment(-1);
 
     private static final List<String> PRIMITIVE_NUMBER_TYPES = ImmutableList.of("Boolean", "Byte", "Char", "Short", "Int", "Float", "Long", "Double");
+    public static final ArraySize ARRAY_SIZE = new ArraySize();
 
     private final Project myProject;
     private final JetStandardLibrary myStdLib;
@@ -41,7 +42,6 @@ public class IntrinsicMethods {
         for (String method : primitiveCastMethods) {
             declareIntrinsicProperty("Number", method, NUMBER_CAST);
         }
-        declareIntrinsicProperty("Array", "size", new ArraySize());
 
         for (String type : PRIMITIVE_NUMBER_TYPES) {
             declareIntrinsicFunction(type, "minus", 0, UNARY_MINUS);
@@ -73,6 +73,20 @@ public class IntrinsicMethods {
 
         declareIntrinsicStringMethods();
         declareIntrinsicProperty("String", "length", new StringLength());
+
+        declareArrayMethods();
+    }
+
+    private void declareArrayMethods() {
+        declareIntrinsicProperty("Array", "size", ARRAY_SIZE);
+        declareIntrinsicProperty("ByteArray", "size", ARRAY_SIZE);
+        declareIntrinsicProperty("ShortArray", "size", ARRAY_SIZE);
+        declareIntrinsicProperty("IntArray", "size", ARRAY_SIZE);
+        declareIntrinsicProperty("LongArray", "size", ARRAY_SIZE);
+        declareIntrinsicProperty("FloatArray", "size", ARRAY_SIZE);
+        declareIntrinsicProperty("DoubleArray", "size", ARRAY_SIZE);
+        declareIntrinsicProperty("CharArray", "size", ARRAY_SIZE);
+        declareIntrinsicProperty("BooleanArray", "size", ARRAY_SIZE);
     }
 
     private void declareIntrinsicStringMethods() {

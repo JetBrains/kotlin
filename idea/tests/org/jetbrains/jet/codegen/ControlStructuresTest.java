@@ -1,6 +1,5 @@
 package org.jetbrains.jet.codegen;
 
-import jet.arrays.JetGenericArray;
 import jet.typeinfo.TypeInfo;
 
 import java.lang.reflect.InvocationTargetException;
@@ -92,7 +91,7 @@ public class ControlStructuresTest extends CodegenTestCase {
         System.out.println(generateToText());
         final Method main = generateFunction();
         String[] args = new String[] { "IntelliJ", " ", "IDEA" };
-        assertEquals("IntelliJ IDEA", main.invoke(null, new Object[] { new JetGenericArray(args, TypeInfo.STRING_TYPE_INFO) }));
+        assertEquals("IntelliJ IDEA", main.invoke(null, new Object[] { args }));
     }
 
     public void testForInRange() throws Exception {

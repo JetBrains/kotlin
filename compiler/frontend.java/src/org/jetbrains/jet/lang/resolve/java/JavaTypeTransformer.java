@@ -114,7 +114,14 @@ public class JavaTypeTransformer {
 
             @Override
             public JetType visitArrayType(PsiArrayType arrayType) {
-                JetType type = transformToType(arrayType.getComponentType());
+                PsiType componentType = arrayType.getComponentType();
+                if(componentType instanceof PsiPrimitiveType) {
+                    JetType jetType = getPrimitiveTypesMap().get("[" + componentType.getCanonicalText());
+                    if(jetType != null)
+                        return TypeUtils.makeNullable(jetType);
+                }
+
+                JetType type = transformToType(componentType);
                 return TypeUtils.makeNullable(standardLibrary.getArrayType(type));
             }
 
@@ -136,6 +143,14 @@ public class JavaTypeTransformer {
             primitiveTypesMap.put("float", standardLibrary.getFloatType());
             primitiveTypesMap.put("double", standardLibrary.getDoubleType());
             primitiveTypesMap.put("boolean", standardLibrary.getBooleanType());
+            primitiveTypesMap.put("[byte", standardLibrary.getByteArrayType());
+            primitiveTypesMap.put("[short", standardLibrary.getShortArrayType());
+            primitiveTypesMap.put("[char", standardLibrary.getCharArrayType());
+            primitiveTypesMap.put("[int", standardLibrary.getIntArrayType());
+            primitiveTypesMap.put("[long", standardLibrary.getLongArrayType());
+            primitiveTypesMap.put("[float", standardLibrary.getFloatArrayType());
+            primitiveTypesMap.put("[double", standardLibrary.getDoubleArrayType());
+            primitiveTypesMap.put("[boolean", standardLibrary.getBooleanArrayType());
             primitiveTypesMap.put("void", JetStandardClasses.getUnitType());
             primitiveTypesMap.put("java.lang.Byte", TypeUtils.makeNullable(standardLibrary.getByteType()));
             primitiveTypesMap.put("java.lang.Short", TypeUtils.makeNullable(standardLibrary.getShortType()));

@@ -82,6 +82,24 @@ public class JetStandardLibrary {
     private final JetType nullableBooleanType;
     private final JetType nullableTuple0Type;
 
+    private final ClassDescriptor byteArrayClass;
+    private final ClassDescriptor charArrayClass;
+    private final ClassDescriptor shortArrayClass;
+    private final ClassDescriptor intArrayClass;
+    private final ClassDescriptor longArrayClass;
+    private final ClassDescriptor floatArrayClass;
+    private final ClassDescriptor doubleArrayClass;
+    private final ClassDescriptor booleanArrayClass;
+
+    private final JetType byteArrayType;
+    private final JetType charArrayType;
+    private final JetType shortArrayType;
+    private final JetType intArrayType;
+    private final JetType longArrayType;
+    private final JetType floatArrayType;
+    private final JetType doubleArrayType;
+    private final JetType booleanArrayType;
+
     public JetType getTuple0Type() {
         return tuple0Type;
     }
@@ -135,6 +153,24 @@ public class JetStandardLibrary {
             this.booleanType = new JetTypeImpl(getBoolean());
             this.stringType = new JetTypeImpl(getString());
             this.tuple0Type = new JetTypeImpl(JetStandardClasses.getTuple(0));
+
+            this.byteArrayClass = (ClassDescriptor) libraryScope.getClassifier("ByteArray");
+            this.charArrayClass = (ClassDescriptor) libraryScope.getClassifier("CharArray");
+            this.shortArrayClass = (ClassDescriptor) libraryScope.getClassifier("ShortArray");
+            this.intArrayClass = (ClassDescriptor) libraryScope.getClassifier("IntArray");
+            this.longArrayClass = (ClassDescriptor) libraryScope.getClassifier("LongArray");
+            this.floatArrayClass = (ClassDescriptor) libraryScope.getClassifier("FloatArray");
+            this.doubleArrayClass = (ClassDescriptor) libraryScope.getClassifier("DoubleArray");
+            this.booleanArrayClass = (ClassDescriptor) libraryScope.getClassifier("BooleanArray");
+
+            this.byteArrayType = new JetTypeImpl(byteArrayClass);
+            this.charArrayType = new JetTypeImpl(charArrayClass);
+            this.shortArrayType = new JetTypeImpl(shortArrayClass);
+            this.intArrayType = new JetTypeImpl(intArrayClass);
+            this.longArrayType = new JetTypeImpl(longArrayClass);
+            this.floatArrayType = new JetTypeImpl(floatArrayClass);
+            this.doubleArrayType = new JetTypeImpl(doubleArrayClass);
+            this.booleanArrayType = new JetTypeImpl(booleanArrayClass);
 
             this.nullableByteType = TypeUtils.makeNullable(byteType);
             this.nullableCharType = TypeUtils.makeNullable(charType);
@@ -342,5 +378,69 @@ public class JetStandardLibrary {
 
     public JetType getNullableTuple0Type() {
         return nullableTuple0Type;
+    }
+
+    public JetType getBooleanArrayType() {
+        return booleanArrayType;
+    }
+
+    public JetType getByteArrayType() {
+        return byteArrayType;
+    }
+
+    public JetType getCharArrayType() {
+        return charArrayType;
+    }
+
+    public JetType getShortArrayType() {
+        return shortArrayType;
+    }
+
+    public JetType getIntArrayType() {
+        return intArrayType;
+    }
+
+    public JetType getLongArrayType() {
+        return longArrayType;
+    }
+
+    public JetType getFloatArrayType() {
+        return floatArrayType;
+    }
+
+    public JetType getDoubleArrayType() {
+        return doubleArrayType;
+    }
+
+    public ClassDescriptor getByteArrayClass() {
+        return byteArrayClass;
+    }
+
+    public ClassDescriptor getCharArrayClass() {
+        return charArrayClass;
+    }
+
+    public ClassDescriptor getShortArrayClass() {
+        return shortArrayClass;
+    }
+
+    public ClassDescriptor getIntArrayClass() {
+        return intArrayClass;
+    }
+
+    public ClassDescriptor getLongArrayClass() {
+        return longArrayClass;
+    }
+
+    public ClassDescriptor getFloatArrayClass() {
+        return floatArrayClass;
+    }
+
+    public ClassDescriptor getDoubleArrayClass() {
+        return doubleArrayClass;
+    }
+
+    public ClassDescriptor getBooleanArrayClass() {
+        return booleanArrayClass;
     }
 }

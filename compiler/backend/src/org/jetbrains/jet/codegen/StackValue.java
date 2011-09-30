@@ -75,8 +75,8 @@ public abstract class StackValue {
         return new Invert(stackValue);
     }
 
-    public static StackValue arrayElement(Type type, boolean genericsArray) {
-        return new ArrayElement(type, genericsArray);
+    public static StackValue arrayElement(Type type, boolean unbox) {
+        return new ArrayElement(type, unbox);
     }
 
     public static StackValue collectionElement(Type type, CallableMethod getter, CallableMethod setter) {
@@ -424,32 +424,23 @@ public abstract class StackValue {
     }
 
     private static class ArrayElement extends StackValue {
-        private boolean genericsArray;
+        private Type boxed;
 
-        public ArrayElement(Type type, boolean genericsArray) {
+        public ArrayElement(Type type, boolean unbox) {
             super(type);
-            this.genericsArray = genericsArray;
+            this.boxed = unbox ? JetTypeMapper.boxType(type) : type;
         }
 
         @Override
         public void put(Type type, InstructionAdapter v) {
-            if(genericsArray) {
-                v.invokevirtual("jet/arrays/JetArray", "get", "(I)Ljava/lang/Object;");
-            }
-            else {    
-                v.aload(this.type);    // assumes array and index are on the stack
-            }
-            coerce(type, v);
+            v.aload(boxed);    // assumes array and index are on the stack
+            onStack(boxed).coerce(type, v);
         }
 
         @Override
         public void store(InstructionAdapter v) {
-            if(genericsArray) {
-                v.invokevirtual("jet/arrays/JetArray", "set", "(ILjava/lang/Object;)V");
-            }
-            else {
-                v.astore(type);   // assumes array and index are on the stack
-            }
+            onStack(type).coerce(boxed, v);
+            v.astore(boxed);
         }
 
         @Override

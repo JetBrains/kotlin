@@ -56,6 +56,62 @@ class Array<T>(val size : Int) {
   fun iterator() : Iterator<T>
 }
 
+class ByteArray(val size : Int) {
+  fun get(index : Int) : Byte
+  fun set(index : Int, value : Byte) : Unit
+
+  fun iterator() : Iterator<Byte>
+}
+
+class ShortArray(val size : Int) {
+  fun get(index : Int) : Short
+  fun set(index : Int, value : Short) : Unit
+
+  fun iterator() : Iterator<Short>
+}
+
+class IntArray(val size : Int) {
+  fun get(index : Int) : Int
+  fun set(index : Int, value : Int) : Unit
+
+  fun iterator() : Iterator<Int>
+}
+
+class LongArray(val size : Int) {
+  fun get(index : Int) : Long
+  fun set(index : Int, value : Long) : Unit
+
+  fun iterator() : Iterator<Long>
+}
+
+class FloatArray(val size : Int) {
+  fun get(index : Int) : Float
+  fun set(index : Int, value : Float) : Unit
+
+  fun iterator() : Iterator<Float>
+}
+
+class DoubleArray(val size : Int) {
+  fun get(index : Int) : Double
+  fun set(index : Int, value : Double) : Unit
+
+  fun iterator() : Iterator<Double>
+}
+
+class CharArray(val size : Int) {
+  fun get(index : Int) : Char
+  fun set(index : Int, value : Char) : Unit
+
+  fun iterator() : Iterator<Char>
+}
+
+class BooleanArray(val size : Int) {
+  fun get(index : Int) : Boolean
+  fun set(index : Int, value : Boolean) : Unit
+
+  fun iterator() : Iterator<Boolean>
+}
+
 trait Comparable<in T> {
   fun compareTo(other : T) : Int
 }

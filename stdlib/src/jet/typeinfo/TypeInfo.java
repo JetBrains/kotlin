@@ -2,7 +2,6 @@ package jet.typeinfo;
 
 import jet.JetObject;
 import jet.Tuple0;
-import jet.arrays.*;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -51,31 +50,7 @@ public abstract class TypeInfo<T> implements JetObject {
     public static final TypeInfo<Tuple0> NULLABLE_TUPLE0_TYPE_INFO = getTypeInfo(Tuple0.class, true);
     
     public static Object [] newArray(int length, TypeInfo typeInfo) {
-        Signature signature = ((TypeInfoImpl) typeInfo).signature;
-        if(signature.klazz.isArray() && signature.klazz.getComponentType().isPrimitive()) {
-            Class componentType = signature.klazz.getComponentType();
-            if(componentType == byte.class)
-                return (Object[]) Array.newInstance(JetByteArray.class, length);
-            if(componentType == short.class)
-                return (Object[]) Array.newInstance(JetShortArray.class, length);
-            if(componentType == int.class)
-                return (Object[]) Array.newInstance(JetIntArray.class, length);
-            if(componentType == long.class)
-                return (Object[]) Array.newInstance(JetLongArray.class, length);
-            if(componentType == char.class)
-                return (Object[]) Array.newInstance(JetCharArray.class, length);
-            if(componentType == boolean.class)
-                return (Object[]) Array.newInstance(JetBoolArray.class, length);
-            if(componentType == float.class)
-                return (Object[]) Array.newInstance(JetFloatArray.class, length);
-            if(componentType == double.class)
-                return (Object[]) Array.newInstance(JetDoubleArray.class, length);
-            
-            throw new IllegalStateException();
-        }
-        else {
-            return (Object[]) Array.newInstance(signature.klazz, length);
-        }
+        return (Object[]) Array.newInstance(((TypeInfoImpl)typeInfo).signature.klazz, length);
     }
 
     public static <T> TypeInfoProjection invariantProjection(final TypeInfo<T> typeInfo) {
@@ -495,6 +470,12 @@ public abstract class TypeInfo<T> implements JetObject {
         }
 
         private static Signature internalParse(Class klass) {
+            if(klass.isArray() && !klass.getComponentType().isPrimitive()) {
+                Signature signature = new ArraySignature(klass);
+                map.put(klass, signature);
+                return signature;
+            }
+
             JetSignature annotation = (JetSignature) klass.getAnnotation(JetSignature.class);
             if(annotation != null) {
                 String value = annotation.value();
@@ -709,6 +690,27 @@ public abstract class TypeInfo<T> implements JetObject {
                     return type.toString();
                 }
             };
+        }
+
+        private static class ArraySignature extends Signature {
+            public ArraySignature(Class klass) {
+                super(null, klass);
+                variables  = new LinkedList<TypeInfoProjection>();
+                varNames = new HashMap<String, Integer>();
+                varNames.put("T", 0);
+                final TypeInfoVar typeInfoVar = new TypeInfoVar(this, 0);
+                variables.add(new TypeInfoProjection(){
+                    @Override
+                    public TypeInfoVariance getVariance() {
+                        return TypeInfoVariance.INVARIANT;
+                    }
+
+                    @Override
+                    public TypeInfo getType() {
+                        return typeInfoVar;
+                    }
+                });
+            }
         }
     }
 }
