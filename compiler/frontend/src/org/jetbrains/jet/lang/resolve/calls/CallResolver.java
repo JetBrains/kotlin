@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.util.Ref;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.JetSemanticServices;
@@ -184,7 +185,6 @@ public class CallResolver {
         return null;
     }
 
-
     private <D extends CallableDescriptor> D resolveCallToDescriptor(
             @NotNull BindingTrace trace,
             @NotNull JetScope scope,
@@ -306,7 +306,7 @@ public class CallResolver {
         Map<D, D> successfulCandidates = Maps.newLinkedHashMap();
         Set<D> failedCandidates = Sets.newLinkedHashSet();
         Set<D> dirtyCandidates = Sets.newLinkedHashSet();
-        Map<D, ConstraintSystem.Solution> solutions = Maps.newHashMap();
+//        Map<D, ConstraintSystem.Solution> solutions = Maps.newHashMap();
         Map<D, TemporaryBindingTrace> traces = Maps.newHashMap();
 
         for (D candidate : task.getCandidates()) {
@@ -322,7 +322,7 @@ public class CallResolver {
                 continue;
             }
 
-            Flag dirty = new Flag(false);
+            Ref<Boolean> dirty = new Ref<Boolean>(false);
 
             Map<ValueArgument, ValueParameterDescriptor> argumentsToParameters = Maps.newHashMap();
             boolean error = ValueArgumentsToParametersMapper.mapValueArgumentsToParameters(task, tracing, candidate, temporaryTrace, argumentsToParameters);
@@ -362,7 +362,7 @@ public class CallResolver {
                             constraintSystem.addSubtypingConstraint(type, valueParameterDescriptor.getOutType());
                         }
                         else {
-                            dirty.setValue(true);
+                            dirty.set(true);
                         }
                     }
 
@@ -379,7 +379,7 @@ public class CallResolver {
                     }
 
                     ConstraintSystem.Solution solution = constraintSystem.solve();
-                    solutions.put(candidate, solution);
+//                    solutions.put(candidate, solution);
                     if (solution.isSuccessful()) {
                         D substitute = (D) candidate.substitute(solution.getSubstitutor());
                         assert substitute != null;
@@ -435,7 +435,7 @@ public class CallResolver {
                 }
             }
             
-            if (dirty.getValue()) {
+            if (dirty.get()) {
                 dirtyCandidates.add(candidate);
             }
             task.performAdvancedChecks(candidate, temporaryTrace, tracing);
@@ -573,7 +573,7 @@ public class CallResolver {
         }
     }
 
-    private boolean checkValueArgumentTypes(JetScope scope, JetTypeInferrer.Services temporaryServices, Map<ValueArgument, ValueParameterDescriptor> argumentsToParameters, Flag dirty, Function<ValueParameterDescriptor, ValueParameterDescriptor> parameterMap) {
+    private boolean checkValueArgumentTypes(JetScope scope, JetTypeInferrer.Services temporaryServices, Map<ValueArgument, ValueParameterDescriptor> argumentsToParameters, Ref<Boolean> dirty, Function<ValueParameterDescriptor, ValueParameterDescriptor> parameterMap) {
         boolean result = true;
         for (Map.Entry<ValueArgument, ValueParameterDescriptor> entry : argumentsToParameters.entrySet()) {
             ValueArgument valueArgument = entry.getKey();
@@ -588,7 +588,7 @@ public class CallResolver {
             if (argumentExpression != null) {
                 JetType type = temporaryServices.getType(scope, argumentExpression, parameterType);
                 if (type == null) {
-                    dirty.setValue(true);
+                    dirty.set(true);
                 }
                 else if (!semanticServices.getTypeChecker().isSubtypeOf(type, parameterType)) {
                     result = false;
@@ -804,20 +804,4 @@ public class CallResolver {
             return new ResolutionTask<VariableDescriptor>(candidates, receiver, call);
         }
     };
-
-    private static class Flag {
-        private boolean flag;
-
-        public Flag(boolean  flag) {
-            this.flag = flag;
-        }
-
-        public boolean getValue() {
-            return flag;
-        }
-
-        public void setValue(boolean flag) {
-            this.flag = flag;
-        }
-    }
 }
